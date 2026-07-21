@@ -18,10 +18,11 @@ Grounded map of **newer Bun runtime APIs** available on this machine’s toolcha
 4. [Bun.udpSocket](#bunudpsocket)
 5. [WebCrypto SHA3 + X25519](#webcrypto-sha3--x25519)
 6. [URLPattern](#urlpattern)
-7. [Bun v1.3.12 release map](#bun-v1312-release-map)
-8. [Bun v1.3.13 release map](#bun-v1313-release-map)
-9. [Platform integration map](#platform-integration-map)
-10. [References](#references)
+7. [Bun.Glob.scan](#bunglobscan)
+8. [Bun v1.3.12 release map](#bun-v1312-release-map)
+9. [Bun v1.3.13 release map](#bun-v1313-release-map)
+10. [Platform integration map](#platform-integration-map)
+11. [References](#references)
 
 ---
 
@@ -146,6 +147,7 @@ const job = Bun.cron("*/10 * * * *", async () => {
 |---------|---------------------------|---------------------|
 | **WebView** | Optional smoke scripts for monorepo dashboards / static UIs | Heavy browser deps for simple headless checks |
 | **URLPattern** | `Bun.serve` routers (`tools/server.ts`); spine smoke + DX catalog | Ad-hoc `req.url.match` / relying on `RegExp.$N` after route checks |
+| **Bun.Glob.scan** | Large-tree walks with `**/X/...` boundaries; spine smoke + DX | `fast-glob` / `globby` / sync walk of huge trees when async scan fits |
 | **markdown.ansi** | Root tooling CLI output (`tools/*`) | Manual ANSI string concat |
 | **cron** | Long-lived servers, R2 jobs, `bun-doc-refs schedule` | External cron for in-process work only |
 | **udpSocket** | `lib/udp/*` | More robust datagram error handling |
@@ -214,6 +216,38 @@ pattern.exec('https://example.com/api/users/42/posts/123')?.pathname.groups;
 
 ---
 
+## Bun.Glob.scan
+
+**What it is:** Native glob walk via `new Bun.Glob(pattern).scan({ cwd })` (async) / `.scanSync(...)`.
+
+**Ship note (Bun ≥1.3.12, verified on 1.4.0):** [Faster Bun.Glob.scan()](https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan). Patterns with a `**/X/...` **boundary** (e.g. `**/node_modules/**/*.js`) no longer open and read the same directory twice. Gains scale with how much of the tree sits under the boundary — up to **2×** on deep trees. Patterns **without** a boundary (e.g. `**/*.ts`) are unchanged.
+
+Blog vector (also spine smoke):
+
+```ts
+const glob = new Bun.Glob('**/node_modules/**/*.js');
+
+// Up to 2× faster when the boundary applies
+for await (const path of glob.scan({ cwd: './my-project' })) {
+  // ...
+}
+```
+
+**Windows (bonus):** simple patterns like `*.js` can push filters to `NtQueryDirectoryFile` (up to ~2.4×). Patterns using `**`, `?`, `[...]`, or `{...}` bypass that filter.
+
+| Surface | Role |
+|---------|------|
+| Smoke | `bun test tests/bun-glob-scan.test.ts` (async scan · scan≡scanSync · blog boundary fixture) |
+| DX | `bun run dx:catalog file.glob` · `file.glob.scan` |
+| Local | docs/search tooling · `scripts/dx-mcp.ts` · `check-bun-env` / `smart-symbol-index` (`scanSync` for small dirs OK) |
+| Canonical | `bun tools/bun-doc-refs.ts url "Bun.Glob.scan"` |
+
+**Prefer:** `for await (… of glob.scan({ cwd }))` for large trees; keep `scanSync` for tiny, sync-only gates.
+
+**Do not:** CI-microbench the 2× claim; smoke the blog shape. Do not pull `fast-glob` / `globby` for new spine code.
+
+---
+
 ## Bun v1.3.12 release map
 
 Upstream SSOT: [bun.com/blog/bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) — page entry [title → `bun upgrade`](https://bun.com/blog/bun-v1.3.12#to-upgrade-bun) (before [WebView](https://bun.com/blog/bun-v1.3.12#bun-webview-headless-browser-automation)), through [Bugfixes](https://bun.com/blog/bun-v1.3.12#bugfixes) → [contributors](https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors). Runtime here: **1.4.0** (superset). Detailed API notes for WebView / markdown / cron / UDP are the sections above this map.
@@ -232,7 +266,7 @@ Upstream SSOT: [bun.com/blog/bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) — 
 | [URLPattern up to 2.3× faster](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster) | Documented above · smoke + DX · no `$N` leak |
 | [Faster `Bun.stripANSI` / `Bun.stringWidth`](https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth) | Wired: [`lib/console-depth.ts`](../lib/console-depth.ts) · CANONICAL_REFS `Bun.stringWidth` / `Bun.stripANSI` |
 | [Faster `bun build` on low-core machines](https://bun.com/blog/bun-v1.3.12#faster-bun-build-on-low-core-machines) | Runtime inherit (thread-pool fix) |
-| [Faster `Bun.Glob.scan()`](https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan) | Runtime inherit · used by docs/search tooling (`**/…` boundary) |
+| [Faster `Bun.Glob.scan()`](https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan) | Documented above · smoke + DX · `**/X/...` boundary |
 | [Cgroup-aware `availableParallelism`](https://bun.com/blog/bun-v1.3.12#cgroup-aware-availableparallelism-hardwareconcurrency-on-linux) | Runtime inherit on Linux hosts / containers |
 | [HTTPS proxy CONNECT keep-alive](https://bun.com/blog/bun-v1.3.12#keep-alive-for-https-proxy-connect-tunnels) | Runtime inherit · `fetch({ proxy })` tunnel reuse |
 | [`TCP_DEFER_ACCEPT` for `Bun.serve()` (Linux)](https://bun.com/blog/bun-v1.3.12#tcp-defer-accept-for-bun-serve-on-linux) | Runtime inherit · `Bun.listen` / `net.createServer` unchanged |
@@ -256,7 +290,7 @@ Upstream SSOT (full TOC → Internal / Runtime): [bun.com/blog/bun-v1.3.13](http
 | `bunx claude` alias | Runtime install fix · no repo change |
 | Bugfixes (Node / Bun APIs / Web / install / bundler / CSS / test / Windows / JSC / Internal) | Inherit by running Bun ≥1.3.13 · do not re-document each bullet |
 
-Day-loop proof for the test flags: `bun run test:changed` · `bun run test:parallel`. Crypto: `bun test tests/bun-crypto-webcrypto.test.ts`. URLPattern: `bun test tests/bun-urlpattern.test.ts`.
+Day-loop proof for the test flags: `bun run test:changed` · `bun run test:parallel`. Crypto: `bun test tests/bun-crypto-webcrypto.test.ts`. URLPattern: `bun test tests/bun-urlpattern.test.ts`. Glob: `bun test tests/bun-glob-scan.test.ts`.
 
 ---
 
@@ -269,6 +303,7 @@ Day-loop proof for the test flags: `bun run test:changed` · `bun run test:paral
 | Bun v1.3.12 upgrade | https://bun.com/blog/bun-v1.3.12#to-upgrade-bun |
 | Bun v1.3.12 Bugfixes | https://bun.com/blog/bun-v1.3.12#bugfixes |
 | URLPattern (1.3.12) | https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster |
+| Bun.Glob.scan (1.3.12) | https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan |
 | Bun v1.3.13 blog | https://bun.com/blog/bun-v1.3.13 |
 | WebView | https://bun.com/docs/runtime/webview |
 | Markdown | https://bun.com/docs/runtime/markdown |
@@ -282,4 +317,4 @@ Day-loop proof for the test flags: `bun run test:changed` · `bun run test:paral
 | Install policy | [UNIFIED.md](./UNIFIED.md) |
 | Docs index | [README.md](./README.md) |
 
-*Last verified: 2026-07-21 against local Bun 1.4.0 (SHA3 + X25519 · URLPattern `$N` isolation · v1.3.12 + v1.3.13 release maps).*
+*Last verified: 2026-07-21 against local Bun 1.4.0 (SHA3 + X25519 · URLPattern `$N` · Glob.scan boundary · v1.3.12 + v1.3.13 release maps).*
