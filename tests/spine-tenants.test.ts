@@ -19,4 +19,17 @@ describe('spine multi-tenant', () => {
       expect(typeof t.run).toBe('function');
     }
   });
+
+  test('runbook documents install-verify signal · intervention · proof · retirement', async () => {
+    const md = await Bun.file(
+      new URL('../docs/harness/spine-tenants.md', import.meta.url).pathname
+    ).text();
+    expect(md).toContain('Tenant: install-verify');
+    expect(md).toContain('### Signal');
+    expect(md).toContain('### Intervention');
+    expect(md).toContain('### Proof');
+    expect(md).toContain('### Retirement');
+    expect(md).toContain('install-verify-journey');
+    expect(md).toContain('bun run spine:schedule:once -- --tenant=install-verify');
+  });
 });

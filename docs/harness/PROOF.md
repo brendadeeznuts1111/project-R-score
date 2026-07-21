@@ -55,6 +55,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:cron-os` · [`cron.md`](cron.md)
 - **`spine-multi-tenant`** — spine runs ≥2 in-process tenants (docs-integrity + install-verify) (`journey` + `boundary`)  
   *Ratchet* → `bun run spine:schedule:once -- --tenant=install-verify` · [`cron.md`](cron.md)
+- **`spine-tenants-runbook`** — install-verify tenant maintenance runbook (signal · intervention · proof · retirement) (`boundary`)  
+  *Ratchet* → `bun run docs:spine-tenants` · [`spine-tenants.md`](spine-tenants.md)
 
 ## Fresh-rerun
 

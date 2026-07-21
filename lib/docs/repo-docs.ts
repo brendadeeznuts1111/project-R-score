@@ -48,6 +48,8 @@ export const CANONICAL_REPO_DOCS = {
   harnessFreshRerun: 'docs/harness/FRESH-RERUN.md',
   /** Claim discovery questionnaire (new ProofPath ceremony) */
   harnessClaimDiscovery: 'docs/harness/CLAIM-DISCOVERY.md',
+  /** Spine tenants continuous-maintenance runbook */
+  harnessSpineTenants: 'docs/harness/spine-tenants.md',
   /** Feedback → ratchet lessons */
   harnessFeedback: 'docs/harness/FEEDBACK.md',
   /** Capability vs permission / lanes */
@@ -134,6 +136,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   harnessProof: 'Proof claim kinds',
   harnessFreshRerun: 'Fresh-rerun contract (PR paste of claim re-proof)',
   harnessClaimDiscovery: 'Claim discovery questionnaire (new ProofPath)',
+  harnessSpineTenants: 'Spine tenants runbook (continuous maintenance)',
   harnessFeedback: 'Feedback → ratchet lessons',
   harnessAuthority: 'Authority / lanes / consequential grants',
   harnessReview: 'Repository review questions → owners',

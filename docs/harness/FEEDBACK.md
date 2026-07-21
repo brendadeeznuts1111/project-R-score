@@ -70,6 +70,8 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
   *Ratchet* → `tsconfig.check.json` include `lib/security/**/*` · claim `lib-security-typecheck` · `bun run type-check`
 - **Spine single-tenant (only docs-integrity)** (`proof`)  
   *Ratchet* → `spine/tenants.ts` ≥2 · claim `spine-multi-tenant` · `bun run spine:schedule:once -- --tenant=install-verify`
+- **Spine tenant without maintenance runbook** (`proof`)  
+  *Ratchet* → [`spine-tenants.md`](spine-tenants.md) · claim `spine-tenants-runbook` · `bun run docs:spine-tenants`
 - **tools/ path dual-era (closed)** (`type`)  
   *Ratchet* → `bun run check:path-bun` covers `lib/**` + `tools/**` · claim `path-bun`
 - **Discover / gate timing dumps in `git status`** (`script-gate`)  

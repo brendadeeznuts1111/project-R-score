@@ -109,6 +109,7 @@ export const CLI_SPECIAL: Record<string, string> = {
     'Install-verify WebView journey brief (ansiMarkdown · docs/harness/install-verify.md)',
   'docs:claim-discovery':
     'Claim discovery questionnaire (new ProofPath · docs/harness/CLAIM-DISCOVERY.md)',
+  'docs:spine-tenants': 'Spine tenants runbook (signal · intervention · proof · retirement)',
   'docs:fresh-rerun':
     'Fresh-rerun contract + per-claim catalog (ansiMarkdown · docs/harness/FRESH-RERUN.md)',
   'docs:search-governance':
@@ -162,6 +163,7 @@ export const CLI_CORE_CMDS = new Set([
   'docs:cron',
   'docs:install-verify',
   'docs:claim-discovery',
+  'docs:spine-tenants',
   'docs:fresh-rerun',
   'docs:search-governance',
   'test:cron',

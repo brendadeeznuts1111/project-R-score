@@ -211,8 +211,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'spine/scheduler.ts',
       'bun run spine:schedule:once -- --tenant=install-verify',
       'docs/harness/cron.md',
+      'docs/harness/spine-tenants.md',
     ],
     freshRerun: 'bun run spine:schedule:once -- --tenant=install-verify',
+  },
+  {
+    id: 'spine-tenants-runbook',
+    // owner: docs/harness/spine-tenants.md
+    claim:
+      'install-verify spine tenant has a maintenance runbook (signal · intervention · proof · retirement)',
+    kinds: ['boundary'],
+    evidence: ['docs/harness/spine-tenants.md', 'bun run docs:spine-tenants', 'spine/tenants.ts'],
+    freshRerun: 'bun run docs:spine-tenants',
   },
 ] as const;
 

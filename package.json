@@ -1690,6 +1690,7 @@
     "docs:install-verify": "bun scripts/docs-install-verify.ts",
     "docs:fresh-rerun": "bun scripts/docs-fresh-rerun.ts",
     "docs:claim-discovery": "bun scripts/docs-claim-discovery.ts",
+    "docs:spine-tenants": "bun scripts/docs-spine-tenants.ts",
     "docs:search-governance": "bun scripts/docs-search-governance.ts",
     "test:cron": "bun test tests/bun-cron.test.ts tests/harness-cron-contract.test.ts tests/bun-explicit-resource.test.ts tests/journey/cron-os-persistent.test.ts",
     "test:cron-os": "bun test tests/journey/cron-os-persistent.test.ts",
