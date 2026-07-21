@@ -59,6 +59,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run spine:schedule:once -- --tenant=install-verify` · [`cron.md`](cron.md)
 - **`spine-maintenance-runbooks`** — TenantRunbook + SignalMonitor; retirement attested; live `freshRerun` (`boundary` + `journey`)  
   *Ratchet* → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · [`maintenance.ts`](../../lib/harness/maintenance.ts) · `assertRetirementEnforcement`
+- **`spine-tenant-heal`** — sandboxed E2E heal loop (break → signal → intervene → recover) (`journey`)  
+  *Ratchet* → `bun run test:tenant-heal` · [`heal-fixture.ts`](../../lib/harness/heal-fixture.ts) · [`tenant-heal.test.ts`](../../tests/journey/tenant-heal.test.ts)
 
 ## Fresh-rerun
 

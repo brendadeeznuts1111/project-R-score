@@ -114,7 +114,8 @@ export const CLI_SPECIAL: Record<string, string> = {
     'install-verify tenant runbook (signal · intervention · retirement)',
   'docs:tenant-docs-integrity':
     'docs-integrity tenant runbook (signal · intervention · retirement)',
-  'test:tenant-runbooks': 'Ratchet: every spine tenant has a TenantRunbook + markdown',
+  'test:tenant-runbooks': 'Ratchet: TenantRunbook catalog + sandboxed E2E heal journey',
+  'test:tenant-heal': 'E2E heal: break → signal → intervene → recover (sandboxed fixture)',
   'docs:fresh-rerun':
     'Fresh-rerun contract + per-claim catalog (ansiMarkdown · docs/harness/FRESH-RERUN.md)',
   'docs:search-governance':
@@ -173,6 +174,7 @@ export const CLI_CORE_CMDS = new Set([
   'docs:tenant-docs-integrity',
   'docs:fresh-rerun',
   'test:tenant-runbooks',
+  'test:tenant-heal',
   'docs:search-governance',
   'test:cron',
   'test:cron-os',

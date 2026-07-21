@@ -246,6 +246,21 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     ],
     freshRerun: 'bun run test:tenant-runbooks',
   },
+  {
+    id: 'spine-tenant-heal',
+    // owner: lib/harness/heal-fixture.ts · tests/journey/tenant-heal.test.ts
+    claim: 'Sandboxed maintenance loop heals: break → signal → intervene → proof green',
+    kinds: ['journey'],
+    evidence: [
+      'lib/harness/heal-fixture.ts',
+      'scripts/tenant-heal-fixture.ts',
+      'tests/fixtures/tenant-heal/',
+      'tests/journey/tenant-heal.test.ts',
+      'bun run test:tenant-heal',
+      'docs/harness/spine-tenants.md',
+    ],
+    freshRerun: 'bun run test:tenant-heal',
+  },
 ] as const;
 
 export function proofPathById(id: string): ProofPath | undefined {

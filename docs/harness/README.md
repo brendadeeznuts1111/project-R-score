@@ -31,6 +31,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron` · `bun run test:cron-os`
 - Spine multi-tenant (docs-integrity + install-verify) → `bun run spine:schedule:once` · claim `spine-multi-tenant` · [`cron.md`](cron.md)
 - Spine maintenance runbooks (typed signal · intervention · proof · retirement) → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · claim `spine-maintenance-runbooks`
+- Spine tenant E2E heal (sandboxed break → signal → intervene → recover) → `bun run test:tenant-heal` · claim `spine-tenant-heal`
 - Install-verify WebView journey (`install-verify-journey`) → `bun run docs:install-verify` · [`install-verify.md`](install-verify.md) · `bun run test:install-verify`
 - Search governance WebView journey (`search-governance-basic`) → `bun run docs:search-governance` · [`search-governance.md`](search-governance.md) · `bun run test:search-governance`
 - Fresh-rerun (claim re-proof before merge) → `bun run docs:fresh-rerun` · [`FRESH-RERUN.md`](FRESH-RERUN.md)

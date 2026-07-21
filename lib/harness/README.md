@@ -14,6 +14,8 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
   *Ratchet* → `assertSignalMonitorTenantLinks` · `assertSignalMonitorFreshness`
 - **`intervention-validity.ts`** — catalog + markdown repair commands resolve (script/path · allowlist)  
   *Ratchet* → `assertInterventionCommandsValid`
+- **`heal-fixture.ts`** — sandboxed E2E heal loop (not a production spine tenant)  
+  *Ratchet* → `bun run test:tenant-heal` · claim `spine-tenant-heal`
 - **`cron.ts`** — Bun.cron surface (OS-persistent primary · in-process complement)  
   *Ratchet* → `bun run test:cron` · [`docs/harness/cron.md`](../../docs/harness/cron.md)
 

@@ -45,10 +45,25 @@ Closed maintenance loop — each edge is machine-checked by `bun run test:tenant
 - **Linked proof is healthy** — each `proofId`’s `freshRerun` exits 0 (deduped)  
   *Ratchet* → `assertLinkedProofFreshRerunsPass`
 
+## E2E heal (sandboxed)
+
+Production `SPINE_TENANTS` are not mutated. A fixture tenant (`heal-fixture`) lives under `tests/fixtures/tenant-heal/` and is copied into `.cache/journey-tenant-heal/` for the journey:
+
+1. **Baseline** — `check` exits 0  
+2. **Break** — flip `health.json` `ok: false`  
+3. **Signal** — `check` exits non-zero  
+4. **Intervention** — `fix` restores health  
+5. **Proof** — `check` exits 0  
+
+*Ratchet* → `bun run test:tenant-heal` · claim `spine-tenant-heal` · [`lib/harness/heal-fixture.ts`](../../lib/harness/heal-fixture.ts)  
+Included in `bun run test:tenant-runbooks`.
+
 ## Ratchet
 
 - **Catalog ↔ tenants ↔ proofs ↔ docs** — full cross-ref set above  
   *Ratchet* → `bun run test:tenant-runbooks` · claim `spine-maintenance-runbooks`
+- **E2E heal loop** — sandboxed break → signal → intervene → recover  
+  *Ratchet* → `bun run test:tenant-heal` · claim `spine-tenant-heal`
 - **Docs render** — `bun run docs:spine-tenants` (this index + live registry)
 
 ## Lookup
@@ -56,6 +71,7 @@ Closed maintenance loop — each edge is machine-checked by `bun run test:tenant
 ```bash
 bun run docs:spine-tenants
 bun run test:tenant-runbooks
+bun run test:tenant-heal
 bun run docs:tenant-install-verify
 bun run docs:tenant-docs-integrity
 ```
