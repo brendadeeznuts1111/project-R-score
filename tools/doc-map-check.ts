@@ -13,7 +13,7 @@
  *   bun tools/doc-map-check.ts --open        # open first broken target
  *   bun tools/doc-map-check.ts --json
  */
-import { resolve, relative, dirname } from 'node:path';
+import { resolvePath, relativePath, dirnamePath } from '../lib/path-bun';
 import {
   CANONICAL_REPO_DOCS,
   CANONICAL_HARNESS,
@@ -21,7 +21,7 @@ import {
   CANONICAL_DOC_ROLES,
 } from '../lib/docs/repo-docs.ts';
 
-const REPO = resolve(import.meta.dir, '..');
+const REPO = resolvePath(import.meta.dir, '..');
 
 const ROOT_MD = [
   'AGENTS.md',
@@ -49,7 +49,7 @@ type Issue = {
 };
 
 async function pathExists(p: string): Promise<boolean> {
-  const abs = resolve(REPO, p.replace(/\/$/, ''));
+  const abs = resolvePath(REPO, p.replace(/\/$/, ''));
   if (await Bun.file(abs).exists()) return true;
   // directories (Bun.file misses pure dirs)
   const dir = Bun.spawn(['test', '-e', abs], { stdout: 'ignore', stderr: 'ignore' });
@@ -92,7 +92,7 @@ async function checkCanonical(): Promise<Issue[]> {
 }
 
 async function checkMarkdownLinks(relFile: string): Promise<Issue[]> {
-  const abs = resolve(REPO, relFile);
+  const abs = resolvePath(REPO, relFile);
   if (!(await pathExists(relFile))) {
     return [
       { kind: 'canonical-missing', file: relFile, target: relFile, detail: 'SSOT file missing' },
@@ -120,8 +120,8 @@ async function checkMarkdownLinks(relFile: string): Promise<Issue[]> {
       }
       const pathPart = url.split('#')[0]!;
       if (!pathPart) continue;
-      const target = resolve(dirname(abs), pathPart);
-      const relTarget = relative(REPO, target);
+      const target = resolvePath(dirnamePath(abs), pathPart);
+      const relTarget = relativePath(REPO, target);
       if (!(await pathExists(relTarget))) {
         issues.push({
           kind: 'broken-link',
@@ -177,7 +177,7 @@ async function main(): Promise<void> {
 
   if (open && issues.length > 0 && typeof Bun.openInEditor === 'function') {
     const first = issues[0]!;
-    const abs = resolve(REPO, first.file);
+    const abs = resolvePath(REPO, first.file);
     console.info(`✏️  open ${first.file}${first.line != null ? `:${first.line}` : ''}`);
     Bun.openInEditor(abs, { line: first.line ?? 1 });
   }

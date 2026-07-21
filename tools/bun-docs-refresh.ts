@@ -11,9 +11,9 @@
  *   bun tools/bun-docs-refresh.ts --skip-integrity
  *   bun tools/bun-docs-refresh.ts --force-scrape
  */
-import { resolve } from 'node:path';
+import { resolvePath } from '../lib/path-bun';
 
-const ROOT = resolve(import.meta.dir, '..');
+const ROOT = resolvePath(import.meta.dir, '..');
 
 type Step = { name: string; cmd: string[] };
 

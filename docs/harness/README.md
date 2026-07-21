@@ -40,8 +40,8 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → `bun tools/branded-id-check.ts --staged --strict`, `bun run check:brands:types`, `tsc --project tsconfig.check.json`
 - **`docs/WIRE_BOUNDARY.md`** — `unknown` / decode stay at parse edges  
   *Ratchet* → eslint `harness/no-unknown-function-param` (**error**), `harness/no-decode-unknown-outside-boundary` (**error**)
-- **`lib/path-bun`** — spine imports Bun path helpers, not `path` / `node:path`  
-  *Ratchet* → `bun run check:path-bun`, eslint `no-restricted-imports` (bun-native)
+- **`lib/path-bun`** — spine `lib/` + `tools/` import Bun path helpers, not `path` / `node:path`  
+  *Ratchet* → `bun run check:path-bun` (pre-commit when `lib/` or `tools/` staged)
 - **`Bun.env` boxing** — no Node `process.env` in spine `lib/` + `scripts/`  
   *Ratchet* → `bun run check:bun-env`, eslint `bun/prefer-bun-env` (**error**)
 - **Canonical Bun `@see` URLs** — Bun APIs cite catalog URLs  
@@ -52,6 +52,8 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → [`FRESH-RERUN.md`](FRESH-RERUN.md) · `freshRerun` on each `CRITICAL_PROOF_PATHS` entry · paste output in PR
 - **`lib/docs/**` type-check** — docs path SSOT is one era under day-loop tsc  
   *Ratchet* → `tsconfig.check.json` include `lib/docs/**/*` · claim `lib-docs-typecheck` · `bun run type-check`
+- **`lib/utils/**` type-check** — utils island is one era under day-loop tsc  
+  *Ratchet* → `tsconfig.check.json` include `lib/utils/**/*` · claim `lib-utils-typecheck` · `bun run type-check`
 
 ## Upstream thesis → FactoryWager owner
 

@@ -13,10 +13,10 @@
  *   bun tools/lib-domains-check.ts --json
  *   bun run lib:domains:check
  */
-import { join, resolve } from 'node:path';
+import { joinPath, resolvePath } from '../lib/path-bun';
 
-const REPO = resolve(import.meta.dir, '..');
-const LIB = join(REPO, 'lib');
+const REPO = resolvePath(import.meta.dir, '..');
+const LIB = joinPath(REPO, 'lib');
 
 type Issue = { kind: 'missing-readme'; path: string };
 
@@ -36,7 +36,7 @@ async function listDirs(abs: string): Promise<string[]> {
     if (name.includes('/')) continue;
     if (name.startsWith('.')) continue;
     if (name === 'node_modules') continue;
-    const child = join(abs, name);
+    const child = joinPath(abs, name);
     if (await isDir(child)) out.push(name);
   }
   return out.sort();
@@ -46,14 +46,14 @@ async function main(): Promise<void> {
   const asJson = Bun.argv.includes('--json');
   const issues: Issue[] = [];
 
-  if (!(await exists(join(LIB, 'README.md')))) {
+  if (!(await exists(joinPath(LIB, 'README.md')))) {
     issues.push({ kind: 'missing-readme', path: 'lib/README.md' });
   }
 
   const domains = await listDirs(LIB);
   for (const name of domains) {
     const rel = `lib/${name}/README.md`;
-    if (!(await exists(join(LIB, name, 'README.md')))) {
+    if (!(await exists(joinPath(LIB, name, 'README.md')))) {
       issues.push({ kind: 'missing-readme', path: rel });
     }
   }

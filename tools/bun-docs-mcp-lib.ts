@@ -7,7 +7,7 @@
 // Release lists use tools/release-index.json; general blog RSS stays live (full feed).
 
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
-import { join } from 'node:path';
+import { joinPath } from '../lib/path-bun';
 
 export const BUN_DOCS_BASE = 'https://bun.com/docs';
 export const DOCS_SUFFIX = 'bun-types/docs/';
@@ -113,7 +113,7 @@ function normalizeDocsRoot(path: string): string {
 }
 
 async function readPkgVersion(docsRoot: string): Promise<string> {
-  const pkgPath = join(docsRoot.replace(/\/$/, ''), '..', 'package.json');
+  const pkgPath = joinPath(docsRoot.replace(/\/$/, ''), '..', 'package.json');
   try {
     const pkg = (await Bun.file(pkgPath).json()) as { version?: string };
     return pkg.version ?? '0.0.0';
@@ -130,8 +130,8 @@ export async function collectDocRootCandidates(workspaceRoot: string): Promise<D
   }
 
   const found = new Map<string, string>();
-  const preferred = normalizeDocsRoot(join(workspaceRoot, 'node_modules/bun-types/docs'));
-  if (await Bun.file(join(preferred, 'index.mdx')).exists()) {
+  const preferred = normalizeDocsRoot(joinPath(workspaceRoot, 'node_modules/bun-types/docs'));
+  if (await Bun.file(joinPath(preferred, 'index.mdx')).exists()) {
     found.set(preferred, await readPkgVersion(preferred));
   }
 
@@ -151,7 +151,7 @@ export function pickBestDocRoot(
   workspaceRoot: string
 ): DocRootCandidate | null {
   if (!candidates.length) return null;
-  const preferred = normalizeDocsRoot(join(workspaceRoot, 'node_modules/bun-types/docs'));
+  const preferred = normalizeDocsRoot(joinPath(workspaceRoot, 'node_modules/bun-types/docs'));
   const sorted = [...candidates].sort((a, b) => {
     const byVersion = Bun.semver.order(b.version, a.version);
     if (byVersion !== 0) return byVersion;
@@ -421,7 +421,7 @@ export async function queryDocs(
 
   if (rg && docsRoot) {
     const searchPath = category
-      ? join(docsRoot.replace(/\/$/, ''), category)
+      ? joinPath(docsRoot.replace(/\/$/, ''), category)
       : docsRoot.replace(/\/$/, '');
     const args = [
       rg,

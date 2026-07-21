@@ -33,16 +33,35 @@ describe('fresh-rerun contract', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'lib-docs-typecheck');
     expect(p?.freshRerun).toBe('bun run type-check');
   });
+
+  test('lib-utils-typecheck freshRerun is day-loop type-check', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'lib-utils-typecheck');
+    expect(p?.freshRerun).toBe('bun run type-check');
+  });
+
+  test('path-bun claim covers lib and tools', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'path-bun');
+    expect(p?.claim).toContain('tools/');
+    expect(p?.freshRerun).toBe('bun run check:path-bun');
+  });
 });
 
-describe('lib-docs typecheck coherence', () => {
-  test('tsconfig.check.json includes lib/docs/**/*', async () => {
+describe('typecheck coherence includes', () => {
+  test('tsconfig.check.json includes lib/docs/**/* and lib/utils/**/*', async () => {
     const cfg = (await Bun.file(
       new URL('../tsconfig.check.json', import.meta.url).pathname
     ).json()) as { include: string[] };
     expect(cfg.include).toContain('lib/docs/**/*');
+    expect(cfg.include).toContain('lib/utils/**/*');
     expect(cfg.include.some(p => p.startsWith('lib/docs/') && p !== 'lib/docs/**/*')).toBe(
       false
     );
+    expect(cfg.include.some(p => p.startsWith('lib/utils/') && p !== 'lib/utils/**/*')).toBe(
+      false
+    );
+    expect(cfg.include).not.toContain('src/**/*');
+    expect(cfg.include).not.toContain('lib/udp/**/*');
+    expect(cfg.include).not.toContain('lib/env/**/*');
+    expect(cfg.include).not.toContain('types/**/*');
   });
 });

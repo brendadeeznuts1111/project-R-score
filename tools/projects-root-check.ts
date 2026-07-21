@@ -13,9 +13,9 @@
  *   bun tools/projects-root-check.ts --json
  *   bun run projects:roots:check
  */
-import { join, relative, resolve } from 'node:path';
+import { joinPath, resolvePath } from '../lib/path-bun';
 
-const REPO = resolve(import.meta.dir, '..');
+const REPO = resolvePath(import.meta.dir, '..');
 
 const ACTIVE_SPECIALS = new Set([
   'factorywager',
@@ -52,24 +52,24 @@ async function listDirs(abs: string): Promise<string[]> {
   for await (const name of new Bun.Glob('*').scan({ cwd: abs, onlyFiles: false })) {
     if (name.includes('/')) continue;
     if (name.startsWith('.')) continue;
-    const child = join(abs, name);
+    const child = joinPath(abs, name);
     if (await isDir(child)) out.push(name);
   }
   return out.sort();
 }
 
 async function checkLeaf(rel: string, issues: Issue[]): Promise<void> {
-  const abs = join(REPO, rel);
-  if (!(await exists(join(abs, 'README.md')))) {
+  const abs = joinPath(REPO, rel);
+  if (!(await exists(joinPath(abs, 'README.md')))) {
     issues.push({ kind: 'missing-readme', path: rel });
   }
-  if (!(await exists(join(abs, 'package.json')))) {
+  if (!(await exists(joinPath(abs, 'package.json')))) {
     issues.push({ kind: 'missing-package', path: rel });
   }
 }
 
 async function checkIndex(rel: string, issues: Issue[]): Promise<void> {
-  if (!(await exists(join(REPO, rel, 'README.md')))) {
+  if (!(await exists(joinPath(REPO, rel, 'README.md')))) {
     issues.push({ kind: 'missing-readme', path: `${rel}/README.md` });
   }
 }
@@ -84,7 +84,7 @@ async function main(): Promise<void> {
   await checkIndex('projects/experimental', issues);
   await checkIndex('projects/archive', issues);
 
-  const activeRoot = join(REPO, 'projects/active');
+  const activeRoot = joinPath(REPO, 'projects/active');
   for (const name of await listDirs(activeRoot)) {
     if (ACTIVE_SPECIALS.has(name)) {
       leaves++;
@@ -99,14 +99,14 @@ async function main(): Promise<void> {
       continue;
     }
     await checkIndex(`projects/active/${name}`, issues);
-    for (const child of await listDirs(join(activeRoot, name))) {
+    for (const child of await listDirs(joinPath(activeRoot, name))) {
       leaves++;
       await checkLeaf(`projects/active/${name}/${child}`, issues);
     }
   }
 
   for (const tier of ['experimental', 'archive'] as const) {
-    const tierRoot = join(REPO, `projects/${tier}`);
+    const tierRoot = joinPath(REPO, `projects/${tier}`);
     if (!(await isDir(tierRoot))) continue;
     for (const name of await listDirs(tierRoot)) {
       leaves++;

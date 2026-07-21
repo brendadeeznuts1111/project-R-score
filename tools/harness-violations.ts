@@ -23,9 +23,9 @@
  *
  * Docs: docs/WIRE_BOUNDARY.md · lib/types/branded/README.md
  */
-import { resolve, relative } from 'node:path';
+import { resolvePath, relativePath } from '../lib/path-bun';
 
-const REPO = resolve(import.meta.dir, '..');
+const REPO = resolvePath(import.meta.dir, '..');
 
 export type Violation = {
   rule: string;
@@ -86,8 +86,8 @@ function parseArgs(argv: string[]): Args {
 }
 
 function rel(file: string): string {
-  const abs = resolve(file);
-  return abs.startsWith(REPO) ? relative(REPO, abs) : file;
+  const abs = resolvePath(file);
+  return abs.startsWith(REPO) ? relativePath(REPO, abs) : file;
 }
 
 function printHelp(): void {
@@ -251,7 +251,7 @@ async function collectEasyBareIdStrings(): Promise<Violation[]> {
     /(?<![\w$.])(sessionId|userId|accountId|requestId|correlationId|zoneId|webhookId|jobId)\??:\s*string\b/;
   const hits: Violation[] = [];
   const glob = new Bun.Glob('**/*.ts');
-  for await (const f of glob.scan({ cwd: resolve(REPO, 'lib'), absolute: true })) {
+  for await (const f of glob.scan({ cwd: resolvePath(REPO, 'lib'), absolute: true })) {
     if (f.includes('/types/branded/')) continue;
     const text = await Bun.file(f).text();
     const lines = text.split('\n');
@@ -343,7 +343,7 @@ function openInEditor(hits: Violation[], count: number): void {
   const n = Math.min(count, hits.length);
   for (let i = 0; i < n; i++) {
     const h = hits[i]!;
-    const abs = resolve(REPO, h.file);
+    const abs = resolvePath(REPO, h.file);
     console.info(`✏️  open ${h.file}:${h.line}`);
     Bun.openInEditor(abs, { line: h.line, column: h.column ?? 1 });
   }

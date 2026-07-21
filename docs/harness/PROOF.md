@@ -31,7 +31,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `.github/workflows/search-governance.yml`
 - **`search-governance-basic`** — known query → WebView results (`journey`)  
   *Ratchet* → `bun run test:search-governance` · [`search-governance.md`](search-governance.md)
-- **`path-bun`** — spine `lib/` does not import `path` / `node:path` (`boundary`)  
+- **`path-bun`** — spine `lib/` + `tools/` do not import `path` / `node:path` (`boundary`)  
   *Ratchet* → `bun run check:path-bun`
 - **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  
   *Ratchet* → `bun run check:bun-env` · eslint `bun/prefer-bun-env` (**error**)
@@ -41,6 +41,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run type-check` · `tsconfig.check.json`
 - **`lib-docs-typecheck`** — `lib/docs/**` inside day-loop type-check (no dual-era docs island) (`boundary` + `journey`)  
   *Ratchet* → `bun run type-check` · `tsconfig.check.json` include `lib/docs/**/*`
+- **`lib-utils-typecheck`** — `lib/utils/**` inside day-loop type-check (no dual-era utils island) (`boundary` + `journey`)  
+  *Ratchet* → `bun run type-check` · `tsconfig.check.json` include `lib/utils/**/*`
 - **`bun-cron`** — OS-persistent primary; in-process complement (`unit` + `boundary`)  
   *Ratchet* → `bun run test:cron` · [`cron.md`](cron.md)
 - **`cron-os-persistent`** — OS register → entry → fire `scheduled()` → marker → remove (`journey` + `boundary`)  

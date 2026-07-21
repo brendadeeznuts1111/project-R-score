@@ -107,7 +107,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   },
   {
     id: 'path-bun',
-    claim: 'Spine lib/ does not import path/node:path',
+    claim: 'Spine lib/ and tools/ do not import path/node:path',
     kinds: ['boundary'],
     evidence: ['bun run check:path-bun'],
     freshRerun: 'bun run check:path-bun',
@@ -142,6 +142,14 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'lib/docs/** is inside tsconfig.check.json (no dual-era docs island)',
     kinds: ['boundary', 'journey'],
     evidence: ['bun run type-check', 'tsconfig.check.json include lib/docs/**/*', 'lib/docs/'],
+    freshRerun: 'bun run type-check',
+  },
+  {
+    id: 'lib-utils-typecheck',
+    // owner: tsconfig.check.json · lib/utils/**
+    claim: 'lib/utils/** is inside tsconfig.check.json (no dual-era utils island)',
+    kinds: ['boundary', 'journey'],
+    evidence: ['bun run type-check', 'tsconfig.check.json include lib/utils/**/*', 'lib/utils/'],
     freshRerun: 'bun run type-check',
   },
   {

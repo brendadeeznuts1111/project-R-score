@@ -33,7 +33,7 @@ bun run help
 bun run type-check          # tsconfig.check.json — spine agent surfaces
 bun run build:affected      # git-true workspaces (scripts/affected-workspaces.ts)
 bun run test:affected
-bun run check:path-bun      # lib/ path ratchet
+bun run check:path-bun      # lib/ + tools/ path ratchet
 bun run check:bun-env       # lib/ + scripts/ Bun.env ratchet
 bun run cli:docs
 ```

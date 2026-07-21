@@ -42,7 +42,7 @@ import { BUN_GITHUB_RELEASES_URL } from '../lib/shared/tools/bun-urls.ts';
  *
  * Consumed by tools/bun-doc-refs.ts (`catalog` / enriched `suggest`).
  */
-import { resolve } from 'node:path';
+import { resolvePath } from '../lib/path-bun';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 import { changelogIndex } from './bun-docs-changelog.ts';
 import {
@@ -64,9 +64,9 @@ import {
 } from '../lib/docs/locus-resolve.ts';
 // Avoid static import of bun-doc-refs (circular: refs → catalog → refs).
 
-const INDEX_PATH = resolve(import.meta.dir, 'bun-docs-index.json');
-const OUT_PATH = resolve(import.meta.dir, 'bun-docs-catalog.json');
-const TOKEN_SUPPLEMENT_PATH = resolve(import.meta.dir, 'bun-docs-token-supplement.json');
+const INDEX_PATH = resolvePath(import.meta.dir, 'bun-docs-index.json');
+const OUT_PATH = resolvePath(import.meta.dir, 'bun-docs-catalog.json');
+const TOKEN_SUPPLEMENT_PATH = resolvePath(import.meta.dir, 'bun-docs-token-supplement.json');
 
 /** Typed token categories where NOTE / LOC / STATUS coverage is tracked closely. */
 export const NOTE_COVERAGE_TYPES: DocRefType[] = [
@@ -1704,7 +1704,7 @@ export async function verifyCatalog(
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
 
-const NOTES_CACHE_DIR = resolve(import.meta.dir, '.cache', 'bun-docs-notes');
+const NOTES_CACHE_DIR = resolvePath(import.meta.dir, '.cache', 'bun-docs-notes');
 
 const SKIP_PARAGRAPH_RE =
   /^(was this page helpful|on this page|edit on github|copy page|table of contents)\b/i;
@@ -1719,11 +1719,11 @@ type NoteCacheEntry = {
 
 function noteCachePathFor(url: string): string {
   const hash = new Bun.CryptoHasher('sha256').update(url).digest('hex').slice(0, 24);
-  return resolve(NOTES_CACHE_DIR, `${hash}.json`);
+  return resolvePath(NOTES_CACHE_DIR, `${hash}.json`);
 }
 
 async function ensureNotesCacheDir(): Promise<void> {
-  const keep = resolve(NOTES_CACHE_DIR, '.keep');
+  const keep = resolvePath(NOTES_CACHE_DIR, '.keep');
   if (!(await Bun.file(keep).exists())) await Bun.write(keep, '');
 }
 

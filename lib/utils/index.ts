@@ -143,7 +143,11 @@ export class ObjectUtils {
           source[key] !== null &&
           !Array.isArray(source[key])
         ) {
-          result[key] = this.deepMerge(result[key] || {}, source[key] as any);
+          const base =
+            typeof result[key] === 'object' && result[key] !== null && !Array.isArray(result[key])
+              ? result[key]
+              : ({} as T[Extract<keyof T, string>]);
+          result[key] = this.deepMerge(base, source[key] as any);
         } else {
           result[key] = source[key] as any;
         }
@@ -156,7 +160,7 @@ export class ObjectUtils {
   /**
    * Pick specific keys from object
    */
-  static pick<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+  static pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
     const result = {} as Pick<T, K>;
     for (const key of keys) {
       if (key in obj) {

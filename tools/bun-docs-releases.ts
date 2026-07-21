@@ -21,15 +21,15 @@
  *
  * Consumed by tools/bun-docs-catalog.ts for BLOG population and SHIP/FIX/CHG overlay.
  */
-import { resolve } from 'node:path';
+import { resolvePath } from '../lib/path-bun';
 
 export const RSS_URL = 'https://bun.com/rss.xml';
 
 const ROOT = import.meta.dir;
-export const RELEASE_INDEX_PATH = resolve(ROOT, 'release-index.json');
-const RSS_CACHE_DIR = resolve(ROOT, '.cache', 'bun-rss');
-const CACHE_XML_PATH = resolve(RSS_CACHE_DIR, 'rss.xml');
-const CACHE_META_PATH = resolve(RSS_CACHE_DIR, 'meta.json');
+export const RELEASE_INDEX_PATH = resolvePath(ROOT, 'release-index.json');
+const RSS_CACHE_DIR = resolvePath(ROOT, '.cache', 'bun-rss');
+const CACHE_XML_PATH = resolvePath(RSS_CACHE_DIR, 'rss.xml');
+const CACHE_META_PATH = resolvePath(RSS_CACHE_DIR, 'meta.json');
 
 const VERSION_RE = /\bv?(\d+\.\d+(?:\.\d+)?)\b/i;
 const URL_VERSION_RE = /\/blog\/bun-v(\d+\.\d+\.\d+)/i;
@@ -176,7 +176,7 @@ async function readCacheMeta(): Promise<CacheMeta> {
 }
 
 async function ensureDir(dir: string): Promise<void> {
-  const keep = resolve(dir, '.keep');
+  const keep = resolvePath(dir, '.keep');
   if (!(await Bun.file(keep).exists())) await Bun.write(keep, '');
 }
 
@@ -308,14 +308,14 @@ export async function loadReleaseIndex(opts?: {
 
 // --- Phase 2b: release blog scrape ---
 
-const SCRAPE_ALIASES_PATH = resolve(ROOT, 'bun-docs-scrape-aliases.json');
+const SCRAPE_ALIASES_PATH = resolvePath(ROOT, 'bun-docs-scrape-aliases.json');
 
-const CATALOG_PATH = resolve(ROOT, 'bun-docs-catalog.json');
-const REVIEW_LOG = resolve(ROOT, '..', 'reports', 'release-scrape-review.jsonl');
+const CATALOG_PATH = resolvePath(ROOT, 'bun-docs-catalog.json');
+const REVIEW_LOG = resolvePath(ROOT, '..', 'reports', 'release-scrape-review.jsonl');
 
-export const RELEASE_OVERLAY_PATH = resolve(ROOT, 'bun-docs-release-overlay.json');
-const BLOG_CACHE_DIR = resolve(ROOT, '.cache', 'bun-blog-posts');
-const STATE_PATH = resolve(BLOG_CACHE_DIR, 'state.json');
+export const RELEASE_OVERLAY_PATH = resolvePath(ROOT, 'bun-docs-release-overlay.json');
+const BLOG_CACHE_DIR = resolvePath(ROOT, '.cache', 'bun-blog-posts');
+const STATE_PATH = resolvePath(BLOG_CACHE_DIR, 'state.json');
 
 export type ReleaseOverlayHit = {
   version: string;
@@ -587,7 +587,7 @@ async function appendReviewLog(
 
 function cachePathFor(url: string): string {
   const hash = new Bun.CryptoHasher('sha256').update(url).digest('hex').slice(0, 24);
-  return resolve(BLOG_CACHE_DIR, `${hash}.html.json`);
+  return resolvePath(BLOG_CACHE_DIR, `${hash}.html.json`);
 }
 
 type PostCache = {
@@ -599,7 +599,7 @@ type PostCache = {
 };
 
 async function ensureCacheDir(): Promise<void> {
-  const keep = resolve(BLOG_CACHE_DIR, '.keep');
+  const keep = resolvePath(BLOG_CACHE_DIR, '.keep');
   if (!(await Bun.file(keep).exists())) await Bun.write(keep, '');
 }
 

@@ -16,7 +16,7 @@ Dominant cost was full-tree ESLint. Default `ci:harness` now uses `lint:bun-nati
 
 ### `type-check` (`tsconfig.check.json`)
 
-Pre-transform `include` covered only a thin slice. Post-transform covers spine agent surfaces: `lib/types/**`, `lib/path-bun`, `lib/harness/**`, select `lib/docs/*`, key `scripts/lib/*`, harness scripts. Full `lib/docs/**` still deferred (type debt).
+Pre-transform `include` covered only a thin slice. Day-loop now covers spine agent surfaces: `lib/types/**`, `lib/path-bun`, `lib/harness/**`, `lib/docs/**`, `lib/utils/**`, `spine/**`, key `scripts/*` / `scripts/lib/*`. Ghost includes (`src/`, root `types/`, `lib/udp/`, `lib/env/`) removed. Remaining type debt: `lib/core/**` (ErrorSeverity burn) then `lib/security/**`. `projects/**` stays product-owned (`typecheck` / `projects:roots:check`).
 
 ### `build:affected` / `test:affected`
 
@@ -45,11 +45,11 @@ Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
 
 | Era | Spine status |
 |-----|----------------|
-| `path` / `node:path` in `lib/` | **Done** — [`lib/path-bun.ts`](../../lib/path-bun.ts) + `bun run check:path-bun` (pre-commit when `lib/` staged) |
+| `path` / `node:path` in `lib/` + `tools/` | **Done** — [`lib/path-bun.ts`](../../lib/path-bun.ts) + `bun run check:path-bun` (pre-commit when `lib/` or `tools/` staged) |
 | `Bun.env` vs `process.env` | **Done** — spine clean + `bun run check:bun-env` (pre-commit when lib\|scripts staged; migrator/catalog allowlist) |
 | Bun pin / dead workspace glob | **Done** — `packageManager` `bun@1.4.0`; removed `kimiremote` workspace glob ([HOMEBASE_DISCOVERY](HOMEBASE_DISCOVERY.md)) |
 
-Day-loop `type-check` now also includes `lib/docs/smart-symbol-index.ts`, `lib/docs/ripgrep-spawn.ts`, and `lib/utils/safe-file-operations.ts` (Wave 2 clean subset). Remaining broad `lib/docs/**` debt still isolated.
+Day-loop `type-check` includes full `lib/docs/**` and `lib/utils/**` (claims `lib-docs-typecheck`, `lib-utils-typecheck`).
 
 Bun test (1.3.13+ / live on 1.4.0): day-loop adds `test:changed` (import graph), `test:parallel` / `test:isolate`, `test:shard` (`SHARD=M/N`). Distinct from `test:affected` (workspace package scripts).
 
@@ -72,7 +72,7 @@ Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harnes
 | Era | Installs per PR (root) |
 |-----|------------------------:|
 | Pre | harness-gates + repo-hygiene + pr-claim + typescript matrix×2 + search/brand/demo/url/har on every PR |
-| Post | **Always on PR:** harness-gates (`ci:core`) · typescript (one job). **Path-filtered:** search-governance · brand-bench · demo-module-contract. **Off PR:** url-validation · har-performance (schedule/main). Shared [`setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml). |
+| Post | **Always on PR:** harness-gates (`ci:core`) · typescript (one job). **Path-filtered:** search-governance · brand-bench. **Off PR:** url-validation · har-performance (schedule/main). Shared [`setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml). |
 
 Local parity: `bun run ci:core` · `bun run ci:harness:fast`. Required check: Harness Gates only ([AUTHORITY.md](../harness/AUTHORITY.md)).
 

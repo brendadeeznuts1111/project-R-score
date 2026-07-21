@@ -11,9 +11,11 @@ import { colorize, ColorStatus } from './color-system';
 
 export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical';
 export type ContextType = 'light' | 'dark';
+/** Semantic statuses accepted by getDynamicStatusColor (subset of ColorStatus). */
+export type SemanticStatus = 'success' | 'warning' | 'error' | 'info';
 
 export interface StatusConfig {
-  status: ColorStatus;
+  status: SemanticStatus;
   severity: SeverityLevel;
   context: ContextType;
   ensureWCAG?: boolean;
@@ -90,11 +92,11 @@ export function createEnhancedStatus(config: StatusConfig, customText?: string):
 export function generateStatusMatrix(
   context: ContextType = 'dark',
   backgroundHsl?: { h: number; s: number; l: number }
-): Array<StatusDisplay & { status: ColorStatus; severity: SeverityLevel }> {
-  const statuses: ColorStatus[] = ['success', 'warning', 'error', 'info'];
+): Array<StatusDisplay & { status: SemanticStatus; severity: SeverityLevel }> {
+  const statuses: SemanticStatus[] = ['success', 'warning', 'error', 'info'];
   const severities: SeverityLevel[] = ['low', 'medium', 'high', 'critical'];
 
-  const matrix: Array<StatusDisplay & { status: ColorStatus; severity: SeverityLevel }> = [];
+  const matrix: Array<StatusDisplay & { status: SemanticStatus; severity: SeverityLevel }> = [];
 
   for (const status of statuses) {
     for (const severity of severities) {
@@ -138,7 +140,7 @@ export function displayStatusMatrix(
   console.info(colorize('═'.repeat(80), 'gray'));
   console.info();
 
-  const statuses: ColorStatus[] = ['success', 'warning', 'error', 'info'];
+  const statuses: SemanticStatus[] = ['success', 'warning', 'error', 'info'];
 
   statuses.forEach(status => {
     console.info(colorize(`${getStatusIcon(status)} ${status.toUpperCase()}`, 'white', true));
@@ -190,7 +192,7 @@ function getSeverityIcon(severity: SeverityLevel): string {
   }
 }
 
-function getStatusIcon(status: ColorStatus): string {
+function getStatusIcon(status: SemanticStatus | ColorStatus): string {
   switch (status) {
     case 'success':
       return '✅';

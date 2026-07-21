@@ -94,7 +94,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'test:isolate': 'Bun test --isolate (fresh global per file)',
   'test:parallel': 'Bun test --parallel (workers; implies --isolate)',
   'test:shard': 'Bun test --shard=$SHARD (CI split; default 1/1)',
-  'check:path-bun': 'Ratchet: no path/node:path imports under lib/',
+  'check:path-bun': 'Ratchet: no path/node:path imports under lib/ + tools/',
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
   'projects:roots:check': 'Ratchet: product-leaf README.md + package.json under projects/',
   'lib:domains:check': 'Ratchet: every first-level lib/*/ has README.md',

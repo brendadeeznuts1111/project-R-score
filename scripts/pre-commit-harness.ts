@@ -271,6 +271,7 @@ async function main(): Promise<void> {
 
   const libStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('lib/'));
   const scriptsStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('scripts/'));
+  const toolsStaged = harnessFiles.some(f => f.replace(/^\.\//, '').startsWith('tools/'));
 
   // Parallel: brands staged ‖ brands smart ‖ path-bun ‖ bun-env (types only on --full)
   console.info(
@@ -304,7 +305,7 @@ async function main(): Promise<void> {
   if (full) {
     parallelJobs.push(spawnGate('brands-types', ['bun', 'run', 'check:brands:types']));
   }
-  if (libStaged) {
+  if (libStaged || toolsStaged) {
     parallelJobs.push(spawnGate('path-bun', ['bun', 'scripts/check-path-bun.ts']));
   }
   if (libStaged || scriptsStaged) {
@@ -338,7 +339,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   if (pathBun !== 0) {
-    console.error('❌ path/node:path in lib/ — use lib/path-bun (bun run check:path-bun)');
+    console.error('❌ path/node:path in lib/|tools/ — use lib/path-bun (bun run check:path-bun)');
     await writeTimings(timings, full);
     process.exit(1);
   }

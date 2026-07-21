@@ -11,13 +11,11 @@
     "tsBuildInfoFile": ".cache/tsbuildinfo/check.tsbuildinfo"
   },
   "include": [
-    "src/**/*",
-    "lib/udp/**/*",
-    "lib/env/**/*",
     "lib/types/**/*",
     "lib/path-bun.ts",
     "lib/harness/**/*",
     "lib/docs/**/*",
+    "lib/utils/**/*",
     "spine/**/*",
     "lib/console-depth.ts",
     "lib/projects-scan.ts",
@@ -38,8 +36,7 @@
     "scripts/lint-bun-native-changed.ts",
     "scripts/lib/git-changed.ts",
     "scripts/check-pr-claim.ts",
-    "scripts/bun-test-changed.ts",
-    "types/**/*"
+    "scripts/bun-test-changed.ts"
   ],
   "exclude": [
     "node_modules",
