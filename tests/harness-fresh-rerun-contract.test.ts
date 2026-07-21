@@ -29,6 +29,13 @@ describe('fresh-rerun contract', () => {
     }
   });
 
+  test('evidence parity: every claim evidence includes freshRerun', () => {
+    for (const p of CRITICAL_PROOF_PATHS) {
+      expect(p.evidence.includes(p.freshRerun), p.id).toBe(true);
+    }
+  });
+
+
   test('runtime-cli-boundaries freshRerun is the fixture suite', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'runtime-cli-boundaries');
     expect(p?.freshRerun).toBe('bun test tests/fixtures/runtime-cli/');

@@ -127,7 +127,10 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'runtime-cli-boundaries',
     claim: 'Critical Bun runtime CLI flags behave as expected',
     kinds: ['boundary'],
-    evidence: ['tests/fixtures/runtime-cli/**/fixture.test.ts'],
+    evidence: [
+      'bun test tests/fixtures/runtime-cli/',
+      'tests/fixtures/runtime-cli/**/fixture.test.ts',
+    ],
     freshRerun: 'bun test tests/fixtures/runtime-cli/',
   },
   {
@@ -135,21 +138,28 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'bun-shell-boundaries',
     claim: 'Bun.$ shell tagged templates behave as this repo depends on them',
     kinds: ['boundary'],
-    evidence: ['tests/fixtures/bun-shell/**/fixture.test.ts'],
+    evidence: ['bun test tests/fixtures/bun-shell/', 'tests/fixtures/bun-shell/**/fixture.test.ts'],
     freshRerun: 'bun test tests/fixtures/bun-shell/',
   },
   {
     id: 'fs-native-boundaries',
     claim: 'Bun.file, Bun.write, and Bun.Glob behave as this repo depends on them',
     kinds: ['boundary'],
-    evidence: ['tests/fs-bun.test.ts', 'tests/bun-glob-scan.test.ts'],
+    evidence: [
+      'bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
+      'tests/fs-bun.test.ts',
+      'tests/bun-glob-scan.test.ts',
+    ],
     freshRerun: 'bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
   },
   {
     id: 'security-hash-boundaries',
     claim: 'Bun.password and CryptoHasher behave as this repo depends on them',
     kinds: ['boundary'],
-    evidence: ['tests/fixtures/security-hash/**/fixture.test.ts'],
+    evidence: [
+      'bun test tests/fixtures/security-hash/',
+      'tests/fixtures/security-hash/**/fixture.test.ts',
+    ],
     freshRerun: 'bun test tests/fixtures/security-hash/',
   },
   {
@@ -376,6 +386,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'Required CI envelope is bun run ci:core (install verify · hygiene · ci:harness)',
     kinds: ['boundary'],
     evidence: [
+      'bun run docs:ci-deploy',
       'scripts/ci-core.ts',
       '.github/workflows/harness-gates.yml',
       'bun run ci:core',
@@ -389,6 +400,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'typescript-checks workflow owns type-check:ci / type-check:full',
     kinds: ['boundary'],
     evidence: [
+      'bun run docs:ci-deploy',
       '.github/workflows/typescript-checks.yml',
       'bun run type-check:ci',
       'docs/harness/tenants/typescript-ci.md',
@@ -401,6 +413,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'Production deploy path is bun run deploy:production (Bun.secrets + R2 preflight)',
     kinds: ['boundary'],
     evidence: [
+      'bun run docs:ci-deploy',
       'scripts/deployment/deploy-production.ts',
       'bun run deploy:production',
       'docs/harness/tenants/deploy-production.md',
@@ -413,6 +426,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'Staging deploy path is bun run deploy:staging',
     kinds: ['boundary'],
     evidence: [
+      'bun run docs:ci-deploy',
       'scripts/shell/deploy-staging.sh',
       'bun run deploy:staging',
       'docs/harness/tenants/deploy-staging.md',
@@ -425,6 +439,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'Bun migration inventory status is bun run migrate:status',
     kinds: ['boundary'],
     evidence: [
+      'bun run docs:ci-deploy',
       'scripts/bun-migrate.ts',
       'bun run migrate:status',
       'docs/harness/tenants/bun-migrate.md',
