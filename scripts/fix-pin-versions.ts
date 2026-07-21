@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readText, writeText, listFilesSync } from './lib/fs-bun';
@@ -21,8 +22,6 @@ import { readText, writeText, listFilesSync } from './lib/fs-bun';
  *   - "*" (any version)
  *   - URL-based versions
  */
-
-import path from 'node:path';
 
 const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set([
@@ -77,7 +76,7 @@ function pinVersion(version: string): string {
 function* walkFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx}', { cwd: ROOT })) {
     if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
-    yield path.join(ROOT, rel);
+    yield `${ROOT}/${rel}`;
   }
 }
 
@@ -109,7 +108,9 @@ for (const file of walkFiles()) {
         deps[name] = pinned;
         changed = true;
         if (!DRY_RUN) {
-          console.info(`${path.relative(ROOT, file)}: ${name} ${version} -> ${pinned}`);
+          console.info(
+            `${file.startsWith(ROOT + '/') ? file.slice(ROOT.length + 1) : file}: ${name} ${version} -> ${pinned}`
+          );
         }
       }
     }
@@ -125,7 +126,9 @@ for (const file of walkFiles()) {
         catalog[name] = pinned;
         changed = true;
         if (!DRY_RUN) {
-          console.info(`${path.relative(ROOT, file)}: catalog.${name} ${version} -> ${pinned}`);
+          console.info(
+            `${file.startsWith(ROOT + '/') ? file.slice(ROOT.length + 1) : file}: catalog.${name} ${version} -> ${pinned}`
+          );
         }
       }
     }

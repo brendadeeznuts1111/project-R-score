@@ -11,7 +11,6 @@
  * console.group, and console.groupEnd are permitted.
  */
 
-import path from 'node:path';
 import { readText, writeText, listFilesSync } from './lib/fs-bun';
 
 const ROOT = process.cwd();
@@ -20,7 +19,7 @@ const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache']
 function* walkTsFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx,js,jsx}', { cwd: ROOT })) {
     if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
-    yield path.join(ROOT, rel);
+    yield `${ROOT}/${rel}`;
   }
 }
 

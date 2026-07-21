@@ -1,12 +1,12 @@
 {
   "meta": {
-    "generated_at": "2026-07-21T06:03:47.529Z",
+    "generated_at": "2026-07-21T06:14:03.702Z",
     "root": "/Users/nolarose/Projects",
     "version": "1.0.0"
   },
   "stats": {
     "total_projects": 39,
-    "total_size_bytes": 779148288,
+    "total_size_bytes": 779152384,
     "total_size_human": "743 MB",
     "by_category": {
       "kimiremote": 1,
@@ -21,8 +21,8 @@
       "f402-openapi": 1,
       "playwriter-skill": 1,
       "tools": 1,
-      "utilities": 10,
-      "experimental": 6
+      "utilities": 9,
+      "experimental": 7
     }
   },
   "featured": [
@@ -73,7 +73,7 @@
       "name": "scratch",
       "path": "scratch",
       "category": "featured",
-      "size_bytes": 11095040,
+      "size_bytes": 11099136,
       "size_human": "10.6 MB",
       "last_modified": "2026-07-21T00:00:00.000Z",
       "has_package_json": false,
@@ -479,8 +479,8 @@
     {
       "id": "keyboard-shortcuts-lite",
       "name": "keyboard-shortcuts-lite",
-      "path": "projects/active/utilities/keyboard-shortcuts-lite",
-      "category": "utilities",
+      "path": "projects/experimental/keyboard-shortcuts-lite",
+      "category": "experimental",
       "size_bytes": 60416,
       "size_human": "59 KB",
       "last_modified": "2026-07-20T00:00:00.000Z",

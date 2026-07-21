@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { readText, writeText, listFilesSync } from './lib/fs-bun';
@@ -16,8 +17,6 @@ import { readText, writeText, listFilesSync } from './lib/fs-bun';
  * - `(Bun as any).method` -> `(Bun as Record<string, unknown>).method`
  */
 
-import path from 'node:path';
-
 const ROOT = process.argv[2] || process.cwd();
 const EXTENSIONS = new Set(['.ts', '.tsx']);
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', '.npm-cache']);
@@ -27,7 +26,7 @@ const DRY_RUN = process.argv.includes('--dry-run');
 function* walkFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx}', { cwd: ROOT })) {
     if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
-    yield path.join(ROOT, rel);
+    yield `${ROOT}/${rel}`;
   }
 }
 
@@ -78,7 +77,9 @@ for (const file of walkFiles()) {
     (content.match(/as\s+any/g) || []).length - (newContent.match(/as\s+any/g) || []).length;
 
   if (DRY_RUN) {
-    console.info(`${path.relative(process.cwd(), file)}: ${count} as any -> as Record/unknown`);
+    console.info(
+      `${file.startsWith(ROOT + '/') ? file.slice(ROOT.length + 1) : file}: ${count} as any -> as Record/unknown`
+    );
     totalFixed += count;
     filesChanged++;
     continue;

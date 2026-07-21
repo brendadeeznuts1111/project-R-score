@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 /**
@@ -10,7 +11,6 @@
  * (e.g., cleanup in finally blocks). Review after running.
  */
 
-import path from 'node:path';
 import { readText, writeText, listFilesSync } from './lib/fs-bun';
 
 const ROOT = process.cwd();
@@ -22,7 +22,7 @@ function* walkFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx,js,jsx,mjs,cjs}', { cwd: ROOT })) {
     if (rel.endsWith('.d.ts')) continue;
     if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p) || p.startsWith('.'))) continue;
-    yield path.join(ROOT, rel);
+    yield `${ROOT}/${rel}`;
   }
 }
 

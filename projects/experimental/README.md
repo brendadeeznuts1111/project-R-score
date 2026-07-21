@@ -9,8 +9,7 @@ Prototypes, demos, and proofs-of-concept. May promote to `active/`, freeze under
 | `2048` | Demo game, not platform product |
 | `cli-dashboard`, `edge-worker`, `my-bun-app` | Tiny Bun demos (ex-`active/apps/`) |
 | `zig-self-bun`, `rust-bun-plugin` | Native experiment toolchains (ex-`active/tools/`) |
-
-Still under `active/` (optional later move): `utilities/keyboard-shortcuts-lite`.
+| `keyboard-shortcuts-lite` | Lightweight utility demo (ex-`active/utilities/`) |
 
 ## Promote / freeze
 

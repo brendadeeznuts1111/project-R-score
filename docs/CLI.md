@@ -68,7 +68,6 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run lint:affected` | --filter '...' lint |
-| `bun run lint:all` | --filter '*' lint |
 | `bun run lint:bun-native` | scripts/harness-strict-lint.ts |
 | `bun run lint:bun-native:rollout` | eslint --config eslint.bun-native.config.ts 'lib/**/*.ts' 'scripts/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts' --ignore-pattern '**/*.bench.ts' --quiet |
 | `bun run lint:ci:root` | eslint lib/ai --ext .ts,.tsx |
@@ -164,15 +163,6 @@ All commands run via `bun run <name>` from the project root:
 | `bun run deploy:staging` | bash scripts/shell/deploy-staging.sh |
 | `bun run deployment:readiness` | scripts/deployment/readiness-matrix.ts |
 
-### RSS
-| Command | Description |
-|---------|-------------|
-| `bun run rss:add` | lib/registry/rss-aggregator.ts add |
-| `bun run rss:feeds` | lib/registry/rss-aggregator.ts feeds |
-| `bun run rss:fetch` | lib/registry/rss-aggregator.ts fetch |
-| `bun run rss:html` | lib/registry/rss-aggregator.ts html |
-| `bun run rss:list` | lib/registry/rss-aggregator.ts list |
-
 ### Search
 | Command | Description |
 |---------|-------------|
@@ -229,7 +219,6 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run registry:config` | lib/registry/cli.ts config |
-| `bun run registry:config:init` | lib/registry/config-loader.ts init |
 | `bun run registry:doctor` | scripts/registry-stack-doctor.ts |
 | `bun run registry:doctor:fix` | scripts/registry-stack-doctor.ts --fix |
 | `bun run registry:doctor:json` | scripts/registry-stack-doctor.ts --json |
@@ -253,7 +242,6 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run validate:bun-urls` | scripts/validate-bun-urls.ts |
-| `bun run validate:demo` | scripts/validate-demo.ts |
 | `bun run validate:github` | scripts/bun-github-validation.ts |
 | `bun run validate:integrity` | scripts/validate-integrity.ts |
 | `bun run validate:integrity:all` | scripts/validate-integrity.ts --section=all |
@@ -274,7 +262,6 @@ All commands run via `bun run <name>` from the project root:
 | Command | Description |
 |---------|-------------|
 | `bun run security:audit` | audit |
-| `bun run security:check` | scripts/security-audit.ts |
 | `bun run security:guard:deps` | scripts/security-dependency-guard.ts |
 | `bun run security:posture:report` | scripts/security/posture-report.ts |
 | `bun run security:secrets:local` | scripts/secrets-scan-local.ts |

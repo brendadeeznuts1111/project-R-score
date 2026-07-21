@@ -10,7 +10,6 @@
  * and reports them. Manual review is needed for each case.
  */
 
-import path from 'node:path';
 import { readText, listFilesSync } from './lib/fs-bun';
 
 const ROOT = process.cwd();
@@ -26,7 +25,7 @@ const patterns = [
 function* walkFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx}', { cwd: ROOT })) {
     if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
-    yield path.join(ROOT, rel);
+    yield `${ROOT}/${rel}`;
   }
 }
 

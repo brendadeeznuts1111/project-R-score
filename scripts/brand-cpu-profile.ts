@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io — Bun.write
-import { join, resolve } from 'node:path';
 import { ensureDir } from './lib/fs-bun';
 import { createShutdown } from './lib/graceful-shutdown';
+
+const joinPath = (...parts: string[]) => parts.filter(Boolean).join('/').replace(/\/+/g, '/');
 
 function nowRunId(): string {
   return new Date().toISOString().replace(/[-:.]/g, '').replace('Z', 'Z');
@@ -26,7 +27,7 @@ function parseArgs(argv: string[]): Options {
     argv.find(a => a.startsWith('--cpu-prof-interval='))?.split('=')[1] || '250'
   );
   const runId = argv.find(a => a.startsWith('--run-id='))?.split('=')[1] || nowRunId();
-  const profilesDir = resolve(
+  const profilesDir = joinPath(
     argv.find(a => a.startsWith('--profiles-dir='))?.split('=')[1] || 'reports/brand-bench/profiles'
   );
   const passthrough = argv.filter(
@@ -78,7 +79,7 @@ async function main(): Promise<void> {
     args.push(`--seed=${options.seed}`);
   } else {
     args.push(`--run-id=${options.runId}`);
-    args.push(`--profile-files=${join(options.profilesDir, profileName)}`);
+    args.push(`--profile-files=${joinPath(options.profilesDir, profileName)}`);
   }
   args.push(...options.passthrough);
 
@@ -102,7 +103,7 @@ async function main(): Promise<void> {
     interval: options.interval,
     seed: options.seed,
     runId: options.runId,
-    profileFile: join(options.profilesDir, profileName),
+    profileFile: joinPath(options.profilesDir, profileName),
     exitCode,
     interrupted: shutdown.requested,
   };

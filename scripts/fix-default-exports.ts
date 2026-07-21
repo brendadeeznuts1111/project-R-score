@@ -12,8 +12,6 @@ import { readText, listFilesSync } from './lib/fs-bun';
  * since the correct name depends on context.
  */
 
-import path from 'node:path';
-
 const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', '.npm-cache']);
 const EXTENSIONS = new Set(['.ts', '.tsx']);
@@ -26,7 +24,7 @@ const defaultExportExprRE = /export\s+default\s+(\w+);?$/m;
 function* walkFiles(): Generator<string> {
   for (const rel of listFilesSync('**/*.{ts,tsx}', { cwd: ROOT })) {
     if (rel.split(/[/\\]/).some(p => EXCLUDE_DIRS.has(p))) continue;
-    yield path.join(ROOT, rel);
+    yield `${ROOT}/${rel}`;
   }
 }
 

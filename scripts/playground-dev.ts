@@ -1,10 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/index#watch-mode — --watch
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-import { join } from 'node:path';
 import { RuntimeEnv } from '../lib/env/runtime';
+
+const joinPath = (...parts: string[]) => parts.filter(Boolean).join('/').replace(/\/+/g, '/');
 
 const PROJECT_ROOT = process.cwd();
 const SERVER_ENTRY = 'scratch/bun-v1.3.9-examples/playground-web/server.ts';
@@ -90,7 +92,7 @@ async function main() {
 
   await ensurePortOwnerSafe(port);
 
-  const serverPath = join(PROJECT_ROOT, SERVER_ENTRY);
+  const serverPath = joinPath(PROJECT_ROOT, SERVER_ENTRY);
   const child = Bun.spawn({
     cmd: ['bun', '--watch', serverPath],
     cwd: PROJECT_ROOT,
