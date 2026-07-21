@@ -21,16 +21,12 @@ import {
   CANONICAL_TOOLS,
 } from './docs/repo-docs';
 import { DOC_PATTERNS, DocumentationUtils } from './docs';
-import { createBunHealthEndpoint, createHealthEndpoint } from './http/health-endpoint';
-import { BunDocumentationIntegration } from './bun-documentation-integration';
 import { PackageManager } from './package/package-manager';
-import { ProfileSessionUploader, resolveUploaderConfig } from './profile';
 import { R2Storage } from './r2/r2-storage-enhanced';
 import { RSSManager } from './rss/rss-manager';
-import { VersionedSecretManager, SecurityUtils } from './security';
+import { SecurityUtils } from './security';
 import { FW_COLORS, log, styled } from './theme/colors';
 import { Utils } from './utils';
-import { BunWikiIntegration } from './wiki/bun-wiki-integration';
 
 // Core infrastructure
 export * from './core/core-types';
@@ -49,10 +45,7 @@ export {
   CANONICAL_EXTERNAL,
 } from './docs/repo-docs';
 
-// Security — AuditEntry and VersionMetadata conflicts: use specific imports when needed
-export { VersionedSecretManager, SecurityUtils } from './security';
-export type { VersionMetadata as SecurityVersionMetadata } from './security';
-export type { AuditEntry as SecurityAuditEntry } from './security';
+export { SecurityUtils } from './security';
 
 // Constants and configuration
 export * from './constants';
@@ -75,45 +68,6 @@ export {
   type RSSFeedItem,
   type FeedSubscription,
 } from './rss/rss-manager';
-
-// Bun Documentation Integration
-export {
-  BunDocumentationIntegration,
-  type BunDocumentationIndex,
-  type DocumentationCategory,
-  type DocumentationPage,
-  type CodeExample,
-  type BunMetricsExample,
-} from './bun-documentation-integration';
-
-// Wiki Integration
-export {
-  BunWikiIntegration,
-  type WikiPage,
-  type WikiCategory,
-  type WikiConfig,
-} from './wiki/bun-wiki-integration';
-
-// HTTP utilities with HSL health endpoints
-export {
-  createHealthEndpoint,
-  createBunHealthEndpoint,
-  type HealthCheck,
-  type HealthCheckResult,
-  type HealthStatus,
-  type HealthEndpointConfig,
-} from './http/health-endpoint';
-
-// Profile session management
-export {
-  ProfileSessionUploader,
-  resolveUploaderConfig,
-  type ProfileType,
-  type TerminalIdentity,
-  type ProfileEntry,
-  type SessionManifest,
-  type ProfileUploaderConfig,
-} from './profile';
 
 /**
  * FactoryWager Library Info — paths are repo-relative (see CANONICAL_REPO_DOCS).
@@ -139,65 +93,27 @@ export const LIB_INFO = {
  * Quick access to most used exports
  */
 export const FW = {
-  // Theme
   colors: FW_COLORS,
   styled,
   log,
-
-  // Utils
   utils: Utils,
-
-  // Documentation
   docs: {
     patterns: DOC_PATTERNS,
     utils: DocumentationUtils,
     canonical: CANONICAL_REPO_DOCS,
   },
-
-  // Security (v5.1)
   security: {
-    versionedSecrets: VersionedSecretManager,
     utils: SecurityUtils,
   },
-
-  // Package Management
   package: {
     manager: PackageManager,
   },
-
-  // R2 Storage Enhanced
   r2: {
     storage: R2Storage,
   },
-
-  // RSS Management
   rss: {
     manager: RSSManager,
   },
-
-  // Bun Documentation Integration
-  bunDocs: {
-    integration: BunDocumentationIntegration,
-  },
-
-  // Wiki Integration
-  wiki: {
-    integration: BunWikiIntegration,
-  },
-
-  // HTTP Health Endpoints
-  http: {
-    createHealthEndpoint,
-    createBunHealthEndpoint,
-  },
-
-  // Profile Session Management
-  profile: {
-    SessionUploader: ProfileSessionUploader,
-    resolveConfig: resolveUploaderConfig,
-  },
-
-  // Development standards + harness path map
   standards: CANONICAL_REPO_DOCS,
   harness: CANONICAL_HARNESS,
   tools: CANONICAL_TOOLS,

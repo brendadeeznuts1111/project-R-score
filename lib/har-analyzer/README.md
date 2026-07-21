@@ -1,9 +1,5 @@
 # har-analyzer
 
-HAR capture analysis.
+Stub — prior HAR analyzer modules removed.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
-
-| Entry |
-|-------|
-| [`bun-serve-types.ts`](./bun-serve-types.ts) |
+Inventory: [`../README.md`](../README.md).

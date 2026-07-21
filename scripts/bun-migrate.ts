@@ -256,21 +256,16 @@ export const VALIDATE_WHITELIST = new Set([
   'scripts/dx-mcp.ts',
   'scripts/lib/fs-bun.ts',
   'tools/performance-comparison.ts',
-  'lib/validation/automated-validation-system.ts',
   'packages/guards/src/bun-first-guard.ts',
-  'lib/core/core-documentation.ts',
   'lib/docs/constants/utils.ts',
   'packages/docs-tools/src/builders/url-builder.ts',
   'lib/performance/memory-pool.ts',
-  'lib/utils/safe-file-operations.ts',
-  'lib/security/secret-lifecycle.ts',
   'scripts/pack-all.ts',
   'scripts/brand-cpu-profile.ts',
   'scripts/search-benchmark-dashboard.ts',
   'lib/docs/ripgrep-spawn.ts',
   'lib/docs/smart-symbol-index.ts',
   'tools/overseer-cli.ts',
-  'lib/utils/input-validation-lib.ts',
 ]);
 
 function normalizeTokenName(name: string): string {

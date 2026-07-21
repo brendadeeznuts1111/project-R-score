@@ -37,7 +37,7 @@ const quickWins: QuickWin[] = [
     files: '5',
     replacement: 'Bun.file().text()',
     gain: '50% faster',
-    path: 'lib/docs/url-fixer-optimizer.ts',
+    path: 'n/a',
   },
   {
     priority: '🔴 CRITICAL',
@@ -45,7 +45,7 @@ const quickWins: QuickWin[] = [
     files: '5',
     replacement: 'Bun.write()',
     gain: '40% faster',
-    path: 'lib/docs/url-fixer-optimizer.ts',
+    path: 'n/a',
   },
   {
     priority: '🔴 CRITICAL',
@@ -53,7 +53,7 @@ const quickWins: QuickWin[] = [
     files: '3',
     replacement: 'Bun.hash()',
     gain: '30% faster',
-    path: 'lib/security/master-token.ts',
+    path: 'n/a',
   },
   {
     priority: '🔴 CRITICAL',
@@ -61,7 +61,7 @@ const quickWins: QuickWin[] = [
     files: '9',
     replacement: 'Bun.file/Bun.write',
     gain: '3x faster',
-    path: 'lib/validation/automated-validation-system.ts',
+    path: 'n/a',
   },
   {
     priority: '🟡 MEDIUM',

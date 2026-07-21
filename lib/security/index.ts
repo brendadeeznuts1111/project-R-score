@@ -6,29 +6,11 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // lib/security/index.ts — Security module index (Bun primitives at call sites)
 
-// Core security components
-export * from './versioned-secrets';
-export * from './version-graph';
-export * from './secret-lifecycle';
-import { VersionedSecretManager } from './versioned-secrets';
-import { VersionGraph } from './version-graph';
-import { SecretLifecycleManager } from './secret-lifecycle';
-
-// Bun types re-exported for convenience (same as `import { Cookie, CookieMap } from "bun"`)
 export { Cookie, CookieMap } from 'bun';
 
-// Security hardening utilities
-export {
-  parseSafeString,
-  parseSafeHexColor,
-  parseSafeServiceName,
-  type SafeResult,
-} from './safe-validators';
-export { secureBunRun, type SecureRunResult } from './secure-bun-run';
-export { WikiSecretTransaction } from './wiki-secret-transaction';
-export { writeAuditLog, type AuditEntry } from './audit-writer';
-
-// Security utilities — direct Bun.password / crypto.getRandomValues / Bun.hash
+export { zeroTrustManager } from './zero-trust-manager';
+export { auditLogger } from './secret-audit-logger';
+/** Security utilities — direct Bun.password / crypto.getRandomValues / Bun.hash */
 export class SecurityUtils {
   static generateSecret(length: number = 32): string {
     const bytes = new Uint8Array(Math.max(1, Math.ceil(length / 2)));
@@ -132,12 +114,6 @@ export class SecurityUtils {
   }
 }
 
-export { VersionedSecretManager, VersionGraph, SecretLifecycleManager };
-export type { VersionMetadata, VersionNode, RollbackOptions, LifecycleRule };
-
 export default {
-  VersionedSecretManager,
-  VersionGraph,
-  SecretLifecycleManager,
   SecurityUtils,
 };

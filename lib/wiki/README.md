@@ -1,9 +1,5 @@
 # wiki
 
-Wiki integration.
+Stub — wiki integration removed (only reached via dead lib barrel exports).
 
 Inventory: [`../README.md`](../README.md).
-
-| Entry |
-|-------|
-| [`bun-wiki-integration.ts`](./bun-wiki-integration.ts) |

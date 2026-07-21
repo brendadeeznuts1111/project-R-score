@@ -8,8 +8,7 @@
   },
   "include": [
     "src/**/*",
-    "../../lib/docs/constants/**/*",
-    "../../lib/docs/stream-search.ts"
+    "../../lib/docs/constants/**/*"
   ],
   "exclude": ["node_modules", "dist", "build"]
 }

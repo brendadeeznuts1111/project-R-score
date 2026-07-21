@@ -44,7 +44,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`text.ts`](./text.ts) | Small text helpers |
 | [`gate-map.ts`](./gate-map.ts) | Gate / proof path map helpers |
 | [`gate-report-monorepo.ts`](./gate-report-monorepo.ts) | Monorepo gate reporting |
-| [`bun-documentation-integration.ts`](./bun-documentation-integration.ts) | Bun docs integration surface (barrel export) |
+| *(removed)* bun-documentation-integration | deleted — unused barrel dump |
 
 ## Domains
 
@@ -53,7 +53,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`ab-testing/`](./ab-testing/) | Stub — live code in `packages/ab-testing` | see README |
 | [`ai/`](./ai/) | AI operations managers | `ai-operations-manager.ts` |
 | [`business/`](./business/) | Stub — unreferenced modules removed | see README |
-| [`cli/`](./cli/) | CLI / ANSI dashboard helpers | `ansi-dashboard.ts` |
+| [`cli/`](./cli/) | CLI helpers | `chrome-integration.ts` |
 | [`constants/`](./constants/) | Shared constants barrel | `index.ts` |
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
 | [`deployment/`](./deployment/) | Deployment metrics feeds | `metrics-feed.ts` |
@@ -61,12 +61,12 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`env/`](./env/) | Runtime env helpers | `runtime.ts` |
 | [`har-analyzer/`](./har-analyzer/) | HAR capture analysis | `bun-serve-types.ts` |
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
-| [`http/`](./http/) | Health endpoints and HTTP helpers | `health-endpoint.ts` |
+| [`http/`](./http/) | HTTP helpers | `hardened-fetch.ts` |
 | [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |
 | [`package/`](./package/) | Package manager graph helpers | `package-manager.ts` |
 | [`performance/`](./performance/) | Cache / memory helpers | `cache-manager.ts` |
 | [`pooling/`](./pooling/) | Stub — unreferenced modules removed | see README |
-| [`profile/`](./profile/) | Profile session upload | `index.ts` |
+| [`profile/`](./profile/) | Stub — session upload removed | see README |
 | [`r2/`](./r2/) | R2 storage and analytics | `r2-storage-enhanced.ts` |
 | [`registry/`](./registry/) | Stub — use root `registry:projects` / `registry:doctor` | see README |
 | [`rss/`](./rss/) | RSS managers | `rss-manager.ts` |
@@ -76,5 +76,5 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`types/`](./types/) | Branded IDs and shared types | `branded.ts` · [branded/README](./types/branded/README.md) |
 | [`udp/`](./udp/) | Stub — unreferenced modules removed | see README |
 | [`utils/`](./utils/) | General utilities barrel | `index.ts` |
-| [`validation/`](./validation/) | Validation systems | `automated-validation-system.ts` |
-| [`wiki/`](./wiki/) | Wiki integration | `bun-wiki-integration.ts` |
+| [`validation/`](./validation/) | Stub — prefer packages/docs-tools | see README |
+| [`wiki/`](./wiki/) | Stub — wiki integration removed | see README |

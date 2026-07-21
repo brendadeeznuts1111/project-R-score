@@ -65,11 +65,6 @@ if [ ! -f "server/base-server.ts" ]; then
     exit 1
 fi
 
-if [ ! -f "lib/utils/logger.ts" ]; then
-    echo -e "${RED}❌ Error: Logger utility missing${NC}"
-    exit 1
-fi
-
 echo -e "${GREEN}✅ Health checks passed${NC}"
 
 # Build the application (if needed)

@@ -1,10 +1,9 @@
 # cli
 
-CLI / ANSI dashboard helpers.
+CLI helpers.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
+Inventory: [`../README.md`](../README.md).
 
 | Entry |
 |-------|
-| [`ansi-dashboard.ts`](./ansi-dashboard.ts) |
-
+| [`chrome-integration.ts`](./chrome-integration.ts) |

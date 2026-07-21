@@ -1,7 +1,7 @@
 {
   "version": 1,
   "generatedAt": "2026-07-21T15:26:05.174Z",
-  "note": "Legacy unbranded ID surfaces grandfathered when mid-line param detection was enabled. Staged commits never use this baseline — new bare-string domain IDs always fail. Remove entries as you migrate to brands (as*/try*/parse*). Regenerate: bun tools/branded-id-check.ts --write-baseline",
+  "note": "Legacy unbranded ID surfaces grandfathered when mid-line param detection was enabled. Staged commits never use this baseline \u2014 new bare-string domain IDs always fail. Remove entries as you migrate to brands (as*/try*/parse*). Regenerate: bun tools/branded-id-check.ts --write-baseline",
   "keys": [
     "lib/ab-testing/cookie-manager.ts\ttestId\tclearAssignment(testId: string): void {",
     "lib/ab-testing/cookie-manager.ts\ttestId\tforceAssignVariant(testId: string, variant: string): void {",
@@ -61,10 +61,6 @@
     "lib/security/junior-runner.ts\tsessionId\tgetProfile(sessionId: string): Promise<LeadSpecProfile | null>;",
     "lib/security/junior-runner.ts\tsessionId\tgetSessionHistory(sessionId: string, limit?: number): Promise<LeadSpecProfile[]>;",
     "lib/security/junior-runner.ts\tsessionId\tsaveProfile(sessionId: string, profile: LeadSpecProfile): Promise<void>;",
-    "lib/security/master-token.ts\ttokenId\tasync revokeToken(tokenId: string, reason?: string): Promise<boolean> {",
-    "lib/security/master-token.ts\ttokenId\tlistTokens(): Array<MasterTokenConfig & { tokenId: string }> {",
-    "lib/security/master-token.ts\ttokenId\tprivate encodeToken(tokenId: string, secret: string): string {",
-    "lib/security/secret-lifecycle.ts\truleId\tprivate scheduler = new Map<string, LifecycleRule & { ruleId: string; nextRotation?: string }>();",
     "lib/security/secure-deployment.ts\tdeploymentId\tstatic async cancelDeployment(deploymentId: string): Promise<void> {",
     "lib/security/secure-deployment.ts\tdeploymentId\tstatic async getDeploymentStatus(deploymentId: string): Promise<any> {",
     "lib/utils/s3-content-encoding.ts\tversionId\t): Promise<{ etag: string; versionId?: string }> {"

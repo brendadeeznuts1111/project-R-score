@@ -1,10 +1,5 @@
 # profile
 
-Profile session upload.
+Stub — session uploader / watcher modules removed (no external callers).
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
-
-| Entry |
-|-------|
-| [`index.ts`](./index.ts) |
-
+Inventory: [`../README.md`](../README.md).

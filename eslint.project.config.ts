@@ -170,8 +170,6 @@ export const projectEslintConfig: Linter.Config[] = [
   {
     name: 'factorywager/project-wiki-legacy',
     files: [
-      'lib/wiki/wiki-generator.ts',
-      'lib/wiki/bun-wiki-integration.ts',
     ],
     rules: {
       'no-console': 'off',

@@ -129,8 +129,6 @@ const DEFAULT_POLICIES: SearchPolicies = {
     '/lib/docs/canonical-family.ts',
     '/lib/docs/smart-symbol-index.ts',
     '/lib/docs/ripgrep-spawn.ts',
-    '/lib/docs/stream-search.ts',
-    '/lib/docs/enhanced-stream-search.ts',
   ],
   scoreThresholds: {
     qualityDropWarn: -1.5,
