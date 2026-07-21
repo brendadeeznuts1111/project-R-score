@@ -157,8 +157,6 @@ export const projectEslintConfig: Linter.Config[] = [
     files: [
       'lib/ai/ai-operations-manager.ts',
       'lib/ai/anomaly-detector.ts',
-      'lib/ai/smart-cache-manager.ts',
-      'lib/ai/smart-cache-manager.test.ts',
     ],
     rules: {
       'import/order': 'error',

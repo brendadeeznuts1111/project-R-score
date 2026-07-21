@@ -78,9 +78,3 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`utils/`](./utils/) | General utilities barrel | `index.ts` |
 | [`validation/`](./validation/) | Validation systems | `automated-validation-system.ts` |
 | [`wiki/`](./wiki/) | Wiki integration | `bun-wiki-integration.ts` |
-
-## Legacy / low-traffic root (do not extend)
-
-| File | Note |
-|------|------|
-| `filter-runner.ts` | Workspace filter helper (`src/server/filter-dashboard`, demos) |

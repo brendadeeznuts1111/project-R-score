@@ -89,7 +89,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 - **Day loop?** `bun run help` · `bun run type-check` (`tsconfig.check.json` spine) · `bun run build:affected` / `test:affected` (**git-true** via [`scripts/affected-workspaces.ts`](scripts/affected-workspaces.ts)). Harness JIT: [`docs/harness/README.md`](docs/harness/README.md). CLI: `bun run help` (optional regenerate [`docs/CLI.md`](docs/CLI.md) via `cli:docs`).
 - **Run something?** Root `package.json` scripts (`bun run <name>`). Prefer named scripts over inventing paths.
 - **Workspace:** `bun run validate:workspaces` · `build:affected` / `test:affected` · `affected:list`
-- **CLI:** [`tools/cli/`](tools/cli/docs-cli.ts) · [`tools/bin/`](tools/bin/bun-filter-cli.ts)
+- **CLI:** [`tools/cli/`](tools/cli/) · `bun run help`
 - **Demos:** [`examples/`](examples/INDEX.md) (optional for product work)
 - **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 - **Coding standards:** [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md)
@@ -116,7 +116,7 @@ From `package.json` `workspaces.packages`:
 - **Jul 2026:** Context-bloat pass — compile dumps removed; root nested products gitignored; STRUCTURE/projects README aligned to disk; skill `node_modules` / utility `dist` cleaned; experimental/archive tier buckets; `packages:list` scaffold filter; local runtime DBs/build-artifacts pruned.
 - **Jul 2026 (docs):** Root standards rewrite; [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) as path SSOT; cleanup summary under [`docs/organization/`](docs/organization/HOMEBASE_DISCOVERY.md).
 - **Jul 2026 (projects triage):** Dropped ghost inventory (`barbershop`/`peer`/empty experimental+archive paths); `bun run registry:projects` regenerates [`public/registry/projects-registry.json`](public/registry/projects-registry.json); `packages:list --write` refreshes [`docs/packages/REGISTRY.md`](docs/packages/REGISTRY.md).
-- **Jul 2026 (scripts trim):** Collapsed ~100 duplicate/unused `package.json` scripts; removed `scratch` passthrough, `deploy-production.sh`, `url-validator-focused.ts`; single `r2` / `playground` / `mybundocs11` entrypoints; migrate phase aliases → `bun-migrate` direct.
+- **Jul 2026 (scripts trim):** Collapsed ~100 duplicate/unused `package.json` scripts; removed `scratch` passthrough, `deploy-production.sh`, `url-validator-focused.ts`; migrate phase aliases → `bun-migrate` direct.
 - **Jul 2026 (bloat/speed):** CLI category SSOT; scripts **329 → 275 → 258 → 193 → 176 → 173**; demos + utility sandboxes → `projects/experimental/`; Bun-native `fs-bun`/`cli-args`/`Bun.argv`; skip ast-grep doctor on lockfile-only staged sets; day-loop docs. Notes: [`docs/organization/BLOAT_SPEED_PASS.md`](docs/organization/BLOAT_SPEED_PASS.md).
 
 Detail: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_DISCOVERY.md) · [`docs/organization/BLOAT_SPEED_PASS.md`](docs/organization/BLOAT_SPEED_PASS.md).

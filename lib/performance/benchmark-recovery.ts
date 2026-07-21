@@ -4,10 +4,10 @@
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // lib/performance/benchmark-recovery.ts — Run benchmarks with timeout, stuck detection, and auto-recovery
-// Usage: bun lib/performance/benchmark-recovery.ts run lib/ai/ai.bench.ts
-//        bun lib/performance/benchmark-recovery.ts detect ai.bench
-//        bun lib/performance/benchmark-recovery.ts tail 50 lib/ai/ai.bench.ts
-//        bun lib/performance/benchmark-recovery.ts recover lib/ai/ai.bench.ts
+// Usage: bun lib/performance/benchmark-recovery.ts run <bench-file.ts>
+//        bun lib/performance/benchmark-recovery.ts detect bench
+//        bun lib/performance/benchmark-recovery.ts tail 50 <bench-file.ts>
+//        bun lib/performance/benchmark-recovery.ts recover <bench-file.ts>
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { heapStats } from 'bun:jsc';
@@ -63,7 +63,7 @@ export class BenchmarkRecoveryEngine {
   /**
    * Run a benchmark file with timeout. Auto-kills if it exceeds the deadline.
    *
-   *   const r = await BenchmarkRecoveryEngine.run('lib/ai/ai.bench.ts');
+   *   const r = await BenchmarkRecoveryEngine.run('<bench-file.ts>');
    *   console.info(r.killed ? 'stuck!' : `done in ${r.durationMs}ms`);
    */
   static async run(
@@ -113,7 +113,7 @@ export class BenchmarkRecoveryEngine {
   /**
    * Find stuck Bun processes matching `pattern`, kill them, return PIDs.
    *
-   *   const d = await BenchmarkRecoveryEngine.detectStuckProcess('ai.bench');
+   *   const d = await BenchmarkRecoveryEngine.detectStuckProcess('bench');
    *   // d.found === 2, d.killed === 2
    */
   static async detectStuckProcess(pattern: string): Promise<DetectResult> {
@@ -158,7 +158,7 @@ export class BenchmarkRecoveryEngine {
   /**
    * Run a benchmark and return only the last N lines of stdout.
    *
-   *   const t = await BenchmarkRecoveryEngine.tailCapture('lib/ai/ai.bench.ts', 50);
+   *   const t = await BenchmarkRecoveryEngine.tailCapture('<bench-file.ts>', 50);
    *   t.lines.forEach(l => console.info(l));
    */
   static async tailCapture(
@@ -182,7 +182,7 @@ export class BenchmarkRecoveryEngine {
   /**
    * Full recovery loop: run benchmark, if stuck → kill → retry up to N times.
    *
-   *   const r = await BenchmarkRecoveryEngine.fullRecovery('lib/ai/ai.bench.ts');
+   *   const r = await BenchmarkRecoveryEngine.fullRecovery('<bench-file.ts>');
    *   console.info(r.finalStatus); // 'ok' | 'stuck' | 'crashed'
    */
   static async fullRecovery(
