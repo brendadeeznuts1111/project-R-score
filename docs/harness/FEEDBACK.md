@@ -143,12 +143,28 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Ratchet:** `.github/workflows/typescript-checks.yml`
 - **Keep / revise / drop:** keep
 
+### Speciality workflows on every PR
+
+- **Finding:** search / brand-bench / demo / url-validation / har-performance each installed on unrelated PRs.
+- **Repair:** Path filters (search · brand · demo); drop PR for url-validation + har-performance; typescript drops duplicate path-bun/bun-env.
+- **Earliest owner:** CI
+- **Ratchet:** workflow `on.paths` / `on` trim · VELOCITY_BASELINE CI install tax
+- **Keep / revise / drop:** keep
+
 ### Docs dump attention tax
 
 - **Finding:** Hundreds of `docs/**` dumps (cheatsheets, council, generated) dominated search/agent context; stubbing in-place still showed up as “bottlenecks.”
 - **Repair:** Delete dumps from tracked live tree (recover via `git log`); keep ~37 SSOT markdown files; archive path stays gitignored.
 - **Earliest owner:** docs index
 - **Ratchet:** `docs/README.md` · `bun tools/doc-map-check.ts`
+- **Keep / revise / drop:** keep
+
+### Pre-commit ESLint cold cost on staged harness files
+
+- **Finding:** Staged harness lint still paid ~1.7s ESLint even after CI moved to changed-files.
+- **Repair:** `--cache` + `.cache/eslint-bun-native` + `content` strategy on pre-commit harness eslint (same path as rollout/changed).
+- **Earliest owner:** script-gate
+- **Ratchet:** `scripts/pre-commit-harness.ts`
 - **Keep / revise / drop:** keep
 
 ### GHA “account locked / billing” (not a code gate)

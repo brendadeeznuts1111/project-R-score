@@ -71,8 +71,8 @@ Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harnes
 
 | Era | Installs per PR (root) |
 |-----|------------------------:|
-| Pre | harness-gates + repo-hygiene + pr-claim + typescript matrix×2 (+ others) |
-| Post | **harness-gates once** (`ci:core` = verify · hygiene · harness + claim) · typescript **one** job (ci+full scopes) · shared [`setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml) cache |
+| Pre | harness-gates + repo-hygiene + pr-claim + typescript matrix×2 + search/brand/demo/url/har on every PR |
+| Post | **Always on PR:** harness-gates (`ci:core`) · typescript (one job). **Path-filtered:** search-governance · brand-bench · demo-module-contract. **Off PR:** url-validation · har-performance (schedule/main). Shared [`setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml). |
 
 Local parity: `bun run ci:core` · `bun run ci:harness:fast`. Required check: Harness Gates only ([AUTHORITY.md](../harness/AUTHORITY.md)).
 

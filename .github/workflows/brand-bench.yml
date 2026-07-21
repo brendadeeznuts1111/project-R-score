@@ -2,27 +2,41 @@ name: brand-bench
 
 on:
   pull_request:
+    paths:
+      - 'lib/types/branded/**'
+      - 'lib/types/brand-manifest.json'
+      - 'tools/brand*'
+      - 'tools/branded*'
+      - 'docs/decisions/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/brand-bench.yml'
   push:
     branches:
       - main
+    paths:
+      - 'lib/types/branded/**'
+      - 'lib/types/brand-manifest.json'
+      - 'tools/brand*'
+      - 'tools/branded*'
+      - 'docs/decisions/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/brand-bench.yml'
+  workflow_dispatch:
 
 jobs:
   brand-bench:
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
-      BUN_INSTALL_GLOBAL_STORE: "1"
+      BUN_INSTALL_GLOBAL_STORE: '1'
       BRAND_BENCH_STRICT: ${{ vars.BRAND_BENCH_STRICT || '0' }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.3.10
-
-      - name: Install
-        run: bun scripts/with-bun-cache-env.ts ci
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
 
       - name: Prepare Artifact Directories
         run: mkdir -p reports/brand-bench reports/brand-bench/profiles

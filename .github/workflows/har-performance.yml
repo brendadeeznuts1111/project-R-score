@@ -1,13 +1,12 @@
 name: HAR Performance Monitoring
 
+# Perf lab — schedule + main push only (not every PR install).
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   schedule:
-    # Run daily at 2 AM UTC
     - cron: '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   performance-test:
@@ -19,13 +18,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun scripts/with-bun-cache-env.ts ci
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
 
       - name: Start test server
         run: |

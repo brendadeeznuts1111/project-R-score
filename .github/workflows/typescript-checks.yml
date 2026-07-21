@@ -31,8 +31,7 @@ jobs:
       - name: Verify Package Import Boundaries
         run: bun run imports:verify
 
-      - name: Spine path-bun + Bun.env ratchets
-        run: bun run check:path-bun && bun run check:bun-env
+      # path-bun / bun-env already enforced by harness-gates ci:core
 
       - name: Type Check (CI Scope)
         id: ci_scope

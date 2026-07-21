@@ -2,24 +2,45 @@ name: Search Governance
 
 on:
   pull_request:
+    paths:
+      - 'lib/**/*search*'
+      - 'scripts/**/*search*'
+      - 'scripts/**/*domain-registry*'
+      - 'tests/**/*search*'
+      - 'tests/**/*domain-registry*'
+      - '.search/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/search-governance.yml'
   push:
     branches:
       - main
       - feat/**
       - codex/**
+    paths:
+      - 'lib/**/*search*'
+      - 'scripts/**/*search*'
+      - 'scripts/**/*domain-registry*'
+      - 'tests/**/*search*'
+      - 'tests/**/*domain-registry*'
+      - '.search/**'
+      - 'package.json'
+      - 'bun.lock'
+      - '.github/workflows/search-governance.yml'
+  workflow_dispatch:
 
 jobs:
   governance:
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
-      BUN_INSTALL_GLOBAL_STORE: "1"
-      SEARCH_BENCH_QUERY_TIMEOUT_MS: "60000"
-      SEARCH_BENCH_QUERY_RETRIES: "1"
-      SEARCH_BENCH_PIN_TREND_ENABLED: "1"
-      SEARCH_BENCH_PIN_TREND_STRICT: "1"
-      SEARCH_BENCH_PIN_TREND_WINDOW: "5"
-      SEARCH_BENCH_PIN_TREND_MIN_SAMPLES: "3"
+      BUN_INSTALL_GLOBAL_STORE: '1'
+      SEARCH_BENCH_QUERY_TIMEOUT_MS: '60000'
+      SEARCH_BENCH_QUERY_RETRIES: '1'
+      SEARCH_BENCH_PIN_TREND_ENABLED: '1'
+      SEARCH_BENCH_PIN_TREND_STRICT: '1'
+      SEARCH_BENCH_PIN_TREND_WINDOW: '5'
+      SEARCH_BENCH_PIN_TREND_MIN_SAMPLES: '3'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
