@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()

@@ -1,3 +1,8 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen — Bun.listen
+// @see https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket — Bun.udpSocket
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 // @see https://bun.com/docs/runtime/networking/dns — Bun.dns
 // @see https://bun.com/docs/runtime/yaml — YAML
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
