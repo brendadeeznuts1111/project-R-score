@@ -93,6 +93,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'test:shard': 'Bun test --shard=$SHARD (CI split; default 1/1)',
   'check:path-bun': 'Ratchet: no path/node:path imports under lib/',
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
+  'projects:roots:check': 'Ratchet: product-leaf README.md + package.json under projects/',
   'harness:status': 'Day-loop + ratchet discovery (tool legibility)',
   'ci:harness':
     'Quiet CI envelope (∥ cheap · eslint-changed · test:changed:main; --full-lint on main)',
@@ -136,6 +137,7 @@ export const CLI_CORE_CMDS = new Set([
   'proof:install',
   'cli:docs',
   'registry:projects',
+  'projects:roots:check',
 ]);
 
 export function matchCliCategory(key: string): { label: string; priority: number } | null {

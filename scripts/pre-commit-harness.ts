@@ -158,9 +158,23 @@ async function main(): Promise<void> {
     }
   }
 
+  const projectsFiles = staged.filter(f => f.replace(/^\.\//, '').startsWith('projects/'));
+  if (projectsFiles.length > 0) {
+    console.info(`📦 Projects root contract (${projectsFiles.length} path(s) staged)...`);
+    const code = await runGate('projects-roots', ['bun', 'run', 'projects:roots:check'], timings);
+    if (code !== 0) {
+      console.error(
+        '❌ Product-leaf root contract failed — each leaf needs README.md + package.json\n' +
+          '   bun run projects:roots:check'
+      );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
   if (harnessFiles.length === 0) {
-    if (docMapFiles.length > 0) {
-      console.info('✅ Harness pre-commit checks passed (doc map only)');
+    if (docMapFiles.length > 0 || projectsFiles.length > 0) {
+      console.info('✅ Harness pre-commit checks passed (doc/projects gates only)');
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
     }

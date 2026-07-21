@@ -5,9 +5,9 @@
 /**
  * CI / agent harness envelope — quiet success; noise only on failure.
  *
- * Cheap ratchets run in parallel. ESLint defaults to changed-files
- * (`lint:bun-native:changed`); full tree only with --full-lint /
- * HARNESS_FULL_LINT=1 (main push).
+ * Cheap ratchets run in parallel (path-bun · bun-env · brands · projects-roots).
+ * ESLint defaults to changed-files (`lint:bun-native:changed`); full tree only
+ * with --full-lint / HARNESS_FULL_LINT=1 (main push).
  *
  *   bun run ci:harness
  *   bun run ci:harness:fast
@@ -42,6 +42,12 @@ const CHEAP: Step[] = [
     cmd: ['bun', 'tools/branded-id-check.ts', '--smart', '--strict', '--quiet'],
     owner: 'lib/types/branded.ts · branded-ids skill',
     repair: 'bun tools/branded-id-check.ts --smart --strict',
+  },
+  {
+    name: 'projects-roots',
+    cmd: ['bun', 'run', 'projects:roots:check'],
+    owner: 'tools/projects-root-check.ts · projects/README.md',
+    repair: 'bun run projects:roots:check',
   },
 ];
 
@@ -154,7 +160,7 @@ const timings: GateTiming[] = [];
 
 if (verbose) console.info(`ci:harness (${mode})`);
 
-// Parallel cheap ratchets (path-bun ‖ bun-env ‖ brands)
+// Parallel cheap ratchets (path-bun ‖ bun-env ‖ brands ‖ projects-roots)
 {
   const t0 = performance.now();
   const results = await Promise.all(CHEAP.map(s => run(s, verbose)));
