@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
@@ -130,6 +133,13 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     kinds: ['boundary'],
     evidence: ['tests/fixtures/bun-shell/**/fixture.test.ts'],
     freshRerun: 'bun test tests/fixtures/bun-shell/',
+  },
+  {
+    id: 'fs-native-boundaries',
+    claim: 'Bun.file, Bun.write, and Bun.Glob behave as this repo depends on them',
+    kinds: ['boundary'],
+    evidence: ['tests/fs-bun.test.ts', 'tests/bun-glob-scan.test.ts'],
+    freshRerun: 'bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
   },
   {
     id: 'path-bun',

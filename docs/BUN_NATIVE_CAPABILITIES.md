@@ -19,7 +19,7 @@
 | `Bun.udpSocket` | UDP + ICMP/truncation | re-read when editing `lib/udp` |
 | WebCrypto SHA3 / X25519 | hashing / key exchange | `tests/bun-crypto-webcrypto.test.ts` · `crypto.sha3` / `crypto.x25519` |
 | `URLPattern` | URL routing (no `$N` leak) | `tests/bun-urlpattern.test.ts` |
-| `Bun.Glob.scan` | tree walk; `**/X/...` boundary | `tests/bun-glob-scan.test.ts` |
+| `Bun.file` / `Bun.write` / `Bun.Glob` | file I/O, glob scanning | `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts` · claim `fs-native-boundaries` |
 | `Bun.$` / shell | tagged templates, `.cwd()`, `.nothrow()`, `.quiet()` | `bun test tests/fixtures/bun-shell/` · claim `bun-shell-boundaries` · [shell](https://bun.com/docs/runtime/shell) |
 | `Bun.stripANSI` / `stringWidth` | TTY width | `tests/bun-ansi-width.test.ts` — **no** npm `string-width` |
 
