@@ -9,6 +9,8 @@ import { assertScheduledJobCoverage } from '../lib/harness/discover-scheduled';
 import { assertInterventionCommandsValid } from '../lib/harness/intervention-validity';
 import {
   assertLinkedProofFreshRerunsPass,
+  assertRetirementCheckShape,
+  assertRetirementConditionCheck,
   assertRetirementEnforcement,
   assertRunbookFieldsNonEmpty,
   assertRunbookFreshRerunsPass,
@@ -47,6 +49,19 @@ describe('spine maintenance runbooks', () => {
       expect(r.retirementVerified, r.tenant).toBe(true);
     }
   });
+
+  test('retirementCheck shape (description · command/proofId)', () => {
+    expect(assertRetirementCheckShape()).toEqual([]);
+    for (const r of MAINTENANCE_RUNBOOKS) {
+      expect(r.retirementCheck, r.tenant).toBeDefined();
+    }
+  });
+
+  test('retirementCheck executes for tombstones (none today)', async () => {
+    const { failures, warnings } = await assertRetirementConditionCheck(ROOT);
+    expect(failures).toEqual([]);
+    for (const w of warnings) console.warn(`⚠️ ${w}`);
+  }, 180_000);
 
   test('bidirectional: SPINE_TENANTS ↔ SIGNAL_MONITORS', () => {
     expect(assertSignalMonitorTenantLinks(SPINE_TENANTS.map(t => t.id))).toEqual([]);

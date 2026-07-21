@@ -29,7 +29,10 @@ const catalog = [
       `- **\`${r.tenant}\`** → proof \`${r.proofId}\`\n` +
       `  *Doc* → \`${r.docPath}\`\n` +
       `  *Fresh-rerun* → \`${r.freshRerun}\`\n` +
-      `  *Retirement verified* → \`${r.retirementVerified}\``
+      `  *Retirement verified* → \`${r.retirementVerified}\`\n` +
+      (r.retirementCheck
+        ? `  *Retirement check* → \`${r.retirementCheck.command ?? r.retirementCheck.proofId}\``
+        : `  *Retirement check* → *(none)*`)
   ),
   '',
   '## Retired tombstones (`RETIRED_TENANT_RUNBOOKS`)',
@@ -39,7 +42,8 @@ const catalog = [
     : RETIRED_TENANT_RUNBOOKS.map(
         r =>
           `- **\`${r.tenant}\`** → proof \`${r.proofId}\` · verified \`${r.retirementVerified}\`\n` +
-          `  *Condition* → ${r.retirement}`
+          `  *Condition* → ${r.retirement}\n` +
+          `  *Check* → \`${r.retirementCheck?.command ?? r.retirementCheck?.proofId ?? 'manual'}\``
       )),
   '',
 ].join('\n');

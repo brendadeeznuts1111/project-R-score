@@ -12,7 +12,12 @@ Each active tenant **must** have signal · intervention · proof · retirement (
 - [`tenants/docs-integrity.md`](tenants/docs-integrity.md) — claim `docs-integrity`
 - [`tenants/install-verify.md`](tenants/install-verify.md) — claim `install-verify-journey`
 
-**To retire a tenant:** attest the condition → set `retirementVerified: true` → move the entry from `MAINTENANCE_RUNBOOKS` to `RETIRED_TENANT_RUNBOOKS` and delete it from `SPINE_TENANTS` / `SIGNAL_MONITORS` in the same PR (keep `spine-multi-tenant` ≥2).
+**To retire a tenant:**
+
+1. Flip `tenants.<id>=true` in [`lib/harness/ci-owned-tenants.json`](../../lib/harness/ci-owned-tenants.json) once CI/operate owns the periodic re-proof.  
+2. Confirm `retirementCheck` passes (`bun scripts/retirement-check-ci-owner.ts --tenant=<id>`).  
+3. Move the entry to `RETIRED_TENANT_RUNBOOKS` with `retirementVerified: true` and remove it from `SPINE_TENANTS` / `SIGNAL_MONITORS` in the same PR (keep `spine-multi-tenant` ≥2).  
+4. The ratchet re-runs `retirementCheck` for every tombstone and rejects the commit if it fails.
 
 ## Cross-references
 
@@ -24,6 +29,8 @@ Closed maintenance loop — each edge is machine-checked by `bun run test:tenant
   *Ratchet* → `assertRunbookTenantLinks`
 - **Retirement attestation** — active runbooks keep `retirementVerified: false`; remove from spine only by moving to `RETIRED_TENANT_RUNBOOKS` with `retirementVerified: true`  
   *Ratchet* → `assertRetirementEnforcement`
+- **Retirement condition check** — active runbooks declare `retirementCheck`; tombstones execute it (command and/or proof `freshRerun` must exit 0; missing check warns)  
+  *Ratchet* → `assertRetirementCheckShape` · `assertRetirementConditionCheck` · [`ci-owned-tenants.json`](../../lib/harness/ci-owned-tenants.json)
 - **Discovered schedules covered** — harness-perimeter crons / `package.json` schedule scripts / GHA `cron:` map to a tenant + runbook or an explicit exemption  
   *Ratchet* → `assertScheduledJobCoverage` · [`lib/harness/discover-scheduled.ts`](../../lib/harness/discover-scheduled.ts)
 - **Signal monitors registered** — every tenant has a probe (`checkCommand`) + `alertChannel`; spine-tick probes name `--tenant=`  

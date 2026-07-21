@@ -11,6 +11,19 @@
  */
 import { CRITICAL_PROOF_PATHS } from './proof';
 
+/**
+ * Programmatic retirement condition. Declared on active runbooks (schema only);
+ * executed for tombstones when `retirementVerified: true`.
+ */
+export type RetirementCheck = {
+  /** What is being verified (should align with `retirement` prose) */
+  description: string;
+  /** Shell-free argv command; exit 0 ⇒ condition met */
+  command?: string;
+  /** Also require this proof’s freshRerun to exit 0 */
+  proofId?: string; // brand-ok — opaque proof-path catalog key
+};
+
 export type TenantRunbook = {
   /** Spine tenant id — must match spine/tenants.ts */
   tenant: string; // brand-ok — opaque spine tenant catalog key
@@ -28,6 +41,11 @@ export type TenantRunbook = {
    * Tombstone (`RETIRED_TENANT_RUNBOOKS`): must be `true` before/with removal from spine.
    */
   retirementVerified: boolean;
+  /**
+   * How to verify `retirement` programmatically.
+   * Active: schema-checked only. Tombstone: executed (must pass if present).
+   */
+  retirementCheck?: RetirementCheck;
   /** UTC crontab (reference; enforcement is spine/tenants.ts) */
   schedule?: string;
   /** Command that validates the runbook doc / catalog entry */
@@ -51,6 +69,11 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     retirement:
       'Remove when docs integrity is solely owned by a required CI / operate schedule that does not need the spine daemon',
     retirementVerified: false,
+    retirementCheck: {
+      description: 'CI owns docs-integrity periodic re-proof (lib/harness/ci-owned-tenants.json)',
+      command: 'bun scripts/retirement-check-ci-owner.ts --tenant=docs-integrity',
+      proofId: 'docs-integrity',
+    },
     schedule: '0 6 * * *',
     freshRerun: 'bun run docs:tenant-docs-integrity',
     docPath: 'docs/harness/tenants/docs-integrity.md',
@@ -64,6 +87,11 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     retirement:
       'Remove when install-verify journey proof is enforced by a pre-deploy / required CI gate on a schedule and spine is no longer the only periodic re-proof',
     retirementVerified: false,
+    retirementCheck: {
+      description: 'CI owns install-verify periodic re-proof (lib/harness/ci-owned-tenants.json)',
+      command: 'bun scripts/retirement-check-ci-owner.ts --tenant=install-verify',
+      proofId: 'install-verify-journey',
+    },
     schedule: '30 6 * * *',
     freshRerun: 'bun run docs:tenant-install-verify',
     docPath: 'docs/harness/tenants/install-verify.md',
@@ -163,6 +191,97 @@ export function assertRetirementEnforcement(activeTenantIds: readonly string[]):
   }
 
   return failures;
+}
+
+const SHELL_META_RE = /[|><;`]|\$\(|&&|\|\|/;
+
+/** Fail closed: retirementCheck shape (active + retired). Does not execute probes. */
+export function assertRetirementCheckShape(): string[] {
+  const proofIds = new Set(CRITICAL_PROOF_PATHS.map(p => p.id));
+  const failures: string[] = [];
+  const all = [...MAINTENANCE_RUNBOOKS, ...RETIRED_TENANT_RUNBOOKS];
+
+  for (const r of all) {
+    const check = r.retirementCheck;
+    if (!check) {
+      if (r.retirementVerified) {
+        // tombstone without check — warned at execute time; shape OK
+        continue;
+      }
+      failures.push(`${r.tenant}: active runbook must declare retirementCheck`);
+      continue;
+    }
+    if (!check.description.trim()) {
+      failures.push(`${r.tenant}.retirementCheck.description empty`);
+    }
+    if (!check.command && !check.proofId) {
+      failures.push(`${r.tenant}.retirementCheck needs command and/or proofId`);
+    }
+    if (check.command) {
+      if (SHELL_META_RE.test(check.command)) {
+        failures.push(`${r.tenant}.retirementCheck.command: shell metacharacters not allowed`);
+      }
+      const argv = argvFromCommand(check.command);
+      if (argv[0] !== 'bun') {
+        failures.push(`${r.tenant}.retirementCheck.command must start with bun`);
+      }
+    }
+    if (check.proofId && !proofIds.has(check.proofId)) {
+      failures.push(
+        `${r.tenant}.retirementCheck.proofId "${check.proofId}" not in CRITICAL_PROOF_PATHS`
+      );
+    }
+  }
+  return failures;
+}
+
+export type RetirementConditionResult = {
+  failures: string[];
+  warnings: string[];
+};
+
+/**
+ * Execute retirementCheck for tombstones only.
+ * Missing check → warning (manual attestation still allowed).
+ * Present check → command and/or proof freshRerun must exit 0.
+ */
+export async function assertRetirementConditionCheck(
+  cwd: string
+): Promise<RetirementConditionResult> {
+  const failures: string[] = [];
+  const warnings: string[] = [];
+  const byId = new Map(CRITICAL_PROOF_PATHS.map(p => [p.id, p]));
+
+  for (const r of RETIRED_TENANT_RUNBOOKS) {
+    const check = r.retirementCheck;
+    if (!check) {
+      warnings.push(`${r.tenant}: tombstone has no retirementCheck — condition not auto-verified`);
+      continue;
+    }
+    console.info(`▶ retirementCheck · ${r.tenant} · ${check.description}`);
+    if (check.command) {
+      const { code } = await runFreshRerunCommand(check.command, cwd);
+      if (code !== 0) {
+        failures.push(`${r.tenant}.retirementCheck.command \`${check.command}\` exit ${code}`);
+      }
+    }
+    if (check.proofId) {
+      const proof = byId.get(check.proofId);
+      if (!proof) {
+        failures.push(`${r.tenant}.retirementCheck.proofId missing: ${check.proofId}`);
+        continue;
+      }
+      console.info(`▶ retirementCheck proof · ${check.proofId} · ${proof.freshRerun}`);
+      const { code } = await runFreshRerunCommand(proof.freshRerun, cwd);
+      if (code !== 0) {
+        failures.push(
+          `${r.tenant}.retirementCheck.proofId ${check.proofId} freshRerun exit ${code}`
+        );
+      }
+    }
+  }
+
+  return { failures, warnings };
 }
 
 /** Fail closed: catalog signal / intervention / retirement are non-empty. */

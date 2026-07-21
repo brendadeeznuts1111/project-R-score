@@ -232,8 +232,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'spine-maintenance-runbooks',
     // owner: lib/harness/maintenance.ts · docs/harness/tenants/
-    claim:
-      'Every spine tenant has TenantRunbook + SignalMonitor; retirement attested; live freshRerun',
+    claim: 'Every spine tenant has TenantRunbook + SignalMonitor; retirementCheck; live freshRerun',
     kinds: ['boundary', 'journey'],
     evidence: [
       'lib/harness/maintenance.ts',
