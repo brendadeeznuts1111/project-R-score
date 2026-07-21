@@ -35,6 +35,7 @@ export const CI_SPINE_SMOKE_TESTS = [
   'tests/bun-markdown-ansi.test.ts',
   'tests/journey/install-verify.test.ts',
   'tests/journey/search-governance.test.ts',
+  'tests/journey/cron-os-persistent.test.ts',
   'tests/harness-fresh-rerun-contract.test.ts',
 ] as const;
 
@@ -147,6 +148,20 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'spine/scheduler.ts',
     ],
     freshRerun: 'bun run test:cron',
+  },
+  {
+    id: 'cron-os-persistent',
+    // owner: tests/journey/cron-os-persistent.test.ts
+    claim:
+      'OS-persistent Bun.cron(path, schedule, title) registers, fires scheduled(), and removes cleanly',
+    kinds: ['journey', 'boundary'],
+    evidence: [
+      'bun run test:cron-os',
+      'tests/journey/cron-os-persistent.test.ts',
+      'tests/fixtures/cron-os-persistent-worker.ts',
+      'docs/harness/cron.md',
+    ],
+    freshRerun: 'bun run test:cron-os',
   },
 ] as const;
 

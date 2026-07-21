@@ -113,6 +113,8 @@ export const CLI_SPECIAL: Record<string, string> = {
     'Search-governance WebView journey brief (ansiMarkdown · docs/harness/search-governance.md)',
   'test:cron':
     'Cron contract ratchet (OS-persistent primary / in-process complement · docs/harness/cron.md)',
+  'test:cron-os':
+    'OS-persistent Bun.cron(path, schedule, title) journey (register → fire → marker → remove)',
   'test:install-verify':
     'Install-verify → smoke HTML → Bun.WebView journey (tests/journey/install-verify.test.ts)',
   'test:search-governance':
@@ -160,6 +162,7 @@ export const CLI_CORE_CMDS = new Set([
   'docs:fresh-rerun',
   'docs:search-governance',
   'test:cron',
+  'test:cron-os',
   'test:install-verify',
   'test:search-governance',
   'spine:schedule',

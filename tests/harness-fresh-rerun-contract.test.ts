@@ -23,4 +23,9 @@ describe('fresh-rerun contract', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'search-governance-basic');
     expect(p?.freshRerun).toBe('bun run test:search-governance');
   });
+
+  test('cron-os-persistent freshRerun is the OS cron journey test', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'cron-os-persistent');
+    expect(p?.freshRerun).toBe('bun run test:cron-os');
+  });
 });

@@ -19,6 +19,8 @@ describe('cron contract (claim / evidence)', () => {
     expect(md).toContain('Bun.cron(path, schedule, title)');
     expect(md).toMatch(/in-process is the complement/i);
     expect(md).toContain('bun run test:cron');
+    expect(md).toContain('bun run test:cron-os');
+    expect(md).toContain('cron-os-persistent');
     // Must not claim in-process is the only / primary Bun.cron form
     expect(md).not.toMatch(/in-process is the primary/i);
   });

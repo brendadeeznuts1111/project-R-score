@@ -14,7 +14,9 @@ Corrected 2026-07-21 (was inverted).
 - lib/harness/cron.ts — both forms · ratchet: bun run test:cron
 - spine/scheduler.ts — in-process on purpose · spine:schedule · type-check
 - bun-doc-refs schedule — cites OS-persistent as canonical · manual
-- PROOF.md / proof.ts — named path bun-cron · proof inventory
+- **OS-persistent journey** — register → OS entry → fire `scheduled()` → marker → remove  
+  *Ratchet* → `bun run test:cron-os` · claim `cron-os-persistent`
+- PROOF.md / proof.ts — named paths `bun-cron` + `cron-os-persistent`
 
 ## Primary — OS-persistent
 
@@ -24,6 +26,7 @@ Survives reboot. System local time. Fresh process each fire.
 - remove — await Bun.cron.remove(title)
 - module — export default { scheduled(controller) { … } }
 - platforms — crontab · launchd · Task Scheduler
+- journey — `tests/journey/cron-os-persistent.test.ts` (does not wait a full minute; fires via `bun run --cron-title`)
 
 ## Complement — in-process
 
@@ -42,6 +45,9 @@ lib/harness/cron.ts + spine/scheduler.ts
 
 ## Ratchet
 
-bun run test:cron
+```bash
+bun run test:cron      # complement + contract docs
+bun run test:cron-os   # OS-persistent primary journey
+```
 
 Lookup: bun tools/bun-doc-refs.ts url Bun.cron

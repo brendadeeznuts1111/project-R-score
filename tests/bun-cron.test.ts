@@ -8,8 +8,8 @@
  * Existing:  await Bun.cron(path, schedule, title)  — OS persistent, local time
  * Complement: Bun.cron(schedule, handler) → CronJob — in-process, UTC, Disposable
  *
- * Smokes below cover the in-process complement + parse (UTC). OS-level registration
- * mutates the machine scheduler — not asserted here.
+ * Smokes below cover the in-process complement + parse (UTC).
+ * OS-persistent primary journey: tests/journey/cron-os-persistent.test.ts (`bun run test:cron-os`).
  *
  *   bun test tests/bun-cron.test.ts
  */

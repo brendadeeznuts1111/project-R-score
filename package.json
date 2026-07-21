@@ -1694,13 +1694,14 @@
     "docs:install-verify": "bun scripts/docs-install-verify.ts",
     "docs:fresh-rerun": "bun scripts/docs-fresh-rerun.ts",
     "docs:search-governance": "bun scripts/docs-search-governance.ts",
-    "test:cron": "bun test tests/bun-cron.test.ts tests/harness-cron-contract.test.ts tests/bun-explicit-resource.test.ts",
+    "test:cron": "bun test tests/bun-cron.test.ts tests/harness-cron-contract.test.ts tests/bun-explicit-resource.test.ts tests/journey/cron-os-persistent.test.ts",
     "test:install-verify": "bun test tests/journey/install-verify.test.ts",
     "test:search-governance": "bun test tests/journey/search-governance.test.ts",
     "spine:schedule": "bun spine/scheduler.ts",
     "spine:schedule:once": "bun spine/scheduler.ts --once",
     "harness:lesson": "bun scripts/harness-lesson.ts",
-    "search:loop:status": "bun run scripts/search-loop-status.ts"
+    "search:loop:status": "bun run scripts/search-loop-status.ts",
+    "test:cron-os": "bun test tests/journey/cron-os-persistent.test.ts"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",
