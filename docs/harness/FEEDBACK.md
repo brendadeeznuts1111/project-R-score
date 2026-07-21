@@ -94,3 +94,11 @@ Scaffold: `bun run harness:lesson --title="…"`.
 - **Earliest owner:** proof + CI
 - **Ratchet:** `.github/workflows/ci-smoke.yml` · `docs/harness/README.md` Setup · `CI_SPINE_SMOKE_TESTS` in `lib/harness/proof.ts`
 - **Keep / revise / drop:** keep
+
+### Soft PR claim + unprotected main
+
+- **Finding:** Claim→evidence template was social; `main` had no required checks.
+- **Repair:** `check-pr-claim` + `pr-claim.yml` (warn until 2026-07-28); document required checks in AUTHORITY; `ci:harness:fast` for local parity; timings + `--fail-json` on `ci:harness`.
+- **Earliest owner:** proof + AUTHORITY
+- **Ratchet:** `scripts/check-pr-claim.ts` · `.github/workflows/pr-claim.yml` · `docs/harness/AUTHORITY.md`
+- **Keep / revise / drop:** keep (flip claim check to error after warn window)

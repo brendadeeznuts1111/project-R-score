@@ -29,6 +29,18 @@ Before editing: `git status`. Own disjoint paths. Never stage `projects/active/u
 - `origin` → this monorepo (default push)
 - `cascade` → separate project — not the default push target
 
+## Required status checks (`main`)
+
+Branch protection should require these GitHub Actions check names (workflow / job):
+
+| Check | Workflow |
+|-------|----------|
+| `Harness Gates / Harness (install · lint · brands · spine smokes)` | [harness-gates.yml](../../.github/workflows/harness-gates.yml) |
+| `Repo Hygiene / hygiene` | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) |
+| `PR Claim Evidence / Claim → evidence` | [pr-claim.yml](../../.github/workflows/pr-claim.yml) |
+
+Applied on `main` (2026-07-21): those three contexts, `strict` up-to-date, force-push off. Re-apply via Settings → Branches or `gh api` if contexts drift after workflow renames. Without required checks the ratchet is social only.
+
 ## Credential custody
 
 Install / R2 / registry tokens stay in machine env or Bun secrets — not in the prompt. Soft try\* merges: [`lib/security/r2-credentials.ts`](../../lib/security/r2-credentials.ts).

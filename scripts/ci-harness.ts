@@ -1,16 +1,25 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * CI / agent-visible harness gate envelope.
  * Quiet success; on failure prints invariant · owner · repair command.
  *
- *   bun run ci:harness
+ *   bun run ci:harness           # full (matches harness-gates.yml)
+ *   bun run ci:harness:fast      # install · path-bun · bun-env · brands (skip eslint + spine)
+ *   bun scripts/ci-harness.ts --fail-json   # machine-readable failure line on stderr
  */
 import { CI_SPINE_SMOKE_TESTS, CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
+import { hasFlag } from './lib/cli-args';
+import { ensureDir, writeJson } from './lib/fs-bun';
+
+const repoRoot = `${import.meta.dir}/..`;
+const TIMING_PATH = `${repoRoot}/reports/ci-harness-timing.json`;
 
 type Step = { name: string; cmd: string[]; owner: string; repair: string };
+type GateTiming = { name: string; ms: number; ok: boolean };
 
-const steps: Step[] = [
+const ALL_STEPS: Step[] = [
   {
     name: 'proof:install',
     cmd: ['bun', 'run', 'proof:install'],
@@ -49,27 +58,67 @@ const steps: Step[] = [
   },
 ];
 
-async function run(step: Step): Promise<number> {
+/** Fast local parity: install + ratchets + brands (eslint/spine stay in full + pre-commit). */
+const FAST_STEP_NAMES = new Set(['proof:install', 'path-bun', 'bun-env', 'brands-smart']);
+
+async function run(step: Step): Promise<{ code: number; ms: number }> {
   console.info(`→ ${step.name}`);
+  const t0 = performance.now();
   const proc = Bun.spawn(step.cmd, { stdout: 'inherit', stderr: 'inherit', stdin: 'inherit' });
-  return (await proc.exited) ?? 1;
+  const code = (await proc.exited) ?? 1;
+  return { code, ms: Math.round(performance.now() - t0) };
 }
 
-console.info('FactoryWager ci:harness');
+async function writeTimings(timings: GateTiming[], mode: 'full' | 'fast'): Promise<void> {
+  await ensureDir(`${repoRoot}/reports`);
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    full: mode === 'full',
+    mode,
+    totalMs: timings.reduce((s, t) => s + t.ms, 0),
+    gates: timings,
+  };
+  await writeJson(TIMING_PATH, payload);
+  console.info(`⏱  gate timings → reports/ci-harness-timing.json (${payload.totalMs}ms total)`);
+}
+
+function failJson(step: Step, code: number): void {
+  const line = JSON.stringify({
+    ok: false,
+    step: step.name,
+    code,
+    owner: step.owner,
+    repair: step.repair,
+    invariant: 'harness gate must exit 0',
+  });
+  console.error(line);
+}
+
+const fast = hasFlag('fast');
+const wantFailJson = hasFlag('fail-json');
+const mode = fast ? 'fast' : 'full';
+const steps = fast ? ALL_STEPS.filter(s => FAST_STEP_NAMES.has(s.name)) : ALL_STEPS;
+const timings: GateTiming[] = [];
+
+console.info(`FactoryWager ci:harness (${mode})`);
 console.info(`Proof catalog: ${CRITICAL_PROOF_PATHS.length} named paths (lib/harness/proof.ts)`);
 console.info('');
 
 for (const step of steps) {
-  const code = await run(step);
+  const { code, ms } = await run(step);
+  timings.push({ name: step.name, ms, ok: code === 0 });
   if (code !== 0) {
     console.error('');
     console.error(`❌ ${step.name} failed`);
     console.error(`   invariant: harness gate must exit 0`);
     console.error(`   owner: ${step.owner}`);
     console.error(`   repair: ${step.repair}`);
+    if (wantFailJson) failJson(step, code);
+    await writeTimings(timings, mode);
     process.exit(code);
   }
 }
 
+await writeTimings(timings, mode);
 console.info('');
-console.info('✅ ci:harness passed');
+console.info(`✅ ci:harness (${mode}) passed`);

@@ -44,18 +44,23 @@ When a decision is unresolved, read **one** owner below — do not load the full
 bun install                 # runs prepare → husky
 # hooks: .husky/pre-commit (hygiene → pre-commit-harness → ast-grep)
 #        .husky/pre-push   (proof:install)
+bun run ci:harness:fast     # local parity before push (skip eslint + spine)
 bun run ci:harness          # same envelope as .github/workflows/harness-gates.yml (full tier)
 ```
 
 ### CI tier matrix
 
-| Tier | Workflow | What it proves |
-|------|----------|----------------|
+| Tier | Workflow / command | What it proves |
+|------|--------------------|----------------|
 | **fast** (install + hygiene) | [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml) | `install:verify:strict` · cache lifecycle · `hygiene` |
-| **full** (harness envelope) | [harness-gates.yml](../../.github/workflows/harness-gates.yml) | `bun run ci:harness` = proof:install · path-bun · bun-env · eslint bun-native · brands · spine smokes (`CI_SPINE_SMOKE_TESTS`) |
+| **fast** (local agent) | `bun run ci:harness:fast` | proof:install · path-bun · bun-env · brands-smart (no full eslint / spine) |
+| **full** (harness envelope) | [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `bun run ci:harness` | + eslint bun-native · spine smokes (`CI_SPINE_SMOKE_TESTS`); timings → `reports/ci-harness-timing.json` |
+| **claim** (PR social → ratchet) | [pr-claim.yml](../../.github/workflows/pr-claim.yml) | Claim → evidence table filled ([PROOF.md](PROOF.md)); warn-only until 2026-07-28 |
 | manual install-only | [ci-smoke.yml](../../.github/workflows/ci-smoke.yml) | `workflow_dispatch` only — not a third push journey |
 
-Pre-commit write tools (eslint `--fix` · prettier · doc-refs annotate) **fail the commit** if they rewrite staged files — re-stage and retry (no amend thrash). Annotate runs on **staged harness paths only**. PR template: claim→evidence ([PROOF.md](PROOF.md)).
+**Required status checks (main):** `Harness Gates / Harness (install · lint · brands · spine smokes)` · `Repo Hygiene / hygiene` · `PR Claim Evidence / Claim → evidence` — see [AUTHORITY.md](AUTHORITY.md).
+
+Pre-commit write tools (eslint `--fix` · prettier · doc-refs annotate) **fail the commit** if they rewrite staged files — re-stage and retry (no amend thrash). Annotate runs on **staged harness paths only**.
 
 ## Day loop (honest)
 
@@ -74,6 +79,8 @@ bun run test:changed            # working tree (staged+unstaged+untracked)
 #   bun run test:parallel | test:isolate
 #   SHARD=1/3 bun run test:shard
 bun run proof:install           # journey: install layout healthy
+bun run ci:harness:fast         # before push: install · ratchets · brands (quick)
+# bun run ci:harness            # full CI envelope when touching lint/spine surfaces
 bun run check:path-bun          # lib/ path ratchet
 bun run check:bun-env           # lib/ + scripts/ Bun.env ratchet
 bun run cli:docs                # when CLI surface changes

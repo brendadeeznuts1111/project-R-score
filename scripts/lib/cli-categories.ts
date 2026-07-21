@@ -94,6 +94,9 @@ export const CLI_SPECIAL: Record<string, string> = {
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
   'harness:status': 'Day-loop + ratchet discovery (tool legibility)',
   'ci:harness': 'CI harness envelope (install · lint · brands · spine smokes)',
+  'ci:harness:fast':
+    'Fast local CI parity (install · path-bun · bun-env · brands; skip eslint/spine)',
+  'check:pr-claim': 'PR Claim → evidence body check (warn-first → error after 2026-07-28)',
   'proof:install': 'Journey proof: install layout healthy',
   'harness:lesson': 'Scaffold a FEEDBACK.md lesson stub',
 };
@@ -123,6 +126,8 @@ export const CLI_CORE_CMDS = new Set([
   'type-check',
   'harness:status',
   'ci:harness',
+  'ci:harness:fast',
+  'check:pr-claim',
   'proof:install',
   'cli:docs',
   'registry:projects',
