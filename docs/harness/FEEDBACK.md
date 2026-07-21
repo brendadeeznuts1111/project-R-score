@@ -45,5 +45,6 @@ Scaffold: `bun run harness:lesson --title="…"`.
 | Heap profile / fat READMEs | doc-map | gitignore `lib/profile.md` · JIT READMEs |
 | Pre-commit ESLint cold | script-gate | `.cache/eslint-bun-native` |
 | GHA billing lock | ops | unlock Actions billing; local `ci:core` still proves |
+| SSOT doc encyclopedia tax | doc-map | compress OPERATE / standards / docs/AGENTS to JIT |
 
 Full prose lessons: `git show 4bd1e324:docs/harness/FEEDBACK.md` (pre-compression).

@@ -1,171 +1,28 @@
-# Bun docs stack — operate & observe
+# Bun docs operate
 
-**Status**: Live  
-**Code**: [`tools/bun-doc-refs.ts`](../tools/bun-doc-refs.ts) · catalog [`tools/bun-docs-catalog.ts`](../tools/bun-docs-catalog.ts) · **northstar** [`lib/docs/token-ref.ts`](../lib/docs/token-ref.ts)  
-**Related**: agent entry [`AGENTS.md`](../AGENTS.md) § Bun API references · retired dumps removed from live `docs/` (recover via `git log -- docs/<file>`)
+**Northstar:** `lib/docs/token-ref.ts` → `BunToken` export · tools: `tools/bun-doc-refs.ts` · `tools/bun-docs-catalog.ts`
 
-Continuity layer for the docs intelligence pipeline: **integrity → self-heal → regen → log → status**.
-
-Every Bun token is a knowledge unit with two layers:
-
-| Layer | Module | Audience |
-|-------|--------|----------|
-| **TokenRef** | [`lib/docs/token-ref.ts`](../lib/docs/token-ref.ts) | Interior harness (brands, provenance) |
-| **BunToken** | [`lib/docs/bun-token.ts`](../lib/docs/bun-token.ts) | **Agent export** — `suggest` / `export` / JSON Schema |
-
-Flow: `DocCatalogEntry → TokenRef → BunToken`. Overlay hits populate `versionEvents[]` (full timeline).
-
-### One mental model
+## Day commands
 
 | Intent | Command |
 |--------|---------|
-| Refresh all evidence | `bun run docs:refresh` |
-| Resolve a BunToken | `bun tools/bun-doc-refs.ts suggest <token>` |
-| Locus table (bounded) | `bun tools/bun-doc-refs.ts locus --depth=20` · `--all` · `--tsv` · `--json` · `--type=api` |
-| Locus STATUS canvas | `bun tools/_gen-locus-canvas.ts` (Bun.color HSL → STATUS column) |
-| Agent pack (BunToken JSON) | `bun tools/bun-docs-catalog.ts export` · `--jsonl` |
-| Thin TSV | `bun run docs:catalog:export` (`--compact`) |
-| Health + tier-A scoreboard | `bun tools/bun-doc-refs.ts status` |
+| Full refresh | `bun run docs:refresh` |
+| Suggest token | `bun tools/bun-doc-refs.ts suggest <token>` |
+| Integrity | `bun tools/bun-doc-refs.ts integrity` · `--fix` / `--fix-dry` |
+| Status | `bun tools/bun-doc-refs.ts status` |
+| Catalog export | `bun run docs:catalog:export` |
+| Locus | `bun tools/bun-doc-refs.ts locus --depth=20` |
 
-Power list flags (`-w` / `-n` / `-c` / `-l`) remain on `bun-docs-catalog.ts list`; they are terminal conveniences, not the northstar vocabulary.
-
----
-
-## Commands
-
-| Command | Purpose |
-|---------|---------|
-| `bun tools/bun-doc-refs.ts integrity` | Full gate: taxonomy coverage · index · canonical map · repo links |
-| `bun tools/bun-doc-refs.ts integrity --fix` | **Self-heal**: fuzzy-match missing sidebar titles → write aliases → re-check |
-| `bun tools/bun-doc-refs.ts integrity --fix-dry` | Report alias fixes without writing taxonomy |
-| `bun tools/bun-doc-refs.ts integrity --fix --no-live` | Heal using local index only (no `llms.txt` fetch) |
-| `bun tools/bun-doc-refs.ts status` | ASCII dashboard; exit 1 if last integrity run &gt; 7 days |
-| `bun tools/bun-doc-refs.ts schedule --once` | One integrity pass + append `reports/doc-integrity.jsonl` |
-| `bun tools/bun-doc-refs.ts schedule` | In-process `Bun.cron` weekly (`0 6 * * *` UTC default) |
-| `bun tools/bun-docs-index-gen.ts` | Rebuild index from live `llms.txt` (+ `bunVersion` pin) |
-| `bun tools/bun-docs-releases.ts index` | **Phase 0** — fetch `https://bun.com/rss.xml` → `tools/release-index.json` (version → blog URL) |
-| `bun tools/bun-docs-releases.ts scrape` | **Phase 2b** — scrape release posts → `tools/bun-docs-release-overlay.json` (SHIP/FIX/CHG) |
-| `bun tools/bun-docs-catalog.ts build [--version=X]` | Structured catalog; pin `bunVersion` + `releaseUrl`; **BLOG** from RSS; **NOTE** from HTML + MD fallback |
-| `bun tools/bun-docs-catalog.ts build --skip-notes` | Catalog build without live NOTE fetches |
-| `bun tools/bun-docs-catalog.ts export --compact` | TSV for agents: name · type · ship · fix · chg · pin · blog · doc · note |
-| `bun tools/bun-docs-catalog.ts export --jsonl` | JSONL compact rows for agent context packing |
-| `bun tools/bun-docs-catalog.ts list --section=runtime --type=api` | List slice (header shows version / release / blog) |
-| `bun tools/bun-docs-catalog.ts get Bun.WebView` | One entry with docsUrl + releaseUrl + blogUrl |
-| `bun tools/bun-docs-catalog.ts verify` | Fail if catalog `bunVersion` ≠ runtime (or `--version=`) |
-| `bun tools/generate-tokens-from-docs.ts [--version=X]` | Optional: rebuild token **supplement** only (not in `docs:refresh`; catalog merge consumes it) |
-| `bun run docs:release-index` | npm alias for Phase 0 RSS refresh |
-| `bun run docs:release-scrape` | npm alias for Phase 2b scrape (incremental via guid state) |
-| `bun run docs:refresh` | Full loop: release-index → scrape → catalog build → integrity log |
-| `bun run docs:catalog:build` / `docs:catalog` | Build / list catalog |
-| `bun run docs:catalog:export` | npm alias for compact TSV export |
-| `bun tools/bun-doc-refs.ts suggest Bun.Image` | **Catalog-first** lookup (NOTE/SHIP/FIX/BLOG/DOC) |
-| `bun tools/bun-doc-refs.ts locus --depth=N` | Locus table: TOKEN · TYPE · **STATUS** · PAGE · FRAGMENT · SUGGESTION · SCORE · HAS_REF (`--all` includes fragment/page) |
-| `bun tools/bun-doc-refs.ts status` | Integrity + **tier-A** coverage dashboard |
-| `bun tools/bun-doc-refs.ts catalog --build` | Same via bun-doc-refs |
-| `bun tools/bun-doc-refs.ts catalog --section=runtime --type=api` | List catalog slice |
-| `bun tools/bun-doc-refs.ts catalog get Bun.WebView` | One catalog entry |
-
-Env: **`DOC_INTEGRITY_AUTOFIX=1`** — schedule path auto-runs `--fix` when integrity fails.
-
----
+Loop: RSS index → scrape → catalog build → integrity log (`docs:refresh`).
 
 ## When integrity fails
 
-```text
-1. bun tools/bun-doc-refs.ts status          # how stale? which Bun?
-2. bun tools/bun-doc-refs.ts integrity --fix-dry   # preview alias heals
-3. bun tools/bun-doc-refs.ts integrity --fix       # write aliases
-4. If still FAIL:
-   a. map/repo layers → fix dead anchors in code (deepcheck)
-   b. taxonomy still unresolved → hand-edit aliases or sidebar titles
-5. bun tools/bun-docs-index-gen.ts           # regen after live docs change
-6. bun tools/bun-doc-refs.ts schedule --once # log PASS
-```
+1. `status` — staleness / Bun pin
+2. `integrity --fix-dry` then `--fix`
+3. Fix dead anchors / taxonomy aliases; re-run `docs:refresh`
 
-**Self-heal scope:** taxonomy **alias** drift only (e.g. `Utilities` ↔ `Utils`).  
-Does **not** invent new sidebar sections or rewrite CANONICAL_REFS.
+Env: `DOC_INTEGRITY_AUTOFIX=1` on schedule path.
 
----
+Agent entry: root [`AGENTS.md`](../AGENTS.md) § Bun API references · capabilities: [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md).
 
-## Logs & version pins
-
-| Artifact | Contents |
-|----------|----------|
-| `reports/doc-integrity.jsonl` | `{ ts, failures, ok, bunVersion, stats, regen, autoFix }` |
-| `tools/bun-docs-index.json` | `generated`, `source`, `bunVersion`, `upstreamBunVersion`, entries |
-| `tools/release-index.json` | RSS-derived release posts: `{ version, title, url, guid, pubDate }[]` |
-| `tools/bun-docs-release-overlay.json` | Scraped SHIP/FIX/CHG from release blog posts (Phase 2b) |
-| `tools/bun-docs-catalog.json` | `bunVersion`, `releaseUrl`, `blogUrl`, optional `commitHash`, entries with `docsUrl` |
-| `tools/bun-docs-token-supplement.json` | Same pin fields + `entries[]` (generator output) |
-| `tools/bun-docs-changelog.ts` | Curated token overlay: feature/fix/change → `releasedIn` / `fixedIn` / `changeNote` / optional SHA |
-| `tools/.cache/bun-rss/` | Conditional-GET cache for RSS (ETag / Last-Modified) |
-| `tools/.cache/bun-docs-notes/` | Cached NOTE extractions keyed by doc URL |
-| `tools/.cache/bun-blog-posts/` | Cached release post HTML + incremental scrape state |
-| `reports/release-scrape-review.jsonl` | Unmatched token-like strings from blog scrape (human review queue) |
-
-## Canonical operate loop
-
-```text
-bun run docs:refresh              # all-in-one (recommended)
-# or step-by-step:
-bun run docs:release-index          # Phase 0: RSS → release-index.json
-bun run docs:release-scrape         # Phase 2b: posts → release-overlay.json (incremental)
-bun tools/generate-tokens-from-docs.ts   # when docs change
-bun tools/bun-docs-index-gen.ts          # when llms.txt changes
-bun run docs:catalog:build               # merge all sources + coverage report
-bun tools/bun-doc-refs.ts integrity [--fix]
-bun tools/bun-doc-refs.ts schedule --once
-```
-
-`bun tools/bun-doc-refs.ts status` shows **tier-A** coverage: NOTE · SHIP · BLOG · FIX · **LOC** (verified fragment) · **EX** (lang-tagged example) · **HIST** (attested timeline).
-
-## Coverage targets
-
-| Field | Target |
-|-------|--------|
-| DOC (`docsUrl`) | 100% of catalog entries |
-| PIN (`verifiedOn`) | 100% (catalog pin) |
-| NOTE (`description`) | ≥95% for tier-A types |
-| LOC (`anchor`, verified) | ≥90% for tier-A types |
-| EX (`examples[]`) | Growing — lang-tagged fences from docs |
-| BLOG | RSS-validated only (never synthetic) |
-| SHIP (`releasedIn`) | Full release history via scrape + curated |
-| HIST | introduced and/or fix/change with evidence URL |
-
-Catalog build prints NOTE/BLOG/SHIP percentages and warns when typed NOTE coverage drops below 95%.
-
-Version pin links (docs pages stay unversioned on bun.com):
-
-| Field | Example |
-|-------|---------|
-| `bunVersion` | `1.3.12` (from `Bun.version` or `--version=`) |
-| `releaseUrl` | `https://github.com/oven-sh/bun/releases/tag/bun-v1.3.12` |
-| `blogUrl` | RSS-validated `https://bun.com/blog/bun-v1.3.12` (empty if not in feed; entries may add `#bugfixes`) |
-| `commitHash` | short `Bun.revision` when pin matches the running binary |
-| `docsUrl` | `https://bun.com/docs/runtime/...` (latest, not `/docs/v1.3.12/`) |
-| `description` / NOTE | Curated/index text, else first `<p>` / meta description from the doc page |
-| `fixedIn` / `changeNote` | From changelog overlay, e.g. `process.env` → `1.3.12` + note |
-
-**Changelog overlay (not a scraper):** add a row to `CHANGELOG_EVENTS` in `tools/bun-docs-changelog.ts` when a token has upgrade impact. Prefer a real git SHA when known; leave `commit` blank rather than inventing one. Curated `minVersion` values auto-seed feature events.
-
-`status` marks integrity **STALE** if last JSONL run is older than **7 days** (process/cron death signal).
-
----
-
-## Roadmap (phases)
-
-| Phase | Focus | Status |
-|-------|--------|--------|
-| **0** RSS release index | `bun tools/bun-docs-releases.ts index` → `release-index.json` | **Shipped** |
-| **1** NOTE + BLOG enrichment | Doc HTML notes + RSS-validated blog URLs in catalog build | **Shipped** |
-| **2** Operate & observe | `--fix`, version pin, `status` health | **Shipped** (this doc + integrity flags) |
-| **2b** SHIP/FIX/CHG from blog sections | `bun tools/bun-docs-releases.ts scrape` → overlay merge in catalog build | **Shipped** |
-| **Northstar** TokenRef schema | `lib/docs/token-ref.ts` + locus/examples/history metrics | **Shipped** |
-| **3** Expand | RRF hybrid search, multi-stack sources, IDE | Planned |
-| **4** Governance | richer migrations for cache DBs, dashboards | Ongoing (JSONL + status for now) |
-
----
-
-## Strict rule
-
-> Integrity alerts are not the end state. Prefer **`--fix` for alias renames**, then regenerate the index. Only escalate human review when fuzzy match score is low or map/repo anchors break.
+Longer command encyclopedia: `git log -- docs/BUN_DOCS_OPERATE.md`.

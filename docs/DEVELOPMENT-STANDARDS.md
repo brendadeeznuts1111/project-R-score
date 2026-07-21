@@ -1,163 +1,46 @@
 # Development Standards — Quick Reference
 
-> Full standards: [`.custom-instructions.md`](../.custom-instructions.md)  
-> Agents / install / brands: [`AGENTS.md`](../AGENTS.md) · Layout: [`STRUCTURE.md`](../STRUCTURE.md) · Install: [`UNIFIED.md`](./UNIFIED.md)  
-> Wire boundary: [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md)  
-> Harness thesis: [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering)
-
----
+> Full: [`.custom-instructions.md`](../.custom-instructions.md) · Agents: [`AGENTS.md`](../AGENTS.md) · Wire: [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md) · Install: [`UNIFIED.md`](./UNIFIED.md)
 
 ## Terminology
 
 | Prefer | Avoid |
 |--------|--------|
-| **artifact** (delivered / maintained / proven thing) | “codebase” |
-| **repository** / **source tree** (location) | “codebase” |
-| **brand** / domain type | bare `string` for domain IDs |
+| **artifact** | “codebase” (for delivered/proven things) |
+| **repository** / **source tree** | “codebase” (for location) |
+| **brand** | bare `string` domain IDs |
 
-Source is one replaceable realization of durable contracts. See [Stop Treating Code as the Artifact](https://hyperbo.la/w/code-is-not-the-artifact/).
+## Domain IDs (mandatory)
 
----
-
-## Core stack
-
-| Layer | Choice |
-|-------|--------|
-| Runtime | Bun |
-| Language | TypeScript (ESM) |
-| Package manager | Bun (`install:all` / `install:verify`) |
-| Tests | Bun test |
-| Lint / format | ESLint + Prettier |
-| Domain IDs | Branded strings (`lib/types/branded.ts`) |
-
----
-
-## Domain strings (harness) — mandatory
-
-**Parse once at the boundary; internal APIs use brands, not bare `string`.** Agents may not add `sessionId: string` / `function f(userId: string)` / `id: string` — pre-commit `--staged --strict` has no baseline. Bare `id: string` / `_id: string` DTO primary keys must be explicitly suppressed with `// brand-ok`; the detector no longer auto-suppresses opaque primary keys.
-
-**Also:** no `decodeUnknownSync` outside the boundary; no `unknown` function params outside the boundary — full map [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md) (`harness/no-decode-unknown-outside-boundary`, `harness/no-unknown-function-param`).
+Parse once at the boundary. No `sessionId: string` / bare `id: string` without `// brand-ok`.
 
 | Boundary | Constructor |
 |----------|-------------|
-| Wire / JSON / env | `parseXId(unknown)` |
-| Optional config | `tryXId(...)` → `undefined` if blank |
-| Trusted internal | `asXId(string)` |
+| Wire | `parseXId(unknown)` |
+| Optional | `tryXId(...)` |
+| Trusted | `asXId(string)` |
 
 ```bash
 bun tools/brand-catalog.ts
-bun run check:brands:staged   # your diff (hook equivalent)
-bun run check:brands
 bun run check:brands:all
 ```
 
-Map: [`lib/types/branded/README.md`](../lib/types/branded/README.md). Bare `string` is OK for non-domain text only.
-
----
-
-## Enforced rules (eslint / harness)
-
-| Don’t | Do |
-|-------|-----|
-| `console.log` | `console.info` / `warn` / `error` |
-| `any` / `as any` | `unknown` + guards |
-| bare `string` domain IDs | brands (`SessionId`, …) |
-| `export default` | Named exports |
-| `value!` | `?.` / defaults |
-| Empty `catch` | Handle or rethrow |
-| Hardcoded secrets | `config/ports.ts`, `config/r2-env.ts` |
+## Everyday
 
 ```bash
-bun run fix:console-log
-bun run fix:scan-any-types
-bun run fix:scan-default-exports
-bun run fix:scan-non-null-assertions
-```
-
----
-
-## Everyday commands
-
-```bash
-bun run install:all
 bun run install:verify
-bun run validate:workspaces
-bun run packages:list
-bun run lint
+bun run type-check
+bun run test:changed
 bun run lint:harness
-bun run format:core
-bun run check:brands:all
-bun run dev
-bun test
-```
-
----
-
-## Brands & Bun docs
-
-```bash
-bun tools/brand-catalog.ts
-bun run check:brands
+bun run harness:status
 bun tools/bun-doc-refs.ts suggest "Bun.secrets"
 ```
 
-- Brands: [`lib/types/branded/README.md`](../lib/types/branded/README.md)
-- Console depth: [`lib/console-depth.ts`](../lib/console-depth.ts)
+## Before merge
 
----
+- Tests / type-check clean on touched surface
+- Harness eslint on staged paths (`--max-warnings 0`)
+- Bun APIs have `// @see` when required
+- Domain IDs branded; prose uses **artifact** not **codebase**
 
-## Testing sketch
-
-```typescript
-describe("utility", () => {
-  it("handles the happy path", () => {
-    const input = "x";
-    const result = utility(input);
-    expect(result).toBe("y");
-  });
-});
-```
-
-Root harness suites: [`tests/`](../tests/). Prefer Arrange → Act → Assert. Match proof to the claim; promote the same artifact CI validated.
-
----
-
-## Security checklist
-
-- [ ] Validate untrusted / wire input before use (`parse*` for brands)
-- [ ] No `eval` / `Function` on untrusted data
-- [ ] Errors do not leak secrets
-- [ ] Deploy env via `config/r2-env.ts` / documented vars
-- [ ] Prefer HTTPS for external calls
-
----
-
-## Quality gates (before merge)
-
-- [ ] Relevant tests pass (`bun test` / `test:affected`)
-- [ ] No new TypeScript errors on touched surface
-- [ ] ESLint / harness gates clean on staged paths
-- [ ] Bun API usages have `// @see` refs when required
-- [ ] Domain IDs are branded (no new bare-string ID ports)
-- [ ] Prose uses **artifact** / **repository**, not **codebase**, for agent-facing docs
-
----
-
-## Doc map
-
-| Doc | Role |
-|-----|------|
-| [`.custom-instructions.md`](../.custom-instructions.md) | Complete coding standards |
-| [`AGENTS.md`](../AGENTS.md) | AI agent entrypoint |
-| [`STRUCTURE.md`](../STRUCTURE.md) | Workspace map |
-| [`README.md`](../README.md) | Human hub |
-| [`IMPORT_BOUNDARIES.md`](./IMPORT_BOUNDARIES.md) | Package import rules |
-| [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md) | Wire / parse-once boundary |
-| [`UNIFIED.md`](./UNIFIED.md) | Bun install policy |
-| [`lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) | Path SSOT (`CANONICAL_REPO_DOCS`) |
-| [`lib/types/branded/README.md`](../lib/types/branded/README.md) | Branded IDs |
-| [`lib/console-depth.ts`](../lib/console-depth.ts) | Inspect depth |
-| [`config/eslint/plugin-harness/boundary.ts`](../config/eslint/plugin-harness/boundary.ts) | Boundary ESLint (`BOUNDARY_POLICY`) |
-| [harness-engineering](https://github.com/lopopolo/harness-engineering) | External thesis corpus |
-
-*Keep this file in sync with `.custom-instructions.md` and `CANONICAL_REPO_DOCS` when conventions change.*
+Map: [docs/README.md](./README.md) · brands: [`lib/types/branded/README.md`](../lib/types/branded/README.md).
