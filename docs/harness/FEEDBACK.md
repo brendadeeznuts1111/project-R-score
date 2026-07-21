@@ -66,6 +66,8 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
   *Ratchet* → `tsconfig.check.json` include `lib/utils/**/*` · claim `lib-utils-typecheck` · `bun run type-check`
 - **lib/core dual-era / ErrorSeverity string literals (closed)** (`type`)  
   *Ratchet* → `tsconfig.check.json` include `lib/core/**/*` · claim `lib-core-typecheck` · `bun run type-check`
+- **lib/security dual-era (closed)** (`type`)  
+  *Ratchet* → `tsconfig.check.json` include `lib/security/**/*` · claim `lib-security-typecheck` · `bun run type-check`
 - **tools/ path dual-era (closed)** (`type`)  
   *Ratchet* → `bun run check:path-bun` covers `lib/**` + `tools/**` · claim `path-bun`
 - **Discover / gate timing dumps in `git status`** (`script-gate`)  

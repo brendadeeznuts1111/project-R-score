@@ -16,7 +16,7 @@ Dominant cost was full-tree ESLint. Default `ci:harness` now uses `lint:bun-nati
 
 ### `type-check` (`tsconfig.check.json`)
 
-Pre-transform `include` covered only a thin slice. Day-loop now covers spine agent surfaces: `lib/types/**`, `lib/path-bun`, `lib/harness/**`, `lib/docs/**`, `lib/utils/**`, `lib/core/**`, `spine/**`, key `scripts/*` / `scripts/lib/*`. Ghost includes removed. Remaining type debt: `lib/security/**` (after core). `projects/**` stays product-owned (`typecheck` / `projects:roots:check`).
+Pre-transform `include` covered only a thin slice. Day-loop now covers spine agent surfaces: `lib/types/**`, `lib/path-bun`, `lib/harness/**`, `lib/docs/**`, `lib/utils/**`, `lib/core/**`, `lib/security/**`, `spine/**`, key `scripts/*` / `scripts/lib/*`. Ghost includes removed. Remaining type debt: other uncovered `lib/*` islands. `projects/**` stays product-owned (`typecheck` / `projects:roots:check`).
 
 ### `build:affected` / `test:affected`
 
@@ -49,7 +49,7 @@ Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
 | `Bun.env` vs `process.env` | **Done** — spine clean + `bun run check:bun-env` (pre-commit when lib\|scripts staged; migrator/catalog allowlist) |
 | Bun pin / dead workspace glob | **Done** — `packageManager` `bun@1.4.0`; removed `kimiremote` workspace glob ([HOMEBASE_DISCOVERY](HOMEBASE_DISCOVERY.md)) |
 
-Day-loop `type-check` includes full `lib/docs/**`, `lib/utils/**`, and `lib/core/**` (claims `lib-docs-typecheck`, `lib-utils-typecheck`, `lib-core-typecheck`).
+Day-loop `type-check` includes full `lib/docs/**`, `lib/utils/**`, `lib/core/**`, and `lib/security/**` (claims `lib-docs-typecheck`, `lib-utils-typecheck`, `lib-core-typecheck`, `lib-security-typecheck`).
 
 Bun test (1.3.13+ / live on 1.4.0): day-loop adds `test:changed` (import graph), `test:parallel` / `test:isolate`, `test:shard` (`SHARD=M/N`). Distinct from `test:affected` (workspace package scripts).
 

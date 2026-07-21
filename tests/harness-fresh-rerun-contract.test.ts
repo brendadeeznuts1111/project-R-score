@@ -44,6 +44,11 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run type-check');
   });
 
+  test('lib-security-typecheck freshRerun is day-loop type-check', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'lib-security-typecheck');
+    expect(p?.freshRerun).toBe('bun run type-check');
+  });
+
   test('path-bun claim covers lib and tools', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'path-bun');
     expect(p?.claim).toContain('tools/');
@@ -52,13 +57,14 @@ describe('fresh-rerun contract', () => {
 });
 
 describe('typecheck coherence includes', () => {
-  test('tsconfig.check.json includes lib/docs, lib/utils, and lib/core globs', async () => {
+  test('tsconfig.check.json includes lib/docs, utils, core, and security globs', async () => {
     const cfg = (await Bun.file(
       new URL('../tsconfig.check.json', import.meta.url).pathname
     ).json()) as { include: string[] };
     expect(cfg.include).toContain('lib/docs/**/*');
     expect(cfg.include).toContain('lib/utils/**/*');
     expect(cfg.include).toContain('lib/core/**/*');
+    expect(cfg.include).toContain('lib/security/**/*');
     expect(cfg.include.some(p => p.startsWith('lib/docs/') && p !== 'lib/docs/**/*')).toBe(
       false
     );
@@ -68,6 +74,9 @@ describe('typecheck coherence includes', () => {
     expect(cfg.include.some(p => p.startsWith('lib/core/') && p !== 'lib/core/**/*')).toBe(
       false
     );
+    expect(
+      cfg.include.some(p => p.startsWith('lib/security/') && p !== 'lib/security/**/*')
+    ).toBe(false);
     expect(cfg.include).not.toContain('src/**/*');
     expect(cfg.include).not.toContain('lib/udp/**/*');
     expect(cfg.include).not.toContain('lib/env/**/*');

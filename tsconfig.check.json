@@ -17,6 +17,7 @@
     "lib/docs/**/*",
     "lib/utils/**/*",
     "lib/core/**/*",
+    "lib/security/**/*",
     "spine/**/*",
     "lib/console-depth.ts",
     "lib/projects-scan.ts",

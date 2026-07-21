@@ -45,6 +45,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run type-check` · `tsconfig.check.json` include `lib/utils/**/*`
 - **`lib-core-typecheck`** — `lib/core/**` inside day-loop type-check with `ErrorSeverity` enum (`boundary` + `journey`)  
   *Ratchet* → `bun run type-check` · `tsconfig.check.json` include `lib/core/**/*`
+- **`lib-security-typecheck`** — `lib/security/**` inside day-loop type-check (no dual-era security island) (`boundary` + `journey`)  
+  *Ratchet* → `bun run type-check` · `tsconfig.check.json` include `lib/security/**/*`
 - **`bun-cron`** — OS-persistent primary; in-process complement (`unit` + `boundary`)  
   *Ratchet* → `bun run test:cron` · [`cron.md`](cron.md)
 - **`cron-os-persistent`** — OS register → entry → fire `scheduled()` → marker → remove (`journey` + `boundary`)  

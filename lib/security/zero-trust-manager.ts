@@ -841,16 +841,23 @@ export class ZeroTrustManager extends EventEmitter {
     // Emit event for listeners
     this.emit('security-event', event);
 
-    // Log to audit system
+    // Log to audit system (secret-audit ops are a fixed set; map ZT event types)
     await auditLogger.logSecretAccess(
-      event.type,
+      'access_attempt',
       `${event.identityId}-${event.type}`,
       'zero-trust-manager',
       event.result === 'success',
       {
-        userId: event.identityId,
         sessionId: event.context.sessionId,
         ipAddress: event.context.ipAddress,
+      },
+      undefined,
+      event.result === 'success' ? undefined : event.reason,
+      {
+        securityEventType: event.type,
+        severity: event.severity,
+        resource: event.resource,
+        identityId: event.identityId,
       }
     );
   }

@@ -162,6 +162,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun run type-check',
   },
   {
+    id: 'lib-security-typecheck',
+    // owner: tsconfig.check.json · lib/security/**
+    claim: 'lib/security/** is inside tsconfig.check.json (no dual-era security island)',
+    kinds: ['boundary', 'journey'],
+    evidence: [
+      'bun run type-check',
+      'tsconfig.check.json include lib/security/**/*',
+      'lib/security/',
+    ],
+    freshRerun: 'bun run type-check',
+  },
+  {
     id: 'bun-cron',
     claim:
       'Scheduling mirrors Bun: OS-persistent Bun.cron(path, schedule, title) is primary; in-process is the complement (spine uses in-process deliberately)',

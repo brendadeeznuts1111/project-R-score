@@ -56,6 +56,8 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → `tsconfig.check.json` include `lib/utils/**/*` · claim `lib-utils-typecheck` · `bun run type-check`
 - **`lib/core/**` type-check** — core island is one era; `ErrorSeverity` enum at call sites  
   *Ratchet* → `tsconfig.check.json` include `lib/core/**/*` · claim `lib-core-typecheck` · `bun run type-check`
+- **`lib/security/**` type-check** — security island is one era under day-loop tsc  
+  *Ratchet* → `tsconfig.check.json` include `lib/security/**/*` · claim `lib-security-typecheck` · `bun run type-check`
 
 ## Upstream thesis → FactoryWager owner
 
