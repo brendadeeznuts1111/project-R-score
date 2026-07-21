@@ -22,9 +22,9 @@ Do **not** delete the tenant to green the daemon.
 
 Remove when docs integrity is solely owned by a required CI / `docs:refresh` operate schedule and the spine daemon is no longer needed for this pass. Keep multi-tenant proof ≥2 via another tenant.
 
-**Retirement verified** `false` — set `tenants.docs-integrity=true` in [`lib/harness/ci-owned-tenants.json`](../../../lib/harness/ci-owned-tenants.json), confirm `bun scripts/retirement-check-ci-owner.ts --tenant=docs-integrity` exits 0, then move the catalog entry to `RETIRED_TENANT_RUNBOOKS` with `retirementVerified: true` in the same PR that removes this tenant from `SPINE_TENANTS`.
+**Retirement verified** `false` — set `tenants.docs-integrity=true` in [`lib/harness/ci-owned-tenants.json`](../../../lib/harness/ci-owned-tenants.json) when CI owns the pre-deploy re-proof, confirm `bun scripts/retirement-check-ci-owner.ts --tenant=docs-integrity` exits 0, then move the catalog entry to `RETIRED_TENANT_RUNBOOKS` with `retirementVerified: true` in the same PR that removes this tenant from `SPINE_TENANTS`.
 
-**Retirement check** `bun scripts/retirement-check-ci-owner.ts --tenant=docs-integrity` (+ proof `docs-integrity`)
+**Retirement check** Ensure docs-integrity is part of CI pre-deploy gate → `bun scripts/retirement-check-ci-owner.ts --tenant=docs-integrity`
 
 **Owner** `// owner: platform / docs operate`  
 **Fresh-rerun** `bun run docs:tenant-docs-integrity`

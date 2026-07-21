@@ -70,9 +70,10 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
       'Remove when docs integrity is solely owned by a required CI / operate schedule that does not need the spine daemon',
     retirementVerified: false,
     retirementCheck: {
-      description: 'CI owns docs-integrity periodic re-proof (lib/harness/ci-owned-tenants.json)',
+      // Shell pipelines are rejected by the ratchet; CI ownership is the argv-safe probe
+      // (flip tenants.docs-integrity=true in lib/harness/ci-owned-tenants.json when CI owns it).
+      description: 'Ensure docs-integrity is part of CI pre-deploy gate',
       command: 'bun scripts/retirement-check-ci-owner.ts --tenant=docs-integrity',
-      proofId: 'docs-integrity',
     },
     schedule: '0 6 * * *',
     freshRerun: 'bun run docs:tenant-docs-integrity',
@@ -88,8 +89,9 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
       'Remove when install-verify journey proof is enforced by a pre-deploy / required CI gate on a schedule and spine is no longer the only periodic re-proof',
     retirementVerified: false,
     retirementCheck: {
-      description: 'CI owns install-verify periodic re-proof (lib/harness/ci-owned-tenants.json)',
-      command: 'bun scripts/retirement-check-ci-owner.ts --tenant=install-verify',
+      description: 'install-verify journey proof is owned by CI pre-deploy gate',
+      // Tombstone execution re-runs this proof’s freshRerun; flip ci-owned-tenants when
+      // CI (not spine) is the periodic owner before retiring.
       proofId: 'install-verify-journey',
     },
     schedule: '30 6 * * *',

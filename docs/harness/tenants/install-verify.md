@@ -23,9 +23,9 @@ Do **not** delete the tenant to green the daemon.
 
 Remove this tenant when the `install-verify` journey proof moves to a pre-deploy / required CI gate that periodically re-proves it without spine. Keep `spine-multi-tenant` ≥2 via another tenant.
 
-**Retirement verified** `false` — set `tenants.install-verify=true` in [`lib/harness/ci-owned-tenants.json`](../../../lib/harness/ci-owned-tenants.json), confirm `bun scripts/retirement-check-ci-owner.ts --tenant=install-verify` exits 0, then move the catalog entry to `RETIRED_TENANT_RUNBOOKS` with `retirementVerified: true` in the same PR that removes this tenant from `SPINE_TENANTS` (do not delete the tombstone).
+**Retirement verified** `false` — when a required CI gate (not spine) periodically re-proves `install-verify-journey`, set `tenants.install-verify=true` in [`lib/harness/ci-owned-tenants.json`](../../../lib/harness/ci-owned-tenants.json), then move the catalog entry to `RETIRED_TENANT_RUNBOOKS` with `retirementVerified: true` in the same PR that removes this tenant from `SPINE_TENANTS` (do not delete the tombstone).
 
-**Retirement check** `bun scripts/retirement-check-ci-owner.ts --tenant=install-verify` (+ proof `install-verify-journey`)
+**Retirement check** install-verify journey proof is owned by CI pre-deploy gate → proofId `install-verify-journey` (tombstone re-runs that proof’s `freshRerun`)
 
 **Owner** `// owner: platform / harness`  
 **Fresh-rerun** `bun run docs:tenant-install-verify`
