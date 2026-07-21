@@ -46,6 +46,8 @@ export const CANONICAL_REPO_DOCS = {
   harnessProof: 'docs/harness/PROOF.md',
   /** Feedback → ratchet lessons */
   harnessFeedback: 'docs/harness/FEEDBACK.md',
+  /** Capability vs permission / lanes */
+  harnessAuthority: 'docs/harness/AUTHORITY.md',
   /** Projects triage + agent scope */
   projectsTriage: 'projects/README.md',
   /** Historical standards implementation notes */
@@ -61,6 +63,7 @@ export const CANONICAL_HARNESS = {
   pathBun: 'lib/path-bun.ts',
   checkPathBun: 'scripts/check-path-bun.ts',
   checkBunEnv: 'scripts/check-bun-env.ts',
+  harnessStatus: 'scripts/harness-status.ts',
   harnessProof: 'lib/harness/proof.ts',
   projectsScan: 'lib/projects-scan.ts',
   r2Credentials: 'lib/security/r2-credentials.ts',
@@ -124,6 +127,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   harnessIndex: 'JIT harness thesis index',
   harnessProof: 'Proof claim kinds',
   harnessFeedback: 'Feedback → ratchet lessons',
+  harnessAuthority: 'Authority / lanes / consequential grants',
   projectsTriage: 'Projects triage + agent scope',
   standardsImplementation: 'Historical standards implementation',
 } as const;

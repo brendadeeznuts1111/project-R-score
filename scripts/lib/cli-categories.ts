@@ -83,6 +83,8 @@ export const CLI_SPECIAL: Record<string, string> = {
   'test:affected': 'Test git-changed workspaces (scripts/affected-workspaces.ts)',
   'check:path-bun': 'Ratchet: no path/node:path imports under lib/',
   'check:bun-env': 'Ratchet: no process.env under lib/ + scripts/',
+  'harness:status': 'Day-loop + ratchet discovery (tool legibility)',
+  'harness:lesson': 'Scaffold a FEEDBACK.md lesson stub',
 };
 
 /** Always shown under Core in generated docs even without a prefix match. */

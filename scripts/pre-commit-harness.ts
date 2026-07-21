@@ -40,6 +40,7 @@ const DOC_MAP_SSOT = new Set([
   'docs/harness/README.md',
   'docs/harness/PROOF.md',
   'docs/harness/FEEDBACK.md',
+  'docs/harness/AUTHORITY.md',
   'docs/organization/VELOCITY_BASELINE.md',
   'docs/organization/BLOAT_SPEED_PASS.md',
   'lib/README.md',

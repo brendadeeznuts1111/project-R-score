@@ -10,7 +10,7 @@ description: >-
 
 Observe a failed or slow agent trajectory, find the earliest failed handoff, apply the smallest reversible fix at the owning boundary, then fresh-rerun and keep/revise/drop.
 
-Upstream shape: [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) playbooks (transform, don't clone).
+Upstream shape: [improve-harness playbook](https://github.com/lopopolo/harness-engineering/blob/trunk/playbooks/improve-harness.md) — transform, don't clone.
 
 ## When to use
 
@@ -19,17 +19,36 @@ Upstream shape: [lopopolo/harness-engineering](https://github.com/lopopolo/harne
 - Repeated review corrections that never become ratchets
 - Unclear which doc owns a nonfunctional requirement
 
+## Job contract (record before changing the harness)
+
+```text
+Target and revision:
+Fixed model / agent:
+Representative job:
+Accepted outcome:
+Evidence that proves the outcome:
+Authority envelope:          # see docs/harness/AUTHORITY.md
+Budget and stop conditions:
+Suspected harness gap:
+```
+
 ## Loop
 
 1. **Observe** — capture the failing command, claim made, and files touched.
-2. **Earliest failed handoff** — context missing? wrong proof? competing precedent? gate tax?
-3. **Owner** — route via [`docs/harness/README.md`](../../../docs/harness/README.md).
-4. **Smallest reversible fix** — prefer type/lint/skill/doc-map over new scripts.
-5. **Fresh rerun** — same claim; keep / revise / drop.
-6. **Lesson** — fill [`docs/harness/FEEDBACK.md`](../../../docs/harness/FEEDBACK.md) template if it will recur.
+2. **Earliest failed handoff** — classify: context | capability | domain ownership | authority | proof | feedback | worker limitation (candidate only).
+3. **Owner** — route via [`docs/harness/README.md`](../../../docs/harness/README.md) (one thesis hop).
+4. **Hypothesis** — If \<intervention\> at \<owner\>, then \<observable change\> on \<job\>, because \<mechanism\>.
+5. **Smallest reversible fix** — prefer type/lint/skill/doc-map over new scripts; verify native checks + claim journey.
+6. **Fresh rerun** — same claim/class of job; confirm the intervention was actually retrieved/invoked.
+7. **Retain / revise / remove** — justify carrying cost; record lesson if it will recur.
+
+## Lesson
+
+Fill [`docs/harness/FEEDBACK.md`](../../../docs/harness/FEEDBACK.md) or `bun run harness:lesson --title="…"`.
 
 ## Do not
 
-- Sweep parallel-lane dirty trees (proton-pass, etc.)
+- Sweep parallel-lane dirty trees (see AUTHORITY)
 - Add package.json aliases as a substitute for proof
 - Clone upstream harness-engineering docs wholesale
+- Weaken a grader / skip hooks to make a run pass

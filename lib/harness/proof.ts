@@ -12,7 +12,7 @@ export type ProofPath = {
   evidence: string[];
 };
 
-/** Start set of named critical paths (expand carefully). */
+/** Named critical paths (expand carefully). */
 export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'branded-ids',
@@ -43,6 +43,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     claim: 'Spine lib/ + scripts/ do not read environment via the Node process object',
     kinds: ['boundary'],
     evidence: ['bun run check:bun-env'],
+  },
+  {
+    id: 'unknown-param',
+    claim: 'Bare unknown function params stay at parse*/FromUnknown edges',
+    kinds: ['boundary'],
+    evidence: ['bun eslint --config eslint.bun-native.config.ts --quiet'],
+  },
+  {
+    id: 'day-loop-typecheck',
+    claim: 'Advertised type-check covers spine agent edit surfaces',
+    kinds: ['journey'],
+    evidence: ['bun run type-check', 'tsconfig.check.json'],
   },
 ] as const;
 

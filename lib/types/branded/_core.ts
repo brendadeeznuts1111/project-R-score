@@ -15,9 +15,24 @@
  * Zero runtime cost by default. Set BRAND_PROVENANCE=1 to log mints (audit trail).
  */
 
-import { BrandValidationError } from '../../core/core-errors.ts';
+import { BrandValidationError, type WireRejectValue } from '../../core/core-errors.ts';
 
 declare const brand: unique symbol;
+
+/** Narrow wire rejects for BrandValidationError (boundary only). */
+function asWireReject(value: unknown): WireRejectValue {
+  switch (typeof value) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+    case 'undefined':
+      return value;
+    case 'object':
+      return value; // includes null
+    default:
+      return String(value);
+  }
+}
 
 /** Nominal brand wrapper: string at runtime, distinct type at compile time. */
 export type Brand<T, B> = T & { readonly [brand]: B };
@@ -99,7 +114,7 @@ export function parseBrandId<B extends string>(
   brandFn: (v: string) => BrandedString<B>
 ): BrandedString<B> {
   if (typeof value !== 'string' || value.trim() === '') {
-    throw new BrandValidationError(kind, value);
+    throw new BrandValidationError(kind, asWireReject(value));
   }
   const trimmed = value.trim();
   logMint(kind, 'parse', trimmed);

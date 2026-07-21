@@ -11,6 +11,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | This file (agent entry) | [`AGENTS.md`](AGENTS.md) |
 | Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) (aligned to this entry + UNIFIED / WIRE_BOUNDARY) |
 | Harness JIT index | [`docs/harness/README.md`](docs/harness/README.md) (when NFR unresolved → one owner) |
+| Authority / lanes | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 | Human hub | [`README.md`](README.md) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
@@ -61,10 +62,11 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
 | No re-decode | `decodeUnknownSync` / `decodeUnknown*` |
 | Trusted `SessionId`, structs | `parse*` / `is*` / type guards |
 
-- ESLint: `harness/no-decode-unknown-outside-boundary` (**error**), `harness/no-unknown-function-param` (**warn** harness · **error** types/security/core)
+- ESLint: `harness/no-decode-unknown-outside-boundary` (**error**), `harness/no-unknown-function-param` (**error** on harness paths)
 - Code: [`config/eslint/plugin-harness/boundary.ts`](config/eslint/plugin-harness/boundary.ts) (`BOUNDARY_POLICY`)
 - Config: [`eslint.harness.config.ts`](eslint.harness.config.ts)
 - Thesis: [domain-modeling](https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md) · [parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/)
+- Authority / lanes: [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · status: `bun run harness:status`
 
 ## Operating rules
 
@@ -73,6 +75,7 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
 - **Task routing:**
   - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
   - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
+  - Harness JIT / proof / authority → [`docs/harness/README.md`](docs/harness/README.md) · `bun run harness:status`
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs staged)
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)

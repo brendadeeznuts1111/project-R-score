@@ -62,4 +62,8 @@ Next single era (not started): expand day-loop `type-check` into remaining `lib/
 
 ## Timing artifact
 
-Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json).
+Gate timings append to [`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json). Discover: `bun run harness:status`.
+
+## Polish (harness-engineering mapping)
+
+2026-07-21 follow-on: map all twelve upstream theses → local owners in [`docs/harness/README.md`](../harness/README.md); add [`AUTHORITY.md`](../harness/AUTHORITY.md); expand proof paths; retain velocity lessons in FEEDBACK.md; tool-legibility via `harness:status`.

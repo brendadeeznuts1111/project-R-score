@@ -1698,6 +1698,7 @@
     "affected:list": "bun scripts/affected-workspaces.ts list",
     "check:path-bun": "bun scripts/check-path-bun.ts",
     "check:bun-env": "bun scripts/check-bun-env.ts",
+    "harness:status": "bun scripts/harness-status.ts",
     "harness:lesson": "bun scripts/harness-lesson.ts"
   },
   "dependencies": {

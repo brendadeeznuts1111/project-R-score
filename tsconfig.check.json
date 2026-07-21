@@ -33,6 +33,7 @@
     "scripts/check-path-bun.ts",
     "scripts/check-bun-env.ts",
     "scripts/harness-lesson.ts",
+    "scripts/harness-status.ts",
     "types/**/*",
     "index.ts"
   ],

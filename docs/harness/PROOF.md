@@ -9,19 +9,21 @@ Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness
 | Kind | Meaning | Typical evidence |
 |------|---------|------------------|
 | `unit` | Pure logic / types | `bun test` file, `check:brands:types` |
-| `boundary` | Wire → domain parse | staged brand gate, wire-boundary eslint, fixture at edge |
+| `boundary` | Wire → domain parse / ratchet | staged brand gate, wire-boundary eslint, path-bun / bun-env |
 | `journey` | Multi-step user/ops path | scripted CLI sequence, contract JSON |
 | `deployed` | Live / machine state | `install:verify`, machine health, CI workflow green |
 
-## Named critical paths (start set)
+## Named critical paths
 
 | Artifact | Claim | Required kinds |
 |----------|-------|----------------|
 | Branded IDs | New domain IDs are branded | `boundary` (`branded-id-check --staged --strict`) + `unit` (`check:brands:types` on CI/`--full`) |
 | Install cache | Root install layout is healthy | `deployed` (`bun run install:verify`) |
 | Search governance | Bench gate policy holds | `journey` (`.github/workflows/search-governance.yml` scripts) |
-| Path-bun | Spine `lib/` does not import `path`/`node:path` | `boundary` (`bun run check:path-bun`, pre-commit when `lib/` staged) |
-| Bun.env | Spine `lib/` + `scripts/` do not use Node `process.env` | `boundary` (`bun run check:bun-env`, pre-commit when lib\|scripts staged) |
+| Path-bun | Spine `lib/` does not import `path`/`node:path` | `boundary` (`bun run check:path-bun`) |
+| Bun.env | Spine `lib/` + `scripts/` do not use Node `process.env` | `boundary` (`bun run check:bun-env`) |
+| Wire / unknown | Bare `unknown` params stay at parse edges | `boundary` (harness eslint `no-unknown-function-param` **error**) |
+| Day-loop type-check | Advertised `type-check` covers spine agent edit surfaces | `journey` (`bun run type-check` + `tsconfig.check.json` include list) |
 
 ## Agent checklist before “done”
 
@@ -30,4 +32,4 @@ Upstream: [harness-engineering proof thesis](https://github.com/lopopolo/harness
 3. Point at evidence paths or commands that actually ran.
 4. If evidence is missing, either run it or downgrade the claim.
 
-Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts).
+Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Discover: `bun run harness:status`.
