@@ -101,10 +101,10 @@ How each claim is enforced day-to-day. Catalog meta (completeness · evidence⊇
 | `test-changed` | continuous | `ci:harness` · harness-gates |
 | `search-governance` | workflow | `search-governance.yml` · `search:bench:gate` |
 | `search-governance-basic` | workflow | `search-governance.yml` · `test:search-governance` |
-| `runtime-cli-boundaries` | human-only | `bun test tests/fixtures/runtime-cli/` |
-| `bun-shell-boundaries` | human-only | `bun test tests/fixtures/bun-shell/` |
-| `fs-native-boundaries` | human-only | `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts` |
-| `security-hash-boundaries` | human-only | `bun test tests/fixtures/security-hash/` |
+| `runtime-cli-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/runtime-cli/` |
+| `bun-shell-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/bun-shell/` |
+| `fs-native-boundaries` | continuous | `ci:harness` boundary-fixtures · fs-bun + bun-glob-scan |
+| `security-hash-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/security-hash/` |
 | `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
 | `bun-env` | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env` |
 | `unknown-param` | continuous | pre-commit / `ci:harness` eslint |
@@ -130,7 +130,7 @@ How each claim is enforced day-to-day. Catalog meta (completeness · evidence⊇
 | `deploy-staging-script` | workflow | `deploy:staging` / catalog |
 | `bun-migrate-status` | workflow | `migrate:status` / catalog |
 
-Counts: continuous ~9 · workflow ~21 · human-only 4. Promote human-only → continuous only with demand (CLAIM-DISCOVERY).
+Counts: continuous ~13 · workflow ~21 · human-only 0 (Bun-native boundaries promoted into `ci:harness`).
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 

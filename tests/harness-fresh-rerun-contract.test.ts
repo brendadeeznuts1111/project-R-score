@@ -35,6 +35,19 @@ describe('fresh-rerun contract', () => {
     }
   });
 
+  test('Owner→gate section lists every proof id', async () => {
+    const proofMd = await Bun.file(
+      new URL('../docs/harness/PROOF.md', import.meta.url).pathname
+    ).text();
+    const start = proofMd.indexOf('## Owner → gate');
+    expect(start).toBeGreaterThanOrEqual(0);
+    const end = proofMd.indexOf('\n## ', start + 1);
+    const section = end >= 0 ? proofMd.slice(start, end) : proofMd.slice(start);
+    for (const p of CRITICAL_PROOF_PATHS) {
+      expect(section.includes(`\`${p.id}\``), p.id).toBe(true);
+    }
+  });
+
   test('evidence parity: every claim evidence includes freshRerun', () => {
     for (const p of CRITICAL_PROOF_PATHS) {
       expect(p.evidence.includes(p.freshRerun), p.id).toBe(true);
