@@ -30,7 +30,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
 - **`test-changed`** — import-graph affected tests (`unit` + `journey`)  
   *Ratchet* → `bun run test:changed` · `bun run test:changed:main` (CI: `harness-gates.yml`)
 - **`search-governance`** — bench gate policy holds (`journey`)  
-  *Ratchet* → `.github/workflows/search-governance.yml`
+  *Ratchet* → `bun run search:bench:gate` · `.github/workflows/search-governance.yml`
 - **`search-governance-basic`** — known query → WebView results (`journey`)  
   *Ratchet* → `bun run test:search-governance` · [`search-governance.md`](search-governance.md)
 - **`runtime-cli-boundaries`** — critical Bun runtime CLI flags behave as expected (`boundary`)  
@@ -81,6 +81,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run check:harness-complexity`
 - **`ci-deploy-runbooks`** — CI/deploy jobs have runbooks; `assertCICoverage` fail-closed  
   *Ratchet* → `bun run test:ci-deploy` · [`ci-deploy.md`](ci-deploy.md)
+- **CI/deploy child claims** — catalog-ownership (not behavior re-proof); each points at a runbook in [`CI_RUNBOOKS`](../../lib/harness/ci-deploy.ts) · [`ci-deploy.md`](ci-deploy.md)  
+  *Ids* → `ci-core-envelope` · `typescript-ci-gate` · `deploy-production-preflight` · `deploy-staging-script` · `bun-migrate-status`  
+  *Fresh-rerun* → `bun run docs:ci-deploy` (shared; prints live catalog)
 
 ## Fresh-rerun
 

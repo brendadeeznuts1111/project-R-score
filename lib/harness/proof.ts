@@ -105,9 +105,9 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   },
   {
     id: 'search-governance',
-    claim: 'Search bench gate policy holds in CI',
+    claim: 'Search bench gate policy holds',
     kinds: ['journey'],
-    evidence: ['.github/workflows/search-governance.yml'],
+    evidence: ['bun run search:bench:gate', '.github/workflows/search-governance.yml'],
     freshRerun: 'bun run search:bench:gate',
   },
   {

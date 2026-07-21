@@ -54,10 +54,32 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run test:install-verify');
   });
 
+  test('search-governance evidence includes bench gate; freshRerun matches', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'search-governance');
+    expect(p?.freshRerun).toBe('bun run search:bench:gate');
+    expect(p?.evidence).toContain('bun run search:bench:gate');
+    expect(p?.claim).not.toMatch(/\bin CI\b/i);
+  });
+
   test('search-governance-basic freshRerun is the WebView journey test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'search-governance-basic');
     expect(p?.freshRerun).toBe('bun run test:search-governance');
   });
+
+  test('CI/deploy child claims share docs:ci-deploy freshRerun', () => {
+    const ids = [
+      'ci-core-envelope',
+      'typescript-ci-gate',
+      'deploy-production-preflight',
+      'deploy-staging-script',
+      'bun-migrate-status',
+    ] as const;
+    for (const id of ids) {
+      const p = CRITICAL_PROOF_PATHS.find(x => x.id === id);
+      expect(p?.freshRerun, id).toBe('bun run docs:ci-deploy');
+    }
+  });
+
 
   test('cron-os-persistent freshRerun is the OS cron journey test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'cron-os-persistent');
