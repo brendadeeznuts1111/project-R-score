@@ -114,8 +114,12 @@ export const CLI_SPECIAL: Record<string, string> = {
     'install-verify tenant runbook (signal · intervention · retirement)',
   'docs:tenant-docs-integrity':
     'docs-integrity tenant runbook (signal · intervention · retirement)',
-  'test:tenant-runbooks': 'Ratchet: TenantRunbook catalog + sandboxed E2E heal journey',
+  'test:tenant-runbooks': 'Ratchet: TenantRunbook catalog + heal journey + code-quality tenants',
   'test:tenant-heal': 'E2E heal: break → signal → intervene → recover (sandboxed fixture)',
+  'test:code-quality': 'Code-quality tenants: types · harness coverage · orphan modules',
+  'test:harness-coverage': 'lib/harness coverage floor vs coverage-baseline.json',
+  'check:harness-orphans': 'Fail if any lib/harness/*.ts module has no importers',
+  'docs:code-quality': 'Code-quality tenants index (ansiMarkdown)',
   'docs:fresh-rerun':
     'Fresh-rerun contract + per-claim catalog (ansiMarkdown · docs/harness/FRESH-RERUN.md)',
   'docs:search-governance':
@@ -175,6 +179,10 @@ export const CLI_CORE_CMDS = new Set([
   'docs:fresh-rerun',
   'test:tenant-runbooks',
   'test:tenant-heal',
+  'test:code-quality',
+  'test:harness-coverage',
+  'check:harness-orphans',
+  'docs:code-quality',
   'docs:search-governance',
   'test:cron',
   'test:cron-os',

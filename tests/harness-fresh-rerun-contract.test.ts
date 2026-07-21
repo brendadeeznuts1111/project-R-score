@@ -64,6 +64,16 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run test:tenant-heal');
   });
 
+  test('harness-coverage-ratchet freshRerun is test:harness-coverage', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'harness-coverage-ratchet');
+    expect(p?.freshRerun).toBe('bun run test:harness-coverage');
+  });
+
+  test('code-quality-tenants freshRerun is test:code-quality', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'code-quality-tenants');
+    expect(p?.freshRerun).toBe('bun run test:code-quality');
+  });
+
   test('docs-integrity freshRerun is bun-doc-refs schedule --once', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'docs-integrity');
     expect(p?.freshRerun).toBe('bun tools/bun-doc-refs.ts schedule --once');

@@ -52,6 +52,12 @@ Closed maintenance loop — each edge is machine-checked by `bun run test:tenant
 - **Linked proof is healthy** — each `proofId`’s `freshRerun` exits 0 (deduped)  
   *Ratchet* → `assertLinkedProofFreshRerunsPass`
 
+## Code quality (not spine cron)
+
+Day-loop / CI code-health tenants use the same runbook shape but are **not** in `SPINE_TENANTS`:
+
+→ [`code-quality.md`](code-quality.md) · `bun run test:code-quality` · claim `code-quality-tenants`
+
 ## E2E heal (sandboxed)
 
 Production `SPINE_TENANTS` are not mutated. A fixture tenant (`heal-fixture`) lives under `tests/fixtures/tenant-heal/` and is copied into `.cache/journey-tenant-heal/` for the journey:

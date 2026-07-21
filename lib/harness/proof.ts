@@ -260,6 +260,43 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     ],
     freshRerun: 'bun run test:tenant-heal',
   },
+  {
+    id: 'harness-coverage-ratchet',
+    // owner: lib/harness/coverage-ratchet.ts · coverage-baseline.json
+    claim: 'lib/harness line/func coverage stays at or above coverage-baseline.json floors',
+    kinds: ['boundary', 'journey'],
+    evidence: [
+      'lib/harness/coverage-ratchet.ts',
+      'lib/harness/coverage-baseline.json',
+      'bun run test:harness-coverage',
+      'docs/harness/code-quality.md',
+    ],
+    freshRerun: 'bun run test:harness-coverage',
+  },
+  {
+    id: 'harness-orphan-modules',
+    // owner: scripts/check-harness-orphans.ts
+    claim: 'Every lib/harness/*.ts module has at least one importer outside itself',
+    kinds: ['boundary'],
+    evidence: [
+      'scripts/check-harness-orphans.ts',
+      'bun run check:harness-orphans',
+      'docs/harness/tenants/orphan-modules.md',
+    ],
+    freshRerun: 'bun run check:harness-orphans',
+  },
+  {
+    id: 'code-quality-tenants',
+    // owner: lib/harness/code-quality.ts
+    claim: 'Code-quality tenants (types · coverage · orphans) have runbooks and live freshRerun',
+    kinds: ['boundary', 'journey'],
+    evidence: [
+      'lib/harness/code-quality.ts',
+      'docs/harness/code-quality.md',
+      'bun run test:code-quality',
+    ],
+    freshRerun: 'bun run test:code-quality',
+  },
 ] as const;
 
 export function proofPathById(id: string): ProofPath | undefined {

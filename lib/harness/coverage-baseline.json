@@ -1,0 +1,7 @@
+{
+  "$comment": "Harness-surface coverage floor (lib/harness). Raise when probe coverage improves; never lower without an explicit retirement PR.",
+  "scope": "lib/harness",
+  "probe": "bun run test:harness-coverage",
+  "minLinesPct": 55,
+  "minFuncsPct": 30
+}

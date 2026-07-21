@@ -61,6 +61,12 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · [`maintenance.ts`](../../lib/harness/maintenance.ts) · `assertRetirementConditionCheck`
 - **`spine-tenant-heal`** — sandboxed E2E heal loop (break → signal → intervene → recover) (`journey`)  
   *Ratchet* → `bun run test:tenant-heal` · [`heal-fixture.ts`](../../lib/harness/heal-fixture.ts) · [`tenant-heal.test.ts`](../../tests/journey/tenant-heal.test.ts)
+- **`code-quality-tenants`** — types · harness coverage · orphan modules (`boundary` + `journey`)  
+  *Ratchet* → `bun run test:code-quality` · [`code-quality.md`](code-quality.md)
+- **`harness-coverage-ratchet`** — lib/harness coverage ≥ `coverage-baseline.json`  
+  *Ratchet* → `bun run test:harness-coverage`
+- **`harness-orphan-modules`** — every `lib/harness/*.ts` has an importer  
+  *Ratchet* → `bun run check:harness-orphans`
 
 ## Fresh-rerun
 
