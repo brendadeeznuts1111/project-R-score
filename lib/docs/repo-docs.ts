@@ -36,8 +36,8 @@ export const CANONICAL_REPO_DOCS = {
   /** TokenRef interior + BunToken export (knowledge unit) */
   tokenRef: 'lib/docs/token-ref.ts',
   bunToken: 'lib/docs/bun-token.ts',
-  /** Root cleanup / organization history */
-  organizationHistory: 'docs/organization/ROOT_CLEANUP_SUMMARY.md',
+  /** Homebase discovery / organization map */
+  organizationHistory: 'docs/organization/HOMEBASE_DISCOVERY.md',
   /** Velocity baseline + day-loop honesty */
   velocityBaseline: 'docs/organization/VELOCITY_BASELINE.md',
   /** JIT harness thesis index */
@@ -52,8 +52,8 @@ export const CANONICAL_REPO_DOCS = {
   harnessReview: 'docs/harness/REVIEW.md',
   /** Projects triage + agent scope */
   projectsTriage: 'projects/README.md',
-  /** Historical standards implementation notes */
-  standardsImplementation: 'docs/archives/STANDARDS-IMPLEMENTATION.md',
+  /** Coding standards quick reference (archives removed from tree) */
+  standardsImplementation: 'docs/DEVELOPMENT-STANDARDS.md',
 } as const;
 
 /** Harness modules agents hit most often. */
@@ -124,7 +124,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',
   tokenRef: 'TokenRef interior knowledge-unit schema',
   bunToken: 'BunToken agent export contract (northstar)',
-  organizationHistory: 'Root organization history',
+  organizationHistory: 'Homebase discovery / organization map',
   velocityBaseline: 'Velocity baseline + day-loop honesty',
   harnessIndex: 'JIT harness thesis index',
   harnessProof: 'Proof claim kinds',
@@ -132,7 +132,7 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   harnessAuthority: 'Authority / lanes / consequential grants',
   harnessReview: 'Repository review questions → owners',
   projectsTriage: 'Projects triage + agent scope',
-  standardsImplementation: 'Historical standards implementation',
+  standardsImplementation: 'Coding standards (quick reference)',
 } as const;
 
 /** Remotes (do not default-push to cascade). */

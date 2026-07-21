@@ -48,12 +48,13 @@ Projects/
 ├── packages/                # @factorywager/* internal packages (8)
 ├── plannator/               # Local Plannotator extra skills mirror (thin)
 ├── projects/
-│   ├── README.md            # Triage rules + active map + agent scope
-│   ├── experimental/        # Relocated demos (2048, apps, zig/rust tools)
+│   ├── README.md            # Triage SSOT — every product leaf + root contract
+│   ├── experimental/        # Demos / PoCs (each top-level has README + package.json)
 │   ├── archive/             # Tier bucket (+ README); empty until first freeze
-│   └── active/              # Maintained apps (see projects/README.md)
+│   └── active/              # Maintained apps (categories keep indexes; no flatten)
 │       ├── analysis|automation|dashboards|development|enterprise|tools|utilities/
-│       ├── factorywager/    # registry (+ workspace packages)
+│       │     └── each category README.md lists product leaves (each leaf = install root)
+│       ├── factorywager/    # registry umbrella (+ workspace packages)
 │       ├── sports-terminal-os/  # root workspace member
 │       ├── kimiremote/      # gitignored — own repo
 │       ├── f402-openapi/    # gitignored — own tree
@@ -118,7 +119,7 @@ From `package.json` `workspaces.packages`:
 - **Jul 2026 (scripts trim):** Collapsed ~100 duplicate/unused `package.json` scripts; removed `scratch` passthrough, `deploy-production.sh`, `url-validator-focused.ts`; single `r2` / `playground` / `mybundocs11` entrypoints; migrate phase aliases → `bun-migrate` direct.
 - **Jul 2026 (bloat/speed):** CLI category SSOT; scripts **329 → 275 → 258 → 193 → 176 → 173**; demos + utility sandboxes → `projects/experimental/`; Bun-native `fs-bun`/`cli-args`/`Bun.argv`; skip ast-grep doctor on lockfile-only staged sets; day-loop docs. Notes: [`docs/organization/BLOAT_SPEED_PASS.md`](docs/organization/BLOAT_SPEED_PASS.md).
 
-Detail: [`docs/organization/ROOT_CLEANUP_SUMMARY.md`](docs/organization/ROOT_CLEANUP_SUMMARY.md).
+Detail: [`docs/organization/HOMEBASE_DISCOVERY.md`](docs/organization/HOMEBASE_DISCOVERY.md) · [`docs/organization/BLOAT_SPEED_PASS.md`](docs/organization/BLOAT_SPEED_PASS.md).
 
 ## Future candidates
 

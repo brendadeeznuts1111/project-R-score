@@ -1,0 +1,11 @@
+{
+  "name": "secrets-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local secrets browser / editor dashboard server",
+  "scripts": {
+    "start": "bun run server.ts",
+    "dev": "bun --hot run server.ts"
+  }
+}

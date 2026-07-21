@@ -1,298 +1,41 @@
 # Bun native capabilities (platform note)
 
-
-> **JIT:** Feature notes + release maps. API lookup → `bun tools/bun-doc-refs.ts suggest "<api>"` · `bun run dx:catalog`.
-Grounded map of **newer Bun runtime APIs** available on this machine’s toolchain, how they relate to FactoryWager **lib / tools / docs**, and where **not** to over-claim.
+> **JIT:** Feature notes. API lookup → `bun tools/bun-doc-refs.ts suggest "<api>"` · `bun run dx:catalog`.
 
 | | |
 | --- | --- |
-| **Verified runtime** | Bun **1.4.0** (`bun --version`) — `typeof Bun.WebView/cron/udpSocket === "function"`; `Bun.markdown` keys: `html`, `ansi`, `render`, `react` |
-| **Canonical refs** | `tools/bun-doc-refs.ts` `CANONICAL_REFS` + catalog — use `bun tools/bun-doc-refs.ts suggest "…"` (catalog-first) before coding · operate: [BUN_DOCS_OPERATE.md](BUN_DOCS_OPERATE.md) |
-| **Not SSOT for product desk** | Partner desk UI, Telegram alerts, balance-sheet product flows — map only if a concrete package owns them |
-
----
-
-## Table of contents
-
-1. [Bun.WebView](#bunwebview)
-2. [Bun.markdown.ansi](#bunmarkdownansi)
-3. [Bun.cron](#buncron)
-4. [Bun.udpSocket](#bunudpsocket)
-5. [WebCrypto SHA3 + X25519](#webcrypto-sha3--x25519)
-6. [URLPattern](#urlpattern)
-7. [Bun.Glob.scan](#bunglobscan)
-8. [Bun.stripANSI / Bun.stringWidth](#bunstripansi--bunstringwidth)
-9. [Release maps (1.3.12 / 1.3.13)](#release-maps-1312--1313)
-10. [Platform integration map](#platform-integration-map)
-11. [References](#references)
-
----
-
-## Bun.WebView
-
-**What it is:** Built-in headless browser control for automation, testing, and scraping.
-
-| Fact | Detail |
-|------|--------|
-| Canonical doc | [bun.com/docs/runtime/webview](https://bun.com/docs/runtime/webview) |
-| Runtime | `Bun.WebView` constructor present (1.4.0) |
-| Prototype (verified) | `navigate`, `evaluate`, `screenshot`, `cdp`, `click`, `type`, `press`, `scroll`, `scrollTo`, `resize`, `goBack`, `goForward`, `reload`, `close`, `url`, `title`, `loading`, … |
-| Backends (docs) | WebKit on macOS (zero deps); Chrome via CDP elsewhere |
-
-**Minimal pattern** (prefer `await using` when disposing):
-
-```ts
-// @see https://bun.com/docs/runtime/webview
-await using view = new Bun.WebView({ width: 800, height: 600 });
-await view.navigate("https://bun.sh");
-await view.click("a[href='/docs']");
-const title = await view.evaluate("document.title");
-const png = await view.screenshot({ format: "jpeg", quality: 90 });
-await Bun.write("page.jpg", png);
-```
-
-**Platform fit (lib / root — not product-specific):**
-
-| Use | Where |
-|-----|--------|
-| Smoke public static UIs | `public/`, registry viewer, dashboard HTML under monorepo spine |
-| Validate scrapers / HTMLRewriter | Scripts under `tools/` / `scripts/` that fetch live pages |
-| CI screenshots | Optional job: compile a small script, no Playwright dep required **if** runner has a backend |
-
-**Do not assume:** removing Puppeteer/Playwright from every nested `package.json` under `projects/active/**` — those trees are out of scope for this note.
-
----
-
-## Bun.markdown.ansi
-
-**What it is:** Markdown → ANSI for the terminal (GFM-oriented built-in parser). Related: `Bun.markdown.html`, `render`, `react`.
-
-| Fact | Detail |
-|------|--------|
-| Canonical doc | [bun.com/docs/runtime/markdown](https://bun.com/docs/runtime/markdown) |
-| Runtime | `typeof Bun.markdown.ansi === "function"` (verified) |
-| CLI | `bun ./file.md` can print formatted Markdown without a full app bootstrap (docs) |
-
-**Minimal pattern:**
-
-```ts
-// @see https://bun.com/docs/runtime/markdown
-console.info(
-  Bun.markdown.ansi(
-    `# Harness report\n\n- **Hits:** ${n}\n\n[Wire boundary](./WIRE_BOUNDARY.md)`,
-    { hyperlinks: true }
-  )
-);
-```
-
-**Platform fit:**
-
-| Use | Where |
-|-----|--------|
-| CLI help / status | `tools/harness-violations.ts`, `tools/doc-map-check.ts`, brand catalog CLI |
-| Install / audit summaries | Future polish for `install:verify` / `bverify` human output |
-| Docs preview | Agent/operator viewing SSOT Markdown in terminal |
-
-Prefer this over ad-hoc chalk string assembly for **tooling** output. Keep product CLIs free to choose their own TUI later.
-
----
-
-## Bun.cron
-
-**What it is:** In-process cron scheduler (UTC schedules, no-overlap after handler settles, `--hot` aware, disposable / ref-unref).
-
-| Fact | Detail |
-|------|--------|
-| Canonical doc | [bun.com/docs/runtime/cron](https://bun.com/docs/runtime/cron) |
-| Runtime | `typeof Bun.cron === "function"` (verified) |
-| Already in tree | `lib/r2/*` lifecycle/sync/analytics/backup; `tools/bun-doc-refs.ts schedule` |
-
-**Minimal pattern:**
-
-```ts
-// @see https://bun.com/docs/runtime/cron
-const job = Bun.cron("*/10 * * * *", async () => {
-  // work — next fire waits until this settles
-});
-// job.stop(); job.unref();
-```
-
-**Platform fit:**
-
-| Use | Where |
-|-----|--------|
-| Weekly Bun docs integrity | `bun tools/bun-doc-refs.ts schedule` |
-| R2 maintenance sweeps | Existing `lib/r2/*` (already gated with `typeof Bun.cron === "function"`) |
-| Doc-map / hygiene on a schedule | Optional local daemon — not required in GHA (use workflow cron) |
-
-**CI note:** GitHub Actions should keep **workflow** schedules for install/cache; use `Bun.cron` for **long-lived local/server processes**, not one-shot CI jobs.
-
----
-
-## Bun.udpSocket
-
-**What it is:** UDP API with improved error survival and truncation flags (docs: ICMP errors no longer tear down the socket; `data` callback can surface truncation).
-
-| Fact | Detail |
-|------|--------|
-| Canonical doc | [bun.com/docs/runtime/networking/udp](https://bun.com/docs/runtime/networking/udp) |
-| Runtime | `typeof Bun.udpSocket === "function"` (verified) |
-| Lib surface | [`lib/udp/`](../lib/udp/) (`udp-realtime-service`, types, multicast helpers) |
-
-**Platform fit:** realtime / probe paths under `lib/udp` — review handlers for `error` continuity and truncation when touching that code. No claim here about phone/gate products outside the monorepo spine.
-
----
-
-## Platform integration map
-
-| Bun API | Integrate into (platform) | Replaces / enhances |
-|---------|---------------------------|---------------------|
-| **WebView** | Optional smoke scripts for monorepo dashboards / static UIs | Heavy browser deps for simple headless checks |
-| **URLPattern** | `Bun.serve` routers (`tools/server.ts`); spine smoke + DX catalog | Ad-hoc `req.url.match` / relying on `RegExp.$N` after route checks |
-| **Bun.Glob.scan** | Large-tree walks with `**/X/...` boundaries; spine smoke + DX | `fast-glob` / `globby` / sync walk of huge trees when async scan fits |
-| **stripANSI / stringWidth** | TTY layout via `console-depth` (`widthOf`…) | npm `string-width` / `strip-ansi`; `string.length` for columns |
-| **markdown.ansi** | Root tooling CLI output (`tools/*`) | Manual ANSI string concat |
-| **cron** | Long-lived servers, R2 jobs, `bun-doc-refs schedule` | External cron for in-process work only |
-| **udpSocket** | `lib/udp/*` | More robust datagram error handling |
-
-### Suggested next steps (docs / lib only)
-
-1. **Refs:** keep `CANONICAL_REFS` current (`WebView`, `udpSocket`, `markdown.ansi` added).
-2. **Tooling UX:** optionally render `harness-violations` / `doc-map-check` summaries with `Bun.markdown.ansi` (no product deps).
-3. **WebView:** add a small **examples/** smoke under monorepo spine when needed — not nested product apps.
-4. **cron:** prefer existing R2 + doc-refs patterns; document UTC + no-overlap before adding more jobs.
-5. **UDP:** when editing `lib/udp`, re-read truncation / error docs and add `@see` refs.
-
----
-
-## WebCrypto SHA3 + X25519
-
-**Verified on Bun 1.4.0** (also `Bun.CryptoHasher('sha3-256')`).
-
-| Surface | Algorithms / APIs |
-|---------|-------------------|
-| `node:crypto` | `createHash` / `createHmac` / `getHashes` — `sha3-224` … `sha3-512` |
-| `crypto.subtle` | `digest("SHA3-256")`, HMAC sign/verify; `deriveBits` with **X25519** (32-byte secret; `null` length → full output) |
-| Prefer for new crypto hashes | `new Bun.CryptoHasher("sha3-256")` over Node `createHash` when staying Bun-first |
-| Non-crypto fingerprints | `Bun.hash` (wyhash) — **not** a SHA3 substitute |
-
-Smoke: `bun test tests/bun-crypto-webcrypto.test.ts`. DX: `bun run dx:catalog crypto.sha3` · `bun run dx:catalog crypto.x25519`.
-
-**Related (runtime, not spine-tested here):** `ws+unix://` / `wss+unix://` WebSocket URLs; BoringSSL ML-KEM/ML-DSA present for future PQ — do not claim app support until we call those APIs.
-
-**Do not:** silently retarget existing `sha256` digests in `lib/security/**` — persisted hashes / HMACs break.
-
----
-
-## URLPattern
-
-**What it is:** WHATWG `URLPattern` for structured route match (`pathname` / `search` / `hostname` …) without hand-rolled regex.
-
-**Ship note (Bun ≥1.3.12, verified on 1.4.0):** [URLPattern is up to 2.3× faster](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster). Internal matching calls the compiled regex engine directly instead of allocating temporary JS objects per URL component (blog: up to ~24 GC allocations removed per call).
-
-| Call | Blog bench (named groups) | Use |
-|------|---------------------------|-----|
-| `pattern.test(input)` | ~2.16× vs prior Bun | Boolean gate in `fetch` routers |
-| `pattern.exec(input)` | ~1.43× vs prior Bun | Named groups → handlers |
-
-Blog vector (also spine smoke):
-
-```ts
-const pattern = new URLPattern({ pathname: '/api/users/:id/posts/:postId' });
-pattern.test('https://example.com/api/users/42/posts/123'); // true
-pattern.exec('https://example.com/api/users/42/posts/123')?.pathname.groups;
-// → { id: '42', postId: '123' }
-```
-
-**Side effect (correctness, not just speed):** internals no longer pollute `RegExp.lastMatch` / `RegExp.$N`. Before 1.3.12, `pattern.test(url)` could leak matcher state into those legacy statics — any code that still reads `$1`…`$9` after a route check was silently wrong. Prefer named `groups` from `exec()`; do not chain on `RegExp.$N` after URLPattern.
-
-| Surface | Role |
-|---------|------|
-| Smoke | `bun test tests/bun-urlpattern.test.ts` (match · groups · no `$N` leak) |
-| DX | `bun run dx:catalog url.urlpattern` |
-| Local router | [`tools/server.ts`](../tools/server.ts) — `patterns.*.test(url)` with `URL` objects |
-| Canonical | `bun tools/bun-doc-refs.ts url URLPattern` |
-
-**Prefer:** `new URLPattern({ pathname })` + `test`/`exec` over `req.url.match(/^\/api\/…/)`.
-
-**Do not:** treat blog speedups as a reason to micro-benchmark routers in CI; the smoke proves API + `$N` isolation. Do not invent a homebase wrapper around URLPattern — use the global.
-
----
-
-## Bun.Glob.scan
-
-**What it is:** Native glob walk via `new Bun.Glob(pattern).scan({ cwd })` (async) / `.scanSync(...)`.
-
-**Ship note (Bun ≥1.3.12, verified on 1.4.0):** [Faster Bun.Glob.scan()](https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan). Patterns with a `**/X/...` **boundary** (e.g. `**/node_modules/**/*.js`) no longer open and read the same directory twice. Gains scale with how much of the tree sits under the boundary — up to **2×** on deep trees. Patterns **without** a boundary (e.g. `**/*.ts`) are unchanged.
-
-Blog vector (also spine smoke):
-
-```ts
-const glob = new Bun.Glob('**/node_modules/**/*.js');
-
-// Up to 2× faster when the boundary applies
-for await (const path of glob.scan({ cwd: './my-project' })) {
-  // ...
-}
-```
-
-**Windows (bonus):** simple patterns like `*.js` can push filters to `NtQueryDirectoryFile` (up to ~2.4×). Patterns using `**`, `?`, `[...]`, or `{...}` bypass that filter.
-
-| Surface | Role |
-|---------|------|
-| Smoke | `bun test tests/bun-glob-scan.test.ts` (async scan · scan≡scanSync · blog boundary fixture) |
-| DX | `bun run dx:catalog file.glob` · `file.glob.scan` |
-| Local | docs/search tooling · `scripts/dx-mcp.ts` · `check-bun-env` / `smart-symbol-index` (`scanSync` for small dirs OK) |
-| Canonical | `bun tools/bun-doc-refs.ts url "Bun.Glob.scan"` |
-
-**Prefer:** `for await (… of glob.scan({ cwd }))` for large trees; keep `scanSync` for tiny, sync-only gates.
-
-**Do not:** CI-microbench the 2× claim; smoke the blog shape. Do not pull `fast-glob` / `globby` for new spine code.
-
----
-
-## Bun.stripANSI / Bun.stringWidth
-
-**What it is:** Native ANSI strip + visual column width (emoji = 2, grapheme-aware). Shared helpers also feed `Bun.sliceAnsi`, `Bun.wrapAnsi`, and Node `readline.getStringWidth`.
-
-**Ship note (Bun ≥1.3.12, verified on 1.4.0):** [Faster Bun.stripANSI and Bun.stringWidth](https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth). SIMD prologue (64-byte chunks), bulk CSI/OSC terminator scans, lazy strip buffer, UTF-16 escape-state refactor. Blog: plain ASCII strip ~4×; hyperlink+emoji UTF-16 width ~11× vs prior Bun. Still **4–822×** vs npm `string-width` depending on input.
-
-**Correctness (prefer over npm):** Bun recognizes all three OSC terminators — **BEL**, **ESC \\**, and **C1 ST (`0x9C`)** — matching ECMA-48. npm `string-width` only recognizes BEL.
-
-| Surface | Role |
-|---------|------|
-| Spine SSOT | [`lib/console-depth.ts`](../lib/console-depth.ts) — `widthOf` / `padEndWidth` / `truncateWidth` / `wrapText` |
-| Smoke | `bun test tests/bun-ansi-width.test.ts` (+ existing `tests/console-depth.test.ts`) |
-| Canonical | `bun tools/bun-doc-refs.ts url "Bun.stringWidth"` · `Bun.stripANSI` · ship note keys `bun v1.3.12 stringWidth` |
-
-**Prefer:** `Bun.stringWidth` / `widthOf` for layout; never `string.length` for TTY columns.
-
-**Do not:** add `string-width` / `strip-ansi` npm deps. Do not CI-bench SIMD claims; smoke terminators + SGR.
-
----
-
-## Release maps (1.3.12 / 1.3.13)
-
-Upstream: [bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) · [bun-v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--changed`). Runtime pin **1.4.0**.
-
-| Wired here | Command / note |
-|------------|----------------|
-| WebView / markdown / cron / UDP | sections above |
-| URLPattern · Glob.scan · stripANSI/stringWidth | sections + smokes |
-| `test:changed` / isolate / parallel / shard | [harness/README.md](./harness/README.md) |
-| SHA3 / X25519 | section above · `tests/bun-crypto-webcrypto.test.ts` |
-
-Do not re-document every blog bugfix bullet — inherit by running Bun ≥1.3.13.
+| **Verified runtime** | Bun **1.4.0** — WebView / cron / udpSocket / `Bun.markdown` present |
+| **Canonical refs** | `bun tools/bun-doc-refs.ts suggest "…"` · operate [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) |
+| **Not product desk SSOT** | Partner UI / Telegram / balance-sheet flows unless a package owns them |
+
+## API map (homebase)
+
+| API | Use when | Smoke / DX |
+|-----|----------|------------|
+| `Bun.WebView` | headless UI / automation | runtime `typeof` · catalog |
+| `Bun.markdown.ansi` | terminal markdown | `bun ./file.md` · ship note 1.3.12 |
+| `Bun.cron` | in-process schedule | docs operate / R2 patterns |
+| `Bun.udpSocket` | UDP + ICMP/truncation | re-read when editing `lib/udp` |
+| WebCrypto SHA3 / X25519 | hashing / key exchange | `tests/bun-crypto-webcrypto.test.ts` · `crypto.sha3` / `crypto.x25519` |
+| `URLPattern` | URL routing (no `$N` leak) | `tests/bun-urlpattern.test.ts` |
+| `Bun.Glob.scan` | tree walk; `**/X/...` boundary | `tests/bun-glob-scan.test.ts` |
+| `Bun.stripANSI` / `stringWidth` | TTY width | `tests/bun-ansi-width.test.ts` — **no** npm `string-width` |
+
+## Platform integration
+
+| Concern | Owner |
+|---------|--------|
+| Install / pin | [UNIFIED.md](./UNIFIED.md) · `packageManager` bun@1.4.0 |
+| Day-loop tests | `test:changed` · `test:parallel` · `test:isolate` · `test:shard` — [harness/README.md](./harness/README.md) |
+| DX one-liners | `bun run dx:catalog` |
+| Wire / brands | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
+
+## Release maps
+
+Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--changed`). Pin **1.4.0** is a superset — do not re-document every bugfix bullet.
 
 ## References
 
-| Role | Entry |
-|------|--------|
-| DX | `bun run dx:catalog` · `tip` · `search` |
-| Canonical URL | `bun tools/bun-doc-refs.ts suggest "<api>"` |
-| Day loop | [harness/README.md](./harness/README.md) · `bun run harness:status` |
-| Operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · `bun run docs:refresh` |
-| Install | [UNIFIED.md](./UNIFIED.md) |
-| llms.txt | https://bun.com/docs/llms.txt |
+`bun run dx:catalog` · `bun tools/bun-doc-refs.ts suggest "<api>"` · `bun run docs:refresh` · https://bun.com/docs/llms.txt
 
-*Verified 2026-07-21 on Bun 1.4.0 — prefer `bun.com/docs`.*
+*Verified 2026-07-21 on Bun 1.4.0.*
