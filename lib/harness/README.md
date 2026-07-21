@@ -20,6 +20,8 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
   *Ratchet* → `bun run test:tenant-heal` · claim `spine-tenant-heal`
 - **`code-quality.ts`** — types · coverage · orphan-module tenants (not spine cron)  
   *Ratchet* → `bun run test:code-quality` · [`docs/harness/code-quality.md`](../../docs/harness/code-quality.md)
+- **`ci-deploy.ts`** + **`discover-ci.ts`** — CI/deploy runbooks + fail-closed job coverage  
+  *Ratchet* → `bun run test:ci-deploy` · [`docs/harness/ci-deploy.md`](../../docs/harness/ci-deploy.md)
 - **`coverage-ratchet.ts`** + **`coverage-baseline.json`** — lib/harness coverage floors  
   *Ratchet* → `bun run test:harness-coverage`
 - **`cron.ts`** — Bun.cron surface (OS-persistent primary · in-process complement)  

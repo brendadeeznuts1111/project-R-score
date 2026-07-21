@@ -74,6 +74,11 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run test:code-quality');
   });
 
+  test('ci-deploy-runbooks freshRerun is test:ci-deploy', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'ci-deploy-runbooks');
+    expect(p?.freshRerun).toBe('bun run test:ci-deploy');
+  });
+
   test('docs-integrity freshRerun is bun-doc-refs schedule --once', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'docs-integrity');
     expect(p?.freshRerun).toBe('bun tools/bun-doc-refs.ts schedule --once');

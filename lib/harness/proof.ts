@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — URLPattern
@@ -296,6 +297,80 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'bun run test:code-quality',
     ],
     freshRerun: 'bun run test:code-quality',
+  },
+  {
+    id: 'ci-deploy-runbooks',
+    // owner: lib/harness/ci-deploy.ts · discover-ci.ts
+    claim: 'CI/deploy jobs have runbooks; discover-ci coverage is fail-closed',
+    kinds: ['boundary'],
+    evidence: [
+      'lib/harness/ci-deploy.ts',
+      'lib/harness/discover-ci.ts',
+      'docs/harness/ci-deploy.md',
+      'bun run test:ci-deploy',
+    ],
+    freshRerun: 'bun run test:ci-deploy',
+  },
+  {
+    id: 'ci-core-envelope',
+    // owner: scripts/ci-core.ts · .github/workflows/harness-gates.yml
+    claim: 'Required CI envelope is bun run ci:core (install verify · hygiene · ci:harness)',
+    kinds: ['boundary'],
+    evidence: [
+      'scripts/ci-core.ts',
+      '.github/workflows/harness-gates.yml',
+      'bun run ci:core',
+      'docs/harness/tenants/ci-core.md',
+    ],
+    freshRerun: 'bun run docs:ci-deploy',
+  },
+  {
+    id: 'typescript-ci-gate',
+    // owner: .github/workflows/typescript-checks.yml
+    claim: 'typescript-checks workflow owns type-check:ci / type-check:full',
+    kinds: ['boundary'],
+    evidence: [
+      '.github/workflows/typescript-checks.yml',
+      'bun run type-check:ci',
+      'docs/harness/tenants/typescript-ci.md',
+    ],
+    freshRerun: 'bun run docs:ci-deploy',
+  },
+  {
+    id: 'deploy-production-preflight',
+    // owner: scripts/deployment/deploy-production.ts
+    claim: 'Production deploy path is bun run deploy:production (Bun.secrets + R2 preflight)',
+    kinds: ['boundary'],
+    evidence: [
+      'scripts/deployment/deploy-production.ts',
+      'bun run deploy:production',
+      'docs/harness/tenants/deploy-production.md',
+    ],
+    freshRerun: 'bun run docs:ci-deploy',
+  },
+  {
+    id: 'deploy-staging-script',
+    // owner: scripts/shell/deploy-staging.sh
+    claim: 'Staging deploy path is bun run deploy:staging',
+    kinds: ['boundary'],
+    evidence: [
+      'scripts/shell/deploy-staging.sh',
+      'bun run deploy:staging',
+      'docs/harness/tenants/deploy-staging.md',
+    ],
+    freshRerun: 'bun run docs:ci-deploy',
+  },
+  {
+    id: 'bun-migrate-status',
+    // owner: scripts/bun-migrate.ts
+    claim: 'Bun migration inventory status is bun run migrate:status',
+    kinds: ['boundary'],
+    evidence: [
+      'scripts/bun-migrate.ts',
+      'bun run migrate:status',
+      'docs/harness/tenants/bun-migrate.md',
+    ],
+    freshRerun: 'bun run docs:ci-deploy',
   },
 ] as const;
 

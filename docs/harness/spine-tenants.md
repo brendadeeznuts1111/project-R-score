@@ -58,6 +58,12 @@ Day-loop / CI code-health tenants use the same runbook shape but are **not** in 
 
 → [`code-quality.md`](code-quality.md) · `bun run test:code-quality` · claim `code-quality-tenants`
 
+## CI / deploy (not spine cron)
+
+Required CI envelopes and deploy scripts:
+
+→ [`ci-deploy.md`](ci-deploy.md) · `bun run test:ci-deploy` · claim `ci-deploy-runbooks`
+
 ## E2E heal (sandboxed)
 
 Production `SPINE_TENANTS` are not mutated. A fixture tenant (`heal-fixture`) lives under `tests/fixtures/tenant-heal/` and is copied into `.cache/journey-tenant-heal/` for the journey:

@@ -10,6 +10,10 @@
  * Product apps / demos / tests outside the perimeter are out of scope —
  * spine tenants are continuous-maintenance jobs the harness daemon owns.
  *
+ * CI / deploy / migrate scripts and GHA push|PR workflows are covered by the
+ * sibling module `./discover-ci.ts` (assertCICoverage) — not this file.
+ *
+ * @see ./discover-ci.ts
  * @see ./maintenance.ts
  * @see ../../docs/harness/spine-tenants.md
  * @see ../../spine/tenants.ts
