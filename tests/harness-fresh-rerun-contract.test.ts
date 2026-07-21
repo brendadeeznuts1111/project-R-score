@@ -2,9 +2,14 @@
  * Every critical proof path must name a fresh-rerun command.
  * @see docs/harness/FRESH-RERUN.md
  * @see docs/harness/PROOF.md — ProofPath catalog completeness
+ * @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
  */
 import { describe, expect, test } from 'bun:test';
+import { CI_RUNBOOKS } from '../lib/harness/ci-deploy';
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
+import { joinPath } from '../lib/path-bun';
+
+const HARNESS_ROOT = joinPath(import.meta.dir, '..');
 
 describe('fresh-rerun contract', () => {
   test('every CRITICAL_PROOF_PATHS entry has a non-empty freshRerun', () => {
@@ -35,6 +40,29 @@ describe('fresh-rerun contract', () => {
     }
   });
 
+  test('dead catalog: CI_SPINE_SMOKE substring absent from harness sources', async () => {
+    // Prefix match (not only …_TESTS) — catches comments, stale docs, partial refs.
+    const needle = 'CI_SPINE_SMOKE';
+    const scans: Array<{ cwd: string; pattern: string }> = [
+      { cwd: joinPath(HARNESS_ROOT, 'lib/harness'), pattern: '**/*.ts' },
+      { cwd: joinPath(HARNESS_ROOT, 'docs/harness'), pattern: '**/*.md' },
+    ];
+    for (const { cwd, pattern } of scans) {
+      for await (const rel of new Bun.Glob(pattern).scan({ cwd })) {
+        const abs = joinPath(cwd, rel);
+        const text = await Bun.file(abs).text();
+        expect(text.includes(needle), abs).toBe(false);
+      }
+    }
+  });
+
+  test('CI_RUNBOOKS freshRerun matches linked ProofPath', () => {
+    for (const r of CI_RUNBOOKS) {
+      const p = CRITICAL_PROOF_PATHS.find(x => x.id === r.proofId);
+      expect(p, r.id).toBeDefined();
+      expect(p!.freshRerun, r.id).toBe(r.freshRerun);
+    }
+  });
 
   test('runtime-cli-boundaries freshRerun is the fixture suite', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'runtime-cli-boundaries');

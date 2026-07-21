@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -7,15 +8,18 @@
  *
  * Warn-first until WARN_UNTIL_ISO (then exit 1 on empty claim rows).
  * Draft PRs are skipped. `--strict` always fails on empty claims.
+ * `--dry-run` evaluates fail-closed semantics but always exits 0 (WOULD_FAIL / WOULD_PASS).
  *
  *   bun scripts/check-pr-claim.ts --body-file path.md
  *   bun scripts/check-pr-claim.ts --event "$GITHUB_EVENT_PATH"
+ *   bun scripts/check-pr-claim.ts --dry-run --event "$GITHUB_EVENT_PATH"
  *   echo "$BODY" | bun scripts/check-pr-claim.ts --stdin
  */
 import { flagValue, hasFlag } from './lib/cli-args';
 
-/** After this date (UTC), empty claim tables fail CI (warn-only before). */
-const WARN_UNTIL_ISO = '2026-07-28T00:00:00.000Z';
+/** After this instant (UTC), empty claim tables fail CI (warn-only before). */
+export const WARN_UNTIL_ISO = '2026-07-28T00:00:00.000Z';
+export const WARN_UNTIL_MS = Date.parse(WARN_UNTIL_ISO);
 
 type Result = {
   ok: boolean;
@@ -26,9 +30,10 @@ type Result = {
   message: string;
 };
 
-function warnOnlyMode(strict: boolean): boolean {
+/** UTC ms comparison — flip is not runner-local calendar day. */
+export function warnOnlyMode(strict: boolean, nowMs: number = Date.now()): boolean {
   if (strict) return false;
-  return Date.now() < Date.parse(WARN_UNTIL_ISO);
+  return nowMs < WARN_UNTIL_MS;
 }
 
 function parseClaimTable(body: string): { missingSection: boolean; emptyClaimRow: boolean } {
@@ -86,7 +91,10 @@ function parseClaimTable(body: string): { missingSection: boolean; emptyClaimRow
   return { missingSection: false, emptyClaimRow: !filled };
 }
 
-export function evaluatePrClaim(body: string, opts: { draft?: boolean; strict?: boolean }): Result {
+export function evaluatePrClaim(
+  body: string,
+  opts: { draft?: boolean; strict?: boolean; nowMs?: number } = {}
+): Result {
   const draft = opts.draft === true;
   if (draft) {
     return {
@@ -100,7 +108,7 @@ export function evaluatePrClaim(body: string, opts: { draft?: boolean; strict?: 
   }
 
   const { missingSection, emptyClaimRow } = parseClaimTable(body ?? '');
-  const warnOnly = warnOnlyMode(opts.strict === true);
+  const warnOnly = warnOnlyMode(opts.strict === true, opts.nowMs);
   const bad = missingSection || emptyClaimRow;
   const message = missingSection
     ? 'PR body missing "## Claim → evidence" section — fill the table (docs/harness/PROOF.md)'
@@ -138,14 +146,27 @@ async function readBody(): Promise<{ body: string; draft: boolean }> {
     return { body: pr.body ?? '', draft: pr.draft === true };
   }
 
-  console.error('usage: check-pr-claim.ts --body-file PATH | --event PATH | --stdin [--strict]');
+  console.error(
+    'usage: check-pr-claim.ts --body-file PATH | --event PATH | --stdin [--strict|--dry-run]'
+  );
   process.exit(2);
 }
 
 async function main(): Promise<void> {
-  const strict = hasFlag('strict');
+  const dryRun = hasFlag('dry-run');
+  const strict = hasFlag('strict') || dryRun;
   const { body, draft } = await readBody();
   const result = evaluatePrClaim(body, { draft, strict });
+
+  if (dryRun) {
+    if (result.draft) {
+      console.info(`DRY_RUN SKIP · ${result.message}`);
+      process.exit(0);
+    }
+    const wouldFail = result.missingSection || result.emptyClaimRow;
+    console.info(`${wouldFail ? 'WOULD_FAIL' : 'WOULD_PASS'} · ${result.message}`);
+    process.exit(0);
+  }
 
   if (result.draft) {
     console.info(`ℹ️  ${result.message}`);

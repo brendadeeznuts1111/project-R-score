@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
@@ -147,7 +148,8 @@ export const CLI_SPECIAL: Record<string, string> = {
   'ci:harness:fast': 'Quiet local parity (∥ cheap · test:changed dirty; no eslint)',
   'ci:core': 'Install verify · hygiene · ci:harness (GHA harness-gates / one install)',
   'lint:bun-native:changed': 'ESLint bun-native on files changed since main-head (cached)',
-  'check:pr-claim': 'PR Claim → evidence body check (warn-first → error after 2026-07-28)',
+  'check:pr-claim':
+    'PR Claim → evidence body check (warn-first → error after 2026-07-28 UTC; --dry-run logs WOULD_*)',
   'proof:install': 'Journey proof: install layout healthy',
   'harness:lesson': 'Scaffold a FEEDBACK.md lesson stub',
 };

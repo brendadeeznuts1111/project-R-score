@@ -24,6 +24,18 @@ No new tooling. Reviewer does not approve without that output.
 
 The fresh-rerun step is what makes retain/revise/remove evidence-based. Lessons in [`FEEDBACK.md`](FEEDBACK.md) still require a fresh rerun of the affected claim.
 
+## Three catalogs (same noun, different jobs)
+
+| Catalog | Field | What exit 0 / paste proves |
+|---------|-------|----------------------------|
+| `ProofPath` (`CRITICAL_PROOF_PATHS`) | `freshRerun` | Claim re-proof (this doc’s meaning) |
+| `TenantRunbook` (spine) | `freshRerun` | Runbook/doc render (`docs:tenant-*`); linked `proofId` has the real claim command |
+| `CiRunbook` (CI/deploy) | `freshRerun` | Catalog/doc render (`docs:ci-deploy`) |
+
+Spine **splits** doc-rerun vs proof-rerun. CI/deploy **children** (`ci-core-envelope` … `bun-migrate-status`) set `ProofPath.freshRerun` to `bun run docs:ci-deploy` — that paste proves **catalog presence**, not that `ci:core` / deploy ran. Intervention stays on `CiRunbook`; fail-closed coverage is parent claim `ci-deploy-runbooks` (`bun run test:ci-deploy`).
+
+Non-draft PRs: after **2026-07-28 UTC**, empty Claim→evidence tables fail CI (`scripts/check-pr-claim.ts`). Drafts stay skipped. Rollback if false positives: extend `WARN_UNTIL_ISO`, do not delete the invariant.
+
 ## Lookup
 
 ```bash

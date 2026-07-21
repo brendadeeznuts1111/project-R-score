@@ -81,9 +81,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run check:harness-complexity`
 - **`ci-deploy-runbooks`** — CI/deploy jobs have runbooks; `assertCICoverage` fail-closed  
   *Ratchet* → `bun run test:ci-deploy` · [`ci-deploy.md`](ci-deploy.md)
-- **CI/deploy child claims** — catalog-ownership (not behavior re-proof); each points at a runbook in [`CI_RUNBOOKS`](../../lib/harness/ci-deploy.ts) · [`ci-deploy.md`](ci-deploy.md)  
+- **CI/deploy child claims** — catalog-ownership; `ProofPath.freshRerun` replays catalog presence, not intervention (see [FRESH-RERUN.md](FRESH-RERUN.md) · Three catalogs). Each points at a runbook in [`CI_RUNBOOKS`](../../lib/harness/ci-deploy.ts) · [`ci-deploy.md`](ci-deploy.md)  
   *Ids* → `ci-core-envelope` · `typescript-ci-gate` · `deploy-production-preflight` · `deploy-staging-script` · `bun-migrate-status`  
-  *Fresh-rerun* → `bun run docs:ci-deploy` (shared; prints live catalog)
+  *Fresh-rerun* → `bun run docs:ci-deploy` (shared; prints live catalog) · fail-closed coverage → `ci-deploy-runbooks`
 
 ## Fresh-rerun
 

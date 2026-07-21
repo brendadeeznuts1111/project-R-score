@@ -108,7 +108,7 @@ Search `proof.ts` and existing contracts. If yes, justify the addition or modify
 Many claims are enforced by the existing `test:changed` / harness gates and the contract test, not a dedicated workflow.  
 Be precise: which existing job already runs this, or what minimal CI change is needed?
 
-For journeys, `CI_SPINE_SMOKE_TESTS` in `proof.ts` is often the hook. For islands, `type-check` already runs on `tsconfig.check.json` changes.
+For journeys, name the existing hook: `bun run test:changed` (path filter), a dedicated workflow, or the journey test file itself. For islands, `type-check` already runs on `tsconfig.check.json` changes. Do not invent a second smoke-file SSOT in `proof.ts`.
 
 **Answer:** … (e.g., “covered by `bun run test:changed` because the test file matches the path filter”; or “add a step to `.github/workflows/journey.yml` triggering on `tests/journey/<id>.test.ts`”)
 

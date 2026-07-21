@@ -30,33 +30,6 @@ export type ProofPath = {
   freshRerun: string;
 };
 
-/** Manual Bun-native smoke files (not a second CI SSOT — prefer test:changed:main). */
-export const CI_SPINE_SMOKE_TESTS = [
-  'tests/bun-urlpattern.test.ts',
-  'tests/bun-glob-scan.test.ts',
-  'tests/bun-ansi-width.test.ts',
-  'tests/console-depth.test.ts',
-  'tests/fixtures/runtime-cli/flag-placement/fixture.test.ts',
-  'tests/fixtures/runtime-cli/resolution-order/fixture.test.ts',
-  'tests/fixtures/runtime-cli/shebang-bun/fixture.test.ts',
-  'tests/fixtures/runtime-cli/console-depth/fixture.test.ts',
-  'tests/fixtures/bun-shell/interpolation/fixture.test.ts',
-  'tests/fixtures/bun-shell/error-handling/fixture.test.ts',
-  'tests/fixtures/bun-shell/cwd/fixture.test.ts',
-  'tests/fixtures/security-hash/password/fixture.test.ts',
-  'tests/fixtures/security-hash/cryptohasher/fixture.test.ts',
-  'tests/bun-cron.test.ts',
-  'tests/bun-explicit-resource.test.ts',
-  'tests/harness-cron-contract.test.ts',
-  'tests/bun-markdown-ansi.test.ts',
-  'tests/journey/install-verify.test.ts',
-  'tests/journey/search-governance.test.ts',
-  'tests/journey/cron-os-persistent.test.ts',
-  'tests/harness-fresh-rerun-contract.test.ts',
-  'tests/spine-tenants.test.ts',
-  'tests/harness-tenant-runbooks.test.ts',
-] as const;
-
 /** Named critical paths — each must set `freshRerun` (see FRESH-RERUN.md). */
 export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
@@ -380,10 +353,13 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     ],
     freshRerun: 'bun run test:ci-deploy',
   },
+  // Catalog-owned CI/deploy children (ci-core-envelope … bun-migrate-status):
+  // ProofPath.freshRerun is `bun run docs:ci-deploy` (catalog presence).
+  // Behavior / intervention lives on CiRunbook; fail-closed coverage is ci-deploy-runbooks.
   {
     id: 'ci-core-envelope',
     // owner: scripts/ci-core.ts · .github/workflows/harness-gates.yml
-    claim: 'Required CI envelope is bun run ci:core (install verify · hygiene · ci:harness)',
+    claim: 'CI envelope bun run ci:core is cataloged (install verify · hygiene · ci:harness)',
     kinds: ['boundary'],
     evidence: [
       'bun run docs:ci-deploy',
@@ -397,7 +373,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'typescript-ci-gate',
     // owner: .github/workflows/typescript-checks.yml
-    claim: 'typescript-checks workflow owns type-check:ci / type-check:full',
+    claim: 'typescript-checks ownership of type-check:ci / type-check:full is cataloged',
     kinds: ['boundary'],
     evidence: [
       'bun run docs:ci-deploy',
@@ -410,7 +386,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'deploy-production-preflight',
     // owner: scripts/deployment/deploy-production.ts
-    claim: 'Production deploy path is bun run deploy:production (Bun.secrets + R2 preflight)',
+    claim: 'Production deploy path bun run deploy:production is cataloged (Bun.secrets + R2)',
     kinds: ['boundary'],
     evidence: [
       'bun run docs:ci-deploy',
@@ -423,7 +399,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'deploy-staging-script',
     // owner: scripts/shell/deploy-staging.sh
-    claim: 'Staging deploy path is bun run deploy:staging',
+    claim: 'Staging deploy path bun run deploy:staging is cataloged',
     kinds: ['boundary'],
     evidence: [
       'bun run docs:ci-deploy',
@@ -436,7 +412,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'bun-migrate-status',
     // owner: scripts/bun-migrate.ts
-    claim: 'Bun migration inventory status is bun run migrate:status',
+    claim: 'Bun migration inventory path bun run migrate:status is cataloged',
     kinds: ['boundary'],
     evidence: [
       'bun run docs:ci-deploy',
