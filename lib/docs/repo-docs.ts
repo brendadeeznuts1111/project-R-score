@@ -44,6 +44,8 @@ export const CANONICAL_REPO_DOCS = {
   harnessIndex: 'docs/harness/README.md',
   /** Proof claim kinds */
   harnessProof: 'docs/harness/PROOF.md',
+  /** Fresh-rerun contract (PR paste of claim re-proof) */
+  harnessFreshRerun: 'docs/harness/FRESH-RERUN.md',
   /** Feedback → ratchet lessons */
   harnessFeedback: 'docs/harness/FEEDBACK.md',
   /** Capability vs permission / lanes */

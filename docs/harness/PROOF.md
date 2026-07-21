@@ -40,11 +40,17 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
 - **`bun-cron`** — OS-persistent primary; in-process complement (`unit` + `boundary`)  
   *Ratchet* → `bun run test:cron` · [`cron.md`](cron.md)
 
+## Fresh-rerun
+
+Every path above has a `freshRerun` command in [`lib/harness/proof.ts`](../../lib/harness/proof.ts).  
+*Ratchet* → [`FRESH-RERUN.md`](FRESH-RERUN.md) · paste command output in the PR body when touching the claim’s owner.
+
 ## Agent checklist before “done”
 
 1. State the claim in one sentence.
 2. Pick kind(s) above.
 3. Point at evidence paths or commands that actually ran.
-4. If evidence is missing, either run it or downgrade the claim.
+4. If the change touches a claim owner, run that claim’s `freshRerun` and keep the output (PR body).
+5. If evidence is missing, either run it or downgrade the claim.
 
-Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Discover: `bun run harness:status`.
+Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Discover: `bun run harness:status` · `bun run docs:fresh-rerun`.

@@ -11,7 +11,7 @@ Inspect, edit, type-check, test, format, lint staged files, local builds, draft 
 ## Consequential (narrow grant)
 
 - **`git commit`** — user asks to commit (or delivery rule after an explicit ship batch)
-- **`git push` / PR** — user asks to push or open a PR
+- **`git push` / PR** — user asks to push or open a PR; if the change touches a proof-claim owner, the PR body includes pasted output of that claim’s `freshRerun` ([`FRESH-RERUN.md`](FRESH-RERUN.md))
 - **`--force` / history rewrite** — explicit user request; never force-push `main` without warning
 - **Skip hooks (`--no-verify`)** — explicit user request only
 - **Secrets / credentials in trajectory** — prefer ambient sidecar / env already loaded; do not paste keys into chat or commit `.env`

@@ -2,7 +2,7 @@
   "name": "factorywager-enterprise",
   "version": "5.1.2",
   "packageManager": "bun@1.4.0",
-  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -1692,6 +1692,7 @@
     "docs:harness": "bun ./docs/harness/README.md",
     "docs:cron": "bun scripts/docs-cron.ts",
     "docs:install-verify": "bun scripts/docs-install-verify.ts",
+    "docs:fresh-rerun": "bun scripts/docs-fresh-rerun.ts",
     "test:cron": "bun test tests/bun-cron.test.ts tests/harness-cron-contract.test.ts tests/bun-explicit-resource.test.ts",
     "test:install-verify": "bun test tests/journey/install-verify.test.ts",
     "spine:schedule": "bun spine/scheduler.ts",

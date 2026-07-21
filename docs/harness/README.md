@@ -29,6 +29,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Discover day-loop + ratchet status (live) → `bun run harness:status` (`ansiMarkdown` / `Bun.markdown.ansi`)
 - Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron`
 - Install-verify WebView journey (`install-verify-journey`) → `bun run docs:install-verify` · [`install-verify.md`](install-verify.md) · `bun run test:install-verify`
+- Fresh-rerun (claim re-proof before merge) → `bun run docs:fresh-rerun` · [`FRESH-RERUN.md`](FRESH-RERUN.md)
 - Improve the harness itself → [`.agents/skills/harness-improve/SKILL.md`](../../.agents/skills/harness-improve/SKILL.md)
 - Coding standards (full) → [`.custom-instructions.md`](../../.custom-instructions.md)
 
@@ -46,6 +47,8 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → pre-commit `bun-doc-refs` annotate-on-write · `bun tools/bun-doc-refs.ts check`
 - **Proof journeys** — claim kind matches evidence  
   *Ratchet* → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` · `bun run proof:install` · `bun run harness:status`
+- **Fresh-rerun** — harness PRs re-prove the affected claim outside the proposing chat  
+  *Ratchet* → [`FRESH-RERUN.md`](FRESH-RERUN.md) · `freshRerun` on each `CRITICAL_PROOF_PATHS` entry · paste output in PR
 
 ## Upstream thesis → FactoryWager owner
 

@@ -39,8 +39,8 @@ Suspected harness gap:
 3. **Owner** — route via [`docs/harness/README.md`](../../../docs/harness/README.md) (one thesis hop).
 4. **Hypothesis** — If \<intervention\> at \<owner\>, then \<observable change\> on \<job\>, because \<mechanism\>.
 5. **Smallest reversible fix** — prefer type/lint/skill/doc-map over new scripts; verify native checks + claim journey.
-6. **Fresh rerun** — same claim/class of job; confirm the intervention was actually retrieved/invoked.
-7. **Retain / revise / remove** — justify carrying cost; record lesson if it will recur.
+6. **Fresh rerun** — run the affected claim’s `freshRerun` from [`lib/harness/proof.ts`](../../../lib/harness/proof.ts) (see [`FRESH-RERUN.md`](../../../docs/harness/FRESH-RERUN.md)); paste terminal output into the PR; confirm the intervention was actually retrieved/invoked.
+7. **Retain / revise / remove** — justify carrying cost; record lesson if it will recur. No retain without fresh-rerun output.
 
 ## Ratchet promote
 

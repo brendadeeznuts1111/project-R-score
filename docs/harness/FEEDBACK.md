@@ -13,10 +13,12 @@ Upstream: [Turn feedback into infrastructure](https://github.com/lopopolo/harnes
 - **Repair:** (what fixed this instance)
 - **Earliest owner:** type | lint | skill | doc-map | script-gate | proof | CI | ops
 - **Ratchet:** (concrete check or doc link that blocks recurrence)
-- **Keep / revise / drop:** after a fresh rerun
+- **Keep / revise / drop:** after a fresh rerun (paste `freshRerun` output — [`FRESH-RERUN.md`](FRESH-RERUN.md))
 ```
 
 Scaffold: `bun run harness:lesson --title="…"`.
+
+Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affected claim’s `freshRerun` from `lib/harness/proof.ts` and paste the terminal output into the PR.
 
 ## Promote
 
@@ -30,8 +32,9 @@ Scaffold: `bun run harness:lesson --title="…"`.
   *Ratchet* → `bun run docs:map:check`
 - **`script-gate`** — `scripts/pre-commit-harness.ts` · named `bun run`  
   *Ratchet* → husky pre-commit / named day-loop command
-- **`proof`** — [`PROOF.md`](PROOF.md)  
-  *Ratchet* → `lib/harness/proof.ts` evidence commands · `bun run harness:status`
+- **`proof`** — [`PROOF.md`](PROOF.md) · [`FRESH-RERUN.md`](FRESH-RERUN.md)  
+  *Ratchet* → `lib/harness/proof.ts` evidence + `freshRerun` · `bun run harness:status`
+
 - **`CI`** — `.github/workflows/` · `scripts/ci-*.ts`  
   *Ratchet* → `bun run ci:core` · required Harness Gates check
 
@@ -55,10 +58,12 @@ Scaffold: `bun run harness:lesson --title="…"`.
   *Ratchet* → slim live `docs/` · `doc-map-check`
 - **Heap profile / fat READMEs** (`doc-map`)  
   *Ratchet* → gitignore `lib/profile.md` · JIT READMEs
+- **Harness change without fresh-rerun evidence** (`proof`)  
+  *Ratchet* → [`FRESH-RERUN.md`](FRESH-RERUN.md) · PR paste of claim `freshRerun` · `bun test tests/harness-fresh-rerun-contract.test.ts`
 - **Discover / gate timing dumps in `git status`** (`script-gate`)  
   *Ratchet* → gitignore `artifacts/bun-native-discover*.json` · `reports/` · hygiene `harness-regenerable-staged` · `bun run clean`
-- **Ephemeral scratch audit scripts polluting status** (`script-gate`)  
-  *Ratchet* → gitignore `/scratch/{find,check,classify,purge,verify,batch,fix}-*` · `/scratch/orphan-*` · `/scratch/toc-ops/`
+- **Ephemeral scratch dumps polluting status** (`script-gate`)  
+  *Ratchet* → default-deny `/scratch/**` · allowlist `README.md` + `bun-v1.3.9-examples/**` (session dumps / toc-ops / audit helpers stay local)
 - **Pre-commit ESLint cold** (`script-gate`)  
   *Ratchet* → `.cache/eslint-bun-native`
 - **GHA billing lock** (`ops`)  

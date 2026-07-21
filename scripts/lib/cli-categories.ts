@@ -107,6 +107,8 @@ export const CLI_SPECIAL: Record<string, string> = {
   'docs:cron': 'Cron contract in-terminal (ansiMarkdown · docs/harness/cron.md)',
   'docs:install-verify':
     'Install-verify WebView journey brief (ansiMarkdown · docs/harness/install-verify.md)',
+  'docs:fresh-rerun':
+    'Fresh-rerun contract + per-claim catalog (ansiMarkdown · docs/harness/FRESH-RERUN.md)',
   'test:cron':
     'Cron contract ratchet (OS-persistent primary / in-process complement · docs/harness/cron.md)',
   'test:install-verify':
@@ -151,6 +153,7 @@ export const CLI_CORE_CMDS = new Set([
   'docs:harness',
   'docs:cron',
   'docs:install-verify',
+  'docs:fresh-rerun',
   'test:cron',
   'test:install-verify',
   'spine:schedule',

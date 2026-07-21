@@ -36,6 +36,7 @@ type Timing = {
 /** Day-loop commands — the cmd *is* the ratchet. */
 const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run docs:harness', purpose: 'bun ./docs/harness/README.md (native ANSI)' },
+  { cmd: 'bun run docs:fresh-rerun', purpose: 'fresh-rerun contract + catalog' },
   { cmd: 'bun run type-check', purpose: 'tsc spine (tsconfig.check.json)' },
   { cmd: 'bun run test:changed', purpose: '--changed dirty tree' },
   { cmd: 'bun run test:changed:main', purpose: '--changed=origin/main|--main-head' },
@@ -53,8 +54,16 @@ const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run build:defines:compile', purpose: 'standalone → dist/fw-build-info' },
 ];
 
-function ratchetBullets(items: Array<{ title: string; body: string; ratchet: string }>): string {
-  return items.map(i => `- **\`${i.title}\`** — ${i.body}\n  *Ratchet* → ${i.ratchet}`).join('\n');
+function ratchetBullets(
+  items: Array<{ title: string; body: string; ratchet: string; fresh?: string }>
+): string {
+  return items
+    .map(i => {
+      const lines = [`- **\`${i.title}\`** — ${i.body}`, `  *Ratchet* → ${i.ratchet}`];
+      if (i.fresh) lines.push(`  *Fresh-rerun* → \`${i.fresh}\``);
+      return lines.join('\n');
+    })
+    .join('\n');
 }
 
 const md = [
@@ -76,6 +85,7 @@ const md = [
       title: p.id,
       body: `${p.claim} (\`${p.kinds.join('`+`')}\`)`,
       ratchet: p.evidence.map(e => `\`${e}\``).join(', '),
+      fresh: p.freshRerun,
     }))
   ),
 ].join('\n');
@@ -93,8 +103,9 @@ if (hasFlag('table')) {
       id: p.id,
       kinds: p.kinds.join('+'),
       claim: p.claim,
+      freshRerun: p.freshRerun,
     })),
-    ['id', 'kinds', 'claim']
+    ['id', 'kinds', 'claim', 'freshRerun']
   );
   console.info('');
 }

@@ -13,3 +13,6 @@ Running `bun run install:verify` succeeds, and a headless browser smoke report s
 
 **Ratchet**  
 `bun run test:install-verify` (CI must pass)
+
+**Fresh-rerun**  
+`bun run test:install-verify` — paste output in the PR when touching this journey ([`FRESH-RERUN.md`](FRESH-RERUN.md)).

@@ -39,6 +39,7 @@ const DOC_MAP_SSOT = new Set([
   'docs/IMPORT_BOUNDARIES.md',
   'docs/harness/README.md',
   'docs/harness/PROOF.md',
+  'docs/harness/FRESH-RERUN.md',
   'docs/harness/FEEDBACK.md',
   'docs/harness/AUTHORITY.md',
   'docs/organization/VELOCITY_BASELINE.md',

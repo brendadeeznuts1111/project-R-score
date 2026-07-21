@@ -16,7 +16,7 @@ Follow one representative job from request → outcome. Ask each question; open 
    → brands · wire eslint · path-bun · bun-env · UNIFIED  
    *Ratchet* → `bun run check:path-bun` · `bun run check:bun-env` · brand staged gate
 6. Does proof exercise the claim at the right boundary?  
-   → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` · `bun run proof:install`
+   → [`PROOF.md`](PROOF.md) · [`FRESH-RERUN.md`](FRESH-RERUN.md) · `lib/harness/proof.ts` · `bun run proof:install`
 7. Review, CI, conflicts, delivery?  
    → husky / pre-commit-harness · `.github/workflows/` · AUTHORITY lanes  
    *Ratchet* → `bun run ci:harness:fast`
