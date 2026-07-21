@@ -192,7 +192,7 @@ Upstream SSOT: [bun.com/blog/bun-v1.3.12](https://bun.com/blog/bun-v1.3.12) — 
 | [Unix domain socket lifecycle ↔ Node](https://bun.com/blog/bun-v1.3.12#unix-domain-socket-lifecycle-now-matches-node-js) | Runtime inherit · prefer Bun.serve / native sockets in new code |
 | JSC: `using` / `await using`, JIT, Wasm, spec, libpas | Prefer `await using` for WebView / resources · rest inherit |
 | [Improved standalone Linux executables](https://bun.com/blog/bun-v1.3.12#improved-standalone-executables-on-linux) | Runtime inherit · `--compile` portability |
-| [URLPattern up to 2.3× faster](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster) | Runtime inherit · no homebase wrapper; prefer for route match |
+| [URLPattern up to 2.3× faster](https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster) | Runtime inherit · `test()` / `exec()`; **no longer** pollutes `RegExp.lastMatch` / `RegExp.$N` (was a leak from internal regex). Prefer for route match (`tools/server.ts`) |
 | [Faster `Bun.stripANSI` / `Bun.stringWidth`](https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth) | Wired: [`lib/console-depth.ts`](../lib/console-depth.ts) · CANONICAL_REFS `Bun.stringWidth` / `Bun.stripANSI` |
 | [Faster `bun build` on low-core machines](https://bun.com/blog/bun-v1.3.12#faster-bun-build-on-low-core-machines) | Runtime inherit (thread-pool fix) |
 | [Faster `Bun.Glob.scan()`](https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan) | Runtime inherit · used by docs/search tooling (`**/…` boundary) |
