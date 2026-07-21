@@ -535,4 +535,6 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
   console.info(`  bun run scripts/codesearch-cli.ts --config-paths --from cli/ --to tools/cli/`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

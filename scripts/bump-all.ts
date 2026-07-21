@@ -103,4 +103,6 @@ async function main(): Promise<void> {
   console.info(`   3. Deploy: bun run registry:publish`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

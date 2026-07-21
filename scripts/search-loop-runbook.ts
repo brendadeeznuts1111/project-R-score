@@ -106,4 +106,6 @@ async function main(): Promise<void> {
   console.info(`[search:loop:runbook] wrote ${outPath}`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

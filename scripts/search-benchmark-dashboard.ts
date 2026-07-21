@@ -278,7 +278,10 @@ async function readLocalJson(path: string): Promise<Response> {
   });
 }
 
-function jsonResponse(body: unknown, options: JsonRouteOptions = {}): Response {
+function jsonResponse(
+  body: object | string | number | boolean | null,
+  options: JsonRouteOptions = {}
+): Response {
   const headers: Record<string, string> = {
     'content-type': 'application/json; charset=utf-8',
     'cache-control': 'no-store',
@@ -7162,7 +7165,7 @@ async function main(): Promise<void> {
   const sseWrite = (
     controller: ReadableStreamDefaultController<Uint8Array>,
     event: string,
-    payload: unknown
+    payload: object | string | number | boolean | null
   ) => {
     controller.enqueue(sseEncoder.encode(`event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`));
   };
@@ -8877,4 +8880,6 @@ async function main(): Promise<void> {
   console.info(ansi(`[search-bench:dashboard] domain=${options.domain}`, '#22d3ee'));
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

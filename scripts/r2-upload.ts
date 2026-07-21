@@ -385,4 +385,6 @@ async function main(): Promise<void> {
   console.info('[r2-upload] uploaded 3 objects successfully');
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

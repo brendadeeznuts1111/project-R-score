@@ -692,7 +692,7 @@ async function main() {
 ╚════════════════════════════════════════════════════════════╝`);
 }
 
-if (process.argv[1] === Bun.main) {
+if (import.meta.main) {
   main().catch(console.error);
 }
 

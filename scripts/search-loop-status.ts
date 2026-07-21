@@ -360,4 +360,6 @@ async function main(): Promise<void> {
   console.info(`[search:loop:status] wrote ${outMd}`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 type CleanupHit = {
   file: string;
@@ -120,4 +121,6 @@ async function main(): Promise<void> {
   console.info(`[search:cleanup:report] wrote ${reportPath}`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

@@ -59,4 +59,6 @@ async function main() {
   console.info(JSON.stringify({ ok: true, output, entrypoint: analysis.entrypoint }, null, 2));
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

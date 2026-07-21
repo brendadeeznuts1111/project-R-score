@@ -46,6 +46,6 @@ Protocol: `bun run dashboard:protocol:check`. Discover Node leftovers: `bun run 
 
 - Root-parked nested remotes; `proton-pass` WIP; lifecycle hook aliases
 - Broad `lib/docs/**` in day-loop type-check (debt isolated)
-- Soft `bun/prefer-*` / unknown-param warns (ratcheted on touch via `--max-warnings 0`)
+- Soft `harness/no-unknown-function-param` warns (~88; ratcheted on touch via `--max-warnings 0`)
 - Intentional Node surfaces: `node:dns` health checks, `node:os` in brand bench, `node:inspector` snapshot, `node:net` test server
 - Large `search-benchmark-dashboard.ts` DNS logic (keep)

@@ -1,5 +1,6 @@
 // profiles.ts - Minimal profiles implementation for service-color-secrets
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 export const BUN_PROFILES_SECRET_NAMES = [
   'DATABASE_URL',
   'API_KEY',
@@ -31,7 +32,7 @@ export async function profileKeychainGet(
   key: string
 ): Promise<{ ok: boolean; value?: string; code?: string }> {
   // Mock implementation - in real usage this would interact with system keychain
-  const envValue = process.env[key];
+  const envValue = Bun.env[key];
   if (envValue) {
     return { ok: true, value: envValue };
   }

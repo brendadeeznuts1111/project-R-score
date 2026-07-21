@@ -1,4 +1,6 @@
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // server/server-enhanced.ts
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
 
 // Simple in-memory cache for RSS feeds
@@ -23,7 +25,7 @@ import { PORTS, SERVER_HOST } from '../config/ports.ts';
 
 const SERVER_PORT = PORTS.SERVER;
 const CONTENT_TYPE_SERVER_PORT = PORTS.CONTENT_TYPE_SERVER;
-const CONTENT_TYPE_SERVER_HOST = process.env.CONTENT_TYPE_SERVER_HOST || SERVER_HOST;
+const CONTENT_TYPE_SERVER_HOST = Bun.env.CONTENT_TYPE_SERVER_HOST || SERVER_HOST;
 const server = Bun.serve({
   port: SERVER_PORT,
   async fetch(request) {
@@ -616,7 +618,7 @@ const text = await response.text(); // or .json(), .arrayBuffer(), etc.</code></
                   const testText = await testResponse.text();
                   result.innerHTML += '<div style="margin-top: 1rem; padding: 1rem; background: #c6f6d5; border-radius: 6px;">🎯 Direct fetch test: ' + testResponse.status + ' OK</div>';
                 } catch (error) {
-                  if (process.env.DEBUG === '1') {
+                  if (Bun.env.DEBUG === '1') {
                     console.warn('⚠️ Direct fetch might be blocked by CORS');
                   }
                 }

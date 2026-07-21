@@ -150,4 +150,6 @@ function main() {
   console.info(`[demo-contract][pass] demos=${demoIds.length} contracts=${contractIds.length}`);
 }
 
-main();
+if (import.meta.main) {
+  void main();
+}

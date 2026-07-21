@@ -1,4 +1,6 @@
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // server/server-fixed.ts
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { BUN_DOCS, TYPED_ARRAY_URLS, RSS_URLS } from '../config/urls.ts';
 import { FetchService } from '../services/core/fetch-service.ts';
 import { AdvancedFetchService } from '../services/core/advanced-fetch-service.ts';
@@ -346,7 +348,7 @@ console.info("Advanced fetch demo completed!");
 // Run the actual advanced demo
 async function runAdvancedDemo(): Promise<Response> {
   try {
-    if (process.env.DEBUG === '1') {
+    if (Bun.env.DEBUG === '1') {
       console.info('🎯 Running advanced fetch demo...');
     }
 
@@ -428,8 +430,8 @@ function handleNotFound(request: Request): Response {
 }
 
 // Create server with endpoints matching Bun's fetch pattern
-const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
-const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
+const SERVER_PORT = parseInt(Bun.env.SERVER_PORT || '3000', 10);
+const SERVER_HOST = Bun.env.SERVER_HOST || 'localhost';
 const server = Bun.serve({
   port: SERVER_PORT,
   async fetch(request: Request): Promise<Response> {

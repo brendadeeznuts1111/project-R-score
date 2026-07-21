@@ -74,10 +74,10 @@ let corsHeaders: Record<string, string>;
 
 try {
   securityMiddleware = createSecurityMiddleware(
-    process.env.NODE_ENV === 'production' ? 'productionAPI' : 'development',
+    Bun.env.NODE_ENV === 'production' ? 'productionAPI' : 'development',
     {
       rateLimit: {
-        maxRequests: process.env.NODE_ENV === 'production' ? 100 : 1000,
+        maxRequests: Bun.env.NODE_ENV === 'production' ? 100 : 1000,
       },
       securityHeaders: {
         customHeaders: {
@@ -102,7 +102,7 @@ try {
 // Initialize CORS headers with error handling
 try {
   corsHeaders = createCORSHeaders(
-    process.env.NODE_ENV === 'production' ? ['https://bun.sh', 'https://bun.com'] : ['*'],
+    Bun.env.NODE_ENV === 'production' ? ['https://bun.sh', 'https://bun.com'] : ['*'],
     ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Client-Version']
   );
@@ -117,14 +117,17 @@ try {
 }
 
 // Unified server configuration
-const SERVER_PORT = parseInt(process.env.SERVER_PORT || '3000', 10);
-const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
+const SERVER_PORT = parseInt(Bun.env.SERVER_PORT || '3000', 10);
+const SERVER_HOST = Bun.env.SERVER_HOST || 'localhost';
 const VERBOSE = Bun.env.BUN_VERBOSE === '1';
 
 type JsonObject = Record<string, unknown>;
 type CacheStatsProvider = { cache: { getStats(): unknown } };
 
-function jsonResponse(body: unknown, init?: ResponseInit): Response {
+function jsonResponse(
+  body: object | string | number | boolean | null,
+  init?: ResponseInit
+): Response {
   return Response.json(body, init);
 }
 
@@ -589,7 +592,7 @@ async function handleInternalWiki(request: Request, url: URL): Promise<Response>
       categories: urls.CATEGORIES,
     },
     note: 'This provider is configured for internal enterprise use',
-    environment: process.env.INTERNAL_WIKI_URL ? 'custom' : 'default',
+    environment: Bun.env.INTERNAL_WIKI_URL ? 'custom' : 'default',
   };
 
   return jsonResponse(response);
@@ -1691,7 +1694,7 @@ async function handleCriticalURLs(request: Request, url: URL): Promise<Response>
 async function handleCookieScannerDemo(request: Request, url: URL): Promise<Response> {
   const projectId = url.searchParams.get('projectId') || 'demo-project';
   const sessionId = url.searchParams.get('sessionId') || crypto.randomUUID();
-  const r2Bucket = url.searchParams.get('bucket') || process.env.R2_BUCKET || 'scanner-cookies';
+  const r2Bucket = url.searchParams.get('bucket') || Bun.env.R2_BUCKET || 'scanner-cookies';
 
   // Simulate the cookie scanner logic
   const cookies = { projectId, sessionId };
@@ -1732,7 +1735,7 @@ async function handleCookieScannerDemo(request: Request, url: URL): Promise<Resp
     },
     cliUsage: {
       command: `R2_BUCKET=${r2Bucket} PROJECT_ID=${projectId} bun tools/cookie-scanner.ts ${sessionId}`,
-      oneLiner: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));const b=Buffer.concat([Buffer.from([0x01]),z]);console.info({p,s,bundle:b.length+"B",bucket:process.env.R2_BUCKET||"scanner-cookies",status:"✅"})' ${projectId} ${sessionId}`,
+      oneLiner: `bun -e 'const a=process.argv.slice(2);const p=a[0]||"demo";const s=a[1]||crypto.randomUUID();const c={p,s};const z=Bun.zstdCompressSync(JSON.stringify(c));const b=Buffer.concat([Buffer.from([0x01]),z]);console.info({p,s,bundle:b.length+"B",bucket:Bun.env.R2_BUCKET||"scanner-cookies",status:"✅"})' ${projectId} ${sessionId}`,
     },
     benefits: [
       'Efficient ZSTD compression',
@@ -1772,7 +1775,7 @@ async function handleCLIEfficiencyDemo(request: Request, url: URL): Promise<Resp
         title: 'Efficient Argument Parsing',
         code: `const args = process.argv.slice(2)
 const getPos = (i, fallback = '') => args[i] ?? fallback
-const projectId = getPos(0, process.env.PROJECT_ID || 'default')
+const projectId = getPos(0, Bun.env.PROJECT_ID || 'default')
 const sessionId = getPos(1, crypto.randomUUID())`,
         explanation: 'Clean argument handling with fallbacks and environment support',
         benefits: ['Type-safe fallbacks', 'Environment integration', 'Minimal code'],
@@ -1816,7 +1819,7 @@ console.info(wrap(msg, 80))`,
           title: 'Efficient Argument Parsing',
           code: `const args = process.argv.slice(2)
 const getPos = (i, fallback = '') => args[i] ?? fallback
-const projectId = getPos(0, process.env.PROJECT_ID || 'default')
+const projectId = getPos(0, Bun.env.PROJECT_ID || 'default')
 const sessionId = getPos(1, crypto.randomUUID())`,
           explanation: 'Clean argument handling with fallbacks',
           benefits: ['Type-safe fallbacks', 'Environment integration'],

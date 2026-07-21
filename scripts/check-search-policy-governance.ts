@@ -127,4 +127,6 @@ async function main(): Promise<void> {
   console.info(`thresholdChanged=${thresholdChanged}`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

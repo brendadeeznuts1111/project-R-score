@@ -10,4 +10,6 @@ async function main() {
   console.info(JSON.stringify(analysis, null, 2));
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

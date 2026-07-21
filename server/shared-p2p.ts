@@ -1,16 +1,17 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { PORTS, REDIS_URL as SHARED_REDIS_URL } from '../config/ports.ts';
 
 export { PORTS, SHARED_REDIS_URL };
 
 export const DEFAULT_PORT = PORTS.P2P_PROXY;
-export const REDIS_URL = process.env.REDIS_URL || `redis://localhost:${PORTS.REDIS}`;
+export const REDIS_URL = Bun.env.REDIS_URL || `redis://localhost:${PORTS.REDIS}`;
 
 export function getEnvOrDefault(key: string, fallback: string): string {
-  return process.env[key] ?? fallback;
+  return Bun.env[key] ?? fallback;
 }
 
 export function getPortOrDefault(key: string, fallback: number): number {
-  const val = process.env[key];
+  const val = Bun.env[key];
   if (!val) return fallback;
   const parsed = parseInt(val, 10);
   if (Number.isNaN(parsed) || parsed < 1 || parsed > 65535) {

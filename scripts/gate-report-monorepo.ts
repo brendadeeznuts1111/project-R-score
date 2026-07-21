@@ -154,10 +154,12 @@ async function main(): Promise<number> {
   return report.overall === 'pass' ? 0 : 1;
 }
 
-main().then(
-  code => process.exit(code),
-  err => {
-    console.error(err);
-    process.exit(1);
-  }
-);
+if (import.meta.main) {
+  main().then(
+    code => process.exit(code),
+    err => {
+      console.error(err);
+      process.exit(1);
+    }
+  );
+}

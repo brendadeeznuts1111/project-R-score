@@ -1,5 +1,6 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 function envPort(key: string, defaultPort: number): number {
-  const val = process.env[key];
+  const val = Bun.env[key];
   if (!val) return defaultPort;
   const parsed = parseInt(val, 10);
   if (Number.isNaN(parsed) || parsed < 1 || parsed > 65535) {
@@ -23,5 +24,5 @@ export const PORTS = {
   SERVER: envPort('SERVER_PORT', 3000),
 } as const;
 
-export const REDIS_URL = process.env.REDIS_URL || `redis://localhost:${PORTS.REDIS}`;
-export const SERVER_HOST = process.env.SERVER_HOST || 'localhost';
+export const REDIS_URL = Bun.env.REDIS_URL || `redis://localhost:${PORTS.REDIS}`;
+export const SERVER_HOST = Bun.env.SERVER_HOST || 'localhost';

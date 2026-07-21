@@ -267,7 +267,9 @@ async function getAllSecrets(): Promise<Array<{ key: string; value: string }>> {
   ];
 }
 
-main().catch(error => {
-  console.error(styled(`💥 Fatal error: ${error.message}`, 'error'));
-  process.exit(1);
-});
+if (import.meta.main) {
+  main().catch(error => {
+    console.error(styled(`💥 Fatal error: ${error.message}`, 'error'));
+    process.exit(1);
+  });
+}

@@ -15,6 +15,7 @@
  * - Bun RedisClient
  */
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { RedisClient } from 'bun';
 import { PORTS, REDIS_URL } from '../config/ports.ts';
 
@@ -478,7 +479,7 @@ const server = Bun.serve({
     const headers = req.headers;
 
     const origin = req.headers.get('Origin') || '';
-    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const allowedOrigins = (Bun.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
     const corsOrigin =
       allowedOrigins.length > 0 && allowedOrigins.includes(origin)
         ? origin

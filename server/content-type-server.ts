@@ -1,13 +1,15 @@
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // server/content-type-server.ts
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { CONTENT_TYPES, ContentTypeHandler } from '../config/content-types.ts';
 import { BUN_DOCS, TYPED_ARRAY_URLS } from '../config/urls.ts';
 import { validateHost, validatePort } from '../lib/utils/env-validator.ts';
 
 // Create server that demonstrates content-type handling with validated environment variables
-const CONTENT_TYPE_SERVER_PORT = validatePort(process.env.CONTENT_TYPE_SERVER_PORT, 3001);
+const CONTENT_TYPE_SERVER_PORT = validatePort(Bun.env.CONTENT_TYPE_SERVER_PORT, 3001);
 const CONTENT_TYPE_SERVER_HOST =
-  validateHost(process.env.CONTENT_TYPE_SERVER_HOST) ||
-  validateHost(process.env.SERVER_HOST) ||
+  validateHost(Bun.env.CONTENT_TYPE_SERVER_HOST) ||
+  validateHost(Bun.env.SERVER_HOST) ||
   'localhost';
 const server = Bun.serve({
   port: CONTENT_TYPE_SERVER_PORT,

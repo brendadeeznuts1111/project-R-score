@@ -298,4 +298,6 @@ async function main() {
   process.exit(1);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

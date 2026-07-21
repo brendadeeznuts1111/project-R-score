@@ -50,4 +50,6 @@ async function main() {
   console.info(JSON.stringify({ base, results: output }, null, 2));
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

@@ -177,4 +177,6 @@ async function main(): Promise<void> {
   console.info('[search:coverage:loc] wrote reports/search-coverage-loc-latest.md');
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

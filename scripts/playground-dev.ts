@@ -111,4 +111,6 @@ async function main() {
   process.exit(exitCode ?? 0);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

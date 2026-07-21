@@ -14,6 +14,7 @@
  * - Class-based architecture
  */
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { RedisClient } from 'bun';
 import { REDIS_URL } from '../config/ports.ts';
 
@@ -443,14 +444,14 @@ const PORT = Number(Bun.env.P2P_PROXY_PORT ?? 3002);
 
 const server = Bun.serve({
   port: PORT,
-  hostname: process.env.SERVER_HOST || 'localhost',
+  hostname: Bun.env.SERVER_HOST || 'localhost',
 
   async fetch(req) {
     const url = new URL(req.url);
     const body = await req.text();
 
     const origin = req.headers.get('Origin') || '';
-    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const allowedOrigins = (Bun.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
     const corsOrigin =
       allowedOrigins.length > 0 && allowedOrigins.includes(origin)
         ? origin

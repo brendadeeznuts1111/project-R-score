@@ -166,4 +166,6 @@ async function main() {
   process.exit(trackedFindings.length > 0 || hasGitIgnoreFailure ? 1 : 0);
 }
 
-main();
+if (import.meta.main) {
+  void main();
+}

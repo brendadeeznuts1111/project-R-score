@@ -201,4 +201,6 @@ async function main() {
   if (fail > 0 || (compareLast && !gate.pass)) process.exit(1);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

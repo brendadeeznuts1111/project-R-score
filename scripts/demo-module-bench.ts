@@ -108,4 +108,6 @@ function main() {
   }
 }
 
-main();
+if (import.meta.main) {
+  void main();
+}

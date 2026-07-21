@@ -12,6 +12,7 @@
  * - Admin dashboard
  */
 
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { RedisClient } from 'bun';
 import { BusinessContinuity } from '@factorywager/p2p';
 import { CustomerNotifier } from '@factorywager/p2p';
@@ -510,14 +511,14 @@ function generatePaymentPage(amount: number, description: string, config: any): 
 // ============================================================================
 
 const PORT = Number(Bun.env.P2P_PROXY_PORT ?? 3002);
-const ADMIN_SECRET = process.env.ADMIN_SECRET;
+const ADMIN_SECRET = Bun.env.ADMIN_SECRET;
 if (!ADMIN_SECRET) {
   console.error('ADMIN_SECRET env var not set — admin endpoints disabled');
 }
 
 const server = Bun.serve({
   port: PORT,
-  hostname: process.env.SERVER_HOST || 'localhost',
+  hostname: Bun.env.SERVER_HOST || 'localhost',
 
   async fetch(req) {
     const url = new URL(req.url);
@@ -525,7 +526,7 @@ const server = Bun.serve({
     const headers = req.headers;
 
     const origin = req.headers.get('Origin') || '';
-    const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
+    const allowedOrigins = (Bun.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
     const corsOrigin =
       allowedOrigins.length > 0 && allowedOrigins.includes(origin)
         ? origin

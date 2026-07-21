@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 import type { ESLint, Linter, Rule } from 'eslint';
 import { formatBunMessage } from '../../bun-dx-catalog.ts';
 
@@ -39,11 +42,7 @@ const preferImportMetaMain: Rule.RuleModule = {
         }
       },
       CallExpression(node) {
-        if (
-          node.callee.type === 'Identifier' &&
-          node.callee.name === 'main' &&
-          !hasMainGuard
-        ) {
+        if (node.callee.type === 'Identifier' && node.callee.name === 'main' && !hasMainGuard) {
           hasTopLevelAwaitMain = true;
         }
       },
@@ -55,7 +54,10 @@ const preferImportMetaMain: Rule.RuleModule = {
             node,
             messageId: 'preferMain',
             data: {
-              message: formatBunMessage('cli.main', 'CLI scripts should guard entry with import.meta.main.'),
+              message: formatBunMessage(
+                'cli.main',
+                'CLI scripts should guard entry with import.meta.main.'
+              ),
             },
           });
         }
@@ -166,9 +168,23 @@ const requireBunPrefix: Rule.RuleModule = {
   },
   create(context) {
     const bunKeywords = [
-      'API', 'CATALOG', 'DOC', 'KEYWORD', 'ANNOTATION', 'CONFIG',
-      'FORMAT', 'VERSION', 'COOKIE', 'R2', 'S3', 'CLIENT', 'ENDPOINT',
-      'BUCKET', 'ACCOUNT', 'ACCESS', 'SECRET',
+      'API',
+      'CATALOG',
+      'DOC',
+      'KEYWORD',
+      'ANNOTATION',
+      'CONFIG',
+      'FORMAT',
+      'VERSION',
+      'COOKIE',
+      'R2',
+      'S3',
+      'CLIENT',
+      'ENDPOINT',
+      'BUCKET',
+      'ACCOUNT',
+      'ACCESS',
+      'SECRET',
     ];
 
     function shouldHaveBunPrefix(name: string): boolean {
@@ -218,8 +234,8 @@ const plugin: ESLint.Plugin = {
 export default plugin;
 
 export const bunPluginRules: Linter.RulesRecord = {
-  'bun/prefer-import-meta-main': 'warn',
-  'bun/prefer-bun-env': 'warn',
+  'bun/prefer-import-meta-main': 'error',
+  'bun/prefer-bun-env': 'error',
   'bun/prefer-bun-test': 'warn',
   'bun/prefer-bun-sqlite': 'warn',
   'bun/require-bun-prefix': 'off',
@@ -227,7 +243,7 @@ export const bunPluginRules: Linter.RulesRecord = {
 
 export const bunPluginStrictRules: Linter.RulesRecord = {
   'bun/prefer-import-meta-main': 'error',
-  'bun/prefer-bun-env': 'warn',
+  'bun/prefer-bun-env': 'error',
   'bun/prefer-bun-test': 'warn',
   'bun/prefer-bun-sqlite': 'warn',
 };

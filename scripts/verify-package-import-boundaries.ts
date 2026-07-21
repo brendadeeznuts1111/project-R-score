@@ -130,4 +130,6 @@ function main(): void {
   process.exit(1);
 }
 
-main();
+if (import.meta.main) {
+  void main();
+}

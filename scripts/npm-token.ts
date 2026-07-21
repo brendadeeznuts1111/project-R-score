@@ -72,4 +72,6 @@ REGISTRY_URL=${targetRegistry}
   console.info(`   2. Publish: npm publish --registry=${targetRegistry}`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

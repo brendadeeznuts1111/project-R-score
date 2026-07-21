@@ -34,4 +34,6 @@ async function main() {
   }
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

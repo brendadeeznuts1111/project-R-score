@@ -263,4 +263,6 @@ async function main() {
   process.exit(failed_n > 0 ? 1 : 0);
 }
 
-main();
+if (import.meta.main) {
+  void main();
+}

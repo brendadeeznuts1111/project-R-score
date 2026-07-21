@@ -1,11 +1,13 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // Simple staging test server with environment validation
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import { validateHost, validatePort } from '../lib/utils/env-validator';
 
-const PORT = validatePort(process.env.SERVER_PORT || process.env.PORT, 3000);
-const HOST = validateHost(process.env.SERVER_HOST) || 'localhost';
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const PORT = validatePort(Bun.env.SERVER_PORT || Bun.env.PORT, 3000);
+const HOST = validateHost(Bun.env.SERVER_HOST) || 'localhost';
+const NODE_ENV = Bun.env.NODE_ENV || 'development';
 
 console.info(`🚀 Starting Staging Test Server`);
 console.info(`📍 Environment: ${NODE_ENV}`);
@@ -50,7 +52,7 @@ const server = Bun.serve({
         { headers }
       );
 
-      if (process.env.DEBUG === '1') {
+      if (Bun.env.DEBUG === '1') {
         console.info(`✅ Health check - ${Date.now() - startTime}ms`);
       }
       return response;
@@ -83,7 +85,7 @@ const server = Bun.serve({
         }
 
         const response = Response.json(validation, { headers });
-        if (process.env.DEBUG === '1') {
+        if (Bun.env.DEBUG === '1') {
           console.info(`✅ Validation test - ${Date.now() - startTime}ms`);
         }
         return response;
@@ -96,7 +98,7 @@ const server = Bun.serve({
           { status: 400, headers }
         );
 
-        if (process.env.DEBUG === '1') {
+        if (Bun.env.DEBUG === '1') {
           console.info(`❌ Validation test failed - ${Date.now() - startTime}ms`);
         }
         return response;
@@ -120,7 +122,7 @@ const server = Bun.serve({
         headers,
       });
 
-      if (process.env.DEBUG === '1') {
+      if (Bun.env.DEBUG === '1') {
         console.info(`⚠️ Error test (${errorType}) - ${Date.now() - startTime}ms`);
       }
       return response;
@@ -145,7 +147,7 @@ const server = Bun.serve({
       { headers }
     );
 
-    if (process.env.DEBUG === '1') {
+    if (Bun.env.DEBUG === '1') {
       console.info(`✅ Default response - ${Date.now() - startTime}ms`);
     }
     return response;
@@ -158,4 +160,4 @@ console.info(`🧪 Validation test: http://${HOST}:${PORT}/api/test-validation`)
 console.info(`⚠️  Error test: http://${HOST}:${PORT}/api/test-error`);
 console.info(`📊 Environment: ${NODE_ENV}`);
 console.info(`🔒 Security: Enabled`);
-console.info(`📝 Logging: ${process.env.DEBUG === '1' ? 'Debug' : 'Standard'}`);
+console.info(`📝 Logging: ${Bun.env.DEBUG === '1' ? 'Debug' : 'Standard'}`);

@@ -313,4 +313,6 @@ function readBunRevision(): string {
   }
 }
 
-main();
+if (import.meta.main) {
+  void main();
+}

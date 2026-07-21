@@ -48,4 +48,6 @@ async function main(): Promise<void> {
   console.info('PASS infra/server/r2/profile secrets integration');
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

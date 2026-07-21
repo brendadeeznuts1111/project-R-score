@@ -170,4 +170,6 @@ async function main(): Promise<void> {
   console.info(`   Chores: ${categories.chore.length}`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

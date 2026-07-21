@@ -106,4 +106,6 @@ async function main(): Promise<void> {
   console.info(`   6. Upload to R2: bun run r2:sync`);
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}

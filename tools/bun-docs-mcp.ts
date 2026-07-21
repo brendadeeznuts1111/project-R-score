@@ -165,7 +165,7 @@ function ok(id: number | string | undefined, result: ToolCallResult): JsonRpcMes
   return rpcOk(id, result);
 }
 
-function num(v: unknown, fallback: number): number {
+function parseNum(v: unknown, fallback: number): number {
   return typeof v === 'number' ? v : fallback;
 }
 
@@ -183,7 +183,7 @@ async function handleToolsCall(
       const results = await searchDocsAsync(
         docs,
         query,
-        num(args.limit, DEFAULTS.searchLimit),
+        parseNum(args.limit, DEFAULTS.searchLimit),
         typeof args.category === 'string' ? args.category : undefined,
         args.codeOnly === true
       );
@@ -195,8 +195,8 @@ async function handleToolsCall(
       const pattern = String(args.pattern ?? '');
       if (!pattern) return ok(id, toolText('pattern is required', true));
       const { hits, engine } = await queryDocs(docs, docsRoot, pattern, {
-        contextLines: num(args.contextLines, DEFAULTS.queryContext),
-        limit: num(args.limit, DEFAULTS.queryLimit),
+        contextLines: parseNum(args.contextLines, DEFAULTS.queryContext),
+        limit: parseNum(args.limit, DEFAULTS.queryLimit),
         category: typeof args.category === 'string' ? args.category : undefined,
       });
       if (!hits.length) return ok(id, toolText(`No matches for /${pattern}/ (${engine}).`));
@@ -204,7 +204,8 @@ async function handleToolsCall(
     }
 
     case 'read_bun_doc': {
-      const maxLines = args.maxLines === 0 ? undefined : num(args.maxLines, DEFAULTS.readMaxLines);
+      const maxLines =
+        args.maxLines === 0 ? undefined : parseNum(args.maxLines, DEFAULTS.readMaxLines);
       const page = await readDocPage(docs, String(args.slug ?? ''), {
         slugMap,
         section: typeof args.section === 'string' ? args.section : undefined,
@@ -238,7 +239,7 @@ async function handleToolsCall(
     case 'list_bun_topics': {
       const category =
         typeof args.category === 'string' ? args.category.replace(/^\/+|\/+$/g, '') : '';
-      const limit = num(args.limit, DEFAULTS.topicListLimit);
+      const limit = parseNum(args.limit, DEFAULTS.topicListLimit);
       let topics = listTopics(docs);
       if (category) topics = topics.filter(t => t.slug.startsWith(category));
       const truncated = topics.length > limit;
@@ -256,7 +257,7 @@ async function handleToolsCall(
 
     case 'get_bun_blog_posts':
       try {
-        const posts = await fetchBlogPosts(num(args.limit, DEFAULTS.blogListLimit));
+        const posts = await fetchBlogPosts(parseNum(args.limit, DEFAULTS.blogListLimit));
         return ok(id, toolText(formatRssItems(posts)));
       } catch (err) {
         return ok(id, toolText(`RSS fetch failed: ${err}`, true));
@@ -265,7 +266,7 @@ async function handleToolsCall(
     case 'read_bun_blog_post':
       try {
         const maxLines =
-          args.maxLines === 0 ? undefined : num(args.maxLines, DEFAULTS.blogMaxLines);
+          args.maxLines === 0 ? undefined : parseNum(args.maxLines, DEFAULTS.blogMaxLines);
         const post = await fetchBlogPost(String(args.slug ?? ''), { maxLines });
         return ok(id, toolText(formatBlogPost(post.title, post.slug, post.content)));
       } catch (err) {
@@ -332,4 +333,6 @@ async function main() {
   }
 }
 
-main();
+if (import.meta.main) {
+  void main();
+}
