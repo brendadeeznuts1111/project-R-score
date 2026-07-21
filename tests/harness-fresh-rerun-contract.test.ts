@@ -1,6 +1,7 @@
 /**
  * Every critical proof path must name a fresh-rerun command.
  * @see docs/harness/FRESH-RERUN.md
+ * @see docs/harness/PROOF.md — ProofPath catalog completeness
  */
 import { describe, expect, test } from 'bun:test';
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
@@ -11,6 +12,20 @@ describe('fresh-rerun contract', () => {
     for (const p of CRITICAL_PROOF_PATHS) {
       expect(p.freshRerun.trim().length, p.id).toBeGreaterThan(0);
       expect(p.freshRerun.includes('bun') || p.freshRerun.startsWith('bun '), p.id).toBe(true);
+    }
+  });
+
+  test('catalog completeness: every proof id is documented', async () => {
+    const proofMd = await Bun.file(
+      new URL('../docs/harness/PROOF.md', import.meta.url).pathname
+    ).text();
+    // Escape hatch for pointer-grouped ids that are intentionally not listed by name.
+    const pointerGrouped = new Set<string>([
+      // empty until a group omits id names from PROOF.md
+    ]);
+    for (const p of CRITICAL_PROOF_PATHS) {
+      const ok = proofMd.includes(`\`${p.id}\``) || pointerGrouped.has(p.id);
+      expect(ok, p.id).toBe(true);
     }
   });
 
