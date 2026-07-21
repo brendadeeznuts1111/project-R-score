@@ -364,3 +364,8 @@ test-binary-*
 # Agent-context bloat (regenerable / local only; reports/ already ignored above)
 docs/*.zip
 .agents/skills/**/node_modules/
+
+# Bun heap profiles (bun --heap-prof-md) — never commit
+lib/profile.md
+**/*heap-prof*.md
+**/*.heapprofile
