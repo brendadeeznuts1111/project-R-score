@@ -71,7 +71,9 @@ Must be the exact command that reproduces the evidence from a clean checkout.
 Usually identical to the ratchet command, but must be explicit.  
 For islands: often `bun run type-check`. For journeys: the named script (e.g., `bun run test:cron-os`).
 
-**Answer:** `bun run …`
+Also pick **`freshRerunKind`**: `claim` (behavioral re-proof) or `catalog` (docs/catalog presence only — CI children use `bun run docs:ci-deploy`).
+
+**Answer:** `bun run …` · `freshRerunKind: claim | catalog`
 
 - If it requires environment setup, describe it here and harden it in the implementation.  
 - Link to [`FRESH-RERUN.md`](FRESH-RERUN.md) for the PR body requirement.
@@ -105,15 +107,15 @@ Search `proof.ts` and existing contracts. If yes, justify the addition or modify
 
 ### 8. How is this claim enforced in CI?
 
-Pick **`gateClass`**: `continuous` | `workflow` | `human-only` (SSOT on `ProofPath` — see [`PROOF.md`](PROOF.md) Owner→gate).
+Pick **`gateClass`** + **`gateRef`** (SSOT on `ProofPath` — see [`PROOF.md`](PROOF.md) Gate class).
 
-- **continuous** — always runs in `pre-commit-harness` and/or `ci:harness` / `ci:core`
-- **workflow** — a named `.github/workflows/*` job runs it (package script alone is **not** workflow)
-- **human-only** — `freshRerun` paste / ad-hoc only
+- **continuous** — `gateRef` = `pre-commit-harness` | `ci:harness` | `ci:core`
+- **workflow** — `gateRef` = basename under `.github/workflows/` (package script alone is **not** workflow)
+- **human-only** — `gateRef` = `none`
 
 Be precise: which existing job already runs this, or what minimal CI change is needed? Do not invent a second smoke-file SSOT in `proof.ts`.
 
-**Answer:** … (e.g., “`gateClass: continuous` via `ci:harness` step X”; or “`human-only` — `bun run test:…` until demand backs a workflow”)
+**Answer:** … (e.g., “`gateClass: continuous`, `gateRef: ci:harness`”; or “`human-only` / `none` until demand backs a workflow”)
 
 ---
 
@@ -153,14 +155,16 @@ Write the exact `ProofPath` object for `lib/harness/proof.ts`:
 export type ProofPath = {
   id: string; // opaque catalog key
   claim: string; // one‑sentence claim (from Q1)
-  kinds: ProofKind[]; // unit | boundary | journey | deployed (choose appropriate)
+  kinds: ProofKind[]; // unit | boundary | journey | deployed (use orderProofKinds)
   gateClass: ProofGateClass; // continuous | workflow | human-only (from Q8)
+  gateRef: string; // from Q8
   evidence: string[]; // paths or commands that demonstrate the claim
   freshRerun: string; // exact command (from Q4)
+  freshRerunKind: FreshRerunKind; // claim | catalog (from Q4)
 };
 ```
 
-Include a `// owner: …` comment above or inline. Also add a matching row to the Owner→gate table in [`PROOF.md`](PROOF.md).
+Include a `// owner: …` comment above or inline. Also add a matching row to the Gate class table in [`PROOF.md`](PROOF.md).
 
 **Answer:** (copy‑paste ready object)
 

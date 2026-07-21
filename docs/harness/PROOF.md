@@ -71,7 +71,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · [`maintenance.ts`](../../lib/harness/maintenance.ts) · `assertRetirementConditionCheck`
 - **`spine-tenant-heal`** — sandboxed E2E heal loop (break → signal → intervene → recover) (`journey`)  
   *Ratchet* → `bun run test:tenant-heal` · [`heal-fixture.ts`](../../lib/harness/heal-fixture.ts) · [`tenant-heal.test.ts`](../../tests/journey/tenant-heal.test.ts)
-- **`code-quality-tenants`** — types · harness coverage · orphan modules (`boundary` + `journey`)  
+- **`code-quality-tenants`** — types · harness coverage · orphan modules · complexity (`boundary` + `journey`)  
   *Ratchet* → `bun run test:code-quality` · [`code-quality.md`](code-quality.md)
 - **`harness-coverage-ratchet`** — lib/harness coverage ≥ `coverage-baseline.json`  
   *Ratchet* → `bun run test:harness-coverage`
@@ -81,13 +81,13 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run check:harness-complexity`
 - **`ci-deploy-runbooks`** — CI/deploy jobs have runbooks; `assertCICoverage` fail-closed  
   *Ratchet* → `bun run test:ci-deploy` · [`ci-deploy.md`](ci-deploy.md)
-- **CI/deploy child claims** — catalog-ownership; `ProofPath.freshRerun` replays catalog presence, not intervention (see [FRESH-RERUN.md](FRESH-RERUN.md) · Three catalogs). Each points at a runbook in [`CI_RUNBOOKS`](../../lib/harness/ci-deploy.ts) · [`ci-deploy.md`](ci-deploy.md)  
+- **CI/deploy child claims** — catalog-ownership; `freshRerunKind: 'catalog'`; paste proves catalog presence, not intervention (see [FRESH-RERUN.md](FRESH-RERUN.md) · Three catalogs). Each points at a runbook in [`CI_RUNBOOKS`](../../lib/harness/ci-deploy.ts) · [`ci-deploy.md`](ci-deploy.md)  
   *Ids* → `ci-core-envelope` · `typescript-ci-gate` · `deploy-production-preflight` · `deploy-staging-script` · `bun-migrate-status`  
   *Fresh-rerun* → `bun run docs:ci-deploy` (shared; prints live catalog) · fail-closed coverage → `ci-deploy-runbooks`
 
-## Owner → gate
+## Gate class
 
-How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` in [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Catalog meta (completeness · evidence⊇freshRerun) always applies. Classes:
+How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRef` in [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Catalog meta (completeness · evidence⊇freshRerun · `freshRerunKind`) always applies. Classes:
 
 - **continuous** — `pre-commit-harness` and/or `ci:harness` / `ci:core` (Harness Gates)
 - **workflow** — named GHA job outside that envelope (may also be a required status check)
@@ -141,14 +141,14 @@ Every path above has a `freshRerun` command in [`lib/harness/proof.ts`](../../li
 
 ## New claim → discovery first
 
-Do not invent a `ProofPath` by editing files ad hoc. Fill [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (Q0–Q14) so ceremony path (slim vs full), `claim` / `kinds` / `evidence` / `freshRerun`, contract asserts, and PR paste are decided before code.  
+Do not invent a `ProofPath` by editing files ad hoc. Fill [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (Q0–Q14) so ceremony path (slim vs full), `claim` / `kinds` / `gateClass` / `gateRef` / `evidence` / `freshRerun` / `freshRerunKind`, contract asserts, and PR paste are decided before code.  
 *Ratchet* → `bun run docs:claim-discovery` · answered questionnaire in the PR or commit trail
 
 ## Agent checklist before “done”
 
 1. For a **new** claim: complete [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (slim or full path from Q0).
 2. State the claim in one sentence (`ProofPath.claim`).
-3. Pick kind(s) above.
+3. Pick kind(s), `gateClass` + `gateRef`, and `freshRerunKind` (`claim` | `catalog`).
 4. Point at evidence paths or commands that actually ran.
 5. If the change touches a claim owner, run that claim’s `freshRerun` and keep the output (PR body) — [`FRESH-RERUN.md`](FRESH-RERUN.md).
 6. If evidence is missing, either run it or downgrade the claim.

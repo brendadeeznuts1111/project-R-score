@@ -5,9 +5,18 @@
  * @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
  */
 import { describe, expect, test } from 'bun:test';
-import { CI_RUNBOOKS } from '../lib/harness/ci-deploy';
-import { CODE_QUALITY_TENANTS } from '../lib/harness/code-quality';
-import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
+import {
+  assertCiChildProofBijection,
+  assertCiInterventionNotCatalogFreshRerun,
+  CI_CATALOG_FRESH_RERUN,
+  CI_RUNBOOKS,
+} from '../lib/harness/ci-deploy';
+import {
+  assertCodeQualityProofClosedSet,
+  CODE_QUALITY_TENANTS,
+} from '../lib/harness/code-quality';
+import { assertGateRefs } from '../lib/harness/gate-ref';
+import { CRITICAL_PROOF_PATHS, orderProofKinds } from '../lib/harness/proof';
 import { joinPath } from '../lib/path-bun';
 
 const HARNESS_ROOT = joinPath(import.meta.dir, '..');
@@ -35,11 +44,11 @@ describe('fresh-rerun contract', () => {
     }
   });
 
-  test('Owner→gate section lists every proof id with matching gateClass', async () => {
+  test('Gate class section lists every proof id with matching gateClass', async () => {
     const proofMd = await Bun.file(
       new URL('../docs/harness/PROOF.md', import.meta.url).pathname
     ).text();
-    const start = proofMd.indexOf('## Owner → gate');
+    const start = proofMd.indexOf('## Gate class');
     expect(start).toBeGreaterThanOrEqual(0);
     const end = proofMd.indexOf('\n## ', start + 1);
     const section = end >= 0 ? proofMd.slice(start, end) : proofMd.slice(start);
@@ -56,10 +65,38 @@ describe('fresh-rerun contract', () => {
     );
   });
 
-  test('every ProofPath declares a gateClass', () => {
+  test('every ProofPath declares gateClass, gateRef, freshRerunKind', () => {
     for (const p of CRITICAL_PROOF_PATHS) {
       expect(['continuous', 'workflow', 'human-only']).toContain(p.gateClass);
+      expect(['claim', 'catalog']).toContain(p.freshRerunKind);
+      expect(p.gateRef.trim().length, p.id).toBeGreaterThan(0);
     }
+  });
+
+  test('freshRerunKind catalog iff docs:ci-deploy', () => {
+    for (const p of CRITICAL_PROOF_PATHS) {
+      const isCatalogCmd = p.freshRerun === CI_CATALOG_FRESH_RERUN;
+      expect(p.freshRerunKind === 'catalog', p.id).toBe(isCatalogCmd);
+    }
+  });
+
+  test('gateRef matches gateClass wiring rules', async () => {
+    expect(await assertGateRefs(CRITICAL_PROOF_PATHS, HARNESS_ROOT)).toEqual([]);
+  });
+
+  test('kinds arrays use stable unit→boundary→journey→deployed order', () => {
+    for (const p of CRITICAL_PROOF_PATHS) {
+      expect(p.kinds, p.id).toEqual(orderProofKinds(p.kinds));
+    }
+  });
+
+  test('CI child bijection + intervention ≠ catalog paste', () => {
+    expect(assertCiChildProofBijection()).toEqual([]);
+    expect(assertCiInterventionNotCatalogFreshRerun()).toEqual([]);
+  });
+
+  test('CODE_QUALITY proof closed set (types-covered → lib-docs only)', () => {
+    expect(assertCodeQualityProofClosedSet()).toEqual([]);
   });
 
   test('evidence parity: every claim evidence includes freshRerun', () => {
@@ -152,20 +189,52 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run test:search-governance');
   });
 
-  test('CI/deploy child claims share docs:ci-deploy freshRerun', () => {
-    const ids = [
-      'ci-core-envelope',
-      'typescript-ci-gate',
-      'deploy-production-preflight',
-      'deploy-staging-script',
-      'bun-migrate-status',
-    ] as const;
-    for (const id of ids) {
-      const p = CRITICAL_PROOF_PATHS.find(x => x.id === id);
-      expect(p?.freshRerun, id).toBe('bun run docs:ci-deploy');
+  test('CI/deploy catalog children use freshRerunKind catalog', () => {
+    for (const p of CRITICAL_PROOF_PATHS.filter(x => x.freshRerunKind === 'catalog')) {
+      expect(p.freshRerun, p.id).toBe(CI_CATALOG_FRESH_RERUN);
     }
+    expect(CRITICAL_PROOF_PATHS.filter(x => x.freshRerunKind === 'catalog')).toHaveLength(5);
   });
 
+  test('branded-ids freshRerun is check:brands:types', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'branded-ids');
+    expect(p?.freshRerun).toBe('bun run check:brands:types');
+  });
+
+  test('install-verify freshRerun is proof:install', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify');
+    expect(p?.freshRerun).toBe('bun run proof:install');
+  });
+
+  test('test-changed freshRerun is test:changed:main', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'test-changed');
+    expect(p?.freshRerun).toBe('bun run test:changed:main');
+  });
+
+  test('bun-env freshRerun is check:bun-env', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'bun-env');
+    expect(p?.freshRerun).toBe('bun run check:bun-env');
+  });
+
+  test('unknown-param freshRerun is bun-native eslint quiet', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'unknown-param');
+    expect(p?.freshRerun).toBe('bun eslint --config eslint.bun-native.config.ts --quiet');
+  });
+
+  test('day-loop-typecheck freshRerun is day-loop type-check', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'day-loop-typecheck');
+    expect(p?.freshRerun).toBe('bun run type-check');
+  });
+
+  test('bun-cron freshRerun is test:cron', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'bun-cron');
+    expect(p?.freshRerun).toBe('bun run test:cron');
+  });
+
+  test('harness-orphan-modules freshRerun is check:harness-orphans', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'harness-orphan-modules');
+    expect(p?.freshRerun).toBe('bun run check:harness-orphans');
+  });
 
   test('cron-os-persistent freshRerun is the OS cron journey test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'cron-os-persistent');

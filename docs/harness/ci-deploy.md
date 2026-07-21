@@ -21,6 +21,8 @@ When `ci:core` or a deploy preflight fails, the signal, repair command, and proo
 
 Runbooks under [`tenants/`](tenants/).
 
+**Id skew:** CiRunbook.id (`ci-core`) ≠ ProofPath id (`ci-core-envelope`). Link via `proofId`. Catalog paste is `bun run docs:ci-deploy` (`freshRerunKind: 'catalog'`); intervention is the live gate.
+
 ## Ratchet
 
 ```bash

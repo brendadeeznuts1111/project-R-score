@@ -6,6 +6,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   assertCodeQualityFields,
+  assertCodeQualityProofClosedSet,
   assertCodeQualityProofLinks,
   CODE_QUALITY_TENANTS,
 } from '../lib/harness/code-quality';
@@ -19,6 +20,7 @@ const ROOT = joinPath(import.meta.dir, '..');
 describe('code quality tenants', () => {
   test('catalog proof links + fields', () => {
     expect(assertCodeQualityProofLinks()).toEqual([]);
+    expect(assertCodeQualityProofClosedSet()).toEqual([]);
     expect(assertCodeQualityFields()).toEqual([]);
     expect(CODE_QUALITY_TENANTS.length).toBeGreaterThanOrEqual(4);
   });

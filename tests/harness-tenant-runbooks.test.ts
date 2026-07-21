@@ -92,6 +92,14 @@ describe('spine maintenance runbooks', () => {
     expect(assertRunbookInterventionContainsProofFreshRerun()).toEqual([]);
   });
 
+  test('TenantRunbook.freshRerun ≠ linked ProofPath.freshRerun (doc vs claim)', () => {
+    for (const r of MAINTENANCE_RUNBOOKS) {
+      const p = CRITICAL_PROOF_PATHS.find(x => x.id === r.proofId);
+      expect(p, r.tenant).toBeDefined();
+      expect(r.freshRerun, r.tenant).not.toBe(p!.freshRerun);
+    }
+  });
+
   test('intervention commands are valid (catalog + markdown)', async () => {
     expect(await assertInterventionCommandsValid(ROOT)).toEqual([]);
   });

@@ -196,3 +196,13 @@ export async function assertCICoverage(root: string): Promise<string[]> {
 
   return failures;
 }
+
+/** Reverse: every CI_RUNBOOKS id appears ≥1 in CI_JOB_OWNERS values. */
+export function assertEveryRunbookHasJobOwner(): string[] {
+  const owned = new Set(Object.values(CI_JOB_OWNERS));
+  const missing: string[] = [];
+  for (const r of CI_RUNBOOKS) {
+    if (!owned.has(r.id)) missing.push(`CI_RUNBOOKS ${r.id} has no CI_JOB_OWNERS entry`);
+  }
+  return missing;
+}

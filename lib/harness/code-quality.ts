@@ -27,6 +27,10 @@ export type CodeQualityTenant = {
 /**
  * SSOT — every code-quality tenant has a runbook doc + proof.
  * Keep out of SPINE_TENANTS (coverage/type-check are CI / day-loop, not cron).
+ *
+ * Types link: only `lib-docs-typecheck` is CQ-linked (`types-covered`). Sibling
+ * islands (`lib-utils|core|security-typecheck`, `day-loop-typecheck`) share
+ * `bun run type-check` by design but are not CODE_QUALITY_TENANTS members.
  */
 export const CODE_QUALITY_TENANTS: readonly CodeQualityTenant[] = [
   {
@@ -102,6 +106,23 @@ export function assertCodeQualityProofLinks(): string[] {
   const missing: string[] = [];
   for (const t of CODE_QUALITY_TENANTS) {
     if (!ids.has(t.proofId)) missing.push(`${t.id} → proofId ${t.proofId}`);
+  }
+  return missing;
+}
+
+/** Closed set: every CQ proofId is a real ProofPath (reverse membership). */
+export function assertCodeQualityProofClosedSet(): string[] {
+  const ids = new Set(CRITICAL_PROOF_PATHS.map(p => p.id));
+  const missing: string[] = [];
+  const linked = new Set<string>();
+  for (const t of CODE_QUALITY_TENANTS) {
+    if (!ids.has(t.proofId)) missing.push(`${t.id} → proofId ${t.proofId}`);
+    if (linked.has(t.proofId)) missing.push(`duplicate CQ proofId ${t.proofId}`);
+    linked.add(t.proofId);
+  }
+  // Intentional: only lib-docs-typecheck is CQ-linked among typecheck islands.
+  if (!linked.has('lib-docs-typecheck')) {
+    missing.push('types-covered must link lib-docs-typecheck');
   }
   return missing;
 }

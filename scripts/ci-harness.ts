@@ -213,7 +213,7 @@ if (!fast) {
   await runSerial([BOUNDARY_FIXTURES], verbose, timings, wantFailJson, mode);
 }
 
-/** Dual-catalog parents — was human-only / test:changed luck. */
+/** Dual-catalog parents + catalog meta — was human-only / test:changed luck. */
 const DUAL_CATALOG: Step[] = [
   {
     name: 'ci-deploy-runbooks',
@@ -226,6 +226,12 @@ const DUAL_CATALOG: Step[] = [
     cmd: ['bun', 'run', 'test:code-quality'],
     owner: 'code-quality-tenants · coverage · orphans · complexity ProofPaths',
     repair: 'bun run test:code-quality',
+  },
+  {
+    name: 'fresh-rerun-contract',
+    cmd: ['bun', 'test', 'tests/harness-fresh-rerun-contract.test.ts'],
+    owner: 'ProofPath catalog meta · gateClass · freshRerunKind · gateRef',
+    repair: 'bun test tests/harness-fresh-rerun-contract.test.ts',
   },
 ];
 
