@@ -57,12 +57,18 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
 Every path above has a `freshRerun` command in [`lib/harness/proof.ts`](../../lib/harness/proof.ts).  
 *Ratchet* → [`FRESH-RERUN.md`](FRESH-RERUN.md) · paste command output in the PR body when touching the claim’s owner.
 
+## New claim → discovery first
+
+Do not invent a `ProofPath` by editing files ad hoc. Fill [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (Q0–Q14) so ceremony path (slim vs full), `claim` / `kinds` / `evidence` / `freshRerun`, contract asserts, and PR paste are decided before code.  
+*Ratchet* → `bun run docs:claim-discovery` · answered questionnaire in the PR or commit trail
+
 ## Agent checklist before “done”
 
-1. State the claim in one sentence.
-2. Pick kind(s) above.
-3. Point at evidence paths or commands that actually ran.
-4. If the change touches a claim owner, run that claim’s `freshRerun` and keep the output (PR body).
-5. If evidence is missing, either run it or downgrade the claim.
+1. For a **new** claim: complete [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) (slim or full path from Q0).
+2. State the claim in one sentence (`ProofPath.claim`).
+3. Pick kind(s) above.
+4. Point at evidence paths or commands that actually ran.
+5. If the change touches a claim owner, run that claim’s `freshRerun` and keep the output (PR body) — [`FRESH-RERUN.md`](FRESH-RERUN.md).
+6. If evidence is missing, either run it or downgrade the claim.
 
-Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Discover: `bun run harness:status` · `bun run docs:fresh-rerun`.
+Code SSOT: [`lib/harness/proof.ts`](../../lib/harness/proof.ts). Discover: `bun run harness:status` · `bun run docs:fresh-rerun` · `bun run docs:claim-discovery`.

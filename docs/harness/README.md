@@ -22,6 +22,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Install / bunfig / machine Bun → [`docs/UNIFIED.md`](../UNIFIED.md)
 - Day loop / affected / type-check honesty → [`docs/organization/VELOCITY_BASELINE.md`](../organization/VELOCITY_BASELINE.md)
 - Claim vs evidence (“done?”) → [`PROOF.md`](PROOF.md) · `bun run proof:install`
+- **New proof claim** → fill [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) first · `bun run docs:claim-discovery`
 - Repository review (9 trajectory questions) → [`REVIEW.md`](REVIEW.md)
 - Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)
 - Lanes / push / credentials / irreversible ops → [`AUTHORITY.md`](AUTHORITY.md)
@@ -31,6 +32,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Install-verify WebView journey (`install-verify-journey`) → `bun run docs:install-verify` · [`install-verify.md`](install-verify.md) · `bun run test:install-verify`
 - Search governance WebView journey (`search-governance-basic`) → `bun run docs:search-governance` · [`search-governance.md`](search-governance.md) · `bun run test:search-governance`
 - Fresh-rerun (claim re-proof before merge) → `bun run docs:fresh-rerun` · [`FRESH-RERUN.md`](FRESH-RERUN.md)
+- Claim discovery questionnaire (new claims) → `bun run docs:claim-discovery` · [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md)
 - Improve the harness itself → [`.agents/skills/harness-improve/SKILL.md`](../../.agents/skills/harness-improve/SKILL.md)
 - Coding standards (full) → [`.custom-instructions.md`](../../.custom-instructions.md)
 
