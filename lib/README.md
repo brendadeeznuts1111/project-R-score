@@ -44,6 +44,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`text.ts`](./text.ts) | Small text helpers |
 | [`gate-map.ts`](./gate-map.ts) | Gate / proof path map helpers |
 | [`gate-report-monorepo.ts`](./gate-report-monorepo.ts) | Monorepo gate reporting |
+| [`github-repository-ref.ts`](./github-repository-ref.ts) | Runtime GitHub owner/name/host/remote resolve (not `REPO_URL`) |
 | *(removed)* bun-documentation-integration | deleted — unused barrel dump |
 
 ## Domains
@@ -51,10 +52,12 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | Domain | Purpose | Entry hint |
 |--------|---------|------------|
 | [`ai/`](./ai/) | AI operations managers | `ai-operations-manager.ts` |
+| [`audit/`](./audit/) | Audit findings sibling SSOT (not BunToken) | `audit-finding.ts` |
 | [`constants/`](./constants/) | Shared constants barrel | `index.ts` |
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
 | [`docs/`](./docs/) | Path SSOT, tokens, doc builders | `index.ts` · `repo-docs.ts` |
 | [`harness/`](./harness/) | Harness proof paths | `proof.ts` |
+| [`macros/`](./macros/) | Bundle-time Bun macros (git commit · repo parts) | `git-commit.ts` · `github-repository.ts` |
 | [`mcp/`](./mcp/) | MCP / domain helpers | `stdio-jsonrpc.ts` |
 | [`package/`](./package/) | Package manager graph helpers | `package-manager.ts` |
 | [`performance/`](./performance/) | Cache / memory helpers | `cache-manager.ts` |

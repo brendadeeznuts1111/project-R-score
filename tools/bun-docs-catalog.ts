@@ -1,3 +1,8 @@
+// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — --port
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
+// @see https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations — --sourcemap
+// @see https://bun.com/docs/bundler/executables#code-splitting — --splitting
+// @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
@@ -534,6 +539,19 @@ export function docsUrlFor(page: string, anchor?: string): string {
   return anchor ? `${pageBase(page)}#${anchor}` : pageBase(page);
 }
 
+/**
+ * Curated `path` → absolute page URL (no hash).
+ * `reference/*` and `blog/*` live at site root; everything else under /docs/.
+ */
+export function curatedPageUrl(pathWithOptionalHash: string): string {
+  const pathPage = pathWithOptionalHash.split('#')[0] ?? '';
+  if (!pathPage) return '';
+  if (pathPage.startsWith('reference/') || pathPage.startsWith('blog/')) {
+    return `https://bun.com/${pathPage}`;
+  }
+  return `https://bun.com/docs/${pathPage}`;
+}
+
 /** Parse --version=1.4.0 or --version 1.4.0 from argv; default Bun.version. */
 export function parseVersionFlag(argv: string[] = Bun.argv.slice(2)): string {
   for (let i = 0; i < argv.length; i++) {
@@ -678,6 +696,8 @@ export function inferType(name: string, url: string): DocRefType {
       /^(?:--config|--cwd|--outdir|--target|--sourcemap|--backend|--cpu|--os|--env|--port|--host|--splitting|--format|--jsx|--tsconfig|--mainfields|--conditions|--publicpath|--assetnaming|--entrynaming|--chunknaming|--sourcemap)$/i;
     return valueFlags.test(name) ? 'cli-option' : 'cli-flag';
   }
+  // Compound CLI flags: `bun test --parallel`, `bun run --sequential`, …
+  if (/^bun (test|run) --/.test(name)) return 'cli-flag';
   // Top-level bun subcommands
   if (/^bun [a-z][a-z0-9-]*$/.test(name)) return 'cli-command';
   // package.json reserved keys
@@ -808,6 +828,16 @@ function mergeEntry(
   existing.section = partial.section ?? existing.section;
 }
 
+/**
+ * Family root for dotted Bun APIs — `Bun.inspect.custom` / `Bun.inspect.table(…)` → `Bun.inspect`.
+ * Bare `Bun.inspect` roots itself so siblings still cluster.
+ */
+export function bunApiFamilyRoot(name: string): string | undefined {
+  const m = name.match(/^(Bun\.[A-Za-z_][A-Za-z0-9_]*)/);
+  if (!m) return undefined;
+  return m[1];
+}
+
 /** Seed related edges from tier-A tokens sharing the same canonical page. */
 export function seedPageRelations(entries: DocCatalogEntry[]): void {
   const byPage = new Map<string, DocCatalogEntry[]>();
@@ -819,11 +849,58 @@ export function seedPageRelations(entries: DocCatalogEntry[]): void {
   }
   for (const e of entries) {
     if (!NOTE_COVERAGE_TYPES.includes(e.type)) continue;
-    const peers = (byPage.get(e.canonicalPage) ?? []).filter(p => p.name !== e.name).slice(0, 5);
-    if (peers.length === 0) continue;
+    const pagePeers = (byPage.get(e.canonicalPage) ?? []).filter(p => p.name !== e.name);
+    if (pagePeers.length === 0) continue;
+    const root = bunApiFamilyRoot(e.name);
+    const family = root ? pagePeers.filter(p => bunApiFamilyRoot(p.name) === root) : [];
+    const others = pagePeers.filter(p => !family.includes(p));
+    const peers = [...family, ...others].slice(0, 5);
     const rel = new Set(e.related ?? []);
     for (const p of peers) rel.add(p.name);
     e.related = [...rel];
+  }
+}
+
+/** Prefer curated relatedTokens (family / options) ahead of page-peer noise. */
+export function applyCuratedRelatedTokens(entries: DocCatalogEntry[]): void {
+  const byName = new Map(entries.map(e => [normalizeName(e.name), e]));
+  for (const c of CURATED_ENTRIES) {
+    if (!c.relatedTokens?.length) continue;
+    const e = byName.get(normalizeName(c.term));
+    if (!e) continue;
+    const preferred = c.relatedTokens.filter(n => byName.has(normalizeName(n)));
+    if (preferred.length === 0) continue;
+    const rest = (e.related ?? []).filter(
+      n => !preferred.some(p => normalizeName(p) === normalizeName(n))
+    );
+    e.related = [...preferred, ...rest].slice(0, 8);
+  }
+}
+
+/**
+ * Re-pin canonicalPage + anchor from curated `path` after related-page merges.
+ * Concepts skip verified-locus; without this, related runtime pages can steal
+ * the canonical (e.g. file-uploads → file-io) while keeping the guide fragment.
+ */
+export function applyCuratedPathPins(entries: DocCatalogEntry[]): void {
+  const byName = new Map(entries.map(e => [normalizeName(e.name), e]));
+  for (const c of CURATED_ENTRIES) {
+    const e = byName.get(normalizeName(c.term));
+    if (!e) continue;
+    const [, pathAnchor] = c.path.split('#');
+    const page = curatedPageUrl(c.path);
+    if (!page) continue;
+    const base = pageBase(page);
+    e.canonicalPage = base;
+    if (pathAnchor) {
+      e.anchor = pathAnchor;
+      e.locusUnresolved = false;
+    } else {
+      // Page-only curated pins (e.g. Runtime nav group Concurrency → /runtime/workers)
+      delete e.anchor;
+      e.locusUnresolved = false;
+    }
+    e.allPages = [base, ...e.allPages.filter(p => p !== base)];
   }
 }
 
@@ -988,7 +1065,8 @@ export async function buildCatalog(opts?: {
 
   // 3) Curated hot-path enrichment (description + stability + releasedIn + related)
   for (const c of CURATED_ENTRIES) {
-    const page = `https://bun.com/docs/${c.path}`;
+    const [, pathAnchor] = c.path.split('#');
+    const page = curatedPageUrl(c.path);
     mergeEntry(map, {
       name: c.term,
       type: inferType(c.term, page),
@@ -998,13 +1076,14 @@ export async function buildCatalog(opts?: {
       lastUpdated: docsLastUpdated,
       verifiedOn,
       page,
+      anchor: pathAnchor,
       section: sectionFromUrl(page),
     });
     if (c.related) {
       for (const rel of c.related) {
         mergeEntry(map, {
           name: c.term,
-          page: `https://bun.com/docs/${rel}`,
+          page: curatedPageUrl(rel),
           lastUpdated: docsLastUpdated,
           verifiedOn,
         });
@@ -1072,6 +1151,35 @@ export async function buildCatalog(opts?: {
     if (!c.description) continue;
     const entry = map.get(normalizeName(c.term));
     if (entry) entry.description = c.description;
+  }
+
+  // Frozen guide fences (lang+code) — by TOKEN_GUIDE_PATH / page path.
+  // Token-level fences are authoritative (drop peer-scavenge supplement junk).
+  const { guideExamplesForPage, guideExamplesForToken, TOKEN_GUIDE_PATH } = await import(
+    './bun-docs-guide-examples.ts'
+  );
+  for (const e of map.values()) {
+    const byToken = guideExamplesForToken(e.name);
+    if (byToken.length > 0) {
+      const frag = TOKEN_GUIDE_PATH[e.name]?.split('#')[1];
+      e.examples = byToken.map(ex => (frag ? { ...ex, fragment: frag } : { ...ex }));
+      continue;
+    }
+    const frozen = guideExamplesForPage(e.canonicalPage);
+    if (frozen.length === 0) continue;
+    const have = new Set((e.examples ?? []).map(x => `${x.lang}\0${x.body}`));
+    const merged = [...(e.examples ?? [])];
+    for (const ex of frozen) {
+      const key = `${ex.lang}\0${ex.body}`;
+      if (have.has(key)) continue;
+      have.add(key);
+      merged.push(ex);
+    }
+    const frozenKeys = new Set(frozen.map(x => `${x.lang}\0${x.body}`));
+    e.examples = [
+      ...merged.filter(x => frozenKeys.has(`${x.lang}\0${x.body}`)),
+      ...merged.filter(x => !frozenKeys.has(`${x.lang}\0${x.body}`)),
+    ].slice(0, 6);
   }
 
   // 5) Inject changelog-only tokens missing from docs merge (e.g. process.env fixes)
@@ -1153,6 +1261,8 @@ export async function buildCatalog(opts?: {
     resolveApiAlias
   );
   seedPageRelations(entries);
+  applyCuratedRelatedTokens(entries);
+  applyCuratedPathPins(entries);
 
   // Re-pick canonical only when locus is still unresolved; verified pages stay pinned.
   for (const e of entries) {

@@ -43,10 +43,26 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
 - **`security-hash-boundaries`** — Bun.password hash/verify and CryptoHasher sha256/sha1 digests behave as expected  
   *Ratchet* → `bun test tests/fixtures/security-hash/` · evidence `tests/fixtures/security-hash/**/fixture.test.ts`  
   *Fixtures* → `password/` · `cryptohasher/`
+- **`url-pattern-boundaries`** — Bun site URLs from URLPatternInit protocol/hostname/pathname/hash (`boundary`)  
+  *Ratchet* → `bun test tests/bun-site-url.test.ts` · evidence `lib/docs/bun-site-url.ts`
+- **`social-metadata-boundaries`** — HTMLRewriter extracts OG/Twitter/fallback metadata correctly (`boundary`)  
+  *Ratchet* → `bun test tests/fixtures/social-metadata/` · evidence `lib/docs/extract-metadata.ts` · [guide](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags)
+- **`blog-extraction-boundaries`** — article sans nav/footer (`boundary`)  
+  *Ratchet* → `bun test tests/fixtures/blog-extraction/` · evidence `lib/docs/blog-extract.ts`
+- **`fetch-page-boundaries`** — BunHarness page fetch: HTTPS, fragment strip, Accept/UA, 15s timeout, optional verbose, non-OK throw, success body unread (`boundary`)  
+  *Ratchet* → `bun test tests/fixtures/fetch-page/` · evidence `lib/docs/fetch-page.ts` · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request)  
+  *Call-site DNS* → `dns.prefetch(hostname)` before fetchPage when host is known; do not use `fetch.preconnect` until Bun fixes Invalid port on default HTTPS (oven-sh/bun#21633)
+- **`blog-extraction-journey`** — `CANONICAL_SOURCES.blog` → URLPattern → `dns.prefetch` → fetchPage → `SocialMetadata` + streamed article (`journey`)  
+  *Ratchet* → `bun test tests/journey/blog-extraction.test.ts` · human-only (live bun.com) · soft `dns.getCacheStats` after prefetch
+- **`bun-http-server-docs`** — `CANONICAL_REFS` + `GUIDE_EXAMPLES` cover `runtime/http/server` TOC (`boundary`)  
+  *Ratchet* → `bun test tests/bun-docs-catalog.test.ts` · evidence `tools/bun-doc-refs.ts` · `tools/bun-docs-guide-examples.ts` · [server](https://bun.com/docs/runtime/http/server#basic-setup)
 - **`path-bun`** — spine `lib/` + `tools/` do not import `path` / `node:path` (`boundary`)  
   *Ratchet* → `bun run check:path-bun`
 - **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  
   *Ratchet* → `bun run check:bun-env` · eslint `bun/prefer-bun-env` (**error**)
+- **`invisible-chars`** — invisible/format Unicode code points are `\u` escapes in source, not literal bytes (`boundary`)  
+  *Ratchet* → `bun run check:invisible-chars` · evidence `scripts/check-invisible-chars.ts` · `// invisible-ok` suppress · VS16 warn-only (`--verbose`)  
+  *Origin* → `tests/console-depth.test.ts` vector corruption (U+200D→U+201D, U+FE0F→U+FE1D) passed every validator; only width assertions caught it
 - **`unknown-param`** — bare `unknown` params stay at parse edges (`boundary`)  
   *Ratchet* → eslint `harness/no-unknown-function-param` (**error**) · `bun eslint --config eslint.bun-native.config.ts --quiet`
 - **`day-loop-typecheck`** — advertised `type-check` covers spine agent edit surfaces (`journey`)  
@@ -65,6 +81,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:cron-os` · [`cron.md`](cron.md)
 - **`docs-integrity`** — Bun docs stack integrity pass (`journey` + `boundary`)  
   *Ratchet* → `bun tools/bun-doc-refs.ts schedule --once` · [`tenants/docs-integrity.md`](tenants/docs-integrity.md)
+- **`audit-findings-catalog`** — FactoryWager audit findings+concepts verify (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary) (`unit` + `boundary`)  
+  *Ratchet* → `bun run audit:verify` · pre-commit (audit SSOT staged) · `ci:harness` CHEAP · `tools/bun-doc-refs.ts` suggest `--audit` · [`docs/audit/README.md`](../audit/README.md) · sibling SSOT (not BunToken)
 - **`spine-multi-tenant`** — spine runs ≥2 in-process tenants (docs-integrity + install-verify) (`journey` + `boundary`)  
   *Ratchet* → `bun run spine:schedule:once -- --tenant=install-verify` · [`cron.md`](cron.md)
 - **`spine-maintenance-runbooks`** — TenantRunbook + SignalMonitor; retirement attested + condition check; live `freshRerun` (`boundary` + `journey`)  
@@ -105,8 +123,15 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `bun-shell-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/bun-shell/` |
 | `fs-native-boundaries` | continuous | `ci:harness` boundary-fixtures · fs-bun + bun-glob-scan |
 | `security-hash-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/security-hash/` |
+| `url-pattern-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-site-url.test.ts` |
+| `social-metadata-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/social-metadata/` |
+| `blog-extraction-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/blog-extraction/` |
+| `fetch-page-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/fetch-page/` |
+| `blog-extraction-journey` | human-only | `bun test tests/journey/blog-extraction.test.ts` |
+| `bun-http-server-docs` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts` |
 | `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
 | `bun-env` | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env` |
+| `invisible-chars` | continuous | pre-commit (spine/test .ts staged) · `ci:harness` |
 | `unknown-param` | continuous | pre-commit / `ci:harness` eslint |
 | `day-loop-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
 | `lib-docs-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
@@ -116,6 +141,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `bun-cron` | human-only | `bun run test:cron` |
 | `cron-os-persistent` | human-only | `bun run test:cron-os` |
 | `docs-integrity` | human-only | `bun-doc-refs schedule --once` · spine tenant |
+| `audit-findings-catalog` | continuous | pre-commit (audit SSOT staged) · `ci:harness` · `bun run audit:verify` |
 | `spine-multi-tenant` | human-only | `spine:schedule:once -- --tenant=install-verify` |
 | `spine-maintenance-runbooks` | human-only | `bun run test:tenant-runbooks` (live tenant freshReruns; heavy) |
 | `spine-tenant-heal` | human-only | `bun run test:tenant-heal` |
@@ -130,7 +156,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
 | `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts (must match `gateClass` tallies): continuous 16 · workflow 8 · human-only 10.
+Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 11.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 

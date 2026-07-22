@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/file-io — Bun.file / Bun.write
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/nodejs-compat#fetch — fetch
@@ -197,7 +198,7 @@ export type FetchRssResult = {
   notModified: boolean;
 };
 
-/** Conditional GET of the Bun RSS feed. */
+/** Conditional GET of the Bun RSS feed (304 + validators — not fetchPage; that helper rejects non-OK). */
 export async function fetchRssXml(opts?: { force?: boolean }): Promise<FetchRssResult> {
   const force = opts?.force ?? false;
   const meta = await readCacheMeta();

@@ -15,6 +15,7 @@
     "lib/path-bun.ts",
     "lib/harness/**/*",
     "lib/docs/**/*",
+    "lib/audit/**/*",
     "lib/utils/**/*",
     "lib/core/**/*",
     "lib/security/**/*",

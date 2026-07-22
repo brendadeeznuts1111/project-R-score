@@ -6,7 +6,7 @@
  * CI / agent harness envelope — quiet success; noise only on failure.
  *
  * Cheap ratchets run in parallel (path-bun · bun-env · brands · projects-roots ·
- * lib-domains). ESLint defaults to changed-files (`lint:bun-native:changed`);
+ * lib-domains · audit-verify). ESLint defaults to changed-files (`lint:bun-native:changed`);
  * full tree only with --full-lint / HARNESS_FULL_LINT=1 (main push).
  *
  *   bun run ci:harness
@@ -15,11 +15,27 @@
  *   bun scripts/ci-harness.ts --verbose
  *   bun scripts/ci-harness.ts --fail-json
  */
+import { logCompact } from '../lib/console-depth';
+import { githubTokenPresence, resolveGitHubRepositoryRef } from '../lib/github-repository-ref';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
 
 const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/ci-harness-timing.json`;
+
+{
+  const ref = resolveGitHubRepositoryRef({ remote: 'origin' });
+  const tok = githubTokenPresence();
+  logCompact({
+    remote: ref.remote,
+    owner: ref.owner,
+    name: ref.name,
+    host: ref.host,
+    source: ref.source,
+    tokenSource: tok.tokenSource,
+    apiDomain: tok.apiDomain,
+  });
+}
 
 type Step = { name: string; cmd: string[]; owner: string; repair: string };
 type GateTiming = { name: string; ms: number; ok: boolean };
@@ -54,6 +70,12 @@ const CHEAP: Step[] = [
     cmd: ['bun', 'run', 'lib:domains:check'],
     owner: 'tools/lib-domains-check.ts · lib/README.md',
     repair: 'bun run lib:domains:check',
+  },
+  {
+    name: 'audit-verify',
+    cmd: ['bun', 'run', 'audit:verify'],
+    owner: 'tools/audit-catalog.ts · lib/audit/',
+    repair: 'bun run audit:verify · bun run audit:catalog:build',
   },
 ];
 
@@ -166,7 +188,7 @@ const timings: GateTiming[] = [];
 
 if (verbose) console.info(`ci:harness (${mode})`);
 
-// Parallel cheap ratchets (path-bun ‖ bun-env ‖ brands ‖ projects-roots ‖ lib-domains)
+// Parallel cheap ratchets (path-bun ‖ bun-env ‖ brands ‖ projects-roots ‖ lib-domains ‖ audit-verify)
 {
   const t0 = performance.now();
   const results = await Promise.all(CHEAP.map(s => run(s, verbose)));
@@ -201,12 +223,18 @@ const BOUNDARY_FIXTURES: Step = {
     'tests/fixtures/runtime-cli/',
     'tests/fixtures/bun-shell/',
     'tests/fixtures/security-hash/',
+    'tests/fixtures/social-metadata/',
+    'tests/fixtures/blog-extraction/',
+    'tests/fixtures/fetch-page/',
+    'tests/bun-site-url.test.ts',
+    'tests/bun-docs-catalog.test.ts',
     'tests/fs-bun.test.ts',
     'tests/bun-glob-scan.test.ts',
   ],
-  owner: 'runtime-cli · bun-shell · security-hash · fs-native ProofPaths',
+  owner:
+    'runtime-cli · bun-shell · security-hash · social-metadata · blog-extraction · fetch-page · url-pattern · bun-http-server-docs · fs-native ProofPaths',
   repair:
-    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
+    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/fixtures/fetch-page/ tests/bun-site-url.test.ts tests/bun-docs-catalog.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
 };
 
 if (!fast) {

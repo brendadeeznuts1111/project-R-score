@@ -7,7 +7,12 @@
 | Intent | Command |
 |--------|---------|
 | Full refresh | `bun run docs:refresh` |
-| Suggest token | `bun tools/bun-doc-refs.ts suggest <token>` |
+| Suggest token | `bun tools/bun-doc-refs.ts suggest <token>` — frozen `CANONICAL_REFS` wins; prints guide `example[lang]` code |
+| Guide fences | Frozen [`bun-docs-guide-examples.ts`](../tools/bun-docs-guide-examples.ts); scrape via `generate-tokens-from-docs` (`guides` domain) |
+| Blog ingestion | `CANONICAL_SOURCES` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · journey `bun test tests/journey/blog-extraction.test.ts` |
+| Fetch-page SSOT | [`fetch-page.ts`](../lib/docs/fetch-page.ts) · locus [`runtime/networking/fetch`](https://bun.com/docs/runtime/networking/fetch) · claim `fetch-page-boundaries` · HTML + RSS (Accept override); conditional GET (304) stays bare `fetch` |
+| Bundler sidebar nav | `bun tools/bun-doc-refs.ts bundler` · SSOT [`lib/docs/bundler-nav.ts`](../lib/docs/bundler-nav.ts) · gaps [`bundler-gaps.ts`](../lib/docs/bundler-gaps.ts) |
+| Bundler anchors / gaps / tokens | `bundler --anchors` · `bundler --gaps [--json] [--strict] [--group=Extensions]` · `bundler --tokens` |
 | Integrity | `bun tools/bun-doc-refs.ts integrity` · `--fix` / `--fix-dry` |
 | Status | `bun tools/bun-doc-refs.ts status` |
 | Catalog export | `bun run docs:catalog:export` |

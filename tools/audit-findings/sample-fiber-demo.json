@@ -1,0 +1,28 @@
+{
+  "id": "sample-fiber-demo-2026-07-21",
+  "kind": "AuditFinding",
+  "title": "Synthetic Nagata-type fiber in demo risk scores",
+  "description": "Two distinct profile triples (10,5,2) and (8,7,2) yield the same demo risk score while the local Jacobian nullspace is trivial (constant non-zero Jac). Pedagogical stand-in for a Nagata map fiber — not a production sportsbook claim. See concept nagata-map.",
+  "status": "confirmed",
+  "publishedAt": "2026-07-21",
+  "since": "2026-07-21",
+  "discoveredIn": "1.4.0",
+  "evidence": {
+    "path": "tools/audit-evidence/sample-fiber-demo.ndjson",
+    "algorithm": "sha3-256",
+    "digest": "ef48291806bee47f6855f9b499aa21bee3561574df6a60b9cc60f74bd1f48cf3",
+    "mediaType": "application/x-ndjson"
+  },
+  "related": [
+    "nagata-map",
+    "jacobian-nullspace",
+    "sha3-integrity"
+  ],
+  "relatedDocs": [
+    "SHA3-256"
+  ],
+  "meta": {
+    "buildPin": "1.4.0",
+    "emitter": "audit-emit-stub"
+  }
+}

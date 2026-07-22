@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
-// @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — port: 0 / server.port
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/utils — Bun.escapeHTML

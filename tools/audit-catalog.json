@@ -1,0 +1,136 @@
+{
+  "generated": "2026-07-22T05:00:45.949Z",
+  "bunVersion": "1.4.0",
+  "count": 1,
+  "conceptCount": 4,
+  "byStatus": {
+    "confirmed": 1,
+    "mitigated": 0,
+    "open": 0
+  },
+  "findings": [
+    {
+      "id": "sample-fiber-demo-2026-07-21",
+      "kind": "AuditFinding",
+      "title": "Synthetic Nagata-type fiber in demo risk scores",
+      "description": "Two distinct profile triples (10,5,2) and (8,7,2) yield the same demo risk score while the local Jacobian nullspace is trivial (constant non-zero Jac). Pedagogical stand-in for a Nagata map fiber — not a production sportsbook claim. See concept nagata-map.",
+      "status": "confirmed",
+      "publishedAt": "2026-07-21",
+      "evidence": {
+        "path": "tools/audit-evidence/sample-fiber-demo.ndjson",
+        "algorithm": "sha3-256",
+        "digest": "ef48291806bee47f6855f9b499aa21bee3561574df6a60b9cc60f74bd1f48cf3",
+        "mediaType": "application/x-ndjson"
+      },
+      "since": "2026-07-21",
+      "discoveredIn": "1.4.0",
+      "related": [
+        "nagata-map",
+        "jacobian-nullspace",
+        "sha3-integrity"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "1.4.0",
+        "emitter": "audit-emit-stub"
+      },
+      "docsPath": "docs/audit/findings/sample-fiber-demo-2026-07-21.md"
+    }
+  ],
+  "concepts": [
+    {
+      "id": "harness-day-loop",
+      "kind": "AuditConcept",
+      "title": "Harness day-loop scripts",
+      "description": "FactoryWager local day-loop: type-check, affected build/test, bun test --changed / --isolate / --parallel / --shard wrappers, and ci:harness:fast before push. Not Bun upstream CI. Docs: docs/harness/day-loop.md · curated NOTE: docs/guides/bun-test-flags-1.3.13.md.",
+      "publishedAt": "2026-07-21",
+      "since": "2026-07-21",
+      "references": [
+        "docs/harness/day-loop.md",
+        "docs/guides/bun-test-flags-1.3.13.md",
+        "docs/BUN_NATIVE_CAPABILITIES.md — Day-loop tests row",
+        "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel"
+      ],
+      "related": [],
+      "relatedDocs": [
+        "bun test flags",
+        "bun test --changed",
+        "bun test --isolate",
+        "bun test --parallel",
+        "bun test --shard"
+      ],
+      "meta": {
+        "buildPin": "1.4.0",
+        "emitter": "audit-curated"
+      },
+      "docsPath": "docs/audit/concepts/harness-day-loop.md"
+    },
+    {
+      "id": "jacobian-nullspace",
+      "kind": "AuditConcept",
+      "title": "Jacobian nullspace",
+      "description": "Local linear-algebra check on DF(x): a non-trivial null vector would indicate a first-order blind direction. For Nagata-type automorphisms the Jacobian determinant is constant and non-zero, so the nullspace is trivial everywhere — local invertibility does not by itself settle tameness or Jacobian-conjecture questions. Local gradient checks therefore cannot certify the global picture.\n\n**Proof integrity** — evidence blobs are fingerprinted via evidence.algorithm + evidence.digest (primary sha3-256). See concept sha3-integrity. Tamper-*authentication* (HMAC/signing) is a separate, unimplemented lane.",
+      "publishedAt": "2026-07-21",
+      "since": "2026-07-21",
+      "related": [
+        "nagata-map",
+        "sample-fiber-demo-2026-07-21",
+        "sha3-integrity"
+      ],
+      "meta": {
+        "buildPin": "1.4.0",
+        "emitter": "audit-curated"
+      },
+      "docsPath": "docs/audit/concepts/jacobian-nullspace.md"
+    },
+    {
+      "id": "nagata-map",
+      "kind": "AuditConcept",
+      "title": "Nagata map",
+      "description": "The Nagata automorphism of affine 3-space: a polynomial automorphism with Jacobian determinant identically 1 that is wild (not tame). Often cited alongside the Jacobian conjecture; as an automorphism it is bijective, not a non-injective fiber counterexample. FactoryWager uses the name for related audit-graph edges (sample finding ↔ concepts).",
+      "publishedAt": "2026-07-21",
+      "since": "2026-07-21",
+      "references": [
+        "Masayoshi Nagata — wild (non-tame) polynomial automorphism of A^3 with Jac ≡ 1",
+        "Jacobian conjecture (Keller) — open for dim ≥ 2; Nagata automorphism illustrates tameness vs Jacobian-determinant questions"
+      ],
+      "related": [
+        "sample-fiber-demo-2026-07-21",
+        "jacobian-nullspace",
+        "sha3-integrity"
+      ],
+      "meta": {
+        "buildPin": "1.4.0",
+        "emitter": "audit-curated"
+      },
+      "docsPath": "docs/audit/concepts/nagata-map.md"
+    },
+    {
+      "id": "sha3-integrity",
+      "kind": "AuditConcept",
+      "title": "SHA3 evidence integrity",
+      "description": "FactoryWager AuditFinding evidence blobs are fingerprinted with SHA3-256 via Bun.CryptoHasher('sha3-256'). SSOT catalog verify requires sha3-256; parse still accepts inbound sha256 for audit:migrate:sha3. Wire shape is evidence.algorithm + evidence.digest (Phase 2). This is tamper-detection only — keyed authentication (HMAC/signing) is a separate, unimplemented lane.\n\nBun shipped native SHA-3 support in v1.3.13 (WebCrypto SHA3-* + node:crypto / CryptoHasher). See relatedDocs SHA3-256 for the ship note.",
+      "publishedAt": "2026-07-21",
+      "since": "1.3.13",
+      "references": [
+        "https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto",
+        "lib/audit/audit-finding.ts — hashFile / verifyEvidenceHash"
+      ],
+      "related": [
+        "sample-fiber-demo-2026-07-21",
+        "jacobian-nullspace",
+        "nagata-map"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "1.4.0",
+        "emitter": "audit-curated"
+      },
+      "docsPath": "docs/audit/concepts/sha3-integrity.md"
+    }
+  ]
+}

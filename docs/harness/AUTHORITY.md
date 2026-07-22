@@ -27,6 +27,21 @@ Before editing: `git status`. Own disjoint paths. Never stage `projects/active/u
 - `origin` → this monorepo (default push)
 - `cascade` → separate project — not the default push target
 
+## GitHub context
+
+Interior identity is **owner / name / host / remote slot**, not a single `REPO_URL`. Resolve via [`lib/github-repository-ref.ts`](../../lib/github-repository-ref.ts): Actions `GITHUB_REPOSITORY` (+ `GITHUB_REPOSITORY_OWNER`, `GITHUB_SERVER_URL`) → `git remote get-url` → [`CANONICAL_REMOTES`](../../lib/docs/repo-docs.ts). Derive `https://…` only at the link edge (`htmlUrl` / `treeUrl` / `commitUrl`). Garbage Actions or unparseable git remotes **fail loud** — never silent hardcode disguised as env.
+
+Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are **create-auth / API host** only — not repository identity. Prefer Actions `GITHUB_REPOSITORY*` on CI. Do not invent a novel env zoo in UNIFIED; Actions wire + Bun create tables are enough.
+
+### Bundle-time vs runtime
+
+| Path | Mechanism |
+|------|-----------|
+| `bun run ci:harness` / `bun scripts/*.ts` | Runtime: `resolveGitHubRepositoryRef` + `git rev-parse` / Actions env |
+| `bun build …` | Macro: [`lib/macros/`](../../lib/macros/) — import with `{ type: "macro" }` so commit / repo parts are **inlined** ([Bun macros](https://bun.com/docs/bundler/macros)) |
+
+Macros do **not** substitute under a plain `bun scripts/foo.ts` run. Keep runtime resolve for live scripts; use macros only for bundle consumers. No bundle-time `fetch` / HTMLRewriter / [`Bun.plugin`](https://bun.com/docs/bundler/plugins) hooks in the harness kit yet — full bundler token map: [`lib/macros/README.md`](../../lib/macros/README.md) · `bun tools/bun-docs-catalog.ts list -s bundler`.
+
 ## Required status checks (`main`)
 
 Branch protection should require these GitHub Actions check names (workflow / job):
@@ -43,9 +58,25 @@ Branch protection should require these GitHub Actions check names (workflow / jo
 | `enforce_admins` | **on** |
 | Require pull request before merging | **on** (`required_pull_request_reviews`, 0 approvals) |
 | search-governance as required | optional — not required yet |
-| GitHub-hosted runners | **watch** — if jobs fail in ~2s with **0 steps** / empty `runner_name`, Actions never started (billing/quota/infra). Not a harness test failure; merge stays blocked until a run actually executes steps. |
+| GitHub-hosted runners | **offline (billing)** — jobs fail in ~2s with **0 steps** / empty `runner_name`. Not a harness test failure. |
 
-Direct `git push` to `main` is declined when the required check is missing. Prefer PR → green Harness Gates → merge. Probe: `gh api repos/<org>/<repo>/branches/main/protection`.
+### Local CI when Actions is offline
+
+Bun has no hosted “local CI” product — this repo’s envelope **is** the local CI. When GHA cannot start runners, prove merge readiness locally (same body as the required jobs):
+
+```bash
+bun run ci:core
+bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run type-check:full
+```
+
+- `ci:core` = install verify · hygiene · `ci:harness` (= Harness Gates job body)
+- Type scripts = TypeScript Checks job body
+- Day loop: `bun run ci:harness:fast` · husky pre-commit / pre-push
+- Status discover: `bun run harness:status` mutes 0-step / billing Actions noise by default (`--show-actions-noise` to show) — [README.md](README.md)
+
+Admin merge / temporary protection bypass is required until billing restores green check runs. Local pass ≠ GitHub check green.
+
+Direct `git push` to `main` is declined when the required check is missing. Prefer PR → green Harness Gates → merge (or local proof + admin merge while Actions is offline). Probe: `gh api repos/<org>/<repo>/branches/main/protection`.
 
 Install+hygiene for `main`/PRs is **inside** harness-gates (one runner). `repo-hygiene.yml` only covers `feat/**` / `codex/**`. Setup: [`.github/actions/setup-factory-bun`](../../.github/actions/setup-factory-bun/action.yml).
 

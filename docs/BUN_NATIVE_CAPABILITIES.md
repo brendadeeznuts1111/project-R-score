@@ -14,7 +14,9 @@
 |-----|----------|------------|
 | `using` / `await using` | deterministic dispose (`Symbol.dispose` / `asyncDispose`) | `tests/bun-explicit-resource.test.ts` · [TC39 ERM](https://github.com/tc39/proposal-explicit-resource-management) · [MDN using](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/using) |
 | `Bun.WebView` | headless UI / automation (`await using view`) | `bun run test:install-verify` · `bun run test:search-governance` · [`install-verify.md`](./harness/install-verify.md) · [`search-governance.md`](./harness/search-governance.md) · [webview](https://bun.com/docs/runtime/webview#new-bun-webview-options) |
-| `Bun.markdown.ansi` | terminal markdown (`AnsiTheme`) | `bun ./docs/harness/README.md` · `bun run docs:harness` · `bun run harness:status` · `tests/bun-markdown-ansi.test.ts` · [ansi](https://bun.com/docs/runtime/markdown#ansi-terminal-output) · ship [1.3.12](https://bun.com/blog/bun-v1.3.12) · helper `ansiMarkdown` in `lib/console-depth.ts` |
+| `Bun.markdown` family | `.ansi` (`AnsiTheme`) · `.react` component overrides | `bun ./docs/harness/README.md` · `bun run docs:harness` · `bun run harness:status` · `tests/bun-markdown-ansi.test.ts` · helper `ansiMarkdown` in `lib/console-depth.ts` · [ansi](https://bun.com/docs/runtime/markdown#ansi-terminal-output) · [react](https://bun.com/docs/runtime/markdown#bun-markdown-react) · [available-overrides](https://bun.com/docs/runtime/markdown#available-overrides) · ship [1.3.12](https://bun.com/blog/bun-v1.3.12) |
+| `Bun.inspect` family | `Bun.inspect()` string serialize · `.custom` symbol · `.table(tabularData, properties, options)` · `BunInspectOptions` `{colors,depth,sorted,compact}` | helpers `inspect` / `inspectCustom` / `logTable` in [`lib/console-depth.ts`](../lib/console-depth.ts) · `bun run harness:status -- --table` · [inspect](https://bun.com/docs/runtime/utils#bun-inspect) · [custom](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options) · [options](https://bun.com/reference/bun/BunInspectOptions) |
+| `Worker` family | `new Worker` · `worker.ref` / `unref` · `terminate` · `Bun.isMainThread` · `Worker smol` (≠ bunfig) | [creating](https://bun.com/docs/runtime/workers#creating-a-worker) · [ref](https://bun.com/docs/runtime/workers#worker-ref) · [unref](https://bun.com/docs/runtime/workers#worker-unref) · [isMainThread](https://bun.com/docs/runtime/workers#bun-ismainthread) · compile entrypoints: [executables Worker](https://bun.com/docs/bundler/executables#worker) |
 | `Bun.cron` | OS-persistent primary + in-process complement | [`docs/harness/cron.md`](./harness/cron.md) · `bun run test:cron` · `bun run test:cron-os` · [cron](https://bun.com/docs/runtime/cron) |
 | `Bun.udpSocket` | UDP + ICMP/truncation | re-read when editing `lib/udp` |
 | WebCrypto SHA3 / X25519 | hashing / key exchange | `tests/bun-crypto-webcrypto.test.ts` · `crypto.sha3` / `crypto.x25519` |
@@ -23,6 +25,7 @@
 | `Bun.$` / shell | tagged templates, `.cwd()`, `.nothrow()`, `.quiet()` | `bun test tests/fixtures/bun-shell/` · claim `bun-shell-boundaries` · [shell](https://bun.com/docs/runtime/shell) |
 | `Bun.password` / `CryptoHasher` | password hash/verify · sha256/sha1 digests | `bun test tests/fixtures/security-hash/` · claim `security-hash-boundaries` · [hashing](https://bun.com/docs/runtime/hashing) |
 | `Bun.stripANSI` / `stringWidth` | TTY width | `tests/bun-ansi-width.test.ts` — **no** npm `string-width` |
+| `Bun.build` / macros / plugins | bundle-time code · inlined macros · `Bun.plugin` | [`lib/docs/bundler-nav.ts`](../lib/docs/bundler-nav.ts) · `bun tools/bun-doc-refs.ts bundler` · [`lib/macros/`](../lib/macros/) · [bundler](https://bun.com/docs/bundler/index) · [macros](https://bun.com/docs/bundler/macros) · [plugins](https://bun.com/docs/bundler/plugins) |
 
 ### `Bun.cron`
 
@@ -53,15 +56,21 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 | Concern | Owner |
 |---------|--------|
 | Install / pin | [UNIFIED.md](./UNIFIED.md) · `packageManager` bun@1.4.0 |
-| Day-loop tests | `test:changed` · `test:parallel` · `test:isolate` · `test:shard` — [harness/README.md](./harness/README.md) |
+| Day-loop tests | `test:changed` · `test:parallel` · `test:isolate` · `test:shard` — [harness/day-loop.md](./harness/day-loop.md) · suggest `harness day-loop` |
 | `bun run` CLI boundaries | claim `runtime-cli-boundaries` · `bun test tests/fixtures/runtime-cli/` · [runtime](https://bun.com/docs/runtime) |
+| URLPattern site URLs | claim `url-pattern-boundaries` · `bun test tests/bun-site-url.test.ts` · [URLPattern](https://bun.com/blog/bun-v1.3.4#urlpattern-api) |
+| `HTMLRewriter` social metadata | claim `social-metadata-boundaries` · `bun test tests/fixtures/social-metadata/` · [extract-social-meta](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags) |
+| Blog HTML extraction | claim `blog-extraction-boundaries` · `bun test tests/fixtures/blog-extraction/` · article body sans nav/footer |
+| `fetch` / `Bun.fetch` | `fetchPage` helper ([`lib/docs/fetch-page.ts`](../lib/docs/fetch-page.ts)) · claim `fetch-page-boundaries` · `bun test tests/fixtures/fetch-page/` · call-site `dns.prefetch` OK; `fetch.preconnect` blocked until Bun Invalid-port fix · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request) · [dns.prefetch](https://bun.com/docs/runtime/networking/dns#dns-prefetch) |
+| `Bun.serve` | claim `bun-http-server-docs` · `bun test tests/bun-docs-catalog.test.ts` · full page mapped (`routes` · port/hostname · unix · HTTP/3 · lifecycle · metrics) · [server](https://bun.com/docs/runtime/http/server#basic-setup) · [reference](https://bun.com/docs/runtime/http/server#reference) |
+| Blog ingestion journey | claim `blog-extraction-journey` · `bun test tests/journey/blog-extraction.test.ts` · live `CANONICAL_SOURCES.blog` → URLPattern → `dns.prefetch` → fetchPage → SocialMetadata + streamed article |
 | Harness spawn / orphans | this section · `bunfig.toml` `[run]` · `runFreshRerunCommand` |
 | DX one-liners | `bun run dx:catalog` |
 | Wire / brands | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 
 ## Release maps
 
-Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--changed`). Pin **1.4.0** is a superset — do not re-document every bugfix bullet.
+Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--isolate` · `--parallel` · `--shard` · `--changed` — curated TOC [bun-test-flags-1.3.13.md](./guides/bun-test-flags-1.3.13.md)). Day-loop wrappers: [harness/day-loop.md](./harness/day-loop.md). Pin **1.4.0** is a superset — do not re-document every bugfix bullet.
 
 ## References
 

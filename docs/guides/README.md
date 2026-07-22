@@ -7,3 +7,8 @@
 | [SEARCH_DOMAIN_FUSION_RUNBOOK.md](./SEARCH_DOMAIN_FUSION_RUNBOOK.md) | search-smart + domain fusion |
 
 Bun API / spawn / migration: [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) · `bun tools/bun-doc-refs.ts`. Velocity: [organization/VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md).
+
+| Guide | Role |
+|-------|------|
+| [bun-test-flags-1.3.13.md](./bun-test-flags-1.3.13.md) | Curated NOTE TOC for Bun v1.3.13 `--isolate` / `--parallel` / `--shard` / `--changed` |
+

@@ -3,13 +3,32 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetchPage
+// @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit / CANONICAL_SOURCES
 // tools/bun-docs-mcp-lib.ts — Index, search, and MDX helpers for bun-docs MCP
 // Release lists use tools/release-index.json; general blog RSS stays live (full feed).
 
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+import {
+  extractArticleText,
+  extractArticleTextFromResponse,
+  extractSocialMetadataFromHtml,
+  extractSocialMetadataFromResponse,
+  fetchPage,
+  stripUrlFragment,
+} from '../lib/docs/blog-extract.ts';
+import {
+  BunComSite,
+  CANONICAL_SOURCES,
+  bunBlog,
+  bunDocs,
+  hrefFromInit,
+} from '../lib/docs/bun-site-url.ts';
 import { joinPath } from '../lib/path-bun';
 
-export const BUN_DOCS_BASE = 'https://bun.com/docs';
+/** Docs root href (no trailing slash) — from CANONICAL_SOURCES parts. */
+export const BUN_DOCS_BASE = hrefFromInit(CANONICAL_SOURCES.docs).replace(/\/$/, '');
 export const DOCS_SUFFIX = 'bun-types/docs/';
 
 export type Doc = { path: string; slug: string; title: string; desc: string; content?: string };
@@ -36,13 +55,26 @@ export type QueryHit = { slug: string; line: number; text: string; context: stri
 export type DocCategory = { category: string; count: number; examples: string[] };
 export type ReleaseNote = { title: string; link: string; date: string; summary: string };
 export type BlogPostSummary = ReleaseNote & { slug: string };
-export type BlogPost = { title: string; slug: string; url: string; content: string };
+export type BlogPost = {
+  title: string;
+  slug: string;
+  url: string;
+  content: string;
+  description?: string;
+  image?: string;
+};
 
-export const BUN_BLOG_BASE = 'https://bun.com/blog';
-export const BUN_CHANGELOG_RSS = 'https://bun.com/rss.xml';
+/** Blog index href (no trailing slash) — from CANONICAL_SOURCES parts. */
+export const BUN_BLOG_BASE = hrefFromInit(CANONICAL_SOURCES.blog).replace(/\/$/, '');
+export const BUN_CHANGELOG_RSS = hrefFromInit({ ...BunComSite, pathname: '/rss.xml' });
 
 export function buildDocUrl(slug: string): string {
-  return `${BUN_DOCS_BASE}/${slug}`;
+  const path = slug.replace(/^\/+/, '').replace(/\.md$/i, '');
+  return bunDocs(path);
+}
+
+export function buildBlogUrl(slug: string): string {
+  return bunBlog(normalizeBlogSlug(slug));
 }
 
 export function parseFrontmatter(raw: string): { title: string; desc: string; body: string } {
@@ -572,8 +604,13 @@ export async function fetchRssFeed(limit = 50): Promise<ReleaseNote[]> {
   const now = Date.now();
   if (rssCache && now - rssCache.at < RSS_CACHE_MS) return rssCache.items.slice(0, limit);
 
-  const res = await fetch(BUN_CHANGELOG_RSS, { signal: AbortSignal.timeout(10_000) });
-  if (!res.ok) throw new Error(`RSS fetch failed: ${res.status}`);
+  // HTML Accept default overridden for RSS; HTTPS/timeout/ok via fetchPage.
+  const res = await fetchPage(BUN_CHANGELOG_RSS, {
+    timeoutMs: 10_000,
+    headers: {
+      Accept: 'application/rss+xml, application/xml, text/xml, */*',
+    },
+  });
   const items = parseRssItems(await res.text(), 100);
   rssCache = { at: now, items };
   return items.slice(0, limit);
@@ -623,10 +660,6 @@ export function normalizeBlogSlug(slugOrUrl: string): string {
   return trimmed.replace(/^\/blog\/?/, '').replace(/\/$/, '');
 }
 
-export function buildBlogUrl(slug: string): string {
-  return `${BUN_BLOG_BASE}/${normalizeBlogSlug(slug)}`;
-}
-
 export async function fetchBlogPosts(limit = 8): Promise<BlogPostSummary[]> {
   const items = await fetchRssFeed(limit);
   return items
@@ -657,33 +690,62 @@ export function htmlArticleToText(html: string): string {
   return stripBlogBoilerplate(s);
 }
 
+/**
+ * Offline path: HTML → BlogPost via SocialMetadata + article text SSOT.
+ * bun.com blog emits `name="og:*"` (not only `property=`).
+ */
+export async function parseBlogPostFromHtml(
+  html: string,
+  slug: string,
+  pageUrl: string
+): Promise<BlogPost> {
+  const url = stripUrlFragment(pageUrl);
+  const meta = await extractSocialMetadataFromHtml(html, url);
+  const articleHtml = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)?.[1];
+  let content = articleHtml
+    ? htmlArticleToText(articleHtml)
+    : stripBlogBoilerplate(await extractArticleText(html));
+
+  const title = (meta.title ?? (await extractArticleText(html)).split('\n')[0] ?? slug)
+    .replace(/<[^>]+>/g, '')
+    .trim()
+    .replace(/\s*\|\s*Bun(?:\s+Blog)?\s*$/i, '');
+
+  return {
+    title: title || slug,
+    slug,
+    url,
+    content,
+    description: meta.description,
+    image: meta.image,
+  };
+}
+
 export async function fetchBlogPost(
   slugOrUrl: string,
   opts: { maxLines?: number } = {}
 ): Promise<BlogPost> {
   const slug = normalizeBlogSlug(slugOrUrl);
   const url = buildBlogUrl(slug);
-  const res = await fetch(url, {
-    signal: AbortSignal.timeout(15_000),
-    headers: { Accept: 'text/html', 'User-Agent': 'bun-docs-mcp/1.2' },
-  });
-  if (!res.ok) throw new Error(`Blog fetch failed (${res.status}): ${url}`);
+  const cleaned = stripUrlFragment(url);
+  // Live path: clone for meta, stream body into article rewriter (no prior .text()).
+  const res = await fetchPage(url, { timeoutMs: 15_000 });
+  const meta = await extractSocialMetadataFromResponse(res.clone(), cleaned);
+  const content = await extractArticleTextFromResponse(res);
+  const title = (meta.title ?? content.split('\n')[0] ?? slug)
+    .replace(/<[^>]+>/g, '')
+    .trim()
+    .replace(/\s*\|\s*Bun(?:\s+Blog)?\s*$/i, '');
 
-  const html = await res.text();
-  const article = html.match(/<article[^>]*>([\s\S]*?)<\/article>/i)?.[1] ?? html;
-  const titleRaw =
-    html.match(/<meta property="og:title" content="([^"]+)"/i)?.[1] ??
-    article.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ??
-    html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.replace(/\s*\|\s*Bun\s*$/i, '') ??
-    slug;
-  const title = decodeHtmlEntities(titleRaw.replace(/<[^>]+>/g, '').trim()).replace(
-    /\s*\|\s*Bun(?:\s+Blog)?\s*$/i,
-    ''
-  );
-  let content = htmlArticleToText(article);
-  content = truncateLines(content, opts.maxLines);
-
-  return { title, slug, url, content };
+  const post: BlogPost = {
+    title: title || slug,
+    slug,
+    url: cleaned,
+    content: truncateLines(content, opts.maxLines),
+    description: meta.description,
+    image: meta.image,
+  };
+  return post;
 }
 
 export async function readDocPage(

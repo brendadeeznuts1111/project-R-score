@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factory-wager.com/schemas/audit-concept.json",
+  "title": "AuditConcept",
+  "description": "FactoryWager audit-domain concept (sibling SSOT — not BunToken).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "title", "description", "publishedAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "kind": { "const": "AuditConcept" },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "publishedAt": { "type": "string", "format": "date" },
+    "since": { "type": "string" },
+    "references": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "related": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "relatedDocs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Opaque BunToken / doc token names (no catalog merge)"
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "buildPin": { "type": "string" },
+        "emitter": { "type": "string" }
+      }
+    }
+  }
+}

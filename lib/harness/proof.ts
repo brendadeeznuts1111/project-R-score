@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
@@ -215,6 +218,94 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'platform / harness',
   },
   {
+    id: 'url-pattern-boundaries',
+    claim: 'Bun site URLs are derived from URLPatternInit protocol/hostname/pathname/hash',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: ['bun test tests/bun-site-url.test.ts', 'tests/bun-site-url.test.ts'],
+    freshRerun: 'bun test tests/bun-site-url.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/docs/bun-site-url.ts',
+  },
+  {
+    id: 'social-metadata-boundaries',
+    claim:
+      'Social metadata extraction via HTMLRewriter matches expected OG/Twitter/fallback behavior',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/fixtures/social-metadata/',
+      'tests/fixtures/social-metadata/fixture.test.ts',
+      'lib/docs/extract-metadata.ts',
+    ],
+    freshRerun: 'bun test tests/fixtures/social-metadata/',
+    freshRerunKind: 'claim',
+    owner: 'lib/docs/extract-metadata.ts',
+  },
+  {
+    id: 'blog-extraction-boundaries',
+    claim: 'Blog HTML extraction excludes nav/footer from article body',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/fixtures/blog-extraction/',
+      'tests/fixtures/blog-extraction/fixture.test.ts',
+    ],
+    freshRerun: 'bun test tests/fixtures/blog-extraction/',
+    freshRerunKind: 'claim',
+    owner: 'lib/docs/blog-extract.ts',
+  },
+  {
+    id: 'fetch-page-boundaries',
+    claim:
+      'fetchPage enforces HTTPS, Accept/UA, 15s timeout, optional verbose; throws on non-OK; leaves success body unread (call-site dns.prefetch OK; fetch.preconnect deferred — Bun Invalid port)',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/fixtures/fetch-page/',
+      'tests/fixtures/fetch-page/fixture.test.ts',
+      'lib/docs/fetch-page.ts',
+    ],
+    freshRerun: 'bun test tests/fixtures/fetch-page/',
+    freshRerunKind: 'claim',
+    owner: 'lib/docs/fetch-page.ts',
+  },
+  {
+    id: 'blog-extraction-journey',
+    claim:
+      'CANONICAL_SOURCES.blog → URLPattern → dns.prefetch → fetchPage → SocialMetadata (+ streamed article)',
+    kinds: ['journey'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/journey/blog-extraction.test.ts',
+      'tests/journey/blog-extraction.test.ts',
+    ],
+    freshRerun: 'bun test tests/journey/blog-extraction.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'tests/journey/blog-extraction.test.ts',
+  },
+  {
+    id: 'bun-http-server-docs',
+    claim:
+      'CANONICAL_REFS + GUIDE_EXAMPLES cover runtime/http/server TOC (routes, port/hostname, unix, HTTP/3, lifecycle, metrics, reference)',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/bun-docs-catalog.test.ts',
+      'tools/bun-doc-refs.ts',
+      'tools/bun-docs-guide-examples.ts',
+    ],
+    freshRerun: 'bun test tests/bun-docs-catalog.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'tools/bun-docs-guide-examples.ts · tools/bun-doc-refs.ts',
+  },
+  {
     id: 'path-bun',
     claim: 'Spine lib/ and tools/ do not import path/node:path',
     kinds: ['boundary'],
@@ -233,6 +324,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateRef: 'pre-commit-harness',
     evidence: ['bun run check:bun-env', 'eslint bun/prefer-bun-env (error)'],
     freshRerun: 'bun run check:bun-env',
+    freshRerunKind: 'claim',
+    owner: 'platform / harness',
+  },
+  {
+    id: 'invisible-chars',
+    claim:
+      'Invisible/format Unicode code points are written as \\u escapes in source, never literal bytes',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'pre-commit-harness',
+    evidence: ['bun run check:invisible-chars'],
+    freshRerun: 'bun run check:invisible-chars',
     freshRerunKind: 'claim',
     owner: 'platform / harness',
   },
@@ -358,6 +461,34 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun tools/bun-doc-refs.ts schedule --once',
     freshRerunKind: 'claim',
     owner: 'tools/bun-doc-refs.ts · spine tenant docs-integrity',
+  },
+  {
+    id: 'audit-findings-catalog',
+    claim:
+      'FactoryWager audit findings+concepts verify (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary; sibling SSOT, not BunToken)',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun run audit:verify',
+      'bun tools/audit-catalog.ts verify',
+      'bun tools/audit-catalog.ts build',
+      'bun test tests/audit-catalog.test.ts',
+      'lib/audit/audit-finding.ts',
+      'lib/audit/audit-concept.ts',
+      'lib/audit/audit-refs.ts',
+      'tools/audit-catalog.ts',
+      'tools/bun-doc-refs.ts',
+      'tools/audit-findings/',
+      'tools/audit-concepts/',
+      'tools/audit-catalog.json',
+      'docs/audit/README.md',
+      'docs/audit/findings/',
+      'docs/audit/concepts/',
+    ],
+    freshRerun: 'bun run audit:verify',
+    freshRerunKind: 'claim',
+    owner: 'lib/audit/ · tools/audit-catalog.ts · tools/bun-doc-refs.ts',
   },
   {
     id: 'spine-multi-tenant',

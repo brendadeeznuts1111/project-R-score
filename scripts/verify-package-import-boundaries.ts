@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
-import { joinPath, readTextSync, resolvePath } from './lib/fs-bun';
+import { joinPath, readTextSync, relativePath, resolvePath } from './lib/fs-bun';
 
 const dirnamePath = (p: string) => (p.includes('/') ? p.slice(0, p.lastIndexOf('/')) || '/' : '.');
 

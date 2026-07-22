@@ -187,6 +187,53 @@ describe('fresh-rerun contract', () => {
     expect(result.exitCode).toBe(0);
   });
 
+  test('url-pattern-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'url-pattern-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/bun-site-url.test.ts');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/bun-site-url.test.ts'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
+  test('social-metadata-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'social-metadata-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/fixtures/social-metadata/');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/social-metadata/'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
+  test('blog-extraction-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'blog-extraction-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/fixtures/blog-extraction/');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/blog-extraction/'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
+  test('fetch-page-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'fetch-page-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/fixtures/fetch-page/');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/fetch-page/'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
+  test('blog-extraction-journey freshRerun is the live ingestion test', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'blog-extraction-journey');
+    expect(p?.freshRerun).toBe('bun test tests/journey/blog-extraction.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.kinds).toContain('journey');
+  });
+
   test('install-verify-journey freshRerun is the WebView journey test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify-journey');
     expect(p?.freshRerun).toBe('bun run test:install-verify');
@@ -316,6 +363,14 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun tools/bun-doc-refs.ts schedule --once');
   });
 
+  test('audit-findings-catalog freshRerun is audit:verify (continuous)', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'audit-findings-catalog');
+    expect(p?.freshRerun).toBe('bun run audit:verify');
+    expect(p?.gateClass).toBe('continuous');
+    expect(p?.gateRef).toBe('ci:harness');
+    expect(p?.evidence.some(e => e.includes('docs/audit'))).toBe(true);
+  });
+
   test('path-bun claim covers lib and tools', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'path-bun');
     expect(p?.claim).toContain('tools/');
@@ -324,15 +379,19 @@ describe('fresh-rerun contract', () => {
 });
 
 describe('typecheck coherence includes', () => {
-  test('tsconfig.check.json includes lib/docs, utils, core, and security globs', async () => {
+  test('tsconfig.check.json includes lib/docs, audit, utils, core, and security globs', async () => {
     const cfg = (await Bun.file(
       new URL('../tsconfig.check.json', import.meta.url).pathname
     ).json()) as { include: string[] };
     expect(cfg.include).toContain('lib/docs/**/*');
+    expect(cfg.include).toContain('lib/audit/**/*');
     expect(cfg.include).toContain('lib/utils/**/*');
     expect(cfg.include).toContain('lib/core/**/*');
     expect(cfg.include).toContain('lib/security/**/*');
     expect(cfg.include.some(p => p.startsWith('lib/docs/') && p !== 'lib/docs/**/*')).toBe(
+      false
+    );
+    expect(cfg.include.some(p => p.startsWith('lib/audit/') && p !== 'lib/audit/**/*')).toBe(
       false
     );
     expect(cfg.include.some(p => p.startsWith('lib/utils/') && p !== 'lib/utils/**/*')).toBe(

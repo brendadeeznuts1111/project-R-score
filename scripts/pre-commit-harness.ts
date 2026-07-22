@@ -54,6 +54,26 @@ function isDocMapPath(file: string): boolean {
   return DOC_MAP_SSOT.has(file.replace(/^\.\//, ''));
 }
 
+/** Audit findings/concepts SSOT — verify even when no harness .ts is staged. */
+export function isAuditSsotPath(file: string): boolean {
+  const n = file.replace(/^\.\//, '');
+  return (
+    n.startsWith('tools/audit-findings/') ||
+    n.startsWith('tools/audit-concepts/') ||
+    n.startsWith('tools/audit-evidence/') ||
+    n.startsWith('lib/audit/') ||
+    n.startsWith('docs/audit/') ||
+    n === 'tools/audit-catalog.ts' ||
+    n === 'tools/audit-catalog.json' ||
+    n === 'tools/audit-emit-stub.ts' ||
+    n === 'tools/audit-migrate-to-sha3.ts' ||
+    n === 'tests/audit-catalog.test.ts' ||
+    n === 'lib/types/branded/audit.ts' ||
+    n === 'tools/bun-doc-refs.ts' ||
+    n === 'tools/bun-docs-curated.ts'
+  );
+}
+
 async function getStagedFiles(): Promise<string[]> {
   const proc = Bun.spawn(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACM'], {
     cwd: repoRoot,
@@ -187,9 +207,29 @@ async function main(): Promise<void> {
     }
   }
 
+  const auditFiles = staged.filter(isAuditSsotPath);
+  if (auditFiles.length > 0) {
+    console.info(`🧾 Audit catalog verify (${auditFiles.length} path(s) staged)...`);
+    const code = await runGate('audit-verify', ['bun', 'run', 'audit:verify'], timings);
+    if (code !== 0) {
+      console.error(
+        '❌ Audit catalog verify failed — evidence/graph/relatedDocs/catalog parity\n' +
+          '   bun run audit:verify\n' +
+          '   bun run audit:catalog:build'
+      );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
   if (harnessFiles.length === 0) {
-    if (docMapFiles.length > 0 || projectsFiles.length > 0 || libFiles.length > 0) {
-      console.info('✅ Harness pre-commit checks passed (doc/projects/lib gates only)');
+    if (
+      docMapFiles.length > 0 ||
+      projectsFiles.length > 0 ||
+      libFiles.length > 0 ||
+      auditFiles.length > 0
+    ) {
+      console.info('✅ Harness pre-commit checks passed (doc/projects/lib/audit gates only)');
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
     }

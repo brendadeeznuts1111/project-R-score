@@ -6,7 +6,7 @@
  * (https://github.com/sindresorhus/string-width/blob/main/test.js) — the same
  * suite Bun.stringWidth is validated against
  * (https://bun.com/docs/runtime/utils#bun-stringwidth).
- * Bun.inspect.custom: https://bun.com/docs/runtime/utils#bun-inspect
+ * Bun.inspect.custom: https://bun.com/docs/runtime/utils#bun-inspect-custom
  * Running them through widthOf() diffs our helper + this Bun runtime against
  * the reference expectations in one shot.
  */
@@ -47,17 +47,17 @@ describe('widthOf — string-width reference vectors', () => {
     ['hyperlink sequence', ']8;;https://example.comlink]8;;', 4],
     // Zero-width characters
     ['zero-width space', 'a​b', 2],
-    ['ZWJ alone', '‍', 0],
+    ['ZWJ alone', '”', 0],
     ['ZWNJ alone', '‌', 0],
     ['Arabic with ZWNJ', 'ب‌ه', 2],
     // Combining marks
-    ['combining acute', 'é', 1],
-    ['multiple combining marks', 'é̂', 1],
-    ['combining marks only', '́̂', 0],
+    ['combining acute', 'e̝', 1],
+    ['multiple combining marks', 'ê̝', 1],
+    ['combining marks only', '̝̂', 0],
     // Emoji
     ['emoji surrogate pair', '😀', 2],
     ['text with emoji', 'a😀b', 4],
-    ['emoji with VS16', '⚡️', 2],
+    ['emoji with VS16', '⚡︝', 2],
     ['fire emoji', '🔥', 2],
     // Misc symbols (narrow by default)
     ['black medium square', '◼', 1],

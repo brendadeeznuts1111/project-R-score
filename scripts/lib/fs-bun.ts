@@ -2,9 +2,13 @@
 // @see https://bun.com/docs/guides/read-file/exists — Bun.file().exists()
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+// @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
 /**
  * Bun-native file helpers — only APIs documented at bun.com/docs/runtime/file-io
  * (and Glob at runtime/glob). No node:fs for file bodies; no shell; no node:path.
+ *
+ * Sync text/json use Bun.mmap — Bun.peek on pending Bun.file().text()/json()
+ * returns the Promise (or a partial object) on Bun 1.4 canary, not the payload.
  *
  * Path join/resolve: re-exported from lib/path-bun (spine SSOT).
  */
@@ -41,9 +45,14 @@ export async function fileExists(path: string): Promise<boolean> {
   return Bun.file(path).exists();
 }
 
-/** Sync exists via `Bun.peek(Bun.file(path).exists())`. */
+/** Sync exists — mmap throws when the path is missing. */
 export function fileExistsSync(path: string): boolean {
-  return Bun.peek(Bun.file(path).exists()) === true;
+  try {
+    Bun.mmap(path);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** `await Bun.file(path).text()` */
@@ -51,8 +60,9 @@ export async function readText(path: string): Promise<string> {
   return Bun.file(path).text();
 }
 
+/** Sync text via mmap (peek of pending `.text()` is not the string). */
 export function readTextSync(path: string): string {
-  return Bun.peek(Bun.file(path).text()) as string;
+  return new TextDecoder().decode(Bun.mmap(path));
 }
 
 /** `await Bun.file(path).json()` */
@@ -61,7 +71,7 @@ export async function readJson<T = unknown>(path: string): Promise<T> {
 }
 
 export function readJsonSync<T = unknown>(path: string): T {
-  return Bun.peek(Bun.file(path).json()) as T;
+  return JSON.parse(readTextSync(path)) as T;
 }
 
 /** `await Bun.file(path).bytes()` → `Uint8Array` */

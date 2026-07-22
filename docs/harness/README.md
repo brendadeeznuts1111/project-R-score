@@ -27,7 +27,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)
 - Lanes / push / credentials / irreversible ops → [`AUTHORITY.md`](AUTHORITY.md)
 - Read this index in-terminal (zero-overhead) → `bun ./docs/harness/README.md` · `bun run docs:harness`
-- Discover day-loop + ratchet status (live) → `bun run harness:status` (`ansiMarkdown` / `Bun.markdown.ansi`)
+- Discover day-loop + ratchet status (live) → `bun run harness:status` (local ratchets + timings SSOT · `ansiMarkdown`) · `--table` · `--show-actions-noise`
 - Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron` · `bun run test:cron-os`
 - Spine multi-tenant (docs-integrity + install-verify) → `bun run spine:schedule:once` · claim `spine-multi-tenant` · [`cron.md`](cron.md)
 - Spine maintenance runbooks (typed signal · intervention · proof · retirement) → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · claim `spine-maintenance-runbooks`
@@ -53,12 +53,21 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - `bun-shell-boundaries` → `bun test tests/fixtures/bun-shell/`
 - `fs-native-boundaries` → `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts`
 - `security-hash-boundaries` → `bun test tests/fixtures/security-hash/`
+- `url-pattern-boundaries` → `bun test tests/bun-site-url.test.ts`
+- `social-metadata-boundaries` → `bun test tests/fixtures/social-metadata/`
+- `blog-extraction-boundaries` → `bun test tests/fixtures/blog-extraction/`
+- `fetch-page-boundaries` → `bun test tests/fixtures/fetch-page/`
+- `blog-extraction-journey` → `bun test tests/journey/blog-extraction.test.ts` (live bun.com)
 - **`lib/path-bun`** — spine `lib/` + `tools/` import Bun path helpers, not `path` / `node:path`  
   *Ratchet* → `bun run check:path-bun` (pre-commit when `lib/` or `tools/` staged)
 - **`Bun.env` boxing** — no Node `process.env` in spine `lib/` + `scripts/`  
   *Ratchet* → `bun run check:bun-env`, eslint `bun/prefer-bun-env` (**error**)
+- **`invisible-chars`** — zero-width / bidi / format code points are `\u` escapes in source, never literal bytes  
+  *Ratchet* → `bun run check:invisible-chars` (pre-commit when spine or test `.ts` staged) · `// invisible-ok` to suppress · VS16 warn-only (`--verbose` lists)
 - **Canonical Bun `@see` URLs** — Bun APIs cite catalog URLs  
   *Ratchet* → pre-commit `bun-doc-refs` annotate-on-write · `bun tools/bun-doc-refs.ts check`
+- **Audit findings + concepts (sibling SSOT)** — hashed evidence + catalog pages, not BunToken  
+  *Ratchet* → claim `audit-findings-catalog` · `bun run audit:verify` · pre-commit + `ci:harness` · [`docs/audit/README.md`](../audit/README.md)
 - **Proof journeys** — claim kind matches evidence  
   *Ratchet* → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` · `bun run proof:install` · `bun run harness:status`
 - **Fresh-rerun** — harness PRs re-prove the affected claim outside the proposing chat  
@@ -95,31 +104,41 @@ bun install                 # prepare → husky
 # pre-push:   install:verify --quiet
 bun run ci:harness:fast     # quiet local parity (no hygiene)
 bun run ci:harness          # quiet harness envelope
-bun run ci:core             # install verify · hygiene · ci:harness (= GHA)
+bun run ci:core             # install verify · hygiene · ci:harness (= GHA body)
+# Actions offline (billing)? Local proof = required-check bodies:
+#   bun run ci:core
+#   bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run type-check:full
 ```
 
 ### CI tiers
 
-- **`core`** (GHA main/PR) — install verify · cache lifecycle · hygiene · claim (PR) · `ci:harness` — **one** runner/install  
+- **`core`** (GHA main/PR **or local**) — install verify · cache lifecycle · hygiene · claim (PR) · `ci:harness` — **one** runner/install  
   *Ratchet* → [harness-gates.yml](../../.github/workflows/harness-gates.yml) · `bun run ci:core`
 - **`fast`** (local) — ∥ cheap · `test:changed` dirty  
   *Ratchet* → `bun run ci:harness:fast`
 - **`harness`** — eslint-changed (PR) / full on main · `test:changed:main`  
   *Ratchet* → `bun run ci:harness`
+- **`local-only`** (Actions billing offline) — run `ci:core` + type-check scripts; admin-merge until GHA runners return  
+  *Ratchet* → [AUTHORITY.md](AUTHORITY.md) · Local CI when Actions is offline
 - **`feat/codex only`** — hygiene for branches without harness-gates  
   *Ratchet* → [repo-hygiene.yml](../../.github/workflows/repo-hygiene.yml)
 - **`setup`** — shared Bun + install cache (+ optional eslint cache)  
   *Ratchet* → [setup-factory-bun](../../.github/actions/setup-factory-bun/action.yml)
 - **`types`** — `type-check:ci` then `type-check:full` (not matrix×2 installs)  
-  *Ratchet* → [typescript-checks.yml](../../.github/workflows/typescript-checks.yml)
+  *Ratchet* → [typescript-checks.yml](../../.github/workflows/typescript-checks.yml) · local: same scripts
 
-**Required checks:** Harness Gates only — see [AUTHORITY.md](AUTHORITY.md). Velocity / install-tax: [VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md#ci-install-tax-2026-07-21-deepen). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
+**Required checks:** Harness Gates + Type Check — see [AUTHORITY.md](AUTHORITY.md). When Actions cannot start, local `ci:core` + type-check is the proof; GitHub status stays red until billing restores. Velocity / install-tax: [VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md#ci-install-tax-2026-07-21-deepen). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
 
 ## Day loop (honest)
 
+Full map: [`day-loop.md`](day-loop.md) · curated Bun flags NOTE: [`../guides/bun-test-flags-1.3.13.md`](../guides/bun-test-flags-1.3.13.md).
+
+
 ```bash
 bun run docs:harness            # this index → bun ./file.md (native ANSI, no VM)
-bun run harness:status          # live ratchets + last gate timing (ansiMarkdown)
+bun run harness:status          # local ratchets + timings SSOT (ansiMarkdown)
+#   bun run harness:status -- --table              # Bun.inspect family map + inspect.table
+#   bun run harness:status -- --show-actions-noise # unmute GHA 0-step / billing checks
 bun run help
 bun run type-check              # tsconfig.check.json — spine agent surfaces
 bun run build:affected          # git-true workspaces → bun --filter
@@ -129,6 +148,9 @@ bun run test:changed:main       # --main-head → origin/main|main
 #   bun run test:changed -- HEAD~1
 #   bun run test:changed -- main --parallel
 #   bun run test:changed:watch
+bun run test:isolate            # --isolate (fresh global per file)
+bun run test:parallel           # --parallel (workers; auto --isolate)
+#   SHARD=1/3 bun run test:shard
 bun run ci:harness:fast         # before push (quiet)
 bun run proof:install           # install only (also pre-push --quiet)
 bun run check:path-bun && bun run check:bun-env
@@ -139,9 +161,9 @@ bun run build:defines           # AST --define BUILD_* + DEBUG=false (prod DCE);
 #   bun run build:defines:compile   # standalone dist/fw-build-info
 ```
 
-`test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
+`test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--isolate` / `--parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel) · [`--shard`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) · [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
 
-Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in tables: `bun run harness:status -- --table`.
+Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in inspect family: `bun run harness:status -- --table` ([`Bun.inspect`](https://bun.com/docs/runtime/utils#bun-inspect) · [`custom`](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [`table`](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)). Actions 0-step / billing checks stay muted; `--show-actions-noise` to show. When Actions is offline, local merge proof remains `bun run ci:core` ([AUTHORITY.md](AUTHORITY.md)).
 
 ## Local theses (FactoryWager)
 

@@ -81,7 +81,9 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
 - **Pre-commit ESLint cold** (`script-gate`)  
   *Ratchet* → `.cache/eslint-bun-native`
 - **GHA billing lock** (`ops`)  
-  *Ratchet* → unlock Actions billing; local `ci:core` still proves
+  *Ratchet* → local `ci:core` + type-check scripts prove merge; admin-merge until billing unlocks runners ([AUTHORITY.md](AUTHORITY.md))
+- **Actions billing noise in `harness:status`** (`ops`)  
+  *Ratchet* → mute 0-step / billing checks by default; `--show-actions-noise` to unmute · local `ci:core` remains merge proof ([README.md](README.md) · [AUTHORITY.md](AUTHORITY.md))
 - **SSOT doc encyclopedia tax** (`doc-map`)  
   *Ratchet* → compress OPERATE / standards / docs/AGENTS to JIT
 - **Generated CLI/REGISTRY tax** (`doc-map`)  

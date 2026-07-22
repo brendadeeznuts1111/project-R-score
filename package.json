@@ -6,15 +6,23 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "projects/active/factorywager/registry/packages/*",
       "projects/active/sports-terminal-os",
       "lib/*"
     ]
   },
   "catalog": {
-    "typescript": "6.0.3",
+    "zod": "3.23.0",
     "@types/bun": "1.3.14",
-    "zod": "3.23.0"
+    "typescript": "5.9.3",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "@types/react": "19.2.15",
+    "@types/react-dom": "19.2.3"
+  },
+  "catalogs": {
+    "next": {
+      "typescript": "6.0.3"
+    }
   },
   "bin": {
     "dx-mcp": "./scripts/dx-mcp.ts"
@@ -1564,6 +1572,13 @@
     "docs:catalog:build": "bun tools/bun-docs-catalog.ts build",
     "docs:catalog": "bun tools/bun-docs-catalog.ts list",
     "docs:catalog:export": "bun tools/bun-docs-catalog.ts export --compact",
+    "audit:catalog:build": "bun tools/audit-catalog.ts build",
+    "audit:catalog": "bun tools/audit-catalog.ts list",
+    "audit:get": "bun tools/audit-catalog.ts get",
+    "audit:search": "bun tools/audit-catalog.ts search",
+    "audit:emit-stub": "bun tools/audit-emit-stub.ts",
+    "audit:migrate:sha3": "bun tools/audit-migrate-to-sha3.ts",
+    "audit:verify": "bun tools/audit-catalog.ts verify",
     "dev": "bun run --watch server/server-enhanced.ts",
     "start": "bun run server/server-enhanced.ts",
     "dashboard": "bun run dashboard/mcp-overview.ts status",
@@ -1684,6 +1699,7 @@
     "affected:list": "bun scripts/affected-workspaces.ts list",
     "check:path-bun": "bun scripts/check-path-bun.ts",
     "check:bun-env": "bun scripts/check-bun-env.ts",
+    "check:invisible-chars": "bun scripts/check-invisible-chars.ts",
     "harness:status": "bun scripts/harness-status.ts",
     "docs:harness": "bun ./docs/harness/README.md",
     "docs:cron": "bun scripts/docs-cron.ts",
@@ -1725,7 +1741,7 @@
     "yaml": "2.9.0"
   },
   "devDependencies": {
-    "@types/bun": "1.3.14",
+    "@types/bun": "catalog:",
     "@types/node": "25.9.0",
     "@typescript-eslint/eslint-plugin": "8.59.3",
     "@typescript-eslint/parser": "8.59.3",

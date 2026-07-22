@@ -1,0 +1,5 @@
+{"event":"meta","note":"FactoryWager audit-catalog sample — synthetic Nagata-type fiber demo, not a production sportsbook claim"}
+{"event":"definition","map":"Nagata","space":"R^3","formula":"F(x,y,z)=(x, y-2x(zx+y^2)-(zx+y^2)^2, z+2y(zx+y^2)+x(zx+y^2)^2)","jacobianDet":1,"injective":false,"citation":"Masayoshi Nagata (1972)"}
+{"event":"profiles","a":[10,5,2],"b":[8,7,2],"note":"Distinct profile triples used as a pedagogical stand-in for fiber endpoints"}
+{"event":"collision","scoreA":42,"scoreB":42,"jacobianNorm":2,"jacobianNullspaceDim":0,"interpretation":"Local DF full rank (nullspace trivial) yet scores collide — Nagata-type global fiber"}
+{"event":"proof","kind":"synthetic-fiber-curve","relatedConcepts":["nagata-map","jacobian-nullspace","sha3-integrity"]}
