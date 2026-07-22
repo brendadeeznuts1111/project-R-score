@@ -261,7 +261,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'fetch-page-boundaries',
     claim:
-      'fetchPage strips fragments, sets Accept/UA, times out, throws on non-OK, leaves success body unread (BunHarness client)',
+      'fetchPage enforces HTTPS, Accept/UA, 15s timeout, optional verbose; throws on non-OK; leaves success body unread',
     kinds: ['boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:harness',

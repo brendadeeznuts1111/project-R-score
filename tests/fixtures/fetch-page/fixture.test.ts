@@ -5,6 +5,7 @@
  * @see https://bun.com/docs/runtime/networking/fetch#custom-headers
  * @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout
  * @see https://bun.com/docs/runtime/networking/fetch#error-handling
+ * @see https://bun.com/docs/runtime/networking/fetch#debugging
  */
 import { afterEach, describe, expect, test } from 'bun:test';
 import { fetchPage, stripUrlFragment } from '../../../lib/docs/fetch-page.ts';
@@ -22,6 +23,10 @@ describe('fetch-page-boundaries', () => {
       new Response('Not Found', { status: 404 })) as typeof fetch;
 
     await expect(fetchPage('https://example.com')).rejects.toThrow(/fetchPage 404/);
+  });
+
+  test('rejects non-https URLs', async () => {
+    await expect(fetchPage('http://example.com')).rejects.toThrow(/requires https/);
   });
 
   test('strips URL fragment before fetch', async () => {
@@ -51,6 +56,21 @@ describe('fetch-page-boundaries', () => {
     expect(captured?.get('User-Agent')).toContain('BunHarness');
   });
 
+  test('caller headers merge without clobbering defaults', async () => {
+    let captured: Headers | undefined;
+    globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      captured = new Headers(init?.headers);
+      return new Response('<html></html>', { status: 200 });
+    }) as typeof fetch;
+
+    await fetchPage('https://example.com', {
+      headers: { 'Accept-Language': 'en' },
+    });
+    expect(captured?.get('Accept')).toBe('text/html');
+    expect(captured?.get('User-Agent')).toContain('BunHarness');
+    expect(captured?.get('Accept-Language')).toBe('en');
+  });
+
   test('success path leaves body readable', async () => {
     globalThis.fetch = (async () =>
       new Response('<html><body>ok</body></html>', { status: 200 })) as typeof fetch;
@@ -74,5 +94,14 @@ describe('fetch-page-boundaries', () => {
     });
     expect(seenSignal).toBeDefined();
     expect(seenSignal?.aborted).toBe(false);
+  });
+
+  test('verbose option does not throw', async () => {
+    globalThis.fetch = (async () =>
+      new Response('<html></html>', { status: 200 })) as typeof fetch;
+
+    await expect(fetchPage('https://example.com', { verbose: true })).resolves.toBeInstanceOf(
+      Response
+    );
   });
 });

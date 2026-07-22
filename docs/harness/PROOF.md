@@ -49,7 +49,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/fixtures/social-metadata/` · evidence `lib/docs/extract-metadata.ts` · [guide](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags)
 - **`blog-extraction-boundaries`** — article sans nav/footer (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/blog-extraction/` · evidence `lib/docs/blog-extract.ts`
-- **`fetch-page-boundaries`** — BunHarness page fetch: fragment strip, Accept/UA, timeout, non-OK throw, success body unread (`boundary`)  
+- **`fetch-page-boundaries`** — BunHarness page fetch: HTTPS, fragment strip, Accept/UA, 15s timeout, optional verbose, non-OK throw, success body unread (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/fetch-page/` · evidence `lib/docs/fetch-page.ts` · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request)
 - **`blog-extraction-journey`** — `CANONICAL_SOURCES.blog` → URLPattern → fetchPage → `SocialMetadata` (`journey`)  
   *Ratchet* → `bun test tests/journey/blog-extraction.test.ts` · human-only (live bun.com)
