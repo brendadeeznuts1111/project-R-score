@@ -14,6 +14,8 @@
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 /**
@@ -403,6 +405,13 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const url = Bun.pathToFileURL("/foo/bar.txt");\nconsole.log(url); // "file:///foo/bar.txt"',
     },
   ],
+  // Official docs — Bun.inspect.custom (≡ util.inspect.custom)
+  'runtime/utils#bun-inspect-custom': [
+    {
+      lang: 'ts',
+      body: 'class Foo {\n  [Bun.inspect.custom]() {\n    return "foo";\n  }\n}\n\nconst foo = new Foo();\nconsole.log(foo); // => "foo"',
+    },
+  ],
   // Official docs — Bun.inspect.table(tabularData, properties, options)
   'runtime/utils#bun-inspect-table-tabulardata-properties-options': [
     {
@@ -610,6 +619,7 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'which-path-to-executable-bin': 'guides/util/which-path-to-executable-bin',
   'get-the-path-to-an-executable-bin-file': 'guides/util/which-path-to-executable-bin',
   // Bun.* → utils fences; bare / node:url → reference; guide titles → guides
+  'Bun.inspect.custom': 'runtime/utils#bun-inspect-custom',
   'Bun.inspect.table': 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
   'Bun.inspect.table(tabularData, properties, options)':
     'runtime/utils#bun-inspect-table-tabulardata-properties-options',

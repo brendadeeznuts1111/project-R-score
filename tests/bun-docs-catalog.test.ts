@@ -309,6 +309,7 @@ describe('frozen guide examples', () => {
     expect(guideExamplesForToken('http3')[0]?.body).toContain('http3: true');
     expect(guideExamplesForToken('idleTimeout')[0]?.body).toContain('idleTimeout: 30');
     expect(guideExamplesForToken('Server')[0]?.body).toContain('interface Server');
+    expect(guideExamplesForToken('Bun.inspect.custom')[0]?.body).toContain('[Bun.inspect.custom]');
     const inspectTable = guideExamplesForToken('Bun.inspect.table');
     expect(inspectTable).toHaveLength(3);
     expect(inspectTable[0]?.body).toContain('Bun.inspect.table([');

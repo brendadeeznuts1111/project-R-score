@@ -301,14 +301,15 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.CookieMap': 'https://bun.com/docs/runtime/cookies#cookiemap-class',
 
   // ── Inspection & formatting (replaces util.inspect options, cli-table) ──
-  'Bun.inspect': 'https://bun.com/docs/runtime/utils#bun-inspect',
+  'Bun.inspect': bunDocs('runtime/utils', 'bun-inspect'),
+  // Heading: Bun.inspect.custom (well-known symbol; ≡ util.inspect.custom)
+  'Bun.inspect.custom': bunDocs('runtime/utils', 'bun-inspect-custom'),
   // Heading: Bun.inspect.table(tabularData, properties, options)
   'Bun.inspect.table': bunDocs('runtime/utils', 'bun-inspect-table-tabulardata-properties-options'),
   'Bun.inspect.table(tabularData, properties, options)': bunDocs(
     'runtime/utils',
     'bun-inspect-table-tabulardata-properties-options'
   ),
-  'Bun.inspect.custom': 'https://bun.com/docs/runtime/utils#bun-inspect',
   BunInspectOptions: 'https://bun.com/reference/bun/BunInspectOptions',
   console: 'https://bun.com/docs/runtime/console',
   '--console-depth': 'https://bun.com/docs/runtime/console#object-inspection-depth',

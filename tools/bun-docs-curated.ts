@@ -18,7 +18,8 @@
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect, Bun.inspect.custom
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
 // @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
@@ -185,8 +186,9 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'Bun.inspect.custom',
-    path: 'runtime/utils',
-    description: 'Well-known symbol for custom Bun.inspect serialization',
+    path: 'runtime/utils#bun-inspect-custom',
+    description:
+      'Well-known symbol for custom Bun.inspect serialization (identical to util.inspect.custom)',
     related: ['runtime/utils'],
   },
   {

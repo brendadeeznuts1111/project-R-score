@@ -187,8 +187,8 @@ export function logTable<T extends object>(
 
 /**
  * Re-export of Bun.inspect.custom — implement `[inspectCustom]()` on classes
- * to control how Bun.inspect/console.log print them.
- * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.custom
+ * to control how Bun.inspect/console.log print them (≡ util.inspect.custom).
+ * @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
  */
 export const inspectCustom = Bun.inspect.custom;
 
