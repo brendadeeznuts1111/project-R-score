@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-22T01:54:32.781Z",
+  "generated": "2026-07-22T13:06:37.715Z",
   "source": "https://bun.com/docs/llms.txt",
   "bunVersion": "1.4.0",
   "upstreamBunVersion": "1.4.0",
@@ -146,8 +146,7 @@
         "using-plugins",
         "unsupported-cli-arguments",
         "api-reference",
-        "complete-example",
-        "runtime-arguments-via-bun_options"
+        "complete-example"
       ]
     },
     {
@@ -3602,12 +3601,12 @@
         "nested-list-numbering",
         "code-block-syntax-highlighting",
         "parser-options",
-        "parser-options-2",
         "bun-markdown-react",
         "server-side-rendering",
         "component-overrides",
         "available-overrides",
-        "react-18-and-older"
+        "react-18-and-older",
+        "parser-options-2"
       ],
       "officialSection": "Interop & Tooling"
     },

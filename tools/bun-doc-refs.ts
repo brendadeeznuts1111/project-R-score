@@ -320,8 +320,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.markdown.html options': 'https://bun.com/docs/runtime/markdown#options',
   'parser-options': 'https://bun.com/docs/runtime/markdown#parser-options',
   'Bun.markdown.render parser options': 'https://bun.com/docs/runtime/markdown#parser-options',
-  'parser-options-2': 'https://bun.com/docs/runtime/markdown#parser-options-2',
-  'Bun.markdown.react parser options': 'https://bun.com/docs/runtime/markdown#parser-options-2',
+  'parser-options-2': 'https://bun.com/docs/runtime/markdown#parser-options',
+  'Bun.markdown.react parser options': 'https://bun.com/docs/runtime/markdown#parser-options',
   'Bun.YAML': 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   YAML: 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
@@ -483,7 +483,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun:test': 'https://bun.com/docs/test/index#run-tests',
   'bun test': 'https://bun.com/docs/test/index#run-tests',
   'bun:test snapshots': 'https://bun.com/docs/test/snapshots#basic-snapshots',
-  'snapshot guide': 'https://bun.com/guides/test/snapshot',
+  'snapshot guide': 'https://bun.com/docs/guides/test/snapshot',
   // Release blog deep links (docs index may lag; prefer these for ship notes)
   'bun v1.3.12': 'https://bun.com/blog/bun-v1.3.12',
   'bun v1.3.12 install': 'https://bun.com/blog/bun-v1.3.12#to-install-bun',
@@ -621,7 +621,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun-run-to-pipe-code-from-stdin': 'https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin',
   'pipe code from stdin': 'https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin',
   // Runtime CLI (bun run) — https://bun.com/docs/runtime#transpilation-language-features
-  // (bun.sh/docs/runtime#transpilation-&-language-features → same slug)
+  // (bun.com/docs/runtime#transpilation-language-features → same slug)
   'Transpilation & Language Features':
     'https://bun.com/docs/runtime#transpilation-language-features',
   'transpilation-language-features': 'https://bun.com/docs/runtime#transpilation-language-features',
@@ -743,7 +743,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'esbuild javascript-api': 'https://bun.com/docs/bundler/esbuild#javascript-api',
   'esbuild plugin-api': 'https://bun.com/docs/bundler/esbuild#plugin-api',
   // Env / globals (bundler-touching)
-  BUN_LOADER_JSX: 'https://bun.com/docs/bundler/plugins#creating-a-native-plugin-in-rust',
+  BUN_LOADER_JSX: 'https://bun.com/docs/bundler/loaders#jsx',
 
   // ── General utilities ──────────────────────────────────────────────────
   // @see pinned for tools that log runtime version in integrity/status

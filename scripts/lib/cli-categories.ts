@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
@@ -12,7 +13,7 @@
 /**
  * Shared CLI category SSOT for `help` and `cli:docs`.
  *
- * @see https://bun.com/docs/cli/run — package.json scripts / bun run
+ * @see https://bun.com/docs/runtime — package.json scripts / bun run
  */
 
 export type CliCategory = {

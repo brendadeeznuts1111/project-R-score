@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/runtime/file-io — Bun.write
-// @see https://bun.com/docs/cli/run — bun run / package.json scripts
+// @see https://bun.com/docs/runtime — bun run / package.json scripts
 /**
  * Auto-generate docs/CLI.md from package.json scripts.
  *

@@ -7,7 +7,7 @@
  *         bun run help <category>  # filter by category (e.g. "fix", "test", "packages")
  *
  * @see ./lib/cli-categories.ts — category SSOT (shared with cli:docs)
- * @see https://bun.com/docs/cli/run — bun run
+ * @see https://bun.com/docs/runtime — bun run
  */
 
 import pkg from '../package.json' assert { type: 'json' };

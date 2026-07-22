@@ -82,7 +82,7 @@ describe('bun-docs-catalog helpers', () => {
     expect(inferType('Bun.cron', 'https://bun.com/docs/runtime/cron')).toBe('api');
     expect(inferType('--console-depth', 'https://bun.com/docs/runtime/console')).toBe('cli-flag');
     expect(inferType('bun test --parallel', 'https://bun.com/blog/bun-v1.3.13')).toBe('cli-flag');
-    expect(inferType('bun run --parallel', 'https://bun.com/docs/cli/run')).toBe('cli-flag');
+    expect(inferType('bun run --parallel', 'https://bun.com/docs/pm/filter')).toBe('cli-flag');
     expect(inferType('JEST_WORKER_ID', 'https://bun.com/blog/bun-v1.3.13')).toBe('env-var');
     expect(inferType('bunfig.toml', 'https://bun.com/docs/runtime/bunfig')).toBe('config-key');
     expect(inferType('Code coverage', 'https://bun.com/docs/test/code-coverage')).toBe('concept');
@@ -445,7 +445,7 @@ describe('inspect family catalog relations', () => {
       'https://bun.com/docs/runtime/markdown#parser-options'
     );
     expect(byName.get('parser-options-2')?.docsUrl).toBe(
-      'https://bun.com/docs/runtime/markdown#parser-options-2'
+      'https://bun.com/docs/runtime/markdown#parser-options'
     );
     expect(byName.get('options')?.examples?.[0]?.body).toContain('tables: true');
     expect(byName.get('parser-options-2')?.examples?.[0]?.body).toContain(
