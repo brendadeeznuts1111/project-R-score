@@ -58,11 +58,6 @@ export function auditConceptDocsPath(id: AuditConceptId | AuditEntryId): string 
   return `docs/audit/concepts/${unbrand(id as AuditEntryId)}.md`;
 }
 
-/** @deprecated use auditFindingDocsPath — kept for call-site clarity during migrate */
-export function auditDocsPath(id: AuditFindingId | AuditEntryId): string {
-  return auditFindingDocsPath(id);
-}
-
 /** Resolve query via AUDIT_REFS (exact, then case-insensitive). */
 export function resolveAuditAlias(query: string): AuditEntryId | undefined {
   const q = query.trim();

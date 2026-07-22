@@ -17,7 +17,6 @@ export { type AuditConcept, parseAuditConcept } from './audit-concept.ts';
 export {
   AUDIT_REFS,
   auditConceptDocsPath,
-  auditDocsPath,
   auditFindingDocsPath,
   resolveAuditAlias,
   toAuditEntryId,

@@ -7,7 +7,7 @@ Repo-local audit SSOT. **Not** bun.com docs / BunToken.
 | [`lib/audit/`](../../lib/audit/) | Types · schema · `AUDIT_REFS` · markdown render |
 | [`tools/audit-findings/`](../../tools/audit-findings/) | Source finding JSON |
 | [`tools/audit-concepts/`](../../tools/audit-concepts/) | Source concept JSON (`nagata-map`, `sha3-integrity`, …) |
-| [`tools/audit-evidence/`](../../tools/audit-evidence/) | Hashed evidence (`algorithm` + `digest`; primary `sha3-256`, enum still allows `sha256`) |
+| [`tools/audit-evidence/`](../../tools/audit-evidence/) | Hashed evidence (`algorithm` + `digest`; SSOT requires `sha3-256`) |
 | [`tools/audit-catalog.json`](../../tools/audit-catalog.json) | Built index |
 | [`tools/audit-catalog.ts`](../../tools/audit-catalog.ts) | `build` · `verify` · `get` · `list` · `search` |
 | [`findings/`](./findings/) | Generated finding pages (do not hand-edit) |
@@ -40,4 +40,4 @@ Prefer `bun run audit:catalog:build`. `bun tools/bun-doc-refs.ts index-audit` is
 | `bun run audit:emit-stub` | rewrite sample finding + evidence |
 | `bun run audit:migrate:sha3` | one-shot normalize inbound/old findings → Phase 2 |
 
-Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2; primary `sha3-256`). Proof claim: `audit-findings-catalog` (continuous — pre-commit when audit SSOT staged · `ci:harness` CHEAP) — see [`docs/harness/PROOF.md`](../harness/PROOF.md).
+Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2; SSOT verify requires `sha3-256`; parse still accepts inbound `sha256` for `audit:migrate:sha3`). Proof claim: `audit-findings-catalog` (continuous — pre-commit when audit SSOT staged · `ci:harness` CHEAP) — see [`docs/harness/PROOF.md`](../harness/PROOF.md).

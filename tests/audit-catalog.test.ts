@@ -104,6 +104,30 @@ describe('parseAuditFinding', () => {
     expect('sha256' in f.evidence).toBe(false);
   });
 
+  test('inbound sha256 algorithm still parses and verifyEvidenceHash accepts', async () => {
+    const path = 'tools/audit-evidence/sample-fiber-demo.ndjson';
+    const digest = await hashFile(joinPath(REPO_ROOT, path), 'sha256');
+    const f = parseAuditFinding({
+      id: 'inbound-sha256',
+      kind: 'AuditFinding',
+      title: 't',
+      description: 'd',
+      status: 'open',
+      publishedAt: '2026-07-21',
+      evidence: {
+        path,
+        algorithm: 'sha256',
+        digest,
+        mediaType: 'application/x-ndjson',
+      },
+    });
+    expect(f.evidence.algorithm).toBe('sha256');
+    expect(await verifyEvidenceHash(f, REPO_ROOT)).toEqual({ ok: true });
+    expect(await verifyEvidenceHash({ ...f, evidence: { ...f.evidence, digest: '0'.repeat(64) } }, REPO_ROOT)).toEqual(
+      expect.objectContaining({ ok: false })
+    );
+  });
+
   test('rejects BunToken-shaped kind', () => {
     expect(() => parseAuditFinding({ kind: 'Concept' })).toThrow(/kind/);
   });
@@ -213,6 +237,22 @@ describe('audit catalog', () => {
     expect(await hashFile(abs, 'sha3-256')).toBe(
       new Bun.CryptoHasher('sha3-256').update(EVIDENCE_BODY).digest('hex')
     );
+  });
+
+  test('SSOT verifyAllEvidence refuses algorithm sha256', async () => {
+    const findings = await loadSourceFindings();
+    const sample = getAuditFinding(findings, 'sample-fiber-demo-2026-07-21')!;
+    const digest = await hashFile(joinPath(REPO_ROOT, sample.evidence.path), 'sha256');
+    const inbound = {
+      ...sample,
+      evidence: { ...sample.evidence, algorithm: 'sha256' as const, digest },
+    };
+    expect(await verifyEvidenceHash(inbound, REPO_ROOT)).toEqual({ ok: true });
+    expect(
+      (await verifyAllEvidence([inbound], REPO_ROOT)).some(e =>
+        e.includes('SSOT evidence.algorithm must be sha3-256')
+      )
+    ).toBe(true);
   });
 
   test('build writes concept + finding pages; search prefers Nagata concept', async () => {

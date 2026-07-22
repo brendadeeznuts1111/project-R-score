@@ -121,6 +121,13 @@ export async function verifyAllEvidence(
 ): Promise<string[]> {
   const errors: string[] = [];
   for (const f of findings) {
+    // SSOT catalog requires sha3-256; parse still accepts inbound sha256 for migrate.
+    if (f.evidence.algorithm !== 'sha3-256') {
+      errors.push(
+        `${f.id}: SSOT evidence.algorithm must be sha3-256 (got ${f.evidence.algorithm}; run audit:migrate:sha3)`
+      );
+      continue;
+    }
     const result = await verifyEvidenceHash(f, repoRoot);
     if (!result.ok) errors.push(`${f.id}: ${result.reason}`);
   }

@@ -37,6 +37,6 @@ bun run audit:migrate:sha3        # one-shot normalize inbound/old findings → 
 | `bun run audit:emit-stub` | sample emitter |
 | `bun run audit:migrate:sha3` | inbound Phase 2 normalize |
 
-Evidence lives under `tools/audit-evidence/` (committed). Source findings: `tools/audit-findings/*.json`. Concepts: `tools/audit-concepts/*.json`. Built index: `tools/audit-catalog.json`. Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2 — primary `sha3-256`; enum still allows `sha256`; no legacy `sha256`-only wire field, no companion). Prefer `bun run audit:catalog:build`; `bun-doc-refs index-audit` is the same rebuild.
+Evidence lives under `tools/audit-evidence/` (committed). Source findings: `tools/audit-findings/*.json`. Concepts: `tools/audit-concepts/*.json`. Built index: `tools/audit-catalog.json`. Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2 — SSOT verify requires `sha3-256`; parse accepts inbound `sha256` for migrate; no legacy `sha256`-only wire field, no companion). Prefer `bun run audit:catalog:build`; `bun-doc-refs index-audit` is the same rebuild.
 
 **Load contract:** missing catalog → auto-build on suggest/list/get/search. Corrupt catalog → throw (`bun run audit:catalog:build`); no silent rewrite.
