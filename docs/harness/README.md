@@ -51,6 +51,12 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → eslint `harness/no-unknown-function-param` (**error**), `harness/no-decode-unknown-outside-boundary` (**error**)
 - **Runtime CLI boundaries** — `bun run` flag placement, script vs file resolution, `--bun` shebang, `--console-depth`  
   *Ratchet* → `bun test tests/fixtures/runtime-cli/` · claim `runtime-cli-boundaries` · [runtime](https://bun.com/docs/runtime)
+- **`console-depth-boundaries`** — `lib/console-depth` helpers (inspect/width/markdown)  
+  *Ratchet* → `bun test tests/console-depth.test.ts` · [PROOF Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external)
+- **`github-repository-ref-boundaries`** — Actions → git → `CANONICAL_REMOTES`  
+  *Ratchet* → `bun test tests/github-repository-ref.test.ts` · [`AUTHORITY.md`](AUTHORITY.md)
+- **`macros-embed-boundaries`** — bundle-time macro inlining  
+  *Ratchet* → `bun test tests/macros/embed-commit.test.ts` · [`lib/macros/README.md`](../../lib/macros/README.md)
 - `bun-shell-boundaries` → `bun test tests/fixtures/bun-shell/`
 - `fs-native-boundaries` → `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts`
 - `security-hash-boundaries` → `bun test tests/fixtures/security-hash/`

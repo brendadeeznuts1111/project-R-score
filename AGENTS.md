@@ -156,6 +156,6 @@ Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](
 
 | Kind | References |
 |------|------------|
-| Repo | [`lib/console-depth.ts`](lib/console-depth.ts) · [`tests/console-depth.test.ts`](tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](tools/benchmarks/console-depth-perf.ts) · map in [`docs/harness/PROOF.md`](docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external) |
+| Repo | claim `console-depth-boundaries` · [`lib/console-depth.ts`](lib/console-depth.ts) · [`tests/console-depth.test.ts`](tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](tools/benchmarks/console-depth-perf.ts) · map in [`docs/harness/PROOF.md`](docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external) |
 | Bun | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`stringWidth` · `inspect`) |
 | Other external | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |

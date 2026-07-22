@@ -271,6 +271,27 @@ describe('fresh-rerun contract', () => {
     expect(p?.evidence).toContain('docs/harness/tenants/cloudflare-pages.md');
   });
 
+  test('console-depth-boundaries freshRerun is console-depth suite', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'console-depth-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/console-depth.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.owner).toBe('lib/console-depth.ts');
+  });
+
+  test('github-repository-ref-boundaries freshRerun is github-repository-ref suite', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'github-repository-ref-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/github-repository-ref.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.owner).toBe('lib/github-repository-ref.ts');
+  });
+
+  test('macros-embed-boundaries freshRerun is macros embed-commit suite', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'macros-embed-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/macros/embed-commit.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.owner).toBe('lib/macros/');
+  });
+
   test('install-verify freshRerun is proof:install', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify');
     expect(p?.freshRerun).toBe('bun run proof:install');

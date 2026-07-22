@@ -304,6 +304,56 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/terminal.ts',
   },
   {
+    id: 'console-depth-boundaries',
+    claim:
+      'lib/console-depth inspect/width/markdown helpers and depth precedence behave as this repo depends on them',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/console-depth.test.ts',
+      'tests/console-depth.test.ts',
+      'lib/console-depth.ts',
+    ],
+    freshRerun: 'bun test tests/console-depth.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/console-depth.ts',
+  },
+  {
+    id: 'github-repository-ref-boundaries',
+    claim:
+      'GitHub repository identity resolves Actions → git remote → CANONICAL_REMOTES and fails loud on garbage wire',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/github-repository-ref.test.ts',
+      'tests/github-repository-ref.test.ts',
+      'lib/github-repository-ref.ts',
+      'lib/docs/repo-docs.ts',
+    ],
+    freshRerun: 'bun test tests/github-repository-ref.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/github-repository-ref.ts',
+  },
+  {
+    id: 'macros-embed-boundaries',
+    claim:
+      'Bundle-time macros inline git commit/branch and GitHub repo parts under bun build (no runtime substitution)',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/macros/embed-commit.test.ts',
+      'tests/macros/embed-commit.test.ts',
+      'lib/macros/',
+      'lib/macros/README.md',
+    ],
+    freshRerun: 'bun test tests/macros/embed-commit.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/macros/',
+  },
+  {
     id: 'security-hash-boundaries',
     claim: 'Bun.password and CryptoHasher behave as this repo depends on them',
     kinds: ['boundary'],

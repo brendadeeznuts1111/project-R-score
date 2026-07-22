@@ -52,6 +52,12 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/r2-env.test.ts` · [`config/r2-env.ts`](../../config/r2-env.ts) · [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · `bun run cloudflare:env` · `:assert` / `:assert-apex` (HTTP) · `:assert-live` (API+apex)
 - **`terminal-pty-boundaries`** — Bun.Terminal PTY helpers (`spawnWithTerminal` / capturing terminal) (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/terminal.test.ts` · evidence [`lib/terminal.ts`](../../lib/terminal.ts)
+- **`console-depth-boundaries`** — `lib/console-depth` inspect/width/markdown helpers + depth precedence (`unit` + `boundary`)  
+  *Ratchet* → `bun test tests/console-depth.test.ts` · evidence [`lib/console-depth.ts`](../../lib/console-depth.ts) · CLI flag also under `runtime-cli-boundaries` fixture `console-depth/`
+- **`github-repository-ref-boundaries`** — Actions → git remote → `CANONICAL_REMOTES`; fail-loud on garbage wire (`unit` + `boundary`)  
+  *Ratchet* → `bun test tests/github-repository-ref.test.ts` · evidence [`lib/github-repository-ref.ts`](../../lib/github-repository-ref.ts) · [`AUTHORITY.md`](AUTHORITY.md)
+- **`macros-embed-boundaries`** — `bun build` macros inline commit/branch + repo parts; no substitute under plain `bun scripts/*.ts` (`unit` + `boundary`)  
+  *Ratchet* → `bun test tests/macros/embed-commit.test.ts` · evidence [`lib/macros/`](../../lib/macros/) · [`lib/macros/README.md`](../../lib/macros/README.md)
 - **`security-hash-boundaries`** — Bun.password hash/verify and CryptoHasher sha256/sha1 digests behave as expected  
   *Ratchet* → `bun test tests/fixtures/security-hash/` · evidence `tests/fixtures/security-hash/**/fixture.test.ts`  
   *Fixtures* → `password/` · `cryptohasher/`
@@ -140,6 +146,9 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `bun-time-boundaries` | human-only | `bun test ./tests/time.test.ts` |
 | `cloudflare-pages-env-ssot` | human-only | `bun test tests/r2-env.test.ts` |
 | `terminal-pty-boundaries` | human-only | `bun test ./tests/terminal.test.ts` |
+| `console-depth-boundaries` | human-only | `bun test tests/console-depth.test.ts` |
+| `github-repository-ref-boundaries` | human-only | `bun test tests/github-repository-ref.test.ts` |
+| `macros-embed-boundaries` | human-only | `bun test tests/macros/embed-commit.test.ts` |
 | `security-hash-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/security-hash/` |
 | `url-pattern-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-site-url.test.ts` |
 | `social-metadata-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/social-metadata/` |
@@ -174,13 +183,13 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
 | `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 17.
+Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 20.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 
 ## Lib surface — docs vs Bun vs other external
 
-Routing for claim-backed `lib/` modules and known gaps (no dedicated `ProofPath` yet). **Bun docs** = oven-sh / bun.com. **Other external** = non-Bun (pinned types, thesis, etc.). Repo docs stay in-tree.
+Routing for `lib/` modules. **Bun docs** = oven-sh / bun.com. **Other external** = non-Bun (pinned types, thesis, Actions wire, etc.). Repo docs stay in-tree.
 
 ### Claim-backed
 
@@ -191,6 +200,9 @@ Routing for claim-backed `lib/` modules and known gaps (no dedicated `ProofPath`
 | `deep-equals-boundaries` · `lib/deep-equals.ts` | claim · `tests/deep-equals.test.ts` | [Bun.deepEquals](https://bun.com/docs/runtime/utils#bun-deepequals) | — |
 | `peek-settle-boundaries` · `lib/peek-settle.ts` | claim · `tests/peek-settle.test.ts` | [Bun.peek](https://bun.com/docs/runtime/utils#bun-peek) | — |
 | `terminal-pty-boundaries` · `lib/terminal.ts` | claim · `tests/terminal.test.ts` | [Bun.Terminal / PTY](https://bun.com/docs/runtime/child-process#terminal-pty-support) | — |
+| `console-depth-boundaries` · `lib/console-depth.ts` | [`AGENTS.md`](../../AGENTS.md) · [`BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · `tests/console-depth.test.ts` · bench `tools/benchmarks/console-depth-perf.ts` | [runtime/console](https://bun.com/docs/runtime/console) · [utils](https://bun.com/docs/runtime/utils) (`inspect` · `stringWidth`) · [markdown.ansi](https://bun.com/docs/runtime/markdown#ansi-terminal-output) · [color](https://bun.com/docs/runtime/color) · [sliceAnsi](https://bun.com/reference/bun/sliceAnsi) | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |
+| `github-repository-ref-boundaries` · `lib/github-repository-ref.ts` | [`AGENTS.md`](../../AGENTS.md) · [`AUTHORITY.md`](AUTHORITY.md) · [`lib/docs/repo-docs.ts`](../../lib/docs/repo-docs.ts) | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [spawnSync](https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync) | GitHub Actions `GITHUB_REPOSITORY*` |
+| `macros-embed-boundaries` · `lib/macros/` | [`lib/macros/README.md`](../../lib/macros/README.md) · [`AUTHORITY.md`](AUTHORITY.md) · `tests/macros/embed-commit.test.ts` | [bundler](https://bun.com/docs/bundler/index) · [macros](https://bun.com/docs/bundler/macros) · [serializability](https://bun.com/docs/bundler/macros#serializability) · [plugins](https://bun.com/docs/bundler/plugins) (unused) | — |
 | `image-metadata-boundaries` · `lib/image-metadata.ts` | claim · `lib/screenshot-remediation.ts` · `tests/image-metadata.test.ts` | [Bun.Image](https://bun.com/docs/runtime/image#input) | — |
 | `url-pattern-boundaries` · `lib/docs/bun-site-url.ts` | claim · `tests/bun-site-url.test.ts` | [URLPattern](https://bun.com/blog/bun-v1.3.4#urlpattern-api) | — |
 | `social-metadata-boundaries` · `lib/docs/extract-metadata.ts` | claim · `tests/fixtures/social-metadata/` | [HTMLRewriter social meta](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags) · [HTMLRewriter](https://bun.com/docs/runtime/html-rewriter) | — |
@@ -200,14 +212,18 @@ Routing for claim-backed `lib/` modules and known gaps (no dedicated `ProofPath`
 | `bun-env` | claim · `bun run check:bun-env` | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [environment variables](https://bun.com/docs/runtime/environment-variables) | — |
 | `cloudflare-pages-env-ssot` · `config/r2-env.ts` | [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · `.env.example` · `public/index.html` | — | Cloudflare Pages / Wrangler (dashboard + API; not Bun) |
 | harness ratchets (`coverage` · `orphans` · `complexity`) | [`lib/harness/README.md`](../../lib/harness/README.md) · [`code-quality.md`](code-quality.md) | — | [harness-engineering](https://github.com/lopopolo/harness-engineering) |
+| type-check islands · `lib/{docs,utils,core,security}` | claims `lib-*-typecheck` · `tsconfig.check.json` | — | — |
+| `audit-findings-catalog` · `lib/audit/` | [`docs/audit/README.md`](../audit/README.md) | — | — |
 
-### Gaps (documented; no dedicated claim yet)
+### Inventory-only (no dedicated claim yet)
 
 | Module | Repo docs | Bun docs | Other external |
 |--------|-----------|----------|----------------|
-| `lib/console-depth.ts` | [`AGENTS.md`](../../AGENTS.md) · [`BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · file header · `tests/console-depth.test.ts` · `tools/benchmarks/console-depth-perf.ts` · fixture under `runtime-cli-boundaries` | [runtime/console](https://bun.com/docs/runtime/console) · [runtime](https://bun.com/docs/runtime) · [utils](https://bun.com/docs/runtime/utils) (`inspect` · `stringWidth` · `stripANSI` · `wrapAnsi`) · [markdown.ansi](https://bun.com/docs/runtime/markdown#ansi-terminal-output) · [color](https://bun.com/docs/runtime/color) · [sliceAnsi](https://bun.com/reference/bun/sliceAnsi) · [TTY compat](https://bun.com/docs/runtime/nodejs-compat#nodetty) | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |
-| `lib/github-repository-ref.ts` | [`AGENTS.md`](../../AGENTS.md) · [`AUTHORITY.md`](AUTHORITY.md) · [`lib/docs/repo-docs.ts`](../../lib/docs/repo-docs.ts) `CANONICAL_REMOTES` | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [spawnSync](https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync) | GitHub Actions `GITHUB_REPOSITORY*` wire |
-| `lib/macros/` | [`lib/macros/README.md`](../../lib/macros/README.md) · [`AUTHORITY.md`](AUTHORITY.md) (bundle vs runtime) · `tests/macros/embed-commit.test.ts` · `bun tools/bun-doc-refs.ts bundler` | [bundler](https://bun.com/docs/bundler/index) · [macros](https://bun.com/docs/bundler/macros) · [macro serializability](https://bun.com/docs/bundler/macros#serializability) · [plugins](https://bun.com/docs/bundler/plugins) (not used yet) | — |
+| `lib/gate-map.ts` · `lib/gate-report-monorepo.ts` | file headers · `.agents/skills/ast-grep/gate-map.json` | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [Bun.file](https://bun.com/docs/runtime/file-io) · [Bun.spawn](https://bun.com/docs/runtime/child-process) | kimi-toolchain JSON summary (optional gate step) |
+| `lib/projects-scan.ts` | file header · `bun run registry:projects` consumers | [Glob](https://bun.com/docs/runtime/glob) · [Bun.file](https://bun.com/docs/runtime/file-io) · [spawnSync](https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync) · [Bun.which](https://bun.com/docs/runtime/utils#bun-which) · [Bun.peek](https://bun.com/docs/runtime/utils#bun-peek) | — |
+| `lib/text.ts` | slugify helpers (Mintlify/GitHub-style) | [Bun.stringWidth](https://bun.com/docs/runtime/utils#bun-stringwidth) (related width work lives in console-depth) | — |
+| `lib/index.ts` | barrel re-exports | — | — |
+| `lib/mcp/` · `lib/r2/` · `lib/rss/` · `lib/package/` · `lib/ai/` · `lib/theme/` · `lib/performance/` · `lib/shared/` · `lib/constants/` | domain [`README.md`](../../lib/README.md) indexes · `bun run lib:domains:check` | varies per module `@see` | product/Cloudflare/R2 as applicable |
 
 Resolve Bun URLs via `bun tools/bun-doc-refs.ts suggest "<api>"` before inventing new `@see` lines.
 

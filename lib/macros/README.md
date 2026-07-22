@@ -10,7 +10,13 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 | [`github-repository.ts`](./github-repository.ts) | `getGitHubRepositoryParts` — serializable owner/name/host/remote |
 | [`index.ts`](./index.ts) | Re-exports |
 
-*Ratchet* → [`docs/harness/AUTHORITY.md`](../../docs/harness/AUTHORITY.md) (bundle-time vs runtime) · [Bun macros](https://bun.com/docs/bundler/macros) · `bun test tests/macros/embed-commit.test.ts` · `bun test tests/bundler-nav.test.ts`
+**Claim** `macros-embed-boundaries` · *Fresh-rerun* → `bun test tests/macros/embed-commit.test.ts`
+
+| Kind | References |
+|------|------------|
+| Repo | this README · [`AUTHORITY.md`](../../docs/harness/AUTHORITY.md) (bundle vs runtime) · [`PROOF.md` Lib surface](../../docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external) · `tests/macros/embed-commit.test.ts` · `tests/bundler-nav.test.ts` · `bun tools/bun-doc-refs.ts bundler` |
+| Bun | [bundler](https://bun.com/docs/bundler/index) · [macros](https://bun.com/docs/bundler/macros) · [serializability](https://bun.com/docs/bundler/macros#serializability) · [plugins](https://bun.com/docs/bundler/plugins) (unused here) |
+| Other external | — |
 
 Runtime scripts (`bun scripts/*.ts`) keep [`../github-repository-ref.ts`](../github-repository-ref.ts) — macros do not substitute outside `bun build`.
 
