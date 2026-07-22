@@ -14,6 +14,7 @@
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 /**
  * Frozen lang+code from Bun guide / blog pages.
@@ -402,6 +403,20 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const url = Bun.pathToFileURL("/foo/bar.txt");\nconsole.log(url); // "file:///foo/bar.txt"',
     },
   ],
+  'runtime/utils#bun-inspect-table-tabulardata-properties-options': [
+    {
+      lang: 'ts',
+      body: 'console.log(\n  Bun.inspect.table([\n    { a: 1, b: 2, c: 3 },\n    { a: 4, b: 5, c: 6 },\n    { a: 7, b: 8, c: 9 },\n  ]),\n);\n//\n// ┌───┬───┬───┬───┐\n// │   │ a │ b │ c │\n// ├───┼───┼───┼───┤\n// │ 0 │ 1 │ 2 │ 3 │\n// │ 1 │ 4 │ 5 │ 6 │\n// │ 2 │ 7 │ 8 │ 9 │\n// └───┴───┴───┴───┘',
+    },
+    {
+      lang: 'ts',
+      body: 'console.log(\n  Bun.inspect.table(\n    [\n      { a: 1, b: 2, c: 3 },\n      { a: 4, b: 5, c: 6 },\n    ],\n    ["a", "c"],\n  ),\n);\n//\n// ┌───┬───┬───┐\n// │   │ a │ c │\n// ├───┼───┼───┤\n// │ 0 │ 1 │ 3 │\n// │ 1 │ 4 │ 6 │\n// └───┴───┴───┘',
+    },
+    {
+      lang: 'ts',
+      body: 'console.log(\n  Bun.inspect.table(\n    [\n      { a: 1, b: 2, c: 3 },\n      { a: 4, b: 5, c: 6 },\n    ],\n    {\n      colors: true,\n    },\n  ),\n);',
+    },
+  ],
   // node:url compatibility (reference pages)
   'reference/node/url/fileURLToPath': [
     {
@@ -592,6 +607,7 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'which-path-to-executable-bin': 'guides/util/which-path-to-executable-bin',
   'get-the-path-to-an-executable-bin-file': 'guides/util/which-path-to-executable-bin',
   // Bun.* → utils fences; bare / node:url → reference; guide titles → guides
+  'Bun.inspect.table': 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
   'Bun.pathToFileURL': 'runtime/utils#bun-pathtofileurl',
   'Bun.fileURLToPath': 'runtime/utils#bun-fileurltopath',
   pathToFileURL: 'reference/node/url/pathToFileURL',

@@ -302,7 +302,7 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Inspection & formatting (replaces util.inspect options, cli-table) ──
   'Bun.inspect': 'https://bun.com/docs/runtime/utils#bun-inspect',
-  'Bun.inspect.table': 'https://bun.com/docs/runtime/utils#bun-inspect',
+  'Bun.inspect.table': bunDocs('runtime/utils', 'bun-inspect-table-tabulardata-properties-options'),
   'Bun.inspect.custom': 'https://bun.com/docs/runtime/utils#bun-inspect',
   BunInspectOptions: 'https://bun.com/reference/bun/BunInspectOptions',
   console: 'https://bun.com/docs/runtime/console',

@@ -5,7 +5,7 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi / ansiMarkdown
-// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 /**
  * Tool-legibility surface for the day loop + ratchets (compact).
@@ -13,10 +13,22 @@
  *   bun run docs:harness              # zero-overhead: bun ./docs/harness/README.md
  *   bun run harness:status            # live ratchets + timings via ansiMarkdown
  *   bun run harness:status -- --table # also emit Bun.inspect.table
+ *   bun run harness:status -- --actions              # non-noise GHA checks table
+ *   bun run harness:status -- --show-actions-noise   # full GHA class table
  *
  * Default output is terminal-first bullets (artefact → *Ratchet*), not tables —
  * so every invariant names the command that keeps it true.
+ * Known GHA billing/offline failures are muted; local `ci:core` is SSOT.
  */
+import {
+  actionableActionsChecks,
+  actionsNoiseSummaryLine,
+  classifyActionsChecks,
+  fetchActionsCheckSignals,
+  nonNoiseActionsChecks,
+  summarizeActionsChecks,
+  type ClassifiedActionsCheck,
+} from '../lib/harness/actions-check-noise';
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
 import { ansiMarkdown, logTable } from '../lib/console-depth';
 import { hasFlag } from './lib/cli-args';
@@ -64,6 +76,64 @@ function ratchetBullets(
       return lines.join('\n');
     })
     .join('\n');
+}
+
+function tableRows(rows: ClassifiedActionsCheck[]): Array<{
+  name: string;
+  conclusion: string;
+  class: string;
+  ms: number | string;
+}> {
+  return rows.map(r => ({
+    name: r.name,
+    conclusion: r.conclusion,
+    class: r.class,
+    ms: r.ms ?? '—',
+  }));
+}
+
+async function showActionsChecks(): Promise<void> {
+  const showNoise = hasFlag('show-actions-noise');
+  const showActions = hasFlag('actions') || showNoise;
+
+  let signals;
+  try {
+    signals = await fetchActionsCheckSignals(ROOT);
+  } catch {
+    return;
+  }
+  if (!signals) return;
+
+  const classified = classifyActionsChecks(signals);
+  const summary = summarizeActionsChecks(classified);
+
+  if (summary.knownOffline > 0) {
+    console.info(ansiMarkdown(`_${actionsNoiseSummaryLine(summary.knownOffline)}_`));
+  }
+
+  if (showNoise) {
+    console.info('Bun.inspect.table · GHA checks (all classes)');
+    logTable(tableRows(classified), ['name', 'conclusion', 'class', 'ms']);
+    console.info('');
+    return;
+  }
+
+  const actionable = actionableActionsChecks(classified);
+  const nonNoise = nonNoiseActionsChecks(classified);
+
+  if (showActions && nonNoise.length > 0) {
+    console.info('Bun.inspect.table · GHA checks (non-noise)');
+    logTable(tableRows(nonNoise), ['name', 'conclusion', 'class', 'ms']);
+    console.info('');
+    return;
+  }
+
+  // Default: surface real/pending only when useful (hide pass + known-offline lists)
+  if (actionable.length > 0) {
+    console.info('Bun.inspect.table · GHA checks (actionable)');
+    logTable(tableRows(actionable), ['name', 'conclusion', 'class', 'ms']);
+    console.info('');
+  }
 }
 
 const md = [
@@ -137,6 +207,7 @@ async function showTiming(label: string, path: string): Promise<void> {
 await showTiming('Last pre-commit', TIMING);
 await showTiming('Last ci:harness', CI_TIMING);
 await showTiming('Last ci:core', CORE_TIMING);
+await showActionsChecks();
 
 console.info(
   ansiMarkdown('_tip:_ `bun run docs:harness` · zero-overhead `bun ./docs/harness/README.md`')

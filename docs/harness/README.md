@@ -27,7 +27,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)
 - Lanes / push / credentials / irreversible ops → [`AUTHORITY.md`](AUTHORITY.md)
 - Read this index in-terminal (zero-overhead) → `bun ./docs/harness/README.md` · `bun run docs:harness`
-- Discover day-loop + ratchet status (live) → `bun run harness:status` (`ansiMarkdown` / `Bun.markdown.ansi`)
+- Discover day-loop + ratchet status (live) → `bun run harness:status` (local ratchets + timings SSOT · `ansiMarkdown`) · `--table` · `--show-actions-noise`
 - Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron` · `bun run test:cron-os`
 - Spine multi-tenant (docs-integrity + install-verify) → `bun run spine:schedule:once` · claim `spine-multi-tenant` · [`cron.md`](cron.md)
 - Spine maintenance runbooks (typed signal · intervention · proof · retirement) → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · claim `spine-maintenance-runbooks`
@@ -129,7 +129,9 @@ bun run ci:core             # install verify · hygiene · ci:harness (= GHA bod
 
 ```bash
 bun run docs:harness            # this index → bun ./file.md (native ANSI, no VM)
-bun run harness:status          # live ratchets + last gate timing (ansiMarkdown)
+bun run harness:status          # local ratchets + timings SSOT (ansiMarkdown)
+#   bun run harness:status -- --table              # Bun.inspect.table · ratchets/proof paths
+#   bun run harness:status -- --show-actions-noise # unmute GHA 0-step / billing checks
 bun run help
 bun run type-check              # tsconfig.check.json — spine agent surfaces
 bun run build:affected          # git-true workspaces → bun --filter
@@ -151,7 +153,7 @@ bun run build:defines           # AST --define BUILD_* + DEBUG=false (prod DCE);
 
 `test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
 
-Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in tables: `bun run harness:status -- --table`.
+Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in tables: `bun run harness:status -- --table` ([`Bun.inspect.table`](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)). Actions 0-step / billing checks stay muted; `--show-actions-noise` to show. When Actions is offline, local merge proof remains `bun run ci:core` ([AUTHORITY.md](AUTHORITY.md)).
 
 ## Local theses (FactoryWager)
 

@@ -161,7 +161,7 @@ export function logSorted<T>(value: T, options: InspectOptions = {}): void {
 
 /**
  * Bun.inspect.table with TTY-aware colors — tabular data done natively.
- * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect.table
+ * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
  */
 export function logTableFromUnknown(
   data: unknown,

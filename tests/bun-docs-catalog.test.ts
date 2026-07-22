@@ -309,6 +309,16 @@ describe('frozen guide examples', () => {
     expect(guideExamplesForToken('http3')[0]?.body).toContain('http3: true');
     expect(guideExamplesForToken('idleTimeout')[0]?.body).toContain('idleTimeout: 30');
     expect(guideExamplesForToken('Server')[0]?.body).toContain('interface Server');
+    const inspectTable = guideExamplesForToken('Bun.inspect.table');
+    expect(inspectTable).toHaveLength(3);
+    expect(inspectTable[0]?.body).toContain('Bun.inspect.table([');
+    expect(inspectTable.some(e => e.body.includes('["a", "c"]'))).toBe(true);
+    expect(inspectTable.some(e => e.body.includes('colors: true'))).toBe(true);
+    expect(
+      guideExamplesForPage(
+        'https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options'
+      )
+    ).toHaveLength(3);
     expect(
       guideExamplesForPage(
         'https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname'

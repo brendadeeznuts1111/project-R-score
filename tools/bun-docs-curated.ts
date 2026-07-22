@@ -1,10 +1,11 @@
-// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
-// @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/redis#getting-started — Bun.redis
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/guides/runtime/timezone — TZ
 // @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
+// @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/cron — Bun.cron
 // @see https://bun.com/docs/runtime/s3 — Bun.s3
@@ -17,7 +18,8 @@
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-// @see https://bun.com/docs/runtime/utils — Bun.inspect, Bun.inspect.custom, Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect, Bun.inspect.custom
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
 // @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
 // tools/bun-docs-curated.ts — Hot-path Bun doc entries (1.3.14+ aware)
@@ -189,10 +191,68 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'Bun.inspect.table',
-    path: 'runtime/utils',
+    path: 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
     description:
       'Format tabular data into an ASCII table string (like console.table but returns a string)',
     related: ['runtime/utils'],
+  },
+  // Env: Bun.env ≡ process.env (guide: guides/runtime/read-env). Prefer utils#bun-env over changelog dump.
+  {
+    term: 'Bun.env',
+    path: 'runtime/utils',
+    description: 'Alias of process.env — current environment variables',
+    related: ['runtime/environment-variables', 'guides/runtime/read-env'],
+  },
+  {
+    term: 'process.env',
+    path: 'runtime/utils',
+    description: 'Current environment variables (Bun.env is an alias)',
+    related: ['runtime/environment-variables', 'guides/runtime/read-env'],
+  },
+  {
+    term: '.env',
+    path: 'runtime/environment-variables',
+    description:
+      'Auto-loaded env files (.env, .env.$NODE_ENV, .env.local) — see also guides/runtime/set-env',
+    related: ['guides/runtime/set-env', 'runtime/utils'],
+  },
+  {
+    term: 'TZ',
+    path: 'guides/runtime/timezone',
+    description:
+      'Default process time zone (IANA id); bun test forces UTC — see also test/runtime-behavior#tz-timezone',
+    related: ['test/runtime-behavior', 'test/dates-times'],
+  },
+  {
+    term: 'Bun.which',
+    path: 'runtime/utils',
+    description:
+      'Resolve path to an executable on PATH (guide: guides/util/which-path-to-executable-bin)',
+    related: ['guides/util/which-path-to-executable-bin'],
+  },
+  {
+    term: 'Bun.pathToFileURL',
+    path: 'runtime/utils',
+    description: 'Absolute path → file: URL (guide: guides/util/path-to-file-url)',
+    related: ['guides/util/path-to-file-url'],
+  },
+  {
+    term: 'Bun.fileURLToPath',
+    path: 'runtime/utils',
+    description: 'file: URL → absolute path (guide: guides/util/file-url-to-path)',
+    related: ['guides/util/file-url-to-path'],
+  },
+  {
+    term: 'import.meta.dir',
+    path: 'runtime/module-resolution',
+    description: 'Directory of the current module (guide: guides/util/import-meta-dir)',
+    related: ['guides/util/import-meta-dir'],
+  },
+  {
+    term: '.npmrc',
+    path: 'pm/npmrc',
+    description: 'npm-compatible .npmrc options Bun reads for install',
+    related: ['runtime/bunfig', 'pm/scopes-registries'],
   },
 ];
 

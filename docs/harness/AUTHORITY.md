@@ -72,6 +72,7 @@ bun run ts:verify && bun run imports:verify && bun run type-check:ci && bun run 
 - `ci:core` = install verify · hygiene · `ci:harness` (= Harness Gates job body)
 - Type scripts = TypeScript Checks job body
 - Day loop: `bun run ci:harness:fast` · husky pre-commit / pre-push
+- Status discover: `bun run harness:status` mutes 0-step / billing Actions noise by default (`--show-actions-noise` to show) — [README.md](README.md)
 
 Admin merge / temporary protection bypass is required until billing restores green check runs. Local pass ≠ GitHub check green.
 
