@@ -156,6 +156,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description: 'Alias for SHA3 (FIPS 202) ship note on bun-v1.3.13.',
     minVersion: '1.3.13',
     relatedTokens: ['SHA3', 'sha3-256'],
+    auditRefs: ['sha3-integrity'],
   },
   {
     term: 'sha3-256',
@@ -222,6 +223,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description: 'node:crypto SHA-3 digest (also createHmac / getHashes).',
     minVersion: '1.3.13',
     relatedTokens: ['sha3-256', 'SHA3', 'crypto.subtle.digest("SHA3-256")'],
+    auditRefs: ['sha3-integrity'],
   },
   {
     term: 'crypto.subtle.digest("SHA3-256")',
@@ -229,6 +231,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description: 'WebCrypto SHA-3 digest (HMAC via subtle.sign/verify).',
     minVersion: '1.3.13',
     relatedTokens: ['SHA3-256', 'SHA3', 'crypto.createHash("sha3-256")'],
+    auditRefs: ['sha3-integrity'],
   },
   { term: 'Bun.build', path: 'bundler', description: 'Bundler and compile-to-binary' },
   { term: 'bun test', path: 'test', description: 'Built-in test runner (bun:test)' },

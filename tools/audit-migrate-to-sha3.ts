@@ -35,8 +35,15 @@ type WireEvidence = {
   mediaType?: unknown;
 };
 
-async function migrateOne(name: string): Promise<'migrated' | 'refreshed' | 'skipped'> {
-  const path = joinPath(FINDINGS_DIR, name);
+export type MigrateResult = 'migrated' | 'refreshed' | 'skipped';
+
+/** Normalize one finding JSON file under findingsDir (evidence paths relative to repoRoot). */
+export async function migrateOneFinding(
+  findingsDir: string,
+  repoRoot: string,
+  name: string
+): Promise<MigrateResult> {
+  const path = joinPath(findingsDir, name);
   const raw: unknown = await Bun.file(path).json();
   if (!isRecord(raw) || !isRecord(raw.evidence)) {
     throw new Error(`${name}: expected finding object with evidence`);
@@ -44,7 +51,7 @@ async function migrateOne(name: string): Promise<'migrated' | 'refreshed' | 'ski
 
   const evidence = raw.evidence as WireEvidence;
   const absEvidence =
-    typeof evidence.path === 'string' ? joinPath(REPO_ROOT, evidence.path) : undefined;
+    typeof evidence.path === 'string' ? joinPath(repoRoot, evidence.path) : undefined;
   if (!absEvidence) {
     throw new Error(`${name}: evidence.path required`);
   }
@@ -65,9 +72,8 @@ async function migrateOne(name: string): Promise<'migrated' | 'refreshed' | 'ski
     evidence: nextEvidence,
   };
 
-  // Parse + verify Phase 2 shape
   const finding = parseAuditFinding(nextRaw);
-  const verified = await verifyEvidenceHash(finding, REPO_ROOT);
+  const verified = await verifyEvidenceHash(finding, repoRoot);
   if (!verified.ok) {
     throw new Error(`${name}: ${verified.reason}`);
   }
@@ -92,17 +98,26 @@ async function migrateOne(name: string): Promise<'migrated' | 'refreshed' | 'ski
   return label === 'refreshed' ? 'refreshed' : 'migrated';
 }
 
-async function main(): Promise<void> {
+/** Scan findingsDir for *.json and normalize each. */
+export async function migrateFindingsDir(
+  findingsDir: string,
+  repoRoot: string
+): Promise<{ migrated: number; refreshed: number; skipped: number }> {
   const glob = new Bun.Glob('*.json');
   let migrated = 0;
   let refreshed = 0;
   let skipped = 0;
-  for await (const name of glob.scan({ cwd: FINDINGS_DIR, onlyFiles: true })) {
-    const result = await migrateOne(name);
+  for await (const name of glob.scan({ cwd: findingsDir, onlyFiles: true })) {
+    const result = await migrateOneFinding(findingsDir, repoRoot, name);
     if (result === 'migrated') migrated++;
     else if (result === 'refreshed') refreshed++;
     else skipped++;
   }
+  return { migrated, refreshed, skipped };
+}
+
+async function main(): Promise<void> {
+  const { migrated, refreshed, skipped } = await migrateFindingsDir(FINDINGS_DIR, REPO_ROOT);
   console.info(`done — migrated=${migrated} refreshed=${refreshed} skipped=${skipped}`);
 }
 

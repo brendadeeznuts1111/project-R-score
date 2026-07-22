@@ -33,6 +33,7 @@ import {
   verifyAuditGraph,
 } from '../tools/audit-catalog.ts';
 import { EVIDENCE_BODY } from '../tools/audit-emit-stub.ts';
+import { migrateOneFinding } from '../tools/audit-migrate-to-sha3.ts';
 
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 
@@ -237,7 +238,60 @@ describe('audit catalog', () => {
   });
 });
 
+describe('audit-migrate-to-sha3', () => {
+  test('strips companion and skips already Phase 2', async () => {
+    const tmp = joinPath(REPO_ROOT, `.tmp-audit-migrate-${Date.now()}`);
+    await Bun.$`mkdir -p ${tmp}`;
+    try {
+      const evidenceRel = 'tools/audit-evidence/sample-fiber-demo.ndjson';
+      const digest = await hashFile(joinPath(REPO_ROOT, evidenceRel), 'sha3-256');
+      const companionPath = joinPath(tmp, 'with-companion.json');
+      await Bun.write(
+        companionPath,
+        `${JSON.stringify({
+          id: 'tmp-companion',
+          kind: 'AuditFinding',
+          title: 't',
+          description: 'd',
+          status: 'open',
+          publishedAt: '2026-07-21',
+          evidence: {
+            path: evidenceRel,
+            algorithm: 'sha3-256',
+            digest,
+            sha256: 'a'.repeat(64),
+            mediaType: 'application/x-ndjson',
+          },
+        })}\n`
+      );
+      expect(await migrateOneFinding(tmp, REPO_ROOT, 'with-companion.json')).toBe('migrated');
+      const after = (await Bun.file(companionPath).json()) as {
+        evidence: { algorithm: string; digest: string; sha256?: string };
+      };
+      expect(after.evidence.algorithm).toBe('sha3-256');
+      expect(after.evidence.digest).toBe(digest);
+      expect(after.evidence.sha256).toBeUndefined();
+
+      expect(await migrateOneFinding(tmp, REPO_ROOT, 'with-companion.json')).toBe('skipped');
+    } finally {
+      await Bun.$`rm -rf ${tmp}`;
+    }
+  });
+});
+
 describe('suggest Nagata map (not BunToken)', () => {
+  test('suggest Bun.CryptoHasher surfaces sha3-integrity auditRefs', async () => {
+    const proc = Bun.spawn(['bun', 'tools/bun-doc-refs.ts', 'suggest', 'Bun.CryptoHasher'], {
+      cwd: REPO_ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const out = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    expect(out).toContain('auditRefs: sha3-integrity');
+    expect(out).toContain('suggest --audit "sha3-integrity"');
+  });
+
   test('suggest "Nagata map" returns AuditConcept', async () => {
     const proc = Bun.spawn(['bun', 'tools/bun-doc-refs.ts', 'suggest', 'Nagata map'], {
       cwd: REPO_ROOT,
