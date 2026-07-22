@@ -74,7 +74,16 @@ for (const site of testSites) {
       // Verify JPEG magic bytes
       const magic = new Uint8Array(buf).slice(0, 2);
       const isJpeg = magic[0] === 0xff && magic[1] === 0xd8;
-      console.log(`   ${gray(`JPEG magic: ${isJpeg ? "✔ FF D8" : "✘ invalid"}`)}  |  ${gray(`${buf.byteLength} bytes`)}`);
+      const w = res.headers.get("x-image-width") ?? "?";
+      const h = res.headers.get("x-image-height") ?? "?";
+      const fmt = res.headers.get("x-image-format") ?? "?";
+      const test003 = res.headers.get("x-test-003") ?? "?";
+      console.log(
+        `   ${gray(`JPEG magic: ${isJpeg ? "✔ FF D8" : "✘ invalid"}`)}  |  ` +
+          `${gray(`${buf.byteLength} bytes`)}  |  ` +
+          `${gray(`meta ${w}×${h} ${fmt}`)}  |  ` +
+          `${gray(`TEST-003=${test003}`)}`,
+      );
     }
 
     if (!passed) failures++;
@@ -84,7 +93,41 @@ for (const site of testSites) {
   }
 }
 
-// 3. Report endpoint
+// 3. Screenshot JSON endpoint (Bun.Image metadata + TEST-003)
+for (const site of testSites) {
+  try {
+    const res = await fetch(`${BASE}/screenshot/${site}`);
+    const expect404 = site === "nonexistent";
+    const passed = expect404 ? res.status === 404 : res.status === 200;
+    const icon = passed ? green("✔") : red("✘");
+
+    if (res.status === 200) {
+      const body = (await res.json()) as {
+        metadata?: { width?: number; height?: number; format?: string; size?: number };
+        test003?: { status?: string; code?: string };
+      };
+      const meta = body.metadata;
+      console.log(
+        `${icon} /screenshot/${site} → ${gray(
+          `${res.status} ${meta?.width ?? "?"}×${meta?.height ?? "?"} ${meta?.format ?? "?"} ` +
+            `${meta?.size ?? "?"}B TEST-003=${body.test003?.status ?? "?"}`,
+        )}`,
+      );
+      if (!meta?.width || !body.test003?.code) {
+        failures++;
+      }
+    } else {
+      console.log(`${icon} /screenshot/${site} → ${gray(String(res.status))}`);
+    }
+
+    if (!passed) failures++;
+  } catch (err: any) {
+    console.log(`${red("✘")} /screenshot/${site} → ${red(err.message)}`);
+    failures++;
+  }
+}
+
+// 4. Report endpoint
 try {
   const res = await fetch(`${BASE}/report`);
   const md = await res.text();

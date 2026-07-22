@@ -27,6 +27,7 @@
  *   http://localhost:3001/report         — Markdown hygiene report
  *   http://localhost:3001/health         — JSON health check
  *   http://localhost:3001/thumbs/:site   — JPEG thumbnail on‑the‑fly
+ *   http://localhost:3001/screenshot/:site — PNG evidence + Bun.Image metadata + TEST-003
  *   tcp://localhost:9090                 — Prometheus metrics
  *
  * Usage:
@@ -41,6 +42,17 @@
 import { Database } from "bun:sqlite";
 import { deepEquals } from "bun";
 import { readConfigFromPackage } from "../src/utils/readme-config-loader";
+import {
+  extractImageEvidenceMeta,
+  imageEvidenceHeaders,
+  type ImageEvidenceMeta,
+} from "../src/utils/image-metadata";
+import {
+  buildScreenshotEvidenceRecord,
+  runTest003,
+  type ScreenshotEvidenceRecord,
+  type Test003Response,
+} from "../src/services/screenshot-remediation";
 
 // Rich nested debug output — no more [Object] truncation in logs
 console.depth = 8;
@@ -276,7 +288,16 @@ await Bun.write(
 // 8. Thumbnail cache (in‑memory, served by HTTP endpoint)
 // ---------------------------------------------------------------------------
 
-const thumbCache = new Map<string, Uint8Array>();
+type ThumbCacheEntry = {
+  jpeg: Uint8Array;
+  png: Uint8Array;
+  jpegMeta: ImageEvidenceMeta;
+  evidence: ScreenshotEvidenceRecord;
+  test003: Test003Response;
+  sourceSha256: string;
+};
+
+const thumbCache = new Map<string, ThumbCacheEntry>();
 
 /** Previous snapshot per site — used by deepEquals to skip unchanged scrapes. */
 const lastSnapshotCache = new Map<string, object>();
@@ -319,15 +340,15 @@ async function processSite(
     // Bun.Image pipeline — construct directly from Buffer
     const img = new Bun.Image(screenshotBytes);
 
-    // metadata() is async — returns { width, height, format }
-    const meta = await img.metadata();
-    const imgW = meta.width;
-    const imgH = meta.height;
-
-    // SHA‑256 for dedup / audit trail
-    const hasher = new Bun.CryptoHasher("sha256");
-    hasher.update(screenshotBytes);
-    const sha256 = hasher.digest("hex") as string;
+    // Bun.Image metadata + TEST-003 evidence chain (source + resize 400×300 PNG)
+    const { record, thumbnailBytes: pngEvidence } = await buildScreenshotEvidenceRecord(
+      screenshotBytes,
+      { team: site },
+    );
+    const test003 = runTest003(record);
+    const imgW = record.source.width;
+    const imgH = record.source.height;
+    const sha256 = record.source.digest;
 
     // Store screenshot metadata
     const row = db
@@ -335,7 +356,7 @@ async function processSite(
         `INSERT INTO screenshots (site, url, width, height, format, sha256, captured_at)
          VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id`
       )
-      .get(site, url, imgW, imgH, "png", sha256, Date.now()) as { id: number };
+      .get(site, url, imgW, imgH, record.source.format, sha256, Date.now()) as { id: number };
     const screenshotId = row.id;
 
     // Extract odds via DOM evaluation using versioned selectors
@@ -383,14 +404,23 @@ async function processSite(
         .modulate({ brightness: 0.85, saturation: 0.6 })
         .resize(400, 300, { fit: "inside", filter: "mitchell", withoutEnlargement: true });
       const thumbBytes = await thumb.jpeg({ quality: 85 }).bytes();
-      thumbCache.set(site, thumbBytes);
+      const jpegMeta = await extractImageEvidenceMeta(thumbBytes);
+      thumbCache.set(site, {
+        jpeg: thumbBytes,
+        png: pngEvidence,
+        jpegMeta,
+        evidence: record,
+        test003,
+        sourceSha256: sha256,
+      });
 
       // Update cache
       lastSnapshotCache.set(site, currentSnapshot);
 
       console.log(
         `🌐 ${site}: ${odds.length} rows CHANGED, ${screenshotBytes.length}B screenshot, ` +
-        `${thumbBytes.byteLength}B thumb, sha256=${sha256.slice(0, 12)}…`
+          `${thumbBytes.byteLength}B jpeg, ${pngEvidence.byteLength}B png evidence, ` +
+          `TEST-003=${test003.status}, sha256=${sha256.slice(0, 12)}…`,
       );
 
       return { site, oddsCount: odds.length, placeholder, changed: true, prevSnapshot };
@@ -513,11 +543,46 @@ const server = Bun.serve({
     // Thumbnail endpoint — serve cached JPEG on‑the‑fly
     if (url.pathname.startsWith("/thumbs/")) {
       const site = url.pathname.split("/").pop()!.replace(/\.\w+$/, "");
-      const bytes = thumbCache.get(site);
-      if (!bytes) return new Response("Not found", { status: 404 });
-      return new Response(bytes, {
-        headers: { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=60" },
+      const entry = thumbCache.get(site);
+      if (!entry) return new Response("Not found", { status: 404 });
+      return new Response(entry.jpeg, {
+        headers: {
+          "Content-Type": "image/jpeg",
+          "Cache-Control": "public, max-age=60",
+          "X-SHA256": entry.sourceSha256,
+          ...imageEvidenceHeaders(entry.jpegMeta),
+          "X-TEST-003": entry.test003.status,
+        },
       });
+    }
+
+    // Screenshot JSON — PNG evidence + Bun.Image metadata + TEST-003 remediation
+    if (url.pathname.startsWith("/screenshot/")) {
+      const site = url.pathname.split("/").pop()!.replace(/\.\w+$/, "");
+      const entry = thumbCache.get(site);
+      if (!entry) {
+        return Response.json({ error: "Not found", code: "SCREENSHOT_MISS", site }, { status: 404 });
+      }
+      return Response.json(
+        {
+          team: site,
+          mediaType: "image/png",
+          bytesBase64: Buffer.from(entry.png).toString("base64"),
+          metadata: entry.evidence.thumbnail,
+          source: entry.evidence.source,
+          sha256: entry.sourceSha256,
+          capturedAt: entry.evidence.capturedAt,
+          test003: entry.test003,
+          evidence: entry.evidence,
+        },
+        {
+          headers: {
+            "Cache-Control": "public, max-age=60",
+            ...imageEvidenceHeaders(entry.evidence.thumbnail),
+            "X-TEST-003": entry.test003.status,
+          },
+        },
+      );
     }
 
     // Markdown report
@@ -557,7 +622,7 @@ const server = Bun.serve({
     }
 
     return new Response(
-      "Mega‑liner v7 — /ws/odds-drift | /report | /health | /thumbs/:site",
+      "Mega‑liner v8 — /ws/odds-drift | /report | /health | /thumbs/:site | /screenshot/:site",
       { status: 200 }
     );
   },

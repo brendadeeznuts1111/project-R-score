@@ -61,6 +61,7 @@ import { applySecurityHeaders } from "@middleware/security";
 import { initOddsDriftEngine } from "@services/odds-drift-engine";
 import { loadAliasMap, startAliasHotReload, stopAliasHotReload } from "@services/team-alias-loader";
 import { PipelineWorker } from "@services/pipeline-worker";
+import { imageEvidenceHeaders } from "@utils/image-metadata";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -500,7 +501,12 @@ async function serveStaticFile(pathname: string): Promise<Response | null> {
   }
 
   // SPA fallback — serve index.html for unknown routes
-  if (!pathname.startsWith("/api/") && !pathname.startsWith("/ws") && !pathname.startsWith("/thumbs/")) {
+  if (
+    !pathname.startsWith("/api/") &&
+    !pathname.startsWith("/ws") &&
+    !pathname.startsWith("/thumbs/") &&
+    !pathname.startsWith("/screenshot/")
+  ) {
     const indexFile = Bun.file("./dist/frontend/index.html");
     if (await indexFile.exists()) {
       return new Response(indexFile, {
@@ -674,7 +680,7 @@ function startServer(): void {
         return handleSSE(req);
       }
 
-      // Zone 10: Thumbnail evidence endpoint
+      // Zone 10: Thumbnail evidence endpoint (JPEG body + Bun.Image metadata headers)
       if (pathname.startsWith("/thumbs/")) {
         const team = decodeURIComponent(pathname.split("/").pop()!);
         const entry = pipelineWorker?.getThumbnail(team);
@@ -684,6 +690,27 @@ function startServer(): void {
             "Content-Type": "image/jpeg",
             "Cache-Control": "public, max-age=60",
             "X-SHA256": entry.sha256,
+            ...imageEvidenceHeaders(entry.thumbMeta),
+            "X-TEST-003": entry.test003.status,
+          },
+        });
+      }
+
+      // Zone 10: Screenshot JSON — PNG evidence + Bun.Image metadata + TEST-003
+      if (pathname.startsWith("/screenshot/")) {
+        const team = decodeURIComponent(pathname.split("/").pop()!);
+        const payload = pipelineWorker?.getScreenshotResponse(team);
+        if (!payload) {
+          return Response.json(
+            { error: "Not found", code: "SCREENSHOT_MISS", team },
+            { status: 404 },
+          );
+        }
+        return Response.json(payload, {
+          headers: {
+            "Cache-Control": "public, max-age=60",
+            ...imageEvidenceHeaders(payload.metadata),
+            "X-TEST-003": payload.test003.status,
           },
         });
       }

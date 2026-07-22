@@ -44,6 +44,70 @@ export {
   CANONICAL_EXTERNAL,
 } from './docs/repo-docs';
 
+// GitHub repository identity (owner/name/host/remote — not REPO_URL)
+export {
+  commitUrl,
+  githubTokenPresence,
+  htmlUrl,
+  ownerName,
+  parseGitRemoteUrl,
+  parseOwnerName,
+  resolveGitHubRepositoryRef,
+  treeUrl,
+  type GitHubRemoteSlot,
+  type GitHubRepositoryRef,
+  type GithubTokenPresence,
+} from './github-repository-ref';
+
+// Bun.Terminal (PTY) helpers
+export {
+  BUN_TERMINAL_OPTIONS_DOCS,
+  BUN_TERMINAL_PTY_DOCS,
+  DEFAULT_TERMINAL_COLS,
+  DEFAULT_TERMINAL_NAME,
+  DEFAULT_TERMINAL_ROWS,
+  createCapturingTerminal,
+  spawnWithTerminal,
+  terminalOptions,
+  type BunTerminal,
+  type BunTerminalOptions,
+  type CapturingTerminal,
+  type CreateTerminalOptions,
+  type SpawnWithTerminalOptions,
+  type SpawnWithTerminalResult,
+  type TerminalSize,
+} from './terminal';
+
+// Bun.Image metadata + TEST-003 screenshot remediation
+export {
+  BUN_IMAGE_DOCS,
+  BUN_IMAGE_METADATA_DOCS,
+  DEFAULT_IMAGE_DIGEST_ALGORITHM,
+  DEFAULT_THUMB_MAX_HEIGHT,
+  DEFAULT_THUMB_MAX_WIDTH,
+  extractImageEvidenceMeta,
+  imageEvidenceHeaders,
+  imageMetaChecksPassed,
+  resizeScreenshotPng,
+  verifyImageEvidenceMeta,
+  type ExtractImageMetaOptions,
+  type ImageDigestAlgorithm,
+  type ImageEvidenceMeta,
+  type ImageMetaCheck,
+  type ImageMetaExpectations,
+  type ResizeScreenshotOptions,
+} from './image-metadata';
+export {
+  TEST_003,
+  buildScreenshotEvidenceRecord,
+  remediateScreenshotCapture,
+  runTest003,
+  type BuildScreenshotEvidenceOptions,
+  type ScreenshotEvidenceRecord,
+  type Test003Remediation,
+  type Test003Response,
+} from './screenshot-remediation';
+
 export { SecurityUtils } from './security';
 
 // Constants and configuration
