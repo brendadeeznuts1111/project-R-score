@@ -14,6 +14,7 @@ import { logger } from './logger';
 import { handleError } from './error-handler';
 import { toJsonString, serializeBigInt } from './serialization';
 import { requireValidUserId } from './validation';
+import { r2EndpointFromAccount, tryR2Config } from '../../../../../../../config/r2-env.ts';
 import { resolveProfileSecretsService } from '../../../../../../../lib/security/infra-secrets';
 
 // Type-safe profile preferences schema (v10.1)
@@ -57,8 +58,9 @@ export class UserProfileEngine {
   constructor(dbPath: string = './profiles.db', s3Config?: { bucket: string; region: string }) {
     // Bun.SQL zero-copy SQLite
     this.db = new Database(dbPath);
-    this.s3Bucket = s3Config?.bucket || process.env.R2_REGISTRY_BUCKET || 'factorywager-profiles';
-    this.s3Region = s3Config?.region || process.env.R2_REGION || 'us-east-1';
+    this.s3Bucket =
+      s3Config?.bucket || Bun.env.R2_REGISTRY_BUCKET || Bun.env.R2_BUCKET || 'factorywager-profiles';
+    this.s3Region = s3Config?.region || Bun.env.R2_REGION || 'us-east-1';
 
     // Initialize schema FIRST (v10.1)
     this.db.exec(`
@@ -295,23 +297,23 @@ export class UserProfileEngine {
         offset += chunk.length;
       }
       
-      // R2/S3 upload (using fetch API)
+      // R2/S3 upload (using fetch API) — credentials via config/r2-env tryR2Config
       const key = `profiles/${userId}/${hashHex}.zst`;
-      const endpoint = process.env.R2_ENDPOINT || `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
-      
-      if (process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY) {
-        // Upload to R2
+      const r2 = tryR2Config();
+      const endpoint = r2?.endpoint || r2EndpointFromAccount();
+
+      if (r2) {
         const response = await fetch(`${endpoint}/${this.s3Bucket}/${key}`, {
           method: 'PUT',
           headers: {
-            'Authorization': `Basic ${btoa(`${process.env.R2_ACCESS_KEY_ID}:${process.env.R2_SECRET_ACCESS_KEY}`)}`,
+            Authorization: `Basic ${btoa(`${r2.accessKeyId}:${r2.secretAccessKey}`)}`,
             'Content-Type': 'application/octet-stream',
             'Content-Encoding': 'zstd',
             'x-amz-meta-parity': hashHex,
           },
           body: compressed,
         });
-        
+
         if (!response.ok) {
           logger.warn(`Failed to save profile snapshot to R2: ${response.status}`);
         }

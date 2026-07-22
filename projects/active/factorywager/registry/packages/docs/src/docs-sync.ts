@@ -7,6 +7,10 @@
  */
 
 import { styled, FW_COLORS } from '@factorywager/theme';
+import {
+  cloudflareAccountIdFromEnv,
+  r2EndpointFromAccount,
+} from '../../../../../../../config/r2-env.ts';
 
 export interface UserPreferences {
   userId: string;
@@ -67,9 +71,9 @@ export class DocumentationSync {
       accountId?: string;
     }
   ) {
-    this.r2Bucket = config?.bucketName || process.env.R2_DOCS_BUCKET || 'docs-sync';
-    const accountId = config?.accountId || process.env.R2_ACCOUNT_ID || '';
-    this.baseUrl = `https://${accountId}.r2.cloudflarestorage.com`;
+    this.r2Bucket = config?.bucketName || Bun.env.R2_DOCS_BUCKET || 'docs-sync';
+    const accountId = config?.accountId || cloudflareAccountIdFromEnv();
+    this.baseUrl = r2EndpointFromAccount(accountId);
     this.deviceId = this.getDeviceId();
   }
 
@@ -85,8 +89,8 @@ export class DocumentationSync {
    * Get auth header for R2 requests
    */
   private getAuthHeader(): string {
-    const accessKey = process.env.R2_ACCESS_KEY_ID || '';
-    const secretKey = process.env.R2_SECRET_ACCESS_KEY || '';
+    const accessKey = Bun.env.R2_ACCESS_KEY_ID || '';
+    const secretKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
     return `Basic ${btoa(`${accessKey}:${secretKey}`)}`;
   }
 

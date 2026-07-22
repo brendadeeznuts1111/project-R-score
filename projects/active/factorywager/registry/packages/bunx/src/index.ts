@@ -53,8 +53,9 @@ export class BunXIntegration {
     } = {}
   ) {
     this.cacheDir = options.cacheDir || `${process.env.HOME}/.bun/registry-cache`;
+    // Bucket/account/endpoint resolve via R2StorageAdapter → config/r2-env SSOT.
     this.storage = new R2StorageAdapter({
-      bucketName: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+      bucketName: Bun.env.R2_REGISTRY_BUCKET,
     });
     this.secretsManager = new RegistrySecretsManager();
   }

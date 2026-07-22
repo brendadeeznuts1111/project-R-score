@@ -56,7 +56,7 @@ export class PackageDocumentationFetcher {
   constructor(r2Config?: ConstructorParameters<typeof R2StorageAdapter>[0]) {
     this.r2Storage = new R2StorageAdapter({
       ...r2Config,
-      bucketName: r2Config?.bucketName || process.env.R2_DOCS_BUCKET || 'npm-registry',
+      bucketName: r2Config?.bucketName || Bun.env.R2_DOCS_BUCKET || Bun.env.R2_REGISTRY_BUCKET,
       prefix: this.cachePrefix,
     });
   }
