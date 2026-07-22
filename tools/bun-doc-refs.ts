@@ -100,6 +100,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   // ── HTTP & networking ───────────────────────────────────────────────────
   'Bun.serve': 'https://bun.com/docs/runtime/http/server#basic-setup',
   // Global fetch / Bun.fetch — networking page (not nodejs-compat)
+  // TOC must-tier: sending · headers · timeout · error-handling (+ stream/debug discovery)
   fetch: bunDocs('runtime/networking/fetch', 'sending-an-http-request'),
   'Bun.fetch': bunDocs('runtime/networking/fetch', 'sending-an-http-request'),
   fetchPage: bunDocs('runtime/networking/fetch', 'sending-an-http-request'),
@@ -108,9 +109,15 @@ export const CANONICAL_REFS: Record<string, string> = {
     'runtime/networking/fetch',
     'fetching-a-url-with-a-timeout'
   ),
+  AbortController: bunDocs('runtime/networking/fetch', 'canceling-a-request'),
+  'canceling-a-request': bunDocs('runtime/networking/fetch', 'canceling-a-request'),
   'fetch headers': bunDocs('runtime/networking/fetch', 'custom-headers'),
   'fetch custom-headers': bunDocs('runtime/networking/fetch', 'custom-headers'),
   'fetch error-handling': bunDocs('runtime/networking/fetch', 'error-handling'),
+  'streaming-response-bodies': bunDocs('runtime/networking/fetch', 'streaming-response-bodies'),
+  'fetch verbose': bunDocs('runtime/networking/fetch', 'debugging'),
+  'fetch.preconnect': bunDocs('runtime/networking/fetch', 'preconnect-to-a-host'),
+  '--fetch-preconnect': bunDocs('runtime/networking/fetch', 'preconnect-at-startup'),
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
   'Bun.connect': 'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',
@@ -197,9 +204,12 @@ export const CANONICAL_REFS: Record<string, string> = {
   '.env files': 'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
   'configuring Bun': 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_OPTIONS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
-  BUN_CONFIG_VERBOSE_FETCH: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
-  BUN_CONFIG_MAX_HTTP_REQUESTS:
-    'https://bun.com/docs/runtime/environment-variables#configuring-bun',
+  // Fetch performance knobs — locus is networking/fetch (env page only lists the names)
+  BUN_CONFIG_VERBOSE_FETCH: bunDocs('runtime/networking/fetch', 'debugging'),
+  BUN_CONFIG_MAX_HTTP_REQUESTS: bunDocs(
+    'runtime/networking/fetch',
+    'simultaneous-connection-limit'
+  ),
   DO_NOT_TRACK: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_RUNTIME_TRANSPILER_CACHE_PATH:
     'https://bun.com/docs/runtime/environment-variables#what-does-it-cache',

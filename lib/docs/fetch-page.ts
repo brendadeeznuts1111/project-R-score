@@ -1,10 +1,16 @@
 /**
- * Shared HTTP client for docs/blog page fetches — returns an untouched success Response.
+ * Shared HTTP client for docs/blog page fetches — returns an untouched success Response
+ * so callers can stream into HTMLRewriter (or read the body once).
+ *
+ * Locus: runtime/networking/fetch must-tier (request · headers · timeout · errors).
+ * Deferred here: DNS prefetch/preconnect, proxy/unix/TLS/S3, POST bodies.
  *
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  * @see https://bun.com/docs/runtime/networking/fetch#custom-headers
  * @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout
  * @see https://bun.com/docs/runtime/networking/fetch#error-handling
+ * @see https://bun.com/docs/runtime/networking/fetch#streaming-response-bodies
+ * @see https://bun.com/docs/runtime/networking/fetch#debugging
  */
 
 const DEFAULT_TIMEOUT_MS = 15_000;
@@ -17,6 +23,8 @@ export type FetchPageOptions = {
   timeoutMs?: number;
   headers?: HeadersInit;
   userAgent?: string;
+  /** Bun extension: print request/response headers (`verbose: true` or `"curl"`). */
+  verbose?: boolean | 'curl';
 };
 
 /** Drop `#fragment` so fetch never sends a fragment to the server. */
@@ -39,7 +47,11 @@ export async function fetchPage(url: string, opts?: FetchPageOptions): Promise<R
   if (!headers.has('Accept')) headers.set('Accept', 'text/html');
   if (!headers.has('User-Agent')) headers.set('User-Agent', userAgent);
 
-  const res = await fetch(cleaned, { signal, headers });
+  const res = await fetch(cleaned, {
+    signal,
+    headers,
+    ...(opts?.verbose !== undefined ? { verbose: opts.verbose } : {}),
+  });
 
   if (!res.ok) {
     const detail = await res.text().catch(() => '');

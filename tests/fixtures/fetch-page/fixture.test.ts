@@ -112,4 +112,15 @@ describe('fetch-page-boundaries', () => {
     await fetchPage('https://example.com/', { userAgent: 'bun-docs-mcp/1.2' });
     expect(ua).toBe('bun-docs-mcp/1.2');
   });
+
+  test('verbose option is forwarded to fetch', async () => {
+    let seenVerbose: unknown;
+    globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      seenVerbose = (init as { verbose?: boolean | 'curl' } | undefined)?.verbose;
+      return new Response('ok', { status: 200 });
+    }) as typeof fetch;
+
+    await fetchPage('https://example.com/', { verbose: true });
+    expect(seenVerbose).toBe(true);
+  });
 });

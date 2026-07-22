@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/guides/runtime/timezone — TZ
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
+// @see https://bun.com/docs/runtime/networking/fetch#custom-headers — fetch headers
 // @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
@@ -25,7 +26,11 @@ export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
   'runtime/networking/fetch': [
     {
       lang: 'ts',
-      body: 'const response = await fetch("http://example.com");\nconsole.log(response.status); // => 200',
+      body: 'const response = await fetch("http://example.com");\n\nconsole.log(response.status); // => 200\n\nconst text = await response.text(); // or response.json(), response.formData(), etc.',
+    },
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  headers: {\n    "X-Custom-Header": "value",\n  },\n});',
     },
     {
       lang: 'ts',
