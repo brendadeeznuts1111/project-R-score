@@ -23,8 +23,11 @@ Common root causes:
    - `SKIP_DEPENDENCY_INSTALL=true`
 3. Build settings: command `exit 0`, output directory `public`, production branch `main`
 4. Retry the failed deployment (dashboard or API). Do **not** pin local `packageManager` to 1.3.14 to “fix” Pages.
+5. Local pin check (no API): `bun run cloudflare:env:assert`
 
-This is **not** `bun run deploy:production` (Bun.secrets + R2). Root `wrangler.toml` is Worker `tier1380-production`, not Pages.
+Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps). Apex 404 means `index.html` is missing from that dir.
+
+This is **not** `bun run deploy:production` (Bun.secrets + R2). Root `wrangler.toml` is Worker `tier1380-production`, not Pages. R2 S3 keys ≠ `CLOUDFLARE_API_TOKEN` (`requireR2Config` vs `requireCloudflareApiToken`).
 
 ## Retirement
 

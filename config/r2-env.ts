@@ -3,9 +3,10 @@
  * Cloudflare / R2 / Pages env SSOT (+ `bun run cloudflare:env` CLI).
  *
  * Sibling to [`config/ports.ts`](./ports.ts). Pages identity/pins live in
- * `CLOUDFLARE_DEFAULTS` — do not mirror them as `CLOUDFLARE_PAGES_*` env keys.
- * Dashboard-only overlays: `BUN_VERSION`, `SKIP_DEPENDENCY_INSTALL`.
+ * `CLOUDFLARE_DEFAULTS` — dashboard overlays: `BUN_VERSION`, `SKIP_DEPENDENCY_INSTALL`.
  * Root `wrangler.toml` is Worker `tier1380-production`, not Pages.
+ *
+ * R2 S3 credentials ≠ Cloudflare API token (`requireR2Config` vs `requireCloudflareApiToken`).
  *
  * Claim: `cloudflare-pages-env-ssot` · Tenant: docs/harness/tenants/cloudflare-pages.md
  */
@@ -67,6 +68,10 @@ function parseTruthy(raw: string, defaultValue: boolean): boolean {
 
 const PLACEHOLDER_RE = /^(your_|replace_me|changeme|xxx|TODO|place.?holder)/i;
 
+function isUsableSecret(value: string): boolean {
+  return Boolean(value) && !PLACEHOLDER_RE.test(value);
+}
+
 /** Account id: prefer R2_*, then CLOUDFLARE_*, then proven default. */
 export function cloudflareAccountIdFromEnv(): string {
   return (
@@ -78,6 +83,16 @@ export function cloudflareAccountIdFromEnv(): string {
 
 export function r2EndpointFromAccount(accountId = cloudflareAccountIdFromEnv()): string {
   return envString('R2_ENDPOINT') || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '');
+}
+
+/** Bucket cascade shared by r2-bridge / search-bench / CI. */
+export function r2BucketFromEnv(): string {
+  return (
+    envString('R2_BENCH_BUCKET') ||
+    envString('R2_BUCKET') ||
+    envString('R2_BUCKET_NAME') ||
+    envString('R2_REGISTRY_BUCKET')
+  );
 }
 
 export const R2_CONFIG = {
@@ -110,6 +125,42 @@ export const CLOUDFLARE_ZONE = {
   name: envString('CLOUDFLARE_ZONE_NAME', CLOUDFLARE_DEFAULTS.zones.factoryWager.name),
 } as const;
 
+/** Desired Git-integration build_config (matches live project-r-score). */
+export function cloudflarePagesDesiredBuild() {
+  return {
+    build_command: CLOUDFLARE_PAGES.buildCommand,
+    destination_dir: CLOUDFLARE_PAGES.destinationDir,
+    root_dir: CLOUDFLARE_PAGES.rootDir,
+    production_branch: CLOUDFLARE_PAGES.productionBranch,
+  } as const;
+}
+
+/**
+ * Fail if local env overlays would recreate the Pages Bun 404
+ * (canary packageManager pin leaking into dashboard-shaped values).
+ */
+export function assertCloudflarePagesPins(): void {
+  const { bunVersion, destinationDir, buildCommand, skipDependencyInstall } = CLOUDFLARE_PAGES;
+  if (bunVersion === '1.4.0' || bunVersion.includes('canary')) {
+    throw new Error(
+      `BUN_VERSION=${bunVersion} is not Pages-safe (GitHub release 404). Use ${CLOUDFLARE_DEFAULTS.pages.bunVersion}.`
+    );
+  }
+  if (destinationDir !== CLOUDFLARE_DEFAULTS.pages.destinationDir) {
+    throw new Error(
+      `Pages destination_dir must be ${CLOUDFLARE_DEFAULTS.pages.destinationDir} (got ${destinationDir})`
+    );
+  }
+  if (buildCommand !== CLOUDFLARE_DEFAULTS.pages.buildCommand) {
+    throw new Error(
+      `Pages build_command must be ${JSON.stringify(CLOUDFLARE_DEFAULTS.pages.buildCommand)} (got ${JSON.stringify(buildCommand)})`
+    );
+  }
+  if (!skipDependencyInstall) {
+    throw new Error('SKIP_DEPENDENCY_INSTALL must be true for project-r-score static public/');
+  }
+}
+
 export type CloudflareEnvPresence = {
   key: string;
   set: boolean;
@@ -127,46 +178,48 @@ function presence(key: string): CloudflareEnvPresence {
 export function describeCloudflareEnv() {
   const secrets = CLOUDFLARE_ENV_KEYS.secrets.map(presence);
   const accessOk =
-    presence('R2_ACCESS_KEY_ID').set &&
-    !presence('R2_ACCESS_KEY_ID').placeholder &&
-    presence('R2_SECRET_ACCESS_KEY').set &&
-    !presence('R2_SECRET_ACCESS_KEY').placeholder;
+    isUsableSecret(R2_CONFIG.accessKeyId) && isUsableSecret(R2_CONFIG.secretAccessKey);
   const token = presence('CLOUDFLARE_API_TOKEN');
   return {
     accountId: cloudflareAccountIdFromEnv(), // brand-ok — status dump hex
     pages: CLOUDFLARE_PAGES,
     zone: CLOUDFLARE_ZONE,
+    desiredBuild: cloudflarePagesDesiredBuild(),
     secrets,
     identity: CLOUDFLARE_ENV_KEYS.identity.map(presence),
-    r2Ready: Boolean(cloudflareAccountIdFromEnv() && accessOk),
+    r2Ready: Boolean(cloudflareAccountIdFromEnv() && accessOk && r2BucketFromEnv()),
     apiTokenReady: token.set && !token.placeholder,
   };
 }
 
+/** S3-compatible R2 only — does not require CLOUDFLARE_API_TOKEN. */
 export function requireR2Config() {
   const missing: string[] = [];
   if (!cloudflareAccountIdFromEnv()) missing.push('R2_ACCOUNT_ID or CLOUDFLARE_ACCOUNT_ID');
-  if (!R2_CONFIG.accessKeyId || PLACEHOLDER_RE.test(R2_CONFIG.accessKeyId)) {
-    missing.push('R2_ACCESS_KEY_ID');
-  }
-  if (!R2_CONFIG.secretAccessKey || PLACEHOLDER_RE.test(R2_CONFIG.secretAccessKey)) {
-    missing.push('R2_SECRET_ACCESS_KEY');
-  }
-  if (!R2_CONFIG.cloudflareApiToken || PLACEHOLDER_RE.test(R2_CONFIG.cloudflareApiToken)) {
-    missing.push('CLOUDFLARE_API_TOKEN');
-  }
+  if (!isUsableSecret(R2_CONFIG.accessKeyId)) missing.push('R2_ACCESS_KEY_ID');
+  if (!isUsableSecret(R2_CONFIG.secretAccessKey)) missing.push('R2_SECRET_ACCESS_KEY');
+  const bucket = r2BucketFromEnv();
+  if (!bucket) missing.push('R2_BENCH_BUCKET or R2_BUCKET or R2_BUCKET_NAME');
   if (missing.length > 0) {
     throw new Error(
-      `Missing required R2 configuration: ${missing.join(', ')}. Set these in your .env file (see .env.example).`
+      `Missing required R2 S3 configuration: ${missing.join(', ')}. Set these in your .env file (see .env.example).`
     );
   }
-  return R2_CONFIG;
+  return {
+    accountId: cloudflareAccountIdFromEnv(),
+    accessKeyId: R2_CONFIG.accessKeyId,
+    secretAccessKey: R2_CONFIG.secretAccessKey,
+    endpoint: r2EndpointFromAccount(),
+    bucket,
+    benchPrefix: R2_CONFIG.benchPrefix,
+    bucketUrl: R2_CONFIG.bucketUrl,
+  };
 }
 
-/** API token for Cloudflare REST (domain manager). Local ops may use wrangler OAuth instead. */
+/** API token for Cloudflare REST (domain manager / Pages API). */
 export function requireCloudflareApiToken(): string {
   const token = R2_CONFIG.cloudflareApiToken;
-  if (!token || PLACEHOLDER_RE.test(token)) {
+  if (!isUsableSecret(token)) {
     throw new Error(
       'Missing CLOUDFLARE_API_TOKEN. Local ops may use `wrangler login`; CI needs an API token.'
     );
@@ -175,17 +228,24 @@ export function requireCloudflareApiToken(): string {
 }
 
 if (import.meta.main) {
+  const assertOnly = Bun.argv.includes('--assert');
+  if (assertOnly) {
+    assertCloudflarePagesPins();
+    console.log('cloudflare Pages pins OK', cloudflarePagesDesiredBuild());
+    process.exit(0);
+  }
+
   const status = describeCloudflareEnv();
   if (Bun.argv.includes('--json')) {
     console.log(JSON.stringify({ defaults: CLOUDFLARE_DEFAULTS, status }, null, 2));
   } else {
-    const { pages: p, zone } = status;
+    const { pages: p, zone, desiredBuild } = status;
     console.log('Cloudflare env status');
     console.log(`  accountId     ${status.accountId}`);
     console.log(`  zone          ${zone.name} (${zone.id})`);
     console.log(`  pages         ${p.project} → ${p.url}`);
     console.log(
-      `  build         cmd=${p.buildCommand} out=${p.destinationDir} branch=${p.productionBranch}`
+      `  build         cmd=${desiredBuild.build_command} out=${desiredBuild.destination_dir} branch=${desiredBuild.production_branch}`
     );
     console.log(
       `  pages_env     BUN_VERSION=${p.bunVersion} SKIP_DEPENDENCY_INSTALL=${p.skipDependencyInstall}`

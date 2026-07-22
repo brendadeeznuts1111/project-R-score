@@ -1705,6 +1705,7 @@
     "check:invisible-chars": "bun scripts/check-invisible-chars.ts",
     "harness:status": "bun scripts/harness-status.ts",
     "cloudflare:env": "bun config/r2-env.ts",
+    "cloudflare:env:assert": "bun config/r2-env.ts --assert",
     "docs:harness": "bun ./docs/harness/README.md",
     "docs:cron": "bun scripts/docs-cron.ts",
     "docs:install-verify": "bun scripts/docs-install-verify.ts",

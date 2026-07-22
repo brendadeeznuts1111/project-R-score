@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { S3Client, semver } from 'bun';
+import { r2BucketFromEnv, r2EndpointFromAccount, requireR2Config } from '../../config/r2-env.ts';
 
 export type R2BridgeConfig = {
   endpoint: string;
@@ -27,6 +28,7 @@ function parseTruthyEnv(value?: string): boolean {
   return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
 }
 
+/** Resolve S3 R2 bridge config via config/r2-env SSOT (optional field overrides). */
 export function resolveR2BridgeConfig(input?: {
   endpoint?: string;
   bucket?: string;
@@ -34,26 +36,16 @@ export function resolveR2BridgeConfig(input?: {
   secretAccessKey?: string;
   requestPayer?: boolean;
 }): R2BridgeConfig {
-  const accountId = Bun.env.R2_ACCOUNT_ID || Bun.env.CLOUDFLARE_ACCOUNT_ID || '';
-  const endpoint = (
-    input?.endpoint ||
-    Bun.env.R2_ENDPOINT ||
-    (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '')
-  ).trim();
-  const bucket = (
-    input?.bucket ||
-    Bun.env.R2_BENCH_BUCKET ||
-    Bun.env.R2_BUCKET ||
-    Bun.env.R2_BUCKET_NAME ||
-    ''
-  ).trim();
-  const accessKeyId = (input?.accessKeyId || Bun.env.R2_ACCESS_KEY_ID || '').trim();
-  const secretAccessKey = (input?.secretAccessKey || Bun.env.R2_SECRET_ACCESS_KEY || '').trim();
+  const base = requireR2Config();
+  const endpoint = (input?.endpoint || base.endpoint || r2EndpointFromAccount()).trim();
+  const bucket = (input?.bucket || base.bucket || r2BucketFromEnv()).trim();
+  const accessKeyId = (input?.accessKeyId || base.accessKeyId).trim();
+  const secretAccessKey = (input?.secretAccessKey || base.secretAccessKey).trim();
   const requestPayer = input?.requestPayer ?? parseTruthyEnv(Bun.env.R2_REQUEST_PAYER);
 
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
     throw new Error(
-      'Missing R2 config. Required: endpoint, bucket, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY.'
+      'Missing R2 config. Required: endpoint, bucket, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY (see config/r2-env.ts).'
     );
   }
   return { endpoint, bucket, accessKeyId, secretAccessKey, requestPayer };

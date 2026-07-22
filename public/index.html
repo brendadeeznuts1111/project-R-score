@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FactoryWager · project-R-score</title>
+    <meta
+      name="description"
+      content="Cloudflare Pages surface for project-R-score. Wiki and registry live here."
+    />
+    <link rel="canonical" href="https://wiki.factory-wager.com/" />
+    <style>
+      :root {
+        --ink: #1a1f16;
+        --muted: #5c664f;
+        --paper: #f3f0e7;
+        --accent: #2f6b3a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+        color: var(--ink);
+        background:
+          radial-gradient(1200px 600px at 10% -10%, #dfe8d4 0%, transparent 55%),
+          linear-gradient(165deg, #ebe6d8 0%, var(--paper) 45%, #e4e9dc 100%);
+        display: grid;
+        place-items: center;
+        padding: 2.5rem 1.25rem;
+      }
+      main {
+        width: min(36rem, 100%);
+      }
+      .brand {
+        font-size: clamp(2.4rem, 6vw, 3.4rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        margin: 0 0 0.75rem;
+      }
+      p {
+        margin: 0 0 1.5rem;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.45;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.25rem;
+      }
+      a {
+        color: var(--accent);
+        font-weight: 600;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.18em;
+      }
+      a:hover {
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 class="brand">FactoryWager</h1>
+      <p>
+        project-R-score Pages edge — registry and crawl assets under
+        <code>/registry</code>, <code>/robots.txt</code>, and sitemaps.
+      </p>
+      <nav>
+        <a href="https://wiki.factory-wager.com/">Wiki</a>
+        <a href="/registry/projects-registry.json">Projects registry</a>
+        <a href="https://github.com/brendadeeznuts1111/project-R-score">Source</a>
+      </nav>
+    </main>
+  </body>
+</html>

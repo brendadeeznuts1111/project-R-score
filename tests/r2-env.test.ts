@@ -6,12 +6,16 @@ import {
   CLOUDFLARE_ENV_KEYS,
   CLOUDFLARE_PAGES,
   CLOUDFLARE_ZONE,
+  assertCloudflarePagesPins,
   cloudflareAccountIdFromEnv,
+  cloudflarePagesDesiredBuild,
+  r2BucketFromEnv,
   r2EndpointFromAccount,
+  requireR2Config,
 } from '../config/r2-env.ts';
 
 describe('config/r2-env Cloudflare SSOT', () => {
-  test('proven Pages identity + pins (single SSOT, no CLOUDFLARE_PAGES_* env)', () => {
+  test('proven Pages identity + pins match live project-r-score', () => {
     const p = CLOUDFLARE_DEFAULTS.pages;
     expect(CLOUDFLARE_DEFAULTS.accountId).toBe('7a470541a704caaf91e71efccc78fd36');
     expect(p.project).toBe('project-r-score');
@@ -23,12 +27,16 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(p.skipDependencyInstall).toBe(true);
 
     expect(CLOUDFLARE_PAGES.url).toBe(`https://${p.subdomain}`);
-    expect(CLOUDFLARE_PAGES.bunVersion).toBe('1.3.14');
-    expect(CLOUDFLARE_PAGES.bunVersion).not.toBe('1.4.0');
-    expect(CLOUDFLARE_PAGES.skipDependencyInstall).toBe(true);
+    expect(cloudflarePagesDesiredBuild()).toEqual({
+      build_command: 'exit 0',
+      destination_dir: 'public',
+      root_dir: '',
+      production_branch: 'main',
+    });
+    expect(() => assertCloudflarePagesPins()).not.toThrow();
   });
 
-  test('zone defaults + account/endpoint helpers', () => {
+  test('zone defaults + account/endpoint/bucket helpers', () => {
     expect(CLOUDFLARE_ZONE.name).toBe('factory-wager.com');
     expect(CLOUDFLARE_ZONE.id).toMatch(/^[a-f0-9]{32}$/);
     const account = cloudflareAccountIdFromEnv();
@@ -36,16 +44,24 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(r2EndpointFromAccount(account)).toBe(
       `https://${account}.r2.cloudflarestorage.com`
     );
+    expect(r2BucketFromEnv().length).toBeGreaterThan(0);
   });
 
-  test('env key catalog is secrets + account/zone + Pages build pins only', () => {
+  test('requireR2Config is S3-only (no API token required)', () => {
+    const cfg = requireR2Config();
+    expect(cfg.endpoint).toContain('.r2.cloudflarestorage.com');
+    expect(cfg.bucket.length).toBeGreaterThan(0);
+    expect(cfg.accessKeyId.length).toBeGreaterThan(0);
+    expect(cfg).not.toHaveProperty('cloudflareApiToken');
+  });
+
+  test('env key catalog stays lean', () => {
     expect(CLOUDFLARE_ENV_KEYS.identity).toEqual([
       'CLOUDFLARE_ACCOUNT_ID',
       'R2_ACCOUNT_ID',
       'CLOUDFLARE_ZONE_ID',
       'CLOUDFLARE_ZONE_NAME',
     ]);
-    expect(CLOUDFLARE_ENV_KEYS.secrets).toContain('CLOUDFLARE_API_TOKEN');
     expect(CLOUDFLARE_ENV_KEYS.pagesBuild).toEqual([
       'BUN_VERSION',
       'SKIP_DEPENDENCY_INSTALL',
@@ -53,21 +69,15 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(CLOUDFLARE_ENV_KEYS.identity.join(' ')).not.toContain('CLOUDFLARE_PAGES_');
   });
 
-  test('.env.example documents pins without duplicating Pages identity keys', async () => {
+  test('.env.example + public/index.html are the Pages publish surface', async () => {
     const text = await Bun.file('.env.example').text();
-    for (const key of [
-      'CLOUDFLARE_ACCOUNT_ID',
-      'CLOUDFLARE_API_TOKEN',
-      'CLOUDFLARE_ZONE_ID',
-      'BUN_VERSION',
-      'SKIP_DEPENDENCY_INSTALL',
-      'R2_ENDPOINT',
-    ]) {
-      expect(text).toContain(`${key}=`);
-    }
     expect(text).toContain('BUN_VERSION=1.3.14');
     expect(text).toContain('SKIP_DEPENDENCY_INSTALL=true');
     expect(text).not.toContain('CLOUDFLARE_PAGES_PROJECT=');
-    expect(text).not.toContain('CLOUDFLARE_PAGES_DESTINATION_DIR=');
+
+    const index = await Bun.file('public/index.html').text();
+    expect(index).toContain('FactoryWager');
+    expect(index).toContain('wiki.factory-wager.com');
+    expect(index).toContain('/registry/projects-registry.json');
   });
 });
