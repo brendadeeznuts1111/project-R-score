@@ -104,4 +104,19 @@ describe('fetch-page-boundaries', () => {
       Response
     );
   });
+
+  test('Accept override supports RSS (caller replaces text/html default)', async () => {
+    let accept = '';
+    globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      accept = new Headers(init?.headers).get('Accept') ?? '';
+      return new Response('<rss/>', { status: 200 });
+    }) as typeof fetch;
+
+    await fetchPage('https://example.com/rss.xml', {
+      headers: { Accept: 'application/rss+xml, application/xml, text/xml, */*' },
+    });
+    expect(accept).toContain('application/rss+xml');
+    expect(accept).not.toBe('text/html');
+  });
 });
+

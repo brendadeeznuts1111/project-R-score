@@ -602,8 +602,13 @@ export async function fetchRssFeed(limit = 50): Promise<ReleaseNote[]> {
   const now = Date.now();
   if (rssCache && now - rssCache.at < RSS_CACHE_MS) return rssCache.items.slice(0, limit);
 
-  const res = await fetch(BUN_CHANGELOG_RSS, { signal: AbortSignal.timeout(10_000) });
-  if (!res.ok) throw new Error(`RSS fetch failed: ${res.status}`);
+  // HTML Accept default overridden for RSS; HTTPS/timeout/ok via fetchPage.
+  const res = await fetchPage(BUN_CHANGELOG_RSS, {
+    timeoutMs: 10_000,
+    headers: {
+      Accept: 'application/rss+xml, application/xml, text/xml, */*',
+    },
+  });
   const items = parseRssItems(await res.text(), 100);
   rssCache = { at: now, items };
   return items.slice(0, limit);
