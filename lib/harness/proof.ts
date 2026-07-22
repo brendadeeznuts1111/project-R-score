@@ -11,6 +11,9 @@
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
@@ -20,6 +23,8 @@
  * @see ../../docs/harness/PROOF.md
  * @see ../../docs/harness/FRESH-RERUN.md
  */
+
+import { inspectCustom } from '../console-depth';
 
 export type ProofKind = 'unit' | 'boundary' | 'journey' | 'deployed';
 
@@ -306,7 +311,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'console-depth-boundaries',
     claim:
-      'lib/console-depth inspect/width/markdown helpers and depth precedence behave as this repo depends on them',
+      'lib/console-depth Bun.inspect / .table / .custom / width / markdown helpers and depth precedence behave as this repo depends on them',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',
@@ -874,6 +879,62 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'scripts/bun-migrate.ts',
   },
 ] as const;
+
+/**
+ * Claim ids that prove Bun-native utils / hashing / Bun.inspect family.
+ * Discover: `bun run harness:status` (always emits this cluster via inspect + table).
+ */
+export const BUN_NATIVE_UTILS_PROOF_IDS = [
+  'console-depth-boundaries',
+  'security-hash-boundaries',
+  'deep-equals-boundaries',
+  'peek-settle-boundaries',
+  'bun-time-boundaries',
+] as const;
+
+export type BunNativeUtilsProofId = (typeof BUN_NATIVE_UTILS_PROOF_IDS)[number];
+
+/** Compact Bun.inspect form for a catalog row (`Bun.inspect.custom`). */
+export class ProofPathView {
+  constructor(readonly path: ProofPath) {}
+
+  [inspectCustom](): string {
+    const k = this.path.kinds.join('+');
+    return `${this.path.id} [${this.path.gateClass}/${this.path.gateRef}] (${k}) — ${this.path.claim}`;
+  }
+}
+
+export function asProofPathView(path: ProofPath): ProofPathView {
+  return new ProofPathView(path);
+}
+
+/** Flat rows for `Bun.inspect.table` / `logTable`. */
+export function proofPathTableRow(path: ProofPath): {
+  id: string; // brand-ok — opaque entity primary key for table rows
+  gateClass: ProofGateClass;
+  gateRef: string;
+  kinds: string;
+  freshRerunKind: FreshRerunKind;
+  owner: string;
+  claim: string;
+  freshRerun: string;
+} {
+  return {
+    id: path.id,
+    gateClass: path.gateClass,
+    gateRef: path.gateRef,
+    kinds: path.kinds.join('+'),
+    freshRerunKind: path.freshRerunKind,
+    owner: path.owner,
+    claim: path.claim,
+    freshRerun: path.freshRerun,
+  };
+}
+
+export function bunNativeUtilsProofPaths(): ProofPath[] {
+  const want = new Set<string>(BUN_NATIVE_UTILS_PROOF_IDS);
+  return CRITICAL_PROOF_PATHS.filter(p => want.has(p.id));
+}
 
 export function proofPathById(id: string): ProofPath | undefined {
   // brand-ok — opaque catalog key
