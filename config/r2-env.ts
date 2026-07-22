@@ -413,7 +413,7 @@ export async function assertLiveCloudflarePages(): Promise<{
 
 /** HTTP-only apex check — no API token (CI-safe when Pages is up). */
 export async function assertCloudflarePagesApex(
-  url = CLOUDFLARE_PAGES.url
+  url: string = CLOUDFLARE_PAGES.url
 ): Promise<{ url: string; status: number }> {
   const res = await fetch(url, { redirect: 'follow' });
   const html = await res.text();

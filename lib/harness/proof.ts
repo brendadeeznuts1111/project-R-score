@@ -287,7 +287,8 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'bun run cloudflare:env:assert-apex',
       'docs/harness/tenants/cloudflare-pages.md',
     ],
-    freshRerun: 'bun test tests/r2-env.test.ts && bun run cloudflare:env:assert',
+    // freshRerun must be an evidence entry (parity ratchet); apex/assert stay optional ops evidence.
+    freshRerun: 'bun test tests/r2-env.test.ts',
     freshRerunKind: 'claim',
     owner: 'config/r2-env.ts',
   },
