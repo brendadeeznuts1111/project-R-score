@@ -587,6 +587,9 @@ export async function verifyAuditCatalog(): Promise<{
   };
 }
 
+/** Alias for programmatic / pulse-daemon callers. */
+export const verifyCatalog = verifyAuditCatalog;
+
 export async function loadAuditCatalog(): Promise<AuditCatalogFile> {
   const file = Bun.file(CATALOG_PATH);
   if (!(await file.exists())) {
