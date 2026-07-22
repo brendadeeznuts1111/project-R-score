@@ -28,31 +28,31 @@ export const GitHubOvenSite = {
   hostname: 'github.com',
 } as const satisfies Pick<URLPatternInit, 'protocol' | 'hostname'>;
 
-/** Match /docs/* on bun.com|bun.sh (hostname regex group). */
+/** Match /docs/* on bun.com|bun.sh (literal dots in hostname regex groups). */
 export const BunDocsPattern = new URLPattern({
   protocol: BunComSite.protocol,
-  hostname: '(bun.com|bun.sh)',
+  hostname: '(bun\\.com|bun\\.sh)',
   pathname: '/docs/:path*',
 });
 
 /** Match /blog index on bun.com|bun.sh */
 export const BunBlogIndexPattern = new URLPattern({
   protocol: BunComSite.protocol,
-  hostname: '(bun.com|bun.sh)',
+  hostname: '(bun\\.com|bun\\.sh)',
   pathname: '/blog',
 });
 
 /** Match /blog/:slug on bun.com|bun.sh */
 export const BunBlogPattern = new URLPattern({
   protocol: BunComSite.protocol,
-  hostname: '(bun.com|bun.sh)',
+  hostname: '(bun\\.com|bun\\.sh)',
   pathname: '/blog/:slug',
 });
 
 /** Match /reference/* on bun.com|bun.sh */
 export const BunReferencePattern = new URLPattern({
   protocol: BunComSite.protocol,
-  hostname: '(bun.com|bun.sh)',
+  hostname: '(bun\\.com|bun\\.sh)',
   pathname: '/reference/:path*',
 });
 
@@ -139,10 +139,11 @@ export function bunBlog(slug: string, hash?: string): string {
 
 /** `https://bun.com/reference/<path>[#hash]` */
 export function bunReference(path: string, hash?: string): string {
+  const parts = splitHash(path, hash);
   return hrefFromInit({
     ...BunComSite,
-    pathname: `/reference/${normalizePath(path)}`,
-    hash: stripHash(hash),
+    pathname: `/reference/${normalizePath(parts.path)}`,
+    hash: parts.hash,
   });
 }
 

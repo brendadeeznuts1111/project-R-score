@@ -5,9 +5,11 @@ import {
   BunBlogPattern,
   BunComSite,
   BunDocsPattern,
+  BunReferencePattern,
   CANONICAL_SOURCES,
   bunBlog,
   bunDocs,
+  bunReference,
   guideKeyFromUrl,
   hrefFromInit,
   mdnWebApi,
@@ -38,6 +40,17 @@ describe('bun-site-url (URLPatternInit components)', () => {
     expect(BunDocsPattern.test(bunDocs('runtime/utils', 'bun-env'))).toBe(true);
     expect(BunDocsPattern.test('https://bun.sh/docs/runtime/utils')).toBe(true);
     expect(BunBlogPattern.test(bunBlog('bun-v1.3.4', 'urlpattern-api'))).toBe(true);
+  });
+
+  test('BunDocsPattern rejects spoofed hosts (literal dots in hostname group)', () => {
+    expect(BunDocsPattern.test('https://bunXcom/docs/x')).toBe(false);
+    expect(BunDocsPattern.test('https://bun-com/docs/x')).toBe(false);
+    expect(BunBlogPattern.test('https://bunXcom/blog/x')).toBe(false);
+    expect(BunReferencePattern.test('https://bun-com/reference/x')).toBe(false);
+  });
+
+  test('bunReference preserves inline # fragments', () => {
+    expect(bunReference('runtime/fetch#timeout')).toBe('https://bun.com/reference/runtime/fetch#timeout');
   });
 
   test('parseBunSiteUrl returns pathname groups + hash', () => {

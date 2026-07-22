@@ -12,7 +12,7 @@
 
 ## Description
 
-Local linear-algebra check on DF(x): a non-trivial null vector would indicate a first-order blind direction. For Nagata-type maps the Jacobian determinant is constant and non-zero, so the nullspace is trivial everywhere — yet a global fiber can still exist. Local gradient checks therefore cannot certify injectivity.
+Local linear-algebra check on DF(x): a non-trivial null vector would indicate a first-order blind direction. For Nagata-type automorphisms the Jacobian determinant is constant and non-zero, so the nullspace is trivial everywhere — local invertibility does not by itself settle tameness or Jacobian-conjecture questions. Local gradient checks therefore cannot certify the global picture.
 
 **Proof integrity** — evidence blobs are fingerprinted via evidence.algorithm + evidence.digest (primary sha3-256). See concept sha3-integrity. Tamper-*authentication* (HMAC/signing) is a separate, unimplemented lane.
 

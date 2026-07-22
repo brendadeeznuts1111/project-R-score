@@ -69,7 +69,8 @@ export function isAuditSsotPath(file: string): boolean {
     n === 'tools/audit-migrate-to-sha3.ts' ||
     n === 'tests/audit-catalog.test.ts' ||
     n === 'lib/types/branded/audit.ts' ||
-    n === 'tools/bun-doc-refs.ts'
+    n === 'tools/bun-doc-refs.ts' ||
+    n === 'tools/bun-docs-curated.ts'
   );
 }
 

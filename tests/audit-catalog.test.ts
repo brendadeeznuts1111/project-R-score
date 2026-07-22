@@ -585,13 +585,17 @@ describe('suggest Nagata map (not BunToken)', () => {
   });
 
   test('suggest --audit --json reports load failure without stack dump', async () => {
-    const catalogPath = joinPath(REPO_ROOT, 'tools/audit-catalog.json');
-    const backup = await Bun.file(catalogPath).text();
+    const tmpCatalog = joinPath(REPO_ROOT, `.tmp-audit-catalog-corrupt-${Date.now()}.json`);
+    await Bun.write(tmpCatalog, '{"findings":"oops","concepts":[]}\n');
     try {
-      await Bun.write(catalogPath, '{"findings":"oops","concepts":[]}\n');
       const proc = Bun.spawn(
         ['bun', 'tools/bun-doc-refs.ts', 'suggest', '--audit', '--json', 'fiber'],
-        { cwd: REPO_ROOT, stdout: 'pipe', stderr: 'pipe' }
+        {
+          cwd: REPO_ROOT,
+          stdout: 'pipe',
+          stderr: 'pipe',
+          env: { ...Bun.env, AUDIT_CATALOG_PATH: tmpCatalog },
+        }
       );
       const out = await new Response(proc.stdout).text();
       const err = await new Response(proc.stderr).text();
@@ -602,7 +606,7 @@ describe('suggest Nagata map (not BunToken)', () => {
       expect(parsed.error).toMatch(/must be arrays/);
       expect(err).not.toMatch(/at suggestAudit/);
     } finally {
-      await Bun.write(catalogPath, backup);
+      await Bun.file(tmpCatalog).unlink().catch(() => undefined);
     }
   });
 });
@@ -614,6 +618,7 @@ describe('isAuditSsotPath', () => {
     expect(isAuditSsotPath('tests/audit-catalog.test.ts')).toBe(true);
     expect(isAuditSsotPath('lib/types/branded/audit.ts')).toBe(true);
     expect(isAuditSsotPath('tools/bun-doc-refs.ts')).toBe(true);
+    expect(isAuditSsotPath('tools/bun-docs-curated.ts')).toBe(true);
     expect(isAuditSsotPath('tests/console-depth.test.ts')).toBe(false);
   });
 });

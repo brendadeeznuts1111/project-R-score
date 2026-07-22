@@ -37,7 +37,11 @@ import {
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 const FINDINGS_DIR = joinPath(REPO_ROOT, 'tools/audit-findings');
 const CONCEPTS_DIR = joinPath(REPO_ROOT, 'tools/audit-concepts');
-const CATALOG_PATH = joinPath(REPO_ROOT, 'tools/audit-catalog.json');
+/** Override for tests — never corrupt the committed SSOT in parallel runs. */
+const CATALOG_PATH =
+  typeof Bun.env.AUDIT_CATALOG_PATH === 'string' && Bun.env.AUDIT_CATALOG_PATH.trim() !== ''
+    ? Bun.env.AUDIT_CATALOG_PATH
+    : joinPath(REPO_ROOT, 'tools/audit-catalog.json');
 const FINDING_PAGES_DIR = joinPath(REPO_ROOT, 'docs/audit/findings');
 const CONCEPT_PAGES_DIR = joinPath(REPO_ROOT, 'docs/audit/concepts');
 
