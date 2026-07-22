@@ -6,6 +6,7 @@ export {
   buildScreenshotEvidenceRecord,
   remediateScreenshotCapture,
   runTest003,
+  screenshotEvidenceEqual,
   type BuildScreenshotEvidenceOptions,
   type ScreenshotEvidenceRecord,
   type Test003Remediation,

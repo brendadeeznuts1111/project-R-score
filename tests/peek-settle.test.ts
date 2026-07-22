@@ -1,7 +1,13 @@
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
-import { BUN_PEEK_DOCS, awaitSettled, promiseStatus } from '../lib/peek-settle.ts';
+import {
+  BUN_PEEK_DOCS,
+  awaitAllSettled,
+  awaitSettled,
+  peekIfSettled,
+  promiseStatus,
+} from '../lib/peek-settle.ts';
 
 describe('lib/peek-settle', () => {
   test('canonical docs URL points at Bun.peek anchor', () => {
@@ -36,5 +42,33 @@ describe('lib/peek-settle', () => {
     expect(promiseStatus(pending)).toBe('pending');
     resolve('later');
     expect(await done).toBe('later');
+  });
+
+  test('peekIfSettled returns undefined while pending and value when fulfilled', async () => {
+    let resolve!: (v: number) => void;
+    const pending = new Promise<number>(r => {
+      resolve = r;
+    });
+    expect(peekIfSettled(pending)).toBeUndefined();
+    resolve(9);
+    await pending;
+    expect(peekIfSettled(pending)).toBe(9);
+  });
+
+  test('peekIfSettled throws on rejected', async () => {
+    const rejected = Promise.reject(new Error('peek-if-fail'));
+    rejected.catch(() => {});
+    expect(() => peekIfSettled(rejected)).toThrow(/peek-if-fail/);
+  });
+
+  test('awaitAllSettled peeks mixed sync/fulfilled/pending', async () => {
+    const [a, b, c] = await awaitAllSettled([
+      1,
+      Promise.resolve(2),
+      Promise.resolve(3).then(n => n),
+    ] as const);
+    expect(a).toBe(1);
+    expect(b).toBe(2);
+    expect(c).toBe(3);
   });
 });

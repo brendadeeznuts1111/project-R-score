@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
@@ -208,7 +210,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'image-metadata-boundaries',
     claim:
-      'Bun.Image metadata extract/resize/verify/parse and TEST-003 screenshot remediation behave as this repo depends on them',
+      'Bun.Image metadata extract/resize/verify/parse and TEST-003 screenshot remediation behave as this repo depends on them (awaitAllSettled + deepEquals unchanged skip)',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',
@@ -217,10 +219,44 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'tests/image-metadata.test.ts',
       'lib/image-metadata.ts',
       'lib/screenshot-remediation.ts',
+      'lib/deep-equals.ts',
+      'lib/peek-settle.ts',
     ],
     freshRerun: 'bun test ./tests/image-metadata.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/image-metadata.ts',
+  },
+  {
+    id: 'deep-equals-boundaries',
+    claim:
+      'Bun.deepEquals wrapper and strict/changed-index helpers behave as this repo depends on them',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test ./tests/deep-equals.test.ts',
+      'tests/deep-equals.test.ts',
+      'lib/deep-equals.ts',
+    ],
+    freshRerun: 'bun test ./tests/deep-equals.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/deep-equals.ts',
+  },
+  {
+    id: 'peek-settle-boundaries',
+    claim:
+      'Bun.peek settled-promise helpers (awaitSettled / awaitAllSettled / peekIfSettled) behave as this repo depends on them',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test ./tests/peek-settle.test.ts',
+      'tests/peek-settle.test.ts',
+      'lib/peek-settle.ts',
+    ],
+    freshRerun: 'bun test ./tests/peek-settle.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/peek-settle.ts',
   },
   {
     id: 'terminal-pty-boundaries',

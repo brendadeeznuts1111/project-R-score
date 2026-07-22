@@ -131,6 +131,7 @@ describe('lib/screenshot-remediation TEST-003', () => {
     expect(result.code).toBe(TEST_003);
     expect(result.status).toBe('pass');
     expect(result.ok).toBe(true);
+    expect(result.unchanged).toBe(false);
     expect(result.remediation.action).toBe('accept');
   });
 
@@ -222,9 +223,10 @@ describe('lib/screenshot-remediation TEST-003', () => {
       capturedAt: '2026-07-22T00:00:00.000Z',
     });
     const b = await buildScreenshotEvidenceRecord(PNG_10, {
-      subject: 'eq',
-      capturedAt: '2026-07-22T00:00:00.000Z',
+      subject: 'other',
+      capturedAt: '2026-07-22T12:00:00.000Z',
     });
+    // subject + capturedAt ignored — metas match
     expect(screenshotEvidenceEqual(a.record, b.record)).toBe(true);
     expect(
       screenshotEvidenceEqual(a.record, {
@@ -232,5 +234,17 @@ describe('lib/screenshot-remediation TEST-003', () => {
         thumbnail: { ...b.record.thumbnail, width: b.record.thumbnail.width + 1 },
       }),
     ).toBe(false);
+  });
+
+  test('remediateScreenshotCapture marks unchanged when previous deepEquals', async () => {
+    const first = await remediateScreenshotCapture(PNG_10, { subject: 'skip' });
+    expect(first.unchanged).toBe(false);
+    const second = await remediateScreenshotCapture(PNG_10, {
+      subject: 'skip-again',
+      previous: first.evidence,
+    });
+    expect(second.ok).toBe(true);
+    expect(second.unchanged).toBe(true);
+    expect(second.remediation.message).toContain('Bun.deepEquals');
   });
 });

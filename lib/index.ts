@@ -79,10 +79,17 @@ export {
 } from './terminal';
 
 // Bun.deepEquals / Bun.peek settled-promise helpers
-export { BUN_DEEP_EQUALS_DOCS, deepEquals } from './deep-equals';
+export {
+  BUN_DEEP_EQUALS_DOCS,
+  deepEquals,
+  deepEqualsChangedIndex,
+  deepEqualsStrict,
+} from './deep-equals';
 export {
   BUN_PEEK_DOCS,
+  awaitAllSettled,
   awaitSettled,
+  peekIfSettled,
   promiseStatus,
   type PromiseSettleStatus,
 } from './peek-settle';

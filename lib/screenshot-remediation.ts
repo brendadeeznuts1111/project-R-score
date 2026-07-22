@@ -25,7 +25,7 @@ import {
   type ImageMetaCheck,
   type ImageMetaExpectations,
 } from './image-metadata.ts';
-import { awaitSettled } from './peek-settle.ts';
+import { awaitAllSettled } from './peek-settle.ts';
 
 /** Stable remediation / claim id for screenshot metadata evidence. */
 export const TEST_003 = 'TEST-003' as const;
@@ -56,6 +56,8 @@ export type Test003Response = {
   title: string;
   status: 'pass' | 'fail';
   ok: boolean;
+  /** True when `previous` matched via Bun.deepEquals (source+thumbnail+crop). */
+  unchanged: boolean;
   checks: ImageMetaCheck[];
   evidence: ScreenshotEvidenceRecord;
   remediation: Test003Remediation;
@@ -74,6 +76,11 @@ export type BuildScreenshotEvidenceOptions = {
   thumbMaxHeight?: number;
   /** Override TEST-003 verify expectations (defaults match thumb bounds + PNG). */
   expectations?: ImageMetaExpectations;
+  /**
+   * Prior evidence record — when source/thumbnail/crop deepEquals the new capture,
+   * remediation reports `unchanged: true` (skip re-persist noise).
+   */
+  previous?: ScreenshotEvidenceRecord;
 };
 
 function defaultExpectations(thumbMaxWidth: number, thumbMaxHeight: number): ImageMetaExpectations {
@@ -91,7 +98,7 @@ function resizeCommand(thumbMaxWidth: number, thumbMaxHeight: number): string {
 
 /**
  * Build a screenshot evidence record from raw capture bytes.
- * Computes Bun.Image metadata for source + resized PNG thumbnail.
+ * Source metadata + thumbnail resize run in parallel via {@link awaitAllSettled}.
  */
 export async function buildScreenshotEvidenceRecord(
   screenshotBytes: Uint8Array | Buffer,
@@ -101,14 +108,15 @@ export async function buildScreenshotEvidenceRecord(
   const algorithm = options.algorithm;
   const thumbMaxWidth = options.thumbMaxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
   const thumbMaxHeight = options.thumbMaxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
-  const source = await awaitSettled(extractImageEvidenceMeta(screenshotBytes, { algorithm }));
-  const { bytes: thumbnailBytes, meta: thumbnail } = await awaitSettled(
+
+  const [source, resized] = await awaitAllSettled([
+    extractImageEvidenceMeta(screenshotBytes, { algorithm }),
     resizeScreenshotPng(screenshotBytes, {
       algorithm,
       width: thumbMaxWidth,
       height: thumbMaxHeight,
-    })
-  );
+    }),
+  ] as const);
 
   const record: ScreenshotEvidenceRecord = {
     kind: 'ScreenshotEvidence',
@@ -117,16 +125,16 @@ export async function buildScreenshotEvidenceRecord(
     subject,
     team: options.team ?? subject,
     source,
-    thumbnail,
+    thumbnail: resized.meta,
     crop: options.crop,
   };
 
-  return { record, thumbnailBytes };
+  return { record, thumbnailBytes: resized.bytes };
 }
 
 /**
  * True when two evidence records match on source+thumbnail metas (Bun.deepEquals).
- * Use to skip re-persist when a recapture is unchanged.
+ * Ignores `capturedAt` / `subject` / `team` so recapture timestamps do not force writes.
  */
 export function screenshotEvidenceEqual(
   a: ScreenshotEvidenceRecord,
@@ -146,7 +154,8 @@ export function screenshotEvidenceEqual(
  */
 export function runTest003(
   record: ScreenshotEvidenceRecord,
-  expectations?: ImageMetaExpectations
+  expectations?: ImageMetaExpectations,
+  options: { unchanged?: boolean } = {}
 ): Test003Response {
   const maxW = expectations?.maxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
   const maxH = expectations?.maxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
@@ -156,9 +165,15 @@ export function runTest003(
   const status = ok ? 'pass' : 'fail';
   const failed = checks.filter(c => !c.ok);
   const cmd = resizeCommand(maxW, maxH);
+  const unchanged = options.unchanged === true;
 
   let remediation: Test003Remediation;
-  if (ok) {
+  if (ok && unchanged) {
+    remediation = {
+      action: 'accept',
+      message: `Unchanged screenshot evidence (Bun.deepEquals on source+thumbnail) — within TEST-003 bounds (≤${maxW}×${maxH} PNG).`,
+    };
+  } else if (ok) {
     remediation = {
       action: 'accept',
       message: `Screenshot thumbnail metadata within TEST-003 bounds (≤${maxW}×${maxH} PNG).`,
@@ -188,6 +203,7 @@ export function runTest003(
     title: 'Screenshot image metadata evidence',
     status,
     ok,
+    unchanged,
     checks,
     evidence: record,
     remediation,
@@ -196,6 +212,7 @@ export function runTest003(
 
 /**
  * End-to-end: build evidence from screenshot bytes and return TEST-003 response.
+ * Pass `previous` to detect unchanged captures via Bun.deepEquals.
  */
 export async function remediateScreenshotCapture(
   screenshotBytes: Uint8Array | Buffer,
@@ -205,6 +222,7 @@ export async function remediateScreenshotCapture(
   const thumbMaxHeight = options.thumbMaxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
   const { record, thumbnailBytes } = await buildScreenshotEvidenceRecord(screenshotBytes, options);
   const expectations = options.expectations ?? defaultExpectations(thumbMaxWidth, thumbMaxHeight);
-  const result = runTest003(record, expectations);
+  const unchanged = Boolean(options.previous && screenshotEvidenceEqual(record, options.previous));
+  const result = runTest003(record, expectations, { unchanged });
   return { ...result, thumbnailBytes };
 }
