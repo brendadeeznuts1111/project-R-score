@@ -45,6 +45,12 @@ export const AUDIT_REFS: Record<string, AuditEntryId> = {
   'kalshi-repo-octagonai-kalshi-trading-bot-cli': asAuditEntryId(
     'kalshi-repo-octagonai-kalshi-trading-bot-cli'
   ),
+  'kalshi-repo-openfi-dao-kalshi-trading-bot': asAuditEntryId(
+    'kalshi-repo-openfi-dao-kalshi-trading-bot'
+  ),
+  'openfi kalshi': asAuditEntryId('kalshi-repo-openfi-dao-kalshi-trading-bot'),
+  'openfi-dao/kalshi-trading-bot': asAuditEntryId('kalshi-repo-openfi-dao-kalshi-trading-bot'),
+  'kalshi watchlist': asAuditEntryId('kalshi-repo-openfi-dao-kalshi-trading-bot'),
   'kalshi-shortlist-diversity': asAuditEntryId('kalshi-shortlist-diversity'),
   'kalshi bot': asAuditEntryId('kalshi-repo-octagonai-kalshi-trading-bot-cli'),
 };

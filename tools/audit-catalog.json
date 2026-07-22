@@ -1,12 +1,12 @@
 {
-  "generated": "2026-07-22T05:15:02.969Z",
+  "generated": "2026-07-22T05:53:31.443Z",
   "bunVersion": "1.4.0",
-  "count": 2,
+  "count": 3,
   "conceptCount": 5,
   "byStatus": {
     "confirmed": 1,
     "mitigated": 0,
-    "open": 1
+    "open": 2
   },
   "findings": [
     {
@@ -19,10 +19,10 @@
       "evidence": {
         "path": "tools/audit-evidence/kalshi/octagonai__kalshi-trading-bot-cli.ndjson",
         "algorithm": "sha3-256",
-        "digest": "6e7e4934e59648439a3a89fcbbfb4542dc3fe1b07f76fc1c0b763654851b70d4",
+        "digest": "ff8b653fd1b3d22e440f93e59b18be5daf5cda65196533f65e2768bbec2238c1",
         "mediaType": "application/x-ndjson"
       },
-      "discoveredIn": "2026-07-22T04-59-00-818Z",
+      "discoveredIn": "2026-07-22T05-50-48-875Z",
       "related": [
         "kalshi-shortlist-diversity",
         "sha3-integrity",
@@ -36,6 +36,34 @@
         "emitter": "kalshi-bot-research"
       },
       "docsPath": "docs/audit/findings/kalshi-repo-octagonai-kalshi-trading-bot-cli.md"
+    },
+    {
+      "id": "kalshi-repo-openfi-dao-kalshi-trading-bot",
+      "kind": "AuditFinding",
+      "title": "Kalshi bot candidate: openfi-dao/kalshi-trading-bot",
+      "description": "Quality score 67.5/100. Strategy: news_event, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.",
+      "status": "open",
+      "publishedAt": "2026-07-22",
+      "evidence": {
+        "path": "tools/audit-evidence/kalshi/openfi-dao__kalshi-trading-bot.ndjson",
+        "algorithm": "sha3-256",
+        "digest": "b15d67acaf6c837f32bb7df08f4324582cdc5e462ec105df44569ec10fc0d96d",
+        "mediaType": "application/x-ndjson"
+      },
+      "discoveredIn": "2026-07-22T05-50-48-875Z",
+      "related": [
+        "kalshi-shortlist-diversity",
+        "sha3-integrity",
+        "nagata-map"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "0.2.0",
+        "emitter": "kalshi-bot-research"
+      },
+      "docsPath": "docs/audit/findings/kalshi-repo-openfi-dao-kalshi-trading-bot.md"
     },
     {
       "id": "sample-fiber-demo-2026-07-21",

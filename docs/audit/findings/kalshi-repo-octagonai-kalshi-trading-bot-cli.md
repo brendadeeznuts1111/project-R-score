@@ -9,7 +9,7 @@
 | status | `open` |
 | publishedAt | 2026-07-22 |
 | since | _unknown_ |
-| discoveredIn | 2026-07-22T04-59-00-818Z |
+| discoveredIn | 2026-07-22T05-50-48-875Z |
 | mitigatedIn | _n/a_ |
 | docs | [`docs/audit/findings/kalshi-repo-octagonai-kalshi-trading-bot-cli.md`](./kalshi-repo-octagonai-kalshi-trading-bot-cli.md) |
 
@@ -23,7 +23,7 @@ Quality score 84.75/100. Strategy: market_making, sports, news_event, momentum, 
 |-------|-------|
 | path | [`tools/audit-evidence/kalshi/octagonai__kalshi-trading-bot-cli.ndjson`](../../../tools/audit-evidence/kalshi/octagonai__kalshi-trading-bot-cli.ndjson) |
 | algorithm | `sha3-256` |
-| digest | `6e7e4934e59648439a3a89fcbbfb4542dc3fe1b07f76fc1c0b763654851b70d4` |
+| digest | `ff8b653fd1b3d22e440f93e59b18be5daf5cda65196533f65e2768bbec2238c1` |
 | mediaType | `application/x-ndjson` |
 
 Verify:
