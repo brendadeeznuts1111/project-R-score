@@ -33,7 +33,10 @@ import {
   verifyAuditCatalog,
   verifyAuditGraph,
   verifyCatalogParity,
+  verifyOrphanPages,
+  verifyPageContent,
   verifyRelatedDocs,
+  writeAuditPages,
 } from '../tools/audit-catalog.ts';
 import { EVIDENCE_BODY } from '../tools/audit-emit-stub.ts';
 import { migrateOneFinding } from '../tools/audit-migrate-to-sha3.ts';
@@ -289,7 +292,7 @@ describe('audit catalog', () => {
     expect(() => parseAuditCatalogRaw(null)).toThrow(/invalid shape/);
   });
 
-  test('verifyCatalogParity flags missing/stale ids and digest drift', async () => {
+  test('verifyCatalogParity flags missing/stale ids and entry drift', async () => {
     const catalog = await buildAuditCatalog();
     const findings = await loadSourceFindings();
     const concepts = await loadSourceConcepts();
@@ -299,26 +302,38 @@ describe('audit catalog', () => {
       findings: catalog.findings.slice(1),
       count: Math.max(0, catalog.count - 1),
     };
-    expect(verifyCatalogParity({ findings, concepts }, stale).some(e => e.includes('missing finding'))).toBe(
-      true
-    );
+    expect(
+      verifyCatalogParity({ findings, concepts }, stale).some(e => e.includes('missing finding'))
+    ).toBe(true);
     if (catalog.findings[0]) {
       const drifted = {
         ...catalog,
         findings: [
           {
             ...catalog.findings[0],
-            evidence: { ...catalog.findings[0].evidence, digest: '0'.repeat(64) },
+            title: `${catalog.findings[0].title} DRIFT`,
           },
           ...catalog.findings.slice(1),
         ],
       };
       expect(
-        verifyCatalogParity({ findings, concepts }, drifted).some(e =>
-          e.includes('fingerprint mismatch')
-        )
+        verifyCatalogParity({ findings, concepts }, drifted).some(e => e.includes('catalog entry drift'))
       ).toBe(true);
     }
+  });
+
+  test('build prunes orphan pages; page content matches render', async () => {
+    const findings = await loadSourceFindings();
+    const concepts = await loadSourceConcepts();
+    const orphan = joinPath(REPO_ROOT, 'docs/audit/concepts/orphan-tmp-verify.md');
+    await Bun.write(orphan, '# orphan\n');
+    expect((await verifyOrphanPages(findings, concepts)).some(e => e.includes('orphan-tmp-verify'))).toBe(
+      true
+    );
+    await writeAuditPages(findings, concepts);
+    expect(await Bun.file(orphan).exists()).toBe(false);
+    expect(await verifyOrphanPages(findings, concepts)).toEqual([]);
+    expect(await verifyPageContent(findings, concepts)).toEqual([]);
   });
 });
 

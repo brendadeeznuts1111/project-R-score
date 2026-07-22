@@ -465,14 +465,14 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'audit-findings-catalog',
     claim:
-      'FactoryWager audit findings+concepts catalog builds and evidence digests verify (sha3-256 primary; sibling SSOT, not BunToken)',
+      'FactoryWager audit findings+concepts verify (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary; sibling SSOT, not BunToken)',
     kinds: ['unit', 'boundary'],
-    gateClass: 'human-only',
-    gateRef: 'none',
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
     evidence: [
-      'bun tools/audit-catalog.ts build && bun test tests/audit-catalog.test.ts',
-      'bun tools/audit-catalog.ts build',
+      'bun run audit:verify',
       'bun tools/audit-catalog.ts verify',
+      'bun tools/audit-catalog.ts build',
       'bun test tests/audit-catalog.test.ts',
       'lib/audit/audit-finding.ts',
       'lib/audit/audit-concept.ts',
@@ -484,7 +484,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'docs/audit/findings/',
       'docs/audit/concepts/',
     ],
-    freshRerun: 'bun tools/audit-catalog.ts build && bun test tests/audit-catalog.test.ts',
+    freshRerun: 'bun run audit:verify',
     freshRerunKind: 'claim',
     owner: 'lib/audit/ · tools/audit-catalog.ts',
   },

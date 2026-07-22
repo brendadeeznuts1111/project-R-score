@@ -20,7 +20,7 @@ Inventory: [`../README.md`](../README.md).
 
 ```bash
 bun tools/audit-catalog.ts build    # catalog + docs/audit/{findings,concepts}/*.md
-bun tools/audit-catalog.ts verify   # evidence + graph + relatedDocs + catalog parity
+bun tools/audit-catalog.ts verify   # evidence · graph · relatedDocs · pages · orphans · catalog parity
 bun tools/audit-catalog.ts list
 bun tools/bun-doc-refs.ts suggest --audit "fiber"
 bun tools/audit-emit-stub.ts

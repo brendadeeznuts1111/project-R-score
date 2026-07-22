@@ -31,11 +31,11 @@ Prefer `bun run audit:catalog:build`. `bun tools/bun-doc-refs.ts index-audit` is
 | Script | Runs |
 |--------|------|
 | `bun run audit:catalog:build` | `audit-catalog.ts build` |
-| `bun run audit:verify` | `audit-catalog.ts verify` (sources + built catalog parity) |
+| `bun run audit:verify` | `audit-catalog.ts verify` (evidence · graph · relatedDocs · pages · orphans · catalog parity) |
 | `bun run audit:catalog` | `audit-catalog.ts list` (list only — not build) |
 | `bun run audit:get -- <id>` | `audit-catalog.ts get` (all hits / co-hits) |
 | `bun run audit:search -- <q>` | `audit-catalog.ts search` |
 | `bun run audit:emit-stub` | rewrite sample finding + evidence |
 | `bun run audit:migrate:sha3` | one-shot normalize inbound/old findings → Phase 2 |
 
-Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2; primary `sha3-256`). Proof claim: `audit-findings-catalog` — see [`docs/harness/PROOF.md`](../harness/PROOF.md).
+Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2; primary `sha3-256`). Proof claim: `audit-findings-catalog` (continuous — pre-commit when audit SSOT staged · `ci:harness` CHEAP) — see [`docs/harness/PROOF.md`](../harness/PROOF.md).

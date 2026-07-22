@@ -188,6 +188,21 @@ export function verifyRelatedDocs(
   return errors;
 }
 
+async function pruneOrphanPages(
+  keepFindingNames: ReadonlySet<string>,
+  keepConceptNames: ReadonlySet<string>
+): Promise<void> {
+  const glob = new Bun.Glob('*.md');
+  for await (const name of glob.scan({ cwd: FINDING_PAGES_DIR, onlyFiles: true })) {
+    if (name === 'README.md' || keepFindingNames.has(name)) continue;
+    await Bun.file(joinPath(FINDING_PAGES_DIR, name)).unlink();
+  }
+  for await (const name of glob.scan({ cwd: CONCEPT_PAGES_DIR, onlyFiles: true })) {
+    if (name === 'README.md' || keepConceptNames.has(name)) continue;
+    await Bun.file(joinPath(CONCEPT_PAGES_DIR, name)).unlink();
+  }
+}
+
 export async function writeAuditPages(
   findings: AuditFinding[],
   concepts: AuditConcept[]
@@ -195,6 +210,8 @@ export async function writeAuditPages(
   const ctx = {
     findingIds: new Set(findings.map(f => normalizeFindingId(f.id))),
   };
+  const keepFindings = new Set(findings.map(f => `${normalizeFindingId(f.id)}.md`));
+  const keepConcepts = new Set(concepts.map(c => `${normalizeFindingId(c.id)}.md`));
   for (const f of findings) {
     await Bun.write(
       joinPath(REPO_ROOT, auditFindingDocsPath(f.id)),
@@ -209,6 +226,7 @@ export async function writeAuditPages(
     );
   }
   await Bun.write(joinPath(CONCEPT_PAGES_DIR, 'README.md'), renderAuditConceptsIndex(concepts));
+  await pruneOrphanPages(keepFindings, keepConcepts);
 }
 
 export function buildCatalogFile(
@@ -236,7 +254,29 @@ async function relatedDocsResolver(): Promise<(token: string) => boolean> {
   return (token: string) => Boolean(getCuratedEntry(token));
 }
 
+function catalogPayloadKey(catalog: AuditCatalogFile): string {
+  // Ignore generated/bunVersion churn — only republish when entries change.
+  return JSON.stringify({
+    count: catalog.count,
+    conceptCount: catalog.conceptCount,
+    byStatus: catalog.byStatus,
+    findings: catalog.findings,
+    concepts: catalog.concepts,
+  });
+}
+
 async function writeCatalogAtomic(catalog: AuditCatalogFile): Promise<void> {
+  const existing = Bun.file(CATALOG_PATH);
+  if (await existing.exists()) {
+    try {
+      const prev = parseAuditCatalogRaw(await existing.json());
+      if (catalogPayloadKey(prev) === catalogPayloadKey(catalog)) {
+        return;
+      }
+    } catch {
+      // rewrite on corrupt prior
+    }
+  }
   await Bun.write(CATALOG_TMP_PATH, `${JSON.stringify(catalog, null, 2)}\n`);
   // Same-dir rename via mv — readers never see a torn JSON write.
   const moved = await Bun.$`mv ${CATALOG_TMP_PATH} ${CATALOG_PATH}`.nothrow();
@@ -293,6 +333,43 @@ export function parseAuditCatalogRaw(raw: unknown): AuditCatalogFile {
   };
 }
 
+function stableJson(value: object | string | number | boolean | null | undefined): string {
+  return JSON.stringify(value ?? null);
+}
+
+function findingSnapshot(f: AuditFinding): string {
+  return stableJson({
+    id: normalizeFindingId(f.id),
+    kind: f.kind,
+    title: f.title,
+    description: f.description,
+    status: f.status,
+    publishedAt: f.publishedAt,
+    since: f.since,
+    discoveredIn: f.discoveredIn,
+    mitigatedIn: f.mitigatedIn,
+    evidence: f.evidence,
+    related: f.related,
+    relatedDocs: f.relatedDocs,
+    meta: f.meta,
+  });
+}
+
+function conceptSnapshot(c: AuditConcept): string {
+  return stableJson({
+    id: normalizeFindingId(c.id),
+    kind: c.kind,
+    title: c.title,
+    description: c.description,
+    publishedAt: c.publishedAt,
+    since: c.since,
+    references: c.references,
+    related: c.related,
+    relatedDocs: c.relatedDocs,
+    meta: c.meta,
+  });
+}
+
 export function verifyCatalogParity(
   sources: { findings: AuditFinding[]; concepts: AuditConcept[] },
   catalog: AuditCatalogFile
@@ -314,20 +391,36 @@ export function verifyCatalogParity(
   for (const id of catC) {
     if (!srcC.has(id)) errors.push(`catalog stale concept ${id} (run build)`);
   }
+  if (catalog.count !== sources.findings.length) {
+    errors.push(`catalog.count ${catalog.count} ≠ sources ${sources.findings.length} (run build)`);
+  }
+  if (catalog.conceptCount !== sources.concepts.length) {
+    errors.push(
+      `catalog.conceptCount ${catalog.conceptCount} ≠ sources ${sources.concepts.length} (run build)`
+    );
+  }
+  const expectedStatus = tallyByStatus(sources.findings);
+  if (stableJson(catalog.byStatus) !== stableJson(expectedStatus)) {
+    errors.push('catalog.byStatus mismatch (run build)');
+  }
   for (const f of sources.findings) {
     const row = catalog.findings.find(c => normalizeFindingId(c.id) === normalizeFindingId(f.id));
     if (!row) continue;
-    if (
-      row.evidence.digest !== f.evidence.digest ||
-      row.evidence.algorithm !== f.evidence.algorithm
-    ) {
-      errors.push(`${f.id}: catalog evidence fingerprint mismatch (run build)`);
+    if (findingSnapshot(f) !== findingSnapshot(row)) {
+      errors.push(`${f.id}: catalog entry drift (run build)`);
+    }
+  }
+  for (const c of sources.concepts) {
+    const row = catalog.concepts.find(x => normalizeFindingId(x.id) === normalizeFindingId(c.id));
+    if (!row) continue;
+    if (conceptSnapshot(c) !== conceptSnapshot(row)) {
+      errors.push(`${c.id}: catalog entry drift (run build)`);
     }
   }
   return errors;
 }
 
-async function verifyOrphanPages(
+export async function verifyOrphanPages(
   findings: AuditFinding[],
   concepts: AuditConcept[]
 ): Promise<string[]> {
@@ -338,13 +431,52 @@ async function verifyOrphanPages(
   for await (const name of glob.scan({ cwd: FINDING_PAGES_DIR, onlyFiles: true })) {
     if (name === 'README.md') continue;
     if (!findingPages.has(name)) {
-      errors.push(`orphan finding page docs/audit/findings/${name} (delete or restore source)`);
+      errors.push(`orphan finding page docs/audit/findings/${name} (run build to prune)`);
     }
   }
   for await (const name of glob.scan({ cwd: CONCEPT_PAGES_DIR, onlyFiles: true })) {
     if (name === 'README.md') continue;
     if (!conceptPages.has(name)) {
-      errors.push(`orphan concept page docs/audit/concepts/${name} (delete or restore source)`);
+      errors.push(`orphan concept page docs/audit/concepts/${name} (run build to prune)`);
+    }
+  }
+  return errors;
+}
+
+export async function verifyPageContent(
+  findings: AuditFinding[],
+  concepts: AuditConcept[]
+): Promise<string[]> {
+  const errors: string[] = [];
+  const ctx = {
+    findingIds: new Set(findings.map(f => normalizeFindingId(f.id))),
+  };
+  for (const f of findings) {
+    const path = joinPath(REPO_ROOT, auditFindingDocsPath(f.id));
+    const file = Bun.file(path);
+    if (!(await file.exists())) continue;
+    if ((await file.text()) !== renderAuditFindingMarkdown(f, ctx)) {
+      errors.push(`${f.id}: docs page drift (run build)`);
+    }
+  }
+  for (const c of concepts) {
+    const path = joinPath(REPO_ROOT, auditConceptDocsPath(c.id));
+    const file = Bun.file(path);
+    if (!(await file.exists())) continue;
+    if ((await file.text()) !== renderAuditConceptMarkdown(c, ctx)) {
+      errors.push(`${c.id}: docs page drift (run build)`);
+    }
+  }
+  const findingsIndex = joinPath(FINDING_PAGES_DIR, 'README.md');
+  if (await Bun.file(findingsIndex).exists()) {
+    if ((await Bun.file(findingsIndex).text()) !== renderAuditFindingsIndex(findings)) {
+      errors.push('docs/audit/findings/README.md drift (run build)');
+    }
+  }
+  const conceptsIndex = joinPath(CONCEPT_PAGES_DIR, 'README.md');
+  if (await Bun.file(conceptsIndex).exists()) {
+    if ((await Bun.file(conceptsIndex).text()) !== renderAuditConceptsIndex(concepts)) {
+      errors.push('docs/audit/concepts/README.md drift (run build)');
     }
   }
   return errors;
@@ -377,6 +509,7 @@ export async function verifyAuditCatalog(): Promise<{
     }
   }
   errors.push(...(await verifyOrphanPages(findings, concepts)));
+  errors.push(...(await verifyPageContent(findings, concepts)));
 
   const catalogFile = Bun.file(CATALOG_PATH);
   if (!(await catalogFile.exists())) {
@@ -402,13 +535,16 @@ export async function verifyAuditCatalog(): Promise<{
 export async function loadAuditCatalog(): Promise<AuditCatalogFile> {
   const file = Bun.file(CATALOG_PATH);
   if (!(await file.exists())) {
+    // Missing catalog: rebuild once (suggest --audit ergonomics). Corrupt catalogs must not silent-write.
     return buildAuditCatalog();
   }
   try {
     return parseAuditCatalogRaw(await file.json());
-  } catch {
-    // Corrupt / torn JSON / soft-legacy shape → rebuild (verify still fails until rebuild succeeds)
-    return buildAuditCatalog();
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(
+      `tools/audit-catalog.json corrupt or invalid (${msg}). Run: bun run audit:catalog:build`
+    );
   }
 }
 
@@ -610,7 +746,8 @@ async function main(): Promise<void> {
       process.exit(1);
     }
     console.info(
-      `✅ audit verify ok — ${result.count} findings, ${result.conceptCount} concepts, evidence + pages`
+      `✅ audit verify ok — ${result.count} findings, ${result.conceptCount} concepts` +
+        ` (evidence · graph · relatedDocs · pages · orphans · catalog parity)`
     );
     return;
   }

@@ -363,6 +363,14 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun tools/bun-doc-refs.ts schedule --once');
   });
 
+  test('audit-findings-catalog freshRerun is audit:verify (continuous)', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'audit-findings-catalog');
+    expect(p?.freshRerun).toBe('bun run audit:verify');
+    expect(p?.gateClass).toBe('continuous');
+    expect(p?.gateRef).toBe('ci:harness');
+    expect(p?.evidence.some(e => e.includes('docs/audit'))).toBe(true);
+  });
+
   test('path-bun claim covers lib and tools', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'path-bun');
     expect(p?.claim).toContain('tools/');
@@ -371,15 +379,19 @@ describe('fresh-rerun contract', () => {
 });
 
 describe('typecheck coherence includes', () => {
-  test('tsconfig.check.json includes lib/docs, utils, core, and security globs', async () => {
+  test('tsconfig.check.json includes lib/docs, audit, utils, core, and security globs', async () => {
     const cfg = (await Bun.file(
       new URL('../tsconfig.check.json', import.meta.url).pathname
     ).json()) as { include: string[] };
     expect(cfg.include).toContain('lib/docs/**/*');
+    expect(cfg.include).toContain('lib/audit/**/*');
     expect(cfg.include).toContain('lib/utils/**/*');
     expect(cfg.include).toContain('lib/core/**/*');
     expect(cfg.include).toContain('lib/security/**/*');
     expect(cfg.include.some(p => p.startsWith('lib/docs/') && p !== 'lib/docs/**/*')).toBe(
+      false
+    );
+    expect(cfg.include.some(p => p.startsWith('lib/audit/') && p !== 'lib/audit/**/*')).toBe(
       false
     );
     expect(cfg.include.some(p => p.startsWith('lib/utils/') && p !== 'lib/utils/**/*')).toBe(
