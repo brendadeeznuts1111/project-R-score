@@ -46,6 +46,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test ./tests/deep-equals.test.ts` · evidence [`lib/deep-equals.ts`](../../lib/deep-equals.ts)
 - **`peek-settle-boundaries`** — `Bun.peek` settled-promise fast path (`awaitSettled` / `awaitAllSettled` / `peekIfSettled`) (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/peek-settle.test.ts` · evidence [`lib/peek-settle.ts`](../../lib/peek-settle.ts)
+- **`bun-time-boundaries`** — utils date/time/number tokens: `Bun.nanoseconds` · `Bun.sleep`/`sleepSync` · `Bun.randomUUIDv7` (`unit` + `boundary`)  
+  *Ratchet* → `bun test ./tests/time.test.ts` · evidence [`lib/time.ts`](../../lib/time.ts)
 - **`terminal-pty-boundaries`** — Bun.Terminal PTY helpers (`spawnWithTerminal` / capturing terminal) (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/terminal.test.ts` · evidence [`lib/terminal.ts`](../../lib/terminal.ts)
 - **`security-hash-boundaries`** — Bun.password hash/verify and CryptoHasher sha256/sha1 digests behave as expected  
@@ -133,6 +135,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `image-metadata-boundaries` | human-only | `bun test ./tests/image-metadata.test.ts` |
 | `deep-equals-boundaries` | human-only | `bun test ./tests/deep-equals.test.ts` |
 | `peek-settle-boundaries` | human-only | `bun test ./tests/peek-settle.test.ts` |
+| `bun-time-boundaries` | human-only | `bun test ./tests/time.test.ts` |
 | `terminal-pty-boundaries` | human-only | `bun test ./tests/terminal.test.ts` |
 | `security-hash-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/security-hash/` |
 | `url-pattern-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-site-url.test.ts` |
@@ -168,7 +171,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
 | `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 15.
+Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 16.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 

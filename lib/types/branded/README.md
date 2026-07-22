@@ -48,6 +48,7 @@ Forge: [`audit.ts`](./audit.ts). JIT: `bun tools/brand-catalog.ts audit`.
 | `AuditFindingId` | `BrandedString<'AuditFindingId'>` | `string` | non-empty string; `parse`/`try` trim | `sample-fiber-demo-2026-07-21` | Finding PK |
 | `AuditConceptId` | `BrandedString<'AuditConceptId'>` | `string` | same | `nagata-map` | Concept PK |
 | `AuditEntryId` | `BrandedString<'AuditEntryId'>` | `string` | same (own brand, not a union) | finding or concept id shape | Polymorphic ref (`related[]`, `AUDIT_REFS`) |
+| `EvidenceId` | `BrandedString<'EvidenceId'>` | `string` | UUID v7 (`Bun.randomUUIDv7`) | system-internal / wire | Screenshot / image evidence row |
 | `AuditId` | `BrandedString<'AuditId'>` | `string` | same (no UUID rule) | any non-empty id used by log callers | Audit **log** entry (not SSOT) |
 | `VersionId` | `BrandedString<'VersionId'>` | `string` | same (no semver rule) | e.g. `1.4.0` | Config/secret version |
 

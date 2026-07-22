@@ -34,6 +34,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | Terminal / PTY | [`terminal.ts`](./terminal.ts) |
 | Deep equals | [`deep-equals.ts`](./deep-equals.ts) |
 | Peek settle | [`peek-settle.ts`](./peek-settle.ts) |
+| Time / UUID v7 | [`time.ts`](./time.ts) |
 | Image metadata | [`image-metadata.ts`](./image-metadata.ts) |
 | Screenshot TEST-003 | [`screenshot-remediation.ts`](./screenshot-remediation.ts) |
 | Path (Bun) | [`path-bun.ts`](./path-bun.ts) |
@@ -48,6 +49,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`terminal.ts`](./terminal.ts) | `Bun.Terminal` PTY helpers (`spawnWithTerminal`) |
 | [`deep-equals.ts`](./deep-equals.ts) | `Bun.deepEquals` · strict · changed-index |
 | [`peek-settle.ts`](./peek-settle.ts) | `Bun.peek` · `awaitSettled` · `awaitAllSettled` · `peekIfSettled` |
+| [`time.ts`](./time.ts) | `Bun.nanoseconds` · `sleep`/`sleepSync` · `randomUUIDv7` |
 | [`image-metadata.ts`](./image-metadata.ts) | `Bun.Image.metadata` evidence helpers |
 | [`screenshot-remediation.ts`](./screenshot-remediation.ts) | TEST-003 screenshot metadata remediation |
 | [`projects-scan.ts`](./projects-scan.ts) | Projects inventory helpers for registry tooling |

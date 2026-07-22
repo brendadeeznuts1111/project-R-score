@@ -574,6 +574,10 @@ export const BUN_UTILS_URLS = {
     IMAGE_METADATA: '/docs/runtime/image#metadata',
     DEEP_EQUALS: '/docs/runtime/utils#bun-deepequals',
     PEEK: '/docs/runtime/utils#bun-peek',
+    NANOSECONDS: '/docs/runtime/utils#bun-nanoseconds',
+    SLEEP: '/docs/runtime/utils#bun-sleep',
+    SLEEP_SYNC: '/docs/runtime/utils#bun-sleepsync',
+    RANDOM_UUID_V7: '/docs/runtime/utils#bun-randomuuidv7',
     PID: '/docs/runtime/child-process#benchmarks',
     SIGNALS: '/docs/runtime/child-process#benchmarks',
     ENV_VARS: '/docs/runtime/environment-variables#setting-environment-variables',
@@ -788,6 +792,23 @@ imageEvidenceMetaEqual(a, b); // strict Bun.deepEquals`,
     PEEK: `import { awaitSettled, promiseStatus } from "../lib/peek-settle.ts";
 const meta = await awaitSettled(img.metadata());
 promiseStatus(pending); // fulfilled | rejected | pending | sync`,
+
+    NANOSECONDS: `import { nanoseconds, elapsedMs, timedAsync } from "../lib/time.ts";
+const t0 = nanoseconds();
+const { value, elapsedMs: ms } = await timedAsync(() => work());
+elapsedMs(t0);`,
+
+    SLEEP: `import { sleep } from "../lib/time.ts";
+await sleep(100); // ms
+await sleep(new Date(Date.now() + 1000)); // Date deadline`,
+
+    SLEEP_SYNC: `import { sleepSync } from "../lib/time.ts";
+sleepSync(50); // blocking ms`,
+
+    RANDOM_UUID_V7: `import { randomUUIDv7 } from "../lib/time.ts";
+randomUUIDv7();
+randomUUIDv7(new Date()); // embed timestamp
+randomUUIDv7("buffer");`,
 
     PID: `console.info("Current PID:", process.pid);
 console.info("Parent PID:", process.ppid);`,

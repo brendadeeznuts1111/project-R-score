@@ -259,6 +259,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/peek-settle.ts',
   },
   {
+    id: 'bun-time-boundaries',
+    claim:
+      'Bun utils date/time/number tokens (nanoseconds, sleep/sleepSync, randomUUIDv7) behave as this repo depends on them',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: ['bun test ./tests/time.test.ts', 'tests/time.test.ts', 'lib/time.ts'],
+    freshRerun: 'bun test ./tests/time.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/time.ts',
+  },
+  {
     id: 'terminal-pty-boundaries',
     claim: 'Bun.Terminal PTY helpers spawn and capture as this repo depends on them',
     kinds: ['unit', 'boundary'],

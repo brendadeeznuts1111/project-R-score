@@ -33,7 +33,14 @@ import type { UserId, AccountId, IdentityId, AccessKeyId, TokenId } from './iden
 import type { DocumentId, ZoneId, DocTokenId } from './documents.ts';
 import type { ChallengeId, PolicyId } from './security.ts';
 import type { DeploymentId } from './deployment.ts';
-import type { VersionId, AuditId, AuditFindingId, AuditConceptId, AuditEntryId } from './audit.ts';
+import type {
+  VersionId,
+  AuditId,
+  AuditFindingId,
+  AuditConceptId,
+  AuditEntryId,
+  EvidenceId,
+} from './audit.ts';
 import type {
   OperationId,
   ResourceId,
@@ -82,6 +89,7 @@ export type AnyId =
   | AuditFindingId
   | AuditConceptId
   | AuditEntryId
+  | EvidenceId
   | OperationId
   | ResourceId
   | ProjectId

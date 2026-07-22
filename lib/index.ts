@@ -94,6 +94,22 @@ export {
   type PromiseSettleStatus,
 } from './peek-settle';
 
+// Bun utils — date / time / high-res number tokens
+export {
+  BUN_NANOSECONDS_DOCS,
+  BUN_RANDOM_UUID_V7_DOCS,
+  BUN_SLEEP_DOCS,
+  BUN_SLEEP_SYNC_DOCS,
+  elapsedMs,
+  elapsedNs,
+  nanoseconds,
+  randomUUIDv7,
+  sleep,
+  sleepSync,
+  timedAsync,
+  type RandomUuidV7Encoding,
+} from './time';
+
 // Bun.Image metadata + TEST-003 screenshot remediation
 export {
   BUN_IMAGE_DOCS,

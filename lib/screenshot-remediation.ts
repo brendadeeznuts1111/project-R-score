@@ -8,6 +8,8 @@
  * @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
  * @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
  * @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
+ * @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+ * @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
  * @see ./image-metadata.ts
  */
 
@@ -26,6 +28,8 @@ import {
   type ImageMetaExpectations,
 } from './image-metadata.ts';
 import { awaitAllSettled } from './peek-settle.ts';
+import { randomUUIDv7, timedAsync } from './time.ts';
+import { asEvidenceId, type EvidenceId } from './types/branded.ts';
 
 /** Stable remediation / claim id for screenshot metadata evidence. */
 export const TEST_003 = 'TEST-003' as const;
@@ -33,7 +37,10 @@ export const TEST_003 = 'TEST-003' as const;
 export type ScreenshotEvidenceRecord = {
   kind: 'ScreenshotEvidence';
   testId: typeof TEST_003;
+  /** ISO-8601 capture instant (wall clock). */
   capturedAt: string;
+  /** Monotonic UUID v7 (timestamp-encoded) for this evidence row. */
+  evidenceId: EvidenceId;
   /** Optional subject label (team, site, market slug, …). */
   subject?: string;
   /** @deprecated prefer `subject` — kept for sports-terminal wire compatibility */
@@ -58,6 +65,8 @@ export type Test003Response = {
   ok: boolean;
   /** True when `previous` matched via Bun.deepEquals (source+thumbnail+crop). */
   unchanged: boolean;
+  /** Wall-clock build duration via Bun.nanoseconds (ms). */
+  elapsedMs: number;
   checks: ImageMetaCheck[];
   evidence: ScreenshotEvidenceRecord;
   remediation: Test003Remediation;
@@ -69,6 +78,8 @@ export type BuildScreenshotEvidenceOptions = {
   team?: string;
   crop?: { x: number; y: number; w: number; h: number };
   capturedAt?: string;
+  /** Override UUID v7 (default: Bun.randomUUIDv7 at capture time). */
+  evidenceId?: EvidenceId;
   /** Digest algorithm for source + thumbnail metadata. */
   algorithm?: ImageDigestAlgorithm;
   /** Thumbnail resize bounds (default 400×300). */
@@ -103,25 +114,37 @@ function resizeCommand(thumbMaxWidth: number, thumbMaxHeight: number): string {
 export async function buildScreenshotEvidenceRecord(
   screenshotBytes: Uint8Array | Buffer,
   options: BuildScreenshotEvidenceOptions = {}
-): Promise<{ record: ScreenshotEvidenceRecord; thumbnailBytes: Uint8Array }> {
+): Promise<{
+  record: ScreenshotEvidenceRecord;
+  thumbnailBytes: Uint8Array;
+  elapsedMs: number;
+}> {
   const subject = options.subject ?? options.team;
   const algorithm = options.algorithm;
   const thumbMaxWidth = options.thumbMaxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
   const thumbMaxHeight = options.thumbMaxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
+  const capturedAt = options.capturedAt ?? new Date().toISOString();
+  const evidenceId = options.evidenceId ?? asEvidenceId(randomUUIDv7(new Date(capturedAt)));
 
-  const [source, resized] = await awaitAllSettled([
-    extractImageEvidenceMeta(screenshotBytes, { algorithm }),
-    resizeScreenshotPng(screenshotBytes, {
-      algorithm,
-      width: thumbMaxWidth,
-      height: thumbMaxHeight,
-    }),
-  ] as const);
+  const {
+    value: [source, resized],
+    elapsedMs,
+  } = await timedAsync(() =>
+    awaitAllSettled([
+      extractImageEvidenceMeta(screenshotBytes, { algorithm }),
+      resizeScreenshotPng(screenshotBytes, {
+        algorithm,
+        width: thumbMaxWidth,
+        height: thumbMaxHeight,
+      }),
+    ] as const)
+  );
 
   const record: ScreenshotEvidenceRecord = {
     kind: 'ScreenshotEvidence',
     testId: TEST_003,
-    capturedAt: options.capturedAt ?? new Date().toISOString(),
+    capturedAt,
+    evidenceId,
     subject,
     team: options.team ?? subject,
     source,
@@ -129,12 +152,12 @@ export async function buildScreenshotEvidenceRecord(
     crop: options.crop,
   };
 
-  return { record, thumbnailBytes: resized.bytes };
+  return { record, thumbnailBytes: resized.bytes, elapsedMs };
 }
 
 /**
  * True when two evidence records match on source+thumbnail metas (Bun.deepEquals).
- * Ignores `capturedAt` / `subject` / `team` so recapture timestamps do not force writes.
+ * Ignores `capturedAt` / `evidenceId` / `subject` / `team` so recapture noise does not force writes.
  */
 export function screenshotEvidenceEqual(
   a: ScreenshotEvidenceRecord,
@@ -155,7 +178,7 @@ export function screenshotEvidenceEqual(
 export function runTest003(
   record: ScreenshotEvidenceRecord,
   expectations?: ImageMetaExpectations,
-  options: { unchanged?: boolean } = {}
+  options: { unchanged?: boolean; elapsedMs?: number } = {}
 ): Test003Response {
   const maxW = expectations?.maxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
   const maxH = expectations?.maxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
@@ -166,6 +189,7 @@ export function runTest003(
   const failed = checks.filter(c => !c.ok);
   const cmd = resizeCommand(maxW, maxH);
   const unchanged = options.unchanged === true;
+  const elapsedMs = options.elapsedMs ?? 0;
 
   let remediation: Test003Remediation;
   if (ok && unchanged) {
@@ -204,6 +228,7 @@ export function runTest003(
     status,
     ok,
     unchanged,
+    elapsedMs,
     checks,
     evidence: record,
     remediation,
@@ -220,9 +245,12 @@ export async function remediateScreenshotCapture(
 ): Promise<Test003Response & { thumbnailBytes: Uint8Array }> {
   const thumbMaxWidth = options.thumbMaxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
   const thumbMaxHeight = options.thumbMaxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
-  const { record, thumbnailBytes } = await buildScreenshotEvidenceRecord(screenshotBytes, options);
+  const { record, thumbnailBytes, elapsedMs } = await buildScreenshotEvidenceRecord(
+    screenshotBytes,
+    options
+  );
   const expectations = options.expectations ?? defaultExpectations(thumbMaxWidth, thumbMaxHeight);
   const unchanged = Boolean(options.previous && screenshotEvidenceEqual(record, options.previous));
-  const result = runTest003(record, expectations, { unchanged });
+  const result = runTest003(record, expectations, { unchanged, elapsedMs });
   return { ...result, thumbnailBytes };
 }

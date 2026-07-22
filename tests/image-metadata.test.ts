@@ -22,6 +22,7 @@ import {
   screenshotEvidenceEqual,
   type ScreenshotEvidenceRecord,
 } from '../lib/screenshot-remediation.ts';
+import { asEvidenceId } from '../lib/types/branded.ts';
 
 /** 10×10 PNG fixture. */
 const PNG_10 = Buffer.from(
@@ -121,17 +122,22 @@ describe('lib/image-metadata', () => {
 
 describe('lib/screenshot-remediation TEST-003', () => {
   test('buildScreenshotEvidenceRecord + runTest003 passes for small PNG', async () => {
-    const { record } = await buildScreenshotEvidenceRecord(PNG_10, { subject: 'demo' });
+    const { record, elapsedMs } = await buildScreenshotEvidenceRecord(PNG_10, { subject: 'demo' });
     expect(record.testId).toBe(TEST_003);
     expect(record.subject).toBe('demo');
+    expect(record.evidenceId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
     expect(record.source.format).toBe('png');
     expect(record.thumbnail.format).toBe('png');
+    expect(elapsedMs).toBeGreaterThanOrEqual(0);
 
-    const result = runTest003(record);
+    const result = runTest003(record, undefined, { elapsedMs });
     expect(result.code).toBe(TEST_003);
     expect(result.status).toBe('pass');
     expect(result.ok).toBe(true);
     expect(result.unchanged).toBe(false);
+    expect(result.elapsedMs).toBe(elapsedMs);
     expect(result.remediation.action).toBe('accept');
   });
 
@@ -140,6 +146,7 @@ describe('lib/screenshot-remediation TEST-003', () => {
       kind: 'ScreenshotEvidence',
       testId: TEST_003,
       capturedAt: new Date().toISOString(),
+      evidenceId: asEvidenceId('00000000-0000-7000-8000-000000000001'),
       source: {
         width: 1280,
         height: 800,
@@ -169,6 +176,7 @@ describe('lib/screenshot-remediation TEST-003', () => {
       kind: 'ScreenshotEvidence',
       testId: TEST_003,
       capturedAt: new Date().toISOString(),
+      evidenceId: asEvidenceId('00000000-0000-7000-8000-000000000002'),
       source: {
         width: 1280,
         height: 800,
@@ -201,6 +209,8 @@ describe('lib/screenshot-remediation TEST-003', () => {
     const result = await remediateScreenshotCapture(PNG_10, { team: 'man-city' });
     expect(result.status).toBe('pass');
     expect(result.ok).toBe(true);
+    expect(result.elapsedMs).toBeGreaterThanOrEqual(0);
+    expect(result.evidence.evidenceId.length).toBeGreaterThan(0);
     expect(result.thumbnailBytes.byteLength).toBeGreaterThan(0);
     expect(result.evidence.thumbnail.width).toBeLessThanOrEqual(DEFAULT_THUMB_MAX_WIDTH);
   });
