@@ -35,6 +35,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Code quality tenants (types · coverage · orphans · complexity) → `bun run test:code-quality` · [`code-quality.md`](code-quality.md)
 - Bun harness control plane (`noOrphans`, freshRerun timeout, `--smol`, stdin vs `bun run -`) → [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md#harness-control-plane) · workspace `bunfig.toml` `[run]`
 - CI / deploy runbooks → `bun run test:ci-deploy` · [`ci-deploy.md`](ci-deploy.md) · claim `ci-deploy-runbooks`
+- Cloudflare / R2 / Pages (`project-r-score`) → `bun run cloudflare:env` · [`config/r2-env.ts`](../../config/r2-env.ts) · [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · claim `cloudflare-pages-env-ssot` · `bun test tests/r2-env.test.ts`
 - Install-verify WebView journey (`install-verify-journey`) → `bun run docs:install-verify` · [`install-verify.md`](install-verify.md) · `bun run test:install-verify`
 - Search governance WebView journey (`search-governance-basic`) → `bun run docs:search-governance` · [`search-governance.md`](search-governance.md) · `bun run test:search-governance`
 - Fresh-rerun (claim re-proof before merge) → `bun run docs:fresh-rerun` · [`FRESH-RERUN.md`](FRESH-RERUN.md)

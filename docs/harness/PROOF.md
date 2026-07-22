@@ -48,6 +48,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test ./tests/peek-settle.test.ts` · evidence [`lib/peek-settle.ts`](../../lib/peek-settle.ts)
 - **`bun-time-boundaries`** — utils date/time/number tokens: `Bun.nanoseconds` · `Bun.sleep`/`sleepSync` · `Bun.randomUUIDv7` · `Bun.version`/`revision` + `mintEvidenceId` / `mintEvidenceIdAt` / `checkEvidenceTiming` (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/time.test.ts` · evidence [`lib/time.ts`](../../lib/time.ts) · wired into TEST-003 via [`lib/screenshot-remediation.ts`](../../lib/screenshot-remediation.ts)
+- **`cloudflare-pages-env-ssot`** — Pages `project-r-score` identity + build pins in `config/r2-env` / `.env.example` (`unit` + `boundary`)  
+  *Ratchet* → `bun test tests/r2-env.test.ts` · [`config/r2-env.ts`](../../config/r2-env.ts) · [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · `bun run cloudflare:env`
 - **`terminal-pty-boundaries`** — Bun.Terminal PTY helpers (`spawnWithTerminal` / capturing terminal) (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/terminal.test.ts` · evidence [`lib/terminal.ts`](../../lib/terminal.ts)
 - **`security-hash-boundaries`** — Bun.password hash/verify and CryptoHasher sha256/sha1 digests behave as expected  
@@ -136,6 +138,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deep-equals-boundaries` | human-only | `bun test ./tests/deep-equals.test.ts` |
 | `peek-settle-boundaries` | human-only | `bun test ./tests/peek-settle.test.ts` |
 | `bun-time-boundaries` | human-only | `bun test ./tests/time.test.ts` |
+| `cloudflare-pages-env-ssot` | human-only | `bun test tests/r2-env.test.ts` |
 | `terminal-pty-boundaries` | human-only | `bun test ./tests/terminal.test.ts` |
 | `security-hash-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/security-hash/` |
 | `url-pattern-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-site-url.test.ts` |
@@ -171,7 +174,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
 | `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 16.
+Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 17.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 

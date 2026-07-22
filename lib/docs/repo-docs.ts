@@ -89,6 +89,9 @@ export const CANONICAL_HARNESS = {
   eslintHarnessConfig: 'eslint.harness.config.ts',
   ports: 'config/ports.ts',
   r2Env: 'config/r2-env.ts',
+  cloudflareEnvStatus: 'scripts/cloudflare-env-status.ts',
+  envExample: '.env.example',
+  cloudflarePagesTenant: 'docs/harness/tenants/cloudflare-pages.md',
 } as const;
 
 /** Tools / skills (repo-relative). */

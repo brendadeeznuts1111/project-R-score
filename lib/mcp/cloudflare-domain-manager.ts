@@ -2,6 +2,7 @@
 // lib/mcp/cloudflare-domain-manager.ts — Cloudflare domain and subdomain management via API
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
+import { cloudflareAccountIdFromEnv, requireCloudflareApiToken } from '../../config/r2-env.ts';
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { domainIntegration } from './domain-integration';
 import { styled, FW_COLORS } from '../theme/colors';
@@ -141,12 +142,14 @@ export class CloudflareDomainManager {
 
   constructor() {
     // Fail closed: never inject demo tokens into the environment.
-    const accountRaw = Bun.env.CLOUDFLARE_ACCOUNT_ID;
-    const token = Bun.env.CLOUDFLARE_API_TOKEN;
-
-    if (!accountRaw || !token) {
+    // Account: R2_* / CLOUDFLARE_* / proven default via config/r2-env.ts
+    const accountRaw = cloudflareAccountIdFromEnv();
+    let token: string;
+    try {
+      token = requireCloudflareApiToken();
+    } catch {
       throw new Error(
-        'Missing required Cloudflare credentials. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN (never hardcode tokens in source).'
+        'Missing required Cloudflare credentials. Set CLOUDFLARE_API_TOKEN (and optionally CLOUDFLARE_ACCOUNT_ID / R2_ACCOUNT_ID). Never hardcode tokens in source.'
       );
     }
     this.accountId = asAccountId(accountRaw);

@@ -263,6 +263,14 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run check:brands:types');
   });
 
+  test('cloudflare-pages-env-ssot freshRerun is r2-env unit suite', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'cloudflare-pages-env-ssot');
+    expect(p?.freshRerun).toBe('bun test tests/r2-env.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.owner).toBe('config/r2-env.ts');
+    expect(p?.evidence).toContain('docs/harness/tenants/cloudflare-pages.md');
+  });
+
   test('install-verify freshRerun is proof:install', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify');
     expect(p?.freshRerun).toBe('bun run proof:install');

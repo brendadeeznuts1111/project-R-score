@@ -59,7 +59,7 @@ Projects/
 │       ├── kimiremote/      # gitignored — own repo
 │       ├── f402-openapi/    # gitignored — own tree
 │       └── playwriter-skill/
-├── public/                  # Static assets, registry viewer
+├── public/                  # Static assets + Cloudflare Pages output (project-r-score; SSOT config/r2-env)
 ├── scratch/                 # Bun playground (curated; archive/scratch has older copies)
 ├── scripts/                 # Automation, CI, fix-* remediations
 ├── server/ · tests/ · tools/

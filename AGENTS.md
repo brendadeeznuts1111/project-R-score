@@ -26,6 +26,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | TokenRef (interior) / BunToken (export) | [`lib/docs/token-ref.ts`](lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](lib/docs/bun-token.ts) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
+| Cloudflare / R2 / Pages | [`config/r2-env.ts`](config/r2-env.ts) · `bun run cloudflare:env` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
 
 ## Communication precision
@@ -78,8 +79,9 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
   - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
   - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
   - Harness JIT / proof / authority / review → [`docs/harness/README.md`](docs/harness/README.md) · [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md) · `bun run harness:status` · `bun run proof:install`
+  - Cloudflare / R2 / Pages → [`config/r2-env.ts`](config/r2-env.ts) · [`.env.example`](.env.example) · `bun run cloudflare:env` · claim `cloudflare-pages-env-ssot` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) (Workers/Functions: `~/.agents/skills/cloudflare` · `wrangler`; root `wrangler.toml` is Worker-only)
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
- - Audit findings/concepts → `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · [`docs/audit/README.md`](docs/audit/README.md) · claim `audit-findings-catalog`
+  - Audit findings/concepts → `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · [`docs/audit/README.md`](docs/audit/README.md) · claim `audit-findings-catalog`
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs staged)
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
   - Testing → nearest `*.test.ts` / [`tests/`](tests/console-depth.test.ts) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))

@@ -271,6 +271,25 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/time.ts',
   },
   {
+    id: 'cloudflare-pages-env-ssot',
+    claim:
+      'Cloudflare Pages project-r-score identity + build pins (BUN_VERSION 1.3.14, SKIP_DEPENDENCY_INSTALL, destination public) stay documented in config/r2-env and .env.example',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/r2-env.test.ts',
+      'tests/r2-env.test.ts',
+      'config/r2-env.ts',
+      '.env.example',
+      'scripts/cloudflare-env-status.ts',
+      'docs/harness/tenants/cloudflare-pages.md',
+    ],
+    freshRerun: 'bun test tests/r2-env.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'config/r2-env.ts',
+  },
+  {
     id: 'terminal-pty-boundaries',
     claim: 'Bun.Terminal PTY helpers spawn and capture as this repo depends on them',
     kinds: ['unit', 'boundary'],

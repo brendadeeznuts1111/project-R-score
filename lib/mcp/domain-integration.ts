@@ -1,10 +1,11 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/mcp/domain-integration.ts — Domain and subdomain integration with R2 MCP
 
+import { cloudflareAccountIdFromEnv, R2_CONFIG } from '../../config/r2-env.ts';
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { styled, FW_COLORS } from '../theme/colors';
 import { type AccountId, asAccountId } from '../types/branded.ts';
-// asAccountId used only after env is present (fail closed — no hardcoded account).
+// Account from config/r2-env (env overlay → proven default).
 
 export interface DomainConfig {
   primary: {
@@ -74,13 +75,7 @@ export class DomainIntegration {
   }
 
   private loadDomainConfig(): DomainConfig {
-    const accountRaw = Bun.env.CLOUDFLARE_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID;
-    if (!accountRaw) {
-      throw new Error(
-        'DomainIntegration requires CLOUDFLARE_ACCOUNT_ID or R2_ACCOUNT_ID (no hardcoded account id).'
-      );
-    }
-    const accountId = asAccountId(accountRaw);
+    const accountId = asAccountId(cloudflareAccountIdFromEnv());
     return {
       primary: {
         domain: 'factory-wager.com',
@@ -106,7 +101,7 @@ export class DomainIntegration {
       cloudflare: {
         account_id: accountId,
         dashboard_url: `https://dash.cloudflare.com/${accountId}/factory-wager.com`,
-        r2_bucket: Bun.env.R2_BUCKET_NAME || 'scanner-cookies',
+        r2_bucket: R2_CONFIG.bucketName || 'scanner-cookies',
       },
     };
   }

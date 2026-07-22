@@ -65,7 +65,7 @@ export function r2CredentialsFromEnv(
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): NormalizedR2Credentials {
   return normalizeR2Credentials({
-    accountId: overrides.accountId ?? env['R2_ACCOUNT_ID'],
+    accountId: overrides.accountId ?? env['R2_ACCOUNT_ID'] ?? env['CLOUDFLARE_ACCOUNT_ID'],
     accessKeyId: overrides.accessKeyId ?? env['R2_ACCESS_KEY_ID'] ?? env['AWS_ACCESS_KEY_ID'],
     secretAccessKey:
       overrides.secretAccessKey ??
@@ -98,7 +98,7 @@ export function requireR2Credentials(
   Pick<NormalizedR2Credentials, 'endpoint' | 'bucketName'> {
   const n = normalizeR2Credentials(input);
   const missing: string[] = [];
-  if (!n.accountId) missing.push('R2_ACCOUNT_ID');
+  if (!n.accountId) missing.push('R2_ACCOUNT_ID or CLOUDFLARE_ACCOUNT_ID');
   if (!n.accessKeyId) missing.push('R2_ACCESS_KEY_ID');
   if (!n.secretAccessKey) missing.push('R2_SECRET_ACCESS_KEY');
   if (missing.length > 0) {

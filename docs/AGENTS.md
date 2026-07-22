@@ -15,6 +15,7 @@
 | Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |
 | Harness JIT | [harness/README.md](./harness/README.md) · `bun run harness:status` |
 | Path SSOT | [`../lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) |
+| Cloudflare / R2 / Pages | [`../config/r2-env.ts`](../config/r2-env.ts) · `bun run cloudflare:env` · [harness/tenants/cloudflare-pages.md](./harness/tenants/cloudflare-pages.md) · claim `cloudflare-pages-env-ssot` |
 
 **Spine:** `lib/` · `packages/` · `scripts/` · `tools/` · `docs/` · selected `projects/active/*` workspaces. Nested own-repos under `projects/active/` are not homebase SSOT.
 

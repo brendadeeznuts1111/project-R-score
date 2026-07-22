@@ -18,6 +18,8 @@
 
 Do **not** treat a green docs render as a production deploy.
 
+Cloudflare Pages (`project-r-score`) is a **separate** surface — see [`cloudflare-pages.md`](cloudflare-pages.md) · claim `cloudflare-pages-env-ssot`. Do not conflate Pages Git deploys with `deploy:production`.
+
 ## Retirement
 
 Remove when production deploy is owned by an external CD system with its own runbook.

@@ -27,5 +27,6 @@ bun run help
 | Velocity / gates | [VELOCITY_BASELINE.md](./VELOCITY_BASELINE.md) · [harness/README.md](../harness/README.md) |
 | Bun APIs | [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) |
 | Bun-first | [bun/BUN_FIRST_POLICY.md](../bun/BUN_FIRST_POLICY.md) |
+| Cloudflare / R2 / Pages | [`config/r2-env.ts`](../../config/r2-env.ts) · `.env.example` · `bun run cloudflare:env` · [tenants/cloudflare-pages.md](../harness/tenants/cloudflare-pages.md) |
 
 Nested own-repos under `projects/active/` (kimiremote, cascade, bet-ticker, …) stay gitignored — not homebase SSOT.
