@@ -572,6 +572,8 @@ export const BUN_UTILS_URLS = {
     TERMINAL_OPTIONS: '/docs/runtime/child-process#terminal-options',
     IMAGE: '/docs/runtime/image#input',
     IMAGE_METADATA: '/docs/runtime/image#metadata',
+    DEEP_EQUALS: '/docs/runtime/utils#bun-deepequals',
+    PEEK: '/docs/runtime/utils#bun-peek',
     PID: '/docs/runtime/child-process#benchmarks',
     SIGNALS: '/docs/runtime/child-process#benchmarks',
     ENV_VARS: '/docs/runtime/environment-variables#setting-environment-variables',
@@ -777,6 +779,15 @@ const png = await new Bun.Image(screenshot)
     IMAGE_METADATA: `import { extractImageEvidenceMeta } from "../lib/image-metadata.ts";
 const meta = await extractImageEvidenceMeta(pngBytes);
 // width, height, format, size, sha256 digest`,
+
+    DEEP_EQUALS: `import { deepEquals } from "../lib/deep-equals.ts";
+import { imageEvidenceMetaEqual } from "../lib/image-metadata.ts";
+deepEquals(prev, next);
+imageEvidenceMetaEqual(a, b); // strict Bun.deepEquals`,
+
+    PEEK: `import { awaitSettled, promiseStatus } from "../lib/peek-settle.ts";
+const meta = await awaitSettled(img.metadata());
+promiseStatus(pending); // fulfilled | rejected | pending | sync`,
 
     PID: `console.info("Current PID:", process.pid);
 console.info("Parent PID:", process.ppid);`,

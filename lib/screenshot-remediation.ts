@@ -6,13 +6,17 @@
  * failed checks and a next action.
  *
  * @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
+ * @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+ * @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
  * @see ./image-metadata.ts
  */
 
+import { deepEquals } from './deep-equals.ts';
 import {
   DEFAULT_THUMB_MAX_HEIGHT,
   DEFAULT_THUMB_MAX_WIDTH,
   extractImageEvidenceMeta,
+  imageEvidenceMetaEqual,
   imageMetaChecksPassed,
   resizeScreenshotPng,
   verifyImageEvidenceMeta,
@@ -21,6 +25,7 @@ import {
   type ImageMetaCheck,
   type ImageMetaExpectations,
 } from './image-metadata.ts';
+import { awaitSettled } from './peek-settle.ts';
 
 /** Stable remediation / claim id for screenshot metadata evidence. */
 export const TEST_003 = 'TEST-003' as const;
@@ -96,12 +101,14 @@ export async function buildScreenshotEvidenceRecord(
   const algorithm = options.algorithm;
   const thumbMaxWidth = options.thumbMaxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
   const thumbMaxHeight = options.thumbMaxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
-  const source = await extractImageEvidenceMeta(screenshotBytes, { algorithm });
-  const { bytes: thumbnailBytes, meta: thumbnail } = await resizeScreenshotPng(screenshotBytes, {
-    algorithm,
-    width: thumbMaxWidth,
-    height: thumbMaxHeight,
-  });
+  const source = await awaitSettled(extractImageEvidenceMeta(screenshotBytes, { algorithm }));
+  const { bytes: thumbnailBytes, meta: thumbnail } = await awaitSettled(
+    resizeScreenshotPng(screenshotBytes, {
+      algorithm,
+      width: thumbMaxWidth,
+      height: thumbMaxHeight,
+    })
+  );
 
   const record: ScreenshotEvidenceRecord = {
     kind: 'ScreenshotEvidence',
@@ -115,6 +122,23 @@ export async function buildScreenshotEvidenceRecord(
   };
 
   return { record, thumbnailBytes };
+}
+
+/**
+ * True when two evidence records match on source+thumbnail metas (Bun.deepEquals).
+ * Use to skip re-persist when a recapture is unchanged.
+ */
+export function screenshotEvidenceEqual(
+  a: ScreenshotEvidenceRecord,
+  b: ScreenshotEvidenceRecord
+): boolean {
+  return (
+    a.kind === b.kind &&
+    a.testId === b.testId &&
+    imageEvidenceMetaEqual(a.source, b.source) &&
+    imageEvidenceMetaEqual(a.thumbnail, b.thumbnail) &&
+    deepEquals(a.crop, b.crop, true)
+  );
 }
 
 /**

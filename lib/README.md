@@ -32,6 +32,8 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | Brands | [`types/branded/README.md`](./types/branded/README.md) |
 | Console depth | [`console-depth.ts`](./console-depth.ts) |
 | Terminal / PTY | [`terminal.ts`](./terminal.ts) |
+| Deep equals | [`deep-equals.ts`](./deep-equals.ts) |
+| Peek settle | [`peek-settle.ts`](./peek-settle.ts) |
 | Image metadata | [`image-metadata.ts`](./image-metadata.ts) |
 | Screenshot TEST-003 | [`screenshot-remediation.ts`](./screenshot-remediation.ts) |
 | Path (Bun) | [`path-bun.ts`](./path-bun.ts) |
@@ -44,6 +46,8 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | [`path-bun.ts`](./path-bun.ts) | Bun-native path helpers (ratchet: no `node:path` in `lib/`) |
 | [`console-depth.ts`](./console-depth.ts) | Inspect depth SSOT (`--console-depth` / `BUN_CONSOLE_DEPTH`) |
 | [`terminal.ts`](./terminal.ts) | `Bun.Terminal` PTY helpers (`spawnWithTerminal`) |
+| [`deep-equals.ts`](./deep-equals.ts) | `Bun.deepEquals` wrapper |
+| [`peek-settle.ts`](./peek-settle.ts) | `Bun.peek` settled-promise fast path (`awaitSettled`) |
 | [`image-metadata.ts`](./image-metadata.ts) | `Bun.Image.metadata` evidence helpers |
 | [`screenshot-remediation.ts`](./screenshot-remediation.ts) | TEST-003 screenshot metadata remediation |
 | [`projects-scan.ts`](./projects-scan.ts) | Projects inventory helpers for registry tooling |

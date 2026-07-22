@@ -6,9 +6,13 @@
  * @see https://bun.com/docs/runtime/image#input — Bun.Image
  * @see https://bun.com/docs/runtime/image#metadata — metadata()
  * @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+ * @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals (via imageEvidenceMetaEqual)
+ * @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek (via awaitSettled)
  */
 
+import { deepEquals } from './deep-equals.ts';
 import { bunDocs } from './docs/bun-site-url.ts';
+import { awaitSettled } from './peek-settle.ts';
 
 /** Canonical docs locus for Bun.Image input. */
 export const BUN_IMAGE_DOCS = bunDocs('runtime/image', 'input');
@@ -119,7 +123,7 @@ export async function extractImageEvidenceMeta(
 
   const algorithm = options.algorithm ?? DEFAULT_IMAGE_DIGEST_ALGORITHM;
   const img = new Bun.Image(buf);
-  const meta = await img.metadata();
+  const meta = await awaitSettled(img.metadata());
   if (!(meta.width > 0) || !(meta.height > 0)) {
     throw new Error(
       `extractImageEvidenceMeta: invalid dimensions ${meta.width}×${meta.height} (format=${meta.format})`
@@ -148,12 +152,31 @@ export async function resizeScreenshotPng(
 ): Promise<{ bytes: Uint8Array; meta: ImageEvidenceMeta }> {
   const width = opts.width ?? DEFAULT_THUMB_MAX_WIDTH;
   const height = opts.height ?? DEFAULT_THUMB_MAX_HEIGHT;
-  const bytes = await new Bun.Image(screenshot)
-    .resize(width, height, { fit: 'inside', filter: 'mitchell', withoutEnlargement: true })
-    .png()
-    .bytes();
+  const bytes = await awaitSettled(
+    new Bun.Image(screenshot)
+      .resize(width, height, { fit: 'inside', filter: 'mitchell', withoutEnlargement: true })
+      .png()
+      .bytes()
+  );
   const meta = await extractImageEvidenceMeta(bytes, { algorithm: opts.algorithm });
   return { bytes, meta };
+}
+
+/**
+ * True when two evidence metas are structurally equal (Bun.deepEquals, strict).
+ * Prefer this over ad-hoc field compares when skipping re-encode / re-verify.
+ */
+export function imageEvidenceMetaEqual(
+  a: ImageEvidenceMeta,
+  b: ImageEvidenceMeta,
+  strict = true
+): boolean {
+  return deepEquals(a, b, strict);
+}
+
+/** Alias for {@link imageEvidenceMetaEqual} with strict=true. */
+export function sameImageEvidence(a: ImageEvidenceMeta, b: ImageEvidenceMeta): boolean {
+  return imageEvidenceMetaEqual(a, b, true);
 }
 
 /** True when every check passed. */

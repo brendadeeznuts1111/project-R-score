@@ -78,6 +78,15 @@ export {
   type TerminalSize,
 } from './terminal';
 
+// Bun.deepEquals / Bun.peek settled-promise helpers
+export { BUN_DEEP_EQUALS_DOCS, deepEquals } from './deep-equals';
+export {
+  BUN_PEEK_DOCS,
+  awaitSettled,
+  promiseStatus,
+  type PromiseSettleStatus,
+} from './peek-settle';
+
 // Bun.Image metadata + TEST-003 screenshot remediation
 export {
   BUN_IMAGE_DOCS,
@@ -88,10 +97,12 @@ export {
   IMAGE_META_CHECK_IDS,
   extractImageEvidenceMeta,
   imageEvidenceHeaders,
+  imageEvidenceMetaEqual,
   imageMetaChecksPassed,
   isImageEvidenceMeta,
   parseImageEvidenceMeta,
   resizeScreenshotPng,
+  sameImageEvidence,
   verifyImageEvidenceMeta,
   type ExtractImageMetaOptions,
   type ImageDigestAlgorithm,
@@ -106,6 +117,7 @@ export {
   buildScreenshotEvidenceRecord,
   remediateScreenshotCapture,
   runTest003,
+  screenshotEvidenceEqual,
   type BuildScreenshotEvidenceOptions,
   type ScreenshotEvidenceRecord,
   type Test003Remediation,

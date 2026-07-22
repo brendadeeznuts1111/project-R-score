@@ -19,6 +19,7 @@ import {
   buildScreenshotEvidenceRecord,
   remediateScreenshotCapture,
   runTest003,
+  screenshotEvidenceEqual,
   type ScreenshotEvidenceRecord,
 } from '../lib/screenshot-remediation.ts';
 
@@ -213,5 +214,23 @@ describe('lib/screenshot-remediation TEST-003', () => {
     expect(result.remediation.message).toContain('320×240');
     expect(result.evidence.thumbnail.width).toBeLessThanOrEqual(320);
     expect(result.evidence.thumbnail.height).toBeLessThanOrEqual(240);
+  });
+
+  test('screenshotEvidenceEqual uses Bun.deepEquals on source+thumbnail metas', async () => {
+    const a = await buildScreenshotEvidenceRecord(PNG_10, {
+      subject: 'eq',
+      capturedAt: '2026-07-22T00:00:00.000Z',
+    });
+    const b = await buildScreenshotEvidenceRecord(PNG_10, {
+      subject: 'eq',
+      capturedAt: '2026-07-22T00:00:00.000Z',
+    });
+    expect(screenshotEvidenceEqual(a.record, b.record)).toBe(true);
+    expect(
+      screenshotEvidenceEqual(a.record, {
+        ...b.record,
+        thumbnail: { ...b.record.thumbnail, width: b.record.thumbnail.width + 1 },
+      }),
+    ).toBe(false);
   });
 });
