@@ -3,6 +3,11 @@
  * Centralized access to all dashboard and hub configurations
  */
 
+import {
+  CLOUDFLARE_DEFAULTS,
+  cloudflareAccountIdFromEnv,
+} from '../../../../../config/r2-env.ts';
+
 export interface DashboardHubConfig {
   hub: {
     name: string;
@@ -56,38 +61,41 @@ export async function loadDashboardHubConfig(): Promise<DashboardHubConfig> {
  * Get default dashboard hub configuration
  */
 function getDefaultConfig(): DashboardHubConfig {
+  const accountId = cloudflareAccountIdFromEnv();
+  const zone = CLOUDFLARE_DEFAULTS.zones.factoryWager.name;
+  const dashboardUrl = `https://dash.cloudflare.com/${accountId}/${zone}`;
   return {
     hub: {
       name: 'Factory Wager Cloudflare Hub',
       description: 'Central hub for all repositories, dashboards, and operational monitoring',
-      url: 'https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com',
+      url: dashboardUrl,
       type: 'cloudflare',
-      domain: 'factory-wager.com',
-      accountId: '7a470541a704caaf91e71efccc78fd36',
+      domain: zone,
+      accountId,
       primary: true,
       categories: ['infrastructure', 'cdn', 'dns', 'security', 'analytics', 'repositories'],
       accessLevel: 'admin',
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     },
     dashboards: [
       {
         id: 'cloudflare-hub',
         name: 'Cloudflare Dashboard Hub',
-        url: 'https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com',
+        url: dashboardUrl,
         type: 'cloudflare',
         description: 'Primary hub for all repos, dashboards, and infrastructure',
         category: 'hub',
-        primary: true
-      }
+        primary: true,
+      },
     ],
     repositories: [],
     integrations: {
       cloudflare: {
-        accountId: '7a470541a704caaf91e71efccc78fd36',
-        domain: 'factory-wager.com',
-        dashboardUrl: 'https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com'
-      }
-    }
+        accountId,
+        domain: zone,
+        dashboardUrl,
+      },
+    },
   };
 }
 

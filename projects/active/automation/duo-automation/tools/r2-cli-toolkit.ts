@@ -16,16 +16,21 @@ import { fetch } from 'undici';
 import { createHash } from 'crypto';
 import { readFile, stat } from 'fs/promises';
 import { join } from 'path';
+import {
+  cloudflareAccountIdFromEnv,
+  r2EndpointFromAccount,
+} from '../../../../../config/r2-env.ts';
 
-// R2 Configuration
+// R2 Configuration — account/endpoint from config/r2-env SSOT
+const accountId = cloudflareAccountIdFromEnv();
 const R2_CONFIG = {
-  endpoint: 'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/',
-  accountId: '7a470541a704caaf91e71efccc78fd36',
+  endpoint: `${r2EndpointFromAccount(accountId)}/`,
+  accountId,
   buckets: {
-    primary: 'duo-automation-storage',
-    backup: 'backup-storage',
-    cdn: 'cdn-assets'
-  }
+    primary: Bun.env.R2_BUCKET || 'duo-automation-storage',
+    backup: Bun.env.R2_BACKUP_BUCKET || 'backup-storage',
+    cdn: Bun.env.R2_CDN_BUCKET || 'cdn-assets',
+  },
 };
 
 // Performance tracking

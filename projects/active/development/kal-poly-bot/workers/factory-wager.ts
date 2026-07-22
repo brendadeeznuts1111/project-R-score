@@ -9,11 +9,16 @@ export interface Env {
   ENVIRONMENT: string;
   PLATFORM_NAME: string;
   HUB_DASHBOARD_URL: string;
+  /** Prefer binding; fallback matches config/r2-env CLOUDFLARE_DEFAULTS.accountId */
+  CLOUDFLARE_ACCOUNT_ID?: string;
   // KV Namespaces
   // HUB_CONFIG: KVNamespace;
   // R2 Buckets
   // ASSETS: R2Bucket;
 }
+
+/** Proven account — keep in sync with config/r2-env CLOUDFLARE_DEFAULTS.accountId */
+const DEFAULT_CLOUDFLARE_ACCOUNT_ID = '7a470541a704caaf91e71efccc78fd36';
 
 /**
  * Main request handler for factory-wager.com Worker
@@ -65,7 +70,7 @@ export default {
           description: 'Central hub for all repositories, dashboards, and operational monitoring',
           url: env.HUB_DASHBOARD_URL,
           domain: 'factory-wager.com',
-          accountId: '7a470541a704caaf91e71efccc78fd36',
+          accountId: env.CLOUDFLARE_ACCOUNT_ID || DEFAULT_CLOUDFLARE_ACCOUNT_ID,
           categories: [
             'infrastructure',
             'cdn',
