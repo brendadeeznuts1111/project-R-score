@@ -12,6 +12,7 @@ import {
   r2BucketFromEnv,
   r2EndpointFromAccount,
   requireR2Config,
+  tryR2Config,
 } from '../config/r2-env.ts';
 
 describe('config/r2-env Cloudflare SSOT', () => {
@@ -47,12 +48,13 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(r2BucketFromEnv().length).toBeGreaterThan(0);
   });
 
-  test('requireR2Config is S3-only (no API token required)', () => {
+  test('requireR2Config / tryR2Config are S3-only (no API token required)', () => {
     const cfg = requireR2Config();
     expect(cfg.endpoint).toContain('.r2.cloudflarestorage.com');
     expect(cfg.bucket.length).toBeGreaterThan(0);
     expect(cfg.accessKeyId.length).toBeGreaterThan(0);
     expect(cfg).not.toHaveProperty('cloudflareApiToken');
+    expect(tryR2Config()?.bucket).toBe(cfg.bucket);
   });
 
   test('env key catalog stays lean', () => {

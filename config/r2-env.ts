@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Cloudflare / R2 / Pages env SSOT (+ `bun run cloudflare:env` CLI).
@@ -192,8 +193,18 @@ export function describeCloudflareEnv() {
   };
 }
 
+export type R2S3Config = {
+  accountId: string; // brand-ok — S3 account hex from env/defaults
+  accessKeyId: string; // brand-ok — R2 access key wire string (brand at S3 send boundary)
+  secretAccessKey: string;
+  endpoint: string;
+  bucket: string;
+  benchPrefix: string;
+  bucketUrl: string;
+};
+
 /** S3-compatible R2 only — does not require CLOUDFLARE_API_TOKEN. */
-export function requireR2Config() {
+export function requireR2Config(): R2S3Config {
   const missing: string[] = [];
   if (!cloudflareAccountIdFromEnv()) missing.push('R2_ACCOUNT_ID or CLOUDFLARE_ACCOUNT_ID');
   if (!isUsableSecret(R2_CONFIG.accessKeyId)) missing.push('R2_ACCESS_KEY_ID');
@@ -216,19 +227,143 @@ export function requireR2Config() {
   };
 }
 
-/** API token for Cloudflare REST (domain manager / Pages API). */
+/** Soft S3 resolve for optional R2 features (dashboard / domain-health). */
+export function tryR2Config(): R2S3Config | undefined {
+  try {
+    return requireR2Config();
+  } catch {
+    return undefined;
+  }
+}
+
+/** API token from env (sync — domain manager / hard boundaries). */
 export function requireCloudflareApiToken(): string {
   const token = R2_CONFIG.cloudflareApiToken;
   if (!isUsableSecret(token)) {
     throw new Error(
-      'Missing CLOUDFLARE_API_TOKEN. Local ops may use `wrangler login`; CI needs an API token.'
+      'Missing CLOUDFLARE_API_TOKEN. Local ops may use `wrangler login` + `bun run cloudflare:env:assert-live`, or set the token for CI.'
     );
   }
   return token;
 }
 
+/** Read wrangler OAuth token from ~/.wrangler/config/default.toml (local only). */
+async function wranglerOauthToken(): Promise<string | undefined> {
+  const home = Bun.env.HOME;
+  if (!home) return undefined;
+  const path = `${home}/.wrangler/config/default.toml`;
+  const file = Bun.file(path);
+  if (!(await file.exists())) return undefined;
+  const text = await file.text();
+  const line = text.split('\n').find(l => l.startsWith('oauth_token'));
+  if (!line) return undefined;
+  const raw = line.split('=', 2)[1]?.trim().replace(/^["']|["']$/g, '') ?? '';
+  return isUsableSecret(raw) ? raw : undefined;
+}
+
+/** Env token, else wrangler OAuth — for live Pages assert CLI. */
+export async function resolveCloudflareApiToken(): Promise<string> {
+  if (isUsableSecret(R2_CONFIG.cloudflareApiToken)) {
+    return R2_CONFIG.cloudflareApiToken;
+  }
+  const oauth = await wranglerOauthToken();
+  if (oauth) return oauth;
+  throw new Error(
+    'Missing CLOUDFLARE_API_TOKEN (and no wrangler OAuth in ~/.wrangler/config/default.toml). Run `wrangler login` or set the token.'
+  );
+}
+
+/**
+ * Compare live Pages project settings to CLOUDFLARE_DEFAULTS (needs API token).
+ * Does not mutate the project.
+ */
+export async function assertLiveCloudflarePages(): Promise<{
+  project: string;
+  url: string;
+  build_config: Record<string, string | null | undefined>;
+  bunVersion: string | undefined;
+  skipDependencyInstall: string | undefined;
+}> {
+  assertCloudflarePagesPins();
+  const token = await resolveCloudflareApiToken();
+  const account = cloudflareAccountIdFromEnv();
+  const project = CLOUDFLARE_DEFAULTS.pages.project;
+  const res = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/${project}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) {
+    throw new Error(`Pages API ${res.status}: ${await res.text()}`);
+  }
+  const body = (await res.json()) as {
+    success?: boolean;
+    result?: {
+      subdomain?: string;
+      production_branch?: string;
+      build_config?: {
+        build_command?: string | null;
+        destination_dir?: string | null;
+        root_dir?: string | null;
+      };
+      deployment_configs?: {
+        production?: {
+          env_vars?: Record<string, { value?: string } | undefined>;
+        };
+      };
+    };
+  };
+  const result = body.result;
+  if (!body.success || !result) {
+    throw new Error('Pages API returned unsuccessful payload');
+  }
+  const desired = cloudflarePagesDesiredBuild();
+  const build = result.build_config || {};
+  const env = result.deployment_configs?.production?.env_vars || {};
+  const bunVersion = env.BUN_VERSION?.value;
+  const skip = env.SKIP_DEPENDENCY_INSTALL?.value;
+  const mismatches: string[] = [];
+  if (build.build_command !== desired.build_command) {
+    mismatches.push(`build_command=${JSON.stringify(build.build_command)}`);
+  }
+  if (build.destination_dir !== desired.destination_dir) {
+    mismatches.push(`destination_dir=${JSON.stringify(build.destination_dir)}`);
+  }
+  if ((result.production_branch || '') !== desired.production_branch) {
+    mismatches.push(`production_branch=${JSON.stringify(result.production_branch)}`);
+  }
+  if (bunVersion !== CLOUDFLARE_PAGES.bunVersion) {
+    mismatches.push(`BUN_VERSION=${JSON.stringify(bunVersion)}`);
+  }
+  if (skip !== 'true' && skip !== '1') {
+    mismatches.push(`SKIP_DEPENDENCY_INSTALL=${JSON.stringify(skip)}`);
+  }
+  if (mismatches.length > 0) {
+    throw new Error(
+      `Live Pages ${project} drifts from CLOUDFLARE_DEFAULTS: ${mismatches.join('; ')}`
+    );
+  }
+  return {
+    project,
+    url: `https://${result.subdomain || CLOUDFLARE_DEFAULTS.pages.subdomain}`,
+    build_config: {
+      build_command: build.build_command,
+      destination_dir: build.destination_dir,
+      root_dir: build.root_dir,
+      production_branch: result.production_branch,
+    },
+    bunVersion,
+    skipDependencyInstall: skip,
+  };
+}
+
 if (import.meta.main) {
   const assertOnly = Bun.argv.includes('--assert');
+  const assertLive = Bun.argv.includes('--assert-live');
+  if (assertLive) {
+    const live = await assertLiveCloudflarePages();
+    console.log('cloudflare Pages live OK', live);
+    process.exit(0);
+  }
   if (assertOnly) {
     assertCloudflarePagesPins();
     console.log('cloudflare Pages pins OK', cloudflarePagesDesiredBuild());

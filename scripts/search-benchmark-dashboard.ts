@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
 // @see https://bun.com/docs/runtime/s3 — S3Client
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -39,6 +40,12 @@ import {
 } from './lib/cookie-manager';
 import { createDomainContext } from './lib/domain-context';
 import { storeCookieTelemetry } from './lib/cookie-telemetry';
+import {
+  CLOUDFLARE_ZONE,
+  cloudflareAccountIdFromEnv,
+  r2BucketFromEnv,
+  tryR2Config,
+} from '../config/r2-env.ts';
 import { resolveR2BridgeConfig } from './lib/r2-bridge';
 import { resolveDomainBranding } from './lib/domain-branding';
 import { buildDomainRegistryStatus } from './domain-registry-status';
@@ -214,20 +221,13 @@ function resolveR2ReadOptions(): {
   accessKeyId: string;
   secretAccessKey: string;
 } | null {
-  const accountId = Bun.env.R2_ACCOUNT_ID || '';
-  const endpoint =
-    Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '');
-  const bucket = Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '';
-  const accessKeyId = Bun.env.R2_ACCESS_KEY_ID || '';
-  const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
-  if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
-    return null;
-  }
+  const cfg = tryR2Config();
+  if (!cfg) return null;
   return {
-    bucket,
-    endpoint,
-    accessKeyId,
-    secretAccessKey,
+    bucket: cfg.bucket,
+    endpoint: cfg.endpoint,
+    accessKeyId: cfg.accessKeyId,
+    secretAccessKey: cfg.secretAccessKey,
   };
 }
 
@@ -7628,16 +7628,10 @@ async function main(): Promise<void> {
     const r2Read = resolveR2ReadOptions();
     const ctx = await createDomainContext({
       domain,
-      zone: Bun.env.CLOUDFLARE_ZONE_NAME || Bun.env.CLOUDFLARE_ZONE_ID || domain,
-      bucket:
-        r2Read?.bucket ||
-        Bun.env.R2_BUCKET ||
-        Bun.env.R2_BUCKET_NAME ||
-        Bun.env.R2_BENCH_BUCKET ||
-        null,
-      endpoint:
-        r2Read?.endpoint || Bun.env.R2_ENDPOINT || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
-      accountIdRaw: Bun.env.CLOUDFLARE_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID || null,
+      zone: CLOUDFLARE_ZONE.name || CLOUDFLARE_ZONE.id || domain,
+      bucket: r2Read?.bucket || r2BucketFromEnv() || null,
+      endpoint: r2Read?.endpoint || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
+      accountIdRaw: cloudflareAccountIdFromEnv() || null,
     });
     const prefixes = ['health', 'ssl', 'analytics'];
     const storage = ctx.storage;
@@ -7968,8 +7962,8 @@ async function main(): Promise<void> {
     if (source === 'local') {
       return {
         source,
-        bucket: Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
-        endpoint: Bun.env.R2_ENDPOINT || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
+        bucket: r2BucketFromEnv() || null,
+        endpoint: Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
         prefix: null,
         rssKey: rssXml,
         rssUrl: `file://${rssXml}`,
@@ -7982,13 +7976,8 @@ async function main(): Promise<void> {
     const publicBase = options.r2Base || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null;
     return {
       source,
-      bucket:
-        r2?.bucket ||
-        Bun.env.R2_BUCKET ||
-        Bun.env.R2_BUCKET_NAME ||
-        Bun.env.R2_BENCH_BUCKET ||
-        null,
-      endpoint: r2?.endpoint || Bun.env.R2_ENDPOINT || publicBase,
+      bucket: r2?.bucket || r2BucketFromEnv() || null,
+      endpoint: r2?.endpoint || publicBase,
       prefix,
       rssKey,
       rssUrl: publicBase ? `${publicBase.replace(/\/+$/g, '')}/rss.xml` : null,
@@ -8010,8 +7999,8 @@ async function main(): Promise<void> {
     if (!r2) {
       return {
         error: 'r2_not_configured',
-        bucket: Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || null,
-        endpoint: Bun.env.R2_ENDPOINT || null,
+        bucket: r2BucketFromEnv() || null,
+        endpoint: null,
         prefix: cleanPrefix,
       };
     }

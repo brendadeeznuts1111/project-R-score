@@ -7,6 +7,7 @@ import { fileExistsSync, readText, resolvePath } from './fs-bun';
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 
 import { S3Client } from 'bun';
+import { tryR2Config } from '../../config/r2-env.ts';
 
 export type DomainHealthLevel = 'healthy' | 'degraded' | 'critical' | 'unknown';
 
@@ -88,18 +89,14 @@ function toLevelFromRatio(ratio: number): DomainHealthLevel {
 }
 
 function resolveR2Config(): R2Config | null {
-  const accountId = Bun.env.R2_ACCOUNT_ID || '';
-  const endpoint =
-    Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '');
-  const bucket = Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '';
-  const accessKeyId = Bun.env.R2_ACCESS_KEY_ID || '';
-  const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
-
-  if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
-    return null;
-  }
-
-  return { endpoint, bucket, accessKeyId, secretAccessKey };
+  const cfg = tryR2Config();
+  if (!cfg) return null;
+  return {
+    endpoint: cfg.endpoint,
+    bucket: cfg.bucket,
+    accessKeyId: cfg.accessKeyId,
+    secretAccessKey: cfg.secretAccessKey,
+  };
 }
 
 async function readJsonFile(path: string): Promise<any | null> {

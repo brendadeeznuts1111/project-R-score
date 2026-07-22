@@ -1706,6 +1706,7 @@
     "harness:status": "bun scripts/harness-status.ts",
     "cloudflare:env": "bun config/r2-env.ts",
     "cloudflare:env:assert": "bun config/r2-env.ts --assert",
+    "cloudflare:env:assert-live": "bun config/r2-env.ts --assert-live",
     "docs:harness": "bun ./docs/harness/README.md",
     "docs:cron": "bun scripts/docs-cron.ts",
     "docs:install-verify": "bun scripts/docs-install-verify.ts",

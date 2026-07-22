@@ -24,6 +24,7 @@ Common root causes:
 3. Build settings: command `exit 0`, output directory `public`, production branch `main`
 4. Retry the failed deployment (dashboard or API). Do **not** pin local `packageManager` to 1.3.14 to “fix” Pages.
 5. Local pin check (no API): `bun run cloudflare:env:assert`
+6. Live dashboard drift check (API token or wrangler OAuth): `bun run cloudflare:env:assert-live`
 
 Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps). Apex 404 means `index.html` is missing from that dir.
 

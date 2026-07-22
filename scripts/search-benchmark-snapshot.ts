@@ -14,6 +14,7 @@ import {
   resolveScoreThresholdsForQueryPack,
   type ScoreThresholdsPolicy,
 } from '../lib/docs/canonical-family';
+import { tryR2Config } from '../config/r2-env.ts';
 import { evaluateStrictWarnings } from './lib/search-benchmark-thresholds';
 
 type RankedProfile = {
@@ -591,20 +592,20 @@ async function readIndex(indexPath: string): Promise<SnapshotIndex> {
 }
 
 function resolveR2Config(options: CliOptions): R2Config | null {
-  const accountId = Bun.env.R2_ACCOUNT_ID || '';
-  const endpoint =
-    Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '');
-  const bucket =
-    options.bucket || Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || '';
-  const accessKeyId = Bun.env.R2_ACCESS_KEY_ID || '';
-  const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
+  const cfg = tryR2Config();
+  if (!cfg) return null;
+  const bucket = (options.bucket || cfg.bucket).trim();
+  if (!bucket) return null;
   const prefix = options.prefix.replace(/^\/+|\/+$/g, '');
   const publicBase = options.publicBase || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE;
-
-  if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
-    return null;
-  }
-  return { endpoint, bucket, accessKeyId, secretAccessKey, prefix, publicBase };
+  return {
+    endpoint: cfg.endpoint,
+    bucket,
+    accessKeyId: cfg.accessKeyId,
+    secretAccessKey: cfg.secretAccessKey,
+    prefix,
+    publicBase,
+  };
 }
 
 async function uploadText(r2: R2Config, key: string, data: string, type: string): Promise<void> {
