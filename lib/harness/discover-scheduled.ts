@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
-// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/glob — Bun.Glob (dot: true required for .github on Bun ≤1.3.6)
 /**
  * Discover scheduled jobs in the harness maintenance perimeter.
  *
@@ -183,8 +183,9 @@ async function discoverPackageScripts(root: string): Promise<DiscoveredJob[]> {
 
 async function discoverGhaCrons(root: string): Promise<DiscoveredJob[]> {
   const out: DiscoveredJob[] = [];
+  // Bun ≤1.3.6 skips dotdirs (`.github`) unless `dot: true`. Bun 1.4+ matches either way.
   const glob = new Bun.Glob('.github/workflows/*.{yml,yaml}');
-  for await (const rel of glob.scan({ cwd: root, onlyFiles: true })) {
+  for await (const rel of glob.scan({ cwd: root, onlyFiles: true, dot: true })) {
     const text = await Bun.file(`${root}/${rel}`).text();
     const lines = text.split('\n');
     const base = rel.split('/').pop() ?? rel;
