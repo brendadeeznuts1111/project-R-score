@@ -25,6 +25,7 @@ Bun shipped native SHA-3 support in v1.3.13 (WebCrypto SHA3-* + node:crypto / Cr
 
 - [`sample-fiber-demo-2026-07-21`](../findings/sample-fiber-demo-2026-07-21.md)
 - [`jacobian-nullspace`](./jacobian-nullspace.md)
+- [`nagata-map`](./nagata-map.md)
 
 ## Related docs (BunToken / curated — opaque)
 

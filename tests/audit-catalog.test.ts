@@ -51,7 +51,7 @@ describe('parseAuditFinding', () => {
           mediaType: 'text/plain',
         },
       })
-    ).toThrow(/sha256 companion removed|algorithm and digest/);
+    ).toThrow(/legacy \{sha256\}-only wire rejected/);
   });
 
   test('rejects dual-write sha256 companion', () => {
@@ -207,6 +207,12 @@ describe('audit catalog', () => {
     expect(sample.evidence.algorithm).toBe('sha3-256');
     expect(sample.related).toEqual(
       expect.arrayContaining(['nagata-map', 'jacobian-nullspace', 'sha3-integrity'])
+    );
+    expect(getAuditConcept(concepts, 'nagata-map')?.related).toEqual(
+      expect.arrayContaining(['sha3-integrity'])
+    );
+    expect(getAuditConcept(concepts, 'sha3-integrity')?.related).toEqual(
+      expect.arrayContaining(['nagata-map'])
     );
     const broken = verifyAuditGraph(findings, [
       ...concepts,

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-22T03:36:38.637Z",
+  "generated": "2026-07-22T03:42:36.904Z",
   "bunVersion": "1.4.0",
   "count": 1,
   "conceptCount": 4,
@@ -120,7 +120,8 @@
       ],
       "related": [
         "sample-fiber-demo-2026-07-21",
-        "jacobian-nullspace"
+        "jacobian-nullspace",
+        "nagata-map"
       ],
       "relatedDocs": [
         "SHA3-256"

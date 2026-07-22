@@ -90,14 +90,20 @@ function parseEvidence(raw: unknown): AuditEvidence {
   const path = parseNonEmptyString(raw.path, 'AuditFinding.evidence.path');
   const mediaType = parseNonEmptyString(raw.mediaType, 'AuditFinding.evidence.mediaType');
 
+  const hasAlgorithm = raw.algorithm !== undefined;
+  const hasDigest = raw.digest !== undefined;
+
   if (raw.sha256 !== undefined) {
+    if (!hasAlgorithm && !hasDigest) {
+      throw new Error(
+        'AuditFinding.evidence: legacy {sha256}-only wire rejected (Phase 2); use algorithm+digest — run bun run audit:migrate:sha3'
+      );
+    }
     throw new Error(
       'AuditFinding.evidence: sha256 companion removed (Phase 2); use algorithm+digest only — run bun run audit:migrate:sha3'
     );
   }
 
-  const hasAlgorithm = raw.algorithm !== undefined;
-  const hasDigest = raw.digest !== undefined;
   if (!hasAlgorithm || !hasDigest) {
     throw new Error(
       'AuditFinding.evidence: algorithm and digest are required (legacy {sha256}-only wire rejected)'

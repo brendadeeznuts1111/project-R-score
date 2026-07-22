@@ -127,6 +127,10 @@ const crossFindingAsLog: AuditId = auditFindingId;
 const crossEntryAsFinding: AuditFindingId = auditEntryId;
 // @ts-expect-error — AuditId is not an AuditEntryId
 const crossLogAsEntry: AuditEntryId = auditLogId;
+// @ts-expect-error — AuditConceptId is not an AuditEntryId
+const crossConceptAsEntry: AuditEntryId = auditConceptId;
+// @ts-expect-error — AuditConceptId is not AuditId (log entry)
+const crossConceptAsLog: AuditId = auditConceptId;
 
 // ─── 2. Same-brand assignment compiles ──────────────────────────────────────
 

@@ -131,14 +131,14 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.CryptoHasher',
     path: 'runtime/hashing#bun-cryptohasher',
     description:
-      'Native sync hasher (sha256, sha3-256, …). FactoryWager audit SSOT uses sha256 today — not SHA-3.',
+      'Native sync hasher (sha256, sha3-256, …). FactoryWager audit SSOT fingerprints evidence with sha3-256 (see AuditConcept sha3-integrity).',
     relatedTokens: ['sha3-256', 'SHA3-256', 'Bun.password'],
   },
   {
     term: 'SHA3',
     path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
     description:
-      'v1.3.13: SHA3-224/256/384/512 in node:crypto + WebCrypto (createHash/createHmac/subtle.digest). Also Bun.CryptoHasher("sha3-256"). Docs-only — audit evidence remains sha256.',
+      'v1.3.13: SHA3-224/256/384/512 in node:crypto + WebCrypto (createHash/createHmac/subtle.digest). Also Bun.CryptoHasher("sha3-256"). Audit SSOT uses sha3-256 via evidence.algorithm + evidence.digest (AuditConcept sha3-integrity).',
     minVersion: '1.3.13',
     relatedTokens: [
       'sha3-256',

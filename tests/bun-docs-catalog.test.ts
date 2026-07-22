@@ -537,7 +537,7 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('--parallel')?.examples?.[0]?.body).toContain(
       'cli/run#parallel-and-sequential-mode'
     );
-    // SHA-3 (v1.3.13) — docs lane only; audit SSOT stays sha256
+    // SHA-3 (v1.3.13) — blog ship note; audit SSOT uses CryptoHasher('sha3-256')
     // normalizeName collapses sha3-256 ↔ SHA3-256 (display name prefers first CANONICAL key)
     expect(byName.get('SHA3-256')?.docsUrl).toBe(
       'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto'
