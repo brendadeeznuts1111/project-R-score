@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-22T12:51:34.247Z",
+  "generated": "2026-07-22T13:05:33.533Z",
   "bunVersion": "1.4.0",
   "releaseUrl": "https://github.com/oven-sh/bun/releases",
   "blogUrl": "",
@@ -62,11 +62,11 @@
     "package-json-key": 4
   },
   "bySection": {
-    "runtime": 456,
+    "runtime": 455,
     "bundler": 147,
     "test": 34,
     "guides": 216,
-    "pm": 131,
+    "pm": 132,
     "reference": 11,
     "other": 61
   },
@@ -2456,37 +2456,6 @@
       ],
       "docsUrl": "https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
-    },
-    {
-      "name": "bun run --parallel",
-      "type": "cli-flag",
-      "description": "bun run --parallel: Foreman-style parallel package.json scripts (prefixed output, --filter/--workspaces). Canonical: cli/run#parallel-and-sequential-mode. ≠ bun test --parallel (test-file workers; blog v1.3.13).",
-      "stability": "stable",
-      "releasedIn": "1.3.9",
-      "lastUpdated": "2026-07-22T01:54:32.781Z",
-      "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/cli/run",
-      "anchor": "parallel-and-sequential-mode",
-      "allPages": [
-        "https://bun.com/docs/cli/run",
-        "https://bun.com/docs/pm/filter"
-      ],
-      "section": "runtime",
-      "changeNote": "bun run --parallel: Foreman-style parallel package.json scripts (prefixed output, --filter/--workspaces). Canonical: cli/run#parallel-and-sequential-mode. ≠ bun test --parallel (test-file workers; blog v1.3.13).",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.9",
-      "locusUnresolved": false,
-      "locusStatus": "fragment",
-      "related": [
-        "bun test --parallel",
-        "--parallel",
-        "--filter",
-        "--no-exit-on-error",
-        "--sequential",
-        "--workspaces",
-        "bun run --sequential"
-      ],
-      "docsUrl": "https://bun.com/docs/cli/run#parallel-and-sequential-mode",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.9"
     },
     {
       "name": "Bun Runtime",
@@ -15099,7 +15068,8 @@
       ],
       "related": [
         "--compile-exec-argv",
-        "BUN_OPTIONS"
+        "BUN_OPTIONS",
+        "runtime-arguments-via-bun-options"
       ],
       "locusUnresolved": false,
       "docsUrl": "https://bun.com/docs/bundler/executables#embedding-runtime-arguments",
@@ -21284,10 +21254,10 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
-        "bun run --parallel",
         "--no-exit-on-error",
         "--sequential",
         "--workspaces",
+        "bun run --parallel",
         "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#package-name-filter-pattern",
@@ -21771,10 +21741,10 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
-        "bun run --parallel",
         "--filter",
         "--sequential",
         "--workspaces",
+        "bun run --parallel",
         "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
@@ -21981,7 +21951,7 @@
     {
       "name": "--parallel",
       "type": "cli-flag",
-      "description": "bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — cli/run#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md",
+      "description": "bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — pm/filter#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md",
       "stability": "stable",
       "releasedIn": "1.1.5",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -21996,11 +21966,11 @@
       "examples": [
         {
           "lang": "bash",
-          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see cli/run#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
+          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
           "fragment": "bun-test-isolate-and-bun-test-parallel"
         }
       ],
-      "changeNote": "bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — cli/run#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md",
+      "changeNote": "bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — pm/filter#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md",
       "blogUrl": "https://bun.com/blog/bun-v1.3.13",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
@@ -22399,10 +22369,10 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
-        "bun run --parallel",
         "--filter",
         "--no-exit-on-error",
         "--workspaces",
+        "bun run --parallel",
         "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
@@ -22667,10 +22637,10 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
-        "bun run --parallel",
         "--filter",
         "--no-exit-on-error",
         "--sequential",
+        "bun run --parallel",
         "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
@@ -22910,6 +22880,43 @@
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
+      "name": "bun run --parallel",
+      "type": "cli-flag",
+      "description": "bun run --parallel: Foreman-style parallel package.json scripts (prefixed output, --filter/--workspaces). Canonical: pm/filter#parallel-and-sequential-mode. ≠ bun test --parallel (test-file workers; blog v1.3.13).",
+      "stability": "stable",
+      "releasedIn": "1.3.9",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/docs/pm/filter",
+      "anchor": "parallel-and-sequential-mode",
+      "allPages": [
+        "https://bun.com/docs/pm/filter"
+      ],
+      "section": "pm",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# Workspace / package.json scripts (Foreman-style) — NOT bun test workers\nbun run --parallel build test\nbun run --sequential build test\nbun run --parallel --filter '*' lint\nbun run --parallel --workspaces --if-present build",
+          "fragment": "parallel-and-sequential-mode"
+        }
+      ],
+      "changeNote": "bun run --parallel: Foreman-style parallel package.json scripts (prefixed output, --filter/--workspaces). Canonical: pm/filter#parallel-and-sequential-mode. ≠ bun test --parallel (test-file workers; blog v1.3.13).",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.9",
+      "locusUnresolved": false,
+      "locusStatus": "fragment",
+      "related": [
+        "bun test --parallel",
+        "--parallel",
+        "--filter",
+        "--no-exit-on-error",
+        "--sequential",
+        "--workspaces",
+        "bun run --sequential"
+      ],
+      "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.9"
+    },
+    {
       "name": "bun run --sequential",
       "type": "cli-flag",
       "description": "Select packages by pattern in a monorepo using the —filter flag",
@@ -22922,14 +22929,21 @@
         "https://bun.com/docs/pm/filter"
       ],
       "section": "pm",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# Workspace / package.json scripts (Foreman-style) — NOT bun test workers\nbun run --parallel build test\nbun run --sequential build test\nbun run --parallel --filter '*' lint\nbun run --parallel --workspaces --if-present build",
+          "fragment": "parallel-and-sequential-mode"
+        }
+      ],
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
-        "bun run --parallel",
         "--filter",
         "--no-exit-on-error",
         "--sequential",
-        "--workspaces"
+        "--workspaces",
+        "bun run --parallel"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -24838,7 +24852,7 @@
       "examples": [
         {
           "lang": "bash",
-          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see cli/run#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
+          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
           "fragment": "bun-test-isolate-and-bun-test-parallel"
         }
       ],
@@ -24874,7 +24888,7 @@
       "examples": [
         {
           "lang": "bash",
-          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see cli/run#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
+          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
           "fragment": "bun-test-isolate-and-bun-test-parallel"
         }
       ],
@@ -25019,7 +25033,7 @@
       "examples": [
         {
           "lang": "bash",
-          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see cli/run#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
+          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
           "fragment": "bun-test-isolate-and-bun-test-parallel"
         }
       ],
@@ -25041,7 +25055,7 @@
     {
       "name": "bun test --parallel",
       "type": "cli-flag",
-      "description": "Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. Callout: ≠ bun run --parallel — that is workspace Foreman mode at cli/run#parallel-and-sequential-mode.",
+      "description": "Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. Callout: ≠ bun run --parallel — that is workspace Foreman mode at pm/filter#parallel-and-sequential-mode.",
       "stability": "stable",
       "releasedIn": "1.3.13",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -25055,11 +25069,11 @@
       "examples": [
         {
           "lang": "bash",
-          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see cli/run#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
+          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
           "fragment": "bun-test-isolate-and-bun-test-parallel"
         }
       ],
-      "changeNote": "Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. Callout: ≠ bun run --parallel — that is workspace Foreman mode at cli/run#parallel-and-sequential-mode.",
+      "changeNote": "Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. Callout: ≠ bun run --parallel — that is workspace Foreman mode at pm/filter#parallel-and-sequential-mode.",
       "blogUrl": "https://bun.com/blog/bun-v1.3.13",
       "locusUnresolved": false,
       "locusStatus": "coincidence",
@@ -25158,7 +25172,7 @@
       "examples": [
         {
           "lang": "bash",
-          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see cli/run#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
+          "body": "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests",
           "fragment": "bun-test-isolate-and-bun-test-parallel"
         }
       ],

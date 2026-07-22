@@ -560,7 +560,7 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
   'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel': [
     {
       lang: 'bash',
-      body: '# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see cli/run#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests',
+      body: '# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests',
     },
   ],
   // Official blog — bun test --shard=M/N (v1.3.13)
@@ -585,7 +585,7 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
     },
   ],
   // Official docs — bun run --parallel / --sequential (Foreman; ≠ bun test --parallel)
-  'cli/run#parallel-and-sequential-mode': [
+  'pm/filter#parallel-and-sequential-mode': [
     {
       lang: 'bash',
       body: "# Workspace / package.json scripts (Foreman-style) — NOT bun test workers\nbun run --parallel build test\nbun run --sequential build test\nbun run --parallel --filter '*' lint\nbun run --parallel --workspaces --if-present build",

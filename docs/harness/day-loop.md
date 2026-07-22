@@ -54,7 +54,7 @@ SHARD=1/3 bun run test:shard
 | `ci:harness:fast` | `scripts/ci-harness.ts --fast` | Cheap local gate before push |
 | `harness:status` | `scripts/harness-status.ts` | Ratchet + timing dashboard |
 
-≠ `bun run --parallel` (workspace Foreman). That is [cli/run#parallel-and-sequential-mode](https://bun.com/docs/cli/run#parallel-and-sequential-mode).
+≠ `bun run --parallel` (workspace Foreman). That is [pm/filter#parallel-and-sequential-mode](https://bun.com/docs/pm/filter#parallel-and-sequential-mode).
 
 ## Artifacts / logs
 

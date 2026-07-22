@@ -46,7 +46,7 @@ bun test --parallel=8 ./tests
 
 > **Not the same as `bun run --parallel`.**  
 > `bun test --parallel` = test-file workers (this section).  
-> `bun run --parallel` = workspace Foreman script runner — see [parallel and sequential mode](https://bun.com/docs/cli/run#parallel-and-sequential-mode).
+> `bun run --parallel` = workspace Foreman script runner — see [parallel and sequential mode](https://bun.com/docs/pm/filter#parallel-and-sequential-mode).
 
 See docs / catalog: `bun tools/bun-doc-refs.ts suggest "bun test --parallel"`  
 Ship note: [blog `#bun-test-isolate-and-bun-test-parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel)
@@ -96,7 +96,7 @@ bun run --parallel build test
 bun run --parallel --filter '*' lint
 ```
 
-Canonical docs: [cli/run#parallel-and-sequential-mode](https://bun.com/docs/cli/run#parallel-and-sequential-mode)  
+Canonical docs: [pm/filter#parallel-and-sequential-mode](https://bun.com/docs/pm/filter#parallel-and-sequential-mode)  
 Suggest: `bun tools/bun-doc-refs.ts suggest "bun run --parallel"`
 
 ## FactoryWager day-loop wrappers

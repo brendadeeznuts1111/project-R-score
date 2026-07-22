@@ -412,7 +412,7 @@ export class EnterpriseDocumentationURLBuilder {
     const base = ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_OFFICIAL].DOCS;
 
     return {
-      run: `${base}/docs/cli/run#examples`,
+      run: `${base}/docs/runtime#examples`,
       test: `${base}/docs/cli/test#configuration`,
       build: `${base}/docs/cli/build#options`,
       install: `${base}/docs/cli/install-command#dependencies`,

@@ -257,7 +257,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: '--parallel',
     path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
     description:
-      'bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — cli/run#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md',
+      'bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — pm/filter#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md',
     minVersion: '1.3.13',
     relatedTokens: [
       '--isolate',
@@ -274,7 +274,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'bun test --parallel',
     path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
     description:
-      'Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. Callout: ≠ bun run --parallel — that is workspace Foreman mode at cli/run#parallel-and-sequential-mode.',
+      'Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. Callout: ≠ bun run --parallel — that is workspace Foreman mode at pm/filter#parallel-and-sequential-mode.',
     minVersion: '1.3.13',
     relatedTokens: [
       '--isolate',
@@ -343,9 +343,9 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   {
     term: 'bun run --parallel',
     // Shipped 1.3.9 — https://bun.com/blog/bun-v1.3.9#bun-run-parallel-and-bun-run-sequential
-    path: 'cli/run#parallel-and-sequential-mode',
+    path: 'pm/filter#parallel-and-sequential-mode',
     description:
-      'bun run --parallel: Foreman-style parallel package.json scripts (prefixed output, --filter/--workspaces). Canonical: cli/run#parallel-and-sequential-mode. ≠ bun test --parallel (test-file workers; blog v1.3.13).',
+      'bun run --parallel: Foreman-style parallel package.json scripts (prefixed output, --filter/--workspaces). Canonical: pm/filter#parallel-and-sequential-mode. ≠ bun test --parallel (test-file workers; blog v1.3.13).',
     minVersion: '1.3.9',
     relatedTokens: ['bun test --parallel', '--parallel'],
   },
