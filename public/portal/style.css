@@ -298,6 +298,185 @@ body {
   color: var(--text-dim);
 }
 
+/* ── Health bars ───────────────────────────────────────────────────── */
+
+.pkg-health-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.pkg-health-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(48, 54, 61, 0.6);
+  overflow: hidden;
+}
+.health-fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.pkg-health-bar.healthy .health-fill { background: var(--green); }
+.pkg-health-bar.warning .health-fill { background: var(--yellow); }
+.pkg-health-bar.critical .health-fill { background: var(--red); }
+.pkg-health-label {
+  font-size: 11px;
+  white-space: nowrap;
+}
+.pkg-health-label.healthy { color: var(--green); }
+.pkg-health-label.warning { color: var(--yellow); }
+.pkg-health-label.critical { color: var(--red); }
+.pkg-detail-btn {
+  margin-top: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--accent);
+  cursor: pointer;
+  transition: background .15s;
+}
+.pkg-detail-btn:hover { background: var(--surface-hover); }
+
+/* ── Filter row ─────────────────────────────────────────────────────── */
+
+.filter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.filter-section, .sort-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-label {
+  font-size: 12px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.filter-chip {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all .15s;
+}
+.filter-chip:hover { border-color: var(--accent); color: var(--text); }
+.filter-chip.active {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+#sort-select {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ── Detail overlay ────────────────────────────────────────────────── */
+
+.detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  animation: fadeIn .15s ease;
+}
+.detail-panel {
+  width: min(560px, 90vw);
+  max-height: 100vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  padding: 32px 24px;
+  animation: slideIn .2s ease;
+}
+@keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.detail-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.detail-close:hover { color: var(--text); }
+.detail-name {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.detail-health { margin: 16px 0; }
+.detail-health .pkg-health-bar { height: 8px; margin-bottom: 6px; }
+.health-breakdown {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.detail-section { margin: 20px 0; }
+.detail-section h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.detail-section p { font-size: 13px; color: var(--text); }
+.detail-readme {
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--bg);
+  padding: 16px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.detail-meta {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.detail-meta code {
+  font-size: 11px;
+  background: var(--bg);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
 /* ── Footer ────────────────────────────────────────────────────────── */
 
 .footer {

@@ -36,7 +36,7 @@
 
     <section id="error-banner" class="error-banner hidden">
       <p>⚠️ <span id="error-text">Could not load registry.</span></p>
-      <p class="error-hint">Make sure the <code>factory-wager-registry</code> R2 bucket is publicly readable, or deploy a static snapshot to <code>public/registry/</code>.</p>
+      <p class="error-hint">Bind <code>REGISTRY_BUCKET</code> on Pages Functions, or deploy a static snapshot to <code>public/registry/registry.json</code>.</p>
     </section>
 
     <section id="loading" class="loading-panel">
@@ -49,6 +49,21 @@
         <div class="stat-card" id="stat-packages">0 <span>packages</span></div>
         <div class="stat-card" id="stat-versions">0 <span>versions</span></div>
         <div class="stat-card" id="stat-types">0 <span>types</span></div>
+        <div class="stat-card" id="stat-health">— <span>avg health</span></div>
+      </div>
+      <div class="filter-row">
+        <div class="filter-section">
+          <span class="filter-label">Type:</span>
+          <div id="filter-types" class="filter-chips"></div>
+        </div>
+        <div class="sort-section">
+          <span class="filter-label">Sort:</span>
+          <select id="sort-select">
+            <option value="name">Name</option>
+            <option value="version">Version</option>
+            <option value="date">Publish date</option>
+          </select>
+        </div>
       </div>
       <div id="package-grid" class="package-grid"></div>
     </section>
@@ -58,6 +73,6 @@
     <p>FactoryWager · <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a></p>
   </footer>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
