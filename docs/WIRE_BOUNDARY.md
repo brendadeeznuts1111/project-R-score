@@ -51,4 +51,6 @@ Suppress only with reason: `// brand-ok` or targeted eslint-disable on a true ed
 3. Interior uses brands only  
 4. No `decodeUnknownSync` outside the edge  
 
+**Spine parse examples:** `parseImageEvidenceMeta` / `isImageEvidenceMeta` in [`lib/image-metadata.ts`](../lib/image-metadata.ts) — wire JSON → `ImageEvidenceMeta` (TEST-003 evidence) via `parse*` / `is*` name rules; no extra path allowlist.
+
 Package imports ≠ wire: [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md). Install ≠ wire: [UNIFIED.md](./UNIFIED.md).

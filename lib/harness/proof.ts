@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit
@@ -202,6 +204,34 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
     freshRerunKind: 'claim',
     owner: 'platform / harness',
+  },
+  {
+    id: 'image-metadata-boundaries',
+    claim:
+      'Bun.Image metadata extract/resize/verify/parse and TEST-003 screenshot remediation behave as this repo depends on them',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test ./tests/image-metadata.test.ts',
+      'tests/image-metadata.test.ts',
+      'lib/image-metadata.ts',
+      'lib/screenshot-remediation.ts',
+    ],
+    freshRerun: 'bun test ./tests/image-metadata.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/image-metadata.ts',
+  },
+  {
+    id: 'terminal-pty-boundaries',
+    claim: 'Bun.Terminal PTY helpers spawn and capture as this repo depends on them',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: ['bun test ./tests/terminal.test.ts', 'tests/terminal.test.ts', 'lib/terminal.ts'],
+    freshRerun: 'bun test ./tests/terminal.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/terminal.ts',
   },
   {
     id: 'security-hash-boundaries',

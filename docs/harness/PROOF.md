@@ -40,6 +40,10 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/fixtures/bun-shell/`
 - **`fs-native-boundaries`** — `Bun.file` / `Bun.write` / `Bun.Glob` behave as expected  
   *Ratchet* → `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts`
+- **`image-metadata-boundaries`** — Bun.Image metadata extract / resize / verify / parse + TEST-003 remediation (`unit` + `boundary`)  
+  *Ratchet* → `bun test ./tests/image-metadata.test.ts` · evidence [`lib/image-metadata.ts`](../../lib/image-metadata.ts) · [`lib/screenshot-remediation.ts`](../../lib/screenshot-remediation.ts)
+- **`terminal-pty-boundaries`** — Bun.Terminal PTY helpers (`spawnWithTerminal` / capturing terminal) (`unit` + `boundary`)  
+  *Ratchet* → `bun test ./tests/terminal.test.ts` · evidence [`lib/terminal.ts`](../../lib/terminal.ts)
 - **`security-hash-boundaries`** — Bun.password hash/verify and CryptoHasher sha256/sha1 digests behave as expected  
   *Ratchet* → `bun test tests/fixtures/security-hash/` · evidence `tests/fixtures/security-hash/**/fixture.test.ts`  
   *Fixtures* → `password/` · `cryptohasher/`
@@ -122,6 +126,8 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `runtime-cli-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/runtime-cli/` |
 | `bun-shell-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/bun-shell/` |
 | `fs-native-boundaries` | continuous | `ci:harness` boundary-fixtures · fs-bun + bun-glob-scan |
+| `image-metadata-boundaries` | human-only | `bun test ./tests/image-metadata.test.ts` |
+| `terminal-pty-boundaries` | human-only | `bun test ./tests/terminal.test.ts` |
 | `security-hash-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/security-hash/` |
 | `url-pattern-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-site-url.test.ts` |
 | `social-metadata-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/social-metadata/` |
@@ -156,7 +162,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
 | `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 11.
+Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 13.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 

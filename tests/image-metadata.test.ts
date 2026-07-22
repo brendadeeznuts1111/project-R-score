@@ -7,6 +7,7 @@ import {
   DEFAULT_THUMB_MAX_HEIGHT,
   DEFAULT_THUMB_MAX_WIDTH,
   extractImageEvidenceMeta,
+  imageEvidenceHeaders,
   imageMetaChecksPassed,
   isImageEvidenceMeta,
   parseImageEvidenceMeta,
@@ -84,6 +85,37 @@ describe('lib/image-metadata', () => {
     expect(isImageEvidenceMeta({ width: 0, height: 10 })).toBe(false);
     expect(() => parseImageEvidenceMeta({ width: 10 })).toThrow(/Invalid ImageEvidenceMeta/);
   });
+
+  test('parseImageEvidenceMeta rejects bad algorithm, short digest, non-object', () => {
+    const base = {
+      width: 10,
+      height: 10,
+      format: 'png',
+      size: 84,
+      algorithm: 'sha256',
+      digest: 'a'.repeat(64),
+    };
+    expect(isImageEvidenceMeta({ ...base, algorithm: 'md5' })).toBe(false);
+    expect(isImageEvidenceMeta({ ...base, digest: 'abc' })).toBe(false);
+    expect(isImageEvidenceMeta(null)).toBe(false);
+    expect(isImageEvidenceMeta('png')).toBe(false);
+    expect(() => parseImageEvidenceMeta({ ...base, algorithm: 'md5' })).toThrow(
+      /Invalid ImageEvidenceMeta/,
+    );
+    expect(() => parseImageEvidenceMeta({ ...base, digest: 'short' })).toThrow(
+      /Invalid ImageEvidenceMeta/,
+    );
+  });
+
+  test('imageEvidenceHeaders emits X-Image-* keys', async () => {
+    const meta = await extractImageEvidenceMeta(PNG_10);
+    const headers = imageEvidenceHeaders(meta);
+    expect(headers['X-Image-Width']).toBe('10');
+    expect(headers['X-Image-Height']).toBe('10');
+    expect(headers['X-Image-Format']).toBe('png');
+    expect(headers['X-Image-Size']).toBe(String(meta.size));
+    expect(headers['X-Image-Digest']).toBe(`sha256:${meta.digest}`);
+  });
 });
 
 describe('lib/screenshot-remediation TEST-003', () => {
@@ -128,6 +160,39 @@ describe('lib/screenshot-remediation TEST-003', () => {
     expect(result.status).toBe('fail');
     expect(result.remediation.action).toBe('resize_fix');
     expect(result.remediation.command).toContain('resize(400, 300');
+  });
+
+  test('runTest003 custom 320×240 expectations put resize(320, 240 in remediation command', () => {
+    const record: ScreenshotEvidenceRecord = {
+      kind: 'ScreenshotEvidence',
+      testId: TEST_003,
+      capturedAt: new Date().toISOString(),
+      source: {
+        width: 1280,
+        height: 800,
+        format: 'png',
+        size: 1000,
+        algorithm: 'sha256',
+        digest: 'd'.repeat(64),
+      },
+      thumbnail: {
+        width: 400,
+        height: 300,
+        format: 'png',
+        size: 500,
+        algorithm: 'sha256',
+        digest: 'e'.repeat(64),
+      },
+    };
+    const result = runTest003(record, {
+      formats: ['png'],
+      maxWidth: 320,
+      maxHeight: 240,
+      minSize: 32,
+    });
+    expect(result.ok).toBe(false);
+    expect(result.remediation.action).toBe('resize_fix');
+    expect(result.remediation.command).toContain('resize(320, 240');
   });
 
   test('remediateScreenshotCapture returns thumbnail bytes and pass status', async () => {
