@@ -1,9 +1,10 @@
 /**
- * Blog HTML extraction: article body + fetch URL fragment strip.
- * Social metadata lives in `extract-metadata.ts` (social-metadata-boundaries).
+ * Blog HTML extraction: article body text via HTMLRewriter.
+ * Fragment strip + page fetch: `fetch-page.ts` (fetch-page-boundaries).
+ * Social metadata: `extract-metadata.ts` (social-metadata-boundaries).
  *
  * @see https://bun.com/docs/runtime/html-rewriter
- * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URL.hash / fragment
+ * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
  */
 

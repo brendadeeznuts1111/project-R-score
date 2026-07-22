@@ -109,7 +109,7 @@ export const CANONICAL_REFS: Record<string, string> = {
     'fetching-a-url-with-a-timeout'
   ),
   'fetch headers': bunDocs('runtime/networking/fetch', 'custom-headers'),
-  'custom-headers': bunDocs('runtime/networking/fetch', 'custom-headers'),
+  'fetch custom-headers': bunDocs('runtime/networking/fetch', 'custom-headers'),
   'fetch error-handling': bunDocs('runtime/networking/fetch', 'error-handling'),
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',

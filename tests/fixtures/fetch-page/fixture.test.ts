@@ -8,6 +8,7 @@
  */
 import { afterEach, describe, expect, test } from 'bun:test';
 import { fetchPage, stripUrlFragment } from '../../../lib/docs/fetch-page.ts';
+import { bunBlog } from '../../../lib/docs/bun-site-url.ts';
 
 const originalFetch = globalThis.fetch;
 
@@ -20,6 +21,9 @@ describe('fetch-page-boundaries', () => {
     expect(stripUrlFragment('https://example.com/post#comments')).toBe(
       'https://example.com/post'
     );
+    const withHash = bunBlog('bun-v1.3.14', 'comments');
+    expect(stripUrlFragment(withHash)).toBe(bunBlog('bun-v1.3.14'));
+    expect(stripUrlFragment(withHash)).not.toContain('#');
   });
 
   test('request URL has no fragment; Accept and User-Agent are set', async () => {
@@ -36,6 +40,21 @@ describe('fetch-page-boundaries', () => {
     expect(seenUrl).not.toContain('#');
     expect(seenHeaders?.get('Accept')).toBe('text/html');
     expect(seenHeaders?.get('User-Agent')).toBe('factorywager-docs-fetch/1.0');
+  });
+
+  test('merges caller headers without clobbering Accept/UA defaults', async () => {
+    let seenHeaders: Headers | undefined;
+    globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      seenHeaders = new Headers(init?.headers);
+      return new Response('ok', { status: 200 });
+    }) as typeof fetch;
+
+    await fetchPage('https://example.com/', {
+      headers: { 'Accept-Language': 'en' },
+    });
+    expect(seenHeaders?.get('Accept')).toBe('text/html');
+    expect(seenHeaders?.get('User-Agent')).toBe('factorywager-docs-fetch/1.0');
+    expect(seenHeaders?.get('Accept-Language')).toBe('en');
   });
 
   test('non-OK rejects after reading error body', async () => {
@@ -66,7 +85,21 @@ describe('fetch-page-boundaries', () => {
       return new Response('ok', { status: 200 });
     }) as typeof fetch;
 
-    expect(fetchPage('https://example.com/x', { signal: controller.signal })).rejects.toThrow();
+    await expect(
+      fetchPage('https://example.com/x', { signal: controller.signal })
+    ).rejects.toThrow();
+  });
+
+  test('timeoutMs installs an AbortSignal when signal omitted', async () => {
+    let seenSignal: AbortSignal | undefined;
+    globalThis.fetch = (async (_input: RequestInfo | URL, init?: RequestInit) => {
+      seenSignal = init?.signal ?? undefined;
+      return new Response('ok', { status: 200 });
+    }) as typeof fetch;
+
+    await fetchPage('https://example.com/', { timeoutMs: 1234 });
+    expect(seenSignal).toBeDefined();
+    expect(seenSignal?.aborted).toBe(false);
   });
 
   test('custom userAgent overrides default', async () => {

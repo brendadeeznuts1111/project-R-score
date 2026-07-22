@@ -246,7 +246,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   },
   {
     id: 'blog-extraction-boundaries',
-    claim: 'Blog HTML extraction strips fragments and excludes nav/footer from article body',
+    claim: 'Blog HTML extraction excludes nav/footer from article body',
     kinds: ['boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:harness',

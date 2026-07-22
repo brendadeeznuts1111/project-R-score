@@ -13,9 +13,9 @@ import { describe, expect, test } from 'bun:test';
 import {
   extractArticleText,
   extractSocialMetadata,
+  fetchPage,
   stripUrlFragment,
 } from '../../lib/docs/blog-extract.ts';
-import { fetchPage } from '../../lib/docs/fetch-page.ts';
 import {
   BunBlogIndexPattern,
   BunBlogPattern,
@@ -41,7 +41,7 @@ describe('blog-extraction journey', () => {
   });
 
   test(
-    'fetch + extractSocialMetadata yields title, description, image',
+    'fetchPage + extractSocialMetadata yields title, description, image',
     async () => {
       const postUrl = hrefFromInit({
         ...CANONICAL_SOURCES.blog,

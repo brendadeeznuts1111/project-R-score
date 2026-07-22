@@ -3200,10 +3200,10 @@
       "stability": "stable",
       "lastUpdated": "2026-07-20T16:44:45.092Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat",
-      "anchor": "fetch",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/fetch",
+      "anchor": "sending-an-http-request",
       "allPages": [
-        "https://bun.com/docs/runtime/nodejs-compat"
+        "https://bun.com/docs/runtime/networking/fetch"
       ],
       "section": "runtime",
       "locusUnresolved": false,
@@ -3212,7 +3212,7 @@
         "--test",
         "bun:jsc"
       ],
-      "docsUrl": "https://bun.com/docs/runtime/nodejs-compat#fetch",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch#sending-an-http-request",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
@@ -6502,9 +6502,10 @@
       "releasedIn": "1.3.14",
       "lastUpdated": "2026-07-20T16:44:45.092Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/nodejs-compat#fetch",
+      "canonicalPage": "https://bun.com/docs/runtime/networking/fetch",
+      "anchor": "sending-an-http-request",
       "allPages": [
-        "https://bun.com/docs/runtime/nodejs-compat#fetch"
+        "https://bun.com/docs/runtime/networking/fetch"
       ],
       "section": "runtime",
       "aliases": [
@@ -6512,7 +6513,7 @@
       ],
       "changeNote": "HTTP/2 and HTTP/3 options on fetch() client",
       "blogUrl": "https://bun.com/blog/bun-v1.3.14",
-      "docsUrl": "https://bun.com/docs/runtime/nodejs-compat#fetch",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch#sending-an-http-request",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
     },
     {

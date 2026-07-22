@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetchPage
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit / CANONICAL_SOURCES
 // tools/bun-docs-mcp-lib.ts — Index, search, and MDX helpers for bun-docs MCP
@@ -12,9 +13,9 @@
 import {
   extractArticleText,
   extractSocialMetadataFromHtml,
+  fetchPage,
   stripUrlFragment,
 } from '../lib/docs/blog-extract.ts';
-import { fetchPage } from '../lib/docs/fetch-page.ts';
 import {
   BunComSite,
   CANONICAL_SOURCES,

@@ -1,13 +1,12 @@
 /**
  * @see https://bun.com/docs/runtime/html-rewriter
- * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
  *
- * Blog extraction: strip anchors, exclude header/footer from article body.
- * Social metadata is ratcheted by social-metadata-boundaries.
+ * Blog extraction: exclude header/footer from article body.
+ * Fragment strip + page fetch: fetch-page-boundaries.
+ * Social metadata: social-metadata-boundaries.
  */
 import { describe, expect, test } from 'bun:test';
-import { extractArticleText, stripUrlFragment } from '../../../lib/docs/blog-extract.ts';
-import { bunBlog } from '../../../lib/docs/bun-site-url.ts';
+import { extractArticleText } from '../../../lib/docs/blog-extract.ts';
 
 const SAMPLE_HTML = `<!DOCTYPE html>
 <html>
@@ -34,17 +33,9 @@ describe('blog-extraction-boundaries', () => {
     expect(text).toContain('WebView is now built-in.');
   });
 
-  test('stripUrlFragment drops # before fetch', () => {
-    const withHash = bunBlog('bun-v1.3.14', 'comments');
-    const cleaned = stripUrlFragment(withHash);
-    expect(cleaned).toBe(bunBlog('bun-v1.3.14'));
-    expect(cleaned).not.toContain('#');
-  });
-
-  test('fragment strip is idempotent for article text base', async () => {
+  test('extractArticleText is deterministic for same HTML', async () => {
     const a = await extractArticleText(SAMPLE_HTML);
     const b = await extractArticleText(SAMPLE_HTML);
-    expect(stripUrlFragment(bunBlog('bun-v1.3.14', 'section'))).toBe(bunBlog('bun-v1.3.14'));
     expect(a).toBe(b);
   });
 });

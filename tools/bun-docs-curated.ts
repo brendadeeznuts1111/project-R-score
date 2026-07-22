@@ -1,3 +1,10 @@
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
+// @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
+// @see https://bun.com/docs/bundler/index#basic-example — Bun.build
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/redis#getting-started — Bun.redis
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/cron — Bun.cron
 // @see https://bun.com/docs/runtime/s3 — Bun.s3
@@ -47,7 +54,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'fetch',
-    path: 'runtime/network/fetch',
+    path: 'runtime/networking/fetch',
     description: 'fetch() client with HTTP/2 and HTTP/3 options',
     minVersion: '1.3.14',
     stability: 'experimental',

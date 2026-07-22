@@ -47,7 +47,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/bun-site-url.test.ts` · evidence `lib/docs/bun-site-url.ts`
 - **`social-metadata-boundaries`** — HTMLRewriter extracts OG/Twitter/fallback metadata correctly (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/social-metadata/` · evidence `lib/docs/extract-metadata.ts` · [guide](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags)
-- **`blog-extraction-boundaries`** — fragment strip + article sans nav/footer (`boundary`)  
+- **`blog-extraction-boundaries`** — article sans nav/footer (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/blog-extraction/` · evidence `lib/docs/blog-extract.ts`
 - **`fetch-page-boundaries`** — shared page fetch: fragment strip, Accept/UA, timeout, non-OK throw, success body unread (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/fetch-page/` · evidence `lib/docs/fetch-page.ts` · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request)

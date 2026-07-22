@@ -57,7 +57,7 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 | `bun run` CLI boundaries | claim `runtime-cli-boundaries` · `bun test tests/fixtures/runtime-cli/` · [runtime](https://bun.com/docs/runtime) |
 | URLPattern site URLs | claim `url-pattern-boundaries` · `bun test tests/bun-site-url.test.ts` · [URLPattern](https://bun.com/blog/bun-v1.3.4#urlpattern-api) |
 | `HTMLRewriter` social metadata | claim `social-metadata-boundaries` · `bun test tests/fixtures/social-metadata/` · [extract-social-meta](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags) |
-| Blog HTML extraction | claim `blog-extraction-boundaries` · `bun test tests/fixtures/blog-extraction/` · article body + fragment strip |
+| Blog HTML extraction | claim `blog-extraction-boundaries` · `bun test tests/fixtures/blog-extraction/` · article body sans nav/footer |
 | `fetch` / fetchPage SSOT | claim `fetch-page-boundaries` · `bun test tests/fixtures/fetch-page/` · [`lib/docs/fetch-page.ts`](../lib/docs/fetch-page.ts) · [networking/fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request) |
 | Blog ingestion journey | claim `blog-extraction-journey` · `bun test tests/journey/blog-extraction.test.ts` · live `CANONICAL_SOURCES.blog` → URLPattern → fetchPage → SocialMetadata |
 | Harness spawn / orphans | this section · `bunfig.toml` `[run]` · `runFreshRerunCommand` |
