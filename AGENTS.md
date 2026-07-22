@@ -4,7 +4,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
 **Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote only — do not default-push there). Runtime identity: [`lib/github-repository-ref.ts`](lib/github-repository-ref.ts) (`owner`/`name`/`host`/`remote` — not `REPO_URL`); parts SSOT in [`CANONICAL_REMOTES`](lib/docs/repo-docs.ts).
 
-**Remote SSH:** Reasonix remote hosts live in `~/.reasonix/config.toml` under `[remote]`. Active: `factorywager-staging` (internal.staging, `~/.ssh/id_ed25519`, workspace `~/Projects`). Cascade Mover host is placeholder (uncomment when IP known). CLI: `reasonix remote test/connect/list`. First-time bootstrap: `bun run remote:setup` or `bash scripts/reasonix-remote-setup.sh`. Reasonix binary: `/Applications/Reasonix.app/Contents/MacOS/reasonix`.
+**Remote SSH:** Reasonix remote hosts live in `~/.reasonix/config.toml` under `[remote]`. Active: `factorywager-staging` (internal.staging, `~/.ssh/id_ed25519`, workspace `~/Projects`). `cloudflare-pages` (API-based, no SSH — deploy via `bash scripts/cloudflare-pages-deploy.sh`). Cascade Mover host is placeholder (uncomment when IP known). Tunnel: `scripts/cloudflared-reasonix.yml` → `reasonix.factory-wager.com`. CLI: `reasonix remote test/connect/list`. First-time bootstrap: `bun run remote:setup`. Reasonix binary: `/Applications/Reasonix.app/Contents/MacOS/reasonix`. Cloudflare MCP servers: 5 connected in `.mcp.json` (`mcp__cloudflare__*`). Env: `CLOUDFLARE_API_TOKEN` in `~/.reasonix/.env`.
 
 ## Canonical docs
 

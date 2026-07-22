@@ -203,8 +203,22 @@ export const CANONICAL_EXTERNAL = {
   reasonixRemote: {
     name: 'remote-ssh',
     configPath: '~/.reasonix/config.toml',
-    activeHosts: ['factorywager-staging'],
+    activeHosts: ['factorywager-staging', 'cloudflare-pages'],
     reasonixBinary: '/Applications/Reasonix.app/Contents/MacOS/reasonix',
     setupScript: 'scripts/reasonix-remote-setup.sh',
+    cloudflarePages: {
+      deployScript: 'scripts/cloudflare-pages-deploy.sh',
+      tunnelConfig: 'scripts/cloudflared-reasonix.yml',
+      mcpServers: [
+        'mcp__cloudflare__connect',
+        'mcp__cloudflare-docs__connect',
+        'mcp__cloudflare-builds__connect',
+        'mcp__cloudflare-bindings__connect',
+        'mcp__cloudflare-observability__connect',
+      ],
+      accountId: '7a470541a704caaf91e71efccc78fd36',
+      project: 'project-r-score',
+      pagesDomain: 'project-r-score.pages.dev',
+    },
   },
 } as const;

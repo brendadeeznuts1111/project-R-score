@@ -1,0 +1,18 @@
+# Cloudflare Tunnel config — expose reasonix serve via factory-wager.com
+# Install: brew install cloudflared
+# Create tunnel: cloudflared tunnel create reasonix-serve
+# Route DNS: cloudflared tunnel route dns reasonix-serve reasonix.factory-wager.com
+# Run: cloudflared tunnel run reasonix-serve
+#
+# This file lives in ~/.cloudflared/config.yml
+tunnel: reasonix-serve
+credentials-file: /Users/nolarose/.cloudflared/reasonix-serve.json
+ingress:
+  # Forward reasonix serve (web UI) traffic
+  - hostname: reasonix.factory-wager.com
+    service: http://localhost:8787
+  # Forward R2 / Cloudflare API traffic
+  - hostname: "*.factory-wager.com"
+    service: https://api.cloudflare.com
+  # Catch-all: reject
+  - service: http_status:404

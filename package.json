@@ -1555,6 +1555,8 @@
     "remote:setup": "bash scripts/reasonix-remote-setup.sh",
     "remote:list": "reasonix remote list 2>/dev/null || echo 'reasonix CLI not in PATH'",
     "remote:connect": "reasonix remote connect",
+    "cloudflare:deploy": "bash scripts/cloudflare-pages-deploy.sh",
+    "cloudflare:tunnel": "cloudflared tunnel run reasonix-serve",
     "ci:harness": "bun scripts/ci-harness.ts",
     "ci:harness:fast": "bun scripts/ci-harness.ts --fast",
     "ci:core": "bun scripts/ci-core.ts",
