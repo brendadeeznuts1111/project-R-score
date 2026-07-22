@@ -75,12 +75,12 @@ export type RandomUuidV7Encoding = 'hex' | 'base64' | 'base64url' | 'buffer';
 export function randomUUIDv7(timestamp?: number | Date): string;
 export function randomUUIDv7(
   encoding: Exclude<RandomUuidV7Encoding, 'buffer'>,
-  timestamp?: number | Date,
+  timestamp?: number | Date
 ): string;
 export function randomUUIDv7(encoding: 'buffer', timestamp?: number | Date): Buffer;
 export function randomUUIDv7(
   encodingOrTs?: RandomUuidV7Encoding | number | Date,
-  timestamp?: number | Date,
+  timestamp?: number | Date
 ): string | Buffer {
   const toMs = (t: number | Date | undefined): number | undefined => {
     if (t === undefined) return undefined;
@@ -98,9 +98,9 @@ export function randomUUIDv7(
   return Bun.randomUUIDv7(encodingOrTs, toMs(timestamp));
 }
 
-/** True when `id` is a canonical UUID v7 hex string (with or without dashes). */
-export function isUuidV7(id: string): boolean {
-  const hex = id.replace(/-/g, '').toLowerCase();
+/** True when `uuid` is a canonical UUID v7 hex string (with or without dashes). */
+export function isUuidV7(uuid: string): boolean {
+  const hex = uuid.replace(/-/g, '').toLowerCase();
   return hex.length === 32 && UUID_V7_HEX_RE.test(hex);
 }
 
@@ -108,18 +108,18 @@ export function isUuidV7(id: string): boolean {
  * Unix timestamp (ms) encoded in a UUID v7 (top 48 bits).
  * @see https://bun.com/docs/runtime/utils#bun-randomuuidv7
  */
-export function uuidV7TimestampMs(id: string): number {
-  const hex = id.replace(/-/g, '').toLowerCase();
-  if (!isUuidV7(hex) && !isUuidV7(id)) {
-    throw new Error(`uuidV7TimestampMs: not a UUID v7 (${id})`);
+export function uuidV7TimestampMs(uuid: string): number {
+  const hex = uuid.replace(/-/g, '').toLowerCase();
+  if (!isUuidV7(hex) && !isUuidV7(uuid)) {
+    throw new Error(`uuidV7TimestampMs: not a UUID v7 (${uuid})`);
   }
-  const normalized = hex.length === 32 ? hex : id.replace(/-/g, '').toLowerCase();
+  const normalized = hex.length === 32 ? hex : uuid.replace(/-/g, '').toLowerCase();
   return Number(BigInt(`0x${normalized.slice(0, 12)}`));
 }
 
 /** {@link uuidV7TimestampMs} as a `Date`. */
-export function uuidV7Date(id: string): Date {
-  return new Date(uuidV7TimestampMs(id));
+export function uuidV7Date(uuid: string): Date {
+  return new Date(uuidV7TimestampMs(uuid));
 }
 
 /**
@@ -173,7 +173,7 @@ export const DEFAULT_EVIDENCE_TIMING_SKEW_MS = 2_000;
 export function checkEvidenceTiming(
   capturedAt: string,
   evidenceId: EvidenceId | string,
-  maxSkewMs = DEFAULT_EVIDENCE_TIMING_SKEW_MS,
+  maxSkewMs = DEFAULT_EVIDENCE_TIMING_SKEW_MS
 ): EvidenceTimingCheck {
   const capturedAtMs = Date.parse(capturedAt);
   if (!Number.isFinite(capturedAtMs)) {
@@ -234,7 +234,7 @@ export function timezoneId(): string {
 
 /** Time an async function with {@link Bun.nanoseconds}. */
 export async function timedAsync<T>(
-  fn: () => Promise<T> | T,
+  fn: () => Promise<T> | T
 ): Promise<{ value: T; elapsedMs: number; elapsedNs: number }> {
   const start = Bun.nanoseconds();
   const value = await fn();
