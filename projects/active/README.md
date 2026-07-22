@@ -7,7 +7,7 @@ Maintained product leaves. Full inventory + root contract: [`../README.md`](../R
 | Category | Products |
 |----------|----------|
 | [`analysis/`](analysis/) | grok-security, matrix-analysis, scanner |
-| [`automation/`](automation/) | duoplus-app-factory, enhancements-1.0.01 |
+| [`automation/`](automation/) | enhancements-1.0.01 |
 | [`dashboards/`](dashboards/) | enterprise-dashboard, quantum-terminal-dashboard, secrets-dashboard |
 | [`development/`](development/) | geelark, kal-poly-bot |
 | [`enterprise/`](enterprise/) | bet-ticker-worker-v1.1, cascade-mover-v3, fantasy42-fire22-registry, foxy-proxy, full-stack-bun.io |
