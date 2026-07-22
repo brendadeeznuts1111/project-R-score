@@ -40,14 +40,14 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/fixtures/bun-shell/`
 - **`fs-native-boundaries`** — `Bun.file` / `Bun.write` / `Bun.Glob` behave as expected  
   *Ratchet* → `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts`
-- **`image-metadata-boundaries`** — Bun.Image metadata extract / resize / verify / parse + TEST-003 remediation (uses `awaitAllSettled` + `deepEquals` unchanged skip) (`unit` + `boundary`)  
+- **`image-metadata-boundaries`** — Bun.Image metadata extract / resize / verify / parse + TEST-003 remediation (`awaitAllSettled` · `deepEquals` unchanged · `checkEvidenceTiming` / runtime fingerprint) (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/image-metadata.test.ts` · evidence [`lib/image-metadata.ts`](../../lib/image-metadata.ts) · [`lib/screenshot-remediation.ts`](../../lib/screenshot-remediation.ts)
 - **`deep-equals-boundaries`** — `Bun.deepEquals` wrapper + strict / changed-index helpers (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/deep-equals.test.ts` · evidence [`lib/deep-equals.ts`](../../lib/deep-equals.ts)
 - **`peek-settle-boundaries`** — `Bun.peek` settled-promise fast path (`awaitSettled` / `awaitAllSettled` / `peekIfSettled`) (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/peek-settle.test.ts` · evidence [`lib/peek-settle.ts`](../../lib/peek-settle.ts)
-- **`bun-time-boundaries`** — utils date/time/number tokens: `Bun.nanoseconds` · `Bun.sleep`/`sleepSync` · `Bun.randomUUIDv7` (`unit` + `boundary`)  
-  *Ratchet* → `bun test ./tests/time.test.ts` · evidence [`lib/time.ts`](../../lib/time.ts)
+- **`bun-time-boundaries`** — utils date/time/number tokens: `Bun.nanoseconds` · `Bun.sleep`/`sleepSync` · `Bun.randomUUIDv7` · `Bun.version`/`revision` + `mintEvidenceId` / `mintEvidenceIdAt` / `checkEvidenceTiming` (`unit` + `boundary`)  
+  *Ratchet* → `bun test ./tests/time.test.ts` · evidence [`lib/time.ts`](../../lib/time.ts) · wired into TEST-003 via [`lib/screenshot-remediation.ts`](../../lib/screenshot-remediation.ts)
 - **`terminal-pty-boundaries`** — Bun.Terminal PTY helpers (`spawnWithTerminal` / capturing terminal) (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/terminal.test.ts` · evidence [`lib/terminal.ts`](../../lib/terminal.ts)
 - **`security-hash-boundaries`** — Bun.password hash/verify and CryptoHasher sha256/sha1 digests behave as expected  

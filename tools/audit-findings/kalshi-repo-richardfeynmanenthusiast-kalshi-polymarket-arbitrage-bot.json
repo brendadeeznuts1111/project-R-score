@@ -1,0 +1,28 @@
+{
+  "id": "kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot",
+  "kind": "AuditFinding",
+  "title": "Kalshi bot candidate: RichardFeynmanEnthusiast/kalshi-polymarket-arbitrage-bot",
+  "description": "Quality score 69.5/100. Strategy: market_making, arb, news_event. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.",
+  "status": "open",
+  "publishedAt": "2026-07-22",
+  "discoveredIn": "2026-07-22T06-19-51-053Z",
+  "evidence": {
+    "path": "tools/audit-evidence/kalshi/richardfeynmanenthusiast__kalshi-polymarket-arbitrage-bot.ndjson",
+    "algorithm": "sha3-256",
+    "digest": "e3ba946f0e10f7927086bd0a996aedce7dbb7d80ebd614fc9bc9f29eb443eb57",
+    "mediaType": "application/x-ndjson"
+  },
+  "related": [
+    "kalshi-shortlist-diversity",
+    "sha3-integrity",
+    "nagata-map"
+  ],
+  "relatedDocs": [
+    "SHA3-256"
+  ],
+  "meta": {
+    "emitter": "kalshi-bot-research",
+    "buildPin": "0.2.0",
+    "tier": "watchlist"
+  }
+}

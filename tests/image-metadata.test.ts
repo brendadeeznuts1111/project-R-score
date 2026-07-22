@@ -22,7 +22,7 @@ import {
   screenshotEvidenceEqual,
   type ScreenshotEvidenceRecord,
 } from '../lib/screenshot-remediation.ts';
-import { asEvidenceId } from '../lib/types/branded.ts';
+import { mintEvidenceIdAt } from '../lib/time.ts';
 
 /** 10×10 PNG fixture. */
 const PNG_10 = Buffer.from(
@@ -138,15 +138,19 @@ describe('lib/screenshot-remediation TEST-003', () => {
     expect(result.ok).toBe(true);
     expect(result.unchanged).toBe(false);
     expect(result.elapsedMs).toBe(elapsedMs);
+    expect(result.timing.ok).toBe(true);
+    expect(result.runtime.version).toBe(Bun.version);
+    expect(result.runtime.revision).toBe(Bun.revision);
     expect(result.remediation.action).toBe('accept');
   });
 
   test('runTest003 fails with resize_fix when thumbnail dims too large', () => {
+    const capturedAt = new Date().toISOString();
     const record: ScreenshotEvidenceRecord = {
       kind: 'ScreenshotEvidence',
       testId: TEST_003,
-      capturedAt: new Date().toISOString(),
-      evidenceId: asEvidenceId('00000000-0000-7000-8000-000000000001'),
+      capturedAt,
+      evidenceId: mintEvidenceIdAt(new Date(capturedAt)),
       source: {
         width: 1280,
         height: 800,
@@ -167,16 +171,18 @@ describe('lib/screenshot-remediation TEST-003', () => {
     const result = runTest003(record);
     expect(result.ok).toBe(false);
     expect(result.status).toBe('fail');
+    expect(result.timing.ok).toBe(true);
     expect(result.remediation.action).toBe('resize_fix');
     expect(result.remediation.command).toContain('resize(400, 300');
   });
 
   test('runTest003 custom 320×240 expectations put resize(320, 240 in remediation command', () => {
+    const capturedAt = new Date().toISOString();
     const record: ScreenshotEvidenceRecord = {
       kind: 'ScreenshotEvidence',
       testId: TEST_003,
-      capturedAt: new Date().toISOString(),
-      evidenceId: asEvidenceId('00000000-0000-7000-8000-000000000002'),
+      capturedAt,
+      evidenceId: mintEvidenceIdAt(new Date(capturedAt)),
       source: {
         width: 1280,
         height: 800,
@@ -203,6 +209,19 @@ describe('lib/screenshot-remediation TEST-003', () => {
     expect(result.ok).toBe(false);
     expect(result.remediation.action).toBe('resize_fix');
     expect(result.remediation.command).toContain('resize(320, 240');
+  });
+
+  test('runTest003 rejects when evidenceId timestamp drifts from capturedAt', async () => {
+    const { record } = await buildScreenshotEvidenceRecord(PNG_10, {
+      capturedAt: '2026-07-22T12:00:00.000Z',
+      // Exact historical stamp (mintEvidenceId would clamp under Bun monotonic watermark).
+      evidenceId: mintEvidenceIdAt(new Date('2026-01-01T00:00:00.000Z')),
+    });
+    const result = runTest003(record);
+    expect(result.ok).toBe(false);
+    expect(result.timing.ok).toBe(false);
+    expect(result.remediation.action).toBe('reject');
+    expect(result.remediation.message).toContain('Evidence timing failed');
   });
 
   test('remediateScreenshotCapture returns thumbnail bytes and pass status', async () => {

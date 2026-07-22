@@ -210,7 +210,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'image-metadata-boundaries',
     claim:
-      'Bun.Image metadata extract/resize/verify/parse and TEST-003 screenshot remediation behave as this repo depends on them (awaitAllSettled + deepEquals unchanged skip)',
+      'Bun.Image metadata extract/resize/verify/parse and TEST-003 screenshot remediation behave as this repo depends on them (awaitAllSettled + deepEquals unchanged + evidence timing)',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',
@@ -261,7 +261,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'bun-time-boundaries',
     claim:
-      'Bun utils date/time/number tokens (nanoseconds, sleep/sleepSync, randomUUIDv7) behave as this repo depends on them',
+      'Bun utils date/time/number tokens (nanoseconds, sleep/sleepSync, randomUUIDv7, version/revision) + evidenceId timing coherence behave as this repo depends on them',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',

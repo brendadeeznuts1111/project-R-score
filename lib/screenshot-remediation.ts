@@ -28,8 +28,16 @@ import {
   type ImageMetaExpectations,
 } from './image-metadata.ts';
 import { awaitAllSettled } from './peek-settle.ts';
-import { randomUUIDv7, timedAsync } from './time.ts';
-import { asEvidenceId, type EvidenceId } from './types/branded.ts';
+import {
+  bunRuntimeFingerprint,
+  checkEvidenceTiming,
+  mintEvidenceId,
+  timedAsync,
+  uuidV7Date,
+  type BunRuntimeFingerprint,
+  type EvidenceTimingCheck,
+} from './time.ts';
+import { unbrand, type EvidenceId } from './types/branded.ts';
 
 /** Stable remediation / claim id for screenshot metadata evidence. */
 export const TEST_003 = 'TEST-003' as const;
@@ -67,6 +75,10 @@ export type Test003Response = {
   unchanged: boolean;
   /** Wall-clock build duration via Bun.nanoseconds (ms). */
   elapsedMs: number;
+  /** UUID v7 timestamp vs capturedAt coherence. */
+  timing: EvidenceTimingCheck;
+  /** Bun.version / Bun.revision at verify time. */
+  runtime: BunRuntimeFingerprint;
   checks: ImageMetaCheck[];
   evidence: ScreenshotEvidenceRecord;
   remediation: Test003Remediation;
@@ -123,8 +135,21 @@ export async function buildScreenshotEvidenceRecord(
   const algorithm = options.algorithm;
   const thumbMaxWidth = options.thumbMaxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
   const thumbMaxHeight = options.thumbMaxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
-  const capturedAt = options.capturedAt ?? new Date().toISOString();
-  const evidenceId = options.evidenceId ?? asEvidenceId(randomUUIDv7(new Date(capturedAt)));
+  // Prefer mint-then-derive so capturedAt matches UUID v7 ms (avoids skew from
+  // ISO round-trip). When only capturedAt is set, mint with that stamp (Bun may
+  // clamp upward if a later watermark already exists in-process).
+  let evidenceId: EvidenceId;
+  let capturedAt: string;
+  if (options.evidenceId !== undefined) {
+    evidenceId = options.evidenceId;
+    capturedAt = options.capturedAt ?? uuidV7Date(unbrand(evidenceId)).toISOString();
+  } else if (options.capturedAt !== undefined) {
+    capturedAt = options.capturedAt;
+    evidenceId = mintEvidenceId(new Date(capturedAt));
+  } else {
+    evidenceId = mintEvidenceId();
+    capturedAt = uuidV7Date(unbrand(evidenceId)).toISOString();
+  }
 
   const {
     value: [source, resized],
@@ -174,33 +199,43 @@ export function screenshotEvidenceEqual(
 
 /**
  * Run TEST-003 verification against an evidence record (thumbnail bounds/format).
+ * Also gates UUID v7 timestamp vs `capturedAt` coherence via {@link checkEvidenceTiming}.
  */
 export function runTest003(
   record: ScreenshotEvidenceRecord,
   expectations?: ImageMetaExpectations,
-  options: { unchanged?: boolean; elapsedMs?: number } = {}
+  options: { unchanged?: boolean; elapsedMs?: number } = {},
 ): Test003Response {
   const maxW = expectations?.maxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
   const maxH = expectations?.maxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
   const resolved = expectations ?? defaultExpectations(maxW, maxH);
   const checks = verifyImageEvidenceMeta(record.thumbnail, resolved);
-  const ok = imageMetaChecksPassed(checks);
+  const timing = checkEvidenceTiming(record.capturedAt, record.evidenceId);
+  const imageOk = imageMetaChecksPassed(checks);
+  const ok = imageOk && timing.ok;
   const status = ok ? 'pass' : 'fail';
   const failed = checks.filter(c => !c.ok);
   const cmd = resizeCommand(maxW, maxH);
   const unchanged = options.unchanged === true;
   const elapsedMs = options.elapsedMs ?? 0;
+  const runtime = bunRuntimeFingerprint();
 
   let remediation: Test003Remediation;
   if (ok && unchanged) {
     remediation = {
       action: 'accept',
-      message: `Unchanged screenshot evidence (Bun.deepEquals on source+thumbnail) — within TEST-003 bounds (≤${maxW}×${maxH} PNG).`,
+      message: `Unchanged screenshot evidence (Bun.deepEquals on source+thumbnail) — within TEST-003 bounds (≤${maxW}×${maxH} PNG); ${timing.message}.`,
     };
   } else if (ok) {
     remediation = {
       action: 'accept',
-      message: `Screenshot thumbnail metadata within TEST-003 bounds (≤${maxW}×${maxH} PNG).`,
+      message: `Screenshot thumbnail metadata within TEST-003 bounds (≤${maxW}×${maxH} PNG); ${timing.message}.`,
+    };
+  } else if (!timing.ok && imageOk) {
+    remediation = {
+      action: 'reject',
+      message: `Evidence timing failed: ${timing.message}. Remint with mintEvidenceId(new Date(capturedAt)).`,
+      command: 'import { mintEvidenceId } from "../lib/time.ts"',
     };
   } else if (failed.some(c => c.id === 'dimensions')) {
     remediation = {
@@ -229,6 +264,8 @@ export function runTest003(
     ok,
     unchanged,
     elapsedMs,
+    timing,
+    runtime,
     checks,
     evidence: record,
     remediation,
