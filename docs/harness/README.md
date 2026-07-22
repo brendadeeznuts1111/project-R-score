@@ -62,10 +62,12 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → `bun run check:path-bun` (pre-commit when `lib/` or `tools/` staged)
 - **`Bun.env` boxing** — no Node `process.env` in spine `lib/` + `scripts/`  
   *Ratchet* → `bun run check:bun-env`, eslint `bun/prefer-bun-env` (**error**)
+- **`invisible-chars`** — zero-width / bidi / format code points are `\u` escapes in source, never literal bytes  
+  *Ratchet* → `bun run check:invisible-chars` (pre-commit when spine or test `.ts` staged) · `// invisible-ok` to suppress · VS16 warn-only (`--verbose` lists)
 - **Canonical Bun `@see` URLs** — Bun APIs cite catalog URLs  
   *Ratchet* → pre-commit `bun-doc-refs` annotate-on-write · `bun tools/bun-doc-refs.ts check`
-- **Audit findings (sibling SSOT)** — hashed evidence + catalog pages, not BunToken  
-  *Ratchet* → claim `audit-findings-catalog` · `bun tools/audit-catalog.ts build` · `bun test tests/audit-catalog.test.ts` · [`docs/audit/README.md`](../audit/README.md)
+- **Audit findings + concepts (sibling SSOT)** — hashed evidence + catalog pages, not BunToken  
+  *Ratchet* → claim `audit-findings-catalog` · `bun tools/audit-catalog.ts build` · `verify` · `bun test tests/audit-catalog.test.ts` · [`docs/audit/README.md`](../audit/README.md)
 - **Proof journeys** — claim kind matches evidence  
   *Ratchet* → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` · `bun run proof:install` · `bun run harness:status`
 - **Fresh-rerun** — harness PRs re-prove the affected claim outside the proposing chat  

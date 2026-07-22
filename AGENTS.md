@@ -79,6 +79,7 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
   - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
   - Harness JIT / proof / authority / review → [`docs/harness/README.md`](docs/harness/README.md) · [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md) · `bun run harness:status` · `bun run proof:install`
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
+ - Audit findings/concepts → `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · [`docs/audit/README.md`](docs/audit/README.md) · claim `audit-findings-catalog`
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs staged)
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
   - Testing → nearest `*.test.ts` / [`tests/`](tests/console-depth.test.ts) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))

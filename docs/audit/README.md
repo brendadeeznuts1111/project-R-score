@@ -1,4 +1,4 @@
-# Audit findings (FactoryWager)
+# Audit findings + concepts (FactoryWager)
 
 Repo-local audit SSOT. **Not** bun.com docs / BunToken.
 
@@ -31,6 +31,8 @@ bun tools/audit-emit-stub.ts
 | `bun run audit:catalog:build` | `audit-catalog.ts build` |
 | `bun run audit:verify` | `audit-catalog.ts verify` |
 | `bun run audit:catalog` | `audit-catalog.ts list` (list only — not build) |
+| `bun run audit:get -- <id>` | `audit-catalog.ts get` (all hits / co-hits) |
+| `bun run audit:search -- <q>` | `audit-catalog.ts search` |
 | `bun run audit:emit-stub` | rewrite sample finding + evidence |
 | `bun run audit:migrate:sha3` | one-shot normalize inbound/old findings → Phase 2 |
 

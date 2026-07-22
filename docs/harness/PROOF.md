@@ -60,6 +60,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run check:path-bun`
 - **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  
   *Ratchet* → `bun run check:bun-env` · eslint `bun/prefer-bun-env` (**error**)
+- **`invisible-chars`** — invisible/format Unicode code points are `\u` escapes in source, not literal bytes (`boundary`)  
+  *Ratchet* → `bun run check:invisible-chars` · evidence `scripts/check-invisible-chars.ts` · `// invisible-ok` suppress · VS16 warn-only (`--verbose`)  
+  *Origin* → `tests/console-depth.test.ts` vector corruption (U+200D→U+201D, U+FE0F→U+FE1D) passed every validator; only width assertions caught it
 - **`unknown-param`** — bare `unknown` params stay at parse edges (`boundary`)  
   *Ratchet* → eslint `harness/no-unknown-function-param` (**error**) · `bun eslint --config eslint.bun-native.config.ts --quiet`
 - **`day-loop-typecheck`** — advertised `type-check` covers spine agent edit surfaces (`journey`)  
@@ -78,8 +81,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun run test:cron-os` · [`cron.md`](cron.md)
 - **`docs-integrity`** — Bun docs stack integrity pass (`journey` + `boundary`)  
   *Ratchet* → `bun tools/bun-doc-refs.ts schedule --once` · [`tenants/docs-integrity.md`](tenants/docs-integrity.md)
-- **`audit-findings-catalog`** — FactoryWager audit findings build + evidence hashes + pages (`unit` + `boundary`)  
-  *Ratchet* → `bun tools/audit-catalog.ts build` · `verify` · `bun test tests/audit-catalog.test.ts` · [`docs/audit/README.md`](../audit/README.md) · [`findings/`](../audit/findings/) · sibling SSOT (not BunToken)
+- **`audit-findings-catalog`** — FactoryWager audit findings+concepts build + evidence hashes + pages (`unit` + `boundary`)  
+  *Ratchet* → `bun tools/audit-catalog.ts build` · `verify` · `bun test tests/audit-catalog.test.ts` · [`docs/audit/README.md`](../audit/README.md) · [`findings/`](../audit/findings/) · [`concepts/`](../audit/concepts/) · sibling SSOT (not BunToken)
 - **`spine-multi-tenant`** — spine runs ≥2 in-process tenants (docs-integrity + install-verify) (`journey` + `boundary`)  
   *Ratchet* → `bun run spine:schedule:once -- --tenant=install-verify` · [`cron.md`](cron.md)
 - **`spine-maintenance-runbooks`** — TenantRunbook + SignalMonitor; retirement attested + condition check; live `freshRerun` (`boundary` + `journey`)  
@@ -128,6 +131,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `bun-http-server-docs` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts` |
 | `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
 | `bun-env` | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env` |
+| `invisible-chars` | continuous | pre-commit (spine/test .ts staged) · `ci:harness` |
 | `unknown-param` | continuous | pre-commit / `ci:harness` eslint |
 | `day-loop-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
 | `lib-docs-typecheck` | workflow | `typescript-checks.yml` · `type-check` (required check) |
@@ -137,7 +141,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `bun-cron` | human-only | `bun run test:cron` |
 | `cron-os-persistent` | human-only | `bun run test:cron-os` |
 | `docs-integrity` | human-only | `bun-doc-refs schedule --once` · spine tenant |
-| `audit-findings-catalog` | human-only | `audit-catalog.ts build` · `tests/audit-catalog.test.ts` |
+| `audit-findings-catalog` | human-only | `audit-catalog.ts build` · `verify` · `tests/audit-catalog.test.ts` (findings+concepts) |
 | `spine-multi-tenant` | human-only | `spine:schedule:once -- --tenant=install-verify` |
 | `spine-maintenance-runbooks` | human-only | `bun run test:tenant-runbooks` (live tenant freshReruns; heavy) |
 | `spine-tenant-heal` | human-only | `bun run test:tenant-heal` |
@@ -152,7 +156,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
 | `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts (must match `gateClass` tallies): continuous 21 · workflow 8 · human-only 12.
+Counts (must match `gateClass` tallies): continuous 22 · workflow 8 · human-only 12.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 

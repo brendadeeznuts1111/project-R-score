@@ -270,6 +270,14 @@ describe('audit catalog', () => {
     ).toBe(true);
     expect((await verifyAuditCatalog()).ok).toBe(true);
   });
+
+  test('relatedDocs resolve via live curated (no bun-doc-refs import)', async () => {
+    const { getCuratedEntry } = await import('../tools/bun-docs-curated.ts');
+    const findings = await loadSourceFindings();
+    const concepts = await loadSourceConcepts();
+    expect(getCuratedEntry('SHA3-256')).not.toBeNull();
+    expect(verifyRelatedDocs(findings, concepts, t => Boolean(getCuratedEntry(t)))).toEqual([]);
+  });
 });
 
 describe('audit-migrate-to-sha3', () => {

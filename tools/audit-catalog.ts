@@ -161,7 +161,7 @@ export function verifyAuditGraph(findings: AuditFinding[], concepts: AuditConcep
   return errors;
 }
 
-/** relatedDocs tokens must resolve via curated and/or CANONICAL_REFS. */
+/** relatedDocs tokens must resolve via bun-docs-curated (CLI-free). */
 export function verifyRelatedDocs(
   findings: AuditFinding[],
   concepts: AuditConcept[],
@@ -174,9 +174,7 @@ export function verifyRelatedDocs(
   ): void => {
     for (const token of relatedDocs ?? []) {
       if (!resolves(token)) {
-        errors.push(
-          `${ownerId}: relatedDocs "${token}" is not a curated term or CANONICAL_REFS key`
-        );
+        errors.push(`${ownerId}: relatedDocs "${token}" is not a curated term (bun-docs-curated)`);
       }
     }
   };
@@ -223,10 +221,14 @@ export function buildCatalogFile(
   };
 }
 
+/**
+ * Resolve relatedDocs via curated only — never import bun-doc-refs.ts here.
+ * Dynamic import of bun-doc-refs from audit-catalog deadlocks when suggest
+ * (import.meta.main on bun-doc-refs) auto-builds a missing catalog.
+ */
 async function relatedDocsResolver(): Promise<(token: string) => boolean> {
   const { getCuratedEntry } = await import('./bun-docs-curated.ts');
-  const { CANONICAL_REFS } = await import('./bun-doc-refs.ts');
-  return (token: string) => Boolean(getCuratedEntry(token) || CANONICAL_REFS[token]);
+  return (token: string) => Boolean(getCuratedEntry(token));
 }
 
 export async function buildAuditCatalog(): Promise<AuditCatalogFile> {
@@ -537,7 +539,11 @@ async function main(): Promise<void> {
       console.error(`❌ not in audit catalog: ${id}`);
       process.exit(1);
     }
-    printAuditEntry(hits[0]!);
+    // Print all hits (alias co-hits: concept + related findings)
+    for (let i = 0; i < hits.length; i++) {
+      printAuditEntry(hits[i]!);
+      if (i < hits.length - 1) console.info('---');
+    }
     return;
   }
   if (cmd === 'search') {

@@ -30,8 +30,10 @@ bun run audit:migrate:sha3        # one-shot normalize inbound/old findings → 
 | Script | Meaning |
 |--------|---------|
 | `bun run audit:catalog:build` | build |
-| `bun run audit:verify` | verify |
+| `bun run audit:verify` | verify (evidence + graph + relatedDocs via curated) |
 | `bun run audit:catalog` | **list only** |
+| `bun run audit:get -- <id>` | get (prints co-hits) |
+| `bun run audit:search -- <q>` | search |
 | `bun run audit:emit-stub` | sample emitter |
 | `bun run audit:migrate:sha3` | inbound Phase 2 normalize |
 
