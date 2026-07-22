@@ -5,8 +5,10 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto — SHA3-256
 /**
- * Phase 2 normalize AuditFinding JSON evidence:
- *   algorithm: sha3-256, digest (strip legacy sha256 companion / sha256-only wire)
+ * One-shot normalize inbound/old AuditFinding JSON → Phase 2 evidence shape:
+ *   algorithm: sha3-256, digest (strip legacy sha256 companion / sha256-only wire).
+ * SSOT sample under tools/audit-findings/ is already Phase 2 — use this for external or
+ * leftover dual-write findings only.
  *
  * Operates on raw JSON first (parse rejects companion). Evidence blobs untouched.
  *

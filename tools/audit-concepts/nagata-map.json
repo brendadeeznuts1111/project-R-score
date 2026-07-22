@@ -11,7 +11,8 @@
   ],
   "related": [
     "sample-fiber-demo-2026-07-21",
-    "jacobian-nullspace"
+    "jacobian-nullspace",
+    "sha3-integrity"
   ],
   "meta": {
     "buildPin": "1.4.0",

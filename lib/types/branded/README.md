@@ -27,6 +27,7 @@ Domain-valued text (session, account, zone, credential keys, …) must not trave
 | User / account / access keys | [identity](./identity.ts) · [identity/README](./identity/README.md) |
 | Documents / DNS zones | [documents](./documents.ts) |
 | Zero-trust | [security](./security.ts) |
+| Audit SSOT / log / version | [audit](./audit.ts) · table below |
 | Jobs / pipelines / webhooks | [operations](./operations.ts) |
 | Core tiers + provenance | [_core.ts](./_core.ts) |
 
@@ -37,6 +38,22 @@ Domain-valued text (session, account, zone, credential keys, …) must not trave
 | `asXId(string)` | Value known required | throws `BrandValidationError` if empty |
 | `tryXId(string\|null\|undefined)` | Soft config / optional fields | returns `undefined` if blank |
 | `parseXId(unknown)` | Wire / JSON / env raw | throws if not non-empty string |
+
+## Audit domain (forge reference)
+
+Forge: [`audit.ts`](./audit.ts). JIT: `bun tools/brand-catalog.ts audit`.
+
+| Brand | TypeScript type | Runtime | Validation (`as*` / `try*` / `parse*`) | Example value | Role |
+|-------|-----------------|---------|----------------------------------------|---------------|------|
+| `AuditFindingId` | `BrandedString<'AuditFindingId'>` | `string` | non-empty string; `parse`/`try` trim | `sample-fiber-demo-2026-07-21` | Finding PK |
+| `AuditConceptId` | `BrandedString<'AuditConceptId'>` | `string` | same | `nagata-map` | Concept PK |
+| `AuditEntryId` | `BrandedString<'AuditEntryId'>` | `string` | same (own brand, not a union) | finding or concept id shape | Polymorphic ref (`related[]`, `AUDIT_REFS`) |
+| `AuditId` | `BrandedString<'AuditId'>` | `string` | same (no UUID rule) | any non-empty id used by log callers | Audit **log** entry (not SSOT) |
+| `VersionId` | `BrandedString<'VersionId'>` | `string` | same (no semver rule) | e.g. `1.4.0` | Config/secret version |
+
+- Brand tag is type-level only: the string literal in `BrandedString<'AuditFindingId'>` via unique symbol in [`_core.ts`](./_core.ts). No runtime `__brand` property on values.
+- Constructors: `asAuditFindingId` · `tryAuditFindingId` · `parseAuditFindingId` (same trio for Concept / Entry / Audit / Version).
+- Cross-assignment: `AuditFindingId` ≠ `AuditConceptId` ≠ `AuditEntryId` ≠ `AuditId` at compile time. Convert finding/concept → entry with `toAuditEntryId` / `asAuditEntryId(unbrand(…))` from [`lib/audit/audit-refs.ts`](../../audit/audit-refs.ts).
 
 ## Mint authority
 

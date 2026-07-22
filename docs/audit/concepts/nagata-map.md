@@ -23,6 +23,7 @@ A polynomial automorphism of affine 3-space with constant non-zero Jacobian dete
 
 - [`sample-fiber-demo-2026-07-21`](../findings/sample-fiber-demo-2026-07-21.md)
 - [`jacobian-nullspace`](./jacobian-nullspace.md)
+- [`sha3-integrity`](./sha3-integrity.md)
 
 ## Related docs (BunToken / curated — opaque)
 
