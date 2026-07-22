@@ -63,7 +63,6 @@ Status: `workspace` = root workspace member · `own remote` = gitignored nested 
 
 | Path | Purpose | Status |
 |------|---------|--------|
-| [`duo-automation/`](active/automation/duo-automation/) | Distributed automation, QR onboarding, dashboards | local |
 | [`duoplus-app-factory/`](active/automation/duoplus-app-factory/) | Lightning / device factory + compliance | local |
 | [`enhancements-1.0.01/`](active/automation/enhancements-1.0.01/) | Enhancement proposals for app v1.0.01 | local |
 

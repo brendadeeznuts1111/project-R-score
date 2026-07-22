@@ -47,8 +47,6 @@ Extension of the [Complete BUN Constants Mapping Plan](./.cursor/plans/complete_
 | ----------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `matrix-analysis/mcp-bun-docs/skills-matrix-integration.ts` | `SKILLS_API_BASE = "http://localhost:3000"`          | Use `process.env.SKILLS_API_BASE ?? "http://localhost:3000"` or `BUN_SKILLS_API_BASE` constant |
 | `scanner/scan.test.ts`                                      | `PORT=3000` in test env string                       | OK (test fixture)                                                                              |
-| `duo-automation/infrastructure/automation`                  | `port: 0` (dynamic), `API_REQUEST_TIMEOUT_MS: 30000` | OK (0 = OS-assigned; timeout is config)                                                        |
-
 ### Action Items
 
 1. **mcp-bun-docs**: Add `BUN_SKILLS_API_BASE` (or env `SKILLS_API_BASE`) in lib.ts, use in
@@ -122,4 +120,3 @@ Extend `scripts/extract-bun-constants.ts` to also report:
 
 - **Scanner**: scan.ts, src/scan.ts, benchmarks, docs
 - **mcp-bun-docs**: skills-matrix-integration.ts, lib.ts
-- **duo-automation**: Out of scope for this pass (noted for future)
