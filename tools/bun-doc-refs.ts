@@ -327,8 +327,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
   'Bun.sha': 'https://bun.com/docs/runtime/hashing#bun-hash',
   'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing#bun-cryptohasher',
-  // SHA-3 (v1.3.13+) — blog ship note; also usable via Bun.CryptoHasher('sha3-256')
-  // ≠ audit SSOT (still evidence.sha256 / CryptoHasher('sha256'))
+  // SHA-3 (v1.3.13+) — blog ship note; audit SSOT uses CryptoHasher('sha3-256') (see AuditConcept sha3-integrity)
   SHA3: 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
   'SHA-3': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
   'SHA3-256': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',

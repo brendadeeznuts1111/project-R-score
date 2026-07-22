@@ -14,7 +14,7 @@
 
 Local linear-algebra check on DF(x): a non-trivial null vector would indicate a first-order blind direction. For Nagata-type maps the Jacobian determinant is constant and non-zero, so the nullspace is trivial everywhere — yet a global fiber can still exist. Local gradient checks therefore cannot certify injectivity.
 
-**Proof integrity** — evidence blobs are fingerprinted via `evidence.sha256` (AuditFinding schema) using Bun's native crypto (`node:crypto` / WebCrypto / `Bun.CryptoHasher`; SHA-3 family since Bun 1.3.13 — `crypto.sha3`). Tamper-*authentication* (HMAC/signing) is a separate, unimplemented lane.
+**Proof integrity** — evidence blobs are fingerprinted via evidence.algorithm + evidence.digest (primary sha3-256). See concept sha3-integrity. Tamper-*authentication* (HMAC/signing) is a separate, unimplemented lane.
 
 ## References
 
@@ -24,6 +24,7 @@ _none_
 
 - [`nagata-map`](./nagata-map.md)
 - [`sample-fiber-demo-2026-07-21`](../findings/sample-fiber-demo-2026-07-21.md)
+- [`sha3-integrity`](./sha3-integrity.md)
 
 ## Related docs (BunToken / curated — opaque)
 

@@ -11,14 +11,16 @@
     "path": "tools/audit-evidence/sample-fiber-demo.ndjson",
     "algorithm": "sha3-256",
     "digest": "c2373eb12af5ba1f0bc5bd5d3ffd8da5e3caf614b4d7adb2355db276a8fb387f",
-    "sha256": "56bf03637d94eb64b3b22ccd7bc379ef53830937ef704838f2aff188b28a4658",
     "mediaType": "application/x-ndjson"
   },
   "related": [
     "nagata-map",
-    "jacobian-nullspace"
+    "jacobian-nullspace",
+    "sha3-integrity"
   ],
-  "relatedDocs": [],
+  "relatedDocs": [
+    "SHA3-256"
+  ],
   "meta": {
     "buildPin": "1.4.0",
     "emitter": "audit-emit-stub"

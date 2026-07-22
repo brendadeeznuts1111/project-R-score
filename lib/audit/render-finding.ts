@@ -63,7 +63,6 @@ ${f.description}
 | path | [\`${f.evidence.path}\`](../../../${f.evidence.path}) |
 | algorithm | \`${f.evidence.algorithm}\` |
 | digest | \`${f.evidence.digest}\` |
-| sha256 companion | ${f.evidence.sha256 ? `\`${f.evidence.sha256}\`` : '_none_'} |
 | mediaType | \`${f.evidence.mediaType}\` |
 
 Verify:

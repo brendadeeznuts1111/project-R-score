@@ -6,8 +6,8 @@ Repo-local audit SSOT. **Not** bun.com docs / BunToken.
 |------|------|
 | [`lib/audit/`](../../lib/audit/) | Types · schema · `AUDIT_REFS` · markdown render |
 | [`tools/audit-findings/`](../../tools/audit-findings/) | Source finding JSON |
-| [`tools/audit-concepts/`](../../tools/audit-concepts/) | Source concept JSON (`nagata-map`, …) |
-| [`tools/audit-evidence/`](../../tools/audit-evidence/) | Hashed evidence (allowlisted path prefix) |
+| [`tools/audit-concepts/`](../../tools/audit-concepts/) | Source concept JSON (`nagata-map`, `sha3-integrity`, …) |
+| [`tools/audit-evidence/`](../../tools/audit-evidence/) | Hashed evidence (`algorithm` + `digest`, sha3-256) |
 | [`tools/audit-catalog.json`](../../tools/audit-catalog.json) | Built index |
 | [`tools/audit-catalog.ts`](../../tools/audit-catalog.ts) | `build` · `verify` · `get` · `list` · `search` |
 | [`findings/`](./findings/) | Generated finding pages (do not hand-edit) |

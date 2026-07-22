@@ -5,10 +5,10 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto — SHA3-256
 /**
- * Migrate AuditFinding JSON to Phase 1 dual-write evidence:
- *   algorithm: sha3-256, digest, sha256 companion
+ * Phase 2 normalize AuditFinding JSON evidence:
+ *   algorithm: sha3-256, digest (strip legacy sha256 companion / sha256-only wire)
  *
- * Rewrites tools/audit-findings/*.json only. Evidence blobs are untouched.
+ * Operates on raw JSON first (parse rejects companion). Evidence blobs untouched.
  *
  *   bun tools/audit-migrate-to-sha3.ts
  *   bun run audit:migrate:sha3
@@ -20,51 +20,73 @@ import {
   type AuditFinding,
 } from '../lib/audit/audit-finding.ts';
 import { joinPath } from '../lib/path-bun.ts';
+import { isRecord } from '../lib/audit/parse-helpers.ts';
 
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 const FINDINGS_DIR = joinPath(REPO_ROOT, 'tools/audit-findings');
 
-function toWireFinding(f: AuditFinding): AuditFinding {
-  return f;
-}
+type WireEvidence = {
+  path?: unknown;
+  algorithm?: unknown;
+  digest?: unknown;
+  sha256?: unknown;
+  mediaType?: unknown;
+};
 
 async function migrateOne(name: string): Promise<'migrated' | 'refreshed' | 'skipped'> {
   const path = joinPath(FINDINGS_DIR, name);
   const raw: unknown = await Bun.file(path).json();
-  const finding = parseAuditFinding(raw);
+  if (!isRecord(raw) || !isRecord(raw.evidence)) {
+    throw new Error(`${name}: expected finding object with evidence`);
+  }
+
+  const evidence = raw.evidence as WireEvidence;
+  const absEvidence =
+    typeof evidence.path === 'string' ? joinPath(REPO_ROOT, evidence.path) : undefined;
+  if (!absEvidence) {
+    throw new Error(`${name}: evidence.path required`);
+  }
+
+  const digest = await hashFile(absEvidence, 'sha3-256');
+  const hadCompanion = evidence.sha256 !== undefined;
+  const wasLegacyOnly = evidence.algorithm === undefined || evidence.digest === undefined;
+
+  const nextEvidence = {
+    path: evidence.path,
+    algorithm: 'sha3-256' as const,
+    digest,
+    mediaType: evidence.mediaType,
+  };
+
+  const nextRaw = {
+    ...raw,
+    evidence: nextEvidence,
+  };
+
+  // Parse + verify Phase 2 shape
+  const finding = parseAuditFinding(nextRaw);
   const verified = await verifyEvidenceHash(finding, REPO_ROOT);
   if (!verified.ok) {
     throw new Error(`${name}: ${verified.reason}`);
   }
 
-  const absEvidence = joinPath(REPO_ROOT, finding.evidence.path);
-  const digest = await hashFile(absEvidence, 'sha3-256');
-  const sha256 = await hashFile(absEvidence, 'sha256');
+  const already =
+    !hadCompanion &&
+    !wasLegacyOnly &&
+    evidence.algorithm === 'sha3-256' &&
+    evidence.digest === digest;
 
-  if (
-    finding.evidence.algorithm === 'sha3-256' &&
-    finding.evidence.digest === digest &&
-    finding.evidence.sha256 === sha256
-  ) {
-    console.info(`⏭  ${name} already sha3-256 dual-write`);
+  if (already) {
+    console.info(`⏭  ${name} already Phase 2 sha3-256`);
     return 'skipped';
   }
 
-  const next: AuditFinding = {
-    ...finding,
-    evidence: {
-      path: finding.evidence.path,
-      algorithm: 'sha3-256',
-      digest,
-      sha256,
-      mediaType: finding.evidence.mediaType,
-    },
-  };
-  await Bun.write(path, `${JSON.stringify(toWireFinding(next), null, 2)}\n`);
-  const label = finding.evidence.algorithm === 'sha3-256' ? 'refreshed' : 'migrated';
+  const wire: AuditFinding = finding;
+  await Bun.write(path, `${JSON.stringify(wire, null, 2)}\n`);
+  const label = wasLegacyOnly || hadCompanion ? 'migrated' : 'refreshed';
   console.info(`✅ ${label} ${name}`);
   console.info(`   digest=${digest}`);
-  console.info(`   sha256=${sha256}`);
+  if (hadCompanion) console.info('   stripped sha256 companion');
   return label === 'refreshed' ? 'refreshed' : 'migrated';
 }
 

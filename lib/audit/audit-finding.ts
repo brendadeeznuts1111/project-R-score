@@ -5,9 +5,9 @@
  * AuditFinding — FactoryWager sibling SSOT for verifiable audit findings.
  * Not BunToken / CANONICAL_REFS. Parse at the wire boundary (JSON files).
  *
- * Evidence fingerprint (Phase 1 transitional):
- * - Legacy wire: `{ path, sha256, mediaType }` → interior algorithm sha256
- * - New / dual: `{ path, algorithm, digest, mediaType, sha256? }`
+ * Evidence fingerprint (Phase 2):
+ * - Wire: `{ path, algorithm, digest, mediaType }`
+ * - Legacy `{ path, sha256, mediaType }` and dual-write `sha256` companion rejected.
  */
 import {
   type AuditEntryId,
@@ -20,7 +20,7 @@ import { isRecord, parseNonEmptyString, parseOptionalStringArray } from './parse
 
 export type AuditFindingStatus = 'confirmed' | 'mitigated' | 'open';
 
-/** Supported evidence digest algorithms (Phase 1). */
+/** Supported evidence digest algorithms. */
 export type AuditHashAlgorithm = 'sha256' | 'sha3-256';
 
 export type AuditEvidence = {
@@ -32,11 +32,6 @@ export type AuditEvidence = {
   digest: string;
   /** IANA media type. */
   mediaType: string;
-  /**
-   * Optional SHA-256 companion during transition (dual-write / rollback).
-   * When algorithm is sha256, equals digest. When sha3-256, independently verified.
-   */
-  sha256?: string;
 };
 
 export type AuditFinding = {
@@ -95,60 +90,31 @@ function parseEvidence(raw: unknown): AuditEvidence {
   const path = parseNonEmptyString(raw.path, 'AuditFinding.evidence.path');
   const mediaType = parseNonEmptyString(raw.mediaType, 'AuditFinding.evidence.mediaType');
 
+  if (raw.sha256 !== undefined) {
+    throw new Error(
+      'AuditFinding.evidence: sha256 companion removed (Phase 2); use algorithm+digest only — run bun run audit:migrate:sha3'
+    );
+  }
+
   const hasAlgorithm = raw.algorithm !== undefined;
   const hasDigest = raw.digest !== undefined;
-  const hasSha256 = raw.sha256 !== undefined;
-
-  // New / dual: algorithm + digest required
-  if (hasAlgorithm || hasDigest) {
-    if (!hasAlgorithm || !hasDigest) {
-      throw new Error(
-        'AuditFinding.evidence: algorithm and digest must both be present (new/dual shape)'
-      );
-    }
-    const algorithmRaw = parseNonEmptyString(raw.algorithm, 'AuditFinding.evidence.algorithm');
-    if (!isAuditHashAlgorithm(algorithmRaw)) {
-      throw new Error(
-        `AuditFinding.evidence.algorithm: invalid "${algorithmRaw}" (want sha256|sha3-256)`
-      );
-    }
-    const digest = parseHex64(
-      parseNonEmptyString(raw.digest, 'AuditFinding.evidence.digest'),
-      'AuditFinding.evidence.digest'
+  if (!hasAlgorithm || !hasDigest) {
+    throw new Error(
+      'AuditFinding.evidence: algorithm and digest are required (legacy {sha256}-only wire rejected)'
     );
-    const evidence: AuditEvidence = { path, algorithm: algorithmRaw, digest, mediaType };
-    if (hasSha256) {
-      const companion = parseHex64(
-        parseNonEmptyString(raw.sha256, 'AuditFinding.evidence.sha256'),
-        'AuditFinding.evidence.sha256'
-      );
-      if (algorithmRaw === 'sha256' && companion !== digest) {
-        throw new Error(
-          'AuditFinding.evidence: sha256 companion must equal digest when algorithm is sha256'
-        );
-      }
-      evidence.sha256 = companion;
-    } else if (algorithmRaw === 'sha256') {
-      evidence.sha256 = digest;
-    }
-    return evidence;
   }
 
-  // Legacy: sha256 only (no algorithm/digest)
-  if (!hasSha256) {
-    throw new Error('AuditFinding.evidence: expected legacy {sha256} or new {algorithm,digest}');
+  const algorithmRaw = parseNonEmptyString(raw.algorithm, 'AuditFinding.evidence.algorithm');
+  if (!isAuditHashAlgorithm(algorithmRaw)) {
+    throw new Error(
+      `AuditFinding.evidence.algorithm: invalid "${algorithmRaw}" (want sha256|sha3-256)`
+    );
   }
-  const sha256 = parseHex64(
-    parseNonEmptyString(raw.sha256, 'AuditFinding.evidence.sha256'),
-    'AuditFinding.evidence.sha256'
+  const digest = parseHex64(
+    parseNonEmptyString(raw.digest, 'AuditFinding.evidence.digest'),
+    'AuditFinding.evidence.digest'
   );
-  return {
-    path,
-    algorithm: 'sha256',
-    digest: sha256,
-    mediaType,
-    sha256,
-  };
+  return { path, algorithm: algorithmRaw, digest, mediaType };
 }
 
 /** Wire `unknown` → AuditFinding (boundary). */
@@ -236,7 +202,7 @@ export function assertEvidencePathAllowed(
   return { ok: true };
 }
 
-/** Resolve evidence path against repo root and verify primary (+ companion) digests. */
+/** Resolve evidence path against repo root and verify primary digest. */
 export async function verifyEvidenceHash(
   finding: AuditFinding,
   repoRoot: string
@@ -248,22 +214,13 @@ export async function verifyEvidenceHash(
   if (!(await file.exists())) {
     return { ok: false, reason: `missing evidence file: ${finding.evidence.path}` };
   }
-  const { algorithm, digest, sha256: companion } = finding.evidence;
+  const { algorithm, digest } = finding.evidence;
   const actual = await hashFile(abs, algorithm);
   if (actual !== digest.toLowerCase()) {
     return {
       ok: false,
       reason: `${algorithm} mismatch for ${finding.evidence.path}: expected ${digest}, got ${actual}`,
     };
-  }
-  if (companion !== undefined && algorithm === 'sha3-256') {
-    const actualSha256 = await hashFile(abs, 'sha256');
-    if (actualSha256 !== companion.toLowerCase()) {
-      return {
-        ok: false,
-        reason: `sha256 companion mismatch for ${finding.evidence.path}: expected ${companion}, got ${actualSha256}`,
-      };
-    }
   }
   return { ok: true };
 }

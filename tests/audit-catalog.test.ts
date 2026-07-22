@@ -7,7 +7,6 @@ import {
   assertEvidencePathAllowed,
   hashFile,
   parseAuditFinding,
-  sha256File,
   verifyEvidenceHash,
 } from '../lib/audit/audit-finding.ts';
 import { asAuditConceptId, asAuditEntryId } from '../lib/types/branded.ts';
@@ -37,27 +36,45 @@ import {
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 
 describe('parseAuditFinding', () => {
-  test('legacy sha256 wire normalizes to algorithm+digest', () => {
-    const f = parseAuditFinding({
-      id: 'x',
-      kind: 'AuditFinding',
-      title: 't',
-      description: 'd',
-      status: 'open',
-      publishedAt: '2026-07-21',
-      evidence: {
-        path: 'tools/audit-evidence/sample-fiber-demo.ndjson',
-        sha256: 'a'.repeat(64),
-        mediaType: 'text/plain',
-      },
-    });
-    expect(f.kind).toBe('AuditFinding');
-    expect(f.evidence.algorithm).toBe('sha256');
-    expect(f.evidence.digest).toBe('a'.repeat(64));
-    expect(f.evidence.sha256).toBe('a'.repeat(64));
+  test('rejects legacy sha256-only wire', () => {
+    expect(() =>
+      parseAuditFinding({
+        id: 'x',
+        kind: 'AuditFinding',
+        title: 't',
+        description: 'd',
+        status: 'open',
+        publishedAt: '2026-07-21',
+        evidence: {
+          path: 'tools/audit-evidence/sample-fiber-demo.ndjson',
+          sha256: 'a'.repeat(64),
+          mediaType: 'text/plain',
+        },
+      })
+    ).toThrow(/sha256 companion removed|algorithm and digest/);
   });
 
-  test('new algorithm+digest wire (+ optional sha256 companion)', () => {
+  test('rejects dual-write sha256 companion', () => {
+    expect(() =>
+      parseAuditFinding({
+        id: 'y',
+        kind: 'AuditFinding',
+        title: 't',
+        description: 'd',
+        status: 'open',
+        publishedAt: '2026-07-21',
+        evidence: {
+          path: 'tools/audit-evidence/sample-fiber-demo.ndjson',
+          algorithm: 'sha3-256',
+          digest: 'b'.repeat(64),
+          sha256: 'c'.repeat(64),
+          mediaType: 'text/plain',
+        },
+      })
+    ).toThrow(/sha256 companion removed/);
+  });
+
+  test('algorithm+digest wire (Phase 2)', () => {
     const f = parseAuditFinding({
       id: 'y',
       kind: 'AuditFinding',
@@ -69,13 +86,12 @@ describe('parseAuditFinding', () => {
         path: 'tools/audit-evidence/sample-fiber-demo.ndjson',
         algorithm: 'sha3-256',
         digest: 'b'.repeat(64),
-        sha256: 'c'.repeat(64),
         mediaType: 'text/plain',
       },
     });
     expect(f.evidence.algorithm).toBe('sha3-256');
     expect(f.evidence.digest).toBe('b'.repeat(64));
-    expect(f.evidence.sha256).toBe('c'.repeat(64));
+    expect('sha256' in f.evidence).toBe(false);
   });
 
   test('rejects BunToken-shaped kind', () => {
@@ -156,9 +172,9 @@ describe('audit catalog', () => {
     const sample = getAuditFinding(findings, 'sample-fiber-demo-2026-07-21');
     expect(sample?.related).toContain('nagata-map');
     expect(sample?.evidence.algorithm).toBe('sha3-256');
+    expect(sample?.related).toContain('sha3-integrity');
     const abs = joinPath(REPO_ROOT, sample!.evidence.path);
     expect(await hashFile(abs, 'sha3-256')).toBe(sample!.evidence.digest);
-    expect(await sha256File(abs)).toBe(sample!.evidence.sha256);
     expect(await verifyEvidenceHash(sample!, REPO_ROOT)).toEqual({ ok: true });
   });
 
@@ -182,7 +198,7 @@ describe('audit catalog', () => {
     expect((await verifyAuditCatalog()).ok).toBe(true);
   });
 
-  test('related graph: ids unique; related resolves; sha3 dual-write matches', async () => {
+  test('related graph: ids unique; related resolves; sha3-256 digest matches', async () => {
     const findings = await loadSourceFindings();
     const concepts = await loadSourceConcepts();
     expect(verifyAuditGraph(findings, concepts)).toEqual([]);
@@ -190,7 +206,7 @@ describe('audit catalog', () => {
     expect(sample.discoveredIn).toBe('1.4.0');
     expect(sample.evidence.algorithm).toBe('sha3-256');
     expect(sample.related).toEqual(
-      expect.arrayContaining(['nagata-map', 'jacobian-nullspace'])
+      expect.arrayContaining(['nagata-map', 'jacobian-nullspace', 'sha3-integrity'])
     );
     const broken = verifyAuditGraph(findings, [
       ...concepts,

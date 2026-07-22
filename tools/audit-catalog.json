@@ -1,8 +1,8 @@
 {
-  "generated": "2026-07-22T03:16:44.508Z",
+  "generated": "2026-07-22T03:32:23.870Z",
   "bunVersion": "1.4.0",
   "count": 1,
-  "conceptCount": 3,
+  "conceptCount": 4,
   "byStatus": {
     "confirmed": 1,
     "mitigated": 0,
@@ -20,16 +20,18 @@
         "path": "tools/audit-evidence/sample-fiber-demo.ndjson",
         "algorithm": "sha3-256",
         "digest": "c2373eb12af5ba1f0bc5bd5d3ffd8da5e3caf614b4d7adb2355db276a8fb387f",
-        "mediaType": "application/x-ndjson",
-        "sha256": "56bf03637d94eb64b3b22ccd7bc379ef53830937ef704838f2aff188b28a4658"
+        "mediaType": "application/x-ndjson"
       },
       "since": "2026-07-21",
       "discoveredIn": "1.4.0",
       "related": [
         "nagata-map",
-        "jacobian-nullspace"
+        "jacobian-nullspace",
+        "sha3-integrity"
       ],
-      "relatedDocs": [],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
       "meta": {
         "buildPin": "1.4.0",
         "emitter": "audit-emit-stub"
@@ -69,12 +71,13 @@
       "id": "jacobian-nullspace",
       "kind": "AuditConcept",
       "title": "Jacobian nullspace",
-      "description": "Local linear-algebra check on DF(x): a non-trivial null vector would indicate a first-order blind direction. For Nagata-type maps the Jacobian determinant is constant and non-zero, so the nullspace is trivial everywhere — yet a global fiber can still exist. Local gradient checks therefore cannot certify injectivity.\n\n**Proof integrity** — evidence blobs are fingerprinted via `evidence.sha256` (AuditFinding schema) using Bun's native crypto (`node:crypto` / WebCrypto / `Bun.CryptoHasher`; SHA-3 family since Bun 1.3.13 — `crypto.sha3`). Tamper-*authentication* (HMAC/signing) is a separate, unimplemented lane.",
+      "description": "Local linear-algebra check on DF(x): a non-trivial null vector would indicate a first-order blind direction. For Nagata-type maps the Jacobian determinant is constant and non-zero, so the nullspace is trivial everywhere — yet a global fiber can still exist. Local gradient checks therefore cannot certify injectivity.\n\n**Proof integrity** — evidence blobs are fingerprinted via evidence.algorithm + evidence.digest (primary sha3-256). See concept sha3-integrity. Tamper-*authentication* (HMAC/signing) is a separate, unimplemented lane.",
       "publishedAt": "2026-07-21",
       "since": "2026-07-21",
       "related": [
         "nagata-map",
-        "sample-fiber-demo-2026-07-21"
+        "sample-fiber-demo-2026-07-21",
+        "sha3-integrity"
       ],
       "meta": {
         "buildPin": "1.4.0",
@@ -102,6 +105,30 @@
         "emitter": "audit-curated"
       },
       "docsPath": "docs/audit/concepts/nagata-map.md"
+    },
+    {
+      "id": "sha3-integrity",
+      "kind": "AuditConcept",
+      "title": "SHA3 evidence integrity",
+      "description": "FactoryWager AuditFinding evidence blobs are fingerprinted with SHA3-256 via Bun.CryptoHasher('sha3-256'). Wire shape is evidence.algorithm + evidence.digest (Phase 2). This is tamper-detection only — keyed authentication (HMAC/signing) is a separate, unimplemented lane.\n\nBun shipped native SHA-3 support in v1.3.13 (WebCrypto SHA3-* + node:crypto / CryptoHasher). See relatedDocs SHA3-256 for the ship note.",
+      "publishedAt": "2026-07-21",
+      "since": "1.3.13",
+      "references": [
+        "https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto",
+        "lib/audit/audit-finding.ts — hashFile / verifyEvidenceHash"
+      ],
+      "related": [
+        "sample-fiber-demo-2026-07-21",
+        "jacobian-nullspace"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "1.4.0",
+        "emitter": "audit-curated"
+      },
+      "docsPath": "docs/audit/concepts/sha3-integrity.md"
     }
   ]
 }

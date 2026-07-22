@@ -1,3 +1,4 @@
+// @see https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto — SHA3
 /**
  * AUDIT_REFS — FactoryWager audit aliases (sibling to CANONICAL_REFS).
  * Values are entry ids (finding or concept) — not bun.com URLs.
@@ -31,6 +32,11 @@ export const AUDIT_REFS: Record<string, AuditEntryId> = {
   'harness day-loop': asAuditEntryId('harness-day-loop'),
   'day-loop': asAuditEntryId('harness-day-loop'),
   'day loop': asAuditEntryId('harness-day-loop'),
+  // evidence integrity (Phase 2)
+  'sha3-integrity': asAuditEntryId('sha3-integrity'),
+  'sha3 integrity': asAuditEntryId('sha3-integrity'),
+  'SHA3 integrity': asAuditEntryId('sha3-integrity'),
+  sha3: asAuditEntryId('sha3-integrity'),
 };
 
 /** Re-brand a finding/concept PK as a polymorphic entry ref. */

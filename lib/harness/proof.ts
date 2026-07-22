@@ -453,7 +453,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'audit-findings-catalog',
     claim:
-      'FactoryWager audit-finding catalog builds and evidence digests verify (sha3-256 primary, sha256 companion; sibling SSOT, not BunToken)',
+      'FactoryWager audit-finding catalog builds and evidence digests verify (sha3-256 primary; sibling SSOT, not BunToken)',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',

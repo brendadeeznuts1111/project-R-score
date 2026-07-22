@@ -7,7 +7,7 @@
  * Stub emitter: write schema-valid AuditFinding + evidence for ingest proof.
  * Real rotor (when it exists) must emit the same JSON shape.
  *
- * Phase 1: primary sha3-256 digest + sha256 companion (dual-write). No --sha3 flag.
+ * Phase 2: primary sha3-256 digest only (no sha256 companion).
  *
  *   bun tools/audit-emit-stub.ts
  */
@@ -31,7 +31,6 @@ const EVIDENCE_BODY = `{"event":"meta","note":"FactoryWager audit-catalog sample
 async function main(): Promise<void> {
   await Bun.write(EVIDENCE_PATH, EVIDENCE_BODY);
   const digest = await hashFile(EVIDENCE_PATH, 'sha3-256');
-  const sha256 = await hashFile(EVIDENCE_PATH, 'sha256');
   const finding: AuditFinding = {
     id: asAuditFindingId('sample-fiber-demo-2026-07-21'),
     kind: 'AuditFinding',
@@ -46,11 +45,14 @@ async function main(): Promise<void> {
       path: EVIDENCE_REL,
       algorithm: 'sha3-256',
       digest,
-      sha256,
       mediaType: 'application/x-ndjson',
     },
-    related: [asAuditEntryId('nagata-map'), asAuditEntryId('jacobian-nullspace')],
-    relatedDocs: [],
+    related: [
+      asAuditEntryId('nagata-map'),
+      asAuditEntryId('jacobian-nullspace'),
+      asAuditEntryId('sha3-integrity'),
+    ],
+    relatedDocs: ['SHA3-256'],
     meta: {
       buildPin: Bun.version.split('+')[0] ?? Bun.version,
       emitter: 'audit-emit-stub',
@@ -60,7 +62,6 @@ async function main(): Promise<void> {
   console.info(`✅ wrote ${EVIDENCE_REL}`);
   console.info(`✅ wrote tools/audit-findings/sample-fiber-demo.json`);
   console.info(`   algorithm=sha3-256 digest=${digest}`);
-  console.info(`   sha256 companion=${sha256}`);
   const { buildAuditCatalog } = await import('./audit-catalog.ts');
   const catalog = await buildAuditCatalog();
   console.info(

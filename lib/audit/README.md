@@ -24,7 +24,7 @@ bun tools/audit-catalog.ts verify   # re-check hashes without rewrite
 bun tools/audit-catalog.ts list
 bun tools/bun-doc-refs.ts suggest --audit "fiber"
 bun tools/audit-emit-stub.ts
-bun run audit:migrate:sha3        # dual-write sha3-256 + sha256 companion on findings
+bun run audit:migrate:sha3        # Phase 2 normalize: sha3-256 + strip companion
 ```
 
-Evidence lives under `tools/audit-evidence/` (committed). Source findings: `tools/audit-findings/*.json`. Built index: `tools/audit-catalog.json`. Pages: `docs/audit/findings/`. Fingerprint: `evidence.algorithm` + `evidence.digest` (legacy `sha256`-only still parses).
+Evidence lives under `tools/audit-evidence/` (committed). Source findings: `tools/audit-findings/*.json`. Built index: `tools/audit-catalog.json`. Pages: `docs/audit/findings/`. Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2 — no legacy `sha256`-only wire, no companion).

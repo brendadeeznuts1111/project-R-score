@@ -353,7 +353,6 @@ export function printAuditFinding(f: AuditFinding | AuditCatalogFinding): void {
   console.info(`evidence: ${f.evidence.path}`);
   console.info(`evidence.algorithm: ${f.evidence.algorithm}`);
   console.info(`evidence.digest: ${f.evidence.digest}`);
-  if (f.evidence.sha256) console.info(`evidence.sha256: ${f.evidence.sha256}`);
   console.info(`evidence.mediaType: ${f.evidence.mediaType}`);
   if (f.related?.length) console.info(`related: ${f.related.join(', ')}`);
   if (f.relatedDocs?.length) console.info(`relatedDocs: ${f.relatedDocs.join(', ')}`);

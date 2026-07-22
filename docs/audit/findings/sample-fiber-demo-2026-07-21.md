@@ -24,7 +24,6 @@ Two distinct profile triples (10,5,2) and (8,7,2) yield the same demo risk score
 | path | [`tools/audit-evidence/sample-fiber-demo.ndjson`](../../../tools/audit-evidence/sample-fiber-demo.ndjson) |
 | algorithm | `sha3-256` |
 | digest | `c2373eb12af5ba1f0bc5bd5d3ffd8da5e3caf614b4d7adb2355db276a8fb387f` |
-| sha256 companion | `56bf03637d94eb64b3b22ccd7bc379ef53830937ef704838f2aff188b28a4658` |
 | mediaType | `application/x-ndjson` |
 
 Verify:
@@ -37,10 +36,11 @@ bun tools/audit-catalog.ts verify
 
 - [`nagata-map`](../concepts/nagata-map.md)
 - [`jacobian-nullspace`](../concepts/jacobian-nullspace.md)
+- [`sha3-integrity`](../concepts/sha3-integrity.md)
 
 ## Related docs (BunToken / curated — opaque)
 
-_none_
+- `SHA3-256`
 
 ## Meta
 
