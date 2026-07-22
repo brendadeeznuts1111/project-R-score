@@ -21,7 +21,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Bun API usage / `@see` refs → `bun tools/bun-doc-refs.ts suggest "<api>"` · [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md)
 - Install / bunfig / machine Bun → [`docs/UNIFIED.md`](../UNIFIED.md)
 - Day loop / affected / type-check honesty → [`docs/organization/VELOCITY_BASELINE.md`](../organization/VELOCITY_BASELINE.md)
-- Claim vs evidence (“done?”) → [`PROOF.md`](PROOF.md) · `bun run proof:install`
+- Claim vs evidence (“done?”) → [`PROOF.md`](PROOF.md) · lib docs/Bun/other map → [Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external) · `bun run proof:install`
 - **New claim?** → fill out [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md) · `bun run docs:claim-discovery`
 - Repository review (9 trajectory questions) → [`REVIEW.md`](REVIEW.md)
 - Repeat failure → earliest owner → [`FEEDBACK.md`](FEEDBACK.md)

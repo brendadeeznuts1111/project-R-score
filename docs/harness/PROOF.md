@@ -178,6 +178,39 @@ Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-on
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 
+## Lib surface — docs vs Bun vs other external
+
+Routing for claim-backed `lib/` modules and known gaps (no dedicated `ProofPath` yet). **Bun docs** = oven-sh / bun.com. **Other external** = non-Bun (pinned types, thesis, etc.). Repo docs stay in-tree.
+
+### Claim-backed
+
+| Module / claim | Repo docs | Bun docs | Other external |
+|----------------|-----------|----------|----------------|
+| `branded-ids` · `lib/types/branded*` | [`lib/types/branded/README.md`](../../lib/types/branded/README.md) · skill `.agents/skills/branded-ids/` | — | [domain-modeling](https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md) · [parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/) |
+| `bun-time-boundaries` · `lib/time.ts` | claim in this file · `tests/time.test.ts` | [utils](https://bun.com/docs/runtime/utils) (`nanoseconds`, `sleep`, `randomUUIDv7`, `version`) | — |
+| `deep-equals-boundaries` · `lib/deep-equals.ts` | claim · `tests/deep-equals.test.ts` | [Bun.deepEquals](https://bun.com/docs/runtime/utils#bun-deepequals) | — |
+| `peek-settle-boundaries` · `lib/peek-settle.ts` | claim · `tests/peek-settle.test.ts` | [Bun.peek](https://bun.com/docs/runtime/utils#bun-peek) | — |
+| `terminal-pty-boundaries` · `lib/terminal.ts` | claim · `tests/terminal.test.ts` | [Bun.Terminal / PTY](https://bun.com/docs/runtime/child-process#terminal-pty-support) | — |
+| `image-metadata-boundaries` · `lib/image-metadata.ts` | claim · `lib/screenshot-remediation.ts` · `tests/image-metadata.test.ts` | [Bun.Image](https://bun.com/docs/runtime/image#input) | — |
+| `url-pattern-boundaries` · `lib/docs/bun-site-url.ts` | claim · `tests/bun-site-url.test.ts` | [URLPattern](https://bun.com/blog/bun-v1.3.4#urlpattern-api) | — |
+| `social-metadata-boundaries` · `lib/docs/extract-metadata.ts` | claim · `tests/fixtures/social-metadata/` | [HTMLRewriter social meta](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags) · [HTMLRewriter](https://bun.com/docs/runtime/html-rewriter) | — |
+| `blog-extraction-boundaries` · `lib/docs/blog-extract.ts` | claim · `tests/fixtures/blog-extraction/` | [HTMLRewriter](https://bun.com/docs/runtime/html-rewriter) | — |
+| `fetch-page-boundaries` · `lib/docs/fetch-page.ts` | claim · `tests/fixtures/fetch-page/` | [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request) | Bun issue [oven-sh/bun#21633](https://github.com/oven-sh/bun/issues/21633) (`fetch.preconnect` deferred) |
+| `path-bun` · `lib/path-bun.ts` | claim · `bun run check:path-bun` | Bun path helpers (via `lib/path-bun` + `bun-doc-refs`) | — |
+| `bun-env` | claim · `bun run check:bun-env` | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [environment variables](https://bun.com/docs/runtime/environment-variables) | — |
+| `cloudflare-pages-env-ssot` · `config/r2-env.ts` | [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · `.env.example` · `public/index.html` | — | Cloudflare Pages / Wrangler (dashboard + API; not Bun) |
+| harness ratchets (`coverage` · `orphans` · `complexity`) | [`lib/harness/README.md`](../../lib/harness/README.md) · [`code-quality.md`](code-quality.md) | — | [harness-engineering](https://github.com/lopopolo/harness-engineering) |
+
+### Gaps (documented; no dedicated claim yet)
+
+| Module | Repo docs | Bun docs | Other external |
+|--------|-----------|----------|----------------|
+| `lib/console-depth.ts` | [`AGENTS.md`](../../AGENTS.md) · [`BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · file header · `tests/console-depth.test.ts` · `tools/benchmarks/console-depth-perf.ts` · fixture under `runtime-cli-boundaries` | [runtime/console](https://bun.com/docs/runtime/console) · [runtime](https://bun.com/docs/runtime) · [utils](https://bun.com/docs/runtime/utils) (`inspect` · `stringWidth` · `stripANSI` · `wrapAnsi`) · [markdown.ansi](https://bun.com/docs/runtime/markdown#ansi-terminal-output) · [color](https://bun.com/docs/runtime/color) · [sliceAnsi](https://bun.com/reference/bun/sliceAnsi) · [TTY compat](https://bun.com/docs/runtime/nodejs-compat#nodetty) | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |
+| `lib/github-repository-ref.ts` | [`AGENTS.md`](../../AGENTS.md) · [`AUTHORITY.md`](AUTHORITY.md) · [`lib/docs/repo-docs.ts`](../../lib/docs/repo-docs.ts) `CANONICAL_REMOTES` | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [spawnSync](https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync) | GitHub Actions `GITHUB_REPOSITORY*` wire |
+| `lib/macros/` | [`lib/macros/README.md`](../../lib/macros/README.md) · [`AUTHORITY.md`](AUTHORITY.md) (bundle vs runtime) · `tests/macros/embed-commit.test.ts` · `bun tools/bun-doc-refs.ts bundler` | [bundler](https://bun.com/docs/bundler/index) · [macros](https://bun.com/docs/bundler/macros) · [macro serializability](https://bun.com/docs/bundler/macros#serializability) · [plugins](https://bun.com/docs/bundler/plugins) (not used yet) | — |
+
+Resolve Bun URLs via `bun tools/bun-doc-refs.ts suggest "<api>"` before inventing new `@see` lines.
+
 ## Fresh-rerun
 
 Every path above has a `freshRerun` command in [`lib/harness/proof.ts`](../../lib/harness/proof.ts).  

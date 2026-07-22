@@ -35,12 +35,12 @@ Bun create envs (`GITHUB_TOKEN`, `GITHUB_ACCESS_TOKEN`, `GITHUB_API_DOMAIN`) are
 
 ### Bundle-time vs runtime
 
-| Path | Mechanism |
-|------|-----------|
-| `bun run ci:harness` / `bun scripts/*.ts` | Runtime: `resolveGitHubRepositoryRef` + `git rev-parse` / Actions env |
-| `bun build …` | Macro: [`lib/macros/`](../../lib/macros/) — import with `{ type: "macro" }` so commit / repo parts are **inlined** ([Bun macros](https://bun.com/docs/bundler/macros)) |
+| Path | Mechanism | Repo docs | Bun docs | Other external |
+|------|-----------|-----------|----------|----------------|
+| `bun run ci:harness` / `bun scripts/*.ts` | Runtime: `resolveGitHubRepositoryRef` + `git rev-parse` / Actions env | [`lib/github-repository-ref.ts`](../../lib/github-repository-ref.ts) · [`CANONICAL_REMOTES`](../../lib/docs/repo-docs.ts) | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [spawnSync](https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync) | GitHub Actions `GITHUB_REPOSITORY*` |
+| `bun build …` | Macro inline `{ type: "macro" }` for commit / repo parts | [`lib/macros/`](../../lib/macros/) · [`lib/macros/README.md`](../../lib/macros/README.md) · `bun tools/bun-doc-refs.ts bundler` | [macros](https://bun.com/docs/bundler/macros) · [serializability](https://bun.com/docs/bundler/macros#serializability) · [bundler](https://bun.com/docs/bundler/index) · [plugins](https://bun.com/docs/bundler/plugins) (unused here) | — |
 
-Macros do **not** substitute under a plain `bun scripts/foo.ts` run. Keep runtime resolve for live scripts; use macros only for bundle consumers. No bundle-time `fetch` / HTMLRewriter / [`Bun.plugin`](https://bun.com/docs/bundler/plugins) hooks in the harness kit yet — full bundler token map: [`lib/macros/README.md`](../../lib/macros/README.md) · `bun tools/bun-docs-catalog.ts list -s bundler`.
+Macros do **not** substitute under a plain `bun scripts/foo.ts` run. Keep runtime resolve for live scripts; use macros only for bundle consumers. Full lib map: [`PROOF.md` Lib surface](PROOF.md#lib-surface--docs-vs-bun-vs-other-external).
 
 ## Required status checks (`main`)
 

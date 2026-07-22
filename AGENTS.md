@@ -152,4 +152,10 @@ Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/) · Type proo
 
 ## Console depth (output verbosity)
 
-Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](lib/console-depth.ts) (SSOT). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Use `inspect()` / `logDepth()` from that module instead of raw `console.log(obj)` in tools; forward to children with `depthArgs()` / `withConsoleDepth()`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work. Refs: [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils#bun-stringwidth](https://bun.com/docs/runtime/utils#bun-stringwidth) · [bun-types (pinned)](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) · correctness suite [`tests/console-depth.test.ts`](tests/console-depth.test.ts) · bench [`tools/benchmarks/console-depth-perf.ts`](tools/benchmarks/console-depth-perf.ts).
+Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](lib/console-depth.ts) (SSOT). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Use `inspect()` / `logDepth()` from that module instead of raw `console.log(obj)` in tools; forward to children with `depthArgs()` / `withConsoleDepth()`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work.
+
+| Kind | References |
+|------|------------|
+| Repo | [`lib/console-depth.ts`](lib/console-depth.ts) · [`tests/console-depth.test.ts`](tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](tools/benchmarks/console-depth-perf.ts) · map in [`docs/harness/PROOF.md`](docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external) |
+| Bun | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`stringWidth` · `inspect`) |
+| Other external | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |
