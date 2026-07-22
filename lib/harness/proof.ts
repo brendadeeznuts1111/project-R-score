@@ -477,6 +477,8 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'lib/audit/audit-finding.ts',
       'lib/audit/audit-concept.ts',
       'lib/audit/audit-refs.ts',
+      'tools/audit-catalog.ts',
+      'tools/bun-doc-refs.ts',
       'tools/audit-findings/',
       'tools/audit-concepts/',
       'tools/audit-catalog.json',
@@ -486,7 +488,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     ],
     freshRerun: 'bun run audit:verify',
     freshRerunKind: 'claim',
-    owner: 'lib/audit/ · tools/audit-catalog.ts',
+    owner: 'lib/audit/ · tools/audit-catalog.ts · tools/bun-doc-refs.ts',
   },
   {
     id: 'spine-multi-tenant',

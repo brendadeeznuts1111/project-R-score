@@ -2,6 +2,8 @@
  * Audit finding/concept SSOT — Nagata map concept + fiber finding (not BunToken).
  */
 import { describe, expect, test } from 'bun:test';
+// Couple test:changed graph to suggest --audit CLI (spawn-only tests would miss it).
+import '../tools/bun-doc-refs.ts';
 import { parseAuditConcept } from '../lib/audit/audit-concept.ts';
 import {
   assertEvidencePathAllowed,
@@ -358,6 +360,18 @@ describe('audit catalog', () => {
     expect(await verifyOrphanPages(findings, concepts)).toEqual([]);
     expect(await verifyPageContent(findings, concepts)).toEqual([]);
   });
+
+  test('writeAuditPages skips unchanged bytes (no mtime churn)', async () => {
+    const findings = await loadSourceFindings();
+    const concepts = await loadSourceConcepts();
+    await writeAuditPages(findings, concepts);
+    const page = joinPath(REPO_ROOT, 'docs/audit/concepts/nagata-map.md');
+    const before = (await Bun.file(page).stat()).mtimeMs;
+    await Bun.sleep(30);
+    await writeAuditPages(findings, concepts);
+    const after = (await Bun.file(page).stat()).mtimeMs;
+    expect(after).toBe(before);
+  });
 });
 
 describe('audit-migrate-to-sha3', () => {
@@ -534,6 +548,7 @@ describe('isAuditSsotPath', () => {
     expect(isAuditSsotPath('tools/audit-findings/x.json')).toBe(true);
     expect(isAuditSsotPath('tests/audit-catalog.test.ts')).toBe(true);
     expect(isAuditSsotPath('lib/types/branded/audit.ts')).toBe(true);
+    expect(isAuditSsotPath('tools/bun-doc-refs.ts')).toBe(true);
     expect(isAuditSsotPath('tests/console-depth.test.ts')).toBe(false);
   });
 });

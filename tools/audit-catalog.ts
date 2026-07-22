@@ -56,7 +56,7 @@ export type AuditCatalogFile = {
   concepts: AuditCatalogConcept[];
 };
 
-/** Single-flight rebuild when catalog is missing (parallel suggest --audit). Corrupt → throw. */
+/** In-process single-flight for missing-catalog rebuild (not a cross-process lock). Corrupt → throw. */
 let buildingCatalog: Promise<AuditCatalogFile> | null = null;
 
 export function normalizeFindingId(
@@ -202,6 +202,20 @@ async function pruneOrphanPages(
   }
 }
 
+/** Write only when bytes change — avoids mtime churn and shrinks build∥verify races. */
+async function writeIfChanged(path: string, contents: string): Promise<boolean> {
+  const file = Bun.file(path);
+  if (await file.exists()) {
+    try {
+      if ((await file.text()) === contents) return false;
+    } catch {
+      /* rewrite */
+    }
+  }
+  await Bun.write(path, contents);
+  return true;
+}
+
 export async function writeAuditPages(
   findings: AuditFinding[],
   concepts: AuditConcept[]
@@ -212,19 +226,25 @@ export async function writeAuditPages(
   const keepFindings = new Set(findings.map(f => `${normalizeFindingId(f.id)}.md`));
   const keepConcepts = new Set(concepts.map(c => `${normalizeFindingId(c.id)}.md`));
   for (const f of findings) {
-    await Bun.write(
+    await writeIfChanged(
       joinPath(REPO_ROOT, auditFindingDocsPath(f.id)),
       renderAuditFindingMarkdown(f, ctx)
     );
   }
-  await Bun.write(joinPath(FINDING_PAGES_DIR, 'README.md'), renderAuditFindingsIndex(findings));
+  await writeIfChanged(
+    joinPath(FINDING_PAGES_DIR, 'README.md'),
+    renderAuditFindingsIndex(findings)
+  );
   for (const c of concepts) {
-    await Bun.write(
+    await writeIfChanged(
       joinPath(REPO_ROOT, auditConceptDocsPath(c.id)),
       renderAuditConceptMarkdown(c, ctx)
     );
   }
-  await Bun.write(joinPath(CONCEPT_PAGES_DIR, 'README.md'), renderAuditConceptsIndex(concepts));
+  await writeIfChanged(
+    joinPath(CONCEPT_PAGES_DIR, 'README.md'),
+    renderAuditConceptsIndex(concepts)
+  );
   await pruneOrphanPages(keepFindings, keepConcepts);
 }
 
