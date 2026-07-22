@@ -5,7 +5,7 @@
  *
  * Sibling to [`config/ports.ts`](./ports.ts). Pages identity/pins live in
  * `CLOUDFLARE_DEFAULTS` — dashboard overlays: `BUN_VERSION`, `SKIP_DEPENDENCY_INSTALL`.
- * Root `wrangler.toml` is Worker `tier1380-production`, not Pages.
+ *
  *
  * R2 S3 credentials ≠ Cloudflare API token (`requireR2Config` vs `requireCloudflareApiToken`).
  *
