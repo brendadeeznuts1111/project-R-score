@@ -19,12 +19,20 @@ Inventory: [`../README.md`](../README.md).
 ## Operate
 
 ```bash
-bun tools/audit-catalog.ts build    # catalog + docs/audit/findings/*.md
-bun tools/audit-catalog.ts verify   # re-check hashes without rewrite
+bun tools/audit-catalog.ts build    # catalog + docs/audit/{findings,concepts}/*.md
+bun tools/audit-catalog.ts verify   # evidence + graph + relatedDocs + AUDIT_REFS identity
 bun tools/audit-catalog.ts list
 bun tools/bun-doc-refs.ts suggest --audit "fiber"
 bun tools/audit-emit-stub.ts
-bun run audit:migrate:sha3        # one-shot normalize inbound/old findings → Phase 2 shape (SSOT sample already clean)
+bun run audit:migrate:sha3        # one-shot normalize inbound/old findings → Phase 2 (SSOT sample already clean)
 ```
 
-Evidence lives under `tools/audit-evidence/` (committed). Source findings: `tools/audit-findings/*.json`. Built index: `tools/audit-catalog.json`. Pages: `docs/audit/findings/`. Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2 — no legacy `sha256`-only wire, no companion).
+| Script | Meaning |
+|--------|---------|
+| `bun run audit:catalog:build` | build |
+| `bun run audit:verify` | verify |
+| `bun run audit:catalog` | **list only** |
+| `bun run audit:emit-stub` | sample emitter |
+| `bun run audit:migrate:sha3` | inbound Phase 2 normalize |
+
+Evidence lives under `tools/audit-evidence/` (committed). Source findings: `tools/audit-findings/*.json`. Concepts: `tools/audit-concepts/*.json`. Built index: `tools/audit-catalog.json`. Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2 — no legacy `sha256`-only wire, no companion).

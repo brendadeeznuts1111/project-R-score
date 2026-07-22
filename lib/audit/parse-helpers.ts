@@ -13,8 +13,16 @@ export function parseNonEmptyString(value: unknown, field: string): string {
 
 export function parseOptionalStringArray(value: unknown, field: string): string[] | undefined {
   if (value === undefined) return undefined;
-  if (!Array.isArray(value) || !value.every(r => typeof r === 'string')) {
+  if (!Array.isArray(value)) {
     throw new Error(`${field}: expected string[]`);
   }
-  return value as string[];
+  const out: string[] = [];
+  for (let i = 0; i < value.length; i++) {
+    const item = value[i];
+    if (typeof item !== 'string' || item.trim() === '') {
+      throw new Error(`${field}[${i}]: expected non-empty string`);
+    }
+    out.push(item);
+  }
+  return out;
 }

@@ -54,12 +54,12 @@
     },
     "related": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": { "type": "string", "minLength": 1 },
       "description": "AuditConcept / AuditFinding ids"
     },
     "relatedDocs": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": { "type": "string", "minLength": 1 },
       "description": "Opaque BunToken / doc token names (no catalog merge)"
     },
     "meta": {

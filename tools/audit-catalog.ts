@@ -150,6 +150,38 @@ export function verifyAuditGraph(findings: AuditFinding[], concepts: AuditConcep
   };
   for (const f of findings) checkRelated(f.id, f.related);
   for (const c of concepts) checkRelated(c.id, c.related);
+
+  // Every SSOT id must have an AUDIT_REFS identity alias (id → itself)
+  for (const id of ids.keys()) {
+    const resolved = resolveAuditAlias(id);
+    if (!resolved || normalizeFindingId(resolved) !== id) {
+      errors.push(`${id}: missing AUDIT_REFS identity alias (add "${id}" → itself)`);
+    }
+  }
+  return errors;
+}
+
+/** relatedDocs tokens must resolve via curated and/or CANONICAL_REFS. */
+export function verifyRelatedDocs(
+  findings: AuditFinding[],
+  concepts: AuditConcept[],
+  resolves: (token: string) => boolean
+): string[] {
+  const errors: string[] = [];
+  const check = (
+    ownerId: AuditFindingId | AuditConceptId,
+    relatedDocs: string[] | undefined
+  ): void => {
+    for (const token of relatedDocs ?? []) {
+      if (!resolves(token)) {
+        errors.push(
+          `${ownerId}: relatedDocs "${token}" is not a curated term or CANONICAL_REFS key`
+        );
+      }
+    }
+  };
+  for (const f of findings) check(f.id, f.relatedDocs);
+  for (const c of concepts) check(c.id, c.relatedDocs);
   return errors;
 }
 
@@ -191,10 +223,21 @@ export function buildCatalogFile(
   };
 }
 
+async function relatedDocsResolver(): Promise<(token: string) => boolean> {
+  const { getCuratedEntry } = await import('./bun-docs-curated.ts');
+  const { CANONICAL_REFS } = await import('./bun-doc-refs.ts');
+  return (token: string) => Boolean(getCuratedEntry(token) || CANONICAL_REFS[token]);
+}
+
 export async function buildAuditCatalog(): Promise<AuditCatalogFile> {
   const findings = await loadSourceFindings();
   const concepts = await loadSourceConcepts();
-  const errors = [...(await verifyAllEvidence(findings)), ...verifyAuditGraph(findings, concepts)];
+  const resolves = await relatedDocsResolver();
+  const errors = [
+    ...(await verifyAllEvidence(findings)),
+    ...verifyAuditGraph(findings, concepts),
+    ...verifyRelatedDocs(findings, concepts, resolves),
+  ];
   if (errors.length > 0) {
     throw new Error(`audit catalog evidence failed:\n${errors.join('\n')}`);
   }
@@ -212,7 +255,12 @@ export async function verifyAuditCatalog(): Promise<{
 }> {
   const findings = await loadSourceFindings();
   const concepts = await loadSourceConcepts();
-  const errors = [...(await verifyAllEvidence(findings)), ...verifyAuditGraph(findings, concepts)];
+  const resolves = await relatedDocsResolver();
+  const errors = [
+    ...(await verifyAllEvidence(findings)),
+    ...verifyAuditGraph(findings, concepts),
+    ...verifyRelatedDocs(findings, concepts, resolves),
+  ];
   for (const f of findings) {
     const page = joinPath(REPO_ROOT, auditFindingDocsPath(f.id));
     if (!(await Bun.file(page).exists())) {

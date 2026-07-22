@@ -31,6 +31,7 @@ import {
   verifyAllEvidence,
   verifyAuditCatalog,
   verifyAuditGraph,
+  verifyRelatedDocs,
 } from '../tools/audit-catalog.ts';
 import { EVIDENCE_BODY } from '../tools/audit-emit-stub.ts';
 import { migrateOneFinding } from '../tools/audit-migrate-to-sha3.ts';
@@ -116,6 +117,26 @@ describe('parseAuditFinding', () => {
         },
       })
     ).toThrow(/algorithm and digest/);
+  });
+
+  test('rejects empty relatedDocs items', () => {
+    expect(() =>
+      parseAuditFinding({
+        id: 'z',
+        kind: 'AuditFinding',
+        title: 't',
+        description: 'd',
+        status: 'open',
+        publishedAt: '2026-07-21',
+        evidence: {
+          path: 'tools/audit-evidence/sample-fiber-demo.ndjson',
+          algorithm: 'sha3-256',
+          digest: 'b'.repeat(64),
+          mediaType: 'text/plain',
+        },
+        relatedDocs: [''],
+      })
+    ).toThrow(/relatedDocs\[0\]/);
   });
 
   test('evidence path allowlist', () => {
@@ -235,6 +256,19 @@ describe('audit catalog', () => {
       },
     ]);
     expect(broken.some(e => e.includes('does-not-exist'))).toBe(true);
+    expect(broken.some(e => e.includes('missing AUDIT_REFS identity'))).toBe(true);
+  });
+
+  test('relatedDocs must resolve; identity AUDIT_REFS required', async () => {
+    const findings = await loadSourceFindings();
+    const concepts = await loadSourceConcepts();
+    expect(verifyRelatedDocs(findings, concepts, () => true)).toEqual([]);
+    expect(
+      verifyRelatedDocs(findings, concepts, token => token !== 'SHA3-256').some(e =>
+        e.includes('SHA3-256')
+      )
+    ).toBe(true);
+    expect((await verifyAuditCatalog()).ok).toBe(true);
   });
 });
 
