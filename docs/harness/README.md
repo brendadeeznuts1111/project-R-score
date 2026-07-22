@@ -53,6 +53,9 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - `bun-shell-boundaries` → `bun test tests/fixtures/bun-shell/`
 - `fs-native-boundaries` → `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts`
 - `security-hash-boundaries` → `bun test tests/fixtures/security-hash/`
+- `url-pattern-boundaries` → `bun test tests/bun-site-url.test.ts`
+- `social-metadata-boundaries` → `bun test tests/fixtures/social-metadata/`
+- `blog-extraction-boundaries` → `bun test tests/fixtures/blog-extraction/`
 - **`lib/path-bun`** — spine `lib/` + `tools/` import Bun path helpers, not `path` / `node:path`  
   *Ratchet* → `bun run check:path-bun` (pre-commit when `lib/` or `tools/` staged)
 - **`Bun.env` boxing** — no Node `process.env` in spine `lib/` + `scripts/`  

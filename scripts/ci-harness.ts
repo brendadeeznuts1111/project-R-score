@@ -201,12 +201,16 @@ const BOUNDARY_FIXTURES: Step = {
     'tests/fixtures/runtime-cli/',
     'tests/fixtures/bun-shell/',
     'tests/fixtures/security-hash/',
+    'tests/fixtures/social-metadata/',
+    'tests/fixtures/blog-extraction/',
+    'tests/bun-site-url.test.ts',
     'tests/fs-bun.test.ts',
     'tests/bun-glob-scan.test.ts',
   ],
-  owner: 'runtime-cli · bun-shell · security-hash · fs-native ProofPaths',
+  owner:
+    'runtime-cli · bun-shell · security-hash · social-metadata · blog-extraction · url-pattern · fs-native ProofPaths',
   repair:
-    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
+    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/bun-site-url.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
 };
 
 if (!fast) {

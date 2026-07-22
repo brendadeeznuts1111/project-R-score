@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
@@ -213,6 +215,47 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun test tests/fixtures/security-hash/',
     freshRerunKind: 'claim',
     owner: 'platform / harness',
+  },
+  {
+    id: 'url-pattern-boundaries',
+    claim: 'Bun site URLs are derived from URLPatternInit protocol/hostname/pathname/hash',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: ['bun test tests/bun-site-url.test.ts', 'tests/bun-site-url.test.ts'],
+    freshRerun: 'bun test tests/bun-site-url.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/docs/bun-site-url.ts',
+  },
+  {
+    id: 'social-metadata-boundaries',
+    claim:
+      'Social metadata extraction via HTMLRewriter matches expected OG/Twitter/fallback behavior',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/fixtures/social-metadata/',
+      'tests/fixtures/social-metadata/fixture.test.ts',
+      'lib/docs/extract-metadata.ts',
+    ],
+    freshRerun: 'bun test tests/fixtures/social-metadata/',
+    freshRerunKind: 'claim',
+    owner: 'lib/docs/extract-metadata.ts',
+  },
+  {
+    id: 'blog-extraction-boundaries',
+    claim: 'Blog HTML extraction strips fragments and excludes nav/footer from article body',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/fixtures/blog-extraction/',
+      'tests/fixtures/blog-extraction/fixture.test.ts',
+    ],
+    freshRerun: 'bun test tests/fixtures/blog-extraction/',
+    freshRerunKind: 'claim',
+    owner: 'lib/docs/blog-extract.ts',
   },
   {
     id: 'path-bun',

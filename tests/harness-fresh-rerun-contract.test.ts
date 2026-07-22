@@ -187,6 +187,36 @@ describe('fresh-rerun contract', () => {
     expect(result.exitCode).toBe(0);
   });
 
+  test('url-pattern-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'url-pattern-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/bun-site-url.test.ts');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/bun-site-url.test.ts'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
+  test('social-metadata-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'social-metadata-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/fixtures/social-metadata/');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/social-metadata/'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
+  test('blog-extraction-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'blog-extraction-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/fixtures/blog-extraction/');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/blog-extraction/'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
   test('install-verify-journey freshRerun is the WebView journey test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify-journey');
     expect(p?.freshRerun).toBe('bun run test:install-verify');
