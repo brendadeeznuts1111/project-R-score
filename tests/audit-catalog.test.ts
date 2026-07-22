@@ -27,10 +27,12 @@ import {
   getAuditFinding,
   loadSourceConcepts,
   loadSourceFindings,
+  parseAuditCatalogRaw,
   searchAuditCatalog,
   verifyAllEvidence,
   verifyAuditCatalog,
   verifyAuditGraph,
+  verifyCatalogParity,
   verifyRelatedDocs,
 } from '../tools/audit-catalog.ts';
 import { EVIDENCE_BODY } from '../tools/audit-emit-stub.ts';
@@ -277,6 +279,46 @@ describe('audit catalog', () => {
     const concepts = await loadSourceConcepts();
     expect(getCuratedEntry('SHA3-256')).not.toBeNull();
     expect(verifyRelatedDocs(findings, concepts, t => Boolean(getCuratedEntry(t)))).toEqual([]);
+  });
+
+  test('parseAuditCatalogRaw rejects non-array findings/concepts (no soft-coerce)', () => {
+    expect(() => parseAuditCatalogRaw({ findings: 'oops', concepts: [] })).toThrow(
+      /must be arrays/
+    );
+    expect(() => parseAuditCatalogRaw({ findings: [], concepts: null })).toThrow(/must be arrays/);
+    expect(() => parseAuditCatalogRaw(null)).toThrow(/invalid shape/);
+  });
+
+  test('verifyCatalogParity flags missing/stale ids and digest drift', async () => {
+    const catalog = await buildAuditCatalog();
+    const findings = await loadSourceFindings();
+    const concepts = await loadSourceConcepts();
+    expect(verifyCatalogParity({ findings, concepts }, catalog)).toEqual([]);
+    const stale = {
+      ...catalog,
+      findings: catalog.findings.slice(1),
+      count: Math.max(0, catalog.count - 1),
+    };
+    expect(verifyCatalogParity({ findings, concepts }, stale).some(e => e.includes('missing finding'))).toBe(
+      true
+    );
+    if (catalog.findings[0]) {
+      const drifted = {
+        ...catalog,
+        findings: [
+          {
+            ...catalog.findings[0],
+            evidence: { ...catalog.findings[0].evidence, digest: '0'.repeat(64) },
+          },
+          ...catalog.findings.slice(1),
+        ],
+      };
+      expect(
+        verifyCatalogParity({ findings, concepts }, drifted).some(e =>
+          e.includes('fingerprint mismatch')
+        )
+      ).toBe(true);
+    }
   });
 });
 

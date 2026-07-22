@@ -20,7 +20,7 @@ Inventory: [`../README.md`](../README.md).
 
 ```bash
 bun tools/audit-catalog.ts build    # catalog + docs/audit/{findings,concepts}/*.md
-bun tools/audit-catalog.ts verify   # evidence + graph + relatedDocs + AUDIT_REFS identity
+bun tools/audit-catalog.ts verify   # evidence + graph + relatedDocs + catalog parity
 bun tools/audit-catalog.ts list
 bun tools/bun-doc-refs.ts suggest --audit "fiber"
 bun tools/audit-emit-stub.ts
@@ -30,11 +30,11 @@ bun run audit:migrate:sha3        # one-shot normalize inbound/old findings → 
 | Script | Meaning |
 |--------|---------|
 | `bun run audit:catalog:build` | build |
-| `bun run audit:verify` | verify (evidence + graph + relatedDocs via curated) |
+| `bun run audit:verify` | verify (sources + built catalog parity) |
 | `bun run audit:catalog` | **list only** |
 | `bun run audit:get -- <id>` | get (prints co-hits) |
 | `bun run audit:search -- <q>` | search |
 | `bun run audit:emit-stub` | sample emitter |
 | `bun run audit:migrate:sha3` | inbound Phase 2 normalize |
 
-Evidence lives under `tools/audit-evidence/` (committed). Source findings: `tools/audit-findings/*.json`. Concepts: `tools/audit-concepts/*.json`. Built index: `tools/audit-catalog.json`. Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2 — no legacy `sha256`-only wire, no companion).
+Evidence lives under `tools/audit-evidence/` (committed). Source findings: `tools/audit-findings/*.json`. Concepts: `tools/audit-concepts/*.json`. Built index: `tools/audit-catalog.json`. Fingerprint: `evidence.algorithm` + `evidence.digest` (Phase 2 — primary `sha3-256`; enum still allows `sha256`; no legacy `sha256`-only wire field, no companion). Prefer `bun run audit:catalog:build`; `bun-doc-refs index-audit` is the same rebuild.

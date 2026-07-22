@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$ (tmp→catalog publish)
 /**
  * Audit catalog — findings + concepts (sibling SSOT to bun-docs-catalog).
  *
@@ -37,6 +38,7 @@ const REPO_ROOT = joinPath(import.meta.dir, '..');
 const FINDINGS_DIR = joinPath(REPO_ROOT, 'tools/audit-findings');
 const CONCEPTS_DIR = joinPath(REPO_ROOT, 'tools/audit-concepts');
 const CATALOG_PATH = joinPath(REPO_ROOT, 'tools/audit-catalog.json');
+const CATALOG_TMP_PATH = `${CATALOG_PATH}.tmp`;
 const FINDING_PAGES_DIR = joinPath(REPO_ROOT, 'docs/audit/findings');
 const CONCEPT_PAGES_DIR = joinPath(REPO_ROOT, 'docs/audit/concepts');
 
@@ -54,6 +56,9 @@ export type AuditCatalogFile = {
   findings: AuditCatalogFinding[];
   concepts: AuditCatalogConcept[];
 };
+
+/** Single-flight rebuild when catalog missing/corrupt (parallel suggest --audit). */
+let buildingCatalog: Promise<AuditCatalogFile> | null = null;
 
 export function normalizeFindingId(
   id: AuditEntryId | AuditFindingId | AuditConceptId | string
@@ -231,22 +236,118 @@ async function relatedDocsResolver(): Promise<(token: string) => boolean> {
   return (token: string) => Boolean(getCuratedEntry(token));
 }
 
-export async function buildAuditCatalog(): Promise<AuditCatalogFile> {
-  const findings = await loadSourceFindings();
-  const concepts = await loadSourceConcepts();
-  const resolves = await relatedDocsResolver();
-  const errors = [
-    ...(await verifyAllEvidence(findings)),
-    ...verifyAuditGraph(findings, concepts),
-    ...verifyRelatedDocs(findings, concepts, resolves),
-  ];
-  if (errors.length > 0) {
-    throw new Error(`audit catalog evidence failed:\n${errors.join('\n')}`);
+async function writeCatalogAtomic(catalog: AuditCatalogFile): Promise<void> {
+  await Bun.write(CATALOG_TMP_PATH, `${JSON.stringify(catalog, null, 2)}\n`);
+  // Same-dir rename via mv — readers never see a torn JSON write.
+  const moved = await Bun.$`mv ${CATALOG_TMP_PATH} ${CATALOG_PATH}`.nothrow();
+  if (moved.exitCode !== 0) {
+    throw new Error(`audit-catalog.json: atomic publish failed (mv exit ${moved.exitCode})`);
   }
-  await writeAuditPages(findings, concepts);
-  const catalog = buildCatalogFile(findings, concepts);
-  await Bun.write(CATALOG_PATH, `${JSON.stringify(catalog, null, 2)}\n`);
-  return catalog;
+}
+
+export async function buildAuditCatalog(): Promise<AuditCatalogFile> {
+  if (buildingCatalog) return buildingCatalog;
+  buildingCatalog = (async () => {
+    const findings = await loadSourceFindings();
+    const concepts = await loadSourceConcepts();
+    const resolves = await relatedDocsResolver();
+    const errors = [
+      ...(await verifyAllEvidence(findings)),
+      ...verifyAuditGraph(findings, concepts),
+      ...verifyRelatedDocs(findings, concepts, resolves),
+    ];
+    if (errors.length > 0) {
+      throw new Error(`audit catalog evidence failed:\n${errors.join('\n')}`);
+    }
+    await writeAuditPages(findings, concepts);
+    const catalog = buildCatalogFile(findings, concepts);
+    await writeCatalogAtomic(catalog);
+    return catalog;
+  })().finally(() => {
+    buildingCatalog = null;
+  });
+  return buildingCatalog;
+}
+
+/** Strict parse — never soft-coerce missing findings/concepts to []. */
+export function parseAuditCatalogRaw(raw: unknown): AuditCatalogFile {
+  if (typeof raw !== 'object' || raw === null) {
+    throw new Error('audit-catalog.json: invalid shape');
+  }
+  const obj = raw as Record<string, unknown>;
+  if (!Array.isArray(obj.findings) || !Array.isArray(obj.concepts)) {
+    throw new Error('audit-catalog.json: findings and concepts must be arrays');
+  }
+  const findings = obj.findings.map(row => toFindingEntry(parseAuditFinding(row)));
+  const concepts = obj.concepts.map(row => toConceptEntry(parseAuditConcept(row)));
+  const generated = typeof obj.generated === 'string' ? obj.generated : new Date(0).toISOString();
+  const bunVersion = typeof obj.bunVersion === 'string' ? obj.bunVersion : Bun.version;
+  return {
+    generated,
+    bunVersion,
+    count: findings.length,
+    conceptCount: concepts.length,
+    byStatus: tallyByStatus(findings),
+    findings,
+    concepts,
+  };
+}
+
+export function verifyCatalogParity(
+  sources: { findings: AuditFinding[]; concepts: AuditConcept[] },
+  catalog: AuditCatalogFile
+): string[] {
+  const errors: string[] = [];
+  const srcF = new Set(sources.findings.map(f => normalizeFindingId(f.id)));
+  const catF = new Set(catalog.findings.map(f => normalizeFindingId(f.id)));
+  const srcC = new Set(sources.concepts.map(c => normalizeFindingId(c.id)));
+  const catC = new Set(catalog.concepts.map(c => normalizeFindingId(c.id)));
+  for (const id of srcF) {
+    if (!catF.has(id)) errors.push(`catalog missing finding ${id} (run build)`);
+  }
+  for (const id of catF) {
+    if (!srcF.has(id)) errors.push(`catalog stale finding ${id} (run build)`);
+  }
+  for (const id of srcC) {
+    if (!catC.has(id)) errors.push(`catalog missing concept ${id} (run build)`);
+  }
+  for (const id of catC) {
+    if (!srcC.has(id)) errors.push(`catalog stale concept ${id} (run build)`);
+  }
+  for (const f of sources.findings) {
+    const row = catalog.findings.find(c => normalizeFindingId(c.id) === normalizeFindingId(f.id));
+    if (!row) continue;
+    if (
+      row.evidence.digest !== f.evidence.digest ||
+      row.evidence.algorithm !== f.evidence.algorithm
+    ) {
+      errors.push(`${f.id}: catalog evidence fingerprint mismatch (run build)`);
+    }
+  }
+  return errors;
+}
+
+async function verifyOrphanPages(
+  findings: AuditFinding[],
+  concepts: AuditConcept[]
+): Promise<string[]> {
+  const errors: string[] = [];
+  const findingPages = new Set(findings.map(f => `${normalizeFindingId(f.id)}.md`));
+  const conceptPages = new Set(concepts.map(c => `${normalizeFindingId(c.id)}.md`));
+  const glob = new Bun.Glob('*.md');
+  for await (const name of glob.scan({ cwd: FINDING_PAGES_DIR, onlyFiles: true })) {
+    if (name === 'README.md') continue;
+    if (!findingPages.has(name)) {
+      errors.push(`orphan finding page docs/audit/findings/${name} (delete or restore source)`);
+    }
+  }
+  for await (const name of glob.scan({ cwd: CONCEPT_PAGES_DIR, onlyFiles: true })) {
+    if (name === 'README.md') continue;
+    if (!conceptPages.has(name)) {
+      errors.push(`orphan concept page docs/audit/concepts/${name} (delete or restore source)`);
+    }
+  }
+  return errors;
 }
 
 export async function verifyAuditCatalog(): Promise<{
@@ -275,6 +376,21 @@ export async function verifyAuditCatalog(): Promise<{
       errors.push(`${c.id}: missing docs page ${auditConceptDocsPath(c.id)} (run build)`);
     }
   }
+  errors.push(...(await verifyOrphanPages(findings, concepts)));
+
+  const catalogFile = Bun.file(CATALOG_PATH);
+  if (!(await catalogFile.exists())) {
+    errors.push('tools/audit-catalog.json missing (run build)');
+  } else {
+    try {
+      const catalog = parseAuditCatalogRaw(await catalogFile.json());
+      errors.push(...verifyCatalogParity({ findings, concepts }, catalog));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`tools/audit-catalog.json: ${msg}`);
+    }
+  }
+
   return {
     ok: errors.length === 0,
     errors,
@@ -288,32 +404,12 @@ export async function loadAuditCatalog(): Promise<AuditCatalogFile> {
   if (!(await file.exists())) {
     return buildAuditCatalog();
   }
-  const raw: unknown = await file.json();
-  if (typeof raw !== 'object' || raw === null) {
-    throw new Error('audit-catalog.json: invalid shape');
+  try {
+    return parseAuditCatalogRaw(await file.json());
+  } catch {
+    // Corrupt / torn JSON / soft-legacy shape → rebuild (verify still fails until rebuild succeeds)
+    return buildAuditCatalog();
   }
-  const obj = raw as Record<string, unknown>;
-  const findingsRaw = Array.isArray(obj.findings) ? obj.findings : [];
-  const conceptsRaw = Array.isArray(obj.concepts) ? obj.concepts : [];
-  const findings = findingsRaw.map(row => {
-    const f = parseAuditFinding(row);
-    return toFindingEntry(f);
-  });
-  const concepts = conceptsRaw.map(row => {
-    const c = parseAuditConcept(row);
-    return toConceptEntry(c);
-  });
-  const generated = typeof obj.generated === 'string' ? obj.generated : new Date(0).toISOString();
-  const bunVersion = typeof obj.bunVersion === 'string' ? obj.bunVersion : Bun.version;
-  return {
-    generated,
-    bunVersion,
-    count: findings.length,
-    conceptCount: concepts.length,
-    byStatus: tallyByStatus(findings),
-    findings,
-    concepts,
-  };
 }
 
 function entryBlob(e: {
