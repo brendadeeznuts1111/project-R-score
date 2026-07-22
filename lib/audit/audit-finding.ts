@@ -186,11 +186,6 @@ export async function hashFile(
   return new Bun.CryptoHasher(algorithm).update(bytes).digest('hex');
 }
 
-/** SHA-256 hex digest (thin wrapper for call-site compatibility). */
-export async function sha256File(filePath: string): Promise<string> {
-  return hashFile(filePath, 'sha256');
-}
-
 /** Evidence must live under tools/audit-evidence/ (no .. traversal). */
 export function assertEvidencePathAllowed(
   relPath: string

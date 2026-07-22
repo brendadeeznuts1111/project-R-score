@@ -23,7 +23,7 @@ Two distinct profile triples (10,5,2) and (8,7,2) yield the same demo risk score
 |-------|-------|
 | path | [`tools/audit-evidence/sample-fiber-demo.ndjson`](../../../tools/audit-evidence/sample-fiber-demo.ndjson) |
 | algorithm | `sha3-256` |
-| digest | `c2373eb12af5ba1f0bc5bd5d3ffd8da5e3caf614b4d7adb2355db276a8fb387f` |
+| digest | `ef48291806bee47f6855f9b499aa21bee3561574df6a60b9cc60f74bd1f48cf3` |
 | mediaType | `application/x-ndjson` |
 
 Verify:

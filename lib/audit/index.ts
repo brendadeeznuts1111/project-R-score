@@ -11,7 +11,6 @@ export {
   isAuditFindingStatus,
   isAuditHashAlgorithm,
   parseAuditFinding,
-  sha256File,
   verifyEvidenceHash,
 } from './audit-finding.ts';
 export { type AuditConcept, parseAuditConcept } from './audit-concept.ts';

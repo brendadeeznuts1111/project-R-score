@@ -133,6 +133,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description:
       'Native sync hasher (sha256, sha3-256, …). FactoryWager audit SSOT fingerprints evidence with sha3-256 (see AuditConcept sha3-integrity).',
     relatedTokens: ['sha3-256', 'SHA3-256', 'Bun.password'],
+    auditRefs: ['sha3-integrity'],
   },
   {
     term: 'SHA3',
@@ -147,6 +148,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'crypto.createHash("sha3-256")',
       'crypto.subtle.digest("SHA3-256")',
     ],
+    auditRefs: ['sha3-integrity'],
   },
   {
     term: 'SHA-3',
@@ -162,6 +164,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'node:crypto createHash("sha3-256") / Bun.CryptoHasher("sha3-256"). WebCrypto id is SHA3-256 (uppercase).',
     minVersion: '1.3.13',
     relatedTokens: ['SHA3-256', 'SHA3', 'Bun.CryptoHasher', 'sha3-512'],
+    auditRefs: ['sha3-integrity'],
   },
   {
     term: 'SHA3-256',
@@ -169,6 +172,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     description: 'WebCrypto subtle.digest("SHA3-256", …). node:crypto / CryptoHasher use sha3-256.',
     minVersion: '1.3.13',
     relatedTokens: ['sha3-256', 'SHA3', 'Bun.CryptoHasher'],
+    auditRefs: ['sha3-integrity'],
   },
   {
     term: 'sha3-224',

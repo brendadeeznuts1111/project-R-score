@@ -32,6 +32,7 @@ import {
   verifyAuditCatalog,
   verifyAuditGraph,
 } from '../tools/audit-catalog.ts';
+import { EVIDENCE_BODY } from '../tools/audit-emit-stub.ts';
 
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 
@@ -176,6 +177,13 @@ describe('audit catalog', () => {
     const abs = joinPath(REPO_ROOT, sample!.evidence.path);
     expect(await hashFile(abs, 'sha3-256')).toBe(sample!.evidence.digest);
     expect(await verifyEvidenceHash(sample!, REPO_ROOT)).toEqual({ ok: true });
+    // Stub body must match committed evidence (prevents emit-stub drift)
+    const onDisk = await Bun.file(abs).text();
+    expect(onDisk).toBe(EVIDENCE_BODY);
+    expect(onDisk).toContain('"sha3-integrity"');
+    expect(await hashFile(abs, 'sha3-256')).toBe(
+      new Bun.CryptoHasher('sha3-256').update(EVIDENCE_BODY).digest('hex')
+    );
   });
 
   test('build writes concept + finding pages; search prefers Nagata concept', async () => {
