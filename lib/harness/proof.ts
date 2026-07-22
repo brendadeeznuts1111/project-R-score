@@ -282,7 +282,6 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'tests/r2-env.test.ts',
       'config/r2-env.ts',
       '.env.example',
-      'scripts/cloudflare-env-status.ts',
       'docs/harness/tenants/cloudflare-pages.md',
     ],
     freshRerun: 'bun test tests/r2-env.test.ts',

@@ -85,7 +85,7 @@ Implementations: [`scripts/fix-*.ts`](scripts/fix-console-log.ts) (e.g. [`script
 - [`config/ports.ts`](config/ports.ts) — Port defaults (DOCS_SERVER=3000, P2P_PROXY=3002, DASHBOARD=3456, …); env-overridable
 - [`config/r2-env.ts`](config/r2-env.ts) — Cloudflare/R2/Pages SSOT (`CLOUDFLARE_DEFAULTS`, `requireR2Config`)
 - [`.env.example`](.env.example) — identity + secret placeholders + Pages build pins
-- Status: `bun scripts/cloudflare-env-status.ts` · secrets: `CLOUDFLARE_API_TOKEN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
+- Status: `bun run cloudflare:env` · secrets: `CLOUDFLARE_API_TOKEN`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
 - CORS: `CORS_ALLOWED_ORIGINS` (comma-separated; empty = allow all)
 - Bind: `SERVER_HOST` (default `localhost`)
 <!-- markdownlint-enable MD013 -->

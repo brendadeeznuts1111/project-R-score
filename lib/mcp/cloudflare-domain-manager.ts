@@ -141,19 +141,9 @@ export class CloudflareDomainManager {
   private initialized: boolean = false;
 
   constructor() {
-    // Fail closed: never inject demo tokens into the environment.
-    // Account: R2_* / CLOUDFLARE_* / proven default via config/r2-env.ts
-    const accountRaw = cloudflareAccountIdFromEnv();
-    let token: string;
-    try {
-      token = requireCloudflareApiToken();
-    } catch {
-      throw new Error(
-        'Missing required Cloudflare credentials. Set CLOUDFLARE_API_TOKEN (and optionally CLOUDFLARE_ACCOUNT_ID / R2_ACCOUNT_ID). Never hardcode tokens in source.'
-      );
-    }
-    this.accountId = asAccountId(accountRaw);
-    this.apiToken = token;
+    // Fail closed: account from r2-env overlay; token required (no demo inject).
+    this.accountId = asAccountId(cloudflareAccountIdFromEnv());
+    this.apiToken = requireCloudflareApiToken();
 
     this.r2 = r2MCPIntegration;
     this.knownSubdomains = this.loadKnownSubdomains();
