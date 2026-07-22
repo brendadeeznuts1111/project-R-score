@@ -50,6 +50,13 @@ export async function appendPulseLog(entry: Record<string, unknown>): Promise<vo
 
 /** Single integrity pass — SSOT for scheduled and --once runs. */
 export async function runPulseTick(): Promise<PulseTickResult> {
+  const catalogPath = joinPath(REPO_ROOT, 'tools/audit-catalog.json');
+  if (!(await Bun.file(catalogPath).exists())) {
+    console.warn(
+      '[pulse] tools/audit-catalog.json not found — run: bun tools/audit-catalog.ts build'
+    );
+  }
+
   const started = Date.now();
   const result = await verifyAuditCatalog();
   const elapsedMs = Date.now() - started;
