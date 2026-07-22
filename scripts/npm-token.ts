@@ -19,6 +19,8 @@
  * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry} R2 Storage
  */
 
+import { r2BucketUrlFromEnv } from '../config/r2-env.ts';
+
 /** FactoryWager registry URL */
 const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
 
@@ -36,9 +38,7 @@ async function main(): Promise<void> {
     console.error('   Example: bun run npm:token npm_xxxxxxxxxx');
     console.error('\n📚 Documentation:');
     console.error(`   Registry: ${REGISTRY_URL}`);
-    console.error(
-      `   R2 Store: https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry`
-    );
+    console.error(`   R2 Store: ${r2BucketUrlFromEnv()}`);
     process.exit(1);
   }
 

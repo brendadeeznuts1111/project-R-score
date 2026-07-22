@@ -14,7 +14,12 @@ import {
   resolveScoreThresholdsForQueryPack,
   type ScoreThresholdsPolicy,
 } from '../lib/docs/canonical-family';
-import { tryR2Config } from '../config/r2-env.ts';
+import {
+  r2BenchPrefixFromEnv,
+  r2UploadRetriesFromEnv,
+  searchBenchR2PublicBaseFromEnv,
+  tryR2Config,
+} from '../config/r2-env.ts';
 import { evaluateStrictWarnings } from './lib/search-benchmark-thresholds';
 
 type RankedProfile = {
@@ -211,9 +216,9 @@ export function parseArgs(argv: string[]): CliOptions {
     overlap: 'ignore',
     outputDir: './reports/search-benchmark',
     upload: true,
-    prefix: Bun.env.R2_BENCH_PREFIX || 'reports/search-bench',
+    prefix: r2BenchPrefixFromEnv(),
     gzip: true,
-    uploadRetries: Number.parseInt(Bun.env.R2_UPLOAD_RETRIES || '3', 10) || 3,
+    uploadRetries: r2UploadRetriesFromEnv(),
     cpuProfilePath: Bun.env.SEARCH_BENCH_CPU_PROFILE || undefined,
   };
 
@@ -597,7 +602,7 @@ function resolveR2Config(options: CliOptions): R2Config | null {
   const bucket = (options.bucket || cfg.bucket).trim();
   if (!bucket) return null;
   const prefix = options.prefix.replace(/^\/+|\/+$/g, '');
-  const publicBase = options.publicBase || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE;
+  const publicBase = options.publicBase || searchBenchR2PublicBaseFromEnv();
   return {
     endpoint: cfg.endpoint,
     bucket,

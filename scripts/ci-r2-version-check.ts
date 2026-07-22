@@ -15,6 +15,10 @@ function getPkgVersion(): string {
   return String(pkg.version || '').trim();
 }
 
+/**
+ * Conflict scanner across R2/S3/AWS *name* envs — intentionally reads raw Bun.env
+ * (not r2BucketFromEnv) so alias collisions stay visible. Runtime resolve: config/r2-env.
+ */
 function getResolvedBucket(): { name: string; source: BucketSource; conflict: boolean } {
   const r2 = (Bun.env.R2_BUCKET_NAME || '').trim();
   const s3 = (Bun.env.S3_BUCKET_NAME || '').trim();

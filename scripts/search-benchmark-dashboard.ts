@@ -43,7 +43,9 @@ import { storeCookieTelemetry } from './lib/cookie-telemetry';
 import {
   CLOUDFLARE_ZONE,
   cloudflareAccountIdFromEnv,
+  r2BenchPrefixFromEnv,
   r2BucketFromEnv,
+  searchBenchR2PublicBaseFromEnv,
   tryR2Config,
 } from '../config/r2-env.ts';
 import { resolveR2BridgeConfig } from './lib/r2-bridge';
@@ -149,10 +151,10 @@ function parseArgs(argv: string[]): Options {
   const out: Options = {
     port: 3099,
     dir: './reports/search-benchmark',
-    r2Base: Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE,
-    r2Prefix: Bun.env.R2_BENCH_PREFIX || 'reports/search-bench',
+    r2Base: searchBenchR2PublicBaseFromEnv() || undefined,
+    r2Prefix: r2BenchPrefixFromEnv(),
     cacheTtlMs: Number.parseInt(Bun.env.SEARCH_BENCH_CACHE_TTL_MS || '8000', 10) || 8000,
-    domain: Bun.env.SEARCH_BENCH_DOMAIN || 'factory-wager.com',
+    domain: Bun.env.SEARCH_BENCH_DOMAIN || CLOUDFLARE_ZONE.name,
     hotReload: Bun.env.SEARCH_BENCH_HOT_RELOAD !== '0',
     cookies: Bun.env.SEARCH_BENCH_DISABLE_COOKIES !== '1',
   };
@@ -7630,7 +7632,7 @@ async function main(): Promise<void> {
       domain,
       zone: CLOUDFLARE_ZONE.name || CLOUDFLARE_ZONE.id || domain,
       bucket: r2Read?.bucket || r2BucketFromEnv() || null,
-      endpoint: r2Read?.endpoint || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
+      endpoint: r2Read?.endpoint || searchBenchR2PublicBaseFromEnv() || null,
       accountIdRaw: cloudflareAccountIdFromEnv() || null,
     });
     const prefixes = ['health', 'ssl', 'analytics'];
@@ -7963,7 +7965,7 @@ async function main(): Promise<void> {
       return {
         source,
         bucket: r2BucketFromEnv() || null,
-        endpoint: Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
+        endpoint: searchBenchR2PublicBaseFromEnv() || null,
         prefix: null,
         rssKey: rssXml,
         rssUrl: `file://${rssXml}`,
@@ -7973,7 +7975,7 @@ async function main(): Promise<void> {
     const prefix = options.r2Prefix.replace(/^\/+|\/+$/g, '');
     const r2 = resolveR2ReadOptions();
     const rssKey = `${prefix}/rss.xml`;
-    const publicBase = options.r2Base || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null;
+    const publicBase = options.r2Base || searchBenchR2PublicBaseFromEnv() || null;
     return {
       source,
       bucket: r2?.bucket || r2BucketFromEnv() || null,

@@ -49,7 +49,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
 - **`bun-time-boundaries`** — utils date/time/number tokens: `Bun.nanoseconds` · `Bun.sleep`/`sleepSync` · `Bun.randomUUIDv7` · `Bun.version`/`revision` + `mintEvidenceId` / `mintEvidenceIdAt` / `checkEvidenceTiming` (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/time.test.ts` · evidence [`lib/time.ts`](../../lib/time.ts) · wired into TEST-003 via [`lib/screenshot-remediation.ts`](../../lib/screenshot-remediation.ts)
 - **`cloudflare-pages-env-ssot`** — Pages `project-r-score` identity + build pins in `config/r2-env` / `.env.example` (`unit` + `boundary`)  
-  *Ratchet* → `bun test tests/r2-env.test.ts` · [`config/r2-env.ts`](../../config/r2-env.ts) · [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · `bun run cloudflare:env`
+  *Ratchet* → `bun test tests/r2-env.test.ts` · [`config/r2-env.ts`](../../config/r2-env.ts) · [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · `bun run cloudflare:env` · `:assert` / `:assert-apex` (HTTP) · `:assert-live` (API+apex)
 - **`terminal-pty-boundaries`** — Bun.Terminal PTY helpers (`spawnWithTerminal` / capturing terminal) (`unit` + `boundary`)  
   *Ratchet* → `bun test ./tests/terminal.test.ts` · evidence [`lib/terminal.ts`](../../lib/terminal.ts)
 - **`security-hash-boundaries`** — Bun.password hash/verify and CryptoHasher sha256/sha1 digests behave as expected  

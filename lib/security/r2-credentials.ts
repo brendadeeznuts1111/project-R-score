@@ -10,6 +10,11 @@
  */
 
 import {
+  cloudflareAccountIdFromEnv,
+  r2BucketFromEnv,
+  r2EndpointFromAccount,
+} from '../../config/r2-env.ts';
+import {
   type AccessKeyId,
   type AccountId,
   tryAccessKeyId,
@@ -64,22 +69,28 @@ export function r2CredentialsFromEnv(
   overrides: R2CredentialInput = {},
   env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
 ): NormalizedR2Credentials {
+  const envAccount =
+    overrides.accountId ?? env['R2_ACCOUNT_ID'] ?? env['CLOUDFLARE_ACCOUNT_ID'] ?? undefined;
+  const envEndpoint = overrides.endpoint ?? env['R2_ENDPOINT'] ?? env['S3_ENDPOINT'] ?? undefined;
+  const envBucket =
+    overrides.bucketName ??
+    env['R2_REGISTRY_BUCKET'] ??
+    env['R2_BUCKET_NAME'] ??
+    env['R2_BUCKET'] ??
+    env['S3_BUCKET_NAME'] ??
+    env['AWS_BUCKET_NAME'] ??
+    undefined;
   return normalizeR2Credentials({
-    accountId: overrides.accountId ?? env['R2_ACCOUNT_ID'] ?? env['CLOUDFLARE_ACCOUNT_ID'],
+    // Prefer explicit env; fall back to Cloudflare SSOT account (proven default).
+    accountId: envAccount || cloudflareAccountIdFromEnv(),
     accessKeyId: overrides.accessKeyId ?? env['R2_ACCESS_KEY_ID'] ?? env['AWS_ACCESS_KEY_ID'],
     secretAccessKey:
       overrides.secretAccessKey ??
       env['R2_SECRET_ACCESS_KEY'] ??
       env['AWS_SECRET_ACCESS_KEY'] ??
       '',
-    endpoint: overrides.endpoint ?? env['R2_ENDPOINT'] ?? env['S3_ENDPOINT'],
-    bucketName:
-      overrides.bucketName ??
-      env['R2_REGISTRY_BUCKET'] ??
-      env['R2_BUCKET_NAME'] ??
-      env['R2_BUCKET'] ??
-      env['S3_BUCKET_NAME'] ??
-      env['AWS_BUCKET_NAME'],
+    endpoint: envEndpoint || r2EndpointFromAccount(),
+    bucketName: envBucket || r2BucketFromEnv() || undefined,
   });
 }
 

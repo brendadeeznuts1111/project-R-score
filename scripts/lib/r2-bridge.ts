@@ -2,7 +2,12 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { S3Client, semver } from 'bun';
-import { r2BucketFromEnv, r2EndpointFromAccount, requireR2Config } from '../../config/r2-env.ts';
+import {
+  r2BucketFromEnv,
+  r2EndpointFromAccount,
+  r2RequestPayerFromEnv,
+  requireR2Config,
+} from '../../config/r2-env.ts';
 
 export type R2BridgeConfig = {
   endpoint: string;
@@ -22,12 +27,6 @@ function assertSafeZstdRuntime(): void {
   }
 }
 
-function parseTruthyEnv(value?: string): boolean {
-  if (!value) return false;
-  const normalized = value.trim().toLowerCase();
-  return normalized === '1' || normalized === 'true' || normalized === 'yes' || normalized === 'on';
-}
-
 /** Resolve S3 R2 bridge config via config/r2-env SSOT (optional field overrides). */
 export function resolveR2BridgeConfig(input?: {
   endpoint?: string;
@@ -41,7 +40,7 @@ export function resolveR2BridgeConfig(input?: {
   const bucket = (input?.bucket || base.bucket || r2BucketFromEnv()).trim();
   const accessKeyId = (input?.accessKeyId || base.accessKeyId).trim();
   const secretAccessKey = (input?.secretAccessKey || base.secretAccessKey).trim();
-  const requestPayer = input?.requestPayer ?? parseTruthyEnv(Bun.env.R2_REQUEST_PAYER);
+  const requestPayer = input?.requestPayer ?? r2RequestPayerFromEnv();
 
   if (!endpoint || !bucket || !accessKeyId || !secretAccessKey) {
     throw new Error(

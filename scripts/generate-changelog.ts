@@ -21,6 +21,7 @@
  */
 
 import { $ } from 'bun';
+import { r2BucketUrlFromEnv } from '../config/r2-env.ts';
 
 /** Changelog filename */
 const CHANGELOG_FILE = 'CHANGELOG.md';
@@ -29,9 +30,7 @@ const CHANGELOG_FILE = 'CHANGELOG.md';
 const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
 
 /** R2 bucket URL */
-const R2_BUCKET_URL =
-  Bun.env.R2_BUCKET_URL ||
-  'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry';
+const R2_BUCKET_URL = r2BucketUrlFromEnv();
 
 /** Commit categories */
 interface CommitCategories {

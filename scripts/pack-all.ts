@@ -21,6 +21,7 @@
 
 import { $ } from 'bun';
 import { Glob } from 'bun';
+import { r2BucketUrlFromEnv } from '../config/r2-env.ts';
 import { ensureDir } from './lib/fs-bun';
 
 /** Output directory for packed packages */
@@ -30,9 +31,7 @@ const PACKS_DIR = './dist/packs';
 const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
 
 /** R2 bucket URL for package storage */
-const R2_BUCKET_URL =
-  Bun.env.R2_BUCKET_URL ||
-  'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry';
+const R2_BUCKET_URL = r2BucketUrlFromEnv();
 
 /**
  * Pack a single package

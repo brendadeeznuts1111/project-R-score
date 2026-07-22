@@ -58,7 +58,7 @@ Branch protection should require these GitHub Actions check names (workflow / jo
 | `enforce_admins` | **on** |
 | Require pull request before merging | **on** (`required_pull_request_reviews`, 0 approvals) |
 | search-governance as required | optional — not required yet |
-| Cloudflare Pages (`project-r-score`) | **not required** — Git-integration deploy signal only; merge SSOT remains Harness Gates + TypeScript Checks. Pins/SSOT: `config/r2-env.ts` · `bun run cloudflare:env` · claim `cloudflare-pages-env-ssot` |
+| Cloudflare Pages (`project-r-score`) | **not required** — Git-integration deploy signal only; merge SSOT remains Harness Gates + TypeScript Checks. Pins/SSOT: `config/r2-env.ts` · `bun run cloudflare:env` / `:assert-apex` · claim `cloudflare-pages-env-ssot` |
 | GitHub-hosted runners | **offline (billing)** — jobs fail in ~2s with **0 steps** / empty `runner_name`. Not a harness test failure. |
 
 ### Local CI when Actions is offline

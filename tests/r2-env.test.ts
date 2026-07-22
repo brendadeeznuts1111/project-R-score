@@ -9,8 +9,11 @@ import {
   assertCloudflarePagesPins,
   cloudflareAccountIdFromEnv,
   cloudflarePagesDesiredBuild,
+  r2BenchPrefixFromEnv,
   r2BucketFromEnv,
+  r2BucketUrlFromEnv,
   r2EndpointFromAccount,
+  r2UploadRetriesFromEnv,
   requireR2Config,
   tryR2Config,
 } from '../config/r2-env.ts';
@@ -46,6 +49,11 @@ describe('config/r2-env Cloudflare SSOT', () => {
       `https://${account}.r2.cloudflarestorage.com`
     );
     expect(r2BucketFromEnv().length).toBeGreaterThan(0);
+    expect(r2BenchPrefixFromEnv().length).toBeGreaterThan(0);
+    expect(r2UploadRetriesFromEnv()).toBeGreaterThan(0);
+    const bucketUrl = r2BucketUrlFromEnv();
+    expect(bucketUrl.startsWith('https://')).toBe(true);
+    expect(bucketUrl).toContain('.r2.cloudflarestorage.com');
   });
 
   test('requireR2Config / tryR2Config are S3-only (no API token required)', () => {

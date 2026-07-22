@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
@@ -12,6 +13,7 @@
  * and enhanced documentation workflows.
  */
 
+import { requireR2Config, tryR2Config } from '../../config/r2-env.ts';
 import { PackageManager, type PackageInfo } from '../../lib/package/package-manager.ts';
 import { R2Storage, type R2StorageConfig } from '../../lib/r2/r2-storage-enhanced.ts';
 import { RSSManager, type RSSFeed } from '../../lib/rss/rss-manager.ts';
@@ -413,15 +415,16 @@ class IntegratedCLI {
   }
 
   private hasR2Credentials(): boolean {
-    return !!(Bun.env.R2_ACCOUNT_ID && Bun.env.R2_ACCESS_KEY_ID && Bun.env.R2_SECRET_ACCESS_KEY);
+    return Boolean(tryR2Config());
   }
 
   private loadR2Config(): R2StorageConfig {
+    const c = requireR2Config();
     return {
-      accountId: Bun.env.R2_ACCOUNT_ID!,
-      accessKeyId: Bun.env.R2_ACCESS_KEY_ID!,
-      secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY!,
-      defaultBucket: Bun.env.R2_BUCKET || 'bun-docs-global',
+      accountId: c.accountId,
+      accessKeyId: c.accessKeyId,
+      secretAccessKey: c.secretAccessKey,
+      defaultBucket: c.bucket || 'bun-docs-global',
     };
   }
 

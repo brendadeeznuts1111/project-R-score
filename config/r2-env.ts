@@ -37,6 +37,9 @@ export const CLOUDFLARE_DEFAULTS = {
     },
   },
   wikiHost: 'wiki.factory-wager.com',
+  /** Default registry object store path (pack/release/changelog scripts). */
+  registryBucket: 'factory-wager-registry',
+  benchPrefix: 'reports/search-bench',
 } as const;
 
 /** Keys checked by status CLI (secrets + account/zone identity). */
@@ -96,6 +99,32 @@ export function r2BucketFromEnv(): string {
   );
 }
 
+/** Search-bench object prefix (dashboard + snapshot). */
+export function r2BenchPrefixFromEnv(): string {
+  return envString('R2_BENCH_PREFIX', CLOUDFLARE_DEFAULTS.benchPrefix);
+}
+
+/** Public/registry R2 URL used by pack/release/changelog scripts. */
+export function r2BucketUrlFromEnv(): string {
+  return (
+    envString('R2_BUCKET_URL') ||
+    `${r2EndpointFromAccount()}/${CLOUDFLARE_DEFAULTS.registryBucket}`
+  );
+}
+
+export function r2UploadRetriesFromEnv(): number {
+  return Number.parseInt(envString('R2_UPLOAD_RETRIES', '3'), 10) || 3;
+}
+
+export function r2RequestPayerFromEnv(): boolean {
+  return parseTruthy(envString('R2_REQUEST_PAYER'), false);
+}
+
+/** Optional public base for search-bench HTML (CDN / custom domain). */
+export function searchBenchR2PublicBaseFromEnv(): string {
+  return envString('SEARCH_BENCH_R2_PUBLIC_BASE');
+}
+
 export const R2_CONFIG = {
   accountId: cloudflareAccountIdFromEnv(),
   accessKeyId: envString('R2_ACCESS_KEY_ID'),
@@ -103,9 +132,9 @@ export const R2_CONFIG = {
   cloudflareApiToken: envString('CLOUDFLARE_API_TOKEN'),
   bucket: envString('R2_BUCKET', 'bun-docs-prod'),
   bucketName: envString('R2_BUCKET_NAME', 'factory-wager-wiki'),
-  benchPrefix: envString('R2_BENCH_PREFIX', 'reports/search-bench'),
+  benchPrefix: r2BenchPrefixFromEnv(),
   endpoint: r2EndpointFromAccount(),
-  bucketUrl: envString('R2_BUCKET_URL'),
+  bucketUrl: r2BucketUrlFromEnv(),
 } as const;
 
 const pages = CLOUDFLARE_DEFAULTS.pages;
@@ -342,9 +371,11 @@ export async function assertLiveCloudflarePages(): Promise<{
       `Live Pages ${project} drifts from CLOUDFLARE_DEFAULTS: ${mismatches.join('; ')}`
     );
   }
+  const url = `https://${result.subdomain || CLOUDFLARE_DEFAULTS.pages.subdomain}`;
+  await assertCloudflarePagesApex(url);
   return {
     project,
-    url: `https://${result.subdomain || CLOUDFLARE_DEFAULTS.pages.subdomain}`,
+    url,
     build_config: {
       build_command: build.build_command,
       destination_dir: build.destination_dir,
@@ -356,12 +387,33 @@ export async function assertLiveCloudflarePages(): Promise<{
   };
 }
 
+/** HTTP-only apex check — no API token (CI-safe when Pages is up). */
+export async function assertCloudflarePagesApex(
+  url = CLOUDFLARE_PAGES.url
+): Promise<{ url: string; status: number }> {
+  const res = await fetch(url, { redirect: 'follow' });
+  const html = await res.text();
+  if (!res.ok) {
+    throw new Error(`Pages apex ${url} returned HTTP ${res.status}`);
+  }
+  if (!html.includes('FactoryWager')) {
+    throw new Error(`Pages apex ${url} missing FactoryWager marker (publish surface stale?)`);
+  }
+  return { url, status: res.status };
+}
+
 if (import.meta.main) {
   const assertOnly = Bun.argv.includes('--assert');
   const assertLive = Bun.argv.includes('--assert-live');
+  const assertApex = Bun.argv.includes('--assert-apex');
   if (assertLive) {
     const live = await assertLiveCloudflarePages();
     console.log('cloudflare Pages live OK', live);
+    process.exit(0);
+  }
+  if (assertApex) {
+    const apex = await assertCloudflarePagesApex();
+    console.log('cloudflare Pages apex OK', apex);
     process.exit(0);
   }
   if (assertOnly) {

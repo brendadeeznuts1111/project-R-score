@@ -22,14 +22,13 @@
  */
 
 import { Glob } from 'bun';
+import { r2BucketUrlFromEnv } from '../config/r2-env.ts';
 
 /** Registry URL for FactoryWager packages */
 const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
 
 /** R2 bucket URL for package storage */
-const R2_BUCKET_URL =
-  Bun.env.R2_BUCKET_URL ||
-  'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry';
+const R2_BUCKET_URL = r2BucketUrlFromEnv();
 
 /** Version bump type */
 type BumpType = 'patch' | 'minor' | 'major';
@@ -63,10 +62,8 @@ async function main(): Promise<void> {
   if (!type || !['patch', 'minor', 'major'].includes(type)) {
     console.error('❌ Usage: bun run bump:all <patch|minor|major>');
     console.error('\n📚 Documentation:');
-    console.error('   Registry: https://registry.factory-wager.com');
-    console.error(
-      '   R2 Store: https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry'
-    );
+    console.error(`   Registry: ${REGISTRY_URL}`);
+    console.error(`   R2 Store: ${R2_BUCKET_URL}`);
     process.exit(1);
   }
 
