@@ -1,14 +1,42 @@
 {
-  "generated": "2026-07-22T05:00:45.949Z",
+  "generated": "2026-07-22T05:15:02.969Z",
   "bunVersion": "1.4.0",
-  "count": 1,
-  "conceptCount": 4,
+  "count": 2,
+  "conceptCount": 5,
   "byStatus": {
     "confirmed": 1,
     "mitigated": 0,
-    "open": 0
+    "open": 1
   },
   "findings": [
+    {
+      "id": "kalshi-repo-octagonai-kalshi-trading-bot-cli",
+      "kind": "AuditFinding",
+      "title": "Kalshi bot candidate: OctagonAI/kalshi-trading-bot-cli",
+      "description": "Quality score 84.75/100. Strategy: market_making, sports, news_event, momentum, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Missing test coverage on extracted paths.",
+      "status": "open",
+      "publishedAt": "2026-07-22",
+      "evidence": {
+        "path": "tools/audit-evidence/kalshi/octagonai__kalshi-trading-bot-cli.ndjson",
+        "algorithm": "sha3-256",
+        "digest": "6e7e4934e59648439a3a89fcbbfb4542dc3fe1b07f76fc1c0b763654851b70d4",
+        "mediaType": "application/x-ndjson"
+      },
+      "discoveredIn": "2026-07-22T04-59-00-818Z",
+      "related": [
+        "kalshi-shortlist-diversity",
+        "sha3-integrity",
+        "nagata-map"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "0.2.0",
+        "emitter": "kalshi-bot-research"
+      },
+      "docsPath": "docs/audit/findings/kalshi-repo-octagonai-kalshi-trading-bot-cli.md"
+    },
     {
       "id": "sample-fiber-demo-2026-07-21",
       "kind": "AuditFinding",
@@ -84,6 +112,24 @@
         "emitter": "audit-curated"
       },
       "docsPath": "docs/audit/concepts/jacobian-nullspace.md"
+    },
+    {
+      "id": "kalshi-shortlist-diversity",
+      "kind": "AuditConcept",
+      "title": "Kalshi bot shortlist diversity constraints",
+      "description": "Portfolio selection over scored repos: size 12, max 4 per strategy tag, min 1 per major tag (market_making, arb, sports, news_event, momentum, mean_reversion, llm_ensemble), TS/JS tiebreak within 5 points. Operates above single-repo RepoReport — see docs/FACTOR_STACK.md shortlist scope.",
+      "publishedAt": "2026-07-22",
+      "related": [
+        "sha3-integrity"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "0.2.0",
+        "emitter": "kalshi-bot-research"
+      },
+      "docsPath": "docs/audit/concepts/kalshi-shortlist-diversity.md"
     },
     {
       "id": "nagata-map",

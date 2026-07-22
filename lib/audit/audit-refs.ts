@@ -41,6 +41,12 @@ export const AUDIT_REFS: Record<string, AuditEntryId> = {
   'SHA-3': asAuditEntryId('sha3-integrity'),
   'SHA3-256': asAuditEntryId('sha3-integrity'),
   'sha3-256': asAuditEntryId('sha3-integrity'),
+  // Kalshi bot research (kalshi-bot-research emitter)
+  'kalshi-repo-octagonai-kalshi-trading-bot-cli': asAuditEntryId(
+    'kalshi-repo-octagonai-kalshi-trading-bot-cli'
+  ),
+  'kalshi-shortlist-diversity': asAuditEntryId('kalshi-shortlist-diversity'),
+  'kalshi bot': asAuditEntryId('kalshi-repo-octagonai-kalshi-trading-bot-cli'),
 };
 
 /** Re-brand a finding/concept PK as a polymorphic entry ref. */
