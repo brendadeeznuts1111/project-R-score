@@ -37,6 +37,50 @@ export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
       body: 'const response = await fetch("http://example.com", {\n  signal: AbortSignal.timeout(1000),\n});',
     },
   ],
+  'runtime/networking/fetch#sending-a-post-request': [
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  method: "POST",\n  body: "Hello, world!",\n});',
+    },
+  ],
+  'runtime/networking/fetch#proxying-requests': [
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  proxy: "http://proxy.com",\n});',
+    },
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  proxy: {\n    url: "http://proxy.com",\n    headers: {\n      "Proxy-Authorization": "Bearer my-token",\n      "X-Custom-Proxy-Header": "value",\n    },\n  },\n});',
+    },
+  ],
+  'runtime/networking/fetch#streaming-response-bodies': [
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com");\n\nfor await (const chunk of response.body) {\n  console.log(chunk);\n}',
+    },
+  ],
+  'runtime/networking/fetch#streaming-request-bodies': [
+    {
+      lang: 'ts',
+      body: 'const stream = new ReadableStream({\n  start(controller) {\n    controller.enqueue("Hello");\n    controller.enqueue(" ");\n    controller.enqueue("World");\n    controller.close();\n  },\n});\n\nconst response = await fetch("http://example.com", {\n  method: "POST",\n  body: stream,\n});',
+    },
+  ],
+  'runtime/networking/fetch#fetching-a-url-with-a-timeout': [
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  signal: AbortSignal.timeout(1000),\n});',
+    },
+  ],
+  'runtime/networking/fetch#performance': [
+    {
+      lang: 'ts',
+      body: 'import { dns } from "bun";\n\ndns.prefetch("bun.com");',
+    },
+    {
+      lang: 'ts',
+      body: 'import { fetch } from "bun";\n\nfetch.preconnect("https://bun.com");',
+    },
+  ],
   'guides/runtime/read-env': [
     { lang: 'ts', body: 'process.env.API_TOKEN; // => "secret"' },
     { lang: 'ts', body: 'Bun.env.API_TOKEN; // => "secret"' },
@@ -254,6 +298,16 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'extract-social-meta': 'guides/html-rewriter/extract-social-meta',
   'Extract social share images and Open Graph tags': 'guides/html-rewriter/extract-social-meta',
   'HTMLRewriter social': 'guides/html-rewriter/extract-social-meta',
+  // networking/fetch TOC fragments (suggest prints these over the page-level trio)
+  'sending-a-post-request': 'runtime/networking/fetch#sending-a-post-request',
+  'fetch POST': 'runtime/networking/fetch#sending-a-post-request',
+  'proxying-requests': 'runtime/networking/fetch#proxying-requests',
+  'fetch proxy': 'runtime/networking/fetch#proxying-requests',
+  'streaming-response-bodies': 'runtime/networking/fetch#streaming-response-bodies',
+  'streaming-request-bodies': 'runtime/networking/fetch#streaming-request-bodies',
+  'fetching-a-url-with-a-timeout': 'runtime/networking/fetch#fetching-a-url-with-a-timeout',
+  'AbortSignal.timeout': 'runtime/networking/fetch#fetching-a-url-with-a-timeout',
+  'fetch performance': 'runtime/networking/fetch#performance',
   'Bun.which': 'guides/util/which-path-to-executable-bin',
   'Get the path to an executable bin file': 'guides/util/which-path-to-executable-bin',
   'which-path-to-executable-bin': 'guides/util/which-path-to-executable-bin',
