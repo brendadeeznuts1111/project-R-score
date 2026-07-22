@@ -9,6 +9,7 @@ import {
   assertCloudflarePagesPins,
   cloudflareAccountIdFromEnv,
   cloudflarePagesDesiredBuild,
+  cloudflareDashboardUrlFromEnv,
   factoryWagerRegistryUrlFromEnv,
   factoryWagerWikiUrl,
   r2BenchPrefixFromEnv,
@@ -59,6 +60,9 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(factoryWagerRegistryUrlFromEnv()).toContain(CLOUDFLARE_DEFAULTS.registryHost);
     expect(factoryWagerWikiUrl()).toBe(`https://${CLOUDFLARE_DEFAULTS.wikiHost}`);
     expect(CLOUDFLARE_DEFAULTS.registryDoctorBucket).toBe('npm-registry');
+    expect(cloudflareDashboardUrlFromEnv()).toContain(
+      `/dash.cloudflare.com/${CLOUDFLARE_DEFAULTS.accountId}/`
+    );
   });
 
   test('requireR2Config / tryR2Config are S3-only (no API token required)', () => {

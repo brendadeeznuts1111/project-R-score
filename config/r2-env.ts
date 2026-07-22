@@ -138,6 +138,14 @@ export function factoryWagerWikiUrl(): string {
   return `https://${CLOUDFLARE_DEFAULTS.wikiHost}`;
 }
 
+/** Cloudflare dashboard URL for the factory-wager zone. */
+export function cloudflareDashboardUrlFromEnv(
+  accountId = cloudflareAccountIdFromEnv(),
+  zoneName = CLOUDFLARE_DEFAULTS.zones.factoryWager.name
+): string {
+  return `https://dash.cloudflare.com/${accountId}/${zoneName}`;
+}
+
 export const R2_CONFIG = {
   accountId: cloudflareAccountIdFromEnv(),
   accessKeyId: envString('R2_ACCESS_KEY_ID'),

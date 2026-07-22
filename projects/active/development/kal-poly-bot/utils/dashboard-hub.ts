@@ -6,6 +6,7 @@
 import {
   CLOUDFLARE_DEFAULTS,
   cloudflareAccountIdFromEnv,
+  cloudflareDashboardUrlFromEnv,
 } from '../../../../../config/r2-env.ts';
 
 export interface DashboardHubConfig {
@@ -63,7 +64,7 @@ export async function loadDashboardHubConfig(): Promise<DashboardHubConfig> {
 function getDefaultConfig(): DashboardHubConfig {
   const accountId = cloudflareAccountIdFromEnv();
   const zone = CLOUDFLARE_DEFAULTS.zones.factoryWager.name;
-  const dashboardUrl = `https://dash.cloudflare.com/${accountId}/${zone}`;
+  const dashboardUrl = cloudflareDashboardUrlFromEnv(accountId, zone);
   return {
     hub: {
       name: 'Factory Wager Cloudflare Hub',
