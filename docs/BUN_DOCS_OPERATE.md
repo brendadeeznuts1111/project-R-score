@@ -10,6 +10,7 @@
 | Suggest token | `bun tools/bun-doc-refs.ts suggest <token>` — frozen `CANONICAL_REFS` wins; prints guide `example[lang]` code |
 | Guide fences | Frozen [`bun-docs-guide-examples.ts`](../tools/bun-docs-guide-examples.ts); scrape via `generate-tokens-from-docs` (`guides` domain) |
 | Blog ingestion | `CANONICAL_SOURCES` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · journey `bun test tests/journey/blog-extraction.test.ts` |
+| Fetch-page SSOT | [`fetch-page.ts`](../lib/docs/fetch-page.ts) · locus [`runtime/networking/fetch`](https://bun.com/docs/runtime/networking/fetch) · claim `fetch-page-boundaries` |
 | Integrity | `bun tools/bun-doc-refs.ts integrity` · `--fix` / `--fix-dry` |
 | Status | `bun tools/bun-doc-refs.ts status` |
 | Catalog export | `bun run docs:catalog:export` |

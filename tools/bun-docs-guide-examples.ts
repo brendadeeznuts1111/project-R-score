@@ -1,5 +1,7 @@
 // @see https://bun.com/docs/guides/runtime/timezone — TZ
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
+// @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout — AbortSignal.timeout
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
@@ -20,6 +22,16 @@ export type GuideExample = { lang: string; body: string };
 
 /** Key = path under bun.com/docs/ (no leading slash, no .md). */
 export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
+  'runtime/networking/fetch': [
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com");\nconsole.log(response.status); // => 200',
+    },
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  signal: AbortSignal.timeout(1000),\n});',
+    },
+  ],
   'guides/runtime/read-env': [
     { lang: 'ts', body: 'process.env.API_TOKEN; // => "secret"' },
     { lang: 'ts', body: 'Bun.env.API_TOKEN; // => "secret"' },

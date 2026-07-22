@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — Bun.fetch
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 /**
@@ -98,7 +99,18 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── HTTP & networking ───────────────────────────────────────────────────
   'Bun.serve': 'https://bun.com/docs/runtime/http/server#basic-setup',
-  'Bun.fetch': 'https://bun.com/docs/runtime/nodejs-compat#fetch',
+  // Global fetch / Bun.fetch — networking page (not nodejs-compat)
+  fetch: bunDocs('runtime/networking/fetch', 'sending-an-http-request'),
+  'Bun.fetch': bunDocs('runtime/networking/fetch', 'sending-an-http-request'),
+  fetchPage: bunDocs('runtime/networking/fetch', 'sending-an-http-request'),
+  'AbortSignal.timeout': bunDocs('runtime/networking/fetch', 'fetching-a-url-with-a-timeout'),
+  'fetching-a-url-with-a-timeout': bunDocs(
+    'runtime/networking/fetch',
+    'fetching-a-url-with-a-timeout'
+  ),
+  'fetch headers': bunDocs('runtime/networking/fetch', 'custom-headers'),
+  'custom-headers': bunDocs('runtime/networking/fetch', 'custom-headers'),
+  'fetch error-handling': bunDocs('runtime/networking/fetch', 'error-handling'),
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
   'Bun.connect': 'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',
@@ -648,17 +660,19 @@ async function tokenLookup(query: string): Promise<void> {
 function printBunTokenSuggest(
   query: string,
   token: import('../lib/docs/bun-token.ts').BunToken,
-  source: string
+  source: string,
+  opts?: { locusOverride?: string }
 ): void {
   const locus =
-    token.docsLocus.anchor != null
+    opts?.locusOverride ??
+    (token.docsLocus.anchor != null
       ? `${token.docsLocus.page}#${token.docsLocus.anchor}`
-      : token.docsLocus.page;
+      : token.docsLocus.page);
   console.info(`${query} → ${locus}`);
   console.info(`  (${source} — BunToken)`);
   console.info(`  kind: ${token.kind}  stability: ${token.stability}`);
   if (token.description) console.info(`  ${token.description}`);
-  if (token.docsLocus.anchor == null) {
+  if (token.docsLocus.anchor == null && !opts?.locusOverride?.includes('#')) {
     console.info(`  docsLocus: page-only (anchor unresolved)`);
   }
   const ex = token.examples[0];
@@ -691,22 +705,16 @@ async function suggest(query: string): Promise<void> {
     process.exit(1);
   }
 
-  // 1) BunToken export (catalog → TokenRef → BunToken)
-  try {
-    const { getBunToken } = await import('./bun-docs-catalog.ts');
-    const token = await getBunToken(query);
-    if (token) {
-      const mapped = CANONICAL_REFS[query] ?? CANONICAL_REFS[resolveApiAlias(query)];
-      const source = mapped
-        ? 'catalog + canonical map — tools/bun-docs-catalog.json'
-        : 'catalog — tools/bun-docs-catalog.json';
-      printBunTokenSuggest(query, token, source);
-      if (mapped) {
-        const locus =
-          token.docsLocus.anchor != null
-            ? `${token.docsLocus.page}#${token.docsLocus.anchor}`
-            : token.docsLocus.page;
-        if (mapped !== locus) console.info(`  canonical map: ${mapped}`);
+  // 1) Frozen institutional map wins (never lose to a stale catalog locus)
+  const mapped = CANONICAL_REFS[query] ?? CANONICAL_REFS[resolveApiAlias(query)];
+  if (mapped) {
+    try {
+      const { getBunToken } = await import('./bun-docs-catalog.ts');
+      const token = await getBunToken(query);
+      if (token) {
+        printBunTokenSuggest(query, token, 'canonical map — tools/bun-doc-refs.ts CANONICAL_REFS', {
+          locusOverride: mapped,
+        });
         if (!token.examples?.length) {
           try {
             const { guideExamplesForQuery } = await import('./bun-docs-guide-examples.ts');
@@ -718,16 +726,11 @@ async function suggest(query: string): Promise<void> {
             /* guide fences optional */
           }
         }
+        return;
       }
-      return;
+    } catch {
+      /* catalog optional */
     }
-  } catch {
-    /* catalog optional */
-  }
-
-  // 2) Institutional CANONICAL_REFS when catalog misses
-  const mapped = CANONICAL_REFS[query] ?? CANONICAL_REFS[resolveApiAlias(query)];
-  if (mapped) {
     console.info(`${query} → ${mapped}`);
     console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_REFS)');
     try {
@@ -740,6 +743,18 @@ async function suggest(query: string): Promise<void> {
       /* guide fences optional */
     }
     return;
+  }
+
+  // 2) BunToken export when no frozen key
+  try {
+    const { getBunToken } = await import('./bun-docs-catalog.ts');
+    const token = await getBunToken(query);
+    if (token) {
+      printBunTokenSuggest(query, token, 'catalog — tools/bun-docs-catalog.json');
+      return;
+    }
+  } catch {
+    /* catalog optional */
   }
 
   const { entries } = await docsIndex();

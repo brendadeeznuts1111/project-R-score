@@ -17,22 +17,16 @@ export {
   extractSocialMetadataFromHtml,
   extractSocialMetadataFromResponse,
 } from './extract-metadata.ts';
+export { fetchPage, stripUrlFragment, type FetchPageOptions } from './fetch-page.ts';
 
 /** @deprecated Prefer `SocialMetadata`. */
 export type OpenGraphTags = SocialMetadata;
 
-/** Drop `#fragment` so fetch never sends a fragment to the server. */
-export function stripUrlFragment(url: string): string {
-  const u = new URL(url);
-  u.hash = '';
-  return u.href;
-}
-
 /**
- * Fetch `url` (fragment stripped) and extract social metadata.
+ * Fetch `url` via fetchPage and extract social metadata (stream Response into rewriter).
  */
 export async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
-  return fetchSocialMetadata(stripUrlFragment(url));
+  return fetchSocialMetadata(url);
 }
 
 const CONTENT_SELECTORS = ['article', '[role="main"]', '.prose', '.content'] as const;

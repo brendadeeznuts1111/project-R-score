@@ -14,6 +14,7 @@ import {
   extractSocialMetadataFromHtml,
   stripUrlFragment,
 } from '../lib/docs/blog-extract.ts';
+import { fetchPage } from '../lib/docs/fetch-page.ts';
 import {
   BunComSite,
   CANONICAL_SOURCES,
@@ -718,15 +719,10 @@ export async function fetchBlogPost(
 ): Promise<BlogPost> {
   const slug = normalizeBlogSlug(slugOrUrl);
   const url = buildBlogUrl(slug);
-  const cleaned = stripUrlFragment(url);
-  const res = await fetch(cleaned, {
-    signal: AbortSignal.timeout(15_000),
-    headers: { Accept: 'text/html', 'User-Agent': 'bun-docs-mcp/1.2' },
-  });
-  if (!res.ok) throw new Error(`Blog fetch failed (${res.status}): ${cleaned}`);
-
+  // Shared timeout/headers/ok via fetchPage; buffer once for article regex (streaming article later).
+  const res = await fetchPage(url, { userAgent: 'bun-docs-mcp/1.2' });
   const html = await res.text();
-  const post = await parseBlogPostFromHtml(html, slug, cleaned);
+  const post = await parseBlogPostFromHtml(html, slug, stripUrlFragment(url));
   post.content = truncateLines(post.content, opts.maxLines);
   return post;
 }

@@ -217,6 +217,16 @@ describe('fresh-rerun contract', () => {
     expect(result.exitCode).toBe(0);
   });
 
+  test('fetch-page-boundaries freshRerun runs green', async () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'fetch-page-boundaries');
+    expect(p?.freshRerun).toBe('bun test tests/fixtures/fetch-page/');
+    const result = Bun.spawnSync(['bun', 'test', 'tests/fixtures/fetch-page/'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(result.exitCode).toBe(0);
+  });
+
   test('blog-extraction-journey freshRerun is the live ingestion test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'blog-extraction-journey');
     expect(p?.freshRerun).toBe('bun test tests/journey/blog-extraction.test.ts');

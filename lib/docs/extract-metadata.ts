@@ -1,10 +1,14 @@
 /**
  * Social metadata extraction via HTMLRewriter (Open Graph, Twitter, fallbacks).
  * Offline path feeds static HTML through `transform(new Response(html))`.
+ * Live path uses fetchPage then transform(Response).
  *
  * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
  * @see https://bun.com/docs/runtime/html-rewriter
+ * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  */
+
+import { fetchPage, stripUrlFragment } from './fetch-page.ts';
 
 /** Guide `SocialMetadata` — Open Graph (+ Twitter / title fallbacks). */
 export type SocialMetadata = {
@@ -114,11 +118,11 @@ export async function extractSocialMetadataFromHtml(
 }
 
 /**
- * Guide entry: fetch `url` and extract social metadata.
- * Callers that need fragment stripping should pass `stripUrlFragment(url)` first
- * (see `lib/docs/blog-extract.ts`).
+ * Live path: fetchPage → HTMLRewriter on Response (body not buffered first).
+ * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  */
 export async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
-  const response = await fetch(url);
-  return extractSocialMetadataFromResponse(response, url);
+  const cleaned = stripUrlFragment(url);
+  const response = await fetchPage(cleaned);
+  return extractSocialMetadataFromResponse(response, cleaned);
 }

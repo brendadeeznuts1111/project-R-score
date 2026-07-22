@@ -1,8 +1,9 @@
 /**
- * Journey: CANONICAL_SOURCES.blog → URLPattern → fetch → SocialMetadata (+ article).
+ * Journey: CANONICAL_SOURCES.blog → URLPattern → fetchPage → SocialMetadata (+ article).
  *
  * Boundaries prove each primitive offline; this closes the ingestion loop on a live page.
  *
+ * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
  * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
  *
@@ -14,6 +15,7 @@ import {
   extractSocialMetadata,
   stripUrlFragment,
 } from '../../lib/docs/blog-extract.ts';
+import { fetchPage } from '../../lib/docs/fetch-page.ts';
 import {
   BunBlogIndexPattern,
   BunBlogPattern,
@@ -65,11 +67,7 @@ describe('blog-extraction journey', () => {
         ...CANONICAL_SOURCES.blog,
         pathname: `${CANONICAL_SOURCES.blog.pathname}/${SAMPLE_SLUG}`,
       });
-      const res = await fetch(stripUrlFragment(postUrl), {
-        signal: AbortSignal.timeout(15_000),
-        headers: { Accept: 'text/html' },
-      });
-      expect(res.ok).toBe(true);
+      const res = await fetchPage(postUrl);
       const html = await res.text();
       const text = await extractArticleText(html);
 

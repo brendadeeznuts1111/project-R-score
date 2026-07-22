@@ -259,9 +259,25 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/docs/blog-extract.ts',
   },
   {
+    id: 'fetch-page-boundaries',
+    claim:
+      'fetchPage strips fragments, sets Accept/UA, times out, throws on non-OK, leaves success body unread',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/fixtures/fetch-page/',
+      'tests/fixtures/fetch-page/fixture.test.ts',
+      'lib/docs/fetch-page.ts',
+    ],
+    freshRerun: 'bun test tests/fixtures/fetch-page/',
+    freshRerunKind: 'claim',
+    owner: 'lib/docs/fetch-page.ts',
+  },
+  {
     id: 'blog-extraction-journey',
     claim:
-      'CANONICAL_SOURCES.blog → URLPattern → fetch → SocialMetadata closes the blog ingestion loop',
+      'CANONICAL_SOURCES.blog → URLPattern → fetchPage → SocialMetadata closes the blog ingestion loop',
     kinds: ['journey'],
     gateClass: 'human-only',
     gateRef: 'none',
