@@ -47,14 +47,24 @@ export async function extractSocialMetadataFromResponse(
   const metadata: SocialMetadata = {};
   let titleFallback = '';
 
+  const applyOg = (attr: string | null, content: string | null, prefer = true) => {
+    if (!attr?.startsWith('og:') || !content) return;
+    const key = normalizeSocialKey(attr.replace(/^og:/, ''));
+    if (!key) return;
+    if (prefer || !metadata[key]) metadata[key] = content;
+  };
+
   const rewriter = new HTMLRewriter()
+    // Guide shape: property="og:…"
     .on('meta[property^="og:"]', {
       element(el) {
-        const property = el.getAttribute('property');
-        const content = el.getAttribute('content');
-        if (!property || !content) return;
-        const key = normalizeSocialKey(property.replace(/^og:/, ''));
-        if (key) metadata[key] = content;
+        applyOg(el.getAttribute('property'), el.getAttribute('content'));
+      },
+    })
+    // bun.com blog ships name="og:…" (not property=)
+    .on('meta[name^="og:"]', {
+      element(el) {
+        applyOg(el.getAttribute('name'), el.getAttribute('content'));
       },
     })
     .on('meta[name^="twitter:"]', {

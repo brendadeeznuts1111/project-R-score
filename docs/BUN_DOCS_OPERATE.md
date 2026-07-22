@@ -7,7 +7,9 @@
 | Intent | Command |
 |--------|---------|
 | Full refresh | `bun run docs:refresh` |
-| Suggest token | `bun tools/bun-doc-refs.ts suggest <token>` |
+| Suggest token | `bun tools/bun-doc-refs.ts suggest <token>` — frozen `CANONICAL_REFS` wins; prints guide `example[lang]` code |
+| Guide fences | Frozen [`bun-docs-guide-examples.ts`](../tools/bun-docs-guide-examples.ts); scrape via `generate-tokens-from-docs` (`guides` domain) |
+| Blog ingestion | `CANONICAL_SOURCES` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · journey `bun test tests/journey/blog-extraction.test.ts` |
 | Integrity | `bun tools/bun-doc-refs.ts integrity` · `--fix` / `--fix-dry` |
 | Status | `bun tools/bun-doc-refs.ts status` |
 | Catalog export | `bun run docs:catalog:export` |

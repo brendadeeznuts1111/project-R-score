@@ -217,6 +217,13 @@ describe('fresh-rerun contract', () => {
     expect(result.exitCode).toBe(0);
   });
 
+  test('blog-extraction-journey freshRerun is the live ingestion test', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'blog-extraction-journey');
+    expect(p?.freshRerun).toBe('bun test tests/journey/blog-extraction.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.kinds).toContain('journey');
+  });
+
   test('install-verify-journey freshRerun is the WebView journey test', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'install-verify-journey');
     expect(p?.freshRerun).toBe('bun run test:install-verify');

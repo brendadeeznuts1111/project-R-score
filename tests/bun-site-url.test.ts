@@ -1,9 +1,11 @@
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit protocol/hostname
 import { describe, expect, test } from 'bun:test';
 import {
+  BunBlogIndexPattern,
   BunBlogPattern,
   BunComSite,
   BunDocsPattern,
+  CANONICAL_SOURCES,
   bunBlog,
   bunDocs,
   guideKeyFromUrl,
@@ -61,5 +63,13 @@ describe('bun-site-url (URLPatternInit components)', () => {
   test('mdnWebApi builds from MdnSite components', () => {
     expect(mdnWebApi('URLPattern')).toContain('developer.mozilla.org');
     expect(mdnWebApi('URLPattern')).toContain('/Web/API/URLPattern');
+  });
+
+  test('CANONICAL_SOURCES.blog is parts-only and matches BunBlogIndexPattern', () => {
+    expect(CANONICAL_SOURCES.blog.protocol).toBe('https');
+    expect(CANONICAL_SOURCES.blog.hostname).toBe('bun.com');
+    expect(CANONICAL_SOURCES.blog.pathname).toBe('/blog');
+    const href = hrefFromInit(CANONICAL_SOURCES.blog);
+    expect(BunBlogIndexPattern.test(href)).toBe(true);
   });
 });

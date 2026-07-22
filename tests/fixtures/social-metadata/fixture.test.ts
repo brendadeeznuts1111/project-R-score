@@ -80,4 +80,16 @@ describe('social-metadata-boundaries', () => {
     expect(meta.title).not.toBe('Twitter Title Fallback');
     expect(meta.description).not.toBe('Fallback description');
   });
+
+  test('reads name="og:*" (bun.com blog shape)', async () => {
+    const html = `<html><head>
+    <meta name="og:title" content="Named OG Title" />
+    <meta name="og:image" content="/named.png" />
+    <meta name="og:site_name" content="Bun" />
+  </head></html>`;
+    const meta = await extractSocialMetadataFromHtml(html, BASE);
+    expect(meta.title).toBe('Named OG Title');
+    expect(meta.image).toBe(hrefFromInit({ ...BunComSite, pathname: '/named.png' }));
+    expect(meta.siteName).toBe('Bun');
+  });
 });

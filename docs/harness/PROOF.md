@@ -49,6 +49,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/fixtures/social-metadata/` · evidence `lib/docs/extract-metadata.ts` · [guide](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags)
 - **`blog-extraction-boundaries`** — fragment strip + article sans nav/footer (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/blog-extraction/` · evidence `lib/docs/blog-extract.ts`
+- **`blog-extraction-journey`** — `CANONICAL_SOURCES.blog` → URLPattern → fetch → `SocialMetadata` (`journey`)  
+  *Ratchet* → `bun test tests/journey/blog-extraction.test.ts` · human-only (live bun.com)
 - **`path-bun`** — spine `lib/` + `tools/` do not import `path` / `node:path` (`boundary`)  
   *Ratchet* → `bun run check:path-bun`
 - **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  
@@ -114,6 +116,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `url-pattern-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-site-url.test.ts` |
 | `social-metadata-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/social-metadata/` |
 | `blog-extraction-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/blog-extraction/` |
+| `blog-extraction-journey` | human-only | `bun test tests/journey/blog-extraction.test.ts` |
 | `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
 | `bun-env` | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env` |
 | `unknown-param` | continuous | pre-commit / `ci:harness` eslint |

@@ -10,6 +10,9 @@
  *
  * Full hrefs: lib/docs/bun-site-url.ts (URLPatternInit protocol/hostname/pathname).
  * Path keys stay relative (guides/…, blog/…#frag) — never hardcode host strings here.
+ *
+ * Note: bun.com blog HTML often uses meta name="og:*" (not only property="og:*");
+ * extract-metadata + social-metadata-boundaries cover both shapes.
  */
 
 import { guideKeyFromUrl } from '../lib/docs/bun-site-url.ts';

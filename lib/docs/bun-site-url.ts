@@ -35,6 +35,13 @@ export const BunDocsPattern = new URLPattern({
   pathname: '/docs/:path*',
 });
 
+/** Match /blog index on bun.com|bun.sh */
+export const BunBlogIndexPattern = new URLPattern({
+  protocol: BunComSite.protocol,
+  hostname: '(bun.com|bun.sh)',
+  pathname: '/blog',
+});
+
 /** Match /blog/:slug on bun.com|bun.sh */
 export const BunBlogPattern = new URLPattern({
   protocol: BunComSite.protocol,
@@ -48,6 +55,17 @@ export const BunReferencePattern = new URLPattern({
   hostname: '(bun.com|bun.sh)',
   pathname: '/reference/:path*',
 });
+
+/**
+ * Parts-only canonical site loci (URLPatternInit).
+ * Build hrefs with `hrefFromInit` — never assemble host strings by hand.
+ */
+export const CANONICAL_SOURCES = {
+  blog: { ...BunComSite, pathname: '/blog' },
+  docs: { ...BunComSite, pathname: '/docs' },
+  reference: { ...BunComSite, pathname: '/reference' },
+  llms: { ...BunComSite, pathname: '/docs/llms.txt' },
+} as const satisfies Record<string, URLPatternInit>;
 
 /** Match MDN Web API pages */
 export const MdnWebApiPattern = new URLPattern({

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 /**
  * bun-doc-refs.ts — canonical Bun documentation reference tool.
  *
@@ -52,6 +54,34 @@ export const BUN_TYPES_PINNED =
 export const BUN_TYPES_MAIN = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
 
 export const CANONICAL_REFS: Record<string, string> = {
+  // HTMLRewriter — social-meta guide (SocialMetadata / extractSocialMetadata)
+  HTMLRewriter: bunDocs('runtime/html-rewriter'),
+  'HTMLRewriter social': bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+  'extract-social-meta': bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+  SocialMetadata: bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+  extractSocialMetadata: bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+
+  // URLPattern — ship 1.3.4; test/exec perf 1.3.12
+  URLPattern: bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern ship': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern API': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  URLPatternInit: bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.test': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
+  'URLPattern.exec': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
+  'URLPattern MDN': mdnWebApi('URLPattern'),
+
   // ── Terminal width & ANSI (replaces string-width / strip-ansi / wrap-ansi /
   //    slice-ansi) ────────────────────────────────────────────────────────
   'Bun.stringWidth': 'https://bun.com/docs/runtime/utils#bun-stringwidth',
@@ -176,7 +206,6 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun v1.3.12 bugfixes': 'https://bun.com/blog/bun-v1.3.12#bugfixes',
   'bun v1.3.12 contributors': 'https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors',
   // v1.3.12 perf ship notes (runtime inherit; docs index may lag)
-  URLPattern: 'https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster',
   'Bun.Glob.scan': 'https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan',
   'bun v1.3.12 stripANSI':
     'https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth',
@@ -678,6 +707,17 @@ async function suggest(query: string): Promise<void> {
             ? `${token.docsLocus.page}#${token.docsLocus.anchor}`
             : token.docsLocus.page;
         if (mapped !== locus) console.info(`  canonical map: ${mapped}`);
+        if (!token.examples?.length) {
+          try {
+            const { guideExamplesForQuery } = await import('./bun-docs-guide-examples.ts');
+            for (const ex of guideExamplesForQuery(query, mapped)) {
+              console.info(`  example[${ex.lang}]:`);
+              for (const line of ex.body.split('\n')) console.info(`    ${line}`);
+            }
+          } catch {
+            /* guide fences optional */
+          }
+        }
       }
       return;
     }
@@ -690,6 +730,15 @@ async function suggest(query: string): Promise<void> {
   if (mapped) {
     console.info(`${query} → ${mapped}`);
     console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_REFS)');
+    try {
+      const { guideExamplesForQuery } = await import('./bun-docs-guide-examples.ts');
+      for (const ex of guideExamplesForQuery(query, mapped)) {
+        console.info(`  example[${ex.lang}]:`);
+        for (const line of ex.body.split('\n')) console.info(`    ${line}`);
+      }
+    } catch {
+      /* guide fences optional */
+    }
     return;
   }
 
@@ -804,6 +853,7 @@ async function deepcheck(paths: string[]): Promise<number> {
 }
 
 import { LLMS_URL } from '../lib/shared/tools/bun-urls.ts';
+import { bunBlog, bunDocs, mdnWebApi } from '../lib/docs/bun-site-url.ts';
 
 const TAXONOMY_PATH = new URL('./bun-docs-taxonomy.json', import.meta.url).pathname;
 const INTEGRITY_LOG = 'reports/doc-integrity.jsonl';

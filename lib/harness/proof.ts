@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -256,6 +257,21 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun test tests/fixtures/blog-extraction/',
     freshRerunKind: 'claim',
     owner: 'lib/docs/blog-extract.ts',
+  },
+  {
+    id: 'blog-extraction-journey',
+    claim:
+      'CANONICAL_SOURCES.blog → URLPattern → fetch → SocialMetadata closes the blog ingestion loop',
+    kinds: ['journey'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/journey/blog-extraction.test.ts',
+      'tests/journey/blog-extraction.test.ts',
+    ],
+    freshRerun: 'bun test tests/journey/blog-extraction.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'tests/journey/blog-extraction.test.ts',
   },
   {
     id: 'path-bun',
