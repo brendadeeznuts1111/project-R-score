@@ -193,7 +193,14 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'Bun.inspect.table',
     path: 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
     description:
-      'Format tabular data into an ASCII table string (like console.table but returns a string)',
+      'Bun.inspect.table(tabularData, properties, options) — format tabular data into a string (like console.table, returns a string)',
+    related: ['runtime/utils'],
+  },
+  {
+    term: 'Bun.inspect.table(tabularData, properties, options)',
+    path: 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
+    description:
+      'Format tabular data into a string. Like console.table, except it returns a string rather than printing to the console.',
     related: ['runtime/utils'],
   },
   // Env: Bun.env ≡ process.env (guide: guides/runtime/read-env). Prefer utils#bun-env over changelog dump.

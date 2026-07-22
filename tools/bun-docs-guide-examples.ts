@@ -403,6 +403,7 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const url = Bun.pathToFileURL("/foo/bar.txt");\nconsole.log(url); // "file:///foo/bar.txt"',
     },
   ],
+  // Official docs — Bun.inspect.table(tabularData, properties, options)
   'runtime/utils#bun-inspect-table-tabulardata-properties-options': [
     {
       lang: 'ts',
@@ -410,10 +411,12 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
     },
     {
       lang: 'ts',
+      // Pass an array of property names to display only those properties.
       body: 'console.log(\n  Bun.inspect.table(\n    [\n      { a: 1, b: 2, c: 3 },\n      { a: 4, b: 5, c: 6 },\n    ],\n    ["a", "c"],\n  ),\n);\n//\n// ┌───┬───┬───┐\n// │   │ a │ c │\n// ├───┼───┼───┤\n// │ 0 │ 1 │ 3 │\n// │ 1 │ 4 │ 6 │\n// └───┴───┴───┘',
     },
     {
       lang: 'ts',
+      // Pass { colors: true } to enable ANSI colors (options as 2nd arg).
       body: 'console.log(\n  Bun.inspect.table(\n    [\n      { a: 1, b: 2, c: 3 },\n      { a: 4, b: 5, c: 6 },\n    ],\n    {\n      colors: true,\n    },\n  ),\n);',
     },
   ],
@@ -608,6 +611,8 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'get-the-path-to-an-executable-bin-file': 'guides/util/which-path-to-executable-bin',
   // Bun.* → utils fences; bare / node:url → reference; guide titles → guides
   'Bun.inspect.table': 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
+  'Bun.inspect.table(tabularData, properties, options)':
+    'runtime/utils#bun-inspect-table-tabulardata-properties-options',
   'Bun.pathToFileURL': 'runtime/utils#bun-pathtofileurl',
   'Bun.fileURLToPath': 'runtime/utils#bun-fileurltopath',
   pathToFileURL: 'reference/node/url/pathToFileURL',

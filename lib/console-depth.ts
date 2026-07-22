@@ -160,16 +160,20 @@ export function logSorted<T>(value: T, options: InspectOptions = {}): void {
 }
 
 /**
- * Bun.inspect.table with TTY-aware colors — tabular data done natively.
- * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+ * Bun.inspect.table(tabularData, properties?, options?) — returns a string (unlike console.table).
+ * Overloads match docs: options alone as 2nd arg, or properties then options.
+ * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  */
 export function logTableFromUnknown(
   data: unknown,
   columns?: string[],
   options: { colors?: boolean } = {}
 ): void {
+  const rows = (Array.isArray(data) ? data : [data]) as object[];
+  const opts = { colors: options.colors ?? shouldColor() };
+  // Docs: (data, options) OR (data, properties, options) — never pass undefined properties.
   console.info(
-    Bun.inspect.table(data as object[], columns, { colors: options.colors ?? shouldColor() })
+    columns?.length ? Bun.inspect.table(rows, columns, opts) : Bun.inspect.table(rows, opts)
   );
 }
 
