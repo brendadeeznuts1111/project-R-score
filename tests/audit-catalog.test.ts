@@ -10,6 +10,7 @@ import {
   sha256File,
   verifyEvidenceHash,
 } from '../lib/audit/audit-finding.ts';
+import { asAuditConceptId, asAuditEntryId } from '../lib/types/branded.ts';
 import {
   AUDIT_REFS,
   auditConceptDocsPath,
@@ -194,12 +195,12 @@ describe('audit catalog', () => {
     const broken = verifyAuditGraph(findings, [
       ...concepts,
       {
-        id: 'orphan-concept',
+        id: asAuditConceptId('orphan-concept'),
         kind: 'AuditConcept',
         title: 'x',
         description: 'y',
         publishedAt: '2026-07-21',
-        related: ['does-not-exist'],
+        related: [asAuditEntryId('does-not-exist')],
       },
     ]);
     expect(broken.some(e => e.includes('does-not-exist'))).toBe(true);
@@ -259,7 +260,7 @@ describe('suggest Nagata map (not BunToken)', () => {
     const parsed = JSON.parse(out) as {
       ok: boolean;
       bunToken: boolean;
-      hits: Array<{ id: string; kind: string }>; // brand-ok — opaque audit entry id
+      hits: Array<{ id: string; kind: string }>; // brand-ok — JSON wire shape from suggest --json
     };
     expect(parsed.ok).toBe(true);
     expect(parsed.bunToken).toBe(false);

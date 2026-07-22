@@ -16,6 +16,9 @@ import type {
   AccountId,
   AnyId,
   AuditId,
+  AuditFindingId,
+  AuditConceptId,
+  AuditEntryId,
   ChallengeId,
   CorrelationId,
   DeploymentId,
@@ -43,6 +46,9 @@ import {
   asAccessKeyId,
   asAccountId,
   asAuditId,
+  asAuditFindingId,
+  asAuditConceptId,
+  asAuditEntryId,
   asChallengeId,
   asCorrelationId,
   asDecisionId,
@@ -106,6 +112,22 @@ const crossAsToken: TokenId = sessionId;
 // @ts-expect-error — DocumentId is not a FeedId
 const crossAsFeed: FeedId = documentId;
 
+const auditFindingId: AuditFindingId = asAuditFindingId('finding-1');
+const auditConceptId: AuditConceptId = asAuditConceptId('concept-1');
+const auditEntryId: AuditEntryId = asAuditEntryId('entry-1');
+const auditLogId: AuditId = asAuditId('au-1');
+
+// @ts-expect-error — AuditFindingId is not an AuditConceptId
+const crossFindingAsConcept: AuditConceptId = auditFindingId;
+// @ts-expect-error — AuditConceptId is not an AuditFindingId
+const crossConceptAsFinding: AuditFindingId = auditConceptId;
+// @ts-expect-error — AuditFindingId is not AuditId (log entry)
+const crossFindingAsLog: AuditId = auditFindingId;
+// @ts-expect-error — AuditEntryId is not an AuditFindingId
+const crossEntryAsFinding: AuditFindingId = auditEntryId;
+// @ts-expect-error — AuditId is not an AuditEntryId
+const crossLogAsEntry: AuditEntryId = auditLogId;
+
 // ─── 2. Same-brand assignment compiles ──────────────────────────────────────
 
 const sameSession: SessionId = sessionId;
@@ -160,6 +182,9 @@ const anyPolicy: AnyId = asPolicyId('p');
 const anyDeployment: AnyId = asDeploymentId('dep');
 const anyVersion: AnyId = asVersionId('v');
 const anyAudit: AnyId = asAuditId('au');
+const anyAuditFinding: AnyId = asAuditFindingId('af');
+const anyAuditConcept: AnyId = asAuditConceptId('ac');
+const anyAuditEntry: AnyId = asAuditEntryId('ae');
 const anyOperation: AnyId = asOperationId('op');
 const anyResource: AnyId = asResourceId('res');
 const anyProject: AnyId = asProjectId('pr');

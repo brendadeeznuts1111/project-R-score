@@ -1382,9 +1382,9 @@ async function suggestAudit(query: string, opts?: { json?: boolean }): Promise<b
   return true;
 }
 
-function normalizeAuditSuggestId(id: string): string {
-  // brand-ok — opaque audit entry id
-  return id.trim().toLowerCase();
+function normalizeAuditSuggestId(id: string | { toString(): string }): string {
+  // brand-ok — suggest compare key
+  return String(id).trim().toLowerCase();
 }
 
 async function suggest(query: string): Promise<void> {

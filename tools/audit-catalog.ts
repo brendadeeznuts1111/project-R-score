@@ -27,6 +27,11 @@ import {
   renderAuditFindingsIndex,
 } from '../lib/audit/render-finding.ts';
 import { joinPath } from '../lib/path-bun.ts';
+import {
+  type AuditConceptId,
+  type AuditEntryId,
+  type AuditFindingId,
+} from '../lib/types/branded.ts';
 
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 const FINDINGS_DIR = joinPath(REPO_ROOT, 'tools/audit-findings');
@@ -50,9 +55,10 @@ export type AuditCatalogFile = {
   concepts: AuditCatalogConcept[];
 };
 
-export function normalizeFindingId(id: string): string {
-  // brand-ok — opaque audit entry id
-  return id.trim().toLowerCase();
+export function normalizeFindingId(
+  id: AuditEntryId | AuditFindingId | AuditConceptId | string
+): string {
+  return String(id).trim().toLowerCase();
 }
 
 export function toFindingEntry(f: AuditFinding): AuditCatalogFinding {
@@ -73,9 +79,9 @@ export function tallyByStatus(findings: AuditFinding[]): Record<AuditFindingStat
   return byStatus;
 }
 
-async function loadJsonDir<T>(
+async function loadJsonDir<T extends { id: AuditFindingId | AuditConceptId }>(
   dir: string,
-  parse: (raw: unknown) => T & { id: string }, // brand-ok — opaque audit entry id
+  parse: (raw: unknown) => T,
   label: string
 ): Promise<T[]> {
   const glob = new Bun.Glob('*.json');
@@ -93,9 +99,7 @@ async function loadJsonDir<T>(
     seen.set(key, name);
     out.push(item);
   }
-  out.sort(
-    (a, b) => (a as { id: string }).id.localeCompare((b as { id: string }).id) // brand-ok — opaque audit entry id
-  );
+  out.sort((a, b) => String(a.id).localeCompare(String(b.id)));
   return out;
 }
 
@@ -134,8 +138,10 @@ export function verifyAuditGraph(findings: AuditFinding[], concepts: AuditConcep
       errors.push(`duplicate audit id "${c.id}" (${ids.get(key)} vs concept)`);
     } else ids.set(key, 'concept');
   }
-  const checkRelated = (ownerId: string, related: string[] | undefined): void => {
-    // brand-ok — opaque audit entry id
+  const checkRelated = (
+    ownerId: AuditFindingId | AuditConceptId,
+    related: AuditEntryId[] | undefined
+  ): void => {
     for (const r of related ?? []) {
       if (!ids.has(normalizeFindingId(r))) {
         errors.push(`${ownerId}: related "${r}" is not an AuditFinding or AuditConcept id`);
@@ -252,10 +258,10 @@ export async function loadAuditCatalog(): Promise<AuditCatalogFile> {
 }
 
 function entryBlob(e: {
-  id: string; // brand-ok — opaque audit entry id
+  id: AuditFindingId | AuditConceptId;
   title: string;
   description: string;
-  related?: string[];
+  related?: AuditEntryId[];
 }): string {
   return [e.id, e.title, e.description, ...(e.related ?? [])].join('\n').toLowerCase();
 }
@@ -315,18 +321,18 @@ export function searchAuditCatalog(catalog: AuditCatalogFile, query: string): Au
 
 export function getAuditFinding(
   findings: AuditFinding[],
-  id: string // brand-ok — opaque audit entry id
+  id: AuditEntryId | AuditFindingId | string
 ): AuditFinding | undefined {
-  const alias = resolveAuditAlias(id);
+  const alias = resolveAuditAlias(String(id));
   const key = normalizeFindingId(alias ?? id);
   return findings.find(f => normalizeFindingId(f.id) === key);
 }
 
 export function getAuditConcept(
   concepts: AuditConcept[],
-  id: string // brand-ok — opaque audit entry id
+  id: AuditEntryId | AuditConceptId | string
 ): AuditConcept | undefined {
-  const alias = resolveAuditAlias(id);
+  const alias = resolveAuditAlias(String(id));
   const key = normalizeFindingId(alias ?? id);
   return concepts.find(c => normalizeFindingId(c.id) === key);
 }

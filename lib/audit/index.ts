@@ -21,6 +21,7 @@ export {
   auditDocsPath,
   auditFindingDocsPath,
   resolveAuditAlias,
+  toAuditEntryId,
 } from './audit-refs.ts';
 export {
   renderAuditConceptMarkdown,

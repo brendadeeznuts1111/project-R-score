@@ -9,6 +9,12 @@
  * - Legacy wire: `{ path, sha256, mediaType }` → interior algorithm sha256
  * - New / dual: `{ path, algorithm, digest, mediaType, sha256? }`
  */
+import {
+  type AuditEntryId,
+  type AuditFindingId,
+  parseAuditEntryId,
+  parseAuditFindingId,
+} from '../types/branded.ts';
 import { joinPath } from '../path-bun.ts';
 import { isRecord, parseNonEmptyString, parseOptionalStringArray } from './parse-helpers.ts';
 
@@ -34,7 +40,7 @@ export type AuditEvidence = {
 };
 
 export type AuditFinding = {
-  id: string; // brand-ok — opaque audit finding primary key
+  id: AuditFindingId;
   kind: 'AuditFinding';
   title: string;
   description: string;
@@ -49,7 +55,7 @@ export type AuditFinding = {
   mitigatedIn?: string;
   evidence: AuditEvidence;
   /** Related audit entry ids (concepts / findings). */
-  related?: string[];
+  related?: AuditEntryId[];
   /** Opaque BunToken / doc token names for reverse navigation (not catalog merge). */
   relatedDocs?: string[];
   meta?: {
@@ -57,6 +63,12 @@ export type AuditFinding = {
     emitter?: string;
   };
 };
+
+function parseRelatedEntryIds(raw: unknown, field: string): AuditEntryId[] | undefined {
+  const arr = parseOptionalStringArray(raw, field);
+  if (arr === undefined) return undefined;
+  return arr.map(s => parseAuditEntryId(s));
+}
 
 const STATUS = new Set<AuditFindingStatus>(['confirmed', 'mitigated', 'open']);
 const ALGORITHMS = new Set<AuditHashAlgorithm>(['sha256', 'sha3-256']);
@@ -145,7 +157,7 @@ export function parseAuditFinding(raw: unknown): AuditFinding {
   if (raw.kind !== 'AuditFinding') {
     throw new Error(`AuditFinding.kind: expected "AuditFinding", got ${String(raw.kind)}`);
   }
-  const id = parseNonEmptyString(raw.id, 'AuditFinding.id');
+  const id = parseAuditFindingId(raw.id);
   const title = parseNonEmptyString(raw.title, 'AuditFinding.title');
   const description = parseNonEmptyString(raw.description, 'AuditFinding.description');
   const statusRaw = parseNonEmptyString(raw.status, 'AuditFinding.status');
@@ -177,7 +189,7 @@ export function parseAuditFinding(raw: unknown): AuditFinding {
   if (raw.mitigatedIn !== undefined) {
     finding.mitigatedIn = parseNonEmptyString(raw.mitigatedIn, 'AuditFinding.mitigatedIn');
   }
-  finding.related = parseOptionalStringArray(raw.related, 'AuditFinding.related');
+  finding.related = parseRelatedEntryIds(raw.related, 'AuditFinding.related');
   finding.relatedDocs = parseOptionalStringArray(raw.relatedDocs, 'AuditFinding.relatedDocs');
   if (raw.meta !== undefined) {
     if (!isRecord(raw.meta)) throw new Error('AuditFinding.meta: expected object');

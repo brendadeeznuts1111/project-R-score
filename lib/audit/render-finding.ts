@@ -1,22 +1,27 @@
 /**
  * Render AuditFinding / AuditConcept → repo-local markdown (not bun.com).
  */
+import type { AuditEntryId } from '../types/branded.ts';
 import type { AuditConcept } from './audit-concept.ts';
 import type { AuditFinding } from './audit-finding.ts';
 import { auditConceptDocsPath, auditFindingDocsPath } from './audit-refs.ts';
 
-function relatedMarkdown(related: string[] | undefined, from: 'finding' | 'concept'): string {
+function relatedMarkdown(
+  related: readonly AuditEntryId[] | undefined,
+  from: 'finding' | 'concept'
+): string {
   if (!related?.length) return '_none_';
   return related
     .map(r => {
-      const looksLikeFinding = r.startsWith('sample-fiber') || /-\d{4}-\d{2}-\d{2}$/.test(r);
+      const id = String(r);
+      const looksLikeFinding = id.startsWith('sample-fiber') || /-\d{4}-\d{2}-\d{2}$/.test(id);
       if (looksLikeFinding) {
-        const rel = from === 'concept' ? `../findings/${r}.md` : `./${r}.md`;
-        return `- [\`${r}\`](${rel})`;
+        const rel = from === 'concept' ? `../findings/${id}.md` : `./${id}.md`;
+        return `- [\`${id}\`](${rel})`;
       }
       // Default: AuditConcept id
-      const rel = from === 'finding' ? `../concepts/${r}.md` : `./${r}.md`;
-      return `- [\`${r}\`](${rel})`;
+      const rel = from === 'finding' ? `../concepts/${id}.md` : `./${id}.md`;
+      return `- [\`${id}\`](${rel})`;
     })
     .join('\n');
 }

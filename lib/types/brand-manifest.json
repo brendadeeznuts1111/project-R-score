@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-20T23:34:32.886Z",
+  "generatedAt": "2026-07-22T03:15:14.411Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 29,
+  "brandCount": 32,
   "domains": [
     "audit",
     "deployment",
@@ -265,6 +265,48 @@
         "wire-input"
       ],
       "description": "Audit log entry identity"
+    },
+    {
+      "name": "AuditFindingId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "FactoryWager audit-finding SSOT primary key"
+    },
+    {
+      "name": "AuditConceptId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "FactoryWager audit-concept SSOT primary key"
+    },
+    {
+      "name": "AuditEntryId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Polymorphic audit SSOT ref (finding or concept id)"
     },
     {
       "name": "OperationId",

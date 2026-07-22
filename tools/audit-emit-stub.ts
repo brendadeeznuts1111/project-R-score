@@ -14,6 +14,7 @@
 import type { AuditFinding } from '../lib/audit/audit-finding.ts';
 import { hashFile } from '../lib/audit/audit-finding.ts';
 import { joinPath } from '../lib/path-bun.ts';
+import { asAuditEntryId, asAuditFindingId } from '../lib/types/branded.ts';
 
 const REPO_ROOT = joinPath(import.meta.dir, '..');
 const EVIDENCE_REL = 'tools/audit-evidence/sample-fiber-demo.ndjson';
@@ -32,7 +33,7 @@ async function main(): Promise<void> {
   const digest = await hashFile(EVIDENCE_PATH, 'sha3-256');
   const sha256 = await hashFile(EVIDENCE_PATH, 'sha256');
   const finding: AuditFinding = {
-    id: 'sample-fiber-demo-2026-07-21',
+    id: asAuditFindingId('sample-fiber-demo-2026-07-21'),
     kind: 'AuditFinding',
     title: 'Synthetic Nagata-type fiber in demo risk scores',
     description:
@@ -48,7 +49,7 @@ async function main(): Promise<void> {
       sha256,
       mediaType: 'application/x-ndjson',
     },
-    related: ['nagata-map', 'jacobian-nullspace'],
+    related: [asAuditEntryId('nagata-map'), asAuditEntryId('jacobian-nullspace')],
     relatedDocs: [],
     meta: {
       buildPin: Bun.version.split('+')[0] ?? Bun.version,

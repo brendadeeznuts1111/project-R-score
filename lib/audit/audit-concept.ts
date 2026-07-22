@@ -2,10 +2,16 @@
  * AuditConcept — mathematical / domain concepts for the audit sibling SSOT.
  * Not BunToken. Linked from AuditFinding.related by id.
  */
-import { parseNonEmptyString, parseOptionalStringArray, isRecord } from './parse-helpers.ts';
+import {
+  type AuditConceptId,
+  type AuditEntryId,
+  parseAuditConceptId,
+  parseAuditEntryId,
+} from '../types/branded.ts';
+import { isRecord, parseNonEmptyString, parseOptionalStringArray } from './parse-helpers.ts';
 
 export type AuditConcept = {
-  id: string; // brand-ok — opaque audit concept primary key
+  id: AuditConceptId;
   kind: 'AuditConcept';
   title: string;
   description: string;
@@ -16,7 +22,7 @@ export type AuditConcept = {
   /** External references (papers, URLs, repo paths) — not BunToken merge. */
   references?: string[];
   /** Related audit entry ids. */
-  related?: string[];
+  related?: AuditEntryId[];
   /** Opaque BunToken / doc token names for reverse navigation. */
   relatedDocs?: string[];
   meta?: {
@@ -25,13 +31,19 @@ export type AuditConcept = {
   };
 };
 
+function parseRelatedEntryIds(raw: unknown, field: string): AuditEntryId[] | undefined {
+  const arr = parseOptionalStringArray(raw, field);
+  if (arr === undefined) return undefined;
+  return arr.map(s => parseAuditEntryId(s));
+}
+
 /** Wire `unknown` → AuditConcept (boundary). */
 export function parseAuditConcept(raw: unknown): AuditConcept {
   if (!isRecord(raw)) throw new Error('AuditConcept: expected object');
   if (raw.kind !== 'AuditConcept') {
     throw new Error(`AuditConcept.kind: expected "AuditConcept", got ${String(raw.kind)}`);
   }
-  const id = parseNonEmptyString(raw.id, 'AuditConcept.id');
+  const id = parseAuditConceptId(raw.id);
   const title = parseNonEmptyString(raw.title, 'AuditConcept.title');
   const description = parseNonEmptyString(raw.description, 'AuditConcept.description');
   const publishedAt = parseNonEmptyString(raw.publishedAt, 'AuditConcept.publishedAt');
@@ -49,7 +61,7 @@ export function parseAuditConcept(raw: unknown): AuditConcept {
     concept.since = parseNonEmptyString(raw.since, 'AuditConcept.since');
   }
   concept.references = parseOptionalStringArray(raw.references, 'AuditConcept.references');
-  concept.related = parseOptionalStringArray(raw.related, 'AuditConcept.related');
+  concept.related = parseRelatedEntryIds(raw.related, 'AuditConcept.related');
   concept.relatedDocs = parseOptionalStringArray(raw.relatedDocs, 'AuditConcept.relatedDocs');
   if (raw.meta !== undefined) {
     if (!isRecord(raw.meta)) throw new Error('AuditConcept.meta: expected object');
