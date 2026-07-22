@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factory-wager.com/schemas/audit-evidence-pointer.json",
+  "title": "AuditEvidenceSchemaPointer",
+  "description": "Pointer to rotor contracts. Canonical schemas live under lib/audit/ (versioned with the SSOT). Rotor validates findings against AuditFinding schema; evidence files are opaque blobs fingerprinted by evidence.algorithm + evidence.digest (legacy evidence.sha256 still accepted).",
+  "type": "object",
+  "required": ["findingSchema", "conceptSchema", "evidenceRoot"],
+  "properties": {
+    "findingSchema": {
+      "const": "lib/audit/audit-finding.schema.json"
+    },
+    "conceptSchema": {
+      "const": "lib/audit/audit-concept.schema.json"
+    },
+    "evidenceRoot": {
+      "const": "tools/audit-evidence/"
+    },
+    "findingsRoot": {
+      "const": "tools/audit-findings/"
+    },
+    "conceptsRoot": {
+      "const": "tools/audit-concepts/"
+    }
+  }
+}

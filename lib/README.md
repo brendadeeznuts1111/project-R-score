@@ -52,6 +52,7 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 | Domain | Purpose | Entry hint |
 |--------|---------|------------|
 | [`ai/`](./ai/) | AI operations managers | `ai-operations-manager.ts` |
+| [`audit/`](./audit/) | Audit findings sibling SSOT (not BunToken) | `audit-finding.ts` |
 | [`constants/`](./constants/) | Shared constants barrel | `index.ts` |
 | [`core/`](./core/) | Core types and infrastructure | `index.ts` |
 | [`docs/`](./docs/) | Path SSOT, tokens, doc builders | `index.ts` · `repo-docs.ts` |

@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --outfile
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -36,6 +38,7 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
+// @see https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto — SHA3
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 /**
  * Frozen lang+code from Bun guide / blog pages.
@@ -557,21 +560,35 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
   'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel': [
     {
       lang: 'bash',
-      body: '# Run tests with isolation (fresh global per file)\nbun test --isolate ./tests\n\n# Run tests in parallel across all CPU cores\nbun test --parallel ./tests\n\n# Run tests in parallel with 8 workers\nbun test --parallel=8 ./tests',
+      body: '# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see cli/run#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests',
     },
   ],
   // Official blog — bun test --shard=M/N (v1.3.13)
   'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs': [
     {
       lang: 'bash',
-      body: '# In a GitHub Actions matrix with 3 jobs:\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3',
+      body: '# CI matrix (1-based). Empty shards exit 0.\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3',
     },
   ],
   // Official blog — bun test --changed (v1.3.13)
   'blog/bun-v1.3.13#bun-test-changed': [
     {
       lang: 'bash',
-      body: '# Run tests affected by uncommitted changes (unstaged + staged + untracked)\nbun test --changed\n\n# Run tests affected by changes since a specific commit, branch, or tag\nbun test --changed=HEAD~1\nbun test --changed=main\n\n# Combine with --watch to re-filter on every restart\nbun test --changed --watch',
+      body: '# Dirty tree (unstaged + staged + untracked)\nbun test --changed\n\n# Since commit / branch / tag\nbun test --changed=HEAD~1\nbun test --changed=main\n\n# Re-query git on every watch restart\nbun test --changed --watch',
+    },
+  ],
+  // Official blog — SHA3 in WebCrypto + node:crypto (v1.3.13)
+  'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto': [
+    {
+      lang: 'ts',
+      body: 'import crypto from "crypto";\n\n// node:crypto\nconst hash = crypto.createHash("sha3-256");\nhash.update("Hello, world!");\nconsole.log(hash.digest("hex"));\n// => "f345a219da005ebe9c1a1eaad97bbf38a10c8473e41d0af7fb617caa0c6aa722"\n\nconst hmac = crypto.createHmac("sha3-256", "secret-key");\nhmac.update("Hello, world!");\nconsole.log(hmac.digest("hex"));\n\n// Web Crypto API\nconst digest = await crypto.subtle.digest(\n  "SHA3-256",\n  new TextEncoder().encode("Hello, world!"),\n);\nconsole.log(Buffer.from(digest).toString("hex"));\n\n// Also: Bun.CryptoHasher("sha3-256") — sync native path',
+    },
+  ],
+  // Official docs — bun run --parallel / --sequential (Foreman; ≠ bun test --parallel)
+  'cli/run#parallel-and-sequential-mode': [
+    {
+      lang: 'bash',
+      body: "# Workspace / package.json scripts (Foreman-style) — NOT bun test workers\nbun run --parallel build test\nbun run --sequential build test\nbun run --parallel --filter '*' lint\nbun run --parallel --workspaces --if-present build",
     },
   ],
   // Official docs — Bun.inspect.table(tabularData, properties, options)
@@ -843,6 +860,22 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'bun test --shard': 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
   '--changed': 'blog/bun-v1.3.13#bun-test-changed',
   'bun test --changed': 'blog/bun-v1.3.13#bun-test-changed',
+  'bun test flags': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  SHA3: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA-3': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA3-256': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA3-224': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA3-384': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA3-512': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'sha3-256': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'sha3-224': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'sha3-384': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'sha3-512': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'crypto.createHash("sha3-256")': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'crypto.subtle.digest("SHA3-256")': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'bun run --parallel': 'cli/run#parallel-and-sequential-mode',
+  'bun run --sequential': 'cli/run#parallel-and-sequential-mode',
+  'parallel-and-sequential-mode': 'cli/run#parallel-and-sequential-mode',
   'executables Worker': 'bundler/executables#worker',
   'Bun.pathToFileURL': 'runtime/utils#bun-pathtofileurl',
   'Bun.fileURLToPath': 'runtime/utils#bun-fileurltopath',

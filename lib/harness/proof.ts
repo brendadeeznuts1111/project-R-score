@@ -451,6 +451,28 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'tools/bun-doc-refs.ts · spine tenant docs-integrity',
   },
   {
+    id: 'audit-findings-catalog',
+    claim:
+      'FactoryWager audit-finding catalog builds and evidence digests verify (sha3-256 primary, sha256 companion; sibling SSOT, not BunToken)',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun tools/audit-catalog.ts build && bun test tests/audit-catalog.test.ts',
+      'bun tools/audit-catalog.ts build',
+      'bun tools/audit-catalog.ts verify',
+      'bun test tests/audit-catalog.test.ts',
+      'lib/audit/audit-finding.ts',
+      'lib/audit/audit-refs.ts',
+      'tools/audit-findings/',
+      'docs/audit/README.md',
+      'docs/audit/findings/',
+    ],
+    freshRerun: 'bun tools/audit-catalog.ts build && bun test tests/audit-catalog.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/audit/ · tools/audit-catalog.ts',
+  },
+  {
     id: 'spine-multi-tenant',
     claim: 'Spine runs ≥2 in-process tenants (docs-integrity + install-verify journey)',
     kinds: ['boundary', 'journey'],

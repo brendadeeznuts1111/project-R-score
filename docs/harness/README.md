@@ -64,6 +64,8 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → `bun run check:bun-env`, eslint `bun/prefer-bun-env` (**error**)
 - **Canonical Bun `@see` URLs** — Bun APIs cite catalog URLs  
   *Ratchet* → pre-commit `bun-doc-refs` annotate-on-write · `bun tools/bun-doc-refs.ts check`
+- **Audit findings (sibling SSOT)** — hashed evidence + catalog pages, not BunToken  
+  *Ratchet* → claim `audit-findings-catalog` · `bun tools/audit-catalog.ts build` · `bun test tests/audit-catalog.test.ts` · [`docs/audit/README.md`](../audit/README.md)
 - **Proof journeys** — claim kind matches evidence  
   *Ratchet* → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` · `bun run proof:install` · `bun run harness:status`
 - **Fresh-rerun** — harness PRs re-prove the affected claim outside the proposing chat  
@@ -126,6 +128,9 @@ bun run ci:core             # install verify · hygiene · ci:harness (= GHA bod
 **Required checks:** Harness Gates + Type Check — see [AUTHORITY.md](AUTHORITY.md). When Actions cannot start, local `ci:core` + type-check is the proof; GitHub status stays red until billing restores. Velocity / install-tax: [VELOCITY_BASELINE.md](../organization/VELOCITY_BASELINE.md#ci-install-tax-2026-07-21-deepen). Pre-commit write tools fail if staged≠worktree (re-stage + retry).
 
 ## Day loop (honest)
+
+Full map: [`day-loop.md`](day-loop.md) · curated Bun flags NOTE: [`../guides/bun-test-flags-1.3.13.md`](../guides/bun-test-flags-1.3.13.md).
+
 
 ```bash
 bun run docs:harness            # this index → bun ./file.md (native ANSI, no VM)

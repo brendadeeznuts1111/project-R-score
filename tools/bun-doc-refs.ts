@@ -25,6 +25,9 @@
  *   bun tools/bun-doc-refs.ts list               # print the whole reference map
  *   bun tools/bun-doc-refs.ts catalog            # structured catalog (type/stability/pages)
  *   bun tools/bun-doc-refs.ts catalog --build    # rebuild tools/bun-docs-catalog.json
+ *   bun tools/bun-doc-refs.ts suggest <q>        # Bun docs / BunToken suggest
+ *   bun tools/bun-doc-refs.ts suggest --audit [--json] <q>  # FactoryWager audit SSOT
+ *   bun tools/bun-doc-refs.ts index-audit                   # rebuild tools/audit-catalog.json
  *   bun tools/bun-doc-refs.ts check [paths...]   # find Bun API usages lacking a @see link
  *   bun tools/bun-doc-refs.ts validate [paths..] # HTTP-check all bun.com/github doc links
  *   bun tools/bun-doc-refs.ts integrity          # full stack gate (taxonomy·index·map·links)
@@ -40,6 +43,7 @@
  * Bundler sidebar leaves/groups: lib/docs/bundler-nav.ts (merged into CANONICAL_REFS).
  * Gap reports: lib/docs/bundler-gaps.ts
  * Structured catalog (type · stability · allPages): tools/bun-docs-catalog.ts
+ * Audit findings (not BunToken): tools/audit-catalog.ts · lib/audit/
  * Operate runbook: docs/BUN_DOCS_OPERATE.md
  */
 
@@ -59,6 +63,7 @@ import {
   type BundlerNavGroup,
 } from '../lib/docs/bundler-nav';
 import { bunBlog, bunDocs, mdnWebApi } from '../lib/docs/bun-site-url.ts';
+import { getCuratedEntry } from './bun-docs-curated.ts';
 
 // Canonical doc map — the reference thesis for this repo's terminal layer:
 //
@@ -322,6 +327,24 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
   'Bun.sha': 'https://bun.com/docs/runtime/hashing#bun-hash',
   'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing#bun-cryptohasher',
+  // SHA-3 (v1.3.13+) — blog ship note; also usable via Bun.CryptoHasher('sha3-256')
+  // ≠ audit SSOT (still evidence.sha256 / CryptoHasher('sha256'))
+  SHA3: 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA-3': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA3-256': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA3-224': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA3-384': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'SHA3-512': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'sha3-256': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'sha3-224': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'sha3-384': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'sha3-512': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'crypto.createHash("sha3-256")':
+    'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  'crypto.subtle.digest("SHA3-256")':
+    'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+  // SHA-3 family (node:crypto / WebCrypto / Bun.CryptoHasher) shipped in 1.3.13
+  'crypto.sha3': 'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
   'Bun.password': 'https://bun.com/docs/runtime/hashing#bun-password',
   'Bun.secrets': 'https://bun.com/docs/runtime/secrets#bun-secrets-get-options',
   'Bun.semver':
@@ -529,6 +552,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun v1.3.12 stringWidth':
     'https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth',
   'bun v1.3.13': 'https://bun.com/blog/bun-v1.3.13',
+  // SHA-3 + bun test flags share the v1.3.13 ship note (sibling sections)
   // bun test flags (v1.3.13+) — blog anchors are the ship notes
   // --isolate / --parallel share one heading; --shard and --changed are siblings
   'bun test --changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
@@ -546,6 +570,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   '--shard=M/N':
     'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
   'bun run --parallel': 'https://bun.com/docs/cli/run#parallel-and-sequential-mode',
+  'bun run --sequential': 'https://bun.com/docs/cli/run#parallel-and-sequential-mode',
+  'bun test flags': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
   // Worker env vars set by bun test --parallel (blog ship note)
   JEST_WORKER_ID: 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
   BUN_TEST_WORKER_ID: 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
@@ -1238,6 +1264,12 @@ function printBunTokenSuggest(
     );
   }
   if (token.meta?.buildPin) console.info(`  meta.buildPin: ${token.meta.buildPin}`);
+  // Bidirectional: curated.auditRefs → audit SSOT (never BunToken fields)
+  const curated = getCuratedEntry(query) ?? getCuratedEntry(resolveApiAlias(query) ?? query);
+  if (curated?.auditRefs?.length) {
+    console.info(`  auditRefs: ${curated.auditRefs.join(', ')}`);
+    console.info(`  also try: bun tools/bun-doc-refs.ts suggest --audit "${curated.auditRefs[0]}"`);
+  }
 }
 
 /**
@@ -1298,9 +1330,70 @@ async function bunTokenForMapped(
   return null;
 }
 
+/** FactoryWager audit suggest — findings + concepts (sibling SSOT, never BunToken). */
+async function suggestAudit(query: string, opts?: { json?: boolean }): Promise<boolean> {
+  if (!query) {
+    console.error(
+      'usage: bun tools/bun-doc-refs.ts suggest --audit [--json] <finding-id-or-topic>'
+    );
+    process.exit(1);
+  }
+  const { loadAuditCatalog, searchAuditCatalog, printAuditEntry } = await import(
+    './audit-catalog.ts'
+  );
+  const { resolveAuditAlias } = await import('../lib/audit/audit-refs.ts');
+  const catalog = await loadAuditCatalog();
+  const alias = resolveAuditAlias(query);
+  const hits = searchAuditCatalog(catalog, query);
+  if (hits.length === 0) {
+    if (opts?.json) {
+      console.info(JSON.stringify({ ok: false, query, alias: alias ?? null, hits: [] }));
+    } else {
+      console.info(`❌ no audit entries for "${query}"`);
+      console.info('  (sibling SSOT — tools/audit-catalog.json · lib/audit/)');
+    }
+    return false;
+  }
+  if (opts?.json) {
+    console.info(
+      JSON.stringify(
+        {
+          ok: true,
+          query,
+          alias: alias ?? null,
+          source: 'tools/audit-catalog.json',
+          bunToken: false,
+          hits,
+        },
+        null,
+        2
+      )
+    );
+    return true;
+  }
+  if (alias && hits[0] && normalizeAuditSuggestId(hits[0].id) === normalizeAuditSuggestId(alias)) {
+    console.info(`alias: "${query}" → ${alias}`);
+  }
+  for (const e of hits) {
+    printAuditEntry(e);
+    console.info('  (audit catalog — tools/audit-catalog.json · not BunToken)');
+    console.info('---');
+  }
+  return true;
+}
+
+function normalizeAuditSuggestId(id: string): string {
+  // brand-ok — opaque audit entry id
+  return id.trim().toLowerCase();
+}
+
 async function suggest(query: string): Promise<void> {
   if (!query) {
     console.error('usage: bun tools/bun-doc-refs.ts suggest <api-or-topic>');
+    console.error(
+      '       bun tools/bun-doc-refs.ts suggest --audit [--json] <finding-id-or-topic>'
+    );
+    console.error('       bun tools/bun-doc-refs.ts index-audit');
     process.exit(1);
   }
 
@@ -1333,6 +1426,25 @@ async function suggest(query: string): Promise<void> {
     }
   } catch {
     /* catalog optional */
+  }
+
+  // 2b) FactoryWager audit sibling SSOT (concepts + findings) — never BunToken
+  try {
+    const { resolveAuditAlias } = await import('../lib/audit/audit-refs.ts');
+    if (resolveAuditAlias(query)) {
+      const ok = await suggestAudit(query);
+      if (ok) return;
+    } else {
+      const { loadAuditCatalog, searchAuditCatalog } = await import('./audit-catalog.ts');
+      const catalog = await loadAuditCatalog();
+      const auditHits = searchAuditCatalog(catalog, query);
+      if (auditHits.length > 0) {
+        await suggestAudit(query);
+        return;
+      }
+    }
+  } catch {
+    /* audit catalog optional */
   }
 
   const { entries } = await docsIndex();
@@ -1382,6 +1494,19 @@ async function suggest(query: string): Promise<void> {
   console.info(
     `❌ no docs page found for "${query}" — browse frozen key "llms.txt index" → ${llms}`
   );
+  // Sibling audit catalog hint (never merge into BunToken)
+  try {
+    const { loadAuditCatalog, searchAuditFindings } = await import('./audit-catalog.ts');
+    const catalog = await loadAuditCatalog();
+    const auditHits = searchAuditFindings(catalog.findings, query);
+    if (auditHits.length > 0) {
+      console.info(
+        `  also try: bun tools/bun-doc-refs.ts suggest --audit "${query}"  (${auditHits.length} audit hit(s))`
+      );
+    }
+  } catch {
+    /* audit catalog optional */
+  }
   process.exit(1);
 }
 
@@ -2370,9 +2495,25 @@ async function mainCli(): Promise<void> {
       process.exit((await proc.exited) === 0 ? 0 : 1);
       break;
     }
-    case 'suggest':
-      await suggest(rest.join(' '));
+    case 'suggest': {
+      const auditMode = rest.includes('--audit');
+      const jsonMode = rest.includes('--json') || rest.includes('-j');
+      const q = rest.filter(a => a !== '--audit' && a !== '--json' && a !== '-j').join(' ');
+      if (auditMode) {
+        const ok = await suggestAudit(q, { json: jsonMode });
+        if (!ok) process.exit(1);
+      } else await suggest(q);
       break;
+    }
+    case 'index-audit': {
+      const proc = Bun.spawn(['bun', 'tools/audit-catalog.ts', 'build'], {
+        cwd: import.meta.dir + '/..',
+        stdout: 'inherit',
+        stderr: 'inherit',
+      });
+      process.exit((await proc.exited) === 0 ? 0 : 1);
+      break;
+    }
     case 'locus':
       await locusAudit(rest);
       break;
@@ -2422,7 +2563,8 @@ async function mainCli(): Promise<void> {
     default:
       console.error(
         `unknown command: ${cmd}\n` +
-          `commands: url|token|list|catalog|suggest|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate|bundler\n` +
+          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate|bundler\n` +
+          `suggest --audit [--json] <q>  ·  index-audit → bun tools/audit-catalog.ts build\n` +
           `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
           `locus: --depth=N · --all · --tsv · --json · --type=api  (TOKEN/TYPE/STATUS/PAGE/FRAGMENT…)\n` +
           `bundler: [--anchors|--gaps|--tokens] [--json] [--strict] [--group=Name]  (lib/docs/bundler-nav.ts)\n` +

@@ -527,6 +527,28 @@ describe('inspect family catalog relations', () => {
       'https://bun.com/docs/cli/run#parallel-and-sequential-mode'
     );
     expect(byName.get('bun run --parallel')?.releasedIn).toBe('1.3.9');
+    expect(byName.get('bun run --parallel')?.examples?.[0]?.body).toContain(
+      'bun run --parallel build test'
+    );
+    expect(byName.get('bun test flags')?.docsUrl).toBe(
+      'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel'
+    );
+    expect(byName.get('bun test flags')?.description).toContain('bun-test-flags-1.3.13.md');
+    expect(byName.get('--parallel')?.examples?.[0]?.body).toContain(
+      'cli/run#parallel-and-sequential-mode'
+    );
+    // SHA-3 (v1.3.13) — docs lane only; audit SSOT stays sha256
+    // normalizeName collapses sha3-256 ↔ SHA3-256 (display name prefers first CANONICAL key)
+    expect(byName.get('SHA3-256')?.docsUrl).toBe(
+      'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto'
+    );
+    expect(byName.get('SHA3')?.docsUrl).toBe(
+      'https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto'
+    );
+    expect(byName.get('SHA3')?.releasedIn).toBe('1.3.13');
+    expect(byName.get('SHA3-256')?.examples?.[0]?.body).toContain('createHash("sha3-256")');
+    expect(byName.get('SHA3-256')?.examples?.[0]?.body).toContain('SHA3-256');
+    expect(byName.get('Bun.CryptoHasher')?.description).toContain('sha256');
   });
 
   test('bunApiFamilyRoot clusters Bun.inspect.*', () => {

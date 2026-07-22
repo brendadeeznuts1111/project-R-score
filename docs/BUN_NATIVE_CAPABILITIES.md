@@ -56,7 +56,7 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 | Concern | Owner |
 |---------|--------|
 | Install / pin | [UNIFIED.md](./UNIFIED.md) · `packageManager` bun@1.4.0 |
-| Day-loop tests | `test:changed` · `test:parallel` · `test:isolate` · `test:shard` — [harness/README.md](./harness/README.md) |
+| Day-loop tests | `test:changed` · `test:parallel` · `test:isolate` · `test:shard` — [harness/day-loop.md](./harness/day-loop.md) · suggest `harness day-loop` |
 | `bun run` CLI boundaries | claim `runtime-cli-boundaries` · `bun test tests/fixtures/runtime-cli/` · [runtime](https://bun.com/docs/runtime) |
 | URLPattern site URLs | claim `url-pattern-boundaries` · `bun test tests/bun-site-url.test.ts` · [URLPattern](https://bun.com/blog/bun-v1.3.4#urlpattern-api) |
 | `HTMLRewriter` social metadata | claim `social-metadata-boundaries` · `bun test tests/fixtures/social-metadata/` · [extract-social-meta](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags) |
@@ -70,7 +70,7 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 
 ## Release maps
 
-Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--isolate` · `--parallel` · `--shard` · `--changed`). Pin **1.4.0** is a superset — do not re-document every bug fix bullet.
+Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--isolate` · `--parallel` · `--shard` · `--changed` — curated TOC [bun-test-flags-1.3.13.md](./guides/bun-test-flags-1.3.13.md)). Day-loop wrappers: [harness/day-loop.md](./harness/day-loop.md). Pin **1.4.0** is a superset — do not re-document every bugfix bullet.
 
 ## References
 

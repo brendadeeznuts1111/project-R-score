@@ -30,6 +30,7 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Tree | Role |
 |------|------|
 | [guides/](./guides/) | Short runbooks |
+| [audit/](./audit/) | FactoryWager audit findings (sibling SSOT, not BunToken) |
 | [organization/](./organization/) | Velocity / homebase discovery |
 | [harness/](./harness/) | JIT index, proof, authority |
 | [packages/](./packages/) | Package registry map |

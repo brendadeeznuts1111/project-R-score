@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factory-wager.com/schemas/audit-finding.json",
+  "title": "AuditFinding",
+  "description": "FactoryWager audit finding (sibling SSOT — not BunToken). Evidence is repo-local; never bun.com. Rotor must emit this shape. Phase 1: legacy sha256 xor new algorithm+digest (optional sha256 companion).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "title",
+    "description",
+    "status",
+    "publishedAt",
+    "evidence"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "kind": { "const": "AuditFinding" },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["confirmed", "mitigated", "open"] },
+    "publishedAt": { "type": "string", "format": "date" },
+    "since": { "type": "string" },
+    "discoveredIn": {
+      "type": "string",
+      "description": "Product version where discovered (prefer over since)"
+    },
+    "mitigatedIn": {
+      "type": "string",
+      "description": "Product version where mitigated"
+    },
+    "evidence": {
+      "oneOf": [
+        {
+          "title": "LegacySha256Evidence",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256", "mediaType"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Must be under tools/audit-evidence/"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$",
+              "description": "Legacy tamper fingerprint (SHA-256)"
+            },
+            "mediaType": { "type": "string", "minLength": 1 }
+          },
+          "not": {
+            "anyOf": [
+              { "required": ["algorithm"] },
+              { "required": ["digest"] }
+            ]
+          }
+        },
+        {
+          "title": "AlgorithmDigestEvidence",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "algorithm", "digest", "mediaType"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Must be under tools/audit-evidence/"
+            },
+            "algorithm": {
+              "type": "string",
+              "enum": ["sha256", "sha3-256"]
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$",
+              "description": "Primary tamper fingerprint (hex)"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$",
+              "description": "Optional SHA-256 companion during dual-write transition"
+            },
+            "mediaType": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "related": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "AuditConcept / AuditFinding ids"
+    },
+    "relatedDocs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Opaque BunToken / doc token names (no catalog merge)"
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "buildPin": { "type": "string" },
+        "emitter": { "type": "string" }
+      }
+    }
+  }
+}

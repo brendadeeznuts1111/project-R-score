@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
@@ -15,6 +16,7 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
+// @see https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto — SHA3 / sha3-256
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
@@ -46,6 +48,8 @@
 // @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
 // tools/bun-docs-curated.ts — Hot-path Bun doc entries (1.3.14+ aware)
 
+import { bunBlog, bunDocs, bunReference } from '../lib/docs/bun-site-url.ts';
+
 export type CuratedEntry = {
   term: string;
   path: string;
@@ -56,6 +60,11 @@ export type CuratedEntry = {
   related?: string[];
   /** Prefer these catalog token names in `related` after page-peer seeding. */
   relatedTokens?: string[];
+  /**
+   * Optional audit SSOT ids (AuditConcept / AuditFinding).
+   * Surfaced by suggest — never merged into BunToken / CANONICAL_REFS.
+   */
+  auditRefs?: string[];
 };
 
 export const CURATED_ENTRIES: CuratedEntry[] = [
@@ -118,6 +127,105 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   { term: 'Bun.s3', path: 'runtime/s3', description: 'S3-compatible object storage client' },
   { term: 'Bun.secrets', path: 'runtime/secrets', description: 'OS keychain-backed secrets API' },
   { term: 'Bun.password', path: 'runtime/hashing', description: 'Argon2/bcrypt password hashing' },
+  {
+    term: 'Bun.CryptoHasher',
+    path: 'runtime/hashing#bun-cryptohasher',
+    description:
+      'Native sync hasher (sha256, sha3-256, …). FactoryWager audit SSOT uses sha256 today — not SHA-3.',
+    relatedTokens: ['sha3-256', 'SHA3-256', 'Bun.password'],
+  },
+  {
+    term: 'SHA3',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description:
+      'v1.3.13: SHA3-224/256/384/512 in node:crypto + WebCrypto (createHash/createHmac/subtle.digest). Also Bun.CryptoHasher("sha3-256"). Docs-only — audit evidence remains sha256.',
+    minVersion: '1.3.13',
+    relatedTokens: [
+      'sha3-256',
+      'SHA3-256',
+      'Bun.CryptoHasher',
+      'crypto.createHash("sha3-256")',
+      'crypto.subtle.digest("SHA3-256")',
+    ],
+  },
+  {
+    term: 'SHA-3',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'Alias for SHA3 (FIPS 202) ship note on bun-v1.3.13.',
+    minVersion: '1.3.13',
+    relatedTokens: ['SHA3', 'sha3-256'],
+  },
+  {
+    term: 'sha3-256',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description:
+      'node:crypto createHash("sha3-256") / Bun.CryptoHasher("sha3-256"). WebCrypto id is SHA3-256 (uppercase).',
+    minVersion: '1.3.13',
+    relatedTokens: ['SHA3-256', 'SHA3', 'Bun.CryptoHasher', 'sha3-512'],
+  },
+  {
+    term: 'SHA3-256',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'WebCrypto subtle.digest("SHA3-256", …). node:crypto / CryptoHasher use sha3-256.',
+    minVersion: '1.3.13',
+    relatedTokens: ['sha3-256', 'SHA3', 'Bun.CryptoHasher'],
+  },
+  {
+    term: 'sha3-224',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'SHA3-224 via createHash / CryptoHasher / subtle.digest("SHA3-224").',
+    minVersion: '1.3.13',
+    relatedTokens: ['SHA3', 'sha3-256'],
+  },
+  {
+    term: 'SHA3-224',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'WebCrypto algorithm id for SHA3-224.',
+    minVersion: '1.3.13',
+    relatedTokens: ['sha3-224', 'SHA3'],
+  },
+  {
+    term: 'sha3-384',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'SHA3-384 via createHash / CryptoHasher / subtle.digest("SHA3-384").',
+    minVersion: '1.3.13',
+    relatedTokens: ['SHA3', 'sha3-256'],
+  },
+  {
+    term: 'SHA3-384',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'WebCrypto algorithm id for SHA3-384.',
+    minVersion: '1.3.13',
+    relatedTokens: ['sha3-384', 'SHA3'],
+  },
+  {
+    term: 'sha3-512',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'SHA3-512 via createHash / CryptoHasher / subtle.digest("SHA3-512").',
+    minVersion: '1.3.13',
+    relatedTokens: ['SHA3', 'sha3-256'],
+  },
+  {
+    term: 'SHA3-512',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'WebCrypto algorithm id for SHA3-512.',
+    minVersion: '1.3.13',
+    relatedTokens: ['sha3-512', 'SHA3'],
+  },
+  {
+    term: 'crypto.createHash("sha3-256")',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'node:crypto SHA-3 digest (also createHmac / getHashes).',
+    minVersion: '1.3.13',
+    relatedTokens: ['sha3-256', 'SHA3', 'crypto.subtle.digest("SHA3-256")'],
+  },
+  {
+    term: 'crypto.subtle.digest("SHA3-256")',
+    path: 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
+    description: 'WebCrypto SHA-3 digest (HMAC via subtle.sign/verify).',
+    minVersion: '1.3.13',
+    relatedTokens: ['SHA3-256', 'SHA3', 'crypto.createHash("sha3-256")'],
+  },
   { term: 'Bun.build', path: 'bundler', description: 'Bundler and compile-to-binary' },
   { term: 'bun test', path: 'test', description: 'Built-in test runner (bun:test)' },
   {
@@ -140,7 +248,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: '--parallel',
     path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
     description:
-      'bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers run with --isolate; console output is buffered so files never interleave. (For workspace scripts use bun run --parallel.)',
+      'bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — cli/run#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md',
     minVersion: '1.3.13',
     relatedTokens: [
       '--isolate',
@@ -156,7 +264,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'bun test --parallel',
     path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
     description:
-      'Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. ≠ bun run --parallel.',
+      'Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. Callout: ≠ bun run --parallel — that is workspace Foreman mode at cli/run#parallel-and-sequential-mode.',
     minVersion: '1.3.13',
     relatedTokens: [
       '--isolate',
@@ -166,6 +274,15 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'JEST_WORKER_ID',
       'BUN_TEST_WORKER_ID',
     ],
+  },
+  {
+    term: 'bun test flags',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'v1.3.13 NOTE family: --isolate, --parallel, --shard, --changed. Scannable TOC + fences: docs/guides/bun-test-flags-1.3.13.md. Day-loop wrappers: docs/harness/day-loop.md.',
+    minVersion: '1.3.13',
+    relatedTokens: ['--isolate', '--parallel', '--shard', '--changed', 'bun run --parallel'],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: '--shard',
@@ -212,7 +329,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     // Shipped 1.3.9 — https://bun.com/blog/bun-v1.3.9#bun-run-parallel-and-bun-run-sequential
     path: 'cli/run#parallel-and-sequential-mode',
     description:
-      'bun run workspace Foreman mode: run package.json scripts in parallel (≠ bun test --parallel file workers).',
+      'bun run --parallel: Foreman-style parallel package.json scripts (prefixed output, --filter/--workspaces). Canonical: cli/run#parallel-and-sequential-mode. ≠ bun test --parallel (test-file workers; blog v1.3.13).',
     minVersion: '1.3.9',
     relatedTokens: ['bun test --parallel', '--parallel'],
   },
@@ -739,10 +856,22 @@ for (const entry of CURATED_ENTRIES) {
   byTerm.set(entry.term.toLowerCase(), entry);
 }
 
+/** Absolute bun.com URL for a curated `path` (docs/ · blog/ · reference/). */
+export function curatedEntryUrl(pathWithOptionalHash: string): string {
+  const [page = '', hash] = pathWithOptionalHash.split('#');
+  if (page.startsWith('blog/')) {
+    return bunBlog(page.slice('blog/'.length), hash);
+  }
+  if (page.startsWith('reference/')) {
+    return bunReference(page.slice('reference/'.length), hash);
+  }
+  return bunDocs(page, hash);
+}
+
 export function getCuratedEntry(term: string): (CuratedEntry & { url: string }) | null {
   const entry = byTerm.get(term.toLowerCase());
   if (!entry) return null;
-  return { ...entry, url: `https://bun.com/docs/${entry.path}` };
+  return { ...entry, url: curatedEntryUrl(entry.path) };
 }
 
 export function searchCuratedEntries(
@@ -756,5 +885,5 @@ export function searchCuratedEntries(
       e.path.toLowerCase().includes(q) ||
       e.description.toLowerCase().includes(q)
   ).slice(0, limit);
-  return hits.map(e => ({ ...e, url: `https://bun.com/docs/${e.path}` }));
+  return hits.map(e => ({ ...e, url: curatedEntryUrl(e.path) }));
 }
