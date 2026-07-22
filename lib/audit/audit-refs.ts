@@ -41,6 +41,27 @@ export const AUDIT_REFS: Record<string, AuditEntryId> = {
   'SHA-3': asAuditEntryId('sha3-integrity'),
   'SHA3-256': asAuditEntryId('sha3-integrity'),
   'sha3-256': asAuditEntryId('sha3-integrity'),
+  // Kalshi bot research (kalshi-bot-research emitter)
+  'kalshi-repo-octagonai-kalshi-trading-bot-cli': asAuditEntryId(
+    'kalshi-repo-octagonai-kalshi-trading-bot-cli'
+  ),
+  'kalshi-repo-openfi-dao-kalshi-trading-bot': asAuditEntryId(
+    'kalshi-repo-openfi-dao-kalshi-trading-bot'
+  ),
+  'kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot': asAuditEntryId(
+    'kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot'
+  ),
+  'openfi kalshi': asAuditEntryId('kalshi-repo-openfi-dao-kalshi-trading-bot'),
+  'openfi-dao/kalshi-trading-bot': asAuditEntryId('kalshi-repo-openfi-dao-kalshi-trading-bot'),
+  'kalshi watchlist': asAuditEntryId('kalshi-repo-openfi-dao-kalshi-trading-bot'),
+  'richardfeynman kalshi arb': asAuditEntryId(
+    'kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot'
+  ),
+  'RichardFeynmanEnthusiast/kalshi-polymarket-arbitrage-bot': asAuditEntryId(
+    'kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot'
+  ),
+  'kalshi-shortlist-diversity': asAuditEntryId('kalshi-shortlist-diversity'),
+  'kalshi bot': asAuditEntryId('kalshi-repo-octagonai-kalshi-trading-bot-cli'),
 };
 
 /** Re-brand a finding/concept PK as a polymorphic entry ref. */

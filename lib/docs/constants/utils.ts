@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/workers#creating-a-worker — Worker
+// @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen — Bun.listen
@@ -8,6 +10,9 @@
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/glob — Bun.Glob
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
@@ -559,10 +564,20 @@ export const BUN_UTILS_URLS = {
 
   [UtilsCategory.PROCESS]: {
     MAIN: '/docs/runtime/child-process#benchmarks',
-    SPAWN: '/docs/api/spawn',
-    EXEC: '/docs/api/spawn#blocking-api-bun-spawnSync',
-    FORK: '/docs/api/spawn',
-    KILL: '/docs/api/spawn',
+    SPAWN: '/docs/runtime/child-process#spawn-a-process-bun-spawn',
+    EXEC: '/docs/runtime/child-process#blocking-api-bun-spawnsync',
+    FORK: '/docs/runtime/child-process#spawn-a-process-bun-spawn',
+    KILL: '/docs/runtime/child-process#spawn-a-process-bun-spawn',
+    TERMINAL: '/docs/runtime/child-process#terminal-pty-support',
+    TERMINAL_OPTIONS: '/docs/runtime/child-process#terminal-options',
+    IMAGE: '/docs/runtime/image#input',
+    IMAGE_METADATA: '/docs/runtime/image#metadata',
+    DEEP_EQUALS: '/docs/runtime/utils#bun-deepequals',
+    PEEK: '/docs/runtime/utils#bun-peek',
+    NANOSECONDS: '/docs/runtime/utils#bun-nanoseconds',
+    SLEEP: '/docs/runtime/utils#bun-sleep',
+    SLEEP_SYNC: '/docs/runtime/utils#bun-sleepsync',
+    RANDOM_UUID_V7: '/docs/runtime/utils#bun-randomuuidv7',
     PID: '/docs/runtime/child-process#benchmarks',
     SIGNALS: '/docs/runtime/child-process#benchmarks',
     ENV_VARS: '/docs/runtime/environment-variables#setting-environment-variables',
@@ -735,6 +750,65 @@ console.info("Worker PID:", proc.pid);`,
     KILL: `const proc = Bun.spawn(["sleep", "60"]);
 proc.kill(); // sends SIGTERM
 console.info("Killed process", proc.pid);`,
+
+    TERMINAL: `await using terminal = new Bun.Terminal({
+  cols: 80,
+  rows: 24,
+  data(_term, data) {
+    process.stdout.write(data);
+  },
+});
+const proc = Bun.spawn(["echo", "hello"], { terminal });
+await proc.exited;`,
+
+    TERMINAL_OPTIONS: `const proc = Bun.spawn(["bash"], {
+  terminal: {
+    cols: 80,
+    rows: 24,
+    data(_term, data) {
+      process.stdout.write(data);
+    },
+  },
+});
+proc.terminal?.write("echo hi\\n");
+await proc.exited;`,
+
+    IMAGE: `const meta = await new Bun.Image(screenshot).metadata();
+// { width, height, format }
+const png = await new Bun.Image(screenshot)
+  .resize(400, 300, { fit: "inside", withoutEnlargement: true })
+  .png()
+  .bytes();`,
+
+    IMAGE_METADATA: `import { extractImageEvidenceMeta } from "../lib/image-metadata.ts";
+const meta = await extractImageEvidenceMeta(pngBytes);
+// width, height, format, size, sha256 digest`,
+
+    DEEP_EQUALS: `import { deepEquals } from "../lib/deep-equals.ts";
+import { imageEvidenceMetaEqual } from "../lib/image-metadata.ts";
+deepEquals(prev, next);
+imageEvidenceMetaEqual(a, b); // strict Bun.deepEquals`,
+
+    PEEK: `import { awaitSettled, promiseStatus } from "../lib/peek-settle.ts";
+const meta = await awaitSettled(img.metadata());
+promiseStatus(pending); // fulfilled | rejected | pending | sync`,
+
+    NANOSECONDS: `import { nanoseconds, elapsedMs, timedAsync } from "../lib/time.ts";
+const t0 = nanoseconds();
+const { value, elapsedMs: ms } = await timedAsync(() => work());
+elapsedMs(t0);`,
+
+    SLEEP: `import { sleep } from "../lib/time.ts";
+await sleep(100); // ms
+await sleep(new Date(Date.now() + 1000)); // Date deadline`,
+
+    SLEEP_SYNC: `import { sleepSync } from "../lib/time.ts";
+sleepSync(50); // blocking ms`,
+
+    RANDOM_UUID_V7: `import { randomUUIDv7 } from "../lib/time.ts";
+randomUUIDv7();
+randomUUIDv7(new Date()); // embed timestamp
+randomUUIDv7("buffer");`,
 
     PID: `console.info("Current PID:", process.pid);
 console.info("Parent PID:", process.ppid);`,

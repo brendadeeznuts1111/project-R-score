@@ -5,18 +5,31 @@
  *   1. Scraping the odds page for the affected team (Bun.WebView)
  *   2. Capturing a screenshot as audit evidence (Bun.Image)
  *   3. Generating blur-up placeholder + dark-mode thumbnail
- *   4. Caching thumbnail for /thumbs/:team HTTP endpoint
- *   5. Broadcasting thumbnail URL via WebSocket pubsub
- *   6. Sending Telegram notification via h2Fetch (HTTP/2)
+ *   4. Caching thumbnail for /thumbs/:team and /screenshot/:team
+ *   5. Broadcasting thumbnail URL + Bun.Image metadata via WebSocket
+ *   6. Running TEST-003 remediation on image metadata evidence
+ *   7. Sending Telegram notification via h2Fetch (HTTP/2)
  *
  * Graceful degradation: if WebView is unavailable (no Chrome/WebKit),
  * falls back to alert-only mode — no crash, no missing alerts.
  *
  * Used by: src/index.ts Zone 10 startup
+ *
+ * @see https://bun.com/docs/runtime/image#metadata — Bun.Image.metadata
  */
 
 import type { DriftAlertOutput } from "./odds-drift-engine";
 import { h2Fetch } from "../utils/h2-fetch";
+import {
+  extractImageEvidenceMeta,
+  type ImageEvidenceMeta,
+} from "../utils/image-metadata";
+import {
+  buildScreenshotEvidenceRecord,
+  runTest003,
+  type ScreenshotEvidenceRecord,
+  type Test003Response,
+} from "./screenshot-remediation";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -31,13 +44,27 @@ export interface PipelineWorkerOptions {
   telegramChatId?: string;
 }
 
-interface ThumbnailEntry {
+export interface ThumbnailEntry {
+  /** JPEG bytes for `/thumbs/:team` (dashboard). */
   bytes: Uint8Array;
+  /** PNG evidence bytes for `/screenshot/:team` + TEST-003 (≤400×300). */
+  pngBytes: Uint8Array;
   placeholder: string;
+  /** Digest of the raw screenshot (audit trail). */
   sha256: string;
+  /** JPEG thumb dimensions (from Bun.Image.metadata). */
   width: number;
   height: number;
   capturedAt: number;
+  /** Bun.Image metadata for raw screenshot. */
+  sourceMeta: ImageEvidenceMeta;
+  /** Bun.Image metadata for JPEG thumb body. */
+  thumbMeta: ImageEvidenceMeta;
+  /** Full evidence record used by TEST-003 (PNG metadata). */
+  evidence: ScreenshotEvidenceRecord;
+  /** Last TEST-003 remediation response. */
+  test003: Test003Response;
+  crop?: { x: number; y: number; w: number; h: number };
 }
 
 // ---------------------------------------------------------------------------
@@ -104,6 +131,37 @@ export class PipelineWorker {
     return this.thumbnailCache.get(normalizeKey(team));
   }
 
+  /**
+   * Screenshot API payload — image bytes + Bun.Image metadata + TEST-003.
+   */
+  getScreenshotResponse(team: string): {
+    team: string;
+    mediaType: "image/png";
+    bytesBase64: string;
+    metadata: ImageEvidenceMeta;
+    source: ImageEvidenceMeta;
+    sha256: string;
+    capturedAt: string;
+    ok: boolean;
+    test003: Test003Response;
+    evidence: ScreenshotEvidenceRecord;
+  } | undefined {
+    const entry = this.getThumbnail(team);
+    if (!entry) return undefined;
+    return {
+      team,
+      mediaType: "image/png" as const,
+      bytesBase64: Buffer.from(entry.pngBytes).toString("base64"),
+      metadata: entry.evidence.thumbnail,
+      source: entry.sourceMeta,
+      sha256: entry.sha256,
+      capturedAt: entry.evidence.capturedAt,
+      ok: entry.test003.ok,
+      test003: entry.test003,
+      evidence: entry.evidence,
+    };
+  }
+
   // -------------------------------------------------------------------
   // Internal
   // -------------------------------------------------------------------
@@ -149,10 +207,14 @@ export class PipelineWorker {
       evidence: cached
         ? {
             thumbnail: `/thumbs/${encodeURIComponent(team)}`,
+            screenshot: `/screenshot/${encodeURIComponent(team)}`,
             placeholder: cached.placeholder,
             width: cached.width,
             height: cached.height,
             sha256: cached.sha256,
+            metadata: cached.thumbMeta,
+            source: cached.sourceMeta,
+            test003: cached.test003,
           }
         : null,
       timestamp: Date.now(),
@@ -215,38 +277,43 @@ export class PipelineWorker {
       // Screenshot with zero-copy Buffer encoding
       const screenshotBytes = (await view.screenshot({ encoding: "buffer" })) as Buffer;
 
-      // Bun.Image pipeline
-      const img = new Bun.Image(screenshotBytes);
-      const meta = await img.metadata();
-
-      // SHA-256 for audit
-      const hasher = new Bun.CryptoHasher("sha256");
-      hasher.update(screenshotBytes);
-      const sha256 = hasher.digest("hex") as string;
-
-      // Placeholder (base64 blur-up for instant preview)
-      const placeholder = (await img.placeholder()) as string;
-
-      // Dark-mode thumbnail
-      const thumb = img
-        .modulate({ brightness: 0.85, saturation: 0.6 })
-        .resize(400, 300, { fit: "inside", filter: "mitchell", withoutEnlargement: true });
-      const thumbBytes = await thumb.jpeg({ quality: 85 }).bytes();
-
-      // Cache with crop region metadata
-      this.thumbnailCache.set(normalizeKey(team), {
-        bytes: thumbBytes,
-        placeholder,
-        sha256,
-        width: meta.width,
-        height: meta.height,
-        capturedAt: Date.now(),
+      // Evidence chain: Bun.Image metadata (source + resize 400×300 PNG) + TEST-003
+      const { record, thumbnailBytes } = await buildScreenshotEvidenceRecord(screenshotBytes, {
+        team,
         crop: cropRegion ?? undefined,
-      } as ThumbnailEntry & { crop?: { x: number; y: number; w: number; h: number } });
+      });
+      const test003 = runTest003(record);
+
+      // Placeholder from original frame (blur-up preview)
+      const placeholder = (await new Bun.Image(screenshotBytes).placeholder()) as string;
+
+      // Dashboard JPEG variant (same bounds; metadata already on PNG evidence)
+      const jpegThumb = await new Bun.Image(screenshotBytes)
+        .modulate({ brightness: 0.85, saturation: 0.6 })
+        .resize(400, 300, { fit: "inside", filter: "mitchell", withoutEnlargement: true })
+        .jpeg({ quality: 85 })
+        .bytes();
+      const jpegMeta = await extractImageEvidenceMeta(jpegThumb);
+
+      this.thumbnailCache.set(normalizeKey(team), {
+        bytes: jpegThumb,
+        pngBytes: thumbnailBytes,
+        placeholder,
+        sha256: record.source.digest,
+        width: jpegMeta.width,
+        height: jpegMeta.height,
+        capturedAt: Date.now(),
+        sourceMeta: record.source,
+        thumbMeta: jpegMeta,
+        evidence: record,
+        test003,
+        crop: cropRegion ?? undefined,
+      });
 
       console.log(
         `📸 [pipeline] Evidence captured: ${team} — ${screenshotBytes.length}B screenshot, ` +
-        `${thumbBytes.byteLength}B thumb, sha256=${sha256.slice(0, 12)}…`
+          `${jpegThumb.byteLength}B jpeg thumb, ${thumbnailBytes.byteLength}B png evidence, ` +
+          `TEST-003=${test003.status}, sha256=${record.source.digest.slice(0, 12)}…`,
       );
     } finally {
       this.scraping = false;

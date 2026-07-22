@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 /**
  * @domain audit
  * @module lib/types/branded/audit.ts
@@ -17,12 +18,15 @@ export type AuditId = BrandedString<'AuditId'>;
 export type AuditFindingId = BrandedString<'AuditFindingId'>;
 export type AuditConceptId = BrandedString<'AuditConceptId'>;
 export type AuditEntryId = BrandedString<'AuditEntryId'>;
+/** Screenshot / image evidence row (typically UUID v7). */
+export type EvidenceId = BrandedString<'EvidenceId'>;
 
 const version = defineBrandConstructors('VersionId');
 const audit = defineBrandConstructors('AuditId');
 const finding = defineBrandConstructors('AuditFindingId');
 const concept = defineBrandConstructors('AuditConceptId');
 const entry = defineBrandConstructors('AuditEntryId');
+const evidence = defineBrandConstructors('EvidenceId');
 
 export const asVersionId = version.as;
 export const tryVersionId = version.try;
@@ -43,6 +47,10 @@ export const parseAuditConceptId = concept.parse;
 export const asAuditEntryId = entry.as;
 export const tryAuditEntryId = entry.try;
 export const parseAuditEntryId = entry.parse;
+
+export const asEvidenceId = evidence.as;
+export const tryEvidenceId = evidence.try;
+export const parseEvidenceId = evidence.parse;
 
 export const AUDIT_BRAND_SPECS: readonly BrandSpec[] = [
   {
@@ -79,5 +87,12 @@ export const AUDIT_BRAND_SPECS: readonly BrandSpec[] = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal', 'wire-input'],
     description: 'Polymorphic audit SSOT ref (finding or concept id)',
+  },
+  {
+    name: 'EvidenceId',
+    domain: 'audit',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Screenshot / image evidence row (UUID v7 via Bun.randomUUIDv7)',
   },
 ] as const;

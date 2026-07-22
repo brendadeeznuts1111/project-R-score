@@ -1,0 +1,28 @@
+{
+  "id": "kalshi-repo-openfi-dao-kalshi-trading-bot",
+  "kind": "AuditFinding",
+  "title": "Kalshi bot candidate: openfi-dao/kalshi-trading-bot",
+  "description": "Quality score 67.5/100. Strategy: news_event, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.",
+  "status": "open",
+  "publishedAt": "2026-07-22",
+  "discoveredIn": "2026-07-22T05-50-48-875Z",
+  "evidence": {
+    "path": "tools/audit-evidence/kalshi/openfi-dao__kalshi-trading-bot.ndjson",
+    "algorithm": "sha3-256",
+    "digest": "b15d67acaf6c837f32bb7df08f4324582cdc5e462ec105df44569ec10fc0d96d",
+    "mediaType": "application/x-ndjson"
+  },
+  "related": [
+    "kalshi-shortlist-diversity",
+    "sha3-integrity",
+    "nagata-map"
+  ],
+  "relatedDocs": [
+    "SHA3-256"
+  ],
+  "meta": {
+    "emitter": "kalshi-bot-research",
+    "buildPin": "0.2.0",
+    "tier": "watchlist"
+  }
+}

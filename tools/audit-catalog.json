@@ -1,14 +1,98 @@
 {
-  "generated": "2026-07-22T05:00:45.949Z",
+  "generated": "2026-07-22T12:02:14.208Z",
   "bunVersion": "1.4.0",
-  "count": 1,
-  "conceptCount": 4,
+  "count": 4,
+  "conceptCount": 5,
   "byStatus": {
     "confirmed": 1,
     "mitigated": 0,
-    "open": 0
+    "open": 3
   },
   "findings": [
+    {
+      "id": "kalshi-repo-octagonai-kalshi-trading-bot-cli",
+      "kind": "AuditFinding",
+      "title": "Kalshi bot candidate: OctagonAI/kalshi-trading-bot-cli",
+      "description": "Quality score 84.75/100. Strategy: market_making, sports, news_event, momentum, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Missing test coverage on extracted paths.",
+      "status": "open",
+      "publishedAt": "2026-07-22",
+      "evidence": {
+        "path": "tools/audit-evidence/kalshi/octagonai__kalshi-trading-bot-cli.ndjson",
+        "algorithm": "sha3-256",
+        "digest": "ff8b653fd1b3d22e440f93e59b18be5daf5cda65196533f65e2768bbec2238c1",
+        "mediaType": "application/x-ndjson"
+      },
+      "discoveredIn": "2026-07-22T05-50-48-875Z",
+      "related": [
+        "kalshi-shortlist-diversity",
+        "sha3-integrity",
+        "nagata-map"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "0.2.0",
+        "emitter": "kalshi-bot-research"
+      },
+      "docsPath": "docs/audit/findings/kalshi-repo-octagonai-kalshi-trading-bot-cli.md"
+    },
+    {
+      "id": "kalshi-repo-openfi-dao-kalshi-trading-bot",
+      "kind": "AuditFinding",
+      "title": "Kalshi bot candidate: openfi-dao/kalshi-trading-bot",
+      "description": "Quality score 67.5/100. Strategy: news_event, llm_ensemble. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.",
+      "status": "open",
+      "publishedAt": "2026-07-22",
+      "evidence": {
+        "path": "tools/audit-evidence/kalshi/openfi-dao__kalshi-trading-bot.ndjson",
+        "algorithm": "sha3-256",
+        "digest": "b15d67acaf6c837f32bb7df08f4324582cdc5e462ec105df44569ec10fc0d96d",
+        "mediaType": "application/x-ndjson"
+      },
+      "discoveredIn": "2026-07-22T05-50-48-875Z",
+      "related": [
+        "kalshi-shortlist-diversity",
+        "sha3-integrity",
+        "nagata-map"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "0.2.0",
+        "emitter": "kalshi-bot-research"
+      },
+      "docsPath": "docs/audit/findings/kalshi-repo-openfi-dao-kalshi-trading-bot.md"
+    },
+    {
+      "id": "kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot",
+      "kind": "AuditFinding",
+      "title": "Kalshi bot candidate: RichardFeynmanEnthusiast/kalshi-polymarket-arbitrage-bot",
+      "description": "Quality score 69.5/100. Strategy: market_making, arb, news_event. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox.  Watchlist tier — below high-value export threshold; verify before lift.",
+      "status": "open",
+      "publishedAt": "2026-07-22",
+      "evidence": {
+        "path": "tools/audit-evidence/kalshi/richardfeynmanenthusiast__kalshi-polymarket-arbitrage-bot.ndjson",
+        "algorithm": "sha3-256",
+        "digest": "e3ba946f0e10f7927086bd0a996aedce7dbb7d80ebd614fc9bc9f29eb443eb57",
+        "mediaType": "application/x-ndjson"
+      },
+      "discoveredIn": "2026-07-22T06-19-51-053Z",
+      "related": [
+        "kalshi-shortlist-diversity",
+        "sha3-integrity",
+        "nagata-map"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "0.2.0",
+        "emitter": "kalshi-bot-research"
+      },
+      "docsPath": "docs/audit/findings/kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot.md"
+    },
     {
       "id": "sample-fiber-demo-2026-07-21",
       "kind": "AuditFinding",
@@ -84,6 +168,24 @@
         "emitter": "audit-curated"
       },
       "docsPath": "docs/audit/concepts/jacobian-nullspace.md"
+    },
+    {
+      "id": "kalshi-shortlist-diversity",
+      "kind": "AuditConcept",
+      "title": "Kalshi bot shortlist diversity constraints",
+      "description": "Portfolio selection over scored repos: size 12, max 4 per strategy tag, min 1 per major tag (market_making, arb, sports, news_event, momentum, mean_reversion, llm_ensemble), TS/JS tiebreak within 5 points. Operates above single-repo RepoReport — see docs/FACTOR_STACK.md shortlist scope.",
+      "publishedAt": "2026-07-22",
+      "related": [
+        "sha3-integrity"
+      ],
+      "relatedDocs": [
+        "SHA3-256"
+      ],
+      "meta": {
+        "buildPin": "0.2.0",
+        "emitter": "kalshi-bot-research"
+      },
+      "docsPath": "docs/audit/concepts/kalshi-shortlist-diversity.md"
     },
     {
       "id": "nagata-map",

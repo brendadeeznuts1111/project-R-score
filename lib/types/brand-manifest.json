@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-22T03:15:14.411Z",
+  "generatedAt": "2026-07-22T11:20:34.083Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 32,
+  "brandCount": 33,
   "domains": [
     "audit",
     "deployment",
@@ -307,6 +307,20 @@
         "wire-input"
       ],
       "description": "Polymorphic audit SSOT ref (finding or concept id)"
+    },
+    {
+      "name": "EvidenceId",
+      "domain": "audit",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Screenshot / image evidence row (UUID v7 via Bun.randomUUIDv7)"
     },
     {
       "name": "OperationId",

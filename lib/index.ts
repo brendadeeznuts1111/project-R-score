@@ -44,6 +44,126 @@ export {
   CANONICAL_EXTERNAL,
 } from './docs/repo-docs';
 
+// GitHub repository identity (owner/name/host/remote — not REPO_URL)
+export {
+  commitUrl,
+  githubTokenPresence,
+  htmlUrl,
+  ownerName,
+  parseGitRemoteUrl,
+  parseOwnerName,
+  resolveGitHubRepositoryRef,
+  treeUrl,
+  type GitHubRemoteSlot,
+  type GitHubRepositoryRef,
+  type GithubTokenPresence,
+} from './github-repository-ref';
+
+// Bun.Terminal (PTY) helpers
+export {
+  BUN_TERMINAL_OPTIONS_DOCS,
+  BUN_TERMINAL_PTY_DOCS,
+  DEFAULT_TERMINAL_COLS,
+  DEFAULT_TERMINAL_NAME,
+  DEFAULT_TERMINAL_ROWS,
+  createCapturingTerminal,
+  spawnWithTerminal,
+  terminalOptions,
+  type BunTerminal,
+  type BunTerminalOptions,
+  type CapturingTerminal,
+  type CreateTerminalOptions,
+  type SpawnWithTerminalOptions,
+  type SpawnWithTerminalResult,
+  type TerminalSize,
+} from './terminal';
+
+// Bun.deepEquals / Bun.peek settled-promise helpers
+export {
+  BUN_DEEP_EQUALS_DOCS,
+  deepEquals,
+  deepEqualsChangedIndex,
+  deepEqualsStrict,
+} from './deep-equals';
+export {
+  BUN_PEEK_DOCS,
+  awaitAllSettled,
+  awaitSettled,
+  peekIfSettled,
+  promiseStatus,
+  type PromiseSettleStatus,
+} from './peek-settle';
+
+// Bun utils — date / time / high-res number tokens
+export {
+  BUN_NANOSECONDS_DOCS,
+  BUN_RANDOM_UUID_V7_DOCS,
+  BUN_REVISION_DOCS,
+  BUN_SLEEP_DOCS,
+  BUN_SLEEP_SYNC_DOCS,
+  BUN_TIMEZONE_DOCS,
+  BUN_VERSION_DOCS,
+  DEFAULT_EVIDENCE_TIMING_SKEW_MS,
+  bunRuntimeFingerprint,
+  checkEvidenceTiming,
+  deadlineFromNow,
+  elapsedMs,
+  elapsedNs,
+  isUuidV7,
+  mintEvidenceId,
+  mintEvidenceIdAt,
+  nanoseconds,
+  randomUUIDv7,
+  sleep,
+  sleepSync,
+  timedAsync,
+  timedSync,
+  timezoneId,
+  uuidV7Date,
+  uuidV7TimestampMs,
+  uuidV7WithTimestamp,
+  type BunRuntimeFingerprint,
+  type EvidenceTimingCheck,
+  type RandomUuidV7Encoding,
+} from './time';
+
+// Bun.Image metadata + TEST-003 screenshot remediation
+export {
+  BUN_IMAGE_DOCS,
+  BUN_IMAGE_METADATA_DOCS,
+  DEFAULT_IMAGE_DIGEST_ALGORITHM,
+  DEFAULT_THUMB_MAX_HEIGHT,
+  DEFAULT_THUMB_MAX_WIDTH,
+  IMAGE_META_CHECK_IDS,
+  extractImageEvidenceMeta,
+  imageEvidenceHeaders,
+  imageEvidenceMetaEqual,
+  imageMetaChecksPassed,
+  isImageEvidenceMeta,
+  parseImageEvidenceMeta,
+  resizeScreenshotPng,
+  sameImageEvidence,
+  verifyImageEvidenceMeta,
+  type ExtractImageMetaOptions,
+  type ImageDigestAlgorithm,
+  type ImageEvidenceMeta,
+  type ImageMetaCheck,
+  type ImageMetaCheckId,
+  type ImageMetaExpectations,
+  type ResizeScreenshotOptions,
+} from './image-metadata';
+export {
+  TEST_003,
+  buildScreenshotEvidenceRecord,
+  remediateScreenshotCapture,
+  runTest003,
+  screenshotEvidenceEqual,
+  type BuildScreenshotEvidenceOptions,
+  type ScreenshotEvidenceRecord,
+  type Test003Remediation,
+  type Test003Response,
+} from './screenshot-remediation';
+
 export { SecurityUtils } from './security';
 
 // Constants and configuration
