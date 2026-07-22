@@ -5,7 +5,10 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
 // @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi / ansiMarkdown
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 /**
  * Tool-legibility surface for the day loop + ratchets (compact).
@@ -30,7 +33,7 @@ import {
   type ClassifiedActionsCheck,
 } from '../lib/harness/actions-check-noise';
 import { CRITICAL_PROOF_PATHS } from '../lib/harness/proof';
-import { ansiMarkdown, logTable } from '../lib/console-depth';
+import { ansiMarkdown, inspect, logTable } from '../lib/console-depth';
 import { hasFlag } from './lib/cli-args';
 
 const ROOT = `${import.meta.dir}/..`;
@@ -164,6 +167,17 @@ process.stdout.write(ansiMarkdown(md));
 process.stdout.write('\n');
 
 if (hasFlag('table')) {
+  console.info('Bun.inspect · family map');
+  console.info(
+    inspect({
+      'Bun.inspect()': 'runtime/utils#bun-inspect',
+      'Bun.inspect.custom': 'runtime/utils#bun-inspect-custom',
+      'Bun.inspect.table': 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
+      BunInspectOptions: 'reference/bun/BunInspectOptions',
+      helpers: 'lib/console-depth.ts · inspect / inspectCustom / logTable',
+    })
+  );
+  console.info('');
   console.info('Bun.inspect.table · ratchets (opt-in)');
   logTable(ratchets, ['cmd', 'purpose']);
   console.info('');

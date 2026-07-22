@@ -130,7 +130,7 @@ bun run ci:core             # install verify · hygiene · ci:harness (= GHA bod
 ```bash
 bun run docs:harness            # this index → bun ./file.md (native ANSI, no VM)
 bun run harness:status          # local ratchets + timings SSOT (ansiMarkdown)
-#   bun run harness:status -- --table              # Bun.inspect.table · ratchets/proof paths
+#   bun run harness:status -- --table              # Bun.inspect family map + inspect.table
 #   bun run harness:status -- --show-actions-noise # unmute GHA 0-step / billing checks
 bun run help
 bun run type-check              # tsconfig.check.json — spine agent surfaces
@@ -153,7 +153,7 @@ bun run build:defines           # AST --define BUILD_* + DEBUG=false (prod DCE);
 
 `test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
 
-Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in tables: `bun run harness:status -- --table` ([`Bun.inspect.table`](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)). Actions 0-step / billing checks stay muted; `--show-actions-noise` to show. When Actions is offline, local merge proof remains `bun run ci:core` ([AUTHORITY.md](AUTHORITY.md)).
+Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in inspect family: `bun run harness:status -- --table` ([`Bun.inspect`](https://bun.com/docs/runtime/utils#bun-inspect) · [`custom`](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [`table`](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)). Actions 0-step / billing checks stay muted; `--show-actions-noise` to show. When Actions is offline, local merge proof remains `bun run ci:core` ([AUTHORITY.md](AUTHORITY.md)).
 
 ## Local theses (FactoryWager)
 

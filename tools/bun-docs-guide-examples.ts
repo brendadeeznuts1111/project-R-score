@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --outfile
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/guides/runtime/timezone — TZ
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -17,6 +19,20 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
+// @see https://bun.com/docs/runtime/markdown#component-overrides — component-overrides
+// @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
+// @see https://bun.com/docs/runtime/markdown#options — options
+// @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
+// @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
+// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options — BUN_OPTIONS
+// @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — embedding-runtime-arguments
+// @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
+// @see https://bun.com/docs/runtime/workers#creating-a-worker — Worker
+// @see https://bun.com/docs/runtime/workers#worker-ref — worker.ref
+// @see https://bun.com/docs/runtime/workers#worker-unref — worker.unref
+// @see https://bun.com/docs/runtime/workers#bun-ismainthread — Bun.isMainThread
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 /**
  * Frozen lang+code from Bun guide / blog pages.
@@ -405,11 +421,133 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const url = Bun.pathToFileURL("/foo/bar.txt");\nconsole.log(url); // "file:///foo/bar.txt"',
     },
   ],
+  // Official docs — Bun.inspect()
+  'runtime/utils#bun-inspect': [
+    {
+      lang: 'ts',
+      body: 'const obj = { foo: "bar" };\nconst str = Bun.inspect(obj);\n// => \'{\\nfoo: "bar" \\n}\'\n\nconst arr = new Uint8Array([1, 2, 3]);\nconst str = Bun.inspect(arr);\n// => "Uint8Array(3) [ 1, 2, 3 ]"',
+    },
+  ],
+  // Official reference — BunInspectOptions { colors, depth, sorted, compact }
+  'reference/bun/BunInspectOptions': [
+    {
+      lang: 'ts',
+      body: 'const str = Bun.inspect(\n  { z: 1, a: { b: 2, c: 3 } },\n  { colors: true, depth: 2, sorted: true, compact: false },\n);',
+    },
+  ],
   // Official docs — Bun.inspect.custom (≡ util.inspect.custom)
   'runtime/utils#bun-inspect-custom': [
     {
       lang: 'ts',
       body: 'class Foo {\n  [Bun.inspect.custom]() {\n    return "foo";\n  }\n}\n\nconst foo = new Foo();\nconsole.log(foo); // => "foo"',
+    },
+  ],
+  // Official docs — Bun.markdown.react
+  'runtime/markdown#bun-markdown-react': [
+    {
+      lang: 'tsx',
+      body: 'function Markdown({ text }: { text: string }) {\n  return Bun.markdown.react(text);\n}',
+    },
+  ],
+  // Official docs — Component overrides (+ Available overrides table)
+  'runtime/markdown#component-overrides': [
+    {
+      lang: 'tsx',
+      body: 'function Code({ language, children }) {\n  return (\n    <pre data-language={language}>\n      <code>{children}</code>\n    </pre>\n  );\n}\n\nfunction Link({ href, title, children }) {\n  return (\n    <a href={href} title={title} target="_blank" rel="noopener noreferrer">\n      {children}\n    </a>\n  );\n}\n\nfunction Heading({ id, children }) {\n  return (\n    <h2 id={id}>\n      <a href={`#${id}`}>{children}</a>\n    </h2>\n  );\n}\n\nconst el = Bun.markdown.react(\n  content,\n  {\n    pre: Code,\n    a: Link,\n    h2: Heading,\n  },\n  { headings: { ids: true } },\n);',
+    },
+  ],
+  'runtime/markdown#available-overrides': [
+    {
+      lang: 'tsx',
+      body: 'const el = Bun.markdown.react(\n  content,\n  {\n    pre: Code,\n    a: Link,\n    h2: Heading,\n  },\n  { headings: { ids: true } },\n);',
+    },
+  ],
+  // Official docs — Bun.markdown.html Options (parser SSOT)
+  'runtime/markdown#options': [
+    {
+      lang: 'ts',
+      body: 'const html = Bun.markdown.html("some markdown", {\n  tables: true, // GFM tables (default: true)\n  strikethrough: true, // GFM strikethrough (default: true)\n  tasklists: true, // GFM task lists (default: true)\n  tagFilter: true, // GFM tag filter for disallowed HTML tags\n  autolinks: true, // Autolink URLs, emails, and www. links\n});',
+    },
+  ],
+  // Official docs — Bun.markdown.render Parser options (third arg)
+  'runtime/markdown#parser-options': [
+    {
+      lang: 'ts',
+      body: 'const result = Bun.markdown.render(\n  "Visit www.example.com",\n  {\n    link: (children, { href }) => `[${children}](${href})`,\n    paragraph: children => children,\n  },\n  { autolinks: true },\n);',
+    },
+  ],
+  // Official docs — Bun.markdown.react Parser options (#parser-options-2)
+  'runtime/markdown#parser-options-2': [
+    {
+      lang: 'tsx',
+      body: 'const el = Bun.markdown.react("## Hello World", undefined, {\n  headings: { ids: true },\n  autolinks: true,\n});',
+    },
+  ],
+  // Official docs — Runtime arguments via BUN_OPTIONS (standalone executables)
+  'bundler/executables#runtime-arguments-via-bun_options': [
+    {
+      lang: 'bash',
+      body: '# Enable CPU profiling on a compiled executable\nBUN_OPTIONS="--cpu-prof" ./myapp\n\n# Enable heap profiling with markdown output\nBUN_OPTIONS="--heap-prof-md" ./myapp\n\n# Combine multiple flags\nBUN_OPTIONS="--smol --cpu-prof-md" ./myapp',
+    },
+  ],
+  // Official docs — Embedding runtime arguments (--compile-exec-argv)
+  'bundler/executables#embedding-runtime-arguments': [
+    {
+      lang: 'bash',
+      body: 'bun build --compile --compile-exec-argv="--smol --user-agent=MyBot" ./app.ts --outfile myapp',
+    },
+  ],
+  // Official guide — Upload files via HTTP using FormData
+  'guides/http/file-uploads#upload-files-via-http-using-formdata': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  port: 4000,\n  async fetch(req) {\n    const url = new URL(req.url);\n\n    // return index.html for root path\n    if (url.pathname === "/")\n      return new Response(Bun.file("index.html"), {\n        headers: {\n          "Content-Type": "text/html",\n        },\n      });\n\n    // parse formdata at /action\n    if (url.pathname === "/action") {\n      const formdata = await req.formData();\n      const name = formdata.get("name");\n      const profilePicture = formdata.get("profilePicture");\n      if (!profilePicture) throw new Error("Must upload a profile picture.");\n      // write profilePicture to disk\n      await Bun.write("profilePicture.png", profilePicture);\n      return new Response("Success");\n    }\n\n    return new Response("Not Found", { status: 404 });\n  },\n});',
+    },
+  ],
+  // Official docs — Creating a Worker
+  'runtime/workers#creating-a-worker': [
+    {
+      lang: 'ts',
+      body: 'const worker = new Worker("./worker.ts");\n\nworker.postMessage("hello");\nworker.onmessage = event => {\n  console.log(event.data);\n};',
+    },
+  ],
+  // Official docs — worker.unref()
+  'runtime/workers#worker-unref': [
+    {
+      lang: 'ts',
+      body: 'const worker = new Worker(new URL("worker.ts", import.meta.url).href);\nworker.unref();',
+    },
+  ],
+  // Official docs — worker.ref()
+  'runtime/workers#worker-ref': [
+    {
+      lang: 'ts',
+      body: 'const worker = new Worker(new URL("worker.ts", import.meta.url).href);\nworker.unref();\n// later...\nworker.ref();',
+    },
+    {
+      lang: 'ts',
+      body: 'const worker = new Worker(new URL("worker.ts", import.meta.url).href, {\n  ref: false,\n});',
+    },
+  ],
+  // Official docs — Terminating a worker
+  'runtime/workers#terminating-a-worker': [
+    {
+      lang: 'ts',
+      body: 'const worker = new Worker(new URL("worker.ts", import.meta.url).href);\n\n// ...some time later\nworker.terminate();',
+    },
+  ],
+  // Official docs — Worker smol mode
+  'runtime/workers#memory-usage-with-smol': [
+    {
+      lang: 'ts',
+      body: 'const worker = new Worker("./i-am-smol.ts", {\n  smol: true,\n});',
+    },
+  ],
+  // Official docs — Bun.isMainThread
+  'runtime/workers#bun-ismainthread': [
+    {
+      lang: 'ts',
+      body: 'if (Bun.isMainThread) {\n  console.log("I\'m the main thread");\n} else {\n  console.log("I\'m in a worker");\n}',
     },
   ],
   // Official docs — Bun.inspect.table(tabularData, properties, options)
@@ -619,10 +757,59 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'which-path-to-executable-bin': 'guides/util/which-path-to-executable-bin',
   'get-the-path-to-an-executable-bin-file': 'guides/util/which-path-to-executable-bin',
   // Bun.* → utils fences; bare / node:url → reference; guide titles → guides
+  'Bun.inspect': 'runtime/utils#bun-inspect',
+  'Bun.inspect()': 'runtime/utils#bun-inspect',
   'Bun.inspect.custom': 'runtime/utils#bun-inspect-custom',
   'Bun.inspect.table': 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
   'Bun.inspect.table(tabularData, properties, options)':
     'runtime/utils#bun-inspect-table-tabulardata-properties-options',
+  BunInspectOptions: 'reference/bun/BunInspectOptions',
+  'Bun.markdown.react': 'runtime/markdown#bun-markdown-react',
+  'component-overrides': 'runtime/markdown#component-overrides',
+  'Bun.markdown.react component overrides': 'runtime/markdown#component-overrides',
+  'available-overrides': 'runtime/markdown#available-overrides',
+  'Bun.markdown.react available overrides': 'runtime/markdown#available-overrides',
+  options: 'runtime/markdown#options',
+  'Bun.markdown.html options': 'runtime/markdown#options',
+  'Bun.markdown.html': 'runtime/markdown#bun-markdown-html',
+  'Bun.markdown.render': 'runtime/markdown#bun-markdown-render',
+  'parser-options': 'runtime/markdown#parser-options',
+  'Bun.markdown.render parser options': 'runtime/markdown#parser-options',
+  'parser-options-2': 'runtime/markdown#parser-options-2',
+  'Bun.markdown.react parser options': 'runtime/markdown#parser-options-2',
+  BUN_OPTIONS: 'bundler/executables#runtime-arguments-via-bun_options',
+  'runtime-arguments-via-bun_options': 'bundler/executables#runtime-arguments-via-bun_options',
+  'Runtime arguments via BUN_OPTIONS': 'bundler/executables#runtime-arguments-via-bun_options',
+  'embedding-runtime-arguments': 'bundler/executables#embedding-runtime-arguments',
+  '--compile-exec-argv': 'bundler/executables#embedding-runtime-arguments',
+  'file-uploads': 'guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'Upload files via HTTP using FormData':
+    'guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'upload-files-via-http-using-formdata':
+    'guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'guides/http/file-uploads': 'guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'req.formData': 'guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'Request.formData': 'guides/http/file-uploads#upload-files-via-http-using-formdata',
+  Concurrency: 'runtime/workers#creating-a-worker',
+  'Runtime Concurrency': 'runtime/workers#creating-a-worker',
+  Worker: 'runtime/workers#creating-a-worker',
+  'new Worker': 'runtime/workers#creating-a-worker',
+  Workers: 'runtime/workers#creating-a-worker',
+  'creating-a-worker': 'runtime/workers#creating-a-worker',
+  'worker.ref': 'runtime/workers#worker-ref',
+  'worker-ref': 'runtime/workers#worker-ref',
+  'worker.unref': 'runtime/workers#worker-unref',
+  'worker-unref': 'runtime/workers#worker-unref',
+  'managing-lifetime': 'runtime/workers#worker-ref',
+  'worker.terminate': 'runtime/workers#terminating-a-worker',
+  'terminating-a-worker': 'runtime/workers#terminating-a-worker',
+  'worker.postMessage': 'runtime/workers#creating-a-worker',
+  'messages-with-postmessage': 'runtime/workers#creating-a-worker',
+  'Worker.preload': 'runtime/workers#preload-load-modules-before-the-worker-starts',
+  'Worker smol': 'runtime/workers#memory-usage-with-smol',
+  'memory-usage-with-smol': 'runtime/workers#memory-usage-with-smol',
+  'Bun.isMainThread': 'runtime/workers#bun-ismainthread',
+  'executables Worker': 'bundler/executables#worker',
   'Bun.pathToFileURL': 'runtime/utils#bun-pathtofileurl',
   'Bun.fileURLToPath': 'runtime/utils#bun-fileurltopath',
   pathToFileURL: 'reference/node/url/pathToFileURL',

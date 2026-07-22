@@ -1,8 +1,8 @@
 {
-  "generated": "2026-07-20T16:44:45.092Z",
+  "generated": "2026-07-22T01:54:32.781Z",
   "source": "https://bun.com/docs/llms.txt",
   "bunVersion": "1.4.0",
-  "upstreamBunVersion": null,
+  "upstreamBunVersion": "1.4.0",
   "taxonomy": "tools/bun-docs-taxonomy.json",
   "taxonomyTagged": 74,
   "pages": 317,
@@ -146,7 +146,8 @@
         "using-plugins",
         "unsupported-cli-arguments",
         "api-reference",
-        "complete-example"
+        "complete-example",
+        "runtime-arguments-via-bun_options"
       ]
     },
     {
@@ -1013,7 +1014,9 @@
       "url": "https://bun.com/docs/guides/http/file-uploads.md",
       "desc": "",
       "domain": "guides/http",
-      "anchors": []
+      "anchors": [
+        "upload-files-via-http-using-formdata"
+      ]
     },
     {
       "section": "Docs",
@@ -3591,6 +3594,7 @@
         "nested-list-numbering",
         "code-block-syntax-highlighting",
         "parser-options",
+        "parser-options-2",
         "bun-markdown-react",
         "server-side-rendering",
         "component-overrides",

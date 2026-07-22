@@ -5,7 +5,8 @@
  *   - Depth control (`--console-depth`, bunfig `[console] depth`):
  *     https://bun.com/docs/runtime/console
  *   - CLI flag reference: https://bun.com/docs/runtime
- *   - Bun.inspect / Bun.inspect.table / Bun.inspect.custom / Bun.stringWidth /
+ *   - Bun.inspect (#bun-inspect) / .custom (#bun-inspect-custom) /
+ *     .table (#bun-inspect-table-…) / Bun.stringWidth /
  *     Bun.stripANSI / Bun.wrapAnsi: https://bun.com/docs/runtime/utils
  *   - Bun.markdown.ansi (AnsiTheme): https://bun.com/docs/runtime/markdown#ansi-terminal-output
  *   - Bun.color: https://bun.com/docs/runtime/color
@@ -104,8 +105,8 @@ export type InspectOptions = {
  * Only official BunInspectOptions fields are exposed — runtime-verified
  * on Bun 1.4.0: `getters`, `maxArrayLength`, and `maxStringLength` are
  * silently ignored by Bun.inspect, so they are deliberately absent.
- * @see https://bun.com/docs/runtime/utils#bun-inspect
- * @see https://bun.com/reference/bun/BunInspectOptions
+ * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+ * @see https://bun.com/reference/bun/BunInspectOptions — colors / depth / sorted / compact
  */
 export function inspectFromUnknown(value: unknown, options: InspectOptions = {}): string {
   return Bun.inspect(value, {
@@ -186,8 +187,8 @@ export function logTable<T extends object>(
 }
 
 /**
- * Re-export of Bun.inspect.custom — implement `[inspectCustom]()` on classes
- * to control how Bun.inspect/console.log print them (≡ util.inspect.custom).
+ * The symbol Bun uses to implement Bun.inspect. Override via `[inspectCustom]()`
+ * on a class to customize how objects are printed (identical to util.inspect.custom).
  * @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
  */
 export const inspectCustom = Bun.inspect.custom;
@@ -214,6 +215,7 @@ export function colorize(text: string, color: string): string {
  * Bun AnsiTheme defaults differ: columns=80, hyperlinks=false, colors=true.
  *
  * @see https://bun.com/docs/runtime/markdown#ansi-terminal-output — Bun.markdown.ansi
+ * @see https://bun.com/docs/runtime/markdown#available-overrides — Bun.markdown.react tag overrides
  * @see https://bun.com/blog/bun-v1.3.12 — bun ./file.md (zero-overhead file path)
  */
 export type AnsiMarkdownTheme = Bun.markdown.AnsiTheme;

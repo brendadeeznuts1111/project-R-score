@@ -98,6 +98,19 @@ export const CANONICAL_REFS: Record<string, string> = {
   // ── File I/O & storage (top repo usage: Bun.file ×266, Bun.write ×153) ──
   'Bun.file': 'https://bun.com/docs/runtime/file-io#reading-files-bun-file',
   'Bun.write': 'https://bun.com/docs/runtime/file-io#writing-files-bun-write',
+  // HTTP multipart upload guide (FormData + req.formData + Bun.write)
+  'file-uploads':
+    'https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'Upload files via HTTP using FormData':
+    'https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'upload-files-via-http-using-formdata':
+    'https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'guides/http/file-uploads':
+    'https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'req.formData':
+    'https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata',
+  'Request.formData':
+    'https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata',
   'Bun.mmap': 'https://bun.com/docs/runtime/bun-apis',
   'bun:sqlite': 'https://bun.com/docs/runtime/sqlite#load-via-es-module-import',
   'Bun.Archive': 'https://bun.com/docs/runtime/archive#quickstart',
@@ -288,6 +301,22 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.html': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.ansi': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
+  'Bun.markdown.render': 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
+  'Bun.markdown.react': 'https://bun.com/docs/runtime/markdown#bun-markdown-react',
+  // React component overrides — #component-overrides → #available-overrides table
+  'component-overrides': 'https://bun.com/docs/runtime/markdown#component-overrides',
+  'Bun.markdown.react component overrides':
+    'https://bun.com/docs/runtime/markdown#component-overrides',
+  'available-overrides': 'https://bun.com/docs/runtime/markdown#available-overrides',
+  'Bun.markdown.react available overrides':
+    'https://bun.com/docs/runtime/markdown#available-overrides',
+  // Parser options SSOT (#options) + render/react third-arg loci
+  options: 'https://bun.com/docs/runtime/markdown#options',
+  'Bun.markdown.html options': 'https://bun.com/docs/runtime/markdown#options',
+  'parser-options': 'https://bun.com/docs/runtime/markdown#parser-options',
+  'Bun.markdown.render parser options': 'https://bun.com/docs/runtime/markdown#parser-options',
+  'parser-options-2': 'https://bun.com/docs/runtime/markdown#parser-options-2',
+  'Bun.markdown.react parser options': 'https://bun.com/docs/runtime/markdown#parser-options-2',
   'Bun.YAML': 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   YAML: 'https://bun.com/docs/runtime/yaml#bun-yaml-parse',
   'Bun.hash': 'https://bun.com/docs/runtime/hashing#bun-hash',
@@ -300,8 +329,47 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.Image': 'https://bun.com/docs/runtime/image#input',
   'Bun.CookieMap': 'https://bun.com/docs/runtime/cookies#cookiemap-class',
 
+  // ── Workers (runtime/workers) — not bundler/executables#worker ──────────
+  // Runtime docs nav group "Concurrency" (sole page: Workers). Distinct from
+  // pm/global-store#concurrency (install linker concurrency).
+  Concurrency: 'https://bun.com/docs/runtime/workers',
+  'Runtime Concurrency': 'https://bun.com/docs/runtime/workers',
+  'global-store concurrency': 'https://bun.com/docs/pm/global-store#concurrency',
+  'install concurrency': 'https://bun.com/docs/pm/global-store#concurrency',
+  'pm concurrency': 'https://bun.com/docs/pm/global-store#concurrency',
+  // Lifetime: managing-lifetime → worker.unref → worker.ref
+  Worker: 'https://bun.com/docs/runtime/workers#creating-a-worker',
+  'new Worker': 'https://bun.com/docs/runtime/workers#creating-a-worker',
+  Workers: 'https://bun.com/docs/runtime/workers#creating-a-worker',
+  'creating-a-worker': 'https://bun.com/docs/runtime/workers#creating-a-worker',
+  'worker.postMessage': 'https://bun.com/docs/runtime/workers#messages-with-postmessage',
+  'messages-with-postmessage': 'https://bun.com/docs/runtime/workers#messages-with-postmessage',
+  'worker.terminate': 'https://bun.com/docs/runtime/workers#terminating-a-worker',
+  'terminating-a-worker': 'https://bun.com/docs/runtime/workers#terminating-a-worker',
+  'managing-lifetime': 'https://bun.com/docs/runtime/workers#managing-lifetime',
+  'worker.unref': 'https://bun.com/docs/runtime/workers#worker-unref',
+  'worker-unref': 'https://bun.com/docs/runtime/workers#worker-unref',
+  'worker.ref': 'https://bun.com/docs/runtime/workers#worker-ref',
+  'worker-ref': 'https://bun.com/docs/runtime/workers#worker-ref',
+  // Worker constructor options (distinct from bunfig smol / preload)
+  'Worker.preload':
+    'https://bun.com/docs/runtime/workers#preload-load-modules-before-the-worker-starts',
+  'Worker smol': 'https://bun.com/docs/runtime/workers#memory-usage-with-smol',
+  'memory-usage-with-smol': 'https://bun.com/docs/runtime/workers#memory-usage-with-smol',
+  'worker open': 'https://bun.com/docs/runtime/workers#open',
+  'worker close': 'https://bun.com/docs/runtime/workers#close',
+  'environment-data': 'https://bun.com/docs/runtime/workers#environment-data',
+  setEnvironmentData: 'https://bun.com/docs/runtime/workers#environment-data',
+  getEnvironmentData: 'https://bun.com/docs/runtime/workers#environment-data',
+  worker_threads: 'https://bun.com/docs/runtime/workers#environment-data',
+  'Bun.isMainThread': 'https://bun.com/docs/runtime/workers#bun-ismainthread',
+  // Compile-time worker entrypoints (standalone binaries) — keep distinct from runtime Worker API
+  'executables Worker': 'https://bun.com/docs/bundler/executables#worker',
+
   // ── Inspection & formatting (replaces util.inspect options, cli-table) ──
+  // Utils inspect family — #bun-inspect → .custom → .table(…)
   'Bun.inspect': bunDocs('runtime/utils', 'bun-inspect'),
+  'Bun.inspect()': bunDocs('runtime/utils', 'bun-inspect'),
   // Heading: Bun.inspect.custom (well-known symbol; ≡ util.inspect.custom)
   'Bun.inspect.custom': bunDocs('runtime/utils', 'bun-inspect-custom'),
   // Heading: Bun.inspect.table(tabularData, properties, options)
@@ -350,7 +418,14 @@ export const CANONICAL_REFS: Record<string, string> = {
   '--no-env-file':
     'https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading',
   'configuring Bun': 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
-  BUN_OPTIONS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
+  // Standalone executables: runtime flags without recompile (also listed under env-vars)
+  BUN_OPTIONS: 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options',
+  'runtime-arguments-via-bun_options':
+    'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options',
+  'Runtime arguments via BUN_OPTIONS':
+    'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options',
+  'embedding-runtime-arguments':
+    'https://bun.com/docs/bundler/executables#embedding-runtime-arguments',
   // Fetch performance knobs — locus is networking/fetch (env page only lists the names)
   BUN_CONFIG_VERBOSE_FETCH: bunDocs('runtime/networking/fetch', 'debugging'),
   BUN_CONFIG_MAX_HTTP_REQUESTS: bunDocs(

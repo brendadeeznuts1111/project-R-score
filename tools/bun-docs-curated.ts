@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
 // @see https://bun.com/docs/bundler/index#basic-example — Bun.build
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/redis#getting-started — Bun.redis
@@ -15,12 +17,28 @@
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
 // @see https://bun.com/docs/bundler — Bun.build
 // @see https://bun.com/docs/runtime/markdown — Bun.markdown
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-react — Bun.markdown.react
+// @see https://bun.com/docs/runtime/markdown#component-overrides — component-overrides
+// @see https://bun.com/docs/runtime/markdown#available-overrides — available-overrides
+// @see https://bun.com/docs/runtime/markdown#options — options
+// @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
+// @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
+// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options — BUN_OPTIONS
+// @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — --compile-exec-argv
+// @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
+// @see https://bun.com/docs/runtime/workers — Concurrency (Runtime nav group)
+// @see https://bun.com/docs/runtime/workers#creating-a-worker — Worker
+// @see https://bun.com/docs/runtime/workers#worker-ref — worker.ref
+// @see https://bun.com/docs/runtime/workers#worker-unref — worker.unref
+// @see https://bun.com/docs/runtime/workers#bun-ismainthread — Bun.isMainThread
+// @see https://bun.com/docs/pm/global-store#concurrency — install concurrency
 // @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
 // @see https://bun.com/docs/runtime/secrets — Bun.secrets
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/reference/bun/BunInspectOptions — BunInspectOptions
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
 // @see https://bun.com/docs/runtime/networking/udp — Bun.udpSocket
 // tools/bun-docs-curated.ts — Hot-path Bun doc entries (1.3.14+ aware)
@@ -31,7 +49,10 @@ export type CuratedEntry = {
   description: string;
   minVersion?: string;
   stability?: 'stable' | 'experimental';
+  /** Extra docs pages merged into allPages (path under docs/ or reference/). */
   related?: string[];
+  /** Prefer these catalog token names in `related` after page-peer seeding. */
+  relatedTokens?: string[];
 };
 
 export const CURATED_ENTRIES: CuratedEntry[] = [
@@ -122,15 +143,301 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'Bun.markdown',
-    path: 'runtime/markdown',
+    path: 'runtime/markdown#bun-markdown-html',
     description: 'Native Markdown rendering (html/ansi/render/react)',
     minVersion: '1.3.0',
+    relatedTokens: [
+      'Bun.markdown.html',
+      'Bun.markdown.ansi',
+      'Bun.markdown.render',
+      'Bun.markdown.react',
+      'options',
+    ],
+  },
+  {
+    term: 'Bun.markdown.html',
+    path: 'runtime/markdown#bun-markdown-html',
+    description: 'Render Markdown to an HTML string. Pass parser options as the second argument.',
+    minVersion: '1.3.0',
+    related: ['runtime/markdown#options'],
+    relatedTokens: ['options', 'Bun.markdown', 'Bun.markdown.render', 'Bun.markdown.react'],
   },
   {
     term: 'Bun.markdown.ansi',
-    path: 'runtime/markdown',
+    path: 'runtime/markdown#ansi-terminal-output',
     description: 'Markdown → ANSI for the terminal',
-    minVersion: '1.4.0',
+    minVersion: '1.3.12',
+    relatedTokens: ['Bun.markdown', 'Bun.markdown.render', 'Bun.markdown.react'],
+  },
+  {
+    term: 'Bun.markdown.render',
+    path: 'runtime/markdown#bun-markdown-render',
+    description:
+      'Render Markdown via callbacks. Pass parser options as a separate third argument (see parser-options).',
+    minVersion: '1.3.0',
+    related: ['runtime/markdown#parser-options', 'runtime/markdown#options'],
+    relatedTokens: [
+      'parser-options',
+      'options',
+      'Bun.markdown',
+      'Bun.markdown.html',
+      'Bun.markdown.react',
+    ],
+  },
+  {
+    term: 'Bun.markdown.react',
+    path: 'runtime/markdown#bun-markdown-react',
+    description:
+      'Render Markdown directly to React elements. Replace any HTML tag via component overrides (see available-overrides).',
+    minVersion: '1.3.8',
+    related: [
+      'runtime/markdown#component-overrides',
+      'runtime/markdown#available-overrides',
+      'runtime/markdown#parser-options-2',
+      'runtime/markdown#options',
+    ],
+    relatedTokens: [
+      'component-overrides',
+      'available-overrides',
+      'parser-options-2',
+      'options',
+      'Bun.markdown',
+      'Bun.markdown.html',
+      'Bun.markdown.render',
+    ],
+  },
+  {
+    term: 'component-overrides',
+    path: 'runtime/markdown#component-overrides',
+    description:
+      'Replace any HTML element with a custom React component by passing it in the second argument to Bun.markdown.react, keyed by tag name.',
+    minVersion: '1.3.8',
+    relatedTokens: ['available-overrides', 'Bun.markdown.react'],
+  },
+  {
+    term: 'available-overrides',
+    path: 'runtime/markdown#available-overrides',
+    description:
+      'Every HTML tag produced by the Bun.markdown.react parser can be overridden (h1–h6, p, pre, a, code, …).',
+    minVersion: '1.3.8',
+    relatedTokens: ['component-overrides', 'Bun.markdown.react'],
+  },
+  {
+    term: 'options',
+    path: 'runtime/markdown#options',
+    description:
+      'Pass an options object as the second argument to Bun.markdown.html to configure the parser (tables, autolinks, headings, …).',
+    minVersion: '1.3.0',
+    relatedTokens: [
+      'parser-options',
+      'parser-options-2',
+      'Bun.markdown.html',
+      'Bun.markdown.render',
+      'Bun.markdown.react',
+    ],
+  },
+  {
+    term: 'parser-options',
+    path: 'runtime/markdown#parser-options',
+    description:
+      'Pass parser options as a separate third argument to Bun.markdown.render (same option set as #options).',
+    minVersion: '1.3.0',
+    relatedTokens: ['options', 'parser-options-2', 'Bun.markdown.render'],
+  },
+  {
+    term: 'parser-options-2',
+    path: 'runtime/markdown#parser-options-2',
+    description:
+      'Pass any of the parser options (#options) as the third argument to Bun.markdown.react.',
+    minVersion: '1.3.8',
+    relatedTokens: ['options', 'parser-options', 'Bun.markdown.react'],
+  },
+  {
+    term: 'BUN_OPTIONS',
+    path: 'bundler/executables#runtime-arguments-via-bun_options',
+    description:
+      'Standalone executables read the BUN_OPTIONS environment variable, so you can pass runtime flags without recompiling.',
+    related: [
+      'bundler/executables#embedding-runtime-arguments',
+      'runtime/environment-variables#configuring-bun',
+    ],
+    relatedTokens: [
+      'runtime-arguments-via-bun_options',
+      'embedding-runtime-arguments',
+      '--compile-exec-argv',
+    ],
+  },
+  {
+    term: 'runtime-arguments-via-bun_options',
+    path: 'bundler/executables#runtime-arguments-via-bun_options',
+    description:
+      'Standalone executables read the BUN_OPTIONS environment variable, so you can pass runtime flags without recompiling.',
+    relatedTokens: ['BUN_OPTIONS', 'embedding-runtime-arguments', '--compile-exec-argv'],
+  },
+  {
+    term: 'embedding-runtime-arguments',
+    path: 'bundler/executables#embedding-runtime-arguments',
+    description:
+      'Embed runtime arguments with --compile-exec-argv / compile.execArgv, available at runtime in process.execArgv.',
+    relatedTokens: ['--compile-exec-argv', 'BUN_OPTIONS', 'runtime-arguments-via-bun_options'],
+  },
+  {
+    term: 'file-uploads',
+    path: 'guides/http/file-uploads#upload-files-via-http-using-formdata',
+    description:
+      'Upload files over HTTP with Bun using the FormData API — parse with req.formData() and persist with Bun.write().',
+    related: [
+      'runtime/file-io#writing-files-bun-write',
+      'runtime/http/server#basic-setup',
+      'runtime/file-io',
+    ],
+    relatedTokens: [
+      'Upload files via HTTP using FormData',
+      'req.formData',
+      'Bun.write',
+      'Bun.serve',
+      'Bun.file',
+    ],
+  },
+  {
+    term: 'Upload files via HTTP using FormData',
+    path: 'guides/http/file-uploads#upload-files-via-http-using-formdata',
+    description:
+      'Upload files over HTTP with Bun using the FormData API — parse with req.formData() and persist with Bun.write().',
+    relatedTokens: ['file-uploads', 'req.formData', 'Bun.write', 'Bun.serve'],
+  },
+  {
+    term: 'upload-files-via-http-using-formdata',
+    path: 'guides/http/file-uploads#upload-files-via-http-using-formdata',
+    description:
+      'Upload files over HTTP with Bun using the FormData API — parse with req.formData() and persist with Bun.write().',
+    relatedTokens: ['file-uploads', 'req.formData', 'Bun.write'],
+  },
+  {
+    term: 'req.formData',
+    path: 'guides/http/file-uploads#upload-files-via-http-using-formdata',
+    description:
+      'Parse an incoming multipart Request into FormData (await req.formData()), then read fields with .get().',
+    relatedTokens: ['file-uploads', 'Bun.write', 'Bun.serve'],
+  },
+  {
+    term: 'Concurrency',
+    path: 'runtime/workers',
+    description:
+      'Runtime docs nav group (Workers). Sidebar: after Networking / Redis clients, before Process & System. Distinct from pm/global-store install concurrency.',
+    related: ['runtime/workers#creating-a-worker', 'runtime/child-process', 'runtime/redis'],
+    relatedTokens: ['Workers', 'Worker', 'worker.ref', 'worker.unref', 'Bun.isMainThread'],
+  },
+  {
+    term: 'Runtime Concurrency',
+    path: 'runtime/workers',
+    description:
+      'Runtime docs nav group (Workers). Sidebar: after Networking / Redis clients, before Process & System.',
+    relatedTokens: ['Concurrency', 'Workers', 'Worker'],
+  },
+  {
+    term: 'global-store concurrency',
+    path: 'pm/global-store#concurrency',
+    description:
+      'Package install linker concurrency for the global virtual store (pm) — not the Runtime Workers nav group.',
+    relatedTokens: ['install concurrency', 'pm concurrency'],
+  },
+  {
+    term: 'install concurrency',
+    path: 'pm/global-store#concurrency',
+    description:
+      'Package install linker concurrency for the global virtual store (pm) — not the Runtime Workers nav group.',
+    relatedTokens: ['global-store concurrency', 'pm concurrency'],
+  },
+  {
+    term: 'pm concurrency',
+    path: 'pm/global-store#concurrency',
+    description:
+      'Package install linker concurrency for the global virtual store (pm) — not the Runtime Workers nav group.',
+    relatedTokens: ['global-store concurrency', 'install concurrency'],
+  },
+  {
+    term: 'Worker',
+    path: 'runtime/workers#creating-a-worker',
+    description:
+      'Create a worker thread with new Worker (global, like browsers). Share I/O with the main thread; communicate via postMessage.',
+    relatedTokens: [
+      'worker.ref',
+      'worker.unref',
+      'worker.terminate',
+      'worker.postMessage',
+      'Bun.isMainThread',
+    ],
+  },
+  {
+    term: 'Workers',
+    path: 'runtime/workers#creating-a-worker',
+    description:
+      "Bun's Workers API — create and communicate with a JavaScript instance on a separate thread while sharing I/O with the main thread.",
+    relatedTokens: ['Worker', 'worker.ref', 'worker.unref', 'Bun.isMainThread', 'Concurrency'],
+  },
+  {
+    term: 'worker.unref',
+    path: 'runtime/workers#worker-unref',
+    description:
+      "Stop a running worker from keeping the process alive. Decouples the worker's lifetime from the main process (≡ Node.js worker_threads). Not available in browsers.",
+    relatedTokens: ['worker.ref', 'Worker', 'managing-lifetime'],
+  },
+  {
+    term: 'worker.ref',
+    path: 'runtime/workers#worker-ref',
+    description:
+      'Keep the process alive until the Worker terminates. Workers are ref\'d by default; a ref\'d worker still needs something on its event loop (such as a "message" listener) to continue running. Not available in browsers.',
+    relatedTokens: ['worker.unref', 'Worker', 'managing-lifetime'],
+  },
+  {
+    term: 'managing-lifetime',
+    path: 'runtime/workers#managing-lifetime',
+    description:
+      'By default an active Worker keeps the main process alive. Use worker.unref() / worker.ref() (or Worker options.ref) to manage lifetime.',
+    relatedTokens: ['worker.ref', 'worker.unref', 'Worker'],
+  },
+  {
+    term: 'worker.terminate',
+    path: 'runtime/workers#terminating-a-worker',
+    description:
+      'Explicitly terminate a Worker. Workers also exit when their event loop has no work left (message listeners keep them alive).',
+    relatedTokens: ['Worker', 'worker.ref', 'worker.unref'],
+  },
+  {
+    term: 'worker.postMessage',
+    path: 'runtime/workers#messages-with-postmessage',
+    description:
+      'Send messages between main thread and worker via worker.postMessage / self.postMessage (structured clone; Bun has string fast paths).',
+    relatedTokens: ['Worker', 'worker.ref'],
+  },
+  {
+    term: 'Worker.preload',
+    path: 'runtime/workers#preload-load-modules-before-the-worker-starts',
+    description:
+      "Pass preload module specifiers in the Worker constructor options to load them before the worker's own code runs (like --preload).",
+    relatedTokens: ['Worker'],
+  },
+  {
+    term: 'Worker smol',
+    path: 'runtime/workers#memory-usage-with-smol',
+    description:
+      'Worker constructor option smol: true reduces memory usage at a cost of performance (distinct from bunfig smol).',
+    relatedTokens: ['Worker'],
+  },
+  {
+    term: 'Bun.isMainThread',
+    path: 'runtime/workers#bun-ismainthread',
+    description:
+      "Check Bun.isMainThread to tell whether you're on the main thread or inside a worker.",
+    relatedTokens: ['Worker', 'worker.ref'],
+  },
+  {
+    term: 'executables Worker',
+    path: 'bundler/executables#worker',
+    description:
+      'When compiling standalone executables, list worker files as additional entrypoints so new Worker(...) paths are bundled.',
+    relatedTokens: ['Worker', 'BUN_OPTIONS'],
   },
   {
     term: 'Bun.udpSocket',
@@ -179,31 +486,54 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   { term: 'ffi', path: 'runtime/ffi', description: 'Call native libraries from JavaScript' },
   {
     term: 'Bun.inspect',
-    path: 'runtime/utils',
-    description:
-      "Serialize a value to a string using Bun's console formatter (depth/colors/sorted)",
-    related: ['runtime/console'],
+    path: 'runtime/utils#bun-inspect',
+    description: 'Serializes an object to a string exactly as it would be printed by console.log',
+    related: ['runtime/console', 'reference/bun/BunInspectOptions'],
+    relatedTokens: [
+      'Bun.inspect.custom',
+      'Bun.inspect.table',
+      'BunInspectOptions',
+      '--console-depth',
+    ],
+  },
+  {
+    term: 'Bun.inspect()',
+    path: 'runtime/utils#bun-inspect',
+    description: 'Serializes an object to a string exactly as it would be printed by console.log',
+    related: ['runtime/console', 'reference/bun/BunInspectOptions'],
+    relatedTokens: ['Bun.inspect.custom', 'Bun.inspect.table', 'BunInspectOptions'],
   },
   {
     term: 'Bun.inspect.custom',
     path: 'runtime/utils#bun-inspect-custom',
     description:
-      'Well-known symbol for custom Bun.inspect serialization (identical to util.inspect.custom)',
-    related: ['runtime/utils'],
+      'The symbol Bun uses to implement Bun.inspect. Override it to customize how your objects are printed. It is identical to util.inspect.custom in Node.js.',
+    related: ['runtime/utils#bun-inspect'],
+    relatedTokens: ['Bun.inspect', 'Bun.inspect.table', 'BunInspectOptions'],
   },
   {
     term: 'Bun.inspect.table',
     path: 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
     description:
       'Bun.inspect.table(tabularData, properties, options) — format tabular data into a string (like console.table, returns a string)',
-    related: ['runtime/utils'],
+    related: ['runtime/utils#bun-inspect'],
+    relatedTokens: ['Bun.inspect', 'Bun.inspect.custom', 'BunInspectOptions'],
   },
   {
     term: 'Bun.inspect.table(tabularData, properties, options)',
     path: 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
     description:
       'Format tabular data into a string. Like console.table, except it returns a string rather than printing to the console.',
-    related: ['runtime/utils'],
+    related: ['runtime/utils#bun-inspect'],
+    relatedTokens: ['Bun.inspect', 'Bun.inspect.custom', 'BunInspectOptions'],
+  },
+  {
+    term: 'BunInspectOptions',
+    path: 'reference/bun/BunInspectOptions',
+    description:
+      'Options for Bun.inspect — colors, depth, sorted, compact (Node util.inspect extras are ignored)',
+    related: ['runtime/utils#bun-inspect', 'runtime/console'],
+    relatedTokens: ['Bun.inspect', 'Bun.inspect.custom', 'Bun.inspect.table', '--console-depth'],
   },
   // Env: Bun.env ≡ process.env (guide: guides/runtime/read-env). Prefer utils#bun-env over changelog dump.
   {
