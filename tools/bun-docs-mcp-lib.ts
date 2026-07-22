@@ -721,7 +721,7 @@ export async function fetchBlogPost(
   const slug = normalizeBlogSlug(slugOrUrl);
   const url = buildBlogUrl(slug);
   // Shared timeout/headers/ok via fetchPage; buffer once for article regex (streaming article later).
-  const res = await fetchPage(url, { userAgent: 'bun-docs-mcp/1.2' });
+  const res = await fetchPage(url, { timeoutMs: 15_000 });
   const html = await res.text();
   const post = await parseBlogPostFromHtml(html, slug, stripUrlFragment(url));
   post.content = truncateLines(post.content, opts.maxLines);

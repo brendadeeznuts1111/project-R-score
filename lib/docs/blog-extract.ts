@@ -24,7 +24,8 @@ export { fetchPage, stripUrlFragment, type FetchPageOptions } from './fetch-page
 export type OpenGraphTags = SocialMetadata;
 
 /**
- * Fetch `url` via fetchPage and extract social metadata (stream Response into rewriter).
+ * Live convenience: fetchPage → extractSocialMetadataFromResponse.
+ * Prefer the two-step form when you also need the HTML body.
  */
 export async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
   return fetchSocialMetadata(url);

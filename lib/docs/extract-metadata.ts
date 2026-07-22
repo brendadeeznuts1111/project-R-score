@@ -1,7 +1,8 @@
 /**
  * Social metadata extraction via HTMLRewriter (Open Graph, Twitter, fallbacks).
- * Offline path feeds static HTML through `transform(new Response(html))`.
- * Live path uses fetchPage then transform(Response).
+ *
+ * Live pipeline: fetchPage → extractSocialMetadataFromResponse (no prior .text()).
+ * Offline / fixtures: extractSocialMetadataFromHtml / new Response(html).
  *
  * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
  * @see https://bun.com/docs/runtime/html-rewriter
@@ -41,8 +42,10 @@ export function normalizeSocialKey(raw: string): keyof SocialMetadata | undefine
 }
 
 /**
- * Extract social metadata from an HTML response (guide shape).
+ * Extract social metadata from an already-fetched Response.
  * When `baseUrl` is set, relative `image` values are resolved against it.
+ *
+ * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
  */
 export async function extractSocialMetadataFromResponse(
   response: Response,
@@ -59,7 +62,6 @@ export async function extractSocialMetadataFromResponse(
   };
 
   const rewriter = new HTMLRewriter()
-    // Guide shape: property="og:…"
     .on('meta[property^="og:"]', {
       element(el) {
         applyOg(el.getAttribute('property'), el.getAttribute('content'));
@@ -109,7 +111,10 @@ export async function extractSocialMetadataFromResponse(
   return metadata;
 }
 
-/** Offline / fixture path — wrap HTML in a Response (no network). */
+/**
+ * Convenience for offline tests — accepts raw HTML.
+ * The live pipeline uses the Response variant to avoid buffering.
+ */
 export async function extractSocialMetadataFromHtml(
   html: string,
   baseUrl?: string
@@ -118,11 +123,13 @@ export async function extractSocialMetadataFromHtml(
 }
 
 /**
- * Live path: fetchPage → HTMLRewriter on Response (body not buffered first).
+ * Live convenience: fetchPage → extractSocialMetadataFromResponse.
+ * Prefer the two-step form at call sites when you also need the HTML body.
+ *
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  */
 export async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
   const cleaned = stripUrlFragment(url);
-  const response = await fetchPage(cleaned);
+  const response = await fetchPage(cleaned, { timeoutMs: 10_000 });
   return extractSocialMetadataFromResponse(response, cleaned);
 }

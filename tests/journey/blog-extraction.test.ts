@@ -12,7 +12,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   extractArticleText,
-  extractSocialMetadata,
+  extractSocialMetadataFromResponse,
   fetchPage,
   stripUrlFragment,
 } from '../../lib/docs/blog-extract.ts';
@@ -41,7 +41,7 @@ describe('blog-extraction journey', () => {
   });
 
   test(
-    'fetchPage + extractSocialMetadata yields title, description, image',
+    'fetchPage → extractSocialMetadataFromResponse yields title, description, image',
     async () => {
       const postUrl = hrefFromInit({
         ...CANONICAL_SOURCES.blog,
@@ -52,7 +52,8 @@ describe('blog-extraction journey', () => {
       expect(cleaned).not.toContain('#');
       expect(BunBlogPattern.test(cleaned)).toBe(true);
 
-      const meta = await extractSocialMetadata(postUrl);
+      const response = await fetchPage(postUrl, { timeoutMs: 10_000 });
+      const meta = await extractSocialMetadataFromResponse(response, cleaned);
       expect(meta.title?.length).toBeGreaterThan(0);
       expect(meta.description?.length).toBeGreaterThan(0);
       expect(meta.image?.startsWith('http')).toBe(true);
@@ -67,7 +68,7 @@ describe('blog-extraction journey', () => {
         ...CANONICAL_SOURCES.blog,
         pathname: `${CANONICAL_SOURCES.blog.pathname}/${SAMPLE_SLUG}`,
       });
-      const res = await fetchPage(postUrl);
+      const res = await fetchPage(postUrl, { timeoutMs: 10_000 });
       const html = await res.text();
       const text = await extractArticleText(html);
 
@@ -79,3 +80,4 @@ describe('blog-extraction journey', () => {
     { timeout: 20_000 }
   );
 });
+

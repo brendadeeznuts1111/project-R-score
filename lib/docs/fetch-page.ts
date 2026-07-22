@@ -1,30 +1,20 @@
 /**
- * Shared HTTP client for docs/blog page fetches — returns an untouched success Response
- * so callers can stream into HTMLRewriter (or read the body once).
+ * Obtain a Response for an HTML page (body unread on success).
  *
- * Locus: runtime/networking/fetch must-tier (request · headers · timeout · errors).
- * Deferred here: DNS prefetch/preconnect, proxy/unix/TLS/S3, POST bodies.
- *
+ * Anchors (primary locus for fetch):
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  * @see https://bun.com/docs/runtime/networking/fetch#custom-headers
  * @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout
  * @see https://bun.com/docs/runtime/networking/fetch#error-handling
- * @see https://bun.com/docs/runtime/networking/fetch#streaming-response-bodies
- * @see https://bun.com/docs/runtime/networking/fetch#debugging
  */
 
 const DEFAULT_TIMEOUT_MS = 15_000;
-const DEFAULT_USER_AGENT = 'factorywager-docs-fetch/1.0';
+const USER_AGENT = 'BunHarness/1.0 (blog ingestion)';
 
 export type FetchPageOptions = {
-  /** When set, used instead of AbortSignal.timeout(timeoutMs). */
   signal?: AbortSignal;
-  /** Default 15_000; ignored when `signal` is provided. */
+  /** Default 15_000. Combined with `signal` via AbortSignal.any when both set. */
   timeoutMs?: number;
-  headers?: HeadersInit;
-  userAgent?: string;
-  /** Bun extension: print request/response headers (`verbose: true` or `"curl"`). */
-  verbose?: boolean | 'curl';
 };
 
 /** Drop `#fragment` so fetch never sends a fragment to the server. */
@@ -34,34 +24,31 @@ export function stripUrlFragment(url: string): string {
   return u.href;
 }
 
+function resolveSignal(opts?: FetchPageOptions): AbortSignal {
+  const timeoutMs = opts?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  const timeout = AbortSignal.timeout(timeoutMs);
+  return opts?.signal ? AbortSignal.any([opts.signal, timeout]) : timeout;
+}
+
 /**
- * Fetch a page URL: strip fragment, set Accept/UA, timeout, throw on non-OK.
- * Success path returns the Response without consuming the body.
+ * Shared page fetch: strip fragment, Accept/UA, timeout, throw on non-OK.
+ * Success path returns the live Response — body is not consumed here.
  */
 export async function fetchPage(url: string, opts?: FetchPageOptions): Promise<Response> {
-  const cleaned = stripUrlFragment(url);
-  const signal = opts?.signal ?? AbortSignal.timeout(opts?.timeoutMs ?? DEFAULT_TIMEOUT_MS);
-  const userAgent = opts?.userAgent ?? DEFAULT_USER_AGENT;
-
-  const headers = new Headers(opts?.headers);
-  if (!headers.has('Accept')) headers.set('Accept', 'text/html');
-  if (!headers.has('User-Agent')) headers.set('User-Agent', userAgent);
-
-  const res = await fetch(cleaned, {
-    signal,
-    headers,
-    ...(opts?.verbose !== undefined ? { verbose: opts.verbose } : {}),
+  const cleanUrl = stripUrlFragment(url);
+  const response = await fetch(cleanUrl, {
+    signal: resolveSignal(opts),
+    headers: {
+      Accept: 'text/html',
+      'User-Agent': USER_AGENT,
+    },
   });
 
-  if (!res.ok) {
-    const detail = await res.text().catch(() => '');
-    const snippet = detail.replace(/\s+/g, ' ').trim().slice(0, 200);
-    throw new Error(
-      `fetchPage failed (${res.status} ${res.statusText}): ${cleaned}${
-        snippet ? ` — ${snippet}` : ''
-      }`
-    );
+  if (!response.ok) {
+    // Consume the body so the connection can be reused, then throw.
+    await response.text().catch(() => {});
+    throw new Error(`fetchPage ${response.status} for ${cleanUrl}`);
   }
 
-  return res;
+  return response;
 }
