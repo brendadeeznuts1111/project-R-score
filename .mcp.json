@@ -15,7 +15,12 @@
       ],
       "optional": [
         "ast-grep",
-        "github"
+        "github",
+        "cloudflare",
+        "cloudflare-docs",
+        "cloudflare-bindings",
+        "cloudflare-builds",
+        "cloudflare-observability"
       ],
       "requiresEnv": {
         "cascade-mover": [
@@ -27,7 +32,7 @@
   "mcpServers": {
     "bun-docs": {
       "type": "stdio",
-      "description": "Bun docs MCP v1.3 — lazy index, compact output, blog/RSS, rg query (zero npm deps)",
+      "description": "Bun docs MCP v1.3 \u2014 lazy index, compact output, blog/RSS, rg query (zero npm deps)",
       "command": "bun",
       "args": [
         "/Users/nolarose/Projects/tools/bun-docs-mcp.ts"
@@ -38,7 +43,7 @@
     },
     "dx": {
       "type": "stdio",
-      "description": "Developer Experience — project scan, health, README, Bun probes, mcp_status",
+      "description": "Developer Experience \u2014 project scan, health, README, Bun probes, mcp_status",
       "command": "bun",
       "args": [
         "/Users/nolarose/Projects/scripts/dx-mcp.ts"
@@ -50,7 +55,7 @@
     },
     "cascade-mover": {
       "type": "stdio",
-      "description": "Cascade Mover v3 — sports intelligence (lines, sources, confidence, 43 tools)",
+      "description": "Cascade Mover v3 \u2014 sports intelligence (lines, sources, confidence, 43 tools)",
       "command": "bun",
       "args": [
         "/Users/nolarose/Projects/projects/active/enterprise/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
@@ -62,7 +67,7 @@
     },
     "ast-grep": {
       "type": "stdio",
-      "description": "ast-grep 0.44+ — outline, structural search, map, scan (pi-ast-grep parity)",
+      "description": "ast-grep 0.44+ \u2014 outline, structural search, map, scan (pi-ast-grep parity)",
       "command": "bun",
       "args": [
         "/Users/nolarose/Projects/.agents/skills/ast-grep/mcp/ast-grep-mcp.ts"
@@ -75,6 +80,41 @@
       "type": "stdio",
       "description": "Official GitHub MCP (local binary; PAT via gh auth token; git remotes remain SSH)",
       "command": "/Users/nolarose/Projects/scripts/github-mcp-stdio.sh"
+    },
+    "cloudflare": {
+      "type": "http",
+      "url": "https://mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+      }
+    },
+    "cloudflare-docs": {
+      "type": "http",
+      "url": "https://docs.mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+      }
+    },
+    "cloudflare-bindings": {
+      "type": "http",
+      "url": "https://bindings.mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+      }
+    },
+    "cloudflare-builds": {
+      "type": "http",
+      "url": "https://builds.mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+      }
+    },
+    "cloudflare-observability": {
+      "type": "http",
+      "url": "https://observability.mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
+      }
     }
   }
 }
