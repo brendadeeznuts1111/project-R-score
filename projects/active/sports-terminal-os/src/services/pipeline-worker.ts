@@ -142,6 +142,7 @@ export class PipelineWorker {
     source: ImageEvidenceMeta;
     sha256: string;
     capturedAt: string;
+    ok: boolean;
     test003: Test003Response;
     evidence: ScreenshotEvidenceRecord;
   } | undefined {

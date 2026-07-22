@@ -8,6 +8,8 @@ import {
   DEFAULT_THUMB_MAX_WIDTH,
   extractImageEvidenceMeta,
   imageMetaChecksPassed,
+  isImageEvidenceMeta,
+  parseImageEvidenceMeta,
   resizeScreenshotPng,
   verifyImageEvidenceMeta,
 } from '../lib/image-metadata.ts';
@@ -74,6 +76,14 @@ describe('lib/image-metadata', () => {
     expect(checks.find(c => c.id === 'dimensions')?.ok).toBe(false);
     expect(imageMetaChecksPassed(checks)).toBe(false);
   });
+
+  test('isImageEvidenceMeta / parseImageEvidenceMeta guard wire payloads', async () => {
+    const meta = await extractImageEvidenceMeta(PNG_10);
+    expect(isImageEvidenceMeta(meta)).toBe(true);
+    expect(parseImageEvidenceMeta(meta)).toEqual(meta);
+    expect(isImageEvidenceMeta({ width: 0, height: 10 })).toBe(false);
+    expect(() => parseImageEvidenceMeta({ width: 10 })).toThrow(/Invalid ImageEvidenceMeta/);
+  });
 });
 
 describe('lib/screenshot-remediation TEST-003', () => {
@@ -126,5 +136,17 @@ describe('lib/screenshot-remediation TEST-003', () => {
     expect(result.ok).toBe(true);
     expect(result.thumbnailBytes.byteLength).toBeGreaterThan(0);
     expect(result.evidence.thumbnail.width).toBeLessThanOrEqual(DEFAULT_THUMB_MAX_WIDTH);
+  });
+
+  test('remediateScreenshotCapture honors dashboard 320×240 thumb bounds', async () => {
+    const result = await remediateScreenshotCapture(PNG_10, {
+      subject: 'dashboard',
+      thumbMaxWidth: 320,
+      thumbMaxHeight: 240,
+    });
+    expect(result.ok).toBe(true);
+    expect(result.remediation.message).toContain('320×240');
+    expect(result.evidence.thumbnail.width).toBeLessThanOrEqual(320);
+    expect(result.evidence.thumbnail.height).toBeLessThanOrEqual(240);
   });
 });

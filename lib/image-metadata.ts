@@ -53,8 +53,11 @@ export type ImageMetaExpectations = {
   digest?: string;
 };
 
+export const IMAGE_META_CHECK_IDS = ['format', 'dimensions', 'size', 'digest'] as const;
+export type ImageMetaCheckId = (typeof IMAGE_META_CHECK_IDS)[number];
+
 export type ImageMetaCheck = {
-  id: string; // brand-ok — opaque check key (format|dimensions|size|digest), not a domain *Id
+  id: ImageMetaCheckId;
   ok: boolean;
   expected?: string;
   actual?: string;
@@ -67,8 +70,39 @@ export type ResizeScreenshotOptions = {
   algorithm?: ImageDigestAlgorithm;
 };
 
+const DIGEST_ALGORITHMS = new Set<ImageDigestAlgorithm>(['sha256', 'sha3-256']);
+
 function toUint8(bytes: Uint8Array | Buffer | ArrayBuffer): Uint8Array {
   return bytes instanceof ArrayBuffer ? new Uint8Array(bytes) : bytes;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/** Type guard for {@link ImageEvidenceMeta} wire payloads. */
+export function isImageEvidenceMeta(value: unknown): value is ImageEvidenceMeta {
+  if (!isRecord(value)) return false;
+  if (typeof value.width !== 'number' || !(value.width > 0)) return false;
+  if (typeof value.height !== 'number' || !(value.height > 0)) return false;
+  if (typeof value.format !== 'string' || !value.format) return false;
+  if (typeof value.size !== 'number' || !(value.size > 0)) return false;
+  if (typeof value.digest !== 'string' || value.digest.length < 32) return false;
+  if (
+    typeof value.algorithm !== 'string' ||
+    !DIGEST_ALGORITHMS.has(value.algorithm as ImageDigestAlgorithm)
+  ) {
+    return false;
+  }
+  return true;
+}
+
+/** Parse wire `unknown` → {@link ImageEvidenceMeta} or throw. */
+export function parseImageEvidenceMeta(value: unknown): ImageEvidenceMeta {
+  if (!isImageEvidenceMeta(value)) {
+    throw new Error('Invalid ImageEvidenceMeta: structural validation failed');
+  }
+  return value;
 }
 
 /**
@@ -145,7 +179,7 @@ export function verifyImageEvidenceMeta(
   const sizeOk = meta.size >= minSize;
   const digestOk = expectations.digest ? meta.digest === expectations.digest : true;
 
-  return [
+  const checks: ImageMetaCheck[] = [
     {
       id: 'format',
       ok: formatOk,
@@ -179,6 +213,7 @@ export function verifyImageEvidenceMeta(
       message: digestOk ? 'digest ok' : 'digest mismatch',
     },
   ];
+  return checks;
 }
 
 export function imageEvidenceHeaders(meta: ImageEvidenceMeta): Record<string, string> {

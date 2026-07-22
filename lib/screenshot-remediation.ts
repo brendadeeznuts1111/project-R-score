@@ -35,7 +35,7 @@ export type ScreenshotEvidenceRecord = {
   team?: string;
   /** Metadata for the raw WebView screenshot. */
   source: ImageEvidenceMeta;
-  /** Metadata for the resized evidence image (400×300 PNG). */
+  /** Metadata for the resized evidence image (≤ thumb max PNG). */
   thumbnail: ImageEvidenceMeta;
   crop?: { x: number; y: number; w: number; h: number };
 };
@@ -56,15 +56,6 @@ export type Test003Response = {
   remediation: Test003Remediation;
 };
 
-const THUMB_EXPECTATIONS: ImageMetaExpectations = {
-  formats: ['png'],
-  maxWidth: DEFAULT_THUMB_MAX_WIDTH,
-  maxHeight: DEFAULT_THUMB_MAX_HEIGHT,
-  minSize: 32,
-};
-
-const RESIZE_CMD = `new Bun.Image(screenshot).resize(${DEFAULT_THUMB_MAX_WIDTH}, ${DEFAULT_THUMB_MAX_HEIGHT}, { fit: "inside", withoutEnlargement: true }).png()`;
-
 export type BuildScreenshotEvidenceOptions = {
   subject?: string;
   /** Alias for `subject` (sports-terminal team key). */
@@ -73,7 +64,25 @@ export type BuildScreenshotEvidenceOptions = {
   capturedAt?: string;
   /** Digest algorithm for source + thumbnail metadata. */
   algorithm?: ImageDigestAlgorithm;
+  /** Thumbnail resize bounds (default 400×300). */
+  thumbMaxWidth?: number;
+  thumbMaxHeight?: number;
+  /** Override TEST-003 verify expectations (defaults match thumb bounds + PNG). */
+  expectations?: ImageMetaExpectations;
 };
+
+function defaultExpectations(thumbMaxWidth: number, thumbMaxHeight: number): ImageMetaExpectations {
+  return {
+    formats: ['png'],
+    maxWidth: thumbMaxWidth,
+    maxHeight: thumbMaxHeight,
+    minSize: 32,
+  };
+}
+
+function resizeCommand(thumbMaxWidth: number, thumbMaxHeight: number): string {
+  return `new Bun.Image(screenshot).resize(${thumbMaxWidth}, ${thumbMaxHeight}, { fit: "inside", withoutEnlargement: true }).png()`;
+}
 
 /**
  * Build a screenshot evidence record from raw capture bytes.
@@ -85,9 +94,13 @@ export async function buildScreenshotEvidenceRecord(
 ): Promise<{ record: ScreenshotEvidenceRecord; thumbnailBytes: Uint8Array }> {
   const subject = options.subject ?? options.team;
   const algorithm = options.algorithm;
+  const thumbMaxWidth = options.thumbMaxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
+  const thumbMaxHeight = options.thumbMaxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
   const source = await extractImageEvidenceMeta(screenshotBytes, { algorithm });
   const { bytes: thumbnailBytes, meta: thumbnail } = await resizeScreenshotPng(screenshotBytes, {
     algorithm,
+    width: thumbMaxWidth,
+    height: thumbMaxHeight,
   });
 
   const record: ScreenshotEvidenceRecord = {
@@ -107,29 +120,36 @@ export async function buildScreenshotEvidenceRecord(
 /**
  * Run TEST-003 verification against an evidence record (thumbnail bounds/format).
  */
-export function runTest003(record: ScreenshotEvidenceRecord): Test003Response {
-  const checks = verifyImageEvidenceMeta(record.thumbnail, THUMB_EXPECTATIONS);
+export function runTest003(
+  record: ScreenshotEvidenceRecord,
+  expectations?: ImageMetaExpectations
+): Test003Response {
+  const maxW = expectations?.maxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
+  const maxH = expectations?.maxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
+  const resolved = expectations ?? defaultExpectations(maxW, maxH);
+  const checks = verifyImageEvidenceMeta(record.thumbnail, resolved);
   const ok = imageMetaChecksPassed(checks);
   const status = ok ? 'pass' : 'fail';
   const failed = checks.filter(c => !c.ok);
+  const cmd = resizeCommand(maxW, maxH);
 
   let remediation: Test003Remediation;
   if (ok) {
     remediation = {
       action: 'accept',
-      message: `Screenshot thumbnail metadata within TEST-003 bounds (≤${DEFAULT_THUMB_MAX_WIDTH}×${DEFAULT_THUMB_MAX_HEIGHT} PNG).`,
+      message: `Screenshot thumbnail metadata within TEST-003 bounds (≤${maxW}×${maxH} PNG).`,
     };
   } else if (failed.some(c => c.id === 'dimensions')) {
     remediation = {
       action: 'resize_fix',
-      message: `Thumbnail dimensions out of bounds (${record.thumbnail.width}×${record.thumbnail.height}). Re-encode with resize(${DEFAULT_THUMB_MAX_WIDTH}, ${DEFAULT_THUMB_MAX_HEIGHT}, { fit: "inside", withoutEnlargement: true }).`,
-      command: RESIZE_CMD,
+      message: `Thumbnail dimensions out of bounds (${record.thumbnail.width}×${record.thumbnail.height}). Re-encode with resize(${maxW}, ${maxH}, { fit: "inside", withoutEnlargement: true }).`,
+      command: cmd,
     };
   } else if (failed.some(c => c.id === 'format')) {
     remediation = {
       action: 'recapture',
       message: `Expected PNG evidence, got ${record.thumbnail.format}. Re-run capture through .png() encode.`,
-      command: `await ${RESIZE_CMD}.bytes()`,
+      command: `await ${cmd}.bytes()`,
     };
   } else {
     remediation = {
@@ -157,7 +177,10 @@ export async function remediateScreenshotCapture(
   screenshotBytes: Uint8Array | Buffer,
   options: BuildScreenshotEvidenceOptions = {}
 ): Promise<Test003Response & { thumbnailBytes: Uint8Array }> {
+  const thumbMaxWidth = options.thumbMaxWidth ?? DEFAULT_THUMB_MAX_WIDTH;
+  const thumbMaxHeight = options.thumbMaxHeight ?? DEFAULT_THUMB_MAX_HEIGHT;
   const { record, thumbnailBytes } = await buildScreenshotEvidenceRecord(screenshotBytes, options);
-  const result = runTest003(record);
+  const expectations = options.expectations ?? defaultExpectations(thumbMaxWidth, thumbMaxHeight);
+  const result = runTest003(record, expectations);
   return { ...result, thumbnailBytes };
 }
