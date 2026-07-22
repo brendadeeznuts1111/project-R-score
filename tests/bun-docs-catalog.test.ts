@@ -338,7 +338,7 @@ describe('frozen guide examples', () => {
     expect(guideExamplesForToken('parser-options')[0]?.body).toContain('autolinks: true');
     expect(guideExamplesForToken('parser-options-2')[0]?.body).toContain('headings: { ids: true }');
     expect(guideExamplesForToken('BUN_OPTIONS')[0]?.body).toContain('BUN_OPTIONS="--cpu-prof"');
-    expect(guideExamplesForToken('runtime-arguments-via-bun_options')[0]?.body).toContain(
+    expect(guideExamplesForToken('runtime-arguments-via-bun-options')[0]?.body).toContain(
       '--smol --cpu-prof-md'
     );
     expect(guideExamplesForToken('embedding-runtime-arguments')[0]?.body).toContain(
@@ -452,12 +452,12 @@ describe('inspect family catalog relations', () => {
       'headings: { ids: true }'
     );
     expect(byName.get('BUN_OPTIONS')?.docsUrl).toBe(
-      'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options'
+      'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options'
     );
     expect(byName.get('BUN_OPTIONS')?.description).toContain('without recompiling');
     expect(byName.get('BUN_OPTIONS')?.examples?.[0]?.body).toContain('BUN_OPTIONS="--cpu-prof"');
     expect(byName.get('BUN_OPTIONS')?.related?.slice(0, 2)).toEqual([
-      'runtime-arguments-via-bun_options',
+      'runtime-arguments-via-bun-options',
       'embedding-runtime-arguments',
     ]);
     expect(byName.get('file-uploads')?.docsUrl).toBe(
@@ -524,7 +524,7 @@ describe('inspect family catalog relations', () => {
       'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel'
     );
     expect(byName.get('bun run --parallel')?.docsUrl).toBe(
-      'https://bun.com/docs/cli/run#parallel-and-sequential-mode'
+      'https://bun.com/docs/pm/filter#parallel-and-sequential-mode'
     );
     expect(byName.get('bun run --parallel')?.releasedIn).toBe('1.3.9');
     expect(byName.get('bun run --parallel')?.examples?.[0]?.body).toContain(
@@ -535,7 +535,7 @@ describe('inspect family catalog relations', () => {
     );
     expect(byName.get('bun test flags')?.description).toContain('bun-test-flags-1.3.13.md');
     expect(byName.get('--parallel')?.examples?.[0]?.body).toContain(
-      'cli/run#parallel-and-sequential-mode'
+      'pm/filter#parallel-and-sequential-mode'
     );
     // SHA-3 (v1.3.13) — blog ship note; audit SSOT uses CryptoHasher('sha3-256')
     // normalizeName collapses sha3-256 ↔ SHA3-256 (display name prefers first CANONICAL key)

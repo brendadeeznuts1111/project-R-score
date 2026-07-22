@@ -1907,7 +1907,9 @@
       "url": "https://bun.com/docs/guides/util/file-url-to-path.md",
       "desc": "",
       "domain": "guides/util",
-      "anchors": []
+      "anchors": [
+        "convert-a-file-url-to-an-absolute-path"
+      ]
     },
     {
       "section": "Docs",
@@ -1931,7 +1933,9 @@
       "url": "https://bun.com/docs/guides/util/import-meta-dir.md",
       "desc": "",
       "domain": "guides/util",
-      "anchors": []
+      "anchors": [
+        "get-the-directory-of-the-current-file"
+      ]
     },
     {
       "section": "Docs",
@@ -1971,7 +1975,9 @@
       "url": "https://bun.com/docs/guides/util/path-to-file-url.md",
       "desc": "",
       "domain": "guides/util",
-      "anchors": []
+      "anchors": [
+        "convert-an-absolute-path-to-a-file-url"
+      ]
     },
     {
       "section": "Docs",
@@ -2010,7 +2016,9 @@
       "url": "https://bun.com/docs/guides/util/which-path-to-executable-bin.md",
       "desc": "",
       "domain": "guides/util",
-      "anchors": []
+      "anchors": [
+        "get-the-path-to-an-executable-bin-file"
+      ]
     },
     {
       "section": "Docs",
@@ -4336,7 +4344,7 @@
       "section": "Docs",
       "title": "WebView",
       "url": "https://bun.com/docs/runtime/webview.md",
-      "desc": "Control a headless browser from Bun for automation, testing, and scraping — zero dependencies on macOS, Chrome DevTools Protocol everywhere else",
+      "desc": "Control a headless browser from Bun for automation, testing, and scraping \u2014 zero dependencies on macOS, Chrome DevTools Protocol everywhere else",
       "domain": "runtime/webview",
       "anchors": [
         "creating-a-view",

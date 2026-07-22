@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-22T03:42:32.765Z",
+  "generated": "2026-07-22T12:51:34.247Z",
   "bunVersion": "1.4.0",
   "releaseUrl": "https://github.com/oven-sh/bun/releases",
   "blogUrl": "",
@@ -45,12 +45,12 @@
     "guides"
   ],
   "count": 1056,
-  "withReleasedIn": 244,
+  "withReleasedIn": 239,
   "withFixedIn": 102,
-  "withChangeNote": 61,
-  "withBlogUrl": 258,
+  "withChangeNote": 54,
+  "withBlogUrl": 251,
   "withDescription": 849,
-  "withReleasedInCount": 244,
+  "withReleasedInCount": 239,
   "byType": {
     "cli-flag": 179,
     "concept": 563,
@@ -62,11 +62,11 @@
     "package-json-key": 4
   },
   "bySection": {
-    "runtime": 457,
+    "runtime": 456,
     "bundler": 147,
     "test": 34,
     "guides": 216,
-    "pm": 130,
+    "pm": 131,
     "reference": 11,
     "other": 61
   },
@@ -2468,55 +2468,25 @@
       "canonicalPage": "https://bun.com/docs/cli/run",
       "anchor": "parallel-and-sequential-mode",
       "allPages": [
-        "https://bun.com/docs/cli/run"
+        "https://bun.com/docs/cli/run",
+        "https://bun.com/docs/pm/filter"
       ],
       "section": "runtime",
-      "examples": [
-        {
-          "lang": "bash",
-          "body": "# Workspace / package.json scripts (Foreman-style) — NOT bun test workers\nbun run --parallel build test\nbun run --sequential build test\nbun run --parallel --filter '*' lint\nbun run --parallel --workspaces --if-present build",
-          "fragment": "parallel-and-sequential-mode"
-        }
-      ],
       "changeNote": "bun run --parallel: Foreman-style parallel package.json scripts (prefixed output, --filter/--workspaces). Canonical: cli/run#parallel-and-sequential-mode. ≠ bun test --parallel (test-file workers; blog v1.3.13).",
       "blogUrl": "https://bun.com/blog/bun-v1.3.9",
       "locusUnresolved": false,
-      "locusStatus": "coincidence",
+      "locusStatus": "fragment",
       "related": [
         "bun test --parallel",
         "--parallel",
+        "--filter",
+        "--no-exit-on-error",
+        "--sequential",
+        "--workspaces",
         "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/cli/run#parallel-and-sequential-mode",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.9"
-    },
-    {
-      "name": "bun run --sequential",
-      "type": "cli-flag",
-      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
-      "stability": "stable",
-      "lastUpdated": "2026-07-22T01:54:32.781Z",
-      "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/cli/run",
-      "anchor": "parallel-and-sequential-mode",
-      "allPages": [
-        "https://bun.com/docs/cli/run"
-      ],
-      "section": "runtime",
-      "examples": [
-        {
-          "lang": "bash",
-          "body": "# Workspace / package.json scripts (Foreman-style) — NOT bun test workers\nbun run --parallel build test\nbun run --sequential build test\nbun run --parallel --filter '*' lint\nbun run --parallel --workspaces --if-present build",
-          "fragment": "parallel-and-sequential-mode"
-        }
-      ],
-      "locusUnresolved": false,
-      "locusStatus": "coincidence",
-      "related": [
-        "bun run --parallel"
-      ],
-      "docsUrl": "https://bun.com/docs/cli/run#parallel-and-sequential-mode",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "Bun Runtime",
@@ -2897,7 +2867,7 @@
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/docs/bundler/executables",
-      "anchor": "runtime-arguments-via-bun_options",
+      "anchor": "runtime-arguments-via-bun-options",
       "allPages": [
         "https://bun.com/docs/bundler/executables",
         "https://bun.com/docs/runtime/environment-variables"
@@ -2907,14 +2877,14 @@
         {
           "lang": "bash",
           "body": "# Enable CPU profiling on a compiled executable\nBUN_OPTIONS=\"--cpu-prof\" ./myapp\n\n# Enable heap profiling with markdown output\nBUN_OPTIONS=\"--heap-prof-md\" ./myapp\n\n# Combine multiple flags\nBUN_OPTIONS=\"--smol --cpu-prof-md\" ./myapp",
-          "fragment": "runtime-arguments-via-bun_options"
+          "fragment": "runtime-arguments-via-bun-options"
         }
       ],
       "fixedIn": "1.3.7",
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
-        "runtime-arguments-via-bun_options",
+        "runtime-arguments-via-bun-options",
         "embedding-runtime-arguments",
         "--compile-exec-argv",
         "--force",
@@ -2922,7 +2892,7 @@
         "--compile-autoload-package-json",
         "--compile-autoload-tsconfig"
       ],
-      "docsUrl": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options",
+      "docsUrl": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.15",
       "blogUrl": "https://bun.com/blog/bun-v1.2.15"
     },
@@ -8813,14 +8783,14 @@
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
-      "name": "http/3-quic",
+      "name": "http-3-quic",
       "type": "concept",
       "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/docs/runtime/http/server",
-      "anchor": "http/3-quic",
+      "anchor": "http-3-quic",
       "allPages": [
         "https://bun.com/docs/runtime/http/server"
       ],
@@ -8829,15 +8799,15 @@
         {
           "lang": "ts",
           "body": "Bun.serve({\n  tls: {\n    key: Bun.file(\"./key.pem\"),\n    cert: Bun.file(\"./cert.pem\"),\n  },\n  http3: true,\n  fetch(req) {\n    return new Response(\"Hello over HTTP/3!\");\n  },\n});",
-          "fragment": "http/3-quic"
+          "fragment": "http-3-quic"
         },
         {
           "lang": "ts",
           "body": "Bun.serve({\n  tls: {\n    key: Bun.file(\"./key.pem\"),\n    cert: Bun.file(\"./cert.pem\"),\n  },\n  http3: true,\n  http1: false,\n  fetch(req) {\n    return new Response(\"HTTP/3 only\");\n  },\n});",
-          "fragment": "http/3-quic"
+          "fragment": "http-3-quic"
         }
       ],
-      "docsUrl": "https://bun.com/docs/runtime/http/server#http/3-quic",
+      "docsUrl": "https://bun.com/docs/runtime/http/server#http-3-quic",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
@@ -8848,7 +8818,7 @@
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/docs/runtime/http/server",
-      "anchor": "http/3-quic",
+      "anchor": "http-3-quic",
       "allPages": [
         "https://bun.com/docs/runtime/http/server"
       ],
@@ -8857,15 +8827,15 @@
         {
           "lang": "ts",
           "body": "Bun.serve({\n  tls: {\n    key: Bun.file(\"./key.pem\"),\n    cert: Bun.file(\"./cert.pem\"),\n  },\n  http3: true,\n  fetch(req) {\n    return new Response(\"Hello over HTTP/3!\");\n  },\n});",
-          "fragment": "http/3-quic"
+          "fragment": "http-3-quic"
         },
         {
           "lang": "ts",
           "body": "Bun.serve({\n  tls: {\n    key: Bun.file(\"./key.pem\"),\n    cert: Bun.file(\"./cert.pem\"),\n  },\n  http3: true,\n  http1: false,\n  fetch(req) {\n    return new Response(\"HTTP/3 only\");\n  },\n});",
-          "fragment": "http/3-quic"
+          "fragment": "http-3-quic"
         }
       ],
-      "docsUrl": "https://bun.com/docs/runtime/http/server#http/3-quic",
+      "docsUrl": "https://bun.com/docs/runtime/http/server#http-3-quic",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
@@ -8886,12 +8856,12 @@
         {
           "lang": "ts",
           "body": "Bun.serve({\n  tls: {\n    key: Bun.file(\"./key.pem\"),\n    cert: Bun.file(\"./cert.pem\"),\n  },\n  http3: true,\n  fetch(req) {\n    return new Response(\"Hello over HTTP/3!\");\n  },\n});",
-          "fragment": "http/3-quic"
+          "fragment": "http-3-quic"
         },
         {
           "lang": "ts",
           "body": "Bun.serve({\n  tls: {\n    key: Bun.file(\"./key.pem\"),\n    cert: Bun.file(\"./cert.pem\"),\n  },\n  http3: true,\n  http1: false,\n  fetch(req) {\n    return new Response(\"HTTP/3 only\");\n  },\n});",
-          "fragment": "http/3-quic"
+          "fragment": "http-3-quic"
         }
       ],
       "changeNote": "Experimental HTTP/3 (QUIC) in Bun.serve",
@@ -15129,8 +15099,7 @@
       ],
       "related": [
         "--compile-exec-argv",
-        "BUN_OPTIONS",
-        "runtime-arguments-via-bun_options"
+        "BUN_OPTIONS"
       ],
       "locusUnresolved": false,
       "docsUrl": "https://bun.com/docs/bundler/executables#embedding-runtime-arguments",
@@ -16259,7 +16228,7 @@
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/docs/bundler/executables",
-      "anchor": "runtime-arguments-via-bun_options",
+      "anchor": "runtime-arguments-via-bun-options",
       "allPages": [
         "https://bun.com/docs/bundler/executables"
       ],
@@ -16268,21 +16237,21 @@
         {
           "lang": "bash",
           "body": "# Enable CPU profiling on a compiled executable\nBUN_OPTIONS=\"--cpu-prof\" ./myapp\n\n# Enable heap profiling with markdown output\nBUN_OPTIONS=\"--heap-prof-md\" ./myapp\n\n# Combine multiple flags\nBUN_OPTIONS=\"--smol --cpu-prof-md\" ./myapp",
-          "fragment": "runtime-arguments-via-bun_options"
+          "fragment": "runtime-arguments-via-bun-options"
         }
       ],
-      "docsUrl": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options",
+      "docsUrl": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
-      "name": "runtime-arguments-via-bun_options",
+      "name": "runtime-arguments-via-bun-options",
       "type": "concept",
       "description": "Standalone executables read the BUN_OPTIONS environment variable, so you can pass runtime flags without recompiling.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/docs/bundler/executables",
-      "anchor": "runtime-arguments-via-bun_options",
+      "anchor": "runtime-arguments-via-bun-options",
       "allPages": [
         "https://bun.com/docs/bundler/executables"
       ],
@@ -16291,7 +16260,7 @@
         {
           "lang": "bash",
           "body": "# Enable CPU profiling on a compiled executable\nBUN_OPTIONS=\"--cpu-prof\" ./myapp\n\n# Enable heap profiling with markdown output\nBUN_OPTIONS=\"--heap-prof-md\" ./myapp\n\n# Combine multiple flags\nBUN_OPTIONS=\"--smol --cpu-prof-md\" ./myapp",
-          "fragment": "runtime-arguments-via-bun_options"
+          "fragment": "runtime-arguments-via-bun-options"
         }
       ],
       "related": [
@@ -16300,7 +16269,7 @@
         "--compile-exec-argv"
       ],
       "locusUnresolved": false,
-      "docsUrl": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options",
+      "docsUrl": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
@@ -21315,9 +21284,11 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
+        "bun run --parallel",
         "--no-exit-on-error",
         "--sequential",
-        "--workspaces"
+        "--workspaces",
+        "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#package-name-filter-pattern",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.1.4",
@@ -21800,9 +21771,11 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
+        "bun run --parallel",
         "--filter",
         "--sequential",
-        "--workspaces"
+        "--workspaces",
+        "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.9",
@@ -22426,9 +22399,11 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
+        "bun run --parallel",
         "--filter",
         "--no-exit-on-error",
-        "--workspaces"
+        "--workspaces",
+        "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.9",
@@ -22692,9 +22667,11 @@
       "locusUnresolved": false,
       "locusStatus": "fragment",
       "related": [
+        "bun run --parallel",
         "--filter",
         "--no-exit-on-error",
-        "--sequential"
+        "--sequential",
+        "bun run --sequential"
       ],
       "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.22",
@@ -22930,6 +22907,31 @@
       ],
       "section": "pm",
       "docsUrl": "https://bun.com/docs/pm/cli/remove",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
+    },
+    {
+      "name": "bun run --sequential",
+      "type": "cli-flag",
+      "description": "Select packages by pattern in a monorepo using the —filter flag",
+      "stability": "stable",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/docs/pm/filter",
+      "anchor": "parallel-and-sequential-mode",
+      "allPages": [
+        "https://bun.com/docs/pm/filter"
+      ],
+      "section": "pm",
+      "locusUnresolved": false,
+      "locusStatus": "fragment",
+      "related": [
+        "bun run --parallel",
+        "--filter",
+        "--no-exit-on-error",
+        "--sequential",
+        "--workspaces"
+      ],
+      "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
@@ -25520,7 +25522,6 @@
       "type": "concept",
       "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
-      "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.4",
@@ -25546,10 +25547,8 @@
           "fragment": "urlpattern-api"
         }
       ],
-      "changeNote": "Native URLPattern (WHATWG); test/exec/properties/hasRegExpGroups; 408 WPT pass",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
       "docsUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.4"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "JEST_WORKER_ID",
@@ -25843,7 +25842,6 @@
       "type": "api",
       "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
-      "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.4",
@@ -25869,9 +25867,6 @@
           "fragment": "urlpattern-api"
         }
       ],
-      "changedIn": "1.3.12",
-      "changeNote": "URLPattern.test/exec up to 2.3× faster (direct regex engine, fewer GC allocs)",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
       "locusUnresolved": false,
       "locusStatus": "coincidence",
       "related": [
@@ -25880,14 +25875,13 @@
         "URLPatternResult"
       ],
       "docsUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.4"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "URLPattern API",
       "type": "concept",
       "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
-      "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.4",
@@ -25913,10 +25907,8 @@
           "fragment": "urlpattern-api"
         }
       ],
-      "changeNote": "Native URLPattern (WHATWG); test/exec/properties/hasRegExpGroups; 408 WPT pass",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
       "docsUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.4"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "URLPattern perf",
@@ -25946,7 +25938,6 @@
       "type": "concept",
       "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
-      "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.4",
@@ -25972,10 +25963,8 @@
           "fragment": "urlpattern-api"
         }
       ],
-      "changeNote": "Native URLPattern (WHATWG); test/exec/properties/hasRegExpGroups; 408 WPT pass",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
       "docsUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.4"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "urlpattern-api",
@@ -26086,11 +26075,8 @@
           "fragment": "urlpattern-is-up-to-2-3x-faster"
         }
       ],
-      "changedIn": "1.3.12",
-      "changeNote": "URLPattern.test/exec up to 2.3× faster (direct regex engine, fewer GC allocs)",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster",
       "docsUrl": "https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.12"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "URLPattern.exec()",
@@ -26409,11 +26395,8 @@
           "fragment": "urlpattern-is-up-to-2-3x-faster"
         }
       ],
-      "changedIn": "1.3.12",
-      "changeNote": "URLPattern.test/exec up to 2.3× faster (direct regex engine, fewer GC allocs)",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster",
       "docsUrl": "https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.12"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "URLPattern.test()",
@@ -26486,7 +26469,6 @@
       "type": "api",
       "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
-      "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.4",
@@ -26512,8 +26494,6 @@
           "fragment": "urlpattern-api"
         }
       ],
-      "changeNote": "Native URLPattern (WHATWG); test/exec/properties/hasRegExpGroups; 408 WPT pass",
-      "blogUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
       "locusUnresolved": false,
       "locusStatus": "coincidence",
       "related": [
@@ -26522,7 +26502,7 @@
         "URLPatternResult"
       ],
       "docsUrl": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.4"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
       "name": "URLPatternInput",

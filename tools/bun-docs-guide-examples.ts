@@ -28,7 +28,7 @@
 // @see https://bun.com/docs/runtime/markdown#options — options
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
 // @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
-// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options — BUN_OPTIONS
+// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — BUN_OPTIONS
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — embedding-runtime-arguments
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — Worker
@@ -219,7 +219,7 @@ export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
       body: 'Bun.serve({\n  unix: "\\0my-abstract-socket", // abstract namespace socket\n  fetch(req) {\n    return new Response(`404!`);\n  },\n});',
     },
   ],
-  'runtime/http/server#http/3-quic': [
+  'runtime/http/server#http-3-quic': [
     {
       lang: 'ts',
       body: 'Bun.serve({\n  tls: {\n    key: Bun.file("./key.pem"),\n    cert: Bun.file("./cert.pem"),\n  },\n  http3: true,\n  fetch(req) {\n    return new Response("Hello over HTTP/3!");\n  },\n});',
@@ -490,7 +490,7 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
     },
   ],
   // Official docs — Runtime arguments via BUN_OPTIONS (standalone executables)
-  'bundler/executables#runtime-arguments-via-bun_options': [
+  'bundler/executables#runtime-arguments-via-bun-options': [
     {
       lang: 'bash',
       body: '# Enable CPU profiling on a compiled executable\nBUN_OPTIONS="--cpu-prof" ./myapp\n\n# Enable heap profiling with markdown output\nBUN_OPTIONS="--heap-prof-md" ./myapp\n\n# Combine multiple flags\nBUN_OPTIONS="--smol --cpu-prof-md" ./myapp',
@@ -753,9 +753,9 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'unix-domain-sockets': 'runtime/http/server#unix-domain-sockets',
   'Bun.serve unix': 'runtime/http/server#unix-domain-sockets',
   'abstract-namespace-sockets': 'runtime/http/server#abstract-namespace-sockets',
-  'http/3-quic': 'runtime/http/server#http/3-quic',
-  http3: 'runtime/http/server#http/3-quic',
-  'http1: false': 'runtime/http/server#http/3-quic',
+  'http-3-quic': 'runtime/http/server#http-3-quic',
+  http3: 'runtime/http/server#http-3-quic',
+  'http1: false': 'runtime/http/server#http-3-quic',
   idleTimeout: 'runtime/http/server#idletimeout',
   idletimeout: 'runtime/http/server#idletimeout',
   'export-default-syntax': 'runtime/http/server#export-default-syntax',
@@ -818,9 +818,9 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.markdown.render parser options': 'runtime/markdown#parser-options',
   'parser-options-2': 'runtime/markdown#parser-options-2',
   'Bun.markdown.react parser options': 'runtime/markdown#parser-options-2',
-  BUN_OPTIONS: 'bundler/executables#runtime-arguments-via-bun_options',
-  'runtime-arguments-via-bun_options': 'bundler/executables#runtime-arguments-via-bun_options',
-  'Runtime arguments via BUN_OPTIONS': 'bundler/executables#runtime-arguments-via-bun_options',
+  BUN_OPTIONS: 'bundler/executables#runtime-arguments-via-bun-options',
+  'runtime-arguments-via-bun-options': 'bundler/executables#runtime-arguments-via-bun-options',
+  'Runtime arguments via BUN_OPTIONS': 'bundler/executables#runtime-arguments-via-bun-options',
   'embedding-runtime-arguments': 'bundler/executables#embedding-runtime-arguments',
   '--compile-exec-argv': 'bundler/executables#embedding-runtime-arguments',
   'file-uploads': 'guides/http/file-uploads#upload-files-via-http-using-formdata',
@@ -873,9 +873,9 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'sha3-512': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
   'crypto.createHash("sha3-256")': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
   'crypto.subtle.digest("SHA3-256")': 'blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto',
-  'bun run --parallel': 'cli/run#parallel-and-sequential-mode',
-  'bun run --sequential': 'cli/run#parallel-and-sequential-mode',
-  'parallel-and-sequential-mode': 'cli/run#parallel-and-sequential-mode',
+  'bun run --parallel': 'pm/filter#parallel-and-sequential-mode',
+  'bun run --sequential': 'pm/filter#parallel-and-sequential-mode',
+  'parallel-and-sequential-mode': 'pm/filter#parallel-and-sequential-mode',
   'executables Worker': 'bundler/executables#worker',
   'Bun.pathToFileURL': 'runtime/utils#bun-pathtofileurl',
   'Bun.fileURLToPath': 'runtime/utils#bun-fileurltopath',

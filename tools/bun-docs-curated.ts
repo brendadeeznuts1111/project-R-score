@@ -28,7 +28,7 @@
 // @see https://bun.com/docs/runtime/markdown#options — options
 // @see https://bun.com/docs/runtime/markdown#parser-options — parser-options
 // @see https://bun.com/docs/runtime/markdown#parser-options-2 — parser-options-2
-// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options — BUN_OPTIONS
+// @see https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options — BUN_OPTIONS
 // @see https://bun.com/docs/bundler/executables#embedding-runtime-arguments — --compile-exec-argv
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — file-uploads
 // @see https://bun.com/docs/runtime/workers — Concurrency (Runtime nav group)
@@ -526,7 +526,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   },
   {
     term: 'BUN_OPTIONS',
-    path: 'bundler/executables#runtime-arguments-via-bun_options',
+    path: 'bundler/executables#runtime-arguments-via-bun-options',
     description:
       'Standalone executables read the BUN_OPTIONS environment variable, so you can pass runtime flags without recompiling.',
     related: [
@@ -534,14 +534,14 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime/environment-variables#configuring-bun',
     ],
     relatedTokens: [
-      'runtime-arguments-via-bun_options',
+      'runtime-arguments-via-bun-options',
       'embedding-runtime-arguments',
       '--compile-exec-argv',
     ],
   },
   {
-    term: 'runtime-arguments-via-bun_options',
-    path: 'bundler/executables#runtime-arguments-via-bun_options',
+    term: 'runtime-arguments-via-bun-options',
+    path: 'bundler/executables#runtime-arguments-via-bun-options',
     description:
       'Standalone executables read the BUN_OPTIONS environment variable, so you can pass runtime flags without recompiling.',
     relatedTokens: ['BUN_OPTIONS', 'embedding-runtime-arguments', '--compile-exec-argv'],
@@ -551,7 +551,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     path: 'bundler/executables#embedding-runtime-arguments',
     description:
       'Embed runtime arguments with --compile-exec-argv / compile.execArgv, available at runtime in process.execArgv.',
-    relatedTokens: ['--compile-exec-argv', 'BUN_OPTIONS', 'runtime-arguments-via-bun_options'],
+    relatedTokens: ['--compile-exec-argv', 'BUN_OPTIONS', 'runtime-arguments-via-bun-options'],
   },
   {
     term: 'file-uploads',

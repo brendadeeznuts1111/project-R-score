@@ -144,9 +144,9 @@ export const CANONICAL_REFS: Record<string, string> = {
   'unix-domain-sockets': bunDocs('runtime/http/server', 'unix-domain-sockets'),
   'Bun.serve unix': bunDocs('runtime/http/server', 'unix-domain-sockets'),
   'abstract-namespace-sockets': bunDocs('runtime/http/server', 'abstract-namespace-sockets'),
-  'http/3-quic': bunDocs('runtime/http/server', 'http/3-quic'),
-  http3: bunDocs('runtime/http/server', 'http/3-quic'),
-  'http1: false': bunDocs('runtime/http/server', 'http/3-quic'),
+  'http-3-quic': bunDocs('runtime/http/server', 'http-3-quic'),
+  http3: bunDocs('runtime/http/server', 'http-3-quic'),
+  'http1: false': bunDocs('runtime/http/server', 'http-3-quic'),
   idleTimeout: bunDocs('runtime/http/server', 'idletimeout'),
   idletimeout: bunDocs('runtime/http/server', 'idletimeout'),
   'export-default-syntax': bunDocs('runtime/http/server', 'export-default-syntax'),
@@ -441,11 +441,11 @@ export const CANONICAL_REFS: Record<string, string> = {
     'https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading',
   'configuring Bun': 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   // Standalone executables: runtime flags without recompile (also listed under env-vars)
-  BUN_OPTIONS: 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options',
-  'runtime-arguments-via-bun_options':
-    'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options',
+  BUN_OPTIONS: 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
+  'runtime-arguments-via-bun-options':
+    'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
   'Runtime arguments via BUN_OPTIONS':
-    'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun_options',
+    'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
   'embedding-runtime-arguments':
     'https://bun.com/docs/bundler/executables#embedding-runtime-arguments',
   // Fetch performance knobs — locus is networking/fetch (env page only lists the names)
@@ -568,8 +568,8 @@ export const CANONICAL_REFS: Record<string, string> = {
     'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
   '--shard=M/N':
     'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
-  'bun run --parallel': 'https://bun.com/docs/cli/run#parallel-and-sequential-mode',
-  'bun run --sequential': 'https://bun.com/docs/cli/run#parallel-and-sequential-mode',
+  'bun run --parallel': 'https://bun.com/docs/pm/filter#parallel-and-sequential-mode',
+  'bun run --sequential': 'https://bun.com/docs/pm/filter#parallel-and-sequential-mode',
   'bun test flags': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
   // Worker env vars set by bun test --parallel (blog ship note)
   JEST_WORKER_ID: 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
@@ -753,6 +753,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.Glob': 'https://bun.com/docs/runtime/glob#quickstart',
   'Bun.which': 'https://bun.com/docs/runtime/utils#bun-which',
   // Guides (llms.txt) — how-to + frozen fences in bun-docs-guide-examples.ts
+  // NOTE: guides/util pages are JS-rendered; anchors verified manually against live bun.com
   'Get the path to an executable bin file':
     'https://bun.com/docs/guides/util/which-path-to-executable-bin#get-the-path-to-an-executable-bin-file',
   'which-path-to-executable-bin':
