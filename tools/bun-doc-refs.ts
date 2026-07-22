@@ -1341,7 +1341,26 @@ async function suggestAudit(query: string, opts?: { json?: boolean }): Promise<b
     './audit-catalog.ts'
   );
   const { resolveAuditAlias } = await import('../lib/audit/audit-refs.ts');
-  const catalog = await loadAuditCatalog();
+  let catalog: Awaited<ReturnType<typeof loadAuditCatalog>>;
+  try {
+    catalog = await loadAuditCatalog();
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (opts?.json) {
+      console.info(
+        JSON.stringify({
+          ok: false,
+          query,
+          error: msg,
+          repair: 'bun run audit:catalog:build',
+        })
+      );
+    } else {
+      console.error(`❌ audit catalog load failed: ${msg}`);
+      console.error('   repair: bun run audit:catalog:build');
+    }
+    process.exit(1);
+  }
   const alias = resolveAuditAlias(query);
   const hits = searchAuditCatalog(catalog, query);
   if (hits.length === 0) {

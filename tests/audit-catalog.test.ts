@@ -292,6 +292,22 @@ describe('audit catalog', () => {
     expect(() => parseAuditCatalogRaw(null)).toThrow(/invalid shape/);
   });
 
+  test('parseAuditCatalogRaw rejects lied count/byStatus meta', async () => {
+    const catalog = await buildAuditCatalog();
+    expect(() =>
+      parseAuditCatalogRaw({
+        ...catalog,
+        count: catalog.count + 99,
+      })
+    ).toThrow(/count .+ ≠ findings\.length/);
+    expect(() =>
+      parseAuditCatalogRaw({
+        ...catalog,
+        byStatus: { confirmed: 0, mitigated: 0, open: 99 },
+      })
+    ).toThrow(/byStatus mismatch/);
+  });
+
   test('verifyCatalogParity flags missing/stale ids and entry drift', async () => {
     const catalog = await buildAuditCatalog();
     const findings = await loadSourceFindings();
@@ -320,6 +336,13 @@ describe('audit catalog', () => {
         verifyCatalogParity({ findings, concepts }, drifted).some(e => e.includes('catalog entry drift'))
       ).toBe(true);
     }
+  });
+
+  test('build skip-republish returns disk generated timestamp', async () => {
+    const first = await buildAuditCatalog();
+    const second = await buildAuditCatalog();
+    expect(second.generated).toBe(first.generated);
+    expect(second.bunVersion).toBe(first.bunVersion);
   });
 
   test('build prunes orphan pages; page content matches render', async () => {
@@ -480,5 +503,37 @@ describe('suggest Nagata map (not BunToken)', () => {
     expect(parsed.ok).toBe(true);
     expect(parsed.bunToken).toBe(false);
     expect(parsed.hits.some(h => h.id === 'sample-fiber-demo-2026-07-21')).toBe(true);
+  });
+
+  test('suggest --audit --json reports load failure without stack dump', async () => {
+    const catalogPath = joinPath(REPO_ROOT, 'tools/audit-catalog.json');
+    const backup = await Bun.file(catalogPath).text();
+    try {
+      await Bun.write(catalogPath, '{"findings":"oops","concepts":[]}\n');
+      const proc = Bun.spawn(
+        ['bun', 'tools/bun-doc-refs.ts', 'suggest', '--audit', '--json', 'fiber'],
+        { cwd: REPO_ROOT, stdout: 'pipe', stderr: 'pipe' }
+      );
+      const out = await new Response(proc.stdout).text();
+      const err = await new Response(proc.stderr).text();
+      expect(await proc.exited).not.toBe(0);
+      const parsed = JSON.parse(out) as { ok: boolean; repair?: string; error?: string };
+      expect(parsed.ok).toBe(false);
+      expect(parsed.repair).toBe('bun run audit:catalog:build');
+      expect(parsed.error).toMatch(/must be arrays/);
+      expect(err).not.toMatch(/at suggestAudit/);
+    } finally {
+      await Bun.write(catalogPath, backup);
+    }
+  });
+});
+
+describe('isAuditSsotPath', () => {
+  test('covers catalog tools, tests, and branded audit module', async () => {
+    const { isAuditSsotPath } = await import('../scripts/pre-commit-harness.ts');
+    expect(isAuditSsotPath('tools/audit-findings/x.json')).toBe(true);
+    expect(isAuditSsotPath('tests/audit-catalog.test.ts')).toBe(true);
+    expect(isAuditSsotPath('lib/types/branded/audit.ts')).toBe(true);
+    expect(isAuditSsotPath('tests/console-depth.test.ts')).toBe(false);
   });
 });

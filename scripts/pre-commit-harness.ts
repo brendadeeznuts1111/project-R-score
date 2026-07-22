@@ -55,7 +55,7 @@ function isDocMapPath(file: string): boolean {
 }
 
 /** Audit findings/concepts SSOT — verify even when no harness .ts is staged. */
-function isAuditSsotPath(file: string): boolean {
+export function isAuditSsotPath(file: string): boolean {
   const n = file.replace(/^\.\//, '');
   return (
     n.startsWith('tools/audit-findings/') ||
@@ -66,7 +66,9 @@ function isAuditSsotPath(file: string): boolean {
     n === 'tools/audit-catalog.ts' ||
     n === 'tools/audit-catalog.json' ||
     n === 'tools/audit-emit-stub.ts' ||
-    n === 'tools/audit-migrate-to-sha3.ts'
+    n === 'tools/audit-migrate-to-sha3.ts' ||
+    n === 'tests/audit-catalog.test.ts' ||
+    n === 'lib/types/branded/audit.ts'
   );
 }
 

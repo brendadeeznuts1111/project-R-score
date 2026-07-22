@@ -26,6 +26,8 @@ bun tools/audit-emit-stub.ts
 
 Prefer `bun run audit:catalog:build`. `bun tools/bun-doc-refs.ts index-audit` is the same rebuild (not the Bun docs `audit` command).
 
+**Load contract:** missing `tools/audit-catalog.json` → auto-build on `suggest --audit` / `list`/`get`/`search`. Corrupt catalog → throw (repair with `bun run audit:catalog:build`); no silent rewrite.
+
 ### npm script aliases (`package.json`)
 
 | Script | Runs |

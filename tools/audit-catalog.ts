@@ -38,7 +38,6 @@ const REPO_ROOT = joinPath(import.meta.dir, '..');
 const FINDINGS_DIR = joinPath(REPO_ROOT, 'tools/audit-findings');
 const CONCEPTS_DIR = joinPath(REPO_ROOT, 'tools/audit-concepts');
 const CATALOG_PATH = joinPath(REPO_ROOT, 'tools/audit-catalog.json');
-const CATALOG_TMP_PATH = `${CATALOG_PATH}.tmp`;
 const FINDING_PAGES_DIR = joinPath(REPO_ROOT, 'docs/audit/findings');
 const CONCEPT_PAGES_DIR = joinPath(REPO_ROOT, 'docs/audit/concepts');
 
@@ -57,7 +56,7 @@ export type AuditCatalogFile = {
   concepts: AuditCatalogConcept[];
 };
 
-/** Single-flight rebuild when catalog missing/corrupt (parallel suggest --audit). */
+/** Single-flight rebuild when catalog is missing (parallel suggest --audit). Corrupt → throw. */
 let buildingCatalog: Promise<AuditCatalogFile> | null = null;
 
 export function normalizeFindingId(
@@ -265,24 +264,32 @@ function catalogPayloadKey(catalog: AuditCatalogFile): string {
   });
 }
 
-async function writeCatalogAtomic(catalog: AuditCatalogFile): Promise<void> {
+/** Publish catalog; return disk truth (prev when payload unchanged). */
+async function writeCatalogAtomic(catalog: AuditCatalogFile): Promise<AuditCatalogFile> {
   const existing = Bun.file(CATALOG_PATH);
   if (await existing.exists()) {
     try {
       const prev = parseAuditCatalogRaw(await existing.json());
       if (catalogPayloadKey(prev) === catalogPayloadKey(catalog)) {
-        return;
+        return prev;
       }
     } catch {
       // rewrite on corrupt prior
     }
   }
-  await Bun.write(CATALOG_TMP_PATH, `${JSON.stringify(catalog, null, 2)}\n`);
+  const tmp = `${CATALOG_PATH}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
+  await Bun.write(tmp, `${JSON.stringify(catalog, null, 2)}\n`);
   // Same-dir rename via mv — readers never see a torn JSON write.
-  const moved = await Bun.$`mv ${CATALOG_TMP_PATH} ${CATALOG_PATH}`.nothrow();
+  const moved = await Bun.$`mv ${tmp} ${CATALOG_PATH}`.nothrow();
   if (moved.exitCode !== 0) {
+    try {
+      await Bun.file(tmp).unlink();
+    } catch {
+      /* best-effort cleanup */
+    }
     throw new Error(`audit-catalog.json: atomic publish failed (mv exit ${moved.exitCode})`);
   }
+  return catalog;
 }
 
 export async function buildAuditCatalog(): Promise<AuditCatalogFile> {
@@ -301,12 +308,15 @@ export async function buildAuditCatalog(): Promise<AuditCatalogFile> {
     }
     await writeAuditPages(findings, concepts);
     const catalog = buildCatalogFile(findings, concepts);
-    await writeCatalogAtomic(catalog);
-    return catalog;
+    return writeCatalogAtomic(catalog);
   })().finally(() => {
     buildingCatalog = null;
   });
   return buildingCatalog;
+}
+
+function stableJson(value: object | string | number | boolean | null | undefined): string {
+  return JSON.stringify(value ?? null);
 }
 
 /** Strict parse — never soft-coerce missing findings/concepts to []. */
@@ -320,6 +330,20 @@ export function parseAuditCatalogRaw(raw: unknown): AuditCatalogFile {
   }
   const findings = obj.findings.map(row => toFindingEntry(parseAuditFinding(row)));
   const concepts = obj.concepts.map(row => toConceptEntry(parseAuditConcept(row)));
+  const byStatus = tallyByStatus(findings);
+  if (typeof obj.count === 'number' && obj.count !== findings.length) {
+    throw new Error(`audit-catalog.json: count ${obj.count} ≠ findings.length ${findings.length}`);
+  }
+  if (typeof obj.conceptCount === 'number' && obj.conceptCount !== concepts.length) {
+    throw new Error(
+      `audit-catalog.json: conceptCount ${obj.conceptCount} ≠ concepts.length ${concepts.length}`
+    );
+  }
+  if (obj.byStatus !== undefined && typeof obj.byStatus === 'object' && obj.byStatus !== null) {
+    if (stableJson(obj.byStatus as object) !== stableJson(byStatus)) {
+      throw new Error('audit-catalog.json: byStatus mismatch vs findings');
+    }
+  }
   const generated = typeof obj.generated === 'string' ? obj.generated : new Date(0).toISOString();
   const bunVersion = typeof obj.bunVersion === 'string' ? obj.bunVersion : Bun.version;
   return {
@@ -327,14 +351,10 @@ export function parseAuditCatalogRaw(raw: unknown): AuditCatalogFile {
     bunVersion,
     count: findings.length,
     conceptCount: concepts.length,
-    byStatus: tallyByStatus(findings),
+    byStatus,
     findings,
     concepts,
   };
-}
-
-function stableJson(value: object | string | number | boolean | null | undefined): string {
-  return JSON.stringify(value ?? null);
 }
 
 function findingSnapshot(f: AuditFinding): string {

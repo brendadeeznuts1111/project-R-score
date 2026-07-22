@@ -2,7 +2,7 @@
   "id": "sha3-integrity",
   "kind": "AuditConcept",
   "title": "SHA3 evidence integrity",
-  "description": "FactoryWager AuditFinding evidence blobs are fingerprinted with SHA3-256 via Bun.CryptoHasher('sha3-256'). Wire shape is evidence.algorithm + evidence.digest (Phase 2). This is tamper-detection only — keyed authentication (HMAC/signing) is a separate, unimplemented lane.\n\nBun shipped native SHA-3 support in v1.3.13 (WebCrypto SHA3-* + node:crypto / CryptoHasher). See relatedDocs SHA3-256 for the ship note.",
+  "description": "FactoryWager AuditFinding evidence blobs are fingerprinted primarily with SHA3-256 via Bun.CryptoHasher('sha3-256') (algorithm enum still allows sha256 for inbound). Wire shape is evidence.algorithm + evidence.digest (Phase 2). This is tamper-detection only — keyed authentication (HMAC/signing) is a separate, unimplemented lane.\n\nBun shipped native SHA-3 support in v1.3.13 (WebCrypto SHA3-* + node:crypto / CryptoHasher). See relatedDocs SHA3-256 for the ship note.",
   "publishedAt": "2026-07-21",
   "since": "1.3.13",
   "references": [
