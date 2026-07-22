@@ -5,6 +5,7 @@
  *
  * @see https://bun.com/docs/runtime/html-rewriter
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
+ * @see https://bun.com/docs/runtime/networking/fetch#streaming-response-bodies
  * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
  */
 
@@ -34,26 +35,40 @@ export async function extractSocialMetadata(url: string): Promise<SocialMetadata
 const CONTENT_SELECTORS = ['article', '[role="main"]', '.prose', '.content'] as const;
 
 /**
- * Extract post body text, preferring semantic selectors over full body.
- * Excludes site nav/footer when `article` / `[role=main]` / `.prose` / `.content` exists.
+ * Extract post body text from a Response in one HTMLRewriter pass.
+ * Prefers semantic selectors over full body (no Response.clone — live fetch bodies
+ * often cannot be multi-piped).
  */
-export async function extractArticleText(html: string): Promise<string> {
+export async function extractArticleTextFromResponse(response: Response): Promise<string> {
+  const buckets: Record<string, string> = Object.fromEntries(CONTENT_SELECTORS.map(s => [s, '']));
+  let body = '';
+
+  let rewriter = new HTMLRewriter();
   for (const selector of CONTENT_SELECTORS) {
-    const text = await collectText(html, selector);
-    if (text.trim()) return text.trim();
+    rewriter = rewriter.on(selector, {
+      text(chunk) {
+        buckets[selector]! += chunk.text;
+      },
+    });
   }
-  return (await collectText(html, 'body')).trim();
+  rewriter = rewriter.on('body', {
+    text(chunk) {
+      body += chunk.text;
+    },
+  });
+
+  await rewriter.transform(response).text();
+
+  for (const selector of CONTENT_SELECTORS) {
+    const text = buckets[selector]!.trim();
+    if (text) return text;
+  }
+  return body.trim();
 }
 
-async function collectText(html: string, selector: string): Promise<string> {
-  let text = '';
-  await new HTMLRewriter()
-    .on(selector, {
-      text(chunk) {
-        text += chunk.text;
-      },
-    })
-    .transform(new Response(html))
-    .text();
-  return text;
+/**
+ * Offline / string path — wrap HTML in a Response (no network).
+ */
+export async function extractArticleText(html: string): Promise<string> {
+  return extractArticleTextFromResponse(new Response(html));
 }

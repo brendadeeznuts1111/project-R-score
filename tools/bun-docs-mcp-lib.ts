@@ -12,7 +12,9 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 import {
   extractArticleText,
+  extractArticleTextFromResponse,
   extractSocialMetadataFromHtml,
+  extractSocialMetadataFromResponse,
   fetchPage,
   stripUrlFragment,
 } from '../lib/docs/blog-extract.ts';
@@ -725,11 +727,24 @@ export async function fetchBlogPost(
 ): Promise<BlogPost> {
   const slug = normalizeBlogSlug(slugOrUrl);
   const url = buildBlogUrl(slug);
-  // Shared timeout/headers/ok via fetchPage; buffer once for article regex (streaming article later).
+  const cleaned = stripUrlFragment(url);
+  // Live path: clone for meta, stream body into article rewriter (no prior .text()).
   const res = await fetchPage(url, { timeoutMs: 15_000 });
-  const html = await res.text();
-  const post = await parseBlogPostFromHtml(html, slug, stripUrlFragment(url));
-  post.content = truncateLines(post.content, opts.maxLines);
+  const meta = await extractSocialMetadataFromResponse(res.clone(), cleaned);
+  const content = await extractArticleTextFromResponse(res);
+  const title = (meta.title ?? content.split('\n')[0] ?? slug)
+    .replace(/<[^>]+>/g, '')
+    .trim()
+    .replace(/\s*\|\s*Bun(?:\s+Blog)?\s*$/i, '');
+
+  const post: BlogPost = {
+    title: title || slug,
+    slug,
+    url: cleaned,
+    content: truncateLines(content, opts.maxLines),
+    description: meta.description,
+    image: meta.image,
+  };
   return post;
 }
 

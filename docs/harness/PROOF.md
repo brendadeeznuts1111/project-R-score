@@ -51,7 +51,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/fixtures/blog-extraction/` · evidence `lib/docs/blog-extract.ts`
 - **`fetch-page-boundaries`** — BunHarness page fetch: HTTPS, fragment strip, Accept/UA, 15s timeout, optional verbose, non-OK throw, success body unread (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/fetch-page/` · evidence `lib/docs/fetch-page.ts` · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request)
-- **`blog-extraction-journey`** — `CANONICAL_SOURCES.blog` → URLPattern → fetchPage → `SocialMetadata` (`journey`)  
+- **`blog-extraction-journey`** — `CANONICAL_SOURCES.blog` → URLPattern → `dns.prefetch` → fetchPage → `SocialMetadata` + streamed article (`journey`)  
   *Ratchet* → `bun test tests/journey/blog-extraction.test.ts` · human-only (live bun.com)
 - **`path-bun`** — spine `lib/` + `tools/` do not import `path` / `node:path` (`boundary`)  
   *Ratchet* → `bun run check:path-bun`

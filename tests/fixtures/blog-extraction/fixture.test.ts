@@ -1,12 +1,16 @@
 /**
  * @see https://bun.com/docs/runtime/html-rewriter
+ * @see https://bun.com/docs/runtime/networking/fetch#streaming-response-bodies
  *
  * Blog extraction: exclude header/footer from article body.
  * Fragment strip + page fetch: fetch-page-boundaries.
  * Social metadata: social-metadata-boundaries.
  */
 import { describe, expect, test } from 'bun:test';
-import { extractArticleText } from '../../../lib/docs/blog-extract.ts';
+import {
+  extractArticleText,
+  extractArticleTextFromResponse,
+} from '../../../lib/docs/blog-extract.ts';
 
 const SAMPLE_HTML = `<!DOCTYPE html>
 <html>
@@ -31,6 +35,12 @@ describe('blog-extraction-boundaries', () => {
     expect(text).not.toContain('Header nav links');
     expect(text).not.toContain('Copyright Bun');
     expect(text).toContain('WebView is now built-in.');
+  });
+
+  test('extractArticleTextFromResponse matches string path', async () => {
+    const fromHtml = await extractArticleText(SAMPLE_HTML);
+    const fromRes = await extractArticleTextFromResponse(new Response(SAMPLE_HTML));
+    expect(fromRes).toBe(fromHtml);
   });
 
   test('extractArticleText is deterministic for same HTML', async () => {

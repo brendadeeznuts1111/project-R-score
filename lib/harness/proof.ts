@@ -277,7 +277,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'blog-extraction-journey',
     claim:
-      'CANONICAL_SOURCES.blog → URLPattern → fetchPage → SocialMetadata closes the blog ingestion loop',
+      'CANONICAL_SOURCES.blog → URLPattern → dns.prefetch → fetchPage → SocialMetadata (+ streamed article)',
     kinds: ['journey'],
     gateClass: 'human-only',
     gateRef: 'none',

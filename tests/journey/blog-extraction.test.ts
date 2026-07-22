@@ -1,17 +1,22 @@
 /**
- * Journey: CANONICAL_SOURCES.blog → URLPattern → fetchPage → SocialMetadata (+ article).
+ * Journey: CANONICAL_SOURCES.blog → URLPattern → dns.prefetch → fetchPage → SocialMetadata (+ article).
  *
  * Boundaries prove each primitive offline; this closes the ingestion loop on a live page.
+ * Prefers dns.prefetch (works); fetch.preconnect is mapped in CANONICAL_REFS but throws
+ * Invalid port on Bun 1.4.0-canary — revisit when that ships clean.
  *
+ * @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
+ * @see https://bun.com/docs/runtime/networking/fetch#streaming-response-bodies
  * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
  * @see https://bun.com/blog/bun-v1.3.4#urlpattern-api
  *
  *   bun test tests/journey/blog-extraction.test.ts
  */
 import { describe, expect, test } from 'bun:test';
+import { dns } from 'bun';
 import {
-  extractArticleText,
+  extractArticleTextFromResponse,
   extractSocialMetadataFromResponse,
   fetchPage,
   stripUrlFragment,
@@ -19,12 +24,16 @@ import {
 import {
   BunBlogIndexPattern,
   BunBlogPattern,
+  BunComSite,
   CANONICAL_SOURCES,
   hrefFromInit,
 } from '../../lib/docs/bun-site-url.ts';
 
 /** Known ship post with stable OG + article markup. */
 const SAMPLE_SLUG = 'bun-v1.3.4';
+
+// Warm DNS before timed live fetches (performance/#dns-prefetching).
+dns.prefetch(BunComSite.hostname);
 
 describe('blog-extraction journey', () => {
   test('URLPattern validates blog index + post derived from CANONICAL_SOURCES', () => {
@@ -62,15 +71,14 @@ describe('blog-extraction journey', () => {
   );
 
   test(
-    'article text excludes site nav/footer chrome',
+    'fetchPage → extractArticleTextFromResponse excludes nav/footer chrome',
     async () => {
       const postUrl = hrefFromInit({
         ...CANONICAL_SOURCES.blog,
         pathname: `${CANONICAL_SOURCES.blog.pathname}/${SAMPLE_SLUG}`,
       });
       const res = await fetchPage(postUrl, { timeoutMs: 10_000 });
-      const html = await res.text();
-      const text = await extractArticleText(html);
+      const text = await extractArticleTextFromResponse(res);
 
       expect(text.length).toBeGreaterThan(40);
       // Chrome that lives outside <article> on bun.com blog
@@ -80,4 +88,3 @@ describe('blog-extraction journey', () => {
     { timeout: 20_000 }
   );
 });
-
