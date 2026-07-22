@@ -328,6 +328,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'platform / harness',
   },
   {
+    id: 'invisible-chars',
+    claim:
+      'Invisible/format Unicode code points are written as \\u escapes in source, never literal bytes',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'pre-commit-harness',
+    evidence: ['bun run check:invisible-chars'],
+    freshRerun: 'bun run check:invisible-chars',
+    freshRerunKind: 'claim',
+    owner: 'platform / harness',
+  },
+  {
     id: 'unknown-param',
     claim: 'Bare unknown function params stay at parse*/FromUnknown edges',
     kinds: ['boundary'],
@@ -453,7 +465,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'audit-findings-catalog',
     claim:
-      'FactoryWager audit-finding catalog builds and evidence digests verify (sha3-256 primary; sibling SSOT, not BunToken)',
+      'FactoryWager audit findings+concepts catalog builds and evidence digests verify (sha3-256 primary; sibling SSOT, not BunToken)',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',
@@ -463,10 +475,14 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'bun tools/audit-catalog.ts verify',
       'bun test tests/audit-catalog.test.ts',
       'lib/audit/audit-finding.ts',
+      'lib/audit/audit-concept.ts',
       'lib/audit/audit-refs.ts',
       'tools/audit-findings/',
+      'tools/audit-concepts/',
+      'tools/audit-catalog.json',
       'docs/audit/README.md',
       'docs/audit/findings/',
+      'docs/audit/concepts/',
     ],
     freshRerun: 'bun tools/audit-catalog.ts build && bun test tests/audit-catalog.test.ts',
     freshRerunKind: 'claim',

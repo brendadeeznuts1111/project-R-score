@@ -292,6 +292,38 @@ describe('suggest Nagata map (not BunToken)', () => {
     expect(out).toContain('suggest --audit "sha3-integrity"');
   });
 
+  test('suggest --audit "SHA3-256" prefers sha3-integrity (not jacobian)', async () => {
+    expect(resolveAuditAlias('SHA3-256')).toBe('sha3-integrity');
+    expect(resolveAuditAlias('sha3-256')).toBe('sha3-integrity');
+    const catalog = await buildAuditCatalog();
+    const hits = searchAuditCatalog(catalog, 'SHA3-256');
+    expect(hits[0]?.id).toBe('sha3-integrity');
+    expect(hits[0]?.kind).toBe('AuditConcept');
+    // Finding that relates to the concept also co-hits
+    expect(hits.some(h => h.id === 'sample-fiber-demo-2026-07-21')).toBe(true);
+    expect(hits.some(h => h.id === 'jacobian-nullspace')).toBe(false);
+    const proc = Bun.spawn(
+      ['bun', 'tools/bun-doc-refs.ts', 'suggest', '--audit', 'SHA3-256'],
+      { cwd: REPO_ROOT, stdout: 'pipe', stderr: 'pipe' }
+    );
+    const out = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    expect(out).toMatch(/alias: "SHA3-256" → sha3-integrity/);
+    expect(out).toContain('id: sha3-integrity');
+    expect(out).toContain('also try: bun tools/bun-doc-refs.ts suggest "SHA3-256"');
+  });
+
+  test('suggest --isolate surfaces harness-day-loop auditRefs', async () => {
+    const proc = Bun.spawn(['bun', 'tools/bun-doc-refs.ts', 'suggest', '--isolate'], {
+      cwd: REPO_ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const out = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    expect(out).toContain('auditRefs: harness-day-loop');
+  });
+
   test('suggest "Nagata map" returns AuditConcept', async () => {
     const proc = Bun.spawn(['bun', 'tools/bun-doc-refs.ts', 'suggest', 'Nagata map'], {
       cwd: REPO_ROOT,

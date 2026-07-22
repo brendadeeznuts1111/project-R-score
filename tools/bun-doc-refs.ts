@@ -1493,11 +1493,11 @@ async function suggest(query: string): Promise<void> {
   console.info(
     `❌ no docs page found for "${query}" — browse frozen key "llms.txt index" → ${llms}`
   );
-  // Sibling audit catalog hint (never merge into BunToken)
+  // Sibling audit catalog hint (findings + concepts — never merge into BunToken)
   try {
-    const { loadAuditCatalog, searchAuditFindings } = await import('./audit-catalog.ts');
+    const { loadAuditCatalog, searchAuditCatalog } = await import('./audit-catalog.ts');
     const catalog = await loadAuditCatalog();
-    const auditHits = searchAuditFindings(catalog.findings, query);
+    const auditHits = searchAuditCatalog(catalog, query);
     if (auditHits.length > 0) {
       console.info(
         `  also try: bun tools/bun-doc-refs.ts suggest --audit "${query}"  (${auditHits.length} audit hit(s))`

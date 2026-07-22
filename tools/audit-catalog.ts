@@ -157,12 +157,21 @@ export async function writeAuditPages(
   findings: AuditFinding[],
   concepts: AuditConcept[]
 ): Promise<void> {
+  const ctx = {
+    findingIds: new Set(findings.map(f => normalizeFindingId(f.id))),
+  };
   for (const f of findings) {
-    await Bun.write(joinPath(REPO_ROOT, auditFindingDocsPath(f.id)), renderAuditFindingMarkdown(f));
+    await Bun.write(
+      joinPath(REPO_ROOT, auditFindingDocsPath(f.id)),
+      renderAuditFindingMarkdown(f, ctx)
+    );
   }
   await Bun.write(joinPath(FINDING_PAGES_DIR, 'README.md'), renderAuditFindingsIndex(findings));
   for (const c of concepts) {
-    await Bun.write(joinPath(REPO_ROOT, auditConceptDocsPath(c.id)), renderAuditConceptMarkdown(c));
+    await Bun.write(
+      joinPath(REPO_ROOT, auditConceptDocsPath(c.id)),
+      renderAuditConceptMarkdown(c, ctx)
+    );
   }
   await Bun.write(joinPath(CONCEPT_PAGES_DIR, 'README.md'), renderAuditConceptsIndex(concepts));
 }
@@ -262,8 +271,44 @@ function entryBlob(e: {
   title: string;
   description: string;
   related?: AuditEntryId[];
+  relatedDocs?: string[];
 }): string {
-  return [e.id, e.title, e.description, ...(e.related ?? [])].join('\n').toLowerCase();
+  return [e.id, e.title, e.description, ...(e.related ?? []), ...(e.relatedDocs ?? [])]
+    .join('\n')
+    .toLowerCase();
+}
+
+/** Higher = better. Exact relatedDocs / id beats description substring. */
+function scoreAuditHit(
+  e: {
+    id: AuditFindingId | AuditConceptId;
+    title: string;
+    description: string;
+    related?: AuditEntryId[];
+    relatedDocs?: string[];
+  },
+  q: string
+): number {
+  const id = normalizeFindingId(e.id);
+  const qn = normalizeFindingId(q);
+  if (id === qn) return 100;
+  if (e.relatedDocs?.some(d => d.trim().toLowerCase() === q)) return 90;
+  if (e.title.trim().toLowerCase() === q) return 80;
+  if (e.relatedDocs?.some(d => d.toLowerCase().includes(q))) return 70;
+  if (id.includes(qn) || e.title.toLowerCase().includes(q)) return 50;
+  return 10;
+}
+
+function rankHits<
+  T extends {
+    id: AuditFindingId | AuditConceptId;
+    title: string;
+    description: string;
+    related?: AuditEntryId[];
+    relatedDocs?: string[];
+  },
+>(hits: T[], q: string): T[] {
+  return [...hits].sort((a, b) => scoreAuditHit(b, q) - scoreAuditHit(a, q));
 }
 
 export function searchAuditFindings(findings: AuditFinding[], query: string): AuditFinding[] {
@@ -275,12 +320,13 @@ export function searchAuditFindings(findings: AuditFinding[], query: string): Au
     if (hit) return [hit];
   }
   const tokens = q.split(/\s+/).filter(Boolean);
-  return findings.filter(f => {
+  const hits = findings.filter(f => {
     if (normalizeFindingId(f.id) === normalizeFindingId(q)) return true;
     const blob = entryBlob(f);
     if (blob.includes(q)) return true;
     return tokens.every(t => blob.includes(t));
   });
+  return rankHits(hits, q);
 }
 
 export function searchAuditConcepts(concepts: AuditConcept[], query: string): AuditConcept[] {
@@ -292,31 +338,38 @@ export function searchAuditConcepts(concepts: AuditConcept[], query: string): Au
     if (hit) return [hit];
   }
   const tokens = q.split(/\s+/).filter(Boolean);
-  return concepts.filter(c => {
+  const hits = concepts.filter(c => {
     if (normalizeFindingId(c.id) === normalizeFindingId(q)) return true;
     const blob = entryBlob(c);
     if (blob.includes(q)) return true;
     return tokens.every(t => blob.includes(t));
   });
+  return rankHits(hits, q);
 }
 
 /** Search findings + concepts; concepts preferred when alias hits a concept id. */
 export function searchAuditCatalog(catalog: AuditCatalogFile, query: string): AuditCatalogEntry[] {
+  const q = query.trim().toLowerCase();
   const alias = resolveAuditAlias(query);
   if (alias) {
-    const concept = catalog.concepts.find(
-      c => normalizeFindingId(c.id) === normalizeFindingId(alias)
-    );
-    if (concept) return [concept];
-    const finding = catalog.findings.find(
-      f => normalizeFindingId(f.id) === normalizeFindingId(alias)
-    );
-    if (finding) return [finding];
+    const aliasKey = normalizeFindingId(alias);
+    const concept = catalog.concepts.find(c => normalizeFindingId(c.id) === aliasKey);
+    const finding = catalog.findings.find(f => normalizeFindingId(f.id) === aliasKey);
+    const primary = concept ?? finding;
+    if (primary) {
+      // Co-hits: findings that relate to the alias id or list the query in relatedDocs
+      const relatedFindings = catalog.findings.filter(f => {
+        if (normalizeFindingId(f.id) === normalizeFindingId(primary.id)) return false;
+        if (f.related?.some(r => normalizeFindingId(r) === aliasKey)) return true;
+        if (q && f.relatedDocs?.some(d => d.trim().toLowerCase() === q)) return true;
+        return false;
+      });
+      return [primary, ...relatedFindings];
+    }
   }
   const concepts = searchAuditConcepts(catalog.concepts, query);
   const findings = searchAuditFindings(catalog.findings, query);
-  // Prefer concepts when both match the same query string loosely
-  return [...concepts, ...findings];
+  return rankHits([...concepts, ...findings], q);
 }
 
 export function getAuditFinding(
@@ -380,6 +433,12 @@ export function printAuditConcept(c: AuditConcept | AuditCatalogConcept): void {
 export function printAuditEntry(e: AuditCatalogEntry): void {
   if (e.kind === 'AuditConcept') printAuditConcept(e);
   else printAuditFinding(e);
+  // Reverse handoff: audit relatedDocs → BunToken / curated suggest
+  if (e.relatedDocs?.length) {
+    console.info(
+      `  also try: bun tools/bun-doc-refs.ts suggest "${e.relatedDocs[0]}"  (BunToken / curated)`
+    );
+  }
 }
 
 async function main(): Promise<void> {

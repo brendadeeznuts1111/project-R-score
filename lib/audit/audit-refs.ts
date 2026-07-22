@@ -32,11 +32,15 @@ export const AUDIT_REFS: Record<string, AuditEntryId> = {
   'harness day-loop': asAuditEntryId('harness-day-loop'),
   'day-loop': asAuditEntryId('harness-day-loop'),
   'day loop': asAuditEntryId('harness-day-loop'),
-  // evidence integrity (Phase 2)
+  // evidence integrity (Phase 2) — include Bun ship-note keys for --audit reverse lookup
   'sha3-integrity': asAuditEntryId('sha3-integrity'),
   'sha3 integrity': asAuditEntryId('sha3-integrity'),
   'SHA3 integrity': asAuditEntryId('sha3-integrity'),
   sha3: asAuditEntryId('sha3-integrity'),
+  SHA3: asAuditEntryId('sha3-integrity'),
+  'SHA-3': asAuditEntryId('sha3-integrity'),
+  'SHA3-256': asAuditEntryId('sha3-integrity'),
+  'sha3-256': asAuditEntryId('sha3-integrity'),
 };
 
 /** Re-brand a finding/concept PK as a polymorphic entry ref. */

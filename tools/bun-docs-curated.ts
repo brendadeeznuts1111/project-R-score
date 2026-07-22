@@ -242,6 +242,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'bun test: run each test file in a fresh global environment within the same process (drain microtasks, close sockets, cancel timers, kill subprocesses). VM transpilation cache keeps shared deps parsed once.',
     minVersion: '1.3.13',
     relatedTokens: ['--parallel', '--changed', '--shard', 'bun test --isolate'],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: 'bun test --isolate',
@@ -250,6 +251,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'bun test: run each test file in a fresh global environment within the same process. Shared deps reuse a VM-level transpilation cache. Implied by --parallel workers.',
     minVersion: '1.3.13',
     relatedTokens: ['--isolate', '--parallel', 'bun test --parallel'],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: '--parallel',
@@ -266,6 +268,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'JEST_WORKER_ID',
       'BUN_TEST_WORKER_ID',
     ],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: 'bun test --parallel',
@@ -281,6 +284,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'JEST_WORKER_ID',
       'BUN_TEST_WORKER_ID',
     ],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: 'bun test flags',
@@ -298,6 +302,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'bun test --shard=M/N: split test files across CI jobs (1-based, round-robin by sorted path). Empty shards exit 0. Composes with --changed and --randomize.',
     minVersion: '1.3.13',
     relatedTokens: ['--shard=M/N', '--parallel', '--changed', '--randomize', '--isolate'],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: '--shard=M/N',
@@ -306,6 +311,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'Split bun test files across CI runners (Jest/Vitest/Playwright syntax). Index is 1-based; invalid inputs like 0/3 exit non-zero.',
     minVersion: '1.3.13',
     relatedTokens: ['--shard', '--parallel', '--changed', '--randomize'],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: 'bun test --shard',
@@ -314,6 +320,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'Split bun test files across CI jobs with --shard=M/N (sorted paths, round-robin).',
     minVersion: '1.3.13',
     relatedTokens: ['--shard', '--parallel', '--changed', '--randomize'],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: '--changed',
@@ -322,6 +329,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'bun test --changed[=ref]: run only test files whose import graph transitively depends on git-changed files (unstaged+staged+untracked, or since a commit/branch). Combines with --watch.',
     minVersion: '1.3.13',
     relatedTokens: ['bun test --changed', '--shard', 'bun test --watch', '--parallel', '--isolate'],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: 'bun test --changed',
@@ -330,6 +338,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'Run only tests affected by git changes via import-graph analysis (skips node_modules). Empty set exits cleanly; with --watch keeps the process alive.',
     minVersion: '1.3.13',
     relatedTokens: ['--changed', '--shard', 'bun test --watch', '--parallel'],
+    auditRefs: ['harness-day-loop'],
   },
   {
     term: 'bun run --parallel',

@@ -6,20 +6,25 @@ import type { AuditConcept } from './audit-concept.ts';
 import type { AuditFinding } from './audit-finding.ts';
 import { auditConceptDocsPath, auditFindingDocsPath } from './audit-refs.ts';
 
+export type RelatedLinkContext = {
+  /** Normalized finding ids (lowercase) for correct related[] hrefs. */
+  findingIds: ReadonlySet<string>;
+};
+
 function relatedMarkdown(
   related: readonly AuditEntryId[] | undefined,
-  from: 'finding' | 'concept'
+  from: 'finding' | 'concept',
+  ctx?: RelatedLinkContext
 ): string {
   if (!related?.length) return '_none_';
   return related
     .map(r => {
       const id = String(r);
-      const looksLikeFinding = id.startsWith('sample-fiber') || /-\d{4}-\d{2}-\d{2}$/.test(id);
-      if (looksLikeFinding) {
+      const isFinding = ctx?.findingIds.has(id.trim().toLowerCase()) ?? false;
+      if (isFinding) {
         const rel = from === 'concept' ? `../findings/${id}.md` : `./${id}.md`;
         return `- [\`${id}\`](${rel})`;
       }
-      // Default: AuditConcept id
       const rel = from === 'finding' ? `../concepts/${id}.md` : `./${id}.md`;
       return `- [\`${id}\`](${rel})`;
     })
@@ -27,7 +32,7 @@ function relatedMarkdown(
 }
 
 /** Stable markdown body for a finding page. */
-export function renderAuditFindingMarkdown(f: AuditFinding): string {
+export function renderAuditFindingMarkdown(f: AuditFinding, ctx?: RelatedLinkContext): string {
   const since = f.since ?? '_unknown_';
   const discoveredIn = f.discoveredIn ?? since;
   const mitigatedIn = f.mitigatedIn ?? '_n/a_';
@@ -73,7 +78,7 @@ bun tools/audit-catalog.ts verify
 
 ## Related (audit SSOT)
 
-${relatedMarkdown(f.related, 'finding')}
+${relatedMarkdown(f.related, 'finding', ctx)}
 
 ## Related docs (BunToken / curated — opaque)
 
@@ -95,7 +100,7 @@ bun tools/bun-doc-refs.ts suggest "Nagata map"
 }
 
 /** Stable markdown body for a concept page. */
-export function renderAuditConceptMarkdown(c: AuditConcept): string {
+export function renderAuditConceptMarkdown(c: AuditConcept, ctx?: RelatedLinkContext): string {
   const since = c.since ?? '_unknown_';
   const refs =
     c.references && c.references.length > 0 ? c.references.map(r => `- ${r}`).join('\n') : '_none_';
@@ -125,7 +130,7 @@ ${refs}
 
 ## Related (audit SSOT)
 
-${relatedMarkdown(c.related, 'concept')}
+${relatedMarkdown(c.related, 'concept', ctx)}
 
 ## Related docs (BunToken / curated — opaque)
 
