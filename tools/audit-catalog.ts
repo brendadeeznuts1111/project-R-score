@@ -202,6 +202,21 @@ async function pruneOrphanPages(
   }
 }
 
+/** Same-dir tmp→mv publish — readers never see a torn write. */
+async function publishAtomic(finalPath: string, contents: string): Promise<void> {
+  const tmp = `${finalPath}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
+  await Bun.write(tmp, contents);
+  const moved = await Bun.$`mv ${tmp} ${finalPath}`.nothrow();
+  if (moved.exitCode !== 0) {
+    try {
+      await Bun.file(tmp).unlink();
+    } catch {
+      /* best-effort cleanup */
+    }
+    throw new Error(`atomic publish failed for ${finalPath} (mv exit ${moved.exitCode})`);
+  }
+}
+
 /** Write only when bytes change — avoids mtime churn and shrinks build∥verify races. */
 async function writeIfChanged(path: string, contents: string): Promise<boolean> {
   const file = Bun.file(path);
@@ -212,7 +227,7 @@ async function writeIfChanged(path: string, contents: string): Promise<boolean> 
       /* rewrite */
     }
   }
-  await Bun.write(path, contents);
+  await publishAtomic(path, contents);
   return true;
 }
 
@@ -297,18 +312,7 @@ async function writeCatalogAtomic(catalog: AuditCatalogFile): Promise<AuditCatal
       // rewrite on corrupt prior
     }
   }
-  const tmp = `${CATALOG_PATH}.${Date.now()}.${Math.random().toString(36).slice(2, 8)}.tmp`;
-  await Bun.write(tmp, `${JSON.stringify(catalog, null, 2)}\n`);
-  // Same-dir rename via mv — readers never see a torn JSON write.
-  const moved = await Bun.$`mv ${tmp} ${CATALOG_PATH}`.nothrow();
-  if (moved.exitCode !== 0) {
-    try {
-      await Bun.file(tmp).unlink();
-    } catch {
-      /* best-effort cleanup */
-    }
-    throw new Error(`audit-catalog.json: atomic publish failed (mv exit ${moved.exitCode})`);
-  }
+  await publishAtomic(CATALOG_PATH, `${JSON.stringify(catalog, null, 2)}\n`);
   return catalog;
 }
 

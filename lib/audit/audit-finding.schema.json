@@ -42,7 +42,8 @@
         },
         "algorithm": {
           "type": "string",
-          "enum": ["sha256", "sha3-256"]
+          "enum": ["sha256", "sha3-256"],
+          "description": "Primary fingerprint is sha3-256. sha256 remains for inbound-only wire; normalize with bun run audit:migrate:sha3. Emitters/rotor must write sha3-256."
         },
         "digest": {
           "type": "string",

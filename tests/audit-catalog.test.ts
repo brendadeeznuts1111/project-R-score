@@ -409,6 +409,31 @@ describe('audit-migrate-to-sha3', () => {
       expect(after.evidence.sha256).toBeUndefined();
 
       expect(await migrateOneFinding(tmp, REPO_ROOT, 'with-companion.json')).toBe('skipped');
+
+      const sha256AlgoPath = joinPath(tmp, 'algo-sha256.json');
+      await Bun.write(
+        sha256AlgoPath,
+        `${JSON.stringify({
+          id: 'tmp-sha256-algo',
+          kind: 'AuditFinding',
+          title: 't',
+          description: 'd',
+          status: 'open',
+          publishedAt: '2026-07-21',
+          evidence: {
+            path: evidenceRel,
+            algorithm: 'sha256',
+            digest: 'b'.repeat(64),
+            mediaType: 'application/x-ndjson',
+          },
+        })}\n`
+      );
+      expect(await migrateOneFinding(tmp, REPO_ROOT, 'algo-sha256.json')).toBe('migrated');
+      const afterAlgo = (await Bun.file(sha256AlgoPath).json()) as {
+        evidence: { algorithm: string; digest: string };
+      };
+      expect(afterAlgo.evidence.algorithm).toBe('sha3-256');
+      expect(afterAlgo.evidence.digest).toBe(digest);
     } finally {
       await Bun.$`rm -rf ${tmp}`;
     }

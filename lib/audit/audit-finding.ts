@@ -7,7 +7,8 @@
  *
  * Evidence fingerprint (Phase 2):
  * - Wire: `{ path, algorithm, digest, mediaType }`
- * - Legacy `{ path, sha256, mediaType }` and dual-write `sha256` companion rejected.
+ * - Primary algorithm: `sha3-256`. `sha256` remains inbound-only — normalize via `audit:migrate:sha3`.
+ * - Legacy `{ path, sha256, mediaType }` field and dual-write `sha256` companion rejected.
  */
 import {
   type AuditEntryId,
@@ -20,7 +21,7 @@ import { isRecord, parseNonEmptyString, parseOptionalStringArray } from './parse
 
 export type AuditFindingStatus = 'confirmed' | 'mitigated' | 'open';
 
-/** Supported evidence digest algorithms. */
+/** Supported evidence digest algorithms (`sha256` = inbound-only; emitters use `sha3-256`). */
 export type AuditHashAlgorithm = 'sha256' | 'sha3-256';
 
 export type AuditEvidence = {

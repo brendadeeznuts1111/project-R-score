@@ -59,6 +59,7 @@ export async function migrateOneFinding(
   const digest = await hashFile(absEvidence, 'sha3-256');
   const hadCompanion = evidence.sha256 !== undefined;
   const wasLegacyOnly = evidence.algorithm === undefined || evidence.digest === undefined;
+  const wasSha256Algo = evidence.algorithm === 'sha256';
 
   const nextEvidence = {
     path: evidence.path,
@@ -81,6 +82,7 @@ export async function migrateOneFinding(
   const already =
     !hadCompanion &&
     !wasLegacyOnly &&
+    !wasSha256Algo &&
     evidence.algorithm === 'sha3-256' &&
     evidence.digest === digest;
 
@@ -91,10 +93,11 @@ export async function migrateOneFinding(
 
   const wire: AuditFinding = finding;
   await Bun.write(path, `${JSON.stringify(wire, null, 2)}\n`);
-  const label = wasLegacyOnly || hadCompanion ? 'migrated' : 'refreshed';
+  const label = wasLegacyOnly || hadCompanion || wasSha256Algo ? 'migrated' : 'refreshed';
   console.info(`✅ ${label} ${name}`);
   console.info(`   digest=${digest}`);
   if (hadCompanion) console.info('   stripped sha256 companion');
+  if (wasSha256Algo) console.info('   algorithm sha256 → sha3-256');
   return label === 'refreshed' ? 'refreshed' : 'migrated';
 }
 
