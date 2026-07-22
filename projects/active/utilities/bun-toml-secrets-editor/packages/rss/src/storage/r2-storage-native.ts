@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
 // src/storage/r2-storage-native.ts - R2 Storage using Bun's native S3Client
 
-import { S3Client } from "bun";
+import { S3Client } from 'bun';
+import { cloudflareAccountIdFromEnv } from '../../../../../../../../config/r2-env.ts';
 
 export interface R2Config {
 	accountId: string;
@@ -270,13 +271,16 @@ export class R2StorageNative {
  * Create R2 configuration for RSS Feed Master bucket
  */
 export function createRSSR2Config(): R2Config {
+	const accountId = cloudflareAccountIdFromEnv();
 	return {
-		accountId: "7a470541a704caaf91e71efccc78fd36",
-		bucketName: "rssfeedmaster",
-		publicUrl: "https://pub-a471e86af24446498311933a2eca2454.r2.dev",
-		accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
-		secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
-		region: "enam",
+		accountId,
+		bucketName: Bun.env.R2_RSS_BUCKET || 'rssfeedmaster',
+		publicUrl:
+			Bun.env.R2_RSS_PUBLIC_URL ||
+			'https://pub-a471e86af24446498311933a2eca2454.r2.dev',
+		accessKeyId: Bun.env.R2_ACCESS_KEY_ID || '',
+		secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY || '',
+		region: 'enam',
 	};
 }
 

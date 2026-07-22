@@ -1,16 +1,31 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// Enhanced Bun R2 Upload Tool — credentials from config/r2-env (never hardcode secrets)
 
-// Enhanced Bun R2 Upload Tool with Content-Disposition Support
-// Uses latest Bun features for better file handling
+import {
+  cloudflareAccountIdFromEnv,
+  r2EndpointFromAccount,
+} from '../../../../../config/r2-env.ts';
 
-// Configuration
-const config = {
-  accountId: "7a470541a704caaf91e71efccc78fd36",
-  accessKeyId: "38249351bba711763bc4a9c066ea84f4",
-  secretAccessKey: "2c6c0a87aa35efd4292eef13e7db0de92900de05665b7fc4f2f8a99247c967f6",
-  bucketName: "foxy-proxy-storage",
-  endpoint: "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com"
-} as const;
+function loadConfig() {
+  const accountId = cloudflareAccountIdFromEnv();
+  const accessKeyId = Bun.env.R2_ACCESS_KEY_ID || '';
+  const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
+  if (!accessKeyId || !secretAccessKey) {
+    throw new Error(
+      'Missing R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY (see config/r2-env.ts)'
+    );
+  }
+  return {
+    accountId,
+    accessKeyId,
+    secretAccessKey,
+    bucketName: Bun.env.R2_BUCKET || 'foxy-proxy-storage',
+    endpoint: r2EndpointFromAccount(accountId),
+  };
+}
+
+const config = loadConfig();
 
 // Colors for output
 const colors = {

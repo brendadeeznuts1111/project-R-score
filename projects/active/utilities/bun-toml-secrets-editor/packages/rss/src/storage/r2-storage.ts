@@ -6,6 +6,8 @@
  * and analytics data using Cloudflare R2.
  */
 
+import { cloudflareAccountIdFromEnv } from '../../../../../../../../config/r2-env.ts';
+
 export interface R2Config {
 	accountId: string;
 	accessKeyId: string;
@@ -433,14 +435,17 @@ export class R2Storage {
  * Create R2 configuration for RSS Feed Master bucket
  */
 export function createRSSR2Config(): R2Config {
+	const accountId = cloudflareAccountIdFromEnv();
 	return {
-		accountId: "7a470541a704caaf91e71efccc78fd36",
-		bucketName: "rssfeedmaster",
-		publicUrl: "https://pub-a471e86af24446498311933a2eca2454.r2.dev",
+		accountId,
+		bucketName: Bun.env.R2_RSS_BUCKET || 'rssfeedmaster',
+		publicUrl:
+			Bun.env.R2_RSS_PUBLIC_URL ||
+			'https://pub-a471e86af24446498311933a2eca2454.r2.dev',
 		// Use Bun.secrets for secure credential storage with async get
-		accessKeyId: "", // Will be loaded asynchronously
-		secretAccessKey: "", // Will be loaded asynchronously
-		region: "enam",
+		accessKeyId: '', // Will be loaded asynchronously
+		secretAccessKey: '', // Will be loaded asynchronously
+		region: 'enam',
 	};
 }
 
@@ -461,13 +466,13 @@ export async function createRSSR2ConfigWithSecrets(): Promise<R2Config> {
 			name: "R2_SECRET_ACCESS_KEY",
 		});
 
-		config.accessKeyId = accessKeyId || process.env.R2_ACCESS_KEY_ID || "";
+		config.accessKeyId = accessKeyId || Bun.env.R2_ACCESS_KEY_ID || '';
 		config.secretAccessKey =
-			secretAccessKey || process.env.R2_SECRET_ACCESS_KEY || "";
-	} catch (error) {
+			secretAccessKey || Bun.env.R2_SECRET_ACCESS_KEY || '';
+	} catch {
 		// Fallback to environment variables
-		config.accessKeyId = process.env.R2_ACCESS_KEY_ID || "";
-		config.secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || "";
+		config.accessKeyId = Bun.env.R2_ACCESS_KEY_ID || '';
+		config.secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY || '';
 	}
 
 	return config;

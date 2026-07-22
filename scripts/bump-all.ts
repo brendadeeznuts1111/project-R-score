@@ -17,8 +17,7 @@
  * bun run bump:all major
  * ```
  *
- * @see {@link https://registry.factory-wager.com} FactoryWager NPM Registry
- * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry} R2 Storage
+ * @see {@link ../config/r2-env.ts} Cloudflare / R2 / registry URL SSOT
  */
 
 import { Glob } from 'bun';
