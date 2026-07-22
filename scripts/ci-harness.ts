@@ -5,8 +5,8 @@
 /**
  * CI / agent harness envelope — quiet success; noise only on failure.
  *
- * Cheap ratchets run in parallel (path-bun · bun-env · brands · projects-roots ·
- * lib-domains · audit-verify). ESLint defaults to changed-files (`lint:bun-native:changed`);
+ * Cheap ratchets run in parallel (path-bun · bun-env · invisible-chars · brands ·
+ * projects-roots · lib-domains · audit-verify). ESLint defaults to changed-files (`lint:bun-native:changed`);
  * full tree only with --full-lint / HARNESS_FULL_LINT=1 (main push).
  *
  *   bun run ci:harness
@@ -52,6 +52,12 @@ const CHEAP: Step[] = [
     cmd: ['bun', 'run', 'check:bun-env'],
     owner: 'scripts/check-bun-env.ts',
     repair: 'bun run check:bun-env',
+  },
+  {
+    name: 'invisible-chars',
+    cmd: ['bun', 'run', 'check:invisible-chars'],
+    owner: 'scripts/check-invisible-chars.ts',
+    repair: 'bun run check:invisible-chars',
   },
   {
     name: 'brands-smart',
@@ -188,7 +194,7 @@ const timings: GateTiming[] = [];
 
 if (verbose) console.info(`ci:harness (${mode})`);
 
-// Parallel cheap ratchets (path-bun ‖ bun-env ‖ brands ‖ projects-roots ‖ lib-domains ‖ audit-verify)
+// Parallel cheap ratchets (path-bun ‖ bun-env ‖ invisible-chars ‖ brands ‖ projects-roots ‖ lib-domains ‖ audit-verify)
 {
   const t0 = performance.now();
   const results = await Promise.all(CHEAP.map(s => run(s, verbose)));

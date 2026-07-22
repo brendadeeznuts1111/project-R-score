@@ -21,10 +21,12 @@ exact = true
 # Dev override — machine ~/.bunfig.toml sets frozenLockfile = true
 frozenLockfile = false
 
-# Scoped registries — private @factorywager packages.
-# Token via FACTORYWAGER_REGISTRY_TOKEN env var.
+# Scoped registries — private FactoryWager packages (SSOT for Bun).
+# Canonical URL per .npmrc + commit 13ce5157; both scope spellings are in use
+# (42× @factorywager, 1× @factory-wager/admin-cli). Token via FACTORY_WAGER_TOKEN env var.
 [install.scopes]
-"@factorywager" = { url = "https://factory-wager.com/registry", token = "$FACTORYWAGER_REGISTRY_TOKEN" }
+"@factorywager" = { url = "https://registry.factory-wager.com/", token = "$FACTORY_WAGER_TOKEN" }
+"@factory-wager" = { url = "https://registry.factory-wager.com/", token = "$FACTORY_WAGER_TOKEN" }
 
 # Test runner defaults.  Per-workspace bunfig.toml files
 # (e.g. projects/active/enterprise/bet-ticker-worker-v1.1/bunfig.toml) override these.

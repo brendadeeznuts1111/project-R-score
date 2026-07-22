@@ -46,18 +46,18 @@ describe('widthOf — string-width reference vectors', () => {
     ['ANSI color codes', '[31mred[0m', 3],
     ['hyperlink sequence', ']8;;https://example.comlink]8;;', 4],
     // Zero-width characters
-    ['zero-width space', 'a​b', 2],
-    ['ZWJ alone', '”', 0],
-    ['ZWNJ alone', '‌', 0],
-    ['Arabic with ZWNJ', 'ب‌ه', 2],
+    ['zero-width space', 'a\u200Bb', 2],
+    ['ZWJ alone', '\u200D', 0],
+    ['ZWNJ alone', '\u200C', 0],
+    ['Arabic with ZWNJ', 'ب\u200Cه', 2],
     // Combining marks
-    ['combining acute', 'e̝', 1],
-    ['multiple combining marks', 'ê̝', 1],
-    ['combining marks only', '̝̂', 0],
+    ['combining acute', 'e\u0301', 1],
+    ['multiple combining marks', 'e\u0301\u0302', 1],
+    ['combining marks only', '\u0301\u0302', 0],
     // Emoji
     ['emoji surrogate pair', '😀', 2],
     ['text with emoji', 'a😀b', 4],
-    ['emoji with VS16', '⚡︝', 2],
+    ['emoji with VS16', '\u26A1\uFE0F', 2],
     ['fire emoji', '🔥', 2],
     // Misc symbols (narrow by default)
     ['black medium square', '◼', 1],

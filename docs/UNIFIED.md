@@ -18,6 +18,13 @@ Not wire/brands — see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
 
 Legitimate hoisted/local-cache overrides exist under some `projects/active/**` — review before stripping (`bun run audit:bunfig`).
 
+## Config SSOT rules
+
+- **Scope→registry mapping: bunfig `[install.scopes]` owns it for Bun** (Bun itself recommends migrating `.npmrc` → bunfig — [pm/npmrc](https://bun.com/docs/pm/npmrc)). `.npmrc` registry/auth lines remain only for non-Bun tooling (vite/npm clients). Both scope spellings exist (`@factorywager` ×42, `@factory-wager` ×1); canonical URL `https://registry.factory-wager.com/`, token `$FACTORY_WAGER_TOKEN`.
+- **`bunfig.toml` does not inherit upward.** A nested workspace root (e.g. `projects/active/factorywager/registry/`) reads only its own `./bunfig.toml` + `~/.bunfig.toml` — it needs its own `frozenLockfile = false` dev override.
+- **`frozenLockfile` has no runtime override** (no `BUN_CONFIG_*` key, no negated flag). Intentional dep change: flip repo bunfig to `false` → `bun install` → restore `true` and verify `git diff bunfig.toml` is empty. Details: `kimi-toolchain/docs/references/bun-install-config.md`.
+- **Known drift (pending removal):** root `.npmrc` `cache=${HOME}/.npm` splits the global virtual store into a shadow store at `~/.npm/links`; machine SSOT is `~/.bun/install/cache`. Single cache root is the target state.
+
 ## Machine layer
 
 | Layer | Path |
@@ -36,9 +43,9 @@ Symptom: literal `./~` under a repo. Cause: unexpanded `~` in cache dir. Fix: ab
 ```toml
 [install]
 frozenLockfile = false
-# [install.scopes."@factorywager"]
-# url = "<private registry>"  # see root bunfig.toml
-# token = "$FACTORYWAGER_REGISTRY_TOKEN"
+# Scope mapping is SSOT'd in the ROOT bunfig.toml [install.scopes]
+# (canonical: https://registry.factory-wager.com/, token "$FACTORY_WAGER_TOKEN").
+# Nested workspace roots need their own frozenLockfile override — bunfig does not inherit upward.
 ```
 
 ## Tooling

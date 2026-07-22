@@ -14,7 +14,8 @@
         "cascade-mover"
       ],
       "optional": [
-        "ast-grep"
+        "ast-grep",
+        "github"
       ],
       "requiresEnv": {
         "cascade-mover": [
@@ -69,6 +70,11 @@
       "env": {
         "AST_GREP_REPO_ROOT": "/Users/nolarose/Projects"
       }
+    },
+    "github": {
+      "type": "stdio",
+      "description": "Official GitHub MCP (local binary; PAT via gh auth token; git remotes remain SSH)",
+      "command": "/Users/nolarose/Projects/scripts/github-mcp-stdio.sh"
     }
   }
 }
