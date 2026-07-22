@@ -3,6 +3,9 @@
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
 // @see https://bun.com/docs/runtime/networking/fetch#custom-headers — fetch headers
 // @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout — AbortSignal.timeout
+// @see https://bun.com/docs/runtime/networking/fetch#debugging — verbose: true
+// @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching — dns.prefetch
+// @see https://bun.com/docs/runtime/networking/fetch#implementation-details — keepalive
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
@@ -110,6 +113,30 @@ export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
     {
       lang: 'ts',
       body: 'import { write } from "bun";\n\nawait write("output.txt", response);',
+    },
+  ],
+  'runtime/networking/fetch#debugging': [
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  verbose: true,\n});',
+    },
+  ],
+  'runtime/networking/fetch#dns-prefetching': [
+    {
+      lang: 'ts',
+      body: 'import { dns } from "bun";\n\ndns.prefetch("bun.com");',
+    },
+  ],
+  'runtime/networking/fetch#dns-caching': [
+    {
+      lang: 'ts',
+      body: 'import { dns } from "bun";\n\ndns.getCacheStats();',
+    },
+  ],
+  'runtime/networking/fetch#implementation-details': [
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  keepalive: false,\n});',
     },
   ],
   'guides/runtime/read-env': [
@@ -351,6 +378,14 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   BUN_CONFIG_MAX_HTTP_REQUESTS: 'runtime/networking/fetch#simultaneous-connection-limit',
   'response-buffering': 'runtime/networking/fetch#response-buffering',
   'response buffering': 'runtime/networking/fetch#response-buffering',
+  'fetch debugging': 'runtime/networking/fetch#debugging',
+  'fetch verbose': 'runtime/networking/fetch#debugging',
+  'verbose: true': 'runtime/networking/fetch#debugging',
+  BUN_CONFIG_VERBOSE_FETCH: 'runtime/networking/fetch#debugging',
+  'dns-prefetching': 'runtime/networking/fetch#dns-prefetching',
+  'dns-caching': 'runtime/networking/fetch#dns-caching',
+  'implementation-details': 'runtime/networking/fetch#implementation-details',
+  'Connection: close': 'runtime/networking/fetch#implementation-details',
   'Bun.which': 'guides/util/which-path-to-executable-bin',
   'Get the path to an executable bin file': 'guides/util/which-path-to-executable-bin',
   'which-path-to-executable-bin': 'guides/util/which-path-to-executable-bin',

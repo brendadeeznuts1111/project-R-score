@@ -123,7 +123,12 @@ export const CANONICAL_REFS: Record<string, string> = {
   'content-type-handling': bunDocs('runtime/networking/fetch', 'content-type-handling'),
   'fetch content-type': bunDocs('runtime/networking/fetch', 'content-type-handling'),
   'fetch performance': bunDocs('runtime/networking/fetch', 'performance'),
+  'fetch debugging': bunDocs('runtime/networking/fetch', 'debugging'),
   'fetch verbose': bunDocs('runtime/networking/fetch', 'debugging'),
+  'verbose: true': bunDocs('runtime/networking/fetch', 'debugging'),
+  // Performance subsection TOC (API deep-dives stay on runtime/networking/dns)
+  'dns-prefetching': bunDocs('runtime/networking/fetch', 'dns-prefetching'),
+  'dns-caching': bunDocs('runtime/networking/fetch', 'dns-caching'),
   'fetch.preconnect': bunDocs('runtime/networking/fetch', 'preconnect-to-a-host'),
   'preconnect-to-a-host': bunDocs('runtime/networking/fetch', 'preconnect-to-a-host'),
   '--fetch-preconnect': bunDocs('runtime/networking/fetch', 'preconnect-at-startup'),
@@ -134,12 +139,14 @@ export const CANONICAL_REFS: Record<string, string> = {
   ),
   'connection pooling': bunDocs('runtime/networking/fetch', 'connection-pooling-http-keep-alive'),
   keepalive: bunDocs('runtime/networking/fetch', 'connection-pooling-http-keep-alive'),
+  'Connection: close': bunDocs('runtime/networking/fetch', 'implementation-details'),
   'simultaneous-connection-limit': bunDocs(
     'runtime/networking/fetch',
     'simultaneous-connection-limit'
   ),
   'response-buffering': bunDocs('runtime/networking/fetch', 'response-buffering'),
   'response buffering': bunDocs('runtime/networking/fetch', 'response-buffering'),
+  'implementation-details': bunDocs('runtime/networking/fetch', 'implementation-details'),
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
   'Bun.connect': 'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',
