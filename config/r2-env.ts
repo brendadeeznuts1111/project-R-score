@@ -37,8 +37,12 @@ export const CLOUDFLARE_DEFAULTS = {
     },
   },
   wikiHost: 'wiki.factory-wager.com',
+  /** HTTPS package registry (npm / CDN front). */
+  registryHost: 'registry.factory-wager.com',
   /** Default registry object store path (pack/release/changelog scripts). */
   registryBucket: 'factory-wager-registry',
+  /** Doctor / deploy fallback when no R2_* bucket env is set. */
+  registryDoctorBucket: 'npm-registry',
   benchPrefix: 'reports/search-bench',
 } as const;
 
@@ -123,6 +127,15 @@ export function r2RequestPayerFromEnv(): boolean {
 /** Optional public base for search-bench HTML (CDN / custom domain). */
 export function searchBenchR2PublicBaseFromEnv(): string {
   return envString('SEARCH_BENCH_R2_PUBLIC_BASE');
+}
+
+/** FactoryWager npm registry URL (`REGISTRY_URL` overlay). */
+export function factoryWagerRegistryUrlFromEnv(): string {
+  return envString('REGISTRY_URL', `https://${CLOUDFLARE_DEFAULTS.registryHost}`);
+}
+
+export function factoryWagerWikiUrl(): string {
+  return `https://${CLOUDFLARE_DEFAULTS.wikiHost}`;
 }
 
 export const R2_CONFIG = {
@@ -443,6 +456,8 @@ if (import.meta.main) {
       const flag = !s.set ? 'missing' : s.placeholder ? 'placeholder' : 'set';
       console.log(`  secret ${s.key}: ${flag}`);
     }
-    console.log(`  wiki          ${CLOUDFLARE_DEFAULTS.wikiHost}`);
+    console.log(`  wiki          ${factoryWagerWikiUrl()}`);
+    console.log(`  registry      ${factoryWagerRegistryUrlFromEnv()}`);
+    console.log(`  r2BucketUrl   ${r2BucketUrlFromEnv()}`);
   }
 }

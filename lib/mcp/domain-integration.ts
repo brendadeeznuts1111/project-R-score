@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/mcp/domain-integration.ts — Domain and subdomain integration with R2 MCP
 
-import { cloudflareAccountIdFromEnv, R2_CONFIG } from '../../config/r2-env.ts';
+import { CLOUDFLARE_DEFAULTS, cloudflareAccountIdFromEnv, R2_CONFIG } from '../../config/r2-env.ts';
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { styled, FW_COLORS } from '../theme/colors';
 import { type AccountId, asAccountId } from '../types/branded.ts';
@@ -78,12 +78,12 @@ export class DomainIntegration {
     const accountId = asAccountId(cloudflareAccountIdFromEnv());
     return {
       primary: {
-        domain: 'factory-wager.com',
+        domain: CLOUDFLARE_DEFAULTS.zones.factoryWager.name,
         environment: 'production',
         tier: 'enterprise',
       },
       subdomains: {
-        npm: 'registry.factory-wager.com',
+        npm: CLOUDFLARE_DEFAULTS.registryHost,
         api: 'api.factory-wager.com',
         cdn: 'cdn.factory-wager.com',
         monitor: 'monitor.factory-wager.com',

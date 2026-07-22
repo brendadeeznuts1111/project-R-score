@@ -19,10 +19,10 @@
  * @see {@link https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com/factory-wager-registry} R2 Storage
  */
 
-import { r2BucketUrlFromEnv } from '../config/r2-env.ts';
+import { factoryWagerRegistryUrlFromEnv, r2BucketUrlFromEnv } from '../config/r2-env.ts';
 
 /** FactoryWager registry URL */
-const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
+const REGISTRY_URL = factoryWagerRegistryUrlFromEnv();
 
 /** NPM registry for fallback */
 const NPM_REGISTRY = 'https://registry.npmjs.org/';

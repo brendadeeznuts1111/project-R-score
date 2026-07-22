@@ -2,7 +2,12 @@
 // lib/mcp/cloudflare-domain-manager.ts — Cloudflare domain and subdomain management via API
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
-import { cloudflareAccountIdFromEnv, requireCloudflareApiToken } from '../../config/r2-env.ts';
+import {
+  CLOUDFLARE_DEFAULTS,
+  cloudflareAccountIdFromEnv,
+  factoryWagerRegistryUrlFromEnv,
+  requireCloudflareApiToken,
+} from '../../config/r2-env.ts';
 import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { domainIntegration } from './domain-integration';
 import { styled, FW_COLORS } from '../theme/colors';
@@ -153,7 +158,7 @@ export class CloudflareDomainManager {
     const subdomains: SubdomainConfig[] = [
       {
         subdomain: 'npm',
-        full_domain: 'registry.factory-wager.com',
+        full_domain: CLOUDFLARE_DEFAULTS.registryHost,
         type: 'CNAME',
         content: 'registry.npmjs.org',
         ttl: 300,
@@ -161,7 +166,7 @@ export class CloudflareDomainManager {
         status: 'active',
         purpose: 'Package Registry',
         dependencies: ['auth.factory-wager.com'],
-        health_check_url: 'https://registry.factory-wager.com',
+        health_check_url: factoryWagerRegistryUrlFromEnv(),
         ssl_required: true,
         enterprise_tier: true,
       },

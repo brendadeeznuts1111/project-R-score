@@ -21,13 +21,13 @@
  */
 
 import { $ } from 'bun';
-import { r2BucketUrlFromEnv } from '../config/r2-env.ts';
+import { factoryWagerRegistryUrlFromEnv, r2BucketUrlFromEnv } from '../config/r2-env.ts';
 
 /** Changelog filename */
 const CHANGELOG_FILE = 'CHANGELOG.md';
 
 /** FactoryWager registry URL */
-const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
+const REGISTRY_URL = factoryWagerRegistryUrlFromEnv();
 
 /** R2 bucket URL */
 const R2_BUCKET_URL = r2BucketUrlFromEnv();

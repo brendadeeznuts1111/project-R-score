@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
+import { CLOUDFLARE_DEFAULTS, factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 
 type Options = {
@@ -16,9 +18,9 @@ type Check = {
   detail: string;
 };
 
-const CANONICAL_REGISTRY_URL = 'https://registry.factory-wager.com';
-const CDN_REGISTRY_URL = 'https://registry.factory-wager.com';
-const DEFAULT_R2_BUCKET = 'npm-registry';
+const CANONICAL_REGISTRY_URL = factoryWagerRegistryUrlFromEnv();
+const CDN_REGISTRY_URL = CANONICAL_REGISTRY_URL;
+const DEFAULT_R2_BUCKET = CLOUDFLARE_DEFAULTS.registryDoctorBucket;
 
 function parseArgs(argv: string[]): Options {
   const out: Options = {

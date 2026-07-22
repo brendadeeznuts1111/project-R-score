@@ -21,14 +21,14 @@
 
 import { $ } from 'bun';
 import { Glob } from 'bun';
-import { r2BucketUrlFromEnv } from '../config/r2-env.ts';
+import { factoryWagerRegistryUrlFromEnv, r2BucketUrlFromEnv } from '../config/r2-env.ts';
 import { ensureDir } from './lib/fs-bun';
 
 /** Output directory for packed packages */
 const PACKS_DIR = './dist/packs';
 
 /** Registry URL for FactoryWager packages */
-const REGISTRY_URL = Bun.env.REGISTRY_URL || 'https://registry.factory-wager.com';
+const REGISTRY_URL = factoryWagerRegistryUrlFromEnv();
 
 /** R2 bucket URL for package storage */
 const R2_BUCKET_URL = r2BucketUrlFromEnv();

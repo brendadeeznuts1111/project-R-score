@@ -1,5 +1,11 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
+import {
+  CLOUDFLARE_DEFAULTS,
+  cloudflareAccountIdFromEnv,
+  r2BucketFromEnv,
+  r2EndpointFromAccount,
+} from '../../config/r2-env.ts';
 import { getSecret } from './bun-secrets-adapter';
 import {
   type AccessKeyId,
@@ -69,10 +75,16 @@ export async function resolveR2InfraConfig(
   const services = uniq(
     ALLOW_GENERIC_SECRET_SERVICE ? [...requestedServices, 'default'] : requestedServices
   );
-  const bucketFallback = options.bucketFallback || 'npm-registry';
+  const bucketFallback =
+    options.bucketFallback || r2BucketFromEnv() || CLOUDFLARE_DEFAULTS.registryDoctorBucket;
 
   // brand-ok — raw secret strings until try* at return (empty stays undefined)
-  const accountIdRaw = await resolveSecretField('R2_ACCOUNT_ID', ['R2_ACCOUNT_ID'], services);
+  const accountIdRaw =
+    (await resolveSecretField(
+      'R2_ACCOUNT_ID',
+      ['R2_ACCOUNT_ID', 'CLOUDFLARE_ACCOUNT_ID'],
+      services
+    )) || cloudflareAccountIdFromEnv();
   // brand-ok — raw secret string until try* at return
   const accessKeyIdRaw = await resolveSecretField(
     'R2_ACCESS_KEY_ID',
@@ -86,7 +98,7 @@ export async function resolveR2InfraConfig(
   );
   const bucketName = await resolveSecretField(
     'R2_REGISTRY_BUCKET',
-    ['R2_REGISTRY_BUCKET', 'R2_BUCKET_NAME', 'R2_BUCKET'],
+    ['R2_REGISTRY_BUCKET', 'R2_BUCKET_NAME', 'R2_BUCKET', 'R2_BENCH_BUCKET'],
     services,
     bucketFallback
   );
@@ -98,7 +110,7 @@ export async function resolveR2InfraConfig(
     'R2_ENDPOINT',
     ['R2_ENDPOINT'],
     services,
-    accountId ? `https://${accountId}.r2.cloudflarestorage.com` : ''
+    r2EndpointFromAccount(accountIdRaw || cloudflareAccountIdFromEnv())
   );
 
   const normalized: NormalizedR2Credentials = normalizeR2Credentials({
