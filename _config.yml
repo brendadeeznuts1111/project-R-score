@@ -1,0 +1,31 @@
+# GitHub Pages (legacy / root) — monorepo exclude list.
+# Without this, Jekyll walks projects/** and fails on intentional non-YAML
+# front matter fixtures (e.g. api-plive-setup-discovery/rules/invalid-rule.md).
+# Site: wiki.factory-wager.com (CNAME) · source: main:/
+title: FactoryWager Wiki
+exclude:
+  - node_modules
+  - bun.lock
+  - bunfig.toml
+  - package.json
+  - package-lock.json
+  - projects
+  - packages
+  - lib
+  - scripts
+  - tools
+  - tests
+  - config
+  - spine
+  - reports
+  - dist
+  - build
+  - coverage
+  - .agents
+  - .cursor
+  - .git
+  - .github
+  - .cache
+  - vendor
+  - rustdesk
+  - Kalshi-bot
