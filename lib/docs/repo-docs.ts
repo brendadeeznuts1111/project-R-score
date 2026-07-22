@@ -200,4 +200,11 @@ export const CANONICAL_EXTERNAL = {
     hyperbolaCase:
       'https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/hyperbola.md',
   },
+  reasonixRemote: {
+    name: 'remote-ssh',
+    configPath: '~/.reasonix/config.toml',
+    activeHosts: ['factorywager-staging'],
+    reasonixBinary: '/Applications/Reasonix.app/Contents/MacOS/reasonix',
+    setupScript: 'scripts/reasonix-remote-setup.sh',
+  },
 } as const;

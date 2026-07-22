@@ -4,6 +4,8 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
 **Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote only — do not default-push there). Runtime identity: [`lib/github-repository-ref.ts`](lib/github-repository-ref.ts) (`owner`/`name`/`host`/`remote` — not `REPO_URL`); parts SSOT in [`CANONICAL_REMOTES`](lib/docs/repo-docs.ts).
 
+**Remote SSH:** Reasonix remote hosts live in `~/.reasonix/config.toml` under `[remote]`. Active: `factorywager-staging` (internal.staging, `~/.ssh/id_ed25519`, workspace `~/Projects`). Cascade Mover host is placeholder (uncomment when IP known). CLI: `reasonix remote test/connect/list`. First-time bootstrap: `bun run remote:setup` or `bash scripts/reasonix-remote-setup.sh`. Reasonix binary: `/Applications/Reasonix.app/Contents/MacOS/reasonix`.
+
 ## Canonical docs
 
 | Role | Doc |
@@ -152,10 +154,10 @@ Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/) · Type proo
 
 ## Console depth (output verbosity)
 
-Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](lib/console-depth.ts) (SSOT). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Use `inspect()` / `logDepth()` from that module instead of raw `console.log(obj)` in tools; forward to children with `depthArgs()` / `withConsoleDepth()`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work.
+Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](lib/console-depth.ts) (**wrapper** over `Bun.inspect` / `.table` / `.custom`). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Prefer wrapper helpers (`inspect` / `logDepth` / `logTable` / `inspectCustom`) over raw `console.log(obj)` / `console.table`; forward to children with `depthArgs()` / `withConsoleDepth()`. Hashing wrapper: [`lib/security/index.ts`](lib/security/index.ts) `SecurityUtils` (claim `security-hash-boundaries`). Full wrapper inventory: [`docs/harness/PROOF.md`](docs/harness/PROOF.md#bun-native-utils-wrappers) · `BUN_NATIVE_WRAPPERS` · `bun run harness:status`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work.
 
 | Kind | References |
 |------|------------|
-| Repo | claim `console-depth-boundaries` · [`lib/console-depth.ts`](lib/console-depth.ts) · [`tests/console-depth.test.ts`](tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](tools/benchmarks/console-depth-perf.ts) · map in [`docs/harness/PROOF.md`](docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external) |
-| Bun | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`stringWidth` · `inspect`) |
+| Repo | claim `console-depth-boundaries` · wrapper [`lib/console-depth.ts`](lib/console-depth.ts) · [`tests/console-depth.test.ts`](tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](tools/benchmarks/console-depth-perf.ts) · wrappers map [`PROOF.md`](docs/harness/PROOF.md#bun-native-utils-wrappers) · hash wrapper `security-hash-boundaries` |
+| Bun | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`inspect` · `.table` · `.custom` · `stringWidth`) · [hashing](https://bun.com/docs/runtime/hashing) |
 | Other external | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |
