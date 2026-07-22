@@ -14,7 +14,7 @@ import { logger } from './logger';
 import { handleError } from './error-handler';
 import { toJsonString, serializeBigInt } from './serialization';
 import { requireValidUserId } from './validation';
-import { resolveProfileSecretsService } from '../../../../../lib/security/infra-secrets';
+import { resolveProfileSecretsService } from '../../../../../../../lib/security/infra-secrets';
 
 // Type-safe profile preferences schema (v10.1)
 export const ProfilePrefsSchema = z.object({

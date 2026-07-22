@@ -6,8 +6,9 @@
  * Uses Bun.wrapAnsi() for 33-88x faster ANSI text wrapping
  */
 
-import { sanitizeEnvVar } from '../../../../../lib/utils/env-validator';
-import { resolveR2InfraConfig } from '../../../../../lib/security/infra-secrets';
+import { CLOUDFLARE_DEFAULTS } from '../../../../../../../config/r2-env.ts';
+import { sanitizeEnvVar } from '../../../../../../../lib/utils/env-validator';
+import { resolveR2InfraConfig } from '../../../../../../../lib/security/infra-secrets';
 import { styled, FW_COLORS } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
 import { NPMRegistryServer } from '../src/server';
@@ -102,7 +103,8 @@ class RegistryCLI {
   private async handleStart(options: any): Promise<void> {
     console.info(styled('\n🚀 Starting NPM Registry...', 'accent'));
     const infraR2 = await resolveR2InfraConfig({
-      bucketFallback: options.bucket || process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+      bucketFallback:
+        options.bucket || Bun.env.R2_REGISTRY_BUCKET || CLOUDFLARE_DEFAULTS.registryDoctorBucket,
     });
 
     const server = new NPMRegistryServer({
@@ -508,7 +510,7 @@ class RegistryCLI {
    */
   private async handleConfig(): Promise<void> {
     const infraR2 = await resolveR2InfraConfig({
-      bucketFallback: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+      bucketFallback: Bun.env.R2_REGISTRY_BUCKET || CLOUDFLARE_DEFAULTS.registryDoctorBucket,
     });
     console.info(styled('\n⚙️  Registry Configuration', 'accent'));
     console.info(styled('==========================', 'accent'));

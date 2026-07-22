@@ -9,7 +9,7 @@
 import { UserProfileEngine, ProfilePrefs } from './core';
 import { logger } from './logger';
 import { handleError } from './error-handler';
-import { resolveProfileSecretsService } from '../../../../../lib/security/infra-secrets';
+import { resolveProfileSecretsService } from '../../../../../../../lib/security/infra-secrets';
 
 export interface OnboardingSession {
   userId: string;           // '@ashschaeffer1'

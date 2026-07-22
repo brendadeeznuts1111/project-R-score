@@ -15,7 +15,8 @@ import { styled } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
 import { RegistryAuth, AuthConfigs } from '@factorywager/registry-core/auth';
 import type { PackageManifest, PackageVersion, PublishRequest } from '@factorywager/registry-core/types';
-import { resolveR2InfraConfig } from '../../../../../lib/security/infra-secrets';
+import { CLOUDFLARE_DEFAULTS } from '../../../../../../../config/r2-env.ts';
+import { resolveR2InfraConfig } from '../../../../../../../lib/security/infra-secrets';
 
 export interface ServerOptions {
   port?: number;
@@ -553,7 +554,7 @@ if (import.meta.main) {
       Bun.env.FW_INFRA_SECRETS_SERVICE || 'com.factorywager.infra',
       'default',
     ],
-    bucketFallback: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+    bucketFallback: Bun.env.R2_REGISTRY_BUCKET || CLOUDFLARE_DEFAULTS.registryDoctorBucket,
   });
 
   const server = new NPMRegistryServer({

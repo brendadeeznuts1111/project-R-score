@@ -13,6 +13,11 @@ import type {
   RegistryStats,
   PackageStats 
 } from '@factorywager/registry-core/types';
+import {
+  CLOUDFLARE_DEFAULTS,
+  cloudflareAccountIdFromEnv,
+  r2EndpointFromAccount,
+} from '../../../../../../../config/r2-env.ts';
 
 export interface R2StorageConfig {
   accountId: string;
@@ -38,18 +43,21 @@ export class R2StorageAdapter {
   private publicUrl: string;
 
   constructor(config: Partial<R2StorageConfig> = {}) {
+    const accountId = config.accountId || cloudflareAccountIdFromEnv();
     this.config = {
-      accountId: config.accountId || process.env.R2_ACCOUNT_ID || '',
-      accessKeyId: config.accessKeyId || process.env.R2_ACCESS_KEY_ID || '',
-      secretAccessKey: config.secretAccessKey || process.env.R2_SECRET_ACCESS_KEY || '',
-      bucketName: config.bucketName || process.env.R2_REGISTRY_BUCKET || 'npm-registry',
-      endpoint: config.endpoint || process.env.R2_ENDPOINT,
+      accountId,
+      accessKeyId: config.accessKeyId || Bun.env.R2_ACCESS_KEY_ID || '',
+      secretAccessKey: config.secretAccessKey || Bun.env.R2_SECRET_ACCESS_KEY || '',
+      bucketName:
+        config.bucketName ||
+        Bun.env.R2_REGISTRY_BUCKET ||
+        CLOUDFLARE_DEFAULTS.registryDoctorBucket,
+      endpoint: config.endpoint || Bun.env.R2_ENDPOINT || r2EndpointFromAccount(accountId),
       prefix: config.prefix || 'packages/',
       compression: config.compression || null,
     };
 
-    this.baseUrl = this.config.endpoint || 
-      `https://${this.config.accountId}.r2.cloudflarestorage.com`;
+    this.baseUrl = this.config.endpoint || r2EndpointFromAccount(this.config.accountId);
     this.publicUrl = `https://pub-${this.config.accountId}.r2.dev`;
   }
 
