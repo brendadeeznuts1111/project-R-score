@@ -145,16 +145,26 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   standardsImplementation: 'Coding standards (quick reference)',
 } as const;
 
-/** Remotes (do not default-push to cascade). */
+/** Build remote SSOT entry — parts first; `url` derived (link edge only). */
+function canonicalRemote<R extends 'origin' | 'cascade'>(
+  remote: R,
+  host: string,
+  owner: string, // brand-ok — github login/org
+  name: string // brand-ok — repository name
+) {
+  return {
+    remote,
+    host,
+    owner,
+    name,
+    url: `https://${host}/${owner}/${name}`,
+  } as const;
+}
+
+/** Remotes (do not default-push to cascade). Parts are SSOT; `url` is the link edge. */
 export const CANONICAL_REMOTES = {
-  origin: {
-    name: 'project-R-score',
-    url: 'https://github.com/brendadeeznuts1111/project-R-score',
-  },
-  cascade: {
-    name: 'cascade-mover-v3',
-    url: 'https://github.com/brendadeeznuts1111/cascade-mover-v3',
-  },
+  origin: canonicalRemote('origin', 'github.com', 'brendadeeznuts1111', 'project-R-score'),
+  cascade: canonicalRemote('cascade', 'github.com', 'brendadeeznuts1111', 'cascade-mover-v3'),
 } as const;
 
 /**

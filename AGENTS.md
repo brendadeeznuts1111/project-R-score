@@ -2,7 +2,7 @@
 
 AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
-**Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote only — do not default-push there).
+**Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote only — do not default-push there). Runtime identity: [`lib/github-repository-ref.ts`](lib/github-repository-ref.ts) (`owner`/`name`/`host`/`remote` — not `REPO_URL`); parts SSOT in [`CANONICAL_REMOTES`](lib/docs/repo-docs.ts).
 
 ## Canonical docs
 

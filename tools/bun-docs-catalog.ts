@@ -1,3 +1,8 @@
+// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — --port
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
+// @see https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations — --sourcemap
+// @see https://bun.com/docs/bundler/executables#code-splitting — --splitting
+// @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/file-io — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
@@ -1072,6 +1077,30 @@ export async function buildCatalog(opts?: {
     if (!c.description) continue;
     const entry = map.get(normalizeName(c.term));
     if (entry) entry.description = c.description;
+  }
+
+  // Frozen guide fences (lang+code) — by page path or TOKEN_GUIDE_PATH (never peer-scavenge)
+  const { guideExamplesForPage, guideExamplesForToken } = await import(
+    './bun-docs-guide-examples.ts'
+  );
+  for (const e of map.values()) {
+    const frozen = [...guideExamplesForToken(e.name), ...guideExamplesForPage(e.canonicalPage)];
+    if (frozen.length === 0) continue;
+    const have = new Set((e.examples ?? []).map(x => `${x.lang}\0${x.body}`));
+    const merged = [...(e.examples ?? [])];
+    for (const ex of frozen) {
+      const key = `${ex.lang}\0${ex.body}`;
+      if (have.has(key)) continue;
+      have.add(key);
+      merged.push(ex);
+    }
+    // Prefer frozen guide fences first when present
+    const frozenKeys = new Set(frozen.map(x => `${x.lang}\0${x.body}`));
+    const guideFirst = [
+      ...merged.filter(x => frozenKeys.has(`${x.lang}\0${x.body}`)),
+      ...merged.filter(x => !frozenKeys.has(`${x.lang}\0${x.body}`)),
+    ];
+    e.examples = guideFirst.slice(0, 6);
   }
 
   // 5) Inject changelog-only tokens missing from docs merge (e.g. process.env fixes)

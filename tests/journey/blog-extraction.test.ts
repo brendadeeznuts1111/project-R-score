@@ -6,6 +6,8 @@
  * Invalid port on Bun 1.4.0-canary — revisit when that ships clean.
  *
  * @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching
+ * @see https://bun.com/docs/runtime/networking/dns#dns-prefetch
+ * @see https://bun.com/docs/runtime/networking/dns#dns-getcachestats
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  * @see https://bun.com/docs/runtime/networking/fetch#streaming-response-bodies
  * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
@@ -36,6 +38,14 @@ const SAMPLE_SLUG = 'bun-v1.3.4';
 dns.prefetch(BunComSite.hostname);
 
 describe('blog-extraction journey', () => {
+  test('dns.prefetch warms Bun DNS cache for bun.com', () => {
+    // Soft observability only — do not claim TTL or hit ratios.
+    const stats = dns.getCacheStats();
+    expect(stats.size).toBeGreaterThan(0);
+    expect(stats.totalCount).toBeGreaterThan(0);
+    expect(stats.errors).toBe(0);
+  });
+
   test('URLPattern validates blog index + post derived from CANONICAL_SOURCES', () => {
     const indexUrl = hrefFromInit(CANONICAL_SOURCES.blog);
     expect(BunBlogIndexPattern.test(indexUrl)).toBe(true);

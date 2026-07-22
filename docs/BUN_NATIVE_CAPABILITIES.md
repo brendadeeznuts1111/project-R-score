@@ -23,6 +23,7 @@
 | `Bun.$` / shell | tagged templates, `.cwd()`, `.nothrow()`, `.quiet()` | `bun test tests/fixtures/bun-shell/` · claim `bun-shell-boundaries` · [shell](https://bun.com/docs/runtime/shell) |
 | `Bun.password` / `CryptoHasher` | password hash/verify · sha256/sha1 digests | `bun test tests/fixtures/security-hash/` · claim `security-hash-boundaries` · [hashing](https://bun.com/docs/runtime/hashing) |
 | `Bun.stripANSI` / `stringWidth` | TTY width | `tests/bun-ansi-width.test.ts` — **no** npm `string-width` |
+| `Bun.build` / macros / plugins | bundle-time code · inlined macros · `Bun.plugin` | [`lib/docs/bundler-nav.ts`](../lib/docs/bundler-nav.ts) · `bun tools/bun-doc-refs.ts bundler` · [`lib/macros/`](../lib/macros/) · [bundler](https://bun.com/docs/bundler/index) · [macros](https://bun.com/docs/bundler/macros) · [plugins](https://bun.com/docs/bundler/plugins) |
 
 ### `Bun.cron`
 
@@ -58,8 +59,9 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 | URLPattern site URLs | claim `url-pattern-boundaries` · `bun test tests/bun-site-url.test.ts` · [URLPattern](https://bun.com/blog/bun-v1.3.4#urlpattern-api) |
 | `HTMLRewriter` social metadata | claim `social-metadata-boundaries` · `bun test tests/fixtures/social-metadata/` · [extract-social-meta](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags) |
 | Blog HTML extraction | claim `blog-extraction-boundaries` · `bun test tests/fixtures/blog-extraction/` · article body sans nav/footer |
-| `fetch` / `Bun.fetch` | `fetchPage` helper with strong defaults (timeout, HTTPS, headers, verbose) · claim `fetch-page-boundaries` · `bun test tests/fixtures/fetch-page/` · anchors: `#sending-an-http-request`, `#fetching-a-url-with-a-timeout`, `#error-handling`, `#debugging` |
-| Blog ingestion journey | claim `blog-extraction-journey` · `bun test tests/journey/blog-extraction.test.ts` · live `CANONICAL_SOURCES.blog` → URLPattern → fetchPage → SocialMetadata |
+| `fetch` / `Bun.fetch` | `fetchPage` helper ([`lib/docs/fetch-page.ts`](../lib/docs/fetch-page.ts)) · claim `fetch-page-boundaries` · `bun test tests/fixtures/fetch-page/` · call-site `dns.prefetch` OK; `fetch.preconnect` blocked until Bun Invalid-port fix · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request) · [dns.prefetch](https://bun.com/docs/runtime/networking/dns#dns-prefetch) |
+| `Bun.serve` | claim `bun-http-server-docs` · `bun test tests/bun-docs-catalog.test.ts` · full page mapped (`routes` · port/hostname · unix · HTTP/3 · lifecycle · metrics) · [server](https://bun.com/docs/runtime/http/server#basic-setup) · [reference](https://bun.com/docs/runtime/http/server#reference) |
+| Blog ingestion journey | claim `blog-extraction-journey` · `bun test tests/journey/blog-extraction.test.ts` · live `CANONICAL_SOURCES.blog` → URLPattern → `dns.prefetch` → fetchPage → SocialMetadata + streamed article |
 | Harness spawn / orphans | this section · `bunfig.toml` `[run]` · `runFreshRerunCommand` |
 | DX one-liners | `bun run dx:catalog` |
 | Wire / brands | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |

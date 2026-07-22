@@ -12,6 +12,8 @@ Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API 
 | [`fetch-page.ts`](./fetch-page.ts) | Shared page fetch SSOT (`fetchPage`) |
 | [`extract-metadata.ts`](./extract-metadata.ts) | Social metadata via HTMLRewriter |
 | [`blog-extract.ts`](./blog-extract.ts) | Article body + re-exports for blog ingestion |
+| [`bundler-nav.ts`](./bundler-nav.ts) | Bun docs Bundler sidebar (leaves · groups · CANONICAL_REFS merge) |
+| [`bundler-gaps.ts`](./bundler-gaps.ts) | High-signal anchor/catalog gap reports (`bundler --gaps`) |
 | [`token-ref.ts`](./token-ref.ts) |
 | [`bun-token.ts`](./bun-token.ts) |
 

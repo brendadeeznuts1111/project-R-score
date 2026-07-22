@@ -1,0 +1,189 @@
+import { describe, expect, test } from 'bun:test';
+import {
+  commitUrl,
+  githubTokenPresence,
+  htmlUrl,
+  ownerName,
+  parseGitRemoteUrl,
+  parseOwnerName,
+  resolveGitHubRepositoryRef,
+  treeUrl,
+} from '../lib/github-repository-ref';
+
+describe('parseOwnerName', () => {
+  test('owner/name', () => {
+    expect(parseOwnerName('brendadeeznuts1111/project-R-score')).toEqual({
+      owner: 'brendadeeznuts1111',
+      name: 'project-R-score',
+    });
+  });
+
+  test('strips .git', () => {
+    expect(parseOwnerName('o/n.git')?.name).toBe('n');
+  });
+});
+
+describe('parseGitRemoteUrl', () => {
+  test('git@ host:owner/name.git', () => {
+    expect(parseGitRemoteUrl('git@github.com:brendadeeznuts1111/project-R-score.git')).toEqual({
+      host: 'github.com',
+      owner: 'brendadeeznuts1111',
+      name: 'project-R-score',
+    });
+  });
+
+  test('https url', () => {
+    expect(
+      parseGitRemoteUrl('https://github.com/brendadeeznuts1111/cascade-mover-v3.git')
+    ).toEqual({
+      host: 'github.com',
+      owner: 'brendadeeznuts1111',
+      name: 'cascade-mover-v3',
+    });
+  });
+
+  test('ssh://git@host/owner/name.git', () => {
+    expect(parseGitRemoteUrl('ssh://git@github.com/acme/widget.git')).toEqual({
+      host: 'github.com',
+      owner: 'acme',
+      name: 'widget',
+    });
+  });
+});
+
+describe('resolveGitHubRepositoryRef', () => {
+  test('Actions GITHUB_REPOSITORY + GITHUB_SERVER_URL', () => {
+    const ref = resolveGitHubRepositoryRef({
+      remote: 'origin',
+      gitRemoteUrl: null,
+      env: {
+        GITHUB_REPOSITORY: 'acme/widget',
+        GITHUB_REPOSITORY_OWNER: 'acme',
+        GITHUB_SERVER_URL: 'https://github.com',
+      },
+    });
+    expect(ref).toEqual({
+      host: 'github.com',
+      owner: 'acme',
+      name: 'widget',
+      remote: 'origin',
+      source: 'actions',
+    });
+  });
+
+  test('fail-loud on garbage GITHUB_REPOSITORY', () => {
+    expect(() =>
+      resolveGitHubRepositoryRef({
+        remote: 'origin',
+        gitRemoteUrl: null,
+        env: { GITHUB_REPOSITORY: 'not-a-pair' },
+      })
+    ).toThrow(/GITHUB_REPOSITORY is not owner\/name/);
+  });
+
+  test('fail-loud when OWNER disagrees with REPOSITORY', () => {
+    expect(() =>
+      resolveGitHubRepositoryRef({
+        remote: 'origin',
+        gitRemoteUrl: null,
+        env: {
+          GITHUB_REPOSITORY: 'acme/widget',
+          GITHUB_REPOSITORY_OWNER: 'other',
+        },
+      })
+    ).toThrow(/disagrees/);
+  });
+
+  test('fail-loud on garbage git remote url', () => {
+    expect(() =>
+      resolveGitHubRepositoryRef({
+        remote: 'origin',
+        env: {},
+        gitRemoteUrl: 'not-a-url',
+      })
+    ).toThrow(/not a parseable GitHub URL/);
+  });
+
+  test('git remote when Actions unset', () => {
+    const ref = resolveGitHubRepositoryRef({
+      remote: 'origin',
+      env: {},
+      gitRemoteUrl: 'git@github.com:other/repo.git',
+    });
+    expect(ref.source).toBe('git-remote');
+    expect(ref.owner).toBe('other');
+    expect(ref.name).toBe('repo');
+  });
+
+  test('canonical fallback sets source: canonical', () => {
+    const ref = resolveGitHubRepositoryRef({
+      remote: 'origin',
+      env: {},
+      gitRemoteUrl: null,
+    });
+    expect(ref).toEqual({
+      host: 'github.com',
+      owner: 'brendadeeznuts1111',
+      name: 'project-R-score',
+      remote: 'origin',
+      source: 'canonical',
+    });
+  });
+
+  test('cascade slot canonical', () => {
+    const ref = resolveGitHubRepositoryRef({
+      remote: 'cascade',
+      env: {},
+      gitRemoteUrl: null,
+    });
+    expect(ref.name).toBe('cascade-mover-v3');
+    expect(ref.source).toBe('canonical');
+  });
+});
+
+describe('link edge helpers', () => {
+  const ref = {
+    host: 'github.com',
+    owner: 'o',
+    name: 'n',
+    remote: 'origin' as const,
+    source: 'canonical' as const,
+  };
+
+  test('htmlUrl + ownerName', () => {
+    expect(htmlUrl(ref)).toBe('https://github.com/o/n');
+    expect(ownerName(ref)).toBe('o/n');
+  });
+
+  test('treeUrl encodes branch segments', () => {
+    expect(treeUrl(ref, 'feat/foo')).toBe('https://github.com/o/n/tree/feat/foo');
+  });
+
+  test('commitUrl', () => {
+    expect(commitUrl(ref, 'abc123')).toBe('https://github.com/o/n/commit/abc123');
+  });
+});
+
+describe('githubTokenPresence', () => {
+  test('GITHUB_TOKEN over GITHUB_ACCESS_TOKEN', () => {
+    expect(
+      githubTokenPresence({
+        GITHUB_TOKEN: 't1',
+        GITHUB_ACCESS_TOKEN: 't2',
+        GITHUB_API_DOMAIN: 'api.github.com',
+      })
+    ).toEqual({ tokenSource: 'GITHUB_TOKEN', apiDomain: 'api.github.com' });
+  });
+
+  test('falls through to ACCESS then GH_TOKEN then none', () => {
+    expect(githubTokenPresence({ GITHUB_ACCESS_TOKEN: 'x' }).tokenSource).toBe(
+      'GITHUB_ACCESS_TOKEN'
+    );
+    expect(githubTokenPresence({ GH_TOKEN: 'x' }).tokenSource).toBe('GH_TOKEN');
+    expect(githubTokenPresence({}).tokenSource).toBe('none');
+  });
+
+  test('default apiDomain', () => {
+    expect(githubTokenPresence({}).apiDomain).toBe('api.github.com');
+  });
+});

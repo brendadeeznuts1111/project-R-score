@@ -275,3 +275,77 @@ describe('catalog list table cells', () => {
     expect(lines[2]).toContain('1.3.5');
   });
 });
+
+describe('frozen guide examples', () => {
+  test('read-env / set-env / timezone / util guides carry lang+code', async () => {
+    const { GUIDE_EXAMPLES, guideExamplesForPage, guideExamplesForToken } = await import(
+      '../tools/bun-docs-guide-examples.ts'
+    );
+    expect(GUIDE_EXAMPLES['guides/runtime/timezone']?.some(e => e.lang === 'ts')).toBe(true);
+    expect(guideExamplesForPage('https://bun.com/docs/guides/runtime/set-env').some(e => e.lang === 'ini')).toBe(
+      true
+    );
+    expect(guideExamplesForPage('https://bun.com/docs/guides/runtime/read-env.md').length).toBeGreaterThan(0);
+    expect(guideExamplesForToken('Bun.which')[0]?.body).toContain('Bun.which');
+    expect(guideExamplesForToken('Bun.pathToFileURL')[0]?.body).toContain('Bun.pathToFileURL');
+    expect(guideExamplesForToken('Bun.fileURLToPath')[0]?.body).toContain('Bun.fileURLToPath');
+    expect(guideExamplesForToken('fileURLToPath')[0]?.body).toContain('node:url');
+    expect(guideExamplesForToken('pathToFileURL')[0]?.body).toContain('node:url');
+    expect(guideExamplesForToken('import.meta.dir')[0]?.body).toContain('import.meta.dir');
+    expect(guideExamplesForToken('process.env')[0]?.body).toContain('process.env');
+    expect(guideExamplesForToken('--define')[0]?.body).toContain('--define');
+    expect(
+      guideExamplesForPage('https://bun.com/docs/runtime#transpilation-language-features').length
+    ).toBeGreaterThan(0);
+    expect(guideExamplesForToken('bun run -')[0]?.body).toContain('bun run -');
+    expect(guideExamplesForToken('URLPattern')[0]?.body).toContain('/users/:id');
+    expect(guideExamplesForToken('server.port')[0]?.body).toContain('port: 8080');
+    expect(guideExamplesForToken('port: 0')?.some(e => e.body.includes('port: 0'))).toBe(true);
+    expect(guideExamplesForToken('BUN_PORT')?.some(e => e.body.includes('BUN_PORT=4002'))).toBe(
+      true
+    );
+    expect(guideExamplesForToken('Bun.serve')[0]?.body).toContain('routes');
+    expect(guideExamplesForToken('server.stop')[0]?.body).toContain('server.stop');
+    expect(guideExamplesForToken('http3')[0]?.body).toContain('http3: true');
+    expect(guideExamplesForToken('idleTimeout')[0]?.body).toContain('idleTimeout: 30');
+    expect(guideExamplesForToken('Server')[0]?.body).toContain('interface Server');
+    expect(
+      guideExamplesForPage(
+        'https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname'
+      ).length
+    ).toBeGreaterThan(0);
+    expect(
+      guideExamplesForPage('https://bun.com/docs/runtime/http/server#reference').length
+    ).toBeGreaterThan(0);
+    expect(
+      guideExamplesForPage('https://bun.com/blog/bun-v1.3.4#urlpattern-api').length
+    ).toBeGreaterThan(0);
+    expect(
+      guideExamplesForPage(
+        'https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster'
+      ).length
+    ).toBeGreaterThan(0);
+  });
+});
+
+describe('frozen CANONICAL_REFS env / npmrc', () => {
+  test('Read/Set environment variables + process.env + .npmrc point at institutional pages', async () => {
+    const { CANONICAL_REFS } = await import('../tools/bun-doc-refs.ts');
+    expect(CANONICAL_REFS['Read environment variables']).toBe(
+      'https://bun.com/docs/guides/runtime/read-env'
+    );
+    expect(CANONICAL_REFS['Set environment variables']).toBe(
+      'https://bun.com/docs/guides/runtime/set-env'
+    );
+    expect(CANONICAL_REFS['set-env']).toBe('https://bun.com/docs/guides/runtime/set-env');
+    expect(CANONICAL_REFS['Set a time zone in Bun']).toBe(
+      'https://bun.com/docs/guides/runtime/timezone'
+    );
+    expect(CANONICAL_REFS.TZ).toBe('https://bun.com/docs/guides/runtime/timezone');
+    expect(CANONICAL_REFS['.env']).toContain('#setting-environment-variables');
+    expect(CANONICAL_REFS['process.env']).toBe('https://bun.com/docs/runtime/utils#bun-env');
+    expect(CANONICAL_REFS['Bun.env']).toBe('https://bun.com/docs/runtime/utils#bun-env');
+    expect(CANONICAL_REFS['.npmrc']).toBe('https://bun.com/docs/pm/npmrc');
+    expect(CANONICAL_REFS['save-exact']).toContain('pm/npmrc#save-exact');
+  });
+});

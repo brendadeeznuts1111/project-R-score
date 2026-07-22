@@ -4,12 +4,19 @@
  * Strong defaults for blog/docs ingestion: HTTPS, Accept text/html, BunHarness UA,
  * 15s timeout. Bun's own UA / Accept defaults remain fine for general-purpose fetch.
  *
+ * DNS / connection warming (call-site only — not baked into this helper):
+ * - Callers that know the host early may `dns.prefetch(hostname)` before fetchPage.
+ * - Do not call `fetch.preconnect` until Bun fixes Invalid port on default HTTPS
+ *   (oven-sh/bun#21633 / #19626 on 1.4). Guide fences stay discovery-only.
+ *
  * Anchors (primary locus for fetch):
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
  * @see https://bun.com/docs/runtime/networking/fetch#custom-headers
  * @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout
  * @see https://bun.com/docs/runtime/networking/fetch#error-handling
  * @see https://bun.com/docs/runtime/networking/fetch#debugging
+ * @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching
+ * @see https://bun.com/docs/runtime/networking/dns#dns-prefetch
  */
 
 const DEFAULT_TIMEOUT_MS = 15_000;

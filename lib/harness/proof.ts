@@ -261,7 +261,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'fetch-page-boundaries',
     claim:
-      'fetchPage enforces HTTPS, Accept/UA, 15s timeout, optional verbose; throws on non-OK; leaves success body unread',
+      'fetchPage enforces HTTPS, Accept/UA, 15s timeout, optional verbose; throws on non-OK; leaves success body unread (call-site dns.prefetch OK; fetch.preconnect deferred — Bun Invalid port)',
     kinds: ['boundary'],
     gateClass: 'continuous',
     gateRef: 'ci:harness',
@@ -288,6 +288,22 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun test tests/journey/blog-extraction.test.ts',
     freshRerunKind: 'claim',
     owner: 'tests/journey/blog-extraction.test.ts',
+  },
+  {
+    id: 'bun-http-server-docs',
+    claim:
+      'CANONICAL_REFS + GUIDE_EXAMPLES cover runtime/http/server TOC (routes, port/hostname, unix, HTTP/3, lifecycle, metrics, reference)',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/bun-docs-catalog.test.ts',
+      'tools/bun-doc-refs.ts',
+      'tools/bun-docs-guide-examples.ts',
+    ],
+    freshRerun: 'bun test tests/bun-docs-catalog.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'tools/bun-docs-guide-examples.ts · tools/bun-doc-refs.ts',
   },
   {
     id: 'path-bun',

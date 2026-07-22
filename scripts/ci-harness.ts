@@ -15,11 +15,27 @@
  *   bun scripts/ci-harness.ts --verbose
  *   bun scripts/ci-harness.ts --fail-json
  */
+import { logCompact } from '../lib/console-depth';
+import { githubTokenPresence, resolveGitHubRepositoryRef } from '../lib/github-repository-ref';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
 
 const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/ci-harness-timing.json`;
+
+{
+  const ref = resolveGitHubRepositoryRef({ remote: 'origin' });
+  const tok = githubTokenPresence();
+  logCompact({
+    remote: ref.remote,
+    owner: ref.owner,
+    name: ref.name,
+    host: ref.host,
+    source: ref.source,
+    tokenSource: tok.tokenSource,
+    apiDomain: tok.apiDomain,
+  });
+}
 
 type Step = { name: string; cmd: string[]; owner: string; repair: string };
 type GateTiming = { name: string; ms: number; ok: boolean };
@@ -205,13 +221,14 @@ const BOUNDARY_FIXTURES: Step = {
     'tests/fixtures/blog-extraction/',
     'tests/fixtures/fetch-page/',
     'tests/bun-site-url.test.ts',
+    'tests/bun-docs-catalog.test.ts',
     'tests/fs-bun.test.ts',
     'tests/bun-glob-scan.test.ts',
   ],
   owner:
-    'runtime-cli · bun-shell · security-hash · social-metadata · blog-extraction · fetch-page · url-pattern · fs-native ProofPaths',
+    'runtime-cli · bun-shell · security-hash · social-metadata · blog-extraction · fetch-page · url-pattern · bun-http-server-docs · fs-native ProofPaths',
   repair:
-    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/fixtures/fetch-page/ tests/bun-site-url.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
+    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/fixtures/fetch-page/ tests/bun-site-url.test.ts tests/bun-docs-catalog.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
 };
 
 if (!fast) {

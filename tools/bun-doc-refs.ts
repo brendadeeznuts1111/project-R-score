@@ -1,7 +1,17 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
+// @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — Bun.serve port
+// @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — Bun.serve hostname
+// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — --port
+// @see https://bun.com/docs/runtime/http/server#unix-domain-sockets — Bun.serve unix
+// @see https://bun.com/docs/runtime/http/server#benchmarks — Bun.serve benchmarks
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — Bun.fetch
+// @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup — --fetch-preconnect
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternInit
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPatternResult
 /**
  * bun-doc-refs.ts — canonical Bun documentation reference tool.
  *
@@ -21,11 +31,34 @@
  *   bun tools/bun-doc-refs.ts integrity --fix  # auto-heal taxonomy aliases, then re-check
  *   bun tools/bun-doc-refs.ts status             # operator dashboard (last run · index · Bun)
  *   bun tools/bun-doc-refs.ts schedule --once    # one integrity pass + JSONL log
+ *   bun tools/bun-doc-refs.ts bundler            # print Bundler docs sidebar nav tree
+ *   bun tools/bun-doc-refs.ts bundler --anchors  # each leaf + index anchors
+ *   bun tools/bun-doc-refs.ts bundler --gaps     # high-signal uncovered report
+ *   bun tools/bun-doc-refs.ts bundler --tokens   # catalog bundler join + hasRef
  *
  * Adding a new API reference? Add it to CANONICAL_REFS below — one place only.
+ * Bundler sidebar leaves/groups: lib/docs/bundler-nav.ts (merged into CANONICAL_REFS).
+ * Gap reports: lib/docs/bundler-gaps.ts
  * Structured catalog (type · stability · allPages): tools/bun-docs-catalog.ts
  * Operate runbook: docs/BUN_DOCS_OPERATE.md
  */
+
+import {
+  catalogMissingRefCount,
+  computeBundlerGaps,
+  computeBundlerTokenRows,
+  formatBundlerAnchorsReport,
+  formatBundlerGapsText,
+  type BundlerGap,
+} from '../lib/docs/bundler-gaps';
+import {
+  BUNDLER_NAV_GROUPS,
+  bundlerNavCanonicalRefs,
+  bundlerNavConceptOnlyKeys,
+  formatBundlerNavTree,
+  type BundlerNavGroup,
+} from '../lib/docs/bundler-nav';
+import { bunBlog, bunDocs, mdnWebApi } from '../lib/docs/bun-site-url.ts';
 
 // Canonical doc map — the reference thesis for this repo's terminal layer:
 //
@@ -55,34 +88,6 @@ export const BUN_TYPES_PINNED =
 export const BUN_TYPES_MAIN = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
 
 export const CANONICAL_REFS: Record<string, string> = {
-  // HTMLRewriter — social-meta guide (SocialMetadata / extractSocialMetadata)
-  HTMLRewriter: bunDocs('runtime/html-rewriter'),
-  'HTMLRewriter social': bunDocs(
-    'guides/html-rewriter/extract-social-meta',
-    'extract-social-share-images-and-open-graph-tags'
-  ),
-  'extract-social-meta': bunDocs(
-    'guides/html-rewriter/extract-social-meta',
-    'extract-social-share-images-and-open-graph-tags'
-  ),
-  SocialMetadata: bunDocs(
-    'guides/html-rewriter/extract-social-meta',
-    'extract-social-share-images-and-open-graph-tags'
-  ),
-  extractSocialMetadata: bunDocs(
-    'guides/html-rewriter/extract-social-meta',
-    'extract-social-share-images-and-open-graph-tags'
-  ),
-
-  // URLPattern — ship 1.3.4; test/exec perf 1.3.12
-  URLPattern: bunBlog('bun-v1.3.4', 'urlpattern-api'),
-  'URLPattern ship': bunBlog('bun-v1.3.4', 'urlpattern-api'),
-  'URLPattern API': bunBlog('bun-v1.3.4', 'urlpattern-api'),
-  URLPatternInit: bunBlog('bun-v1.3.4', 'urlpattern-api'),
-  'URLPattern.test': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
-  'URLPattern.exec': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
-  'URLPattern MDN': mdnWebApi('URLPattern'),
-
   // ── Terminal width & ANSI (replaces string-width / strip-ansi / wrap-ansi /
   //    slice-ansi) ────────────────────────────────────────────────────────
   'Bun.stringWidth': 'https://bun.com/docs/runtime/utils#bun-stringwidth',
@@ -93,12 +98,94 @@ export const CANONICAL_REFS: Record<string, string> = {
   // ── File I/O & storage (top repo usage: Bun.file ×266, Bun.write ×153) ──
   'Bun.file': 'https://bun.com/docs/runtime/file-io#reading-files-bun-file',
   'Bun.write': 'https://bun.com/docs/runtime/file-io#writing-files-bun-write',
+  'Bun.mmap': 'https://bun.com/docs/runtime/bun-apis',
   'bun:sqlite': 'https://bun.com/docs/runtime/sqlite#load-via-es-module-import',
   'Bun.Archive': 'https://bun.com/docs/runtime/archive#quickstart',
   'Bun.gzipSync': 'https://bun.com/docs/runtime/utils#bun-gzipsync',
 
   // ── HTTP & networking ───────────────────────────────────────────────────
-  'Bun.serve': 'https://bun.com/docs/runtime/http/server#basic-setup',
+  // Bun.serve page TOC — howto anchors preferred over #reference type dump
+  'Bun.serve': bunDocs('runtime/http/server', 'basic-setup'),
+  'basic-setup': bunDocs('runtime/http/server', 'basic-setup'),
+  'Bun.serve routes': bunDocs('runtime/http/server', 'basic-setup'),
+  'html-imports': bunDocs('runtime/http/server', 'html-imports'),
+  'HTML imports': bunDocs('runtime/http/server', 'html-imports'),
+  'changing-the-port-and-hostname': bunDocs(
+    'runtime/http/server',
+    'changing-the-port-and-hostname'
+  ),
+  'Bun.serve port': bunDocs('runtime/http/server', 'changing-the-port-and-hostname'),
+  'Bun.serve hostname': bunDocs('runtime/http/server', 'changing-the-port-and-hostname'),
+  'server.port': bunDocs('runtime/http/server', 'changing-the-port-and-hostname'),
+  'server.url': bunDocs('runtime/http/server', 'changing-the-port-and-hostname'),
+  'port: 0': bunDocs('runtime/http/server', 'changing-the-port-and-hostname'),
+  'configuring-a-default-port': bunDocs('runtime/http/server', 'configuring-a-default-port'),
+  BUN_PORT: bunDocs('runtime/http/server', 'configuring-a-default-port'),
+  NODE_PORT: bunDocs('runtime/http/server', 'configuring-a-default-port'),
+  '--port': bunDocs('runtime/http/server', 'configuring-a-default-port'),
+  'unix-domain-sockets': bunDocs('runtime/http/server', 'unix-domain-sockets'),
+  'Bun.serve unix': bunDocs('runtime/http/server', 'unix-domain-sockets'),
+  'abstract-namespace-sockets': bunDocs('runtime/http/server', 'abstract-namespace-sockets'),
+  'http/3-quic': bunDocs('runtime/http/server', 'http/3-quic'),
+  http3: bunDocs('runtime/http/server', 'http/3-quic'),
+  'http1: false': bunDocs('runtime/http/server', 'http/3-quic'),
+  idleTimeout: bunDocs('runtime/http/server', 'idletimeout'),
+  idletimeout: bunDocs('runtime/http/server', 'idletimeout'),
+  'export-default-syntax': bunDocs('runtime/http/server', 'export-default-syntax'),
+  'Serve.Options': bunDocs('runtime/http/server', 'export-default-syntax'),
+  'hot-route-reloading': bunDocs('runtime/http/server', 'hot-route-reloading'),
+  'server-lifecycle-methods': bunDocs('runtime/http/server', 'server-lifecycle-methods'),
+  'server-stop': bunDocs('runtime/http/server', 'server-stop'),
+  'server.stop': bunDocs('runtime/http/server', 'server-stop'),
+  'server-ref-and-server-unref': bunDocs('runtime/http/server', 'server-ref-and-server-unref'),
+  'server.ref': bunDocs('runtime/http/server', 'server-ref-and-server-unref'),
+  'server.unref': bunDocs('runtime/http/server', 'server-ref-and-server-unref'),
+  'server-reload': bunDocs('runtime/http/server', 'server-reload'),
+  'server.reload': bunDocs('runtime/http/server', 'server-reload'),
+  'per-request-controls': bunDocs('runtime/http/server', 'per-request-controls'),
+  'server-timeout-request-seconds': bunDocs(
+    'runtime/http/server',
+    'server-timeout-request-seconds'
+  ),
+  'server.timeout': bunDocs('runtime/http/server', 'server-timeout-request-seconds'),
+  'server-requestip-request': bunDocs('runtime/http/server', 'server-requestip-request'),
+  'server.requestIP': bunDocs('runtime/http/server', 'server-requestip-request'),
+  'server-metrics': bunDocs('runtime/http/server', 'server-metrics'),
+  'server-pendingrequests-and-server-pendingwebsockets': bunDocs(
+    'runtime/http/server',
+    'server-pendingrequests-and-server-pendingwebsockets'
+  ),
+  pendingRequests: bunDocs(
+    'runtime/http/server',
+    'server-pendingrequests-and-server-pendingwebsockets'
+  ),
+  pendingWebSockets: bunDocs(
+    'runtime/http/server',
+    'server-pendingrequests-and-server-pendingwebsockets'
+  ),
+  'server.pendingRequests': bunDocs(
+    'runtime/http/server',
+    'server-pendingrequests-and-server-pendingwebsockets'
+  ),
+  'server.pendingWebSockets': bunDocs(
+    'runtime/http/server',
+    'server-pendingrequests-and-server-pendingwebsockets'
+  ),
+  'server-subscribercount-topic': bunDocs('runtime/http/server', 'server-subscribercount-topic'),
+  'server.subscriberCount': bunDocs('runtime/http/server', 'server-subscribercount-topic'),
+  'Bun.serve benchmarks': bunDocs('runtime/http/server', 'benchmarks'),
+  'practical-example-rest-api': bunDocs('runtime/http/server', 'practical-example-rest-api'),
+  // Type surface (Server / WebSocketHandler / TLSOptions) — #reference
+  'Bun.serve reference': bunDocs('runtime/http/server', 'reference'),
+  'server reference': bunDocs('runtime/http/server', 'reference'),
+  Server: bunDocs('runtime/http/server', 'reference'),
+  'server.fetch': bunDocs('runtime/http/server', 'reference'),
+  'server.upgrade': bunDocs('runtime/http/server', 'reference'),
+  'server.publish': bunDocs('runtime/http/server', 'reference'),
+  'server.development': bunDocs('runtime/http/server', 'reference'),
+  'server.id': bunDocs('runtime/http/server', 'reference'),
+  WebSocketHandler: bunDocs('runtime/http/server', 'reference'),
+  TLSOptions: bunDocs('runtime/http/server', 'reference'),
   // Global fetch / Bun.fetch — networking page (not nodejs-compat)
   // TOC must-tier: sending · headers · timeout · error-handling (+ stream/debug discovery)
   fetch: bunDocs('runtime/networking/fetch', 'sending-an-http-request'),
@@ -164,7 +251,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.spawnSync': 'https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync',
   'Bun.Terminal': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
   'Bun.build': 'https://bun.com/docs/bundler/index#basic-example',
-  'Bun.plugin': 'https://bun.com/docs/runtime/plugins#usage',
+  // Universal plugin API — bundler page is SSOT; runtime/plugins mirrors it
+  'Bun.plugin': 'https://bun.com/docs/bundler/plugins#usage',
   // In-process scheduler (returns CronJob with stop/ref/unref)
   'Bun.cron': 'https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process',
   // Shell template tag ($`…`)
@@ -228,9 +316,33 @@ export const CANONICAL_REFS: Record<string, string> = {
   FORCE_COLOR: 'https://bun.com/docs/runtime/environment-variables',
 
   // ── Environment & configuration ────────────────────────────────────────
-  // Runtime property (utils#bun-env) + env-file loading guide
+  // Guides (llms.txt): read-env / set-env — Bun.env ≡ process.env; .env load order
+  'Read environment variables': 'https://bun.com/docs/guides/runtime/read-env',
+  'read-env': 'https://bun.com/docs/guides/runtime/read-env',
+  'Set environment variables': 'https://bun.com/docs/guides/runtime/set-env',
+  'set-env': 'https://bun.com/docs/guides/runtime/set-env',
+  // Guide: process.env.TZ / TZ=… on CLI; bun test defaults to UTC
+  'Set a time zone in Bun': 'https://bun.com/docs/guides/runtime/timezone',
+  timezone: 'https://bun.com/docs/guides/runtime/timezone',
+  'set-timezone': 'https://bun.com/docs/guides/runtime/timezone',
+  TZ: 'https://bun.com/docs/guides/runtime/timezone',
+  'tz-timezone': 'https://bun.com/docs/test/runtime-behavior#tz-timezone',
+  'set-the-time-zone': 'https://bun.com/docs/test/dates-times#set-the-time-zone',
+  // Runtime property (utils#bun-env) + full Environment Variables guide
   'Bun.env': 'https://bun.com/docs/runtime/utils#bun-env',
+  'process.env': 'https://bun.com/docs/runtime/utils#bun-env',
+  'Environment variables': 'https://bun.com/docs/runtime/environment-variables',
+  'reading environment variables':
+    'https://bun.com/docs/runtime/environment-variables#reading-environment-variables',
+  'setting environment variables':
+    'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
+  // Auto-load: .env → .env.$NODE_ENV → .env.local (see set-env guide + this section)
+  '.env': 'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
   '.env files': 'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
+  '.env.local': 'https://bun.com/docs/runtime/environment-variables#setting-environment-variables',
+  '--env-file': 'https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files',
+  '--no-env-file':
+    'https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading',
   'configuring Bun': 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_OPTIONS: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   // Fetch performance knobs — locus is networking/fetch (env page only lists the names)
@@ -243,6 +355,26 @@ export const CANONICAL_REFS: Record<string, string> = {
   BUN_RUNTIME_TRANSPILER_CACHE_PATH:
     'https://bun.com/docs/runtime/environment-variables#what-does-it-cache',
   'bunfig.toml': 'https://bun.com/docs/runtime/bunfig',
+  // .npmrc (pm/npmrc) — prefer over scopes-registries#npmrc dump
+  '.npmrc': 'https://bun.com/docs/pm/npmrc',
+  npmrc: 'https://bun.com/docs/pm/npmrc',
+  'link-workspace-packages':
+    'https://bun.com/docs/pm/npmrc#link-workspace-packages-control-workspace-package-installation',
+  'save-exact': 'https://bun.com/docs/pm/npmrc#save-exact-save-exact-versions',
+  'ignore-scripts': 'https://bun.com/docs/pm/npmrc#ignore-scripts-skip-lifecycle-scripts',
+  'install-strategy':
+    'https://bun.com/docs/pm/npmrc#install-strategy-and-node-linker-installation-strategy',
+  'node-linker':
+    'https://bun.com/docs/pm/npmrc#install-strategy-and-node-linker-installation-strategy',
+  'public-hoist-pattern':
+    'https://bun.com/docs/pm/npmrc#public-hoist-pattern-and-hoist-pattern-control-hoisting',
+  // bunfig equivalents (install.*) — frozen keys for suggest/url
+  'install.registry': 'https://bun.com/docs/runtime/bunfig#install-registry',
+  'install.linkWorkspacePackages':
+    'https://bun.com/docs/runtime/bunfig#install-linkworkspacepackages',
+  'install.exact': 'https://bun.com/docs/runtime/bunfig#install-exact',
+  'install.dryRun': 'https://bun.com/docs/runtime/bunfig#install-dryrun',
+  'install.cache': 'https://bun.com/docs/runtime/bunfig#install-cache',
 
   // ── Testing & snapshots ────────────────────────────────────────────────
   'bun:test': 'https://bun.com/docs/test/index#run-tests',
@@ -256,7 +388,60 @@ export const CANONICAL_REFS: Record<string, string> = {
   'bun upgrade': 'https://bun.com/blog/bun-v1.3.12#to-upgrade-bun',
   'bun v1.3.12 bugfixes': 'https://bun.com/blog/bun-v1.3.12#bugfixes',
   'bun v1.3.12 contributors': 'https://bun.com/blog/bun-v1.3.12#thanks-to-8-contributors',
-  // v1.3.12 perf ship notes (runtime inherit; docs index may lag)
+  // HTMLRewriter — API page + social-meta guide (SocialMetadata / extractSocialMetadata)
+  HTMLRewriter: bunDocs('runtime/html-rewriter'),
+  'HTMLRewriter social': bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+  'extract-social-meta': bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+  'extract-social-share-images-and-open-graph-tags': bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+  SocialMetadata: bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+  extractSocialMetadata: bunDocs(
+    'guides/html-rewriter/extract-social-meta',
+    'extract-social-share-images-and-open-graph-tags'
+  ),
+
+  // URLPattern — hrefs from bunBlog/mdnWebApi (URLPatternInit protocol/hostname/pathname/hash)
+  // Ship 1.3.4 (PR #25168); test/exec up to 2.3× faster in 1.3.12
+  URLPattern: bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern ship': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern API': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'urlpattern-api': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  URLPatternInit: bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  URLPatternInput: bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  URLPatternResult: bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.constructor': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.test()': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.exec()': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'test()': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'exec()': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  hasRegExpGroups: bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.hasRegExpGroups': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.protocol': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.username': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.password': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.hostname': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.port': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.pathname': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.search': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.hash': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  'URLPattern.test': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
+  'URLPattern.exec': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
+  'URLPattern perf': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
+  'urlpattern-is-up-to-2-3x-faster': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
+  'URLPattern MDN': mdnWebApi('URLPattern'),
+  'URLPatternResult MDN': mdnWebApi('URLPatternResult'),
+  'URLPatternInit MDN': mdnWebApi('URLPattern/URLPattern'),
   'Bun.Glob.scan': 'https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan',
   'bun v1.3.12 stripANSI':
     'https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth',
@@ -271,9 +456,172 @@ export const CANONICAL_REFS: Record<string, string> = {
   '--shard':
     'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
 
-  // ── Bundler / executables ──────────────────────────────────────────────
-  'bun build --compile': 'https://bun.com/docs/bundler/executables',
+  // ── Bundler sidebar nav (lib/docs/bundler-nav.ts) + APIs / flags ────────
+  ...bundlerNavCanonicalRefs(),
+  // Extensions / Optimization / Migration deep links (beyond leaf landing)
+  'plugin lifecycle': 'https://bun.com/docs/bundler/plugins#plugin-lifecycle',
+  onStart: 'https://bun.com/docs/bundler/plugins#onstart',
+  onResolve: 'https://bun.com/docs/bundler/plugins#onresolve',
+  onLoad: 'https://bun.com/docs/bundler/plugins#onload',
+  onBeforeParse: 'https://bun.com/docs/bundler/plugins#onbeforeparse',
+  onEnd: 'https://bun.com/docs/bundler/plugins#onend',
+  'type: macro': 'https://bun.com/docs/bundler/macros#import-attributes',
+  'with { type: "macro" }': 'https://bun.com/docs/bundler/macros#import-attributes',
+  '--no-macros': 'https://bun.com/docs/runtime#transpilation-language-features',
+  'macros security': 'https://bun.com/docs/bundler/macros#security-considerations',
+  'export condition macro': 'https://bun.com/docs/bundler/macros#export-condition-macro',
+  'embed git commit hash': 'https://bun.com/docs/bundler/macros#embed-latest-git-commit-hash',
+  'bundle-time fetch': 'https://bun.com/docs/bundler/macros#make-fetch-requests-at-bundle-time',
+  'bun:error': 'https://bun.com/docs/bundler/hot-reloading#built-in-events',
+  'bun:invalidate': 'https://bun.com/docs/bundler/hot-reloading#built-in-events',
+  'bun:ws': 'https://bun.com/docs/bundler/hot-reloading#built-in-events',
+  'serve.static.env': 'https://bun.com/docs/bundler/fullstack#inline-environment-variables',
+  'serve.static.plugins': 'https://bun.com/docs/bundler/fullstack',
   'compile targets': 'https://bun.com/docs/bundler/executables#supported-targets',
+  'Bun.embeddedFiles': 'https://bun.com/docs/bundler/executables#listing-embedded-files',
+  'Bun.isStandaloneExecutable':
+    'https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime',
+  BUN_BE_BUN: 'https://bun.com/docs/bundler/executables#act-as-the-bun-cli',
+  'bun:bundle': 'https://bun.com/docs/bundler/esbuild#cli-api',
+  // Bundler CLI flags (catalog -s bundler) — url/suggest; annotate only for --* code keys
+  '--bytecode': 'https://bun.com/docs/bundler/bytecode#basic-usage-commonjs',
+  '--compile': 'https://bun.com/docs/bundler/bytecode#with-standalone-executables',
+  '--compile-autoload-package-json':
+    'https://bun.com/docs/bundler/executables#enabling-config-loading-at-runtime',
+  '--compile-autoload-tsconfig':
+    'https://bun.com/docs/bundler/executables#enabling-config-loading-at-runtime',
+  '--compile-exec-argv': 'https://bun.com/docs/bundler/executables#embedding-runtime-arguments',
+  // Runtime CLI — pipe JS/TS/TSX/JSX from stdin (no temp file)
+  // https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin
+  'bun run -': 'https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin',
+  'bun run - to pipe code from stdin':
+    'https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin',
+  'bun-run-to-pipe-code-from-stdin': 'https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin',
+  'pipe code from stdin': 'https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin',
+  // Runtime CLI (bun run) — https://bun.com/docs/runtime#transpilation-language-features
+  // (bun.sh/docs/runtime#transpilation-&-language-features → same slug)
+  'Transpilation & Language Features':
+    'https://bun.com/docs/runtime#transpilation-language-features',
+  'transpilation-language-features': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--tsconfig-override': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--define': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--drop': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--loader': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--jsx-factory': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--jsx-fragment': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--jsx-import-source': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--jsx-runtime': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--jsx-side-effects': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--ignore-dce-annotations': 'https://bun.com/docs/runtime#transpilation-language-features',
+  '--external': 'https://bun.com/docs/bundler/esbuild#cli-api',
+  '--format': 'https://bun.com/docs/bundler/bytecode#with-standalone-executables',
+  '--keep-names': 'https://bun.com/docs/bundler/minifier#keep-names',
+  '--minify': 'https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations',
+  '--minify-identifiers': 'https://bun.com/docs/bundler/minifier#granular-control',
+  '--minify-syntax': 'https://bun.com/docs/bundler/minifier#granular-control',
+  '--minify-whitespace': 'https://bun.com/docs/bundler/minifier#granular-control',
+  '--no-bundle': 'https://bun.com/docs/bundler/esbuild#cli-api',
+  '--outfile': 'https://bun.com/docs/bundler/bytecode#with-standalone-executables',
+  '--sourcemap': 'https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations',
+  '--splitting': 'https://bun.com/docs/bundler/executables#code-splitting',
+  '--asset-naming': 'https://bun.com/docs/bundler/executables#content-hash',
+  '--bundle': 'https://bun.com/docs/bundler/esbuild',
+  '--windows-hide-console': 'https://bun.com/docs/bundler/executables#windows-specific-flags',
+  '--windows-icon': 'https://bun.com/docs/bundler/executables#windows-specific-flags',
+  // Catalog flag name keys (url already covered; name must resolve via suggest/url)
+  '--force': 'https://bun.com/docs/bundler/executables',
+  '--console':
+    'https://bun.com/docs/bundler/html-static#echo-console-logs-from-browser-to-terminal',
+  '--cpu-prof': 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
+  '--cpu-prof-md': 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
+  '--heap-prof-md': 'https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options',
+  '--deep': 'https://bun.com/docs/bundler/executables#code-signing-on-macos',
+  '--entitlements': 'https://bun.com/docs/bundler/executables#code-signing-on-macos',
+  '--sign': 'https://bun.com/docs/bundler/executables#code-signing-on-macos',
+  '--verify': 'https://bun.com/docs/bundler/executables#code-signing-on-macos',
+  '--user-agent': 'https://bun.com/docs/bundler/executables#embedding-runtime-arguments',
+  '--no-compile-autoload-bunfig':
+    'https://bun.com/docs/bundler/executables#disabling-config-loading-at-runtime',
+  '--no-compile-autoload-dotenv':
+    'https://bun.com/docs/bundler/executables#disabling-config-loading-at-runtime',
+  '--jsx-dev': 'https://bun.com/docs/bundler/esbuild#cli-api',
+  '--sourcefile': 'https://bun.com/docs/bundler/esbuild#cli-api',
+  '--production': 'https://bun.com/docs/bundler/fullstack#production-mode',
+  // --env / --version: in map for url/suggest; excluded from annotate (ambiguous)
+  '--env': 'https://bun.com/docs/bundler/html-static#build-for-production',
+  '--version': 'https://bun.com/docs/bundler/esbuild#cli-api',
+  'Bun.embeddedFiles.length':
+    'https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime',
+  // Core — Bun.build API section landings
+  'bundler define': 'https://bun.com/docs/bundler/index#define',
+  'bundler loader': 'https://bun.com/docs/bundler/index#loader',
+  'bundler metafile': 'https://bun.com/docs/bundler/index#metafile',
+  'bundler external': 'https://bun.com/docs/bundler/index#external',
+  'bundler minify': 'https://bun.com/docs/bundler/index#minify',
+  'bundler cli-usage': 'https://bun.com/docs/bundler/index#cli-usage',
+  // Development Server
+  'fullstack html-routes': 'https://bun.com/docs/bundler/fullstack#html-routes',
+  'Fullstack dev server html-routes': 'https://bun.com/docs/bundler/fullstack#html-routes',
+  'import.meta.hot': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-api-reference',
+  'import.meta.hot.accept': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-accept',
+  'import.meta.hot.data': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-data',
+  'import.meta.hot.dispose': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-dispose',
+  'import.meta.hot.prune': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-prune',
+  'import.meta.hot.on': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-on-and-off',
+  // Asset Processing
+  'html-static inline-env': 'https://bun.com/docs/bundler/html-static#inline-environment-variables',
+  'HTML & static sites inline-environment-variables':
+    'https://bun.com/docs/bundler/html-static#inline-environment-variables',
+  'HTML & static sites build-for-production':
+    'https://bun.com/docs/bundler/html-static#build-for-production',
+  'HTML & static sites watch-mode': 'https://bun.com/docs/bundler/html-static#watch-mode',
+  'HTML & static sites plugin-api': 'https://bun.com/docs/bundler/html-static#plugin-api',
+  'Standalone HTML javascript-api': 'https://bun.com/docs/bundler/standalone-html#javascript-api',
+  'CSS css-modules': 'https://bun.com/docs/bundler/css#css-modules',
+  'loader:built-in-loaders': 'https://bun.com/docs/bundler/loaders#built-in-loaders',
+  'loader:js': 'https://bun.com/docs/bundler/loaders#js',
+  'loader:jsx': 'https://bun.com/docs/bundler/loaders#jsx',
+  'loader:ts': 'https://bun.com/docs/bundler/loaders#ts',
+  'loader:tsx': 'https://bun.com/docs/bundler/loaders#tsx',
+  'loader:json': 'https://bun.com/docs/bundler/loaders#json',
+  'loader:jsonc': 'https://bun.com/docs/bundler/loaders#jsonc',
+  'loader:toml': 'https://bun.com/docs/bundler/loaders#toml',
+  'loader:yaml': 'https://bun.com/docs/bundler/loaders#yaml',
+  'loader:text': 'https://bun.com/docs/bundler/loaders#text',
+  'loader:napi': 'https://bun.com/docs/bundler/loaders#napi',
+  'loader:sqlite': 'https://bun.com/docs/bundler/loaders#sqlite',
+  'loader:html': 'https://bun.com/docs/bundler/loaders#html',
+  'loader:css': 'https://bun.com/docs/bundler/loaders#css',
+  'loader:sh': 'https://bun.com/docs/bundler/loaders#sh',
+  'loader:file': 'https://bun.com/docs/bundler/loaders#file',
+  // Single File Executable
+  'build-time-constants': 'https://bun.com/docs/bundler/executables#build-time-constants',
+  'Single-file executable build-time-constants':
+    'https://bun.com/docs/bundler/executables#build-time-constants',
+  // Extensions
+  'plugins namespaces': 'https://bun.com/docs/bundler/plugins#namespaces',
+  'plugins defer': 'https://bun.com/docs/bundler/plugins#defer',
+  'plugins native-plugins': 'https://bun.com/docs/bundler/plugins#native-plugins',
+  'macros when-to-use-macros': 'https://bun.com/docs/bundler/macros#when-to-use-macros',
+  'macros execution': 'https://bun.com/docs/bundler/macros#execution',
+  'macros dead-code-elimination': 'https://bun.com/docs/bundler/macros#dead-code-elimination',
+  'macros examples': 'https://bun.com/docs/bundler/macros#examples',
+  // Optimization
+  'Bytecode Caching usage': 'https://bun.com/docs/bundler/bytecode#usage',
+  'Bytecode Caching esm-bytecode': 'https://bun.com/docs/bundler/bytecode#esm-bytecode',
+  'Bytecode Caching when-to-use-bytecode':
+    'https://bun.com/docs/bundler/bytecode#when-to-use-bytecode',
+  'Minifier cli-usage': 'https://bun.com/docs/bundler/minifier#cli-usage',
+  'Minifier javascript-api': 'https://bun.com/docs/bundler/minifier#javascript-api',
+  'Minifier dead-code-elimination': 'https://bun.com/docs/bundler/minifier#dead-code-elimination',
+  'Minifier drop-console-calls': 'https://bun.com/docs/bundler/minifier#drop-console-calls',
+  'Minifier when-to-use-minification':
+    'https://bun.com/docs/bundler/minifier#when-to-use-minification',
+  // Migration
+  'esbuild javascript-api': 'https://bun.com/docs/bundler/esbuild#javascript-api',
+  'esbuild plugin-api': 'https://bun.com/docs/bundler/esbuild#plugin-api',
+  // Env / globals (bundler-touching)
+  BUN_LOADER_JSX: 'https://bun.com/docs/bundler/plugins#creating-a-native-plugin-in-rust',
 
   // ── General utilities ──────────────────────────────────────────────────
   // @see pinned for tools that log runtime version in integrity/status
@@ -282,6 +630,13 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.randomUUIDv7': 'https://bun.com/docs/runtime/utils#bun-randomuuidv7',
   'Bun.Glob': 'https://bun.com/docs/runtime/glob#quickstart',
   'Bun.which': 'https://bun.com/docs/runtime/utils#bun-which',
+  // Guides (llms.txt) — how-to + frozen fences in bun-docs-guide-examples.ts
+  'Get the path to an executable bin file':
+    'https://bun.com/docs/guides/util/which-path-to-executable-bin#get-the-path-to-an-executable-bin-file',
+  'which-path-to-executable-bin':
+    'https://bun.com/docs/guides/util/which-path-to-executable-bin#get-the-path-to-an-executable-bin-file',
+  'get-the-path-to-an-executable-bin-file':
+    'https://bun.com/docs/guides/util/which-path-to-executable-bin#get-the-path-to-an-executable-bin-file',
   'Bun.nanoseconds': 'https://bun.com/docs/runtime/utils#bun-nanoseconds',
   'Bun.sleep': 'https://bun.com/docs/runtime/utils#bun-sleep',
   'Bun.sleepSync': 'https://bun.com/docs/runtime/utils#bun-sleepsync',
@@ -290,8 +645,39 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.peek': 'https://bun.com/docs/runtime/utils#bun-peek',
   'Bun.main': 'https://bun.com/docs/runtime/utils#bun-main',
   'Bun.resolveSync': 'https://bun.com/docs/runtime/utils#bun-resolvesync',
+  // Bun globals (primary) + guides + node:url compatibility (reference/)
   'Bun.fileURLToPath': 'https://bun.com/docs/runtime/utils#bun-fileurltopath',
   'Bun.pathToFileURL': 'https://bun.com/docs/runtime/utils#bun-pathtofileurl',
+  'Convert a file URL to an absolute path':
+    'https://bun.com/docs/guides/util/file-url-to-path#convert-a-file-url-to-an-absolute-path',
+  'file-url-to-path':
+    'https://bun.com/docs/guides/util/file-url-to-path#convert-a-file-url-to-an-absolute-path',
+  'convert-a-file-url-to-an-absolute-path':
+    'https://bun.com/docs/guides/util/file-url-to-path#convert-a-file-url-to-an-absolute-path',
+  'Convert an absolute path to a file URL':
+    'https://bun.com/docs/guides/util/path-to-file-url#convert-an-absolute-path-to-a-file-url',
+  'path-to-file-url':
+    'https://bun.com/docs/guides/util/path-to-file-url#convert-an-absolute-path-to-a-file-url',
+  'convert-an-absolute-path-to-a-file-url':
+    'https://bun.com/docs/guides/util/path-to-file-url#convert-an-absolute-path-to-a-file-url',
+  // Node-compatible (fully implemented) — not in llms.txt /docs index; audit skips /reference/
+  'node:url': 'https://bun.com/reference/node/url',
+  fileURLToPath: 'https://bun.com/reference/node/url/fileURLToPath',
+  'node:url/fileURLToPath': 'https://bun.com/reference/node/url/fileURLToPath',
+  'url.fileURLToPath': 'https://bun.com/reference/node/url/fileURLToPath',
+  pathToFileURL: 'https://bun.com/reference/node/url/pathToFileURL',
+  'node:url/pathToFileURL': 'https://bun.com/reference/node/url/pathToFileURL',
+  'url.pathToFileURL': 'https://bun.com/reference/node/url/pathToFileURL',
+  FileUrlToPathOptions: 'https://bun.com/reference/node/url/fileURLToPath',
+  PathToFileUrlOptions: 'https://bun.com/reference/node/url/pathToFileURL',
+  'import.meta.dir': 'https://bun.com/docs/runtime/module-resolution#import-meta',
+  'import.meta': 'https://bun.com/docs/runtime/module-resolution#import-meta',
+  'Get the directory of the current file':
+    'https://bun.com/docs/guides/util/import-meta-dir#get-the-directory-of-the-current-file',
+  'import-meta-dir':
+    'https://bun.com/docs/guides/util/import-meta-dir#get-the-directory-of-the-current-file',
+  'get-the-directory-of-the-current-file':
+    'https://bun.com/docs/guides/util/import-meta-dir#get-the-directory-of-the-current-file',
   'Bun.deflateSync': 'https://bun.com/docs/runtime/utils#bun-deflatesync',
   'Bun.gunzipSync': 'https://bun.com/docs/runtime/utils#bun-gunzipsync',
   'Bun.inflateSync': 'https://bun.com/docs/runtime/utils#bun-inflatesync',
@@ -304,6 +690,8 @@ export const CANONICAL_REFS: Record<string, string> = {
     'https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync',
   'Bun.readableStreamTo': 'https://bun.com/docs/runtime/utils#bun-readablestreamto',
   'Bun.stdin': 'https://bun.com/docs/runtime/console#reading-from-stdin',
+  'Read from stdin': 'https://bun.com/docs/guides/process/stdin',
+  'guides/process/stdin': 'https://bun.com/docs/guides/process/stdin',
   'Bun.spawn': 'https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn',
   'Bun.spawn terminal (PTY)': 'https://bun.com/docs/runtime/child-process#terminal-pty-support',
   'spawn terminal options': 'https://bun.com/docs/runtime/child-process#terminal-options',
@@ -354,10 +742,16 @@ export const CANONICAL_REFS: Record<string, string> = {
  *   - ultra-common globals (console) — every file would need a @see
  *   - ambiguous short tokens (dns, redis) — use RedisClient / Bun.dns instead
  */
+/** Concept / nav labels that match PascalCase but are not code symbols to annotate. */
+const CONCEPT_ONLY_KEYS = new Set(bundlerNavConceptOnlyKeys());
+
 function isCodeApiKey(k: string): boolean {
   if (k === 'console' || k === 'dns' || k === 'redis') return false;
+  if (CONCEPT_ONLY_KEYS.has(k)) return false;
   // Ambiguous CLI flag: bundler watch vs `bun test --changed --watch` (blog #bun-test-changed)
   if (k === '--watch') return false;
+  // Bundler CLI flags that collide with unrelated --env / --version / --console surfaces
+  if (k === '--env' || k === '--version' || k === '--console') return false;
   if (k.startsWith('Bun.') || k.startsWith('bun:') || k.startsWith('--')) return true;
   // PascalCase Bun package exports / types
   if (/^[A-Z][A-Za-z0-9]+$/.test(k)) return true;
@@ -392,7 +786,6 @@ export function resolveApiAlias(api: string): string {
     'Bun.CSRF.generate': 'Bun.CSRF',
     CSRF: 'Bun.CSRF',
     'bun.env': 'Bun.env',
-    'process.env': 'Bun.env',
   };
   return aliases[api] ?? api;
 }
@@ -696,6 +1089,22 @@ async function tokenLookup(query: string): Promise<void> {
  * Map any API name or topic to its canonical Bun docs page + anchor using
  * the generated index. Matches: exact anchor, title substring, then desc.
  */
+function printExamples(
+  examples: Array<{ lang: string; code: string; description?: string }>,
+  limit = 6
+): void {
+  for (const ex of examples.slice(0, limit)) {
+    const label = ex.description ? `example[${ex.lang} ${ex.description}]` : `example[${ex.lang}]`;
+    const lines = ex.code.split('\n');
+    if (lines.length === 1) {
+      console.info(`  ${label}: ${lines[0]}`);
+      continue;
+    }
+    console.info(`  ${label}:`);
+    for (const line of lines) console.info(`    ${line}`);
+  }
+}
+
 function printBunTokenSuggest(
   query: string,
   token: import('../lib/docs/bun-token.ts').BunToken,
@@ -714,11 +1123,7 @@ function printBunTokenSuggest(
   if (token.docsLocus.anchor == null && !opts?.locusOverride?.includes('#')) {
     console.info(`  docsLocus: page-only (anchor unresolved)`);
   }
-  const ex = token.examples[0];
-  if (ex) {
-    const preview = ex.code.split('\n')[0]!.slice(0, 72);
-    console.info(`  example[${ex.lang}]: ${preview}${ex.code.length > 72 ? '…' : ''}`);
-  }
+  if (token.examples.length) printExamples(token.examples);
   console.info(`  since: ${token.since ?? 'unknown'}`);
   if (token.versionEvents.length > 0) {
     const summary = token.versionEvents
@@ -738,33 +1143,79 @@ function printBunTokenSuggest(
   if (token.meta?.buildPin) console.info(`  meta.buildPin: ${token.meta.buildPin}`);
 }
 
+/**
+ * Resolve BunToken for a frozen URL.
+ * Never scavenge peer examples from the same page (that glued Bun.serve onto process.env).
+ * Prefer frozen guide fences (token→guide map or mapped guide URL) for example[lang]/code.
+ */
+async function bunTokenForMapped(
+  query: string,
+  mapped: string
+): Promise<import('../lib/docs/bun-token.ts').BunToken | null> {
+  const { getBunToken, loadCatalogFile } = await import('./bun-docs-catalog.ts');
+  const { catalogEntryToBunToken } = await import('../lib/docs/token-ref-adapter.ts');
+  const { guideExamplesForQuery } = await import('./bun-docs-guide-examples.ts');
+
+  const page = mapped.replace(/#.*$/, '');
+  const frozen = guideExamplesForQuery(query, mapped).map(e => ({
+    lang: e.lang,
+    code: e.body,
+  }));
+
+  const direct = (await getBunToken(query)) ?? (await getBunToken(resolveApiAlias(query)));
+
+  if (direct) {
+    if (frozen.length) return { ...direct, examples: frozen };
+    return direct;
+  }
+
+  if (frozen.length) {
+    const meta = await loadCatalogFile();
+    // Only reuse catalog metadata when the entry name matches the query (never peer page)
+    const named =
+      meta.entries.find(e => e.name === query) ??
+      meta.entries.find(e => e.name === resolveApiAlias(query));
+    if (named) {
+      return {
+        ...catalogEntryToBunToken(named, { catalogGenerated: meta.generated }),
+        examples: frozen,
+      };
+    }
+    return {
+      name: query,
+      kind: 'Concept',
+      description: '',
+      stability: 'stable',
+      docsLocus: {
+        page,
+        anchor: mapped.includes('#') ? (mapped.split('#')[1] ?? null) : null,
+        status: mapped.includes('#') ? 'fragment' : 'page',
+      },
+      since: null,
+      announcementUrl: null,
+      versionEvents: [],
+      examples: frozen,
+    };
+  }
+
+  return null;
+}
+
 async function suggest(query: string): Promise<void> {
   if (!query) {
     console.error('usage: bun tools/bun-doc-refs.ts suggest <api-or-topic>');
     process.exit(1);
   }
 
-  // 1) Frozen institutional map wins (never lose to a stale catalog locus)
+  // 1) Frozen institutional map wins (never lose to a bad catalog dump locus)
   const mapped = CANONICAL_REFS[query] ?? CANONICAL_REFS[resolveApiAlias(query)];
   if (mapped) {
     try {
-      const { getBunToken } = await import('./bun-docs-catalog.ts');
-      const token = await getBunToken(query);
+      const token = await bunTokenForMapped(query, mapped);
       if (token) {
         printBunTokenSuggest(query, token, 'canonical map — tools/bun-doc-refs.ts CANONICAL_REFS', {
           locusOverride: mapped,
         });
-        if (!token.examples?.length) {
-          try {
-            const { guideExamplesForQuery } = await import('./bun-docs-guide-examples.ts');
-            for (const ex of guideExamplesForQuery(query, mapped)) {
-              console.info(`  example[${ex.lang}]:`);
-              for (const line of ex.body.split('\n')) console.info(`    ${line}`);
-            }
-          } catch {
-            /* guide fences optional */
-          }
-        }
         return;
       }
     } catch {
@@ -772,15 +1223,6 @@ async function suggest(query: string): Promise<void> {
     }
     console.info(`${query} → ${mapped}`);
     console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_REFS)');
-    try {
-      const { guideExamplesForQuery } = await import('./bun-docs-guide-examples.ts');
-      for (const ex of guideExamplesForQuery(query, mapped)) {
-        console.info(`  example[${ex.lang}]:`);
-        for (const line of ex.body.split('\n')) console.info(`    ${line}`);
-      }
-    } catch {
-      /* guide fences optional */
-    }
     return;
   }
 
@@ -839,8 +1281,25 @@ async function suggest(query: string): Promise<void> {
     }
     return;
   }
-  console.info(`❌ no docs page found for "${query}" — browse https://bun.com/docs/llms.txt`);
+  const llms = CANONICAL_REFS['llms.txt index'] ?? 'https://bun.com/docs/llms.txt';
+  console.info(
+    `❌ no docs page found for "${query}" — browse frozen key "llms.txt index" → ${llms}`
+  );
   process.exit(1);
+}
+
+/** Resolve a docs page URL against the index (bare /docs/runtime → runtime/index.md). */
+function indexEntryForDocsUrl(
+  entries: Awaited<ReturnType<typeof docsIndex>>['entries'],
+  baseUrl: string
+): (typeof entries)[number] | undefined {
+  const bare = baseUrl.replace(/\.md$/i, '');
+  return (
+    entries.find(e => e.url.replace(/\.md$/, '') === bare) ??
+    entries.find(e => e.url.replace(/\.md$/, '') === `${bare}/index`) ??
+    entries.find(e => e.url === `${bare}.md`) ??
+    entries.find(e => e.url === `${bare}/index.md`)
+  );
 }
 
 /** Verify every CANONICAL_REFS anchor against the generated docs index. */ async function audit(): Promise<number> {
@@ -851,15 +1310,21 @@ async function suggest(query: string): Promise<void> {
       continue;
     const [base, anchor] = url.split('#');
     if (!anchor) continue;
-    const entry = entries.find(e => e.url.replace(/\.md$/, '') === base);
+    const entry = indexEntryForDocsUrl(entries, base!);
     if (!entry) {
       console.info(`❌ ${api}: page not in index: ${base}`);
       bad++;
       continue;
     }
-    if (!entry.anchors.includes(anchor)) {
+    const titleSlug = slugify(entry.title);
+    // Mintlify guide share links: #slug(H1 title) when the index lists no section anchors
+    const anchorOk =
+      entry.anchors.includes(anchor) || (entry.anchors.length === 0 && titleSlug === anchor);
+    if (!anchorOk) {
       console.info(`❌ ${api}: anchor missing from page: #${anchor}`);
-      console.info(`   available: ${entry.anchors.slice(0, 8).join(', ')}…`);
+      console.info(
+        `   available: ${entry.anchors.slice(0, 8).join(', ') || `(title slug: ${titleSlug})`}…`
+      );
       bad++;
     }
   }
@@ -907,7 +1372,6 @@ async function deepcheck(paths: string[]): Promise<number> {
 }
 
 import { LLMS_URL } from '../lib/shared/tools/bun-urls.ts';
-import { bunBlog, bunDocs, mdnWebApi } from '../lib/docs/bun-site-url.ts';
 
 const TAXONOMY_PATH = new URL('./bun-docs-taxonomy.json', import.meta.url).pathname;
 const INTEGRITY_LOG = 'reports/doc-integrity.jsonl';
@@ -1661,6 +2125,114 @@ async function locusAudit(args: string[]): Promise<number> {
   return needsWork;
 }
 
+function parseBundlerGroup(argv: string[]): BundlerNavGroup | undefined {
+  const eq = argv.find(a => a.startsWith('--group='));
+  const raw = eq
+    ? eq.slice('--group='.length)
+    : (() => {
+        const i = argv.indexOf('--group');
+        return i >= 0 ? argv[i + 1] : undefined;
+      })();
+  if (!raw) return undefined;
+  if ((BUNDLER_NAV_GROUPS as readonly string[]).includes(raw)) return raw as BundlerNavGroup;
+  console.error(`unknown --group=${raw}; expect one of: ${BUNDLER_NAV_GROUPS.join(' | ')}`);
+  process.exit(2);
+}
+
+async function runBundlerCli(argv: string[]): Promise<number> {
+  const wantAnchors = argv.includes('--anchors');
+  const wantGaps = argv.includes('--gaps');
+  const wantTokens = argv.includes('--tokens');
+  const asJson = argv.includes('--json');
+  const strict = argv.includes('--strict');
+  const group = parseBundlerGroup(argv);
+
+  if (!wantAnchors && !wantGaps && !wantTokens) {
+    console.info(formatBundlerNavTree().trimEnd());
+    return 0;
+  }
+
+  const idx = await docsIndex();
+  const { loadCatalog } = await import('./bun-docs-catalog.ts');
+  const catalog = await loadCatalog();
+
+  if (wantAnchors) {
+    const text = formatBundlerAnchorsReport(idx.entries, group);
+    if (asJson) {
+      const byDomain = new Map(
+        idx.entries.map(e => [
+          e.domain ?? e.url.replace(/^https:\/\/bun\.com\/docs\//, '').replace(/\.md$/, ''),
+          e,
+        ])
+      );
+      const leaves = group
+        ? (await import('../lib/docs/bundler-nav')).BUNDLER_NAV_LEAVES.filter(
+            l => l.group === group
+          )
+        : (await import('../lib/docs/bundler-nav')).BUNDLER_NAV_LEAVES;
+      console.info(
+        JSON.stringify(
+          leaves.map(l => ({
+            group: l.group,
+            title: l.title,
+            path: l.path,
+            url: `https://bun.com/docs/${l.path}`,
+            anchors: byDomain.get(l.path)?.anchors ?? [],
+          })),
+          null,
+          2
+        )
+      );
+    } else {
+      console.info(text.trimEnd());
+    }
+  }
+
+  if (wantTokens) {
+    const rows = computeBundlerTokenRows({ catalogEntries: catalog, refs: CANONICAL_REFS });
+    const filtered = group ? rows.filter(r => r.group === group) : rows;
+    if (asJson) {
+      console.info(
+        JSON.stringify(
+          { count: filtered.length, missing: catalogMissingRefCount(filtered), rows: filtered },
+          null,
+          2
+        )
+      );
+    } else {
+      console.info(
+        `bundler catalog tokens: ${filtered.length} · missingRef=${catalogMissingRefCount(filtered)}`
+      );
+      for (const r of filtered) {
+        console.info(
+          `${r.hasRef ? '✓' : '✗'} ${r.name.padEnd(36)} ${r.type.padEnd(10)} ${r.docsUrl}`
+        );
+      }
+    }
+    if (strict && catalogMissingRefCount(filtered) > 0) return 1;
+  }
+
+  if (wantGaps) {
+    const gaps: BundlerGap[] = computeBundlerGaps({
+      indexEntries: idx.entries,
+      catalogEntries: catalog,
+      refs: CANONICAL_REFS,
+      group,
+    });
+    if (asJson) {
+      console.info(JSON.stringify({ count: gaps.length, gaps }, null, 2));
+    } else {
+      console.info(formatBundlerGapsText(gaps).trimEnd());
+    }
+    const catalogGaps = gaps.filter(
+      g => g.kind === 'catalog' && g.reason.includes('missing from CANONICAL_REFS')
+    );
+    if (strict && catalogGaps.length > 0) return 1;
+  }
+
+  return 0;
+}
+
 async function mainCli(): Promise<void> {
   const [, , cmd = 'list', ...rest] = Bun.argv;
   switch (cmd) {
@@ -1745,12 +2317,18 @@ async function mainCli(): Promise<void> {
     case 'validate':
       process.exit((await validate(rest.length ? rest : defaultPaths)) > 0 ? 1 : 0);
       break;
+    case 'bundler': {
+      const code = await runBundlerCli(rest);
+      process.exit(code);
+      break;
+    }
     default:
       console.error(
         `unknown command: ${cmd}\n` +
-          `commands: url|token|list|catalog|suggest|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate\n` +
+          `commands: url|token|list|catalog|suggest|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate|bundler\n` +
           `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
           `locus: --depth=N · --all · --tsv · --json · --type=api  (TOKEN/TYPE/STATUS/PAGE/FRAGMENT…)\n` +
+          `bundler: [--anchors|--gaps|--tokens] [--json] [--strict] [--group=Name]  (lib/docs/bundler-nav.ts)\n` +
           `operate: bun run docs:refresh · docs/BUN_DOCS_OPERATE.md\n` +
           `integrity flags: --fix · --fix-dry · --no-live\n` +
           `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/guides/runtime/timezone — TZ
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch
@@ -6,6 +7,10 @@
 // @see https://bun.com/docs/runtime/networking/fetch#debugging — verbose: true
 // @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching — dns.prefetch
 // @see https://bun.com/docs/runtime/networking/fetch#implementation-details — keepalive
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
+// @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — port/hostname
+// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — BUN_PORT / --port
+// @see https://bun.com/docs/runtime/http/server#reference — Server type surface
 // @see https://bun.com/docs/runtime/html-rewriter — HTMLRewriter
 // @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags — SocialMetadata
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
@@ -137,6 +142,143 @@ export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
     {
       lang: 'ts',
       body: 'const response = await fetch("http://example.com", {\n  keepalive: false,\n});',
+    },
+  ],
+  'runtime/http/server': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  routes: {\n    "/api/status": new Response("OK"),\n    "/users/:id": req => {\n      return new Response(`Hello User ${req.params.id}!`);\n    },\n    "/api/posts": {\n      GET: () => new Response("List posts"),\n      POST: async req => {\n        const body = await req.json();\n        return Response.json({ created: true, ...body });\n      },\n    },\n    "/api/*": Response.json({ message: "Not found" }, { status: 404 }),\n  },\n  fetch(req) {\n    return new Response("Not Found", { status: 404 });\n  },\n});\n\nconsole.log(`Server running at ${server.url}`);',
+    },
+  ],
+  'runtime/http/server#basic-setup': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  routes: {\n    "/api/status": new Response("OK"),\n    "/users/:id": req => {\n      return new Response(`Hello User ${req.params.id}!`);\n    },\n  },\n  fetch(req) {\n    return new Response("Not Found", { status: 404 });\n  },\n});\n\nconsole.log(`Server running at ${server.url}`);',
+    },
+  ],
+  'runtime/http/server#html-imports': [
+    {
+      lang: 'ts',
+      body: 'import myReactSinglePageApp from "./index.html";\n\nBun.serve({\n  routes: {\n    "/": myReactSinglePageApp,\n  },\n});',
+    },
+  ],
+  'runtime/http/server#changing-the-port-and-hostname': [
+    {
+      lang: 'ts',
+      body: 'Bun.serve({\n  port: 8080, // defaults to $BUN_PORT, $PORT, $NODE_PORT otherwise 3000\n  hostname: "mydomain.com", // defaults to "0.0.0.0"\n  fetch(req) {\n    return new Response("404!");\n  },\n});',
+    },
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  port: 0, // random port\n  fetch(req) {\n    return new Response("404!");\n  },\n});\n\n// server.port is the randomly selected port\nconsole.log(server.port);',
+    },
+    {
+      lang: 'ts',
+      body: 'console.log(server.port); // 3000\nconsole.log(server.url); // http://localhost:3000',
+    },
+  ],
+  'runtime/http/server#configuring-a-default-port': [
+    { lang: 'sh', body: 'bun --port=4002 server.ts' },
+    { lang: 'sh', body: 'BUN_PORT=4002 bun server.ts' },
+    { lang: 'sh', body: 'PORT=4002 bun server.ts' },
+    { lang: 'sh', body: 'NODE_PORT=4002 bun server.ts' },
+  ],
+  'runtime/http/server#unix-domain-sockets': [
+    {
+      lang: 'ts',
+      body: 'Bun.serve({\n  unix: "/tmp/my-socket.sock", // path to socket\n  fetch(req) {\n    return new Response(`404!`);\n  },\n});',
+    },
+  ],
+  'runtime/http/server#abstract-namespace-sockets': [
+    {
+      lang: 'ts',
+      body: 'Bun.serve({\n  unix: "\\0my-abstract-socket", // abstract namespace socket\n  fetch(req) {\n    return new Response(`404!`);\n  },\n});',
+    },
+  ],
+  'runtime/http/server#http/3-quic': [
+    {
+      lang: 'ts',
+      body: 'Bun.serve({\n  tls: {\n    key: Bun.file("./key.pem"),\n    cert: Bun.file("./cert.pem"),\n  },\n  http3: true,\n  fetch(req) {\n    return new Response("Hello over HTTP/3!");\n  },\n});',
+    },
+    {
+      lang: 'ts',
+      body: 'Bun.serve({\n  tls: {\n    key: Bun.file("./key.pem"),\n    cert: Bun.file("./cert.pem"),\n  },\n  http3: true,\n  http1: false,\n  fetch(req) {\n    return new Response("HTTP/3 only");\n  },\n});',
+    },
+  ],
+  'runtime/http/server#idletimeout': [
+    {
+      lang: 'ts',
+      body: 'Bun.serve({\n  // 30 seconds (default is 10)\n  idleTimeout: 30,\n  fetch(req) {\n    return new Response("Bun!");\n  },\n});',
+    },
+  ],
+  'runtime/http/server#export-default-syntax': [
+    {
+      lang: 'ts',
+      body: 'import type { Serve } from "bun";\n\nexport default {\n  fetch(req) {\n    return new Response("Bun!");\n  },\n} satisfies Serve.Options<undefined>;',
+    },
+  ],
+  'runtime/http/server#hot-route-reloading': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  routes: {\n    "/api/version": () => Response.json({ version: "1.0.0" }),\n  },\n});\n\n// Deploy new routes without downtime\nserver.reload({\n  routes: {\n    "/api/version": () => Response.json({ version: "2.0.0" }),\n  },\n});',
+    },
+  ],
+  'runtime/http/server#server-stop': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  fetch(req) {\n    return new Response("Hello!");\n  },\n});\n\n// Gracefully stop the server (waits for in-flight requests)\nawait server.stop();\n\n// Force stop and close all active connections\nawait server.stop(true);',
+    },
+  ],
+  'runtime/http/server#server-ref-and-server-unref': [
+    {
+      lang: 'ts',
+      body: "// Don't keep process alive if server is the only thing running\nserver.unref();\n\n// Restore default behavior - keep process alive\nserver.ref();",
+    },
+  ],
+  'runtime/http/server#server-reload': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  routes: {\n    "/api/version": Response.json({ version: "v1" }),\n  },\n  fetch(req) {\n    return new Response("v1");\n  },\n});\n\nserver.reload({\n  routes: {\n    "/api/version": Response.json({ version: "v2" }),\n  },\n  fetch(req) {\n    return new Response("v2");\n  },\n});',
+    },
+  ],
+  'runtime/http/server#server-timeout-request-seconds': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  async fetch(req, server) {\n    // Give this request up to 60 seconds of inactivity instead of the default 10\n    server.timeout(req, 60);\n    await req.text();\n    return new Response("Done!");\n  },\n});',
+    },
+    {
+      lang: 'ts',
+      body: 'Bun.serve({\n  routes: {\n    "/events": (req, server) => {\n      server.timeout(req, 0);\n      return new Response(\n        async function* () {\n          yield "data: hello\\n\\n";\n        },\n        { headers: { "Content-Type": "text/event-stream" } },\n      );\n    },\n  },\n});',
+    },
+  ],
+  'runtime/http/server#server-requestip-request': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  fetch(req, server) {\n    const address = server.requestIP(req);\n    if (address) {\n      return new Response(`Client IP: ${address.address}, Port: ${address.port}`);\n    }\n    return new Response("Unknown client");\n  },\n});',
+    },
+  ],
+  'runtime/http/server#server-pendingrequests-and-server-pendingwebsockets': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  fetch(req, server) {\n    return new Response(\n      `Active requests: ${server.pendingRequests}\\n` +\n        `Active WebSockets: ${server.pendingWebSockets}`,\n    );\n  },\n});',
+    },
+  ],
+  'runtime/http/server#server-subscribercount-topic': [
+    {
+      lang: 'ts',
+      body: 'const server = Bun.serve({\n  fetch(req, server) {\n    const chatUsers = server.subscriberCount("chat");\n    return new Response(`${chatUsers} users in chat`);\n  },\n  websocket: {\n    message(ws) {\n      ws.subscribe("chat");\n    },\n  },\n});',
+    },
+  ],
+  'runtime/http/server#benchmarks': [
+    {
+      lang: 'ts',
+      body: 'Bun.serve({\n  fetch(req: Request) {\n    return new Response("Bun!");\n  },\n  port: 3000,\n});',
+    },
+  ],
+  // Type surface from docs #reference
+  'runtime/http/server#reference': [
+    {
+      lang: 'ts',
+      body: 'interface Server extends Disposable {\n  stop(closeActiveConnections?: boolean): Promise<void>;\n  reload(options: Serve): void;\n  fetch(request: Request | string): Response | Promise<Response>;\n  upgrade<T = undefined>(request: Request, options?: { headers?: Bun.HeadersInit; data?: T }): boolean;\n  publish(topic: string, data: string | ArrayBufferView | ArrayBuffer | SharedArrayBuffer, compress?: boolean): ServerWebSocketSendStatus;\n  subscriberCount(topic: string): number;\n  requestIP(request: Request): SocketAddress | null;\n  timeout(request: Request, seconds: number): void;\n  ref(): void;\n  unref(): void;\n  readonly pendingRequests: number;\n  readonly pendingWebSockets: number;\n  readonly url: URL;\n  readonly port: number;\n  readonly hostname: string;\n  readonly development: boolean;\n  readonly id: string; // brand-ok — Bun Server.id from docs reference\n}',
     },
   ],
   'guides/runtime/read-env': [
@@ -386,6 +528,65 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'dns-caching': 'runtime/networking/fetch#dns-caching',
   'implementation-details': 'runtime/networking/fetch#implementation-details',
   'Connection: close': 'runtime/networking/fetch#implementation-details',
+  // runtime/http/server full-page TOC (howto anchors; #reference = type dump)
+  'Bun.serve': 'runtime/http/server#basic-setup',
+  'basic-setup': 'runtime/http/server#basic-setup',
+  'Bun.serve routes': 'runtime/http/server#basic-setup',
+  'html-imports': 'runtime/http/server#html-imports',
+  'HTML imports': 'runtime/http/server#html-imports',
+  'changing-the-port-and-hostname': 'runtime/http/server#changing-the-port-and-hostname',
+  'Bun.serve port': 'runtime/http/server#changing-the-port-and-hostname',
+  'Bun.serve hostname': 'runtime/http/server#changing-the-port-and-hostname',
+  'server.port': 'runtime/http/server#changing-the-port-and-hostname',
+  'server.url': 'runtime/http/server#changing-the-port-and-hostname',
+  'port: 0': 'runtime/http/server#changing-the-port-and-hostname',
+  'configuring-a-default-port': 'runtime/http/server#configuring-a-default-port',
+  BUN_PORT: 'runtime/http/server#configuring-a-default-port',
+  NODE_PORT: 'runtime/http/server#configuring-a-default-port',
+  '--port': 'runtime/http/server#configuring-a-default-port',
+  'unix-domain-sockets': 'runtime/http/server#unix-domain-sockets',
+  'Bun.serve unix': 'runtime/http/server#unix-domain-sockets',
+  'abstract-namespace-sockets': 'runtime/http/server#abstract-namespace-sockets',
+  'http/3-quic': 'runtime/http/server#http/3-quic',
+  http3: 'runtime/http/server#http/3-quic',
+  'http1: false': 'runtime/http/server#http/3-quic',
+  idleTimeout: 'runtime/http/server#idletimeout',
+  idletimeout: 'runtime/http/server#idletimeout',
+  'export-default-syntax': 'runtime/http/server#export-default-syntax',
+  'Serve.Options': 'runtime/http/server#export-default-syntax',
+  'hot-route-reloading': 'runtime/http/server#hot-route-reloading',
+  'server-stop': 'runtime/http/server#server-stop',
+  'server.stop': 'runtime/http/server#server-stop',
+  'server-ref-and-server-unref': 'runtime/http/server#server-ref-and-server-unref',
+  'server.ref': 'runtime/http/server#server-ref-and-server-unref',
+  'server.unref': 'runtime/http/server#server-ref-and-server-unref',
+  'server-reload': 'runtime/http/server#server-reload',
+  'server.reload': 'runtime/http/server#server-reload',
+  'server-timeout-request-seconds': 'runtime/http/server#server-timeout-request-seconds',
+  'server.timeout': 'runtime/http/server#server-timeout-request-seconds',
+  'server-requestip-request': 'runtime/http/server#server-requestip-request',
+  'server.requestIP': 'runtime/http/server#server-requestip-request',
+  'server-pendingrequests-and-server-pendingwebsockets':
+    'runtime/http/server#server-pendingrequests-and-server-pendingwebsockets',
+  pendingRequests: 'runtime/http/server#server-pendingrequests-and-server-pendingwebsockets',
+  pendingWebSockets: 'runtime/http/server#server-pendingrequests-and-server-pendingwebsockets',
+  'server.pendingRequests':
+    'runtime/http/server#server-pendingrequests-and-server-pendingwebsockets',
+  'server.pendingWebSockets':
+    'runtime/http/server#server-pendingrequests-and-server-pendingwebsockets',
+  'server-subscribercount-topic': 'runtime/http/server#server-subscribercount-topic',
+  'server.subscriberCount': 'runtime/http/server#server-subscribercount-topic',
+  'Bun.serve benchmarks': 'runtime/http/server#benchmarks',
+  'Bun.serve reference': 'runtime/http/server#reference',
+  'server reference': 'runtime/http/server#reference',
+  Server: 'runtime/http/server#reference',
+  'server.fetch': 'runtime/http/server#reference',
+  'server.upgrade': 'runtime/http/server#reference',
+  'server.publish': 'runtime/http/server#reference',
+  'server.development': 'runtime/http/server#reference',
+  'server.id': 'runtime/http/server#reference',
+  WebSocketHandler: 'runtime/http/server#reference',
+  TLSOptions: 'runtime/http/server#reference',
   'Bun.which': 'guides/util/which-path-to-executable-bin',
   'Get the path to an executable bin file': 'guides/util/which-path-to-executable-bin',
   'which-path-to-executable-bin': 'guides/util/which-path-to-executable-bin',

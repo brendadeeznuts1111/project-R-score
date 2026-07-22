@@ -50,9 +50,12 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
 - **`blog-extraction-boundaries`** — article sans nav/footer (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/blog-extraction/` · evidence `lib/docs/blog-extract.ts`
 - **`fetch-page-boundaries`** — BunHarness page fetch: HTTPS, fragment strip, Accept/UA, 15s timeout, optional verbose, non-OK throw, success body unread (`boundary`)  
-  *Ratchet* → `bun test tests/fixtures/fetch-page/` · evidence `lib/docs/fetch-page.ts` · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request)
+  *Ratchet* → `bun test tests/fixtures/fetch-page/` · evidence `lib/docs/fetch-page.ts` · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request)  
+  *Call-site DNS* → `dns.prefetch(hostname)` before fetchPage when host is known; do not use `fetch.preconnect` until Bun fixes Invalid port on default HTTPS (oven-sh/bun#21633)
 - **`blog-extraction-journey`** — `CANONICAL_SOURCES.blog` → URLPattern → `dns.prefetch` → fetchPage → `SocialMetadata` + streamed article (`journey`)  
-  *Ratchet* → `bun test tests/journey/blog-extraction.test.ts` · human-only (live bun.com)
+  *Ratchet* → `bun test tests/journey/blog-extraction.test.ts` · human-only (live bun.com) · soft `dns.getCacheStats` after prefetch
+- **`bun-http-server-docs`** — `CANONICAL_REFS` + `GUIDE_EXAMPLES` cover `runtime/http/server` TOC (`boundary`)  
+  *Ratchet* → `bun test tests/bun-docs-catalog.test.ts` · evidence `tools/bun-doc-refs.ts` · `tools/bun-docs-guide-examples.ts` · [server](https://bun.com/docs/runtime/http/server#basic-setup)
 - **`path-bun`** — spine `lib/` + `tools/` do not import `path` / `node:path` (`boundary`)  
   *Ratchet* → `bun run check:path-bun`
 - **`bun-env`** — spine `lib/` + `scripts/` do not use Node `process.env` (`boundary`)  
@@ -120,6 +123,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `blog-extraction-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/blog-extraction/` |
 | `fetch-page-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/fetch-page/` |
 | `blog-extraction-journey` | human-only | `bun test tests/journey/blog-extraction.test.ts` |
+| `bun-http-server-docs` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts` |
 | `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
 | `bun-env` | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env` |
 | `unknown-param` | continuous | pre-commit / `ci:harness` eslint |
@@ -145,7 +149,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
 | `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts (must match `gateClass` tallies): continuous 16 · workflow 8 · human-only 10.
+Counts (must match `gateClass` tallies): continuous 21 · workflow 8 · human-only 11.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 
