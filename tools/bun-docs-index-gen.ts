@@ -94,6 +94,32 @@ async function main(): Promise<void> {
     })
   );
 
+  // Manual anchor supplement for JS-rendered pages the markdown scraper can't parse
+  // (guides/util/*, guides/http/* — Bun docs renders headings client-side)
+  const MANUAL_ANCHORS: Record<string, string[]> = {
+    'https://bun.com/docs/guides/http/file-uploads.md': ['upload-files-via-http-using-formdata'],
+    'https://bun.com/docs/guides/util/which-path-to-executable-bin.md': [
+      'get-the-path-to-an-executable-bin-file',
+    ],
+    'https://bun.com/docs/guides/util/file-url-to-path.md': [
+      'convert-a-file-url-to-an-absolute-path',
+    ],
+    'https://bun.com/docs/guides/util/path-to-file-url.md': [
+      'convert-an-absolute-path-to-a-file-url',
+    ],
+    'https://bun.com/docs/guides/util/import-meta-dir.md': [
+      'get-the-directory-of-the-current-file',
+    ],
+  };
+  for (const e of entries) {
+    const extras = MANUAL_ANCHORS[e.url];
+    if (extras) {
+      for (const a of extras) {
+        if (!e.anchors.includes(a)) e.anchors.push(a);
+      }
+    }
+  }
+
   const totalAnchors = entries.reduce((n, e) => n + e.anchors.length, 0);
 
   // Enrich with the official sidebar taxonomy (bun-docs-taxonomy.json)
