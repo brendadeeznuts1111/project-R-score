@@ -1,0 +1,21 @@
+{
+  "name": "{{name}}",
+  "version": "0.1.0",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "build": "bun build ./src/index.ts --outdir ./dist"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "bun-create": {
+    "preinstall": "echo '📦 Installing dependencies for {{name}}...'",
+    "postinstall": [
+      "echo '✓ {{name}} scaffolded successfully!'",
+      "bun test"
+    ]
+  }
+}

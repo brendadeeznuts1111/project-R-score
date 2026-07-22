@@ -101,6 +101,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun tools/bun-doc-refs.ts schedule --once` · [`tenants/docs-integrity.md`](tenants/docs-integrity.md)
 - **`audit-findings-catalog`** — FactoryWager audit findings+concepts verify (evidence · graph · relatedDocs · catalog/page parity; sha3-256 primary) (`unit` + `boundary`)  
   *Ratchet* → `bun run audit:verify` · pre-commit (audit SSOT staged) · `ci:harness` CHEAP · `tools/bun-doc-refs.ts` suggest `--audit` · [`docs/audit/README.md`](../audit/README.md) · sibling SSOT (not BunToken)
+- **`factory-registry-cli-v1`** — R2 artifact registry client + CLI (`publish`, `install`, `list`, `search`, `readme`) with README auto-detection (`unit` + `boundary`)  
+  *Ratchet* → `bun test tests/registry.test.ts tests/cli.test.ts` · `lib/factory/` sources
 - **`spine-multi-tenant`** — spine runs ≥2 in-process tenants (docs-integrity + install-verify) (`journey` + `boundary`)  
   *Ratchet* → `bun run spine:schedule:once -- --tenant=install-verify` · [`cron.md`](cron.md)
 - **`spine-maintenance-runbooks`** — TenantRunbook + SignalMonitor; retirement attested + condition check; live `freshRerun` (`boundary` + `journey`)  
@@ -154,6 +156,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `social-metadata-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/social-metadata/` |
 | `blog-extraction-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/blog-extraction/` |
 | `fetch-page-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/fetch-page/` |
+| `factory-registry-cli-v1` | human-only | `bun test tests/registry.test.ts tests/cli.test.ts` |
 | `blog-extraction-journey` | human-only | `bun test tests/journey/blog-extraction.test.ts` |
 | `bun-http-server-docs` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts` |
 | `path-bun` | continuous | pre-commit (lib\|tools staged) · `ci:harness` |
@@ -183,7 +186,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `deploy-staging-script` | human-only | catalog via `docs:ci-deploy`; behavior = `deploy:staging` |
 | `bun-migrate-status` | human-only | catalog via `docs:ci-deploy`; behavior = `migrate:status` |
 
-Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 20.
+Counts (must match `gateClass` tallies): continuous 23 · workflow 8 · human-only 21.
 
 Discover (display only, not gates): `bun run harness:status` · `bun run docs:fresh-rerun`.
 
@@ -214,6 +217,7 @@ Routing for `lib/` modules. **Bun docs** = oven-sh / bun.com. **Other external**
 | harness ratchets (`coverage` · `orphans` · `complexity`) | [`lib/harness/README.md`](../../lib/harness/README.md) · [`code-quality.md`](code-quality.md) | — | [harness-engineering](https://github.com/lopopolo/harness-engineering) |
 | type-check islands · `lib/{docs,utils,core,security}` | claims `lib-*-typecheck` · `tsconfig.check.json` | — | — |
 | `audit-findings-catalog` · `lib/audit/` | [`docs/audit/README.md`](../audit/README.md) | — | — |
+| `factory-registry-cli-v1` · `lib/factory/` | claim this file · `tests/registry.test.ts` · `tests/cli.test.ts` | [Bun.semver](https://bun.com/docs/runtime/semver) · [Bun.file](https://bun.com/docs/runtime/file-io) · [Bun.inspect](https://bun.com/docs/runtime/utils#bun-inspect) · [fetch](https://bun.com/docs/runtime/networking/fetch) | Cloudflare R2 (S3-compat) |
 
 ### Inventory-only (no dedicated claim yet)
 

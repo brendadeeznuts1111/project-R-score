@@ -878,6 +878,25 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerunKind: 'catalog',
     owner: 'scripts/bun-migrate.ts',
   },
+  {
+    id: 'factory-registry-cli-v1',
+    claim:
+      'R2-backed artifact registry client and CLI for publishing, installing, listing, searching packages with README auto-detection (mirroring bun publish)',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/registry.test.ts tests/cli.test.ts',
+      'tests/registry.test.ts',
+      'tests/cli.test.ts',
+      'lib/factory/artifact.ts',
+      'lib/factory/registry.ts',
+      'lib/factory/cli.ts',
+    ],
+    freshRerun: 'bun test tests/registry.test.ts tests/cli.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/factory/',
+  },
 ] as const;
 
 /**
