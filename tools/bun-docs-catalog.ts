@@ -539,6 +539,19 @@ export function docsUrlFor(page: string, anchor?: string): string {
   return anchor ? `${pageBase(page)}#${anchor}` : pageBase(page);
 }
 
+/**
+ * Curated `path` → absolute page URL (no hash).
+ * `reference/*` and `blog/*` live at site root; everything else under /docs/.
+ */
+export function curatedPageUrl(pathWithOptionalHash: string): string {
+  const pathPage = pathWithOptionalHash.split('#')[0] ?? '';
+  if (!pathPage) return '';
+  if (pathPage.startsWith('reference/') || pathPage.startsWith('blog/')) {
+    return `https://bun.com/${pathPage}`;
+  }
+  return `https://bun.com/docs/${pathPage}`;
+}
+
 /** Parse --version=1.4.0 or --version 1.4.0 from argv; default Bun.version. */
 export function parseVersionFlag(argv: string[] = Bun.argv.slice(2)): string {
   for (let i = 0; i < argv.length; i++) {
@@ -683,6 +696,8 @@ export function inferType(name: string, url: string): DocRefType {
       /^(?:--config|--cwd|--outdir|--target|--sourcemap|--backend|--cpu|--os|--env|--port|--host|--splitting|--format|--jsx|--tsconfig|--mainfields|--conditions|--publicpath|--assetnaming|--entrynaming|--chunknaming|--sourcemap)$/i;
     return valueFlags.test(name) ? 'cli-option' : 'cli-flag';
   }
+  // Compound CLI flags: `bun test --parallel`, `bun run --sequential`, …
+  if (/^bun (test|run) --/.test(name)) return 'cli-flag';
   // Top-level bun subcommands
   if (/^bun [a-z][a-z0-9-]*$/.test(name)) return 'cli-command';
   // package.json reserved keys
@@ -872,11 +887,9 @@ export function applyCuratedPathPins(entries: DocCatalogEntry[]): void {
   for (const c of CURATED_ENTRIES) {
     const e = byName.get(normalizeName(c.term));
     if (!e) continue;
-    const [pathPage, pathAnchor] = c.path.split('#');
-    if (!pathPage) continue;
-    const page = c.path.startsWith('reference/')
-      ? `https://bun.com/${pathPage}`
-      : `https://bun.com/docs/${pathPage}`;
+    const [, pathAnchor] = c.path.split('#');
+    const page = curatedPageUrl(c.path);
+    if (!page) continue;
     const base = pageBase(page);
     e.canonicalPage = base;
     if (pathAnchor) {
@@ -1052,10 +1065,8 @@ export async function buildCatalog(opts?: {
 
   // 3) Curated hot-path enrichment (description + stability + releasedIn + related)
   for (const c of CURATED_ENTRIES) {
-    const [pathPage, pathAnchor] = c.path.split('#');
-    const page = c.path.startsWith('reference/')
-      ? `https://bun.com/${pathPage}`
-      : `https://bun.com/docs/${pathPage}`;
+    const [, pathAnchor] = c.path.split('#');
+    const page = curatedPageUrl(c.path);
     mergeEntry(map, {
       name: c.term,
       type: inferType(c.term, page),
@@ -1070,12 +1081,9 @@ export async function buildCatalog(opts?: {
     });
     if (c.related) {
       for (const rel of c.related) {
-        const relPage = rel.split('#')[0]!;
         mergeEntry(map, {
           name: c.term,
-          page: rel.startsWith('reference/')
-            ? `https://bun.com/${relPage}`
-            : `https://bun.com/docs/${relPage}`,
+          page: curatedPageUrl(rel),
           lastUpdated: docsLastUpdated,
           verifiedOn,
         });

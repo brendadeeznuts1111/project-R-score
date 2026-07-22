@@ -33,6 +33,9 @@
 // @see https://bun.com/docs/runtime/workers#worker-ref — worker.ref
 // @see https://bun.com/docs/runtime/workers#worker-unref — worker.unref
 // @see https://bun.com/docs/runtime/workers#bun-ismainthread — Bun.isMainThread
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/docs/runtime/console#reading-from-stdin — Bun.stdin
 /**
  * Frozen lang+code from Bun guide / blog pages.
@@ -550,6 +553,27 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'if (Bun.isMainThread) {\n  console.log("I\'m the main thread");\n} else {\n  console.log("I\'m in a worker");\n}',
     },
   ],
+  // Official blog — bun test --isolate / --parallel (v1.3.13)
+  'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel': [
+    {
+      lang: 'bash',
+      body: '# Run tests with isolation (fresh global per file)\nbun test --isolate ./tests\n\n# Run tests in parallel across all CPU cores\nbun test --parallel ./tests\n\n# Run tests in parallel with 8 workers\nbun test --parallel=8 ./tests',
+    },
+  ],
+  // Official blog — bun test --shard=M/N (v1.3.13)
+  'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs': [
+    {
+      lang: 'bash',
+      body: '# In a GitHub Actions matrix with 3 jobs:\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3',
+    },
+  ],
+  // Official blog — bun test --changed (v1.3.13)
+  'blog/bun-v1.3.13#bun-test-changed': [
+    {
+      lang: 'bash',
+      body: '# Run tests affected by uncommitted changes (unstaged + staged + untracked)\nbun test --changed\n\n# Run tests affected by changes since a specific commit, branch, or tag\nbun test --changed=HEAD~1\nbun test --changed=main\n\n# Combine with --watch to re-filter on every restart\nbun test --changed --watch',
+    },
+  ],
   // Official docs — Bun.inspect.table(tabularData, properties, options)
   'runtime/utils#bun-inspect-table-tabulardata-properties-options': [
     {
@@ -809,6 +833,16 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Worker smol': 'runtime/workers#memory-usage-with-smol',
   'memory-usage-with-smol': 'runtime/workers#memory-usage-with-smol',
   'Bun.isMainThread': 'runtime/workers#bun-ismainthread',
+  '--isolate': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  'bun test --isolate': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  '--parallel': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  '--parallel=N': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  'bun test --parallel': 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  '--shard': 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+  '--shard=M/N': 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+  'bun test --shard': 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+  '--changed': 'blog/bun-v1.3.13#bun-test-changed',
+  'bun test --changed': 'blog/bun-v1.3.13#bun-test-changed',
   'executables Worker': 'bundler/executables#worker',
   'Bun.pathToFileURL': 'runtime/utils#bun-pathtofileurl',
   'Bun.fileURLToPath': 'runtime/utils#bun-fileurltopath',

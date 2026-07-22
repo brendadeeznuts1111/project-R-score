@@ -530,12 +530,28 @@ export const CANONICAL_REFS: Record<string, string> = {
     'https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth',
   'bun v1.3.13': 'https://bun.com/blog/bun-v1.3.13',
   // bun test flags (v1.3.13+) — blog anchors are the ship notes
+  // --isolate / --parallel share one heading; --shard and --changed are siblings
   'bun test --changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
   '--changed': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
+  'bun test --isolate': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
   '--isolate': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  'bun test --parallel': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  // bun test file workers (≠ bun run --parallel workspace Foreman mode)
   '--parallel': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  '--parallel=N': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  'bun test --shard':
+    'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
   '--shard':
     'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+  '--shard=M/N':
+    'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+  'bun run --parallel': 'https://bun.com/docs/cli/run#parallel-and-sequential-mode',
+  // Worker env vars set by bun test --parallel (blog ship note)
+  JEST_WORKER_ID: 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  BUN_TEST_WORKER_ID: 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  // Mentioned alongside --isolate/--parallel/--shard on the v1.3.13 ship note
+  '--randomize': 'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+  'bun test --watch': 'https://bun.com/blog/bun-v1.3.13#bun-test-changed',
 
   // ── Bundler sidebar nav (lib/docs/bundler-nav.ts) + APIs / flags ────────
   ...bundlerNavCanonicalRefs(),

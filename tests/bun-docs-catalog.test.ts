@@ -15,6 +15,7 @@ import {
   releaseUrlFor,
   blogUrlFor,
   docsUrlFor,
+  curatedPageUrl,
   parseVersionFlag,
   normalizeBunVersion,
   applyChangelogOverlay,
@@ -80,6 +81,9 @@ describe('bun-docs-catalog helpers', () => {
   test('inferType classifies api flag config concept', () => {
     expect(inferType('Bun.cron', 'https://bun.com/docs/runtime/cron')).toBe('api');
     expect(inferType('--console-depth', 'https://bun.com/docs/runtime/console')).toBe('cli-flag');
+    expect(inferType('bun test --parallel', 'https://bun.com/blog/bun-v1.3.13')).toBe('cli-flag');
+    expect(inferType('bun run --parallel', 'https://bun.com/docs/cli/run')).toBe('cli-flag');
+    expect(inferType('JEST_WORKER_ID', 'https://bun.com/blog/bun-v1.3.13')).toBe('env-var');
     expect(inferType('bunfig.toml', 'https://bun.com/docs/runtime/bunfig')).toBe('config-key');
     expect(inferType('Code coverage', 'https://bun.com/docs/test/code-coverage')).toBe('concept');
   });
@@ -119,6 +123,18 @@ describe('bun-docs-catalog helpers', () => {
     );
     expect(docsUrlFor('https://bun.com/docs/runtime/utils', 'bun-version')).toBe(
       'https://bun.com/docs/runtime/utils#bun-version'
+    );
+  });
+
+  test('curatedPageUrl maps blog/reference at site root; else /docs/', () => {
+    expect(curatedPageUrl('blog/bun-v1.3.13#bun-test-changed')).toBe(
+      'https://bun.com/blog/bun-v1.3.13'
+    );
+    expect(curatedPageUrl('reference/bun/BunInspectOptions')).toBe(
+      'https://bun.com/reference/bun/BunInspectOptions'
+    );
+    expect(curatedPageUrl('runtime/workers#worker-ref')).toBe(
+      'https://bun.com/docs/runtime/workers'
     );
   });
 
@@ -479,6 +495,38 @@ describe('inspect family catalog relations', () => {
     expect(byName.get('global-store concurrency')?.docsUrl).toBe(
       'https://bun.com/docs/pm/global-store#concurrency'
     );
+    expect(byName.get('--isolate')?.docsUrl).toBe(
+      'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel'
+    );
+    expect(byName.get('--parallel')?.docsUrl).toBe(
+      'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel'
+    );
+    expect(byName.get('--parallel')?.description).toContain('bun test --parallel');
+    expect(byName.get('--parallel')?.description).toContain('bun run --parallel');
+    expect(byName.get('--shard')?.docsUrl).toBe(
+      'https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs'
+    );
+    expect(byName.get('--changed')?.docsUrl).toBe(
+      'https://bun.com/blog/bun-v1.3.13#bun-test-changed'
+    );
+    expect(byName.get('--isolate')?.examples?.[0]?.body).toContain('bun test --isolate');
+    expect(byName.get('--shard')?.examples?.[0]?.body).toContain('--shard=1/3');
+    expect(byName.get('--changed')?.examples?.[0]?.body).toContain('bun test --changed');
+    expect(byName.get('bun test --parallel')?.type).toBe('cli-flag');
+    expect(byName.get('bun test --parallel')?.related?.slice(0, 4)).toEqual([
+      '--isolate',
+      '--shard',
+      '--changed',
+      'bun run --parallel',
+    ]);
+    expect(byName.get('JEST_WORKER_ID')?.type).toBe('env-var');
+    expect(byName.get('BUN_TEST_WORKER_ID')?.docsUrl).toBe(
+      'https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel'
+    );
+    expect(byName.get('bun run --parallel')?.docsUrl).toBe(
+      'https://bun.com/docs/cli/run#parallel-and-sequential-mode'
+    );
+    expect(byName.get('bun run --parallel')?.releasedIn).toBe('1.3.9');
   });
 
   test('bunApiFamilyRoot clusters Bun.inspect.*', () => {

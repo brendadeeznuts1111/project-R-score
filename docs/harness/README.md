@@ -141,6 +141,9 @@ bun run test:changed:main       # --main-head → origin/main|main
 #   bun run test:changed -- HEAD~1
 #   bun run test:changed -- main --parallel
 #   bun run test:changed:watch
+bun run test:isolate            # --isolate (fresh global per file)
+bun run test:parallel           # --parallel (workers; auto --isolate)
+#   SHARD=1/3 bun run test:shard
 bun run ci:harness:fast         # before push (quiet)
 bun run proof:install           # install only (also pre-push --quiet)
 bun run check:path-bun && bun run check:bun-env
@@ -151,7 +154,7 @@ bun run build:defines           # AST --define BUILD_* + DEBUG=false (prod DCE);
 #   bun run build:defines:compile   # standalone dist/fw-build-info
 ```
 
-`test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
+`test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--isolate` / `--parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel) · [`--shard`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) · [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
 
 Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in inspect family: `bun run harness:status -- --table` ([`Bun.inspect`](https://bun.com/docs/runtime/utils#bun-inspect) · [`custom`](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [`table`](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)). Actions 0-step / billing checks stay muted; `--show-actions-noise` to show. When Actions is offline, local merge proof remains `bun run ci:core` ([AUTHORITY.md](AUTHORITY.md)).
 

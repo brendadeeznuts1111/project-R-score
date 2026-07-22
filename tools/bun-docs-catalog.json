@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-22T02:05:38.375Z",
+  "generated": "2026-07-22T02:17:28.516Z",
   "bunVersion": "1.4.0",
   "releaseUrl": "https://github.com/oven-sh/bun/releases",
   "blogUrl": "",
@@ -44,34 +44,34 @@
     "test",
     "guides"
   ],
-  "count": 1036,
-  "withReleasedIn": 222,
+  "count": 1045,
+  "withReleasedIn": 235,
   "withFixedIn": 102,
-  "withChangeNote": 37,
-  "withBlogUrl": 236,
-  "withDescription": 536,
-  "withReleasedInCount": 222,
+  "withChangeNote": 52,
+  "withBlogUrl": 249,
+  "withDescription": 838,
+  "withReleasedInCount": 235,
   "byType": {
-    "cli-flag": 170,
-    "concept": 555,
+    "cli-flag": 178,
+    "concept": 554,
     "api": 185,
-    "env-var": 29,
+    "env-var": 31,
     "config-key": 67,
     "cli-command": 3,
     "guide": 23,
     "package-json-key": 4
   },
   "bySection": {
-    "runtime": 455,
+    "runtime": 456,
     "bundler": 147,
     "test": 34,
     "guides": 216,
     "pm": 130,
     "reference": 11,
-    "other": 43
+    "other": 51
   },
   "byStability": {
-    "stable": 1032,
+    "stable": 1041,
     "experimental": 4
   },
   "entries": [
@@ -103,9 +103,9 @@
       "related": [
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
         "--rerun-each",
-        "--retry"
+        "--retry",
+        "--seed"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-concurrenttestglob",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.23",
@@ -540,6 +540,7 @@
     {
       "name": "--drop",
       "type": "cli-flag",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "releasedIn": "1.1.31",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -761,6 +762,7 @@
     {
       "name": "--ignore-dce-annotations",
       "type": "cli-flag",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "releasedIn": "1.1.22",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -889,6 +891,7 @@
     {
       "name": "--jsx-factory",
       "type": "cli-flag",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -935,6 +938,7 @@
     {
       "name": "--jsx-fragment",
       "type": "cli-flag",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -981,6 +985,7 @@
     {
       "name": "--jsx-import-source",
       "type": "cli-flag",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -1027,6 +1032,7 @@
     {
       "name": "--jsx-runtime",
       "type": "cli-flag",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -1073,6 +1079,7 @@
     {
       "name": "--jsx-side-effects",
       "type": "cli-flag",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -1288,6 +1295,7 @@
     {
       "name": "--no-macros",
       "type": "cli-flag",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -1358,9 +1366,9 @@
       "related": [
         "--concurrent",
         "--path-ignore-patterns",
-        "--randomize",
         "--rerun-each",
-        "--retry"
+        "--retry",
+        "--seed"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
@@ -1485,9 +1493,9 @@
       "related": [
         "--concurrent",
         "--no-orphans",
-        "--randomize",
         "--rerun-each",
-        "--retry"
+        "--retry",
+        "--seed"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-pathignorepatterns",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.11",
@@ -1628,14 +1636,15 @@
     {
       "name": "--randomize",
       "type": "cli-flag",
-      "description": "Run tests in random order.",
+      "description": "bun test: shuffle test order. With --shard, shuffle happens after shard selection (within the shard).",
       "stability": "stable",
       "releasedIn": "1.2.23",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
-      "canonicalPage": "https://bun.com/docs/runtime/bunfig",
-      "anchor": "test-randomize",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-isolate-and-bun-test-parallel",
       "allPages": [
+        "https://bun.com/blog/bun-v1.3.13",
         "https://bun.com/docs/runtime/bunfig",
         "https://bun.com/docs/test/index"
       ],
@@ -1647,18 +1656,19 @@
           "fragment": "test-randomize"
         }
       ],
+      "changeNote": "bun test: shuffle test order. With --shard, shuffle happens after shard selection (within the shard).",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
       "locusUnresolved": false,
-      "locusStatus": "fragment",
+      "locusStatus": "coincidence",
       "related": [
-        "--concurrent",
-        "--no-orphans",
-        "--path-ignore-patterns",
-        "--rerun-each",
-        "--retry"
+        "--shard",
+        "--parallel",
+        "--isolate",
+        "--changed",
+        "--parallel=N"
       ],
-      "docsUrl": "https://bun.com/docs/runtime/bunfig#test-randomize",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.23",
-      "blogUrl": "https://bun.com/blog/bun-v1.2.23"
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.23"
     },
     {
       "name": "--react",
@@ -1738,8 +1748,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--retry"
+        "--retry",
+        "--seed"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-reruneach",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.5.8",
@@ -1774,8 +1784,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--seed"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-retry",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.10",
@@ -1809,8 +1819,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-seed",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.23",
@@ -2096,6 +2106,7 @@
     {
       "name": ".env files",
       "type": "concept",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -2125,6 +2136,7 @@
     {
       "name": ".env.local",
       "type": "concept",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -2154,6 +2166,7 @@
     {
       "name": "AbortController",
       "type": "api",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -2191,6 +2204,7 @@
     {
       "name": "AbortSignal.timeout",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -2213,6 +2227,7 @@
     {
       "name": "abstract-namespace-sockets",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -2296,6 +2311,7 @@
     {
       "name": "basic-setup",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -2378,6 +2394,7 @@
     {
       "name": "bun run -",
       "type": "concept",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -2410,6 +2427,7 @@
     {
       "name": "bun run - to pipe code from stdin",
       "type": "concept",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -2438,6 +2456,31 @@
       ],
       "docsUrl": "https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
+    },
+    {
+      "name": "bun run --parallel",
+      "type": "cli-flag",
+      "description": "bun run workspace Foreman mode: run package.json scripts in parallel (≠ bun test --parallel file workers).",
+      "stability": "stable",
+      "releasedIn": "1.3.9",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/docs/cli/run",
+      "anchor": "parallel-and-sequential-mode",
+      "allPages": [
+        "https://bun.com/docs/cli/run"
+      ],
+      "section": "runtime",
+      "changeNote": "bun run workspace Foreman mode: run package.json scripts in parallel (≠ bun test --parallel file workers).",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.9",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "bun test --parallel",
+        "--parallel"
+      ],
+      "docsUrl": "https://bun.com/docs/cli/run#parallel-and-sequential-mode",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.9"
     },
     {
       "name": "Bun Runtime",
@@ -2701,8 +2744,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -2733,8 +2776,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globalbindir",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -2765,8 +2808,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globaldir",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -2925,6 +2968,7 @@
     {
       "name": "bun-run-to-pipe-code-from-stdin",
       "type": "concept",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -3014,6 +3058,7 @@
     {
       "name": "bun:sql",
       "type": "api",
+      "description": "Bun provides native bindings for working with SQL databases through a unified Promise-based API that supports PostgreSQL, MySQL, and SQLite.",
       "stability": "stable",
       "releasedIn": "1.2.19",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -3724,6 +3769,7 @@
     {
       "name": "Bun.dns",
       "type": "api",
+      "description": "Use Bun’s DNS module to resolve DNS records",
       "stability": "stable",
       "releasedIn": "0.5.0",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -3925,6 +3971,7 @@
     {
       "name": "Bun.fetch",
       "type": "api",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -4872,6 +4919,7 @@
     {
       "name": "Bun.markdown.html options",
       "type": "api",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -4941,6 +4989,7 @@
     {
       "name": "Bun.markdown.react available overrides",
       "type": "api",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -4972,6 +5021,7 @@
     {
       "name": "Bun.markdown.react component overrides",
       "type": "api",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -5003,6 +5053,7 @@
     {
       "name": "Bun.markdown.react parser options",
       "type": "api",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -5064,6 +5115,7 @@
     {
       "name": "Bun.markdown.render parser options",
       "type": "api",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -6093,6 +6145,7 @@
     {
       "name": "Bun.serve benchmarks",
       "type": "api",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -6124,6 +6177,7 @@
     {
       "name": "Bun.serve hostname",
       "type": "api",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -6165,6 +6219,7 @@
     {
       "name": "Bun.serve port",
       "type": "api",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -6206,6 +6261,7 @@
     {
       "name": "Bun.serve reference",
       "type": "api",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -6237,6 +6293,7 @@
     {
       "name": "Bun.serve routes",
       "type": "api",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -6268,6 +6325,7 @@
     {
       "name": "Bun.serve unix",
       "type": "api",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -6438,6 +6496,7 @@
     {
       "name": "Bun.spawn terminal (PTY)",
       "type": "api",
+      "description": "Spawn child processes with Bun.spawn or Bun.spawnSync",
       "stability": "stable",
       "releasedIn": "1.3.5",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -6779,6 +6838,7 @@
     {
       "name": "Bun.TOML",
       "type": "api",
+      "description": "Use Bun’s built-in support for TOML files through both runtime APIs and bundler integration",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7131,6 +7191,7 @@
     {
       "name": "Bun.YAML",
       "type": "api",
+      "description": "Use Bun’s built-in support for YAML files through both runtime APIs and bundler integration",
       "stability": "stable",
       "releasedIn": "1.3.0",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -7347,6 +7408,7 @@
     {
       "name": "canceling-a-request",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7376,6 +7438,7 @@
     {
       "name": "changing-the-port-and-hostname",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7487,6 +7550,7 @@
     {
       "name": "configuring Bun",
       "type": "config-key",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7511,6 +7575,7 @@
     {
       "name": "configuring-a-default-port",
       "type": "config-key",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7557,6 +7622,7 @@
     {
       "name": "connection pooling",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7579,6 +7645,7 @@
     {
       "name": "connection-pooling-http-keep-alive",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7601,6 +7668,7 @@
     {
       "name": "Connection: close",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7664,8 +7732,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#console-depth",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -7673,6 +7741,7 @@
     {
       "name": "content-type-handling",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7702,6 +7771,7 @@
     {
       "name": "CookieMap",
       "type": "api",
+      "description": "Use Bun’s native APIs for working with HTTP cookies",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7739,6 +7809,7 @@
     {
       "name": "creating-a-worker",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7825,6 +7896,7 @@
     {
       "name": "dns-caching",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7847,6 +7919,7 @@
     {
       "name": "dns-prefetching",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7869,6 +7942,7 @@
     {
       "name": "DO_NOT_TRACK",
       "type": "env-var",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -7992,8 +8066,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#env",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -8019,6 +8093,7 @@
     {
       "name": "environment-data",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8049,6 +8124,7 @@
     {
       "name": "export-default-syntax",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8126,6 +8202,7 @@
     {
       "name": "fetch content-type",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8155,6 +8232,7 @@
     {
       "name": "fetch custom-headers",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8184,6 +8262,7 @@
     {
       "name": "fetch debugging",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8206,6 +8285,7 @@
     {
       "name": "fetch error-handling",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8235,6 +8315,7 @@
     {
       "name": "fetch headers",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8264,6 +8345,7 @@
     {
       "name": "fetch performance",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8291,6 +8373,7 @@
     {
       "name": "fetch POST",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8313,6 +8396,7 @@
     {
       "name": "fetch proxy",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8340,6 +8424,7 @@
     {
       "name": "fetch verbose",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8362,6 +8447,7 @@
     {
       "name": "fetch.preconnect",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8384,6 +8470,7 @@
     {
       "name": "fetching-a-url-with-a-timeout",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8406,6 +8493,7 @@
     {
       "name": "fetchPage",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8499,6 +8587,7 @@
     {
       "name": "FORCE_COLOR",
       "type": "env-var",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8541,6 +8630,7 @@
     {
       "name": "getEnvironmentData",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8601,6 +8691,7 @@
     {
       "name": "hot-route-reloading",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8623,6 +8714,7 @@
     {
       "name": "HTML imports",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8645,6 +8737,7 @@
     {
       "name": "html-imports",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8684,6 +8777,7 @@
     {
       "name": "http/3-quic",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8711,6 +8805,7 @@
     {
       "name": "http1: false",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8770,6 +8865,7 @@
     {
       "name": "idleTimeout",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8810,6 +8906,7 @@
     {
       "name": "implementation-details",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8832,6 +8929,7 @@
     {
       "name": "import.meta",
       "type": "concept",
+      "description": "How Bun resolves modules and handles imports in JavaScript and TypeScript",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8893,8 +8991,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-auto",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -8925,8 +9023,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-ca-and-install-cafile",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -8934,6 +9032,7 @@
     {
       "name": "install.cache",
       "type": "concept",
+      "description": "Configure Bun’s behavior using its configuration file bunfig.toml",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -8972,8 +9071,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-cache",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9004,8 +9103,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-ca-and-install-cafile",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9036,8 +9135,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globalbindir",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9068,8 +9167,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globaldir",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9100,8 +9199,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-hoistpattern",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9137,8 +9236,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-lockfile",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9174,8 +9273,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-lockfile",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9206,8 +9305,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-loglevel",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9239,8 +9338,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-prefer",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9271,8 +9370,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-publichoistpattern",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9360,8 +9459,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#jsx",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9392,8 +9491,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#jsx",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9424,8 +9523,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#jsx",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9433,6 +9532,7 @@
     {
       "name": "keepalive",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9478,8 +9578,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#loglevel",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -9536,6 +9636,7 @@
     {
       "name": "markdown docs",
       "type": "concept",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9550,6 +9651,7 @@
     {
       "name": "memory-usage-with-smol",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9572,6 +9674,7 @@
     {
       "name": "messages-with-postmessage",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9624,6 +9727,7 @@
     {
       "name": "new Worker",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9646,6 +9750,7 @@
     {
       "name": "NO_COLOR",
       "type": "env-var",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9669,6 +9774,7 @@
     {
       "name": "NODE_PORT",
       "type": "env-var",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9862,6 +9968,7 @@
     {
       "name": "pendingRequests",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9884,6 +9991,7 @@
     {
       "name": "pendingWebSockets",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9906,6 +10014,7 @@
     {
       "name": "per-request-controls",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9927,6 +10036,7 @@
     {
       "name": "pipe code from stdin",
       "type": "concept",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9959,6 +10069,7 @@
     {
       "name": "port: 0",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -9991,6 +10102,7 @@
     {
       "name": "practical-example-rest-api",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10012,6 +10124,7 @@
     {
       "name": "preconnect-at-startup",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10034,6 +10147,7 @@
     {
       "name": "preconnect-to-a-host",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10079,8 +10193,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#preload",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -10142,6 +10256,7 @@
     {
       "name": "process.stdout.columns",
       "type": "concept",
+      "description": "Bun’s compatibility status with Node.js APIs, modules, and globals",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10157,6 +10272,7 @@
     {
       "name": "process.stdout.isTTY",
       "type": "concept",
+      "description": "Bun’s compatibility status with Node.js APIs, modules, and globals",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10172,6 +10288,7 @@
     {
       "name": "proxying-requests",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10199,6 +10316,7 @@
     {
       "name": "reading environment variables",
       "type": "concept",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10233,6 +10351,7 @@
     {
       "name": "RedisClient",
       "type": "api",
+      "description": "Use Bun’s native Redis client with a Promise-based API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10269,6 +10388,7 @@
     {
       "name": "response buffering",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10291,6 +10411,7 @@
     {
       "name": "response-buffering",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10361,8 +10482,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#run-bun-auto-alias-node-to-bun",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -10454,8 +10575,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -10506,6 +10627,7 @@
     {
       "name": "S3Client",
       "type": "api",
+      "description": "Bun provides fast, native bindings for interacting with S3-compatible object storage services.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10557,6 +10679,7 @@
     {
       "name": "sending-a-post-request",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10579,6 +10702,7 @@
     {
       "name": "Serve.Options",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10624,8 +10748,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#serve-port",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -10695,6 +10819,7 @@
     {
       "name": "server reference",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10717,6 +10842,7 @@
     {
       "name": "server-lifecycle-methods",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10738,6 +10864,7 @@
     {
       "name": "server-metrics",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10759,6 +10886,7 @@
     {
       "name": "server-pendingrequests-and-server-pendingwebsockets",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10781,6 +10909,7 @@
     {
       "name": "server-ref-and-server-unref",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10803,6 +10932,7 @@
     {
       "name": "server-reload",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10825,6 +10955,7 @@
     {
       "name": "server-requestip-request",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10847,6 +10978,7 @@
     {
       "name": "server-stop",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10869,6 +11001,7 @@
     {
       "name": "server-subscribercount-topic",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10891,6 +11024,7 @@
     {
       "name": "server-timeout-request-seconds",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10918,6 +11052,7 @@
     {
       "name": "server.development",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10940,6 +11075,7 @@
     {
       "name": "server.fetch",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10962,6 +11098,7 @@
     {
       "name": "server.id",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -10984,6 +11121,7 @@
     {
       "name": "server.pendingRequests",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11006,6 +11144,7 @@
     {
       "name": "server.pendingWebSockets",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11028,6 +11167,7 @@
     {
       "name": "server.port",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11060,6 +11200,7 @@
     {
       "name": "server.publish",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11082,6 +11223,7 @@
     {
       "name": "server.ref",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11104,6 +11246,7 @@
     {
       "name": "server.reload",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11126,6 +11269,7 @@
     {
       "name": "server.requestIP",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11148,6 +11292,7 @@
     {
       "name": "server.stop",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11170,6 +11315,7 @@
     {
       "name": "server.subscriberCount",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11192,6 +11338,7 @@
     {
       "name": "server.timeout",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11219,6 +11366,7 @@
     {
       "name": "server.unref",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11241,6 +11389,7 @@
     {
       "name": "server.upgrade",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11263,6 +11412,7 @@
     {
       "name": "server.url",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11295,6 +11445,7 @@
     {
       "name": "ServerWebSocket",
       "type": "api",
+      "description": "Server-side WebSockets in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11315,6 +11466,7 @@
     {
       "name": "setEnvironmentData",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11330,6 +11482,7 @@
     {
       "name": "setting environment variables",
       "type": "concept",
+      "description": "Read and configure environment variables in Bun, including automatic .env file support",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11360,6 +11513,7 @@
     {
       "name": "simultaneous-connection-limit",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11405,8 +11559,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#smol",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11429,6 +11583,7 @@
     {
       "name": "spawn terminal options",
       "type": "concept",
+      "description": "Spawn child processes with Bun.spawn or Bun.spawnSync",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11474,6 +11629,7 @@
     {
       "name": "streaming-request-bodies",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11496,6 +11652,7 @@
     {
       "name": "streaming-response-bodies",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11571,8 +11728,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#telemetry",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11580,6 +11737,7 @@
     {
       "name": "terminating-a-worker",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -11626,8 +11784,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-concurrenttestglob",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11660,8 +11818,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coverage",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11694,8 +11852,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coveragedir",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11728,8 +11886,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coverageignoresourcemaps",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11763,8 +11921,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coveragepathignorepatterns",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.19",
@@ -11798,8 +11956,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coveragereporter",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11832,8 +11990,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coverageskiptestfiles",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11871,8 +12029,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-coveragethreshold",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11903,8 +12061,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-onlyfailures",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -11937,8 +12095,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-pathignorepatterns",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.11",
@@ -11975,8 +12133,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-preload",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.16",
@@ -12009,8 +12167,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-randomize",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -12041,8 +12199,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-reporter-dots",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -12075,8 +12233,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-reporter-junit",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -12108,8 +12266,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-reruneach",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -12142,8 +12300,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-retry",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -12176,8 +12334,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-root",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -12209,8 +12367,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-seed",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -12242,8 +12400,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#test-smol",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -12266,6 +12424,7 @@
     {
       "name": "TLSOptions",
       "type": "api",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12312,6 +12471,7 @@
     {
       "name": "Transpilation & Language Features",
       "type": "concept",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12349,6 +12509,7 @@
     {
       "name": "transpilation-language-features",
       "type": "concept",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12416,6 +12577,7 @@
     {
       "name": "udpSocket",
       "type": "concept",
+      "description": "Use Bun’s UDP API to implement services with advanced real-time requirements, such as voice chat.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12431,6 +12593,7 @@
     {
       "name": "unix-domain-sockets",
       "type": "concept",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12468,6 +12631,7 @@
     {
       "name": "verbose: true",
       "type": "concept",
+      "description": "Send HTTP requests with Bun’s fetch API",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12540,6 +12704,7 @@
     {
       "name": "WebSocketHandler",
       "type": "api",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12645,6 +12810,7 @@
     {
       "name": "worker close",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12660,6 +12826,7 @@
     {
       "name": "worker open",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12702,6 +12869,7 @@
     {
       "name": "worker_threads",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12717,6 +12885,7 @@
     {
       "name": "worker-ref",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -12744,6 +12913,7 @@
     {
       "name": "worker-unref",
       "type": "concept",
+      "description": "Use Bun’s Workers API to create and communicate with a new JavaScript instance running on a separate thread while sharing I/O resources with the main thread",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14239,6 +14409,7 @@
     {
       "name": "Asset Processing",
       "type": "concept",
+      "description": "Build static sites, landing pages, and web applications with Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14253,6 +14424,7 @@
     {
       "name": "build-time-constants",
       "type": "concept",
+      "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14268,6 +14440,7 @@
     {
       "name": "bun build",
       "type": "cli-command",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14291,6 +14464,7 @@
     {
       "name": "bun build --compile",
       "type": "concept",
+      "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14305,6 +14479,7 @@
     {
       "name": "bun build --watch",
       "type": "concept",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14578,6 +14753,7 @@
     {
       "name": "bundle-time fetch",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14619,6 +14795,7 @@
     {
       "name": "bundler cli-usage",
       "type": "concept",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14634,6 +14811,7 @@
     {
       "name": "bundler define",
       "type": "concept",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14649,6 +14827,7 @@
     {
       "name": "bundler external",
       "type": "concept",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14664,6 +14843,7 @@
     {
       "name": "bundler loader",
       "type": "concept",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14679,6 +14859,7 @@
     {
       "name": "bundler metafile",
       "type": "concept",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14694,6 +14875,7 @@
     {
       "name": "bundler minify",
       "type": "concept",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14709,6 +14891,7 @@
     {
       "name": "bytecode",
       "type": "concept",
+      "description": "Speed up JavaScript execution with bytecode caching in Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14738,6 +14921,7 @@
     {
       "name": "Bytecode Caching esm-bytecode",
       "type": "concept",
+      "description": "Speed up JavaScript execution with bytecode caching in Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14753,6 +14937,7 @@
     {
       "name": "Bytecode Caching usage",
       "type": "concept",
+      "description": "Speed up JavaScript execution with bytecode caching in Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14768,6 +14953,7 @@
     {
       "name": "Bytecode Caching when-to-use-bytecode",
       "type": "concept",
+      "description": "Speed up JavaScript execution with bytecode caching in Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14783,6 +14969,7 @@
     {
       "name": "compile targets",
       "type": "concept",
+      "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14798,6 +14985,7 @@
     {
       "name": "Core",
       "type": "api",
+      "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14837,6 +15025,7 @@
     {
       "name": "CSS css-modules",
       "type": "concept",
+      "description": "Bun’s bundler has built-in support for CSS with modern features",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14852,6 +15041,7 @@
     {
       "name": "Development Server",
       "type": "concept",
+      "description": "Build fullstack applications with Bun’s integrated dev server that bundles frontend assets and handles API routes",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14866,6 +15056,7 @@
     {
       "name": "embed git commit hash",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14925,6 +15116,7 @@
     {
       "name": "esbuild javascript-api",
       "type": "concept",
+      "description": "Migration guide from esbuild to Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14940,6 +15132,7 @@
     {
       "name": "esbuild plugin-api",
       "type": "concept",
+      "description": "Migration guide from esbuild to Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14955,6 +15148,7 @@
     {
       "name": "executables",
       "type": "concept",
+      "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -14990,6 +15184,7 @@
     {
       "name": "export condition macro",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15005,6 +15200,7 @@
     {
       "name": "Extensions",
       "type": "api",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15026,6 +15222,7 @@
     {
       "name": "fullstack",
       "type": "concept",
+      "description": "Build fullstack applications with Bun’s integrated dev server that bundles frontend assets and handles API routes",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15055,6 +15252,7 @@
     {
       "name": "Fullstack dev server html-routes",
       "type": "concept",
+      "description": "Build fullstack applications with Bun’s integrated dev server that bundles frontend assets and handles API routes",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15070,6 +15268,7 @@
     {
       "name": "fullstack html-routes",
       "type": "concept",
+      "description": "Build fullstack applications with Bun’s integrated dev server that bundles frontend assets and handles API routes",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15118,6 +15317,7 @@
     {
       "name": "HTML & static sites build-for-production",
       "type": "concept",
+      "description": "Build static sites, landing pages, and web applications with Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15133,6 +15333,7 @@
     {
       "name": "HTML & static sites inline-environment-variables",
       "type": "concept",
+      "description": "Build static sites, landing pages, and web applications with Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15148,6 +15349,7 @@
     {
       "name": "HTML & static sites plugin-api",
       "type": "concept",
+      "description": "Build static sites, landing pages, and web applications with Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15163,6 +15365,7 @@
     {
       "name": "HTML & static sites watch-mode",
       "type": "concept",
+      "description": "Build static sites, landing pages, and web applications with Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15178,6 +15381,7 @@
     {
       "name": "html-static",
       "type": "concept",
+      "description": "Build static sites, landing pages, and web applications with Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15192,6 +15396,7 @@
     {
       "name": "html-static inline-env",
       "type": "concept",
+      "description": "Build static sites, landing pages, and web applications with Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15207,6 +15412,7 @@
     {
       "name": "import.meta.hot",
       "type": "concept",
+      "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15222,6 +15428,7 @@
     {
       "name": "import.meta.hot.accept",
       "type": "concept",
+      "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15237,6 +15444,7 @@
     {
       "name": "import.meta.hot.data",
       "type": "concept",
+      "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15252,6 +15460,7 @@
     {
       "name": "import.meta.hot.dispose",
       "type": "concept",
+      "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15267,6 +15476,7 @@
     {
       "name": "import.meta.hot.on",
       "type": "concept",
+      "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15282,6 +15492,7 @@
     {
       "name": "import.meta.hot.prune",
       "type": "concept",
+      "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15297,6 +15508,7 @@
     {
       "name": "loader:built-in-loaders",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15312,6 +15524,7 @@
     {
       "name": "loader:css",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15327,6 +15540,7 @@
     {
       "name": "loader:file",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15342,6 +15556,7 @@
     {
       "name": "loader:html",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15357,6 +15572,7 @@
     {
       "name": "loader:js",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15372,6 +15588,7 @@
     {
       "name": "loader:json",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15387,6 +15604,7 @@
     {
       "name": "loader:jsonc",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15402,6 +15620,7 @@
     {
       "name": "loader:jsx",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15417,6 +15636,7 @@
     {
       "name": "loader:napi",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15432,6 +15652,7 @@
     {
       "name": "loader:sh",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15447,6 +15668,7 @@
     {
       "name": "loader:sqlite",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15462,6 +15684,7 @@
     {
       "name": "loader:text",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15477,6 +15700,7 @@
     {
       "name": "loader:toml",
       "type": "config-key",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15497,6 +15721,7 @@
     {
       "name": "loader:ts",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15512,6 +15737,7 @@
     {
       "name": "loader:tsx",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15527,6 +15753,7 @@
     {
       "name": "loader:yaml",
       "type": "concept",
+      "description": "Built-in loaders for the Bun bundler and runtime",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15585,6 +15812,7 @@
     {
       "name": "macros dead-code-elimination",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15600,6 +15828,7 @@
     {
       "name": "macros examples",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15615,6 +15844,7 @@
     {
       "name": "macros execution",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15630,6 +15860,7 @@
     {
       "name": "macros security",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15645,6 +15876,7 @@
     {
       "name": "macros when-to-use-macros",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15660,6 +15892,7 @@
     {
       "name": "Migration",
       "type": "api",
+      "description": "Migration guide from esbuild to Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15709,6 +15942,7 @@
     {
       "name": "Minifier cli-usage",
       "type": "concept",
+      "description": "Reduce bundle sizes with Bun’s JavaScript and TypeScript minifier",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15724,6 +15958,7 @@
     {
       "name": "Minifier dead-code-elimination",
       "type": "concept",
+      "description": "Reduce bundle sizes with Bun’s JavaScript and TypeScript minifier",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15739,6 +15974,7 @@
     {
       "name": "Minifier drop-console-calls",
       "type": "concept",
+      "description": "Reduce bundle sizes with Bun’s JavaScript and TypeScript minifier",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15754,6 +15990,7 @@
     {
       "name": "Minifier javascript-api",
       "type": "concept",
+      "description": "Reduce bundle sizes with Bun’s JavaScript and TypeScript minifier",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15769,6 +16006,7 @@
     {
       "name": "Minifier when-to-use-minification",
       "type": "concept",
+      "description": "Reduce bundle sizes with Bun’s JavaScript and TypeScript minifier",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15784,6 +16022,7 @@
     {
       "name": "onBeforeParse",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15799,6 +16038,7 @@
     {
       "name": "onEnd",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15814,6 +16054,7 @@
     {
       "name": "onLoad",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15829,6 +16070,7 @@
     {
       "name": "onResolve",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15844,6 +16086,7 @@
     {
       "name": "onStart",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15859,6 +16102,7 @@
     {
       "name": "Optimization",
       "type": "api",
+      "description": "Speed up JavaScript execution with bytecode caching in Bun’s bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15882,6 +16126,7 @@
     {
       "name": "plugin lifecycle",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15923,6 +16168,7 @@
     {
       "name": "plugins defer",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15938,6 +16184,7 @@
     {
       "name": "plugins namespaces",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15953,6 +16200,7 @@
     {
       "name": "plugins native-plugins",
       "type": "concept",
+      "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -15968,6 +16216,7 @@
     {
       "name": "Runtime arguments via BUN_OPTIONS",
       "type": "concept",
+      "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -16043,6 +16292,7 @@
     {
       "name": "Single File Executable",
       "type": "concept",
+      "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -16072,6 +16322,7 @@
     {
       "name": "Single-file executable build-time-constants",
       "type": "concept",
+      "description": "Generate standalone executables from TypeScript or JavaScript files with Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -16102,6 +16353,7 @@
     {
       "name": "Standalone HTML javascript-api",
       "type": "concept",
+      "description": "Bundle a single-page app into a single self-contained .html file with no external dependencies",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -16117,6 +16369,7 @@
     {
       "name": "standalone-html",
       "type": "concept",
+      "description": "Bundle a single-page app into a single self-contained .html file with no external dependencies",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -16131,6 +16384,7 @@
     {
       "name": "type: macro",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -16146,6 +16400,7 @@
     {
       "name": "with { type: \"macro\" }",
       "type": "concept",
+      "description": "Run JavaScript functions at bundle-time with Bun macros",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -16732,6 +16987,7 @@
     {
       "name": "bun:test snapshots",
       "type": "api",
+      "description": "Learn how to use snapshot testing in Bun to save and compare output between test runs",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -16854,6 +17110,7 @@
     {
       "name": "set-the-time-zone",
       "type": "concept",
+      "description": "Learn how to manipulate time and dates in your Bun tests using setSystemTime and Jest compatibility functions",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -17021,6 +17278,7 @@
     {
       "name": "tz-timezone",
       "type": "concept",
+      "description": "Learn about Bun test’s runtime integration, environment variables, timeouts, and error handling",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -17261,6 +17519,7 @@
     {
       "name": "Build an app with Next.js and Bun",
       "type": "concept",
+      "description": "Create a new Next.js app",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -17415,6 +17674,7 @@
     {
       "name": "Bun Redis with Upstash",
       "type": "concept",
+      "description": "Create a new project",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -18270,6 +18530,7 @@
     {
       "name": "Deploy a Bun application on AWS Lambda",
       "type": "concept",
+      "description": "Create a new Dockerfile",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -18284,6 +18545,7 @@
     {
       "name": "Deploy a Bun application on DigitalOcean",
       "type": "concept",
+      "description": "Create a new DigitalOcean Container Registry",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -18298,6 +18560,7 @@
     {
       "name": "Deploy a Bun application on Google Cloud Run",
       "type": "concept",
+      "description": "Initialize gcloud by select/creating a project",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -18341,6 +18604,7 @@
     {
       "name": "Deploy a Bun application on Vercel",
       "type": "concept",
+      "description": "Configure Bun in vercel.json",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -19826,6 +20090,7 @@
     {
       "name": "SocialMetadata",
       "type": "api",
+      "description": "Bun's HTMLRewriter API extracts social share images and Open Graph metadata from HTML by matching CSS selectors against the elements, text, and attributes you want to process. Use it to build link previews, social media cards, or web scrapers.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -20166,6 +20431,7 @@
     {
       "name": "Use Prisma Postgres with Bun",
       "type": "concept",
+      "description": "Create a new project",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -20180,6 +20446,7 @@
     {
       "name": "Use Prisma with Bun",
       "type": "concept",
+      "description": "Create a new project",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -20208,6 +20475,7 @@
     {
       "name": "Use TanStack Start with Bun",
       "type": "concept",
+      "description": "Create a new TanStack Start app",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -20630,8 +20898,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v0.4.0",
@@ -21400,8 +21668,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-linker",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.2.19",
@@ -21702,7 +21970,7 @@
     {
       "name": "--parallel",
       "type": "cli-flag",
-      "description": "Combine `--filter` or `--workspaces` with `--parallel` or `--sequential` to run scripts across workspace packages with Foreman-style prefixed output:",
+      "description": "bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers run with --isolate; console output is buffered so files never interleave. (For workspace scripts use bun run --parallel.)",
       "stability": "stable",
       "releasedIn": "1.1.5",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -21717,21 +21985,27 @@
       "examples": [
         {
           "lang": "bash",
-          "body": "# Run \"build\" in all matching packages concurrently\nbun run --parallel --filter '*' build\n\n# Run \"build\" in all workspace packages sequentially\nbun run --sequential --workspaces build\n\n# Run glob-matched scripts across all packages\nbun run --parallel --filter '*' \"build:*\"\n\n# Continue running even if one package's script fails\nbun run --parallel --no-exit-on-error --filter '*' test\n\n# Run multiple scripts across all packages\nbun run --parallel --filter '*' build lint",
-          "fragment": "parallel-and-sequential-mode"
+          "body": "# Run tests with isolation (fresh global per file)\nbun test --isolate ./tests\n\n# Run tests in parallel across all CPU cores\nbun test --parallel ./tests\n\n# Run tests in parallel with 8 workers\nbun test --parallel=8 ./tests",
+          "fragment": "bun-test-isolate-and-bun-test-parallel"
         }
       ],
+      "changeNote": "bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers run with --isolate; console output is buffered so files never interleave. (For workspace scripts use bun run --parallel.)",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
       "fixedIn": "1.3.14",
       "locusUnresolved": false,
       "locusStatus": "coincidence",
       "related": [
-        "--changed",
         "--isolate",
-        "--shard"
+        "--shard",
+        "--changed",
+        "bun test --parallel",
+        "bun run --parallel",
+        "JEST_WORKER_ID",
+        "BUN_TEST_WORKER_ID",
+        "--randomize"
       ],
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.1.5",
-      "blogUrl": "https://bun.com/blog/bun-v1.1.5"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.1.5"
     },
     {
       "name": "--patches-dir",
@@ -22151,8 +22425,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.2",
@@ -22936,8 +23210,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
@@ -23046,8 +23320,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14"
@@ -23131,8 +23405,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "locusStatus": "inherited",
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-cache",
@@ -23166,8 +23440,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "locusStatus": "inherited",
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-cache",
@@ -23201,8 +23475,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-concurrentscripts",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.17",
@@ -23235,8 +23509,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-dev",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23318,8 +23592,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-frozenlockfile",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23357,8 +23631,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-globalstore",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.14",
@@ -23396,8 +23670,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-ignorescripts",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23431,8 +23705,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-linker",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23493,8 +23767,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseage",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23531,8 +23805,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-minimumreleaseageexcludes",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23564,8 +23838,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-optional",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23598,8 +23872,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-peer",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.0.5",
@@ -23632,8 +23906,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-production",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23698,8 +23972,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-savetextlockfile",
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.1.40",
@@ -23731,8 +24005,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -23764,8 +24038,8 @@
         "--concurrent",
         "--no-orphans",
         "--path-ignore-patterns",
-        "--randomize",
-        "--rerun-each"
+        "--rerun-each",
+        "--retry"
       ],
       "docsUrl": "https://bun.com/docs/runtime/bunfig#install-security-scanner",
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
@@ -24166,6 +24440,7 @@
     {
       "name": "Bun.sliceAnsi",
       "type": "api",
+      "description": "Slice a string by visible column width, preserving ANSI escape codes.",
       "stability": "stable",
       "releasedIn": "1.3.11",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -24215,6 +24490,7 @@
     {
       "name": "fileURLToPath",
       "type": "api",
+      "description": "This function ensures the correct decodings of percent-encoded characters as well as ensuring a cross-platform valid absolute path string.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24246,6 +24522,7 @@
     {
       "name": "FileUrlToPathOptions",
       "type": "api",
+      "description": "This function ensures the correct decodings of percent-encoded characters as well as ensuring a cross-platform valid absolute path string.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24277,6 +24554,7 @@
     {
       "name": "node:url",
       "type": "api",
+      "description": "The 'node:url' module provides utilities to parse, format, and resolve URLs. It includes the URL and URLSearchParams classes that conform to the WHATWG URL specification.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24293,6 +24571,7 @@
     {
       "name": "node:url/fileURLToPath",
       "type": "api",
+      "description": "This function ensures the correct decodings of percent-encoded characters as well as ensuring a cross-platform valid absolute path string.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24324,6 +24603,7 @@
     {
       "name": "node:url/pathToFileURL",
       "type": "api",
+      "description": "This function ensures that path is resolved absolutely, and that the URL control characters are correctly encoded when converting into a File URL.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24351,6 +24631,7 @@
     {
       "name": "pathToFileURL",
       "type": "api",
+      "description": "This function ensures that path is resolved absolutely, and that the URL control characters are correctly encoded when converting into a File URL.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24378,6 +24659,7 @@
     {
       "name": "PathToFileUrlOptions",
       "type": "api",
+      "description": "This function ensures that path is resolved absolutely, and that the URL control characters are correctly encoded when converting into a File URL.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24405,6 +24687,7 @@
     {
       "name": "url.fileURLToPath",
       "type": "api",
+      "description": "This function ensures the correct decodings of percent-encoded characters as well as ensuring a cross-platform valid absolute path string.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24436,6 +24719,7 @@
     {
       "name": "url.pathToFileURL",
       "type": "api",
+      "description": "This function ensures that path is resolved absolutely, and that the URL control characters are correctly encoded when converting into a File URL.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24463,7 +24747,9 @@
     {
       "name": "--changed",
       "type": "cli-flag",
+      "description": "bun test --changed[=ref]: run only test files whose import graph transitively depends on git-changed files (unstaged+staged+untracked, or since a commit/branch). Combines with --watch.",
       "stability": "stable",
+      "releasedIn": "1.3.13",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
@@ -24472,20 +24758,35 @@
         "https://bun.com/blog/bun-v1.3.13"
       ],
       "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# Run tests affected by uncommitted changes (unstaged + staged + untracked)\nbun test --changed\n\n# Run tests affected by changes since a specific commit, branch, or tag\nbun test --changed=HEAD~1\nbun test --changed=main\n\n# Combine with --watch to re-filter on every restart\nbun test --changed --watch",
+          "fragment": "bun-test-changed"
+        }
+      ],
+      "changeNote": "bun test --changed[=ref]: run only test files whose import graph transitively depends on git-changed files (unstaged+staged+untracked, or since a commit/branch). Combines with --watch.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
       "locusUnresolved": false,
       "locusStatus": "coincidence",
       "related": [
+        "bun test --changed",
+        "--shard",
+        "bun test --watch",
         "--parallel",
         "--isolate",
-        "--shard"
+        "--randomize",
+        "--parallel=N"
       ],
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-changed",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
     },
     {
       "name": "--isolate",
       "type": "cli-flag",
+      "description": "bun test: run each test file in a fresh global environment within the same process (drain microtasks, close sockets, cancel timers, kill subprocesses). VM transpilation cache keeps shared deps parsed once.",
       "stability": "stable",
+      "releasedIn": "1.3.13",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
@@ -24494,20 +24795,70 @@
         "https://bun.com/blog/bun-v1.3.13"
       ],
       "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# Run tests with isolation (fresh global per file)\nbun test --isolate ./tests\n\n# Run tests in parallel across all CPU cores\nbun test --parallel ./tests\n\n# Run tests in parallel with 8 workers\nbun test --parallel=8 ./tests",
+          "fragment": "bun-test-isolate-and-bun-test-parallel"
+        }
+      ],
+      "changeNote": "bun test: run each test file in a fresh global environment within the same process (drain microtasks, close sockets, cancel timers, kill subprocesses). VM transpilation cache keeps shared deps parsed once.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
       "locusUnresolved": false,
       "locusStatus": "coincidence",
       "related": [
         "--parallel",
         "--changed",
+        "--shard",
+        "bun test --isolate",
+        "--randomize",
+        "--parallel=N"
+      ],
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
+    },
+    {
+      "name": "--parallel=N",
+      "type": "cli-flag",
+      "description": "bun test --parallel=N: cap worker processes at N (default CPU count). Workers auto-enable --isolate.",
+      "stability": "stable",
+      "releasedIn": "1.3.13",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-isolate-and-bun-test-parallel",
+      "allPages": [
+        "https://bun.com/blog/bun-v1.3.13"
+      ],
+      "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# Run tests with isolation (fresh global per file)\nbun test --isolate ./tests\n\n# Run tests in parallel across all CPU cores\nbun test --parallel ./tests\n\n# Run tests in parallel with 8 workers\nbun test --parallel=8 ./tests",
+          "fragment": "bun-test-isolate-and-bun-test-parallel"
+        }
+      ],
+      "changeNote": "bun test --parallel=N: cap worker processes at N (default CPU count). Workers auto-enable --isolate.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "--parallel",
+        "--isolate",
+        "bun test --parallel",
+        "--randomize",
+        "--changed",
         "--shard"
       ],
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
     },
     {
       "name": "--shard",
       "type": "cli-flag",
+      "description": "bun test --shard=M/N: split test files across CI jobs (1-based, round-robin by sorted path). Empty shards exit 0. Composes with --changed and --randomize.",
       "stability": "stable",
+      "releasedIn": "1.3.13",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
@@ -24516,20 +24867,70 @@
         "https://bun.com/blog/bun-v1.3.13"
       ],
       "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# In a GitHub Actions matrix with 3 jobs:\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3",
+          "fragment": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs"
+        }
+      ],
+      "changeNote": "bun test --shard=M/N: split test files across CI jobs (1-based, round-robin by sorted path). Empty shards exit 0. Composes with --changed and --randomize.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
       "locusUnresolved": false,
       "locusStatus": "coincidence",
       "related": [
+        "--shard=M/N",
         "--parallel",
         "--changed",
-        "--isolate"
+        "--randomize",
+        "--isolate",
+        "--parallel=N"
       ],
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
+    },
+    {
+      "name": "--shard=M/N",
+      "type": "cli-flag",
+      "description": "Split bun test files across CI runners (Jest/Vitest/Playwright syntax). Index is 1-based; invalid inputs like 0/3 exit non-zero.",
+      "stability": "stable",
+      "releasedIn": "1.3.13",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "allPages": [
+        "https://bun.com/blog/bun-v1.3.13"
+      ],
+      "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# In a GitHub Actions matrix with 3 jobs:\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3",
+          "fragment": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs"
+        }
+      ],
+      "changeNote": "Split bun test files across CI runners (Jest/Vitest/Playwright syntax). Index is 1-based; invalid inputs like 0/3 exit non-zero.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "--shard",
+        "--parallel",
+        "--changed",
+        "--randomize",
+        "--isolate",
+        "--parallel=N"
+      ],
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
     },
     {
       "name": "bun test --changed",
-      "type": "concept",
+      "type": "cli-flag",
+      "description": "Run only tests affected by git changes via import-graph analysis (skips node_modules). Empty set exits cleanly; with --watch keeps the process alive.",
       "stability": "stable",
+      "releasedIn": "1.3.13",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
       "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
@@ -24538,12 +24939,172 @@
         "https://bun.com/blog/bun-v1.3.13"
       ],
       "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# Run tests affected by uncommitted changes (unstaged + staged + untracked)\nbun test --changed\n\n# Run tests affected by changes since a specific commit, branch, or tag\nbun test --changed=HEAD~1\nbun test --changed=main\n\n# Combine with --watch to re-filter on every restart\nbun test --changed --watch",
+          "fragment": "bun-test-changed"
+        }
+      ],
+      "changeNote": "Run only tests affected by git changes via import-graph analysis (skips node_modules). Empty set exits cleanly; with --watch keeps the process alive.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "--changed",
+        "--shard",
+        "bun test --watch",
+        "--parallel",
+        "--randomize",
+        "--isolate",
+        "--parallel=N"
+      ],
       "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-changed",
-      "releaseUrl": "https://github.com/oven-sh/bun/releases"
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
+    },
+    {
+      "name": "bun test --isolate",
+      "type": "cli-flag",
+      "description": "bun test: run each test file in a fresh global environment within the same process. Shared deps reuse a VM-level transpilation cache. Implied by --parallel workers.",
+      "stability": "stable",
+      "releasedIn": "1.3.13",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-isolate-and-bun-test-parallel",
+      "allPages": [
+        "https://bun.com/blog/bun-v1.3.13"
+      ],
+      "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# Run tests with isolation (fresh global per file)\nbun test --isolate ./tests\n\n# Run tests in parallel across all CPU cores\nbun test --parallel ./tests\n\n# Run tests in parallel with 8 workers\nbun test --parallel=8 ./tests",
+          "fragment": "bun-test-isolate-and-bun-test-parallel"
+        }
+      ],
+      "changeNote": "bun test: run each test file in a fresh global environment within the same process. Shared deps reuse a VM-level transpilation cache. Implied by --parallel workers.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "--isolate",
+        "--parallel",
+        "bun test --parallel",
+        "--randomize",
+        "--changed",
+        "--parallel=N"
+      ],
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
+    },
+    {
+      "name": "bun test --parallel",
+      "type": "cli-flag",
+      "description": "Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. ≠ bun run --parallel.",
+      "stability": "stable",
+      "releasedIn": "1.3.13",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-isolate-and-bun-test-parallel",
+      "allPages": [
+        "https://bun.com/blog/bun-v1.3.13"
+      ],
+      "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# Run tests with isolation (fresh global per file)\nbun test --isolate ./tests\n\n# Run tests in parallel across all CPU cores\nbun test --parallel ./tests\n\n# Run tests in parallel with 8 workers\nbun test --parallel=8 ./tests",
+          "fragment": "bun-test-isolate-and-bun-test-parallel"
+        }
+      ],
+      "changeNote": "Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. ≠ bun run --parallel.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "--isolate",
+        "--shard",
+        "--changed",
+        "bun run --parallel",
+        "JEST_WORKER_ID",
+        "BUN_TEST_WORKER_ID",
+        "--randomize",
+        "--parallel"
+      ],
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
+    },
+    {
+      "name": "bun test --shard",
+      "type": "cli-flag",
+      "description": "Split bun test files across CI jobs with --shard=M/N (sorted paths, round-robin).",
+      "stability": "stable",
+      "releasedIn": "1.3.13",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "allPages": [
+        "https://bun.com/blog/bun-v1.3.13"
+      ],
+      "section": "other",
+      "examples": [
+        {
+          "lang": "bash",
+          "body": "# In a GitHub Actions matrix with 3 jobs:\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3",
+          "fragment": "bun-test-shard-m-n-for-splitting-tests-across-ci-jobs"
+        }
+      ],
+      "changeNote": "Split bun test files across CI jobs with --shard=M/N (sorted paths, round-robin).",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "--shard",
+        "--parallel",
+        "--changed",
+        "--randomize",
+        "--isolate",
+        "--parallel=N"
+      ],
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
+    },
+    {
+      "name": "bun test --watch",
+      "type": "cli-flag",
+      "description": "Re-run bun test on file changes. Combined with --changed, each restart re-queries git and re-filters the import graph.",
+      "stability": "stable",
+      "releasedIn": "1.3.13",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-changed",
+      "allPages": [
+        "https://bun.com/blog/bun-v1.3.13"
+      ],
+      "section": "other",
+      "changeNote": "Re-run bun test on file changes. Combined with --changed, each restart re-queries git and re-filters the import graph.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "--changed",
+        "bun test --changed",
+        "--randomize",
+        "--parallel",
+        "--isolate",
+        "--parallel=N"
+      ],
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-changed",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
     },
     {
       "name": "bun upgrade",
       "type": "cli-command",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24564,6 +25125,7 @@
     {
       "name": "bun v1.3.12",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24578,6 +25140,7 @@
     {
       "name": "bun v1.3.12 bugfixes",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24593,6 +25156,7 @@
     {
       "name": "bun v1.3.12 contributors",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24608,6 +25172,7 @@
     {
       "name": "bun v1.3.12 install",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24623,6 +25188,7 @@
     {
       "name": "bun v1.3.12 stringWidth",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24638,6 +25204,7 @@
     {
       "name": "bun v1.3.12 stripANSI",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24653,6 +25220,7 @@
     {
       "name": "bun v1.3.12 upgrade",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24668,6 +25236,7 @@
     {
       "name": "bun v1.3.13",
       "type": "concept",
+      "description": "In the next version of Bun bun test gets experimental support for per-file test isolation, and we made it fast. pic.twitter.com/va8GKDh3fy",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24680,8 +25249,39 @@
       "releaseUrl": "https://github.com/oven-sh/bun/releases"
     },
     {
+      "name": "BUN_TEST_WORKER_ID",
+      "type": "env-var",
+      "description": "Environment variable set by bun test --parallel identifying the worker process. Also see JEST_WORKER_ID.",
+      "stability": "stable",
+      "releasedIn": "1.3.13",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-isolate-and-bun-test-parallel",
+      "allPages": [
+        "https://bun.com/blog/bun-v1.3.13"
+      ],
+      "section": "other",
+      "changeNote": "Environment variable set by bun test --parallel identifying the worker process. Also see JEST_WORKER_ID.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "JEST_WORKER_ID",
+        "bun test --parallel",
+        "--parallel",
+        "--randomize",
+        "--changed",
+        "--isolate",
+        "--parallel=N"
+      ],
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
+    },
+    {
       "name": "bun-types",
       "type": "concept",
+      "description": "Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one - bun/packages/bun-types at 98f664962ffe4c6ba9b38382babc623ef0ba8693 · oven-sh/bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24696,6 +25296,7 @@
     {
       "name": "Bun.Glob.scan",
       "type": "api",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24716,6 +25317,7 @@
     {
       "name": "CI failures from terminal",
       "type": "concept",
+      "description": "Contributing to Bun",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24731,6 +25333,7 @@
     {
       "name": "exec()",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24763,6 +25366,7 @@
     {
       "name": "hasRegExpGroups",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -24796,6 +25400,36 @@
       "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.4"
     },
     {
+      "name": "JEST_WORKER_ID",
+      "type": "env-var",
+      "description": "Environment variable set by bun test --parallel (Jest-compatible worker id). Also see BUN_TEST_WORKER_ID.",
+      "stability": "stable",
+      "releasedIn": "1.3.13",
+      "lastUpdated": "2026-07-22T01:54:32.781Z",
+      "verifiedOn": "1.4.0",
+      "canonicalPage": "https://bun.com/blog/bun-v1.3.13",
+      "anchor": "bun-test-isolate-and-bun-test-parallel",
+      "allPages": [
+        "https://bun.com/blog/bun-v1.3.13"
+      ],
+      "section": "other",
+      "changeNote": "Environment variable set by bun test --parallel (Jest-compatible worker id). Also see BUN_TEST_WORKER_ID.",
+      "blogUrl": "https://bun.com/blog/bun-v1.3.13",
+      "locusUnresolved": false,
+      "locusStatus": "coincidence",
+      "related": [
+        "BUN_TEST_WORKER_ID",
+        "bun test --parallel",
+        "--parallel",
+        "--randomize",
+        "--changed",
+        "--isolate",
+        "--parallel=N"
+      ],
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "releaseUrl": "https://github.com/oven-sh/bun/releases/tag/bun-v1.3.13"
+    },
+    {
       "name": "snapshot guide",
       "type": "concept",
       "stability": "stable",
@@ -24812,6 +25446,7 @@
     {
       "name": "test()",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24844,6 +25479,7 @@
     {
       "name": "URLPattern",
       "type": "api",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -24887,6 +25523,7 @@
     {
       "name": "URLPattern API",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -24922,6 +25559,7 @@
     {
       "name": "URLPattern perf",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -24944,6 +25582,7 @@
     {
       "name": "URLPattern ship",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -24979,6 +25618,7 @@
     {
       "name": "urlpattern-api",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25011,6 +25651,7 @@
     {
       "name": "urlpattern-is-up-to-2-3x-faster",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25033,6 +25674,7 @@
     {
       "name": "URLPattern.constructor",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25065,6 +25707,7 @@
     {
       "name": "URLPattern.exec",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25090,6 +25733,7 @@
     {
       "name": "URLPattern.exec()",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25122,6 +25766,7 @@
     {
       "name": "URLPattern.hash",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25154,6 +25799,7 @@
     {
       "name": "URLPattern.hasRegExpGroups",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25186,6 +25832,7 @@
     {
       "name": "URLPattern.hostname",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25218,6 +25865,7 @@
     {
       "name": "URLPattern.password",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25250,6 +25898,7 @@
     {
       "name": "URLPattern.pathname",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25282,6 +25931,7 @@
     {
       "name": "URLPattern.port",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25314,6 +25964,7 @@
     {
       "name": "URLPattern.protocol",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25346,6 +25997,7 @@
     {
       "name": "URLPattern.search",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25378,6 +26030,7 @@
     {
       "name": "URLPattern.test",
       "type": "concept",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25403,6 +26056,7 @@
     {
       "name": "URLPattern.test()",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25435,6 +26089,7 @@
     {
       "name": "URLPattern.username",
       "type": "concept",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25467,6 +26122,7 @@
     {
       "name": "URLPatternInit",
       "type": "api",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "releasedIn": "1.3.4",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
@@ -25509,6 +26165,7 @@
     {
       "name": "URLPatternInput",
       "type": "api",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",
@@ -25548,6 +26205,7 @@
     {
       "name": "URLPatternResult",
       "type": "api",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
       "stability": "stable",
       "lastUpdated": "2026-07-22T01:54:32.781Z",
       "verifiedOn": "1.4.0",

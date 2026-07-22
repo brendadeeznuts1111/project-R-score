@@ -12,6 +12,9 @@
 // @see https://bun.com/docs/runtime/cron — Bun.cron
 // @see https://bun.com/docs/runtime/s3 — Bun.s3
 // @see https://bun.com/docs/cli/test — bun:test
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs — --shard
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
@@ -117,6 +120,142 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   { term: 'Bun.password', path: 'runtime/hashing', description: 'Argon2/bcrypt password hashing' },
   { term: 'Bun.build', path: 'bundler', description: 'Bundler and compile-to-binary' },
   { term: 'bun test', path: 'test', description: 'Built-in test runner (bun:test)' },
+  {
+    term: '--isolate',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'bun test: run each test file in a fresh global environment within the same process (drain microtasks, close sockets, cancel timers, kill subprocesses). VM transpilation cache keeps shared deps parsed once.',
+    minVersion: '1.3.13',
+    relatedTokens: ['--parallel', '--changed', '--shard', 'bun test --isolate'],
+  },
+  {
+    term: 'bun test --isolate',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'bun test: run each test file in a fresh global environment within the same process. Shared deps reuse a VM-level transpilation cache. Implied by --parallel workers.',
+    minVersion: '1.3.13',
+    relatedTokens: ['--isolate', '--parallel', 'bun test --parallel'],
+  },
+  {
+    term: '--parallel',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers run with --isolate; console output is buffered so files never interleave. (For workspace scripts use bun run --parallel.)',
+    minVersion: '1.3.13',
+    relatedTokens: [
+      '--isolate',
+      '--shard',
+      '--changed',
+      'bun test --parallel',
+      'bun run --parallel',
+      'JEST_WORKER_ID',
+      'BUN_TEST_WORKER_ID',
+    ],
+  },
+  {
+    term: 'bun test --parallel',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'Parallel workers for test files (work-stealing queue, atomic per-file console flush). Sets JEST_WORKER_ID and BUN_TEST_WORKER_ID. ≠ bun run --parallel.',
+    minVersion: '1.3.13',
+    relatedTokens: [
+      '--isolate',
+      '--shard',
+      '--changed',
+      'bun run --parallel',
+      'JEST_WORKER_ID',
+      'BUN_TEST_WORKER_ID',
+    ],
+  },
+  {
+    term: '--shard',
+    path: 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+    description:
+      'bun test --shard=M/N: split test files across CI jobs (1-based, round-robin by sorted path). Empty shards exit 0. Composes with --changed and --randomize.',
+    minVersion: '1.3.13',
+    relatedTokens: ['--shard=M/N', '--parallel', '--changed', '--randomize', '--isolate'],
+  },
+  {
+    term: '--shard=M/N',
+    path: 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+    description:
+      'Split bun test files across CI runners (Jest/Vitest/Playwright syntax). Index is 1-based; invalid inputs like 0/3 exit non-zero.',
+    minVersion: '1.3.13',
+    relatedTokens: ['--shard', '--parallel', '--changed', '--randomize'],
+  },
+  {
+    term: 'bun test --shard',
+    path: 'blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs',
+    description:
+      'Split bun test files across CI jobs with --shard=M/N (sorted paths, round-robin).',
+    minVersion: '1.3.13',
+    relatedTokens: ['--shard', '--parallel', '--changed', '--randomize'],
+  },
+  {
+    term: '--changed',
+    path: 'blog/bun-v1.3.13#bun-test-changed',
+    description:
+      'bun test --changed[=ref]: run only test files whose import graph transitively depends on git-changed files (unstaged+staged+untracked, or since a commit/branch). Combines with --watch.',
+    minVersion: '1.3.13',
+    relatedTokens: ['bun test --changed', '--shard', 'bun test --watch', '--parallel', '--isolate'],
+  },
+  {
+    term: 'bun test --changed',
+    path: 'blog/bun-v1.3.13#bun-test-changed',
+    description:
+      'Run only tests affected by git changes via import-graph analysis (skips node_modules). Empty set exits cleanly; with --watch keeps the process alive.',
+    minVersion: '1.3.13',
+    relatedTokens: ['--changed', '--shard', 'bun test --watch', '--parallel'],
+  },
+  {
+    term: 'bun run --parallel',
+    // Shipped 1.3.9 — https://bun.com/blog/bun-v1.3.9#bun-run-parallel-and-bun-run-sequential
+    path: 'cli/run#parallel-and-sequential-mode',
+    description:
+      'bun run workspace Foreman mode: run package.json scripts in parallel (≠ bun test --parallel file workers).',
+    minVersion: '1.3.9',
+    relatedTokens: ['bun test --parallel', '--parallel'],
+  },
+  {
+    term: '--parallel=N',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'bun test --parallel=N: cap worker processes at N (default CPU count). Workers auto-enable --isolate.',
+    minVersion: '1.3.13',
+    relatedTokens: ['--parallel', '--isolate', 'bun test --parallel'],
+  },
+  {
+    term: 'JEST_WORKER_ID',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'Environment variable set by bun test --parallel (Jest-compatible worker id). Also see BUN_TEST_WORKER_ID.',
+    minVersion: '1.3.13',
+    relatedTokens: ['BUN_TEST_WORKER_ID', 'bun test --parallel', '--parallel'],
+  },
+  {
+    term: 'BUN_TEST_WORKER_ID',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'Environment variable set by bun test --parallel identifying the worker process. Also see JEST_WORKER_ID.',
+    minVersion: '1.3.13',
+    relatedTokens: ['JEST_WORKER_ID', 'bun test --parallel', '--parallel'],
+  },
+  {
+    term: '--randomize',
+    path: 'blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel',
+    description:
+      'bun test: shuffle test order. With --shard, shuffle happens after shard selection (within the shard).',
+    minVersion: '1.3.13',
+    relatedTokens: ['--shard', '--parallel', '--isolate', '--changed'],
+  },
+  {
+    term: 'bun test --watch',
+    path: 'blog/bun-v1.3.13#bun-test-changed',
+    description:
+      'Re-run bun test on file changes. Combined with --changed, each restart re-queries git and re-filters the import graph.',
+    minVersion: '1.3.13',
+    relatedTokens: ['--changed', 'bun test --changed'],
+  },
   {
     term: 'Bun.Terminal',
     path: 'runtime/terminal',

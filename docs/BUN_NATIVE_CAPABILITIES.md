@@ -70,7 +70,7 @@ Workspace runtime knobs for gates / spawn chains (not install-machine SSOT). See
 
 ## Release maps
 
-Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--changed`). Pin **1.4.0** is a superset — do not re-document every bugfix bullet.
+Upstream: [v1.3.12](https://bun.com/blog/bun-v1.3.12) · [v1.3.13](https://bun.com/blog/bun-v1.3.13) (`--isolate` · `--parallel` · `--shard` · `--changed`). Pin **1.4.0** is a superset — do not re-document every bug fix bullet.
 
 ## References
 
