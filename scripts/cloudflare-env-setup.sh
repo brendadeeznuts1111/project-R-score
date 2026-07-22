@@ -13,21 +13,28 @@ read -s -p "  Paste your CLOUDFLARE_API_TOKEN: " TOKEN
 echo ""
 
 if [ -z "$TOKEN" ]; then
-  echo "  ❌ No token provided. You can set it later manually:"
-  echo "     echo 'CLOUDFLARE_API_TOKEN=your_token' >> ~/.reasonix/.env"
+  echo "  ❌ No token provided. Set it manually (secure — no history leak):"
+  echo '     read -s -p "Token: " TOKEN && echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> ~/.reasonix/.env && unset TOKEN'
   exit 1
 fi
 
-# Write to Reasonix global .env
+# Write to Reasonix global .env (append, never overwrite)
 echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> ~/.reasonix/.env
+unset TOKEN
 echo "  ✅ Token saved to ~/.reasonix/.env"
 
 echo ""
-echo "Step 2: Verify token"
+echo "Step 2: Verify token (HISTFILE disabled to prevent history leak)"
 echo "  Testing: curl -s https://api.cloudflare.com/client/v4/user/tokens/verify"
-TEST=$(curl -s -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
-  -H "Authorization: Bearer $TOKEN" \
+# Read token back from env for verification (safer than re-prompting)
+VERIFY_TOKEN=$(grep '^CLOUDFLARE_API_TOKEN=' ~/.reasonix/.env | tail -1 | cut -d= -f2-)
+set +o history
+HISTFILE=/dev/null
+VERIFY_RESP=$(curl -s -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+  -H "Authorization: Bearer $VERIFY_TOKEN" \
   -H "Content-Type: application/json")
+unset VERIFY_TOKEN
+set -o history
 if echo "$TEST" | grep -q '"success":true'; then
   echo "  ✅ Token verified!"
 else
