@@ -125,7 +125,21 @@ export const CANONICAL_REFS: Record<string, string> = {
   'fetch performance': bunDocs('runtime/networking/fetch', 'performance'),
   'fetch verbose': bunDocs('runtime/networking/fetch', 'debugging'),
   'fetch.preconnect': bunDocs('runtime/networking/fetch', 'preconnect-to-a-host'),
+  'preconnect-to-a-host': bunDocs('runtime/networking/fetch', 'preconnect-to-a-host'),
   '--fetch-preconnect': bunDocs('runtime/networking/fetch', 'preconnect-at-startup'),
+  'preconnect-at-startup': bunDocs('runtime/networking/fetch', 'preconnect-at-startup'),
+  'connection-pooling-http-keep-alive': bunDocs(
+    'runtime/networking/fetch',
+    'connection-pooling-http-keep-alive'
+  ),
+  'connection pooling': bunDocs('runtime/networking/fetch', 'connection-pooling-http-keep-alive'),
+  keepalive: bunDocs('runtime/networking/fetch', 'connection-pooling-http-keep-alive'),
+  'simultaneous-connection-limit': bunDocs(
+    'runtime/networking/fetch',
+    'simultaneous-connection-limit'
+  ),
+  'response-buffering': bunDocs('runtime/networking/fetch', 'response-buffering'),
+  'response buffering': bunDocs('runtime/networking/fetch', 'response-buffering'),
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
   'Bun.connect': 'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',

@@ -81,6 +81,37 @@ export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
       body: 'import { fetch } from "bun";\n\nfetch.preconnect("https://bun.com");',
     },
   ],
+  'runtime/networking/fetch#preconnect-to-a-host': [
+    {
+      lang: 'ts',
+      body: 'import { fetch } from "bun";\n\nfetch.preconnect("https://bun.com");',
+    },
+  ],
+  // Not implemented on Windows — see Bun docs caveat on this anchor.
+  'runtime/networking/fetch#preconnect-at-startup': [
+    {
+      lang: 'sh',
+      body: 'bun --fetch-preconnect https://bun.com ./my-script.ts',
+    },
+  ],
+  'runtime/networking/fetch#connection-pooling-http-keep-alive': [
+    {
+      lang: 'ts',
+      body: 'const response = await fetch("http://example.com", {\n  keepalive: false,\n});',
+    },
+  ],
+  'runtime/networking/fetch#simultaneous-connection-limit': [
+    {
+      lang: 'sh',
+      body: 'BUN_CONFIG_MAX_HTTP_REQUESTS=512 bun ./my-script.ts',
+    },
+  ],
+  'runtime/networking/fetch#response-buffering': [
+    {
+      lang: 'ts',
+      body: 'import { write } from "bun";\n\nawait write("output.txt", response);',
+    },
+  ],
   'guides/runtime/read-env': [
     { lang: 'ts', body: 'process.env.API_TOKEN; // => "secret"' },
     { lang: 'ts', body: 'Bun.env.API_TOKEN; // => "secret"' },
@@ -308,6 +339,18 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'fetching-a-url-with-a-timeout': 'runtime/networking/fetch#fetching-a-url-with-a-timeout',
   'AbortSignal.timeout': 'runtime/networking/fetch#fetching-a-url-with-a-timeout',
   'fetch performance': 'runtime/networking/fetch#performance',
+  'fetch.preconnect': 'runtime/networking/fetch#preconnect-to-a-host',
+  'preconnect-to-a-host': 'runtime/networking/fetch#preconnect-to-a-host',
+  '--fetch-preconnect': 'runtime/networking/fetch#preconnect-at-startup',
+  'preconnect-at-startup': 'runtime/networking/fetch#preconnect-at-startup',
+  'connection-pooling-http-keep-alive':
+    'runtime/networking/fetch#connection-pooling-http-keep-alive',
+  'connection pooling': 'runtime/networking/fetch#connection-pooling-http-keep-alive',
+  keepalive: 'runtime/networking/fetch#connection-pooling-http-keep-alive',
+  'simultaneous-connection-limit': 'runtime/networking/fetch#simultaneous-connection-limit',
+  BUN_CONFIG_MAX_HTTP_REQUESTS: 'runtime/networking/fetch#simultaneous-connection-limit',
+  'response-buffering': 'runtime/networking/fetch#response-buffering',
+  'response buffering': 'runtime/networking/fetch#response-buffering',
   'Bun.which': 'guides/util/which-path-to-executable-bin',
   'Get the path to an executable bin file': 'guides/util/which-path-to-executable-bin',
   'which-path-to-executable-bin': 'guides/util/which-path-to-executable-bin',
