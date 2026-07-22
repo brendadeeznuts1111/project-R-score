@@ -5,6 +5,8 @@
 // @see https://bun.sh/docs/runtime/semver#bun-semver-parse — Bun.semver.parse
 // @see https://bun.sh/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.sh/docs/runtime/networking/fetch#sending-an-http-request — fetch
+// @see https://bun.sh/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.sh/reference/bun/concatArrayBuffers — Bun.concatArrayBuffers
 // @see https://bun.sh/docs/runtime/file-io#reading-files-bunfile — Bun.file
 // @see https://bun.sh/docs/runtime/environment-variables — Bun.env
 /**
@@ -153,10 +155,11 @@ export class RegistryClient {
     const type = options?.type ?? 'library';
     const distTag = options?.distTag ?? 'latest';
 
-    // Compute SHA-256 checksum
+    // Compute SHA-256 checksum via Bun.CryptoHasher
     const blob = data instanceof Blob ? data : new Blob([data]);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
-    const checksum = Buffer.from(hashBuffer).toString('hex');
+    const hasher = new Bun.CryptoHasher('sha256');
+    hasher.update(await blob.arrayBuffer());
+    const checksum = hasher.digest('hex');
 
     // Auto-detect README (mirrors `bun publish` behavior)
     let readme: string | undefined;
@@ -267,16 +270,30 @@ export class RegistryClient {
     const release = pkg.releases[String(resolved)];
     if (!release) return undefined;
 
-    // Download from R2
+    // Download — stream if body supports async iteration, fall back to buffered
     const url = bucketUrl(release.storage.r2Key);
     const res = await fetch(url, { headers: s3Auth() });
     if (!res.ok) throw new Error(`Failed to download artifact: ${res.status}`);
 
-    const data = new Uint8Array(await res.arrayBuffer());
+    const hasher = new Bun.CryptoHasher('sha256');
+    let data: Uint8Array;
 
-    // Verify checksum
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const checksum = Buffer.from(hashBuffer).toString('hex');
+    if (res.body && typeof res.body[Symbol.asyncIterator] === 'function') {
+      // Streaming path — hash incrementally, assemble with concatArrayBuffers
+      const chunks: Uint8Array[] = [];
+      let total = 0;
+      for await (const chunk of res.body) {
+        chunks.push(chunk);
+        total += chunk.byteLength;
+        hasher.update(chunk);
+      }
+      data = total ? Bun.concatArrayBuffers(chunks, total, true) : new Uint8Array(0);
+    } else {
+      // Buffered path — single read (used by test mocks)
+      data = new Uint8Array(await res.arrayBuffer());
+      hasher.update(data);
+    }
+    const checksum = hasher.digest('hex');
     if (checksum !== release.storage.checksum) {
       throw new Error(`Checksum mismatch for ${name}@${resolved}`);
     }

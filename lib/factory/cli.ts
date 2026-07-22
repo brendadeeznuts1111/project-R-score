@@ -1,17 +1,14 @@
 #!/usr/bin/env bun
-// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/bundler/executables — --force
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.sh/docs/guides/process/argv — Bun.argv
 // @see https://bun.sh/docs/guides/process/argv#parse-command-line-arguments — util.parseArgs
-// @see https://bun.sh/docs/runtime/utils#bun-inspect — Bun.inspect
-// @see https://bun.sh/docs/runtime/file-io#reading-files-bunfile — Bun.file
-// @see https://bun.sh/docs/runtime/file-io#writing-files-bun-write — Bun.write
-// @see https://bun.sh/docs/runtime/environment-variables — Bun.env
-// @see https://bun.sh/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.sh/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.sh/docs/runtime/console#object-inspection-depth — console depth
+// @see https://bun.sh/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
 // @see https://bun.sh/docs/runtime/templating/create — bun create
-// @see https://bun.sh/docs/guides/util/upgrade#install-a-specific-version — bun upgrade
-// @see https://bun.sh/docs/bundler/executables#embedding-runtime-arguments — compile.execArgv
 /**
  * Factory CLI — publish, list, search, and install artifacts to/from the
  * R2-backed artifact registry.
@@ -32,8 +29,10 @@
  */
 
 import { parseArgs } from 'util';
-import { registry, RegistryClient } from './registry';
+import { registry } from './registry';
 import { type ArtifactType } from './artifact';
+import { shouldColor } from '../console-depth';
+import { TOML } from 'bun';
 
 const VERSION = '0.1.0';
 
@@ -149,12 +148,6 @@ function errorExit(message: string, code = 1): never {
   process.exit(code);
 }
 
-/** Pretty-inspect a value with depth=2 and colors. Bun.inspect passthrough. */
-// eslint-disable-next-line harness/no-unknown-function-param
-function inspect(value: unknown): string {
-  return Bun.inspect(value, { depth: 2, colors: true });
-}
-
 /** Read a JSON file and parse it, or return null. */
 async function tryReadJson(path: string): Promise<Record<string, unknown> | null> {
   try {
@@ -172,7 +165,7 @@ async function cmdEnv(): Promise<void> {
   const result = await registry.checkEnv();
   const status = result.ok ? '✓ OK' : '✗ FAIL';
   console.log(`\n  Registry status: ${status}\n`);
-  console.log(inspect(result));
+  console.log(TOML.stringify(result));
   process.exit(result.ok ? 0 : 1);
 }
 
@@ -264,7 +257,7 @@ async function cmdPublish(args: string[]): Promise<void> {
   });
 
   console.log(`\n  ✓ Published ${name}@${version}\n`);
-  console.log(inspect(release));
+  console.log(TOML.stringify(release));
 }
 
 async function cmdList(): Promise<void> {
@@ -284,7 +277,11 @@ async function cmdList(): Promise<void> {
   }));
 
   console.log(`\n  ${packages.length} package(s) in registry\n`);
-  console.log(inspect(table));
+  console.log(
+    Bun.inspect.table(table, ['name', 'latest', 'versions', 'description'], {
+      colors: shouldColor(),
+    })
+  );
 }
 
 async function cmdSearch(args: string[]): Promise<void> {
@@ -305,7 +302,9 @@ async function cmdSearch(args: string[]): Promise<void> {
   }));
 
   console.log(`\n  ${results.length} result(s) for "${query}"\n`);
-  console.log(inspect(table));
+  console.log(
+    Bun.inspect.table(table, ['name', 'latest', 'description'], { colors: shouldColor() })
+  );
 }
 
 async function cmdInstall(args: string[]): Promise<void> {
@@ -453,7 +452,7 @@ async function publishScaffolded(projectPath: string): Promise<void> {
   });
 
   console.log(`\n  ✓ Registered ${name}@${version} in registry (scaffold marker)\n`);
-  console.log(inspect(release));
+  console.log(TOML.stringify(release));
   console.log(`\n  Run 'factory publish ${projectPath}' to upload the full project.\n`);
 }
 

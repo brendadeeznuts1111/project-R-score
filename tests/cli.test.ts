@@ -8,9 +8,8 @@
 
 import { describe, expect, test } from 'bun:test';
 import { spawn } from 'bun';
-import { resolve } from 'path';
 
-const CLI_PATH = resolve(import.meta.dir, '../lib/factory/cli.ts');
+const CLI_PATH = `${import.meta.dir}/../lib/factory/cli.ts`;
 
 /** Run the CLI with args and return stdout + stderr + exit code. */
 async function runCli(
