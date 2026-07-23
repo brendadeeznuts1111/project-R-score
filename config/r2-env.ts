@@ -18,6 +18,11 @@ export const CLOUDFLARE_DEFAULTS = {
   pages: {
     project: 'project-r-score',
     subdomain: 'project-r-score.pages.dev',
+    /**
+     * Custom domain (Pages project + zone DNS CNAME → pages.dev).
+     * Dashboard: score.factory-wager.com · CNAME score → project-r-score.pages.dev (proxied).
+     */
+    customDomain: 'score.factory-wager.com',
     productionBranch: 'main',
     destinationDir: 'public',
     buildCommand: 'exit 0',
@@ -150,6 +155,16 @@ export function factoryWagerWikiUrl(): string {
   return `https://${CLOUDFLARE_DEFAULTS.wikiHost}`;
 }
 
+/** Cloudflare Pages production URL (pages.dev). */
+export function factoryWagerPagesUrl(): string {
+  return `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
+}
+
+/** Custom domain for Pages when DNS CNAME is active (may 404 until DNS exists). */
+export function factoryWagerPagesCustomUrl(): string {
+  return `https://${CLOUDFLARE_DEFAULTS.pages.customDomain}`;
+}
+
 /** Cloudflare dashboard URL for the factory-wager zone. */
 export function cloudflareDashboardUrlFromEnv(
   accountId = cloudflareAccountIdFromEnv(),
@@ -176,6 +191,7 @@ const pages = CLOUDFLARE_DEFAULTS.pages;
 export const CLOUDFLARE_PAGES = {
   ...pages,
   url: `https://${pages.subdomain}`,
+  customUrl: `https://${pages.customDomain}`,
   bunVersion: envString('BUN_VERSION', pages.bunVersion),
   skipDependencyInstall: parseTruthy(
     envString('SKIP_DEPENDENCY_INSTALL'),

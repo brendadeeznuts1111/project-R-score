@@ -2,6 +2,7 @@
 
 **Tenant** `cloudflare-pages` (Git-integrated Pages · not `deploy:production`)  
 **Project** `project-r-score` → https://project-r-score.pages.dev  
+**Custom domain** `score.factory-wager.com` (Pages project domain attached; **needs zone DNS CNAME**)  
 **Proof** `cloudflare-pages-env-ssot`  
 **Owner** [`config/r2-env.ts`](../../../config/r2-env.ts) · [`.env.example`](../../../.env.example)
 
@@ -66,7 +67,26 @@ Ops experiments/prediction on the portal:
 
 **Submodule:** `Kalshi-bot` gitlink must resolve on GitHub or Pages `clone_repo` fails.
 
-**Custom domain note:** `wiki.factory-wager.com` is currently **GitHub Pages** (Fastly/`x-github-request-id`). Cloudflare Pages production host is `project-r-score.pages.dev` until a custom domain is attached in the Pages project.
+### Custom domain: `score.factory-wager.com`
+
+Pages project domain is registered. **Activate DNS** (token needs Zone.DNS Edit):
+
+```bash
+bash scripts/cloudflare-pages-domain-dns.sh
+# or manually in Cloudflare DNS for factory-wager.com:
+#   CNAME  score  →  project-r-score.pages.dev  (proxied)
+```
+
+Until DNS exists, use:
+
+| Surface | URL |
+|---------|-----|
+| Pages production | https://project-r-score.pages.dev/ |
+| Ops dashboard (C4/C5) | https://project-r-score.pages.dev/portal/ops/ |
+| Ops summary API | https://project-r-score.pages.dev/api/operations/summary |
+| Ops summary static | https://project-r-score.pages.dev/registry/ops-summary.json |
+
+`wiki.factory-wager.com` remains **GitHub Pages** (separate content). Do not repoint it without a deliberate content migration.
 
 ### Factory registry portal (claim `factory-registry-pages-proxy-v1`)
 
