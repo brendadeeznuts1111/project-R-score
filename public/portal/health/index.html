@@ -104,9 +104,10 @@
         <a href="/portal/health" class="nav-link active">Health</a>
         <a href="/portal/env" class="nav-link">Env</a>
         <a href="/monitoring" class="nav-link">Monitoring</a>
-        <a href="https://wiki.factory-wager.com" class="nav-link">Wiki</a>
+        <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer">Wiki</a>
       </nav>
       <div class="topbar-status">
+        <a href="/portal/health.md" class="nav-link nav-md" title="Markdown view">MD</a>
         <span id="nav-dot" class="health-dot unknown" title="Health"></span>
         <span id="nav-label" class="health-label">…</span>
       </div>
@@ -158,6 +159,23 @@
 
   <script type="module">
     const $ = (id) => document.getElementById(id);
+
+    const CANONICAL_URLS = {
+      CLOUDFLARE_API_TOKEN: 'https://developers.cloudflare.com/fundamentals/api/get-started/create-token/',
+      'R2 binding REGISTRY_BUCKET': 'https://developers.cloudflare.com/r2/buckets/public-buckets/',
+      ASSETS: 'https://developers.cloudflare.com/pages/functions/api-reference/#envassets',
+      BUN_VERSION: 'https://bun.com/docs/runtime/bunfig#install',
+      SKIP_DEPENDENCY_INSTALL: 'https://bun.com/docs/runtime/bunfig#install',
+      NODE_ENV: 'https://bun.com/docs/runtime/environment-variables',
+      'Bun.stringWidth': 'https://bun.com/docs/runtime/utils#bun-stringwidth',
+      'Bun.deepEquals': 'https://bun.com/docs/runtime/utils#bun-deepequals',
+      'Bun.escapeHTML': 'https://bun.com/docs/runtime/utils#bun-escapehtml',
+      'Bun.write': 'https://bun.com/docs/runtime/file-io#writing-files-bun-write',
+      'Bun.inspect': 'https://bun.com/docs/runtime/utils#bun-inspect',
+      'Bun.CryptoHasher': 'https://bun.com/docs/runtime/hashing',
+    };
+
+    function canonicalUrl(key) { return CANONICAL_URLS[key] || null; }
 
     async function fetchHealth() {
       const sources = ['/api/health', '/health'];
@@ -318,7 +336,7 @@
                 ? 'st-warn'
                 : 'st-ok';
             return `<tr>
-              <td class="mono">${escapeHtml(row.Key)}</td>
+              <td class="mono">${linkHtml(row.Key)}</td>
               <td>${escapeHtml(row.Group)}</td>
               <td>${escapeHtml(row.Severity)}</td>
               <td class="${cls}">${escapeHtml(st)}</td>
@@ -335,6 +353,13 @@
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+    }
+
+    function linkHtml(key) {
+      const url = canonicalUrl(key);
+      const label = escapeHtml(key);
+      if (url) return '<a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" style="color:var(--accent)">' + label + '</a>';
+      return label;
     }
 
     async function load() {
