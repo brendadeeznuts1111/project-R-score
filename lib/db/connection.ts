@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
  * Shared database connection manager + TTL cache for ops data.
  *
@@ -7,7 +8,7 @@
  */
 import { Database } from 'bun:sqlite';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
-import { collectMonitoring, type MonitoringPayload } from '../../monitoring/collect.ts';
+import { collectMonitoring, type MonitoringPayload } from '../monitoring/collect.ts';
 
 let dbInstance: Database | null = null;
 let monitoringCache: { data: MonitoringPayload; ts: number } | null = null;
@@ -22,11 +23,13 @@ export function getDb(dbPath = DEFAULT_OPS_DB_PATH): Database {
 }
 
 /** Get monitoring data — returns cached result if within TTL. */
-export async function getMonitoringData(options: {
-  source?: 'live' | 'snapshot';
-  uptimeOriginMs?: number;
-  forceRefresh?: boolean;
-} = {}): Promise<MonitoringPayload> {
+export async function getMonitoringData(
+  options: {
+    source?: 'live' | 'snapshot';
+    uptimeOriginMs?: number;
+    forceRefresh?: boolean;
+  } = {}
+): Promise<MonitoringPayload> {
   const now = Date.now();
   const { forceRefresh = false, source = 'snapshot', uptimeOriginMs = 0 } = options;
 

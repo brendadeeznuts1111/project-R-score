@@ -5,8 +5,8 @@
 import { describe, expect, test } from 'bun:test';
 import { signSession, verifySession, sessionCookieHeader } from '../lib/auth/session.ts';
 import { devClaimsFromCode } from '../lib/auth/oidc.ts';
-import { onRequest as onboardRequest } from '../functions/api/onboard.ts';
-import { onRequest as authCallback } from '../functions/api/auth/callback.ts';
+import { onRequest as onboardRequest } from '../functions-bun-only/api/onboard.ts';
+import { onRequest as authCallback } from '../functions-bun-only/api/auth/callback.ts';
 import type { R2PutBucket } from '../lib/pages/r2-types.ts';
 
 function mockR2(): R2PutBucket {

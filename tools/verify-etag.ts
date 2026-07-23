@@ -40,18 +40,14 @@ import {
   BUN_FETCH_CUSTOM_HEADERS_DOCS,
   installGlobalFetchHeaders,
   mergeFetchInit,
-} from '../lib/http/fetch-client.ts';
+} from '../lib/http/fetch-headers.ts';
 import {
   computeDataETag,
   isFresh,
   notModified,
   respondWithSharedETag,
 } from '../lib/http/data-etag.ts';
-import {
-  BUN_DEEP_EQUALS_DOCS,
-  deepEqualsModes,
-  deepEqualsStrict,
-} from '../lib/deep-equals.ts';
+import { BUN_DEEP_EQUALS_DOCS, deepEqualsModes, deepEqualsStrict } from '../lib/deep-equals.ts';
 import {
   BUN_DNS_PREFETCHING_DOCS,
   BUN_FETCH_PRECONNECT_STARTUP_DOCS,
@@ -88,11 +84,7 @@ const flag = (name: string): string | undefined => {
 };
 const has = (name: string) => args.includes(`--${name}`);
 
-const BASE =
-  flag('base') ||
-  Bun.env.HEALTH_URL ||
-  Bun.env.BASE_URL ||
-  'http://127.0.0.1:3000';
+const BASE = flag('base') || Bun.env.HEALTH_URL || Bun.env.BASE_URL || 'http://127.0.0.1:3000';
 const WANT_ONLINE = has('online') || has('probe');
 const SKIP_TTL = has('skip-ttl');
 const AS_JSON = has('json');
@@ -119,7 +111,10 @@ function shortEtag(etag: string | null | undefined, n = 14): string {
   return `${etag.slice(0, n)}…`;
 }
 
-function cacheLabel(status: number, kind: 'hit' | 'miss' | 'shared' | 'broken' | 'none' | 'stable' | 'changed'): string {
+function cacheLabel(
+  status: number,
+  kind: 'hit' | 'miss' | 'shared' | 'broken' | 'none' | 'stable' | 'changed'
+): string {
   switch (kind) {
     case 'hit':
       return status === 304 ? 'HIT' : 'MISS';
@@ -199,10 +194,7 @@ export function runOfflineETagProof(): ETagCheckRow[] {
     etag: shortEtag(jsonEtag),
     status: String(rJson.status),
     cache: cacheLabel(rJson.status, 'miss'),
-    pass:
-      rJson.status === 200 &&
-      jsonEtag === etag &&
-      rJson.headers.get('Vary') === 'Accept',
+    pass: rJson.status === 200 && jsonEtag === etag && rJson.headers.get('Vary') === 'Accept',
   });
 
   // 4. Plain with If-None-Match → 304 (shared across format)
@@ -345,10 +337,7 @@ export async function runOnlineETagSuite(
     etag: shortEtag(etag),
     status: String(json.status),
     cache: '—',
-    pass:
-      json.status === 200 &&
-      Boolean(etag) &&
-      (json.vary?.includes('Accept') ?? false),
+    pass: json.status === 200 && Boolean(etag) && (json.vary?.includes('Accept') ?? false),
     detail: `scope=${json.scope ?? '—'} vary=${json.vary ?? '—'}`,
   });
 
@@ -407,10 +396,7 @@ export async function runOnlineETagSuite(
     etag: shortEtag(pre200.etag),
     status: String(pre200.status),
     cache: etagsMatch ? 'SHARED' : 'BROKEN',
-    pass:
-      pre200.status === 200 &&
-      etagsMatch &&
-      (pre200.vary?.includes('Accept') ?? false),
+    pass: pre200.status === 200 && etagsMatch && (pre200.vary?.includes('Accept') ?? false),
     detail: 'deepEqualsStrict(plain.ETag, json.ETag)',
   });
 
@@ -582,7 +568,9 @@ async function main(): Promise<void> {
     if (passed < total) {
       console.log('\nFAILURES:');
       for (const r of rows.filter(x => !x.pass)) {
-        console.log(`  • ${r.step}: status=${r.status} cache=${r.cache}${r.detail ? ` — ${r.detail}` : ''}`);
+        console.log(
+          `  • ${r.step}: status=${r.status} cache=${r.cache}${r.detail ? ` — ${r.detail}` : ''}`
+        );
       }
     } else {
       console.log('\nAll ETag behaviors correct');

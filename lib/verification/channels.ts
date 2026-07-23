@@ -1,8 +1,10 @@
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
  * Channel resolution for metadata-only verification (no binary switching).
  *
- * @see https://bun.com/docs/installation#upgrade — bun upgrade channels
+ * @see https://bun.com/docs/installation#upgrading — bun upgrade channels
  */
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 import type { ReleaseChannel, SemanticTags } from './types.ts';
 
 export type ChannelResolution = {
@@ -76,14 +78,16 @@ export async function resolveChannel(
 }
 
 export type BuildSemanticTagsOptions = ResolveChannelOptions & {
-  provenanceId?: string;
+  provenanceId?: string; // brand-ok — opaque CI provenance key
   testedAt?: string;
   testSuiteCommit?: string;
 };
 
 export async function readTestSuiteCommit(): Promise<string | undefined> {
+  const git = Bun.which('git');
+  if (!git) return undefined;
   try {
-    const proc = Bun.spawn(['git', 'rev-parse', 'HEAD'], { stdout: 'pipe', stderr: 'ignore' });
+    const proc = Bun.spawn([git, 'rev-parse', 'HEAD'], { stdout: 'pipe', stderr: 'ignore' });
     const out = (await new Response(proc.stdout).text()).trim();
     const code = await proc.exited;
     return code === 0 && out ? out : undefined;
@@ -94,9 +98,9 @@ export async function readTestSuiteCommit(): Promise<string | undefined> {
 
 export function resolveProvenanceId(testedAt: string): string {
   return (
-    process.env.GITHUB_RUN_ID ??
-    process.env.CI_RUN_ID ??
-    process.env.CI_PIPELINE_ID ??
+    Bun.env.GITHUB_RUN_ID ??
+    Bun.env.CI_RUN_ID ??
+    Bun.env.CI_PIPELINE_ID ??
     `local-${testedAt.replace(/[:.]/g, '-')}`
   );
 }
@@ -108,8 +112,7 @@ export async function buildSemanticTags(
   const testedAt = options.testedAt ?? new Date().toISOString();
   const runtimeVersion = options.runtimeVersion ?? Bun.version;
   const resolution = await resolveChannel(channel, options);
-  const testSuiteCommit =
-    options.testSuiteCommit ?? (await readTestSuiteCommit());
+  const testSuiteCommit = options.testSuiteCommit ?? (await readTestSuiteCommit());
 
   let latestAtTestTime = resolution.latestAtResolution;
   if (!latestAtTestTime && resolution.channel !== 'latest') {

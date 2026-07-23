@@ -26,7 +26,7 @@
  * @see https://bun.com/docs/runtime/networking/fetch#custom-headers
  */
 
-import { mergeFetchHeaders } from '../http/fetch-client.ts';
+import { mergeFetchHeaders } from '../http/fetch-headers.ts';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const USER_AGENT = 'BunHarness/1.0 (blog ingestion)';
@@ -55,10 +55,7 @@ function resolveSignal(opts?: FetchPageOptions): AbortSignal {
 }
 
 function resolveHeaders(opts?: FetchPageOptions): Headers {
-  return mergeFetchHeaders(
-    { Accept: 'text/html', 'User-Agent': USER_AGENT },
-    opts?.headers
-  );
+  return mergeFetchHeaders({ Accept: 'text/html', 'User-Agent': USER_AGENT }, opts?.headers);
 }
 
 /**

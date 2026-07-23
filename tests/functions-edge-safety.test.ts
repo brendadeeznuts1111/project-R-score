@@ -11,10 +11,10 @@ const BUN_ONLY_PATTERNS = [
   /from\s+['"]bun:sqlite['"]/,
   /from\s+['"]bun:ffi['"]/,
   /from\s+['"]bun:jsc['"]/,
+  /from\s+['"]bun['"]/, // `import { ... } from 'bun'` — unresolvable on Workers
   /from\s+['"]node:fs['"]/,
   /from\s+['"]node:crypto['"]/,
-  /new\s+Bun\.S3Client/,
-  /new\s+Bun\.WebView/,
+  /\bBun\.(file|version|env|CryptoHasher|Glob|WebView|S3Client|sqlite)\b/, // bare Bun globals (incl. transitive)
   /new\s+Database\s*\(/,
 ];
 
@@ -22,7 +22,12 @@ describe("functions/ edge safety", () => {
   test("no Bun-only APIs in edge functions", async () => {
     const violations: string[] = [];
     for await (const file of new Bun.Glob("**/*.ts").scan("functions")) {
-      const text = await Bun.file(`functions/${file}`).text();
+      const raw = await Bun.file(`functions/${file}`).text();
+      // Strip comments so doc mentions (e.g. "no Bun.file") don't false-positive.
+      // Line comments: only when // is not part of a URL scheme (https://).
+      const text = raw
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/(^|[^:])\/\/.*$/gm, "$1");
       for (const pattern of BUN_ONLY_PATTERNS) {
         if (pattern.test(text)) {
           violations.push(`${file}: ${pattern.source}`);

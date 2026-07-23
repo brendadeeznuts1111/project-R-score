@@ -94,7 +94,12 @@ import {
   serveVerificationScriptMeta,
 } from '../lib/http/verification-scripts.ts';
 import { resolvePublishReadme } from '../lib/registry/npm-publish-readme.ts';
-import { serveBindSnapshot, type BunServer, type ServeBindSnapshot } from '../lib/http/bun-server.ts';
+import {
+  serveBindSnapshot,
+  type BunServer,
+  type ServeBindSnapshot,
+} from '../lib/http/bun-server.ts';
+import { getDb, getMonitoringData } from '../lib/db/connection.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
 /** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
@@ -368,7 +373,8 @@ async function npmPublish(req: Request, name: string): Promise<Response> {
   let publishBody: Record<string, unknown> | null = null;
   if (ct.includes('application/json')) {
     publishBody = (await req.json()) as Record<string, unknown>;
-    version = publishBody['dist-tags']?.latest || Object.keys(publishBody.versions || {})[0] || '0.0.0';
+    version =
+      publishBody['dist-tags']?.latest || Object.keys(publishBody.versions || {})[0] || '0.0.0';
     const attachments = publishBody._attachments as Record<string, { data?: string }> | undefined;
     if (attachments) {
       const data = attachments[Object.keys(attachments)[0]!]?.data;
@@ -444,9 +450,13 @@ async function npmPackageMetadata(req: Request): Promise<Response> {
       readme: rel.readme || undefined,
       readmeFilename: rel.readmeFilename || (rel.readme ? 'README.md' : undefined),
       dist: {
-        tarball: `/registry/storage/${name}/${v}/artifact.tgz`,
+        tarball: `${url.origin}/registry/storage/${encodeURIComponent(name)}/${v}/artifact.tgz`,
+        // npm SRI: sha256-<base64 of the 32 digest bytes> (hex string mislabeled
+        // as SRI breaks install-time integrity verification).
         shasum: rel.storage?.checksum?.slice(0, 40) || '',
-        integrity: rel.storage?.checksum ? `sha256-${rel.storage.checksum}` : undefined,
+        integrity: rel.storage?.checksum
+          ? `sha256-${Buffer.from(rel.storage.checksum, 'hex').toString('base64')}`
+          : undefined,
         size: rel.storage?.size || 0,
       },
     };
@@ -1471,7 +1481,7 @@ function buildPublicRoutes() {
           self: '/api/defaults',
           raw: '/api/defaults?format=raw',
           text: '/api/defaults?format=text',
-          proof: '/public/registry/defaults-proof.json',
+          proof: '/registry/defaults-proof.json',
           script: '/api/defaults/script',
           scriptMeta: '/api/defaults/script.meta',
           docs: 'https://bun.com/docs/runtime/utils',
@@ -1508,12 +1518,18 @@ function buildPublicRoutes() {
       serveVerificationScript('release', { baseUrl: new URL(req.url).origin }),
     '/api/release': async () => {
       const f = Bun.file('public/registry/release-features.json');
-      if (await f.exists()) return new Response(f, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' } });
+      if (await f.exists())
+        return new Response(f, {
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+        });
       return json({ error: 'Not generated' }, 404);
     },
     '/api/release/': async () => {
       const f = Bun.file('public/registry/release-features.json');
-      if (await f.exists()) return new Response(f, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' } });
+      if (await f.exists())
+        return new Response(f, {
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+        });
       return json({ error: 'Not generated' }, 404);
     },
     '/api/release/script/': (req: Request) =>

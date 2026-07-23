@@ -18,7 +18,7 @@ export type SemanticTags = {
   /** Git commit of the verification suite */
   testSuiteCommit?: string;
   /** CI run ID or local timestamp id */
-  provenanceId: string;
+  provenanceId: string; // brand-ok — opaque CI provenance key
   /** OS platform (darwin, linux, win32) */
   platform?: string;
   /** CPU architecture (arm64, x64, etc.) */

@@ -35,6 +35,7 @@ import { getRoutingProof, routingToOpsSlice } from '../lib/routing-proof.ts';
 import { collectMonitoring } from '../lib/monitoring/index.ts';
 import { writePredictionReport } from '../lib/prediction/index.ts';
 import { runNetworkingVerification } from './verify-networking.ts';
+import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
 
 const argv = Bun.argv.slice(2);
 const outIdx = argv.indexOf('--out');
@@ -152,10 +153,7 @@ export async function buildRegistrySnapshot(options?: {
         const net = await runNetworkingVerification({
           saveProof: true,
           remote: Bun.env.NETWORKING_VERIFY_REMOTE === '1',
-          base:
-            Bun.env.HEALTH_URL ||
-            Bun.env.BASE_URL ||
-            'http://127.0.0.1:3000',
+          base: Bun.env.HEALTH_URL || Bun.env.BASE_URL || 'http://127.0.0.1:3000',
         });
         (payload as Record<string, unknown>).networking = {
           proofHash: net.proofHash,
@@ -201,9 +199,13 @@ export async function buildRegistrySnapshot(options?: {
       );
     }
 
-    // 4. Monitoring snapshot
+    // 4. Monitoring snapshot (+ env status — edge /api/env reads monitoring.env)
     const monitoring = await collectMonitoring(db, { source: 'snapshot' });
-    await Bun.write(monitoringPath, `${JSON.stringify(monitoring, null, 2)}\n`);
+    const monitoringWithEnv = {
+      ...monitoring,
+      env: buildPortalEnvStatus(),
+    };
+    await Bun.write(monitoringPath, `${JSON.stringify(monitoringWithEnv, null, 2)}\n`);
 
     // 5. Prediction report (HTML + SVG; optional WebView PNG)
     let report: {
