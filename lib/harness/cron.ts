@@ -37,10 +37,16 @@ export async function removeOsCron(title: string): Promise<void> {
 }
 
 /**
- * In-process complement — embed a scheduler in a long-lived process.
+ * In-process complement — embed a scheduler in a long-lived process
+ * (servers, containers, spine daemon). Shares pools/caches/module state.
  *
- * Schedules are **UTC**. Next fire waits for handler Promise to settle (no overlap).
- * Prefer `using job = scheduleInProcess(…)` so Symbol.dispose → stop().
+ * - Schedules are **UTC** (`0 9 * * *` = 09:00 UTC). OS-level form uses local time.
+ * - **No overlap**: next fire only after handler + returned Promise settle.
+ * - Errors match setTimeout: sync throw → uncaughtException; rejected Promise →
+ *   unhandledRejection. Catch inside handlers so the daemon keeps running.
+ * - `--hot` safe: jobs cleared before module re-eval.
+ * - Prefer `using job = scheduleInProcess(…)` so Symbol.dispose → stop().
+ * - `.ref()` (default) keeps process alive; `.unref()` allows natural exit.
  *
  * @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
  */

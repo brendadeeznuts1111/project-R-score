@@ -34,13 +34,17 @@ Survives reboot. System local time. Fresh process each fire.
 
 ## Complement — in-process
 
-Dies with the process. UTC. Shared state. No overlap.
+Dies with the process. **UTC**. Shared state. **No overlap** (next fire after
+handler Promise settles). Errors match `setTimeout` (uncaughtException /
+unhandledRejection). `--hot` safe. Disposable via `using job = …`.
 
-- schedule — Bun.cron(schedule, handler) → CronJob
-- dispose — using job = … → Symbol.dispose → stop()
-- hot — cleared before --hot re-eval
+- schedule — `Bun.cron(schedule, handler)` → `CronJob` · wrapper `scheduleInProcess`
+- dispose — `using job = …` → `Symbol.dispose` → `stop()`
+- hot — cleared before `--hot` re-eval
 - spine — multi-tenant in-process crons (daemon owns lifetime)  
   *Ratchet* → `bun run spine:schedule:once` · `bun run spine:schedule:once -- --tenant=install-verify`
+- **ops-snapshot** — `*/10 * * * *` UTC · `lib/operations/snapshot-cron.ts` · portal/Pages artifacts  
+  *Ratchet* → `bun run spine:schedule:once -- --tenant=ops-snapshot` · `bun run ops:snapshot:once`
 
 Align both with TZ=UTC when you need them to agree.
 

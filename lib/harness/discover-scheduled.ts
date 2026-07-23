@@ -41,6 +41,8 @@ export type ScheduledJobExemption = {
 /** Path (repo-relative) → spine tenant that owns this schedule entrypoint. */
 export const SCHEDULED_JOB_OWNERS: Readonly<Record<string, string>> = {
   'tools/bun-doc-refs.ts': 'docs-integrity',
+  'lib/operations/snapshot-cron.ts': 'ops-snapshot',
+  'lib/factory/monitoring.ts': 'registry-integrity',
 };
 
 /**
@@ -95,6 +97,18 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     source: 'package-script',
     match: 'test:cron',
     reason: 'Unit tests for Bun.cron surface — not a schedule runner',
+  },
+  {
+    id: 'pkg-ops-snapshot-cron',
+    source: 'package-script',
+    match: 'ops:snapshot:cron',
+    reason: 'Daemon entry for spine tenant ops-snapshot (lib/operations/snapshot-cron.ts)',
+  },
+  {
+    id: 'pkg-ops-snapshot-once',
+    source: 'package-script',
+    match: 'ops:snapshot:once',
+    reason: 'One-shot entry for spine tenant ops-snapshot',
   },
   {
     id: 'gha-har-performance',

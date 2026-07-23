@@ -3,6 +3,7 @@
   "tenants": {
     "docs-integrity": false,
     "install-verify": false,
-    "registry-integrity": false
+    "registry-integrity": false,
+    "ops-snapshot": false
   }
 }

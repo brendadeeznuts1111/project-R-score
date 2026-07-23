@@ -11,7 +11,11 @@ import { joinPath } from '../lib/path-bun';
 
 const ROOT = joinPath(import.meta.dir, '..');
 
-export type SpineTenantId = 'docs-integrity' | 'install-verify' | 'registry-integrity';
+export type SpineTenantId =
+  | 'docs-integrity'
+  | 'install-verify'
+  | 'registry-integrity'
+  | 'ops-snapshot';
 
 export type SpineTenant = {
   id: SpineTenantId;
@@ -82,6 +86,18 @@ export const SPINE_TENANTS: readonly SpineTenant[] = [
         ['bun', 'lib/factory/monitoring.ts', '--once'],
         'registry-integrity',
         'registry-integrity'
+      ),
+  },
+  {
+    id: 'ops-snapshot',
+    label: 'ops-snapshot (routing proof + portal/Pages artifacts)',
+    // UTC every 10m — in-process no-overlap waits if a tick is still probing
+    schedule: '*/10 * * * *',
+    run: () =>
+      spawnTenant(
+        ['bun', 'lib/operations/snapshot-cron.ts', '--once', '--no-webview'],
+        'ops-snapshot',
+        'ops-snapshot'
       ),
   },
 ] as const;

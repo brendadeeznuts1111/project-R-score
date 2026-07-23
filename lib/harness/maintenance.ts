@@ -134,6 +134,25 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/registry-integrity.md',
   },
+  {
+    tenant: 'ops-snapshot',
+    signal:
+      '`bun run spine:schedule:once -- --tenant=ops-snapshot` exits non-zero (snapshot write fail)',
+    intervention:
+      'bun test tests/ops-snapshot-cron.test.ts · bun lib/operations/snapshot-cron.ts --once',
+    proofId: 'ops-snapshot-cron-v1',
+    retirement:
+      'Remove when CI/Pages deploy always runs ops:snapshot before publish and spine is no longer the periodic owner',
+    retirementVerified: false,
+    retirementCheck: {
+      description: 'ops-snapshot is owned by CI/Pages deploy pipeline',
+      command: 'bun scripts/retirement-check-ci-owner.ts --tenant=ops-snapshot',
+    },
+    schedule: '*/10 * * * *',
+    freshRerun: 'bun run docs:tenant-ops-snapshot',
+    freshRerunKind: 'catalog',
+    docPath: 'docs/harness/tenants/ops-snapshot.md',
+  },
 ] as const;
 
 /**

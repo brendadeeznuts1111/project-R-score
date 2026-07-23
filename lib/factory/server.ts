@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
@@ -391,6 +393,16 @@ export function createRegistryServer(
 if (import.meta.main) {
   if (Bun.env.REGISTRY_MONITOR === '1') {
     registerRegistryCrons();
+    console.info('  cron: registry-integrity (in-process Bun.cron, 03:00 UTC)');
+  }
+  if (Bun.env.OPS_SNAPSHOT_CRON === '1') {
+    const { registerOpsSnapshotCron, OPS_SNAPSHOT_SCHEDULE } = await import(
+      '../operations/snapshot-cron.ts'
+    );
+    registerOpsSnapshotCron();
+    console.info(
+      `  cron: ops-snapshot (in-process Bun.cron @ ${OPS_SNAPSHOT_SCHEDULE} UTC, no-overlap)`
+    );
   }
   const server = createRegistryServer();
   console.info(`Registry gateway listening on ${server.url}`);

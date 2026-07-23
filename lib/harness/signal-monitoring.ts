@@ -71,6 +71,15 @@ export const SIGNAL_MONITORS: readonly SignalMonitor[] = [
     lastCheckPath: 'reports/registry-integrity.json',
     maxAgeMinutes: 48 * 60,
   },
+  {
+    tenant: 'ops-snapshot',
+    kind: 'spine-tick',
+    checkCommand: 'bun run spine:schedule:once -- --tenant=ops-snapshot',
+    alertChannel:
+      'spine daemon stdout · non-zero exit / ❌ spine tenant · ops-snapshot; stale public/registry/ops-summary.json',
+    lastCheckPath: 'public/registry/ops-summary.json',
+    maxAgeMinutes: 60,
+  },
 ] as const;
 
 export function monitorByTenant(tenant: string): SignalMonitor | undefined {

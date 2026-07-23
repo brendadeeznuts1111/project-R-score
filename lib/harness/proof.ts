@@ -737,7 +737,12 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun run test:tenant-runbooks',
     freshRerunKind: 'claim',
     owner: 'lib/harness/maintenance.ts · docs/harness/tenants/',
-    childIds: ['docs-integrity', 'install-verify-journey', 'factory-registry-integrity-v1'],
+    childIds: [
+      'docs-integrity',
+      'install-verify-journey',
+      'factory-registry-integrity-v1',
+      'ops-snapshot-cron-v1',
+    ],
   },
   {
     id: 'spine-tenant-heal',
@@ -997,6 +1002,26 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun test tests/factory-production.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/factory/monitoring.ts',
+  },
+  {
+    id: 'ops-snapshot-cron-v1',
+    claim:
+      'In-process Bun.cron ops-snapshot tenant refreshes portal/Pages artifacts (ops-summary, monitoring, static, routing/bun-utils proofs) with no-overlap UTC schedule',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/ops-snapshot-cron.test.ts',
+      'tests/ops-snapshot-cron.test.ts',
+      'lib/operations/snapshot-cron.ts',
+      'tools/ops-snapshot.ts',
+      'lib/routing-proof.ts',
+      'spine/tenants.ts',
+      'docs/harness/tenants/ops-snapshot.md',
+    ],
+    freshRerun: 'bun test tests/ops-snapshot-cron.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/operations/snapshot-cron.ts',
   },
   {
     id: 'multi-tenant-portal-v1',

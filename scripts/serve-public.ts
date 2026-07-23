@@ -1054,3 +1054,16 @@ console.log(`Bind: ${boundHost}:${boundPort}  DB: ${dbPath}`);
 if (boundPort !== PORT) {
   console.log(`(preferred PORT=${PORT} was busy — bound ${boundPort})`);
 }
+
+// In-process Bun.cron complement: refresh snapshots while the portal is up.
+// UTC schedule, no-overlap (next fire waits for snapshot Promise).
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
+if (Bun.env.OPS_SNAPSHOT_CRON === '1') {
+  const { registerOpsSnapshotCron, OPS_SNAPSHOT_SCHEDULE } = await import(
+    '../lib/operations/snapshot-cron.ts'
+  );
+  registerOpsSnapshotCron();
+  console.log(
+    `Cron:          ops-snapshot @ ${OPS_SNAPSHOT_SCHEDULE} UTC (in-process Bun.cron, no-overlap)`
+  );
+}
