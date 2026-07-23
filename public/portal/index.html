@@ -13,9 +13,12 @@
         <span class="logo-icon">■</span>
         Factory Registry
       </h1>
+      <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
       <nav class="topbar-nav">
         <a href="/" class="nav-link">Home</a>
         <a href="/portal/" class="nav-link active">Registry</a>
+        <a href="/portal/ops" class="nav-link">Ops</a>
+        <a href="/portal/catalog" class="nav-link">Catalog</a>
         <a href="https://wiki.factory-wager.com" class="nav-link">Wiki</a>
       </nav>
       <div class="topbar-status">
@@ -72,6 +75,8 @@
       <div id="package-grid" class="package-grid"></div>
     </section>
   </main>
+
+  <notification-center aria-live="polite"></notification-center>
 
   <footer class="footer">
     <p>FactoryWager · <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a></p>

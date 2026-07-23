@@ -134,5 +134,34 @@ export function initSchema(db: Database): void {
       sent_at TEXT NOT NULL,
       confirmed_at TEXT
     );
+
+    -- Platform catalog (sportsbooks, exchanges, DFS, crypto)
+    CREATE TABLE IF NOT EXISTS platforms (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL UNIQUE,
+      category TEXT NOT NULL CHECK(category IN ('sportsbook', 'exchange', 'dfs', 'crypto_sportsbook', 'casino', 'p2p')),
+      sub_category TEXT,
+      url TEXT,
+      active INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL
+    );
+
+    -- Partner platform accounts (link partners to platforms)
+    CREATE TABLE IF NOT EXISTS partner_platform_accounts (
+      id TEXT PRIMARY KEY,
+      platform_id TEXT NOT NULL REFERENCES platforms(id),
+      partner_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      account_identifier TEXT NOT NULL,
+      balance REAL DEFAULT 0,
+      status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive', 'limited', 'closed', 'pending')),
+      notes TEXT,
+      opened_at TEXT NOT NULL,
+      last_verified_at TEXT,
+      created_at TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_ppa_platform ON partner_platform_accounts(platform_id);
+    CREATE INDEX IF NOT EXISTS idx_ppa_partner ON partner_platform_accounts(partner_id);
+    CREATE INDEX IF NOT EXISTS idx_ppa_status ON partner_platform_accounts(status);
   `);
 }
