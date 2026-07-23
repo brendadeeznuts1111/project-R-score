@@ -8,6 +8,7 @@
  */
 
 import { Database } from "bun:sqlite";
+import { DEFAULT_OPS_DB_PATH } from '../../../lib/operations/db.ts';
 
 export async function onRequest({ request }: { request: Request }) {
   const url = new URL(request.url);
@@ -16,7 +17,7 @@ export async function onRequest({ request }: { request: Request }) {
   const status = url.searchParams.get("status") || "";
 
   try {
-    const db = new Database("data/operations.db");
+    const db = new Database(Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH);
     db.run("PRAGMA journal_mode=WAL");
 
     let sql = `

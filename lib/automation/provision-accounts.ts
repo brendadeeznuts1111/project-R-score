@@ -13,6 +13,7 @@
  */
 import { Database } from 'bun:sqlite';
 import { encryptAesGcm } from '../dod/verifier.ts';
+import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -222,7 +223,7 @@ async function provisionSingle(
 // ── Main Entry Point ───────────────────────────────────────────────
 
 export async function provisionAccounts(input: ProvisionInput): Promise<ProvisionResult[]> {
-  const db = new Database(input.dbPath ?? 'data/operations.db');
+  const db = new Database(input.dbPath ?? DEFAULT_OPS_DB_PATH);
   const keyMaterial = resolveKey(input.encryptionKey);
   const results: ProvisionResult[] = [];
 

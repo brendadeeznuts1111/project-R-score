@@ -4,7 +4,7 @@
 
 [install]
 exact = true
-minimumReleaseAge = 259200 # seconds
+# minimumReleaseAge inherited from machine ~/.bunfig.toml
 registry = "https://registry.factory-wager.com"
 
 [publish]

@@ -9,10 +9,7 @@ sourcemap = "external"
 [install]
 exact = true
 registry = "https://registry.factory-wager.com"
-auto-install = true
-# CONFIG.BUNFIG.SECURITY - Enterprise policy: 30-day minimum release age (2592000s)
-# MIN_RELEASE_AGE - Prevents installation of packages newer than 30 days
-minimumReleaseAge = 2592000
+# minimumReleaseAge inherited from machine ~/.bunfig.toml (3-day gate)
 linkWorkspacePackages = false
 globalBinDir = "./my-portal/packages/templates/bun-transformer/dist"
 
@@ -35,19 +32,6 @@ hoistPattern = [
   "eslint-*",
   "@eslint/*"
 ]
-
-[install.registry]
-# Enterprise registry configuration with scoped authentication
-# Scoped tokens for different package scopes
-"@enterprise/*" = "https://registry.enterprise.com/"
-"@internal/*" = "https://registry.internal.com/"
-# Fallback to public registry for all others
-"*" = "https://registry.npmjs.org/"
-
-[install.scoped-tokens]
-# Scoped authentication tokens for private registries
-"@enterprise/*" = "enterprise-token-here"
-"@internal/*" = "internal-token-here"
 
 [install.scopes]
 "@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }

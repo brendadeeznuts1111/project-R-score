@@ -6,19 +6,14 @@ optional = true
 dev = true
 peer = true
 production = false
-saveTextLockfile = false
-frozenLockfile = false
+saveTextLockfile = true
+frozenLockfile = true
 dryRun = false
-concurrentScripts = 16
 
-# Use hoisted strategy for better performance with our tiny library
-linker = "hoisted"
-
-# Security & stability configuration
-# Only accept packages that are at least 3 days old to avoid unstable releases
-minimumReleaseAge = 259200 # seconds
+# linker inherited from machine ~/.bunfig.toml (isolated)
 
 # Exclude essential packages from age check for development
+# (minimumReleaseAge itself inherited from machine ~/.bunfig.toml)
 minimumReleaseAgeExcludes = [
   "@types/bun",
   "typescript",
@@ -27,9 +22,6 @@ minimumReleaseAgeExcludes = [
 
 # Default registry configuration
 registry = "https://registry.factory-wager.com"
-
-# Lockfile format version
-lockfileVersion = 1
 
 # Enable telemetry for optimization (can be disabled for privacy)
 telemetry = false

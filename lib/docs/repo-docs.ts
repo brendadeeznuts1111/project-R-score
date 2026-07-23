@@ -9,6 +9,8 @@
  * @see ../../STRUCTURE.md
  */
 
+import { CLOUDFLARE_DEFAULTS } from '../../config/r2-env.ts';
+
 /** Repo-relative paths to root / docs entrypoints. */
 export const CANONICAL_REPO_DOCS = {
   /** Human hub */
@@ -216,7 +218,7 @@ export const CANONICAL_EXTERNAL = {
         'mcp__cloudflare-bindings__connect',
         'mcp__cloudflare-observability__connect',
       ],
-      accountId: '7a470541a704caaf91e71efccc78fd36',
+      accountId: CLOUDFLARE_DEFAULTS.accountId,
       project: 'project-r-score',
       pagesDomain: 'project-r-score.pages.dev',
     },

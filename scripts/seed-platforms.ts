@@ -5,6 +5,7 @@
 import { Database } from 'bun:sqlite';
 import { initSchema } from '../lib/operations/schema.ts';
 import { platformSlug } from '../lib/operations/platform-coverage.ts';
+import { DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 
 type SeedRow = {
   id: string; // brand-ok — platforms.id slug
@@ -209,7 +210,7 @@ const PLATFORMS: SeedRow[] = [
   },
 ];
 
-const dbPath = Bun.env.OPS_DB_PATH || 'data/operations.db';
+const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const db = new Database(dbPath, { create: true });
 initSchema(db);
 

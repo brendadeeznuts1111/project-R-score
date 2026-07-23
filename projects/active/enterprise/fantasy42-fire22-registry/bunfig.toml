@@ -65,9 +65,8 @@ optional = true
 peer = true
 production = false
 
-# Dependency version management
-exact = false                    # Use caret ranges (^) for flexibility
-frozenLockfile = false          # Allow lockfile updates in development
+# Dependency version management (exact = true set above; deduped)
+frozenLockfile = true           # Hardened (gate bunfig-policy)
 dryRun = false                  # Perform actual installations
 
 # Lockfile and workspace configuration
@@ -159,7 +158,7 @@ typescript = "^5.0.0"   # TypeScript compiler - trust v5.x.x
 # Installation behavior
 optional = true                     # Include optional dependencies
 production = false                  # Include dev dependencies for development
-frozenLockfile = false              # Allow lockfile updates in development
+# frozenLockfile set above (deduped)
 
 # Global package cache settings - Optimized for SportsBet
 [install.cache]
@@ -188,8 +187,6 @@ save = true
 # Run security scans with: bun run security:audit
 
 # Run configuration for enterprise script execution
-[run]
-
 # Version Management Configuration
 [version]
 # Fire22 follows semantic versioning with Bun's enhanced conventions

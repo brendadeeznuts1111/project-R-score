@@ -2,6 +2,9 @@
   "name": "factorywager-enterprise",
   "version": "5.2.0+build.20260723",
   "packageManager": "bun@1.4.0",
+  "engines": {
+    "bun": ">=1.4.0"
+  },
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
@@ -1787,7 +1790,9 @@
     "check:routes": "bun tools/verify-networking.ts --routes-only",
     "check:formdata": "bun tools/verify-formdata.ts",
     "check:formdata:save": "bun tools/verify-formdata.ts --save",
-    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-bun-release.ts --save && bun tools/verify-package-info.ts --save && bun tools/verify-install-env.ts --save && bun tools/verify-install-platform.ts --dry-run --save && bun tools/build-doc-index.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"✅ Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");const ip=await Bun.file(\"public/registry/install-platform.json\").json();console.log(\"✅ Install platform: \"+ip.summary.passed+\"/\"+ip.summary.total+\" (\"+ip.results.filter(r=>r.canonical).length+\" with canonical URLs)\");'",
+    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-bun-release.ts --save && bun tools/verify-package-info.ts --save && bun tools/verify-install-env.ts --save && bun tools/verify-install-platform.ts --dry-run --save && bun tools/build-doc-index.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"✅ Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");const ip=await Bun.file(\"public/registry/install-platform.json\").json();console.log(\"✅ Install platform: \"+ip.summary.passed+\"/\"+ip.summary.total);const ie=await Bun.file(\"public/registry/install-env-proof.json\").json();console.log(\"✅ Install env: \"+ie.summary.passed+\"/\"+ie.summary.total+\" probes (6 env + scoped + read-plane)\");'",
+    "verify:install-env": "bun tools/verify-install-env.ts",
+    "verify:install-env:save": "bun tools/verify-install-env.ts --save",
     "verify:release": "bun tools/verify-bun-release.ts",
     "verify:release:save": "bun tools/verify-bun-release.ts --save",
     "verify:install-platform": "bun tools/verify-install-platform.ts",

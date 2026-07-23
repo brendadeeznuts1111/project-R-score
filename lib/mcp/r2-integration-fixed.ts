@@ -17,6 +17,7 @@ import { safeConcurrent } from '../core/concurrent-operations';
 import { URLHandler, FactoryWagerURLUtils, URLFragmentUtils } from '../core/url-handler';
 import { r2CredentialsFromEnv } from '../security/r2-credentials.ts';
 import { type AccessKeyId, type AccountId } from '../types/branded.ts';
+import { r2EndpointFromAccount } from '../../config/r2-env.ts';
 
 export interface R2Config {
   /** Present when configured; undefined when unresolved (never empty brand). */
@@ -414,7 +415,7 @@ export class R2MCPIntegration {
       const validatedKey = keyValidation.data;
 
       // Create base URL
-      const baseURL = `https://${this.config.accountId}.r2.cloudflarestorage.com/${this.config.bucketName}/${validatedKey}`;
+      const baseURL = `${r2EndpointFromAccount(this.config.accountId)}/${this.config.bucketName}/${validatedKey}`;
 
       // Add fragment with metadata
       const fragment = {

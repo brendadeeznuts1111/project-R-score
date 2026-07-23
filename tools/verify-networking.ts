@@ -10,6 +10,8 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -63,7 +65,11 @@ import {
   type HealthRouteObjects,
   type PublicRouteDef,
 } from '../lib/http/public-routes.ts';
+import { padEndWidth } from '../lib/console-depth.ts';
+import { factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
+import { BUN_DEEP_EQUALS_DOCS } from '../lib/deep-equals.ts';
 import {
+  BUN_STRING_WIDTH_DOCS,
   NetworkingChecksReport,
   RouteProbeReport,
   netCheckRow,
@@ -96,6 +102,8 @@ const CANONICAL = {
   nanoseconds: 'https://bun.com/docs/runtime/utils#bun-nanoseconds',
   inspectTable:
     'https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options',
+  stringWidth: BUN_STRING_WIDTH_DOCS,
+  deepEquals: BUN_DEEP_EQUALS_DOCS,
   env: 'https://bun.com/docs/runtime/utils#bun-env',
   server: 'https://bun.com/docs/runtime/http/server#reference',
   serverReload: 'https://bun.com/docs/runtime/http/server#server-reload',
@@ -121,6 +129,11 @@ const ROUTES_ONLY = has('routes-only');
 const SKIP_WRITE = has('skip-write');
 const AS_JSON = has('json');
 const TIMEOUT_MS = Number(flag('timeout-ms') ?? 10_000);
+const BOX_INNER = 62;
+
+function boxLine(text: string): string {
+  return `║  ${padEndWidth(text, BOX_INNER)}║`;
+}
 
 // ── Targets ────────────────────────────────────────────────────────────────
 
@@ -588,6 +601,7 @@ async function main(): Promise<void> {
                 routes: routeJson.routes,
                 byCategory: routeJson.byCategory,
                 rendered: routeJson.rendered,
+                tableProof: routeJson.tableProof,
               }
             : null,
           routeReport: routeJson,
@@ -601,12 +615,10 @@ async function main(): Promise<void> {
   } else {
     console.log('╔══════════════════════════════════════════════════════════════════════╗');
     console.log('║  Bun Networking Optimization — Multi-Target + Routes                 ║');
-    console.log(
-      `║  Bun:  ${(Bun.version + ' / ' + (Bun.revision || 'unknown').slice(0, 8)).padEnd(62)}║`
-    );
-    console.log(`║  Base: ${LOCAL_BASE.slice(0, 62).padEnd(62)}║`);
-    console.log(`║  Targets: ${String(targets.length).padEnd(59)}║`);
-    console.log(`║  Routes:  ${String(routeProbe?.catalog.length ?? 0).padEnd(59)}║`);
+    console.log(boxLine(`Bun:  ${Bun.version} / ${(Bun.revision || 'unknown').slice(0, 8)}`));
+    console.log(boxLine(`Base: ${LOCAL_BASE.slice(0, BOX_INNER - 6)}`));
+    console.log(boxLine(`Targets: ${targets.length}`));
+    console.log(boxLine(`Routes:  ${routeProbe?.catalog.length ?? 0}`));
     console.log('╚══════════════════════════════════════════════════════════════════════╝');
 
     // console.log → Bun.inspect → [Bun.inspect.custom] → inspect.table
@@ -640,7 +652,7 @@ async function main(): Promise<void> {
       console.log(`  • ${k.padEnd(18)} ${url}`);
     }
     console.log(
-      '\nTip: console.log(report) uses Bun.inspect.custom → inspect.table automatically.'
+      '\nTip: console.log(report) uses Bun.inspect.custom → inspect.table(properties) + stringWidth + deepEquals.'
     );
     console.log('     JSON: --json  →  .tables.rendered.routes  (or omit --json for live tables)');
   }

@@ -7,6 +7,7 @@ import { crc32 } from '../core/crc32';
 import { ConcurrencyManagers } from '../core/safe-concurrency';
 import { requireR2Credentials } from '../security/r2-credentials.ts';
 import { type AccessKeyId, type AccountId } from '../types/branded.ts';
+import { r2EndpointFromAccount } from '../../config/r2-env.ts';
 
 const R2_CB_CONFIG = { failureThreshold: 5, resetTimeoutMs: 30000, callTimeoutMs: 10000 };
 
@@ -42,7 +43,7 @@ export class R2Storage {
       accessKeyId: required.accessKeyId,
       secretAccessKey: required.secretAccessKey,
     };
-    this.endpoint = `https://${this.config.accountId}.r2.cloudflarestorage.com`;
+    this.endpoint = r2EndpointFromAccount(this.config.accountId);
     this.buckets = new Map();
   }
 

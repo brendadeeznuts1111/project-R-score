@@ -13,6 +13,7 @@
 
 import { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
+import { requireSecret } from '../security/require-secret.ts';
 
 export interface PlayInput {
   expertId: string; // brand-ok — opaque UUID from bun.randomUUIDv7
@@ -43,7 +44,7 @@ export class PlaySigner {
   private secret: string;
 
   constructor() {
-    this.secret = Bun.env.PLAY_SIGNING_SECRET || 'operations-dev-secret';
+    this.secret = requireSecret('PLAY_SIGNING_SECRET', 'operations-dev-secret');
   }
 
   /** Produce an HMAC signature for a play payload. */

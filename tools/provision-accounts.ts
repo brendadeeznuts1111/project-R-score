@@ -22,6 +22,7 @@
  * @see ../lib/automation/provision-accounts.ts
  */
 import { provisionAccounts, type CredentialBundle } from '../lib/automation/provision-accounts.ts';
+import { DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 
 function parseCreds(raw: string): CredentialBundle {
   const parts = raw.split(':');
@@ -58,7 +59,7 @@ Examples:
   const credsFlags = args.filter(a => a.startsWith('--creds=')).map(a => a.slice(8));
   const dryRun = args.includes('--dry-run');
   const headless = !args.includes('--show');
-  const dbPath = args.find(a => a.startsWith('--db='))?.slice(5) ?? 'data/operations.db';
+  const dbPath = args.find(a => a.startsWith('--db='))?.slice(5) ?? DEFAULT_OPS_DB_PATH;
   const encryptionKey = args.find(a => a.startsWith('--key='))?.slice(6);
   const timeout = Number(args.find(a => a.startsWith('--timeout='))?.slice(10) ?? '30000');
 

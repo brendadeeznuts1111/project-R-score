@@ -22,6 +22,8 @@
 
 import { Database } from 'bun:sqlite';
 import { averageHash, hammingDistance } from './evidence.ts';
+import { requireSecret } from '../security/require-secret.ts';
+import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 
 /** Magic-byte sniffing: PNG, JPEG, WebP (RIFF), GIF. */
 export function validateImage(bytes: Uint8Array): boolean {
@@ -175,7 +177,7 @@ export class DODVerifier {
   private onVerifiedBalance?: (agentId: string, amount?: number) => Promise<void>;
 
   constructor(
-    dbPath = 'data/operations.db',
+    dbPath = DEFAULT_OPS_DB_PATH,
     opts: {
       evidenceRoot?: string;
       registryPath?: string;
@@ -184,7 +186,7 @@ export class DODVerifier {
       onVerifiedBalance?: (agentId: string, amount?: number) => Promise<void>;
     } = {}
   ) {
-    this.proofSecret = Bun.env.DOD_PROOF_SECRET || 'dod-dev-secret';
+    this.proofSecret = requireSecret('DOD_PROOF_SECRET', 'dod-dev-secret');
     this.evidenceRoot = opts.evidenceRoot ?? 'public/evidence';
     this.registryPath = opts.registryPath ?? 'public/registry/dod-registry.json';
     this.store = opts.store ?? r2EvidenceStoreFromEnv() ?? localEvidenceStore(this.evidenceRoot);
@@ -368,7 +370,8 @@ export class DODVerifier {
   // ── Rate Limit ─────────────────────────────────────────────────
   private checkRateLimit(agentId: string): void {
     // brand-ok — external agent key, not domain AgentId
-    const maxPerHour = Number(Bun.env.DOD_RATE_LIMIT_PER_HOUR ?? 10);
+    const parsed = Number(Bun.env.DOD_RATE_LIMIT_PER_HOUR ?? 10);
+    const maxPerHour = Number.isFinite(parsed) && parsed > 0 ? parsed : 10;
     const row = this.db
       .query(
         "SELECT COUNT(*) as c FROM dod_submissions WHERE agent_id = $id AND submitted_at > datetime('now', '-1 hour')"

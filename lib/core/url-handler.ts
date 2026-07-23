@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { ErrorSeverity, handleErrorFromUnknown, ValidationError } from './error-handling';
 import { Validator } from './validation';
+import { CLOUDFLARE_DEFAULTS } from '../../config/r2-env.ts';
 
 /**
  * URL components interface
@@ -551,7 +552,7 @@ export class FactoryWagerURLUtils {
   private static readonly ALLOWED_HOSTS = [
     'factory-wager.com',
     'duoplus.com',
-    'registry.factory-wager.com',
+    CLOUDFLARE_DEFAULTS.registryHost,
     'r2.factory-wager.com',
     'api.factory-wager.com',
     'docs.factory-wager.com',
