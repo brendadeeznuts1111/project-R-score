@@ -1042,6 +1042,22 @@ function formatDuration(seconds: number): string {
   return `${d}d ${h}h ${m}m ${s}s`;
 }
 
+/** GET /api/content-type — default | our | wire | expected | status matrix. */
+function contentTypeApi(): Response {
+  const m = summarizeContentTypeMatrix();
+  return json({
+    columns: ['defaultValue', 'ourValue', 'wireValue', 'expected', 'status', 'severity'],
+    summary: {
+      total: m.total,
+      pass: m.pass,
+      warn: m.warn,
+      fail: m.fail,
+      byStatus: m.byStatus,
+    },
+    rows: contentTypePolicyTableRows(m.rows),
+  });
+}
+
 /** GET /api/proof — Bun API coverage proof status. */
 async function bunApiProof(): Promise<Response> {
   const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
@@ -1216,20 +1232,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   // Bun API proof status
   if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
   if (path === '/api/env' || path === '/api/env/') return envStatus();
-  if (path === '/api/content-type' || path === '/api/content-type/') {
-    const m = summarizeContentTypeMatrix();
-    return json({
-      columns: ['defaultValue', 'ourValue', 'wireValue', 'expected', 'status', 'severity'],
-      summary: {
-        total: m.total,
-        pass: m.pass,
-        warn: m.warn,
-        fail: m.fail,
-        byStatus: m.byStatus,
-      },
-      rows: contentTypePolicyTableRows(m.rows),
-    });
-  }
+  if (path === '/api/content-type' || path === '/api/content-type/') return contentTypeApi();
 
   // Optional auth for read endpoints
   const authErr = requireReadAuth(req);
@@ -1306,7 +1309,14 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   const staticRes = await staticFile(path, req);
   if (staticRes) return staticRes;
 
-  return new Response('Not found', { status: 404 });
+  // API paths always JSON 404 so `curl | jq` fails with a clear error object
+  if (path.startsWith('/api/')) {
+    return json({ error: 'Not found', path, hint: 'Restart serve-public if route is new' }, 404);
+  }
+  return new Response('Not found', {
+    status: 404,
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
 }
 
 /**
@@ -1338,20 +1348,8 @@ function buildPublicRoutes() {
     '/health/pre': (req: Request, server: RouteServer) => healthHtml(req, server),
     '/health/pre/': (req: Request, server: RouteServer) => healthHtml(req, server),
 
-    '/api/content-type': () => {
-      const m = summarizeContentTypeMatrix();
-      return json({
-        columns: ['defaultValue', 'ourValue', 'wireValue', 'expected', 'status', 'severity'],
-        summary: {
-          total: m.total,
-          pass: m.pass,
-          warn: m.warn,
-          fail: m.fail,
-          byStatus: m.byStatus,
-        },
-        rows: contentTypePolicyTableRows(m.rows),
-      });
-    },
+    '/api/content-type': () => contentTypeApi(),
+    '/api/content-type/': () => contentTypeApi(),
     '/api/proof': (req: Request) => {
       const hot = hotByUrl.get('/api/proof');
       if (hot) return respondStatic(hot, req, { cacheControl: 'public, max-age=30' });
