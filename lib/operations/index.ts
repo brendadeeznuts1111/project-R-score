@@ -7,7 +7,14 @@
 
 export { initSchema, migrateSchema } from './schema.ts';
 export { openOperationsDb, DEFAULT_OPS_DB_PATH, type OpenOperationsDbOpts } from './db.ts';
-export { buildOpsSummary, type OpsSummaryPayload } from './ops-summary.ts';
+export {
+  buildOpsSummary,
+  queryGrowth,
+  queryBunUtilsProof,
+  type OpsSummaryPayload,
+  type OpsSummaryGrowth,
+  type OpsSummaryBunUtils,
+} from './ops-summary.ts';
 export { PlaySigner } from './play-signing.ts';
 export type { PlayInput, PlayRecord } from './play-signing.ts';
 export {

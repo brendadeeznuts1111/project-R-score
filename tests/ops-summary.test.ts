@@ -30,6 +30,37 @@ describe('buildOpsSummary', () => {
     expect(s.experiments.recent).toEqual([]);
     expect(s.prediction.coverage.n).toBe(0);
     expect(s.liquidity.total).toBe(0);
+    expect(s.growth.playsReceived).toBe(0);
+    expect(s.growth.top).toEqual([]);
+    expect(s.bunUtils.total).toBeGreaterThan(0);
+    expect(s.bunUtils.passed).toBe(s.bunUtils.total);
+    expect(s.bunUtils.proofHash).toMatch(/^[a-f0-9]{64}$/);
+    db.close();
+  });
+
+  test('surfaces growth_metrics for current period', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const period = now.slice(0, 7);
+    const nodeId = Bun.randomUUIDv7();
+    db.run(
+      `INSERT INTO tree_nodes (id, type, name, telegram_id, active, status, created_at)
+       VALUES ($id, 'agent', 'A1', 'tg', 1, 'active', $n)`,
+      { $id: nodeId, $n: now }
+    );
+    db.run(
+      `INSERT INTO growth_metrics (node_id, period, plays_received, plays_placed, volume, pnl)
+       VALUES ($id, $p, 3, 2, 1500, 120)`,
+      { $id: nodeId, $p: period }
+    );
+    const s = buildOpsSummary(db, 'live');
+    expect(s.growth.period).toBe(period);
+    expect(s.growth.playsReceived).toBe(3);
+    expect(s.growth.playsPlaced).toBe(2);
+    expect(s.growth.volume).toBe(1500);
+    expect(s.growth.pnl).toBe(120);
+    expect(s.growth.nodes).toBe(1);
+    expect(s.growth.top[0]?.nodeId).toBe(nodeId);
     db.close();
   });
 

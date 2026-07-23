@@ -17,6 +17,7 @@
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
 import { collectMonitoring } from '../lib/monitoring/index.ts';
 import { writePredictionReport } from '../lib/prediction/index.ts';
 
@@ -42,6 +43,12 @@ const db = openOperationsDb({ path: dbPath });
 try {
   const payload = buildOpsSummary(db, 'snapshot');
   await Bun.write(outPath, `${JSON.stringify(payload, null, 2)}\n`);
+
+  // Mirror full Bun utils proof for static + /api/registry/@factorywager/* allowlist.
+  const bunProof = buildBunUtilsProof();
+  const bunDir = 'public/registry/@factorywager/bun-utils-test';
+  await Bun.$`mkdir -p ${bunDir}`.quiet();
+  await Bun.write(`${bunDir}/latest.json`, `${JSON.stringify(bunProof, null, 2)}\n`);
 
   const monitoringPath = Bun.env.MONITORING_SNAPSHOT_PATH ?? 'public/registry/monitoring.json';
   const monitoring = await collectMonitoring(db, { source: 'snapshot' });
@@ -69,6 +76,17 @@ try {
         generated: payload.generated,
         experiments: payload.experiments.active,
         predictionN: payload.prediction.coverage.n,
+        growth: {
+          period: payload.growth.period,
+          playsReceived: payload.growth.playsReceived,
+          playsPlaced: payload.growth.playsPlaced,
+        },
+        bunUtils: {
+          proofHash: payload.bunUtils.proofHash.slice(0, 16),
+          passed: payload.bunUtils.passed,
+          total: payload.bunUtils.total,
+          bunVersion: payload.bunUtils.bunVersion,
+        },
         dodQueue: monitoring.dodQueue,
         packageCount: monitoring.packageCount,
         liquidity: payload.liquidity.total,

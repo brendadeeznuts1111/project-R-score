@@ -1,7 +1,8 @@
 /**
  * Operations dashboard — live `/api/operations/summary` or static
  * `/registry/ops-summary.json` (Cloudflare Pages snapshot from `ops:snapshot`).
- * Includes factorial experiments (C4) and coverage prediction (C5).
+ * Includes factorial experiments (C4), coverage prediction (C5),
+ * growth metrics, and Bun utils runtime proof.
  */
 class OperationsDashboard extends HTMLElement {
   data = null;
@@ -27,6 +28,19 @@ class OperationsDashboard extends HTMLElement {
           <section class="ops-panel">
             <h2>Agent Tree</h2>
             <div id="tree-viz"></div>
+          </section>
+          <section class="ops-panel">
+            <h2>Growth</h2>
+            <div class="ops-metric" id="growth-plays">0</div>
+            <div class="ops-sub" id="growth-detail"></div>
+            <ul id="growth-top"></ul>
+          </section>
+          <section class="ops-panel">
+            <h2>Bun utils proof</h2>
+            <div class="ops-metric" id="bun-utils-pass">—</div>
+            <div class="ops-sub" id="bun-utils-detail"></div>
+            <div class="ops-mono" id="bun-utils-hash"></div>
+            <a class="ops-link" id="bun-utils-link" href="/registry/@factorywager/bun-utils-test/latest.json">Full proof JSON</a>
           </section>
           <section class="ops-panel">
             <h2>Experiments</h2>
@@ -177,6 +191,72 @@ class OperationsDashboard extends HTMLElement {
         </div>
         <div>Downstream: $${(t.downstreamLiquidity ?? 0).toLocaleString()}</div>
       `;
+    }
+
+    // Growth metrics (period rollup)
+    const growth = d.growth || {
+      period: '—',
+      playsReceived: 0,
+      playsPlaced: 0,
+      volume: 0,
+      pnl: 0,
+      nodes: 0,
+      top: [],
+    };
+    const growthPlays = this.querySelector('#growth-plays');
+    if (growthPlays) {
+      growthPlays.textContent = String((growth.playsReceived ?? 0) + (growth.playsPlaced ?? 0));
+    }
+    const growthDetail = this.querySelector('#growth-detail');
+    if (growthDetail) {
+      growthDetail.textContent =
+        `${growth.period || '—'} · recv ${growth.playsReceived ?? 0} · placed ${growth.playsPlaced ?? 0}` +
+        ` · vol $${Number(growth.volume ?? 0).toLocaleString()}` +
+        ` · pnl $${Number(growth.pnl ?? 0).toLocaleString()}` +
+        ` · nodes ${growth.nodes ?? 0}`;
+    }
+    const growthTop = this.querySelector('#growth-top');
+    if (growthTop) {
+      growthTop.innerHTML = (growth.top || [])
+        .slice(0, 5)
+        .map(
+          n => `
+        <li>
+          <span class="ops-mono">${String(n.nodeId || '').slice(0, 8)}</span>
+          <small>r${n.playsReceived ?? 0} · p${n.playsPlaced ?? 0} · $${Number(n.volume ?? 0).toLocaleString()}</small>
+        </li>
+      `
+        )
+        .join('');
+    }
+
+    // Bun utils proof
+    const bun = d.bunUtils || {
+      bunVersion: '—',
+      proofHash: '',
+      passed: 0,
+      total: 0,
+      failed: 0,
+    };
+    const bunPass = this.querySelector('#bun-utils-pass');
+    if (bunPass) {
+      bunPass.textContent =
+        bun.total > 0 ? `${bun.passed}/${bun.total}` : '—';
+      bunPass.classList.toggle('ok', bun.total > 0 && bun.failed === 0);
+      bunPass.classList.toggle('bad', bun.failed > 0);
+    }
+    const bunDetail = this.querySelector('#bun-utils-detail');
+    if (bunDetail) {
+      bunDetail.textContent =
+        bun.total > 0
+          ? `Bun v${bun.bunVersion} · ${bun.failed === 0 ? 'all pass' : bun.failed + ' fail'}`
+          : 'Run bun run bun:utils-proof:write + ops:snapshot';
+    }
+    const bunHash = this.querySelector('#bun-utils-hash');
+    if (bunHash) {
+      bunHash.textContent = bun.proofHash
+        ? `sha256 ${String(bun.proofHash).slice(0, 16)}…`
+        : '';
     }
 
     // Experiments (C4)

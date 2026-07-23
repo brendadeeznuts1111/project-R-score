@@ -2,8 +2,11 @@
 /**
  * Operations portal summary payload — live SQLite → JSON.
  * Used by Pages Function `/api/operations/summary` and `ops:snapshot`.
+ *
+ * Metrics panels: growth_metrics (ops) + Bun utils proof (runtime fingerprint).
  */
 import type { Database } from 'bun:sqlite';
+import { buildBunUtilsProof } from '../bun-utils-proof.ts';
 import { getPredictionAccuracy } from '../prediction/index.ts';
 
 export type OpsSummaryExpert = {
@@ -39,6 +42,34 @@ export type OpsSummaryExperiment = {
   metrics: number;
 };
 
+export type OpsSummaryGrowthNode = {
+  nodeId: string; // brand-ok — tree_nodes.id
+  playsReceived: number;
+  playsPlaced: number;
+  volume: number;
+  pnl: number;
+};
+
+export type OpsSummaryGrowth = {
+  period: string;
+  playsReceived: number;
+  playsPlaced: number;
+  volume: number;
+  pnl: number;
+  nodes: number;
+  top: OpsSummaryGrowthNode[];
+};
+
+export type OpsSummaryBunUtils = {
+  bunVersion: string;
+  bunRevision: string;
+  proofHash: string;
+  passed: number;
+  total: number;
+  failed: number;
+  timestamp: string;
+};
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -61,6 +92,10 @@ export type OpsSummaryPayload = {
   prediction: {
     coverage: { mae: number; rmse: number; bias: number; n: number };
   };
+  /** Period growth_metrics rollup (current calendar month). */
+  growth: OpsSummaryGrowth;
+  /** Self-verifying Bun.stringWidth / deepEquals / inspect fingerprint. */
+  bunUtils: OpsSummaryBunUtils;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -131,6 +166,88 @@ function queryPrediction(db: Database): OpsSummaryPayload['prediction'] {
   } catch {
     return emptyPrediction();
   }
+}
+
+function emptyGrowth(period: string): OpsSummaryGrowth {
+  return {
+    period,
+    playsReceived: 0,
+    playsPlaced: 0,
+    volume: 0,
+    pnl: 0,
+    nodes: 0,
+    top: [],
+  };
+}
+
+/** Current YYYY-MM growth_metrics aggregates + top nodes. */
+export function queryGrowth(db: Database, period?: string): OpsSummaryGrowth {
+  const p = period ?? new Date().toISOString().slice(0, 7);
+  if (!tableExists(db, 'growth_metrics')) return emptyGrowth(p);
+
+  const totals = db
+    .query(
+      `SELECT
+         COALESCE(SUM(plays_received), 0) AS playsReceived,
+         COALESCE(SUM(plays_placed), 0) AS playsPlaced,
+         COALESCE(SUM(volume), 0) AS volume,
+         COALESCE(SUM(pnl), 0) AS pnl,
+         COUNT(*) AS nodes
+       FROM growth_metrics WHERE period = $p`
+    )
+    .get({ $p: p }) as {
+    playsReceived: number;
+    playsPlaced: number;
+    volume: number;
+    pnl: number;
+    nodes: number;
+  };
+
+  const top = db
+    .query(
+      `SELECT node_id, plays_received, plays_placed, volume, pnl
+       FROM growth_metrics
+       WHERE period = $p
+       ORDER BY (plays_received + plays_placed) DESC, volume DESC
+       LIMIT 5`
+    )
+    .all({ $p: p }) as Array<{
+    node_id: string;
+    plays_received: number;
+    plays_placed: number;
+    volume: number;
+    pnl: number;
+  }>;
+
+  return {
+    period: p,
+    playsReceived: totals.playsReceived,
+    playsPlaced: totals.playsPlaced,
+    volume: totals.volume,
+    pnl: totals.pnl,
+    nodes: totals.nodes,
+    top: top.map(r => ({
+      nodeId: r.node_id,
+      playsReceived: r.plays_received,
+      playsPlaced: r.plays_placed,
+      volume: r.volume,
+      pnl: r.pnl,
+    })),
+  };
+}
+
+/** Run Bun utils proof and project fields for the portal panel. */
+export function queryBunUtilsProof(): OpsSummaryBunUtils {
+  const proof = buildBunUtilsProof();
+  return {
+    bunVersion: proof.bunVersion,
+    bunRevision: proof.bunRevision,
+    proofHash: proof.proofHash ?? '',
+    passed: proof.summary.passed,
+    total: proof.summary.total,
+    failed: proof.summary.failed,
+    timestamp: proof.timestamp,
+  };
 }
 
 /** Build full ops summary from an open operations DB. */
@@ -216,5 +333,7 @@ export function buildOpsSummary(
     phones,
     experiments: queryExperiments(db),
     prediction: queryPrediction(db),
+    growth: queryGrowth(db),
+    bunUtils: queryBunUtilsProof(),
   };
 }
