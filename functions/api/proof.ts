@@ -14,7 +14,6 @@ export async function onRequest(context: {
   env: ProofEnv;
 }): Promise<Response> {
   const url = new URL(context.request.url);
-  const proofUrl = new URL('/tools/bun-api-coverage-proof.json', url.origin);
 
   if (context.request.method === 'OPTIONS') {
     return new Response(null, {
@@ -23,61 +22,55 @@ export async function onRequest(context: {
     });
   }
 
-  try {
-    let res: Response;
-    if (context.env?.ASSETS?.fetch) {
-      res = await context.env.ASSETS.fetch(new Request(proofUrl.toString()));
-    } else {
-      res = await fetch(proofUrl.toString());
-    }
+  // Try committed manifest via ASSETS (if tools/ copied to build), else GitHub raw
+  const sources = [
+    // 1. Local ASSETS fetch (if tools/ is included in Pages build)
+    async () => {
+      if (!context.env?.ASSETS?.fetch) throw new Error('no ASSETS binding');
+      return context.env.ASSETS.fetch(new URL('/tools/bun-api-coverage-proof.json', url.origin));
+    },
+    // 2. GitHub raw as fallback
+    async () => {
+      return fetch('https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/bun-api-coverage-proof.json');
+    },
+  ];
 
-    if (!res.ok) {
+  let lastErr: unknown;
+  for (const source of sources) {
+    try {
+      const res = await source();
+      if (!res.ok) continue;
+      const proof = await res.json() as Record<string, unknown>;
+      const summary = proof.summary as Record<string, number> | undefined;
       return Response.json(
         {
-          error: 'Proof manifest not found',
-          hint: 'Run bun run docs:api-verify --write to generate tools/bun-api-coverage-proof.json',
+          generated: proof.generated ?? null,
+          bunVersion: proof.bunVersion ?? null,
+          summary: proof.summary ?? null,
+          demoPassRate: summary?.demos
+            ? `${Math.round((summary.demosPassed! / summary.demos) * 100)}%`
+            : '0%',
+          allPassed: summary?.demosPassed === summary?.demos,
+          source: 'github-raw',
         },
-        { status: 404 }
+        {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Cache-Control': 'public, max-age=300',
+            'Access-Control-Allow-Origin': '*',
+          },
+        }
       );
+    } catch (e) {
+      lastErr = e;
     }
-
-    const proof = (await res.json()) as {
-      generated?: string;
-      bunVersion?: string;
-      summary?: {
-        demos?: number;
-        demosPassed?: number;
-        apis?: number;
-        apisVerified?: number;
-      };
-    };
-
-    return Response.json(
-      {
-        generated: proof.generated ?? null,
-        bunVersion: proof.bunVersion ?? null,
-        summary: proof.summary ?? null,
-        demoPassRate: proof.summary?.demos
-          ? `${Math.round((proof.summary.demosPassed! / proof.summary.demos) * 100)}%`
-          : '0%',
-        allPassed: proof.summary?.demosPassed === proof.summary?.demos,
-        source: 'pages-snapshot',
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'Cache-Control': 'public, max-age=300',
-          'Access-Control-Allow-Origin': '*',
-        },
-      }
-    );
-  } catch (err) {
-    return Response.json(
-      {
-        error: 'Failed to load proof manifest',
-        detail: err instanceof Error ? err.message : String(err),
-      },
-      { status: 503 }
-    );
   }
+
+  return Response.json(
+    {
+      error: 'Failed to load proof manifest',
+      detail: lastErr instanceof Error ? lastErr.message : String(lastErr),
+    },
+    { status: 503, headers: { 'Access-Control-Allow-Origin': '*' } }
+  );
 }

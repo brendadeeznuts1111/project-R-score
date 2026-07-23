@@ -25,8 +25,9 @@ frozenLockfile = false
 # Canonical URL per .npmrc + commit 13ce5157; both scope spellings are in use
 # (42× @factorywager, 1× @factory-wager/admin-cli). Token via FACTORY_WAGER_TOKEN env var.
 [install.scopes]
-"@factorywager" = { url = "https://registry.factory-wager.com/", token = "$FACTORY_WAGER_TOKEN" }
-"@factory-wager" = { url = "https://registry.factory-wager.com/", token = "$FACTORY_WAGER_TOKEN" }
+"@factorywager" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
+"@factory-wager" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
+"@factory" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
 
 # Test runner defaults.  Per-workspace bunfig.toml files
 # (e.g. projects/active/enterprise/bet-ticker-worker-v1.1/bunfig.toml) override these.
