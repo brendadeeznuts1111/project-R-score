@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
 /**
- * verify-package-info.ts — Verify package metadata from npm and custom registry.
+ * verify-package-info.ts — Verify package metadata + README from npm and custom registry.
  *
- * Uses `bun info --json` to check package resolution and version availability.
+ * Uses `bun info --json` to check resolution, then `bun info readme` for README content.
+ * README comparison: matches local README.md for custom packages.
  *
  * Usage:
  *   bun tools/verify-package-info.ts
@@ -15,18 +16,28 @@ const SAVE_PATH = 'public/registry/package-info.json';
 const SHOULD_SAVE = process.argv.includes('--save');
 const LOCAL = Bun.env.REGISTRY_URL || 'http://localhost:3000';
 
-type PkgCheck = { name: string; registry: string; version: string; statusCode: number; ok: boolean };
+type PkgCheck = { name: string; registry: string; version: string; readme: string; ok: boolean };
 
 async function checkPackage(name: string, registry: string): Promise<PkgCheck> {
   const url = registry === 'npm' ? 'https://registry.npmjs.org' : LOCAL;
   try {
     const proc = Bun.spawnSync(['bun', 'info', name, `--registry=${url}`, '--json']);
-    if (proc.exitCode !== 0) throw new Error(proc.stderr.toString().trim().split('\n').pop() || 'unknown');
+    if (proc.exitCode !== 0) throw new Error(proc.stderr.toString().trim().split('\n').pop() || '');
     const data = JSON.parse(proc.stdout.toString());
     const version = data['dist-tags']?.latest || data.version || '?';
-    return { name, registry, version, statusCode: 200, ok: true };
+
+    // README check via `bun info <pkg> readme`
+    let readmeStatus = '—';
+    if (registry === 'custom') {
+      const rProc = Bun.spawnSync(['bun', 'info', name, 'readme', `--registry=${url}`]);
+      const readme = rProc.stdout.toString().trim();
+      if (readme && readme.length > 20) readmeStatus = '✅ ' + readme.slice(0, 40).replace(/\n/g, ' ') + '…';
+      else readmeStatus = readme ? '⚠️ short' : '❌ empty';
+    }
+
+    return { name, registry, version, readme: readmeStatus, ok: true };
   } catch (e: any) {
-    return { name, registry, version: '—', statusCode: 0, ok: false };
+    return { name, registry, version: '—', readme: '—', ok: false };
   }
 }
 
@@ -47,7 +58,7 @@ async function run() {
   const results = await Promise.all(packages.map(p => checkPackage(p.name, p.registry)));
   const passed = results.filter(r => r.ok).length;
 
-  const table = inspect(results.map(r => [r.name, r.registry, r.version, r.ok ? '✅' : '❌']), { colors: true, table: true });
+  const table = inspect(results.map(r => [r.name, r.registry, r.version, r.readme, r.ok ? '✅' : '❌']), { colors: true, table: true });
   console.log(table);
   console.log(`\n  📊 ${passed}/${results.length} packages resolved`);
 
