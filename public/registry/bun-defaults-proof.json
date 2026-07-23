@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
+  "timestamp": "2026-07-23T20:17:37.080Z",
+  "summary": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0
+  },
+  "cases": [
+    {
+      "id": "crypto-hasher-requires-algorithm",
+      "name": "CryptoHasher requires algorithm",
+      "pass": true,
+      "actual": "throws Expected an algorithm name",
+      "expected": "throws without algorithm name",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-cryptohasher"
+    },
+    {
+      "id": "password-hash-default-argon2id",
+      "name": "password.hash default argon2id",
+      "pass": true,
+      "actual": "$argon2id$…",
+      "expected": "hash starts with $argon2id$",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-password"
+    },
+    {
+      "id": "inspect-depth-options",
+      "name": "inspect depth 0 vs 2 vs default",
+      "pass": true,
+      "actual": "depth0=[Object], depth2=c:[Object], default shows d:1",
+      "expected": "depth:0 truncates; depth:2 truncates leaf; default expands more",
+      "docs": "https://bun.com/docs/runtime/utils#bun-inspect"
+    },
+    {
+      "id": "write-creates-dirs",
+      "name": "write creates parent dirs + overwrites",
+      "pass": true,
+      "actual": "nested path written & overwritten",
+      "expected": "file exists after nested write",
+      "docs": "https://bun.com/docs/runtime/file-io#writing-files-bun-write"
+    },
+    {
+      "id": "file-stat",
+      "name": "file.stat returns size",
+      "pass": true,
+      "actual": "stat.size > 0",
+      "expected": "package.json size > 0",
+      "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file"
+    },
+    {
+      "id": "serve-port-ephemeral",
+      "name": "serve port:0 binds ephemeral > 0",
+      "pass": true,
+      "actual": "port:0 → ephemeral listener",
+      "expected": "port > 0 when port:0 (omit port → BUN_PORT|PORT|NODE_PORT|3000)",
+      "docs": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname"
+    },
+    {
+      "id": "which-missing-null",
+      "name": "which returns null for missing",
+      "pass": true,
+      "actual": "null",
+      "expected": "null",
+      "docs": "https://bun.com/docs/runtime/utils#bun-which"
+    },
+    {
+      "id": "escape-html",
+      "name": "escapeHTML escapes < > & \" '",
+      "pass": true,
+      "actual": "&lt;div class=&quot;t&quot;&gt;&#x27;&amp;&lt;/div&gt;",
+      "expected": "contains &lt; &gt; &amp; &quot; and escaped quote",
+      "docs": "https://bun.com/docs/runtime/utils#bun-escapehtml"
+    },
+    {
+      "id": "readable-stream-to-bytes-empty",
+      "name": "readableStreamToBytes empty stream",
+      "pass": true,
+      "actual": "Uint8Array(0)",
+      "expected": "length 0",
+      "docs": "https://bun.com/docs/runtime/utils#bun-readablestreamto"
+    },
+    {
+      "id": "nanoseconds-monotonic",
+      "name": "nanoseconds monotonic",
+      "pass": true,
+      "actual": "increasing",
+      "expected": "b > a after sleep(1)",
+      "docs": "https://bun.com/docs/runtime/utils#bun-nanoseconds"
+    },
+    {
+      "id": "sleep-approx",
+      "name": "sleep ~50ms",
+      "pass": true,
+      "actual": "≥45ms wall",
+      "expected": "elapsed >= 45ms",
+      "docs": "https://bun.com/docs/runtime/utils#bun-sleep"
+    },
+    {
+      "id": "hash-returns-bigint",
+      "name": "hash returns bigint (Wyhash)",
+      "pass": true,
+      "actual": "bigint 1019145960556548909",
+      "expected": "typeof === \"bigint\"",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-hash"
+    }
+  ],
+  "proofHash": "80971c5ee71fb45888b153712d905f49b8f5f6681a30d30369bd29c2420bff6b"
+}

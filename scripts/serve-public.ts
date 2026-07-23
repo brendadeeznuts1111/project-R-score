@@ -1549,3 +1549,18 @@ if (Bun.env.OPS_SNAPSHOT_CRON === '1') {
     `Cron:          ops-snapshot @ ${OPS_SNAPSHOT_SCHEDULE} UTC (in-process Bun.cron, no-overlap)`
   );
 }
+
+// Nightly Bun defaults verification (12 cases → public/registry/bun-defaults-proof.json)
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
+// Schedule: Bun.cron("0 4 * * *", handler) — UTC, no-overlap (not title-first overload)
+if (Bun.env.BUN_DEFAULTS_CRON === '1') {
+  const {
+    registerDefaultsVerifyCron,
+    BUN_DEFAULTS_CRON_SCHEDULE,
+    BUN_DEFAULTS_PROOF_PATH,
+  } = await import('../lib/http/defaults-cron.ts');
+  registerDefaultsVerifyCron();
+  console.log(
+    `Cron:          defaults-verify @ ${BUN_DEFAULTS_CRON_SCHEDULE} UTC → ${BUN_DEFAULTS_PROOF_PATH}`
+  );
+}

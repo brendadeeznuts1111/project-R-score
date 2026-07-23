@@ -24,28 +24,35 @@ import {
   BunDefaultsReport,
   buildBunDefaultsProof,
 } from '../lib/http/bun-defaults-proof.ts';
+import { runDefaultsVerification } from '../lib/http/defaults-cron.ts';
+
+/** Programmatic entry for cron / importers. */
+export { runDefaultsVerification };
 
 const AS_JSON = process.argv.includes('--json');
 const SAVE = process.argv.find(a => a.startsWith('--save='))?.slice('--save='.length);
 
-const proof = await buildBunDefaultsProof();
-const report = new BunDefaultsReport(proof);
+if (import.meta.main) {
+  const result = await runDefaultsVerification({
+    savePath: SAVE,
+    quiet: AS_JSON,
+  });
+  const proof = result.proof ?? (await buildBunDefaultsProof());
+  const report = new BunDefaultsReport(proof);
 
-if (SAVE) {
-  await Bun.write(SAVE, JSON.stringify(proof, null, 2) + '\n');
-  console.error(`wrote ${SAVE}`);
+  if (AS_JSON) {
+    console.log(JSON.stringify(proof, null, 2));
+  } else {
+    console.log(report);
+    if (result.path) console.log(`\nwrote ${result.path}`);
+    console.log('');
+    console.log('Canonical notes:');
+    console.log('  • password.hash default: argon2id (not bcrypt on 1.4)');
+    console.log('  • Bun.hash: bigint Wyhash');
+    console.log('  • CryptoHasher: algorithm required');
+    console.log('  • serve port:0 = ephemeral; omit port → BUN_PORT|PORT|NODE_PORT|3000');
+    console.log('  • cron: BUN_DEFAULTS_CRON=1 · schedule 0 4 * * * UTC (lib/http/defaults-cron.ts)');
+  }
+
+  process.exit(result.code);
 }
-
-if (AS_JSON) {
-  console.log(JSON.stringify(proof, null, 2));
-} else {
-  console.log(report);
-  console.log('');
-  console.log('Canonical notes:');
-  console.log('  • password.hash default: argon2id (not bcrypt on 1.4)');
-  console.log('  • Bun.hash: bigint Wyhash');
-  console.log('  • CryptoHasher: algorithm required');
-  console.log('  • serve port:0 = ephemeral; omit port → BUN_PORT|PORT|NODE_PORT|3000');
-}
-
-if (proof.summary.failed > 0) process.exit(1);

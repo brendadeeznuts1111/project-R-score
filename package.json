@@ -1762,6 +1762,7 @@
     "check:env-defaults:dry": "bun scripts/check-env-defaults.ts --dry-run",
     "check:etag": "bun tools/verify-etag.ts",
     "check:bun-defaults": "bun tools/verify-bun-defaults.ts",
+    "check:bun-defaults:once": "bun lib/http/defaults-cron.ts --once",
     "check:networking": "bun tools/verify-networking.ts",
     "check:networking:save": "bun tools/verify-networking.ts --save",
     "check:networking:remote": "bun tools/verify-networking.ts --remote --save",
