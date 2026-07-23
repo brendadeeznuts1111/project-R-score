@@ -96,6 +96,25 @@ export function renderMonitoringHtml(data: MonitoringPayload): string {
   ${platforms}
   ${api}
   ${dod}
-</body>
-</html>`;
+  ${tableSection('Bun API Proof', [
+    { Metric: 'Status', Value: `${data.bunApiProof?.demosPassed ?? '?'}/${data.bunApiProof?.demosTotal ?? '?'} demos` },
+    { Metric: 'APIs verified', Value: String(data.bunApiProof?.apisVerified ?? '?') },
+    { Metric: 'Pass rate', Value: data.bunApiProof?.demoPassRate ?? '?' },
+    { Metric: 'Generated', Value: data.bunApiProof?.generated ?? 'never' },
+  ])}
+  ${tableSection('Routing proof', [
+    { Metric: 'Routes passed', Value: `${data.routeStats?.routing?.passed ?? '?'}/${data.routeStats?.routing?.total ?? '?'}` },
+    { Metric: 'HTTP 200 ok', Value: String(data.routeStats?.routing?.httpOk ?? '?') },
+    { Metric: 'Critical failed', Value: String(data.routeStats?.routing?.criticalFailed ?? '0') },
+    { Metric: 'p95 latency', Value: data.routeStats?.routing?.p95Ms ? `${data.routeStats.routing.p95Ms}ms` : '?' },
+    { Metric: 'Error rate', Value: data.routeStats?.routing?.errorRate ? `${(data.routeStats.routing.errorRate * 100).toFixed(1)}%` : '0%' },
+    { Metric: 'Proof hash', Value: data.routeStats?.routing?.proofHash?.slice(0, 16) + '…' ?? '—' },
+  ])}
+  ${tableSection('Environment checks', [
+    { Metric: 'Total checks', Value: String(data.env?.summary?.total ?? '?') },
+    { Metric: 'OK', Value: String(data.env?.summary?.ok ?? '?') },
+    { Metric: 'Missing', Value: String(data.env?.summary?.missing ?? '0') },
+    { Metric: 'Required missing', Value: String(data.env?.summary?.requiredMissing ?? '0') },
+  ])}
+</body></html>`;
 }
