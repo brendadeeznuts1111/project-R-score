@@ -212,7 +212,7 @@ export function queryGrowth(db: Database, period?: string): OpsSummaryGrowth {
        LIMIT 5`
     )
     .all({ $p: p }) as Array<{
-    node_id: string;
+    node_id: string; // brand-ok — opaque growth_metrics row, not domain NodeId
     plays_received: number;
     plays_placed: number;
     volume: number;
