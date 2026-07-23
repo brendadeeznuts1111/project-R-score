@@ -1621,6 +1621,8 @@
     "docs:api-verify:check": "bun tools/bun-api-verify.ts",
     "bun:utils-proof": "bun tools/bun-utils-registry-proof.ts",
     "bun:utils-proof:write": "bun tools/bun-utils-registry-proof.ts --write",
+    "routing:proof": "bun tools/routing-registry-proof.ts",
+    "routing:proof:write": "bun tools/routing-registry-proof.ts --write",
     "ops:migrate": "bun tools/ops-migrate.ts",
     "ops:coverage": "bun tools/ops-coverage.ts",
     "ops:provision-queue": "bun tools/provision-queue.ts",
