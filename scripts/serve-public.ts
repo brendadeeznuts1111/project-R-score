@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
@@ -29,8 +30,15 @@ import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { collectMonitoring, renderMonitoringHtml } from '../lib/monitoring/index.ts';
 import { DODVerifier } from '../lib/dod/verifier.ts';
+import {
+  bearerToken,
+  configuredPublishToken,
+  decidePublishAuth,
+} from '../lib/registry/publish-auth.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
+/** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
+const HOST = (Bun.env.HOST || Bun.env.BIND_HOST || '127.0.0.1').trim() || '127.0.0.1';
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 
 function json(
@@ -42,6 +50,16 @@ function json(
     status,
     headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': cache },
   });
+}
+
+/** Fail-closed publish gate — 503 unconfigured, 401 bad/missing Bearer. */
+async function requirePublishAuth(req: Request): Promise<Response | null> {
+  const decision = await decidePublishAuth(req);
+  if (decision.ok) return null;
+  return json(
+    decision.hint ? { error: decision.error, hint: decision.hint } : { error: decision.error },
+    decision.status
+  );
 }
 
 async function writeBytes(path: string, data: Uint8Array | string): Promise<void> {
@@ -186,8 +204,8 @@ async function listVersions(name: string): Promise<Response> {
 }
 
 async function publishVersion(req: Request, name: string): Promise<Response> {
-  const apiKey = req.headers.get('Authorization')?.replace('Bearer ', '');
-  if (!apiKey) return json({ error: 'Authorization required' }, 401);
+  const authErr = await requirePublishAuth(req);
+  if (authErr) return authErr;
   const form = await req.formData();
   const file = form.get('file');
   const version = form.get('version') as string;
@@ -238,9 +256,8 @@ async function publishVersion(req: Request, name: string): Promise<Response> {
 // ── npm-compatible publish (bun publish) ────────────────────────────
 
 async function npmPublish(req: Request, name: string): Promise<Response> {
-  const token = (req.headers.get('authorization') || '').replace('Bearer ', '').trim();
-  if (!token && Bun.env.NODE_ENV === 'production')
-    return json({ error: 'missing authentication' }, 401);
+  const authErr = await requirePublishAuth(req);
+  if (authErr) return authErr;
   const ct = req.headers.get('content-type') || '';
   let version = '';
   let tarballBuf: Uint8Array | null = null;
@@ -393,12 +410,29 @@ async function staticFile(pathname: string): Promise<Response | null> {
 
 const startedAt = Date.now();
 
-/** GET /api/monitoring — registry + ops metrics (live SQLite, snapshot fallback). */
+/** GET /api/monitoring — registry + ops metrics + API proof (JSON). */
 async function liveMonitoringApi(): Promise<Response> {
   try {
     const db = openOperationsDb({ path: dbPath });
     try {
-      const data = await collectMonitoring(db, { source: 'live', uptimeOriginMs: startedAt });
+      const data = (await collectMonitoring(db, {
+        source: 'live',
+        uptimeOriginMs: startedAt,
+      })) as Record<string, unknown>;
+      // Append Bun API proof status
+      const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
+      if (await proofFile.exists()) {
+        const proof = JSON.parse(await proofFile.text());
+        data.bunApiProof = {
+          generated: proof.generated,
+          bunVersion: proof.bunVersion,
+          demosTotal: proof.summary?.demos ?? 0,
+          demosPassed: proof.summary?.demosPassed ?? 0,
+          apisTotal: proof.summary?.apis ?? 0,
+          apisVerified: proof.summary?.apisVerified ?? 0,
+          allPassed: proof.summary?.demosPassed === proof.summary?.demos,
+        };
+      }
       return json(data);
     } finally {
       db.close();
@@ -464,13 +498,44 @@ async function health(): Promise<Response> {
   });
 }
 
-/** Optional auth middleware — set REGISTRY_AUTH=token to protect read endpoints. */
+/** GET /api/proof — Bun API coverage proof status. */
+async function bunApiProof(): Promise<Response> {
+  const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
+  if (!(await proofFile.exists()))
+    return json({ error: 'No proof manifest generated yet — run bun run docs:api-verify' }, 404);
+  const proof = JSON.parse(await proofFile.text());
+  return json({
+    generated: proof.generated,
+    bunVersion: proof.bunVersion,
+    summary: proof.summary,
+    demoPassRate: proof.summary?.demos
+      ? `${Math.round((proof.summary.demosPassed / proof.summary.demos) * 100)}%`
+      : '0%',
+    allPassed: proof.summary?.demosPassed === proof.summary?.demos,
+  });
+}
+
+/**
+ * Optional read auth — set REGISTRY_SECRET (or REGISTRY_AUTH as the bearer secret).
+ * Mode keywords from .env.registry.example (`token`/`jwt`/`basic`/`none`) are ignored
+ * so they are never treated as the literal password.
+ */
 function requireReadAuth(req: Request): Response | null {
-  const expected = Bun.env.REGISTRY_AUTH;
+  const modeish = new Set(['token', 'jwt', 'basic', 'none']);
+  const authEnv = (Bun.env.REGISTRY_AUTH || '').trim();
+  const expected =
+    (Bun.env.REGISTRY_SECRET || '').trim() ||
+    (authEnv && !modeish.has(authEnv.toLowerCase()) ? authEnv : '');
   if (!expected) return null;
-  const provided = (req.headers.get('authorization') || '').replace('Bearer ', '').trim();
-  if (provided === expected) return null;
-  return json({ error: 'Unauthorized' }, 401);
+  const provided = bearerToken(req);
+  // Sync path: hash via Bun.CryptoHasher for constant-time string compare without async.
+  const a = new Bun.CryptoHasher('sha256').update(provided).digest();
+  const b = new Bun.CryptoHasher('sha256').update(expected).digest();
+  if (a.byteLength !== b.byteLength) return json({ error: 'Unauthorized' }, 401);
+  let mismatch = 0;
+  for (let i = 0; i < a.byteLength; i++) mismatch |= a[i]! ^ b[i]!;
+  if (mismatch !== 0) return json({ error: 'Unauthorized' }, 401);
+  return null;
 }
 
 async function fetchHandler(req: Request): Promise<Response> {
@@ -479,6 +544,9 @@ async function fetchHandler(req: Request): Promise<Response> {
 
   // Health endpoint — no auth
   if (path === '/health' || path === '/health/') return health();
+
+  // Bun API proof status
+  if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
 
   // Optional auth for read endpoints
   const authErr = requireReadAuth(req);
@@ -558,13 +626,13 @@ async function fetchHandler(req: Request): Promise<Response> {
   return new Response('Not found', { status: 404 });
 }
 
-function startServer(preferred: number, maxTries = 20): { port: number } {
+function startServer(preferred: number, maxTries = 20): { port: number; hostname: string } {
   let lastErr: unknown;
   for (let i = 0; i < maxTries; i++) {
     const port = preferred + i;
     try {
-      Bun.serve({ port, fetch: fetchHandler });
-      return { port };
+      const server = Bun.serve({ port, hostname: HOST, fetch: fetchHandler });
+      return { port: server.port, hostname: server.hostname };
     } catch (e) {
       lastErr = e;
       const msg = e instanceof Error ? e.message : String(e);
@@ -572,23 +640,24 @@ function startServer(preferred: number, maxTries = 20): { port: number } {
     }
   }
   console.error(`
-Port ${preferred}–${preferred + maxTries - 1} busy.
+Port ${preferred}–${preferred + maxTries - 1} busy on ${HOST}.
 
   # Use the server already on :${preferred} (if it is serve-public):
-  open http://localhost:${preferred}/portal/ops/
+  open http://127.0.0.1:${preferred}/portal/ops/
 
   # Or free the port, then re-run:
   lsof -nP -iTCP:${preferred} -sTCP:LISTEN
   kill <PID>
 
   # Or pick a free port:
-  PORT=3010 bunx --bun serve-public
-  # (not: bunx bunx --bun serve-public)
+  PORT=3010 bun scripts/serve-public.ts
+  # LAN bind (explicit only): HOST=0.0.0.0 bun scripts/serve-public.ts
 `);
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
-const { port: boundPort } = startServer(PORT);
+const { port: boundPort, hostname: boundHost } = startServer(PORT);
+const base = `http://${boundHost === '0.0.0.0' ? '127.0.0.1' : boundHost}:${boundPort}`;
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
@@ -600,15 +669,20 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
-console.log(`Local portal:  http://localhost:${boundPort}/portal/ops/`);
-console.log(`Monitoring:    http://localhost:${boundPort}/monitoring`);
-console.log(`Live API:      http://localhost:${boundPort}/api/operations/summary`);
-console.log(`Monitoring API http://localhost:${boundPort}/api/monitoring`);
-console.log(`Registry:      http://localhost:${boundPort}/api/registry`);
-console.log(`Catalog:       http://localhost:${boundPort}/api/catalog`);
-console.log(`Prediction:    http://localhost:${boundPort}/registry/prediction/report.html`);
-console.log(`Publish:       PUT http://localhost:${boundPort}/{name} (npm-compatible)`);
-console.log(`DB: ${dbPath}`);
+console.log(`Local portal:  ${base}/portal/ops/`);
+console.log(`Monitoring:    ${base}/monitoring`);
+console.log(`Live API:      ${base}/api/operations/summary`);
+console.log(`Monitoring API ${base}/api/monitoring`);
+console.log(`Registry:      ${base}/api/registry`);
+console.log(`Catalog:       ${base}/api/catalog`);
+console.log(`Prediction:    ${base}/registry/prediction/report.html`);
+const publishReady = Boolean(configuredPublishToken());
+console.log(
+  publishReady
+    ? `Publish:       PUT ${base}/{name} (Bearer REGISTRY_SECRET required)`
+    : `Publish:       disabled — set REGISTRY_SECRET or FACTORY_WAGER_TOKEN`
+);
+console.log(`Bind: ${boundHost}:${boundPort}  DB: ${dbPath}`);
 if (boundPort !== PORT) {
   console.log(`(preferred PORT=${PORT} was busy — bound ${boundPort})`);
 }

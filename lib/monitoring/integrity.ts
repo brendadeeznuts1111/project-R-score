@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 /**
@@ -5,19 +6,23 @@
  * contracts (lib/registry/contracts.ts) and records the result into
  * `integrity_checks` so /monitoring shows a real "last check" row.
  *
+ * DB SSOT: `openOperationsDb` / `OPS_DB_PATH` / `DEFAULT_OPS_DB_PATH`
+ * (`data/operations.db`) — same DB as live `/api/monitoring`. Never
+ * `data/registry.db`.
+ *
  * Run: bun run integrity:check
  */
 
-import { Database } from 'bun:sqlite';
 import { validateDodRegistry, validateOpsSummary } from '../registry/contracts.ts';
+import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 import { recordIntegrityCheck } from './collect.ts';
-import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 
 export type IntegrityCheckResult = {
   status: 'ok' | 'failed';
   failures: number;
   timestamp: string;
   details: string[];
+  dbPath: string;
 };
 
 const ARTIFACTS = [
@@ -25,10 +30,14 @@ const ARTIFACTS = [
   { name: 'dod-registry', path: 'public/registry/dod-registry.json' },
 ] as const;
 
+function resolveOpsDbPath(override?: string): string {
+  const path = (override || Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH).trim();
+  return path || DEFAULT_OPS_DB_PATH;
+}
+
 /** Validate artifacts, record into the operations DB (what /api/monitoring reads). */
-export async function runIntegrityCheck(
-  dbPath = DEFAULT_OPS_DB_PATH
-): Promise<IntegrityCheckResult> {
+export async function runIntegrityCheck(dbPath?: string): Promise<IntegrityCheckResult> {
+  const resolvedPath = resolveOpsDbPath(dbPath);
   const failures: string[] = [];
 
   for (const artifact of ARTIFACTS) {
@@ -63,15 +72,19 @@ export async function runIntegrityCheck(
     failures: failures.length,
     timestamp: new Date().toISOString(),
     details: failures,
+    dbPath: resolvedPath,
   };
 
-  const db = new Database(dbPath);
-  recordIntegrityCheck(db, {
-    status: result.status,
-    failures: result.failures,
-    details: JSON.stringify(result.details),
-  });
-  db.close();
+  const db = openOperationsDb({ path: resolvedPath });
+  try {
+    recordIntegrityCheck(db, {
+      status: result.status,
+      failures: result.failures,
+      details: JSON.stringify(result.details),
+    });
+  } finally {
+    db.close();
+  }
   return result;
 }
 
@@ -80,6 +93,7 @@ if (import.meta.main) {
   console.log(
     `${result.status === 'ok' ? '✅' : '❌'} integrity ${result.status} · ${result.failures} failure(s) · ${result.timestamp}`
   );
+  console.log(`  db: ${result.dbPath}`);
   for (const d of result.details) console.log(`  - ${d}`);
   if (result.status !== 'ok') process.exit(1);
 }
