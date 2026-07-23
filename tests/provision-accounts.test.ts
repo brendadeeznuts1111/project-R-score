@@ -7,6 +7,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { Database } from 'bun:sqlite';
 import { encryptAesGcm, decryptAesGcm } from '../lib/dod/verifier.ts';
+import { isSandboxPlatform } from '../lib/automation/provision-accounts.ts';
 
 const SCRATCH = '.tmp/provision-test';
 let db: Database;
@@ -20,6 +21,7 @@ beforeEach(async () => {
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL UNIQUE,
       category TEXT NOT NULL DEFAULT 'sportsbook',
+      sub_category TEXT,
       url TEXT,
       active INTEGER DEFAULT 1,
       status TEXT DEFAULT 'active',
@@ -31,6 +33,7 @@ beforeEach(async () => {
       partner_id TEXT NOT NULL,
       account_identifier TEXT NOT NULL,
       credentials_encrypted TEXT,
+      is_test INTEGER DEFAULT 0,
       balance REAL DEFAULT 0,
       status TEXT DEFAULT 'active',
       notes TEXT,
@@ -39,8 +42,33 @@ beforeEach(async () => {
       created_at TEXT NOT NULL
     );
   `);
-  db.run(`INSERT INTO platforms (id, name, category, url, created_at)
-    VALUES ('test-book', 'TestBook', 'sportsbook', 'https://testbook.example', datetime('now'))`);
+  db.run(`INSERT INTO platforms (id, name, category, sub_category, url, created_at)
+    VALUES ('test-book', 'TestBook', 'sportsbook', 'sandbox', 'https://testbook.example', datetime('now'))`);
+  db.run(`INSERT INTO platforms (id, name, category, sub_category, url, created_at)
+    VALUES ('draftkings', 'DraftKings', 'sportsbook', 'regulated_us', 'https://draftkings.com', datetime('now'))`);
+});
+
+describe('provision-accounts — sandbox gate', () => {
+  test('isSandboxPlatform accepts url/sub_category markers', () => {
+    expect(isSandboxPlatform({ url: 'https://demo.example.com' })).toBe(true);
+    expect(isSandboxPlatform({ url: 'https://x.com', sub_category: 'sandbox' })).toBe(true);
+    expect(isSandboxPlatform({ url: 'https://draftkings.com', sub_category: 'regulated_us' })).toBe(
+      false
+    );
+  });
+
+  test('live book is rejected before WebView', async () => {
+    const { provisionAccounts } = await import('../lib/automation/provision-accounts.ts');
+    const results = await provisionAccounts({
+      platformId: 'draftkings',
+      partnerIds: ['p1'],
+      credentials: [{ username: 'u', password: 'p', email: 'e@x.com' }],
+      dbPath: `${SCRATCH}/ops.db`,
+    });
+    expect(results).toHaveLength(1);
+    expect(results[0]!.success).toBe(false);
+    expect(results[0]!.error).toMatch(/sandbox\/test\/demo/i);
+  });
 });
 
 afterEach(async () => {
@@ -89,8 +117,8 @@ describe('provision-accounts — error paths', () => {
   });
 
   test('platform with no URL returns all failures', async () => {
-    db.run(`INSERT INTO platforms (id, name, category, url, created_at)
-      VALUES ('no-url', 'No URL', 'sportsbook', NULL, datetime('now'))`);
+    db.run(`INSERT INTO platforms (id, name, category, sub_category, url, created_at)
+      VALUES ('no-url', 'No URL', 'sportsbook', 'sandbox', NULL, datetime('now'))`);
     const { provisionAccounts } = await import('../lib/automation/provision-accounts.ts');
     const results = await provisionAccounts({
       platformId: 'no-url',

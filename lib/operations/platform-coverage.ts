@@ -127,6 +127,9 @@ export function ensurePlatformCoverageSchema(db: Database): void {
   if (ppaCols.size > 0 && !ppaCols.has('credentials_encrypted')) {
     db.run('ALTER TABLE partner_platform_accounts ADD COLUMN credentials_encrypted TEXT');
   }
+  if (ppaCols.size > 0 && !ppaCols.has('is_test')) {
+    db.run('ALTER TABLE partner_platform_accounts ADD COLUMN is_test INTEGER DEFAULT 0');
+  }
 
   db.run(`
     CREATE TABLE IF NOT EXISTS coverage_snapshots (
@@ -167,7 +170,7 @@ export function getCoverageSummary(db: Database): CoverageSummary {
        ),
        covered AS (
          SELECT DISTINCT platform_id AS id FROM partner_platform_accounts
-         WHERE status = 'active'
+         WHERE status = 'active' AND COALESCE(is_test, 0) = 0
          UNION
          SELECT DISTINCT book AS id FROM sb_accounts WHERE status = 'active'
        )
@@ -184,7 +187,8 @@ export function getCoverageSummary(db: Database): CoverageSummary {
               COUNT(DISTINCT CASE WHEN cov.id IS NOT NULL THEN p.id END) AS covered
        FROM platforms p
        LEFT JOIN (
-         SELECT DISTINCT platform_id AS id FROM partner_platform_accounts WHERE status = 'active'
+         SELECT DISTINCT platform_id AS id FROM partner_platform_accounts
+         WHERE status = 'active' AND COALESCE(is_test, 0) = 0
          UNION
          SELECT DISTINCT book AS id FROM sb_accounts WHERE status = 'active'
        ) cov ON cov.id = p.id
@@ -225,7 +229,7 @@ export function getPlatformCapacities(db: Database): PlatformCapacity[] {
          (
            SELECT COUNT(DISTINCT agent_id) FROM (
              SELECT partner_id AS agent_id FROM partner_platform_accounts
-               WHERE platform_id = p.id AND status = 'active'
+               WHERE platform_id = p.id AND status = 'active' AND COALESCE(is_test, 0) = 0
              UNION
              SELECT agent_id FROM sb_accounts WHERE book = p.id AND status = 'active'
            )
@@ -283,7 +287,7 @@ export function listPlatforms(db: Database): PlatformRow[] {
               p.launch_date,
               (
                 SELECT COUNT(*) FROM partner_platform_accounts a
-                WHERE a.platform_id = p.id AND a.status = 'active'
+                WHERE a.platform_id = p.id AND a.status = 'active' AND COALESCE(a.is_test, 0) = 0
               ) + (
                 SELECT COUNT(*) FROM sb_accounts s
                 WHERE s.book = p.id AND s.status = 'active'

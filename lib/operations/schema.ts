@@ -6,6 +6,7 @@
  *   Operations → Expert → Partner → Agent → Sub-agent
  */
 import type { Database } from 'bun:sqlite';
+import { ensurePlatformCoverageSchema } from './platform-coverage.ts';
 
 const TREE_NODE_COLUMNS = [
   ['email', 'TEXT'],
@@ -25,6 +26,11 @@ export function migrateSchema(db: Database): void {
     if (!existing.has(name)) {
       db.run(`ALTER TABLE tree_nodes ADD COLUMN ${name} ${def}`);
     }
+  }
+  // Enforce call_sign UNIQUE for databases that got the column before the
+  // constraint was in the DDL (SQLite ADD COLUMN ignores UNIQUE).
+  if (existing.has('call_sign')) {
+    db.run('CREATE UNIQUE INDEX IF NOT EXISTS idx_tree_nodes_call_sign ON tree_nodes(call_sign)');
   }
 
   const opsCols = new Set(
@@ -48,6 +54,38 @@ export function migrateSchema(db: Database): void {
     );
     CREATE INDEX IF NOT EXISTS idx_positions_node ON positions(node_id);
   `);
+
+  const sbCols = new Set(
+    (db.query('PRAGMA table_info(sb_accounts)').all() as { name: string }[]).map(c => c.name)
+  );
+  if (!sbCols.has('last_scraped_at')) {
+    db.run('ALTER TABLE sb_accounts ADD COLUMN last_scraped_at TEXT');
+  }
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS book_scrape_log (
+      id TEXT PRIMARY KEY,
+      account_id TEXT NOT NULL REFERENCES sb_accounts(id),
+      agent_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      book TEXT NOT NULL,
+      reported_balance REAL NOT NULL,
+      scraped_balance REAL NOT NULL,
+      source TEXT NOT NULL DEFAULT 'cached',
+      scraped_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_book_scrape_agent ON book_scrape_log(agent_id, scraped_at);
+
+    CREATE TABLE IF NOT EXISTS cut_ledger (
+      id TEXT PRIMARY KEY,
+      play_id TEXT NOT NULL REFERENCES plays(id),
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      amount REAL NOT NULL,
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_cut_ledger_node ON cut_ledger(node_id, created_at);
+  `);
+
+  ensurePlatformCoverageSchema(db);
 }
 
 export function initSchema(db: Database): void {
@@ -201,6 +239,14 @@ export function initSchema(db: Database): void {
       sub_category TEXT,
       url TEXT,
       active INTEGER DEFAULT 1,
+      status TEXT DEFAULT 'active',
+      api_available INTEGER DEFAULT 0,
+      requires_geolocation INTEGER DEFAULT 1,
+      launch_date TEXT,
+      kyc_tier TEXT,
+      max_wager_default REAL,
+      notes TEXT,
+      updated_at TEXT,
       created_at TEXT NOT NULL
     );
 
@@ -211,6 +257,8 @@ export function initSchema(db: Database): void {
       account_identifier TEXT NOT NULL,
       balance REAL DEFAULT 0,
       status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive', 'limited', 'closed', 'pending')),
+      credentials_encrypted TEXT,
+      is_test INTEGER DEFAULT 0,
       notes TEXT,
       opened_at TEXT NOT NULL,
       last_verified_at TEXT,

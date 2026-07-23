@@ -45,6 +45,18 @@ export type ProvisionResult = {
   durationMs: number;
 };
 
+// ── Sandbox gate ───────────────────────────────────────────────────
+
+/** Automated WebView signup only on demo/test/sandbox platforms. */
+export function isSandboxPlatform(platform: {
+  url?: string | null;
+  sub_category?: string | null;
+}): boolean {
+  if (platform.sub_category?.toLowerCase() === 'sandbox') return true;
+  const url = (platform.url ?? '').toLowerCase();
+  return /demo|test|sandbox/.test(url);
+}
+
 // ── Encryption ─────────────────────────────────────────────────────
 
 function resolveKey(encryptionKey?: string): string | undefined {
@@ -61,7 +73,7 @@ async function encryptCredentials(bundle: CredentialBundle, keyMaterial: string)
 
 async function provisionSingle(
   db: Database,
-  platform: { id: string; name: string; url: string | null }, // brand-ok — platforms.id
+  platform: { id: string; name: string; url: string | null; sub_category?: string | null }, // brand-ok — platforms.id
   partnerId: string, // brand-ok — tree_nodes.id
   creds: CredentialBundle | undefined,
   keyMaterial: string | undefined,
@@ -71,9 +83,19 @@ async function provisionSingle(
 
   try {
     if (!creds) throw new Error('No credentials provided');
+    if (!isSandboxPlatform(platform)) {
+      throw new Error(
+        'Automated provisioning only allowed on sandbox/test/demo platforms (url or sub_category)'
+      );
+    }
 
     const baseUrl = platform.url?.replace(/\/+$/, '');
     if (!baseUrl) throw new Error(`Platform ${platform.name} has no URL configured`);
+    if (!baseUrl.startsWith('https://')) {
+      throw new Error(
+        `Platform ${platform.name} URL must use HTTPS (got: ${baseUrl.slice(0, 30)})`
+      );
+    }
     const signupUrl = `${baseUrl}/signup`;
 
     // Open a fresh WebView for this partner
@@ -160,8 +182,8 @@ async function provisionSingle(
       db.run(
         `INSERT INTO partner_platform_accounts
            (id, platform_id, partner_id, account_identifier, credentials_encrypted,
-            status, opened_at, created_at)
-         VALUES ($id, $pid, $aid, $user, $enc, 'active', $now, $now)`,
+            status, is_test, opened_at, created_at)
+         VALUES ($id, $pid, $aid, $user, $enc, 'active', 1, $now, $now)`,
         {
           $id: accountId,
           $pid: platform.id,
@@ -206,8 +228,13 @@ export async function provisionAccounts(input: ProvisionInput): Promise<Provisio
 
   // Resolve platform
   const platform = db
-    .query('SELECT id, name, url FROM platforms WHERE id = $id')
-    .get({ $id: input.platformId }) as { id: string; name: string; url: string | null } | null; // brand-ok — platforms.id
+    .query('SELECT id, name, url, sub_category FROM platforms WHERE id = $id')
+    .get({ $id: input.platformId }) as {
+    id: string; // brand-ok — platforms.id
+    name: string;
+    url: string | null;
+    sub_category: string | null;
+  } | null;
 
   if (!platform) {
     const err = `Platform not found: ${input.platformId}`;
@@ -215,6 +242,34 @@ export async function provisionAccounts(input: ProvisionInput): Promise<Provisio
       results.push({ partnerId: pid, username: '', success: false, error: err, durationMs: 0 });
     }
     return results;
+  }
+
+  const baseUrl = platform.url?.replace(/\/+$/, '');
+  if (!baseUrl) {
+    const err = `Platform ${platform.name} has no URL configured`;
+    for (const pid of input.partnerIds) {
+      results.push({ partnerId: pid, username: '', success: false, error: err, durationMs: 0 });
+    }
+    return results;
+  }
+
+  if (!isSandboxPlatform(platform)) {
+    const err =
+      'Automated provisioning only allowed on sandbox/test/demo platforms (url or sub_category)';
+    for (const pid of input.partnerIds) {
+      results.push({ partnerId: pid, username: '', success: false, error: err, durationMs: 0 });
+    }
+    return results;
+  }
+
+  // Ensure is_test column exists for inserts
+  const ppaCols = new Set(
+    (db.query('PRAGMA table_info(partner_platform_accounts)').all() as { name: string }[]).map(
+      c => c.name
+    )
+  );
+  if (!ppaCols.has('is_test')) {
+    db.run('ALTER TABLE partner_platform_accounts ADD COLUMN is_test INTEGER DEFAULT 0');
   }
 
   // Provision each partner independently
