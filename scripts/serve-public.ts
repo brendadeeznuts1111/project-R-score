@@ -41,11 +41,16 @@ import {
   decidePublishAuth,
 } from '../lib/registry/publish-auth.ts';
 import {
+  computeDataETag,
+  isFresh,
+  notModified,
+  respondWithSharedETag,
+} from '../lib/http/data-etag.ts';
+import {
   getRouteStats,
   preloadStaticMap,
   respondAuto,
   respondStatic,
-  respondStaticJson,
   type PreloadedStatic,
 } from '../lib/http/static-response.ts';
 
@@ -562,27 +567,41 @@ async function monitoringPage(): Promise<Response> {
   }
 }
 
-/** Health body TTL — small, frequent; static-route ETag + 304. */
+/** Health data TTL — regenerate underlying payload every 5s; ETag is data-scoped. */
 const HEALTH_TTL_MS = 5_000;
-let healthCache: { body: Record<string, unknown>; etag: string; at: number } | null = null;
+let healthDataCache: { data: Record<string, unknown>; etag: string; at: number } | null = null;
 
 function routeStatsForHealth() {
   return getRouteStats([hotByUrl, fileRouteCache]);
 }
 
-/** GET /health — uptime, runtime, route strategy stats (static JSON + ETag). */
-async function health(req: Request = new Request('http://local/health')): Promise<Response> {
+/**
+ * Fields that change every second must not enter the shared data ETag
+ * (uptime, hit counters) — otherwise JSON and /health/pre never share a 304.
+ */
+function healthETagPayload(data: Record<string, unknown>): Record<string, unknown> {
+  const { uptimeSeconds: _u, routeStats, ...rest } = data;
+  const rs = routeStats as Record<string, unknown> | undefined;
+  return {
+    ...rest,
+    routeStats: rs
+      ? {
+          staticRoutes: rs.staticRoutes,
+          fileRoutes: rs.fileRoutes,
+          totalMemoryUsed: rs.totalMemoryUsed,
+          decision: rs.decision,
+        }
+      : undefined,
+  };
+}
+
+async function collectHealthData(): Promise<{
+  data: Record<string, unknown>;
+  etag: string;
+}> {
   const now = Date.now();
-  if (healthCache && now - healthCache.at < HEALTH_TTL_MS) {
-    const asset = {
-      path: ':health',
-      bytes: new TextEncoder().encode(JSON.stringify(healthCache.body)),
-      etag: healthCache.etag,
-      contentType: 'application/json; charset=utf-8',
-      size: 0,
-    };
-    asset.size = asset.bytes.byteLength;
-    return respondStatic(asset, req, { cacheControl: 'public, max-age=5' });
+  if (healthDataCache && now - healthDataCache.at < HEALTH_TTL_MS) {
+    return { data: healthDataCache.data, etag: healthDataCache.etag };
   }
 
   const summary = Bun.file('public/registry/ops-summary.json');
@@ -620,11 +639,13 @@ async function health(req: Request = new Request('http://local/health')): Promis
         demosTotal: proof.summary?.demos,
         apisVerified: proof.summary?.apisVerified,
       };
-    } catch {}
+    } catch {
+      /* ignore */
+    }
   }
 
   const routeStats = routeStatsForHealth();
-  const body = {
+  const data: Record<string, unknown> = {
     status: 'ok',
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     bun: Bun.version,
@@ -639,46 +660,39 @@ async function health(req: Request = new Request('http://local/health')): Promis
         file: 'Bun.file stream + Last-Modified + Range (large / changing)',
         hybrid: '≤512KiB first hit → static cache; else file',
       },
+      etagScope: 'shared-data across /health and /health/pre (Vary: Accept)',
       hotPreloaded: [...hotByUrl.keys()],
     },
   };
 
-  const text = JSON.stringify(body);
-  const etag = `"${new Bun.CryptoHasher('sha256').update(text).digest('hex')}"`;
-  healthCache = { body, etag, at: now };
-  return respondStaticJson(body, req, {
-    cacheControl: 'public, max-age=5',
-    etag,
-  });
+  const etag = computeDataETag(healthETagPayload(data));
+  healthDataCache = { data, etag, at: now };
+  return { data, etag };
 }
 
-/** GET /health/pre — HTML health page with <pre> formatted diagnostics. */
-async function healthHtml(req: Request = new Request('http://local/health/pre')): Promise<Response> {
-  const healthRes = await health(req);
-  if (healthRes.status === 304) return healthRes;
-  const json = (await healthRes.json()) as Record<string, unknown>;
+function renderHealthPlain(data: Record<string, unknown>): string {
   const lines: string[] = [
     '╔══════════════════════════════════════════╗',
     '║     FactoryWager · Health Diagnostics    ║',
     '╚══════════════════════════════════════════╝',
     '',
-    `  Status:    ${json.status}`,
-    `  Uptime:    ${formatDuration(json.uptimeSeconds as number)}`,
-    `  Runtime:   Bun ${json.bun} (${json.platform})`,
+    `  Status:    ${data.status}`,
+    `  Uptime:    ${formatDuration(data.uptimeSeconds as number)}`,
+    `  Runtime:   Bun ${data.bun} (${data.platform})`,
     `  PID:       ${process.pid}`,
     `  Started:   ${new Date(startedAt).toISOString()}`,
     '',
     '── Registry ──────────────────────────────',
-    `  Packages:  ${(json.registry as Record<string, number>)?.packages ?? '?'}`,
-    `  Versions:  ${(json.registry as Record<string, number>)?.versions ?? '?'}`,
+    `  Packages:  ${(data.registry as Record<string, number>)?.packages ?? '?'}`,
+    `  Versions:  ${(data.registry as Record<string, number>)?.versions ?? '?'}`,
     '',
     '── Artifacts ─────────────────────────────',
-    `  Ops summary: ${((json.artifacts as Record<string, unknown>)?.opsSummary as Record<string, unknown>)?.exists ? '✅' : '❌'}`,
-    `  Generated:   ${((json.artifacts as Record<string, unknown>)?.opsSummary as Record<string, unknown>)?.generated ?? '—'}`,
+    `  Ops summary: ${((data.artifacts as Record<string, unknown>)?.opsSummary as Record<string, unknown>)?.exists ? 'yes' : 'no'}`,
+    `  Generated:   ${((data.artifacts as Record<string, unknown>)?.opsSummary as Record<string, unknown>)?.generated ?? '—'}`,
     '',
     '── Bun API Proof ────────────────────────',
   ];
-  const proof = (json.bunApiProof as Record<string, unknown>) || {};
+  const proof = (data.bunApiProof as Record<string, unknown>) || {};
   if (proof.available) {
     lines.push(`  Generated:   ${proof.generated}`);
     lines.push(`  Demos:       ${proof.demosPassed}/${proof.demosTotal} passed`);
@@ -686,7 +700,7 @@ async function healthHtml(req: Request = new Request('http://local/health/pre'))
   } else {
     lines.push('  Not generated — run bun run docs:api-verify --write');
   }
-  const rs = (json.routeStats as Record<string, unknown>) || {};
+  const rs = (data.routeStats as Record<string, unknown>) || {};
   lines.push(
     '',
     '── Route strategy ────────────────────────',
@@ -695,16 +709,62 @@ async function healthHtml(req: Request = new Request('http://local/health/pre'))
     `  304 responses:   ${rs.notModified304 ?? 0}`,
     `  Memory used:     ${Math.round(Number(rs.totalMemoryUsed ?? 0) / 1024)} KiB`,
     `  Rule:            ${((rs.decision as Record<string, string>) || {}).rule ?? '—'}`,
+    `  ETag:            shared data scope (JSON + plain)`,
     '',
     `  Checked at: ${new Date().toISOString()}`,
     ''
   );
+  return lines.join('\n');
+}
 
-  const text = lines.join('\n');
-  return respondStaticJson(text, req, {
-    cacheControl: 'public, max-age=5',
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-  });
+/** GET /health — JSON; ETag = data hash (shared with /health/pre). */
+async function health(req: Request = new Request('http://local/health')): Promise<Response> {
+  const { data, etag } = await collectHealthData();
+  // Refresh volatile uptime for body while keeping shared etag
+  const body = {
+    ...data,
+    uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
+  };
+  return respondWithSharedETag(
+    req,
+    healthETagPayload(data),
+    {
+      body: JSON.stringify(body),
+      contentType: 'application/json; charset=utf-8',
+    },
+    {
+      etag,
+      cacheControl: 'public, max-age=5, must-revalidate',
+      vary: 'Accept',
+      extraHeaders: { 'X-ETag-Scope': 'health-data' },
+    }
+  );
+}
+
+/** GET /health/pre — plain diagnostics; same data ETag as /health. */
+async function healthHtml(req: Request = new Request('http://local/health/pre')): Promise<Response> {
+  const { data, etag } = await collectHealthData();
+  const live = {
+    ...data,
+    uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
+  };
+  if (isFresh(req, etag)) {
+    return notModified(etag, { vary: 'Accept', cacheControl: 'public, max-age=5, must-revalidate' });
+  }
+  return respondWithSharedETag(
+    req,
+    healthETagPayload(data),
+    {
+      body: renderHealthPlain(live),
+      contentType: 'text/plain; charset=utf-8',
+    },
+    {
+      etag,
+      cacheControl: 'public, max-age=5, must-revalidate',
+      vary: 'Accept',
+      extraHeaders: { 'X-ETag-Scope': 'health-data' },
+    }
+  );
 }
 
 function formatDuration(seconds: number): string {
