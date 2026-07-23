@@ -137,10 +137,15 @@ export async function buildRegistrySnapshot(
     opts.monitoringPath ||
     Bun.env.MONITORING_SNAPSHOT_PATH ||
     'public/registry/monitoring.json';
+  // Prefer explicit opts; then env if non-loopback; else production custom domain.
+  // Loopback REGISTRY_URL (serve-public) must not be written into Pages ops-summary.
+  const envBase = (Bun.env.REGISTRY_URL || Bun.env.FACTORY_REGISTRY_URL || '').trim();
+  const isLoopback =
+    /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?\/?$/i.test(envBase) ||
+    /^https?:\/\/(127\.0\.0\.1|localhost)/i.test(envBase);
   const baseUrl =
     opts.baseUrl ||
-    Bun.env.REGISTRY_URL ||
-    Bun.env.FACTORY_REGISTRY_URL ||
+    (!isLoopback && envBase ? envBase.replace(/\/$/, '') : '') ||
     'https://score.factory-wager.com';
 
   // Ensure parent dirs
