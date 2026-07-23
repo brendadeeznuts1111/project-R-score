@@ -7,6 +7,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/bundler/hot-reloading — bun --hot (server module re-eval)
 // @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — Content-Type
+// @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — FormData upload
 /**
  * Local portal + static public/ server with live ops/catalog/registry APIs.
  *
@@ -66,6 +67,7 @@ import {
   maybeInjectLiveReloadResponse,
   shouldEnableLiveReload,
 } from '../lib/http/live-reload.ts';
+import { formString, requireFormBlob, sha256Blob, writeFormBlob } from '../lib/http/form-upload.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
 /** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
@@ -273,25 +275,28 @@ async function listVersions(name: string): Promise<Response> {
 async function publishVersion(req: Request, name: string): Promise<Response> {
   const authErr = await requirePublishAuth(req);
   if (authErr) return authErr;
+  // Bun guide: await req.formData() → get fields → Bun.write(path, blob)
   const form = await req.formData();
-  const file = form.get('file');
-  const version = form.get('version') as string;
-  const tags = ((form.get('tags') as string) || '')
+  const filePart = requireFormBlob(form, 'file');
+  if (!filePart.ok) return json({ error: filePart.error }, 400);
+  const version = formString(form, 'version');
+  if (!version) return json({ error: 'Version required' }, 400);
+  const tags = (formString(form, 'tags') || '')
     .split(',')
     .map((t: string) => t.trim())
     .filter(Boolean);
   let metadata: Record<string, unknown> = {};
   try {
-    metadata = JSON.parse((form.get('metadata') as string) || '{}');
-  } catch {}
-  if (!file || !(file instanceof File)) return json({ error: 'File required' }, 400);
-  if (!version) return json({ error: 'Version required' }, 400);
-  const buf = Buffer.from(await file.arrayBuffer());
-  const sha256 = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', buf)))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+    metadata = JSON.parse(formString(form, 'metadata') || '{}');
+  } catch {
+    /* empty metadata */
+  }
+  const { blob } = filePart;
+  const sha256 = await sha256Blob(blob);
+  const size = blob.size;
   const storageDir = `public/registry/storage/${name}/${version}`;
-  await writeBytes(`${storageDir}/artifact.tgz`, buf);
+  // Bun.write accepts Blob/File directly (no Buffer.copy)
+  await writeFormBlob(`${storageDir}/artifact.tgz`, blob);
   const raw = await Bun.file('public/registry/registry.json').text();
   const reg = JSON.parse(raw || '{"packages":{}}');
   if (!reg.packages) reg.packages = {};
@@ -311,13 +316,13 @@ async function publishVersion(req: Request, name: string): Promise<Response> {
     publisher: 'api',
     storage: {
       r2Key: `@factorywager/${name}/${version}.tgz`,
-      size: buf.length,
+      size,
       checksum: sha256,
-      contentType: file.type || 'application/gzip',
+      contentType: blob.type || 'application/gzip',
     },
   };
-  await writeBytes('public/registry/registry.json', JSON.stringify(reg, null, 2));
-  return json({ success: true, version, checksum: sha256, size: buf.length });
+  await Bun.write('public/registry/registry.json', `${JSON.stringify(reg, null, 2)}\n`);
+  return json({ success: true, version, checksum: sha256, size });
 }
 
 // ── npm-compatible publish (bun publish) ────────────────────────────

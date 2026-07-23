@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
+// @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — FormData upload
 /**
  * VM / bare-metal registry gateway.
  *
@@ -202,10 +203,13 @@ export async function publishRegistryVersion(
   }
 
   try {
+    // Guide: formdata = await req.formData(); file field is Blob (File extends Blob)
     const form = await request.formData();
     const file = form.get('file');
     const version = optionalString(form.get('version'));
-    if (!(file instanceof File)) return json({ error: 'Artifact file is required' }, 400);
+    if (file == null || typeof file === 'string' || !(file instanceof Blob)) {
+      return json({ error: 'Artifact file is required' }, 400);
+    }
     if (!version) return json({ error: 'Version is required' }, 400);
     if (file.size > maxBytes) return json({ error: 'Artifact exceeds publish size limit' }, 413);
 
