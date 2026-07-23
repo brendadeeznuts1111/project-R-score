@@ -87,7 +87,7 @@ import {
   summarizeContentTypeMatrix,
 } from '../lib/http/content-type.ts';
 import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
-import { parsePortalMdPath, PORTAL_MD_SLUG_TO_NAV } from '../lib/http/portal-nav.ts';
+import { parsePortalMdPath } from '../lib/http/portal-nav.ts';
 import { portalMarkdownRaw, renderPortalMarkdownPage } from '../lib/http/portal-markdown.ts';
 import type { BunServer } from '../lib/http/bun-server.ts';
 
@@ -975,9 +975,7 @@ async function health(
   const body = {
     ...data,
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
-    client: ip
-      ? { address: ip.address, family: ip.family, port: ip.port }
-      : null,
+    client: ip ? { address: ip.address, family: ip.family, port: ip.port } : null,
     pendingRequests: server?.pendingRequests ?? null,
   };
   return respondWithSharedETag(
@@ -1114,14 +1112,16 @@ Fetch with \`Accept: text/markdown\` for raw markdown; HTML renders otherwise.
   });
 }
 
+const PORTAL_MD_SLUGS = ['index', 'ops', 'catalog', 'dod', 'health', 'env', 'monitoring'] as const;
+
 /**
  * GET /llms-full.txt — every portal markdown endpoint inlined (llms.txt
  * convention for single-file consumption).
  */
 function llmsFullTxt(): Response {
-  const sections = (Object.keys(PORTAL_MD_SLUG_TO_NAV) as (keyof typeof PORTAL_MD_SLUG_TO_NAV)[])
-    .map(slug => `# portal/${slug}.md\n\n${portalMarkdownRaw(slug)}`)
-    .join('\n\n---\n\n');
+  const sections = PORTAL_MD_SLUGS.map(
+    slug => `# portal/${slug}.md\n\n${portalMarkdownRaw(slug)}`
+  ).join('\n\n---\n\n');
   return new Response(`# FactoryWager — full portal corpus\n\n${sections}`, {
     headers: {
       'Content-Type': 'text/markdown; charset=utf-8',
@@ -1357,6 +1357,14 @@ function buildPublicRoutes() {
       if (hot) return respondStatic(hot, req, { cacheControl: 'public, max-age=30' });
       return bunApiProof();
     },
+    '/api/defaults': async (req: Request) => {
+      const f = Bun.file('public/registry/defaults-proof.json');
+      if (await f.exists())
+        return new Response(f, {
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+        });
+      return json({ error: 'Defaults proof not generated yet — run bun run check:defaults' }, 404);
+    },
     '/api/env': () => envStatus(),
     '/api/monitoring': () => liveMonitoringApi(),
     '/api/operations/summary': () => liveOpsSummary(),
@@ -1554,11 +1562,8 @@ if (Bun.env.OPS_SNAPSHOT_CRON === '1') {
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
 // Schedule: Bun.cron("0 4 * * *", handler) — UTC, no-overlap (not title-first overload)
 if (Bun.env.BUN_DEFAULTS_CRON === '1') {
-  const {
-    registerDefaultsVerifyCron,
-    BUN_DEFAULTS_CRON_SCHEDULE,
-    BUN_DEFAULTS_PROOF_PATH,
-  } = await import('../lib/http/defaults-cron.ts');
+  const { registerDefaultsVerifyCron, BUN_DEFAULTS_CRON_SCHEDULE, BUN_DEFAULTS_PROOF_PATH } =
+    await import('../lib/http/defaults-cron.ts');
   registerDefaultsVerifyCron();
   console.log(
     `Cron:          defaults-verify @ ${BUN_DEFAULTS_CRON_SCHEDULE} UTC → ${BUN_DEFAULTS_PROOF_PATH}`
