@@ -40,11 +40,12 @@ export type AccuracySummary = {
 /** Naive predictor: covered/total among platforms launched by asOfDate (prod accounts only). */
 export function simulateCoveragePrediction(db: Database, asOfDate: string): number {
   ensurePlatformCoverageSchema(db);
+  // Compare calendar days only — ISO timestamps like opened_at must not sort after date-only $d.
   const total = db
     .query(
       `SELECT COUNT(*) AS c FROM platforms
        WHERE (status = 'active' OR (status IS NULL AND COALESCE(active, 1) = 1))
-         AND (launch_date IS NULL OR launch_date <= $d)`
+         AND (launch_date IS NULL OR date(launch_date) <= date($d))`
     )
     .get({ $d: asOfDate }) as { c: number };
   const covered = db
@@ -53,8 +54,8 @@ export function simulateCoveragePrediction(db: Database, asOfDate: string): numb
        FROM partner_platform_accounts a
        JOIN platforms p ON p.id = a.platform_id
        WHERE a.status = 'active' AND COALESCE(a.is_test, 0) = 0
-         AND (p.launch_date IS NULL OR p.launch_date <= $d)
-         AND a.opened_at <= $d`
+         AND (p.launch_date IS NULL OR date(p.launch_date) <= date($d))
+         AND date(a.opened_at) <= date($d)`
     )
     .get({ $d: asOfDate }) as { c: number };
   return total.c > 0 ? Math.round((10000 * covered.c) / total.c) / 100 : 0;
