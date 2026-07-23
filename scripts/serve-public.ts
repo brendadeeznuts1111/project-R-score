@@ -40,6 +40,12 @@ import {
   configuredPublishToken,
   decidePublishAuth,
 } from '../lib/registry/publish-auth.ts';
+import {
+  preloadStaticMap,
+  respondAuto,
+  respondStatic,
+  type PreloadedStatic,
+} from '../lib/http/static-response.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
 /** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
@@ -431,18 +437,54 @@ async function channelsEvents(req: Request): Promise<Response> {
 }
 
 // ── Static files ────────────────────────────────────────────────────
+// Hot small registry JSON → memory static-route (ETag); everything else → Bun.file
+// @see lib/http/static-response.ts
 
-async function staticFile(pathname: string): Promise<Response | null> {
+const HOT_STATIC_PATHS = [
+  'public/registry/ops-summary.json',
+  'public/registry/static.json',
+  'public/registry/monitoring.json',
+  'public/registry/registry.json',
+  'public/registry/@factorywager/bun-utils-test/latest.json',
+  'public/registry/@factorywager/routing-test/latest.json',
+  'public/registry/@factorywager/registry-snapshot/latest.json',
+  'public/registry/@factorywager/proof-packages.json',
+];
+
+const hotStatic = await preloadStaticMap(HOT_STATIC_PATHS, { optional: true });
+// Key by URL path (/registry/...)
+const hotByUrl = new Map<string, PreloadedStatic>();
+for (const [fsPath, asset] of hotStatic) {
+  hotByUrl.set('/' + fsPath.replace(/^public\//, ''), asset);
+}
+
+const fileRouteCache = new Map<string, PreloadedStatic>();
+
+async function staticFile(
+  pathname: string,
+  request: Request = new Request('http://local/')
+): Promise<Response | null> {
   let path = pathname === '/' ? '/index.html' : pathname;
   if (path.endsWith('/')) path = `${path}index.html`;
-  let file = Bun.file(`public${path}`);
-  if (!(await file.exists()) && !path.endsWith('.html') && !path.includes('.'))
-    file = Bun.file(`public${path}/index.html`);
+
+  const hot = hotByUrl.get(path);
+  if (hot) {
+    return respondStatic(hot, request, { cacheControl: 'public, max-age=30' });
+  }
+
+  let fsPath = `public${path}`;
+  let file = Bun.file(fsPath);
+  if (!(await file.exists()) && !path.endsWith('.html') && !path.includes('.')) {
+    fsPath = `public${path}/index.html`;
+    file = Bun.file(fsPath);
+    path = `${path}index.html`.replace(/\/+/g, '/');
+  }
   if (!(await file.exists())) return null;
-  const headers = new Headers();
-  if (path.endsWith('.json')) headers.set('Content-Type', 'application/json; charset=utf-8');
-  else if (path.endsWith('.svg')) headers.set('Content-Type', 'image/svg+xml');
-  return new Response(file, { headers });
+
+  return respondAuto(fsPath, request, {
+    cache: fileRouteCache,
+    cacheControl: path.startsWith('/registry/') ? 'public, max-age=60' : 'public, max-age=300',
+  });
 }
 
 // ── Server ──────────────────────────────────────────────────────────
@@ -506,7 +548,7 @@ async function monitoringPage(): Promise<Response> {
       db.close();
     }
   } catch {
-    const staticRes = await staticFile('/monitoring/');
+    const staticRes = await staticFile('/monitoring/', new Request('http://local/monitoring/'));
     if (staticRes) return staticRes;
     return new Response('Monitoring unavailable', { status: 503 });
   }
@@ -732,7 +774,7 @@ async function fetchHandler(req: Request): Promise<Response> {
     return npmPackageMetadata(req);
   }
 
-  const staticRes = await staticFile(path);
+  const staticRes = await staticFile(path, req);
   if (staticRes) return staticRes;
 
   return new Response('Not found', { status: 404 });
@@ -749,7 +791,6 @@ function buildPublicRoutes() {
   });
 
   /** Pre-buffered portal index — zero filesystem I/O on requests. */
-  const portalFile = Bun.file('public/portal/index.html');
 
   return {
     '/ready': ready,
@@ -800,9 +841,11 @@ function buildPublicRoutes() {
 
     '/monitoring': () => monitoringPage(),
 
-    // Portal — static file routes with streaming, ETag, and Range support
-    '/portal': () => new Response(portalFile),
-    '/portal/': () => new Response(portalFile),
+    // Portal — file-route with Last-Modified / Range; small HTML can cache in respondAuto
+    '/portal': (req: Request) =>
+      respondAuto('public/portal/index.html', req, { cacheControl: 'public, max-age=60' }),
+    '/portal/': (req: Request) =>
+      respondAuto('public/portal/index.html', req, { cacheControl: 'public, max-age=60' }),
   };
 }
 

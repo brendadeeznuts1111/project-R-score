@@ -16,11 +16,17 @@
  */
 
 import type { BunRequest } from 'bun';
+import {
+  guessContentType,
+  respondAuto,
+  respondFile,
+  type PreloadedStatic,
+} from '../http/static-response.ts';
+import { type ArtifactType } from './artifact';
 import { buildRegistryHealthReport, healthHttpStatus, publicRegistryHealthReport } from './health';
 import { parseRegistryObjectKey } from './http-keys';
 import { registerRegistryCrons } from './monitoring';
 import { registry, type RegistryClient } from './registry';
-import { type ArtifactType } from './artifact';
 
 const DEFAULT_MAX_PUBLISH_BYTES = 50 * 1024 * 1024;
 
@@ -39,44 +45,71 @@ function json(data: object, status = 200): Response {
   });
 }
 
+/** In-process cache for small hot registry JSON (static-route semantics). */
+const registryLocalCache = new Map<string, PreloadedStatic>();
+
 function contentTypeForKey(key: string): string {
-  if (key.endsWith('.json')) return 'application/json';
-  if (key.endsWith('.md')) return 'text/markdown; charset=utf-8';
-  return 'application/octet-stream';
+  return guessContentType(key).replace(/; charset=utf-8$/, '') || 'application/octet-stream';
 }
 
 /**
- * Prefer remote/object-store, then local `public/registry/<key>` snapshot files
- * (self-heal when R2 is empty but ops:snapshot wrote static artifacts).
+ * Prefer remote/object-store, then local `public/registry/<key>`.
+ * Local: small JSON via static-route (ETag / memory); large via Bun.file stream.
  */
-async function serveRegistryObject(client: RegistryClient, key: string): Promise<Response> {
+async function serveRegistryObject(
+  client: RegistryClient,
+  key: string,
+  request: Request = new Request('http://local/registry')
+): Promise<Response> {
   const data = await client.fetchObjectBytes(key);
   if (data) {
-    return new Response(Uint8Array.from(data).buffer, {
+    const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+    const h = new Bun.CryptoHasher('sha256');
+    h.update(bytes);
+    const etag = `"${h.digest('hex')}"`;
+    const inm = request.headers.get('If-None-Match');
+    if (inm && (inm.includes(etag) || inm === '*')) {
+      return new Response(null, {
+        status: 304,
+        headers: { ETag: etag, 'Cache-Control': 'public, max-age=60' },
+      });
+    }
+    if (request.method === 'HEAD') {
+      return new Response(null, {
+        status: 200,
+        headers: {
+          'Content-Type': contentTypeForKey(key),
+          'Content-Length': String(bytes.byteLength),
+          ETag: etag,
+          'Cache-Control': 'public, max-age=60',
+        },
+      });
+    }
+    return new Response(bytes, {
       status: 200,
       headers: {
         'Content-Type': contentTypeForKey(key),
+        ETag: etag,
         'Cache-Control': 'public, max-age=60',
       },
     });
   }
 
-  try {
-    const local = Bun.file(`public/registry/${key}`);
-    if (await local.exists()) {
-      return new Response(local, {
-        status: 200,
-        headers: {
-          'Content-Type': contentTypeForKey(key),
-          'Cache-Control': 'public, max-age=60',
-        },
-      });
-    }
-  } catch {
-    /* ignore */
+  const localPath = `public/registry/${key}`;
+  // .tgz / large artifacts: always file-route (Range, stream, 404)
+  if (key.endsWith('.tgz') || key.endsWith('.tar.gz') || key.endsWith('.wasm')) {
+    return respondFile(localPath, request, {
+      contentType: contentTypeForKey(key),
+      cacheControl: 'public, max-age=300',
+    });
   }
 
-  return json({ error: 'Not found' }, 404);
+  return respondAuto(localPath, request, {
+    contentType: guessContentType(localPath),
+    cacheControl: 'public, max-age=60',
+    cache: registryLocalCache,
+    maxStaticBytes: 512 * 1024,
+  });
 }
 
 async function tokenMatches(provided: string, expected: string): Promise<boolean> {
@@ -128,12 +161,9 @@ async function healthResponse(client: RegistryClient, method: string): Promise<R
 async function serveObjectMaybeHead(
   client: RegistryClient,
   key: string,
-  method: string
+  request: Request
 ): Promise<Response> {
-  const response = await serveRegistryObject(client, key);
-  return method === 'HEAD'
-    ? new Response(null, { status: response.status, headers: response.headers })
-    : response;
+  return serveRegistryObject(client, key, request);
 }
 
 export async function publishRegistryVersion(
@@ -250,18 +280,18 @@ export function createRegistryRoutes(
     '/api/registry/health': health,
 
     '/api/registry': {
-      GET: (req: Request) => serveObjectMaybeHead(client, 'registry.json', req.method),
-      HEAD: (req: Request) => serveObjectMaybeHead(client, 'registry.json', req.method),
+      GET: (req: Request) => serveObjectMaybeHead(client, 'registry.json', req),
+      HEAD: (req: Request) => serveObjectMaybeHead(client, 'registry.json', req),
     },
 
     // Aggregate snapshot from buildRegistrySnapshot / ops:snapshot
     '/api/registry/static': {
-      GET: (req: Request) => serveObjectMaybeHead(client, 'static.json', req.method),
-      HEAD: (req: Request) => serveObjectMaybeHead(client, 'static.json', req.method),
+      GET: (req: Request) => serveObjectMaybeHead(client, 'static.json', req),
+      HEAD: (req: Request) => serveObjectMaybeHead(client, 'static.json', req),
     },
     '/api/registry/static.json': {
-      GET: (req: Request) => serveObjectMaybeHead(client, 'static.json', req.method),
-      HEAD: (req: Request) => serveObjectMaybeHead(client, 'static.json', req.method),
+      GET: (req: Request) => serveObjectMaybeHead(client, 'static.json', req),
+      HEAD: (req: Request) => serveObjectMaybeHead(client, 'static.json', req),
     },
 
     // Unscoped / URL-encoded package name
@@ -319,7 +349,7 @@ export function createRegistryFetchHandler(
     }
 
     if (url.pathname === '/api/registry' || url.pathname === '/api/registry/') {
-      return serveObjectMaybeHead(client, 'registry.json', req.method);
+      return serveObjectMaybeHead(client, 'registry.json', req);
     }
 
     const registryPrefix = '/api/registry/';
@@ -327,7 +357,7 @@ export function createRegistryFetchHandler(
       const rawKey = url.pathname.slice(registryPrefix.length);
       const key = parseRegistryObjectKey(rawKey);
       if (!key) return json({ error: 'Invalid registry object key' }, 400);
-      return serveObjectMaybeHead(client, key, req.method);
+      return serveObjectMaybeHead(client, key, req);
     }
 
     return json({ error: 'Not found' }, 404);
