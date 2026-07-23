@@ -40,6 +40,7 @@ import {
   configuredPublishToken,
   decidePublishAuth,
 } from '../lib/registry/publish-auth.ts';
+import { envCheckForHealth } from '../lib/env-check.ts';
 import {
   computeDataETag,
   isFresh,
@@ -522,6 +523,7 @@ async function liveMonitoringApi(): Promise<Response> {
         };
       }
       data.routeStats = routeStatsForHealth();
+      data.env = envCheckForHealth();
       return json(data);
     } finally {
       db.close();
@@ -645,8 +647,9 @@ async function collectHealthData(): Promise<{
   }
 
   const routeStats = routeStatsForHealth();
+  const envCheck = envCheckForHealth();
   const data: Record<string, unknown> = {
-    status: 'ok',
+    status: envCheck.summary.requiredMissing > 0 ? 'degraded' : 'ok',
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     bun: Bun.version,
     platform: process.arch + ' ' + process.platform,
@@ -654,6 +657,7 @@ async function collectHealthData(): Promise<{
     registry: { packages: pkgCount, versions: versionCount },
     bunApiProof: proofStatus,
     routeStats,
+    env: envCheck,
     serve: {
       strategies: {
         static: 'memory + ETag + If-None-Match (hot registry JSON, health)',
@@ -711,9 +715,18 @@ function renderHealthPlain(data: Record<string, unknown>): string {
     `  Rule:            ${((rs.decision as Record<string, string>) || {}).rule ?? '—'}`,
     `  ETag:            shared data scope (JSON + plain)`,
     '',
-    `  Checked at: ${new Date().toISOString()}`,
-    ''
-  );
+  ];
+  const env = (data.env as { summary?: Record<string, number>; requiredMissingKeys?: string[] }) || {};
+  if (env.summary) {
+    lines.push(
+      '── Environment ───────────────────────────',
+      `  Checklist:    ${env.summary.ok}/${env.summary.total} ok`,
+      `  Required gaps:${env.summary.requiredMissing ?? 0}`,
+      `  Missing keys: ${(env.requiredMissingKeys || []).join(', ') || '—'}`,
+      ''
+    );
+  }
+  lines.push(`  Checked at: ${new Date().toISOString()}`, '');
   return lines.join('\n');
 }
 

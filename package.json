@@ -1814,7 +1814,10 @@
     "registry:tags:promote": "bun tools/registry-tags-cli.ts promote --all",
     "registry:tags:upgrade": "bun tools/registry-tags-cli.ts upgrade",
     "ops:snapshot:pre": "bun tools/ops-snapshot.ts --pre",
-    "ops:snapshot:post": "bun tools/ops-snapshot.ts --post"
+    "ops:snapshot:post": "bun tools/ops-snapshot.ts --post",
+    "env:check": "bun tools/env-check.ts",
+    "env:check:reasonix": "bun tools/env-check.ts --reasonix",
+    "env:check:strict": "bun tools/env-check.ts --reasonix --strict"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",

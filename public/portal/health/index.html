@@ -78,6 +78,17 @@
     .health-banner.warn .dot { background: var(--yellow, #d29922); }
     .health-banner .title { font-weight: 600; font-size: 16px; }
     .health-banner .meta { font-size: 12px; color: var(--text-dim); }
+    .env-table { width: 100%; border-collapse: collapse; font-size: 12px; background: var(--surface); }
+    .env-table th {
+      text-align: left; padding: 8px 10px; color: var(--text-dim); font-weight: 500;
+      border-bottom: 1px solid var(--border); background: var(--surface-hover, rgba(255,255,255,.03));
+    }
+    .env-table td { padding: 7px 10px; border-bottom: 1px solid rgba(48,54,61,.35); vertical-align: top; }
+    .env-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    .env-table .st-ok { color: var(--green, #3fb950); }
+    .env-table .st-bad { color: var(--red, #f85149); }
+    .env-table .st-warn { color: var(--yellow, #d29922); }
+    .env-table .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
   </style>
 </head>
 <body>
@@ -121,7 +132,26 @@
 
     <div class="health-grid" id="cards"></div>
 
-    <h2 style="font-size:14px;color:var(--text-dim);margin:8px 0">Raw payload</h2>
+    <h2 style="font-size:14px;color:var(--text-dim);margin:20px 0 8px">Environment checklist</h2>
+    <p class="sub" id="env-summary" style="font-size:12px;color:var(--text-dim);margin:0 0 10px">—</p>
+    <div style="overflow:auto;border:1px solid var(--border);border-radius:var(--radius)">
+      <table class="env-table" id="env-table">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Group</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody id="env-body">
+          <tr><td colspan="5">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 style="font-size:14px;color:var(--text-dim);margin:20px 0 8px">Raw payload</h2>
     <pre class="health-pre" id="raw">Loading…</pre>
   </main>
 
@@ -262,6 +292,48 @@
       ].join('');
 
       raw.textContent = JSON.stringify(d, null, 2);
+
+      // Env checklist table
+      const env = d.env || {};
+      const summary = env.summary || {};
+      const table = env.table || [];
+      const miss = env.requiredMissingKeys || [];
+      $('env-summary').textContent = table.length
+        ? `${summary.ok ?? '—'}/${summary.total ?? table.length} ok · missing ${summary.missing ?? 0} · required gaps ${summary.requiredMissing ?? 0}` +
+          (miss.length ? ` · need: ${miss.join(', ')}` : '') +
+          (summary.note ? ` · ${summary.note}` : '')
+        : 'Env table only on origin (bun run env:check) or /api/health after deploy';
+      const tbody = $('env-body');
+      if (!table.length) {
+        tbody.innerHTML =
+          '<tr><td colspan="5">No env checklist in payload. Run <code>bun run env:check</code> locally or open origin <code>/health</code>.</td></tr>';
+      } else {
+        tbody.innerHTML = table
+          .map((row) => {
+            const st = String(row.Status || '');
+            const cls = st.includes('✗') || st === 'missing' || st === 'placeholder'
+              ? 'st-bad'
+              : st === 'default' || st === 'edge-n/a' || st === 'binding'
+                ? 'st-warn'
+                : 'st-ok';
+            return `<tr>
+              <td class="mono">${escapeHtml(row.Key)}</td>
+              <td>${escapeHtml(row.Group)}</td>
+              <td>${escapeHtml(row.Severity)}</td>
+              <td class="${cls}">${escapeHtml(st)}</td>
+              <td>${escapeHtml(row.Detail || '')}</td>
+            </tr>`;
+          })
+          .join('');
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
 
     async function load() {

@@ -98,6 +98,31 @@ export async function onRequest(context: {
         )
       : null;
 
+  // Edge workers rarely have CF/R2 secrets in process.env — surface expected checklist.
+  const envTable = [
+    {
+      Key: 'CLOUDFLARE_API_TOKEN',
+      Group: 'cloudflare',
+      Severity: 'required',
+      Status: 'edge-n/a',
+      Detail: 'set on build host / reasonix; not in Pages Function env by default',
+    },
+    {
+      Key: 'R2 binding REGISTRY_BUCKET',
+      Group: 'r2',
+      Severity: 'required',
+      Status: 'binding',
+      Detail: 'Pages dashboard binding → factory-wager-registry',
+    },
+    {
+      Key: 'ASSETS',
+      Group: 'pages',
+      Severity: 'required',
+      Status: context.env?.ASSETS?.fetch ? 'set' : 'missing',
+      Detail: 'static file fetch for /registry/*',
+    },
+  ];
+
   const body = {
     status: 'ok',
     runtime: 'cloudflare-pages',
@@ -125,6 +150,19 @@ export async function onRequest(context: {
         }
       : null,
     bunApiProof,
+    env: {
+      summary: {
+        total: envTable.length,
+        ok: envTable.filter(r => r.Status === 'set' || r.Status === 'binding' || r.Status === 'edge-n/a')
+          .length,
+        missing: envTable.filter(r => r.Status === 'missing').length,
+        placeholder: 0,
+        requiredMissing: envTable.filter(r => r.Status === 'missing').length,
+        note: 'Full secret checklist runs on origin: bun run env:check',
+      },
+      table: envTable,
+      requiredMissingKeys: envTable.filter(r => r.Status === 'missing').map(r => r.Key),
+    },
     routeStats: ops?.routing
       ? {
           note: 'from last ops snapshot routing slice (edge has no in-process static cache)',
