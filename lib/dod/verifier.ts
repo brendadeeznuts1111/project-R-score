@@ -1,3 +1,14 @@
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.sh/docs/runtime/image — Bun.Image
 // @see https://bun.sh/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.sh/docs/runtime/sqlite — bun:sqlite
@@ -8,7 +19,101 @@
  *       resize/compress → S3 store → sign → tamper-detect → notify.
  */
 
-import { Database } from "bun:sqlite";
+import { Database } from 'bun:sqlite';
+import { averageHash, hammingDistance } from './evidence.ts';
+
+/** Magic-byte sniffing: PNG, JPEG, WebP (RIFF), GIF. */
+export function validateImage(bytes: Uint8Array): boolean {
+  if (bytes.byteLength < 12) return false;
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return true; // PNG
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return true; // JPEG
+  if (
+    bytes[0] === 0x52 &&
+    bytes[1] === 0x49 &&
+    bytes[2] === 0x46 &&
+    bytes[3] === 0x46 &&
+    bytes[8] === 0x57 &&
+    bytes[9] === 0x45 &&
+    bytes[10] === 0x42 &&
+    bytes[11] === 0x50
+  )
+    return true; // RIFF....WEBP
+  if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x38) return true; // GIF8
+  return false;
+}
+
+// ── AES-GCM at-rest encryption (PII: type 'id') ─────────────────
+async function aesKey(keyMaterial: string): Promise<CryptoKey> {
+  const digest = new Bun.CryptoHasher('sha256').update(keyMaterial).digest();
+  return crypto.subtle.importKey('raw', digest, { name: 'AES-GCM', length: 256 }, false, [
+    'encrypt',
+    'decrypt',
+  ]);
+}
+
+/** Encrypt bytes; output = 12-byte IV ‖ ciphertext. */
+export async function encryptAesGcm(data: Uint8Array, keyMaterial: string): Promise<Uint8Array> {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await aesKey(keyMaterial), data);
+  const out = new Uint8Array(12 + ct.byteLength);
+  out.set(iv, 0);
+  out.set(new Uint8Array(ct), 12);
+  return out;
+}
+
+/** Decrypt output of {@link encryptAesGcm}. */
+export async function decryptAesGcm(data: Uint8Array, keyMaterial: string): Promise<Uint8Array> {
+  const iv = data.subarray(0, 12);
+  const ct = data.subarray(12);
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, await aesKey(keyMaterial), ct);
+  return new Uint8Array(pt);
+}
+
+// ── Evidence stores ──────────────────────────────────────────────
+export type DODEvidenceStore = {
+  put(key: string, bytes: Uint8Array): Promise<void>;
+};
+
+/** Local filesystem store (default; also the test store). */
+export function localEvidenceStore(root: string): DODEvidenceStore {
+  return {
+    async put(key, bytes) {
+      await Bun.write(`${root}/${key}`, bytes);
+    },
+  };
+}
+
+/**
+ * R2/S3 store when env is present (DOD_R2_BUCKET + CLOUDFLARE_ACCOUNT_ID +
+ * R2_ACCESS_KEY_ID + R2_SECRET_ACCESS_KEY); returns null otherwise.
+ */
+export function r2EvidenceStoreFromEnv(): DODEvidenceStore | null {
+  const bucket = Bun.env.DOD_R2_BUCKET;
+  const accountId = Bun.env.CLOUDFLARE_ACCOUNT_ID;
+  const accessKeyId = Bun.env.R2_ACCESS_KEY_ID;
+  const secretAccessKey = Bun.env.R2_SECRET_ACCESS_KEY;
+  if (!bucket || !accountId || !accessKeyId || !secretAccessKey) return null;
+  const client = new Bun.S3Client({
+    bucket,
+    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    accessKeyId,
+    secretAccessKey,
+  });
+  return {
+    async put(key, bytes) {
+      await client.write(key, bytes);
+    },
+  };
+}
+
+/** First plausible dollar amount in OCR text, e.g. "$12,345.67" → 12345.67. */
+export function extractAmount(text: string | undefined): number | undefined {
+  if (!text) return undefined;
+  const m = text.match(/\$\s?([\d,]+(?:\.\d{1,2})?)/);
+  if (!m) return undefined;
+  const n = Number(m[1]!.replace(/,/g, ''));
+  return Number.isFinite(n) ? n : undefined;
+}
 
 export interface DODSubmission {
   id: string; // brand-ok — UUIDv7
@@ -36,11 +141,18 @@ export interface DODVerification {
 export class DODVerifier {
   private proofSecret: string;
   private db: Database;
+  private evidenceRoot: string;
+  private registryPath: string;
 
-  constructor(dbPath = 'data/operations.db') {
+  constructor(
+    dbPath = 'data/operations.db',
+    opts: { evidenceRoot?: string; registryPath?: string } = {}
+  ) {
     this.proofSecret = Bun.env.DOD_PROOF_SECRET || 'dod-dev-secret';
+    this.evidenceRoot = opts.evidenceRoot ?? 'public/evidence';
+    this.registryPath = opts.registryPath ?? 'public/registry/dod-registry.json';
     this.db = new Database(dbPath);
-    this.db.run("PRAGMA journal_mode=WAL");
+    this.db.run('PRAGMA journal_mode=WAL');
     this.initTable();
   }
 
@@ -72,14 +184,22 @@ export class DODVerifier {
   async process(submission: DODSubmission): Promise<DODVerification> {
     const t0 = Bun.nanoseconds();
 
+    // 0a. Validate image magic bytes before decoding.
+    if (!validateImage(submission.rawImage)) {
+      throw new Error('Invalid image format (magic bytes: expected PNG/JPEG/WebP/GIF)');
+    }
+
+    // 0b. Per-agent rate limit (default 10/hour, DOD_RATE_LIMIT_PER_HOUR override).
+    this.checkRateLimit(submission.agentId);
+
     // 1. Load image
     const img = new Bun.Image(submission.rawImage);
 
     // 2. Extract metadata
     const metadata = await img.metadata();
 
-    // 3. Perceptual hash
-    const visualHash = await this.perceptualHash(img);
+    // 3. Perceptual hash (pixel-based aHash — shared implementation with evidence.ts)
+    const visualHash = await averageHash(submission.rawImage);
 
     // 4. Apply operations watermark
     const watermarked = await this.applyWatermark(img, submission);
@@ -90,9 +210,21 @@ export class DODVerifier {
       .webp({ quality: 85 })
       .bytes();
 
-    // 5. S3 path + write
-    const s3Path = `dod/${submission.agentId}/${submission.type}/${submission.id}.webp`;
-    await Bun.write(`public/evidence/${s3Path}`, stored);
+    // 5. Randomized storage path (no agentId in URL; deterministic per id+secret)
+    const prefix = Bun.hash
+      .crc32(submission.id + this.proofSecret)
+      .toString(36)
+      .slice(0, 8);
+
+    // 5b. PII: encrypt 'id' documents at rest (AES-GCM, key from DOD_ID_ENCRYPTION_KEY)
+    let storeBytes: Uint8Array = stored;
+    let encrypted = false;
+    if (submission.type === 'id' && this.idEncryptionKey) {
+      storeBytes = await encryptAesGcm(stored, this.idEncryptionKey);
+      encrypted = true;
+    }
+    const s3Path = `dod/${prefix}/${submission.id}.webp${encrypted ? '.enc' : ''}`;
+    await this.store.put(s3Path, storeBytes);
 
     // 6. Metadata hash
     const metaHash = this.hashMetadata(metadata, submission);
@@ -103,13 +235,23 @@ export class DODVerifier {
     // 8. Tamper detection
     const tamperScore = this.detectTampering(metadata, submission);
 
+    // 8b. OCR for document types (degrades to '' on CDN/WebView failure)
+    const extractedText =
+      submission.type === 'slip' || submission.type === 'receipt' || submission.type === 'balance'
+        ? await this.extractText(img)
+        : undefined;
+
+    // 8c. Auto-approve low-risk submissions (manual review only for the rest)
+    const autoApproved = this.autoApprove(submission, tamperScore, extractedText);
+
     const verification: DODVerification = {
       dodId: submission.id,
-      status: tamperScore > 70 ? 'flagged' : 'pending',
+      status: autoApproved ? 'verified' : tamperScore > 70 ? 'flagged' : 'pending',
       visualHash,
       metadataHash: metaHash,
       signature,
       tamperScore,
+      extractedText,
       geoLocation: metadata.gps,
       deviceModel: metadata.exif?.Device?.Model,
       s3Path,
@@ -117,26 +259,30 @@ export class DODVerifier {
     };
 
     // 9. Persist
-    this.db.run(`
+    this.db.run(
+      `
       INSERT INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
-        geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at)
-      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $lat, $lng, $dev, $s3, $sub, $proc)
-    `, {
-      $id: submission.id,
-      $aid: submission.agentId,
-      $type: submission.type,
-      $status: verification.status,
-      $vh: visualHash,
-      $mh: metaHash,
-      $sig: signature,
-      $ts: tamperScore,
-      $lat: verification.geoLocation?.lat ?? null,
-      $lng: verification.geoLocation?.lng ?? null,
-      $dev: verification.deviceModel ?? null,
-      $s3: s3Path,
-      $sub: submission.submittedAt,
-      $proc: verification.processedAt,
-    });
+        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at)
+      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc)
+    `,
+      {
+        $id: submission.id,
+        $aid: submission.agentId,
+        $type: submission.type,
+        $status: verification.status,
+        $vh: visualHash,
+        $mh: metaHash,
+        $sig: signature,
+        $ts: tamperScore,
+        $text: extractedText ?? null,
+        $lat: verification.geoLocation?.lat ?? null,
+        $lng: verification.geoLocation?.lng ?? null,
+        $dev: verification.deviceModel ?? null,
+        $s3: s3Path,
+        $sub: submission.submittedAt,
+        $proc: verification.processedAt,
+      }
+    );
 
     // 10. Notify ops if flagged
     if (verification.status === 'flagged') {
@@ -149,16 +295,18 @@ export class DODVerifier {
     return verification;
   }
 
-  // ── Perceptual Hash (aHash) ──────────────────────────────────────
-  private async perceptualHash(img: Bun.Image): Promise<string> {
-    const tiny = img.resize(8, 8, { fit: 'fill', filter: 'nearest' });
-    const bytes = await tiny.bytes();
-    const avg = bytes.reduce((a, b) => a + b, 0) / bytes.length;
-    let hash = 0n;
-    for (let i = 0; i < bytes.length; i++) {
-      if (bytes[i] > avg) hash |= 1n << BigInt(i);
+  // ── Rate Limit ─────────────────────────────────────────────────
+  private checkRateLimit(agentId: string): void {
+    // brand-ok — external agent key, not domain AgentId
+    const maxPerHour = Number(Bun.env.DOD_RATE_LIMIT_PER_HOUR ?? 10);
+    const row = this.db
+      .query(
+        "SELECT COUNT(*) as c FROM dod_submissions WHERE agent_id = $id AND submitted_at > datetime('now', '-1 hour')"
+      )
+      .get({ $id: agentId }) as { c: number };
+    if (row.c >= maxPerHour) {
+      throw new Error(`Rate limited: ${row.c}/${maxPerHour} DODs in the last hour — retry later`);
     }
-    return hash.toString(16).padStart(16, '0');
   }
 
   // ── Watermark via WebView ──────────────────────────────────────
@@ -167,7 +315,8 @@ export class DODVerifier {
       const text = `OPS-${sub.agentId.slice(0, 8)}-${sub.id.slice(0, 8)}`;
       const meta = await img.metadata();
       const wv = new Bun.WebView({
-        width: meta.width || 400, height: (meta.height || 300) + 24,
+        width: meta.width || 400,
+        height: (meta.height || 300) + 24,
         html: `<style>body{margin:0;background:#000}img{width:100%;object-fit:contain}.wm{position:absolute;bottom:4px;right:8px;background:rgba(0,0,0,0.7);color:#fff;font:11px monospace;padding:2px 6px;border-radius:3px}</style><img src="data:image/webp;base64,${Buffer.from(await img.webp({ quality: 90 }).bytes()).toString('base64')}"/><div class="wm">${text}</div>`,
         headless: true,
       });
@@ -185,7 +334,8 @@ export class DODVerifier {
     try {
       const encoded = Buffer.from(await img.webp({ quality: 80 }).bytes()).toString('base64');
       const wv = new Bun.WebView({
-        width: 800, height: 600,
+        width: 800,
+        height: 600,
         html: `<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script><img id="t"/><script>document.getElementById('t').src='data:image/webp;base64,${encoded}';Tesseract.recognize(document.getElementById('t')).then(r=>window.r=r.data.text);</script>`,
         headless: true,
       });
@@ -201,11 +351,18 @@ export class DODVerifier {
   // ── Metadata Hash ────────────────────────────────────────────────
   private hashMetadata(metadata: any, sub: DODSubmission): string {
     const h = new Bun.CryptoHasher('sha256');
-    h.update(JSON.stringify({
-      w: metadata.width, h: metadata.height, fmt: metadata.format,
-      created: metadata.exif?.DateTimeOriginal, gps: metadata.gps,
-      agentId: sub.agentId, type: sub.type, at: sub.submittedAt,
-    }));
+    h.update(
+      JSON.stringify({
+        w: metadata.width,
+        h: metadata.height,
+        fmt: metadata.format,
+        created: metadata.exif?.DateTimeOriginal,
+        gps: metadata.gps,
+        agentId: sub.agentId,
+        type: sub.type,
+        at: sub.submittedAt,
+      })
+    );
     return h.digest('hex');
   }
 
@@ -234,16 +391,20 @@ export class DODVerifier {
   }
 
   // ── Snapshot Registry ────────────────────────────────────────────
-  private async recordSnapshot(
-    sub: DODSubmission, ver: DODVerification, processingNs: bigint,
-  ) {
-    const path = 'public/registry/dod-registry.json';
-    const reg = await Bun.file(path).json().catch(() => ({ entries: [] }));
+  private async recordSnapshot(sub: DODSubmission, ver: DODVerification, processingNs: bigint) {
+    const path = this.registryPath;
+    const reg = await Bun.file(path)
+      .json()
+      .catch(() => ({ entries: [] }));
     reg.entries = (reg.entries || []).slice(-999);
     reg.entries.push({
-      id: sub.id, agentId: sub.agentId, type: sub.type,
-      status: ver.status, tamperScore: ver.tamperScore,
-      submittedAt: sub.submittedAt, processedAt: ver.processedAt,
+      id: sub.id,
+      agentId: sub.agentId,
+      type: sub.type,
+      status: ver.status,
+      tamperScore: ver.tamperScore,
+      submittedAt: sub.submittedAt,
+      processedAt: ver.processedAt,
       processingMs: Number(processingNs) / 1e6,
     });
     await Bun.write(path, JSON.stringify(reg, null, 2));
@@ -276,29 +437,30 @@ export class DODVerifier {
   approve(dodId: string, reviewedBy = 'operations') {
     this.db.run(
       "UPDATE dod_submissions SET status='verified', reviewed_at=datetime('now'), reviewed_by=$by WHERE id=$id",
-      { $id: dodId, $by: reviewedBy },
+      { $id: dodId, $by: reviewedBy }
     );
   }
 
   reject(dodId: string, reason: string, reviewedBy = 'operations') {
     this.db.run(
       "UPDATE dod_submissions SET status='rejected', reviewed_at=datetime('now'), reviewed_by=$by, rejection_reason=$r WHERE id=$id",
-      { $id: dodId, $by: reviewedBy, $r: reason },
+      { $id: dodId, $by: reviewedBy, $r: reason }
     );
   }
 
   list(status?: string) {
-    const sql = status && status !== 'all'
-      ? "SELECT * FROM dod_submissions WHERE status=$s ORDER BY submitted_at DESC LIMIT 50"
-      : "SELECT * FROM dod_submissions ORDER BY submitted_at DESC LIMIT 50";
+    const sql =
+      status && status !== 'all'
+        ? 'SELECT * FROM dod_submissions WHERE status=$s ORDER BY submitted_at DESC LIMIT 50'
+        : 'SELECT * FROM dod_submissions ORDER BY submitted_at DESC LIMIT 50';
     return this.db.query(sql).all(status ? { $s: status } : {});
   }
 
   /** Find submissions with similar perceptual hashes (Hamming distance). */
   findSimilar(hash: string, maxDistance = 5): { id: string; agent_id: string; distance: number }[] {
-    const all = this.db.query(
-      "SELECT id, agent_id, visual_hash FROM dod_submissions WHERE visual_hash IS NOT NULL",
-    ).all() as { id: string; agent_id: string; visual_hash: string }[];
+    const all = this.db
+      .query('SELECT id, agent_id, visual_hash FROM dod_submissions WHERE visual_hash IS NOT NULL')
+      .all() as { id: string; agent_id: string; visual_hash: string }[]; // brand-ok x2 — opaque DB row, not domain types
 
     return all
       .map(row => ({
@@ -314,18 +476,8 @@ export class DODVerifier {
   cleanupPending(maxAgeDays = 7): number {
     const result = this.db.run(
       "DELETE FROM dod_submissions WHERE status='pending' AND submitted_at < datetime('now', ? || ' days')",
-      [String(-maxAgeDays)],
+      [String(-maxAgeDays)]
     );
     return result.changes;
   }
-}
-
-function hammingDistance(a: string, b: string): number {
-  if (a.length !== b.length) return Infinity;
-  let dist = 0;
-  for (let i = 0; i < a.length; i++) {
-    const xor = parseInt(a[i]!, 16) ^ parseInt(b[i]!, 16);
-    dist += [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4][xor]!;
-  }
-  return dist;
 }

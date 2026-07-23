@@ -1,0 +1,50 @@
+# DOD — Daily Operations Document (Visual Evidence)
+
+Agent-submitted image proof pipeline. Agents upload photos (balance, slip, receipt, location, device, other) which are verified, watermarked, stored, and reviewed.
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `evidence.ts` | Evidence package: pack/unpack/verify, average hash, HMAC signing, registry |
+| `verifier.ts` | Processing pipeline: `DODVerifier` class with image validation, rate limiting, watermark, OCR, tamper detection, SQLite persistence |
+
+## DOD Types
+
+`balance` · `slip` · `receipt` · `location` · `device` · `other`
+
+## Flow
+
+1. Agent submits image → `DODVerifier.process()`
+2. Image validated (magic bytes), rate limit checked
+3. Bun.Image loaded → metadata extracted → perceptual hash (aHash)
+4. Ops watermark applied via Bun.WebView
+5. Resized/compressed (1024px WebP 85%) → stored at randomized path
+6. Metadata hash + HMAC-SHA256 signature
+7. Tamper detection scored (0–100)
+8. OCR extracted for slip/receipt types
+9. Persisted to SQLite (`dod_submissions`)
+10. Ops notified via Telegram if flagged (score > 70)
+
+## Usage
+
+```ts
+import { DODVerifier } from "../lib/dod/verifier.ts";
+
+const verifier = new DODVerifier("data/ops.db");
+const result = await verifier.process({
+  id: "evt_abc123",
+  agentId: "agent_xyz",
+  type: "balance",
+  rawImage: await Bun.file("photo.webp").bytes(),
+  submittedAt: new Date().toISOString(),
+});
+```
+
+## Related
+
+- [`tests/dod-verifier.test.ts`](../../tests/dod-verifier.test.ts) — verifier pipeline tests
+- [`tests/dod-evidence.test.ts`](../../tests/dod-evidence.test.ts) — evidence package tests
+- [`tools/dod-evidence.ts`](../../tools/dod-evidence.ts) — CLI for packing/verifying evidence
+- [`public/portal/dod/index.html`](../../public/portal/dod/index.html) — admin review UI
+- [`functions/api/dod/index.ts`](../../functions/api/dod/index.ts) — review API
