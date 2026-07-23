@@ -47,3 +47,51 @@ export {
   type SettlePlayResult,
   type PlayResult,
 } from './play-settlement.ts';
+export {
+  PLAY_GUARDRAILS,
+  validatePlay,
+  maxStakeForEdge,
+  type PlayValidation,
+} from './play-validation.ts';
+export {
+  FRAUD_GUARDRAILS,
+  detectFraudSignals,
+} from './fraud-guard.ts';
+export {
+  publishAndDispatch,
+  flushOutbox,
+  validatePlayFull,
+  type PublishDispatchOpts,
+  type PublishDispatchResult,
+  type FlushOutboxOpts,
+} from './play-dispatcher.ts';
+export {
+  fundViaRail,
+  applyDynamicRailLimits,
+  calculateRailLimit,
+  type FundResult,
+  type FundInput,
+} from './rail-limits.ts';
+export {
+  runReconciliation,
+  reconcileRailsVsDeposits,
+  reconcileAllPositions,
+  type ReconciliationReport,
+  type ReconcileMismatch,
+} from './reconciliation.ts';
+export {
+  applyOpsSyncEvent,
+  getSyncCursor,
+  setSyncCursor,
+  processOpsSyncQueue,
+  type OpsSyncEvent,
+} from './ops-sync.ts';
+export {
+  loadActiveSbAccounts,
+  scrapeBookBalance,
+  applyBookScrapes,
+  runBookReconciliation,
+  type SbAccountRow,
+  type BookScrapeResult,
+} from './book-reconcile.ts';
+export { exportPostgresDdl, probePostgresOps } from './postgres-bridge.ts';
