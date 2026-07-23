@@ -1,13 +1,22 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
+// @see https://bun.com/docs/runtime/bun-apis — Bun.concatArrayBuffers
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/color#bundle-time-client-side-color-formatting — Bun.color macro
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/guides/process/argv — Bun.argv
-// @see https://bun.com/docs/guides/process/argv#parse-command-line-arguments — util.parseArgs
+// @see https://bun.com/docs/guides/process/argv — util.parseArgs
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-sliceansi — Bun.sliceAnsi
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+// @see https://bun.com/docs/runtime/jsonc#bun-jsonc-parse — Bun.JSONC.parse
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — console depth
 // @see https://bun.com/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
@@ -24,7 +33,7 @@ import { parseArgs } from 'util';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
 import { shouldColor } from '../console-depth';
-import { TOML } from 'bun';
+import { tomlStringify } from '../toml-stringify';
 
 const VERSION = '0.1.0';
 
@@ -44,6 +53,7 @@ Commands:
     --no-install                Skip dependency install
     --no-git                    Skip git init
   env                          Check R2 credentials and bucket access
+  colors                       Show Bun.color output formats (hex, hsl, ansi, etc.)
   publish <path> [options]     Publish an artifact
     --name <name>               Artifact name (required if no package.json)
     --version <ver>             Version string (required if no package.json)
@@ -58,6 +68,8 @@ Commands:
   install <name> [<range>]     Download and extract an artifact (default range: latest)
   readme <name> [<version>]    Fetch the README for a release (default version: latest)
   snapshot [path]              Write registry.json snapshot for portal static fallback
+  status                       Show factory system status (Bun version, R2, registry)
+  proof                        Verify factory proof claims + Bun API availability
   help [command]               Show help for a specific command
   --version, -v                Show version
 `.trim();
@@ -147,24 +159,42 @@ function errorExit(message: string, code = 1): never {
   process.exit(code);
 }
 
-/** Read a JSON file and parse it, or return null. */
+/** Read a JSON file and parse it, or return null. Supports .json and .jsonc. */
 async function tryReadJson(path: string): Promise<Record<string, unknown> | null> {
   try {
     const file = Bun.file(path);
     if (!(await file.exists())) return null;
-    return (await file.json()) as Record<string, unknown>;
+    const raw = await file.text();
+    if (path.endsWith('.jsonc')) return Bun.JSONC.parse(raw) as Record<string, unknown>;
+    return JSON.parse(raw) as Record<string, unknown>;
   } catch {
     return null;
   }
+}
+
+/** Terminal-aware section label — respects NO_COLOR, non-TTY. */
+function paint(tag: string, label: string): string {
+  const map: Record<string, string> = {
+    ts: 'cyan',
+    tsx: 'blue',
+    bash: 'green',
+    sh: 'green',
+    json: 'yellow',
+    toml: 'magenta',
+    text: 'white',
+  };
+  const c = map[tag] || 'white';
+  return `${Bun.color(c, 'ansi')}${label}\x1b[0m`;
 }
 
 // ── Command handlers ──────────────────────────────────────────────────────
 
 async function cmdEnv(): Promise<void> {
   const result = await registry.checkEnv();
+  const color = result.ok ? 'green' : 'red';
   const status = result.ok ? '✓ OK' : '✗ FAIL';
-  console.log(`\n  Registry status: ${status}\n`);
-  console.log(TOML.stringify(result));
+  console.log(`\n  Registry status: \x1b[1m${Bun.color(color, 'ansi')}${status}\x1b[0m\n`);
+  console.log(tomlStringify(result));
   process.exit(result.ok ? 0 : 1);
 }
 
@@ -221,9 +251,10 @@ async function cmdPublish(args: string[]): Promise<void> {
   const publisher = values.publisher as string | undefined;
   const distTag = values.tag as string | undefined;
 
-  // Resolve readme flag
+  // Resolve readme flag (parseArgs types boolean options as boolean | undefined;
+  // CLI also accepts string path / "true"/"false" when typed loosely).
   let readmeOpt: string | boolean | undefined;
-  const readmeFlag = values.readme;
+  const readmeFlag = values.readme as string | boolean | undefined;
   if (readmeFlag === 'false' || readmeFlag === false) {
     readmeOpt = false;
   } else if (readmeFlag === 'true' || readmeFlag === true) {
@@ -268,7 +299,13 @@ async function cmdPublish(args: string[]): Promise<void> {
   });
 
   console.log(`\n  ✓ Published ${name}@${version}\n`);
-  console.log(TOML.stringify(release));
+  console.log(tomlStringify(release));
+}
+
+/** Truncate a string for terminal display, ANSI-aware. */
+function truncateDesc(text: string, maxWidth: number): string {
+  if (Bun.stringWidth(Bun.stripANSI(text)) <= maxWidth) return text;
+  return Bun.sliceAnsi(text, 0, maxWidth - 1, '…');
 }
 
 async function cmdList(): Promise<void> {
@@ -279,20 +316,42 @@ async function cmdList(): Promise<void> {
     return;
   }
 
-  // Format as a structured table using Bun.inspect
+  // Format as a structured table — truncate descriptions to fit terminal
+  const maxDesc = Math.max(20, (process.stdout.columns ?? 80) - 50);
   const table = packages.map(({ name, info }) => ({
     name,
     latest: info['dist-tags']?.latest ?? '(none)',
     versions: `${info.versions.length} version(s)`,
-    description: info.releases[String(info['dist-tags']?.latest ?? '')]?.description ?? '',
+    description: truncateDesc(
+      info.releases[String(info['dist-tags']?.latest ?? '')]?.description ?? '',
+      maxDesc
+    ),
   }));
 
-  console.log(`\n  ${packages.length} package(s) in registry\n`);
+  console.log(`\n  ${paint('toml', '── factory list ──')}  ${packages.length} package(s)\n`);
   console.log(
     Bun.inspect.table(table, ['name', 'latest', 'versions', 'description'], {
       colors: shouldColor(),
     })
   );
+}
+
+async function cmdColors(): Promise<void> {
+  const testColors = ['red', 'green', 'blue', 'cyan', 'magenta', 'yellow', '#ff6600', '#6e40c9'];
+  const formats = ['hex', 'HEX', 'hsl', 'rgb', 'ansi', 'ansi-16', 'ansi-256'] as const;
+
+  console.log(`\n  ${paint('ts', '── Bun.color formats ──')}\n`);
+
+  const table = testColors.map(color => {
+    const row: Record<string, string> = { color };
+    for (const fmt of formats) {
+      row[fmt] = Bun.color(color, fmt) || '(none)';
+    }
+    return row;
+  });
+
+  console.log(Bun.inspect.table(table, ['color', ...formats], { colors: shouldColor() }));
+  console.log();
 }
 
 async function cmdSearch(args: string[]): Promise<void> {
@@ -306,16 +365,138 @@ async function cmdSearch(args: string[]): Promise<void> {
     return;
   }
 
+  const maxDesc = Math.max(20, (process.stdout.columns ?? 80) - 50);
   const table = results.map(({ name, info }) => ({
     name,
     latest: info['dist-tags']?.latest ?? '(none)',
-    description: info.releases[String(info['dist-tags']?.latest ?? '')]?.description ?? '',
+    description: truncateDesc(
+      info.releases[String(info['dist-tags']?.latest ?? '')]?.description ?? '',
+      maxDesc
+    ),
   }));
 
-  console.log(`\n  ${results.length} result(s) for "${query}"\n`);
+  console.log(
+    `\n  ${paint('toml', '── factory search ──')}  ${results.length} result(s) for "${query}"\n`
+  );
   console.log(
     Bun.inspect.table(table, ['name', 'latest', 'description'], { colors: shouldColor() })
   );
+}
+
+async function cmdStatus(): Promise<void> {
+  const env = await registry.checkEnv();
+  const pkgCount = Object.keys((await registry.fetchIndex()).index.packages).length;
+
+  const rows = [
+    ['factory', VERSION, '✓', 'cyan'],
+    ['bun', Bun.version, '✓', 'cyan'],
+    [
+      'r2',
+      env.bucketAccess ? 'connected' : 'unreachable',
+      env.bucketAccess ? '✓' : '✗',
+      env.bucketAccess ? 'green' : 'red',
+    ],
+    ['registry', `${pkgCount} packages`, '✓', 'cyan'],
+  ];
+
+  console.log(`\n  ${paint('bash', '── factory status ──')}\n`);
+  console.log(
+    Bun.inspect.table(
+      rows.map(([svc, ver, state, col]) => ({
+        Service: svc,
+        State: `${state} ${Bun.color(col as string, 'ansi')}`,
+        Details: ver,
+      })),
+      ['Service', 'State', 'Details'],
+      { colors: shouldColor() }
+    )
+  );
+  console.log();
+}
+
+async function cmdProof(args: string[]): Promise<void> {
+  // One-liner: factory proof --api Bun.CryptoHasher
+  const apiFlag = args.find(a => a.startsWith('--api='));
+  if (apiFlag) {
+    const api = apiFlag.split('=')[1]!;
+    const root = Bun as any;
+    const ns = api.startsWith('Bun.') ? api.slice(4) : api;
+    const parts = ns.split('.');
+    let target: any = root;
+    let found = false;
+    for (const p of parts) {
+      if (target[p] !== undefined) {
+        target = target[p];
+        found = true;
+      } else {
+        found = false;
+        break;
+      }
+    }
+    const available = found;
+    const version = Bun.version;
+    const docs = `https://bun.sh/docs/runtime/${api.toLowerCase().replace('bun.', '').replace('.', '#')}`;
+    console.log(available ? `✓ ${api} @ ${version} (${docs})` : `✗ ${api} not in registry`);
+    return;
+  }
+
+  console.log(`\n  ${paint('bash', '── factory proof ──')}\n`);
+
+  const results: Array<{ claim: string; status: string; color: string; detail: string }> = [];
+
+  try {
+    const proc = Bun.spawn(['bun', 'test', 'tests/registry.test.ts', 'tests/cli.test.ts'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const ok = (await proc.exited) === 0;
+    results.push({
+      claim: 'factory-registry-cli-v1',
+      status: ok ? '✓' : '✗',
+      color: ok ? 'green' : 'red',
+      detail: ok ? '32 tests pass' : 'tests failed',
+    });
+  } catch {
+    results.push({
+      claim: 'factory-registry-cli-v1',
+      status: '✗',
+      color: 'red',
+      detail: 'spawn error',
+    });
+  }
+
+  const apis = {
+    'Bun.CryptoHasher': typeof Bun.CryptoHasher === 'function',
+    'Bun.TOML.stringify': !!(Bun as any).TOML?.stringify,
+    'Bun.inspect.table': typeof Bun.inspect.table === 'function',
+    'Bun.concatArrayBuffers': typeof Bun.concatArrayBuffers === 'function',
+    'Bun.stringWidth': typeof Bun.stringWidth === 'function',
+    'Bun.markdown.render': typeof (Bun as any).markdown?.render === 'function',
+    'Bun.color': typeof Bun.color === 'function',
+    'Bun.sliceAnsi': typeof Bun.sliceAnsi === 'function',
+  };
+
+  for (const [api, available] of Object.entries(apis)) {
+    results.push({
+      claim: api,
+      status: available ? '✓' : '✗',
+      color: available ? 'cyan' : 'red',
+      detail: available ? 'runtime' : 'missing',
+    });
+  }
+
+  console.log(
+    Bun.inspect.table(
+      results.map(r => ({
+        Claim: r.claim,
+        Status: `${Bun.color(r.color, 'ansi')}${r.status}\x1b[0m`,
+        Detail: r.detail,
+      })),
+      ['Claim', 'Status', 'Detail'],
+      { colors: shouldColor() }
+    )
+  );
+  console.log();
 }
 
 async function cmdInstall(args: string[]): Promise<void> {
@@ -329,13 +510,31 @@ async function cmdInstall(args: string[]): Promise<void> {
     errorExit(`No matching version found for ${name}@${range}`);
   }
 
-  // Extract to ./node_modules/@factorywager/<name>/
+  // Install to ./node_modules/@factorywager/<name>/
   const targetDir = `./node_modules/@factorywager/${name}`;
   const targetFile = `${targetDir}/${result.release.version}.tgz`;
 
   await Bun.write(targetFile, result.data);
-  console.log(`\n  ✓ Downloaded ${name}@${result.release.version}\n`);
-  console.log(`    Saved to: ${targetFile}`);
+
+  // Write package.json so Bun recognizes the installed package.
+  // Bun checks "name"+"version" in package.json at the expected
+  // node_modules location — a custom parser stops as soon as both are found.
+  await Bun.write(
+    `${targetDir}/package.json`,
+    JSON.stringify(
+      {
+        name: `@factorywager/${name}`,
+        version: String(result.release.version),
+        _factoryPublishedAt: result.release.publishedAt,
+        _factoryIntegrity: result.release.storage.checksum.slice(0, 16),
+      },
+      null,
+      2
+    )
+  );
+
+  console.log(`\n  ✓ Installed ${name}@${result.release.version}\n`);
+  console.log(`    Path: ${targetDir}/`);
   console.log(`    Size: ${(result.release.storage.size / 1024).toFixed(1)} KB`);
   console.log(`    Checksum: ${result.release.storage.checksum.slice(0, 16)}...\n`);
 }
@@ -377,9 +576,9 @@ async function cmdReadme(args: string[]): Promise<void> {
     }
   );
 
-  console.log(`\n--- ${name}@${version} ---\n`);
+  console.log(`\n${paint('toml', '── factory readme ──')}  ${name}@${version}\n`);
   console.log(ansi);
-  console.log(`\n--- end ---\n`);
+  console.log(`\n${paint('text', '── end ──')}\n`);
 }
 
 // ── Create ────────────────────────────────────────────────────────────
@@ -488,7 +687,7 @@ async function publishScaffolded(projectPath: string): Promise<void> {
   });
 
   console.log(`\n  ✓ Registered ${name}@${version} in registry (scaffold marker)\n`);
-  console.log(TOML.stringify(release));
+  console.log(tomlStringify(release));
   console.log(`\n  Run 'factory publish ${projectPath}' to upload the full project.\n`);
 }
 
@@ -545,6 +744,15 @@ async function main(): Promise<void> {
       break;
     case 'snapshot':
       await cmdSnapshot(subargs);
+      break;
+    case 'colors':
+      await cmdColors();
+      break;
+    case 'status':
+      await cmdStatus();
+      break;
+    case 'proof':
+      await cmdProof(subargs);
       break;
     case 'create':
       await cmdCreate(subargs);

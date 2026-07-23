@@ -432,6 +432,23 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/docs/fetch-page.ts',
   },
   {
+    id: 'blog-codeblocks-boundaries',
+    claim:
+      'Blog div.CodeBlock extraction: Shiki strip, CodeBlockTab skip, bunBlog URL round-trip, token join fixture',
+    kinds: ['boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun test tests/bun-blog-codeblocks.test.ts',
+      'bun test tests/blog-codeblock-join.test.ts',
+      'tools/bun-blog-codeblocks.ts',
+      'lib/docs/blog-codeblock-join.ts',
+    ],
+    freshRerun: 'bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'tools/bun-blog-codeblocks.ts',
+  },
+  {
     id: 'blog-extraction-journey',
     claim:
       'CANONICAL_SOURCES.blog → URLPattern → dns.prefetch → fetchPage → SocialMetadata (+ streamed article)',
@@ -445,6 +462,21 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun test tests/journey/blog-extraction.test.ts',
     freshRerunKind: 'claim',
     owner: 'tests/journey/blog-extraction.test.ts',
+  },
+  {
+    id: 'blog-codeblocks-journey',
+    claim:
+      'CANONICAL_SOURCES.blog → fetchPostHtml → extractCodeBlocks on live bun-v1.3.6 (≥30 CodeBlock regions)',
+    kinds: ['journey'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/journey/blog-codeblocks-journey.test.ts',
+      'tests/journey/blog-codeblocks-journey.test.ts',
+    ],
+    freshRerun: 'bun test tests/journey/blog-codeblocks-journey.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'tests/journey/blog-codeblocks-journey.test.ts',
   },
   {
     id: 'bun-http-server-docs',
@@ -516,7 +548,16 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     kinds: ['journey'],
     gateClass: 'workflow',
     gateRef: 'typescript-checks.yml',
-    evidence: ['bun run type-check', 'tsconfig.check.json'],
+    evidence: [
+      'bun run type-check',
+      'tsconfig.check.json',
+      'tsconfig.bun.json',
+      'bun run check:tsconfig-types',
+      'bun run type-check:tools',
+      'tools/tsconfig.json globs *.ts · cli/*.ts · benchmarks/*.ts',
+      'bun run type-check:sto',
+      'tsconfig.check.json includes factory/mcp/ai/r2/theme/package/rss/shared/performance',
+    ],
     freshRerun: 'bun run type-check',
     freshRerunKind: 'claim',
     owner: 'platform / harness',

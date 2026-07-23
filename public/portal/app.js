@@ -105,6 +105,13 @@ function updateStats(packages) {
   $('stat-versions').innerHTML = `${allVersions} <span>versions</span>`;
   $('stat-types').innerHTML = `${types.size} <span>types</span>`;
   $('stat-health').innerHTML = `${avgHealth}/100 <span>avg health</span>`;
+
+  // Banner
+  const updated = registryIndex.lastUpdated ? new Date(registryIndex.lastUpdated) : null;
+  const label = updated
+    ? `Registry updated ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
+    : 'Registry snapshot';
+  $('banner-text').textContent = label;
 }
 
 // ── Search & filter UI ─────────────────────────────────────────────────
@@ -176,7 +183,8 @@ function setHealth(klass, label) {
 function updateHealth(healthy) {
   if (healthy) {
     healthFailures = 0;
-    setHealth('ok', 'Live');
+    lastHealthState = 'ok';
+    setHealth('ok', `Live · ${new Date().toLocaleTimeString()}`);
   } else {
     healthFailures++;
     if (healthFailures >= HEALTH_FAIL_THRESHOLD) {

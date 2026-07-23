@@ -98,6 +98,22 @@ body {
 
 .health-label { color: var(--text-dim); }
 
+.proof-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(63, 185, 80, 0.15);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 8px;
+  cursor: help;
+}
+.proof-badge.hidden { display: none; }
+
 /* ── Main ──────────────────────────────────────────────────────────── */
 
 .main {
@@ -201,6 +217,18 @@ body {
   margin-top: 2px;
 }
 
+/* ── Registry banner ─────────────────────────────────────────────────── */
+
+.registry-banner {
+  text-align: center;
+  padding: 8px 16px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--text-dim);
+  background: var(--surface-hover);
+  border-radius: 4px;
+}
+
 /* ── Package grid ──────────────────────────────────────────────────── */
 
 .package-grid {
@@ -242,6 +270,20 @@ body {
   font-weight: 600;
   color: var(--accent);
   word-break: break-all;
+}
+
+.pkg-badge-new {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--green);
+  color: var(--bg);
+  vertical-align: middle;
+  margin-left: 4px;
 }
 
 .pkg-version {
@@ -476,6 +518,94 @@ body {
   border-top: 1px solid var(--border);
   font-size: 12px;
   color: var(--text-dim);
+}
+
+.detail-actions {
+  margin-bottom: 16px;
+}
+
+.copy-install-btn {
+  padding: 6px 16px;
+  font-size: 13px;
+  background: var(--accent-glow);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all .15s;
+}
+.copy-install-btn:hover,
+.copy-create-btn:hover { background: var(--accent); color: var(--bg); }
+
+.copy-create-btn {
+  background: rgba(63, 185, 80, 0.15);
+  border-color: var(--green);
+  color: var(--green);
+}
+.copy-create-btn:hover { background: var(--green); color: var(--bg); }
+
+/* ── Version list ─────────────────────────────────────────────────── */
+
+.version-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.version-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  background: var(--surface-hover);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.version-num {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--text);
+  min-width: 80px;
+}
+
+.version-tags { display: flex; gap: 4px; flex: 1; }
+
+.tag-dist {
+  background: rgba(63, 185, 80, 0.15);
+  border-color: var(--green);
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.version-date { color: var(--text-dim); white-space: nowrap; }
+
+/* ── Dependency list ──────────────────────────────────────────────── */
+
+.dep-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dep-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: var(--surface-hover);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.dep-name {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--accent);
+}
+
+.dep-ver {
+  color: var(--text-dim);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px;
 }
 .detail-meta code {
   font-size: 11px;
