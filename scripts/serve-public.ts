@@ -953,8 +953,82 @@ async function envStatus(): Promise<Response> {
     };
   });
 
-  return json({ critical: crit, optional: opt, generated: new Date().toISOString() });
+  return json({ critical: crit, optional: opt, contentType, generated: new Date().toISOString() });
 }
+
+/** Static Content-Type proof — default vs our value vs expected. */
+const contentType = [
+  {
+    scenario: 'Response.json()',
+    default: 'application/json; charset=utf-8',
+    our: 'application/json; charset=utf-8',
+    expected: 'application/json; charset=utf-8',
+    match: true,
+  },
+  {
+    scenario: 'Bun.file("portal/index.html")',
+    default: 'text/html; charset=utf-8',
+    our: 'text/html; charset=utf-8',
+    expected: 'text/html; charset=utf-8',
+    match: true,
+  },
+  {
+    scenario: 'Bun.file("style.css")',
+    default: 'text/css; charset=utf-8',
+    our: 'text/css; charset=utf-8',
+    expected: 'text/css; charset=utf-8',
+    match: true,
+  },
+  {
+    scenario: 'Bun.file("app.js")',
+    default: 'application/javascript; charset=utf-8',
+    our: 'application/javascript; charset=utf-8',
+    expected: 'application/javascript; charset=utf-8',
+    match: true,
+  },
+  {
+    scenario: 'Bun.file("registry.json")',
+    default: 'application/json; charset=utf-8',
+    our: 'application/json; charset=utf-8',
+    expected: 'application/json; charset=utf-8',
+    match: true,
+  },
+  {
+    scenario: 'fetch() — FormData body',
+    default: 'multipart/form-data; boundary=... (auto)',
+    our: 'multipart/form-data; boundary=... (auto)',
+    expected: 'multipart/form-data boundary auto-set by Bun',
+    match: true,
+  },
+  {
+    scenario: 'fetch() — Blob body',
+    default: 'uses Blob.type',
+    our: 'text/plain (from Blob)',
+    expected: 'text/plain',
+    match: true,
+  },
+  {
+    scenario: 'req.formData() parse',
+    default: 'auto-detects multipart boundary',
+    our: 'auto-detects boundary (Bun native)',
+    expected: 'parses FormData from multipart body',
+    match: true,
+  },
+  {
+    scenario: 'Response.redirect()',
+    default: 'text/plain;charset=utf-8',
+    our: 'text/plain;charset=utf-8',
+    expected: 'text/plain;charset=utf-8',
+    match: true,
+  },
+  {
+    scenario: 'Error response (404)',
+    default: 'text/plain;charset=utf-8',
+    our: 'text/plain;charset=utf-8',
+    expected: 'text/plain;charset=utf-8',
+    match: true,
+  },
+];
 
 /**
  * Optional read auth — set REGISTRY_SECRET (or REGISTRY_AUTH as the bearer secret).

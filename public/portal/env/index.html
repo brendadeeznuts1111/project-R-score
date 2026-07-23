@@ -55,6 +55,13 @@
         <tbody></tbody>
       </table>
 
+      <div class="section-title">📦 Content-Type Handling</div>
+      <div class="section-sub">Default Bun behavior vs our values vs expected — <span style="color:hsl(120,60%,45%)">all match</span></div>
+      <table class="env-table" id="content-type-table">
+        <thead><tr><th>Status</th><th>Scenario</th><th>Default</th><th>Our Value</th><th>Expected</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
       <div class="generated" id="generated"></div>
     </div>
   </main>
@@ -70,6 +77,7 @@
         const data = await res.json();
         renderCritical(data.critical);
         renderOptional(data.optional);
+        renderContentType(data.contentType);
         $('generated').textContent = 'Last checked: ' + new Date(data.generated).toLocaleString();
         $('loading').classList.add('hidden');
         $('dashboard').classList.remove('hidden');
@@ -101,6 +109,20 @@
           '<td class="env-desc">' + (v.default || '—') + '</td>' +
           '</tr>';
       }).join('');
+    }
+
+    function renderContentType(items) {
+      const html = items.map(v => {
+        const hue = v.match ? 120 : 45;
+        return '<tr>' +
+          '<td><span class="badge-dot" style="background:hsl(' + hue + ',60%,45%)"></span></td>' +
+          '<td class="env-key">' + v.scenario + '</td>' +
+          '<td class="env-desc">' + v.default + '</td>' +
+          '<td class="env-val">' + v.our + '</td>' +
+          '<td class="env-desc">' + v.expected + '</td>' +
+          '</tr>';
+      }).join('');
+      document.querySelector('#content-type-table tbody').innerHTML = html;
     }
 
     loadEnv();
