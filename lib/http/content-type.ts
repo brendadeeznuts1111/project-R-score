@@ -193,10 +193,9 @@ export function decideRequestContentType(
   opts?: { id?: string; label?: string; explicitOurHeader?: string | null } // brand-ok — opaque decision-row key
 ): ContentTypeDecision {
   const defaultValue = bunDefaultContentType(body);
+  // undefined = policy default; '' = we force no header (e.g. missing CT demo)
   const ourValue =
-    opts?.explicitOurHeader != null && opts.explicitOurHeader !== ''
-      ? opts.explicitOurHeader
-      : ourContentTypeForBody(body);
+    opts?.explicitOurHeader !== undefined ? opts.explicitOurHeader : ourContentTypeForBody(body);
   const expected = expectedContentTypeForBody(body);
   return evaluateContentType({
     id: opts?.id ?? 'request-body',
@@ -254,7 +253,7 @@ export function contentTypePolicyCatalog(): ContentTypeDecision[] {
     decideRequestContentType(plainJson, {
       id: 'json-string-no-header',
       label: 'JSON string + no CT (bad)',
-      explicitOurHeader: '',
+      explicitOurHeader: '', // force empty — Bun default is also empty → missing
     }),
     decideResponseContentType('public/registry/ops-summary.json'),
     decideResponseContentType('public/registry/prediction/report.html'),
