@@ -1,37 +1,93 @@
 /**
- * OIDC callback handler — placeholder for Phase 2.
+ * OIDC callback — exchange code, mint session cookie, redirect to portal.
  *
- * Flow (not yet implemented):
- *   1. GET /api/auth/callback?code=...&state=...
- *   2. Exchange code for tokens at OIDC provider
- *   3. Set HttpOnly Secure SameSite=Lax session cookie
- *   4. Redirect to /portal/ only (fixed relative target — no open redirect)
- *
- * @see https://developers.cloudflare.com/pages/functions/ — Pages Functions
+ * Dev stub (`dev:sub:email`) only when ALLOW_DEV_AUTH=1 (never on production deploys).
  */
 
-export type AuthCallbackEnv = Record<string, string | undefined>;
-
-export type AuthCallbackContext = {
-  request: Request;
-  env: AuthCallbackEnv;
-};
+import { devClaimsFromCode, exchangeAuthorizationCode } from '../../../lib/auth/oidc.ts';
+import { signSession, sessionCookieHeader } from '../../../lib/auth/session.ts';
+import { AccountR2Store } from '../../../lib/accounts/account-r2-store.ts';
+import {
+  jsonResponse,
+  requireBucket,
+  requireSessionSecret,
+  type PagesContext,
+} from '../_shared/pages-env.ts';
 
 const PORTAL_REDIRECT = '/portal/';
 
-export async function onRequest(context: AuthCallbackContext): Promise<Response> {
-  const { request } = context;
+function allowDevAuth(env: PagesContext['env']): boolean {
+  return env.ALLOW_DEV_AUTH === '1';
+}
+
+function oidcConfigured(env: PagesContext['env']): boolean {
+  return Boolean(env.OIDC_CLIENT_ID && env.OIDC_CLIENT_SECRET && env.OIDC_TOKEN_URL);
+}
+
+export async function onRequest(context: PagesContext): Promise<Response> {
+  const { request, env } = context;
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
 
   if (!code) {
-    return new Response(JSON.stringify({ error: 'Missing authorization code' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-    });
+    return jsonResponse({ error: 'Missing authorization code' }, 400);
   }
 
-  // TODO(phase-2): exchange `code` at OIDC token endpoint using env secrets.
-  // Do not accept a user-controlled redirect target — always PORTAL_REDIRECT.
-  return Response.redirect(new URL(PORTAL_REDIRECT, url.origin).toString(), 302);
+  let secret: string;
+  let bucket: NonNullable<typeof env.REGISTRY_BUCKET>;
+  try {
+    secret = requireSessionSecret(env);
+    bucket = requireBucket(env);
+  } catch (e) {
+    if (e instanceof Response) return e;
+    throw e;
+  }
+
+  let sub: string;
+  let email: string;
+
+  if (oidcConfigured(env)) {
+    const redirectUri = env.OIDC_REDIRECT_URI ?? `${url.origin}/api/auth/callback`;
+    const claims = await exchangeAuthorizationCode({
+      code,
+      clientId: env.OIDC_CLIENT_ID!,
+      clientSecret: env.OIDC_CLIENT_SECRET!,
+      tokenUrl: env.OIDC_TOKEN_URL!,
+      redirectUri,
+    });
+    if (!claims) return jsonResponse({ error: 'Token exchange failed' }, 401);
+    sub = claims.sub;
+    email = claims.email ?? `${claims.sub}@unknown.local`;
+  } else if (allowDevAuth(env)) {
+    const claims = devClaimsFromCode(code);
+    if (!claims) return jsonResponse({ error: 'Invalid dev authorization code' }, 400);
+    sub = claims.sub;
+    email = claims.email ?? `${claims.sub}@dev.local`;
+  } else {
+    return jsonResponse({ error: 'OIDC not configured' }, 503);
+  }
+
+  const accounts = new AccountR2Store(bucket);
+  const existing = await accounts.getByOidc(sub);
+  const token = await signSession(
+    {
+      sub,
+      email,
+      accountId: existing?.id as string | undefined,
+      tenantId: existing?.tenantId as string | undefined,
+    },
+    secret
+  );
+
+  const target = new URL(PORTAL_REDIRECT, url.origin);
+  if (!existing) target.searchParams.set('onboard', '1');
+
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: target.toString(),
+      'Set-Cookie': sessionCookieHeader(token, url.protocol === 'https:'),
+      'Cache-Control': 'no-store',
+    },
+  });
 }

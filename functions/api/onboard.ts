@@ -67,7 +67,7 @@ export async function onRequest(context: PagesContext): Promise<Response> {
       return jsonResponse({ error: 'Invalid tenantId' }, 400);
     }
     const tenant = getTenant(body.tenantId)!;
-    const role = body.role === 'admin' || body.role === 'operator' ? body.role : 'viewer';
+    const role = 'viewer' as const;
     const existing = await accounts.getByOidc(session.sub);
     if (existing) {
       return jsonResponse({ status: 'existing', account: serializeAccount(existing) });
@@ -81,7 +81,10 @@ export async function onRequest(context: PagesContext): Promise<Response> {
     });
     await publishEvent(channel, 'onboard', {
       event: 'account.created',
-      account: serializeAccount(account),
+      accountId: account.id as string,
+      tenantId: body.tenantId,
+      role,
+      oidcSubject: session.sub,
     });
     await publishEvent(channel, 'ops-sync', {
       type: 'account_assigned',
@@ -114,7 +117,6 @@ export async function onRequest(context: PagesContext): Promise<Response> {
     return jsonResponse({
       status: 'link_pending',
       deepLink: `https://t.me/${username}?start=link_${nonce}`,
-      nonce,
     });
   }
 

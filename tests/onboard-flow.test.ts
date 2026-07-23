@@ -70,7 +70,7 @@ describe('auth callback dev', () => {
     const bucket = mockR2();
     const res = await authCallback({
       request: new Request('https://example.com/api/auth/callback?code=dev:new1:n@dev.local'),
-      env: { SESSION_SECRET: 'cb-secret', REGISTRY_BUCKET: bucket },
+      env: { SESSION_SECRET: 'cb-secret', REGISTRY_BUCKET: bucket, ALLOW_DEV_AUTH: '1' },
     });
     expect(res.status).toBe(302);
     expect(res.headers.get('Location')).toContain('onboard=1');

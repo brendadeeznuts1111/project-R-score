@@ -29,6 +29,9 @@ export type RegistryPagesEnv = {
   OIDC_CLIENT_ID?: string;
   OIDC_CLIENT_SECRET?: string;
   OIDC_TOKEN_URL?: string;
+  OIDC_REDIRECT_URI?: string;
+  ALLOW_DEV_AUTH?: string;
+  ALLOW_INSECURE_TELEGRAM_WEBHOOK?: string;
   TELEGRAM_WEBHOOK_SECRET?: string;
   TELEGRAM_BOT_FACTORY?: string;
   TELEGRAM_BOT_SCIENCE?: string;

@@ -16,7 +16,11 @@ export async function onRequest(context: PagesContext): Promise<Response> {
   }
 
   const secret = env.TELEGRAM_WEBHOOK_SECRET;
-  if (secret) {
+  if (!secret) {
+    if (env.ALLOW_INSECURE_TELEGRAM_WEBHOOK !== '1') {
+      return jsonResponse({ error: 'Webhook secret not configured' }, 503);
+    }
+  } else {
     const header = request.headers.get('X-Telegram-Bot-Api-Secret-Token');
     if (header !== secret) return jsonResponse({ error: 'Forbidden' }, 403);
   }
