@@ -394,3 +394,6 @@ docs/*.zip
 lib/profile.md
 **/*heap-prof*.md
 **/*.heapprofile
+
+# Bun utils proof version stamps (keep latest.json)
+public/registry/@factorywager/bun-utils-test/v*.json

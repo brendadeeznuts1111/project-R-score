@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "bunVersion": "1.3.6",
+  "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
+  "timestamp": "2026-07-23T17:51:49.532Z",
+  "testCases": [
+    {
+      "utility": "stringWidth",
+      "input": "hello",
+      "expected": 5,
+      "actual": 5,
+      "note": "ASCII"
+    },
+    {
+      "utility": "stringWidth",
+      "input": "👨‍👩‍👧‍👦",
+      "expected": 2,
+      "actual": 2,
+      "note": "Emoji ZWJ family (Bun baseline)"
+    },
+    {
+      "utility": "stringWidth",
+      "input": "こんにちは",
+      "expected": 10,
+      "actual": 10,
+      "note": "CJK fullwidth (Bun baseline)"
+    },
+    {
+      "utility": "deepEquals",
+      "input": "{a:1} == {a:1}",
+      "expected": true,
+      "actual": true,
+      "note": "Same plain object"
+    },
+    {
+      "utility": "deepEquals",
+      "input": "{a:1} == {a:2}",
+      "expected": false,
+      "actual": false,
+      "note": "Different value"
+    },
+    {
+      "utility": "deepEquals",
+      "input": "[1,2] == [1,2]",
+      "expected": true,
+      "actual": true,
+      "note": "Same array"
+    },
+    {
+      "utility": "deepEquals",
+      "input": "[1,2] == [1,3]",
+      "expected": false,
+      "actual": false,
+      "note": "Different array"
+    },
+    {
+      "utility": "inspect (depth:0)",
+      "input": "depth:0",
+      "expected": "truncates at a → [Object …]",
+      "actual": "{\n  a: [Object ...],\n}",
+      "note": "No recursion",
+      "pass": true
+    },
+    {
+      "utility": "inspect (depth:1)",
+      "input": "depth:1",
+      "expected": "shows b then [Object …]",
+      "actual": "{\n  a: {\n    b: [Object ...],\n  },\n}",
+      "note": "One level",
+      "pass": true
+    },
+    {
+      "utility": "inspect (default)",
+      "input": "default depth",
+      "expected": "shows a.b.c structure",
+      "actual": "{\n  a: {\n    b: {\n      c: {\n        d: \"e\",\n      },\n    },\n  },\n}",
+      "note": "Default depth ≥ 2",
+      "pass": true
+    }
+  ],
+  "summary": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0
+  },
+  "proofHash": "705d9b28f41b74c84080414795f489a1ae37842c62d90d9f5adc0cd9a7e21325"
+}
