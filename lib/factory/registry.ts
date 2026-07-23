@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client (via object-store)
 // @see https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support — requestPayer (via object-store)
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -142,10 +143,16 @@ export class RegistryClient {
     let readme: string | undefined;
     const readmeOpt = options?.readme;
     if (readmeOpt === undefined || readmeOpt === true) {
-      const readmeFile = Bun.file('README.md');
+      // Match bun publish v1.3.14: first README or README.* (case-insensitive).
       try {
-        const exists = await readmeFile.exists();
-        if (exists) readme = await readmeFile.text();
+        for await (const f of new Bun.Glob('[Rr][Ee][Aa][Dd][Mm][Ee]*').scan({
+          onlyFiles: true,
+        })) {
+          if (/^README(\..*)?$/i.test(f)) {
+            readme = await Bun.file(f).text();
+            break;
+          }
+        }
       } catch {
         // Binary, permission error, etc. — skip README silently
       }

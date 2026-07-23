@@ -39,20 +39,26 @@ describe('RegistryClient — publish with README', () => {
 
   test('publish with readme: true (auto-detect) when no README exists', async () => {
     const client = mockClient();
-    const existsMock = mock(async () => false);
-    Bun.file = mock(
-      () => ({ exists: existsMock, text: async () => '' }) as unknown as ReturnType<typeof Bun.file>
-    );
+    // Glob-based detection (v1.3.14 parity): stub scan to yield nothing.
+    const origGlob = Bun.Glob;
+    Bun.Glob = class {
+      constructor() {}
+      scan() {
+        return (async function* () {})();
+      }
+    } as unknown as typeof Bun.Glob;
+    try {
+      const release = await client.publish('test-lib', '1.0.0', new Blob(['data']), {
+        type: 'library',
+        readme: true,
+      });
 
-    const release = await client.publish('test-lib', '1.0.0', new Blob(['data']), {
-      type: 'library',
-      readme: true,
-    });
-
-    expect(release.name).toBe('test-lib');
-    expect(release.version).toBe('1.0.0');
-    expect(release.readme).toBeUndefined();
-    expect(existsMock).toHaveBeenCalledTimes(1);
+      expect(release.name).toBe('test-lib');
+      expect(release.version).toBe('1.0.0');
+      expect(release.readme).toBeUndefined();
+    } finally {
+      Bun.Glob = origGlob;
+    }
   });
 
   test('publish with readme: true auto-detects README.md', async () => {
@@ -103,17 +109,21 @@ describe('RegistryClient — publish with README', () => {
 
   test('publish without readme option defaults to auto-detect (no README)', async () => {
     const client = mockClient();
-    Bun.file = mock(
-      () =>
-        ({
-          exists: async () => false,
-          text: async () => '',
-        }) as unknown as ReturnType<typeof Bun.file>
-    );
-    const release = await client.publish('test-lib', '1.0.0', new Blob(['data']), {
-      type: 'library',
-    });
-    expect(release.readme).toBeUndefined();
+    const origGlob = Bun.Glob;
+    Bun.Glob = class {
+      constructor() {}
+      scan() {
+        return (async function* () {})();
+      }
+    } as unknown as typeof Bun.Glob;
+    try {
+      const release = await client.publish('test-lib', '1.0.0', new Blob(['data']), {
+        type: 'library',
+      });
+      expect(release.readme).toBeUndefined();
+    } finally {
+      Bun.Glob = origGlob;
+    }
   });
 
   test('publish without readme option auto-detects when README exists', async () => {
@@ -472,5 +482,40 @@ describe('RegistryClient — resolve / listVersions / promote', () => {
     // promote: rejects unpublished versions and unknown packages
     await expect(client.promote('fw-demo', '9.9.9')).rejects.toThrow(/not published/);
     await expect(client.promote('fw-nope', '1.0.0')).rejects.toThrow(/not found/);
+  });
+});
+
+describe('RegistryClient — README auto-detect (bun publish v1.3.14 parity)', () => {
+  test('finds case-insensitive README.* variants', async () => {
+    const dir = '.tmp/registry-readme-test';
+    await Bun.$`rm -rf ${dir} && mkdir -p ${dir}`.quiet();
+    const cwd = process.cwd();
+    try {
+      for (const variant of ['README.md', 'readme.md', 'README.txt', 'Readme']) {
+        // Bun.$ glob doesn't expand [Rr] classes — remove via Glob iteration.
+        for await (const stale of new Bun.Glob('[Rr][Ee][Aa][Dd][Mm][Ee]*').scan(dir)) {
+          await Bun.$`rm -f ${dir}/${stale}`.quiet();
+        }
+        await Bun.write(`${dir}/${variant}`, `# Demo for ${variant}`);
+        process.chdir(dir);
+        const client = mockClient();
+        const release = await client.publish('fw-readme', '1.0.0', new Uint8Array([1]), {
+          readme: true,
+        });
+        expect(release.readme).toBe(`# Demo for ${variant}`);
+        process.chdir(cwd);
+      }
+    } finally {
+      process.chdir(cwd);
+      await Bun.$`rm -rf ${dir}`.quiet();
+    }
+  });
+
+  test('explicit readme option wins over auto-detect', async () => {
+    const client = mockClient();
+    const release = await client.publish('fw-readme2', '1.0.0', new Uint8Array([1]), {
+      readme: '# Explicit',
+    });
+    expect(release.readme).toBe('# Explicit');
   });
 });

@@ -69,13 +69,18 @@ async function run() {
   console.log(`  🔒 Proof hash: ${proofHash.slice(0, 16)}…`);
 
   const proof = {
-    schemaVersion: 1,
-    bunVersion: Bun.version,
     timestamp: new Date().toISOString(),
-    total: results.length,
-    passed,
+    bunVersion: Bun.version,
+    bunRevision: Bun.revision?.slice(0, 12) || 'unknown',
+    results: results.map(r => ({
+      name: r.name,
+      registry: r.registry,
+      version: r.version,
+      readme: r.readme,
+      status: r.ok ? '✅ OK' : '❌ error',
+    })),
+    summary: { passed, total: results.length },
     proofHash,
-    results,
   };
 
   if (SHOULD_SAVE) {
@@ -83,7 +88,7 @@ async function run() {
     console.log(`\n💾 Proof saved to ${SAVE_PATH}`);
   }
 
-  if (!proof.allOk && passed < results.length) process.exit(1);
+  if (passed < results.length) process.exit(1);
   return proof;
 }
 

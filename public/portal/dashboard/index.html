@@ -85,9 +85,9 @@
       $('cards').innerHTML = cards.map(c => '<div class="card"><div class="lbl">'+c.lbl+'</div><div class="val '+c.cls+'">'+c.val+'</div><div class="d">'+c.d+'</div></div>').join('');
 
       // Defaults table
-      if (def.results?.length) {
+      if (def.tests?.length) {
         $('defaults-tbl').innerHTML = '<h2>🔍 Bun Defaults Verification</h2><table><thead><tr><th>Test</th><th>Expected</th><th>Result</th></tr></thead><tbody>' +
-          def.results.map(t => '<tr><td>'+t.name+'</td><td>'+t.expected+'</td><td>'+(t.pass ? '✅' : '❌')+'</td></tr>').join('') +
+          def.tests.map(t => '<tr><td>'+t.name+'</td><td>'+t.expected+'</td><td>'+(t.passed ? '✅' : '❌')+'</td></tr>').join('') +
           '</tbody></table><p style="margin-top:8px"><span class="phash">🔒 Proof hash: '+(def.proofHash||'N/A')+'</span></p>';
       }
 

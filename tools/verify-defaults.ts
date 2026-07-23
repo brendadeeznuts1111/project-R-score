@@ -14,6 +14,8 @@ import { CryptoHasher, inspect, version, revision } from 'bun';
 import { writeFileSync } from 'fs';
 
 const SHOULD_SAVE = process.argv.includes('--save');
+const FORMAT = process.argv.find(a => a.startsWith('--format='))?.split('=')[1] || 'table';
+const OUTPUT = process.argv.find(a => a.startsWith('--output='))?.split('=')[1];
 const SAVE_PATH = 'public/registry/defaults-proof.json';
 
 type TestResult = { name: string; pass: boolean; actual: string; expected: string };
@@ -64,15 +66,34 @@ console.log(`\n  📊 ${pass}/${pass + fail} passed`);
 console.log(`  🔒 Proof hash: ${proofHash.slice(0, 16)}…`);
 
 const proof = {
-  schemaVersion: 1,
+  timestamp: new Date().toISOString(),
   bunVersion: version,
   bunRevision: revision?.slice(0, 12) || 'unknown',
-  timestamp: new Date().toISOString(),
-  total: pass + fail,
-  passed: pass,
+  summary: { passed: pass, total: pass + fail, status: pass === (pass + fail) ? 'pass' : 'fail' },
+  tests: results.map(r => ({ name: r.name, expected: r.expected, actual: r.pass ? 'pass' : 'fail', passed: r.pass })),
   proofHash,
-  results,
 };
+
+// Generate report in requested format
+if (FORMAT === 'md' || FORMAT === 'markdown') {
+  const md: string[] = [
+    '# 🔍 Bun Defaults Verification',
+    '',
+    `Generated: ${proof.timestamp}`,
+    `Bun: ${proof.bunVersion} (${(revision || '').slice(0, 8)})`,
+    '',
+    '| Test | Expected | Result |',
+    '|------|----------|--------|',
+  ];
+  for (const r of results) {
+    md.push(`| ${r.name} | ${r.expected} | ${r.pass ? '✅' : '❌'} |`);
+  }
+  md.push(`\n**${pass}/${pass + fail} passed**`);
+  md.push(`\n🔒 Proof hash: \`${proofHash}\``);
+  const report = md.join('\n');
+  if (OUTPUT) writeFileSync(OUTPUT, report);
+  else console.log('\n' + report);
+}
 
 if (SHOULD_SAVE) {
   writeFileSync(SAVE_PATH, JSON.stringify(proof, null, 2));
