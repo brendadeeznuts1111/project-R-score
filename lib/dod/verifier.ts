@@ -71,6 +71,9 @@ export async function decryptAesGcm(data: Uint8Array, keyMaterial: string): Prom
 }
 
 // ── Evidence stores ──────────────────────────────────────────────
+/** Verification-model version stamped into registry snapshots (bump on detector changes). */
+export const DOD_MODEL_VERSION = 'dod-verifier/2.1.0';
+
 export type DODEvidenceStore = {
   put(key: string, bytes: Uint8Array): Promise<void>;
   /** Optional read-back for rebuild-index. */
@@ -495,6 +498,7 @@ export class DODVerifier {
       // HMAC signature (id:visualHash:metaHash) — tamper evidence, validated
       // by the dod-registry contract for new entries.
       signature: ver.signature,
+      modelVersion: DOD_MODEL_VERSION,
     });
     await Bun.write(path, JSON.stringify(reg, null, 2));
   }

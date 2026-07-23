@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import {
+  DOD_MODEL_VERSION,
   DODVerifier,
   decryptAesGcm,
   encryptAesGcm,
@@ -44,24 +45,25 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+  verifier.close();
   await Bun.$`rm -rf ${SCRATCH}`.quiet();
 });
 
 describe("dod-verifier image validation", () => {
-  test("accepts PNG magic bytes", () => {
+  test.serial("accepts PNG magic bytes", () => {
     expect(validateImage(new Uint8Array(PNG_1PX))).toBe(true);
   });
 
-  test("accepts JPEG magic bytes", () => {
+  test.serial("accepts JPEG magic bytes", () => {
     expect(validateImage(JPEG_MAGIC)).toBe(true);
   });
 
-  test("rejects non-image payloads", () => {
+  test.serial("rejects non-image payloads", () => {
     expect(validateImage(NOT_IMAGE)).toBe(false);
     expect(validateImage(new Uint8Array(4))).toBe(false);
   });
 
-  test("process() throws on invalid image before any storage", async () => {
+  test.serial("process() throws on invalid image before any storage", async () => {
     await expect(verifier.process(submission({ rawImage: NOT_IMAGE }))).rejects.toThrow(
       /Invalid image format/,
     );
@@ -70,7 +72,7 @@ describe("dod-verifier image validation", () => {
 });
 
 describe("dod-verifier rate limit", () => {
-  test("trips at the hourly threshold", async () => {
+  test.serial("trips at the hourly threshold", async () => {
     const limit = Number(Bun.env.DOD_RATE_LIMIT_PER_HOUR ?? 10);
     for (let i = 0; i < limit; i++) {
       await verifier.process(submission());
@@ -80,7 +82,7 @@ describe("dod-verifier rate limit", () => {
 });
 
 describe("dod-verifier storage path", () => {
-  test("path is randomized, contains no agentId, deterministic per id", async () => {
+  test.serial("path is randomized, contains no agentId, deterministic per id", async () => {
     const sub = submission({ agentId: "agent-secret-name" });
     const ver = await verifier.process(sub);
     expect(ver.s3Path).not.toContain("agent-secret-name");
@@ -90,7 +92,7 @@ describe("dod-verifier storage path", () => {
 });
 
 describe("dod-verifier perceptual hash", () => {
-  test("matches evidence.ts averageHash (pixel-based)", async () => {
+  test.serial("matches evidence.ts averageHash (pixel-based)", async () => {
     const ver = await verifier.process(submission());
     const expected = await averageHash(png2x2);
     expect(ver.visualHash).toBe(expected);
@@ -99,14 +101,14 @@ describe("dod-verifier perceptual hash", () => {
 });
 
 describe("dod-verifier OCR wiring", () => {
-  test("non-document types skip OCR", async () => {
+  test.serial("non-document types skip OCR", async () => {
     const ver = await verifier.process(submission({ type: "location" }));
     expect(ver.extractedText).toBeUndefined();
   });
 });
 
 describe("dod batch 2 — encryption", () => {
-  test("AES-GCM roundtrip", async () => {
+  test.serial("AES-GCM roundtrip", async () => {
     const data = new TextEncoder().encode("sensitive id scan bytes");
     const enc = await encryptAesGcm(data, "test-key");
     expect(enc.length).toBeGreaterThan(data.length);
@@ -114,12 +116,12 @@ describe("dod batch 2 — encryption", () => {
     expect(new TextDecoder().decode(dec)).toBe("sensitive id scan bytes");
   });
 
-  test("wrong key fails to decrypt", async () => {
+  test.serial("wrong key fails to decrypt", async () => {
     const enc = await encryptAesGcm(new Uint8Array([1, 2, 3]), "k1");
     await expect(decryptAesGcm(enc, "k2")).rejects.toThrow();
   });
 
-  test("id submissions are stored encrypted with .enc suffix and flagged in db", async () => {
+  test.serial("id submissions are stored encrypted with .enc suffix and flagged in db", async () => {
     const keyed = new DODVerifier(`${SCRATCH}/ops2.db`, {
       evidenceRoot: `${SCRATCH}/evidence`,
       registryPath: `${SCRATCH}/registry2.json`,
@@ -132,11 +134,12 @@ describe("dod batch 2 — encryption", () => {
     expect(validateImage(stored)).toBe(false); // ciphertext, not a webp
     const roundtrip = await decryptAesGcm(stored, "pii-key");
     expect(validateImage(roundtrip)).toBe(true); // decrypts back to a real image
+    keyed.close();
   });
 });
 
 describe("dod batch 2 — auto-approve", () => {
-  test("balance auto-approves for trusted agents (10+ verified)", async () => {
+  test.serial("balance auto-approves for trusted agents (10+ verified)", async () => {
     const db = new (await import("bun:sqlite")).Database(`${SCRATCH}/ops.db`);
     for (let i = 0; i < 10; i++) {
       // Older than 1h: counts toward auto-approve trust, not the rate limit.
@@ -150,14 +153,14 @@ describe("dod batch 2 — auto-approve", () => {
     expect(ver.status).toBe("verified");
   });
 
-  test("first-time agent balance stays pending", async () => {
+  test.serial("first-time agent balance stays pending", async () => {
     const ver = await verifier.process(submission({ type: "balance" }));
     expect(ver.status).toBe("pending");
   });
 });
 
 describe("dod batch 2 — liquidity hook", () => {
-  test("onVerifiedBalance fires with parsed amount after verified balance DOD", async () => {
+  test.serial("onVerifiedBalance fires with parsed amount after verified balance DOD", async () => {
     const calls: { agentId: string; amount?: number }[] = []; // brand-ok — test spy
     const db = new (await import("bun:sqlite")).Database(`${SCRATCH}/ops.db`);
     for (let i = 0; i < 10; i++) {
@@ -179,9 +182,10 @@ describe("dod batch 2 — liquidity hook", () => {
     expect(ver.status).toBe("verified");
     expect(calls).toHaveLength(1);
     expect(calls[0]!.agentId).toBe("agent-test");
+    hooked.close();
   });
 
-  test("extractAmount parses dollar figures", () => {
+  test.serial("extractAmount parses dollar figures", () => {
     expect(extractAmount("Balance: $12,345.67 available")).toBe(12345.67);
     expect(extractAmount("no amount here")).toBeUndefined();
     expect(extractAmount(undefined)).toBeUndefined();
@@ -196,7 +200,7 @@ describe("dod batch 2 — review API auth", () => {
     else Bun.env.DOD_REVIEW_TOKEN = savedToken;
   });
 
-  test("401 without bearer token when DOD_REVIEW_TOKEN is set", async () => {
+  test.serial("401 without bearer token when DOD_REVIEW_TOKEN is set", async () => {
     Bun.env.DOD_REVIEW_TOKEN = "test-review-token";
     const { onRequest } = await import("../functions-bun-only/api/dod/index.ts");
     const res = await onRequest({
@@ -205,7 +209,7 @@ describe("dod batch 2 — review API auth", () => {
     expect(res.status).toBe(401);
   });
 
-  test("200 with correct bearer token", async () => {
+  test.serial("200 with correct bearer token", async () => {
     Bun.env.DOD_REVIEW_TOKEN = "test-review-token";
     const { onRequest } = await import("../functions-bun-only/api/dod/index.ts");
     const res = await onRequest({
@@ -216,7 +220,7 @@ describe("dod batch 2 — review API auth", () => {
     expect(res.status).toBe(200);
   });
 
-  test("open when DOD_REVIEW_TOKEN is unset (dev)", async () => {
+  test.serial("open when DOD_REVIEW_TOKEN is unset (dev)", async () => {
     delete Bun.env.DOD_REVIEW_TOKEN;
     const { onRequest } = await import("../functions-bun-only/api/dod/index.ts");
     const res = await onRequest({
@@ -227,7 +231,7 @@ describe("dod batch 2 — review API auth", () => {
 });
 
 describe("dod batch 3 — rebuild index", () => {
-  test("rebuilds SQLite from sidecar records in the store", async () => {
+  test.serial("rebuilds SQLite from sidecar records in the store", async () => {
     await verifier.process(submission({ id: "dod-rebuild-1" }));
     await verifier.process(submission({ id: "dod-rebuild-2" }));
     const db = new (await import("bun:sqlite")).Database(`${SCRATCH}/ops.db`);
@@ -241,7 +245,7 @@ describe("dod batch 3 — rebuild index", () => {
 });
 
 describe("dod batch 3 — agent receipt", () => {
-  test("receipt returns status + hashes after processing", async () => {
+  test.serial("receipt returns status + hashes after processing", async () => {
     const ver = await verifier.process(submission({ id: "dod-receipt-1" }));
     const r = verifier.receipt("dod-receipt-1") as Record<string, unknown>;
     expect(r.status).toBe(ver.status);
@@ -249,7 +253,7 @@ describe("dod batch 3 — agent receipt", () => {
     expect(r.signature).toBe(ver.signature);
   });
 
-  test("verifySignature accepts the issued signature, rejects tampered ones", async () => {
+  test.serial("verifySignature accepts the issued signature, rejects tampered ones", async () => {
     const ver = await verifier.process(submission({ id: "dod-sig-1" }));
     expect(verifier.verifySignature(ver.dodId, ver.visualHash, ver.metadataHash, ver.signature)).toBe(true);
     expect(
@@ -259,7 +263,7 @@ describe("dod batch 3 — agent receipt", () => {
 });
 
 describe("dod batch 3 — watermark batching", () => {
-  test("repeated process() calls reuse the pipeline and close() disposes cleanly", async () => {
+  test.serial("repeated process() calls reuse the pipeline and close() disposes cleanly", async () => {
     for (let i = 0; i < 3; i++) {
       await verifier.process(submission());
     }
@@ -272,11 +276,12 @@ describe("dod batch 3 — watermark batching", () => {
 });
 
 describe("dod — registry signature chain", () => {
-  test("new registry entries carry the HMAC signature", async () => {
+  test.serial("new registry entries carry the HMAC signature", async () => {
     const ver = await verifier.process(submission({ id: "dod-chain-1" }));
     const reg = await Bun.file(`${SCRATCH}/registry.json`).json();
     const entry = reg.entries.find((e: { id: string }) => e.id === "dod-chain-1"); // brand-ok — opaque registry JSON row
     expect(entry.signature).toBe(ver.signature);
     expect(entry.signature).toMatch(/^[0-9a-f]{64}$/);
+    expect(entry.modelVersion).toBe(DOD_MODEL_VERSION);
   });
 });

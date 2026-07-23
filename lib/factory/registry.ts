@@ -22,6 +22,7 @@ import {
   validateArtifactName,
 } from './artifact';
 import { sortVersions, resolveVersion } from './semver';
+import { parseRegistryObjectKey } from './http-keys';
 import {
   type RegistryObjectStore,
   createS3RegistryStore,
@@ -60,9 +61,14 @@ export class RegistryClient {
   /**
    * Fetch the registry index from R2, or return a fresh empty index if none exists.
    */
-  async fetchIndex(): Promise<{ index: RegistryIndex; etag: string | null }> {
+  async fetchIndex(
+    options: { required?: boolean } = {}
+  ): Promise<{ index: RegistryIndex; etag: string | null }> {
     const hit = await this.store.getJson<RegistryIndex>(INDEX_KEY);
     if (!hit) {
+      if (options.required) {
+        throw new Error('Registry index is unavailable');
+      }
       return {
         index: { schemaVersion: 1, lastUpdated: new Date().toISOString(), packages: {} },
         etag: null,
@@ -149,7 +155,7 @@ export class RegistryClient {
 
     const r2Key =
       type === 'library'
-        ? `@factorywager/${name}/${version}.tgz`
+        ? `${name.startsWith('@factorywager/') ? name : `@factorywager/${name}`}/${version}.tgz`
         : `projects/${name}/${version}.tgz`;
 
     await this.store.putBytes(r2Key, blob, { contentType: 'application/gzip' });
@@ -227,6 +233,47 @@ export class RegistryClient {
     return { data, release };
   }
 
+  // ── Resolve / Versions / Promote ─────────────────────────────────────
+
+  /** Resolve a name+range to a concrete version and release metadata (no download). */
+  async resolve(
+    name: string,
+    range = 'latest'
+  ): Promise<{ name: string; version: string; release: ArtifactRelease } | undefined> {
+    const { index } = await this.fetchIndex();
+    const pkg = index.packages[name];
+    if (!pkg) return undefined;
+    const resolved = resolveVersion(range, pkg.versions, pkg['dist-tags']);
+    if (!resolved) return undefined;
+    const release = pkg.releases[String(resolved)];
+    if (!release) return undefined;
+    return { name, version: String(resolved), release };
+  }
+
+  /** Published versions of a package, semver-sorted. */
+  async listVersions(name: string): Promise<string[]> {
+    const pkg = await this.list(name);
+    if (!pkg) return [];
+    return sortVersions([...pkg.versions]).map(String);
+  }
+
+  /** Move a dist-tag to an already-published version (etag-guarded index update). */
+  async promote(name: string, version: string, distTag = 'latest'): Promise<RegistryIndex> {
+    const artifactVersion = asArtifactVersion(version);
+    return this.writeIndex(index => {
+      const pkg = index.packages[name];
+      if (!pkg) throw new Error(`promote: package not found: ${name}`);
+      if (!pkg.releases[String(artifactVersion)]) {
+        throw new Error(`promote: ${name}@${String(artifactVersion)} is not published`);
+      }
+      const updatedPkg: PackageInfo = {
+        ...pkg,
+        'dist-tags': { ...pkg['dist-tags'], [distTag]: artifactVersion },
+      };
+      return { ...index, packages: { ...index.packages, [name]: updatedPkg } };
+    });
+  }
+
   // ── Readme ────────────────────────────────────────────────────────────
 
   async fetchReadme(name: string, version: string): Promise<string | undefined> {
@@ -251,6 +298,13 @@ export class RegistryClient {
   async listAll(): Promise<Array<{ name: string; info: PackageInfo }>> {
     const { index } = await this.fetchIndex();
     return Object.entries(index.packages).map(([name, info]) => ({ name, info }));
+  }
+
+  /** Read allowlisted object bytes (read-only HTTP proxy). */
+  async fetchObjectBytes(key: string): Promise<Uint8Array | null> {
+    const safe = parseRegistryObjectKey(key);
+    if (!safe) throw new Error(`Invalid registry object key: ${key}`);
+    return this.store.getBytes(safe);
   }
 
   // ── Search ────────────────────────────────────────────────────────────
@@ -299,6 +353,19 @@ export class RegistryClient {
     requestPayer: boolean;
     error?: string;
   }> {
+    if (this.injectedStore) {
+      const ping = await this.injectedStore.ping();
+      return {
+        ok: ping.ok,
+        r2Key: true,
+        r2Secret: true,
+        bucketAccess: ping.ok,
+        bucket: 'injected',
+        requestPayer: false,
+        error: ping.error,
+      };
+    }
+
     const r2Key = !!Bun.env.R2_ACCESS_KEY_ID?.trim();
     const r2Secret = !!Bun.env.R2_SECRET_ACCESS_KEY?.trim();
     const bucket = factoryRegistryBucketFromEnv();

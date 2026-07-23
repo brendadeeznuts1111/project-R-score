@@ -464,11 +464,28 @@ async function health(): Promise<Response> {
   });
 }
 
+/** Optional auth middleware — set REGISTRY_AUTH=token to protect read endpoints. */
+function requireReadAuth(req: Request): Response | null {
+  const expected = Bun.env.REGISTRY_AUTH;
+  if (!expected) return null;
+  const provided = (req.headers.get('authorization') || '').replace('Bearer ', '').trim();
+  if (provided === expected) return null;
+  return json({ error: 'Unauthorized' }, 401);
+}
+
 async function fetchHandler(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname;
 
+  // Health endpoint — no auth
   if (path === '/health' || path === '/health/') return health();
+
+  // Optional auth for read endpoints
+  const authErr = requireReadAuth(req);
+  if (authErr && path !== '/api/operations/summary' && path !== '/api/catalog') {
+    const unprotectedPaths = ['/api/monitoring', '/api/registry', '/api/dod', '/api/channels'];
+    if (unprotectedPaths.some(p => path.startsWith(p))) return authErr;
+  }
   if (path === '/api/monitoring' || path === '/api/monitoring/') return liveMonitoringApi();
   if (path === '/monitoring' || path === '/monitoring/') return monitoringPage();
   if (path === '/api/operations/summary' || path === '/api/operations/summary/')
@@ -572,6 +589,16 @@ Port ${preferred}–${preferred + maxTries - 1} busy.
 }
 
 const { port: boundPort } = startServer(PORT);
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('Shutting down...');
+  process.exit(0);
+});
+process.on('SIGINT', () => {
+  console.log('Shutting down...');
+  process.exit(0);
+});
 
 console.log(`Local portal:  http://localhost:${boundPort}/portal/ops/`);
 console.log(`Monitoring:    http://localhost:${boundPort}/monitoring`);

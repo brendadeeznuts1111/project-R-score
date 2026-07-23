@@ -441,3 +441,36 @@ describe('RegistryClient — writeIndex conflict retry', () => {
     expect(updated.packages.winner).toBeDefined();
   });
 });
+
+describe('RegistryClient — resolve / listVersions / promote', () => {
+  test('publish → resolve latest → listVersions → promote dist-tag', async () => {
+    const client = mockClient();
+
+    await client.publish('fw-demo', '1.0.0', new Uint8Array([1, 2, 3]), {
+      readme: false,
+    });
+    await client.publish('fw-demo', '1.1.0', new Uint8Array([4, 5, 6]), {
+      readme: false,
+    });
+
+    // resolve: latest dist-tag tracks the newest publish
+    const latest = await client.resolve('fw-demo');
+    expect(latest?.version).toBe('1.1.0');
+
+    // resolve: explicit version and unknown package
+    expect((await client.resolve('fw-demo', '1.0.0'))?.version).toBe('1.0.0');
+    expect(await client.resolve('fw-nope')).toBeUndefined();
+
+    // listVersions: semver-sorted (newest first, per sortVersions contract)
+    expect(await client.listVersions('fw-demo')).toEqual(['1.1.0', '1.0.0']);
+    expect(await client.listVersions('fw-nope')).toEqual([]);
+
+    // promote: move latest back to 1.0.0
+    await client.promote('fw-demo', '1.0.0');
+    expect((await client.resolve('fw-demo'))?.version).toBe('1.0.0');
+
+    // promote: rejects unpublished versions and unknown packages
+    await expect(client.promote('fw-demo', '9.9.9')).rejects.toThrow(/not published/);
+    await expect(client.promote('fw-nope', '1.0.0')).rejects.toThrow(/not found/);
+  });
+});
