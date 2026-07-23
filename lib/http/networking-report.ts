@@ -224,54 +224,339 @@ export class RouteProbeReport {
   }
 }
 
+// ── Multi-target networking checks (typed) ─────────────────────────────────
+
+/** Optimization step kinds (stable ids for grouping / JSON). */
+export const NET_OPTIMIZATION_TYPES = [
+  'dns-prefetch',
+  'dns-cache',
+  'preconnect',
+  'cold-fetch',
+  'warm-fetch',
+  'buffer',
+  'disk-write',
+] as const;
+
+export type NetOptimizationType = (typeof NET_OPTIMIZATION_TYPES)[number];
+
+/** Human labels for inspect.table + CLI. */
+export const NET_OPTIMIZATION_LABELS: Record<NetOptimizationType, string> = {
+  'dns-prefetch': 'DNS Prefetch',
+  'dns-cache': 'DNS Cache',
+  preconnect: 'Preconnect',
+  'cold-fetch': 'Cold Fetch',
+  'warm-fetch': 'Warm Fetch',
+  buffer: 'Buffer',
+  'disk-write': 'Disk Write',
+};
+
+/** Target bucket (ops, registry, dashboard, …). */
+export type NetTargetCategory =
+  | 'ops'
+  | 'registry'
+  | 'dashboard'
+  | 'pages'
+  | 'trading'
+  | 'control'
+  | 'messaging'
+  | 'storage'
+  | (string & {});
+
+export type NetCheckStatus = 'PASS' | 'FAIL' | 'SKIP' | 'INFO';
+
+/** One networking optimization measurement for a target. */
+export type NetCheckRow = {
+  target: string;
+  category: NetTargetCategory;
+  /** Machine id — use for byType grouping. */
+  type: NetOptimizationType;
+  /** Display label (from NET_OPTIMIZATION_LABELS). */
+  optimization: string;
+  metric: string;
+  status: NetCheckStatus;
+  detail?: string;
+};
+
+export type NetworkingChecksMeta = {
+  base: string;
+  bun: string;
+  revision: string;
+};
+
+export type NetCheckTypeSummary = {
+  type: NetOptimizationType;
+  label: string;
+  total: number;
+  passed: number;
+  failed: number;
+  info: number;
+  skipped: number;
+};
+
+export type NetworkingChecksSummary = {
+  total: number;
+  passed: number;
+  failed: number;
+  info: number;
+  skipped: number;
+  byType: NetCheckTypeSummary[];
+  byCategory: Array<{
+    category: string;
+    total: number;
+    passed: number;
+    failed: number;
+  }>;
+};
+
+export type NetworkingChecksReportJson = {
+  meta: NetworkingChecksMeta;
+  summary: NetworkingChecksSummary;
+  rows: NetCheckRow[];
+  byType: Record<NetOptimizationType, NetCheckRow[]>;
+  byCategory: Record<string, NetCheckRow[]>;
+  /** Object rows for tables. */
+  tables: {
+    all: TableRow[];
+    byType: Record<string, TableRow[]>;
+    byCategory: Record<string, TableRow[]>;
+    typeSummary: TableRow[];
+  };
+  rendered: {
+    all: string;
+    byType: Record<string, string>;
+    byCategory: Record<string, string>;
+    typeSummary: string;
+  };
+};
+
+/** Build a typed row with label filled from type. */
+export function netCheckRow(
+  partial: Omit<NetCheckRow, 'optimization'> & { optimization?: string }
+): NetCheckRow {
+  return {
+    ...partial,
+    optimization: partial.optimization ?? NET_OPTIMIZATION_LABELS[partial.type],
+  };
+}
+
+function countStatus(rows: NetCheckRow[]): Pick<
+  NetworkingChecksSummary,
+  'total' | 'passed' | 'failed' | 'info' | 'skipped'
+> {
+  let passed = 0;
+  let failed = 0;
+  let info = 0;
+  let skipped = 0;
+  for (const r of rows) {
+    if (r.status === 'PASS') passed++;
+    else if (r.status === 'FAIL') failed++;
+    else if (r.status === 'INFO') info++;
+    else if (r.status === 'SKIP') skipped++;
+  }
+  return { total: rows.length, passed, failed, info, skipped };
+}
+
+function tableRowsFromChecks(rows: NetCheckRow[]): TableRow[] {
+  return rows.map(r => ({
+    target: r.target,
+    category: r.category,
+    type: r.type,
+    optimization: r.optimization,
+    metric: r.metric,
+    status: r.status,
+  }));
+}
+
 /**
- * Multi-target networking check rows (DNS / preconnect / cold-warm fetch).
+ * Multi-target networking check report (DNS / preconnect / cold-warm / buffer).
+ * - Grouped **by type** (optimization kind) and **by category** (target bucket)
+ * - `console.log(report)` → `[Bun.inspect.custom]` + inspect.table sections
  */
 export class NetworkingChecksReport {
-  constructor(
-    public readonly rows: Array<{
-      target: string;
-      category: string;
-      optimization: string;
-      metric: string;
-      status: string;
-      detail?: string;
-    }>,
-    public readonly meta: { base: string; bun: string; revision: string } = {
-      base: '',
-      bun: Bun.version,
-      revision: Bun.revision || 'unknown',
-    }
-  ) {}
+  readonly rows: NetCheckRow[];
+  readonly meta: NetworkingChecksMeta;
 
-  toJSON() {
+  constructor(
+    rows: NetCheckRow[],
+    meta: Partial<NetworkingChecksMeta> = {}
+  ) {
+    this.rows = rows;
+    this.meta = {
+      base: meta.base ?? '',
+      bun: meta.bun ?? Bun.version,
+      revision: meta.revision ?? (Bun.revision || 'unknown'),
+    };
+  }
+
+  /** Group rows by optimization type (stable NET_OPTIMIZATION_TYPES order). */
+  byType(): Record<NetOptimizationType, NetCheckRow[]> {
+    const out = {} as Record<NetOptimizationType, NetCheckRow[]>;
+    for (const t of NET_OPTIMIZATION_TYPES) out[t] = [];
+    for (const r of this.rows) {
+      (out[r.type] ??= []).push(r);
+    }
+    return out;
+  }
+
+  /** Group rows by target category. */
+  byCategory(): Record<string, NetCheckRow[]> {
+    const out: Record<string, NetCheckRow[]> = {};
+    for (const r of this.rows) {
+      (out[r.category] ??= []).push(r);
+    }
+    return out;
+  }
+
+  summary(): NetworkingChecksSummary {
+    const overall = countStatus(this.rows);
+    const byTypeMap = this.byType();
+    const byType: NetCheckTypeSummary[] = NET_OPTIMIZATION_TYPES.map(type => {
+      const slice = byTypeMap[type] ?? [];
+      const c = countStatus(slice);
+      return {
+        type,
+        label: NET_OPTIMIZATION_LABELS[type],
+        total: c.total,
+        passed: c.passed,
+        failed: c.failed,
+        info: c.info,
+        skipped: c.skipped,
+      };
+    }).filter(s => s.total > 0);
+
+    const byCategory = Object.entries(this.byCategory()).map(([category, slice]) => {
+      const c = countStatus(slice);
+      return {
+        category,
+        total: c.total,
+        passed: c.passed,
+        failed: c.failed,
+      };
+    });
+
+    return { ...overall, byType, byCategory };
+  }
+
+  slices(): Pick<NetworkingChecksReportJson, 'tables' | 'byType' | 'byCategory' | 'summary'> {
+    const byType = this.byType();
+    const byCategory = this.byCategory();
+    const summary = this.summary();
+
+    const tablesByType: Record<string, TableRow[]> = {};
+    for (const [type, slice] of Object.entries(byType)) {
+      if (!slice.length) continue;
+      tablesByType[type] = tableRowsFromChecks(slice);
+    }
+    const tablesByCategory: Record<string, TableRow[]> = {};
+    for (const [cat, slice] of Object.entries(byCategory)) {
+      tablesByCategory[cat] = tableRowsFromChecks(slice);
+    }
+
+    return {
+      summary,
+      byType,
+      byCategory,
+      tables: {
+        all: tableRowsFromChecks(this.rows),
+        byType: tablesByType,
+        byCategory: tablesByCategory,
+        typeSummary: summary.byType.map(s => ({
+          type: s.type,
+          label: s.label,
+          total: s.total,
+          passed: s.passed,
+          failed: s.failed,
+          info: s.info,
+          skipped: s.skipped,
+        })),
+      },
+    };
+  }
+
+  render(opts: { colors?: boolean } = {}): NetworkingChecksReportJson['rendered'] {
+    const colors = opts.colors ?? shouldColor();
+    const { tables } = this.slices();
+    const cols = ['target', 'type', 'optimization', 'metric', 'status'] as const;
+
+    const byType: Record<string, string> = {};
+    for (const [type, slice] of Object.entries(tables.byType)) {
+      byType[type] = inspectTable(slice, [...cols], { colors });
+    }
+    const byCategory: Record<string, string> = {};
+    for (const [cat, slice] of Object.entries(tables.byCategory)) {
+      byCategory[cat] = inspectTable(slice, [...cols], { colors });
+    }
+
+    return {
+      all: tables.all.length
+        ? inspectTable(tables.all, [...cols], { colors })
+        : '(no multi-target checks)',
+      byType,
+      byCategory,
+      typeSummary: tables.typeSummary.length
+        ? inspectTable(
+            tables.typeSummary,
+            ['type', 'label', 'total', 'passed', 'failed', 'info', 'skipped'],
+            { colors }
+          )
+        : '(none)',
+    };
+  }
+
+  toJSON(): NetworkingChecksReportJson {
+    const s = this.slices();
     return {
       meta: this.meta,
       rows: this.rows,
+      ...s,
       rendered: this.render({ colors: false }),
     };
   }
 
-  render(opts: { colors?: boolean } = {}): string {
-    const colors = opts.colors ?? shouldColor();
-    if (!this.rows.length) return '(no multi-target checks)';
-    return inspectTable(
-      this.rows.map(r => ({
-        target: r.target,
-        optimization: r.optimization,
-        metric: r.metric,
-        status: r.status,
-      })),
-      ['target', 'optimization', 'metric', 'status'],
-      { colors }
-    );
-  }
-
+  /**
+   * @see https://bun.com/docs/runtime/utils#bun-inspect-custom
+   */
   [inspectCustom](_depth?: number, options?: { colors?: boolean }): string {
     const colors = options?.colors ?? shouldColor();
-    return [
-      `NetworkingChecksReport · ${this.meta.base || 'multi-target'} · Bun ${this.meta.bun}`,
-      this.render({ colors }),
-    ].join('\n');
+    const summary = this.summary();
+    const rendered = this.render({ colors });
+    const rev = this.meta.revision.slice(0, 8);
+
+    const parts = [
+      `NetworkingChecksReport · ${this.meta.base || 'multi-target'} · Bun ${this.meta.bun}/${rev}`,
+      `  ${summary.passed}/${summary.total} pass · ${summary.failed} fail · ${summary.info} info · ${summary.skipped} skip`,
+      '',
+      '── BY TYPE (summary) ──',
+      rendered.typeSummary,
+      '',
+      '── ALL CHECKS ──',
+      rendered.all,
+      '',
+      '── BY TYPE ──',
+    ];
+
+    for (const t of NET_OPTIMIZATION_TYPES) {
+      const table = rendered.byType[t];
+      if (!table) continue;
+      const label = NET_OPTIMIZATION_LABELS[t];
+      const ts = summary.byType.find(s => s.type === t);
+      parts.push(
+        '',
+        `  · ${t} (${label})${ts ? ` · ${ts.passed}/${ts.total}` : ''}`,
+        table
+      );
+    }
+
+    parts.push('', '── BY CATEGORY ──');
+    for (const [cat, table] of Object.entries(rendered.byCategory)) {
+      const cs = summary.byCategory.find(s => s.category === cat);
+      parts.push(
+        '',
+        `  · ${cat}${cs ? ` · ${cs.passed}/${cs.total}` : ''}`,
+        table
+      );
+    }
+
+    return parts.join('\n');
   }
 }
