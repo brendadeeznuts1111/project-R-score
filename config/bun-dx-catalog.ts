@@ -326,9 +326,9 @@ export const BUN_DX_CATALOG: BunDxEntry[] = [
   },
   {
     id: 'runtime.deep-equals',
-    summary: 'Deep equality check',
+    summary: 'Deep equality check (prefer strict)',
     bad: 'JSON.stringify(a) === JSON.stringify(b)',
-    good: 'Bun.deepEquals(a, b)',
+    good: 'deepEquals(a, b) // Bun.deepEquals(a, b, true) — undefined key ≠ missing',
     docs: 'https://bun.com/docs/runtime/utils#bun-deepequals',
     severity: 'warn',
     fixTier: 'medium',

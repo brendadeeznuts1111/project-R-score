@@ -248,7 +248,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'deep-equals-boundaries',
     claim:
-      'Bun.deepEquals wrapper and strict/changed-index helpers behave as this repo depends on them',
+      'Bun.deepEquals wrapper defaults strict; docs strict matrix (undefined/sparse/class/nested), dual-mode, changed-index/key helpers behave as this repo depends on them',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',
@@ -256,8 +256,9 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'bun test ./tests/deep-equals.test.ts',
       'tests/deep-equals.test.ts',
       'lib/deep-equals.ts',
+      'lib/bun-utils-proof.ts',
     ],
-    freshRerun: 'bun test ./tests/deep-equals.test.ts',
+    freshRerun: 'bun test ./tests/deep-equals.test.ts ./tests/bun-utils-proof.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/deep-equals.ts',
   },

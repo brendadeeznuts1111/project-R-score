@@ -784,9 +784,11 @@ const png = await new Bun.Image(screenshot)
 const meta = await extractImageEvidenceMeta(pngBytes);
 // width, height, format, size, sha256 digest`,
 
-    DEEP_EQUALS: `import { deepEquals } from "../lib/deep-equals.ts";
+    DEEP_EQUALS: `import { deepEquals, deepEqualsModes, deepEqualsDocsStrictProof } from "../lib/deep-equals.ts";
 import { imageEvidenceMetaEqual } from "../lib/image-metadata.ts";
-deepEquals(prev, next);
+deepEquals(prev, next); // strict default — undefined key ≠ missing
+deepEqualsModes(a, b); // { strict, loose, diverges }
+deepEqualsDocsStrictProof(); // Bun docs strict matrix
 imageEvidenceMetaEqual(a, b); // strict Bun.deepEquals`,
 
     PEEK: `import { awaitSettled, promiseStatus } from "../lib/peek-settle.ts";

@@ -8,7 +8,12 @@
  */
 import { inspect, stringWidth } from 'bun';
 // Prefer strict shape: Bun.deepEquals(a, b, true)
-import { deepEquals, deepEqualsLoose } from './deep-equals.ts';
+import {
+  deepEquals,
+  deepEqualsDocsStrictCases,
+  deepEqualsLoose,
+  deepEqualsModes,
+} from './deep-equals.ts';
 
 export type BunUtilsCase = {
   utility: string;
@@ -166,6 +171,33 @@ export function buildTestCases(): BunUtilsCase[] {
       })(),
       note: 'Bun.deepEquals(a,b) loose for contrast',
     },
+    // Full Bun docs strict-inequality matrix (utils + guide) + nested deeper shape.
+    ...deepEqualsDocsStrictCases().flatMap(c => {
+      const modes = deepEqualsModes(c.a, c.b);
+      return [
+        {
+          utility: 'deepEquals(strict)',
+          input: c.label,
+          expected: c.expectedStrict,
+          actual: modes.strict,
+          note: `docs matrix · ${c.id} · strict`,
+        },
+        {
+          utility: 'deepEquals(loose)',
+          input: c.label,
+          expected: c.expectedLoose,
+          actual: modes.loose,
+          note: `docs matrix · ${c.id} · loose`,
+        },
+        {
+          utility: 'deepEquals(diverges)',
+          input: c.label,
+          expected: c.expectedLoose && !c.expectedStrict,
+          actual: modes.diverges,
+          note: `docs matrix · ${c.id} · strict≠loose`,
+        },
+      ] satisfies BunUtilsCase[];
+    }),
     {
       utility: 'inspect (depth:0)',
       input: 'depth:0',

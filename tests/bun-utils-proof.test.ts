@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/utils
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 import { describe, expect, test } from 'bun:test';
 import {
   buildBunUtilsProof,
@@ -6,6 +7,7 @@ import {
   inspectDepthPasses,
   sha256Hex,
 } from '../lib/bun-utils-proof.ts';
+import { deepEqualsDocsStrictCases } from '../lib/deep-equals.ts';
 
 describe('bun-utils-proof', () => {
   test('all baselines pass on this Bun', () => {
@@ -17,6 +19,11 @@ describe('bun-utils-proof', () => {
     expect(proof.summary.failed).toBe(0);
     expect(proof.summary.passed).toBe(proof.summary.total);
     expect(proof.proofHash).toMatch(/^[a-f0-9]{64}$/);
+
+    // Docs strict matrix expanded into proof rows (strict + loose + diverges per case).
+    const docsRows = proof.testCases.filter(c => c.note.includes('docs matrix'));
+    expect(docsRows.length).toBe(deepEqualsDocsStrictCases().length * 3);
+    expect(docsRows.every(c => Object.is(c.actual, c.expected))).toBe(true);
   });
 
   test('proof hash is stable for fixed timestamp and cases', () => {

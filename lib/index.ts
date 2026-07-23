@@ -81,10 +81,19 @@ export {
 // Bun.deepEquals / Bun.peek settled-promise helpers
 export {
   BUN_DEEP_EQUALS_DOCS,
+  BUN_DEEP_EQUALS_GUIDE,
   deepEquals,
   deepEqualsChangedIndex,
+  deepEqualsChangedKey,
+  deepEqualsDocsStrictCases,
+  deepEqualsDocsStrictProof,
   deepEqualsLoose,
+  deepEqualsModes,
   deepEqualsStrict,
+  deepEqualsStrictDiverges,
+  type DeepEqualsDocsCase,
+  type DeepEqualsDocsProofRow,
+  type DeepEqualsModes,
 } from './deep-equals';
 export {
   BUN_PEEK_DOCS,
