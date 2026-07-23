@@ -1426,6 +1426,12 @@ function buildPublicRoutes() {
       serveVerificationScript('defaults', { baseUrl: new URL(req.url).origin }),
     '/api/defaults/script.meta': (req: Request) =>
       serveVerificationScriptMeta('defaults', new URL(req.url).origin),
+    '/api/networking/script': (req: Request) =>
+      serveVerificationScript('networking', { baseUrl: new URL(req.url).origin }),
+    '/api/networking/script/': (req: Request) =>
+      serveVerificationScript('networking', { baseUrl: new URL(req.url).origin }),
+    '/api/networking/script.meta': (req: Request) =>
+      serveVerificationScriptMeta('networking', new URL(req.url).origin),
     '/api/bun-defaults/script': (req: Request) =>
       serveVerificationScript('bun-defaults', { baseUrl: new URL(req.url).origin }),
     '/api/bun-defaults/script.meta': (req: Request) =>
