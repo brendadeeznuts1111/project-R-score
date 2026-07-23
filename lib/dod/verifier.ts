@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -72,6 +73,10 @@ export async function decryptAesGcm(data: Uint8Array, keyMaterial: string): Prom
 // ── Evidence stores ──────────────────────────────────────────────
 export type DODEvidenceStore = {
   put(key: string, bytes: Uint8Array): Promise<void>;
+  /** Optional read-back for rebuild-index. */
+  get?(key: string): Promise<Uint8Array | null>;
+  /** Optional listing for rebuild-index. */
+  list?(prefix: string): Promise<string[]>;
 };
 
 /** Local filesystem store (default; also the test store). */
@@ -79,6 +84,17 @@ export function localEvidenceStore(root: string): DODEvidenceStore {
   return {
     async put(key, bytes) {
       await Bun.write(`${root}/${key}`, bytes);
+    },
+    async get(key) {
+      const f = Bun.file(`${root}/${key}`);
+      return (await f.exists()) ? f.bytes() : null;
+    },
+    async list(prefix) {
+      const keys: string[] = [];
+      for await (const f of new Bun.Glob(`${prefix}**/*`).scan(root)) {
+        keys.push(f);
+      }
+      return keys;
     },
   };
 }
@@ -102,6 +118,14 @@ export function r2EvidenceStoreFromEnv(): DODEvidenceStore | null {
   return {
     async put(key, bytes) {
       await client.write(key, bytes);
+    },
+    async get(key) {
+      const f = client.file(key);
+      return (await f.exists()) ? new Uint8Array(await f.bytes()) : null;
+    },
+    async list(prefix) {
+      const res = await client.list({ prefix });
+      return (res.contents ?? []).map(o => o.key).filter((k): k is string => !!k);
     },
   };
 }
@@ -541,5 +565,81 @@ export class DODVerifier {
       [String(-maxAgeDays)]
     );
     return result.changes;
+  }
+
+  /**
+   * Rebuild the SQLite index from sidecar records in the evidence store.
+   * Requires a store with list/get (local fs and R2 both support it).
+   * Returns the number of records restored.
+   */
+  async rebuildIndex(): Promise<number> {
+    if (!this.store.list || !this.store.get) {
+      throw new Error('rebuildIndex: evidence store does not support list/get');
+    }
+    const keys = await this.store.list('dod-records/');
+    let restored = 0;
+    for (const key of keys) {
+      if (!key.endsWith('.json')) continue;
+      const raw = await this.store.get(key);
+      if (!raw) continue;
+      try {
+        const record = JSON.parse(new TextDecoder().decode(raw)) as {
+          submission: DODSubmission;
+          verification: DODVerification;
+          encrypted?: boolean;
+        };
+        const { submission: s, verification: v } = record;
+        this.db.run(
+          `INSERT OR REPLACE INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
+            extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted)
+          VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)`,
+          {
+            $id: s.id,
+            $aid: s.agentId,
+            $type: s.type,
+            $status: v.status,
+            $vh: v.visualHash,
+            $mh: v.metadataHash,
+            $sig: v.signature,
+            $ts: v.tamperScore,
+            $text: v.extractedText ?? null,
+            $lat: v.geoLocation?.lat ?? null,
+            $lng: v.geoLocation?.lng ?? null,
+            $dev: v.deviceModel ?? null,
+            $s3: v.s3Path,
+            $sub: s.submittedAt,
+            $proc: v.processedAt,
+            $enc: record.encrypted ? 1 : 0,
+          }
+        );
+        restored++;
+      } catch {
+        // skip malformed record
+      }
+    }
+    return restored;
+  }
+
+  /** Agent-side receipt: status + hashes for a submitted DOD. */
+  receipt(dodId: string) {
+    // brand-ok — opaque external DOD id
+    return (
+      this.db
+        .query(
+          'SELECT id, agent_id, type, status, visual_hash, signature, submitted_at, processed_at FROM dod_submissions WHERE id=$id'
+        )
+        .get({ $id: dodId }) ?? null
+    );
+  }
+
+  /** Agent-side verification: recompute HMAC and compare (constant length). */
+  verifySignature(dodId: string, visualHash: string, metaHash: string, signature: string): boolean {
+    // brand-ok — opaque external DOD id
+    return this.sign(dodId, visualHash, metaHash) === signature;
+  }
+
+  /** Close the DB (and any future shared resources). */
+  close(): void {
+    this.db.close();
   }
 }

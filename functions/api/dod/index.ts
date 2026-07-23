@@ -10,7 +10,25 @@ import { DODVerifier } from "../../../lib/dod/verifier";
 
 const verifier = new DODVerifier();
 
+/** Constant-time-ish token check: compare sha256 digests (equal-length inputs). */
+function tokenOk(provided: string, expected: string): boolean {
+  const hash = (s: string) => new Bun.CryptoHasher("sha256").update(s).digest("hex");
+  return hash(provided) === hash(expected);
+}
+
+/** Bearer auth when DOD_REVIEW_TOKEN is set; open in dev when unset. */
+function authorized(request: Request): boolean {
+  const expected = Bun.env.DOD_REVIEW_TOKEN;
+  if (!expected) return true;
+  const auth = request.headers.get("authorization") ?? "";
+  const provided = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  return provided.length > 0 && tokenOk(provided, expected);
+}
+
 export async function onRequest({ request }: { request: Request }) {
+  if (!authorized(request)) {
+    return new Response("Unauthorized", { status: 401 });
+  }
   const url = new URL(request.url);
   const path = url.pathname.replace("/api/dod", "");
 

@@ -1,6 +1,13 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { DODVerifier, validateImage, type DODSubmission } from "../lib/dod/verifier.ts";
+import {
+  DODVerifier,
+  decryptAesGcm,
+  encryptAesGcm,
+  extractAmount,
+  validateImage,
+  type DODSubmission,
+} from "../lib/dod/verifier.ts";
 import { averageHash } from "../lib/dod/evidence.ts";
 
 const PNG_1PX = Buffer.from(
@@ -13,6 +20,7 @@ const NOT_IMAGE = new TextEncoder().encode("<?php echo 'shell'; ?>");
 const SCRATCH = ".tmp/dod-verifier-test";
 let verifier: DODVerifier;
 let counter = 0;
+let png2x2: Uint8Array;
 
 function submission(overrides: Partial<DODSubmission> = {}): DODSubmission {
   counter++;
@@ -20,7 +28,7 @@ function submission(overrides: Partial<DODSubmission> = {}): DODSubmission {
     id: `dod-test-${counter}`,
     agentId: "agent-test",
     type: "balance",
-    rawImage: new Uint8Array(PNG_1PX),
+    rawImage: png2x2, // even dimensions → tamper floor 20 (no EXIF only)
     submittedAt: new Date().toISOString(),
     ...overrides,
   };
@@ -28,6 +36,7 @@ function submission(overrides: Partial<DODSubmission> = {}): DODSubmission {
 
 beforeEach(async () => {
   await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
+  png2x2 = await new Bun.Image(new Uint8Array(PNG_1PX)).resize(2, 2).png().bytes();
   verifier = new DODVerifier(`${SCRATCH}/ops.db`, {
     evidenceRoot: `${SCRATCH}/evidence`,
     registryPath: `${SCRATCH}/registry.json`,
@@ -83,7 +92,7 @@ describe("dod-verifier storage path", () => {
 describe("dod-verifier perceptual hash", () => {
   test("matches evidence.ts averageHash (pixel-based)", async () => {
     const ver = await verifier.process(submission());
-    const expected = await averageHash(new Uint8Array(PNG_1PX));
+    const expected = await averageHash(png2x2);
     expect(ver.visualHash).toBe(expected);
     expect(ver.visualHash).toMatch(/^[0-9a-f]{16}$/);
   });
@@ -93,5 +102,171 @@ describe("dod-verifier OCR wiring", () => {
   test("non-document types skip OCR", async () => {
     const ver = await verifier.process(submission({ type: "location" }));
     expect(ver.extractedText).toBeUndefined();
+  });
+});
+
+describe("dod batch 2 — encryption", () => {
+  test("AES-GCM roundtrip", async () => {
+    const data = new TextEncoder().encode("sensitive id scan bytes");
+    const enc = await encryptAesGcm(data, "test-key");
+    expect(enc.length).toBeGreaterThan(data.length);
+    const dec = await decryptAesGcm(enc, "test-key");
+    expect(new TextDecoder().decode(dec)).toBe("sensitive id scan bytes");
+  });
+
+  test("wrong key fails to decrypt", async () => {
+    const enc = await encryptAesGcm(new Uint8Array([1, 2, 3]), "k1");
+    await expect(decryptAesGcm(enc, "k2")).rejects.toThrow();
+  });
+
+  test("id submissions are stored encrypted with .enc suffix and flagged in db", async () => {
+    const keyed = new DODVerifier(`${SCRATCH}/ops2.db`, {
+      evidenceRoot: `${SCRATCH}/evidence`,
+      registryPath: `${SCRATCH}/registry2.json`,
+      idEncryptionKey: "pii-key",
+    });
+    const sub = submission({ type: "id" });
+    const ver = await keyed.process(sub);
+    expect(ver.s3Path).toEndWith(".webp.enc");
+    const stored = await Bun.file(`${SCRATCH}/evidence/${ver.s3Path}`).bytes();
+    expect(validateImage(stored)).toBe(false); // ciphertext, not a webp
+    const roundtrip = await decryptAesGcm(stored, "pii-key");
+    expect(validateImage(roundtrip)).toBe(true); // decrypts back to a real image
+  });
+});
+
+describe("dod batch 2 — auto-approve", () => {
+  test("balance auto-approves for trusted agents (10+ verified)", async () => {
+    const db = new (await import("bun:sqlite")).Database(`${SCRATCH}/ops.db`);
+    for (let i = 0; i < 10; i++) {
+      // Older than 1h: counts toward auto-approve trust, not the rate limit.
+      db.run(
+        "INSERT INTO dod_submissions (id, agent_id, type, status, submitted_at) VALUES (?, 'agent-test', 'balance', 'verified', datetime('now', '-2 hours'))",
+        [`seed-${i}`],
+      );
+    }
+    db.close();
+    const ver = await verifier.process(submission({ type: "balance" }));
+    expect(ver.status).toBe("verified");
+  });
+
+  test("first-time agent balance stays pending", async () => {
+    const ver = await verifier.process(submission({ type: "balance" }));
+    expect(ver.status).toBe("pending");
+  });
+});
+
+describe("dod batch 2 — liquidity hook", () => {
+  test("onVerifiedBalance fires with parsed amount after verified balance DOD", async () => {
+    const calls: { agentId: string; amount?: number }[] = []; // brand-ok — test spy
+    const db = new (await import("bun:sqlite")).Database(`${SCRATCH}/ops.db`);
+    for (let i = 0; i < 10; i++) {
+      // Older than 1h: counts toward auto-approve trust, not the rate limit.
+      db.run(
+        "INSERT INTO dod_submissions (id, agent_id, type, status, submitted_at) VALUES (?, 'agent-test', 'balance', 'verified', datetime('now', '-2 hours'))",
+        [`seed-${i}`],
+      );
+    }
+    db.close();
+    const hooked = new DODVerifier(`${SCRATCH}/ops.db`, {
+      evidenceRoot: `${SCRATCH}/evidence`,
+      registryPath: `${SCRATCH}/registry.json`,
+      onVerifiedBalance: async (agentId, amount) => {
+        calls.push({ agentId, amount });
+      },
+    });
+    const ver = await hooked.process(submission({ type: "balance" }));
+    expect(ver.status).toBe("verified");
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.agentId).toBe("agent-test");
+  });
+
+  test("extractAmount parses dollar figures", () => {
+    expect(extractAmount("Balance: $12,345.67 available")).toBe(12345.67);
+    expect(extractAmount("no amount here")).toBeUndefined();
+    expect(extractAmount(undefined)).toBeUndefined();
+  });
+});
+
+describe("dod batch 2 — review API auth", () => {
+  const savedToken = Bun.env.DOD_REVIEW_TOKEN;
+
+  afterEach(() => {
+    if (savedToken == null) delete Bun.env.DOD_REVIEW_TOKEN;
+    else Bun.env.DOD_REVIEW_TOKEN = savedToken;
+  });
+
+  test("401 without bearer token when DOD_REVIEW_TOKEN is set", async () => {
+    Bun.env.DOD_REVIEW_TOKEN = "test-review-token";
+    const { onRequest } = await import("../functions/api/dod/index.ts");
+    const res = await onRequest({
+      request: new Request("http://localhost/api/dod?status=all"),
+    });
+    expect(res.status).toBe(401);
+  });
+
+  test("200 with correct bearer token", async () => {
+    Bun.env.DOD_REVIEW_TOKEN = "test-review-token";
+    const { onRequest } = await import("../functions/api/dod/index.ts");
+    const res = await onRequest({
+      request: new Request("http://localhost/api/dod?status=all", {
+        headers: { authorization: "Bearer test-review-token" },
+      }),
+    });
+    expect(res.status).toBe(200);
+  });
+
+  test("open when DOD_REVIEW_TOKEN is unset (dev)", async () => {
+    delete Bun.env.DOD_REVIEW_TOKEN;
+    const { onRequest } = await import("../functions/api/dod/index.ts");
+    const res = await onRequest({
+      request: new Request("http://localhost/api/dod?status=all"),
+    });
+    expect(res.status).toBe(200);
+  });
+});
+
+describe("dod batch 3 — rebuild index", () => {
+  test("rebuilds SQLite from sidecar records in the store", async () => {
+    await verifier.process(submission({ id: "dod-rebuild-1" }));
+    await verifier.process(submission({ id: "dod-rebuild-2" }));
+    const db = new (await import("bun:sqlite")).Database(`${SCRATCH}/ops.db`);
+    db.run("DELETE FROM dod_submissions");
+    db.close();
+    const restored = await verifier.rebuildIndex();
+    expect(restored).toBe(2);
+    expect(verifier.receipt("dod-rebuild-1")?.status).toBe("pending");
+    expect(verifier.receipt("dod-rebuild-2")?.status).toBe("pending");
+  });
+});
+
+describe("dod batch 3 — agent receipt", () => {
+  test("receipt returns status + hashes after processing", async () => {
+    const ver = await verifier.process(submission({ id: "dod-receipt-1" }));
+    const r = verifier.receipt("dod-receipt-1") as Record<string, unknown>;
+    expect(r.status).toBe(ver.status);
+    expect(r.visual_hash).toBe(ver.visualHash);
+    expect(r.signature).toBe(ver.signature);
+  });
+
+  test("verifySignature accepts the issued signature, rejects tampered ones", async () => {
+    const ver = await verifier.process(submission({ id: "dod-sig-1" }));
+    expect(verifier.verifySignature(ver.dodId, ver.visualHash, ver.metadataHash, ver.signature)).toBe(true);
+    expect(
+      verifier.verifySignature(ver.dodId, ver.visualHash, ver.metadataHash, "0".repeat(64)),
+    ).toBe(false);
+  });
+});
+
+describe("dod batch 3 — watermark batching", () => {
+  test("repeated process() calls reuse the pipeline and close() disposes cleanly", async () => {
+    for (let i = 0; i < 3; i++) {
+      await verifier.process(submission());
+    }
+    expect(() => verifier.close()).not.toThrow();
+    verifier = new DODVerifier(`${SCRATCH}/ops.db`, {
+      evidenceRoot: `${SCRATCH}/evidence`,
+      registryPath: `${SCRATCH}/registry.json`,
+    });
   });
 });
