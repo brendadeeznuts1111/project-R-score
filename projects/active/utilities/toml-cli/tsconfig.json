@@ -17,7 +17,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": ".",
-    "types": ["bun-types"],
+    "types": ["bun"],
     "paths": {
       "@/*": ["src/*"],
       "@config/*": ["config/*"],

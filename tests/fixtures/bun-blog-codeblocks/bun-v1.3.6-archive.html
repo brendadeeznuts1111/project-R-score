@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Bun v1.3.6 Archive fixture</title></head>
+<body>
+  <article>
+    <h2 id="bun-archive-api-creates-extracts-tarballs">Bun.Archive API creates &amp; extracts tarballs</h2>
+    <div class="CodeBlock ">
+      <div class="relative">
+        <pre class="shiki"><code><span class="line"><span class="s">// Create an archive from files</span></span><span class="line"><span class="s">const archive = new Bun.Archive({</span></span><span class="line"><span class="s">  "hello.txt": "Hello, World!",</span></span><span class="line"><span class="s">  "data.json": JSON.stringify({ foo: "bar" }),</span></span><span class="line"><span class="s">  "binary.bin": new Uint8Array([1, 2, 3, 4]),</span></span><span class="line"><span class="s">});</span></span><span class="line"><span class="s"></span></span><span class="line"><span class="s">// Or get as Blob/Uint8Array</span></span><span class="line"><span class="s">const blob = await archive.blob();</span></span><span class="line"><span class="s">const bytes = await archive.bytes();</span></span><span class="line"><span class="s"></span></span><span class="line"><span class="s">// Or read files:</span></span><span class="line"><span class="s">const files = await archive.files();</span></span><span class="line"><span class="s">const text = await archive.files("*.{txt,json}");</span></span><span class="line"><span class="s"></span></span><span class="line"><span class="s">// Extract an existing tarball</span></span><span class="line"><span class="s">const tarball = new Bun.Archive(await Bun.file("package.tar.gz").bytes());</span></span><span class="line"><span class="s">const fileCount = await tarball.extract("./output-dir");</span></span><span class="line"><span class="s">console.log(\`Extracted \${fileCount} files\`);</span></span><span class="line"><span class="s"></span></span><span class="line"><span class="s">// Enable gzip compression (.tar.gz)</span></span><span class="line"><span class="s">const compressed = new Bun.Archive(files, { compress: "gzip" });</span></span><span class="line"><span class="s"></span></span><span class="line"><span class="s">// Gzip with custom compression level (1-12)</span></span><span class="line"><span class="s">const maxCompression = new Bun.Archive(files, { compress: "gzip", level: 12 });</span></span></code></pre>
+      </div>
+    </div>
+    <div class="CodeBlock ">
+      <div class="relative">
+        <pre class="shiki"><code><span class="line"><span class="s">// Write to local file</span></span><span class="line"><span class="s">await Bun.write("archive.tar", archive);</span></span><span class="line"><span class="s">await Bun.write("archive.tar.gz", compressed);</span></span></code></pre>
+      </div>
+    </div>
+    <div class="CodeBlock ">
+      <div class="relative">
+        <pre class="shiki"><code><span class="line"><span class="s">// Write to S3</span></span><span class="line"><span class="s">await Bun.write("s3://bucket/archive.tar.gz", compressed);</span></span><span class="line"><span class="s">await s3Client.write("archive.tar.gz", compressed);</span></span></code></pre>
+      </div>
+    </div>
+  </article>
+</body>
+</html>

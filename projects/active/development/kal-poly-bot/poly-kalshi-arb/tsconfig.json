@@ -25,7 +25,7 @@
       "@/*": ["./src/*"],
       "@/styles/*": ["./styles/*"]
     },
-    "types": ["bun-types"]
+    "types": ["bun"]
   },
   "include": [
     "src/**/*",

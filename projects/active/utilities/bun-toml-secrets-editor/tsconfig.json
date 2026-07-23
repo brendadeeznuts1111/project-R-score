@@ -15,7 +15,7 @@
 		"outDir": "./dist",
 		"rootDir": "./",
 		"resolveJsonModule": true,
-		"types": ["bun-types"],
+    "types": ["bun"],
 		"jsx": "react-jsx",
 		"jsxImportSource": "react"
 	},

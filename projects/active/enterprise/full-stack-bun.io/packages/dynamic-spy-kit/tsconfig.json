@@ -11,7 +11,7 @@
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
-		"types": ["bun-types"],
+		"types": ["bun"],
 		"typeRoots": ["./node_modules/@types", "./src/types"]
 	},
 	"include": [

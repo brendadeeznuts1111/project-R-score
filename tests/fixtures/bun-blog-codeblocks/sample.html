@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Bun v9.9.9 fixture</title></head>
+<body>
+  <h2>Install tabs</h2>
+  <div class="CodeBlockTab">
+    <pre><code><span class="line"><span class="s">curl install</span></span></code></pre>
+  </div>
+
+  <h2 id="files-in-bun-build">files in Bun.build</h2>
+  <div class="CodeBlock ">
+    <div class="relative">
+      <pre class="shiki"><code><span class="line"><span class="s">const</span><span class="s"> result = await Bun.build({</span></span><span class="line"><span class="s">  files: {</span></span><span class="line"><span class="s">    "/app/index.ts": "console.log(1)",</span></span><span class="line"><span class="s">  },</span></span><span class="line"><span class="s">});</span></span></code></pre>
+    </div>
+  </div>
+
+  <h2 id="s3-requester-pays-support">S3 Requester Pays Support</h2>
+  <div class="CodeBlock ">
+    <div class="relative">
+      <pre class="shiki"><code><span class="line"><span class="s">// Reading from a Requester Pays bucket</span></span><span class="line"><span class="s">import { s3 } from "bun";</span></span><span class="line"><span class="s">s3.file("data.csv", { requestPayer: true });</span></span></code></pre>
+    </div>
+  </div>
+</body>
+</html>

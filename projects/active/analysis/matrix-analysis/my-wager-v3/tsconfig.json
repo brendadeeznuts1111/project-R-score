@@ -42,7 +42,7 @@
       "@/utils/*": ["./src/utils/*"],
       "@/types/*": ["./src/types/*"]
     },
-    "types": ["bun-types"]
+    "types": ["bun"]
   },
   "include": [
     "**/*.ts",

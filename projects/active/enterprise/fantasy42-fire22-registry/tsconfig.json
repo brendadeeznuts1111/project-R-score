@@ -16,7 +16,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false,
-    "types": ["bun-types"],
+    "types": ["bun"],
     "paths": {
       "@/*": ["./src/*"],
       "@/lib/*": ["./lib/*"],

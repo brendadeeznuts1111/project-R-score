@@ -4,7 +4,7 @@
     "noEmit": true,
     "incremental": true,
     "types": [
-      "bun-types"
+      "bun"
     ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,

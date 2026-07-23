@@ -1,0 +1,36 @@
+// @see https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support — requestPayer
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
+import { describe, expect, test } from 'bun:test';
+import { asAccessKeyId } from '../lib/types/branded';
+import {
+  createS3RegistryStore,
+  requireFactoryRegistryS3Config,
+} from '../lib/factory/object-store.ts';
+
+describe('factory S3 store requestPayer (Bun ≥1.3.6)', () => {
+  test('requireFactoryRegistryS3Config includes requestPayer from env', () => {
+    const prev = Bun.env.R2_REQUEST_PAYER;
+    try {
+      Bun.env.R2_REQUEST_PAYER = 'true';
+      const cfg = requireFactoryRegistryS3Config();
+      expect(cfg.requestPayer).toBe(true);
+      Bun.env.R2_REQUEST_PAYER = '0';
+      expect(requireFactoryRegistryS3Config().requestPayer).toBe(false);
+    } finally {
+      if (prev === undefined) delete Bun.env.R2_REQUEST_PAYER;
+      else Bun.env.R2_REQUEST_PAYER = prev;
+    }
+  });
+
+  test('createS3RegistryStore accepts explicit requestPayer without throwing', () => {
+    const store = createS3RegistryStore({
+      accessKeyId: asAccessKeyId('AKIAFACTORYTEST'),
+      secretAccessKey: 'test-secret',
+      bucket: 'requester-pays-bucket',
+      endpoint: 'https://example.r2.cloudflarestorage.com',
+      requestPayer: true,
+    });
+    expect(typeof store.ping).toBe('function');
+    expect(typeof store.putJson).toBe('function');
+  });
+});

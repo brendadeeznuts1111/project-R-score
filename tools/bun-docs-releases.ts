@@ -604,7 +604,7 @@ async function ensureCacheDir(): Promise<void> {
   if (!(await Bun.file(keep).exists())) await Bun.write(keep, '');
 }
 
-async function fetchPostHtml(url: string, force?: boolean): Promise<string> {
+export async function fetchPostHtml(url: string, force?: boolean): Promise<string> {
   const cachePath = cachePathFor(url);
   let prev: PostCache | null = null;
   if (!force && (await Bun.file(cachePath).exists())) {
