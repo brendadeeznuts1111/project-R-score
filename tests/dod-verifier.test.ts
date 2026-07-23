@@ -270,3 +270,13 @@ describe("dod batch 3 — watermark batching", () => {
     });
   });
 });
+
+describe("dod — registry signature chain", () => {
+  test("new registry entries carry the HMAC signature", async () => {
+    const ver = await verifier.process(submission({ id: "dod-chain-1" }));
+    const reg = await Bun.file(`${SCRATCH}/registry.json`).json();
+    const entry = reg.entries.find((e: { id: string }) => e.id === "dod-chain-1"); // brand-ok — opaque registry JSON row
+    expect(entry.signature).toBe(ver.signature);
+    expect(entry.signature).toMatch(/^[0-9a-f]{64}$/);
+  });
+});

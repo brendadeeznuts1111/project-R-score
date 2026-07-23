@@ -47,4 +47,4 @@ const result = await verifier.process({
 - [`tests/dod-evidence.test.ts`](../../tests/dod-evidence.test.ts) — evidence package tests
 - [`tools/dod-evidence.ts`](../../tools/dod-evidence.ts) — CLI for packing/verifying evidence
 - [`public/portal/dod/index.html`](../../public/portal/dod/index.html) — admin review UI
-- [`functions/api/dod/index.ts`](../../functions/api/dod/index.ts) — review API
+- [`functions-bun-only/api/dod/index.ts`](../../functions-bun-only/api/dod/index.ts) — review API (Bun runtime; isolated from edge `functions/` in 6ff0514)

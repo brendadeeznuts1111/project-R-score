@@ -492,6 +492,9 @@ export class DODVerifier {
       submittedAt: sub.submittedAt,
       processedAt: ver.processedAt,
       processingMs: Number(processingNs) / 1e6,
+      // HMAC signature (id:visualHash:metaHash) — tamper evidence, validated
+      // by the dod-registry contract for new entries.
+      signature: ver.signature,
     });
     await Bun.write(path, JSON.stringify(reg, null, 2));
   }
