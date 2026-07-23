@@ -22,6 +22,8 @@ const summary = await buildRegistrySnapshot({
   withWebView: args.includes('--webview'),
   withStaticRegistry: !args.includes('--no-static'),
   forceRoutingRefresh: args.includes('--force-routing'),
+  phase: args.includes('--post') ? 'post' : args.includes('--pre') ? 'pre' : undefined,
+  pinStable: args.includes('--stable'),
   outPath,
 });
 

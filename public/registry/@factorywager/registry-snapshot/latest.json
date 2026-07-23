@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generated": "2026-07-23T18:12:54.750Z",
+  "generated": "2026-07-23T18:16:47.644Z",
   "bunVersion": "1.3.6",
   "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
   "packageCount": 14,
@@ -544,7 +544,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 31,
+    "uptimeMs": 25,
     "packageCount": 14,
     "versionCount": 23,
     "lastIntegrity": {
@@ -562,11 +562,11 @@
     "dodByStatus": {},
     "experimentsActive": 0,
     "predictionN": 0,
-    "timestamp": "2026-07-23T18:12:54.750Z"
+    "timestamp": "2026-07-23T18:16:47.644Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-23T18:12:54.733Z",
+    "generated": "2026-07-23T18:16:47.621Z",
     "liquidity": {
       "total": 0
     },
@@ -609,11 +609,11 @@
     "bunUtils": {
       "bunVersion": "1.3.6",
       "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
-      "proofHash": "f6778c4b3aaff0a65f949654e6e0bfc4a545b48152234981464c3350852e9d49",
+      "proofHash": "0d6baaffe8e9012182245b9e53306f48cb2ee9f00a7736b2896daafb1997e962",
       "passed": 10,
       "total": 10,
       "failed": 0,
-      "timestamp": "2026-07-23T18:12:54.734Z"
+      "timestamp": "2026-07-23T18:16:47.622Z"
     },
     "routing": {
       "available": true,
@@ -703,7 +703,7 @@
     "schemaVersion": 1,
     "bunVersion": "1.3.6",
     "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
-    "timestamp": "2026-07-23T18:12:54.744Z",
+    "timestamp": "2026-07-23T18:16:47.630Z",
     "testCases": [
       {
         "utility": "stringWidth",
@@ -784,8 +784,8 @@
       "passed": 10,
       "failed": 0
     },
-    "proofHash": "f4ed30664322e759294d36e919a28382f9f4324b828f875e71d9763aab6e3b90"
+    "proofHash": "acdadb6aea2004d62ccc1ab611db178293e29fcb3c258eaf7bad908d3c53f079"
   },
   "routing": null,
-  "proofHash": "9083c4f7f9cbea727ff641f79d4527b98cd9b29a3e6ff777a53570795e9cc5bb"
+  "proofHash": "2da90f1d45e3360388fd435a1afd7cbcd3d568229b7c3669cef8171464eeb933"
 }

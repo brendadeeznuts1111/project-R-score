@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "lastUpdated": "2026-07-23T18:16:47.724Z",
+  "packages": {
+    "@factorywager/bun-utils-test": {
+      "name": "@factorywager/bun-utils-test",
+      "versions": [
+        "0.0.0+20260723T181647"
+      ],
+      "dist-tags": {
+        "pre": "0.0.0+20260723T181647",
+        "latest": "0.0.0+20260723T181647",
+        "post": "0.0.0+20260723T181647"
+      },
+      "releases": {
+        "0.0.0+20260723T181647": {
+          "version": "0.0.0+20260723T181647",
+          "publishedAt": "2026-07-23T18:16:47.722Z",
+          "proofHash": "acdadb6aea2004d62ccc1ab611db178293e29fcb3c258eaf7bad908d3c53f079",
+          "phase": "post",
+          "path": "public/registry/@factorywager/bun-utils-test/latest.json"
+        }
+      }
+    },
+    "@factorywager/registry-snapshot": {
+      "name": "@factorywager/registry-snapshot",
+      "versions": [
+        "0.0.0+20260723T181647"
+      ],
+      "dist-tags": {
+        "pre": "0.0.0+20260723T181647",
+        "latest": "0.0.0+20260723T181647",
+        "post": "0.0.0+20260723T181647"
+      },
+      "releases": {
+        "0.0.0+20260723T181647": {
+          "version": "0.0.0+20260723T181647",
+          "publishedAt": "2026-07-23T18:16:47.724Z",
+          "proofHash": "2da90f1d45e3360388fd435a1afd7cbcd3d568229b7c3669cef8171464eeb933",
+          "phase": "post",
+          "path": "public/registry/@factorywager/registry-snapshot/latest.json"
+        }
+      }
+    }
+  }
+}

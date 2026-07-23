@@ -399,3 +399,6 @@ lib/profile.md
 public/registry/@factorywager/bun-utils-test/v*.json
 # Routing proof version stamps (keep latest.json)
 public/registry/@factorywager/routing-test/v*.json
+
+# Snapshot version stamps (keep latest/pre/post.json)
+public/registry/@factorywager/*/0.0.0+*.json

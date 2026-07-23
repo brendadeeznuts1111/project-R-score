@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-23T18:12:54.733Z",
+  "generated": "2026-07-23T18:16:47.621Z",
   "liquidity": {
     "total": 0
   },
@@ -43,11 +43,11 @@
   "bunUtils": {
     "bunVersion": "1.3.6",
     "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
-    "proofHash": "f6778c4b3aaff0a65f949654e6e0bfc4a545b48152234981464c3350852e9d49",
+    "proofHash": "0d6baaffe8e9012182245b9e53306f48cb2ee9f00a7736b2896daafb1997e962",
     "passed": 10,
     "total": 10,
     "failed": 0,
-    "timestamp": "2026-07-23T18:12:54.734Z"
+    "timestamp": "2026-07-23T18:16:47.622Z"
   },
   "routing": {
     "available": true,

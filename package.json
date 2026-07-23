@@ -1,8 +1,8 @@
 {
   "name": "factorywager-enterprise",
-  "version": "5.1.2+build.20260723",
+  "version": "5.2.0+build.20260723",
   "packageManager": "bun@1.4.0",
-  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -1172,7 +1172,7 @@
   },
   "versioning": {
     "scheme": "semantic",
-    "current": "5.1.0",
+    "current": "5.2.0",
     "format": "MAJOR.MINOR.PATCH",
     "prerelease_format": "MAJOR.MINOR.PATCH-PRERELEASE",
     "build_format": "MAJOR.MINOR.PATCH+BUILD",
@@ -1808,7 +1808,13 @@
     "search:loop:status": "bun run scripts/search-loop-status.ts",
     "check:tsconfig-types": "bun tools/tsconfig-types-audit.ts",
     "type-check:tools": "bunx tsc -p tools --pretty false",
-    "type-check:sto": "bun run --filter sports-terminal-os typecheck"
+    "type-check:sto": "bun run --filter sports-terminal-os typecheck",
+    "registry:tags": "bun tools/registry-tags-cli.ts",
+    "registry:tags:status": "bun tools/registry-tags-cli.ts status",
+    "registry:tags:promote": "bun tools/registry-tags-cli.ts promote --all",
+    "registry:tags:upgrade": "bun tools/registry-tags-cli.ts upgrade",
+    "ops:snapshot:pre": "bun tools/ops-snapshot.ts --pre",
+    "ops:snapshot:post": "bun tools/ops-snapshot.ts --post"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",

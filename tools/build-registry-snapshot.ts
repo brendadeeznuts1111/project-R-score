@@ -17,6 +17,8 @@ const withReport = !args.includes('--no-report');
 const withWebView = args.includes('--webview') && !args.includes('--no-webview');
 const withStaticRegistry = !args.includes('--no-static');
 const forceRoutingRefresh = args.includes('--force-routing');
+const phase = args.includes('--post') ? 'post' : args.includes('--pre') ? 'pre' : undefined;
+const pinStable = args.includes('--stable');
 
 const summary = await buildRegistrySnapshot({
   withRouting,
@@ -24,6 +26,8 @@ const summary = await buildRegistrySnapshot({
   withWebView,
   withStaticRegistry,
   forceRoutingRefresh,
+  phase,
+  pinStable,
 });
 
 console.log(JSON.stringify(summary, null, 2));

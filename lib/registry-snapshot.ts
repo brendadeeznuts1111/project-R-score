@@ -20,6 +20,12 @@ import {
   type RoutingProofResult,
 } from './routing-proof.ts';
 import { sha256Hex, canonicalJson } from './bun-utils-proof.ts';
+import {
+  resolveSnapshotPhase,
+  tagsForPhase,
+  writeTaggedProofArtifact,
+  type SnapshotPhase,
+} from './registry-tags.ts';
 
 export const STATIC_REGISTRY_PATH =
   Bun.env.STATIC_REGISTRY_PATH || 'public/registry/static.json';
@@ -30,6 +36,9 @@ export type BuildRegistrySnapshotOpts = {
   withWebView?: boolean;
   withStaticRegistry?: boolean;
   forceRoutingRefresh?: boolean;
+  /** pre = canary before deploy; post = verified after deploy. Default env SNAPSHOT_PHASE or pre. */
+  phase?: SnapshotPhase;
+  pinStable?: boolean;
   dbPath?: string;
   outPath?: string;
   monitoringPath?: string;
@@ -40,6 +49,7 @@ export type RegistrySnapshotSummary = {
   out: string;
   monitoring: string;
   staticRegistry?: string;
+  phase: SnapshotPhase;
   generated: string;
   experiments: number;
   predictionN: number;
@@ -49,6 +59,8 @@ export type RegistrySnapshotSummary = {
     passed: number;
     total: number;
     bunVersion: string;
+    phase?: SnapshotPhase;
+    version?: string;
   };
   routing: Record<string, unknown>;
   dodQueue: number;
@@ -75,7 +87,8 @@ export type StaticRegistrySnapshot = {
 async function maybePublishArtifact(
   packageName: string,
   body: unknown,
-  metadata: Record<string, unknown>
+  metadata: Record<string, unknown>,
+  opts: { version: string; tags: string[] }
 ): Promise<void> {
   const base = Bun.env.REGISTRY_URL || Bun.env.FACTORY_REGISTRY_URL;
   const key = Bun.env.API_KEY || Bun.env.REGISTRY_API_KEY;
@@ -88,8 +101,8 @@ async function maybePublishArtifact(
       new Blob([JSON.stringify(body, null, 2)], { type: 'application/json' }),
       'artifact.json'
     );
-    form.append('version', `v${Date.now()}`);
-    form.append('tags', 'latest,snapshot');
+    form.append('version', opts.version);
+    form.append('tags', opts.tags.join(','));
     form.append('metadata', JSON.stringify(metadata));
     const res = await fetch(`${base.replace(/\/$/, '')}/api/registry/${packageName}/versions`, {
       method: 'POST',
@@ -114,6 +127,8 @@ export async function buildRegistrySnapshot(
   const withReport = opts.withReport !== false;
   const withWebView = Boolean(opts.withWebView);
   const withStaticRegistry = opts.withStaticRegistry !== false;
+  const phase = opts.phase ?? resolveSnapshotPhase();
+  const pinStable = Boolean(opts.pinStable);
 
   const dbPath = opts.dbPath || Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
   const outPath =
@@ -165,24 +180,44 @@ export async function buildRegistrySnapshot(
 
     await Bun.write(outPath, `${JSON.stringify(payload, null, 2)}\n`);
 
-    // Bun utils proof → static allowlisted path
+    // Bun utils proof → tagged artifact (pre/post/latest)
     const bunProof = buildBunUtilsProof();
-    const bunDir = 'public/registry/@factorywager/bun-utils-test';
-    await Bun.$`mkdir -p ${bunDir}`.quiet();
-    await Bun.write(`${bunDir}/latest.json`, `${JSON.stringify(bunProof, null, 2)}\n`);
-    await maybePublishArtifact('@factorywager/bun-utils-test', bunProof, {
-      proofHash: bunProof.proofHash,
-      passed: bunProof.summary.passed,
-      total: bunProof.summary.total,
-      bunVersion: bunProof.bunVersion,
-    });
+    const bunTagged = await writeTaggedProofArtifact(
+      '@factorywager/bun-utils-test',
+      bunProof,
+      { phase, proofHash: bunProof.proofHash, pinStable }
+    );
+    const phaseTags = tagsForPhase(phase, { pinStable });
+    await maybePublishArtifact(
+      '@factorywager/bun-utils-test',
+      bunProof,
+      {
+        proofHash: bunProof.proofHash,
+        passed: bunProof.summary.passed,
+        total: bunProof.summary.total,
+        bunVersion: bunProof.bunVersion,
+        phase,
+      },
+      { version: bunTagged.version, tags: phaseTags }
+    );
     if (routingProof) {
-      await maybePublishArtifact('@factorywager/routing-test', routingProof, {
-        proofHash: routingProof.proofHash,
-        passed: routingProof.summary.passed,
-        total: routingProof.summary.total,
-        criticalFailed: routingProof.summary.criticalFailed,
-      });
+      const routeTagged = await writeTaggedProofArtifact(
+        '@factorywager/routing-test',
+        routingProof,
+        { phase, proofHash: routingProof.proofHash, pinStable }
+      );
+      await maybePublishArtifact(
+        '@factorywager/routing-test',
+        routingProof,
+        {
+          proofHash: routingProof.proofHash,
+          passed: routingProof.summary.passed,
+          total: routingProof.summary.total,
+          criticalFailed: routingProof.summary.criticalFailed,
+          phase,
+        },
+        { version: routeTagged.version, tags: phaseTags }
+      );
     }
 
     const monitoring = await collectMonitoring(db, { source: 'snapshot' });
@@ -237,10 +272,11 @@ export async function buildRegistrySnapshot(
       const proofHash = sha256Hex(canonicalJson(staticBody));
       const staticSnapshot: StaticRegistrySnapshot = { ...staticBody, proofHash };
       await Bun.write(STATIC_REGISTRY_PATH, `${JSON.stringify(staticSnapshot, null, 2)}\n`);
-      // Also under allowlisted @factorywager prefix for R2-style keys
-      const afDir = 'public/registry/@factorywager/registry-snapshot';
-      await Bun.$`mkdir -p ${afDir}`.quiet();
-      await Bun.write(`${afDir}/latest.json`, `${JSON.stringify(staticSnapshot, null, 2)}\n`);
+      await writeTaggedProofArtifact('@factorywager/registry-snapshot', staticSnapshot, {
+        phase,
+        proofHash,
+        pinStable,
+      });
       staticPath = STATIC_REGISTRY_PATH;
     }
 
@@ -248,6 +284,7 @@ export async function buildRegistrySnapshot(
       out: outPath,
       monitoring: monitoringPath,
       staticRegistry: staticPath,
+      phase,
       generated: payload.generated,
       experiments: payload.experiments.active,
       predictionN: payload.prediction.coverage.n,
@@ -261,6 +298,8 @@ export async function buildRegistrySnapshot(
         passed: bunProof.summary.passed,
         total: bunProof.summary.total,
         bunVersion: bunProof.bunVersion,
+        phase,
+        version: bunTagged.version,
       },
       routing: payload.routing.available
         ? {
