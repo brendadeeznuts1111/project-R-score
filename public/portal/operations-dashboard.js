@@ -1,5 +1,7 @@
 /**
- * Operations dashboard — 6-panel grid with error, loading, retry, and polling.
+ * Operations dashboard — live `/api/operations/summary` or static
+ * `/registry/ops-summary.json` (Cloudflare Pages snapshot from `ops:snapshot`).
+ * Includes factorial experiments (C4) and coverage prediction (C5).
  */
 class OperationsDashboard extends HTMLElement {
   data = null;
@@ -25,6 +27,17 @@ class OperationsDashboard extends HTMLElement {
           <section class="ops-panel">
             <h2>Agent Tree</h2>
             <div id="tree-viz"></div>
+          </section>
+          <section class="ops-panel">
+            <h2>Experiments</h2>
+            <div class="ops-metric" id="exp-active">0</div>
+            <div class="ops-sub" id="exp-status"></div>
+            <ul id="exp-list"></ul>
+          </section>
+          <section class="ops-panel">
+            <h2>Coverage prediction</h2>
+            <div class="ops-metric" id="pred-mae">—</div>
+            <div class="ops-sub" id="pred-detail"></div>
           </section>
           <section class="ops-panel wide">
             <h2>Today's Plays</h2>
@@ -57,7 +70,6 @@ class OperationsDashboard extends HTMLElement {
     grid.classList.add('hidden');
 
     try {
-      // Try live API first (Pages Function)
       const res = await fetch('/api/operations/summary');
       if (res.ok) {
         this.data = await res.json();
@@ -66,9 +78,10 @@ class OperationsDashboard extends HTMLElement {
         grid.classList.remove('hidden');
         return;
       }
-    } catch { /* fall through to snapshot */ }
+    } catch {
+      /* fall through to snapshot */
+    }
 
-    // Try static snapshot fallback
     try {
       const res = await fetch('/registry/ops-summary.json');
       if (res.ok) {
@@ -78,7 +91,9 @@ class OperationsDashboard extends HTMLElement {
         grid.classList.remove('hidden');
         return;
       }
-    } catch { /* fall through to error */ }
+    } catch {
+      /* fall through to error */
+    }
 
     this.retries++;
     loading.classList.add('hidden');
@@ -88,7 +103,7 @@ class OperationsDashboard extends HTMLElement {
       error.classList.remove('hidden');
     } else {
       error.innerHTML = `<p>⚠️ Could not load operations data.</p>
-        <p class="error-hint">Deploy a static snapshot to public/registry/ops-summary.json or connect a live database.</p>
+        <p class="error-hint">Local: ensure DB at data/operations.db. Pages: run <code>bun run ops:snapshot</code> and deploy public/registry/ops-summary.json.</p>
         <button class="retry-btn">Retry</button>`;
       error.classList.remove('hidden');
       error.querySelector('.retry-btn').addEventListener('click', () => {
@@ -102,13 +117,23 @@ class OperationsDashboard extends HTMLElement {
     setInterval(async () => {
       try {
         const res = await fetch('/api/operations/summary');
-        if (res.ok) { this.data = await res.json(); this.render(); return; }
-      } catch {}
-      // Fallback to static snapshot
+        if (res.ok) {
+          this.data = await res.json();
+          this.render();
+          return;
+        }
+      } catch {
+        /* ignore */
+      }
       try {
         const res = await fetch('/registry/ops-summary.json');
-        if (res.ok) { this.data = await res.json(); this.render(); }
-      } catch {}
+        if (res.ok) {
+          this.data = await res.json();
+          this.render();
+        }
+      } catch {
+        /* ignore */
+      }
     }, 30_000);
   }
 
@@ -116,26 +141,29 @@ class OperationsDashboard extends HTMLElement {
     if (!this.data) return;
     const d = this.data;
 
-    // Source indicator
     const src = this.querySelector('#ops-source');
-    if (src) src.textContent = d.source === 'live' ? 'Live' : 'Snapshot';
+    if (src) {
+      const when = d.generated ? ` · ${String(d.generated).slice(0, 19)}Z` : '';
+      src.textContent = (d.source === 'live' ? 'Live' : 'Snapshot') + when;
+    }
 
-    // Liquidity
     const liq = this.querySelector('#total-liquidity');
     if (liq) liq.textContent = '$' + (d.liquidity?.total ?? 0).toLocaleString();
 
-    // Experts
     const expList = this.querySelector('#expert-list');
     if (expList) {
-      expList.innerHTML = (d.experts || []).map(e => `
+      expList.innerHTML = (d.experts || [])
+        .map(
+          e => `
         <li class="${e.active ? 'active' : 'inactive'}">
           <span>${e.name}</span>
           <small>${e.sport} ${e.market} · Edge: ${e.edge_score}%</small>
         </li>
-      `).join('');
+      `
+        )
+        .join('');
     }
 
-    // Tree
     const tree = this.querySelector('#tree-viz');
     if (tree) {
       const t = d.tree || {};
@@ -149,10 +177,49 @@ class OperationsDashboard extends HTMLElement {
       `;
     }
 
-    // Plays
+    // Experiments (C4)
+    const exp = d.experiments || { byStatus: {}, active: 0, recent: [] };
+    const expActive = this.querySelector('#exp-active');
+    if (expActive) expActive.textContent = String(exp.active ?? 0);
+    const expStatus = this.querySelector('#exp-status');
+    if (expStatus) {
+      const parts = Object.entries(exp.byStatus || {}).map(([k, v]) => `${k}: ${v}`);
+      expStatus.textContent = parts.length ? parts.join(' · ') : 'No experiments yet';
+    }
+    const expUl = this.querySelector('#exp-list');
+    if (expUl) {
+      expUl.innerHTML = (exp.recent || [])
+        .slice(0, 5)
+        .map(
+          e => `
+        <li class="${e.status === 'active' ? 'active' : 'inactive'}">
+          <span>${e.name}</span>
+          <small>${e.status} · ${e.variants}v · ${e.assignments}a · ${e.metrics}m</small>
+        </li>
+      `
+        )
+        .join('');
+    }
+
+    // Prediction (C5)
+    const cov = d.prediction?.coverage || { mae: 0, rmse: 0, bias: 0, n: 0 };
+    const predMae = this.querySelector('#pred-mae');
+    if (predMae) {
+      predMae.textContent = cov.n > 0 ? `MAE ${Number(cov.mae).toFixed(2)}` : 'No rows';
+    }
+    const predDetail = this.querySelector('#pred-detail');
+    if (predDetail) {
+      predDetail.textContent =
+        cov.n > 0
+          ? `n=${cov.n} · RMSE ${Number(cov.rmse).toFixed(2)} · bias ${Number(cov.bias).toFixed(2)}`
+          : 'Run ops:prediction backtest, then ops:snapshot for Pages';
+    }
+
     const tbody = this.querySelector('#plays-table tbody');
     if (tbody) {
-      tbody.innerHTML = (d.plays || []).map(p => `
+      tbody.innerHTML = (d.plays || [])
+        .map(
+          p => `
         <tr>
           <td>${(p.sent_at || '').slice(11, 16)}</td>
           <td>${p.expert_name || ''}</td>
@@ -162,22 +229,26 @@ class OperationsDashboard extends HTMLElement {
           <td>${p.sent_count ?? 0}</td>
           <td>${p.placed_count ?? 0}</td>
         </tr>
-      `).join('');
+      `
+        )
+        .join('');
     }
 
-    // Rails
     const rail = this.querySelector('#rail-status');
     if (rail) {
-      rail.innerHTML = (d.rails || []).map(r => `
+      rail.innerHTML = (d.rails || [])
+        .map(
+          r => `
         <div class="rail-row">
           <span>${r.type}</span>
           <span>$${(r.total_sent ?? 0).toLocaleString()}</span>
           <span>${((r.total_sent / (r.monthly_limit || 1)) * 100).toFixed(0)}%</span>
         </div>
-      `).join('');
+      `
+        )
+        .join('');
     }
 
-    // Phones
     const phones = this.querySelector('#phone-inventory');
     if (phones) {
       const ph = d.phones || {};

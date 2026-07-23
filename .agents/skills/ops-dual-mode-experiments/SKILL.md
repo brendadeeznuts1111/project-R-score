@@ -65,17 +65,32 @@ Stage named files only. Never sweep unrelated dirty portal/DOD trees.
 |--------|--------|
 | `ops:experiments` | `bun tools/ops-experiments.ts` |
 | `ops:prediction` | `bun tools/ops-prediction.ts` |
+| `ops:snapshot` | `bun tools/ops-snapshot.ts` → `public/registry/ops-summary.json` |
 | `ops:provision-queue` | `bun tools/provision-queue.ts` |
+
+## Portal + Cloudflare Pages
+
+| Path | Role |
+|------|------|
+| `public/portal/ops/` | Ops dashboard UI |
+| `public/portal/operations-dashboard.js` | Fetches summary; panels for experiments + prediction |
+| `functions/api/operations/summary.ts` | Live `buildOpsSummary` or snapshot fallback |
+| `lib/operations/ops-summary.ts` | Shared payload builder (C4/C5 fields) |
+| `public/registry/ops-summary.json` | Static seed / Pages deploy artifact |
+
+**Local:** open `/portal/ops` with a running serve that mounts `functions/` + `public/` (SQLite live).  
+**Pages:** no bun:sqlite — run `bun run ops:snapshot` before deploy so the dashboard still renders.
 
 ## Prove commands
 
 ```bash
-bun test tests/operations-schema.test.ts tests/platform-coverage.test.ts
+bun test tests/operations-schema.test.ts tests/ops-summary.test.ts tests/platform-coverage.test.ts
 bun test tests/provision-*.test.ts tests/provisioning-*.test.ts
 bun test tests/experiments-*.test.ts tests/prediction-*.test.ts
 bun run ops:provision-queue --help
 bun run ops:experiments --help
 bun run ops:prediction --help
+bun run ops:snapshot --out /tmp/ops-summary.json
 ```
 
 ## C4 surface — factorial experiments

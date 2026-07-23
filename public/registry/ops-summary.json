@@ -1,10 +1,23 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-23T00:00:00Z",
+  "generated": "2026-07-23T00:00:00.000Z",
   "liquidity": { "total": 0 },
   "experts": [],
-  "tree": { "partners": 0, "agents": 0, "subAgents": 0, "downstreamLiquidity": 0 },
+  "tree": {
+    "partners": 0,
+    "agents": 0,
+    "subAgents": 0,
+    "downstreamLiquidity": 0
+  },
   "plays": [],
   "rails": [],
-  "phones": { "inventory": 0, "issued": 0, "returned": 0 }
+  "phones": { "inventory": 0, "issued": 0, "returned": 0 },
+  "experiments": {
+    "byStatus": {},
+    "active": 0,
+    "recent": []
+  },
+  "prediction": {
+    "coverage": { "mae": 0, "rmse": 0, "bias": 0, "n": 0 }
+  }
 }

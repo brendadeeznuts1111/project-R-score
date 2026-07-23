@@ -1,0 +1,81 @@
+// @see https://bun.com/docs/test/index#run-tests
+/**
+ * Portal ops summary includes experiments + prediction for live + snapshot.
+ */
+import { describe, expect, test } from 'bun:test';
+import { openOperationsDb } from '../lib/operations/db.ts';
+import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { FactorialEngine } from '../lib/experiments/index.ts';
+import { runCoverageBacktest } from '../lib/prediction/index.ts';
+import { asTreeNodeId, unbrand } from '../lib/types/branded.ts';
+
+describe('buildOpsSummary', () => {
+  test('includes empty experiments and prediction on fresh db', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const s = buildOpsSummary(db, 'live');
+    expect(s.source).toBe('live');
+    expect(s.experiments.active).toBe(0);
+    expect(s.experiments.recent).toEqual([]);
+    expect(s.prediction.coverage.n).toBe(0);
+    expect(s.liquidity.total).toBe(0);
+    db.close();
+  });
+
+  test('surfaces active experiment and prediction accuracy', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+
+    // Enough partners for 2-cell design under sandbox policy
+    for (let i = 0; i < 2; i++) {
+      const id = asTreeNodeId(Bun.randomUUIDv7());
+      db.run(
+        `INSERT INTO tree_nodes (id, type, name, active, status, created_at)
+         VALUES ($id, 'partner', $n, 1, 'partner', $t)`,
+        { $id: unbrand(id), $n: `P${i}`, $t: now }
+      );
+    }
+
+    const engine = new FactorialEngine(db);
+    const exp = engine.createExperiment({
+      name: 'portal-exp',
+      factors: [{ name: 'routing', levels: ['static', 'dynamic'] }],
+      policy: { minPartnersPerVariant: 1, minDurationDays: 0 },
+    });
+    engine.setStatus(exp.id, 'active');
+
+    db.run(
+      `INSERT INTO platforms (id, name, category, launch_date, active, status, created_at)
+       VALUES ('a', 'A', 'sportsbook', '2024-01-01', 1, 'active', $n),
+              ('b', 'B', 'sportsbook', '2024-01-01', 1, 'active', $n)`,
+      { $n: now }
+    );
+    const partnerId = unbrand(asTreeNodeId(Bun.randomUUIDv7()));
+    db.run(
+      `INSERT INTO tree_nodes (id, type, name, active, status, created_at)
+       VALUES ($id, 'partner', 'Px', 1, 'partner', $n)`,
+      { $id: partnerId, $n: now }
+    );
+    db.run(
+      `INSERT INTO partner_platform_accounts
+         (id, platform_id, partner_id, account_identifier, balance, status, is_test, opened_at, created_at)
+       VALUES ($id, 'a', $p, 'x', 1, 'active', 0, '2024-06-01T00:00:00.000Z', $n)`,
+      { $id: Bun.randomUUIDv7(), $p: partnerId, $n: now }
+    );
+    db.run(
+      `INSERT INTO coverage_snapshots
+         (snapshot_date, total_platforms, covered_platforms, coverage_percentage, by_category, created_at)
+       VALUES ('2024-07-01', 2, 1, 80, '[]', $n)`,
+      { $n: now }
+    );
+    runCoverageBacktest(db, '2024-01-01', '2024-12-31');
+
+    const s = buildOpsSummary(db, 'live');
+    expect(s.experiments.active).toBe(1);
+    expect(s.experiments.recent[0]?.name).toBe('portal-exp');
+    expect(s.experiments.recent[0]?.variants).toBe(2);
+    expect(s.prediction.coverage.n).toBe(1);
+    expect(s.prediction.coverage.mae).toBe(30);
+
+    db.close();
+  });
+});

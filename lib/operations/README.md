@@ -20,6 +20,7 @@ Tree-structured agent management with HMAC-signed play distribution.
 |------|---------|
 | [`db.ts`](db.ts) | `openOperationsDb` · `DEFAULT_OPS_DB_PATH` (`data/operations.db`) |
 | [`schema.ts`](schema.ts) | `initSchema` / `migrateSchema` — core + provision + coverage + experiments + prediction |
+| [`ops-summary.ts`](ops-summary.ts) | Portal/Pages summary payload (`buildOpsSummary`) |
 | [`platform-coverage.ts`](platform-coverage.ts) | Platforms, coverage snapshots, `canOfferOnPlatform` |
 | [`liquidity.ts`](liquidity.ts) | `ensurePosition` · `reservePlay` / `releasePlay` · coverage-gated reserve |
 | [`play-signing.ts`](play-signing.ts) | `Bun.CryptoHasher("sha256")` HMAC play signing |
@@ -72,11 +73,32 @@ Skill (lanes + prove): [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../
 
 (`COVERAGE_FLOOR_KEYS` in [`lib/experiments/engine.ts`](../experiments/engine.ts)).
 
+## Portal + Cloudflare Pages
+
+| Surface | Role |
+|---------|------|
+| Local portal | `/portal/ops` → `fetch('/api/operations/summary')` (live SQLite) |
+| Pages Function | [`functions/api/operations/summary.ts`](../../functions/api/operations/summary.ts) |
+| Pages static | `public/registry/ops-summary.json` (no bun:sqlite on Workers) |
+| Snapshot CLI | `bun run ops:snapshot` writes that JSON from live DB |
+
+Summary includes **experiments** (C4) and **prediction** (C5) counts for the dashboard panels.
+
+```bash
+# Local
+bun run serve:public   # or your local Pages/functions serve
+# open /portal/ops
+
+# Before Pages deploy
+bun run ops:snapshot   # → public/registry/ops-summary.json
+```
+
 ## Prove (ops SSOT)
 
 ```bash
-bun test tests/operations-schema.test.ts
+bun test tests/operations-schema.test.ts tests/ops-summary.test.ts
 bun test tests/experiments-*.test.ts tests/prediction-*.test.ts
 bun run ops:experiments --help
 bun run ops:prediction --help
+bun run ops:snapshot --out /tmp/ops-summary.json
 ```
