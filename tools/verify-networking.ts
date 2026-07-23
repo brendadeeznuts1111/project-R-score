@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching — DNS prefetching
 // @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — dns.prefetch
 // @see https://bun.com/docs/runtime/networking/dns#dns-getcachestats — dns.getCacheStats
@@ -367,7 +368,7 @@ export async function verifyTarget(
   const tBuf = Bun.nanoseconds();
   const get = await fetchTimed(target.url, { method: 'GET' });
   if ('error' in get) {
-    rows.push(row(name, cat, 'buffer', `${get.elapsedMs.toFixed(1)}ms`, 'FAIL', get.error));
+    rows.push(row(name, cat, 'response-bytes', `${get.elapsedMs.toFixed(1)}ms`, 'FAIL', get.error));
     return rows;
   }
   try {
@@ -376,7 +377,7 @@ export async function verifyTarget(
       row(
         name,
         cat,
-        'buffer',
+        'response-bytes',
         `${ms(tBuf).toFixed(1)}ms (${bytes.byteLength} B)`,
         get.res.ok || statusOk(get.res.status, target.okStatuses) ? 'PASS' : 'FAIL'
       )
@@ -408,7 +409,7 @@ export async function verifyTarget(
       row(
         name,
         cat,
-        'buffer',
+        'response-bytes',
         `${ms(tBuf).toFixed(1)}ms`,
         'FAIL',
         err instanceof Error ? err.message : String(err)
@@ -653,4 +654,27 @@ if (import.meta.main) {
     console.error('Fatal:', err);
     process.exit(1);
   });
+}
+
+/**
+ * Compat shim for ops-snapshot's pre-refactor call shape.
+ * Adapts {saveProof, remote, base} → runNetworkingSuite and returns the
+ * {ok, proofHash, proofObj.global.{checksPassed,checksTotal}} contract.
+ */
+export async function runNetworkingVerification(opts: {
+  saveProof?: boolean;
+  remote?: boolean;
+  base?: string;
+}): Promise<{
+  ok: boolean;
+  proofHash: string;
+  proofObj: { global: { checksPassed: number; checksTotal: number } };
+}> {
+  const { rows } = await runNetworkingSuite({ skipWrite: !opts.saveProof });
+  const checksPassed = rows.filter(r => r.status === 'PASS').length;
+  const checksTotal = rows.length;
+  const proofObj = { global: { checksPassed, checksTotal } };
+  const h = new Bun.CryptoHasher('sha256');
+  h.update(JSON.stringify(proofObj));
+  return { ok: checksPassed === checksTotal, proofHash: h.digest('hex'), proofObj };
 }

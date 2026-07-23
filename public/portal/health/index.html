@@ -303,6 +303,21 @@
               ? String(proof.generated).slice(0, 19)
               : ''
         ),
+        card('Defaults', '—', 'fetching…'),
+      ].join('');
+
+      // Fetch defaults proof async
+      fetch('/api/defaults').then(r => r.ok ? r.json() : null).then(dp => {
+        if (!dp) return;
+        const ok = (dp.passed ?? dp.summary?.passed) === (dp.total ?? dp.summary?.total);
+        const cardEl = document.querySelector('#cards .health-card:last-child');
+        if (cardEl) {
+          cardEl.querySelector('h3').textContent = 'Defaults';
+          cardEl.querySelector('.val').textContent = ok ? `${dp.passed ?? dp.summary?.passed}/${dp.total ?? dp.summary?.total}` : '❌';
+          cardEl.querySelector('.sub').textContent = `Bun ${dp.bunVersion} · hash ${(dp.proofHash || '').slice(0, 12)}…`;
+          cardEl.className = `health-card ${ok ? 'ok' : 'bad'}`;
+        }
+      }).catch(() => {});
         card(
           'DOD queue',
           mon.dodQueue != null ? String(mon.dodQueue) : '—',

@@ -1,3 +1,5 @@
+// @see https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto — SHA3
+// @see https://bun.com/blog/bun-v1.3.4#urlpattern-api — URLPattern
 // @see https://bun.com/blog/bun-v1.3.12#urlpattern-is-up-to-2-3x-faster — URLPattern
 // @see https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan — Bun.Glob.scan
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -16,7 +18,7 @@
  * Each entry links an anti-pattern to an elite one-liner and official docs.
  */
 
-export type BunDxSeverity = 'error' | 'warn';
+export type BunDxSeverity = 'error' | 'warn' | 'info';
 export type FixTier = 'easy' | 'medium' | 'hard';
 
 export type BunDxEntry = {
