@@ -597,6 +597,13 @@ async function liveMonitoringApi(): Promise<Response> {
       }
       data.routeStats = routeStatsForHealth();
       data.env = envCheckForHealth();
+      // Append networking proof
+      const netFile = Bun.file('public/registry/networking-proof.json');
+      if (await netFile.exists()) {
+        try {
+          data.networkingProof = JSON.parse(await netFile.text());
+        } catch {}
+      }
       return json(data);
     } finally {
       db.close();

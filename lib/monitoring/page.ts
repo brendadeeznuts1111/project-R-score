@@ -20,6 +20,28 @@ function tableSection(title: string, rows: Record<string, string | number>[]): s
   return `<div class="section"><h2>${escapeHtml(title)}</h2><pre>${escapeHtml(plain)}</pre></div>`;
 }
 
+/** Render networking proof section (target-by-target with reuse metrics). */
+function networkingProofSection(proof: import('./collect.ts').NetworkingChecksReport | undefined | null): string {
+  if (!proof) return tableSection('Networking proof', [{ Metric: 'Status', Value: 'not available — run bun run check:networking:save' }]);
+  const targetRows = proof.targets.map(t => ({
+    Target: t.name,
+    Protocol: t.summary.protocol,
+    Reuse: `${t.summary.reuseEfficiency.toFixed(1)}×`,
+    'Cold(ms)': t.summary.coldFetchMs.toFixed(1),
+    'Warm(ms)': t.summary.warmFetchMs.toFixed(1),
+    Status: t.summary.statusCode,
+  }));
+  const summary = tableSection('Networking proof — per target', targetRows);
+  const meta = tableSection('Networking summary', [
+    { Metric: 'Proof hash', Value: proof.proofHash.slice(0, 16) + '…' },
+    { Metric: 'All OK', Value: String(proof.allOk) },
+    { Metric: 'Targets', Value: String(proof.totalTargets) },
+    { Metric: 'Bun version', Value: proof.bunVersion },
+    { Metric: 'Generated', Value: proof.timestamp },
+  ]);
+  return summary + meta;
+}
+
 /** Render full monitoring HTML page from payload. */
 export function renderMonitoringHtml(data: MonitoringPayload): string {
   const overview = tableSection('Registry overview', [
@@ -116,5 +138,6 @@ export function renderMonitoringHtml(data: MonitoringPayload): string {
     { Metric: 'Missing', Value: String(data.env?.summary?.missing ?? '0') },
     { Metric: 'Required missing', Value: String(data.env?.summary?.requiredMissing ?? '0') },
   ])}
+  ${networkingProofSection(data.networkingProof)}
 </body></html>`;
 }

@@ -16,6 +16,29 @@ export type IntegritySnapshot = {
   source?: 'sqlite' | 'file' | 'unknown';
 };
 
+/** Networking proof — connection reuse, preconnect efficiency, fetch perf. */
+export type NetworkingChecksReport = {
+  schemaVersion: number;
+  bunVersion: string;
+  bunRevision: string;
+  timestamp: string;
+  base: string;
+  totalTargets: number;
+  allOk: boolean;
+  proofHash: string;
+  targets: Array<{
+    name: string;
+    summary: {
+      protocol: string;
+      reuseEfficiency: number;
+      coldFetchMs: number;
+      warmFetchMs: number;
+      statusCode: number;
+      bodySize: number;
+    };
+  }>;
+};
+
 export type MonitoringPayload = {
   source: 'live' | 'snapshot';
   uptime: string;
@@ -30,6 +53,8 @@ export type MonitoringPayload = {
   experimentsActive: number;
   predictionN: number;
   timestamp: string;
+  /** Networking connection reuse proof (from verify-networking.ts). */
+  networkingProof?: NetworkingChecksReport;
 };
 
 const REGISTRY_INTEGRITY_FILE = joinPath(import.meta.dir, '../../reports/registry-integrity.json');
