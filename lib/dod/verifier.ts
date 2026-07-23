@@ -81,8 +81,11 @@ export class DODVerifier {
     // 3. Perceptual hash
     const visualHash = await this.perceptualHash(img);
 
-    // 4. Resize and compress for storage
-    const stored = await img
+    // 4. Apply operations watermark
+    const watermarked = await this.applyWatermark(img, submission);
+
+    // 5. Resize and compress for storage
+    const stored = await watermarked
       .resize(1024, 1024, { fit: 'inside' })
       .webp({ quality: 85 })
       .bytes();
@@ -156,6 +159,43 @@ export class DODVerifier {
       if (bytes[i] > avg) hash |= 1n << BigInt(i);
     }
     return hash.toString(16).padStart(16, '0');
+  }
+
+  // ── Watermark via WebView ──────────────────────────────────────
+  private async applyWatermark(img: Bun.Image, sub: DODSubmission): Promise<Bun.Image> {
+    try {
+      const text = `OPS-${sub.agentId.slice(0, 8)}-${sub.id.slice(0, 8)}`;
+      const meta = await img.metadata();
+      const wv = new Bun.WebView({
+        width: meta.width || 400, height: (meta.height || 300) + 24,
+        html: `<style>body{margin:0;background:#000}img{width:100%;object-fit:contain}.wm{position:absolute;bottom:4px;right:8px;background:rgba(0,0,0,0.7);color:#fff;font:11px monospace;padding:2px 6px;border-radius:3px}</style><img src="data:image/webp;base64,${Buffer.from(await img.webp({ quality: 90 }).bytes()).toString('base64')}"/><div class="wm">${text}</div>`,
+        headless: true,
+      });
+      await Bun.sleep(200);
+      const ss = await wv.screenshot({ format: 'png' });
+      wv.close();
+      return new Bun.Image(ss);
+    } catch {
+      return img; // fallback: return unwatermarked
+    }
+  }
+
+  // ── OCR via WebView + Tesseract ──────────────────────────────
+  private async extractText(img: Bun.Image): Promise<string> {
+    try {
+      const encoded = Buffer.from(await img.webp({ quality: 80 }).bytes()).toString('base64');
+      const wv = new Bun.WebView({
+        width: 800, height: 600,
+        html: `<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script><img id="t"/><script>document.getElementById('t').src='data:image/webp;base64,${encoded}';Tesseract.recognize(document.getElementById('t')).then(r=>window.r=r.data.text);</script>`,
+        headless: true,
+      });
+      await Bun.sleep(3000);
+      const text = await wv.evaluate('window.r || ""');
+      wv.close();
+      return String(text);
+    } catch {
+      return '';
+    }
   }
 
   // ── Metadata Hash ────────────────────────────────────────────────
@@ -253,4 +293,39 @@ export class DODVerifier {
       : "SELECT * FROM dod_submissions ORDER BY submitted_at DESC LIMIT 50";
     return this.db.query(sql).all(status ? { $s: status } : {});
   }
+
+  /** Find submissions with similar perceptual hashes (Hamming distance). */
+  findSimilar(hash: string, maxDistance = 5): { id: string; agent_id: string; distance: number }[] {
+    const all = this.db.query(
+      "SELECT id, agent_id, visual_hash FROM dod_submissions WHERE visual_hash IS NOT NULL",
+    ).all() as { id: string; agent_id: string; visual_hash: string }[];
+
+    return all
+      .map(row => ({
+        id: row.id,
+        agent_id: row.agent_id,
+        distance: hammingDistance(hash, row.visual_hash),
+      }))
+      .filter(r => r.distance > 0 && r.distance <= maxDistance)
+      .sort((a, b) => a.distance - b.distance);
+  }
+
+  /** Clean up old pending DODs older than N days. */
+  cleanupPending(maxAgeDays = 7): number {
+    const result = this.db.run(
+      "DELETE FROM dod_submissions WHERE status='pending' AND submitted_at < datetime('now', ? || ' days')",
+      [String(-maxAgeDays)],
+    );
+    return result.changes;
+  }
+}
+
+function hammingDistance(a: string, b: string): number {
+  if (a.length !== b.length) return Infinity;
+  let dist = 0;
+  for (let i = 0; i < a.length; i++) {
+    const xor = parseInt(a[i]!, 16) ^ parseInt(b[i]!, 16);
+    dist += [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4][xor]!;
+  }
+  return dist;
 }
