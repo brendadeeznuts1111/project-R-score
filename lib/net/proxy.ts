@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/networking/fetch#proxying-requests — fetch proxy option
+// @see https://bun.com/docs/guides/http/proxy — proxy guide (env vars, custom headers)
 /**
  * Bun fetch `proxy` option — all three documented forms.
  *
