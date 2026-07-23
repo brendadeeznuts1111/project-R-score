@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "tenantId": "tennis",
+  "lastUpdated": "2026-07-23T06:00:00Z",
+  "meta": {
+    "coverage": 54,
+    "proof": {
+      "verified": 5,
+      "total": 10
+    }
+  },
+  "packages": {
+    "kalshi-connector": {
+      "versions": ["0.2.0"],
+      "dist-tags": { "latest": "0.2.0" },
+      "releases": {
+        "0.2.0": {
+          "id": "kalshi-connector@0.2.0",
+          "name": "kalshi-connector",
+          "version": "0.2.0",
+          "type": "library",
+          "description": "Kalshi market data connector",
+          "tags": ["kalshi", "tennis", "trading"],
+          "publishedAt": "2026-07-18T12:00:00Z",
+          "publisher": "factory-cli"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "tenantId": "factory",
+  "lastUpdated": "2026-07-23T06:00:00Z",
+  "meta": {
+    "coverage": 78,
+    "proof": {
+      "verified": 12,
+      "total": 15
+    }
+  },
+  "packages": {
+    "event-store": {
+      "versions": ["1.1.0"],
+      "dist-tags": { "latest": "1.1.0" },
+      "releases": {
+        "1.1.0": {
+          "id": "event-store@1.1.0",
+          "name": "event-store",
+          "version": "1.1.0",
+          "type": "library",
+          "description": "Event sourcing with snapshot support",
+          "tags": ["event-sourcing", "factory"],
+          "publishedAt": "2026-07-20T14:00:00Z",
+          "publisher": "factory-cli"
+        }
+      }
+    }
+  }
+}

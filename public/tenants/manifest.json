@@ -1,0 +1,52 @@
+{
+  "tenants": [
+    {
+      "id": "factory",
+      "name": "Factory Registry",
+      "icon": "factory",
+      "portalDefaultPage": "dashboard",
+      "staticRegistryPath": "/registry/factory/registry.json",
+      "roles": [
+        "admin",
+        "operator",
+        "viewer"
+      ],
+      "iconSrc": "/icons/factory/mark-32.webp",
+      "iconSvg": "/icons/factory/mark.svg",
+      "color": "#3b82f6",
+      "iconSrcset": "/icons/factory/mark-16.webp 16w, /icons/factory/mark-32.webp 32w, /icons/factory/mark-64.webp 64w"
+    },
+    {
+      "id": "science",
+      "name": "Science Lab",
+      "icon": "science",
+      "portalDefaultPage": "dashboard",
+      "staticRegistryPath": "/registry/science/registry.json",
+      "roles": [
+        "admin",
+        "operator",
+        "viewer"
+      ],
+      "iconSrc": "/icons/science/mark-32.webp",
+      "iconSvg": "/icons/science/mark.svg",
+      "color": "#10b981",
+      "iconSrcset": "/icons/science/mark-16.webp 16w, /icons/science/mark-32.webp 32w, /icons/science/mark-64.webp 64w"
+    },
+    {
+      "id": "tennis",
+      "name": "Kalshi Tennis",
+      "icon": "tennis",
+      "portalDefaultPage": "dashboard",
+      "staticRegistryPath": "/registry/tennis/registry.json",
+      "roles": [
+        "admin",
+        "operator",
+        "viewer"
+      ],
+      "iconSrc": "/icons/tennis/mark-32.webp",
+      "iconSvg": "/icons/tennis/mark.svg",
+      "color": "#f59e0b",
+      "iconSrcset": "/icons/tennis/mark-16.webp 16w, /icons/tennis/mark-32.webp 32w, /icons/tennis/mark-64.webp 64w"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "tenantId": "science",
+  "lastUpdated": "2026-07-23T06:00:00Z",
+  "meta": {
+    "coverage": 65,
+    "proof": {
+      "verified": 8,
+      "total": 12
+    }
+  },
+  "packages": {
+    "quantum-domain-ops": {
+      "versions": ["0.1.0"],
+      "dist-tags": { "latest": "0.1.0" },
+      "releases": {
+        "0.1.0": {
+          "id": "quantum-domain-ops@0.1.0",
+          "name": "quantum-domain-ops",
+          "version": "0.1.0",
+          "type": "library",
+          "description": "Experimental quantum state management",
+          "tags": ["quantum", "science"],
+          "publishedAt": "2026-07-20T03:00:00Z",
+          "publisher": "factory-cli"
+        }
+      }
+    }
+  }
+}
