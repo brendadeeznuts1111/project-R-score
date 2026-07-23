@@ -8,7 +8,12 @@
 
 import { DODVerifier } from "../../../lib/dod/verifier";
 
-const verifier = new DODVerifier();
+// DOD_DB_PATH override for integration tests; production uses the default.
+// Lazy per request: avoids a stale handle if the DB file is replaced (and
+// matches the Pages Functions lifecycle).
+function getVerifier(): DODVerifier {
+  return new DODVerifier(Bun.env.DOD_DB_PATH || undefined);
+}
 
 /** Constant-time-ish token check: compare sha256 digests (equal-length inputs). */
 function tokenOk(provided: string, expected: string): boolean {
@@ -34,17 +39,20 @@ export async function onRequest({ request }: { request: Request }) {
 
   if (request.method === "GET") {
     const status = url.searchParams.get("status") || "all";
+    using verifier = getVerifier();
     return Response.json(verifier.list(status));
   }
 
   if (request.method === "POST" && path === "/approve") {
     const { id } = await request.json();
+    using verifier = getVerifier();
     verifier.approve(id);
     return Response.json({ ok: true, id, status: "verified" });
   }
 
   if (request.method === "POST" && path === "/reject") {
     const { id, reason } = await request.json();
+    using verifier = getVerifier();
     verifier.reject(id, reason || "Not specified");
     return Response.json({ ok: true, id, status: "rejected" });
   }
