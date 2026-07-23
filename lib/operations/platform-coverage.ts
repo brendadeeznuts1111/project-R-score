@@ -7,6 +7,7 @@
  * Detection is OCR/text alias matching only (no trained visual hashes).
  */
 import type { Database } from 'bun:sqlite';
+import { resolveExperimentCoverageFloor } from '../experiments/engine.ts';
 
 /** Minimum agent-coverage % required to offer a play on a platform (override via env). */
 export function minCoveragePct(): number {
@@ -265,16 +266,26 @@ export function getPlatformCapacities(db: Database): PlatformCapacity[] {
   }));
 }
 
-/** Can we offer `stake` on this platform given liquidity + coverage floor? */
+/**
+ * Can we offer `stake` on this platform given liquidity + coverage floor?
+ * Optional `partnerId` applies active experiment variant floor
+ * (`min_coverage_pct` / `coverage_floor`) when set.
+ */
 export function canOfferOnPlatform(
   db: Database,
   platformId: string, // brand-ok
   stake: number,
-  minPct = minCoveragePct()
+  minPct = minCoveragePct(),
+  partnerId?: string // brand-ok — TreeNodeId at experiment boundary
 ): boolean {
+  let floor = minPct;
+  if (partnerId) {
+    const override = resolveExperimentCoverageFloor(db, partnerId);
+    if (override !== undefined) floor = override;
+  }
   const cap = getPlatformCapacities(db).find(p => p.platformId === platformId);
   if (!cap) return false;
-  return cap.totalAvailable >= stake && cap.coverageScore >= minPct;
+  return cap.totalAvailable >= stake && cap.coverageScore >= floor;
 }
 
 export function listPlatforms(db: Database): PlatformRow[] {

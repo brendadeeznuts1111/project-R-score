@@ -65,3 +65,12 @@ bun run ops:provision-queue --help
 bun run ops:experiments --help
 bun run ops:prediction-backtest --help
 ```
+
+## C4 surface (shipped)
+
+| Path | Role |
+|------|------|
+| `lib/experiments/` | Design + engine + analyze + schema |
+| `tools/ops-experiments.ts` | CLI (`ops:experiments`) |
+| `canOfferOnPlatform(..., partnerId?)` | Variant `min_coverage_pct` / `coverage_floor` |
+| Brands | `ExperimentId`, `ExperimentVariantId`, `ExperimentAssignmentId`, `TreeNodeId` |

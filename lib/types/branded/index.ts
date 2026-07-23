@@ -18,6 +18,7 @@ export * from './security.ts';
 export * from './deployment.ts';
 export * from './audit.ts';
 export * from './operations.ts';
+export * from './portal.ts';
 
 import type { BrandSpec } from './_core.ts';
 import { SESSION_BRAND_SPECS } from './session.ts';
@@ -27,6 +28,7 @@ import { SECURITY_BRAND_SPECS } from './security.ts';
 import { DEPLOYMENT_BRAND_SPECS } from './deployment.ts';
 import { AUDIT_BRAND_SPECS } from './audit.ts';
 import { OPERATIONS_BRAND_SPECS } from './operations.ts';
+import { PORTAL_BRAND_SPECS } from './portal.ts';
 
 import type { SessionId, TerminalId, RequestId, CorrelationId, SnapshotId } from './session.ts';
 import type { UserId, AccountId, IdentityId, AccessKeyId, TokenId } from './identity.ts';
@@ -53,7 +55,17 @@ import type {
   RunId,
   DecisionId,
   LoopId,
+  TreeNodeId,
+  ExperimentId,
+  ExperimentVariantId,
+  ExperimentAssignmentId,
 } from './operations.ts';
+import type {
+  PortalTenantId,
+  TelegramUserId,
+  PortalAccountId,
+  LinkNonceId,
+} from './portal.ts';
 
 /** Full institutional catalog — SSOT for brand-manifest generation. */
 export const BRAND_CATALOG: readonly BrandSpec[] = [
@@ -64,6 +76,7 @@ export const BRAND_CATALOG: readonly BrandSpec[] = [
   ...DEPLOYMENT_BRAND_SPECS,
   ...AUDIT_BRAND_SPECS,
   ...OPERATIONS_BRAND_SPECS,
+  ...PORTAL_BRAND_SPECS,
 ] as const;
 
 /** Union of every branded ID — telemetry/serialization edges that accept any ID. */
@@ -100,4 +113,12 @@ export type AnyId =
   | FeedId
   | RunId
   | DecisionId
-  | LoopId;
+  | LoopId
+  | TreeNodeId
+  | ExperimentId
+  | ExperimentVariantId
+  | ExperimentAssignmentId
+  | PortalTenantId
+  | TelegramUserId
+  | PortalAccountId
+  | LinkNonceId;

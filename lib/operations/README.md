@@ -42,3 +42,13 @@ const play = await signer.publish({
   stakeRecommended: 500,
 }, db);
 ```
+
+## Experiments (factorial C4)
+
+| Surface | Path |
+|---------|------|
+| Engine | [`../experiments/`](../experiments/) |
+| CLI | `bun run ops:experiments --help` |
+| Skill | [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md) |
+
+`canOfferOnPlatform(..., partnerId)` honors active variant `min_coverage_pct` / `coverage_floor`.

@@ -1546,6 +1546,7 @@
     "install:machine:health": "bun scripts/machine-bun-health.ts",
     "install:cache:lifecycle": "bun scripts/bun-cache-lifecycle.ts --dry-run",
     "install:cache:prune": "bun scripts/bun-cache-lifecycle.ts --prune",
+    "ops:experiments": "bun tools/ops-experiments.ts",
     "audit:bunfig": "bash scripts/audit-bunfig.sh",
     "audit:bunfig:strict": "bash scripts/audit-bunfig.sh --strict",
     "build:affected": "bun scripts/affected-workspaces.ts build",

@@ -6,8 +6,9 @@
  *   Operations → Expert → Partner → Agent → Sub-agent
  */
 import type { Database } from 'bun:sqlite';
-import { ensurePlatformCoverageSchema } from './platform-coverage.ts';
+import { ensureExperimentsSchema } from '../experiments/schema.ts';
 import { ensureProvisioningSchema } from '../provisioning/schema.ts';
+import { ensurePlatformCoverageSchema } from './platform-coverage.ts';
 
 const TREE_NODE_COLUMNS = [
   ['email', 'TEXT'],
@@ -88,6 +89,7 @@ export function migrateSchema(db: Database): void {
 
   ensurePlatformCoverageSchema(db);
   ensureProvisioningSchema(db);
+  ensureExperimentsSchema(db);
 }
 
 export function initSchema(db: Database): void {

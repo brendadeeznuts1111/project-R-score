@@ -1,14 +1,15 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-22T11:20:34.083Z",
+  "generatedAt": "2026-07-23T16:07:28.116Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 33,
+  "brandCount": 41,
   "domains": [
     "audit",
     "deployment",
     "documents",
     "identity",
     "operations",
+    "portal",
     "security",
     "session"
   ],
@@ -473,6 +474,114 @@
         "system-internal"
       ],
       "description": "Search / maintenance loop identity"
+    },
+    {
+      "name": "TreeNodeId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Ops tree node (partner / agent / sub_agent) identity"
+    },
+    {
+      "name": "ExperimentId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Factorial or multi-variant experiment identity"
+    },
+    {
+      "name": "ExperimentVariantId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "One design cell (factor combination) in an experiment"
+    },
+    {
+      "name": "ExperimentAssignmentId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Sticky partner-to-variant assignment row"
+    },
+    {
+      "name": "PortalTenantId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Multi-tenant portal tenant key (factory | science | tennis)"
+    },
+    {
+      "name": "TelegramUserId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input"
+      ],
+      "description": "Telegram user id from Bot API"
+    },
+    {
+      "name": "PortalAccountId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Portal user account primary key (UUID v7)"
+    },
+    {
+      "name": "LinkNonceId",
+      "domain": "portal",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Telegram link nonce for account binding"
     }
   ],
   "constructorTiers": {

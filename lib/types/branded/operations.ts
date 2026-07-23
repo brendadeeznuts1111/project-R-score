@@ -19,6 +19,14 @@ export type FeedId = BrandedString<'FeedId'>;
 export type RunId = BrandedString<'RunId'>;
 export type DecisionId = BrandedString<'DecisionId'>;
 export type LoopId = BrandedString<'LoopId'>;
+/** Ops tree node (partner / agent / sub_agent) primary key. */
+export type TreeNodeId = BrandedString<'TreeNodeId'>;
+/** Factorial / A/B experiment primary key. */
+export type ExperimentId = BrandedString<'ExperimentId'>;
+/** One design cell (variant) within an experiment. */
+export type ExperimentVariantId = BrandedString<'ExperimentVariantId'>;
+/** Sticky partner → variant assignment row. */
+export type ExperimentAssignmentId = BrandedString<'ExperimentAssignmentId'>;
 
 const operation = defineBrandConstructors('OperationId');
 const resource = defineBrandConstructors('ResourceId');
@@ -31,6 +39,10 @@ const feed = defineBrandConstructors('FeedId');
 const run = defineBrandConstructors('RunId');
 const decision = defineBrandConstructors('DecisionId');
 const loop = defineBrandConstructors('LoopId');
+const treeNode = defineBrandConstructors('TreeNodeId');
+const experiment = defineBrandConstructors('ExperimentId');
+const experimentVariant = defineBrandConstructors('ExperimentVariantId');
+const experimentAssignment = defineBrandConstructors('ExperimentAssignmentId');
 
 export const asOperationId = operation.as;
 export const tryOperationId = operation.try;
@@ -75,6 +87,22 @@ export const parseDecisionId = decision.parse;
 export const asLoopId = loop.as;
 export const tryLoopId = loop.try;
 export const parseLoopId = loop.parse;
+
+export const asTreeNodeId = treeNode.as;
+export const tryTreeNodeId = treeNode.try;
+export const parseTreeNodeId = treeNode.parse;
+
+export const asExperimentId = experiment.as;
+export const tryExperimentId = experiment.try;
+export const parseExperimentId = experiment.parse;
+
+export const asExperimentVariantId = experimentVariant.as;
+export const tryExperimentVariantId = experimentVariant.try;
+export const parseExperimentVariantId = experimentVariant.parse;
+
+export const asExperimentAssignmentId = experimentAssignment.as;
+export const tryExperimentAssignmentId = experimentAssignment.try;
+export const parseExperimentAssignmentId = experimentAssignment.parse;
 
 export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
   {
@@ -153,5 +181,33 @@ export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal'],
     description: 'Search / maintenance loop identity',
+  },
+  {
+    name: 'TreeNodeId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Ops tree node (partner / agent / sub_agent) identity',
+  },
+  {
+    name: 'ExperimentId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'user-input', 'wire-input'],
+    description: 'Factorial or multi-variant experiment identity',
+  },
+  {
+    name: 'ExperimentVariantId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'One design cell (factor combination) in an experiment',
+  },
+  {
+    name: 'ExperimentAssignmentId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Sticky partner-to-variant assignment row',
   },
 ] as const;

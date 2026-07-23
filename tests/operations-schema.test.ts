@@ -31,6 +31,10 @@ describe('operations schema', () => {
       'coverage_snapshots',
       'expert_platform_prefs',
       'provisioning_tasks',
+      'experiments',
+      'experiment_variants',
+      'experiment_assignments',
+      'experiment_metrics',
     ]) {
       expect(names).toContain(table);
     }
@@ -51,6 +55,15 @@ describe('operations schema', () => {
     expect(names).toContain('oidc_subject');
     expect(names).toContain('status');
     expect(names).toContain('email');
+    db.close();
+  });
+
+  test('platforms gains coverage columns via migrate', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const cols = db.query('PRAGMA table_info(platforms)').all() as { name: string }[];
+    const names = cols.map(c => c.name);
+    expect(names).toContain('status');
+    expect(names).toContain('api_available');
     db.close();
   });
 });
