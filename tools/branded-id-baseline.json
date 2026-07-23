@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-23T15:57:35.304Z",
+  "generatedAt": "2026-07-23T16:03:48.143Z",
   "note": "Legacy unbranded ID surfaces grandfathered when mid-line param detection was enabled. Staged commits never use this baseline — new bare-string domain IDs always fail. Remove entries as you migrate to brands (as*/try*/parse*). Regenerate: bun tools/branded-id-check.ts --write-baseline",
   "keys": [
     "lib/accounts/automation.ts\tid\t.all() as { id: string; name: string }[];",
@@ -45,13 +45,6 @@
     "lib/operations/ops-sync.ts\taccountId\taccountId: string;",
     "lib/operations/ops-sync.ts\ttelegramUserId\ttelegramUserId: string;",
     "lib/operations/ops-sync.ts\ttenantId\ttenantId: string;",
-    "lib/operations/platform-coverage.ts\tagentId\tagentId: string,",
-    "lib/operations/platform-coverage.ts\tagentId\texport function getAgentPlatformAccounts(db: Database, agentId: string): AgentPlatformAccount[] {",
-    "lib/operations/platform-coverage.ts\tid\t.all() as { id: string; name: string }[];",
-    "lib/operations/platform-coverage.ts\tid\t.get({ $id: id }) as { id: string } | null;",
-    "lib/operations/platform-coverage.ts\tplatformId\tplatformId: string",
-    "lib/operations/platform-coverage.ts\tplatformId\tplatformId: string,",
-    "lib/operations/platform-coverage.ts\tplatform_id\tplatform_id: string;",
     "lib/operations/play-dispatcher.ts\tid\t.all({ $eid: play.expertId }) as { id: string; telegram_id: string }[];",
     "lib/operations/play-dispatcher.ts\tid\tfunction formatPlayMessage(play: PlayInput & { id: string; signedHash: string }): string {",
     "lib/operations/play-dispatcher.ts\tid\tid: string;",
