@@ -7,6 +7,7 @@ Registry + ops health dashboard.
 | [`collect.ts`](collect.ts) | `collectMonitoring` — packages, platforms, DOD, integrity, experiments, prediction |
 | [`page.ts`](page.ts) | Server HTML via `Bun.inspect.table` |
 | [`schema.ts`](schema.ts) | `integrity_checks` table |
+| [`integrity.ts`](integrity.ts) | `runIntegrityCheck` — contract-validates artifacts, records `integrity_checks` row (`bun run integrity:check`) |
 | Local JSON | `GET /api/monitoring` (`serve-public`) |
 | Local page | `GET /monitoring` (Bun.inspect.table HTML) |
 | Pages JSON | `functions/api/monitoring.ts` → `public/registry/monitoring.json` |

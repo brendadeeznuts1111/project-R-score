@@ -1540,6 +1540,7 @@
     "showcase:coverage": "bun tools/bun-api-showcase/coverage.ts",
     "showcase:ops": "bun tools/bun-api-showcase/ops-oneliners.ts",
     "showcase:verify": "bun tools/bun-api-showcase/verify.ts --write",
+    "integrity:check": "bun lib/monitoring/integrity.ts",
     "postinstall": "bun scripts/evict-root-tilde-cache.ts",
     "precommit": ".husky/pre-commit",
     "precommit:ast-grep": "bun scripts/pre-commit-ast-grep.ts --full",
