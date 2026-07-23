@@ -354,6 +354,7 @@ export function decideFromResponse(path: string, res: Response): ContentTypeDeci
 export function decideFromRequest(
   req: Request,
   opts?: {
+    // brand-ok — opaque matrix row key
     id?: string; // brand-ok — opaque matrix row key
     label?: string;
     expected?: string;
