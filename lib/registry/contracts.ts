@@ -92,6 +92,12 @@ export function validateDodRegistryEntry(v: unknown, index: number): ContractRes
       v.signature === undefined ||
         (typeof v.signature === 'string' && /^[0-9a-f]{64}$/.test(v.signature)),
     ],
+    [
+      'modelVersion, when present, is a dod-verifier/x.y.z tag',
+      v.modelVersion === undefined ||
+        (typeof v.modelVersion === 'string' &&
+          /^dod-verifier\/\d+\.\d+\.\d+$/.test(v.modelVersion)),
+    ],
   ];
   return check(name, v, rules);
 }
@@ -110,9 +116,9 @@ export function validateDodRegistry(v: unknown): ContractResult {
 }
 
 /** Validate a named artifact with its registered contract. */
-// eslint-disable-next-line harness/no-unknown-function-param
 export function validateArtifact(
   name: 'ops-summary' | 'dod-registry',
+  // eslint-disable-next-line harness/no-unknown-function-param
   value: unknown
 ): ContractResult {
   return name === 'ops-summary' ? validateOpsSummary(value) : validateDodRegistry(value);
