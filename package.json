@@ -1761,6 +1761,7 @@
     "check:env-defaults": "bun scripts/check-env-defaults.ts",
     "check:env-defaults:dry": "bun scripts/check-env-defaults.ts --dry-run",
     "check:etag": "bun tools/verify-etag.ts",
+    "check:bun-defaults": "bun tools/verify-bun-defaults.ts",
     "check:networking": "bun tools/verify-networking.ts",
     "check:networking:save": "bun tools/verify-networking.ts --save",
     "check:networking:remote": "bun tools/verify-networking.ts --remote --save",
