@@ -1,0 +1,14 @@
+# Cloudflare Pages static headers — keep JSON/assets as real files (not HTML)
+
+/registry/*
+  X-Content-Type-Options: nosniff
+
+/registry/*.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=60
+
+/registry/prediction/*
+  Cache-Control: public, max-age=300
+
+/portal/*
+  Cache-Control: public, max-age=60

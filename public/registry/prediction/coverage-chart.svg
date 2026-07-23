@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="320" viewBox="0 0 720 320">
+  <rect width="100%" height="100%" fill="#0d1117"/>
+  <text x="360" y="160" fill="#8b949e" font-family="ui-sans-serif,system-ui" font-size="14" text-anchor="middle">No prediction_accuracy rows — run ops:prediction backtest</text>
+</svg>

@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/runtime/webview#new-bun-webview-options — Bun.WebView
 /**
  * Coverage prediction backtest CLI (`package.json` → `ops:prediction`).
  *
- * Implementation: `lib/prediction/` (`runCoverageBacktest`, `getPredictionAccuracy`).
- * DB: `openOperationsDb` / `OPS_DB_PATH` / `DEFAULT_OPS_DB_PATH`.
- *
  *   bun run ops:prediction --help
  *   bun run ops:prediction backtest --from 2025-01-01 --to 2025-12-31
+ *   bun run ops:prediction report [--webview]
  *   bun run ops:prediction accuracy [--json]
  *
  * @see lib/prediction/README.md
@@ -18,6 +18,7 @@ import {
   getPredictionAccuracy,
   runCoverageBacktest,
   runDailyCoveragePredictionCycle,
+  writePredictionReport,
 } from '../lib/prediction/index.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
@@ -40,13 +41,16 @@ ops:prediction — coverage prediction backtest (ops C5)
 Commands:
   daily    [--lookback N]     Snapshot coverage + idempotent backtest (cron entry)
   backtest [--from YYYY-MM-DD] [--to YYYY-MM-DD]
+  report   [--webview] [--out DIR]
+                              SVG+HTML under public/registry/prediction/
+                              --webview: Bun.WebView screenshot → Bun.Image PNG
   accuracy
 
 Compares naive coverage predictor (prod accounts / launched platforms)
 against coverage_snapshots in the ops DB, writing rows to prediction_accuracy.
 
 Env: OPS_DB_PATH (default ${DEFAULT_OPS_DB_PATH})
-Flags: --json
+Flags: --json · --webview (report only)
 `);
 }
 
@@ -60,7 +64,7 @@ function out(data: object | string | number | boolean | null): void {
   }
 }
 
-function main(): number {
+async function main(): Promise<number> {
   if (cmd === 'help' || cmd === '--help' || args.includes('--help')) {
     printHelp();
     return 0;
@@ -91,6 +95,22 @@ function main(): number {
         out({ from, to, rows: results.length, accuracy: acc, sample: results.slice(0, 5) });
         return 0;
       }
+      case 'report': {
+        const webview = args.includes('--webview');
+        const report = await writePredictionReport(db, {
+          outDir: flag('out') ?? 'public/registry/prediction',
+          webview,
+        });
+        out({
+          svgPath: report.svgPath,
+          htmlPath: report.htmlPath,
+          pngPath: report.pngPath ?? null,
+          points: report.points,
+          accuracy: report.accuracy,
+          openedWebView: report.openedWebView,
+        });
+        return 0;
+      }
       case 'accuracy': {
         out(getPredictionAccuracy(db, 'coverage'));
         return 0;
@@ -100,11 +120,14 @@ function main(): number {
         printHelp();
         return 1;
     }
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : String(e));
+    return 1;
   } finally {
     db.close();
   }
 }
 
 if (import.meta.main) {
-  process.exit(main());
+  process.exit(await main());
 }

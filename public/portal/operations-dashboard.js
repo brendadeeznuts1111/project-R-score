@@ -38,6 +38,8 @@ class OperationsDashboard extends HTMLElement {
             <h2>Coverage prediction</h2>
             <div class="ops-metric" id="pred-mae">—</div>
             <div class="ops-sub" id="pred-detail"></div>
+            <a class="ops-link" id="pred-report-link" href="/registry/prediction/report.html">Open report</a>
+            <img id="pred-chart" class="ops-chart hidden" alt="Coverage prediction chart" width="100%" />
           </section>
           <section class="ops-panel wide">
             <h2>Today's Plays</h2>
@@ -212,7 +214,24 @@ class OperationsDashboard extends HTMLElement {
       predDetail.textContent =
         cov.n > 0
           ? `n=${cov.n} · RMSE ${Number(cov.rmse).toFixed(2)} · bias ${Number(cov.bias).toFixed(2)}`
-          : 'Run ops:prediction backtest, then ops:snapshot for Pages';
+          : 'Run ops:prediction backtest + report, then ops:snapshot for Pages';
+    }
+    const chart = this.querySelector('#pred-chart');
+    if (chart) {
+      // Prefer PNG (Bun.Image from WebView); fall back to SVG artifact
+      const trySrc = ['/registry/prediction/coverage-chart.png', '/registry/prediction/coverage-chart.svg'];
+      let i = 0;
+      const next = () => {
+        if (i >= trySrc.length) {
+          chart.classList.add('hidden');
+          return;
+        }
+        const src = trySrc[i++] + '?t=' + (d.generated || Date.now());
+        chart.onload = () => chart.classList.remove('hidden');
+        chart.onerror = () => next();
+        chart.src = src;
+      };
+      next();
     }
 
     const tbody = this.querySelector('#plays-table tbody');

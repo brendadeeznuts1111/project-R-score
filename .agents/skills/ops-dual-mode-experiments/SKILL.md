@@ -77,10 +77,11 @@ Stage named files only. Never sweep unrelated dirty portal/DOD trees.
 | `functions/api/operations/summary.ts` | Live `buildOpsSummary` or snapshot fallback |
 | `lib/operations/ops-summary.ts` | Shared payload builder (C4/C5 fields) |
 | `public/registry/ops-summary.json` | Static seed / Pages deploy artifact |
+| `public/registry/prediction/` | SVG/HTML report (+ optional PNG from WebView) |
+| `public/_redirects` · `_headers` | No SPA catch-all; JSON content-type |
 
 **Local:** open `/portal/ops` with a running serve that mounts `functions/` + `public/` (SQLite live).  
-**Pages:** no bun:sqlite — run `bun run ops:snapshot` before deploy so the dashboard still renders.
-
+**Pages:** no bun:sqlite — run `bun run ops:snapshot` before deploy. Disable CF Pages SPA rewrite or every path returns the landing shell.
 ## Prove commands
 
 ```bash
@@ -133,19 +134,21 @@ bun run ops:experiments analyze --id <experimentId>
 | Path | Role |
 |------|------|
 | [`lib/prediction/`](../../../lib/prediction/) | Coverage backtest + accuracy rollup |
+| [`lib/prediction/report.ts`](../../../lib/prediction/report.ts) | SVG chart · HTML · optional WebView→Image PNG |
 | [`lib/prediction/schema.ts`](../../../lib/prediction/schema.ts) | `prediction_accuracy` via `ensurePredictionSchema` |
 | [`lib/prediction/tester.ts`](../../../lib/prediction/tester.ts) | `runCoverageBacktest` · `getPredictionAccuracy` |
 | [`lib/prediction/README.md`](../../../lib/prediction/README.md) | Model notes + CLI |
 | [`tools/ops-prediction.ts`](../../../tools/ops-prediction.ts) | CLI |
-| Tests | `tests/prediction-backtest.test.ts` |
+| Tests | `tests/prediction-backtest.test.ts` · `tests/prediction-report.test.ts` |
 
 ```bash
-bun test tests/prediction-backtest.test.ts tests/experiments-*.test.ts
+bun test tests/prediction-backtest.test.ts tests/prediction-report.test.ts
 bun run ops:prediction daily --lookback 30
 bun run ops:prediction backtest --from 2024-01-01 --to 2024-12-31
+bun run ops:prediction report              # public/registry/prediction/*.svg+html
+bun run ops:prediction report --webview    # Bun.WebView → Bun.Image PNG
+bun run ops:snapshot                       # summary JSON + report for Pages
 bun run ops:prediction accuracy
-# alias (same CLI):
-bun run ops:prediction-backtest --help
 # cron process (daily snapshot+backtest at 01:00 UTC)
 bun run ops:automation --once --coverage-prediction
 ```

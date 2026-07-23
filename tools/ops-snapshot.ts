@@ -15,6 +15,7 @@
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { writePredictionReport } from '../lib/prediction/index.ts';
 
 const argv = Bun.argv.slice(2);
 const outIdx = argv.indexOf('--out');
@@ -23,6 +24,8 @@ const outPath =
   Bun.env.OPS_SNAPSHOT_PATH ??
   'public/registry/ops-summary.json';
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
+const withReport = !argv.includes('--no-report');
+const withWebView = argv.includes('--webview');
 
 // Ensure parent dirs exist (fresh clones often lack data/)
 if (dbPath !== ':memory:') {
@@ -36,6 +39,21 @@ const db = openOperationsDb({ path: dbPath });
 try {
   const payload = buildOpsSummary(db, 'snapshot');
   await Bun.write(outPath, `${JSON.stringify(payload, null, 2)}\n`);
+
+  let report: { svgPath: string; htmlPath: string; pngPath?: string; points: number } | null = null;
+  if (withReport) {
+    const r = await writePredictionReport(db, {
+      outDir: 'public/registry/prediction',
+      webview: withWebView,
+    });
+    report = {
+      svgPath: r.svgPath,
+      htmlPath: r.htmlPath,
+      pngPath: r.pngPath,
+      points: r.points,
+    };
+  }
+
   console.log(
     JSON.stringify(
       {
@@ -44,6 +62,7 @@ try {
         experiments: payload.experiments.active,
         predictionN: payload.prediction.coverage.n,
         liquidity: payload.liquidity.total,
+        report,
       },
       null,
       2

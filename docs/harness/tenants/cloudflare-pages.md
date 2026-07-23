@@ -27,7 +27,26 @@ Common root causes:
 6. Apex HTTP check (no API token): `bun run cloudflare:env:assert-apex`
 7. Live dashboard drift + apex (API token or wrangler OAuth): `bun run cloudflare:env:assert-live`
 
-Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
+Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps + portal) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
+
+### Ops portal + prediction (static)
+
+| Path | Asset |
+|------|--------|
+| `/portal/ops/` | Operations dashboard (experiments + prediction panels) |
+| `/registry/ops-summary.json` | Snapshot from `bun run ops:snapshot` |
+| `/registry/prediction/report.html` | Backtest report (+ `coverage-chart.svg`) |
+
+**Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + `public/_redirects` (trailing-slash only) + `public/_headers` (JSON content-type).
+
+Before deploy (or in CI):
+
+```bash
+bun run ops:prediction backtest --from 2024-01-01 --to 2024-12-31   # optional
+bun run ops:snapshot   # summary JSON + prediction SVG/HTML under public/registry/
+```
+
+Local ops station chart PNG (optional): `bun run ops:prediction report --webview` (Bun.WebView screenshot → Bun.Image).
 
 ### Pages Functions (edge-safe only)
 
@@ -68,3 +87,15 @@ Remove when `project-r-score` is disconnected from Git or replaced by an in-repo
 
 **Owner** `// owner: platform / cloudflare-pages`  
 **Fresh-rerun** `bun test tests/r2-env.test.ts`
+
+### Live proof (ops portal)
+
+After deploy (SPA rewrite **off**, output dir `public`):
+
+```bash
+curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/portal/ops/
+curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/registry/ops-summary.json
+curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/registry/prediction/coverage-chart.svg
+```
+
+Expect: ops HTML title `Operations · FactoryWager`; JSON `application/json`; SVG `image/svg+xml` (not the landing-page HTML shell).

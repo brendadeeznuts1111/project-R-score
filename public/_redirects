@@ -1,0 +1,8 @@
+# Explicit static routes — do NOT SPA-fallback the whole site to index.html.
+# Dashboard SPA mode in CF Pages (/* → /index.html 200) breaks JSON + portal;
+# leave that OFF and rely on real files under public/.
+
+/portal/ops              /portal/ops/index.html   200
+/portal/ops/             /portal/ops/index.html   200
+/portal                  /portal/index.html       200
+/portal/                 /portal/index.html       200
