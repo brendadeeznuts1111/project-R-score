@@ -1,0 +1,100 @@
+{
+  "type": "InstallEnvVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-23T22:37:06.523Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "reportPath": "/registry/install-env-proof.json",
+  "results": [
+    {
+      "envVar": "BUN_CONFIG_REGISTRY",
+      "canonicalKey": "BUN_CONFIG_REGISTRY",
+      "name": "BUN_CONFIG_REGISTRY",
+      "expected": "custom registry URL overrides default (unreachable registry fails dry-run)",
+      "actual": "baseline exit=0; BUN_CONFIG_REGISTRY=http://127.0.0.1:9 exit≠0",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
+        "report": "/registry/install-env-proof.json"
+      }
+    },
+    {
+      "envVar": "BUN_CONFIG_TOKEN",
+      "canonicalKey": "BUN_CONFIG_TOKEN",
+      "name": "BUN_CONFIG_TOKEN",
+      "expected": "auth token env accepted (public registry dry-run)",
+      "actual": "exit=0 with BUN_CONFIG_TOKEN set",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
+        "report": "/registry/install-env-proof.json"
+      }
+    },
+    {
+      "envVar": "BUN_CONFIG_YARN_LOCKFILE",
+      "canonicalKey": "BUN_CONFIG_YARN_LOCKFILE",
+      "name": "BUN_CONFIG_YARN_LOCKFILE",
+      "expected": "yarn.lock created alongside bun.lock",
+      "actual": "yarn.lock present after install",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
+        "report": "/registry/install-env-proof.json"
+      }
+    },
+    {
+      "envVar": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
+      "canonicalKey": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
+      "name": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
+      "expected": "bun.lock not written when skip-save env set",
+      "actual": "no bun.lock after install",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
+        "report": "/registry/install-env-proof.json"
+      }
+    },
+    {
+      "envVar": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
+      "canonicalKey": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
+      "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
+      "expected": "dry-run succeeds with lock present when skip-load env set",
+      "actual": "first=0 lock=false skip=0",
+      "passed": false,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
+        "report": "/registry/install-env-proof.json"
+      }
+    },
+    {
+      "envVar": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
+      "canonicalKey": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
+      "name": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
+      "expected": "node_modules not created when skip-install env set",
+      "actual": "exit=0; node_modules absent",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
+        "report": "/registry/install-env-proof.json"
+      }
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "total": 6,
+    "status": "fail"
+  },
+  "proofHash": "e9710fe6e31e4ccb61f0fb92d9c434a5a054c890762a757304c2ac7ba5aa4d01"
+}
