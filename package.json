@@ -1590,6 +1590,7 @@
     "factory:health": "bun lib/factory/cli.ts health",
     "factory:integrity": "bun lib/factory/cli.ts integrity",
     "factory:serve": "bun lib/factory/server.ts",
+    "factory:routes:test": "bun tools/registry-routes-test.ts",
     "factory:monitor": "bun lib/factory/monitoring.ts",
     "portal:telegram:webhook": "bash scripts/telegram-webhook-register.sh",
     "factory:create": "bun lib/factory/cli.ts create",

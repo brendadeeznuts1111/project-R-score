@@ -3,15 +3,19 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
-// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Local portal + static public/ server with live ops/catalog/registry APIs.
  *
  *   bun scripts/serve-public.ts
- *   open http://localhost:3000/portal/ops/
+ *   open http://127.0.0.1:3000/portal/ops/
  *
- * Routes:
+ * Routing (Bun.serve `routes` + `fetch` fallback):
+ *   routes  — SIMD-matched exact API + monitoring + ready/health handlers
+ *   fetch   — publish mutations, npm-compatible PUT, static public/*, catch-all
+ *
+ * Paths:
  *   /api/operations/summary   → live SQLite
  *   /api/catalog              → account catalog from SQLite
  *   /api/registry             → full registry index
@@ -25,6 +29,7 @@
  *   PUT /{name}               → npm-compatible publish (bun publish)
  *   /*                        → public/* static files
  */
+import type { BunRequest } from 'bun';
 import { Database } from 'bun:sqlite';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
@@ -626,12 +631,82 @@ async function fetchHandler(req: Request): Promise<Response> {
   return new Response('Not found', { status: 404 });
 }
 
+/**
+ * Exact SIMD-matched routes. Named params work; bare `*` wildcards do not
+ * populate `req.params` on this runtime — multi-segment paths stay in `fetch`.
+ */
+function buildPublicRoutes() {
+  /** Static ready probe — zero-allocation cloneable response. */
+  const ready = new Response('Ready', {
+    headers: { 'X-Ready': '1', 'Cache-Control': 'no-store' },
+  });
+
+  return {
+    '/ready': ready,
+
+    // Dynamic health (handler — not frozen Response)
+    '/health': () => health(),
+
+    '/api/proof': () => bunApiProof(),
+    '/api/monitoring': () => liveMonitoringApi(),
+    '/api/operations/summary': () => liveOpsSummary(),
+    '/api/catalog': (req: Request) => liveCatalog(req),
+    '/api/dod': (req: Request) => dodApi(req),
+    '/api/channels/events': (req: Request) => channelsEvents(req),
+
+    '/api/registry': () => serveRegistryIndex(),
+    '/api/registry/registry.json': () => serveRegistryIndex(),
+    '/api/registry/search': (req: Request) => searchRegistry(req),
+
+    // Unscoped package detail + versions (named params — type-safe)
+    '/api/registry/:package': (req: BunRequest<'/api/registry/:package'>) => {
+      const name = req.params.package;
+      if (name === 'search' || name === 'registry.json') {
+        return json({ error: 'Not found' }, 404);
+      }
+      return packageDetail(name);
+    },
+    '/api/registry/:package/versions': {
+      GET: (req: BunRequest<'/api/registry/:package/versions'>) => listVersions(req.params.package),
+      POST: (req: BunRequest<'/api/registry/:package/versions'>) =>
+        publishVersion(req, req.params.package),
+    },
+
+    // Unencoded scoped package: /api/registry/@scope/name[/versions]
+    '/api/registry/:scope/:name': (req: BunRequest<'/api/registry/:scope/:name'>) => {
+      const { scope, name } = req.params;
+      if (!scope.startsWith('@')) return json({ error: 'Not found' }, 404);
+      return packageDetail(`${scope}/${name}`);
+    },
+    '/api/registry/:scope/:name/versions': {
+      GET: (req: BunRequest<'/api/registry/:scope/:name/versions'>) =>
+        listVersions(`${req.params.scope}/${req.params.name}`),
+      POST: (req: BunRequest<'/api/registry/:scope/:name/versions'>) =>
+        publishVersion(req, `${req.params.scope}/${req.params.name}`),
+    },
+
+    '/monitoring': () => monitoringPage(),
+
+    // Portal entry — Bun.file auto ETag / Last-Modified / Range
+    '/portal': () => new Response(Bun.file('public/portal/index.html')),
+    '/portal/': () => new Response(Bun.file('public/portal/index.html')),
+  };
+}
+
 function startServer(preferred: number, maxTries = 20): { port: number; hostname: string } {
   let lastErr: unknown;
+  const routes = buildPublicRoutes();
+
   for (let i = 0; i < maxTries; i++) {
     const port = preferred + i;
     try {
-      const server = Bun.serve({ port, hostname: HOST, fetch: fetchHandler });
+      const server = Bun.serve({
+        port,
+        hostname: HOST,
+        routes,
+        // Mutations, multi-segment static, npm-compat, tenants, everything else
+        fetch: fetchHandler,
+      });
       return { port: server.port, hostname: server.hostname };
     } catch (e) {
       lastErr = e;

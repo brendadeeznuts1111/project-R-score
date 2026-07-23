@@ -69,6 +69,14 @@ export {
 export { runIntegrityCheck, type IntegrityReport, type IntegrityFailure } from './integrity';
 
 export {
+  createRegistryServer,
+  createRegistryRoutes,
+  createRegistryFetchHandler,
+  publishRegistryVersion,
+  type RegistryGatewayOptions,
+} from './server';
+
+export {
   type RegistryObjectStore,
   type ObjectPutOptions,
   createMemoryObjectStore,

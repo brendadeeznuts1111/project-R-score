@@ -1,15 +1,21 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
+// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
 /**
  * VM / bare-metal registry gateway.
  *
  *   bun lib/factory/server.ts
  *   REGISTRY_MONITOR=1 bun lib/factory/server.ts  # also starts integrity cron
  *
+ * Routing:
+ *   - `routes` — SIMD-matched health/ping/index + method-map POST publish
+ *   - `fetch`  — allowlisted object-key reads, OPTIONS, unmatched 404
+ *
  * Reads are anonymous and allowlisted. Publishing is accepted only at the
  * multipart versions endpoint and fails closed without a configured token.
  */
 
+import type { BunRequest } from 'bun';
 import { buildRegistryHealthReport, healthHttpStatus, publicRegistryHealthReport } from './health';
 import { parseRegistryObjectKey } from './http-keys';
 import { registerRegistryCrons } from './monitoring';
@@ -17,6 +23,9 @@ import { registry, type RegistryClient } from './registry';
 import { type ArtifactType } from './artifact';
 
 const DEFAULT_MAX_PUBLISH_BYTES = 50 * 1024 * 1024;
+
+/** Static ready probe — buffered once at module load (zero-allocation responses). */
+const READY_RESPONSE = Response.json({ ready: true });
 
 export type RegistryGatewayOptions = {
   publishToken?: string;
@@ -84,7 +93,29 @@ function artifactType(value: string | undefined): ArtifactType {
   }
 }
 
-async function publishRegistryVersion(
+async function healthResponse(client: RegistryClient, method: string): Promise<Response> {
+  const report = await buildRegistryHealthReport(client);
+  if (method === 'HEAD') {
+    return new Response(null, {
+      status: healthHttpStatus(report),
+      headers: { 'Cache-Control': 'no-store' },
+    });
+  }
+  return json(publicRegistryHealthReport(report), healthHttpStatus(report));
+}
+
+async function serveObjectMaybeHead(
+  client: RegistryClient,
+  key: string,
+  method: string
+): Promise<Response> {
+  const response = await serveRegistryObject(client, key);
+  return method === 'HEAD'
+    ? new Response(null, { status: response.status, headers: response.headers })
+    : response;
+}
+
+export async function publishRegistryVersion(
   request: Request,
   client: RegistryClient,
   rawName: string,
@@ -171,6 +202,55 @@ async function publishRegistryVersion(
   }
 }
 
+/**
+ * SIMD-matched routes: health, ready, index, and method-map POST publish.
+ * Scoped packages use `/api/registry/:scope/:name/versions` (`scope` includes `@…`).
+ * URL-encoded single-segment names (`%40scope%2Fname`) hit `:package`.
+ */
+export function createRegistryRoutes(
+  client: RegistryClient = registry,
+  options: RegistryGatewayOptions = {}
+) {
+  const health = {
+    GET: (req: Request) => healthResponse(client, req.method),
+    HEAD: (req: Request) => healthResponse(client, req.method),
+  };
+
+  return {
+    // Static zero-allocation readiness
+    '/ready': READY_RESPONSE,
+
+    '/-/ping': {
+      GET: () => json({ ok: true }),
+      HEAD: () => new Response(null, { status: 200 }),
+    },
+
+    '/health': health,
+    '/api/registry/health': health,
+
+    '/api/registry': {
+      GET: (req: Request) => serveObjectMaybeHead(client, 'registry.json', req.method),
+      HEAD: (req: Request) => serveObjectMaybeHead(client, 'registry.json', req.method),
+    },
+
+    // Unscoped / URL-encoded package name
+    '/api/registry/:package/versions': {
+      POST: (req: BunRequest<'/api/registry/:package/versions'>) =>
+        publishRegistryVersion(req, client, req.params.package, options),
+    },
+
+    // Unencoded scoped: /api/registry/@factorywager/sdk/versions
+    '/api/registry/:scope/:name/versions': {
+      POST: (req: BunRequest<'/api/registry/:scope/:name/versions'>) =>
+        publishRegistryVersion(req, client, `${req.params.scope}/${req.params.name}`, options),
+    },
+  };
+}
+
+/**
+ * Fallback fetch: allowlisted object-key GET/HEAD, OPTIONS, and a complete
+ * router when used alone (unit tests without starting Bun.serve).
+ */
 export function createRegistryFetchHandler(
   client: RegistryClient = registry,
   options: RegistryGatewayOptions = {}
@@ -182,6 +262,7 @@ export function createRegistryFetchHandler(
       return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } });
     }
 
+    // Publish (also registered on routes — kept here for handler-only tests)
     const publishMatch = url.pathname.match(/^\/api\/registry\/(.+)\/versions$/);
     if (publishMatch && req.method === 'POST') {
       return publishRegistryVersion(req, client, publishMatch[1]!, options);
@@ -191,19 +272,23 @@ export function createRegistryFetchHandler(
       return json({ error: 'Method not allowed' }, 405);
     }
 
-    if (url.pathname === '/health' || url.pathname === '/api/registry/health') {
-      const report = await buildRegistryHealthReport(client);
-      if (req.method === 'HEAD') {
-        return new Response(null, {
-          status: healthHttpStatus(report),
-          headers: { 'Cache-Control': 'no-store' },
-        });
-      }
-      return json(publicRegistryHealthReport(report), healthHttpStatus(report));
+    if (url.pathname === '/ready') {
+      return READY_RESPONSE.clone();
     }
 
-    if (url.pathname === '/-/ping') {
-      return req.method === 'HEAD' ? new Response(null, { status: 200 }) : json({ ok: true });
+    if (
+      url.pathname === '/health' ||
+      url.pathname === '/api/registry/health' ||
+      url.pathname === '/-/ping'
+    ) {
+      if (url.pathname === '/-/ping') {
+        return req.method === 'HEAD' ? new Response(null, { status: 200 }) : json({ ok: true });
+      }
+      return healthResponse(client, req.method);
+    }
+
+    if (url.pathname === '/api/registry' || url.pathname === '/api/registry/') {
+      return serveObjectMaybeHead(client, 'registry.json', req.method);
     }
 
     const registryPrefix = '/api/registry/';
@@ -211,17 +296,7 @@ export function createRegistryFetchHandler(
       const rawKey = url.pathname.slice(registryPrefix.length);
       const key = parseRegistryObjectKey(rawKey);
       if (!key) return json({ error: 'Invalid registry object key' }, 400);
-      const response = await serveRegistryObject(client, key);
-      return req.method === 'HEAD'
-        ? new Response(null, { status: response.status, headers: response.headers })
-        : response;
-    }
-
-    if (url.pathname === '/api/registry' || url.pathname === '/api/registry/') {
-      const response = await serveRegistryObject(client, 'registry.json');
-      return req.method === 'HEAD'
-        ? new Response(null, { status: response.status, headers: response.headers })
-        : response;
+      return serveObjectMaybeHead(client, key, req.method);
     }
 
     return json({ error: 'Not found' }, 404);
@@ -237,15 +312,18 @@ export function createRegistryServer(
     maxPublishBytes?: number;
   } = {}
 ): ReturnType<typeof Bun.serve> {
+  const client = options.client ?? registry;
+  const gateway: RegistryGatewayOptions = {
+    publishToken: options.publishToken,
+    maxPublishBytes: options.maxPublishBytes,
+  };
   const port = options.port ?? Number(Bun.env.REGISTRY_PORT || Bun.env.PORT || 3000);
   const hostname = options.hostname ?? Bun.env.REGISTRY_HOST ?? '0.0.0.0';
   return Bun.serve({
     hostname,
     port,
-    fetch: createRegistryFetchHandler(options.client, {
-      publishToken: options.publishToken,
-      maxPublishBytes: options.maxPublishBytes,
-    }),
+    routes: createRegistryRoutes(client, gateway),
+    fetch: createRegistryFetchHandler(client, gateway),
   });
 }
 
@@ -254,5 +332,7 @@ if (import.meta.main) {
     registerRegistryCrons();
   }
   const server = createRegistryServer();
-  console.info(`Registry read gateway listening on http://${server.hostname}:${server.port}`);
+  console.info(`Registry gateway listening on ${server.url}`);
+  console.info(`  routes: /ready /health /-/ping /api/registry (+ POST …/versions)`);
+  console.info(`  fetch:  allowlisted object keys under /api/registry/*`);
 }
