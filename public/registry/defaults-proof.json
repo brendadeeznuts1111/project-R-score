@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "timestamp": "2026-07-23T20:14:04.792Z",
+  "total": 12,
+  "passed": 12,
+  "proofHash": "24c0763617b6ea6a51eba4f1a0db13888f00eabb546886a472ec5195d13543e8",
+  "results": [
+    {
+      "name": "CryptoHasher requires algorithm",
+      "pass": true,
+      "actual": "pass",
+      "expected": "throws without algorithm"
+    },
+    {
+      "name": "password.hash default argon2id",
+      "pass": true,
+      "actual": "pass",
+      "expected": "starts with $argon2id$"
+    },
+    {
+      "name": "inspect default depth shows all",
+      "pass": true,
+      "actual": "pass",
+      "expected": "default depth shows nested objects (unlimited in canary)"
+    },
+    {
+      "name": "write creates dirs",
+      "pass": true,
+      "actual": "pass",
+      "expected": "auto-creates parent directories"
+    },
+    {
+      "name": "file.stat works",
+      "pass": true,
+      "actual": "pass",
+      "expected": "returns stats for existing file"
+    },
+    {
+      "name": "serve port fallback",
+      "pass": true,
+      "actual": "pass",
+      "expected": "port 0 assigns random available port"
+    },
+    {
+      "name": "which returns null for missing",
+      "pass": true,
+      "actual": "pass",
+      "expected": "null for missing command"
+    },
+    {
+      "name": "escapeHTML escapes & < > \" '",
+      "pass": true,
+      "actual": "pass",
+      "expected": "&lt; &gt; &#x27; &amp;"
+    },
+    {
+      "name": "readableStreamToBytes empty",
+      "pass": true,
+      "actual": "pass",
+      "expected": "empty stream returns 0 bytes"
+    },
+    {
+      "name": "nanoseconds monotonic",
+      "pass": true,
+      "actual": "pass",
+      "expected": "increasing values"
+    },
+    {
+      "name": "sleep ~50ms",
+      "pass": true,
+      "actual": "pass",
+      "expected": "resolves within ~50ms"
+    },
+    {
+      "name": "hash returns bigint",
+      "pass": true,
+      "actual": "pass",
+      "expected": "returns bigint (Wyhash)"
+    }
+  ]
+}
