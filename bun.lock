@@ -59,6 +59,10 @@
       "name": "@factorywager/package",
       "version": "0.1.0",
     },
+    "packages/registry-client": {
+      "name": "@factorywager/registry-client",
+      "version": "1.0.0",
+    },
     "packages/rip": {
       "name": "@factorywager/rip",
       "version": "0.1.0",
@@ -335,6 +339,8 @@
     "@factorywager/p2p": ["@factorywager/p2p@workspace:packages/p2p"],
 
     "@factorywager/package": ["@factorywager/package@workspace:packages/package"],
+
+    "@factorywager/registry-client": ["@factorywager/registry-client@workspace:packages/registry-client"],
 
     "@factorywager/pref-propagation": ["@factorywager/pref-propagation@workspace:projects/active/factorywager/registry/packages/pref-propagation"],
 

@@ -62,6 +62,15 @@ export const SIGNAL_MONITORS: readonly SignalMonitor[] = [
     maxAgeMinutes: 48 * 60,
     lastCheckFilterByTenant: true,
   },
+  {
+    tenant: 'registry-integrity',
+    kind: 'spine-tick',
+    checkCommand: 'bun run spine:schedule:once -- --tenant=registry-integrity',
+    alertChannel:
+      'spine daemon stdout · non-zero exit / ❌ spine tenant · registry-integrity; reports/registry-integrity.json failures>0',
+    lastCheckPath: 'reports/registry-integrity.json',
+    maxAgeMinutes: 48 * 60,
+  },
 ] as const;
 
 export function monitorByTenant(tenant: string): SignalMonitor | undefined {
@@ -127,7 +136,7 @@ export function assertSignalMonitorAlignedWithRunbook(): string[] {
   return missing;
 }
 
-type TickRow = { ts?: string; tenant?: string; ok?: boolean };
+type TickRow = { ts?: string; checkedAt?: string; tenant?: string; ok?: boolean };
 
 async function readLastObservationTs(root: string, m: SignalMonitor): Promise<string | undefined> {
   if (!m.lastCheckPath) return undefined;
@@ -146,6 +155,9 @@ async function readLastObservationTs(root: string, m: SignalMonitor): Promise<st
     }
     if (m.lastCheckFilterByTenant && row.tenant !== m.tenant) continue;
     if (typeof row.ts === 'string' && row.ts.length > 0) return row.ts;
+    if (typeof row.checkedAt === 'string' && row.checkedAt.length > 0) {
+      return row.checkedAt;
+    }
   }
   return undefined;
 }

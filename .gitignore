@@ -124,6 +124,7 @@ yarn-error.log*
 .env.*.local
 .env.*
 !/.env.example
+!/.env.registry.example
 .env.development
 .env.production
 .env.staging

@@ -1,19 +1,24 @@
 # Factory — R2-backed artifact registry
 
-Registry client, CLI, and template scaffolding for the FactoryWager
-internal package registry.
+Registry client, CLI, and template scaffolding for the FactoryWager internal
+package registry.
 
 ## Structure
 
-| File | Role |
-|------|------|
-| `artifact.ts` | Branded ArtifactName/Version/Id types + ArtifactRelease schema |
-| `object-store.ts` | `RegistryObjectStore` — memory (tests) + `S3Client` SigV4 (live) |
-| `markdown.ts` | `Bun.markdown` helpers — **Bun runtime only** (never import from `functions/`) |
-| `registry.ts` | RegistryClient: publish, install, list, search, fetchReadme |
-| `cli.ts` | CLI (env, publish, list, search, install, readme, snapshot, create, help) |
-| `semver.ts` | Bun.semver wrappers: sortVersions, satisfiesRange, resolveVersion |
-| `index.ts` | Barrel exports |
+| File              | Role                                                                           |
+| ----------------- | ------------------------------------------------------------------------------ |
+| `artifact.ts`     | Branded ArtifactName/Version/Id types + ArtifactRelease schema                 |
+| `object-store.ts` | `RegistryObjectStore` — memory (tests) + `S3Client` SigV4 (live)               |
+| `markdown.ts`     | `Bun.markdown` helpers — **Bun runtime only** (never import from `functions/`) |
+| `registry.ts`     | RegistryClient: publish, install, list, search, fetchReadme                    |
+| `health.ts`       | Bun-host health report: R2 probe, package/version counts, integrity status     |
+| `integrity.ts`    | Full artifact size + SHA-256 verification                                      |
+| `alerts.ts`       | Slack and Telegram alert delivery without secret logging                       |
+| `monitoring.ts`   | One-shot integrity cycle + in-process Bun cron complement                      |
+| `server.ts`       | Bun VM health/read gateway + token-authenticated multipart publishing          |
+| `cli.ts`          | CLI (env, publish, list, search, install, readme, snapshot, create, help)      |
+| `semver.ts`       | Bun.semver wrappers: sortVersions, satisfiesRange, resolveVersion              |
+| `index.ts`        | Barrel exports                                                                 |
 
 ## Quick start
 
@@ -25,6 +30,11 @@ bun run factory create factory-library my-lib --publish
 ```
 
 See [proof claim](../../docs/harness/PROOF.md) `factory-registry-cli-v1`.  
-Pages portal proxy: claim `factory-registry-pages-proxy-v1` · `functions/api/registry/`.
+Pages portal proxy: claim `factory-registry-pages-proxy-v1` ·
+`functions/api/registry/`.
 
-Live R2 uses [`Bun.S3Client`](https://bun.com/docs/runtime/s3#bun-s3client-bun-s3) (SigV4) via `createS3RegistryStore`. Unit tests inject `createMemoryObjectStore()` — green tests prove coordination, not deployed bucket health (`factory env` / live ping).
+Live R2 uses
+[`Bun.S3Client`](https://bun.com/docs/runtime/s3#bun-s3client-bun-s3) (SigV4)
+via `createS3RegistryStore`. Unit tests inject `createMemoryObjectStore()` —
+green tests prove coordination, not deployed bucket health (`factory env` / live
+ping).

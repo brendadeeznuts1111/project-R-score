@@ -30,6 +30,8 @@
  */
 
 import { parseArgs } from 'util';
+import { buildRegistryHealthReport } from './health';
+import { runIntegrityCycle } from './monitoring';
 import { registry } from './registry';
 import { type ArtifactType } from './artifact';
 import { shouldColor } from '../console-depth';
@@ -68,6 +70,8 @@ Commands:
   install <name> [<range>]     Download and extract an artifact (default range: latest)
   readme <name> [<version>]    Fetch the README for a release (default version: latest)
   snapshot [path]              Write registry.json snapshot for portal static fallback
+  health                       JSON health report (R2 + index stats)
+  integrity                    Run checksum audit (writes reports/registry-integrity.json)
   status                       Show factory system status (Bun version, R2, registry)
   proof                        Verify factory proof claims + Bun API availability
   help [command]               Show help for a specific command
@@ -119,6 +123,14 @@ Fetch the live registry index and write a static JSON snapshot for the portal
 fallback (default: public/registry/registry.json).
 
 Requires R2 credentials (same as factory env).`,
+  health: `factory health
+
+Emit a JSON health report (status, package counts, R2 probe).
+Exits non-zero when R2 is unreachable.`,
+  integrity: `factory integrity
+
+Verify every indexed release against its SHA-256 checksum in R2.
+Writes reports/registry-integrity.json and exits 1 on any failure.`,
   create: `factory create <template> [<destination>] [options]
 
 Scaffold a new project from a template using bun create.
@@ -385,7 +397,8 @@ async function cmdSearch(args: string[]): Promise<void> {
 
 async function cmdStatus(): Promise<void> {
   const env = await registry.checkEnv();
-  const pkgCount = Object.keys((await registry.fetchIndex()).index.packages).length;
+  const health = await buildRegistryHealthReport(registry);
+  const pkgCount = health.packages;
 
   const rows = [
     ['factory', VERSION, '✓', 'cyan'],
@@ -397,6 +410,12 @@ async function cmdStatus(): Promise<void> {
       env.bucketAccess ? 'green' : 'red',
     ],
     ['registry', `${pkgCount} packages`, '✓', 'cyan'],
+    [
+      'health',
+      health.status,
+      health.status === 'ok' ? '✓' : '⚠',
+      health.status === 'ok' ? 'green' : 'yellow',
+    ],
   ];
 
   console.log(`\n  ${paint('bash', '── factory status ──')}\n`);
@@ -412,6 +431,18 @@ async function cmdStatus(): Promise<void> {
     )
   );
   console.log();
+}
+
+async function cmdHealth(): Promise<void> {
+  const report = await buildRegistryHealthReport(registry);
+  console.log(JSON.stringify(report, null, 2));
+  process.exit(report.status === 'error' ? 1 : 0);
+}
+
+async function cmdIntegrity(): Promise<void> {
+  const report = await runIntegrityCycle();
+  console.log(Bun.inspect(report, { depth: 4, colors: shouldColor() }));
+  process.exit(report.failures.length > 0 ? 1 : 0);
 }
 
 async function cmdProof(args: string[]): Promise<void> {
@@ -744,6 +775,12 @@ async function main(): Promise<void> {
       break;
     case 'snapshot':
       await cmdSnapshot(subargs);
+      break;
+    case 'health':
+      await cmdHealth();
+      break;
+    case 'integrity':
+      await cmdIntegrity();
       break;
     case 'colors':
       await cmdColors();

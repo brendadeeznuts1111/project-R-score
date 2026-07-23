@@ -9,6 +9,10 @@
  * @see https://developers.cloudflare.com/r2/api/workers/workers-api-reference/ — R2 bindings
  */
 
+import { parseRegistryObjectKey } from '../../../lib/factory/http-keys';
+
+export { parseRegistryObjectKey };
+
 /** Minimal R2 object shape used by this handler (Workers R2Bucket.get). */
 export type RegistryR2Object = {
   body: ReadableStream | null;
@@ -33,9 +37,6 @@ export type RegistryPagesContext = {
   params?: { path?: string | string[] };
 };
 
-const ALLOWED_EXACT = new Set(['registry.json']);
-const ALLOWED_PREFIXES = ['@factorywager/', 'projects/', 'readme/'] as const;
-
 /** JSON error with optional CORS + no-store cache. */
 export function jsonError(
   status: number,
@@ -52,27 +53,6 @@ export function jsonError(
   });
 }
 
-/**
- * Decode + validate an object key from `/api/registry/<key>`.
- * Rejects traversal, absolute paths, NULs, and non-allowlisted prefixes.
- */
-export function parseRegistryObjectKey(raw: string): string | null {
-  if (!raw) return null;
-  let key: string;
-  try {
-    key = decodeURIComponent(raw);
-  } catch {
-    return null;
-  }
-  if (!key || key.includes('\0')) return null;
-  if (key.startsWith('/') || key.includes('\\')) return null;
-  const segments = key.split('/');
-  if (segments.some(s => s === '' || s === '.' || s === '..')) return null;
-  if (ALLOWED_EXACT.has(key)) return key;
-  if (ALLOWED_PREFIXES.some(p => key.startsWith(p))) return key;
-  return null;
-}
-
 function pathParamToKey(params: RegistryPagesContext['params'], url: URL): string {
   const fromParams = params?.path;
   if (Array.isArray(fromParams)) return fromParams.join('/');
@@ -81,7 +61,10 @@ function pathParamToKey(params: RegistryPagesContext['params'], url: URL): strin
   return url.pathname.replace(/^\/api\/registry\/?/, '');
 }
 
-function corsHeaders(request: Request, env: RegistryPagesEnv): Record<string, string> {
+export function registryCorsHeaders(
+  request: Request,
+  env: RegistryPagesEnv
+): Record<string, string> {
   const allow = (env.REGISTRY_CORS_ORIGINS ?? '')
     .split(',')
     .map(s => s.trim())
@@ -99,7 +82,7 @@ function corsHeaders(request: Request, env: RegistryPagesEnv): Record<string, st
 
 export async function onRequest(context: RegistryPagesContext): Promise<Response> {
   const { request, env, params } = context;
-  const cors = corsHeaders(request, env);
+  const cors = registryCorsHeaders(request, env);
 
   if (request.method === 'OPTIONS') {
     return new Response(null, {

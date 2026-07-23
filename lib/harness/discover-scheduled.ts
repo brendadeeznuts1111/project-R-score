@@ -49,6 +49,12 @@ export const SCHEDULED_JOB_OWNERS: Readonly<Record<string, string>> = {
  */
 export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
   {
+    id: 'verify-bun-apis-workflow',
+    source: 'gha-cron',
+    match: 'verify-bun-apis.yml',
+    reason: 'GitHub Actions owns this Bun API proof schedule; it is not a spine tenant',
+  },
+  {
     id: 'harness-cron-api',
     source: 'code-cron',
     match: 'lib/harness/cron.ts',

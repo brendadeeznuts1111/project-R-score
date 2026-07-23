@@ -47,6 +47,27 @@ export { sortVersions, latestVersion, satisfiesRange, resolveVersion } from './s
 
 export { RegistryClient, registry } from './registry';
 
+export { parseRegistryObjectKey } from './http-keys';
+
+export { resolveArtifact, artifactPublicUrl } from './resolve';
+
+export {
+  buildRegistryHealthReport,
+  publicRegistryHealthReport,
+  healthHttpStatus,
+  type RegistryHealthReport,
+  type RegistryPublicHealthReport,
+} from './health';
+
+export {
+  sendRegistryAlert,
+  type AlertSeverity,
+  type RegistryAlertFetch,
+  type RegistryAlertOptions,
+} from './alerts';
+
+export { runIntegrityCheck, type IntegrityReport, type IntegrityFailure } from './integrity';
+
 export {
   type RegistryObjectStore,
   type ObjectPutOptions,

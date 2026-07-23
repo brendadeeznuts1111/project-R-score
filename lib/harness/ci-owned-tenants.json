@@ -2,6 +2,7 @@
   "$comment": "Flip a tenant to true only when a required CI / operate schedule owns its periodic re-proof and spine is no longer required. retirement-check-ci-owner.ts exits 0 iff true.",
   "tenants": {
     "docs-integrity": false,
-    "install-verify": false
+    "install-verify": false,
+    "registry-integrity": false
   }
 }

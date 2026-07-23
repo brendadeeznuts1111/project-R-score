@@ -115,6 +115,25 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     freshRerunKind: 'catalog',
     docPath: 'docs/harness/tenants/install-verify.md',
   },
+  {
+    tenant: 'registry-integrity',
+    signal:
+      '`bun run spine:schedule:once -- --tenant=registry-integrity` exits non-zero (checksum audit fail)',
+    intervention:
+      'bun test tests/factory-production.test.ts · bun lib/factory/monitoring.ts --once',
+    proofId: 'factory-registry-integrity-v1',
+    retirement:
+      'Remove when registry integrity is enforced by required CI on publish/deploy and spine is no longer the periodic owner',
+    retirementVerified: false,
+    retirementCheck: {
+      description: 'registry-integrity is part of CI pre-deploy gate',
+      command: 'bun scripts/retirement-check-ci-owner.ts --tenant=registry-integrity',
+    },
+    schedule: '0 3 * * *',
+    freshRerun: 'bun run docs:tenant-registry-integrity',
+    freshRerunKind: 'catalog',
+    docPath: 'docs/harness/tenants/registry-integrity.md',
+  },
 ] as const;
 
 /**

@@ -29,13 +29,21 @@ export const tryArtifactName = nameBrand.try;
 export const asArtifactName = nameBrand.as;
 export const parseArtifactName = nameBrand.parse;
 
-/** Valid artifact names: alphanumeric, hyphen, underscore (npm-compatible). */
-const NAME_RE = /^[a-zA-Z0-9_-]+$/;
+/**
+ * Valid artifact names: local names or the canonical npm scope.
+ *
+ * Registry storage and the public proxy intentionally allow only
+ * `@factorywager/*`; accepting arbitrary scopes here would create objects the
+ * read boundary refuses to serve.
+ */
+const NAME_RE = /^(?:@factorywager\/)?[a-zA-Z0-9_-]+$/;
 
 /** Create an ArtifactName with npm-compatible validation. */
 export function validateArtifactName(raw: string): ArtifactName {
   if (!NAME_RE.test(raw)) {
-    throw new TypeError(`Invalid artifact name: "${raw}". Use only [a-zA-Z0-9_-].`);
+    throw new TypeError(
+      `Invalid artifact name: "${raw}". Use [a-zA-Z0-9_-] or @factorywager/<name>.`
+    );
   }
   return asArtifactName(raw);
 }
@@ -49,11 +57,15 @@ export function asArtifactId(name: ArtifactName, version: ArtifactVersion): Arti
   return `${String(name)}@${String(version)}` as ArtifactId;
 }
 export function parseArtifactId(raw: unknown): ArtifactId {
-  if (typeof raw !== 'string' || !raw.includes('@'))
+  if (typeof raw !== 'string') throw new TypeError(`Invalid ArtifactId: ${raw}`);
+  const separator = raw.lastIndexOf('@');
+  if (separator <= 0 || separator === raw.length - 1) {
     throw new TypeError(`Invalid ArtifactId: ${raw}`);
-  const parts = raw.split('@');
-  if (parts.length !== 2) throw new TypeError(`Invalid ArtifactId: ${raw}`);
-  return asArtifactId(asArtifactName(parts[0]!), asArtifactVersion(parts[1]!));
+  }
+  return asArtifactId(
+    validateArtifactName(raw.slice(0, separator)),
+    asArtifactVersion(raw.slice(separator + 1))
+  );
 }
 
 // ── Brand specs (manifest) ───────────────────────────────────────────────

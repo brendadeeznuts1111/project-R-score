@@ -11,7 +11,7 @@ import { joinPath } from '../lib/path-bun';
 
 const ROOT = joinPath(import.meta.dir, '..');
 
-export type SpineTenantId = 'docs-integrity' | 'install-verify';
+export type SpineTenantId = 'docs-integrity' | 'install-verify' | 'registry-integrity';
 
 export type SpineTenant = {
   id: SpineTenantId;
@@ -72,6 +72,17 @@ export const SPINE_TENANTS: readonly SpineTenant[] = [
     schedule: '30 6 * * *',
     run: () =>
       spawnTenant(['bun', 'run', 'test:install-verify'], 'install-verify', 'install-verify'),
+  },
+  {
+    id: 'registry-integrity',
+    label: 'registry-integrity (factory R2 checksum audit)',
+    schedule: '0 3 * * *',
+    run: () =>
+      spawnTenant(
+        ['bun', 'lib/factory/monitoring.ts', '--once'],
+        'registry-integrity',
+        'registry-integrity'
+      ),
   },
 ] as const;
 

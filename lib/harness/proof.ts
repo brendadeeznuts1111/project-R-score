@@ -222,6 +222,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
+      'bun test ./tests/image-metadata.test.ts ./tests/dod-evidence.test.ts ./tests/dod-verifier.test.ts',
       'bun test ./tests/image-metadata.test.ts',
       'tests/image-metadata.test.ts',
       'lib/image-metadata.ts',
@@ -450,6 +451,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'continuous',
     gateRef: 'ci:harness',
     evidence: [
+      'bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts',
       'bun test tests/bun-blog-codeblocks.test.ts',
       'bun test tests/blog-codeblock-join.test.ts',
       'tools/bun-blog-codeblocks.ts',
@@ -735,7 +737,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun run test:tenant-runbooks',
     freshRerunKind: 'claim',
     owner: 'lib/harness/maintenance.ts · docs/harness/tenants/',
-    childIds: ['docs-integrity', 'install-verify-journey'],
+    childIds: ['docs-integrity', 'install-verify-journey', 'factory-registry-integrity-v1'],
   },
   {
     id: 'spine-tenant-heal',
@@ -975,6 +977,28 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'functions/api/registry/[[path]].ts',
   },
   {
+    id: 'factory-registry-integrity-v1',
+    claim:
+      'Registry integrity cron verifies every indexed release SHA-256 against R2; health endpoint + spine tenant + Slack/Telegram alerts',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/factory-production.test.ts',
+      'tests/factory-production.test.ts',
+      'lib/factory/integrity.ts',
+      'lib/factory/health.ts',
+      'lib/factory/monitoring.ts',
+      'lib/factory/alerts.ts',
+      'lib/factory/server.ts',
+      'functions/api/registry/health.ts',
+      'spine/tenants.ts',
+    ],
+    freshRerun: 'bun test tests/factory-production.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/factory/monitoring.ts',
+  },
+  {
     id: 'multi-tenant-portal-v1',
     claim:
       'Multi-tenant portal: config/tenants SSOT, per-tenant registry paths, sidebar + manifest, proof badge from registry.meta',
@@ -982,6 +1006,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
+      'bun test tests/registry-pages-function.test.ts',
       'config/tenants.ts',
       'public/tenants/manifest.json',
       'public/portal/components/sidebar.js',
@@ -999,6 +1024,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
+      'bun test tests/accounts-r2.test.ts',
       'lib/accounts/account-r2-store.ts',
       'lib/accounts/account-types.ts',
       'tests/accounts-r2.test.ts',
@@ -1015,6 +1041,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
+      'bun test tests/operations-schema.test.ts tests/play-dispatcher.test.ts tests/account-service.test.ts tests/operations-phase2.test.ts tests/operations-phase3.test.ts',
       'lib/operations/schema.ts',
       'lib/operations/db.ts',
       'lib/operations/account-service.ts',
@@ -1047,6 +1074,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
+      'bun test tests/telegram-bot.test.ts',
       'functions/api/telegram/webhook/[[tenant]].ts',
       'lib/telegram/bot.ts',
       'scripts/telegram-webhook-register.sh',
