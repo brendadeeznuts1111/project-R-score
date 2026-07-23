@@ -34,8 +34,8 @@ import {
 /** Known ship post with stable OG + article markup. */
 const SAMPLE_SLUG = 'bun-v1.3.4';
 
-// Warm DNS before timed live fetches (performance/#dns-prefetching).
-dns.prefetch(BunComSite.hostname);
+// Warm DNS before timed live fetches (fetch#dns-prefetching + dns#dns-prefetch host+port).
+dns.prefetch(BunComSite.hostname, 443);
 
 describe('blog-extraction journey', () => {
   test('dns.prefetch warms Bun DNS cache for bun.com', () => {

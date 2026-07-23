@@ -5,11 +5,11 @@
  * 15s timeout. Bun's own UA / Accept defaults remain fine for general-purpose fetch.
  *
  * DNS / connection warming (call-site only — not baked into this helper):
- * - Callers that know the host early may `dns.prefetch(hostname)` before fetchPage.
+ * - Prefer `dns.prefetch(hostname)` or `dns.prefetch(hostname, port)` when the host
+ *   is known early — see fetch#dns-prefetching (avoids first-request DNS latency).
+ * - Helpers: `dnsPrefetchOrigin` / `preconnectOrigin` in `lib/http/fetch-preconnect.ts`.
  * - `fetch.preconnect("https://…")` still throws **Invalid port** on Bun 1.4
- *   (oven-sh/bun#21633) — use {@link preconnectOrigin} from `lib/http/fetch-preconnect.ts`
- *   (HTTP+port OK) or CLI startup warmup:
- *   `bun --fetch-preconnect https://host:443 ./app.ts`
+ *   (oven-sh/bun#21633) — use CLI `bun --fetch-preconnect https://host:443 ./app.ts`
  *   @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup
  *
  * Anchors (primary locus for fetch):
@@ -22,6 +22,7 @@
  * @see https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host
  * @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup
  * @see https://bun.com/docs/runtime/networking/dns#dns-prefetch
+ * @see https://bun.com/docs/runtime/networking/dns#dns-getcachestats
  */
 
 const DEFAULT_TIMEOUT_MS = 15_000;

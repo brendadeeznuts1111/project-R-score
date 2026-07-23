@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch / Bun.fetch
 // @see https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host — fetch.preconnect
 // @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup — --fetch-preconnect
+// @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching — DNS prefetching
 // @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — dns.prefetch
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -44,7 +45,9 @@ import {
   deepEqualsStrict,
 } from '../lib/deep-equals.ts';
 import {
+  BUN_DNS_PREFETCHING_DOCS,
   BUN_FETCH_PRECONNECT_STARTUP_DOCS,
+  dnsCacheStats,
   preconnectOrigin,
 } from '../lib/http/fetch-preconnect.ts';
 
@@ -54,6 +57,7 @@ const CANONICAL = {
   fetch: 'https://bun.com/docs/runtime/networking/fetch#sending-an-http-request',
   preconnect: 'https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host',
   preconnectStartup: BUN_FETCH_PRECONNECT_STARTUP_DOCS,
+  dnsPrefetching: BUN_DNS_PREFETCHING_DOCS,
   dnsPrefetch: 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
   inspectTable:
     'https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options',
@@ -292,16 +296,27 @@ export async function runOnlineETagSuite(
   const skipTtl = opts.skipTtl ?? false;
   const ttlWaitMs = opts.ttlWaitMs ?? TTL_WAIT_MS;
 
-  // 0. Warm DNS (+ fetch.preconnect when runtime accepts the URL)
-  // Gap between warm and first GET is intentional — see preconnect-at-startup docs.
+  // 0. Warm DNS (fetch#dns-prefetching) + fetch.preconnect when runtime accepts the URL.
+  // Gap between warm and first GET is intentional — see preconnect / DNS prefetch docs.
   const warm = preconnectOrigin(base);
+  const dnsStats = dnsCacheStats();
   rows.push({
-    step: '0. preconnect base',
+    step: '0. dns.prefetch base',
+    endpoint: warm.origin,
+    format: warm.port != null ? `dns:${warm.port}` : 'dns',
+    etag: '—',
+    status: warm.dnsPrefetch ? 'ok' : 'fail',
+    cache: `size=${dnsStats.size}`,
+    pass: warm.dnsPrefetch,
+    detail: `dns.prefetch(${warm.host}${warm.port != null ? `, ${warm.port}` : ''}) · totalCount=${dnsStats.totalCount}`,
+  });
+  rows.push({
+    step: '0b. preconnect base',
     endpoint: warm.origin,
     format: 'warm',
     etag: '—',
-    status: warm.fetchPreconnect ? 'tcp+tls' : warm.dnsPrefetch ? 'dns' : 'skip',
-    cache: warm.fetchPreconnect ? 'PRECONNECT' : warm.dnsPrefetch ? 'DNS' : '—',
+    status: warm.fetchPreconnect ? 'tcp+tls' : warm.dnsPrefetch ? 'dns-only' : 'skip',
+    cache: warm.fetchPreconnect ? 'PRECONNECT' : '—',
     pass: warm.dnsPrefetch || warm.fetchPreconnect,
     detail: warm.note,
   });

@@ -155,7 +155,13 @@ export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
   'runtime/networking/fetch#dns-prefetching': [
     {
       lang: 'ts',
-      body: 'import { dns } from "bun";\n\ndns.prefetch("bun.com");',
+      body: 'import { dns } from "bun";\n\ndns.prefetch("bun.com");\ndns.prefetch("bun.com", 443);',
+    },
+  ],
+  'runtime/networking/dns#dns-prefetch': [
+    {
+      lang: 'ts',
+      body: 'import { dns } from "bun";\n\ndns.prefetch("my.database-host.com", 5432);',
     },
   ],
   'runtime/networking/fetch#dns-caching': [
