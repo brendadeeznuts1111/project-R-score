@@ -9,6 +9,9 @@
  * @see https://github.com/oven-sh/bun/pull/29526 — lazy-load system certs
  */
 import tls from 'node:tls';
+import { buildVerificationLinks } from '../verification/links.ts';
+import type { SemanticTags, VerificationResult } from '../verification/types.ts';
+import { FETCH_PROTOCOL_DOCS } from './fetch-protocol-docs.ts';
 
 /** Base URL for Bun v1.3.14 blog post (all section anchors are stable). */
 export const BUN_V1314_BLOG = 'https://bun.com/blog/bun-v1.3.14' as const;
@@ -40,6 +43,7 @@ export const BUN_V1314_ANCHORS = {
   'tls-getcacertificates-system-no-longer-stalls-on-managed-macs': `${BUN_V1314_BLOG}#tls-getcacertificates-system-no-longer-stalls-on-managed-macs`,
   'use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates': `${BUN_V1314_BLOG}#use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates`,
   'event-loop-refactor': `${BUN_V1314_BLOG}#event-loop-refactor`,
+  'bun-install-flags': 'https://bun.sh/docs/pm/cli/install#cpu-and-os-flags',
 } as const;
 
 export type BunV1314AnchorKey = keyof typeof BUN_V1314_ANCHORS;
@@ -178,40 +182,50 @@ export const BUN_RELEASE_TEST_CANONICAL: Readonly<Record<string, string>> = {
   'Bun.Image (all terminal methods: bytes, buffer, blob, toBase64, dataurl, placeholder, metadata, write)':
     BUN_V1314_ANCHORS['terminal-methods'],
   'Bun.Image (all terminal methods)': BUN_V1314_ANCHORS['bun-image'],
+  'fetch protocol (data:)': FETCH_PROTOCOL_DOCS.data,
+  'fetch protocol (blob:)': FETCH_PROTOCOL_DOCS.blob,
+  'fetch protocol (file://)': FETCH_PROTOCOL_DOCS.file,
+  'fetch s3:// (explicit s3: creds)': FETCH_PROTOCOL_DOCS.s3,
+  'fetch s3:// (env credentials)': FETCH_PROTOCOL_DOCS.s3,
+  'fetch s3:// (Bun.file)': FETCH_PROTOCOL_DOCS.s3,
 };
 
-export type ReleaseVerifyResult = {
-  name: string;
-  expected: string;
-  actual: string;
-  passed: boolean;
-  /** Permanent canonical URL (blog anchor or runtime docs). */
-  canonical?: string;
-  /** Release channel: stable / canary / pin / git (tag) / rss (feed). */
-  channel?: 'stable' | 'canary' | 'pin' | 'git' | 'rss';
-  /** Pinned version this test targets. */
-  targetVersion?: string;
-  /** Latest version at the time of testing. */
-  latestAtTestTime?: string;
-};
+export type ReleaseVerifyResult = VerificationResult;
+export type { SemanticTags, VerificationResult };
+export {
+  FETCH_PROTOCOL_COVERAGE,
+  FETCH_PROTOCOL_DOCS,
+  awsEnvFromR2Credentials,
+  buildFetchS3Request,
+  fetchS3InitFromR2,
+  probeFetchS3Optional,
+  runFetchProtocolProbes,
+  smokeFetchProtocolSupport,
+} from './fetch-protocol-docs.ts';
 
 /** Resolve canonical URL for a release verification test by name. */
 export function canonicalForReleaseTest(name: string): string | undefined {
   return BUN_RELEASE_TEST_CANONICAL[name];
 }
 
-/** Push a result with optional explicit anchor override. */
+export type PushReleaseResultContext = {
+  semanticTags: SemanticTags;
+};
+
+/** Push a result with optional explicit anchor override and report-level semantic tags. */
 export function pushReleaseResult(
-  results: ReleaseVerifyResult[],
-  row: Omit<ReleaseVerifyResult, 'canonical' | 'channel' | 'targetVersion' | 'latestAtTestTime'> & { anchor?: BunV1314AnchorKey }
+  results: VerificationResult[],
+  row: Omit<VerificationResult, 'canonical' | '_links' | 'channel' | 'targetVersion' | 'latestAtTestTime'> & {
+    anchor?: BunV1314AnchorKey;
+  },
+  ctx: PushReleaseResultContext
 ): void {
   const { anchor, ...rest } = row;
+  const canonical = anchor ? BUN_V1314_ANCHORS[anchor] : canonicalForReleaseTest(row.name);
   results.push({
     ...rest,
-    channel: (process.env.BUN_CHANNEL === 'canary' ? 'canary' : process.env.BUN_CHANNEL === 'pin' ? 'pin' : process.env.BUN_CHANNEL === 'git' ? 'git' : process.env.BUN_CHANNEL === 'rss' ? 'rss' : 'stable') as 'stable' | 'canary' | 'pin' | 'git' | 'rss',
-    targetVersion: Bun.version,
-    latestAtTestTime: Bun.version,
-    canonical: anchor ? BUN_V1314_ANCHORS[anchor] : canonicalForReleaseTest(row.name),
+    canonical,
+    _links: buildVerificationLinks(canonical),
   });
 }
 
