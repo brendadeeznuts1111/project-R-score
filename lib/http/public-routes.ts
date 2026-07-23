@@ -206,8 +206,17 @@ export const FETCH_HANDLER_ROUTES: PublicRouteDef[] = [
     path: '/api/env',
     name: 'Env status API',
     category: 'api',
-    kind: 'fetch-handler',
+    kind: 'simd-route',
     okStatuses: [200],
+    note: 'registered on routes (SIMD); also available via fetch fallback',
+  },
+  {
+    path: '/llms.txt',
+    name: 'llms.txt index',
+    category: 'ready',
+    kind: 'simd-route',
+    okStatuses: [200],
+    note: 'static Response route (docs zero-alloc pattern)',
   },
 ];
 

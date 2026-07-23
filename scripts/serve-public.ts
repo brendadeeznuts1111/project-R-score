@@ -4,6 +4,11 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
+// @see https://bun.com/docs/runtime/http/routing — static paths, params, wildcards, fetch fallback
+// @see https://bun.com/docs/runtime/http/routing#static-responses — zero-alloc Response routes
+// @see https://bun.com/docs/runtime/http/routing#file-responses-vs-static-responses — memory vs Bun.file
+// @see https://bun.com/docs/runtime/http/routing#fetch-request-handler — fetch(req, server)
+// @see https://bun.com/docs/runtime/http/server#server-stop — server.stop
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/bundler/hot-reloading — bun --hot (server module re-eval)
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
@@ -20,9 +25,11 @@
  *   SERVE_PUBLIC_HMR=0  disable
  *   SERVE_PUBLIC_HMR=1  force on (any bind)
  *
- * Routing (Bun.serve `routes` + `fetch` fallback):
- *   routes  — SIMD-matched exact API + monitoring + ready/health handlers
- *   fetch   — publish mutations, npm-compatible PUT, static public/*, catch-all
+ * Routing — Bun native recommendations (docs/runtime/http/routing):
+ *   routes  — SIMD match: exact > :param > wildcard; static Response for /ready
+ *             hot JSON via respondStatic (ETag); portal pages via respondAuto/file
+ *   fetch   — unmatched only (publish, npm PUT, multi-segment static, 404)
+ *             signature fetch(req, server) for requestIP / timeout on real sockets
  *
  * Paths:
  *   /api/operations/summary   → live SQLite
@@ -78,6 +85,7 @@ import { formString, requireFormBlob, sha256Blob, writeFormBlob } from '../lib/h
 import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
 import { parsePortalMdPath } from '../lib/http/portal-nav.ts';
 import { portalMarkdownRaw, renderPortalMarkdownPage } from '../lib/http/portal-markdown.ts';
+import type { BunServer } from '../lib/http/bun-server.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
 /** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
@@ -85,6 +93,17 @@ const HOST = (Bun.env.HOST || Bun.env.BIND_HOST || '127.0.0.1').trim() || '127.0
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 /** Browser SSE live-reload (not Cloudflare Pages). */
 const LIVE_RELOAD = shouldEnableLiveReload({ host: HOST });
+/**
+ * Bun.serve development flag — docs default true; we prefer false for prod-like
+ * local/staging unless SERVE_PUBLIC_DEV=1 or NODE_ENV=development.
+ */
+const SERVE_DEVELOPMENT =
+  Bun.env.SERVE_PUBLIC_DEV === '1' ||
+  Bun.env.NODE_ENV === 'development' ||
+  Bun.env.NODE_ENV === 'dev';
+
+/** Active server for graceful stop (Bun Server interface). */
+let activeServer: BunServer | null = null;
 
 function json(
   data: object | string | number | boolean | null,
@@ -880,13 +899,35 @@ function renderHealthPlain(data: Record<string, unknown>): string {
   return lines.join('\n');
 }
 
+/**
+ * Optional Server from route/fetch 2nd arg (TCP only — not server.fetch).
+ * @see https://bun.com/docs/runtime/http/routing#fetch-request-handler
+ */
+type RouteServer = Pick<BunServer, 'requestIP' | 'timeout' | 'pendingRequests'>;
+
+function clientSocket(req: Request, server?: RouteServer) {
+  try {
+    return server?.requestIP?.(req) ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /** GET /health — JSON; ETag = data hash (shared with /health/pre). */
-async function health(req: Request = new Request('http://local/health')): Promise<Response> {
+async function health(
+  req: Request = new Request('http://local/health'),
+  server?: RouteServer
+): Promise<Response> {
   const { data, etag } = await collectHealthData();
-  // Refresh volatile uptime for body while keeping shared etag
+  // Volatile fields (uptime, client) stay out of ETag payload
+  const ip = clientSocket(req, server);
   const body = {
     ...data,
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
+    client: ip
+      ? { address: ip.address, family: ip.family, port: ip.port }
+      : null,
+    pendingRequests: server?.pendingRequests ?? null,
   };
   return respondWithSharedETag(
     req,
@@ -899,19 +940,25 @@ async function health(req: Request = new Request('http://local/health')): Promis
       etag,
       cacheControl: 'public, max-age=5, must-revalidate',
       vary: 'Accept',
-      extraHeaders: { 'X-ETag-Scope': 'health-data' },
+      extraHeaders: {
+        'X-ETag-Scope': 'health-data',
+        ...(ip ? { 'X-Client-Address': ip.address } : {}),
+      },
     }
   );
 }
 
 /** GET /health/pre — plain diagnostics; same data ETag as /health. */
 async function healthHtml(
-  req: Request = new Request('http://local/health/pre')
+  req: Request = new Request('http://local/health/pre'),
+  server?: RouteServer
 ): Promise<Response> {
   const { data, etag } = await collectHealthData();
+  const ip = clientSocket(req, server);
   const live = {
     ...data,
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
+    client: ip ? { address: ip.address, family: ip.family, port: ip.port } : null,
   };
   if (isFresh(req, etag)) {
     return notModified(etag, {
@@ -930,7 +977,10 @@ async function healthHtml(
       etag,
       cacheControl: 'public, max-age=5, must-revalidate',
       vary: 'Accept',
-      extraHeaders: { 'X-ETag-Scope': 'health-data' },
+      extraHeaders: {
+        'X-ETag-Scope': 'health-data',
+        ...(ip ? { 'X-Client-Address': ip.address } : {}),
+      },
     }
   );
 }
@@ -1057,9 +1107,23 @@ function requireReadAuth(req: Request): Response | null {
   return null;
 }
 
-async function fetchHandler(req: Request): Promise<Response> {
+/**
+ * Unmatched-request handler (Bun routing docs: runs when no `routes` match).
+ * Second arg is Server on real TCP; may be undefined for in-process server.fetch.
+ * @see https://bun.com/docs/runtime/http/routing#fetch-request-handler
+ */
+async function fetchHandler(req: Request, server?: RouteServer): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname;
+
+  // Long-lived SSE: disable idle timeout when Server is available
+  if ((path === '/__hmr' || path === '/__hmr/') && server?.timeout) {
+    try {
+      server.timeout(req, 0);
+    } catch {
+      /* ignore */
+    }
+  }
 
   // Browser live-reload SSE (loopback / SERVE_PUBLIC_HMR=1)
   if (path === '/__hmr' || path === '/__hmr/') {
@@ -1069,9 +1133,9 @@ async function fetchHandler(req: Request): Promise<Response> {
     return liveReloadHub.subscribe(req);
   }
 
-  // Health endpoint — no auth
-  if (path === '/health' || path === '/health/') return health(req);
-  if (path === '/health/pre' || path === '/health/pre/') return healthHtml(req);
+  // Health endpoint — no auth (also registered on routes; kept for trailing variants)
+  if (path === '/health' || path === '/health/') return health(req, server);
+  if (path === '/health/pre' || path === '/health/pre/') return healthHtml(req, server);
   if (path === '/llms.txt') return llmsTxt();
 
   const md = await portalMarkdown(req);
@@ -1160,30 +1224,40 @@ async function fetchHandler(req: Request): Promise<Response> {
 }
 
 /**
- * Exact SIMD-matched routes. Named params work; bare `*` wildcards do not
- * populate `req.params` on this runtime — multi-segment paths stay in `fetch`.
+ * Exact SIMD-matched routes (docs: exact > :param > wildcard).
+ * Named params are type-safe via BunRequest string literals.
+ * Static Response objects for fixed probes (zero-alloc dispatch).
+ * @see https://bun.com/docs/runtime/http/routing#route-precedence
+ * @see https://bun.com/docs/runtime/http/routing#static-responses
  */
 function buildPublicRoutes() {
-  /** Static ready probe — zero-allocation cloneable response. */
+  /** Static ready probe — zero-allocation cloneable response (docs pattern). */
   const ready = new Response('Ready', {
     headers: { 'X-Ready': '1', 'Cache-Control': 'no-store' },
   });
 
-  /** Pre-buffered portal index — zero filesystem I/O on requests. */
+  /** Portal HTML — file/hybrid via staticFile (Last-Modified / Range / HMR). */
+  const portalPage =
+    (urlPath: string) =>
+    (req: Request): Promise<Response> =>
+      staticFile(urlPath, req).then(r => r ?? new Response('Not found', { status: 404 }));
 
   return {
+    // Exact static first (highest specificity)
     '/ready': ready,
 
-    // Dynamic health (handler — not frozen Response)
-    '/health': (req: Request) => health(req),
-    '/health/pre': (req: Request) => healthHtml(req),
-    '/health/pre/': (req: Request) => healthHtml(req),
+    // Dynamic health — handlers receive (req, server) on TCP
+    '/health': (req: Request, server: RouteServer) => health(req, server),
+    '/health/': (req: Request, server: RouteServer) => health(req, server),
+    '/health/pre': (req: Request, server: RouteServer) => healthHtml(req, server),
+    '/health/pre/': (req: Request, server: RouteServer) => healthHtml(req, server),
 
     '/api/proof': (req: Request) => {
       const hot = hotByUrl.get('/api/proof');
       if (hot) return respondStatic(hot, req, { cacheControl: 'public, max-age=30' });
       return bunApiProof();
     },
+    '/api/env': () => envStatus(),
     '/api/monitoring': () => liveMonitoringApi(),
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
@@ -1223,22 +1297,41 @@ function buildPublicRoutes() {
     },
 
     '/monitoring': () => monitoringPage(),
-    '/__hmr': (req: Request) =>
-      liveReloadHub ? liveReloadHub.subscribe(req) : json({ error: 'live-reload disabled' }, 404),
+    '/llms.txt': llmsTxt(),
 
-    // Portal — file-route with Last-Modified / Range; live-reload injects client
-    '/portal': (req: Request) =>
-      staticFile('/portal/index.html', req).then(
-        r => r ?? new Response('Not found', { status: 404 })
-      ),
-    '/portal/': (req: Request) =>
-      staticFile('/portal/index.html', req).then(
-        r => r ?? new Response('Not found', { status: 404 })
-      ),
+    '/__hmr': (req: Request, server: RouteServer) => {
+      if (server?.timeout) {
+        try {
+          server.timeout(req, 0);
+        } catch {
+          /* ignore */
+        }
+      }
+      return liveReloadHub
+        ? liveReloadHub.subscribe(req)
+        : json({ error: 'live-reload disabled' }, 404);
+    },
+
+    // Portal dashboards — exact routes (file strategy under the hood)
+    '/portal': portalPage('/portal/index.html'),
+    '/portal/': portalPage('/portal/index.html'),
+    '/portal/ops': portalPage('/portal/ops/'),
+    '/portal/ops/': portalPage('/portal/ops/'),
+    '/portal/health': portalPage('/portal/health/'),
+    '/portal/health/': portalPage('/portal/health/'),
+    '/portal/env': portalPage('/portal/env/'),
+    '/portal/env/': portalPage('/portal/env/'),
+    '/portal/dod': portalPage('/portal/dod/'),
+    '/portal/dod/': portalPage('/portal/dod/'),
+    '/portal/catalog': portalPage('/portal/catalog/'),
+    '/portal/catalog/': portalPage('/portal/catalog/'),
   };
 }
 
-function startServer(preferred: number, maxTries = 20): { port: number; hostname: string } {
+function startServer(
+  preferred: number,
+  maxTries = 20
+): { port: number; hostname: string; server: BunServer } {
   let lastErr: unknown;
   const routes = buildPublicRoutes();
 
@@ -1248,15 +1341,17 @@ function startServer(preferred: number, maxTries = 20): { port: number; hostname
       const server = Bun.serve({
         port,
         hostname: HOST,
+        development: SERVE_DEVELOPMENT,
         routes,
-        // Mutations, multi-segment static, npm-compat, tenants, everything else
+        // Unmatched only — publish, npm, tenants, remaining static
         fetch: fetchHandler,
         error(error) {
           console.error('[serve] unhandled:', error);
           return new Response('Internal Server Error', { status: 500 });
         },
       });
-      return { port: server.port, hostname: server.hostname };
+      activeServer = server;
+      return { port: server.port, hostname: server.hostname, server };
     } catch (e) {
       lastErr = e;
       const msg = e instanceof Error ? e.message : String(e);
@@ -1280,17 +1375,34 @@ Port ${preferred}–${preferred + maxTries - 1} busy on ${HOST}.
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
-const { port: boundPort, hostname: boundHost } = startServer(PORT);
+const { port: boundPort, hostname: boundHost, server: boundServer } = startServer(PORT);
 const base = `http://${boundHost === '0.0.0.0' ? '127.0.0.1' : boundHost}:${boundPort}`;
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('Shutting down...');
+async function gracefulShutdown(signal: string): Promise<void> {
+  console.log(`${signal} — graceful stop (server.stop)…`);
+  try {
+    liveReloadHub?.stop();
+  } catch {
+    /* ignore */
+  }
+  try {
+    if (activeServer) await activeServer.stop(false);
+  } catch (e) {
+    console.error('server.stop failed:', e);
+    try {
+      await activeServer?.stop(true);
+    } catch {
+      /* ignore */
+    }
+  }
   process.exit(0);
+}
+
+process.on('SIGTERM', () => {
+  void gracefulShutdown('SIGTERM');
 });
 process.on('SIGINT', () => {
-  console.log('Shutting down...');
-  process.exit(0);
+  void gracefulShutdown('SIGINT');
 });
 
 console.log(`Local portal:  ${base}/portal/ops/`);
@@ -1307,6 +1419,9 @@ console.log(
     : `Publish:       disabled — set REGISTRY_SECRET or FACTORY_WAGER_TOKEN`
 );
 console.log(`Bind: ${boundHost}:${boundPort}  DB: ${dbPath}`);
+console.log(
+  `Serve:         development=${SERVE_DEVELOPMENT} · url=${boundServer.url.href} · routes=SIMD+static · fetch=unmatched`
+);
 if (boundPort !== PORT) {
   console.log(`(preferred PORT=${PORT} was busy — bound ${boundPort})`);
 }
