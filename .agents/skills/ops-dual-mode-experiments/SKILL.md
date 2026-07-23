@@ -125,7 +125,18 @@ bun run ops:experiments analyze --id <experimentId>
 | Tests | `tests/prediction-backtest.test.ts` |
 
 ```bash
-bun test tests/prediction-backtest.test.ts
+bun test tests/prediction-backtest.test.ts tests/experiments-*.test.ts
 bun run ops:prediction backtest --from 2024-01-01 --to 2024-12-31
 bun run ops:prediction accuracy
+# alias (same CLI):
+bun run ops:prediction-backtest --help
 ```
+
+### C4 extensions (policy · cluster · switchback)
+
+| Path | Role |
+|------|------|
+| `lib/experiments/policy.ts` | Launch guardrails (resolution, partners/cell, duration, system-factor block) |
+| `lib/experiments/cluster.ts` | `assignClustered` — shared cell per `clusterKey` |
+| `lib/experiments/switchback.ts` | Within-partner schedules + washout + `analyzeSwitchback` |
+| Tests | `tests/experiments-policy-cluster-switchback.test.ts` |
