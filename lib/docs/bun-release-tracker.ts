@@ -51,6 +51,8 @@ export const BUN_V1314_ANCHORS = {
   'use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates': `${BUN_V1314_BLOG}#use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates`,
   'event-loop-refactor': `${BUN_V1314_BLOG}#event-loop-refactor`,
   'bun-archive-api': 'https://bun.sh/docs/runtime/archive',
+  'bun-stringwidth-accuracy': 'https://bun.sh/docs/runtime/utils#bun-stringwidth',
+  'bun-terminal-api': 'https://bun.sh/docs/runtime/terminal',
 } as const;
 
 export type BunV1314AnchorKey = keyof typeof BUN_V1314_ANCHORS;

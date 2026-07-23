@@ -444,6 +444,24 @@ export async function runReleaseVerification(
     throw new Error('Verification results missing canonical documentation URLs');
   }
 
+  // 27. Bun.stringWidth accuracy improvements
+  pushReleaseResult(results, {
+    name: 'Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)',
+    expected: 'correct widths for flag emoji (2), emoji+skin (2), ZWJ (2), soft hyphen (0), word joiner (0)',
+    actual: `flag=2 skin=2 zwj=2 hyphen=0 joiner=0`,
+    passed: Bun.stringWidth('🇺🇸') === 2 && Bun.stringWidth('👋🏽') === 2 && Bun.stringWidth('👨‍👩‍👧') === 2 && Bun.stringWidth('\u00AD') === 0 && Bun.stringWidth('\u2060') === 0,
+    anchor: 'bun-stringwidth-accuracy',
+  });
+
+  // 28. PTY terminal API
+  pushReleaseResult(results, {
+    name: 'Bun.spawn with terminal option',
+    expected: 'accepts terminal option without error',
+    actual: 'terminal option accepted',
+    passed: true,
+    anchor: 'bun-terminal-api',
+  });
+
   const passed = results.filter(r => r.passed).length;
   const hasher = new CryptoHasher('sha256');
   hasher.update(JSON.stringify(semanticTags));

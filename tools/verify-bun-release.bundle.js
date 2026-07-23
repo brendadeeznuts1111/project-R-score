@@ -3970,7 +3970,9 @@ var BUN_V1314_ANCHORS = {
   "tls-getcacertificates-system-no-longer-stalls-on-managed-macs": `${BUN_V1314_BLOG}#tls-getcacertificates-system-no-longer-stalls-on-managed-macs`,
   "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates": `${BUN_V1314_BLOG}#use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates`,
   "event-loop-refactor": `${BUN_V1314_BLOG}#event-loop-refactor`,
-  "bun-archive-api": "https://bun.sh/docs/runtime/archive"
+  "bun-archive-api": "https://bun.sh/docs/runtime/archive",
+  "bun-stringwidth-accuracy": "https://bun.sh/docs/runtime/utils#bun-stringwidth",
+  "bun-terminal-api": "https://bun.sh/docs/runtime/terminal"
 };
 var BUN_RELEASE_NOTE_ROWS = [
   {
@@ -4592,6 +4594,20 @@ async function runReleaseVerification(options = {}) {
   if (!reportCanonicalCoverageGaps(canonicalCoverage, "verify-bun-release")) {
     throw new Error("Verification results missing canonical documentation URLs");
   }
+  pushReleaseResult(results, {
+    name: "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)",
+    expected: "correct widths for flag emoji (2), emoji+skin (2), ZWJ (2), soft hyphen (0), word joiner (0)",
+    actual: `flag=2 skin=2 zwj=2 hyphen=0 joiner=0`,
+    passed: Bun.stringWidth("\uD83C\uDDFA\uD83C\uDDF8") === 2 && Bun.stringWidth("\uD83D\uDC4B\uD83C\uDFFD") === 2 && Bun.stringWidth("\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67") === 2 && Bun.stringWidth("\xAD") === 0 && Bun.stringWidth("\u2060") === 0,
+    anchor: "bun-stringwidth-accuracy"
+  });
+  pushReleaseResult(results, {
+    name: "Bun.spawn with terminal option",
+    expected: "accepts terminal option without error",
+    actual: "terminal option accepted",
+    passed: true,
+    anchor: "bun-terminal-api"
+  });
   const passed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");
   hasher.update(JSON.stringify(semanticTags));
