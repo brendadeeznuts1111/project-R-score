@@ -479,6 +479,7 @@ const HOT_STATIC_PATHS = [
   'public/registry/prediction/report.html',
   'public/registry/prediction/coverage-chart.svg',
   'public/registry/prediction/error-chart.svg',
+  'public/registry/networking-proof.json',
   'tools/bun-api-coverage-proof.json',
 ];
 
@@ -685,6 +686,32 @@ function healthETagPayload(data: Record<string, unknown>): Record<string, unknow
   };
 }
 
+async function readNetworkingProofCompact(): Promise<Record<string, unknown>> {
+  const f = Bun.file('public/registry/networking-proof.json');
+  if (!(await f.exists())) return { available: false };
+  try {
+    const p = (await f.json()) as {
+      proofHash?: string;
+      timestamp?: string;
+      global?: { checksPassed?: number; checksTotal?: number };
+      targets?: unknown[];
+    };
+    const checksPassed = p.global?.checksPassed ?? 0;
+    const checksTotal = p.global?.checksTotal ?? 0;
+    return {
+      available: true,
+      generated: p.timestamp ?? null,
+      proofHash: p.proofHash ?? null,
+      checksPassed,
+      checksTotal,
+      targets: Array.isArray(p.targets) ? p.targets.length : 0,
+      degraded: checksTotal > 0 && checksPassed < checksTotal,
+    };
+  } catch {
+    return { available: false };
+  }
+}
+
 async function collectHealthData(): Promise<{
   data: Record<string, unknown>;
   etag: string;
@@ -736,14 +763,20 @@ async function collectHealthData(): Promise<{
 
   const routeStats = routeStatsForHealth();
   const envCheck = envCheckForHealth();
+  const networking = await readNetworkingProofCompact();
+  const networkingDegraded =
+    networking.available === true &&
+    typeof networking.degraded === 'boolean' &&
+    networking.degraded;
   const data: Record<string, unknown> = {
-    status: envCheck.summary.requiredMissing > 0 ? 'degraded' : 'ok',
+    status: envCheck.summary.requiredMissing > 0 || networkingDegraded ? 'degraded' : 'ok',
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     bun: Bun.version,
     platform: process.arch + ' ' + process.platform,
     artifacts: { opsSummary: { exists, generated, ageSeconds } },
     registry: { packages: pkgCount, versions: versionCount },
     bunApiProof: proofStatus,
+    networking,
     routeStats,
     env: envCheck,
     serve: {
@@ -791,6 +824,16 @@ function renderHealthPlain(data: Record<string, unknown>): string {
     lines.push(`  APIs:        ${proof.apisVerified} verified`);
   } else {
     lines.push('  Not generated — run bun run docs:api-verify --write');
+  }
+  const net = (data.networking as Record<string, unknown>) || {};
+  lines.push('', '── Networking Proof ───────────────────────');
+  if (net.available) {
+    lines.push(`  Generated:   ${net.generated ?? '—'}`);
+    lines.push(`  Checks:      ${net.checksPassed}/${net.checksTotal} passed`);
+    lines.push(`  Targets:     ${net.targets ?? '—'}`);
+    lines.push(`  Proof hash:  ${String(net.proofHash ?? '—').slice(0, 16)}…`);
+  } else {
+    lines.push('  Not generated — run bun run check:networking:save');
   }
   const rs = (data.routeStats as Record<string, unknown>) || {};
   lines.push(

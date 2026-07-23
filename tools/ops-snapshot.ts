@@ -34,6 +34,7 @@ import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
 import { getRoutingProof, routingToOpsSlice } from '../lib/routing-proof.ts';
 import { collectMonitoring } from '../lib/monitoring/index.ts';
 import { writePredictionReport } from '../lib/prediction/index.ts';
+import { runNetworkingVerification } from './verify-networking.ts';
 
 const argv = Bun.argv.slice(2);
 const outIdx = argv.indexOf('--out');
@@ -145,6 +146,33 @@ export async function buildRegistrySnapshot(options?: {
     // 2. Ops summary (embeds disk routing by default; override with fresh slice)
     const payload = buildOpsSummary(db, 'snapshot');
     if (routingSlice) payload.routing = routingSlice;
+
+    if (Bun.env.NETWORKING_VERIFY === '1') {
+      try {
+        const net = await runNetworkingVerification({
+          saveProof: true,
+          remote: Bun.env.NETWORKING_VERIFY_REMOTE === '1',
+        });
+        (payload as Record<string, unknown>).networking = {
+          proofHash: net.proofHash,
+          ...net.proofObj,
+        };
+        if (!net.ok) {
+          console.warn(
+            `[ops-snapshot] networking verify degraded: ${net.proofObj.global.checksPassed}/${net.proofObj.global.checksTotal} passed`
+          );
+        }
+      } catch (e) {
+        console.warn(
+          '[ops-snapshot] networking verify failed:',
+          e instanceof Error ? e.message : e
+        );
+        (payload as Record<string, unknown>).networking = {
+          available: false,
+          error: e instanceof Error ? e.message : String(e),
+        };
+      }
+    }
 
     await Bun.write(cfg.outPath, `${JSON.stringify(payload, null, 2)}\n`);
 
