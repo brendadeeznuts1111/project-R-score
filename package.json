@@ -30,7 +30,8 @@
     "ops-experiments": "./tools/ops-experiments.ts",
     "ops-snapshot": "./tools/ops-snapshot.ts",
     "serve-public": "./scripts/serve-public.ts",
-    "bun-serve-defaults-table": "./tools/bun-serve-defaults-table.ts"
+    "bun-serve-defaults-table": "./tools/bun-serve-defaults-table.ts",
+    "bun-info": "./tools/bun-info.ts"
   },
   "homepage": "https://factory-wager.com",
   "repository": {
@@ -1763,6 +1764,7 @@
     "check:etag": "bun tools/verify-etag.ts",
     "check:bun-defaults": "bun tools/verify-bun-defaults.ts",
     "check:bun-defaults:once": "bun lib/http/defaults-cron.ts --once",
+    "info:pkg": "bun tools/bun-info.ts",
     "check:defaults": "bun tools/verify-defaults.ts",
     "check:defaults:save": "bun tools/verify-defaults.ts --save",
     "check:defaults:pipe": "curl -sf http://127.0.0.1:3000/api/defaults/script | bun run -",
@@ -1776,7 +1778,9 @@
     "check:routes": "bun tools/verify-networking.ts --routes-only",
     "check:formdata": "bun tools/verify-formdata.ts",
     "check:formdata:save": "bun tools/verify-formdata.ts --save",
-    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"✅ Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");'",
+    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-package-info.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"✅ Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");'",
+    "verify:package-info": "bun tools/verify-package-info.ts",
+    "verify:package-info:save": "bun tools/verify-package-info.ts --save",
     "check:secrets": "gitleaks detect --source . --no-git --config .gitleaks.toml -v",
     "check:secrets:dry": "echo '[dry-run] gitleaks detect --source . --no-git'",
     "discover:bun-native": "bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools --write-report",
