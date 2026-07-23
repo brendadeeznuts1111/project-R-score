@@ -1764,6 +1764,8 @@
     "check:networking": "bun tools/verify-networking.ts",
     "check:networking:json": "bun tools/verify-networking.ts --routes-only --json",
     "check:routes": "bun tools/verify-networking.ts --routes-only",
+    "check:formdata": "bun tools/verify-formdata.ts",
+    "check:formdata:save": "bun tools/verify-formdata.ts --save",
     "check:secrets": "gitleaks detect --source . --no-git --config .gitleaks.toml -v",
     "check:secrets:dry": "echo '[dry-run] gitleaks detect --source . --no-git'",
     "discover:bun-native": "bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools --write-report",

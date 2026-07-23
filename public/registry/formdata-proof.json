@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "timestamp": "2026-07-23T19:30:36.022Z",
+  "base": "http://localhost:3000",
+  "totalTests": 5,
+  "allOk": true,
+  "proofHash": "85797466ce6e83a595e41b786a89eca82deb187be305f6cc771f6b1912f50456",
+  "contentType": "multipart/form-data; boundary=... (auto-set by Bun)",
+  "docsUrl": "https://bun.com/docs/guides/http/file-uploads",
+  "results": [
+    {
+      "test": {
+        "name": "JavaScript plugin",
+        "fileContent": "module.exports = { name: \"test\" };",
+        "fileName": "plugin.js",
+        "mimeType": "text/javascript",
+        "version": "1.0.0"
+      },
+      "statusCode": 200,
+      "contentType": "(auto: multipart/form-data)",
+      "contentTypeHeader": "(auto-set by Bun)",
+      "success": true,
+      "checksum": "23585678e8153b0043fe707106b315db7aea6ed789e39af1effe4987423b73f5",
+      "durMs": 3.78,
+      "ok": true
+    },
+    {
+      "test": {
+        "name": "CSS stylesheet",
+        "fileContent": ".test { color: red; }",
+        "fileName": "styles.css",
+        "mimeType": "text/css",
+        "version": "1.0.0"
+      },
+      "statusCode": 200,
+      "contentType": "(auto: multipart/form-data)",
+      "contentTypeHeader": "(auto-set by Bun)",
+      "success": true,
+      "checksum": "c871a622a90e6c60eee634e6c05f36ff9b6297913b8af4d11bb2019720337c3c",
+      "durMs": 1.15,
+      "ok": true
+    },
+    {
+      "test": {
+        "name": "JSON config",
+        "fileContent": "{\"key\":\"value\"}",
+        "fileName": "config.json",
+        "mimeType": "application/json",
+        "version": "1.0.0"
+      },
+      "statusCode": 200,
+      "contentType": "(auto: multipart/form-data)",
+      "contentTypeHeader": "(auto-set by Bun)",
+      "success": true,
+      "checksum": "e43abcf3375244839c012f9633f95862d232a95b00d5bc7348b3098b9fed7f32",
+      "durMs": 2.51,
+      "ok": true
+    },
+    {
+      "test": {
+        "name": "Binary WASM",
+        "fileContent": "\u0000asm\u0001\u0000\u0000\u0000",
+        "fileName": "module.wasm",
+        "mimeType": "application/wasm",
+        "version": "1.0.0"
+      },
+      "statusCode": 200,
+      "contentType": "(auto: multipart/form-data)",
+      "contentTypeHeader": "(auto-set by Bun)",
+      "success": true,
+      "checksum": "93a44bbb96c751218e4c00d479e4c14358122a389acca16205b1e4d0dc5f9476",
+      "durMs": 1.16,
+      "ok": true
+    },
+    {
+      "test": {
+        "name": "Markdown doc",
+        "fileContent": "# Hello\n\nThis is a **test**.",
+        "fileName": "readme.md",
+        "mimeType": "text/markdown",
+        "version": "1.0.0"
+      },
+      "statusCode": 200,
+      "contentType": "(auto: multipart/form-data)",
+      "contentTypeHeader": "(auto-set by Bun)",
+      "success": true,
+      "checksum": "9e3f03aa5caf98578bfc262433f6a23bded2a9d9366af8f7383b236495d09ccb",
+      "durMs": 1.79,
+      "ok": true
+    }
+  ]
+}
