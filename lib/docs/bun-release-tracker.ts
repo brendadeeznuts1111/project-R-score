@@ -187,8 +187,8 @@ export type ReleaseVerifyResult = {
   passed: boolean;
   /** Permanent canonical URL (blog anchor or runtime docs). */
   canonical?: string;
-  /** Release channel: stable / canary / pin. */
-  channel?: 'stable' | 'canary' | 'pin';
+  /** Release channel: stable / canary / pin / git (tag) / rss (feed). */
+  channel?: 'stable' | 'canary' | 'pin' | 'git' | 'rss';
   /** Pinned version this test targets. */
   targetVersion?: string;
   /** Latest version at the time of testing. */
@@ -208,7 +208,7 @@ export function pushReleaseResult(
   const { anchor, ...rest } = row;
   results.push({
     ...rest,
-    channel: (process.env.BUN_CHANNEL === 'canary' ? 'canary' : process.env.BUN_CHANNEL === 'pin' ? 'pin' : 'stable') as 'stable' | 'canary' | 'pin',
+    channel: (process.env.BUN_CHANNEL === 'canary' ? 'canary' : process.env.BUN_CHANNEL === 'pin' ? 'pin' : process.env.BUN_CHANNEL === 'git' ? 'git' : process.env.BUN_CHANNEL === 'rss' ? 'rss' : 'stable') as 'stable' | 'canary' | 'pin' | 'git' | 'rss',
     targetVersion: Bun.version,
     latestAtTestTime: Bun.version,
     canonical: anchor ? BUN_V1314_ANCHORS[anchor] : canonicalForReleaseTest(row.name),
