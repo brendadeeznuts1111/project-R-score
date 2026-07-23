@@ -80,8 +80,9 @@ Stage named files only. Never sweep unrelated dirty portal/DOD trees.
 | `public/registry/prediction/` | SVG/HTML report (+ optional PNG from WebView) |
 | `public/_redirects` · `_headers` | No SPA catch-all; JSON content-type |
 
-**Local:** open `/portal/ops` with a running serve that mounts `functions/` + `public/` (SQLite live).  
-**Pages:** no bun:sqlite — run `bun run ops:snapshot` before deploy. Disable CF Pages SPA rewrite or every path returns the landing shell.
+**Local API (aligned):** `bun run serve:public` → `/api/operations/summary` is **live** `buildOpsSummary` (same JSON keys as snapshot).  
+**Pages API:** snapshot-only (`functions/api/operations/summary.ts` → `/registry/ops-summary.json`).  
+**Freeze for Pages:** `bun run ops:snapshot` then deploy `public/`. Disable CF Pages SPA rewrite or every path returns the landing shell.
 ## Prove commands
 
 ```bash

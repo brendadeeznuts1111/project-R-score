@@ -8,7 +8,19 @@ They must **not** live under root `functions/` — Pages bundler fails on `bun:s
 | Root `functions/` | Cloudflare Pages (Workers) — edge-safe only |
 | `functions-bun-only/` | Local Bun / self-hosted (optional future wire-up) |
 
-Ops summary on Pages: static `public/registry/ops-summary.json` via  
-`functions/api/operations/summary.ts` (ASSETS fetch).
+## Ops summary alignment
 
-Regenerate snapshot: `bun run ops:snapshot`
+| Runtime | Handler | Data |
+|---------|---------|------|
+| **Local Bun** | `bun run serve:public` → `/api/operations/summary` | **Live** SQLite via `buildOpsSummary` (`source: "live"`) |
+| **Local Bun-only module** | `functions-bun-only/api/operations/summary.ts` | Same live builder |
+| **Cloudflare Pages** | `functions/api/operations/summary.ts` | **Snapshot** `public/registry/ops-summary.json` (no bun:sqlite) |
+
+Same JSON contract: `lib/operations/ops-summary.ts` (`OpsSummaryPayload`).
+
+```bash
+bun run ops:snapshot          # refresh Pages snapshot (+ prediction report assets)
+bun run serve:public          # local portal + live API
+# http://localhost:3000/portal/ops/
+# http://localhost:3000/api/operations/summary
+```

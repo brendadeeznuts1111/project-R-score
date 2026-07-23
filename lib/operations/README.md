@@ -73,24 +73,26 @@ Skill (lanes + prove): [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../
 
 (`COVERAGE_FLOOR_KEYS` in [`lib/experiments/engine.ts`](../experiments/engine.ts)).
 
-## Portal + Cloudflare Pages
+## Portal + Cloudflare Pages + local API
 
-| Surface | Role |
-|---------|------|
-| Local portal | `/portal/ops` → `fetch('/api/operations/summary')` (live SQLite) |
-| Pages Function | [`functions/api/operations/summary.ts`](../../functions/api/operations/summary.ts) |
-| Pages static | `public/registry/ops-summary.json` (no bun:sqlite on Workers) |
-| Snapshot CLI | `bun run ops:snapshot` writes that JSON from live DB |
+**One payload:** `buildOpsSummary` → `OpsSummaryPayload` (experiments C4 + prediction C5).
 
-Summary includes **experiments** (C4) and **prediction** (C5) counts for the dashboard panels.
+| Surface | Endpoint | Source |
+|---------|----------|--------|
+| Local portal | `bun run serve:public` → `/api/operations/summary` | **Live** SQLite (`source: "live"`) |
+| Local static fallback | `/registry/ops-summary.json` | File from last `ops:snapshot` |
+| Pages Function | `/api/operations/summary` | Snapshot via ASSETS (Workers have no bun:sqlite) |
+| Pages static | `/registry/ops-summary.json` | Same file |
+| Builder SSOT | [`ops-summary.ts`](ops-summary.ts) | Used by live local + `ops:snapshot` |
 
 ```bash
-# Local
-bun run serve:public   # or your local Pages/functions serve
-# open /portal/ops
+# Local (aligned live API)
+bun run serve:public
+# open http://localhost:3000/portal/ops/
+# curl  http://localhost:3000/api/operations/summary
 
-# Before Pages deploy
-bun run ops:snapshot   # → public/registry/ops-summary.json
+# Before Pages deploy (freeze live → static)
+bun run ops:snapshot   # → public/registry/ops-summary.json + prediction/*
 ```
 
 ## Prove (ops SSOT)
@@ -101,4 +103,5 @@ bun test tests/experiments-*.test.ts tests/prediction-*.test.ts
 bun run ops:experiments --help
 bun run ops:prediction --help
 bun run ops:snapshot --out /tmp/ops-summary.json
+bun run serve:public   # local live /api/operations/summary
 ```

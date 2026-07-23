@@ -105,7 +105,7 @@ class OperationsDashboard extends HTMLElement {
       error.classList.remove('hidden');
     } else {
       error.innerHTML = `<p>⚠️ Could not load operations data.</p>
-        <p class="error-hint">Local: ensure DB at data/operations.db. Pages: run <code>bun run ops:snapshot</code> and deploy public/registry/ops-summary.json.</p>
+        <p class="error-hint">Local: <code>bun run serve:public</code> (live <code>/api/operations/summary</code> from data/operations.db). Pages: <code>bun run ops:snapshot</code> then deploy public/registry/*.</p>
         <button class="retry-btn">Retry</button>`;
       error.classList.remove('hidden');
       error.querySelector('.retry-btn').addEventListener('click', () => {

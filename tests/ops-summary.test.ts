@@ -10,6 +10,18 @@ import { runCoverageBacktest } from '../lib/prediction/index.ts';
 import { asTreeNodeId, unbrand } from '../lib/types/branded.ts';
 
 describe('buildOpsSummary', () => {
+  test('live and snapshot use the same top-level contract keys', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const live = buildOpsSummary(db, 'live');
+    const snap = buildOpsSummary(db, 'snapshot');
+    expect(Object.keys(live).sort()).toEqual(Object.keys(snap).sort());
+    expect(live.source).toBe('live');
+    expect(snap.source).toBe('snapshot');
+    expect(live.prediction).toHaveProperty('coverage');
+    expect(live.experiments).toHaveProperty('recent');
+    db.close();
+  });
+
   test('includes empty experiments and prediction on fresh db', () => {
     const db = openOperationsDb({ path: ':memory:' });
     const s = buildOpsSummary(db, 'live');
