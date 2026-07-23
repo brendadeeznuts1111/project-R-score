@@ -23,10 +23,17 @@ describe('lib/deep-equals', () => {
     expect(BUN_DEEP_EQUALS_DOCS).toBe('https://bun.com/docs/runtime/utils#bun-deepequals');
   });
 
-  test('deepEquals matches Bun.deepEquals for plain objects', () => {
+  test('deepEquals defaults to strict (Bun.deepEquals(a, b, true))', () => {
     expect(deepEquals({ a: 1, b: [2] }, { a: 1, b: [2] })).toBe(true);
     expect(deepEquals({ a: 1 }, { a: 2 })).toBe(false);
-    expect(deepEquals({ a: undefined }, {}, true)).toBe(false);
+
+    // docs shape we want as house default
+    const a = { entries: [1, 2] };
+    const b = { entries: [1, 2], extra: undefined };
+    expect(Bun.deepEquals(a, b)).toBe(true);
+    expect(Bun.deepEquals(a, b, true)).toBe(false);
+    expect(deepEquals(a, b)).toBe(false); // wrapper defaults strict=true
+    expect(deepEquals(a, b, false)).toBe(true); // explicit loose
   });
 
   test('deepEqualsStrict treats undefined vs missing as unequal', () => {
@@ -47,6 +54,10 @@ describe('lib/deep-equals', () => {
   });
 
   test('imageEvidenceMetaEqual / sameImageEvidence use deepEquals', async () => {
+    if (typeof (Bun as { Image?: unknown }).Image !== 'function') {
+      // Runtime without Bun.Image (some canary/minimal builds)
+      return;
+    }
     const a = await extractImageEvidenceMeta(PNG_10);
     const b = await extractImageEvidenceMeta(PNG_10);
     expect(imageEvidenceMetaEqual(a, b)).toBe(true);

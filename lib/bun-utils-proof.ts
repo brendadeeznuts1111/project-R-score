@@ -6,7 +6,9 @@
  * Produces a stable JSON record + SHA-256 proof hash for a given Bun version.
  * Baselines match **Bun runtime** (not Node util.inspect / string-width packages).
  */
-import { deepEquals, inspect, stringWidth } from 'bun';
+import { inspect, stringWidth } from 'bun';
+// Prefer strict shape: Bun.deepEquals(a, b, true)
+import { deepEquals, deepEqualsLoose } from './deep-equals.ts';
 
 export type BunUtilsCase = {
   utility: string;
@@ -115,32 +117,54 @@ export function buildTestCases(): BunUtilsCase[] {
       note: 'CJK fullwidth (Bun baseline)',
     },
     {
-      utility: 'deepEquals',
+      utility: 'deepEquals(strict)',
       input: '{a:1} == {a:1}',
       expected: true,
       actual: deepEquals({ a: 1 }, { a: 1 }),
-      note: 'Same plain object',
+      note: 'Same plain object · Bun.deepEquals(a,b,true)',
     },
     {
-      utility: 'deepEquals',
+      utility: 'deepEquals(strict)',
       input: '{a:1} == {a:2}',
       expected: false,
       actual: deepEquals({ a: 1 }, { a: 2 }),
       note: 'Different value',
     },
     {
-      utility: 'deepEquals',
+      utility: 'deepEquals(strict)',
       input: '[1,2] == [1,2]',
       expected: true,
       actual: deepEquals([1, 2], [1, 2]),
       note: 'Same array',
     },
     {
-      utility: 'deepEquals',
+      utility: 'deepEquals(strict)',
       input: '[1,2] == [1,3]',
       expected: false,
       actual: deepEquals([1, 2], [1, 3]),
       note: 'Different array',
+    },
+    {
+      utility: 'deepEquals(strict)',
+      input: '{entries:[1,2]} vs +extra:undefined',
+      expected: false,
+      actual: (() => {
+        const a = { entries: [1, 2] };
+        const b = { entries: [1, 2], extra: undefined };
+        return deepEquals(a, b); // strict default → false
+      })(),
+      note: 'undefined key ≠ missing (docs shape we want)',
+    },
+    {
+      utility: 'deepEquals(loose)',
+      input: '{entries:[1,2]} vs +extra:undefined',
+      expected: true,
+      actual: (() => {
+        const a = { entries: [1, 2] };
+        const b = { entries: [1, 2], extra: undefined };
+        return deepEqualsLoose(a, b);
+      })(),
+      note: 'Bun.deepEquals(a,b) loose for contrast',
     },
     {
       utility: 'inspect (depth:0)',

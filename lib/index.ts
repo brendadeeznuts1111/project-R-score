@@ -83,6 +83,7 @@ export {
   BUN_DEEP_EQUALS_DOCS,
   deepEquals,
   deepEqualsChangedIndex,
+  deepEqualsLoose,
   deepEqualsStrict,
 } from './deep-equals';
 export {
