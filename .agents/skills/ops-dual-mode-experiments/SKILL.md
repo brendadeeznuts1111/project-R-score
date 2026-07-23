@@ -108,3 +108,19 @@ bun run ops:experiments analyze --id <experimentId>
 | `ops:experiments` | `bun tools/ops-experiments.ts` |
 | `ops:prediction` | `bun tools/ops-prediction.ts` |
 | `ops:provision-queue` | `bun tools/provision-queue.ts` |
+
+## C5 surface (shipped)
+
+| Path | Role |
+|------|------|
+| [`lib/prediction/`](../../../lib/prediction/) | Coverage backtest + accuracy rollup |
+| [`lib/prediction/schema.ts`](../../../lib/prediction/schema.ts) | `prediction_accuracy` table via `ensurePredictionSchema` |
+| [`lib/prediction/tester.ts`](../../../lib/prediction/tester.ts) | `runCoverageBacktest` · `getPredictionAccuracy` |
+| [`tools/ops-prediction.ts`](../../../tools/ops-prediction.ts) | CLI · package script `ops:prediction` |
+| Tests | `tests/prediction-backtest.test.ts` |
+
+```bash
+bun test tests/prediction-backtest.test.ts
+bun run ops:prediction backtest --from 2024-01-01 --to 2024-12-31
+bun run ops:prediction accuracy
+```

@@ -7,6 +7,7 @@
  */
 import type { Database } from 'bun:sqlite';
 import { ensureExperimentsSchema } from '../experiments/schema.ts';
+import { ensurePredictionSchema } from '../prediction/schema.ts';
 import { ensureProvisioningSchema } from '../provisioning/schema.ts';
 import { ensurePlatformCoverageSchema } from './platform-coverage.ts';
 
@@ -90,6 +91,7 @@ export function migrateSchema(db: Database): void {
   ensurePlatformCoverageSchema(db);
   ensureProvisioningSchema(db);
   ensureExperimentsSchema(db);
+  ensurePredictionSchema(db);
 }
 
 export function initSchema(db: Database): void {

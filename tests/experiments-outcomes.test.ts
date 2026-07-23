@@ -14,7 +14,14 @@ import { ensurePosition, reservePlay } from '../lib/operations/liquidity.ts';
 import { settlePlay } from '../lib/operations/play-settlement.ts';
 import { asTreeNodeId, unbrand } from '../lib/types/branded.ts';
 
-function seedTree(db: ReturnType<typeof openOperationsDb>) {
+/** Launch policy for unit tests (prod default is 10 partners/cell + 28 days). */
+const TEST_POLICY = { minPartnersPerVariant: 1, minDurationDays: 0 } as const;
+
+function seedTree(
+  db: ReturnType<typeof openOperationsDb>,
+  /** Extra active partners so launch readiness (1 per design cell) can pass. */
+  extraPartnerCount = 0
+) {
   const now = new Date().toISOString();
   const partner = asTreeNodeId(Bun.randomUUIDv7());
   const agent = asTreeNodeId(Bun.randomUUIDv7());
@@ -28,6 +35,14 @@ function seedTree(db: ReturnType<typeof openOperationsDb>) {
      VALUES ($id, 'agent', $p, 'Agent', 1, 'active', 0, $n)`,
     { $id: unbrand(agent), $p: unbrand(partner), $n: now }
   );
+  for (let i = 0; i < extraPartnerCount; i++) {
+    const id = asTreeNodeId(Bun.randomUUIDv7());
+    db.run(
+      `INSERT INTO tree_nodes (id, type, name, active, status, cut_percentage, created_at)
+       VALUES ($id, 'partner', $n, 1, 'partner', 0, $t)`,
+      { $id: unbrand(id), $n: `P-extra-${i}`, $t: now }
+    );
+  }
   db.run(
     `INSERT INTO experts (id, name, sport, market, edge_score, active, created_at)
      VALUES ('exp1', 'E', 'NBA', 'spread', 0.7, 1, $n)`,
@@ -54,7 +69,8 @@ describe('experiment outcomes', () => {
 
   test('settlePlay records win_rate on partner for active experiment', () => {
     const db = openOperationsDb({ path: ':memory:' });
-    const { partner, agent, now } = seedTree(db);
+    // 4 design cells → need 4 active partners under TEST_POLICY
+    const { partner, agent, now } = seedTree(db, 3);
     const engine = new FactorialEngine(db);
 
     const exp = engine.createExperiment({
@@ -64,6 +80,7 @@ describe('experiment outcomes', () => {
         { name: 'cut', levels: [0.1, 0.15] },
       ],
       metricName: 'win_rate',
+      policy: TEST_POLICY,
     });
     engine.setStatus(exp.id, 'active');
 
@@ -108,11 +125,13 @@ describe('experiment outcomes', () => {
 
   test('push does not write win_rate; settle still succeeds', () => {
     const db = openOperationsDb({ path: ':memory:' });
-    const { agent, now } = seedTree(db);
+    // 2 cells → +1 extra partner
+    const { agent, now } = seedTree(db, 1);
     const engine = new FactorialEngine(db);
     const exp = engine.createExperiment({
       name: 'x',
       factors: [{ name: 'a', levels: ['lo', 'hi'] }],
+      policy: TEST_POLICY,
     });
     engine.setStatus(exp.id, 'active');
 
@@ -139,7 +158,8 @@ describe('experiment outcomes', () => {
 
   test('reservePlay checkCoverage uses experiment floor via canOfferStakeForNode', () => {
     const db = openOperationsDb({ path: ':memory:' });
-    const { partner, agent, now } = seedTree(db);
+    // 2 cells + second active agent for coverage denominator
+    const { partner, agent, now } = seedTree(db, 1);
     const other = asTreeNodeId(Bun.randomUUIDv7());
     db.run(
       `INSERT INTO tree_nodes (id, type, name, active, status, created_at)
@@ -164,11 +184,12 @@ describe('experiment outcomes', () => {
       { $n: unbrand(partner) }
     );
 
-    // 1/2 agents on platform → 50% coverage
+    // 1 of several active tree nodes on platform → coverageScore < 90
     const engine = new FactorialEngine(db);
     const exp = engine.createExperiment({
       name: 'cov',
       factors: [{ name: 'min_coverage_pct', levels: [10, 90] }],
+      policy: TEST_POLICY,
     });
     engine.setStatus(exp.id, 'active');
     engine.assignToConfig(exp.id, partner, { min_coverage_pct: 90 });

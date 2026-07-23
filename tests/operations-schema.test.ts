@@ -35,6 +35,7 @@ describe('operations schema', () => {
       'experiment_variants',
       'experiment_assignments',
       'experiment_metrics',
+      'prediction_accuracy',
     ]) {
       expect(names).toContain(table);
     }

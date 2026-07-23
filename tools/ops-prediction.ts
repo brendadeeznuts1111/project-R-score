@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
-// @see https://bun.com/docs/runtime/sqlite
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 /**
  * Coverage prediction backtest CLI (`package.json` → `ops:prediction`).
  *
@@ -18,36 +18,74 @@ import { getPredictionAccuracy, runCoverageBacktest } from '../lib/prediction/te
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const args = process.argv.slice(2);
-const cmd = args[0] ?? 'help';
+const json = args.includes('--json');
+const cmd = args.find(a => !a.startsWith('-')) ?? 'help';
 
 function flag(name: string): string | undefined {
-  const hit = args.find(a => a.startsWith(`--${name}=`));
-  return hit?.slice(name.length + 3);
+  const eq = args.find(a => a.startsWith(`--${name}=`));
+  if (eq) return eq.slice(name.length + 3);
+  const i = args.indexOf(`--${name}`);
+  if (i === -1) return undefined;
+  return args[i + 1];
 }
 
-const db = openOperationsDb({ path: dbPath });
+function printHelp(): void {
+  console.log(`
+ops:prediction — coverage prediction backtest (ops C5)
 
-try {
-  switch (cmd) {
-    case 'backtest': {
-      const from = flag('from') ?? '2020-01-01';
-      const to = flag('to') ?? new Date().toISOString().slice(0, 10);
-      const results = runCoverageBacktest(db, from, to);
-      const acc = getPredictionAccuracy(db, 'coverage');
-      console.log(`Backtest rows: ${results.length}`);
-      console.log(JSON.stringify(acc, null, 2));
-      break;
-    }
-    case 'accuracy': {
-      console.log(JSON.stringify(getPredictionAccuracy(db, 'coverage'), null, 2));
-      break;
-    }
-    default:
-      console.log(`Usage:
-  backtest [--from=YYYY-MM-DD] [--to=YYYY-MM-DD]
+Commands:
+  backtest [--from YYYY-MM-DD] [--to YYYY-MM-DD]
   accuracy
+
+Compares naive coverage predictor (prod accounts / launched platforms)
+against coverage_snapshots in the ops DB, writing rows to prediction_accuracy.
+
+Env: OPS_DB_PATH (default ${DEFAULT_OPS_DB_PATH})
+Flags: --json
 `);
+}
+
+function out(data: object | string | number | boolean | null): void {
+  if (json) {
+    console.log(JSON.stringify(data, null, 2));
+  } else if (typeof data === 'string') {
+    console.log(data);
+  } else {
+    console.log(Bun.inspect(data, { depth: 6, colors: true }));
   }
-} finally {
-  db.close();
+}
+
+function main(): number {
+  if (cmd === 'help' || cmd === '--help' || args.includes('--help')) {
+    printHelp();
+    return 0;
+  }
+
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    switch (cmd) {
+      case 'backtest': {
+        const from = flag('from') ?? '2020-01-01';
+        const to = flag('to') ?? new Date().toISOString().slice(0, 10);
+        const results = runCoverageBacktest(db, from, to);
+        const acc = getPredictionAccuracy(db, 'coverage');
+        out({ from, to, rows: results.length, accuracy: acc, sample: results.slice(0, 5) });
+        return 0;
+      }
+      case 'accuracy': {
+        out(getPredictionAccuracy(db, 'coverage'));
+        return 0;
+      }
+      default:
+        console.error(`Unknown command: ${cmd}`);
+        printHelp();
+        return 1;
+    }
+  } finally {
+    db.close();
+  }
+}
+
+if (import.meta.main) {
+  process.exit(main());
 }
