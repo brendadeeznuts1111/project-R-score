@@ -84,6 +84,14 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
   *Ratchet* → local `ci:core` + type-check scripts prove merge; admin-merge until billing unlocks runners ([AUTHORITY.md](AUTHORITY.md))
 - **Actions billing noise in `harness:status`** (`ops`)  
   *Ratchet* → mute 0-step / billing checks by default; `--show-actions-noise` to unmute · local `ci:core` remains merge proof ([README.md](README.md) · [AUTHORITY.md](AUTHORITY.md))
+- **R2 Basic auth mistaken for S3 SigV4** (`proof`)  
+  *Ratchet* → claim `factory-registry-cli-v1` open gap · migrate `lib/factory/registry.ts` to `Bun.S3Client` · edge uses R2 binding (`factory-registry-pages-proxy-v1`)
+- **Pages `functions/` unexpected-root-dir** (`script-gate`)  
+  *Ratchet* → `ALLOWED_ROOT_DIRS` includes `functions` · `bun run hygiene`
+- **Kalshi-bot orphan gitlink** (`ops`)  
+  *Ratchet* → `.gitmodules` + `ALLOWED_ROOT_DIRS` includes `Kalshi-bot` · keep Jekyll exclude in `_config.yml`
+- **Portal `*.js` gitignored** (`script-gate`)  
+  *Ratchet* → `.gitignore` `!public/portal/**/*.js`
 - **SSOT doc encyclopedia tax** (`doc-map`)  
   *Ratchet* → compress OPERATE / standards / docs/AGENTS to JIT
 - **Generated CLI/REGISTRY tax** (`doc-map`)  

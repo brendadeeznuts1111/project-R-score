@@ -27,5 +27,4 @@ exclude:
   - .github
   - .cache
   - vendor
-  - rustdesk
   - Kalshi-bot

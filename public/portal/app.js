@@ -136,13 +136,6 @@ function buildFilterUI(packages) {
     renderGrid(Object.entries(registryIndex.packages || {}));
   });
 
-  $('search').addEventListener('input', e => {
-    const state = readHashState();
-    state.query = e.target.value;
-    writeHashState(state);
-    renderGrid(Object.entries(registryIndex.packages || {}));
-  });
-
   // Restore search box from hash
   $('search').value = state.query;
 }
@@ -164,11 +157,69 @@ function updateUrlFromState(state) {
 
 // ── Health indicator ────────────────────────────────────────────────────
 
+let healthFailures = 0;
+let lastHealthState = 'unknown';
+const HEALTH_FAIL_THRESHOLD = 2;
+
 function setHealth(klass, label) {
   const dot = $('health-dot');
   const lbl = $('health-label');
   if (dot) dot.className = `health-dot ${klass}`;
-  if (lbl) lbl.textContent = label;
+  if (lbl) {
+    const failures = healthFailures > 0 ? ` · ${healthFailures} missed` : '';
+    lbl.textContent = `${label}${failures}`;
+  }
+  lastHealthState = klass;
+}
+
+/** Stale-while-revalidate: only downgrade after N consecutive failures. */
+function updateHealth(healthy) {
+  if (healthy) {
+    healthFailures = 0;
+    setHealth('ok', 'Live');
+  } else {
+    healthFailures++;
+    if (healthFailures >= HEALTH_FAIL_THRESHOLD) {
+      setHealth('degraded', 'Degraded');
+    } else if (lastHealthState === 'ok') {
+      setHealth('ok', 'Live'); // keep showing ok with missed count
+    }
+  }
+}
+
+// ── Debounced search ────────────────────────────────────────────────────
+
+let searchTimer = 0;
+
+function debouncedSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    const state = readHashState();
+    state.query = $('search').value;
+    writeHashState(state);
+    renderGrid(Object.entries(registryIndex.packages || {}));
+  }, 200);
+}
+
+// ── Keyboard nav ────────────────────────────────────────────────────────
+
+let focusedCardIndex = -1;
+
+function updateCardFocus() {
+  const cards = document.querySelectorAll('.pkg-card');
+  cards.forEach((c, i) => {
+    c.classList.toggle('focused', i === focusedCardIndex);
+    if (i === focusedCardIndex) c.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  });
+}
+
+function openFocusedCard() {
+  const cards = document.querySelectorAll('.pkg-card');
+  const card = cards[focusedCardIndex];
+  if (!card) return;
+  const name = card.dataset.name;
+  const info = registryIndex?.packages?.[name];
+  if (info) showDetail(name, info);
 }
 
 // ── Init ────────────────────────────────────────────────────────────────
@@ -180,15 +231,45 @@ async function init() {
     $('dashboard').classList.remove('hidden');
     renderAll(data);
 
-    // Poll health every 30s
+    // Debounced search
+    $('search').addEventListener('input', debouncedSearch);
+
+    // Deep-link: auto-open modal if hash contains project=foo
+    const hashState = readHashState();
+    const deepProject = hashState.query?.startsWith?.('project:')
+      ? hashState.query.replace('project:', '')
+      : new URLSearchParams(window.location.hash.slice(1)).get('project');
+    if (deepProject && registryIndex?.packages?.[deepProject]) {
+      showDetail(deepProject, registryIndex.packages[deepProject]);
+    }
+
+    // Keyboard nav
+    document.addEventListener('keydown', e => {
+      if (document.getElementById('detail-overlay')) return; // modal handles own keys
+      const cardCount = document.querySelectorAll('.pkg-card').length;
+      if (!cardCount) return;
+      if (e.key === 'ArrowDown' || e.key === 'j') {
+        e.preventDefault();
+        focusedCardIndex = Math.min(focusedCardIndex + 1, cardCount - 1);
+        updateCardFocus();
+      } else if (e.key === 'ArrowUp' || e.key === 'k') {
+        e.preventDefault();
+        focusedCardIndex = Math.max(focusedCardIndex - 1, 0);
+        updateCardFocus();
+      } else if (e.key === 'Enter' && focusedCardIndex >= 0) {
+        e.preventDefault();
+        openFocusedCard();
+      }
+    });
+
+    // Poll health every 30s with stale-while-revalidate
     setInterval(async () => {
       try {
         const res = await fetch('/api/registry/registry.json',
           { signal: AbortSignal.timeout(3000) });
-        if (res.ok) setHealth('ok', 'Live');
-        else setHealth('degraded', 'Slow');
+        updateHealth(res.ok);
       } catch {
-        setHealth('degraded', 'Offline');
+        updateHealth(false);
       }
     }, 30_000);
   } catch (err) {

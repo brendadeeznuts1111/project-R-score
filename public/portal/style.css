@@ -223,6 +223,13 @@ body {
   box-shadow: 0 0 20px var(--accent-glow);
 }
 
+.pkg-card.focused {
+  border-color: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .pkg-card-header {
   display: flex;
   justify-content: space-between;

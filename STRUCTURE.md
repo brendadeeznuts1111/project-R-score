@@ -43,6 +43,8 @@ Projects/
 │   ├── organization/        # Root cleanup history
 │   └── packages/            # REGISTRY.md snapshot (regenerate via packages:list tooling)
 ├── examples/                # Demos & Bun feature showcases (opt-in context)
+├── functions/               # Cloudflare Pages Functions (/api/registry R2 proxy)
+├── Kalshi-bot/              # Nested product submodule (own remote; see .gitmodules)
 ├── lib/                     # Shared library — README.md inventory + domain/*/README.md indexes
 │   └── docs/repo-docs.ts    # CANONICAL_REPO_DOCS path SSOT
 ├── packages/                # @factorywager/* internal packages (8)
@@ -74,6 +76,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 
 | Path | Why |
 |------|-----|
+| `Kalshi-bot/` | **Tracked submodule** → [Kalshi-bot](https://github.com/brendadeeznuts1111/Kalshi-bot) (not spine; own package.json / tests) |
 | `Proton-workspace/` | Standalone Proton playbook repo |
 | `plannotator-upstream/` | Full upstream clone; use `plannator/` for thin skills |
 | `toc-ops/`, `toc-ops-repo/`, `toc-ops-repo-wt-*` | Separate TOC-ops product / worktrees |
