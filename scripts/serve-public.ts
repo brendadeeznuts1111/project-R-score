@@ -669,11 +669,31 @@ async function liveMonitoringApi(): Promise<Response> {
         data.networkingProof = parsed ? toMonitoringNetworkingReport(parsed) : await netFile.json();
       } catch {}
     }
+    // Append install env proof
+    const envFile = Bun.file('public/registry/install-env-proof.json');
+    if (await envFile.exists()) {
+      try {
+        data.installEnvProof = JSON.parse(await envFile.text());
+      } catch {}
+    }
     return json(data);
   } catch (err) {
     const snap = Bun.file('public/registry/monitoring.json');
     if (await snap.exists()) {
       const data = (await snap.json()) as Record<string, unknown>;
+      // Append proof files to snapshot fallback too
+      const proofFiles = [
+        ['bunApiProof', 'tools/bun-api-coverage-proof.json'],
+        ['networkingProof', 'public/registry/networking-proof.json'],
+        ['installEnvProof', 'public/registry/install-env-proof.json'],
+        ['defaultsProof', 'public/registry/defaults-proof.json'],
+      ];
+      for (const [key, path] of proofFiles) {
+        try {
+          const f = Bun.file(path);
+          if (await f.exists()) data[key] = JSON.parse(await f.text());
+        } catch {}
+      }
       return json({
         ...data,
         source: 'snapshot',

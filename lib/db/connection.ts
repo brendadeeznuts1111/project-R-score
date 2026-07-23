@@ -35,9 +35,26 @@ export async function getMonitoringData(options: {
   }
 
   const db = getDb();
-  const data = await collectMonitoring(db, { source, uptimeOriginMs });
-  monitoringCache = { data, ts: now };
-  return data;
+  const data = (await collectMonitoring(db, { source, uptimeOriginMs })) as Record<string, unknown>;
+
+  // Append proof files
+  const proofFiles = [
+    ['bunApiProof', 'tools/bun-api-coverage-proof.json'],
+    ['networkingProof', 'public/registry/networking-proof.json'],
+    ['installEnvProof', 'public/registry/install-env-proof.json'],
+    ['defaultsProof', 'public/registry/defaults-proof.json'],
+  ];
+  for (const [key, path] of proofFiles) {
+    try {
+      const f = Bun.file(path);
+      if (await f.exists()) {
+        data[key] = JSON.parse(await f.text());
+      }
+    } catch {}
+  }
+
+  monitoringCache = { data: data as MonitoringPayload, ts: now };
+  return data as MonitoringPayload;
 }
 
 /** Invalidate the monitoring cache (call after DOD submission / ops change). */
