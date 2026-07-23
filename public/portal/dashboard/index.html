@@ -72,8 +72,9 @@
         fetch('/api/defaults').then(r => r.json()).catch(() => ({})),
         fetch('/api/monitoring').then(r => r.json()).catch(() => ({})),
         fetch('/api/registry').then(r => r.json()).catch(() => ({})),
+        fetch('/api/release').then(r => r.json()).catch(() => ({})),
       ]);
-      const [def, mon, reg] = res;
+      const [def, mon, reg, rel] = res;
 
       const pkgCount = reg?.packages ? Object.keys(reg.packages).length : mon?.packageCount || 0;
       const verCount = reg?.packages ? Object.values(reg.packages).reduce((s, p) => s + (p.versions?.length || 0), 0) : mon?.versionCount || 0;
@@ -99,8 +100,12 @@
       const hashes = [];
       if (def.proofHash) hashes.push(['Defaults', def.proofHash]);
       if (mon?.env?.summary) hashes.push(['Env checks', mon.env.summary.ok + '/' + mon.env.summary.total + ' ok']);
-      hashes.push(['Proof manifest', def.bunVersion || '1.4.0']);
-      $('proofs').innerHTML = '<h2>🔐 Proof Hashes</h2><table><thead><tr><th>Proof</th><th>Hash / Status</th></tr></thead><tbody>' +
+      const r = rel?.results?.[0] || {};
+      const chan = r.channel || '—';
+      const tgt = r.targetVersion || '—';
+      const lat = r.latestAtTestTime || '—';
+      hashes.push(['Bun runtime', `${def.bunVersion || '?'} · channel:${chan} · target:${tgt} · latest:${lat}`]);
+      $('proofs').innerHTML = '<h2>🔐 Proof Hashes & Channels</h2><table><thead><tr><th>Proof</th><th>Value</th></tr></thead><tbody>' +
         hashes.map(h => '<tr><td>'+h[0]+'</td><td class="mono">'+h[1]+'</td></tr>').join('') + '</tbody></table>';
 
       $('ts').textContent = new Date().toLocaleTimeString();

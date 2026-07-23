@@ -94,7 +94,7 @@ import {
   serveVerificationScriptMeta,
 } from '../lib/http/verification-scripts.ts';
 import { resolvePublishReadme } from '../lib/registry/npm-publish-readme.ts';
-import type { BunServer } from '../lib/http/bun-server.ts';
+import { serveBindSnapshot, type BunServer, type ServeBindSnapshot } from '../lib/http/bun-server.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
 /** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
@@ -520,6 +520,7 @@ const HOT_STATIC_PATHS = [
   'public/registry/prediction/coverage-chart.svg',
   'public/registry/prediction/error-chart.svg',
   'public/registry/networking-proof.json',
+  'public/registry/doc-index.json',
   'tools/bun-api-coverage-proof.json',
 ];
 
@@ -836,6 +837,31 @@ async function collectHealthData(): Promise<{
   const envCheck = envCheckForHealth();
   const networking = await readNetworkingProofCompact();
   const ctMatrix = summarizeContentTypeMatrix();
+  const docIndexFile = Bun.file('public/registry/doc-index.json');
+  let docRefs: Record<string, unknown> = { available: false };
+  if (await docIndexFile.exists()) {
+    try {
+      const parsed = (await docIndexFile.json()) as {
+        totalEntries?: number;
+        byStability?: Record<string, number>;
+        defaultsCoverage?: { passed?: boolean };
+        proofHash?: string;
+        timestamp?: string;
+      };
+      docRefs = {
+        available: true,
+        totalEntries: parsed.totalEntries ?? 0,
+        stable: parsed.byStability?.stable ?? 0,
+        experimental: parsed.byStability?.experimental ?? 0,
+        deprecated: parsed.byStability?.deprecated ?? 0,
+        defaultsCoverage: parsed.defaultsCoverage?.passed ?? false,
+        proofHash: parsed.proofHash,
+        generated: parsed.timestamp,
+      };
+    } catch {
+      docRefs = { available: true, malformed: true };
+    }
+  }
   const networkingDegraded =
     networking.available === true &&
     typeof networking.degraded === 'boolean' &&
@@ -870,6 +896,7 @@ async function collectHealthData(): Promise<{
         severity: r.severity,
       })),
     },
+    docRefs,
     serve: {
       strategies: {
         static: 'memory + ETag + If-None-Match (hot registry JSON, health)',
@@ -1457,6 +1484,44 @@ function buildPublicRoutes() {
       serveVerificationScript('bun-defaults', { baseUrl: new URL(req.url).origin }),
     '/api/bun-defaults/script.meta': (req: Request) =>
       serveVerificationScriptMeta('bun-defaults', new URL(req.url).origin),
+    '/api/release/script': (req: Request) =>
+      serveVerificationScript('release', { baseUrl: new URL(req.url).origin }),
+    '/api/release': async () => {
+      const f = Bun.file('public/registry/release-features.json');
+      if (await f.exists()) return new Response(f, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' } });
+      return json({ error: 'Not generated' }, 404);
+    },
+    '/api/release/': async () => {
+      const f = Bun.file('public/registry/release-features.json');
+      if (await f.exists()) return new Response(f, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' } });
+      return json({ error: 'Not generated' }, 404);
+    },
+    '/api/release/script/': (req: Request) =>
+      serveVerificationScript('release', { baseUrl: new URL(req.url).origin }),
+    '/api/release/script.meta': (req: Request) =>
+      serveVerificationScriptMeta('release', new URL(req.url).origin),
+    '/api/doc-refs': async () => {
+      const f = Bun.file('public/registry/doc-index.json');
+      if (!(await f.exists())) {
+        return json(
+          {
+            error: 'Doc index not generated — run bun tools/build-doc-index.ts --save',
+            _links: {
+              script: '/api/doc-refs/script',
+              pipe: 'curl -sf http://127.0.0.1:3000/api/doc-refs/script | bun run - --save',
+            },
+          },
+          503
+        );
+      }
+      return json(JSON.parse(await f.text()), 200, 'public, max-age=60');
+    },
+    '/api/doc-refs/script': (req: Request) =>
+      serveVerificationScript('doc-index', { baseUrl: new URL(req.url).origin }),
+    '/api/doc-refs/script/': (req: Request) =>
+      serveVerificationScript('doc-index', { baseUrl: new URL(req.url).origin }),
+    '/api/doc-refs/script.meta': (req: Request) =>
+      serveVerificationScriptMeta('doc-index', new URL(req.url).origin),
     '/api/env': () => envStatus(),
     '/api/monitoring': () => liveMonitoringApi(),
     '/api/operations/summary': () => liveOpsSummary(),
@@ -1530,10 +1595,7 @@ function buildPublicRoutes() {
   };
 }
 
-function startServer(
-  preferred: number,
-  maxTries = 20
-): { port: number; hostname: string; server: BunServer } {
+function startServer(preferred: number, maxTries = 20): ServeBindSnapshot {
   let lastErr: unknown;
   const routes = buildPublicRoutes();
 
@@ -1553,7 +1615,7 @@ function startServer(
         },
       });
       activeServer = server;
-      return { port: server.port, hostname: server.hostname, server };
+      return serveBindSnapshot(server);
     } catch (e) {
       lastErr = e;
       const msg = e instanceof Error ? e.message : String(e);
@@ -1577,8 +1639,9 @@ Port ${preferred}–${preferred + maxTries - 1} busy on ${HOST}.
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
-const { port: boundPort, hostname: boundHost, server: boundServer } = startServer(PORT);
-const base = `http://${boundHost === '0.0.0.0' ? '127.0.0.1' : boundHost}:${boundPort}`;
+const bind = startServer(PORT);
+const { port: boundPort, hostname: boundHost, protocol: boundProtocol } = bind;
+const base = bind.loopbackOrigin;
 
 async function gracefulShutdown(signal: string): Promise<void> {
   console.log(`${signal} — graceful stop (server.stop)…`);
@@ -1620,9 +1683,11 @@ console.log(
     ? `Publish:       PUT ${base}/{name} (Bearer REGISTRY_SECRET required)`
     : `Publish:       disabled — set REGISTRY_SECRET or FACTORY_WAGER_TOKEN`
 );
-console.log(`Bind: ${boundHost}:${boundPort}  DB: ${dbPath}`);
 console.log(
-  `Serve:         development=${SERVE_DEVELOPMENT} · url=${boundServer.url.href} · routes=SIMD+static · fetch=unmatched`
+  `Bind: ${boundProtocol}://${boundHost}:${boundPort} (url.port=${bind.urlPort || 'default'})  DB: ${dbPath}`
+);
+console.log(
+  `Serve:         development=${bind.development} · protocol=${bind.protocol} · origin=${bind.origin} · loopback=${base} · routes=SIMD+static · fetch=unmatched`
 );
 if (boundPort !== PORT) {
   console.log(`(preferred PORT=${PORT} was busy — bound ${boundPort})`);
