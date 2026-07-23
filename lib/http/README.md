@@ -12,33 +12,35 @@ HTTP helpers for Bun.serve surfaces (static response utilities, caching headers)
 | [`data-etag.ts`](data-etag.ts) | Shared ETag for JSON health/summary bodies |
 | [`live-reload.ts`](live-reload.ts) | Local SSE browser live-reload + HTML inject (serve-public HMR) |
 
-### Content-Type (separated columns)
+### Content-Type (deep matrix)
 
 Canonical: [content-type-handling](https://bun.com/docs/runtime/networking/fetch#content-type-handling)
 
-Every decision is a four-column row:
+Every decision separates layers — never one fuzzy string:
 
 | Column | Meaning |
 |--------|---------|
-| **defaultValue** | Bun auto CT when header omitted (`multipart/form-data`, `blob.type`, or `—`) |
-| **ourValue** | What we set explicitly, or `—` if we defer to Bun |
-| **expected** | Contract for this surface |
-| **status** | `ok` · `mismatch` · `missing` · `override` · `defer` |
+| **defaultValue** | Bun auto CT when header omitted |
+| **ourValue** | What we set, or `—` if we defer |
+| **wireValue** | Observed on built `Request`/`Response` (includes multipart boundary) |
+| **expected** | Contract |
+| **status** | `ok` · `mismatch` · `missing` · `override` · `defer` · `unknown` |
+| **severity** | `pass` · `warn` · `fail` |
 
 ```bash
-bun tools/content-type-table.ts          # Bun.inspect.table
+bun tools/content-type-table.ts
 bun tools/content-type-table.ts --json
+bun tools/content-type-table.ts --live=http://127.0.0.1:3000
+bun tools/content-type-table.ts --fail   # exit 1 on real fails (demo rows excluded)
+
+# runtime
+curl -s http://127.0.0.1:3000/api/content-type | head
+# also embedded under /health → contentType.rows
 ```
 
-| Body | defaultValue | ourValue | expected | status |
-|------|--------------|----------|----------|--------|
-| `FormData` | multipart + boundary | `—` (never set) | multipart | ok |
-| `FormData` + manual CT | multipart | multipart | multipart | **override** (bad) |
-| `Blob` / `File` | `blob.type` | `—` | media type | ok |
-| JSON `string` | `—` | `application/json; charset=utf-8` | application/json | ok |
-| Response `.json` path | `—` | `application/json; charset=utf-8` | same | ok |
-
-API: `decideRequestContentType`, `decideResponseContentType`, `evaluateContentType`, `contentTypePolicyCatalog`.
+API: `decideRequestContentType` · `decideResponseContentType` · `decideFromResponse` ·
+`evaluateContentType` · `contentTypePolicyCatalog` · `summarizeContentTypeMatrix` ·
+`probeLiveContentTypes`.
 
 ### File uploads (FormData)
 

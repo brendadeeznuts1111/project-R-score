@@ -5,6 +5,7 @@ import {
   CT_JSON,
   contentTypePolicyCatalog,
   contentTypePolicyTableRows,
+  decideFromResponse,
   decideRequestContentType,
   decideResponseContentType,
   evaluateContentType,
@@ -15,23 +16,26 @@ import {
   jsonBlob,
   jsonFile,
   normalizeContentType,
+  summarizeContentTypeMatrix,
 } from '../lib/http/content-type.ts';
 
-describe('content-type (defaultValue | ourValue | expected | status)', () => {
-  test('FormData: default multipart, our empty, expected multipart → ok', () => {
+describe('content-type deep matrix (default|our|wire|expected|status)', () => {
+  test('FormData: default multipart, our —, wire has boundary, status ok', () => {
     const form = new FormData();
     form.set('file', jsonFile({ ok: true }, 'x.json'));
     const d = decideRequestContentType(form, { id: 'formdata' });
     expect(normalizeContentType(d.defaultValue)).toBe('multipart/form-data');
     expect(d.ourValue).toBe('—');
+    expect(isMultipartContentType(d.wireValue)).toBe(true);
+    expect(d.wireValue).toContain('boundary=');
     expect(normalizeContentType(d.expected)).toBe('multipart/form-data');
     expect(d.status).toBe('ok');
-
-    const req = new Request('http://example.test/upload', { method: 'POST', body: form });
-    expect(isMultipartContentType(req.headers.get('content-type'))).toBe(true);
+    expect(d.severity).toBe('pass');
+    expect(d.bunMechanism).toBe('formdata-multipart');
+    expect(d.match.wireVsExpected).toBe(true);
   });
 
-  test('FormData + manual Content-Type → override (bad)', () => {
+  test('FormData + manual Content-Type → override fail', () => {
     const form = new FormData();
     form.set('x', '1');
     const d = decideRequestContentType(form, {
@@ -39,40 +43,60 @@ describe('content-type (defaultValue | ourValue | expected | status)', () => {
       explicitOurHeader: 'multipart/form-data',
     });
     expect(d.status).toBe('override');
+    expect(d.severity).toBe('fail');
   });
 
-  test('JSON Blob: Bun default from blob.type, we defer → ok', () => {
+  test('JSON Blob: wire carries blob.type', () => {
     const blob = jsonBlob({ a: 1 });
     const d = decideRequestContentType(blob);
     expect(isJsonContentType(d.defaultValue)).toBe(true);
     expect(d.ourValue).toBe('—');
+    expect(isJsonContentType(d.wireValue)).toBe(true);
     expect(d.status).toBe('ok');
+    expect(d.bunMechanism).toBe('blob-type');
   });
 
-  test('JSON string: Bun default empty, our CT_JSON, expected json → ok', () => {
+  test('JSON string: default empty, our CT_JSON, wire empty until header applied', () => {
     const d = decideRequestContentType('{"a":1}');
     expect(d.defaultValue).toBe('—');
     expect(d.ourValue).toBe(CT_JSON);
     expect(normalizeContentType(d.expected)).toBe('application/json');
     expect(d.status).toBe('ok');
+    expect(d.bunMechanism).toBe('none');
   });
 
-  test('JSON string with forced empty header → missing', () => {
+  test('JSON string with forced empty header → missing fail', () => {
     const d = decideRequestContentType('{"a":1}', {
       id: 'no-ct',
       explicitOurHeader: '',
     });
     expect(d.ourValue).toBe('—');
     expect(d.status).toBe('missing');
+    expect(d.severity).toBe('fail');
   });
 
-  test('response path decision separates default empty vs our guess', () => {
+  test('response path: four columns + severity', () => {
     const d = decideResponseContentType('public/x.json');
     expect(d.defaultValue).toBe('—');
     expect(d.ourValue).toBe(CT_JSON);
+    expect(d.wireValue).toBe(CT_JSON);
     expect(d.expected).toBe(CT_JSON);
     expect(d.status).toBe('ok');
     expect(d.side).toBe('response');
+  });
+
+  test('decideFromResponse uses live wire header', () => {
+    const res = new Response('{}', { headers: { 'Content-Type': CT_JSON } });
+    const d = decideFromResponse('public/a.json', res);
+    expect(d.wireValue).toBe(CT_JSON);
+    expect(d.status).toBe('ok');
+
+    const bad = decideFromResponse(
+      'public/a.json',
+      new Response('x', { headers: { 'Content-Type': 'text/plain' } })
+    );
+    expect(bad.status).toBe('mismatch');
+    expect(bad.severity).toBe('fail');
   });
 
   test('evaluateContentType mismatch when our ≠ expected', () => {
@@ -82,23 +106,41 @@ describe('content-type (defaultValue | ourValue | expected | status)', () => {
       side: 'response',
       defaultValue: '',
       ourValue: 'text/plain',
+      wireValue: 'text/plain',
       expected: CT_JSON,
     });
     expect(d.status).toBe('mismatch');
+    expect(d.match.ourVsExpected).toBe(false);
   });
 
-  test('policy catalog rows have all four columns + status', () => {
-    const rows = contentTypePolicyTableRows();
-    expect(rows.length).toBeGreaterThanOrEqual(6);
-    for (const r of rows) {
+  test('catalog + summary: all rows have five CT columns', () => {
+    const catalog = contentTypePolicyCatalog();
+    expect(catalog.length).toBeGreaterThanOrEqual(15);
+    for (const r of catalog) {
       expect(r).toHaveProperty('defaultValue');
       expect(r).toHaveProperty('ourValue');
+      expect(r).toHaveProperty('wireValue');
       expect(r).toHaveProperty('expected');
       expect(r).toHaveProperty('status');
+      expect(r).toHaveProperty('severity');
     }
-    // FormData bad override is in catalog as override
-    const bad = contentTypePolicyCatalog().find(c => c.id === 'formdata-override-bad');
-    expect(bad?.status).toBe('override');
+    const summary = summarizeContentTypeMatrix(catalog);
+    expect(summary.total).toBe(catalog.length);
+    expect(summary.pass + summary.warn + summary.fail).toBe(summary.total);
+
+    const table = contentTypePolicyTableRows(catalog);
+    expect(table[0]).toHaveProperty('wireValue');
+    expect(table[0]).toHaveProperty('severity');
+  });
+
+  test('intentional bad rows are fail severity', () => {
+    const catalog = contentTypePolicyCatalog();
+    const override = catalog.find(c => c.id === 'formdata-manual-ct-override');
+    const missing = catalog.find(c => c.id === 'json-string-missing-ct');
+    expect(override?.status).toBe('override');
+    expect(override?.severity).toBe('fail');
+    expect(missing?.status).toBe('missing');
+    expect(missing?.severity).toBe('fail');
   });
 
   test('fetchHeadersForBody leaves FormData CT unset', () => {

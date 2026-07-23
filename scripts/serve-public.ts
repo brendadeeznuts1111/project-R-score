@@ -82,8 +82,12 @@ import {
   shouldEnableLiveReload,
 } from '../lib/http/live-reload.ts';
 import { formString, requireFormBlob, sha256Blob, writeFormBlob } from '../lib/http/form-upload.ts';
+import {
+  contentTypePolicyTableRows,
+  summarizeContentTypeMatrix,
+} from '../lib/http/content-type.ts';
 import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
-import { parsePortalMdPath } from '../lib/http/portal-nav.ts';
+import { parsePortalMdPath, PORTAL_MD_SLUG_TO_NAV } from '../lib/http/portal-nav.ts';
 import { portalMarkdownRaw, renderPortalMarkdownPage } from '../lib/http/portal-markdown.ts';
 import type { BunServer } from '../lib/http/bun-server.ts';
 
@@ -595,7 +599,25 @@ async function staticFile(
     cache: path.endsWith('.html') && LIVE_RELOAD ? undefined : fileRouteCache,
     cacheControl,
   });
-  return withLiveReload(res);
+  return withLiveReload(withMarkdownAlternate(res, path));
+}
+
+/**
+ * Advertise the machine-readable markdown alternate on portal HTML pages:
+ *   Link: </portal/{slug}.md>; rel="alternate"; type="text/markdown"
+ */
+function withMarkdownAlternate(res: Response, path: string): Response {
+  if (!path.endsWith('.html')) return res;
+  let slug: string | null = null;
+  if (path === '/portal/index.html') slug = 'index';
+  else {
+    const m = path.match(/^\/portal\/(ops|catalog|dod|health|env|monitoring)\/index\.html$/);
+    if (m) slug = m[1]!;
+  }
+  if (!slug) return res;
+  const headers = new Headers(res.headers);
+  headers.append('Link', `</portal/${slug}.md>; rel="alternate"; type="text/markdown"`);
+  return new Response(res.body, { status: res.status, headers });
 }
 
 // ── Server ──────────────────────────────────────────────────────────
@@ -605,34 +627,35 @@ const startedAt = Date.now();
 /** GET /api/monitoring — registry + ops metrics + API proof (JSON). */
 async function liveMonitoringApi(): Promise<Response> {
   try {
-    const data = (await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt })) as Record<string, unknown>;
-      // Append Bun API proof status
-      const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
-      if (await proofFile.exists()) {
-        const proof = JSON.parse(await proofFile.text());
-        data.bunApiProof = {
-          generated: proof.generated,
-          bunVersion: proof.bunVersion,
-          demosTotal: proof.summary?.demos ?? 0,
-          demosPassed: proof.summary?.demosPassed ?? 0,
-          apisTotal: proof.summary?.apis ?? 0,
-          apisVerified: proof.summary?.apisVerified ?? 0,
-          allPassed: proof.summary?.demosPassed === proof.summary?.demos,
-        };
-      }
-      data.routeStats = routeStatsForHealth();
-      data.env = envCheckForHealth();
-      // Append networking proof
-      const netFile = Bun.file('public/registry/networking-proof.json');
-      if (await netFile.exists()) {
-        try {
-          const parsed = parseNetworkingProofArtifact(await netFile.json());
-          data.networkingProof = parsed
-            ? toMonitoringNetworkingReport(parsed)
-            : await netFile.json();
-        } catch {}
-      }
-      return json(data);
+    const data = (await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt })) as Record<
+      string,
+      unknown
+    >;
+    // Append Bun API proof status
+    const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
+    if (await proofFile.exists()) {
+      const proof = JSON.parse(await proofFile.text());
+      data.bunApiProof = {
+        generated: proof.generated,
+        bunVersion: proof.bunVersion,
+        demosTotal: proof.summary?.demos ?? 0,
+        demosPassed: proof.summary?.demosPassed ?? 0,
+        apisTotal: proof.summary?.apis ?? 0,
+        apisVerified: proof.summary?.apisVerified ?? 0,
+        allPassed: proof.summary?.demosPassed === proof.summary?.demos,
+      };
+    }
+    data.routeStats = routeStatsForHealth();
+    data.env = envCheckForHealth();
+    // Append networking proof
+    const netFile = Bun.file('public/registry/networking-proof.json');
+    if (await netFile.exists()) {
+      try {
+        const parsed = parseNetworkingProofArtifact(await netFile.json());
+        data.networkingProof = parsed ? toMonitoringNetworkingReport(parsed) : await netFile.json();
+      } catch {}
+    }
+    return json(data);
   } catch (err) {
     const snap = Bun.file('public/registry/monitoring.json');
     if (await snap.exists()) {
@@ -799,6 +822,7 @@ async function collectHealthData(): Promise<{
   const routeStats = routeStatsForHealth();
   const envCheck = envCheckForHealth();
   const networking = await readNetworkingProofCompact();
+  const ctMatrix = summarizeContentTypeMatrix();
   const networkingDegraded =
     networking.available === true &&
     typeof networking.degraded === 'boolean' &&
@@ -814,6 +838,25 @@ async function collectHealthData(): Promise<{
     networking,
     routeStats,
     env: envCheck,
+    /** Content-Type: defaultValue | ourValue | wireValue | expected | status */
+    contentType: {
+      total: ctMatrix.total,
+      pass: ctMatrix.pass,
+      warn: ctMatrix.warn,
+      fail: ctMatrix.fail,
+      byStatus: ctMatrix.byStatus,
+      /** compact rows for dashboards */
+      rows: contentTypePolicyTableRows(ctMatrix.rows).map(r => ({
+        id: r.id,
+        side: r.side,
+        defaultValue: r.defaultValue,
+        ourValue: r.ourValue,
+        wireValue: r.wireValue,
+        expected: r.expected,
+        status: r.status,
+        severity: r.severity,
+      })),
+    },
     serve: {
       strategies: {
         static: 'memory + ETag + If-None-Match (hot registry JSON, health)',
@@ -882,6 +925,14 @@ function renderHealthPlain(data: Record<string, unknown>): string {
     `  Memory used:     ${Math.round(Number(rs.totalMemoryUsed ?? 0) / 1024)} KiB`,
     `  Rule:            ${((rs.decision as Record<string, string>) || {}).rule ?? '—'}`,
     `  ETag:            shared data scope (JSON + plain)`,
+    ''
+  );
+  const ct = (data.contentType as Record<string, unknown>) || {};
+  lines.push(
+    '── Content-Type (default | our | wire | expected) ──',
+    `  pass/warn/fail: ${ct.pass ?? 0}/${ct.warn ?? 0}/${ct.fail ?? 0} of ${ct.total ?? 0}`,
+    `  byStatus:       ${JSON.stringify(ct.byStatus ?? {})}`,
+    `  full matrix:    GET /api/content-type`,
     ''
   );
   const env =
@@ -1050,8 +1101,28 @@ Fetch with \`Accept: text/markdown\` for raw markdown; HTML renders otherwise.
 - [ops-summary.json](registry/ops-summary.json): portal ops snapshot
 - [dod-registry.json](registry/dod-registry.json): DOD snapshot registry
 - [registry.json](registry/registry.json): package index
+
+## Full corpus
+
+- [llms-full.txt](llms-full.txt): all portal markdown inlined in one file
 `;
   return new Response(body, {
+    headers: {
+      'Content-Type': 'text/markdown; charset=utf-8',
+      'Cache-Control': 'public, max-age=300',
+    },
+  });
+}
+
+/**
+ * GET /llms-full.txt — every portal markdown endpoint inlined (llms.txt
+ * convention for single-file consumption).
+ */
+function llmsFullTxt(): Response {
+  const sections = (Object.keys(PORTAL_MD_SLUG_TO_NAV) as (keyof typeof PORTAL_MD_SLUG_TO_NAV)[])
+    .map(slug => `# portal/${slug}.md\n\n${portalMarkdownRaw(slug)}`)
+    .join('\n\n---\n\n');
+  return new Response(`# FactoryWager — full portal corpus\n\n${sections}`, {
     headers: {
       'Content-Type': 'text/markdown; charset=utf-8',
       'Cache-Control': 'public, max-age=300',
@@ -1137,6 +1208,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/health' || path === '/health/') return health(req, server);
   if (path === '/health/pre' || path === '/health/pre/') return healthHtml(req, server);
   if (path === '/llms.txt') return llmsTxt();
+  if (path === '/llms-full.txt') return llmsFullTxt();
 
   const md = await portalMarkdown(req);
   if (md) return md;
@@ -1144,6 +1216,20 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   // Bun API proof status
   if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
   if (path === '/api/env' || path === '/api/env/') return envStatus();
+  if (path === '/api/content-type' || path === '/api/content-type/') {
+    const m = summarizeContentTypeMatrix();
+    return json({
+      columns: ['defaultValue', 'ourValue', 'wireValue', 'expected', 'status', 'severity'],
+      summary: {
+        total: m.total,
+        pass: m.pass,
+        warn: m.warn,
+        fail: m.fail,
+        byStatus: m.byStatus,
+      },
+      rows: contentTypePolicyTableRows(m.rows),
+    });
+  }
 
   // Optional auth for read endpoints
   const authErr = requireReadAuth(req);
@@ -1252,6 +1338,20 @@ function buildPublicRoutes() {
     '/health/pre': (req: Request, server: RouteServer) => healthHtml(req, server),
     '/health/pre/': (req: Request, server: RouteServer) => healthHtml(req, server),
 
+    '/api/content-type': () => {
+      const m = summarizeContentTypeMatrix();
+      return json({
+        columns: ['defaultValue', 'ourValue', 'wireValue', 'expected', 'status', 'severity'],
+        summary: {
+          total: m.total,
+          pass: m.pass,
+          warn: m.warn,
+          fail: m.fail,
+          byStatus: m.byStatus,
+        },
+        rows: contentTypePolicyTableRows(m.rows),
+      });
+    },
     '/api/proof': (req: Request) => {
       const hot = hotByUrl.get('/api/proof');
       if (hot) return respondStatic(hot, req, { cacheControl: 'public, max-age=30' });

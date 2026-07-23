@@ -2,40 +2,104 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table — Bun.inspect.table
 // @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — Content-Type
 /**
- * Print Content-Type policy table:
- *   defaultValue | ourValue | expected | status
+ * Deep Content-Type matrix:
+ *   defaultValue | ourValue | wireValue | expected | status | severity
  *
  *   bun tools/content-type-table.ts
  *   bun tools/content-type-table.ts --json
+ *   bun tools/content-type-table.ts --live=http://127.0.0.1:3000
+ *   bun tools/content-type-table.ts --fail   # exit 1 if any severity=fail (excl demos)
  */
-import { contentTypePolicyCatalog, contentTypePolicyTableRows } from '../lib/http/content-type.ts';
+import {
+  contentTypePolicyCatalog,
+  contentTypePolicyTableRows,
+  probeLiveContentTypes,
+  summarizeContentTypeMatrix,
+  type ContentTypeDecision,
+} from '../lib/http/content-type.ts';
 
-const rows = contentTypePolicyTableRows();
-const catalog = contentTypePolicyCatalog();
-const fail = catalog.filter(r => r.status !== 'ok');
+function flag(name: string): string | undefined {
+  const hit = Bun.argv.find(a => a.startsWith(`--${name}=`));
+  return hit?.slice(name.length + 3);
+}
 
-if (Bun.argv.includes('--json')) {
-  console.log(JSON.stringify({ rows, fail: fail.length }, null, 2));
+const liveBase = flag('live');
+const asJson = Bun.argv.includes('--json');
+const failMode = Bun.argv.includes('--fail');
+const demoIds = new Set([
+  'formdata-manual-ct-override',
+  'formdata-wrong-ct-override',
+  'json-string-missing-ct',
+]);
+
+let rows: ContentTypeDecision[] = contentTypePolicyCatalog();
+
+if (liveBase) {
+  console.error(`Probing live Content-Types @ ${liveBase} …`);
+  const live = await probeLiveContentTypes(liveBase);
+  rows = [...rows, ...live];
+}
+
+const summary = summarizeContentTypeMatrix(rows);
+const table = contentTypePolicyTableRows(rows);
+
+// Intentional demo failures don't count for --fail
+const realFails = rows.filter(r => r.severity === 'fail' && !demoIds.has(r.id));
+
+if (asJson) {
+  console.log(
+    JSON.stringify(
+      {
+        summary: {
+          total: summary.total,
+          pass: summary.pass,
+          warn: summary.warn,
+          fail: summary.fail,
+          byStatus: summary.byStatus,
+          realFails: realFails.length,
+        },
+        rows: table,
+      },
+      null,
+      2
+    )
+  );
 } else {
-  console.log('Content-Type policy (defaultValue | ourValue | expected | status)\n');
+  console.log(
+    'Content-Type matrix\n  columns: defaultValue | ourValue | wireValue | expected | status | severity\n'
+  );
+  const display = table.map(r => ({
+    id: r.id.length > 28 ? r.id.slice(0, 25) + '…' : r.id,
+    side: r.side,
+    default: clip(r.defaultValue, 28),
+    our: clip(r.ourValue, 28),
+    wire: clip(r.wireValue, 28),
+    expected: clip(r.expected, 28),
+    status: r.status,
+    sev: r.severity,
+  }));
   console.log(
     Bun.inspect.table(
-      rows.map(r => ({
-        id: r.id,
-        side: r.side,
-        defaultValue:
-          r.defaultValue.length > 40 ? r.defaultValue.slice(0, 37) + '…' : r.defaultValue,
-        ourValue: r.ourValue.length > 40 ? r.ourValue.slice(0, 37) + '…' : r.ourValue,
-        expected: r.expected.length > 40 ? r.expected.slice(0, 37) + '…' : r.expected,
-        status: r.status,
-      })),
-      ['id', 'side', 'defaultValue', 'ourValue', 'expected', 'status'],
-      { colors: true }
+      display,
+      ['id', 'side', 'default', 'our', 'wire', 'expected', 'status', 'sev'],
+      {
+        colors: true,
+      }
     )
   );
   console.log(
-    fail.length === 0
-      ? `\n✅ ${rows.length} rows · all ok`
-      : `\n⚠️ ${fail.length}/${rows.length} non-ok (override/mismatch rows are intentional demos)`
+    `\nsummary: total=${summary.total} pass=${summary.pass} warn=${summary.warn} fail=${summary.fail}` +
+      ` · byStatus ${JSON.stringify(summary.byStatus)}`
   );
+  if (realFails.length) {
+    console.log(`real fails (non-demo): ${realFails.map(f => f.id).join(', ')}`);
+  } else {
+    console.log('real fails: none (demo override/missing rows excluded)');
+  }
+}
+
+if (failMode && realFails.length > 0) process.exit(1);
+
+function clip(s: string, n: number): string {
+  return s.length > n ? s.slice(0, n - 1) + '…' : s;
 }
