@@ -1561,6 +1561,7 @@
     "ops:snapshot:cron": "bun lib/operations/snapshot-cron.ts",
     "registry:snapshot": "bun tools/build-registry-snapshot.ts",
     "serve:public": "bun scripts/serve-public.ts",
+    "serve:public:hot": "bun --hot scripts/serve-public.ts",
     "audit:bunfig": "bash scripts/audit-bunfig.sh",
     "audit:bunfig:strict": "bash scripts/audit-bunfig.sh --strict",
     "build:affected": "bun scripts/affected-workspaces.ts build",

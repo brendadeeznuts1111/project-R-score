@@ -5,11 +5,17 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/bundler/hot-reloading — bun --hot (server module re-eval)
 /**
  * Local portal + static public/ server with live ops/catalog/registry APIs.
  *
  *   bun scripts/serve-public.ts
+ *   bun --hot scripts/serve-public.ts   # re-eval server on TS change
  *   open http://127.0.0.1:3000/portal/ops/
+ *
+ * Browser live-reload (SSE /__hmr) is ON for loopback by default.
+ *   SERVE_PUBLIC_HMR=0  disable
+ *   SERVE_PUBLIC_HMR=1  force on (any bind)
  *
  * Routing (Bun.serve `routes` + `fetch` fallback):
  *   routes  — SIMD-matched exact API + monitoring + ready/health handlers
@@ -54,11 +60,18 @@ import {
   respondStatic,
   type PreloadedStatic,
 } from '../lib/http/static-response.ts';
+import {
+  LiveReloadHub,
+  maybeInjectLiveReloadResponse,
+  shouldEnableLiveReload,
+} from '../lib/http/live-reload.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
 /** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
 const HOST = (Bun.env.HOST || Bun.env.BIND_HOST || '127.0.0.1').trim() || '127.0.0.1';
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
+/** Browser SSE live-reload (not Cloudflare Pages). */
+const LIVE_RELOAD = shouldEnableLiveReload({ host: HOST });
 
 function json(
   data: object | string | number | boolean | null,
@@ -457,24 +470,67 @@ const HOT_STATIC_PATHS = [
   'public/registry/@factorywager/routing-test/latest.json',
   'public/registry/@factorywager/registry-snapshot/latest.json',
   'public/registry/@factorywager/proof-packages.json',
+  'public/registry/prediction/report.html',
+  'public/registry/prediction/coverage-chart.svg',
+  'public/registry/prediction/error-chart.svg',
   'tools/bun-api-coverage-proof.json',
 ];
 
-const hotStatic = await preloadStaticMap(HOT_STATIC_PATHS, { optional: true });
-// Key by URL path (/registry/...)
+/** Paths polled for browser live-reload (mtime via Bun.file). */
+const WATCH_PATHS = [
+  ...HOT_STATIC_PATHS,
+  'public/portal/index.html',
+  'public/portal/ops/index.html',
+  'public/portal/operations-dashboard.js',
+  'public/portal/app.js',
+  'public/portal/style.css',
+  'public/monitoring/index.html',
+];
+
 const hotByUrl = new Map<string, PreloadedStatic>();
-for (const [fsPath, asset] of hotStatic) {
-  hotByUrl.set('/' + fsPath.replace(/^public\//, ''), asset);
-}
-
-// Route aliases for preloaded assets
-const proofAsset = hotStatic.get('tools/bun-api-coverage-proof.json');
-if (proofAsset) {
-  hotByUrl.set('/api/proof', proofAsset);
-  hotByUrl.set('/api/proof/', proofAsset);
-}
-
 const fileRouteCache = new Map<string, PreloadedStatic>();
+
+function rebuildHotUrlMap(hotStatic: Map<string, PreloadedStatic>): void {
+  hotByUrl.clear();
+  for (const [fsPath, asset] of hotStatic) {
+    hotByUrl.set('/' + fsPath.replace(/^public\//, ''), asset);
+  }
+  const proofAsset = hotStatic.get('tools/bun-api-coverage-proof.json');
+  if (proofAsset) {
+    hotByUrl.set('/api/proof', proofAsset);
+    hotByUrl.set('/api/proof/', proofAsset);
+  }
+}
+
+async function refreshHotStatic(reason = 'reload'): Promise<void> {
+  const hotStatic = await preloadStaticMap(HOT_STATIC_PATHS, { optional: true });
+  rebuildHotUrlMap(hotStatic);
+  fileRouteCache.clear();
+  if (LIVE_RELOAD) {
+    // reason is for logs; browser notify is driven by watcher
+    void reason;
+  }
+}
+
+// Initial preload
+{
+  const hotStatic = await preloadStaticMap(HOT_STATIC_PATHS, { optional: true });
+  rebuildHotUrlMap(hotStatic);
+}
+
+const liveReloadHub = LIVE_RELOAD
+  ? new LiveReloadHub({
+      pollMs: 350,
+      onChange: async path => {
+        console.log(`[hmr] change ${path} — refresh preload cache`);
+        await refreshHotStatic(path);
+      },
+    })
+  : null;
+
+async function withLiveReload(res: Response): Promise<Response> {
+  return maybeInjectLiveReloadResponse(res, LIVE_RELOAD);
+}
 
 async function staticFile(
   pathname: string,
@@ -485,7 +541,9 @@ async function staticFile(
 
   const hot = hotByUrl.get(path);
   if (hot) {
-    return respondStatic(hot, request, { cacheControl: 'public, max-age=30' });
+    // Dev: no-store so browser picks up post-reload content
+    const cache = LIVE_RELOAD ? 'no-store' : 'public, max-age=30';
+    return withLiveReload(respondStatic(hot, request, { cacheControl: cache }));
   }
 
   let fsPath = `public${path}`;
@@ -497,10 +555,17 @@ async function staticFile(
   }
   if (!(await file.exists())) return null;
 
-  return respondAuto(fsPath, request, {
-    cache: fileRouteCache,
-    cacheControl: path.startsWith('/registry/') ? 'public, max-age=60' : 'public, max-age=300',
+  const cacheControl = LIVE_RELOAD
+    ? 'no-store'
+    : path.startsWith('/registry/')
+      ? 'public, max-age=60'
+      : 'public, max-age=300';
+  // Skip memory cache for HTML when live-reload so disk is always fresh
+  const res = await respondAuto(fsPath, request, {
+    cache: path.endsWith('.html') && LIVE_RELOAD ? undefined : fileRouteCache,
+    cacheControl,
   });
+  return withLiveReload(res);
 }
 
 // ── Server ──────────────────────────────────────────────────────────
@@ -564,9 +629,11 @@ async function monitoringPage(): Promise<Response> {
     const db = openOperationsDb({ path: dbPath });
     try {
       const data = await collectMonitoring(db, { source: 'live', uptimeOriginMs: startedAt });
-      return new Response(renderMonitoringHtml(data), {
-        headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
-      });
+      return withLiveReload(
+        new Response(renderMonitoringHtml(data), {
+          headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+        })
+      );
     } finally {
       db.close();
     }
@@ -722,9 +789,10 @@ function renderHealthPlain(data: Record<string, unknown>): string {
     `  Memory used:     ${Math.round(Number(rs.totalMemoryUsed ?? 0) / 1024)} KiB`,
     `  Rule:            ${((rs.decision as Record<string, string>) || {}).rule ?? '—'}`,
     `  ETag:            shared data scope (JSON + plain)`,
-    '',
+    ''
   );
-  const env = (data.env as { summary?: Record<string, number>; requiredMissingKeys?: string[] }) || {};
+  const env =
+    (data.env as { summary?: Record<string, number>; requiredMissingKeys?: string[] }) || {};
   if (env.summary) {
     lines.push(
       '── Environment ───────────────────────────',
@@ -763,14 +831,19 @@ async function health(req: Request = new Request('http://local/health')): Promis
 }
 
 /** GET /health/pre — plain diagnostics; same data ETag as /health. */
-async function healthHtml(req: Request = new Request('http://local/health/pre')): Promise<Response> {
+async function healthHtml(
+  req: Request = new Request('http://local/health/pre')
+): Promise<Response> {
   const { data, etag } = await collectHealthData();
   const live = {
     ...data,
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
   };
   if (isFresh(req, etag)) {
-    return notModified(etag, { vary: 'Accept', cacheControl: 'public, max-age=5, must-revalidate' });
+    return notModified(etag, {
+      vary: 'Accept',
+      cacheControl: 'public, max-age=5, must-revalidate',
+    });
   }
   return respondWithSharedETag(
     req,
@@ -842,13 +915,29 @@ async function envStatus(): Promise<Response> {
   const crit = critical.map(([key, desc]) => {
     const val = Bun.env[key];
     const h = hue(val);
-    return { key, desc, actual: val ? '••••' + val.slice(-4) : null, set: !!val, hue: h, hsl: `hsl(${h}, 70%, ${h === 0 ? 40 : 50}%)` };
+    return {
+      key,
+      desc,
+      actual: val ? '••••' + val.slice(-4) : null,
+      set: !!val,
+      hue: h,
+      hsl: `hsl(${h}, 70%, ${h === 0 ? 40 : 50}%)`,
+    };
   });
 
   const opt = optional.map(([key, desc, expected]) => {
     const val = Bun.env[key];
     const h = hue(val, expected);
-    return { key, desc, actual: val ?? '', default: expected, set: !!val, match: val === expected, hue: h, hsl: `hsl(${h}, 60%, 45%)` };
+    return {
+      key,
+      desc,
+      actual: val ?? '',
+      default: expected,
+      set: !!val,
+      match: val === expected,
+      hue: h,
+      hsl: `hsl(${h}, 60%, 45%)`,
+    };
   });
 
   return json({ critical: crit, optional: opt, generated: new Date().toISOString() });
@@ -880,6 +969,14 @@ function requireReadAuth(req: Request): Response | null {
 async function fetchHandler(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname;
+
+  // Browser live-reload SSE (loopback / SERVE_PUBLIC_HMR=1)
+  if (path === '/__hmr' || path === '/__hmr/') {
+    if (!liveReloadHub) {
+      return json({ error: 'live-reload disabled', hint: 'SERVE_PUBLIC_HMR=1' }, 404);
+    }
+    return liveReloadHub.subscribe(req);
+  }
 
   // Health endpoint — no auth
   if (path === '/health' || path === '/health/') return health(req);
@@ -1031,12 +1128,18 @@ function buildPublicRoutes() {
     },
 
     '/monitoring': () => monitoringPage(),
+    '/__hmr': (req: Request) =>
+      liveReloadHub ? liveReloadHub.subscribe(req) : json({ error: 'live-reload disabled' }, 404),
 
-    // Portal — file-route with Last-Modified / Range; small HTML can cache in respondAuto
+    // Portal — file-route with Last-Modified / Range; live-reload injects client
     '/portal': (req: Request) =>
-      respondAuto('public/portal/index.html', req, { cacheControl: 'public, max-age=60' }),
+      staticFile('/portal/index.html', req).then(
+        r => r ?? new Response('Not found', { status: 404 })
+      ),
     '/portal/': (req: Request) =>
-      respondAuto('public/portal/index.html', req, { cacheControl: 'public, max-age=60' }),
+      staticFile('/portal/index.html', req).then(
+        r => r ?? new Response('Not found', { status: 404 })
+      ),
   };
 }
 
@@ -1107,6 +1210,17 @@ console.log(
 console.log(`Bind: ${boundHost}:${boundPort}  DB: ${dbPath}`);
 if (boundPort !== PORT) {
   console.log(`(preferred PORT=${PORT} was busy — bound ${boundPort})`);
+}
+if (LIVE_RELOAD && liveReloadHub) {
+  await liveReloadHub.startPolling(WATCH_PATHS);
+  console.log(
+    `HMR:           browser live-reload ON (SSE ${base}/__hmr) · poll ${WATCH_PATHS.length} paths`
+  );
+  console.log(
+    `               server HMR: bun --hot scripts/serve-public.ts · off: SERVE_PUBLIC_HMR=0`
+  );
+} else {
+  console.log(`HMR:           off (set SERVE_PUBLIC_HMR=1 or bind 127.0.0.1)`);
 }
 
 // In-process Bun.cron complement: refresh snapshots while the portal is up.
