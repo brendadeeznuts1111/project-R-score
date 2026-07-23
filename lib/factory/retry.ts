@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 /**
  * retry.ts — exponential backoff retry utility for registry proof checks.
  *
@@ -17,7 +20,7 @@ export async function withRetry<T>(
   fn: () => Promise<T>,
   label: string,
   maxRetries = 3,
-  baseDelayMs = 1000,
+  baseDelayMs = 1000
 ): Promise<T | null> {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -25,7 +28,9 @@ export async function withRetry<T>(
     } catch (e) {
       const jitter = Math.random() * 1000;
       const delay = baseDelayMs * Math.pow(2, attempt - 1) + jitter;
-      console.warn(`[${label}] attempt ${attempt}/${maxRetries}: ${(e as Error).message}. retry in ${Math.round(delay)}ms`);
+      console.warn(
+        `[${label}] attempt ${attempt}/${maxRetries}: ${(e as Error).message}. retry in ${Math.round(delay)}ms`
+      );
       if (attempt === maxRetries) {
         console.error(`[${label}] all ${maxRetries} retries exhausted`);
         return null;
@@ -44,7 +49,7 @@ export async function withCache<T>(
   key: string,
   compute: () => Promise<T>,
   ttlMs = 5 * 60 * 1000,
-  diskPath?: string,
+  diskPath?: string
 ): Promise<{ data: T; source: 'fresh' | 'memory' | 'disk' | 'stale' }> {
   const now = Date.now();
 
@@ -70,14 +75,19 @@ export async function withCache<T>(
           return { data: disk.data, source: 'stale' };
         }
       }
-    } catch { /* corrupted */ }
+    } catch {
+      /* corrupted */
+    }
   }
 
   // 3. Fresh compute
   const data = await compute();
   GLOBAL_CACHE.set(key, { data, ts: now });
   if (diskPath) {
-    await Bun.write(diskPath, JSON.stringify({ data, ts: new Date().toISOString() }, null, 2)).catch(() => {});
+    await Bun.write(
+      diskPath,
+      JSON.stringify({ data, ts: new Date().toISOString() }, null, 2)
+    ).catch(() => {});
   }
   return { data, source: 'fresh' };
 }

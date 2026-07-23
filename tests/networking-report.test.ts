@@ -60,6 +60,16 @@ describe('NetworkingChecksReport', () => {
     });
     expect(r.optimization).toBe('Warm Fetch');
     expect(r.type).toBe('warm-fetch');
+
+    expect(
+      netCheckRow({
+        target: 'x',
+        category: 'ops',
+        type: 'response-json',
+        metric: '1ms',
+        status: 'PASS',
+      }).optimization
+    ).toBe('response.json()');
   });
 
   test('byType and byCategory group correctly', () => {
@@ -68,7 +78,7 @@ describe('NetworkingChecksReport', () => {
     expect(byType['dns-prefetch']).toHaveLength(2);
     expect(byType['cold-fetch']).toHaveLength(2);
     expect(byType['preconnect']).toHaveLength(1);
-    expect(byType['buffer']).toHaveLength(0);
+    expect(byType['response-bytes']).toHaveLength(0);
 
     const byCat = report.byCategory();
     expect(byCat.ops).toHaveLength(3);

@@ -152,6 +152,10 @@ export async function buildRegistrySnapshot(options?: {
         const net = await runNetworkingVerification({
           saveProof: true,
           remote: Bun.env.NETWORKING_VERIFY_REMOTE === '1',
+          base:
+            Bun.env.HEALTH_URL ||
+            Bun.env.BASE_URL ||
+            'http://127.0.0.1:3000',
         });
         (payload as Record<string, unknown>).networking = {
           proofHash: net.proofHash,

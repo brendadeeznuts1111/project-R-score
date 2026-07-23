@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/networking/fetch#custom-headers — custom headers
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch / Bun.fetch
 // @see https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host — fetch.preconnect
 // @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup — --fetch-preconnect
@@ -34,6 +35,13 @@
  */
 
 import {
+  ACCEPT_JSON,
+  ACCEPT_PLAIN,
+  BUN_FETCH_CUSTOM_HEADERS_DOCS,
+  installGlobalFetchHeaders,
+  mergeFetchInit,
+} from '../lib/http/fetch-client.ts';
+import {
   computeDataETag,
   isFresh,
   notModified,
@@ -55,6 +63,7 @@ import {
 
 const CANONICAL = {
   fetch: 'https://bun.com/docs/runtime/networking/fetch#sending-an-http-request',
+  customHeaders: BUN_FETCH_CUSTOM_HEADERS_DOCS,
   preconnect: 'https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host',
   preconnectStartup: BUN_FETCH_PRECONNECT_STARTUP_DOCS,
   dnsPrefetching: BUN_DNS_PREFETCHING_DOCS,
@@ -253,7 +262,7 @@ async function fetchHealth(
   base: string,
   path: string,
   opts: { accept: string; ifNoneMatch?: string; method?: string } = {
-    accept: 'application/json',
+    accept: ACCEPT_JSON,
   }
 ): Promise<{
   status: number;
@@ -265,11 +274,14 @@ async function fetchHealth(
 }> {
   const headers: Record<string, string> = { Accept: opts.accept };
   if (opts.ifNoneMatch) headers['If-None-Match'] = opts.ifNoneMatch;
-  const res = await fetch(new URL(path, base.endsWith('/') ? base : `${base}/`), {
-    method: opts.method ?? 'GET',
-    headers,
-    ...(VERBOSE ? { verbose: true } : {}),
-  });
+  const res = await fetch(
+    new URL(path, base.endsWith('/') ? base : `${base}/`),
+    mergeFetchInit({
+      method: opts.method ?? 'GET',
+      headers,
+      ...(VERBOSE ? { verbose: true } : {}),
+    })
+  );
   const etag = res.headers.get('ETag');
   const vary = res.headers.get('Vary');
   const scope = res.headers.get('X-ETag-Scope');
@@ -324,7 +336,7 @@ export async function runOnlineETagSuite(
   });
 
   // 1. GET /health JSON
-  const json = await fetchHealth(base, '/health', { accept: 'application/json' });
+  const json = await fetchHealth(base, '/health', { accept: ACCEPT_JSON });
   const etag = json.etag;
   rows.push({
     step: '1. GET /health',
@@ -356,7 +368,7 @@ export async function runOnlineETagSuite(
 
   // 2. Same path If-None-Match → 304
   const reJson = await fetchHealth(base, '/health', {
-    accept: 'application/json',
+    accept: ACCEPT_JSON,
     ifNoneMatch: etag,
   });
   rows.push({
@@ -371,7 +383,7 @@ export async function runOnlineETagSuite(
 
   // 3. /health/pre with same ETag → 304 (shared format)
   const pre304 = await fetchHealth(base, '/health/pre', {
-    accept: 'text/plain',
+    accept: ACCEPT_PLAIN,
     ifNoneMatch: etag,
   });
   rows.push({
@@ -386,7 +398,7 @@ export async function runOnlineETagSuite(
   });
 
   // 4. Fresh plain 200 must emit the same ETag (deepEquals)
-  const pre200 = await fetchHealth(base, '/health/pre', { accept: 'text/plain' });
+  const pre200 = await fetchHealth(base, '/health/pre', { accept: ACCEPT_PLAIN });
   const etagsMatch = deepEqualsStrict(pre200.etag, etag);
   rows.push({
     step: '4. plain ETag shared',
@@ -404,11 +416,11 @@ export async function runOnlineETagSuite(
 
   // 5. Dual revalidate both formats
   const vJson = await fetchHealth(base, '/health', {
-    accept: 'application/json',
+    accept: ACCEPT_JSON,
     ifNoneMatch: etag,
   });
   const vPre = await fetchHealth(base, '/health/pre', {
-    accept: 'text/plain',
+    accept: ACCEPT_PLAIN,
     ifNoneMatch: etag,
   });
   const sharedOk = vJson.status === 304 && vPre.status === 304;
@@ -436,7 +448,7 @@ export async function runOnlineETagSuite(
     });
   } else {
     await Bun.sleep(ttlWaitMs);
-    const fresh = await fetchHealth(base, '/health', { accept: 'application/json' });
+    const fresh = await fetchHealth(base, '/health', { accept: ACCEPT_JSON });
     const freshEtag = fresh.etag;
     const changed = freshEtag !== etag;
     // Pass if: 200 + has ETag + shared revalidate still works with fresh tag
@@ -444,11 +456,11 @@ export async function runOnlineETagSuite(
     let newShared = false;
     if (freshEtag) {
       const nJson = await fetchHealth(base, '/health', {
-        accept: 'application/json',
+        accept: ACCEPT_JSON,
         ifNoneMatch: freshEtag,
       });
       const nPre = await fetchHealth(base, '/health/pre', {
-        accept: 'text/plain',
+        accept: ACCEPT_PLAIN,
         ifNoneMatch: freshEtag,
       });
       newShared = nJson.status === 304 && nPre.status === 304;
@@ -472,9 +484,10 @@ export async function runOnlineETagSuite(
 
 async function baseReachable(base: string): Promise<boolean> {
   try {
-    const res = await fetch(new URL('/health', base.endsWith('/') ? base : `${base}/`), {
-      signal: AbortSignal.timeout(2_000),
-    });
+    const res = await fetch(
+      new URL('/health', base.endsWith('/') ? base : `${base}/`),
+      mergeFetchInit({ signal: AbortSignal.timeout(2_000), headers: { Accept: ACCEPT_JSON } })
+    );
     return res.status > 0;
   } catch {
     return false;
@@ -521,6 +534,7 @@ function printCanonicalFooter(): void {
 // ── Main ───────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
+  installGlobalFetchHeaders();
   const t0 = Bun.nanoseconds();
   const offline = runOfflineETagProof();
 

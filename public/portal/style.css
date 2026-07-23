@@ -78,6 +78,8 @@ body {
 
 .nav-link:hover { color: var(--text); background: var(--surface-hover); }
 .nav-link.active { color: var(--accent); font-weight: 500; }
+.nav-link.nav-md { font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.85; }
+.nav-link.nav-md:hover { opacity: 1; }
 
 .topbar-status {
   display: flex;

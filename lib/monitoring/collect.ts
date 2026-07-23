@@ -6,6 +6,10 @@
  */
 import type { Database } from 'bun:sqlite';
 import { joinPath } from '../path-bun';
+import {
+  parseNetworkingProofArtifact,
+  toMonitoringNetworkingReport,
+} from '../http/networking-proof.ts';
 import { ensureMonitoringSchema } from './schema.ts';
 
 export type IntegritySnapshot = {
@@ -16,28 +20,8 @@ export type IntegritySnapshot = {
   source?: 'sqlite' | 'file' | 'unknown';
 };
 
-/** Networking proof — connection reuse, preconnect efficiency, fetch perf. */
-export type NetworkingChecksReport = {
-  schemaVersion: number;
-  bunVersion: string;
-  bunRevision: string;
-  timestamp: string;
-  base: string;
-  totalTargets: number;
-  allOk: boolean;
-  proofHash: string;
-  targets: Array<{
-    name: string;
-    summary: {
-      protocol: string;
-      reuseEfficiency: number;
-      coldFetchMs: number;
-      warmFetchMs: number;
-      statusCode: number;
-      bodySize: number;
-    };
-  }>;
-};
+/** Networking connection reuse proof (from verify-networking.ts). */
+export type { NetworkingMonitoringReport as NetworkingChecksReport } from '../http/networking-proof.ts';
 
 export type MonitoringPayload = {
   source: 'live' | 'snapshot';
@@ -255,6 +239,17 @@ export async function collectMonitoring(
     predictionN = row?.c ?? 0;
   }
 
+  let networkingProof: import('../http/networking-proof.ts').NetworkingMonitoringReport | undefined;
+  const netFile = Bun.file('public/registry/networking-proof.json');
+  if (await netFile.exists()) {
+    try {
+      const parsed = parseNetworkingProofArtifact(await netFile.json());
+      if (parsed) networkingProof = toMonitoringNetworkingReport(parsed);
+    } catch {
+      /* ignore malformed artifact */
+    }
+  }
+
   return {
     source: opts?.source ?? 'live',
     uptime: formatUptime(uptimeMs),
@@ -269,5 +264,6 @@ export async function collectMonitoring(
     experimentsActive,
     predictionN,
     timestamp: new Date().toISOString(),
+    networkingProof,
   };
 }

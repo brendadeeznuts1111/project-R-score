@@ -33,6 +33,7 @@ function networkingProofSection(proof: import('./collect.ts').NetworkingChecksRe
   }));
   const summary = tableSection('Networking proof — per target', targetRows);
   const meta = tableSection('Networking summary', [
+    { Metric: 'Report type', Value: proof.reportType },
     { Metric: 'Proof hash', Value: proof.proofHash.slice(0, 16) + '…' },
     { Metric: 'All OK', Value: String(proof.allOk) },
     { Metric: 'Targets', Value: String(proof.totalTargets) },

@@ -23,7 +23,10 @@
  * @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup
  * @see https://bun.com/docs/runtime/networking/dns#dns-prefetch
  * @see https://bun.com/docs/runtime/networking/dns#dns-getcachestats
+ * @see https://bun.com/docs/runtime/networking/fetch#custom-headers
  */
+
+import { mergeFetchHeaders } from '../http/fetch-client.ts';
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 const USER_AGENT = 'BunHarness/1.0 (blog ingestion)';
@@ -52,10 +55,10 @@ function resolveSignal(opts?: FetchPageOptions): AbortSignal {
 }
 
 function resolveHeaders(opts?: FetchPageOptions): Headers {
-  const headers = new Headers(opts?.headers);
-  if (!headers.has('Accept')) headers.set('Accept', 'text/html');
-  if (!headers.has('User-Agent')) headers.set('User-Agent', USER_AGENT);
-  return headers;
+  return mergeFetchHeaders(
+    { Accept: 'text/html', 'User-Agent': USER_AGENT },
+    opts?.headers
+  );
 }
 
 /**

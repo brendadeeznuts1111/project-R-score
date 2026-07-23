@@ -536,6 +536,64 @@
           }
         }
       }
+    },
+    "formdata-test": {
+      "versions": [
+        "1.0.0"
+      ],
+      "dist-tags": {
+        "latest": "1.0.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "formdata-test@1.0.0",
+          "name": "formdata-test",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "FormData per Bun docs",
+          "tags": [
+            "latest"
+          ],
+          "publishedAt": "2026-07-23T19:29:06.047Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/formdata-test/1.0.0.tgz",
+            "size": 42,
+            "checksum": "f381181fda4dc88664b89627a69057106e9fc2eea73661457bf0f3886322d730",
+            "contentType": "text/javascript;charset=utf-8"
+          }
+        }
+      }
+    },
+    "__formdata-test": {
+      "versions": [
+        "1.0.0"
+      ],
+      "dist-tags": {
+        "latest": "1.0.0",
+        "formdata-test": "1.0.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "__formdata-test@1.0.0",
+          "name": "__formdata-test",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "FormData: Markdown doc",
+          "tags": [
+            "latest",
+            "formdata-test"
+          ],
+          "publishedAt": "2026-07-23T19:30:36.020Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/__formdata-test/1.0.0.tgz",
+            "size": 28,
+            "checksum": "9e3f03aa5caf98578bfc262433f6a23bded2a9d9366af8f7383b236495d09ccb",
+            "contentType": "text/markdown"
+          }
+        }
+      }
     }
   }
 }

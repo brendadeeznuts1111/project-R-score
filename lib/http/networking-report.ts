@@ -233,7 +233,12 @@ export const NET_OPTIMIZATION_TYPES = [
   'preconnect',
   'cold-fetch',
   'warm-fetch',
-  'buffer',
+  'response-text',
+  'response-json',
+  'response-formdata',
+  'response-bytes',
+  'response-arraybuffer',
+  'response-blob',
   'disk-write',
 ] as const;
 
@@ -246,7 +251,12 @@ export const NET_OPTIMIZATION_LABELS: Record<NetOptimizationType, string> = {
   preconnect: 'Preconnect',
   'cold-fetch': 'Cold Fetch',
   'warm-fetch': 'Warm Fetch',
-  buffer: 'Buffer',
+  'response-text': 'response.text()',
+  'response-json': 'response.json()',
+  'response-formdata': 'response.formData()',
+  'response-bytes': 'response.bytes()',
+  'response-arraybuffer': 'response.arrayBuffer()',
+  'response-blob': 'response.blob()',
   'disk-write': 'Disk Write',
 };
 

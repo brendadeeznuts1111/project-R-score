@@ -22,7 +22,8 @@ describe('tools/verify-networking', () => {
       reachable = false;
     }
 
-    const rows = await verifyTarget(target, { skipWrite: true });
+    const result = await verifyTarget(target, { skipWrite: true });
+    const rows = result.rows;
     expect(rows.some(r => r.optimization === 'DNS Prefetch' && r.status === 'PASS')).toBe(true);
     expect(rows.some(r => r.optimization === 'Preconnect')).toBe(true);
 

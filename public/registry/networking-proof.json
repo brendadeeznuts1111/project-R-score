@@ -1,30 +1,35 @@
 {
-  "proofHash": "b1828bef692562b6b01bac80f5bf4eec2e88c084e8de3c43d7244ccf9c69ab7b",
-  "timestamp": "2026-07-23T19:38:47.458Z",
+  "proofHash": "243ca6ee4dd9e79d1dca0ab9653f83221acd91d157af707d086f07f6a49c0392",
+  "schemaVersion": 1,
+  "reportType": "networking-verification",
+  "timestamp": "2026-07-23T19:44:27.255Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
+  "base": "http://127.0.0.1:3000",
+  "remote": false,
+  "allOk": true,
   "targets": [
     {
       "name": "Health",
       "category": "ops",
       "optimizations": {
         "DNS Prefetch": {
-          "metric": "0.065ms",
+          "metric": "0.309ms",
           "status": "PASS",
           "detail": "dns.prefetch(\"127.0.0.1\", 3000)"
         },
         "DNS Cache": {
-          "metric": "size=2 total=13",
+          "metric": "size=1 total=1",
           "status": "PASS",
-          "detail": "hits=6 miss=2 err=0"
+          "detail": "hits=0 miss=1 err=0"
         },
         "Preconnect": {
-          "metric": "tcp",
+          "metric": "dns-only",
           "status": "PASS",
-          "detail": "fetch.preconnect(http://127.0.0.1:3000)"
+          "detail": "fetch.preconnect is not a function. (In 'fetch.preconnect(target)', 'fetch.preconnect' is undefined)"
         },
         "Cold Fetch": {
-          "metric": "3.7ms (200)",
+          "metric": "4.1ms (200)",
           "status": "PASS"
         },
         "Warm Fetch": {
@@ -37,44 +42,46 @@
           "status": "PASS"
         },
         "Disk Write": {
-          "metric": "0.3ms",
+          "metric": "0.8ms",
           "status": "PASS",
-          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-ops-1784835527455.bin"
+          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-ops-1784835867250.bin"
         }
       },
       "summary": {
-        "coldFetchMs": 3.733834,
-        "warmFetchMs": 0.271375,
-        "reuseEfficiency": 13.758946107784432,
+        "coldFetchMs": 4.108916,
+        "warmFetchMs": 0.2555,
+        "reuseEfficiency": 16.08186301369863,
         "protocol": "unknown",
         "compression": "none",
         "dnsCacheHit": true,
         "keepAlive": false,
-        "http3": false
+        "http3": false,
+        "statusCode": 200,
+        "bodySize": 4264
       },
-      "timestamp": "2026-07-23T19:38:47.450Z"
+      "timestamp": "2026-07-23T19:44:27.245Z"
     },
     {
       "name": "Prediction report",
       "category": "registry",
       "optimizations": {
         "DNS Prefetch": {
-          "metric": "0.006ms",
+          "metric": "0.023ms",
           "status": "PASS",
           "detail": "dns.prefetch(\"127.0.0.1\", 3000)"
         },
         "DNS Cache": {
-          "metric": "size=2 total=15",
+          "metric": "size=1 total=3",
           "status": "PASS",
-          "detail": "hits=6 miss=2 err=0"
+          "detail": "hits=0 miss=1 err=0"
         },
         "Preconnect": {
-          "metric": "tcp",
+          "metric": "dns-only",
           "status": "PASS",
-          "detail": "fetch.preconnect(http://127.0.0.1:3000)"
+          "detail": "fetch.preconnect is not a function. (In 'fetch.preconnect(target)', 'fetch.preconnect' is undefined)"
         },
         "Cold Fetch": {
-          "metric": "0.5ms (200)",
+          "metric": "0.8ms (200)",
           "status": "PASS"
         },
         "Warm Fetch": {
@@ -83,39 +90,41 @@
           "detail": "faster than cold (likely reuse)"
         },
         "Buffer": {
-          "metric": "0.7ms (17789 B)",
+          "metric": "0.3ms (17789 B)",
           "status": "PASS"
         },
         "Disk Write": {
           "metric": "0.3ms",
           "status": "PASS",
-          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-registry-1784835527457.bin"
+          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-registry-1784835867254.bin"
         }
       },
       "summary": {
-        "coldFetchMs": 0.466834,
-        "warmFetchMs": 0.280625,
-        "reuseEfficiency": 1.6635510022271716,
+        "coldFetchMs": 0.840042,
+        "warmFetchMs": 0.333541,
+        "reuseEfficiency": 2.518556939026986,
         "protocol": "unknown",
         "compression": "none",
         "dnsCacheHit": true,
         "keepAlive": false,
-        "http3": false
+        "http3": false,
+        "statusCode": 200,
+        "bodySize": 17789
       },
-      "timestamp": "2026-07-23T19:38:47.456Z"
+      "timestamp": "2026-07-23T19:44:27.252Z"
     }
   ],
   "global": {
-    "elapsedMs": 8.113292,
+    "elapsedMs": 10.788917,
     "checksPassed": 14,
     "checksTotal": 14,
     "dnsCache": {
-      "cacheHitsCompleted": 6,
-      "cacheHitsInflight": 5,
-      "cacheMisses": 2,
-      "size": 2,
+      "cacheHitsCompleted": 0,
+      "cacheHitsInflight": 0,
+      "cacheMisses": 1,
+      "size": 1,
       "errors": 0,
-      "totalCount": 16
+      "totalCount": 4
     }
   }
 }

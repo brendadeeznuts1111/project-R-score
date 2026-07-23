@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 /**
  * check-env-defaults.ts — verify Bun.env.* calls have proper fallbacks or SSOT defaults.
  * Prevents runtime crashes from missing env vars.
@@ -9,13 +12,20 @@ import { Glob } from 'bun';
 
 const ROOT = process.cwd();
 const IGNORE_DIRS = ['node_modules', '.git', '.cache', 'bun.lock', '__snapshots__'];
-const IGNORE_PATTERNS = [/\.test\./, /\.spec\./, /\.bench\./, /\.d\.ts$/, /fixtures\//, /__tests__\//];
+const IGNORE_PATTERNS = [
+  /\.test\./,
+  /\.spec\./,
+  /\.bench\./,
+  /\.d\.ts$/,
+  /fixtures\//,
+  /__tests__\//,
+];
 const DRY_RUN = Bun.argv.includes('--dry-run') || Bun.argv.includes('--dry');
 
 // Patterns that are safe: Bun.env.FOO || 'default' or Bun.env.FOO ?? 'default'
-const SAFE_RE = /\bBun\.env\.([A-Z_][A-Z0-9_]*)/
-const HAS_FALLBACK_RE = /\|\| ['"`]|\?\? ['"`]/
-const HAS_SSOT_RE = /CLOUDFLARE_DEFAULTS|R2_CONFIG|DEFAULT_/
+const SAFE_RE = /\bBun\.env\.([A-Z_][A-Z0-9_]*)/;
+const HAS_FALLBACK_RE = /\|\| ['"`]|\?\? ['"`]/;
+const HAS_SSOT_RE = /CLOUDFLARE_DEFAULTS|R2_CONFIG|DEFAULT_/;
 
 const glob = new Glob('**/*.ts');
 const issues: string[] = [];
@@ -25,22 +35,29 @@ for await (const file of glob.scan({ cwd: ROOT, absolute: true })) {
   if (IGNORE_PATTERNS.some(p => p.test(file))) continue;
   const text = await Bun.file(file).text();
   const lines = text.split('\n');
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const match = line.match(SAFE_RE);
     if (!match) continue;
-    
+
     const envVar = match[1];
     // Skip known SSOT config vars
-    if (envVar.startsWith('NODE_') || envVar === 'HOME' || envVar === 'PATH' || envVar === 'PORT' || envVar === 'HOSTNAME') continue;
-    
+    if (
+      envVar.startsWith('NODE_') ||
+      envVar === 'HOME' ||
+      envVar === 'PATH' ||
+      envVar === 'PORT' ||
+      envVar === 'HOSTNAME'
+    )
+      continue;
+
     // Check same line for fallback
     if (HAS_FALLBACK_RE.test(line)) continue;
-    
+
     // Check for SSOT reference
     if (HAS_SSOT_RE.test(line)) continue;
-    
+
     issues.push(`${file}:${i + 1}: Bun.env.${envVar} without explicit fallback`);
   }
 }

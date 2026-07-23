@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-  "baseUrl": "http://127.0.0.1:54415",
-  "timestamp": "2026-07-23T18:18:32.870Z",
+  "baseUrl": "https://score.factory-wager.com",
+  "timestamp": "2026-07-23T19:38:46.814Z",
   "concurrency": 6,
   "probes": [
     {
@@ -12,8 +12,8 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 9.58,
-      "contentType": "application/json",
+      "timeMs": 537.32,
+      "contentType": "text/html",
       "note": "may be SPA HTML"
     },
     {
@@ -22,48 +22,48 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 1.03,
-      "contentType": "text/plain",
+      "timeMs": 304.9,
+      "contentType": "text/html",
       "note": "may be SPA HTML"
     },
     {
       "path": "/api/registry",
-      "status": 200,
-      "ok": true,
+      "status": 400,
+      "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 2.3,
+      "timeMs": 342.63,
       "contentType": "application/json",
       "note": "index (local) or empty-key 400 (R2 gateway)"
     },
     {
       "path": "/api/registry/@factorywager/test-pkg",
-      "status": 404,
-      "ok": false,
-      "pass": true,
+      "status": 200,
+      "ok": true,
+      "pass": false,
       "critical": false,
-      "timeMs": 2.35,
-      "contentType": "application/json",
+      "timeMs": 444.21,
+      "contentType": "text/html",
       "note": "placeholder package"
     },
     {
       "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
-      "status": 404,
-      "ok": false,
+      "status": 200,
+      "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 1.87,
-      "contentType": "text/plain",
+      "timeMs": 510.78,
+      "contentType": "application/json",
       "note": "R2 optional; static path preferred"
     },
     {
       "path": "/api/registry/@factorywager/routing-test/latest.json",
-      "status": 404,
-      "ok": false,
+      "status": 200,
+      "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 1.91,
-      "contentType": "text/plain",
+      "timeMs": 474.69,
+      "contentType": "application/json",
       "note": "R2 optional"
     },
     {
@@ -72,7 +72,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 6.45,
+      "timeMs": 101.35,
       "contentType": "application/json",
       "note": "ops snapshot/live"
     },
@@ -82,7 +82,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 9.6,
+      "timeMs": 41.28,
       "contentType": "application/json",
       "note": "monitoring payload"
     },
@@ -92,7 +92,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 9.52,
+      "timeMs": 143.26,
       "contentType": "text/html"
     },
     {
@@ -101,7 +101,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 5.36,
+      "timeMs": 187.65,
       "contentType": "text/html"
     },
     {
@@ -110,7 +110,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 5.37,
+      "timeMs": 133.53,
       "contentType": "text/html",
       "note": "ops dashboard"
     },
@@ -120,7 +120,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 3.96,
+      "timeMs": 36.14,
       "contentType": "application/json",
       "note": "static ops metrics"
     },
@@ -130,7 +130,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 3.86,
+      "timeMs": 36.52,
       "contentType": "application/json",
       "note": "static bun utils proof"
     },
@@ -140,7 +140,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 3.78,
+      "timeMs": 103.2,
       "contentType": "application/json",
       "note": "this artifact (404 until first --write deploy)"
     },
@@ -150,46 +150,76 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 2.05,
+      "timeMs": 102.29,
       "contentType": "application/json",
       "note": "composite snapshot from ops:snapshot"
     },
     {
       "path": "/api/registry/static",
-      "status": 200,
-      "ok": true,
-      "pass": true,
+      "status": 400,
+      "ok": false,
+      "pass": false,
       "critical": false,
-      "timeMs": 0.3,
+      "timeMs": 32.87,
       "contentType": "application/json",
       "note": "local serve-public static snapshot route"
     }
   ],
   "latency": {
-    "minMs": 0.3,
-    "maxMs": 9.6,
-    "meanMs": 4.33,
-    "p50Ms": 3.78,
-    "p95Ms": 9.6
+    "minMs": 32.87,
+    "maxMs": 537.32,
+    "meanMs": 220.79,
+    "p50Ms": 133.53,
+    "p95Ms": 537.32
   },
   "summary": {
     "total": 16,
-    "passed": 16,
-    "failed": 0,
-    "httpOk": 13,
+    "passed": 14,
+    "failed": 2,
+    "httpOk": 14,
     "criticalFailed": 0,
     "criticalFailedPaths": []
   },
   "regression": {
-    "previousTimestamp": "2026-07-23T18:18:06.967Z",
-    "previousProofHash": "e6f852b285437f30b958bbd5419c971ad423014b8eb70c35a148b919154733fd",
+    "previousTimestamp": "2026-07-23T18:18:32.870Z",
+    "previousProofHash": "daec640ea45879f19642bf99510a0f329f2491accba9f4cc338d46c87990b9a8",
     "changes": [
       {
         "path": "/api/registry",
+        "kind": "status",
+        "detail": "200 → 400"
+      },
+      {
+        "path": "/api/registry/@factorywager/test-pkg",
+        "kind": "status",
+        "detail": "404 → 200"
+      },
+      {
+        "path": "/api/registry/@factorywager/test-pkg",
         "kind": "pass",
-        "detail": "FAIL → pass"
+        "detail": "pass → FAIL"
+      },
+      {
+        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+        "kind": "status",
+        "detail": "404 → 200"
+      },
+      {
+        "path": "/api/registry/@factorywager/routing-test/latest.json",
+        "kind": "status",
+        "detail": "404 → 200"
+      },
+      {
+        "path": "/api/registry/static",
+        "kind": "status",
+        "detail": "200 → 400"
+      },
+      {
+        "path": "/api/registry/static",
+        "kind": "pass",
+        "detail": "pass → FAIL"
       }
     ]
   },
-  "proofHash": "daec640ea45879f19642bf99510a0f329f2491accba9f4cc338d46c87990b9a8"
+  "proofHash": "cdde6780dd64e8c9e17cb6158452b1ee0b9fcecb7c8e6824451c3378332f417a"
 }
