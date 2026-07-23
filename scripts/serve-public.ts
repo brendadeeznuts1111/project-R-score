@@ -89,6 +89,10 @@ import {
 import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
 import { parsePortalMdPath } from '../lib/http/portal-nav.ts';
 import { portalMarkdownRaw, renderPortalMarkdownPage } from '../lib/http/portal-markdown.ts';
+import {
+  serveVerificationScript,
+  serveVerificationScriptMeta,
+} from '../lib/http/verification-scripts.ts';
 import type { BunServer } from '../lib/http/bun-server.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
@@ -1360,8 +1364,12 @@ function buildPublicRoutes() {
       if (!(await f.exists())) {
         return json(
           {
-            error: 'Defaults proof not generated — run bun run check:defaults',
+            error: 'Defaults proof not generated — run bun tools/verify-defaults.ts --save',
             docs: 'https://bun.com/docs/runtime/utils',
+            _links: {
+              script: '/api/defaults/script',
+              pipe: 'curl -sf http://127.0.0.1:3000/api/defaults/script | bun run -',
+            },
           },
           404
         );
@@ -1406,10 +1414,28 @@ function buildPublicRoutes() {
           raw: '/api/defaults?format=raw',
           text: '/api/defaults?format=text',
           proof: '/public/registry/defaults-proof.json',
+          script: '/api/defaults/script',
+          scriptMeta: '/api/defaults/script.meta',
           docs: 'https://bun.com/docs/runtime/utils',
         },
       });
     },
+    '/api/defaults/script': (req: Request) =>
+      serveVerificationScript('defaults', { baseUrl: new URL(req.url).origin }),
+    '/api/defaults/script/': (req: Request) =>
+      serveVerificationScript('defaults', { baseUrl: new URL(req.url).origin }),
+    '/api/defaults/script.meta': (req: Request) =>
+      serveVerificationScriptMeta('defaults', new URL(req.url).origin),
+    '/api/bun-defaults/script': (req: Request) =>
+      serveVerificationScript('bun-defaults', { baseUrl: new URL(req.url).origin }),
+    '/api/bun-defaults/script.meta': (req: Request) =>
+      serveVerificationScriptMeta('bun-defaults', new URL(req.url).origin),
+    '/api/networking/script': (req: Request) =>
+      serveVerificationScript('networking', { baseUrl: new URL(req.url).origin }),
+    '/api/networking/script/': (req: Request) =>
+      serveVerificationScript('networking', { baseUrl: new URL(req.url).origin }),
+    '/api/networking/script.meta': (req: Request) =>
+      serveVerificationScriptMeta('networking', new URL(req.url).origin),
     '/api/env': () => envStatus(),
     '/api/monitoring': () => liveMonitoringApi(),
     '/api/operations/summary': () => liveOpsSummary(),
@@ -1476,6 +1502,8 @@ function buildPublicRoutes() {
     '/portal/env/': portalPage('/portal/env/'),
     '/portal/dod': portalPage('/portal/dod/'),
     '/portal/dod/': portalPage('/portal/dod/'),
+    '/portal/dashboard': portalPage('/portal/dashboard/'),
+    '/portal/dashboard/': portalPage('/portal/dashboard/'),
     '/portal/catalog': portalPage('/portal/catalog/'),
     '/portal/catalog/': portalPage('/portal/catalog/'),
   };
