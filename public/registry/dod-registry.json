@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "id": "019f8dbe-72f9-7782-a05a-beb99987f580",
+      "agentId": "019f8dbe-72f9-7783-9a11-27ed7abbcb95",
+      "type": "slip",
+      "status": "pending",
+      "tamperScore": 20,
+      "submittedAt": "2026-07-23T06:51:36.569Z",
+      "processedAt": "2026-07-23T06:51:36.613Z",
+      "processingMs": 43.393334
+    }
+  ]
+}
