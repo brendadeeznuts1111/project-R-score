@@ -7,6 +7,10 @@
  */
 import type { Database } from 'bun:sqlite';
 import { buildBunUtilsProof } from '../bun-utils-proof.ts';
+import {
+  loadRoutingOpsSliceSync,
+  type RoutingOpsSlice,
+} from '../routing-proof.ts';
 import { getPredictionAccuracy } from '../prediction/index.ts';
 
 export type OpsSummaryExpert = {
@@ -96,6 +100,11 @@ export type OpsSummaryPayload = {
   growth: OpsSummaryGrowth;
   /** Self-verifying Bun.stringWidth / deepEquals / inspect fingerprint. */
   bunUtils: OpsSummaryBunUtils;
+  /**
+   * Last routing proof from public/registry/@factorywager/routing-test/latest.json
+   * (refreshed by `bun run routing:proof:write` or `ops:snapshot --routing`).
+   */
+  routing: RoutingOpsSlice;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -335,5 +344,6 @@ export function buildOpsSummary(
     prediction: queryPrediction(db),
     growth: queryGrowth(db),
     bunUtils: queryBunUtilsProof(),
+    routing: loadRoutingOpsSliceSync(),
   };
 }

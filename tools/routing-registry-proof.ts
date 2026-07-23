@@ -5,25 +5,28 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/networking/fetch
 /**
- * Registry routing proof + optional local artifact publish.
+ * Registry routing proof + optional local artifact publish (v2).
  *
  *   bun tools/routing-registry-proof.ts
  *   REGISTRY_URL=https://score.factory-wager.com bun tools/routing-registry-proof.ts --write
  *   bun tools/routing-registry-proof.ts --write --json
- *   API_KEY=… bun tools/routing-registry-proof.ts --publish
- *
- * Artifact: public/registry/@factorywager/routing-test/latest.json
- * (allowlisted under /api/registry/@factorywager/* when mirrored to R2)
+ *   bun tools/routing-registry-proof.ts --concurrency 8 --base https://project-r-score.pages.dev
  *
  * @see lib/routing-proof.ts
  */
-import { runRoutingProof, routingTableRows } from '../lib/routing-proof.ts';
+import {
+  runRoutingProof,
+  routingTableRows,
+  writeRoutingArtifact,
+  ROUTING_ARTIFACT_PACKAGE,
+} from '../lib/routing-proof.ts';
 
 const argv = Bun.argv.slice(2);
 const writeLocal = argv.includes('--write');
 const publishRemote = argv.includes('--publish');
 const jsonOnly = argv.includes('--json');
 const strictExit = !argv.includes('--no-fail');
+const noPrevious = argv.includes('--no-previous');
 
 const baseIdx = argv.indexOf('--base');
 const baseUrl =
@@ -32,46 +35,61 @@ const baseUrl =
   Bun.env.FACTORY_REGISTRY_URL ||
   'https://score.factory-wager.com';
 
-const PACKAGE_NAME = Bun.env.PACKAGE_NAME || '@factorywager/routing-test';
+const concIdx = argv.indexOf('--concurrency');
+const concurrency = concIdx >= 0 ? Number(argv[concIdx + 1]) : undefined;
+
+const API_KEY = Bun.env.API_KEY || Bun.env.REGISTRY_API_KEY || Bun.env.CLOUDFLARE_API_TOKEN;
 const VERSION =
   Bun.env.VERSION ||
   `v${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)}`;
-const ARTIFACT_DIR = `public/registry/${PACKAGE_NAME}`;
-const API_KEY = Bun.env.API_KEY || Bun.env.REGISTRY_API_KEY || Bun.env.CLOUDFLARE_API_TOKEN;
 
-const result = await runRoutingProof({ baseUrl });
+const result = await runRoutingProof({
+  baseUrl,
+  concurrency: Number.isFinite(concurrency) ? concurrency : undefined,
+  noPrevious,
+});
 
 if (jsonOnly) {
   console.log(JSON.stringify(result, null, 2));
 } else {
-  console.log('Registry routing proof');
-  console.log(`Base: ${result.baseUrl}`);
+  console.log('Registry routing proof v2');
+  console.log(`Base: ${result.baseUrl} · concurrency ${result.concurrency}`);
   console.log(`Bun v${result.bunVersion} (${result.bunRevision})`);
   console.log(
     Bun.inspect.table(
       routingTableRows(result),
-      ['Endpoint', 'Status', 'OK', 'Pass', 'Time', 'Type', 'Note'],
+      ['Endpoint', 'Status', 'OK', 'Pass', 'Crit', 'Time', 'Type', 'Note'],
       { colors: true }
     )
   );
+  const { latency, summary } = result;
   console.log(
-    `${result.summary.passed}/${result.summary.total} expectations met · httpOk ${result.summary.httpOk}`
+    `${summary.passed}/${summary.total} pass · httpOk ${summary.httpOk}` +
+      ` · criticalFail ${summary.criticalFailed}` +
+      ` · latency p50=${latency.p50Ms}ms p95=${latency.p95Ms}ms max=${latency.maxMs}ms`
   );
+  if (result.regression) {
+    const n = result.regression.changes.length;
+    console.log(
+      n === 0
+        ? `Regression: none vs ${result.regression.previousTimestamp ?? 'previous'}`
+        : `Regression: ${n} change(s) vs ${result.regression.previousTimestamp ?? 'previous'}`
+    );
+    for (const c of result.regression.changes.slice(0, 12)) {
+      console.log(`  [${c.kind}] ${c.path}: ${c.detail}`);
+    }
+  }
   console.log(`Proof hash: ${result.proofHash}`);
 }
 
 if (writeLocal) {
-  await Bun.$`mkdir -p ${ARTIFACT_DIR}`.quiet();
-  const body = `${JSON.stringify(result, null, 2)}\n`;
-  const versionPath = `${ARTIFACT_DIR}/${VERSION}.json`;
-  const latestPath = `${ARTIFACT_DIR}/latest.json`;
-  await Bun.write(versionPath, body);
-  await Bun.write(latestPath, body);
+  const { latestPath, versionPath } = await writeRoutingArtifact(result, { version: VERSION });
   if (!jsonOnly) {
     console.log(`\nWrote ${versionPath}`);
     console.log(`Wrote ${latestPath}`);
-    console.log(`Static URL (after deploy): ${baseUrl}/registry/${PACKAGE_NAME}/latest.json`);
-    console.log(`API URL (R2 bind): ${baseUrl}/api/registry/${PACKAGE_NAME}/latest.json`);
+    console.log(
+      `Static URL (after deploy): ${baseUrl.replace(/\/$/, '')}/registry/${ROUTING_ARTIFACT_PACKAGE}/latest.json`
+    );
   }
 }
 
@@ -93,39 +111,40 @@ if (publishRemote) {
   form.append(
     'metadata',
     JSON.stringify({
-      description: 'Registry routing proof',
+      description: 'Registry routing proof v2',
       proofHash: result.proofHash,
       bunVersion: result.bunVersion,
       baseUrl: result.baseUrl,
       passed: result.summary.passed,
       total: result.summary.total,
       httpOk: result.summary.httpOk,
+      criticalFailed: result.summary.criticalFailed,
+      p95Ms: result.latency.p95Ms,
+      regressions: result.regression?.changes.length ?? 0,
     })
   );
 
-  const res = await fetch(`${baseUrl.replace(/\/$/, '')}/api/registry/${PACKAGE_NAME}/versions`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${API_KEY}` },
-    body: form,
-  });
+  const res = await fetch(
+    `${baseUrl.replace(/\/$/, '')}/api/registry/${ROUTING_ARTIFACT_PACKAGE}/versions`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${API_KEY}` },
+      body: form,
+    }
+  );
 
   if (res.ok) {
-    if (!jsonOnly) {
-      console.log(`Published ${PACKAGE_NAME}@${VERSION}`);
-      console.log(`  ${baseUrl}/api/registry/${PACKAGE_NAME}/versions/${VERSION}`);
-    }
+    if (!jsonOnly) console.log(`Published ${ROUTING_ARTIFACT_PACKAGE}@${VERSION}`);
   } else {
     console.error(`Publish failed: ${res.status} ${await res.text()}`);
-    console.error(
-      'Note: Pages /api/registry is GET-only today. Prefer --write + deploy, or R2 put of the same key.'
-    );
+    console.error('Prefer --write + deploy (Pages /api/registry is GET-only).');
     process.exit(1);
   }
 } else if (!writeLocal && !jsonOnly) {
   console.log('\nTip: --write → public/registry/@factorywager/routing-test/');
-  console.log('     --publish needs a POST registry endpoint + API_KEY (optional).');
 }
 
-if (strictExit && result.summary.failed > 0) {
+// Fail on expectation failures or critical path failures
+if (strictExit && (result.summary.failed > 0 || result.summary.criticalFailed > 0)) {
   process.exit(1);
 }

@@ -2,7 +2,7 @@
  * Operations dashboard — live `/api/operations/summary` or static
  * `/registry/ops-summary.json` (Cloudflare Pages snapshot from `ops:snapshot`).
  * Includes factorial experiments (C4), coverage prediction (C5),
- * growth metrics, and Bun utils runtime proof.
+ * growth metrics, Bun utils runtime proof, and routing proof.
  */
 class OperationsDashboard extends HTMLElement {
   data = null;
@@ -41,6 +41,14 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="bun-utils-detail"></div>
             <div class="ops-mono" id="bun-utils-hash"></div>
             <a class="ops-link" id="bun-utils-link" href="/registry/@factorywager/bun-utils-test/latest.json">Full proof JSON</a>
+          </section>
+          <section class="ops-panel">
+            <h2>Routing proof</h2>
+            <div class="ops-metric" id="routing-pass">—</div>
+            <div class="ops-sub" id="routing-detail"></div>
+            <div class="ops-mono" id="routing-hash"></div>
+            <ul id="routing-crit"></ul>
+            <a class="ops-link" id="routing-link" href="/registry/@factorywager/routing-test/latest.json">Full routing JSON</a>
           </section>
           <section class="ops-panel">
             <h2>Experiments</h2>
@@ -257,6 +265,42 @@ class OperationsDashboard extends HTMLElement {
       bunHash.textContent = bun.proofHash
         ? `sha256 ${String(bun.proofHash).slice(0, 16)}…`
         : '';
+    }
+
+    // Routing proof (last artifact embedded in summary)
+    const rt = d.routing || { available: false };
+    const routingPass = this.querySelector('#routing-pass');
+    if (routingPass) {
+      if (rt.available && rt.total > 0) {
+        routingPass.textContent = `${rt.passed}/${rt.total}`;
+        routingPass.classList.toggle('ok', (rt.failed ?? 0) === 0 && (rt.criticalFailed ?? 0) === 0);
+        routingPass.classList.toggle('bad', (rt.failed ?? 0) > 0 || (rt.criticalFailed ?? 0) > 0);
+      } else {
+        routingPass.textContent = '—';
+        routingPass.classList.remove('ok', 'bad');
+      }
+    }
+    const routingDetail = this.querySelector('#routing-detail');
+    if (routingDetail) {
+      routingDetail.textContent = rt.available
+        ? `httpOk ${rt.httpOk ?? 0} · p50 ${rt.p50Ms ?? 0}ms · p95 ${rt.p95Ms ?? 0}ms · max ${rt.maxMs ?? 0}ms` +
+          ` · critFail ${rt.criticalFailed ?? 0}` +
+          ` · Δreg ${rt.regressions ?? 0}`
+        : 'Run bun run routing:proof:write or ops:snapshot';
+    }
+    const routingHash = this.querySelector('#routing-hash');
+    if (routingHash) {
+      routingHash.textContent = rt.proofHash
+        ? `sha256 ${String(rt.proofHash).slice(0, 16)}…`
+        : '';
+    }
+    const routingCrit = this.querySelector('#routing-crit');
+    if (routingCrit) {
+      const paths = rt.criticalFailedPaths || [];
+      routingCrit.innerHTML = paths
+        .slice(0, 5)
+        .map(p => `<li><span class="ops-mono">${p}</span><small>critical</small></li>`)
+        .join('');
     }
 
     // Experiments (C4)

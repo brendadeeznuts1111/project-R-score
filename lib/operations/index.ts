@@ -15,6 +15,7 @@ export {
   type OpsSummaryGrowth,
   type OpsSummaryBunUtils,
 } from './ops-summary.ts';
+export type { RoutingOpsSlice } from '../routing-proof.ts';
 export { PlaySigner } from './play-signing.ts';
 export type { PlayInput, PlayRecord } from './play-signing.ts';
 export {

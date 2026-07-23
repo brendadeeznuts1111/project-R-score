@@ -35,6 +35,12 @@ describe('buildOpsSummary', () => {
     expect(s.bunUtils.total).toBeGreaterThan(0);
     expect(s.bunUtils.passed).toBe(s.bunUtils.total);
     expect(s.bunUtils.proofHash).toMatch(/^[a-f0-9]{64}$/);
+    expect(s.routing).toHaveProperty('available');
+    // Slice present when artifact exists on disk (repo may ship latest.json)
+    if (s.routing.available) {
+      expect(s.routing.total).toBeGreaterThan(0);
+      expect(s.routing.proofHash).toMatch(/^[a-f0-9]{64}$/);
+    }
     db.close();
   });
 

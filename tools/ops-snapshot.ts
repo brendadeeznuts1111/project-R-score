@@ -18,6 +18,11 @@
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
+import {
+  runRoutingProof,
+  writeRoutingArtifact,
+  routingToOpsSlice,
+} from '../lib/routing-proof.ts';
 import { collectMonitoring } from '../lib/monitoring/index.ts';
 import { writePredictionReport } from '../lib/prediction/index.ts';
 
@@ -30,6 +35,8 @@ const outPath =
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const withReport = !argv.includes('--no-report');
 const withWebView = argv.includes('--webview');
+/** Probe live registry/portal routes and embed slice (network). Default on; `--no-routing` skips. */
+const withRouting = !argv.includes('--no-routing');
 
 // Ensure parent dirs exist (fresh clones often lack data/)
 if (dbPath !== ':memory:') {
@@ -41,7 +48,29 @@ if (outParent && outParent !== '.') await Bun.$`mkdir -p ${outParent}`.quiet();
 
 const db = openOperationsDb({ path: dbPath });
 try {
+  // Refresh routing artifact first so buildOpsSummary embeds the new slice.
+  let routingSlice = null as ReturnType<typeof routingToOpsSlice> | null;
+  if (withRouting) {
+    const baseUrl =
+      Bun.env.REGISTRY_URL ||
+      Bun.env.FACTORY_REGISTRY_URL ||
+      'https://score.factory-wager.com';
+    try {
+      const routingProof = await runRoutingProof({ baseUrl });
+      await writeRoutingArtifact(routingProof);
+      routingSlice = routingToOpsSlice(routingProof);
+    } catch (e) {
+      console.error(
+        'routing proof skipped:',
+        e instanceof Error ? e.message : e
+      );
+    }
+  }
+
   const payload = buildOpsSummary(db, 'snapshot');
+  // Prefer freshly probed slice over disk stale if we just wrote it
+  if (routingSlice) payload.routing = routingSlice;
+
   await Bun.write(outPath, `${JSON.stringify(payload, null, 2)}\n`);
 
   // Mirror full Bun utils proof for static + /api/registry/@factorywager/* allowlist.
@@ -87,6 +116,16 @@ try {
           total: payload.bunUtils.total,
           bunVersion: payload.bunUtils.bunVersion,
         },
+        routing: payload.routing.available
+          ? {
+              passed: payload.routing.passed,
+              total: payload.routing.total,
+              criticalFailed: payload.routing.criticalFailed,
+              p95Ms: payload.routing.p95Ms,
+              regressions: payload.routing.regressions,
+              proofHash: payload.routing.proofHash.slice(0, 16),
+            }
+          : { available: false },
         dodQueue: monitoring.dodQueue,
         packageCount: monitoring.packageCount,
         liquidity: payload.liquidity.total,
