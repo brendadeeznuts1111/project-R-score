@@ -1,5 +1,8 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request — fetch / Bun.fetch
+// @see https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host — fetch.preconnect
+// @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup — --fetch-preconnect
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — dns.prefetch
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
@@ -17,11 +20,14 @@
  *
  * Offline always proves lib/http/data-etag.ts + deepEquals.
  * Online probes a live base (default http://127.0.0.1:3000) when reachable
- * or when --online is set.
+ * or when --online is set. Warms the base with dns.prefetch + fetch.preconnect
+ * (HTTP) before the burst — see lib/http/fetch-preconnect.ts.
  *
  *   bun tools/verify-etag.ts
  *   bun tools/verify-etag.ts --online
  *   bun tools/verify-etag.ts --online --skip-ttl
+ *   # HTTPS warmup must use CLI (API throws Invalid port):
+ *   bun --fetch-preconnect https://ops.example.com:443 tools/verify-etag.ts --online
  *   HEALTH_URL=https://example.com bun run check:etag -- --online
  *   bun tools/verify-etag.ts --base=http://127.0.0.1:3000 --json
  */
@@ -34,15 +40,21 @@ import {
 } from '../lib/http/data-etag.ts';
 import {
   BUN_DEEP_EQUALS_DOCS,
-  deepEquals,
   deepEqualsModes,
   deepEqualsStrict,
 } from '../lib/deep-equals.ts';
+import {
+  BUN_FETCH_PRECONNECT_STARTUP_DOCS,
+  preconnectOrigin,
+} from '../lib/http/fetch-preconnect.ts';
 
 // ── Canonical API refs (bun.com — institutional SSOT; not bun.sh) ──────────
 
 const CANONICAL = {
   fetch: 'https://bun.com/docs/runtime/networking/fetch#sending-an-http-request',
+  preconnect: 'https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host',
+  preconnectStartup: BUN_FETCH_PRECONNECT_STARTUP_DOCS,
+  dnsPrefetch: 'https://bun.com/docs/runtime/networking/dns#dns-prefetch',
   inspectTable:
     'https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options',
   cryptoHasher: 'https://bun.com/docs/runtime/hashing#bun-cryptohasher',
@@ -279,6 +291,20 @@ export async function runOnlineETagSuite(
   const rows: ETagCheckRow[] = [];
   const skipTtl = opts.skipTtl ?? false;
   const ttlWaitMs = opts.ttlWaitMs ?? TTL_WAIT_MS;
+
+  // 0. Warm DNS (+ fetch.preconnect when runtime accepts the URL)
+  // Gap between warm and first GET is intentional — see preconnect-at-startup docs.
+  const warm = preconnectOrigin(base);
+  rows.push({
+    step: '0. preconnect base',
+    endpoint: warm.origin,
+    format: 'warm',
+    etag: '—',
+    status: warm.fetchPreconnect ? 'tcp+tls' : warm.dnsPrefetch ? 'dns' : 'skip',
+    cache: warm.fetchPreconnect ? 'PRECONNECT' : warm.dnsPrefetch ? 'DNS' : '—',
+    pass: warm.dnsPrefetch || warm.fetchPreconnect,
+    detail: warm.note,
+  });
 
   // 1. GET /health JSON
   const json = await fetchHealth(base, '/health', { accept: 'application/json' });

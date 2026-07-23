@@ -6,8 +6,11 @@
  *
  * DNS / connection warming (call-site only — not baked into this helper):
  * - Callers that know the host early may `dns.prefetch(hostname)` before fetchPage.
- * - Do not call `fetch.preconnect` until Bun fixes Invalid port on default HTTPS
- *   (oven-sh/bun#21633 / #19626 on 1.4). Guide fences stay discovery-only.
+ * - `fetch.preconnect("https://…")` still throws **Invalid port** on Bun 1.4
+ *   (oven-sh/bun#21633) — use {@link preconnectOrigin} from `lib/http/fetch-preconnect.ts`
+ *   (HTTP+port OK) or CLI startup warmup:
+ *   `bun --fetch-preconnect https://host:443 ./app.ts`
+ *   @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup
  *
  * Anchors (primary locus for fetch):
  * @see https://bun.com/docs/runtime/networking/fetch#sending-an-http-request
@@ -16,6 +19,8 @@
  * @see https://bun.com/docs/runtime/networking/fetch#error-handling
  * @see https://bun.com/docs/runtime/networking/fetch#debugging
  * @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching
+ * @see https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host
+ * @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup
  * @see https://bun.com/docs/runtime/networking/dns#dns-prefetch
  */
 

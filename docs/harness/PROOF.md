@@ -119,8 +119,10 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `lib/docs/fetch-page.ts` ·
   [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request)
   _Call-site DNS_ → `dns.prefetch(hostname)` before fetchPage when host is
-  known; do not use `fetch.preconnect` until Bun fixes Invalid port on default
-  HTTPS (oven-sh/bun#21633)
+  known; `fetch.preconnect` HTTPS still Invalid-port on 1.4 — use
+  `bun --fetch-preconnect https://host:443` (startup) or
+  [`lib/http/fetch-preconnect.ts`](../../lib/http/fetch-preconnect.ts) (HTTP OK)
+  · [preconnect at startup](https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup)
 - **`blog-extraction-journey`** — `CANONICAL_SOURCES.blog` → URLPattern →
   `dns.prefetch` → fetchPage → `SocialMetadata` + streamed article (`journey`)
   _Ratchet_ → `bun test tests/journey/blog-extraction.test.ts` · human-only

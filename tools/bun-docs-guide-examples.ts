@@ -121,10 +121,11 @@ export const GUIDE_EXAMPLES: Record<string, GuideExample[]> = {
     },
   ],
   // Not implemented on Windows — see Bun docs caveat on this anchor.
+  // Explicit :443 required on current Bun (default HTTPS port rejected as "Invalid port").
   'runtime/networking/fetch#preconnect-at-startup': [
     {
       lang: 'sh',
-      body: 'bun --fetch-preconnect https://bun.com ./my-script.ts',
+      body: 'bun --fetch-preconnect https://bun.com:443 ./my-script.ts',
     },
   ],
   'runtime/networking/fetch#connection-pooling-http-keep-alive': [
