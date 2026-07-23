@@ -32,10 +32,12 @@ RESP=$(curl -s -X POST \
   -H "Content-Type: application/json" \
   -d "{\"branch\":\"${BRANCH#--branch }\",\"skip_build_cache\":false}")
 
-if echo "$RESP" | grep -q '"success":true'; then
-  DEPLOY_ID=$(echo "$RESP" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+SUCCESS=$(echo "$RESP" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("success", False))' 2>/dev/null || echo False)
+if [ "$SUCCESS" = "True" ]; then
+  DEPLOY_ID=$(echo "$RESP" | python3 -c 'import json,sys; print(json.load(sys.stdin)["result"]["id"])' 2>/dev/null || true)
   echo "✅ Deploy triggered: $DEPLOY_ID"
   echo "   https://dash.cloudflare.com/$ACCOUNT_ID/pages/view/$PROJECT"
+  echo "   https://project-r-score.pages.dev"
 else
   echo "❌ Deploy failed:"
   echo "$RESP" | python3 -m json.tool 2>/dev/null || echo "$RESP"

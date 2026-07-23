@@ -29,6 +29,26 @@ Common root causes:
 
 Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
 
+### Pages Functions (edge-safe only)
+
+Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**.
+
+| Path | Role |
+|------|------|
+| `functions/api/operations/summary.ts` | Serves `public/registry/ops-summary.json` (C4/C5 portal data) |
+| `functions/api/registry/[[path]].ts` | R2 registry proxy (`REGISTRY_BUCKET` binding) |
+| `functions-bun-only/` | Local Bun handlers (auth/DOD/catalog) — **not** deployed to Pages |
+
+Ops experiments/prediction on the portal:
+
+1. Local: `bun run ops:snapshot` → writes `public/registry/ops-summary.json`
+2. Commit/deploy: GitHub → Pages (or `bun run cloudflare:deploy`)
+3. Live: https://project-r-score.pages.dev/portal/ops/ and `/api/operations/summary`
+
+**Submodule:** `Kalshi-bot` gitlink must resolve on GitHub or Pages `clone_repo` fails.
+
+**Custom domain note:** `wiki.factory-wager.com` is currently **GitHub Pages** (Fastly/`x-github-request-id`). Cloudflare Pages production host is `project-r-score.pages.dev` until a custom domain is attached in the Pages project.
+
 ### Factory registry portal (claim `factory-registry-pages-proxy-v1`)
 
 1. Pages → Settings → Functions → R2 bucket bindings: bind name `REGISTRY_BUCKET` → bucket `factory-wager-registry` (or `R2_REGISTRY_BUCKET`).

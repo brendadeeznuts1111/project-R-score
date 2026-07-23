@@ -235,6 +235,8 @@ credentials/
 **/auth/
 !functions/api/auth/
 !functions/api/auth/**
+!functions-bun-only/api/auth/
+!functions-bun-only/api/auth/**
 **/credentials/
 !config/
 config/*

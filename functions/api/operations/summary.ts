@@ -1,49 +1,77 @@
 /**
- * Operations summary endpoint — live SQLite or static snapshot fallback.
+ * Operations summary for Cloudflare Pages — edge-safe (no bun:sqlite).
  *
- * Local / self-hosted: reads `data/operations.db` (experiments + prediction included).
- * Cloudflare Pages (no bun:sqlite): falls back to `public/registry/ops-summary.json`
- * produced by `bun run ops:snapshot`.
+ * Serves `public/registry/ops-summary.json` produced by `bun run ops:snapshot`.
+ * Local Bun/self-hosted can still use the same static path, or hit this handler
+ * via ASSETS / origin fetch.
  *
- * Env: `OPS_DB_PATH`, `OPS_SNAPSHOT_PATH`
+ * Live SQLite summaries are intentionally not built into Pages Functions
+ * (Workers cannot resolve bun:sqlite). Use:
+ *   bun run ops:snapshot   # write public/registry/ops-summary.json
+ *   bun run cloudflare:deploy
  *
- * @see https://bun.com/docs/runtime/sqlite — bun:sqlite
- * @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+ * @see public/registry/ops-summary.json
  * @see lib/operations/ops-summary.ts
+ * @see https://developers.cloudflare.com/pages/functions/api-reference/
  */
 
-import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../../../lib/operations/db.ts';
-import { buildOpsSummary } from '../../../lib/operations/ops-summary.ts';
+export type PagesSummaryEnv = {
+  /** Cloudflare Pages static asset binding (when present). */
+  ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
+};
 
-const DEFAULT_SNAPSHOT = 'public/registry/ops-summary.json';
+export type PagesSummaryContext = {
+  request: Request;
+  env: PagesSummaryEnv;
+};
 
-async function loadSnapshot(): Promise<Record<string, unknown> | null> {
-  const path = Bun.env.OPS_SNAPSHOT_PATH || DEFAULT_SNAPSHOT;
-  const file = Bun.file(path);
-  if (await file.exists()) {
-    return (await file.json()) as Record<string, unknown>;
-  }
-  return null;
-}
+/**
+ * Prefer ASSETS binding; fall back to same-origin fetch of the snapshot path.
+ */
+export async function onRequest(context: PagesSummaryContext): Promise<Response> {
+  const url = new URL(context.request.url);
+  const snapshotUrl = new URL('/registry/ops-summary.json', url.origin);
 
-export async function onRequest(): Promise<Response> {
-  const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
   try {
-    const db = openOperationsDb({ path: dbPath });
-    try {
-      const data = buildOpsSummary(db, 'live');
-      return Response.json(data);
-    } finally {
-      db.close();
+    let res: Response;
+    if (context.env?.ASSETS?.fetch) {
+      res = await context.env.ASSETS.fetch(new Request(snapshotUrl.toString()));
+    } else {
+      res = await fetch(snapshotUrl.toString(), {
+        headers: { Accept: 'application/json' },
+      });
     }
-  } catch {
-    const snapshot = await loadSnapshot();
-    if (snapshot) {
-      return Response.json({ ...snapshot, source: 'snapshot' });
+
+    if (!res.ok) {
+      return Response.json(
+        {
+          error: 'ops-summary snapshot missing',
+          hint: 'Run bun run ops:snapshot and redeploy public/',
+          source: 'none',
+          status: res.status,
+        },
+        { status: 503, headers: { 'Cache-Control': 'no-store' } }
+      );
     }
+
+    const data = (await res.json()) as Record<string, unknown>;
     return Response.json(
-      { error: 'No live database or snapshot available', source: 'none' },
-      { status: 503 }
+      { ...data, source: data.source ?? 'snapshot' },
+      {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'public, max-age=60',
+        },
+      }
+    );
+  } catch (err) {
+    return Response.json(
+      {
+        error: 'Failed to load ops-summary snapshot',
+        detail: err instanceof Error ? err.message : String(err),
+        source: 'none',
+      },
+      { status: 503, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

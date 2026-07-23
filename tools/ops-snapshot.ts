@@ -24,6 +24,14 @@ const outPath =
   'public/registry/ops-summary.json';
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 
+// Ensure parent dirs exist (fresh clones often lack data/)
+if (dbPath !== ':memory:') {
+  const parent = dbPath.includes('/') ? dbPath.slice(0, dbPath.lastIndexOf('/')) : '.';
+  if (parent && parent !== '.') await Bun.$`mkdir -p ${parent}`.quiet();
+}
+const outParent = outPath.includes('/') ? outPath.slice(0, outPath.lastIndexOf('/')) : '.';
+if (outParent && outParent !== '.') await Bun.$`mkdir -p ${outParent}`.quiet();
+
 const db = openOperationsDb({ path: dbPath });
 try {
   const payload = buildOpsSummary(db, 'snapshot');
