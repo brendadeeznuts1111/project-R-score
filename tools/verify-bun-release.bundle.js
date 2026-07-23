@@ -3972,7 +3972,8 @@ var BUN_V1314_ANCHORS = {
   "event-loop-refactor": `${BUN_V1314_BLOG}#event-loop-refactor`,
   "bun-archive-api": "https://bun.sh/docs/runtime/archive",
   "bun-stringwidth-accuracy": "https://bun.sh/docs/runtime/utils#bun-stringwidth",
-  "bun-terminal-api": "https://bun.sh/docs/runtime/terminal"
+  "bun-terminal-api": "https://bun.sh/docs/runtime/terminal",
+  "bun-compile-features": "https://bun.sh/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination"
 };
 var BUN_RELEASE_NOTE_ROWS = [
   {
@@ -4608,6 +4609,28 @@ async function runReleaseVerification(options = {}) {
     passed: true,
     anchor: "bun-terminal-api"
   });
+  try {
+    const out = "/tmp/test-feature-out.js";
+    const build = Bun.spawnSync(["bun", "build", "--feature=DEBUG", "/tmp/test-features.ts", `--outfile=${out}`]);
+    const built = build.exitCode === 0;
+    const output = built ? await Bun.file(out).text().catch(() => "") : "";
+    const worked = output.includes("debug") && !output.includes("yes");
+    pushReleaseResult(results, {
+      name: "Compile-time feature flags (bun:bundle)",
+      expected: 'feature("DEBUG") \u2192 true when --feature=DEBUG',
+      actual: built ? worked ? "DEBUG=debug, PREMIUM=no \u2705" : "output mismatch" : "build failed",
+      passed: built && worked,
+      anchor: "bun-compile-features"
+    });
+  } catch (e) {
+    pushReleaseResult(results, {
+      name: "Compile-time feature flags (bun:bundle)",
+      expected: 'feature("DEBUG") \u2192 true when --feature=DEBUG',
+      actual: `error: ${e.message}`,
+      passed: false,
+      anchor: "bun-compile-features"
+    });
+  }
   const passed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");
   hasher.update(JSON.stringify(semanticTags));

@@ -462,6 +462,30 @@ export async function runReleaseVerification(
     anchor: 'bun-terminal-api',
   });
 
+  // 29. Compile-time feature flags (bun:bundle)
+  try {
+    const out = '/tmp/test-feature-out.js';
+    const build = Bun.spawnSync(['bun', 'build', '--feature=DEBUG', '/tmp/test-features.ts', `--outfile=${out}`]);
+    const built = build.exitCode === 0;
+    const output = built ? await Bun.file(out).text().catch(() => '') : '';
+    const worked = output.includes('debug') && !output.includes('yes');
+    pushReleaseResult(results, {
+      name: 'Compile-time feature flags (bun:bundle)',
+      expected: 'feature("DEBUG") → true when --feature=DEBUG',
+      actual: built ? (worked ? 'DEBUG=debug, PREMIUM=no ✅' : 'output mismatch') : 'build failed',
+      passed: built && worked,
+      anchor: 'bun-compile-features',
+    });
+  } catch (e: any) {
+    pushReleaseResult(results, {
+      name: 'Compile-time feature flags (bun:bundle)',
+      expected: 'feature("DEBUG") → true when --feature=DEBUG',
+      actual: `error: ${e.message}`,
+      passed: false,
+      anchor: 'bun-compile-features',
+    });
+  }
+
   const passed = results.filter(r => r.passed).length;
   const hasher = new CryptoHasher('sha256');
   hasher.update(JSON.stringify(semanticTags));

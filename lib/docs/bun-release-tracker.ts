@@ -53,6 +53,7 @@ export const BUN_V1314_ANCHORS = {
   'bun-archive-api': 'https://bun.sh/docs/runtime/archive',
   'bun-stringwidth-accuracy': 'https://bun.sh/docs/runtime/utils#bun-stringwidth',
   'bun-terminal-api': 'https://bun.sh/docs/runtime/terminal',
+  'bun-compile-features': 'https://bun.sh/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination',
 } as const;
 
 export type BunV1314AnchorKey = keyof typeof BUN_V1314_ANCHORS;
