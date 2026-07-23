@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 1,
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "timestamp": "2026-07-23T19:09:11.927Z",
+  "base": "http://localhost:3000",
+  "totalTargets": 8,
+  "allOk": true,
+  "proofHash": "c76a10e90c1ae20cce1a9c6711969b8c43975aa0a0abe6a7bc903445318d8de9",
+  "targets": [
+    {
+      "name": "Health (JSON)",
+      "summary": {
+        "protocol": "HTTP/1.1",
+        "reuseEfficiency": 14.76,
+        "coldFetchMs": 6.41,
+        "warmFetchMs": 0.43,
+        "statusCode": 200,
+        "bodySize": 4095
+      },
+      "detail": {
+        "cold": {
+          "start": 0,
+          "end": 6.412209,
+          "durMs": 6.41,
+          "ok": true
+        },
+        "warm": {
+          "start": 0,
+          "end": 0.434542,
+          "durMs": 0.43,
+          "ok": true
+        },
+        "preconnect": {
+          "start": 0,
+          "end": 0.006833,
+          "durMs": 0.01,
+          "ok": true
+        },
+        "connectionReuse": true,
+        "httpVersion": "HTTP/1.1"
+      }
+    },
+    {
+      "name": "Portal index",
+      "summary": {
+        "protocol": "HTTP/1.1",
+        "reuseEfficiency": 3.84,
+        "coldFetchMs": 1.49,
+        "warmFetchMs": 0.39,
+        "statusCode": 200,
+        "bodySize": 3690
+      },
+      "detail": {
+        "cold": {
+          "start": 0,
+          "end": 1.49325,
+          "durMs": 1.49,
+          "ok": true
+        },
+        "warm": {
+          "start": 0,
+          "end": 0.388792,
+          "durMs": 0.39,
+          "ok": true
+        },
+        "preconnect": {
+          "start": 0,
+          "end": 0.012708,
+          "durMs": 0.01,
+          "ok": true
+        },
+        "connectionReuse": true,
+        "httpVersion": "HTTP/1.1"
+      }
+    },
+    {
+      "name": "Registry index",
+      "summary": {
+        "protocol": "HTTP/1.1",
+        "reuseEfficiency": 0.62,
+        "coldFetchMs": 0.31,
+        "warmFetchMs": 0.5,
+        "statusCode": 200,
+        "bodySize": 11562
+      },
+      "detail": {
+        "cold": {
+          "start": 0,
+          "end": 0.309125,
+          "durMs": 0.31,
+          "ok": true
+        },
+        "warm": {
+          "start": 0,
+          "end": 0.496625,
+          "durMs": 0.5,
+          "ok": true
+        },
+        "preconnect": {
+          "start": 0,
+          "end": 0.004375,
+          "durMs": 0,
+          "ok": true
+        },
+        "connectionReuse": false,
+        "httpVersion": "HTTP/1.1"
+      }
+    },
+    {
+      "name": "Account catalog",
+      "summary": {
+        "protocol": "HTTP/1.1",
+        "reuseEfficiency": 1.52,
+        "coldFetchMs": 1.91,
+        "warmFetchMs": 1.26,
+        "statusCode": 200,
+        "bodySize": 7845
+      },
+      "detail": {
+        "cold": {
+          "start": 0,
+          "end": 1.912459,
+          "durMs": 1.91,
+          "ok": true
+        },
+        "warm": {
+          "start": 0,
+          "end": 1.25575,
+          "durMs": 1.26,
+          "ok": true
+        },
+        "preconnect": {
+          "start": 0,
+          "end": 0.009416,
+          "durMs": 0.01,
+          "ok": true
+        },
+        "connectionReuse": true,
+        "httpVersion": "HTTP/1.1"
+      }
+    },
+    {
+      "name": "Environment API",
+      "summary": {
+        "protocol": "HTTP/1.1",
+        "reuseEfficiency": 0.41,
+        "coldFetchMs": 0.32,
+        "warmFetchMs": 0.76,
+        "statusCode": 200,
+        "bodySize": 1818
+      },
+      "detail": {
+        "cold": {
+          "start": 0,
+          "end": 0.315042,
+          "durMs": 0.32,
+          "ok": true
+        },
+        "warm": {
+          "start": 0,
+          "end": 0.763375,
+          "durMs": 0.76,
+          "ok": true
+        },
+        "preconnect": {
+          "start": 0,
+          "end": 0.006334,
+          "durMs": 0.01,
+          "ok": true
+        },
+        "connectionReuse": false,
+        "httpVersion": "HTTP/1.1"
+      }
+    },
+    {
+      "name": "Proof manifest",
+      "summary": {
+        "protocol": "HTTP/1.1",
+        "reuseEfficiency": 0.27,
+        "coldFetchMs": 0.2,
+        "warmFetchMs": 0.73,
+        "statusCode": 200,
+        "bodySize": 37503
+      },
+      "detail": {
+        "cold": {
+          "start": 0,
+          "end": 0.198958,
+          "durMs": 0.2,
+          "ok": true
+        },
+        "warm": {
+          "start": 0,
+          "end": 0.725792,
+          "durMs": 0.73,
+          "ok": true
+        },
+        "preconnect": {
+          "start": 0,
+          "end": 0.009167,
+          "durMs": 0.01,
+          "ok": true
+        },
+        "connectionReuse": false,
+        "httpVersion": "HTTP/1.1"
+      }
+    },
+    {
+      "name": "Monitoring API",
+      "summary": {
+        "protocol": "HTTP/1.1",
+        "reuseEfficiency": 1.89,
+        "coldFetchMs": 5.21,
+        "warmFetchMs": 2.77,
+        "statusCode": 200,
+        "bodySize": 3611
+      },
+      "detail": {
+        "cold": {
+          "start": 0,
+          "end": 5.214542,
+          "durMs": 5.21,
+          "ok": true
+        },
+        "warm": {
+          "start": 0,
+          "end": 2.76625,
+          "durMs": 2.77,
+          "ok": true
+        },
+        "preconnect": {
+          "start": 0,
+          "end": 0.015292,
+          "durMs": 0.02,
+          "ok": true
+        },
+        "connectionReuse": true,
+        "httpVersion": "HTTP/1.1"
+      }
+    },
+    {
+      "name": "Health pre (HTML)",
+      "summary": {
+        "protocol": "HTTP/1.1",
+        "reuseEfficiency": 0.21,
+        "coldFetchMs": 0.26,
+        "warmFetchMs": 1.24,
+        "statusCode": 200,
+        "bodySize": 1020
+      },
+      "detail": {
+        "cold": {
+          "start": 0,
+          "end": 0.257625,
+          "durMs": 0.26,
+          "ok": true
+        },
+        "warm": {
+          "start": 0,
+          "end": 1.237792,
+          "durMs": 1.24,
+          "ok": true
+        },
+        "preconnect": {
+          "start": 0,
+          "end": 0.008334,
+          "durMs": 0.01,
+          "ok": true
+        },
+        "connectionReuse": false,
+        "httpVersion": "HTTP/1.1"
+      }
+    }
+  ]
+}
