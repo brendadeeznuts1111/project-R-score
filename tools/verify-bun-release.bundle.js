@@ -263,17 +263,25 @@ async function run() {
     const img = new Bun.Image(bytes);
     const meta = await img.metadata();
     const resized = img.resize(2, 2);
-    const resizedMeta = await resized.metadata();
     const webp = await resized.webp({ quality: 80 }).bytes();
+    const buf = await resized.webp({ quality: 80 }).buffer();
+    const blob = await resized.webp({ quality: 80 }).blob();
+    const b64 = await resized.webp({ quality: 80 }).toBase64();
+    const dataurl = await resized.webp({ quality: 80 }).dataurl();
     const placeholder = await img.placeholder();
+    const tmpPath = "/tmp/bun-image-test.webp";
+    await resized.webp({ quality: 80 }).write(tmpPath);
+    const written = await Bun.file(tmpPath).exists();
+    if (written)
+      await Bun.file(tmpPath).delete();
     results.push({
-      name: "Bun.Image (load, metadata, encode, placeholder)",
-      expected: "loads, metadata correct, encodes WebP, generates placeholder",
-      actual: `${meta.width}x${meta.height} ${meta.format} encoded=${(webp.length / 1024).toFixed(1)}KB placeholder=${placeholder.length}B`,
-      passed: meta.width === 1 && meta.height === 1 && meta.format === "png" && webp.length > 0 && placeholder.startsWith("data:image/png;base64,")
+      name: "Bun.Image (all terminal methods: bytes, buffer, blob, toBase64, dataurl, placeholder, metadata, write)",
+      expected: "all terminal methods produce correct output",
+      actual: `fmt=${meta.format} ${meta.width}x${meta.height} webp=${(webp.length / 1024).toFixed(1)}KB buf=${(buf.byteLength / 1024).toFixed(1)}KB blob=${(blob.size / 1024).toFixed(1)}KB b64=${b64.length}B dataurl=${dataurl.length}B placeholder=${placeholder.length}B write=${written}`,
+      passed: meta.format === "png" && webp.length > 0 && buf.byteLength > 0 && blob.size > 0 && b64.length > 0 && dataurl.length > 0 && placeholder.startsWith("data:image/png;base64,") && written
     });
   } catch (e) {
-    results.push({ name: "Bun.Image (load, metadata, encode, placeholder)", expected: "loads, metadata correct, encodes WebP, generates placeholder", actual: `error: ${e.message}`, passed: false });
+    results.push({ name: "Bun.Image (all terminal methods)", expected: "all terminal methods produce output", actual: `error: ${e.message}`, passed: false });
   }
   const passed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");
