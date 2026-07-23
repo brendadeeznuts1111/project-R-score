@@ -103,6 +103,18 @@ export function r2BucketFromEnv(): string {
   );
 }
 
+/**
+ * Factory artifact registry bucket (CLI + Pages binding target).
+ * Prefer dedicated `R2_REGISTRY_BUCKET` / `FACTORY_REGISTRY_BUCKET` over bench cascade.
+ */
+export function factoryRegistryBucketFromEnv(): string {
+  return (
+    envString('R2_REGISTRY_BUCKET') ||
+    envString('FACTORY_REGISTRY_BUCKET') ||
+    CLOUDFLARE_DEFAULTS.registryBucket
+  );
+}
+
 /** Search-bench object prefix (dashboard + snapshot). */
 export function r2BenchPrefixFromEnv(): string {
   return envString('R2_BENCH_PREFIX', CLOUDFLARE_DEFAULTS.benchPrefix);

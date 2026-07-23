@@ -44,6 +44,10 @@ out/
 *.js
 # Shebang fixture must be .js for #!/usr/bin/env node (runtime-cli-boundaries)
 !tests/fixtures/runtime-cli/shebang-bun/cli.js
+# Cloudflare Pages portal modules (tracked as source, not build output)
+!public/portal/**/*.js
+# Local `factory create` scaffold dumps (nested .git) — never root clutter
+/factory-library/
 *.js.map
 *.tsbuildinfo
 
@@ -229,6 +233,8 @@ credentials/
 **/config/
 **/secrets/
 **/auth/
+!functions/api/auth/
+!functions/api/auth/**
 **/credentials/
 !config/
 config/*

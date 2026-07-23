@@ -405,6 +405,23 @@ describe('fresh-rerun contract', () => {
     expect(p?.claim).toContain('tools/');
     expect(p?.freshRerun).toBe('bun run check:path-bun');
   });
+
+  test('factory-registry-cli-v1 freshRerun is registry+cli suites', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'factory-registry-cli-v1');
+    expect(p?.freshRerun).toBe('bun test tests/registry.test.ts tests/cli.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.owner).toBe('lib/factory/');
+    expect(p?.kinds).toEqual(expect.arrayContaining(['unit', 'boundary']));
+  });
+
+  test('factory-registry-pages-proxy-v1 freshRerun is pages-function suite', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'factory-registry-pages-proxy-v1');
+    expect(p?.freshRerun).toBe('bun test tests/registry-pages-function.test.ts');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.owner).toBe('functions/api/registry/[[path]].ts');
+    expect(p?.evidence).toContain('functions/api/registry/[[path]].ts');
+    expect(p?.evidence).toContain('public/portal/app.js');
+  });
 });
 
 describe('typecheck coherence includes', () => {

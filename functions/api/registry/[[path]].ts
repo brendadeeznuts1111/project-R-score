@@ -140,18 +140,3 @@ export async function onRequest(context: RegistryPagesContext): Promise<Response
     return jsonError(502, 'Registry unreachable', cors);
   }
 }
-
-/**
- * Render a README string to HTML using Bun.markdown.html — zero deps,
- * GFM extensions enabled (tables, code blocks, task lists, autolinks).
- * Heading IDs generate anchor links for in-page navigation.
- *
- * @see https://bun.sh/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
- */
-export function renderReadmeHTML(markdown: string): string {
-  return Bun.markdown.html(markdown, {
-    headings: true,
-    autolinks: { url: true, www: true },
-    tagFilter: true,
-  });
-}

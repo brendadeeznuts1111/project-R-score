@@ -222,6 +222,41 @@ function openFocusedCard() {
   if (info) showDetail(name, info);
 }
 
+// ── Help overlay ───────────────────────────────────────────────────────
+
+function toggleHelpOverlay() {
+  const existing = document.getElementById('help-overlay');
+  if (existing) {
+    existing.remove();
+    return;
+  }
+  document.body.insertAdjacentHTML('beforeend', `
+    <div id="help-overlay" class="help-overlay" role="dialog" aria-label="Keyboard shortcuts">
+      <div class="help-panel">
+        <button type="button" class="help-close" aria-label="Close">&times;</button>
+        <h2>Keyboard Shortcuts</h2>
+        <table class="help-table">
+          <tr><td><kbd>↓</kbd> <kbd>j</kbd></td><td>Next card</td></tr>
+          <tr><td><kbd>↑</kbd> <kbd>k</kbd></td><td>Previous card</td></tr>
+          <tr><td><kbd>Enter</kbd></td><td>Open detail modal</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close modal / overlay</td></tr>
+          <tr><td><kbd>c</kbd></td><td>Clear all filters</td></tr>
+          <tr><td><kbd>/</kbd></td><td>Focus search</td></tr>
+          <tr><td><kbd>g</kbd> <kbd>g</kbd></td><td>Scroll to top</td></tr>
+          <tr><td><kbd>G</kbd></td><td>Scroll to bottom</td></tr>
+          <tr><td><kbd>r</kbd></td><td>Refresh registry</td></tr>
+          <tr><td><kbd>?</kbd> <kbd>h</kbd></td><td>Toggle this help</td></tr>
+        </table>
+      </div>
+    </div>
+  `);
+  const overlay = document.getElementById('help-overlay');
+  overlay?.querySelector('.help-close')?.addEventListener('click', () => overlay.remove());
+  overlay?.addEventListener('click', e => {
+    if (e.target === overlay) overlay.remove();
+  });
+}
+
 // ── Init ────────────────────────────────────────────────────────────────
 
 async function init() {
@@ -243,22 +278,86 @@ async function init() {
       showDetail(deepProject, registryIndex.packages[deepProject]);
     }
 
-    // Keyboard nav
+    // ── Keyboard navigation ──────────────────────────────────────────
+
+    let lastKey = '';
+    let lastKeyTime = 0;
+
     document.addEventListener('keydown', e => {
-      if (document.getElementById('detail-overlay')) return; // modal handles own keys
+      // Don't intercept when typing in input fields
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.metaKey || e.ctrlKey) return;
+
       const cardCount = document.querySelectorAll('.pkg-card').length;
-      if (!cardCount) return;
-      if (e.key === 'ArrowDown' || e.key === 'j') {
-        e.preventDefault();
-        focusedCardIndex = Math.min(focusedCardIndex + 1, cardCount - 1);
-        updateCardFocus();
-      } else if (e.key === 'ArrowUp' || e.key === 'k') {
-        e.preventDefault();
-        focusedCardIndex = Math.max(focusedCardIndex - 1, 0);
-        updateCardFocus();
-      } else if (e.key === 'Enter' && focusedCardIndex >= 0) {
-        e.preventDefault();
-        openFocusedCard();
+      const modal = document.getElementById('detail-overlay');
+
+      // Modal is open — only handle Escape
+      if (modal) {
+        if (e.key === 'Escape') modal.querySelector('.detail-close')?.click();
+        return;
+      }
+
+      switch (true) {
+        // Navigation
+        case e.key === 'ArrowDown' || e.key === 'j':
+          e.preventDefault();
+          focusedCardIndex = Math.min(focusedCardIndex + 1, Math.max(cardCount - 1, 0));
+          updateCardFocus();
+          break;
+        case e.key === 'ArrowUp' || e.key === 'k':
+          e.preventDefault();
+          focusedCardIndex = Math.max(focusedCardIndex - 1, 0);
+          updateCardFocus();
+          break;
+        case e.key === 'Enter' && focusedCardIndex >= 0:
+          e.preventDefault();
+          openFocusedCard();
+          break;
+        // Clear filters (mirrors Bun dev server's c + Enter)
+        case e.key === 'c':
+          e.preventDefault();
+          window.location.hash = '';
+          $('search').value = '';
+          focusedCardIndex = -1;
+          renderGrid(Object.entries(registryIndex.packages || {}));
+          buildFilterUI(Object.entries(registryIndex.packages || {}));
+          break;
+        // Quick search focus
+        case e.key === '/' && !e.target.closest('input'):
+        case e.key === '/' && !e.target.closest('input'):
+          e.preventDefault();
+          $('search').focus();
+          break;
+        // Scroll
+        case e.key === 'g':
+          if (lastKey === 'g' && Date.now() - lastKeyTime < 400) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lastKey = '';
+          }
+          break;
+        case e.key === 'G':
+          e.preventDefault();
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+          break;
+        // Help overlay
+        case e.key === '?':
+        case e.key === 'h':
+          e.preventDefault();
+          toggleHelpOverlay();
+          break;
+        // Refresh
+        case e.key === 'r':
+          e.preventDefault();
+          location.reload();
+          break;
+      }
+
+      if (e.key === 'g') {
+        lastKey = 'g';
+        lastKeyTime = Date.now();
+      } else if (e.key !== 'Shift') {
+        lastKey = '';
       }
     });
 

@@ -27,7 +27,15 @@ Common root causes:
 6. Apex HTTP check (no API token): `bun run cloudflare:env:assert-apex`
 7. Live dashboard drift + apex (API token or wrangler OAuth): `bun run cloudflare:env:assert-live`
 
-Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
+Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
+
+### Factory registry portal (claim `factory-registry-pages-proxy-v1`)
+
+1. Pages → Settings → Functions → R2 bucket bindings: bind name `REGISTRY_BUCKET` → bucket `factory-wager-registry` (or `R2_REGISTRY_BUCKET`).
+2. Optional: `REGISTRY_CORS_ORIGINS=https://factory-wager.com,https://project-r-score.pages.dev` (comma-separated). Omit for same-origin only.
+3. Do **not** put `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` on the Pages Function for `/api/registry` — the proxy uses the R2 binding.
+4. CLI publish/install still needs local R2 S3 keys (`bun run factory:env`) via SigV4 `S3Client`.
+5. Portal static fallback: `bun run factory:snapshot` → `public/registry/registry.json` (committed empty seed; refresh after publishes).
 
 This is **not** `bun run deploy:production` (Bun.secrets + R2). Root `wrangler.toml` is Worker `tier1380-production`, not Pages. R2 S3 keys ≠ `CLOUDFLARE_API_TOKEN` (`requireR2Config` vs `requireCloudflareApiToken`). Never hardcode R2 access keys in scripts — use env / Bun.secrets / `requireR2Config`.
 

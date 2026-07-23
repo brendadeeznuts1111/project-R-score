@@ -1,33 +1,23 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
-// @see https://bun.sh/docs/guides/process/argv — Bun.argv
-// @see https://bun.sh/docs/guides/process/argv#parse-command-line-arguments — util.parseArgs
-// @see https://bun.sh/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
-// @see https://bun.sh/docs/runtime/console#object-inspection-depth — console depth
-// @see https://bun.sh/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
-// @see https://bun.sh/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
-// @see https://bun.sh/docs/runtime/templating/create — bun create
+// @see https://bun.com/docs/guides/process/argv — Bun.argv
+// @see https://bun.com/docs/guides/process/argv#parse-command-line-arguments — util.parseArgs
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — console depth
+// @see https://bun.com/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
+// @see https://bun.com/docs/runtime/templating/create — bun create
 /**
- * Factory CLI — publish, list, search, and install artifacts to/from the
- * R2-backed artifact registry.
+ * Factory CLI — publish, list, search, install, snapshot artifacts to/from the
+ * R2-backed artifact registry (Bun runtime — not Pages Functions).
  *
  * Usage:
  *   factory <command> [options]
- *
- * Commands:
- *   create <template> [<dest>]  Scaffold a new project from a template (wraps bun create)
- *   env          Check R2 credentials and bucket access
- *   publish      Publish an artifact to the registry
- *   list         List all packages in the registry
- *   search       Search the registry by name/description/tags
- *   install      Download and extract an artifact
- *   readme       Fetch the README for a published release
- *   help         Show this help message
- *   --version    Show version
  */
 
 import { parseArgs } from 'util';
@@ -67,6 +57,7 @@ Commands:
   search <query>               Search by name, description, or tags
   install <name> [<range>]     Download and extract an artifact (default range: latest)
   readme <name> [<version>]    Fetch the README for a release (default version: latest)
+  snapshot [path]              Write registry.json snapshot for portal static fallback
   help [command]               Show help for a specific command
   --version, -v                Show version
 `.trim();
@@ -110,6 +101,12 @@ Default: latest`,
 
 Fetch and print the README for a published release.
 <version> defaults to 'latest'.`,
+  snapshot: `factory snapshot [<path>]
+
+Fetch the live registry index and write a static JSON snapshot for the portal
+fallback (default: public/registry/registry.json).
+
+Requires R2 credentials (same as factory env).`,
   create: `factory create <template> [<destination>] [options]
 
 Scaffold a new project from a template using bun create.
@@ -169,6 +166,18 @@ async function cmdEnv(): Promise<void> {
   console.log(`\n  Registry status: ${status}\n`);
   console.log(TOML.stringify(result));
   process.exit(result.ok ? 0 : 1);
+}
+
+/** Default portal static fallback path (Pages destination_dir = public). */
+const DEFAULT_SNAPSHOT_PATH = 'public/registry/registry.json';
+
+async function cmdSnapshot(args: string[]): Promise<void> {
+  const outPath = args[0] && !args[0].startsWith('-') ? args[0] : DEFAULT_SNAPSHOT_PATH;
+  const { index } = await registry.fetchIndex();
+  const body = `${JSON.stringify(index, null, 2)}\n`;
+  await Bun.write(outPath, body);
+  const pkgCount = Object.keys(index.packages ?? {}).length;
+  console.log(`\n  ✓ Wrote snapshot → ${outPath} (${pkgCount} packages)\n`);
 }
 
 const PUBLISH_OPTIONS = {
@@ -343,7 +352,8 @@ async function cmdReadme(args: string[]): Promise<void> {
     return;
   }
 
-  // Render via Bun.markdown.render with ANSI callbacks for terminal output
+  // Render via Bun.markdown.render with Bun.color for ANSI output.
+  // Auto-detects terminal depth; degrades to plain text when piped.
   const ansi = Bun.markdown.render(
     readme,
     {
@@ -353,12 +363,12 @@ async function cmdReadme(args: string[]): Promise<void> {
       },
       strong: children => `\x1b[1m${children}\x1b[22m`,
       emphasis: children => `\x1b[3m${children}\x1b[23m`,
-      codespan: children => `\x1b[36m${children}\x1b[39m`,
+      codespan: children => `${Bun.color('cyan', 'ansi')}${children}\x1b[39m`,
       code: (children, meta) => {
         const lang = meta?.language ? ` \x1b[2m[${meta.language}]\x1b[22m` : '';
         return `\n\x1b[2m---${lang}---\x1b[22m\n${children}\n\x1b[2m---\x1b[22m\n`;
       },
-      link: children => `\x1b[34m${children}\x1b[39m`,
+      link: children => `${Bun.color('blue', 'ansi')}${children}\x1b[39m`,
       paragraph: children => children + '\n',
     },
     {
@@ -532,6 +542,9 @@ async function main(): Promise<void> {
       break;
     case 'readme':
       await cmdReadme(subargs);
+      break;
+    case 'snapshot':
+      await cmdSnapshot(subargs);
       break;
     case 'create':
       await cmdCreate(subargs);

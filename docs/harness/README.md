@@ -77,6 +77,8 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
   *Ratchet* → claim `audit-findings-catalog` · `bun run audit:verify` · pre-commit + `ci:harness` · [`docs/audit/README.md`](../audit/README.md)
 - **`factory-registry-cli-v1`** — R2 artifact registry + CLI (publish, install, list, search, readme)  
   *Ratchet* → `bun test tests/registry.test.ts tests/cli.test.ts` · claim `factory-registry-cli-v1` · [`lib/factory/`](../../lib/factory/)
+- **`factory-registry-pages-proxy-v1`** — Pages `/api/registry` R2 binding proxy (allowlisted keys, fail-closed)  
+  *Ratchet* → `bun test tests/registry-pages-function.test.ts` · claim `factory-registry-pages-proxy-v1` · [`functions/api/registry/`](../../functions/api/registry/)
 - **Proof journeys** — claim kind matches evidence  
   *Ratchet* → [`PROOF.md`](PROOF.md) · `lib/harness/proof.ts` · `bun run proof:install` · `bun run harness:status`
 - **Fresh-rerun** — harness PRs re-prove the affected claim outside the proposing chat  

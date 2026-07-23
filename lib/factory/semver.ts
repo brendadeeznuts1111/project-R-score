@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
-// @see https://bun.sh/docs/runtime/semver#bun-semver-satisfies — Bun.semver.satisfies
-// @see https://bun.sh/docs/runtime/semver#bun-semver-order — Bun.semver.order
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies — Bun.semver.satisfies
+// @see https://bun.com/docs/runtime/semver#bun-semver-order — Bun.semver.order
 /**
  * Bun semver wrappers for the factory registry.
  *

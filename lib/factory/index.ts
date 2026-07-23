@@ -4,10 +4,10 @@
  * The factory provides an R2-backed artifact registry with npm-compatible
  * index format, Bun semver versioning, and etag-based optimistic locking.
  *
- * @see https://bun.sh/docs/runtime/semver — Bun.semver
- * @see https://bun.sh/docs/runtime/file-io#reading-files-bunfile — Bun.file
- * @see https://bun.sh/docs/runtime/file-io#writing-files-bun-write — Bun.write
- * @see https://bun.sh/docs/runtime/plugins#onresolve — onResolve (roadmap: @factorywager/* import resolution)
+ * @see https://bun.com/docs/runtime/semver — Bun.semver
+ * @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+ * @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+ * @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
  *
  * @example
  * ```ts
@@ -46,3 +46,14 @@ export {
 export { sortVersions, latestVersion, satisfiesRange, resolveVersion } from './semver';
 
 export { RegistryClient, registry } from './registry';
+
+export {
+  type RegistryObjectStore,
+  type ObjectPutOptions,
+  createMemoryObjectStore,
+  createS3RegistryStore,
+  factoryRegistryBucketFromEnv,
+  requireFactoryRegistryS3Config,
+} from './object-store';
+
+export { renderReadmeHTML, renderReadmeAnsi } from './markdown';

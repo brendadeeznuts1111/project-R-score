@@ -30,6 +30,8 @@ export const HARNESS_COVERAGE_PROBE = [
   'tests/harness-coverage-probe.test.ts',
   'tests/spine-tenants.test.ts',
   'tests/harness-cron-contract.test.ts',
+  // Keeps proof.ts catalog + ProofPathView above the line floor when claims grow.
+  'tests/harness-fresh-rerun-contract.test.ts',
 ] as const;
 
 export async function loadCoverageBaseline(root: string): Promise<CoverageBaseline> {

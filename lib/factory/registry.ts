@@ -1,94 +1,78 @@
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client (via object-store)
+// @see https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support — requestPayer (via object-store)
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
-// @see https://bun.sh/docs/runtime/semver#bun-semver-satisfies — Bun.semver.satisfies
-// @see https://bun.sh/docs/runtime/semver#bun-semver-order — Bun.semver.order
-// @see https://bun.sh/docs/runtime/semver#bun-semver-parse — Bun.semver.parse
-// @see https://bun.sh/docs/runtime/file-io#writing-files-bun-write — Bun.write
-// @see https://bun.sh/docs/runtime/networking/fetch#sending-an-http-request — fetch
-// @see https://bun.sh/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
-// @see https://bun.sh/reference/bun/concatArrayBuffers — Bun.concatArrayBuffers
-// @see https://bun.sh/docs/runtime/file-io#reading-files-bunfile — Bun.file
-// @see https://bun.sh/docs/runtime/environment-variables — Bun.env
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 /**
  * R2-backed artifact registry client.
  *
- * Stores artifacts in the `factory-wager-registry` R2 bucket with an
- * npm-compatible registry index (`registry.json`). Uses optimistic locking
- * via R2 etags for atomic index updates.
- *
- * The registry is designed to be compatible with `bun publish --registry`,
- * so publishing can also be done directly via the standard npm protocol.
+ * Stores artifacts in the factory registry R2 bucket with an npm-compatible
+ * registry index (`registry.json`). Uses etag compare-before-write retries for
+ * optimistic index updates. Auth is SigV4 via {@link createS3RegistryStore}.
  */
 
+import { r2RequestPayerFromEnv } from '../../config/r2-env';
 import {
-  type ArtifactName,
-  type ArtifactVersion,
-  type ArtifactId,
   type ArtifactType,
   type ArtifactRelease,
-  type ArtifactStorage,
   type PackageInfo,
   type RegistryIndex,
-  asArtifactName,
   asArtifactVersion,
   asArtifactId,
-  tryArtifactName,
-  tryArtifactVersion,
   validateArtifactName,
 } from './artifact';
-import { sortVersions, satisfiesRange, resolveVersion, latestVersion } from './semver';
-
-// ── Constants ────────────────────────────────────────────────────────────
-
-/** R2 bucket name for the factory artifact registry. */
-const REGISTRY_BUCKET = 'factory-wager-registry';
+import { sortVersions, resolveVersion } from './semver';
+import {
+  type RegistryObjectStore,
+  createS3RegistryStore,
+  isPreconditionFailed,
+  requireFactoryRegistryS3Config,
+  factoryRegistryBucketFromEnv,
+} from './object-store';
 
 /** Registry index file name stored in the bucket root. */
 const INDEX_KEY = 'registry.json';
 
-const S3_ENDPOINT = `https://${Bun.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
-
-// ── S3 helpers (R2 is S3-compatible) ─────────────────────────────────────
-
-function s3Auth(): Record<string, string> {
-  const key = Bun.env.R2_ACCESS_KEY_ID;
-  const secret = Bun.env.R2_SECRET_ACCESS_KEY;
-  if (!key || !secret) throw new Error('R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY must be set');
-  return {
-    Authorization: `Basic ${btoa(`${key}:${secret}`)}`,
-  };
-}
-
-function bucketUrl(key: string): string {
-  return `${S3_ENDPOINT}/${REGISTRY_BUCKET}/${key}`;
-}
+export type RegistryClientOptions = {
+  /** Inject a store (tests). Default: SigV4 S3Client against factory registry bucket. */
+  store?: RegistryObjectStore;
+};
 
 // ── Registry client ──────────────────────────────────────────────────────
 
 export class RegistryClient {
+  private readonly injectedStore?: RegistryObjectStore;
+  private _store: RegistryObjectStore | undefined;
+
+  constructor(options?: RegistryClientOptions) {
+    this.injectedStore = options?.store;
+  }
+
+  /** Lazy so `factory env` can report missing creds without throwing at import. */
+  private get store(): RegistryObjectStore {
+    if (this.injectedStore) return this.injectedStore;
+    if (!this._store) this._store = createS3RegistryStore();
+    return this._store;
+  }
+
   // ── Index operations ─────────────────────────────────────────────────
 
   /**
    * Fetch the registry index from R2, or return a fresh empty index if none exists.
    */
   async fetchIndex(): Promise<{ index: RegistryIndex; etag: string | null }> {
-    const url = bucketUrl(INDEX_KEY);
-    const res = await fetch(url, { headers: s3Auth() });
-    if (res.status === 404) {
+    const hit = await this.store.getJson<RegistryIndex>(INDEX_KEY);
+    if (!hit) {
       return {
         index: { schemaVersion: 1, lastUpdated: new Date().toISOString(), packages: {} },
         etag: null,
       };
     }
-    if (!res.ok) throw new Error(`Failed to fetch registry index: ${res.status}`);
-    const etag = res.headers.get('etag');
-    const index = (await res.json()) as RegistryIndex;
-    return { index, etag };
+    return { index: hit.value, etag: hit.etag };
   }
 
   /**
-   * Write the registry index to R2 with etag-based optimistic locking.
-   * Retries on conflict (up to 3 attempts).
+   * Write the registry index with etag compare-before-write retries.
    */
   async writeIndex(
     update: (index: RegistryIndex) => RegistryIndex,
@@ -98,25 +82,20 @@ export class RegistryClient {
       const { index, etag } = await this.fetchIndex();
       const updated: RegistryIndex = { ...update(index), lastUpdated: new Date().toISOString() };
 
-      const headers: Record<string, string> = {
-        ...s3Auth(),
-        'Content-Type': 'application/json',
-      };
-      if (etag) headers['If-Match'] = etag;
-
-      const url = bucketUrl(INDEX_KEY);
-      const res = await fetch(url, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify(updated, null, 2),
-      });
-
-      if (res.ok) return updated;
-      if (res.status === 412 && attempt < maxRetries - 1) {
-        // 412 Precondition Failed — etag conflict, retry
-        continue;
+      try {
+        await this.store.putJson(INDEX_KEY, updated, {
+          contentType: 'application/json',
+          ifMatch: etag,
+        });
+        return updated;
+      } catch (err) {
+        if (isPreconditionFailed(err) && attempt < maxRetries - 1) continue;
+        throw new Error(
+          `Failed to write registry index (attempt ${attempt + 1}): ${
+            err instanceof Error ? err.message : String(err)
+          }`
+        );
       }
-      throw new Error(`Failed to write registry index (attempt ${attempt + 1}): ${res.status}`);
     }
     throw new Error('Failed to write registry index after max retries');
   }
@@ -127,12 +106,6 @@ export class RegistryClient {
    * Publish an artifact to the registry.
    *
    * Auto-detects `README.md` in CWD when `readme` option is `true` (default).
-   *
-   * @param name - Artifact name (e.g. "my-lib")
-   * @param version - Version string ("1.0.0" or "build-2026-07-22")
-   * @param data - Raw file data (Buffer, Uint8Array, or Blob)
-   * @param options - Publish options
-   * @returns The published release metadata
    */
   async publish(
     name: string,
@@ -155,13 +128,11 @@ export class RegistryClient {
     const type = options?.type ?? 'library';
     const distTag = options?.distTag ?? 'latest';
 
-    // Compute SHA-256 checksum via Bun.CryptoHasher
     const blob = data instanceof Blob ? data : new Blob([data]);
     const hasher = new Bun.CryptoHasher('sha256');
     hasher.update(await blob.arrayBuffer());
     const checksum = hasher.digest('hex');
 
-    // Auto-detect README (mirrors `bun publish` behavior)
     let readme: string | undefined;
     const readmeOpt = options?.readme;
     if (readmeOpt === undefined || readmeOpt === true) {
@@ -176,27 +147,13 @@ export class RegistryClient {
       readme = readmeOpt;
     }
 
-    // Build R2 key: @factorywager/<name>/<version>.tgz
     const r2Key =
       type === 'library'
         ? `@factorywager/${name}/${version}.tgz`
         : `projects/${name}/${version}.tgz`;
 
-    // Upload the artifact file
-    const headers: Record<string, string> = {
-      ...s3Auth(),
-      'Content-Type': 'application/gzip',
-      'x-amz-checksum-sha256': checksum,
-    };
-    const uploadUrl = bucketUrl(r2Key);
-    const uploadRes = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers,
-      body: blob,
-    });
-    if (!uploadRes.ok) throw new Error(`Failed to upload artifact: ${uploadRes.status}`);
+    await this.store.putBytes(r2Key, blob, { contentType: 'application/gzip' });
 
-    // Build release metadata
     const release: ArtifactRelease = {
       id: asArtifactId(artifactName, artifactVersion),
       name: artifactName,
@@ -217,7 +174,6 @@ export class RegistryClient {
       },
     };
 
-    // Update the registry index
     await this.writeIndex(index => {
       const pkg: PackageInfo = index.packages[name] ?? {
         versions: [],
@@ -225,17 +181,12 @@ export class RegistryClient {
         releases: {},
       };
 
-      // Update versions list
       const versions = pkg.versions.some(v => String(v) === version)
         ? pkg.versions
         : sortVersions([...pkg.versions, artifactVersion]);
 
-      // Update dist-tags
       const distTags = { ...pkg['dist-tags'], [distTag]: artifactVersion };
-
-      // Store release metadata
       const releases = { ...pkg.releases, [version]: release };
-
       const updatedPkg: PackageInfo = { versions, 'dist-tags': distTags, releases };
 
       return {
@@ -249,13 +200,6 @@ export class RegistryClient {
 
   // ── Install ──────────────────────────────────────────────────────────
 
-  /**
-   * Install (download) an artifact from the registry.
-   *
-   * @param name - Artifact name
-   * @param range - Version specifier (e.g. "^1.0.0", "latest", exact version)
-   * @returns The downloaded file data and release metadata, or undefined if not found
-   */
   async install(
     name: string,
     range = 'latest'
@@ -270,29 +214,11 @@ export class RegistryClient {
     const release = pkg.releases[String(resolved)];
     if (!release) return undefined;
 
-    // Download — stream if body supports async iteration, fall back to buffered
-    const url = bucketUrl(release.storage.r2Key);
-    const res = await fetch(url, { headers: s3Auth() });
-    if (!res.ok) throw new Error(`Failed to download artifact: ${res.status}`);
+    const data = await this.store.getBytes(release.storage.r2Key);
+    if (!data) throw new Error(`Failed to download artifact: missing ${release.storage.r2Key}`);
 
     const hasher = new Bun.CryptoHasher('sha256');
-    let data: Uint8Array;
-
-    if (res.body && typeof res.body[Symbol.asyncIterator] === 'function') {
-      // Streaming path — hash incrementally, assemble with concatArrayBuffers
-      const chunks: Uint8Array[] = [];
-      let total = 0;
-      for await (const chunk of res.body) {
-        chunks.push(chunk);
-        total += chunk.byteLength;
-        hasher.update(chunk);
-      }
-      data = total ? Bun.concatArrayBuffers(chunks, total, true) : new Uint8Array(0);
-    } else {
-      // Buffered path — single read (used by test mocks)
-      data = new Uint8Array(await res.arrayBuffer());
-      hasher.update(data);
-    }
+    hasher.update(data);
     const checksum = hasher.digest('hex');
     if (checksum !== release.storage.checksum) {
       throw new Error(`Checksum mismatch for ${name}@${resolved}`);
@@ -303,12 +229,6 @@ export class RegistryClient {
 
   // ── Readme ────────────────────────────────────────────────────────────
 
-  /**
-   * Fetch the README text for a specific release.
-   *
-   * Returns the stored README from the registry index, or `undefined` if
-   * no README was published with this release.
-   */
   async fetchReadme(name: string, version: string): Promise<string | undefined> {
     const { index } = await this.fetchIndex();
     const pkg = index.packages[name];
@@ -323,17 +243,11 @@ export class RegistryClient {
 
   // ── List ──────────────────────────────────────────────────────────────
 
-  /**
-   * List all versions of an artifact.
-   */
   async list(name: string): Promise<PackageInfo | undefined> {
     const { index } = await this.fetchIndex();
     return index.packages[name];
   }
 
-  /**
-   * List all packages in the registry.
-   */
   async listAll(): Promise<Array<{ name: string; info: PackageInfo }>> {
     const { index } = await this.fetchIndex();
     return Object.entries(index.packages).map(([name, info]) => ({ name, info }));
@@ -341,9 +255,6 @@ export class RegistryClient {
 
   // ── Search ────────────────────────────────────────────────────────────
 
-  /**
-   * Search the registry by name/description/tags.
-   */
   async search(query: string): Promise<Array<{ name: string; info: PackageInfo }>> {
     const { index } = await this.fetchIndex();
     const q = query.toLowerCase();
@@ -354,10 +265,9 @@ export class RegistryClient {
         results.push({ name, info });
         continue;
       }
-      // Check latest release description/tags
-      const latestVersion = info['dist-tags']?.latest;
-      if (latestVersion) {
-        const release = info.releases[String(latestVersion)];
+      const latest = info['dist-tags']?.latest;
+      if (latest) {
+        const release = info.releases[String(latest)];
         if (release) {
           if (release.description?.toLowerCase().includes(q)) {
             results.push({ name, info });
@@ -376,41 +286,62 @@ export class RegistryClient {
   // ── Health / env check ────────────────────────────────────────────────
 
   /**
-   * Verify that R2 credentials and bucket access work.
+   * Verify that R2 credentials are set and the bucket responds to a signed probe.
+   * Missing `registry.json` is still a successful probe (empty registry).
    */
   async checkEnv(): Promise<{
     ok: boolean;
     r2Key: boolean;
     r2Secret: boolean;
     bucketAccess: boolean;
+    bucket: string;
+    /** Bun ≥1.3.6 `requestPayer` — from `R2_REQUEST_PAYER`. */
+    requestPayer: boolean;
     error?: string;
   }> {
-    const r2Key = !!Bun.env.R2_ACCESS_KEY_ID;
-    const r2Secret = !!Bun.env.R2_SECRET_ACCESS_KEY;
+    const r2Key = !!Bun.env.R2_ACCESS_KEY_ID?.trim();
+    const r2Secret = !!Bun.env.R2_SECRET_ACCESS_KEY?.trim();
+    const bucket = factoryRegistryBucketFromEnv();
+    const requestPayer = r2RequestPayerFromEnv();
 
-    let bucketAccess = false;
-    let error: string | undefined;
-
-    if (r2Key && r2Secret) {
-      try {
-        const res = await fetch(S3_ENDPOINT, { headers: s3Auth() });
-        bucketAccess = res.ok || res.status === 403; // 403 means auth works but listing may be denied
-      } catch (e) {
-        error = String(e);
-      }
-    } else {
-      error = 'R2 credentials not set';
+    if (!r2Key || !r2Secret) {
+      return {
+        ok: false,
+        r2Key,
+        r2Secret,
+        bucketAccess: false,
+        bucket,
+        requestPayer,
+        error: 'R2 credentials not set',
+      };
     }
 
-    return {
-      ok: r2Key && r2Secret && bucketAccess,
-      r2Key,
-      r2Secret,
-      bucketAccess,
-      error,
-    };
+    try {
+      // Validate config shape before ping (account id / endpoint).
+      requireFactoryRegistryS3Config();
+      const ping = await this.store.ping();
+      return {
+        ok: ping.ok,
+        r2Key,
+        r2Secret,
+        bucketAccess: ping.ok,
+        bucket,
+        requestPayer,
+        error: ping.error,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        r2Key,
+        r2Secret,
+        bucketAccess: false,
+        bucket,
+        requestPayer,
+        error: e instanceof Error ? e.message : String(e),
+      };
+    }
   }
 }
 
-/** Singleton registry client instance. */
+/** Singleton registry client instance (live S3 store). */
 export const registry = new RegistryClient();

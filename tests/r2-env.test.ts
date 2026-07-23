@@ -17,6 +17,7 @@ import {
   r2BucketUrlFromEnv,
   r2EndpointFromAccount,
   r2UploadRetriesFromEnv,
+  factoryRegistryBucketFromEnv,
   requireR2Config,
   tryR2Config,
 } from '../config/r2-env.ts';
@@ -60,6 +61,8 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(factoryWagerRegistryUrlFromEnv()).toContain(CLOUDFLARE_DEFAULTS.registryHost);
     expect(factoryWagerWikiUrl()).toBe(`https://${CLOUDFLARE_DEFAULTS.wikiHost}`);
     expect(CLOUDFLARE_DEFAULTS.registryDoctorBucket).toBe('npm-registry');
+    expect(factoryRegistryBucketFromEnv().length).toBeGreaterThan(0);
+    expect(CLOUDFLARE_DEFAULTS.registryBucket).toBe('factory-wager-registry');
     expect(cloudflareDashboardUrlFromEnv()).toContain(
       `/dash.cloudflare.com/${CLOUDFLARE_DEFAULTS.accountId}/`
     );

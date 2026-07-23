@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
+// @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 // @see https://bun.com/docs/runtime/child-process#terminal-pty-support — Bun.Terminal
@@ -881,7 +883,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'factory-registry-cli-v1',
     claim:
-      'R2-backed artifact registry client and CLI for publishing, installing, listing, searching packages with README auto-detection (mirroring bun publish)',
+      'R2-backed artifact registry client and CLI (SigV4 S3Client store) for publishing, installing, listing, searching packages with README auto-detection',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',
@@ -890,12 +892,35 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'tests/registry.test.ts',
       'tests/cli.test.ts',
       'lib/factory/artifact.ts',
+      'lib/factory/object-store.ts',
+      'lib/factory/markdown.ts',
       'lib/factory/registry.ts',
       'lib/factory/cli.ts',
+      'config/r2-env.ts',
     ],
     freshRerun: 'bun test tests/registry.test.ts tests/cli.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/factory/',
+  },
+  {
+    id: 'factory-registry-pages-proxy-v1',
+    claim:
+      'Pages Function /api/registry serves allowlisted registry objects through a bound R2 bucket with validated keys, fail-closed binding, and origin-restricted CORS (Workers APIs only — no Bun.*)',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/registry-pages-function.test.ts',
+      'tests/registry-pages-function.test.ts',
+      'functions/api/registry/[[path]].ts',
+      'public/portal/app.js',
+      'public/portal/index.html',
+      'public/registry/registry.json',
+      'lib/factory/cli.ts',
+    ],
+    freshRerun: 'bun test tests/registry-pages-function.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'functions/api/registry/[[path]].ts',
   },
 ] as const;
 

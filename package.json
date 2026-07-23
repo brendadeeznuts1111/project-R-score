@@ -1565,6 +1565,7 @@
     "factory:search": "bun lib/factory/cli.ts search",
     "factory:env": "bun lib/factory/cli.ts env",
     "factory:readme": "bun lib/factory/cli.ts readme",
+    "factory:snapshot": "bun lib/factory/cli.ts snapshot",
     "factory:create": "bun lib/factory/cli.ts create",
     "ci:harness": "bun scripts/ci-harness.ts",
     "ci:harness:fast": "bun scripts/ci-harness.ts --fast",

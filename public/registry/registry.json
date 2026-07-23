@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "lastUpdated": "2026-07-22T00:00:00Z",
+  "packages": {
+    "event-store": {
+      "versions": ["1.0.0", "1.1.0", "2.0.0-beta"],
+      "dist-tags": {
+        "latest": "1.1.0",
+        "beta": "2.0.0-beta"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "event-store@1.0.0",
+          "name": "event-store",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "Event sourcing and CQRS primitives for sports trading pipelines",
+          "tags": ["event-sourcing", "cqrs", "trading"],
+          "readme": "# Event Store\n\nEvent sourcing primitives.\n\n## Usage\n\n```ts\nimport { EventStore } from '@factorywager/event-store';\n```\n\n## Configuration\n\nSet `EVENT_STORE_BACKEND` to `memory` or `r2`.",
+          "publishedAt": "2026-07-15T10:30:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/1.0.0.tgz",
+            "size": 12480,
+            "checksum": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2",
+            "contentType": "application/gzip"
+          }
+        },
+        "1.1.0": {
+          "id": "event-store@1.1.0",
+          "name": "event-store",
+          "version": "1.1.0",
+          "type": "library",
+          "description": "Event sourcing with snapshot support and R2 persistence",
+          "tags": ["event-sourcing", "cqrs", "r2", "snapshots"],
+          "publishedAt": "2026-07-20T14:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/1.1.0.tgz",
+            "size": 15720,
+            "checksum": "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3",
+            "contentType": "application/gzip"
+          }
+        },
+        "2.0.0-beta": {
+          "id": "event-store@2.0.0-beta",
+          "name": "event-store",
+          "version": "2.0.0-beta",
+          "type": "library",
+          "description": "v2 beta: multi-tenant event stores, streaming projections, WebSocket tailing",
+          "tags": ["event-sourcing", "multi-tenant", "streaming", "beta"],
+          "publishedAt": "2026-07-22T09:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/2.0.0-beta.tgz",
+            "size": 22400,
+            "checksum": "c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "bet-ticker": {
+      "versions": ["1.0.0", "1.2.0"],
+      "dist-tags": { "latest": "1.2.0" },
+      "releases": {
+        "1.0.0": {
+          "id": "bet-ticker@1.0.0",
+          "name": "bet-ticker",
+          "version": "1.0.0",
+          "type": "worker",
+          "description": "Cloudflare Worker for live wager broadcast via WebSocket",
+          "tags": ["worker", "websocket", "betting"],
+          "publishedAt": "2026-06-01T08:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "@factorywager/bet-ticker/1.0.0.tgz",
+            "size": 8960,
+            "checksum": "d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5",
+            "contentType": "application/gzip"
+          }
+        },
+        "1.2.0": {
+          "id": "bet-ticker@1.2.0",
+          "name": "bet-ticker",
+          "version": "1.2.0",
+          "type": "worker",
+          "description": "Bet Ticker Worker v1.2 with Durable Object coordination and Zod validation",
+          "tags": ["worker", "websocket", "durable-object", "zod"],
+          "publishedAt": "2026-07-18T16:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "@factorywager/bet-ticker/1.2.0.tgz",
+            "size": 11240,
+            "checksum": "e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "odds-engine": {
+      "versions": ["0.5.0", "0.6.0", "0.7.0"],
+      "dist-tags": { "latest": "0.7.0" },
+      "releases": {
+        "0.7.0": {
+          "id": "odds-engine@0.7.0",
+          "name": "odds-engine",
+          "version": "0.7.0",
+          "type": "library",
+          "description": "Real-time odds computation with Bayesian adjustment and market normalization",
+          "tags": ["odds", "bayesian", "trading"],
+          "publishedAt": "2026-05-10T12:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/odds-engine/0.7.0.tgz",
+            "size": 18300,
+            "checksum": "f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "cascade-mover": {
+      "versions": ["3.0.0", "3.1.0", "3.1.1"],
+      "dist-tags": { "latest": "3.1.1", "stable": "3.0.0" },
+      "releases": {
+        "3.1.1": {
+          "id": "cascade-mover@3.1.1",
+          "name": "cascade-mover",
+          "version": "3.1.1",
+          "type": "project",
+          "description": "Global Liquidity & Predictive Risk Command Center — 6-indicator confidence engine",
+          "tags": ["risk", "liquidity", "confidence-engine"],
+          "publishedAt": "2026-07-21T22:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "projects/cascade-mover/3.1.1.tgz",
+            "size": 45800,
+            "checksum": "a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8",
+            "contentType": "application/gzip"
+          }
+        },
+        "3.0.0": {
+          "id": "cascade-mover@3.0.0",
+          "name": "cascade-mover",
+          "version": "3.0.0",
+          "type": "project",
+          "description": "Cascade Mover v3 stable — recursive multi-market cascade detection",
+          "tags": ["risk", "stable"],
+          "publishedAt": "2026-04-01T00:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "projects/cascade-mover/3.0.0.tgz",
+            "size": 42100,
+            "checksum": "b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "sports-terminal-os": {
+      "versions": ["5.2.0"],
+      "dist-tags": { "latest": "5.2.0" },
+      "releases": {
+        "5.2.0": {
+          "id": "sports-terminal-os@5.2.0",
+          "name": "sports-terminal-os",
+          "version": "5.2.0",
+          "type": "project",
+          "description": "Partner Profile OS for Sports Terminal v5.2 — TOML templates, PartnerGateway kernel",
+          "tags": ["partner", "toml", "gateway"],
+          "publishedAt": "2026-07-22T18:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "projects/sports-terminal-os/5.2.0.tgz",
+            "size": 89200,
+            "checksum": "c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "factory-cli": {
+      "versions": ["0.1.0"],
+      "dist-tags": { "latest": "0.1.0" },
+      "releases": {
+        "0.1.0": {
+          "id": "factory-cli@0.1.0",
+          "name": "factory-cli",
+          "version": "0.1.0",
+          "type": "cli-tool",
+          "description": "R2-backed artifact registry CLI — publish, install, list, search, create, and readme",
+          "dependencies": {
+            "@factorywager/event-store": "^1.0.0"
+          },
+          "readme": "# Factory CLI\n\nR2-backed artifact registry CLI.\n\n## Usage\n\n```bash\nbun run factory --version\nbun run factory:publish ./dist.tgz --name my-lib --version 1.0.0\nbun run factory:list\nbun run factory:search event-store\nbun run factory:install my-lib\nbun run factory:readme my-lib\nbun run factory create factory-library my-new-lib --publish\n```\n\n## Environment\n\nSet `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` for registry access.\nOptional: `FACTORY_REGISTRY_URL`, `BUN_CREATE_DIR`, `FACTORY_NO_COLOR`.",
+          "publishedAt": "2026-07-22T23:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/factory-cli/0.1.0.tgz",
+            "size": 24800,
+            "checksum": "d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "kimi-toolchain": {
+      "versions": ["2.1.0"],
+      "dist-tags": { "latest": "2.1.0" },
+      "releases": {
+        "2.1.0": {
+          "id": "kimi-toolchain@2.1.0",
+          "name": "kimi-toolchain",
+          "version": "2.1.0",
+          "type": "cli-tool",
+          "description": "Kimi governance and doctor toolchain for harness health checks",
+          "tags": ["governance", "doctor", "harness"],
+          "publishedAt": "2026-07-19T08:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "@factorywager/kimi-toolchain/2.1.0.tgz",
+            "size": 31200,
+            "checksum": "e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "quantum-domain-ops": {
+      "versions": ["0.1.0"],
+      "dist-tags": { "latest": "0.1.0" },
+      "releases": {
+        "0.1.0": {
+          "id": "quantum-domain-ops@0.1.0",
+          "name": "quantum-domain-ops",
+          "version": "0.1.0",
+          "type": "library",
+          "description": "Protocols for operating QuantumDomain instances — state collapse, entanglement, coherence monitoring",
+          "tags": ["quantum", "state-management", "experimental"],
+          "readme": "# Quantum Domain Ops\n\nExperimental quantum state management.\n\n> ⚠️ Requires Bun ≥1.3.0 with `--experimental-quantum` flag.\n\n```ts\nimport { QuantumDomain } from '@factorywager/quantum-domain-ops';\nconst domain = new QuantumDomain({ qubits: 8 });\nawait domain.collapse('entangled');\n```",
+          "publishedAt": "2026-07-20T03:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/quantum-domain-ops/0.1.0.tgz",
+            "size": 6800,
+            "checksum": "f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    }
+  }
+}
