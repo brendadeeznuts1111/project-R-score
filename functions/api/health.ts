@@ -21,27 +21,25 @@ export async function onRequest(context: {
     });
   }
 
-  // Bun API proof status
+  // Bun API proof status — try ASSETS, fall back to GitHub raw
   let proofStatus: Record<string, unknown> = { available: false };
-  try {
-    const proofUrl = new URL('/tools/bun-api-coverage-proof.json', new URL(context.request.url).origin);
-    let res: Response;
-    if (context.env?.ASSETS?.fetch) {
-      res = await context.env.ASSETS.fetch(new Request(proofUrl.toString()));
-    } else {
-      res = await fetch(proofUrl.toString());
-    }
-    if (res.ok) {
-      const proof = (await res.json()) as { generated?: string; bunVersion?: string; summary?: Record<string, unknown> };
-      proofStatus = {
-        available: true,
-        generated: proof.generated ?? null,
-        bunVersion: proof.bunVersion ?? null,
-        summary: proof.summary ?? null,
-      };
-    }
-  } catch {
-    // proof manifest not committed yet
+  const proofSources = [
+    async () => {
+      if (!context.env?.ASSETS?.fetch) throw new Error('no ASSETS');
+      const proofUrl = new URL('/tools/bun-api-coverage-proof.json', new URL(context.request.url).origin);
+      return context.env.ASSETS.fetch(new Request(proofUrl.toString()));
+    },
+    async () => fetch('https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/bun-api-coverage-proof.json'),
+  ];
+  for (const src of proofSources) {
+    try {
+      const res = await src();
+      if (res.ok) {
+        const proof = await res.json() as { generated?: string; bunVersion?: string; summary?: Record<string, unknown> };
+        proofStatus = { available: true, generated: proof.generated ?? null, bunVersion: proof.bunVersion ?? null, summary: proof.summary ?? null };
+        break;
+      }
+    } catch { /* try next */ }
   }
 
   return Response.json(
