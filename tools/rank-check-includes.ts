@@ -91,3 +91,5 @@ console.log(
   )
 );
 await Bun.$`rm -f tsconfig.check.probe.json`.quiet();
+
+export {};

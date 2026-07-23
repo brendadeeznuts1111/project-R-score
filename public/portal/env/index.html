@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Environment · FactoryWager</title>
+  <link rel="stylesheet" href="/portal/style.css" />
+  <style>
+    .hidden { display: none; }
+    .env-dashboard { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .env-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .env-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .env-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .env-table tr:hover { background: var(--surface-hover); }
+    .env-key { font-family: monospace; font-weight: 600; color: var(--accent); font-size: 12px; }
+    .env-desc { color: var(--text-dim); font-size: 11px; }
+    .env-val { font-family: monospace; font-size: 12px; }
+    .badge-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .section-title { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+    .section-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
+    .generated { font-size: 11px; color: var(--text-dim); text-align: right; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="logo"><span class="logo-icon">■</span> Environment</h1>
+      <nav class="topbar-nav">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/portal/" class="nav-link">Registry</a>
+        <a href="/portal/ops" class="nav-link">Ops</a>
+        <a href="/portal/catalog" class="nav-link">Catalog</a>
+        <a href="/portal/dod" class="nav-link">DOD</a>
+        <a href="/portal/health" class="nav-link">Health</a>
+        <a href="/portal/env" class="nav-link active">Env</a>
+        <a href="/monitoring" class="nav-link">Monitoring</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="env-dashboard">
+    <div id="loading" class="ops-loading"><div class="spinner"></div><p>Loading environment…</p></div>
+    <div id="dashboard" class="hidden">
+      <div class="section-title">🔐 Critical Secrets</div>
+      <div class="section-sub">Required for server operations — missing vars shown in <span style="color:hsl(0,70%,50%)">red</span></div>
+      <table class="env-table" id="critical-table">
+        <thead><tr><th>Status</th><th>Variable</th><th>Description</th><th>Actual</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="section-title">⚙️ Optional Configuration</div>
+      <div class="section-sub">Expected defaults shown — mismatches in <span style="color:hsl(45,60%,45%)">yellow</span></div>
+      <table class="env-table" id="optional-table">
+        <thead><tr><th>Status</th><th>Variable</th><th>Description</th><th>Actual</th><th>Default</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="generated" id="generated"></div>
+    </div>
+  </main>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const hueToBg = h => `hsl(${h}, 60%, 20%)`;
+
+    async function loadEnv() {
+      try {
+        const res = await fetch('/api/env');
+        if (!res.ok) throw new Error(String(res.status));
+        const data = await res.json();
+        renderCritical(data.critical);
+        renderOptional(data.optional);
+        $('generated').textContent = 'Last checked: ' + new Date(data.generated).toLocaleString();
+        $('loading').classList.add('hidden');
+        $('dashboard').classList.remove('hidden');
+      } catch (e) {
+        $('loading').innerHTML = '<p style="color:var(--red)">⚠️ Failed to load: ' + e.message + '</p>';
+      }
+    }
+
+    function renderCritical(vars) {
+      const tbody = document.querySelector('#critical-table tbody');
+      tbody.innerHTML = vars.map(v => {
+        return '<tr>' +
+          '<td><span class="badge-dot" style="background:' + v.hsl + '"></span></td>' +
+          '<td class="env-key">' + v.key + '</td>' +
+          '<td class="env-desc">' + v.desc + '</td>' +
+          '<td class="env-val" style="color:hsl(' + (v.set ? 120 : 0) + ',70%,' + (v.set ? 60 : 40) + '%)">' + (v.actual || '—') + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    function renderOptional(vars) {
+      const tbody = document.querySelector('#optional-table tbody');
+      tbody.innerHTML = vars.map(v => {
+        return '<tr>' +
+          '<td><span class="badge-dot" style="background:' + v.hsl + '"></span></td>' +
+          '<td class="env-key">' + v.key + '</td>' +
+          '<td class="env-desc">' + v.desc + '</td>' +
+          '<td class="env-val" style="color:hsl(' + v.hue + ',60%,' + (v.match ? 60 : 45) + '%)">' + (v.actual || '—') + '</td>' +
+          '<td class="env-desc">' + (v.default || '—') + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    loadEnv();
+  </script>
+</body>
+</html>

@@ -2,86 +2,116 @@
   "schemaVersion": 1,
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-  "timestamp": "2026-07-23T18:20:06.218Z",
+  "timestamp": "2026-07-23T18:43:47.980Z",
+  "summary": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0
+  },
   "testCases": [
     {
       "utility": "stringWidth",
       "input": "hello",
       "expected": 5,
       "actual": 5,
-      "note": "ASCII"
+      "note": "ASCII",
+      "pass": true
     },
     {
       "utility": "stringWidth",
       "input": "👨‍👩‍👧‍👦",
       "expected": 2,
       "actual": 2,
-      "note": "Emoji ZWJ family (Bun baseline)"
+      "note": "Emoji ZWJ family",
+      "pass": true
     },
     {
       "utility": "stringWidth",
       "input": "こんにちは",
       "expected": 10,
       "actual": 10,
-      "note": "CJK fullwidth (Bun baseline)"
+      "note": "CJK 2-width each",
+      "pass": true
+    },
+    {
+      "utility": "stringWidth",
+      "input": "\u001b[31mhello\u001b[0m",
+      "expected": 5,
+      "actual": 5,
+      "note": "ANSI ignored",
+      "pass": true
+    },
+    {
+      "utility": "stringWidth",
+      "input": "\u001b[31mhello\u001b[0m",
+      "expected": 12,
+      "actual": 12,
+      "note": "ANSI counted",
+      "pass": true
+    },
+    {
+      "utility": "stringWidth",
+      "input": "",
+      "expected": 0,
+      "actual": 0,
+      "note": "Empty string",
+      "pass": true
     },
     {
       "utility": "deepEquals",
       "input": "{a:1} == {a:1}",
       "expected": true,
       "actual": true,
-      "note": "Same plain object"
+      "note": "Same object",
+      "pass": true
     },
     {
       "utility": "deepEquals",
       "input": "{a:1} == {a:2}",
       "expected": false,
       "actual": false,
-      "note": "Different value"
+      "note": "Different value",
+      "pass": true
     },
     {
       "utility": "deepEquals",
       "input": "[1,2] == [1,2]",
       "expected": true,
       "actual": true,
-      "note": "Same array"
+      "note": "Same array",
+      "pass": true
     },
     {
       "utility": "deepEquals",
       "input": "[1,2] == [1,3]",
       "expected": false,
       "actual": false,
-      "note": "Different array"
-    },
-    {
-      "utility": "inspect (depth:0)",
-      "input": "depth:0",
-      "expected": "truncates at a → [Object …]",
-      "actual": "{\n  a: [Object ...],\n}",
-      "note": "No recursion",
+      "note": "Different array",
       "pass": true
     },
     {
-      "utility": "inspect (depth:1)",
-      "input": "depth:1",
-      "expected": "shows b then [Object …]",
-      "actual": "{\n  a: {\n    b: [Object ...],\n  },\n}",
-      "note": "One level",
+      "utility": "deepEquals(strict)",
+      "input": "{a:1} == {a:1,extra:undefined}",
+      "expected": false,
+      "actual": false,
+      "note": "Strict: extra undefined key",
       "pass": true
     },
     {
-      "utility": "inspect (default)",
-      "input": "default depth",
-      "expected": "shows a.b.c structure",
-      "actual": "{\n  a: {\n    b: {\n      c: {\n        d: \"e\",\n      },\n    },\n  },\n}",
-      "note": "Default depth ≥ 2",
+      "utility": "deepEquals(strict)",
+      "input": "[\"a\"] == [\"a\",undefined]",
+      "expected": false,
+      "actual": false,
+      "note": "Strict: sparse array",
+      "pass": true
+    },
+    {
+      "utility": "deepEquals(strict)",
+      "input": "new Foo() == {a:1}",
+      "expected": false,
+      "actual": false,
+      "note": "Strict: class vs literal",
       "pass": true
     }
-  ],
-  "summary": {
-    "total": 10,
-    "passed": 10,
-    "failed": 0
-  },
-  "proofHash": "e6897c7d62de5c701f901fb6c9a309be6ca195792118bc3648b44aacbf31ceb5"
+  ]
 }

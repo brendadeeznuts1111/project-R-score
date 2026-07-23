@@ -457,6 +457,7 @@ const HOT_STATIC_PATHS = [
   'public/registry/@factorywager/routing-test/latest.json',
   'public/registry/@factorywager/registry-snapshot/latest.json',
   'public/registry/@factorywager/proof-packages.json',
+  'tools/bun-api-coverage-proof.json',
 ];
 
 const hotStatic = await preloadStaticMap(HOT_STATIC_PATHS, { optional: true });
@@ -464,6 +465,13 @@ const hotStatic = await preloadStaticMap(HOT_STATIC_PATHS, { optional: true });
 const hotByUrl = new Map<string, PreloadedStatic>();
 for (const [fsPath, asset] of hotStatic) {
   hotByUrl.set('/' + fsPath.replace(/^public\//, ''), asset);
+}
+
+// Route aliases for preloaded assets
+const proofAsset = hotStatic.get('tools/bun-api-coverage-proof.json');
+if (proofAsset) {
+  hotByUrl.set('/api/proof', proofAsset);
+  hotByUrl.set('/api/proof/', proofAsset);
 }
 
 const fileRouteCache = new Map<string, PreloadedStatic>();
@@ -715,7 +723,7 @@ function renderHealthPlain(data: Record<string, unknown>): string {
     `  Rule:            ${((rs.decision as Record<string, string>) || {}).rule ?? '—'}`,
     `  ETag:            shared data scope (JSON + plain)`,
     '',
-  ];
+  );
   const env = (data.env as { summary?: Record<string, number>; requiredMissingKeys?: string[] }) || {};
   if (env.summary) {
     lines.push(
@@ -805,6 +813,47 @@ async function bunApiProof(): Promise<Response> {
   });
 }
 
+/** GET /api/env — read-only env var status with HSL health indicators. */
+async function envStatus(): Promise<Response> {
+  const critical = [
+    ['CLOUDFLARE_API_TOKEN', 'Cloudflare API token for MCP + deploys'],
+    ['FACTORY_WAGER_TOKEN', 'Registry scope auth token'],
+    ['REGISTRY_SECRET', 'Local publish auth secret'],
+    ['R2_ACCESS_KEY_ID', 'R2/S3 access key for artifact storage'],
+    ['R2_SECRET_ACCESS_KEY', 'R2/S3 secret key'],
+    ['R2_ACCOUNT_ID', 'Cloudflare account ID'],
+  ];
+  const optional = [
+    ['NODE_ENV', 'Runtime environment', 'production'],
+    ['PORT', 'Server port', '3000'],
+    ['HOST', 'Server bind address', '127.0.0.1'],
+    ['BUN_CONSOLE_DEPTH', 'Console inspect depth', '4'],
+    ['SLACK_WEBHOOK_URL', 'Slack alert webhook'],
+    ['TELEGRAM_BOT_TOKEN', 'Telegram alert bot token'],
+    ['TELEGRAM_OPS_CHAT_ID', 'Telegram ops chat ID'],
+  ];
+
+  function hue(val: string | undefined, expected?: string): number {
+    if (!val || !val.trim()) return 0;
+    if (!expected || val.trim() === expected) return 120;
+    return 45;
+  }
+
+  const crit = critical.map(([key, desc]) => {
+    const val = Bun.env[key];
+    const h = hue(val);
+    return { key, desc, actual: val ? '••••' + val.slice(-4) : null, set: !!val, hue: h, hsl: `hsl(${h}, 70%, ${h === 0 ? 40 : 50}%)` };
+  });
+
+  const opt = optional.map(([key, desc, expected]) => {
+    const val = Bun.env[key];
+    const h = hue(val, expected);
+    return { key, desc, actual: val ?? '', default: expected, set: !!val, match: val === expected, hue: h, hsl: `hsl(${h}, 60%, 45%)` };
+  });
+
+  return json({ critical: crit, optional: opt, generated: new Date().toISOString() });
+}
+
 /**
  * Optional read auth — set REGISTRY_SECRET (or REGISTRY_AUTH as the bearer secret).
  * Mode keywords from .env.registry.example (`token`/`jwt`/`basic`/`none`) are ignored
@@ -838,6 +887,7 @@ async function fetchHandler(req: Request): Promise<Response> {
 
   // Bun API proof status
   if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
+  if (path === '/api/env' || path === '/api/env/') return envStatus();
 
   // Optional auth for read endpoints
   const authErr = requireReadAuth(req);
@@ -937,7 +987,11 @@ function buildPublicRoutes() {
     '/health/pre': (req: Request) => healthHtml(req),
     '/health/pre/': (req: Request) => healthHtml(req),
 
-    '/api/proof': () => bunApiProof(),
+    '/api/proof': (req: Request) => {
+      const hot = hotByUrl.get('/api/proof');
+      if (hot) return respondStatic(hot, req, { cacheControl: 'public, max-age=30' });
+      return bunApiProof();
+    },
     '/api/monitoring': () => liveMonitoringApi(),
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),

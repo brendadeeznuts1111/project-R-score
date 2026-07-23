@@ -1,0 +1,27 @@
+# Gitleaks config for FactoryWager monorepo
+
+[allowlist]
+paths = [
+  '''node_modules''',
+  '''.git''',
+  '''.cache''',
+  '''bun.lock''',
+  '''package-lock.json''',
+  '''yarn.lock''',
+  '''.wrangler''',
+  '''tools/bun-docs-catalog.json''',
+  '''tools/bun-docs-index.json''',
+  '''tools/bun-docs-token-supplement.json''',
+]
+
+[[rules]]
+id = "factorywager-placeholder-tokens"
+description = "Placeholder secret patterns"
+regex = '''(?:your_|replace_me|changeme|TODO|place.?holder|xxx)_[A-Z_]+'''
+tags = ["placeholder", "secret"]
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''(?i)(?:api[_-]?key|token|secret|password|credential)\s*[:=]\s*['"][A-Za-z0-9_\-\.]{16,}['"]'''
+tags = ["key", "API"]

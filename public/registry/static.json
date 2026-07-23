@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-23T18:20:06.222Z",
+  "generated": "2026-07-23T18:42:49.957Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 14,
@@ -543,7 +543,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 12,
+    "uptimeMs": 13,
     "packageCount": 14,
     "versionCount": 23,
     "lastIntegrity": {
@@ -563,11 +563,11 @@
     "dodByStatus": {},
     "experimentsActive": 0,
     "predictionN": 10,
-    "timestamp": "2026-07-23T18:20:06.221Z"
+    "timestamp": "2026-07-23T18:42:49.957Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-23T18:20:06.217Z",
+    "generated": "2026-07-23T18:42:49.948Z",
     "liquidity": {
       "total": 0
     },
@@ -610,11 +610,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "e6897c7d62de5c701f901fb6c9a309be6ca195792118bc3648b44aacbf31ceb5",
+      "proofHash": "a71cbfcf3b7e40545be9f33f217b81f0ef2c84a4d4a3a9a26e4faf0f8d1cc75c",
       "passed": 10,
       "total": 10,
       "failed": 0,
-      "timestamp": "2026-07-23T18:20:06.218Z"
+      "timestamp": "2026-07-23T18:42:49.948Z"
     },
     "routing": {
       "available": true,
@@ -766,7 +766,7 @@
     }
   },
   "bunUtils": {
-    "proofHash": "e6897c7d62de5c701f901fb6c9a309be6ca195792118bc3648b44aacbf31ceb5",
+    "proofHash": "fa09fed36760a562a18dae761617c1c892f15e69715ccfa43f3bdfa55a85d628",
     "passed": 10,
     "total": 10,
     "bunVersion": "1.4.0",

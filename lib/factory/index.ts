@@ -86,3 +86,4 @@ export {
 } from './object-store';
 
 export { renderReadmeHTML, renderReadmeAnsi } from './markdown';
+export { withRetry, withCache } from './retry';
