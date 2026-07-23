@@ -13,7 +13,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 // @see https://bun.com/blog/bun-v1.3.14#event-loop-refactor — event loop probes
 import { CryptoHasher, inspect, version, revision, spawn, $ } from 'bun';
-import { writeFileSync } from 'fs';
+import { writeFileSync, readFileSync } from 'fs';
 import {
   BUN_RELEASE_NOTE_ROWS,
   probeTlsSystemCaCertificates,
@@ -24,6 +24,9 @@ import {
 
 const SAVE_PATH = 'public/registry/release-features.json';
 const SHOULD_SAVE = process.argv.includes('--save');
+
+/** Read bunfig.toml once at module init. */
+const bunfigText = readFileSync(new URL('../bunfig.toml', import.meta.url), 'utf-8');
 
 type TestResult = { name: string; expected: string; actual: string; passed: boolean };
 
@@ -155,6 +158,13 @@ async function run(): Promise<{ timestamp: string; bunVersion: string; bunRevisi
   } catch (e: any) {
     results.push({ name: 'Built-in objects (Request, Response)', expected: 'created without crash', actual: `error: ${e.message}`, passed: false });
   }
+
+  // 15. no-orphans (--no-orphans / BUN_FEATURE_FLAG_NO_ORPHANS)
+  results.push({
+    name: '--no-orphans support', expected: 'configured in bunfig + env',
+    actual: `bunfig=${bunfigText.includes('noOrphans')}, env=${!!process.env.BUN_FEATURE_FLAG_NO_ORPHANS}`,
+    passed: process.env.BUN_FEATURE_FLAG_NO_ORPHANS === '1',
+  });
 
   const passed = results.filter(r => r.passed).length;
   const hasher = new CryptoHasher('sha256');

@@ -4,7 +4,7 @@ var __require = import.meta.require;
 
 // tools/verify-bun-release.ts
 var {CryptoHasher, inspect, version, revision, spawn, $ } = globalThis.Bun;
-import { writeFileSync } from "fs";
+import { writeFileSync, readFileSync } from "fs";
 
 // lib/docs/bun-release-tracker.ts
 import tls from "tls";
@@ -123,6 +123,7 @@ function smokeBuiltinObjectsGc() {
 // tools/verify-bun-release.ts
 var SAVE_PATH = "public/registry/release-features.json";
 var SHOULD_SAVE = process.argv.includes("--save");
+var bunfigText = readFileSync(new URL("../bunfig.toml", import.meta.url), "utf-8");
 async function run() {
   const results = [];
   const tlsProbe = probeTlsSystemCaCertificates();
@@ -236,6 +237,12 @@ async function run() {
   } catch (e) {
     results.push({ name: "Built-in objects (Request, Response)", expected: "created without crash", actual: `error: ${e.message}`, passed: false });
   }
+  results.push({
+    name: "--no-orphans support",
+    expected: "configured in bunfig + env",
+    actual: `bunfig=${bunfigText.includes("noOrphans")}, env=${!!process.env.BUN_FEATURE_FLAG_NO_ORPHANS}`,
+    passed: process.env.BUN_FEATURE_FLAG_NO_ORPHANS === "1"
+  });
   const passed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");
   for (const r of results)
