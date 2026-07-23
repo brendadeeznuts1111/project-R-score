@@ -93,6 +93,7 @@ import {
   serveVerificationScript,
   serveVerificationScriptMeta,
 } from '../lib/http/verification-scripts.ts';
+import { resolvePublishReadme } from '../lib/registry/npm-publish-readme.ts';
 import type { BunServer } from '../lib/http/bun-server.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
@@ -364,12 +365,13 @@ async function npmPublish(req: Request, name: string): Promise<Response> {
   const ct = req.headers.get('content-type') || '';
   let version = '';
   let tarballBuf: Uint8Array | null = null;
+  let publishBody: Record<string, unknown> | null = null;
   if (ct.includes('application/json')) {
-    const body = await req.json();
-    version = body['dist-tags']?.latest || Object.keys(body.versions || {})[0] || '0.0.0';
-    const attachments = body._attachments;
+    publishBody = (await req.json()) as Record<string, unknown>;
+    version = publishBody['dist-tags']?.latest || Object.keys(publishBody.versions || {})[0] || '0.0.0';
+    const attachments = publishBody._attachments as Record<string, { data?: string }> | undefined;
     if (attachments) {
-      const data = attachments[Object.keys(attachments)[0]]?.data;
+      const data = attachments[Object.keys(attachments)[0]!]?.data;
       if (data) tarballBuf = Buffer.from(data, 'base64');
     }
   } else {
@@ -377,6 +379,7 @@ async function npmPublish(req: Request, name: string): Promise<Response> {
     version = `0.0.0-${Date.now()}`;
   }
   if (!tarballBuf) return json({ error: 'No tarball in request' }, 400);
+  const manifest = await resolvePublishReadme(publishBody, version, tarballBuf);
   const sha256 = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', tarballBuf)))
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
@@ -395,7 +398,11 @@ async function npmPublish(req: Request, name: string): Promise<Response> {
     name,
     version,
     type: 'library',
-    description: 'Published via bun publish',
+    description: manifest.description ?? 'Published via bun publish',
+    ...(manifest.dependencies ? { dependencies: manifest.dependencies } : {}),
+    ...(manifest.readme
+      ? { readme: manifest.readme, readmeFilename: manifest.readmeFilename ?? 'README.md' }
+      : {}),
     publishedAt: new Date().toISOString(),
     publisher: 'bun-publish',
     storage: {
@@ -434,6 +441,8 @@ async function npmPackageMetadata(req: Request): Promise<Response> {
       description: rel.description,
       bin: rel.bin || undefined,
       dependencies: rel.dependencies || undefined,
+      readme: rel.readme || undefined,
+      readmeFilename: rel.readmeFilename || (rel.readme ? 'README.md' : undefined),
       dist: {
         tarball: `/registry/storage/${name}/${v}/artifact.tgz`,
         shasum: rel.storage?.checksum?.slice(0, 40) || '',
@@ -1381,9 +1390,9 @@ function buildPublicRoutes() {
       const format = url.searchParams.get('format') || req.headers.get('Accept') || 'json';
 
       if (format === 'raw' || (format === 'application/json' && url.searchParams.has('format'))) {
-        return new Response(f, {
-          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
-        });
+        const cases = raw.results ?? raw.cases ?? raw.testCases;
+        const body = cases && !raw.tests ? { ...raw, tests: cases } : raw;
+        return json(body, 200, 'public, max-age=60');
       }
       if (format === 'text' || format.startsWith('text/')) {
         return new Response(
@@ -1409,6 +1418,8 @@ function buildPublicRoutes() {
         bunVersion: raw.bunVersion,
         proofHash: raw.proofHash,
         generated: raw.timestamp,
+        results: raw.results ?? raw.cases ?? raw.testCases,
+        tests: raw.results ?? raw.cases ?? raw.testCases,
         _links: {
           self: '/api/defaults',
           raw: '/api/defaults?format=raw',
@@ -1426,6 +1437,16 @@ function buildPublicRoutes() {
       serveVerificationScript('defaults', { baseUrl: new URL(req.url).origin }),
     '/api/defaults/script.meta': (req: Request) =>
       serveVerificationScriptMeta('defaults', new URL(req.url).origin),
+    '/api/sqlite/version': async () => {
+      const db = new Database(':memory:');
+      const v = db.query('SELECT sqlite_version() as v').get() as { v: string };
+      return json({
+        version: v.v,
+        bunVersion: Bun.version,
+        features: ['WAL mode', 'Synchronous NORMAL', 'Prepared statements', 'JSON functions'],
+        docs: 'https://bun.sh/docs/runtime/sqlite',
+      });
+    },
     '/api/networking/script': (req: Request) =>
       serveVerificationScript('networking', { baseUrl: new URL(req.url).origin }),
     '/api/networking/script/': (req: Request) =>
@@ -1436,12 +1457,6 @@ function buildPublicRoutes() {
       serveVerificationScript('bun-defaults', { baseUrl: new URL(req.url).origin }),
     '/api/bun-defaults/script.meta': (req: Request) =>
       serveVerificationScriptMeta('bun-defaults', new URL(req.url).origin),
-    '/api/networking/script': (req: Request) =>
-      serveVerificationScript('networking', { baseUrl: new URL(req.url).origin }),
-    '/api/networking/script/': (req: Request) =>
-      serveVerificationScript('networking', { baseUrl: new URL(req.url).origin }),
-    '/api/networking/script.meta': (req: Request) =>
-      serveVerificationScriptMeta('networking', new URL(req.url).origin),
     '/api/env': () => envStatus(),
     '/api/monitoring': () => liveMonitoringApi(),
     '/api/operations/summary': () => liveOpsSummary(),
