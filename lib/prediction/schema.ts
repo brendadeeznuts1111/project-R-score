@@ -1,6 +1,11 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+/**
+ * Prediction accuracy tables.
+ * Idempotent CREATE IF NOT EXISTS; called from ops `migrateSchema`.
+ */
 import type { Database } from 'bun:sqlite';
 
+/** Ensure `prediction_accuracy` exists (idempotent). */
 export function ensurePredictionSchema(db: Database): void {
   db.run(`
     CREATE TABLE IF NOT EXISTS prediction_accuracy (

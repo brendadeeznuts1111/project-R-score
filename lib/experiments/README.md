@@ -22,10 +22,12 @@ SSOT lives here — not under `lib/operations/`.
 | DB open + schema init | [`lib/operations/db.ts`](../operations/db.ts) → `initSchema` → `migrateSchema` → `ensureExperimentsSchema` |
 | Coverage offer gate | [`lib/operations/platform-coverage.ts`](../operations/platform-coverage.ts) `canOfferOnPlatform(..., partnerId?)` |
 | Liquidity + reserve | [`lib/operations/liquidity.ts`](../operations/liquidity.ts) `ensurePosition` · `reservePlay(..., { checkCoverage })` |
+| Settlement hook | [`play-settlement.ts`](../operations/play-settlement.ts) → [`outcomes.ts`](outcomes.ts) |
 | CLI | [`tools/ops-experiments.ts`](../../tools/ops-experiments.ts) · package script `ops:experiments` |
 | Brands | [`lib/types/branded.ts`](../types/branded.ts) → `ExperimentId`, `ExperimentVariantId`, `ExperimentAssignmentId`, `TreeNodeId` |
-| Tests | [`tests/experiments-factorial.test.ts`](../../tests/experiments-factorial.test.ts) · schema: [`tests/operations-schema.test.ts`](../../tests/operations-schema.test.ts) |
+| Tests | `tests/experiments-factorial.test.ts` · `tests/experiments-outcomes.test.ts` · `tests/operations-schema.test.ts` |
 | Skill | [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md) |
+| Sibling (C5) | [`lib/prediction/`](../prediction/) · `bun run ops:prediction` |
 
 ## Tables (`ensureExperimentsSchema`)
 
@@ -123,7 +125,9 @@ accumulate.
 ## Prove
 
 ```bash
-bun test tests/experiments-factorial.test.ts tests/operations-schema.test.ts
+bun test tests/experiments-factorial.test.ts \
+         tests/experiments-outcomes.test.ts \
+         tests/operations-schema.test.ts
 bun run ops:experiments design --factors 'routing:static,dynamic;cut:0.10,0.15' --fraction 1
 bun run ops:experiments --help
 ```

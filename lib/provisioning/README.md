@@ -20,7 +20,16 @@ Automated provisioning queue and sandboxed WebView account creation.
 5. On success: account stored in `partner_platform_accounts` with AES-GCM encrypted credentials
 6. Queue entry marked completed
 
+## CLI
+
+```bash
+bun run ops:provision-queue --help
+```
+
 ## Related
 
 - [`lib/automation/provision-accounts.ts`](../automation/provision-accounts.ts) — low-level WebView provisioning
 - [`lib/operations/platform-coverage.ts`](../operations/platform-coverage.ts) — platform catalog CRUD + sandbox gate
+- Skill: [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md) (C2)
+- Experiments (C4): [`lib/experiments/README.md`](../experiments/README.md)
+- Prediction (C5): [`lib/prediction/README.md`](../prediction/README.md)

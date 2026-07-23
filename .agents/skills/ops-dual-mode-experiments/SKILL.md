@@ -38,22 +38,34 @@ Automated WebView provisioning is allowed only when:
 
 Live books must fail closed. Test accounts set `partner_platform_accounts.is_test = 1` and are excluded from coverage “covered” counts.
 
-## Commit groups (logical)
+## Commit groups
 
-1. **C0** — this skill + README pointers  
-2. **C1** — `is_test` + sandbox gate + coverage exclude  
-3. **C2** — `provisioning_tasks` queue + CLI + automated_test wire  
-4. **C3** — manual path + Telegram/KYC DOD  
-5. **C4** — `FactorialEngine` + `canOfferOnPlatform` variant hook  
-6. **C5** — `prediction_accuracy` + coverage backtest  
+| # | Scope | Status |
+|---|--------|--------|
+| C0 | this skill + README pointers | shipped |
+| C1 | `is_test` + sandbox gate + coverage exclude | shipped |
+| C2 | `provisioning_tasks` queue + CLI + automated_test wire | shipped |
+| C3 | manual path + Telegram/KYC DOD | shipped |
+| C4 | `FactorialEngine` + coverage / settlement hooks | shipped |
+| C5 | `prediction_accuracy` + coverage backtest | shipped |
 
 Stage named files only. Never sweep unrelated dirty portal/DOD trees.
 
 ## Env
 
-- `PROVISION_ENCRYPTION_KEY` — credential AES-GCM key material  
-- `OPS_DB_PATH` — override operations DB (`DEFAULT_OPS_DB_PATH` = `data/operations.db`)  
-- `OPS_MIN_PLATFORM_COVERAGE` — default coverage floor (variants may override per partner)
+| Variable | Role |
+|----------|------|
+| `PROVISION_ENCRYPTION_KEY` | credential AES-GCM key material |
+| `OPS_DB_PATH` | ops DB path (default `data/operations.db`) |
+| `OPS_MIN_PLATFORM_COVERAGE` | default coverage floor (variants may override) |
+
+## Package scripts
+
+| Script | Entry |
+|--------|--------|
+| `ops:experiments` | `bun tools/ops-experiments.ts` |
+| `ops:prediction` | `bun tools/ops-prediction.ts` |
+| `ops:provision-queue` | `bun tools/provision-queue.ts` |
 
 ## Prove commands
 
@@ -66,30 +78,30 @@ bun run ops:experiments --help
 bun run ops:prediction --help
 ```
 
-## C4 surface (shipped)
+## C4 surface — factorial experiments
 
 | Path | Role |
 |------|------|
 | [`lib/experiments/`](../../../lib/experiments/) | Design · `FactorialEngine` · analyze · policy · schema · cluster · switchback |
 | [`lib/experiments/outcomes.ts`](../../../lib/experiments/outcomes.ts) | Settlement metrics + `canOfferStakeForNode` / subject resolution |
 | [`lib/experiments/README.md`](../../../lib/experiments/README.md) | Agent map (paths, naming, CLI, prove) |
-| [`tools/ops-experiments.ts`](../../../tools/ops-experiments.ts) | CLI · package script `ops:experiments` |
+| [`tools/ops-experiments.ts`](../../../tools/ops-experiments.ts) | CLI |
 | [`lib/operations/db.ts`](../../../lib/operations/db.ts) | `openOperationsDb` / `DEFAULT_OPS_DB_PATH` |
 | [`lib/operations/liquidity.ts`](../../../lib/operations/liquidity.ts) | `ensurePosition` · `reservePlay(..., { checkCoverage })` |
 | [`lib/operations/platform-coverage.ts`](../../../lib/operations/platform-coverage.ts) | `canOfferOnPlatform(..., partnerId?)` |
 | `settlePlay` | Auto-records win_rate/pnl for active experiments via outcomes |
-| Brands | `ExperimentId` · `ExperimentVariantId` · `ExperimentAssignmentId` · `TreeNodeId` via `lib/types/branded` |
-| Tests | `tests/experiments-factorial.test.ts` · schema tables include `experiments*` |
+| Brands | `ExperimentId` · `ExperimentVariantId` · `ExperimentAssignmentId` · `TreeNodeId` |
+| Tests | `tests/experiments-factorial.test.ts` · `tests/experiments-outcomes.test.ts` |
 
 ### Coverage floor keys (`COVERAGE_FLOOR_KEYS`)
 
-Variant config may set any of: `min_coverage_pct` · `coverage_floor` · `minPlatformCoverage`.
+Variant config may set: `min_coverage_pct` · `coverage_floor` · `minPlatformCoverage`.
 
 Resolved by `resolveExperimentCoverageFloor(db, partnerId)` for active assignments.
 
 ### Sandbox CLI (relax launch policy)
 
-Production defaults: 10 partners/cell, 28-day min duration. Demo:
+Production defaults: **10** partners/cell, **28**-day min duration.
 
 ```bash
 bun run ops:experiments create --name routing-cut \
@@ -101,22 +113,15 @@ bun run ops:experiments record --id <experimentId> --partner <treeNodeId> --valu
 bun run ops:experiments analyze --id <experimentId>
 ```
 
-### Package scripts
-
-| Script | Entry |
-|--------|--------|
-| `ops:experiments` | `bun tools/ops-experiments.ts` |
-| `ops:prediction` | `bun tools/ops-prediction.ts` |
-| `ops:provision-queue` | `bun tools/provision-queue.ts` |
-
-## C5 surface (shipped)
+## C5 surface — coverage prediction
 
 | Path | Role |
 |------|------|
 | [`lib/prediction/`](../../../lib/prediction/) | Coverage backtest + accuracy rollup |
-| [`lib/prediction/schema.ts`](../../../lib/prediction/schema.ts) | `prediction_accuracy` table via `ensurePredictionSchema` |
+| [`lib/prediction/schema.ts`](../../../lib/prediction/schema.ts) | `prediction_accuracy` via `ensurePredictionSchema` |
 | [`lib/prediction/tester.ts`](../../../lib/prediction/tester.ts) | `runCoverageBacktest` · `getPredictionAccuracy` |
-| [`tools/ops-prediction.ts`](../../../tools/ops-prediction.ts) | CLI · package script `ops:prediction` |
+| [`lib/prediction/README.md`](../../../lib/prediction/README.md) | Model notes + CLI |
+| [`tools/ops-prediction.ts`](../../../tools/ops-prediction.ts) | CLI |
 | Tests | `tests/prediction-backtest.test.ts` |
 
 ```bash

@@ -1,6 +1,7 @@
 # Prediction (ops C5)
 
 Coverage prediction backtests and accuracy rollups for operations analytics.
+SSOT lives here — not under `lib/operations/`.
 
 | Path | Role |
 |------|------|
@@ -11,6 +12,7 @@ Coverage prediction backtests and accuracy rollups for operations analytics.
 | Schema hook | `migrateSchema` in [`lib/operations/schema.ts`](../operations/schema.ts) |
 | Tests | [`tests/prediction-backtest.test.ts`](../../tests/prediction-backtest.test.ts) |
 | Skill | [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md) (C5) |
+| Sibling (C4) | [`lib/experiments/`](../experiments/) · `bun run ops:experiments` |
 
 ## Model (v1)
 

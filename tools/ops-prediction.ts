@@ -8,13 +8,13 @@
  * DB: `openOperationsDb` / `OPS_DB_PATH` / `DEFAULT_OPS_DB_PATH`.
  *
  *   bun run ops:prediction --help
- *   bun run ops:prediction backtest --from=2025-01-01 --to=2025-12-31
- *   bun run ops:prediction accuracy
+ *   bun run ops:prediction backtest --from 2025-01-01 --to 2025-12-31
+ *   bun run ops:prediction accuracy [--json]
  *
  * @see lib/prediction/README.md
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
-import { getPredictionAccuracy, runCoverageBacktest } from '../lib/prediction/tester.ts';
+import { getPredictionAccuracy, runCoverageBacktest } from '../lib/prediction/index.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const args = process.argv.slice(2);

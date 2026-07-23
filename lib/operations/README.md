@@ -19,11 +19,13 @@ Tree-structured agent management with HMAC-signed play distribution.
 | Path | Purpose |
 |------|---------|
 | [`db.ts`](db.ts) | `openOperationsDb` · `DEFAULT_OPS_DB_PATH` (`data/operations.db`) |
-| [`schema.ts`](schema.ts) | `initSchema` / `migrateSchema` — core tables + provision + coverage + experiments |
+| [`schema.ts`](schema.ts) | `initSchema` / `migrateSchema` — core + provision + coverage + experiments + prediction |
 | [`platform-coverage.ts`](platform-coverage.ts) | Platforms, coverage snapshots, `canOfferOnPlatform` |
-| [`liquidity.ts`](liquidity.ts) | `ensurePosition`; re-exports offer/capacity helpers |
+| [`liquidity.ts`](liquidity.ts) | `ensurePosition` · `reservePlay` / `releasePlay` · coverage-gated reserve |
 | [`play-signing.ts`](play-signing.ts) | `Bun.CryptoHasher("sha256")` HMAC play signing |
+| [`play-settlement.ts`](play-settlement.ts) | Settle play + experiment outcome hook |
 | [`account-service.ts`](account-service.ts) | Tree nodes, portal sync |
+| [`cut-engine.ts`](cut-engine.ts) | Cut cascade allocations |
 | [`backup.ts`](backup.ts) | DB backup helpers |
 | [`index.ts`](index.ts) | Barrel exports |
 
@@ -49,18 +51,32 @@ const play = await signer.publish(
 );
 ```
 
-## Experiments (factorial C4)
+Env: `OPS_DB_PATH` overrides the default DB path.
 
-SSOT is **[`lib/experiments/`](../experiments/)** — not a submodule of operations.
+## Adjacent packages (not under this directory)
 
-| Surface | Path |
-|---------|------|
-| Engine | [`lib/experiments/`](../experiments/) · `FactorialEngine` |
-| Schema hook | `migrateSchema` → `ensureExperimentsSchema` |
-| CLI | `bun run ops:experiments --help` → [`tools/ops-experiments.ts`](../../tools/ops-experiments.ts) |
-| Docs | [`lib/experiments/README.md`](../experiments/README.md) |
-| Skill | [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md) |
+| Package | Role | CLI |
+|---------|------|-----|
+| [`lib/experiments/`](../experiments/) | Factorial partner-policy experiments (C4) | `bun run ops:experiments` |
+| [`lib/prediction/`](../prediction/) | Coverage prediction backtest (C5) | `bun run ops:prediction` |
+| [`lib/provisioning/`](../provisioning/) | Manual / automated_test queue | `bun run ops:provision-queue` |
 
-`canOfferOnPlatform(db, platformId, stake, minPct, partnerId?)` honors active
-variant coverage floor keys: `min_coverage_pct` · `coverage_floor` ·
-`minPlatformCoverage` (`COVERAGE_FLOOR_KEYS` in `lib/experiments/engine.ts`).
+Skill (lanes + prove): [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md).
+
+### Coverage floors (experiments → offer gate)
+
+`canOfferOnPlatform(db, platformId, stake, minPct, partnerId?)` and
+`reservePlay(..., { checkCoverage: true })` honor active variant keys:
+
+`min_coverage_pct` · `coverage_floor` · `minPlatformCoverage`
+
+(`COVERAGE_FLOOR_KEYS` in [`lib/experiments/engine.ts`](../experiments/engine.ts)).
+
+## Prove (ops SSOT)
+
+```bash
+bun test tests/operations-schema.test.ts
+bun test tests/experiments-*.test.ts tests/prediction-*.test.ts
+bun run ops:experiments --help
+bun run ops:prediction --help
+```

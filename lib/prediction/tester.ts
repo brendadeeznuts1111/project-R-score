@@ -1,7 +1,8 @@
-// @see https://bun.com/docs/runtime/sqlite
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 /**
- * Coverage prediction backtest against coverage_snapshots.
+ * Coverage prediction backtest against `coverage_snapshots`.
+ * Writes rows to `prediction_accuracy` (see `schema.ts`).
  */
 import type { Database } from 'bun:sqlite';
 import { ensurePlatformCoverageSchema } from '../operations/platform-coverage.ts';
