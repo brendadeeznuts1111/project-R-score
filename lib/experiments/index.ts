@@ -34,3 +34,15 @@ export {
   type ExperimentRow,
   type AssignmentResult,
 } from './engine.ts';
+export {
+  resolveExperimentSubject,
+  winRateFromResult,
+  ensureAssignedToActiveExperiments,
+  recordPlaySettlementOutcomes,
+  canOfferStakeForNode,
+  listActiveExperimentIds,
+  type PlaySettleResult,
+  type RecordSettlementInput,
+  type SettlementOutcomeRecord,
+  type SettlementMetricWrite,
+} from './outcomes.ts';

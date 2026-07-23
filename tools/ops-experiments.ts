@@ -16,13 +16,13 @@
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import {
   FactorialEngine,
+  ensureAssignedToActiveExperiments,
   generateDesign,
+  resolveExperimentSubject,
   type Factor,
   type FactorLevel,
 } from '../lib/experiments/index.ts';
 import {
-  asExperimentId,
-  asTreeNodeId,
   parseExperimentId,
   parseTreeNodeId,
   unbrand,
@@ -79,23 +79,36 @@ function printHelp(): void {
 ops:experiments — factorial designs for partner policy
 
 Commands:
-  design   --factors SPEC [--fraction N]     Print design (no DB)
-  create   --name NAME --factors SPEC [--fraction N] [--metric win_rate]
+  design        --factors SPEC [--fraction N]     Print design (no DB)
+  create        --name NAME --factors SPEC [--fraction N] [--metric win_rate]
   list
-  show     --id EXPERIMENT_ID
-  activate --id EXPERIMENT_ID
-  pause    --id EXPERIMENT_ID
-  assign   --id EXPERIMENT_ID --partner TREE_NODE_ID
-  record   --id EXPERIMENT_ID --partner TREE_NODE_ID --value N [--metric NAME]
-  analyze  --id EXPERIMENT_ID
-  predict  --id EXPERIMENT_ID --config 'routing:dynamic;cut:0.15'
+  show          --id EXPERIMENT_ID
+  activate      --id EXPERIMENT_ID
+  pause         --id EXPERIMENT_ID
+  assign        --id EXPERIMENT_ID --partner ID[,ID2,...]
+  assign-active --partner ID[,ID2,...]            Sticky-assign into all active experiments
+  record        --id EXPERIMENT_ID --partner ID --value N [--metric NAME]
+  analyze       --id EXPERIMENT_ID
+  predict       --id EXPERIMENT_ID --config 'routing:dynamic;cut:0.15'
 
 Factors SPEC:
   name:level1,level2;name2:a,b,c
   example: routing:static,dynamic;cut:0.10,0.15;min_coverage_pct:30,40
 
+Settlement auto-records win_rate/pnl for active experiments (see lib/experiments/outcomes.ts).
+
 Env: OPS_DB_PATH (default ${DEFAULT_OPS_DB_PATH})
+Flags: --json
 `);
+}
+
+function partnerIdsFromFlag(): string[] {
+  const raw = flag('--partner');
+  if (!raw) return [];
+  return raw
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
 }
 
 function out(data: unknown): void {
@@ -210,20 +223,46 @@ function main(): number {
       }
       case 'assign': {
         const id = flag('--id');
-        const partner = flag('--partner');
-        if (!id || !partner) {
-          console.error('assign requires --id and --partner');
+        const partners = partnerIdsFromFlag();
+        if (!id || !partners.length) {
+          console.error('assign requires --id and --partner (comma-separated ok)');
           return 1;
         }
-        const result = engine.assignBalanced(parseExperimentId(id), parseTreeNodeId(partner));
-        out({
-          assignmentId: result.assignmentId,
-          experimentId: unbrand(result.experimentId),
-          partnerId: unbrand(result.partnerId),
-          variantId: unbrand(result.variantId),
-          config: result.config,
-          created: result.created,
+        const eid = parseExperimentId(id);
+        const results = partners.map(p => {
+          const result = engine.assignBalanced(eid, parseTreeNodeId(p));
+          return {
+            assignmentId: result.assignmentId,
+            experimentId: unbrand(result.experimentId),
+            partnerId: unbrand(result.partnerId),
+            variantId: unbrand(result.variantId),
+            config: result.config,
+            created: result.created,
+          };
         });
+        out(results.length === 1 ? results[0]! : results);
+        return 0;
+      }
+      case 'assign-active': {
+        const partners = partnerIdsFromFlag();
+        if (!partners.length) {
+          console.error('assign-active requires --partner (comma-separated ok)');
+          return 1;
+        }
+        const results = partners.map(raw => {
+          const subject = resolveExperimentSubject(db, raw);
+          const assignments = ensureAssignedToActiveExperiments(db, subject);
+          return {
+            input: raw,
+            subject: unbrand(subject),
+            assignments: assignments.map(a => ({
+              experimentId: unbrand(a.experimentId),
+              config: a.config,
+              created: a.created,
+            })),
+          };
+        });
+        out(results.length === 1 ? results[0]! : results);
         return 0;
       }
       case 'record': {
@@ -232,6 +271,10 @@ function main(): number {
         const value = flag('--value');
         if (!id || !partner || value === undefined) {
           console.error('record requires --id, --partner, --value');
+          return 1;
+        }
+        if (partner.includes(',')) {
+          console.error('record accepts a single --partner');
           return 1;
         }
         const metricId = engine.recordMetric({
@@ -250,6 +293,13 @@ function main(): number {
           return 1;
         }
         const analysis = engine.analyze(parseExperimentId(id));
+        if (analysis.nPartners === 0) {
+          console.error(
+            'analyze: no partner metrics yet — settle wins/losses or use record --value'
+          );
+          out(analysis);
+          return 2;
+        }
         out(analysis);
         return 0;
       }
@@ -279,10 +329,6 @@ function main(): number {
     db.close();
   }
 }
-
-// Silence unused import when tree-shaken in tests
-void asExperimentId;
-void asTreeNodeId;
 
 if (import.meta.main) {
   process.exit(main());

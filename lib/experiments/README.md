@@ -25,6 +25,18 @@ bun run ops:experiments analyze --id <experimentId>
 
 Active assignments may set `min_coverage_pct` or `coverage_floor` on the variant.
 `canOfferOnPlatform(db, platformId, stake, minPct, partnerId)` uses that floor when present.
+`canOfferStakeForNode` / `reservePlay(..., { checkCoverage: true })` resolve the partner subject, sticky-assign into active experiments, then apply the floor.
+
+## Outcome plumbing (settlement)
+
+`settlePlay` calls `recordPlaySettlementOutcomes` (best-effort):
+
+1. Resolve partner subject (walk leaf → root; prefer `type = partner`)
+2. Sticky-assign into every **active** experiment
+3. Record primary metric (`win_rate` 1/0 on win/loss, or `pnl`) + auxiliary `pnl` when primary is win_rate
+4. push/void → no win_rate row (no signal)
+
+Analyze with `bun run ops:experiments analyze --id <id>` after settlements accumulate.
 
 ## Brands
 

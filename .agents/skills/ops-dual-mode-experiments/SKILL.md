@@ -71,6 +71,9 @@ bun run ops:prediction-backtest --help
 | Path | Role |
 |------|------|
 | `lib/experiments/` | Design + engine + analyze + schema |
+| `lib/experiments/outcomes.ts` | Settlement metrics + `canOfferStakeForNode` |
 | `tools/ops-experiments.ts` | CLI (`ops:experiments`) |
+| `settlePlay` | Auto-records win_rate/pnl for active experiments |
+| `reservePlay(..., { checkCoverage: true })` | Partner floor via experiment assignment |
 | `canOfferOnPlatform(..., partnerId?)` | Variant `min_coverage_pct` / `coverage_floor` |
 | Brands | `ExperimentId`, `ExperimentVariantId`, `ExperimentAssignmentId`, `TreeNodeId` |
