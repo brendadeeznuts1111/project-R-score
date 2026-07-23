@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname
 // @see https://bun.com/docs/runtime/http/server#configuring-a-default-port
