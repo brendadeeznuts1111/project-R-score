@@ -700,3 +700,12 @@ body {
   .topbar-inner { gap: 12px; }
   .topbar-nav { gap: 8px; }
 }
+
+.topbar-health-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+.topbar-health-link:hover .health-label { color: var(--accent); }

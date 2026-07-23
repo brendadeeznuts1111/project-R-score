@@ -10,3 +10,7 @@
 /monitoring/             /monitoring/index.html   200
 /monitoring              /monitoring/index.html   200
 /monitoring/             /monitoring/index.html   200
+/portal/health           /portal/health/index.html   200
+/portal/health/          /portal/health/index.html   200
+/health                  /health/index.html          200
+/health/                 /health/index.html          200
