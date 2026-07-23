@@ -17,6 +17,10 @@
     "README.md"
   ],
   "sideEffects": false,
+  "dependencies": {},
+  "peerDependencies": {
+    "bun-types": "*"
+  },
   "publishConfig": {
     "access": "public"
   },
