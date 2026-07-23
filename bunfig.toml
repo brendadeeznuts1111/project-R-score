@@ -1,4 +1,11 @@
 # FactoryWager monorepo — project bunfig.toml
+# Precedence (highest to lowest):
+#   1. CLI flags (--port, --registry, --console-depth)
+#   2. Environment variables (PORT, FACTORY_WAGER_TOKEN, NODE_ENV)
+#   3. This local file (./bunfig.toml) — overrides global keys (shallow merge)
+#   4. Global file (~/.bunfig.toml) — machine-wide defaults
+# @see https://bun.com/docs/runtime/bunfig#global-vs-local
+#
 # Machine install SSOT: ~/.bunfig.toml (linker, globalStore, cache.dir, minimumReleaseAge)
 # Enterprise reference profile (not auto-loaded): ./.bunfig.toml
 
@@ -39,6 +46,8 @@ frozenLockfile = false
 # @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel
 [test]
 timeout = 10000
+# Coverage threshold for CI (bun test --coverage)
+coverage = 0.8
 # ast-grep integration scans (see .agents/skills/ast-grep/bunfig.toml for skill-local defaults)
 concurrentTestGlob = [
   ".agents/skills/ast-grep/tests/integration/*.test.ts",
@@ -57,3 +66,15 @@ pathIgnorePatterns = [
   "generated/**",
   "vendor/**",
 ]
+
+# HTTP server defaults (overridden by PORT env or --port CLI flag)
+# @see https://bun.com/docs/runtime/bunfig#serve
+[serve]
+port = 3000
+hostname = "0.0.0.0"
+
+# Build defaults for portal (Cloudflare Pages)
+# @see https://bun.com/docs/runtime/bunfig#build
+[build]
+output = "public"
+
