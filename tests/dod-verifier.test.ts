@@ -198,7 +198,7 @@ describe("dod batch 2 — review API auth", () => {
 
   test("401 without bearer token when DOD_REVIEW_TOKEN is set", async () => {
     Bun.env.DOD_REVIEW_TOKEN = "test-review-token";
-    const { onRequest } = await import("../functions/api/dod/index.ts");
+    const { onRequest } = await import("../functions-bun-only/api/dod/index.ts");
     const res = await onRequest({
       request: new Request("http://localhost/api/dod?status=all"),
     });
@@ -207,7 +207,7 @@ describe("dod batch 2 — review API auth", () => {
 
   test("200 with correct bearer token", async () => {
     Bun.env.DOD_REVIEW_TOKEN = "test-review-token";
-    const { onRequest } = await import("../functions/api/dod/index.ts");
+    const { onRequest } = await import("../functions-bun-only/api/dod/index.ts");
     const res = await onRequest({
       request: new Request("http://localhost/api/dod?status=all", {
         headers: { authorization: "Bearer test-review-token" },
@@ -218,7 +218,7 @@ describe("dod batch 2 — review API auth", () => {
 
   test("open when DOD_REVIEW_TOKEN is unset (dev)", async () => {
     delete Bun.env.DOD_REVIEW_TOKEN;
-    const { onRequest } = await import("../functions/api/dod/index.ts");
+    const { onRequest } = await import("../functions-bun-only/api/dod/index.ts");
     const res = await onRequest({
       request: new Request("http://localhost/api/dod?status=all"),
     });
