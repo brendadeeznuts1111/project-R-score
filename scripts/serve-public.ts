@@ -1,11 +1,13 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/bunx — bunx (args after bin name; --bun before package)
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Local portal + static public/ server with live ops API.
  *
- *   bun scripts/serve-public.ts
+ *   bun run serve:public
+ *   bunx --bun serve-public          # after bun install (package.json bin)
  *   open http://localhost:3000/portal/ops/
  *
  * Routes:
@@ -13,7 +15,6 @@
  *   /*                       → public/* (index.html for directories)
  *
  * Pages edge stays snapshot-only (functions/api/operations/summary.ts).
- * Local uses functions-bun-only live path.
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
@@ -40,7 +41,6 @@ async function liveOpsSummary(): Promise<Response> {
       db.close();
     }
   } catch (err) {
-    // Fall back to committed snapshot so portal still loads offline
     const snap = Bun.file('public/registry/ops-summary.json');
     if (await snap.exists()) {
       const data = (await snap.json()) as Record<string, unknown>;
@@ -59,7 +59,6 @@ async function liveOpsSummary(): Promise<Response> {
 
 async function staticFile(pathname: string): Promise<Response | null> {
   let path = pathname === '/' ? '/index.html' : pathname;
-  // directory → index.html (portal/ops/)
   if (path.endsWith('/')) path = `${path}index.html`;
 
   let file = Bun.file(`public${path}`);
@@ -73,6 +72,8 @@ async function staticFile(pathname: string): Promise<Response | null> {
     headers.set('Content-Type', 'application/json; charset=utf-8');
   } else if (path.endsWith('.svg')) {
     headers.set('Content-Type', 'image/svg+xml');
+  } else if (path.endsWith('.png')) {
+    headers.set('Content-Type', 'image/png');
   }
   return new Response(file, { headers });
 }

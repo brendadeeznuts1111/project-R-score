@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/bunx — bunx (args after bin name; --bun before package)
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 /**
@@ -28,11 +29,7 @@ import {
   type Factor,
   type FactorLevel,
 } from '../lib/experiments/index.ts';
-import {
-  parseExperimentId,
-  parseTreeNodeId,
-  unbrand,
-} from '../lib/types/branded.ts';
+import { parseExperimentId, parseTreeNodeId, unbrand } from '../lib/types/branded.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const argv = Bun.argv.slice(2);

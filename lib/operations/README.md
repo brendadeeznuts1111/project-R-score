@@ -95,6 +95,19 @@ bun run serve:public
 bun run ops:snapshot   # → public/registry/ops-summary.json + prediction/*
 ```
 
+### Invocation (`bun run` vs `bunx`)
+
+Monorepo scripts prefer **`bun run ops:*`**. Package `bin` entries also allow **bunx**
+([docs](https://bun.com/docs/pm/bunx)):
+
+| Style | Example |
+|-------|---------|
+| Script (default) | `bun run ops:prediction report --webview` |
+| Direct file | `bun tools/ops-prediction.ts report --webview` |
+| bunx + bin | `bunx --bun ops-prediction report --webview` |
+
+Per bunx rules: place **`--bun` before** the binary name so shebangs run under Bun;
+flags **after** the name (`report`, `--webview`) pass through to the tool.
 ## Prove (ops SSOT)
 
 ```bash

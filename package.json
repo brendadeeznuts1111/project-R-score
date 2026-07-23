@@ -2,7 +2,7 @@
   "name": "factorywager-enterprise",
   "version": "5.1.2+build.20260723",
   "packageManager": "bun@1.4.0",
-  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -25,7 +25,11 @@
     }
   },
   "bin": {
-    "dx-mcp": "./scripts/dx-mcp.ts"
+    "dx-mcp": "./scripts/dx-mcp.ts",
+    "ops-prediction": "./tools/ops-prediction.ts",
+    "ops-experiments": "./tools/ops-experiments.ts",
+    "ops-snapshot": "./tools/ops-snapshot.ts",
+    "serve-public": "./scripts/serve-public.ts"
   },
   "homepage": "https://factory-wager.com",
   "repository": {

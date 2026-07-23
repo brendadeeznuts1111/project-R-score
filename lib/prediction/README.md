@@ -38,6 +38,11 @@ bun run ops:prediction report              # SVG+HTML → public/registry/predic
 bun run ops:prediction report --webview    # + Bun.WebView screenshot → Bun.Image PNG
 bun run ops:prediction accuracy --json
 bun run ops:snapshot                       # ops-summary.json + report assets for Pages
+
+# bunx after `bun install` links package.json bin → node_modules/.bin
+# @see https://bun.com/docs/pm/bunx (args after bin; --bun before package name)
+bunx --bun ops-prediction backtest --from 2024-01-01 --to 2024-12-31
+bunx --bun ops-prediction report --webview
 ```
 
 Env: `OPS_DB_PATH` (same ops DB as experiments / provision).
