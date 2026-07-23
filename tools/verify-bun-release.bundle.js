@@ -243,6 +243,28 @@ async function run() {
     actual: `bunfig=${bunfigText.includes("noOrphans")}, env=${!!process.env.BUN_FEATURE_FLAG_NO_ORPHANS}`,
     passed: process.env.BUN_FEATURE_FLAG_NO_ORPHANS === "1"
   });
+  try {
+    const w = 50, h = 50;
+    const imgPath = "public/icons/factory/mark.png";
+    const exists = await Bun.file(imgPath).exists();
+    if (!exists) {
+      results.push({ name: "Bun.Image", expected: "loads and processes", actual: "no test image found", passed: false });
+    } else {
+      const img = new Bun.Image(await Bun.file(imgPath).bytes());
+      const meta = await img.metadata();
+      const resized = img.resize(25, 25);
+      const webp = await resized.webp({ quality: 80 }).bytes();
+      const jpeg = await resized.jpeg({ quality: 80 }).bytes();
+      results.push({
+        name: "Bun.Image (load, resize, encode WebP/JPEG)",
+        expected: "loads, resizes, encodes, metadata works",
+        actual: `${meta.width}x${meta.height} ${meta.format} \u2192 webp=${(webp.length / 1024).toFixed(1)}KB jpeg=${(jpeg.length / 1024).toFixed(1)}KB`,
+        passed: webp.length > 0 && jpeg.length > 0 && meta.width > 0
+      });
+    }
+  } catch (e) {
+    results.push({ name: "Bun.Image (load, resize, encode WebP/JPEG)", expected: "loads, resizes, encodes", actual: `error: ${e.message}`, passed: false });
+  }
   const passed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");
   for (const r of results)

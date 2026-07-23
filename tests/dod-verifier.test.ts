@@ -285,3 +285,23 @@ describe("dod — registry signature chain", () => {
     expect(entry.modelVersion).toBe(DOD_MODEL_VERSION);
   });
 });
+
+describe("dod — explicit resource management", () => {
+  test("using auto-closes the verifier at block exit", async () => {
+    let closed = false;
+    {
+      using v = new DODVerifier(`${SCRATCH}/dispose.db`, {
+        evidenceRoot: `${SCRATCH}/evidence`,
+        registryPath: `${SCRATCH}/registry.json`,
+      });
+      // spy on close to observe disposal
+      const origClose = v.close.bind(v);
+      v.close = () => {
+        closed = true;
+        origClose();
+      };
+      expect(v.receipt("nothing")).toBeNull();
+    }
+    expect(closed).toBe(true);
+  });
+});

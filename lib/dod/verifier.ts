@@ -649,4 +649,9 @@ export class DODVerifier {
   close(): void {
     this.db.close();
   }
+
+  /** `using verifier = new DODVerifier(...)` — auto-close at block exit. */
+  [Symbol.dispose](): void {
+    this.close();
+  }
 }

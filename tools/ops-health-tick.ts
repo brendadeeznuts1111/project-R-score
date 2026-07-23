@@ -36,13 +36,15 @@ export async function runHealthTick(dbPath = DEFAULT_OPS_DB_PATH): Promise<Healt
   // 1. Integrity (records its own row into the same DB)
   const integrity = await runIntegrityCheck(dbPath);
 
-  // 2. DOD cleanup (default 7-day pending purge)
-  const verifier = new DODVerifier(dbPath, {
-    evidenceRoot: 'public/evidence',
-    registryPath: 'public/registry/dod-registry.json',
-  });
-  const dodCleaned = verifier.cleanupPending(7);
-  verifier.close();
+  // 2. DOD cleanup (default 7-day pending purge) — auto-closed via Symbol.dispose
+  let dodCleaned = 0;
+  {
+    using verifier = new DODVerifier(dbPath, {
+      evidenceRoot: 'public/evidence',
+      registryPath: 'public/registry/dod-registry.json',
+    });
+    dodCleaned = verifier.cleanupPending(7);
+  }
 
   // 3. Coverage snapshot
   const db = openOperationsDb({ path: dbPath });
