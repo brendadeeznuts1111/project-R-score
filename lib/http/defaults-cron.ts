@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron in-process
 // @see https://bun.com/docs/runtime/cron#bun-cron-path-schedule-title-os-level — OS-persistent primary
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -22,8 +23,6 @@
  * Schedule default: 04:00 UTC daily (`0 4 * * *`).
  * Override: BUN_DEFAULTS_CRON_SCHEDULE="30 5 * * *"
  */
-import { mkdir } from 'node:fs/promises';
-import { dirname } from 'node:path';
 import { scheduleInProcess, type InProcessCronJob } from '../harness/cron.ts';
 import { buildBunDefaultsProof, type BunDefaultsProof } from './bun-defaults-proof.ts';
 
@@ -48,14 +47,15 @@ export type DefaultsVerificationResult = {
 /**
  * One tick: run 12 default cases, write proof JSON, return exit-style code.
  */
-export async function runDefaultsVerification(opts: {
-  savePath?: string;
-  quiet?: boolean;
-} = {}): Promise<DefaultsVerificationResult> {
+export async function runDefaultsVerification(
+  opts: {
+    savePath?: string;
+    quiet?: boolean;
+  } = {}
+): Promise<DefaultsVerificationResult> {
   const savePath = opts.savePath ?? BUN_DEFAULTS_PROOF_PATH;
   try {
     const proof = await buildBunDefaultsProof();
-    await mkdir(dirname(savePath), { recursive: true });
     await Bun.write(savePath, JSON.stringify(proof, null, 2) + '\n');
 
     if (!opts.quiet) {

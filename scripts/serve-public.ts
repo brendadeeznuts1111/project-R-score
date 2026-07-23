@@ -1357,11 +1357,58 @@ function buildPublicRoutes() {
     },
     '/api/defaults': async (req: Request) => {
       const f = Bun.file('public/registry/defaults-proof.json');
-      if (await f.exists())
+      if (!(await f.exists())) {
+        return json(
+          {
+            error: 'Defaults proof not generated — run bun run check:defaults',
+            docs: 'https://bun.com/docs/runtime/utils',
+          },
+          404
+        );
+      }
+      const raw = JSON.parse(await f.text());
+      const passed = raw.passed ?? raw.summary?.passed ?? 0;
+      const total = raw.total ?? raw.summary?.total ?? 0;
+      const url = new URL(req.url);
+      const format = url.searchParams.get('format') || req.headers.get('Accept') || 'json';
+
+      if (format === 'raw' || (format === 'application/json' && url.searchParams.has('format'))) {
         return new Response(f, {
           headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
         });
-      return json({ error: 'Defaults proof not generated yet — run bun run check:defaults' }, 404);
+      }
+      if (format === 'text' || format.startsWith('text/')) {
+        return new Response(
+          `Bun Defaults Verification\n` +
+            `Status: ${passed === total ? '✅ PASS' : '❌ FAIL'}\n` +
+            `Passed: ${passed}/${total} (${total > 0 ? Math.round((passed / total) * 100) : 0}%)\n` +
+            `Bun:    ${raw.bunVersion}\n` +
+            `Hash:   ${raw.proofHash}\n`,
+          {
+            headers: {
+              'Content-Type': 'text/plain; charset=utf-8',
+              'Cache-Control': 'public, max-age=60',
+            },
+          }
+        );
+      }
+
+      return json({
+        status: passed === total ? 'pass' : 'fail',
+        passed,
+        total,
+        passedRatio: +(passed / Math.max(total, 1)).toFixed(2),
+        bunVersion: raw.bunVersion,
+        proofHash: raw.proofHash,
+        generated: raw.timestamp,
+        _links: {
+          self: '/api/defaults',
+          raw: '/api/defaults?format=raw',
+          text: '/api/defaults?format=text',
+          proof: '/public/registry/defaults-proof.json',
+          docs: 'https://bun.com/docs/runtime/utils',
+        },
+      });
     },
     '/api/env': () => envStatus(),
     '/api/monitoring': () => liveMonitoringApi(),
