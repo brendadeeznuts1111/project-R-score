@@ -151,7 +151,7 @@ bun run harness:status          # local ratchets + timings SSOT (ansiMarkdown)
 #   bun run harness:status -- --table              # Bun.inspect family map + inspect.table
 #   bun run harness:status -- --show-actions-noise # unmute GHA 0-step / billing checks
 bun run help
-bun run type-check              # tsconfig.check.json — spine agent surfaces
+bun run type-check              # tsconfig.check.json (extends tsconfig.bun.json) — spine agent surfaces
 bun run build:affected          # git-true workspaces → bun --filter
 bun run test:affected           # workspace package.json "test" scripts
 bun run test:changed            # --changed (dirty)

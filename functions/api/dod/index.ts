@@ -6,7 +6,7 @@
  * POST /api/dod/reject  {id,reason} → reject
  */
 
-import { DODVerifier } from "../../../lib/dod/verifier";
+import { DODVerifier } from "../../../lib/dod/verifier.ts";
 
 const verifier = new DODVerifier();
 

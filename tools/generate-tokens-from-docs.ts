@@ -133,7 +133,7 @@ function firstSentence(text: string): string {
   if (!trimmed) return '';
   // Stop at first sentence break, but allow common abbreviations roughly.
   const match = trimmed.match(/^([^.!?]{1,250}[.!?])(\s|$)/);
-  const sentence = match ? match[1] : trimmed.slice(0, 200);
+  const sentence = match?.[1] ?? trimmed.slice(0, 200);
   return sentence.length > 200 ? sentence.slice(0, 197) + '...' : sentence;
 }
 
@@ -314,8 +314,9 @@ export function parsePage(markdown: string, pageTitle: string, pageUrl: string):
         inCode = null;
         codeAnnotation = '';
       } else {
-        inCode = fence[1].trim().split(/\s+/)[0] || 'text';
-        codeAnnotation = fence[1];
+        const fenceBody = fence[1] ?? '';
+        inCode = fenceBody.trim().split(/\s+/)[0] || 'text';
+        codeAnnotation = fenceBody;
       }
       continue;
     }
@@ -338,7 +339,9 @@ export function parsePage(markdown: string, pageTitle: string, pageUrl: string):
 
     const heading = line.match(/^(#{2,4})\s+(.+)$/);
     if (heading) {
-      currentSection = heading[2].trim();
+      const headingTitle = heading[2];
+      if (headingTitle === undefined) continue;
+      currentSection = headingTitle.trim();
       currentAnchor = slugify(stripBackticks(currentSection));
       currentStability = detectStability(currentSection);
       currentDescription = '';
@@ -468,7 +471,6 @@ type GeneratorArgs = {
   sections: string[];
   version: string;
   releaseUrl: string;
-  blogUrl: string;
   commitHash?: string;
   versionPinned: boolean;
 };
@@ -554,13 +556,14 @@ async function main(): Promise<void> {
     if (!m) continue;
     const title = m[1];
     const url = m[2];
+    if (title === undefined || url === undefined) continue;
     if (SKIP_TITLES.has(title)) continue;
     const pathname = new URL(url).pathname;
     const domain = pathname
       .replace(/^\/docs\//, '')
       .replace(/\.md$/, '')
       .split('/')[0];
-    if (!sections.includes(domain)) continue;
+    if (domain === undefined || !sections.includes(domain)) continue;
     pages.push({ title, url });
   }
 

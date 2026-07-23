@@ -34,7 +34,7 @@ export type RegistryPagesContext = {
 };
 
 const ALLOWED_EXACT = new Set(['registry.json']);
-const ALLOWED_PREFIXES = ['@factorywager/', 'projects/', 'readme/'] as const;
+const ALLOWED_PREFIXES = ['@factorywager/', 'projects/', 'readme/', 'tenants/'] as const;
 
 /** JSON error with optional CORS + no-store cache. */
 export function jsonError(

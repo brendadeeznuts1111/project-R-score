@@ -3,8 +3,16 @@
   "compilerOptions": {
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
-    "outDir": "lib"
+    "outDir": "lib",
+    "types": [
+      "bun"
+    ],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["."],
-  "exclude": ["lib"]
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "lib"
+  ]
 }

@@ -62,12 +62,12 @@ export const HSL_SWEET_SPOTS = {
 // STATUS HUE MAPPINGS (Perceptual Adjustment)
 // ═══════════════════════════════════════════════════════════════
 
-export const STATUS_HUES: Record<string, number> = {
+export const STATUS_HUES = {
   success: 135, // Vivid green (shifted from 120 for better visibility)
   warning: 38, // Amber/orange
   error: 0, // Pure red
   info: 210, // Blue
-};
+} as const satisfies Record<'success' | 'warning' | 'error' | 'info', number>;
 
 // ═══════════════════════════════════════════════════════════════
 // CORE HSL UTILITIES
@@ -83,21 +83,27 @@ export function parseHSL(input: string | HSL): HSL {
   // Try CSS format first: hsl(120, 50%, 50%)
   let match = input.match(/hsl\(\s*(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)%,\s*(\d+(?:\.\d+)?)%\s*\)/i);
   if (match) {
-    return {
-      h: Math.round(parseFloat(match[1])),
-      s: Math.round(parseFloat(match[2])),
-      l: Math.round(parseFloat(match[3])),
-    };
+    const [, hStr, sStr, lStr] = match;
+    if (hStr !== undefined && sStr !== undefined && lStr !== undefined) {
+      return {
+        h: Math.round(parseFloat(hStr)),
+        s: Math.round(parseFloat(sStr)),
+        l: Math.round(parseFloat(lStr)),
+      };
+    }
   }
 
   // Try Bun.color format: hsl(120, 0.5, 0.5) - decimal saturation/lightness
   match = input.match(/hsl\(\s*(\d+(?:\.\d+)?),\s*([\d.]+),\s*([\d.]+)\s*\)/i);
   if (match) {
-    return {
-      h: Math.round(parseFloat(match[1])),
-      s: Math.round(parseFloat(match[2]) * 100),
-      l: Math.round(parseFloat(match[3]) * 100),
-    };
+    const [, hStr, sStr, lStr] = match;
+    if (hStr !== undefined && sStr !== undefined && lStr !== undefined) {
+      return {
+        h: Math.round(parseFloat(hStr)),
+        s: Math.round(parseFloat(sStr) * 100),
+        l: Math.round(parseFloat(lStr) * 100),
+      };
+    }
   }
 
   throw new Error(`Invalid HSL format: ${input}`);
@@ -170,13 +176,17 @@ export function hslToHex(hsl: HSL): string {
  * Calculate perceived brightness (W3C relative luminance approximation)
  * Accounts for HSL perceptual non-uniformity
  */
+function linearizeChannel(value: number): number {
+  return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
+}
+
 export function perceivedBrightness(hsl: HSL): number {
   const rgb = hslToRgb(hsl);
 
   // W3C relative luminance formula (simplified)
-  const [r, g, b] = [rgb.r / 255, rgb.g / 255, rgb.b / 255].map(val => {
-    return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
-  });
+  const r = linearizeChannel(rgb.r / 255);
+  const g = linearizeChannel(rgb.g / 255);
+  const b = linearizeChannel(rgb.b / 255);
 
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
@@ -282,7 +292,9 @@ function linearizeRGB(value: number): number {
  */
 export function rgbToOKLCH(rgb: RGB): OKLCH {
   // Normalize RGB
-  const [r, g, b] = [rgb.r / 255, rgb.g / 255, rgb.b / 255].map(linearizeRGB);
+  const r = linearizeRGB(rgb.r / 255);
+  const g = linearizeRGB(rgb.g / 255);
+  const b = linearizeRGB(rgb.b / 255);
 
   // Simplified OKLab conversion (approximation)
   // Full implementation would use 3x3 matrix multiplication
@@ -339,9 +351,9 @@ export function oklchToHSL(oklch: OKLCH): HSL {
  * Calculate relative luminance (WCAG formula)
  */
 function relativeLuminance(rgb: RGB): number {
-  const [r, g, b] = [rgb.r / 255, rgb.g / 255, rgb.b / 255].map(val => {
-    return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
-  });
+  const r = linearizeChannel(rgb.r / 255);
+  const g = linearizeChannel(rgb.g / 255);
+  const b = linearizeChannel(rgb.b / 255);
 
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }

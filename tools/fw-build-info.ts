@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/guides/runtime/build-time-constants
 // @see https://bun.com/docs/guides/runtime/define-constant
 // @see https://bun.com/docs/runtime — feature() from bun:bundle (compile-time DCE)
+// @see https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime — Bun.isStandaloneExecutable
 /**
  * Thin CLI that reads AST-injected build constants.
  *
@@ -10,8 +11,13 @@
  */
 import { feature } from 'bun:bundle';
 
+/** Injected by `bun build --define` / compile; absent under plain `bun run`. */
+declare const BUILD_VERSION: string | undefined;
+declare const BUILD_TIME: string | undefined;
+declare const GIT_COMMIT: string | undefined;
+declare const DEBUG: boolean | undefined;
+
 function readString(name: 'BUILD_VERSION' | 'BUILD_TIME' | 'GIT_COMMIT', fallback: string): string {
-  // typeof works for undeclared bindings (no ReferenceError)
   switch (name) {
     case 'BUILD_VERSION':
       return typeof BUILD_VERSION !== 'undefined' ? BUILD_VERSION : fallback;
@@ -30,12 +36,17 @@ function readDebug(): boolean {
   return false;
 }
 
+/** bun-types 1.3.x lag — runtime ships this on Bun 1.4+ compiled executables. */
+function isStandaloneExecutable(): boolean {
+  return (Bun as typeof Bun & { isStandaloneExecutable?: boolean }).isStandaloneExecutable === true;
+}
+
 const meta = {
   version: readString('BUILD_VERSION', '0.0.0-dev'),
   buildTime: readString('BUILD_TIME', 'unknown'),
   commit: readString('GIT_COMMIT', 'unknown'),
   debug: readDebug(),
-  standalone: Bun.isStandaloneExecutable === true,
+  standalone: isStandaloneExecutable(),
 };
 
 if (feature('DEBUG')) {

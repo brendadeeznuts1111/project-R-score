@@ -135,8 +135,9 @@ export class AnomalyDetector extends EventEmitter {
       filtered = filtered.filter(a => a.severity === filter.severity);
     }
 
-    if (filter?.minConfidence) {
-      filtered = filtered.filter(a => a.confidence >= filter.minConfidence);
+    const minConfidence = filter?.minConfidence;
+    if (minConfidence !== undefined) {
+      filtered = filtered.filter(a => a.confidence >= minConfidence);
     }
 
     if (filter?.timeRange) {
@@ -437,12 +438,12 @@ export class AnomalyDetector extends EventEmitter {
       timestamp: data.timestamp,
       source: data.source,
       metrics: { [metricName]: value },
-      baseline: { [metricName]: baseline.metrics[metricName].mean },
+      baseline: { [metricName]: baseline.metrics[metricName]?.mean ?? 0 },
       deviation,
       recommendations: this.generateRecommendations(
         metricName,
         value,
-        baseline.metrics[metricName]
+        baseline.metrics[metricName] ?? { mean: 0, stdDev: 0, min: 0, max: 0, count: 0 }
       ),
       relatedEvents: this.findRelatedEvents(data, metricName),
     };
@@ -503,18 +504,21 @@ export class AnomalyDetector extends EventEmitter {
    * Execute automatic response
    */
   private executeAutoResponse(anomaly: Anomaly): void {
+    const autoResponse = anomaly.autoResponse;
+    if (!autoResponse) return;
+
     // In a real implementation, execute the actual response
     logger.info(
       'Executing auto-response',
       {
         anomalyId: anomaly.id,
-        action: anomaly.autoResponse!.action,
+        action: autoResponse.action,
       },
       ['anomaly', 'response']
     );
 
-    anomaly.autoResponse.executed = true;
-    anomaly.autoResponse.result = 'success';
+    autoResponse.executed = true;
+    autoResponse.result = 'success';
   }
 
   /**

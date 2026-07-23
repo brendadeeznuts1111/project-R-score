@@ -1,8 +1,0 @@
-{
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "oven.bun-vscode",
-  "bun.test.enabled": true,
-  "bun.debug.enabled": true
-}

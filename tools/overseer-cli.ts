@@ -6,52 +6,62 @@
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // tools/overseer-cli.ts — Root project manager for Bun platform projects
 
+import { which, spawn } from 'bun';
 import { ensureDirectExecution } from '../lib/shared/tools/entry-guard';
+
 ensureDirectExecution();
 
-import { which, spawn } from 'bun';
+const cwd = process.cwd();
 
 console.info(`Overseer running from: ${Bun.main}`);
 
 // Discover projects (subdirs with package.json)
-const projects = [...new Bun.Glob('*/package.json').scanSync({ cwd: Bun.cwd })].map(rel =>
+const projects = [...new Bun.Glob('*/package.json').scanSync({ cwd })].map(rel =>
   rel.replace(/\/package\.json$/, '')
 );
 
 if (projects.length === 0) {
   console.error('No projects found (subdirectories with package.json required)');
-  Bun.exit(1);
+  process.exit(1);
 }
 
 console.info('Available projects:');
-console.table(projects.map(p => ({ name: p, path: `${Bun.cwd}/${p}` })));
+console.table(projects.map(p => ({ name: p, path: `${cwd}/${p}` })));
 
-async function runInProject(projectName: string, cmd: string[]) {
-  const projectHome = `${Bun.cwd}/${projectName}`;
-
-  if (Bun.peek(Bun.file(`${projectHome}/package.json`).exists()) !== true) {
+async function runInProject(projectName: string, cmd: string[]): Promise<number | undefined> {
+  const projectHome = `${cwd}/${projectName}`;
+  const pkg = Bun.file(`${projectHome}/package.json`);
+  if (!(await pkg.exists())) {
     console.error(`Project not found: ${projectHome}`);
     return;
   }
 
-  const binPath = which(cmd[0], {
+  const bin = cmd[0];
+  if (bin === undefined) {
+    console.error(`[${projectName}] empty command`);
+    return;
+  }
+
+  const binPath = which(bin, {
     cwd: projectHome,
     PATH: `${projectHome}/node_modules/.bin:${Bun.env.PATH || ''}`,
   });
 
   if (!binPath) {
-    console.error(`Command not found in ${projectHome}: ${cmd[0]}`);
+    console.error(`Command not found in ${projectHome}: ${bin}`);
     return;
   }
 
   console.info(`[${projectName}] Running: ${cmd.join(' ')}`);
   const proc = spawn([binPath, ...cmd.slice(1)], {
     cwd: projectHome,
-    stdio: 'inherit',
+    stdout: 'inherit',
+    stderr: 'inherit',
+    stdin: 'inherit',
     env: {
       ...Bun.env,
       PROJECT_HOME: projectHome,
-      BUN_PLATFORM_HOME: Bun.cwd,
+      BUN_PLATFORM_HOME: cwd,
     },
   });
 
@@ -73,12 +83,15 @@ Examples:
 List available projects:
   bun tools/overseer-cli.ts
 `);
-  Bun.exit(0);
+  process.exit(0);
 }
 
-const [projectName, ...cmdArgs] = args;
-runInProject(projectName, cmdArgs).then(exitCode => {
+const projectName = args[0];
+const cmdArgs = args.slice(1);
+if (projectName === undefined) process.exit(1);
+
+void runInProject(projectName, cmdArgs).then(exitCode => {
   if (exitCode !== undefined && exitCode !== 0) {
-    Bun.exit(exitCode);
+    process.exit(exitCode);
   }
 });

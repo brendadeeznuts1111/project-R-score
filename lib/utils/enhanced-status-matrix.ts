@@ -7,7 +7,8 @@ import {
   autoAdjustContrast,
   perceivedBrightness,
 } from './advanced-hsl-system';
-import { colorize, ColorStatus } from './color-system';
+import { colorize } from './color-system';
+import type { ColorStatus } from './color-system';
 
 export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical';
 export type ContextType = 'light' | 'dark';
@@ -47,10 +48,15 @@ export function createEnhancedStatus(config: StatusConfig, customText?: string):
     throw new Error(`Invalid HSL string: ${hslString}`);
   }
 
+  const [, hStr, sStr, lStr] = hslMatch;
+  if (hStr === undefined || sStr === undefined || lStr === undefined) {
+    throw new Error(`Invalid HSL capture groups: ${hslString}`);
+  }
+
   const hslValues = {
-    h: parseInt(hslMatch[1]),
-    s: parseInt(hslMatch[2]),
-    l: parseInt(hslMatch[3]),
+    h: parseInt(hStr, 10),
+    s: parseInt(sStr, 10),
+    l: parseInt(lStr, 10),
   };
 
   // Apply WCAG auto-adjustment if requested

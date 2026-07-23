@@ -106,6 +106,180 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     term: 'bun install',
     path: 'pm/cli/install',
     description: 'Package manager install with hoisted/isolated linkers',
+    related: ['pm/cli/install#configuring-with-environment-variables', 'pm/global-cache', 'pm/global-store'],
+    relatedTokens: [
+      'bun install env',
+      'BUN_CONFIG_REGISTRY',
+      'BUN_CONFIG_TOKEN',
+      'BUN_INSTALL_CACHE_DIR',
+      'BUN_INSTALL_GLOBAL_STORE',
+    ],
+  },
+  {
+    term: 'bun install env',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description:
+      'BUN_CONFIG_* table + install mechanism (backend/cache/eager-lazy). Env > bunfig. SSOT: tools/bun-install-env.ts. Host: bun.com.',
+    related: [
+      'pm/cli/install#cache',
+      'pm/cli/install#platform-specific-backends',
+      'pm/global-cache',
+    ],
+    relatedTokens: [
+      'BUN_CONFIG_REGISTRY',
+      'BUN_CONFIG_TOKEN',
+      'BUN_CONFIG_YARN_LOCKFILE',
+      'BUN_CONFIG_SKIP_SAVE_LOCKFILE',
+      'BUN_CONFIG_SKIP_LOAD_LOCKFILE',
+      'BUN_CONFIG_SKIP_INSTALL_PACKAGES',
+      '--backend',
+      'bun install cache',
+      'bun install',
+    ],
+  },
+  {
+    term: 'BUN_CONFIG_REGISTRY',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description: 'Set npm registry (default https://registry.npmjs.org). Env > bunfig.',
+    relatedTokens: ['bun install env', 'BUN_CONFIG_TOKEN', 'install.registry'],
+  },
+  {
+    term: 'BUN_CONFIG_TOKEN',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description: 'Auth token for the default registry. Env > bunfig.',
+    relatedTokens: ['bun install env', 'BUN_CONFIG_REGISTRY'],
+  },
+  {
+    term: 'BUN_CONFIG_YARN_LOCKFILE',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description: 'Save a Yarn v1-style yarn.lock during bun install',
+    relatedTokens: ['bun install env'],
+  },
+  {
+    term: 'BUN_CONFIG_SKIP_SAVE_LOCKFILE',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description: "Don't save a lockfile (bun install)",
+    relatedTokens: ['bun install env', 'BUN_CONFIG_SKIP_LOAD_LOCKFILE'],
+  },
+  {
+    term: 'BUN_CONFIG_SKIP_LOAD_LOCKFILE',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description: "Don't load a lockfile (bun install)",
+    relatedTokens: ['bun install env', 'BUN_CONFIG_SKIP_SAVE_LOCKFILE'],
+  },
+  {
+    term: 'BUN_CONFIG_SKIP_INSTALL_PACKAGES',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description: "Don't install any packages (bun install)",
+    relatedTokens: ['bun install env'],
+  },
+  {
+    term: '--backend',
+    path: 'pm/cli/install#platform-specific-backends',
+    description:
+      'Override install copy backend (default clonefile macOS / hardlink Linux; falls back to copy)',
+    relatedTokens: ['bun install env', 'clonefile', 'hardlink'],
+  },
+  {
+    term: 'bun install cache',
+    path: 'pm/cli/install#cache',
+    description:
+      'Cache at ~/.bun/install/cache/${name}@${version}; pre/build tags hashed. See also pm/global-cache + UNIFIED.md.',
+    relatedTokens: ['cache-layout', 'BUN_INSTALL_CACHE_DIR', 'install.cache', 'bun install env'],
+  },
+  {
+    term: 'cache-layout',
+    path: 'pm/cli/install#cache',
+    description:
+      'npm packages at ~/.bun/install/cache/${name}@${version}; build/pre tags → hash. Text fragment (bun.com): #:~:text=~/.bun/install/cache/${name}@${version}…hash…on disk.',
+    relatedTokens: ['bun install cache', 'BUN_INSTALL_CACHE_DIR', 'install.cache'],
+  },
+  {
+    term: 'node-modules-check',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description:
+      'When node_modules exists, Bun installs only if package.json name+version at the expected path mismatch. Custom JSON parser stops at those two keys. Text fragment (bun.com): #:~:text=When%20the%20node_modules,%22version%22.',
+    relatedTokens: ['bun install env', 'bun install name version', 'eager-vs-lazy'],
+  },
+  {
+    term: 'bun install name version',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description:
+      'Alias for node-modules-check — early-exit name/version match decides whether a package needs install.',
+    relatedTokens: ['node-modules-check', 'bun install env'],
+  },
+  {
+    term: 'eager-vs-lazy',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description:
+      'Umbrella: eager-resolve + lazy-resolve. Prefer those tokens for text fragments.',
+    relatedTokens: ['eager-resolve', 'lazy-resolve', 'node-modules-check', 'bun install env'],
+  },
+  {
+    term: 'eager-resolve',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description:
+      'No bun.lock or package.json deps changed → download/extract tarballs eagerly while resolving.',
+    relatedTokens: ['lazy-resolve', 'node-modules-check', 'bun install env'],
+  },
+  {
+    term: 'lazy-resolve',
+    path: 'pm/cli/install#configuring-with-environment-variables',
+    description:
+      'Lock in sync → lazy download; skip tarball if matching name+version already in node_modules.',
+    relatedTokens: ['eager-resolve', 'node-modules-check', 'bun install env'],
+  },
+  {
+    term: 'installation-strategies',
+    path: 'pm/cli/install#installation-strategies',
+    description: 'Hoisted vs isolated linkers (--linker). FactoryWager machine: isolated + globalStore.',
+    relatedTokens: ['hoisted-installs', 'isolated-installs', 'default-strategy', '--linker'],
+  },
+  {
+    term: 'isolated-installs',
+    path: 'pm/cli/install#isolated-installs',
+    description: 'pnpm-like store in node_modules/.bun/ + symlinks; prevents phantom dependencies.',
+    relatedTokens: ['hoisted-installs', 'globalStore', '--linker'],
+  },
+  {
+    term: 'hoisted-installs',
+    path: 'pm/cli/install#hoisted-installs',
+    description: 'Traditional flattened node_modules (npm/Yarn style).',
+    relatedTokens: ['isolated-installs', '--linker'],
+  },
+  {
+    term: 'minimum-release-age',
+    path: 'pm/cli/install#minimum-release-age',
+    description:
+      'Filter newly resolved versions younger than N seconds (machine: 259200). Lockfile pins unchanged. bunfig minimumReleaseAge.',
+    relatedTokens: ['minimumReleaseAge', 'bun install', 'frozenLockfile'],
+  },
+  {
+    term: 'bun ci',
+    path: 'pm/cli/install#ci-cd',
+    description: 'CI reproducible install — fails if package.json out of sync with lockfile.',
+    relatedTokens: ['--frozen-lockfile', 'frozenLockfile', 'bun install'],
+  },
+  {
+    term: 'frozenLockfile',
+    path: 'pm/cli/install#production-mode',
+    description:
+      'bunfig / --frozen-lockfile — exact lockfile versions; error on package.json drift. No BUN_CONFIG_* override.',
+    relatedTokens: ['--frozen-lockfile', 'bun ci', 'bun install'],
+  },
+  {
+    term: 'BUN_INSTALL_CACHE_DIR',
+    path: 'pm/global-cache',
+    description:
+      'Override install cache dir. FactoryWager: set absolute path in ~/.bunfig.toml [install.cache].dir — do not set in shell/IDE (docs/UNIFIED.md).',
+    relatedTokens: ['BUN_INSTALL_GLOBAL_STORE', 'install.cache', 'bun install'],
+  },
+  {
+    term: 'BUN_INSTALL_GLOBAL_STORE',
+    path: 'pm/global-store',
+    description:
+      'Enable global virtual store. FactoryWager: machine bunfig globalStore=true — do not set in shell/IDE (docs/UNIFIED.md).',
+    relatedTokens: ['BUN_INSTALL_CACHE_DIR', 'globalStore', 'bun install'],
   },
   {
     term: 'Bun.SQL',
@@ -416,39 +590,73 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
   {
     term: 'Bun.markdown',
     path: 'runtime/markdown#bun-markdown-html',
-    description: 'Native Markdown rendering (html/ansi/render/react)',
+    description:
+      'Native Markdown (html/ansi/render/react). Unstable — types in bun.d.ts namespace markdown; mode chooser tools/bun-markdown-modes.ts',
     minVersion: '1.3.0',
+    stability: 'experimental',
     relatedTokens: [
       'Bun.markdown.html',
       'Bun.markdown.ansi',
       'Bun.markdown.render',
       'Bun.markdown.react',
+      'Bun.markdown types',
       'options',
+      'AnsiTheme',
+      'RenderCallbacks',
+      'ComponentOverrides',
     ],
+  },
+  {
+    term: 'Bun.markdown types',
+    path: 'reference/bun/markdown',
+    description:
+      'Generated API reference for namespace markdown (Options, AnsiTheme, RenderCallbacks, ComponentOverrides). Mirrors bun-types.',
+    minVersion: '1.3.0',
+    stability: 'experimental',
+    relatedTokens: ['Bun.markdown', 'options', 'AnsiTheme'],
   },
   {
     term: 'Bun.markdown.html',
     path: 'runtime/markdown#bun-markdown-html',
-    description: 'Render Markdown to an HTML string. Pass parser options as the second argument.',
+    description: 'Markdown → HTML string. Second arg: Options (GFM tables/strikethrough/tasklists on by default).',
     minVersion: '1.3.0',
+    stability: 'experimental',
     related: ['runtime/markdown#options'],
     relatedTokens: ['options', 'Bun.markdown', 'Bun.markdown.render', 'Bun.markdown.react'],
   },
   {
     term: 'Bun.markdown.ansi',
     path: 'runtime/markdown#ansi-terminal-output',
-    description: 'Markdown → ANSI for the terminal',
+    description:
+      'Markdown → ANSI for the terminal. Second arg: AnsiTheme (colors, columns, hyperlinks, kittyGraphics, light).',
     minVersion: '1.3.12',
-    relatedTokens: ['Bun.markdown', 'Bun.markdown.render', 'Bun.markdown.react'],
+    stability: 'experimental',
+    relatedTokens: [
+      'AnsiTheme',
+      'Bun.markdown',
+      'Bun.markdown.render',
+      'Bun.stringWidth',
+      'Bun.stripANSI',
+    ],
+  },
+  {
+    term: 'AnsiTheme',
+    path: 'runtime/markdown#ansi-terminal-output',
+    description: 'Options for Bun.markdown.ansi — colors, columns, hyperlinks, kittyGraphics, light.',
+    minVersion: '1.3.12',
+    stability: 'experimental',
+    relatedTokens: ['Bun.markdown.ansi'],
   },
   {
     term: 'Bun.markdown.render',
     path: 'runtime/markdown#bun-markdown-render',
     description:
-      'Render Markdown via callbacks. Pass parser options as a separate third argument (see parser-options).',
+      'Markdown → string via RenderCallbacks (null/undefined omits node). Third arg: Options (parser-options).',
     minVersion: '1.3.0',
+    stability: 'experimental',
     related: ['runtime/markdown#parser-options', 'runtime/markdown#options'],
     relatedTokens: [
+      'RenderCallbacks',
       'parser-options',
       'options',
       'Bun.markdown',
@@ -457,11 +665,21 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
     ],
   },
   {
+    term: 'RenderCallbacks',
+    path: 'runtime/markdown#bun-markdown-render',
+    description:
+      'Callback map for Bun.markdown.render — heading/link/code/list/… plus HeadingMeta, LinkMeta, ListMeta, …',
+    minVersion: '1.3.0',
+    stability: 'experimental',
+    relatedTokens: ['Bun.markdown.render'],
+  },
+  {
     term: 'Bun.markdown.react',
     path: 'runtime/markdown#bun-markdown-react',
     description:
-      'Render Markdown directly to React elements. Replace any HTML tag via component overrides (see available-overrides).',
+      'Markdown → React elements. Second arg: ComponentOverrides; third: ReactOptions (extends parser Options).',
     minVersion: '1.3.8',
+    stability: 'experimental',
     related: [
       'runtime/markdown#component-overrides',
       'runtime/markdown#available-overrides',
@@ -469,6 +687,7 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'runtime/markdown#options',
     ],
     relatedTokens: [
+      'ComponentOverrides',
       'component-overrides',
       'available-overrides',
       'parser-options-2',
@@ -477,6 +696,14 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'Bun.markdown.html',
       'Bun.markdown.render',
     ],
+  },
+  {
+    term: 'ComponentOverrides',
+    path: 'runtime/markdown#component-overrides',
+    description: 'HTML-tag → component map for Bun.markdown.react (h1–h6, p, pre, a, …).',
+    minVersion: '1.3.8',
+    stability: 'experimental',
+    relatedTokens: ['Bun.markdown.react', 'available-overrides'],
   },
   {
     term: 'component-overrides',

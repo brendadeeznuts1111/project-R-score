@@ -470,7 +470,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
   // Enhanced utility methods
   private async updateStats(updateFn: () => void): Promise<void> {
     if (!this.enableStats) return;
-    await this.statsMutex.withLock(() => {
+    await this.statsMutex.withLock(async () => {
       updateFn();
     });
   }
@@ -922,7 +922,7 @@ export class AIOperationsManager extends EventEmitter {
     command: Omit<AICommand, 'id' | 'timestamp'>,
     clientIp?: string
   ): Promise<string> {
-    return await this.mutex.withLock(() => {
+    return await this.mutex.withLock(async () => {
       // Rate limiting
       if (clientIp && !this.checkRateLimit(clientIp)) {
         throw new Error('Rate limit exceeded');
@@ -989,8 +989,9 @@ export class AIOperationsManager extends EventEmitter {
       filtered = filtered.filter(insight => insight.impact === filter.impact);
     }
 
-    if (filter?.minConfidence) {
-      filtered = filtered.filter(insight => insight.confidence >= filter.minConfidence);
+    const minConfidence = filter?.minConfidence;
+    if (minConfidence !== undefined) {
+      filtered = filtered.filter(insight => insight.confidence >= minConfidence);
     }
 
     if (filter?.severity) {
@@ -2356,12 +2357,7 @@ export class AIOperationsManager extends EventEmitter {
   /**
    * Export configuration and state
    */
-  exportState(): {
-    config: Record<string, any>;
-    adaptiveThresholds: Record<string, { min: number; max: number; adaptive: boolean }>;
-    systemStats: ReturnType<typeof this.getSystemStats>;
-    healthStatus: Promise<HealthStatus>;
-  } {
+  exportState() {
     return {
       config: this.config,
       adaptiveThresholds: this.adaptiveThresholds,

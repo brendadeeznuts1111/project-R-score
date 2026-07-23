@@ -223,7 +223,7 @@ export class URLHandler {
     });
 
     const result = validation(url);
-    if (!result.isValid) {
+    if (!result.isValid || result.data === undefined) {
       throw new ValidationError(`Invalid URL string: ${result.errors.join(', ')}`);
     }
 

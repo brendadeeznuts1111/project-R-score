@@ -4,6 +4,20 @@
 
 **Precedence:** CLI flags → `BUN_CONFIG_*` → bunfig merge (`~/.bunfig.toml` + `./bunfig.toml`; **project wins**). Pin: `packageManager` **bun@1.4.0**.
 
+### Official install docs (bun.com)
+
+SSOT [`tools/bun-install-env.ts`](../tools/bun-install-env.ts) · `bun tools/bun-doc-refs.ts install-env [--section=mechanism|strategies|age|config]`.
+
+| Section | Command / token | Notes |
+|---------|-----------------|-------|
+| `BUN_CONFIG_*` | `install-env --section=env` | Env > bunfig; registry/token/lockfile skips |
+| Mechanism | `suggest "cache-layout"` · `node-modules-check` · `eager-resolve` · `lazy-resolve` · `--backend` | Text fragments under env/cache |
+| Strategies | `isolated-installs` / `hoisted-installs` | Machine: **isolated** + `globalStore` |
+| Age gate | `minimum-release-age` | Machine: `minimumReleaseAge = 259200` |
+| CI | `bun ci` · `frozenLockfile` | No `BUN_CONFIG_*` for frozen |
+
+**Cache layout:** `~/.bun/install/cache/${name}@${version}` (pre/build → hash) — [text fragment](https://bun.com/docs/pm/cli/install#:~:text=~/.bun/install/cache/%24%7Bname%7D%40%24%7Bversion%7D.%20If%20the%20semver%20version%20has%20a%20build%20or%20a%20pre%20tag%2C%20Bun%20replaces%20it%20with%20a%20hash%20of%20that%20value.%20This%20reduces%20the%20chances%20of%20errors%20from%20long%20file%20paths%2C%20but%20complicates%20figuring%20out%20where%20a%20package%20was%20installed%20on%20disk.) · `suggest "cache-layout"`. Machine absolute `[install.cache].dir`, not shell. **node_modules check:** early-exit `"name"`+`"version"` parse.
+
 Not wire/brands — see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
 
 ## Install matrix

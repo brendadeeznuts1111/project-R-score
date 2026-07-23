@@ -27,4 +27,4 @@ bun run factory create factory-library my-lib --publish
 See [proof claim](../../docs/harness/PROOF.md) `factory-registry-cli-v1`.  
 Pages portal proxy: claim `factory-registry-pages-proxy-v1` · `functions/api/registry/`.
 
-Live R2 uses [`Bun.S3Client`](https://bun.com/docs/runtime/s3#bun-s3client-bun-s3) (SigV4) via `createS3RegistryStore`. Unit tests inject `createMemoryObjectStore()` — green tests prove coordination, not deployed bucket health (`factory env` / live ping).
+Live R2 uses [`Bun.S3Client`](https://bun.com/docs/runtime/s3#bun-s3client-bun-s3) (SigV4) via `createS3RegistryStore`. Optional [`requestPayer`](https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support) from `R2_REQUEST_PAYER` (same SSOT as `scripts/lib/r2-bridge.ts`). Unit tests inject `createMemoryObjectStore()` — green tests prove coordination, not deployed bucket health (`factory env` / live ping).

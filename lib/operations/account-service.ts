@@ -257,15 +257,19 @@ export class AccountService {
     );
 
     if (node.telegramId && !node.telegramId.startsWith('pending-')) {
-      await sendTelegramMessage(node.telegramId, [
-        '🎉 *PROMOTION*',
-        '',
-        'You are now a *Partner*!',
-        'You can recruit your own agents and sub-agents.',
-        `Your cut: ${node.cutPercentage}% from downstream.`,
-        '',
-        'Use /tree to see your network.',
-      ]);
+      try {
+        await sendTelegramMessage(node.telegramId, [
+          '🎉 *PROMOTION*',
+          '',
+          'You are now a *Partner*!',
+          'You can recruit your own agents and sub-agents.',
+          `Your cut: ${node.cutPercentage}% from downstream.`,
+          '',
+          'Use /tree to see your network.',
+        ]);
+      } catch {
+        // Notification failure must not revert the promotion.
+      }
     }
   }
 

@@ -66,6 +66,9 @@ describe('parseRegistryObjectKey', () => {
     );
     expect(parseRegistryObjectKey('projects/app/2.0.0.tgz')).toBe('projects/app/2.0.0.tgz');
     expect(parseRegistryObjectKey('readme/my-lib.md')).toBe('readme/my-lib.md');
+    expect(parseRegistryObjectKey('tenants/factory/registry.json')).toBe(
+      'tenants/factory/registry.json'
+    );
   });
 
   test('rejects traversal, absolute, empty, and unknown prefixes', () => {

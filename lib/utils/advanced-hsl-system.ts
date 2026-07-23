@@ -236,10 +236,14 @@ export function advancedColorize(
   if (options.ensureContrast && options.backgroundHsl) {
     const hslMatch = hslString.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
     if (hslMatch) {
+      const [, hStr, sStr, lStr] = hslMatch;
+      if (hStr === undefined || sStr === undefined || lStr === undefined) {
+        return `${options.bold ? '\x1b[1m' : ''}${color(hslString, 'ansi') || ''}${text}\x1b[0m`;
+      }
       const fgHsl = {
-        h: parseInt(hslMatch[1]),
-        s: parseInt(hslMatch[2]),
-        l: parseInt(hslMatch[3]),
+        h: parseInt(hStr, 10),
+        s: parseInt(sStr, 10),
+        l: parseInt(lStr, 10),
       };
 
       const adjustedFg = autoAdjustContrast(fgHsl, options.backgroundHsl);

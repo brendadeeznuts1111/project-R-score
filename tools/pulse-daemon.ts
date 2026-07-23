@@ -12,6 +12,7 @@
  *   bun run pulse:start -- --once
  *   bun run pulse:preview
  */
+import { appendFile } from 'node:fs/promises';
 import { parseCron, scheduleInProcess } from '../lib/harness/cron.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { verifyAuditCatalog } from './audit-catalog.ts';
@@ -45,7 +46,8 @@ export function previewPulseFires(expression: string, count: number, from?: Date
 }
 
 export async function appendPulseLog(entry: Record<string, unknown>): Promise<void> {
-  await Bun.write(PULSE_LOG_PATH, `${JSON.stringify(entry)}\n`, { append: true });
+  // Bun.write({ append }) is runtime-supported but not yet in bun-types 1.3.x overloads.
+  await appendFile(PULSE_LOG_PATH, `${JSON.stringify(entry)}\n`, 'utf8');
 }
 
 /** Single integrity pass — SSOT for scheduled and --once runs. */

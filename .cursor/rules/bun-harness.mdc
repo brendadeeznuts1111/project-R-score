@@ -1,35 +1,227 @@
 ---
-description: Global Bun harness — use Bun-native APIs in root paths; consult dx catalog for one-liners
+description: Bun-native API preference, docs SSOT, TS6 types allowlist, escape hatches, and prove gates for harness paths
 globs: lib/**/*.ts,scripts/**/*.ts,packages/**/*.ts,server/**/*.ts,config/**/*.ts,tools/**/*.ts
 alwaysApply: false
 ---
 
 # Bun Harness
 
-Root TypeScript in harness paths must prefer Bun-native APIs over Node.js equivalents.
+Harness TypeScript must prefer Bun-native APIs. Host is **bun.com** (not bun.sh).
 
-## Before writing code
+| Pin | Value | Note |
+|-----|-------|------|
+| Runtime | Bun **~1.4.0** (`packageManager`) | Source of truth for what exists |
+| Types | `@types/bun` / `bun-types` **1.3.14** | Lags runtime — see escape hatch |
+| TypeScript | **6.0.3** (`catalog:`) | `"types": ["bun"]` allowlist |
 
-- Run `bun run dx:catalog tip` or `bun run dx:catalog search <topic>` for one-liners + doc links
-- Source of truth: [`config/bun-dx-catalog.ts`](config/bun-dx-catalog.ts)
+## Docs SSOT (never invent a parallel scrape)
 
-## Prefer
-
-| Instead of | Use |
-|------------|-----|
-| `fs.readFileSync` | `await Bun.file(path).text()` |
-| `child_process.spawn` | `Bun.spawn([...])` |
-| `process.env.X` | `Bun.env.X` |
-| `axios` | `fetch()` |
-| CLI without guard | `if (import.meta.main) { ... }` |
-
-## Lint configs
-
-- Harness (global): `eslint.harness.config.ts`
-- Project-specific: `eslint.project.config.ts` (naming, lib/ai overrides)
-
-## Verify
+| Priority | Artifact | Role |
+|----------|----------|------|
+| 1 | [llms.txt](https://bun.com/docs/llms.txt) | Upstream API index |
+| 2 | [`tools/bun-docs-index.json`](../../tools/bun-docs-index.json) | Pages + anchors |
+| 3 | [`tools/bun-docs-catalog.json`](../../tools/bun-docs-catalog.json) | Token NOTE/SHIP/FIX/BLOG |
+| 4 | [`tools/bun-doc-refs.ts`](../../tools/bun-doc-refs.ts) `CANONICAL_REFS` | Frozen URL map |
+| — | [`tools/bun-api-index.json`](../../tools/bun-api-index.json) | Compact `Bun.*` / `bun:` pointer + `coverage` |
+| — | [`tools/bun-prefer-matrix.ts`](../../tools/bun-prefer-matrix.ts) | Prefer matrix SSOT (grouped) |
+| — | [`tools/bun-docs-coverage.ts`](../../tools/bun-docs-coverage.ts) | Coverage formula (prefer / repo / DX) |
+| — | [`tools/bun-markdown-modes.ts`](../../tools/bun-markdown-modes.ts) | `Bun.markdown` mode chooser + type loci |
+| — | [`tools/bun-install-env.ts`](../../tools/bun-install-env.ts) | `BUN_CONFIG_*` + install mechanism (env > bunfig) |
+| — | [`tools/cli-table.ts`](../../tools/cli-table.ts) | Columnar CLI — meta `BUN`+`COLS`; row attrs in `ATTRS` (not PROPERTIES) |
+| — | [`tools/config-toml-snapshot.ts`](../../tools/config-toml-snapshot.ts) | JSON config → CryptoHasher → TOML snapshot (single-pass) |
+| — | [`lib/toml-stringify.ts`](../../lib/toml-stringify.ts) | Types-lag `Bun.TOML.stringify` helper |
+| — | [`tools/bun-api-oneliners.ts`](../../tools/bun-api-oneliners.ts) | Verified API demos; version-aware `surface` coverage layer |
+| — | [`tools/generate-portal-icons.ts`](../../tools/generate-portal-icons.ts) | Portal tenant WebP icons (`icons:generate` / `icons:verify`) |
+| — | [`config/bun-dx-catalog.ts`](../../config/bun-dx-catalog.ts) | Lint bad→good one-liners |
+| — | [`docs/BUN_NATIVE_CAPABILITIES.md`](../../docs/BUN_NATIVE_CAPABILITIES.md) | Capability map + claims |
 
 ```bash
-bun run check:harness
+bun tools/bun-doc-refs.ts status                  # Coverage formula first, then integrity
+bun tools/bun-doc-refs.ts coverage [--json]       # prefer×canonical×repo×DX formula
+bun tools/bun-doc-refs.ts install-env             # BUN_CONFIG_* · mechanism · strategies · age
+bun tools/bun-doc-refs.ts install-env get cache-layout
+bun tools/bun-doc-refs.ts oneliners               # verified demos (surface coverage)
+bun tools/bun-doc-refs.ts oneliners --run mmap
+bun tools/bun-doc-refs.ts suggest "cache-layout"  # heading + text fragment
+bun tools/bun-doc-refs.ts suggest "Bun.secrets"   # → URL + catalog notes
+bun tools/bun-doc-refs.ts url "Bun.stringWidth"   # → canonical URL only
+bun tools/bun-doc-refs.ts annotate --write <files>
+bun run docs:api-index                            # regenerate bun-api-index.json (+ coverage)
+bun run docs:refresh                              # operate loop
+bun run dx:catalog tip | search <topic>
 ```
+
+Prefer-matrix SSOT: [`tools/bun-prefer-matrix.ts`](../../tools/bun-prefer-matrix.ts). Formula: [`tools/bun-docs-coverage.ts`](../../tools/bun-docs-coverage.ts). Install SSOT: [`tools/bun-install-env.ts`](../../tools/bun-install-env.ts). Missing from `bun-api-index.json` → llms.txt → `suggest` → catalog. **Do not invent signatures.**
+
+## Type islands (where tsc is proven)
+
+| Island | Config | Command |
+|--------|--------|---------|
+| Day-loop check | [`tsconfig.check.json`](../../tsconfig.check.json) ← `tsconfig.bun.json` | `bun run type-check` |
+| Tools ratchet | [`tools/tsconfig.json`](../../tools/tsconfig.json) globs `*.ts` · `cli/*.ts` · `benchmarks/*.ts` | `bun run type-check:tools` |
+| STO workspace | `projects/active/sports-terminal-os/tsconfig.check.json` | `bun run type-check:sto` |
+| Types audit | walks `extends` for `"types"` | `bun run check:tsconfig-types` |
+
+Expand check: `bun tools/rank-check-includes.ts`. Expand tools: keep globs green or `bun tools/expand-tools-tsconfig.ts`.
+
+### Types allowlist (TS6+)
+
+| Do | Don't |
+|----|-------|
+| `"types": ["bun"]` | Omit `types` (loads **nothing**) |
+| Prefer `"bun"` over `"bun-types"` | Treat `"bun-types"` as the day-loop allowlist |
+| `ignoreDeprecations: "6.0"` when `baseUrl` still needed | Forge `'' as AccountId` |
+| Add `"react"` / `"node"` only on surfaces that need them | Paste Bun-init onto DOM Pages base blindly |
+
+## Prefer matrix
+
+| Task | Use | Avoid |
+|------|-----|-------|
+| File read/write | `Bun.file`, `Bun.write`, `.text()` / `.json()` / `.stream()` | `fs.readFile*`, `fs.writeFile*`, `createReadStream` |
+| Exists | `await Bun.file(path).exists()` | `existsSync` |
+| Glob | `for await (const p of new Bun.Glob(pat).scan({ cwd }))` | `fast-glob`, `globby`, defaulting to `scanSync` |
+| Hash digests | `Bun.CryptoHasher`, `Bun.hash` | `crypto.createHash` |
+| Passwords | `Bun.password.hash` / `.verify` | `bcrypt`, `argon2` packages |
+| Spawn / shell | `Bun.spawn`, `Bun.spawnSync`, `Bun.$` | `child_process` |
+| Which | `Bun.which(cmd)` | hand-rolled PATH walks |
+| HTTP server | `Bun.serve` | `express`, `fastify` (harness) |
+| Fetch | `fetch` / `lib/docs/fetch-page.ts` | `axios` |
+| SQLite | `bun:sqlite` | `better-sqlite3` |
+| SQL | `Bun.sql` / `bun:sql` when used | `pg`, `mysql2` as default |
+| Redis | `Bun.redis` (alias `RedisClient`) | `ioredis` as default |
+| S3 / R2 | `Bun.s3` (alias `S3Client`) · `lib/factory/object-store.ts` | ad-hoc AWS SDK in harness |
+| Secrets | `Bun.secrets` when applicable | plaintext env for long-lived secrets |
+| Test | `bun:test` | `vitest`, `jest` |
+| Image | `Bun.Image` · `lib/image-metadata.ts` | `sharp` |
+| WebView | `Bun.WebView` (`await using`) | `puppeteer`, `playwright` |
+| Cron | `Bun.cron` · [`docs/harness/cron.md`](../../docs/harness/cron.md) | `node-cron` |
+| TOML / YAML | `Bun.TOML`, `Bun.YAML` | `@iarna/toml` |
+| Semver | `Bun.semver` | npm `semver` |
+| Color / ANSI | `Bun.color`, `Bun.stripANSI`, `Bun.stringWidth` | `chalk`, `string-width`, `strip-ansi` |
+| Markdown | `Bun.markdown.html` / `.ansi` / `.render` / `.react` (unstable) | `marked` as default |
+| Inspect / tables | `Bun.inspect` / `.table` · `lib/console-depth.ts` | raw `util.inspect`, unscoped `console.log(obj)` |
+| Env | `Bun.env` | `process.env` in `lib/` + `scripts/` (`check:bun-env`) |
+| Paths | `lib/path-bun.ts` | `path` / `node:path` in `lib/` + `tools/` (`check:path-bun`) |
+| Deep equals | `Bun.deepEquals` · `lib/deep-equals.ts` | hand-rolled deep compare |
+| Peek / settle | `Bun.peek` · `lib/peek-settle.ts` | busy-wait on promises |
+| Time / UUID | `Bun.nanoseconds`, `Bun.sleep`, `Bun.randomUUIDv7` · `lib/time.ts` | weak `Date.now()` evidence IDs |
+| Entry guard | `import.meta.main` / `lib/shared/tools/entry-guard.ts` | side effects on import |
+
+### Bun.markdown (unstable — four modes)
+
+Types: `bun-types` `namespace markdown` · [reference](https://bun.com/reference/bun/markdown) · mode SSOT [`tools/bun-markdown-modes.ts`](../../tools/bun-markdown-modes.ts). Pin Bun + `@types/bun` together.
+
+| Goal | Call | Key types |
+|------|------|-----------|
+| Default HTML | `html(md, Options?)` | `Options` |
+| Terminal / CLI | `ansi(md, AnsiTheme?)` | `AnsiTheme` |
+| Custom string | `render(md, RenderCallbacks?, Options?)` | callbacks + metas |
+| React tree | `react(md, ComponentOverrides?, ReactOptions?)` | overrides + props |
+
+```ts
+// CLI docs
+const out = Bun.markdown.ansi(readme, {
+  colors: Boolean(process.stdout.isTTY) && !Bun.env.NO_COLOR,
+  columns: process.stdout.columns ?? 80,
+  hyperlinks: true,
+});
+const w = Bun.stringWidth(out);
+const plain = Bun.stripANSI(out);
+
+// HTML with heading ids
+Bun.markdown.html("## Hello", { headings: { ids: true } });
+```
+
+### Snippets (default shapes)
+
+```ts
+// Read / write
+const text = await Bun.file(path).text();
+const data = await Bun.file(path).json();
+await Bun.write(path, body);
+
+// Glob
+for await (const rel of new Bun.Glob("**/*.ts").scan({ cwd: dir })) { /* … */ }
+
+// Spawn (prefer discrete stdio over invalid string "inherit" if types complain)
+const proc = Bun.spawn(["bun", "run", "script.ts"], {
+  cwd,
+  stdout: "inherit",
+  stderr: "inherit",
+  stdin: "inherit",
+});
+await proc.exited;
+
+// Shell
+await Bun.$`bun test ${file}`.cwd(dir);
+
+// Hash
+const hex = new Bun.CryptoHasher("sha256").update(bytes).digest("hex");
+
+// Config → hash → TOML snapshot (single-pass)
+// bun tools/config-toml-snapshot.ts config.json snapshot.toml [--algo=sha3-256]
+```
+
+## Known types lag (1.3.14 vs runtime 1.4)
+
+| API | Pattern in-repo |
+|-----|-----------------|
+| `Bun.TOML.stringify` | [`lib/toml-stringify.ts`](../../lib/toml-stringify.ts) (`factory/cli`, `config-toml-snapshot`) |
+| `Bun.isStandaloneExecutable` | `(Bun as …).isStandaloneExecutable` — `tools/fw-build-info.ts` |
+| `Bun.write(..., { append: true })` | `appendFile` from `node:fs/promises` — `tools/pulse-daemon.ts` |
+
+When adding a new lag workaround: comment `// types lag bun-types@1.3.x — <docs url>` and prefer Bun again after types bump.
+
+## Escape hatch (ladder)
+
+1. **Narrow Bun cast** (preferred).
+2. **One Node primitive** + why (append / missing overload only).
+3. **Never** expand into general Node I/O style in harness paths.
+4. Reopen when `@types/bun` ≥ runtime minor.
+
+## Wire, brands, console
+
+- Parse once at the edge — [`docs/WIRE_BOUNDARY.md`](../../docs/WIRE_BOUNDARY.md). No `decodeUnknown*` in interior.
+- Domain `*Id`: [`lib/types/branded.ts`](../../lib/types/branded.ts) — `as*` / `try*` / `parse*`. Pre-commit: `branded-id-check --staged --strict`.
+- Inspect depth: `inspect` / `logDepth` / `logTable` from [`lib/console-depth.ts`](../../lib/console-depth.ts). Bun ignores Node `util.inspect.defaultOptions.depth`.
+
+## Agent workflow
+
+1. `suggest "<api>"` → add `// @see <url>` (or `annotate --write`).
+2. Hit prefer matrix / DX catalog before reaching for npm.
+3. Stay in a claimed lane; don't sweep other sessions' dirty files.
+4. Prove the island you touched:
+
+```bash
+bun run type-check
+bun run type-check:tools   # if tools/**
+bun run check:tsconfig-types
+bun run check:bun-env && bun run check:path-bun
+bun run test:changed
+bun run check:harness      # or lint:bun-native:changed
+```
+
+### Parallel agents — report tables
+
+When reporting multi-agent work, separate **Lane** and **Shortcode**:
+
+| Lane | Shortcode | Outcome |
+|------|-----------|---------|
+| STO | `e3c9ef06` | … |
+
+Link shortcodes as `[label](full-agent-id)` when citing subagents.
+
+## Lint / verify
+
+| Gate | Command |
+|------|---------|
+| Docs coverage formula | `bun tools/bun-doc-refs.ts status` · `coverage [--json]` |
+| Bun-native ESLint | `eslint.harness.config.ts` · `bun run check:harness` |
+| Env / path ratchets | `check:bun-env` · `check:path-bun` |
+| Types allowlist | `check:tsconfig-types` |
+| Day-loop tsc | `type-check` · `type-check:tools` · `type-check:sto` |
+| Brands | `check:brands` / staged `--strict` |
+| DX | `dx:catalog` |
+| Status | `harness:status` |
+
+Cheap `ci:harness` includes `check:tsconfig-types` + `type-check:tools`.

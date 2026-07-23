@@ -53,13 +53,16 @@ console.info('━━━━━━━━━━━━━━━━━━━━━━
 console.info('📊 Bun.stringWidth — size scaling (diff vs official bench)');
 console.info('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 for (let i = 0; i < SCALES.length; i++) {
-  bench(`${SCALES[i].toLocaleString()} chars ascii`, () => void Bun.stringWidth(scaledAscii[i]));
+  const scale = SCALES[i];
+  const sample = scaledAscii[i];
+  if (scale === undefined || sample === undefined) continue;
+  bench(`${scale.toLocaleString()} chars ascii`, () => void Bun.stringWidth(sample));
 }
 for (let i = 0; i < SCALES.length; i++) {
-  bench(
-    `${SCALES[i].toLocaleString()} chars ansi+emoji`,
-    () => void Bun.stringWidth(scaledAnsiEmoji[i])
-  );
+  const scale = SCALES[i];
+  const sample = scaledAnsiEmoji[i];
+  if (scale === undefined || sample === undefined) continue;
+  bench(`${scale.toLocaleString()} chars ansi+emoji`, () => void Bun.stringWidth(sample));
 }
 
 console.info('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

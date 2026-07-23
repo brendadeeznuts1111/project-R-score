@@ -4,11 +4,16 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 /**
  * Run bun ci / bun install with documented PM env defaults (prefer `ci` in GHA):
- * - https://bun.sh/docs/pm/global-cache (BUN_INSTALL_CACHE_DIR)
- * - https://bun.sh/docs/pm/global-store (BUN_INSTALL_GLOBAL_STORE + isolated linker)
+ * - https://bun.com/docs/pm/global-cache (BUN_INSTALL_CACHE_DIR)
+ * - https://bun.com/docs/pm/global-store (BUN_INSTALL_GLOBAL_STORE + isolated linker)
+ * - https://bun.com/docs/pm/cli/install#configuring-with-environment-variables (BUN_CONFIG_*)
  *
  * Absolute cache path avoids literal `./~/` dirs when nested bunfigs use unexpanded `~`.
+ * Host is bun.com (not bun.sh). Day-loop machine policy: prefer bunfig over shell env — docs/UNIFIED.md.
  */
+// @see https://bun.com/docs/pm/cli/install#configuring-with-environment-variables
+// @see https://bun.com/docs/pm/global-cache
+// @see https://bun.com/docs/pm/global-store
 import { applyBunInstallEnv } from './lib/bun-install-env.ts';
 
 const verbose = Bun.argv.includes('--verbose') || Bun.env.BUN_INSTALL_ENV_VERBOSE === '1';

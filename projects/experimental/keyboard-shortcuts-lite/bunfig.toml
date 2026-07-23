@@ -79,10 +79,9 @@ disableManifest = false
 
 # Performance optimization
 [install.performance]
-# Use clonefile on macOS for maximum speed (copy-on-write, space efficient)
-# Use hardlink on Linux/Windows (space efficient)
-# Available options: clonefile, hardlink, symlink, copyfile
-backend = "clonefile"
+# Install backend is auto-detected by Bun (clonefile on macOS, hardlink on Linux,
+# automatic copy fallback on error). To override, set `backend` under [install];
+# valid values: clonefile, hardlink, symlink, copyfile.
 
 # Concurrent network requests for faster downloads
 networkConcurrency = 48

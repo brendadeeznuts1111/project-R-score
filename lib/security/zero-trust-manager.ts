@@ -766,8 +766,8 @@ export class ZeroTrustManager extends EventEmitter {
     // Time window condition
     if (conditions.timeWindow) {
       const currentHour = new Date().getHours();
-      const startHour = parseInt(conditions.timeWindow.start.split(':')[0]);
-      const endHour = parseInt(conditions.timeWindow.end.split(':')[0]);
+      const startHour = parseInt(conditions.timeWindow.start.split(':')[0] ?? '0', 10);
+      const endHour = parseInt(conditions.timeWindow.end.split(':')[0] ?? '0', 10);
 
       if (currentHour < startHour || currentHour > endHour) {
         return false;

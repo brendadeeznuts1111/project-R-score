@@ -19,6 +19,7 @@ import {
   parseVersionFlag,
   normalizeBunVersion,
   applyChangelogOverlay,
+  applyBlogExamplesOverlay,
   listCells,
   shortType,
   shortStability,
@@ -685,5 +686,43 @@ describe('frozen CANONICAL_REFS env / npmrc', () => {
     expect(CANONICAL_REFS['Bun.env']).toBe('https://bun.com/docs/runtime/utils#bun-env');
     expect(CANONICAL_REFS['.npmrc']).toBe('https://bun.com/docs/pm/npmrc');
     expect(CANONICAL_REFS['save-exact']).toContain('pm/npmrc#save-exact');
+  });
+});
+
+describe('applyBlogExamplesOverlay', () => {
+  test('appends blog examples without overriding guide fences', () => {
+    const entry: DocCatalogEntry = {
+      name: 'Bun.Archive',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/runtime/archive',
+      allPages: ['https://bun.com/docs/runtime/archive'],
+      section: 'runtime',
+      examples: [{ lang: 'ts', body: 'const guide = 1;', fragment: 'quickstart' }],
+    };
+    const blogMap = new Map([
+      [
+        'bun.archive',
+        {
+          name: 'Bun.Archive',
+          examples: [
+            {
+              lang: 'ts',
+              body: 'const blog = new Bun.Archive({});',
+              version: '1.3.6',
+              url: 'https://bun.com/blog/bun-v1.3.6',
+              guideKey: 'bun-v1.3.6',
+              section: 'Bun.Archive API',
+              blockIndex: 8,
+              kind: 'ship' as const,
+            },
+          ],
+        },
+      ],
+    ]);
+    applyBlogExamplesOverlay(entry, blogMap);
+    expect(entry.examples).toHaveLength(2);
+    expect(entry.examples?.[0]?.body).toBe('const guide = 1;');
+    expect(entry.examples?.[1]?.fragment).toBe('blog/bun-v1.3.6#8');
   });
 });

@@ -46,8 +46,8 @@ export function toolText(text: string, isError = false): ToolCallResult {
 
 export function rpcOk(
   id: number | string | undefined,
-  result: JsonValue
-): JsonRpcMessage & { result: JsonValue } {
+  result: unknown
+): JsonRpcMessage & { result: unknown } {
   return { jsonrpc: '2.0', id, result };
 }
 

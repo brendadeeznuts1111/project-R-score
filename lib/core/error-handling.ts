@@ -82,11 +82,7 @@ export class ErrorHandler {
   /**
    * Handle and log errors with proper sanitization
    */
-  handle(
-    error: Error | string | number | boolean | object | null | undefined,
-    context: string,
-    severity: ErrorSeverity = ErrorSeverity.MEDIUM
-  ): R2IntegrationError {
+  handle(error: unknown, context: string, severity: ErrorSeverity = ErrorSeverity.MEDIUM): R2IntegrationError {
     const sanitizedError = this.normalizeError(error);
     const errorCode = this.generateErrorCode(sanitizedError, context);
 
@@ -107,20 +103,23 @@ export class ErrorHandler {
   /**
    * Sanitize error to prevent sensitive data leakage
    */
-  private normalizeError(
-    error: Error | string | number | boolean | object | null | undefined
-  ): R2IntegrationError {
+  private normalizeError(error: unknown): R2IntegrationError {
     if (error instanceof R2IntegrationError) {
       return error;
     }
 
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    const message =
+      error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : 'Unknown error occurred';
     const sanitizedMessage = this.sanitizeMessage(message);
 
     return new R2IntegrationError(
       sanitizedMessage,
       'UNKNOWN_ERROR',
-      { originalError: error instanceof Error ? error.name : 'Unknown' },
+      { originalError: error instanceof Error ? error.name : typeof error },
       false
     );
   }
@@ -229,7 +228,7 @@ export class ErrorHandler {
  * Standardized error handler function
  */
 export function handleErrorFromUnknown(
-  error: Error | string | number | boolean | object | null | undefined,
+  error: unknown,
   context: string,
   severity: ErrorSeverity = ErrorSeverity.MEDIUM
 ): R2IntegrationError {

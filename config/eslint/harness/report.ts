@@ -235,7 +235,7 @@ export async function collectGuardIssues(
         source: 'guard',
         file,
         line: v.line,
-        severity: v.severity,
+        severity: v.severity === 'info' ? 'warn' : v.severity,
         ruleId: `guard/${v.catalogId ?? 'unknown'}`,
         catalogId: v.catalogId,
         message: v.message,

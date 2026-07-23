@@ -202,12 +202,25 @@ async function cmdEnv(): Promise<void> {
 const DEFAULT_SNAPSHOT_PATH = 'public/registry/registry.json';
 
 async function cmdSnapshot(args: string[]): Promise<void> {
-  const outPath = args[0] && !args[0].startsWith('-') ? args[0] : DEFAULT_SNAPSHOT_PATH;
+  let tenant: string | undefined;
+  const positional: string[] = [];
+  for (const a of args) {
+    if (a.startsWith('--tenant=')) tenant = a.slice('--tenant='.length).trim();
+    else positional.push(a);
+  }
+  const outPath =
+    positional[0] && !positional[0].startsWith('-')
+      ? positional[0]
+      : tenant
+        ? `public/registry/${tenant}/registry.json`
+        : DEFAULT_SNAPSHOT_PATH;
   const { index } = await registry.fetchIndex();
-  const body = `${JSON.stringify(index, null, 2)}\n`;
+  const body = tenant
+    ? `${JSON.stringify({ ...index, tenantId: tenant }, null, 2)}\n`
+    : `${JSON.stringify(index, null, 2)}\n`;
   await Bun.write(outPath, body);
   const pkgCount = Object.keys(index.packages ?? {}).length;
-  console.log(`\n  ✓ Wrote snapshot → ${outPath} (${pkgCount} packages)\n`);
+  console.log(`\n  ✓ Wrote snapshot → ${outPath} (${pkgCount} packages${tenant ? ` · tenant=${tenant}` : ''})\n`);
 }
 
 const PUBLISH_OPTIONS = {

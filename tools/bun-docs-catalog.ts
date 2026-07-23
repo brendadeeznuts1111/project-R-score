@@ -34,7 +34,7 @@ import { BUN_GITHUB_RELEASES_URL } from '../lib/shared/tools/bun-urls.ts';
  * Token upgrade notes come from tools/bun-docs-changelog.ts (curated, not scraped).
  * Missing descriptions can be filled from live doc HTML (Phase 1 NOTE).
  *
- * Build:   bun tools/bun-docs-catalog.ts build [--version=1.4.0] [--force] [--skip-notes]
+ * Build:   bun tools/bun-docs-catalog.ts build [--version=1.4.0] [--force] [--skip-notes] [--derived]
  * Prefetch: bun tools/bun-docs-releases.ts index
  * List:    bun tools/bun-docs-catalog.ts list [--section=runtime] [--type=api]
  *                 [-s runtime] [-t api] [-q WebView] [-w] [-n] [-c] [-l] [-v] [-j]
@@ -51,7 +51,13 @@ import { resolvePath } from '../lib/path-bun';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 import { changelogIndex } from './bun-docs-changelog.ts';
 import {
+  blogHitToTokenExample,
+  type BlogExamplesEntry,
+  type BlogExamplesFile,
+} from '../lib/docs/blog-codeblock-join.ts';
+import {
   cleanBunVersion,
+  BLOG_EXAMPLES_PATH,
   loadReleaseIndex,
   lookupBlogUrl,
   RELEASE_OVERLAY_PATH,
@@ -812,7 +818,7 @@ function mergeEntry(
   if (partial.verifiedOn) existing.verifiedOn = partial.verifiedOn;
   // type: prefer api over concept
   if (partial.type === 'api' && existing.type === 'concept') existing.type = 'api';
-  if (partial.type === 'cli-flag' || partial.type === 'config') existing.type = partial.type;
+  if (partial.type === 'cli-flag' || partial.type === 'config-key') existing.type = partial.type;
   // aliases
   if (partial.name !== existing.name) {
     const al = new Set(existing.aliases ?? []);
@@ -1002,6 +1008,8 @@ export async function buildCatalog(opts?: {
   skipNotes?: boolean;
   /** Force refresh of release-index.json from RSS (default: refresh if missing) */
   refreshRss?: boolean;
+  /** Merge blog CodeBlock examples from bun-docs-blog-examples.json */
+  derived?: boolean;
 }): Promise<DocCatalogEntry[]> {
   const index = await loadIndex();
   const map = new Map<string, DocCatalogEntry>();
@@ -1230,6 +1238,16 @@ export async function buildCatalog(opts?: {
     }
   }
 
+  // 6c) Blog CodeBlock examples (guide/supplement precedence; --derived only)
+  if (opts?.derived) {
+    const blogExamples = await loadBlogExamplesOverlay();
+    if (blogExamples.size > 0) {
+      for (const e of entries) {
+        applyBlogExamplesOverlay(e, blogExamples);
+      }
+    }
+  }
+
   // 7) Phase 1 NOTE — fill empty descriptions from live doc HTML (cached).
   if (!opts?.skipNotes) {
     const needUrls = [
@@ -1323,6 +1341,48 @@ export async function loadReleaseOverlay(): Promise<Map<string, ReleaseOverlayEn
     return releaseOverlayIndex(file);
   } catch {
     return new Map();
+  }
+}
+
+export function blogExamplesIndex(file: BlogExamplesFile): Map<string, BlogExamplesEntry> {
+  return new Map(file.entries.map(e => [normalizeName(e.name), e]));
+}
+
+export async function loadBlogExamplesOverlay(): Promise<Map<string, BlogExamplesEntry>> {
+  if (!(await Bun.file(BLOG_EXAMPLES_PATH).exists())) return new Map();
+  try {
+    const file = (await Bun.file(BLOG_EXAMPLES_PATH).json()) as BlogExamplesFile;
+    return blogExamplesIndex(file);
+  } catch {
+    return new Map();
+  }
+}
+
+/** Merge blog-derived examples after guide/supplement (never overrides frozen fences). */
+export function applyBlogExamplesOverlay(
+  e: DocCatalogEntry,
+  blogMap: Map<string, BlogExamplesEntry>,
+  opts?: { maxExamples?: number }
+): void {
+  const overlay = blogMap.get(normalizeName(e.name));
+  if (!overlay?.examples.length) return;
+
+  const max = opts?.maxExamples ?? 6;
+  const existing = e.examples ?? [];
+  if (existing.length >= max) return;
+
+  const have = new Set(existing.map(x => `${x.lang}\0${x.body}`));
+  const merged = [...existing];
+  for (const hit of overlay.examples) {
+    if (merged.length >= max) break;
+    const ex = blogHitToTokenExample(hit);
+    const key = `${ex.lang}\0${ex.body}`;
+    if (have.has(key)) continue;
+    have.add(key);
+    merged.push(ex);
+  }
+  if (merged.length > existing.length) {
+    e.examples = merged;
   }
 }
 
@@ -1587,6 +1647,7 @@ export async function writeCatalog(
       changelog: 'tools/bun-docs-changelog.ts',
       releaseIndex: 'tools/release-index.json',
       releaseOverlay: 'tools/bun-docs-release-overlay.json',
+      blogExamples: 'tools/bun-docs-blog-examples.json',
       tokenSupplement: 'tools/bun-docs-token-supplement.json',
     },
     schema: {
@@ -1985,6 +2046,7 @@ async function main(): Promise<void> {
     const force = rest.includes('--force');
     const skipNotes = rest.includes('--skip-notes');
     const refreshRss = !rest.includes('--no-refresh-rss');
+    const derived = rest.includes('--derived');
     const { map: releaseMap } = await loadReleaseIndex({ refresh: refreshRss, force });
     const entries = await buildCatalog({
       bunVersion,
@@ -1992,6 +2054,7 @@ async function main(): Promise<void> {
       force,
       skipNotes,
       refreshRss,
+      derived,
     });
     await writeCatalog(entries, { bunVersion, versionPinned, commitHash, releaseMap });
     const typeCounts = countBy(entries, e => e.type);

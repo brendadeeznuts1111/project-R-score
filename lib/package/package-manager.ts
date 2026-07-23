@@ -120,18 +120,19 @@ export class PackageManager {
       const fetcher = new EnhancedDocsFetcher();
       const results = await fetcher.search(api);
 
-      if (results.length > 0) {
+      const first = results[0];
+      if (first) {
         return {
           api,
-          url: results[0].domains?.com || `https://bun.sh/docs/api/${api}`,
-          category: results[0].category || 'api',
+          url: first.domains?.com || `https://bun.com/docs/api/${api}`,
+          category: first.category || 'api',
         };
       }
     } catch {
       // Fallback to basic URL
       return {
         api,
-        url: `https://bun.sh/docs/api/${api}`,
+        url: `https://bun.com/docs/api/${api}`,
         category: 'api',
       };
     }

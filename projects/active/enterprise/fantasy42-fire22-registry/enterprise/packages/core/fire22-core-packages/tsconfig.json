@@ -16,9 +16,20 @@
     "outDir": "./dist",
     "rootDir": "./packages",
     "composite": true,
-    "incremental": true
+    "incremental": true,
+    "types": [
+      "bun"
+    ],
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["packages/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "include": [
+    "packages/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
   "references": []
 }

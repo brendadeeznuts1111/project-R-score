@@ -21,9 +21,10 @@ registry = "https://registry.npmjs.org/"
 
 # Isolated installs specific configuration
 [install.isolated]
-# Backend strategy for file operations (auto-detected by default)
-# Options: "clonefile" (macOS CoW), "hardlink" (Linux/Windows), "copyfile" (fallback)
-backend = "auto"
+# Backend strategy for file operations (auto-detected by default: clonefile on macOS,
+# hardlink on Linux, with automatic copy fallback on error).
+# Valid values if overriding: "clonefile", "hardlink", "symlink", "copyfile".
+# backend = "clonefile"
 
 # Enable verbose logging for debugging isolated installs
 verbose = false

@@ -44,6 +44,7 @@ export type ProvenanceSource =
   | 'docs-index'
   | 'catalog-scrape'
   | 'release-scrape'
+  | 'blog-codeblock'
   | 'curated'
   | 'supplement'
   | 'manual';

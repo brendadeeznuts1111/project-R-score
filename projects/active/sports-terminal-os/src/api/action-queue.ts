@@ -27,8 +27,14 @@ const logger = createLogger("ActionQueue");
 const MAX_ATTEMPTS = 5;
 const RETRY_BACKOFF_MS = 60_000; // 1 minute base
 
-function isDispatchOptions(value: Record<string, unknown>): value is DispatchOptions {
-  return typeof value.eventType === "string" && typeof value.payload === "object" && value.payload !== null;
+function isDispatchOptions(value: unknown): value is DispatchOptions {
+  if (value === null || typeof value !== "object") return false;
+  const rec = value as Record<string, unknown>;
+  return (
+    typeof rec.eventType === "string" &&
+    typeof rec.payload === "object" &&
+    rec.payload !== null
+  );
 }
 
 // ---------------------------------------------------------------------------

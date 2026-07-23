@@ -7,6 +7,10 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 import { CryptoHasher } from 'bun';
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 export interface CacheConfig {
   ttl: number; // milliseconds
   maxSize: number;
@@ -74,7 +78,7 @@ export class EnhancedDocsCacheManager {
         });
       }
     } catch (error) {
-      console.warn('Failed to load cache:', error.message);
+      console.warn('Failed to load cache:', errorMessage(error));
     }
   }
 
@@ -93,7 +97,7 @@ export class EnhancedDocsCacheManager {
 
       await Bun.write(`${this.cacheDir}/cache.json`, JSON.stringify(dataToSave, null, 2));
     } catch (error) {
-      console.warn('Failed to save cache:', error.message);
+      console.warn('Failed to save cache:', errorMessage(error));
     }
   }
 
@@ -190,7 +194,7 @@ export class EnhancedDocsCacheManager {
       // Fallback to cache even if expired
       const cached = await this.get<T>(cacheKey);
       if (cached) {
-        console.warn(`Using cached data for ${url}:`, error.message);
+        console.warn(`Using cached data for ${url}:`, errorMessage(error));
         return cached;
       }
 
@@ -326,7 +330,7 @@ export class EnhancedDocsCacheManager {
         await this.fetchWithCache(url);
         await Bun.sleep(100); // Rate limiting
       } catch (error) {
-        console.warn(`Failed to preload ${url}:`, error.message);
+        console.warn(`Failed to preload ${url}:`, errorMessage(error));
       }
     }
 

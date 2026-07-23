@@ -52,13 +52,16 @@ async function resolveSecretField(
   }
 
   if (services.length > 0) {
-    const value = await getSecret({
-      service: services[0],
-      legacyServices: services.slice(1),
-      name,
-      envKeys,
-    });
-    if (value) return value;
+    const primaryService = services[0];
+    if (primaryService !== undefined) {
+      const value = await getSecret({
+        service: primaryService,
+        legacyServices: services.slice(1),
+        name,
+        envKeys,
+      });
+      if (value) return value;
+    }
   }
 
   return fallback;

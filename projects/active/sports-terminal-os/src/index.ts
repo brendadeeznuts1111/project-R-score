@@ -685,7 +685,7 @@ function startServer(): void {
         const team = decodeURIComponent(pathname.split("/").pop()!);
         const entry = pipelineWorker?.getThumbnail(team);
         if (!entry) return new Response("Not found", { status: 404 });
-        return new Response(entry.bytes, {
+        return new Response(new Blob([entry.bytes as BlobPart]), {
           headers: {
             "Content-Type": "image/jpeg",
             "Cache-Control": "public, max-age=60",

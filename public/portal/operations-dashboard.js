@@ -19,12 +19,25 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-metric" id="total-liquidity">$0</div>
           </section>
           <section class="ops-panel">
+            <h2>Coverage</h2>
+            <div class="ops-metric" id="coverage-pct">—</div>
+            <div id="coverage-detail" class="ops-sub"></div>
+          </section>
+          <section class="ops-panel">
+            <h2>DOD Queue</h2>
+            <div id="dod-queue"></div>
+          </section>
+          <section class="ops-panel">
             <h2>Experts</h2>
             <ul id="expert-list"></ul>
           </section>
           <section class="ops-panel">
             <h2>Agent Tree</h2>
             <div id="tree-viz"></div>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Platform Breakdown</h2>
+            <div id="platform-breakdown"></div>
           </section>
           <section class="ops-panel wide">
             <h2>Today's Plays</h2>
@@ -123,6 +136,52 @@ class OperationsDashboard extends HTMLElement {
     // Liquidity
     const liq = this.querySelector('#total-liquidity');
     if (liq) liq.textContent = '$' + (d.liquidity?.total ?? 0).toLocaleString();
+
+    // Coverage
+    const covPct = this.querySelector('#coverage-pct');
+    const covDetail = this.querySelector('#coverage-detail');
+    if (covPct) {
+      const c = d.coverage;
+      covPct.textContent = c ? `${c.current ?? 0}%` : '—';
+    }
+    if (covDetail) {
+      const c = d.coverage;
+      if (c) {
+        covDetail.innerHTML = `${c.covered ?? 0}/${c.total ?? 0} platforms` +
+          (c.byCategory || []).map(x => `<div>${x.category}: ${x.covered}/${x.total}</div>`).join('');
+      } else {
+        covDetail.textContent = '';
+      }
+    }
+
+    // DOD queue
+    const dodEl = this.querySelector('#dod-queue');
+    if (dodEl) {
+      const q = d.dod || {};
+      dodEl.innerHTML = `
+        <div>Flagged: <strong>${q.flagged ?? 0}</strong></div>
+        <div>Pending: ${q.pending ?? 0}</div>
+        <div>Verified: ${q.verified ?? 0}</div>
+        <a href="/portal/dod">Review →</a>
+      `;
+    }
+
+    // Platform capacities
+    const plat = this.querySelector('#platform-breakdown');
+    if (plat) {
+      const rows = d.platforms || [];
+      plat.innerHTML = rows.length
+        ? `<table><thead><tr><th>Platform</th><th>Category</th><th>Available</th><th>Coverage</th></tr></thead><tbody>${
+            rows.slice(0, 12).map(p => `
+              <tr>
+                <td>${p.name || p.platformId}</td>
+                <td>${p.category || ''}</td>
+                <td>$${(p.totalAvailable ?? 0).toLocaleString()}</td>
+                <td>${p.coverageScore ?? 0}%</td>
+              </tr>`).join('')
+          }</tbody></table>`
+        : '<p class="ops-sub">No platform capacity data</p>';
+    }
 
     // Experts
     const expList = this.querySelector('#expert-list');

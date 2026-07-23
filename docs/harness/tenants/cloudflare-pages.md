@@ -36,6 +36,43 @@ Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps) 
 3. Do **not** put `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` on the Pages Function for `/api/registry` — the proxy uses the R2 binding.
 4. CLI publish/install still needs local R2 S3 keys (`bun run factory:env`) via SigV4 `S3Client`.
 5. Portal static fallback: `bun run factory:snapshot` → `public/registry/registry.json` (committed empty seed; refresh after publishes).
+6. Per-tenant snapshots: `bun run factory:snapshot -- --tenant=factory` → `public/registry/factory/registry.json` (and `science` / `tennis`).
+
+### Multi-tenant portal + accounts + Telegram (claims `multi-tenant-portal-v1`, `accounts-r2-v1`, `telegram-webhook-v1`)
+
+**Tenant SSOT:** [`config/tenants.ts`](../../../config/tenants.ts) · browser mirror [`public/tenants/manifest.json`](../../../public/tenants/manifest.json).
+
+**R2 key layout** (same `REGISTRY_BUCKET` binding; writes require authenticated Functions — not on anonymous `/api/registry` allowlist):
+
+| Prefix | Purpose |
+|--------|---------|
+| `tenants/{id}/registry.json` | Public per-tenant registry (allowlisted read via `/api/registry/`) |
+| `accounts/{tenantId}/{accountId}.json` | Portal user account document |
+| `accounts/oidc/{subject}.json` | OIDC subject → account index |
+| `accounts/telegram/{telegramId}.json` | Telegram user → account index |
+| `links/{nonce}.json` | Telegram link nonce (10m TTL) |
+| `channels/{topic}/events.jsonl` | Append-only channel event log |
+| `channels/{topic}/meta.json` | Channel sequence metadata |
+
+**Pages env (production + preview):**
+
+| Variable | Purpose |
+|----------|---------|
+| `SESSION_SECRET` | HMAC session cookie signing |
+| `OIDC_CLIENT_ID` / `OIDC_CLIENT_SECRET` / `OIDC_TOKEN_URL` | Cloudflare Access token exchange (omit locally — use `?code=dev:sub:email`) |
+| `TELEGRAM_BOT_FACTORY` / `TELEGRAM_BOT_SCIENCE` / `TELEGRAM_BOT_TENNIS` | Bot tokens |
+| `TELEGRAM_WEBHOOK_SECRET` | Validates `X-Telegram-Bot-Api-Secret-Token` |
+| `KALSHI_KEY` | Optional tennis `/markets` |
+
+**Webhook registration** (after deploy):
+
+```bash
+bash scripts/telegram-webhook-register.sh https://project-r-score.pages.dev
+```
+
+**Auth callback:** `/api/auth/callback` (not `/auth/callback`). Sign-in link on apex [`public/index.html`](../../../public/index.html).
+
+**API routes:** `/api/onboard?step=init|assign|telegram` · `/api/channels/events?topic={tenant}&since=N` · `/api/telegram/webhook/{tenant}`
 
 This is **not** `bun run deploy:production` (Bun.secrets + R2). Root `wrangler.toml` is Worker `tier1380-production`, not Pages. R2 S3 keys ≠ `CLOUDFLARE_API_TOKEN` (`requireR2Config` vs `requireCloudflareApiToken`). Never hardcode R2 access keys in scripts — use env / Bun.secrets / `requireR2Config`.
 

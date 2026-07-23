@@ -88,8 +88,11 @@ export function parseFrontmatter(raw: string): { title: string; desc: string; bo
   for (const line of fm.split('\n')) {
     const m = line.match(/^(\w+):\s*"?(.+?)"?\s*$/);
     if (!m) continue;
-    if (m[1] === 'title') title = m[2];
-    if (m[1] === 'description') desc = m[2];
+    const key = m[1];
+    const val = m[2];
+    if (key === undefined || val === undefined) continue;
+    if (key === 'title') title = val;
+    if (key === 'description') desc = val;
   }
   return { title, desc, body };
 }
@@ -126,8 +129,10 @@ export function extractSection(content: string, section?: string): string {
   const q = section.toLowerCase();
   const parts = content.split(/^## /m);
   for (let i = 1; i < parts.length; i++) {
-    const heading = parts[i].split('\n')[0] ?? '';
-    if (heading.toLowerCase().includes(q)) return `## ${parts[i].trim()}`;
+    const part = parts[i];
+    if (part === undefined) continue;
+    const heading = part.split('\n')[0] ?? '';
+    if (heading.toLowerCase().includes(q)) return `## ${part.trim()}`;
   }
   return content;
 }

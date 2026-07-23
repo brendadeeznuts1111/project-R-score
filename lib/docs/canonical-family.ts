@@ -408,6 +408,9 @@ function astSignature(code: string, filePath: string): string {
 }
 
 function pickCanonical(files: string[], policies: SearchPolicies): string {
+  if (files.length === 0) {
+    throw new Error('pickCanonical requires at least one file');
+  }
   const ranked = [...files].sort((a, b) => {
     const scoreDiff =
       computePathAuthorityScore(b, policies) - computePathAuthorityScore(a, policies);
@@ -416,7 +419,11 @@ function pickCanonical(files: string[], policies: SearchPolicies): string {
     }
     return a.length - b.length;
   });
-  return ranked[0];
+  const winner = ranked[0];
+  if (winner === undefined) {
+    throw new Error('pickCanonical requires at least one file');
+  }
+  return winner;
 }
 
 export async function buildCanonicalFamilies(
@@ -461,7 +468,7 @@ export async function buildCanonicalFamilies(
     const canonicalFile = pickCanonical(familyFiles, policies);
     const mirrors = familyFiles.filter(file => file !== canonicalFile).sort();
 
-    const [hash, sig] = key.split(':');
+    const [hash = '', sig = ''] = key.split(':');
     const family: CanonicalFamily = {
       id: key,
       hash,

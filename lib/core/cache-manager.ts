@@ -403,7 +403,9 @@ export class CacheManager {
     const evictCount = Math.floor(this.config.maxSize * 0.25);
 
     for (let i = 0; i < evictCount && i < entries.length; i++) {
-      const [key, entry] = entries[i];
+      const entryPair = entries[i];
+      if (!entryPair) continue;
+      const [key, entry] = entryPair;
       this.cache.delete(key);
       this.updateTagIndex(key, entry.tags, false);
     }

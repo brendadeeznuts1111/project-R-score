@@ -1,6 +1,6 @@
 {
   "name": "@factorywager/guards",
-  "version": "0.1.0",
+  "version": "0.1.0+build.20260723",
   "private": true,
   "module": "src/index.ts",
   "type": "module"

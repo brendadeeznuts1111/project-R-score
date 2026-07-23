@@ -19,6 +19,7 @@ import {
   r2UploadRetriesFromEnv,
   factoryRegistryBucketFromEnv,
   requireR2Config,
+  r2RequestPayerFromEnv,
   tryR2Config,
 } from '../config/r2-env.ts';
 
@@ -75,6 +76,21 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(cfg.accessKeyId.length).toBeGreaterThan(0);
     expect(cfg).not.toHaveProperty('cloudflareApiToken');
     expect(tryR2Config()?.bucket).toBe(cfg.bucket);
+  });
+
+  test('r2RequestPayerFromEnv honors R2_REQUEST_PAYER (Bun ≥1.3.6)', () => {
+    const prev = Bun.env.R2_REQUEST_PAYER;
+    try {
+      delete Bun.env.R2_REQUEST_PAYER;
+      expect(r2RequestPayerFromEnv()).toBe(false);
+      Bun.env.R2_REQUEST_PAYER = '1';
+      expect(r2RequestPayerFromEnv()).toBe(true);
+      Bun.env.R2_REQUEST_PAYER = 'false';
+      expect(r2RequestPayerFromEnv()).toBe(false);
+    } finally {
+      if (prev === undefined) delete Bun.env.R2_REQUEST_PAYER;
+      else Bun.env.R2_REQUEST_PAYER = prev;
+    }
   });
 
   test('env key catalog stays lean', () => {
