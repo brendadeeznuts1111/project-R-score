@@ -1,0 +1,278 @@
+{
+  "timestamp": "2026-07-23T21:42:17.964Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "blogPost": "https://bun.com/blog/bun-v1.3.14",
+  "releaseNotes": [
+    {
+      "id": "bun-image",
+      "title": "Bun.Image — built-in image processing",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#bun-image",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#bun-image",
+        "https://bun.com/blog/bun-v1.3.14#terminal-methods"
+      ]
+    },
+    {
+      "id": "tls-system-ca-no-flag",
+      "title": "tls.getCACertificates('system') without --use-system-ca",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+        "https://bun.com/reference/node/tls/getCACertificates",
+        "https://github.com/oven-sh/bun/issues/24339",
+        "https://github.com/oven-sh/bun/pull/29526"
+      ]
+    },
+    {
+      "id": "gc-builtins-incremental",
+      "title": "Reduced incremental GC overhead for built-in objects",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+        "https://bun.com/docs/runtime/gc"
+      ]
+    },
+    {
+      "id": "binary-size-linux-windows",
+      "title": "Smaller Bun binary on Windows and Linux",
+      "verify": "informational",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#smaller-binary-size",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#smaller-binary-size",
+        "https://github.com/oven-sh/bun/releases"
+      ]
+    },
+    {
+      "id": "event-loop-refactor",
+      "title": "Event loop refactor (reliability + memory)",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#event-loop-refactor"
+      ]
+    },
+    {
+      "id": "using-await-using-native",
+      "title": "using / await using no longer lowered when targeting Bun",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun"
+      ]
+    },
+    {
+      "id": "no-orphans",
+      "title": "--no-orphans — exit when parent process dies",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#no-orphans"
+      ]
+    },
+    {
+      "id": "faster-esm",
+      "title": "Faster ESM module loading",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading"
+      ]
+    },
+    {
+      "id": "cross-language-lto",
+      "title": "Cross-language LTO for Zig ↔ C++ on Linux",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "name": "tls.getCACertificates('system')",
+      "expected": "non-empty on linux/win32; array on macOS (no --use-system-ca)",
+      "actual": "1 certs · darwin · non-empty without --use-system-ca",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca"
+    },
+    {
+      "name": "Built-in objects GC smoke (Request/Response)",
+      "expected": "2000 allocs + optional Bun.gc without crash",
+      "actual": "ok (2000 allocs)",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects"
+    },
+    {
+      "name": "Bun.escapeHTML performance",
+      "expected": "< 500 ns per call",
+      "actual": "99.0 ns",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux"
+    },
+    {
+      "name": "ESM module load (node:fs)",
+      "expected": "loads successfully",
+      "actual": "0.09ms",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading"
+    },
+    {
+      "name": "Process exit with pending timer",
+      "expected": "exits before unref timer fires",
+      "actual": "exits before unref timer fires",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor"
+    },
+    {
+      "name": "timer.ref() after fired setTimeout",
+      "expected": "process exits (ref does not keep loop alive)",
+      "actual": "exits after ref on fired timer",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor"
+    },
+    {
+      "name": "WebSocket cleanup on close",
+      "expected": "no crash or leak",
+      "actual": "ok",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#websocket-permessagedeflate-false-now-respected-in-upgrade-requests"
+    },
+    {
+      "name": "Child process stdin pipe cleanup",
+      "expected": "exits without hanging",
+      "actual": "exited",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor"
+    },
+    {
+      "name": "Bun Shell basics",
+      "expected": "echo works",
+      "actual": "\"hello\"",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0"
+    },
+    {
+      "name": "structuredClone Blob",
+      "expected": "clone works",
+      "actual": "ok",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0"
+    },
+    {
+      "name": "Bun.password.hash",
+      "expected": "returns a string",
+      "actual": "string",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0"
+    },
+    {
+      "name": "Bun.inspect depth",
+      "expected": "unlimited in canary",
+      "actual": "unlimited",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#upgraded-javascriptcore-engine"
+    },
+    {
+      "name": "Bun.hash returns bigint",
+      "expected": "bigint",
+      "actual": "bigint",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0"
+    },
+    {
+      "name": "Bun.version / Bun.revision",
+      "expected": "both available",
+      "actual": "1.4.0 (a227ad99)",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0"
+    },
+    {
+      "name": "using / await using (Explicit Resource Mgmt)",
+      "expected": "works without lowering",
+      "actual": "using=42, await using=84",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun"
+    },
+    {
+      "name": "Built-in objects (Request, Response)",
+      "expected": "created without crash",
+      "actual": "ok",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects"
+    },
+    {
+      "name": "--no-orphans support",
+      "expected": "configured in bunfig + env",
+      "actual": "bunfig=true, env=true",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans"
+    },
+    {
+      "name": "Bun.Image (all terminal methods: bytes, buffer, blob, toBase64, dataurl, placeholder, metadata, write)",
+      "expected": "all terminal methods produce correct output",
+      "actual": "fmt=png 1x1 webp=0.1KB buf=0.1KB blob=0.1KB b64=136B dataurl=159B placeholder=2638B write=true",
+      "passed": true,
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#terminal-methods"
+    }
+  ],
+  "summary": {
+    "passed": 18,
+    "total": 18,
+    "status": "pass"
+  },
+  "proofHash": "50740fe012e58e0dae43a2dd570fe37243003ff7f818c411bb33c22e2afdc95f"
+}
