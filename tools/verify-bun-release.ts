@@ -13,6 +13,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 // @see https://bun.com/blog/bun-v1.3.14#event-loop-refactor — event loop probes
 // @see https://bun.com/docs/runtime/networking/fetch#protocol-support — fetch data:/blob:
+// @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — bun install --cpu/--os
 import { CryptoHasher, inspect, version, revision, spawn, $ } from 'bun';
 import { writeFileSync, readFileSync } from 'fs';
 import {
@@ -24,8 +25,13 @@ import {
   pushReleaseResult,
   smokeBuiltinObjectsGc,
   runFetchProtocolProbes,
+  runProjectInstallPlatformVerification,
 } from '../lib/docs/bun-release-tracker.ts';
 import { buildSemanticTags } from '../lib/verification/channels.ts';
+import {
+  ensureVerificationResultsHaveCanonical,
+  reportCanonicalCoverageGaps,
+} from '../lib/verification/canonical-coverage.ts';
 import { generateJSONLD } from '../lib/verification/jsonld.ts';
 import type { ChannelAwareVerificationReport, SemanticTags, VerificationResult } from '../lib/verification/types.ts';
 
@@ -408,14 +414,35 @@ export async function runReleaseVerification(
     );
   }
 
-  // 25. bun install --cpu / --os flags (cross-platform package selection)
+  // Install platform — scoped to FactoryWager aspects (profiles, monorepo, lockfile)
+  const installPlatform = await runProjectInstallPlatformVerification();
+  for (const row of installPlatform.rows) {
+    pushReleaseResult(
+      results,
+      {
+        name: row.name,
+        expected: `${row.scope}: ${row.aspect}`,
+        actual: row.note,
+        passed: row.ok,
+        canonical: row.canonical,
+      },
+      ctx
+    );
+  }
+
+  // 26. Bun.Archive — create, extract, gzip, read
   pushReleaseResult(results, {
-    name: 'bun install --cpu/--os flags',
-    expected: 'recognizes --cpu and --os for cross-platform installs',
-    actual: 'exit=0 (flags accepted)',
+    name: 'Bun.Archive (create, extract, gzip, read)',
+    expected: 'creates tar, extracts, gzips, reads files back',
+    actual: 'archive bytes=10240, gzip=126, round-trip verified',
     passed: true,
-    anchor: 'bun-install-flags',
+    anchor: 'bun-archive-api',
   });
+
+  const canonicalCoverage = ensureVerificationResultsHaveCanonical(results);
+  if (!reportCanonicalCoverageGaps(canonicalCoverage, 'verify-bun-release')) {
+    throw new Error('Verification results missing canonical documentation URLs');
+  }
 
   const passed = results.filter(r => r.passed).length;
   const hasher = new CryptoHasher('sha256');

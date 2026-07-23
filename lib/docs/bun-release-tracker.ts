@@ -10,8 +10,15 @@
  */
 import tls from 'node:tls';
 import { buildVerificationLinks } from '../verification/links.ts';
+import {
+  INSTALL_ASPECT_CANONICAL_KEYS,
+  resolveCanonicalUrl,
+} from '../verification/canonical-coverage.ts';
+import type { InstallPlatformAspectId } from '../verification/install-platform.ts';
 import type { SemanticTags, VerificationResult } from '../verification/types.ts';
 import { FETCH_PROTOCOL_DOCS } from './fetch-protocol-docs.ts';
+import { INSTALL_PLATFORM_DOCS } from './bun-install-platform-docs.ts';
+import { INSTALL_LINKER_DOCS } from './bun-install-linker-docs.ts';
 
 /** Base URL for Bun v1.3.14 blog post (all section anchors are stable). */
 export const BUN_V1314_BLOG = 'https://bun.com/blog/bun-v1.3.14' as const;
@@ -43,7 +50,7 @@ export const BUN_V1314_ANCHORS = {
   'tls-getcacertificates-system-no-longer-stalls-on-managed-macs': `${BUN_V1314_BLOG}#tls-getcacertificates-system-no-longer-stalls-on-managed-macs`,
   'use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates': `${BUN_V1314_BLOG}#use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates`,
   'event-loop-refactor': `${BUN_V1314_BLOG}#event-loop-refactor`,
-  'bun-install-flags': 'https://bun.sh/docs/pm/cli/install#cpu-and-os-flags',
+  'bun-archive-api': 'https://bun.sh/docs/runtime/archive',
 } as const;
 
 export type BunV1314AnchorKey = keyof typeof BUN_V1314_ANCHORS;
@@ -161,6 +168,13 @@ export const BUN_RELEASE_NOTE_ROWS: readonly BunReleaseNoteRow[] = [
   },
 ] as const;
 
+const INSTALL_PLATFORM_TEST_CANONICAL = Object.fromEntries(
+  (Object.keys(INSTALL_ASPECT_CANONICAL_KEYS) as InstallPlatformAspectId[]).map(aspect => [
+    `install platform: ${aspect}`,
+    resolveCanonicalUrl(INSTALL_ASPECT_CANONICAL_KEYS[aspect]),
+  ])
+) as Record<string, string>;
+
 /** Map verify-bun-release test names → canonical v1.3.14 blog URLs. */
 export const BUN_RELEASE_TEST_CANONICAL: Readonly<Record<string, string>> = {
   "tls.getCACertificates('system')":
@@ -188,6 +202,13 @@ export const BUN_RELEASE_TEST_CANONICAL: Readonly<Record<string, string>> = {
   'fetch s3:// (explicit s3: creds)': FETCH_PROTOCOL_DOCS.s3,
   'fetch s3:// (env credentials)': FETCH_PROTOCOL_DOCS.s3,
   'fetch s3:// (Bun.file)': FETCH_PROTOCOL_DOCS.s3,
+  'Bun Shell basics': resolveCanonicalUrl('Bun.$'),
+  'structuredClone Blob': resolveCanonicalUrl('Bun.file'),
+  'Bun.password.hash': resolveCanonicalUrl('Bun.password'),
+  'Bun.inspect depth': BUN_V1314_ANCHORS['upgraded-javascriptcore-engine'],
+  'Bun.hash returns bigint': resolveCanonicalUrl('Bun.hash'),
+  'Bun.version / Bun.revision': resolveCanonicalUrl('Bun.version'),
+  ...INSTALL_PLATFORM_TEST_CANONICAL,
 };
 
 export type ReleaseVerifyResult = VerificationResult;
@@ -202,6 +223,25 @@ export {
   runFetchProtocolProbes,
   smokeFetchProtocolSupport,
 } from './fetch-protocol-docs.ts';
+export {
+  BUN_INSTALL_CPU_VALUES,
+  BUN_INSTALL_OS_VALUES,
+  BUN_INSTALL_PLATFORM_SUPPORTED,
+  INSTALL_PLATFORM_COVERAGE,
+  INSTALL_PLATFORM_DOCS,
+  probeBunInstallPlatformFlags,
+} from './bun-install-platform-docs.ts';
+export {
+  PROJECT_CROSS_INSTALL_PROFILES,
+  PROJECT_INSTALL_PLATFORM_ASPECTS,
+  runProjectInstallPlatformVerification,
+} from '../verification/install-platform.ts';
+export {
+  INSTALL_LINKER_DOCS,
+  LOCKFILE_CONFIG_VERSION_ISOLATED_DEFAULT,
+  probeLockfileConfigVersion,
+  readLockfileInstallMeta,
+} from './bun-install-linker-docs.ts';
 
 /** Resolve canonical URL for a release verification test by name. */
 export function canonicalForReleaseTest(name: string): string | undefined {
@@ -217,11 +257,15 @@ export function pushReleaseResult(
   results: VerificationResult[],
   row: Omit<VerificationResult, 'canonical' | '_links' | 'channel' | 'targetVersion' | 'latestAtTestTime'> & {
     anchor?: BunV1314AnchorKey;
+    /** Explicit canonical URL override (e.g. install platform row). */
+    canonical?: string;
   },
   ctx: PushReleaseResultContext
 ): void {
-  const { anchor, ...rest } = row;
-  const canonical = anchor ? BUN_V1314_ANCHORS[anchor] : canonicalForReleaseTest(row.name);
+  const { anchor, canonical: explicitCanonical, ...rest } = row;
+  const canonical =
+    explicitCanonical ??
+    (anchor ? BUN_V1314_ANCHORS[anchor] : canonicalForReleaseTest(row.name));
   results.push({
     ...rest,
     canonical,
