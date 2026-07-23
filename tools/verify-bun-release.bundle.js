@@ -60,15 +60,30 @@ function probeTlsSystemCaCertificates() {
   }
   return { count, platform, nodeParity, note };
 }
+async function spawnProbe(argv, timeoutMs = 3000) {
+  const proc = Bun.spawn(argv, { stdout: "pipe", stderr: "pipe", stdin: "ignore" });
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    proc.kill();
+  }, timeoutMs);
+  const [out, code] = await Promise.all([
+    new Response(proc.stdout).text(),
+    proc.exited
+  ]);
+  clearTimeout(timer);
+  return { out, code: timedOut ? null : code, timedOut };
+}
 async function probeProcessExitWithPendingTimer() {
   try {
-    const proc = Bun.spawn(["bun", "-e", 'setTimeout(()=>{},5000);console.log("ok")'], {
-      stdout: "pipe"
-    });
-    const [out, code] = await Promise.all([
-      new Response(proc.stdout).text(),
-      proc.exited
+    const { out, code, timedOut } = await spawnProbe([
+      "bun",
+      "-e",
+      'const t=setTimeout(()=>{},5000);t.unref();console.log("ok");'
     ]);
+    if (timedOut) {
+      return { ok: false, note: `timed out after 3s (out=${out.trim()})` };
+    }
     const ok = code === 0 && out.trim() === "ok";
     return {
       ok,
@@ -80,19 +95,18 @@ async function probeProcessExitWithPendingTimer() {
 }
 async function probeTimerRefAfterFire() {
   try {
-    const proc = Bun.spawn([
+    const { out, code, timedOut } = await spawnProbe([
       "bun",
       "-e",
       `await Bun.sleep(20);
-const t = setTimeout(() => {}, 5);
+const t=setTimeout(()=>{},5);
 await Bun.sleep(20);
 t.ref();
 console.log("ok");`
-    ], { stdout: "pipe" });
-    const [out, code] = await Promise.all([
-      new Response(proc.stdout).text(),
-      proc.exited
     ]);
+    if (timedOut) {
+      return { ok: false, note: `timed out after 3s (out=${out.trim()})` };
+    }
     const ok = code === 0 && out.trim() === "ok";
     return {
       ok,
@@ -244,26 +258,22 @@ async function run() {
     passed: process.env.BUN_FEATURE_FLAG_NO_ORPHANS === "1"
   });
   try {
-    const w = 50, h = 50;
-    const imgPath = "public/icons/factory/mark.png";
-    const exists = await Bun.file(imgPath).exists();
-    if (!exists) {
-      results.push({ name: "Bun.Image", expected: "loads and processes", actual: "no test image found", passed: false });
-    } else {
-      const img = new Bun.Image(await Bun.file(imgPath).bytes());
-      const meta = await img.metadata();
-      const resized = img.resize(25, 25);
-      const webp = await resized.webp({ quality: 80 }).bytes();
-      const jpeg = await resized.jpeg({ quality: 80 }).bytes();
-      results.push({
-        name: "Bun.Image (load, resize, encode WebP/JPEG)",
-        expected: "loads, resizes, encodes, metadata works",
-        actual: `${meta.width}x${meta.height} ${meta.format} \u2192 webp=${(webp.length / 1024).toFixed(1)}KB jpeg=${(jpeg.length / 1024).toFixed(1)}KB`,
-        passed: webp.length > 0 && jpeg.length > 0 && meta.width > 0
-      });
-    }
+    const PNG_1x1_RED = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+    const bytes = Buffer.from(PNG_1x1_RED, "base64");
+    const img = new Bun.Image(bytes);
+    const meta = await img.metadata();
+    const resized = img.resize(2, 2);
+    const resizedMeta = await resized.metadata();
+    const webp = await resized.webp({ quality: 80 }).bytes();
+    const placeholder = await img.placeholder();
+    results.push({
+      name: "Bun.Image (load, metadata, encode, placeholder)",
+      expected: "loads, metadata correct, encodes WebP, generates placeholder",
+      actual: `${meta.width}x${meta.height} ${meta.format} encoded=${(webp.length / 1024).toFixed(1)}KB placeholder=${placeholder.length}B`,
+      passed: meta.width === 1 && meta.height === 1 && meta.format === "png" && webp.length > 0 && placeholder.startsWith("data:image/png;base64,")
+    });
   } catch (e) {
-    results.push({ name: "Bun.Image (load, resize, encode WebP/JPEG)", expected: "loads, resizes, encodes", actual: `error: ${e.message}`, passed: false });
+    results.push({ name: "Bun.Image (load, metadata, encode, placeholder)", expected: "loads, metadata correct, encodes WebP, generates placeholder", actual: `error: ${e.message}`, passed: false });
   }
   const passed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");

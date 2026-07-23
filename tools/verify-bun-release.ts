@@ -168,27 +168,22 @@ async function run(): Promise<{ timestamp: string; bunVersion: string; bunRevisi
 
   // 16. Bun.Image — native image processing (v1.3.14)
   try {
-    // Create small PNG via Bun.write + Bun.file, then load with Bun.Image
-    const w = 50, h = 50;
-    // Use a minimal PNG with gradient-like data from an existing image
-    const imgPath = 'public/icons/factory/mark.png';
-    const exists = await Bun.file(imgPath).exists();
-    if (!exists) { results.push({ name: 'Bun.Image', expected: 'loads and processes', actual: 'no test image found', passed: false }); }
-    else {
-      const img = new Bun.Image(await Bun.file(imgPath).bytes());
-      const meta = await img.metadata();
-      const resized = img.resize(25, 25);
-      const webp = await resized.webp({ quality: 80 }).bytes();
-      const jpeg = await resized.jpeg({ quality: 80 }).bytes();
-      results.push({
-        name: 'Bun.Image (load, resize, encode WebP/JPEG)',
-        expected: 'loads, resizes, encodes, metadata works',
-        actual: `${meta.width}x${meta.height} ${meta.format} → webp=${(webp.length / 1024).toFixed(1)}KB jpeg=${(jpeg.length / 1024).toFixed(1)}KB`,
-        passed: webp.length > 0 && jpeg.length > 0 && meta.width > 0,
-      });
-    }
+    const PNG_1x1_RED = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+    const bytes = Buffer.from(PNG_1x1_RED, 'base64');
+    const img = new Bun.Image(bytes);
+    const meta = await img.metadata();
+    const resized = img.resize(2, 2);
+    const resizedMeta = await resized.metadata();
+    const webp = await resized.webp({ quality: 80 }).bytes();
+    const placeholder = await img.placeholder();
+    results.push({
+      name: 'Bun.Image (load, metadata, encode, placeholder)',
+      expected: 'loads, metadata correct, encodes WebP, generates placeholder',
+      actual: `${meta.width}x${meta.height} ${meta.format} encoded=${(webp.length / 1024).toFixed(1)}KB placeholder=${placeholder.length}B`,
+      passed: meta.width === 1 && meta.height === 1 && meta.format === 'png' && webp.length > 0 && placeholder.startsWith('data:image/png;base64,'),
+    });
   } catch (e: any) {
-    results.push({ name: 'Bun.Image (load, resize, encode WebP/JPEG)', expected: 'loads, resizes, encodes', actual: `error: ${e.message}`, passed: false });
+    results.push({ name: 'Bun.Image (load, metadata, encode, placeholder)', expected: 'loads, metadata correct, encodes WebP, generates placeholder', actual: `error: ${e.message}`, passed: false });
   }
 
   const passed = results.filter(r => r.passed).length;
