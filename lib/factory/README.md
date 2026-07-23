@@ -21,4 +21,7 @@ bun run factory:list
 bun run factory create factory-library my-lib --publish
 ```
 
-See [proof claim](../../docs/harness/PROOF.md) `factory-registry-cli-v1`.
+See [proof claim](../../docs/harness/PROOF.md) `factory-registry-cli-v1`.  
+Pages portal proxy: claim `factory-registry-pages-proxy-v1` · `functions/api/registry/`.
+
+**Deploy gap:** `RegistryClient` still uses HTTP Basic against the S3 endpoint in unit-mocked tests. Live R2 requires SigV4 via [`Bun.S3Client`](https://bun.com/docs/runtime/s3#bun-s3client-bun-s3) / `scripts/lib/r2-bridge.ts` — do not treat green unit tests as deployed proof.

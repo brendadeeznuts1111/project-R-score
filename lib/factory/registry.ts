@@ -55,7 +55,7 @@ function s3Auth(): Record<string, string> {
   const secret = Bun.env.R2_SECRET_ACCESS_KEY;
   if (!key || !secret) throw new Error('R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY must be set');
   return {
-    Authorization: `Basic ${Buffer.from(`${key}:${secret}`).toString('base64')}`,
+    Authorization: `Basic ${btoa(`${key}:${secret}`)}`,
   };
 }
 

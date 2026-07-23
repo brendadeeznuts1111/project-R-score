@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -8,6 +9,7 @@
 // @see https://bun.sh/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.sh/docs/runtime/console#object-inspection-depth — console depth
 // @see https://bun.sh/docs/runtime/toml#bun-toml-stringify — Bun.TOML.stringify
+// @see https://bun.sh/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
 // @see https://bun.sh/docs/runtime/templating/create — bun create
 /**
  * Factory CLI — publish, list, search, and install artifacts to/from the
@@ -341,8 +343,32 @@ async function cmdReadme(args: string[]): Promise<void> {
     return;
   }
 
+  // Render via Bun.markdown.render with ANSI callbacks for terminal output
+  const ansi = Bun.markdown.render(
+    readme,
+    {
+      heading: (children, { level }) => {
+        const prefix = level === 1 ? '\x1b[1;4m' : '\x1b[1m';
+        return `\n${prefix}${children}\x1b[0m\n`;
+      },
+      strong: children => `\x1b[1m${children}\x1b[22m`,
+      emphasis: children => `\x1b[3m${children}\x1b[23m`,
+      codespan: children => `\x1b[36m${children}\x1b[39m`,
+      code: (children, meta) => {
+        const lang = meta?.language ? ` \x1b[2m[${meta.language}]\x1b[22m` : '';
+        return `\n\x1b[2m---${lang}---\x1b[22m\n${children}\n\x1b[2m---\x1b[22m\n`;
+      },
+      link: children => `\x1b[34m${children}\x1b[39m`,
+      paragraph: children => children + '\n',
+    },
+    {
+      autolinks: true,
+      tables: true,
+    }
+  );
+
   console.log(`\n--- ${name}@${version} ---\n`);
-  console.log(readme);
+  console.log(ansi);
   console.log(`\n--- end ---\n`);
 }
 
