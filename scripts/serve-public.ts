@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/bundler/hot-reloading — bun --hot (server module re-eval)
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
 // @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — Content-Type
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — FormData upload
 /**
@@ -56,6 +57,12 @@ import {
   respondWithSharedETag,
 } from '../lib/http/data-etag.ts';
 import {
+  parseNetworkingProofArtifact,
+  toMonitoringNetworkingReport,
+  NETWORKING_REPORT_TYPES,
+  NETWORKING_PROOF_SCHEMA_VERSION,
+} from '../lib/http/networking-proof.ts';
+import {
   getRouteStats,
   preloadStaticMap,
   respondAuto,
@@ -68,6 +75,9 @@ import {
   shouldEnableLiveReload,
 } from '../lib/http/live-reload.ts';
 import { formString, requireFormBlob, sha256Blob, writeFormBlob } from '../lib/http/form-upload.ts';
+import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
+import { parsePortalMdPath } from '../lib/http/portal-nav.ts';
+import { portalMarkdownRaw, renderPortalMarkdownPage } from '../lib/http/portal-markdown.ts';
 
 const PORT = Number(Bun.env.PORT || 3000);
 /** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
@@ -608,7 +618,10 @@ async function liveMonitoringApi(): Promise<Response> {
       const netFile = Bun.file('public/registry/networking-proof.json');
       if (await netFile.exists()) {
         try {
-          data.networkingProof = JSON.parse(await netFile.text());
+          const parsed = parseNetworkingProofArtifact(await netFile.json());
+          data.networkingProof = parsed
+            ? toMonitoringNetworkingReport(parsed)
+            : await netFile.json();
         } catch {}
       }
       return json(data);
@@ -690,7 +703,25 @@ async function readNetworkingProofCompact(): Promise<Record<string, unknown>> {
   const f = Bun.file('public/registry/networking-proof.json');
   if (!(await f.exists())) return { available: false };
   try {
-    const p = (await f.json()) as {
+    const raw = await f.json();
+    const parsed = parseNetworkingProofArtifact(raw);
+    if (parsed) {
+      const checksPassed = parsed.global.checksPassed;
+      const checksTotal = parsed.global.checksTotal;
+      return {
+        available: true,
+        reportType: parsed.reportType,
+        schemaVersion: parsed.schemaVersion,
+        generated: parsed.timestamp,
+        proofHash: parsed.proofHash,
+        checksPassed,
+        checksTotal,
+        targets: parsed.targets.length,
+        allOk: parsed.allOk,
+        degraded: !parsed.allOk,
+      };
+    }
+    const p = raw as {
       proofHash?: string;
       timestamp?: string;
       global?: { checksPassed?: number; checksTotal?: number };
@@ -700,12 +731,16 @@ async function readNetworkingProofCompact(): Promise<Record<string, unknown>> {
     const checksTotal = p.global?.checksTotal ?? 0;
     return {
       available: true,
+      reportType: NETWORKING_REPORT_TYPES.verification,
+      schemaVersion: null,
       generated: p.timestamp ?? null,
       proofHash: p.proofHash ?? null,
       checksPassed,
       checksTotal,
       targets: Array.isArray(p.targets) ? p.targets.length : 0,
+      allOk: checksTotal > 0 && checksPassed >= checksTotal,
       degraded: checksTotal > 0 && checksPassed < checksTotal,
+      legacy: true,
     };
   } catch {
     return { available: false };
@@ -828,6 +863,8 @@ function renderHealthPlain(data: Record<string, unknown>): string {
   const net = (data.networking as Record<string, unknown>) || {};
   lines.push('', '── Networking Proof ───────────────────────');
   if (net.available) {
+    lines.push(`  Report type: ${net.reportType ?? NETWORKING_REPORT_TYPES.verification}`);
+    lines.push(`  Schema:      ${net.schemaVersion ?? NETWORKING_PROOF_SCHEMA_VERSION}`);
     lines.push(`  Generated:   ${net.generated ?? '—'}`);
     lines.push(`  Checks:      ${net.checksPassed}/${net.checksTotal} passed`);
     lines.push(`  Targets:     ${net.targets ?? '—'}`);
@@ -944,134 +981,77 @@ async function bunApiProof(): Promise<Response> {
 
 /** GET /api/env — read-only env var status with HSL health indicators. */
 async function envStatus(): Promise<Response> {
-  const critical = [
-    ['CLOUDFLARE_API_TOKEN', 'Cloudflare API token for MCP + deploys'],
-    ['FACTORY_WAGER_TOKEN', 'Registry scope auth token'],
-    ['REGISTRY_SECRET', 'Local publish auth secret'],
-    ['R2_ACCESS_KEY_ID', 'R2/S3 access key for artifact storage'],
-    ['R2_SECRET_ACCESS_KEY', 'R2/S3 secret key'],
-    ['R2_ACCOUNT_ID', 'Cloudflare account ID'],
-  ];
-  const optional = [
-    ['NODE_ENV', 'Runtime environment', 'production'],
-    ['PORT', 'Server port', '3000'],
-    ['HOST', 'Server bind address', '127.0.0.1'],
-    ['BUN_CONSOLE_DEPTH', 'Console inspect depth', '4'],
-    ['SLACK_WEBHOOK_URL', 'Slack alert webhook'],
-    ['TELEGRAM_BOT_TOKEN', 'Telegram alert bot token'],
-    ['TELEGRAM_OPS_CHAT_ID', 'Telegram ops chat ID'],
-  ];
-
-  function hue(val: string | undefined, expected?: string): number {
-    if (!val || !val.trim()) return 0;
-    if (!expected || val.trim() === expected) return 120;
-    return 45;
-  }
-
-  const crit = critical.map(([key, desc]) => {
-    const val = Bun.env[key];
-    const h = hue(val);
-    return {
-      key,
-      desc,
-      actual: val ? '••••' + val.slice(-4) : null,
-      set: !!val,
-      hue: h,
-      hsl: `hsl(${h}, 70%, ${h === 0 ? 40 : 50}%)`,
-    };
-  });
-
-  const opt = optional.map(([key, desc, expected]) => {
-    const val = Bun.env[key];
-    const h = hue(val, expected);
-    return {
-      key,
-      desc,
-      actual: val ?? '',
-      default: expected,
-      set: !!val,
-      match: val === expected,
-      hue: h,
-      hsl: `hsl(${h}, 60%, 45%)`,
-    };
-  });
-
-  return json({ critical: crit, optional: opt, contentType, generated: new Date().toISOString() });
+  return json(buildPortalEnvStatus());
 }
 
-/** Static Content-Type proof — default vs our value vs expected. */
-const contentType = [
-  {
-    scenario: 'Response.json()',
-    default: 'application/json; charset=utf-8',
-    our: 'application/json; charset=utf-8',
-    expected: 'application/json; charset=utf-8',
-    match: true,
-  },
-  {
-    scenario: 'Bun.file("portal/index.html")',
-    default: 'text/html; charset=utf-8',
-    our: 'text/html; charset=utf-8',
-    expected: 'text/html; charset=utf-8',
-    match: true,
-  },
-  {
-    scenario: 'Bun.file("style.css")',
-    default: 'text/css; charset=utf-8',
-    our: 'text/css; charset=utf-8',
-    expected: 'text/css; charset=utf-8',
-    match: true,
-  },
-  {
-    scenario: 'Bun.file("app.js")',
-    default: 'application/javascript; charset=utf-8',
-    our: 'application/javascript; charset=utf-8',
-    expected: 'application/javascript; charset=utf-8',
-    match: true,
-  },
-  {
-    scenario: 'Bun.file("registry.json")',
-    default: 'application/json; charset=utf-8',
-    our: 'application/json; charset=utf-8',
-    expected: 'application/json; charset=utf-8',
-    match: true,
-  },
-  {
-    scenario: 'fetch() — FormData body',
-    default: 'multipart/form-data; boundary=... (auto)',
-    our: 'multipart/form-data; boundary=... (auto)',
-    expected: 'multipart/form-data boundary auto-set by Bun',
-    match: true,
-  },
-  {
-    scenario: 'fetch() — Blob body',
-    default: 'uses Blob.type',
-    our: 'text/plain (from Blob)',
-    expected: 'text/plain',
-    match: true,
-  },
-  {
-    scenario: 'req.formData() parse',
-    default: 'auto-detects multipart boundary',
-    our: 'auto-detects boundary (Bun native)',
-    expected: 'parses FormData from multipart body',
-    match: true,
-  },
-  {
-    scenario: 'Response.redirect()',
-    default: 'text/plain;charset=utf-8',
-    our: 'text/plain;charset=utf-8',
-    expected: 'text/plain;charset=utf-8',
-    match: true,
-  },
-  {
-    scenario: 'Error response (404)',
-    default: 'text/plain;charset=utf-8',
-    our: 'text/plain;charset=utf-8',
-    expected: 'text/plain;charset=utf-8',
-    match: true,
-  },
-];
+/**
+ * GET /llms.txt — machine-readable index for LLM consumers.
+ * Lists the portal markdown endpoints (Accept: text/markdown) and JSON APIs.
+ * @see https://llmstxt.org — llms.txt convention
+ */
+function llmsTxt(): Response {
+  const body = `# FactoryWager
+
+> Factory registry, operations portal, and evidence (DOD) pipeline.
+
+## Portal (machine-readable markdown)
+
+Fetch with \`Accept: text/markdown\` for raw markdown; HTML renders otherwise.
+
+- [Registry](portal/index.md): package registry overview
+- [Ops](portal/ops.md): operations dashboard (tree, plays, rails)
+- [Catalog](portal/catalog.md): platform + account catalog
+- [DOD](portal/dod.md): visual-proof submission queue
+- [Health](portal/health.md): service health
+- [Env](portal/env.md): environment + secret status (redacted)
+- [Monitoring](portal/monitoring.md): registry + integrity metrics
+
+## JSON APIs
+
+- [GET /api/monitoring](api/monitoring): registry + ops metrics, integrity snapshot
+- [GET /api/operations/summary](api/operations/summary): live ops summary
+- [GET /api/registry](api/registry): npm-compatible registry index
+- [GET /api/env](api/env): env var status (redacted values)
+- [GET /health](health): uptime + artifact freshness probe
+
+## Artifacts (static)
+
+- [ops-summary.json](registry/ops-summary.json): portal ops snapshot
+- [dod-registry.json](registry/dod-registry.json): DOD snapshot registry
+- [registry.json](registry/registry.json): package index
+`;
+  return new Response(body, {
+    headers: {
+      'Content-Type': 'text/markdown; charset=utf-8',
+      'Cache-Control': 'public, max-age=300',
+    },
+  });
+}
+
+async function portalMarkdown(req: Request): Promise<Response | null> {
+  const path = new URL(req.url).pathname;
+  const slug = parsePortalMdPath(path);
+  if (!slug) return null;
+
+  const accept = req.headers.get('accept') ?? '';
+  if (accept.includes('text/markdown') && !accept.includes('text/html')) {
+    const raw = portalMarkdownRaw(slug);
+    return new Response(raw, {
+      headers: {
+        'Content-Type': 'text/markdown; charset=utf-8',
+        'Cache-Control': 'no-store',
+      },
+    });
+  }
+
+  const html = renderPortalMarkdownPage(slug);
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-store',
+    },
+  });
+}
 
 /**
  * Optional read auth — set REGISTRY_SECRET (or REGISTRY_AUTH as the bearer secret).
@@ -1111,6 +1091,10 @@ async function fetchHandler(req: Request): Promise<Response> {
   // Health endpoint — no auth
   if (path === '/health' || path === '/health/') return health(req);
   if (path === '/health/pre' || path === '/health/pre/') return healthHtml(req);
+  if (path === '/llms.txt') return llmsTxt();
+
+  const md = await portalMarkdown(req);
+  if (md) return md;
 
   // Bun API proof status
   if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
