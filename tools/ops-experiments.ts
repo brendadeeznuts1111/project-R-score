@@ -2,16 +2,22 @@
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 /**
- * Ops factorial experiments CLI.
+ * Ops factorial experiments CLI (`package.json` → `ops:experiments`).
+ *
+ * Implementation: `lib/experiments/` (`FactorialEngine`, `generateDesign`, policy).
+ * DB: `openOperationsDb` / `OPS_DB_PATH` / `DEFAULT_OPS_DB_PATH`.
  *
  *   bun run ops:experiments --help
- *   bun run ops:experiments design --factors 'routing:static,dynamic;cut:0.10,0.15' --fraction 2
- *   bun run ops:experiments create --name routing-cut --factors '...'
- *   bun run ops:experiments list
- *   bun run ops:experiments activate --id <id>
- *   bun run ops:experiments assign --id <id> --partner <treeNodeId>
- *   bun run ops:experiments record --id <id> --partner <treeNodeId> --value 0.58
- *   bun run ops:experiments analyze --id <id>
+ *   bun run ops:experiments design --factors 'routing:static,dynamic;cut:0.10,0.15' --fraction 1
+ *   bun run ops:experiments create --name routing-cut \
+ *     --factors 'routing:static,dynamic;cut:0.10,0.15;min_coverage_pct:30,40' \
+ *     --min-partners-per-variant 1 --min-duration-days 0   # sandbox policy
+ *   bun run ops:experiments activate --id <experimentId>
+ *   bun run ops:experiments assign --id <experimentId> --partner <treeNodeId>
+ *   bun run ops:experiments record --id <experimentId> --partner <treeNodeId> --value 0.58
+ *   bun run ops:experiments analyze --id <experimentId>
+ *
+ * @see lib/experiments/README.md
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import {
@@ -81,6 +87,8 @@ ops:experiments — factorial designs for partner policy
 Commands:
   design        --factors SPEC [--fraction N]     Print design (no DB)
   create        --name NAME --factors SPEC [--fraction N] [--metric win_rate]
+                  [--min-partners-per-variant N] [--min-duration-days N]
+                  [--allow-exploratory-subset]
   list
   show          --id EXPERIMENT_ID
   activate      --id EXPERIMENT_ID
@@ -95,7 +103,18 @@ Factors SPEC:
   name:level1,level2;name2:a,b,c
   example: routing:static,dynamic;cut:0.10,0.15;min_coverage_pct:30,40
 
+Typical flow:
+  create --name routing-cut --factors 'routing:static,dynamic;cut:0.10,0.15;min_coverage_pct:30,40'
+  activate --id <experimentId>
+  assign --id <experimentId> --partner <treeNodeId>
+  record --id <experimentId> --partner <treeNodeId> --value 0.58
+  analyze --id <experimentId>
+
 Settlement auto-records win_rate/pnl for active experiments (see lib/experiments/outcomes.ts).
+Launch policy defaults: Resolution IV, 10 active partners per variant, 28 days.
+Sandbox/demo: pass --min-partners-per-variant 1 --min-duration-days 0 on create.
+System factors (model, automation_frequency, reconciliation_mode, infrastructure)
+are blocked from per-partner experiments. Use shadow/challenger evaluation instead.
 
 Env: OPS_DB_PATH (default ${DEFAULT_OPS_DB_PATH})
 Flags: --json
@@ -111,7 +130,8 @@ function partnerIdsFromFlag(): string[] {
     .filter(Boolean);
 }
 
-function out(data: unknown): void {
+/** CLI dump helper — accepts any serializable payload at the process edge. */
+function out(data: object | string | number | boolean | null): void {
   if (json) {
     console.log(JSON.stringify(data, null, 2));
   } else if (typeof data === 'string') {
@@ -140,6 +160,7 @@ function main(): number {
       fullRuns: design.fullRuns,
       targetRuns: design.targetRuns,
       fractionDenom: design.fractionDenom,
+      resolution: design.resolution,
       aliases: design.aliases,
       variants: design.variants,
     });
@@ -158,11 +179,26 @@ function main(): number {
           console.error('create requires --name and --factors');
           return 1;
         }
+        const policy: {
+          minPartnersPerVariant?: number;
+          minDurationDays?: number;
+          allowExploratorySubset?: boolean;
+        } = {};
+        if (flag('--min-partners-per-variant') !== undefined) {
+          policy.minPartnersPerVariant = flagNum('--min-partners-per-variant', 1);
+        }
+        if (flag('--min-duration-days') !== undefined) {
+          policy.minDurationDays = flagNum('--min-duration-days', 0);
+        }
+        if (argv.includes('--allow-exploratory-subset')) {
+          policy.allowExploratorySubset = true;
+        }
         const exp = engine.createExperiment({
           name,
           factors: parseFactorsSpec(spec),
           fractionDenom: flagNum('--fraction', 1),
           metricName: flag('--metric') ?? 'win_rate',
+          policy: Object.keys(policy).length ? policy : undefined,
         });
         out({
           id: unbrand(exp.id),
@@ -171,6 +207,7 @@ function main(): number {
           method: exp.designMethod,
           variants: exp.design.variants.length,
           aliases: exp.aliases,
+          policy: exp.policy,
         });
         return 0;
       }
@@ -182,6 +219,7 @@ function main(): number {
           variants: e.design.variants.length,
           method: e.designMethod,
           metric: e.metricName,
+          policy: e.policy,
         }));
         out(rows);
         return 0;
@@ -206,6 +244,7 @@ function main(): number {
             config: v.config,
             assignments: v.assignmentCount,
           })),
+          readiness: engine.launchReadiness(exp),
         });
         return 0;
       }
@@ -292,15 +331,22 @@ function main(): number {
           console.error('analyze requires --id');
           return 1;
         }
-        const analysis = engine.analyze(parseExperimentId(id));
+        const experimentId = parseExperimentId(id);
+        const analysis = engine.analyze(experimentId);
         if (analysis.nPartners === 0) {
           console.error(
             'analyze: no partner metrics yet — settle wins/losses or use record --value'
           );
-          out(analysis);
+          out({
+            readiness: engine.analysisReadiness(experimentId),
+            analysis,
+          });
           return 2;
         }
-        out(analysis);
+        out({
+          readiness: engine.analysisReadiness(experimentId),
+          analysis,
+        });
         return 0;
       }
       case 'predict': {

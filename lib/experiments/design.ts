@@ -8,17 +8,15 @@
  *
  * `fractionDenom` is the reciprocal of the fraction (1 = full, 2 = ½, 4 = ¼).
  */
-import {
-  unbrand,
-  type ExperimentId,
-  type TreeNodeId,
-} from '../types/branded.ts';
+import { unbrand, type ExperimentId, type TreeNodeId } from '../types/branded.ts';
 
 export type FactorLevel = string | number | boolean;
 
 export type Factor = {
   name: string;
   levels: FactorLevel[];
+  /** Per-partner factors may be randomized; system factors are launch-blocked. */
+  scope?: 'partner' | 'hybrid' | 'system';
 };
 
 /** One design cell: factor name → level. */
@@ -32,6 +30,8 @@ export type FactorialDesignResult = {
   targetRuns: number;
   fractionDenom: number;
   method: DesignMethod;
+  /** Regular-design resolution; null for full or non-regular designs. */
+  resolution: number | null;
   /** Human-readable alias notes for regular fractions (e.g. I = A×B×C). */
   aliases: string[];
 };
@@ -89,7 +89,7 @@ function allTwoLevel(factors: Factor[]): boolean {
 export function regularTwoLevelFraction(
   factors: Factor[],
   fractionDenom: number
-): { variants: VariantConfig[]; aliases: string[] } {
+): { variants: VariantConfig[]; aliases: string[]; resolution: number } {
   if (!allTwoLevel(factors)) {
     throw new Error('regularTwoLevelFraction requires all factors to have exactly 2 levels');
   }
@@ -110,6 +110,7 @@ export function regularTwoLevelFraction(
   const generated = factors.slice(freeCount);
   const freeGrid = fullFactorial(free);
   const aliases: string[] = [];
+  const generatorMasks: bigint[] = [];
 
   // Generators: generated[g] ← product of free factors, skipping free[g % freeCount]
   // For p=1 this is product of all free → classic resolution-max half fraction when k free+1.
@@ -121,8 +122,16 @@ export function regularTwoLevelFraction(
       const drop = g % freeCount;
       const used = free.filter((_, i) => i !== drop).map(f => f.name);
       aliases.push(`I = ${[...used, gen.name].join('×')}`);
+      const usedMask = free.reduce(
+        (mask, _, i) => (i === drop ? mask : mask | (1n << BigInt(i))),
+        0n
+      );
+      generatorMasks.push(usedMask | (1n << BigInt(freeCount + g)));
     } else {
       aliases.push(`I = ${[...parts, gen.name].join('×')}`);
+      generatorMasks.push(
+        free.reduce((mask, _, i) => mask | (1n << BigInt(i)), 0n) | (1n << BigInt(freeCount + g))
+      );
     }
   }
 
@@ -146,7 +155,17 @@ export function regularTwoLevelFraction(
     return out;
   });
 
-  return { variants, aliases };
+  let resolution = Infinity;
+  for (let subset = 1; subset < 1 << generatorMasks.length; subset++) {
+    let word = 0n;
+    for (let i = 0; i < generatorMasks.length; i++) {
+      if (subset & (1 << i)) word ^= generatorMasks[i]!;
+    }
+    const length = word.toString(2).replace(/0/g, '').length;
+    resolution = Math.min(resolution, length);
+  }
+
+  return { variants, aliases, resolution };
 }
 
 /**
@@ -224,6 +243,7 @@ export function generateDesign(
       targetRuns: 0,
       fractionDenom: denom,
       method: 'full',
+      resolution: null,
       aliases: [],
     };
   }
@@ -237,19 +257,21 @@ export function generateDesign(
       targetRuns: fullRuns,
       fractionDenom: 1,
       method: 'full',
+      resolution: null,
       aliases: [],
     };
   }
 
   if (allTwoLevel(factors) && isPowerOfTwo(denom) && factors.length - Math.log2(denom) >= 1) {
     try {
-      const { variants, aliases } = regularTwoLevelFraction(factors, denom);
+      const { variants, aliases, resolution } = regularTwoLevelFraction(factors, denom);
       return {
         variants,
         fullRuns,
         targetRuns: variants.length,
         fractionDenom: denom,
         method: 'regular-2level',
+        resolution,
         aliases,
       };
     } catch {
@@ -264,6 +286,7 @@ export function generateDesign(
     targetRuns: variants.length,
     fractionDenom: denom,
     method: 'balanced-subset',
+    resolution: null,
     aliases: [
       `Deterministic balanced subset (${variants.length}/${fullRuns}); interactions may be aliased — prefer full or regular-2level when feasible.`,
     ],

@@ -10,6 +10,7 @@ import {
   FactorialEngine,
   analyzeFactorial,
   predictFromEffects,
+  classifyFactor,
   type Factor,
 } from '../lib/experiments/index.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
@@ -48,6 +49,7 @@ describe('factorial design (pure)', () => {
     expect(design.variants).toHaveLength(4);
     expect(design.fullRuns).toBe(8);
     expect(design.aliases.length).toBeGreaterThan(0);
+    expect(design.resolution).toBe(3);
   });
 
   test('mixed levels fraction uses balanced-subset', () => {
@@ -66,6 +68,13 @@ describe('factorial design (pure)', () => {
     expect(f).toHaveLength(2);
     expect(f[0]!.levels).toEqual(['static', 'dynamic']);
     expect(f[1]!.levels).toEqual([0.1, 0.15]);
+  });
+
+  test('classifies infrastructure controls as system-scoped', () => {
+    expect(classifyFactor({ name: 'automation_frequency', levels: ['realtime', '5m'] })).toBe(
+      'system'
+    );
+    expect(classifyFactor({ name: 'routing', levels: ['static', 'dynamic'] })).toBe('partner');
   });
 });
 
@@ -130,6 +139,7 @@ describe('FactorialEngine + coverage hook', () => {
       ],
       fractionDenom: 1,
       metricName: 'win_rate',
+      policy: { minPartnersPerVariant: 1, minDurationDays: 0 },
     });
     expect(exp.design.variants).toHaveLength(4);
     engine.setStatus(exp.id, 'active');
@@ -182,18 +192,19 @@ describe('FactorialEngine + coverage hook', () => {
     );
     // status column is added by ensurePlatformCoverageSchema during openOperationsDb/migrate
 
+    // Launch readiness requires ≥1 active partner per design cell (2 variants here).
+    // Coverage score still uses all active/partner tree nodes as denominator.
     const partner = asTreeNodeId(Bun.randomUUIDv7());
     const other = asTreeNodeId(Bun.randomUUIDv7());
     for (const [id, name] of [
       [partner, 'P'],
-      [other, 'A2'],
+      [other, 'P2'],
     ] as const) {
       db.run(
         `INSERT INTO tree_nodes (id, type, name, active, status, created_at)
-         VALUES ($id, $t, $n, 1, 'active', $at)`,
+         VALUES ($id, 'partner', $n, 1, 'partner', $at)`,
         {
           $id: unbrand(id),
-          $t: id === partner ? 'partner' : 'agent',
           $n: name,
           $at: now,
         }
@@ -216,6 +227,7 @@ describe('FactorialEngine + coverage hook', () => {
       name: 'coverage-floor',
       factors: [{ name: 'min_coverage_pct', levels: [10, 90] }],
       fractionDenom: 1,
+      policy: { minPartnersPerVariant: 1, minDurationDays: 0 },
     });
     engine.setStatus(exp.id, 'active');
     engine.assignToConfig(exp.id, partner, { min_coverage_pct: 90 });
@@ -232,5 +244,37 @@ describe('FactorialEngine + coverage hook', () => {
     // mint id shape
     const id = asExperimentId(Bun.randomUUIDv7());
     expect(unbrand(id).length).toBeGreaterThan(8);
+  });
+
+  test('blocks unsafe fractions and underpowered activation until policy is explicit', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const engine = new FactorialEngine(db);
+
+    expect(() =>
+      engine.createExperiment({
+        name: 'unsafe-half',
+        factors: [
+          { name: 'routing', levels: ['static', 'dynamic'] },
+          { name: 'cut', levels: [0.1, 0.15] },
+          { name: 'stake', levels: ['fixed', 'kelly'] },
+        ],
+        fractionDenom: 2,
+      })
+    ).toThrow('resolution 3');
+
+    const experiment = engine.createExperiment({
+      name: 'needs-sample',
+      factors: [{ name: 'routing', levels: ['static', 'dynamic'] }],
+    });
+    expect(engine.launchReadiness(experiment).ready).toBe(false);
+    expect(engine.analysisReadiness(experiment).mature).toBe(false);
+    expect(() => engine.setStatus(experiment.id, 'active')).toThrow('Need 20 active partners');
+    expect(() =>
+      engine.createExperiment({
+        name: 'system-factor',
+        factors: [{ name: 'model_type', levels: ['linear', 'rf'] }],
+      })
+    ).toThrow('system-scoped');
+    db.close();
   });
 });

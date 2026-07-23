@@ -281,21 +281,24 @@ export function initSchema(db: Database): void {
       UNIQUE(node_id, book)
     );
 
+    CREATE TABLE IF NOT EXISTS ops_sync_cursor (
+      topic TEXT PRIMARY KEY,
+      last_seq INTEGER DEFAULT 0
+    );
+  `);
+
+  // Migrate legacy columns before indexes that reference them (e.g. tree_nodes.status).
+  migrateSchema(db);
+
+  db.run(`
     CREATE INDEX IF NOT EXISTS idx_positions_node ON positions(node_id);
     CREATE INDEX IF NOT EXISTS idx_expert ON tree_nodes(expert_id);
     CREATE INDEX IF NOT EXISTS idx_telegram ON tree_nodes(telegram_id);
     CREATE INDEX IF NOT EXISTS idx_status ON tree_nodes(status);
     CREATE INDEX IF NOT EXISTS idx_outbox_status ON telegram_outbox(status);
     CREATE INDEX IF NOT EXISTS idx_parent ON tree_nodes(parent_id);
-
-    CREATE TABLE IF NOT EXISTS ops_sync_cursor (
-      topic TEXT PRIMARY KEY,
-      last_seq INTEGER DEFAULT 0
-    );
     CREATE INDEX IF NOT EXISTS idx_ppa_platform ON partner_platform_accounts(platform_id);
     CREATE INDEX IF NOT EXISTS idx_ppa_partner ON partner_platform_accounts(partner_id);
     CREATE INDEX IF NOT EXISTS idx_ppa_status ON partner_platform_accounts(status);
   `);
-
-  migrateSchema(db);
 }

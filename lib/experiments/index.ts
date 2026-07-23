@@ -26,13 +26,39 @@ export {
   type PartnerMetricRow,
 } from './analyze.ts';
 export { ensureExperimentsSchema } from './schema.ts';
+export { assignClustered } from './cluster.ts';
+export {
+  createSwitchbackSchedule,
+  currentSwitchbackPeriod,
+  recordSwitchbackMetric,
+  analyzeSwitchback,
+  type SwitchbackPeriod,
+  type SwitchbackAnalysis,
+} from './switchback.ts';
+export {
+  classifyFactor,
+  factorLaunchErrors,
+  normalizeExperimentPolicy,
+  DEFAULT_EXPERIMENT_POLICY,
+  type FactorScope,
+  type ExperimentPolicy,
+} from './policy.ts';
 export {
   FactorialEngine,
   resolveExperimentCoverageFloor,
+  getPartnerVariantConfig,
+  createExperiment,
+  activateExperiment,
+  assignVariant,
+  logMetric,
+  getResults,
   COVERAGE_FLOOR_KEYS,
   type ExperimentStatus,
   type ExperimentRow,
   type AssignmentResult,
+  type AbVariantInput,
+  type AbExperiment,
+  type AbResultRow,
 } from './engine.ts';
 export {
   resolveExperimentSubject,

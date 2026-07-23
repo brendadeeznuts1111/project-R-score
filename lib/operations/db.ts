@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 /**
  * Operations DB connection factory — WAL + busy_timeout + unified schema.
  */
