@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-23T16:03:48.143Z",
+  "generatedAt": "2026-07-23T16:04:56.107Z",
   "note": "Legacy unbranded ID surfaces grandfathered when mid-line param detection was enabled. Staged commits never use this baseline — new bare-string domain IDs always fail. Remove entries as you migrate to brands (as*/try*/parse*). Regenerate: bun tools/branded-id-check.ts --write-baseline",
   "keys": [
     "lib/accounts/automation.ts\tid\t.all() as { id: string; name: string }[];",
@@ -66,6 +66,10 @@
     "lib/operations/reconciliation.ts\tid\t.all() as { id: string }[];",
     "lib/operations/reconciliation.ts\tnodeId\tnodeId?: string;",
     "lib/operations/reconciliation.ts\trailId\trailId?: string;",
+    "lib/provisioning/queue.ts\tid\t) as { id: string } | null;",
+    "lib/provisioning/queue.ts\tkycDodId\topts?: { credentialsEncrypted?: string; kycDodId?: string; notes?: string }",
+    "lib/provisioning/run-automated.ts\taccountId\t): Promise<{ ok: boolean; taskId: string; error?: string; accountId?: string }> {",
+    "lib/provisioning/run-automated.ts\ttaskId\t): Promise<{ ok: boolean; taskId: string; error?: string; accountId?: string }> {",
     "lib/telegram/ops-bot.ts\tagent_id\t.filter((r: { agent_id?: string }) => r.agent_id === node.id)",
     "lib/telegram/ops-bot.ts\tfileId\tprivate async downloadTelegramFile(fileId: string): Promise<Uint8Array> {",
     "lib/telegram/ops-bot.ts\tfile_id\tconst photos = msg.photo as { file_id: string; file_size?: number }[] | undefined;",

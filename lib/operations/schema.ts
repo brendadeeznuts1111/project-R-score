@@ -7,6 +7,7 @@
  */
 import type { Database } from 'bun:sqlite';
 import { ensurePlatformCoverageSchema } from './platform-coverage.ts';
+import { ensureProvisioningSchema } from '../provisioning/schema.ts';
 
 const TREE_NODE_COLUMNS = [
   ['email', 'TEXT'],
@@ -86,6 +87,7 @@ export function migrateSchema(db: Database): void {
   `);
 
   ensurePlatformCoverageSchema(db);
+  ensureProvisioningSchema(db);
 }
 
 export function initSchema(db: Database): void {

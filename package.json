@@ -1,6 +1,6 @@
 {
   "name": "factorywager-enterprise",
-  "version": "5.1.2",
+  "version": "5.1.2+build.20260723",
   "packageManager": "bun@1.4.0",
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
@@ -13,7 +13,7 @@
   "catalog": {
     "zod": "3.23.0",
     "@types/bun": "1.3.14",
-    "typescript": "5.9.3",
+    "typescript": "6.0.3",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "@types/react": "19.2.15",
@@ -1530,6 +1530,11 @@
   "type": "module",
   "scripts": {
     "prepare": "husky && bun scripts/evict-root-tilde-cache.ts",
+    "showcase": "bun tools/bun-api-showcase/oneliners.ts",
+    "showcase:live": "bun tools/bun-api-showcase/oneliners.ts --live",
+    "showcase:coverage": "bun tools/bun-api-showcase/coverage.ts",
+    "showcase:ops": "bun tools/bun-api-showcase/ops-oneliners.ts",
+    "showcase:verify": "bun tools/bun-api-showcase/verify.ts --write",
     "postinstall": "bun scripts/evict-root-tilde-cache.ts",
     "precommit": ".husky/pre-commit",
     "precommit:ast-grep": "bun scripts/pre-commit-ast-grep.ts --full",
@@ -1558,6 +1563,10 @@
     "cloudflare:deploy": "bash scripts/cloudflare-pages-deploy.sh",
     "cloudflare:env:setup": "bash scripts/cloudflare-env-setup.sh",
     "cloudflare:tunnel": "cloudflared tunnel run reasonix-serve",
+    "icons:generate": "bun tools/generate-portal-icons.ts --check",
+    "icons:verify": "bun tools/generate-portal-icons.ts --verify",
+    "dod:pack": "bun tools/dod-evidence.ts pack",
+    "dod:verify": "bun tools/dod-evidence.ts verify",
     "factory": "bun lib/factory/cli.ts",
     "factory:publish": "bun lib/factory/cli.ts publish",
     "factory:install": "bun lib/factory/cli.ts install",
@@ -1566,6 +1575,7 @@
     "factory:env": "bun lib/factory/cli.ts env",
     "factory:readme": "bun lib/factory/cli.ts readme",
     "factory:snapshot": "bun lib/factory/cli.ts snapshot",
+    "portal:telegram:webhook": "bash scripts/telegram-webhook-register.sh",
     "factory:create": "bun lib/factory/cli.ts create",
     "ci:harness": "bun scripts/ci-harness.ts",
     "ci:harness:fast": "bun scripts/ci-harness.ts --fast",
@@ -1583,10 +1593,27 @@
     "docs:links:check": "bun tools/md-link-check.ts",
     "docs:release-index": "bun tools/bun-docs-releases.ts index",
     "docs:release-scrape": "bun tools/bun-docs-releases.ts scrape",
+    "docs:blog-codeblocks": "bun tools/bun-blog-codeblocks.ts",
+    "docs:blog-examples": "bun tools/bun-docs-releases.ts scrape",
     "docs:refresh": "bun tools/bun-docs-refresh.ts",
     "docs:catalog:build": "bun tools/bun-docs-catalog.ts build",
     "docs:catalog": "bun tools/bun-docs-catalog.ts list",
     "docs:catalog:export": "bun tools/bun-docs-catalog.ts export --compact",
+    "docs:api-index": "bun tools/export-bun-api-index.ts",
+    "docs:showcase": "bun tools/bun-api-showcase.ts",
+    "docs:showcase:offline": "bun tools/bun-api-showcase.ts run offline",
+    "docs:api-verify": "bun tools/bun-api-verify.ts --write",
+    "docs:api-verify:check": "bun tools/bun-api-verify.ts",
+    "ops:migrate": "bun tools/ops-migrate.ts",
+    "ops:coverage": "bun tools/ops-coverage.ts",
+    "ops:provision-queue": "bun tools/provision-queue.ts",
+    "ops:seed-platforms": "bun scripts/seed-platforms.ts",
+    "ops:reconcile": "bun tools/ops-reconcile.ts",
+    "ops:book-reconcile": "bun tools/ops-book-reconcile.ts",
+    "ops:postgres-probe": "bun tools/ops-postgres-probe.ts",
+    "ops:sync": "bun tools/ops-sync-consumer.ts",
+    "ops:automation": "bun run lib/accounts/automation.ts",
+    "test:showcase": "bun test tests/bun-api-showcase.test.ts",
     "audit:catalog:build": "bun tools/audit-catalog.ts build",
     "audit:catalog": "bun tools/audit-catalog.ts list",
     "audit:get": "bun tools/audit-catalog.ts get",
@@ -1750,7 +1777,10 @@
     "spine:schedule": "bun spine/scheduler.ts",
     "spine:schedule:once": "bun spine/scheduler.ts --once",
     "harness:lesson": "bun scripts/harness-lesson.ts",
-    "search:loop:status": "bun run scripts/search-loop-status.ts"
+    "search:loop:status": "bun run scripts/search-loop-status.ts",
+    "check:tsconfig-types": "bun tools/tsconfig-types-audit.ts",
+    "type-check:tools": "bunx tsc -p tools --pretty false",
+    "type-check:sto": "bun run --filter sports-terminal-os typecheck"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",
@@ -1773,11 +1803,13 @@
     "eslint-plugin-security": "3.0.1",
     "husky": "9.1.7",
     "prettier": "3.6.2",
-    "typescript-eslint": "8.59.3"
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.59.3",
+    "undici-types": "^8.7.0"
   },
   "private": "false",
   "peerDependencies": {
-    "typescript": "5.9.3"
+    "typescript": "6.0.3"
   },
   "files": [
     "lib/",
