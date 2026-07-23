@@ -1,0 +1,54 @@
+/**
+ * Shared database connection manager + TTL cache for ops data.
+ *
+ * Bun docs: Singleton connection at module scope is the recommended pattern.
+ * @see https://bun.com/docs/runtime/sqlite
+ * @see https://bun.com/docs/runtime/http/server#practical-example-rest-api
+ */
+import { Database } from 'bun:sqlite';
+import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
+import { collectMonitoring, type MonitoringPayload } from '../../monitoring/collect.ts';
+
+let dbInstance: Database | null = null;
+let monitoringCache: { data: MonitoringPayload; ts: number } | null = null;
+const MONITORING_CACHE_TTL = 5_000; // 5 seconds
+
+/** Get or create the shared SQLite connection (singleton per process). */
+export function getDb(dbPath = DEFAULT_OPS_DB_PATH): Database {
+  if (!dbInstance) {
+    dbInstance = openOperationsDb({ path: dbPath });
+  }
+  return dbInstance;
+}
+
+/** Get monitoring data — returns cached result if within TTL. */
+export async function getMonitoringData(options: {
+  source?: 'live' | 'snapshot';
+  uptimeOriginMs?: number;
+  forceRefresh?: boolean;
+} = {}): Promise<MonitoringPayload> {
+  const now = Date.now();
+  const { forceRefresh = false, source = 'snapshot', uptimeOriginMs = 0 } = options;
+
+  if (!forceRefresh && monitoringCache && now - monitoringCache.ts < MONITORING_CACHE_TTL) {
+    return monitoringCache.data;
+  }
+
+  const db = getDb();
+  const data = await collectMonitoring(db, { source, uptimeOriginMs });
+  monitoringCache = { data, ts: now };
+  return data;
+}
+
+/** Invalidate the monitoring cache (call after DOD submission / ops change). */
+export function invalidateMonitoringCache(): void {
+  monitoringCache = null;
+}
+
+/** Close the shared database connection. */
+export function closeDb(): void {
+  if (dbInstance) {
+    dbInstance.close();
+    dbInstance = null;
+  }
+}

@@ -116,12 +116,7 @@ async function writeBytes(path: string, data: Uint8Array | string): Promise<void
 
 async function liveOpsSummary(): Promise<Response> {
   try {
-    const db = openOperationsDb({ path: dbPath });
-    try {
-      return json(buildOpsSummary(db, 'live'));
-    } finally {
-      db.close();
-    }
+    return json(buildOpsSummary(getDb(), 'live'));
   } catch (err) {
     const snap = Bun.file('public/registry/ops-summary.json');
     if (await snap.exists()) {
@@ -147,8 +142,7 @@ async function liveCatalog(req: Request): Promise<Response> {
   const category = url.searchParams.get('category') || '';
   const status = url.searchParams.get('status') || '';
   try {
-    const db = new Database(dbPath);
-    db.run('PRAGMA journal_mode=WAL');
+    const db = getDb();
     let sql = `SELECT p.id as platform_id, p.name as platform, p.category, p.sub_category, a.id as account_id, a.partner_id, a.account_identifier, a.balance, a.status, a.notes, a.opened_at, a.last_verified_at, n.name as partner_name, n.type as partner_type FROM partner_platform_accounts a JOIN platforms p ON a.platform_id = p.id JOIN tree_nodes n ON a.partner_id = n.id WHERE a.status != 'closed'`;
     const params: (string | number)[] = [];
     if (search) {
@@ -592,12 +586,7 @@ const startedAt = Date.now();
 /** GET /api/monitoring — registry + ops metrics + API proof (JSON). */
 async function liveMonitoringApi(): Promise<Response> {
   try {
-    const db = openOperationsDb({ path: dbPath });
-    try {
-      const data = (await collectMonitoring(db, {
-        source: 'live',
-        uptimeOriginMs: startedAt,
-      })) as Record<string, unknown>;
+    const data = (await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt })) as Record<string, unknown>;
       // Append Bun API proof status
       const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
       if (await proofFile.exists()) {
@@ -625,9 +614,6 @@ async function liveMonitoringApi(): Promise<Response> {
         } catch {}
       }
       return json(data);
-    } finally {
-      db.close();
-    }
   } catch (err) {
     const snap = Bun.file('public/registry/monitoring.json');
     if (await snap.exists()) {
@@ -653,17 +639,12 @@ async function liveMonitoringApi(): Promise<Response> {
 /** GET /monitoring — server-rendered Bun.inspect.table dashboard. */
 async function monitoringPage(): Promise<Response> {
   try {
-    const db = openOperationsDb({ path: dbPath });
-    try {
-      const data = await collectMonitoring(db, { source: 'live', uptimeOriginMs: startedAt });
-      return withLiveReload(
-        new Response(renderMonitoringHtml(data), {
-          headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
-        })
-      );
-    } finally {
-      db.close();
-    }
+    const data = await getMonitoringData({ source: 'live', uptimeOriginMs: startedAt });
+    return withLiveReload(
+      new Response(renderMonitoringHtml(data), {
+        headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+      })
+    );
   } catch {
     const staticRes = await staticFile('/monitoring/', new Request('http://local/monitoring/'));
     if (staticRes) return staticRes;
