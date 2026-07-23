@@ -1,23 +1,25 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 25,
+  "uptimeMs": 12,
   "packageCount": 14,
   "versionCount": 23,
   "lastIntegrity": {
-    "status": "unknown",
-    "timestamp": null,
+    "status": "ok",
+    "timestamp": "2026-07-23T17:59:09.433Z",
     "failures": 0,
-    "source": "unknown"
+    "source": "sqlite"
   },
-  "platformSummary": {},
+  "platformSummary": {
+    "active": 27
+  },
   "platformApiAvailable": {
     "yes": 0,
-    "no": 0
+    "no": 27
   },
   "dodQueue": 0,
   "dodByStatus": {},
   "experimentsActive": 0,
-  "predictionN": 0,
-  "timestamp": "2026-07-23T18:16:47.644Z"
+  "predictionN": 10,
+  "timestamp": "2026-07-23T18:20:06.221Z"
 }

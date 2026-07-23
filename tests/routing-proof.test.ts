@@ -161,5 +161,25 @@ describe('routing-proof v2', () => {
     expect(slice.available).toBe(true);
     expect(slice.passed).toBe(2);
     expect(slice.total).toBe(2);
+    expect(slice.errorRate).toBe(0);
+    expect(slice.routes.length).toBe(2);
+    expect(slice.meanMs).toBeGreaterThanOrEqual(0);
+  });
+
+  test('withRetry succeeds after transient failures', async () => {
+    const { withRetry } = await import('../lib/routing-proof.ts');
+    let n = 0;
+    const v = await withRetry(
+      async () => {
+        n++;
+        if (n < 2) throw new Error('transient');
+        return 42;
+      },
+      'test-retry',
+      3,
+      1
+    );
+    expect(v).toBe(42);
+    expect(n).toBe(2);
   });
 });

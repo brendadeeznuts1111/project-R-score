@@ -47,8 +47,18 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-metric" id="routing-pass">—</div>
             <div class="ops-sub" id="routing-detail"></div>
             <div class="ops-mono" id="routing-hash"></div>
+            <ul id="routing-routes"></ul>
             <ul id="routing-crit"></ul>
             <a class="ops-link" id="routing-link" href="/registry/@factorywager/routing-test/latest.json">Full routing JSON</a>
+            <a class="ops-link" href="/registry/static.json">Static composite</a>
+          </section>
+          <section class="ops-panel">
+            <h2>Snapshot health</h2>
+            <div class="ops-metric" id="snap-packages">—</div>
+            <div class="ops-sub" id="snap-detail"></div>
+            <div class="ops-mono" id="snap-source"></div>
+            <a class="ops-link" href="/api/monitoring">Live monitoring API</a>
+            <a class="ops-link" href="/api/registry/static">/api/registry/static</a>
           </section>
           <section class="ops-panel">
             <h2>Experiments</h2>
@@ -282,13 +292,16 @@ class OperationsDashboard extends HTMLElement {
     }
     const routingDetail = this.querySelector('#routing-detail');
     if (routingDetail) {
+      const errPct =
+        rt.errorRate != null ? ` · err ${(Number(rt.errorRate) * 100).toFixed(0)}%` : '';
+      const cacheNote = rt.stale ? ' · STALE' : rt.cached ? ' · cached' : '';
       routingDetail.textContent = rt.available
-        ? `httpOk ${rt.httpOk ?? 0} · p50 ${rt.p50Ms ?? 0}ms · p95 ${rt.p95Ms ?? 0}ms · max ${rt.maxMs ?? 0}ms` +
-          ` · err ${(Number(rt.errorRate ?? 0) * 100).toFixed(0)}%` +
+        ? `httpOk ${rt.httpOk ?? 0} · mean ${rt.meanMs ?? 0}ms · p50 ${rt.p50Ms ?? 0}ms · p95 ${rt.p95Ms ?? 0}ms · max ${rt.maxMs ?? 0}ms` +
           ` · critFail ${rt.criticalFailed ?? 0}` +
           ` · Δreg ${rt.regressions ?? 0}` +
-          (rt.cache ? ` · cache ${rt.cache}` : '')
-        : 'Run bun run routing:proof:write or ops:snapshot';
+          errPct +
+          cacheNote
+        : 'Run bunx --bun ops-snapshot (or routing:proof:write)';
     }
     const routingHash = this.querySelector('#routing-hash');
     if (routingHash) {
@@ -296,27 +309,56 @@ class OperationsDashboard extends HTMLElement {
         ? `sha256 ${String(rt.proofHash).slice(0, 16)}…`
         : '';
     }
+    const routingRoutes = this.querySelector('#routing-routes');
+    if (routingRoutes) {
+      const rows = Array.isArray(rt.routes) ? rt.routes : [];
+      const show = rows.filter(r => !r.pass).slice(0, 4);
+      const fallback = rows.slice(0, 3);
+      const list = show.length ? show : fallback;
+      routingRoutes.innerHTML = list
+        .map(
+          r => `
+        <li class="${r.pass ? 'active' : 'inactive'}">
+          <span class="ops-mono">${r.path}</span>
+          <small>${r.pass ? 'pass' : 'FAIL'} · ${r.status} · ${r.timeMs}ms${r.critical ? ' · crit' : ''}</small>
+        </li>`
+        )
+        .join('');
+    }
     const routingCrit = this.querySelector('#routing-crit');
     if (routingCrit) {
-      const routes = rt.routes || [];
-      if (routes.length) {
-        routingCrit.innerHTML = routes
-          .slice(0, 6)
-          .map(
-            r => `
-          <li class="${r.pass ? 'active' : 'inactive'}">
-            <span class="ops-mono">${r.path}</span>
-            <small>${r.status} · ${r.timeMs}ms${r.critical ? ' · crit' : ''}${r.pass ? '' : ' · FAIL'}</small>
-          </li>`
-          )
-          .join('');
-      } else {
-        const paths = rt.criticalFailedPaths || [];
-        routingCrit.innerHTML = paths
-          .slice(0, 5)
-          .map(p => `<li><span class="ops-mono">${p}</span><small>critical</small></li>`)
-          .join('');
-      }
+      const paths = rt.criticalFailedPaths || [];
+      routingCrit.innerHTML = paths
+        .slice(0, 5)
+        .map(p => `<li><span class="ops-mono">${p}</span><small>critical</small></li>`)
+        .join('');
+    }
+
+    // Snapshot health card (packages from tree/registry hints + generation)
+    const snapPkgs = this.querySelector('#snap-packages');
+    if (snapPkgs) {
+      const n = d.tree?.partners != null ? (d.packageCount ?? null) : null;
+      // Prefer routing total as "routes probed" proxy when packageCount absent
+      snapPkgs.textContent =
+        d.bunUtils?.total != null
+          ? `${d.bunUtils.passed ?? 0}/${d.bunUtils.total} utils`
+          : '—';
+      snapPkgs.classList.toggle('ok', (d.bunUtils?.failed ?? 0) === 0 && (d.bunUtils?.total ?? 0) > 0);
+      snapPkgs.classList.toggle('bad', (d.bunUtils?.failed ?? 0) > 0);
+      void n;
+    }
+    const snapDetail = this.querySelector('#snap-detail');
+    if (snapDetail) {
+      const liq = d.liquidity?.total ?? 0;
+      const exp = d.experiments?.active ?? 0;
+      const predN = d.prediction?.coverage?.n ?? 0;
+      snapDetail.textContent = `liquidity $${Number(liq).toLocaleString()} · experiments ${exp} · prediction n=${predN}`;
+    }
+    const snapSource = this.querySelector('#snap-source');
+    if (snapSource) {
+      snapSource.textContent = d.generated
+        ? `${d.source || 'snapshot'} · ${String(d.generated).slice(0, 19)}`
+        : '';
     }
 
     // Experiments (C4)

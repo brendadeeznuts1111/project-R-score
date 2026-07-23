@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "bunVersion": "1.3.6",
-  "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
-  "timestamp": "2026-07-23T18:16:47.630Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
+  "timestamp": "2026-07-23T18:20:06.218Z",
   "testCases": [
     {
       "utility": "stringWidth",
@@ -83,5 +83,5 @@
     "passed": 10,
     "failed": 0
   },
-  "proofHash": "acdadb6aea2004d62ccc1ab611db178293e29fcb3c258eaf7bad908d3c53f079"
+  "proofHash": "e6897c7d62de5c701f901fb6c9a309be6ca195792118bc3648b44aacbf31ceb5"
 }

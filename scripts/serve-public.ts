@@ -149,6 +149,40 @@ async function serveRegistryIndex(): Promise<Response> {
   return json(reg);
 }
 
+/** GET /api/registry/static — aggregated snapshot with monitoring + proof. */
+async function serveStaticRegistry(): Promise<Response> {
+  const f = Bun.file('public/registry/static.json');
+  if (await f.exists())
+    return new Response(f, {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+    });
+  // Fallback to live aggregation
+  const reg = await readRegistry();
+  const db = openOperationsDb({ path: dbPath });
+  let ops: Record<string, unknown> = {};
+  try {
+    ops = buildOpsSummary(db, 'live') as Record<string, unknown>;
+  } catch {}
+  db.close();
+  const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
+  let proof: Record<string, unknown> = {};
+  if (await proofFile.exists())
+    try {
+      proof = JSON.parse(await proofFile.text());
+    } catch {}
+  const snapshot = {
+    generated: new Date().toISOString(),
+    bunVersion: Bun.version,
+    packageCount: reg?.packages ? Object.keys(reg.packages).length : 0,
+    packages: reg?.packages || {},
+    ops,
+    bunApiProof: proof,
+  };
+  return new Response(JSON.stringify(snapshot, null, 2), {
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+  });
+}
+
 async function searchRegistry(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const q = url.searchParams.get('q')?.toLowerCase() || '';
@@ -478,7 +512,7 @@ async function monitoringPage(): Promise<Response> {
   }
 }
 
-/** GET /health — uptime, runtime, and artifact freshness probe. */
+/** GET /health — uptime, runtime, and artifact freshness probe (JSON). */
 async function health(): Promise<Response> {
   const summary = Bun.file('public/registry/ops-summary.json');
   const exists = await summary.exists();
@@ -493,14 +527,87 @@ async function health(): Promise<Response> {
       /* malformed artifact still reports exists */
     }
   }
+
+  const reg = await readRegistry();
+  const pkgCount = reg?.packages ? Object.keys(reg.packages).length : 0;
+  const versionCount = reg?.packages
+    ? Object.values(reg.packages).reduce(
+        (sum: number, p: any) => sum + (p.versions?.length || 0),
+        0
+      )
+    : 0;
+
+  const proofFile = Bun.file('tools/bun-api-coverage-proof.json');
+  let proofStatus: Record<string, unknown> = { available: false };
+  if (await proofFile.exists()) {
+    try {
+      const proof = JSON.parse(await proofFile.text());
+      proofStatus = {
+        available: true,
+        generated: proof.generated,
+        demosPassed: proof.summary?.demosPassed,
+        demosTotal: proof.summary?.demos,
+        apisVerified: proof.summary?.apisVerified,
+      };
+    } catch {}
+  }
+
   return json({
     status: 'ok',
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     bun: Bun.version,
-    artifacts: {
-      opsSummary: { exists, generated, ageSeconds },
-    },
+    platform: process.arch + ' ' + process.platform,
+    artifacts: { opsSummary: { exists, generated, ageSeconds } },
+    registry: { packages: pkgCount, versions: versionCount },
+    bunApiProof: proofStatus,
   });
+}
+
+/** GET /health/pre — HTML health page with <pre> formatted diagnostics. */
+async function healthHtml(): Promise<Response> {
+  const json = (await (await health()).json()) as Record<string, unknown>;
+  const lines: string[] = [
+    '╔══════════════════════════════════════════╗',
+    '║     FactoryWager · Health Diagnostics    ║',
+    '╚══════════════════════════════════════════╝',
+    '',
+    `  Status:    ${json.status}`,
+    `  Uptime:    ${formatDuration(json.uptimeSeconds as number)}`,
+    `  Runtime:   Bun ${json.bun} (${json.platform})`,
+    `  PID:       ${process.pid}`,
+    `  Started:   ${new Date(startedAt).toISOString()}`,
+    '',
+    '── Registry ──────────────────────────────',
+    `  Packages:  ${(json.registry as Record<string, number>)?.packages ?? '?'}`,
+    `  Versions:  ${(json.registry as Record<string, number>)?.versions ?? '?'}`,
+    '',
+    '── Artifacts ─────────────────────────────',
+    `  Ops summary: ${((json.artifacts as Record<string, unknown>)?.opsSummary as Record<string, unknown>)?.exists ? '✅' : '❌'}`,
+    `  Generated:   ${((json.artifacts as Record<string, unknown>)?.opsSummary as Record<string, unknown>)?.generated ?? '—'}`,
+    '',
+    '── Bun API Proof ────────────────────────',
+  ];
+  const proof = (json.bunApiProof as Record<string, unknown>) || {};
+  if (proof.available) {
+    lines.push(`  Generated:   ${proof.generated}`);
+    lines.push(`  Demos:       ${proof.demosPassed}/${proof.demosTotal} passed`);
+    lines.push(`  APIs:        ${proof.apisVerified} verified`);
+  } else {
+    lines.push('  Not generated — run bun run docs:api-verify --write');
+  }
+  lines.push('', `  Checked at: ${new Date().toISOString()}`, '');
+
+  return new Response(`<pre>${lines.join('\n')}</pre>`, {
+    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+  });
+}
+
+function formatDuration(seconds: number): string {
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${d}d ${h}h ${m}m ${s}s`;
 }
 
 /** GET /api/proof — Bun API coverage proof status. */
@@ -641,11 +748,16 @@ function buildPublicRoutes() {
     headers: { 'X-Ready': '1', 'Cache-Control': 'no-store' },
   });
 
+  /** Pre-buffered portal index — zero filesystem I/O on requests. */
+  const portalFile = Bun.file('public/portal/index.html');
+
   return {
     '/ready': ready,
 
     // Dynamic health (handler — not frozen Response)
     '/health': () => health(),
+    '/health/pre': () => healthHtml(),
+    '/health/pre/': () => healthHtml(),
 
     '/api/proof': () => bunApiProof(),
     '/api/monitoring': () => liveMonitoringApi(),
@@ -656,12 +768,13 @@ function buildPublicRoutes() {
 
     '/api/registry': () => serveRegistryIndex(),
     '/api/registry/registry.json': () => serveRegistryIndex(),
+    '/api/registry/static': () => serveStaticRegistry(),
     '/api/registry/search': (req: Request) => searchRegistry(req),
 
     // Unscoped package detail + versions (named params — type-safe)
     '/api/registry/:package': (req: BunRequest<'/api/registry/:package'>) => {
       const name = req.params.package;
-      if (name === 'search' || name === 'registry.json') {
+      if (name === 'search' || name === 'registry.json' || name === 'static') {
         return json({ error: 'Not found' }, 404);
       }
       return packageDetail(name);
@@ -687,9 +800,9 @@ function buildPublicRoutes() {
 
     '/monitoring': () => monitoringPage(),
 
-    // Portal entry — Bun.file auto ETag / Last-Modified / Range
-    '/portal': () => new Response(Bun.file('public/portal/index.html')),
-    '/portal/': () => new Response(Bun.file('public/portal/index.html')),
+    // Portal — static file routes with streaming, ETag, and Range support
+    '/portal': () => new Response(portalFile),
+    '/portal/': () => new Response(portalFile),
   };
 }
 

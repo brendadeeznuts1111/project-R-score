@@ -1,7 +1,10 @@
+// @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/utils — Bun.inspect.table
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/networking/fetch
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/file-io — Bun.mmap
 /**
  * Registry / portal routing proof — concurrent probes, latency stats,
  * regression vs previous artifact, SHA-256 fingerprint.
@@ -9,7 +12,6 @@
  * Default base: score.factory-wager.com
  * Artifact: public/registry/@factorywager/routing-test/latest.json
  */
-import { existsSync, readFileSync } from 'node:fs';
 import { canonicalJson, sha256Hex } from './bun-utils-proof.ts';
 
 export const ROUTING_ARTIFACT_PACKAGE = '@factorywager/routing-test';
@@ -80,14 +82,14 @@ export type RoutingProofResult = {
   proofHash?: string;
 };
 
-/** Per-route row embedded in ops-summary (top slow / critical). */
+/** Per-route row for ops dashboard cards. */
 export type RoutingOpsRouteRow = {
   path: string;
-  status: number | 'ERR';
+  status: number | 'ERR' | string;
   pass: boolean;
   critical: boolean;
   timeMs: number;
-  contentType: string;
+  contentType?: string;
 };
 
 /** Compact slice embedded in ops-summary / portal. */
@@ -99,17 +101,21 @@ export type RoutingOpsSlice = {
   failed: number;
   httpOk: number;
   criticalFailed: number;
+  /** failed / total (0–1) */
+  errorRate: number;
+  meanMs: number;
   p50Ms: number;
   p95Ms: number;
   maxMs: number;
-  errorRate: number;
   proofHash: string;
   timestamp: string;
   regressions: number;
   criticalFailedPaths: string[];
-  /** Slowest + critical routes (capped). */
+  /** Compact per-route breakdown (failures first, then slowest). */
   routes: RoutingOpsRouteRow[];
-  cache?: 'memory' | 'disk' | 'fresh' | 'stale';
+  /** true when served from mem/disk cache (not a live probe this run). */
+  cached?: boolean;
+  stale?: boolean;
 };
 
 export type RunRoutingProofOpts = {
@@ -135,7 +141,14 @@ export type RunRoutingProofOpts = {
 export const DEFAULT_ROUTING_SPECS: RoutingProbeSpec[] = [
   { path: '/health', requireOk: true, note: 'may be SPA HTML' },
   { path: '/ready', requireOk: true, note: 'may be SPA HTML' },
-  { path: '/api/registry', expectedStatus: 400, requireOk: false, note: 'empty key → 400' },
+  // Factory R2 gateway returns 400 for empty key; serve-public returns the index (200).
+  {
+    path: '/api/registry',
+    expectedStatus: [200, 400],
+    requireOk: false,
+    expectContentType: 'application/json',
+    note: 'index (local) or empty-key 400 (R2 gateway)',
+  },
   {
     path: '/api/registry/@factorywager/test-pkg',
     expectedStatus: [404, 503],
@@ -184,20 +197,6 @@ export const DEFAULT_ROUTING_SPECS: RoutingProbeSpec[] = [
     note: 'static ops metrics',
   },
   {
-    path: '/registry/static.json',
-    // 404 until next Pages deploy of public/registry/static.json
-    expectedStatus: [200, 404],
-    requireOk: false,
-    expectContentType: undefined,
-    note: 'aggregate registry snapshot (after deploy)',
-  },
-  {
-    path: '/api/registry/static.json',
-    expectedStatus: [200, 404, 503],
-    requireOk: false,
-    note: 'R2 or ASSETS fallback for static aggregate',
-  },
-  {
     path: '/registry/@factorywager/bun-utils-test/latest.json',
     requireOk: true,
     expectContentType: 'application/json',
@@ -209,6 +208,18 @@ export const DEFAULT_ROUTING_SPECS: RoutingProbeSpec[] = [
     expectedStatus: [200, 404],
     requireOk: false,
     note: 'this artifact (404 until first --write deploy)',
+  },
+  {
+    path: '/registry/static.json',
+    expectedStatus: [200, 404],
+    requireOk: false,
+    note: 'composite snapshot from ops:snapshot',
+  },
+  {
+    path: '/api/registry/static',
+    expectedStatus: [200, 404, 503],
+    requireOk: false,
+    note: 'local serve-public static snapshot route',
   },
 ];
 
@@ -304,13 +315,16 @@ export async function mapPool<T, R>(
 ): Promise<R[]> {
   const results = new Array<R>(items.length);
   let next = 0;
-  const workers = Array.from({ length: Math.max(1, Math.min(concurrency, items.length)) }, async () => {
-    while (true) {
-      const i = next++;
-      if (i >= items.length) break;
-      results[i] = await fn(items[i]!, i);
+  const workers = Array.from(
+    { length: Math.max(1, Math.min(concurrency, items.length)) },
+    async () => {
+      while (true) {
+        const i = next++;
+        if (i >= items.length) break;
+        results[i] = await fn(items[i]!, i);
+      }
     }
-  });
+  );
   await Promise.all(workers);
   return results;
 }
@@ -343,11 +357,7 @@ export function compareRoutingProofs(
         detail: prev.pass ? 'pass → FAIL' : 'FAIL → pass',
       });
     }
-    if (
-      prev.timeMs >= floor &&
-      cur.timeMs >= floor &&
-      cur.timeMs > prev.timeMs * factor
-    ) {
+    if (prev.timeMs >= floor && cur.timeMs >= floor && cur.timeMs > prev.timeMs * factor) {
       changes.push({
         path: cur.path,
         kind: 'latency',
@@ -390,9 +400,7 @@ export async function runRoutingProof(opts: RunRoutingProofOpts = {}): Promise<R
         ? null
         : await loadPreviousRoutingProof();
 
-  const probes = await mapPool(specs, concurrency, spec =>
-    probeEndpoint(baseUrl, spec, fetchImpl)
-  );
+  const probes = await mapPool(specs, concurrency, spec => probeEndpoint(baseUrl, spec, fetchImpl));
 
   const passed = probes.filter(p => p.pass).length;
   const httpOk = probes.filter(p => p.ok).length;
@@ -435,28 +443,27 @@ export async function runRoutingProof(opts: RunRoutingProofOpts = {}): Promise<R
   return { ...body, proofHash };
 }
 
-function pickRouteRows(probes: RoutingProbeResult[], limit = 8): RoutingOpsRouteRow[] {
-  const rows = probes.map(p => ({
+function routeRowsFromProof(proof: RoutingProofResult): RoutingOpsRouteRow[] {
+  const rows: RoutingOpsRouteRow[] = proof.probes.map(p => ({
     path: p.path,
     status: p.status,
     pass: p.pass,
     critical: p.critical,
     timeMs: p.timeMs,
-    contentType: p.contentType,
+    contentType: p.contentType || undefined,
   }));
-  // Critical failures first, then slowest
+  // Failures first, then critical, then slowest
   rows.sort((a, b) => {
-    const af = a.critical && !a.pass ? 0 : 1;
-    const bf = b.critical && !b.pass ? 0 : 1;
-    if (af !== bf) return af - bf;
+    if (a.pass !== b.pass) return a.pass ? 1 : -1;
+    if (a.critical !== b.critical) return a.critical ? -1 : 1;
     return b.timeMs - a.timeMs;
   });
-  return rows.slice(0, limit);
+  return rows;
 }
 
 export function routingToOpsSlice(
   proof: RoutingProofResult | null | undefined,
-  extras: { cache?: RoutingOpsSlice['cache'] } = {}
+  meta: { cached?: boolean; stale?: boolean } = {}
 ): RoutingOpsSlice {
   if (!proof?.probes?.length) {
     return {
@@ -467,101 +474,122 @@ export function routingToOpsSlice(
       failed: 0,
       httpOk: 0,
       criticalFailed: 0,
+      errorRate: 0,
+      meanMs: 0,
       p50Ms: 0,
       p95Ms: 0,
       maxMs: 0,
-      errorRate: 0,
       proofHash: '',
       timestamp: '',
       regressions: 0,
       criticalFailedPaths: [],
       routes: [],
-      cache: extras.cache,
+      cached: meta.cached,
+      stale: meta.stale,
     };
   }
-  const total = proof.summary.total || 1;
+  const total = proof.summary.total;
+  const failed = proof.summary.failed;
   return {
     available: true,
     baseUrl: proof.baseUrl,
     passed: proof.summary.passed,
-    total: proof.summary.total,
-    failed: proof.summary.failed,
+    total,
+    failed,
     httpOk: proof.summary.httpOk,
     criticalFailed: proof.summary.criticalFailed,
+    errorRate: total > 0 ? Math.round((failed / total) * 1000) / 1000 : 0,
+    meanMs: proof.latency.meanMs,
     p50Ms: proof.latency.p50Ms,
     p95Ms: proof.latency.p95Ms,
     maxMs: proof.latency.maxMs,
-    errorRate: Math.round((proof.summary.failed / total) * 1000) / 1000,
     proofHash: proof.proofHash ?? '',
     timestamp: proof.timestamp,
     regressions: proof.regression?.changes.length ?? 0,
     criticalFailedPaths: proof.summary.criticalFailedPaths,
-    routes: pickRouteRows(proof.probes),
-    cache: extras.cache,
+    routes: routeRowsFromProof(proof),
+    cached: meta.cached,
+    stale: meta.stale,
   };
 }
 
-// ── Memory + disk cache (TTL) ─────────────────────────────────────────────
+export const ROUTING_CACHE_REL =
+  Bun.env.ROUTING_PROOF_CACHE_PATH?.trim() || 'tmp/routing-proof-cache.json';
+export const ROUTING_CACHE_TTL_MS = Number(Bun.env.ROUTING_PROOF_TTL_MS || 5 * 60 * 1000);
 
-export const ROUTING_CACHE_PATH =
-  Bun.env.ROUTING_PROOF_CACHE_PATH || 'tmp/routing-proof-cache.json';
-export const ROUTING_TTL_MS = Number(Bun.env.ROUTING_PROOF_TTL_MS || 5 * 60 * 1000);
+type MemCache = { proof: RoutingProofResult; at: number };
+let memCache: MemCache | null = null;
 
-type CachedRoutingEnvelope = {
-  generatedAt: string;
-  proof: RoutingProofResult;
-};
-
-let memProof: RoutingProofResult | null = null;
-let memAt = 0;
-
-export function clearRoutingProofCache(): void {
-  memProof = null;
-  memAt = 0;
+/** Exponential backoff with jitter. Returns null after exhausting retries. */
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  label: string,
+  maxRetries = 3,
+  baseDelayMs = 1000
+): Promise<T | null> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (e) {
+      const delay = baseDelayMs * 2 ** (attempt - 1) + Math.random() * 500;
+      console.warn(
+        `[${label}] attempt ${attempt}/${maxRetries} failed: ${e instanceof Error ? e.message : e}`
+      );
+      if (attempt === maxRetries) {
+        console.error(`[${label}] all retries failed`);
+        return null;
+      }
+      await Bun.sleep(delay);
+    }
+  }
+  return null;
 }
 
-/**
- * Get routing proof with retry, memory/disk TTL cache, and optional artifact write.
- * Falls back to stale cache when live probe fails.
- */
-export async function getRoutingProofCached(
-  opts: RunRoutingProofOpts & {
-    forceRefresh?: boolean;
-    ttlMs?: number;
-    cachePath?: string;
-    writeArtifact?: boolean;
-    maxRetries?: number;
-  } = {}
-): Promise<{ proof: RoutingProofResult; cache: NonNullable<RoutingOpsSlice['cache']> }> {
-  const { withRetry } = await import('./retry.ts');
-  const ttl = opts.ttlMs ?? ROUTING_TTL_MS;
-  const cachePath = opts.cachePath ?? ROUTING_CACHE_PATH;
-  const now = Date.now();
-  const force = Boolean(opts.forceRefresh);
+function isFresh(isoOrMs: string | number, ttlMs: number, now = Date.now()): boolean {
+  const t = typeof isoOrMs === 'number' ? isoOrMs : Date.parse(isoOrMs);
+  if (!Number.isFinite(t)) return false;
+  return now - t < ttlMs;
+}
 
-  if (!force && memProof && now - memAt < ttl) {
-    return { proof: memProof, cache: 'memory' };
+export type GetRoutingProofOpts = RunRoutingProofOpts & {
+  forceRefresh?: boolean;
+  ttlMs?: number;
+  cachePath?: string;
+  maxRetries?: number;
+  baseDelayMs?: number;
+  /** When true, write public/registry/@factorywager/routing-test/latest.json */
+  writeArtifact?: boolean;
+};
+
+/**
+ * Self-healing routing proof: mem cache → disk cache → live probe with retries →
+ * optional stale fallback. Always fingerprints via runRoutingProof (CryptoHasher).
+ */
+export async function getRoutingProof(
+  opts: GetRoutingProofOpts = {}
+): Promise<{ proof: RoutingProofResult; cached: boolean; stale: boolean } | null> {
+  const ttlMs = opts.ttlMs ?? ROUTING_CACHE_TTL_MS;
+  const cachePath = opts.cachePath ?? ROUTING_CACHE_REL;
+  const force = Boolean(opts.forceRefresh);
+  const now = Date.now();
+
+  if (!force && memCache && now - memCache.at < ttlMs) {
+    return { proof: memCache.proof, cached: true, stale: false };
   }
 
   if (!force) {
     try {
       const file = Bun.file(cachePath);
       if (await file.exists()) {
-        const disk = (await file.json()) as CachedRoutingEnvelope;
-        const gen = disk.generatedAt ? new Date(disk.generatedAt).getTime() : 0;
-        if (disk.proof?.probes && now - gen < ttl) {
-          memProof = disk.proof;
-          memAt = now;
-          return { proof: disk.proof, cache: 'disk' };
-        }
-        // keep as last-resort stale
-        if (disk.proof?.probes && !memProof) {
-          memProof = disk.proof;
-          memAt = gen;
+        const disk = (await file.json()) as RoutingProofResult & { generatedAt?: string };
+        const stamp = disk.timestamp || disk.generatedAt;
+        if (disk?.probes?.length && stamp && isFresh(stamp, ttlMs, now)) {
+          memCache = { proof: disk, at: now };
+          return { proof: disk, cached: true, stale: false };
         }
       }
     } catch {
-      /* ignore corrupt cache */
+      /* corrupt cache ignored */
     }
   }
 
@@ -571,57 +599,75 @@ export async function getRoutingProofCached(
         baseUrl: opts.baseUrl,
         specs: opts.specs,
         fetchImpl: opts.fetchImpl,
-        concurrency: opts.concurrency,
-        noPrevious: opts.noPrevious,
-        previous: opts.previous,
+        now: opts.now,
         bunVersion: opts.bunVersion,
         bunRevision: opts.bunRevision,
+        concurrency: opts.concurrency,
+        previous: opts.previous,
+        noPrevious: opts.noPrevious,
+        latencyRegressionFactor: opts.latencyRegressionFactor,
+        latencyRegressionFloorMs: opts.latencyRegressionFloorMs,
       }),
-    {
-      label: 'routing-proof',
-      maxRetries: opts.maxRetries ?? 3,
-      baseDelayMs: 2000,
-    }
+    'routing-proof',
+    opts.maxRetries ?? 3,
+    opts.baseDelayMs ?? 2000
   );
 
-  if (!proof) {
-    if (memProof) {
-      console.warn('[routing-proof] using stale cache after retries failed');
-      return { proof: memProof, cache: 'stale' };
-    }
-    throw new Error('Unable to obtain routing proof');
-  }
-
-  memProof = proof;
-  memAt = now;
-
-  try {
-    await Bun.$`mkdir -p ${cachePath.includes('/') ? cachePath.slice(0, cachePath.lastIndexOf('/')) : '.'}`.quiet();
-    const envelope: CachedRoutingEnvelope = {
-      generatedAt: new Date().toISOString(),
-      proof,
-    };
-    await Bun.write(cachePath, `${JSON.stringify(envelope, null, 2)}\n`);
-  } catch {
-    /* non-fatal */
-  }
-
-  if (opts.writeArtifact !== false) {
+  if (proof) {
+    memCache = { proof, at: now };
     try {
-      await writeRoutingArtifact(proof);
-    } catch (e) {
-      console.warn('[routing-proof] artifact write failed:', e);
+      const parent = cachePath.includes('/') ? cachePath.slice(0, cachePath.lastIndexOf('/')) : '.';
+      if (parent && parent !== '.') await Bun.$`mkdir -p ${parent}`.quiet();
+      await Bun.write(cachePath, `${JSON.stringify(proof, null, 2)}\n`);
+    } catch {
+      /* cache write best-effort */
     }
+    if (opts.writeArtifact !== false) {
+      await writeRoutingArtifact(proof);
+    }
+    return { proof, cached: false, stale: false };
   }
 
-  return { proof, cache: 'fresh' };
+  // Stale fallback: mem then disk
+  if (memCache?.proof) {
+    console.warn('[routing-proof] using stale in-memory proof');
+    return { proof: memCache.proof, cached: true, stale: true };
+  }
+  try {
+    const file = Bun.file(cachePath);
+    if (await file.exists()) {
+      const disk = (await file.json()) as RoutingProofResult;
+      if (disk?.probes?.length) {
+        console.warn('[routing-proof] using stale disk cache');
+        memCache = { proof: disk, at: now };
+        return { proof: disk, cached: true, stale: true };
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  try {
+    const prev = await loadPreviousRoutingProof();
+    if (prev?.probes?.length) {
+      console.warn('[routing-proof] using previous registry artifact (stale)');
+      return { proof: prev, cached: true, stale: true };
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
 }
 
-/** Sync load of last written artifact for ops-summary (no network). */
+/**
+ * Load last written routing artifact for ops-summary (no network).
+ * Prefers process mem cache, else Bun.mmap (sync) for disk artifact.
+ */
 export function loadRoutingOpsSliceSync(path: string = ROUTING_ARTIFACT_REL): RoutingOpsSlice {
   try {
-    if (!existsSync(path)) return routingToOpsSlice(null);
-    const data = JSON.parse(readFileSync(path, 'utf8')) as RoutingProofResult;
+    if (memCache?.proof) return routingToOpsSlice(memCache.proof, { cached: true });
+    // @see https://bun.com/docs/runtime/file-io — Bun.mmap (sync path read)
+    const mapped = Bun.mmap(path);
+    const data = JSON.parse(new TextDecoder().decode(mapped)) as RoutingProofResult;
     return routingToOpsSlice(data);
   } catch {
     return routingToOpsSlice(null);
