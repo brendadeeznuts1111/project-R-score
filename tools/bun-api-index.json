@@ -1,0 +1,959 @@
+{
+  "schema": "factorywager/bun-api-index/v1",
+  "generated": "2026-07-23T06:04:39.686Z",
+  "bunVersion": "1.4.0",
+  "ssot": {
+    "llms": "https://bun.com/docs/llms.txt",
+    "docsIndex": "tools/bun-docs-index.json",
+    "catalog": "tools/bun-docs-catalog.json",
+    "canonicalRefs": "tools/bun-doc-refs.ts",
+    "preferMatrix": "tools/bun-prefer-matrix.ts",
+    "coverageFormula": "tools/bun-docs-coverage.ts",
+    "markdownModes": "tools/bun-markdown-modes.ts",
+    "installEnv": "tools/bun-install-env.ts",
+    "oneliners": "tools/bun-api-oneliners.ts",
+    "lookup": "bun tools/bun-doc-refs.ts suggest \"<api>\"",
+    "coverage": "bun tools/bun-doc-refs.ts coverage [--json]",
+    "markdown": "bun tools/bun-doc-refs.ts markdown [--json]",
+    "installEnvCmd": "bun tools/bun-doc-refs.ts install-env [--json] | get <id>",
+    "onelinersCmd": "bun tools/bun-doc-refs.ts oneliners [--json] [--id=…] · --run <id> [--live]",
+    "refresh": "bun run docs:refresh"
+  },
+  "typesAllowlist": [
+    "bun"
+  ],
+  "coverage": {
+    "generated": "2026-07-23T06:04:39.686Z",
+    "bunVersion": "1.4.0",
+    "composite": {
+      "pct": 93
+    },
+    "groups": {
+      "prefer": {
+        "canonical": {
+          "hit": 39,
+          "total": 39,
+          "pct": 100
+        },
+        "apiIndex": {
+          "hit": 39,
+          "total": 39,
+          "pct": 100
+        },
+        "topics": {
+          "hit": 29,
+          "total": 29,
+          "pct": 100
+        }
+      },
+      "repo": {
+        "apis": {
+          "hit": 87,
+          "total": 109,
+          "pct": 80,
+          "missing": [
+            "Bun.argv",
+            "Bun.openInEditor",
+            "Bun.RedisClient",
+            "Bun.readableStreamToBytes",
+            "Bun.readableStreamToArray",
+            "Bun.BlobOrStringOrBuffer",
+            "Bun.CronJob",
+            "Bun.utils",
+            "bun:fs",
+            "Bun.S3Client",
+            "Bun.yaml",
+            "Bun.stdout",
+            "Bun.readableStreamToJSON",
+            "Bun.exit",
+            "Bun.TerminalOptions",
+            "Bun.xxx",
+            "Bun.CronController",
+            "bun:check",
+            "Bun.HeadersInit",
+            "Bun.csrf",
+            "Bun.environment",
+            "Bun.readableStreamToText"
+          ]
+        },
+        "links": {
+          "hit": 1055,
+          "total": 1063,
+          "pct": 99,
+          "missing": [
+            "runtime/utils#bun-sliceansi",
+            "runtime/jsonc#bun-jsonc-parse",
+            "runtime/s3#basics",
+            "runtime/semver#bun-semver-satisfies-version-string-range-string--boolean",
+            "runtime/semver#bun-semver-order-versiona-string-versionb-string--0-",
+            "runtime/semver#bun-semver-satisfies-version-string-range-string--boolean",
+            "runtime/semver#bun-semver-order-versiona-string-versionb-string--0-",
+            "guides/process/argv#parse-command-line-arguments"
+          ]
+        }
+      },
+      "dx": {
+        "canonical": {
+          "hit": 34,
+          "total": 37,
+          "pct": 92,
+          "missing": [
+            "file.exists:guides/read-file/exists",
+            "url.urlpattern",
+            "cli.main:guides/util/main"
+          ]
+        }
+      },
+      "surface": {
+        "versioned": {
+          "hit": 87,
+          "total": 109,
+          "pct": 80,
+          "missing": [
+            "Bun.fetch",
+            "Bun.Terminal",
+            "Bun.plugin",
+            "Bun.s3",
+            "bun:sql",
+            "bun:ffi",
+            "Bun.YAML",
+            "Bun.sha",
+            "Bun.secrets",
+            "Bun.isMainThread",
+            "bun:test",
+            "bun:error",
+            "bun:invalidate",
+            "bun:ws",
+            "Bun.embeddedFiles",
+            "Bun.isStandaloneExecutable",
+            "bun:bundle",
+            "Bun.embeddedFiles.length",
+            "Bun.zstdCompress",
+            "Bun.zstdDecompress",
+            "Bun.readableStreamTo",
+            "Bun.stdin"
+          ]
+        }
+      }
+    }
+  },
+  "install": {
+    "host": "bun.com",
+    "policy": "BUN_CONFIG_* may override bunfig for registry/token/lockfile skips. Cache/store/age: machine ~/.bunfig.toml only — never shell/IDE (docs/UNIFIED.md).",
+    "factory": {
+      "linker": "isolated",
+      "globalStore": true,
+      "frozenLockfileMachine": true,
+      "frozenLockfileWorkspaceDev": false,
+      "minimumReleaseAgeSeconds": 259200,
+      "cacheDir": "absolute path in ~/.bunfig.toml [install.cache].dir",
+      "shellEnvForbidden": [
+        "BUN_INSTALL_CACHE_DIR",
+        "BUN_INSTALL_GLOBAL_STORE"
+      ]
+    },
+    "noteIds": [
+      "backend",
+      "cache-layout",
+      "node-modules-check",
+      "eager-resolve",
+      "lazy-resolve",
+      "hoisted",
+      "isolated",
+      "default-strategy",
+      "minimum-release-age",
+      "age-stability-check",
+      "bunfig-merge",
+      "frozen-lockfile",
+      "bun-ci",
+      "dry-run"
+    ],
+    "vars": [
+      "BUN_CONFIG_REGISTRY",
+      "BUN_CONFIG_TOKEN",
+      "BUN_CONFIG_YARN_LOCKFILE",
+      "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
+      "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
+      "BUN_CONFIG_SKIP_INSTALL_PACKAGES"
+    ],
+    "loci": {
+      "env": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "cache": "https://bun.com/docs/pm/cli/install#cache",
+      "strategies": "https://bun.com/docs/pm/cli/install#installation-strategies",
+      "minimumReleaseAge": "https://bun.com/docs/pm/cli/install#minimum-release-age"
+    }
+  },
+  "prefer": {
+    "fileIo": {
+      "use": [
+        "Bun.file",
+        "Bun.write"
+      ],
+      "avoid": [
+        "fs.readFile",
+        "fs.writeFile"
+      ],
+      "group": "io"
+    },
+    "exists": {
+      "use": [
+        "Bun.file"
+      ],
+      "avoid": [
+        "existsSync"
+      ],
+      "group": "io"
+    },
+    "glob": {
+      "use": [
+        "Bun.Glob"
+      ],
+      "avoid": [
+        "fast-glob",
+        "globby"
+      ],
+      "group": "io"
+    },
+    "paths": {
+      "use": [],
+      "avoid": [
+        "path",
+        "node:path"
+      ],
+      "group": "io"
+    },
+    "hashing": {
+      "use": [
+        "Bun.CryptoHasher",
+        "Bun.hash"
+      ],
+      "avoid": [
+        "crypto.createHash"
+      ],
+      "group": "crypto"
+    },
+    "passwords": {
+      "use": [
+        "Bun.password"
+      ],
+      "avoid": [
+        "bcrypt",
+        "argon2"
+      ],
+      "group": "crypto"
+    },
+    "secrets": {
+      "use": [
+        "Bun.secrets"
+      ],
+      "avoid": [],
+      "group": "crypto"
+    },
+    "spawn": {
+      "use": [
+        "Bun.spawn",
+        "Bun.spawnSync",
+        "Bun.$"
+      ],
+      "avoid": [
+        "child_process"
+      ],
+      "group": "process"
+    },
+    "which": {
+      "use": [
+        "Bun.which"
+      ],
+      "avoid": [],
+      "group": "process"
+    },
+    "httpServer": {
+      "use": [
+        "Bun.serve"
+      ],
+      "avoid": [
+        "express",
+        "fastify"
+      ],
+      "group": "process"
+    },
+    "fetch": {
+      "use": [
+        "fetch"
+      ],
+      "avoid": [
+        "axios"
+      ],
+      "group": "process"
+    },
+    "cron": {
+      "use": [
+        "Bun.cron"
+      ],
+      "avoid": [
+        "node-cron"
+      ],
+      "group": "process"
+    },
+    "entryGuard": {
+      "use": [],
+      "avoid": [],
+      "group": "process"
+    },
+    "sqlite": {
+      "use": [
+        "bun:sqlite"
+      ],
+      "avoid": [
+        "better-sqlite3"
+      ],
+      "group": "data"
+    },
+    "sql": {
+      "use": [
+        "Bun.sql",
+        "bun:sql"
+      ],
+      "avoid": [
+        "pg",
+        "mysql2"
+      ],
+      "group": "data"
+    },
+    "redis": {
+      "use": [
+        "Bun.redis"
+      ],
+      "avoid": [
+        "ioredis"
+      ],
+      "group": "data"
+    },
+    "s3": {
+      "use": [
+        "Bun.s3"
+      ],
+      "avoid": [],
+      "group": "data"
+    },
+    "tomlYaml": {
+      "use": [
+        "Bun.TOML",
+        "Bun.YAML"
+      ],
+      "avoid": [
+        "@iarna/toml"
+      ],
+      "group": "data"
+    },
+    "semver": {
+      "use": [
+        "Bun.semver"
+      ],
+      "avoid": [
+        "semver"
+      ],
+      "group": "data"
+    },
+    "test": {
+      "use": [
+        "bun:test"
+      ],
+      "avoid": [
+        "vitest",
+        "jest"
+      ],
+      "group": "data"
+    },
+    "image": {
+      "use": [
+        "Bun.Image"
+      ],
+      "avoid": [
+        "sharp"
+      ],
+      "group": "ui"
+    },
+    "webview": {
+      "use": [
+        "Bun.WebView"
+      ],
+      "avoid": [
+        "puppeteer",
+        "playwright"
+      ],
+      "group": "ui"
+    },
+    "colorAnsi": {
+      "use": [
+        "Bun.color",
+        "Bun.stripANSI",
+        "Bun.stringWidth"
+      ],
+      "avoid": [
+        "chalk",
+        "string-width",
+        "strip-ansi"
+      ],
+      "group": "ui"
+    },
+    "markdown": {
+      "use": [
+        "Bun.markdown",
+        "Bun.markdown.html",
+        "Bun.markdown.ansi",
+        "Bun.markdown.render",
+        "Bun.markdown.react"
+      ],
+      "avoid": [
+        "marked"
+      ],
+      "group": "ui"
+    },
+    "inspect": {
+      "use": [
+        "Bun.inspect"
+      ],
+      "avoid": [
+        "util.inspect"
+      ],
+      "group": "ui"
+    },
+    "env": {
+      "use": [
+        "Bun.env"
+      ],
+      "avoid": [
+        "process.env"
+      ],
+      "group": "harness"
+    },
+    "deepEquals": {
+      "use": [
+        "Bun.deepEquals"
+      ],
+      "avoid": [],
+      "group": "harness"
+    },
+    "peek": {
+      "use": [
+        "Bun.peek"
+      ],
+      "avoid": [],
+      "group": "harness"
+    },
+    "timeUuid": {
+      "use": [
+        "Bun.nanoseconds",
+        "Bun.sleep",
+        "Bun.randomUUIDv7"
+      ],
+      "avoid": [],
+      "group": "harness"
+    }
+  },
+  "escapeHatch": "When bun-types lags a Bun runtime API (e.g. Bun.write append), a minimal typed Node escape is OK with a comment; prefer Bun when types catch up.",
+  "apis": [
+    {
+      "name": "bun:bundle",
+      "docs": "https://bun.com/docs/bundler/esbuild#cli-api"
+    },
+    {
+      "name": "bun:error",
+      "docs": "https://bun.com/docs/bundler/hot-reloading#built-in-events"
+    },
+    {
+      "name": "bun:ffi",
+      "docs": "https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi"
+    },
+    {
+      "name": "bun:invalidate",
+      "docs": "https://bun.com/docs/bundler/hot-reloading#built-in-events"
+    },
+    {
+      "name": "bun:sql",
+      "docs": "https://bun.com/docs/runtime/sql#features"
+    },
+    {
+      "name": "bun:sqlite",
+      "docs": "https://bun.com/docs/runtime/sqlite#load-via-es-module-import"
+    },
+    {
+      "name": "bun:test",
+      "docs": "https://bun.com/docs/test/index#run-tests"
+    },
+    {
+      "name": "bun:test snapshots",
+      "docs": "https://bun.com/docs/test/snapshots#basic-snapshots"
+    },
+    {
+      "name": "bun:ws",
+      "docs": "https://bun.com/docs/bundler/hot-reloading#built-in-events"
+    },
+    {
+      "name": "Bun.$",
+      "docs": "https://bun.com/docs/runtime/shell#getting-started"
+    },
+    {
+      "name": "Bun.allocUnsafe",
+      "docs": "https://bun.com/docs/runtime/bun-apis"
+    },
+    {
+      "name": "Bun.Archive",
+      "docs": "https://bun.com/docs/runtime/archive#quickstart"
+    },
+    {
+      "name": "Bun.ArrayBufferSink",
+      "docs": "https://bun.com/docs/runtime/streams#bun-arraybuffersink"
+    },
+    {
+      "name": "Bun.build",
+      "docs": "https://bun.com/docs/bundler/index#basic-example"
+    },
+    {
+      "name": "Bun.color",
+      "docs": "https://bun.com/docs/runtime/color#flexible-input"
+    },
+    {
+      "name": "Bun.concatArrayBuffers",
+      "docs": "https://bun.com/docs/runtime/bun-apis"
+    },
+    {
+      "name": "Bun.connect",
+      "docs": "https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect"
+    },
+    {
+      "name": "Bun.Cookie",
+      "docs": "https://bun.com/docs/runtime/cookies#cookie-class"
+    },
+    {
+      "name": "Bun.CookieMap",
+      "docs": "https://bun.com/docs/runtime/cookies#cookiemap-class"
+    },
+    {
+      "name": "Bun.cron",
+      "docs": "https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process"
+    },
+    {
+      "name": "Bun.CryptoHasher",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-cryptohasher"
+    },
+    {
+      "name": "Bun.CSRF",
+      "docs": "https://bun.com/docs/runtime/csrf#bun-csrf-generate"
+    },
+    {
+      "name": "Bun.CSRF.generate",
+      "docs": "https://bun.com/docs/runtime/csrf#bun-csrf-generate"
+    },
+    {
+      "name": "Bun.CSRF.verify",
+      "docs": "https://bun.com/docs/runtime/csrf#bun-csrf-verify"
+    },
+    {
+      "name": "Bun.deepEquals",
+      "docs": "https://bun.com/docs/runtime/utils#bun-deepequals"
+    },
+    {
+      "name": "Bun.deflateSync",
+      "docs": "https://bun.com/docs/runtime/utils#bun-deflatesync"
+    },
+    {
+      "name": "Bun.dns",
+      "docs": "https://bun.com/docs/runtime/networking/dns#dns-prefetch"
+    },
+    {
+      "name": "Bun.dns.getCacheStats",
+      "docs": "https://bun.com/docs/runtime/networking/dns#dns-getcachestats"
+    },
+    {
+      "name": "Bun.dns.lookup",
+      "docs": "https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun"
+    },
+    {
+      "name": "Bun.dns.prefetch",
+      "docs": "https://bun.com/docs/runtime/networking/dns#dns-prefetch"
+    },
+    {
+      "name": "Bun.embeddedFiles",
+      "docs": "https://bun.com/docs/bundler/executables#listing-embedded-files"
+    },
+    {
+      "name": "Bun.embeddedFiles.length",
+      "docs": "https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime"
+    },
+    {
+      "name": "Bun.env",
+      "docs": "https://bun.com/docs/runtime/utils#bun-env"
+    },
+    {
+      "name": "Bun.escapeHTML",
+      "docs": "https://bun.com/docs/runtime/utils#bun-escapehtml"
+    },
+    {
+      "name": "Bun.fetch",
+      "docs": "https://bun.com/docs/runtime/networking/fetch#sending-an-http-request"
+    },
+    {
+      "name": "Bun.file",
+      "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file"
+    },
+    {
+      "name": "Bun.FileSystemRouter",
+      "docs": "https://bun.com/docs/runtime/bun-apis"
+    },
+    {
+      "name": "Bun.fileURLToPath",
+      "docs": "https://bun.com/docs/runtime/utils#bun-fileurltopath"
+    },
+    {
+      "name": "Bun.gc",
+      "docs": "https://bun.com/docs/runtime/utils"
+    },
+    {
+      "name": "Bun.generateHeapSnapshot",
+      "docs": "https://bun.com/docs/runtime/utils"
+    },
+    {
+      "name": "Bun.Glob",
+      "docs": "https://bun.com/docs/runtime/glob#quickstart"
+    },
+    {
+      "name": "Bun.Glob.scan",
+      "docs": "https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan"
+    },
+    {
+      "name": "Bun.gunzipSync",
+      "docs": "https://bun.com/docs/runtime/utils#bun-gunzipsync"
+    },
+    {
+      "name": "Bun.gzipSync",
+      "docs": "https://bun.com/docs/runtime/utils#bun-gzipsync"
+    },
+    {
+      "name": "Bun.hash",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-hash"
+    },
+    {
+      "name": "Bun.hash.crc32",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-hash"
+    },
+    {
+      "name": "Bun.Image",
+      "docs": "https://bun.com/docs/runtime/image#input"
+    },
+    {
+      "name": "Bun.inflateSync",
+      "docs": "https://bun.com/docs/runtime/utils#bun-inflatesync"
+    },
+    {
+      "name": "Bun.inspect",
+      "docs": "https://bun.com/docs/runtime/utils#bun-inspect"
+    },
+    {
+      "name": "Bun.inspect.custom",
+      "docs": "https://bun.com/docs/runtime/utils#bun-inspect-custom"
+    },
+    {
+      "name": "Bun.inspect.table",
+      "docs": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options"
+    },
+    {
+      "name": "Bun.inspect.table(tabularData, properties, options)",
+      "docs": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options"
+    },
+    {
+      "name": "Bun.inspect()",
+      "docs": "https://bun.com/docs/runtime/utils#bun-inspect"
+    },
+    {
+      "name": "Bun.isMainThread",
+      "docs": "https://bun.com/docs/runtime/workers#bun-ismainthread"
+    },
+    {
+      "name": "Bun.isStandaloneExecutable",
+      "docs": "https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime"
+    },
+    {
+      "name": "Bun.JSON5",
+      "docs": "https://bun.com/docs/runtime/json5"
+    },
+    {
+      "name": "Bun.JSONC",
+      "docs": "https://bun.com/docs/runtime/jsonc"
+    },
+    {
+      "name": "Bun.JSONL",
+      "docs": "https://bun.com/docs/runtime/jsonl"
+    },
+    {
+      "name": "Bun.listen",
+      "docs": "https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen"
+    },
+    {
+      "name": "Bun.main",
+      "docs": "https://bun.com/docs/runtime/utils#bun-main"
+    },
+    {
+      "name": "Bun.markdown",
+      "docs": "https://bun.com/docs/runtime/markdown#bun-markdown-html"
+    },
+    {
+      "name": "Bun.markdown reference",
+      "docs": "https://bun.com/reference/bun/markdown"
+    },
+    {
+      "name": "Bun.markdown types",
+      "docs": "https://bun.com/reference/bun/markdown"
+    },
+    {
+      "name": "Bun.markdown.ansi",
+      "docs": "https://bun.com/docs/runtime/markdown#ansi-terminal-output"
+    },
+    {
+      "name": "Bun.markdown.AnsiTheme",
+      "docs": "https://bun.com/docs/runtime/markdown#ansi-terminal-output"
+    },
+    {
+      "name": "Bun.markdown.html",
+      "docs": "https://bun.com/docs/runtime/markdown#bun-markdown-html"
+    },
+    {
+      "name": "Bun.markdown.html options",
+      "docs": "https://bun.com/docs/runtime/markdown#options"
+    },
+    {
+      "name": "Bun.markdown.Options",
+      "docs": "https://bun.com/docs/runtime/markdown#options"
+    },
+    {
+      "name": "Bun.markdown.react",
+      "docs": "https://bun.com/docs/runtime/markdown#bun-markdown-react"
+    },
+    {
+      "name": "Bun.markdown.react available overrides",
+      "docs": "https://bun.com/docs/runtime/markdown#available-overrides"
+    },
+    {
+      "name": "Bun.markdown.react component overrides",
+      "docs": "https://bun.com/docs/runtime/markdown#component-overrides"
+    },
+    {
+      "name": "Bun.markdown.react parser options",
+      "docs": "https://bun.com/docs/runtime/markdown#parser-options"
+    },
+    {
+      "name": "Bun.markdown.render",
+      "docs": "https://bun.com/docs/runtime/markdown#bun-markdown-render"
+    },
+    {
+      "name": "Bun.markdown.render parser options",
+      "docs": "https://bun.com/docs/runtime/markdown#parser-options"
+    },
+    {
+      "name": "Bun.mmap",
+      "docs": "https://bun.com/docs/runtime/bun-apis"
+    },
+    {
+      "name": "Bun.nanoseconds",
+      "docs": "https://bun.com/docs/runtime/utils#bun-nanoseconds"
+    },
+    {
+      "name": "Bun.password",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-password"
+    },
+    {
+      "name": "Bun.password.hash",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-password"
+    },
+    {
+      "name": "Bun.password.verify",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-password"
+    },
+    {
+      "name": "Bun.pathToFileURL",
+      "docs": "https://bun.com/docs/runtime/utils#bun-pathtofileurl"
+    },
+    {
+      "name": "Bun.peek",
+      "docs": "https://bun.com/docs/runtime/utils#bun-peek"
+    },
+    {
+      "name": "Bun.plugin",
+      "docs": "https://bun.com/docs/bundler/plugins#usage"
+    },
+    {
+      "name": "Bun.randomUUIDv7",
+      "docs": "https://bun.com/docs/runtime/utils#bun-randomuuidv7"
+    },
+    {
+      "name": "Bun.readableStreamTo",
+      "docs": "https://bun.com/docs/runtime/utils#bun-readablestreamto"
+    },
+    {
+      "name": "Bun.redis",
+      "docs": "https://bun.com/docs/runtime/redis#getting-started"
+    },
+    {
+      "name": "Bun.resolveSync",
+      "docs": "https://bun.com/docs/runtime/utils#bun-resolvesync"
+    },
+    {
+      "name": "Bun.revision",
+      "docs": "https://bun.com/docs/runtime/utils#bun-revision"
+    },
+    {
+      "name": "Bun.s3",
+      "docs": "https://bun.com/docs/runtime/s3#bun-s3client-bun-s3"
+    },
+    {
+      "name": "Bun.secrets",
+      "docs": "https://bun.com/docs/runtime/secrets#bun-secrets-get-options"
+    },
+    {
+      "name": "Bun.semver",
+      "docs": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean"
+    },
+    {
+      "name": "Bun.serve",
+      "docs": "https://bun.com/docs/runtime/http/server#basic-setup"
+    },
+    {
+      "name": "Bun.serve benchmarks",
+      "docs": "https://bun.com/docs/runtime/http/server#benchmarks"
+    },
+    {
+      "name": "Bun.serve hostname",
+      "docs": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname"
+    },
+    {
+      "name": "Bun.serve port",
+      "docs": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname"
+    },
+    {
+      "name": "Bun.serve reference",
+      "docs": "https://bun.com/docs/runtime/http/server#reference"
+    },
+    {
+      "name": "Bun.serve routes",
+      "docs": "https://bun.com/docs/runtime/http/server#basic-setup"
+    },
+    {
+      "name": "Bun.serve unix",
+      "docs": "https://bun.com/docs/runtime/http/server#unix-domain-sockets"
+    },
+    {
+      "name": "Bun.sha",
+      "docs": "https://bun.com/docs/runtime/hashing#bun-hash"
+    },
+    {
+      "name": "Bun.sleep",
+      "docs": "https://bun.com/docs/runtime/utils#bun-sleep"
+    },
+    {
+      "name": "Bun.sleepSync",
+      "docs": "https://bun.com/docs/runtime/utils#bun-sleepsync"
+    },
+    {
+      "name": "Bun.sliceAnsi",
+      "docs": "https://bun.com/reference/bun/sliceAnsi"
+    },
+    {
+      "name": "Bun.spawn",
+      "docs": "https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn"
+    },
+    {
+      "name": "Bun.spawn terminal (PTY)",
+      "docs": "https://bun.com/docs/runtime/child-process#terminal-pty-support"
+    },
+    {
+      "name": "Bun.spawnSync",
+      "docs": "https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync"
+    },
+    {
+      "name": "Bun.sql",
+      "docs": "https://bun.com/docs/runtime/sql#features"
+    },
+    {
+      "name": "Bun.SQL",
+      "docs": "https://bun.com/docs/runtime/sql"
+    },
+    {
+      "name": "Bun.stdin",
+      "docs": "https://bun.com/docs/runtime/console#reading-from-stdin"
+    },
+    {
+      "name": "Bun.stringWidth",
+      "docs": "https://bun.com/docs/runtime/utils#bun-stringwidth"
+    },
+    {
+      "name": "Bun.stripANSI",
+      "docs": "https://bun.com/docs/runtime/utils#bun-stripansi"
+    },
+    {
+      "name": "Bun.Terminal",
+      "docs": "https://bun.com/docs/runtime/child-process#terminal-pty-support"
+    },
+    {
+      "name": "Bun.TOML",
+      "docs": "https://bun.com/docs/runtime/toml#bun-toml-parse"
+    },
+    {
+      "name": "Bun.TOML.parse",
+      "docs": "https://bun.com/docs/runtime/toml#bun-toml-parse"
+    },
+    {
+      "name": "Bun.TOML.stringify",
+      "docs": "https://bun.com/docs/runtime/toml#bun-toml-stringify"
+    },
+    {
+      "name": "Bun.Transpiler",
+      "docs": "https://bun.com/docs/runtime/transpiler"
+    },
+    {
+      "name": "Bun.udpSocket",
+      "docs": "https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket"
+    },
+    {
+      "name": "Bun.version",
+      "docs": "https://bun.com/docs/runtime/utils#bun-version"
+    },
+    {
+      "name": "Bun.WebView",
+      "docs": "https://bun.com/docs/runtime/webview#new-bun-webview-options"
+    },
+    {
+      "name": "Bun.which",
+      "docs": "https://bun.com/docs/runtime/utils#bun-which"
+    },
+    {
+      "name": "Bun.wrapAnsi",
+      "docs": "https://bun.com/docs/runtime/utils#bun-wrapansi"
+    },
+    {
+      "name": "Bun.write",
+      "docs": "https://bun.com/docs/runtime/file-io#writing-files-bun-write"
+    },
+    {
+      "name": "Bun.YAML",
+      "docs": "https://bun.com/docs/runtime/yaml#bun-yaml-parse"
+    },
+    {
+      "name": "Bun.zstdCompress",
+      "docs": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync"
+    },
+    {
+      "name": "Bun.zstdCompressSync",
+      "docs": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync"
+    },
+    {
+      "name": "Bun.zstdDecompress",
+      "docs": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync"
+    },
+    {
+      "name": "Bun.zstdDecompressSync",
+      "docs": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync"
+    }
+  ],
+  "count": 125
+}

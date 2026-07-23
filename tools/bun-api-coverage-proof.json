@@ -1,0 +1,1200 @@
+{
+  "generated": "2026-07-23T06:34:02.601Z",
+  "bunVersion": "1.4.0",
+  "bunTypesDir": "/Users/nolarose/.npm/links/bun-types@1.3.14-08e2499268f905f7/node_modules/bun-types",
+  "docsIndexVersion": "1.4.0",
+  "summary": {
+    "demos": 46,
+    "demosPassed": 46,
+    "apis": 73,
+    "apisVerified": 73,
+    "opsDemos": 9,
+    "apiDemos": 37
+  },
+  "demos": [
+    {
+      "id": "file-meta",
+      "kind": "api",
+      "summary": "Bun.file exists/stat/json",
+      "apis": [
+        "Bun.file"
+      ],
+      "runtimeOutput": "60626B name=factorywager-enterprise",
+      "runtimeOk": true,
+      "proofHash": "c116e8c064952f1ff29cf0c6a3744a9943b546986322b91aa00719ec1fe1c5ad",
+      "proofPreview": "c116e8c0"
+    },
+    {
+      "id": "file-write-copy",
+      "kind": "api",
+      "summary": "Bun.write copy via Bun.file",
+      "apis": [
+        "Bun.write",
+        "Bun.file"
+      ],
+      "runtimeOutput": "copied 60626B",
+      "runtimeOk": true,
+      "proofHash": "158d3118f3d4981b726ef2684a947dee91726c5fec6c532a09f4537b635081c7",
+      "proofPreview": "158d3118"
+    },
+    {
+      "id": "toml",
+      "kind": "api",
+      "summary": "Bun.TOML parse + stringify",
+      "apis": [
+        "Bun.TOML",
+        "Bun.TOML.parse",
+        "Bun.TOML.stringify"
+      ],
+      "runtimeOutput": "a=1",
+      "runtimeOk": true,
+      "proofHash": "91f063d82c8ed3fca1491d672514b91bf512a4ccc726feccfe6a77f0154d4c49",
+      "proofPreview": "91f063d8"
+    },
+    {
+      "id": "json-family",
+      "kind": "api",
+      "summary": "JSONC / JSON5 / JSONL parse",
+      "apis": [
+        "Bun.JSONC",
+        "Bun.JSON5",
+        "Bun.JSONL"
+      ],
+      "runtimeOutput": "jsonc=1 json5=world jsonl=2",
+      "runtimeOk": true,
+      "proofHash": "bec16fbdd367ef7dcea3c6dc880912018774805a9481e83dcada328eca6fbcde",
+      "proofPreview": "bec16fbd"
+    },
+    {
+      "id": "crypto-hasher",
+      "kind": "api",
+      "summary": "CryptoHasher SHA-256 + HMAC",
+      "apis": [
+        "Bun.CryptoHasher"
+      ],
+      "runtimeOutput": "1b2c16b75bd2a870",
+      "runtimeOk": true,
+      "proofHash": "b03405d00898ff9c726d3db40f0ecabb48b16e97688dcca6d34bcd88d8996358",
+      "proofPreview": "b03405d0"
+    },
+    {
+      "id": "password",
+      "kind": "api",
+      "summary": "Bun.password argon2id",
+      "apis": [
+        "Bun.password",
+        "Bun.password.hash",
+        "Bun.password.verify"
+      ],
+      "runtimeOutput": "verify=true",
+      "runtimeOk": true,
+      "proofHash": "5ffad1ee9a109b2066d725e590ad862877512c83dd7fc9c87c9e7afdd8607c44",
+      "proofPreview": "5ffad1ee"
+    },
+    {
+      "id": "hash-wyhash-crc32",
+      "kind": "api",
+      "summary": "Bun.hash + crc32",
+      "apis": [
+        "Bun.hash",
+        "Bun.hash.crc32"
+      ],
+      "runtimeOutput": "wyhash=1019145960556548909 crc32=907060870",
+      "runtimeOk": true,
+      "proofHash": "9f341e2538d8a854976a298dfe09a6be8d3fc56fbbad7939c3be51d001b7d1fc",
+      "proofPreview": "9f341e25"
+    },
+    {
+      "id": "uuid-v7",
+      "kind": "api",
+      "summary": "Bun.randomUUIDv7",
+      "apis": [
+        "Bun.randomUUIDv7"
+      ],
+      "runtimeOutput": "019f8dae-5d6e-75aa-b171-f3283b60295f",
+      "runtimeOk": true,
+      "proofHash": "6281d813ba401577f0962fccd6bd0cf7d74c63fa0c69ac498869428eba8d1d57",
+      "proofPreview": "6281d813"
+    },
+    {
+      "id": "compression",
+      "kind": "api",
+      "summary": "gzip / deflate / zstd sync",
+      "apis": [
+        "Bun.gzipSync",
+        "Bun.gunzipSync",
+        "Bun.deflateSync",
+        "Bun.inflateSync",
+        "Bun.zstdCompressSync",
+        "Bun.zstdDecompressSync"
+      ],
+      "runtimeOutput": "gz=32 zstd=22 roundtrip=true",
+      "runtimeOk": true,
+      "proofHash": "82d72345907c346d8dd578aaf862615aa8e6abf9a4e27975d75004be75d591df",
+      "proofPreview": "82d72345"
+    },
+    {
+      "id": "buffers",
+      "kind": "api",
+      "summary": "concatArrayBuffers + allocUnsafe",
+      "apis": [
+        "Bun.concatArrayBuffers",
+        "Bun.allocUnsafe"
+      ],
+      "runtimeOutput": "concat=4 alloc=1024",
+      "runtimeOk": true,
+      "proofHash": "f0fcfb60d91af5151f71dd95160a7b43fe345a30853fb9b8b1e66da99ea526c8",
+      "proofPreview": "f0fcfb60"
+    },
+    {
+      "id": "string-utils",
+      "kind": "api",
+      "summary": "escapeHTML / stringWidth / stripANSI / wrapAnsi / sliceAnsi",
+      "apis": [
+        "Bun.escapeHTML",
+        "Bun.stringWidth",
+        "Bun.stripANSI",
+        "Bun.wrapAnsi",
+        "Bun.sliceAnsi"
+      ],
+      "runtimeOutput": "&lt;div&gt; w=2 red long|line|here \u001b[31mre\u001b[39m",
+      "runtimeOk": true,
+      "proofHash": "3e8e6ff859655aead9e46b406934feeb8330c1a0294dcc92a1b9912ebd95bccd",
+      "proofPreview": "3e8e6ff8"
+    },
+    {
+      "id": "color",
+      "kind": "api",
+      "summary": "Bun.color convert",
+      "apis": [
+        "Bun.color"
+      ],
+      "runtimeOutput": "#ff0000",
+      "runtimeOk": true,
+      "proofHash": "3b1866d89d9c2a3366cc82eb823fc070ecfd43ff1435de5af04cce937953a9be",
+      "proofPreview": "3b1866d8"
+    },
+    {
+      "id": "inspect-table",
+      "kind": "api",
+      "summary": "Bun.inspect + inspect.table",
+      "apis": [
+        "Bun.inspect",
+        "Bun.inspect.table"
+      ],
+      "runtimeOutput": "inspect=true table=true",
+      "runtimeOk": true,
+      "proofHash": "6f4cda35eebfc767d58bffc0f5e7999956ac0a01e07a824ce3ee662cb7471546",
+      "proofPreview": "6f4cda35"
+    },
+    {
+      "id": "semver",
+      "kind": "api",
+      "summary": "Bun.semver order + satisfies",
+      "apis": [
+        "Bun.semver",
+        "Bun.semver.order",
+        "Bun.semver.satisfies"
+      ],
+      "runtimeOutput": "order=-1 ok=true",
+      "runtimeOk": true,
+      "proofHash": "daa83f0a94783dc728bfd3f2721e55faccbd6a30f6286e10cdd89df518c1d9d9",
+      "proofPreview": "daa83f0a"
+    },
+    {
+      "id": "markdown",
+      "kind": "api",
+      "summary": "Bun.markdown.html + ansi",
+      "apis": [
+        "Bun.markdown",
+        "Bun.markdown.html",
+        "Bun.markdown.ansi"
+      ],
+      "runtimeOutput": "html=true ansi=true",
+      "runtimeOk": true,
+      "proofHash": "9366747131d624e678b252e8aa6785bd758dffc40497b7ea432d4def57dcf4ab",
+      "proofPreview": "93667471"
+    },
+    {
+      "id": "shell-which",
+      "kind": "api",
+      "summary": "Bun.$ + Bun.which",
+      "apis": [
+        "Bun.$",
+        "Bun.which"
+      ],
+      "runtimeOutput": "hello which=yes",
+      "runtimeOk": true,
+      "proofHash": "96bf7fc6c154c8b5fecd06be218e3c1ff723a40b6b2e3ca9bda61f00b1914450",
+      "proofPreview": "96bf7fc6"
+    },
+    {
+      "id": "spawn",
+      "kind": "api",
+      "summary": "Bun.spawnSync",
+      "apis": [
+        "Bun.spawn",
+        "Bun.spawnSync"
+      ],
+      "runtimeOutput": "1.4.0",
+      "runtimeOk": true,
+      "proofHash": "a2f83d61eb7e9998b64adbe85ad1833c1bba1e7f16f82a9eaf6a784e9a4ea53a",
+      "proofPreview": "a2f83d61"
+    },
+    {
+      "id": "glob",
+      "kind": "api",
+      "summary": "Bun.Glob scan + match",
+      "apis": [
+        "Bun.Glob"
+      ],
+      "runtimeOutput": "match=true",
+      "runtimeOk": true,
+      "proofHash": "8639c6d685edbe31993b6f227ba9be6d3309ef7b0be76f474e5a918788f17349",
+      "proofPreview": "8639c6d6"
+    },
+    {
+      "id": "csrf",
+      "kind": "api",
+      "summary": "Bun.CSRF generate + verify",
+      "apis": [
+        "Bun.CSRF",
+        "Bun.CSRF.generate",
+        "Bun.CSRF.verify"
+      ],
+      "runtimeOutput": "verify=true",
+      "runtimeOk": true,
+      "proofHash": "cb8d171084a85b64aba752327f8eb0bbf095bc9a87ce145e2d77a03f07619f10",
+      "proofPreview": "cb8d1710"
+    },
+    {
+      "id": "cookies",
+      "kind": "api",
+      "summary": "Bun.Cookie + CookieMap",
+      "apis": [
+        "Bun.Cookie",
+        "Bun.CookieMap"
+      ],
+      "runtimeOutput": "session=abc123",
+      "runtimeOk": true,
+      "proofHash": "ce22b209eeb46ee126dff25fa6af6102ebda0f52119e14ef9df3d7ddf08de0ba",
+      "proofPreview": "ce22b209"
+    },
+    {
+      "id": "sqlite",
+      "kind": "api",
+      "summary": "bun:sqlite CRUD",
+      "apis": [
+        "bun:sqlite"
+      ],
+      "runtimeOutput": "rows=1 name=Alice",
+      "runtimeOk": true,
+      "proofHash": "7e80a916ee7567fec71c8a6db9232c635e91544e5b280ace2a32f463207fd9c7",
+      "proofPreview": "7e80a916"
+    },
+    {
+      "id": "archive",
+      "kind": "api",
+      "summary": "Bun.Archive create + list",
+      "apis": [
+        "Bun.Archive"
+      ],
+      "runtimeOutput": "bytes=10240",
+      "runtimeOk": true,
+      "proofHash": "5e6c1a082d23694130a0b5edc7e14ef95cce8d3df640be669abedf41faf66cef",
+      "proofPreview": "5e6c1a08"
+    },
+    {
+      "id": "transpiler",
+      "kind": "api",
+      "summary": "Bun.Transpiler transformSync",
+      "apis": [
+        "Bun.Transpiler"
+      ],
+      "runtimeOutput": "ok",
+      "runtimeOk": true,
+      "proofHash": "da6e41fe56ee3102c2af360b9b18b20782278c6c0021de1cd6610b96f5c5c16a",
+      "proofPreview": "da6e41fe"
+    },
+    {
+      "id": "resolve",
+      "kind": "api",
+      "summary": "Bun.resolveSync",
+      "apis": [
+        "Bun.resolveSync"
+      ],
+      "runtimeOutput": "/Users/nolarose/Projects/package.json",
+      "runtimeOk": true,
+      "proofHash": "2f0e87bee58b6a6264109b0ef274eb8c104e7ba99f063cb5ac1485903c79e637",
+      "proofPreview": "2f0e87be"
+    },
+    {
+      "id": "env-argv-main",
+      "kind": "api",
+      "summary": "Bun.env / argv / main",
+      "apis": [
+        "Bun.env",
+        "Bun.argv",
+        "Bun.main"
+      ],
+      "runtimeOutput": "home=true argv=3 main=true",
+      "runtimeOk": true,
+      "proofHash": "d87769a6640e69b0bcb980bfc1fec34f29582f4d385f3806dbc06071f95f869a",
+      "proofPreview": "d87769a6"
+    },
+    {
+      "id": "version-revision",
+      "kind": "api",
+      "summary": "Bun.version + Bun.revision",
+      "apis": [
+        "Bun.version",
+        "Bun.revision"
+      ],
+      "runtimeOutput": "1.4.0 a227ad99",
+      "runtimeOk": true,
+      "proofHash": "ba544015f11e27a75cee167b064ef0e34cafcd527499df8d076aed586126a2ac",
+      "proofPreview": "ba544015"
+    },
+    {
+      "id": "deep-equals-peek",
+      "kind": "api",
+      "summary": "Bun.deepEquals + Bun.peek",
+      "apis": [
+        "Bun.deepEquals",
+        "Bun.peek"
+      ],
+      "runtimeOutput": "eq=true peek=42",
+      "runtimeOk": true,
+      "proofHash": "18375f9ad3f6254565eaf8cdc58cc32af117cb2994a3d226fe154111179c166d",
+      "proofPreview": "18375f9a"
+    },
+    {
+      "id": "serve-stop",
+      "kind": "api",
+      "summary": "Bun.serve start + stop (localhost)",
+      "apis": [
+        "Bun.serve"
+      ],
+      "runtimeOutput": "port=63888 body=ok",
+      "runtimeOk": true,
+      "proofHash": "c9493b088b3638566dcc21a8f44bbbf833470b77e5ea093538deb5e6534f971e",
+      "proofPreview": "c9493b08"
+    },
+    {
+      "id": "build-inline",
+      "kind": "api",
+      "summary": "Bun.build in-memory entry",
+      "apis": [
+        "Bun.build"
+      ],
+      "runtimeOutput": "success=true outputs=1",
+      "runtimeOk": true,
+      "proofHash": "53a239955802f494b0ecb3eab011ff10d7d62866db512513cf12053dc4b2440c",
+      "proofPreview": "53a23995"
+    },
+    {
+      "id": "timers",
+      "kind": "api",
+      "summary": "Bun.sleep / sleepSync / nanoseconds",
+      "apis": [
+        "Bun.sleep",
+        "Bun.sleepSync",
+        "Bun.nanoseconds"
+      ],
+      "runtimeOutput": "ms=17.3",
+      "runtimeOk": true,
+      "proofHash": "b82af2cdab56905dca8bad44445f7eb34234764055142d63dceeaf68fba06c0e",
+      "proofPreview": "b82af2cd"
+    },
+    {
+      "id": "streams",
+      "kind": "api",
+      "summary": "readableStreamToBytes + ArrayBufferSink",
+      "apis": [
+        "Bun.readableStreamToBytes",
+        "Bun.ArrayBufferSink"
+      ],
+      "runtimeOutput": "stream=ab sink=hello",
+      "runtimeOk": true,
+      "proofHash": "67388ba8daaf2850245ce9a26fd1eb37344fa187005d9a7c6904bb01b84600f5",
+      "proofPreview": "67388ba8"
+    },
+    {
+      "id": "gc-heap",
+      "kind": "api",
+      "summary": "Bun.gc (+ generateHeapSnapshot exists)",
+      "apis": [
+        "Bun.gc",
+        "Bun.generateHeapSnapshot"
+      ],
+      "runtimeOutput": "heapSnapshotFn=function",
+      "runtimeOk": true,
+      "proofHash": "1566bd70f840f937ac5612a11e4025f48eff5a222e75d603a3c4b909ce50252c",
+      "proofPreview": "1566bd70"
+    },
+    {
+      "id": "mmap",
+      "kind": "api",
+      "summary": "Bun.mmap → Uint8Array",
+      "apis": [
+        "Bun.mmap"
+      ],
+      "runtimeOutput": "ctor=Uint8Array len=60626",
+      "runtimeOk": true,
+      "proofHash": "1368a532752fc81eb09d86dca428baa506f3d89ec281b926dd6435eb5ef02bcc",
+      "proofPreview": "1368a532"
+    },
+    {
+      "id": "path-url",
+      "kind": "api",
+      "summary": "pathToFileURL / fileURLToPath",
+      "apis": [
+        "Bun.pathToFileURL",
+        "Bun.fileURLToPath"
+      ],
+      "runtimeOutput": "/tmp/x",
+      "runtimeOk": true,
+      "proofHash": "26ee1313661464bf9172143f1b6dc3ba63871fdb735e6393ae15d761a6c6bef7",
+      "proofPreview": "26ee1313"
+    },
+    {
+      "id": "cron",
+      "kind": "api",
+      "summary": "Bun.cron schedule (in-process)",
+      "apis": [
+        "Bun.cron"
+      ],
+      "runtimeOutput": "cronJob=Object",
+      "runtimeOk": true,
+      "proofHash": "6b6ec33df080b26c2dc439401ee9b4a4da309cce81a5b001ea7cde8be2a2ba3c",
+      "proofPreview": "6b6ec33d"
+    },
+    {
+      "id": "fs-router",
+      "kind": "api",
+      "summary": "Bun.FileSystemRouter",
+      "apis": [
+        "Bun.FileSystemRouter"
+      ],
+      "runtimeOutput": "match=true",
+      "runtimeOk": true,
+      "proofHash": "0c04ceffcaeb06fb91a0c697ca5bef7a31c374fe6e9f3843b0a5bd0140cc3182",
+      "proofPreview": "0c04ceff"
+    },
+    {
+      "id": "html-rewriter",
+      "kind": "api",
+      "summary": "HTMLRewriter transform",
+      "apis": [
+        "HTMLRewriter"
+      ],
+      "runtimeOutput": "ok",
+      "runtimeOk": true,
+      "proofHash": "d3a4aeebf5c85fe66d0da7e87688921aefb70f15a0ddcd839922d2a088860a64",
+      "proofPreview": "d3a4aeeb"
+    },
+    {
+      "id": "onboard-partner",
+      "kind": "ops",
+      "summary": "Onboard partner node with proof hash",
+      "apis": [
+        "Bun.randomUUIDv7",
+        "Bun.CryptoHasher",
+        "bun:sqlite"
+      ],
+      "runtimeOutput": "partner=Partner B proof=744b545c",
+      "runtimeOk": true,
+      "proofHash": "a9e719baf64e1b433bf5751765b93ef308ea319f0adc20394e4d75c3f223ec12",
+      "proofPreview": "a9e719ba"
+    },
+    {
+      "id": "fund-agent-rail",
+      "kind": "ops",
+      "summary": "Fund agent via PayPal rail",
+      "apis": [
+        "bun:sqlite",
+        "Bun.CryptoHasher"
+      ],
+      "runtimeOutput": "funded=$10000 balance=$15000 proof=6c458cf2",
+      "runtimeOk": true,
+      "proofHash": "d45881dbb6e6f9fd600f50f7ffd2302c2a791c81f4896d5d6cc0aa1f71d5c39d",
+      "proofPreview": "d45881db"
+    },
+    {
+      "id": "generate-play",
+      "kind": "ops",
+      "summary": "Expert play HMAC-signed via PlaySigner",
+      "apis": [
+        "Bun.CryptoHasher",
+        "Bun.randomUUIDv7",
+        "bun:sqlite"
+      ],
+      "runtimeOutput": "play=019f8dae sig=d14c2576",
+      "runtimeOk": true,
+      "proofHash": "0bf60545e0b9546f46707be6952a71d8f5178d543e2794178f3943ac380f68d5",
+      "proofPreview": "0bf60545"
+    },
+    {
+      "id": "distribute-play",
+      "kind": "ops",
+      "summary": "Fan-out play to agent tree nodes",
+      "apis": [
+        "bun:sqlite"
+      ],
+      "runtimeOutput": "recipients=2 play=019f8dae",
+      "runtimeOk": true,
+      "proofHash": "f8fc60604abe0066743452ed33f135655bbb3f83405d94a9e83fbad9c24d03a9",
+      "proofPreview": "f8fc6060"
+    },
+    {
+      "id": "track-wager",
+      "kind": "ops",
+      "summary": "Close play with P&L",
+      "apis": [
+        "bun:sqlite"
+      ],
+      "runtimeOutput": "pnl=$2000",
+      "runtimeOk": true,
+      "proofHash": "633741cfa0646e4207c07ebbd243857dcfc1788e1cf137fac6cc1f7e59a9633e",
+      "proofPreview": "633741cf"
+    },
+    {
+      "id": "reconcile-rails",
+      "kind": "ops",
+      "summary": "Reconcile rail totals vs agent deposits",
+      "apis": [
+        "bun:sqlite",
+        "Bun.inspect"
+      ],
+      "runtimeOutput": "reconciled diff=$-5000",
+      "runtimeOk": true,
+      "proofHash": "2abdcb054d7938debe420df5691bae3baf3dd0695312b53f2002502bcc1ece96",
+      "proofPreview": "2abdcb05"
+    },
+    {
+      "id": "phone-inventory",
+      "kind": "ops",
+      "summary": "Assign phone to agent from inventory",
+      "apis": [
+        "bun:sqlite",
+        "Bun.randomUUIDv7"
+      ],
+      "runtimeOutput": "phone=019f8dae agent=019f8dae",
+      "runtimeOk": true,
+      "proofHash": "ef2d9c1167d5e838086623352954593a30e323da7928e99ae024d6ac6fe582eb",
+      "proofPreview": "ef2d9c11"
+    },
+    {
+      "id": "daily-pnl-report",
+      "kind": "ops",
+      "summary": "P&L table via Bun.inspect.table",
+      "apis": [
+        "bun:sqlite",
+        "Bun.inspect.table"
+      ],
+      "runtimeOutput": "table=empty",
+      "runtimeOk": true,
+      "proofHash": "6aa9992c2a9a2ffe61359fc768e31445cebc8e8e8f869eb1185109fe32fe7c4e",
+      "proofPreview": "6aa9992c"
+    },
+    {
+      "id": "auto-fund-cron",
+      "kind": "ops",
+      "summary": "Register auto-fund cron (register + stop)",
+      "apis": [
+        "Bun.cron",
+        "bun:sqlite"
+      ],
+      "runtimeOutput": "cron=Object",
+      "runtimeOk": true,
+      "proofHash": "0c6190b0e96bd185375333ec8bb0de8f0ec3deb151460b61870b598bd30a8660",
+      "proofPreview": "0c6190b0"
+    }
+  ],
+  "apis": {
+    "Bun.$": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/shell#getting-started",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "d627b68e75b97312b7800df0b3987175909fa1bfa24cc749e447f020e45474e4"
+    },
+    "Bun.Archive": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/archive#quickstart",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "f966912bcf83e3d079790089d22877dd5c0748854db02a2ac1d70a9230c269b3"
+    },
+    "Bun.ArrayBufferSink": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/streams#bun-arraybuffersink",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "1217494d4ebcc9b5d0230ba09bbb569a4649970640308d0989a42036fbd6a5a5"
+    },
+    "Bun.CSRF": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "68b07c24fc2b6c62175734af7383b10d8e5582e2bcdf80f0466572a6e9c93e9c"
+    },
+    "Bun.CSRF.generate": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "cb9836f6d0a63c6e0486573c79792daa949b492a4ffff6ec0fbdce420d351624"
+    },
+    "Bun.CSRF.verify": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/csrf#bun-csrf-verify",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "300c84fc1e62c79539b885a95a72788a31a3c323e0070d1f3ebf412936ac70e1"
+    },
+    "Bun.Cookie": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/cookies#cookie-class",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "4f64d5a3ff6532231ffdfba2688f0d4bdd0ca4f473b51b298471f6107c7a16b3"
+    },
+    "Bun.CookieMap": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/cookies#cookiemap-class",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "3f6d23c711921d2b2687d41cbf160a239de1b71801f788d7682f096680ad2c78"
+    },
+    "Bun.CryptoHasher": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/hashing#bun-cryptohasher",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "80dc952349f2149d4894df0e066c405867bc94aa24c9a7656d2dbdd062e629ba"
+    },
+    "Bun.FileSystemRouter": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/bun-apis",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "98ea6472bc35dbacde6edda97e0bdd2184a93228eea9b19ea37113363aec56d1"
+    },
+    "Bun.Glob": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/glob#quickstart",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "a8d15c3cfe9711a783e30e5a167b581a44c0e18daaf7f40b4b419ba6d854289c"
+    },
+    "Bun.JSON5": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/json5",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "12a542daba54fb6c3c4d91d0eb77833d3858b7642cc6fee9ef02d62245788652"
+    },
+    "Bun.JSONC": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/jsonc",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "e88b639fe948402db8a7d85afd156c2050ee31cd6e2c9bfcffd2588138bfe291"
+    },
+    "Bun.JSONL": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/jsonl",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "1355ec03694cbf1bad0e35de793896c08c95642f6885a81ed103a414fb312307"
+    },
+    "Bun.TOML": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/toml#bun-toml-parse",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "121b5b79ffe471e38a26ae83386d8b1bb900598aee9f16a6b7b0c723f94407af"
+    },
+    "Bun.TOML.parse": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/toml#bun-toml-parse",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "b5c6468e7043e82578b2cb0fe71f09ef3005bba1809a6b547c3d551b2c32a026"
+    },
+    "Bun.TOML.stringify": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/toml#bun-toml-stringify",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "112cea2884f5ecc678aa841da3449c83d4ad36b3addbd4421ae7d467f3b867ba"
+    },
+    "Bun.Transpiler": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/transpiler",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "c1c3b3b7454d23b60ad5bd99318a3754dd46d369abea130fc1921cd981d095e2"
+    },
+    "Bun.allocUnsafe": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/bun-apis",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "0db57a1e4418a68972fc36c0488e8c8aef0766caadb1f7154de0ca2310f6b8a3"
+    },
+    "Bun.argv": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/guides/process/argv.md",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "60b4fe56b1138427b37c03dd2f8723efd8abfea7052b895b482a81f3cfb983f2"
+    },
+    "Bun.build": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/bundler/index#basic-example",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "2681c207dc0d3c7e6f76090666ec73b9673d4bfe7e05228de22b350526a1bcc4"
+    },
+    "Bun.color": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/color#flexible-input",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "d38614fa87c04dbb1f0d6395a26cd98e034d72ea77940e3f06e30e3f5ba3054b"
+    },
+    "Bun.concatArrayBuffers": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/bun-apis",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "bbdfab8f91097c87e4257416613887f552a6048ef86286915e1835f6b97aa1df"
+    },
+    "Bun.cron": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "4cf97f3a0ff764548a3fbf095fee0f09e62e577f76cccd4e79086faf57badee6"
+    },
+    "Bun.deepEquals": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-deepequals",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "0a975243964c216f8ff8baef10a3dca56bcaef8b98ece16a24830254a289bbe7"
+    },
+    "Bun.deflateSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-deflatesync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "1dcd3b69fc123369a90dceaa44bb05f8fe5d266682ade4b125f5c84d583b89b0"
+    },
+    "Bun.env": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-env",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "aad04e981f9749bf0ca26a9df84b005a2e9305fd17127302e4e13b4a4451c635"
+    },
+    "Bun.escapeHTML": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-escapehtml",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "54001614bb94e80f01a69e7fb216eaf4df5121e029afe775298092611fb8e808"
+    },
+    "Bun.file": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "f9da442df74de60838d5f8aaa15702e86fcf33c51f1a15ebaa4ea3c4c76041f5"
+    },
+    "Bun.fileURLToPath": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-fileurltopath",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "4f24dac8bc82cff19918879aa07321c50201d3c514ebe5545c6a87bd384b0c20"
+    },
+    "Bun.gc": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "99f1682c69e8ada99462351a1db0de00162f3287f37fcbf28125cb929d47485b"
+    },
+    "Bun.generateHeapSnapshot": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "020e77ae26ae41a2eab3f14c2b9912d24197d3d4140e8409223e424ace581a2b"
+    },
+    "Bun.gunzipSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-gunzipsync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "c57187e7010148a2c78b5a0798d93441c24cd6db8e7c49cbbcbd64d62040e1eb"
+    },
+    "Bun.gzipSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-gzipsync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "e6ca198ddf74eab00d737e632d4f15e47d7794c290010d9d7f753e50bf382539"
+    },
+    "Bun.hash": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "d2231154322c69c16f37035229d9dd28bfaafa7eeb85c01ff3f1b27e993ccf97"
+    },
+    "Bun.hash.crc32": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/hashing#bun-hash",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "9d18c823fc02c4212071f6e453400646aa192128aa09a6c9715c6c6702fff98a"
+    },
+    "Bun.inflateSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-inflatesync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "3019b3e474dc8c9c38dcff17ea2cb6a958189ff8bae22bdd14860da2a7c01aae"
+    },
+    "Bun.inspect": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "00e6c136a7f7c623ff3e3cbeb8519bba6a8697d214d9b96e965602fab90146ef"
+    },
+    "Bun.inspect.table": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "11a4c682cbf42e1158320734cc803784c7e0e68242aa8850ae43d6934ed913b0"
+    },
+    "Bun.main": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-main",
+      "runtime": "string",
+      "ok": true,
+      "sha256": "61898413c7f1fe2051c590ca8fa526fdfaf9b5a34ce64067f347a4655e33f447"
+    },
+    "Bun.markdown": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "5041f0d524b944b63249947244b2bffe355f5a7846f5f2b116759703da009419"
+    },
+    "Bun.markdown.ansi": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/markdown#ansi-terminal-output",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "e4c5768ff8539a9c47bb46fce6a83d787c6006d6b5bec0cd5ca3bbe4b73de4ce"
+    },
+    "Bun.markdown.html": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "b85321df88d1b210b58300d60d1b028eeb32c82a5921b0082f4488715355c325"
+    },
+    "Bun.mmap": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/bun-apis",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "c5f1d507fd603feda4e74b16113c2f1fb63e452d5dbe5fde98443408f9e291a5"
+    },
+    "Bun.nanoseconds": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-nanoseconds",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "60530cf0ba0b098acf3595ba10bf8da6e2e2a8918502ba551678e8115bf16ac9"
+    },
+    "Bun.password": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "603c656033b01eaca925126df8aacde48b9654e0f8b97174598406f5f2d89072"
+    },
+    "Bun.password.hash": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "5974021ae56ace44521de5b5cebdf2229ebfd54e59c649fe3306228d1cfc4832"
+    },
+    "Bun.password.verify": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/hashing#bun-password",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "d7ce48add0e1c1dd442ce565095a4ba62977061fb26bf4c3e8c0265c04872045"
+    },
+    "Bun.pathToFileURL": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-pathtofileurl",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "0d1e6bb601deb306eac4dfb2e565cb68f6cff4961459bbd45a3c38fb6a84e295"
+    },
+    "Bun.peek": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-peek",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "96d30148b4c736f659007a6a43c386ae91acba15af79e78927d5b90ab47f6169"
+    },
+    "Bun.randomUUIDv7": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "8ea4e8eaef81c394ffc62942ec50071c02b1f96ca1a18a2136896d75e5dbb68d"
+    },
+    "Bun.readableStreamToBytes": {
+      "inTypes": true,
+      "inDocs": false,
+      "docUrl": null,
+      "runtime": "function",
+      "ok": true,
+      "sha256": "dbbd356d2193e3011c3d82e215e72eeffbc2f9bfcd1ec73099b4531ae5c7473c"
+    },
+    "Bun.resolveSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-resolvesync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "03d5a15879961ea4786f85fbcc2b339c011bea8757eb47315b2ea9215f870605"
+    },
+    "Bun.revision": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-revision",
+      "runtime": "string",
+      "ok": true,
+      "sha256": "7c8dc0ee400af80404f882ef24343c0d2aa610374afc8a63b639eb31c5595a9f"
+    },
+    "Bun.semver": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean",
+      "runtime": "object",
+      "ok": true,
+      "sha256": "12926885fe7bd1ffcebccbce0d5d9251dd462786c728e77fb466313e3298d922"
+    },
+    "Bun.semver.order": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/pm/filter.md",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "ba2e2747100e85327c4c7088578c81f1556c2f90b22d62e40d7bdfcc80a383a5"
+    },
+    "Bun.semver.satisfies": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/semver.md",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "aa2c34fecc07f4f7da4bf837da87a78ac0ac4890009165632f9d78bbc2f68ff9"
+    },
+    "Bun.serve": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/http/server#basic-setup",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "7cc1c83f5899d84af962d160fd9113cbd8a6cfd906e3ebb070070f4a89f61bed"
+    },
+    "Bun.sleep": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-sleep",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "a8b0bacd2cf105843d41b6019c52806821d54f3a09211207c986264b733bb161"
+    },
+    "Bun.sleepSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-sleepsync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "644e953ac655740b7eeb689fb839c3f2b76d287ff32d56d2b071d7ac549355e0"
+    },
+    "Bun.sliceAnsi": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/reference/bun/sliceAnsi",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "fc9aa4e8828f65405ef04754b170b6dda719a8fbb41beb1ce8688e40ebecd25d"
+    },
+    "Bun.spawn": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "50cc064b975ef705db0a259a5d2f4759060b40d3dad864cc4a123de900341275"
+    },
+    "Bun.spawnSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "698ad1c0cd38c9916e10c4c8fc0254d4c6fd18c552124d2f017bc3074f1ce553"
+    },
+    "Bun.stringWidth": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-stringwidth",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "3a22b339865dd28d2c0d816e88c4bcaf4168eaab1143cccfa71e9a09cc00051d"
+    },
+    "Bun.stripANSI": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-stripansi",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "27adee389d3962b7ce9d6c6126b40c16c1514f72ba63d40be1b58a9bd22343d9"
+    },
+    "Bun.version": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-version",
+      "runtime": "string",
+      "ok": true,
+      "sha256": "259725bf093100565be8711d7485aae9c82e8c97b9dd4fccaec0ee12534d9951"
+    },
+    "Bun.which": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-which",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "674baddeb986f6ddb3823973bea55759016446f19ab93e6e3551f4a8230241d6"
+    },
+    "Bun.wrapAnsi": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-wrapansi",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "6f9270a7935949103f27fedc72b0c4e9dc9b609fb60e8ae0a4510f63e6640071"
+    },
+    "Bun.write": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "712362aecb2f1b17c442b461bc786fd24cdd19b58d3a3a27f16a23339900d473"
+    },
+    "Bun.zstdCompressSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "27088a2a55341dfe313e5cf1630dab4c4bd1222f99edf398d9cca000a4c99083"
+    },
+    "Bun.zstdDecompressSync": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "089e84b2c8a34185c4688ec1d480385e8e0aa77de11ef7b0080243538ddc121c"
+    },
+    "HTMLRewriter": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/html-rewriter",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "10e8281871bca4e374fc0719d0caa43680b1fb51529f8968f29e48a316ffe043"
+    },
+    "bun:sqlite": {
+      "inTypes": true,
+      "inDocs": true,
+      "docUrl": "https://bun.com/docs/runtime/sqlite#load-via-es-module-import",
+      "runtime": "function",
+      "ok": true,
+      "sha256": "00f549b6fa588c8f29b471881450b64be44d2e4b7cb6ff6798413caf713c5760"
+    }
+  }
+}

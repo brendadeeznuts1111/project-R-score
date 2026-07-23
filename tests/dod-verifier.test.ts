@@ -91,7 +91,7 @@ describe("dod-verifier perceptual hash", () => {
 
 describe("dod-verifier OCR wiring", () => {
   test("non-document types skip OCR", async () => {
-    const ver = await verifier.process(submission({ type: "balance" }));
+    const ver = await verifier.process(submission({ type: "location" }));
     expect(ver.extractedText).toBeUndefined();
   });
 });

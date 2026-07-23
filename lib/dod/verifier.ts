@@ -143,14 +143,26 @@ export class DODVerifier {
   private db: Database;
   private evidenceRoot: string;
   private registryPath: string;
+  private store: DODEvidenceStore;
+  private idEncryptionKey?: string;
+  private onVerifiedBalance?: (agentId: string, amount?: number) => Promise<void>;
 
   constructor(
     dbPath = 'data/operations.db',
-    opts: { evidenceRoot?: string; registryPath?: string } = {}
+    opts: {
+      evidenceRoot?: string;
+      registryPath?: string;
+      store?: DODEvidenceStore;
+      idEncryptionKey?: string;
+      onVerifiedBalance?: (agentId: string, amount?: number) => Promise<void>;
+    } = {}
   ) {
     this.proofSecret = Bun.env.DOD_PROOF_SECRET || 'dod-dev-secret';
     this.evidenceRoot = opts.evidenceRoot ?? 'public/evidence';
     this.registryPath = opts.registryPath ?? 'public/registry/dod-registry.json';
+    this.store = opts.store ?? r2EvidenceStoreFromEnv() ?? localEvidenceStore(this.evidenceRoot);
+    this.idEncryptionKey = opts.idEncryptionKey ?? Bun.env.DOD_ID_ENCRYPTION_KEY;
+    this.onVerifiedBalance = opts.onVerifiedBalance;
     this.db = new Database(dbPath);
     this.db.run('PRAGMA journal_mode=WAL');
     this.initTable();
@@ -179,6 +191,11 @@ export class DODVerifier {
         rejection_reason TEXT
       )
     `);
+    // Migration: encrypted-at-rest flag (Batch 2).
+    const cols = this.db.query('PRAGMA table_info(dod_submissions)').all() as { name: string }[];
+    if (!cols.some(c => c.name === 'encrypted')) {
+      this.db.run('ALTER TABLE dod_submissions ADD COLUMN encrypted INTEGER DEFAULT 0');
+    }
   }
 
   async process(submission: DODSubmission): Promise<DODVerification> {
@@ -235,9 +252,12 @@ export class DODVerifier {
     // 8. Tamper detection
     const tamperScore = this.detectTampering(metadata, submission);
 
-    // 8b. OCR for document types (degrades to '' on CDN/WebView failure)
+    // 8b. OCR for document types (degrades to '' on CDN/WebView failure).
+    // Balance proofs only pay the OCR cost when a liquidity hook needs the amount.
     const extractedText =
-      submission.type === 'slip' || submission.type === 'receipt' || submission.type === 'balance'
+      submission.type === 'slip' ||
+      submission.type === 'receipt' ||
+      (submission.type === 'balance' && this.onVerifiedBalance != null)
         ? await this.extractText(img)
         : undefined;
 
@@ -262,8 +282,8 @@ export class DODVerifier {
     this.db.run(
       `
       INSERT INTO dod_submissions (id, agent_id, type, status, visual_hash, metadata_hash, signature, tamper_score,
-        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at)
-      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc)
+        extracted_text, geo_lat, geo_lng, device_model, s3_path, submitted_at, processed_at, encrypted)
+      VALUES ($id, $aid, $type, $status, $vh, $mh, $sig, $ts, $text, $lat, $lng, $dev, $s3, $sub, $proc, $enc)
     `,
       {
         $id: submission.id,
@@ -281,10 +301,33 @@ export class DODVerifier {
         $s3: s3Path,
         $sub: submission.submittedAt,
         $proc: verification.processedAt,
+        $enc: encrypted ? 1 : 0,
       }
     );
 
-    // 10. Notify ops if flagged
+    // 9b. Sidecar record — the store is the source of truth; SQLite is a
+    // rebuildable index (see rebuildIndex()).
+    await this.store.put(
+      `dod-records/${submission.id}.json`,
+      new TextEncoder().encode(
+        JSON.stringify({
+          submission: { ...submission, rawImage: undefined },
+          verification,
+          encrypted,
+        })
+      )
+    );
+
+    // 10. Liquidity cross-reference — verified balance proofs update positions
+    if (
+      verification.status === 'verified' &&
+      submission.type === 'balance' &&
+      this.onVerifiedBalance
+    ) {
+      await this.onVerifiedBalance(submission.agentId, extractAmount(extractedText));
+    }
+
+    // 11. Notify ops if flagged
     if (verification.status === 'flagged') {
       await this.notifyOps(submission, verification);
     }
@@ -307,6 +350,25 @@ export class DODVerifier {
     if (row.c >= maxPerHour) {
       throw new Error(`Rate limited: ${row.c}/${maxPerHour} DODs in the last hour — retry later`);
     }
+  }
+
+  // ── Auto-Approve Rules ─────────────────────────────────────────
+  private autoApprove(sub: DODSubmission, tamperScore: number, extractedText?: string): boolean {
+    // 20 is the no-EXIF floor (screenshots legitimately lack EXIF); anything
+    // above it implies an additional tamper signal.
+    if (tamperScore > 20) return false;
+    if (sub.type === 'balance') {
+      const row = this.db
+        .query(
+          "SELECT COUNT(*) as c FROM dod_submissions WHERE agent_id = $a AND status = 'verified'"
+        )
+        .get({ $a: sub.agentId }) as { c: number };
+      return row.c >= 10;
+    }
+    if ((sub.type === 'receipt' || sub.type === 'slip') && extractAmount(extractedText) != null) {
+      return true;
+    }
+    return false;
   }
 
   // ── Watermark via WebView ──────────────────────────────────────
