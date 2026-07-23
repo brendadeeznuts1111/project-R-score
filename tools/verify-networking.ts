@@ -29,9 +29,10 @@
  *   bun tools/verify-networking.ts
  *   bun tools/verify-networking.ts --local-only
  *   bun tools/verify-networking.ts --routes          # portal + API + hot static catalog
- *   bun tools/verify-networking.ts --routes-only     # skip external multi-target
+ *   bun tools/verify-networking.ts --routes-only     # tables via Bun.inspect.table
+ *   bun tools/verify-networking.ts --routes-only --json   # machine JSON + tables.* strings
  *   bun tools/verify-networking.ts --skip-write
- *   bun tools/verify-networking.ts --json
+ *   # Human tables: omit --json. JSON still embeds Bun.inspect.table under .tables
  *   bun --fetch-preconnect https://api.elections.kalshi.com:443 tools/verify-networking.ts
  */
 
@@ -517,113 +518,161 @@ export async function probePublicRoutes(
 
 // ── Render ─────────────────────────────────────────────────────────────────
 
+function table(
+  rows: Record<string, unknown>[],
+  columns: string[],
+  colors = true
+): string {
+  // Object rows only — array-of-arrays leaves named columns empty in Bun.inspect.table.
+  return Bun.inspect.table(rows, columns, { colors });
+}
+
 function renderCategory(category: string, rows: NetCheckRow[]): void {
   console.log(`\n── ${category.toUpperCase()} ──`);
   console.log(
-    Bun.inspect.table(
+    table(
       rows.map(r => ({
         target: r.target,
         optimization: r.optimization,
         metric: r.metric,
         status: r.status,
       })),
-      ['target', 'optimization', 'metric', 'status'],
-      { colors: true }
+      ['target', 'optimization', 'metric', 'status']
     )
   );
 }
 
-function renderRouteObjects(probe: RouteProbeResult): void {
+/** Structured + rendered tables for route probe (human + --json.tables). */
+export function buildRouteTables(
+  probe: RouteProbeResult,
+  opts: { colors?: boolean } = {}
+): {
+  routeStats: Record<string, unknown>[];
+  hotPreloaded: Record<string, unknown>[];
+  strategies: Record<string, unknown>[];
+  /** Flat catalog probe — one row per path (main table people expect). */
+  routes: Record<string, unknown>[];
+  byCategory: Record<string, Record<string, unknown>[]>;
+  rendered: {
+    routeStats: string;
+    hotPreloaded: string;
+    strategies: string;
+    routes: string;
+    byCategory: Record<string, string>;
+  };
+} {
+  const colors = opts.colors ?? false;
   const rs = probe.health?.routeStats;
   const serve = probe.health?.serve;
 
-  console.log('\n── ROUTE OBJECTS (/health) ──');
-  if (rs) {
-    console.log(
-      Bun.inspect.table(
-        [
-          {
-            field: 'staticRoutes',
-            value: String(rs.staticRoutes ?? '—'),
-          },
-          {
-            field: 'fileRoutes',
-            value: String(rs.fileRoutes ?? '—'),
-          },
-          {
-            field: 'staticHits',
-            value: String(rs.staticHits ?? '—'),
-          },
-          {
-            field: 'fileHits',
-            value: String(rs.fileHits ?? '—'),
-          },
-          {
-            field: 'notModified304',
-            value: String(rs.notModified304 ?? '—'),
-          },
-          {
-            field: 'totalMemoryUsed',
-            value:
-              rs.totalMemoryUsed != null
-                ? `${Math.round(rs.totalMemoryUsed / 1024)} KiB`
-                : '—',
-          },
-          {
-            field: 'decision.rule',
-            value: rs.decision?.rule ?? '—',
-          },
-        ],
-        ['field', 'value'],
-        { colors: true }
-      )
-    );
-  } else {
-    console.log('(no /health routeStats — is serve-public up?)');
+  const routeStats: Record<string, unknown>[] = rs
+    ? [
+        { field: 'staticRoutes', value: rs.staticRoutes ?? '—' },
+        { field: 'fileRoutes', value: rs.fileRoutes ?? '—' },
+        { field: 'staticHits', value: rs.staticHits ?? '—' },
+        { field: 'fileHits', value: rs.fileHits ?? '—' },
+        { field: 'notModified304', value: rs.notModified304 ?? '—' },
+        {
+          field: 'totalMemoryUsed',
+          value:
+            rs.totalMemoryUsed != null
+              ? `${Math.round(rs.totalMemoryUsed / 1024)} KiB`
+              : '—',
+        },
+        { field: 'decision.rule', value: rs.decision?.rule ?? '—' },
+      ]
+    : [{ field: '(no /health)', value: 'serve-public down?' }];
+
+  const hotPreloaded = (serve?.hotPreloaded ?? []).map((p, i) => ({ i, path: p }));
+  const strategies = Object.entries(serve?.strategies ?? {}).map(([k, v]) => ({
+    strategy: k,
+    rule: v,
+  }));
+
+  const routes = probe.rows.map(r => ({
+    path: r.path,
+    name: r.name,
+    category: r.category,
+    kind: r.kind,
+    status: r.status,
+    ms: r.ms,
+    crit: r.critical ? 'Y' : '',
+    pass: r.pass ? 'PASS' : 'FAIL',
+  }));
+
+  const byCategory: Record<string, Record<string, unknown>[]> = {};
+  for (const r of probe.rows) {
+    (byCategory[r.category] ??= []).push({
+      path: r.path,
+      kind: r.kind,
+      status: String(r.status),
+      ms: r.ms,
+      crit: r.critical ? 'Y' : '',
+      pass: r.pass ? 'PASS' : 'FAIL',
+    });
   }
 
-  if (serve?.hotPreloaded?.length) {
-    console.log('\n── HOT PRELOADED (serve.hotPreloaded) ──');
-    console.log(
-      Bun.inspect.table(
-        serve.hotPreloaded.map((p, i) => ({ i, path: p })),
-        ['i', 'path'],
-        { colors: true }
-      )
-    );
-  }
-  if (serve?.etagScope) {
-    console.log(`ETag scope: ${serve.etagScope}`);
-  }
-  if (serve?.strategies) {
-    console.log(
-      Bun.inspect.table(
-        Object.entries(serve.strategies).map(([k, v]) => ({ strategy: k, rule: v })),
-        ['strategy', 'rule'],
-        { colors: true }
-      )
-    );
+  const byCategoryRendered: Record<string, string> = {};
+  for (const [c, slice] of Object.entries(byCategory)) {
+    byCategoryRendered[c] = table(slice, ['path', 'kind', 'status', 'ms', 'crit', 'pass'], colors);
   }
 
-  console.log('\n── PUBLIC ROUTE CATALOG PROBE ──');
-  const cats = [...new Set(probe.rows.map(r => r.category))];
-  for (const c of cats) {
-    const slice = probe.rows.filter(r => r.category === c);
-    console.log(`\n  · ${c}`);
-    console.log(
-      Bun.inspect.table(
-        slice.map(r => ({
+  return {
+    routeStats,
+    hotPreloaded,
+    strategies,
+    routes,
+    byCategory,
+    rendered: {
+      routeStats: table(routeStats, ['field', 'value'], colors),
+      hotPreloaded: hotPreloaded.length
+        ? table(hotPreloaded, ['i', 'path'], colors)
+        : '(none)',
+      strategies: strategies.length
+        ? table(strategies, ['strategy', 'rule'], colors)
+        : '(none)',
+      routes: table(
+        routes.map(r => ({
           path: r.path,
           kind: r.kind,
           status: String(r.status),
           ms: r.ms,
-          crit: r.critical ? 'Y' : '',
-          pass: r.pass ? 'PASS' : 'FAIL',
+          crit: r.crit,
+          pass: r.pass,
         })),
         ['path', 'kind', 'status', 'ms', 'crit', 'pass'],
-        { colors: true }
-      )
-    );
+        colors
+      ),
+      byCategory: byCategoryRendered,
+    },
+  };
+}
+
+function renderRouteObjects(probe: RouteProbeResult): void {
+  const tables = buildRouteTables(probe, { colors: true });
+  const serve = probe.health?.serve;
+
+  console.log('\n── ROUTE OBJECTS (/health) ──');
+  console.log(tables.rendered.routeStats);
+
+  if (tables.hotPreloaded.length) {
+    console.log('\n── HOT PRELOADED (serve.hotPreloaded) ──');
+    console.log(tables.rendered.hotPreloaded);
+  }
+  if (serve?.etagScope) {
+    console.log(`ETag scope: ${serve.etagScope}`);
+  }
+  if (tables.strategies.length) {
+    console.log(tables.rendered.strategies);
+  }
+
+  console.log('\n── PUBLIC ROUTE CATALOG PROBE (all paths) ──');
+  console.log(tables.rendered.routes);
+
+  console.log('\n── BY CATEGORY ──');
+  for (const [c, rendered] of Object.entries(tables.rendered.byCategory)) {
+    console.log(`\n  · ${c}`);
+    console.log(rendered);
   }
 
   console.log(
@@ -655,6 +704,12 @@ async function main(): Promise<void> {
   const routeCritFailed = routeProbe?.summary.criticalFailed ?? 0;
   const finalDns = dnsCacheStats();
 
+  // --json is machine output: still embeds Bun.inspect.table under .tables
+  // (colors off). For live colored tables in the terminal, omit --json.
+  const routeTables = routeProbe
+    ? buildRouteTables(routeProbe, { colors: false })
+    : null;
+
   if (AS_JSON) {
     console.log(
       JSON.stringify(
@@ -674,6 +729,18 @@ async function main(): Promise<void> {
           maxHttpRequests: Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS ?? '256 (default)',
           rows,
           routeProbe,
+          /** Object rows ready for Bun.inspect.table / spreadsheets. */
+          tables: routeTables
+            ? {
+                routeStats: routeTables.routeStats,
+                hotPreloaded: routeTables.hotPreloaded,
+                strategies: routeTables.strategies,
+                routes: routeTables.routes,
+                byCategory: routeTables.byCategory,
+                /** Pre-rendered Bun.inspect.table strings (colors: false). */
+                rendered: routeTables.rendered,
+              }
+            : null,
           routeCatalog: publicRouteCatalog(),
           canonical: CANONICAL,
         },
