@@ -17,6 +17,7 @@
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { collectMonitoring } from '../lib/monitoring/index.ts';
 import { writePredictionReport } from '../lib/prediction/index.ts';
 
 const argv = Bun.argv.slice(2);
@@ -42,6 +43,10 @@ try {
   const payload = buildOpsSummary(db, 'snapshot');
   await Bun.write(outPath, `${JSON.stringify(payload, null, 2)}\n`);
 
+  const monitoringPath = Bun.env.MONITORING_SNAPSHOT_PATH ?? 'public/registry/monitoring.json';
+  const monitoring = await collectMonitoring(db, { source: 'snapshot' });
+  await Bun.write(monitoringPath, `${JSON.stringify(monitoring, null, 2)}\n`);
+
   let report: { svgPath: string; htmlPath: string; pngPath?: string; points: number } | null = null;
   if (withReport) {
     const r = await writePredictionReport(db, {
@@ -60,9 +65,12 @@ try {
     JSON.stringify(
       {
         out: outPath,
+        monitoring: monitoringPath,
         generated: payload.generated,
         experiments: payload.experiments.active,
         predictionN: payload.prediction.coverage.n,
+        dodQueue: monitoring.dodQueue,
+        packageCount: monitoring.packageCount,
         liquidity: payload.liquidity.total,
         report,
       },

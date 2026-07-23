@@ -6,3 +6,7 @@
 /portal/ops/             /portal/ops/index.html   200
 /portal                  /portal/index.html       200
 /portal/                 /portal/index.html       200
+/monitoring              /monitoring/index.html   200
+/monitoring/             /monitoring/index.html   200
+/monitoring              /monitoring/index.html   200
+/monitoring/             /monitoring/index.html   200

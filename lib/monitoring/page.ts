@@ -1,0 +1,101 @@
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+/**
+ * Server-rendered monitoring HTML using Bun.inspect.table.
+ */
+import type { MonitoringPayload } from './collect.ts';
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function tableSection(title: string, rows: Record<string, string | number>[]): string {
+  // colors: false — ANSI codes are noise in HTML <pre>
+  const body = Bun.inspect.table(rows, { colors: false });
+  const plain = typeof Bun.stripANSI === 'function' ? Bun.stripANSI(body) : body;
+  return `<div class="section"><h2>${escapeHtml(title)}</h2><pre>${escapeHtml(plain)}</pre></div>`;
+}
+
+/** Render full monitoring HTML page from payload. */
+export function renderMonitoringHtml(data: MonitoringPayload): string {
+  const overview = tableSection('Registry overview', [
+    { Metric: 'Uptime', Value: data.uptime },
+    { Metric: 'Packages', Value: data.packageCount },
+    { Metric: 'Versions', Value: data.versionCount },
+    { Metric: 'DOD queue (pending)', Value: data.dodQueue },
+    { Metric: 'Experiments active', Value: data.experimentsActive },
+    { Metric: 'Prediction rows', Value: data.predictionN },
+    { Metric: 'Source', Value: data.source },
+  ]);
+
+  const integrity = tableSection('Last integrity check', [
+    { Metric: 'Status', Value: data.lastIntegrity.status },
+    { Metric: 'Timestamp', Value: data.lastIntegrity.timestamp ?? 'never' },
+    { Metric: 'Failures', Value: data.lastIntegrity.failures },
+    { Metric: 'Source', Value: data.lastIntegrity.source ?? 'unknown' },
+  ]);
+
+  const platformRows = Object.entries(data.platformSummary).map(([status, count]) => ({
+    Status: status,
+    Count: count,
+  }));
+  const platforms = tableSection(
+    'Platform health (status)',
+    platformRows.length ? platformRows : [{ Status: 'none', Count: 0 }]
+  );
+
+  const api = tableSection('Platform API available', [
+    { Metric: 'api_available=1', Value: data.platformApiAvailable.yes },
+    { Metric: 'api_available=0', Value: data.platformApiAvailable.no },
+  ]);
+
+  const dodRows = Object.entries(data.dodByStatus).map(([status, count]) => ({
+    Status: status,
+    Count: count,
+  }));
+  const dod = tableSection(
+    'DOD submissions',
+    dodRows.length ? dodRows : [{ Status: 'none', Count: 0 }]
+  );
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="refresh" content="30" />
+  <title>Monitoring · FactoryWager</title>
+  <style>
+    :root { --bg: #0d1117; --panel: #161b22; --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --border: #30363d; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding: 2rem; line-height: 1.4; }
+    h1 { color: var(--accent); font-size: 1.35rem; margin: 0 0 0.5rem; font-weight: 600; }
+    h2 { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.5rem; font-weight: 500; }
+    .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+    .section { margin-bottom: 1.5rem; }
+    pre { background: var(--panel); border: 1px solid var(--border); padding: 1rem; border-radius: 8px; overflow-x: auto; white-space: pre-wrap; word-break: break-word; margin: 0; font-size: 13px; }
+    a { color: var(--accent); }
+    nav { margin-bottom: 1.25rem; display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/portal/">Portal</a>
+    <a href="/portal/ops/">Ops</a>
+    <a href="/api/monitoring">JSON</a>
+    <a href="/registry/prediction/report.html">Prediction report</a>
+  </nav>
+  <h1>Registry monitoring</h1>
+  <p class="meta">Last updated: ${escapeHtml(data.timestamp)} · auto-refresh 30s</p>
+  ${overview}
+  ${integrity}
+  ${platforms}
+  ${api}
+  ${dod}
+</body>
+</html>`;
+}

@@ -18,6 +18,8 @@
  *   /api/registry/{name}/versions → list/publish versions
  *   /api/registry/search      → search packages
  *   /api/dod                  → DOD submissions
+ *   /api/monitoring           → live registry + ops metrics (JSON)
+ *   /monitoring               → Bun.inspect.table dashboard (HTML)
  *   /api/channels/events      → notification events
  *   PUT /{name}               → npm-compatible publish (bun publish)
  *   /*                        → public/* static files
@@ -25,7 +27,9 @@
 import { Database } from 'bun:sqlite';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { collectMonitoring, renderMonitoringHtml } from '../lib/monitoring/index.ts';
 import { DODVerifier } from '../lib/dod/verifier.ts';
+
 const PORT = Number(Bun.env.PORT || 3000);
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 
@@ -287,7 +291,11 @@ async function npmPublish(req: Request, name: string): Promise<Response> {
 
 // ── npm-compatible package metadata (for bun install / bunx) ────────
 
-async function npmPackageMetadata(name: string): Promise<Response> {
+async function npmPackageMetadata(req: Request): Promise<Response> {
+  const url = new URL(req.url);
+  const rawPath = url.pathname;
+  // Handle URL-encoded scoped names: /@factorywager%2Fregistry-client → @factorywager/registry-client
+  const name = decodeURIComponent(rawPath.startsWith('/@') ? rawPath.slice(1) : rawPath.slice(1));
   const reg = await readRegistry();
   if (!reg) return json({ error: 'No registry' }, 404);
   const pkg = (reg.packages || {})[name];
@@ -383,10 +391,86 @@ async function staticFile(pathname: string): Promise<Response | null> {
 
 // ── Server ──────────────────────────────────────────────────────────
 
+const startedAt = Date.now();
+
+/** GET /api/monitoring — registry + ops metrics (live SQLite, snapshot fallback). */
+async function liveMonitoringApi(): Promise<Response> {
+  try {
+    const db = openOperationsDb({ path: dbPath });
+    try {
+      const data = await collectMonitoring(db, { source: 'live', uptimeOriginMs: startedAt });
+      return json(data);
+    } finally {
+      db.close();
+    }
+  } catch (err) {
+    const snap = Bun.file('public/registry/monitoring.json');
+    if (await snap.exists()) {
+      const data = (await snap.json()) as Record<string, unknown>;
+      return json({ ...data, source: 'snapshot', fallback: 'db-unavailable' });
+    }
+    return json(
+      {
+        error: 'Failed to collect monitoring metrics',
+        detail: err instanceof Error ? err.message : String(err),
+        source: 'none',
+      },
+      503
+    );
+  }
+}
+
+/** GET /monitoring — server-rendered Bun.inspect.table dashboard. */
+async function monitoringPage(): Promise<Response> {
+  try {
+    const db = openOperationsDb({ path: dbPath });
+    try {
+      const data = await collectMonitoring(db, { source: 'live', uptimeOriginMs: startedAt });
+      return new Response(renderMonitoringHtml(data), {
+        headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+      });
+    } finally {
+      db.close();
+    }
+  } catch {
+    const staticRes = await staticFile('/monitoring/');
+    if (staticRes) return staticRes;
+    return new Response('Monitoring unavailable', { status: 503 });
+  }
+}
+
+/** GET /health — uptime, runtime, and artifact freshness probe. */
+async function health(): Promise<Response> {
+  const summary = Bun.file('public/registry/ops-summary.json');
+  const exists = await summary.exists();
+  let generated: string | null = null;
+  let ageSeconds: number | null = null;
+  if (exists) {
+    try {
+      const parsed = (await summary.json()) as { generated?: string };
+      generated = parsed.generated ?? null;
+      ageSeconds = generated ? Math.round((Date.now() - Date.parse(generated)) / 1000) : null;
+    } catch {
+      /* malformed artifact still reports exists */
+    }
+  }
+  return json({
+    status: 'ok',
+    uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
+    bun: Bun.version,
+    artifacts: {
+      opsSummary: { exists, generated, ageSeconds },
+    },
+  });
+}
+
 async function fetchHandler(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const path = url.pathname;
 
+  if (path === '/health' || path === '/health/') return health();
+  if (path === '/api/monitoring' || path === '/api/monitoring/') return liveMonitoringApi();
+  if (path === '/monitoring' || path === '/monitoring/') return monitoringPage();
   if (path === '/api/operations/summary' || path === '/api/operations/summary/')
     return liveOpsSummary();
   if (path === '/api/catalog' || path === '/api/catalog/') return liveCatalog(req);
@@ -431,14 +515,24 @@ async function fetchHandler(req: Request): Promise<Response> {
     return dodApi(req);
   if (path === '/api/channels/events') return channelsEvents(req);
 
-  // npm-compatible publish: PUT /{name}
-  if (req.method === 'PUT' && path.split('/').length === 2 && path.startsWith('/')) {
+  // npm-compatible publish: PUT /{name} or /@scope/name
+  if (
+    req.method === 'PUT' &&
+    (path.match(/^\/@[a-z0-9-]+\/[a-zA-Z0-9._-]+$/) ||
+      path.match(/^\/@[a-z0-9-]+%2[fF][a-zA-Z0-9._-]+$/) ||
+      (path.split('/').length === 2 && path.startsWith('/') && !path.startsWith('/@')))
+  ) {
     return npmPublish(req, decodeURIComponent(path.slice(1)));
   }
 
-  // npm-compatible metadata: GET /{name} (for bun install / bunx resolution)
-  if (req.method === 'GET' && path.split('/').length === 2 && path.startsWith('/')) {
-    return npmPackageMetadata(decodeURIComponent(path.slice(1)));
+  // npm-compatible metadata: GET /{name} or /@scope/name
+  if (
+    req.method === 'GET' &&
+    (path.match(/^\/@[a-z0-9-]+\/[a-zA-Z0-9._-]+$/) ||
+      path.match(/^\/@[a-z0-9-]+%2[fF][a-zA-Z0-9._-]+$/) ||
+      (path.split('/').length === 2 && path.startsWith('/') && !path.startsWith('/@')))
+  ) {
+    return npmPackageMetadata(req);
   }
 
   const staticRes = await staticFile(path);
@@ -480,7 +574,9 @@ Port ${preferred}–${preferred + maxTries - 1} busy.
 const { port: boundPort } = startServer(PORT);
 
 console.log(`Local portal:  http://localhost:${boundPort}/portal/ops/`);
+console.log(`Monitoring:    http://localhost:${boundPort}/monitoring`);
 console.log(`Live API:      http://localhost:${boundPort}/api/operations/summary`);
+console.log(`Monitoring API http://localhost:${boundPort}/api/monitoring`);
 console.log(`Registry:      http://localhost:${boundPort}/api/registry`);
 console.log(`Catalog:       http://localhost:${boundPort}/api/catalog`);
 console.log(`Prediction:    http://localhost:${boundPort}/registry/prediction/report.html`);
