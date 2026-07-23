@@ -1,29 +1,65 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
-// @see https://bun.sh/docs/runtime/sqlite — bun:sqlite Database
 /**
- * Operations platform schema — tree-structured sportsbook agent management.
+ * Operations platform schema — tree-structured sportsbook agent management (SSOT).
  *
  * Entity hierarchy:
  *   Operations → Expert → Partner → Agent → Sub-agent
- *
- * Each node in the tree can source sportsbook accounts and receive plays
- * from the expert they follow. Agents become Partners when they grow enough
- * accounts/liquidity to manage their own down-tree.
  */
+import type { Database } from 'bun:sqlite';
 
-import { Database } from 'bun:sqlite';
+const TREE_NODE_COLUMNS = [
+  ['email', 'TEXT'],
+  ['call_sign', 'TEXT'],
+  ['oidc_subject', 'TEXT'],
+  ['status', "TEXT DEFAULT 'active'"],
+  ['promoted_at', 'TEXT'],
+  ['last_play_at', 'TEXT'],
+] as const;
+
+/** Add columns / tables introduced after initial deploy (SQLite-safe). */
+export function migrateSchema(db: Database): void {
+  const existing = new Set(
+    (db.query('PRAGMA table_info(tree_nodes)').all() as { name: string }[]).map(c => c.name)
+  );
+  for (const [name, def] of TREE_NODE_COLUMNS) {
+    if (!existing.has(name)) {
+      db.run(`ALTER TABLE tree_nodes ADD COLUMN ${name} ${def}`);
+    }
+  }
+
+  const opsCols = new Set(
+    (db.query('PRAGMA table_info(operations)').all() as { name: string }[]).map(c => c.name)
+  );
+  if (!opsCols.has('version')) {
+    db.run('ALTER TABLE operations ADD COLUMN version INTEGER DEFAULT 0');
+  }
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS positions (
+      id TEXT PRIMARY KEY,
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      book TEXT NOT NULL DEFAULT '_all',
+      deposited REAL DEFAULT 0,
+      in_play REAL DEFAULT 0,
+      available REAL DEFAULT 0,
+      version INTEGER DEFAULT 0,
+      last_reconciled TEXT,
+      UNIQUE(node_id, book)
+    );
+    CREATE INDEX IF NOT EXISTS idx_positions_node ON positions(node_id);
+  `);
+}
 
 export function initSchema(db: Database): void {
   db.run(`
-    -- Singleton config for the operations platform
     CREATE TABLE IF NOT EXISTS operations (
       id TEXT PRIMARY KEY DEFAULT 'main',
       total_liquidity REAL DEFAULT 0,
       total_exposure REAL DEFAULT 0,
+      version INTEGER DEFAULT 0,
       updated_at TEXT
     );
 
-    -- Experts: people with proven edge in a sport/market
     CREATE TABLE IF NOT EXISTS experts (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -34,24 +70,28 @@ export function initSchema(db: Database): void {
       created_at TEXT NOT NULL
     );
 
-    -- Unified tree: partners, agents, sub-agents
     CREATE TABLE IF NOT EXISTS tree_nodes (
       id TEXT PRIMARY KEY,
       type TEXT NOT NULL CHECK(type IN ('partner', 'agent', 'sub_agent')),
       parent_id TEXT REFERENCES tree_nodes(id),
       expert_id TEXT REFERENCES experts(id),
       name TEXT NOT NULL,
-      telegram_id TEXT,
+      call_sign TEXT UNIQUE,
+      email TEXT,
+      telegram_id TEXT UNIQUE,
+      oidc_subject TEXT UNIQUE,
       phone_id TEXT,
       rail_preference TEXT DEFAULT 'paypal',
       total_accounts INTEGER DEFAULT 0,
       total_liquidity REAL DEFAULT 0,
       cut_percentage REAL DEFAULT 0,
       active INTEGER DEFAULT 1,
-      created_at TEXT NOT NULL
+      status TEXT DEFAULT 'active' CHECK(status IN ('prospect', 'active', 'partner', 'suspended')),
+      promoted_at TEXT,
+      created_at TEXT NOT NULL,
+      last_play_at TEXT
     );
 
-    -- Sportsbook accounts belonging to agents
     CREATE TABLE IF NOT EXISTS sb_accounts (
       id TEXT PRIMARY KEY,
       agent_id TEXT NOT NULL REFERENCES tree_nodes(id),
@@ -64,7 +104,6 @@ export function initSchema(db: Database): void {
       created_at TEXT NOT NULL
     );
 
-    -- Funding channels (rails)
     CREATE TABLE IF NOT EXISTS rails (
       id TEXT PRIMARY KEY,
       type TEXT NOT NULL CHECK(type IN ('paypal', 'venmo', 'cashapp', 'wire', 'zelle')),
@@ -77,7 +116,6 @@ export function initSchema(db: Database): void {
       created_at TEXT NOT NULL
     );
 
-    -- Plays: wager recommendations from experts
     CREATE TABLE IF NOT EXISTS plays (
       id TEXT PRIMARY KEY,
       expert_id TEXT NOT NULL REFERENCES experts(id),
@@ -95,7 +133,6 @@ export function initSchema(db: Database): void {
       pnl REAL
     );
 
-    -- Play distribution: who received each play
     CREATE TABLE IF NOT EXISTS play_distribution (
       play_id TEXT NOT NULL REFERENCES plays(id),
       node_id TEXT NOT NULL REFERENCES tree_nodes(id),
@@ -108,7 +145,30 @@ export function initSchema(db: Database): void {
       PRIMARY KEY (play_id, node_id)
     );
 
-    -- Hardware inventory
+    CREATE TABLE IF NOT EXISTS growth_metrics (
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      period TEXT NOT NULL,
+      plays_received INTEGER DEFAULT 0,
+      plays_placed INTEGER DEFAULT 0,
+      volume REAL DEFAULT 0,
+      pnl REAL DEFAULT 0,
+      new_sub_agents INTEGER DEFAULT 0,
+      new_accounts INTEGER DEFAULT 0,
+      PRIMARY KEY (node_id, period)
+    );
+
+    CREATE TABLE IF NOT EXISTS telegram_outbox (
+      id TEXT PRIMARY KEY,
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      play_id TEXT NOT NULL REFERENCES plays(id),
+      telegram_id TEXT NOT NULL,
+      payload TEXT NOT NULL,
+      status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'sent', 'failed')),
+      retries INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL,
+      sent_at TEXT
+    );
+
     CREATE TABLE IF NOT EXISTS phones (
       id TEXT PRIMARY KEY,
       model TEXT,
@@ -121,7 +181,6 @@ export function initSchema(db: Database): void {
       returned_at TEXT
     );
 
-    -- Funding transaction history
     CREATE TABLE IF NOT EXISTS funding (
       id TEXT PRIMARY KEY,
       rail_id TEXT NOT NULL REFERENCES rails(id),
@@ -135,7 +194,6 @@ export function initSchema(db: Database): void {
       confirmed_at TEXT
     );
 
-    -- Platform catalog (sportsbooks, exchanges, DFS, crypto)
     CREATE TABLE IF NOT EXISTS platforms (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL UNIQUE,
@@ -146,7 +204,6 @@ export function initSchema(db: Database): void {
       created_at TEXT NOT NULL
     );
 
-    -- Partner platform accounts (link partners to platforms)
     CREATE TABLE IF NOT EXISTS partner_platform_accounts (
       id TEXT PRIMARY KEY,
       platform_id TEXT NOT NULL REFERENCES platforms(id),
@@ -160,8 +217,33 @@ export function initSchema(db: Database): void {
       created_at TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS positions (
+      id TEXT PRIMARY KEY,
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      book TEXT NOT NULL DEFAULT '_all',
+      deposited REAL DEFAULT 0,
+      in_play REAL DEFAULT 0,
+      available REAL DEFAULT 0,
+      version INTEGER DEFAULT 0,
+      last_reconciled TEXT,
+      UNIQUE(node_id, book)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_positions_node ON positions(node_id);
+    CREATE INDEX IF NOT EXISTS idx_expert ON tree_nodes(expert_id);
+    CREATE INDEX IF NOT EXISTS idx_telegram ON tree_nodes(telegram_id);
+    CREATE INDEX IF NOT EXISTS idx_status ON tree_nodes(status);
+    CREATE INDEX IF NOT EXISTS idx_outbox_status ON telegram_outbox(status);
+    CREATE INDEX IF NOT EXISTS idx_parent ON tree_nodes(parent_id);
+
+    CREATE TABLE IF NOT EXISTS ops_sync_cursor (
+      topic TEXT PRIMARY KEY,
+      last_seq INTEGER DEFAULT 0
+    );
     CREATE INDEX IF NOT EXISTS idx_ppa_platform ON partner_platform_accounts(platform_id);
     CREATE INDEX IF NOT EXISTS idx_ppa_partner ON partner_platform_accounts(partner_id);
     CREATE INDEX IF NOT EXISTS idx_ppa_status ON partner_platform_accounts(status);
   `);
+
+  migrateSchema(db);
 }
