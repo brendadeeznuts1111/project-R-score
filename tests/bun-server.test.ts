@@ -127,4 +127,79 @@ describe('lib/http/bun-server — Server surface', () => {
       await stopServer(server, true);
     }
   });
+
+  test('server.fetch does not pass server as fetch 2nd arg; TCP does', async () => {
+    const server: BunServer = Bun.serve({
+      port: 0,
+      hostname: '127.0.0.1',
+      development: false,
+      fetch(req, srv) {
+        return Response.json({
+          hasServer: typeof srv?.requestIP === 'function',
+          ip: typeof srv?.requestIP === 'function' ? srv.requestIP(req) : null,
+        });
+      },
+    });
+    try {
+      const viaSf = (await (
+        await serverFetch(server, new URL('/', server.url).href)
+      ).json()) as { hasServer: boolean; ip: unknown };
+      expect(viaSf.hasServer).toBe(false);
+      expect(viaSf.ip).toBeNull();
+
+      const viaTcp = (await (await loopbackFetch(server, '/')).json()) as {
+        hasServer: boolean;
+        ip: { address: string; family: string; port: number } | null;
+      };
+      expect(viaTcp.hasServer).toBe(true);
+      expect(viaTcp.ip?.address).toBe('127.0.0.1');
+      expect(viaTcp.ip?.family).toBe('IPv4');
+    } finally {
+      await stopServer(server, true);
+    }
+  });
+
+  test('method routes work on loopback; unmatched methods fall to fetch', async () => {
+    const server: BunServer = Bun.serve({
+      port: 0,
+      hostname: '127.0.0.1',
+      routes: {
+        '/item': {
+          GET: () => new Response('get'),
+          POST: async (req: Request) => new Response(`post:${await req.text()}`),
+        },
+      },
+      fetch: () => new Response('fb', { status: 404 }),
+    });
+    try {
+      const g = await loopbackFetch(server, '/item');
+      expect(await g.text()).toBe('get');
+      const p = await loopbackFetch(server, '/item', { method: 'POST', body: 'x' });
+      expect(await p.text()).toBe('post:x');
+      const d = await loopbackFetch(server, '/item', { method: 'DELETE' });
+      expect(d.status).toBe(404);
+      // server.fetch never sees method routes
+      const sf = await serverFetch(server, new URL('/item', server.url).href);
+      expect(sf.status).toBe(404);
+    } finally {
+      await stopServer(server, true);
+    }
+  });
+
+  test('routes-only server: server.fetch throws; TCP works', async () => {
+    const server: BunServer = Bun.serve({
+      port: 0,
+      hostname: '127.0.0.1',
+      routes: { '/ready': new Response('R') },
+    });
+    try {
+      await expect(serverFetch(server, new URL('/ready', server.url).href)).rejects.toThrow(
+        /fetch handler/i
+      );
+      const tcp = await loopbackFetch(server, '/ready');
+      expect(await tcp.text()).toBe('R');
+    } finally {
+      await stopServer(server, true);
+    }
+  });
 });

@@ -3,15 +3,22 @@
  *
  * ## Runtime matrix (Bun 1.4 canary verified)
  *
- * | Call | Hits `routes` | Hits `fetch` handler |
- * |------|---------------|----------------------|
- * | TCP `fetch(server.url + path)` | yes | yes (fallback) |
- * | `server.fetch(Request\|string)` | **no** | yes only |
+ * | Call | Hits `routes` | Hits `fetch` | `fetch(req, server)` 2nd arg | `requestIP` |
+ * |------|---------------|--------------|------------------------------|-------------|
+ * | TCP `fetch(server.url+path)` | **yes** | yes (fallback) | **Server object** | real socket addr |
+ * | `server.fetch(Request\|string)` | **no** | yes only | **undefined** | N/A (no socket) |
  *
- * `server.fetch` requires a `fetch` handler (`routes`-only servers throw).
- * Use loopback `fetch(server.url)` to exercise SIMD `routes` + fetch fallback
- * (same as production clients). Use `server.fetch` for unit-testing the
- * `fetch` handler / internal routing without going through route matching.
+ * Further facts:
+ * - `server.fetch` requires a `fetch` handler — routes-only servers **throw**.
+ * - Relative `server.fetch("/path")` can resolve to `http://host:0/path` — always
+ *   pass absolute URLs via `new URL(path, server.url)`.
+ * - Method routes (`{ GET, POST }`) only apply on the TCP/`routes` path.
+ * - `server.reload({ routes, fetch, websocket, error })` hot-swaps handlers; port stays.
+ * - `pendingRequests` increments for in-flight TCP requests (observed mid-handler = 1).
+ * - `development` defaults to **true** when unset; set `development: false` for prod-like.
+ * - `server.id` may be empty string unless configured.
+ * - Prefer loopback for production-path proofs (routes + socket + requestIP).
+ * - Prefer `server.fetch` only to unit-test pure `fetch` handler logic (no routes).
  *
  * Interface (docs reference): stop, reload, fetch, upgrade, publish,
  * subscriberCount, requestIP, timeout, ref/unref, pendingRequests,
