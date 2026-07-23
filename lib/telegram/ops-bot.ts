@@ -14,14 +14,24 @@
  *   /plays          — today's pending plays
  *   /tree           — downstream tree (partners/agents only)
  *   /register <ref> <name> — register as sub-agent
+ *   /verifydod <id> — DOD delivery receipt (status + hashes)
  *
  * Each node is identified by their Telegram user ID stored in
  * tree_nodes.telegram_id.
  */
 
 import { Database } from 'bun:sqlite';
+import { DODVerifier } from '../dod/verifier.ts';
 
-const COMMANDS = ['/start', '/status', '/accounts', '/plays', '/tree', '/register'] as const;
+const COMMANDS = [
+  '/start',
+  '/status',
+  '/accounts',
+  '/plays',
+  '/tree',
+  '/register',
+  '/verifydod',
+] as const;
 
 type BotCommand = (typeof COMMANDS)[number] | null;
 
@@ -41,11 +51,13 @@ export interface TreeNode {
 
 export class OpsTelegramBot {
   private db: Database;
+  private dbPath: string;
   private token: string;
   private polling = false;
 
   constructor(config: BotConfig) {
     this.token = config.token || Bun.env.TELEGRAM_BOT_TOKEN || '';
+    this.dbPath = config.dbPath;
     this.db = new Database(config.dbPath);
     this.db.run('PRAGMA journal_mode=WAL');
   }
@@ -112,10 +124,51 @@ export class OpsTelegramBot {
       case '/register':
         await this.handleRegister(chatId, userId, node, args);
         break;
+      case '/verifydod':
+        await this.handleVerifyDod(chatId, node, args);
+        break;
     }
   }
 
   // ── Command handlers ──────────────────────────────────────────────
+
+  /** /verifydod <dod-id> — agent-side delivery receipt (own submissions only). */
+  private async handleVerifyDod(
+    chatId: number,
+    node: TreeNode | null,
+    args: string[]
+  ): Promise<void> {
+    if (!node) {
+      await this.send(chatId, ['❌ Not registered']);
+      return;
+    }
+    const dodId = args[0]?.trim();
+    if (!dodId) {
+      await this.send(chatId, ['Usage: `/verifydod <dod-id>`']);
+      return;
+    }
+    const verifier = new DODVerifier(this.dbPath);
+    try {
+      const r = verifier.receipt(dodId) as Record<string, unknown> | null;
+      if (!r || r.agent_id !== node.id) {
+        await this.send(chatId, ['❌ DOD not found']);
+        return;
+      }
+      await this.send(chatId, [
+        '📄 *DOD Receipt*',
+        `ID: \`${String(r.id).slice(0, 8)}…\``,
+        `Type: ${r.type}`,
+        `Status: *${r.status}*`,
+        `Visual hash: \`${String(r.visual_hash).slice(0, 12)}…\``,
+        `Signature: \`${String(r.signature).slice(0, 12)}…\``,
+        `Submitted: ${r.submitted_at}`,
+        '',
+        'Keep the full ID + signature for your records.',
+      ]);
+    } finally {
+      verifier.close();
+    }
+  }
 
   private async handleStart(chatId: number, node: TreeNode | null): Promise<void> {
     if (!node) {
@@ -148,6 +201,7 @@ export class OpsTelegramBot {
       '/accounts — Sportsbook accounts',
       "/plays — Today's plays",
       '/tree — Your down-tree',
+      '/verifydod <id> — DOD delivery receipt',
     ]);
   }
 
