@@ -1270,6 +1270,10 @@ function startServer(preferred: number, maxTries = 20): { port: number; hostname
         routes,
         // Mutations, multi-segment static, npm-compat, tenants, everything else
         fetch: fetchHandler,
+        error(error) {
+          console.error('[serve] unhandled:', error);
+          return new Response('Internal Server Error', { status: 500 });
+        },
       });
       return { port: server.port, hostname: server.hostname };
     } catch (e) {
