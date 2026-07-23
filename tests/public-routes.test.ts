@@ -7,7 +7,9 @@ import {
   publicRouteCatalog,
   publicRoutesByCategory,
 } from '../lib/http/public-routes.ts';
+import { RouteProbeReport } from '../lib/http/networking-report.ts';
 import { probePublicRoutes } from '../tools/verify-networking.ts';
+import { inspectCustom } from '../lib/console-depth.ts';
 
 describe('lib/http/public-routes', () => {
   test('catalog includes portal dashboards + health + critical APIs', () => {
@@ -62,5 +64,16 @@ describe('probePublicRoutes (live when serve-public up)', () => {
     expect(probe.rows.some(r => r.path === '/portal/ops/' && r.pass)).toBe(true);
     expect(probe.rows.some(r => r.path === '/portal/health/' && r.pass)).toBe(true);
     expect(probe.rows.some(r => r.path === '/api/operations/summary' && r.pass)).toBe(true);
+
+    // Bun.inspect.custom → inspect.table (docs shape)
+    const report = new RouteProbeReport(probe);
+    expect(typeof report[inspectCustom]).toBe('function');
+    const printed = Bun.inspect(report, { colors: false });
+    expect(printed).toContain('RouteProbeReport');
+    expect(printed).toContain('/health');
+    expect(printed).toContain('PASS');
+    const j = report.toJSON();
+    expect(j.routes.length).toBe(probe.rows.length);
+    expect(j.rendered.routes).toContain('/portal/ops/');
   });
 });

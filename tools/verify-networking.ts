@@ -1,197 +1,656 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/networking/fetch#dns-prefetching — DNS prefetching
+// @see https://bun.com/docs/runtime/networking/dns#dns-prefetch — dns.prefetch
+// @see https://bun.com/docs/runtime/networking/dns#dns-getcachestats — dns.getCacheStats
+// @see https://bun.com/docs/runtime/networking/fetch#preconnect-to-a-host — fetch.preconnect
+// @see https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup — --fetch-preconnect
+// @see https://bun.com/docs/runtime/networking/fetch#connection-pooling-http-keep-alive — keepalive / pool
+// @see https://bun.com/docs/runtime/networking/fetch#response-buffering — response.bytes()
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
- * verify-networking.ts — Test fetch connection reuse, preconnect, and HTTP/2.
+ * Multi-target Bun networking optimization suite.
  *
- * APIs Used:
- *   Bun.fetch()             → https://bun.sh/docs/api/fetch
- *   fetch.preconnect()      → https://bun.sh/docs/runtime/networking/fetch#preconnect-at-startup
- *   Bun.CryptoHasher        → https://bun.sh/docs/runtime/hashing
- *   Bun.inspect.table       → https://bun.sh/docs/runtime/utils#bun-inspect
- *   Bun.nanoseconds()       → https://bun.sh/docs/runtime/utils#bun-nanoseconds
- *   Bun.deepEquals()        → https://bun.sh/docs/runtime/utils#bun-deepequals
- *   Bun.sleep()             → https://bun.sh/docs/runtime/utils#bun-sleep
+ * Printing: prefer `console.log(report)` — RouteProbeReport implements
+ * `[Bun.inspect.custom]` so Bun renders inspect.table automatically.
+ * JSON: `JSON.stringify(report)` → toJSON() with rows + rendered tables.
  *
- * Usage:
- *   bun tools/verify-networking.ts                                    # run + print
- *   bun tools/verify-networking.ts --save --path=proof.json           # save proof
- *   bun tools/verify-networking.ts --expect=public/registry/networking-proof.json  # compare
+ * Grounded targets (not invent):
+ *   - Cloudflare dashboard / Pages-facing registry
+ *   - Local serve-public health + prediction report
+ *   - Kalshi public exchange status
+ *   - bun.com docs (HTTPS DNS control)
+ *   - optional Telegram getMe when TELEGRAM_BOT_TOKEN is set
+ *   - optional R2 public base via R2_PUBLIC_BASE
+ *
+ * Runtime matrix (Bun 1.4):
+ *   dns.prefetch(host[, port])  — always preferred
+ *   fetch.preconnect(http://host:port) — OK
+ *   fetch.preconnect(https://…) — Invalid port → CLI --fetch-preconnect https://host:443
+ *
+ *   bun tools/verify-networking.ts
+ *   bun tools/verify-networking.ts --local-only
+ *   bun tools/verify-networking.ts --routes          # portal + API + hot static catalog
+ *   bun tools/verify-networking.ts --routes-only     # tables via Bun.inspect.table
+ *   bun tools/verify-networking.ts --routes-only --json   # machine JSON + tables.* strings
+ *   bun tools/verify-networking.ts --skip-write
+ *   # Human tables: omit --json. JSON still embeds Bun.inspect.table under .tables
+ *   bun --fetch-preconnect https://api.elections.kalshi.com:443 tools/verify-networking.ts
  */
-import { inspect, CryptoHasher, deepEquals, sleep, version, revision } from 'bun';
-import { existsSync, writeFileSync } from 'fs';
 
-const BASE = process.env.HEALTH_URL || 'http://localhost:3000';
-const EXPECTED_FILE = process.argv.find(a => a.startsWith('--expect='))?.split('=')[1];
-const SAVE_PATH = process.argv.find(a => a.startsWith('--path='))?.split('=')[1];
-const SHOULD_SAVE = process.argv.includes('--save');
+import { unlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import {
+  BUN_DNS_CACHE_STATS_DOCS,
+  BUN_DNS_PREFETCHING_DOCS,
+  BUN_DNS_PREFETCH_DOCS,
+  BUN_FETCH_PRECONNECT_DOCS,
+  BUN_FETCH_PRECONNECT_STARTUP_DOCS,
+  dnsCacheStats,
+  dnsPrefetchOrigin,
+  preconnectCliUrl,
+  preconnectOrigin,
+} from '../lib/http/fetch-preconnect.ts';
+import {
+  mergeHotFromHealth,
+  publicRouteCatalog,
+  type HealthRouteObjects,
+  type PublicRouteDef,
+} from '../lib/http/public-routes.ts';
+import {
+  NetworkingChecksReport,
+  RouteProbeReport,
+  type RouteProbeResult,
+  type RouteProbeRow,
+} from '../lib/http/networking-report.ts';
 
-type TargetResult = {
-  name: string;
-  summary: {
-    protocol: string;
-    reuseEfficiency: number;
-    coldFetchMs: number;
-    warmFetchMs: number;
-    statusCode: number;
-    bodySize: number;
-  };
-  detail: {
-    cold: { start: number; end: number; durMs: number; ok: boolean };
-    warm: { start: number; end: number; durMs: number; ok: boolean };
-    preconnect: { start: number; end: number; durMs: number; ok: boolean };
-    connectionReuse: boolean;
-    httpVersion: string;
-  };
+export type { RouteProbeResult, RouteProbeRow } from '../lib/http/networking-report.ts';
+
+// ── Canonical refs (bun.com) ───────────────────────────────────────────────
+
+const CANONICAL = {
+  dnsPrefetching: BUN_DNS_PREFETCHING_DOCS,
+  dnsPrefetch: BUN_DNS_PREFETCH_DOCS,
+  dnsCacheStats: BUN_DNS_CACHE_STATS_DOCS,
+  preconnect: BUN_FETCH_PRECONNECT_DOCS,
+  preconnectStartup: BUN_FETCH_PRECONNECT_STARTUP_DOCS,
+  keepalive: 'https://bun.com/docs/runtime/networking/fetch#connection-pooling-http-keep-alive',
+  responseBuffering: 'https://bun.com/docs/runtime/networking/fetch#response-buffering',
+  write: 'https://bun.com/docs/runtime/file-io#writing-files-bun-write',
+  nanoseconds: 'https://bun.com/docs/runtime/utils#bun-nanoseconds',
+  inspectTable:
+    'https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options',
+  env: 'https://bun.com/docs/runtime/utils#bun-env',
+} as const;
+
+// ── CLI ────────────────────────────────────────────────────────────────────
+
+const args = process.argv.slice(2);
+const has = (n: string) => args.includes(`--${n}`);
+const flag = (n: string): string | undefined => {
+  const hit = args.find(a => a.startsWith(`--${n}=`));
+  return hit?.slice(n.length + 3);
 };
 
-async function timeFetch(url: string, opts: RequestInit = {}): Promise<{ durMs: number; ok: boolean; status: number; size: number; httpVer: string }> {
-  const t0 = Bun.nanoseconds();
-  const res = await fetch(url, opts);
-  const durMs = (Bun.nanoseconds() - t0) / 1e6;
-  const text = await res.text();
-  const httpVer = res.headers.get('x-http-version') || (res.url.startsWith('https') ? 'HTTP/2' : 'HTTP/1.1');
-  return { durMs, ok: res.ok, status: res.status, size: text.length, httpVer };
-}
+const LOCAL_BASE = flag('base') || Bun.env.HEALTH_URL || Bun.env.BASE_URL || 'http://127.0.0.1:3000';
+const LOCAL_ONLY = has('local-only');
+const ROUTES = has('routes') || has('routes-only') || has('local-only');
+const ROUTES_ONLY = has('routes-only');
+const SKIP_WRITE = has('skip-write');
+const AS_JSON = has('json');
+const TIMEOUT_MS = Number(flag('timeout-ms') ?? 10_000);
 
-async function testTarget(name: string, url: string): Promise<TargetResult> {
-  // Cold fetch (no preconnect)
-  const cold = await timeFetch(url);
+// ── Targets ────────────────────────────────────────────────────────────────
 
-  // Preconnect then warm fetch
-  const tPc = Bun.nanoseconds();
-  fetch.preconnect(url);
-  const pcDur = (Bun.nanoseconds() - tPc) / 1e6;
-  await sleep(50); // let preconnect settle
-  const warm = await timeFetch(url);
+export type NetTarget = {
+  name: string;
+  url: string;
+  category: string;
+  /** Prefer HEAD; some hosts block HEAD → fall back to GET. */
+  method?: 'HEAD' | 'GET';
+  /** Skip response.bytes + Bun.write (rate limits / large HTML). */
+  skipBuffer?: boolean;
+  /** Treat these HTTP statuses as "reachable" for networking proof. */
+  okStatuses?: number[];
+};
 
-  const reuse = warm.durMs < cold.durMs * 0.8;
-  const httpVer = warm.httpVer;
-
-  return {
-    name,
-    summary: {
-      protocol: httpVer,
-      reuseEfficiency: cold.durMs > 0 ? +(cold.durMs / Math.max(warm.durMs, 0.01)).toFixed(2) : 0,
-      coldFetchMs: +cold.durMs.toFixed(2),
-      warmFetchMs: +warm.durMs.toFixed(2),
-      statusCode: warm.status,
-      bodySize: warm.size,
+function buildTargets(): NetTarget[] {
+  const local = LOCAL_BASE.replace(/\/$/, '');
+  const out: NetTarget[] = [
+    {
+      name: 'Health',
+      url: `${local}/health`,
+      category: 'ops',
+      method: 'GET',
+      okStatuses: [200],
     },
-    detail: {
-      cold: { start: 0, end: cold.durMs, durMs: +cold.durMs.toFixed(2), ok: cold.ok },
-      warm: { start: 0, end: warm.durMs, durMs: +warm.durMs.toFixed(2), ok: warm.ok },
-      preconnect: { start: 0, end: pcDur, durMs: +pcDur.toFixed(2), ok: true },
-      connectionReuse: reuse,
-      httpVersion: httpVer,
+    {
+      name: 'Prediction report',
+      url: `${local}/registry/prediction/report.html`,
+      category: 'registry',
+      method: 'GET',
+      okStatuses: [200],
     },
-  };
-}
-
-async function main() {
-  const tStart = Bun.nanoseconds();
-
-  const targets = [
-    { name: 'Health (JSON)', url: `${BASE}/health` },
-    { name: 'Portal index', url: `${BASE}/portal/` },
-    { name: 'Registry index', url: `${BASE}/api/registry` },
-    { name: 'Account catalog', url: `${BASE}/api/catalog` },
-    { name: 'Environment API', url: `${BASE}/api/env` },
-    { name: 'Proof manifest', url: `${BASE}/api/proof` },
-    { name: 'Monitoring API', url: `${BASE}/api/monitoring` },
-    { name: 'Health pre (HTML)', url: `${BASE}/health/pre` },
   ];
 
-  // Preconnect all targets in parallel
-  await Promise.all(targets.map(t => fetch.preconnect(t.url)));
+  if (LOCAL_ONLY) return out;
 
-  const results: TargetResult[] = [];
-  for (const target of targets) {
-    results.push(await testTarget(target.name, target.url));
+  out.push(
+    {
+      name: 'CF Dashboard',
+      url: 'https://dash.cloudflare.com',
+      category: 'dashboard',
+      method: 'HEAD',
+      // 403/302 still prove DNS+TLS+pool — dashboard often rejects unauth HEAD body paths
+      okStatuses: [200, 301, 302, 303, 307, 308, 401, 403],
+      skipBuffer: true,
+    },
+    {
+      name: 'Registry (Pages)',
+      url: 'https://registry.factory-wager.com/',
+      category: 'pages',
+      method: 'HEAD',
+      okStatuses: [200, 301, 302, 303, 307, 308],
+      skipBuffer: true,
+    },
+    {
+      name: 'Kalshi exchange',
+      url: 'https://api.elections.kalshi.com/trade-api/v2/exchange/status',
+      category: 'trading',
+      method: 'GET',
+      okStatuses: [200],
+    },
+    {
+      name: 'Bun docs',
+      url: 'https://bun.com/docs',
+      category: 'control',
+      method: 'HEAD',
+      okStatuses: [200, 301, 302],
+      skipBuffer: true,
+    }
+  );
+
+  const tg = Bun.env.TELEGRAM_BOT_TOKEN?.trim();
+  if (tg) {
+    out.push({
+      name: 'Telegram getMe',
+      url: `https://api.telegram.org/bot${tg}/getMe`,
+      category: 'messaging',
+      method: 'GET',
+      okStatuses: [200],
+      skipBuffer: true,
+    });
   }
 
-  // Compute proof hash
-  const hasher = new CryptoHasher('sha256');
-  for (const r of results) {
-    hasher.update(r.name);
-    hasher.update(String(r.summary.coldFetchMs));
-    hasher.update(String(r.summary.warmFetchMs));
-    hasher.update(String(r.summary.statusCode));
-    hasher.update(r.summary.protocol);
-  }
-  const allOk = results.every(r => r.detail.warm.ok);
-  const proofHash = hasher.digest('hex');
-
-  const proof = {
-    schemaVersion: 1,
-    bunVersion: version,
-    bunRevision: revision?.slice(0, 12) || 'unknown',
-    timestamp: new Date().toISOString(),
-    base: BASE,
-    totalTargets: targets.length,
-    allOk,
-    proofHash,
-    targets: results,
-  };
-
-  // Compare with expected if --expect provided
-  if (EXPECTED_FILE && existsSync(EXPECTED_FILE)) {
-    const expected = JSON.parse(await Bun.file(EXPECTED_FILE).text());
-    const match = expected.proofHash === proofHash;
-    console.log(`\n📋 Proof comparison: ${match ? '✅ MATCH' : '❌ MISMATCH'}`);
-    console.log(`   Expected: ${expected.proofHash.slice(0, 16)}…`);
-    console.log(`   Actual:   ${proofHash.slice(0, 16)}…`);
-    if (!match) process.exit(1);
-    return;
+  const r2 = Bun.env.R2_PUBLIC_BASE?.trim() || Bun.env.R2_PUBLIC_URL?.trim();
+  if (r2) {
+    out.push({
+      name: 'R2 public',
+      url: r2,
+      category: 'storage',
+      method: 'HEAD',
+      okStatuses: [200, 301, 302, 403, 404],
+      skipBuffer: true,
+    });
   }
 
-  // Save proof
-  if (SHOULD_SAVE && SAVE_PATH) {
-    writeFileSync(SAVE_PATH, JSON.stringify(proof, null, 2));
-    console.log(`\n💾 Proof saved to ${SAVE_PATH}`);
-  }
-
-  // Render table
-  const elapsed = (Bun.nanoseconds() - tStart) / 1e6;
-  console.log('╔══════════════════════════════════════════════════════════════════════╗');
-  console.log('║  🧪 Networking Proof — Connection Reuse & Preconnect                 ║');
-  console.log(`║  Base: ${BASE.padEnd(58)}║`);
-  console.log(`║  Bun:  ${(version + ' / ' + (revision?.slice(0, 8) || 'unknown')).padEnd(58)}║`);
-  console.log(`║  Time: ${(elapsed.toFixed(2) + 'ms').padEnd(57)}║`);
-  console.log('╚══════════════════════════════════════════════════════════════════════╝\n');
-
-  const table = inspect(results.map(r => [
-    r.name,
-    r.summary.protocol,
-    r.summary.reuseEfficiency.toFixed(2) + '×',
-    r.summary.coldFetchMs + 'ms',
-    r.summary.warmFetchMs + 'ms',
-    r.detail.connectionReuse ? '✅' : '❌',
-    r.summary.statusCode,
-  ]), { colors: true, table: true });
-  console.log(table);
-
-  const reused = results.filter(r => r.detail.connectionReuse).length;
-  console.log(`\n  📊 Connection reuse: ${reused}/${results.length} targets`);
-  console.log(`  🔒 Proof hash: ${proofHash.slice(0, 16)}…`);
-  console.log(`  📋 All endpoints healthy: ${allOk ? '✅' : '❌'}`);
-
-  if (!allOk) {
-    console.log('\n  ❌ FAILURES:');
-    results.filter(r => !r.detail.warm.ok).forEach(r => console.log(`    • ${r.name}: status ${r.summary.statusCode}`));
-    process.exit(1);
-  }
-
-  if (SHOULD_SAVE && !SAVE_PATH) {
-    console.log('\n  ⚠️  --path not specified, proof not saved');
-  }
-
-  console.log('\n  Canonical API references:');
-  console.log('    • Bun.fetch:        https://bun.sh/docs/api/fetch');
-  console.log('    • fetch.preconnect: https://bun.sh/docs/runtime/networking/fetch#preconnect-at-startup');
-  console.log('    • Bun.CryptoHasher: https://bun.sh/docs/runtime/hashing');
-  console.log('    • Bun.inspect.table:https://bun.sh/docs/runtime/utils#bun-inspect');
-  console.log('    • Bun.nanoseconds:  https://bun.sh/docs/runtime/utils#bun-nanoseconds');
-  console.log('    • Bun.deepEquals:   https://bun.sh/docs/runtime/utils#bun-deepequals');
-  console.log('    • Bun.sleep:        https://bun.sh/docs/runtime/utils#bun-sleep');
+  return out;
 }
 
-await main();
+// ── Row model ──────────────────────────────────────────────────────────────
+
+export type NetCheckRow = {
+  target: string;
+  category: string;
+  optimization: string;
+  metric: string;
+  status: 'PASS' | 'FAIL' | 'SKIP' | 'INFO';
+  detail?: string;
+};
+
+function ms(ns0: number): number {
+  return (Bun.nanoseconds() - ns0) / 1e6;
+}
+
+function statusOk(status: number, ok: number[] | undefined): boolean {
+  if (ok?.length) return ok.includes(status);
+  return status >= 200 && status < 400;
+}
+
+async function fetchTimed(
+  url: string,
+  init: RequestInit & { method?: string }
+): Promise<{ res: Response; elapsedMs: number } | { error: string; elapsedMs: number }> {
+  const t0 = Bun.nanoseconds();
+  try {
+    const res = await fetch(url, {
+      ...init,
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      // Bun reuses connections by default; keepalive is for fetch RequestInit parity
+      keepalive: true,
+    });
+    return { res, elapsedMs: ms(t0) };
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : String(err),
+      elapsedMs: ms(t0),
+    };
+  }
+}
+
+/** Per-target DNS → preconnect → cold/warm fetch → optional buffer + write. */
+export async function verifyTarget(
+  target: NetTarget,
+  opts: { skipWrite?: boolean } = {}
+): Promise<NetCheckRow[]> {
+  const rows: NetCheckRow[] = [];
+  const u = new URL(target.url);
+  const cat = target.category;
+  const name = target.name;
+
+  // 1. DNS prefetch (host + connection port)
+  const tPrefetch = Bun.nanoseconds();
+  const dns = dnsPrefetchOrigin(target.url);
+  rows.push({
+    target: name,
+    category: cat,
+    optimization: 'DNS Prefetch',
+    metric: `${ms(tPrefetch).toFixed(3)}ms`,
+    status: dns.ok ? 'PASS' : 'FAIL',
+    detail: dns.ok
+      ? `dns.prefetch("${dns.host}"${dns.port != null ? `, ${dns.port}` : ''})`
+      : dns.note,
+  });
+
+  // 2. Cache stats (no per-host entries array on Bun — use size/totalCount)
+  const stats = dnsCacheStats();
+  rows.push({
+    target: name,
+    category: cat,
+    optimization: 'DNS Cache',
+    metric: `size=${stats.size} total=${stats.totalCount}`,
+    status: stats.size > 0 || stats.totalCount > 0 ? 'PASS' : 'INFO',
+    detail: `hits=${stats.cacheHitsCompleted} miss=${stats.cacheMisses} err=${stats.errors}`,
+  });
+
+  // 3. Preconnect (safe helper — HTTPS becomes dns-only + CLI note)
+  const warm = preconnectOrigin(target.url);
+  rows.push({
+    target: name,
+    category: cat,
+    optimization: 'Preconnect',
+    metric: warm.fetchPreconnect ? 'tcp' : warm.dnsPrefetch ? 'dns-only' : 'skip',
+    status: warm.fetchPreconnect || warm.dnsPrefetch ? 'PASS' : 'FAIL',
+    detail: warm.fetchPreconnect
+      ? `fetch.preconnect(${warm.origin})`
+      : warm.note ?? `CLI: bun --fetch-preconnect ${preconnectCliUrl(target.url)} ./app.ts`,
+  });
+
+  // 4. Cold fetch
+  const method = target.method ?? 'GET';
+  const cold = await fetchTimed(target.url, { method });
+  if ('error' in cold) {
+    rows.push({
+      target: name,
+      category: cat,
+      optimization: 'Cold Fetch',
+      metric: `${cold.elapsedMs.toFixed(1)}ms`,
+      status: 'FAIL',
+      detail: cold.error,
+    });
+    return rows;
+  }
+  // Drain HEAD/GET body so the socket can return to the pool.
+  if (method !== 'HEAD') await cold.res.arrayBuffer().catch(() => {});
+  else await cold.res.body?.cancel().catch(() => {});
+
+  const coldOk = statusOk(cold.res.status, target.okStatuses);
+  rows.push({
+    target: name,
+    category: cat,
+    optimization: 'Cold Fetch',
+    metric: `${cold.elapsedMs.toFixed(1)}ms (${cold.res.status})`,
+    status: coldOk ? 'PASS' : 'FAIL',
+  });
+
+  // 5. Warm fetch (connection pool / keep-alive)
+  const warmFetch = await fetchTimed(target.url, { method });
+  if ('error' in warmFetch) {
+    rows.push({
+      target: name,
+      category: cat,
+      optimization: 'Warm Fetch',
+      metric: `${warmFetch.elapsedMs.toFixed(1)}ms`,
+      status: 'FAIL',
+      detail: warmFetch.error,
+    });
+    return rows;
+  }
+  if (method !== 'HEAD') await warmFetch.res.arrayBuffer().catch(() => {});
+  else await warmFetch.res.body?.cancel().catch(() => {});
+
+  const warmOk = statusOk(warmFetch.res.status, target.okStatuses);
+  // Soft pool signal only — not a hard fail (jitter / TLS session / CDN)
+  const pooled =
+    warmOk && warmFetch.elapsedMs <= cold.elapsedMs * 0.95 && warmFetch.elapsedMs < cold.elapsedMs;
+  rows.push({
+    target: name,
+    category: cat,
+    optimization: 'Warm Fetch',
+    metric: `${warmFetch.elapsedMs.toFixed(1)}ms (${warmFetch.res.status})`,
+    status: warmOk ? 'PASS' : 'FAIL',
+    detail: pooled ? 'faster than cold (likely reuse)' : 'timing only — not a pool guarantee',
+  });
+
+  if (target.skipBuffer) return rows;
+
+  // 6. response.bytes() buffering
+  const tBuf = Bun.nanoseconds();
+  const get = await fetchTimed(target.url, { method: 'GET' });
+  if ('error' in get) {
+    rows.push({
+      target: name,
+      category: cat,
+      optimization: 'Buffer',
+      metric: `${get.elapsedMs.toFixed(1)}ms`,
+      status: 'FAIL',
+      detail: get.error,
+    });
+    return rows;
+  }
+  try {
+    const bytes = await get.res.bytes();
+    rows.push({
+      target: name,
+      category: cat,
+      optimization: 'Buffer',
+      metric: `${ms(tBuf).toFixed(1)}ms (${bytes.byteLength} B)`,
+      status: get.res.ok || statusOk(get.res.status, target.okStatuses) ? 'PASS' : 'FAIL',
+    });
+
+    // 7. Bun.write small payloads
+    if (!opts.skipWrite && bytes.byteLength > 0 && bytes.byteLength < 1_000_000) {
+      const path = join(tmpdir(), `bun-net-${cat}-${Date.now()}.bin`);
+      const tW = Bun.nanoseconds();
+      try {
+        await Bun.write(path, bytes);
+        const exists = await Bun.file(path).exists();
+        rows.push({
+          target: name,
+          category: cat,
+          optimization: 'Disk Write',
+          metric: `${ms(tW).toFixed(1)}ms`,
+          status: exists ? 'PASS' : 'FAIL',
+          detail: path,
+        });
+      } finally {
+        try {
+          unlinkSync(path);
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+  } catch (err) {
+    rows.push({
+      target: name,
+      category: cat,
+      optimization: 'Buffer',
+      metric: `${ms(tBuf).toFixed(1)}ms`,
+      status: 'FAIL',
+      detail: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  return rows;
+}
+
+export async function runNetworkingSuite(opts: {
+  targets?: NetTarget[];
+  skipWrite?: boolean;
+} = {}): Promise<{ rows: NetCheckRow[]; targets: NetTarget[] }> {
+  const targets = opts.targets ?? buildTargets();
+  const rows: NetCheckRow[] = [];
+  for (const t of targets) {
+    rows.push(...(await verifyTarget(t, { skipWrite: opts.skipWrite })));
+  }
+  return { rows, targets };
+}
+
+// ── Local route catalog probe (dashboard + endpoints + route objects) ──────
+
+/** GET /health → routeStats + serve.hotPreloaded objects. */
+export async function fetchHealthRouteObjects(
+  base: string
+): Promise<HealthRouteObjects | null> {
+  try {
+    const res = await fetch(new URL('/health', base.endsWith('/') ? base : `${base}/`), {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as HealthRouteObjects;
+  } catch {
+    return null;
+  }
+}
+
+/** Probe every catalog path (and live hotPreloaded extras) against local base. */
+export async function probePublicRoutes(
+  base: string,
+  opts: { catalog?: PublicRouteDef[] } = {}
+): Promise<RouteProbeResult> {
+  const origin = base.replace(/\/$/, '');
+  const health = await fetchHealthRouteObjects(origin);
+  const catalog = mergeHotFromHealth(opts.catalog ?? publicRouteCatalog(), health);
+  const rows: RouteProbeRow[] = [];
+
+  // One DNS warm for the base (shared by all local paths).
+  preconnectOrigin(origin);
+
+  for (const route of catalog) {
+    const url = `${origin}${route.path.startsWith('/') ? route.path : `/${route.path}`}`;
+    const method = route.method ?? 'GET';
+    const t0 = Bun.nanoseconds();
+    try {
+      const res = await fetch(url, {
+        method,
+        keepalive: true,
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      // drain so pool reuses
+      if (method === 'GET') await res.arrayBuffer().catch(() => {});
+      else await res.body?.cancel().catch(() => {});
+      const elapsed = ms(t0);
+      const okList = route.okStatuses ?? [200];
+      const pass = okList.includes(res.status);
+      rows.push({
+        path: route.path,
+        name: route.name,
+        category: route.category,
+        kind: route.kind,
+        status: res.status,
+        ms: Number(elapsed.toFixed(1)),
+        pass,
+        critical: Boolean(route.critical),
+        note: route.note,
+      });
+    } catch (err) {
+      rows.push({
+        path: route.path,
+        name: route.name,
+        category: route.category,
+        kind: route.kind,
+        status: 'ERR',
+        ms: Number(ms(t0).toFixed(1)),
+        pass: false,
+        critical: Boolean(route.critical),
+        note: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  const failed = rows.filter(r => !r.pass);
+  return {
+    base: origin,
+    health,
+    catalog,
+    rows,
+    summary: {
+      total: rows.length,
+      passed: rows.filter(r => r.pass).length,
+      failed: failed.length,
+      criticalFailed: failed.filter(r => r.critical).length,
+    },
+  };
+}
+
+// ── Render (Bun.inspect.custom + inspect.table) ────────────────────────────
+
+async function main(): Promise<void> {
+  const t0 = Bun.nanoseconds();
+
+  let rows: NetCheckRow[] = [];
+  let targets: NetTarget[] = [];
+  if (!ROUTES_ONLY) {
+    const suite = await runNetworkingSuite({ skipWrite: SKIP_WRITE });
+    rows = suite.rows;
+    targets = suite.targets;
+  }
+
+  let routeProbe: RouteProbeResult | null = null;
+  let routeReport: RouteProbeReport | null = null;
+  if (ROUTES || ROUTES_ONLY) {
+    routeProbe = await probePublicRoutes(LOCAL_BASE);
+    routeReport = new RouteProbeReport(routeProbe);
+  }
+
+  const netReport =
+    rows.length > 0
+      ? new NetworkingChecksReport(
+          rows.map(r => ({
+            target: r.target,
+            category: r.category,
+            optimization: r.optimization,
+            metric: r.metric,
+            status: r.status,
+            detail: r.detail,
+          })),
+          {
+            base: LOCAL_BASE,
+            bun: Bun.version,
+            revision: Bun.revision || 'unknown',
+          }
+        )
+      : null;
+
+  const elapsed = ms(t0);
+  const hard = rows.filter(r => r.status === 'PASS' || r.status === 'FAIL');
+  const passed = hard.filter(r => r.status === 'PASS').length;
+  const failed = hard.filter(r => r.status === 'FAIL').length;
+  const routeFailed = routeProbe?.summary.failed ?? 0;
+  const routeCritFailed = routeProbe?.summary.criticalFailed ?? 0;
+  const finalDns = dnsCacheStats();
+
+  if (AS_JSON) {
+    // toJSON on reports includes rows + rendered inspect.table strings
+    const routeJson = routeReport?.toJSON() ?? null;
+    console.log(
+      JSON.stringify(
+        {
+          bun: Bun.version,
+          revision: Bun.revision,
+          base: LOCAL_BASE,
+          elapsedMs: elapsed,
+          summary: {
+            passed,
+            failed,
+            total: hard.length,
+            targets: targets.length,
+            routes: routeProbe?.summary ?? null,
+          },
+          dns: finalDns,
+          maxHttpRequests: Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS ?? '256 (default)',
+          networking: netReport?.toJSON() ?? null,
+          routeProbe,
+          /** Same as routeReport.toJSON() — tables.routes / tables.rendered.routes */
+          tables: routeJson
+            ? {
+                routeStats: routeJson.routeStats,
+                hotPreloaded: routeJson.hotPreloaded,
+                strategies: routeJson.strategies,
+                routes: routeJson.routes,
+                byCategory: routeJson.byCategory,
+                rendered: routeJson.rendered,
+              }
+            : null,
+          routeReport: routeJson,
+          routeCatalog: publicRouteCatalog(),
+          canonical: CANONICAL,
+        },
+        null,
+        2
+      )
+    );
+  } else {
+    console.log('╔══════════════════════════════════════════════════════════════════════╗');
+    console.log('║  Bun Networking Optimization — Multi-Target + Routes                 ║');
+    console.log(
+      `║  Bun:  ${(Bun.version + ' / ' + (Bun.revision || 'unknown').slice(0, 8)).padEnd(62)}║`
+    );
+    console.log(`║  Base: ${LOCAL_BASE.slice(0, 62).padEnd(62)}║`);
+    console.log(`║  Targets: ${String(targets.length).padEnd(59)}║`);
+    console.log(
+      `║  Routes:  ${String(routeProbe?.catalog.length ?? 0).padEnd(59)}║`
+    );
+    console.log('╚══════════════════════════════════════════════════════════════════════╝');
+
+    // console.log → Bun.inspect → [Bun.inspect.custom] → inspect.table
+    if (netReport) {
+      console.log('');
+      console.log(netReport);
+      console.log(
+        `\n${passed}/${hard.length} network checks passed · ${failed} failed · ${elapsed.toFixed(1)}ms`
+      );
+    }
+
+    if (routeReport) {
+      console.log('');
+      console.log(routeReport);
+    }
+
+    console.log(
+      `\nDNS cache: size=${finalDns.size} total=${finalDns.totalCount} hits=${finalDns.cacheHitsCompleted} miss=${finalDns.cacheMisses} err=${finalDns.errors}`
+    );
+    console.log(
+      `HTTP request limit: ${Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS ?? '256 (default)'} · BUN_CONFIG_MAX_HTTP_REQUESTS`
+    );
+    if (!ROUTES_ONLY && !Bun.env.TELEGRAM_BOT_TOKEN) {
+      console.log('(Telegram skipped — set TELEGRAM_BOT_TOKEN to include messaging)');
+    }
+    if (!ROUTES_ONLY && !Bun.env.R2_PUBLIC_BASE && !Bun.env.R2_PUBLIC_URL) {
+      console.log('(R2 skipped — set R2_PUBLIC_BASE to a public object/URL)');
+    }
+    console.log('\nCanonical API references (bun.com):');
+    for (const [k, url] of Object.entries(CANONICAL)) {
+      console.log(`  • ${k.padEnd(18)} ${url}`);
+    }
+    console.log('\nTip: console.log(report) uses Bun.inspect.custom → inspect.table automatically.');
+    console.log('     JSON: --json  →  .tables.rendered.routes  (or omit --json for live tables)');
+  }
+
+  if (failed > 0 || routeCritFailed > 0) process.exit(1);
+  if (routeFailed > 0 && has('strict-routes')) process.exit(1);
+}
+
+if (import.meta.main) {
+  main().catch(err => {
+    console.error('Fatal:', err);
+    process.exit(1);
+  });
+}
