@@ -60,35 +60,49 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
     return healthJson({ error: 'Method not allowed' }, 405, false, cors);
   }
 
-  const bucket = env.REGISTRY_BUCKET;
-  if (!bucket || typeof bucket.get !== 'function') {
-    return healthJson(
-      { status: 'error', message: 'Registry binding unavailable' },
-      503,
-      head,
-      cors
-    );
+  // Try R2 bucket first, fall back to ASSETS (static snapshot)
+  async function fromR2(): Promise<{ text: string } | null> {
+    const bucket = env.REGISTRY_BUCKET;
+    if (!bucket || typeof bucket.get !== 'function') return null;
+    try {
+      const object = await bucket.get('registry.json');
+      if (object?.body) return { text: await new Response(object.body).text() };
+    } catch {}
+    return null;
+  }
+
+  async function fromAssets(): Promise<{ text: string } | null> {
+    try {
+      const url = new URL(request.url);
+      const origin = url.origin;
+      const res = await fetch(`${origin}/registry/registry.json`);
+      if (res.ok) return { text: await res.text() };
+    } catch {}
+    return null;
+  }
+
+  let source: string;
+  let text: string | null = null;
+
+  const r2 = await fromR2();
+  if (r2) { text = r2.text; source = 'r2'; }
+  else {
+    const assets = await fromAssets();
+    if (assets) { text = assets.text; source = 'assets'; }
+    else {
+      return healthJson(
+        { status: 'error', indexOk: false, message: 'Registry index unavailable (R2 and ASSETS both empty)' },
+        503, head, cors
+      );
+    }
   }
 
   try {
-    const object = await bucket.get('registry.json');
-    if (!object?.body) {
-      return healthJson(
-        { status: 'error', indexOk: false, message: 'Registry index unavailable' },
-        503,
-        head,
-        cors
-      );
-    }
-
-    const text = await new Response(object.body).text();
     const stats = parseIndexStats(JSON.parse(text) as unknown);
     if (!stats) {
       return healthJson(
         { status: 'error', indexOk: false, message: 'Registry index is invalid' },
-        503,
-        head,
-        cors
+        503, head, cors
       );
     }
 
@@ -99,11 +113,10 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
         packages: stats.packages,
         versions: stats.versions,
         edge: true,
+        source,
         checkedAt: new Date().toISOString(),
       },
-      200,
-      head,
-      cors
+      200, head, cors
     );
   } catch {
     return healthJson(
