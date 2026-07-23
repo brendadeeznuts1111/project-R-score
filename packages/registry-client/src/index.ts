@@ -171,7 +171,7 @@ export class RegistryClient {
     if (!release) return undefined;
     return {
       release,
-      assetUrl: `${this.baseUrl}/api/registry/${encodePath(release.storage.r2Key)}`,
+      assetUrl: `${this.baseUrl}/registry/storage/${encodePath(name)}/${version}/artifact.tgz`,
     };
   }
 
