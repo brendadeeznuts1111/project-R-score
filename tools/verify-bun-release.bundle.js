@@ -4602,11 +4602,20 @@ async function runReleaseVerification(options = {}) {
     passed: Bun.stringWidth("\uD83C\uDDFA\uD83C\uDDF8") === 2 && Bun.stringWidth("\uD83D\uDC4B\uD83C\uDFFD") === 2 && Bun.stringWidth("\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67") === 2 && Bun.stringWidth("\xAD") === 0 && Bun.stringWidth("\u2060") === 0,
     anchor: "bun-stringwidth-accuracy"
   });
+  let ptyReceived = "";
+  const ptyProc = Bun.spawn(["echo", "hello-pty"], {
+    terminal: { cols: 80, rows: 24, data(_term, data) {
+      ptyReceived += data;
+    } }
+  });
+  await ptyProc.exited;
+  ptyProc.terminal?.close();
+  const ptyOk = ptyReceived.includes("hello-pty");
   pushReleaseResult(results, {
-    name: "Bun.spawn with terminal option",
-    expected: "accepts terminal option without error",
-    actual: "terminal option accepted",
-    passed: true,
+    name: "Bun.spawn with terminal option (PTY)",
+    expected: "receives output via data() callback",
+    actual: ptyOk ? `received: ${ptyReceived.trim()}` : "no output",
+    passed: ptyOk,
     anchor: "bun-terminal-api"
   });
   try {
