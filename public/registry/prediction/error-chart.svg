@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="200" viewBox="0 0 720 200">
+  <rect width="100%" height="100%" fill="#0d1117"/>
+  <text x="48" y="20" fill="#e6edf3" font-family="ui-sans-serif,system-ui" font-size="13" font-weight="600">Residuals (error) · ±56.3</text>
+  <line x1="48" y1="98.0" x2="704" y2="98.0" stroke="#30363d" stroke-width="1" stroke-dasharray="4 3"/>
+  <rect x="39.0" y="78.9" width="18.0" height="19.1" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="111.9" y="73.0" width="18.0" height="25.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="184.8" y="67.2" width="18.0" height="30.8" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="257.7" y="55.4" width="18.0" height="42.6" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="330.6" y="49.6" width="18.0" height="48.4" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="403.4" y="43.7" width="18.0" height="54.3" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="476.3" y="37.9" width="18.0" height="60.1" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="549.2" y="46.1" width="18.0" height="51.9" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="622.1" y="41.4" width="18.0" height="56.6" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="695.0" y="32.0" width="18.0" height="66.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <text x="48" y="190" fill="#8b949e" font-size="11" font-family="ui-sans-serif,system-ui">2024-03-01</text>
+  <text x="704" y="190" fill="#8b949e" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">2024-12-01</text>
+  <g font-family="ui-sans-serif,system-ui" font-size="10">
+    <rect x="560" y="28" width="10" height="10" fill="#f85149" rx="1"/>
+    <text x="574" y="36" fill="#e6edf3">over (err&gt;0)</text>
+    <rect x="560" y="44" width="10" height="10" fill="#3fb950" rx="1"/>
+    <text x="574" y="52" fill="#e6edf3">under (err&lt;0)</text>
+  </g>
+</svg>

@@ -7,6 +7,8 @@ import { describe, expect, test } from 'bun:test';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   buildCoverageChartSvg,
+  buildErrorChartSvg,
+  buildReportHtml,
   writePredictionReport,
 } from '../lib/prediction/report.ts';
 import { runCoverageBacktest } from '../lib/prediction/tester.ts';
@@ -16,6 +18,29 @@ describe('prediction report', () => {
     const svg = buildCoverageChartSvg([], { mae: 0, rmse: 0, bias: 0, n: 0 });
     expect(svg).toContain('No prediction_accuracy');
     expect(svg).toContain('<svg');
+  });
+
+  test('extended report HTML has cards, residuals, and series table', () => {
+    const points = [
+      { date: '2024-01-01', predicted: 10, actual: 12, error: 2 },
+      { date: '2024-02-01', predicted: 20, actual: 40, error: 20 },
+    ];
+    const accuracy = { mae: 11, rmse: 14, bias: 11, n: 2 };
+    const html = buildReportHtml({
+      svgInline: buildCoverageChartSvg(points, accuracy),
+      errorSvgInline: buildErrorChartSvg(points),
+      accuracy,
+      points,
+      generated: '2026-01-01T00:00:00.000Z',
+    });
+    expect(html).toContain('Coverage prediction backtest');
+    expect(html).toContain('Residuals');
+    expect(html).toContain('MAE');
+    expect(html).toContain('RMSE');
+    expect(html).toContain('data-col');
+    expect(html).toContain('err-bad');
+    expect(html).toContain('/portal/ops/');
+    expect(buildErrorChartSvg(points)).toContain('Residuals');
   });
 
   test('writes SVG + HTML after backtest', async () => {

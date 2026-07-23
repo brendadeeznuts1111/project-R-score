@@ -3,21 +3,151 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Coverage prediction report</title>
+  <meta name="color-scheme" content="dark"/>
+  <title>Coverage prediction · FactoryWager</title>
   <style>
-    body { margin: 0; background: #0d1117; color: #e6edf3; font-family: ui-sans-serif, system-ui, sans-serif; padding: 24px; }
-    h1 { font-size: 18px; margin: 0 0 8px; }
-    .meta { color: #8b949e; font-size: 13px; margin-bottom: 16px; }
-    .chart { max-width: 100%; background: #161b22; border-radius: 8px; padding: 8px; border: 1px solid #30363d; }
-    table { border-collapse: collapse; width: 100%; max-width: 720px; margin-top: 20px; font-size: 13px; }
-    th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #21262d; }
-    th { color: #8b949e; font-weight: 500; }
+    :root {
+      --bg: #0d1117; --surface: #161b22; --border: #30363d;
+      --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff;
+      --green: #3fb950; --red: #f85149; --yellow: #d29922;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; line-height: 1.45; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .topbar {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 14px 24px; border-bottom: 1px solid var(--border);
+      background: rgba(22,27,34,.9); position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+    .logo { font-weight: 600; font-size: 15px; letter-spacing: .02em; }
+    .logo span { color: var(--accent); margin-right: 6px; }
+    nav { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; }
+    nav a { color: var(--muted); }
+    nav a:hover, nav a.active { color: var(--text); }
+    main { max-width: 960px; margin: 0 auto; padding: 24px 20px 48px; }
+    h1 { font-size: 22px; margin: 0 0 6px; font-weight: 600; }
+    .lede { color: var(--muted); font-size: 13px; margin: 0 0 20px; }
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px;
+      border-radius: 999px; border: 1px solid var(--border); vertical-align: middle; margin-left: 8px;
+    }
+    .badge.good { color: var(--green); border-color: rgba(63,185,80,.4); background: rgba(63,185,80,.08); }
+    .badge.fair { color: var(--yellow); border-color: rgba(210,153,34,.4); background: rgba(210,153,34,.08); }
+    .badge.poor { color: var(--red); border-color: rgba(248,81,73,.4); background: rgba(248,81,73,.08); }
+    .badge.unknown { color: var(--muted); }
+    .cards {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;
+    }
+    @media (max-width: 720px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; }
+    .card .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .card .sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .panel {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px; margin-bottom: 16px;
+    }
+    .panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+    .chart { width: 100%; overflow-x: auto; }
+    .chart svg { display: block; max-width: 100%; height: auto; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 12px; font-size: 12px; color: var(--muted); }
+    .toolbar input {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      border-radius: 6px; padding: 6px 10px; font-size: 13px; min-width: 160px;
+    }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #21262d; }
+    th { color: var(--muted); font-weight: 500; position: sticky; top: 0; background: var(--surface); cursor: pointer; user-select: none; }
+    th:hover { color: var(--text); }
+    th .sort { opacity: .4; font-size: 10px; margin-left: 4px; }
+    td.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+    tr.err-ok td:nth-child(4), tr.err-ok td:nth-child(5) { color: var(--green); }
+    tr.err-mid td:nth-child(4), tr.err-mid td:nth-child(5) { color: var(--yellow); }
+    tr.err-bad td:nth-child(4), tr.err-bad td:nth-child(5) { color: var(--red); }
+    tr.hidden { display: none; }
+    .table-wrap { max-height: 420px; overflow: auto; border-radius: 6px; }
+    .footer {
+      margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border);
+      font-size: 12px; color: var(--muted);
+    }
+    .footer code { background: var(--surface); padding: 1px 6px; border-radius: 4px; font-size: 11px; border: 1px solid var(--border); }
+    .links { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 0; font-size: 13px; }
   </style>
 </head>
 <body>
-  <h1>Coverage prediction backtest</h1>
-  <p class="meta">Generated 2026-07-23T18:41:48.135Z · n=10 · MAE 38.80 · RMSE 40.83 · bias -38.80</p>
-  <div class="chart"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="320" viewBox="0 0 720 320">
+  <header class="topbar">
+    <div class="logo"><span>■</span> Coverage prediction</div>
+    <nav>
+      <a href="/portal/ops/">Ops</a>
+      <a href="/monitoring">Monitoring</a>
+      <a href="/registry/ops-summary.json">ops-summary</a>
+      <a href="/registry/static.json">static</a>
+      <a href="/registry/prediction/coverage-chart.svg">SVG</a>
+      <a href="coverage-chart.png">PNG</a>
+      <a href="/registry/prediction/report.html" class="active">Report</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Coverage prediction backtest
+      <span class="badge poor">High error</span>
+    </h1>
+    <p class="lede">Generated 2026-07-23T19:13:47.968Z · range 2024-03-01 → 2024-12-01 · model naive coverage % · static Pages artifact from <code>ops:prediction report</code> / <code>ops:snapshot</code></p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="label">n</div>
+        <div class="value">10</div>
+        <div class="sub">backtest rows</div>
+      </div>
+      <div class="card">
+        <div class="label">MAE</div>
+        <div class="value">38.80</div>
+        <div class="sub">mean abs error</div>
+      </div>
+      <div class="card">
+        <div class="label">RMSE</div>
+        <div class="value">40.83</div>
+        <div class="sub">root mean square</div>
+      </div>
+      <div class="card">
+        <div class="label">Bias</div>
+        <div class="value">-38.80</div>
+        <div class="sub">mean signed error</div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="label">Worst |error|</div>
+        <div class="value">56.30</div>
+        <div class="sub">2024-12-01</div>
+      </div>
+      <div class="card">
+        <div class="label">Mean |error|</div>
+        <div class="value">38.80</div>
+        <div class="sub">series absolute</div>
+      </div>
+      <div class="card">
+        <div class="label">Last predicted</div>
+        <div class="value">3.7</div>
+        <div class="sub">coverage %</div>
+      </div>
+      <div class="card">
+        <div class="label">Last actual</div>
+        <div class="value">60.0</div>
+        <div class="sub">coverage %</div>
+      </div>
+    </div>
+
+    <section class="panel">
+      <h2>Predicted vs actual</h2>
+      <div class="chart"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="320" viewBox="0 0 720 320">
   <rect width="100%" height="100%" fill="#0d1117"/>
   <text x="48" y="22" fill="#e6edf3" font-family="ui-sans-serif,system-ui" font-size="14" font-weight="600">Coverage prediction · n=10 · MAE 38.80 · RMSE 40.83</text>
   <line x1="48" y1="280.0" x2="704" y2="280.0" stroke="#21262d" stroke-width="1"/>
@@ -32,6 +162,7 @@
   <text x="40" y="40.0" fill="#8b949e" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">100</text>
   <path d="M48.0,231.2 L120.9,219.0 L193.8,206.8 L266.7,182.4 L339.6,170.2 L412.4,158.0 L485.3,145.8 L558.2,162.9 L631.1,153.1 L704.0,133.6" fill="none" stroke="#3fb950" stroke-width="2.5"/>
   <path d="M48.0,271.0 L120.9,271.0 L193.8,271.0 L266.7,271.0 L339.6,271.0 L412.4,271.0 L485.3,271.0 L558.2,271.0 L631.1,271.0 L704.0,271.0" fill="none" stroke="#58a6ff" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <circle cx="48.0" cy="231.2" r="3" fill="#3fb950" opacity="0.9"/><circle cx="48.0" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="120.9" cy="219.0" r="3" fill="#3fb950" opacity="0.9"/><circle cx="120.9" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="193.8" cy="206.8" r="3" fill="#3fb950" opacity="0.9"/><circle cx="193.8" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="266.7" cy="182.4" r="3" fill="#3fb950" opacity="0.9"/><circle cx="266.7" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="339.6" cy="170.2" r="3" fill="#3fb950" opacity="0.9"/><circle cx="339.6" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="412.4" cy="158.0" r="3" fill="#3fb950" opacity="0.9"/><circle cx="412.4" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="485.3" cy="145.8" r="3" fill="#3fb950" opacity="0.9"/><circle cx="485.3" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="558.2" cy="162.9" r="3" fill="#3fb950" opacity="0.9"/><circle cx="558.2" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="631.1" cy="153.1" r="3" fill="#3fb950" opacity="0.9"/><circle cx="631.1" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/><circle cx="704.0" cy="133.6" r="3" fill="#3fb950" opacity="0.9"/><circle cx="704.0" cy="271.0" r="2.5" fill="#58a6ff" opacity="0.85"/>
   <text x="48" y="308" fill="#8b949e" font-size="11" font-family="ui-sans-serif,system-ui">2024-03-01</text>
   <text x="704" y="308" fill="#8b949e" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">2024-12-01</text>
   <g font-family="ui-sans-serif,system-ui" font-size="11">
@@ -42,20 +173,179 @@
   </g>
 </svg>
 </div>
-  <table>
-    <thead><tr><th>Date</th><th>Predicted</th><th>Actual</th><th>Error</th></tr></thead>
-    <tbody>
-<tr><td>2024-12-01</td><td>3.70</td><td>60.00</td><td>56.30</td></tr>
-<tr><td>2024-11-01</td><td>3.70</td><td>52.00</td><td>48.30</td></tr>
-<tr><td>2024-10-01</td><td>3.70</td><td>48.00</td><td>44.30</td></tr>
-<tr><td>2024-09-01</td><td>3.70</td><td>55.00</td><td>51.30</td></tr>
-<tr><td>2024-08-01</td><td>3.70</td><td>50.00</td><td>46.30</td></tr>
-<tr><td>2024-07-01</td><td>3.70</td><td>45.00</td><td>41.30</td></tr>
-<tr><td>2024-06-01</td><td>3.70</td><td>40.00</td><td>36.30</td></tr>
-<tr><td>2024-05-01</td><td>3.70</td><td>30.00</td><td>26.30</td></tr>
-<tr><td>2024-04-01</td><td>3.70</td><td>25.00</td><td>21.30</td></tr>
-<tr><td>2024-03-01</td><td>3.70</td><td>20.00</td><td>16.30</td></tr>
-    </tbody>
-  </table>
+    </section>
+
+    <section class="panel">
+      <h2>Residuals</h2>
+      <div class="chart"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="200" viewBox="0 0 720 200">
+  <rect width="100%" height="100%" fill="#0d1117"/>
+  <text x="48" y="20" fill="#e6edf3" font-family="ui-sans-serif,system-ui" font-size="13" font-weight="600">Residuals (error) · ±56.3</text>
+  <line x1="48" y1="98.0" x2="704" y2="98.0" stroke="#30363d" stroke-width="1" stroke-dasharray="4 3"/>
+  <rect x="39.0" y="78.9" width="18.0" height="19.1" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="111.9" y="73.0" width="18.0" height="25.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="184.8" y="67.2" width="18.0" height="30.8" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="257.7" y="55.4" width="18.0" height="42.6" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="330.6" y="49.6" width="18.0" height="48.4" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="403.4" y="43.7" width="18.0" height="54.3" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="476.3" y="37.9" width="18.0" height="60.1" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="549.2" y="46.1" width="18.0" height="51.9" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="622.1" y="41.4" width="18.0" height="56.6" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="695.0" y="32.0" width="18.0" height="66.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <text x="48" y="190" fill="#8b949e" font-size="11" font-family="ui-sans-serif,system-ui">2024-03-01</text>
+  <text x="704" y="190" fill="#8b949e" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">2024-12-01</text>
+  <g font-family="ui-sans-serif,system-ui" font-size="10">
+    <rect x="560" y="28" width="10" height="10" fill="#f85149" rx="1"/>
+    <text x="574" y="36" fill="#e6edf3">over (err&gt;0)</text>
+    <rect x="560" y="44" width="10" height="10" fill="#3fb950" rx="1"/>
+    <text x="574" y="52" fill="#e6edf3">under (err&lt;0)</text>
+  </g>
+</svg>
+</div>
+    </section>
+
+    <section class="panel">
+      <h2>Series (10 rows)</h2>
+      <div class="toolbar">
+        <label>Filter date <input type="search" id="filter" placeholder="YYYY-MM…" autocomplete="off"/></label>
+        <span id="row-count">10 shown</span>
+      </div>
+      <div class="table-wrap">
+        <table id="series">
+          <thead>
+            <tr>
+              <th data-col="0">Date<span class="sort">↕</span></th>
+              <th data-col="1">Predicted<span class="sort">↕</span></th>
+              <th data-col="2">Actual<span class="sort">↕</span></th>
+              <th data-col="3">Error<span class="sort">↕</span></th>
+              <th data-col="4">|Error|<span class="sort">↕</span></th>
+            </tr>
+          </thead>
+          <tbody>
+<tr class="err-bad">
+  <td class="mono">2024-12-01</td>
+  <td>3.70</td>
+  <td>60.00</td>
+  <td>56.30</td>
+  <td>56.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-11-01</td>
+  <td>3.70</td>
+  <td>52.00</td>
+  <td>48.30</td>
+  <td>48.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-10-01</td>
+  <td>3.70</td>
+  <td>48.00</td>
+  <td>44.30</td>
+  <td>44.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-09-01</td>
+  <td>3.70</td>
+  <td>55.00</td>
+  <td>51.30</td>
+  <td>51.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-08-01</td>
+  <td>3.70</td>
+  <td>50.00</td>
+  <td>46.30</td>
+  <td>46.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-07-01</td>
+  <td>3.70</td>
+  <td>45.00</td>
+  <td>41.30</td>
+  <td>41.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-06-01</td>
+  <td>3.70</td>
+  <td>40.00</td>
+  <td>36.30</td>
+  <td>36.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-05-01</td>
+  <td>3.70</td>
+  <td>30.00</td>
+  <td>26.30</td>
+  <td>26.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-04-01</td>
+  <td>3.70</td>
+  <td>25.00</td>
+  <td>21.30</td>
+  <td>21.30</td>
+</tr>
+<tr class="err-bad">
+  <td class="mono">2024-03-01</td>
+  <td>3.70</td>
+  <td>20.00</td>
+  <td>16.30</td>
+  <td>16.30</td>
+</tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="links">
+        <a href="/portal/ops/">← Ops dashboard</a>
+        <a href="/api/operations/summary">Live ops summary API</a>
+        <a href="/registry/prediction/coverage-chart.svg">Open SVG</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Regenerate: <code>bun run ops:prediction report</code> · <code>bunx --bun ops-snapshot</code> · optional PNG: <code>bun run ops:prediction report --webview</code></p>
+      <p>Error coloring: green ≤5 · amber ≤15 · red &gt;15 absolute points of coverage %.</p>
+    </footer>
+  </main>
+  <script>
+    (function () {
+      const input = document.getElementById('filter');
+      const tbody = document.querySelector('#series tbody');
+      const count = document.getElementById('row-count');
+      if (!input || !tbody) return;
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      function refresh() {
+        const q = (input.value || '').trim().toLowerCase();
+        let n = 0;
+        for (const tr of rows) {
+          const show = !q || tr.textContent.toLowerCase().includes(q);
+          tr.classList.toggle('hidden', !show);
+          if (show) n++;
+        }
+        if (count) count.textContent = n + ' shown';
+      }
+      input.addEventListener('input', refresh);
+
+      let sortCol = -1;
+      let sortAsc = true;
+      document.querySelectorAll('#series th[data-col]').forEach(th => {
+        th.addEventListener('click', () => {
+          const col = Number(th.getAttribute('data-col'));
+          if (sortCol === col) sortAsc = !sortAsc;
+          else { sortCol = col; sortAsc = col === 0; }
+          const sorted = rows.slice().sort((a, b) => {
+            const ta = a.children[col]?.textContent?.trim() || '';
+            const tb = b.children[col]?.textContent?.trim() || '';
+            const na = Number(ta); const nb = Number(tb);
+            let cmp;
+            if (!Number.isNaN(na) && !Number.isNaN(nb) && ta !== '' && tb !== '') cmp = na - nb;
+            else cmp = ta.localeCompare(tb);
+            return sortAsc ? cmp : -cmp;
+          });
+          for (const tr of sorted) tbody.appendChild(tr);
+          refresh();
+        });
+      });
+    })();
+  </script>
 </body>
 </html>

@@ -53,8 +53,9 @@ Backtest inserts are **idempotent** per `(prediction_type, prediction_date, mode
 
 | File | How |
 |------|-----|
-| `public/registry/prediction/coverage-chart.svg` | Pure SVG from series |
-| `public/registry/prediction/report.html` | Table + chart |
+| `public/registry/prediction/coverage-chart.svg` | Predicted vs actual (markers) |
+| `public/registry/prediction/error-chart.svg` | Residual bar chart |
+| `public/registry/prediction/report.html` | Dashboard: cards, dual charts, filter/sort table |
 | `public/registry/prediction/coverage-chart.png` | Optional: `Bun.WebView` → `Bun.Image` |
 
 Portal `/portal/ops` loads PNG or SVG. Pages needs `ops:snapshot` (and preferably report assets) committed/deployed. Disable CF Pages SPA rewrite so `/registry/*.json` is not HTML.
