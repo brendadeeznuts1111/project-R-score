@@ -29,7 +29,8 @@
     "ops-prediction": "./tools/ops-prediction.ts",
     "ops-experiments": "./tools/ops-experiments.ts",
     "ops-snapshot": "./tools/ops-snapshot.ts",
-    "serve-public": "./scripts/serve-public.ts"
+    "serve-public": "./scripts/serve-public.ts",
+    "bun-serve-defaults-table": "./tools/bun-serve-defaults-table.ts"
   },
   "homepage": "https://factory-wager.com",
   "repository": {
@@ -1584,6 +1585,10 @@
     "factory:env": "bun lib/factory/cli.ts env",
     "factory:readme": "bun lib/factory/cli.ts readme",
     "factory:snapshot": "bun lib/factory/cli.ts snapshot",
+    "factory:health": "bun lib/factory/cli.ts health",
+    "factory:integrity": "bun lib/factory/cli.ts integrity",
+    "factory:serve": "bun lib/factory/server.ts",
+    "factory:monitor": "bun lib/factory/monitoring.ts",
     "portal:telegram:webhook": "bash scripts/telegram-webhook-register.sh",
     "factory:create": "bun lib/factory/cli.ts create",
     "ci:harness": "bun scripts/ci-harness.ts",
@@ -1741,6 +1746,8 @@
     "ci:r2:version:check": "bun run scripts/ci-r2-version-check.ts",
     "check:brands:types": "bun x tsc -p tests/tsconfig.branded.json",
     "check:brands:all": "bun run brand:manifest:check && bun run check:brands && bun run check:brands:types",
+    "check:env-defaults": "bun scripts/check-env-defaults.ts",
+    "check:secrets": "gitleaks detect --source . --no-git --config .gitleaks.toml -v",
     "discover:bun-native": "bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools --write-report",
     "discover:bun-native:json": "bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools --json",
     "discover:bun-native:apply": "bun run scripts/bun-native-discover.ts --apply --roots=scripts --write-report",
@@ -1766,6 +1773,7 @@
     "docs:claim-discovery": "bun scripts/docs-claim-discovery.ts",
     "docs:spine-tenants": "bun scripts/docs-spine-tenants.ts",
     "docs:tenant-install-verify": "bun scripts/docs-tenant-install-verify.ts",
+    "docs:tenant-registry-integrity": "bun scripts/docs-tenant-registry-integrity.ts",
     "docs:tenant-docs-integrity": "bun scripts/docs-tenant-docs-integrity.ts",
     "test:tenant-runbooks": "bun test tests/harness-tenant-runbooks.test.ts tests/journey/tenant-heal.test.ts && bun run test:code-quality && bun run test:ci-deploy",
     "test:tenant-heal": "bun test tests/journey/tenant-heal.test.ts",
