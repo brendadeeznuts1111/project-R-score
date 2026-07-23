@@ -117,7 +117,7 @@ export function deepEqualsChangedKey(
 
 /** One row of the Bun docs strict-inequality matrix (plus deeper nest). */
 export type DeepEqualsDocsCase = {
-  id: string;
+  id: string; // brand-ok — opaque docs-matrix row key
   label: string;
   /** Expected under strict mode. */
   expectedStrict: boolean;
@@ -197,7 +197,7 @@ export function deepEqualsDocsStrictCases(): DeepEqualsDocsCase[] {
 }
 
 export type DeepEqualsDocsProofRow = {
-  id: string;
+  id: string; // brand-ok — opaque docs-matrix row key
   label: string;
   strict: boolean;
   loose: boolean;

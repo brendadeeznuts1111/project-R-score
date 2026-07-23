@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/pm/cli/update#latest — --latest
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 import { fileExists, readJson, readText, resolvePath } from './lib/fs-bun';
 import { normalizeWarningCode } from './lib/search-status-contract';
@@ -90,9 +92,9 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
     : [];
   checks.push({
     id: 'latest_loop_warning_alignment',
-    ok: JSON.stringify(latestWarnings) === JSON.stringify(loopWarnings),
+    ok: Bun.deepEquals(latestWarnings, loopWarnings),
     detail: `latest=[${latestWarnings.join(',')}] loop=[${loopWarnings.join(',')}]`,
-    status: JSON.stringify(latestWarnings) === JSON.stringify(loopWarnings) ? 'ok' : 'fail',
+    status: Bun.deepEquals(latestWarnings, loopWarnings) ? 'ok' : 'fail',
   });
 
   const latestCoverageLines = Number(latest?.coverage?.lines || 0);
