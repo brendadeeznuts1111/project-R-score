@@ -2,7 +2,14 @@
  * Allowlisted R2 object keys for read-only registry HTTP surfaces.
  */
 
-export const REGISTRY_ALLOWED_EXACT = new Set(['registry.json']);
+/** Exact keys served by /api/registry/<key> when present in R2 (or static mirror). */
+export const REGISTRY_ALLOWED_EXACT = new Set([
+  'registry.json',
+  /** Aggregate ops+routing+monitoring snapshot from build-registry-snapshot. */
+  'static.json',
+  'ops-summary.json',
+  'monitoring.json',
+]);
 export const REGISTRY_ALLOWED_PREFIXES = ['@factorywager/', 'projects/', 'readme/'] as const;
 
 /**

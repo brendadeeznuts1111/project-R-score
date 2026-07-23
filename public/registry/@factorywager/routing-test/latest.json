@@ -3,7 +3,7 @@
   "bunVersion": "1.3.6",
   "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
   "baseUrl": "https://score.factory-wager.com",
-  "timestamp": "2026-07-23T18:02:30.888Z",
+  "timestamp": "2026-07-23T18:05:23.921Z",
   "concurrency": 6,
   "probes": [
     {
@@ -12,7 +12,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 129.12,
+      "timeMs": 225.58,
       "contentType": "text/html",
       "note": "may be SPA HTML"
     },
@@ -22,7 +22,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 147.17,
+      "timeMs": 277.5,
       "contentType": "text/html",
       "note": "may be SPA HTML"
     },
@@ -32,7 +32,7 @@
       "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 122.18,
+      "timeMs": 250.38,
       "contentType": "application/json",
       "note": "empty key → 400"
     },
@@ -42,7 +42,7 @@
       "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 234.9,
+      "timeMs": 321.63,
       "contentType": "application/json",
       "note": "placeholder package"
     },
@@ -52,7 +52,7 @@
       "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 227.63,
+      "timeMs": 328.55,
       "contentType": "application/json",
       "note": "R2 optional; static path preferred"
     },
@@ -62,7 +62,7 @@
       "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 243.11,
+      "timeMs": 318.76,
       "contentType": "application/json",
       "note": "R2 optional"
     },
@@ -72,7 +72,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 41.84,
+      "timeMs": 187.02,
       "contentType": "application/json",
       "note": "ops snapshot/live"
     },
@@ -82,7 +82,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 83.41,
+      "timeMs": 162.28,
       "contentType": "application/json",
       "note": "monitoring payload"
     },
@@ -92,7 +92,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 65.25,
+      "timeMs": 137.79,
       "contentType": "text/html"
     },
     {
@@ -101,7 +101,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 80.14,
+      "timeMs": 79.18,
       "contentType": "text/html"
     },
     {
@@ -110,7 +110,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 44.14,
+      "timeMs": 46.95,
       "contentType": "text/html",
       "note": "ops dashboard"
     },
@@ -120,7 +120,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 33.15,
+      "timeMs": 76.94,
       "contentType": "application/json",
       "note": "static ops metrics"
     },
@@ -130,7 +130,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 37.06,
+      "timeMs": 195.53,
       "contentType": "application/json",
       "note": "static bun utils proof"
     },
@@ -140,17 +140,17 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 180.72,
+      "timeMs": 153.26,
       "contentType": "application/json",
       "note": "this artifact (404 until first --write deploy)"
     }
   ],
   "latency": {
-    "minMs": 33.15,
-    "maxMs": 243.11,
-    "meanMs": 119.27,
-    "p50Ms": 83.41,
-    "p95Ms": 243.11
+    "minMs": 46.95,
+    "maxMs": 328.55,
+    "meanMs": 197.24,
+    "p50Ms": 187.02,
+    "p95Ms": 328.55
   },
   "summary": {
     "total": 14,
@@ -161,9 +161,9 @@
     "criticalFailedPaths": []
   },
   "regression": {
-    "previousTimestamp": "2026-07-23T17:59:09.336Z",
-    "previousProofHash": "295fc8e0cdef4d377dc4ee32efa975dbbebb1c849fe7787af1d2675a05e76bdd",
+    "previousTimestamp": "2026-07-23T18:02:30.888Z",
+    "previousProofHash": "a0c989c827388ea52b8f7a6b378f13089428ebc2b5d46866be87b73662788ebf",
     "changes": []
   },
-  "proofHash": "a0c989c827388ea52b8f7a6b378f13089428ebc2b5d46866be87b73662788ebf"
+  "proofHash": "e51f27f3d3877e7a9f4b72739d9b1eab3bbaa232b62ec2d9f1b28ef32c03e7ca"
 }

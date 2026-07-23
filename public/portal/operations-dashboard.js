@@ -284,8 +284,10 @@ class OperationsDashboard extends HTMLElement {
     if (routingDetail) {
       routingDetail.textContent = rt.available
         ? `httpOk ${rt.httpOk ?? 0} · p50 ${rt.p50Ms ?? 0}ms · p95 ${rt.p95Ms ?? 0}ms · max ${rt.maxMs ?? 0}ms` +
+          ` · err ${(Number(rt.errorRate ?? 0) * 100).toFixed(0)}%` +
           ` · critFail ${rt.criticalFailed ?? 0}` +
-          ` · Δreg ${rt.regressions ?? 0}`
+          ` · Δreg ${rt.regressions ?? 0}` +
+          (rt.cache ? ` · cache ${rt.cache}` : '')
         : 'Run bun run routing:proof:write or ops:snapshot';
     }
     const routingHash = this.querySelector('#routing-hash');
@@ -296,11 +298,25 @@ class OperationsDashboard extends HTMLElement {
     }
     const routingCrit = this.querySelector('#routing-crit');
     if (routingCrit) {
-      const paths = rt.criticalFailedPaths || [];
-      routingCrit.innerHTML = paths
-        .slice(0, 5)
-        .map(p => `<li><span class="ops-mono">${p}</span><small>critical</small></li>`)
-        .join('');
+      const routes = rt.routes || [];
+      if (routes.length) {
+        routingCrit.innerHTML = routes
+          .slice(0, 6)
+          .map(
+            r => `
+          <li class="${r.pass ? 'active' : 'inactive'}">
+            <span class="ops-mono">${r.path}</span>
+            <small>${r.status} · ${r.timeMs}ms${r.critical ? ' · crit' : ''}${r.pass ? '' : ' · FAIL'}</small>
+          </li>`
+          )
+          .join('');
+      } else {
+        const paths = rt.criticalFailedPaths || [];
+        routingCrit.innerHTML = paths
+          .slice(0, 5)
+          .map(p => `<li><span class="ops-mono">${p}</span><small>critical</small></li>`)
+          .join('');
+      }
     }
 
     // Experiments (C4)

@@ -26,6 +26,8 @@ export type RegistryR2Bucket = {
 };
 
 export type RegistryPagesEnv = {
+  /** Pages static assets — used when R2 is unbound or key missing. */
+  ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
   REGISTRY_BUCKET?: RegistryR2Bucket;
   /** Comma-separated origins; omit for same-origin only (no ACAO). */
   REGISTRY_CORS_ORIGINS?: string;
@@ -95,30 +97,49 @@ export async function onRequest(context: RegistryPagesContext): Promise<Response
     return jsonError(405, 'Method not allowed', cors);
   }
 
-  const bucket = env.REGISTRY_BUCKET;
-  if (!bucket || typeof bucket.get !== 'function') {
-    return jsonError(503, 'Registry binding unavailable', cors);
-  }
-
   const key = parseRegistryObjectKey(pathParamToKey(params, new URL(request.url)));
   if (!key) {
     return jsonError(400, 'Invalid registry object key', cors);
   }
 
-  try {
-    const object = await bucket.get(key);
-    if (!object || !object.body) {
-      return jsonError(404, 'Not found', cors);
+  const bucket = env.REGISTRY_BUCKET;
+  // Prefer R2 when bound; fall back to static ASSETS under /registry/<key>
+  // so allowlisted proofs (static.json, @factorywager/*) still serve without R2.
+  if (bucket && typeof bucket.get === 'function') {
+    try {
+      const object = await bucket.get(key);
+      if (object?.body) {
+        const headers: Record<string, string> = {
+          'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
+          'Cache-Control': 'public, max-age=60, s-maxage=300',
+          ...cors,
+        };
+        if (object.httpEtag) headers.ETag = object.httpEtag;
+        return new Response(object.body, { status: 200, headers });
+      }
+    } catch {
+      // fall through to ASSETS
     }
+  }
 
+  const origin = new URL(request.url).origin;
+  const assetUrl = new URL(`/registry/${key}`, origin);
+  try {
+    let res: Response;
+    if (env.ASSETS?.fetch) {
+      res = await env.ASSETS.fetch(new Request(assetUrl.toString()));
+    } else {
+      res = await fetch(assetUrl.toString(), { headers: { Accept: 'application/json,*/*' } });
+    }
+    if (!res.ok) {
+      return jsonError(res.status === 404 ? 404 : 503, res.status === 404 ? 'Not found' : 'Registry binding unavailable', cors);
+    }
     const headers: Record<string, string> = {
-      'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
+      'Content-Type': res.headers.get('Content-Type') || 'application/json',
       'Cache-Control': 'public, max-age=60, s-maxage=300',
       ...cors,
     };
-    if (object.httpEtag) headers.ETag = object.httpEtag;
-
-    return new Response(object.body, { status: 200, headers });
+    return new Response(res.body, { status: 200, headers });
   } catch {
     return jsonError(502, 'Registry unreachable', cors);
   }

@@ -80,6 +80,16 @@ export type RoutingProofResult = {
   proofHash?: string;
 };
 
+/** Per-route row embedded in ops-summary (top slow / critical). */
+export type RoutingOpsRouteRow = {
+  path: string;
+  status: number | 'ERR';
+  pass: boolean;
+  critical: boolean;
+  timeMs: number;
+  contentType: string;
+};
+
 /** Compact slice embedded in ops-summary / portal. */
 export type RoutingOpsSlice = {
   available: boolean;
@@ -92,10 +102,14 @@ export type RoutingOpsSlice = {
   p50Ms: number;
   p95Ms: number;
   maxMs: number;
+  errorRate: number;
   proofHash: string;
   timestamp: string;
   regressions: number;
   criticalFailedPaths: string[];
+  /** Slowest + critical routes (capped). */
+  routes: RoutingOpsRouteRow[];
+  cache?: 'memory' | 'disk' | 'fresh' | 'stale';
 };
 
 export type RunRoutingProofOpts = {
@@ -407,7 +421,29 @@ export async function runRoutingProof(opts: RunRoutingProofOpts = {}): Promise<R
   return { ...body, proofHash };
 }
 
-export function routingToOpsSlice(proof: RoutingProofResult | null | undefined): RoutingOpsSlice {
+function pickRouteRows(probes: RoutingProbeResult[], limit = 8): RoutingOpsRouteRow[] {
+  const rows = probes.map(p => ({
+    path: p.path,
+    status: p.status,
+    pass: p.pass,
+    critical: p.critical,
+    timeMs: p.timeMs,
+    contentType: p.contentType,
+  }));
+  // Critical failures first, then slowest
+  rows.sort((a, b) => {
+    const af = a.critical && !a.pass ? 0 : 1;
+    const bf = b.critical && !b.pass ? 0 : 1;
+    if (af !== bf) return af - bf;
+    return b.timeMs - a.timeMs;
+  });
+  return rows.slice(0, limit);
+}
+
+export function routingToOpsSlice(
+  proof: RoutingProofResult | null | undefined,
+  extras: { cache?: RoutingOpsSlice['cache'] } = {}
+): RoutingOpsSlice {
   if (!proof?.probes?.length) {
     return {
       available: false,
@@ -420,12 +456,16 @@ export function routingToOpsSlice(proof: RoutingProofResult | null | undefined):
       p50Ms: 0,
       p95Ms: 0,
       maxMs: 0,
+      errorRate: 0,
       proofHash: '',
       timestamp: '',
       regressions: 0,
       criticalFailedPaths: [],
+      routes: [],
+      cache: extras.cache,
     };
   }
+  const total = proof.summary.total || 1;
   return {
     available: true,
     baseUrl: proof.baseUrl,
@@ -437,11 +477,130 @@ export function routingToOpsSlice(proof: RoutingProofResult | null | undefined):
     p50Ms: proof.latency.p50Ms,
     p95Ms: proof.latency.p95Ms,
     maxMs: proof.latency.maxMs,
+    errorRate: Math.round((proof.summary.failed / total) * 1000) / 1000,
     proofHash: proof.proofHash ?? '',
     timestamp: proof.timestamp,
     regressions: proof.regression?.changes.length ?? 0,
     criticalFailedPaths: proof.summary.criticalFailedPaths,
+    routes: pickRouteRows(proof.probes),
+    cache: extras.cache,
   };
+}
+
+// ── Memory + disk cache (TTL) ─────────────────────────────────────────────
+
+export const ROUTING_CACHE_PATH =
+  Bun.env.ROUTING_PROOF_CACHE_PATH || 'tmp/routing-proof-cache.json';
+export const ROUTING_TTL_MS = Number(Bun.env.ROUTING_PROOF_TTL_MS || 5 * 60 * 1000);
+
+type CachedRoutingEnvelope = {
+  generatedAt: string;
+  proof: RoutingProofResult;
+};
+
+let memProof: RoutingProofResult | null = null;
+let memAt = 0;
+
+export function clearRoutingProofCache(): void {
+  memProof = null;
+  memAt = 0;
+}
+
+/**
+ * Get routing proof with retry, memory/disk TTL cache, and optional artifact write.
+ * Falls back to stale cache when live probe fails.
+ */
+export async function getRoutingProofCached(
+  opts: RunRoutingProofOpts & {
+    forceRefresh?: boolean;
+    ttlMs?: number;
+    cachePath?: string;
+    writeArtifact?: boolean;
+    maxRetries?: number;
+  } = {}
+): Promise<{ proof: RoutingProofResult; cache: NonNullable<RoutingOpsSlice['cache']> }> {
+  const { withRetry } = await import('./retry.ts');
+  const ttl = opts.ttlMs ?? ROUTING_TTL_MS;
+  const cachePath = opts.cachePath ?? ROUTING_CACHE_PATH;
+  const now = Date.now();
+  const force = Boolean(opts.forceRefresh);
+
+  if (!force && memProof && now - memAt < ttl) {
+    return { proof: memProof, cache: 'memory' };
+  }
+
+  if (!force) {
+    try {
+      const file = Bun.file(cachePath);
+      if (await file.exists()) {
+        const disk = (await file.json()) as CachedRoutingEnvelope;
+        const gen = disk.generatedAt ? new Date(disk.generatedAt).getTime() : 0;
+        if (disk.proof?.probes && now - gen < ttl) {
+          memProof = disk.proof;
+          memAt = now;
+          return { proof: disk.proof, cache: 'disk' };
+        }
+        // keep as last-resort stale
+        if (disk.proof?.probes && !memProof) {
+          memProof = disk.proof;
+          memAt = gen;
+        }
+      }
+    } catch {
+      /* ignore corrupt cache */
+    }
+  }
+
+  const proof = await withRetry(
+    () =>
+      runRoutingProof({
+        baseUrl: opts.baseUrl,
+        specs: opts.specs,
+        fetchImpl: opts.fetchImpl,
+        concurrency: opts.concurrency,
+        noPrevious: opts.noPrevious,
+        previous: opts.previous,
+        bunVersion: opts.bunVersion,
+        bunRevision: opts.bunRevision,
+      }),
+    {
+      label: 'routing-proof',
+      maxRetries: opts.maxRetries ?? 3,
+      baseDelayMs: 2000,
+    }
+  );
+
+  if (!proof) {
+    if (memProof) {
+      console.warn('[routing-proof] using stale cache after retries failed');
+      return { proof: memProof, cache: 'stale' };
+    }
+    throw new Error('Unable to obtain routing proof');
+  }
+
+  memProof = proof;
+  memAt = now;
+
+  try {
+    await Bun.$`mkdir -p ${cachePath.includes('/') ? cachePath.slice(0, cachePath.lastIndexOf('/')) : '.'}`.quiet();
+    const envelope: CachedRoutingEnvelope = {
+      generatedAt: new Date().toISOString(),
+      proof,
+    };
+    await Bun.write(cachePath, `${JSON.stringify(envelope, null, 2)}\n`);
+  } catch {
+    /* non-fatal */
+  }
+
+  if (opts.writeArtifact !== false) {
+    try {
+      await writeRoutingArtifact(proof);
+    } catch (e) {
+      console.warn('[routing-proof] artifact write failed:', e);
+    }
+  }
+
+  return { proof, cache: 'fresh' };
 }
 
 /** Sync load of last written artifact for ops-summary (no network). */

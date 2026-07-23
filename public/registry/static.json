@@ -1,0 +1,875 @@
+{
+  "schemaVersion": 1,
+  "generated": "2026-07-23T18:06:09.253Z",
+  "bunVersion": "1.3.6",
+  "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
+  "packageCount": 14,
+  "packages": {
+    "event-store": {
+      "versions": [
+        "1.0.0",
+        "1.1.0",
+        "2.0.0-beta"
+      ],
+      "dist-tags": {
+        "latest": "1.1.0",
+        "beta": "2.0.0-beta"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "event-store@1.0.0",
+          "name": "event-store",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "Event sourcing and CQRS primitives for sports trading pipelines",
+          "tags": [
+            "event-sourcing",
+            "cqrs",
+            "trading"
+          ],
+          "readme": "# Event Store\n\nEvent sourcing primitives.\n\n## Usage\n\n```ts\nimport { EventStore } from '@factorywager/event-store';\n```\n\n## Configuration\n\nSet `EVENT_STORE_BACKEND` to `memory` or `r2`.",
+          "publishedAt": "2026-07-15T10:30:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/1.0.0.tgz",
+            "size": 12480,
+            "checksum": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2",
+            "contentType": "application/gzip"
+          }
+        },
+        "1.1.0": {
+          "id": "event-store@1.1.0",
+          "name": "event-store",
+          "version": "1.1.0",
+          "type": "library",
+          "description": "Event sourcing with snapshot support and R2 persistence",
+          "tags": [
+            "event-sourcing",
+            "cqrs",
+            "r2",
+            "snapshots"
+          ],
+          "publishedAt": "2026-07-20T14:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/1.1.0.tgz",
+            "size": 15720,
+            "checksum": "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3",
+            "contentType": "application/gzip"
+          }
+        },
+        "2.0.0-beta": {
+          "id": "event-store@2.0.0-beta",
+          "name": "event-store",
+          "version": "2.0.0-beta",
+          "type": "library",
+          "description": "v2 beta: multi-tenant event stores, streaming projections, WebSocket tailing",
+          "tags": [
+            "event-sourcing",
+            "multi-tenant",
+            "streaming",
+            "beta"
+          ],
+          "publishedAt": "2026-07-22T09:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/2.0.0-beta.tgz",
+            "size": 22400,
+            "checksum": "c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "bet-ticker": {
+      "versions": [
+        "1.0.0",
+        "1.2.0"
+      ],
+      "dist-tags": {
+        "latest": "1.2.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "bet-ticker@1.0.0",
+          "name": "bet-ticker",
+          "version": "1.0.0",
+          "type": "worker",
+          "description": "Cloudflare Worker for live wager broadcast via WebSocket",
+          "tags": [
+            "worker",
+            "websocket",
+            "betting"
+          ],
+          "publishedAt": "2026-06-01T08:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "@factorywager/bet-ticker/1.0.0.tgz",
+            "size": 8960,
+            "checksum": "d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5",
+            "contentType": "application/gzip"
+          }
+        },
+        "1.2.0": {
+          "id": "bet-ticker@1.2.0",
+          "name": "bet-ticker",
+          "version": "1.2.0",
+          "type": "worker",
+          "description": "Bet Ticker Worker v1.2 with Durable Object coordination and Zod validation",
+          "tags": [
+            "worker",
+            "websocket",
+            "durable-object",
+            "zod"
+          ],
+          "publishedAt": "2026-07-18T16:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "@factorywager/bet-ticker/1.2.0.tgz",
+            "size": 11240,
+            "checksum": "e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "odds-engine": {
+      "versions": [
+        "0.5.0",
+        "0.6.0",
+        "0.7.0"
+      ],
+      "dist-tags": {
+        "latest": "0.7.0"
+      },
+      "releases": {
+        "0.7.0": {
+          "id": "odds-engine@0.7.0",
+          "name": "odds-engine",
+          "version": "0.7.0",
+          "type": "library",
+          "description": "Real-time odds computation with Bayesian adjustment and market normalization",
+          "tags": [
+            "odds",
+            "bayesian",
+            "trading"
+          ],
+          "publishedAt": "2026-05-10T12:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/odds-engine/0.7.0.tgz",
+            "size": 18300,
+            "checksum": "f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "cascade-mover": {
+      "versions": [
+        "3.0.0",
+        "3.1.0",
+        "3.1.1"
+      ],
+      "dist-tags": {
+        "latest": "3.1.1",
+        "stable": "3.0.0"
+      },
+      "releases": {
+        "3.1.1": {
+          "id": "cascade-mover@3.1.1",
+          "name": "cascade-mover",
+          "version": "3.1.1",
+          "type": "project",
+          "description": "Global Liquidity & Predictive Risk Command Center — 6-indicator confidence engine",
+          "tags": [
+            "risk",
+            "liquidity",
+            "confidence-engine"
+          ],
+          "publishedAt": "2026-07-21T22:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "projects/cascade-mover/3.1.1.tgz",
+            "size": 45800,
+            "checksum": "a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8",
+            "contentType": "application/gzip"
+          }
+        },
+        "3.0.0": {
+          "id": "cascade-mover@3.0.0",
+          "name": "cascade-mover",
+          "version": "3.0.0",
+          "type": "project",
+          "description": "Cascade Mover v3 stable — recursive multi-market cascade detection",
+          "tags": [
+            "risk",
+            "stable"
+          ],
+          "publishedAt": "2026-04-01T00:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "projects/cascade-mover/3.0.0.tgz",
+            "size": 42100,
+            "checksum": "b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "sports-terminal-os": {
+      "versions": [
+        "5.2.0"
+      ],
+      "dist-tags": {
+        "latest": "5.2.0"
+      },
+      "releases": {
+        "5.2.0": {
+          "id": "sports-terminal-os@5.2.0",
+          "name": "sports-terminal-os",
+          "version": "5.2.0",
+          "type": "project",
+          "description": "Partner Profile OS for Sports Terminal v5.2 — TOML templates, PartnerGateway kernel",
+          "tags": [
+            "partner",
+            "toml",
+            "gateway"
+          ],
+          "publishedAt": "2026-07-22T18:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "projects/sports-terminal-os/5.2.0.tgz",
+            "size": 89200,
+            "checksum": "c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "factory-cli": {
+      "versions": [
+        "0.1.0"
+      ],
+      "dist-tags": {
+        "latest": "0.1.0"
+      },
+      "releases": {
+        "0.1.0": {
+          "id": "factory-cli@0.1.0",
+          "name": "factory-cli",
+          "version": "0.1.0",
+          "type": "cli-tool",
+          "description": "R2-backed artifact registry CLI — publish, install, list, search, create, and readme",
+          "dependencies": {
+            "@factorywager/event-store": "^1.0.0"
+          },
+          "readme": "# Factory CLI\n\nR2-backed artifact registry CLI.\n\n## Usage\n\n```bash\nbun run factory --version\nbun run factory:publish ./dist.tgz --name my-lib --version 1.0.0\nbun run factory:list\nbun run factory:search event-store\nbun run factory:install my-lib\nbun run factory:readme my-lib\nbun run factory create factory-library my-new-lib --publish\n```\n\n## Environment\n\nSet `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` for registry access.\nOptional: `FACTORY_REGISTRY_URL`, `BUN_CREATE_DIR`, `FACTORY_NO_COLOR`.",
+          "publishedAt": "2026-07-22T23:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/factory-cli/0.1.0.tgz",
+            "size": 24800,
+            "checksum": "d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "kimi-toolchain": {
+      "versions": [
+        "2.1.0"
+      ],
+      "dist-tags": {
+        "latest": "2.1.0"
+      },
+      "releases": {
+        "2.1.0": {
+          "id": "kimi-toolchain@2.1.0",
+          "name": "kimi-toolchain",
+          "version": "2.1.0",
+          "type": "cli-tool",
+          "description": "Kimi governance and doctor toolchain for harness health checks",
+          "tags": [
+            "governance",
+            "doctor",
+            "harness"
+          ],
+          "publishedAt": "2026-07-19T08:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "@factorywager/kimi-toolchain/2.1.0.tgz",
+            "size": 31200,
+            "checksum": "e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "quantum-domain-ops": {
+      "versions": [
+        "0.1.0"
+      ],
+      "dist-tags": {
+        "latest": "0.1.0"
+      },
+      "releases": {
+        "0.1.0": {
+          "id": "quantum-domain-ops@0.1.0",
+          "name": "quantum-domain-ops",
+          "version": "0.1.0",
+          "type": "library",
+          "description": "Protocols for operating QuantumDomain instances — state collapse, entanglement, coherence monitoring",
+          "tags": [
+            "quantum",
+            "state-management",
+            "experimental"
+          ],
+          "readme": "# Quantum Domain Ops\n\nExperimental quantum state management.\n\n> ⚠️ Requires Bun ≥1.3.0 with `--experimental-quantum` flag.\n\n```ts\nimport { QuantumDomain } from '@factorywager/quantum-domain-ops';\nconst domain = new QuantumDomain({ qubits: 8 });\nawait domain.collapse('entangled');\n```",
+          "publishedAt": "2026-07-20T03:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/quantum-domain-ops/0.1.0.tgz",
+            "size": 6800,
+            "checksum": "f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "test-plugin": {
+      "versions": [
+        "1.0.0"
+      ],
+      "dist-tags": {
+        "latest": "1.0.0",
+        "stable": "1.0.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "test-plugin@1.0.0",
+          "name": "test-plugin",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "Test plugin",
+          "tags": [
+            "latest",
+            "stable"
+          ],
+          "publishedAt": "2026-07-23T17:14:57.086Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/test-plugin/1.0.0.tgz",
+            "size": 13,
+            "checksum": "098fa9f704db63e8d2673a658118ea4f9da3bc8083403deed460c56de63dbd30",
+            "contentType": "text/javascript;charset=utf-8"
+          }
+        }
+      }
+    },
+    "test-npm-pkg": {
+      "versions": [
+        "1.0.0"
+      ],
+      "dist-tags": {
+        "latest": "1.0.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "test-npm-pkg@1.0.0",
+          "name": "test-npm-pkg",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "Published via bun publish",
+          "publishedAt": "2026-07-23T17:17:10.600Z",
+          "publisher": "bun-publish",
+          "storage": {
+            "r2Key": "@factorywager/test-npm-pkg/1.0.0.tgz",
+            "size": 225,
+            "checksum": "7dc1d34540ba9a715becab67f4371150aad8418b0b3614cb16e2fe727da85e8e",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "@factorywager/bun-test": {
+      "versions": [
+        "0.1.0",
+        "0.2.0"
+      ],
+      "dist-tags": {
+        "latest": "0.2.0",
+        "beta": "0.2.0"
+      },
+      "releases": {
+        "0.1.0": {
+          "id": "@factorywager/bun-test@0.1.0",
+          "name": "@factorywager/bun-test",
+          "version": "0.1.0",
+          "type": "library",
+          "description": "Published via bun publish",
+          "publishedAt": "2026-07-23T17:22:36.203Z",
+          "publisher": "bun-publish",
+          "storage": {
+            "r2Key": "@factorywager/@factorywager/bun-test/0.1.0.tgz",
+            "size": 257,
+            "checksum": "40d01475b9fffb79c20d4aef839a4bf241bfc580aee36ec8cfc23fb05e2af4cf",
+            "contentType": "application/gzip"
+          }
+        },
+        "0.2.0": {
+          "id": "@factorywager/bun-test@0.2.0",
+          "name": "@factorywager/bun-test",
+          "version": "0.2.0",
+          "type": "library",
+          "description": "Updated test",
+          "tags": [
+            "latest",
+            "beta"
+          ],
+          "publishedAt": "2026-07-23T17:23:18.841Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/@factorywager/bun-test/0.2.0.tgz",
+            "size": 5,
+            "checksum": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+            "contentType": "text/javascript;charset=utf-8"
+          }
+        }
+      }
+    },
+    "@factorywager/final-test": {
+      "versions": [
+        "1.0.0"
+      ],
+      "dist-tags": {
+        "latest": "1.0.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "@factorywager/final-test@1.0.0",
+          "name": "@factorywager/final-test",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "Published via bun publish",
+          "publishedAt": "2026-07-23T17:23:29.897Z",
+          "publisher": "bun-publish",
+          "storage": {
+            "r2Key": "@factorywager/@factorywager/final-test/1.0.0.tgz",
+            "size": 218,
+            "checksum": "c537adc08cf6e424daedb1f0715e0c49a884309f30f20ffc5b348fc141dd1008",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "@factory/health-check": {
+      "versions": [
+        "1.0.0",
+        "1.1.0"
+      ],
+      "dist-tags": {
+        "latest": "1.1.0",
+        "stable": "1.1.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "@factory/health-check@1.0.0",
+          "name": "@factory/health-check",
+          "version": "1.0.0",
+          "type": "cli-tool",
+          "description": "Registry health check CLI",
+          "tags": [
+            "latest"
+          ],
+          "publishedAt": "2026-07-23T17:24:45.991Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/@factory/health-check/1.0.0.tgz",
+            "size": 688,
+            "checksum": "7239c3d7386983feb80dd73bff9cd159cbd3fe58800f4e99ea6ccf9a593df8bf",
+            "contentType": "text/javascript;charset=utf-8"
+          },
+          "bin": {
+            "health-check": "bin/health-check.js"
+          }
+        },
+        "1.1.0": {
+          "id": "@factory/health-check@1.1.0",
+          "name": "@factory/health-check",
+          "version": "1.1.0",
+          "type": "cli-tool",
+          "description": "Updated health check",
+          "tags": [
+            "latest",
+            "stable"
+          ],
+          "publishedAt": "2026-07-23T17:26:35.935Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/@factory/health-check/1.1.0.tgz",
+            "size": 20,
+            "checksum": "ed14c3d0ad306e24dd26b814baef3ae6c1becec47adee3abc3b8346aa3640f5e",
+            "contentType": "text/javascript;charset=utf-8"
+          }
+        }
+      }
+    },
+    "@factorywager/registry-client": {
+      "versions": [
+        "1.0.0"
+      ],
+      "dist-tags": {
+        "latest": "1.0.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "@factorywager/registry-client@1.0.0",
+          "name": "@factorywager/registry-client",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "Published via bun publish",
+          "publishedAt": "2026-07-23T17:31:15.266Z",
+          "publisher": "bun-publish",
+          "storage": {
+            "r2Key": "@factorywager/@factorywager/registry-client/1.0.0.tgz",
+            "size": 636,
+            "checksum": "e2fd9f16c4d3fa285c8a8fc63ce475b8f4d6445f687de28c10d77d582f5f4049",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    }
+  },
+  "monitoring": {
+    "source": "snapshot",
+    "uptime": "0d 0h 0m 0s",
+    "uptimeMs": 13,
+    "packageCount": 14,
+    "versionCount": 23,
+    "lastIntegrity": {
+      "status": "unknown",
+      "timestamp": null,
+      "failures": 0,
+      "source": "unknown"
+    },
+    "platformSummary": {},
+    "platformApiAvailable": {
+      "yes": 0,
+      "no": 0
+    },
+    "dodQueue": 0,
+    "dodByStatus": {},
+    "experimentsActive": 0,
+    "predictionN": 0,
+    "timestamp": "2026-07-23T18:06:09.253Z"
+  },
+  "ops": {
+    "source": "snapshot",
+    "generated": "2026-07-23T18:06:09.250Z",
+    "liquidity": {
+      "total": 0
+    },
+    "experts": [],
+    "tree": {
+      "partners": 0,
+      "agents": 0,
+      "subAgents": 0,
+      "downstreamLiquidity": 0
+    },
+    "plays": [],
+    "rails": [],
+    "phones": {
+      "inventory": 0,
+      "issued": 0,
+      "returned": 0
+    },
+    "experiments": {
+      "byStatus": {},
+      "active": 0,
+      "recent": []
+    },
+    "prediction": {
+      "coverage": {
+        "mae": 0,
+        "rmse": 0,
+        "bias": 0,
+        "n": 0
+      }
+    },
+    "growth": {
+      "period": "2026-07",
+      "playsReceived": 0,
+      "playsPlaced": 0,
+      "volume": 0,
+      "pnl": 0,
+      "nodes": 0,
+      "top": []
+    },
+    "bunUtils": {
+      "bunVersion": "1.3.6",
+      "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
+      "proofHash": "621498310811975344ec7b2f2a88cfe1dd726254c3e36df6de1577f94e7b2eeb",
+      "passed": 10,
+      "total": 10,
+      "failed": 0,
+      "timestamp": "2026-07-23T18:06:09.250Z"
+    },
+    "routing": {
+      "available": true,
+      "baseUrl": "https://score.factory-wager.com",
+      "passed": 14,
+      "total": 14,
+      "failed": 0,
+      "httpOk": 10,
+      "criticalFailed": 0,
+      "p50Ms": 187.02,
+      "p95Ms": 328.55,
+      "maxMs": 328.55,
+      "errorRate": 0,
+      "proofHash": "e51f27f3d3877e7a9f4b72739d9b1eab3bbaa232b62ec2d9f1b28ef32c03e7ca",
+      "timestamp": "2026-07-23T18:05:23.921Z",
+      "regressions": 0,
+      "criticalFailedPaths": [],
+      "routes": [
+        {
+          "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+          "status": 404,
+          "pass": true,
+          "critical": false,
+          "timeMs": 328.55,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/test-pkg",
+          "status": 404,
+          "pass": true,
+          "critical": false,
+          "timeMs": 321.63,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/routing-test/latest.json",
+          "status": 404,
+          "pass": true,
+          "critical": false,
+          "timeMs": 318.76,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/ready",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 277.5,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/api/registry",
+          "status": 400,
+          "pass": true,
+          "critical": false,
+          "timeMs": 250.38,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/health",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 225.58,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/registry/@factorywager/bun-utils-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 195.53,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/operations/summary",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 187.02,
+          "contentType": "application/json"
+        }
+      ],
+      "cache": "disk"
+    }
+  },
+  "bunUtils": {
+    "schemaVersion": 1,
+    "bunVersion": "1.3.6",
+    "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
+    "timestamp": "2026-07-23T18:06:09.251Z",
+    "testCases": [
+      {
+        "utility": "stringWidth",
+        "input": "hello",
+        "expected": 5,
+        "actual": 5,
+        "note": "ASCII"
+      },
+      {
+        "utility": "stringWidth",
+        "input": "👨‍👩‍👧‍👦",
+        "expected": 2,
+        "actual": 2,
+        "note": "Emoji ZWJ family (Bun baseline)"
+      },
+      {
+        "utility": "stringWidth",
+        "input": "こんにちは",
+        "expected": 10,
+        "actual": 10,
+        "note": "CJK fullwidth (Bun baseline)"
+      },
+      {
+        "utility": "deepEquals",
+        "input": "{a:1} == {a:1}",
+        "expected": true,
+        "actual": true,
+        "note": "Same plain object"
+      },
+      {
+        "utility": "deepEquals",
+        "input": "{a:1} == {a:2}",
+        "expected": false,
+        "actual": false,
+        "note": "Different value"
+      },
+      {
+        "utility": "deepEquals",
+        "input": "[1,2] == [1,2]",
+        "expected": true,
+        "actual": true,
+        "note": "Same array"
+      },
+      {
+        "utility": "deepEquals",
+        "input": "[1,2] == [1,3]",
+        "expected": false,
+        "actual": false,
+        "note": "Different array"
+      },
+      {
+        "utility": "inspect (depth:0)",
+        "input": "depth:0",
+        "expected": "truncates at a → [Object …]",
+        "actual": "{\n  a: [Object ...],\n}",
+        "note": "No recursion",
+        "pass": true
+      },
+      {
+        "utility": "inspect (depth:1)",
+        "input": "depth:1",
+        "expected": "shows b then [Object …]",
+        "actual": "{\n  a: {\n    b: [Object ...],\n  },\n}",
+        "note": "One level",
+        "pass": true
+      },
+      {
+        "utility": "inspect (default)",
+        "input": "default depth",
+        "expected": "shows a.b.c structure",
+        "actual": "{\n  a: {\n    b: {\n      c: {\n        d: \"e\",\n      },\n    },\n  },\n}",
+        "note": "Default depth ≥ 2",
+        "pass": true
+      }
+    ],
+    "summary": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0
+    },
+    "proofHash": "94652a3712d6574cc35182d33560e0e5bab5d0fbcedd8e604a93423bb9d59e0e"
+  },
+  "routing": {
+    "available": true,
+    "baseUrl": "https://score.factory-wager.com",
+    "passed": 14,
+    "total": 14,
+    "failed": 0,
+    "httpOk": 10,
+    "criticalFailed": 0,
+    "p50Ms": 187.02,
+    "p95Ms": 328.55,
+    "maxMs": 328.55,
+    "errorRate": 0,
+    "proofHash": "e51f27f3d3877e7a9f4b72739d9b1eab3bbaa232b62ec2d9f1b28ef32c03e7ca",
+    "timestamp": "2026-07-23T18:05:23.921Z",
+    "regressions": 0,
+    "criticalFailedPaths": [],
+    "routes": [
+      {
+        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+        "status": 404,
+        "pass": true,
+        "critical": false,
+        "timeMs": 328.55,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry/@factorywager/test-pkg",
+        "status": 404,
+        "pass": true,
+        "critical": false,
+        "timeMs": 321.63,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry/@factorywager/routing-test/latest.json",
+        "status": 404,
+        "pass": true,
+        "critical": false,
+        "timeMs": 318.76,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/ready",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 277.5,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/api/registry",
+        "status": 400,
+        "pass": true,
+        "critical": false,
+        "timeMs": 250.38,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/health",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 225.58,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/registry/@factorywager/bun-utils-test/latest.json",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 195.53,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/operations/summary",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 187.02,
+        "contentType": "application/json"
+      }
+    ],
+    "cache": "disk"
+  },
+  "proofHash": "d1f7a88942ba4ab70753b0129fc87cc3197a69af3cc58f59c11f7ff54c289d63"
+}

@@ -1557,6 +1557,7 @@
     "ops:prediction": "bun tools/ops-prediction.ts",
     "ops:prediction-backtest": "bun tools/ops-prediction.ts",
     "ops:snapshot": "bun tools/ops-snapshot.ts",
+    "registry:snapshot": "bun tools/build-registry-snapshot.ts",
     "serve:public": "bun scripts/serve-public.ts",
     "audit:bunfig": "bash scripts/audit-bunfig.sh",
     "audit:bunfig:strict": "bash scripts/audit-bunfig.sh --strict",
