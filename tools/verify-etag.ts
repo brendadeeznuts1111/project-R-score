@@ -87,6 +87,7 @@ const BASE =
 const WANT_ONLINE = has('online') || has('probe');
 const SKIP_TTL = has('skip-ttl');
 const AS_JSON = has('json');
+const VERBOSE = has('verbose');
 /** Wait past HEALTH_TTL_MS (5s) + slack — content-hash may still be unchanged. */
 const TTL_WAIT_MS = Number(flag('ttl-ms') ?? 6_000);
 
@@ -267,6 +268,7 @@ async function fetchHealth(
   const res = await fetch(new URL(path, base.endsWith('/') ? base : `${base}/`), {
     method: opts.method ?? 'GET',
     headers,
+    ...(VERBOSE ? { verbose: true } : {}),
   });
   const etag = res.headers.get('ETag');
   const vary = res.headers.get('Vary');
