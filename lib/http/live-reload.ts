@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/bundler/hot-reloading — bun --hot (process re-eval)
+// @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — Content-Type
 /**
  * Browser live-reload for local static + API hosts (serve-public).
  *
@@ -161,7 +162,7 @@ export class LiveReloadHub {
 
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Content-Type': 'text/event-stream; charset=utf-8', // response CT (not fetch auto)
         'Cache-Control': 'no-store',
         Connection: 'keep-alive',
       },

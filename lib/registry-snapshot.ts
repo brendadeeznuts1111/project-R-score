@@ -1,3 +1,6 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
@@ -27,8 +30,7 @@ import {
   type SnapshotPhase,
 } from './registry-tags.ts';
 
-export const STATIC_REGISTRY_PATH =
-  Bun.env.STATIC_REGISTRY_PATH || 'public/registry/static.json';
+export const STATIC_REGISTRY_PATH = Bun.env.STATIC_REGISTRY_PATH || 'public/registry/static.json';
 
 export type BuildRegistrySnapshotOpts = {
   withRouting?: boolean;
@@ -86,6 +88,7 @@ export type StaticRegistrySnapshot = {
 
 async function maybePublishArtifact(
   packageName: string,
+  // eslint-disable-next-line harness/no-unknown-function-param -- JSON wire artifact
   body: unknown,
   metadata: Record<string, unknown>,
   opts: { version: string; tags: string[] }
@@ -95,12 +98,10 @@ async function maybePublishArtifact(
   if (!base || !key) return;
 
   try {
+    const { jsonFile } = await import('./http/content-type.ts');
     const form = new FormData();
-    form.append(
-      'file',
-      new Blob([JSON.stringify(body, null, 2)], { type: 'application/json' }),
-      'artifact.json'
-    );
+    // Bun sets multipart Content-Type + boundary — never set Content-Type on this fetch
+    form.append('file', jsonFile(body, 'artifact.json'));
     form.append('version', opts.version);
     form.append('tags', opts.tags.join(','));
     form.append('metadata', JSON.stringify(metadata));
@@ -131,12 +132,9 @@ export async function buildRegistrySnapshot(
   const pinStable = Boolean(opts.pinStable);
 
   const dbPath = opts.dbPath || Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
-  const outPath =
-    opts.outPath || Bun.env.OPS_SNAPSHOT_PATH || 'public/registry/ops-summary.json';
+  const outPath = opts.outPath || Bun.env.OPS_SNAPSHOT_PATH || 'public/registry/ops-summary.json';
   const monitoringPath =
-    opts.monitoringPath ||
-    Bun.env.MONITORING_SNAPSHOT_PATH ||
-    'public/registry/monitoring.json';
+    opts.monitoringPath || Bun.env.MONITORING_SNAPSHOT_PATH || 'public/registry/monitoring.json';
   // Prefer explicit opts; then env if non-loopback; else production custom domain.
   // Loopback REGISTRY_URL (serve-public) must not be written into Pages ops-summary.
   const envBase = (Bun.env.REGISTRY_URL || Bun.env.FACTORY_REGISTRY_URL || '').trim();
@@ -173,10 +171,7 @@ export async function buildRegistrySnapshot(
       routingSlice = routingToOpsSlice(proof, { cache });
     }
   } catch (e) {
-    console.error(
-      'Routing proof failed:',
-      e instanceof Error ? e.message : e
-    );
+    console.error('Routing proof failed:', e instanceof Error ? e.message : e);
   }
 
   try {
@@ -187,11 +182,11 @@ export async function buildRegistrySnapshot(
 
     // Bun utils proof → tagged artifact (pre/post/latest)
     const bunProof = buildBunUtilsProof();
-    const bunTagged = await writeTaggedProofArtifact(
-      '@factorywager/bun-utils-test',
-      bunProof,
-      { phase, proofHash: bunProof.proofHash, pinStable }
-    );
+    const bunTagged = await writeTaggedProofArtifact('@factorywager/bun-utils-test', bunProof, {
+      phase,
+      proofHash: bunProof.proofHash,
+      pinStable,
+    });
     const phaseTags = tagsForPhase(phase, { pinStable });
     await maybePublishArtifact(
       '@factorywager/bun-utils-test',
@@ -265,9 +260,7 @@ export async function buildRegistrySnapshot(
         bunVersion: Bun.version,
         bunRevision: Bun.revision || 'unknown',
         packageCount:
-          packages && typeof packages === 'object'
-            ? Object.keys(packages as object).length
-            : 0,
+          packages && typeof packages === 'object' ? Object.keys(packages as object).length : 0,
         packages,
         monitoring,
         ops: payload,

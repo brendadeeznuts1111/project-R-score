@@ -42,9 +42,8 @@
  *   bun --fetch-preconnect https://api.elections.kalshi.com:443 tools/verify-networking.ts
  */
 
-import { unlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+import { joinPath } from '../lib/path-bun.ts';
 import {
   BUN_DNS_CACHE_STATS_DOCS,
   BUN_DNS_PREFETCHING_DOCS,
@@ -107,7 +106,8 @@ const flag = (n: string): string | undefined => {
   return hit?.slice(n.length + 3);
 };
 
-const LOCAL_BASE = flag('base') || Bun.env.HEALTH_URL || Bun.env.BASE_URL || 'http://127.0.0.1:3000';
+const LOCAL_BASE =
+  flag('base') || Bun.env.HEALTH_URL || Bun.env.BASE_URL || 'http://127.0.0.1:3000';
 const LOCAL_ONLY = has('local-only');
 const ROUTES = has('routes') || has('routes-only') || has('local-only');
 const ROUTES_ONLY = has('routes-only');
@@ -275,9 +275,7 @@ export async function verifyTarget(
       'dns-prefetch',
       `${ms(tPrefetch).toFixed(3)}ms`,
       dns.ok ? 'PASS' : 'FAIL',
-      dns.ok
-        ? `dns.prefetch("${dns.host}"${dns.port != null ? `, ${dns.port}` : ''})`
-        : dns.note
+      dns.ok ? `dns.prefetch("${dns.host}"${dns.port != null ? `, ${dns.port}` : ''})` : dns.note
     )
   );
 
@@ -380,7 +378,10 @@ export async function verifyTarget(
 
     // 7. Bun.write small payloads
     if (!opts.skipWrite && bytes.byteLength > 0 && bytes.byteLength < 1_000_000) {
-      const path = join(tmpdir(), `bun-net-${cat}-${Date.now()}.bin`);
+      const path = joinPath(
+        Bun.env.TMPDIR || Bun.env.TMP || '/tmp',
+        `bun-net-${cat}-${Date.now()}.bin`
+      );
       const tW = Bun.nanoseconds();
       try {
         await Bun.write(path, bytes);
@@ -390,7 +391,7 @@ export async function verifyTarget(
         );
       } finally {
         try {
-          unlinkSync(path);
+          await Bun.$`rm -f ${path}`.quiet();
         } catch {
           /* ignore */
         }
@@ -412,10 +413,12 @@ export async function verifyTarget(
   return rows;
 }
 
-export async function runNetworkingSuite(opts: {
-  targets?: NetTarget[];
-  skipWrite?: boolean;
-} = {}): Promise<{ rows: NetCheckRow[]; targets: NetTarget[] }> {
+export async function runNetworkingSuite(
+  opts: {
+    targets?: NetTarget[];
+    skipWrite?: boolean;
+  } = {}
+): Promise<{ rows: NetCheckRow[]; targets: NetTarget[] }> {
   const targets = opts.targets ?? buildTargets();
   const rows: NetCheckRow[] = [];
   for (const t of targets) {
@@ -427,9 +430,7 @@ export async function runNetworkingSuite(opts: {
 // ── Local route catalog probe (dashboard + endpoints + route objects) ──────
 
 /** GET /health → routeStats + serve.hotPreloaded objects. */
-export async function fetchHealthRouteObjects(
-  base: string
-): Promise<HealthRouteObjects | null> {
+export async function fetchHealthRouteObjects(base: string): Promise<HealthRouteObjects | null> {
   try {
     const res = await fetch(new URL('/health', base.endsWith('/') ? base : `${base}/`), {
       headers: { Accept: 'application/json' },
@@ -598,9 +599,7 @@ async function main(): Promise<void> {
     );
     console.log(`║  Base: ${LOCAL_BASE.slice(0, 62).padEnd(62)}║`);
     console.log(`║  Targets: ${String(targets.length).padEnd(59)}║`);
-    console.log(
-      `║  Routes:  ${String(routeProbe?.catalog.length ?? 0).padEnd(59)}║`
-    );
+    console.log(`║  Routes:  ${String(routeProbe?.catalog.length ?? 0).padEnd(59)}║`);
     console.log('╚══════════════════════════════════════════════════════════════════════╝');
 
     // console.log → Bun.inspect → [Bun.inspect.custom] → inspect.table
@@ -633,7 +632,9 @@ async function main(): Promise<void> {
     for (const [k, url] of Object.entries(CANONICAL)) {
       console.log(`  • ${k.padEnd(18)} ${url}`);
     }
-    console.log('\nTip: console.log(report) uses Bun.inspect.custom → inspect.table automatically.');
+    console.log(
+      '\nTip: console.log(report) uses Bun.inspect.custom → inspect.table automatically.'
+    );
     console.log('     JSON: --json  →  .tables.rendered.routes  (or omit --json for live tables)');
   }
 

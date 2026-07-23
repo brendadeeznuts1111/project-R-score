@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
+// @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — request CT auto
 /**
  * Bun static-route vs file-route response helpers.
  *
@@ -16,8 +17,12 @@
  *   - Range handled by Bun when using Bun.file body
  *   - runtime 404 if missing
  *   - best for large / changing files
+ *
+ * Response Content-Type is always explicit (path guess). Request-side auto CT
+ * for fetch(Blob|FormData) lives in content-type.ts.
  */
 import { sha256Hex } from '../bun-utils-proof.ts';
+import { guessContentType as guessContentTypeFromPath } from './content-type.ts';
 
 export const DEFAULT_STATIC_MAX_BYTES = 512 * 1024; // 512 KiB
 /** Prefer static (memory) when under this size and access is “hot”. */
@@ -132,20 +137,9 @@ export type FileRespondOpts = StaticRespondOpts & {
   contentType?: string;
 };
 
-/** Guess Content-Type from path extension. */
+/** Guess response Content-Type from path extension (SSOT: content-type.ts). */
 export function guessContentType(path: string): string {
-  if (path.endsWith('.json')) return 'application/json; charset=utf-8';
-  if (path.endsWith('.html') || path.endsWith('.htm')) return 'text/html; charset=utf-8';
-  if (path.endsWith('.js') || path.endsWith('.mjs')) return 'text/javascript; charset=utf-8';
-  if (path.endsWith('.css')) return 'text/css; charset=utf-8';
-  if (path.endsWith('.svg')) return 'image/svg+xml';
-  if (path.endsWith('.png')) return 'image/png';
-  if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 'image/jpeg';
-  if (path.endsWith('.webp')) return 'image/webp';
-  if (path.endsWith('.md')) return 'text/markdown; charset=utf-8';
-  if (path.endsWith('.tgz') || path.endsWith('.tar.gz')) return 'application/gzip';
-  if (path.endsWith('.wasm')) return 'application/wasm';
-  return 'application/octet-stream';
+  return guessContentTypeFromPath(path);
 }
 
 /** Strong ETag from content bytes or string (quoted hex). */
@@ -201,10 +195,7 @@ export async function preloadStaticMap(
   return map;
 }
 
-function mergeHeaders(
-  base: Record<string, string>,
-  extra?: Record<string, string>
-): Headers {
+function mergeHeaders(base: Record<string, string>, extra?: Record<string, string>): Headers {
   const h = new Headers(base);
   if (extra) {
     for (const [k, v] of Object.entries(extra)) h.set(k, v);
@@ -263,7 +254,12 @@ export function etagMatches(ifNoneMatch: string, etag: string): boolean {
   const want = etag.replace(/^W\//, '');
   return ifNoneMatch.split(',').some(part => {
     const t = part.trim().replace(/^W\//, '');
-    return t === etag || t === want || t === etag.replace(/"/g, '') || `"${t.replace(/"/g, '')}"` === etag;
+    return (
+      t === etag ||
+      t === want ||
+      t === etag.replace(/"/g, '') ||
+      `"${t.replace(/"/g, '')}"` === etag
+    );
   });
 }
 
@@ -334,6 +330,7 @@ export async function respondFile(
  * revalidation for dynamic-but-small payloads (health, tables).
  */
 export function respondStaticJson(
+  // eslint-disable-next-line harness/no-unknown-function-param -- JSON wire body
   body: unknown,
   request: Request,
   opts: StaticRespondOpts & { etag?: string } = {}

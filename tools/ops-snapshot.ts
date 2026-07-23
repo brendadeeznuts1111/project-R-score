@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — FormData CT
 /**
  * Production-grade ops / registry snapshot for Cloudflare Pages + local portal.
  *
@@ -74,18 +75,16 @@ async function maybePublishJsonArtifact(
     return { ok: false, error: 'REGISTRY_URL + REGISTRY_SECRET required for --publish' };
   }
   try {
+    const { jsonFile } = await import('../lib/http/content-type.ts');
     const form = new FormData();
-    form.set(
-      'file',
-      new File([`${JSON.stringify(body, null, 2)}\n`], `${name.split('/').pop()}.json`, {
-        type: 'application/json',
-      })
-    );
+    // File.type → part headers; FormData body → Bun sets multipart boundary (do not set Content-Type)
+    form.set('file', jsonFile(body, `${name.split('/').pop() || 'artifact'}.json`));
     form.set('version', version);
     form.set('tags', 'latest,proof');
     form.set('metadata', JSON.stringify({ type: 'library', ...meta }));
     const res = await fetch(`${base}/api/registry/${encodeURIComponent(name)}/versions`, {
       method: 'POST',
+      // Authorization only — Content-Type must stay unset for FormData
       headers: { Authorization: `Bearer ${token}` },
       body: form,
     });

@@ -6,6 +6,7 @@
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/bundler/hot-reloading — bun --hot (server module re-eval)
+// @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — Content-Type
 /**
  * Local portal + static public/ server with live ops/catalog/registry APIs.
  *
