@@ -253,6 +253,7 @@ dump.rdb
 metrics/
 plugins/
 wrangler.toml
+!wrangler.toml
 
 # Clawdbot - temporarily ignored
 clawdbot/

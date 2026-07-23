@@ -1,0 +1,17 @@
+# Cloudflare Pages config for project-r-score (Git-integrated + wrangler pages deploy).
+# @see https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+# @see docs/harness/tenants/cloudflare-pages.md
+
+name = "project-r-score"
+compatibility_date = "2026-02-08"
+pages_build_output_dir = "public"
+
+# Edge Functions env (dashboard also sets BUN_VERSION / SKIP_DEPENDENCY_INSTALL for builds)
+[vars]
+# Comma-separated; omit for same-origin only. Aligned via API + this file for local pages dev.
+REGISTRY_CORS_ORIGINS = "https://factory-wager.com,https://project-r-score.pages.dev,https://score.factory-wager.com,https://wiki.factory-wager.com"
+
+# R2 registry proxy for /api/registry/*
+[[r2_buckets]]
+binding = "REGISTRY_BUCKET"
+bucket_name = "factory-wager-registry"

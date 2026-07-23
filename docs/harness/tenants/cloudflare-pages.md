@@ -90,8 +90,10 @@ Until DNS exists, use:
 
 ### Factory registry portal (claim `factory-registry-pages-proxy-v1`)
 
-1. Pages → Settings → Functions → R2 bucket bindings: bind name `REGISTRY_BUCKET` → bucket `factory-wager-registry` (or `R2_REGISTRY_BUCKET`).
-2. Optional: `REGISTRY_CORS_ORIGINS=https://factory-wager.com,https://project-r-score.pages.dev` (comma-separated). Omit for same-origin only.
+1. Pages → Settings → Bindings → R2: `REGISTRY_BUCKET` → `factory-wager-registry`  
+   (also declared in root [`wrangler.toml`](../../../wrangler.toml) for Pages Functions).
+2. Env `REGISTRY_CORS_ORIGINS` (prod+preview):  
+   `https://factory-wager.com,https://project-r-score.pages.dev,https://score.factory-wager.com,https://wiki.factory-wager.com`
 3. Do **not** put `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` on the Pages Function for `/api/registry` — the proxy uses the R2 binding.
 4. CLI publish/install still needs local R2 S3 keys (`bun run factory:env`) via SigV4 `S3Client`.
 5. Portal static fallback: `bun run factory:snapshot` → `public/registry/registry.json` (committed empty seed; refresh after publishes).
