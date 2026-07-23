@@ -3,12 +3,16 @@ import { describe, expect, test, beforeAll, afterAll } from 'bun:test';
 import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+  decideRouteStrategy,
   etagFromBytes,
   etagMatches,
+  getRouteStats,
   preloadStatic,
+  resetRouteStats,
   respondAuto,
   respondFile,
   respondStatic,
+  respondStaticJson,
 } from '../lib/http/static-response.ts';
 
 const dir = join(import.meta.dir, '.tmp-static-response');
@@ -87,5 +91,27 @@ describe('static-response', () => {
   test('etagFromBytes is stable for same string', () => {
     expect(etagFromBytes('abc')).toBe(etagFromBytes('abc'));
     expect(etagFromBytes('abc')).not.toBe(etagFromBytes('abd'));
+  });
+
+  test('decideRouteStrategy decision tree', () => {
+    expect(decideRouteStrategy(50 * 1024, { hot: true })).toBe('static');
+    expect(decideRouteStrategy(2 * 1024 * 1024)).toBe('file');
+    expect(decideRouteStrategy(200 * 1024)).toBe('hybrid');
+    expect(decideRouteStrategy(600 * 1024)).toBe('file');
+  });
+
+  test('respondStaticJson + getRouteStats counters', async () => {
+    resetRouteStats();
+    const body = { ok: true };
+    const r1 = respondStaticJson(body, new Request('http://t/h'));
+    expect(r1.status).toBe(200);
+    const etag = r1.headers.get('ETag')!;
+    const r2 = respondStaticJson(body, new Request('http://t/h', { headers: { 'If-None-Match': etag } }), {
+      etag,
+    });
+    expect(r2.status).toBe(304);
+    const s = getRouteStats([]);
+    expect(s.staticHits).toBeGreaterThanOrEqual(2);
+    expect(s.notModified304).toBeGreaterThanOrEqual(1);
   });
 });

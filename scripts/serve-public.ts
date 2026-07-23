@@ -41,9 +41,11 @@ import {
   decidePublishAuth,
 } from '../lib/registry/publish-auth.ts';
 import {
+  getRouteStats,
   preloadStaticMap,
   respondAuto,
   respondStatic,
+  respondStaticJson,
   type PreloadedStatic,
 } from '../lib/http/static-response.ts';
 
@@ -514,6 +516,7 @@ async function liveMonitoringApi(): Promise<Response> {
           allPassed: proof.summary?.demosPassed === proof.summary?.demos,
         };
       }
+      data.routeStats = routeStatsForHealth();
       return json(data);
     } finally {
       db.close();
@@ -522,7 +525,12 @@ async function liveMonitoringApi(): Promise<Response> {
     const snap = Bun.file('public/registry/monitoring.json');
     if (await snap.exists()) {
       const data = (await snap.json()) as Record<string, unknown>;
-      return json({ ...data, source: 'snapshot', fallback: 'db-unavailable' });
+      return json({
+        ...data,
+        source: 'snapshot',
+        fallback: 'db-unavailable',
+        routeStats: routeStatsForHealth(),
+      });
     }
     return json(
       {
@@ -554,8 +562,29 @@ async function monitoringPage(): Promise<Response> {
   }
 }
 
-/** GET /health — uptime, runtime, and artifact freshness probe (JSON). */
-async function health(): Promise<Response> {
+/** Health body TTL — small, frequent; static-route ETag + 304. */
+const HEALTH_TTL_MS = 5_000;
+let healthCache: { body: Record<string, unknown>; etag: string; at: number } | null = null;
+
+function routeStatsForHealth() {
+  return getRouteStats([hotByUrl, fileRouteCache]);
+}
+
+/** GET /health — uptime, runtime, route strategy stats (static JSON + ETag). */
+async function health(req: Request = new Request('http://local/health')): Promise<Response> {
+  const now = Date.now();
+  if (healthCache && now - healthCache.at < HEALTH_TTL_MS) {
+    const asset = {
+      path: ':health',
+      bytes: new TextEncoder().encode(JSON.stringify(healthCache.body)),
+      etag: healthCache.etag,
+      contentType: 'application/json; charset=utf-8',
+      size: 0,
+    };
+    asset.size = asset.bytes.byteLength;
+    return respondStatic(asset, req, { cacheControl: 'public, max-age=5' });
+  }
+
   const summary = Bun.file('public/registry/ops-summary.json');
   const exists = await summary.exists();
   let generated: string | null = null;
@@ -594,7 +623,8 @@ async function health(): Promise<Response> {
     } catch {}
   }
 
-  return json({
+  const routeStats = routeStatsForHealth();
+  const body = {
     status: 'ok',
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     bun: Bun.version,
@@ -602,12 +632,31 @@ async function health(): Promise<Response> {
     artifacts: { opsSummary: { exists, generated, ageSeconds } },
     registry: { packages: pkgCount, versions: versionCount },
     bunApiProof: proofStatus,
+    routeStats,
+    serve: {
+      strategies: {
+        static: 'memory + ETag + If-None-Match (hot registry JSON, health)',
+        file: 'Bun.file stream + Last-Modified + Range (large / changing)',
+        hybrid: '≤512KiB first hit → static cache; else file',
+      },
+      hotPreloaded: [...hotByUrl.keys()],
+    },
+  };
+
+  const text = JSON.stringify(body);
+  const etag = `"${new Bun.CryptoHasher('sha256').update(text).digest('hex')}"`;
+  healthCache = { body, etag, at: now };
+  return respondStaticJson(body, req, {
+    cacheControl: 'public, max-age=5',
+    etag,
   });
 }
 
 /** GET /health/pre — HTML health page with <pre> formatted diagnostics. */
-async function healthHtml(): Promise<Response> {
-  const json = (await (await health()).json()) as Record<string, unknown>;
+async function healthHtml(req: Request = new Request('http://local/health/pre')): Promise<Response> {
+  const healthRes = await health(req);
+  if (healthRes.status === 304) return healthRes;
+  const json = (await healthRes.json()) as Record<string, unknown>;
   const lines: string[] = [
     '╔══════════════════════════════════════════╗',
     '║     FactoryWager · Health Diagnostics    ║',
@@ -637,10 +686,24 @@ async function healthHtml(): Promise<Response> {
   } else {
     lines.push('  Not generated — run bun run docs:api-verify --write');
   }
-  lines.push('', `  Checked at: ${new Date().toISOString()}`, '');
+  const rs = (json.routeStats as Record<string, unknown>) || {};
+  lines.push(
+    '',
+    '── Route strategy ────────────────────────',
+    `  Static (memory): ${rs.staticRoutes ?? 0} · hits ${rs.staticHits ?? 0}`,
+    `  File (stream):   ${rs.fileRoutes ?? 0} · hits ${rs.fileHits ?? 0}`,
+    `  304 responses:   ${rs.notModified304 ?? 0}`,
+    `  Memory used:     ${Math.round(Number(rs.totalMemoryUsed ?? 0) / 1024)} KiB`,
+    `  Rule:            ${((rs.decision as Record<string, string>) || {}).rule ?? '—'}`,
+    '',
+    `  Checked at: ${new Date().toISOString()}`,
+    ''
+  );
 
-  return new Response(`<pre>${lines.join('\n')}</pre>`, {
-    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+  const text = lines.join('\n');
+  return respondStaticJson(text, req, {
+    cacheControl: 'public, max-age=5',
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
   });
 }
 
@@ -697,7 +760,8 @@ async function fetchHandler(req: Request): Promise<Response> {
   const path = url.pathname;
 
   // Health endpoint — no auth
-  if (path === '/health' || path === '/health/') return health();
+  if (path === '/health' || path === '/health/') return health(req);
+  if (path === '/health/pre' || path === '/health/pre/') return healthHtml(req);
 
   // Bun API proof status
   if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
@@ -796,9 +860,9 @@ function buildPublicRoutes() {
     '/ready': ready,
 
     // Dynamic health (handler — not frozen Response)
-    '/health': () => health(),
-    '/health/pre': () => healthHtml(),
-    '/health/pre/': () => healthHtml(),
+    '/health': (req: Request) => health(req),
+    '/health/pre': (req: Request) => healthHtml(req),
+    '/health/pre/': (req: Request) => healthHtml(req),
 
     '/api/proof': () => bunApiProof(),
     '/api/monitoring': () => liveMonitoringApi(),

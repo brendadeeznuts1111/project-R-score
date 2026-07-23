@@ -20,6 +20,99 @@
 import { sha256Hex } from '../bun-utils-proof.ts';
 
 export const DEFAULT_STATIC_MAX_BYTES = 512 * 1024; // 512 KiB
+/** Prefer static (memory) when under this size and access is “hot”. */
+export const HOT_STATIC_MAX_BYTES = 100 * 1024; // 100 KiB
+
+export type RouteStrategy = 'static' | 'file' | 'hybrid';
+
+export type RouteStatsSnapshot = {
+  staticRoutes: number;
+  fileRoutes: number;
+  totalMemoryUsed: number;
+  staticHits: number;
+  fileHits: number;
+  notModified304: number;
+  decision: {
+    staticMaxBytes: number;
+    hotMaxBytes: number;
+    rule: string;
+  };
+};
+
+/** Process-wide counters for health / monitoring. */
+const stats = {
+  staticHits: 0,
+  fileHits: 0,
+  notModified304: 0,
+  knownFileRoutes: new Set<string>(),
+};
+
+export function recordStaticHit(notModified = false): void {
+  stats.staticHits++;
+  if (notModified) stats.notModified304++;
+}
+
+export function recordFileHit(path?: string, notModified = false): void {
+  stats.fileHits++;
+  if (notModified) stats.notModified304++;
+  if (path) stats.knownFileRoutes.add(path);
+}
+
+/**
+ * Decision tree:
+ *  size < hotMax && hot → static
+ *  size > 1MB or infrequent → file
+ *  else hybrid (first request sizes, then cache or stream)
+ */
+export function decideRouteStrategy(
+  sizeBytes: number,
+  opts: { hot?: boolean; maxStatic?: number; hotMax?: number } = {}
+): RouteStrategy {
+  const maxStatic = opts.maxStatic ?? DEFAULT_STATIC_MAX_BYTES;
+  const hotMax = opts.hotMax ?? HOT_STATIC_MAX_BYTES;
+  if (opts.hot && sizeBytes <= hotMax) return 'static';
+  if (sizeBytes > 1024 * 1024) return 'file';
+  if (sizeBytes <= maxStatic) return 'hybrid';
+  return 'file';
+}
+
+export function getRouteStats(
+  staticCaches: Iterable<Map<string, PreloadedStatic> | PreloadedStatic[]> = []
+): RouteStatsSnapshot {
+  let staticRoutes = 0;
+  let totalMemoryUsed = 0;
+  for (const cache of staticCaches) {
+    if (cache instanceof Map) {
+      staticRoutes += cache.size;
+      for (const a of cache.values()) totalMemoryUsed += a.size;
+    } else {
+      for (const a of cache) {
+        staticRoutes++;
+        totalMemoryUsed += a.size;
+      }
+    }
+  }
+  return {
+    staticRoutes,
+    fileRoutes: stats.knownFileRoutes.size,
+    totalMemoryUsed,
+    staticHits: stats.staticHits,
+    fileHits: stats.fileHits,
+    notModified304: stats.notModified304,
+    decision: {
+      staticMaxBytes: DEFAULT_STATIC_MAX_BYTES,
+      hotMaxBytes: HOT_STATIC_MAX_BYTES,
+      rule: 'hot∧≤100KiB→static; >1MiB→file; ≤512KiB→hybrid; else file',
+    },
+  };
+}
+
+export function resetRouteStats(): void {
+  stats.staticHits = 0;
+  stats.fileHits = 0;
+  stats.notModified304 = 0;
+  stats.knownFileRoutes.clear();
+}
 
 export type PreloadedStatic = {
   path: string;
@@ -130,24 +223,28 @@ export function respondStatic(
 ): Response {
   const inm = request.headers.get('If-None-Match');
   if (inm && etagMatches(inm, asset.etag)) {
+    recordStaticHit(true);
     return new Response(null, {
       status: 304,
       headers: mergeHeaders(
         {
           ETag: asset.etag,
           'Cache-Control': opts.cacheControl ?? 'public, max-age=60',
+          'X-Serve-Strategy': 'static',
         },
         opts.headers
       ),
     });
   }
 
+  recordStaticHit(false);
   const headers = mergeHeaders(
     {
       'Content-Type': asset.contentType,
       'Content-Length': String(asset.size),
       ETag: asset.etag,
       'Cache-Control': opts.cacheControl ?? 'public, max-age=60',
+      'X-Serve-Strategy': 'static',
     },
     opts.headers
   );
@@ -185,6 +282,7 @@ export async function respondFile(
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-store',
+        'X-Serve-Strategy': 'file',
       },
     });
   }
@@ -196,12 +294,14 @@ export async function respondFile(
     const since = Date.parse(ims);
     if (!Number.isNaN(since) && file.lastModified <= since + 999) {
       // +999: HTTP dates have 1s resolution
+      recordFileHit(path, true);
       return new Response(null, {
         status: 304,
         headers: mergeHeaders(
           {
             'Last-Modified': lastModifiedHttp,
             'Cache-Control': opts.cacheControl ?? 'public, max-age=60',
+            'X-Serve-Strategy': 'file',
           },
           opts.headers
         ),
@@ -209,11 +309,13 @@ export async function respondFile(
     }
   }
 
+  recordFileHit(path, false);
   const headers = mergeHeaders(
     {
       'Content-Type': opts.contentType ?? guessContentType(path),
       'Last-Modified': lastModifiedHttp,
       'Cache-Control': opts.cacheControl ?? 'public, max-age=60',
+      'X-Serve-Strategy': 'file',
       // Bun.file enables Accept-Ranges / Range when used as body
     },
     opts.headers
@@ -225,6 +327,31 @@ export async function respondFile(
   }
 
   return new Response(file, { status: 200, headers });
+}
+
+/**
+ * Build a JSON/text body as a static-route response with ETag + optional TTL
+ * revalidation for dynamic-but-small payloads (health, tables).
+ */
+export function respondStaticJson(
+  body: unknown,
+  request: Request,
+  opts: StaticRespondOpts & { etag?: string } = {}
+): Response {
+  const text = typeof body === 'string' ? body : JSON.stringify(body);
+  const bytes = new TextEncoder().encode(text);
+  const etag = opts.etag ?? etagFromBytes(bytes);
+  const asset: PreloadedStatic = {
+    path: ':json',
+    bytes,
+    etag,
+    contentType: opts.headers?.['Content-Type'] ?? 'application/json; charset=utf-8',
+    size: bytes.byteLength,
+  };
+  return respondStatic(asset, request, {
+    cacheControl: opts.cacheControl ?? 'public, max-age=5',
+    headers: opts.headers,
+  });
 }
 
 /**
