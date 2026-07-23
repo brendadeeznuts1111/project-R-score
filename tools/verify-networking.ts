@@ -28,6 +28,8 @@
  *
  *   bun tools/verify-networking.ts
  *   bun tools/verify-networking.ts --local-only
+ *   bun tools/verify-networking.ts --routes          # portal + API + hot static catalog
+ *   bun tools/verify-networking.ts --routes-only     # skip external multi-target
  *   bun tools/verify-networking.ts --skip-write
  *   bun tools/verify-networking.ts --json
  *   bun --fetch-preconnect https://api.elections.kalshi.com:443 tools/verify-networking.ts
@@ -47,6 +49,12 @@ import {
   preconnectCliUrl,
   preconnectOrigin,
 } from '../lib/http/fetch-preconnect.ts';
+import {
+  mergeHotFromHealth,
+  publicRouteCatalog,
+  type HealthRouteObjects,
+  type PublicRouteDef,
+} from '../lib/http/public-routes.ts';
 
 // ── Canonical refs (bun.com) ───────────────────────────────────────────────
 
@@ -76,6 +84,8 @@ const flag = (n: string): string | undefined => {
 
 const LOCAL_BASE = flag('base') || Bun.env.HEALTH_URL || Bun.env.BASE_URL || 'http://127.0.0.1:3000';
 const LOCAL_ONLY = has('local-only');
+const ROUTES = has('routes') || has('routes-only') || has('local-only');
+const ROUTES_ONLY = has('routes-only');
 const SKIP_WRITE = has('skip-write');
 const AS_JSON = has('json');
 const TIMEOUT_MS = Number(flag('timeout-ms') ?? 10_000);
@@ -397,6 +407,114 @@ export async function runNetworkingSuite(opts: {
   return { rows, targets };
 }
 
+// ── Local route catalog probe (dashboard + endpoints + route objects) ──────
+
+export type RouteProbeRow = {
+  path: string;
+  name: string;
+  category: string;
+  kind: string;
+  status: number | 'ERR';
+  ms: number;
+  pass: boolean;
+  critical: boolean;
+  note?: string;
+};
+
+export type RouteProbeResult = {
+  base: string;
+  health: HealthRouteObjects | null;
+  catalog: PublicRouteDef[];
+  rows: RouteProbeRow[];
+  summary: { total: number; passed: number; failed: number; criticalFailed: number };
+};
+
+/** GET /health → routeStats + serve.hotPreloaded objects. */
+export async function fetchHealthRouteObjects(
+  base: string
+): Promise<HealthRouteObjects | null> {
+  try {
+    const res = await fetch(new URL('/health', base.endsWith('/') ? base : `${base}/`), {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as HealthRouteObjects;
+  } catch {
+    return null;
+  }
+}
+
+/** Probe every catalog path (and live hotPreloaded extras) against local base. */
+export async function probePublicRoutes(
+  base: string,
+  opts: { catalog?: PublicRouteDef[] } = {}
+): Promise<RouteProbeResult> {
+  const origin = base.replace(/\/$/, '');
+  const health = await fetchHealthRouteObjects(origin);
+  const catalog = mergeHotFromHealth(opts.catalog ?? publicRouteCatalog(), health);
+  const rows: RouteProbeRow[] = [];
+
+  // One DNS warm for the base (shared by all local paths).
+  preconnectOrigin(origin);
+
+  for (const route of catalog) {
+    const url = `${origin}${route.path.startsWith('/') ? route.path : `/${route.path}`}`;
+    const method = route.method ?? 'GET';
+    const t0 = Bun.nanoseconds();
+    try {
+      const res = await fetch(url, {
+        method,
+        keepalive: true,
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      // drain so pool reuses
+      if (method === 'GET') await res.arrayBuffer().catch(() => {});
+      else await res.body?.cancel().catch(() => {});
+      const elapsed = ms(t0);
+      const okList = route.okStatuses ?? [200];
+      const pass = okList.includes(res.status);
+      rows.push({
+        path: route.path,
+        name: route.name,
+        category: route.category,
+        kind: route.kind,
+        status: res.status,
+        ms: Number(elapsed.toFixed(1)),
+        pass,
+        critical: Boolean(route.critical),
+        note: route.note,
+      });
+    } catch (err) {
+      rows.push({
+        path: route.path,
+        name: route.name,
+        category: route.category,
+        kind: route.kind,
+        status: 'ERR',
+        ms: Number(ms(t0).toFixed(1)),
+        pass: false,
+        critical: Boolean(route.critical),
+        note: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  const failed = rows.filter(r => !r.pass);
+  return {
+    base: origin,
+    health,
+    catalog,
+    rows,
+    summary: {
+      total: rows.length,
+      passed: rows.filter(r => r.pass).length,
+      failed: failed.length,
+      criticalFailed: failed.filter(r => r.critical).length,
+    },
+  };
+}
+
 // ── Render ─────────────────────────────────────────────────────────────────
 
 function renderCategory(category: string, rows: NetCheckRow[]): void {
@@ -415,13 +533,126 @@ function renderCategory(category: string, rows: NetCheckRow[]): void {
   );
 }
 
+function renderRouteObjects(probe: RouteProbeResult): void {
+  const rs = probe.health?.routeStats;
+  const serve = probe.health?.serve;
+
+  console.log('\n── ROUTE OBJECTS (/health) ──');
+  if (rs) {
+    console.log(
+      Bun.inspect.table(
+        [
+          {
+            field: 'staticRoutes',
+            value: String(rs.staticRoutes ?? '—'),
+          },
+          {
+            field: 'fileRoutes',
+            value: String(rs.fileRoutes ?? '—'),
+          },
+          {
+            field: 'staticHits',
+            value: String(rs.staticHits ?? '—'),
+          },
+          {
+            field: 'fileHits',
+            value: String(rs.fileHits ?? '—'),
+          },
+          {
+            field: 'notModified304',
+            value: String(rs.notModified304 ?? '—'),
+          },
+          {
+            field: 'totalMemoryUsed',
+            value:
+              rs.totalMemoryUsed != null
+                ? `${Math.round(rs.totalMemoryUsed / 1024)} KiB`
+                : '—',
+          },
+          {
+            field: 'decision.rule',
+            value: rs.decision?.rule ?? '—',
+          },
+        ],
+        ['field', 'value'],
+        { colors: true }
+      )
+    );
+  } else {
+    console.log('(no /health routeStats — is serve-public up?)');
+  }
+
+  if (serve?.hotPreloaded?.length) {
+    console.log('\n── HOT PRELOADED (serve.hotPreloaded) ──');
+    console.log(
+      Bun.inspect.table(
+        serve.hotPreloaded.map((p, i) => ({ i, path: p })),
+        ['i', 'path'],
+        { colors: true }
+      )
+    );
+  }
+  if (serve?.etagScope) {
+    console.log(`ETag scope: ${serve.etagScope}`);
+  }
+  if (serve?.strategies) {
+    console.log(
+      Bun.inspect.table(
+        Object.entries(serve.strategies).map(([k, v]) => ({ strategy: k, rule: v })),
+        ['strategy', 'rule'],
+        { colors: true }
+      )
+    );
+  }
+
+  console.log('\n── PUBLIC ROUTE CATALOG PROBE ──');
+  const cats = [...new Set(probe.rows.map(r => r.category))];
+  for (const c of cats) {
+    const slice = probe.rows.filter(r => r.category === c);
+    console.log(`\n  · ${c}`);
+    console.log(
+      Bun.inspect.table(
+        slice.map(r => ({
+          path: r.path,
+          kind: r.kind,
+          status: String(r.status),
+          ms: r.ms,
+          crit: r.critical ? 'Y' : '',
+          pass: r.pass ? 'PASS' : 'FAIL',
+        })),
+        ['path', 'kind', 'status', 'ms', 'crit', 'pass'],
+        { colors: true }
+      )
+    );
+  }
+
+  console.log(
+    `\nRoutes: ${probe.summary.passed}/${probe.summary.total} · critical fails: ${probe.summary.criticalFailed}`
+  );
+}
+
 async function main(): Promise<void> {
   const t0 = Bun.nanoseconds();
-  const { rows, targets } = await runNetworkingSuite({ skipWrite: SKIP_WRITE });
+
+  let rows: NetCheckRow[] = [];
+  let targets: NetTarget[] = [];
+  if (!ROUTES_ONLY) {
+    const suite = await runNetworkingSuite({ skipWrite: SKIP_WRITE });
+    rows = suite.rows;
+    targets = suite.targets;
+  }
+
+  let routeProbe: RouteProbeResult | null = null;
+  if (ROUTES || ROUTES_ONLY) {
+    routeProbe = await probePublicRoutes(LOCAL_BASE);
+  }
+
   const elapsed = ms(t0);
   const hard = rows.filter(r => r.status === 'PASS' || r.status === 'FAIL');
   const passed = hard.filter(r => r.status === 'PASS').length;
   const failed = hard.filter(r => r.status === 'FAIL').length;
+  const routeFailed = routeProbe?.summary.failed ?? 0;
+  const routeCritFailed = routeProbe?.summary.criticalFailed ?? 0;
   const finalDns = dnsCacheStats();
 
   if (AS_JSON) {
@@ -432,10 +663,18 @@ async function main(): Promise<void> {
           revision: Bun.revision,
           base: LOCAL_BASE,
           elapsedMs: elapsed,
-          summary: { passed, failed, total: hard.length, targets: targets.length },
+          summary: {
+            passed,
+            failed,
+            total: hard.length,
+            targets: targets.length,
+            routes: routeProbe?.summary ?? null,
+          },
           dns: finalDns,
           maxHttpRequests: Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS ?? '256 (default)',
           rows,
+          routeProbe,
+          routeCatalog: publicRouteCatalog(),
           canonical: CANONICAL,
         },
         null,
@@ -444,7 +683,7 @@ async function main(): Promise<void> {
     );
   } else {
     console.log('╔══════════════════════════════════════════════════════════════════════╗');
-    console.log('║  Bun Networking Optimization — Multi-Target                          ║');
+    console.log('║  Bun Networking Optimization — Multi-Target + Routes                 ║');
     console.log(
       `║  Bun:  ${(Bun.version + ' / ' + (Bun.revision || 'unknown').slice(0, 8)).padEnd(62)}║`
     );
@@ -452,22 +691,31 @@ async function main(): Promise<void> {
     console.log(
       `║  Targets: ${String(targets.length).padEnd(59)}║`
     );
+    console.log(
+      `║  Routes:  ${String(routeProbe?.catalog.length ?? 0).padEnd(59)}║`
+    );
     console.log('╚══════════════════════════════════════════════════════════════════════╝');
 
-    const cats = [...new Set(rows.map(r => r.category))];
-    for (const c of cats) renderCategory(c, rows.filter(r => r.category === c));
+    if (rows.length) {
+      const cats = [...new Set(rows.map(r => r.category))];
+      for (const c of cats) renderCategory(c, rows.filter(r => r.category === c));
+      console.log(
+        `\n${passed}/${hard.length} network checks passed · ${failed} failed · ${elapsed.toFixed(1)}ms`
+      );
+    }
 
-    console.log(`\n${passed}/${hard.length} hard checks passed · ${failed} failed · ${elapsed.toFixed(1)}ms`);
+    if (routeProbe) renderRouteObjects(routeProbe);
+
     console.log(
       `DNS cache: size=${finalDns.size} total=${finalDns.totalCount} hits=${finalDns.cacheHitsCompleted} miss=${finalDns.cacheMisses} err=${finalDns.errors}`
     );
     console.log(
       `HTTP request limit: ${Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS ?? '256 (default)'} · BUN_CONFIG_MAX_HTTP_REQUESTS`
     );
-    if (!Bun.env.TELEGRAM_BOT_TOKEN) {
+    if (!ROUTES_ONLY && !Bun.env.TELEGRAM_BOT_TOKEN) {
       console.log('(Telegram skipped — set TELEGRAM_BOT_TOKEN to include messaging)');
     }
-    if (!Bun.env.R2_PUBLIC_BASE && !Bun.env.R2_PUBLIC_URL) {
+    if (!ROUTES_ONLY && !Bun.env.R2_PUBLIC_BASE && !Bun.env.R2_PUBLIC_URL) {
       console.log('(R2 skipped — set R2_PUBLIC_BASE to a public object/URL)');
     }
     console.log('\nCanonical API references (bun.com):');
@@ -476,7 +724,8 @@ async function main(): Promise<void> {
     }
   }
 
-  if (failed > 0) process.exit(1);
+  if (failed > 0 || routeCritFailed > 0) process.exit(1);
+  if (routeFailed > 0 && has('strict-routes')) process.exit(1);
 }
 
 if (import.meta.main) {

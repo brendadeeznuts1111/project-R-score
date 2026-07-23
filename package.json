@@ -1761,6 +1761,7 @@
     "check:env-defaults:dry": "bun scripts/check-env-defaults.ts --dry-run",
     "check:etag": "bun tools/verify-etag.ts",
     "check:networking": "bun tools/verify-networking.ts",
+    "check:routes": "bun tools/verify-networking.ts --routes-only",
     "check:secrets": "gitleaks detect --source . --no-git --config .gitleaks.toml -v",
     "check:secrets:dry": "echo '[dry-run] gitleaks detect --source . --no-git'",
     "discover:bun-native": "bun run scripts/bun-native-discover.ts --roots=scripts,lib,packages,tools --write-report",
