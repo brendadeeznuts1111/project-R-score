@@ -19,8 +19,14 @@ import { onRequest as registryHealthOnRequest } from '../functions/api/registry/
 describe('parseRegistryObjectKey (lib)', () => {
   test('allows registry.json and factory prefixes', () => {
     expect(parseRegistryObjectKey('registry.json')).toBe('registry.json');
+    expect(parseRegistryObjectKey('static.json')).toBe('static.json');
+    expect(parseRegistryObjectKey('ops-summary.json')).toBe('ops-summary.json');
+    expect(parseRegistryObjectKey('monitoring.json')).toBe('monitoring.json');
     expect(parseRegistryObjectKey('@factorywager/pkg/1.0.0.tgz')).toBe(
       '@factorywager/pkg/1.0.0.tgz'
+    );
+    expect(parseRegistryObjectKey('@factorywager/routing-test/latest.json')).toBe(
+      '@factorywager/routing-test/latest.json'
     );
   });
 

@@ -262,18 +262,18 @@ export async function buildRegistrySnapshot(
         total: bunProof.summary.total,
         bunVersion: bunProof.bunVersion,
       },
-      routing: routingSlice
+      routing: payload.routing.available
         ? {
             available: true,
-            passed: routingSlice.passed,
-            total: routingSlice.total,
-            criticalFailed: routingSlice.criticalFailed,
-            p95Ms: routingSlice.p95Ms,
-            errorRate: routingSlice.errorRate,
-            regressions: routingSlice.regressions,
-            cache: routingSlice.cache,
-            proofHash: routingSlice.proofHash.slice(0, 16),
-            routes: routingSlice.routes?.length ?? 0,
+            passed: payload.routing.passed,
+            total: payload.routing.total,
+            criticalFailed: payload.routing.criticalFailed,
+            p95Ms: payload.routing.p95Ms,
+            errorRate: payload.routing.errorRate,
+            regressions: payload.routing.regressions,
+            cache: payload.routing.cache ?? (routingSlice ? routingSlice.cache : undefined),
+            proofHash: payload.routing.proofHash.slice(0, 16),
+            routes: payload.routing.routes?.length ?? 0,
           }
         : { available: false },
       dodQueue: monitoring.dodQueue ?? 0,

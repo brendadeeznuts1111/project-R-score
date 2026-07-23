@@ -39,23 +39,44 @@ function json(data: object, status = 200): Response {
   });
 }
 
+function contentTypeForKey(key: string): string {
+  if (key.endsWith('.json')) return 'application/json';
+  if (key.endsWith('.md')) return 'text/markdown; charset=utf-8';
+  return 'application/octet-stream';
+}
+
+/**
+ * Prefer remote/object-store, then local `public/registry/<key>` snapshot files
+ * (self-heal when R2 is empty but ops:snapshot wrote static artifacts).
+ */
 async function serveRegistryObject(client: RegistryClient, key: string): Promise<Response> {
   const data = await client.fetchObjectBytes(key);
-  if (!data) return json({ error: 'Not found' }, 404);
+  if (data) {
+    return new Response(Uint8Array.from(data).buffer, {
+      status: 200,
+      headers: {
+        'Content-Type': contentTypeForKey(key),
+        'Cache-Control': 'public, max-age=60',
+      },
+    });
+  }
 
-  const contentType = key.endsWith('.json')
-    ? 'application/json'
-    : key.endsWith('.md')
-      ? 'text/markdown; charset=utf-8'
-      : 'application/octet-stream';
+  try {
+    const local = Bun.file(`public/registry/${key}`);
+    if (await local.exists()) {
+      return new Response(local, {
+        status: 200,
+        headers: {
+          'Content-Type': contentTypeForKey(key),
+          'Cache-Control': 'public, max-age=60',
+        },
+      });
+    }
+  } catch {
+    /* ignore */
+  }
 
-  return new Response(Uint8Array.from(data).buffer, {
-    status: 200,
-    headers: {
-      'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=60',
-    },
-  });
+  return json({ error: 'Not found' }, 404);
 }
 
 async function tokenMatches(provided: string, expected: string): Promise<boolean> {
@@ -231,6 +252,16 @@ export function createRegistryRoutes(
     '/api/registry': {
       GET: (req: Request) => serveObjectMaybeHead(client, 'registry.json', req.method),
       HEAD: (req: Request) => serveObjectMaybeHead(client, 'registry.json', req.method),
+    },
+
+    // Aggregate snapshot from buildRegistrySnapshot / ops:snapshot
+    '/api/registry/static': {
+      GET: (req: Request) => serveObjectMaybeHead(client, 'static.json', req.method),
+      HEAD: (req: Request) => serveObjectMaybeHead(client, 'static.json', req.method),
+    },
+    '/api/registry/static.json': {
+      GET: (req: Request) => serveObjectMaybeHead(client, 'static.json', req.method),
+      HEAD: (req: Request) => serveObjectMaybeHead(client, 'static.json', req.method),
     },
 
     // Unscoped / URL-encoded package name

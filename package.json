@@ -1635,6 +1635,7 @@
     "ops:postgres-probe": "bun tools/ops-postgres-probe.ts",
     "ops:sync": "bun tools/ops-sync-consumer.ts",
     "ops:automation": "bun run lib/accounts/automation.ts",
+    "ops:registry-snapshot": "bun run lib/accounts/automation.ts --once --registry-snapshot",
     "test:showcase": "bun test tests/bun-api-showcase.test.ts",
     "audit:catalog:build": "bun tools/audit-catalog.ts build",
     "audit:catalog": "bun tools/audit-catalog.ts list",

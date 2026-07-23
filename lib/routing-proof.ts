@@ -184,6 +184,20 @@ export const DEFAULT_ROUTING_SPECS: RoutingProbeSpec[] = [
     note: 'static ops metrics',
   },
   {
+    path: '/registry/static.json',
+    // 404 until next Pages deploy of public/registry/static.json
+    expectedStatus: [200, 404],
+    requireOk: false,
+    expectContentType: undefined,
+    note: 'aggregate registry snapshot (after deploy)',
+  },
+  {
+    path: '/api/registry/static.json',
+    expectedStatus: [200, 404, 503],
+    requireOk: false,
+    note: 'R2 or ASSETS fallback for static aggregate',
+  },
+  {
     path: '/registry/@factorywager/bun-utils-test/latest.json',
     requireOk: true,
     expectContentType: 'application/json',

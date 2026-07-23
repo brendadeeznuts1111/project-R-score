@@ -1,16 +1,47 @@
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 /**
- * Operations automation — cron jobs for growth checks, metrics, and C5 coverage prediction.
+ * Operations automation — cron jobs for growth checks, metrics, C5 coverage prediction,
+ * and production registry snapshot (routing proof + static aggregate).
  *
  * Run with: bun run lib/accounts/automation.ts
  * Or: bun run lib/accounts/automation.ts --once
  *     bun run lib/accounts/automation.ts --once --coverage-prediction
+ *     bun run lib/accounts/automation.ts --once --registry-snapshot
  */
 
 import { openOperationsDb } from '../operations/db.ts';
+import { buildRegistrySnapshot } from '../registry-snapshot.ts';
 import { runDailyCoveragePredictionCycle } from '../prediction/index.ts';
 import { type TreeNodeId } from '../types/branded.ts';
 import { AccountSystem } from './accounts';
+
+/** Production snapshot: routing proof, ops-summary, monitoring, static.json (every 10 min). */
+export async function runRegistrySnapshotCycle(): Promise<void> {
+  const summary = await buildRegistrySnapshot({
+    withRouting: true,
+    withReport: true,
+    withWebView: false,
+    withStaticRegistry: true,
+  });
+  console.log(
+    `Registry snapshot: routing ${summary.routing && typeof summary.routing === 'object' && 'passed' in summary.routing ? `${(summary.routing as { passed?: number }).passed}/${(summary.routing as { total?: number }).total}` : 'n/a'}` +
+      ` · bunUtils ${summary.bunUtils.passed}/${summary.bunUtils.total}` +
+      ` · liquidity $${summary.liquidity}` +
+      ` · proof ${summary.proofHash.slice(0, 12)}…`
+  );
+}
+
+// Every 10 minutes — self-healing Pages artifacts (no WebView in cron)
+Bun.cron('ops-registry-snapshot', '*/10 * * * *', async () => {
+  try {
+    await runRegistrySnapshotCycle();
+  } catch (e) {
+    console.error(
+      'Registry snapshot cron failed:',
+      e instanceof Error ? e.message : e
+    );
+  }
+});
 
 // Daily coverage snapshot + prediction backtest (01:00 UTC)
 Bun.cron('ops-coverage-prediction', '0 1 * * *', () => {
@@ -74,6 +105,12 @@ if (Bun.argv.includes('--once')) {
     } finally {
       db.close();
     }
+    process.exit(0);
+  }
+
+  if (Bun.argv.includes('--registry-snapshot')) {
+    console.log('Running registry snapshot cycle once...');
+    await runRegistrySnapshotCycle();
     process.exit(0);
   }
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generated": "2026-07-23T18:06:09.253Z",
+  "generated": "2026-07-23T18:12:54.750Z",
   "bunVersion": "1.3.6",
   "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
   "packageCount": 14,
@@ -544,7 +544,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 13,
+    "uptimeMs": 31,
     "packageCount": 14,
     "versionCount": 23,
     "lastIntegrity": {
@@ -562,11 +562,11 @@
     "dodByStatus": {},
     "experimentsActive": 0,
     "predictionN": 0,
-    "timestamp": "2026-07-23T18:06:09.253Z"
+    "timestamp": "2026-07-23T18:12:54.750Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-23T18:06:09.250Z",
+    "generated": "2026-07-23T18:12:54.733Z",
     "liquidity": {
       "total": 0
     },
@@ -609,11 +609,11 @@
     "bunUtils": {
       "bunVersion": "1.3.6",
       "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
-      "proofHash": "621498310811975344ec7b2f2a88cfe1dd726254c3e36df6de1577f94e7b2eeb",
+      "proofHash": "f6778c4b3aaff0a65f949654e6e0bfc4a545b48152234981464c3350852e9d49",
       "passed": 10,
       "total": 10,
       "failed": 0,
-      "timestamp": "2026-07-23T18:06:09.250Z"
+      "timestamp": "2026-07-23T18:12:54.734Z"
     },
     "routing": {
       "available": true,
@@ -696,15 +696,14 @@
           "timeMs": 187.02,
           "contentType": "application/json"
         }
-      ],
-      "cache": "disk"
+      ]
     }
   },
   "bunUtils": {
     "schemaVersion": 1,
     "bunVersion": "1.3.6",
     "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
-    "timestamp": "2026-07-23T18:06:09.251Z",
+    "timestamp": "2026-07-23T18:12:54.744Z",
     "testCases": [
       {
         "utility": "stringWidth",
@@ -785,91 +784,8 @@
       "passed": 10,
       "failed": 0
     },
-    "proofHash": "94652a3712d6574cc35182d33560e0e5bab5d0fbcedd8e604a93423bb9d59e0e"
+    "proofHash": "f4ed30664322e759294d36e919a28382f9f4324b828f875e71d9763aab6e3b90"
   },
-  "routing": {
-    "available": true,
-    "baseUrl": "https://score.factory-wager.com",
-    "passed": 14,
-    "total": 14,
-    "failed": 0,
-    "httpOk": 10,
-    "criticalFailed": 0,
-    "p50Ms": 187.02,
-    "p95Ms": 328.55,
-    "maxMs": 328.55,
-    "errorRate": 0,
-    "proofHash": "e51f27f3d3877e7a9f4b72739d9b1eab3bbaa232b62ec2d9f1b28ef32c03e7ca",
-    "timestamp": "2026-07-23T18:05:23.921Z",
-    "regressions": 0,
-    "criticalFailedPaths": [],
-    "routes": [
-      {
-        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
-        "status": 404,
-        "pass": true,
-        "critical": false,
-        "timeMs": 328.55,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/registry/@factorywager/test-pkg",
-        "status": 404,
-        "pass": true,
-        "critical": false,
-        "timeMs": 321.63,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/registry/@factorywager/routing-test/latest.json",
-        "status": 404,
-        "pass": true,
-        "critical": false,
-        "timeMs": 318.76,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/ready",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 277.5,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/api/registry",
-        "status": 400,
-        "pass": true,
-        "critical": false,
-        "timeMs": 250.38,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/health",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 225.58,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/registry/@factorywager/bun-utils-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 195.53,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/operations/summary",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 187.02,
-        "contentType": "application/json"
-      }
-    ],
-    "cache": "disk"
-  },
-  "proofHash": "d1f7a88942ba4ab70753b0129fc87cc3197a69af3cc58f59c11f7ff54c289d63"
+  "routing": null,
+  "proofHash": "9083c4f7f9cbea727ff641f79d4527b98cd9b29a3e6ff777a53570795e9cc5bb"
 }

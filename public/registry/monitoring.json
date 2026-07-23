@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 13,
+  "uptimeMs": 31,
   "packageCount": 14,
   "versionCount": 23,
   "lastIntegrity": {
@@ -19,5 +19,5 @@
   "dodByStatus": {},
   "experimentsActive": 0,
   "predictionN": 0,
-  "timestamp": "2026-07-23T18:06:09.253Z"
+  "timestamp": "2026-07-23T18:12:54.750Z"
 }
