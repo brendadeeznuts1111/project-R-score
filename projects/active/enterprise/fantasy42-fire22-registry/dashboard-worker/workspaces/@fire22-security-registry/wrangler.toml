@@ -1,0 +1,104 @@
+# Fire22 Security Registry - Production Configuration
+# Enterprise-grade registry with persistent connections and comprehensive error handling
+
+name = "fire22-security-registry"
+main = "src/worker-production.ts"
+compatibility_date = "2024-12-27"
+compatibility_flags = ["nodejs_compat"]
+account_id = "80693377f3abb78e00820aa69a415ce4"
+
+# Worker configuration - disable build command, use direct TypeScript
+# [build]
+# command = "bun run build"
+
+# Production Environment variables
+[vars]
+SECURITY_SCANNING_ENABLED = "true"
+ALLOWED_SCOPES = "@fire22,@ff,@brendadeeznuts"
+REGISTRY_NAME = "Fire22 Production Registry"
+REGISTRY_VERSION = "2.0.0"
+
+# Connection and reliability settings
+MAX_RETRY_ATTEMPTS = "3"
+CIRCUIT_BREAKER_THRESHOLD = "5"
+RATE_LIMIT_REQUESTS = "100"
+RATE_LIMIT_WINDOW = "60000"
+ENABLE_MONITORING = "true"
+FALLBACK_MODE = "true"
+
+# D1 Database binding for package metadata
+[[d1_databases]]
+binding = "REGISTRY_DB"
+database_name = "fire22-registry"
+database_id = "207dd984-2300-4a0b-a040-832d3ba5adae"
+preview_database_id = "207dd984-2300-4a0b-a040-832d3ba5adae"
+
+# R2 Storage binding for package tarballs
+[[r2_buckets]]
+binding = "REGISTRY_STORAGE"
+bucket_name = "fire22-packages"
+preview_bucket_name = "fire22-packages-preview"
+
+# KV binding for caching
+[[kv_namespaces]]
+binding = "REGISTRY_CACHE"
+id = "cf160b5651134496a20e6d537ab409fc"
+preview_id = "195ceb3e66ed4dd18c3df39403a9492e"
+
+# Custom domains - disabled for now, using default workers.dev subdomain
+# [[routes]]
+# pattern = "fire22.workers.dev/registry/*" 
+# zone_name = "workers.dev"
+
+# Security headers
+[env.production.vars]
+SECURITY_SCANNING_ENABLED = "true"
+STRICT_MODE = "false"
+ALLOWED_SCOPES = "@fire22,@ff,@brendadeeznuts"
+REGISTRY_NAME = "Fire22 Production Registry"
+REGISTRY_VERSION = "2.0.0"
+MAX_RETRY_ATTEMPTS = "3"
+CIRCUIT_BREAKER_THRESHOLD = "5"
+RATE_LIMIT_REQUESTS = "100"
+RATE_LIMIT_WINDOW = "60000"
+ENABLE_MONITORING = "true"
+FALLBACK_MODE = "true"
+
+# Production environment bindings
+[[env.production.kv_namespaces]]
+binding = "REGISTRY_CACHE"
+id = "cf160b5651134496a20e6d537ab409fc"
+preview_id = "195ceb3e66ed4dd18c3df39403a9492e"
+
+[[env.production.r2_buckets]] 
+binding = "REGISTRY_STORAGE"
+bucket_name = "fire22-packages"
+preview_bucket_name = "fire22-packages-preview"
+
+[[env.production.d1_databases]]
+binding = "REGISTRY_DB"
+database_name = "fire22-registry"
+database_id = "207dd984-2300-4a0b-a040-832d3ba5adae"
+preview_database_id = "207dd984-2300-4a0b-a040-832d3ba5adae"
+
+[env.staging.vars]
+SECURITY_SCANNING_ENABLED = "true"
+STRICT_MODE = "true"
+
+# Durable Objects (for future scalability)
+# [[durable_objects.bindings]]
+# name = "REGISTRY_COORDINATOR"
+# class_name = "RegistryCoordinator"
+
+# Analytics and monitoring
+[observability]
+enabled = true
+
+# Production Limits - Increased for enterprise workloads
+[limits]
+cpu_ms = 50000      # 50 seconds for complex operations
+memory_mb = 256     # 256MB for large package processing
+
+# Production Cron Schedules - Temporarily disabled for deployment
+# [[triggers.crons]]
+# cron = "0 2 * * *"

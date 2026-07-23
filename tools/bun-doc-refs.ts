@@ -32,9 +32,7 @@
  *   bun tools/bun-doc-refs.ts validate [paths..] # HTTP-check all bun.com/github doc links
  *   bun tools/bun-doc-refs.ts integrity          # full stack gate (taxonomy·index·map·links)
  *   bun tools/bun-doc-refs.ts integrity --fix  # auto-heal taxonomy aliases, then re-check
- *   bun tools/bun-doc-refs.ts status             # operator dashboard (Coverage first · index · Bun)
- *   bun tools/bun-doc-refs.ts coverage [--json]  # prefer×canonical×repo×DX formula
- *   bun tools/bun-doc-refs.ts install-env        # BUN_CONFIG_* + install mechanism notes
+ *   bun tools/bun-doc-refs.ts status             # operator dashboard (last run · index · Bun)
  *   bun tools/bun-doc-refs.ts schedule --once    # one integrity pass + JSONL log
  *   bun tools/bun-doc-refs.ts bundler            # print Bundler docs sidebar nav tree
  *   bun tools/bun-doc-refs.ts bundler --anchors  # each leaf + index anchors
@@ -64,7 +62,7 @@ import {
   formatBundlerNavTree,
   type BundlerNavGroup,
 } from '../lib/docs/bundler-nav';
-import { bunBlog, bunDocs, bunReference, mdnWebApi } from '../lib/docs/bun-site-url.ts';
+import { bunBlog, bunDocs, mdnWebApi } from '../lib/docs/bun-site-url.ts';
 import { getCuratedEntry } from './bun-docs-curated.ts';
 
 // Canonical doc map — the reference thesis for this repo's terminal layer:
@@ -119,21 +117,6 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Request.formData':
     'https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata',
   'Bun.mmap': 'https://bun.com/docs/runtime/bun-apis',
-  'Bun.allocUnsafe': 'https://bun.com/docs/runtime/bun-apis',
-  'Bun.concatArrayBuffers': 'https://bun.com/docs/runtime/bun-apis',
-  'Bun.FileSystemRouter': 'https://bun.com/docs/runtime/bun-apis',
-  'Bun.gc': 'https://bun.com/docs/runtime/utils',
-  'Bun.generateHeapSnapshot': 'https://bun.com/docs/runtime/utils',
-  'Bun.Transpiler': 'https://bun.com/docs/runtime/transpiler',
-  'Bun.SQL': 'https://bun.com/docs/runtime/sql',
-  'Bun.JSONC': 'https://bun.com/docs/runtime/jsonc',
-  'Bun.JSON5': 'https://bun.com/docs/runtime/json5',
-  'Bun.JSONL': 'https://bun.com/docs/runtime/jsonl',
-  'Bun.TOML.parse': 'https://bun.com/docs/runtime/toml#bun-toml-parse',
-  'Bun.TOML.stringify': 'https://bun.com/docs/runtime/toml#bun-toml-stringify',
-  'Bun.hash.crc32': 'https://bun.com/docs/runtime/hashing#bun-hash',
-  'Bun.password.hash': 'https://bun.com/docs/runtime/hashing#bun-password',
-  'Bun.password.verify': 'https://bun.com/docs/runtime/hashing#bun-password',
   'bun:sqlite': 'https://bun.com/docs/runtime/sqlite#load-via-es-module-import',
   'Bun.Archive': 'https://bun.com/docs/runtime/archive#quickstart',
   'Bun.gzipSync': 'https://bun.com/docs/runtime/utils#bun-gzipsync',
@@ -319,20 +302,12 @@ export const CANONICAL_REFS: Record<string, string> = {
 
   // ── Data formats & hashing ──────────────────────────────────────────────
   'Bun.TOML': 'https://bun.com/docs/runtime/toml#bun-toml-parse',
-  // Markdown page (html + ansi + render + react) — unstable; types in bun.d.ts namespace markdown
-  // Mode chooser SSOT: tools/bun-markdown-modes.ts
+  // Markdown page (html + ansi + render + react)
   'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.html': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.ansi': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
   'Bun.markdown.render': 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
   'Bun.markdown.react': 'https://bun.com/docs/runtime/markdown#bun-markdown-react',
-  // Generated API reference (mirrors bun-types)
-  'Bun.markdown types': bunReference('bun/markdown'),
-  'Bun.markdown reference': bunReference('bun/markdown'),
-  AnsiTheme: 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
-  'Bun.markdown.AnsiTheme': 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
-  RenderCallbacks: 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
-  ComponentOverrides: 'https://bun.com/docs/runtime/markdown#component-overrides',
   // React component overrides — #component-overrides → #available-overrides table
   'component-overrides': 'https://bun.com/docs/runtime/markdown#component-overrides',
   'Bun.markdown.react component overrides':
@@ -342,8 +317,6 @@ export const CANONICAL_REFS: Record<string, string> = {
     'https://bun.com/docs/runtime/markdown#available-overrides',
   // Parser options SSOT (#options) + render/react third-arg loci
   options: 'https://bun.com/docs/runtime/markdown#options',
-  Options: 'https://bun.com/docs/runtime/markdown#options',
-  'Bun.markdown.Options': 'https://bun.com/docs/runtime/markdown#options',
   'Bun.markdown.html options': 'https://bun.com/docs/runtime/markdown#options',
   'parser-options': 'https://bun.com/docs/runtime/markdown#parser-options',
   'Bun.markdown.render parser options': 'https://bun.com/docs/runtime/markdown#parser-options',
@@ -481,63 +454,6 @@ export const CANONICAL_REFS: Record<string, string> = {
     'runtime/networking/fetch',
     'simultaneous-connection-limit'
   ),
-  // bun install — host bun.com (not bun.sh). Env vars beat bunfig.toml.
-  // @see https://bun.com/docs/pm/cli/install#configuring-with-environment-variables
-  'bun install': bunDocs('pm/cli/install'),
-  'pm/cli/install': bunDocs('pm/cli/install'),
-  'configuring-with-environment-variables': bunDocs(
-    'pm/cli/install',
-    'configuring-with-environment-variables'
-  ),
-  'bun install env': bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  BUN_CONFIG_REGISTRY: bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  BUN_CONFIG_TOKEN: bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  BUN_CONFIG_YARN_LOCKFILE: bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  BUN_CONFIG_SKIP_SAVE_LOCKFILE: bunDocs(
-    'pm/cli/install',
-    'configuring-with-environment-variables'
-  ),
-  BUN_CONFIG_SKIP_LOAD_LOCKFILE: bunDocs(
-    'pm/cli/install',
-    'configuring-with-environment-variables'
-  ),
-  BUN_CONFIG_SKIP_INSTALL_PACKAGES: bunDocs(
-    'pm/cli/install',
-    'configuring-with-environment-variables'
-  ),
-  // Install mechanism (same page; SSOT tools/bun-install-env.ts)
-  'bun install cache': bunDocs('pm/cli/install', 'cache'),
-  'cache-layout': bunDocs('pm/cli/install', 'cache'),
-  'bun install cache layout': bunDocs('pm/cli/install', 'cache'),
-  'bun install backends': bunDocs('pm/cli/install', 'platform-specific-backends'),
-  '--backend': bunDocs('pm/cli/install', 'platform-specific-backends'),
-  clonefile: bunDocs('pm/cli/install', 'platform-specific-backends'),
-  hardlink: bunDocs('pm/cli/install', 'platform-specific-backends'),
-  // node_modules presence check (paragraph under env section; no heading anchor — text fragment)
-  'node-modules-check': bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  'bun install node_modules check': bunDocs(
-    'pm/cli/install',
-    'configuring-with-environment-variables'
-  ),
-  'bun install name version': bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  'eager-resolve': bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  'lazy-resolve': bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  'eager-vs-lazy': bunDocs('pm/cli/install', 'configuring-with-environment-variables'),
-  // Strategies / age / CI (install page)
-  'installation-strategies': bunDocs('pm/cli/install', 'installation-strategies'),
-  'hoisted-installs': bunDocs('pm/cli/install', 'hoisted-installs'),
-  'isolated-installs': bunDocs('pm/cli/install', 'isolated-installs'),
-  'default-strategy': bunDocs('pm/cli/install', 'default-strategy'),
-  '--linker': bunDocs('pm/cli/install', 'installation-strategies'),
-  'minimum-release-age': bunDocs('pm/cli/install', 'minimum-release-age'),
-  minimumReleaseAge: bunDocs('pm/cli/install', 'minimum-release-age'),
-  '--minimum-release-age': bunDocs('pm/cli/install', 'minimum-release-age'),
-  'bun ci': bunDocs('pm/cli/install', 'ci-cd'),
-  '--frozen-lockfile': bunDocs('pm/cli/install', 'production-mode'),
-  frozenLockfile: bunDocs('pm/cli/install', 'production-mode'),
-  // Cache/store paths (machine SSOT via bunfig — do not set these in shell; see docs/UNIFIED.md)
-  BUN_INSTALL_CACHE_DIR: bunDocs('pm/global-cache'),
-  BUN_INSTALL_GLOBAL_STORE: bunDocs('pm/global-store'),
   DO_NOT_TRACK: 'https://bun.com/docs/runtime/environment-variables#configuring-bun',
   BUN_RUNTIME_TRANSPILER_CACHE_PATH:
     'https://bun.com/docs/runtime/environment-variables#what-does-it-cache',
@@ -1052,9 +968,7 @@ async function findMissing(paths: string[]): Promise<MissingRef[]> {
     for (const api of APIS) {
       if (!codeUsesApi(code, api)) continue;
       const url = CANONICAL_REFS[api];
-      if (url === undefined) continue;
       const [base, anchor] = url.split('#');
-      if (base === undefined) continue;
       const referenced =
         text.includes(url) ||
         text.includes(base) ||
@@ -1090,7 +1004,7 @@ async function annotate(paths: string[], write: boolean): Promise<number> {
     // Insertion point: after shebang and leading blank lines
     let at = 0;
     if (lines[0]?.startsWith('#!')) at = 1;
-    while (at < lines.length && (lines[at]?.trim() ?? '') === '') at++;
+    while (at < lines.length && lines[at].trim() === '') at++;
     const header = refs.map(r => `// @see ${r.url} — ${r.api}`);
     if (write) {
       lines.splice(at, 0, ...header);
@@ -1511,13 +1425,6 @@ async function suggest(query: string): Promise<void> {
         printBunTokenSuggest(query, token, 'canonical map — tools/bun-doc-refs.ts CANONICAL_REFS', {
           locusOverride: mapped,
         });
-        try {
-          const { formatInstallNoteSuggest } = await import('./bun-install-env.ts');
-          const installExtra = formatInstallNoteSuggest(query);
-          if (installExtra) console.info(installExtra);
-        } catch {
-          /* install SSOT optional */
-        }
         return;
       }
     } catch {
@@ -1525,29 +1432,7 @@ async function suggest(query: string): Promise<void> {
     }
     console.info(`${query} → ${mapped}`);
     console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_REFS)');
-    try {
-      const { formatInstallNoteSuggest } = await import('./bun-install-env.ts');
-      const installExtra = formatInstallNoteSuggest(query);
-      if (installExtra) console.info(installExtra);
-    } catch {
-      /* install SSOT optional */
-    }
     return;
-  }
-
-  // 1b) Install-page note ids / aliases (cache-layout, eager-resolve, …)
-  try {
-    const { formatInstallNoteSuggest, lookupInstallNote } = await import('./bun-install-env.ts');
-    if (lookupInstallNote(query)) {
-      const installExtra = formatInstallNoteSuggest(query);
-      if (installExtra) {
-        console.info(`${query}`);
-        console.info(installExtra);
-        return;
-      }
-    }
-  } catch {
-    /* install SSOT optional */
   }
 
   // 2) BunToken export when no frozen key
@@ -1695,14 +1580,29 @@ function indexEntryForDocsUrl(
  * that plain HTTP validation cannot (200 page, missing fragment).
  */
 async function deepcheck(paths: string[]): Promise<number> {
-  const { countDeadRepoAnchors } = await import('./bun-docs-coverage.ts');
-  const { checked, bad, dead } = await countDeadRepoAnchors(paths);
-  for (const d of dead) {
-    console.info(
-      d.reason === 'page'
-        ? `❌ ${d.file}: page not indexed: ${d.path}#${d.anchor}`
-        : `❌ ${d.file}: dead anchor ${d.path}#${d.anchor}`
-    );
+  const { entries } = await docsIndex();
+  const linkRe = /https:\/\/bun\.com\/docs\/([a-z0-9\-/]+)#([a-z0-9-]+)/g;
+  const findEntry = (path: string) =>
+    entries.find(e => e.url === `https://bun.com/docs/${path}.md`) ??
+    entries.find(e => e.url === `https://bun.com/docs/${path}/index.md`);
+  let checked = 0;
+  let bad = 0;
+  for (const file of await tsFiles(paths)) {
+    const text = await Bun.file(file).text();
+    for (const m of text.matchAll(linkRe)) {
+      checked++;
+      const [, path, anchor] = m;
+      const entry = findEntry(path);
+      if (!entry) {
+        console.info(`❌ ${file}: page not indexed: ${path}#${anchor}`);
+        bad++;
+        continue;
+      }
+      if (!entry.anchors.includes(anchor)) {
+        console.info(`❌ ${file}: dead anchor ${path}#${anchor}`);
+        bad++;
+      }
+    }
   }
   console.info(
     bad === 0
@@ -1876,9 +1776,6 @@ type IntegrityStats = {
   linkBad: number;
   failed: number;
   bunVersion: string;
-  coverage?: Awaited<
-    ReturnType<(typeof import('./bun-docs-coverage.ts'))['computeBunDocsCoverage']>
-  >;
 };
 
 /**
@@ -1941,49 +1838,18 @@ async function integrity(opts?: {
   // Layer 3: canonical map anchors vs index
   const mapBad = await audit();
 
-  // Layer 4: repo links vs index (shared scanner with coverage formula)
-  const {
-    computeBunDocsCoverage,
-    printCoverageBlock,
-    countDeadRepoAnchors,
-  } = await import('./bun-docs-coverage.ts');
-  const linkStats = await countDeadRepoAnchors(['lib', 'tools', 'scripts', 'tests']);
-  const linkBad = linkStats.bad;
-  const coverage = await computeBunDocsCoverage({
-    repoLinks: {
-      hit: linkStats.checked - linkStats.bad,
-      total: linkStats.checked,
-      missing: linkStats.dead.slice(0, 20).map(d => `${d.path}#${d.anchor}`),
-    },
-  });
+  // Layer 4: repo links vs index
+  const linkBad = await deepcheck(['lib', 'tools', 'scripts', 'tests']);
 
   const row = (label: string, value: string, ok: boolean) =>
     console.info(`  ${ok ? '✅' : '❌'} ${label.padEnd(38)} ${value}`);
-
-  // Ordered report: Coverage → integrity layers → dead-anchor detail
-  console.info('\n📋 Doc-stack integrity\n');
-  printCoverageBlock(coverage);
-  console.info('  Integrity layers');
+  console.info('\n📋 Doc-stack integrity');
   row('taxonomy coverage', `${taxHit}/${taxTotal} sidebar pages in index`, taxHit === taxTotal);
   row('index pages / anchors', `${pages} / ${anchors}`, pages > 0 && anchors > 0);
   row('taxonomy-tagged entries', `${tagged}`, tagged > 0);
   row('canonical map anchors', mapBad === 0 ? 'all valid' : `${mapBad} bad`, mapBad === 0);
-  row(
-    'repo links',
-    linkBad === 0 ? `${linkStats.checked} valid` : `${linkBad}/${linkStats.checked} dead`,
-    linkBad === 0
-  );
+  row('repo links', linkBad === 0 ? 'all valid' : `${linkBad} dead`, linkBad === 0);
   row('runtime Bun.version', Bun.version, true);
-  if (linkBad > 0) {
-    console.info('\n  Dead @see anchors');
-    for (const d of linkStats.dead) {
-      console.info(
-        d.reason === 'page'
-          ? `    ❌ ${d.file}: page not indexed: ${d.path}#${d.anchor}`
-          : `    ❌ ${d.file}: ${d.path}#${d.anchor}`
-      );
-    }
-  }
   const failed = (taxHit === taxTotal ? 0 : 1) + (mapBad > 0 ? 1 : 0) + (linkBad > 0 ? 1 : 0);
   console.info(
     failed === 0 ? '\n🟢 integrity: PASS' : `\n🔴 integrity: ${failed} layer(s) failing`
@@ -1999,7 +1865,6 @@ async function integrity(opts?: {
     linkBad,
     failed,
     bunVersion: Bun.version,
-    coverage,
   };
   return failed;
 }
@@ -2011,7 +1876,7 @@ let lastIntegrityStats: IntegrityStats | null = null;
  */
 async function status(): Promise<void> {
   const LOG = INTEGRITY_LOG;
-  type IntegrityLogLine = {
+  let last: {
     ts?: string;
     failures?: number;
     ok?: boolean;
@@ -2023,14 +1888,13 @@ async function status(): Promise<void> {
       ship: { pct: number };
       blog: { pct: number };
     };
-  };
-  let last: IntegrityLogLine | null = null;
+  } | null = null;
   if (await Bun.file(LOG).exists()) {
     const lines = (await Bun.file(LOG).text()).trim().split('\n').filter(Boolean);
     const raw = lines.at(-1);
     if (raw) {
       try {
-        last = JSON.parse(raw) as IntegrityLogLine;
+        last = JSON.parse(raw) as typeof last;
       } catch {
         last = null;
       }
@@ -2054,13 +1918,6 @@ async function status(): Promise<void> {
     console.info(`${icon} ${label.padEnd(18)} ${value}`);
 
   console.info('\n📊 Bun docs stack — status\n');
-  {
-    const { computeBunDocsCoverage, printCoverageBlock } = await import('./bun-docs-coverage.ts');
-    const coverage = await computeBunDocsCoverage();
-    printCoverageBlock(coverage);
-  }
-
-  console.info('  Gate');
   line(
     ok ? '🟢' : stale ? '🟡' : '🔴',
     'Integrity',
@@ -2068,44 +1925,41 @@ async function status(): Promise<void> {
       ? `${last.ok ? 'PASS' : 'FAIL'} (last: ${last.ts ?? '?'}${stale ? ' · STALE >7d' : ''})`
       : 'no runs yet — bun tools/bun-doc-refs.ts schedule --once'
   );
+  line('📚', 'Docs indexed', pages > 0 ? `${pages} pages · ${anchors} anchors` : 'missing index');
+  line('📌', 'Index generated', generated || 'unknown');
   line('🐇', 'Bun.version', Bun.version);
   if (last?.bunVersion) line('🐇', 'Last run Bun', last.bunVersion);
 
-  console.info('\n  Index');
-  line('📚', 'Docs indexed', pages > 0 ? `${pages} pages · ${anchors} anchors` : 'missing index');
-  line('📌', 'Generated', generated || 'unknown');
-
-  console.info('\n  Catalog');
   try {
     const { loadTierACoverageFromDisk } = await import('./bun-docs-catalog.ts');
     const tier = await loadTierACoverageFromDisk();
     if (tier) {
       line(
         '🎯',
-        'Tier-A',
+        'Catalog tier-A',
         `NOTE ${tier.note.pct}% · SHIP ${tier.ship.pct}% · BLOG ${tier.blog.pct}% · FIX ${tier.fix.pct}% · LOC ${tier.locus.pct}% · EX ${tier.examples.pct}% · HIST ${tier.history.pct}% (${tier.total} tokens)`
       );
       if (tier.bunVersion)
         line(
           '📦',
-          'Pin',
+          'Catalog pin',
           `${tier.bunVersion}${tier.generated ? ` · ${tier.generated.slice(0, 10)}` : ''}`
         );
     } else {
-      line('🎯', 'Tier-A', 'no catalog — bun run docs:catalog:build');
+      line('🎯', 'Catalog tier-A', 'no catalog — bun run docs:catalog:build');
     }
   } catch {
-    line('🎯', 'Tier-A', 'unavailable');
+    line('🎯', 'Catalog tier-A', 'unavailable');
   }
+
   if (last?.tierA) {
     line(
       '📈',
-      'Last log',
+      'Last log tier-A',
       `NOTE ${last.tierA.note.pct}% · SHIP ${last.tierA.ship.pct}% · BLOG ${last.tierA.blog.pct}%`
     );
   }
 
-  console.info('\n  Ops');
   line('⏰', 'Weekly cron', '0 6 * * * UTC (schedule command; in-process)');
   line('🩹', 'Self-heal', 'bun tools/bun-doc-refs.ts integrity --fix');
   console.info('');
@@ -2183,11 +2037,7 @@ async function regenIndex(): Promise<{
     if (exitCode !== 0) return { ok: false, error: stderr.trim() || `exit ${exitCode}` };
     // Final line: "✅ <pages> pages, <anchors> anchors (… fetch failures), …"
     const m = stdout.match(/(\d+) pages, (\d+) anchors/);
-    const pagesN = m?.[1];
-    const anchorsN = m?.[2];
-    return pagesN !== undefined && anchorsN !== undefined
-      ? { ok: true, pages: +pagesN, anchors: +anchorsN }
-      : { ok: false, error: 'unparsed output' };
+    return m ? { ok: true, pages: +m[1], anchors: +m[2] } : { ok: false, error: 'unparsed output' };
   } catch (e) {
     return { ok: false, error: String(e) };
   }
@@ -2243,16 +2093,14 @@ async function schedule(pattern: string, once: boolean): Promise<void> {
         }) +
         '\n'
     );
-    const regenMsg =
-      failures !== 0 || 'skipped' in regen
-        ? ' — regen skipped'
-        : regen.ok
-          ? ` — regen OK (${regen.pages} pages, ${regen.anchors} anchors)`
-          : ` — regen FAILED: ${regen.error}`;
     console.info(
       `🕐 [${started}] integrity ${failures === 0 ? 'PASS' : `FAIL (${failures})`}` +
         ` · bun ${Bun.version}` +
-        regenMsg +
+        (failures === 0
+          ? regen.ok
+            ? ` — regen OK (${regen.pages} pages, ${regen.anchors} anchors)`
+            : ` — regen FAILED: ${regen.error}`
+          : ' — regen skipped') +
         ` — logged to ${LOG}`
     );
   };
@@ -2374,8 +2222,7 @@ async function locusAudit(args: string[]): Promise<number> {
 
     let suggestion = '';
     let score = '';
-    // okStatus is an inferred type predicate — !okStatus excludes inherited/reference/etc.
-    if (!okStatus(status)) {
+    if (!okStatus(status) && status !== 'inherited') {
       const local = suggestAnchorsForToken(e.name, pageAnchors, {
         pages: e.allPages,
         limit: 1,
@@ -2705,142 +2552,9 @@ async function mainCli(): Promise<void> {
     case 'status':
       await status();
       break;
-    case 'coverage': {
-      const json = rest.includes('--json') || rest.includes('-j');
-      const {
-        computeBunDocsCoverage,
-        printCoverageBlock,
-        coverageRepoLinksFail,
-      } = await import('./bun-docs-coverage.ts');
-      const coverage = await computeBunDocsCoverage();
-      if (json) {
-        console.info(JSON.stringify(coverage, null, 2));
-      } else {
-        printCoverageBlock(coverage);
-      }
-      process.exit(coverageRepoLinksFail(coverage) ? 1 : 0);
-      break;
-    }
-    case 'markdown': {
-      const { formatMarkdownModeChooser, MARKDOWN_MODES, MARKDOWN_LOCI } = await import(
-        './bun-markdown-modes.ts'
-      );
-      if (rest.includes('--json') || rest.includes('-j')) {
-        console.info(JSON.stringify({ loci: MARKDOWN_LOCI, modes: MARKDOWN_MODES }, null, 2));
-      } else {
-        console.info(formatMarkdownModeChooser().trimEnd());
-      }
-      break;
-    }
-    case 'install-env': {
-      const mod = await import('./bun-install-env.ts');
-      const getIdx = rest.indexOf('get');
-      if (getIdx !== -1) {
-        const q = rest
-          .slice(getIdx + 1)
-          .filter(a => a !== '--json' && a !== '-j' && !a.startsWith('--section='))
-          .join(' ');
-        const detail = mod.formatInstallNoteDetail(q);
-        if (!detail) {
-          console.error(`unknown install note: ${q}`);
-          console.error(`known: ${mod.ALL_INSTALL_NOTES.map(n => n.id).join(', ')}`);
-          process.exit(1);
-        }
-        if (rest.includes('--json') || rest.includes('-j')) {
-          console.info(JSON.stringify(mod.lookupInstallNote(q), null, 2));
-        } else {
-          console.info(detail.trimEnd());
-        }
-        break;
-      }
-      const sectionRaw = rest.find(a => a.startsWith('--section='))?.slice('--section='.length);
-      const section = (sectionRaw ?? 'all') as import('./bun-install-env.ts').InstallEnvSection;
-      if (rest.includes('--json') || rest.includes('-j')) {
-        console.info(JSON.stringify(mod.installEnvSnapshot(), null, 2));
-      } else {
-        console.info(mod.formatInstallEnvBlock(section).trimEnd());
-      }
-      break;
-    }
-    case 'ops-oneliners': {
-      const mod = await import('./bun-ops-oneliners.ts');
-      const live = rest.includes('--live');
-      const json = rest.includes('--json') || rest.includes('-j');
-      const idFlag = rest.find(a => a.startsWith('--id='))?.slice('--id='.length);
-      const runIdx = rest.indexOf('--run');
-      if (runIdx !== -1) {
-        const id = rest[runIdx + 1];
-        if (!id || id.startsWith('-')) {
-          console.error('usage: ops-oneliners --run <id> [--live]');
-          process.exit(1);
-        }
-        try {
-          const { result } = await mod.runOpsOneliner(id, { live });
-          console.info(result);
-        } catch (e) {
-          console.error(e instanceof Error ? e.message : String(e));
-          process.exit(1);
-        }
-        break;
-      }
-      if (json) {
-        console.info(JSON.stringify(mod.opsOnelinersSnapshot(), null, 2));
-      } else {
-        console.info(mod.formatOpsOnelinersBlock({ id: idFlag }).trimEnd());
-      }
-      break;
-    }
-    case 'verify': {
-      const { verifyBunApis, PROOF_MANIFEST_PATH } = await import('./bun-api-verify.ts');
-      const live = rest.includes('--live');
-      const write = rest.includes('--write');
-      const json = rest.includes('--json') || rest.includes('-j');
-      const manifest = await verifyBunApis({ live, write });
-      const { summary } = manifest;
-      if (json) {
-        console.info(JSON.stringify(manifest, null, 2));
-      } else {
-        console.info(
-          `verify: demos ${summary.demosPassed}/${summary.demos} · apis ${summary.apisVerified}/${summary.apis}` +
-            (write ? ` · wrote ${PROOF_MANIFEST_PATH}` : ' (dry run — pass --write)')
-        );
-      }
-      const failed =
-        summary.demosPassed < summary.demos || summary.apisVerified < summary.apis;
-      process.exit(failed ? 1 : 0);
-      break;
-    }
-    case 'oneliners': {
-      const mod = await import('./bun-api-oneliners.ts');
-      const live = rest.includes('--live');
-      const json = rest.includes('--json') || rest.includes('-j');
-      const idFlag = rest.find(a => a.startsWith('--id='))?.slice('--id='.length);
-      const runIdx = rest.indexOf('--run');
-      if (runIdx !== -1) {
-        const id = rest[runIdx + 1];
-        if (!id || id.startsWith('-')) {
-          console.error('usage: oneliners --run <id> [--live]');
-          process.exit(1);
-        }
-        try {
-          const { result } = await mod.runOneliner(id, { live });
-          console.info(result);
-        } catch (e) {
-          console.error(e instanceof Error ? e.message : String(e));
-          process.exit(1);
-        }
-        break;
-      }
-      if (json) {
-        console.info(JSON.stringify(mod.onelinersSnapshot(), null, 2));
-      } else {
-        console.info(mod.formatOnelinersBlock({ id: idFlag }).trimEnd());
-      }
-      break;
-    }
     case 'schedule': {
       const pIdx = rest.indexOf('--pattern');
-      const pattern = (pIdx !== -1 ? rest[pIdx + 1] : undefined) ?? '0 6 * * *';
+      const pattern = pIdx !== -1 ? rest[pIdx + 1] : '0 6 * * *';
       await schedule(pattern, rest.includes('--once'));
       break;
     }
@@ -2868,18 +2582,11 @@ async function mainCli(): Promise<void> {
     default:
       console.error(
         `unknown command: ${cmd}\n` +
-          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|coverage|markdown|install-env|oneliners|ops-oneliners|verify|schedule|export|annotate|check|validate|bundler\n` +
+          `commands: url|token|list|catalog|suggest|index-audit|locus|audit|deepcheck|integrity|status|schedule|export|annotate|check|validate|bundler\n` +
           `suggest --audit [--json] <q>  ·  index-audit → bun tools/audit-catalog.ts build\n` +
           `catalog: --build · list --section=… --type=… · get <Name>  (also: bun run docs:catalog:export · docs:refresh)\n` +
           `locus: --depth=N · --all · --tsv · --json · --type=api  (TOKEN/TYPE/STATUS/PAGE/FRAGMENT…)\n` +
           `bundler: [--anchors|--gaps|--tokens] [--json] [--strict] [--group=Name]  (lib/docs/bundler-nav.ts)\n` +
-          `coverage [--json]  ·  prefer×canonical×repo×DX×surface formula (exit 1 if repoLinks < 100%)\n` +
-          `markdown [--json]  ·  Bun.markdown mode chooser (html|ansi|render|react) + type loci\n` +
-          `install-env [--json] [--section=env|mechanism|strategies|age|config|factory|all]\n` +
-          `install-env get <id> [--json]  ·  cache-layout · node-modules-check · eager-resolve …\n` +
-          `oneliners [--json] [--id=…] · --run <id> [--live]  ·  verified API demos (surface coverage)\n` +
-          `ops-oneliners [--json] [--id=…] · --run <id> [--live]  ·  lib/operations sports-betting demos\n` +
-          `verify [--write] [--live] [--json]  ·  three-source proof manifest (tools/bun-api-coverage-proof.json)\n` +
           `operate: bun run docs:refresh · docs/BUN_DOCS_OPERATE.md\n` +
           `integrity flags: --fix · --fix-dry · --no-live\n` +
           `schedule flags: --pattern "0 6 * * *" · --once · env DOC_INTEGRITY_AUTOFIX=1`

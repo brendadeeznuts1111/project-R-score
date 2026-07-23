@@ -1,0 +1,125 @@
+# Cloudflare Workers Wrangler Configuration
+# Generated for Quantum Terminal Dashboard
+
+name = "quantum-terminal-dashboard"
+main = "src/cloud/worker.js"
+compatibility_date = "2024-01-01"
+
+# Account configuration
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
+
+# Workers configuration
+workers_dev = false
+
+# Route configuration
+routes = [
+  { pattern = "factory-wager.com", custom_domain = true },
+  { pattern = "www.factory-wager.com", custom_domain = true },
+]
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+DOMAIN = "factory-wager.com"
+PORT_MAIN = 8091
+PORT_COMPLIANCE = 3001
+PORT_DASHBOARD = 3000
+
+# KV Namespace bindings
+[[kv_namespaces]]
+binding = "CONFIG_NAMESPACE"
+id = "${KV_CONFIG_NAMESPACE_ID}"
+preview_id = "${KV_CONFIG_NAMESPACE_ID}"
+
+[[kv_namespaces]]
+binding = "OVERRIDE_NAMESPACE"
+id = "${KV_OVERRIDE_NAMESPACE_ID}"
+preview_id = "${KV_OVERRIDE_NAMESPACE_ID}"
+
+# R2 Bucket bindings
+[[r2_buckets]]
+binding = "QUANTUM_BUCKET"
+bucket_name = "${R2_BUCKET_NAME}"
+preview_bucket_name = "${R2_BUCKET_NAME}"
+
+# Durable Objects (for WebSocket connections)
+[[durable_objects.bindings]]
+name = "WEBSOCKET_ROOM"
+class_name = "WebSocketRoom"
+
+# Environment-specific configurations
+[env.staging]
+name = "quantum-terminal-dashboard-staging"
+routes = [
+  { pattern = "staging.factory-wager.com", custom_domain = true },
+]
+vars = { ENVIRONMENT = "staging", DOMAIN = "staging.factory-wager.com" }
+
+[env.development]
+name = "quantum-terminal-dashboard-dev"
+routes = [
+  { pattern = "dev.factory-wager.com", custom_domain = true },
+]
+vars = { ENVIRONMENT = "development", DOMAIN = "dev.factory-wager.com" }
+
+# Build configuration
+[build]
+command = "bun run build"
+
+# Compatibility settings
+compatibility_flags = ["nodejs_compat"]
+
+# Limits
+limits = {
+  cpu_ms = 50000,
+  memory = "128MB",
+  duration = 30,
+}
+
+# Observability
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+# Triggers (scheduled events)
+[[triggers]]
+cron = "0 */6 * * *"  # Every 6 hours
+enabled = true
+
+# Placement
+[placement]
+mode = "smart"
+
+# Tail workers (for logging)
+[[tail_workers]]
+name = "quantum-logger"
+service = "quantum-logger-service"
+
+# Service bindings (for inter-worker communication)
+[[services]]
+binding = "LOGGER_SERVICE"
+service = "quantum-logger"
+environment = "production"
+
+# Analytics engine bindings
+[[analytics_engine_datasets]]
+binding = "QUANTUM_ANALYTICS"
+
+# Secrets (managed via Wrangler secrets command)
+# CLOUDFLARE_API_TOKEN
+# CLOUDFLARE_ACCOUNT_ID
+# KV_CONFIG_NAMESPACE_ID
+# KV_OVERRIDE_NAMESPACE_ID
+# R2_BUCKET_NAME
+# WEBSOCKET_PROXY_URL
+# WEBSOCKET_PROXY_AUTH
+
+# Development settings
+[dev]
+ip = "0.0.0.0"
+port = 8787
+local_protocol = "http"
+
+# Test configuration
+[test]
+# Test-specific settings

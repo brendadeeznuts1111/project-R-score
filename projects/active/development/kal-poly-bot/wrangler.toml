@@ -1,0 +1,72 @@
+# Cloudflare Workers Configuration for factory-wager.com
+# Deploy with: bunx wrangler deploy
+
+name = "factory-wager"
+main = "workers/factory-wager.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Account and Zone Configuration
+account_id = "7a470541a704caaf91e71efccc78fd36"
+zone_id = "" # Will be auto-detected from domain
+
+# Routes - Configure routes for factory-wager.com
+routes = [
+  { pattern = "factory-wager.com/*", zone_name = "factory-wager.com" },
+  { pattern = "www.factory-wager.com/*", zone_name = "factory-wager.com" }
+]
+
+# Environment Variables
+[vars]
+ENVIRONMENT = "production"
+PLATFORM_NAME = "Surgical Precision Platform"
+HUB_DASHBOARD_URL = "https://dash.cloudflare.com/7a470541a704caaf91e71efccc78fd36/factory-wager.com"
+
+# KV Namespaces (if needed)
+# [[kv_namespaces]]
+# binding = "HUB_CONFIG"
+# id = "your-kv-namespace-id"
+
+# Durable Objects (if needed)
+# [[durable_objects.bindings]]
+# name = "HUB_STATE"
+# class_name = "HubState"
+
+# R2 Buckets
+[[r2_buckets]]
+binding = "SCANNER_COOKIES"
+bucket_name = "scanner-cookies"
+
+# Workers AI (if needed)
+# [ai]
+# binding = "AI"
+
+# Limits
+[limits]
+cpu_ms = 50
+
+# Build Configuration
+[build]
+command = "bun run build:worker"
+cwd = "."
+
+# Development Configuration
+[dev]
+port = 8787
+local_protocol = "http"
+ip = "127.0.0.1"
+
+# Environment-specific configurations
+[env.production]
+name = "factory-wager"
+routes = [
+  { pattern = "factory-wager.com/*", zone_name = "factory-wager.com" },
+  { pattern = "www.factory-wager.com/*", zone_name = "factory-wager.com" }
+]
+
+[env.staging]
+name = "factory-wager-staging"
+routes = [
+  { pattern = "staging.factory-wager.com/*", zone_name = "factory-wager.com" }
+]
+

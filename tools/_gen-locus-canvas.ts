@@ -23,18 +23,7 @@ const types = new Set([
   'package-json-key',
   'cli-command',
 ]);
-type CatEntry = {
-  name: string;
-  type: string;
-  canonicalPage: string;
-  anchor?: string;
-  locusUnresolved?: boolean;
-  locusStatus?: string;
-};
-
-const byName = new Map<string, CatEntry>(
-  (cat.entries as CatEntry[]).map(e => [e.name, e])
-);
+const byName = new Map(cat.entries.map((e: { name: string }) => [e.name, e]));
 
 /** HSL sources — converted with Bun.color for the STATUS column */
 const STATUS_HSL = {
@@ -57,6 +46,15 @@ const STATUS_COLORS = Object.fromEntries(
     },
   ])
 );
+
+type CatEntry = {
+  name: string;
+  type: string;
+  canonicalPage: string;
+  anchor?: string;
+  locusUnresolved?: boolean;
+  locusStatus?: string;
+};
 
 const rows: Array<{
   token: string;

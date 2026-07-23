@@ -17,7 +17,6 @@ import { requireR2Config, tryR2Config } from '../../config/r2-env.ts';
 import { PackageManager, type PackageInfo } from '../../lib/package/package-manager.ts';
 import { R2Storage, type R2StorageConfig } from '../../lib/r2/r2-storage-enhanced.ts';
 import { RSSManager, type RSSFeed } from '../../lib/rss/rss-manager.ts';
-import { asAccessKeyId, asAccountId } from '../../lib/types/branded.ts';
 
 class IntegratedCLI {
   private packageManager: PackageManager;
@@ -260,17 +259,11 @@ class IntegratedCLI {
     const operation = args[0];
 
     switch (operation) {
-      case 'subscribe': {
-        const url = args[1];
-        const name = args[2];
-        if (url === undefined || name === undefined) {
-          console.error('Usage: rss subscribe <url> <name>');
-          break;
-        }
+      case 'subscribe':
+        const [url, name] = args.slice(1);
         await this.rssManager.subscribe(url, name);
         console.info(`✅ Subscribed to ${name}`);
         break;
-      }
 
       case 'fetch':
         const feeds = await this.rssManager.fetchAll();
@@ -428,8 +421,8 @@ class IntegratedCLI {
   private loadR2Config(): R2StorageConfig {
     const c = requireR2Config();
     return {
-      accountId: asAccountId(c.accountId),
-      accessKeyId: asAccessKeyId(c.accessKeyId),
+      accountId: c.accountId,
+      accessKeyId: c.accessKeyId,
       secretAccessKey: c.secretAccessKey,
       defaultBucket: c.bucket || 'bun-docs-global',
     };

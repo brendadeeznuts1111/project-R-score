@@ -291,31 +291,26 @@ export const FRAGMENT_PARSERS = {
     }
 
     const rawText = textMatch[1];
-    if (rawText === undefined) {
-      return null;
-    }
     const decodedText = decodeURIComponent(rawText);
 
     // Parse components: [prefix-,]textStart[,textEnd][,-suffix]
-    const components: Record<string, string> = {};
+    const components: any = {};
     const parts = decodedText.split(',');
-    const firstPart = parts[0] ?? '';
 
-    if (firstPart.endsWith('-')) {
-      components.prefix = firstPart.slice(0, -1);
-      components.textStart = parts[1] ?? '';
+    if (parts[0].endsWith('-')) {
+      components.prefix = parts[0].slice(0, -1);
+      components.textStart = parts[1] || '';
     } else {
-      components.textStart = firstPart;
+      components.textStart = parts[0];
     }
 
-    const lastPart = parts[parts.length - 1] ?? '';
-    if (parts.length > 1 && lastPart.startsWith('-')) {
-      components.suffix = lastPart.slice(1);
+    if (parts.length > 1 && parts[parts.length - 1].startsWith('-')) {
+      components.suffix = parts[parts.length - 1].slice(1);
       if (parts.length > 2) {
-        components.textEnd = parts[parts.length - 2] ?? '';
+        components.textEnd = parts[parts.length - 2];
       }
     } else if (parts.length > 1) {
-      components.textEnd = lastPart;
+      components.textEnd = parts[parts.length - 1];
     }
 
     return {
@@ -337,10 +332,9 @@ export const FRAGMENT_PARSERS = {
 
     // Separate text fragment from standard parameters
     const textFragmentMatch = fragment.match(/(#:~:text=[^&]+)/);
-    if (textFragmentMatch?.[1]) {
-      const textFragment = textFragmentMatch[1];
-      result.textFragment = FRAGMENT_PARSERS.parseTextFragment(textFragment);
-      fragment = fragment.replace(textFragment, '').replace(/^#&?|&$/, '');
+    if (textFragmentMatch) {
+      result.textFragment = FRAGMENT_PARSERS.parseTextFragment(textFragmentMatch[1]);
+      fragment = fragment.replace(textFragmentMatch[1], '').replace(/^#&?|&$/, '');
     }
 
     // Parse remaining standard parameters

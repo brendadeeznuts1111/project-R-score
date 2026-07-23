@@ -9,16 +9,6 @@
       "submittedAt": "2026-07-23T06:51:36.569Z",
       "processedAt": "2026-07-23T06:51:36.613Z",
       "processingMs": 43.393334
-    },
-    {
-      "id": "019f8dc0-7ad8-77d3-900e-fb54fa6ed744",
-      "agentId": "019f8dc0-7ad8-77d4-841e-3d667e0fe478",
-      "type": "slip",
-      "status": "pending",
-      "tamperScore": 20,
-      "submittedAt": "2026-07-23T06:53:49.656Z",
-      "processedAt": "2026-07-23T06:53:49.965Z",
-      "processingMs": 308.998542
     }
   ]
 }

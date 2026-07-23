@@ -267,7 +267,7 @@ function discoverSymbolsAndEdges(code: string, filePath: string): DiscoverResult
   }
 
   function currentScopeName(): string {
-    return scopeStack.at(-1) ?? '<module>';
+    return scopeStack.length > 0 ? scopeStack[scopeStack.length - 1] : '<module>';
   }
 
   function visit(node: ts.Node): void {

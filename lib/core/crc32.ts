@@ -125,24 +125,17 @@ export function crc32Chunks(chunks: Uint8Array[]): CRC32Result {
     return { value: 0, hex: '00000000', size: 0, durationMs: 0 };
   }
 
-  const first = chunks[0];
-  if (!first) {
-    return { value: 0, hex: '00000000', size: 0, durationMs: 0 };
-  }
-
   if (chunks.length === 1) {
-    return crc32(first);
+    return crc32(chunks[0]);
   }
 
   // Incremental hashing: seed each round with the previous CRC
-  let value = Bun.hash.crc32(first);
-  let totalSize = first.length;
+  let value = Bun.hash.crc32(chunks[0]);
+  let totalSize = chunks[0].length;
 
   for (let i = 1; i < chunks.length; i++) {
-    const chunk = chunks[i];
-    if (!chunk) continue;
-    value = Bun.hash.crc32(chunk, value);
-    totalSize += chunk.length;
+    value = Bun.hash.crc32(chunks[i], value);
+    totalSize += chunks[i].length;
   }
 
   const durationMs = performance.now() - start;

@@ -3,8 +3,6 @@
  */
 import { formatBunMessage, getBunDxEntry, type BunDxEntry } from '../../bun-dx-catalog.ts';
 
-export { formatBunMessage };
-
 export function lintMessage(entryId: string, prefix?: string): string {
   return formatBunMessage(entryId, prefix);
 }

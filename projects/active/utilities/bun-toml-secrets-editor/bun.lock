@@ -1,0 +1,168 @@
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "bun-toml-secrets-editor",
+      "dependencies": {
+        "commander": "14.0.2",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+        "typescript": "5.9.3",
+      },
+    },
+    "packages/benchmark": {
+      "name": "@bun-toml/benchmark",
+      "version": "1.0.0",
+      "bin": {
+        "bun-toml-bench": "./dist/cli.js",
+      },
+      "dependencies": {
+        "@bun-toml/core": "workspace:*",
+        "@bun-toml/rss": "workspace:*",
+        "@bun-toml/shared": "workspace:*",
+      },
+      "devDependencies": {
+        "bun-types": "latest",
+        "typescript": "^5.9.3",
+      },
+    },
+    "packages/cli": {
+      "name": "@bun-tolm/cli",
+      "version": "1.0.0",
+      "bin": {
+        "matrix": "./src/matrix-cli.ts",
+        "duoplus": "./src/duoplus-cli.ts",
+        "kimi": "./src/kimi-cli.ts",
+        "bun-v1.3.7": "./src/bun-v1.3.7-cli.ts",
+      },
+      "dependencies": {
+        "@bun-toml/core": "workspace:*",
+        "@bun-toml/profiler": "workspace:*",
+        "@bun-toml/rss": "workspace:*",
+        "commander": "^12.0.0",
+      },
+    },
+    "packages/core": {
+      "name": "@bun-toml/core",
+      "version": "1.0.0",
+      "dependencies": {
+        "zod": "^3.25.76",
+      },
+    },
+    "packages/dashboard": {
+      "name": "@bun-toml/dashboard",
+      "version": "1.0.0",
+      "bin": {
+        "god-view": "./src/dashboard/god-view-rss.ts",
+      },
+      "dependencies": {
+        "@bun-toml/core": "workspace:*",
+        "@bun-toml/profiler": "workspace:*",
+        "@bun-toml/rss": "workspace:*",
+      },
+    },
+    "packages/logger": {
+      "name": "@bun-toml/logger",
+      "version": "1.0.0",
+      "devDependencies": {
+        "bun-types": "1.3.7",
+      },
+    },
+    "packages/profiler": {
+      "name": "@bun-toml/profiler",
+      "version": "1.0.0",
+      "bin": {
+        "bun-profiler": "./src/cli/profiling-cli.ts",
+      },
+      "dependencies": {
+        "@bun-toml/core": "workspace:*",
+      },
+    },
+    "packages/rss": {
+      "name": "@bun-toml/rss",
+      "version": "1.0.0",
+      "dependencies": {
+        "@bun-toml/core": "workspace:*",
+        "fast-xml-parser": "5.3.3",
+      },
+    },
+    "packages/secrets-editor": {
+      "name": "bun-toml-secrets-editor",
+      "version": "1.0.0",
+      "bin": {
+        "secrets-editor": "./src/main.ts",
+        "safe-toml": "./src/safe-toml-cli.ts",
+      },
+      "dependencies": {
+        "@bun-toml/core": "workspace:*",
+        "@bun-toml/profiler": "workspace:*",
+        "@bun-toml/rss": "workspace:*",
+      },
+    },
+    "packages/shared": {
+      "name": "@bun-toml/shared",
+      "version": "1.0.0",
+      "devDependencies": {
+        "bun-types": "latest",
+        "typescript": "^5.9.3",
+      },
+    },
+    "packages/templates": {
+      "name": "@bun-toml/templates",
+      "version": "1.0.0",
+      "dependencies": {
+        "@bun-toml/core": "workspace:*",
+        "@bun-toml/shared": "workspace:*",
+      },
+      "devDependencies": {
+        "bun-types": "latest",
+        "typescript": "^5.9.3",
+      },
+    },
+  },
+  "packages": {
+    "@bun-tolm/cli": ["@bun-tolm/cli@workspace:packages/cli"],
+
+    "@bun-toml/benchmark": ["@bun-toml/benchmark@workspace:packages/benchmark"],
+
+    "@bun-toml/core": ["@bun-toml/core@workspace:packages/core"],
+
+    "@bun-toml/dashboard": ["@bun-toml/dashboard@workspace:packages/dashboard"],
+
+    "@bun-toml/logger": ["@bun-toml/logger@workspace:packages/logger"],
+
+    "@bun-toml/profiler": ["@bun-toml/profiler@workspace:packages/profiler"],
+
+    "@bun-toml/rss": ["@bun-toml/rss@workspace:packages/rss"],
+
+    "@bun-toml/shared": ["@bun-toml/shared@workspace:packages/shared"],
+
+    "@bun-toml/templates": ["@bun-toml/templates@workspace:packages/templates"],
+
+    "@types/bun": ["@types/bun@1.3.8", "", { "dependencies": { "bun-types": "1.3.8" } }, "sha512-3LvWJ2q5GerAXYxO2mffLTqOzEu5qnhEAlh48Vnu8WQfnmSwbgagjGZV6BoHKJztENYEDn6QmVd949W4uESRJA=="],
+
+    "@types/node": ["@types/node@25.0.10", "", { "dependencies": { "undici-types": "~7.16.0" } }, "sha512-zWW5KPngR/yvakJgGOmZ5vTBemDoSqF3AcV/LrO5u5wTWyEAVVh+IT39G4gtyAkh3CtTZs8aX/yRM82OfzHJRg=="],
+
+    "bun-toml-secrets-editor": ["bun-toml-secrets-editor@workspace:packages/secrets-editor"],
+
+    "bun-types": ["bun-types@1.3.8", "", { "dependencies": { "@types/node": "*" } }, "sha512-fL99nxdOWvV4LqjmC+8Q9kW3M4QTtTR1eePs94v5ctGqU8OeceWrSUaRw3JYb7tU3FkMIAjkueehrHPPPGKi5Q=="],
+
+    "commander": ["commander@14.0.2", "", {}, "sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ=="],
+
+    "fast-xml-parser": ["fast-xml-parser@5.3.3", "", { "dependencies": { "strnum": "^2.1.0" }, "bin": { "fxparser": "src/cli/cli.js" } }, "sha512-2O3dkPAAC6JavuMm8+4+pgTk+5hoAs+CjZ+sWcQLkX9+/tHRuTkQh/Oaifr8qDmZ8iEHb771Ea6G8CdwkrgvYA=="],
+
+    "strnum": ["strnum@2.1.2", "", {}, "sha512-l63NF9y/cLROq/yqKXSLtcMeeyOfnSQlfMSlzFt/K73oIaD8DGaQWd7Z34X9GPiKqP5rbSh84Hl4bOlLcjiSrQ=="],
+
+    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
+
+    "undici-types": ["undici-types@7.16.0", "", {}, "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw=="],
+
+    "zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
+
+    "@bun-tolm/cli/commander": ["commander@12.1.0", "", {}, "sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA=="],
+
+    "@bun-toml/logger/bun-types": ["bun-types@1.3.7", "", { "dependencies": { "@types/node": "*" } }, "sha512-qyschsA03Qz+gou+apt6HNl6HnI+sJJLL4wLDke4iugsE6584CMupOtTY1n+2YC9nGVrEKUlTs99jjRLKgWnjQ=="],
+  }
+}

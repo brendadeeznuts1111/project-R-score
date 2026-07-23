@@ -3,9 +3,7 @@
     "types": ["bun"],
     "target": "ES2020",
     "module": "commonjs",
-    "lib": [
-      "ES2020"
-    ],
+    "lib": ["ES2020"],
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -22,26 +20,12 @@
     "moduleResolution": "node",
     "baseUrl": "./src",
     "paths": {
-      "@/*": [
-        "*"
-      ],
-      "@/api/*": [
-        "api/*"
-      ],
-      "@/modules/*": [
-        "modules/*"
-      ],
-      "@/config/*": [
-        "config/*"
-      ],
-      "@/utils/*": [
-        "utils/*"
-      ]
-    },
-    "types": [
-      "bun"
-    ],
-    "ignoreDeprecations": "6.0"
+      "@/*": ["*"],
+      "@/api/*": ["api/*"],
+      "@/modules/*": ["modules/*"],
+      "@/config/*": ["config/*"],
+      "@/utils/*": ["utils/*"]
+    }
   },
   "include": [
     "src/**/*"

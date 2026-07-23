@@ -4,8 +4,7 @@
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
 import { EnhancedDocsCacheManager } from './cache-manager';
-import { RipgrepSearcher } from './ripgrep-spawn';
-import type { RipgrepMatch } from './ripgrep-spawn';
+import { RipgrepSearcher, RipgrepMatch } from './ripgrep-spawn';
 
 export interface BunApiIndex {
   topic: string;
@@ -121,22 +120,19 @@ export class EnhancedDocsFetcher {
         if (parts.length >= 2) {
           const topic = parts[0];
           const apiText = parts[1];
-          if (topic === undefined || apiText === undefined) {
-            continue;
-          }
 
           // Extract URLs
           const urlMatch = apiText.match(/\[.*?\]\((.*?)\)/);
-          const url = urlMatch?.[1] ?? '';
+          const url = urlMatch ? urlMatch[1] : '';
 
           // Extract API names from backticks
           const apiMatches = apiText.match(/`([^`]+)`/g) || [];
-          const apiNames = apiMatches.map(m => m.replace(/`/g, ''));
+          const apis = apiMatches.map(m => m.replace(/`/g, ''));
 
           if (url) {
             apis.push({
               topic,
-              apis: apiNames,
+              apis,
               url: url.startsWith('/') ? url : `/${url}`,
               category: currentCategory,
               domains: {

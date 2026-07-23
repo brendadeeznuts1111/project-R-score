@@ -7,7 +7,6 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
-    "ignoreDeprecations": "6.0",
     "types": ["bun"],
     "lib": ["ESNext"],
     "verbatimModuleSyntax": false,

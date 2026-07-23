@@ -1,0 +1,21 @@
+name = "factorywager-edge"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+WORKFLOW_VERSION = "2.0.0"
+
+[[kv_namespaces]]
+binding = "WORKFLOW_KV"
+id = "your-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+[[d1_databases]]
+binding = "WORKFLOW_DB"
+database_name = "factorywager-workflows"
+database_id = "your-database-id"
+
+[triggers]
+crons = ["*/5 * * * *"]

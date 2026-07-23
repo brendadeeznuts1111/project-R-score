@@ -39,11 +39,7 @@
     "noImplicitOverride": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    "skipLibCheck": true,
-    "types": [
-      "bun"
-    ],
-    "ignoreDeprecations": "6.0"
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*",

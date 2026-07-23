@@ -13,102 +13,35 @@
 import { renderCard, showDetail } from './card.js';
 import { readHashState, writeHashState, applyFilters, collectTypes, collectTags } from './search.js';
 import { computeHealth, healthClass } from './health.js';
-import {
-  loadTenantManifest,
-  renderSidebar,
-  resolveTenantId,
-  tenantRegistryPaths,
-} from './components/sidebar.js';
-import './components/notification.js';
 
 // ── DOM refs ─────────────────────────────────────────────────────────────
 
 const $ = id => document.getElementById(id);
 
-let activeTenantId = 'factory';
-let tenantManifest = [];
-
 // ── Fetch registry ───────────────────────────────────────────────────────
 
-async function fetchRegistryForTenant(tenantId, tenants) {
-  const paths = tenantRegistryPaths(tenantId, tenants);
-
+async function fetchRegistry() {
+  // 1. Pages Function proxy (R2 binding, allowlisted keys, edge-cached)
   try {
-    const res = await fetch(paths.proxy, { signal: AbortSignal.timeout(5000) });
+    const res = await fetch('/api/registry/registry.json',
+      { signal: AbortSignal.timeout(5000) });
     if (res.ok) {
       setHealth('ok', 'Live');
       return await res.json();
     }
   } catch { /* fall through */ }
 
+  // 2. Static snapshot fallback (no credentials in browser)
   try {
-    const res = await fetch(paths.static, { signal: AbortSignal.timeout(3000) });
+    const res = await fetch('/registry/registry.json',
+      { signal: AbortSignal.timeout(3000) });
     if (res.ok) {
       setHealth('degraded', 'Snapshot');
       return await res.json();
     }
   } catch { /* fall through */ }
 
-  throw new Error(`Cannot load registry for tenant ${tenantId}.`);
-}
-
-function updateProofBadge(data) {
-  const badge = $('proof-badge');
-  if (!badge) return;
-  const proof = data?.meta?.proof;
-  if (proof && proof.verified > 0) {
-    badge.classList.remove('hidden');
-    badge.title = `Verified ${proof.verified}/${proof.total} · coverage ${data.meta?.coverage ?? 0}%`;
-  } else {
-    badge.classList.add('hidden');
-  }
-}
-
-async function maybeRunOnboard() {
-  const params = new URLSearchParams(location.search);
-  if (params.get('onboard') !== '1') return;
-
-  try {
-    const res = await fetch('/api/onboard?step=init', { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) return;
-    const body = await res.json();
-    if (body.status === 'existing') {
-      location.href = `/portal/?tenant=${body.account.tenantId}`;
-      return;
-    }
-    if (body.status !== 'new' || !body.availableTenants?.length) return;
-
-    const pick = prompt(
-      `Select tenant:\n${body.availableTenants.map((t, i) => `${i + 1}. ${t.name}`).join('\n')}\nEnter 1-${body.availableTenants.length}:`
-    );
-    const idx = Number(pick) - 1;
-    const tenant = body.availableTenants[idx];
-    if (!tenant) return;
-
-    const assign = await fetch('/api/onboard?step=assign', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tenantId: tenant.id, role: 'viewer' }),
-    });
-    if (!assign.ok) return;
-    const assigned = await assign.json();
-    location.href = `/portal/?tenant=${assigned.account.tenantId}`;
-  } catch {
-    /* auth cookie may be absent in static dev */
-  }
-}
-
-async function switchTenant(tenantId) {
-  activeTenantId = tenantId;
-  const url = new URL(location.href);
-  url.searchParams.set('tenant', tenantId);
-  history.replaceState(null, '', url.toString());
-  renderSidebar(tenantManifest, tenantId, switchTenant);
-  const data = await fetchRegistryForTenant(tenantId, tenantManifest);
-  renderAll(data);
-  updateProofBadge(data);
-  const nc = document.querySelector('notification-center');
-  nc?.start(tenantId);
+  throw new Error('Cannot load registry from proxy or static snapshot.');
 }
 
 // ── Render pipeline ──────────────────────────────────────────────────────
@@ -336,19 +269,10 @@ function toggleHelpOverlay() {
 
 async function init() {
   try {
-    await maybeRunOnboard();
-    tenantManifest = await loadTenantManifest();
-    activeTenantId = resolveTenantId();
-    renderSidebar(tenantManifest, activeTenantId, switchTenant);
-
-    const data = await fetchRegistryForTenant(activeTenantId, tenantManifest);
+    const data = await fetchRegistry();
     $('loading').classList.add('hidden');
     $('dashboard').classList.remove('hidden');
     renderAll(data);
-    updateProofBadge(data);
-
-    const nc = document.querySelector('notification-center');
-    nc?.start(activeTenantId);
 
     // Debounced search
     $('search').addEventListener('input', debouncedSearch);
@@ -448,8 +372,8 @@ async function init() {
     // Poll health every 30s with stale-while-revalidate
     setInterval(async () => {
       try {
-        const paths = tenantRegistryPaths(activeTenantId, tenantManifest);
-        const res = await fetch(paths.proxy, { signal: AbortSignal.timeout(3000) });
+        const res = await fetch('/api/registry/registry.json',
+          { signal: AbortSignal.timeout(3000) });
         updateHealth(res.ok);
       } catch {
         updateHealth(false);

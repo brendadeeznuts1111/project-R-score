@@ -1,0 +1,49 @@
+---
+description: Cookie session management patterns with Bun.secrets
+globs: **/cookie-*.ts
+alwaysApply: false
+---
+
+# Cookie Session Management Patterns
+
+## Session Creation
+
+```typescript
+// ✅ GOOD - Use createProjectSession with ProjectInfo
+const projectContext = createProjectContext(projectId);
+const session = await createProjectSession(
+  projectContext.projectInfo,
+  domain,
+  { ttl: 24 * 60 * 60 * 1000, secure: true }
+);
+```
+
+## Session Storage
+
+- Store sessions in Bun.secrets using `getSecret`/`setSecret` from `profiles.ts`
+- Use keys: `cookie-session.{service}.{project}.{sessionId}` for individual sessions
+- Use keys: `cookie-session.list.{service}.{project}` for session lists
+- `getSecret` returns `string | null` (not a result object)
+
+## Cookie Parsing
+
+```typescript
+// ✅ GOOD - Use parseCookieString for cookie header strings
+const cookies = parseCookieString('sessionId=abc123; Path=/; HttpOnly');
+// Returns Record<string, CookieInfo>
+```
+
+## Terminal Integration
+
+```typescript
+// ✅ GOOD - Use createCookieTerminalManager for interactive features
+const manager = createCookieTerminalManager({ interactive: true, color: true });
+const session = await manager.createSessionInteractive(service, project);
+await manager.monitorSession(service, project, sessionId);
+```
+
+## Error Handling
+
+- Always check if `getSecret` returns `null` before parsing JSON
+- Handle expired sessions (check `expiresAt` against `Date.now()`)
+- Return `null` or `false` for missing sessions, don't throw unless critical

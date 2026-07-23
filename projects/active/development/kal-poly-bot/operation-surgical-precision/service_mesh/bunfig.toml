@@ -4,8 +4,12 @@ registry = "https://registry.npmjs.org"
 [install.cache]
 # dir: monorepo root bunfig.toml — use BUN_INSTALL_CACHE_DIR in CI
 
-# Install backend is auto-detected by Bun (clonefile on macOS, hardlink on Linux,
-# automatic copy fallback on error). No user-configurable fallback key exists.
+# Advanced cache backend optimization for service mesh performance
+# clonefile: Copy-on-write for instant operations (macOS optimized)
+# hardlink: Zero additional disk usage for shared packages
+# copyfile: Universal compatibility with safe operations
+backend = "clonefile"  # Use clonefile for macOS performance
+fallback = "hardlink"  # Fallback to hardlink for compatibility
 
 [test]
 # Root directory for test files

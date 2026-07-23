@@ -1,0 +1,1 @@
+{"timestamp":"2026-02-01T19:11:40.867Z","overall":"WARNING","compliance":{"tier1380":true,"auditTrail":true,"quarantineActive":false},"risks":["R2 storage simulated — no cloud redundancy","MCP servers partially installed","Secrets management not fully configured"],"hash":"44916889"}

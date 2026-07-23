@@ -8,18 +8,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "types": [
-      "bun"
-    ],
-    "ignoreDeprecations": "6.0"
+    "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "."
-  ],
-  "exclude": [
-    "node_modules",
-    "bench",
-    "__test__"
-  ]
+  "include": ["."],
+  "exclude": ["node_modules", "bench", "__test__"]
 }

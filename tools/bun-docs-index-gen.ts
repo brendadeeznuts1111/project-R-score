@@ -41,9 +41,7 @@ function extractAnchors(markdown: string): string[] {
     if (inCode) continue;
     const m = line.match(/^#{2,4} (.+)$/);
     if (m) {
-      const heading = m[1];
-      if (heading === undefined) continue;
-      const slug = slugify(heading);
+      const slug = slugify(m[1]);
       if (slug && !anchors.includes(slug)) anchors.push(slug);
     }
   }
@@ -57,20 +55,16 @@ async function main(): Promise<void> {
   for (const line of text.split('\n')) {
     const h = line.match(/^## (.+)/);
     if (h) {
-      const sectionName = h[1];
-      if (sectionName === undefined) continue;
-      section = sectionName;
+      section = h[1];
       continue;
     }
     const m = line.match(/^- \[(.+?)\]\((https:\/\/[^)]+)\)(?:: (.+))?$/);
     if (!m) continue;
-    const title = m[1];
     const url = m[2];
-    if (title === undefined || url === undefined) continue;
     const path = new URL(url).pathname.replace(/^\/docs\//, '').replace(/\.md$/, '');
     entries.push({
       section,
-      title,
+      title: m[1],
       url,
       desc: m[3] ?? '',
       domain: path.split('/').slice(0, 2).join('/'),

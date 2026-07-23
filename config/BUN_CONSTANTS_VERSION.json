@@ -1,0 +1,1748 @@
+{
+  "version": "1.0.1",
+  "schemaVersion": "1.0.0",
+  "bunVersion": "1.3.7+",
+  "mcpEnabled": true,
+  "tier1380": {
+    "compliant": true,
+    "certified": "2026-02-04",
+    "auditLevel": "enterprise",
+    "col89Max": 89,
+    "col93Balanced": true
+  },
+  "projects": {
+    "scanner": {
+      "root": "/Users/nolarose/Projects/scanner",
+      "constants": 40,
+      "lastScan": "2026-02-04T19:59:00.550Z"
+    },
+    "mcp-bun-docs": {
+      "root": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs",
+      "constants": 36,
+      "lastScan": "2026-02-04T19:59:00.550Z"
+    }
+  },
+  "constants": [
+    {
+      "name": "BUN_KEYCHAIN_SERVICE",
+      "file": "/Users/nolarose/Projects/scanner/scan.ts",
+      "line": 1405,
+      "relPath": "scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "dev.bun.scanner",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_KEYCHAIN_SERVICE_LEGACY",
+      "file": "/Users/nolarose/Projects/scanner/scan.ts",
+      "line": 1406,
+      "relPath": "scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "bun-scanner",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_KEYCHAIN_TOKEN_NAMES",
+      "file": "/Users/nolarose/Projects/scanner/scan.ts",
+      "line": 1407,
+      "relPath": "scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "critical",
+      "tags": []
+    },
+    {
+      "name": "BUN_TOKEN_AUDIT_RSS_PATH",
+      "file": "/Users/nolarose/Projects/scanner/scan.ts",
+      "line": 1859,
+      "relPath": "scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "${SNAPSHOT_DIR}/token-events.rss.xml",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "critical",
+      "tags": [
+        "rss",
+        "feed"
+      ]
+    },
+    {
+      "name": "BUN_SCAN_RESULTS_RSS_PATH",
+      "file": "/Users/nolarose/Projects/scanner/scan.ts",
+      "line": 1860,
+      "relPath": "scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "${SNAPSHOT_DIR}/scan-results.rss.xml",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "rss",
+        "feed"
+      ]
+    },
+    {
+      "name": "BUN_ADVISORY_MATCHES_PATH",
+      "file": "/Users/nolarose/Projects/scanner/scan.ts",
+      "line": 1861,
+      "relPath": "scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "${SNAPSHOT_DIR}/advisory-matches.jsonl",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_API_PROVENANCE",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/doc-cross-reference.ts",
+      "line": 65,
+      "relPath": "cli/renderers/doc-cross-reference.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "api",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_PERF_ANNOTATIONS",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/doc-cross-reference.ts",
+      "line": 177,
+      "relPath": "cli/renderers/doc-cross-reference.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_RELATED_APIS",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/doc-cross-reference.ts",
+      "line": 232,
+      "relPath": "cli/renderers/doc-cross-reference.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "api",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_SEARCH_KEYWORDS",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/doc-cross-reference.ts",
+      "line": 361,
+      "relPath": "cli/renderers/doc-cross-reference.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_STATUS_GLYPHS",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/status-glyphs.ts",
+      "line": 19,
+      "relPath": "cli/renderers/status-glyphs.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_PROJECT_PRESETS",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/status-glyphs.ts",
+      "line": 47,
+      "relPath": "cli/renderers/status-glyphs.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_DOCS_BASE",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/bun-api-matrix.ts",
+      "line": 45,
+      "relPath": "cli/renderers/bun-api-matrix.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "https://bun.com/docs",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "documentation"
+      ]
+    },
+    {
+      "name": "BUN_DOC_BASE",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/bun-api-matrix.ts",
+      "line": 47,
+      "relPath": "cli/renderers/bun-api-matrix.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "config",
+      "type": "url",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_API_CATALOG",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/bun-api-matrix.ts",
+      "line": 89,
+      "relPath": "cli/renderers/bun-api-matrix.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "api",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_SCANNER_APIS",
+      "file": "/Users/nolarose/Projects/scanner/cli/renderers/bun-api-matrix.ts",
+      "line": 1844,
+      "relPath": "cli/renderers/bun-api-matrix.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "api",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_MAX_SAFE_SIZE",
+      "file": "/Users/nolarose/Projects/scanner/optimizations/runtime-optimizations.ts",
+      "line": 18,
+      "relPath": "optimizations/runtime-optimizations.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_RISK_CONSTANTS",
+      "file": "/Users/nolarose/Projects/scanner/optimizations/bun-optimizations.ts",
+      "line": 69,
+      "relPath": "optimizations/bun-optimizations.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_CONSTANTS_VERSION",
+      "file": "/Users/nolarose/Projects/scanner/scripts/extract-bun-constants.ts",
+      "line": 13,
+      "relPath": "scripts/extract-bun-constants.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "1.0.1",
+      "type": "string",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_R2_COOKIE_FORMAT_VERSION",
+      "file": "/Users/nolarose/Projects/scanner/lib/r2-cookie-stream.ts",
+      "line": 3,
+      "relPath": "lib/r2-cookie-stream.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "1",
+      "type": "number",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_R2_COOKIE_COMPRESS_THRESHOLD",
+      "file": "/Users/nolarose/Projects/scanner/lib/r2-cookie-stream.ts",
+      "line": 4,
+      "relPath": "lib/r2-cookie-stream.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "1024",
+      "type": "number",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_PROFILES_KEYCHAIN_PREFIX",
+      "file": "/Users/nolarose/Projects/scanner/src/profiles.ts",
+      "line": 9,
+      "relPath": "src/profiles.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "bun-tier1380",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_PROFILES_DEFAULT_NAMESPACE",
+      "file": "/Users/nolarose/Projects/scanner/src/profiles.ts",
+      "line": 10,
+      "relPath": "src/profiles.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "com.tier1380.scanner",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_PROFILES_SECRET_NAMES",
+      "file": "/Users/nolarose/Projects/scanner/src/profiles.ts",
+      "line": 11,
+      "relPath": "src/profiles.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "critical",
+      "tags": []
+    },
+    {
+      "name": "BUN_PROFILES_ENV_MAP",
+      "file": "/Users/nolarose/Projects/scanner/src/profiles.ts",
+      "line": 13,
+      "relPath": "src/profiles.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_KEYCHAIN_ERROR_CODES",
+      "file": "/Users/nolarose/Projects/scanner/src/profiles.ts",
+      "line": 95,
+      "relPath": "src/profiles.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_KEYCHAIN_SERVICE",
+      "file": "/Users/nolarose/Projects/scanner/src/scan.ts",
+      "line": 1430,
+      "relPath": "src/scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "dev.bun.scanner",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_KEYCHAIN_SERVICE_LEGACY",
+      "file": "/Users/nolarose/Projects/scanner/src/scan.ts",
+      "line": 1431,
+      "relPath": "src/scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "bun-scanner",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_KEYCHAIN_TOKEN_NAMES",
+      "file": "/Users/nolarose/Projects/scanner/src/scan.ts",
+      "line": 1432,
+      "relPath": "src/scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "critical",
+      "tags": []
+    },
+    {
+      "name": "BUN_TOKEN_AUDIT_RSS_PATH",
+      "file": "/Users/nolarose/Projects/scanner/src/scan.ts",
+      "line": 1878,
+      "relPath": "src/scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "${SNAPSHOT_DIR}/token-events.rss.xml",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "critical",
+      "tags": [
+        "rss",
+        "feed"
+      ]
+    },
+    {
+      "name": "BUN_SCAN_RESULTS_RSS_PATH",
+      "file": "/Users/nolarose/Projects/scanner/src/scan.ts",
+      "line": 1879,
+      "relPath": "src/scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "${SNAPSHOT_DIR}/scan-results.rss.xml",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "rss",
+        "feed"
+      ]
+    },
+    {
+      "name": "BUN_ADVISORY_MATCHES_PATH",
+      "file": "/Users/nolarose/Projects/scanner/src/scan.ts",
+      "line": 1880,
+      "relPath": "src/scan.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "${SNAPSHOT_DIR}/advisory-matches.jsonl",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_SCANNER_COLUMNS",
+      "file": "/Users/nolarose/Projects/scanner/src/scan-columns.ts",
+      "line": 3,
+      "relPath": "src/scan-columns.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_R_SCORE_BASELINE",
+      "file": "/Users/nolarose/Projects/scanner/src/cli-constants.ts",
+      "line": 46,
+      "relPath": "src/cli-constants.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "0.82",
+      "type": "number",
+      "description": "Current baseline R-Score: 0.82 Used as the starting point for calculating projected improvements. /",
+      "category": "cli",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_FIX_PROJECTIONS",
+      "file": "/Users/nolarose/Projects/scanner/src/cli-constants.ts",
+      "line": 60,
+      "relPath": "src/cli-constants.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "description": "@see BUN_CONSTANTS_TABLE.md for complete reference /",
+      "category": "cli",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_SECRET_STATUS_COLUMNS",
+      "file": "/Users/nolarose/Projects/scanner/src/service-color-secrets.ts",
+      "line": 35,
+      "relPath": "src/service-color-secrets.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "critical",
+      "tags": []
+    },
+    {
+      "name": "BUN_EXPORT_MANIFEST",
+      "file": "/Users/nolarose/Projects/scanner/src/code-discovery.ts",
+      "line": 40,
+      "relPath": "src/code-discovery.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_COOKIE_SESSION_PREFIX",
+      "file": "/Users/nolarose/Projects/scanner/src/cookie-sessions.ts",
+      "line": 101,
+      "relPath": "src/cookie-sessions.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "cookie-session",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_DEFAULT_SESSION_TTL",
+      "file": "/Users/nolarose/Projects/scanner/src/cookie-sessions.ts",
+      "line": 102,
+      "relPath": "src/cookie-sessions.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "value": "24",
+      "type": "number",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_COOKIE_SECRET_NAMES",
+      "file": "/Users/nolarose/Projects/scanner/src/cookie-sessions.ts",
+      "line": 103,
+      "relPath": "src/cookie-sessions.ts",
+      "project": "scanner",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": false,
+        "mcpExposed": false
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "critical",
+      "tags": []
+    },
+    {
+      "name": "BUN_BASE_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 11,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "https://bun.com",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_INSTALL_SCRIPT_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 14,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "https://bun.sh/install",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_DOCS_BASE",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 16,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/docs",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "documentation"
+      ]
+    },
+    {
+      "name": "BUN_DOCS_VERSION",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 17,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "1.3.7",
+      "type": "string",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "documentation"
+      ]
+    },
+    {
+      "name": "BUN_DOCS_MIN_VERSION",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 18,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "1.3.6",
+      "type": "string",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "documentation"
+      ]
+    },
+    {
+      "name": "BUN_CHANGELOG_RSS",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 19,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/rss.xml",
+      "type": "string",
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "rss",
+        "feed"
+      ]
+    },
+    {
+      "name": "BUN_SHOP_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 22,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "https://shop.bun.com/",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_BLOG_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 24,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/blog",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_BLOG_RSS_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 26,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "config",
+      "type": "url",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "rss",
+        "feed"
+      ]
+    },
+    {
+      "name": "BUN_GUIDES_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 27,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/guides",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_REPO_RELEASES_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 30,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "https://github.com/oven-sh/bun/releases",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_PM_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 32,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/package-manager",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_PM_CLI_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 33,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/docs/cli/pm",
+      "type": "string",
+      "category": "cli",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_INSTALL_ADD_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 34,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/docs/guides/install/add",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_NODE_COMPAT_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 35,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/docs/runtime/nodejs-apis",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_FEEDBACK_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 36,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/docs/feedback",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_FEEDBACK_UPGRADE_FIRST",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 39,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_REFERENCE_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 42,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/reference",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_TEST_REFERENCE_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 43,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/reference/bun/test",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_REPO_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 46,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "https://github.com/oven-sh/bun",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_DOCS_JSON_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 49,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "config",
+      "type": "url",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": [
+        "json",
+        "api",
+        "documentation"
+      ]
+    },
+    {
+      "name": "BUN_TYPES_REPO_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 53,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "config",
+      "type": "url",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_TYPES_README_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 57,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "config",
+      "type": "url",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_TYPES_AUTHORING_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 61,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "config",
+      "type": "url",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "high",
+      "tags": []
+    },
+    {
+      "name": "BUN_TYPES_KEY_FILES",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 65,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_REFERENCE_LINKS",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 78,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_URL_CONFIG",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 111,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "config",
+      "type": "url",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_DOC_ENTRIES",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 299,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_TEST_CLI_OPTIONS",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 1296,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "cli",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_137_FEATURE_MATRIX",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 1403,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_137_COMPLETE_MATRIX",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 1463,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_NODE_API_COMPARISON_MATRIX",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 1827,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "api",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_DOC_MAP",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 2145,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_REFERENCE_KEYS",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 2244,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_GLOBALS",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 2258,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "category": "runtime",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    },
+    {
+      "name": "BUN_GLOBALS_API_URL",
+      "file": "/Users/nolarose/Projects/matrix-analysis/mcp-bun-docs/lib.ts",
+      "line": 2569,
+      "relPath": "lib.ts",
+      "project": "mcp-bun-docs",
+      "tier1380": {
+        "col89Compliant": true,
+        "enterpriseReady": true,
+        "mcpExposed": true
+      },
+      "value": "${BUN_BASE_URL}/docs/api/globals",
+      "type": "url",
+      "category": "config",
+      "stability": "stable",
+      "platforms": [
+        "darwin",
+        "linux",
+        "win32"
+      ],
+      "security": "low",
+      "tags": []
+    }
+  ],
+  "metadata": {
+    "totalConstants": 76,
+    "extractionTime": "2026-02-04T19:59:00.550Z",
+    "platform": "darwin",
+    "nodeVersion": "24.3.0",
+    "cliVersion": "1.0.0"
+  },
+  "changelog": {
+    "1.0.1": "Tier-1380 enhanced extraction with 20-column schema"
+  }
+}

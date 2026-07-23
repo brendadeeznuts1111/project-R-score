@@ -167,7 +167,7 @@ function displayEndpointResults(results: EndpointResult[], context: ContextType 
 
   for (const category of categories) {
     console.info();
-    console.info(styled(category.toUpperCase(), 'accent'));
+    console.info(styled`{bold}{magenta}${category.toUpperCase()}{/magenta}{/bold}`);
 
     const categoryResults = results.filter(r => r.endpoint.category === category);
 
@@ -204,7 +204,7 @@ function displayEndpointResults(results: EndpointResult[], context: ContextType 
   );
 
   if (critical > 0) {
-    console.info(styled(`  Critical Issues: ${critical}`, 'error'));
+    console.info(styled`{bold}{red}  🔴 Critical Issues: ${critical}{/red}{/bold}`);
   }
 
   const avgResponseTime = Math.round(results.reduce((sum, r) => sum + r.responseTime, 0) / total);

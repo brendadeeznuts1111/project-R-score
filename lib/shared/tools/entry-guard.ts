@@ -32,7 +32,15 @@ export function ensureDirectExecution(): void {
  */
 export function runIfMain(mainFunction: () => void | Promise<void>): void {
   if (import.meta.main) {
-    void Promise.resolve(mainFunction()).catch(console.error);
+    if (mainFunction.constructor.name === 'AsyncFunction') {
+      mainFunction().catch(console.error);
+    } else {
+      try {
+        mainFunction();
+      } catch (error) {
+        console.error(error);
+      }
+    }
   } else {
     console.info('ℹ️  Script was imported, not executed directly');
   }

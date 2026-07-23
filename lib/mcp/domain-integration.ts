@@ -2,11 +2,7 @@
 // lib/mcp/domain-integration.ts — Domain and subdomain integration with R2 MCP
 
 import { CLOUDFLARE_DEFAULTS, cloudflareAccountIdFromEnv, R2_CONFIG } from '../../config/r2-env.ts';
-import {
-  r2MCPIntegration,
-  diagnosisSeverityFromError,
-  type DiagnosisEntry,
-} from './r2-integration-fixed.ts';
+import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { styled, FW_COLORS } from '../theme/colors';
 import { type AccountId, asAccountId } from '../types/branded.ts';
 // Account from config/r2-env (env overlay → proven default).
@@ -139,8 +135,7 @@ export class DomainIntegration {
       await this.r2.putJSON(key, this.config);
       console.info(styled(`✅ Domain config stored: ${key}`, 'success'));
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error(styled(`❌ Failed to store domain config: ${msg}`, 'error'));
+      console.error(styled(`❌ Failed to store domain config: ${error.message}`, 'error'));
     }
   }
 
@@ -249,25 +244,20 @@ export class DomainIntegration {
     fix: string,
     context: string
   ): Promise<string> {
-    const diagnosis: DiagnosisEntry = {
+    const diagnosis = {
       id: `domain-${subdomain}-${Date.now()}`,
       timestamp: new Date().toISOString(),
-      issue: error?.name || 'Unknown',
-      severity: diagnosisSeverityFromError(error),
-      category: subdomain,
-      description: error?.message || 'Unknown error',
-      recommendations: [fix],
-      resolved: false,
+      domain: this.config.primary.domain,
+      subdomain,
+      error: {
+        name: error.name || 'Unknown',
+        message: error.message || 'Unknown error',
+        stack: error.stack,
+      },
+      fix,
+      context: `${this.getSubdomainMCPContext(subdomain)}-${context}`,
+      confidence: this.calculateConfidence(subdomain, error),
       metadata: {
-        domain: this.config.primary.domain,
-        subdomain,
-        context: `${this.getSubdomainMCPContext(subdomain)}-${context}`,
-        confidence: this.calculateConfidence(subdomain, error),
-        error: {
-          name: error?.name || 'Unknown',
-          message: error?.message || 'Unknown error',
-          stack: error?.stack,
-        },
         enterprise_tier: this.config.primary.tier,
         compliance_level: this.config.enterprise.compliance_level,
         security_posture: this.config.enterprise.security_posture,
@@ -342,8 +332,7 @@ export class DomainIntegration {
         mrr_impact: this.calculateMRRImpact(subdomain || 'api', { name: diag.category }),
       }));
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.warn(styled(`⚠️ Failed to get domain recommendations: ${msg}`, 'warning'));
+      console.warn(styled(`⚠️ Failed to get domain recommendations: ${error.message}`, 'warning'));
       return [];
     }
   }

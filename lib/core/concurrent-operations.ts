@@ -78,17 +78,7 @@ export class ConcurrentOperationsManager {
       const startTime = Date.now();
 
       try {
-        const operation = operations[index];
-        if (!operation) {
-          results[index] = {
-            success: false,
-            error: 'Operation not found',
-            operationId,
-            duration: Date.now() - startTime,
-          };
-          return;
-        }
-        const data = await this.executeOperation(operation, operationId, finalConfig);
+        const data = await this.executeOperation(operations[index], operationId, finalConfig);
         results[index] = {
           success: true,
           data,
@@ -185,7 +175,6 @@ export class ConcurrentOperationsManager {
       for (let i = 0; i < readyResults.length; i++) {
         const result = readyResults[i];
         const operation = readyOperations[i];
-        if (!result || !operation) continue;
 
         if (result.success) {
           completed.add(operation.id);
@@ -306,7 +295,6 @@ export class ConcurrentOperationsManager {
     // Rollback in reverse order
     for (let i = successfulResults.length - 1; i >= 0; i--) {
       const result = successfulResults[i];
-      if (!result) continue;
       const operation = operations.find(op => op.id === result.operationId);
 
       if (operation && operation.rollback && result.data) {

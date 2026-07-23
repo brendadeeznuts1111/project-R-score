@@ -1,5 +1,4 @@
 // @see https://bun.com/docs/runtime/s3 — S3Client
-// @see https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support — requestPayer
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { S3Client, semver } from 'bun';

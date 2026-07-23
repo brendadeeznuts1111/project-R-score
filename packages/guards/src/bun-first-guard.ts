@@ -106,7 +106,7 @@ export function guardBunFirst(): void {
   const originalRequire = (globalThis as { require?: NodeRequire }).require;
 
   if (originalRequire) {
-    const guarded = function (this: unknown, id: string) {
+    (globalThis as { require: NodeRequire }).require = function (id: string) {
       const violation = MODULE_VIOLATIONS[id];
       if (violation) {
         const message = `🛡️ BUN-FIRST GUARD: "${id}" is blocked. ${formatBunMessage(violation.catalogId, violation.replacement)}`;
@@ -117,9 +117,7 @@ export function guardBunFirst(): void {
         console.warn(`⚠️ ${message}`);
       }
       return originalRequire.apply(this, arguments as unknown as Parameters<NodeRequire>);
-    } as NodeRequire;
-    Object.assign(guarded, originalRequire);
-    (globalThis as { require: NodeRequire }).require = guarded;
+    };
   }
 }
 

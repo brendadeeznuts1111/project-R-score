@@ -237,9 +237,7 @@ class StructuredLogger {
         if (match) {
           entry.function = match[1];
           entry.module = match[2];
-          if (match[3]) {
-            entry.line = parseInt(match[3], 10);
-          }
+          entry.line = parseInt(match[3]);
         }
       }
     }

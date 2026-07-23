@@ -1,8 +1,7 @@
 // lib/core/core-errors.ts — Standardized error handling system
 
 // @see https://bun.com/docs/runtime/environment-variables#setting-environment-variables — Bun.env
-import { SecurityRiskLevel, OperationStatus } from './core-types';
-import type { EnterpriseError } from './core-types';
+import { EnterpriseError, SecurityRiskLevel, OperationStatus } from './core-types';
 import type { ResourceId } from '../types/branded.ts';
 
 // ============================================================================

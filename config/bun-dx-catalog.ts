@@ -16,7 +16,7 @@
  * Each entry links an anti-pattern to an elite one-liner and official docs.
  */
 
-export type BunDxSeverity = 'error' | 'warn' | 'info';
+export type BunDxSeverity = 'error' | 'warn';
 export type FixTier = 'easy' | 'medium' | 'hard';
 
 export type BunDxEntry = {
@@ -378,64 +378,6 @@ export const BUN_DX_CATALOG: BunDxEntry[] = [
     docs: 'https://bun.com/docs/runtime/utils#bun-inspect',
     severity: 'warn',
     fixTier: 'easy',
-  },
-  {
-    id: 'markdown.marked',
-    summary: 'Markdown → HTML (prefer Bun.markdown.html)',
-    bad: 'import { marked } from "marked"; marked.parse(md)',
-    good: 'Bun.markdown.html(md, { headings: { ids: true } })',
-    docs: 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
-    severity: 'warn',
-    fixTier: 'medium',
-    modules: ['marked'],
-    patterns: [/from\s+['"]marked['"]|require\s*\(\s*['"]marked['"]/],
-  },
-  {
-    id: 'markdown.ansi',
-    summary: 'CLI docs: Markdown → ANSI',
-    bad: 'chalk.bold(md) // hand-rolled terminal markdown',
-    good: 'Bun.markdown.ansi(md, { colors: true, columns: process.stdout.columns ?? 80, hyperlinks: true })',
-    docs: 'https://bun.com/docs/runtime/markdown#ansi-terminal-output',
-    severity: 'info',
-    fixTier: 'easy',
-  },
-  {
-    id: 'markdown.render',
-    summary: 'Custom Markdown → string via callbacks',
-    bad: 'unified().use(remarkParse).use(remarkHtml)',
-    good: 'Bun.markdown.render(md, { heading: (c, { level }) => `<h${level}>${c}</h${level}>` })',
-    docs: 'https://bun.com/docs/runtime/markdown#bun-markdown-render',
-    severity: 'info',
-    fixTier: 'medium',
-  },
-  {
-    id: 'markdown.react',
-    summary: 'Markdown → React tree',
-    bad: 'dangerouslySetInnerHTML={{ __html: marked(md) }}',
-    good: 'Bun.markdown.react(md, { pre: CodeBlock }, { headings: { ids: true } })',
-    docs: 'https://bun.com/docs/runtime/markdown#bun-markdown-react',
-    severity: 'info',
-    fixTier: 'medium',
-  },
-  {
-    id: 'install.cache-env',
-    summary: 'Install cache via bunfig, not shell BUN_INSTALL_CACHE_DIR',
-    bad: 'export BUN_INSTALL_CACHE_DIR=~/.bun/install/cache',
-    good:
-      '# ~/.bunfig.toml\n[install.cache]\ndir = "/Users/you/.bun/install/cache"  # absolute — see docs/UNIFIED.md',
-    docs: 'https://bun.com/docs/pm/cli/install#cache',
-    severity: 'warn',
-    fixTier: 'easy',
-    patterns: [/BUN_INSTALL_CACHE_DIR|BUN_INSTALL_GLOBAL_STORE/],
-  },
-  {
-    id: 'install.linker-isolated',
-    summary: 'Prefer isolated linker (FactoryWager machine default)',
-    bad: 'bun install --linker hoisted  # phantom deps risk in monorepos',
-    good: 'bun install --linker isolated  # or machine bunfig linker = "isolated"',
-    docs: 'https://bun.com/docs/pm/cli/install#isolated-installs',
-    severity: 'info',
-    fixTier: 'medium',
   },
 ];
 

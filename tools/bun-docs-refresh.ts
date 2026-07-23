@@ -10,7 +10,6 @@
  *   bun tools/bun-docs-refresh.ts --skip-scrape
  *   bun tools/bun-docs-refresh.ts --skip-integrity
  *   bun tools/bun-docs-refresh.ts --force-scrape
- *   bun tools/bun-docs-refresh.ts --derived
  */
 import { resolvePath } from '../lib/path-bun';
 
@@ -32,7 +31,6 @@ async function main(): Promise<void> {
   const skipScrape = Bun.argv.includes('--skip-scrape');
   const skipIntegrity = Bun.argv.includes('--skip-integrity');
   const forceScrape = Bun.argv.includes('--force-scrape');
-  const derived = Bun.argv.includes('--derived');
 
   const steps: Step[] = [
     { name: 'Phase 0: RSS release-index', cmd: ['bun', 'tools/bun-docs-releases.ts', 'index'] },
@@ -40,15 +38,12 @@ async function main(): Promise<void> {
 
   if (!skipScrape) {
     steps.push({
-      name: 'Phase 2b: release scrape + blog examples',
+      name: 'Phase 2b: release scrape',
       cmd: ['bun', 'tools/bun-docs-releases.ts', 'scrape', ...(forceScrape ? ['--force'] : [])],
     });
   }
 
-  steps.push({
-    name: 'Catalog build',
-    cmd: ['bun', 'tools/bun-docs-catalog.ts', 'build', ...(derived ? ['--derived'] : [])],
-  });
+  steps.push({ name: 'Catalog build', cmd: ['bun', 'tools/bun-docs-catalog.ts', 'build'] });
 
   if (!skipIntegrity) {
     steps.push({

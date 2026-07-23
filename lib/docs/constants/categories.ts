@@ -681,56 +681,6 @@ export const INTELLIGENT_ROUTING_RULES = {
 } as const;
 
 // Helper functions for intelligent routing
-type RouteEndpoint = {
-  provider: DocumentationProvider;
-  category: DocumentationCategory;
-  path: string;
-};
-
-type RouteBundle = {
-  primary: RouteEndpoint;
-  secondary?: RouteEndpoint;
-  fallback?: RouteEndpoint;
-};
-
-type UserTypedRoutes = {
-  developers: RouteBundle;
-  beginners?: RouteBundle;
-  educators?: RouteBundle;
-};
-
-type TopicUserType = 'developers' | 'beginners' | 'educators';
-
-function isRouteBundle(route: RouteBundle | UserTypedRoutes): route is RouteBundle {
-  if (!('primary' in route)) {
-    return false;
-  }
-  const candidate = route.primary;
-  return (
-    typeof candidate === 'object' &&
-    candidate !== null &&
-    'provider' in candidate &&
-    'category' in candidate &&
-    'path' in candidate
-  );
-}
-
-function resolveRouteBundle(
-  route: RouteBundle | UserTypedRoutes,
-  userType: TopicUserType | 'all_users'
-): RouteBundle {
-  if (isRouteBundle(route)) {
-    return route;
-  }
-  if (userType !== 'all_users') {
-    const userRoute = route[userType];
-    if (userRoute) {
-      return userRoute;
-    }
-  }
-  return route.developers;
-}
-
 export class IntelligentRouting {
   /**
    * Get the best documentation route for a topic and user type
@@ -752,37 +702,29 @@ export class IntelligentRouting {
     const normalizedFormat = format?.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
     // Check format preference first
-    if (normalizedFormat && normalizedFormat in INTELLIGENT_ROUTING_RULES.formatRouting) {
-      const formatRoute =
-        INTELLIGENT_ROUTING_RULES.formatRouting[
-          normalizedFormat as keyof typeof INTELLIGENT_ROUTING_RULES.formatRouting
-        ];
+    if (normalizedFormat && INTELLIGENT_ROUTING_RULES.formatRouting[normalizedFormat]) {
+      const formatRoute = INTELLIGENT_ROUTING_RULES.formatRouting[normalizedFormat];
+      const userRoute = formatRoute[userType] || formatRoute.primary;
       return {
-        ...formatRoute.primary,
+        ...userRoute.primary,
         reasoning: `Selected based on format preference: ${format}`,
       };
     }
 
     // Check context preference
-    if (normalizedContext && normalizedContext in INTELLIGENT_ROUTING_RULES.contextRouting) {
-      const contextRoute =
-        INTELLIGENT_ROUTING_RULES.contextRouting[
-          normalizedContext as keyof typeof INTELLIGENT_ROUTING_RULES.contextRouting
-        ];
-      const routeBundle = resolveRouteBundle(contextRoute, userType);
+    if (normalizedContext && INTELLIGENT_ROUTING_RULES.contextRouting[normalizedContext]) {
+      const contextRoute = INTELLIGENT_ROUTING_RULES.contextRouting[normalizedContext];
+      const userRoute = contextRoute[userType] || contextRoute.primary;
       return {
-        ...routeBundle.primary,
+        ...userRoute.primary,
         reasoning: `Selected based on context: ${context}`,
       };
     }
 
     // Check topic routing
-    if (normalizedTopic in INTELLIGENT_ROUTING_RULES.topicRouting) {
-      const topicRoute =
-        INTELLIGENT_ROUTING_RULES.topicRouting[
-          normalizedTopic as keyof typeof INTELLIGENT_ROUTING_RULES.topicRouting
-        ];
-      const userRoute = resolveRouteBundle(topicRoute, userType);
+    if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
+      const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
+      const userRoute = topicRoute[userType] || topicRoute.developers;
       return {
         ...userRoute.primary,
         reasoning: `Selected based on topic: ${topic} for user type: ${userType}`,
@@ -820,12 +762,9 @@ export class IntelligentRouting {
       reasoning: string;
     }> = [];
 
-    if (normalizedTopic in INTELLIGENT_ROUTING_RULES.topicRouting) {
-      const topicRoute =
-        INTELLIGENT_ROUTING_RULES.topicRouting[
-          normalizedTopic as keyof typeof INTELLIGENT_ROUTING_RULES.topicRouting
-        ];
-      const userRoute = resolveRouteBundle(topicRoute, userType);
+    if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
+      const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
+      const userRoute = topicRoute[userType] || topicRoute.developers;
 
       if (userRoute.secondary) {
         alternatives.push({
@@ -860,11 +799,8 @@ export class IntelligentRouting {
     const normalizedTopic = topic.toLowerCase().replace(/[^a-z0-9]/g, '-');
     const result: Record<string, any> = {};
 
-    if (normalizedTopic in INTELLIGENT_ROUTING_RULES.topicRouting) {
-      const topicRoute =
-        INTELLIGENT_ROUTING_RULES.topicRouting[
-          normalizedTopic as keyof typeof INTELLIGENT_ROUTING_RULES.topicRouting
-        ];
+    if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
+      const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
 
       Object.keys(topicRoute).forEach(userType => {
         const userRoute = topicRoute[userType as keyof typeof topicRoute];
@@ -910,15 +846,9 @@ export class IntelligentRouting {
     category: DocumentationCategory,
     pathKey: string
   ): string {
-    const corePaths = ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE;
-    if (provider in corePaths) {
-      const providerPaths = corePaths[provider as keyof typeof corePaths];
-      if (category in providerPaths) {
-        const categoryPaths = providerPaths[category as keyof typeof providerPaths];
-        if (pathKey in categoryPaths) {
-          return categoryPaths[pathKey as keyof typeof categoryPaths];
-        }
-      }
+    const paths = ENTERPRISE_DOCUMENTATION_PATHS[provider];
+    if (paths && paths[category] && paths[category][pathKey]) {
+      return paths[category][pathKey];
     }
     return `/${pathKey.toLowerCase().replace(/_/g, '-')}`;
   }

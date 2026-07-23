@@ -164,18 +164,6 @@ export {
   type Test003Response,
 } from './screenshot-remediation';
 
-export {
-  averageHash,
-  buildDodEvidencePackage,
-  DOD_KINDS,
-  hammingDistance,
-  parseDodEvidencePackage,
-  verifyDodEvidence,
-  type DodEvidencePackage,
-  type DodKind,
-  type DodVerifyResult,
-} from './dod';
-
 export { SecurityUtils } from './security';
 
 // Constants and configuration

@@ -475,12 +475,15 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const html = Bun.markdown.html("some markdown", {\n  tables: true, // GFM tables (default: true)\n  strikethrough: true, // GFM strikethrough (default: true)\n  tasklists: true, // GFM task lists (default: true)\n  tagFilter: true, // GFM tag filter for disallowed HTML tags\n  autolinks: true, // Autolink URLs, emails, and www. links\n});',
     },
   ],
-  // Official docs — Bun.markdown.render / .react Parser options (third arg)
+  // Official docs — Bun.markdown.render Parser options (third arg)
   'runtime/markdown#parser-options': [
     {
       lang: 'ts',
       body: 'const result = Bun.markdown.render(\n  "Visit www.example.com",\n  {\n    link: (children, { href }) => `[${children}](${href})`,\n    paragraph: children => children,\n  },\n  { autolinks: true },\n);',
     },
+  ],
+  // Official docs — Bun.markdown.react Parser options (#parser-options)
+  'runtime/markdown#parser-options': [
     {
       lang: 'tsx',
       body: 'const el = Bun.markdown.react("## Hello World", undefined, {\n  headings: { ids: true },\n  autolinks: true,\n});',

@@ -309,9 +309,8 @@ export class CacheManager<K = string, V = any> {
     }
 
     const lruKey = this.accessOrder[0];
-    if (lruKey === undefined) return;
-
     const entry = this.cache.get(lruKey);
+
     if (entry) {
       this.cache.delete(lruKey);
       this.updateMemoryUsage(-entry.size);

@@ -39,33 +39,6 @@ export interface DiagnosisEntry {
   metadata?: Record<string, any>;
 }
 
-const CRITICAL_DIAGNOSIS_KEYWORDS =
-  /\b(critical|security|unauthorized|forbidden|breach|compromised)\b/i;
-
-/** Derive diagnosis severity from an error when possible; otherwise use defaultSeverity. */
-export function diagnosisSeverityFromError(
-  error: unknown,
-  defaultSeverity: DiagnosisEntry['severity'] = 'medium',
-): DiagnosisEntry['severity'] {
-  if (error == null || typeof error !== 'object') {
-    return defaultSeverity;
-  }
-
-  const name = 'name' in error && typeof error.name === 'string' ? error.name : '';
-  const message = 'message' in error && typeof error.message === 'string' ? error.message : '';
-  const haystack = `${name} ${message}`;
-
-  if (name === 'SecurityError' || CRITICAL_DIAGNOSIS_KEYWORDS.test(haystack)) {
-    return 'critical';
-  }
-
-  if (name === 'TypeError' || name === 'ReferenceError' || name === 'NetworkError') {
-    return 'high';
-  }
-
-  return defaultSeverity;
-}
-
 export interface AuditEntry {
   id: string; // brand-ok — opaque entity primary key
   timestamp: string;
@@ -86,16 +59,6 @@ export interface MetricsEntry {
   category: string;
   period: string;
   metadata?: Record<string, any>;
-}
-
-function requireValidatedKey(
-  result: { isValid: boolean; data?: string; errors: string[] },
-  label: string
-): string {
-  if (!result.isValid || result.data === undefined) {
-    throw new R2DataError(`Invalid ${label}: ${result.errors.join(', ') || 'missing data'}`);
-  }
-  return result.data;
 }
 
 /**
@@ -153,10 +116,12 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate input
-      const key = requireValidatedKey(
-        parseR2Key(`mcp/diagnoses/${diagnosis.id}.json`),
-        'diagnosis key'
-      );
+      const keyValidation = parseR2Key(`mcp/diagnoses/${diagnosis.id}.json`);
+      if (!keyValidation.isValid) {
+        throw new R2DataError(`Invalid diagnosis key: ${keyValidation.errors.join(', ')}`);
+      }
+
+      const key = keyValidation.data;
 
       // Store with retry
       await safeAsyncWithRetry(() => this.putJSON(key, diagnosis), 'storeDiagnosis', 3, 1000);
@@ -179,7 +144,12 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate input
-      const key = requireValidatedKey(parseR2Key(`mcp/audits/${audit.id}.json`), 'audit key');
+      const keyValidation = parseR2Key(`mcp/audits/${audit.id}.json`);
+      if (!keyValidation.isValid) {
+        throw new R2DataError(`Invalid audit key: ${keyValidation.errors.join(', ')}`);
+      }
+
+      const key = keyValidation.data;
 
       // Store with retry
       await safeAsyncWithRetry(() => this.putJSON(key, audit), 'storeAuditEntry', 3, 1000);
@@ -243,9 +213,9 @@ export class R2MCPIntegration {
       );
 
       // Filter successful results
-      const fullEntries: AuditEntry[] = results
-        .map(result => result.data)
-        .filter((entry): entry is AuditEntry => entry != null);
+      const fullEntries = results
+        .filter(result => result.success && result.data)
+        .map(result => result.data);
 
       // Cache results
       await globalCache.set(cacheKey, fullEntries, {
@@ -309,9 +279,9 @@ export class R2MCPIntegration {
       );
 
       // Filter successful results
-      const fullEntries: DiagnosisEntry[] = results
-        .map(result => result.data)
-        .filter((entry): entry is DiagnosisEntry => entry != null);
+      const fullEntries = results
+        .filter(result => result.success && result.data)
+        .map(result => result.data);
 
       // Cache results
       await globalCache.set(cacheKey, fullEntries, {
@@ -334,10 +304,12 @@ export class R2MCPIntegration {
       this.ensureInitialized();
 
       // Validate input
-      const key = requireValidatedKey(
-        parseR2Key(`mcp/metrics/${metrics.id}.json`),
-        'metrics key'
-      );
+      const keyValidation = parseR2Key(`mcp/metrics/${metrics.id}.json`);
+      if (!keyValidation.isValid) {
+        throw new R2DataError(`Invalid metrics key: ${keyValidation.errors.join(', ')}`);
+      }
+
+      const key = keyValidation.data;
 
       // Store with retry
       await safeAsyncWithRetry(() => this.putJSON(key, metrics), 'storeMetrics', 3, 1000);
@@ -359,7 +331,13 @@ export class R2MCPIntegration {
     try {
       this.ensureInitialized();
 
-      const validatedKey = requireValidatedKey(parseR2Key(key), 'key');
+      // Validate key
+      const keyValidation = parseR2Key(key);
+      if (!keyValidation.isValid) {
+        throw new R2DataError(`Invalid key: ${keyValidation.errors.join(', ')}`);
+      }
+
+      const validatedKey = keyValidation.data;
 
       // Try cache first
       const cached = await globalCache.get<T>(validatedKey);
@@ -395,7 +373,13 @@ export class R2MCPIntegration {
     try {
       this.ensureInitialized();
 
-      const validatedKey = requireValidatedKey(parseR2Key(key), 'key');
+      // Validate key
+      const keyValidation = parseR2Key(key);
+      if (!keyValidation.isValid) {
+        throw new R2DataError(`Invalid key: ${keyValidation.errors.join(', ')}`);
+      }
+
+      const validatedKey = keyValidation.data;
 
       // Store in R2 (simulated)
       console.info(styled(`📤 Storing JSON: ${validatedKey}`, 'muted'));
@@ -421,13 +405,19 @@ export class R2MCPIntegration {
     try {
       this.ensureInitialized();
 
-      const validatedKey = requireValidatedKey(parseR2Key(key), 'key for signed URL');
+      // Validate key
+      const keyValidation = parseR2Key(key);
+      if (!keyValidation.isValid) {
+        throw new R2DataError(`Invalid key for signed URL: ${keyValidation.errors.join(', ')}`);
+      }
+
+      const validatedKey = keyValidation.data;
 
       // Create base URL
       const baseURL = `https://${this.config.accountId}.r2.cloudflarestorage.com/${this.config.bucketName}/${validatedKey}`;
 
       // Add fragment with metadata
-      const fragment: Record<string, string> = {
+      const fragment = {
         expires: new Date(Date.now() + expiresIn * 1000).toISOString(),
         bucket: this.config.bucketName,
         key: validatedKey,

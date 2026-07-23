@@ -223,10 +223,7 @@ function stdDev(nums: number[]): number {
 
 function percentiles(nums: number[]): Record<string, number> {
   const sorted = [...nums].sort((a, b) => a - b);
-  const at = (p: number): number => {
-    if (sorted.length === 0) return 0;
-    return sorted[Math.floor(sorted.length * p)] ?? sorted[sorted.length - 1] ?? 0;
-  };
+  const at = (p: number) => sorted[Math.floor(sorted.length * p)] ?? sorted[sorted.length - 1];
   return { p50: at(0.5), p90: at(0.9), p95: at(0.95), p99: at(0.99) };
 }
 

@@ -93,13 +93,12 @@ export class InputSanitizer {
       return {};
     }
 
-    const record = input as Record<string, unknown>;
     const sanitized: Record<string, any> = {};
-    const keys = Object.keys(record).slice(0, 50); // Limit object size
+    const keys = Object.keys(input).slice(0, 50); // Limit object size
 
     for (const key of keys) {
       if (typeof key === 'string' && key.length <= 100) {
-        sanitized[key] = record[key];
+        sanitized[key] = input[key];
       }
     }
 

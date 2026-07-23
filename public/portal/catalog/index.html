@@ -12,32 +12,22 @@
     .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
     .stat-card .stat-num { font-size: 28px; font-weight: 600; }
     .stat-card .stat-label { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
-    .stat-card .stat-bar { height: 4px; border-radius: 2px; margin-top: 8px; overflow: hidden; background: var(--surface-hover); }
-    .stat-card .stat-fill { height: 100%; border-radius: 2px; transition: width .4s; }
-    .stat-fill.sportsbook { background: var(--accent); }
-    .stat-fill.exchange { background: var(--green); }
-    .stat-fill.dfs { background: var(--yellow); }
-    .stat-fill.crypto_sportsbook { background: #a855f7; }
-    .filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-    .filter-section { display: flex; align-items: center; gap: 8px; }
-    .filter-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); white-space: nowrap; }
+    .filter-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
     .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-    .filter-chip { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text-dim); cursor: pointer; transition: all .15s; }
-    .filter-chip:hover { border-color: var(--accent); color: var(--text); }
+    .filter-chip { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text-dim); cursor: pointer; }
     .filter-chip.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
-    #search, #sort-select { padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); font-size: 13px; }
-    #search { width: 220px; }
+    #sort-select { padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); font-size: 12px; }
+    #search { padding: 6px 12px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text); font-size: 13px; width: 240px; }
     .account-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
-    .account-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color .15s; cursor: pointer; }
+    .account-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color .15s; }
     .account-card:hover { border-color: var(--accent); }
     .account-card.active { border-left: 4px solid var(--green); }
     .account-card.inactive { border-left: 4px solid var(--yellow); }
     .account-card.limited { border-left: 4px solid var(--red); }
-    .account-card.closed { border-left: 4px solid var(--text-dim); }
     .account-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
     .account-platform { font-size: 16px; font-weight: 600; color: var(--accent); }
     .account-identifier { font-size: 12px; font-family: monospace; color: var(--text-dim); }
-    .account-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .account-meta { display: flex; gap: 12px; margin-bottom: 8px; }
     .account-category { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; padding: 2px 8px; border-radius: 4px; background: var(--accent-glow); color: var(--accent); }
     .account-balance { font-size: 18px; font-weight: 600; }
     .account-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); }
@@ -45,18 +35,7 @@
     .status-active { background: rgba(46,204,113,.15); color: var(--green); }
     .status-inactive { background: rgba(243,156,18,.15); color: var(--yellow); }
     .status-limited { background: rgba(231,76,60,.15); color: var(--red); }
-    .status-closed { background: rgba(139,148,158,.15); color: var(--text-dim); }
-    .detail-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 100; display: flex; align-items: flex-start; justify-content: flex-end; animation: fadeIn .15s ease; }
-    .detail-panel { width: min(500px, 90vw); max-height: 100vh; overflow-y: auto; background: var(--surface); border-left: 1px solid var(--border); padding: 32px 24px; animation: slideIn .2s ease; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    .detail-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; color: var(--text-dim); cursor: pointer; }
-    .detail-close:hover { color: var(--text); }
-    .detail-name { font-size: 20px; font-weight: 600; }
-    .detail-section { margin: 20px 0; }
-    .detail-section h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin-bottom: 8px; }
-    .detail-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; border-bottom: 1px solid rgba(48,54,61,.3); }
-    .detail-row span:last-child { color: var(--text-dim); }
+    .partner-name { color: var(--text-dim); }
     @media (max-width: 768px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .account-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -69,7 +48,6 @@
         <a href="/portal/" class="nav-link">Registry</a>
         <a href="/portal/ops" class="nav-link">Ops</a>
         <a href="/portal/catalog" class="nav-link active">Catalog</a>
-        <a href="/portal/dod" class="nav-link">DOD</a>
       </nav>
     </div>
   </header>
@@ -81,23 +59,12 @@
       <div class="stats-row">
         <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">accounts</div></div>
         <div class="stat-card"><div class="stat-num" id="stat-active">0</div><div class="stat-label">active</div></div>
-        <div class="stat-card"><div class="stat-num" id="stat-partners">0</div><div class="stat-label">partners</div></div>
-        <div class="stat-card"><div class="stat-num" id="stat-balance">$0</div><div class="stat-label">total balance</div><div class="stat-bar"><div class="stat-fill sportsbook" id="stat-bar-fill" style="width:0%"></div></div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-categories">0</div><div class="stat-label">categories</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-balance">$0</div><div class="stat-label">total balance</div></div>
       </div>
       <div class="filter-row">
-        <input type="text" id="search" placeholder="Search…" />
-        <div class="filter-section">
-          <span class="filter-label">Category</span>
-          <div id="filter-categories" class="filter-chips"></div>
-        </div>
-        <div class="filter-section">
-          <span class="filter-label">Status</span>
-          <div id="filter-statuses" class="filter-chips"></div>
-        </div>
-        <div class="filter-section">
-          <span class="filter-label">Partner</span>
-          <div id="filter-partners" class="filter-chips"></div>
-        </div>
+        <input type="text" id="search" placeholder="Search platform, partner, account…" />
+        <div id="filter-chips" class="filter-chips"></div>
         <select id="sort-select">
           <option value="name">Name</option>
           <option value="balance">Balance</option>
@@ -121,7 +88,7 @@
         const res = await fetch('/registry/catalog-snapshot.json');
         if (res.ok) { accounts = (await res.json()).accounts; render(); return; }
       } catch {}
-      $('error-banner').innerHTML = '<p>⚠️ Could not load catalog.</p>';
+      $('error-banner').innerHTML = '<p>⚠️ Could not load catalog. Deploy a static snapshot or connect the database.</p>';
       $('error-banner').classList.remove('hidden');
       $('loading').classList.add('hidden');
     }
@@ -136,72 +103,36 @@
 
     function renderStats() {
       const active = accounts.filter(a => a.status === 'active').length;
-      const partners = new Set(accounts.map(a => a.partner_name));
+      const cats = new Set(accounts.map(a => a.category));
       const bal = accounts.reduce((s, a) => s + (a.balance || 0), 0);
-      const cats = {};
-      accounts.forEach(a => { cats[a.category] = (cats[a.category] || 0) + 1; });
-      const topCat = Object.entries(cats).sort((a,b) => b[1] - a[1])[0]?.[0];
-
       $('stat-total').textContent = accounts.length;
       $('stat-active').textContent = active;
-      $('stat-partners').textContent = partners.size;
+      $('stat-categories').textContent = cats.size;
       $('stat-balance').textContent = '$' + bal.toLocaleString();
-      $('stat-bar-fill').style.width = topCat ? ((cats[topCat] || 0) / accounts.length * 100) + '%' : '0%';
-    }
-
-    function chipSet(id) {
-      return new Set([...document.querySelectorAll('#' + id + ' .active')].map(el => el.dataset.val));
     }
 
     function renderFilters() {
       const cats = [...new Set(accounts.map(a => a.category))].sort();
-      const statuses = [...new Set(accounts.map(a => a.status))].sort();
-      const partners = [...new Set(accounts.map(a => a.partner_name))].sort();
-      const activeCats = chipSet('filter-categories');
-      const activeStatuses = chipSet('filter-statuses');
-      const activePartners = chipSet('filter-partners');
-
-      $('filter-categories').innerHTML = cats.map(c =>
-        `<button class="filter-chip ${activeCats.size === 0 || activeCats.has(c) ? 'active' : ''}" data-val="${c}">${c}</button>`
-      ).join('');
-      $('filter-statuses').innerHTML = statuses.map(s =>
-        `<button class="filter-chip ${activeStatuses.size === 0 || activeStatuses.has(s) ? 'active' : ''}" data-val="${s}">${s}</button>`
-      ).join('');
-      $('filter-partners').innerHTML = partners.map(p =>
-        `<button class="filter-chip ${activePartners.size === 0 || activePartners.has(p) ? 'active' : ''}" data-val="${p}">${p}</button>`
-      ).join('');
-
-      ['filter-categories', 'filter-statuses', 'filter-partners'].forEach(id => {
-        $(id).querySelectorAll('button').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const set = chipSet(id);
-            if (set.size === 0) {
-              [...$(id).querySelectorAll('button')].forEach(b => b.classList.add('active'));
-            } else {
-              set.has(btn.dataset.val) ? set.delete(btn.dataset.val) : set.add(btn.dataset.val);
-            }
-            render();
-          });
+      const active = new Set([...document.querySelectorAll('#filter-chips .active')].map(el => el.dataset.cat));
+      $('filter-chips').innerHTML = cats.map(c => `
+        <button class="filter-chip ${active.has(c) || active.size === 0 ? 'active' : ''}" data-cat="${c}">${c}</button>
+      `).join('');
+      $('filter-chips').querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (active.size === 0) cats.forEach(c => active.add(c));
+          active.has(btn.dataset.cat) ? active.delete(btn.dataset.cat) : active.add(btn.dataset.cat);
+          render();
         });
       });
     }
 
-    function getActive(id) {
-      const set = chipSet(id);
-      if (set.size === 0) return [...document.querySelectorAll('#' + id + ' button')].map(b => b.dataset.val);
-      return set;
-    }
-
     function renderGrid() {
       const q = ($('search').value || '').toLowerCase();
-      const activeCats = getActive('filter-categories');
-      const activeStatuses = getActive('filter-statuses');
-      const activePartners = getActive('filter-partners');
+      const activeFilters = new Set([...document.querySelectorAll('#filter-chips .active')].map(el => el.dataset.cat));
+      if (activeFilters.size === 0) [...new Set(accounts.map(a => a.category))].forEach(c => activeFilters.add(c));
 
       let filtered = accounts.filter(a =>
-        activeCats.includes(a.category) &&
-        activeStatuses.includes(a.status) &&
-        activePartners.includes(a.partner_name) &&
+        activeFilters.has(a.category) &&
         (!q || a.platform?.toLowerCase().includes(q) || a.account_identifier?.toLowerCase().includes(q) || a.partner_name?.toLowerCase().includes(q))
       );
 
@@ -212,7 +143,7 @@
 
       $('account-grid').innerHTML = filtered.length
         ? filtered.map(a => `
-          <div class="account-card ${a.status}" data-account='${JSON.stringify(a).replace(/'/g, "&#39;")}'>
+          <div class="account-card ${a.status}">
             <div class="account-header">
               <span class="account-platform">${a.platform || '—'}</span>
               <span class="account-identifier">${a.account_identifier || '—'}</span>
@@ -223,54 +154,12 @@
             </div>
             <div class="account-balance">$${(a.balance || 0).toLocaleString()}</div>
             <div class="account-footer">
-              <span>${a.partner_name || '—'}</span>
+              <span class="partner-name">${a.partner_name || '—'} (${a.partner_type || '—'})</span>
               <span>${a.opened_at ? new Date(a.opened_at).toLocaleDateString() : '—'}</span>
             </div>
           </div>
         `).join('')
         : '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--text-dim)">No accounts match.</div>';
-
-      // Wire card click → detail modal
-      $('account-grid').querySelectorAll('.account-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const a = JSON.parse(card.dataset.account);
-          showDetail(a);
-        });
-      });
-    }
-
-    function showDetail(a) {
-      removeDetail();
-      document.body.insertAdjacentHTML('beforeend', `
-        <div id="detail-overlay" class="detail-overlay">
-          <div class="detail-panel">
-            <button class="detail-close">&times;</button>
-            <div class="detail-name">${a.platform || '—'}</div>
-            <div class="account-meta" style="margin-top:8px">
-              <span class="account-category">${a.category}${a.sub_category ? ' · ' + a.sub_category : ''}</span>
-              <span class="status-badge status-${a.status}">${a.status}</span>
-            </div>
-            <div class="account-balance" style="margin:12px 0;font-size:24px">$${(a.balance || 0).toLocaleString()}</div>
-            <div class="detail-section"><h3>Account</h3>
-              <div class="detail-row"><span>Identifier</span><span>${a.account_identifier || '—'}</span></div>
-              <div class="detail-row"><span>Partner</span><span>${a.partner_name || '—'} (${a.partner_type || '—'})</span></div>
-              <div class="detail-row"><span>Opened</span><span>${a.opened_at ? new Date(a.opened_at).toLocaleDateString() : '—'}</span></div>
-              <div class="detail-row"><span>Last Verified</span><span>${a.last_verified_at ? new Date(a.last_verified_at).toLocaleString() : 'Never'}</span></div>
-              <div class="detail-row"><span>Notes</span><span>${a.notes || '—'}</span></div>
-            </div>
-          </div>
-        </div>
-      `);
-      const overlay = document.getElementById('detail-overlay');
-      overlay.querySelector('.detail-close').addEventListener('click', removeDetail);
-      overlay.addEventListener('click', e => { if (e.target === overlay) removeDetail(); });
-      document.addEventListener('keydown', function esc(e) {
-        if (e.key === 'Escape') { removeDetail(); document.removeEventListener('keydown', esc); }
-      });
-    }
-
-    function removeDetail() {
-      document.getElementById('detail-overlay')?.remove();
     }
 
     $('search').addEventListener('input', renderGrid);

@@ -67,10 +67,6 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
   *Ratchet* → `bun test tests/fixtures/social-metadata/` · evidence `lib/docs/extract-metadata.ts` · [guide](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags)
 - **`blog-extraction-boundaries`** — article sans nav/footer (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/blog-extraction/` · evidence `lib/docs/blog-extract.ts`
-- **`blog-codeblocks-boundaries`** — `div.CodeBlock` harvest, Shiki strip, `bunBlog` URLs, token join (`boundary`)  
-  *Ratchet* → `bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts` · evidence `tools/bun-blog-codeblocks.ts` · `lib/docs/blog-codeblock-join.ts`
-- **`blog-codeblocks-journey`** — live v1.3.6 post → `fetchPostHtml` → ≥30 CodeBlocks (`journey`)  
-  *Ratchet* → `bun test tests/journey/blog-codeblocks-journey.test.ts` · human-only
 - **`fetch-page-boundaries`** — BunHarness page fetch: HTTPS, fragment strip, Accept/UA, 15s timeout, optional verbose, non-OK throw, success body unread (`boundary`)  
   *Ratchet* → `bun test tests/fixtures/fetch-page/` · evidence `lib/docs/fetch-page.ts` · [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request)  
   *Call-site DNS* → `dns.prefetch(hostname)` before fetchPage when host is known; do not use `fetch.preconnect` until Bun fixes Invalid port on default HTTPS (oven-sh/bun#21633)
@@ -88,8 +84,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**), `tsconfig.chec
 - **`unknown-param`** — bare `unknown` params stay at parse edges (`boundary`)  
   *Ratchet* → eslint `harness/no-unknown-function-param` (**error**) · `bun eslint --config eslint.bun-native.config.ts --quiet`
 - **`day-loop-typecheck`** — advertised `type-check` covers spine agent edit surfaces (`journey`)  
-  *Ratchet* → `bun run type-check` · `tsconfig.check.json` (extends [`tsconfig.bun.json`](../../tsconfig.bun.json); TypeScript **6.0.3** + `"types": ["bun"]` per [typescript-6](https://bun.com/docs/typescript-6))  
-  *Audit* → `bun run check:tsconfig-types` · `tools/tsconfig-types-audit.ts`
+  *Ratchet* → `bun run type-check` · `tsconfig.check.json`
 - **`lib-docs-typecheck`** — `lib/docs/**` inside day-loop type-check (no dual-era docs island) (`boundary` + `journey`)  
   *Ratchet* → `bun run type-check` · `tsconfig.check.json` include `lib/docs/**/*`
 - **`lib-utils-typecheck`** — `lib/utils/**` inside day-loop type-check (no dual-era utils island) (`boundary` + `journey`)  
@@ -162,7 +157,6 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` + `gateRe
 | `url-pattern-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-site-url.test.ts` |
 | `social-metadata-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/social-metadata/` |
 | `blog-extraction-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/blog-extraction/` |
-| `blog-codeblocks-boundaries` | continuous | `bun test tests/bun-blog-codeblocks.test.ts tests/blog-codeblock-join.test.ts` |
 | `fetch-page-boundaries` | continuous | `ci:harness` boundary-fixtures · `bun test tests/fixtures/fetch-page/` |
 | `factory-registry-cli-v1` | human-only | `bun test tests/registry.test.ts tests/cli.test.ts` |
 | `factory-registry-pages-proxy-v1` | human-only | `bun test tests/registry-pages-function.test.ts` |
@@ -219,7 +213,6 @@ Routing for `lib/` modules. **Bun docs** = oven-sh / bun.com. **Other external**
 | `url-pattern-boundaries` · `lib/docs/bun-site-url.ts` | claim · `tests/bun-site-url.test.ts` | [URLPattern](https://bun.com/blog/bun-v1.3.4#urlpattern-api) | — |
 | `social-metadata-boundaries` · `lib/docs/extract-metadata.ts` | claim · `tests/fixtures/social-metadata/` | [HTMLRewriter social meta](https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags) · [HTMLRewriter](https://bun.com/docs/runtime/html-rewriter) | — |
 | `blog-extraction-boundaries` · `lib/docs/blog-extract.ts` | claim · `tests/fixtures/blog-extraction/` | [HTMLRewriter](https://bun.com/docs/runtime/html-rewriter) | — |
-| `blog-codeblocks-boundaries` · `tools/bun-blog-codeblocks.ts` | claim · `tests/bun-blog-codeblocks.test.ts` · `lib/docs/blog-codeblock-join.ts` | [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options) | — |
 | `fetch-page-boundaries` · `lib/docs/fetch-page.ts` | claim · `tests/fixtures/fetch-page/` | [fetch](https://bun.com/docs/runtime/networking/fetch#sending-an-http-request) | Bun issue [oven-sh/bun#21633](https://github.com/oven-sh/bun/issues/21633) (`fetch.preconnect` deferred) |
 | `path-bun` · `lib/path-bun.ts` | claim · `bun run check:path-bun` | Bun path helpers (via `lib/path-bun` + `bun-doc-refs`) | — |
 | `bun-env` | claim · `bun run check:bun-env` | [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [environment variables](https://bun.com/docs/runtime/environment-variables) | — |
@@ -227,7 +220,7 @@ Routing for `lib/` modules. **Bun docs** = oven-sh / bun.com. **Other external**
 | harness ratchets (`coverage` · `orphans` · `complexity`) | [`lib/harness/README.md`](../../lib/harness/README.md) · [`code-quality.md`](code-quality.md) | — | [harness-engineering](https://github.com/lopopolo/harness-engineering) |
 | type-check islands · `lib/{docs,utils,core,security}` | claims `lib-*-typecheck` · `tsconfig.check.json` | — | — |
 | `audit-findings-catalog` · `lib/audit/` | [`docs/audit/README.md`](../audit/README.md) | — | — |
-| `factory-registry-cli-v1` · `lib/factory/` | claim this file · `tests/registry.test.ts` · `tests/cli.test.ts` · `object-store.ts` · `markdown.ts` · `tests/factory-object-store-request-payer.test.ts` | [S3Client](https://bun.com/docs/runtime/s3#bun-s3client-bun-s3) · [requestPayer](https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support) · [Bun.semver](https://bun.com/docs/runtime/semver) · [Bun.file](https://bun.com/docs/runtime/file-io#reading-files-bun-file) · [Bun.write](https://bun.com/docs/runtime/file-io#writing-files-bun-write) · [Bun.CryptoHasher](https://bun.com/docs/runtime/hashing#bun-cryptohasher) · [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [Bun.markdown](https://bun.com/docs/runtime/markdown#bun-markdown-html) · [Bun.TOML](https://bun.com/docs/runtime/toml) · [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options) · [Bun.spawn](https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn) | Cloudflare R2 (S3 SigV4) |
+| `factory-registry-cli-v1` · `lib/factory/` | claim this file · `tests/registry.test.ts` · `tests/cli.test.ts` · `object-store.ts` · `markdown.ts` | [S3Client](https://bun.com/docs/runtime/s3#bun-s3client-bun-s3) · [Bun.semver](https://bun.com/docs/runtime/semver) · [Bun.file](https://bun.com/docs/runtime/file-io#reading-files-bun-file) · [Bun.write](https://bun.com/docs/runtime/file-io#writing-files-bun-write) · [Bun.CryptoHasher](https://bun.com/docs/runtime/hashing#bun-cryptohasher) · [Bun.env](https://bun.com/docs/runtime/utils#bun-env) · [Bun.markdown](https://bun.com/docs/runtime/markdown#bun-markdown-html) · [Bun.TOML](https://bun.com/docs/runtime/toml) · [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options) · [Bun.spawn](https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn) | Cloudflare R2 (S3 SigV4) |
 | `factory-registry-pages-proxy-v1` · `functions/api/registry/` | claim this file · `tests/registry-pages-function.test.ts` · `public/portal/` · `public/registry/registry.json` | [Pages Functions](https://developers.cloudflare.com/pages/functions/) · [R2 bindings](https://developers.cloudflare.com/r2/api/workers/workers-api-reference/) — **no Bun.* on edge** | Cloudflare Pages + R2 binding |
 
 ### Inventory-only (no dedicated claim yet)

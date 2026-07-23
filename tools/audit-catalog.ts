@@ -695,11 +695,7 @@ export function searchAuditCatalog(catalog: AuditCatalogFile, query: string): Au
     const aliasKey = normalizeFindingId(alias);
     const concept = catalog.concepts.find(c => normalizeFindingId(c.id) === aliasKey);
     const finding = catalog.findings.find(f => normalizeFindingId(f.id) === aliasKey);
-    const primary: AuditCatalogEntry | undefined = concept
-      ? toConceptEntry(concept)
-      : finding
-        ? toFindingEntry(finding)
-        : undefined;
+    const primary = concept ?? finding;
     if (primary) {
       // Co-hits: findings that relate to the alias id or list the query in relatedDocs
       const relatedFindings = catalog.findings.filter(f => {
@@ -711,8 +707,8 @@ export function searchAuditCatalog(catalog: AuditCatalogFile, query: string): Au
       return [primary, ...relatedFindings];
     }
   }
-  const concepts = searchAuditConcepts(catalog.concepts, query).map(toConceptEntry);
-  const findings = searchAuditFindings(catalog.findings, query).map(toFindingEntry);
+  const concepts = searchAuditConcepts(catalog.concepts, query);
+  const findings = searchAuditFindings(catalog.findings, query);
   return rankHits([...concepts, ...findings], q);
 }
 

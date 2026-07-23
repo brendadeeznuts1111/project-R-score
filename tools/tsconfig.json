@@ -1,8 +1,10 @@
 {
-  "extends": "../tsconfig.bun.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"]
+    "noEmit": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true
   },
-  "include": ["*.ts", "cli/*.ts", "benchmarks/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.bench.ts"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
 }

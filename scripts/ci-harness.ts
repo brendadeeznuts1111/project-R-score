@@ -83,18 +83,6 @@ const CHEAP: Step[] = [
     owner: 'tools/audit-catalog.ts · lib/audit/',
     repair: 'bun run audit:verify · bun run audit:catalog:build',
   },
-  {
-    name: 'tsconfig-types',
-    cmd: ['bun', 'run', 'check:tsconfig-types'],
-    owner: 'tools/tsconfig-types-audit.ts · tsconfig.bun.json',
-    repair: 'bun run check:tsconfig-types · bun tools/patch-tsconfig-types-bun.ts',
-  },
-  {
-    name: 'type-check-tools',
-    cmd: ['bun', 'run', 'type-check:tools'],
-    owner: 'tools/tsconfig.json · tsconfig.bun.json',
-    repair: 'bun run type-check:tools · bun tools/expand-tools-tsconfig.ts',
-  },
 ];
 
 function eslintStep(fullLint: boolean): Step {

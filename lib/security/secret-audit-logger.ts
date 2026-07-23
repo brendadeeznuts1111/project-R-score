@@ -5,7 +5,7 @@ import { type UserId, type SessionId } from '../types/branded.ts';
 
 interface AuditEvent {
   timestamp: string;
-  operation: 'read' | 'write' | 'delete' | 'rotate' | 'access_attempt' | 'anomaly_detection';
+  operation: 'read' | 'write' | 'delete' | 'rotate' | 'access_attempt';
   secretName: string;
   service: string;
   userId?: UserId;

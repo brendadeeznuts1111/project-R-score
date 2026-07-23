@@ -8,11 +8,7 @@ import {
   factoryWagerRegistryUrlFromEnv,
   requireCloudflareApiToken,
 } from '../../config/r2-env.ts';
-import {
-  r2MCPIntegration,
-  diagnosisSeverityFromError,
-  type DiagnosisEntry,
-} from './r2-integration-fixed.ts';
+import { r2MCPIntegration } from './r2-integration-fixed.ts';
 import { domainIntegration } from './domain-integration';
 import { styled, FW_COLORS } from '../theme/colors';
 import { type AccountId, type ZoneId, asAccountId, parseZoneId } from '../types/branded.ts';
@@ -658,26 +654,21 @@ export class CloudflareDomainManager {
     }
 
     try {
-      const diagnosis: DiagnosisEntry = {
+      const diagnosis = {
         id: `cf-${subdomain}-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        issue: error.name || 'SubdomainError',
-        severity: diagnosisSeverityFromError(error, 'high'),
-        category: subdomain,
-        description: error.message || 'Subdomain operation failed',
-        recommendations: [fix],
-        resolved: false,
+        domain: 'factory-wager.com',
+        subdomain,
+        full_domain: subConfig.full_domain,
+        error: {
+          name: error.name || 'SubdomainError',
+          message: error.message || 'Subdomain operation failed',
+          stack: error.stack,
+        },
+        fix,
+        context: `cloudflare-${subdomain}-${context}`,
+        confidence: this.calculateSubdomainConfidence(subdomain, error),
         metadata: {
-          domain: 'factory-wager.com',
-          subdomain,
-          full_domain: subConfig.full_domain,
-          context: `cloudflare-${subdomain}-${context}`,
-          confidence: this.calculateSubdomainConfidence(subdomain, error),
-          error: {
-            name: error.name || 'SubdomainError',
-            message: error.message || 'Subdomain operation failed',
-            stack: error.stack,
-          },
           purpose: subConfig.purpose,
           dependencies: subConfig.dependencies,
           ssl_required: subConfig.ssl_required,

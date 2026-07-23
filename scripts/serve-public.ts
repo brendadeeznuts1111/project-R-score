@@ -9,14 +9,7 @@ Bun.serve({
     const url = new URL(req.url);
     let path = url.pathname === '/' ? '/index.html' : url.pathname;
 
-    // Try exact path first
-    let file = Bun.file(`public${path}`);
-    if (await file.exists()) {
-      return new Response(file);
-    }
-    // Try directory → index.html
-    if (!path.endsWith('/')) path += '/';
-    file = Bun.file(`public${path}index.html`);
+    const file = Bun.file(`public${path}`);
     if (await file.exists()) {
       return new Response(file);
     }
