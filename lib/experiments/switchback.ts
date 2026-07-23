@@ -127,7 +127,7 @@ export function createSwitchbackSchedule(
         $periodIndex: periodIndex,
         $startsAt: startsAt,
         $endsAt: endsAt,
-        $washoutDays,
+        $washoutDays: washoutDays,
         $createdAt: new Date().toISOString(),
       });
       periods.push({
