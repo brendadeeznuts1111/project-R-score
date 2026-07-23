@@ -318,12 +318,6 @@
           cardEl.className = `health-card ${ok ? 'ok' : 'bad'}`;
         }
       }).catch(() => {});
-        card(
-          'DOD queue',
-          mon.dodQueue != null ? String(mon.dodQueue) : '—',
-          'from monitoring snapshot'
-        ),
-      ].join('');
 
       raw.textContent = JSON.stringify(d, null, 2);
 

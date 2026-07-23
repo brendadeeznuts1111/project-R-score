@@ -85,7 +85,7 @@
       <div class="topbar-status">
         <a href="/portal/ops.md" class="nav-link nav-md" title="Markdown view">MD</a>
         <a href="/portal/health" class="topbar-health-link" title="System health">
-          <span class="health-dot ok" aria-hidden="true"></span>
+          <span id="health-dot" class="health-dot unknown" title="Health"></span>
           <span class="health-label">Health</span>
         </a>
       </div>
@@ -93,5 +93,15 @@
   </header>
   <operations-dashboard></operations-dashboard>
   <script type="module" src="/portal/operations-dashboard.js"></script>
+  <script>
+    // Poll health status for the dot indicator
+    setInterval(async () => {
+      try {
+        const res = await fetch('/api/health');
+        const ok = res.ok && (await res.json()).status === 'ok';
+        document.getElementById('health-dot').className = 'health-dot ' + (ok ? 'ok' : 'bad');
+      } catch { document.getElementById('health-dot').className = 'health-dot bad'; }
+    }, 15000);
+  </script>
 </body>
 </html>
