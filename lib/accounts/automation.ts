@@ -1,13 +1,31 @@
-// @see https://bun.sh/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 /**
- * Operations automation — cron jobs for growth checks and metrics.
+ * Operations automation — cron jobs for growth checks, metrics, and C5 coverage prediction.
  *
  * Run with: bun run lib/accounts/automation.ts
  * Or: bun run lib/accounts/automation.ts --once
+ *     bun run lib/accounts/automation.ts --once --coverage-prediction
  */
 
+import { openOperationsDb } from '../operations/db.ts';
+import { runDailyCoveragePredictionCycle } from '../prediction/index.ts';
 import { type TreeNodeId } from '../types/branded.ts';
 import { AccountSystem } from './accounts';
+
+// Daily coverage snapshot + prediction backtest (01:00 UTC)
+Bun.cron('ops-coverage-prediction', '0 1 * * *', () => {
+  const db = openOperationsDb();
+  try {
+    const result = runDailyCoveragePredictionCycle(db);
+    console.log(
+      `Coverage prediction: snapshot ${result.snapshotDate} ` +
+        `${result.snapshot.covered}/${result.snapshot.total} (${result.snapshot.pct}%) ` +
+        `newRows=${result.backtest.length} mae=${result.accuracy.mae.toFixed(2)} n=${result.accuracy.n}`
+    );
+  } finally {
+    db.close();
+  }
+});
 
 // Daily promotion eligibility check (9 AM)
 Bun.cron('ops-promotion-check', '0 9 * * *', async () => {
@@ -47,6 +65,18 @@ Bun.cron('ops-metrics-rollup', '0 0 * * *', async () => {
 
 // Run once and exit (for testing)
 if (Bun.argv.includes('--once')) {
+  if (Bun.argv.includes('--coverage-prediction')) {
+    console.log('Running coverage prediction cycle once...');
+    const db = openOperationsDb();
+    try {
+      const result = runDailyCoveragePredictionCycle(db);
+      console.log(Bun.inspect(result, { depth: 4 }));
+    } finally {
+      db.close();
+    }
+    process.exit(0);
+  }
+
   console.log('Running promotion check once...');
   const accounts = new AccountSystem();
 

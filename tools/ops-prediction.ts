@@ -14,7 +14,11 @@
  * @see lib/prediction/README.md
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
-import { getPredictionAccuracy, runCoverageBacktest } from '../lib/prediction/index.ts';
+import {
+  getPredictionAccuracy,
+  runCoverageBacktest,
+  runDailyCoveragePredictionCycle,
+} from '../lib/prediction/index.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const args = process.argv.slice(2);
@@ -34,6 +38,7 @@ function printHelp(): void {
 ops:prediction — coverage prediction backtest (ops C5)
 
 Commands:
+  daily    [--lookback N]     Snapshot coverage + idempotent backtest (cron entry)
   backtest [--from YYYY-MM-DD] [--to YYYY-MM-DD]
   accuracy
 
@@ -64,6 +69,20 @@ function main(): number {
   const db = openOperationsDb({ path: dbPath });
   try {
     switch (cmd) {
+      case 'daily': {
+        const lookback = Number(flag('lookback') ?? 30);
+        const result = runDailyCoveragePredictionCycle(db, {
+          lookbackDays: Number.isFinite(lookback) ? lookback : 30,
+        });
+        out({
+          snapshotDate: result.snapshotDate,
+          coverage: result.snapshot,
+          newBacktestRows: result.backtest.length,
+          accuracy: result.accuracy,
+          window: result.window,
+        });
+        return 0;
+      }
       case 'backtest': {
         const from = flag('from') ?? '2020-01-01';
         const to = flag('to') ?? new Date().toISOString().slice(0, 10);

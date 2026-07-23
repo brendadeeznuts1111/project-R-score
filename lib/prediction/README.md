@@ -5,10 +5,11 @@ SSOT lives here — not under `lib/operations/`.
 
 | Path | Role |
 |------|------|
-| [`tester.ts`](tester.ts) | `simulateCoveragePrediction` · `runCoverageBacktest` · `getPredictionAccuracy` |
+| [`tester.ts`](tester.ts) | `simulateCoveragePrediction` · `runCoverageBacktest` · `runDailyCoveragePredictionCycle` · `getPredictionAccuracy` |
 | [`schema.ts`](schema.ts) | `ensurePredictionSchema` → table `prediction_accuracy` |
 | [`index.ts`](index.ts) | Public barrel |
 | CLI | [`tools/ops-prediction.ts`](../../tools/ops-prediction.ts) · `bun run ops:prediction` |
+| Cron | [`lib/accounts/automation.ts`](../accounts/automation.ts) · `ops-coverage-prediction` @ 01:00 UTC |
 | Schema hook | `migrateSchema` in [`lib/operations/schema.ts`](../operations/schema.ts) |
 | Tests | [`tests/prediction-backtest.test.ts`](../../tests/prediction-backtest.test.ts) |
 | Skill | [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md) (C5) |
@@ -30,16 +31,23 @@ Each backtest row is persisted to `prediction_accuracy` with MAE/RMSE/bias rollu
 
 ```bash
 bun run ops:prediction --help
+# Daily loop (snapshot + idempotent backtest) — same as cron
+bun run ops:prediction daily --lookback 30
 bun run ops:prediction backtest --from 2025-01-01 --to 2025-12-31
 bun run ops:prediction accuracy
 bun run ops:prediction accuracy --json
+# Cron process (includes ops-coverage-prediction @ 01:00)
+bun run ops:automation --once --coverage-prediction
 ```
 
 Env: `OPS_DB_PATH` (same ops DB as experiments / provision).
+
+Backtest inserts are **idempotent** per `(prediction_type, prediction_date, model_version)` so daily cron does not double-count.
 
 ## Prove
 
 ```bash
 bun test tests/prediction-backtest.test.ts
 bun run ops:prediction --help
+bun run ops:prediction daily --json
 ```

@@ -126,10 +126,13 @@ bun run ops:experiments analyze --id <experimentId>
 
 ```bash
 bun test tests/prediction-backtest.test.ts tests/experiments-*.test.ts
+bun run ops:prediction daily --lookback 30
 bun run ops:prediction backtest --from 2024-01-01 --to 2024-12-31
 bun run ops:prediction accuracy
 # alias (same CLI):
 bun run ops:prediction-backtest --help
+# cron process (daily snapshot+backtest at 01:00 UTC)
+bun run ops:automation --once --coverage-prediction
 ```
 
 ### C4 extensions (policy · cluster · switchback)

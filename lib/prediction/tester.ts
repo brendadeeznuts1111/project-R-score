@@ -5,7 +5,11 @@
  * Writes rows to `prediction_accuracy` (see `schema.ts`).
  */
 import type { Database } from 'bun:sqlite';
-import { ensurePlatformCoverageSchema } from '../operations/platform-coverage.ts';
+import {
+  ensurePlatformCoverageSchema,
+  recordCoverageSnapshot,
+  type CoverageSummary,
+} from '../operations/platform-coverage.ts';
 import { ensurePredictionSchema } from './schema.ts';
 
 export type PredictionType = 'coverage' | 'arbitrage' | 'routing';
@@ -80,6 +84,18 @@ export function runCoverageBacktest(
   const now = new Date().toISOString();
 
   for (const snap of snapshots) {
+    // Idempotent: skip dates already scored for this model (safe for daily cron)
+    const already = db
+      .query(
+        `SELECT id FROM prediction_accuracy
+         WHERE prediction_type = 'coverage'
+           AND prediction_date = $d
+           AND model_version = $mv
+         LIMIT 1`
+      )
+      .get({ $d: snap.snapshot_date, $mv: modelVersion }) as { id: string } | null; // brand-ok
+    if (already) continue;
+
     const predicted = simulateCoveragePrediction(db, snap.snapshot_date);
     const actual = snap.coverage_percentage;
     const error = Math.abs(predicted - actual);
@@ -113,6 +129,46 @@ export function runCoverageBacktest(
     });
   }
   return results;
+}
+
+export type DailyCoverageCycleResult = {
+  snapshot: CoverageSummary;
+  snapshotDate: string;
+  /** Newly written backtest rows (empty if already scored today). */
+  backtest: PredictionTest[];
+  accuracy: AccuracySummary;
+  lookbackDays: number;
+  window: { from: string; to: string };
+};
+
+/**
+ * Daily ops loop: persist coverage snapshot, score naive predictor vs snapshots
+ * in the lookback window (idempotent per day/model), return accuracy rollup.
+ */
+export function runDailyCoveragePredictionCycle(
+  db: Database,
+  opts?: { lookbackDays?: number; asOf?: Date }
+): DailyCoverageCycleResult {
+  ensurePredictionSchema(db);
+  ensurePlatformCoverageSchema(db);
+
+  const asOf = opts?.asOf ?? new Date();
+  const lookbackDays = opts?.lookbackDays ?? 30;
+  const snapshot = recordCoverageSnapshot(db);
+  const to = asOf.toISOString().slice(0, 10);
+  const fromDate = new Date(asOf.getTime() - lookbackDays * 86_400_000);
+  const from = fromDate.toISOString().slice(0, 10);
+  const backtest = runCoverageBacktest(db, from, to);
+  const accuracy = getPredictionAccuracy(db, 'coverage');
+
+  return {
+    snapshot,
+    snapshotDate: to,
+    backtest,
+    accuracy,
+    lookbackDays,
+    window: { from, to },
+  };
 }
 
 export function getPredictionAccuracy(
