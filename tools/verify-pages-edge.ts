@@ -74,6 +74,12 @@ async function main() {
       if (!html.includes('/portal/topbar.js')) throw new Error('missing topbar.js script tag');
       return 'includes shared portal scripts';
     }),
+    check('proof-taxonomy-audit.json', () =>
+      expectJson('/registry/proof-taxonomy-audit.json', j => {
+        if (j.type !== 'ProofTaxonomyAuditReport') throw new Error(`type=${j.type}`);
+        if (!Array.isArray(j.audits)) throw new Error('missing audits[]');
+      })
+    ),
   ]);
 
   for (const c of checks) {

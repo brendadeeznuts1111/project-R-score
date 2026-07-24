@@ -1,16 +1,16 @@
 {
   "type": "ChannelAwareVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T04:33:08.160Z",
+  "timestamp": "2026-07-24T04:51:04.017Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "semanticTags": {
     "channel": "stable",
     "targetVersion": "1.4.0",
     "latestAtTestTime": "1.4.0",
-    "testSuiteCommit": "9d0180ccfdba2dffdb2f9ab91f207e1947b1abf7",
-    "provenanceId": "local-2026-07-24T04-33-08-160Z",
-    "testedAt": "2026-07-24T04:33:08.160Z",
+    "testSuiteCommit": "bc36087cb9a5ea134f8b0138bdd5e430ba9bbaa2",
+    "provenanceId": "local-2026-07-24T04-51-04-017Z",
+    "testedAt": "2026-07-24T04:51:04.017Z",
     "bunRevision": "a227ad991b62",
     "runtimeVersion": "1.4.0",
     "platform": "darwin",
@@ -192,7 +192,7 @@
       }
     }
   },
-  "proofHash": "987f18a5433a4e5b1056f488a26ff3147b30da268884869164e3ee11e86c254d",
+  "proofHash": "da6180712744193a50f7c495efe35463d564961ec495a92bd8b44d3ea17b1675",
   "jsonLd": {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -200,7 +200,7 @@
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any",
     "softwareVersion": "1.4.0",
-    "dateModified": "2026-07-24T04:33:08.160Z",
+    "dateModified": "2026-07-24T04:51:04.017Z",
     "identifier": "1.4.0",
     "featureList": [
       "bundler",
@@ -228,7 +228,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:33:08.160Z",
+        "datePublished": "2026-07-24T04:51:04.017Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -244,7 +244,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:33:08.160Z",
+        "datePublished": "2026-07-24T04:51:04.017Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -260,7 +260,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:33:08.160Z",
+        "datePublished": "2026-07-24T04:51:04.017Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -276,7 +276,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:33:08.160Z",
+        "datePublished": "2026-07-24T04:51:04.017Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -292,7 +292,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:33:08.160Z",
+        "datePublished": "2026-07-24T04:51:04.017Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -308,7 +308,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:33:08.160Z",
+        "datePublished": "2026-07-24T04:51:04.017Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"

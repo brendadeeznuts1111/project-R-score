@@ -314,5 +314,12 @@ describe('tools/verify-bun-release.ts', () => {
       BUN_V1314_ANCHORS['tls-getcacertificates-system-now-works-without-use-system-ca']
     );
     expect(proof.jsonLd?.['@type']).toBe('SoftwareApplication');
+
+    // Rebake channel-meta so downstream consistency tests see aligned artifacts.
+    const meta = Bun.spawn(['bun', 'tools/verify-channel-meta.ts', '--prefer-artifacts', '--save'], {
+      stdout: 'ignore',
+      stderr: 'ignore',
+    });
+    expect(await meta.exited).toBe(0);
   }, { timeout: 60_000 });
 });

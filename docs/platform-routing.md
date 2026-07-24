@@ -72,6 +72,7 @@ Publish remains auth-gated.
 - Live local: `/api/operations/summary` (SQLite)
 - Pages: same path via edge function → `public/registry/ops-summary.json`
 - Proofs: `/registry/*.json` including `proof-taxonomy-audit.json`
+- Ops summary embeds a `proofTaxonomy` slice (contracts/consistency/hash); dashboard uses slice first, full audit JSON for the contract table
 
 Regenerate: `bun run ops:snapshot` (writes summary + taxonomy audit + routing proofs).
 

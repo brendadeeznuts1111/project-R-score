@@ -300,7 +300,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `operations-ssot-v1`               | human-only | operations Phase 1–3 unit suites                                                              |
 | `telegram-webhook-v1`              | human-only | `bun test tests/telegram-bot.test.ts`                                                         |
 | `ops-snapshot-cron-v1`             | human-only | `bun test tests/ops-snapshot-cron.test.ts`                                                    |
-| `channel-meta-verification-v1`     | human-only | channel-suite + subsystem + bundler + networking + taxonomy + meta-refresh + consistency      |
+| `channel-meta-verification-v1`     | continuous | `ci:harness` channel-meta step · also `check:release-tracker`                                 |
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                              |
 | `bun-http-server-docs`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts`                    |
 | `path-bun`                         | continuous | pre-commit (lib\|tools staged) · `ci:harness`                                                 |
@@ -332,7 +332,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 24 · workflow 8 · human-only 30.
+continuous 25 · workflow 8 · human-only 29.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.

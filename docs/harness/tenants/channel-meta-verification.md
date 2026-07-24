@@ -1,6 +1,7 @@
 # Channel meta-verification
 
-**Proof** `channel-meta-verification-v1` (claim in `lib/harness/proof.ts`)
+**Proof** `channel-meta-verification-v1` (claim in `lib/harness/proof.ts`) ·
+gate `continuous` / `ci:harness` (+ day-loop `check:release-tracker`)
 
 Orthogonal lanes for Bun product pillars under a release **channel**:
 
@@ -21,7 +22,7 @@ bun run ops:snapshot                # refreshes channel meta unless --no-channel
 bun run harness:status              # discover claim
 ```
 
-`verify:channel:meta` / `ops:snapshot` strip prior `runtime-nits:` / `bundler:` / `networking:` rows, then merge pillar artifacts — idempotent for Pages bake without a full release re-run.
+`verify:channel:meta` / `ops:snapshot` strip prior `runtime-nits:` / `bundler:` / `networking:` rows, then merge pillar artifacts — idempotent for Pages bake without a full release re-run. Live `suite=all --save` also writes the bake sidecar. **Release-only** saves (`suite=release` / `verify-bun-release --save`) invalidate the bake so ops cannot stay green on a drifted meta claim.
 
 Bake sidecar: `public/registry/channel-meta-bake.json` (sources + rollup). Embedded in `ops-summary.json` / `static.json` as `channelMeta`; ops dashboard shows bake line on the release panel + snapshot health.
 

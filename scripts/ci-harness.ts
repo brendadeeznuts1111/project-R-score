@@ -255,8 +255,27 @@ const BOUNDARY_FIXTURES: Step = {
     'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/fixtures/fetch-page/ tests/bun-site-url.test.ts tests/bun-docs-catalog.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
 };
 
+/** Channel meta-verification — bake/release drift + suite isolation (claim channel-meta-verification-v1). */
+const CHANNEL_META_FIXTURES: Step = {
+  name: 'channel-meta-verification',
+  cmd: [
+    'bun',
+    'test',
+    'tests/channel-suite.test.ts',
+    'tests/verification-subsystem.test.ts',
+    'tests/bundler-loader-probes.test.ts',
+    'tests/networking-channel.test.ts',
+    'tests/verification-proof-taxonomy.test.ts',
+    'tests/channel-meta-refresh.test.ts',
+    'tests/verification-proof-consistency.test.ts',
+  ],
+  owner: 'channel-meta-verification-v1 ProofPath',
+  repair:
+    'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts tests/verification-proof-consistency.test.ts · bun run verify:channel:meta',
+};
+
 if (!fast) {
-  await runSerial([BOUNDARY_FIXTURES], verbose, timings, wantFailJson, mode);
+  await runSerial([BOUNDARY_FIXTURES, CHANNEL_META_FIXTURES], verbose, timings, wantFailJson, mode);
 }
 
 /** Dual-catalog parents + catalog meta — was human-only / test:changed luck. */

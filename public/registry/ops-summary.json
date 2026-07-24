@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T04:43:10.733Z",
+  "generated": "2026-07-24T04:51:50.351Z",
   "liquidity": {
     "total": 0
   },
@@ -43,11 +43,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "088a7e7398c6f6243fddb32bdbab2814c66fd2a670117ccedc0f9d8b38d905d6",
+    "proofHash": "1eb388f2f5e7803fd19045981ecbeeb1c3c1c2c9562a6e49ccb1340bfd59b883",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T04:43:10.733Z"
+    "timestamp": "2026-07-24T04:51:50.353Z"
   },
   "registryClient": {
     "available": true,
@@ -79,20 +79,21 @@
     "ok": true,
     "contracts": 7,
     "contractsOk": 7,
-    "consistencyOk": 5,
-    "consistencyTotal": 5,
-    "proofHash": "9cd8ec513038d2ed2a914c03981d23ccf353e66ad1bffe62a48252652594c006",
-    "timestamp": "2026-07-24T04:43:10.729Z",
+    "consistencyOk": 11,
+    "consistencyTotal": 11,
+    "proofHash": "ac6bf1a124d95b9e2fa3799e268f1bee6ed5bf58b3f8b890915495e85dd4e698",
+    "timestamp": "2026-07-24T04:51:50.349Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
     "available": true,
     "ok": true,
+    "stale": false,
     "passed": 75,
     "total": 75,
     "status": "pass",
-    "proofHash": "1a203210514d7f7e03753ab2ba667a6adf8b60590ec4d6e3e1bdb9cf7e33f62b",
-    "updatedAt": "2026-07-24T04:43:10.731Z",
+    "proofHash": "a41c73515b9808ddbaa1a7665de3b26665828a5166be56ba8997a0b80ecd525e",
+    "updatedAt": "2026-07-24T04:51:50.347Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",

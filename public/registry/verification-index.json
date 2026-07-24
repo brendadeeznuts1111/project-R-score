@@ -1,7 +1,7 @@
 {
   "type": "VerificationSnapshotIndex",
   "version": "1.0.0",
-  "updatedAt": "2026-07-24T04:49:45.231Z",
+  "updatedAt": "2026-07-24T04:51:56.428Z",
   "canonical": "public/registry/release-features.json",
   "snapshots": [
     {
@@ -11,8 +11,8 @@
       "suite": "all",
       "runtimeVersion": "1.4.0",
       "path": "public/registry/verification-stable-1.4.0.json",
-      "proofHash": "5155fa9246416d0e6ae3d7ceb58ecb7a9e841530ea9afb83f088dad4742fc582",
-      "testedAt": "2026-07-24T04:43:47.931Z",
+      "proofHash": "a41c73515b9808ddbaa1a7665de3b26665828a5166be56ba8997a0b80ecd525e",
+      "testedAt": "2026-07-24T04:51:43.355Z",
       "status": "pass"
     },
     {

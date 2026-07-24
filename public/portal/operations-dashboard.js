@@ -665,6 +665,7 @@ class OperationsDashboard extends HTMLElement {
     }
 
     const tax = this.proofTaxonomyAudit || {};
+    const pt = d.proofTaxonomy;
     const taxPass = this.querySelector('#taxonomy-pass');
     if (taxPass) {
       const audits = tax.audits || [];
@@ -673,6 +674,11 @@ class OperationsDashboard extends HTMLElement {
         taxPass.textContent = tax.ok ? `${okCount}/${audits.length} contracts` : `${okCount}/${audits.length} failing`;
         taxPass.classList.toggle('ok', tax.ok === true);
         taxPass.classList.toggle('bad', tax.ok !== true);
+      } else if (pt?.available && pt.contracts != null) {
+        const okCount = pt.contractsOk ?? 0;
+        taxPass.textContent = pt.ok ? `${okCount}/${pt.contracts} contracts` : `${okCount}/${pt.contracts} failing`;
+        taxPass.classList.toggle('ok', pt.ok === true);
+        taxPass.classList.toggle('bad', pt.ok !== true);
       } else {
         taxPass.textContent = '—';
         taxPass.classList.remove('ok', 'bad');
@@ -680,19 +686,24 @@ class OperationsDashboard extends HTMLElement {
     }
     const taxDetail = this.querySelector('#taxonomy-detail');
     if (taxDetail) {
-      if (tax.timestamp) {
+      const ts = tax.timestamp || pt?.timestamp;
+      if (ts) {
         const consistency = tax.consistency || [];
-        const cOk = consistency.filter(c => c.ok).length;
-        const cTotal = consistency.length;
+        const cOk =
+          consistency.length > 0
+            ? consistency.filter(c => c.ok).length
+            : (pt?.consistencyOk ?? 0);
+        const cTotal = consistency.length > 0 ? consistency.length : (pt?.consistencyTotal ?? 0);
         const cBit = cTotal > 0 ? ` · consistency ${cOk}/${cTotal}` : '';
-        taxDetail.textContent = `audited ${String(tax.timestamp).slice(0, 19)}${cBit}`;
+        taxDetail.textContent = `audited ${String(ts).slice(0, 19)}${cBit}`;
       } else {
         taxDetail.textContent = 'Run bun run verify:proof-taxonomy:save';
       }
     }
     const taxHash = this.querySelector('#taxonomy-hash');
     if (taxHash) {
-      taxHash.textContent = tax.proofHash ? `sha256 ${String(tax.proofHash).slice(0, 16)}…` : '';
+      const hash = tax.proofHash || pt?.proofHash;
+      taxHash.textContent = hash ? `sha256 ${String(hash).slice(0, 16)}…` : '';
     }
     const taxTable = this.querySelector('#taxonomy-table');
     const taxTbody = taxTable?.querySelector('tbody');
@@ -1083,9 +1094,17 @@ class OperationsDashboard extends HTMLElement {
     }
     const bundlerDetail = this.querySelector('#bundler-loaders-detail');
     if (bundlerDetail) {
-      bundlerDetail.textContent = bundler.bunVersion
-        ? `Bun ${bundler.bunVersion} · css · jsonc · subsystem bundler${formatBySubsystem(bundler.summary?.bySubsystem)}`
-        : 'Run bun run verify:bundler:save';
+      if (bundler.bunVersion) {
+        const loaders = [
+          ...new Set(
+            (bundler.results || []).map(r => r.loader).filter(Boolean)
+          ),
+        ].join(' · ');
+        const loaderBit = loaders || 'loaders';
+        bundlerDetail.textContent = `Bun ${bundler.bunVersion} · ${loaderBit} · subsystem bundler${formatBySubsystem(bundler.summary?.bySubsystem)}`;
+      } else {
+        bundlerDetail.textContent = 'Run bun run verify:bundler:save';
+      }
     }
     const bundlerHash = this.querySelector('#bundler-loaders-hash');
     if (bundlerHash) {

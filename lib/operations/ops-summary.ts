@@ -400,14 +400,22 @@ export function loadChannelMetaSlice(
       bySubsystem?: OpsSummaryChannelMeta['bySubsystem'];
       sources?: OpsSummaryChannelMeta['sources'];
     };
-    if (bake.type === 'ChannelMetaBake' || bake.proofHash) {
+    if (bake.type === 'ChannelMetaBake') {
       let stale = false;
       try {
         const relMapped = Bun.mmap(releasePath);
         const rel = JSON.parse(new TextDecoder().decode(relMapped)) as {
           proofHash?: string;
+          results?: Array<{ name?: string }>;
         };
         if (bake.proofHash && rel.proofHash && bake.proofHash !== rel.proofHash) {
+          stale = true;
+        }
+        // Release-only overwrite left bake claiming suite=all embeds.
+        const hasEmbeds = (rel.results ?? []).some(r =>
+          /^(runtime-nits:|bundler:|networking:)/.test(String(r.name ?? ''))
+        );
+        if (!hasEmbeds && (bake.total ?? 0) > 0) {
           stale = true;
         }
       } catch {

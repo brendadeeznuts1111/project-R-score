@@ -17,6 +17,7 @@
  *
  * Writes (SSOT paths):
  *   public/registry/ops-summary.json
+ *   public/registry/proof-taxonomy-audit.json
  *   public/registry/monitoring.json
  *   public/registry/static.json          — composite fast snapshot
  *   public/registry/@factorywager/bun-utils-test/latest.json
