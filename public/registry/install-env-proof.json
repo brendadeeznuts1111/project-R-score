@@ -1,7 +1,7 @@
 {
   "type": "InstallEnvVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-23T22:37:06.523Z",
+  "timestamp": "2026-07-24T03:14:06.667Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "reportPath": "/registry/install-env-proof.json",
@@ -66,9 +66,9 @@
       "envVar": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
       "canonicalKey": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
       "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
-      "expected": "dry-run succeeds with lock present when skip-load env set",
-      "actual": "first=0 lock=false skip=0",
-      "passed": false,
+      "expected": "dry-run succeeds with stub bun.lock when skip-load env set",
+      "actual": "skip-load dry-run exit=0 with bun.lock present",
+      "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
@@ -89,12 +89,41 @@
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
       }
+    },
+    {
+      "envVar": "install.scopes",
+      "canonicalKey": "install.scopes",
+      "name": "install.scopes",
+      "expected": "scoped @factorywager dry-run or bun info via bunfig registry URL",
+      "actual": "local-serve-public: no npm packument; production-apex: no npm packument",
+      "passed": false,
+      "canonical": "https://bun.com/docs/runtime/bunfig#install-registry",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/bunfig#install-registry",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
+        "report": "/registry/install-env-proof.json"
+      }
+    },
+    {
+      "envVar": "registry-read-plane",
+      "canonicalKey": "registry-read-plane",
+      "name": "registry-read-plane",
+      "expected": "RegistryClient.health() succeeds against R2-backed read plane",
+      "actual": "production-apex health status=ok packages=17",
+      "passed": true,
+      "canonical": "https://developers.cloudflare.com/pages/functions/bindings/#r2-bucket-bindings",
+      "lane": "production-apex",
+      "_links": {
+        "docs": "https://developers.cloudflare.com/pages/functions/bindings/#r2-bucket-bindings",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
+        "report": "/registry/install-env-proof.json"
+      }
     }
   ],
   "summary": {
-    "passed": 5,
-    "total": 6,
+    "passed": 7,
+    "total": 8,
     "status": "fail"
   },
-  "proofHash": "e9710fe6e31e4ccb61f0fb92d9c434a5a054c890762a757304c2ac7ba5aa4d01"
+  "proofHash": "e0090d6a15c2dc5361f4d896be5eee19491a17d5b72b2f7894fa138cc3fb263d"
 }

@@ -3,7 +3,7 @@
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
   "baseUrl": "https://score.factory-wager.com",
-  "timestamp": "2026-07-23T19:38:46.814Z",
+  "timestamp": "2026-07-24T03:13:28.891Z",
   "concurrency": 6,
   "probes": [
     {
@@ -12,7 +12,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 537.32,
+      "timeMs": 216.19,
       "contentType": "text/html",
       "note": "may be SPA HTML"
     },
@@ -22,7 +22,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 304.9,
+      "timeMs": 135.49,
       "contentType": "text/html",
       "note": "may be SPA HTML"
     },
@@ -32,7 +32,7 @@
       "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 342.63,
+      "timeMs": 122.51,
       "contentType": "application/json",
       "note": "index (local) or empty-key 400 (R2 gateway)"
     },
@@ -42,7 +42,7 @@
       "ok": true,
       "pass": false,
       "critical": false,
-      "timeMs": 444.21,
+      "timeMs": 285.92,
       "contentType": "text/html",
       "note": "placeholder package"
     },
@@ -52,7 +52,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 510.78,
+      "timeMs": 260.71,
       "contentType": "application/json",
       "note": "R2 optional; static path preferred"
     },
@@ -62,7 +62,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 474.69,
+      "timeMs": 227.72,
       "contentType": "application/json",
       "note": "R2 optional"
     },
@@ -72,7 +72,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 101.35,
+      "timeMs": 43.7,
       "contentType": "application/json",
       "note": "ops snapshot/live"
     },
@@ -82,7 +82,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 41.28,
+      "timeMs": 96.42,
       "contentType": "application/json",
       "note": "monitoring payload"
     },
@@ -92,7 +92,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 143.26,
+      "timeMs": 205.6,
       "contentType": "text/html"
     },
     {
@@ -101,7 +101,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 187.65,
+      "timeMs": 288.01,
       "contentType": "text/html"
     },
     {
@@ -110,7 +110,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 133.53,
+      "timeMs": 142.83,
       "contentType": "text/html",
       "note": "ops dashboard"
     },
@@ -120,7 +120,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 36.14,
+      "timeMs": 33.98,
       "contentType": "application/json",
       "note": "static ops metrics"
     },
@@ -130,7 +130,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 36.52,
+      "timeMs": 94.26,
       "contentType": "application/json",
       "note": "static bun utils proof"
     },
@@ -140,7 +140,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 103.2,
+      "timeMs": 117.98,
       "contentType": "application/json",
       "note": "this artifact (404 until first --write deploy)"
     },
@@ -150,7 +150,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 102.29,
+      "timeMs": 37.07,
       "contentType": "application/json",
       "note": "composite snapshot from ops:snapshot"
     },
@@ -160,17 +160,17 @@
       "ok": false,
       "pass": false,
       "critical": false,
-      "timeMs": 32.87,
+      "timeMs": 82.17,
       "contentType": "application/json",
       "note": "local serve-public static snapshot route"
     }
   ],
   "latency": {
-    "minMs": 32.87,
-    "maxMs": 537.32,
-    "meanMs": 220.79,
-    "p50Ms": 133.53,
-    "p95Ms": 537.32
+    "minMs": 33.98,
+    "maxMs": 288.01,
+    "meanMs": 149.41,
+    "p50Ms": 122.51,
+    "p95Ms": 288.01
   },
   "summary": {
     "total": 16,
@@ -181,45 +181,9 @@
     "criticalFailedPaths": []
   },
   "regression": {
-    "previousTimestamp": "2026-07-23T18:18:32.870Z",
-    "previousProofHash": "daec640ea45879f19642bf99510a0f329f2491accba9f4cc338d46c87990b9a8",
-    "changes": [
-      {
-        "path": "/api/registry",
-        "kind": "status",
-        "detail": "200 → 400"
-      },
-      {
-        "path": "/api/registry/@factorywager/test-pkg",
-        "kind": "status",
-        "detail": "404 → 200"
-      },
-      {
-        "path": "/api/registry/@factorywager/test-pkg",
-        "kind": "pass",
-        "detail": "pass → FAIL"
-      },
-      {
-        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
-        "kind": "status",
-        "detail": "404 → 200"
-      },
-      {
-        "path": "/api/registry/@factorywager/routing-test/latest.json",
-        "kind": "status",
-        "detail": "404 → 200"
-      },
-      {
-        "path": "/api/registry/static",
-        "kind": "status",
-        "detail": "200 → 400"
-      },
-      {
-        "path": "/api/registry/static",
-        "kind": "pass",
-        "detail": "pass → FAIL"
-      }
-    ]
+    "previousTimestamp": "2026-07-24T01:29:28.972Z",
+    "previousProofHash": "9ea4b8a2499f431edd83fe92589e8d2c54b20540f3e232e1e99f52f891ec7b6b",
+    "changes": []
   },
-  "proofHash": "cdde6780dd64e8c9e17cb6158452b1ee0b9fcecb7c8e6824451c3378332f417a"
+  "proofHash": "b78ca5087e3d0720ec0014cde8d4eaba31c6314f0bc9cfa750190400ec680b47"
 }

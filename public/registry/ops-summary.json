@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-23T19:38:47.447Z",
+  "generated": "2026-07-24T03:13:29.401Z",
   "liquidity": {
     "total": 0
   },
@@ -43,11 +43,36 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "fbf3890c8c6de65e221f5a26ad48b1030fe5b536f3fa3ee81616ee7093013202",
+    "proofHash": "bff319614310a9e340415e2182c0c3de4ea92a01ec0b09dfc388c47fc6abab47",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-23T19:38:47.448Z"
+    "timestamp": "2026-07-24T03:13:29.401Z"
+  },
+  "registryClient": {
+    "available": true,
+    "sdkVersion": "1.0.0",
+    "passed": 3,
+    "total": 3,
+    "status": "pass",
+    "proofHash": "38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f",
+    "timestamp": "2026-07-24T01:24:55.940Z",
+    "path": "/registry/registry-client-proof.json"
+  },
+  "docsCoverage": {
+    "available": true,
+    "ok": true,
+    "missingCanonicalCount": 0,
+    "catalogTracked": 13,
+    "catalogTotal": 13,
+    "overlayTracked": 232,
+    "overlayTotal": 232,
+    "referenceModuleCount": 44,
+    "referencePageCount": 57,
+    "indexStale": false,
+    "proofHash": "c74594ac19fd2bc94162c4ab8943ccec771c0430e51c6ef43317c712385c2fdc",
+    "timestamp": "2026-07-24T02:09:05.741Z",
+    "path": "/registry/docs-coverage-proof.json"
   },
   "routing": {
     "available": true,
@@ -58,13 +83,13 @@
     "httpOk": 14,
     "criticalFailed": 0,
     "errorRate": 0.125,
-    "meanMs": 220.79,
-    "p50Ms": 133.53,
-    "p95Ms": 537.32,
-    "maxMs": 537.32,
-    "proofHash": "cdde6780dd64e8c9e17cb6158452b1ee0b9fcecb7c8e6824451c3378332f417a",
-    "timestamp": "2026-07-23T19:38:46.814Z",
-    "regressions": 7,
+    "meanMs": 149.41,
+    "p50Ms": 122.51,
+    "p95Ms": 288.01,
+    "maxMs": 288.01,
+    "proofHash": "b78ca5087e3d0720ec0014cde8d4eaba31c6314f0bc9cfa750190400ec680b47",
+    "timestamp": "2026-07-24T03:13:28.891Z",
+    "regressions": 0,
     "criticalFailedPaths": [],
     "routes": [
       {
@@ -72,7 +97,7 @@
         "status": 200,
         "pass": false,
         "critical": false,
-        "timeMs": 444.21,
+        "timeMs": 285.92,
         "contentType": "text/html"
       },
       {
@@ -80,7 +105,7 @@
         "status": 400,
         "pass": false,
         "critical": false,
-        "timeMs": 32.87,
+        "timeMs": 82.17,
         "contentType": "application/json"
       },
       {
@@ -88,23 +113,15 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 133.53,
+        "timeMs": 142.83,
         "contentType": "text/html"
-      },
-      {
-        "path": "/api/operations/summary",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 101.35,
-        "contentType": "application/json"
       },
       {
         "path": "/api/monitoring",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 41.28,
+        "timeMs": 96.42,
         "contentType": "application/json"
       },
       {
@@ -112,7 +129,15 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 36.52,
+        "timeMs": 94.26,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/operations/summary",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 43.7,
         "contentType": "application/json"
       },
       {
@@ -120,15 +145,15 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 36.14,
+        "timeMs": 33.98,
         "contentType": "application/json"
       },
       {
-        "path": "/health",
+        "path": "/portal",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 537.32,
+        "timeMs": 288.01,
         "contentType": "text/html"
       },
       {
@@ -136,7 +161,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 510.78,
+        "timeMs": 260.71,
         "contentType": "application/json"
       },
       {
@@ -144,31 +169,15 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 474.69,
+        "timeMs": 227.72,
         "contentType": "application/json"
       },
       {
-        "path": "/api/registry",
-        "status": 400,
-        "pass": true,
-        "critical": false,
-        "timeMs": 342.63,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/ready",
+        "path": "/health",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 304.9,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/portal",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 187.65,
+        "timeMs": 216.19,
         "contentType": "text/html"
       },
       {
@@ -176,15 +185,31 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 143.26,
+        "timeMs": 205.6,
         "contentType": "text/html"
+      },
+      {
+        "path": "/ready",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 135.49,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/api/registry",
+        "status": 400,
+        "pass": true,
+        "critical": false,
+        "timeMs": 122.51,
+        "contentType": "application/json"
       },
       {
         "path": "/registry/@factorywager/routing-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 103.2,
+        "timeMs": 117.98,
         "contentType": "application/json"
       },
       {
@@ -192,132 +217,11 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 102.29,
+        "timeMs": 37.07,
         "contentType": "application/json"
       }
     ],
     "cached": false,
     "stale": false
-  },
-  "networking": {
-    "proofHash": "b1828bef692562b6b01bac80f5bf4eec2e88c084e8de3c43d7244ccf9c69ab7b",
-    "timestamp": "2026-07-23T19:38:47.458Z",
-    "bunVersion": "1.4.0",
-    "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "targets": [
-      {
-        "name": "Health",
-        "category": "ops",
-        "optimizations": {
-          "DNS Prefetch": {
-            "metric": "0.065ms",
-            "status": "PASS",
-            "detail": "dns.prefetch(\"127.0.0.1\", 3000)"
-          },
-          "DNS Cache": {
-            "metric": "size=2 total=13",
-            "status": "PASS",
-            "detail": "hits=6 miss=2 err=0"
-          },
-          "Preconnect": {
-            "metric": "tcp",
-            "status": "PASS",
-            "detail": "fetch.preconnect(http://127.0.0.1:3000)"
-          },
-          "Cold Fetch": {
-            "metric": "3.7ms (200)",
-            "status": "PASS"
-          },
-          "Warm Fetch": {
-            "metric": "0.3ms (200)",
-            "status": "PASS",
-            "detail": "faster than cold (likely reuse)"
-          },
-          "Buffer": {
-            "metric": "0.2ms (4264 B)",
-            "status": "PASS"
-          },
-          "Disk Write": {
-            "metric": "0.3ms",
-            "status": "PASS",
-            "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-ops-1784835527455.bin"
-          }
-        },
-        "summary": {
-          "coldFetchMs": 3.733834,
-          "warmFetchMs": 0.271375,
-          "reuseEfficiency": 13.758946107784432,
-          "protocol": "unknown",
-          "compression": "none",
-          "dnsCacheHit": true,
-          "keepAlive": false,
-          "http3": false
-        },
-        "timestamp": "2026-07-23T19:38:47.450Z"
-      },
-      {
-        "name": "Prediction report",
-        "category": "registry",
-        "optimizations": {
-          "DNS Prefetch": {
-            "metric": "0.006ms",
-            "status": "PASS",
-            "detail": "dns.prefetch(\"127.0.0.1\", 3000)"
-          },
-          "DNS Cache": {
-            "metric": "size=2 total=15",
-            "status": "PASS",
-            "detail": "hits=6 miss=2 err=0"
-          },
-          "Preconnect": {
-            "metric": "tcp",
-            "status": "PASS",
-            "detail": "fetch.preconnect(http://127.0.0.1:3000)"
-          },
-          "Cold Fetch": {
-            "metric": "0.5ms (200)",
-            "status": "PASS"
-          },
-          "Warm Fetch": {
-            "metric": "0.3ms (200)",
-            "status": "PASS",
-            "detail": "faster than cold (likely reuse)"
-          },
-          "Buffer": {
-            "metric": "0.7ms (17789 B)",
-            "status": "PASS"
-          },
-          "Disk Write": {
-            "metric": "0.3ms",
-            "status": "PASS",
-            "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-registry-1784835527457.bin"
-          }
-        },
-        "summary": {
-          "coldFetchMs": 0.466834,
-          "warmFetchMs": 0.280625,
-          "reuseEfficiency": 1.6635510022271716,
-          "protocol": "unknown",
-          "compression": "none",
-          "dnsCacheHit": true,
-          "keepAlive": false,
-          "http3": false
-        },
-        "timestamp": "2026-07-23T19:38:47.456Z"
-      }
-    ],
-    "global": {
-      "elapsedMs": 8.113292,
-      "checksPassed": 14,
-      "checksTotal": 14,
-      "dnsCache": {
-        "cacheHitsCompleted": 6,
-        "cacheHitsInflight": 5,
-        "cacheMisses": 2,
-        "size": 2,
-        "errors": 0,
-        "totalCount": 16
-      }
-    }
   }
 }

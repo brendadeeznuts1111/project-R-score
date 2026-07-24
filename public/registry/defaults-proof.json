@@ -1,83 +1,176 @@
 {
-  "schemaVersion": 1,
+  "timestamp": "2026-07-24T03:13:58.029Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
-  "timestamp": "2026-07-23T20:14:04.792Z",
-  "total": 12,
-  "passed": 12,
-  "proofHash": "24c0763617b6ea6a51eba4f1a0db13888f00eabb546886a472ec5195d13543e8",
-  "results": [
+  "summary": {
+    "passed": 12,
+    "total": 12,
+    "status": "pass"
+  },
+  "tests": [
     {
       "name": "CryptoHasher requires algorithm",
-      "pass": true,
+      "expected": "throws without algorithm",
       "actual": "pass",
-      "expected": "throws without algorithm"
+      "passed": true
     },
     {
       "name": "password.hash default argon2id",
-      "pass": true,
+      "expected": "starts with $argon2id$",
       "actual": "pass",
-      "expected": "starts with $argon2id$"
+      "passed": true
     },
     {
       "name": "inspect default depth shows all",
-      "pass": true,
+      "expected": "default depth shows nested objects (unlimited in canary)",
       "actual": "pass",
-      "expected": "default depth shows nested objects (unlimited in canary)"
+      "passed": true
     },
     {
       "name": "write creates dirs",
-      "pass": true,
+      "expected": "auto-creates parent directories",
       "actual": "pass",
-      "expected": "auto-creates parent directories"
+      "passed": true
     },
     {
       "name": "file.stat works",
-      "pass": true,
+      "expected": "returns stats for existing file",
       "actual": "pass",
-      "expected": "returns stats for existing file"
+      "passed": true
     },
     {
       "name": "serve port fallback",
-      "pass": true,
+      "expected": "port 0 assigns random available port",
       "actual": "pass",
-      "expected": "port 0 assigns random available port"
+      "passed": true
     },
     {
       "name": "which returns null for missing",
-      "pass": true,
+      "expected": "null for missing command",
       "actual": "pass",
-      "expected": "null for missing command"
+      "passed": true
     },
     {
       "name": "escapeHTML escapes & < > \" '",
-      "pass": true,
+      "expected": "&lt; &gt; &#x27; &amp;",
       "actual": "pass",
-      "expected": "&lt; &gt; &#x27; &amp;"
+      "passed": true
     },
     {
       "name": "readableStreamToBytes empty",
-      "pass": true,
+      "expected": "empty stream returns 0 bytes",
       "actual": "pass",
-      "expected": "empty stream returns 0 bytes"
+      "passed": true
     },
     {
       "name": "nanoseconds monotonic",
-      "pass": true,
+      "expected": "increasing values",
       "actual": "pass",
-      "expected": "increasing values"
+      "passed": true
     },
     {
       "name": "sleep ~50ms",
-      "pass": true,
+      "expected": "resolves within ~50ms",
       "actual": "pass",
-      "expected": "resolves within ~50ms"
+      "passed": true
     },
     {
       "name": "hash returns bigint",
-      "pass": true,
+      "expected": "returns bigint (Wyhash)",
       "actual": "pass",
-      "expected": "returns bigint (Wyhash)"
+      "passed": true
     }
-  ]
+  ],
+  "proofHash": "24c0763617b6ea6a51eba4f1a0db13888f00eabb546886a472ec5195d13543e8",
+  "docCoverage": {
+    "passed": true,
+    "total": 12,
+    "documented": 12,
+    "rows": [
+      {
+        "name": "CryptoHasher requires algorithm",
+        "docKey": "Bun.CryptoHasher",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/hashing#bun-cryptohasher",
+        "stability": "stable"
+      },
+      {
+        "name": "password.hash default argon2id",
+        "docKey": "Bun.password",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/hashing#bun-password",
+        "stability": "stable"
+      },
+      {
+        "name": "inspect default depth shows all",
+        "docKey": "Bun.inspect",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "stability": "stable"
+      },
+      {
+        "name": "write creates dirs",
+        "docKey": "Bun.write",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+        "stability": "stable"
+      },
+      {
+        "name": "file.stat works",
+        "docKey": "Bun.file",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "stability": "stable"
+      },
+      {
+        "name": "serve port fallback",
+        "docKey": "Bun.serve port",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname",
+        "stability": "stable"
+      },
+      {
+        "name": "which returns null for missing",
+        "docKey": "Bun.which",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-which",
+        "stability": "stable"
+      },
+      {
+        "name": "escapeHTML escapes & < > \" '",
+        "docKey": "Bun.escapeHTML",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-escapehtml",
+        "stability": "stable"
+      },
+      {
+        "name": "readableStreamToBytes empty",
+        "docKey": "Bun.readableStreamTo",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
+        "stability": "stable"
+      },
+      {
+        "name": "nanoseconds monotonic",
+        "docKey": "Bun.nanoseconds",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-nanoseconds",
+        "stability": "stable"
+      },
+      {
+        "name": "sleep ~50ms",
+        "docKey": "Bun.sleep",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-sleep",
+        "stability": "stable"
+      },
+      {
+        "name": "hash returns bigint",
+        "docKey": "Bun.hash",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/hashing#bun-hash",
+        "stability": "stable"
+      }
+    ]
+  }
 }

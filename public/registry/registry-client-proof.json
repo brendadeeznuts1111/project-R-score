@@ -1,0 +1,68 @@
+{
+  "type": "RegistryClientVerificationReport",
+  "version": "1.0.0",
+  "sdkVersion": "1.0.0",
+  "timestamp": "2026-07-24T03:14:06.889Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "reportPath": "/registry/registry-client-proof.json",
+  "results": [
+    {
+      "probe": "registry-client.resolve",
+      "canonicalKey": "registry-client resolve",
+      "canonical": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#resolve",
+      "canonicalKind": "SDK",
+      "canonicalStability": "stable",
+      "canonicalDescription": "resolve() — dist-tag to /registry/storage/…/artifact.tgz",
+      "_links": {
+        "docs": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#resolve",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-registry-client.ts",
+        "report": "/registry/registry-client-proof.json"
+      },
+      "name": "registry-client.resolve",
+      "expected": "resolve().assetUrl equals npm packument dist.tarball",
+      "actual": "local-serve-public: no npm packument; production-apex: no npm packument",
+      "passed": false
+    },
+    {
+      "probe": "registry-client.download",
+      "canonicalKey": "registry-client download",
+      "canonical": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#download",
+      "canonicalKind": "SDK",
+      "canonicalStability": "stable",
+      "canonicalDescription": "download() — SHA-256 + size verification",
+      "_links": {
+        "docs": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#download",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-registry-client.ts",
+        "report": "/registry/registry-client-proof.json"
+      },
+      "name": "registry-client.download",
+      "expected": "download() bytes match index size + SHA-256 verified",
+      "actual": "local-serve-public: Artifact download failed (401); production-apex: Failed to parse JSON",
+      "passed": false
+    },
+    {
+      "probe": "registry-client.publish",
+      "canonicalKey": "registry-client publish",
+      "canonical": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#publish",
+      "canonicalKind": "SDK",
+      "canonicalStability": "stable",
+      "canonicalDescription": "publish() — authenticated multipart FormData",
+      "_links": {
+        "docs": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#publish",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-registry-client.ts",
+        "report": "/registry/registry-client-proof.json"
+      },
+      "name": "registry-client.publish",
+      "expected": "publish() throws when apiKey is absent",
+      "actual": "Registry publish requires an API key",
+      "passed": true
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "total": 3,
+    "status": "fail"
+  },
+  "proofHash": "35f6733c610a3633a755696d9afa9cf1c738093082ce65921b80034c02955492"
+}

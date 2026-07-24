@@ -1,3 +1,4 @@
+// @see https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md — RegistryClient
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
@@ -363,7 +364,7 @@ export async function probeFactoryWagerScopedRegistry(): Promise<InstallEnvProbe
   return resultRow(
     'install.scopes',
     'scoped @factorywager dry-run or bun info via bunfig registry URL',
-    attempts.length > 0 ? attempts.joinPath('; ') : 'no registry lanes configured',
+    attempts.length > 0 ? attempts.join('; ') : 'no registry lanes configured',
     false,
     { canonicalKey: 'install.scopes', canonical: SCOPED_REGISTRY_DOCS }
   );

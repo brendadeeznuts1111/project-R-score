@@ -1,0 +1,156 @@
+{
+  "type": "InstallPlatformVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T03:14:06.935Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "dryRun": true,
+  "reportPath": "/registry/install-platform.json",
+  "toolchain": {
+    "path": "/Users/nolarose/.bun/bin/bun",
+    "source": "runtime",
+    "runtimeVersion": "1.4.0",
+    "spawnedVersion": "1.4.0",
+    "matchesRuntime": true
+  },
+  "results": [
+    {
+      "name": "install platform: bun-binary-resolved",
+      "expected": "Verification toolchain (runtime execPath / Bun.which): bun-binary-resolved",
+      "actual": "spawned=bun source=runtime runtime=1.4.0 cli=1.4.0",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/utils#bun-which",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-which",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: bun-config-env-ssot",
+      "expected": "tools/bun-install-env.ts BUN_CONFIG_INSTALL_VARS: bun-config-env-ssot",
+      "actual": "env > bunfig; 6 vars (BUN_CONFIG_REGISTRY, BUN_CONFIG_SKIP_INSTALL_PACKAGES, BUN_CONFIG_SKIP_LOAD_LOCKFILE, BUN_CONFIG_SKIP_SAVE_LOCKFILE, BUN_CONFIG_TOKEN, BUN_CONFIG_YARN_LOCKFILE)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: forbidden-install-env",
+      "expected": "shell env (docs/UNIFIED.md machine layer): forbidden-install-env",
+      "actual": "no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in shell env",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: install-mechanism-notes-ssot",
+      "expected": "tools/bun-install-env.ts INSTALL_MECHANISM_NOTES: install-mechanism-notes-ssot",
+      "actual": "5 mechanism notes (backend, cache, node_modules, eager/lazy resolve)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cache",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cache",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: runtime-flags",
+      "expected": "Bun CLI (isolated probe dir): runtime-flags",
+      "actual": "skipped (--dry-run) — would run bun install --cpu=x64 --os=linux --dry-run in isolated dir",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: profile-ssot",
+      "expected": ".agents/skills/ast-grep/bun-install-profiles.json: profile-ssot",
+      "actual": "cross-linux-x64=x64/linux; cross-linux-arm64=arm64/linux; cross-darwin-arm64=arm64/darwin",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: lockfile-config-version",
+      "expected": "bun.lock configVersion + workspaces: lockfile-config-version",
+      "actual": "configVersion=1 + workspaces → isolated linker default per Bun docs",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/isolated-installs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: machine-isolated-linker",
+      "expected": "~/.bunfig.toml (docs/UNIFIED.md machine SSOT): machine-isolated-linker",
+      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/isolated-installs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: machine-global-store",
+      "expected": "~/.bunfig.toml globalStore + isolated linker: machine-global-store",
+      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/global-store",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/global-store",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: monorepo-cross-dry-run",
+      "expected": "FactoryWager monorepo root (package.json + bun.lock): monorepo-cross-dry-run",
+      "actual": "skipped (--dry-run) — would run: cross-linux-x64=bun install --cpu=x64 --os=linux --dry-run (x64/linux); cross-linux-arm64=bun install --cpu=arm64 --os=linux --dry-run (arm64/linux); cross-darwin-arm64=bun install --cpu=arm64 --os=darwin --dry-run (arm64/darwin)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    },
+    {
+      "name": "install platform: lockfile-stable",
+      "expected": "bun.lock shared lockfile (docs/UNIFIED.md): lockfile-stable",
+      "actual": "skipped (--dry-run) — would hash bun.lock before/after cross dry-runs",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      }
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "total": 11,
+    "skipped": 3,
+    "status": "pass"
+  }
+}

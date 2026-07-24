@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-  "timestamp": "2026-07-23T20:17:37.080Z",
+  "timestamp": "2026-07-23T20:18:56.752Z",
   "summary": {
     "total": 12,
     "passed": 12,
@@ -106,5 +106,5 @@
       "docs": "https://bun.com/docs/runtime/hashing#bun-hash"
     }
   ],
-  "proofHash": "80971c5ee71fb45888b153712d905f49b8f5f6681a30d30369bd29c2420bff6b"
+  "proofHash": "224c20110dfd439cb5b9040e6e6c3489400759fadf767f30e99df4e6eba0da80"
 }

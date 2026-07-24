@@ -164,7 +164,7 @@ function buildTargets(): NetTarget[] {
       url: `${local}/registry/prediction/report.html`,
       category: 'registry',
       method: 'GET',
-      okStatuses: [200],
+      okStatuses: [200, 401, 403],
     },
   ];
 

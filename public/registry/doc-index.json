@@ -1,0 +1,4650 @@
+{
+  "schemaVersion": 1,
+  "timestamp": "2026-07-24T03:14:06.967Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
+  "catalogGenerated": "2026-07-24T00:08:46.051Z",
+  "catalogBunVersion": "1.4.0",
+  "totalEntries": 209,
+  "byStability": {
+    "stable": 207,
+    "experimental": 2
+  },
+  "byKind": {
+    "CLI": 67,
+    "API": 135,
+    "Other": 7
+  },
+  "entries": [
+    {
+      "key": "--asset-naming",
+      "url": "https://bun.com/docs/bundler/executables#content-hash",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "By default, embedded files have a content hash appended to their name, which helps with cache invalidation when you serve them from a URL or CDN.",
+      "examples": [],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig",
+        "--compile-exec-argv"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--bundle",
+      "url": "https://bun.com/docs/bundler/esbuild",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun's bundler API is heavily inspired by esbuild.",
+      "examples": [],
+      "related": [
+        "--external",
+        "--jsx-dev",
+        "--no-bundle",
+        "--sourcefile",
+        "--version"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--bytecode",
+      "url": "https://bun.com/docs/bundler/bytecode#basic-usage-commonjs",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.30",
+      "description": "Enable bytecode caching with the `--bytecode` flag.",
+      "examples": [
+        "bun build ./index.ts --target=bun --bytecode --outdir=./dist",
+        "bun ./dist/index.js  # Automatically uses index.js.jsc"
+      ],
+      "related": [
+        "--compile",
+        "--format",
+        "--minify",
+        "--outfile",
+        "--sourcemap"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--changed",
+      "url": "https://bun.com/blog/bun-v1.3.13#bun-test-changed",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.13",
+      "description": "bun test --changed[=ref]: run only test files whose import graph transitively depends on git-changed files (unstaged+staged+untracked, or since a commit/branch). Combines with --watch.",
+      "examples": [
+        "# Dirty tree (unstaged + staged + untracked)\nbun test --changed\n\n# Since commit / branch / tag\nbun test --changed=HEAD~1\nbun test --changed=main\n\n# Re-query git on every watch restart\nbun test --changed --watch"
+      ],
+      "related": [
+        "bun test --changed",
+        "--shard",
+        "bun test --watch",
+        "--parallel",
+        "--isolate",
+        "--randomize",
+        "--parallel=N"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--compile",
+      "url": "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "0.6.0",
+      "description": "When you create an executable with `--compile`, Bun embeds the bytecode in the binary.",
+      "examples": [
+        "# ESM (requires --compile)\nbun build ./cli.ts --compile --bytecode --format=esm --outfile=mycli\n\n# CommonJS (works with or without --compile)\nbun build ./cli.ts --compile --bytecode --outfile=mycli"
+      ],
+      "related": [
+        "--bytecode",
+        "--format",
+        "--minify",
+        "--outfile",
+        "--sourcemap"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--compile-autoload-package-json",
+      "url": "https://bun.com/docs/bundler/executables#enabling-config-loading-at-runtime",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.4",
+      "description": "If your executable needs to read `tsconfig.json` or `package.json` at runtime, opt in with these flags:",
+      "examples": [
+        "# Enable runtime loading of tsconfig.json\nbun build --compile --compile-autoload-tsconfig ./app.ts --outfile myapp\n\n# Enable runtime loading of package.json\nbun build --compile --compile-autoload-package-json ./app.ts --outfile myapp\n\n# Enable both\nbun build --compile --compile-autoload-tsconfig --compile-autoload-package-json ./app.ts --outfile myapp"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-tsconfig",
+        "--compile-exec-argv"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--compile-autoload-tsconfig",
+      "url": "https://bun.com/docs/bundler/executables#enabling-config-loading-at-runtime",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.4",
+      "description": "If your executable needs to read `tsconfig.json` or `package.json` at runtime, opt in with these flags:",
+      "examples": [
+        "# Enable runtime loading of tsconfig.json\nbun build --compile --compile-autoload-tsconfig ./app.ts --outfile myapp\n\n# Enable runtime loading of package.json\nbun build --compile --compile-autoload-package-json ./app.ts --outfile myapp\n\n# Enable both\nbun build --compile --compile-autoload-tsconfig --compile-autoload-package-json ./app.ts --outfile myapp"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-exec-argv"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--compile-exec-argv",
+      "url": "https://bun.com/docs/bundler/executables#embedding-runtime-arguments",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "**`--compile-exec-argv=\"args\"`** - Embed runtime arguments, available at runtime in `process.execArgv`:",
+      "examples": [
+        "bun build --compile --compile-exec-argv=\"--smol --user-agent=MyBot\" ./app.ts --outfile myapp"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--console-depth",
+      "url": "https://bun.com/docs/runtime/console#object-inspection-depth",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.2.19",
+      "description": "Set the default depth for `console.log()` object inspection. Default `2`.",
+      "examples": [
+        "[console]\ndepth = 3"
+      ],
+      "related": [
+        "Bun.stdin"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--cpu",
+      "url": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.0",
+      "description": "bun install react",
+      "examples": [
+        "bun install --cpu=x64 --os=linux"
+      ],
+      "related": [
+        "--concurrent-scripts",
+        "--dry-run",
+        "--minimum-release-age",
+        "--omit",
+        "--os"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--cpu-prof",
+      "url": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.2",
+      "description": "Standalone executables read the `BUN_OPTIONS` environment variable, so you can pass runtime flags without recompiling:",
+      "examples": [
+        "# Enable CPU profiling on a compiled executable\nBUN_OPTIONS=\"--cpu-prof\" ./myapp\n\n# Enable heap profiling with markdown output\nBUN_OPTIONS=\"--heap-prof-md\" ./myapp\n\n# Combine multiple flags\nBUN_OPTIONS=\"--smol --cpu-prof-md\" ./myapp"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--cpu-prof-md",
+      "url": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.7",
+      "description": "Standalone executables read the `BUN_OPTIONS` environment variable, so you can pass runtime flags without recompiling:",
+      "examples": [
+        "# Enable CPU profiling on a compiled executable\nBUN_OPTIONS=\"--cpu-prof\" ./myapp\n\n# Enable heap profiling with markdown output\nBUN_OPTIONS=\"--heap-prof-md\" ./myapp\n\n# Combine multiple flags\nBUN_OPTIONS=\"--smol --cpu-prof-md\" ./myapp"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--deep",
+      "url": "https://bun.com/docs/bundler/executables#code-signing-on-macos",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "To codesign a standalone executable on macOS (which fixes Gatekeeper warnings), use the `codesign` command.",
+      "examples": [
+        "codesign --deep --force -vvvv --sign \"XXXXXXXXXX\" ./myapp",
+        "codesign --deep --force -vvvv --sign \"XXXXXXXXXX\" --entitlements entitlements.plist ./myapp",
+        "codesign -vvv --verify ./myapp\n./myapp: valid on disk\n./myapp: satisfies its Designated Requirement"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--define",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.5",
+      "description": "In Bun's CLI, boolean flags like `--minify` take no argument.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-import-source"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--dev",
+      "url": "https://bun.com/docs/pm/cli/add#dev",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.0.0",
+      "description": "To add a particular package:",
+      "examples": [
+        "bun add --dev @types/react\nbun add -d @types/react"
+      ],
+      "related": [
+        "--exact",
+        "--global",
+        "--help",
+        "--optional",
+        "--peer"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--drop",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.31",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-import-source",
+        "--jsx-runtime"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--dry-run",
+      "url": "https://bun.com/docs/pm/cli/install#dry-run",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "To perform a dry run, without installing anything:",
+      "examples": [
+        "bun install --dry-run"
+      ],
+      "related": [
+        "--concurrent-scripts",
+        "--cpu",
+        "--minimum-release-age",
+        "--omit",
+        "--os"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--entitlements",
+      "url": "https://bun.com/docs/bundler/executables#code-signing-on-macos",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "To codesign a standalone executable on macOS (which fixes Gatekeeper warnings), use the `codesign` command.",
+      "examples": [
+        "codesign --deep --force -vvvv --sign \"XXXXXXXXXX\" ./myapp",
+        "codesign --deep --force -vvvv --sign \"XXXXXXXXXX\" --entitlements entitlements.plist ./myapp",
+        "codesign -vvv --verify ./myapp\n./myapp: valid on disk\n./myapp: satisfies its Designated Requirement"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--env-file",
+      "url": "https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.0.12",
+      "description": "The `--env-file` flag overrides which `.env` files Bun loads. It works both when running a file with `bun` and when running `package.json` scripts.",
+      "examples": [
+        "bun --env-file=.env.1 src/index.ts\n\nbun --env-file=.env.abc --env-file=.env.def run build"
+      ],
+      "related": [
+        "--no-env-file",
+        "--print",
+        "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD",
+        "BUN_RUNTIME_TRANSPILER_CACHE_PATH",
+        "configuring Bun"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--external",
+      "url": "https://bun.com/docs/bundler/esbuild#cli-api",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.11",
+      "description": "In Bun's CLI, boolean flags like `--minify` take no argument.",
+      "examples": [
+        "# esbuild\nesbuild <entrypoint> --outdir=out --bundle\n\n# bun\nbun build <entrypoint> --outdir=out"
+      ],
+      "related": [
+        "--bundle",
+        "--jsx-dev",
+        "--no-bundle",
+        "--sourcefile",
+        "--version"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--fetch-preconnect",
+      "url": "https://bun.com/docs/runtime/networking/fetch#preconnect-at-startup",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "To preconnect to a host at startup, pass `--fetch-preconnect`:",
+      "examples": [
+        "bun --fetch-preconnect https://bun.com:443 ./my-script.ts"
+      ],
+      "related": [
+        "AbortController",
+        "BUN_CONFIG_MAX_HTTP_REQUESTS",
+        "BUN_CONFIG_VERBOSE_FETCH",
+        "Bun.fetch"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--filter",
+      "url": "https://bun.com/docs/pm/filter#package-name-filter-pattern",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.4",
+      "description": "The `--filter` (or `-F`) flag selects packages in a monorepo by pattern.",
+      "examples": [],
+      "related": [
+        "--no-exit-on-error",
+        "--sequential",
+        "--workspaces",
+        "bun run --parallel",
+        "bun run --sequential"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--force",
+      "url": "https://bun.com/docs/bundler/executables",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "`bun create <user>/<repo>` downloads the contents of the GitHub repo to disk.",
+      "examples": [
+        "bun create <user>/<repo>\nbun create github.com/<user>/<repo>",
+        "bun create <user>/<repo> mydir\nbun create github.com/<user>/<repo> mydir"
+      ],
+      "related": [
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig",
+        "--compile-exec-argv"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--format",
+      "url": "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.30",
+      "description": "When you create an executable with `--compile`, Bun embeds the bytecode in the binary.",
+      "examples": [
+        "# ESM (requires --compile)\nbun build ./cli.ts --compile --bytecode --format=esm --outfile=mycli\n\n# CommonJS (works with or without --compile)\nbun build ./cli.ts --compile --bytecode --outfile=mycli"
+      ],
+      "related": [
+        "--bytecode",
+        "--compile",
+        "--minify",
+        "--outfile",
+        "--sourcemap"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--heap-prof-md",
+      "url": "https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.7",
+      "description": "Standalone executables read the `BUN_OPTIONS` environment variable, so you can pass runtime flags without recompiling:",
+      "examples": [
+        "# Enable CPU profiling on a compiled executable\nBUN_OPTIONS=\"--cpu-prof\" ./myapp\n\n# Enable heap profiling with markdown output\nBUN_OPTIONS=\"--heap-prof-md\" ./myapp\n\n# Combine multiple flags\nBUN_OPTIONS=\"--smol --cpu-prof-md\" ./myapp"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--ignore-dce-annotations",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.22",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-import-source",
+        "--jsx-runtime"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--isolate",
+      "url": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.13",
+      "description": "bun test: run each test file in a fresh global environment within the same process (drain microtasks, close sockets, cancel timers, kill subprocesses). VM transpilation cache keeps shared deps parsed once.",
+      "examples": [
+        "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests"
+      ],
+      "related": [
+        "--parallel",
+        "--changed",
+        "--shard",
+        "bun test --isolate",
+        "--randomize",
+        "--parallel=N"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--jsx-dev",
+      "url": "https://bun.com/docs/bundler/esbuild#cli-api",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "In Bun's CLI, boolean flags like `--minify` take no argument.",
+      "examples": [
+        "# esbuild\nesbuild <entrypoint> --outdir=out --bundle\n\n# bun\nbun build <entrypoint> --outdir=out"
+      ],
+      "related": [
+        "--bundle",
+        "--external",
+        "--no-bundle",
+        "--sourcefile",
+        "--version"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--jsx-factory",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-fragment",
+        "--jsx-import-source",
+        "--jsx-runtime"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--jsx-fragment",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-import-source",
+        "--jsx-runtime"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--jsx-import-source",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-runtime"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--jsx-runtime",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-import-source"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--jsx-side-effects",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-import-source"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--keep-names",
+      "url": "https://bun.com/docs/bundler/minifier#keep-names",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.2.22",
+      "description": "To keep original function and class names for debugging while minifying identifiers, use the `--keep-names` flag:",
+      "examples": [
+        "bun build ./index.ts --minify --keep-names --outfile=out.js",
+        "await Bun.build({\n  entrypoints: [\"./index.ts\"],\n  outdir: \"./out\",\n  minify: {\n    identifiers: true,\n    keepNames: true,\n  },\n});"
+      ],
+      "related": [
+        "--minify-identifiers",
+        "--minify-syntax",
+        "--minify-whitespace",
+        "Minifier"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--latest",
+      "url": "https://bun.com/docs/pm/cli/update#latest",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.2.0",
+      "description": "Run the command in a project with a `bun.lock` file:",
+      "examples": [
+        "bun audit"
+      ],
+      "related": [
+        "--interactive",
+        "--recursive"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--linker",
+      "url": "https://bun.com/docs/runtime/bunfig#install-linker",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.2.19",
+      "description": "The traditional npm/Yarn approach that flattens dependencies into a shared `node_modules` directory:",
+      "examples": [
+        "bun install --linker hoisted"
+      ],
+      "related": [
+        "--concurrent",
+        "--path-ignore-patterns",
+        "--rerun-each",
+        "--retry",
+        "--seed"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--loader",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.5",
+      "description": "In Bun's CLI, boolean flags like `--minify` take no argument.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-import-source"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--minify",
+      "url": "https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "0.6.0",
+      "description": "Combine bytecode with minification and source maps:",
+      "examples": [
+        "bun build --compile --bytecode --minify --sourcemap ./cli.ts --outfile=mycli"
+      ],
+      "related": [
+        "--bytecode",
+        "--compile",
+        "--format",
+        "--outfile",
+        "--sourcemap"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--minify-identifiers",
+      "url": "https://bun.com/docs/bundler/minifier#granular-control",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Enable specific minification modes individually:",
+      "examples": [
+        "# Only remove whitespace\nbun build ./index.ts --minify-whitespace --outfile=out.js\n\n# Only minify syntax\nbun build ./index.ts --minify-syntax --outfile=out.js\n\n# Only minify identifiers\nbun build ./index.ts --minify-identifiers --outfile=out.js\n\n# Combine specific modes\nbun build ./index.ts --minify-whitespace --minify-syntax --outfile=out.js"
+      ],
+      "related": [
+        "--keep-names",
+        "--minify-syntax",
+        "--minify-whitespace",
+        "Minifier"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--minify-syntax",
+      "url": "https://bun.com/docs/bundler/minifier#granular-control",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.13",
+      "description": "Enable specific minification modes individually:",
+      "examples": [
+        "# Only remove whitespace\nbun build ./index.ts --minify-whitespace --outfile=out.js\n\n# Only minify syntax\nbun build ./index.ts --minify-syntax --outfile=out.js\n\n# Only minify identifiers\nbun build ./index.ts --minify-identifiers --outfile=out.js\n\n# Combine specific modes\nbun build ./index.ts --minify-whitespace --minify-syntax --outfile=out.js"
+      ],
+      "related": [
+        "--keep-names",
+        "--minify-identifiers",
+        "--minify-whitespace",
+        "Minifier"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--minify-whitespace",
+      "url": "https://bun.com/docs/bundler/minifier#granular-control",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Enable specific minification modes individually:",
+      "examples": [
+        "# Only remove whitespace\nbun build ./index.ts --minify-whitespace --outfile=out.js\n\n# Only minify syntax\nbun build ./index.ts --minify-syntax --outfile=out.js\n\n# Only minify identifiers\nbun build ./index.ts --minify-identifiers --outfile=out.js\n\n# Combine specific modes\nbun build ./index.ts --minify-whitespace --minify-syntax --outfile=out.js"
+      ],
+      "related": [
+        "--keep-names",
+        "--minify-identifiers",
+        "--minify-syntax",
+        "Minifier"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--no-bundle",
+      "url": "https://bun.com/docs/bundler/esbuild#cli-api",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.1",
+      "description": "In Bun's CLI, boolean flags like `--minify` take no argument.",
+      "examples": [
+        "# esbuild\nesbuild <entrypoint> --outdir=out --bundle\n\n# bun\nbun build <entrypoint> --outdir=out"
+      ],
+      "related": [
+        "--bundle",
+        "--external",
+        "--jsx-dev",
+        "--sourcefile",
+        "--version"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--no-compile-autoload-bunfig",
+      "url": "https://bun.com/docs/bundler/executables#disabling-config-loading-at-runtime",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.3",
+      "description": "To disable `.env` or `bunfig.toml` loading for deterministic execution:",
+      "examples": [],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--no-compile-autoload-dotenv",
+      "url": "https://bun.com/docs/bundler/executables#disabling-config-loading-at-runtime",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.3",
+      "description": "To disable `.env` or `bunfig.toml` loading for deterministic execution:",
+      "examples": [],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--no-env-file",
+      "url": "https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.3",
+      "description": "Use `--no-env-file` to disable Bun's automatic `.env` file loading, for example in production or CI/CD pipelines where you want to rely solely on system environment variables.",
+      "examples": [
+        "bun run --no-env-file index.ts",
+        "# Disable loading .env files\nenv = false"
+      ],
+      "related": [
+        "--env-file",
+        "--print",
+        "BUN_CONFIG_NO_CLEAR_TERMINAL_ON_RELOAD",
+        "BUN_RUNTIME_TRANSPILER_CACHE_PATH",
+        "configuring Bun"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--no-macros",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Execute JavaScript/TypeScript files, package.json scripts, and executable packages with Bun’s fast runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-import-source"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--no-orphans",
+      "url": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.14",
+      "description": "When `true`, Bun watches the process that spawned it and exits as soon as that parent goes away, even if the parent was force-killed and never got a chance to forward a signal.",
+      "examples": [
+        "[run]\nnoOrphans = true"
+      ],
+      "related": [
+        "BUN_FEATURE_FLAG_NO_ORPHANS",
+        "Bun.Image (v1.3.14)",
+        "Bun.Image terminal methods",
+        "Bun.serve http3",
+        "Bun.Terminal (ConPTY)"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--os",
+      "url": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.0",
+      "description": "bun install react",
+      "examples": [
+        "bun install --cpu=x64 --os=linux"
+      ],
+      "related": [
+        "--concurrent-scripts",
+        "--cpu",
+        "--dry-run",
+        "--minimum-release-age",
+        "--omit"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--outfile",
+      "url": "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.0.23",
+      "description": "When you create an executable with `--compile`, Bun embeds the bytecode in the binary.",
+      "examples": [
+        "# ESM (requires --compile)\nbun build ./cli.ts --compile --bytecode --format=esm --outfile=mycli\n\n# CommonJS (works with or without --compile)\nbun build ./cli.ts --compile --bytecode --outfile=mycli"
+      ],
+      "related": [
+        "--bytecode",
+        "--compile",
+        "--format",
+        "--minify",
+        "--sourcemap"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--parallel",
+      "url": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.5",
+      "description": "bun test --parallel[=N]: distribute test files across up to N worker processes (default CPU count). Workers auto --isolate; console buffered per file. ≠ bun run --parallel (Foreman scripts — pm/filter#parallel-and-sequential-mode). FactoryWager NOTE: docs/guides/bun-test-flags-1.3.13.md",
+      "examples": [
+        "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests"
+      ],
+      "related": [
+        "--isolate",
+        "--shard",
+        "--changed",
+        "bun test --parallel",
+        "bun run --parallel",
+        "JEST_WORKER_ID",
+        "BUN_TEST_WORKER_ID",
+        "--randomize"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--parallel=N",
+      "url": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.13",
+      "description": "bun test --parallel=N: cap worker processes at N (default CPU count). Workers auto-enable --isolate.",
+      "examples": [
+        "# --- bun test --isolate (fresh global per file) ---\nbun test --isolate ./tests\n\n# --- bun test --parallel (file workers; auto --isolate) ---\n# NOT the same as: bun run --parallel  (see pm/filter#parallel-and-sequential-mode)\nbun test --parallel ./tests\nbun test --parallel=8 ./tests"
+      ],
+      "related": [
+        "--parallel",
+        "--isolate",
+        "bun test --parallel",
+        "--randomize",
+        "--changed",
+        "--shard"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--port",
+      "url": "https://bun.com/docs/runtime/http/server#configuring-a-default-port",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "0.2.0",
+      "description": "Several flags and environment variables set the default port, which Bun uses when the `port` option is not set.",
+      "examples": [
+        "bun --port=4002 server.ts",
+        "BUN_PORT=4002 bun server.ts",
+        "PORT=4002 bun server.ts",
+        "NODE_PORT=4002 bun server.ts"
+      ],
+      "related": [
+        "BUN_PORT",
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve hostname",
+        "Bun.serve port"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--production",
+      "url": "https://bun.com/docs/bundler/fullstack#production-mode",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "0.6.10",
+      "description": "To install in production mode (without `devDependencies`):",
+      "examples": [
+        "bun install --production",
+        "bun install --frozen-lockfile"
+      ],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--randomize",
+      "url": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.2.23",
+      "description": "bun test: shuffle test order. With --shard, shuffle happens after shard selection (within the shard).",
+      "examples": [
+        "[test]\nrandomize = true"
+      ],
+      "related": [
+        "--shard",
+        "--parallel",
+        "--isolate",
+        "--changed",
+        "--parallel=N"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--shard",
+      "url": "https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.13",
+      "description": "bun test --shard=M/N: split test files across CI jobs (1-based, round-robin by sorted path). Empty shards exit 0. Composes with --changed and --randomize.",
+      "examples": [
+        "# CI matrix (1-based). Empty shards exit 0.\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3"
+      ],
+      "related": [
+        "--shard=M/N",
+        "--parallel",
+        "--changed",
+        "--randomize",
+        "--isolate",
+        "--parallel=N"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--shard=M/N",
+      "url": "https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.13",
+      "description": "Split bun test files across CI runners (Jest/Vitest/Playwright syntax). Index is 1-based; invalid inputs like 0/3 exit non-zero.",
+      "examples": [
+        "# CI matrix (1-based). Empty shards exit 0.\nbun test --shard=1/3\nbun test --shard=2/3\nbun test --shard=3/3"
+      ],
+      "related": [
+        "--shard",
+        "--parallel",
+        "--changed",
+        "--randomize",
+        "--isolate",
+        "--parallel=N"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--sign",
+      "url": "https://bun.com/docs/bundler/executables#code-signing-on-macos",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "To codesign a standalone executable on macOS (which fixes Gatekeeper warnings), use the `codesign` command.",
+      "examples": [
+        "codesign --deep --force -vvvv --sign \"XXXXXXXXXX\" ./myapp",
+        "codesign --deep --force -vvvv --sign \"XXXXXXXXXX\" --entitlements entitlements.plist ./myapp",
+        "codesign -vvv --verify ./myapp\n./myapp: valid on disk\n./myapp: satisfies its Designated Requirement"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--silent",
+      "url": "https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.0.2",
+      "description": "To modify logging verbosity:",
+      "examples": [
+        "bun install --verbose # debug logging\nbun install --silent  # no logging"
+      ],
+      "related": [
+        "--concurrent",
+        "--path-ignore-patterns",
+        "--rerun-each",
+        "--retry",
+        "--seed"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "pm",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--sourcefile",
+      "url": "https://bun.com/docs/bundler/esbuild#cli-api",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "In Bun's CLI, boolean flags like `--minify` take no argument.",
+      "examples": [
+        "# esbuild\nesbuild <entrypoint> --outdir=out --bundle\n\n# bun\nbun build <entrypoint> --outdir=out"
+      ],
+      "related": [
+        "--bundle",
+        "--external",
+        "--jsx-dev",
+        "--no-bundle",
+        "--version"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--sourcemap",
+      "url": "https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.1.9",
+      "description": "Combine bytecode with minification and source maps:",
+      "examples": [
+        "bun build --compile --bytecode --minify --sourcemap ./cli.ts --outfile=mycli"
+      ],
+      "related": [
+        "--bytecode",
+        "--compile",
+        "--format",
+        "--minify",
+        "--outfile"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--splitting",
+      "url": "https://bun.com/docs/bundler/executables#code-splitting",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.10",
+      "description": "Standalone executables support code splitting.",
+      "examples": [
+        "./build/entry"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--test-only",
+      "url": "https://bun.com/docs/test/writing-tests#test-only",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "🟡 Partially implemented.",
+      "examples": [],
+      "related": [
+        "--only",
+        "--todo"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--tsconfig-override",
+      "url": "https://bun.com/docs/runtime#transpilation-language-features",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "1.3.13",
+      "description": "`bun test` is deeply integrated with Bun's runtime.",
+      "examples": [
+        "bun --define process.env.NODE_ENV:\\\"development\\\" ./index.ts",
+        "bun --drop=console ./index.ts",
+        "bun --loader .js:jsx ./index.ts",
+        "bun --no-macros ./index.ts"
+      ],
+      "related": [
+        "--drop",
+        "--ignore-dce-annotations",
+        "--jsx-factory",
+        "--jsx-fragment",
+        "--jsx-import-source"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "test",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--user-agent",
+      "url": "https://bun.com/docs/bundler/executables#embedding-runtime-arguments",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "**`--compile-exec-argv=\"args\"`** - Embed runtime arguments, available at runtime in `process.execArgv`:",
+      "examples": [
+        "// In the compiled app\nconsole.log(process.execArgv); // [\"--smol\", \"--user-agent=MyBot\"]"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--verify",
+      "url": "https://bun.com/docs/bundler/executables#code-signing-on-macos",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "To codesign a standalone executable on macOS (which fixes Gatekeeper warnings), use the `codesign` command.",
+      "examples": [
+        "codesign --deep --force -vvvv --sign \"XXXXXXXXXX\" ./myapp",
+        "codesign --deep --force -vvvv --sign \"XXXXXXXXXX\" --entitlements entitlements.plist ./myapp",
+        "codesign -vvv --verify ./myapp\n./myapp: valid on disk\n./myapp: satisfies its Designated Requirement"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--windows-hide-console",
+      "url": "https://bun.com/docs/bundler/executables#windows-specific-flags",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "When compiling a standalone executable on Windows, platform-specific options customize metadata on the generated `.exe` file:",
+      "examples": [],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "--windows-icon",
+      "url": "https://bun.com/docs/bundler/executables#windows-specific-flags",
+      "kind": "CLI",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "When compiling a standalone executable on Windows, platform-specific options customize metadata on the generated `.exe` file:",
+      "examples": [],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "AbortController",
+      "url": "https://bun.com/docs/runtime/networking/fetch#canceling-a-request",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Send HTTP requests with Bun’s fetch API",
+      "examples": [
+        "const response = await fetch(\"http://example.com\");\n\nconsole.log(response.status); // => 200\n\nconst text = await response.text(); // or response.json(), response.formData(), etc.",
+        "const response = await fetch(\"http://example.com\", {\n  headers: {\n    \"X-Custom-Header\": \"value\",\n  },\n});",
+        "const response = await fetch(\"http://example.com\", {\n  signal: AbortSignal.timeout(1000),\n});"
+      ],
+      "related": [
+        "--fetch-preconnect",
+        "BUN_CONFIG_MAX_HTTP_REQUESTS",
+        "BUN_CONFIG_VERBOSE_FETCH",
+        "Bun.fetch"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.$",
+      "url": "https://bun.com/docs/runtime/shell#getting-started",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Shell template tag for running commands",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Archive",
+      "url": "https://bun.com/docs/runtime/archive#quickstart",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.6",
+      "description": "`Bun.Archive` is Bun's native API for tar archives. It creates archives from in-memory data, extracts archives to disk, and reads archive contents without extraction.",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.ArrayBufferSink",
+      "url": "https://bun.com/docs/runtime/streams#bun-arraybuffersink",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.CSRF",
+      "url": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.5",
+      "description": "`Bun.CSRF` generates and verifies [CSRF (Cross-Site Request Forgery)](https://owasp.org/www-community/attacks/csrf) tokens. Tokens are signed with HMAC and include an expiration timestamp.",
+      "examples": [
+        "// Generate a token bound to the requester's session\nconst token = Bun.CSRF.generate(\"my-secret\", { sessionId: \"user-session-id\" });\n\n// Verify it\nconst isValid = Bun.CSRF.verify(token, { secret: \"my-secret\", sessionId: \"user-session-id\" });\nconsole.log(isValid); // true"
+      ],
+      "related": [
+        "Bun.CSRF.generate",
+        "Bun.CSRF.verify"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.CSRF.generate",
+      "url": "https://bun.com/docs/runtime/csrf#bun-csrf-generate",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.5",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.CSRF",
+        "Bun.CSRF.verify"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.CSRF.verify",
+      "url": "https://bun.com/docs/runtime/csrf#bun-csrf-verify",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.5",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.CSRF",
+        "Bun.CSRF.generate"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Cookie",
+      "url": "https://bun.com/docs/runtime/cookies#cookie-class",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.7",
+      "description": "Bun provides two native APIs for working with HTTP cookies: `Bun.Cookie` and `Bun.CookieMap`. They parse, generate, and manipulate cookies in HTTP requests and responses.",
+      "examples": [],
+      "related": [
+        "Bun.CookieMap",
+        "CookieMap"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.CookieMap",
+      "url": "https://bun.com/docs/runtime/cookies#cookiemap-class",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.7",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.Cookie",
+        "CookieMap"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.CryptoHasher",
+      "url": "https://bun.com/docs/runtime/hashing#bun-cryptohasher",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.5.0",
+      "description": "Native sync hasher (sha256, sha3-256, …). FactoryWager audit SSOT fingerprints evidence with sha3-256 (see AuditConcept sha3-integrity).",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "sha3-256",
+        "SHA3-256",
+        "Bun.password",
+        "Bun.hash",
+        "Bun.password.hash",
+        "Bun.sha"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Glob",
+      "url": "https://bun.com/docs/runtime/glob#quickstart",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.0.14",
+      "description": "Pass a glob pattern to filter which files are returned:",
+      "examples": [
+        "// Get only TypeScript files\nconst tsFiles = await archive.files(\"**/*.ts\");\n\n// Get files in src directory\nconst srcFiles = await archive.files(\"src/*\");\n\n// Get all JSON files (recursive)\nconst jsonFiles = await archive.files(\"**/*.json\");\n\n// Get multiple file types with array of patterns\nconst codeFiles = await archive.files([\"**/*.ts\", \"**/*.js\"]);"
+      ],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Glob.scan",
+      "url": "https://bun.com/blog/bun-v1.3.12#faster-bun-glob-scan",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
+      "examples": [],
+      "related": [
+        "bun upgrade"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Image",
+      "url": "https://bun.com/docs/runtime/image#input",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.14",
+      "description": "Built-in image decode/resize/encode pipeline",
+      "examples": [
+        "await Bun.file(\"photo.jpg\").image().resize(400, 400, { fit: \"inside\" }).webp({ quality: 80 }).write(\"thumb.webp\");"
+      ],
+      "related": [
+        "Bun.s3.file"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Image (v1.3.14)",
+      "url": "https://bun.com/blog/bun-v1.3.14#bun-image",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now ships a built-in image processing API that handles JPEG, PNG, WebP, GIF, and BMP — plus HEIC, AVIF, and TIFF on macOS and Windows — with zero native module installs .",
+      "examples": [],
+      "related": [
+        "Bun.Image terminal methods",
+        "--no-orphans",
+        "BUN_FEATURE_FLAG_NO_ORPHANS",
+        "Bun.serve http3",
+        "Bun.Terminal (ConPTY)"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Image terminal methods",
+      "url": "https://bun.com/blog/bun-v1.3.14#terminal-methods",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now ships a built-in image processing API that handles JPEG, PNG, WebP, GIF, and BMP — plus HEIC, AVIF, and TIFF on macOS and Windows — with zero native module installs .",
+      "examples": [],
+      "related": [
+        "Bun.Image (v1.3.14)",
+        "--no-orphans",
+        "BUN_FEATURE_FLAG_NO_ORPHANS",
+        "Bun.serve http3",
+        "Bun.Terminal (ConPTY)"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.TOML",
+      "url": "https://bun.com/docs/runtime/toml#bun-toml-parse",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun’s built-in support for TOML files through both runtime APIs and bundler integration",
+      "examples": [],
+      "related": [
+        "Bun.TOML.parse",
+        "Bun.TOML.stringify"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Terminal",
+      "url": "https://bun.com/docs/runtime/child-process#terminal-pty-support",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.5",
+      "description": "Built-in PTY API (new Bun.Terminal + Bun.spawn terminal option); POSIX only at ship",
+      "examples": [],
+      "related": [
+        "Bun.spawn",
+        "Bun.spawn terminal (PTY)",
+        "Bun.spawnSync",
+        "Bun.Subprocess"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Terminal (ConPTY)",
+      "url": "https://bun.com/blog/bun-v1.3.14#bunterminal-on-windows-via-conpty",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now ships a built-in image processing API that handles JPEG, PNG, WebP, GIF, and BMP — plus HEIC, AVIF, and TIFF on macOS and Windows — with zero native module installs .",
+      "examples": [],
+      "related": [
+        "--no-orphans",
+        "BUN_FEATURE_FLAG_NO_ORPHANS",
+        "Bun.Image (v1.3.14)",
+        "Bun.Image terminal methods",
+        "Bun.serve http3"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.Terminal (v1.3.5 ship)",
+      "url": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now has a built-in API for creating and managing pseudo-terminals, enabling interactive terminal applications like shells, vim , htop , and any program that expects to run in a real TTY.",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.WebView",
+      "url": "https://bun.com/docs/runtime/webview#new-bun-webview-options",
+      "kind": "API",
+      "stability": "experimental",
+      "since": "1.3.12",
+      "description": "Headless browser automation",
+      "examples": [
+        "await using view = new Bun.WebView();\n\nawait view.navigate(\"https://example.com\");\nawait view.click(\"a[href]\"); // waits for the link to be clickable\nconst title = await view.evaluate(\"document.title\");\n\nawait Bun.write(\"page.png\", await view.screenshot());"
+      ],
+      "related": [
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-extensions",
+        "--disable-gpu"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.YAML",
+      "url": "https://bun.com/docs/runtime/yaml#bun-yaml-parse",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.0",
+      "description": "Use Bun’s built-in support for YAML files through both runtime APIs and bundler integration",
+      "examples": [],
+      "related": [
+        "Bun.YAML.parse",
+        "YAML"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.build",
+      "url": "https://bun.com/docs/bundler/index#basic-example",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.6.0",
+      "description": "Bundler and compile-to-binary",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "--watch",
+        "bun build",
+        "bun:bundle",
+        "Bundler",
+        "Core"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.color",
+      "url": "https://bun.com/docs/runtime/color#flexible-input",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.1.30",
+      "description": "`Bun.color(input, outputFormat?)` uses Bun's CSS parser to parse, normalize, and convert colors from user input to any of these output formats:",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.connect",
+      "url": "https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.5.0",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.listen"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.cron",
+      "url": "https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.11",
+      "description": "In-process cron scheduling (UTC; no-overlap after handler settles)",
+      "examples": [],
+      "related": [
+        "Bun.cron.parse",
+        "Bun.cron.remove",
+        "--cron-period",
+        "--cron-title",
+        "--hot"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.deepEquals",
+      "url": "https://bun.com/docs/runtime/utils#bun-deepequals",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.3.0",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath",
+        "Bun.generateHeapSnapshot"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.deflateSync",
+      "url": "https://bun.com/docs/runtime/utils#bun-deflatesync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath",
+        "Bun.generateHeapSnapshot"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.dns",
+      "url": "https://bun.com/docs/runtime/networking/dns#dns-prefetch",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.5.0",
+      "description": "Use Bun’s DNS module to resolve DNS records",
+      "examples": [],
+      "related": [
+        "Bun.dns.getCacheStats",
+        "Bun.dns.lookup",
+        "Bun.dns.prefetch",
+        "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.dns.getCacheStats",
+      "url": "https://bun.com/docs/runtime/networking/dns#dns-getcachestats",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.dns",
+        "Bun.dns.lookup",
+        "Bun.dns.prefetch",
+        "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.dns.lookup",
+      "url": "https://bun.com/docs/runtime/networking/dns#dns-caching-in-bun",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.dns",
+        "Bun.dns.getCacheStats",
+        "Bun.dns.prefetch",
+        "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.dns.prefetch",
+      "url": "https://bun.com/docs/runtime/networking/dns#dns-prefetch",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.dns",
+        "Bun.dns.getCacheStats",
+        "Bun.dns.lookup",
+        "BUN_CONFIG_DNS_TIME_TO_LIVE_SECONDS"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.embeddedFiles",
+      "url": "https://bun.com/docs/bundler/executables#listing-embedded-files",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.1.25",
+      "description": "`Bun.embeddedFiles` exposes all embedded files as `Blob` objects:",
+      "examples": [
+        "import \"./icon.png\" with { type: \"file\" };\nimport \"./data.json\" with { type: \"file\" };\nimport \"./template.html\" with { type: \"file\" };\nimport { embeddedFiles } from \"bun\";\n\n// List all embedded files\nfor (const blob of embeddedFiles) {\n  console.log(`${blob.name} - ${blob.size} bytes`);\n}\n// Output:\n//   icon-a1b2c3d4.png - 4096 bytes\n//   data-e5f6g7h8.json - 256 bytes\n//   template-i9j0k1l2.html - 1024 bytes",
+        "embeddedFiles: ReadonlyArray<Blob>;",
+        "import \"./public/favicon.ico\" with { type: \"file\" };\nimport \"./public/logo.png\" with { type: \"file\" };\nimport \"./public/styles.css\" with { type: \"file\" };\nimport { embeddedFiles, serve } from \"bun\";\n\n// Build static routes from all embedded files\nconst staticRoutes: Record<string, Blob> = {};\nfor (const blob of embeddedFiles) {\n  // Remove hash from filename: \"icon-a1b2c3d4.png\" -> \"icon.png\"\n  const name = blob.name.replace(/-[a-f0-9]+\\./, \".\");\n  staticRoutes[`/${name}`] = blob;\n}\n\nserve({\n  static: staticRoutes,\n  fetch(req) {\n    return new Response(\"Not found\", { status: 404 });\n  },\n});"
+      ],
+      "related": [
+        "Bun.embeddedFiles.length",
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.embeddedFiles.length",
+      "url": "https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use `Bun.isStandaloneExecutable` to check whether the current process is running from a compiled binary:",
+      "examples": [
+        "if (Bun.isStandaloneExecutable) {\n  // Running from `bun build --compile` output\n} else {\n  // Running via `bun <file>` or as a library\n}"
+      ],
+      "related": [
+        "Bun.embeddedFiles",
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.env",
+      "url": "https://bun.com/docs/runtime/utils#bun-env",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.0.3",
+      "description": "Alias of process.env — current environment variables",
+      "examples": [
+        "process.env.API_TOKEN; // => \"secret\"",
+        "Bun.env.API_TOKEN; // => \"secret\"",
+        "bun --print process.env"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath",
+        "Bun.generateHeapSnapshot"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.escapeHTML",
+      "url": "https://bun.com/docs/runtime/utils#bun-escapehtml",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.1.5",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.fileURLToPath",
+        "Bun.generateHeapSnapshot"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.fetch",
+      "url": "https://bun.com/docs/runtime/networking/fetch#sending-an-http-request",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Send HTTP requests with Bun’s fetch API",
+      "examples": [
+        "const response = await fetch(\"http://example.com\");\n\nconsole.log(response.status); // => 200\n\nconst text = await response.text(); // or response.json(), response.formData(), etc.",
+        "const response = await fetch(\"http://example.com\", {\n  headers: {\n    \"X-Custom-Header\": \"value\",\n  },\n});",
+        "const response = await fetch(\"http://example.com\", {\n  signal: AbortSignal.timeout(1000),\n});"
+      ],
+      "related": [
+        "--fetch-preconnect",
+        "AbortController",
+        "BUN_CONFIG_MAX_HTTP_REQUESTS",
+        "BUN_CONFIG_VERBOSE_FETCH"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.file",
+      "url": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.2.0",
+      "description": "Lazy file I/O API",
+      "examples": [],
+      "related": [
+        "Bun.write"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.fileURLToPath",
+      "url": "https://bun.com/docs/runtime/utils#bun-fileurltopath",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.0.30",
+      "description": "file: URL → absolute path (guide: guides/util/file-url-to-path)",
+      "examples": [
+        "const path = Bun.fileURLToPath(new URL(\"file:///foo/bar.txt\"));\nconsole.log(path); // \"/foo/bar.txt\""
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.generateHeapSnapshot"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.gunzipSync",
+      "url": "https://bun.com/docs/runtime/utils#bun-gunzipsync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.gzipSync",
+      "url": "https://bun.com/docs/runtime/utils#bun-gzipsync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.hash",
+      "url": "https://bun.com/docs/runtime/hashing#bun-hash",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.8.0",
+      "description": "<Note>",
+      "examples": [
+        "Bun.hash(\"some data here\");\n// 11562320457524636935n",
+        "const arr = new Uint8Array([1, 2, 3, 4]);\n\nBun.hash(\"some data here\");\nBun.hash(arr);\nBun.hash(arr.buffer);\nBun.hash(new DataView(arr.buffer));",
+        "Bun.hash(\"some data here\", 1234);\n// 15724820720172937558n"
+      ],
+      "related": [
+        "Bun.CryptoHasher",
+        "Bun.password",
+        "Bun.password.hash",
+        "Bun.sha"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.inflateSync",
+      "url": "https://bun.com/docs/runtime/utils#bun-inflatesync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.inspect",
+      "url": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.8.0",
+      "description": "Serializes an object to a string exactly as it would be printed by console.log",
+      "examples": [
+        "const obj = { foo: \"bar\" };\nconst str = Bun.inspect(obj);\n// => '{\\nfoo: \"bar\" \\n}'\n\nconst arr = new Uint8Array([1, 2, 3]);\nconst str = Bun.inspect(arr);\n// => \"Uint8Array(3) [ 1, 2, 3 ]\""
+      ],
+      "related": [
+        "Bun.inspect.custom",
+        "Bun.inspect.table",
+        "BunInspectOptions",
+        "--console-depth",
+        "Bun.inspect.table(tabularData, properties, options)",
+        "Bun.inspect()",
+        "Bun.deepEquals"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.inspect()",
+      "url": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Serializes an object to a string exactly as it would be printed by console.log",
+      "examples": [
+        "const obj = { foo: \"bar\" };\nconst str = Bun.inspect(obj);\n// => '{\\nfoo: \"bar\" \\n}'\n\nconst arr = new Uint8Array([1, 2, 3]);\nconst str = Bun.inspect(arr);\n// => \"Uint8Array(3) [ 1, 2, 3 ]\""
+      ],
+      "related": [
+        "Bun.inspect.custom",
+        "Bun.inspect.table",
+        "BunInspectOptions",
+        "Bun.inspect",
+        "Bun.inspect.table(tabularData, properties, options)",
+        "Bun.deepEquals"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.inspect.compact",
+      "url": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "kind": "Other",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": false
+      }
+    },
+    {
+      "key": "Bun.inspect.custom",
+      "url": "https://bun.com/docs/runtime/utils#bun-inspect-custom",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.8.0",
+      "description": "The symbol Bun uses to implement Bun.inspect. Override it to customize how your objects are printed. It is identical to util.inspect.custom in Node.js.",
+      "examples": [
+        "class Foo {\n  [Bun.inspect.custom]() {\n    return \"foo\";\n  }\n}\n\nconst foo = new Foo();\nconsole.log(foo); // => \"foo\""
+      ],
+      "related": [
+        "Bun.inspect",
+        "Bun.inspect.table",
+        "BunInspectOptions",
+        "Bun.inspect.table(tabularData, properties, options)",
+        "Bun.inspect()",
+        "Bun.deepEquals"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.inspect.sorted",
+      "url": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "kind": "Other",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": false
+      }
+    },
+    {
+      "key": "Bun.inspect.table",
+      "url": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.1.31",
+      "description": "Bun.inspect.table(tabularData, properties, options) — format tabular data into a string (like console.table, returns a string)",
+      "examples": [
+        "console.log(\n  Bun.inspect.table([\n    { a: 1, b: 2, c: 3 },\n    { a: 4, b: 5, c: 6 },\n    { a: 7, b: 8, c: 9 },\n  ]),\n);\n//\n// ┌───┬───┬───┬───┐\n// │   │ a │ b │ c │\n// ├───┼───┼───┼───┤\n// │ 0 │ 1 │ 2 │ 3 │\n// │ 1 │ 4 │ 5 │ 6 │\n// │ 2 │ 7 │ 8 │ 9 │\n// └───┴───┴───┴───┘",
+        "console.log(\n  Bun.inspect.table(\n    [\n      { a: 1, b: 2, c: 3 },\n      { a: 4, b: 5, c: 6 },\n    ],\n    [\"a\", \"c\"],\n  ),\n);\n//\n// ┌───┬───┬───┐\n// │   │ a │ c │\n// ├───┼───┼───┤\n// │ 0 │ 1 │ 3 │\n// │ 1 │ 4 │ 6 │\n// └───┴───┴───┘",
+        "console.log(\n  Bun.inspect.table(\n    [\n      { a: 1, b: 2, c: 3 },\n      { a: 4, b: 5, c: 6 },\n    ],\n    {\n      colors: true,\n    },\n  ),\n);"
+      ],
+      "related": [
+        "Bun.inspect",
+        "Bun.inspect.custom",
+        "BunInspectOptions",
+        "Bun.inspect.table(tabularData, properties, options)",
+        "Bun.inspect()",
+        "Bun.deepEquals"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.inspect.table(tabularData, properties, options)",
+      "url": "https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Format tabular data into a string. Like console.table, except it returns a string rather than printing to the console.",
+      "examples": [
+        "console.log(\n  Bun.inspect.table([\n    { a: 1, b: 2, c: 3 },\n    { a: 4, b: 5, c: 6 },\n    { a: 7, b: 8, c: 9 },\n  ]),\n);\n//\n// ┌───┬───┬───┬───┐\n// │   │ a │ b │ c │\n// ├───┼───┼───┼───┤\n// │ 0 │ 1 │ 2 │ 3 │\n// │ 1 │ 4 │ 5 │ 6 │\n// │ 2 │ 7 │ 8 │ 9 │\n// └───┴───┴───┴───┘",
+        "console.log(\n  Bun.inspect.table(\n    [\n      { a: 1, b: 2, c: 3 },\n      { a: 4, b: 5, c: 6 },\n    ],\n    [\"a\", \"c\"],\n  ),\n);\n//\n// ┌───┬───┬───┐\n// │   │ a │ c │\n// ├───┼───┼───┤\n// │ 0 │ 1 │ 3 │\n// │ 1 │ 4 │ 6 │\n// └───┴───┴───┘",
+        "console.log(\n  Bun.inspect.table(\n    [\n      { a: 1, b: 2, c: 3 },\n      { a: 4, b: 5, c: 6 },\n    ],\n    {\n      colors: true,\n    },\n  ),\n);"
+      ],
+      "related": [
+        "Bun.inspect",
+        "Bun.inspect.custom",
+        "BunInspectOptions",
+        "Bun.inspect.table",
+        "Bun.inspect()",
+        "Bun.deepEquals"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.isMainThread",
+      "url": "https://bun.com/docs/runtime/workers#bun-ismainthread",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.7.1",
+      "description": "Check Bun.isMainThread to tell whether you're on the main thread or inside a worker.",
+      "examples": [
+        "if (Bun.isMainThread) {\n  console.log(\"I'm the main thread\");\n} else {\n  console.log(\"I'm in a worker\");\n}"
+      ],
+      "related": [
+        "Worker",
+        "worker.ref",
+        "Concurrency",
+        "Workers"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.isStandaloneExecutable",
+      "url": "https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use `Bun.isStandaloneExecutable` to check whether the current process is running from a compiled binary:",
+      "examples": [
+        "if (Bun.isStandaloneExecutable) {\n  // Running from `bun build --compile` output\n} else {\n  // Running via `bun <file>` or as a library\n}"
+      ],
+      "related": [
+        "--force",
+        "BUN_OPTIONS",
+        "--asset-naming",
+        "--compile-autoload-package-json",
+        "--compile-autoload-tsconfig"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.listen",
+      "url": "https://bun.com/docs/runtime/networking/tcp#start-a-server-bun-listen",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.5.0",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.connect"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.main",
+      "url": "https://bun.com/docs/runtime/utils#bun-main",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown",
+      "url": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.0",
+      "description": "Native Markdown rendering (html/ansi/render/react)",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.markdown.html",
+        "Bun.markdown.ansi",
+        "Bun.markdown.render",
+        "Bun.markdown.react",
+        "options",
+        "Bun.markdown.html options",
+        "Bun.markdown.react available overrides"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.ansi",
+      "url": "https://bun.com/docs/runtime/markdown#ansi-terminal-output",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.12",
+      "description": "Markdown → ANSI for the terminal",
+      "examples": [],
+      "related": [
+        "Bun.markdown",
+        "Bun.markdown.render",
+        "Bun.markdown.react",
+        "Bun.markdown.html",
+        "Bun.markdown.html options",
+        "Bun.markdown.react available overrides"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.html",
+      "url": "https://bun.com/docs/runtime/markdown#bun-markdown-html",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.0",
+      "description": "Render Markdown to an HTML string. Pass parser options as the second argument.",
+      "examples": [],
+      "related": [
+        "options",
+        "Bun.markdown",
+        "Bun.markdown.render",
+        "Bun.markdown.react",
+        "Bun.markdown.ansi",
+        "Bun.markdown.html options",
+        "Bun.markdown.react available overrides"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.html options",
+      "url": "https://bun.com/docs/runtime/markdown#options",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
+      "examples": [
+        "const html = Bun.markdown.html(\"some markdown\", {\n  tables: true, // GFM tables (default: true)\n  strikethrough: true, // GFM strikethrough (default: true)\n  tasklists: true, // GFM task lists (default: true)\n  tagFilter: true, // GFM tag filter for disallowed HTML tags\n  autolinks: true, // Autolink URLs, emails, and www. links\n});"
+      ],
+      "related": [
+        "Bun.markdown",
+        "Bun.markdown.ansi",
+        "Bun.markdown.html",
+        "Bun.markdown.react",
+        "Bun.markdown.react available overrides"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.react",
+      "url": "https://bun.com/docs/runtime/markdown#bun-markdown-react",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.8",
+      "description": "Render Markdown directly to React elements. Replace any HTML tag via component overrides (see available-overrides).",
+      "examples": [
+        "function Markdown({ text }: { text: string }) {\n  return Bun.markdown.react(text);\n}"
+      ],
+      "related": [
+        "component-overrides",
+        "available-overrides",
+        "parser-options-2",
+        "options",
+        "Bun.markdown",
+        "Bun.markdown.html",
+        "Bun.markdown.render",
+        "Bun.markdown.ansi"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.react available overrides",
+      "url": "https://bun.com/docs/runtime/markdown#available-overrides",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
+      "examples": [
+        "const el = Bun.markdown.react(\n  content,\n  {\n    pre: Code,\n    a: Link,\n    h2: Heading,\n  },\n  { headings: { ids: true } },\n);"
+      ],
+      "related": [
+        "Bun.markdown",
+        "Bun.markdown.ansi",
+        "Bun.markdown.html",
+        "Bun.markdown.html options",
+        "Bun.markdown.react"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.react component overrides",
+      "url": "https://bun.com/docs/runtime/markdown#component-overrides",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
+      "examples": [
+        "function Code({ language, children }) {\n  return (\n    <pre data-language={language}>\n      <code>{children}</code>\n    </pre>\n  );\n}\n\nfunction Link({ href, title, children }) {\n  return (\n    <a href={href} title={title} target=\"_blank\" rel=\"noopener noreferrer\">\n      {children}\n    </a>\n  );\n}\n\nfunction Heading({ id, children }) {\n  return (\n    <h2 id={id}>\n      <a href={`#${id}`}>{children}</a>\n    </h2>\n  );\n}\n\nconst el = Bun.markdown.react(\n  content,\n  {\n    pre: Code,\n    a: Link,\n    h2: Heading,\n  },\n  { headings: { ids: true } },\n);"
+      ],
+      "related": [
+        "Bun.markdown",
+        "Bun.markdown.ansi",
+        "Bun.markdown.html",
+        "Bun.markdown.html options",
+        "Bun.markdown.react"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.react parser options",
+      "url": "https://bun.com/docs/runtime/markdown#parser-options",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
+      "examples": [
+        "const el = Bun.markdown.react(\"## Hello World\", undefined, {\n  headings: { ids: true },\n  autolinks: true,\n});"
+      ],
+      "related": [
+        "Bun.markdown",
+        "Bun.markdown.ansi",
+        "Bun.markdown.html",
+        "Bun.markdown.html options",
+        "Bun.markdown.react"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.render",
+      "url": "https://bun.com/docs/runtime/markdown#bun-markdown-render",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.0",
+      "description": "Render Markdown via callbacks. Pass parser options as a separate third argument (see parser-options).",
+      "examples": [],
+      "related": [
+        "parser-options",
+        "options",
+        "Bun.markdown",
+        "Bun.markdown.html",
+        "Bun.markdown.react",
+        "Bun.markdown.ansi",
+        "Bun.markdown.html options"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.markdown.render parser options",
+      "url": "https://bun.com/docs/runtime/markdown#parser-options",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Parse and render Markdown with Bun’s built-in Markdown API, supporting GFM extensions and custom rendering callbacks",
+      "examples": [
+        "const el = Bun.markdown.react(\"## Hello World\", undefined, {\n  headings: { ids: true },\n  autolinks: true,\n});"
+      ],
+      "related": [
+        "Bun.markdown",
+        "Bun.markdown.ansi",
+        "Bun.markdown.html",
+        "Bun.markdown.html options",
+        "Bun.markdown.react"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.mmap",
+      "url": "https://bun.com/docs/runtime/bun-apis",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.allocUnsafe",
+        "Bun.concatArrayBuffers",
+        "Bun.deepMatch",
+        "Bun.FileSystemRouter",
+        "Bun.indexOfLine"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.nanoseconds",
+      "url": "https://bun.com/docs/runtime/utils#bun-nanoseconds",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.password",
+      "url": "https://bun.com/docs/runtime/hashing#bun-password",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.6.8",
+      "description": "Argon2/bcrypt password hashing",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.password.hash",
+        "Bun.CryptoHasher",
+        "Bun.hash",
+        "Bun.sha"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.pathToFileURL",
+      "url": "https://bun.com/docs/runtime/utils#bun-pathtofileurl",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.1",
+      "description": "Absolute path → file: URL (guide: guides/util/path-to-file-url)",
+      "examples": [
+        "const url = Bun.pathToFileURL(\"/foo/bar.txt\");\nconsole.log(url); // \"file:///foo/bar.txt\""
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.peek",
+      "url": "https://bun.com/docs/runtime/utils#bun-peek",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.2.2",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.plugin",
+      "url": "https://bun.com/docs/bundler/plugins#usage",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.5.8",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Extensions",
+        "Plugins"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.randomUUIDv7",
+      "url": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.0",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.readableStreamTo",
+      "url": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.redis",
+      "url": "https://bun.com/docs/runtime/redis#getting-started",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.9",
+      "description": "Redis/Valkey client",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.RedisClient",
+        "RedisClient"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.resolveSync",
+      "url": "https://bun.com/docs/runtime/utils#bun-resolvesync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.20",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.revision",
+      "url": "https://bun.com/docs/runtime/utils#bun-revision",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.2.0",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.s3",
+      "url": "https://bun.com/docs/runtime/s3#bun-s3client-bun-s3",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.1.43",
+      "description": "S3-compatible object storage client",
+      "examples": [
+        "import { S3Client } from \"bun\";\n\nconst client = new S3Client({\n  accessKeyId: \"your-access-key\",\n  secretAccessKey: \"your-secret-key\",\n  bucket: \"my-bucket\",\n  // sessionToken: \"...\"\n  // acl: \"public-read\",\n  // endpoint: \"https://s3.us-east-1.amazonaws.com\",\n  // endpoint: \"https://<account-id>.r2.cloudflarestorage.com\", // Cloudflare R2\n  // endpoint: \"https://<region>.digitaloceanspaces.com\", // DigitalOcean Spaces\n  // endpoint: \"http://localhost:9000\", // MinIO\n});\n\n// Bun.s3 is a global singleton that is equivalent to `new Bun.S3Client()`"
+      ],
+      "related": [
+        "Bun.S3Client",
+        "S3Client"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.secrets",
+      "url": "https://bun.com/docs/runtime/secrets#bun-secrets-get-options",
+      "kind": "API",
+      "stability": "experimental",
+      "since": "1.2.21",
+      "description": "OS keychain-backed secrets API",
+      "examples": [],
+      "related": [
+        "Bun.secrets.delete",
+        "Bun.secrets.get",
+        "Bun.secrets.set"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.semver",
+      "url": "https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.0.11",
+      "description": "`Bun.semver` compares semantic versions and checks whether a version is compatible with a range of versions. Versions and ranges are designed to be compatible with `node-semver`, which npm clients use",
+      "examples": [],
+      "related": [
+        "Bun.semver.order",
+        "Bun.semver.satisfies"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.serve",
+      "url": "https://bun.com/docs/runtime/http/server#basic-setup",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.1.9",
+      "description": "HTTP server with routes, TLS, WebSockets, HTTP/3",
+      "examples": [
+        "const server = Bun.serve({\n  routes: {\n    \"/api/status\": new Response(\"OK\"),\n    \"/users/:id\": req => {\n      return new Response(`Hello User ${req.params.id}!`);\n    },\n  },\n  fetch(req) {\n    return new Response(\"Not Found\", { status: 404 });\n  },\n});\n\nconsole.log(`Server running at ${server.url}`);"
+      ],
+      "related": [
+        "Bun.serve benchmarks",
+        "Bun.serve hostname",
+        "Bun.serve port",
+        "Bun.serve reference",
+        "Bun.serve routes"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.serve benchmarks",
+      "url": "https://bun.com/docs/runtime/http/server#benchmarks",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Bun!\");\n  },\n  port: 3000,\n});"
+      ],
+      "related": [
+        "Bun.serve",
+        "Bun.serve hostname",
+        "Bun.serve port",
+        "Bun.serve reference",
+        "Bun.serve routes"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.serve hostname",
+      "url": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
+      "examples": [
+        "Bun.serve({\n  port: 8080, // defaults to $BUN_PORT, $PORT, $NODE_PORT otherwise 3000\n  hostname: \"mydomain.com\", // defaults to \"0.0.0.0\"\n  fetch(req) {\n    return new Response(\"404!\");\n  },\n});",
+        "const server = Bun.serve({\n  port: 0, // random port\n  fetch(req) {\n    return new Response(\"404!\");\n  },\n});\n\n// server.port is the randomly selected port\nconsole.log(server.port);",
+        "console.log(server.port); // 3000\nconsole.log(server.url); // http://localhost:3000"
+      ],
+      "related": [
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve port",
+        "Bun.serve reference",
+        "Bun.serve routes"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.serve http3",
+      "url": "https://bun.com/blog/bun-v1.3.14#http3",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now ships a built-in image processing API that handles JPEG, PNG, WebP, GIF, and BMP — plus HEIC, AVIF, and TIFF on macOS and Windows — with zero native module installs .",
+      "examples": [],
+      "related": [
+        "--no-orphans",
+        "BUN_FEATURE_FLAG_NO_ORPHANS",
+        "Bun.Image (v1.3.14)",
+        "Bun.Image terminal methods",
+        "Bun.Terminal (ConPTY)"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.serve port",
+      "url": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
+      "examples": [
+        "Bun.serve({\n  port: 8080, // defaults to $BUN_PORT, $PORT, $NODE_PORT otherwise 3000\n  hostname: \"mydomain.com\", // defaults to \"0.0.0.0\"\n  fetch(req) {\n    return new Response(\"404!\");\n  },\n});",
+        "const server = Bun.serve({\n  port: 0, // random port\n  fetch(req) {\n    return new Response(\"404!\");\n  },\n});\n\n// server.port is the randomly selected port\nconsole.log(server.port);",
+        "console.log(server.port); // 3000\nconsole.log(server.url); // http://localhost:3000"
+      ],
+      "related": [
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve hostname",
+        "Bun.serve reference",
+        "Bun.serve routes"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.serve reference",
+      "url": "https://bun.com/docs/runtime/http/server#reference",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
+      "examples": [
+        "interface Server extends Disposable {\n  stop(closeActiveConnections?: boolean): Promise<void>;\n  reload(options: Serve): void;\n  fetch(request: Request | string): Response | Promise<Response>;\n  upgrade<T = undefined>(request: Request, options?: { headers?: Bun.HeadersInit; data?: T }): boolean;\n  publish(topic: string, data: string | ArrayBufferView | ArrayBuffer | SharedArrayBuffer, compress?: boolean): ServerWebSocketSendStatus;\n  subscriberCount(topic: string): number;\n  requestIP(request: Request): SocketAddress | null;\n  timeout(request: Request, seconds: number): void;\n  ref(): void;\n  unref(): void;\n  readonly pendingRequests: number;\n  readonly pendingWebSockets: number;\n  readonly url: URL;\n  readonly port: number;\n  readonly hostname: string;\n  readonly development: boolean;\n  readonly id: string; // brand-ok — Bun Server.id from docs reference\n}"
+      ],
+      "related": [
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve hostname",
+        "Bun.serve port",
+        "Bun.serve routes"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.serve routes",
+      "url": "https://bun.com/docs/runtime/http/server#basic-setup",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
+      "examples": [
+        "const server = Bun.serve({\n  routes: {\n    \"/api/status\": new Response(\"OK\"),\n    \"/users/:id\": req => {\n      return new Response(`Hello User ${req.params.id}!`);\n    },\n  },\n  fetch(req) {\n    return new Response(\"Not Found\", { status: 404 });\n  },\n});\n\nconsole.log(`Server running at ${server.url}`);"
+      ],
+      "related": [
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve hostname",
+        "Bun.serve port",
+        "Bun.serve reference"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.serve unix",
+      "url": "https://bun.com/docs/runtime/http/server#unix-domain-sockets",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
+      "examples": [
+        "Bun.serve({\n  unix: \"/tmp/my-socket.sock\", // path to socket\n  fetch(req) {\n    return new Response(`404!`);\n  },\n});"
+      ],
+      "related": [
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve hostname",
+        "Bun.serve port",
+        "Bun.serve reference"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.sha",
+      "url": "https://bun.com/docs/runtime/hashing#bun-hash",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.CryptoHasher",
+        "Bun.hash",
+        "Bun.password",
+        "Bun.password.hash"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.sleep",
+      "url": "https://bun.com/docs/runtime/utils#bun-sleep",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.5.6",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.sleepSync",
+      "url": "https://bun.com/docs/runtime/utils#bun-sleepsync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.5.8",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.sliceAnsi",
+      "url": "https://bun.com/reference/bun/sliceAnsi",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.11",
+      "description": "Slice a string by visible column width, preserving ANSI escape codes.",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "reference",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.spawn",
+      "url": "https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.2.0",
+      "description": "Spawn subprocesses with pipes and terminals",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.spawn terminal (PTY)",
+        "Bun.spawnSync",
+        "Bun.Subprocess",
+        "Bun.Terminal"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.spawn terminal (PTY)",
+      "url": "https://bun.com/docs/runtime/child-process#terminal-pty-support",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.5",
+      "description": "Spawn child processes with Bun.spawn or Bun.spawnSync",
+      "examples": [],
+      "related": [
+        "Bun.spawn",
+        "Bun.spawnSync",
+        "Bun.Subprocess",
+        "Bun.Terminal"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.spawnSync",
+      "url": "https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.2.0",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.spawn",
+        "Bun.spawn terminal (PTY)",
+        "Bun.Subprocess",
+        "Bun.Terminal"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.sql",
+      "url": "https://bun.com/docs/runtime/sql#features",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.1.43",
+      "description": "Postgres and MySQL client with connection pooling",
+      "examples": [],
+      "related": [
+        "--db-preconnect",
+        "--sql-preconnect",
+        "bun:sql",
+        "Bun.postgres"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.stdin",
+      "url": "https://bun.com/docs/runtime/console#reading-from-stdin",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.1.44",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "--console-depth"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.stringWidth",
+      "url": "https://bun.com/docs/runtime/utils#bun-stringwidth",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.0.29",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.stripANSI",
+      "url": "https://bun.com/docs/runtime/utils#bun-stripansi",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.21",
+      "description": "A `string` containing the version of the `bun` CLI that is currently running.",
+      "examples": [
+        "const coloredText = \"\\u001b[31mHello\\u001b[0m \\u001b[32mWorld\\u001b[0m\";\nconst plainText = Bun.stripANSI(coloredText);\nconsole.log(plainText); // => \"Hello World\"\n\n// Works with various ANSI codes\nconst formatted = \"\\u001b[1m\\u001b[4mBold and underlined\\u001b[0m\";\nconsole.log(Bun.stripANSI(formatted)); // => \"Bold and underlined\"",
+        "bun bench/snippets/strip-ansi.mjs",
+        "node bench/snippets/strip-ansi.mjs"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.udpSocket",
+      "url": "https://bun.com/docs/runtime/networking/udp#bind-a-udp-socket-bun-udpsocket",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.0.0",
+      "description": "UDP sockets with ICMP/truncation handling",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.version",
+      "url": "https://bun.com/docs/runtime/utils#bun-version",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.2.0",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.which",
+      "url": "https://bun.com/docs/runtime/utils#bun-which",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.2.0",
+      "description": "Resolve path to an executable on PATH (guide: guides/util/which-path-to-executable-bin)",
+      "examples": [
+        "Bun.which(\"sh\"); // => \"/bin/sh\"\nBun.which(\"notfound\"); // => null\nBun.which(\"bun\"); // => \"/home/user/.bun/bin/bun\""
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.wrapAnsi",
+      "url": "https://bun.com/docs/runtime/utils#bun-wrapansi",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.7",
+      "description": "A `string` containing the version of the `bun` CLI that is currently running.",
+      "examples": [
+        "// Basic wrapping at 20 columns\nBun.wrapAnsi(\"The quick brown fox jumps over the lazy dog\", 20);\n// => \"The quick brown fox\\njumps over the lazy\\ndog\"\n\n// Preserves ANSI escape codes: an open style is closed at each row end\n// and re-opened on the next row so every row renders correctly on its own\nBun.wrapAnsi(\"\\u001b[31mThe quick brown fox jumps over the lazy dog\\u001b[0m\", 20);\n// => \"\\u001b[31mThe quick brown fox\\u001b[39m\\n\\u001b[31mjumps over the lazy\\u001b[39m\\n\\u001b[31mdog\\u001b[0m\""
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.write",
+      "url": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.1.12",
+      "description": "Use `Bun.write()` to write an archive to disk:",
+      "examples": [
+        "// Write uncompressed tar (default)\nconst archive = new Bun.Archive({\n  \"file1.txt\": \"content1\",\n  \"file2.txt\": \"content2\",\n});\nawait Bun.write(\"output.tar\", archive);\n\n// Write gzipped tar\nconst compressed = new Bun.Archive({ \"src/index.ts\": \"console.log('Hello');\" }, { compress: \"gzip\" });\nawait Bun.write(\"output.tar.gz\", compressed);"
+      ],
+      "related": [
+        "Bun.file"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.zstdCompress",
+      "url": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.14",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.zstdCompressSync",
+      "url": "https://bun.com/docs/runtime/utils#bun-zstdcompress-bun-zstdcompresssync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.zstdDecompress",
+      "url": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.14",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.zstdDecompressSync",
+      "url": "https://bun.com/docs/runtime/utils#bun-zstddecompress-bun-zstddecompresssync",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "Bun.deepEquals",
+        "Bun.deflateSync",
+        "Bun.env",
+        "Bun.escapeHTML",
+        "Bun.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "BunInspectOptions",
+      "url": "https://bun.com/reference/bun/BunInspectOptions",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Options for Bun.inspect — colors, depth, sorted, compact (Node util.inspect extras are ignored)",
+      "examples": [
+        "const str = Bun.inspect(\n  { z: 1, a: { b: 2, c: 3 } },\n  { colors: true, depth: 2, sorted: true, compact: false },\n);"
+      ],
+      "related": [
+        "Bun.inspect",
+        "Bun.inspect.custom",
+        "Bun.inspect.table",
+        "--console-depth"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "reference",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "CompressionStream",
+      "url": "https://bun.com/reference/globals/CompressionStream",
+      "kind": "Other",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": false
+      }
+    },
+    {
+      "key": "Concurrency",
+      "url": "https://bun.com/docs/runtime/workers",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Runtime docs nav group (Workers). Sidebar: after Networking / Redis clients, before Process & System. Distinct from pm/global-store install concurrency.",
+      "examples": [
+        "const worker = new Worker(\"./worker.ts\");\n\nworker.postMessage(\"hello\");\nworker.onmessage = event => {\n  console.log(event.data);\n};"
+      ],
+      "related": [
+        "Workers",
+        "Worker",
+        "worker.ref",
+        "worker.unref",
+        "Bun.isMainThread"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "CookieMap",
+      "url": "https://bun.com/docs/runtime/cookies#cookiemap-class",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun’s native APIs for working with HTTP cookies",
+      "examples": [],
+      "related": [
+        "Bun.Cookie",
+        "Bun.CookieMap"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "DecompressionStream",
+      "url": "https://bun.com/reference/globals/DecompressionStream",
+      "kind": "Other",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": false
+      }
+    },
+    {
+      "key": "FileUrlToPathOptions",
+      "url": "https://bun.com/reference/node/url/fileURLToPath",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "This function ensures the correct decodings of percent-encoded characters as well as ensuring a cross-platform valid absolute path string.",
+      "examples": [
+        "import { fileURLToPath } from 'node:url';\nconst __filename = fileURLToPath(import.meta.url);",
+        "new URL('file:///C:/path/').pathname;      // Incorrect: /C:/path/\nfileURLToPath('file:///C:/path/');         // Correct:   C:\\path\\ (Windows)"
+      ],
+      "related": [
+        "fileURLToPath",
+        "node:url/fileURLToPath",
+        "url.fileURLToPath"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "reference",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "HTMLRewriter",
+      "url": "https://bun.com/docs/runtime/html-rewriter",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Streaming HTML transformation",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "PathToFileUrlOptions",
+      "url": "https://bun.com/reference/node/url/pathToFileURL",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "This function ensures that path is resolved absolutely, and that the URL control characters are correctly encoded when converting into a File URL.",
+      "examples": [
+        "import { pathToFileURL } from 'node:url';\npathToFileURL('/foo#1');        // Correct: file:///foo%231 (POSIX)\npathToFileURL('/some/path%.c'); // Correct: file:///some/path%25.c (POSIX)"
+      ],
+      "related": [
+        "node:url/pathToFileURL",
+        "pathToFileURL",
+        "url.pathToFileURL"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "reference",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "RedisClient",
+      "url": "https://bun.com/docs/runtime/redis#getting-started",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun’s native Redis client with a Promise-based API",
+      "examples": [],
+      "related": [
+        "Bun.redis",
+        "Bun.RedisClient"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "RegistryClient",
+      "url": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md",
+      "kind": "Other",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": false
+      }
+    },
+    {
+      "key": "S3Client",
+      "url": "https://bun.com/docs/runtime/s3#bun-s3client-bun-s3",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun provides fast, native bindings for interacting with S3-compatible object storage services.",
+      "examples": [],
+      "related": [
+        "Bun.s3",
+        "Bun.S3Client"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "SHA3",
+      "url": "https://bun.com/blog/bun-v1.3.13#sha3-support-in-webcrypto-and-node-crypto",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.13",
+      "description": "v1.3.13: SHA3-224/256/384/512 in node:crypto + WebCrypto (createHash/createHmac/subtle.digest). Also Bun.CryptoHasher(\"sha3-256\"). Audit SSOT uses sha3-256 via evidence.algorithm + evidence.digest (AuditConcept sha3-integrity).",
+      "examples": [
+        "import crypto from \"crypto\";\n\n// node:crypto\nconst hash = crypto.createHash(\"sha3-256\");\nhash.update(\"Hello, world!\");\nconsole.log(hash.digest(\"hex\"));\n// => \"f345a219da005ebe9c1a1eaad97bbf38a10c8473e41d0af7fb617caa0c6aa722\"\n\nconst hmac = crypto.createHmac(\"sha3-256\", \"secret-key\");\nhmac.update(\"Hello, world!\");\nconsole.log(hmac.digest(\"hex\"));\n\n// Web Crypto API\nconst digest = await crypto.subtle.digest(\n  \"SHA3-256\",\n  new TextEncoder().encode(\"Hello, world!\"),\n);\nconsole.log(Buffer.from(digest).toString(\"hex\"));\n\n// Also: Bun.CryptoHasher(\"sha3-256\") — sync native path"
+      ],
+      "related": [
+        "sha3-256",
+        "SHA3-256",
+        "Bun.CryptoHasher",
+        "crypto.createHash(\"sha3-256\")",
+        "crypto.subtle.digest(\"SHA3-256\")",
+        "--randomize",
+        "--parallel",
+        "--changed"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Server",
+      "url": "https://bun.com/docs/runtime/http/server#reference",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use `Bun.serve` to start a high-performance HTTP server in Bun",
+      "examples": [
+        "interface Server extends Disposable {\n  stop(closeActiveConnections?: boolean): Promise<void>;\n  reload(options: Serve): void;\n  fetch(request: Request | string): Response | Promise<Response>;\n  upgrade<T = undefined>(request: Request, options?: { headers?: Bun.HeadersInit; data?: T }): boolean;\n  publish(topic: string, data: string | ArrayBufferView | ArrayBuffer | SharedArrayBuffer, compress?: boolean): ServerWebSocketSendStatus;\n  subscriberCount(topic: string): number;\n  requestIP(request: Request): SocketAddress | null;\n  timeout(request: Request, seconds: number): void;\n  ref(): void;\n  unref(): void;\n  readonly pendingRequests: number;\n  readonly pendingWebSockets: number;\n  readonly url: URL;\n  readonly port: number;\n  readonly hostname: string;\n  readonly development: boolean;\n  readonly id: string; // brand-ok — Bun Server.id from docs reference\n}"
+      ],
+      "related": [
+        "--port",
+        "BUN_PORT",
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve hostname"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "ServerWebSocket",
+      "url": "https://bun.com/docs/runtime/http/websockets#start-a-websocket-server",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Server-side WebSockets in Bun",
+      "examples": [],
+      "related": [
+        "WebSocket"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "SocialMetadata",
+      "url": "https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun's HTMLRewriter API extracts social share images and Open Graph metadata from HTML by matching CSS selectors against the elements, text, and attributes you want to process. Use it to build link previews, social media cards, or web scrapers.",
+      "examples": [
+        "interface SocialMetadata {\n  title?: string;\n  description?: string;\n  image?: string;\n  url?: string;\n  siteName?: string;\n  type?: string;\n}\n\nasync function extractSocialMetadata(url: string): Promise<SocialMetadata> {\n  const metadata: SocialMetadata = {};\n  const response = await fetch(url);\n\n  const rewriter = new HTMLRewriter()\n    .on('meta[property^=\"og:\"]', {\n      element(el) {\n        const property = el.getAttribute(\"property\");\n        const content = el.getAttribute(\"content\");\n        if (property && content) {\n          const key = property.replace(\"og:\", \"\") as keyof SocialMetadata;\n          metadata[key] = content;\n        }\n      },\n    })\n    .on('meta[name^=\"twitter:\"]', {\n      element(el) {\n        const name = el.getAttribute(\"name\");\n        const content = el.getAttribute(\"content\");\n        if (name && content) {\n          const key = name.replace(\"twitter:\", \"\") as keyof SocialMetadata;\n          if (!metadata[key]) {\n            metadata[key] = content;\n          }\n        }\n      },\n    })\n    .on('meta[name=\"description\"]', {\n      element(el) {\n        const content = el.getAttribute(\"content\");\n        if (content && !metadata.description) {\n          metadata.description = content;\n        }\n      },\n    })\n    .on(\"title\", {\n      text(text) {\n        if (!metadata.title) {\n          metadata.title = text.text;\n        }\n      },\n    });\n\n  await rewriter.transform(response).blob();\n\n  if (metadata.image && !metadata.image.startsWith(\"http\")) {\n    try {\n      metadata.image = new URL(metadata.image, url).href;\n    } catch {\n      // Keep the original URL if parsing fails\n    }\n  }\n\n  return metadata;\n}"
+      ],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "guides",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "TLSOptions",
+      "url": "https://bun.com/docs/runtime/http/server#reference",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
+      "examples": [
+        "interface Server extends Disposable {\n  stop(closeActiveConnections?: boolean): Promise<void>;\n  reload(options: Serve): void;\n  fetch(request: Request | string): Response | Promise<Response>;\n  upgrade<T = undefined>(request: Request, options?: { headers?: Bun.HeadersInit; data?: T }): boolean;\n  publish(topic: string, data: string | ArrayBufferView | ArrayBuffer | SharedArrayBuffer, compress?: boolean): ServerWebSocketSendStatus;\n  subscriberCount(topic: string): number;\n  requestIP(request: Request): SocketAddress | null;\n  timeout(request: Request, seconds: number): void;\n  ref(): void;\n  unref(): void;\n  readonly pendingRequests: number;\n  readonly pendingWebSockets: number;\n  readonly url: URL;\n  readonly port: number;\n  readonly hostname: string;\n  readonly development: boolean;\n  readonly id: string; // brand-ok — Bun Server.id from docs reference\n}"
+      ],
+      "related": [
+        "--port",
+        "BUN_PORT",
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve hostname"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "TZ",
+      "url": "https://bun.com/docs/guides/runtime/timezone",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Default process time zone (IANA id); bun test forces UTC — see also test/runtime-behavior#tz-timezone",
+      "examples": [
+        "process.env.TZ = \"America/New_York\";",
+        "TZ=America/New_York bun run dev",
+        "new Date().getHours(); // => 18\n\nprocess.env.TZ = \"America/New_York\";\n\nnew Date().getHours(); // => 21"
+      ],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "guides",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "TextDecoderStream",
+      "url": "https://bun.com/reference/globals/TextDecoderStream",
+      "kind": "Other",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": false
+      }
+    },
+    {
+      "key": "TextEncoderStream",
+      "url": "https://bun.com/reference/globals/TextEncoderStream",
+      "kind": "Other",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": false
+      }
+    },
+    {
+      "key": "URLPattern",
+      "url": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
+      "examples": [
+        "// Match URLs with a user ID parameter\nconst pattern = new URLPattern({ pathname: \"/users/:id\" });\n\npattern.test(\"https://example.com/users/123\"); // true\npattern.test(\"https://example.com/posts/456\"); // false\n\nconst result = pattern.exec(\"https://example.com/users/123\");\nconsole.log(result.pathname.groups.id); // \"123\"\n\n// Wildcard matching\nconst filesPattern = new URLPattern({ pathname: \"/files/*\" });\nconst match = filesPattern.exec(\"https://example.com/files/image.png\");\nconsole.log(match.pathname.groups[0]); // \"image.png\"",
+        "- **Constructor**: Create patterns from strings or `URLPatternInit` dictionaries\n- **`test()`**: Check if a URL matches the pattern (returns boolean)\n- **`exec()`**: Extract matched groups from a URL (returns `URLPatternResult` or null)\n- **Pattern properties**: `protocol`, `username`, `password`, `hostname`, `port`, `pathname`, `search`, `hash`\n- **`hasRegExpGroups`**: Detect if the pattern uses custom regular expressions",
+        "408 Web Platform Tests pass for this implementation. Thanks to the WebKit team for implementing this!"
+      ],
+      "related": [
+        "URLPatternInit",
+        "URLPatternInput",
+        "URLPatternResult"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "URLPatternInit",
+      "url": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
+      "examples": [
+        "// Match URLs with a user ID parameter\nconst pattern = new URLPattern({ pathname: \"/users/:id\" });\n\npattern.test(\"https://example.com/users/123\"); // true\npattern.test(\"https://example.com/posts/456\"); // false\n\nconst result = pattern.exec(\"https://example.com/users/123\");\nconsole.log(result.pathname.groups.id); // \"123\"\n\n// Wildcard matching\nconst filesPattern = new URLPattern({ pathname: \"/files/*\" });\nconst match = filesPattern.exec(\"https://example.com/files/image.png\");\nconsole.log(match.pathname.groups[0]); // \"image.png\"",
+        "- **Constructor**: Create patterns from strings or `URLPatternInit` dictionaries\n- **`test()`**: Check if a URL matches the pattern (returns boolean)\n- **`exec()`**: Extract matched groups from a URL (returns `URLPatternResult` or null)\n- **Pattern properties**: `protocol`, `username`, `password`, `hostname`, `port`, `pathname`, `search`, `hash`\n- **`hasRegExpGroups`**: Detect if the pattern uses custom regular expressions",
+        "408 Web Platform Tests pass for this implementation. Thanks to the WebKit team for implementing this!"
+      ],
+      "related": [
+        "URLPattern",
+        "URLPatternInput",
+        "URLPatternResult"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "URLPatternInput",
+      "url": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
+      "examples": [
+        "// Match URLs with a user ID parameter\nconst pattern = new URLPattern({ pathname: \"/users/:id\" });\n\npattern.test(\"https://example.com/users/123\"); // true\npattern.test(\"https://example.com/posts/456\"); // false\n\nconst result = pattern.exec(\"https://example.com/users/123\");\nconsole.log(result.pathname.groups.id); // \"123\"\n\n// Wildcard matching\nconst filesPattern = new URLPattern({ pathname: \"/files/*\" });\nconst match = filesPattern.exec(\"https://example.com/files/image.png\");\nconsole.log(match.pathname.groups[0]); // \"image.png\"",
+        "- **Constructor**: Create patterns from strings or `URLPatternInit` dictionaries\n- **`test()`**: Check if a URL matches the pattern (returns boolean)\n- **`exec()`**: Extract matched groups from a URL (returns `URLPatternResult` or null)\n- **Pattern properties**: `protocol`, `username`, `password`, `hostname`, `port`, `pathname`, `search`, `hash`\n- **`hasRegExpGroups`**: Detect if the pattern uses custom regular expressions",
+        "408 Web Platform Tests pass for this implementation. Thanks to the WebKit team for implementing this!"
+      ],
+      "related": [
+        "URLPattern",
+        "URLPatternInit",
+        "URLPatternResult"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "URLPatternResult",
+      "url": "https://bun.com/blog/bun-v1.3.4#urlpattern-api",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun now supports the URLPattern Web API, providing declarative pattern matching for URLs—similar to how regular expressions work for strings. This is especially useful for routing in web servers and frameworks.",
+      "examples": [
+        "// Match URLs with a user ID parameter\nconst pattern = new URLPattern({ pathname: \"/users/:id\" });\n\npattern.test(\"https://example.com/users/123\"); // true\npattern.test(\"https://example.com/posts/456\"); // false\n\nconst result = pattern.exec(\"https://example.com/users/123\");\nconsole.log(result.pathname.groups.id); // \"123\"\n\n// Wildcard matching\nconst filesPattern = new URLPattern({ pathname: \"/files/*\" });\nconst match = filesPattern.exec(\"https://example.com/files/image.png\");\nconsole.log(match.pathname.groups[0]); // \"image.png\"",
+        "- **Constructor**: Create patterns from strings or `URLPatternInit` dictionaries\n- **`test()`**: Check if a URL matches the pattern (returns boolean)\n- **`exec()`**: Extract matched groups from a URL (returns `URLPatternResult` or null)\n- **Pattern properties**: `protocol`, `username`, `password`, `hostname`, `port`, `pathname`, `search`, `hash`\n- **`hasRegExpGroups`**: Detect if the pattern uses custom regular expressions",
+        "408 Web Platform Tests pass for this implementation. Thanks to the WebKit team for implementing this!"
+      ],
+      "related": [
+        "URLPattern",
+        "URLPatternInit",
+        "URLPatternInput"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "other",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "WebSocketHandler",
+      "url": "https://bun.com/docs/runtime/http/server#reference",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun.serve to start a high-performance HTTP server in Bun",
+      "examples": [
+        "interface Server extends Disposable {\n  stop(closeActiveConnections?: boolean): Promise<void>;\n  reload(options: Serve): void;\n  fetch(request: Request | string): Response | Promise<Response>;\n  upgrade<T = undefined>(request: Request, options?: { headers?: Bun.HeadersInit; data?: T }): boolean;\n  publish(topic: string, data: string | ArrayBufferView | ArrayBuffer | SharedArrayBuffer, compress?: boolean): ServerWebSocketSendStatus;\n  subscriberCount(topic: string): number;\n  requestIP(request: Request): SocketAddress | null;\n  timeout(request: Request, seconds: number): void;\n  ref(): void;\n  unref(): void;\n  readonly pendingRequests: number;\n  readonly pendingWebSockets: number;\n  readonly url: URL;\n  readonly port: number;\n  readonly hostname: string;\n  readonly development: boolean;\n  readonly id: string; // brand-ok — Bun Server.id from docs reference\n}"
+      ],
+      "related": [
+        "--port",
+        "BUN_PORT",
+        "Bun.serve",
+        "Bun.serve benchmarks",
+        "Bun.serve hostname"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "WebView",
+      "url": "https://bun.com/docs/runtime/webview#new-bun-webview-options",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Control a headless browser from Bun for automation, testing, and scraping — zero dependencies on macOS, Chrome DevTools Protocol everywhere else",
+      "examples": [],
+      "related": [
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-extensions",
+        "--disable-gpu"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Worker",
+      "url": "https://bun.com/docs/runtime/workers#creating-a-worker",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Create a worker thread with new Worker (global, like browsers). Share I/O with the main thread; communicate via postMessage.",
+      "examples": [
+        "const worker = new Worker(\"./worker.ts\");\n\nworker.postMessage(\"hello\");\nworker.onmessage = event => {\n  console.log(event.data);\n};"
+      ],
+      "related": [
+        "worker.ref",
+        "worker.unref",
+        "worker.terminate",
+        "worker.postMessage",
+        "Bun.isMainThread",
+        "Concurrency",
+        "Workers"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Workers",
+      "url": "https://bun.com/docs/runtime/workers#creating-a-worker",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Bun's Workers API — create and communicate with a JavaScript instance on a separate thread while sharing I/O with the main thread.",
+      "examples": [
+        "const worker = new Worker(\"./worker.ts\");\n\nworker.postMessage(\"hello\");\nworker.onmessage = event => {\n  console.log(event.data);\n};"
+      ],
+      "related": [
+        "Worker",
+        "worker.ref",
+        "worker.unref",
+        "Bun.isMainThread",
+        "Concurrency"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "YAML",
+      "url": "https://bun.com/docs/runtime/yaml#bun-yaml-parse",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Use Bun's built-in support for YAML files through both runtime APIs and bundler integration",
+      "examples": [],
+      "related": [
+        "Bun.YAML",
+        "Bun.YAML.parse"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:bundle",
+      "url": "https://bun.com/docs/bundler/index#features",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.3.5",
+      "description": "In Bun's CLI, boolean flags like `--minify` take no argument.",
+      "examples": [
+        "# esbuild\nesbuild <entrypoint> --outdir=out --bundle\n\n# bun\nbun build <entrypoint> --outdir=out"
+      ],
+      "related": [
+        "--watch",
+        "Bun.build",
+        "bun build",
+        "Bundler",
+        "Core"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:error",
+      "url": "https://bun.com/docs/bundler/hot-reloading#built-in-events",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "| Event                  | Emitted when                                                                                    |",
+      "examples": [],
+      "related": [
+        "bun:invalidate",
+        "bun:ws"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:ffi",
+      "url": "https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.1.8",
+      "description": "<Warning>",
+      "examples": [],
+      "related": [
+        "--crate-type"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:invalidate",
+      "url": "https://bun.com/docs/bundler/hot-reloading#built-in-events",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "| Event                  | Emitted when                                                                                    |",
+      "examples": [],
+      "related": [
+        "bun:error",
+        "bun:ws"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:sql",
+      "url": "https://bun.com/docs/runtime/sql#features",
+      "kind": "API",
+      "stability": "stable",
+      "since": "1.2.19",
+      "description": "Bun provides native bindings for working with SQL databases through a unified Promise-based API that supports PostgreSQL, MySQL, and SQLite.",
+      "examples": [],
+      "related": [
+        "--db-preconnect",
+        "--sql-preconnect",
+        "Bun.postgres",
+        "Bun.sql"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:sqlite",
+      "url": "https://bun.com/docs/runtime/sqlite#load-via-es-module-import",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.2.0",
+      "description": "Built-in SQLite driver (v3.53.0 in 1.3.14)",
+      "examples": [
+        "import { Database } from \"bun:sqlite\";\n\nconst db = new Database(\":memory:\");\nconst query = db.query(\"select 'Hello world' as message;\");\nquery.get();"
+      ],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:test",
+      "url": "https://bun.com/docs/test/index#run-tests",
+      "kind": "API",
+      "stability": "stable",
+      "since": "0.1.12",
+      "description": "Bun implements a set of native APIs on the `Bun` global object and through several built-in modules.",
+      "examples": [
+        "Bun.serve({\n  fetch(req: Request) {\n    return new Response(\"Success!\");\n  },\n});"
+      ],
+      "related": [
+        "--bail",
+        "--max-concurrency",
+        "--timeout",
+        "--update-snapshots",
+        "bun test"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:test snapshots",
+      "url": "https://bun.com/docs/test/snapshots#basic-snapshots",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "Learn how to use snapshot testing in Bun to save and compare output between test runs",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": true,
+        "section": "test",
+        "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "bun:ws",
+      "url": "https://bun.com/docs/bundler/hot-reloading#built-in-events",
+      "kind": "API",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "| Event                  | Emitted when                                                                                    |",
+      "examples": [],
+      "related": [
+        "bun:error",
+        "bun:invalidate"
+      ],
+      "meta": {
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
+      }
+    }
+  ],
+  "defaultsCoverage": {
+    "passed": true,
+    "total": 12,
+    "documented": 12,
+    "rows": [
+      {
+        "name": "CryptoHasher requires algorithm",
+        "docKey": "Bun.CryptoHasher",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/hashing#bun-cryptohasher",
+        "stability": "stable"
+      },
+      {
+        "name": "password.hash default argon2id",
+        "docKey": "Bun.password",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/hashing#bun-password",
+        "stability": "stable"
+      },
+      {
+        "name": "inspect default depth shows all",
+        "docKey": "Bun.inspect",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "stability": "stable"
+      },
+      {
+        "name": "write creates dirs",
+        "docKey": "Bun.write",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+        "stability": "stable"
+      },
+      {
+        "name": "file.stat works",
+        "docKey": "Bun.file",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "stability": "stable"
+      },
+      {
+        "name": "serve port fallback",
+        "docKey": "Bun.serve port",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname",
+        "stability": "stable"
+      },
+      {
+        "name": "which returns null for missing",
+        "docKey": "Bun.which",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-which",
+        "stability": "stable"
+      },
+      {
+        "name": "escapeHTML escapes & < > \" '",
+        "docKey": "Bun.escapeHTML",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-escapehtml",
+        "stability": "stable"
+      },
+      {
+        "name": "readableStreamToBytes empty",
+        "docKey": "Bun.readableStreamTo",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-readablestreamto",
+        "stability": "stable"
+      },
+      {
+        "name": "nanoseconds monotonic",
+        "docKey": "Bun.nanoseconds",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-nanoseconds",
+        "stability": "stable"
+      },
+      {
+        "name": "sleep ~50ms",
+        "docKey": "Bun.sleep",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/utils#bun-sleep",
+        "stability": "stable"
+      },
+      {
+        "name": "hash returns bigint",
+        "docKey": "Bun.hash",
+        "documented": true,
+        "url": "https://bun.com/docs/runtime/hashing#bun-hash",
+        "stability": "stable"
+      }
+    ]
+  },
+  "proofHash": "16e9cbf7ca892b44911041d77c82adb96ead4ddafacb90e319ce6dd4c9da0f28"
+}

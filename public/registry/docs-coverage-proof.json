@@ -1,0 +1,40 @@
+{
+  "type": "DocsCoverageVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T03:14:07.000Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "rss": {
+    "source": "https://bun.com/rss.xml",
+    "indexGenerated": "2026-07-24T00:08:45.155Z",
+    "newestVersion": "1.3.14",
+    "indexStale": false
+  },
+  "reference": {
+    "source": "https://bun.com/reference",
+    "indexGenerated": "2026-07-24T02:04:57.869Z",
+    "moduleCount": 44,
+    "pageCount": 57
+  },
+  "canonical": {
+    "catalogTotal": 13,
+    "catalogTracked": 13,
+    "catalogMissing": [],
+    "overlayTotal": 232,
+    "overlayTracked": 232,
+    "overlayMissing": [],
+    "reviewTotal": 26,
+    "reviewTracked": 26,
+    "reviewMissing": []
+  },
+  "referenceUrls": {
+    "catalogPagesChecked": 13,
+    "missingFromIndex": []
+  },
+  "summary": {
+    "ok": true,
+    "missingCanonicalCount": 0,
+    "indexStale": false
+  },
+  "proofHash": "c74594ac19fd2bc94162c4ab8943ccec771c0430e51c6ef43317c712385c2fdc"
+}

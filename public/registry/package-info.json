@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-07-24T03:14:01.344Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "results": [
+    {
+      "name": "react",
+      "registry": "npm",
+      "version": "19.2.8",
+      "readme": "—",
+      "status": "✅ OK"
+    },
+    {
+      "name": "@factorywager/registry-client",
+      "registry": "custom",
+      "version": "—",
+      "readme": "—",
+      "status": "❌ error"
+    },
+    {
+      "name": "@factorywager/bun-test",
+      "registry": "custom",
+      "version": "—",
+      "readme": "—",
+      "status": "❌ error"
+    },
+    {
+      "name": "@factory/health-check",
+      "registry": "custom",
+      "version": "—",
+      "readme": "—",
+      "status": "❌ error"
+    },
+    {
+      "name": "event-store",
+      "registry": "custom",
+      "version": "—",
+      "readme": "—",
+      "status": "❌ error"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "total": 5
+  },
+  "proofHash": "fbeaac1080eba2f9ff27c2384b95d878b338d4c829338125484f3e3288470962"
+}

@@ -1,12 +1,12 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 562,
+  "uptimeMs": 525,
   "packageCount": 17,
-  "versionCount": 26,
+  "versionCount": 23,
   "lastIntegrity": {
     "status": "ok",
-    "timestamp": "2026-07-23T17:59:09.433Z",
+    "timestamp": "2026-07-24T00:12:25.225Z",
     "failures": 0,
     "source": "sqlite"
   },
@@ -21,12 +21,12 @@
   "dodByStatus": {},
   "experimentsActive": 0,
   "predictionN": 10,
-  "timestamp": "2026-07-23T23:23:22.107Z",
-  "snapshotAt": "2026-07-23T23:23:22.107Z",
+  "timestamp": "2026-07-24T03:13:29.404Z",
+  "snapshotAt": "2026-07-24T03:13:29.404Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-23T23:23:22.107Z",
+    "checkedAt": "2026-07-24T03:13:29.405Z",
     "summary": {
       "total": 21,
       "ok": 20,
@@ -151,8 +151,8 @@
         "Key": "PLAY_SIGNING_SECRET",
         "Group": "ops",
         "Severity": "recommended",
-        "Status": "default",
-        "Detail": "unset · code default · defaults to operations-dev-secret if unset"
+        "Status": "set",
+        "Detail": "set (len 64, 019…33)"
       },
       {
         "Key": "PROVISION_ENCRYPTION_KEY",
