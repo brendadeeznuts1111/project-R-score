@@ -1,8 +1,8 @@
 # Tenant: reference-discovery
 
-**Tenant** `reference-discovery` (agent-operated; not on spine cron yet)  
-**Runs** `bun tools/reference-discovery.ts --check`  
-**Proof** manual / agent cleanup batch  
+**Tenant** `reference-discovery` (agent-operated; not on spine cron yet)
+**Runs** `bun tools/reference-discovery.ts --check`
+**Proof** manual / agent cleanup batch
 **Skill** `.agents/skills/reference-discovery/SKILL.md`
 
 ## Signal (failure)

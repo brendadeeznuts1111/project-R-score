@@ -1,9 +1,9 @@
-// @see https://bun.com/docs/runtime/color  Bun.color
+// @see https://bun.com/docs/runtime/color ï¿½ Bun.color
 /**
- * console-depth.test.ts  correctness diff for lib/console-depth.ts.
+ * console-depth.test.ts ï¿½ correctness diff for lib/console-depth.ts.
  *
  * Width vectors are mirrored from sindresorhus/string-width's test suite
- * (https://github.com/sindresorhus/string-width/blob/main/test.js)  the same
+ * (https://github.com/sindresorhus/string-width/blob/main/test.js) ï¿½ the same
  * suite Bun.stringWidth is validated against
  * (https://bun.com/docs/runtime/utils#bun-stringwidth).
  * v1.3.5 accuracy vectors: https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy
@@ -31,7 +31,7 @@ import {
   inspectCustom,
 } from '../lib/console-depth.ts';
 
-describe('widthOf  string-width reference vectors', () => {
+describe('widthOf ï¿½ string-width reference vectors', () => {
   const vectors: Array<[string, string, number]> = [
     // Basic
     ['empty string', '', 0],
@@ -170,9 +170,12 @@ describe('truncateWidth', () => {
     expect(out).toContain('[31m');
   });
   test('does not split a wide grapheme mid-glyph', () => {
-    const out = truncateWidth('??????', 3);
-    // width 3 cannot hold two 2-col emoji; must keep whole graphemes only
-    expect(widthOf(out)).toBeLessThanOrEqual(4);
+    // Fullwidth letters are 2 cols each. Bun.sliceAnsi keeps whole glyphs.
+    const twoWide = '\uFF21\uFF22'; // ï¼¡ï¼¢
+    expect(widthOf(twoWide)).toBe(4);
+    const out = truncateWidth(twoWide, 2);
+    expect(widthOf(out)).toBe(2);
+    expect(out).toBe('\uFF21');
     expect(out).not.toContain('\uFFFD');
   });
   test('ellipsis option uses sliceAnsi', () => {
@@ -243,21 +246,21 @@ describe('Bun API surface guard', () => {  // Fails loudly if a Bun upgrade remo
     expect(typeof Bun.inspect.custom).toBe('symbol');
   });
   test('TTY primitives degrade safely when piped', () => {
-    // When piped: isTTY is absent and columns is undefined  shouldColor/termWidth
+    // When piped: isTTY is absent and columns is undefined ï¿½ shouldColor/termWidth
     // must still behave (false / fallback width), never throw.
     expect(process.stdout.isTTY === true).toBe(false);
     expect(typeof process.stdout.columns === 'undefined' || typeof process.stdout.columns === 'number').toBe(true);
   });
 });
 
-// @see https://bun.com/docs/runtime/color  Bun.color
+// @see https://bun.com/docs/runtime/color ï¿½ Bun.color
 /**
- * Snapshot tests  deterministic output pinned via bun:test snapshots.
- * https://bun.com/docs/test/snapshots  https://bun.com/guides/test/snapshot
+ * Snapshot tests ï¿½ deterministic output pinned via bun:test snapshots.
+ * https://bun.com/docs/test/snapshots ï¿½ https://bun.com/guides/test/snapshot
  *
  * If a Bun upgrade intentionally changes formatting, regenerate with:
  *   bun test tests/console-depth.test.ts --update-snapshots
- * (scoped to this file  do NOT run --update-snapshots repo-wide)
+ * (scoped to this file ï¿½ do NOT run --update-snapshots repo-wide)
  */
 describe('snapshots', () => {
   const fixture = {

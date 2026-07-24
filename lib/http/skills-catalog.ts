@@ -92,6 +92,11 @@ function packagesDir(): string {
  * Handles inline scalars, single/double quotes, and `>` / `|-` style block
  * scalars (continuation lines indented deeper than the key).
  */
+/** @internal exported for unit tests — frontmatter wire edge for SKILL.md */
+export function parseSkillFrontmatter(text: string): { name: string; description: string } {
+  return parseFrontmatter(text);
+}
+
 function parseFrontmatter(text: string): { name: string; description: string } {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   const out = { name: '', description: '' };

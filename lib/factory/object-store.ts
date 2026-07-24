@@ -246,5 +246,6 @@ export { isPreconditionFailed };
 /** Default attachment filename for tarball keys (last path segment). */
 export function tarballContentDisposition(r2Key: string): string {
   const base = r2Key.split('/').pop()?.replace(/"/g, '') || 'artifact.tgz';
+  // RFC 6266 attachment; strip quotes from the basename to keep header well-formed.
   return `attachment; filename="${base}"`;
 }

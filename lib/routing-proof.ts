@@ -220,6 +220,19 @@ export const DEFAULT_ROUTING_SPECS: RoutingProbeSpec[] = [
     note: 'ops dashboard',
   },
   {
+    path: '/portal/dashboard/',
+    requireOk: true,
+    critical: true,
+    note: 'executive dashboard',
+  },
+  {
+    path: '/portal/dashboard.js',
+    requireOk: true,
+    expectContentType: 'application/javascript',
+    critical: true,
+    note: 'executive dashboard client',
+  },
+  {
     path: '/registry/ops-summary.json',
     requireOk: true,
     expectContentType: 'application/json',

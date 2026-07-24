@@ -5,6 +5,7 @@ import { asAccessKeyId } from '../lib/types/branded';
 import {
   createS3RegistryStore,
   requireFactoryRegistryS3Config,
+  tarballContentDisposition,
 } from '../lib/factory/object-store.ts';
 
 describe('factory S3 store requestPayer (Bun ≥1.3.6)', () => {
@@ -32,5 +33,20 @@ describe('factory S3 store requestPayer (Bun ≥1.3.6)', () => {
     });
     expect(typeof store.ping).toBe('function');
     expect(typeof store.putJson).toBe('function');
+  });
+});
+
+describe('tarballContentDisposition', () => {
+  test('uses last path segment as attachment filename', () => {
+    expect(tarballContentDisposition('@scope/pkg/1.0.0/artifact.tgz')).toBe(
+      'attachment; filename="artifact.tgz"'
+    );
+  });
+
+  test('strips embedded quotes and falls back for empty key', () => {
+    expect(tarballContentDisposition('evil"name.tgz')).toBe(
+      'attachment; filename="evilname.tgz"'
+    );
+    expect(tarballContentDisposition('')).toBe('attachment; filename="artifact.tgz"');
   });
 });
