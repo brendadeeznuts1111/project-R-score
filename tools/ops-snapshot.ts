@@ -376,16 +376,19 @@ export async function buildRegistrySnapshot(options?: {
 
     // Always bake TOC fixture before ops-summary so `payload.toc` is available.
     try {
-      const { exportTocOpsSnapshot, buildDemoTocOpsFixture } = await import(
+      const { exportTocOpsSnapshot, buildDemoTocOpsFixture, withTocEnforcement } = await import(
         '../lib/toc-ops/index.ts'
       );
       const { enrichTocFixtureWithIdentity } = await import(
         '../lib/operations/toc-identity-bridge.ts'
       );
-      const fixture = enrichTocFixtureWithIdentity(db, buildDemoTocOpsFixture(), {
+      const { seedTocSoftFromFixture } = await import('../lib/operations/toc-soft-balance.ts');
+      let fixture = enrichTocFixtureWithIdentity(db, buildDemoTocOpsFixture(), {
         seed: true,
         force: argv.includes('--seed-force'),
       });
+      const soft = seedTocSoftFromFixture(db, fixture, { force: argv.includes('--seed-force') });
+      fixture = withTocEnforcement(fixture);
       const toc = await exportTocOpsSnapshot({
         root,
         fixture,
@@ -395,7 +398,11 @@ export async function buildRegistrySnapshot(options?: {
         `[ops-snapshot] toc-ops → ${toc.partners} partners · warmed ${toc.warmed} · openTasks ${toc.openTasks}` +
           (fixture.identity?.linked
             ? ` · identity ${fixture.identity.linkedPartners}p/${fixture.identity.linkedAccounts}a`
-            : ' · identity unlinked')
+            : ' · identity unlinked') +
+          (soft.inserted ? ` · soft+${soft.inserted}` : '') +
+          (fixture.enforcement
+            ? ` · focus=${fixture.enforcement.diagnosis.focus} fail=${fixture.enforcement.failed}`
+            : '')
       );
     } catch (e) {
       console.warn('[ops-snapshot] toc-ops export skipped:', e instanceof Error ? e.message : e);

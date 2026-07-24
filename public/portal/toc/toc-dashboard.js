@@ -1,5 +1,5 @@
 /**
- * TOC Ops portal — Drum / rails / warmup / Soft / Gate 12 / ONB / plays / experiments.
+ * TOC Ops portal — Drum / rails / warmup / Soft / Gate 12 / ONB / plays / operate-lite.
  * Embed-first (Pages), then /api/toc, then /registry/toc-ops.json.
  */
 function parseEmbed() {
@@ -110,6 +110,48 @@ function renderPlays(plays) {
     .join('');
 }
 
+function renderEnforcement(enf) {
+  if (!enf) return '';
+  const d = enf.diagnosis || {};
+  const t = enf.throughput || {};
+  const fails = (enf.gates || []).filter(g => !g.ok);
+  const focusKind = d.focus === 'rope' || d.ropeBroken ? 'hot' : d.focus === 'elevate' ? 'ok' : 'dim';
+  return `
+    <section class="toc-enforcement">
+      <h3>Operate-lite · Rope diagnosis</h3>
+      <div class="toc-enf-head">
+        ${pill(`focus:${d.focus || '—'}`, focusKind)}
+        ${pill(`${enf.passed ?? 0} pass`, 'ok')}
+        ${pill(`${enf.failed ?? 0} fail`, enf.failed ? 'hot' : 'dim')}
+        ${pill(`${enf.criticalFailed ?? 0} critical`, enf.criticalFailed ? 'hot' : 'dim')}
+        ${pill(enf.plane || 'operate-lite', 'dim')}
+      </div>
+      <p class="toc-sub">${d.summary || ''}</p>
+      <div class="toc-tioe">
+        <div class="toc-stat"><span class="k">T (ProfitSplit)</span><span class="v">${money(t.T)}</span></div>
+        <div class="toc-stat"><span class="k">I (inventory)</span><span class="v">${money(t.I)}</span></div>
+        <div class="toc-stat"><span class="k">OE (priming+loss)</span><span class="v">${money(t.OE)}</span></div>
+      </div>
+      <ul class="toc-gate-list">
+        ${
+          fails.length
+            ? fails
+                .slice(0, 12)
+                .map(
+                  g =>
+                    `<li>${pill(g.severity, g.severity === 'critical' ? 'hot' : 'dim')} <code>${g.gateId}</code>
+                    ${g.callSign ? `<code>${g.callSign}</code>` : `<code>${g.partnerCode}</code>`}
+                    ${g.tag ? pill(g.tag, 'hot') : ''}
+                    <div class="toc-sub">${g.reason}</div></li>`
+                )
+                .join('')
+            : '<li class="toc-sub">All evaluated gates pass</li>'
+        }
+      </ul>
+      <p class="toc-sub">${enf.note || ''}</p>
+    </section>`;
+}
+
 function render(root, { mode, data }) {
   const s = data.summary || {};
   const buf = data.buffer || {};
@@ -119,27 +161,31 @@ function render(root, { mode, data }) {
 
   const identity = data.identity;
   const plane = data.plane || 'demo-readonly';
+  const enf = data.enforcement;
 
   root.innerHTML = `
     <div class="toc-banner" role="status">
-      <strong>DEMO · read-only</strong>
-      Soft Balance, Hard Gates, and DoD are <em>not</em> enforced on Pages.
+      <strong>DEMO · read-only on Pages</strong>
+      Mutations (Soft post / DoD close) stay local or in toc-ops-repo <code>ct</code>.
+      Hard Gates are <em>evaluated</em> into this bake (${enf ? 'operate-lite present' : 'no enforcement slice'}).
       ${identity?.linked ? `Identity linked: ${identity.linkedPartners} partners · ${identity.linkedAccounts} accounts · ${identity.linkedRails} rails.` : 'Identity not linked — run <code>bun run ops:seed:toc -- --force</code> with ops DB.'}
-      Operate via toc-ops-repo <code>ct</code> or local bun-only APIs.
     </div>
 
     <div class="toc-head">
       <div>
         <h2 class="toc-title">TOC Ops · Drum / Buffer / Rope</h2>
-        <p class="toc-sub">ONB→PLAY storyboard + ops identity bridge. Theory SSOT in toc-ops-repo — this plane does not redefine Soft/T/I/OE.</p>
+        <p class="toc-sub">ONB→PLAY storyboard + identity bridge + operate-lite gate bake. Theory SSOT in toc-ops-repo — Pages does not redefine Soft/T/I/OE.</p>
         <p class="toc-flow">${flow}</p>
       </div>
       <div class="toc-mode ${mode === 'embed' ? 'snapshot' : mode}">
         <span class="toc-mode-pill">${plane}</span>
+        ${enf ? `<span class="toc-mode-pill">${enf.plane}</span>` : ''}
         <span class="toc-mode-pill">${mode === 'embed' ? 'Snapshot' : mode === 'api' ? 'API' : 'Registry'}</span>
         <span class="toc-mode-time">${data.generatedAt || '—'}</span>
       </div>
     </div>
+
+    ${renderEnforcement(enf)}
 
     ${
       identity
@@ -178,7 +224,7 @@ function render(root, { mode, data }) {
       <div class="toc-stat"><span class="k">Rails ok / pending</span><span class="v">${s.confirmedRails ?? 0}/${s.unconfirmedRails ?? 0}</span></div>
       <div class="toc-stat"><span class="k">ONB / LIMIT</span><span class="v">${s.openOnb ?? 0}/${s.openLimit ?? 0}</span></div>
       <div class="toc-stat"><span class="k">Plays pend/set</span><span class="v">${s.playsPending ?? 0}/${s.playsSettled ?? 0}</span></div>
-      <div class="toc-stat ${s.openBottlenecks ? 'hot' : ''}"><span class="k">Bottlenecks</span><span class="v">${s.openBottlenecks ?? 0}</span></div>
+      <div class="toc-stat ${s.openBottlenecks || enf?.failed ? 'hot' : ''}"><span class="k">Gate fails</span><span class="v">${enf?.failed ?? '—'}</span></div>
     </div>
 
     <div class="toc-buffer">
@@ -190,6 +236,8 @@ function render(root, { mode, data }) {
       ${buf.throttleOnboarding ? pill('ONBOARD_THROTTLED', 'hot') : pill('onboard ok', 'ok')}
       ${pill(`${s.activeExperiments ?? 0} active exp`, s.activeExperiments ? 'ok' : 'dim')}
     </div>
+
+    ${renderEnforcement(enf)}
 
     ${renderExperiments(data.experiments)}
 

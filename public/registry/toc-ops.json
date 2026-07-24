@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-24T07:02:07.187Z",
+  "generatedAt": "2026-07-24T07:09:24.926Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -1030,7 +1030,7 @@
     "linkedPartners": 3,
     "linkedAccounts": 6,
     "linkedRails": 4,
-    "generatedAt": "2026-07-24T07:02:07.188Z",
+    "generatedAt": "2026-07-24T07:09:24.926Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -1146,5 +1146,568 @@
         ]
       }
     ]
+  },
+  "enforcement": {
+    "evaluatedAt": "2026-07-24T07:09:24.927Z",
+    "plane": "operate-lite",
+    "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
+    "warmupRequiredForPlay": 2,
+    "gates": [
+      {
+        "gateId": "partner_ready",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "reason": "Partner ASH Ready"
+      },
+      {
+        "gateId": "fund_rail_ready",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "reason": "Partner Ready + confirmed rail"
+      },
+      {
+        "gateId": "confirmed_rail",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "reason": "Rail confirmed: CASHOUT-VENMO",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": false,
+        "severity": "warn",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "reason": "stale_limit_on_drum: ASH-001 freshness=stale",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "reason": "WARM sequence ok: ASH-001 status=WARMED count=2"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "reason": "Gate 12 mode ok: profit_split"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "reason": "PLAY Rope ok: ASH-001 WARMED warmup=2",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "confirmed_rail",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-002",
+        "reason": "Rail confirmed: CASHOUT-VENMO",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-002",
+        "reason": "Limit freshness N/A (not on Drum)"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-002",
+        "reason": "WARM sequence ok: ASH-002 status=Warming count=1"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-002",
+        "reason": "Gate 12 mode ok: warmup_capital_return"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": false,
+        "severity": "critical",
+        "partnerCode": "ASH",
+        "callSign": "ASH-002",
+        "reason": "PLAY blocked: warmup_count=1 status=Warming (need WARMED + 2)",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "play_limit",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-002",
+        "reason": "PLAY limit ok: stake 800 ≤ dailyMax n/a"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": false,
+        "severity": "critical",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "taskId": "ONB-ASH-000-20260710-080000-001",
+        "reason": "Soft Balance required before Done — missing journal for ONB-ASH-000-20260710-080000-001",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "taskId": "ONB-ASH-000-20260710-080000-001",
+        "reason": "Screenshot-first ok / waiting Partner (Completed)"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-002",
+        "taskId": "WARM-ASH-002-20260716-120000-001",
+        "reason": "Soft check N/A (task not money-close)"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-002",
+        "taskId": "WARM-ASH-002-20260716-120000-001",
+        "reason": "Screenshot check deferred (early status)"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "taskId": "LIMIT-ASH-001-20260720-090000-001",
+        "reason": "Soft check N/A (task not money-close)"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-001",
+        "taskId": "LIMIT-ASH-001-20260720-090000-001",
+        "reason": "Screenshot-first ok / waiting Partner (PendingPartner)"
+      },
+      {
+        "gateId": "partner_ready",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "reason": "Partner PAT Ready"
+      },
+      {
+        "gateId": "fund_rail_ready",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "reason": "Partner Ready + confirmed rail"
+      },
+      {
+        "gateId": "confirmed_rail",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "reason": "Rail confirmed: CASHOUT-CASHAPP",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "reason": "Drum limits fresh on PAT-001"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "reason": "WARM sequence ok: PAT-001 status=WARMED count=2"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "reason": "Gate 12 mode ok: profit_split"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "reason": "PLAY Rope ok: PAT-001 WARMED warmup=2",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "confirmed_rail",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "reason": "Rail confirmed: CASHOUT-CASHAPP",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "reason": "Drum limits fresh on PAT-002"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "reason": "WARM sequence ok: PAT-002 status=WARMED count=2"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "taskId": "WD-PAT-002-20260722-160000-001",
+        "reason": "Gate 12 mode ok: principal_recovery"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "reason": "PLAY Rope ok: PAT-002 WARMED warmup=2",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "taskId": "PLAY-PAT-001-20260722-150000-001",
+        "reason": "PLAY Rope ok: PAT-001 WARMED warmup=2",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "play_limit",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "taskId": "PLAY-PAT-001-20260722-150000-001",
+        "reason": "PLAY limit ok: stake 900 ≤ dailyMax 3000"
+      },
+      {
+        "gateId": "play_limit",
+        "ok": false,
+        "severity": "critical",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "reason": "PLAY-EX-01: stake 2500 > dailyMax 2000",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": false,
+        "severity": "critical",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "taskId": "LIMIT-PAT-001-20260721-140000-001",
+        "reason": "Soft Balance required before Done — missing journal for LIMIT-PAT-001-20260721-140000-001",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "taskId": "LIMIT-PAT-001-20260721-140000-001",
+        "reason": "Screenshot-first ok / waiting Partner (Completed)"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "taskId": "PLAY-PAT-001-20260722-150000-001",
+        "reason": "Soft check N/A (task not money-close)"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": false,
+        "severity": "warn",
+        "partnerCode": "PAT",
+        "callSign": "PAT-001",
+        "taskId": "PLAY-PAT-001-20260722-150000-001",
+        "reason": "Missing proofRefs on PLAY-PAT-001-20260722-150000-001",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "taskId": "WD-PAT-002-20260722-160000-001",
+        "reason": "Soft present for WD-PAT-002-20260722-160000-001"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "taskId": "WD-PAT-002-20260722-160000-001",
+        "reason": "Screenshot check deferred (early status)"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "taskId": "FUND-PAT-002-20260721-110000-001",
+        "reason": "Soft present for FUND-PAT-002-20260721-110000-001"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": false,
+        "severity": "warn",
+        "partnerCode": "PAT",
+        "callSign": "PAT-002",
+        "taskId": "FUND-PAT-002-20260721-110000-001",
+        "reason": "Missing proofRefs on FUND-PAT-002-20260721-110000-001",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "partner_ready",
+        "ok": false,
+        "severity": "warn",
+        "partnerCode": "NOV",
+        "reason": "Partner NOV status=Onboarding — FUND blocked until Ready",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "fund_rail_ready",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "reason": "ONB — FUND gated until Ready + confirmed rail (current confirmed=false)"
+      },
+      {
+        "gateId": "confirmed_rail",
+        "ok": false,
+        "severity": "critical",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "reason": "Rail not confirmed for NOV-001 — FUND/WD Rope cut",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "reason": "Limit freshness N/A (not on Drum)"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "reason": "WARM sequence ok: NOV-001 status=New count=0"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "reason": "Gate 12 mode ok: warmup_capital_return"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "critical",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "reason": "PLAY blocked: warmup_count=0 status=New (need WARMED + 2)",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "confirmed_rail",
+        "ok": false,
+        "severity": "critical",
+        "partnerCode": "NOV",
+        "callSign": "NOV-002",
+        "reason": "Rail not confirmed for NOV-002 — FUND/WD Rope cut",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-002",
+        "reason": "Limit freshness N/A (not on Drum)"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-002",
+        "reason": "WARM sequence ok: NOV-002 status=Funded count=0"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-002",
+        "reason": "Gate 12 mode ok: warmup_capital_return"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "critical",
+        "partnerCode": "NOV",
+        "callSign": "NOV-002",
+        "reason": "PLAY blocked: warmup_count=0 status=Funded (need WARMED + 2)",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "taskId": "ONB-NOV-001-20260722-100000-001",
+        "reason": "Soft check N/A (task not money-close)"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "taskId": "ONB-NOV-001-20260722-100000-001",
+        "reason": "Screenshot-first ok / waiting Partner (PendingPartner)"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-002",
+        "taskId": "FUND-NOV-002-20260722-140000-001",
+        "reason": "Soft present for FUND-NOV-002-20260722-140000-001"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-002",
+        "taskId": "FUND-NOV-002-20260722-140000-001",
+        "reason": "Screenshot-first ok / waiting Partner (PendingPartner)"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "taskId": "LIMIT-NOV-001-20260722-110000-001",
+        "reason": "Soft check N/A (task not money-close)"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "NOV",
+        "callSign": "NOV-001",
+        "taskId": "LIMIT-NOV-001-20260722-110000-001",
+        "reason": "Screenshot check deferred (early status)"
+      }
+    ],
+    "passed": 50,
+    "failed": 10,
+    "criticalFailed": 6,
+    "throughput": {
+      "T": 1200,
+      "I": 25010,
+      "OE": 20,
+      "byPartner": {
+        "ASH": {
+          "T": 0,
+          "I": 5010,
+          "OE": 20
+        },
+        "PAT": {
+          "T": 1200,
+          "I": 10000,
+          "OE": 0
+        },
+        "NOV": {
+          "T": 0,
+          "I": 10000,
+          "OE": 0
+        }
+      }
+    },
+    "diagnosis": {
+      "order": [
+        "rope",
+        "drum",
+        "buffer",
+        "elevate"
+      ],
+      "focus": "rope",
+      "summary": "Rope broken — fix Hard Gates / Soft / screenshots before elevating",
+      "ropeBroken": true,
+      "drumStarved": false,
+      "bufferWrongSized": false
+    }
   }
 }

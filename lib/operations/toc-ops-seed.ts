@@ -5,12 +5,15 @@
  * Seed / bake TOC Ops portal fixture (partners · rails · WARMED · Soft · Gate 12).
  *
  * Fixture-first (Pages-safe): writes `public/registry/toc-ops.json`.
- * When ops DB is available, binds ASH/PAT/NOV → tree_nodes / rails / sb_accounts.
+ * When ops DB is available, binds ASH/PAT/NOV → tree_nodes / rails / sb_accounts
+ * and seeds append-only toc_soft_entries. Always bakes operate-lite enforcement.
  *
  * @see tools/ops-seed-toc.ts
  * @see lib/toc-ops/fixture.ts
  * @see lib/operations/toc-identity-bridge.ts
+ * @see lib/toc-ops/enforcement.ts
  */
+import { withTocEnforcement } from '../toc-ops/enforcement.ts';
 import { buildDemoTocOpsFixture } from '../toc-ops/fixture.ts';
 import {
   exportTocOpsSnapshot,
@@ -18,6 +21,7 @@ import {
   type ExportTocOpsSnapshotResult,
 } from '../toc-ops/export-snapshot.ts';
 import { enrichTocFixtureWithIdentity } from './toc-identity-bridge.ts';
+import { seedTocSoftFromFixture } from './toc-soft-balance.ts';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from './db.ts';
 import type { Database } from 'bun:sqlite';
 
@@ -30,6 +34,8 @@ export type SeedTocOpsDemoOpts = {
   dbPath?: string;
   /** Bind TOC codes into ops SQLite (default true when DB opens). */
   linkIdentity?: boolean;
+  /** Seed append-only toc_soft_entries from fixture Soft rows (default with identity). */
+  seedSoft?: boolean;
 };
 
 export type SeedTocOpsDemoResult = {
@@ -37,6 +43,9 @@ export type SeedTocOpsDemoResult = {
   reason?: string;
   identityLinked?: boolean;
   identityPartners?: number;
+  softInserted?: number;
+  enforcementFailed?: number;
+  enforcementFocus?: string;
 } & Partial<ExportTocOpsSnapshotResult>;
 
 export function isTocOpsSnapshotMissing(root = process.cwd()): boolean {
@@ -64,32 +73,42 @@ export async function seedTocOpsDemo(opts: SeedTocOpsDemoOpts = {}): Promise<See
   let fixture = buildDemoTocOpsFixture();
   let identityLinked = false;
   let identityPartners = 0;
+  let softInserted = 0;
   let ownedDb: Database | null = null;
 
   try {
-    if (opts.linkIdentity !== false) {
+    if (opts.linkIdentity !== false || opts.seedSoft !== false) {
       const db = opts.db ?? openOperationsDb({ path: opts.dbPath ?? DEFAULT_OPS_DB_PATH });
       if (!opts.db) ownedDb = db;
-      fixture = enrichTocFixtureWithIdentity(db, fixture, {
-        seed: true,
-        force: opts.force,
-      });
-      identityLinked = fixture.identity?.linked ?? false;
-      identityPartners = fixture.identity?.linkedPartners ?? 0;
+      if (opts.linkIdentity !== false) {
+        fixture = enrichTocFixtureWithIdentity(db, fixture, {
+          seed: true,
+          force: opts.force,
+        });
+        identityLinked = fixture.identity?.linked ?? false;
+        identityPartners = fixture.identity?.linkedPartners ?? 0;
+      }
+      if (opts.seedSoft !== false) {
+        softInserted = seedTocSoftFromFixture(db, fixture, { force: opts.force }).inserted;
+      }
     }
   } catch (e) {
-    // Ops DB optional — still bake fixture without links
+    // Ops DB optional — still bake fixture without links / Soft journal
     fixture = { ...fixture, plane: 'demo-readonly' };
     void e;
   } finally {
     ownedDb?.close();
   }
 
+  fixture = withTocEnforcement(fixture);
   const exported = await exportTocOpsSnapshot({ root, fixture, bakeEmbed: true });
   return {
     seeded: true,
     identityLinked,
     identityPartners,
+    softInserted,
+    enforcementFailed: fixture.enforcement?.failed,
+    enforcementFocus: fixture.enforcement?.diagnosis.focus,
     ...exported,
   };
 }

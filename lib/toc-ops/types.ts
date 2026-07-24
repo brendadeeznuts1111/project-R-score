@@ -7,6 +7,58 @@
  */
 import type { TocIdentityBridge } from './identity.ts';
 
+export type TocGateId =
+  | 'play_warmed'
+  | 'play_limit'
+  | 'confirmed_rail'
+  | 'partner_ready'
+  | 'gate12_wd_mode'
+  | 'soft_posted'
+  | 'screenshot_first'
+  | 'limit_fresh_drum'
+  | 'fund_rail_ready'
+  | 'warm_sequential';
+
+export type TocGateResult = {
+  gateId: TocGateId;
+  ok: boolean;
+  severity: 'info' | 'warn' | 'critical';
+  partnerCode: string;
+  callSign?: string;
+  taskId?: string; // brand-ok — fixture/enforcement DTO mirrors toc-ops-repo task id
+  reason: string;
+  tag?: '#HARDGATE-VIOLATION' | '#ROPE' | '#GATE12';
+};
+
+export type TocThroughputSlice = {
+  T: number;
+  I: number;
+  OE: number;
+  byPartner: Record<string, { T: number; I: number; OE: number }>;
+};
+
+export type TocConstraintDiagnosis = {
+  order: Array<'rope' | 'drum' | 'buffer' | 'elevate'>;
+  focus: 'rope' | 'drum' | 'buffer' | 'elevate';
+  summary: string;
+  ropeBroken: boolean;
+  drumStarved: boolean;
+  bufferWrongSized: boolean;
+};
+
+export type TocEnforcementSlice = {
+  evaluatedAt: string;
+  plane: 'operate-lite';
+  note: string;
+  warmupRequiredForPlay: 2;
+  gates: TocGateResult[];
+  passed: number;
+  failed: number;
+  criticalFailed: number;
+  throughput: TocThroughputSlice;
+  diagnosis: TocConstraintDiagnosis;
+};
+
 export type TocPartnerStatus = 'Ready' | 'Limited' | 'Inactive' | 'Onboarding';
 export type TocAccountStatus = 'New' | 'Funded' | 'Warming' | 'WARMED' | 'Limited' | 'Inactive';
 export type TocCapitalLocation =
@@ -243,9 +295,11 @@ export type TocOpsSnapshot = {
   schema: 'factorywager.toc-ops.portal-fixture.v2';
   source: 'snapshot' | 'demo';
   readOnly: true;
-  /** Always demo-readonly on Pages — Soft/Hard Gates are not enforced here. */
+  /** Pages surface is always demo-readonly (no Soft mutations). */
   plane: 'demo-readonly';
   identity?: TocIdentityBridge;
+  /** Baked operate-lite Rope/Hard Gate evaluation (read-only on Pages). */
+  enforcement?: TocEnforcementSlice;
   generatedAt: string;
   ssot: {
     theory: 'toc-ops-repo/docs/reference/TOC-Production-Reference.md';
@@ -309,4 +363,10 @@ export type TocOpsSummarySlice = {
   plane: 'demo-readonly';
   identityLinked: boolean;
   identityPartners: number;
+  enforcementFocus: 'rope' | 'drum' | 'buffer' | 'elevate' | null;
+  enforcementFailed: number;
+  enforcementCritical: number;
+  throughputT: number | null;
+  throughputI: number | null;
+  throughputOE: number | null;
 };

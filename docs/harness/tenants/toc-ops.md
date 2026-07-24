@@ -47,8 +47,11 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 |------|------|
 | `lib/toc-ops/types.ts` | Fixture types |
 | `lib/toc-ops/fixture.ts` | ASH + PAT + NOV demo (WARMED / Warming / Gate 12 / rails / plays) |
+| `lib/toc-ops/enforcement.ts` | Operate-lite Hard Gate + T/I/OE + Rope diagnosis (baked) |
 | `lib/toc-ops/export-snapshot.ts` | Bake + ops-summary slice |
 | `lib/operations/toc-ops-seed.ts` | `ops:seed:toc` |
+| `lib/operations/toc-soft-balance.ts` | Append-only `toc_soft_entries` (local ops DB) |
+| `lib/operations/toc-identity-bridge.ts` | TOC ↔ tree_nodes / rails / sb_accounts |
 | `public/registry/toc-ops.json` | Pages ASSETS |
 | `public/portal/toc/` | Board UI |
 | `functions/api/toc/[[path]].ts` | GET snapshot; POST → 503 |
@@ -60,7 +63,7 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 bun run ops:seed:toc              # write fixture (skip if present)
 bun run ops:seed:toc -- --force   # rebuild
 bun run ops:snapshot --no-routing # bake + embed + ops-summary.toc
-bun test tests/toc-ops-fixture.test.ts
+bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts
 ```
 
 ## Gap map (discovery)
@@ -77,9 +80,10 @@ bun test tests/toc-ops-fixture.test.ts
 | Live Central Tool mutations on Pages | **Open by design** — POST 503; use toc-ops-repo `ct` |
 | Demo/read-only labeling | **Closed (P0)** — banner + `plane: demo-readonly` |
 | Identity bridge TOC ↔ ops | **Closed (P0)** — `toc_identity_bindings` + call_sign / hardrock accounts |
-| Soft/Hard Gate enforcement | **Open** — operate plane (CT or bun-only Soft port) |
-| SQLite Soft journal in FactoryWager ops DB | **Open** — next elevation after identity |
+| Soft/Hard Gate enforcement | **P1 operate-lite** — baked `enforcement` slice (eval only; Pages POST still 503) |
+| SQLite Soft journal in FactoryWager ops DB | **P1** — append-only `toc_soft_entries` (seed from fixture; local post helper) |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |
+| Full CT Soft mutations / DoD close on Pages | **Open by design** — use toc-ops-repo `ct` |
 
 ## Signal
 

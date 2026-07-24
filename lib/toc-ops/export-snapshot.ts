@@ -7,6 +7,7 @@
  * @see lib/toc-ops/fixture.ts
  * @see tools/ops-seed-toc.ts
  */
+import { withTocEnforcement } from './enforcement.ts';
 import { buildDemoTocOpsFixture } from './fixture.ts';
 import type { TocOpsSnapshot, TocOpsSummarySlice } from './types.ts';
 
@@ -42,10 +43,17 @@ export function emptyTocOpsSummarySlice(): TocOpsSummarySlice {
     plane: 'demo-readonly',
     identityLinked: false,
     identityPartners: 0,
+    enforcementFocus: null,
+    enforcementFailed: 0,
+    enforcementCritical: 0,
+    throughputT: null,
+    throughputI: null,
+    throughputOE: null,
   };
 }
 
 export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
+  const enf = snap.enforcement;
   return {
     available: true,
     path: TOC_OPS_REGISTRY_PATH,
@@ -70,6 +78,12 @@ export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
     plane: 'demo-readonly',
     identityLinked: snap.identity?.linked ?? false,
     identityPartners: snap.identity?.linkedPartners ?? 0,
+    enforcementFocus: enf?.diagnosis.focus ?? null,
+    enforcementFailed: enf?.failed ?? 0,
+    enforcementCritical: enf?.criticalFailed ?? 0,
+    throughputT: enf?.throughput.T ?? null,
+    throughputI: enf?.throughput.I ?? null,
+    throughputOE: enf?.throughput.OE ?? null,
   };
 }
 
@@ -108,9 +122,12 @@ export async function exportTocOpsSnapshot(opts?: {
   root?: string;
   fixture?: TocOpsSnapshot;
   bakeEmbed?: boolean;
+  /** Re-evaluate operate-lite gates (default true). */
+  enforce?: boolean;
 }): Promise<ExportTocOpsSnapshotResult> {
   const root = opts?.root ?? process.cwd();
-  const snap = opts?.fixture ?? buildDemoTocOpsFixture();
+  const base = opts?.fixture ?? buildDemoTocOpsFixture();
+  const snap = opts?.enforce === false ? base : withTocEnforcement(base);
   const outPath = tocOpsAbsPath(root);
   await Bun.write(outPath, `${JSON.stringify(snap, null, 2)}\n`);
 

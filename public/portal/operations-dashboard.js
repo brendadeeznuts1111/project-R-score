@@ -124,9 +124,10 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="loop-detail"></div>
           </section>
           <section class="ops-panel">
-            <h2>TOC Ops <span class="ops-badge" title="Soft/Hard Gates not enforced on Pages">DEMO</span></h2>
+            <h2>TOC Ops <span class="ops-badge" title="Operate-lite gates baked; Soft mutations not on Pages">DEMO</span></h2>
             <div class="ops-metric" id="toc-warmed">—</div>
             <div class="ops-sub" id="toc-detail"></div>
+            <div class="ops-sub" id="toc-enforcement"></div>
             <a class="ops-link" href="/portal/toc/">Open TOC board (read-only)</a>
           </section>
           <section class="ops-panel">
@@ -684,8 +685,11 @@ class OperationsDashboard extends HTMLElement {
           const idLink = d.toc.identityLinked
             ? `identity ${d.toc.identityPartners ?? 0} linked`
             : 'identity unlinked';
+          const focus = d.toc.enforcementFocus ? `focus ${d.toc.enforcementFocus}` : 'no enf';
+          const fails =
+            d.toc.enforcementFailed != null ? `${d.toc.enforcementFailed} gate fails` : '';
           tocDetail.textContent =
-            `DEMO read-only · ${idLink} · ` +
+            `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''} · ` +
             `${d.toc.warming ?? 0} warming · ${d.toc.onboarding ?? 0} onboarding · ` +
             `${d.toc.openOnb ?? 0} ONB · ${d.toc.playsPending ?? 0} plays · ` +
             `${d.toc.activeExperiments ?? 0} experiments`;

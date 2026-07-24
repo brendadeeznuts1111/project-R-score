@@ -4,7 +4,8 @@ Fixture-first Drum / Buffer / Rope surface for Cloudflare Pages + portal.
 Theory SSOT stays in `toc-ops-repo` (TOC-REF · ACCOUNTING · SOPs).
 
 **Schema** `factorywager.toc-ops.portal-fixture.v2` — ONB→FUND→LIMIT→WARM→PLAY→WD,
-account limits, rails, Soft/Gate 12, recent plays, switchback experiments.
+account limits, rails, Soft/Gate 12, recent plays, switchback experiments,
+operate-lite Hard Gate bake (`enforcement` slice).
 
 ## Files
 
@@ -12,17 +13,19 @@ account limits, rails, Soft/Gate 12, recent plays, switchback experiments.
 |------|---------|
 | [`types.ts`](types.ts) | Snapshot + ops-summary slice types |
 | [`fixture.ts`](fixture.ts) | ASH (Drum) · PAT (PLAY) · NOV (ONB); bottleneck keys (`reconcile_*` is CT-only) |
+| [`enforcement.ts`](enforcement.ts) | Operate-lite Hard Gates · T/I/OE · Rope→Drum→Buffer diagnosis |
 | [`identity.ts`](identity.ts) | TOC ↔ ops binding types |
 | [`export-snapshot.ts`](export-snapshot.ts) | Bake `public/registry/toc-ops.json` + summary slice |
 | [`index.ts`](index.ts) | Barrel exports |
 | [`../operations/toc-identity-bridge.ts`](../operations/toc-identity-bridge.ts) | Seed/bind `tree_nodes.call_sign` · hardrock `sb_accounts` |
+| [`../operations/toc-soft-balance.ts`](../operations/toc-soft-balance.ts) | Append-only Soft journal in ops SQLite |
 
 ## Commands
 
 ```bash
 bun run ops:seed:toc
 bun run ops:snapshot --no-routing
-bun test tests/toc-ops-fixture.test.ts
+bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts
 ```
 
 ## Portal
@@ -37,6 +40,7 @@ bun test tests/toc-ops-fixture.test.ts
 | Plane | Owns |
 |-------|------|
 | This fixture (`lib/toc-ops`) | Pages-safe mirror for `/portal/toc` |
+| Operate-lite bake | Hard Gate eval + Soft seed (local); no Pages mutations |
 | `toc-ops-repo` Central Tool | Live Soft, Gate 12, MessageLog, phones, rails confirm, package bot |
 | `/portal/ops` FactoryWager | Partner-profile bridge, channel outbox, phone inventory + TOC rollup card |
 | Cloudflare MCP | Pages/account deploy + observability — **not** TOC desk |
