@@ -68,6 +68,21 @@ export const SIMD_ROUTES: PublicRouteDef[] = [
     note: 'shared data ETag with /health (Vary: Accept)',
   },
   {
+    path: '/api/health',
+    name: 'Health API (portal)',
+    category: 'health',
+    kind: 'simd-route',
+    critical: true,
+    okStatuses: [200],
+  },
+  {
+    path: '/',
+    name: 'Home landing',
+    category: 'portal',
+    kind: 'simd-route',
+    okStatuses: [200],
+  },
+  {
     path: '/api/proof',
     name: 'API proof',
     category: 'proof',
@@ -353,7 +368,11 @@ export function mergeHotFromHealth(
     extra.push({
       path,
       name: path,
-      category: path.startsWith('/api/') ? 'api' : path.startsWith('/registry/') ? 'registry' : 'proof',
+      category: path.startsWith('/api/')
+        ? 'api'
+        : path.startsWith('/registry/')
+          ? 'registry'
+          : 'proof',
       kind: 'hot-static',
       okStatuses: [200],
       note: 'from health.serve.hotPreloaded',

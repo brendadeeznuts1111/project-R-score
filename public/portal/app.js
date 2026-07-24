@@ -13,35 +13,51 @@
 import { renderCard, showDetail } from './card.js';
 import { readHashState, writeHashState, applyFilters, collectTypes, collectTags } from './search.js';
 import { computeHealth, healthClass } from './health.js';
+import { tenantRegistryPaths, resolveTenantId } from './components/sidebar.js';
 
 // ── DOM refs ─────────────────────────────────────────────────────────────
 
 const $ = id => document.getElementById(id);
 
+let tenantsCache = [];
+let registrySource = 'snapshot';
+
 // ── Fetch registry ───────────────────────────────────────────────────────
 
-async function fetchRegistry() {
-  // 1. Pages Function proxy (R2 binding, allowlisted keys, edge-cached)
+async function fetchRegistry(tenantId = resolveTenantId(), tenants = tenantsCache) {
+  const paths = tenantRegistryPaths(tenantId, tenants);
   try {
-    const res = await fetch('/api/registry/registry.json',
-      { signal: AbortSignal.timeout(5000) });
+    const res = await fetch(paths.proxy, { signal: AbortSignal.timeout(5000) });
     if (res.ok) {
-      setHealth('ok', 'Live');
+      registrySource = 'live';
+      updateRegistryBanner('live');
       return await res.json();
     }
   } catch { /* fall through */ }
 
-  // 2. Static snapshot fallback (no credentials in browser)
   try {
-    const res = await fetch('/registry/registry.json',
-      { signal: AbortSignal.timeout(3000) });
+    const res = await fetch(paths.static, { signal: AbortSignal.timeout(3000) });
     if (res.ok) {
-      setHealth('degraded', 'Snapshot');
+      registrySource = 'snapshot';
+      updateRegistryBanner('snapshot');
       return await res.json();
     }
   } catch { /* fall through */ }
 
   throw new Error('Cannot load registry from proxy or static snapshot.');
+}
+
+function updateRegistryBanner(mode) {
+  const banner = $('registry-banner');
+  const text = $('banner-text');
+  if (banner) banner.dataset.source = mode;
+  if (text && registryIndex) {
+    const updated = registryIndex.lastUpdated ? new Date(registryIndex.lastUpdated) : null;
+    const label = updated
+      ? `Registry updated ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
+      : 'Registry snapshot';
+    text.textContent = `${mode === 'live' ? 'Live' : 'Snapshot'} · ${label}`;
+  }
 }
 
 // ── Render pipeline ──────────────────────────────────────────────────────
@@ -109,8 +125,8 @@ function updateStats(packages) {
   // Banner
   const updated = registryIndex.lastUpdated ? new Date(registryIndex.lastUpdated) : null;
   const label = updated
-    ? `Registry updated ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
-    : 'Registry snapshot';
+    ? `${registrySource === 'live' ? 'Live' : 'Snapshot'} · ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
+    : registrySource === 'live' ? 'Live registry' : 'Registry snapshot';
   $('banner-text').textContent = label;
 }
 
@@ -160,39 +176,6 @@ function toggleFilter(kind, value) {
 
 function updateUrlFromState(state) {
   writeHashState(state);
-}
-
-// ── Health indicator ────────────────────────────────────────────────────
-
-let healthFailures = 0;
-let lastHealthState = 'unknown';
-const HEALTH_FAIL_THRESHOLD = 2;
-
-function setHealth(klass, label) {
-  const dot = $('health-dot');
-  const lbl = $('health-label');
-  if (dot) dot.className = `health-dot ${klass}`;
-  if (lbl) {
-    const failures = healthFailures > 0 ? ` · ${healthFailures} missed` : '';
-    lbl.textContent = `${label}${failures}`;
-  }
-  lastHealthState = klass;
-}
-
-/** Stale-while-revalidate: only downgrade after N consecutive failures. */
-function updateHealth(healthy) {
-  if (healthy) {
-    healthFailures = 0;
-    lastHealthState = 'ok';
-    setHealth('ok', `Live · ${new Date().toLocaleTimeString()}`);
-  } else {
-    healthFailures++;
-    if (healthFailures >= HEALTH_FAIL_THRESHOLD) {
-      setHealth('degraded', 'Degraded');
-    } else if (lastHealthState === 'ok') {
-      setHealth('ok', 'Live'); // keep showing ok with missed count
-    }
-  }
 }
 
 // ── Debounced search ────────────────────────────────────────────────────
@@ -267,14 +250,32 @@ function toggleHelpOverlay() {
 
 // ── Init ────────────────────────────────────────────────────────────────
 
+async function reloadRegistry(tenantId, tenants) {
+  const data = await fetchRegistry(tenantId, tenants);
+  registryIndex = data;
+  $('loading')?.classList.add('hidden');
+  $('dashboard')?.classList.remove('hidden');
+  $('error-banner')?.classList.add('hidden');
+  renderAll(data);
+}
+
 async function init() {
   try {
-    const data = await fetchRegistry();
-    $('loading').classList.add('hidden');
-    $('dashboard').classList.remove('hidden');
-    renderAll(data);
+    await reloadRegistry(resolveTenantId(), tenantsCache);
 
-    // Debounced search
+    document.addEventListener('portal:tenant', async e => {
+      const { tenantId, tenants } = e.detail || {};
+      if (tenants?.length) tenantsCache = tenants;
+      if (!tenantId) return;
+      $('loading')?.classList.remove('hidden');
+      try {
+        await reloadRegistry(tenantId, tenantsCache);
+      } catch (err) {
+        $('error-banner')?.classList.remove('hidden');
+        $('error-text').textContent = err.message;
+      }
+    });
+
     $('search').addEventListener('input', debouncedSearch);
 
     // Deep-link: auto-open modal if hash contains project=foo
@@ -368,22 +369,10 @@ async function init() {
         lastKey = '';
       }
     });
-
-    // Poll health every 30s with stale-while-revalidate
-    setInterval(async () => {
-      try {
-        const res = await fetch('/api/registry/registry.json',
-          { signal: AbortSignal.timeout(3000) });
-        updateHealth(res.ok);
-      } catch {
-        updateHealth(false);
-      }
-    }, 30_000);
   } catch (err) {
     $('loading').classList.add('hidden');
     $('error-banner').classList.remove('hidden');
     $('error-text').textContent = err.message;
-    setHealth('fail', 'Offline');
   }
 }
 

@@ -125,6 +125,7 @@ export async function onRequest(context: {
 
   const body = {
     status: 'ok',
+    schemaVersion: 1,
     runtime: 'cloudflare-pages',
     edge: true,
     checkedAt: new Date().toISOString(),

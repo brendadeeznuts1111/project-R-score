@@ -4,8 +4,20 @@
  * Includes factorial experiments (C4), coverage prediction (C5),
  * growth metrics, Bun utils runtime proof, and routing proof.
  */
+import {
+  renderVerificationResults,
+  renderVerificationTableRow,
+} from './verification-card.js';
+import './channel-filter.js';
 class OperationsDashboard extends HTMLElement {
   data = null;
+  docIndex = null;
+  releaseFeatures = null;
+  installPlatform = null;
+  installEnv = null;
+  registryClient = null;
+  docsCoverage = null;
+  bunRuntimeNits = null;
   retries = 0;
   maxRetries = 3;
 
@@ -53,6 +65,83 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/registry/static.json">Static composite</a>
           </section>
           <section class="ops-panel">
+            <h2>API documentation</h2>
+            <div class="ops-metric" id="doc-refs-stable">—</div>
+            <div class="ops-sub" id="doc-refs-detail"></div>
+            <div class="ops-mono" id="doc-refs-hash"></div>
+            <a class="ops-link" href="/api/doc-refs">Full doc index JSON</a>
+            <a class="ops-link" href="/api/doc-refs/script.meta">Pipe metadata</a>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Install platform verification</h2>
+            <div class="ops-metric" id="install-platform-pass">—</div>
+            <div class="ops-sub" id="install-platform-detail"></div>
+            <a class="ops-link" id="install-platform-link" href="/registry/install-platform.json">Full install platform proof JSON</a>
+            <table id="install-platform-table" class="ops-table hidden">
+              <thead><tr><th>Aspect</th><th>Status</th><th>Docs</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Install env + scoped registry verification</h2>
+            <div class="ops-metric" id="install-env-pass">—</div>
+            <div class="ops-sub" id="install-env-detail"></div>
+            <a class="ops-link" id="install-env-link" href="/registry/install-env-proof.json">Full install env proof JSON</a>
+            <a class="ops-link" href="https://bun.com/docs/pm/cli/install#configuring-with-environment-variables" target="_blank" rel="noopener">Bun install env vars</a>
+            <table id="install-env-table" class="ops-table hidden">
+              <thead><tr><th>Env var</th><th>Status</th><th>Docs</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Docs coverage (RSS + reference)</h2>
+            <div class="ops-metric" id="docs-coverage-pass">—</div>
+            <div class="ops-sub" id="docs-coverage-detail"></div>
+            <div class="ops-mono" id="docs-coverage-hash"></div>
+            <a class="ops-link" id="docs-coverage-link" href="/registry/docs-coverage-proof.json">Full docs coverage proof JSON</a>
+            <a class="ops-link" href="https://bun.com/reference" target="_blank" rel="noopener" title="Meta · stable — Complete generated API reference">Bun API Reference</a>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Registry client SDK</h2>
+            <div class="ops-metric" id="registry-client-pass">—</div>
+            <div class="ops-sub" id="registry-client-detail"></div>
+            <div class="ops-mono" id="registry-client-hash"></div>
+            <a class="ops-link" id="registry-client-link" href="/registry/registry-client-proof.json">Full registry client proof JSON</a>
+            <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md" target="_blank" rel="noopener">Registry client docs</a>
+            <table id="registry-client-table" class="ops-table hidden">
+              <thead><tr><th>Probe</th><th>Status</th><th>Docs</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Bun runtime nits (Phase 1)</h2>
+            <div class="ops-metric" id="runtime-nits-pass">—</div>
+            <div class="ops-sub" id="runtime-nits-detail"></div>
+            <div class="ops-mono" id="runtime-nits-hash"></div>
+            <a class="ops-link" id="runtime-nits-link" href="/registry/bun-runtime-nits-proof.json">Full runtime nits proof JSON</a>
+            <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/bun-runtime-nits.md" target="_blank" rel="noopener">Runtime nits docs</a>
+            <table id="runtime-nits-table" class="ops-table hidden">
+              <thead><tr><th>Probe</th><th>Category</th><th>Status</th><th>Docs</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Bun release verification</h2>
+            <div class="ops-metric" id="release-pass">—</div>
+            <div class="ops-sub" id="release-detail"></div>
+            <div class="ops-mono" id="release-hash"></div>
+            <div class="ops-mono" id="release-channel"></div>
+            <a class="ops-link" id="release-link" href="/registry/release-features.json">Full release proof JSON</a>
+            <a class="ops-link" href="https://bun.com/blog/bun-v1.3.14" target="_blank" rel="noopener">Bun v1.3.14 blog</a>
+            <channel-filter></channel-filter>
+            <div id="release-features-cards" class="verification-cards hidden"></div>
+            <script type="application/ld+json" id="release-jsonld"></script>
+            <table id="release-features-table" class="ops-table hidden">
+              <thead><tr><th>Test</th><th>Status</th><th>Docs</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </section>
+          <section class="ops-panel">
             <h2>Snapshot health</h2>
             <div class="ops-metric" id="snap-packages">—</div>
             <div class="ops-sub" id="snap-detail"></div>
@@ -95,6 +184,81 @@ class OperationsDashboard extends HTMLElement {
     this.startPolling();
   }
 
+  async loadDocIndex() {
+    this.docIndex = null;
+    for (const url of ['/api/doc-refs', '/registry/doc-index.json']) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          this.docIndex = await res.json();
+          return;
+        }
+      } catch {
+        /* try next */
+      }
+    }
+  }
+
+  async loadReleaseFeatures() {
+    this.releaseFeatures = null;
+    try {
+      const res = await fetch('/registry/release-features.json');
+      if (res.ok) this.releaseFeatures = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
+  async loadInstallPlatform() {
+    this.installPlatform = null;
+    try {
+      const res = await fetch('/registry/install-platform.json');
+      if (res.ok) this.installPlatform = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
+  async loadInstallEnv() {
+    this.installEnv = null;
+    try {
+      const res = await fetch('/registry/install-env-proof.json');
+      if (res.ok) this.installEnv = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
+  async loadRegistryClient() {
+    this.registryClient = null;
+    try {
+      const res = await fetch('/registry/registry-client-proof.json');
+      if (res.ok) this.registryClient = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
+  async loadDocsCoverage() {
+    this.docsCoverage = null;
+    try {
+      const res = await fetch('/registry/docs-coverage-proof.json');
+      if (res.ok) this.docsCoverage = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
+  async loadBunRuntimeNits() {
+    this.bunRuntimeNits = null;
+    try {
+      const res = await fetch('/registry/bun-runtime-nits-proof.json');
+      if (res.ok) this.bunRuntimeNits = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
   async load() {
     const loading = this.querySelector('#ops-loading');
     const error = this.querySelector('#ops-error');
@@ -107,6 +271,13 @@ class OperationsDashboard extends HTMLElement {
       const res = await fetch('/api/operations/summary');
       if (res.ok) {
         this.data = await res.json();
+        await this.loadDocIndex();
+        await this.loadReleaseFeatures();
+        await this.loadInstallPlatform();
+        await this.loadInstallEnv();
+        await this.loadRegistryClient();
+        await this.loadDocsCoverage();
+        await this.loadBunRuntimeNits();
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
@@ -120,6 +291,13 @@ class OperationsDashboard extends HTMLElement {
       const res = await fetch('/registry/ops-summary.json');
       if (res.ok) {
         this.data = await res.json();
+        await this.loadDocIndex();
+        await this.loadReleaseFeatures();
+        await this.loadInstallPlatform();
+        await this.loadInstallEnv();
+        await this.loadRegistryClient();
+        await this.loadDocsCoverage();
+        await this.loadBunRuntimeNits();
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
@@ -334,6 +512,316 @@ class OperationsDashboard extends HTMLElement {
         .join('');
     }
 
+    const doc = this.docIndex || {};
+    const docStable = this.querySelector('#doc-refs-stable');
+    if (docStable) {
+      const stable = doc.byStability?.stable ?? 0;
+      const total = doc.totalEntries ?? 0;
+      if (total > 0) {
+        docStable.textContent = `${stable} stable`;
+        docStable.classList.toggle('ok', stable > 0);
+        docStable.classList.remove('bad');
+      } else {
+        docStable.textContent = '—';
+        docStable.classList.remove('ok', 'bad');
+      }
+    }
+    const docDetail = this.querySelector('#doc-refs-detail');
+    if (docDetail) {
+      const total = doc.totalEntries ?? 0;
+      docDetail.textContent =
+        total > 0
+          ? `${total} APIs indexed · defaults docs ${doc.defaultsCoverage?.passed ? '✅' : '❌'}`
+          : 'Run bun tools/build-doc-index.ts --save';
+    }
+    const docHash = this.querySelector('#doc-refs-hash');
+    if (docHash) {
+      docHash.textContent = doc.proofHash
+        ? `sha256 ${String(doc.proofHash).slice(0, 16)}…`
+        : '';
+    }
+
+    const rel = this.releaseFeatures || {};
+    const relPass = this.querySelector('#release-pass');
+    if (relPass) {
+      const total = rel.summary?.total ?? 0;
+      const passed = rel.summary?.passed ?? 0;
+      if (total > 0) {
+        relPass.textContent = `${passed}/${total} passed`;
+        relPass.classList.toggle('ok', passed === total);
+        relPass.classList.toggle('bad', passed < total);
+      } else {
+        relPass.textContent = '—';
+        relPass.classList.remove('ok', 'bad');
+      }
+    }
+    const relDetail = this.querySelector('#release-detail');
+    if (relDetail) {
+      const tags = rel.semanticTags;
+      if (tags) {
+        relDetail.textContent = `channel ${tags.channel} → ${tags.targetVersion} · runtime ${tags.runtimeVersion} · ${rel.releaseNotes?.length ?? 0} notes`;
+      } else if (rel.bunVersion) {
+        relDetail.textContent = `Bun ${rel.bunVersion} · ${rel.releaseNotes?.length ?? 0} release notes tracked`;
+      } else {
+        relDetail.textContent = 'Run bun tools/verify-bun-release.ts --save';
+      }
+    }
+    const relChannel = this.querySelector('#release-channel');
+    if (relChannel) {
+      const tags = rel.semanticTags;
+      relChannel.textContent = tags
+        ? `provenance ${tags.provenanceId}${tags.testSuiteCommit ? ` · commit ${String(tags.testSuiteCommit).slice(0, 8)}` : ''}`
+        : '';
+    }
+    const relHash = this.querySelector('#release-hash');
+    if (relHash) {
+      relHash.textContent = rel.proofHash
+        ? `sha256 ${String(rel.proofHash).slice(0, 16)}…`
+        : '';
+    }
+    const relCards = this.querySelector('#release-features-cards');
+    const relTable = this.querySelector('#release-features-table');
+    const relTbody = relTable?.querySelector('tbody');
+    const relJsonLd = this.querySelector('#release-jsonld');
+    const rows = rel.results || [];
+
+    if (rel.semanticTags && relCards && rows.length > 0) {
+      relCards.classList.remove('hidden');
+      relCards.innerHTML = renderVerificationResults(rel, 12);
+      if (relTable) relTable.classList.add('hidden');
+    } else if (relTable && relTbody) {
+      if (relCards) relCards.classList.add('hidden');
+      if (rows.length > 0) {
+        relTable.classList.remove('hidden');
+        relTbody.innerHTML = rows.slice(0, 12).map(r => renderVerificationTableRow(r)).join('');
+      } else {
+        relTable.classList.add('hidden');
+        relTbody.innerHTML = '';
+      }
+    }
+
+    if (relJsonLd && rel.jsonLd) {
+      relJsonLd.textContent = JSON.stringify(rel.jsonLd);
+    } else if (relJsonLd) {
+      relJsonLd.textContent = '';
+    }
+
+    const ip = this.installPlatform || {};
+    const ipPass = this.querySelector('#install-platform-pass');
+    if (ipPass) {
+      const s = ip.summary;
+      if (s?.total) {
+        ipPass.textContent = `${s.passed}/${s.total} aspects`;
+        ipPass.classList.toggle('ok', s.status === 'pass');
+        ipPass.classList.toggle('bad', s.status !== 'pass');
+      } else {
+        ipPass.textContent = '—';
+      }
+    }
+    const ipDetail = this.querySelector('#install-platform-detail');
+    if (ipDetail) {
+      ipDetail.textContent = ip.bunVersion
+        ? `Bun ${ip.bunVersion}${ip.dryRun ? ' · dry-run' : ''} · ${(ip.results || []).filter(r => r.canonical).length}/${(ip.results || []).length} with canonical URLs`
+        : 'Run bun tools/verify-install-platform.ts --save';
+    }
+    const ipTable = this.querySelector('#install-platform-table');
+    const ipTbody = ipTable?.querySelector('tbody');
+    const ipRows = ip.results || [];
+    if (ipTable && ipTbody) {
+      if (ipRows.length > 0) {
+        ipTable.classList.remove('hidden');
+        ipTbody.innerHTML = ipRows
+          .map(r =>
+            renderVerificationTableRow({
+              name: r.name.replace(/^install platform: /, ''),
+              passed: r.passed,
+              canonical: r.canonical,
+              _links: r._links,
+            })
+          )
+          .join('');
+      } else {
+        ipTable.classList.add('hidden');
+        ipTbody.innerHTML = '';
+      }
+    }
+
+    const ie = this.installEnv || {};
+    const iePass = this.querySelector('#install-env-pass');
+    if (iePass) {
+      const s = ie.summary;
+      if (s?.total) {
+        iePass.textContent = `${s.passed}/${s.total} env probes`;
+        iePass.classList.toggle('ok', s.status === 'pass');
+        iePass.classList.toggle('bad', s.status !== 'pass');
+      } else {
+        iePass.textContent = '—';
+      }
+    }
+    const ieDetail = this.querySelector('#install-env-detail');
+    if (ieDetail) {
+      ieDetail.textContent = ie.bunVersion
+        ? `Bun ${ie.bunVersion} · ${(ie.results || []).filter(r => r.canonical).length}/${(ie.results || []).length} with canonical URLs`
+        : 'Run bun tools/verify-install-env.ts --save';
+    }
+    const ieTable = this.querySelector('#install-env-table');
+    const ieTbody = ieTable?.querySelector('tbody');
+    const ieRows = ie.results || [];
+    if (ieTable && ieTbody) {
+      if (ieRows.length > 0) {
+        ieTable.classList.remove('hidden');
+        ieTbody.innerHTML = ieRows.map(r => renderVerificationTableRow(r)).join('');
+      } else {
+        ieTable.classList.add('hidden');
+        ieTbody.innerHTML = '';
+      }
+    }
+
+    const dc =
+      this.docsCoverage ||
+      (d.docsCoverage?.available
+        ? {
+            summary: {
+              ok: d.docsCoverage.ok,
+              missingCanonicalCount: d.docsCoverage.missingCanonicalCount,
+              indexStale: d.docsCoverage.indexStale,
+            },
+            canonical: {
+              catalogTracked: d.docsCoverage.catalogTracked,
+              catalogTotal: d.docsCoverage.catalogTotal,
+              overlayTracked: d.docsCoverage.overlayTracked,
+              overlayTotal: d.docsCoverage.overlayTotal,
+            },
+            reference: {
+              moduleCount: d.docsCoverage.referenceModuleCount,
+              pageCount: d.docsCoverage.referencePageCount,
+            },
+            proofHash: d.docsCoverage.proofHash,
+          }
+        : {});
+    const dcPass = this.querySelector('#docs-coverage-pass');
+    if (dcPass) {
+      if (dc.summary?.ok === true) {
+        dcPass.textContent = '✅';
+        dcPass.classList.add('ok');
+        dcPass.classList.remove('bad');
+      } else if (dc.summary) {
+        dcPass.textContent = dc.summary.missingCanonicalCount
+          ? `⚠️ ${dc.summary.missingCanonicalCount} gaps`
+          : '⚠️';
+        dcPass.classList.toggle('ok', false);
+        dcPass.classList.toggle('bad', true);
+      } else {
+        dcPass.textContent = '—';
+      }
+    }
+    const dcDetail = this.querySelector('#docs-coverage-detail');
+    if (dcDetail) {
+      const cat = dc.canonical;
+      const ref = dc.reference;
+      if (cat?.catalogTotal != null) {
+        dcDetail.textContent = `catalog ${cat.catalogTracked}/${cat.catalogTotal} · overlay ${cat.overlayTracked}/${cat.overlayTotal} · reference ${ref?.moduleCount ?? '—'} modules`;
+      } else {
+        dcDetail.textContent = 'Run bun run verify:docs-coverage:save';
+      }
+    }
+    const dcHash = this.querySelector('#docs-coverage-hash');
+    if (dcHash) {
+      dcHash.textContent = dc.proofHash ? `sha256 ${String(dc.proofHash).slice(0, 16)}…` : '';
+    }
+
+    const rc =
+      this.registryClient ||
+      (d.registryClient?.available
+        ? {
+            sdkVersion: d.registryClient.sdkVersion,
+            bunVersion: d.bunUtils?.bunVersion,
+            proofHash: d.registryClient.proofHash,
+            summary: {
+              passed: d.registryClient.passed,
+              total: d.registryClient.total,
+              status: d.registryClient.status,
+            },
+          }
+        : {});
+    const rcPass = this.querySelector('#registry-client-pass');
+    if (rcPass) {
+      const s = rc.summary;
+      if (s?.total) {
+        rcPass.textContent = s.status === 'pass' ? '✅' : `${s.passed}/${s.total} probes`;
+        rcPass.classList.toggle('ok', s.status === 'pass');
+        rcPass.classList.toggle('bad', s.status !== 'pass');
+      } else {
+        rcPass.textContent = '—';
+      }
+    }
+    const rcDetail = this.querySelector('#registry-client-detail');
+    if (rcDetail) {
+      rcDetail.textContent = rc.sdkVersion
+        ? `SDK v${rc.sdkVersion} · Bun ${rc.bunVersion ?? '?'} · ${(rc.results || []).filter(r => r.canonical).length}/${(rc.results || []).length} with canonical URLs`
+        : 'Run bun tools/verify-registry-client.ts --save';
+    }
+    const rcHash = this.querySelector('#registry-client-hash');
+    if (rcHash) {
+      rcHash.textContent = rc.proofHash ? `sha256 ${String(rc.proofHash).slice(0, 16)}…` : '';
+    }
+    const rcTable = this.querySelector('#registry-client-table');
+    const rcTbody = rcTable?.querySelector('tbody');
+    const rcRows = rc.results || [];
+    if (rcTable && rcTbody) {
+      if (rcRows.length > 0) {
+        rcTable.classList.remove('hidden');
+        rcTbody.innerHTML = rcRows.map(r => renderVerificationTableRow(r)).join('');
+      } else {
+        rcTable.classList.add('hidden');
+        rcTbody.innerHTML = '';
+      }
+    }
+
+    const nits = this.bunRuntimeNits || {};
+    const nitsPass = this.querySelector('#runtime-nits-pass');
+    if (nitsPass) {
+      const s = nits.summary;
+      if (s?.total) {
+        nitsPass.textContent = s.status === 'pass' ? '✅' : `${s.passed}/${s.total} probes`;
+        nitsPass.classList.toggle('ok', s.status === 'pass');
+        nitsPass.classList.toggle('bad', s.status !== 'pass');
+      } else {
+        nitsPass.textContent = '—';
+      }
+    }
+    const nitsDetail = this.querySelector('#runtime-nits-detail');
+    if (nitsDetail) {
+      nitsDetail.textContent = nits.bunVersion
+        ? `Bun ${nits.bunVersion} · inspect · streams · url · file-io · ${(nits.results || []).filter(r => r.canonical).length}/${(nits.results || []).length} canonical`
+        : 'Run bun tools/verify-bun-runtime-nits.ts --save';
+    }
+    const nitsHash = this.querySelector('#runtime-nits-hash');
+    if (nitsHash) {
+      nitsHash.textContent = nits.proofHash ? `sha256 ${String(nits.proofHash).slice(0, 16)}…` : '';
+    }
+    const nitsTable = this.querySelector('#runtime-nits-table');
+    const nitsTbody = nitsTable?.querySelector('tbody');
+    const nitsRows = nits.results || [];
+    if (nitsTable && nitsTbody) {
+      if (nitsRows.length > 0) {
+        nitsTable.classList.remove('hidden');
+        nitsTbody.innerHTML = nitsRows
+          .map(r =>
+            renderVerificationTableRow({
+              name: `${r.category}: ${r.probe.replace(/^[^.]+\./, '')}`,
+              passed: r.passed,
+              canonical: r.canonical,
+              _links: r._links,
+            })
+          )
+          .join('');
+      } else {
+        nitsTable.classList.add('hidden');
+        nitsTbody.innerHTML = '';
+      }
+    }
+
     // Snapshot health card (packages from tree/registry hints + generation)
     const snapPkgs = this.querySelector('#snap-packages');
     if (snapPkgs) {
@@ -460,6 +948,12 @@ class OperationsDashboard extends HTMLElement {
       `;
     }
   }
+}
+
+function esc(s) {
+  if (typeof s !== 'string') return '';
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return s.replace(/[&<>"']/g, ch => map[ch]);
 }
 
 customElements.define('operations-dashboard', OperationsDashboard);

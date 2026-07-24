@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- @see docs/portal-foundation.md -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -103,13 +104,16 @@
         <a href="/portal/dod" class="nav-link">DOD</a>
         <a href="/portal/health" class="nav-link active">Health</a>
         <a href="/portal/env" class="nav-link">Env</a>
+        <a href="/portal/dashboard" class="nav-link">Dashboard</a>
         <a href="/monitoring" class="nav-link">Monitoring</a>
         <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer">Wiki</a>
       </nav>
       <div class="topbar-status">
         <a href="/portal/health.md" class="nav-link nav-md" title="Markdown view">MD</a>
-        <span id="nav-dot" class="health-dot unknown" title="Health"></span>
-        <span id="nav-label" class="health-label">…</span>
+        <a href="/portal/health" class="topbar-health-link" title="System health">
+          <span id="health-dot" class="health-dot unknown" title="Health"></span>
+          <span id="health-label" class="health-label">…</span>
+        </a>
       </div>
     </div>
   </header>
@@ -235,8 +239,8 @@
         $('banner').className = 'health-banner bad';
         $('banner-title').textContent = 'Health unavailable';
         $('banner-meta').textContent = 'Could not reach /api/health, /health, or static snapshots';
-        $('nav-dot').className = 'health-dot bad';
-        $('nav-label').textContent = 'Down';
+        $('health-dot').className = 'health-dot bad';
+        $('health-label').textContent = 'Down';
         raw.textContent = 'No data';
         $('cards').innerHTML = '';
         return;
@@ -255,8 +259,8 @@
         .filter(Boolean)
         .join(' · ');
 
-      $('nav-dot').className = `health-dot ${ok ? 'ok' : 'bad'}`;
-      $('nav-label').textContent = ok ? 'Healthy' : 'Issue';
+      $('health-dot').className = `health-dot ${ok ? 'ok' : 'degraded'}`;
+      $('health-label').textContent = ok ? 'ok' : 'degraded';
 
       const arts = d.artifacts?.opsSummary || {};
       const rs = d.routeStats || {};
@@ -384,5 +388,7 @@
     load();
     setInterval(load, 15_000);
   </script>
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
 </body>
 </html>

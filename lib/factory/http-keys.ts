@@ -9,6 +9,13 @@ export const REGISTRY_ALLOWED_EXACT = new Set([
   'static.json',
   'ops-summary.json',
   'monitoring.json',
+  /** Per-tenant registry snapshots (portal sidebar). */
+  'factory/registry.json',
+  'science/registry.json',
+  'tennis/registry.json',
+  'tenants/factory/registry.json',
+  'tenants/science/registry.json',
+  'tenants/tennis/registry.json',
 ]);
 export const REGISTRY_ALLOWED_PREFIXES = ['@factorywager/', 'projects/', 'readme/'] as const;
 

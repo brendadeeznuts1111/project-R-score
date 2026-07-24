@@ -15,30 +15,33 @@
  * - Method routes (`{ GET, POST }`) only apply on the TCP/`routes` path.
  * - `server.reload({ routes, fetch, websocket, error })` hot-swaps handlers; port stays.
  * - `pendingRequests` increments for in-flight TCP requests (observed mid-handler = 1).
- * - `development` defaults to **true** when unset; set `development: false` for prod-like.
- * - `server.id` may be empty string unless configured.
- * - Prefer loopback for production-path proofs (routes + socket + requestIP).
- * - Prefer `server.fetch` only to unit-test pure `fetch` handler logic (no routes).
+ * - `development` when omitted follows `NODE_ENV` on 1.4.0 canary (`production` → false).
+ * - `server.protocol` is in bun-types + runtime but missing from published #reference (see bun-serve-shape.ts).
  *
- * Interface (docs reference): stop, reload, fetch, upgrade, publish,
- * subscriberCount, requestIP, timeout, ref/unref, pendingRequests,
- * pendingWebSockets, url, port, hostname, development, id.
+ * Port + protocol come in two shapes on the same Server:
+ * - `server.port` (number) vs `server.url.port` (string; empty when default 80/443)
+ * - `server.protocol` ("http"|"https") vs `server.url.protocol` ("http:"|"https:")
  *
  * @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
  * @see https://bun.com/docs/runtime/http/server#reference — Server interface
+ * @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — port + hostname
  * @see https://bun.com/docs/runtime/http/server#server-reload — server.reload
  * @see https://bun.com/docs/runtime/http/server#server-stop — server.stop
  * @see https://bun.com/docs/runtime/http/server#server-pendingrequests-and-server-pendingwebsockets
  * @see https://bun.com/docs/runtime/http/websockets#start-a-websocket-server — WebSocketHandler
  * @see https://bun.com/docs/runtime/http/tls — TLSOptions
+ * @see ./bun-serve-shape.ts — docs / bun-types / runtime drift matrix
  */
 
 import { inspectCustom, shouldColor } from '../console-depth.ts';
+import { isTcpServer, probeServerShape, serverShapeViolations } from './bun-serve-shape.ts';
 import { inspectTable, type TableRow } from './networking-report.ts';
 
 /** Canonical docs loci. */
 export const BUN_SERVE_DOCS = 'https://bun.com/docs/runtime/http/server#basic-setup';
 export const BUN_SERVER_REFERENCE_DOCS = 'https://bun.com/docs/runtime/http/server#reference';
+export const BUN_SERVER_PORT_DOCS =
+  'https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname';
 export const BUN_SERVER_RELOAD_DOCS = 'https://bun.com/docs/runtime/http/server#server-reload';
 export const BUN_SERVER_STOP_DOCS = 'https://bun.com/docs/runtime/http/server#server-stop';
 export const BUN_SERVER_PENDING_DOCS =
@@ -53,17 +56,48 @@ export const BUN_TLS_DOCS = 'https://bun.com/docs/runtime/http/tls';
  */
 export type BunServer = ReturnType<typeof Bun.serve>;
 
+/** Bun.serve options bag — use for typed bind/config helpers. */
+export type BunServeOptions = Parameters<typeof Bun.serve>[0];
+
+/** Common bind knobs for local servers (port, host, TLS, development). */
+export type BunServeBindOptions = Pick<
+  BunServeOptions,
+  'port' | 'hostname' | 'development' | 'tls'
+>;
+
+/** `server.protocol` — bare scheme without colon (`http`, `https`; null on unix). */
+export type ServerWireProtocol = NonNullable<BunServer['protocol']>;
+
+/** `server.url.protocol` — URL scheme with trailing colon. */
+export type ServerUrlProtocol = 'http:' | 'https:';
+
 /** Snapshot of identity + in-flight counters (no body I/O). */
 export type ServerIdentity = {
   /** server.url.href */
   url: string;
+  /** server.port — numeric listen port */
   port: number;
+  /** server.url.port — wire string (empty when default 80/443) */
+  urlPort: string;
   hostname: string;
+  /** server.protocol */
+  protocol: ServerWireProtocol;
+  /** server.url.protocol */
+  urlProtocol: ServerUrlProtocol;
+  /** server.url.origin */
+  origin: string;
   development: boolean;
   /** Bun Server.id — opaque runtime instance id */
   id: string; // brand-ok — Bun Server.id from docs reference
   pendingRequests: number;
   pendingWebSockets: number;
+};
+
+/** Running server + typed bind/protocol snapshot (serve-public startup). */
+export type ServeBindSnapshot = ServerIdentity & {
+  server: BunServer;
+  /** Loopback-safe origin (`0.0.0.0` bind → `127.0.0.1` for console URLs). */
+  loopbackOrigin: string;
 };
 
 /** How the probe reaches the server. */
@@ -100,18 +134,52 @@ export type ServerFetchProbeOpts = {
 };
 
 /**
+ * Loopback origin for console links when bound to `0.0.0.0`.
+ * Preserves `server.url.protocol` / port (TLS-aware).
+ */
+export function serverLoopbackOrigin(server: Pick<BunServer, 'url' | 'hostname'>): string {
+  const u = new URL(server.url.href);
+  if (server.hostname === '0.0.0.0') {
+    u.hostname = '127.0.0.1';
+  }
+  return u.origin;
+}
+
+/**
  * Live identity fields from a running Server.
  * @see https://bun.com/docs/runtime/http/server#reference
  */
 export function serverIdentity(server: BunServer): ServerIdentity {
+  if (!isTcpServer(server)) {
+    throw new Error('serverIdentity requires a TCP listener (not unix socket)');
+  }
+  const probe = probeServerShape(server);
+  const violations = serverShapeViolations(probe);
+  if (violations.length > 0) {
+    throw new Error(`server shape invariant failed: ${violations.join('; ')}`);
+  }
   return {
-    url: server.url.href,
-    port: server.port,
-    hostname: server.hostname,
-    development: server.development,
-    id: server.id,
-    pendingRequests: server.pendingRequests,
-    pendingWebSockets: server.pendingWebSockets,
+    url: probe.href,
+    port: probe.port,
+    urlPort: probe.urlPort,
+    hostname: probe.hostname,
+    protocol: probe.protocol,
+    urlProtocol: probe.urlProtocol,
+    origin: probe.origin,
+    development: probe.development,
+    id: probe.id,
+    pendingRequests: probe.pendingRequests,
+    pendingWebSockets: probe.pendingWebSockets,
+  };
+}
+
+/** Identity + loopback origin + server handle — use after Bun.serve(). */
+export function serveBindSnapshot(server: BunServer): ServeBindSnapshot {
+  const identity = serverIdentity(server);
+  return {
+    ...identity,
+    server,
+    loopbackOrigin: serverLoopbackOrigin(server),
   };
 }
 

@@ -1,18 +1,12 @@
 /**
- * Pages Function — serve bundlet release verification script via HTTP for `bun run -`.
+ * Pages Function — serve verify-bun-release.ts for `bun run -`.
+ *
+ *   curl -sf https://project-r-score.pages.dev/api/release/script | bun run -
+ *   curl -sf .../script.meta | jq -r .pipeVerified
  */
-export async function onRequest(): Promise<Response> {
-  const sources = [
-    'https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.bundle.js',
-    'https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.bundle.js',
-  ];
-  for (const url of sources) {
-    try {
-      const res = await fetch(url);
-      if (res.ok) return new Response(await res.text(), {
-        headers: { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=300', 'Access-Control-Allow-Origin': '*' },
-      });
-    } catch {}
-  }
-  return new Response('Script not found', { status: 404 });
+import { serveVerificationScript } from '../../../lib/http/verification-scripts.ts';
+
+export async function onRequest(context: { request: Request }): Promise<Response> {
+  const base = new URL(context.request.url).origin;
+  return serveVerificationScript('release', { baseUrl: base });
 }

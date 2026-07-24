@@ -1,23 +1,25 @@
 <!DOCTYPE html>
+<!-- @see docs/portal-foundation.md -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="portal-poll-ms" content="30000" />
   <title>Environment · FactoryWager</title>
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
     .hidden { display: none; }
-    .env-dashboard { max-width: 900px; margin: 0 auto; padding: 0 24px; }
-    .env-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .env-dashboard { max-width: 960px; margin: 0 auto; padding: 0 24px 32px; }
+    .env-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
     .env-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); padding: 8px 12px; border-bottom: 1px solid var(--border); }
-    .env-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .env-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
     .env-table tr:hover { background: var(--surface-hover); }
     .env-key { font-family: monospace; font-weight: 600; color: var(--accent); font-size: 12px; }
-    .env-desc { color: var(--text-dim); font-size: 11px; }
-    .env-val { font-family: monospace; font-size: 12px; }
-    .badge-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .st-ok { color: var(--green, #3fb950); }
+    .st-bad { color: var(--red, #f85149); }
+    .st-warn { color: var(--yellow, #d29922); }
     .section-title { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
-    .section-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
+    .section-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
     .generated { font-size: 11px; color: var(--text-dim); text-align: right; margin-top: 24px; }
   </style>
 </head>
@@ -33,11 +35,16 @@
         <a href="/portal/dod" class="nav-link">DOD</a>
         <a href="/portal/health" class="nav-link">Health</a>
         <a href="/portal/env" class="nav-link active">Env</a>
+        <a href="/portal/dashboard" class="nav-link">Dashboard</a>
         <a href="/monitoring" class="nav-link">Monitoring</a>
         <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer">Wiki</a>
       </nav>
-      <div class="topbar-status view-toggle">
+      <div class="topbar-status">
         <a href="/portal/env.md" class="nav-link nav-md" title="Markdown view">MD</a>
+        <a href="/portal/health" class="topbar-health-link" title="System health">
+          <span id="health-dot" class="health-dot unknown"></span>
+          <span id="health-label" class="health-label">…</span>
+        </a>
       </div>
     </div>
   </header>
@@ -45,91 +52,148 @@
   <main class="env-dashboard">
     <div id="loading" class="ops-loading"><div class="spinner"></div><p>Loading environment…</p></div>
     <div id="dashboard" class="hidden">
-      <div class="section-title">🔐 Critical Secrets</div>
-      <div class="section-sub">Required for server operations — missing vars shown in <span style="color:hsl(0,70%,50%)">red</span></div>
-      <table class="env-table" id="critical-table">
-        <thead><tr><th>Status</th><th>Variable</th><th>Description</th><th>Actual</th></tr></thead>
-        <tbody></tbody>
+      <p class="section-sub" id="env-summary">—</p>
+
+      <div class="section-title">Environment checklist</div>
+      <table class="env-table" id="env-table">
+        <thead><tr><th>Key</th><th>Group</th><th>Severity</th><th>Status</th><th>Detail</th></tr></thead>
+        <tbody id="env-body">
+          <tr class="skeleton-row"><td colspan="5">Loading…</td></tr>
+        </tbody>
       </table>
 
-      <div class="section-title">⚙️ Optional Configuration</div>
-      <div class="section-sub">Expected defaults shown — mismatches in <span style="color:hsl(45,60%,45%)">yellow</span></div>
-      <table class="env-table" id="optional-table">
-        <thead><tr><th>Status</th><th>Variable</th><th>Description</th><th>Actual</th><th>Default</th></tr></thead>
-        <tbody></tbody>
-      </table>
-
-      <div class="section-title">📦 Content-Type Handling</div>
-      <div class="section-sub">Default Bun behavior vs our values vs expected — <span style="color:hsl(120,60%,45%)">all match</span></div>
+      <div class="section-title" id="ct-title">Content-Type handling</div>
+      <p class="section-sub" id="ct-summary">—</p>
       <table class="env-table" id="content-type-table">
-        <thead><tr><th>Status</th><th>Scenario</th><th>Default</th><th>Our Value</th><th>Expected</th></tr></thead>
-        <tbody></tbody>
+        <thead><tr><th>Status</th><th>Scenario</th><th>Default</th><th>Our value</th><th>Expected</th></tr></thead>
+        <tbody id="ct-body">
+          <tr class="skeleton-row"><td colspan="5">Loading…</td></tr>
+        </tbody>
       </table>
 
       <div class="generated" id="generated"></div>
     </div>
   </main>
 
-  <script>
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+  <script type="module">
     const $ = id => document.getElementById(id);
-    const hueToBg = h => `hsl(${h}, 60%, 20%)`;
 
-    async function loadEnv() {
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function statusClass(st) {
+      const s = String(st || '');
+      if (s.includes('✗') || s === 'missing' || s === 'placeholder' || s === 'fail') return 'st-bad';
+      if (s === 'default' || s === 'edge-n/a' || s === 'binding' || s === 'warn') return 'st-warn';
+      return 'st-ok';
+    }
+
+    function renderEnvTable(env) {
+      const summary = env.summary || {};
+      const table = env.table || [];
+      const miss = env.requiredMissingKeys || [];
+      $('env-summary').textContent = table.length
+        ? `${summary.ok ?? '—'}/${summary.total ?? table.length} ok · missing ${summary.missing ?? 0} · required gaps ${summary.requiredMissing ?? 0}` +
+          (miss.length ? ` · need: ${miss.join(', ')}` : '')
+        : 'No env checklist in payload';
+      const tbody = $('env-body');
+      if (!table.length) {
+        tbody.innerHTML = '<tr><td colspan="5">No env data. Run <code>bun run env:check</code> locally.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = table.map(row => {
+        const st = String(row.Status || '');
+        const cls = statusClass(st);
+        return `<tr>
+          <td class="env-key">${escapeHtml(row.Key)}</td>
+          <td>${escapeHtml(row.Group)}</td>
+          <td>${escapeHtml(row.Severity)}</td>
+          <td class="${cls}">${escapeHtml(st)}</td>
+          <td>${escapeHtml(row.Detail || '')}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderContentType(data) {
+      const rows = data?.rows || data?.contentType?.rows || [];
+      const ctSection = $('ct-title');
+      const ctTable = $('content-type-table');
+      if (!rows.length) {
+        ctSection.classList.add('hidden');
+        ctTable.classList.add('hidden');
+        return;
+      }
+      ctSection.classList.remove('hidden');
+      ctTable.classList.remove('hidden');
+      const pass = rows.filter(r => r.status === 'ok' || r.severity === 'pass').length;
+      $('ct-summary').textContent = `${pass}/${rows.length} scenarios match expected wire behavior`;
+      $('ct-body').innerHTML = rows.map(r => {
+        const ok = r.status === 'ok' || r.severity === 'pass';
+        return `<tr>
+          <td class="${ok ? 'st-ok' : 'st-warn'}">${ok ? '✓' : '△'}</td>
+          <td class="env-key">${escapeHtml(r.id || r.scenario || r.note)}</td>
+          <td>${escapeHtml(r.defaultValue ?? r.default ?? '—')}</td>
+          <td>${escapeHtml(r.ourValue ?? r.our ?? '—')}</td>
+          <td>${escapeHtml(r.expected ?? '—')}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function showDashboard(checkedAt) {
+      $('loading').classList.add('hidden');
+      $('dashboard').classList.remove('hidden');
+      $('generated').textContent = checkedAt
+        ? 'Last checked: ' + new Date(checkedAt).toLocaleString()
+        : '';
+    }
+
+    async function fetchEnvDirect() {
+      const res = await fetch('/api/env', { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(String(res.status));
+      return res.json();
+    }
+
+    async function fetchContentType() {
       try {
-        const res = await fetch('/api/env');
-        if (!res.ok) throw new Error(String(res.status));
-        const data = await res.json();
-        renderCritical(data.critical);
-        renderOptional(data.optional);
-        renderContentType(data.contentType);
-        $('generated').textContent = 'Last checked: ' + new Date(data.generated).toLocaleString();
-        $('loading').classList.add('hidden');
-        $('dashboard').classList.remove('hidden');
-      } catch (e) {
-        $('loading').innerHTML = '<p style="color:var(--red)">⚠️ Failed to load: ' + e.message + '</p>';
+        const res = await fetch('/api/content-type');
+        if (!res.ok) return null;
+        return res.json();
+      } catch {
+        return null;
       }
     }
 
-    function renderCritical(vars) {
-      const tbody = document.querySelector('#critical-table tbody');
-      tbody.innerHTML = vars.map(v => {
-        return '<tr>' +
-          '<td><span class="badge-dot" style="background:' + v.hsl + '"></span></td>' +
-          '<td class="env-key">' + v.key + '</td>' +
-          '<td class="env-desc">' + v.desc + '</td>' +
-          '<td class="env-val" style="color:hsl(' + (v.set ? 120 : 0) + ',70%,' + (v.set ? 60 : 40) + '%)">' + (v.actual || '—') + '</td>' +
-          '</tr>';
-      }).join('');
+    async function loadFromEnv(env, checkedAt) {
+      renderEnvTable(env);
+      showDashboard(checkedAt || env.checkedAt);
+      const ct = await fetchContentType();
+      if (ct) renderContentType(ct);
+      else if (env.contentType?.rows) renderContentType(env);
     }
 
-    function renderOptional(vars) {
-      const tbody = document.querySelector('#optional-table tbody');
-      tbody.innerHTML = vars.map(v => {
-        return '<tr>' +
-          '<td><span class="badge-dot" style="background:' + v.hsl + '"></span></td>' +
-          '<td class="env-key">' + v.key + '</td>' +
-          '<td class="env-desc">' + v.desc + '</td>' +
-          '<td class="env-val" style="color:hsl(' + v.hue + ',60%,' + (v.match ? 60 : 45) + '%)">' + (v.actual || '—') + '</td>' +
-          '<td class="env-desc">' + (v.default || '—') + '</td>' +
-          '</tr>';
-      }).join('');
+    async function load() {
+      try {
+        const ctPromise = fetchContentType();
+        const env = await fetchEnvDirect();
+        await loadFromEnv(env, env.checkedAt);
+        const ct = await ctPromise;
+        if (ct) renderContentType(ct);
+      } catch (e) {
+        $('loading').innerHTML = '<p style="color:var(--red)">⚠️ Failed to load: ' + escapeHtml(e.message) + '</p>';
+      }
     }
 
-    function renderContentType(items) {
-      const html = items.map(v => {
-        const hue = v.match ? 120 : 45;
-        return '<tr>' +
-          '<td><span class="badge-dot" style="background:hsl(' + hue + ',60%,45%)"></span></td>' +
-          '<td class="env-key">' + v.scenario + '</td>' +
-          '<td class="env-desc">' + v.default + '</td>' +
-          '<td class="env-val">' + v.our + '</td>' +
-          '<td class="env-desc">' + v.expected + '</td>' +
-          '</tr>';
-      }).join('');
-      document.querySelector('#content-type-table tbody').innerHTML = html;
-    }
+    document.addEventListener('portal:data', e => {
+      const { status, data } = e.detail || {};
+      if ((status === 'ok' || status === 'stale') && data?.env) {
+        loadFromEnv(data.env, data.checkedAt || data.env.checkedAt);
+      }
+    });
 
-    loadEnv();
+    load();
   </script>
 </body>
 </html>

@@ -3,7 +3,8 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
-// @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
+// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — BUN_PORT / PORT / NODE_PORT
+// @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — port + hostname
 // @see https://bun.com/docs/runtime/http/routing — static paths, params, wildcards, fetch fallback
 // @see https://bun.com/docs/runtime/http/routing#static-responses — zero-alloc Response routes
 // @see https://bun.com/docs/runtime/http/routing#file-responses-vs-static-responses — memory vs Bun.file
@@ -18,8 +19,14 @@
  * Local portal + static public/ server with live ops/catalog/registry APIs.
  *
  *   bun scripts/serve-public.ts
- *   bun --hot scripts/serve-public.ts   # re-eval server on TS change
+ *   bun --hot scripts/serve-public.ts      # soft reload server TS (see docs/portal-foundation.md)
+ *   bun --watch scripts/serve-public.ts    # hard restart process
+ *   bun run serve:public:hot               # same as --hot (flag embedded in package.json script)
  *   open http://127.0.0.1:3000/portal/ops/
+ *
+ * Bun flags (--hot, --watch, --port) must come immediately after `bun`, not after `run`.
+ * @see https://bun.com/docs/runtime/watch-mode
+ * @see https://bun.com/docs/runtime#watch
  *
  * Browser live-reload (SSE /__hmr) is ON for loopback by default.
  *   SERVE_PUBLIC_HMR=0  disable
@@ -102,16 +109,19 @@ import { resolvePublishReadme } from '../lib/registry/npm-publish-readme.ts';
 import {
   serveBindSnapshot,
   type BunServer,
+  type BunServeOptions,
   type ServeBindSnapshot,
 } from '../lib/http/bun-server.ts';
+import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
 import { getDb, getMonitoringData } from '../lib/db/connection.ts';
 
-const PORT = Number(Bun.env.PORT || 3000);
-/** Loopback by default — set HOST=0.0.0.0 only when intentional LAN bind. */
-const HOST = (Bun.env.HOST || Bun.env.BIND_HOST || '127.0.0.1').trim() || '127.0.0.1';
+/** Optional bind override — omit to use Bun docs default (`0.0.0.0`). */
+const HOST_OVERRIDE = (Bun.env.HOST || Bun.env.BIND_HOST)?.trim() || undefined;
+/** Hint for live-reload gating before listen (runtime uses `localhost` when hostname omitted). */
+const BIND_HOST_HINT = HOST_OVERRIDE ?? 'localhost';
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 /** Browser SSE live-reload (not Cloudflare Pages). */
-const LIVE_RELOAD = shouldEnableLiveReload({ host: HOST });
+const LIVE_RELOAD = shouldEnableLiveReload({ host: BIND_HOST_HINT });
 /**
  * Bun.serve development flag — docs default true; we prefer false for prod-like
  * local/staging unless SERVE_PUBLIC_DEV=1 or NODE_ENV=development.
@@ -437,6 +447,16 @@ async function npmPackageMetadata(req: Request): Promise<Response> {
   const rawPath = url.pathname;
   // Handle URL-encoded scoped names: /@factorywager%2Fregistry-client → @factorywager/registry-client
   const name = decodeURIComponent(rawPath.startsWith('/@') ? rawPath.slice(1) : rawPath.slice(1));
+  if (!name) {
+    return staticFile('/index.html', req).then(
+      r =>
+        r ??
+        new Response('Not found', {
+          status: 404,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        })
+    );
+  }
   const reg = await readRegistry();
   if (!reg) return json({ error: 'No registry' }, 404);
   const pkg = (reg.packages || {})[name];
@@ -540,6 +560,8 @@ const HOT_STATIC_PATHS = [
   'public/registry/networking-proof.json',
   'public/registry/install-env-proof.json',
   'public/registry/registry-client-proof.json',
+  'public/registry/docs-coverage-proof.json',
+  'public/registry/bun-runtime-nits-proof.json',
   'public/registry/doc-index.json',
   'tools/bun-api-coverage-proof.json',
 ];
@@ -718,6 +740,18 @@ async function liveMonitoringApi(): Promise<Response> {
         data.registryClientProof = JSON.parse(await rcFile.text());
       } catch {}
     }
+    const nitsFile = Bun.file('public/registry/bun-runtime-nits-proof.json');
+    if (await nitsFile.exists()) {
+      try {
+        data.bunRuntimeNitsProof = JSON.parse(await nitsFile.text());
+      } catch {}
+    }
+    const docsCovFile = Bun.file('public/registry/docs-coverage-proof.json');
+    if (await docsCovFile.exists()) {
+      try {
+        data.docsCoverageProof = JSON.parse(await docsCovFile.text());
+      } catch {}
+    }
     return json(data);
   } catch (err) {
     const snap = Bun.file('public/registry/monitoring.json');
@@ -729,6 +763,8 @@ async function liveMonitoringApi(): Promise<Response> {
         ['networkingProof', 'public/registry/networking-proof.json'],
         ['installEnvProof', 'public/registry/install-env-proof.json'],
         ['registryClientProof', 'public/registry/registry-client-proof.json'],
+        ['docsCoverageProof', 'public/registry/docs-coverage-proof.json'],
+        ['bunRuntimeNitsProof', 'public/registry/bun-runtime-nits-proof.json'],
         ['defaultsProof', 'public/registry/defaults-proof.json'],
       ];
       for (const [key, path] of proofFiles) {
@@ -930,6 +966,7 @@ async function collectHealthData(): Promise<{
     typeof networking.degraded === 'boolean' &&
     networking.degraded;
   const data: Record<string, unknown> = {
+    schemaVersion: 1,
     status: envCheck.summary.requiredMissing > 0 || networkingDegraded ? 'degraded' : 'ok',
     uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
     bun: Bun.version,
@@ -1265,6 +1302,14 @@ function requireReadAuth(req: Request): Response | null {
   return null;
 }
 
+/** True when path is a single-segment npm package name (not `/`, `/index.html`, etc.). */
+function isNpmPackagePath(path: string): boolean {
+  if (path === '/' || path === '') return false;
+  const seg = path.slice(1);
+  if (!seg || seg.includes('/')) return false;
+  return true;
+}
+
 /**
  * Unmatched-request handler (Bun routing docs: runs when no `routes` match).
  * Second arg is Server on real TCP; may be undefined for in-process server.fetch.
@@ -1311,11 +1356,18 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/env' || path === '/api/env/') return envStatus();
   if (path === '/api/content-type' || path === '/api/content-type/') return contentTypeApi();
 
-  // Optional auth for read endpoints
+  // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
-  if (authErr && path !== '/api/operations/summary' && path !== '/api/catalog') {
-    const unprotectedPaths = ['/api/monitoring', '/api/registry', '/api/dod', '/api/channels'];
-    if (unprotectedPaths.some(p => path.startsWith(p))) return authErr;
+  if (authErr) {
+    const publicReadPaths = [
+      '/api/monitoring',
+      '/api/registry',
+      '/api/dod',
+      '/api/channels',
+      '/api/operations/summary',
+      '/api/catalog',
+    ];
+    if (!publicReadPaths.some(p => path.startsWith(p))) return authErr;
   }
   if (path === '/api/monitoring' || path === '/api/monitoring/') return liveMonitoringApi();
   if (path === '/monitoring' || path === '/monitoring/') return monitoringPage();
@@ -1386,12 +1438,22 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
     return dodApi(req);
   if (path === '/api/channels/events') return channelsEvents(req);
 
-  // npm-compatible publish: PUT /{name} or /@scope/name
+  const storageRes = await serveRegistryStorage(path, req);
+  if (storageRes) return storageRes;
+
+  const staticRes = await staticFile(path, req);
+  if (staticRes) return staticRes;
+
+  // npm-compatible publish: PUT /{name} or /@scope/name (not / or static paths)
   if (
     req.method === 'PUT' &&
+    isNpmPackagePath(path) &&
     (path.match(/^\/@[a-z0-9-]+\/[a-zA-Z0-9._-]+$/) ||
       path.match(/^\/@[a-z0-9-]+%2[fF][a-zA-Z0-9._-]+$/) ||
-      (path.split('/').length === 2 && path.startsWith('/') && !path.startsWith('/@')))
+      (path.length > 1 &&
+        path.split('/').length === 2 &&
+        path.startsWith('/') &&
+        !path.startsWith('/@')))
   ) {
     return npmPublish(req, decodeURIComponent(path.slice(1)));
   }
@@ -1399,18 +1461,16 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   // npm-compatible metadata: GET /{name} or /@scope/name
   if (
     req.method === 'GET' &&
+    isNpmPackagePath(path) &&
     (path.match(/^\/@[a-z0-9-]+\/[a-zA-Z0-9._-]+$/) ||
       path.match(/^\/@[a-z0-9-]+%2[fF][a-zA-Z0-9._-]+$/) ||
-      (path.split('/').length === 2 && path.startsWith('/') && !path.startsWith('/@')))
+      (path.length > 1 &&
+        path.split('/').length === 2 &&
+        path.startsWith('/') &&
+        !path.startsWith('/@')))
   ) {
     return npmPackageMetadata(req);
   }
-
-  const storageRes = await serveRegistryStorage(path, req);
-  if (storageRes) return storageRes;
-
-  const staticRes = await staticFile(path, req);
-  if (staticRes) return staticRes;
 
   // API paths always JSON 404 so `curl | jq` fails with a clear error object
   if (path.startsWith('/api/')) {
@@ -1448,8 +1508,15 @@ function buildPublicRoutes() {
     // Dynamic health — handlers receive (req, server) on TCP
     '/health': (req: Request, server: RouteServer) => health(req, server),
     '/health/': (req: Request, server: RouteServer) => health(req, server),
+    '/api/health': (req: Request, server: RouteServer) => health(req, server),
+    '/api/health/': (req: Request, server: RouteServer) => health(req, server),
     '/health/pre': (req: Request, server: RouteServer) => healthHtml(req, server),
     '/health/pre/': (req: Request, server: RouteServer) => healthHtml(req, server),
+
+    '/': (req: Request): Promise<Response> =>
+      staticFile('/index.html', req).then(r => r ?? new Response('Not found', { status: 404 })),
+    '/index.html': (req: Request): Promise<Response> =>
+      staticFile('/index.html', req).then(r => r ?? new Response('Not found', { status: 404 })),
 
     '/api/content-type': () => contentTypeApi(),
     '/api/content-type/': () => contentTypeApi(),
@@ -1685,52 +1752,71 @@ function buildPublicRoutes() {
   };
 }
 
-function startServer(preferred: number, maxTries = 20): ServeBindSnapshot {
-  let lastErr: unknown;
+function isListenPortBusy(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return msg.includes('EADDRINUSE') || /port \d+ in use/i.test(msg);
+}
+
+function createServer(options: Pick<BunServeOptions, 'port' | 'hostname'> = {}): BunServer {
   const routes = buildPublicRoutes();
+  const serveOptions: BunServeOptions = {
+    development: SERVE_DEVELOPMENT,
+    routes,
+    fetch: fetchHandler,
+    error(error) {
+      console.error('[serve] unhandled:', error);
+      return new Response('Internal Server Error', { status: 500 });
+    },
+  };
+  if (HOST_OVERRIDE) serveOptions.hostname = HOST_OVERRIDE;
+  else if (options.hostname !== undefined) serveOptions.hostname = options.hostname;
+  if (options.port !== undefined) serveOptions.port = options.port;
 
-  for (let i = 0; i < maxTries; i++) {
-    const port = preferred + i;
-    try {
-      const server = Bun.serve({
-        port,
-        hostname: HOST,
-        development: SERVE_DEVELOPMENT,
-        routes,
-        // Unmatched only — publish, npm, tenants, remaining static
-        fetch: fetchHandler,
-        error(error) {
-          console.error('[serve] unhandled:', error);
-          return new Response('Internal Server Error', { status: 500 });
-        },
-      });
-      activeServer = server;
-      return serveBindSnapshot(server);
-    } catch (e) {
-      lastErr = e;
-      const msg = e instanceof Error ? e.message : String(e);
-      if (!msg.includes('EADDRINUSE') && !msg.includes('port')) throw e;
-    }
+  return Bun.serve(serveOptions);
+}
+
+/**
+ * Start with Bun-native bind: omit `port`/`hostname` so `--port`, env chain, and docs defaults apply.
+ * On EADDRINUSE, retry once with `port: 0` (ephemeral).
+ * @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname
+ * @see https://bun.com/docs/runtime/http/server#configuring-a-default-port
+ */
+function startServer(): ServeBindSnapshot & { ephemeralFallback: boolean } {
+  let lastErr: unknown;
+  try {
+    return { ...serveBindSnapshot(createServer()), ephemeralFallback: false };
+  } catch (e) {
+    lastErr = e;
+    if (!isListenPortBusy(e)) throw e;
   }
+
+  try {
+    console.warn(
+      `[serve] default port ${resolveBunServeDefaultPort()} busy — retrying with port: 0 (ephemeral)`
+    );
+    return { ...serveBindSnapshot(createServer({ port: 0 })), ephemeralFallback: true };
+  } catch (e) {
+    lastErr = e;
+  }
+
+  const expected = resolveBunServeDefaultPort();
   console.error(`
-Port ${preferred}–${preferred + maxTries - 1} busy on ${HOST}.
+Failed to bind serve-public on ${HOST_OVERRIDE ?? '(Bun default hostname)'} port ${expected}.
 
-  # Use the server already on :${preferred} (if it is serve-public):
-  open http://127.0.0.1:${preferred}/portal/ops/
-
-  # Or free the port, then re-run:
-  lsof -nP -iTCP:${preferred} -sTCP:LISTEN
+  # Free the default port, then re-run (Bun resolves --port → BUN_PORT → PORT → NODE_PORT → 3000):
+  lsof -nP -iTCP:${expected} -sTCP:LISTEN
   kill <PID>
 
-  # Or pick a free port:
-  PORT=3010 bun scripts/serve-public.ts
-  # LAN bind (explicit only): HOST=0.0.0.0 bun scripts/serve-public.ts
+  bun --port=3010 scripts/serve-public.ts
+  BUN_PORT=3010 bun scripts/serve-public.ts
+  HOST=0.0.0.0 bun scripts/serve-public.ts
 `);
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
-const bind = startServer(PORT);
-const { port: boundPort, hostname: boundHost, protocol: boundProtocol } = bind;
+const bind = startServer();
+const { port: boundPort, hostname: boundHost, protocol: boundProtocol, ephemeralFallback } = bind;
+activeServer = bind.server;
 const base = bind.loopbackOrigin;
 
 async function gracefulShutdown(signal: string): Promise<void> {
@@ -1779,8 +1865,10 @@ console.log(
 console.log(
   `Serve:         development=${bind.development} · protocol=${bind.protocol} · origin=${bind.origin} · loopback=${base} · routes=SIMD+static · fetch=unmatched`
 );
-if (boundPort !== PORT) {
-  console.log(`(preferred PORT=${PORT} was busy — bound ${boundPort})`);
+if (ephemeralFallback) {
+  console.log(
+    `(default port busy — bound ephemeral port ${boundPort}; set BUN_PORT/PORT or bun --port=…)`
+  );
 }
 if (LIVE_RELOAD && liveReloadHub) {
   await liveReloadHub.startPolling(WATCH_PATHS);

@@ -41,9 +41,26 @@ export function renderSidebar(tenants, activeId, onSelect) {
     btn.className = `tenant-btn${t.id === activeId ? ' active' : ''}`;
     btn.title = t.name;
     btn.dataset.tenant = t.id;
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('tabindex', '0');
+    btn.setAttribute('aria-pressed', t.id === activeId ? 'true' : 'false');
     if (t.color) btn.style.setProperty('--tenant-color', t.color);
     btn.innerHTML = `${tenantIconHtml(t)}<span class="tenant-name">${t.name}</span>`;
-    btn.addEventListener('click', () => onSelect(t.id));
+    const select = () => {
+      const prev = nav.querySelector('.tenant-btn.active');
+      prev?.classList.remove('active');
+      prev?.setAttribute('aria-pressed', 'false');
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+      onSelect(t.id);
+    };
+    btn.addEventListener('click', select);
+    btn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        select();
+      }
+    });
     nav.appendChild(btn);
   }
 }

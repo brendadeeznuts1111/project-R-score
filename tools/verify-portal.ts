@@ -1,0 +1,203 @@
+#!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+/**
+ * Portal foundation verification — static anti-patterns + optional live probes.
+ *
+ *   bun run verify:portal:static   # no server
+ *   bun run verify:portal          # static + live (serve-public on PORT)
+ *
+ * @see docs/portal-foundation.md
+ */
+import { joinPath } from '../lib/path-bun.ts';
+import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
+
+const PORTAL_ROOT = joinPath(import.meta.dir, '../public/portal');
+const BASE =
+  Bun.env.PORTAL_VERIFY_BASE || `http://127.0.0.1:${resolveBunServeDefaultPort(Bun.env, Bun.argv)}`;
+
+const NAV_PATHS = [
+  '/',
+  '/portal/',
+  '/portal/ops/',
+  '/portal/catalog/',
+  '/portal/dod/',
+  '/portal/health/',
+  '/portal/env/',
+  '/portal/dashboard/',
+  '/monitoring',
+];
+
+/** Pages allowed to fetch /api/health directly (diagnostic SSOT). */
+const INLINE_HEALTH_ALLOW = new Set(['data.js', 'health/index.html']);
+
+/** HTML shells excluded from script-include checks. */
+const HTML_SKIP = new Set(['_page-template.html']);
+
+async function walkPortalFiles(): Promise<string[]> {
+  const out: string[] = [];
+  const glob = new Bun.Glob('**/*.{html,js}');
+  for await (const rel of glob.scan({ cwd: PORTAL_ROOT, onlyFiles: true })) {
+    out.push(rel);
+  }
+  return out.sort();
+}
+
+async function readPortalFile(rel: string): Promise<string> {
+  return Bun.file(joinPath(PORTAL_ROOT, rel)).text();
+}
+
+async function checkInlineHealthFetch() {
+  for (const file of await walkPortalFiles()) {
+    if (INLINE_HEALTH_ALLOW.has(file)) continue;
+    const content = await readPortalFile(file);
+    if (/fetch\s*\(\s*['"`]\/api\/health/.test(content)) {
+      throw new Error(
+        `${file}: inline fetch('/api/health') — use data.js / portal:data (see docs/portal-foundation.md)`
+      );
+    }
+  }
+  console.log('✓ no forbidden inline /api/health fetches');
+}
+
+async function checkNoProcessEnv() {
+  for (const file of await walkPortalFiles()) {
+    const content = await readPortalFile(file);
+    if (/\bprocess\.env\b/.test(content)) {
+      throw new Error(`${file}: process.env on client — use /api/env`);
+    }
+  }
+  console.log('✓ no process.env in portal client');
+}
+
+async function checkHtmlIncludes() {
+  const files = (await walkPortalFiles()).filter(f => f.endsWith('.html') && !HTML_SKIP.has(f));
+  for (const file of files) {
+    const content = await readPortalFile(file);
+    if (!content.includes('src="/portal/data.js"')) {
+      throw new Error(`${file}: missing <script src="/portal/data.js">`);
+    }
+    if (!content.includes('src="/portal/topbar.js"')) {
+      throw new Error(`${file}: missing <script src="/portal/topbar.js">`);
+    }
+  }
+  console.log(`✓ ${files.length} HTML pages include data.js + topbar.js`);
+}
+
+async function checkFoundationDoc() {
+  const doc = Bun.file('docs/portal-foundation.md');
+  if (!(await doc.exists())) throw new Error('docs/portal-foundation.md missing');
+  const template = Bun.file('public/portal/_page-template.html');
+  if (!(await template.exists())) throw new Error('public/portal/_page-template.html missing');
+  console.log('✓ portal-foundation.md + page template present');
+}
+
+async function checkClientContract() {
+  const dataJs = await readPortalFile('data.js');
+  if (!dataJs.includes('startDataService')) throw new Error('data.js missing startDataService');
+  if (!dataJs.includes('portal:data')) throw new Error('data.js missing portal:data event');
+  const topbarJs = await readPortalFile('topbar.js');
+  if (!topbarJs.includes('portal:data')) throw new Error('topbar.js missing portal:data listener');
+  console.log('✓ data.js + topbar.js contract');
+}
+
+async function checkNav() {
+  const failures: string[] = [];
+  for (const p of NAV_PATHS) {
+    const res = await fetch(`${BASE}${p}`, { redirect: 'follow' });
+    if (!res.ok) {
+      failures.push(`${p} → ${res.status}`);
+      continue;
+    }
+    if (p === '/') {
+      const ct = res.headers.get('content-type') ?? '';
+      const body = await res.text();
+      if (!ct.includes('text/html')) {
+        failures.push(`${p} → expected text/html, got ${ct || 'unknown'}`);
+      } else if (body.includes('"Package not found"')) {
+        failures.push(
+          `${p} → npm matcher stole Home (stale serve-public?) — restart: lsof -ti :3000 | xargs kill -9; bun run serve:public`
+        );
+      }
+    }
+    console.log(`✓ ${p} → ${res.status}`);
+  }
+  if (failures.length) throw new Error(`Nav failures:\n${failures.join('\n')}`);
+}
+
+async function checkApiHealth() {
+  const res = await fetch(`${BASE}/api/health`);
+  if (!res.ok) throw new Error(`/api/health → ${res.status}`);
+  const j = (await res.json()) as Record<string, unknown>;
+  if (typeof j.status !== 'string') throw new Error('/api/health missing status');
+  if (j.schemaVersion !== 1) {
+    throw new Error(`/api/health schemaVersion ${j.schemaVersion} — expected 1`);
+  }
+  console.log(`✓ /api/health status=${j.status} schemaVersion=1`);
+}
+
+async function checkApiEnv() {
+  const res = await fetch(`${BASE}/api/env`);
+  if (!res.ok) throw new Error(`/api/env → ${res.status}`);
+  const j = (await res.json()) as Record<string, unknown>;
+  if (!j.summary || !Array.isArray(j.table)) throw new Error('/api/env missing summary/table');
+  console.log(`✓ /api/env table=${(j.table as unknown[]).length} rows`);
+}
+
+async function checkRegistryHealth() {
+  const res = await fetch(`${BASE}/api/registry/health`);
+  if (!res.ok) throw new Error(`/api/registry/health → ${res.status}`);
+  console.log('✓ /api/registry/health');
+}
+
+async function runStatic() {
+  await checkFoundationDoc();
+  await checkInlineHealthFetch();
+  await checkNoProcessEnv();
+  await checkHtmlIncludes();
+  await checkClientContract();
+}
+
+async function runLive() {
+  console.log(`Live probes → ${BASE}`);
+  await checkNav();
+  await checkApiHealth();
+  await checkApiEnv();
+  await checkRegistryHealth();
+}
+
+async function main() {
+  const staticOnly = Bun.argv.includes('--static-only');
+  const liveOnly = Bun.argv.includes('--live-only');
+
+  if (!liveOnly) {
+    console.log('Portal static verify');
+    await runStatic();
+  }
+
+  if (!staticOnly) {
+    if (liveOnly) console.log('Portal live verify');
+    else console.log('Portal live verify');
+    try {
+      await runLive();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes('Unable to connect') || msg.includes('ECONNREFUSED')) {
+        console.warn('⚠ live probes skipped (no server) — run: bun run serve:public');
+        if (liveOnly) throw e;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  console.log('✅ portal verify passed');
+}
+
+if (import.meta.main) {
+  main().catch(e => {
+    console.error(e instanceof Error ? e.message : e);
+    process.exit(1);
+  });
+}

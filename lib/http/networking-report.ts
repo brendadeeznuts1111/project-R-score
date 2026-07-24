@@ -15,13 +15,48 @@
  *
  * @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
  * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+ * @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
  * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
  */
 
-import { inspectCustom, shouldColor } from '../console-depth.ts';
+import { inspectCustom, shouldColor, widthOf } from '../console-depth.ts';
+import { BUN_DEEP_EQUALS_DOCS, deepEquals } from '../deep-equals.ts';
 import type { HealthRouteObjects, PublicRouteDef } from './public-routes.ts';
 
+export { BUN_DEEP_EQUALS_DOCS };
+
+/** Canonical docs locus for Bun.stringWidth (via {@link widthOf}). */
+export const BUN_STRING_WIDTH_DOCS = 'https://bun.com/docs/runtime/utils#bun-stringwidth';
+
+/** Explicit Bun.inspect.table `properties` for route probe tables (--routes). */
+export const ROUTE_PROBE_TABLE_PROPERTIES = [
+  'path',
+  'kind',
+  'status',
+  'ms',
+  'crit',
+  'pass',
+] as const;
+
+export const ROUTE_STATS_TABLE_PROPERTIES = ['field', 'value'] as const;
+export const HOT_PRELOADED_TABLE_PROPERTIES = ['i', 'path'] as const;
+export const STRATEGIES_TABLE_PROPERTIES = ['strategy', 'rule'] as const;
+
 export type TableRow = Record<string, string | number | boolean | null | undefined>;
+
+export type TableColumnWidths = Record<string, number>;
+
+export type InspectTableProof = {
+  properties: readonly string[];
+  rowCount: number;
+  /** Per-column visual width via Bun.stringWidth (ANSI-aware). */
+  columnWidths: TableColumnWidths;
+  /** deepEquals(render, render) with colors:false */
+  renderIdempotent: boolean;
+  /** deepEquals(project₁, project₂) on the same rows */
+  rowsStable: boolean;
+};
 
 export type RouteProbeRow = {
   path: string;
@@ -43,22 +78,74 @@ export type RouteProbeResult = {
   summary: { total: number; passed: number; failed: number; criticalFailed: number };
 };
 
+/** Project object rows to explicit inspect.table columns only. */
+export function projectTableRows(rows: TableRow[], properties: readonly string[]): TableRow[] {
+  return rows.map(row => {
+    const out: TableRow = {};
+    for (const p of properties) out[p] = row[p];
+    return out;
+  });
+}
+
+/** Visual column widths for table cells (Bun.stringWidth). */
+export function tableColumnWidths(
+  rows: TableRow[],
+  properties: readonly string[]
+): TableColumnWidths {
+  const widths: TableColumnWidths = {};
+  for (const prop of properties) {
+    let max = widthOf(String(prop));
+    for (const row of rows) {
+      const cell = row[prop];
+      max = Math.max(max, widthOf(cell == null ? '' : String(cell)));
+    }
+    widths[prop] = max;
+  }
+  return widths;
+}
+
+/** Self-verify inspect.table: stringWidth widths + deepEquals idempotency. */
+export function proveInspectTable(
+  rows: TableRow[],
+  properties: readonly string[]
+): InspectTableProof {
+  const projected = projectTableRows(rows, properties);
+  const render = () => Bun.inspect.table(projected, [...properties], { colors: false });
+  const r1 = render();
+  const r2 = render();
+  return {
+    properties,
+    rowCount: rows.length,
+    columnWidths: tableColumnWidths(projected, properties),
+    renderIdempotent: deepEquals(r1, r2),
+    rowsStable: deepEquals(projectTableRows(rows, properties), projectTableRows(rows, properties)),
+  };
+}
+
 /**
  * Format rows with Bun.inspect.table.
- * Docs overload: `(data, { colors })` auto-picks columns from object keys,
- * or `(data, properties, { colors })` to project columns.
+ * When `properties` is set: projects columns, measures widths with Bun.stringWidth,
+ * and deepEquals-proves colorless render is idempotent before returning.
  */
 export function inspectTable(
   rows: TableRow[],
-  columns?: string[],
+  properties?: readonly string[],
   opts: { colors?: boolean } = {}
 ): string {
   if (!rows.length) return '(empty)';
   const colors = opts.colors ?? shouldColor();
-  // Never pass undefined as properties — Bun treats it poorly.
-  return columns?.length
-    ? Bun.inspect.table(rows, columns, { colors })
-    : Bun.inspect.table(rows, { colors });
+
+  if (!properties?.length) {
+    return Bun.inspect.table(rows, { colors });
+  }
+
+  const projected = projectTableRows(rows, properties);
+  const stable = Bun.inspect.table(projected, [...properties], { colors: false });
+  if (!deepEquals(stable, Bun.inspect.table(projected, [...properties], { colors: false }))) {
+    throw new Error('inspectTable: Bun.inspect.table render not idempotent (deepEquals)');
+  }
+
+  return Bun.inspect.table(projected, [...properties], { colors });
 }
 
 function routeStatsRows(health: HealthRouteObjects | null): TableRow[] {
@@ -72,15 +159,14 @@ function routeStatsRows(health: HealthRouteObjects | null): TableRow[] {
     { field: 'notModified304', value: rs.notModified304 ?? '—' },
     {
       field: 'totalMemoryUsed',
-      value:
-        rs.totalMemoryUsed != null ? `${Math.round(rs.totalMemoryUsed / 1024)} KiB` : '—',
+      value: rs.totalMemoryUsed != null ? `${Math.round(rs.totalMemoryUsed / 1024)} KiB` : '—',
     },
     { field: 'decision.rule', value: rs.decision?.rule ?? '—' },
   ];
 }
 
-function probeRows(rows: RouteProbeRow[]): TableRow[] {
-  return rows.map(r => ({
+function routeProbeTableRow(r: RouteProbeRow): TableRow {
+  return {
     path: r.path,
     name: r.name,
     category: r.category,
@@ -89,7 +175,11 @@ function probeRows(rows: RouteProbeRow[]): TableRow[] {
     ms: r.ms,
     crit: r.critical ? 'Y' : '',
     pass: r.pass ? 'PASS' : 'FAIL',
-  }));
+  };
+}
+
+function probeRows(rows: RouteProbeRow[]): TableRow[] {
+  return rows.map(routeProbeTableRow);
 }
 
 export type RouteReportJson = {
@@ -108,6 +198,14 @@ export type RouteReportJson = {
     strategies: string;
     routes: string;
     byCategory: Record<string, string>;
+  };
+  /** Bun.stringWidth + deepEquals + inspect.table(properties) self-proof. */
+  tableProof: {
+    routes: InspectTableProof;
+    routeStats: InspectTableProof;
+    hotPreloaded?: InspectTableProof;
+    strategies?: InspectTableProof;
+    byCategory: Record<string, InspectTableProof>;
   };
 };
 
@@ -141,16 +239,32 @@ export class RouteProbeReport {
     const routes = probeRows(this.rows);
     const byCategory: Record<string, TableRow[]> = {};
     for (const r of this.rows) {
-      (byCategory[r.category] ??= []).push({
-        path: r.path,
-        kind: r.kind,
-        status: String(r.status),
-        ms: r.ms,
-        crit: r.critical ? 'Y' : '',
-        pass: r.pass ? 'PASS' : 'FAIL',
-      });
+      const row = routeProbeTableRow(r);
+      (byCategory[r.category] ??= []).push(
+        projectTableRows([row], ROUTE_PROBE_TABLE_PROPERTIES)[0]!
+      );
     }
     return { routeStats, hotPreloaded, strategies, routes, byCategory };
+  }
+
+  /** deepEquals + stringWidth + properties proof for each route table slice. */
+  tableProof(): RouteReportJson['tableProof'] {
+    const s = this.slices();
+    const byCategory: Record<string, InspectTableProof> = {};
+    for (const [c, slice] of Object.entries(s.byCategory)) {
+      byCategory[c] = proveInspectTable(slice, ROUTE_PROBE_TABLE_PROPERTIES);
+    }
+    return {
+      routes: proveInspectTable(s.routes, ROUTE_PROBE_TABLE_PROPERTIES),
+      routeStats: proveInspectTable(s.routeStats, ROUTE_STATS_TABLE_PROPERTIES),
+      ...(s.hotPreloaded.length
+        ? { hotPreloaded: proveInspectTable(s.hotPreloaded, HOT_PRELOADED_TABLE_PROPERTIES) }
+        : {}),
+      ...(s.strategies.length
+        ? { strategies: proveInspectTable(s.strategies, STRATEGIES_TABLE_PROPERTIES) }
+        : {}),
+      byCategory,
+    };
   }
 
   /**
@@ -162,33 +276,34 @@ export class RouteProbeReport {
     const s = this.slices();
     const byCategory: Record<string, string> = {};
     for (const [c, slice] of Object.entries(s.byCategory)) {
-      byCategory[c] = inspectTable(slice, ['path', 'kind', 'status', 'ms', 'crit', 'pass'], {
-        colors,
-      });
+      byCategory[c] = inspectTable(slice, ROUTE_PROBE_TABLE_PROPERTIES, { colors });
     }
     return {
-      routeStats: inspectTable(s.routeStats, ['field', 'value'], { colors }),
+      routeStats: inspectTable(s.routeStats, ROUTE_STATS_TABLE_PROPERTIES, { colors }),
       hotPreloaded: s.hotPreloaded.length
-        ? inspectTable(s.hotPreloaded, ['i', 'path'], { colors })
+        ? inspectTable(s.hotPreloaded, HOT_PRELOADED_TABLE_PROPERTIES, { colors })
         : '(none)',
       strategies: s.strategies.length
-        ? inspectTable(s.strategies, ['strategy', 'rule'], { colors })
+        ? inspectTable(s.strategies, STRATEGIES_TABLE_PROPERTIES, { colors })
         : '(none)',
-      routes: inspectTable(s.routes, ['path', 'kind', 'status', 'ms', 'crit', 'pass'], {
-        colors,
-      }),
+      routes: inspectTable(s.routes, ROUTE_PROBE_TABLE_PROPERTIES, { colors }),
       byCategory,
     };
   }
 
   toJSON(): RouteReportJson {
     const s = this.slices();
+    const proof = this.tableProof();
+    if (!proof.routes.renderIdempotent || !proof.routes.rowsStable) {
+      throw new Error('RouteProbeReport: routes table proof failed (deepEquals)');
+    }
     return {
       base: this.base,
       summary: this.summary,
       health: this.health,
       ...s,
       rendered: this.render({ colors: false }),
+      tableProof: proof,
     };
   }
 
@@ -349,10 +464,9 @@ export function netCheckRow(
   };
 }
 
-function countStatus(rows: NetCheckRow[]): Pick<
-  NetworkingChecksSummary,
-  'total' | 'passed' | 'failed' | 'info' | 'skipped'
-> {
+function countStatus(
+  rows: NetCheckRow[]
+): Pick<NetworkingChecksSummary, 'total' | 'passed' | 'failed' | 'info' | 'skipped'> {
   let passed = 0;
   let failed = 0;
   let info = 0;
@@ -386,10 +500,7 @@ export class NetworkingChecksReport {
   readonly rows: NetCheckRow[];
   readonly meta: NetworkingChecksMeta;
 
-  constructor(
-    rows: NetCheckRow[],
-    meta: Partial<NetworkingChecksMeta> = {}
-  ) {
+  constructor(rows: NetCheckRow[], meta: Partial<NetworkingChecksMeta> = {}) {
     this.rows = rows;
     this.meta = {
       base: meta.base ?? '',
@@ -550,21 +661,13 @@ export class NetworkingChecksReport {
       if (!table) continue;
       const label = NET_OPTIMIZATION_LABELS[t];
       const ts = summary.byType.find(s => s.type === t);
-      parts.push(
-        '',
-        `  · ${t} (${label})${ts ? ` · ${ts.passed}/${ts.total}` : ''}`,
-        table
-      );
+      parts.push('', `  · ${t} (${label})${ts ? ` · ${ts.passed}/${ts.total}` : ''}`, table);
     }
 
     parts.push('', '── BY CATEGORY ──');
     for (const [cat, table] of Object.entries(rendered.byCategory)) {
       const cs = summary.byCategory.find(s => s.category === cat);
-      parts.push(
-        '',
-        `  · ${cat}${cs ? ` · ${cs.passed}/${cs.total}` : ''}`,
-        table
-      );
+      parts.push('', `  · ${cat}${cs ? ` · ${cs.passed}/${cs.total}` : ''}`, table);
     }
 
     return parts.join('\n');

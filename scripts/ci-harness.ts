@@ -84,6 +84,12 @@ const CHEAP: Step[] = [
     repair: 'bun run audit:verify · bun run audit:catalog:build',
   },
   {
+    name: 'portal-foundation',
+    cmd: ['bun', 'run', 'verify:portal:static'],
+    owner: 'docs/portal-foundation.md · tools/verify-portal.ts',
+    repair: 'bun run verify:portal:static · docs/portal-foundation.md',
+  },
+  {
     name: 'script-flag-order',
     cmd: ['bun', 'run', 'verify:flag-order'],
     owner: 'tools/verify-script-flags.ts · docs/portal-foundation.md',

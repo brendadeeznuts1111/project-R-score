@@ -31,6 +31,7 @@ export type BunDefaultCaseId =
   | 'write-creates-dirs'
   | 'file-stat'
   | 'serve-port-ephemeral'
+  | 'serve-identity-protocol-sync'
   | 'which-missing-null'
   | 'escape-html'
   | 'readable-stream-to-bytes-empty'
@@ -188,6 +189,28 @@ export async function runBunDefaultsCases(): Promise<BunDefaultCaseResult[]> {
     ),
 
     await runCase(
+      'serve-identity-protocol-sync',
+      'server.protocol syncs with url.protocol and port',
+      'https://bun.com/docs/runtime/http/server#reference',
+      'protocol=http, url.protocol=http:, url.port=String(port)',
+      async () => {
+        const s = Bun.serve({
+          port: 0,
+          hostname: '127.0.0.1',
+          fetch: () => new Response('ok'),
+        });
+        const ok =
+          s.protocol === 'http' &&
+          s.url.protocol === 'http:' &&
+          s.url.port === String(s.port) &&
+          s.url.origin === `http://127.0.0.1:${s.port}`;
+        await s.stop(true);
+        return ok;
+      },
+      () => 'protocol + url fields aligned'
+    ),
+
+    await runCase(
       'which-missing-null',
       'which returns null for missing',
       'https://bun.com/docs/runtime/utils#bun-which',
@@ -268,11 +291,13 @@ export async function runBunDefaultsCases(): Promise<BunDefaultCaseResult[]> {
   ];
 }
 
-export async function buildBunDefaultsProof(opts: {
-  now?: () => Date;
-  bunVersion?: string;
-  bunRevision?: string;
-} = {}): Promise<BunDefaultsProof> {
+export async function buildBunDefaultsProof(
+  opts: {
+    now?: () => Date;
+    bunVersion?: string;
+    bunRevision?: string;
+  } = {}
+): Promise<BunDefaultsProof> {
   const cases = await runBunDefaultsCases();
   const passed = cases.filter(c => c.pass).length;
   const failed = cases.length - passed;
@@ -284,9 +309,7 @@ export async function buildBunDefaultsProof(opts: {
     summary: { total: cases.length, passed, failed },
     cases,
   };
-  const proofHash = new Bun.CryptoHasher('sha256')
-    .update(JSON.stringify(body))
-    .digest('hex');
+  const proofHash = new Bun.CryptoHasher('sha256').update(JSON.stringify(body)).digest('hex');
   return { ...body, proofHash };
 }
 

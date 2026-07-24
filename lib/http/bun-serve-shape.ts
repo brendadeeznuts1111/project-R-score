@@ -135,6 +135,55 @@ export const BUN_SERVE_DEFAULT_PORT_ENV = ['BUN_PORT', 'PORT', 'NODE_PORT'] as c
 
 export const BUN_SERVE_DEFAULT_PORT_FALLBACK = 3000;
 
+/**
+ * Resolve bind port from env only (BUN_PORT → PORT → NODE_PORT → 3000).
+ * Use {@link resolveBunServeDefaultPort} when `--port` CLI may apply (verify probes).
+ * @see https://bun.com/docs/runtime/http/server#configuring-a-default-port
+ */
+export function resolveServeDefaultPort(
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): number {
+  for (const key of BUN_SERVE_DEFAULT_PORT_ENV) {
+    const raw = env[key]?.trim();
+    if (!raw) continue;
+    const port = Number(raw);
+    if (Number.isInteger(port) && port >= 1 && port <= 65535) return port;
+  }
+  return BUN_SERVE_DEFAULT_PORT_FALLBACK;
+}
+
+/** Parse `bun --port=N` / `bun --port N` from argv (docs precedence over env). */
+export function parseBunPortFlag(argv: string[] = Bun.argv): number | undefined {
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]!;
+    if (arg.startsWith('--port=')) {
+      const port = Number(arg.slice('--port='.length));
+      if (Number.isInteger(port) && port >= 0 && port <= 65535) return port;
+      continue;
+    }
+    if (arg === '--port') {
+      const port = Number(argv[i + 1]);
+      if (Number.isInteger(port) && port >= 0 && port <= 65535) return port;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Expected default bind port when `port` is omitted from `Bun.serve` (matches Bun runtime).
+ * Precedence: `--port` → `BUN_PORT` → `PORT` → `NODE_PORT` → `3000`.
+ * @see https://bun.com/docs/runtime/http/server#configuring-a-default-port
+ * @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname
+ */
+export function resolveBunServeDefaultPort(
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>,
+  argv: string[] = Bun.argv
+): number {
+  const fromFlag = parseBunPortFlag(argv);
+  if (fromFlag !== undefined) return fromFlag;
+  return resolveServeDefaultPort(env);
+}
+
 /** Live probe of Server bind fields (TCP servers only). */
 export type ServerShapeProbe = {
   port: number;

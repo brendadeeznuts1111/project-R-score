@@ -1,8 +1,10 @@
 <!DOCTYPE html>
+<!-- @see docs/portal-foundation.md -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="portal-poll-ms" content="30000" />
   <title>Factory Registry · project-R-score</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -22,6 +24,7 @@
         <a href="/portal/dod" class="nav-link">DOD</a>
         <a href="/portal/health" class="nav-link">Health</a>
         <a href="/portal/env" class="nav-link">Env</a>
+        <a href="/portal/dashboard" class="nav-link">Dashboard</a>
         <a href="/monitoring" class="nav-link">Monitoring</a>
         <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer">Wiki</a>
       </nav>
@@ -88,6 +91,8 @@
     <p>FactoryWager · <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a></p>
   </footer>
 
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>
