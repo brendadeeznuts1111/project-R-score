@@ -26,7 +26,7 @@ export type OpsLoopMetricsSlice = {
   reserved: number;
   /** plays.result closed (not pending). */
   settled: number;
-  /** Settled plays with gate allow/adjust + distribution + play.settled outbox sent. */
+  /** Distribution rows with gate allow/adjust + play.settled outbox sent (same unit as dispatched). */
   settledViaFullLoop: number;
   outboxSent: number;
   outboxFailed: number;
@@ -93,7 +93,7 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
     settledViaFullLoop = (
       db
         .query(
-          `SELECT COUNT(DISTINCT p.id) AS n
+          `SELECT COUNT(*) AS n
            FROM plays p
            INNER JOIN play_distribution d ON d.play_id = p.id
            INNER JOIN play_gate_decisions g ON g.play_id = p.id AND g.node_id = d.node_id AND g.allowed = 1

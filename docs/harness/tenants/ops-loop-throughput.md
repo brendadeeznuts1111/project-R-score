@@ -21,11 +21,13 @@
 | `gatedAllow` / `gatedAdjust` / `gatedDeny` | Counts from `play_gate_decisions`. |
 | `reserved` | Same as dispatched (successful reserve + enqueue). |
 | `settled` | `plays.result` closed (not `pending`). |
-| `settledViaFullLoop` | Settled play with gate allow/adjust on same node + `play.settled` outbox row `sent`. |
+| `settledViaFullLoop` | Distribution rows with gate allow/adjust on same node + `play.settled` outbox row `sent`. |
 | `manualStepsPerCycle` | Pending distributed plays + pending outbox rows. |
-| **`loopCompletionRate`** | `settledViaFullLoop / dispatched` (0 when dispatched = 0). |
+| **`loopCompletionRate`** | `settledViaFullLoop / dispatched` — row-aligned (same unit as `dispatched`). |
 
 **60% claim:** `(post.loopCompletionRate - baseline.loopCompletionRate) / baseline.loopCompletionRate ≥ 0.6` when baseline rate > 0; when baseline ≈ 0, post rate must be ≥ 0.6 absolute.
+
+**Row-aligned numerator (2026-07-24):** `settledViaFullLoop` counts distribution rows with full gate + settle attribution (not `COUNT(DISTINCT play_id)`). `settlePlay` fans out `play.settled` to every `play_distribution` node. Legacy DBs still need one `ops:loop:backfill` pass for pre-fan-out history.
 
 Developer velocity is tracked separately via `bun run harness:status` → `reports/harness-gate-timing.json` gate sum.
 
@@ -66,7 +68,7 @@ Dispatches that predate `play_gate_decisions` (and settled plays missing `play.s
 | Gate | For each `play_distribution` row with no matching `play_gate_decisions`, insert `allowed=1`, `action='allow'`, `adjusted_stake` from `stake_actual` or `plays.stake_recommended`, reason `Legacy gate attribution (backfill — not re-dispatch)`. |
 | Settle outbox | For each settled play (`result != pending`) and distribution node lacking a **sent** `play.settled` row (`idempotency_key` `settle:{playId}:{nodeId}`), enqueue via `enqueueSettlementChannelEvent` then drain with `processChannelOutbox` (`deliver: false` by default). |
 
-**60% ceiling on live DB:** `loopCompletionRate = settledViaFullLoop / dispatched` uses `COUNT(DISTINCT play_id)` in the numerator but `COUNT(*)` on `play_distribution` in the denominator. Multi-node fan-out inflates `dispatched` faster than distinct settled plays can lift the rate. After backfill, report the achieved rate in `reports/ops-loop-post-live.json`; reaching ≥60% absolute may require a clean slate or fewer legacy distribution rows, not more attribution alone.
+**Live DB after backfill:** With row-aligned metrics, fully attributed history reports `loopCompletionRate` ≈ `fullLoopRows / dispatched`. Run `bun tools/ops-loop-report.ts --out reports/ops-loop-post-live.json` after backfill to capture the achieved rate.
 
 ## Closed loop (target)
 

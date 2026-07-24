@@ -68,3 +68,66 @@ export async function runOpsLoopFixture(): Promise<Database> {
 
   return db;
 }
+
+/** Multi-agent fan-out fixture — proves row-aligned loopCompletionRate under N recipients. */
+export async function runOpsLoopMultiNodeFixture(agentCount = 3): Promise<Database> {
+  const db = openOperationsDb({ path: ':memory:' });
+  const now = new Date().toISOString();
+  const expertId = randomUUIDv7();
+
+  db.run(
+    `INSERT INTO experts (id, name, sport, market, edge_score, active, created_at)
+     VALUES ($id, 'Loop Expert Multi', 'NBA', 'totals', 0.9, 1, $now)`,
+    { $id: expertId, $now: now }
+  );
+
+  for (let i = 0; i < agentCount; i++) {
+    const agentId = randomUUIDv7();
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, active, status, created_at)
+       VALUES ($aid, 'agent', NULL, $eid, $name, $tg, 1, 'active', $now)`,
+      {
+        $aid: agentId,
+        $eid: expertId,
+        $name: `Loop Agent ${i + 1}`,
+        $tg: `99900${i + 1}`,
+        $now: now,
+      }
+    );
+    bindPartnerProfile(db, asTreeNodeId(agentId), {
+      templateId: asPartnerTemplateId('default-prospect'),
+    });
+    db.run(`UPDATE partner_profile_bindings SET metadata_json = $meta WHERE tree_node_id = $id`, {
+      $id: agentId,
+      $meta: JSON.stringify({ opsecScore: 12, riskLevel: 'green' }),
+    });
+    ensurePosition(db, agentId, '_all', 10_000);
+  }
+
+  const signer = new PlaySigner();
+  await publishAndDispatch(
+    signer,
+    {
+      expertId,
+      sport: 'NBA',
+      market: 'totals multi',
+      event: 'Multi-node fixture',
+      selection: 'over 220',
+      odds: -110,
+      stakeRecommended: 500,
+    },
+    db,
+    { flush: false }
+  );
+
+  await settlePendingPlays(db, {
+    limit: 10,
+    defaultResult: 'win',
+    defaultPnl: 45,
+    outbox: { deliver: false },
+  });
+
+  await processChannelOutbox(db, { deliver: false });
+
+  return db;
+}

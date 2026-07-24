@@ -114,15 +114,7 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
     }
   }
 
-  const leafId = asTreeNodeId(input.leafNodeId);
-  const profile = materializePartnerProfile(db, leafId);
-  enqueueSettlementChannelEvent(db, {
-    playId: input.playId,
-    leafNodeId: leafId,
-    result: input.result,
-    pnl: input.pnl,
-    profileKey: profile?.binding.profileKey as string | undefined,
-  });
+  enqueueSettlementEventsForDistributionNodes(db, input.playId, input.result, input.pnl);
 
   return {
     playId: input.playId,
@@ -131,6 +123,30 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
     cuts,
     experimentOutcomes,
   };
+}
+
+/** Enqueue play.settled for every distribution node (idempotent per node). */
+function enqueueSettlementEventsForDistributionNodes(
+  db: Database,
+  playId: string, // brand-ok
+  result: PlayResult,
+  pnl: number
+): void {
+  const nodes = db
+    .query(`SELECT node_id FROM play_distribution WHERE play_id = $pid ORDER BY received_at ASC`)
+    .all({ $pid: playId }) as { node_id: string }[]; // brand-ok
+
+  for (const { node_id } of nodes) {
+    const leafId = asTreeNodeId(node_id);
+    const profile = materializePartnerProfile(db, leafId);
+    enqueueSettlementChannelEvent(db, {
+      playId,
+      leafNodeId: leafId,
+      result,
+      pnl,
+      profileKey: profile?.binding.profileKey as string | undefined,
+    });
+  }
 }
 
 /** Sum cut ledger for a node in a period (YYYY-MM). */

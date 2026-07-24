@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T07:28:18.743Z",
+  "generated": "2026-07-24T07:31:42.679Z",
   "liquidity": {
     "total": 77710
   },
@@ -228,11 +228,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "4a7432b9bed44bc1997e26c67aee7c5bfa3fa9468c0c4f74ed7270db0d52962c",
+    "proofHash": "2d7ebe4ffd147e016d7435e0d41af63358f8a091275b5dff7bb07c1d3a2e3d90",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T07:28:18.745Z"
+    "timestamp": "2026-07-24T07:31:42.680Z"
   },
   "registryClient": {
     "available": true,
@@ -278,7 +278,7 @@
   },
   "cloudflarePages": {
     "available": true,
-    "ok": true,
+    "ok": false,
     "steps": [
       {
         "id": "well-known-mcp-parity",
@@ -302,19 +302,19 @@
       },
       {
         "id": "proof-taxonomy-audit",
-        "ok": true,
-        "detail": "13 contracts · 20 consistency"
+        "ok": false,
+        "detail": "contracts fail 1 · consistency fail 0"
       }
     ],
-    "timestamp": "2026-07-24T07:28:18.715Z",
+    "timestamp": "2026-07-24T07:31:42.649Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
   "proofTaxonomy": {
     "available": true,
-    "ok": true,
+    "ok": false,
     "contracts": 13,
-    "contractsOk": 13,
+    "contractsOk": 12,
     "consistencyOk": 20,
     "consistencyTotal": 20,
     "audits": [
@@ -405,7 +405,7 @@
       {
         "path": "public/registry/cloudflare-pages-preflight.json",
         "reportPath": "/registry/cloudflare-pages-preflight.json",
-        "ok": true,
+        "ok": false,
         "primarySubsystem": "other",
         "rows": 5
       }
@@ -492,8 +492,8 @@
         "ok": true
       }
     ],
-    "proofHash": "ff1e8fb7714e0914f74c0030e17b0a1357019629252828ec24ab7f64631566d7",
-    "timestamp": "2026-07-24T07:28:18.259Z",
+    "proofHash": "a1f90208521def1075762410944cf13c974ad141219a1d0b38bb53f4429b33a9",
+    "timestamp": "2026-07-24T07:31:42.315Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -504,7 +504,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-24T07:28:18.255Z",
+    "updatedAt": "2026-07-24T07:31:42.311Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -769,7 +769,7 @@
     ]
   },
   "channels": {
-    "pending": 27,
+    "pending": 54,
     "failed": 1,
     "sent": 114,
     "oldestPendingAt": "2026-07-24T07:27:51.352Z",
@@ -778,7 +778,7 @@
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-24T07:28:18.737Z",
+    "generatedAt": "2026-07-24T07:31:42.671Z",
     "partners": 3,
     "warmed": 3,
     "warming": 1,
@@ -806,8 +806,14 @@
     "throughputI": 39810,
     "throughputOE": 240,
     "topRankedProcess": "LIMIT",
-    "avgRP": 28.255230033695508,
-    "settlementFloatRatio": 0.5249937201708114
+    "avgRP": 28.224792494621642,
+    "settlementFloatRatio": 0.5249937201708114,
+    "presencePartners": 3,
+    "presenceIpv6": 18,
+    "presenceUniqueZips": 8,
+    "presenceUniqueAsns": 3,
+    "presenceDnsResolved": 18,
+    "presenceAvgDistanceKm": 241.3
   },
   "loop": {
     "dispatched": 29,
@@ -816,13 +822,13 @@
     "gatedDeny": 0,
     "reserved": 29,
     "settled": 7,
-    "settledViaFullLoop": 7,
+    "settledViaFullLoop": 29,
     "outboxSent": 114,
     "outboxFailed": 1,
-    "outboxPending": 27,
-    "oldestPendingAgeSec": 27,
-    "manualStepsPerCycle": 27,
-    "loopCompletionRate": 0.2413793103448276,
+    "outboxPending": 54,
+    "oldestPendingAgeSec": 231,
+    "manualStepsPerCycle": 54,
+    "loopCompletionRate": 1,
     "capitalEfficiencyProxy": 0.08580946035976016,
     "limitEfficiencyProxy": 0.39050235478806905,
     "processReturnProxy": 0.2178074245939675

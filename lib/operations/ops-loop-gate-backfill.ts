@@ -3,7 +3,8 @@
  * Legacy ops-loop attribution backfill — gate decisions + play.settled outbox repair.
  *
  * Does **not** re-dispatch plays; only fills missing `play_gate_decisions` and
- * `play.settled` outbox rows so `settledViaFullLoop / dispatched` reflects history.
+ * `play.settled` outbox rows so `settledViaFullLoop / dispatched` reflects history
+ * (row-aligned: distribution rows with gate + settle outbox sent).
  *
  * SSOT: docs/harness/tenants/ops-loop-throughput.md
  */

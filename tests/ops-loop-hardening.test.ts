@@ -20,7 +20,7 @@ import { ensurePosition, reservePlayWithRetry } from '../lib/operations/liquidit
 import { settlePlay } from '../lib/operations/play-settlement.ts';
 import { queryLoopMetricsSlice, loopThroughputLift } from '../lib/operations/ops-loop-metrics.ts';
 import { backfillOpsLoopGateAttribution } from '../lib/operations/ops-loop-gate-backfill.ts';
-import { runOpsLoopFixture } from '../lib/operations/ops-loop-fixture.ts';
+import { runOpsLoopFixture, runOpsLoopMultiNodeFixture } from '../lib/operations/ops-loop-fixture.ts';
 import { asPartnerTemplateId, asTreeNodeId } from '../lib/types/branded.ts';
 
 function mockR2Bucket(): R2PutBucket {
@@ -84,6 +84,56 @@ describe('settlePlay stake_actual', () => {
       .get({ $nid: nodeId }) as { in_play: number; available: number };
     expect(pos.in_play).toBe(0);
     expect(pos.available).toBeGreaterThan(5000);
+    db.close();
+  });
+
+  test('enqueues play.settled outbox for every distribution node', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const playId = randomUUIDv7();
+    const nodeA = randomUUIDv7();
+    const nodeB = randomUUIDv7();
+    const nodeC = randomUUIDv7();
+
+    db.run(
+      `INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at, result)
+       VALUES ($id, $eid, 'NBA', 'totals', 'Game', 'over', -110, 500, 0.8, 'hash', $now, 'pending')`,
+      { $id: playId, $eid: randomUUIDv7(), $now: now }
+    );
+    for (const nodeId of [nodeA, nodeB, nodeC]) {
+      db.run(
+        `INSERT INTO play_distribution (play_id, node_id, channel, received_at, stake_actual)
+         VALUES ($pid, $nid, 'telegram', $now, 250)`,
+        { $pid: playId, $nid: nodeId, $now: now }
+      );
+      ensurePosition(db, nodeId, '_all', 5000);
+      db.run(
+        `UPDATE positions SET available = available - 250, in_play = in_play + 250 WHERE node_id = $nid AND book = '_all'`,
+        { $nid: nodeId }
+      );
+    }
+    db.run(`UPDATE operations SET total_exposure = total_exposure + 250 WHERE id = 'main'`);
+
+    settlePlay(db, {
+      playId,
+      leafNodeId: nodeA,
+      result: 'win',
+      pnl: 100,
+      skipExperimentOutcomes: true,
+    });
+
+    const byKey = db
+      .query(
+        `SELECT COUNT(*) AS n FROM ops_channel_outbox
+         WHERE event_type = 'play.settled'
+           AND idempotency_key IN ($k0, $k1, $k2)`
+      )
+      .get({
+        $k0: `settle:${playId}:${nodeA}`,
+        $k1: `settle:${playId}:${nodeB}`,
+        $k2: `settle:${playId}:${nodeC}`,
+      }) as { n: number };
+    expect(byKey.n).toBe(3);
     db.close();
   });
 });
@@ -169,6 +219,17 @@ describe('ops loop throughput proof', () => {
 
     const lift = loopThroughputLift(baseline, post);
     expect(lift).toBeGreaterThanOrEqual(0.6);
+  });
+
+  test('multi-node fixture achieves >=65% row-aligned loopCompletionRate', async () => {
+    const fixtureDb = await runOpsLoopMultiNodeFixture(3);
+    const post = queryLoopMetricsSlice(fixtureDb);
+    fixtureDb.close();
+
+    expect(post.dispatched).toBe(3);
+    expect(post.settledViaFullLoop).toBe(3);
+    expect(post.loopCompletionRate).toBeGreaterThanOrEqual(0.65);
+    expect(post.manualStepsPerCycle).toBe(0);
   });
 });
 
