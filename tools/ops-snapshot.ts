@@ -36,6 +36,7 @@ import { collectMonitoring } from '../lib/monitoring/index.ts';
 import { writePredictionReport } from '../lib/prediction/index.ts';
 import { runNetworkingVerification } from './verify-networking.ts';
 import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
+import { writeLlmsStatic } from './llms-static.ts';
 
 const argv = Bun.argv.slice(2);
 const outIdx = argv.indexOf('--out');
@@ -199,6 +200,10 @@ export async function buildRegistrySnapshot(options?: {
       );
     }
 
+    const registryClientSlice = payload.registryClient as
+      | { available?: boolean; passed?: number; total?: number; proofHash?: string }
+      | undefined;
+
     // 4. Monitoring snapshot (+ env status — edge /api/env reads monitoring.env)
     const monitoring = await collectMonitoring(db, { source: 'snapshot' });
     const monitoringWithEnv = {
@@ -206,6 +211,10 @@ export async function buildRegistrySnapshot(options?: {
       env: buildPortalEnvStatus(),
     };
     await Bun.write(monitoringPath, `${JSON.stringify(monitoringWithEnv, null, 2)}\n`);
+
+    // 4b. llms.txt / llms-full.txt / portal/*.md static mirror for Pages
+    const llmsFiles = await writeLlmsStatic();
+    console.log(`  llms mirror: ${llmsFiles.length} files`);
 
     // 5. Prediction report (HTML + SVG; optional WebView PNG)
     let report: {
@@ -292,6 +301,16 @@ export async function buildRegistrySnapshot(options?: {
         bunVersion: payload.bunUtils.bunVersion,
         published: bunPublish,
       },
+      registryClient: registryClientSlice?.available
+        ? {
+            available: true,
+            sdkVersion: (registryClientSlice as { sdkVersion?: string }).sdkVersion,
+            passed: registryClientSlice.passed,
+            total: registryClientSlice.total,
+            status: (registryClientSlice as { status?: string }).status,
+            proofHash: registryClientSlice.proofHash?.slice(0, 16),
+          }
+        : { available: false },
       routing: payload.routing.available
         ? {
             available: true,

@@ -1,0 +1,61 @@
+# FactoryWager — full portal corpus
+
+# portal/index.md
+
+# Registry
+
+FactoryWager package registry overview.
+
+
+---
+
+# portal/ops.md
+
+# Ops
+
+Operations dashboard (tree, plays, rails).
+
+
+---
+
+# portal/catalog.md
+
+# Catalog
+
+Platform + account catalog.
+
+
+---
+
+# portal/dod.md
+
+# DOD
+
+Visual-proof submission queue.
+
+
+---
+
+# portal/health.md
+
+# Health
+
+Service health probe.
+
+
+---
+
+# portal/env.md
+
+# Env
+
+Environment + secret status (redacted).
+
+
+---
+
+# portal/monitoring.md
+
+# Monitoring
+
+Registry + integrity metrics.

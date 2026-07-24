@@ -88,7 +88,12 @@ import {
 } from '../lib/http/content-type.ts';
 import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
 import { parsePortalMdPath } from '../lib/http/portal-nav.ts';
-import { portalMarkdownRaw, renderPortalMarkdownPage } from '../lib/http/portal-markdown.ts';
+import {
+  portalMarkdownExists,
+  portalMarkdownRaw,
+  renderPortalMarkdownPage,
+} from '../lib/http/portal-markdown.ts';
+import { llmsFullTxtBody, llmsTxtBody, PORTAL_MD_SLUGS } from '../lib/http/llms-txt.ts';
 import {
   serveVerificationScript,
   serveVerificationScriptMeta,
@@ -533,6 +538,8 @@ const HOT_STATIC_PATHS = [
   'public/registry/prediction/coverage-chart.svg',
   'public/registry/prediction/error-chart.svg',
   'public/registry/networking-proof.json',
+  'public/registry/install-env-proof.json',
+  'public/registry/registry-client-proof.json',
   'public/registry/doc-index.json',
   'tools/bun-api-coverage-proof.json',
 ];
@@ -591,6 +598,22 @@ const liveReloadHub = LIVE_RELOAD
 
 async function withLiveReload(res: Response): Promise<Response> {
   return maybeInjectLiveReloadResponse(res, LIVE_RELOAD);
+}
+
+/** GET /registry/storage/{name}/{version}/artifact.tgz — decode scoped segments for disk lookup. */
+async function serveRegistryStorage(pathname: string, request: Request): Promise<Response | null> {
+  const prefix = '/registry/storage/';
+  if (!pathname.startsWith(prefix) || !pathname.endsWith('/artifact.tgz')) return null;
+  const rel = pathname.slice(prefix.length);
+  const segments = rel.split('/').map(segment => decodeURIComponent(segment));
+  if (segments.length < 3) return null;
+  const fsPath = `public/registry/storage/${segments.join('/')}`;
+  const file = Bun.file(fsPath);
+  if (!(await file.exists())) return null;
+  return respondAuto(fsPath, request, {
+    cache: fileRouteCache,
+    cacheControl: 'public, max-age=60',
+  });
 }
 
 async function staticFile(
@@ -689,6 +712,12 @@ async function liveMonitoringApi(): Promise<Response> {
         data.installEnvProof = JSON.parse(await envFile.text());
       } catch {}
     }
+    const rcFile = Bun.file('public/registry/registry-client-proof.json');
+    if (await rcFile.exists()) {
+      try {
+        data.registryClientProof = JSON.parse(await rcFile.text());
+      } catch {}
+    }
     return json(data);
   } catch (err) {
     const snap = Bun.file('public/registry/monitoring.json');
@@ -699,6 +728,7 @@ async function liveMonitoringApi(): Promise<Response> {
         ['bunApiProof', 'tools/bun-api-coverage-proof.json'],
         ['networkingProof', 'public/registry/networking-proof.json'],
         ['installEnvProof', 'public/registry/install-env-proof.json'],
+        ['registryClientProof', 'public/registry/registry-client-proof.json'],
         ['defaultsProof', 'public/registry/defaults-proof.json'],
       ];
       for (const [key, path] of proofFiles) {
@@ -1167,41 +1197,7 @@ async function envStatus(): Promise<Response> {
  * @see https://llmstxt.org — llms.txt convention
  */
 function llmsTxt(): Response {
-  const body = `# FactoryWager
-
-> Factory registry, operations portal, and evidence (DOD) pipeline.
-
-## Portal (machine-readable markdown)
-
-Fetch with \`Accept: text/markdown\` for raw markdown; HTML renders otherwise.
-
-- [Registry](portal/index.md): package registry overview
-- [Ops](portal/ops.md): operations dashboard (tree, plays, rails)
-- [Catalog](portal/catalog.md): platform + account catalog
-- [DOD](portal/dod.md): visual-proof submission queue
-- [Health](portal/health.md): service health
-- [Env](portal/env.md): environment + secret status (redacted)
-- [Monitoring](portal/monitoring.md): registry + integrity metrics
-
-## JSON APIs
-
-- [GET /api/monitoring](api/monitoring): registry + ops metrics, integrity snapshot
-- [GET /api/operations/summary](api/operations/summary): live ops summary
-- [GET /api/registry](api/registry): npm-compatible registry index
-- [GET /api/env](api/env): env var status (redacted values)
-- [GET /health](health): uptime + artifact freshness probe
-
-## Artifacts (static)
-
-- [ops-summary.json](registry/ops-summary.json): portal ops snapshot
-- [dod-registry.json](registry/dod-registry.json): DOD snapshot registry
-- [registry.json](registry/registry.json): package index
-
-## Full corpus
-
-- [llms-full.txt](llms-full.txt): all portal markdown inlined in one file
-`;
-  return new Response(body, {
+  return new Response(llmsTxtBody(), {
     headers: {
       'Content-Type': 'text/markdown; charset=utf-8',
       'Cache-Control': 'public, max-age=300',
@@ -1209,17 +1205,8 @@ Fetch with \`Accept: text/markdown\` for raw markdown; HTML renders otherwise.
   });
 }
 
-const PORTAL_MD_SLUGS = ['index', 'ops', 'catalog', 'dod', 'health', 'env', 'monitoring'] as const;
-
-/**
- * GET /llms-full.txt — every portal markdown endpoint inlined (llms.txt
- * convention for single-file consumption).
- */
 function llmsFullTxt(): Response {
-  const sections = PORTAL_MD_SLUGS.map(
-    slug => `# portal/${slug}.md\n\n${portalMarkdownRaw(slug)}`
-  ).join('\n\n---\n\n');
-  return new Response(`# FactoryWager — full portal corpus\n\n${sections}`, {
+  return new Response(llmsFullTxtBody(portalMarkdownRaw), {
     headers: {
       'Content-Type': 'text/markdown; charset=utf-8',
       'Cache-Control': 'public, max-age=300',
@@ -1231,6 +1218,9 @@ async function portalMarkdown(req: Request): Promise<Response | null> {
   const path = new URL(req.url).pathname;
   const slug = parsePortalMdPath(path);
   if (!slug) return null;
+  if (!portalMarkdownExists(slug)) {
+    return new Response(`Not found: ${path}`, { status: 404 });
+  }
 
   const accept = req.headers.get('accept') ?? '';
   if (accept.includes('text/markdown') && !accept.includes('text/html')) {
@@ -1302,7 +1292,13 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   }
 
   // Health endpoint — no auth (also registered on routes; kept for trailing variants)
-  if (path === '/health' || path === '/health/') return health(req, server);
+  if (
+    path === '/health' ||
+    path === '/health/' ||
+    path === '/api/health' ||
+    path === '/api/health/'
+  )
+    return health(req, server);
   if (path === '/health/pre' || path === '/health/pre/') return healthHtml(req, server);
   if (path === '/llms.txt') return llmsTxt();
   if (path === '/llms-full.txt') return llmsFullTxt();
@@ -1340,10 +1336,33 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
     return json({ error: 'Method not allowed' }, 405);
   }
 
+  // Registry health: GET /api/registry/health (un-shadow from packageDetail)
+  if (
+    (path === '/api/registry/health' || path === '/api/registry/health/') &&
+    req.method === 'GET'
+  ) {
+    const idx = await Bun.file('public/registry/registry.json')
+      .json()
+      .catch(() => ({ packages: {} }));
+    const packages = Object.keys(idx.packages ?? {});
+    return json({
+      ok: true,
+      source: 'assets',
+      packageCount: packages.length,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   // Package detail: GET /api/registry/{name}
   if (path.startsWith('/api/registry/') && req.method === 'GET') {
     const name = path.slice(14);
-    if (name && name !== 'search' && name !== 'registry.json' && !name.includes('/tenants/')) {
+    if (
+      name &&
+      name !== 'search' &&
+      name !== 'registry.json' &&
+      name !== 'health' &&
+      !name.includes('/tenants/')
+    ) {
       if (name.includes('/')) {
         const parts = name.split('/');
         if (parts.length === 2 && parts[0]!.startsWith('@')) return packageDetail(name);
@@ -1386,6 +1405,9 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   ) {
     return npmPackageMetadata(req);
   }
+
+  const storageRes = await serveRegistryStorage(path, req);
+  if (storageRes) return storageRes;
 
   const staticRes = await staticFile(path, req);
   if (staticRes) return staticRes;
@@ -1587,13 +1609,25 @@ function buildPublicRoutes() {
 
     '/api/registry': () => serveRegistryIndex(),
     '/api/registry/registry.json': () => serveRegistryIndex(),
+    '/api/registry/health': async () => {
+      const idx = await Bun.file('public/registry/registry.json')
+        .json()
+        .catch(() => ({ packages: {} }));
+      const packages = Object.keys(idx.packages ?? {});
+      return json({
+        ok: true,
+        source: 'assets',
+        packageCount: packages.length,
+        timestamp: new Date().toISOString(),
+      });
+    },
     '/api/registry/static': () => serveStaticRegistry(),
     '/api/registry/search': (req: Request) => searchRegistry(req),
 
     // Unscoped package detail + versions (named params — type-safe)
     '/api/registry/:package': (req: BunRequest<'/api/registry/:package'>) => {
       const name = req.params.package;
-      if (name === 'search' || name === 'registry.json' || name === 'static') {
+      if (name === 'search' || name === 'registry.json' || name === 'static' || name === 'health') {
         return json({ error: 'Not found' }, 404);
       }
       return packageDetail(name);

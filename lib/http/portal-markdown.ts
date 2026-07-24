@@ -13,6 +13,10 @@ const PAGES: Record<string, string> = {
   monitoring: `# Monitoring\n\nRegistry + integrity metrics.\n`,
 };
 
+export function portalMarkdownExists(slug: string): boolean {
+  return slug in PAGES;
+}
+
 export function portalMarkdownRaw(slug: string): string {
   return PAGES[slug] ?? `# ${slug}\n\n(page not found)\n`;
 }
