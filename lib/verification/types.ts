@@ -45,6 +45,14 @@ export type VerificationResult = {
   passed: boolean;
   /** Permanent canonical URL (blog anchor or runtime docs). */
   canonical?: string;
+  /** CANONICAL_REFS / token map key used for docs lookup. */
+  canonicalKey?: string;
+  /** Token kind from canonical map (SDK, API, Global, …). */
+  canonicalKind?: string;
+  /** Token stability (stable, experimental, …). */
+  canonicalStability?: string;
+  /** Human-readable token description when available. */
+  canonicalDescription?: string;
   /** Machine-readable feature flags tested */
   features?: string[];
   _links?: VerificationLinks;
@@ -54,6 +62,8 @@ export type VerificationResult = {
   targetVersion?: string;
   /** @deprecated Legacy per-row latest — prefer report semanticTags */
   latestAtTestTime?: string;
+  /** Platform context: cpu arch, os, native flag. */
+  platform?: { cpu: string; os: string; native: boolean };
 };
 
 /** @deprecated Use VerificationResult */
