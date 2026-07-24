@@ -1114,10 +1114,10 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'channel-meta-verification-v1',
     claim:
-      'Channel-aware Bun verification tags rows by subsystem, suite-aware saves never clobber release-features with bundler/networking, suite=all merges a meta-proof, prefer-artifact meta refresh bakes Pages via ops:snapshot / verify:channel:meta, and channelMeta slice lands in ops-summary / static.json / ops dashboard',
+      'Channel-aware Bun verification tags rows by subsystem, suite-aware saves never clobber release-features with bundler/networking, suite=all merges a meta-proof and writes bake sidecar, release-only saves invalidate bake, prefer-artifact meta refresh bakes Pages via ops:snapshot / verify:channel:meta, and channelMeta slice lands in ops-summary / static.json / ops dashboard',
     kinds: ['unit', 'boundary'],
-    gateClass: 'human-only',
-    gateRef: 'none',
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
     evidence: [
       'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts tests/verification-proof-consistency.test.ts',
       'lib/verification/channel-suite.ts',
