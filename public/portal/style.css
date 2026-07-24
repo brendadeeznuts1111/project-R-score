@@ -605,6 +605,36 @@ body {
   margin-left: 4px;
 }
 
+.ops-weave-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 8px 0 12px;
+}
+
+.ops-weave-h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin: 8px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ops-weave-scripts {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.ops-weave-scripts code {
+  font-size: 11px;
+  background: var(--surface);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
 /* ── Package grid ──────────────────────────────────────────────────── */
 
 .package-grid {
@@ -1304,6 +1334,12 @@ body {
   &.subsystem-other {
     color: var(--text-dim);
     border-color: rgba(139, 148, 158, 0.35);
+  }
+
+  &.introduced-in {
+    color: var(--text-dim);
+    border-color: rgba(139, 148, 158, 0.3);
+    font-variant-numeric: tabular-nums;
   }
 }
 

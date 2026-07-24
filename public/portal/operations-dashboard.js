@@ -280,11 +280,11 @@ class OperationsDashboard extends HTMLElement {
               No backtest rows yet —
               <code>bun run ops:snapshot:demo</code> or
               <code>bun run ops:prediction backtest</code>.
-              <a href="/registry/prediction/report">Open report</a>
+              <a href="/registry/prediction/report.html">Open report</a>
             </div>
             <div class="ops-metric" id="pred-mae">—</div>
             <div class="ops-sub" id="pred-detail"></div>
-            <a class="ops-link" id="pred-report-link" href="/registry/prediction/report">Open report</a>
+            <a class="ops-link" id="pred-report-link" href="/registry/prediction/report.html">Open report</a>
             <img id="pred-chart" class="ops-chart hidden" alt="Coverage prediction chart" width="100%" />
           </section>
           <section class="ops-panel wide">
@@ -299,6 +299,13 @@ class OperationsDashboard extends HTMLElement {
           <section class="ops-panel">
             <h2>Hardware</h2>
             <div id="phone-inventory"></div>
+          </section>
+          <section class="ops-panel wide" id="portal-weave-panel">
+            <h2>Portal weave</h2>
+            <div class="ops-sub">Cross-surface links · <a href="/registry/portal-weave.json">portal-weave.json</a></div>
+            <div id="portal-weave-surfaces" class="ops-weave-links"></div>
+            <h3 class="ops-weave-h3">Operator scripts</h3>
+            <ul id="portal-weave-scripts" class="ops-weave-scripts"></ul>
           </section>
         </div>
       </div>
@@ -452,6 +459,16 @@ class OperationsDashboard extends HTMLElement {
     }
   }
 
+  async loadPortalWeave() {
+    this.portalWeave = null;
+    try {
+      const res = await fetch('/registry/portal-weave.json');
+      if (res.ok) this.portalWeave = await res.json();
+    } catch {
+      /* optional — baked by ops:snapshot */
+    }
+  }
+
   async loadVerificationArtifacts() {
     await this.loadDocIndex();
     await this.loadReleaseFeatures();
@@ -465,6 +482,7 @@ class OperationsDashboard extends HTMLElement {
     await this.loadBunRuntimeNits();
     await this.loadBundlerLoaders();
     await this.loadProofTaxonomyAudit();
+    await this.loadPortalWeave();
   }
 
   async load() {
@@ -1503,6 +1521,40 @@ class OperationsDashboard extends HTMLElement {
         <span>Issued: ${ph.issued ?? 0}</span>
         <span>Returned: ${ph.returned ?? 0}</span>
       `;
+    }
+
+    const weave = this.portalWeave;
+    const weaveSurfaces = this.querySelector('#portal-weave-surfaces');
+    if (weaveSurfaces) {
+      const surfaces = weave?.surfaces?.length
+        ? weave.surfaces
+        : [
+            { label: 'Monitoring', href: '/monitoring/' },
+            { label: 'DOD', href: '/portal/dod/' },
+            { label: 'Skills', href: '/portal/skills/' },
+            { label: 'Prediction', href: '/registry/prediction/report.html' },
+          ];
+      weaveSurfaces.innerHTML = surfaces
+        .map(
+          s =>
+            `<a class="ops-link" href="${esc(s.href)}" title="${esc(s.note || '')}">${esc(s.label)}</a>`
+        )
+        .join('');
+    }
+    const weaveScripts = this.querySelector('#portal-weave-scripts');
+    if (weaveScripts) {
+      const scripts = weave?.scripts?.length
+        ? weave.scripts
+        : [
+            { label: 'Demo snapshot', cmd: 'bun run ops:snapshot:demo' },
+            { label: 'Reference discovery', cmd: 'bun run reference:discover:check' },
+          ];
+      weaveScripts.innerHTML = scripts
+        .map(
+          s =>
+            `<li><code>${esc(s.cmd)}</code>${s.doc ? ` · <a href="/${esc(s.doc)}">doc</a>` : ''}</li>`
+        )
+        .join('');
     }
   }
 }

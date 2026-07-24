@@ -11,7 +11,8 @@ const PAGES: Record<string, string> = {
   health: `# Health\n\nService health probe.\n`,
   env: `# Env\n\nEnvironment + secret status (redacted).\n`,
   skills: `# Skills\n\nInstalled Kimi skills registry (name, description, last updated) with downloadable \`.skill\` packages when available.\n`,
-  monitoring: `# Monitoring\n\nRegistry + integrity metrics.\n`,
+  monitoring: `# Monitoring\n\nRegistry + integrity metrics. Regenerate: \`bun run ops:snapshot\` bakes JSON embed into this page.\n`,
+  dashboard: `# Dashboard\n\nExecutive proof summary — routing, channel meta, release features.\n`,
 };
 
 export function portalMarkdownExists(slug: string): boolean {
