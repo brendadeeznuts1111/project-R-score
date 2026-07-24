@@ -9,6 +9,7 @@
 export const PORTAL_HTML_ROUTES = [
   '/portal/',
   '/portal/ops/',
+  '/portal/toc/',
   '/portal/health/',
   '/portal/env/',
   '/portal/catalog/',
@@ -21,6 +22,7 @@ export const PORTAL_HTML_ROUTES = [
 /** Paths that need 301 → trailing-slash in public/_redirects (no .html suffix). */
 export const PORTAL_TRAILING_SLASH_SOURCES = [
   '/portal/ops',
+  '/portal/toc',
   '/portal',
   '/portal/health',
   '/portal/env',
@@ -36,6 +38,7 @@ export const PORTAL_TRAILING_SLASH_SOURCES = [
 export const PORTAL_MARKDOWN_SLUGS = [
   'index',
   'ops',
+  'toc',
   'catalog',
   'dod',
   'health',

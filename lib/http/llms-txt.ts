@@ -4,6 +4,7 @@
 export const PORTAL_MD_SLUGS = [
   'index',
   'ops',
+  'toc',
   'catalog',
   'dod',
   'health',
@@ -23,6 +24,7 @@ Fetch with \`Accept: text/markdown\` for raw markdown; HTML renders otherwise.
 
 - [Registry](portal/index.md): package registry overview
 - [Ops](portal/ops.md): operations dashboard (tree, plays, rails)
+- [TOC Ops](portal/toc.md): Drum/Buffer/Rope board (demo-readonly; Soft via ct)
 - [Catalog](portal/catalog.md): platform + account catalog
 - [DOD](portal/dod.md): visual-proof submission queue
 - [Health](portal/health.md): service health
@@ -41,6 +43,7 @@ Fetch with \`Accept: text/markdown\` for raw markdown; HTML renders otherwise.
 ## Artifacts (static)
 
 - [ops-summary.json](registry/ops-summary.json): portal ops snapshot
+- [toc-ops.json](registry/toc-ops.json): TOC Ops fixture + operate-lite enforcement
 - [dod-registry.json](registry/dod-registry.json): DOD snapshot registry
 - [dod-queue.json](registry/dod-queue.json): DOD review queue snapshot (Pages read-only)
 - [registry.json](registry/registry.json): package index
