@@ -1,0 +1,8 @@
+default_expert_sport = "NBA"
+default_cut_percentage = 10
+
+[default_template_by_source]
+referral = "default-prospect"
+portal = "default-prospect"
+telegram = "default-prospect"
+promoted = "partner-active"

@@ -1,0 +1,18 @@
+[meta]
+template_id = "partner-active"
+name = "Partner Active"
+description = "Elevated limits for promoted active partners"
+version = "1.0.0"
+
+[sor]
+eligible_tiers = ["T1", "T2", "T3", "T4"]
+max_exposure_per_signal = 5000
+max_daily_exposure = 25000
+max_single_bet = 5000
+steam_allowed = true
+arb_allowed = false
+clv_allowed = true
+manual_allowed = true
+predictive_allowed = true
+require_opsec_green = false
+opsec_score_max = 40

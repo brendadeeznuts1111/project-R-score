@@ -1,0 +1,18 @@
+[meta]
+template_id = "default-prospect"
+name = "Default Prospect"
+description = "Standard onboarding template for new partners and agents"
+version = "1.0.0"
+
+[sor]
+eligible_tiers = ["T2", "T3", "T4"]
+max_exposure_per_signal = 2500
+max_daily_exposure = 10000
+max_single_bet = 2500
+steam_allowed = true
+arb_allowed = false
+clv_allowed = true
+manual_allowed = true
+predictive_allowed = false
+require_opsec_green = false
+opsec_score_max = 50

@@ -97,6 +97,16 @@ export function migrateSchema(db: Database): void {
   ensurePredictionShadowSchema(db);
   ensureMonitoringSchema(db);
 
+  const pdCols = new Set(
+    (db.query('PRAGMA table_info(play_distribution)').all() as { name: string }[]).map(c => c.name)
+  );
+  if (!pdCols.has('ack_status')) {
+    db.run(`ALTER TABLE play_distribution ADD COLUMN ack_status TEXT DEFAULT 'pending'`);
+  }
+  if (!pdCols.has('telegram_message_id')) {
+    db.run(`ALTER TABLE play_distribution ADD COLUMN telegram_message_id INTEGER`);
+  }
+
   db.run(`
     CREATE TABLE IF NOT EXISTS partner_profile_bindings (
       tree_node_id TEXT PRIMARY KEY REFERENCES tree_nodes(id),

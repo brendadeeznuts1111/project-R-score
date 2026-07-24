@@ -15,7 +15,7 @@ import {
   processChannelOutbox,
 } from '../channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
-import { asTreeNodeId } from '../types/branded/operations.ts';
+import { asTreeNodeId, asGateDecisionId } from '../types/branded/operations.ts';
 import { AccountService } from './account-service.ts';
 import { detectFraudSignals } from './fraud-guard.ts';
 import { reservePlayWithRetry, releasePlay } from './liquidity.ts';
@@ -26,6 +26,7 @@ import {
   recordGateDecision,
 } from './partner-profile-bridge.ts';
 import { validatePlay } from './play-validation.ts';
+import { rankPlayRecipients } from './toc-play-routing.ts';
 import type { PlayInput, PlaySigner } from './play-signing.ts';
 
 export type PublishDispatchOpts = {
@@ -100,12 +101,7 @@ export async function publishAndDispatch(
   const sentAt = new Date().toISOString();
   const confidence = play.confidence ?? 0;
 
-  const recipients = db
-    .query(
-      `SELECT id, telegram_id FROM tree_nodes
-       WHERE expert_id = $eid AND active = 1 AND telegram_id IS NOT NULL AND telegram_id != ''`
-    )
-    .all({ $eid: play.expertId }) as { id: string; telegram_id: string }[]; // brand-ok
+  const recipients = rankPlayRecipients(db, play.expertId);
 
   const payload = formatPlayMessage({ ...play, id, signedHash });
   const now = sentAt;
@@ -134,7 +130,7 @@ export async function publishAndDispatch(
 
   const signalType = inferSignalTypeFromPlay(play);
 
-  for (const { id: nodeId } of recipients) {
+  for (const { nodeId } of recipients) {
     const treeNodeId = asTreeNodeId(nodeId);
     const hasBinding = db
       .query('SELECT 1 FROM partner_profile_bindings WHERE tree_node_id = $id')
@@ -144,8 +140,26 @@ export async function publishAndDispatch(
     }
   }
 
-  for (const { id: nodeId, telegram_id: telegramId } of recipients) {
+  for (const { nodeId, telegramId, weightedScore, ropeBlocked } of recipients) {
     const treeNodeId = asTreeNodeId(nodeId);
+
+    if (ropeBlocked) {
+      const evaluation = {
+        allowed: false as const,
+        action: 'defer' as const,
+        reason: `TOC routing defer (weightedScore=${weightedScore.toFixed(2)})`,
+        decisionId: asGateDecisionId(randomUUIDv7()),
+      };
+      recordGateDecision(db, id, treeNodeId, evaluation);
+      enqueuePlayGatedChannelEvent(db, {
+        playId: id,
+        treeNodeId,
+        allowed: false,
+        action: 'defer',
+        reason: evaluation.reason,
+      });
+      continue;
+    }
 
     const gate = evaluateForNode(db, treeNodeId, {
       suggestedStake: play.stakeRecommended,
@@ -186,8 +200,8 @@ export async function publishAndDispatch(
     try {
       db.transaction(() => {
         db.run(
-          `INSERT OR IGNORE INTO play_distribution (play_id, node_id, channel, received_at, stake_actual)
-           VALUES ($pid, $nid, 'telegram', $now, $stake)`,
+          `INSERT OR IGNORE INTO play_distribution (play_id, node_id, channel, received_at, stake_actual, ack_status)
+           VALUES ($pid, $nid, 'telegram', $now, $stake, 'pending')`,
           { $pid: id, $nid: nodeId, $now: now, $stake: stake }
         );
 

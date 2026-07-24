@@ -22,6 +22,10 @@
 
 import { Database } from 'bun:sqlite';
 import { DODVerifier } from '../dod/verifier.ts';
+import { asTreeNodeId } from '../types/branded/operations.ts';
+import { asTelegramUserId } from '../types/branded/portal.ts';
+import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
+import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
 
 const COMMANDS = [
   '/start',
@@ -216,7 +220,9 @@ export class OpsTelegramBot {
       .get({ $a: node.id }) as { c: number };
 
     const placed = this.db
-      .query("SELECT COUNT(*) as c FROM play_distribution WHERE node_id = $n AND status = 'placed'")
+      .query(
+        "SELECT COUNT(*) as c FROM play_distribution WHERE node_id = $n AND ack_status = 'placed'"
+      )
       .get({ $n: node.id }) as { c: number };
 
     const pnl = this.db
@@ -276,7 +282,7 @@ export class OpsTelegramBot {
     const plays = this.db
       .query(
         `
-      SELECT p.sport, p.market, p.event, p.selection, p.odds, p.confidence, p.sent_at
+      SELECT p.sport, p.market, p.event, p.selection, p.odds, p.confidence, p.sent_at, d.ack_status
       FROM plays p
       JOIN play_distribution d ON p.id = d.play_id
       WHERE d.node_id = $n AND p.result = 'pending'
@@ -292,6 +298,7 @@ export class OpsTelegramBot {
       odds: number;
       confidence: number;
       sent_at: string;
+      ack_status: string;
     }[];
 
     if (!plays.length) {
@@ -301,7 +308,7 @@ export class OpsTelegramBot {
 
     const rows = plays
       .map(p => [
-        `🎯 *${p.sport} ${p.market}*`,
+        `🎯 *${p.sport} ${p.market}* (${p.ack_status})`,
         `${p.event}: ${p.selection} @ ${p.odds > 0 ? '+' : ''}${p.odds}`,
         `   Confidence: ${p.confidence}% · ${p.sent_at.slice(11, 16)}`,
         '',
@@ -382,8 +389,8 @@ export class OpsTelegramBot {
 
     this.db.run(
       `
-      INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, created_at)
-      VALUES ($id, 'sub_agent', $pid, $eid, $name, $tg, $now)
+      INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, active, status, created_at)
+      VALUES ($id, 'sub_agent', $pid, $eid, $name, $tg, 1, 'active', $now)
     `,
       {
         $id: newId,
@@ -394,6 +401,21 @@ export class OpsTelegramBot {
         $now: now,
       }
     );
+
+    const binding = onboardPartnerProfile(this.db, asTreeNodeId(newId), {
+      referralNodeId: parent.id,
+      source: 'telegram',
+    });
+    if (binding.created) {
+      enqueuePartnerWelcomeEvent(this.db, {
+        treeNodeId: binding.treeNodeId,
+        profileKey: binding.profileKey as string,
+        partnerTemplate: binding.templateId,
+        lifecycleStatus: binding.lifecycleStatus,
+        telegramId: asTelegramUserId(userId),
+        nodeName: name,
+      });
+    }
 
     await this.send(chatId, [
       `✅ Registered as sub-agent of *${parent.name}*`,

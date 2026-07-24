@@ -22,6 +22,7 @@ import {
   type PartnerTemplateId,
   type TreeNodeId,
 } from '../types/branded/operations.ts';
+import { templateIdForOnboardingSource } from './onboarding-config.ts';
 
 export const DEFAULT_TEMPLATE_ID = 'default-prospect';
 /** Alias used by backfill / docs for the same default onboarding template. */
@@ -30,11 +31,10 @@ export const PARTNER_TEMPLATES_DIR = 'config/partner-templates';
 
 /**
  * Map onboarding source / tenant intent → template id.
- * Phase I1: single default; expand when referral/platform sources need distinct SoR.
+ * Reads config/onboarding-defaults.toml via onboarding-config.
  */
 export function templateIdForSource(source?: string): PartnerTemplateId {
-  void source;
-  return asPartnerTemplateId(DEFAULT_TEMPLATE_ID);
+  return templateIdForOnboardingSource(source);
 }
 
 export type PartnerLifecycleStatus =

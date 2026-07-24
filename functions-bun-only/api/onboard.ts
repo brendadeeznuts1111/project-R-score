@@ -64,10 +64,14 @@ export async function onRequest(context: PagesContext): Promise<Response> {
 
   if (step === 'assign') {
     if (request.method !== 'POST') return jsonResponse({ error: 'POST required' }, 405);
-    const body = await readJsonBody<{ tenantId?: string; role?: string }>(request); // brand-ok — wire JSON at Pages boundary
+    const body = await readJsonBody<{ tenantId?: string; role?: string; referral?: string }>(request); // brand-ok — wire JSON at Pages boundary
     if (!body.tenantId || !isTenantSlug(body.tenantId)) {
       return jsonResponse({ error: 'Invalid tenantId' }, 400);
     }
+    const referral =
+      body.referral?.trim() ||
+      url.searchParams.get('referral')?.trim() ||
+      undefined;
     const tenant = getTenant(body.tenantId)!;
     const role = 'viewer' as const;
     const existing = await accounts.getByOidc(session.sub);
@@ -93,8 +97,9 @@ export async function onRequest(context: PagesContext): Promise<Response> {
       tenantId: body.tenantId,
       oidcSubject: session.sub,
       email: session.email,
+      ...(referral ? { referralNodeId: referral, source: 'referral' } : { source: 'portal' }),
     });
-    maybeSyncOpsTree(env, session.sub, session.email, body.tenantId);
+    maybeSyncOpsTree(env, session.sub, session.email, body.tenantId, referral);
     return jsonResponse({ status: 'assigned', account: serializeAccount(account) });
   }
 
@@ -130,7 +135,8 @@ function maybeSyncOpsTree(
   env: PagesContext['env'],
   oidcSubject: string,
   email: string,
-  tenantId: string // brand-ok — tenant slug for ops-sync gate
+  tenantId: string, // brand-ok — tenant slug for ops-sync gate
+  referralNodeId?: string // brand-ok — tree_nodes.id wire
 ): void {
   const syncFlag = (env as Record<string, string | undefined>).OPS_TREE_SYNC ?? Bun.env.OPS_TREE_SYNC;
   const dbPath = (env as Record<string, string | undefined>).OPS_DB_PATH ?? Bun.env.OPS_DB_PATH;
@@ -140,7 +146,15 @@ function maybeSyncOpsTree(
     const accounts = new AccountService(db);
     applyOpsSyncEvent(
       accounts,
-      { type: 'account_assigned', tenantId: 'factory', oidcSubject, email },
+      {
+        type: 'account_assigned',
+        tenantId: 'factory',
+        oidcSubject,
+        email,
+        ...(referralNodeId
+          ? { referralNodeId, source: 'referral' }
+          : { source: 'portal' }),
+      },
       db
     );
     accounts.close();

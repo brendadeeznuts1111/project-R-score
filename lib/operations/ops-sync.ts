@@ -7,10 +7,14 @@
 import type { Database } from 'bun:sqlite';
 import { S3Client } from 'bun';
 import type { AccountService } from './account-service.ts';
-import { bindPartnerProfile } from './partner-profile-bridge.ts';
 import { asTreeNodeId } from '../types/branded/operations.ts';
-import { enqueueIdentityChannelEvent, processChannelOutbox } from '../channels/outbox.ts';
+import {
+  enqueueIdentityChannelEvent,
+  enqueuePartnerWelcomeEvent,
+  processChannelOutbox,
+} from '../channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
+import { onboardPartnerProfile } from './partner-onboarding.ts';
 
 const DEFAULT_TOPIC = 'ops-sync';
 const EVENTS_KEY = 'channels/ops-sync/events.jsonl';
@@ -32,6 +36,8 @@ export type OpsSyncEvent = {
   accountId?: string; // brand-ok
   telegramUserId?: string; // brand-ok
   name?: string;
+  source?: string;
+  referralNodeId?: string; // brand-ok — tree_nodes.id wire
 };
 
 function coerceEvent(event: OpsSyncEvent | Record<string, unknown>): OpsSyncEvent | null {
@@ -47,6 +53,8 @@ function coerceEvent(event: OpsSyncEvent | Record<string, unknown>): OpsSyncEven
     accountId: typeof event.accountId === 'string' ? event.accountId : undefined,
     telegramUserId: typeof event.telegramUserId === 'string' ? event.telegramUserId : undefined,
     name: typeof event.name === 'string' ? event.name : undefined,
+    source: typeof event.source === 'string' ? event.source : undefined,
+    referralNodeId: typeof event.referralNodeId === 'string' ? event.referralNodeId : undefined,
   };
 }
 
@@ -73,14 +81,29 @@ export function applyOpsSyncEvent(
       telegramId: e.telegramUserId,
     });
     if (db) {
-      const binding = bindPartnerProfile(db, asTreeNodeId(node.id));
-      // I3: emit partner.bound on first insert (idempotency_key = bind:nodeId)
+      const source =
+        e.source ??
+        (e.type === 'telegram_linked' ? 'telegram' : e.referralNodeId ? 'referral' : 'portal');
+      const binding = onboardPartnerProfile(db, asTreeNodeId(node.id), {
+        referralNodeId: e.referralNodeId,
+        source,
+      });
       if (binding.created) {
         enqueueIdentityChannelEvent(db, {
           treeNodeId: binding.treeNodeId,
           profileKey: binding.profileKey as string,
           partnerTemplate: binding.templateId,
           lifecycleStatus: binding.lifecycleStatus,
+        });
+      }
+      if (e.type === 'telegram_linked' && e.telegramUserId) {
+        enqueuePartnerWelcomeEvent(db, {
+          treeNodeId: binding.treeNodeId,
+          profileKey: binding.profileKey as string,
+          partnerTemplate: binding.templateId,
+          lifecycleStatus: binding.lifecycleStatus,
+          telegramId: e.telegramUserId,
+          nodeName: node.name,
         });
       }
     }

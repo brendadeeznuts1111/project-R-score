@@ -14,6 +14,7 @@ import {
 describe('ops channel outbox', () => {
   test('enqueue + process populates local channel store', async () => {
     const db = openOperationsDb({ path: ':memory:' });
+    const baseline = (await readLocalChannelEvents('identity', 0)).length;
     enqueueOpsChannelEvent(db, {
       topic: 'identity',
       eventType: 'partner.bound',
@@ -27,7 +28,7 @@ describe('ops channel outbox', () => {
     const result = await processChannelOutbox(db, { deliver: false });
     expect(result.sent).toBe(1);
 
-    const events = await readLocalChannelEvents('identity', 0);
+    const events = await readLocalChannelEvents('identity', baseline);
     expect(events.length).toBe(1);
     expect((events[0]?.payload as Record<string, unknown>).profileKey).toBe('pp-test');
 

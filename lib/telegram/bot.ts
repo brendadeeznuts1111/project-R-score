@@ -11,6 +11,9 @@ import { r2GetJson } from '../pages/r2-types.ts';
 import { asTelegramUserId } from '../types/branded/portal.ts';
 import type { TenantConfig } from '../../config/tenants.ts';
 import { consumeLinkNonce } from './link-nonce.ts';
+import { runOpsCommand, tryOpenOpsDb } from './ops-bridge.ts';
+import { handlePlayCallback } from './play-callback.ts';
+import { answerCallbackQuery } from './telegram-api.ts';
 
 export type TelegramMessage = {
   chat: { id: number };
@@ -18,8 +21,16 @@ export type TelegramMessage = {
   text?: string;
 };
 
+export type TelegramCallbackQuery = {
+  id: string; // brand-ok — Telegram callback_query id
+  from: { id: number };
+  data?: string;
+  message?: { chat: { id: number } };
+};
+
 export type TelegramUpdate = {
   message?: TelegramMessage;
+  callback_query?: TelegramCallbackQuery;
 };
 
 export type CommandContext = {
@@ -30,6 +41,7 @@ export type CommandContext = {
   bucket: R2PutBucket;
   channel: R2ChannelStore | MemoryChannelStore;
   env: Record<string, string | undefined>;
+  opsArgs?: string[];
 };
 
 export type TelegramCommand = {
@@ -37,6 +49,24 @@ export type TelegramCommand = {
   description: string;
   handler: (ctx: CommandContext) => Promise<string>;
 };
+
+function resolveTelegramToken(
+  env: Record<string, string | undefined>,
+  tenant: TenantConfig
+): string | undefined {
+  const key = tenant.telegramBotEnvKey;
+  return key ? env[key] : undefined;
+}
+
+async function dispatchFactoryOpsCommand(ctx: CommandContext, command: string): Promise<string> {
+  const args = ctx.opsArgs ?? ctx.msg.text?.split(/\s+/).slice(1) ?? [];
+  const result = await runOpsCommand(ctx.env, ctx.bucket, {
+    telegramUserId: String(ctx.msg.from.id),
+    command,
+    args,
+  });
+  return result.reply;
+}
 
 export class TelegramBot {
   private commands = new Map<string, TelegramCommand>();
@@ -53,6 +83,11 @@ export class TelegramBot {
     update: TelegramUpdate,
     deps: Omit<CommandContext, 'msg' | 'account'>
   ): Promise<void> {
+    if (update.callback_query) {
+      await this.handleCallbackQuery(update.callback_query, deps);
+      return;
+    }
+
     const msg = update.message;
     if (!msg?.text) return;
 
@@ -82,6 +117,7 @@ export class TelegramBot {
               telegramUserId: String(msg.from.id),
               oidcSubject: linked.oidcSubject,
               email: linked.email,
+              source: 'telegram',
             },
             { sender: 'telegram', tenant: record.tenantId }
           );
@@ -94,6 +130,15 @@ export class TelegramBot {
         );
         return;
       }
+      if ((deps.tenant.id as string) === 'factory') {
+        const ops = await runOpsCommand(deps.env, deps.bucket, {
+          telegramUserId: String(msg.from.id),
+          command: '/start',
+          args: [],
+        });
+        await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, ops.reply);
+        return;
+      }
       await sendTelegramMessage(
         deps.env,
         deps.tenant,
@@ -104,7 +149,7 @@ export class TelegramBot {
     }
 
     if (!text.startsWith('/')) return;
-    const [command] = text.split(/\s+/);
+    const [command, ...argParts] = text.split(/\s+/);
     const cmd = this.commands.get(command!);
     if (!cmd) {
       await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, 'Unknown command. Try /help');
@@ -112,8 +157,41 @@ export class TelegramBot {
     }
 
     const account = await deps.accounts.getByTelegram(asTelegramUserId(String(msg.from.id)));
-    const response = await cmd.handler({ ...deps, msg, account });
+    const response = await cmd.handler({
+      ...deps,
+      msg,
+      account,
+      opsArgs: argParts,
+    });
     await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, response);
+  }
+
+  private async handleCallbackQuery(
+    cq: TelegramCallbackQuery,
+    deps: Omit<CommandContext, 'msg' | 'account'>
+  ): Promise<void> {
+    if ((deps.tenant.id as string) !== 'factory') return;
+    const data = cq.data?.trim();
+    if (!data?.startsWith('play:')) return;
+
+    const token = resolveTelegramToken(deps.env, deps.tenant);
+    if (!token) return;
+
+    const telegramUserId = String(cq.from.id);
+    let message: string;
+    const db = tryOpenOpsDb(deps.env);
+    if (db) {
+      try {
+        const result = handlePlayCallback(db, telegramUserId, data);
+        message = result.message;
+      } finally {
+        db.close();
+      }
+    } else {
+      message = 'Play ack unavailable — set OPS_DB_PATH on Bun host.';
+    }
+
+    await answerCallbackQuery(token, cq.id, message);
   }
 }
 
@@ -123,8 +201,7 @@ export async function sendTelegramMessage(
   chatId: number,
   text: string
 ): Promise<void> {
-  const key = tenant.telegramBotEnvKey;
-  const token = key ? env[key] : undefined;
+  const token = resolveTelegramToken(env, tenant);
   if (!token) return;
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
@@ -136,10 +213,12 @@ export async function sendTelegramMessage(
 export function registerFactoryCommands(bot: TelegramBot): void {
   bot.register({
     command: '/status',
-    description: 'Factory registry health',
+    description: 'Ops status or registry health',
     handler: async ctx => {
+      const opsReply = await dispatchFactoryOpsCommand(ctx, '/status');
+      if (!opsReply.startsWith('❌ Not registered')) return opsReply;
       if (!ctx.account || (ctx.account.tenantId as string) !== 'factory') {
-        return 'Not authorized for factory tenant.';
+        return opsReply;
       }
       const registry = await r2GetJson<{
         packages?: Record<string, unknown>;
@@ -149,6 +228,45 @@ export function registerFactoryCommands(bot: TelegramBot): void {
       const coverage = registry?.meta?.coverage ?? 0;
       return `*Factory Status*\nPackages: ${pkgCount}\nCoverage: ${coverage}%`;
     },
+  });
+
+  bot.register({
+    command: '/registry',
+    description: 'Factory registry package count',
+    handler: async ctx => {
+      if (!ctx.account || (ctx.account.tenantId as string) !== 'factory') {
+        return 'Not authorized for factory tenant.';
+      }
+      const registry = await r2GetJson<{ packages?: Record<string, unknown> }>(
+        ctx.bucket,
+        ctx.tenant.registryKey
+      );
+      const pkgCount = Object.keys(registry?.packages ?? {}).length;
+      return `*Registry*\nPackages: ${pkgCount}`;
+    },
+  });
+
+  const opsOnly = [
+    { command: '/accounts', description: 'Sportsbook accounts' },
+    { command: '/plays', description: 'Pending plays' },
+    { command: '/tree', description: 'Downstream network' },
+    { command: '/register', description: 'Register as sub-agent' },
+    { command: '/verifydod', description: 'DOD delivery receipt' },
+  ] as const;
+
+  for (const spec of opsOnly) {
+    bot.register({
+      command: spec.command,
+      description: spec.description,
+      handler: async ctx => dispatchFactoryOpsCommand(ctx, spec.command),
+    });
+  }
+
+  bot.register({
+    command: '/link',
+    description: 'How to link Telegram to portal',
+    handler: async () =>
+      'Link your portal account: complete onboarding, then `/start link_<nonce>` from the portal.',
   });
 
   bot.register({

@@ -112,6 +112,20 @@ export {
   type OpsSyncEvent,
 } from './ops-sync.ts';
 export {
+  assignOnboardingDefaults,
+  onboardPartnerProfile,
+  type AssignOnboardingOpts,
+  type AssignOnboardingResult,
+} from './partner-onboarding.ts';
+export {
+  loadOnboardingDefaultsSync,
+  templateIdForOnboardingSource,
+  resolveDefaultExpertId,
+  resetOnboardingDefaultsCache,
+  ONBOARDING_DEFAULTS_PATH,
+  type OnboardingDefaults,
+} from './onboarding-config.ts';
+export {
   loadActiveSbAccounts,
   scrapeBookBalance,
   applyBookScrapes,
