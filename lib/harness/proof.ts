@@ -1119,10 +1119,11 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
-      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts',
+      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts tests/verification-proof-consistency.test.ts',
       'lib/verification/channel-suite.ts',
       'lib/verification/channel-meta-refresh.ts',
       'lib/verification/channel-proof.ts',
+      'lib/verification/proof-consistency.ts',
       'lib/verification/subsystem.ts',
       'lib/verification/networking-channel.ts',
       'lib/verification/bundler-loader-probes.ts',
@@ -1137,7 +1138,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'docs/harness/tenants/channel-meta-verification.md',
     ],
     freshRerun:
-      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts',
+      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts tests/verification-proof-consistency.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/verification/',
   },

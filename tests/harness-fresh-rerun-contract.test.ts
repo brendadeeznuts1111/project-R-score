@@ -277,11 +277,12 @@ describe('fresh-rerun contract', () => {
     expect(p?.owner).toBe('lib/verification/');
     expect(p?.kinds).toEqual(['unit', 'boundary']);
     expect(p?.freshRerun).toBe(
-      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts'
+      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts tests/verification-proof-consistency.test.ts'
     );
     expect(p?.evidence).toContain(p!.freshRerun);
     expect(p?.evidence).toContain('docs/harness/tenants/channel-meta-verification.md');
     expect(p?.evidence).toContain('lib/verification/channel-meta-refresh.ts');
+    expect(p?.evidence).toContain('lib/verification/proof-consistency.ts');
   });
 
   test('console-depth-boundaries freshRerun is console-depth suite', () => {

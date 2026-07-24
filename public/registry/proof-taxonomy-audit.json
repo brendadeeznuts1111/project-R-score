@@ -1,14 +1,14 @@
 {
   "type": "ProofTaxonomyAuditReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T04:43:50.620Z",
+  "timestamp": "2026-07-24T04:47:10.666Z",
   "ok": true,
   "reportPath": "/registry/proof-taxonomy-audit.json",
   "audits": [
     {
       "path": "public/registry/release-features.json",
       "ok": true,
-      "rows": 46,
+      "rows": 75,
       "missingSubsystem": 0,
       "notes": [],
       "primarySubsystem": "runtime",
@@ -83,6 +83,26 @@
       "notes": []
     },
     {
+      "id": "channel-meta-bake",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "channel-meta-nits-embed",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "channel-meta-bundler-embed",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "channel-meta-networking-embed",
+      "ok": true,
+      "notes": []
+    },
+    {
       "id": "by-subsystem:release-features",
       "ok": true,
       "notes": []
@@ -101,7 +121,17 @@
       "id": "by-subsystem:runtime-nits",
       "ok": true,
       "notes": []
+    },
+    {
+      "id": "by-subsystem:bundler-loaders",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "by-subsystem:networking-channel",
+      "ok": true,
+      "notes": []
     }
   ],
-  "proofHash": "4aa1e5e7c0b7447654d317aaff9b40aeca861e571549a7bb120496fd36bf0c37"
+  "proofHash": "57aee896b02b4f3d9c78619c4dab82b09816789c3dfa05dd4b6807d95cdfe0dc"
 }

@@ -1,7 +1,7 @@
 {
   "type": "ChannelAwareVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T04:43:29.398Z",
+  "timestamp": "2026-07-24T04:46:26.394Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "blogPost": "https://bun.com/blog/bun-v1.3.14",
@@ -10,8 +10,8 @@
     "targetVersion": "1.4.0",
     "latestAtTestTime": "1.4.0",
     "testSuiteCommit": "9d0180ccfdba2dffdb2f9ab91f207e1947b1abf7",
-    "provenanceId": "local-2026-07-24T04-32-25-009Z",
-    "testedAt": "2026-07-24T04:32:25.009Z",
+    "provenanceId": "local-2026-07-24T04-43-47-931Z",
+    "testedAt": "2026-07-24T04:43:47.931Z",
     "bunRevision": "a227ad991b62",
     "runtimeVersion": "1.4.0",
     "platform": "darwin",
@@ -208,7 +208,7 @@
     {
       "name": "Bun.escapeHTML performance",
       "expected": "< 500 ns per call",
-      "actual": "146.0 ns",
+      "actual": "61.5 ns",
       "passed": true,
       "canonicalKey": "cross-language-lto-for-zig-c-on-linux",
       "canonical": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
@@ -227,7 +227,7 @@
     {
       "name": "ESM module load (node:fs)",
       "expected": "loads successfully",
-      "actual": "0.08ms",
+      "actual": "0.05ms",
       "passed": true,
       "canonicalKey": "faster-esm-module-loading",
       "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
@@ -960,7 +960,7 @@
     {
       "name": "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)",
       "expected": "all Bun Uint8Array extensions and binary data APIs work",
-      "actual": "base64=true hex=true rt=true mmap=71995B file=71995B blob=5B",
+      "actual": "base64=true hex=true rt=true mmap=72346B file=72346B blob=5B",
       "passed": true,
       "canonicalKey": "uint8array-bun-extensions",
       "canonical": "https://bun.com/docs",
@@ -1808,7 +1808,7 @@
       }
     }
   },
-  "proofHash": "1a203210514d7f7e03753ab2ba667a6adf8b60590ec4d6e3e1bdb9cf7e33f62b",
+  "proofHash": "5155fa9246416d0e6ae3d7ceb58ecb7a9e841530ea9afb83f088dad4742fc582",
   "jsonLd": {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -1816,7 +1816,7 @@
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any",
     "softwareVersion": "1.4.0",
-    "dateModified": "2026-07-24T04:32:25.009Z",
+    "dateModified": "2026-07-24T04:43:47.931Z",
     "identifier": "1.4.0",
     "featureList": [
       "runtime-nits",
@@ -1857,7 +1857,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1873,7 +1873,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1889,7 +1889,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1905,7 +1905,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1921,7 +1921,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1937,7 +1937,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1953,7 +1953,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1969,7 +1969,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1985,7 +1985,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2001,7 +2001,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2017,7 +2017,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2033,7 +2033,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2049,7 +2049,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2065,7 +2065,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2081,7 +2081,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2097,7 +2097,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2113,7 +2113,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2129,7 +2129,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2145,7 +2145,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2161,7 +2161,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2177,7 +2177,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2193,7 +2193,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2209,7 +2209,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2225,7 +2225,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2241,7 +2241,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2257,7 +2257,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2273,7 +2273,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2289,7 +2289,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2305,7 +2305,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2321,7 +2321,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2337,7 +2337,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2353,7 +2353,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2369,7 +2369,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2385,7 +2385,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2401,7 +2401,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2417,7 +2417,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2433,7 +2433,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2449,7 +2449,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2465,7 +2465,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2481,7 +2481,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2497,7 +2497,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2513,7 +2513,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2529,7 +2529,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2545,7 +2545,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2561,7 +2561,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2577,7 +2577,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2593,7 +2593,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2609,7 +2609,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2625,7 +2625,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2641,7 +2641,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2657,7 +2657,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2673,7 +2673,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2689,7 +2689,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2705,7 +2705,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2721,7 +2721,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2737,7 +2737,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2753,7 +2753,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2769,7 +2769,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2785,7 +2785,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2801,7 +2801,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2817,7 +2817,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2833,7 +2833,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2849,7 +2849,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2865,7 +2865,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2881,7 +2881,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2897,7 +2897,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2913,7 +2913,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2929,7 +2929,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2945,7 +2945,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2961,7 +2961,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2977,7 +2977,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2993,7 +2993,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3009,7 +3009,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3025,7 +3025,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3041,7 +3041,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T04:32:25.009Z",
+        "datePublished": "2026-07-24T04:43:47.931Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"

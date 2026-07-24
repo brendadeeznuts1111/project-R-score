@@ -23,6 +23,8 @@ bun run harness:status              # discover claim
 
 `verify:channel:meta` / `ops:snapshot` strip prior `runtime-nits:` / `bundler:` / `networking:` rows, then merge pillar artifacts — idempotent for Pages bake without a full release re-run.
 
-Bake sidecar: `public/registry/channel-meta-bake.json` (sources + rollup). Embedded in `ops-summary.json` / `static.json` as `channelMeta`; ops dashboard shows bake line on the release panel.
+Bake sidecar: `public/registry/channel-meta-bake.json` (sources + rollup). Embedded in `ops-summary.json` / `static.json` as `channelMeta`; ops dashboard shows bake line on the release panel + snapshot health.
+
+Consistency (taxonomy audit): bake.proofHash must match release-features; meta-prefixed rows must mirror nits / bundler-loaders / networking-channel pillars. Stale bake → `channelMeta.stale` + dashboard badge.
 
 Ops UI: `/portal/ops/` (Pages: `project-r-score.pages.dev/portal/ops/`). Portal JSDoc: `public/portal/portal-types.d.ts`.

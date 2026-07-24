@@ -1,7 +1,7 @@
 {
   "type": "ChannelAwareVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T04:43:47.931Z",
+  "timestamp": "2026-07-24T04:46:26.394Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "blogPost": "https://bun.com/blog/bun-v1.3.14",
@@ -17,7 +17,14 @@
     "platform": "darwin",
     "arch": "arm64",
     "channelResolveSource": "runtime",
-    "githubAuthSource": "none"
+    "githubAuthSource": "none",
+    "subsystems": [
+      "runtime",
+      "bundler",
+      "package-manager",
+      "networking",
+      "other"
+    ]
   },
   "releaseNotes": [
     {
@@ -1063,30 +1070,737 @@
       "targetVersion": "1.4.0",
       "latestAtTestTime": "1.4.0",
       "canonicalSource": "docs"
+    },
+    {
+      "probe": "inspect.sorted",
+      "category": "inspect",
+      "canonicalKey": "Bun.inspect.sorted",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.inspect sorted — deterministic key order for snapshots",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.sorted",
+      "expected": "sorted:true orders keys alphabetically (recursive)",
+      "actual": "alpha before zebra; bravo before delta",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.compact",
+      "category": "inspect",
+      "canonicalKey": "Bun.inspect.compact",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.inspect compact — single-line output",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.compact",
+      "expected": "compact:true produces single-line output",
+      "actual": "no newlines",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.showProxy",
+      "category": "inspect",
+      "canonicalKey": "inspect.showProxy",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "showProxy — Proxy target/handler in inspect output",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.showProxy",
+      "expected": "showProxy:true surfaces Proxy or target (runtime truth)",
+      "actual": "showProxy ignored; target inspected directly",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.getters",
+      "category": "inspect",
+      "canonicalKey": "inspect.getters",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "getters — evaluate or suppress property getters",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.getters",
+      "expected": "getters:true shows [Getter] (Bun 1.4 runtime truth)",
+      "actual": "getters:true shows [Getter]",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.numericSeparator",
+      "category": "inspect",
+      "canonicalKey": "inspect.numericSeparator",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "numericSeparator — underscore separators in numbers (Node compat)",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.numericSeparator",
+      "expected": "numericSeparator:true or ignored (record runtime)",
+      "actual": "no separator (ignored on runtime)",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.maxStringLength",
+      "category": "inspect",
+      "canonicalKey": "util.inspect options",
+      "canonical": "https://nodejs.org/api/util.html#utilinspectobject-options",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Node util.inspect option delta vs BunInspectOptions",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://nodejs.org/api/util.html#utilinspectobject-options",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.maxStringLength",
+      "expected": "maxStringLength honored or ignored (record runtime)",
+      "actual": "full string shown (ignored on Bun 1.4)",
+      "passed": true,
+      "canonicalSource": "other",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.customInspect",
+      "category": "inspect",
+      "canonicalKey": "BunInspectOptions",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.customInspect",
+      "expected": "custom symbol honored; false suppresses when supported",
+      "actual": "customInspect:false ignored; custom still shown",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "streams.gzip-roundtrip",
+      "category": "streams",
+      "canonicalKey": "CompressionStream",
+      "canonical": "https://bun.com/reference/globals/CompressionStream",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "WHATWG gzip/deflate compression stream",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/CompressionStream",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:streams.gzip-roundtrip",
+      "expected": "gzip compress then decompress restores bytes",
+      "actual": "36 bytes round-trip ok",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "streams"
+      ]
+    },
+    {
+      "probe": "streams.text-encoder-decoder",
+      "category": "streams",
+      "canonicalKey": "TextEncoderStream",
+      "canonical": "https://bun.com/reference/globals/TextEncoderStream",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Streaming string to Uint8Array",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/TextEncoderStream",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:streams.text-encoder-decoder",
+      "expected": "TextEncoderStream → TextDecoderStream restores string",
+      "actual": "\"registry-client-probe\" round-trip ok",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "streams"
+      ]
+    },
+    {
+      "probe": "url.host",
+      "category": "url",
+      "canonicalKey": "URL.host",
+      "canonical": "https://bun.com/reference/globals/URL/host",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/host",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:url.host",
+      "expected": "host includes port; hostname excludes; host setter updates href",
+      "actual": "host=example.com:8080; set host=test.com:9000",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "url"
+      ]
+    },
+    {
+      "probe": "url.origin",
+      "category": "url",
+      "canonicalKey": "URL.origin",
+      "canonical": "https://bun.com/reference/globals/URL/origin",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "protocol + host + port",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/origin",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:url.origin",
+      "expected": "origin is protocol + host + port",
+      "actual": "https://example.com:8080",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "url"
+      ]
+    },
+    {
+      "probe": "url.searchParams",
+      "category": "url",
+      "canonicalKey": "URL.searchParams",
+      "canonical": "https://bun.com/reference/globals/URL/searchParams",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Query parameter interface on URL",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/searchParams",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:url.searchParams",
+      "expected": "searchParams set/get/delete roundtrip",
+      "actual": "?b=2",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "url"
+      ]
+    },
+    {
+      "probe": "url.host-setter",
+      "category": "url",
+      "canonicalKey": "URL.host",
+      "canonical": "https://bun.com/reference/globals/URL/host",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/host",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:url.host-setter",
+      "expected": "host setter updates origin and preserves path",
+      "actual": "https://new.example.com:9090/api/v1",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "url"
+      ]
+    },
+    {
+      "probe": "bun.file.lazy-stat",
+      "category": "file-io",
+      "canonicalKey": "bun.file.lazy-stat",
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.file is lazy until .text/.bytes/.exists",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:bun.file.lazy-stat",
+      "expected": "Bun.file size matches fs.stat after write",
+      "actual": "size=4 exists=true",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "file-io"
+      ]
+    },
+    {
+      "probe": "bun.write.auto-dir",
+      "category": "file-io",
+      "canonicalKey": "bun.write.auto-dir",
+      "canonical": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.write creates parent directories",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:bun.write.auto-dir",
+      "expected": "Bun.write creates parent directories",
+      "actual": "nested path written without mkdir",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "file-io"
+      ]
+    },
+    {
+      "probe": "bun.file.bytes-vs-buffer",
+      "category": "file-io",
+      "canonicalKey": "bun.file.bytes-vs-buffer",
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.file().bytes() matches fs read bytes",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:bun.file.bytes-vs-buffer",
+      "expected": "Bun.file().bytes() equals fs read bytes",
+      "actual": "5 bytes match",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "file-io"
+      ]
+    },
+    {
+      "probe": "loader.css.explicit",
+      "loader": "css",
+      "name": "bundler:loader.css.explicit",
+      "expected": "CSS output contains entry rule",
+      "actual": "css bytes=126",
+      "passed": true,
+      "canonicalKey": "loader:css",
+      "canonical": "https://bun.com/docs/bundler/loaders#css",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "CSS loader — bundles stylesheets via Bun.build",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#css",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "css"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.css.default",
+      "loader": "css",
+      "name": "bundler:loader.css.default",
+      "expected": "default .css → css loader succeeds",
+      "actual": "outputs=1",
+      "passed": true,
+      "canonicalKey": "Asset Processing",
+      "canonical": "https://bun.com/docs/bundler#content-types",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.build content-type / Asset Processing table",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler#content-types",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "css"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.jsonc",
+      "loader": "jsonc",
+      "name": "bundler:loader.jsonc",
+      "expected": "jsonc output has data, comments stripped",
+      "actual": "js bytes=233",
+      "passed": true,
+      "canonicalKey": "loader:jsonc",
+      "canonical": "https://bun.com/docs/bundler/loaders#jsonc",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "JSONC loader — comments stripped (portal theme.jsonc)",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#jsonc",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "jsonc"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.text",
+      "loader": "text",
+      "name": "bundler:loader.text",
+      "expected": "text loader embeds file contents",
+      "actual": "js bytes=172",
+      "passed": true,
+      "canonicalKey": "loader:text",
+      "canonical": "https://bun.com/docs/bundler/loaders#text",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Text loader — file contents as string export",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#text",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "text"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.ts",
+      "loader": "ts",
+      "name": "bundler:loader.ts",
+      "expected": "transpiles TypeScript to JavaScript (types stripped)",
+      "actual": "js bytes=150 typesStripped=true",
+      "passed": true,
+      "canonicalKey": "loader:ts",
+      "canonical": "https://bun.com/docs/bundler/loaders#ts",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "TypeScript loader — strips types via Bun.build",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#ts",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "ts"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.file",
+      "loader": "file",
+      "name": "bundler:loader.file",
+      "expected": "copies asset / exports path via file loader",
+      "actual": "outputs=2 hasAsset=true jsMentions=true",
+      "passed": true,
+      "canonicalKey": "loader:file",
+      "canonical": "https://bun.com/docs/bundler/loaders#file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "File loader — copy asset to outdir and export path",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "file"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Health",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=4.9ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "ops"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Prediction report",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=0.3ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "registry"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:CF Dashboard",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=126.3ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "dashboard"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Registry (Pages)",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=81.5ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "pages"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Kalshi exchange",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=61.7ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "trading"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Bun docs",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=138.4ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "control"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:global-checks",
+      "expected": "36 checks pass",
+      "actual": "36/36",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "aggregate"
+      ],
+      "canonicalSource": "docs"
     }
   ],
   "summary": {
-    "passed": 46,
-    "total": 46,
+    "passed": 75,
+    "total": 75,
     "status": "pass",
     "channel": "stable",
     "version": "1.4.0",
     "bySubsystem": {
       "runtime": {
-        "passed": 20,
-        "total": 20
+        "passed": 36,
+        "total": 36
       },
       "bundler": {
-        "passed": 2,
-        "total": 2
+        "passed": 8,
+        "total": 8
       },
       "package-manager": {
         "passed": 12,
         "total": 12
       },
       "networking": {
-        "passed": 6,
-        "total": 6
+        "passed": 13,
+        "total": 13
       },
       "other": {
         "passed": 6,
@@ -1094,7 +1808,7 @@
       }
     }
   },
-  "proofHash": "453cc3f58d2be9d4ae1300d718fdc0c629c51121185809c82ab1738e675011a5",
+  "proofHash": "5155fa9246416d0e6ae3d7ceb58ecb7a9e841530ea9afb83f088dad4742fc582",
   "jsonLd": {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -1104,11 +1818,32 @@
     "softwareVersion": "1.4.0",
     "dateModified": "2026-07-24T04:43:47.931Z",
     "identifier": "1.4.0",
-    "featureList": [],
+    "featureList": [
+      "runtime-nits",
+      "inspect",
+      "streams",
+      "url",
+      "file-io",
+      "bundler",
+      "loaders",
+      "css",
+      "jsonc",
+      "text",
+      "ts",
+      "file",
+      "networking",
+      "ops",
+      "registry",
+      "dashboard",
+      "pages",
+      "trading",
+      "control",
+      "aggregate"
+    ],
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": 5,
-      "reviewCount": 46,
+      "reviewCount": 75,
       "bestRating": 5,
       "worstRating": 0
     },
@@ -1836,6 +2571,470 @@
       {
         "@type": "Review",
         "name": "URL.domainToASCII / domainToUnicode (Node.js compat)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.sorted",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.compact",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.showProxy",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.getters",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.numericSeparator",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.maxStringLength",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.customInspect",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:streams.gzip-roundtrip",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:streams.text-encoder-decoder",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:url.host",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:url.origin",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:url.searchParams",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:url.host-setter",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:bun.file.lazy-stat",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:bun.write.auto-dir",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:bun.file.bytes-vs-buffer",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.css.explicit",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.css.default",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.jsonc",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.text",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.ts",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.file",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Health",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Prediction report",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:CF Dashboard",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Registry (Pages)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Kalshi exchange",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Bun docs",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:43:47.931Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:global-checks",
         "reviewRating": {
           "@type": "Rating",
           "ratingValue": 5,

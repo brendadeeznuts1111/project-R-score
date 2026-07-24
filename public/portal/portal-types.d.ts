@@ -93,6 +93,7 @@
  * @typedef {Object} PortalOpsChannelMetaSlice
  * @property {boolean} available
  * @property {boolean} [ok]
+ * @property {boolean} [stale]
  * @property {number} [passed]
  * @property {number} [total]
  * @property {'pass'|'fail'} [status]
