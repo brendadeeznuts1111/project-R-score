@@ -6,6 +6,7 @@
  * @see lib/verification/channel-meta-refresh.ts — bake sidecar
  */
 import type { VerificationResult, VerificationSubsystem } from './types.ts';
+import type { AccountId } from '../types/branded.ts';
 import { summarizeBySubsystem } from './subsystem.ts';
 
 export type ProofConsistencyRow = {
@@ -216,6 +217,121 @@ export function auditChannelMetaPillarEmbed(
   return { id, ok: notes.length === 0, notes };
 }
 
+export type DocsCoverageLike = {
+  reference?: { pageCount?: number; moduleCount?: number; indexGenerated?: string };
+  summary?: { ok?: boolean };
+};
+
+export type ReferenceIndexLike = {
+  count?: number;
+  moduleCount?: number;
+  generated?: string;
+};
+
+/** docs-coverage-proof reference counts must mirror committed reference-index.json. */
+export function auditDocsCoverageReferenceParity(
+  docsCoverage: DocsCoverageLike,
+  referenceIndex: ReferenceIndexLike
+): ProofConsistencyRow {
+  const notes: string[] = [];
+  if (docsCoverage.reference?.pageCount !== referenceIndex.count) {
+    notes.push(
+      `pageCount ${docsCoverage.reference?.pageCount ?? '—'} vs reference-index ${referenceIndex.count ?? '—'}`
+    );
+  }
+  if (docsCoverage.reference?.moduleCount !== referenceIndex.moduleCount) {
+    notes.push(
+      `moduleCount ${docsCoverage.reference?.moduleCount ?? '—'} vs reference-index ${referenceIndex.moduleCount ?? '—'}`
+    );
+  }
+  return { id: 'docs-coverage-reference-parity', ok: notes.length === 0, notes };
+}
+
+/** registry-client pass implies at least one install-env registry row passed. */
+export function auditRegistryClientInstallEnvParity(
+  registryClient: ProofWithResults,
+  installEnv: ProofWithResults
+): ProofConsistencyRow {
+  const notes: string[] = [];
+  const rcPass =
+    registryClient.summary?.status === 'pass' ||
+    (registryClient.summary?.passed != null &&
+      registryClient.summary.passed === registryClient.summary.total);
+  const registryRows = (installEnv.results ?? []).filter(r => {
+    const n = String(r.name);
+    return n === 'install.scopes' || n === 'registry-read-plane' || n.includes('registry');
+  });
+  const envRegistryOk = registryRows.some(r => r.passed);
+  if (rcPass && registryRows.length > 0 && !envRegistryOk) {
+    notes.push('registry-client pass but install-env registry rows all failed');
+  }
+  return { id: 'registry-client-install-env', ok: notes.length === 0, notes };
+}
+
+/** docs-coverage ok implies doc-index defaults doc coverage passed. */
+export function auditDocsCoverageDocIndexParity(
+  docsCoverage: { summary?: { ok?: boolean } },
+  docIndex: { defaultsCoverage?: { passed?: boolean } }
+): ProofConsistencyRow {
+  const notes: string[] = [];
+  if (docsCoverage.summary?.ok && docIndex.defaultsCoverage?.passed === false) {
+    notes.push('docs-coverage ok but doc-index defaultsCoverage failed');
+  }
+  return { id: 'docs-coverage-doc-index', ok: notes.length === 0, notes };
+}
+
+/** cloudflare-token-scope proof pins must match CLOUDFLARE_TOKEN_PERMISSIONS SSOT. */
+export function auditCloudflareTokenScopeSsot(
+  proof: {
+    pins?: { accountId?: AccountId | string; pagesProject?: string; zoneName?: string };
+  },
+  expected: { accountId: AccountId; pagesProject: string; zoneName: string }
+): ProofConsistencyRow {
+  const notes: string[] = [];
+  const p = proof.pins;
+  if (p?.accountId !== expected.accountId) {
+    notes.push(`pins.accountId ${p?.accountId} ≠ ${expected.accountId}`);
+  }
+  if (p?.pagesProject !== expected.pagesProject) {
+    notes.push(`pins.pagesProject ${p?.pagesProject} ≠ ${expected.pagesProject}`);
+  }
+  if (p?.zoneName !== expected.zoneName) {
+    notes.push(`pins.zoneName ${p?.zoneName} ≠ ${expected.zoneName}`);
+  }
+  return { id: 'cloudflare-token-scope-ssot', ok: notes.length === 0, notes };
+}
+
+/** well-known MCP manifest rows must match proof mcpCatalog parity. */
+export function auditWellKnownMcpCatalogParity(
+  proof: { mcpCatalog?: { ok?: boolean; rows?: Array<{ name: string; ok: boolean }> } },
+  wellKnown: { servers?: Array<{ name: string; url: string }> }
+): ProofConsistencyRow {
+  const notes: string[] = [];
+  if (proof.mcpCatalog?.ok === false) {
+    notes.push('cloudflare-token-scope mcpCatalog.ok is false');
+  }
+  const bad = proof.mcpCatalog?.rows?.filter(r => !r.ok) ?? [];
+  if (bad.length) notes.push(`mcpCatalog rows failed: ${bad.map(r => r.name).join(', ')}`);
+  const proofNames = new Set(proof.mcpCatalog?.rows?.map(r => r.name) ?? []);
+  for (const s of wellKnown.servers ?? []) {
+    if (!proofNames.has(s.name)) notes.push(`well-known server ${s.name} missing from proof rows`);
+  }
+  return { id: 'well-known-mcp-catalog-parity', ok: notes.length === 0, notes };
+}
+
+/** Audit row count must match PROOF_TAXONOMY_CONTRACTS registry length. */
+export function auditTaxonomyContractRegistry(
+  auditCount: number,
+  expectedCount: number
+): ProofConsistencyRow {
+  const ok = auditCount === expectedCount;
+  return {
+    id: 'taxonomy-contract-registry',
+    ok,
+    notes: ok ? [] : [`audit rows ${auditCount} ≠ contract registry ${expectedCount}`],
+  };
+}
+
 export type ProofConsistencyInput = {
   release?: ProofWithResults;
   installPlatform?: ProofWithResults;
@@ -223,6 +339,18 @@ export type ProofConsistencyInput = {
   runtimeNits?: ProofWithResults;
   bundlerLoaders?: ProofWithResults;
   networkingChannel?: ProofWithResults;
+  registryClient?: ProofWithResults;
+  docsCoverage?: DocsCoverageLike;
+  referenceIndex?: ReferenceIndexLike;
+  docIndex?: { defaultsCoverage?: { passed?: boolean } };
+  cloudflareTokenScope?: {
+    pins?: { accountId?: AccountId | string; pagesProject?: string; zoneName?: string };
+    mcpCatalog?: { ok?: boolean; rows?: Array<{ name: string; ok: boolean }> };
+  };
+  wellKnownMcp?: { servers?: Array<{ name: string; url: string }> };
+  cloudflareTokenExpected?: { accountId: AccountId; pagesProject: string; zoneName: string };
+  taxonomyAuditCount?: number;
+  taxonomyExpectedCount?: number;
   channelMetaBake?: ChannelMetaBakeLike | null;
 };
 
@@ -283,6 +411,35 @@ export function auditProofConsistency(input: ProofConsistencyInput): ProofConsis
   }
   if (input.networkingChannel) {
     rows.push(auditBySubsystemTotals(input.networkingChannel, 'networking-channel'));
+  }
+  if (input.registryClient) {
+    rows.push(auditBySubsystemTotals(input.registryClient, 'registry-client'));
+  }
+
+  if (input.registryClient && input.installEnv) {
+    rows.push(auditRegistryClientInstallEnvParity(input.registryClient, input.installEnv));
+  }
+
+  if (input.docsCoverage && input.referenceIndex) {
+    rows.push(auditDocsCoverageReferenceParity(input.docsCoverage, input.referenceIndex));
+  }
+
+  if (input.docsCoverage && input.docIndex) {
+    rows.push(auditDocsCoverageDocIndexParity(input.docsCoverage, input.docIndex));
+  }
+
+  if (input.cloudflareTokenScope && input.cloudflareTokenExpected) {
+    rows.push(
+      auditCloudflareTokenScopeSsot(input.cloudflareTokenScope, input.cloudflareTokenExpected)
+    );
+  }
+
+  if (input.cloudflareTokenScope && input.wellKnownMcp) {
+    rows.push(auditWellKnownMcpCatalogParity(input.cloudflareTokenScope, input.wellKnownMcp));
+  }
+
+  if (input.taxonomyAuditCount != null && input.taxonomyExpectedCount != null) {
+    rows.push(auditTaxonomyContractRegistry(input.taxonomyAuditCount, input.taxonomyExpectedCount));
   }
 
   return rows;

@@ -62,4 +62,73 @@ describe('verification proof taxonomy contract', () => {
     expect(proof.summary?.bySubsystem?.bundler?.total).toBeGreaterThan(0);
     expect(proof.semanticTags?.subsystems).toContain('bundler');
   });
+
+  test('docs-coverage-proof.json carries report-level subsystem other', async () => {
+    const file = Bun.file(joinPath(ROOT, 'public/registry/docs-coverage-proof.json'));
+    if (!(await file.exists())) return;
+    const proof = (await file.json()) as {
+      subsystem?: string;
+      type?: string;
+      lanes?: unknown[];
+      semanticTags?: { subsystems?: string[] };
+    };
+    expect(proof.subsystem).toBe('other');
+    expect(proof.type).toBe('DocsCoverageVerificationReport');
+    expect(Array.isArray(proof.lanes)).toBe(true);
+    expect((proof.lanes ?? []).length).toBe(5);
+    expect(proof.semanticTags?.subsystems).toContain('other');
+  });
+
+  test('registry-client-proof.json is package-manager with semanticTags', async () => {
+    const file = Bun.file(joinPath(ROOT, 'public/registry/registry-client-proof.json'));
+    if (!(await file.exists())) return;
+    const proof = (await file.json()) as {
+      results?: Array<{ subsystem?: string }>;
+      semanticTags?: { subsystems?: string[] };
+      summary?: { bySubsystem?: Record<string, { total: number }> };
+    };
+    expect(proof.results?.every(r => r.subsystem === 'package-manager')).toBe(true);
+    expect(proof.semanticTags?.subsystems).toContain('package-manager');
+    expect(proof.summary?.bySubsystem?.['package-manager']?.total).toBeGreaterThan(0);
+  });
+
+  test('doc-index.json carries report-level subsystem other', async () => {
+    const file = Bun.file(joinPath(ROOT, 'public/registry/doc-index.json'));
+    if (!(await file.exists())) return;
+    const proof = (await file.json()) as {
+      subsystem?: string;
+      totalEntries?: number;
+      defaultsCoverage?: { passed?: boolean };
+    };
+    expect(proof.subsystem).toBe('other');
+    expect(proof.totalEntries).toBeGreaterThan(0);
+    expect(proof.defaultsCoverage?.passed).toBe(true);
+  });
+
+  test('cloudflare-token-scope-proof.json carries subsystem other + mcp catalog', async () => {
+    const file = Bun.file(joinPath(ROOT, 'public/registry/cloudflare-token-scope-proof.json'));
+    if (!(await file.exists())) return;
+    const proof = (await file.json()) as {
+      type?: string;
+      subsystem?: string;
+      mcpCatalog?: { ok?: boolean; serverCount?: number };
+      summary?: { staticOk?: boolean };
+    };
+    expect(proof.type).toBe('CloudflareTokenScopeProof');
+    expect(proof.subsystem).toBe('other');
+    expect(proof.mcpCatalog?.ok).toBe(true);
+    expect(proof.mcpCatalog?.serverCount).toBe(5);
+    expect(proof.summary?.staticOk).toBe(true);
+  });
+
+  test('well-known/mcp.json lists five Cloudflare MCP servers', async () => {
+    const file = Bun.file(joinPath(ROOT, 'public/.well-known/mcp.json'));
+    expect(await file.exists()).toBe(true);
+    const manifest = (await file.json()) as {
+      servers?: Array<{ name: string; url: string }>;
+      auth?: { env?: string };
+    };
+    expect(manifest.servers?.length).toBe(5);
+    expect(manifest.auth?.env).toBe('CLOUDFLARE_API_TOKEN');
+  });
 });

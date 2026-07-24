@@ -1,0 +1,41 @@
+{
+  "version": "1",
+  "description": "FactoryWager IDE MCP catalog — Cloudflare-hosted servers require CLOUDFLARE_API_TOKEN",
+  "servers": [
+    {
+      "name": "cloudflare",
+      "url": "https://mcp.cloudflare.com/mcp",
+      "transport": "http",
+      "description": "Cloudflare account and API operations"
+    },
+    {
+      "name": "cloudflare-docs",
+      "url": "https://docs.mcp.cloudflare.com/mcp",
+      "transport": "http",
+      "description": "Cloudflare documentation search"
+    },
+    {
+      "name": "cloudflare-bindings",
+      "url": "https://bindings.mcp.cloudflare.com/mcp",
+      "transport": "http",
+      "description": "Workers bindings"
+    },
+    {
+      "name": "cloudflare-builds",
+      "url": "https://builds.mcp.cloudflare.com/mcp",
+      "transport": "http",
+      "description": "Workers Builds CI"
+    },
+    {
+      "name": "cloudflare-observability",
+      "url": "https://observability.mcp.cloudflare.com/mcp",
+      "transport": "http",
+      "description": "Workers logs and metrics"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "env": "CLOUDFLARE_API_TOKEN"
+  },
+  "repoCatalog": ".mcp.json"
+}

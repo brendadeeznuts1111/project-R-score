@@ -106,6 +106,50 @@ export const PROOF_TAXONOMY_CONTRACTS: readonly ProofTaxonomyContract[] = [
     verifyScript: 'tools/verify-channel.ts --suite=networking',
     canonicalSource: 'docs',
   },
+  {
+    path: 'public/registry/docs-coverage-proof.json',
+    reportPath: '/registry/docs-coverage-proof.json',
+    primarySubsystem: 'other',
+    requireReportSubsystem: true,
+    expectSemanticTags: true,
+    verifyScript: 'tools/verify-docs-coverage.ts',
+    canonicalSource: 'mixed',
+  },
+  {
+    path: 'public/registry/registry-client-proof.json',
+    reportPath: '/registry/registry-client-proof.json',
+    primarySubsystem: 'package-manager',
+    resultsKey: 'results',
+    requireRowSubsystem: true,
+    requireBySubsystem: true,
+    expectSemanticTags: true,
+    verifyScript: 'tools/verify-registry-client.ts',
+    canonicalSource: 'mixed',
+  },
+  {
+    path: 'public/registry/doc-index.json',
+    reportPath: '/registry/doc-index.json',
+    primarySubsystem: 'other',
+    requireReportSubsystem: true,
+    verifyScript: 'tools/build-doc-index.ts',
+    canonicalSource: 'mixed',
+  },
+  {
+    path: 'public/registry/cloudflare-token-scope-proof.json',
+    reportPath: '/registry/cloudflare-token-scope-proof.json',
+    primarySubsystem: 'other',
+    requireReportSubsystem: true,
+    expectSemanticTags: true,
+    verifyScript: 'tools/verify-cloudflare-token.ts',
+    canonicalSource: 'mixed',
+  },
+  {
+    path: 'public/.well-known/mcp.json',
+    reportPath: '/.well-known/mcp.json',
+    primarySubsystem: 'other',
+    verifyScript: 'tools/sync-well-known-mcp.ts --check',
+    canonicalSource: 'mixed',
+  },
 ] as const;
 
 export type ProofTaxonomyAuditRow = {
@@ -198,6 +242,27 @@ export function auditProofTaxonomy(
     notes.push(`${missingIntroducedIn}/${rows} rows missing introducedIn`);
   }
 
+  if (contract.path.endsWith('.well-known/mcp.json')) {
+    const servers = raw.servers;
+    if (!Array.isArray(servers) || servers.length < 5) {
+      notes.push('servers[] incomplete (expected ≥5 Cloudflare MCP entries)');
+    }
+    const auth = raw.auth as { env?: string } | undefined;
+    if (auth?.env !== 'CLOUDFLARE_API_TOKEN') {
+      notes.push('auth.env must be CLOUDFLARE_API_TOKEN');
+    }
+    rows = Array.isArray(servers) ? servers.length : 0;
+  }
+
+  if (contract.path.endsWith('cloudflare-token-scope-proof.json')) {
+    const mcp = raw.mcpCatalog as { ok?: boolean; serverCount?: number } | undefined;
+    if (!mcp?.ok) notes.push('mcpCatalog.ok is false');
+    if ((mcp?.serverCount ?? 0) < 5) notes.push('mcpCatalog.serverCount < 5');
+    const summary = raw.summary as { staticOk?: boolean } | undefined;
+    if (summary?.staticOk === false) notes.push('summary.staticOk is false');
+    rows = mcp?.serverCount ?? 0;
+  }
+
   return {
     path: contract.path,
     ok: notes.length === 0,
@@ -250,6 +315,19 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
     }
   }
 
+  let referenceIndex: Record<string, unknown> | undefined;
+  const refIdxPath = joinPath(rootDir, 'tools/reference-index.json');
+  const refIdxFile = Bun.file(refIdxPath);
+  if (await refIdxFile.exists()) {
+    try {
+      referenceIndex = (await refIdxFile.json()) as Record<string, unknown>;
+    } catch {
+      referenceIndex = undefined;
+    }
+  }
+
+  const { CLOUDFLARE_TOKEN_PERMISSIONS } = await import('../../config/r2-env.ts');
+
   const consistency = auditProofConsistency({
     release: loaded['public/registry/release-features.json'] as {
       results?: VerificationResult[];
@@ -276,6 +354,41 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
       results?: VerificationResult[];
       summary?: { bySubsystem?: Record<string, { passed: number; total: number }> };
     },
+    registryClient: loaded['public/registry/registry-client-proof.json'] as {
+      results?: VerificationResult[];
+      summary?: { bySubsystem?: Record<string, { passed: number; total: number }> };
+    },
+    docsCoverage: loaded['public/registry/docs-coverage-proof.json'] as {
+      reference?: { pageCount?: number; moduleCount?: number };
+      summary?: { ok?: boolean };
+    },
+    docIndex: loaded['public/registry/doc-index.json'] as {
+      defaultsCoverage?: { passed?: boolean };
+    },
+    cloudflareTokenScope: loaded['public/registry/cloudflare-token-scope-proof.json'] as {
+      pins?: {
+        accountId?: string; // brand-ok — proof JSON wire field
+        pagesProject?: string;
+        zoneName?: string;
+      };
+      mcpCatalog?: { ok?: boolean; rows?: Array<{ ok: boolean }> };
+      summary?: { staticOk?: boolean; tier?: string };
+    },
+    wellKnownMcp: loaded['public/.well-known/mcp.json'] as {
+      servers?: Array<{ name: string; url: string }>;
+    },
+    cloudflareTokenExpected: {
+      accountId: CLOUDFLARE_TOKEN_PERMISSIONS.accountId,
+      pagesProject: CLOUDFLARE_TOKEN_PERMISSIONS.pagesProject,
+      zoneName: CLOUDFLARE_TOKEN_PERMISSIONS.zoneName,
+    },
+    referenceIndex: referenceIndex as {
+      count?: number;
+      moduleCount?: number;
+      generated?: string;
+    },
+    taxonomyAuditCount: audits.length,
+    taxonomyExpectedCount: PROOF_TAXONOMY_CONTRACTS.length,
     // Always evaluate bake consistency when release exists (missing → fail row)
     channelMetaBake: loaded['public/registry/release-features.json'] ? channelMetaBake : undefined,
   });

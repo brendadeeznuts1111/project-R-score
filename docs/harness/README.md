@@ -195,7 +195,7 @@ Parallel agent lanes for platform mapping — run from broad to narrow:
 |------|-----------------|--------|
 | 0 | `bun run harness:status` | ratchet + claim inventory |
 | 1 | `bun run cloudflare:env` · MCP `cloudflare` Pages API | domain pins · deploy state |
-| 2 | `bun run verify:proof-taxonomy:save` · `bun run check:release-tracker` | 7 contracts + consistency |
+| 2 | `bun run verify:proof-taxonomy:save` · `bun run check:release-tracker` | 12 contracts · 18 consistency |
 | 3 | `bun run ops:snapshot` · `bun run verify:portal` · `verify:pages-edge` | live portal + Pages edge |
 
 Routing SSOT: [`docs/platform-routing.md`](../platform-routing.md) · proof taxonomy: [`PROOF.md`](PROOF.md#verification-lane-taxonomy-bun-product-pillars).

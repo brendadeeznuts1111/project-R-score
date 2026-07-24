@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Cloudflare / R2 / Pages env SSOT (+ `bun run cloudflare:env` CLI).
@@ -11,6 +12,8 @@
  *
  * Claim: `cloudflare-pages-env-ssot` · Tenant: docs/harness/tenants/cloudflare-pages.md
  */
+
+import { asAccountId, asZoneId } from '../lib/types/branded.ts';
 
 /** Non-secret identity proven live (wrangler whoami + Pages/zones API). */
 export const CLOUDFLARE_DEFAULTS = {
@@ -210,6 +213,33 @@ export const CLOUDFLARE_ZONE = {
   name: envString('CLOUDFLARE_ZONE_NAME', CLOUDFLARE_DEFAULTS.zones.factoryWager.name),
 } as const;
 
+/** Layer 2 — dashboard token policy SSOT (MCP + harness). See tenant doc for mint steps. */
+export const CLOUDFLARE_TOKEN_PERMISSIONS = {
+  accountId: asAccountId(CLOUDFLARE_DEFAULTS.accountId),
+  pagesProject: CLOUDFLARE_DEFAULTS.pages.project,
+  zoneName: CLOUDFLARE_DEFAULTS.zones.factoryWager.name,
+  zoneId: asZoneId(CLOUDFLARE_DEFAULTS.zones.factoryWager.id),
+  /** Minimum for assert-live + DNS CNAME script */
+  minimal: [
+    { permission: 'Cloudflare Pages:Edit', resource: 'account → project-r-score' },
+    { permission: 'Cloudflare Pages:Read', resource: 'account → project-r-score' },
+    { permission: 'Zone:DNS:Edit', resource: 'factory-wager.com' },
+    { permission: 'Zone:Read', resource: 'factory-wager.com' },
+  ],
+  /** Optional extras when using all five HTTP MCP servers (broader blast radius) */
+  mcpOptional: [
+    'Workers Scripts:Edit',
+    'Workers Scripts:Read',
+    'Workers R2 Storage:Edit',
+    'Workers R2 Storage:Read',
+    'Account Settings:Read',
+    'Workers Observability Read',
+    'Workers Tail Read',
+    'Cloudflare Pages:Edit',
+    'Cloudflare Pages:Read',
+  ],
+} as const;
+
 /** Desired Git-integration build_config (matches live project-r-score). */
 export function cloudflarePagesDesiredBuild() {
   return {
@@ -350,8 +380,9 @@ async function wranglerOauthToken(): Promise<string | undefined> {
 
 /** Env token, else wrangler OAuth — for live Pages assert CLI. */
 export async function resolveCloudflareApiToken(): Promise<string> {
-  if (isUsableSecret(R2_CONFIG.cloudflareApiToken)) {
-    return R2_CONFIG.cloudflareApiToken;
+  const fromEnv = envString('CLOUDFLARE_API_TOKEN');
+  if (isUsableSecret(fromEnv)) {
+    return fromEnv;
   }
   const oauth = await wranglerOauthToken();
   if (oauth) return oauth;
@@ -445,6 +476,19 @@ export async function assertLiveCloudflarePages(): Promise<{
   };
 }
 
+/**
+ * Layer 2 scope probe — token verify + Pages/zone reachability.
+ * Harness operational confidence; does not restrict MCP runtime (dashboard-only).
+ */
+export async function assertCloudflareTokenScope(opts?: {
+  strict?: boolean;
+}): Promise<import('../lib/verification/cloudflare-token-scope.ts').CloudflareTokenScopeReport> {
+  const { runCloudflareTokenScopeProbe } = await import(
+    '../lib/verification/cloudflare-token-scope.ts'
+  );
+  return runCloudflareTokenScopeProbe(opts);
+}
+
 /** HTTP-only apex check — no API token (CI-safe when Pages is up). */
 export async function assertCloudflarePagesApex(
   url: string = CLOUDFLARE_PAGES.url
@@ -464,6 +508,12 @@ if (import.meta.main) {
   const assertOnly = Bun.argv.includes('--assert');
   const assertLive = Bun.argv.includes('--assert-live');
   const assertApex = Bun.argv.includes('--assert-apex');
+  if (Bun.argv.includes('--validate-token')) {
+    console.error(
+      'Use: bun run cloudflare:env:validate (tools/cloudflare-env-validate.ts — avoids CLI circular import)'
+    );
+    process.exit(1);
+  }
   if (assertLive) {
     const live = await assertLiveCloudflarePages();
     console.log('cloudflare Pages live OK', live);

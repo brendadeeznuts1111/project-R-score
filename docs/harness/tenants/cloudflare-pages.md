@@ -27,6 +27,94 @@ Common root causes:
 5. Local pin check (no API): `bun run cloudflare:env:assert`
 6. Apex HTTP check (no API token): `bun run cloudflare:env:assert-apex`
 7. Live dashboard drift + apex (API token or wrangler OAuth): `bun run cloudflare:env:assert-live`
+8. Token scope probe (Layer 2 — permissions + Pages/zone reachability): `bun run cloudflare:env:validate`
+
+### Token permissions (Layer 2)
+
+MCP HTTP servers in [`.mcp.json`](../../../.mcp.json) send `Authorization: Bearer ${CLOUDFLARE_API_TOKEN}` to Cloudflare-hosted endpoints. **There is no Cloudflare Access or Worker proxy** — the only runtime boundary is the token minted in the [Cloudflare dashboard](https://dash.cloudflare.com/profile/api-tokens).
+
+**Operational confidence vs runtime authorization:** Harness commands (`cloudflare:env:assert-live`, `cloudflare:env:validate`) prove local pins and declared token scope. They do **not** restrict what MCP can do at runtime — that remains dashboard-only.
+
+SSOT: [`CLOUDFLARE_TOKEN_PERMISSIONS`](../../../config/r2-env.ts) in `config/r2-env.ts`.
+
+| Tier | Permissions | Use |
+|------|-------------|-----|
+| **Minimal** | Cloudflare Pages:Read + Edit (project `project-r-score`), Zone:Read + DNS:Edit (`factory-wager.com`) | `assert-live`, DNS CNAME script, Pages deploy repair |
+| **MCP-full** | Minimal + Workers Scripts/R2/Observability read (as needed for optional MCP servers) | All five HTTP MCP servers in `.mcp.json` |
+
+**Why not mint through MCP?** Hosted MCP servers consume `Authorization: Bearer ${CLOUDFLARE_API_TOKEN}` — they do not expose token creation. Minting requires the [dashboard](https://dash.cloudflare.com/profile/api-tokens) (human authority boundary); `cloudflare:env:validate` proves the mint worked (operational confidence).
+
+**Token kinds:** User tokens (`cfut_…`) verify at `/user/tokens/verify` and return permission policies. **Account tokens** (`cfat_…`, Manage Account → API Tokens) verify at `/accounts/{account_id}/tokens/verify` — validate uses probe-based scope for those (Pages + zone API), which matches why `assert-live` can pass while an old user-verify curl fails.
+
+| Aspect | Dashboard | MCP |
+|--------|-----------|-----|
+| Mint new token | Yes — human-only, auditable | No — not exposed |
+| Narrow scope | Yes — explicit resources/permissions | No — behaviour follows token only |
+| Validate scope | Manual | `bun run cloudflare:env:validate` (+ `--strict`) |
+| Rotate tokens | Dashboard | No |
+
+#### Dashboard checklist (copy-paste)
+
+Open **[Cloudflare → My Profile → API Tokens](https://dash.cloudflare.com/profile/api-tokens)** → **Create Token** → **Create Custom Token**.
+
+**1. Token name**
+
+```
+MCP-Portal-Scoped
+```
+
+(or any label you will recognize at rotation time)
+
+**2. Permissions — minimal harness tier**
+
+| Resource type | Permission | Resource restriction |
+|---------------|------------|-------------------|
+| Account → `7a470541a704caaf91e71efccc78fd36` | **Cloudflare Pages** → Read | **Specific project** → `project-r-score` |
+| Account → `7a470541a704caaf91e71efccc78fd36` | **Cloudflare Pages** → Edit | **Specific project** → `project-r-score` |
+| Zone → `factory-wager.com` | **Zone** → Read | *(inherits zone restriction)* |
+| Zone → `factory-wager.com` | **DNS** → Edit | *(inherits zone restriction)* |
+
+Pages **Read** is required for `cloudflare:env:assert-live` and the Pages probe inside `cloudflare:env:validate` (GET project settings). Edit alone is not enough for the harness gates.
+
+If you use **all five** HTTP MCP servers in [`.mcp.json`](../../../.mcp.json) (`cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`), add the **MCP-full** extras from [`CLOUDFLARE_TOKEN_PERMISSIONS.mcpOptional`](../../../config/r2-env.ts) (Workers Scripts/R2/Observability as needed). Minimal tier is sufficient for Pages + DNS CNAME work only.
+
+**3. Account resources**
+
+- Include **only** account `7a470541a704caaf91e71efccc78fd36`
+- Not “All accounts”
+
+**4. Zone resources**
+
+- Include **only** zone `factory-wager.com`
+- Not “All zones”
+
+**5. TTL**
+
+- 1 year (or your rotation policy). Shorter if you rotate often.
+
+**6. Create and copy**
+
+- **Create Token** → copy the value immediately (shown once).
+
+**7. Store**
+
+```bash
+# Reasonix / Cursor (AGENTS.md default)
+echo 'CLOUDFLARE_API_TOKEN=…' >> ~/.reasonix/.env
+
+# Or project .env for CI
+# Guided setup: bash scripts/cloudflare-env-setup.sh
+```
+
+**8. Verify**
+
+```bash
+bun run cloudflare:env:validate
+bun run cloudflare:env:validate --strict   # fail if permissions are over-broad
+bun run verify:cloudflare-token:save       # optional proof artifact (live probe when token set)
+```
+
+Discovery manifest (Layer 5): `/.well-known/mcp.json` on Pages (see [`public/.well-known/mcp.json`](../../../public/.well-known/mcp.json)). Regenerate: `bun run sync:well-known-mcp`. Proof artifact: `bun run verify:cloudflare-token:save` → [`public/registry/cloudflare-token-scope-proof.json`](../../../public/registry/cloudflare-token-scope-proof.json).
 
 Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps + portal) plus root `functions/` (Pages Functions). Apex 404 means `index.html` is missing from that dir. Pack/release/changelog R2 URLs resolve via `r2BucketUrlFromEnv()` in `config/r2-env.ts`. Registry apps import root `lib/` / `config/` at **7** `../` levels from `apps/*/src` and `packages/*/src`.
 

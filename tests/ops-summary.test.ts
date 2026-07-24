@@ -37,11 +37,16 @@ describe('buildOpsSummary', () => {
     expect(s.bunUtils.proofHash).toMatch(/^[a-f0-9]{64}$/);
     expect(s.registryClient).toHaveProperty('available');
     expect(s.registryClient.path).toBe('/registry/registry-client-proof.json');
+    expect(s.cloudflareTokenScope).toHaveProperty('available');
+    expect(s.cloudflareTokenScope.path).toBe('/registry/cloudflare-token-scope-proof.json');
     expect(s.proofTaxonomy).toHaveProperty('available');
     expect(s.proofTaxonomy.path).toBe('/registry/proof-taxonomy-audit.json');
     if (s.proofTaxonomy.available) {
       expect(s.proofTaxonomy.contracts).toBeGreaterThan(0);
       expect(s.proofTaxonomy.proofHash).toMatch(/^[a-f0-9]{64}$/);
+      if (s.proofTaxonomy.audits?.length) {
+        expect(s.proofTaxonomy.audits.length).toBe(s.proofTaxonomy.contracts);
+      }
     }
     expect(s.channelMeta).toHaveProperty('available');
     expect(s.channelMeta.path).toBe('/registry/release-features.json');

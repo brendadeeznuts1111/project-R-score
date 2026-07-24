@@ -78,6 +78,7 @@ export type OpsSummaryRegistryClient = {
   passed?: number;
   total?: number;
   status?: 'pass' | 'fail';
+  subsystem?: 'package-manager';
   proofHash?: string;
   timestamp?: string;
   path: '/registry/registry-client-proof.json';
@@ -86,6 +87,7 @@ export type OpsSummaryRegistryClient = {
 export type OpsSummaryDocsCoverage = {
   available: boolean;
   ok?: boolean;
+  subsystem?: 'other';
   missingCanonicalCount?: number;
   catalogTracked?: number;
   catalogTotal?: number;
@@ -99,6 +101,36 @@ export type OpsSummaryDocsCoverage = {
   path: '/registry/docs-coverage-proof.json';
 };
 
+/** Cloudflare token scope + MCP catalog parity (Layer 2 + Layer 5). */
+export type OpsSummaryCloudflareTokenScope = {
+  available: boolean;
+  ok?: boolean;
+  status?: 'pass' | 'fail' | 'partial';
+  tier?: string;
+  staticOk?: boolean;
+  liveOk?: boolean | null;
+  liveAvailable?: boolean;
+  mcpCatalogOk?: boolean;
+  serverCount?: number;
+  proofHash?: string;
+  timestamp?: string;
+  path: '/registry/cloudflare-token-scope-proof.json';
+  wellKnownPath: '/.well-known/mcp.json';
+};
+
+export type OpsSummaryProofTaxonomyAuditRow = {
+  path: string;
+  reportPath: string;
+  ok: boolean;
+  primarySubsystem: string;
+  rows: number;
+};
+
+export type OpsSummaryProofTaxonomyConsistencyRow = {
+  id: string; // brand-ok — opaque consistency check id
+  ok: boolean;
+};
+
 export type OpsSummaryProofTaxonomy = {
   available: boolean;
   ok?: boolean;
@@ -106,6 +138,9 @@ export type OpsSummaryProofTaxonomy = {
   contractsOk?: number;
   consistencyOk?: number;
   consistencyTotal?: number;
+  /** Per-contract rows — embedded so portal renders without full audit JSON fetch. */
+  audits?: OpsSummaryProofTaxonomyAuditRow[];
+  consistency?: OpsSummaryProofTaxonomyConsistencyRow[];
   proofHash?: string;
   timestamp?: string;
   path: '/registry/proof-taxonomy-audit.json';
@@ -172,6 +207,11 @@ export type OpsSummaryPayload = {
    * (RSS + reference + canonical alignment; `bun run verify:docs-coverage:save`).
    */
   docsCoverage: OpsSummaryDocsCoverage;
+  /**
+   * Cloudflare token scope proof from public/registry/cloudflare-token-scope-proof.json
+   * (`bun run verify:cloudflare-token:save`).
+   */
+  cloudflareTokenScope: OpsSummaryCloudflareTokenScope;
   /**
    * Proof taxonomy audit from public/registry/proof-taxonomy-audit.json
    * (`bun run verify:proof-taxonomy:save` / `verify-all` / `ops:snapshot`).
@@ -351,6 +391,7 @@ export function loadRegistryClientProofSlice(
     const mapped = Bun.mmap(path);
     const data = JSON.parse(new TextDecoder().decode(mapped)) as {
       sdkVersion?: string;
+      subsystem?: 'package-manager';
       summary?: { passed?: number; total?: number; status?: 'pass' | 'fail' };
       proofHash?: string;
       timestamp?: string;
@@ -361,6 +402,7 @@ export function loadRegistryClientProofSlice(
       passed: data.summary?.passed,
       total: data.summary?.total,
       status: data.summary?.status,
+      subsystem: data.subsystem ?? 'package-manager',
       proofHash: data.proofHash,
       timestamp: data.timestamp,
       path: '/registry/registry-client-proof.json',
@@ -371,6 +413,7 @@ export function loadRegistryClientProofSlice(
 }
 
 const DOCS_COVERAGE_PROOF_PATH = 'public/registry/docs-coverage-proof.json';
+const CLOUDFLARE_TOKEN_SCOPE_PROOF_PATH = 'public/registry/cloudflare-token-scope-proof.json';
 const PROOF_TAXONOMY_AUDIT_PATH = 'public/registry/proof-taxonomy-audit.json';
 const CHANNEL_META_BAKE_PATH = 'public/registry/channel-meta-bake.json';
 const RELEASE_FEATURES_PATH = 'public/registry/release-features.json';
@@ -491,8 +534,14 @@ export function loadProofTaxonomySlice(
       ok?: boolean;
       proofHash?: string;
       timestamp?: string;
-      audits?: unknown[];
-      consistency?: unknown[];
+      audits?: Array<{
+        path?: string;
+        reportPath?: string;
+        ok?: boolean;
+        primarySubsystem?: string;
+        rows?: number;
+      }>;
+      consistency?: Array<{ id?: string; ok?: boolean }>; // brand-ok — consistency row id
     };
     const audits = data.audits ?? [];
     const consistency = data.consistency ?? [];
@@ -500,9 +549,20 @@ export function loadProofTaxonomySlice(
       available: true,
       ok: data.ok,
       contracts: audits.length,
-      contractsOk: audits.filter((a: { ok?: boolean }) => a.ok).length,
-      consistencyOk: consistency.filter((c: { ok?: boolean }) => c.ok).length,
+      contractsOk: audits.filter(a => a.ok).length,
+      consistencyOk: consistency.filter(c => c.ok).length,
       consistencyTotal: consistency.length,
+      audits: audits.map(a => ({
+        path: a.path ?? '',
+        reportPath: a.reportPath ?? '',
+        ok: a.ok === true,
+        primarySubsystem: a.primarySubsystem ?? 'other',
+        rows: a.rows ?? 0,
+      })),
+      consistency: consistency.map(c => ({
+        id: c.id ?? 'unknown',
+        ok: c.ok === true,
+      })),
       proofHash: data.proofHash,
       timestamp: data.timestamp,
       path: '/registry/proof-taxonomy-audit.json',
@@ -519,6 +579,7 @@ export function loadDocsCoverageProofSlice(
   try {
     const mapped = Bun.mmap(path);
     const data = JSON.parse(new TextDecoder().decode(mapped)) as {
+      subsystem?: 'other';
       summary?: { ok?: boolean; missingCanonicalCount?: number; indexStale?: boolean };
       canonical?: {
         catalogTracked?: number;
@@ -533,6 +594,7 @@ export function loadDocsCoverageProofSlice(
     return {
       available: true,
       ok: data.summary?.ok,
+      subsystem: data.subsystem ?? 'other',
       missingCanonicalCount: data.summary?.missingCanonicalCount,
       catalogTracked: data.canonical?.catalogTracked,
       catalogTotal: data.canonical?.catalogTotal,
@@ -547,6 +609,49 @@ export function loadDocsCoverageProofSlice(
     };
   } catch {
     return { available: false, path: '/registry/docs-coverage-proof.json' };
+  }
+}
+
+/** Disk snapshot of Cloudflare token scope + MCP catalog parity proof. */
+export function loadCloudflareTokenScopeSlice(
+  path: string = CLOUDFLARE_TOKEN_SCOPE_PROOF_PATH
+): OpsSummaryCloudflareTokenScope {
+  try {
+    const mapped = Bun.mmap(path);
+    const data = JSON.parse(new TextDecoder().decode(mapped)) as {
+      summary?: {
+        ok?: boolean;
+        status?: 'pass' | 'fail' | 'partial';
+        tier?: string;
+        staticOk?: boolean;
+        liveOk?: boolean | null;
+      };
+      mcpCatalog?: { ok?: boolean; serverCount?: number };
+      liveProbe?: { available?: boolean };
+      proofHash?: string;
+      timestamp?: string;
+    };
+    return {
+      available: true,
+      ok: data.summary?.ok,
+      status: data.summary?.status,
+      tier: data.summary?.tier,
+      staticOk: data.summary?.staticOk,
+      liveOk: data.summary?.liveOk,
+      liveAvailable: data.liveProbe?.available,
+      mcpCatalogOk: data.mcpCatalog?.ok,
+      serverCount: data.mcpCatalog?.serverCount,
+      proofHash: data.proofHash,
+      timestamp: data.timestamp,
+      path: '/registry/cloudflare-token-scope-proof.json',
+      wellKnownPath: '/.well-known/mcp.json',
+    };
+  } catch {
+    return {
+      available: false,
+      path: '/registry/cloudflare-token-scope-proof.json',
+      wellKnownPath: '/.well-known/mcp.json',
+    };
   }
 }
 
@@ -637,6 +742,7 @@ export function buildOpsSummary(
     bunUtils: queryBunUtilsProof(),
     registryClient: loadRegistryClientProofSlice(),
     docsCoverage: loadDocsCoverageProofSlice(),
+    cloudflareTokenScope: loadCloudflareTokenScopeSlice(),
     proofTaxonomy: loadProofTaxonomySlice(),
     channelMeta: loadChannelMetaSlice(),
     routing: loadRoutingOpsSliceSync(),

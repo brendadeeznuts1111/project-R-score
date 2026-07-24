@@ -306,6 +306,11 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'public/index.html',
       'bun run cloudflare:env:assert',
       'bun run cloudflare:env:assert-apex',
+      'bun run cloudflare:env:validate',
+      'bun run verify:cloudflare-token:static',
+      'tools/verify-cloudflare-token.ts',
+      'lib/verification/cloudflare-token-scope.ts',
+      'public/.well-known/mcp.json',
       'docs/harness/tenants/cloudflare-pages.md',
     ],
     // freshRerun must be an evidence entry (parity ratchet); apex/assert stay optional ops evidence.

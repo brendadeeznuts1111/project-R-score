@@ -6,7 +6,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
 **Remote SSH:** Reasonix remote hosts live in `~/.reasonix/config.toml` under `[remote]`. Active: `factorywager-staging` (internal.staging, `~/.ssh/id_ed25519`, workspace `~/Projects`). `cloudflare-pages` (API-based, no SSH — deploy via `bash scripts/cloudflare-pages-deploy.sh`). Cascade Mover host is placeholder (uncomment when IP known). Tunnel: `scripts/cloudflared-reasonix.yml` → `reasonix.factory-wager.com`. CLI: `reasonix remote test/connect/list`. First-time bootstrap: `bun run remote:setup`. Reasonix binary: `/Applications/Reasonix.app/Contents/MacOS/reasonix`.
 
-**Cloudflare MCP** (`.mcp.json`): `cloudflare` (account/API) · `cloudflare-docs` (search) · `cloudflare-bindings` (Workers bindings) · `cloudflare-builds` (Workers Builds CI — not Pages deploy history) · `cloudflare-observability` (logs/metrics). Token: `CLOUDFLARE_API_TOKEN` in `~/.reasonix/.env`. Pages project pins: `bun run cloudflare:env`.
+**Cloudflare MCP** (`.mcp.json`): `cloudflare` (account/API) · `cloudflare-docs` (search) · `cloudflare-bindings` (Workers bindings) · `cloudflare-builds` (Workers Builds CI — not Pages deploy history) · `cloudflare-observability` (logs/metrics). Token: `CLOUDFLARE_API_TOKEN` in `~/.reasonix/.env`. Pages project pins: `bun run cloudflare:env`. Token scope probe (`bun run cloudflare:env:validate`) proves harness operational confidence — **not** MCP runtime authorization (dashboard token policy only).
 
 ## Canonical docs
 
@@ -32,7 +32,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | TokenRef (interior) / BunToken (export) | [`lib/docs/token-ref.ts`](lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](lib/docs/bun-token.ts) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
-| Cloudflare / R2 / Pages | [`config/r2-env.ts`](config/r2-env.ts) · `bun run cloudflare:env` / `:assert` / `:assert-apex` / `:assert-live` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
+| Cloudflare / R2 / Pages | [`config/r2-env.ts`](config/r2-env.ts) · `bun run cloudflare:env` / `:assert` / `:assert-apex` / `:assert-live` / `:validate` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
 
 ## Communication precision

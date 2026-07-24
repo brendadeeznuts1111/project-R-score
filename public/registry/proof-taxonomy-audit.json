@@ -1,7 +1,7 @@
 {
   "type": "ProofTaxonomyAuditReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T04:51:50.349Z",
+  "timestamp": "2026-07-24T05:25:47.190Z",
   "ok": true,
   "reportPath": "/registry/proof-taxonomy-audit.json",
   "audits": [
@@ -81,6 +81,61 @@
       "primarySubsystem": "networking",
       "reportPath": "/registry/networking-channel-proof.json",
       "verifyScript": "tools/verify-channel.ts --suite=networking"
+    },
+    {
+      "path": "public/registry/docs-coverage-proof.json",
+      "ok": true,
+      "rows": 0,
+      "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
+      "notes": [],
+      "primarySubsystem": "other",
+      "reportPath": "/registry/docs-coverage-proof.json",
+      "verifyScript": "tools/verify-docs-coverage.ts"
+    },
+    {
+      "path": "public/registry/registry-client-proof.json",
+      "ok": true,
+      "rows": 3,
+      "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
+      "notes": [],
+      "primarySubsystem": "package-manager",
+      "reportPath": "/registry/registry-client-proof.json",
+      "verifyScript": "tools/verify-registry-client.ts"
+    },
+    {
+      "path": "public/registry/doc-index.json",
+      "ok": true,
+      "rows": 0,
+      "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
+      "notes": [],
+      "primarySubsystem": "other",
+      "reportPath": "/registry/doc-index.json",
+      "verifyScript": "tools/build-doc-index.ts"
+    },
+    {
+      "path": "public/registry/cloudflare-token-scope-proof.json",
+      "ok": true,
+      "rows": 5,
+      "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
+      "notes": [],
+      "primarySubsystem": "other",
+      "reportPath": "/registry/cloudflare-token-scope-proof.json",
+      "verifyScript": "tools/verify-cloudflare-token.ts"
+    },
+    {
+      "path": "public/.well-known/mcp.json",
+      "ok": true,
+      "rows": 5,
+      "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
+      "notes": [],
+      "primarySubsystem": "other",
+      "reportPath": "/.well-known/mcp.json",
+      "verifyScript": "tools/sync-well-known-mcp.ts --check"
     }
   ],
   "consistency": [
@@ -138,7 +193,42 @@
       "id": "by-subsystem:networking-channel",
       "ok": true,
       "notes": []
+    },
+    {
+      "id": "by-subsystem:registry-client",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "registry-client-install-env",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "docs-coverage-reference-parity",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "docs-coverage-doc-index",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "cloudflare-token-scope-ssot",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "well-known-mcp-catalog-parity",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "taxonomy-contract-registry",
+      "ok": true,
+      "notes": []
     }
   ],
-  "proofHash": "ac6bf1a124d95b9e2fa3799e268f1bee6ed5bf58b3f8b890915495e85dd4e698"
+  "proofHash": "58c6b9f1a8cda074b16596659a137324367720726d6b7393f8fa372196776e34"
 }

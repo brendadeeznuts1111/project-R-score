@@ -35,6 +35,7 @@ class OperationsDashboard extends HTMLElement {
   networkingProof = null;
   registryClient = null;
   docsCoverage = null;
+  cloudflareTokenScope = null;
   bunRuntimeNits = null;
   bundlerLoaders = null;
   proofTaxonomyAudit = null;
@@ -126,16 +127,32 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
-          <section class="ops-panel wide">
-            <h2>Docs coverage (RSS + reference)</h2>
+          <section class="ops-panel wide" data-subsystem="other">
+            <h2>Docs coverage (RSS + reference) <span class="version-badge subsystem-other">other</span></h2>
             <div class="ops-metric" id="docs-coverage-pass">—</div>
             <div class="ops-sub" id="docs-coverage-detail"></div>
             <div class="ops-mono" id="docs-coverage-hash"></div>
             <a class="ops-link" id="docs-coverage-link" href="/registry/docs-coverage-proof.json">Full docs coverage proof JSON</a>
             <a class="ops-link" href="https://bun.com/reference" target="_blank" rel="noopener" title="Meta · stable — Complete generated API reference">Bun API Reference</a>
+            <table id="docs-coverage-table" class="ops-table hidden">
+              <thead><tr><th>Lane</th><th>Status</th><th>Detail</th></tr></thead>
+              <tbody></tbody>
+            </table>
           </section>
-          <section class="ops-panel wide">
-            <h2>Registry client SDK</h2>
+          <section class="ops-panel wide" data-subsystem="other">
+            <h2>Cloudflare token scope + MCP catalog <span class="version-badge subsystem-other">other</span></h2>
+            <div class="ops-metric" id="cloudflare-token-pass">—</div>
+            <div class="ops-sub" id="cloudflare-token-detail"></div>
+            <div class="ops-mono" id="cloudflare-token-hash"></div>
+            <a class="ops-link" id="cloudflare-token-link" href="/registry/cloudflare-token-scope-proof.json">Token scope proof JSON</a>
+            <a class="ops-link" href="/.well-known/mcp.json">/.well-known/mcp.json</a>
+            <table id="cloudflare-token-table" class="ops-table hidden">
+              <thead><tr><th>Server</th><th>Status</th><th>URL</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </section>
+          <section class="ops-panel wide" data-subsystem="package-manager">
+            <h2>Registry client SDK <span class="version-badge subsystem-package-manager">package-manager</span></h2>
             <div class="ops-metric" id="registry-client-pass">—</div>
             <div class="ops-sub" id="registry-client-detail"></div>
             <div class="ops-mono" id="registry-client-hash"></div>
@@ -347,6 +364,16 @@ class OperationsDashboard extends HTMLElement {
     }
   }
 
+  async loadCloudflareTokenScope() {
+    this.cloudflareTokenScope = null;
+    try {
+      const res = await fetch('/registry/cloudflare-token-scope-proof.json');
+      if (res.ok) this.cloudflareTokenScope = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
   async loadBunRuntimeNits() {
     this.bunRuntimeNits = null;
     try {
@@ -386,6 +413,7 @@ class OperationsDashboard extends HTMLElement {
     await this.loadNetworkingProof();
     await this.loadRegistryClient();
     await this.loadDocsCoverage();
+    await this.loadCloudflareTokenScope();
     await this.loadBunRuntimeNits();
     await this.loadBundlerLoaders();
     await this.loadProofTaxonomyAudit();
@@ -707,7 +735,9 @@ class OperationsDashboard extends HTMLElement {
     }
     const taxTable = this.querySelector('#taxonomy-table');
     const taxTbody = taxTable?.querySelector('tbody');
-    const taxRows = tax.audits || [];
+    const taxRows =
+      (tax.audits && tax.audits.length > 0 ? tax.audits : null) ||
+      (pt?.audits && pt.audits.length > 0 ? pt.audits : []);
     if (taxTable && taxTbody) {
       if (taxRows.length > 0) {
         taxTable.classList.remove('hidden');
@@ -985,6 +1015,104 @@ class OperationsDashboard extends HTMLElement {
     if (dcHash) {
       dcHash.textContent = dc.proofHash ? `sha256 ${String(dc.proofHash).slice(0, 16)}…` : '';
     }
+    const dcTable = this.querySelector('#docs-coverage-table');
+    const dcTbody = dcTable?.querySelector('tbody');
+    const dcLanes = dc.lanes || [];
+    if (dcTable && dcTbody) {
+      if (dcLanes.length > 0) {
+        dcTable.classList.remove('hidden');
+        dcTbody.innerHTML = dcLanes
+          .map(lane =>
+            renderVerificationTableRow({
+              name: lane.name,
+              passed: lane.passed,
+              subsystem: lane.subsystem,
+              expected: lane.expected,
+              actual: lane.actual,
+              canonical: dc._links?.docs,
+            })
+          )
+          .join('');
+      } else {
+        dcTable.classList.add('hidden');
+        dcTbody.innerHTML = '';
+      }
+    }
+
+    const cf =
+      this.cloudflareTokenScope ||
+      (d.cloudflareTokenScope?.available
+        ? {
+            summary: {
+              ok: d.cloudflareTokenScope.ok,
+              status: d.cloudflareTokenScope.status,
+              tier: d.cloudflareTokenScope.tier,
+              staticOk: d.cloudflareTokenScope.staticOk,
+              liveOk: d.cloudflareTokenScope.liveOk,
+            },
+            mcpCatalog: {
+              ok: d.cloudflareTokenScope.mcpCatalogOk,
+              serverCount: d.cloudflareTokenScope.serverCount,
+            },
+            liveProbe: { available: d.cloudflareTokenScope.liveAvailable },
+            proofHash: d.cloudflareTokenScope.proofHash,
+          }
+        : {});
+    const cfPass = this.querySelector('#cloudflare-token-pass');
+    if (cfPass) {
+      if (cf.summary?.ok === true) {
+        cfPass.textContent = '✅';
+        cfPass.classList.add('ok');
+        cfPass.classList.remove('bad');
+      } else if (cf.summary?.status === 'partial') {
+        cfPass.textContent = `⚠️ ${cf.summary.tier ?? 'partial'}`;
+        cfPass.classList.toggle('ok', false);
+        cfPass.classList.toggle('bad', true);
+      } else if (cf.summary) {
+        cfPass.textContent = '❌';
+        cfPass.classList.toggle('ok', false);
+        cfPass.classList.toggle('bad', true);
+      } else {
+        cfPass.textContent = '—';
+      }
+    }
+    const cfDetail = this.querySelector('#cloudflare-token-detail');
+    if (cfDetail) {
+      const tier = cf.summary?.tier ?? '—';
+      const live = cf.liveProbe?.available
+        ? cf.summary?.liveOk === true
+          ? 'live ✅'
+          : 'live ❌'
+        : 'live skipped';
+      const catalog = cf.mcpCatalog?.ok ? `catalog ${cf.mcpCatalog.serverCount ?? 5}/5` : 'catalog ❌';
+      cfDetail.textContent = `${catalog} · tier ${tier} · ${live}`;
+    }
+    const cfHash = this.querySelector('#cloudflare-token-hash');
+    if (cfHash) {
+      cfHash.textContent = cf.proofHash ? `sha256 ${String(cf.proofHash).slice(0, 16)}…` : '';
+    }
+    const cfTable = this.querySelector('#cloudflare-token-table');
+    const cfTbody = cfTable?.querySelector('tbody');
+    const cfRows = cf.mcpCatalog?.rows || [];
+    if (cfTable && cfTbody) {
+      if (cfRows.length > 0) {
+        cfTable.classList.remove('hidden');
+        cfTbody.innerHTML = cfRows
+          .map(r =>
+            renderVerificationTableRow({
+              name: r.name,
+              passed: r.ok,
+              subsystem: 'other',
+              expected: r.repoUrl ?? '—',
+              actual: r.wellKnownUrl ?? '—',
+            })
+          )
+          .join('');
+      } else {
+        cfTable.classList.add('hidden');
+        cfTbody.innerHTML = '';
+      }
+    }
 
     const rc =
       this.registryClient ||
@@ -1014,7 +1142,7 @@ class OperationsDashboard extends HTMLElement {
     const rcDetail = this.querySelector('#registry-client-detail');
     if (rcDetail) {
       rcDetail.textContent = rc.sdkVersion
-        ? `SDK v${rc.sdkVersion} · Bun ${rc.bunVersion ?? '?'} · ${(rc.results || []).filter(r => r.canonical).length}/${(rc.results || []).length} with canonical URLs`
+        ? `SDK v${rc.sdkVersion} · Bun ${rc.bunVersion ?? '?'} · ${(rc.results || []).filter(r => r.canonical).length}/${(rc.results || []).length} with canonical URLs${formatBySubsystem(rc.summary?.bySubsystem)}`
         : 'Run bun tools/verify-registry-client.ts --save';
     }
     const rcHash = this.querySelector('#registry-client-hash');

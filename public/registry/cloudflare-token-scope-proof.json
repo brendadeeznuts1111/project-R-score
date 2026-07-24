@@ -1,0 +1,112 @@
+{
+  "type": "CloudflareTokenScopeProof",
+  "version": "1.0.0",
+  "subsystem": "other",
+  "timestamp": "2026-07-24T05:25:47.098Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "reportPath": "/registry/cloudflare-token-scope-proof.json",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "9e110c3d29ff4768e33a725ca7d19935f219c22e",
+    "provenanceId": "local-2026-07-24T05-25-45-142Z",
+    "testedAt": "2026-07-24T05:25:45.142Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none",
+    "subsystems": [
+      "other"
+    ]
+  },
+  "pins": {
+    "accountId": "7a470541a704caaf91e71efccc78fd36",
+    "pagesProject": "project-r-score",
+    "zoneName": "factory-wager.com",
+    "zoneId": "a3b7ba4bb62cb1b177b04b8675250674",
+    "minimalPermissions": [
+      {
+        "permission": "Cloudflare Pages:Edit",
+        "resource": "account → project-r-score"
+      },
+      {
+        "permission": "Cloudflare Pages:Read",
+        "resource": "account → project-r-score"
+      },
+      {
+        "permission": "Zone:DNS:Edit",
+        "resource": "factory-wager.com"
+      },
+      {
+        "permission": "Zone:Read",
+        "resource": "factory-wager.com"
+      }
+    ]
+  },
+  "mcpCatalog": {
+    "ok": true,
+    "serverCount": 5,
+    "rows": [
+      {
+        "name": "cloudflare",
+        "repoUrl": "https://mcp.cloudflare.com/mcp",
+        "wellKnownUrl": "https://mcp.cloudflare.com/mcp",
+        "ok": true
+      },
+      {
+        "name": "cloudflare-docs",
+        "repoUrl": "https://docs.mcp.cloudflare.com/mcp",
+        "wellKnownUrl": "https://docs.mcp.cloudflare.com/mcp",
+        "ok": true
+      },
+      {
+        "name": "cloudflare-bindings",
+        "repoUrl": "https://bindings.mcp.cloudflare.com/mcp",
+        "wellKnownUrl": "https://bindings.mcp.cloudflare.com/mcp",
+        "ok": true
+      },
+      {
+        "name": "cloudflare-builds",
+        "repoUrl": "https://builds.mcp.cloudflare.com/mcp",
+        "wellKnownUrl": "https://builds.mcp.cloudflare.com/mcp",
+        "ok": true
+      },
+      {
+        "name": "cloudflare-observability",
+        "repoUrl": "https://observability.mcp.cloudflare.com/mcp",
+        "wellKnownUrl": "https://observability.mcp.cloudflare.com/mcp",
+        "ok": true
+      }
+    ],
+    "wellKnownPath": "/.well-known/mcp.json",
+    "repoCatalog": ".mcp.json"
+  },
+  "liveProbe": {
+    "available": true,
+    "ok": true,
+    "tier": "minimal",
+    "verify": {
+      "status": "active",
+      "id": "0c3c250a88db2435395ac54f8d5fb777"
+    },
+    "permissions": [],
+    "warnings": []
+  },
+  "summary": {
+    "ok": true,
+    "status": "pass",
+    "tier": "minimal",
+    "staticOk": true,
+    "liveOk": true
+  },
+  "_links": {
+    "self": "/registry/cloudflare-token-scope-proof.json",
+    "wellKnown": "/.well-known/mcp.json",
+    "tenant": "/docs/harness/tenants/cloudflare-pages.md"
+  },
+  "proofHash": "26ba79cfe4b3ead250a98f44ec75353bfbc77b9e1e481ae11016a90e3fd36cab"
+}

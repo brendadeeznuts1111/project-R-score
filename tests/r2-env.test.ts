@@ -5,6 +5,7 @@ import {
   CLOUDFLARE_DEFAULTS,
   CLOUDFLARE_ENV_KEYS,
   CLOUDFLARE_PAGES,
+  CLOUDFLARE_TOKEN_PERMISSIONS,
   CLOUDFLARE_ZONE,
   assertCloudflarePagesPins,
   cloudflareAccountIdFromEnv,
@@ -42,6 +43,12 @@ describe('config/r2-env Cloudflare SSOT', () => {
       production_branch: 'main',
     });
     expect(() => assertCloudflarePagesPins()).not.toThrow();
+  });
+
+  test('token permissions SSOT pins project-r-score + factory-wager zone', () => {
+    expect(CLOUDFLARE_TOKEN_PERMISSIONS.pagesProject).toBe('project-r-score');
+    expect(CLOUDFLARE_TOKEN_PERMISSIONS.zoneName).toBe('factory-wager.com');
+    expect(CLOUDFLARE_TOKEN_PERMISSIONS.minimal.length).toBeGreaterThanOrEqual(4);
   });
 
   test('zone defaults + account/endpoint/bucket helpers', () => {

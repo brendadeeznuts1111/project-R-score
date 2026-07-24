@@ -78,6 +78,6 @@ Regenerate: `bun run ops:snapshot` (writes summary + taxonomy audit + routing pr
 
 ## Agent MCP (Cloudflare)
 
-HTTP MCP servers in [`.mcp.json`](../.mcp.json): `cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`. Token: `CLOUDFLARE_API_TOKEN` (`~/.reasonix/.env`). See [`AGENTS.md`](../AGENTS.md).
+HTTP MCP servers in [`.mcp.json`](../.mcp.json): `cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`. Token: `CLOUDFLARE_API_TOKEN` (`~/.reasonix/.env`). Scope probe: `bun run cloudflare:env:validate`. Discovery: `/.well-known/mcp.json` on Pages. See [`AGENTS.md`](../AGENTS.md) and [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md).
 
 **Note:** `cloudflare-builds` is Workers Builds CI — not Cloudflare Pages deploy history. Use `cloudflare` `execute` for Pages API (`/accounts/{id}/pages/projects/...`).

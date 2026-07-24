@@ -5,9 +5,16 @@ import {
   auditBySubsystemTotals,
   auditChannelMetaBake,
   auditChannelMetaPillarEmbed,
+  auditDocsCoverageReferenceParity,
+  auditDocsCoverageDocIndexParity,
   auditInstallPlatformEmbed,
   auditProofConsistency,
+  auditRegistryClientInstallEnvParity,
+  auditCloudflareTokenScopeSsot,
+  auditWellKnownMcpCatalogParity,
+  auditTaxonomyContractRegistry,
 } from '../lib/verification/proof-consistency.ts';
+import { CLOUDFLARE_TOKEN_PERMISSIONS } from '../config/r2-env.ts';
 import type { VerificationResult } from '../lib/verification/types.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
@@ -30,6 +37,73 @@ describe('lib/verification/proof-consistency', () => {
     if (!(await Bun.file(path).exists())) return;
     const proof = await Bun.file(path).json();
     const row = auditBySubsystemTotals(proof, 'release-features');
+    expect(row.ok).toBe(true);
+  });
+
+  test('registry-client bySubsystem matches row counts', async () => {
+    const path = joinPath(ROOT, 'public/registry/registry-client-proof.json');
+    if (!(await Bun.file(path).exists())) return;
+    const proof = await Bun.file(path).json();
+    const row = auditBySubsystemTotals(proof, 'registry-client');
+    expect(row.ok).toBe(true);
+  });
+
+  test('docs-coverage reference counts match reference-index.json', async () => {
+    const dcPath = joinPath(ROOT, 'public/registry/docs-coverage-proof.json');
+    const refPath = joinPath(ROOT, 'tools/reference-index.json');
+    if (!(await Bun.file(dcPath).exists()) || !(await Bun.file(refPath).exists())) return;
+    const docsCoverage = await Bun.file(dcPath).json();
+    const referenceIndex = await Bun.file(refPath).json();
+    const row = auditDocsCoverageReferenceParity(docsCoverage, referenceIndex);
+    expect(row.ok).toBe(true);
+  });
+
+  test('registry-client and install-env registry rows align when both pass', async () => {
+    const rcPath = joinPath(ROOT, 'public/registry/registry-client-proof.json');
+    const iePath = joinPath(ROOT, 'public/registry/install-env-proof.json');
+    if (!(await Bun.file(rcPath).exists()) || !(await Bun.file(iePath).exists())) return;
+    const registryClient = await Bun.file(rcPath).json();
+    const installEnv = await Bun.file(iePath).json();
+    const row = auditRegistryClientInstallEnvParity(registryClient, installEnv);
+    expect(row.ok).toBe(true);
+  });
+
+  test('taxonomy contract registry count matches SSOT', () => {
+    const row = auditTaxonomyContractRegistry(12, 12);
+    expect(row.ok).toBe(true);
+  });
+
+  test('docs-coverage and doc-index defaults coverage align', async () => {
+    const dcPath = joinPath(ROOT, 'public/registry/docs-coverage-proof.json');
+    const diPath = joinPath(ROOT, 'public/registry/doc-index.json');
+    if (!(await Bun.file(dcPath).exists()) || !(await Bun.file(diPath).exists())) return;
+    const docsCoverage = await Bun.file(dcPath).json();
+    const docIndex = await Bun.file(diPath).json();
+    const row = auditDocsCoverageDocIndexParity(docsCoverage, docIndex);
+    expect(row.ok).toBe(true);
+  });
+
+  test('cloudflare token scope proof pins match SSOT', async () => {
+    const path = joinPath(ROOT, 'public/registry/cloudflare-token-scope-proof.json');
+    if (!(await Bun.file(path).exists())) return;
+    const proof = await Bun.file(path).json();
+    const row = auditCloudflareTokenScopeSsot(proof, {
+      accountId: CLOUDFLARE_TOKEN_PERMISSIONS.accountId,
+      pagesProject: CLOUDFLARE_TOKEN_PERMISSIONS.pagesProject,
+      zoneName: CLOUDFLARE_TOKEN_PERMISSIONS.zoneName,
+    });
+    expect(row.ok).toBe(true);
+  });
+
+  test('well-known mcp catalog parity matches token scope proof', async () => {
+    const proofPath = joinPath(ROOT, 'public/registry/cloudflare-token-scope-proof.json');
+    const wellKnownPath = joinPath(ROOT, 'public/.well-known/mcp.json');
+    if (!(await Bun.file(proofPath).exists()) || !(await Bun.file(wellKnownPath).exists())) {
+      return;
+    }
+    const proof = await Bun.file(proofPath).json();
+    const wellKnown = await Bun.file(wellKnownPath).json();
+    const row = auditWellKnownMcpCatalogParity(proof, wellKnown);
     expect(row.ok).toBe(true);
   });
 
@@ -84,6 +158,9 @@ describe('lib/verification/proof-consistency', () => {
     const networkingChannel = (await Bun.file(
       joinPath(ROOT, 'public/registry/networking-channel-proof.json')
     ).json()) as { results?: VerificationResult[]; summary?: unknown };
+    const registryClient = (await Bun.file(
+      joinPath(ROOT, 'public/registry/registry-client-proof.json')
+    ).json()) as { results?: VerificationResult[]; summary?: unknown };
     const bakeFile = Bun.file(joinPath(ROOT, 'public/registry/channel-meta-bake.json'));
     const channelMetaBake = (await bakeFile.exists()) ? await bakeFile.json() : null;
 
@@ -94,6 +171,7 @@ describe('lib/verification/proof-consistency', () => {
       runtimeNits,
       bundlerLoaders,
       networkingChannel,
+      registryClient,
       channelMetaBake,
     });
     if (!rows.every(r => r.ok)) {

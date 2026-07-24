@@ -78,6 +78,47 @@ async function main() {
       expectJson('/registry/proof-taxonomy-audit.json', j => {
         if (j.type !== 'ProofTaxonomyAuditReport') throw new Error(`type=${j.type}`);
         if (!Array.isArray(j.audits)) throw new Error('missing audits[]');
+        if (j.audits.length !== 12)
+          throw new Error(`expected 12 contracts, got ${j.audits.length}`);
+        if (!Array.isArray(j.consistency)) throw new Error('missing consistency[]');
+        if (j.consistency.length < 18) {
+          throw new Error(`expected ≥18 consistency rows, got ${j.consistency.length}`);
+        }
+      })
+    ),
+    check('docs-coverage-proof.json subsystem', () =>
+      expectJson('/registry/docs-coverage-proof.json', j => {
+        if (j.subsystem !== 'other') throw new Error(`subsystem=${j.subsystem}`);
+        if (!Array.isArray(j.lanes) || j.lanes.length < 5) throw new Error('missing lanes[]');
+        if (!j.semanticTags?.subsystems?.includes('other')) throw new Error('missing semanticTags');
+      })
+    ),
+    check('registry-client-proof.json taxonomy', () =>
+      expectJson('/registry/registry-client-proof.json', j => {
+        if (!j.results?.every(r => r.subsystem === 'package-manager')) {
+          throw new Error('registry-client rows not package-manager');
+        }
+        if (!j.semanticTags?.subsystems?.includes('package-manager')) {
+          throw new Error('missing package-manager semanticTags');
+        }
+        if (!j.summary?.bySubsystem?.['package-manager']) {
+          throw new Error('missing summary.bySubsystem');
+        }
+      })
+    ),
+    check('doc-index.json taxonomy', () =>
+      expectJson('/registry/doc-index.json', j => {
+        if (j.subsystem !== 'other') throw new Error(`subsystem=${j.subsystem}`);
+        if (!j.defaultsCoverage?.passed) throw new Error('defaultsCoverage not passed');
+      })
+    ),
+    check('well-known/mcp.json', () =>
+      expectJson('/.well-known/mcp.json', j => {
+        if (!Array.isArray(j.servers) || j.servers.length < 5) throw new Error('missing servers[]');
+        const names = j.servers.map((s: { name: string }) => s.name);
+        if (!names.includes('cloudflare') || !names.includes('cloudflare-docs')) {
+          throw new Error(`unexpected servers: ${names.join(', ')}`);
+        }
       })
     ),
   ]);
