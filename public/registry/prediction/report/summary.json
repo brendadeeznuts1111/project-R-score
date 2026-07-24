@@ -1,0 +1,39 @@
+{
+  "generated": "2026-07-24T07:44:01.116Z",
+  "model": "naive-coverage-v1",
+  "range": {
+    "from": "2026-06-25",
+    "to": "2026-07-24"
+  },
+  "accuracy": {
+    "mae": 2.8666666666666667,
+    "rmse": 4.464676173400859,
+    "bias": 2.8666666666666667,
+    "n": 30
+  },
+  "diagnostics": {
+    "maxAbsError": 10,
+    "worstDate": "2026-06-30",
+    "meanAbsError": 2.8666666666666667,
+    "lastPredicted": 100,
+    "lastActual": 93,
+    "lastSignedError": 7,
+    "within5Pct": 73.33333333333333,
+    "within15Pct": 100,
+    "overCount": 14,
+    "underCount": 0,
+    "exactCount": 16,
+    "firstHalfMae": 2.8666666666666667,
+    "secondHalfMae": 2.8666666666666667,
+    "maeDelta": 0,
+    "trend": "stable"
+  },
+  "quality": "good",
+  "points": 30,
+  "artifacts": {
+    "report": "/registry/prediction/report/",
+    "coverageSvg": "/registry/prediction/coverage-chart.svg",
+    "errorSvg": "/registry/prediction/error-chart.svg",
+    "summaryJson": "/registry/prediction/report/summary.json"
+  }
+}

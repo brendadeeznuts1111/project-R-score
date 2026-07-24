@@ -54,8 +54,11 @@ Backtest inserts are **idempotent** per `(prediction_type, prediction_date, mode
 | File | How |
 |------|-----|
 | `public/registry/prediction/coverage-chart.svg` | Predicted vs actual (markers) |
-| `public/registry/prediction/error-chart.svg` | Residual bar chart |
-| `public/registry/prediction/report.html` | Dashboard: cards, dual charts, filter/sort table |
+| `public/registry/prediction/error-chart.svg` | Residual bar chart (signed pred − actual) |
+| `public/registry/prediction/error-histogram.svg` | \|Error\| distribution |
+| `public/registry/prediction/rolling-mae.svg` | Rolling MAE (window 7) |
+| `public/registry/prediction/report/` | Dashboard: calibration KPIs, charts, filter/CSV |
+| `public/registry/prediction/report/summary.json` | Machine-readable diagnostics |
 | `public/registry/prediction/coverage-chart.png` | Optional: `Bun.WebView` → `Bun.Image` |
 
 Portal `/portal/ops` loads PNG or SVG. Pages needs `ops:snapshot` (and preferably report assets) committed/deployed. Disable CF Pages SPA rewrite so `/registry/*.json` is not HTML.

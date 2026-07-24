@@ -8,7 +8,10 @@ import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   buildCoverageChartSvg,
   buildErrorChartSvg,
+  buildErrorHistogramSvg,
   buildReportHtml,
+  buildRollingMaeSvg,
+  computeReportDiagnostics,
   writePredictionReport,
 } from '../lib/prediction/report.ts';
 import { runCoverageBacktest } from '../lib/prediction/tester.ts';
@@ -20,12 +23,27 @@ describe('prediction report', () => {
     expect(svg).toContain('<svg');
   });
 
+  test('diagnostics + histogram/rolling charts', () => {
+    const points = [
+      { date: '2024-01-01', predicted: 10, actual: 12, error: -2 },
+      { date: '2024-01-02', predicted: 20, actual: 18, error: 2 },
+      { date: '2024-01-03', predicted: 30, actual: 50, error: -20 },
+      { date: '2024-01-04', predicted: 40, actual: 41, error: -1 },
+    ];
+    const d = computeReportDiagnostics(points);
+    expect(d.within5Pct).toBe(75);
+    expect(d.overCount).toBe(1);
+    expect(d.underCount).toBe(3);
+    expect(buildErrorHistogramSvg(points)).toContain('|Error| distribution');
+    expect(buildRollingMaeSvg(points)).toContain('Rolling MAE');
+  });
+
   test('extended report HTML has cards, residuals, and series table', () => {
     const points = [
-      { date: '2024-01-01', predicted: 10, actual: 12, error: 2 },
-      { date: '2024-02-01', predicted: 20, actual: 40, error: 20 },
+      { date: '2024-01-01', predicted: 10, actual: 12, error: -2 },
+      { date: '2024-02-01', predicted: 20, actual: 40, error: -20 },
     ];
-    const accuracy = { mae: 11, rmse: 14, bias: 11, n: 2 };
+    const accuracy = { mae: 11, rmse: 14, bias: -11, n: 2 };
     const html = buildReportHtml({
       svgInline: buildCoverageChartSvg(points, accuracy),
       errorSvgInline: buildErrorChartSvg(points),
@@ -35,6 +53,12 @@ describe('prediction report', () => {
     });
     expect(html).toContain('Coverage prediction backtest');
     expect(html).toContain('Residuals');
+    expect(html).toContain('Within ≤5');
+    expect(html).toContain('Rolling MAE');
+    expect(html).toContain('|Error| distribution');
+    expect(html).toContain('summary.json');
+    expect(html).toContain('Download CSV');
+    expect(html).toContain('prediction-series');
     expect(html).toContain('MAE');
     expect(html).toContain('RMSE');
     expect(html).toContain('data-col');
@@ -78,9 +102,17 @@ describe('prediction report', () => {
     expect(report.points).toBe(2);
     expect(await Bun.file(report.svgPath).exists()).toBe(true);
     expect(await Bun.file(report.htmlPath).exists()).toBe(true);
+    expect(await Bun.file(report.summaryPath).exists()).toBe(true);
+    const summary = await Bun.file(report.summaryPath).json();
+    expect(summary.model).toBe('naive-coverage-v1');
+    expect(summary.diagnostics.within5Pct).toBeGreaterThanOrEqual(0);
     const svg = await Bun.file(report.svgPath).text();
     expect(svg).toContain('predicted');
     expect(svg).toContain('actual');
+    const html = await Bun.file(report.htmlPath).text();
+    expect(html).toContain('thresh-chips');
+    expect(html).toContain('summary.json');
+    expect(html).toContain('Within ≤5');
 
     // Bun.Image polish of SVG is not supported; polish a seed PNG instead
     const seed = Buffer.from(

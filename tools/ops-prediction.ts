@@ -109,9 +109,11 @@ async function main(): Promise<number> {
         out({
           svgPath: report.svgPath,
           htmlPath: report.htmlPath,
+          summaryPath: report.summaryPath,
           pngPath: report.pngPath ?? null,
           points: report.points,
           accuracy: report.accuracy,
+          diagnostics: report.diagnostics,
           openedWebView: report.openedWebView,
         });
         return 0;

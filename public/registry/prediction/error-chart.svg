@@ -36,9 +36,9 @@
   <text x="48" y="190" fill="#8b949e" font-size="11" font-family="ui-sans-serif,system-ui">2026-06-25</text>
   <text x="704" y="190" fill="#8b949e" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">2026-07-24</text>
   <g font-family="ui-sans-serif,system-ui" font-size="10">
-    <rect x="560" y="28" width="10" height="10" fill="#f85149" rx="1"/>
-    <text x="574" y="36" fill="#e6edf3">over (err&gt;0)</text>
-    <rect x="560" y="44" width="10" height="10" fill="#3fb950" rx="1"/>
-    <text x="574" y="52" fill="#e6edf3">under (err&lt;0)</text>
+    <rect x="552" y="28" width="10" height="10" fill="#f85149" rx="1"/>
+    <text x="566" y="36" fill="#e6edf3">over-pred (err&gt;0)</text>
+    <rect x="552" y="44" width="10" height="10" fill="#3fb950" rx="1"/>
+    <text x="566" y="52" fill="#e6edf3">under-pred (err&lt;0)</text>
   </g>
 </svg>

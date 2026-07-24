@@ -12,10 +12,17 @@ export {
 } from './tester.ts';
 export {
   buildCoverageChartSvg,
+  buildErrorChartSvg,
+  buildErrorHistogramSvg,
+  buildPredictionReportSummary,
   buildReportHtml,
+  buildRollingMaeSvg,
   captureReportWithWebView,
+  computeReportDiagnostics,
   loadCoverageSeries,
   writePredictionReport,
   type PredictionReportResult,
+  type PredictionReportSummary,
+  type ReportDiagnostics,
   type ReportSeriesPoint,
 } from './report.ts';

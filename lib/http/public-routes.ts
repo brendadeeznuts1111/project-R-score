@@ -383,6 +383,14 @@ export const HOT_STATIC_ROUTES: PublicRouteDef[] = [
     note: 'directory index — Cloudflare pretty URL',
   },
   {
+    path: '/registry/prediction/report/summary.json',
+    name: 'Prediction report summary',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'machine-readable coverage backtest diagnostics',
+  },
+  {
     path: '/registry/@factorywager/routing-test/latest.json',
     name: 'Routing-test proof',
     category: 'proof',
