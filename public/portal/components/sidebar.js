@@ -66,16 +66,17 @@ export function renderSidebar(tenants, activeId, onSelect) {
 }
 
 export function tenantRegistryPaths(tenantId, tenants) {
-  const t = tenants.find(x => x.id === tenantId) ?? tenants[0];
-  if (!t) {
-    return {
-      proxy: '/api/registry/registry.json',
-      static: '/registry/registry.json',
-    };
-  }
-  const key = `tenants/${tenantId}/registry.json`;
+  const id = typeof tenantId === 'string' ? tenantId.trim() : '';
+  const defaults = {
+    proxy: '/api/registry/registry.json',
+    static: '/registry/registry.json',
+  };
+  // Empty ?tenant= / pre-manifest load → root index (valid JSON on Pages).
+  if (!id) return defaults;
+  const t = (tenants || []).find(x => x.id === id) ?? (tenants || [])[0];
+  if (!t) return defaults;
   return {
-    proxy: `/api/registry/${key}`,
-    static: t.staticRegistryPath,
+    proxy: `/api/registry/tenants/${t.id}/registry.json`,
+    static: t.staticRegistryPath || defaults.static,
   };
 }

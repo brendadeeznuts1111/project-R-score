@@ -26,7 +26,7 @@ let registrySource = 'snapshot';
 
 async function fetchRegistry(tenantId = resolveTenantId(), tenants = tenantsCache) {
   const paths = tenantRegistryPaths(tenantId, tenants);
-  const attempts: Array<{ mode: 'live' | 'snapshot'; url: string }> = [
+  const attempts = [
     { mode: 'live', url: paths.proxy },
     { mode: 'snapshot', url: paths.static },
   ];
