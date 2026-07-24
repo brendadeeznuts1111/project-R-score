@@ -83,6 +83,12 @@ const CHEAP: Step[] = [
     owner: 'tools/audit-catalog.ts · lib/audit/',
     repair: 'bun run audit:verify · bun run audit:catalog:build',
   },
+  {
+    name: 'script-flag-order',
+    cmd: ['bun', 'run', 'verify:flag-order'],
+    owner: 'tools/verify-script-flags.ts · docs/portal-foundation.md',
+    repair: 'bun run verify:flag-order · use bun --watch not bun run --watch',
+  },
 ];
 
 function eslintStep(fullLint: boolean): Step {

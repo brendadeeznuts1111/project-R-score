@@ -1,0 +1,17 @@
+{
+  "description": "Grandfathered package.json scripts with bun run --watch|--hot (fix incrementally; root package.json must stay clean).",
+  "entries": [
+    "projects/active/dashboards/enterprise-dashboard/package.json:config:watch",
+    "projects/active/dashboards/enterprise-dashboard/package.json:dev:config",
+    "projects/active/dashboards/quantum-terminal-dashboard/package.json:dev:legacy",
+    "projects/active/enterprise/fantasy42-fire22-registry/package.json:dev",
+    "projects/active/enterprise/fantasy42-fire22-registry/package.json:api-server:dev",
+    "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/package.json:dev",
+    "projects/active/enterprise/foxy-proxy/packages/dashboard/package.json:dev",
+    "projects/active/sports-terminal-os/package.json:dev",
+    "projects/active/sports-terminal-os/integrations/kimi-plugin/sports-mcp-server/package.json:dev",
+    "projects/active/utilities/bun-file-analyzer/package.json:dev",
+    "projects/active/utilities/bun-file-analyzer/package.json:dev:api",
+    "projects/active/utilities/toml-cli/package.json:dev"
+  ]
+}
