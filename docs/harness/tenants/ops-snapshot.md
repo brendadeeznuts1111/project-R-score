@@ -12,6 +12,7 @@ Refreshes portal/Pages artifacts:
 - `public/registry/monitoring.json`
 - `public/registry/static.json`
 - `public/registry/dod-queue.json` (+ bakes `#dod-embed` on `/portal/dod/`)
+- `public/registry/toc-ops.json` (+ bakes `#toc-embed` on `/portal/toc/` · ops-summary `toc` slice)
 - tenant slices `public/registry/{factory,science,tennis}/registry.json` (when thin)
 - `@factorywager/bun-utils-test` + `routing-test` proofs
 - prediction report (unless `--no-report`)
@@ -21,9 +22,11 @@ Refreshes portal/Pages artifacts:
 
 **Populate demos (Pages “looks live”):** `bun run ops:snapshot:demo` runs
 `ops:seed:all` (ops + prediction + DOD + partner profiles/channels/accounts +
-tenants) then snapshot. Snapshot itself auto-seeds empty ops / prediction /
-DOD / partner bindings unless `--no-seed`, and always refreshes
-`catalog-snapshot.json`.
+TOC Ops fixture + tenants) then snapshot. Snapshot itself auto-seeds empty ops /
+prediction / DOD / partner bindings / missing `toc-ops.json` unless `--no-seed`,
+and always refreshes `catalog-snapshot.json` + `toc-ops.json`.
+
+TOC board: [`toc-ops.md`](toc-ops.md) · `/portal/toc/`.
 
 Uses routing proof **retry + TTL cache** (`lib/routing-proof.ts` ·
 `getRoutingProof`). Next fire waits for the snapshot Promise (**no overlap**).

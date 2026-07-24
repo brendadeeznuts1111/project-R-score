@@ -45,6 +45,7 @@ import {
   isPartnerProfileBindingsEmpty,
   seedPartnerProfilesDemo,
 } from '../lib/operations/partner-profile-seed.ts';
+import { isTocOpsSnapshotMissing, seedTocOpsDemo } from '../lib/operations/toc-ops-seed.ts';
 import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
 import {
   getRoutingProof,
@@ -351,6 +352,19 @@ export async function buildRegistrySnapshot(options?: {
           e instanceof Error ? e.message : e
         );
       }
+
+      if (wantSeed || isTocOpsSnapshotMissing(root)) {
+        const toc = await seedTocOpsDemo({
+          root,
+          force: forceSeed,
+          ifEmpty: ifEmptyOnly,
+        });
+        if (toc.seeded) {
+          console.log(
+            `[ops-snapshot] toc-ops seed → ${toc.partners} partners · warmed ${toc.warmed} · openTasks ${toc.openTasks}`
+          );
+        }
+      }
     }
 
     try {
@@ -358,6 +372,23 @@ export async function buildRegistrySnapshot(options?: {
       console.log(`[ops-snapshot] catalog snapshot → ${catalog.accounts} accounts`);
     } catch (e) {
       console.warn('[ops-snapshot] catalog snapshot skipped:', e instanceof Error ? e.message : e);
+    }
+
+    // Always bake TOC fixture before ops-summary so `payload.toc` is available.
+    try {
+      const { exportTocOpsSnapshot, buildDemoTocOpsFixture } = await import(
+        '../lib/toc-ops/index.ts'
+      );
+      const toc = await exportTocOpsSnapshot({
+        root,
+        fixture: buildDemoTocOpsFixture(),
+        bakeEmbed: true,
+      });
+      console.log(
+        `[ops-snapshot] toc-ops → ${toc.partners} partners · warmed ${toc.warmed} · openTasks ${toc.openTasks}`
+      );
+    } catch (e) {
+      console.warn('[ops-snapshot] toc-ops export skipped:', e instanceof Error ? e.message : e);
     }
 
     const payload = buildOpsSummary(db, 'snapshot');

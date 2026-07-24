@@ -75,6 +75,11 @@ export function validateOpsSummary(v: unknown): ContractResult {
     // Optional sections (ops-snapshot extras)
     ['networking, when present, is object', v.networking === undefined || isRecord(v.networking)],
     ['env, when present, is object', v.env === undefined || isRecord(v.env)],
+    [
+      'toc, when present, is object',
+      v.toc === undefined ||
+        (isRecord(v.toc) && typeof v.toc.available === 'boolean' && typeof v.toc.path === 'string'),
+    ],
   ];
   return check('ops-summary', v, rules);
 }

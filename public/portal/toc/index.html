@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!-- @see docs/portal-foundation.md · docs/harness/tenants/toc-ops.md -->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOC Ops · FactoryWager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/portal/style.css" />
+  <style>
+    .toc-dashboard { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .toc-head {
+      display: flex; flex-wrap: wrap; gap: 16px 24px;
+      justify-content: space-between; align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .toc-title { font-size: 22px; font-weight: 650; letter-spacing: -0.02em; margin: 0 0 6px; }
+    .toc-sub { margin: 0; font-size: 13px; color: var(--text-dim); line-height: 1.45; }
+    .toc-mode { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; text-align: right; }
+    .toc-mode-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-dim);
+    }
+    .toc-mode-time { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text-dim); }
+    .toc-stats {
+      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 900px) {
+      .toc-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .toc-stat {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .toc-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+    .toc-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .toc-stat.hot { border-color: rgba(248,81,73,.45); }
+    .toc-stat.hot .v { color: var(--red, #f85149); }
+    .toc-stat.ok .v { color: var(--green, #3fb950); }
+    .toc-buffer {
+      margin-bottom: 18px; padding: 12px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius); background: var(--surface); font-size: 13px;
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .toc-partner {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--surface); padding: 16px; margin-bottom: 14px;
+    }
+    .toc-partner h3 { margin: 0 0 4px; font-size: 18px; display: flex; gap: 8px; align-items: center; }
+    .toc-partner h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+    .toc-cols {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;
+      margin-top: 14px;
+    }
+    .toc-partner ul { margin: 0; padding-left: 18px; font-size: 13px; }
+    .toc-partner li { margin-bottom: 6px; }
+    .toc-pill {
+      display: inline-flex; align-items: center;
+      font-size: 10px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase;
+      padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border);
+      color: var(--text-dim); vertical-align: middle;
+    }
+    .toc-pill-ok { color: var(--green, #3fb950); border-color: rgba(63,185,80,.45); background: rgba(63,185,80,.1); }
+    .toc-pill-hot { color: var(--red, #f85149); border-color: rgba(248,81,73,.45); background: rgba(248,81,73,.1); }
+    .toc-foot { margin-top: 20px; font-size: 12px; color: var(--text-dim); }
+    .toc-foot a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="logo">
+        <span class="logo-icon">■</span>
+        <span class="brand-wordmark">FactoryWager</span>
+        <span class="brand-badge">ops</span>
+        <span class="logo-page">TOC</span>
+      </h1>
+      <nav class="topbar-nav" aria-label="Primary">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/portal/ops" class="nav-link">Ops</a>
+        <a href="/portal/toc" class="nav-link" aria-current="page">TOC</a>
+        <a href="/portal/" class="nav-link">Registry</a>
+        <a href="/portal/dod" class="nav-link">DOD</a>
+        <div class="nav-overflow">
+          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/portal/catalog" class="nav-link" role="menuitem">Catalog</a>
+            <a href="/portal/health" class="nav-link" role="menuitem">Health</a>
+            <a href="/portal/skills" class="nav-link" role="menuitem">Skills</a>
+            <a href="/portal/dashboard" class="nav-link" role="menuitem">Dashboard</a>
+            <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
+          </div>
+        </div>
+      </nav>
+      <div class="topbar-status">
+        <a href="/portal/health" class="topbar-health-link" title="System health">
+          <span id="health-dot" class="health-dot unknown"></span>
+          <span id="health-label" class="health-label">Connecting…</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="toc-dashboard">
+      <script type="application/json" id="toc-embed">{"schema":"factorywager.toc-ops.portal-fixture.v1","source":"demo","readOnly":true,"generatedAt":"2026-07-24T06:49:31.497Z","ssot":{"theory":"toc-ops-repo/docs/reference/TOC-Production-Reference.md","accounting":"toc-ops-repo/docs/system/ACCOUNTING.md","domain":"toc-ops-repo/docs/DOMAIN_CONSTANTS.md"},"catalog":{"taskTypes":["ONB","FUND","LIMIT","WARM","PLAY","WD"],"accountStatuses":["New","Funded","Warming","WARMED","Limited","Inactive"],"softBalanceEntryTypes":["CapitalDeployment","CapitalReturn","ProfitSplit","Loss","CostOfPriming","Adjustment"],"bottleneckRuleKeys":["open_pending_partner_queue","warmup_cycle_aging","stale_limit_on_drum","orphan_pending_exposure","capital_in_book_warming","telegram_lane_undelivered_cards","rotor_drift_detected"],"warmupRequiredForPlay":2,"defaultSplit":{"partnerPct":70,"expertPct":20,"housePct":10},"exceptionFamilies":{"WD":"WTH-EX-","FUND":"FUND-EX-","WARM":"WARM-EX-","PLAY":"PLAY-EX-","LIMIT":"LIMIT-EX-","ONB":"ONB-EX-"}},"buffer":{"floatTarget":50000,"floatTargetSource":"static","houseFloatHard":42500,"floatRatio":0.85,"throttleOnboarding":false,"settlementFloatRatio":0.32,"primedDrums":3,"playableDrums":1,"principalOutstandingTotal":5000},"partners":[{"partnerCode":"ASH","status":"Ready","package":{"id":"pkg-default-70-20-10","partnerPct":70,"expertPct":20,"housePct":10},"readiness":{"score":0.72,"playableAccountCount":0,"accountScores":[{"callSign":"ASH-001","score":0.85,"playable":false,"factors":["WARMED","needs_exact_stake_fund"]},{"callSign":"ASH-002","score":0.4,"playable":false,"factors":["Warming","warmup_1_of_2","ball_partner"]}]},"rails":[{"id":"rail-ash-venmo-1","railType":"Venmo","label":"CASHOUT-VENMO","confirmed":true,"profileScreenshotRef":"proof:ash-venmo-profile"}],"accounts":[{"callSign":"ASH-001","status":"WARMED","warmupCount":2,"warmupProgress":{"completed":2,"required":2,"tags":["#WARMED","#CYCLE-2","#PRIMED"]},"capitalLocation":"HouseFloat","hardBalance":0,"primaryRailId":"rail-ash-venmo-1","gate12":{"housePrincipalOutstanding":0,"withdrawalMode":"profit_split"},"sportsbook":"Hard Rock Florida"},{"callSign":"ASH-002","status":"Warming","warmupCount":1,"warmupProgress":{"completed":1,"required":2,"tags":["#CYCLE-1","#WARMUP-CYCLE"]},"capitalLocation":"InSportsbook","hardBalance":5010,"primaryRailId":"rail-ash-venmo-1","gate12":{"housePrincipalOutstanding":0,"withdrawalMode":"warmup_capital_return"},"sportsbook":"Hard Rock Florida"}],"openTasks":[{"taskId":"WARM-ASH-002-20260716-120000-001","taskType":"WARM","callSign":"ASH-002","status":"PendingPartner","ballInCourt":"Partner","nextAction":"Complete cycle 2 dummy bet → settlement → WD","linkedExceptionId":"WARM-EX-01"},{"taskId":"LIMIT-ASH-001-20260720-090000-001","taskType":"LIMIT","callSign":"ASH-001","status":"PendingPartner","ballInCourt":"Partner","nextAction":"Screenshot limit screen (UTC stamp) — do not interrupt PLAY"}],"softBalance":{"byStakeholder":{"Partner":0,"Expert":0,"House":10000},"recentEntries":[{"entryType":"CapitalDeployment","stakeholder":"House","amount":5000,"callSign":"ASH-001","taskId":"FUND-ASH-001-20260715-100000-001","timestamp":"2026-07-15T18:00:00.000Z"},{"entryType":"CapitalReturn","stakeholder":"House","amount":4980,"callSign":"ASH-001","taskId":"WD-ASH-001-20260716-140000-001","timestamp":"2026-07-16T14:30:00.000Z"},{"entryType":"CostOfPriming","stakeholder":"House","amount":20,"callSign":"ASH-001","taskId":"WARM-ASH-001-20260716-120000-001","timestamp":"2026-07-16T14:31:00.000Z"},{"entryType":"CapitalDeployment","stakeholder":"House","amount":5000,"callSign":"ASH-002","taskId":"FUND-ASH-002-20260718-100000-001","timestamp":"2026-07-18T16:00:00.000Z"}],"pendingDeployments":{"count":0,"totalAmount":0}},"bottlenecks":[{"ruleKey":"warmup_cycle_aging","severity":"warn","metric":"hours_open","threshold":24,"observed":30,"callSign":"ASH-002","taskId":"WARM-ASH-002-20260716-120000-001","resolvedAt":null,"nextAction":"Ping Partner; complete cycle 2 WD; record AAR if delayed"},{"ruleKey":"stale_limit_on_drum","severity":"info","metric":"days_stale","threshold":7,"observed":8,"callSign":"ASH-001","taskId":"LIMIT-ASH-001-20260720-090000-001","resolvedAt":null,"nextAction":"Refresh limit screenshot before next PLAY release"}],"knownExceptions":[{"id":"WARM-EX-01","trigger":"Dummy bet loses (balance \u003c deposit)","action":"WD remaining; Soft CostOfPriming; cycle still counts"},{"id":"FUND-EX-01","trigger":"Typed rail ≠ profile screenshot","action":"Block send; re-upload + re-confirm"}]},{"partnerCode":"PAT","status":"Ready","package":{"id":"pkg-default-70-20-10","partnerPct":70,"expertPct":20,"housePct":10},"readiness":{"score":0.91,"playableAccountCount":1,"accountScores":[{"callSign":"PAT-001","score":0.92,"playable":true,"factors":["WARMED","limits_fresh","capital_in_book"]},{"callSign":"PAT-002","score":0.55,"playable":false,"factors":["WARMED","gate12_principal_out"]}]},"rails":[{"id":"rail-pat-cashapp-1","railType":"CashApp","label":"CASHOUT-CASHAPP","confirmed":true,"profileScreenshotRef":"proof:pat-cashapp-profile"},{"id":"rail-pat-paypal-1","railType":"PayPal","label":"CASHOUT-PAYPAL","confirmed":false}],"accounts":[{"callSign":"PAT-001","status":"WARMED","warmupCount":2,"warmupProgress":{"completed":2,"required":2,"tags":["#WARMED","#CYCLE-2","#READY"]},"capitalLocation":"InSportsbook","hardBalance":5200,"primaryRailId":"rail-pat-cashapp-1","gate12":{"housePrincipalOutstanding":0,"withdrawalMode":"profit_split"},"sportsbook":"Hard Rock Florida"},{"callSign":"PAT-002","status":"WARMED","warmupCount":2,"warmupProgress":{"completed":2,"required":2,"tags":["#WARMED","#CYCLE-2"]},"capitalLocation":"InSportsbook","hardBalance":4800,"primaryRailId":"rail-pat-cashapp-1","gate12":{"housePrincipalOutstanding":5000,"withdrawalMode":"principal_recovery"},"sportsbook":"Hard Rock Florida"}],"openTasks":[{"taskId":"PLAY-PAT-001-20260722-150000-001","taskType":"PLAY","callSign":"PAT-001","status":"Processing","ballInCourt":"Partner","nextAction":"Place expert instruction; post bet-slip screenshot"},{"taskId":"WD-PAT-002-20260722-160000-001","taskType":"WD","callSign":"PAT-002","status":"GateCheck","ballInCourt":"Ops","nextAction":"Gate 12 principal_recovery only — Soft CapitalReturn 100% House"},{"taskId":"FUND-PAT-002-20260721-110000-001","taskType":"FUND","callSign":"PAT-002","status":"Completed","ballInCourt":"Ops","nextAction":"Done — Soft location WithPartner → InSportsbook verified"}],"softBalance":{"byStakeholder":{"Partner":840,"Expert":240,"House":12420},"recentEntries":[{"entryType":"CapitalDeployment","stakeholder":"House","amount":5000,"callSign":"PAT-002","taskId":"FUND-PAT-002-20260721-110000-001","timestamp":"2026-07-21T11:20:00.000Z"},{"entryType":"ProfitSplit","stakeholder":"Partner","amount":840,"callSign":"PAT-001","taskId":"WD-PAT-001-20260720-180000-001","timestamp":"2026-07-20T18:45:00.000Z"},{"entryType":"ProfitSplit","stakeholder":"Expert","amount":240,"callSign":"PAT-001","taskId":"WD-PAT-001-20260720-180000-001","timestamp":"2026-07-20T18:45:00.000Z"},{"entryType":"ProfitSplit","stakeholder":"House","amount":120,"callSign":"PAT-001","taskId":"WD-PAT-001-20260720-180000-001","timestamp":"2026-07-20T18:45:00.000Z"}],"pendingDeployments":{"count":0,"totalAmount":0}},"bottlenecks":[{"ruleKey":"capital_in_book_warming","severity":"info","metric":"hard_balance","threshold":4500,"observed":4800,"callSign":"PAT-002","resolvedAt":null,"nextAction":"Principal recovery WD after settlement; do not profit_split"},{"ruleKey":"open_pending_partner_queue","severity":"warn","metric":"pending_partner_tasks","threshold":3,"observed":1,"taskId":"PLAY-PAT-001-20260722-150000-001","resolvedAt":null,"nextAction":"Partner holds PLAY ball — ping at 30m / escalate 60m"}],"knownExceptions":[{"id":"PLAY-EX-02","trigger":"Warm-up count ≠ 2 / not WARMED","action":"Block PLAY; escalate if Expert insists"},{"id":"WTH-EX-02","trigger":"Rail payment under review","action":"PendingRailReview; recheck 30 min"}]}],"summary":{"partners":2,"accounts":4,"warmed":3,"warming":1,"confirmedRails":2,"openTasks":4,"openBottlenecks":4,"criticalBottlenecks":0,"principalOutstandingTotal":5000,"byTaskType":{"WARM":1,"LIMIT":1,"PLAY":1,"WD":1},"byBallInCourt":{"Partner":3,"Ops":2}}}</script>
+<div id="toc-app"></div>
+    </div>
+  </main>
+
+  <notification-center aria-live="polite"></notification-center>
+
+  <footer class="footer">
+    <p>FactoryWager · TOC Ops fixture · <a href="/registry/toc-ops.json">toc-ops.json</a></p>
+  </footer>
+
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/toc/toc-dashboard.js"></script>
+</body>
+</html>

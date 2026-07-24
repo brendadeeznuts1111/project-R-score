@@ -119,6 +119,12 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="channels-detail"></div>
           </section>
           <section class="ops-panel">
+            <h2>TOC Ops</h2>
+            <div class="ops-metric" id="toc-warmed">—</div>
+            <div class="ops-sub" id="toc-detail"></div>
+            <a class="ops-link" href="/portal/toc/">Open TOC board</a>
+          </section>
+          <section class="ops-panel">
             <h2>Growth</h2>
             <div class="ops-metric" id="growth-plays">0</div>
             <div class="ops-sub" id="growth-detail"></div>
@@ -664,6 +670,21 @@ class OperationsDashboard extends HTMLElement {
     const partnersBound = this.querySelector('#partners-bound');
     const partnersDetail = this.querySelector('#partners-detail');
     const partnersRecent = this.querySelector('#partners-recent');
+    const tocWarmed = this.querySelector('#toc-warmed');
+    const tocDetail = this.querySelector('#toc-detail');
+    if (tocWarmed && d.toc) {
+      if (d.toc.available) {
+        tocWarmed.textContent = String(d.toc.warmed ?? 0);
+        if (tocDetail) {
+          tocDetail.textContent =
+            `${d.toc.warming ?? 0} warming · ${d.toc.playableDrums ?? 0} playable · ` +
+            `${d.toc.openTasks ?? 0} open tasks · ${d.toc.openBottlenecks ?? 0} bottlenecks`;
+        }
+      } else if (tocDetail) {
+        tocDetail.textContent = 'Fixture missing — bun run ops:seed:toc';
+      }
+    }
+
     if (partnersBound && d.partners) {
       partnersBound.textContent = String(d.partners.bound ?? 0);
       const lifecycle = d.partners.byLifecycle ?? {};

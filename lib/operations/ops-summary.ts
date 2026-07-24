@@ -14,6 +14,7 @@ import { getPredictionAccuracy } from '../prediction/index.ts';
 import { queryPartnersSlice, type PartnersSummarySlice } from './partner-profile-bridge.ts';
 import { queryOpsChannelHealth } from '../channels/outbox.ts';
 import type { OpsChannelHealthSlice } from '../channels/ops-channel-event.ts';
+import { loadTocOpsSummarySlice, type TocOpsSummarySlice } from '../toc-ops/export-snapshot.ts';
 
 export type OpsSummaryExpert = {
   name: string;
@@ -191,6 +192,9 @@ export type OpsSummaryPartners = PartnersSummarySlice;
 /** Unified ops channel outbox health (distinct from release channelMeta). */
 export type OpsSummaryChannels = OpsChannelHealthSlice;
 
+/** TOC Ops Drum/rails/warmup rollup from /registry/toc-ops.json (optional). */
+export type OpsSummaryToc = TocOpsSummarySlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -256,6 +260,11 @@ export type OpsSummaryPayload = {
   partners: OpsSummaryPartners;
   /** Ops channel outbox health (not Bun release channelMeta). */
   channels: OpsSummaryChannels;
+  /**
+   * TOC Ops fixture rollup (partners · WARMED · rails · Gate 12 · bottlenecks).
+   * Baked by `bun run ops:seed:toc` / `ops:snapshot` → `/registry/toc-ops.json`.
+   */
+  toc: OpsSummaryToc;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -811,5 +820,6 @@ export function buildOpsSummary(
     routing: loadRoutingOpsSliceSync(),
     partners: queryPartnersSlice(db),
     channels: queryOpsChannelHealth(db),
+    toc: loadTocOpsSummarySlice(),
   };
 }
