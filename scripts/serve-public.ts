@@ -1367,6 +1367,10 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
       '/api/channels',
       '/api/operations/summary',
       '/api/catalog',
+      // Portal static chrome (HTML is route-matched; CSS/JS/modules hit fetch)
+      '/portal/',
+      // Static proof plane under public/registry/ (Pages parity; dashboard fetches JSON)
+      '/registry/',
       // Tarball downloads are public (read plane) like npm metadata — auth is
       // publish-only. SDK download() must work without credentials.
       '/registry/storage/',

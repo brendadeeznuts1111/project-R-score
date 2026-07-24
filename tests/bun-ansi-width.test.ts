@@ -28,6 +28,14 @@ describe('Bun.stripANSI / Bun.stringWidth (Bun 1.3.12+)', () => {
     expect(Bun.stringWidth('👋')).toBe(2);
   });
 
+  test('v1.3.5 grapheme and zero-width vectors', () => {
+    expect(Bun.stringWidth('🇺🇸')).toBe(2);
+    expect(Bun.stringWidth('👋🏽')).toBe(2);
+    expect(Bun.stringWidth('👨‍👩‍👧')).toBe(2);
+    expect(Bun.stringWidth('\u00AD')).toBe(0);
+    expect(Bun.stringWidth('\u2060')).toBe(0);
+  });
+
   test('OSC-8 hyperlink: BEL / ESC ST / C1 ST all strip and width as visible text', () => {
     for (const osc of [OSC8_BEL, OSC8_ST_ESC, OSC8_ST_C1]) {
       expect(Bun.stripANSI(osc)).toBe('link');

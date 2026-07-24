@@ -116,14 +116,39 @@ async function bootstrapSidebar() {
   }
 }
 
+/** Priority-nav overflow (⋯) — click toggle + outside close. */
+function bootstrapNavOverflow() {
+  document.querySelectorAll('.nav-overflow').forEach(wrap => {
+    const btn = wrap.querySelector('.nav-more');
+    if (!btn || btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = wrap.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.nav-overflow.open').forEach(wrap => {
+      wrap.classList.remove('open');
+      wrap.querySelector('.nav-more')?.setAttribute('aria-expanded', 'false');
+    });
+  });
+}
+
 if (!window.__portalDataStarted) {
   startDataService();
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', bootstrapSidebar);
-} else {
+function onReady() {
   bootstrapSidebar();
+  bootstrapNavOverflow();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', onReady);
+} else {
+  onReady();
 }
 
 export { tenantRegistryPaths, resolveTenantId };

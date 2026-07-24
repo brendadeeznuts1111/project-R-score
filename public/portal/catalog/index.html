@@ -5,6 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Account Catalog · FactoryWager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
     .hidden { display: none; }
@@ -43,18 +46,28 @@
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <h1 class="logo"><span class="logo-icon">■</span> Account Catalog</h1>
+      <h1 class="logo">
+        <span class="logo-icon">■</span>
+        <span class="brand-wordmark">FactoryWager</span>
+        <span class="brand-badge">ops</span>
+        <span class="logo-page">Catalog</span>
+      </h1>
       <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link">Home</a>
-        <a href="/portal/" class="nav-link">Registry</a>
         <a href="/portal/ops" class="nav-link">Ops</a>
-        <a href="/portal/catalog" class="nav-link active">Catalog</a>
-        <a href="/portal/dod" class="nav-link">DOD</a>
+        <a href="/portal/" class="nav-link">Registry</a>
         <a href="/portal/health" class="nav-link">Health</a>
-        <a href="/portal/env" class="nav-link">Env</a>
-        <a href="/portal/dashboard" class="nav-link">Dashboard</a>
-        <a href="/monitoring" class="nav-link">Monitoring</a>
-        <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer">Wiki</a>
+        <a href="/portal/dod" class="nav-link">DOD</a>
+        <div class="nav-overflow">
+          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/portal/catalog" class="nav-link active" role="menuitem">Catalog</a>
+            <a href="/portal/env" class="nav-link" role="menuitem">Env</a>
+            <a href="/portal/dashboard" class="nav-link" role="menuitem">Dashboard</a>
+            <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
+            <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">Wiki</a>
+          </div>
+        </div>
       </nav>
       <div class="topbar-status">
         <a href="/portal/catalog.md" class="nav-link nav-md" title="Markdown view">MD</a>

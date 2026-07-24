@@ -9,6 +9,7 @@ import {
   buildServerProbeReport,
   loopbackFetch,
   probeServerPath,
+  serveBindSnapshot,
   serverFetch,
   serverIdentity,
   stopServer,
@@ -18,6 +19,41 @@ import {
 describe('lib/http/bun-server — Server surface', () => {
   test('docs locus', () => {
     expect(BUN_SERVER_REFERENCE_DOCS).toContain('runtime/http/server#reference');
+  });
+
+  test('serveBindSnapshot exposes typed port + protocol fields', () => {
+    const server: BunServer = Bun.serve({
+      port: 0,
+      hostname: '127.0.0.1',
+      development: false,
+      fetch: () => new Response('ok'),
+    });
+    try {
+      const snap = serveBindSnapshot(server);
+      expect(snap.port).toBe(server.port);
+      expect(snap.urlPort).toBe(String(server.port));
+      expect(snap.protocol).toBe(server.protocol);
+      expect(snap.urlProtocol).toBe(server.url.protocol);
+      expect(snap.loopbackOrigin).toBe(server.url.origin);
+      expect(snap.server).toBe(server);
+    } finally {
+      void stopServer(server, true);
+    }
+  });
+
+  test('serverLoopbackOrigin maps 0.0.0.0 bind to 127.0.0.1', () => {
+    const server: BunServer = Bun.serve({
+      port: 0,
+      hostname: '0.0.0.0',
+      fetch: () => new Response('ok'),
+    });
+    try {
+      const snap = serveBindSnapshot(server);
+      expect(snap.hostname).toBe('0.0.0.0');
+      expect(snap.loopbackOrigin).toBe(`http://127.0.0.1:${snap.port}`);
+    } finally {
+      void stopServer(server, true);
+    }
   });
 
   test('server.fetch hits fetch handler only; loopback hits routes', async () => {
@@ -43,7 +79,11 @@ describe('lib/http/bun-server — Server surface', () => {
     try {
       const id = serverIdentity(server);
       expect(id.port).toBeGreaterThan(0);
+      expect(id.urlPort).toBe(String(id.port));
       expect(id.hostname).toBe('127.0.0.1');
+      expect(id.protocol).toBe('http');
+      expect(id.urlProtocol).toBe('http:');
+      expect(id.origin).toBe(`http://127.0.0.1:${id.port}`);
       expect(id.url).toContain(`http://127.0.0.1:${id.port}`);
       expect(typeof id.id).toBe('string');
       expect(id.pendingWebSockets).toBe(0);

@@ -9,15 +9,35 @@ import {
   renderVerificationTableRow,
 } from './verification-card.js';
 import './channel-filter.js';
+
+/** Format summary.bySubsystem for ops panel subtitle. */
+function formatBySubsystem(bySubsystem) {
+  if (!bySubsystem || typeof bySubsystem !== 'object') return '';
+  const parts = Object.entries(bySubsystem)
+    .filter(([, v]) => v && typeof v.total === 'number' && v.total > 0)
+    .map(([k, v]) => `${k} ${v.passed}/${v.total}`);
+  return parts.length ? ` · ${parts.join(' · ')}` : '';
+}
+
+/** Rows duplicated in install-platform panel — omit from release card/table preview. */
+function releasePreviewRows(results) {
+  return (results || []).filter(r => !String(r.name || '').startsWith('install platform:'));
+}
+
 class OperationsDashboard extends HTMLElement {
   data = null;
   docIndex = null;
   releaseFeatures = null;
+  releaseFeaturesPath = '/registry/release-features.json';
+  verificationIndex = null;
   installPlatform = null;
   installEnv = null;
+  networkingProof = null;
   registryClient = null;
   docsCoverage = null;
   bunRuntimeNits = null;
+  bundlerLoaders = null;
+  proofTaxonomyAudit = null;
   retries = 0;
   maxRetries = 3;
 
@@ -26,7 +46,12 @@ class OperationsDashboard extends HTMLElement {
       <div class="ops-dashboard">
         <div id="ops-error" class="ops-banner error hidden"></div>
         <div id="ops-loading" class="ops-loading">
-          <div class="spinner"></div><p>Loading operations data…</p>
+          <div class="skeleton skeleton-card" aria-busy="true" aria-label="Loading operations data">
+            <div class="skeleton-line" style="width:40%"></div>
+            <div class="skeleton-line" style="width:80%"></div>
+            <div class="skeleton-line" style="width:60%"></div>
+            <div class="skeleton-line" style="width:70%"></div>
+          </div>
         </div>
         <div id="ops-grid" class="ops-grid hidden">
           <section class="ops-panel">
@@ -71,6 +96,14 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-mono" id="doc-refs-hash"></div>
             <a class="ops-link" href="/api/doc-refs">Full doc index JSON</a>
             <a class="ops-link" href="/api/doc-refs/script.meta">Pipe metadata</a>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Networking verification</h2>
+            <div class="ops-metric" id="networking-pass">—</div>
+            <div class="ops-sub" id="networking-detail"></div>
+            <div class="ops-mono" id="networking-hash"></div>
+            <a class="ops-link" id="networking-link" href="/registry/networking-proof.json">Full networking proof JSON</a>
+            <a class="ops-link" href="https://bun.com/docs/runtime/networking/fetch" target="_blank" rel="noopener">Bun fetch networking</a>
           </section>
           <section class="ops-panel wide">
             <h2>Install platform verification</h2>
@@ -126,12 +159,39 @@ class OperationsDashboard extends HTMLElement {
             </table>
           </section>
           <section class="ops-panel wide">
+            <h2>Bundler loaders (Asset Processing)</h2>
+            <div class="ops-metric" id="bundler-loaders-pass">—</div>
+            <div class="ops-sub" id="bundler-loaders-detail"></div>
+            <div class="ops-mono" id="bundler-loaders-hash"></div>
+            <a class="ops-link" id="bundler-loaders-link" href="/registry/bundler-loaders-proof.json">Full bundler loaders proof JSON</a>
+            <a class="ops-link" href="https://bun.com/docs/bundler/loaders#css" target="_blank" rel="noopener">CSS loader</a>
+            <a class="ops-link" href="https://bun.com/docs/bundler#content-types" target="_blank" rel="noopener">Asset Processing</a>
+            <table id="bundler-loaders-table" class="ops-table hidden">
+              <thead><tr><th>Probe</th><th>Status</th><th>Docs</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </section>
+          <section class="ops-panel wide">
+            <h2>Proof taxonomy audit</h2>
+            <div class="ops-metric" id="taxonomy-pass">—</div>
+            <div class="ops-sub" id="taxonomy-detail"></div>
+            <div class="ops-mono" id="taxonomy-hash"></div>
+            <a class="ops-link" id="taxonomy-link" href="/registry/proof-taxonomy-audit.json">Full taxonomy audit JSON</a>
+            <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/verification/proof-taxonomy.ts" target="_blank" rel="noopener">Contract SSOT</a>
+            <table id="taxonomy-table" class="ops-table hidden">
+              <thead><tr><th>Artifact</th><th>Subsystem</th><th>Rows</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </section>
+          <section class="ops-panel wide">
             <h2>Bun release verification</h2>
             <div class="ops-metric" id="release-pass">—</div>
             <div class="ops-sub" id="release-detail"></div>
             <div class="ops-mono" id="release-hash"></div>
             <div class="ops-mono" id="release-channel"></div>
+            <div class="ops-mono" id="release-meta-bake"></div>
             <a class="ops-link" id="release-link" href="/registry/release-features.json">Full release proof JSON</a>
+            <a class="ops-link" href="/registry/channel-meta-bake.json">Channel meta bake JSON</a>
             <a class="ops-link" href="https://bun.com/blog/bun-v1.3.14" target="_blank" rel="noopener">Bun v1.3.14 blog</a>
             <channel-filter></channel-filter>
             <div id="release-features-cards" class="verification-cards hidden"></div>
@@ -179,6 +239,14 @@ class OperationsDashboard extends HTMLElement {
       </div>
     `;
 
+    this.addEventListener('proof-snapshot-change', async e => {
+      const path = e.detail?.path || '';
+      await this.loadReleaseFeatures(path || undefined);
+      this.render();
+      const filter = this.querySelector('channel-filter');
+      filter?.applyFilter?.();
+    });
+
     await this.load();
     this.render();
     this.startPolling();
@@ -199,13 +267,33 @@ class OperationsDashboard extends HTMLElement {
     }
   }
 
-  async loadReleaseFeatures() {
+  async loadReleaseFeatures(path) {
+    const url = path && String(path).trim()
+      ? String(path)
+      : '/registry/release-features.json';
     this.releaseFeatures = null;
+    this.releaseFeaturesPath = url;
     try {
-      const res = await fetch('/registry/release-features.json');
+      const res = await fetch(url);
       if (res.ok) this.releaseFeatures = await res.json();
     } catch {
       /* snapshot optional */
+    }
+    const link = this.querySelector('#release-link');
+    if (link) link.setAttribute('href', url);
+  }
+
+  async loadVerificationIndex() {
+    this.verificationIndex = null;
+    try {
+      const res = await fetch('/registry/verification-index.json');
+      if (res.ok) this.verificationIndex = await res.json();
+    } catch {
+      /* optional */
+    }
+    const filter = this.querySelector('channel-filter');
+    if (filter && typeof filter.setSnapshots === 'function') {
+      filter.setSnapshots(this.verificationIndex?.snapshots || [], this.releaseFeaturesPath || '');
     }
   }
 
@@ -224,6 +312,16 @@ class OperationsDashboard extends HTMLElement {
     try {
       const res = await fetch('/registry/install-env-proof.json');
       if (res.ok) this.installEnv = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
+  async loadNetworkingProof() {
+    this.networkingProof = null;
+    try {
+      const res = await fetch('/registry/networking-proof.json');
+      if (res.ok) this.networkingProof = await res.json();
     } catch {
       /* snapshot optional */
     }
@@ -259,6 +357,40 @@ class OperationsDashboard extends HTMLElement {
     }
   }
 
+  async loadBundlerLoaders() {
+    this.bundlerLoaders = null;
+    try {
+      const res = await fetch('/registry/bundler-loaders-proof.json');
+      if (res.ok) this.bundlerLoaders = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
+  async loadProofTaxonomyAudit() {
+    this.proofTaxonomyAudit = null;
+    try {
+      const res = await fetch('/registry/proof-taxonomy-audit.json');
+      if (res.ok) this.proofTaxonomyAudit = await res.json();
+    } catch {
+      /* optional — run bun run verify:proof-taxonomy:save */
+    }
+  }
+
+  async loadVerificationArtifacts() {
+    await this.loadDocIndex();
+    await this.loadReleaseFeatures();
+    await this.loadVerificationIndex();
+    await this.loadInstallPlatform();
+    await this.loadInstallEnv();
+    await this.loadNetworkingProof();
+    await this.loadRegistryClient();
+    await this.loadDocsCoverage();
+    await this.loadBunRuntimeNits();
+    await this.loadBundlerLoaders();
+    await this.loadProofTaxonomyAudit();
+  }
+
   async load() {
     const loading = this.querySelector('#ops-loading');
     const error = this.querySelector('#ops-error');
@@ -271,13 +403,7 @@ class OperationsDashboard extends HTMLElement {
       const res = await fetch('/api/operations/summary');
       if (res.ok) {
         this.data = await res.json();
-        await this.loadDocIndex();
-        await this.loadReleaseFeatures();
-        await this.loadInstallPlatform();
-        await this.loadInstallEnv();
-        await this.loadRegistryClient();
-        await this.loadDocsCoverage();
-        await this.loadBunRuntimeNits();
+        await this.loadVerificationArtifacts();
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
@@ -291,13 +417,7 @@ class OperationsDashboard extends HTMLElement {
       const res = await fetch('/registry/ops-summary.json');
       if (res.ok) {
         this.data = await res.json();
-        await this.loadDocIndex();
-        await this.loadReleaseFeatures();
-        await this.loadInstallPlatform();
-        await this.loadInstallEnv();
-        await this.loadRegistryClient();
-        await this.loadDocsCoverage();
-        await this.loadBunRuntimeNits();
+        await this.loadVerificationArtifacts();
         this.retries = 0;
         loading.classList.add('hidden');
         grid.classList.remove('hidden');
@@ -314,9 +434,12 @@ class OperationsDashboard extends HTMLElement {
       error.innerHTML = `<p>⚠️ Retrying (${this.retries}/${this.maxRetries})…</p>`;
       error.classList.remove('hidden');
     } else {
-      error.innerHTML = `<p>⚠️ Could not load operations data.</p>
-        <p class="error-hint">Local: <code>bun run serve:public</code> (live <code>/api/operations/summary</code> from data/operations.db). Pages: <code>bun run ops:snapshot</code> then deploy public/registry/*.</p>
-        <button class="retry-btn">Retry</button>`;
+      error.innerHTML = `<div class="error-state">
+          <h3>Operations summary unavailable</h3>
+          <p>Could not load live ops data. Local: run <code>bun run serve:public</code>. Pages: generate a snapshot then deploy <code>public/registry/*</code>.</p>
+          <code class="error-code">OPS_SUMMARY_UNAVAILABLE: /api/operations/summary</code>
+          <button type="button" class="retry-btn error-action">Retry</button>
+        </div>`;
       error.classList.remove('hidden');
       error.querySelector('.retry-btn').addEventListener('click', () => {
         this.retries = 0;
@@ -541,6 +664,59 @@ class OperationsDashboard extends HTMLElement {
         : '';
     }
 
+    const tax = this.proofTaxonomyAudit || {};
+    const taxPass = this.querySelector('#taxonomy-pass');
+    if (taxPass) {
+      const audits = tax.audits || [];
+      if (audits.length > 0) {
+        const okCount = audits.filter(a => a.ok).length;
+        taxPass.textContent = tax.ok ? `${okCount}/${audits.length} contracts` : `${okCount}/${audits.length} failing`;
+        taxPass.classList.toggle('ok', tax.ok === true);
+        taxPass.classList.toggle('bad', tax.ok !== true);
+      } else {
+        taxPass.textContent = '—';
+        taxPass.classList.remove('ok', 'bad');
+      }
+    }
+    const taxDetail = this.querySelector('#taxonomy-detail');
+    if (taxDetail) {
+      if (tax.timestamp) {
+        const consistency = tax.consistency || [];
+        const cOk = consistency.filter(c => c.ok).length;
+        const cTotal = consistency.length;
+        const cBit = cTotal > 0 ? ` · consistency ${cOk}/${cTotal}` : '';
+        taxDetail.textContent = `audited ${String(tax.timestamp).slice(0, 19)}${cBit}`;
+      } else {
+        taxDetail.textContent = 'Run bun run verify:proof-taxonomy:save';
+      }
+    }
+    const taxHash = this.querySelector('#taxonomy-hash');
+    if (taxHash) {
+      taxHash.textContent = tax.proofHash ? `sha256 ${String(tax.proofHash).slice(0, 16)}…` : '';
+    }
+    const taxTable = this.querySelector('#taxonomy-table');
+    const taxTbody = taxTable?.querySelector('tbody');
+    const taxRows = tax.audits || [];
+    if (taxTable && taxTbody) {
+      if (taxRows.length > 0) {
+        taxTable.classList.remove('hidden');
+        taxTbody.innerHTML = taxRows
+          .map(a => {
+            const file = String(a.path || '').split('/').pop() || a.path;
+            const rowLabel = a.rows > 0 ? String(a.rows) : 'report';
+            const status = a.ok ? '✅' : '❌';
+            const subBadge = a.primarySubsystem
+              ? `<span class="version-badge subsystem-${a.primarySubsystem}">${a.primarySubsystem}</span>`
+              : '—';
+            return `<tr><td><a href="${a.reportPath || '#'}" class="ops-link">${file}</a></td><td>${subBadge}</td><td>${rowLabel}</td><td>${status}</td></tr>`;
+          })
+          .join('');
+      } else {
+        taxTable.classList.add('hidden');
+        taxTbody.innerHTML = '';
+      }
+    }
+
     const rel = this.releaseFeatures || {};
     const relPass = this.querySelector('#release-pass');
     if (relPass) {
@@ -559,7 +735,14 @@ class OperationsDashboard extends HTMLElement {
     if (relDetail) {
       const tags = rel.semanticTags;
       if (tags) {
-        relDetail.textContent = `channel ${tags.channel} → ${tags.targetVersion} · runtime ${tags.runtimeVersion} · ${rel.releaseNotes?.length ?? 0} notes`;
+        const match =
+          tags.targetMatchesRuntime === true
+            ? ' · runtime✓'
+            : tags.targetMatchesRuntime === false
+              ? ' · runtime≠'
+              : '';
+        const canary = tags.canaryCommitShort ? ` · canary ${tags.canaryCommitShort}` : '';
+        relDetail.textContent = `channel ${tags.channel} → ${tags.targetVersion}${canary}${match} · runtime ${tags.runtimeVersion} · ${rel.releaseNotes?.length ?? 0} notes${formatBySubsystem(rel.summary?.bySubsystem)}`;
       } else if (rel.bunVersion) {
         relDetail.textContent = `Bun ${rel.bunVersion} · ${rel.releaseNotes?.length ?? 0} release notes tracked`;
       } else {
@@ -569,9 +752,18 @@ class OperationsDashboard extends HTMLElement {
     const relChannel = this.querySelector('#release-channel');
     if (relChannel) {
       const tags = rel.semanticTags;
-      relChannel.textContent = tags
-        ? `provenance ${tags.provenanceId}${tags.testSuiteCommit ? ` · commit ${String(tags.testSuiteCommit).slice(0, 8)}` : ''}`
-        : '';
+      if (tags) {
+        const bits = [`provenance ${tags.provenanceId}`];
+        if (tags.testSuiteCommit) bits.push(`commit ${String(tags.testSuiteCommit).slice(0, 8)}`);
+        if (tags.channelResolveSource) bits.push(`via ${tags.channelResolveSource}`);
+        if (tags.channelPublishedAt) bits.push(`published ${String(tags.channelPublishedAt).slice(0, 10)}`);
+        if (this.releaseFeaturesPath && this.releaseFeaturesPath !== '/registry/release-features.json') {
+          bits.push(`view ${this.releaseFeaturesPath}`);
+        }
+        relChannel.textContent = bits.join(' · ');
+      } else {
+        relChannel.textContent = '';
+      }
     }
     const relHash = this.querySelector('#release-hash');
     if (relHash) {
@@ -579,21 +771,39 @@ class OperationsDashboard extends HTMLElement {
         ? `sha256 ${String(rel.proofHash).slice(0, 16)}…`
         : '';
     }
+    const relBake = this.querySelector('#release-meta-bake');
+    if (relBake) {
+      const cm = d.channelMeta;
+      if (cm?.available) {
+        const src = cm.sources
+          ? ` · sources ${cm.sources.release}/${cm.sources.nits}/${cm.sources.bundler}/${cm.sources.networking}`
+          : '';
+        const when = cm.updatedAt ? ` · baked ${String(cm.updatedAt).slice(0, 19)}` : '';
+        relBake.textContent = `meta bake ${cm.passed ?? '—'}/${cm.total ?? '—'} ${cm.status ?? ''}${src}${when}`;
+        relBake.classList.toggle('ok', cm.ok === true);
+        relBake.classList.toggle('bad', cm.ok === false);
+      } else {
+        relBake.textContent = 'meta bake — run bun run verify:channel:meta';
+        relBake.classList.remove('ok', 'bad');
+      }
+    }
     const relCards = this.querySelector('#release-features-cards');
     const relTable = this.querySelector('#release-features-table');
     const relTbody = relTable?.querySelector('tbody');
     const relJsonLd = this.querySelector('#release-jsonld');
     const rows = rel.results || [];
+    const previewRows = releasePreviewRows(rows);
+    const previewProof = rel.semanticTags ? { ...rel, results: previewRows } : rel;
 
-    if (rel.semanticTags && relCards && rows.length > 0) {
+    if (rel.semanticTags && relCards && previewRows.length > 0) {
       relCards.classList.remove('hidden');
-      relCards.innerHTML = renderVerificationResults(rel, 12);
+      relCards.innerHTML = renderVerificationResults(previewProof, 12);
       if (relTable) relTable.classList.add('hidden');
     } else if (relTable && relTbody) {
       if (relCards) relCards.classList.add('hidden');
-      if (rows.length > 0) {
+      if (previewRows.length > 0) {
         relTable.classList.remove('hidden');
-        relTbody.innerHTML = rows.slice(0, 12).map(r => renderVerificationTableRow(r)).join('');
+        relTbody.innerHTML = previewRows.slice(0, 12).map(r => renderVerificationTableRow(r)).join('');
       } else {
         relTable.classList.add('hidden');
         relTbody.innerHTML = '';
@@ -604,6 +814,29 @@ class OperationsDashboard extends HTMLElement {
       relJsonLd.textContent = JSON.stringify(rel.jsonLd);
     } else if (relJsonLd) {
       relJsonLd.textContent = '';
+    }
+
+    const net = this.networkingProof || {};
+    const netPass = this.querySelector('#networking-pass');
+    if (netPass) {
+      const g = net.global;
+      if (g?.checksTotal) {
+        netPass.textContent = `${g.checksPassed}/${g.checksTotal} checks`;
+        netPass.classList.toggle('ok', net.allOk === true);
+        netPass.classList.toggle('bad', net.allOk !== true);
+      } else {
+        netPass.textContent = '—';
+      }
+    }
+    const netDetail = this.querySelector('#networking-detail');
+    if (netDetail) {
+      netDetail.textContent = net.bunVersion
+        ? `subsystem ${net.subsystem ?? 'networking'} · ${net.targets?.length ?? 0} targets · base ${net.base ?? '—'}${net.remote ? ' · remote' : ''}`
+        : 'Run bun tools/verify-networking.ts --local-only --save';
+    }
+    const netHash = this.querySelector('#networking-hash');
+    if (netHash) {
+      netHash.textContent = net.proofHash ? `sha256 ${String(net.proofHash).slice(0, 16)}…` : '';
     }
 
     const ip = this.installPlatform || {};
@@ -621,7 +854,7 @@ class OperationsDashboard extends HTMLElement {
     const ipDetail = this.querySelector('#install-platform-detail');
     if (ipDetail) {
       ipDetail.textContent = ip.bunVersion
-        ? `Bun ${ip.bunVersion}${ip.dryRun ? ' · dry-run' : ''} · ${(ip.results || []).filter(r => r.canonical).length}/${(ip.results || []).length} with canonical URLs`
+        ? `Bun ${ip.bunVersion}${ip.dryRun ? ' · dry-run' : ''} · ${(ip.results || []).filter(r => r.canonical).length}/${(ip.results || []).length} with canonical URLs${formatBySubsystem(ip.summary?.bySubsystem)}`
         : 'Run bun tools/verify-install-platform.ts --save';
     }
     const ipTable = this.querySelector('#install-platform-table');
@@ -636,6 +869,9 @@ class OperationsDashboard extends HTMLElement {
               name: r.name.replace(/^install platform: /, ''),
               passed: r.passed,
               canonical: r.canonical,
+              canonicalKind: r.canonicalKind,
+              canonicalStability: r.canonicalStability,
+              subsystem: r.subsystem ?? 'package-manager',
               _links: r._links,
             })
           )
@@ -670,7 +906,15 @@ class OperationsDashboard extends HTMLElement {
     if (ieTable && ieTbody) {
       if (ieRows.length > 0) {
         ieTable.classList.remove('hidden');
-        ieTbody.innerHTML = ieRows.map(r => renderVerificationTableRow(r)).join('');
+        ieTbody.innerHTML = ieRows
+          .map(r =>
+            renderVerificationTableRow({
+              ...r,
+              name: r.name ?? r.envVar,
+              subsystem: r.subsystem ?? 'package-manager',
+            })
+          )
+          .join('');
       } else {
         ieTable.classList.add('hidden');
         ieTbody.innerHTML = '';
@@ -793,7 +1037,7 @@ class OperationsDashboard extends HTMLElement {
     const nitsDetail = this.querySelector('#runtime-nits-detail');
     if (nitsDetail) {
       nitsDetail.textContent = nits.bunVersion
-        ? `Bun ${nits.bunVersion} · inspect · streams · url · file-io · ${(nits.results || []).filter(r => r.canonical).length}/${(nits.results || []).length} canonical`
+        ? `Bun ${nits.bunVersion} · inspect · streams · url · file-io · ${(nits.results || []).filter(r => r.canonical).length}/${(nits.results || []).length} canonical${formatBySubsystem(nits.summary?.bySubsystem)}`
         : 'Run bun tools/verify-bun-runtime-nits.ts --save';
     }
     const nitsHash = this.querySelector('#runtime-nits-hash');
@@ -809,9 +1053,11 @@ class OperationsDashboard extends HTMLElement {
         nitsTbody.innerHTML = nitsRows
           .map(r =>
             renderVerificationTableRow({
-              name: `${r.category}: ${r.probe.replace(/^[^.]+\./, '')}`,
+              name: `${r.category}: ${r.name || r.probe}`,
               passed: r.passed,
               canonical: r.canonical,
+              canonicalKind: r.canonicalKind,
+              subsystem: r.subsystem ?? 'runtime',
               _links: r._links,
             })
           )
@@ -819,6 +1065,54 @@ class OperationsDashboard extends HTMLElement {
       } else {
         nitsTable.classList.add('hidden');
         nitsTbody.innerHTML = '';
+      }
+    }
+
+    const bundler = this.bundlerLoaders || {};
+    const bundlerPass = this.querySelector('#bundler-loaders-pass');
+    if (bundlerPass) {
+      const s = bundler.summary;
+      if (s?.total) {
+        bundlerPass.textContent = s.status === 'pass' ? '✅' : `${s.passed}/${s.total} probes`;
+        bundlerPass.classList.toggle('ok', s.status === 'pass');
+        bundlerPass.classList.toggle('bad', s.status !== 'pass');
+      } else {
+        bundlerPass.textContent = '—';
+      }
+    }
+    const bundlerDetail = this.querySelector('#bundler-loaders-detail');
+    if (bundlerDetail) {
+      bundlerDetail.textContent = bundler.bunVersion
+        ? `Bun ${bundler.bunVersion} · css · jsonc · subsystem bundler${formatBySubsystem(bundler.summary?.bySubsystem)}`
+        : 'Run bun run verify:bundler:save';
+    }
+    const bundlerHash = this.querySelector('#bundler-loaders-hash');
+    if (bundlerHash) {
+      bundlerHash.textContent = bundler.proofHash
+        ? `sha256 ${String(bundler.proofHash).slice(0, 16)}…`
+        : '';
+    }
+    const bundlerTable = this.querySelector('#bundler-loaders-table');
+    const bundlerTbody = bundlerTable?.querySelector('tbody');
+    const bundlerRows = bundler.results || [];
+    if (bundlerTable && bundlerTbody) {
+      if (bundlerRows.length > 0) {
+        bundlerTable.classList.remove('hidden');
+        bundlerTbody.innerHTML = bundlerRows
+          .map(r =>
+            renderVerificationTableRow({
+              name: r.loader ? `${r.loader}: ${r.name || r.probe}` : r.name || r.probe,
+              passed: r.passed,
+              canonical: r.canonical,
+              canonicalKind: r.canonicalKind,
+              subsystem: r.subsystem ?? 'bundler',
+              _links: r._links,
+            })
+          )
+          .join('');
+      } else {
+        bundlerTable.classList.add('hidden');
+        bundlerTbody.innerHTML = '';
       }
     }
 

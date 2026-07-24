@@ -1,0 +1,59 @@
+---
+description: FactoryWager portal UI — brand typography, nav trim, skeletons, actionable errors (supersedes generic anti-Inter guidance)
+globs: public/portal/**/*,docs/portal-foundation.md,REVIEW.html
+alwaysApply: false
+---
+
+# Portal frontend (FactoryWager)
+
+SSOT: [`docs/portal-foundation.md`](docs/portal-foundation.md) · static UI in [`public/portal/`](public/portal/).
+
+This rule **overrides** generic “avoid Inter / system-only” user guidance for the portal. Brand fonts are intentional product chrome, not a landing-page cliché ban.
+
+## Typography (preferred)
+
+| Token role | Face | Notes |
+|------------|------|--------|
+| Brand / UI | **Inter** (or Space Grotesk for wordmark only) | Matches `package.json` → `factoryWager.brand.fonts.primary` |
+| Metrics / hashes / code | **JetBrains Mono** or system SF Mono / Monaco | Tabular nums on `.metric-value` / `.proof-hash` |
+| Body fallback | system-ui stack | Keep as CSS fallback after webfonts |
+
+**Do:**
+
+- Define `--font-sans`, `--font-brand`, `--font-mono` in [`public/portal/style.css`](public/portal/style.css) (not a parallel `tokens.css` tree unless you migrate the whole portal).
+- Prefer static-safe Bun CSS: **logical + nesting + `:lang()` / `:not()` + shorthands + `clamp()`**; `:is()` / `system-ui` / media ranges ok; defer `light-dark()` / `color-mix()` / relative colors / CSS Modules in the static source.
+- Theme tokens SSOT: [`public/portal/theme.jsonc`](public/portal/theme.jsonc) (Bun **jsonc** loader) → `bun run portal:theme:sync` → `theme-tokens.css` (`@import`ed by `style.css`). Do not hand-edit `theme-tokens.css`.
+- Power UI pillars: `bun run portal:css:score:power` ([`lib/portal/power-ui-score.ts`](lib/portal/power-ui-score.ts)).
+- Optional lowering: `bun run portal:css:build` (syncs theme, then **css** loader) → `/portal/dist/style.css`. See `docs/portal-foundation.md`.
+- Load fonts once via shared head pattern on **all** portal pages / [`_page-template.html`](public/portal/_page-template.html) — Google Fonts CDN from brand config, or self-hosted under `public/portal/fonts/`.
+- Use `Bun.escapeHTML` for any server-rendered portal HTML strings.
+- Re-apply chrome with `bun tools/portal-apply-chrome.ts` after editing shells.
+
+**Don’t:**
+
+- Append fonts to only `index.html`.
+- Rely on `document.fonts` inside `bun -e` (no DOM) — check in browser or via installed font paths.
+- Invent a second palette; keep GitHub-dark tokens (`--bg`, `--surface`, `--accent`).
+
+## UX polish (preferred)
+
+1. **Nav trim** — Priority links (Home, Ops, Registry, Health, DOD) + overflow for Catalog / Env / Dashboard / Monitoring / Wiki.
+2. **Atmosphere** — Subtle top radial gradient on layout; optional card top-edge accent; health-dot may pulse when ok.
+3. **Loading** — Skeleton shimmer for cards/tables; prefer over indefinite spinners for data panels.
+4. **Errors** — Title + message + machine code + primary action (retry / generate snapshot), not empty “Failed to load”.
+5. **Semantic proof UI** — Verification cards keep `data-channel` / `data-subsystem` / `data-version` / microdata; `<channel-filter>` filters by channel and subsystem independently.
+
+## Still avoid (ops + marketing)
+
+- Purple-on-white / purple→indigo gradient themes on **marketing** surfaces.
+- Warm-cream + terracotta “AI brochure” look.
+- Broadsheet hairline newspaper layouts.
+- Emoji as the primary nav system (small status glyphs ok; prefer text + CSS for nav icons).
+- Card-everything dashboards; cards only when they bound an interaction or proof unit.
+
+## Apply checklist
+
+```bash
+bun tools/portal-apply-chrome.ts
+bun run verify:portal:static
+```

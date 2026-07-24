@@ -1,0 +1,46 @@
+/* GENERATED — do not edit. Source: public/portal/theme.jsonc */
+/* bun run portal:theme:sync */
+/* @see https://bun.com/docs/bundler/loaders#jsonc */
+
+:root {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-hover: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-dim: #8b949e;
+  --accent: #58a6ff;
+  --accent-glow: rgba(88, 166, 255, 0.15);
+  --green: #3fb950;
+  --yellow: #d29922;
+  --red: #f85149;
+  --gradient-subtle: radial-gradient(ellipse at top, #1a2332 0%, var(--bg) 55%);
+  --radius: 8px;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-brand: 'Inter', var(--font-sans);
+  --font-mono: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', ui-monospace, monospace;
+  --font: var(--font-sans);
+  --glow-accent: 0 0 20px var(--accent-glow);
+  --layout-max: 75rem;
+  --pad-inline: clamp(1rem, 3vw, 1.5rem);
+  --pad-block: clamp(1.25rem, 4vw, 2rem);
+  --font-hero: clamp(1.35rem, 1.15rem + 1.1vw, 1.75rem);
+  --font-metric: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f6f8fa;
+  --surface-hover: #eaeef2;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-dim: #656d76;
+  --accent: #0969da;
+  --accent-glow: rgba(9, 105, 218, 0.12);
+  --green: #1a7f37;
+  --yellow: #9a6700;
+  --red: #cf222e;
+  --gradient-subtle: radial-gradient(ellipse at top, #eef2f7 0%, var(--bg) 55%);
+}

@@ -17,19 +17,36 @@ function esc(s) {
 export function renderVerificationArticle(result, semanticTags) {
   const tags = semanticTags || {};
   const channel = result.channel || tags.channel || 'unknown';
+  const subsystem = result.subsystem || 'other';
   const version = result.targetVersion || tags.targetVersion || tags.runtimeVersion || '';
   const testedAt = tags.testedAt || new Date().toISOString();
   const docs = result._links?.docs || result.canonical || '';
-  const docMeta = [result.canonicalKind, result.canonicalStability].filter(Boolean).join(' · ');
+  const docMeta = [result.canonicalKind, result.canonicalStability, result.canonicalSource]
+    .filter(Boolean)
+    .join(' · ');
   const docTitle = [docMeta, result.canonicalDescription || docs].filter(Boolean).join(' — ');
   const source = result._links?.source || '';
   const report = result._links?.report || '/registry/release-features.json';
+  const canary = tags.canaryCommitShort
+    ? `<span class="version-badge" title="canary commit">${esc(String(tags.canaryCommitShort))}</span>`
+    : '';
+  const matchBadge =
+    tags.targetMatchesRuntime === true
+      ? '<span class="version-badge match-ok" title="target matches runtime">runtime✓</span>'
+      : tags.targetMatchesRuntime === false
+        ? '<span class="version-badge match-no" title="target differs from runtime">runtime≠</span>'
+        : '';
+  const subsystemBadge =
+    subsystem && subsystem !== 'other'
+      ? `<span class="version-badge subsystem-${esc(String(subsystem))}" title="verification subsystem">${esc(String(subsystem))}</span>`
+      : '';
 
   return `
 <article
   class="verification-result"
   data-test-id="${esc(result.name)}"
   data-channel="${esc(String(channel))}"
+  data-subsystem="${esc(String(subsystem))}"
   data-version="${esc(String(version))}"
   data-passed="${result.passed ? 'true' : 'false'}"
   data-tested-at="${esc(testedAt)}"
@@ -39,7 +56,10 @@ export function renderVerificationArticle(result, semanticTags) {
   <header class="verification-header">
     <h3 class="verification-title" itemprop="name">${esc(result.name)}</h3>
     <span class="channel-badge ${esc(String(channel))}" itemprop="applicationSubCategory">${esc(String(channel))}</span>
+    ${subsystemBadge}
     ${version ? `<span class="version-badge" itemprop="softwareVersion">${esc(String(version))}</span>` : ''}
+    ${canary}
+    ${matchBadge}
     <time datetime="${esc(testedAt)}" itemprop="dateModified">${esc(new Date(testedAt).toLocaleDateString())}</time>
   </header>
   <section class="test-result" data-passed="${result.passed ? 'true' : 'false'}">
@@ -77,11 +97,17 @@ export function renderVerificationResults(proof, limit = 12) {
  */
 export function renderVerificationTableRow(result) {
   const doc = result.canonical || result._links?.docs;
-  const meta = [result.canonicalKind, result.canonicalStability].filter(Boolean).join(' · ');
+  const meta = [result.subsystem, result.canonicalKind, result.canonicalStability]
+    .filter(Boolean)
+    .join(' · ');
   const title = [meta, result.canonicalDescription || doc].filter(Boolean).join(' — ');
   const docCell = doc
     ? `<a href="${esc(doc)}" target="_blank" rel="noopener" title="${esc(title || doc)}">Docs</a>`
     : '—';
   const lane = result.lane ? `<span class="ops-lane">${esc(result.lane)}</span> ` : '';
-  return `<tr><td>${lane}${esc(result.name)}</td><td>${result.passed ? '✅' : '❌'}</td><td>${docCell}</td></tr>`;
+  const sub =
+    result.subsystem && result.subsystem !== 'other'
+      ? `<span class="version-badge subsystem-${esc(String(result.subsystem))}">${esc(String(result.subsystem))}</span> `
+      : '';
+  return `<tr><td>${sub}${lane}${esc(result.name)}</td><td>${result.passed ? '✅' : '❌'}</td><td>${docCell}</td></tr>`;
 }

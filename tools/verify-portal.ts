@@ -102,6 +102,38 @@ async function checkClientContract() {
   console.log('✓ data.js + topbar.js contract');
 }
 
+async function checkPortalStyles() {
+  const assets = [
+    '/portal/style.css',
+    '/portal/theme-tokens.css',
+    '/portal/topbar.js',
+    '/portal/data.js',
+  ];
+  const failures: string[] = [];
+  for (const path of assets) {
+    const res = await fetch(`${BASE}${path}`);
+    const ct = res.headers.get('content-type') ?? '';
+    if (!res.ok) {
+      failures.push(`${path} → ${res.status}`);
+      continue;
+    }
+    if (path.endsWith('.css') && !ct.includes('text/css')) {
+      failures.push(`${path} → expected text/css, got ${ct || 'unknown'}`);
+      continue;
+    }
+    if (path.endsWith('.js') && !ct.includes('javascript')) {
+      failures.push(`${path} → expected javascript, got ${ct || 'unknown'}`);
+      continue;
+    }
+    console.log(`✓ ${path} → ${res.status} (${ct.split(';')[0]})`);
+  }
+  if (failures.length) {
+    throw new Error(
+      `Portal style assets failed (REGISTRY_SECRET gate? restart serve-public after fix):\n${failures.join('\n')}`
+    );
+  }
+}
+
 async function checkNav() {
   const failures: string[] = [];
   for (const p of NAV_PATHS) {
@@ -151,17 +183,37 @@ async function checkRegistryHealth() {
   console.log('✓ /api/registry/health');
 }
 
+async function checkVerificationTaxonomyChrome() {
+  const dash = await readPortalFile('operations-dashboard.js');
+  if (!dash.includes('releasePreviewRows')) {
+    throw new Error('operations-dashboard.js missing releasePreviewRows (install-platform dedupe)');
+  }
+  if (!dash.includes('proof-taxonomy-audit.json')) {
+    throw new Error('operations-dashboard.js missing proof-taxonomy-audit panel');
+  }
+  const filter = await readPortalFile('channel-filter.js');
+  if (!filter.includes('data-filter="subsystem"')) {
+    throw new Error('channel-filter.js missing subsystem filter fieldset');
+  }
+  if (!filter.includes('data-subsystem')) {
+    throw new Error('channel-filter.js should filter cards by data-subsystem (see applyFilter)');
+  }
+  console.log('✓ verification taxonomy portal chrome (subsystem filter + dedupe + audit panel)');
+}
+
 async function runStatic() {
   await checkFoundationDoc();
   await checkInlineHealthFetch();
   await checkNoProcessEnv();
   await checkHtmlIncludes();
   await checkClientContract();
+  await checkVerificationTaxonomyChrome();
 }
 
 async function runLive() {
   console.log(`Live probes → ${BASE}`);
   await checkNav();
+  await checkPortalStyles();
   await checkApiHealth();
   await checkApiEnv();
   await checkRegistryHealth();

@@ -110,6 +110,7 @@ describe('Bun.serve', () => {
       expect(server.port).toBeGreaterThan(0);
       expect(server.port).toBeLessThan(65536);
       expect(server.url.port).toBe(String(server.port));
+      expect(server.protocol).toBe('http');
       expect(server.url.protocol).toBe('http:');
     });
 
@@ -164,9 +165,10 @@ describe('Bun.serve', () => {
       expect(server.development).toBe(true);
     });
 
-    test('when development is omitted, server.development is exactly true on this runtime', () => {
+    test('when development is omitted, follows NODE_ENV (non-production → true)', () => {
       const server = serve({ port: 0 });
-      expect(server.development).toBe(true);
+      const expected = process.env.NODE_ENV !== 'production';
+      expect(server.development).toBe(expected);
     });
   });
 
@@ -281,16 +283,12 @@ describe('Bun.serve', () => {
   });
 
   describe('FactoryWager monorepo convention', () => {
-    test('Bun.env.PORT || 3000 is a finite integer >= 1 (serve-public default)', () => {
-      const port = Number(Bun.env.PORT || 3000);
+    test('resolveBunServeDefaultPort matches serve-public verify probes', async () => {
+      const { resolveBunServeDefaultPort } = await import('../lib/http/bun-serve-shape.ts');
+      const port = resolveBunServeDefaultPort(Bun.env, Bun.argv);
       expect(Number.isInteger(port)).toBe(true);
       expect(port).toBeGreaterThanOrEqual(1);
       expect(port).toBeLessThanOrEqual(65535);
-      if (Bun.env.PORT === undefined || Bun.env.PORT === '') {
-        expect(port).toBe(3000);
-      } else {
-        expect(port).toBe(Number(Bun.env.PORT));
-      }
     });
   });
 });

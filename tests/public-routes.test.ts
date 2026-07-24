@@ -7,7 +7,7 @@ import {
   publicRouteCatalog,
   publicRoutesByCategory,
 } from '../lib/http/public-routes.ts';
-import { RouteProbeReport } from '../lib/http/networking-report.ts';
+import { RouteProbeReport, ROUTE_PROBE_TABLE_PROPERTIES } from '../lib/http/networking-report.ts';
 import { probePublicRoutes } from '../tools/verify-networking.ts';
 import { inspectCustom } from '../lib/console-depth.ts';
 
@@ -75,5 +75,9 @@ describe('probePublicRoutes (live when serve-public up)', () => {
     const j = report.toJSON();
     expect(j.routes.length).toBe(probe.rows.length);
     expect(j.rendered.routes).toContain('/portal/ops/');
+    expect(j.tableProof.routes.renderIdempotent).toBe(true);
+    expect(j.tableProof.routes.rowsStable).toBe(true);
+    expect(j.tableProof.routes.properties).toEqual([...ROUTE_PROBE_TABLE_PROPERTIES]);
+    expect(j.tableProof.routes.columnWidths.path).toBeGreaterThan(0);
   });
 });
