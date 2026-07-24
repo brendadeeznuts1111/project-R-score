@@ -8,6 +8,7 @@
  * @see lib/verification/subsystem.ts — inference + summarizeBySubsystem
  */
 import type { VerificationSubsystem, VerificationResult } from './types.ts';
+import { asAccountId } from '../types/branded.ts';
 import { auditProofConsistency, type ProofConsistencyRow } from './proof-consistency.ts';
 
 export type ProofTaxonomyContract = {
@@ -378,7 +379,7 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
       servers?: Array<{ name: string; url: string }>;
     },
     cloudflareTokenExpected: {
-      accountId: CLOUDFLARE_TOKEN_PERMISSIONS.accountId,
+      accountId: asAccountId(CLOUDFLARE_TOKEN_PERMISSIONS.accountId),
       pagesProject: CLOUDFLARE_TOKEN_PERMISSIONS.pagesProject,
       zoneName: CLOUDFLARE_TOKEN_PERMISSIONS.zoneName,
     },

@@ -13,8 +13,6 @@
  * Claim: `cloudflare-pages-env-ssot` · Tenant: docs/harness/tenants/cloudflare-pages.md
  */
 
-import { asAccountId, asZoneId } from '../lib/types/branded.ts';
-
 /** Non-secret identity proven live (wrangler whoami + Pages/zones API). */
 export const CLOUDFLARE_DEFAULTS = {
   accountId: '7a470541a704caaf91e71efccc78fd36',
@@ -215,10 +213,10 @@ export const CLOUDFLARE_ZONE = {
 
 /** Layer 2 — dashboard token policy SSOT (MCP + harness). See tenant doc for mint steps. */
 export const CLOUDFLARE_TOKEN_PERMISSIONS = {
-  accountId: asAccountId(CLOUDFLARE_DEFAULTS.accountId),
+  accountId: CLOUDFLARE_DEFAULTS.accountId,
   pagesProject: CLOUDFLARE_DEFAULTS.pages.project,
   zoneName: CLOUDFLARE_DEFAULTS.zones.factoryWager.name,
-  zoneId: asZoneId(CLOUDFLARE_DEFAULTS.zones.factoryWager.id),
+  zoneId: CLOUDFLARE_DEFAULTS.zones.factoryWager.id,
   /** Minimum for assert-live + DNS CNAME script */
   minimal: [
     { permission: 'Cloudflare Pages:Edit', resource: 'account → project-r-score' },
