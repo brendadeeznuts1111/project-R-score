@@ -1,28 +1,269 @@
 {
   "schemaVersion": 1,
   "tenantId": "factory",
-  "lastUpdated": "2026-07-23T06:00:00Z",
+  "lastUpdated": "2026-07-24T06:35:58.661Z",
   "meta": {
-    "coverage": 78,
-    "proof": {
-      "verified": 12,
-      "total": 15
-    }
+    "source": "tenant-registry-seed",
+    "rootLastUpdated": "2026-07-24T00:00:22.295046+00:00",
+    "packageCount": 6
   },
   "packages": {
     "event-store": {
-      "versions": ["1.1.0"],
-      "dist-tags": { "latest": "1.1.0" },
+      "versions": [
+        "1.0.0",
+        "1.1.0",
+        "2.0.0-beta"
+      ],
+      "dist-tags": {
+        "latest": "1.1.0",
+        "beta": "2.0.0-beta"
+      },
       "releases": {
+        "1.0.0": {
+          "id": "event-store@1.0.0",
+          "name": "event-store",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "Event sourcing and CQRS primitives for sports trading pipelines",
+          "tags": [
+            "event-sourcing",
+            "cqrs",
+            "trading"
+          ],
+          "readme": "# Event Store\n\nEvent sourcing primitives.\n\n## Usage\n\n```ts\nimport { EventStore } from '@factorywager/event-store';\n```\n\n## Configuration\n\nSet `EVENT_STORE_BACKEND` to `memory` or `r2`.",
+          "publishedAt": "2026-07-15T10:30:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/1.0.0.tgz",
+            "size": 12480,
+            "checksum": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2",
+            "contentType": "application/gzip"
+          }
+        },
         "1.1.0": {
           "id": "event-store@1.1.0",
           "name": "event-store",
           "version": "1.1.0",
           "type": "library",
-          "description": "Event sourcing with snapshot support",
-          "tags": ["event-sourcing", "factory"],
+          "description": "Event sourcing with snapshot support and R2 persistence",
+          "tags": [
+            "event-sourcing",
+            "cqrs",
+            "r2",
+            "snapshots"
+          ],
           "publishedAt": "2026-07-20T14:00:00Z",
-          "publisher": "factory-cli"
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/1.1.0.tgz",
+            "size": 15720,
+            "checksum": "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3",
+            "contentType": "application/gzip"
+          }
+        },
+        "2.0.0-beta": {
+          "id": "event-store@2.0.0-beta",
+          "name": "event-store",
+          "version": "2.0.0-beta",
+          "type": "library",
+          "description": "v2 beta: multi-tenant event stores, streaming projections, WebSocket tailing",
+          "tags": [
+            "event-sourcing",
+            "multi-tenant",
+            "streaming",
+            "beta"
+          ],
+          "publishedAt": "2026-07-22T09:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/event-store/2.0.0-beta.tgz",
+            "size": 22400,
+            "checksum": "c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "factory-cli": {
+      "versions": [
+        "0.1.0"
+      ],
+      "dist-tags": {
+        "latest": "0.1.0"
+      },
+      "releases": {
+        "0.1.0": {
+          "id": "factory-cli@0.1.0",
+          "name": "factory-cli",
+          "version": "0.1.0",
+          "type": "cli-tool",
+          "description": "R2-backed artifact registry CLI — publish, install, list, search, create, and readme",
+          "dependencies": {
+            "@factorywager/event-store": "^1.0.0"
+          },
+          "readme": "# Factory CLI\n\nR2-backed artifact registry CLI.\n\n## Usage\n\n```bash\nbun run factory --version\nbun run factory:publish ./dist.tgz --name my-lib --version 1.0.0\nbun run factory:list\nbun run factory:search event-store\nbun run factory:install my-lib\nbun run factory:readme my-lib\nbun run factory create factory-library my-new-lib --publish\n```\n\n## Environment\n\nSet `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` for registry access.\nOptional: `FACTORY_REGISTRY_URL`, `BUN_CREATE_DIR`, `FACTORY_NO_COLOR`.",
+          "publishedAt": "2026-07-22T23:00:00Z",
+          "publisher": "factory-cli",
+          "storage": {
+            "r2Key": "@factorywager/factory-cli/0.1.0.tgz",
+            "size": 24800,
+            "checksum": "d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "@factorywager/registry-client": {
+      "versions": [
+        "1.0.0"
+      ],
+      "dist-tags": {
+        "latest": "1.0.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "@factorywager/registry-client@1.0.0",
+          "name": "@factorywager/registry-client",
+          "version": "1.0.0",
+          "type": "library",
+          "description": "",
+          "tags": [],
+          "publishedAt": "2026-07-24T04:02:27.943Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/@factorywager/registry-client/1.0.0.tgz",
+            "size": 69,
+            "checksum": "76f15dd931dcd2f9ee0d36473e58b879561a6df6bdd9a4c276cdebc9ad76b792",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "@factory/health-check": {
+      "versions": [
+        "1.0.0",
+        "1.1.0"
+      ],
+      "dist-tags": {
+        "latest": "1.1.0",
+        "stable": "1.1.0"
+      },
+      "releases": {
+        "1.0.0": {
+          "id": "@factory/health-check@1.0.0",
+          "name": "@factory/health-check",
+          "version": "1.0.0",
+          "type": "cli-tool",
+          "description": "Registry health check CLI",
+          "tags": [
+            "latest"
+          ],
+          "publishedAt": "2026-07-23T17:24:45.991Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/@factory/health-check/1.0.0.tgz",
+            "size": 688,
+            "checksum": "7239c3d7386983feb80dd73bff9cd159cbd3fe58800f4e99ea6ccf9a593df8bf",
+            "contentType": "text/javascript;charset=utf-8"
+          },
+          "bin": {
+            "health-check": "bin/health-check.js"
+          }
+        },
+        "1.1.0": {
+          "id": "@factory/health-check@1.1.0",
+          "name": "@factory/health-check",
+          "version": "1.1.0",
+          "type": "cli-tool",
+          "description": "Updated health check",
+          "tags": [
+            "latest",
+            "stable"
+          ],
+          "publishedAt": "2026-07-23T17:26:35.935Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/@factory/health-check/1.1.0.tgz",
+            "size": 20,
+            "checksum": "ed14c3d0ad306e24dd26b814baef3ae6c1becec47adee3abc3b8346aa3640f5e",
+            "contentType": "text/javascript;charset=utf-8"
+          }
+        }
+      }
+    },
+    "kimi-toolchain": {
+      "versions": [
+        "2.1.0"
+      ],
+      "dist-tags": {
+        "latest": "2.1.0"
+      },
+      "releases": {
+        "2.1.0": {
+          "id": "kimi-toolchain@2.1.0",
+          "name": "kimi-toolchain",
+          "version": "2.1.0",
+          "type": "cli-tool",
+          "description": "Kimi governance and doctor toolchain for harness health checks",
+          "tags": [
+            "governance",
+            "doctor",
+            "harness"
+          ],
+          "publishedAt": "2026-07-19T08:00:00Z",
+          "publisher": "ci-bot",
+          "storage": {
+            "r2Key": "@factorywager/kimi-toolchain/2.1.0.tgz",
+            "size": 31200,
+            "checksum": "e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1f2",
+            "contentType": "application/gzip"
+          }
+        }
+      }
+    },
+    "@factorywager/bun-test": {
+      "versions": [
+        "0.1.0",
+        "0.2.0"
+      ],
+      "dist-tags": {
+        "latest": "0.2.0",
+        "beta": "0.2.0"
+      },
+      "releases": {
+        "0.1.0": {
+          "id": "@factorywager/bun-test@0.1.0",
+          "name": "@factorywager/bun-test",
+          "version": "0.1.0",
+          "type": "library",
+          "description": "Published via bun publish",
+          "publishedAt": "2026-07-23T17:22:36.203Z",
+          "publisher": "bun-publish",
+          "storage": {
+            "r2Key": "@factorywager/@factorywager/bun-test/0.1.0.tgz",
+            "size": 257,
+            "checksum": "40d01475b9fffb79c20d4aef839a4bf241bfc580aee36ec8cfc23fb05e2af4cf",
+            "contentType": "application/gzip"
+          }
+        },
+        "0.2.0": {
+          "id": "@factorywager/bun-test@0.2.0",
+          "name": "@factorywager/bun-test",
+          "version": "0.2.0",
+          "type": "library",
+          "description": "Updated test",
+          "tags": [
+            "latest",
+            "beta"
+          ],
+          "publishedAt": "2026-07-23T17:23:18.841Z",
+          "publisher": "api",
+          "storage": {
+            "r2Key": "@factorywager/@factorywager/bun-test/0.2.0.tgz",
+            "size": 5,
+            "checksum": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+            "contentType": "text/javascript;charset=utf-8"
+          }
         }
       }
     }

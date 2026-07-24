@@ -37,6 +37,9 @@ import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { isOperationsDbEmpty, seedOperationsDemo } from '../lib/operations/ops-seed.ts';
+import { isPredictionDataEmpty, seedPredictionDemo } from '../lib/operations/prediction-seed.ts';
+import { isDodQueueEmpty, seedDodDemo } from '../lib/operations/dod-seed.ts';
+import { seedTenantRegistries } from '../lib/operations/tenant-registry-seed.ts';
 import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
 import {
   getRoutingProof,
@@ -278,20 +281,58 @@ export async function buildRegistrySnapshot(options?: {
       console.warn('[ops-snapshot] skills catalog skipped:', e instanceof Error ? e.message : e);
     }
 
-    // 2. Ops summary (embeds disk routing / taxonomy / channel-meta slices)
+    // 2. Demo seeds (ops / prediction / DOD / tenant registries) when empty
     if (!argv.includes('--no-seed')) {
       const forceSeed = argv.includes('--seed-force');
-      const shouldSeed = forceSeed || argv.includes('--seed') || isOperationsDbEmpty(db);
-      if (shouldSeed) {
+      const wantSeed = forceSeed || argv.includes('--seed');
+      const ifEmptyOnly = !forceSeed && !argv.includes('--seed');
+
+      if (wantSeed || isOperationsDbEmpty(db)) {
         const seed = await seedOperationsDemo(db, {
           force: forceSeed,
-          ifEmpty: !forceSeed && !argv.includes('--seed'),
+          ifEmpty: ifEmptyOnly,
         });
         if (seed.seeded) {
           console.log(
-            `[ops-snapshot] demo seed → ${seed.experts} experts · ${seed.plays} plays · $${seed.liquidity} sb liquidity`
+            `[ops-snapshot] ops seed → ${seed.experts} experts · ${seed.plays} plays · $${seed.liquidity} sb liquidity`
           );
         }
+      }
+
+      if (wantSeed || isPredictionDataEmpty(db)) {
+        const pred = seedPredictionDemo(db, { force: forceSeed, ifEmpty: ifEmptyOnly });
+        if (pred.seeded) {
+          console.log(
+            `[ops-snapshot] prediction seed → ${pred.snapshots} snapshots · n=${pred.accuracy?.n ?? 0}`
+          );
+        }
+      }
+
+      if (wantSeed || isDodQueueEmpty(cfg.dbPath)) {
+        const dod = await seedDodDemo({
+          dbPath: cfg.dbPath,
+          force: forceSeed,
+          ifEmpty: ifEmptyOnly,
+        });
+        if (dod.seeded) {
+          console.log(
+            `[ops-snapshot] dod seed → ${dod.inserted} submissions · ${JSON.stringify(dod.byStatus)}`
+          );
+        }
+      }
+
+      try {
+        const tenants = await seedTenantRegistries({
+          force: forceSeed || argv.includes('--seed-tenants'),
+        });
+        if (tenants.seeded) {
+          console.log(`[ops-snapshot] tenant registries → ${JSON.stringify(tenants.tenants)}`);
+        }
+      } catch (e) {
+        console.warn(
+          '[ops-snapshot] tenant registry seed skipped:',
+          e instanceof Error ? e.message : e
+        );
       }
     }
 

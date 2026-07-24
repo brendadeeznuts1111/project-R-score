@@ -11,11 +11,17 @@ Refreshes portal/Pages artifacts:
 - `public/registry/proof-taxonomy-audit.json` (subsystem contracts + consistency — written before ops-summary)
 - `public/registry/monitoring.json`
 - `public/registry/static.json`
+- `public/registry/dod-queue.json` (+ bakes `#dod-embed` on `/portal/dod/`)
+- tenant slices `public/registry/{factory,science,tennis}/registry.json` (when thin)
 - `@factorywager/bun-utils-test` + `routing-test` proofs
 - prediction report (unless `--no-report`)
 - `public/registry/release-features.json` channel meta merge (prefer-artifact;
   disable with `--no-channel-meta` / `OPS_SNAPSHOT_CHANNEL_META=0`) · claim
   `channel-meta-verification-v1`
+
+**Populate demos (Pages “looks live”):** `bun run ops:snapshot:demo` runs
+`ops:seed:all` (ops + prediction + DOD + tenants) then snapshot. Snapshot itself
+auto-seeds empty ops / prediction / DOD queues unless `--no-seed`.
 
 Uses routing proof **retry + TTL cache** (`lib/routing-proof.ts` ·
 `getRoutingProof`). Next fire waits for the snapshot Promise (**no overlap**).
