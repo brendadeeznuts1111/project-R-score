@@ -60,7 +60,18 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
     return healthJson({ error: 'Method not allowed' }, 405, false, cors);
   }
 
-  // Try R2 bucket first, fall back to ASSETS (static snapshot)
+  // Try ASSETS binding first (static files deployed with Pages), then R2, then HTTP fetch
+  async function fromAssets(): Promise<{ text: string } | null> {
+    try {
+      const url = new URL(request.url);
+      if (env.ASSETS && typeof (env.ASSETS as any).fetch === 'function') {
+        const res = await (env.ASSETS as any).fetch(new URL('/registry/registry.json', url.origin));
+        if (res && res.ok) return { text: await res.text() };
+      }
+    } catch {}
+    return null;
+  }
+
   async function fromR2(): Promise<{ text: string } | null> {
     const bucket = env.REGISTRY_BUCKET;
     if (!bucket || typeof bucket.get !== 'function') return null;
@@ -71,11 +82,10 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
     return null;
   }
 
-  async function fromAssets(): Promise<{ text: string } | null> {
+  async function fromHttp(): Promise<{ text: string } | null> {
     try {
       const url = new URL(request.url);
-      const origin = url.origin;
-      const res = await fetch(`${origin}/registry/registry.json`);
+      const res = await fetch(`${url.origin}/registry/registry.json`);
       if (res.ok) return { text: await res.text() };
     } catch {}
     return null;
@@ -84,16 +94,20 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
   let source: string;
   let text: string | null = null;
 
-  const r2 = await fromR2();
-  if (r2) { text = r2.text; source = 'r2'; }
+  const assets = await fromAssets();
+  if (assets) { text = assets.text; source = 'assets'; }
   else {
-    const assets = await fromAssets();
-    if (assets) { text = assets.text; source = 'assets'; }
+    const r2 = await fromR2();
+    if (r2) { text = r2.text; source = 'r2'; }
     else {
-      return healthJson(
-        { status: 'error', indexOk: false, message: 'Registry index unavailable (R2 and ASSETS both empty)' },
-        503, head, cors
-      );
+      const http = await fromHttp();
+      if (http) { text = http.text; source = 'http'; }
+      else {
+        return healthJson(
+          { status: 'error', indexOk: false, message: 'Registry index unavailable (all sources empty)' },
+          503, head, cors
+        );
+      }
     }
   }
 
