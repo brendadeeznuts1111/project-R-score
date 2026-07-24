@@ -295,6 +295,14 @@ export const HOT_STATIC_ROUTES: PublicRouteDef[] = [
     okStatuses: [200],
   },
   {
+    path: '/registry/skills-catalog.json',
+    name: 'Skills catalog artifact',
+    category: 'registry',
+    kind: 'hot-static',
+    okStatuses: [200],
+    note: 'origin scan via ops:snapshot · /api/skills on Pages',
+  },
+  {
     path: '/registry/registry.json',
     name: 'Registry index file',
     category: 'registry',

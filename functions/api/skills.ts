@@ -2,7 +2,7 @@
  * Pages Function — skills catalog JSON (edge-safe stub).
  *
  * Full scan (Bun.Glob over PORTAL_SKILLS_DIR) runs on origin via serve-public.
- * On Pages we serve committed static artifact or an empty catalog with a warning.
+ * On Pages we serve committed public/registry/skills-catalog.json or an empty catalog.
  *
  * @see lib/http/skills-catalog.ts
  * @see public/portal/skills/index.html
@@ -21,12 +21,22 @@ const EMPTY = {
   skills: [],
   count: 0,
   warning:
-    'Skills directory scan is origin-only — run locally or commit public/registry/skills-catalog.json.',
+    'Skills directory scan is origin-only — run ops:snapshot locally or commit public/registry/skills-catalog.json.',
 };
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'public, max-age=60',
+    },
+  });
+}
 
 export async function onRequest(context: SkillsPagesContext): Promise<Response> {
   if (context.request.method !== 'GET') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return jsonResponse({ error: 'Method not allowed' }, 405);
   }
 
   const origin = new URL(context.request.url).origin;
@@ -39,24 +49,17 @@ export async function onRequest(context: SkillsPagesContext): Promise<Response> 
       res = await fetch(assetUrl.toString(), { headers: { Accept: 'application/json' } });
     }
     if (res.ok) {
-      const ct = res.headers.get('Content-Type') || 'application/json; charset=utf-8';
-      return new Response(res.body, {
-        status: 200,
-        headers: {
-          'Content-Type': ct.includes('json') ? ct : 'application/json; charset=utf-8',
-          'Cache-Control': 'public, max-age=60',
-        },
-      });
+      const ct = res.headers.get('Content-Type') ?? '';
+      if (ct.includes('json')) {
+        const data = (await res.json()) as { skills?: unknown[]; count?: number };
+        if (Array.isArray(data.skills)) {
+          return jsonResponse({ ...data, source: 'snapshot' });
+        }
+      }
     }
   } catch {
     /* fall through */
   }
 
-  return new Response(JSON.stringify(EMPTY), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'public, max-age=60',
-    },
-  });
+  return jsonResponse(EMPTY);
 }

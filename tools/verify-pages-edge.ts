@@ -123,6 +123,12 @@ async function main() {
         }
       })
     ),
+    check('/api/skills JSON', 'core', () =>
+      expectJson('/api/skills', j => {
+        if (!Array.isArray(j.skills)) throw new Error('missing skills[]');
+        if (typeof j.count !== 'number') throw new Error('missing count');
+      })
+    ),
     check('proof-taxonomy-audit.json', 'taxonomy', () =>
       expectJson('/registry/proof-taxonomy-audit.json', j => {
         if (j.type !== 'ProofTaxonomyAuditReport') throw new Error(`type=${j.type}`);

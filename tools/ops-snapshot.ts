@@ -264,6 +264,17 @@ export async function buildRegistrySnapshot(options?: {
       );
     }
 
+    try {
+      const { buildSkillsCatalog } = await import('../lib/http/skills-catalog.ts');
+      const skillsCatalog = await buildSkillsCatalog();
+      await Bun.write(
+        `${root}/public/registry/skills-catalog.json`,
+        `${JSON.stringify(skillsCatalog, null, 2)}\n`
+      );
+    } catch (e) {
+      console.warn('[ops-snapshot] skills catalog skipped:', e instanceof Error ? e.message : e);
+    }
+
     // 2. Ops summary (embeds disk routing / taxonomy / channel-meta slices)
     const payload = buildOpsSummary(db, 'snapshot');
     if (routingSlice) payload.routing = routingSlice;
