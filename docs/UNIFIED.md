@@ -71,7 +71,7 @@ Docs: [platform-specific dependencies](https://bun.com/docs/pm/cli/install#platf
 | Trusting `.npmrc` for Bun scope URLs | Bun reads `[install.scopes]` in bunfig, not `.npmrc` | bunfig SSOT; `.npmrc` for npm/vite clients only |
 | `frozenLockfile = true` in **root** repo bunfig | blocks local dep edits; duplicates CI machine policy | root stays `false`; machine/CI stays `true` |
 | Spawning bare `'bun'` in verify scripts | PATH may resolve a different binary than the runtime interpreter | `lib/verification/resolve-bun-binary.ts` — `process.execPath` first, `Bun.which('bun')` fallback |
-| `BUN_CONFIG_REGISTRY` in project `.env` for default registry | env overrides bunfig unpredictably in dev/CI | use `[install].registry` in bunfig or scoped `REGISTRY_URL` in tools; CI-only `BUN_CONFIG_TOKEN` |
+| `BUN_CONFIG_REGISTRY` in project `.env` for default registry | env overrides bunfig unpredictably in dev/CI | use `[install].registry` in bunfig, scoped `.npmrc`, or `bun publish --registry` ([docs](https://bun.com/docs/pm/cli/publish#registry-configuration)); tool overlay `REGISTRY_URL` is npm API only — not Pages routing probes |
 
 ## Legitimate variants (not wrong)
 

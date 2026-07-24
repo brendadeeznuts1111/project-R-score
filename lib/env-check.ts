@@ -152,7 +152,15 @@ export const ENV_CHECK_SPECS: Spec[] = [
     severity: 'recommended',
     anyOf: ['REGISTRY_URL', 'FACTORY_REGISTRY_URL'],
     hasCodeDefault: true,
-    note: `https://${CLOUDFLARE_DEFAULTS.registryHost} or score.factory-wager.com`,
+    note: `npm publish/install plane (default https://${CLOUDFLARE_DEFAULTS.registryHost}); see bun publish --registry`,
+  },
+  {
+    key: 'ROUTING_PROBE_BASE_URL',
+    group: 'registry',
+    severity: 'optional',
+    anyOf: ['ROUTING_PROBE_BASE_URL', 'PAGES_PUBLIC_URL'],
+    hasCodeDefault: true,
+    note: `Pages public origin for routing proof (default https://${CLOUDFLARE_DEFAULTS.pages.customDomain}); not REGISTRY_URL`,
   },
   {
     key: 'REGISTRY_PUBLIC_URL',

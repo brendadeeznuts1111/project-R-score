@@ -233,35 +233,128 @@ export function ansiMarkdown(
   });
 }
 
+/** Options shared by width / pad / fit (keep ambiguousIsNarrow consistent in one layout). */
+export type StringWidthOptions = {
+  countAnsiEscapeCodes?: boolean;
+  ambiguousIsNarrow?: boolean;
+};
+
 /**
  * Visual width of a string (ANSI-aware, emoji = 2). Thin alias of Bun.stringWidth.
- * Options mirror the Bun API: countAnsiEscapeCodes (default false),
- * ambiguousIsNarrow (default true).
+ * Default ignores CSI so Bun.color / styleText labels still align.
  * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  */
-export function widthOf(
-  text: string,
-  options: { countAnsiEscapeCodes?: boolean; ambiguousIsNarrow?: boolean } = {}
-): number {
+export function widthOf(text: string, options: StringWidthOptions = {}): number {
   return Bun.stringWidth(text, options);
 }
 
 /**
- * Pad a string on the right to a visual column width (ANSI/emoji safe).
+ * Pad end by visible columns (ANSI/emoji safe). Prefer over String#padEnd when
+ * the string may contain CSI from Bun.color / styleText.
  * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  */
-export function padEndWidth(text: string, width: number, fill = ' '): string {
-  const missing = width - Bun.stringWidth(text);
+export function padEndWidth(
+  text: string,
+  width: number,
+  fill = ' ',
+  options?: Pick<StringWidthOptions, 'ambiguousIsNarrow'>
+): string {
+  const missing = width - Bun.stringWidth(text, options);
   return missing > 0 ? text + fill.repeat(missing) : text;
 }
+
+/** Alias — visible-column pad end. */
+export const padEndVisible = padEndWidth;
+
+/**
+ * Pad start by visible columns (ANSI/emoji safe).
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth
+ */
+export function padStartWidth(
+  text: string,
+  width: number,
+  fill = ' ',
+  options?: Pick<StringWidthOptions, 'ambiguousIsNarrow'>
+): string {
+  const missing = width - Bun.stringWidth(text, options);
+  return missing > 0 ? fill.repeat(missing) + text : text;
+}
+
+/** Alias — visible-column pad start. */
+export const padStartVisible = padStartWidth;
+
+/**
+ * Center in a visible column width (ANSI/emoji safe).
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth
+ */
+export function padCenterWidth(
+  text: string,
+  width: number,
+  fill = ' ',
+  options?: Pick<StringWidthOptions, 'ambiguousIsNarrow'>
+): string {
+  const missing = width - Bun.stringWidth(text, options);
+  if (missing <= 0) return text;
+  const left = Math.floor(missing / 2);
+  return fill.repeat(left) + text + fill.repeat(missing - left);
+}
+
+/** Alias — visible-column center. */
+export const padCenterVisible = padCenterWidth;
 
 /**
  * Truncate to a visual column width without breaking ANSI codes or graphemes.
  * @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi semantics
  */
-export function truncateWidth(text: string, width: number): string {
-  return Bun.stringWidth(text) <= width ? text : Bun.sliceAnsi(text, 0, width);
+export function truncateWidth(
+  text: string,
+  width: number,
+  options?: Pick<StringWidthOptions, 'ambiguousIsNarrow'> & { ellipsis?: string }
+): string {
+  const { ellipsis, ...sw } = options ?? {};
+  if (Bun.stringWidth(text, sw) <= width) return text;
+  return ellipsis !== undefined
+    ? Bun.sliceAnsi(text, 0, width, { ellipsis, ...sw })
+    : Bun.sliceAnsi(text, 0, width, sw);
 }
+
+/**
+ * Fit = sliceAnsi (overflow) then pad to exact column width.
+ * Pair with pad*Visible for banners / probe columns; prefer Bun.inspect.table for box chrome.
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth
+ * @see https://bun.com/reference/bun/sliceAnsi
+ */
+export function fitWidth(
+  text: string,
+  cols: number,
+  opts?: {
+    ellipsis?: string;
+    align?: 'left' | 'right' | 'center';
+    fill?: string;
+    ambiguousIsNarrow?: boolean;
+  }
+): string {
+  const sw =
+    opts?.ambiguousIsNarrow === undefined
+      ? undefined
+      : { ambiguousIsNarrow: opts.ambiguousIsNarrow };
+  const fill = opts?.fill ?? ' ';
+  const clipped =
+    Bun.stringWidth(text, sw) > cols
+      ? Bun.sliceAnsi(text, 0, cols, { ellipsis: opts?.ellipsis ?? '…', ...sw })
+      : text;
+  switch (opts?.align ?? 'left') {
+    case 'right':
+      return padStartWidth(clipped, cols, fill, sw);
+    case 'center':
+      return padCenterWidth(clipped, cols, fill, sw);
+    default:
+      return padEndWidth(clipped, cols, fill, sw);
+  }
+}
+
+/** Alias — truncate-then-pad for fixed columns. */
+export const fitVisible = fitWidth;
 
 /**
  * Wrap text to a column width, ANSI- and grapheme-safe: Bun.wrapAnsi

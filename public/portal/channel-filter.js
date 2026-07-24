@@ -91,6 +91,22 @@ class ChannelFilter extends HTMLElement {
       /** @type {HTMLElement} */ (card).style.display =
         channelOk && subsystemOk ? '' : 'none';
     });
+    // Ops panels: data-subsystem="mixed" stays when any pillar is selected;
+    // empty / missing attr always visible.
+    root.querySelectorAll('.ops-panel[data-subsystem]').forEach(panel => {
+      const sub = panel.getAttribute('data-subsystem') || '';
+      let show = true;
+      if (subsystems.length > 0) {
+        if (sub === 'mixed') {
+          show = subsystems.some(s =>
+            ['runtime', 'package-manager', 'networking', 'bundler', 'test', 'other'].includes(s)
+          );
+        } else if (sub) {
+          show = subsystems.includes(sub);
+        }
+      }
+      /** @type {HTMLElement} */ (panel).style.display = show ? '' : 'none';
+    });
   }
 }
 

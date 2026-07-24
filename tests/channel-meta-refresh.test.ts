@@ -4,9 +4,11 @@ import { resolvePath } from '../lib/path-bun.ts';
 import {
   CHANNEL_META_BAKE_PATH,
   channelMetaToOpsSlice,
+  invalidateChannelMetaBake,
   isChannelMetaMergedRow,
   nitsRowsToChannelMeta,
   refreshChannelMetaProof,
+  releaseHasChannelMetaEmbeds,
   saveChannelMetaProof,
   stripChannelMetaRows,
 } from '../lib/verification/channel-meta-refresh.ts';
@@ -68,7 +70,6 @@ describe('lib/verification/channel-meta-refresh', () => {
     expect(report.results.some(r => r.name.startsWith('networking:'))).toBe(true);
     expect(report.summary.bySubsystem?.bundler?.total).toBeGreaterThan(0);
     expect(report.summary.bySubsystem?.networking?.total).toBeGreaterThan(0);
-    // Idempotent strip: meta rows are not duplicated when base was already suite=all
     const nitsCount = report.results.filter(r => r.name.startsWith('runtime-nits:')).length;
     expect(nitsCount).toBeLessThanOrEqual(32);
     expect(report.summary.status).toBe('pass');
@@ -80,6 +81,7 @@ describe('lib/verification/channel-meta-refresh', () => {
       root,
       preferArtifacts: true,
     });
+    expect(releaseHasChannelMetaEmbeds(report.results)).toBe(true);
     const { bakePath } = await saveChannelMetaProof(report, sources);
     expect(bakePath).toBe(CHANNEL_META_BAKE_PATH);
     const bakeFile = Bun.file(CHANNEL_META_BAKE_PATH);
@@ -94,5 +96,24 @@ describe('lib/verification/channel-meta-refresh', () => {
     expect(loaded.available).toBe(true);
     expect(loaded.total).toBe(report.summary.total);
     expect(loaded.sources?.release).toBe('artifact');
+    expect(loaded.stale).toBe(false);
+  });
+
+  test('invalidateChannelMetaBake tombstones sidecar; load falls back', async () => {
+    const root = resolvePath(import.meta.dir, '..');
+    const { report, sources } = await refreshChannelMetaProof({
+      root,
+      preferArtifacts: true,
+    });
+    await saveChannelMetaProof(report, sources);
+    await invalidateChannelMetaBake('unit-test');
+    const tomb = await Bun.file(CHANNEL_META_BAKE_PATH).json();
+    expect(tomb.type).toBe('ChannelMetaBakeInvalid');
+    expect(tomb.reason).toBe('unit-test');
+    const loaded = loadChannelMetaSlice();
+    expect(loaded.available).toBe(true);
+    expect(loaded.sources).toBeUndefined();
+    // Restore valid bake for other tests / disk hygiene
+    await saveChannelMetaProof(report, sources);
   });
 });

@@ -8,13 +8,16 @@
  * Registry routing proof + optional local artifact publish (v2).
  *
  *   bun tools/routing-registry-proof.ts
- *   REGISTRY_URL=https://score.factory-wager.com bun tools/routing-registry-proof.ts --write
- *   bun tools/routing-registry-proof.ts --write --json
- *   bun tools/routing-registry-proof.ts --concurrency 8 --base https://project-r-score.pages.dev
+ *   bun tools/routing-registry-proof.ts --write
+ *   ROUTING_PROBE_BASE_URL=https://project-r-score.pages.dev bun tools/routing-registry-proof.ts --write
+ *   bun tools/routing-registry-proof.ts --write --base http://localhost:3000
  *
  * @see lib/routing-proof.ts
+ * @see docs/registry-client.md
  */
+import { factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
 import {
+  resolveRoutingProbeBaseUrl,
   runRoutingProof,
   routingTableRows,
   writeRoutingArtifact,
@@ -29,19 +32,14 @@ const strictExit = !argv.includes('--no-fail');
 const noPrevious = argv.includes('--no-previous');
 
 const baseIdx = argv.indexOf('--base');
-const baseUrl =
-  (baseIdx >= 0 ? argv[baseIdx + 1] : undefined) ||
-  Bun.env.REGISTRY_URL ||
-  Bun.env.FACTORY_REGISTRY_URL ||
-  'https://score.factory-wager.com';
+const baseUrl = resolveRoutingProbeBaseUrl(baseIdx >= 0 ? argv[baseIdx + 1] : undefined);
 
 const concIdx = argv.indexOf('--concurrency');
 const concurrency = concIdx >= 0 ? Number(argv[concIdx + 1]) : undefined;
 
 const API_KEY = Bun.env.API_KEY || Bun.env.REGISTRY_API_KEY || Bun.env.CLOUDFLARE_API_TOKEN;
 const VERSION =
-  Bun.env.VERSION ||
-  `v${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)}`;
+  Bun.env.VERSION || `v${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)}`;
 
 const result = await runRoutingProof({
   baseUrl,
@@ -98,7 +96,8 @@ if (publishRemote) {
     console.error('Publish requires API_KEY / REGISTRY_API_KEY / CLOUDFLARE_API_TOKEN');
     process.exit(2);
   }
-  if (!jsonOnly) console.log(`\nPublishing proof to ${baseUrl} …`);
+  const publishBase = factoryWagerRegistryUrlFromEnv().replace(/\/$/, '');
+  if (!jsonOnly) console.log(`\nPublishing proof to ${publishBase} …`);
 
   const form = new FormData();
   form.append(
@@ -124,14 +123,11 @@ if (publishRemote) {
     })
   );
 
-  const res = await fetch(
-    `${baseUrl.replace(/\/$/, '')}/api/registry/${ROUTING_ARTIFACT_PACKAGE}/versions`,
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${API_KEY}` },
-      body: form,
-    }
-  );
+  const res = await fetch(`${publishBase}/api/registry/${ROUTING_ARTIFACT_PACKAGE}/versions`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${API_KEY}` },
+    body: form,
+  });
 
   if (res.ok) {
     if (!jsonOnly) console.log(`Published ${ROUTING_ARTIFACT_PACKAGE}@${VERSION}`);

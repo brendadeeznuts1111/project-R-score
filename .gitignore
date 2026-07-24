@@ -46,6 +46,7 @@ out/
 !tests/fixtures/runtime-cli/shebang-bun/cli.js
 # Cloudflare Pages portal modules (tracked as source, not build output)
 !public/portal/**/*.js
+!public/monitoring/**/*.js
 # Local `factory create` scaffold dumps (nested .git) — never root clutter
 /factory-library/
 *.js.map

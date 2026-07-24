@@ -14,6 +14,9 @@ describe('lib/docs/doc-index', () => {
     expect(index.schemaVersion).toBe(1);
     expect(index.totalEntries).toBe(index.entries.length);
     expect(index.totalEntries).toBeGreaterThan(50);
+    expect(index.subsystem).toBe('other');
+    expect(index.reportPath).toBe('/registry/doc-index.json');
+    expect(index._links?.report).toBe('/registry/doc-index.json');
     expect(index.proofHash).toMatch(/^[a-f0-9]{64}$/);
     expect(index.byStability.stable).toBeGreaterThan(0);
   });

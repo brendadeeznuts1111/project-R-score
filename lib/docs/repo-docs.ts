@@ -126,6 +126,7 @@ export const CANONICAL_TOOLS = {
   imageMetadataTest: 'tests/image-metadata.test.ts',
   harnessViolations: 'tools/harness-violations.ts',
   docMapCheck: 'tools/doc-map-check.ts',
+  referenceDiscovery: 'tools/reference-discovery.ts',
   wireBoundaryTest: 'tests/wire-boundary-policy.test.ts',
   docsIndex: 'docs/README.md',
 } as const;

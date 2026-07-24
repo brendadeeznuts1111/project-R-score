@@ -1,6 +1,10 @@
 /**
  * Diff two channel-aware verification reports by probe name.
+ *
+ * CLI layout uses Bun.stringWidth padding (ANSI-safe) — never String#padEnd.
+ * @see https://bun.com/docs/runtime/utils#bun-stringwidth
  */
+import { fitVisible } from '../console-depth.ts';
 import type { ChannelAwareVerificationReport, VerificationResult } from './types.ts';
 
 export type ResultDelta =
@@ -147,17 +151,17 @@ export function diffChannelProofs(
   };
 }
 
+/** Collapse whitespace, then fit to visible columns (sliceAnsi + pad). */
 function clip(s: string, n: number): string {
   const t = String(s ?? '')
     .replace(/\s+/g, ' ')
     .trim();
-  if (t.length <= n) return t;
-  return `${t.slice(0, Math.max(0, n - 1))}…`;
+  return fitVisible(t, n, { align: 'left', ellipsis: '…' });
 }
 
+/** Fit left-aligned column (ANSI-safe). */
 function pad(s: string, n: number): string {
-  const t = clip(s, n);
-  return t.length >= n ? t : t + ' '.repeat(n - t.length);
+  return clip(s, n);
 }
 
 function passLabel(ok: boolean): string {

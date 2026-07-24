@@ -1,6 +1,9 @@
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+// @see https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy — v1.3.5 accuracy
 // @see https://bun.com/blog/bun-v1.3.12#faster-bun-stripansi-and-bun-stringwidth — SIMD ship note
+// @see https://github.com/oven-sh/bun/blob/main/test/js/bun/util/stringWidth.test.ts — full upstream suite
+// @see https://github.com/oven-sh/bun/blob/main/bench/snippets/string-width.mjs — official bench
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 /**
  * Spine smoke: Bun.stripANSI / Bun.stringWidth (1.3.12+ SIMD path).
@@ -11,6 +14,7 @@
  *   bun test tests/bun-ansi-width.test.ts
  */
 import { describe, expect, test } from 'bun:test';
+import { STRING_WIDTH_V135_VECTORS } from '../lib/docs/bun-release-tracker.ts';
 
 const RED = '\x1b[31m';
 const RESET = '\x1b[0m';
@@ -29,11 +33,9 @@ describe('Bun.stripANSI / Bun.stringWidth (Bun 1.3.12+)', () => {
   });
 
   test('v1.3.5 grapheme and zero-width vectors', () => {
-    expect(Bun.stringWidth('🇺🇸')).toBe(2);
-    expect(Bun.stringWidth('👋🏽')).toBe(2);
-    expect(Bun.stringWidth('👨‍👩‍👧')).toBe(2);
-    expect(Bun.stringWidth('\u00AD')).toBe(0);
-    expect(Bun.stringWidth('\u2060')).toBe(0);
+    for (const [text, width] of STRING_WIDTH_V135_VECTORS) {
+      expect(Bun.stringWidth(text)).toBe(width);
+    }
   });
 
   test('OSC-8 hyperlink: BEL / ESC ST / C1 ST all strip and width as visible text', () => {

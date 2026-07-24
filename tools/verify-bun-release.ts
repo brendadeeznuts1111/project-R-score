@@ -48,7 +48,7 @@ import {
   reportCanonicalCoverageGaps,
 } from '../lib/verification/canonical-coverage.ts';
 import { generateJSONLD } from '../lib/verification/jsonld.ts';
-import { summarizeBySubsystem } from '../lib/verification/subsystem.ts';
+import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 import type {
   ChannelAwareVerificationReport,
   SemanticTags,
@@ -715,8 +715,12 @@ export async function runReleaseVerification(
 
   const finalPassed = results.filter(r => r.passed).length;
 
+  const tagsWithSubsystems = {
+    ...semanticTags,
+    subsystems: subsystemsFromResults(results),
+  };
   const hasher = new CryptoHasher('sha256');
-  hasher.update(JSON.stringify(semanticTags));
+  hasher.update(JSON.stringify(tagsWithSubsystems));
   for (const r of results)
     hasher.update(r.name + r.passed + (r.canonical ?? '') + JSON.stringify(r._links ?? {}));
   const proofHash = hasher.digest('hex');
@@ -728,7 +732,7 @@ export async function runReleaseVerification(
     bunVersion: version,
     bunRevision: (revision || '').slice(0, 12) || 'unknown',
     blogPost: BUN_V1314_BLOG,
-    semanticTags,
+    semanticTags: tagsWithSubsystems,
     releaseNotes: BUN_RELEASE_NOTE_ROWS.map(r => ({
       id: r.id,
       title: r.title,
@@ -746,14 +750,7 @@ export async function runReleaseVerification(
       bySubsystem: summarizeBySubsystem(results),
     },
     proofHash,
-    jsonLd: generateJSONLD(results, {
-      ...semanticTags,
-      subsystems: [
-        ...new Set(
-          results.map(r => r.subsystem).filter((s): s is NonNullable<typeof s> => Boolean(s))
-        ),
-      ],
-    }),
+    jsonLd: generateJSONLD(results, tagsWithSubsystems),
   };
 
   return proof;
@@ -796,6 +793,12 @@ async function main(): Promise<void> {
   if (shouldSave) {
     await Bun.write(SAVE_PATH, JSON.stringify(proof, null, 2));
     console.log(`\n💾 Proof saved to ${SAVE_PATH}`);
+    // Release-only proof strips suite=all embeds — do not leave a green meta bake.
+    const { invalidateChannelMetaBake } = await import(
+      '../lib/verification/channel-meta-refresh.ts'
+    );
+    await invalidateChannelMetaBake('verify-bun-release --save');
+    console.log('⚠️  Invalidated channel-meta-bake.json (re-run bun run verify:channel:meta)');
   }
 
   if (proof.summary.passed < proof.summary.total) process.exit(1);

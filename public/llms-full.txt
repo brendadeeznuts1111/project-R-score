@@ -54,6 +54,15 @@ Environment + secret status (redacted).
 
 ---
 
+# portal/skills.md
+
+# Skills
+
+Installed Kimi skills registry (name, description, last updated) with downloadable `.skill` packages when available.
+
+
+---
+
 # portal/monitoring.md
 
 # Monitoring

@@ -1,20 +1,28 @@
-// @see https://bun.com/docs/runtime/color — Bun.color
+// @see https://bun.com/docs/runtime/color � Bun.color
 /**
- * console-depth.test.ts — correctness diff for lib/console-depth.ts.
+ * console-depth.test.ts � correctness diff for lib/console-depth.ts.
  *
  * Width vectors are mirrored from sindresorhus/string-width's test suite
- * (https://github.com/sindresorhus/string-width/blob/main/test.js) — the same
+ * (https://github.com/sindresorhus/string-width/blob/main/test.js) � the same
  * suite Bun.stringWidth is validated against
  * (https://bun.com/docs/runtime/utils#bun-stringwidth).
+ * v1.3.5 accuracy vectors: https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy
+ * Full upstream suite: https://github.com/oven-sh/bun/blob/main/test/js/bun/util/stringWidth.test.ts
+ * Official bench: https://github.com/oven-sh/bun/blob/main/bench/snippets/string-width.mjs
  * Bun.inspect.custom: https://bun.com/docs/runtime/utils#bun-inspect-custom
  * Running them through widthOf() diffs our helper + this Bun runtime against
  * the reference expectations in one shot.
  */
 
 import { describe, expect, test } from 'bun:test';
+import { STRING_WIDTH_V135_VECTORS } from '../lib/docs/bun-release-tracker.ts';
 import {
   widthOf,
   padEndWidth,
+  padStartWidth,
+  padCenterWidth,
+  padEndVisible,
+  fitVisible,
   truncateWidth,
   wrapText,
   colorize,
@@ -23,45 +31,45 @@ import {
   inspectCustom,
 } from '../lib/console-depth.ts';
 
-describe('widthOf — string-width reference vectors', () => {
+describe('widthOf � string-width reference vectors', () => {
   const vectors: Array<[string, string, number]> = [
     // Basic
     ['empty string', '', 0],
     ['single ASCII', 'a', 1],
     ['ASCII string', 'hello world', 11],
     // East Asian width
-    ['full-width CJK', '你好', 4],
-    ['mixed width', 'hello世界', 9],
-    ['precomposed Hangul syllable', '가', 2],
-    ['three precomposed syllables', '한국어', 6],
-    ['Hangul Compatibility Jamo', 'ㄱ', 2],
-    ['two Compatibility Jamo do not compose', 'ㄱㄱ', 4],
+    ['full-width CJK', '\u4F60\u597D', 4],
+    ['mixed width', 'hello\u4E16\u754C', 9],
+    ['precomposed Hangul syllable', '\uAC00', 2],
+    ['three precomposed syllables', '\uD55C\uAD6D\uC5B4', 6],
+    ['Hangul Compatibility Jamo', '\u3131', 2],
+    ['two Compatibility Jamo do not compose', '\u3131\u3131', 4],
     // Control characters
     ['tab', '\t', 0],
     ['tab sandwich', 'a\tb', 2],
     ['newline', '\n', 0],
-    ['escape char', '', 0],
-    ['control in text', 'ab', 2],
+    ['escape char', '\x1b', 0],
+    ['control in text', 'a\x01b', 2],
     // ANSI escape codes
-    ['ANSI color codes', '[31mred[0m', 3],
-    ['hyperlink sequence', ']8;;https://example.comlink]8;;', 4],
+    ['ANSI color codes', '\x1b[31mred\x1b[0m', 3],
+    ['hyperlink sequence', '\x1b]8;;https://example.com\x07link\x1b]8;;\x07', 4],
     // Zero-width characters
     ['zero-width space', 'a\u200Bb', 2],
     ['ZWJ alone', '\u200D', 0],
     ['ZWNJ alone', '\u200C', 0],
-    ['Arabic with ZWNJ', 'ب\u200Cه', 2],
+    ['Arabic with ZWNJ', '\u0628\u200C\u0647', 2],
     // Combining marks
     ['combining acute', 'e\u0301', 1],
     ['multiple combining marks', 'e\u0301\u0302', 1],
     ['combining marks only', '\u0301\u0302', 0],
     // Emoji
-    ['emoji surrogate pair', '😀', 2],
-    ['text with emoji', 'a😀b', 4],
+    ['emoji surrogate pair', '\u{1F600}', 2],
+    ['text with emoji', 'a\u{1F600}b', 4],
     ['emoji with VS16', '\u26A1\uFE0F', 2],
-    ['fire emoji', '🔥', 2],
+    ['fire emoji', '\u{1F525}', 2],
     // Misc symbols (narrow by default)
-    ['black medium square', '◼', 1],
-    ['check mark', '✔', 1],
+    ['black medium square', '\u25FC', 1],
+    ['check mark', '\u2714', 1],
   ];
 
   for (const [name, input, expected] of vectors) {
@@ -71,19 +79,81 @@ describe('widthOf — string-width reference vectors', () => {
   }
 });
 
+describe('v1.3.5 stringWidth accuracy via widthOf', () => {
+  for (const [text, expected] of STRING_WIDTH_V135_VECTORS) {
+    test(`widthOf ${JSON.stringify(text)} = ${expected}`, () => {
+      expect(widthOf(text)).toBe(expected);
+    });
+  }
+
+  test('padEndVisible pads ZWJ family to visible cols', () => {
+    const zwjFamily = STRING_WIDTH_V135_VECTORS[2]![0];
+    const out = padEndVisible(zwjFamily, 4);
+    expect(widthOf(out)).toBe(4);
+    expect(out.endsWith('  ')).toBe(true);
+  });
+
+  test('fitVisible keeps flag + label at exact column width', () => {
+    const flag = STRING_WIDTH_V135_VECTORS[0]![0];
+    const label = `${flag} ok`;
+    expect(widthOf(label)).toBe(5);
+    expect(widthOf(fitVisible(label, 8))).toBe(8);
+  });
+
+  test('CSI non-m sequences (cursor/erase) do not add width', () => {
+    expect(widthOf('\x1b[2J\x1b[Hhi')).toBe(2);
+  });
+});
+
 describe('padEndWidth', () => {
   test('pads ASCII to width', () => {
     expect(padEndWidth('ok', 5)).toBe('ok   ');
   });
   test('emoji counts as 2 columns', () => {
-    expect(padEndWidth('ok🔥', 6)).toBe('ok🔥  ');
+    expect(padEndWidth('ok\u{1F525}', 6)).toBe('ok\u{1F525}  ');
   });
   test('no padding when already at width', () => {
     expect(padEndWidth('exact', 5)).toBe('exact');
   });
   test('ANSI-colored input pads by visual width', () => {
-    const colored = '[31mok[0m';
+    const colored = '\x1b[31mok\x1b[0m';
     expect(padEndWidth(colored, 5)).toBe(`${colored}   `);
+  });
+  test('padEndVisible aliases padEndWidth', () => {
+    expect(padEndVisible('x', 3)).toBe(padEndWidth('x', 3));
+  });
+});
+
+describe('padStartWidth / padCenterWidth', () => {
+  test('padStartWidth pads left', () => {
+    expect(padStartWidth('ok', 5)).toBe('   ok');
+  });
+  test('padCenterWidth balances', () => {
+    expect(padCenterWidth('ok', 6)).toBe('  ok  ');
+    expect(padCenterWidth('ok', 5)).toBe(' ok  ');
+  });
+  test('ANSI-safe start pad keeps visible width', () => {
+    const colored = `${Bun.color('cyan', 'ansi') ?? ''}probe\x1b[0m`;
+    expect(widthOf(colored)).toBe(5);
+    expect(widthOf(padStartWidth(colored, 10))).toBe(10);
+  });
+});
+
+describe('fitVisible', () => {
+  test('pads short text', () => {
+    expect(fitVisible('hi', 5)).toBe('hi   ');
+  });
+  test('truncates with ellipsis then pads to exact cols', () => {
+    const out = fitVisible('Bun.escapeHTML performance', 20);
+    expect(widthOf(out)).toBe(20);
+    expect(out).toContain('\u2026');
+  });
+  test('right align', () => {
+    expect(fitVisible('ab', 5, { align: 'right' })).toBe('   ab');
+  });
+  test('colored label keeps visible width', () => {
+    const label = `${Bun.color('red', 'ansi') ?? ''}gaps=3\x1b[0m`;
+    expect(widthOf(fitVisible(label, 12, { align: 'right' }))).toBe(12);
   });
 });
 
@@ -100,10 +170,15 @@ describe('truncateWidth', () => {
     expect(out).toContain('[31m');
   });
   test('does not split a wide grapheme mid-glyph', () => {
-    const out = truncateWidth('😀😀😀', 3);
+    const out = truncateWidth('??????', 3);
     // width 3 cannot hold two 2-col emoji; must keep whole graphemes only
     expect(widthOf(out)).toBeLessThanOrEqual(4);
     expect(out).not.toContain('\uFFFD');
+  });
+  test('ellipsis option uses sliceAnsi', () => {
+    const out = truncateWidth('abcdefghij', 5, { ellipsis: '\u2026' });
+    expect(widthOf(out)).toBe(5);
+    expect(out).toContain('\u2026');
   });
 });
 
@@ -122,8 +197,8 @@ describe('widthOf options (Bun.stringWidth surface)', () => {
     expect(widthOf(s, { countAnsiEscapeCodes: true })).toBe(10);
   });
   test('ambiguousIsNarrow default treats ambiguous chars as 1 col', () => {
-    expect(widthOf('±')).toBe(1);
-    expect(widthOf('±', { ambiguousIsNarrow: false })).toBe(2);
+    expect(widthOf('\u00B1')).toBe(1);
+    expect(widthOf('\u00B1', { ambiguousIsNarrow: false })).toBe(2);
   });
 });
 
@@ -168,21 +243,21 @@ describe('Bun API surface guard', () => {  // Fails loudly if a Bun upgrade remo
     expect(typeof Bun.inspect.custom).toBe('symbol');
   });
   test('TTY primitives degrade safely when piped', () => {
-    // When piped: isTTY is absent and columns is undefined — shouldColor/termWidth
+    // When piped: isTTY is absent and columns is undefined � shouldColor/termWidth
     // must still behave (false / fallback width), never throw.
     expect(process.stdout.isTTY === true).toBe(false);
     expect(typeof process.stdout.columns === 'undefined' || typeof process.stdout.columns === 'number').toBe(true);
   });
 });
 
-// @see https://bun.com/docs/runtime/color — Bun.color
+// @see https://bun.com/docs/runtime/color � Bun.color
 /**
- * Snapshot tests — deterministic output pinned via bun:test snapshots.
- * https://bun.com/docs/test/snapshots · https://bun.com/guides/test/snapshot
+ * Snapshot tests � deterministic output pinned via bun:test snapshots.
+ * https://bun.com/docs/test/snapshots � https://bun.com/guides/test/snapshot
  *
  * If a Bun upgrade intentionally changes formatting, regenerate with:
  *   bun test tests/console-depth.test.ts --update-snapshots
- * (scoped to this file — do NOT run --update-snapshots repo-wide)
+ * (scoped to this file � do NOT run --update-snapshots repo-wide)
  */
 describe('snapshots', () => {
   const fixture = {
@@ -221,7 +296,7 @@ describe('snapshots', () => {
 
   test('padEndWidth / truncateWidth edges are stable', () => {
     expect([
-      padEndWidth('ok🔥', 8),
+      padEndWidth('ok\u{1F525}', 8),
       padEndWidth('degraded', 8),
       truncateWidth('some very long status line', 12),
     ]).toMatchSnapshot();

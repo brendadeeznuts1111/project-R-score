@@ -355,11 +355,50 @@ export async function buildRegistrySnapshot(options?: {
 
     // 4. Monitoring snapshot (+ env status — edge /api/env reads monitoring.env)
     const monitoring = await collectMonitoring(db, { source: 'snapshot' });
-    const monitoringWithEnv = {
-      ...monitoring,
+    const { enrichMonitoringForSnapshot } = await import('../lib/monitoring/enrich-snapshot.ts');
+    const monitoringWithEnv = enrichMonitoringForSnapshot(monitoring, {
       env: buildPortalEnvStatus(),
-    };
+      routing:
+        payload.routing as import('../lib/monitoring/enrich-snapshot.ts').MonitoringSnapshotExtras['routing'],
+      bunUtils: {
+        passed: bunProof.summary?.passed,
+        total: bunProof.summary?.total,
+        bunVersion: bunProof.bunVersion,
+        proofHash: bunProof.proofHash,
+        timestamp: bunProof.timestamp,
+      },
+      registryClient: payload.registryClient as Record<string, unknown> | undefined,
+      docsCoverage: payload.docsCoverage as Record<string, unknown> | undefined,
+      networking: (payload as Record<string, unknown>).networking as
+        | Record<string, unknown>
+        | undefined,
+    });
     await Bun.write(monitoringPath, `${JSON.stringify(monitoringWithEnv, null, 2)}\n`);
+
+    const dodQueuePath = `${root}/public/registry/dod-queue.json`;
+    try {
+      const { exportDodQueueSnapshot } = await import('../lib/dod/export-queue-snapshot.ts');
+      const dodSnap = exportDodQueueSnapshot();
+      await Bun.write(dodQueuePath, `${JSON.stringify(dodSnap, null, 2)}\n`);
+      const { bakeJsonEmbed } = await import('../lib/http/portal-embed-bake.ts');
+      await bakeJsonEmbed(`${root}/public/portal/dod/index.html`, 'dod-embed', dodSnap);
+    } catch (e) {
+      console.warn('[ops-snapshot] dod queue export skipped:', e instanceof Error ? e.message : e);
+    }
+
+    try {
+      const { bakeMonitoringPage } = await import('../lib/monitoring/bake-page.ts');
+      await bakeMonitoringPage({
+        snapshotPath: monitoringPath,
+        htmlPath: `${root}/public/monitoring/index.html`,
+        opsPath: cfg.outPath,
+      });
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] monitoring page bake skipped:',
+        e instanceof Error ? e.message : e
+      );
+    }
 
     // 4b. llms.txt / llms-full.txt / portal/*.md static mirror for Pages
     const llmsFiles = await writeLlmsStatic();

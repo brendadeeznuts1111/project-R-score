@@ -324,6 +324,24 @@
         "rate"
       ],
       "description": "Branded ID catalog and boundary constructors"
+    },
+    "reference-discovery": {
+      "path": ".agents/skills/reference-discovery",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun tools/reference-discovery.ts --check --skip-unused"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 60
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "optional staged harness scan — not wired yet"
+        }
+      }
     }
   }
 }

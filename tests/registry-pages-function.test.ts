@@ -7,6 +7,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   jsonError,
+  isRegistryIndexPayload,
   onRequest,
   parseRegistryObjectKey,
   type RegistryPagesContext,
@@ -37,6 +38,15 @@ function mockBucket(
   };
 }
 
+function mockAssets(body: string, contentType = 'application/json') {
+  return {
+    fetch: async () =>
+      new Response(body, {
+        status: 200,
+        headers: { 'Content-Type': contentType, ETag: '"static-1"' },
+      }),
+  };
+}
 function ctx(
   path: string,
   init?: {
@@ -79,11 +89,45 @@ describe('parseRegistryObjectKey', () => {
   });
 });
 
+describe('isRegistryIndexPayload', () => {
+  test('accepts packages object', () => {
+    expect(isRegistryIndexPayload('{"schemaVersion":1,"packages":{}}')).toBe(true);
+  });
+
+  test('rejects forbidden stub and malformed JSON', () => {
+    expect(
+      isRegistryIndexPayload('Forbidden: requests to project-r-score.pages.dev are not allowed')
+    ).toBe(false);
+    expect(isRegistryIndexPayload('{"packages":[]}')).toBe(false);
+  });
+});
+
 describe('onRequest — Pages registry proxy', () => {
+  test('registry.json prefers static ASSETS over corrupt R2', async () => {
+    const bucket = mockBucket({
+      'registry.json': {
+        body: 'Forbidden: requests to project-r-score.pages.dev are not allowed',
+        contentType: 'application/json',
+      },
+    });
+    const res = await onRequest(
+      ctx('/api/registry/registry.json', {
+        env: {
+          REGISTRY_BUCKET: bucket,
+          ASSETS: mockAssets('{"schemaVersion":1,"packages":{"x":{"versions":["1.0.0"]}}}'),
+        },
+        paramsPath: 'registry.json',
+      })
+    );
+    expect(res.status).toBe(200);
+    expect(await res.text()).toContain('"packages"');
+    expect(bucket.calls).toEqual([]);
+  });
+
   test('streams allowlisted object with cache headers', async () => {
     const bucket = mockBucket({
       'registry.json': {
-        body: '{"schemaVersion":1}',
+        body: '{"schemaVersion":1,"packages":{}}',
         contentType: 'application/json',
         etag: '"etag-1"',
       },
@@ -98,7 +142,7 @@ describe('onRequest — Pages registry proxy', () => {
     expect(res.headers.get('Content-Type')).toBe('application/json');
     expect(res.headers.get('Cache-Control')).toContain('max-age=60');
     expect(res.headers.get('ETag')).toBe('"etag-1"');
-    expect(await res.text()).toBe('{"schemaVersion":1}');
+    expect(await res.text()).toBe('{"schemaVersion":1,"packages":{}}');
     expect(bucket.calls).toEqual(['registry.json']);
   });
 
@@ -118,16 +162,29 @@ describe('onRequest — Pages registry proxy', () => {
   test('fail-closed when REGISTRY_BUCKET binding is missing', async () => {
     const res = await onRequest(ctx('/api/registry/registry.json', { paramsPath: 'registry.json' }));
     expect(res.status).toBe(503);
-    expect(await res.json()).toEqual({ error: 'Registry binding unavailable' });
+    expect(await res.json()).toEqual({ error: 'Registry index unavailable' });
     expect(res.headers.get('Cache-Control')).toBe('no-store');
   });
 
-  test('404 for missing object', async () => {
+  test('404 for missing registry.json when R2 empty and static absent', async () => {
     const bucket = mockBucket({});
     const res = await onRequest(
       ctx('/api/registry/registry.json', {
         env: { REGISTRY_BUCKET: bucket },
         paramsPath: 'registry.json',
+      })
+    );
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: 'Registry index unavailable' });
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
+  });
+
+  test('404 for missing non-index object', async () => {
+    const bucket = mockBucket({});
+    const res = await onRequest(
+      ctx('/api/registry/@factorywager/missing/1.0.0.tgz', {
+        env: { REGISTRY_BUCKET: bucket },
+        paramsPath: '@factorywager/missing/1.0.0.tgz',
       })
     );
     expect(res.status).toBe(404);

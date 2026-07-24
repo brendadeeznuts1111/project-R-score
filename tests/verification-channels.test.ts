@@ -422,6 +422,40 @@ describe('lib/verification/proof-diff', () => {
     expect(lines.some(l => l.includes('VALUE DRIFTS'))).toBe(true);
     expect(lines.some(l => l.includes('133.5 ns') && l.includes('111.6 ns'))).toBe(true);
   });
+
+  test('formatProofDiffSummary columns use visible width (ANSI-safe pad)', () => {
+    const colored = `${Bun.color('cyan', 'ansi') ?? ''}escapeHTML\x1b[0m`;
+    const before = proof({
+      proofHash: 'aaa',
+      semanticTags: {
+        channel: 'stable',
+        targetVersion: '1.4.0',
+        provenanceId: 'a',
+        testedAt: 't',
+        runtimeVersion: '1.4.0',
+      },
+      results: [{ name: colored, expected: 'ok', actual: '133.5 ns', passed: true }],
+    });
+    const after = proof({
+      proofHash: 'bbb',
+      semanticTags: {
+        channel: 'pinned',
+        targetVersion: '1.3.14',
+        provenanceId: 'b',
+        testedAt: 't',
+        runtimeVersion: '1.4.0',
+      },
+      results: [{ name: colored, expected: 'ok', actual: '111.6 ns', passed: true }],
+    });
+    const lines = formatProofDiffSummary(diffChannelProofs(before, after), {
+      nameWidth: 20,
+      cellWidth: 16,
+    });
+    const drift = lines.find(l => l.includes('133.5') && l.includes('111.6'));
+    expect(drift).toBeDefined();
+    // Leading indent (2) + name col (20) + gap (2) + before cell (16) ≥ layout
+    expect(Bun.stringWidth(drift!.trimEnd())).toBeGreaterThanOrEqual(2 + 20 + 2 + 16);
+  });
 });
 
 describe('lib/verification/jsonld', () => {

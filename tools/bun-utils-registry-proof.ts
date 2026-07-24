@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/utils — Bun.inspect · .table · stringWidth · deepEquals
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -15,12 +16,10 @@
  * allowlisted for /api/registry/@factorywager/* when mirrored to R2).
  *
  * @see lib/bun-utils-proof.ts
+ * @see docs/registry-client.md
  */
-import {
-  buildBunUtilsProof,
-  tableRows,
-  type BunUtilsProofResult,
-} from '../lib/bun-utils-proof.ts';
+import { factoryWagerPagesCustomUrl, factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
+import { buildBunUtilsProof, tableRows, type BunUtilsProofResult } from '../lib/bun-utils-proof.ts';
 
 const argv = Bun.argv.slice(2);
 const writeLocal = argv.includes('--write');
@@ -28,15 +27,12 @@ const publishRemote = argv.includes('--publish');
 const jsonOnly = argv.includes('--json');
 const strictExit = !argv.includes('--no-fail');
 
-const REGISTRY_URL =
-  Bun.env.REGISTRY_URL ||
-  Bun.env.FACTORY_REGISTRY_URL ||
-  'https://score.factory-wager.com';
+const registryUrl = factoryWagerRegistryUrlFromEnv().replace(/\/$/, '');
+const pagesUrl = factoryWagerPagesCustomUrl().replace(/\/$/, '');
 const API_KEY = Bun.env.API_KEY || Bun.env.REGISTRY_API_KEY || Bun.env.CLOUDFLARE_API_TOKEN;
 const PACKAGE_NAME = Bun.env.PACKAGE_NAME || '@factorywager/bun-utils-test';
 const VERSION =
-  Bun.env.VERSION ||
-  `v${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)}`;
+  Bun.env.VERSION || `v${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)}`;
 
 // @factorywager/bun-utils-test → public/registry/@factorywager/bun-utils-test
 const ARTIFACT_DIR = `public/registry/${PACKAGE_NAME}`;
@@ -49,9 +45,13 @@ if (jsonOnly) {
   console.log('Bun utility defaults proof');
   console.log(`Bun v${result.bunVersion} (${result.bunRevision})`);
   console.log(
-    Bun.inspect.table(tableRows(result), ['Utility', 'Input', 'Actual', 'Expected', 'Note', 'Match'], {
-      colors: true,
-    })
+    Bun.inspect.table(
+      tableRows(result),
+      ['Utility', 'Input', 'Actual', 'Expected', 'Note', 'Match'],
+      {
+        colors: true,
+      }
+    )
   );
   console.log(`${result.summary.passed}/${result.summary.total} passed`);
   console.log(`Proof hash: ${result.proofHash}`);
@@ -67,8 +67,8 @@ if (writeLocal) {
   if (!jsonOnly) {
     console.log(`\nWrote ${versionPath}`);
     console.log(`Wrote ${latestPath}`);
-    console.log(`Static URL (after deploy): ${REGISTRY_URL}/registry/${PACKAGE_NAME}/latest.json`);
-    console.log(`API URL (R2 bind): ${REGISTRY_URL}/api/registry/${PACKAGE_NAME}/latest.json`);
+    console.log(`Static URL (after deploy): ${pagesUrl}/registry/${PACKAGE_NAME}/latest.json`);
+    console.log(`Registry index: ${registryUrl}/api/registry/registry.json`);
   }
 }
 
@@ -77,7 +77,7 @@ if (publishRemote) {
     console.error('Publish requires API_KEY / REGISTRY_API_KEY / CLOUDFLARE_API_TOKEN');
     process.exit(2);
   }
-  if (!jsonOnly) console.log(`\nPublishing proof to ${REGISTRY_URL} …`);
+  if (!jsonOnly) console.log(`\nPublishing proof to ${registryUrl} …`);
 
   const form = new FormData();
   form.append(
@@ -98,7 +98,7 @@ if (publishRemote) {
     })
   );
 
-  const res = await fetch(`${REGISTRY_URL}/api/registry/${PACKAGE_NAME}/versions`, {
+  const res = await fetch(`${registryUrl}/api/registry/${PACKAGE_NAME}/versions`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${API_KEY}` },
     body: form,
@@ -107,7 +107,7 @@ if (publishRemote) {
   if (res.ok) {
     if (!jsonOnly) {
       console.log(`Published ${PACKAGE_NAME}@${VERSION}`);
-      console.log(`  ${REGISTRY_URL}/api/registry/${PACKAGE_NAME}/versions/${VERSION}`);
+      console.log(`  ${registryUrl}/api/registry/${PACKAGE_NAME}/versions/${VERSION}`);
     }
   } else {
     console.error(`Publish failed: ${res.status} ${await res.text()}`);

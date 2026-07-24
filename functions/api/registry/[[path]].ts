@@ -82,6 +82,66 @@ export function registryCorsHeaders(
   };
 }
 
+/** Index key — prefer static snapshot before R2 (R2 copy may be stale/corrupt). */
+export const REGISTRY_INDEX_KEY = 'registry.json';
+
+/** Matches health.ts / RegistryClient index shape. */
+export function isRegistryIndexPayload(text: string): boolean {
+  try {
+    const value = JSON.parse(text) as unknown;
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+    const packages = Reflect.get(value, 'packages');
+    return typeof packages === 'object' && packages !== null && !Array.isArray(packages);
+  } catch {
+    return false;
+  }
+}
+
+async function fetchStaticRegistryKey(
+  key: string,
+  request: Request,
+  env: RegistryPagesEnv
+): Promise<Response | null> {
+  const assetUrl = new URL(`/registry/${key}`, new URL(request.url).origin);
+  try {
+    const res = env.ASSETS?.fetch
+      ? await env.ASSETS.fetch(new Request(assetUrl.toString()))
+      : await fetch(assetUrl.toString(), { headers: { Accept: 'application/json,*/*' } });
+    return res.ok ? res : null;
+  } catch {
+    return null;
+  }
+}
+
+function jsonResponseFromText(
+  text: string,
+  contentType: string,
+  cors: Record<string, string>,
+  etag?: string
+): Response {
+  const headers: Record<string, string> = {
+    'Content-Type': contentType,
+    'Cache-Control': 'public, max-age=60, s-maxage=300',
+    ...cors,
+  };
+  if (etag) headers.ETag = etag;
+  return new Response(text, { status: 200, headers });
+}
+
+function wrapStaticRegistryResponse(
+  res: Response,
+  cors: Record<string, string>
+): Response {
+  const headers: Record<string, string> = {
+    'Content-Type': res.headers.get('Content-Type') || 'application/json; charset=utf-8',
+    'Cache-Control': 'public, max-age=60, s-maxage=300',
+    ...cors,
+  };
+  const etag = res.headers.get('ETag');
+  if (etag) headers.ETag = etag;
+  return new Response(res.body, { status: 200, headers });
+}
+
 export async function onRequest(context: RegistryPagesContext): Promise<Response> {
   const { request, env, params } = context;
   const cors = registryCorsHeaders(request, env);
@@ -103,44 +163,74 @@ export async function onRequest(context: RegistryPagesContext): Promise<Response
   }
 
   const bucket = env.REGISTRY_BUCKET;
-  // Prefer R2 when bound; fall back to static ASSETS under /registry/<key>
-  // so allowlisted proofs (static.json, @factorywager/*) still serve without R2.
+
+  // Index: static snapshot first (same as health.ts) — R2 registry.json may be corrupt.
+  if (key === REGISTRY_INDEX_KEY) {
+    const staticRes = await fetchStaticRegistryKey(key, request, env);
+    if (staticRes) {
+      const text = await staticRes.text();
+      if (isRegistryIndexPayload(text)) {
+        return jsonResponseFromText(
+          text,
+          staticRes.headers.get('Content-Type') || 'application/json; charset=utf-8',
+          cors,
+          staticRes.headers.get('ETag') ?? undefined
+        );
+      }
+    }
+  }
+
+  // Other keys: R2 when bound; index falls through here only when static is missing.
   if (bucket && typeof bucket.get === 'function') {
     try {
       const object = await bucket.get(key);
       if (object?.body) {
-        const headers: Record<string, string> = {
-          'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
-          'Cache-Control': 'public, max-age=60, s-maxage=300',
-          ...cors,
-        };
-        if (object.httpEtag) headers.ETag = object.httpEtag;
-        return new Response(object.body, { status: 200, headers });
+        if (key === REGISTRY_INDEX_KEY) {
+          const text = await new Response(object.body).text();
+          if (isRegistryIndexPayload(text)) {
+            return jsonResponseFromText(
+              text,
+              object.httpMetadata?.contentType || 'application/json; charset=utf-8',
+              cors,
+              object.httpEtag
+            );
+          }
+          // Corrupt R2 stub — do not serve verbatim.
+        } else {
+          const headers: Record<string, string> = {
+            'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
+            'Cache-Control': 'public, max-age=60, s-maxage=300',
+            ...cors,
+          };
+          if (object.httpEtag) headers.ETag = object.httpEtag;
+          return new Response(object.body, { status: 200, headers });
+        }
       }
     } catch {
       // fall through to ASSETS
     }
   }
 
-  const origin = new URL(request.url).origin;
-  const assetUrl = new URL(`/registry/${key}`, origin);
-  try {
-    let res: Response;
-    if (env.ASSETS?.fetch) {
-      res = await env.ASSETS.fetch(new Request(assetUrl.toString()));
+  const staticRes = await fetchStaticRegistryKey(key, request, env);
+  if (staticRes) {
+    if (key === REGISTRY_INDEX_KEY) {
+      const text = await staticRes.text();
+      if (isRegistryIndexPayload(text)) {
+        return jsonResponseFromText(
+          text,
+          staticRes.headers.get('Content-Type') || 'application/json; charset=utf-8',
+          cors,
+          staticRes.headers.get('ETag') ?? undefined
+        );
+      }
     } else {
-      res = await fetch(assetUrl.toString(), { headers: { Accept: 'application/json,*/*' } });
+      return wrapStaticRegistryResponse(staticRes, cors);
     }
-    if (!res.ok) {
-      return jsonError(res.status === 404 ? 404 : 503, res.status === 404 ? 'Not found' : 'Registry binding unavailable', cors);
-    }
-    const headers: Record<string, string> = {
-      'Content-Type': res.headers.get('Content-Type') || 'application/json; charset=utf-8',
-      'Cache-Control': 'public, max-age=60, s-maxage=300',
-      ...cors,
-    };
-    return new Response(res.body, { status: 200, headers });
-  } catch {
-    return jsonError(502, 'Registry unreachable', cors);
   }
+
+  if (key === REGISTRY_INDEX_KEY) {
+    return jsonError(503, 'Registry index unavailable', cors);
+  }
+
+  return jsonError(404, 'Not found', cors);
 }

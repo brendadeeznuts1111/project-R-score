@@ -170,6 +170,8 @@ export type ProofTaxonomyAuditRow = {
   missingSubsystem: number;
   /** Rows missing introducedIn when requireRowSubsystem (taxonomy completeness). */
   missingIntroducedIn: number;
+  /** Rows missing canonicalKind when requireRowSubsystem. */
+  missingCanonicalKind: number;
   notes: string[];
   primarySubsystem: VerificationSubsystem;
   reportPath: string;
@@ -197,6 +199,7 @@ export function auditProofTaxonomy(
   const notes: string[] = [];
   let missingSubsystem = 0;
   let missingIntroducedIn = 0;
+  let missingCanonicalKind = 0;
   let rows = 0;
 
   if (contract.requireReportSubsystem && raw.subsystem !== contract.primarySubsystem) {
@@ -241,6 +244,7 @@ export function auditProofTaxonomy(
           const r = row as Record<string, unknown>;
           if (!r.subsystem) missingSubsystem++;
           if (r.introducedIn == null || r.introducedIn === '') missingIntroducedIn++;
+          if (r.canonicalKind == null || r.canonicalKind === '') missingCanonicalKind++;
         }
       }
     }
@@ -251,6 +255,9 @@ export function auditProofTaxonomy(
   }
   if (missingIntroducedIn > 0) {
     notes.push(`${missingIntroducedIn}/${rows} rows missing introducedIn`);
+  }
+  if (missingCanonicalKind > 0) {
+    notes.push(`${missingCanonicalKind}/${rows} rows missing canonicalKind`);
   }
 
   if (contract.path.endsWith('.well-known/mcp.json')) {
@@ -302,6 +309,7 @@ export function auditProofTaxonomy(
     rows,
     missingSubsystem,
     missingIntroducedIn,
+    missingCanonicalKind,
     notes,
     primarySubsystem: contract.primarySubsystem,
     reportPath: contract.reportPath,
@@ -325,6 +333,7 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
         rows: 0,
         missingSubsystem: 0,
         missingIntroducedIn: 0,
+        missingCanonicalKind: 0,
         notes: [`missing file — run ${contract.verifyScript} --save`],
         primarySubsystem: contract.primarySubsystem,
         reportPath: contract.reportPath,

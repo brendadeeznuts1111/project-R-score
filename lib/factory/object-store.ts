@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/s3#basic-usage — S3File read/write/stat/exists
-// @see https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support — requestPayer
+// @see https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads — contentDisposition
+// @see https://bun.com/docs/blog/bun-v1.3.6#s3-requester-pays-support — requestPayer
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Injectible object store for the factory registry.
@@ -21,6 +22,8 @@ import { type AccessKeyId, asAccessKeyId } from '../types/branded';
 export { factoryRegistryBucketFromEnv };
 export type ObjectPutOptions = {
   contentType?: string;
+  /** Bun S3 — inline vs attachment filename for browser downloads. */
+  contentDisposition?: string;
   /** When set, write fails with status 412 if the object etag does not match. */
   ifMatch?: string | null;
 };
@@ -37,7 +40,7 @@ export type RegistryObjectStore = {
   putBytes(
     key: string,
     data: Blob | Uint8Array | ArrayBuffer,
-    opts?: { contentType?: string }
+    opts?: { contentType?: string; contentDisposition?: string }
   ): Promise<void>;
   getBytes(key: string): Promise<Uint8Array | null>;
   /** Probe that credentials + bucket respond (exists-or-missing is success). */
@@ -192,6 +195,7 @@ export function createS3RegistryStore(config?: S3RegistryStoreConfig): RegistryO
       const body = JSON.stringify(value, null, 2);
       await file.write(body, {
         type: opts?.contentType ?? 'application/json',
+        ...(opts?.contentDisposition ? { contentDisposition: opts.contentDisposition } : {}),
         ...(requestPayer ? { requestPayer: true } : {}),
       });
       try {
@@ -208,6 +212,7 @@ export function createS3RegistryStore(config?: S3RegistryStoreConfig): RegistryO
         data instanceof Blob ? data : data instanceof ArrayBuffer ? new Uint8Array(data) : data;
       await file.write(payload, {
         type: opts?.contentType ?? 'application/octet-stream',
+        ...(opts?.contentDisposition ? { contentDisposition: opts.contentDisposition } : {}),
         ...(requestPayer ? { requestPayer: true } : {}),
       });
     },
@@ -237,3 +242,9 @@ export function createS3RegistryStore(config?: S3RegistryStoreConfig): RegistryO
 }
 
 export { isPreconditionFailed };
+
+/** Default attachment filename for tarball keys (last path segment). */
+export function tarballContentDisposition(r2Key: string): string {
+  const base = r2Key.split('/').pop()?.replace(/"/g, '') || 'artifact.tgz';
+  return `attachment; filename="${base}"`;
+}

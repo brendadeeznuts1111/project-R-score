@@ -15,8 +15,12 @@ They must **not** live under root `functions/` — Pages bundler fails on `bun:s
 | **Local Bun** | `bun run serve:public` → `/api/operations/summary` | **Live** SQLite via `buildOpsSummary` (`source: "live"`) |
 | **Local Bun-only module** | `functions-bun-only/api/operations/summary.ts` | Same live builder |
 | **Cloudflare Pages** | `functions/api/operations/summary.ts` | **Snapshot** `public/registry/ops-summary.json` (no bun:sqlite) |
+| **Cloudflare Pages** | `functions/api/dod/[[path]].ts` | **Snapshot** `public/registry/dod-queue.json` (GET only; POST → 503) |
+| **Local Bun-only module** | `functions-bun-only/api/dod/index.ts` | Live SQLite + approve/reject |
 
 Same JSON contract: `lib/operations/ops-summary.ts` (`OpsSummaryPayload`).
+
+Triage runbook: [`docs/harness/ops-summary-endpoint.md`](../docs/harness/ops-summary-endpoint.md) · `bun run ops:diagnose`
 
 ```bash
 bun run ops:snapshot          # refresh Pages snapshot (+ prediction report assets)

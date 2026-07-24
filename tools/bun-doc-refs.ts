@@ -237,30 +237,39 @@ export type CanonicalRegistryClientToken = CanonicalVerificationToken & {
 const REGISTRY_CLIENT_DOC =
   'https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md';
 
+const REGISTRY_CLIENT_TOKEN = {
+  subsystem: 'package-manager' as const,
+  introducedIn: 'all' as const,
+};
+
 export const CANONICAL_REGISTRY_CLIENT_TOKENS: Record<string, CanonicalRegistryClientToken> = {
   RegistryClient: {
     url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md',
     kind: 'SDK',
     stability: 'stable',
     description: 'Runtime-neutral FactoryWager registry read plane + publish SDK',
+    ...REGISTRY_CLIENT_TOKEN,
   },
   'registry-client resolve': {
     url: `${REGISTRY_CLIENT_DOC}#resolve`,
     kind: 'SDK',
     stability: 'stable',
     description: 'resolve() — dist-tag to /registry/storage/…/artifact.tgz',
+    ...REGISTRY_CLIENT_TOKEN,
   },
   'registry-client download': {
     url: `${REGISTRY_CLIENT_DOC}#download`,
     kind: 'SDK',
     stability: 'stable',
     description: 'download() — SHA-256 + size verification',
+    ...REGISTRY_CLIENT_TOKEN,
   },
   'registry-client publish': {
     url: `${REGISTRY_CLIENT_DOC}#publish`,
     kind: 'SDK',
     stability: 'stable',
     description: 'publish() — authenticated multipart FormData',
+    ...REGISTRY_CLIENT_TOKEN,
   },
 };
 

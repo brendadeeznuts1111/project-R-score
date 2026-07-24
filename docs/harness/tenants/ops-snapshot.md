@@ -26,6 +26,9 @@ Uses routing proof **retry + TTL cache** (`lib/routing-proof.ts` ·
 Also: missing/stale `public/registry/ops-summary.json`, or ops dashboard
 routing card shows `criticalFailed > 0` after a successful write.
 
+Proofs green but liquidity/plays empty → read [`ops-summary-endpoint.md`](../ops-summary-endpoint.md)
+(two pipelines; empty ops DB is not a failed summary assemble). Diagnose: `bun run ops:diagnose`.
+
 ## Intervention (repair)
 
 Catalog intervention:
@@ -34,8 +37,9 @@ Catalog intervention:
 1. Re-run: `bun run spine:schedule:once -- --tenant=ops-snapshot`
 2. Local smoke: `bun run ops:snapshot -- --no-routing`
 3. Force routing: `bun lib/operations/snapshot-cron.ts --once --force-routing`
-4. Check `data/operations.db` and network reachability of
-   `REGISTRY_URL` / `FACTORY_REGISTRY_URL` (default score.factory-wager.com)
+4. Check `data/operations.db` and network reachability of the **Pages public
+   origin** (`ROUTING_PROBE_BASE_URL` or default `https://score.factory-wager.com`).
+   `REGISTRY_URL` is the npm registry API — not the routing probe target.
 
 Do **not** delete the tenant to green the daemon.
 

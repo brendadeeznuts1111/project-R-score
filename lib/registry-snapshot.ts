@@ -18,6 +18,7 @@ import { collectMonitoring, type MonitoringPayload } from './monitoring/index.ts
 import { writePredictionReport } from './prediction/index.ts';
 import {
   getRoutingProofCached,
+  resolveRoutingProbeBaseUrl,
   routingToOpsSlice,
   type RoutingOpsSlice,
   type RoutingProofResult,
@@ -135,16 +136,7 @@ export async function buildRegistrySnapshot(
   const outPath = opts.outPath || Bun.env.OPS_SNAPSHOT_PATH || 'public/registry/ops-summary.json';
   const monitoringPath =
     opts.monitoringPath || Bun.env.MONITORING_SNAPSHOT_PATH || 'public/registry/monitoring.json';
-  // Prefer explicit opts; then env if non-loopback; else production custom domain.
-  // Loopback REGISTRY_URL (serve-public) must not be written into Pages ops-summary.
-  const envBase = (Bun.env.REGISTRY_URL || Bun.env.FACTORY_REGISTRY_URL || '').trim();
-  const isLoopback =
-    /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?\/?$/i.test(envBase) ||
-    /^https?:\/\/(127\.0\.0\.1|localhost)/i.test(envBase);
-  const baseUrl =
-    opts.baseUrl ||
-    (!isLoopback && envBase ? envBase.replace(/\/$/, '') : '') ||
-    'https://score.factory-wager.com';
+  const baseUrl = resolveRoutingProbeBaseUrl(opts.baseUrl);
 
   // Ensure parent dirs
   for (const p of [outPath, monitoringPath, STATIC_REGISTRY_PATH]) {

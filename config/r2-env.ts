@@ -158,7 +158,8 @@ export function searchBenchR2PublicBaseFromEnv(): string {
   return envString('SEARCH_BENCH_R2_PUBLIC_BASE');
 }
 
-/** FactoryWager npm registry URL (`REGISTRY_URL` overlay). */
+/** FactoryWager npm registry URL (`REGISTRY_URL` overlay; `bun publish --registry`). */
+// @see https://bun.com/docs/pm/cli/publish#registry-configuration
 export function factoryWagerRegistryUrlFromEnv(): string {
   return envString('REGISTRY_URL', `https://${CLOUDFLARE_DEFAULTS.registryHost}`);
 }

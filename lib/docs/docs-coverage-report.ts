@@ -15,6 +15,24 @@ import {
   type ReferencePageEntry,
 } from '../../tools/bun-docs-reference-index.ts';
 import type { ReleaseIndexFile } from '../../tools/bun-docs-releases.ts';
+import type {
+  SemanticTags,
+  VerificationLinks,
+  VerificationSubsystem,
+} from '../verification/types.ts';
+
+export const DOCS_COVERAGE_PROOF_REPORT_PATH = '/registry/docs-coverage-proof.json';
+export const DOCS_COVERAGE_VERIFY_SOURCE = 'tools/verify-docs-coverage.ts';
+export const DOCS_COVERAGE_DOCS =
+  'https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/BUN_DOCS_OPERATE.md';
+
+export type DocsCoverageLane = {
+  name: string;
+  passed: boolean;
+  subsystem: VerificationSubsystem;
+  expected: string;
+  actual: string;
+};
 
 export type CatalogEntryLike = {
   name: string;
@@ -181,6 +199,8 @@ export type DocsCoverageReport = {
   type: 'DocsCoverageVerificationReport';
   version: '1.0.0';
   timestamp: string;
+  subsystem: 'other';
+  reportPath?: typeof DOCS_COVERAGE_PROOF_REPORT_PATH;
   bunVersion: string;
   bunRevision: string;
   rss: {
@@ -215,6 +235,10 @@ export type DocsCoverageReport = {
     missingCanonicalCount: number;
     indexStale: boolean;
   };
+  /** Per-lane breakdown for portal tables + taxonomy drill-down. */
+  lanes?: DocsCoverageLane[];
+  semanticTags?: SemanticTags;
+  _links?: VerificationLinks;
   proofHash?: string;
 };
 
@@ -228,6 +252,56 @@ export type BuildDocsCoverageReportInput = {
   liveNewestVersion?: string | null;
   recentReleaseLimit?: number;
 };
+
+/** Build lane rows from coverage check aggregates (all `other` — cross-pillar meta gate). */
+export function buildDocsCoverageLanes(input: {
+  rssStale: boolean;
+  newestVersion: string | null;
+  referencePageCount: number;
+  referenceModuleCount: number;
+  catalogCheck: CoverageCheckResult;
+  overlayCheck: CoverageCheckResult;
+  reviewCheck: CoverageCheckResult;
+}): DocsCoverageLane[] {
+  const sub: VerificationSubsystem = 'other';
+  return [
+    {
+      name: 'docs-coverage:rss',
+      passed: !input.rssStale,
+      subsystem: sub,
+      expected: 'RSS index fresh vs live head',
+      actual: input.rssStale ? 'stale' : `fresh (${input.newestVersion ?? '—'})`,
+    },
+    {
+      name: 'docs-coverage:reference',
+      passed: true,
+      subsystem: sub,
+      expected: 'reference index present',
+      actual: `${input.referencePageCount} pages · ${input.referenceModuleCount} modules`,
+    },
+    {
+      name: 'docs-coverage:catalog',
+      passed: input.catalogCheck.missing.length === 0,
+      subsystem: sub,
+      expected: 'catalog tokens tracked',
+      actual: `${input.catalogCheck.tracked}/${input.catalogCheck.total}`,
+    },
+    {
+      name: 'docs-coverage:overlay',
+      passed: input.overlayCheck.missing.length === 0,
+      subsystem: sub,
+      expected: 'overlay tokens tracked',
+      actual: `${input.overlayCheck.tracked}/${input.overlayCheck.total}`,
+    },
+    {
+      name: 'docs-coverage:review',
+      passed: input.reviewCheck.missing.length === 0,
+      subsystem: sub,
+      expected: 'recent release review tokens tracked',
+      actual: `${input.reviewCheck.tracked}/${input.reviewCheck.total}`,
+    },
+  ];
+}
 
 export function buildDocsCoverageReport(input: BuildDocsCoverageReportInput): DocsCoverageReport {
   const catalogByName = new Map(input.catalogEntries.map(e => [e.name, e]));
@@ -254,10 +328,22 @@ export function buildDocsCoverageReport(input: BuildDocsCoverageReportInput): Do
 
   const ok = missingCanonicalCount === 0 && !rssFresh.indexStale;
 
+  const lanes = buildDocsCoverageLanes({
+    rssStale: rssFresh.indexStale,
+    newestVersion: rssFresh.newestVersion,
+    referencePageCount: input.referenceIndex.count,
+    referenceModuleCount: input.referenceIndex.moduleCount,
+    catalogCheck,
+    overlayCheck,
+    reviewCheck,
+  });
+
   return {
     type: 'DocsCoverageVerificationReport',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
+    subsystem: 'other',
+    reportPath: DOCS_COVERAGE_PROOF_REPORT_PATH,
     bunVersion: Bun.version,
     bunRevision: (Bun.revision || '').slice(0, 12) || 'unknown',
     rss: {
@@ -288,6 +374,12 @@ export function buildDocsCoverageReport(input: BuildDocsCoverageReportInput): Do
       ok,
       missingCanonicalCount,
       indexStale: rssFresh.indexStale,
+    },
+    lanes,
+    _links: {
+      docs: DOCS_COVERAGE_DOCS,
+      source: DOCS_COVERAGE_VERIFY_SOURCE,
+      report: DOCS_COVERAGE_PROOF_REPORT_PATH,
     },
   };
 }

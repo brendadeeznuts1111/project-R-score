@@ -4,6 +4,7 @@
 // (SIMD, native) and Bun.sliceAnsi vs the naive JS approaches they replace.
 // Scaled cases mirror Bun's official stringWidth benchmark so numbers diff
 // directly: https://bun.com/docs/runtime/utils#bun-stringwidth
+// Official upstream bench: https://github.com/oven-sh/bun/blob/main/bench/snippets/string-width.mjs
 // Bun.sliceAnsi: https://bun.com/reference/bun/sliceAnsi
 // Bun.nanoseconds: https://bun.com/docs/runtime/utils#bun-nanoseconds
 
@@ -22,6 +23,12 @@ const scaledAscii = SCALES.map(n => 'a'.repeat(n));
 const scaledAnsiEmoji = SCALES.map(n => {
   const body = '\x1b[31m' + 'a😀'.repeat(Math.ceil(n / 3)) + '\x1b[0m';
   return body.slice(0, n);
+});
+// OSC-8 hyperlink + emoji — shape from oven-sh/bun bench/snippets/string-width.mjs
+const osc8Hyperlink = '\x1b]8;;https://bun.sh\x07Bun\x1b]8;;\x07';
+const scaledOscEmoji = SCALES.map(n => {
+  const unit = osc8Hyperlink + '\u{1F44B}';
+  return unit.repeat(Math.ceil(n / unit.length)).slice(0, n);
 });
 
 function bench(name: string, fn: () => void, iterations = ITERATIONS): number {
@@ -59,6 +66,12 @@ for (let i = 0; i < SCALES.length; i++) {
   bench(
     `${SCALES[i].toLocaleString()} chars ansi+emoji`,
     () => void Bun.stringWidth(scaledAnsiEmoji[i])
+  );
+}
+for (let i = 0; i < SCALES.length; i++) {
+  bench(
+    `${SCALES[i].toLocaleString()} chars osc8+emoji`,
+    () => void Bun.stringWidth(scaledOscEmoji[i])
   );
 }
 

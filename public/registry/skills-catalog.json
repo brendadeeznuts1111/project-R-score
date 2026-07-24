@@ -4,247 +4,538 @@
       "name": "ad-creative",
       "description": "When the user wants to generate, iterate, or scale ad creative — headlines, descriptions, primary text, or full ad variations — for any paid advertising platform. Also use when the user mentions 'ad copy variations,' 'ad creative,' 'generate headlines,' 'RSA headlines,' 'bulk ad copy,' 'ad iterations,' 'creative testing,' 'ad performance optimization,' 'write me some ads,' 'Facebook ad copy,' 'Google ad headlines,' 'LinkedIn ad text,' or 'I need more ad variations.' Use this whenever someone needs to produce ad copy at scale or iterate on existing ads.",
       "updatedAt": "2026-06-03T23:03:43.368Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 339,
+      "resources": {
+        "scripts": 0,
+        "references": 2,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "apex-biolabs",
       "description": "Manage the Apex BioLabs biotech/pharma brand and discovery project. Use when updating discovery documents, tracking tasks, organizing brand assets, managing inventory data, coordinating pre-launch e-commerce operations, preparing banking documents, or working with the DirectPep LLC entity for the research-grade peptide reseller.",
       "updatedAt": "2026-06-20T06:45:51.401Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 313,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "automation",
       "description": "Use when creating, reading, updating, deleting, running, cancelling, scheduling, condition-triggering, or inspecting Daimon Blueprint Automations and their run records.",
       "updatedAt": "2026-07-16T19:31:14.442Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 367,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "bet-ticker-worker",
       "description": "Bet Ticker Worker v1.1 — Cloudflare Worker + Durable Object live wager broadcast, local poller, Zod boundary validation, PartnerGateway ops, KPI CLI, shade pipeline (autonomous market-making), steam detection, ruthless refactoring conventions, Bun test platform, visual testing, and autophagy team workflows. Bun workspace with isolated linker.",
       "updatedAt": "2026-06-04T07:19:53.656Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 237,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "binding",
       "description": "Use when creating, reading, validating, repairing, deleting, or troubleshooting Daimon Blueprint automation_widget Bindings between Automation artifact results and Widget data slots and submit events.",
       "updatedAt": "2026-07-16T19:31:14.444Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 100,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "blueprint",
       "description": "Use when choosing between Daimon Blueprint Automation, Widget, Binding, and Canvas tools or routing a request to the correct Blueprint domain skill.",
       "updatedAt": "2026-07-16T19:31:14.445Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 57,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "browse",
       "description": "Automate browser interactions via CLI commands to navigate web pages, extract data, take screenshots, fill forms, and interact with web apps. Supports remote sessions with CAPTCHA solving and anti-bot stealth for scraping protected sites. Trigger when the user asks to browse websites, scrape data, or automate clicks on any page.",
       "updatedAt": "2026-06-03T23:05:36.894Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 162,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "campaign-plan",
       "description": "Generate a full campaign brief with objectives, audience, messaging, channel strategy, content calendar, and success metrics. Use when planning a product launch, lead-gen push, or awareness campaign, when you need a week-by-week content calendar with dependencies, or when translating a marketing goal into a structured, executable plan.",
       "updatedAt": "2026-06-03T23:03:43.410Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 310,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "canvas",
       "description": "Use when creating, reading, updating, or deleting Daimon Blueprint Canvases and when placing, moving, resizing, ordering, removing, or inspecting Widget placements and placement-local view state.",
       "updatedAt": "2026-07-16T19:31:14.446Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 147,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "cascade-mover",
       "description": "Work with the user's cascade-mover-v3 project — a real-time sports betting intelligence terminal built with Bun-native APIs, zero runtime npm dependencies, SQLite (WAL + FTS5), WebSocket broadcasting, and a 62-tool MCP bridge. Trigger when the user mentions cascade-mover, cascade-mover-v3, autophagy sweep, entropy scan, bloat excision, dead-code excision, native-align, AGENTS.md Section IV/V, or asks to audit, review, refactor, harden, or perform ops on the cascade-mover codebase. Also trigger for source operations (fonbet, buckeye, euro-books), worker pool changes, MCP tool additions, league onboarding, or pattern engine changes.",
       "updatedAt": "2026-06-26T07:33:51.485Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 115,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "churn-prevention",
       "description": "Reduce voluntary and involuntary churn through cancel flow design, save offers, exit surveys, and dunning sequences. Use when designing or optimizing a cancel flow, building save offers, setting up dunning emails, or reducing failed-payment churn. Trigger keywords: cancel flow, churn reduction, save offers, dunning, exit survey, payment recovery, win-back, involuntary churn, failed payments, cancel page. NOT for customer health scoring or expansion revenue.",
       "updatedAt": "2026-06-03T23:03:43.440Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 233,
+      "resources": {
+        "scripts": 1,
+        "references": 4,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "content-research-writer",
       "description": "Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating on outlines, and providing real-time feedback on each section. Transforms your writing process from solo effort to collaborative partnership.",
       "updatedAt": "2026-06-03T23:03:43.446Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 542,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": [
+        "body too long (537 lines, want ≤500)"
+      ]
     },
     {
       "name": "copy-editing",
       "description": "When the user wants to edit, review, or improve existing marketing copy. Also use when the user mentions 'edit this copy,' 'review my copy,' 'copy feedback,' 'proofread,' 'polish this,' 'make this better,' 'copy sweep,' 'tighten this up,' 'this reads awkwardly,' 'clean up this text,' 'too wordy,' or 'sharpen the messaging.' Use this when the user already has copy and wants it improved rather than rewritten from scratch.",
       "updatedAt": "2026-06-03T23:03:43.471Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 438,
+      "resources": {
+        "scripts": 0,
+        "references": 1,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "copywriting",
       "description": "When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages, pricing pages, feature pages, about pages, or product pages. Also use when the user says \"write copy for,\" \"improve this copy,\" \"rewrite this page,\" \"marketing copy,\" \"headline help,\" \"CTA copy,\" \"value proposition,\" \"tagline,\" \"subheadline,\" \"hero section copy,\" \"above the fold,\" \"this copy is weak,\" \"make this more compelling,\" or \"help me describe my product.\" Use this whenever someone is working on website text that needs to persuade or convert.",
       "updatedAt": "2026-06-03T23:03:43.488Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 243,
+      "resources": {
+        "scripts": 0,
+        "references": 2,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "daily-report",
       "description": "Generate a professional daily intelligence brief PDF covering global geopolitics, macro policy, industrial supply chains, and tech trends. Use when user needs a comprehensive daily report similar to institutional research formats.",
       "updatedAt": "2026-06-03T23:03:43.516Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 337,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "daimon-widget-cards",
       "description": "Render Daimon display cards for assistant results. Use automatically when showing local files, images, videos, final generated products, completed deletion lists, existing tool resources, or a Canvas entry point in Daimon chat. Blueprint Widgets are shown with the Widget tool, not card fences.",
       "updatedAt": "2026-07-16T19:31:14.450Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 126,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "docx",
       "description": "Create, edit, repair, and review Word documents (.docx). Use for docx-js document creation, in-place editing of existing .docx files, comments, tracked changes, and DOCX package validation/auto-repair.",
       "updatedAt": "2026-07-22T11:58:54.750Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 145,
+      "resources": {
+        "scripts": 63,
+        "references": 4,
+        "assets": 1
+      },
+      "validation": []
     },
     {
       "name": "humanizer-zh",
       "description": "去除文本中的 AI 生成痕迹。适用于编辑或审阅文本，使其听起来更自然、更像人类书写。 基于维基百科的\"AI 写作特征\"综合指南。检测并修复以下模式：夸大的象征意义、 宣传性语言、以 -ing 结尾的肤浅分析、模糊的归因、破折号过度使用、三段式法则、 AI 词汇、否定式排比、过多的连接性短语。",
       "updatedAt": "2026-06-03T23:03:44.202Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 487,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "kimi-design-skill",
       "description": "Use when generating, modifying, or reviewing Kimi-style Web UI, and draft Kimi-style Mobile UI. This skill applies Kimi design principles, design tokens, and platform-specific component rules with progressive disclosure.",
       "updatedAt": "2026-07-16T19:31:14.493Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 78,
+      "resources": {
+        "scripts": 0,
+        "references": 38,
+        "assets": 268
+      },
+      "validation": []
     },
     {
       "name": "kimi-find-skills",
       "description": "Search and discover skills for the agent. Use when the user expresses intent to find a skill, search for a skill, or needs a skill to solve a specific problem. Triggers on phrases like \"find skill\", \"search skill\", \"look for skill\", or when the user describes a problem and asks for a skill recommendation. Also triggers when the user asks about available skills or skill discovery.",
       "updatedAt": "2026-06-04T21:26:53.615Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 91,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "kimi-slides",
       "description": "Create and edit presentations in PPTX format. This skill defines a .pptd intermediate format to simplify OOXML operations. Any task involving the generation or editing of PPTX files must use this skill and no other method. This skill can also be used to read uploaded PPTX files and convert PPTX documents into images. When the user requests an infographic or poster without specifying an image or HTML format, this skill may likewise be used to create it as a PPTX file.",
       "updatedAt": "2026-07-16T19:31:14.534Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 97,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "kimi-toolchain",
       "description": "Work with the user's kimi-toolchain Bun-native developer tooling project. Trigger when the user mentions kimi-toolchain, dx, herdr, ~/.kimi-code, or asks to audit, review, diagnose, or fix their local dev tooling setup. Covers the integration between the repo (~/kimi-toolchain), the desktop runtime (~/.kimi-code/), the dx global platform, and the herdr terminal orchestrator.",
       "updatedAt": "2026-06-22T04:29:31.734Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 100,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "kimi-webbridge",
       "description": "Kimi WebBridge lets AI control the user's real browser — navigate, click, type, read, screenshot, and interact with any website using the user's actual login sessions. Use this skill whenever the user wants to interact with websites, automate browser tasks, scrape web content, or perform any action requiring a real browser. Also use when the user mentions \"browser\", \"webpage\", \"open URL\", \"screenshot\", or asks to read/interact with any website. Use even for simple-sounding browser requests — the daemon handles all complexity.",
       "updatedAt": "2026-07-22T18:19:45.929Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 178,
+      "resources": {
+        "scripts": 0,
+        "references": 1,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "legal-risk-assessment",
       "description": "Assess and classify legal risks using a severity-by-likelihood framework with escalation criteria. Use when evaluating contract risk, assessing deal exposure, classifying issues by severity, or determining whether a matter needs senior counsel or outside legal review.",
       "updatedAt": "2026-06-03T23:03:44.311Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 266,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "md-to-pdf",
       "description": "Convert Markdown documents to PDF format. Use when the user needs to transform .md files into .pdf, including documentation export, report generation, or document sharing. Supports multiple conversion methods from simple to advanced formatting needs.",
       "updatedAt": "2026-06-03T23:03:44.402Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 137,
+      "resources": {
+        "scripts": 1,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "memory-widget",
       "description": "Use when the user wants to SEE their own memory/vault as a visual widget - a dashboard, calendar, table, tag gallery, or relationship graph of the people/projects/concepts you remember about them. Triggers: '把我的记忆做成 dashboard', 'show my memory', 'visualize what you know about me', '我的记忆时间线/关系图/表格'. This is the data-class widget path: FIXED component styles, you only bind real vault data. For free-form / creative / one-off visuals that are NOT the user's memory data, use the Blueprint widget skill instead.",
       "updatedAt": "2026-07-16T19:31:14.540Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 69,
+      "resources": {
+        "scripts": 0,
+        "references": 1,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "partner-gateway-integrator",
       "description": "Use when changing partner profile, Telegram, sharp-signal, data-source, settlement, dashboard, SOR, balance, risk, compliance, partner resource/geo utilization, sub-agent communication, accounting/cuts/reconciliation, or operator UI flows. Enforces PartnerGateway as the single policy module, Bun-native implementation, and packages/ui as the shared UI surface. Part of the bet-ticker-worker autophagy team.",
       "updatedAt": "2026-07-24T04:18:29.943Z",
-      "hasPackage": true
+      "hasPackage": true,
+      "lineCount": 216,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "pdf",
       "description": "Create and process PDF files. Creation covers reports, papers, and documents with charts, tables, math formulas, and code listings. Processing covers text/table extraction, form filling, and page operations (merge, split, rotate, crop). Use when the user mentions PDF, .pdf, or asks to extract/merge/fill PDF files.",
       "updatedAt": "2026-07-22T11:58:54.823Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 133,
+      "resources": {
+        "scripts": 8,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "pptx",
       "description": "Exclusive skill for generating PowerPoint/PPT/PPTX presentations. Any request involving creating, generating, producing, designing, or laying out slides or presentations **must** use the domain-specific language provided by a PPTD-family skill; using python-pptx, OpenXML SDK, or any other library/method to generate presentations is strictly prohibited. Use this `pptx` skill when the presentation has fewer than 20 slides. Use `pptx-swarm` for long presentations or batch creation of multiple presentations. Note: this skill does not support editing, modifying, reading, or reverse-converting existing PPT/PPTX files; if the user asks to modify an existing PPT, use another approach.",
       "updatedAt": "2026-06-03T23:03:46.428Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 59,
+      "resources": {
+        "scripts": 4,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "pptx-swarm",
       "description": "Exclusive skill for generating PowerPoint/PPT/PPTX presentations. Any request involving creating, generating, producing, designing, or laying out slides or presentations **must** use the domain-specific language provided by a PPTD-family skill; using python-pptx, OpenXML SDK, or any other library/method to generate presentations is strictly prohibited. Use this `pptx-swarm` skill only for long presentation generation or batch creation of multiple presentations; otherwise use the `pptx` skill. Note: this skill does not support editing, modifying, reading, or reverse-converting existing PPT/PPTX files; if the user asks to modify an existing PPT, use another approach.\\nNotice:\\nThe main agent must complete visual design, outline design, and .pptd file construction. Sub-agents may only generate .page files. Before the .pptd file is generated, strictly prohibited from assigning production tasks to sub-agents using the `agent` tool or any other tool!",
       "updatedAt": "2026-06-03T23:03:48.455Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 65,
+      "resources": {
+        "scripts": 4,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "process-doc",
       "description": "Document a business process — flowcharts, RACI, and SOPs. Use when formalizing a process that lives in someone's head, building a RACI to clarify who owns what, writing an SOP for a handoff or audit, or capturing the exceptions and edge cases of how work actually gets done.",
       "updatedAt": "2026-06-03T23:03:48.579Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 74,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "saas-metrics-coach",
       "description": "SaaS financial health advisor. Use when a user shares revenue or customer numbers, or mentions ARR, MRR, churn, LTV, CAC, NRR, or asks how their SaaS business is doing.",
       "updatedAt": "2026-06-03T23:03:48.891Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 154,
+      "resources": {
+        "scripts": 3,
+        "references": 2,
+        "assets": 1
+      },
+      "validation": []
     },
     {
       "name": "scientific-problem-selection",
       "description": "This skill should be used when scientists need help with research problem selection, project ideation, troubleshooting stuck projects, or strategic scientific decisions. Use this skill when users ask to pitch a new research idea, work through a project problem, evaluate project risks, plan research strategy, navigate decision trees, or get help choosing what scientific problem to work on. Typical requests include \"I have an idea for a project\", \"I'm stuck on my research\", \"help me evaluate this project\", \"what should I work on\", or \"I need strategic advice about my research\".",
       "updatedAt": "2026-06-03T23:03:49.020Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 270,
+      "resources": {
+        "scripts": 0,
+        "references": 9,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "seaborn-visualization",
       "description": "charting, plotting, graphing, visualization, seaborn, matplotlib, pandas reports, Chinese chart labels, and data-viz code in Daimon's managed Python runtime. Covers both interactive runs via the Bash tool and Blueprint Automation code execution.",
       "updatedAt": "2026-07-22T11:58:54.829Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 90,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "seo-audit",
       "description": "When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions \"SEO audit,\" \"technical SEO,\" \"why am I not ranking,\" \"SEO issues,\" \"on-page SEO,\" \"meta tags review,\" \"SEO health check,\" \"my traffic dropped,\" \"lost rankings,\" \"not showing up in Google,\" \"site isn't ranking,\" \"Google update hit me,\" \"page speed,\" \"core web vitals,\" \"crawl errors,\" or \"indexing issues.\" Use this even if the user just says something vague like \"my SEO is bad\" or \"help with SEO\" — start with an audit.",
       "updatedAt": "2026-06-03T23:03:49.122Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 402,
+      "resources": {
+        "scripts": 0,
+        "references": 1,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "skill-creator",
       "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Kimi's capabilities with specialized knowledge, workflows, or tool integrations.",
       "updatedAt": "2026-06-03T23:03:49.136Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 369,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "theme-factory",
       "description": "Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.",
       "updatedAt": "2026-06-03T23:03:50.070Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 61,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "webapp-building",
       "description": "Tools for building modern React webapps with TypeScript, Tailwind CSS and shadcn/ui on the local machine. Best suited for applications with complex UI components and state management. If the user mentions building a website, webpage, or app, you MUST read and follow this skill's guidance to deploy a local React project rather than a plain HTML file. Supports optional templates for specialized requirements. Local edition.",
       "updatedAt": "2026-07-16T19:31:14.581Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 118,
+      "resources": {
+        "scripts": 1,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "widget",
       "description": "Use when creating, showing, updating, validating, deleting, rendering, or troubleshooting Daimon Blueprint Widgets, their responsive index.html UI, data slots, submit events, input state, files, and workspace resources. You MUST read widgetdesign skill before creating any widget.",
       "updatedAt": "2026-07-16T19:31:14.609Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 221,
+      "resources": {
+        "scripts": 0,
+        "references": 1,
+        "assets": 0
+      },
+      "validation": []
     },
     {
       "name": "widgetdesign",
       "description": "Use when creating or reviewing a responsive Daimon/Kimi conversational, Blueprint, or Canvas widget; use for generic visual tools only when explicitly invoking $widgetdesign or targeting a Daimon/Kimi widget.",
       "updatedAt": "2026-07-16T19:31:14.618Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 96,
+      "resources": {
+        "scripts": 0,
+        "references": 41,
+        "assets": 125
+      },
+      "validation": []
     },
     {
       "name": "xlsx",
       "description": "Create and analyze Excel spreadsheets (.xlsx/.csv). Supports formula-driven analysis, charts, conditional formatting, styled reports, and financial modeling (three-statement models, DCF, comps analysis). Use when the user mentions Excel, spreadsheet, .xlsx, .csv, or asks for data analysis with formulas.",
       "updatedAt": "2026-07-16T19:31:14.642Z",
-      "hasPackage": false
+      "hasPackage": false,
+      "lineCount": 561,
+      "resources": {
+        "scripts": 1,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": [
+        "body too long (557 lines, want ≤500)"
+      ]
     }
   ],
   "count": 41

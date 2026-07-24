@@ -273,7 +273,8 @@ describe('fresh-rerun contract', () => {
 
   test('channel-meta-verification-v1 freshRerun is verification suite cluster', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'channel-meta-verification-v1');
-    expect(p?.gateClass).toBe('human-only');
+    expect(p?.gateClass).toBe('continuous');
+    expect(p?.gateRef).toBe('ci:harness');
     expect(p?.owner).toBe('lib/verification/');
     expect(p?.kinds).toEqual(['unit', 'boundary']);
     expect(p?.freshRerun).toBe(

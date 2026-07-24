@@ -1,3 +1,4 @@
+// @see https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md — RegistryClient
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client (via object-store)
 // @see https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support — requestPayer (via object-store)
@@ -30,6 +31,7 @@ import {
   isPreconditionFailed,
   requireFactoryRegistryS3Config,
   factoryRegistryBucketFromEnv,
+  tarballContentDisposition,
 } from './object-store';
 
 /** Registry index file name stored in the bucket root. */
@@ -165,7 +167,10 @@ export class RegistryClient {
         ? `${name.startsWith('@factorywager/') ? name : `@factorywager/${name}`}/${version}.tgz`
         : `projects/${name}/${version}.tgz`;
 
-    await this.store.putBytes(r2Key, blob, { contentType: 'application/gzip' });
+    await this.store.putBytes(r2Key, blob, {
+      contentType: 'application/gzip',
+      contentDisposition: tarballContentDisposition(r2Key),
+    });
 
     const release: ArtifactRelease = {
       id: asArtifactId(artifactName, artifactVersion),

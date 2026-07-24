@@ -102,7 +102,14 @@ import {
   renderPortalMarkdownPage,
 } from '../lib/http/portal-markdown.ts';
 import { llmsFullTxtBody, llmsTxtBody, PORTAL_MD_SLUGS } from '../lib/http/llms-txt.ts';
-import { buildSkillsCatalog } from '../lib/http/skills-catalog.ts';
+import {
+  buildSkillDetail,
+  buildSkillsCatalog,
+  packageSkill,
+  SkillPackageError,
+  skillPackageExists,
+} from '../lib/http/skills-catalog.ts';
+import { renderSkillDetailPage, renderSkillNotFoundPage } from '../lib/http/portal-skill-detail.ts';
 import {
   serveVerificationScript,
   serveVerificationScriptMeta,
@@ -574,10 +581,13 @@ const WATCH_PATHS = [
   'public/portal/index.html',
   'public/portal/ops/index.html',
   'public/portal/skills/index.html',
+  'public/portal/dashboard/index.html',
   'public/portal/operations-dashboard.js',
+  'public/portal/dashboard.js',
   'public/portal/app.js',
   'public/portal/style.css',
   'public/monitoring/index.html',
+  'public/monitoring/monitoring-dashboard.js',
 ];
 
 const hotByUrl = new Map<string, PreloadedStatic>();
@@ -1371,7 +1381,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
       '/api/channels',
       '/api/operations/summary',
       '/api/catalog',
-      '/api/skills',
+      '/api/skills', // prefix also covers /api/skills/{name} + /package (publish-gated POST)
       // Packaged .skill archives under public/skills/ — public read plane.
       '/skills/',
       // Portal static chrome (HTML is route-matched; CSS/JS/modules hit fetch)
@@ -1393,6 +1403,44 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/catalog' || path === '/api/catalog/') return liveCatalog(req);
   // Skills registry — local SKILL.md scan + *.skill package drop (never crashes)
   if (path === '/api/skills' || path === '/api/skills/') return json(await buildSkillsCatalog());
+
+  // Skill detail JSON: GET /api/skills/{name}
+  const skillDetailM = path.match(/^\/api\/skills\/([a-z0-9-]{1,64})$/);
+  if (skillDetailM) {
+    if (req.method !== 'GET') return json({ error: 'Method not allowed' }, 405);
+    const detail = await buildSkillDetail(skillDetailM[1]!);
+    if (!detail) return json({ error: `No such skill: ${skillDetailM[1]}` }, 404);
+    return json(detail);
+  }
+
+  // Skill packaging (publish-gated): POST /api/skills/{name}/package
+  const skillPkgM = path.match(/^\/api\/skills\/([a-z0-9-]{1,64})\/package$/);
+  if (skillPkgM) {
+    if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
+    const pubErr = await requirePublishAuth(req);
+    if (pubErr) return pubErr;
+    try {
+      const result = await packageSkill(skillPkgM[1]!);
+      return json({ ok: true, ...result });
+    } catch (err) {
+      if (err instanceof SkillPackageError)
+        return json({ error: err.message, code: err.code }, err.code === 'not-found' ? 404 : 500);
+      return json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    }
+  }
+
+  // Skill detail page (server-rendered): GET /portal/skills/{name}
+  const skillPageM = path.match(/^\/portal\/skills\/([a-z0-9-]{1,64})$/);
+  if (skillPageM && req.method === 'GET') {
+    const detail = await buildSkillDetail(skillPageM[1]!);
+    const html = detail
+      ? renderSkillDetailPage(detail, await skillPackageExists(skillPageM[1]!))
+      : renderSkillNotFoundPage(skillPageM[1]!);
+    return new Response(html, {
+      status: detail ? 200 : 404,
+      headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+    });
+  }
 
   // Registry
   if (path === '/api/registry' || path === '/api/registry/') return serveRegistryIndex();

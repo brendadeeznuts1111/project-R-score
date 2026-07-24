@@ -77,6 +77,7 @@ export function subsystemFromProbeName(name: string): VerificationSubsystem | un
   if (
     n.startsWith('install platform:') ||
     n.startsWith('install-env:') ||
+    n.startsWith('registry-client.') ||
     n.startsWith('bun_config_')
   ) {
     return 'package-manager';

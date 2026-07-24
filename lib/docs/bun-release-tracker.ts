@@ -543,16 +543,22 @@ export function probeUrlHost(): { ok: boolean; note: string } {
   return probeUrlHostLegacy();
 }
 
+/**
+ * v1.3.5 blog vectors — flag, skin tone, ZWJ family, soft hyphen, word joiner.
+ * @see https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy
+ * @see https://github.com/oven-sh/bun/blob/main/test/js/bun/util/stringWidth.test.ts
+ */
+export const STRING_WIDTH_V135_VECTORS: ReadonlyArray<readonly [string, number]> = [
+  ['\u{1F1FA}\u{1F1F8}', 2], // flag emoji
+  ['\u{1F44B}\u{1F3FD}', 2], // skin tone
+  ['\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}', 2], // ZWJ family
+  ['\u00AD', 0], // soft hyphen
+  ['\u2060', 0], // word joiner
+];
+
 /** v1.3.5 stringWidth vectors from release notes. */
 export function probeStringWidthV135Accuracy(): { ok: boolean; note: string } {
-  const checks: Array<[string, number]> = [
-    ['🇺🇸', 2],
-    ['👋🏽', 2],
-    ['👨‍👩‍👧', 2],
-    ['\u00AD', 0],
-    ['\u2060', 0],
-  ];
-  const bad = checks.filter(([text, width]) => Bun.stringWidth(text) !== width);
+  const bad = STRING_WIDTH_V135_VECTORS.filter(([text, width]) => Bun.stringWidth(text) !== width);
   return {
     ok: bad.length === 0,
     note:

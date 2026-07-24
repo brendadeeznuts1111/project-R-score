@@ -1,6 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests
 import { describe, expect, test } from 'bun:test';
 import {
+  buildDocsCoverageLanes,
   buildDocsCoverageReport,
   checkCanonicalCoverage,
   checkReferenceUrlPresence,
@@ -187,6 +188,24 @@ describe('buildDocsCoverageReport', () => {
     expect(report.summary.ok).toBe(false);
     expect(report.summary.missingCanonicalCount).toBeGreaterThan(0);
     expect(report.canonical.catalogMissing).toContain('gap.token');
+    expect(report.subsystem).toBe('other');
+    expect(report.lanes?.length).toBe(5);
+    expect(report.lanes?.every(l => l.subsystem === 'other')).toBe(true);
+    expect(report._links?.report).toBe('/registry/docs-coverage-proof.json');
+  });
+
+  test('buildDocsCoverageLanes marks catalog lane failed when gaps exist', () => {
+    const lanes = buildDocsCoverageLanes({
+      rssStale: false,
+      newestVersion: '1.3.14',
+      referencePageCount: 57,
+      referenceModuleCount: 44,
+      catalogCheck: { total: 2, tracked: 1, missing: ['gap'] },
+      overlayCheck: { total: 1, tracked: 1, missing: [] },
+      reviewCheck: { total: 1, tracked: 1, missing: [] },
+    });
+    const catalog = lanes.find(l => l.name === 'docs-coverage:catalog');
+    expect(catalog?.passed).toBe(false);
   });
 
   test('collectCatalogReferenceTokens includes reference locus and /reference/ pages', () => {

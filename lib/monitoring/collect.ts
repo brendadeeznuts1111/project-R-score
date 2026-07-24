@@ -76,6 +76,15 @@ export type MonitoringPayload = {
       p95Ms?: number;
       errorRate?: number;
       proofHash?: string;
+      baseUrl?: string;
+      routes?: Array<{
+        path: string;
+        status: number;
+        pass: boolean;
+        critical?: boolean;
+        timeMs?: number;
+        contentType?: string;
+      }>;
     };
   };
   /** Optional env check summary. */
@@ -86,7 +95,17 @@ export type MonitoringPayload = {
       missing?: number;
       requiredMissing?: number;
     };
+    table?: Array<{
+      Key: string;
+      Group?: string;
+      Severity?: string;
+      Status?: string;
+      Detail?: string;
+    }>;
   };
+  /** Compact proof slices (ops:snapshot enrichment). */
+  registryClientProof?: Record<string, unknown>;
+  docsCoverageProof?: Record<string, unknown>;
 };
 
 const REGISTRY_INTEGRITY_FILE = joinPath(import.meta.dir, '../../reports/registry-integrity.json');

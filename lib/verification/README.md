@@ -46,6 +46,7 @@ Catalogued in `lib/env-check.ts` (group `github`, optional).
 - `public/registry/install-platform.json` · `install-env-proof.json` (package-manager subsystem)
 - `public/registry/networking-proof.json` (`check:networking:save` / `verify-all`)
 - `public/registry/bun-runtime-nits-proof.json` (`verify:bun-runtime-nits:save` / `verify-all`)
+- `public/registry/docs-coverage-proof.json` · `registry-client-proof.json` · `doc-index.json` (taxonomy contracts)
 - `public/registry/proof-taxonomy-audit.json` (`verify:proof-taxonomy:save` / `verify-all`)
 - `public/registry/verification-<channel>-<version>[-suite].json` (snapshots; bundler gets `-bundler`)
 - `public/registry/verification-index.json` (`canonical` updates only for release/all)
@@ -55,13 +56,23 @@ bun run verify:proof-taxonomy
 bun run verify:proof-taxonomy:save
 ```
 
-**Canonical metadata SSOT:** [`tools/canonical-helpers.ts`](../../tools/canonical-helpers.ts) (`getCanonicalEntry`, `resolveCanonicalForProbe`) merges token maps from [`tools/bun-doc-refs.ts`](../../tools/bun-doc-refs.ts). Each proof row may carry `subsystem`, `introducedIn`, `canonicalKey`, `canonicalKind`, `canonicalStability`.
+**Canonical metadata SSOT:** [`tools/canonical-helpers.ts`](../../tools/canonical-helpers.ts) (`getCanonicalEntry`, `resolveCanonicalForProbe`) merges token maps from [`tools/bun-doc-refs.ts`](../../tools/bun-doc-refs.ts). Every proof row should carry `subsystem`, `introducedIn`, `canonicalKey`, `canonicalKind`, `canonicalStability` (filled at resolve + re-normalized in `rehashChannelProof` / `ensureRowTaxonomy`).
+
+**Bare vs meta `release-features.json`**
+
+| Mode | How | Bake |
+|------|-----|------|
+| Bare (~46 rows) | `bun tools/verify-bun-release.ts --save` | **Invalidated** (`ChannelMetaBakeInvalid`) |
+| Meta (~75 rows) | `bun run verify:channel:meta` | Written as `channel-meta-bake.json` |
+
+`verify-all` ends with `verify-channel-meta` then `verify-proof-taxonomy`. After ad-hoc bare release saves, re-run meta before relying on taxonomy consistency.
 
 ```bash
 bun run verify:channel:auth
 bun run verify:channel:resolve -- --channel=latest
 bun run verify:channel:canary
 bun run verify:channel:all          # release + nits + bundler + networking
+bun run verify:channel:meta         # prefer-artifact merge (no full re-run)
 bun run verify:channel:bundler      # bundler loaders only
 bun run verify:channel:networking   # networking channel bridge
 bun run verify:bundler              # same suite, standalone tool

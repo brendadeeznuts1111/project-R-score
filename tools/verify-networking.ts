@@ -24,7 +24,7 @@
  * JSON: `JSON.stringify(report)` → toJSON() with rows + rendered tables.
  *
  * Grounded targets (not invent):
- *   - Cloudflare dashboard / Pages-facing registry
+ *   - Cloudflare dashboard / npm registry API
  *   - Local serve-public health + prediction report
  *   - Kalshi public exchange status
  *   - bun.com docs (HTTPS DNS control)
@@ -191,9 +191,9 @@ function buildTargets(): NetTarget[] {
       skipBuffer: true,
     },
     {
-      name: 'Registry (Pages)',
-      url: 'https://registry.factory-wager.com/',
-      category: 'pages',
+      name: 'Registry (npm API)',
+      url: `${factoryWagerRegistryUrlFromEnv().replace(/\/$/, '')}/`,
+      category: 'registry',
       method: 'HEAD',
       okStatuses: [200, 301, 302, 303, 307, 308],
       skipBuffer: true,

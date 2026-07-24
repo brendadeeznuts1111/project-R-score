@@ -68,9 +68,30 @@ export function isChannelMetaMergedRow(row: VerificationResult): boolean {
   return CHANNEL_META_ROW_PREFIXES.some(p => row.name.startsWith(p));
 }
 
+/** True when release-features carries suite=all meta pillar embeds. */
+export function releaseHasChannelMetaEmbeds(results: VerificationResult[] | undefined): boolean {
+  return (results ?? []).some(r => isChannelMetaMergedRow(r));
+}
+
 /** Drop previously merged meta rows so refresh is idempotent. */
 export function stripChannelMetaRows(results: VerificationResult[]): VerificationResult[] {
   return results.filter(r => !isChannelMetaMergedRow(r));
+}
+
+/**
+ * Mark bake sidecar invalid after a release-only write to release-features.json.
+ * Prevents Pages/ops from advertising a green meta bake that no longer matches.
+ */
+export async function invalidateChannelMetaBake(reason: string): Promise<void> {
+  const file = Bun.file(CHANNEL_META_BAKE_PATH);
+  if (!(await file.exists())) return;
+  const tombstone = {
+    type: 'ChannelMetaBakeInvalid' as const,
+    version: '1.0.0' as const,
+    invalidatedAt: new Date().toISOString(),
+    reason,
+  };
+  await Bun.write(CHANNEL_META_BAKE_PATH, `${JSON.stringify(tombstone, null, 2)}\n`);
 }
 
 export function nitsRowsToChannelMeta(results: VerificationResult[]): VerificationResult[] {

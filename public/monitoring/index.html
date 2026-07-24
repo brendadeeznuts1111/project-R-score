@@ -1,84 +1,162 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- @see docs/portal-foundation.md -->
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="portal-poll-ms" content="30000" />
   <title>Monitoring · FactoryWager</title>
-  <style>
-    :root { --bg: #0d1117; --panel: #161b22; --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --border: #30363d; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-monospace, Menlo, monospace; padding: 2rem; }
-    h1 { color: var(--accent); font-size: 1.35rem; }
-    h2 { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; }
-    .meta { color: var(--muted); font-size: 0.85rem; }
-    table { border-collapse: collapse; width: 100%; max-width: 480px; margin: 0 0 1.5rem; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
-    th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
-    th { color: var(--muted); font-weight: 500; }
-    a { color: var(--accent); }
-    nav { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
-    .err { color: #f85149; }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/portal/style.css" />
+  <script type="application/json" id="monitoring-embed">{"mon":{"source":"snapshot","uptime":"0d 0h 0m 0s","uptimeMs":473,"packageCount":17,"versionCount":23,"lastIntegrity":{"status":"unknown","timestamp":null,"failures":0,"source":"unknown"},"platformSummary":{"active":4},"platformApiAvailable":{"yes":4,"no":0},"dodQueue":0,"dodByStatus":{},"experimentsActive":1,"predictionN":30,"timestamp":"2026-07-24T06:23:58.181Z","snapshotAt":"2026-07-24T06:23:58.181Z","env":{"ok":true,"source":"env-check","checkedAt":"2026-07-24T06:23:58.181Z","summary":{"total":23,"ok":23,"missing":7,"placeholder":0,"requiredMissing":0},"table":[{"Key":"CLOUDFLARE_ACCOUNT_ID","Group":"cloudflare","Severity":"required","Status":"set","Detail":"7a470541a704caaf91e71efccc78fd36 · default 7a470541…"},{"Key":"CLOUDFLARE_ZONE_ID","Group":"cloudflare","Severity":"recommended","Status":"default","Detail":"unset · code default · a3b7ba4b…"},{"Key":"CLOUDFLARE_ZONE_NAME","Group":"cloudflare","Severity":"optional","Status":"default","Detail":"unset · code default · factory-wager.com"},{"Key":"CLOUDFLARE_API_TOKEN","Group":"cloudflare","Severity":"required","Status":"set","Detail":"set (len 53, cfa…15)"},{"Key":"CLOUDFLARE_DNS_API_TOKEN","Group":"cloudflare","Severity":"recommended","Status":"set","Detail":"set (len 53, cfa…9f)"},{"Key":"R2_ACCESS_KEY_ID","Group":"r2","Severity":"required","Status":"set","Detail":"set (len 32, 890…1b)"},{"Key":"R2_SECRET_ACCESS_KEY","Group":"r2","Severity":"required","Status":"set","Detail":"set (len 64, 026…0a)"},{"Key":"R2_ENDPOINT","Group":"r2","Severity":"recommended","Status":"set","Detail":"https://7a470541a704caaf91e71efccc78fd36… · via R2_S3_ENDPOINT · or derived from account id"},{"Key":"R2_REGISTRY_BUCKET","Group":"r2","Severity":"recommended","Status":"set","Detail":"bun-secrets · via R2_BUCKET_NAME · factory-wager-registry"},{"Key":"REGISTRY_URL","Group":"registry","Severity":"recommended","Status":"default","Detail":"unset · code default · npm publish/install plane (default https://registry.factory-wager.com); see bun publish --registry"},{"Key":"ROUTING_PROBE_BASE_URL","Group":"registry","Severity":"optional","Status":"default","Detail":"unset · code default · Pages public origin for routing proof (default https://score.factory-wager.com); not REGISTRY_URL"},{"Key":"REGISTRY_PUBLIC_URL","Group":"registry","Severity":"optional","Status":"missing","Detail":"—"},{"Key":"REGISTRY_SECRET","Group":"registry","Severity":"required","Status":"set","Detail":"set (len 7)"},{"Key":"API_KEY","Group":"registry","Severity":"optional","Status":"missing","Detail":"optional proof POST publish"},{"Key":"OPS_DB_PATH","Group":"ops","Severity":"recommended","Status":"default","Detail":"unset · code default · data/operations.db"},{"Key":"GITHUB_TOKEN","Group":"github","Severity":"optional","Status":"missing","Detail":"aliases: GITHUB_ACCESS_TOKEN · GH_TOKEN · or `gh auth login` (channels.ts gh-cli fallback)"},{"Key":"TELEGRAM_BOT_TOKEN","Group":"ops","Severity":"optional","Status":"missing","Detail":"outbox / alerts"},{"Key":"TELEGRAM_OPS_CHAT_ID","Group":"ops","Severity":"optional","Status":"missing","Detail":"alert chat"},{"Key":"PLAY_SIGNING_SECRET","Group":"ops","Severity":"recommended","Status":"set","Detail":"set (len 64, 019…33)"},{"Key":"PROVISION_ENCRYPTION_KEY","Group":"ops","Severity":"optional","Status":"missing","Detail":"—"},{"Key":"SNAPSHOT_PHASE","Group":"ops","Severity":"optional","Status":"default","Detail":"unset · code default · pre | post"},{"Key":"BUN_CONSOLE_DEPTH","Group":"runtime","Severity":"optional","Status":"set","Detail":"4 · wrapper default 4"},{"Key":"SLACK_WEBHOOK_URL","Group":"alerts","Severity":"optional","Status":"missing","Detail":"—"}],"requiredMissingKeys":[]},"routeStats":{"routing":{"passed":16,"total":16,"httpOk":14,"criticalFailed":0,"p95Ms":364.42,"errorRate":0,"proofHash":"75d9b2c07b050d001316547e5a0cb35ac708935a2d5fc52a49a3d86d3946f928","baseUrl":"https://score.factory-wager.com","routes":[{"path":"/registry/@factorywager/bun-utils-test/latest.json","status":200,"pass":true,"critical":true,"timeMs":65.39,"contentType":"application/json"},{"path":"/api/monitoring","status":200,"pass":true,"critical":true,"timeMs":54.11,"contentType":"application/json"},{"path":"/portal/ops/","status":200,"pass":true,"critical":true,"timeMs":54.03,"contentType":"text/html"},{"path":"/api/operations/summary","status":200,"pass":true,"critical":true,"timeMs":37.93,"contentType":"application/json"},{"path":"/registry/ops-summary.json","status":200,"pass":true,"critical":true,"timeMs":36.96,"contentType":"application/json"},{"path":"/api/registry/@factorywager/routing-test/latest.json","status":200,"pass":true,"critical":false,"timeMs":364.42,"contentType":"application/json"},{"path":"/api/registry/@factorywager/bun-utils-test/latest.json","status":200,"pass":true,"critical":false,"timeMs":308.31,"contentType":"application/json"},{"path":"/api/registry/@factorywager/test-pkg","status":200,"pass":true,"critical":false,"timeMs":210.46,"contentType":"text/html"},{"path":"/health","status":200,"pass":true,"critical":false,"timeMs":185.43,"contentType":"text/html"},{"path":"/portal","status":200,"pass":true,"critical":false,"timeMs":143.95,"contentType":"text/html"},{"path":"/ready","status":200,"pass":true,"critical":false,"timeMs":128.91,"contentType":"text/html"},{"path":"/monitoring","status":200,"pass":true,"critical":false,"timeMs":128.74,"contentType":"text/html"},{"path":"/registry/@factorywager/routing-test/latest.json","status":200,"pass":true,"critical":false,"timeMs":101.47,"contentType":"application/json"},{"path":"/api/registry","status":400,"pass":true,"critical":false,"timeMs":90.94,"contentType":"application/json"},{"path":"/registry/static.json","status":200,"pass":true,"critical":false,"timeMs":84.07,"contentType":"application/json"},{"path":"/api/registry/static","status":400,"pass":true,"critical":false,"timeMs":29.1,"contentType":"application/json"}]}},"bunApiProof":{"demosPassed":30,"demosTotal":30,"demoPassRate":"100.0%","generated":"2026-07-24T06:23:58.179Z","apisVerified":30},"registryClientProof":{"available":true,"sdkVersion":"1.0.0","passed":3,"total":3,"status":"pass","subsystem":"package-manager","proofHash":"38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f","timestamp":"2026-07-24T04:59:00.755Z","path":"/registry/registry-client-proof.json"},"docsCoverageProof":{"available":true,"ok":true,"subsystem":"other","missingCanonicalCount":0,"catalogTracked":13,"catalogTotal":13,"overlayTracked":232,"overlayTotal":232,"referenceModuleCount":44,"referencePageCount":57,"indexStale":false,"proofHash":"c74594ac19fd2bc94162c4ab8943ccec771c0430e51c6ef43317c712385c2fdc","timestamp":"2026-07-24T04:59:00.392Z","path":"/registry/docs-coverage-proof.json"}},"ops":{"source":"snapshot","generated":"2026-07-24T06:23:58.175Z","liquidity":{"total":47900},"experts":[{"name":"Edge NBA","sport":"NBA","market":"totals","edge_score":0.74,"active":1},{"name":"Sharp NFL","sport":"NFL","market":"spread","edge_score":0.68,"active":1},{"name":"Kalshi Tennis","sport":"Tennis","market":"moneyline","edge_score":0.61,"active":1}],"tree":{"partners":2,"agents":3,"subAgents":1,"downstreamLiquidity":47900},"plays":[{"sport":"NBA","market":"spread","event":"BOS vs MIA","selection":"BOS -3.5","odds":-105,"confidence":0.66,"sent_at":"2026-07-24T06:10:35.351Z","result":"loss","expert_name":"Edge NBA","sent_count":5,"placed_count":1},{"sport":"NFL","market":"spread","event":"KC vs BUF","selection":"KC -2.5","odds":-110,"confidence":0.63,"sent_at":"2026-07-24T06:10:35.351Z","result":"pending","expert_name":"Sharp NFL","sent_count":5,"placed_count":1},{"sport":"Tennis","market":"moneyline","event":"Sinner vs Alcaraz","selection":"Sinner ML","odds":125,"confidence":0.58,"sent_at":"2026-07-24T06:10:35.351Z","result":"win","expert_name":"Kalshi Tennis","sent_count":4,"placed_count":2},{"sport":"NBA","market":"totals","event":"LAL vs GSW","selection":"over 228.5","odds":-108,"confidence":0.71,"sent_at":"2026-07-24T06:10:35.350Z","result":"win","expert_name":"Edge NBA","sent_count":5,"placed_count":1}],"rails":[{"type":"paypal","total_sent":42000,"monthly_limit":300000},{"type":"venmo","total_sent":12800,"monthly_limit":100000}],"phones":{"inventory":1,"issued":1,"returned":1},"experiments":{"byStatus":{"active":1,"completed":1},"active":1,"recent":[{"id":"019f92bf-40d7-7425-9dbc-ec95e761e283","name":"Partner policy factorial","status":"active","designMethod":"full","metricName":"placement_rate","variants":2,"assignments":2,"metrics":2},{"id":"019f92bf-40d7-7426-b3c3-ba48f35435a9","name":"Rail timing switchback","status":"completed","designMethod":"switchback","metricName":"win_rate","variants":0,"assignments":0,"metrics":0}]},"prediction":{"coverage":{"mae":2.8666666666666667,"rmse":4.464676173400859,"bias":2.8666666666666667,"n":30}},"growth":{"period":"2026-07","playsReceived":46,"playsPlaced":32,"volume":158500,"pnl":15800,"nodes":4,"top":[{"nodeId":"019f92bf-40d6-72e3-aa09-f0a9b8a95824","playsReceived":20,"playsPlaced":14,"volume":70000,"pnl":7900},{"nodeId":"019f92bf-40d6-72e5-80da-8aaa4cd7e0d2","playsReceived":12,"playsPlaced":9,"volume":48000,"pnl":6200},{"nodeId":"019f92bf-40d6-72e6-9a91-8f3f3c099c7b","playsReceived":8,"playsPlaced":5,"volume":22000,"pnl":-1100},{"nodeId":"019f92bf-40d6-72e7-8927-9528b1e3aff6","playsReceived":6,"playsPlaced":4,"volume":18500,"pnl":2800}]},"bunUtils":{"bunVersion":"1.4.0","bunRevision":"a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88","proofHash":"00397ce1224fb539b77e24e9a86da7cd27a0974333c8b558ff3febfdf86c6e62","passed":30,"total":30,"failed":0,"timestamp":"2026-07-24T06:23:58.177Z"},"registryClient":{"available":true,"sdkVersion":"1.0.0","passed":3,"total":3,"status":"pass","subsystem":"package-manager","proofHash":"38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f","timestamp":"2026-07-24T04:59:00.755Z","path":"/registry/registry-client-proof.json"},"docsCoverage":{"available":true,"ok":true,"subsystem":"other","missingCanonicalCount":0,"catalogTracked":13,"catalogTotal":13,"overlayTracked":232,"overlayTotal":232,"referenceModuleCount":44,"referencePageCount":57,"indexStale":false,"proofHash":"c74594ac19fd2bc94162c4ab8943ccec771c0430e51c6ef43317c712385c2fdc","timestamp":"2026-07-24T04:59:00.392Z","path":"/registry/docs-coverage-proof.json"},"cloudflareTokenScope":{"available":true,"ok":true,"status":"pass","tier":"minimal","staticOk":true,"liveOk":null,"liveAvailable":false,"mcpCatalogOk":true,"serverCount":5,"proofHash":"f68e8f68ac68cc5c361a181922639c26a9cc002e56e6142add76f1536c2c1807","timestamp":"2026-07-24T05:37:51.242Z","path":"/registry/cloudflare-token-scope-proof.json","wellKnownPath":"/.well-known/mcp.json"},"cloudflarePages":{"available":true,"ok":true,"steps":[{"id":"well-known-mcp-parity","ok":true,"detail":"5 servers"},{"id":"cloudflare-token-static","ok":true,"detail":"catalog 5/5 · tier minimal"},{"id":"functions-import-graph","ok":true,"detail":"allowlist ok"},{"id":"functions-edge-safety","ok":true,"detail":"regex + r2-env boundary"},{"id":"proof-taxonomy-audit","ok":true,"detail":"13 contracts · 20 consistency"}],"timestamp":"2026-07-24T06:23:58.154Z","pagesUrl":"https://project-r-score.pages.dev","path":"/registry/cloudflare-pages-preflight.json"},"proofTaxonomy":{"available":true,"ok":true,"contracts":13,"contractsOk":13,"consistencyOk":20,"consistencyTotal":20,"audits":[{"path":"public/registry/release-features.json","reportPath":"/registry/release-features.json","ok":true,"primarySubsystem":"runtime","rows":75},{"path":"public/registry/install-platform.json","reportPath":"/registry/install-platform.json","ok":true,"primarySubsystem":"package-manager","rows":11},{"path":"public/registry/install-env-proof.json","reportPath":"/registry/install-env-proof.json","ok":true,"primarySubsystem":"package-manager","rows":8},{"path":"public/registry/networking-proof.json","reportPath":"/registry/networking-proof.json","ok":true,"primarySubsystem":"networking","rows":0},{"path":"public/registry/bun-runtime-nits-proof.json","reportPath":"/registry/bun-runtime-nits-proof.json","ok":true,"primarySubsystem":"runtime","rows":16},{"path":"public/registry/bundler-loaders-proof.json","reportPath":"/registry/bundler-loaders-proof.json","ok":true,"primarySubsystem":"bundler","rows":6},{"path":"public/registry/networking-channel-proof.json","reportPath":"/registry/networking-channel-proof.json","ok":true,"primarySubsystem":"networking","rows":7},{"path":"public/registry/docs-coverage-proof.json","reportPath":"/registry/docs-coverage-proof.json","ok":true,"primarySubsystem":"other","rows":0},{"path":"public/registry/registry-client-proof.json","reportPath":"/registry/registry-client-proof.json","ok":true,"primarySubsystem":"package-manager","rows":3},{"path":"public/registry/doc-index.json","reportPath":"/registry/doc-index.json","ok":true,"primarySubsystem":"other","rows":0},{"path":"public/registry/cloudflare-token-scope-proof.json","reportPath":"/registry/cloudflare-token-scope-proof.json","ok":true,"primarySubsystem":"other","rows":5},{"path":"public/.well-known/mcp.json","reportPath":"/.well-known/mcp.json","ok":true,"primarySubsystem":"other","rows":5},{"path":"public/registry/cloudflare-pages-preflight.json","reportPath":"/registry/cloudflare-pages-preflight.json","ok":true,"primarySubsystem":"other","rows":5}],"consistency":[{"id":"install-platform-embed","ok":true},{"id":"channel-meta-bake","ok":true},{"id":"channel-meta-nits-embed","ok":true},{"id":"channel-meta-bundler-embed","ok":true},{"id":"channel-meta-networking-embed","ok":true},{"id":"by-subsystem:release-features","ok":true},{"id":"by-subsystem:install-platform","ok":true},{"id":"by-subsystem:install-env","ok":true},{"id":"by-subsystem:runtime-nits","ok":true},{"id":"by-subsystem:bundler-loaders","ok":true},{"id":"by-subsystem:networking-channel","ok":true},{"id":"by-subsystem:registry-client","ok":true},{"id":"registry-client-install-env","ok":true},{"id":"docs-coverage-reference-parity","ok":true},{"id":"docs-coverage-doc-index","ok":true},{"id":"cloudflare-token-scope-ssot","ok":true},{"id":"well-known-mcp-catalog-parity","ok":true},{"id":"cloudflare-preflight-aggregate","ok":true},{"id":"cloudflare-preflight-token-scope","ok":true},{"id":"taxonomy-contract-registry","ok":true}],"proofHash":"ddd2d191be2f40ffe2aa4089918395947b43b1abf4b89396b02af5663ce680c0","timestamp":"2026-07-24T06:23:57.727Z","path":"/registry/proof-taxonomy-audit.json"},"channelMeta":{"available":true,"ok":true,"stale":false,"passed":75,"total":75,"status":"pass","proofHash":"55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de","updatedAt":"2026-07-24T06:23:57.722Z","channel":"stable","targetVersion":"1.4.0","runtimeVersion":"1.4.0","bySubsystem":{"runtime":{"passed":36,"total":36},"bundler":{"passed":8,"total":8},"package-manager":{"passed":12,"total":12},"networking":{"passed":13,"total":13},"other":{"passed":6,"total":6}},"sources":{"release":"artifact","nits":"artifact","bundler":"artifact","networking":"artifact"},"path":"/registry/release-features.json","bakePath":"/registry/channel-meta-bake.json"},"routing":{"available":true,"baseUrl":"https://score.factory-wager.com","passed":16,"total":16,"failed":0,"httpOk":14,"criticalFailed":0,"errorRate":0,"meanMs":126.51,"p50Ms":90.94,"p95Ms":364.42,"maxMs":364.42,"proofHash":"75d9b2c07b050d001316547e5a0cb35ac708935a2d5fc52a49a3d86d3946f928","timestamp":"2026-07-24T06:20:14.023Z","regressions":0,"criticalFailedPaths":[],"routes":[{"path":"/registry/@factorywager/bun-utils-test/latest.json","status":200,"pass":true,"critical":true,"timeMs":65.39,"contentType":"application/json"},{"path":"/api/monitoring","status":200,"pass":true,"critical":true,"timeMs":54.11,"contentType":"application/json"},{"path":"/portal/ops/","status":200,"pass":true,"critical":true,"timeMs":54.03,"contentType":"text/html"},{"path":"/api/operations/summary","status":200,"pass":true,"critical":true,"timeMs":37.93,"contentType":"application/json"},{"path":"/registry/ops-summary.json","status":200,"pass":true,"critical":true,"timeMs":36.96,"contentType":"application/json"},{"path":"/api/registry/@factorywager/routing-test/latest.json","status":200,"pass":true,"critical":false,"timeMs":364.42,"contentType":"application/json"},{"path":"/api/registry/@factorywager/bun-utils-test/latest.json","status":200,"pass":true,"critical":false,"timeMs":308.31,"contentType":"application/json"},{"path":"/api/registry/@factorywager/test-pkg","status":200,"pass":true,"critical":false,"timeMs":210.46,"contentType":"text/html"},{"path":"/health","status":200,"pass":true,"critical":false,"timeMs":185.43,"contentType":"text/html"},{"path":"/portal","status":200,"pass":true,"critical":false,"timeMs":143.95,"contentType":"text/html"},{"path":"/ready","status":200,"pass":true,"critical":false,"timeMs":128.91,"contentType":"text/html"},{"path":"/monitoring","status":200,"pass":true,"critical":false,"timeMs":128.74,"contentType":"text/html"},{"path":"/registry/@factorywager/routing-test/latest.json","status":200,"pass":true,"critical":false,"timeMs":101.47,"contentType":"application/json"},{"path":"/api/registry","status":400,"pass":true,"critical":false,"timeMs":90.94,"contentType":"application/json"},{"path":"/registry/static.json","status":200,"pass":true,"critical":false,"timeMs":84.07,"contentType":"application/json"},{"path":"/api/registry/static","status":400,"pass":true,"critical":false,"timeMs":29.1,"contentType":"application/json"}],"cached":true,"stale":false}}}</script>
+<style>
+    .mon-page { max-width: 1080px; margin: 0 auto; padding: 24px; }
+    .mon-banner {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px; border-radius: var(--radius);
+      border: 1px solid var(--border); background: var(--surface); margin-bottom: 16px;
+    }
+    .mon-banner .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--text-dim); flex-shrink: 0; }
+    .mon-banner.ok .dot { background: var(--green, #3fb950); box-shadow: 0 0 8px var(--green, #3fb950); }
+    .mon-banner.warn .dot { background: var(--yellow, #d29922); }
+    .mon-banner.bad .dot { background: var(--red, #f85149); }
+    .mon-banner .title { font-weight: 600; font-size: 16px; }
+    .mon-meta { font-size: 12px; color: var(--text-dim); margin-bottom: 20px; }
+    .mon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .mon-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .mon-card h3 {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .4px;
+      color: var(--text-dim); margin: 0 0 6px; font-weight: 500;
+    }
+    .mon-card .val { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .mon-card .sub { font-size: 11px; color: var(--text-dim); margin-top: 6px; word-break: break-all; }
+    .mon-card.ok .val { color: var(--green, #3fb950); }
+    .mon-card.bad .val { color: var(--red, #f85149); }
+    .mon-card.warn .val { color: var(--yellow, #d29922); }
+    .mon-h2 {
+      font-size: 13px; text-transform: uppercase; letter-spacing: .35px;
+      color: var(--text-dim); margin: 0 0 10px; font-weight: 600;
+    }
+    .mon-section { margin-bottom: 28px; }
+    .mon-section-meta { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; }
+    .mon-table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .mon-table-wrap.narrow { max-width: 480px; }
+    .mon-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .mon-table th {
+      text-align: left; padding: 8px 10px; color: var(--text-dim); font-weight: 500;
+      border-bottom: 1px solid var(--border); background: rgba(255,255,255,.03);
+      position: sticky; top: 0;
+    }
+    .mon-table td { padding: 7px 10px; border-bottom: 1px solid rgba(48,54,61,.35); vertical-align: top; }
+    .mon-table tr.critical td:first-child { font-weight: 600; }
+    .mon-table .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+    .mon-table .dim { color: var(--text-dim); }
+    .st-ok { color: var(--green, #3fb950); }
+    .st-bad { color: var(--red, #f85149); }
+    .st-warn { color: var(--yellow, #d29922); }
+    .mon-empty { font-size: 13px; color: var(--text-dim); }
+    .mon-proof-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .mon-proof {
+      display: block;
+      padding: 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      text-decoration: none;
+      color: inherit;
+    }
+    .mon-proof:hover { border-color: var(--accent); }
+    .mon-proof h4 { font-size: 11px; text-transform: uppercase; color: var(--text-dim); margin: 0 0 6px; }
+    .mon-proof .val { font-size: 18px; font-weight: 600; }
+    .mon-proof .sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+    .mon-proof.ok .val { color: var(--green, #3fb950); }
+    .mon-proof.bad .val { color: var(--red, #f85149); }
+    .mon-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .mon-actions a {
+      font-size: 13px; padding: 6px 12px; border-radius: 6px;
+      border: 1px solid var(--border); color: var(--accent); text-decoration: none; background: var(--surface);
+    }
+    .mon-actions a:hover { border-color: var(--accent); }
   </style>
-</head>
+  </head>
 <body>
-  <nav>
-    <a href="/portal/">Portal</a>
-    <a href="/portal/ops/">Ops</a>
-    <a href="/api/monitoring">JSON</a>
-  </nav>
-  <h1>Registry monitoring</h1>
-  <p class="meta" id="meta">Loading…</p>
-  <div id="root"></div>
-  <script type="module">
-    function table(title, rows) {
-      const keys = rows.length ? Object.keys(rows[0]) : [];
-      const head = keys.map(k => '<th>' + k + '</th>').join('');
-      const body = rows
-        .map(r => '<tr>' + keys.map(k => '<td>' + r[k] + '</td>').join('') + '</tr>')
-        .join('');
-      return '<h2>' + title + '</h2><table><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table>';
-    }
-    async function load() {
-      const root = document.getElementById('root');
-      const meta = document.getElementById('meta');
-      try {
-        let res = await fetch('/api/monitoring');
-        if (!res.ok) res = await fetch('/registry/monitoring.json');
-        if (!res.ok) throw new Error('No monitoring data');
-        const d = await res.json();
-        meta.textContent =
-          'Last updated: ' + (d.timestamp || '—') + ' · source: ' + (d.source || '—') + ' · auto-refresh 30s';
-        const platformRows = Object.entries(d.platformSummary || {}).map(([Status, Count]) => ({
-          Status,
-          Count,
-        }));
-        const dodRows = Object.entries(d.dodByStatus || {}).map(([Status, Count]) => ({
-          Status,
-          Count,
-        }));
-        root.innerHTML =
-          table('Overview', [
-            { Metric: 'Uptime', Value: d.uptime },
-            { Metric: 'Packages', Value: d.packageCount },
-            { Metric: 'Versions', Value: d.versionCount },
-            { Metric: 'DOD queue', Value: d.dodQueue },
-            { Metric: 'Experiments active', Value: d.experimentsActive },
-            { Metric: 'Prediction rows', Value: d.predictionN },
-          ]) +
-          table('Integrity', [
-            { Metric: 'Status', Value: d.lastIntegrity?.status },
-            { Metric: 'Timestamp', Value: d.lastIntegrity?.timestamp ?? 'never' },
-            { Metric: 'Failures', Value: d.lastIntegrity?.failures ?? 0 },
-            { Metric: 'Source', Value: d.lastIntegrity?.source ?? 'unknown' },
-          ]) +
-          table('Platforms', platformRows.length ? platformRows : [{ Status: 'none', Count: 0 }]) +
-          table('DOD', dodRows.length ? dodRows : [{ Status: 'none', Count: 0 }]);
-      } catch (e) {
-        meta.innerHTML =
-          '<span class="err">Failed to load. Local: bun run serve:public. Pages: bun run ops:snapshot.</span>';
-        root.textContent = String(e);
-      }
-    }
-    load();
-    setInterval(load, 30_000);
-  </script>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="logo">
+        <span class="logo-icon">■</span>
+        <span class="brand-wordmark">FactoryWager</span>
+        <span class="brand-badge">ops</span>
+        <span class="logo-page">Monitoring</span>
+      </h1>
+      <nav class="topbar-nav" aria-label="Primary">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/portal/ops/" class="nav-link">Ops</a>
+        <a href="/portal/" class="nav-link">Registry</a>
+        <a href="/portal/health/" class="nav-link">Health</a>
+        <a href="/portal/dod/" class="nav-link">DOD</a>
+        <div class="nav-overflow">
+          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/portal/catalog/" class="nav-link" role="menuitem">Catalog</a>
+            <a href="/portal/skills/" class="nav-link" role="menuitem">Skills</a>
+            <a href="/portal/env/" class="nav-link" role="menuitem">Env</a>
+            <a href="/portal/dashboard/" class="nav-link" role="menuitem">Dashboard</a>
+            <a href="/monitoring/" class="nav-link" role="menuitem" aria-current="page">Monitoring</a>
+            <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">Wiki</a>
+          </div>
+        </div>
+      </nav>
+      <div class="topbar-status">
+        <a href="/portal/monitoring.md" class="nav-link nav-md" title="Markdown view">MD</a>
+        <a href="/portal/health/" class="topbar-health-link" title="System health">
+          <span id="health-dot" class="health-dot unknown"></span>
+          <span id="health-label" class="health-label">Connecting…</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main mon-page">
+    <div id="mon-banner" class="mon-banner">
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <div id="mon-banner-title" class="title">Loading monitoring…</div>
+      </div>
+    </div>
+    <p id="mon-meta" class="mon-meta">Fetching /api/monitoring and ops summary…</p>
+    <div id="mon-cards" class="mon-grid"></div>
+    <div id="mon-sections"></div>
+  </main>
+
+  <notification-center aria-live="polite"></notification-center>
+
+  <footer class="footer">
+    <p>FactoryWager · <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a></p>
+  </footer>
+
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/monitoring/monitoring-dashboard.js"></script>
 </body>
 </html>

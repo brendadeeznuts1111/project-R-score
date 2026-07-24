@@ -13,10 +13,12 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
 import { CryptoHasher, revision, version } from 'bun';
 import { logTable } from '../lib/console-depth.ts';
+import { buildSemanticTags } from '../lib/verification/channels.ts';
 import {
   ensureVerificationResultsHaveCanonical,
   reportCanonicalCoverageGaps,
 } from '../lib/verification/canonical-coverage.ts';
+import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 import { REGISTRY_CLIENT_CANONICAL_KEYS, validateCanonicalKeys } from './canonical-helpers.ts';
 import {
   REGISTRY_CLIENT_PROOF_REPORT_PATH,
@@ -31,6 +33,7 @@ validateCanonicalKeys(REGISTRY_CLIENT_CANONICAL_KEYS);
 const asJson = Bun.argv.includes('--json');
 const shouldSave = Bun.argv.includes('--save');
 
+const semanticTags = await buildSemanticTags('runtime');
 const report = await runRegistryClientVerification();
 const canonicalCoverage = ensureVerificationResultsHaveCanonical(report.results);
 const canonicalOk = reportCanonicalCoverageGaps(canonicalCoverage, 'verify-registry-client');
@@ -47,11 +50,13 @@ const proof = {
   bunVersion: version,
   bunRevision: (revision || '').slice(0, 12) || 'unknown',
   reportPath: REGISTRY_CLIENT_PROOF_REPORT_PATH,
+  semanticTags: { ...semanticTags, subsystems: subsystemsFromResults(report.results) },
   results: report.results,
   summary: {
     passed: report.results.filter(r => r.passed).length,
     total: report.results.length,
     status: report.ok && canonicalOk ? ('pass' as const) : ('fail' as const),
+    bySubsystem: summarizeBySubsystem(report.results),
   },
   proofHash,
 };

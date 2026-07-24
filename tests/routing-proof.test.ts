@@ -3,15 +3,34 @@ import { describe, expect, test } from 'bun:test';
 import {
   compareRoutingProofs,
   computeLatencyStats,
+  isLoopbackUrl,
   mapPool,
   probeEndpoint,
+  resolveRoutingProbeBaseUrl,
   routingToOpsSlice,
   runRoutingProof,
+  DEFAULT_ROUTING_PROBE_BASE,
   type RoutingProbeSpec,
   type RoutingProofResult,
 } from '../lib/routing-proof.ts';
 
 describe('routing-proof v2', () => {
+  test('resolveRoutingProbeBaseUrl ignores REGISTRY_URL', () => {
+    const prev = Bun.env.REGISTRY_URL;
+    Bun.env.REGISTRY_URL = 'http://localhost:3000';
+    try {
+      expect(resolveRoutingProbeBaseUrl()).toBe(DEFAULT_ROUTING_PROBE_BASE);
+      expect(resolveRoutingProbeBaseUrl('http://localhost:3999')).toBe('http://localhost:3999');
+    } finally {
+      if (prev === undefined) delete Bun.env.REGISTRY_URL;
+      else Bun.env.REGISTRY_URL = prev;
+    }
+  });
+
+  test('isLoopbackUrl detects localhost origins', () => {
+    expect(isLoopbackUrl('http://localhost:3000')).toBe(true);
+    expect(isLoopbackUrl('https://score.factory-wager.com')).toBe(false);
+  });
   test('probeEndpoint maps expected 400 without requireOk', async () => {
     const fetchImpl = (async () =>
       new Response(JSON.stringify({ error: 'Invalid registry object key' }), {

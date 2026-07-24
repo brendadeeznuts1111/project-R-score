@@ -8,6 +8,7 @@ export const PORTAL_MD_SLUGS = [
   'dod',
   'health',
   'env',
+  'skills',
   'monitoring',
 ] as const;
 
@@ -26,6 +27,7 @@ Fetch with \`Accept: text/markdown\` for raw markdown; HTML renders otherwise.
 - [DOD](portal/dod.md): visual-proof submission queue
 - [Health](portal/health.md): service health
 - [Env](portal/env.md): environment + secret status (redacted)
+- [Skills](portal/skills.md): installed skills registry + package downloads
 - [Monitoring](portal/monitoring.md): registry + integrity metrics
 
 ## JSON APIs

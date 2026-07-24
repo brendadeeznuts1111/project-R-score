@@ -10,6 +10,7 @@ const PAGES: Record<string, string> = {
   dod: `# DOD\n\nVisual-proof submission queue.\n`,
   health: `# Health\n\nService health probe.\n`,
   env: `# Env\n\nEnvironment + secret status (redacted).\n`,
+  skills: `# Skills\n\nInstalled Kimi skills registry (name, description, last updated) with downloadable \`.skill\` packages when available.\n`,
   monitoring: `# Monitoring\n\nRegistry + integrity metrics.\n`,
 };
 

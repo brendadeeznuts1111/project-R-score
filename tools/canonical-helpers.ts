@@ -72,19 +72,41 @@ function entryFromToken(meta: TokenMeta): CanonicalEntry {
 }
 
 /** Infer kind for plain CANONICAL_REFS string entries (no token metadata). */
-function inferKindFromRefKey(key: string): string {
+export function inferKindFromRefKey(key: string): string {
   if (key.startsWith('registry-client')) return 'SDK';
+  if (key.startsWith('loader:') || key.startsWith('bundler.')) return 'API';
   if (/install|env|mechanism|dependencies|store|scopes/i.test(key)) return 'Concept';
   if (/^[A-Z][A-Za-z0-9]*$/.test(key)) return 'Global';
   if (key.startsWith('Bun.') || key.startsWith('bun.')) return 'API';
+  // Blog ship-note anchors (kebab-case release keys)
+  if (/^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(key)) return 'ShipNote';
   return 'API';
 }
 
-/** Infer introducedIn from blog URLs (e.g. bun-v1.3.14 → 1.3.14). */
+/** Infer kind when only a URL is known (fallback path for release anchors). */
+export function inferKindFromUrl(url: string): string {
+  if (!url) return 'API';
+  if (/\/blog\/bun-v/i.test(url)) return 'ShipNote';
+  if (url.includes('/docs/pm/')) return 'Concept';
+  if (url.includes('/docs/bundler')) return 'API';
+  if (url.includes('/docs/')) return 'API';
+  if (url.includes('/reference/')) return 'API';
+  if (url.includes('developers.cloudflare.com')) return 'Concept';
+  if (url.includes('github.com')) return 'Documentation';
+  return 'Concept';
+}
+
+/**
+ * Infer introducedIn from blog URLs (e.g. bun-v1.3.14 → 1.3.14).
+ * Living docs and other HTTPS canonicals default to `all`.
+ */
 export function inferIntroducedInFromUrl(url: string): string | undefined {
+  if (!url) return undefined;
   const m = url.match(/\/blog\/bun-v(\d+\.\d+\.\d+)/i);
   if (m) return m[1];
   if (url.includes('bun.com/docs') || url.includes('bun.com/reference')) return 'all';
+  // External docs used as package-manager / ops canonicals (Cloudflare, GitHub, …)
+  if (/^https?:\/\//i.test(url)) return 'all';
   return undefined;
 }
 
@@ -212,12 +234,15 @@ export function resolveCanonicalForProbe(
   const entry = getCanonicalEntry(key);
   const canonical = entry?.url ?? options.fallback ?? getCanonicalUrl(key);
   const subsystem = options.subsystem ?? entry?.subsystem ?? inferSubsystemFromUrl(canonical);
-  const introducedIn = entry?.introducedIn ?? inferIntroducedInFromUrl(canonical);
+  const introducedIn = entry?.introducedIn ?? inferIntroducedInFromUrl(canonical) ?? 'all';
+  // Prefer token/map kind; when key is unknown (blog anchors), infer from key then URL.
+  const canonicalKind =
+    entry?.kind ?? (!entry ? inferKindFromRefKey(key) : undefined) ?? inferKindFromUrl(canonical);
   return {
     canonicalKey: key,
     canonical,
-    canonicalKind: entry?.kind,
-    canonicalStability: entry?.stability,
+    canonicalKind,
+    canonicalStability: entry?.stability ?? 'stable',
     canonicalDescription: entry?.description,
     subsystem,
     introducedIn,

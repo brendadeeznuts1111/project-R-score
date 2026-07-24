@@ -28,6 +28,11 @@ import {
 } from '../lib/verification/channels.ts';
 import { rehashChannelProof } from '../lib/verification/channel-proof.ts';
 import {
+  invalidateChannelMetaBake,
+  nitsRowsToChannelMeta,
+  saveChannelMetaProof,
+} from '../lib/verification/channel-meta-refresh.ts';
+import {
   channelSuiteCanonicalSavePath,
   channelSuiteReportUrl,
   channelSuiteUpdatesCanonicalIndex,
@@ -93,16 +98,7 @@ async function runSuite(
         preferArtifact: true,
         localOnly: true,
       });
-      const nitsRows: VerificationResult[] = nits.results.map(r =>
-        withSubsystem(
-          {
-            ...r,
-            name: `runtime-nits:${r.name}`,
-            features: [...(r.features ?? []), 'runtime-nits', r.category],
-          },
-          'runtime'
-        )
-      );
+      const nitsRows: VerificationResult[] = nitsRowsToChannelMeta(nits.results);
       const bundlerRows: VerificationResult[] = bundler.results.map(r =>
         withSubsystem(r, 'bundler')
       );
@@ -240,29 +236,52 @@ async function main(): Promise<void> {
   }
 
   if (shouldSave) {
-    await Bun.write(savePath, JSON.stringify(report, null, 2));
-    console.log(`Saved: ${savePath}`);
+    if (suite === 'all') {
+      // Live suite=all must write bake sidecar (same persist path as verify:channel:meta).
+      const {
+        savePath: metaPath,
+        snapshotPath,
+        bakePath,
+      } = await saveChannelMetaProof(report, {
+        release: 'live',
+        nits: 'live',
+        bundler: 'live',
+        networking: 'live',
+      });
+      console.log(`Saved: ${metaPath}`);
+      if (snapshotPath !== metaPath) console.log(`Saved: ${snapshotPath}`);
+      console.log(`Saved: ${bakePath}`);
+    } else {
+      await Bun.write(savePath, JSON.stringify(report, null, 2));
+      console.log(`Saved: ${savePath}`);
 
-    const snapshotPath = verificationSnapshotFilename(report.semanticTags, suite);
-    if (snapshotPath !== savePath) {
-      await Bun.write(snapshotPath, JSON.stringify(report, null, 2));
-      console.log(`Saved: ${snapshotPath}`);
+      const snapshotPath = verificationSnapshotFilename(report.semanticTags, suite);
+      if (snapshotPath !== savePath) {
+        await Bun.write(snapshotPath, JSON.stringify(report, null, 2));
+        console.log(`Saved: ${snapshotPath}`);
+      }
+
+      const index = await upsertVerificationSnapshotIndex({
+        channel: String(report.semanticTags.channel),
+        targetVersion: report.semanticTags.targetVersion,
+        suite,
+        runtimeVersion: report.semanticTags.runtimeVersion,
+        path: snapshotPath,
+        proofHash: report.proofHash,
+        testedAt: report.semanticTags.testedAt,
+        status: report.summary.status,
+        updateCanonical: channelSuiteUpdatesCanonicalIndex(suite),
+      });
+      console.log(
+        `Index: public/registry/verification-index.json (${index.snapshots.length} snapshots)`
+      );
+
+      // Release-only clobbers meta embeds — invalidate bake so ops cannot stay green.
+      if (suite === 'release') {
+        await invalidateChannelMetaBake('verify-channel suite=release --save');
+        console.log('Invalidated: public/registry/channel-meta-bake.json (release-only save)');
+      }
     }
-
-    const index = await upsertVerificationSnapshotIndex({
-      channel: String(report.semanticTags.channel),
-      targetVersion: report.semanticTags.targetVersion,
-      suite,
-      runtimeVersion: report.semanticTags.runtimeVersion,
-      path: snapshotPath,
-      proofHash: report.proofHash,
-      testedAt: report.semanticTags.testedAt,
-      status: report.summary.status,
-      updateCanonical: channelSuiteUpdatesCanonicalIndex(suite),
-    });
-    console.log(
-      `Index: public/registry/verification-index.json (${index.snapshots.length} snapshots)`
-    );
   }
 
   console.log('\n---JSON---');

@@ -1,0 +1,3 @@
+display_name: Reference Discovery
+short_description: Find unused and similarly named stale references in the harness perimeter
+default_prompt: "Run reference-discovery, triage plane-mismatch and legacy-domain findings first, then consolidate naming on config/r2-env.ts SSOT."

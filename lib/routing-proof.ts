@@ -12,7 +12,37 @@
  * Default base: score.factory-wager.com
  * Artifact: public/registry/@factorywager/routing-test/latest.json
  */
+import { factoryWagerPagesCustomUrl } from '../config/r2-env.ts';
 import { canonicalJson, sha256Hex } from './bun-utils-proof.ts';
+
+/** Pages public origin for portal/registry HTTP probes — not npm `REGISTRY_URL`. */
+export const DEFAULT_ROUTING_PROBE_BASE = factoryWagerPagesCustomUrl();
+
+export function isLoopbackUrl(url: string): boolean {
+  const u = url.trim();
+  return (
+    /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?(\/|$)/i.test(u) ||
+    /^https?:\/\/(127\.0\.0\.1|localhost)/i.test(u)
+  );
+}
+
+/**
+ * Resolve origin for routing probes. `REGISTRY_URL` is the npm registry API
+ * (`bun publish --registry`, bunfig, .npmrc) — never used here.
+ * @see https://bun.com/docs/pm/cli/publish#registry-configuration
+ * Override: CLI `--base`, `opts.baseUrl`, or `ROUTING_PROBE_BASE_URL` / `PAGES_PUBLIC_URL`.
+ */
+export function resolveRoutingProbeBaseUrl(explicit?: string): string {
+  const fromExplicit = explicit?.trim().replace(/\/$/, '');
+  if (fromExplicit) return fromExplicit;
+
+  const fromEnv = (Bun.env.ROUTING_PROBE_BASE_URL || Bun.env.PAGES_PUBLIC_URL || '')
+    .trim()
+    .replace(/\/$/, '');
+  if (fromEnv) return fromEnv;
+
+  return DEFAULT_ROUTING_PROBE_BASE;
+}
 
 export const ROUTING_ARTIFACT_PACKAGE = '@factorywager/routing-test';
 export const ROUTING_ARTIFACT_REL = `public/registry/${ROUTING_ARTIFACT_PACKAGE}/latest.json`;
@@ -151,9 +181,9 @@ export const DEFAULT_ROUTING_SPECS: RoutingProbeSpec[] = [
   },
   {
     path: '/api/registry/@factorywager/test-pkg',
-    expectedStatus: [404, 503],
+    expectedStatus: [200, 404, 503],
     requireOk: false,
-    note: 'placeholder package',
+    note: 'SPA fallback 200 (Pages) or missing package 404/503',
   },
   {
     path: '/api/registry/@factorywager/bun-utils-test/latest.json',
@@ -217,9 +247,9 @@ export const DEFAULT_ROUTING_SPECS: RoutingProbeSpec[] = [
   },
   {
     path: '/api/registry/static',
-    expectedStatus: [200, 404, 503],
+    expectedStatus: [200, 400, 404, 503],
     requireOk: false,
-    note: 'local serve-public static snapshot route',
+    note: 'local serve-public 200 or R2 gateway empty-key 400',
   },
 ];
 
@@ -383,11 +413,7 @@ export async function loadPreviousRoutingProof(
 }
 
 export async function runRoutingProof(opts: RunRoutingProofOpts = {}): Promise<RoutingProofResult> {
-  const baseUrl =
-    opts.baseUrl ||
-    Bun.env.REGISTRY_URL ||
-    Bun.env.FACTORY_REGISTRY_URL ||
-    'https://score.factory-wager.com';
+  const baseUrl = resolveRoutingProbeBaseUrl(opts.baseUrl);
   const specs = opts.specs ?? DEFAULT_ROUTING_SPECS;
   const fetchImpl = opts.fetchImpl ?? fetch;
   const now = opts.now?.() ?? new Date();

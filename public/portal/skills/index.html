@@ -13,7 +13,7 @@
   <style>
     .hidden { display: none; }
     .skills-dashboard { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
     .stat-card .stat-num { font-size: 28px; font-weight: 600; }
     .stat-card .stat-label { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
@@ -29,6 +29,10 @@
     .pkg-link { font-size: 12px; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--accent); color: var(--accent); text-decoration: none; white-space: nowrap; }
     .pkg-link:hover { background: var(--accent-glow); }
     .pkg-none { color: var(--text-dim); font-size: 12px; }
+    .valid-ok { color: #3fb950; font-size: 12px; }
+    .valid-warn { color: #d29922; font-size: 12px; cursor: help; }
+    .res-cell { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+    .lines-cell { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); }
     .ops-banner.error { margin-bottom: 16px; }
     @media (max-width: 768px) { .stats-row { grid-template-columns: 1fr; } .skill-desc { max-width: none; } }
   </style>
@@ -77,6 +81,7 @@
       <div class="stats-row">
         <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">skills installed</div></div>
         <div class="stat-card"><div class="stat-num" id="stat-packages">0</div><div class="stat-label">downloadable packages</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-warnings">0</div><div class="stat-label">validation warnings</div></div>
         <div class="stat-card"><div class="stat-num" id="stat-updated">—</div><div class="stat-label">latest update</div></div>
       </div>
       <div class="filter-row">
@@ -84,7 +89,7 @@
       </div>
       <table class="skills-table">
         <thead>
-          <tr><th>Name</th><th>Description</th><th>Updated</th><th>Package</th></tr>
+          <tr><th>Name</th><th>Description</th><th>Lines</th><th>Resources</th><th>Valid</th><th>Updated</th><th>Package</th></tr>
         </thead>
         <tbody id="skills-body"></tbody>
       </table>
@@ -134,8 +139,14 @@
     function renderStats() {
       $('stat-total').textContent = skills.length;
       $('stat-packages').textContent = skills.filter(s => s.hasPackage).length;
+      $('stat-warnings').textContent = skills.reduce((n, s) => n + (s.validation?.length ?? 0), 0);
       const latest = skills.reduce((m, s) => Math.max(m, Date.parse(s.updatedAt) || 0), 0);
       $('stat-updated').textContent = latest ? new Date(latest).toLocaleDateString() : '—';
+    }
+
+    function resSummary(r) {
+      if (!r || (!r.scripts && !r.references && !r.assets)) return '—';
+      return `${r.scripts}s·${r.references}r·${r.assets}a`;
     }
 
     function renderTable() {
@@ -146,15 +157,20 @@
       $('skills-body').innerHTML = filtered.length
         ? filtered.map(s => `
           <tr>
-            <td class="skill-name">${esc(s.name)}</td>
+            <td class="skill-name"><a href="/portal/skills/${encodeURIComponent(s.name)}" style="color:inherit;text-decoration:none">${esc(s.name)}</a></td>
             <td class="skill-desc">${esc(s.description) || '—'}</td>
+            <td class="lines-cell">${s.lineCount ?? '—'}</td>
+            <td class="res-cell">${resSummary(s.resources)}</td>
+            <td>${(s.validation?.length ?? 0) === 0
+              ? '<span class="valid-ok">✓</span>'
+              : `<span class="valid-warn" title="${esc(s.validation.join('\n'))}">⚠ ${s.validation.length}</span>`}</td>
             <td class="skill-updated">${s.updatedAt ? esc(new Date(s.updatedAt).toLocaleString()) : '—'}</td>
             <td>${s.hasPackage
               ? `<a class="pkg-link" href="/skills/${encodeURIComponent(s.name)}.skill">.skill ↓</a>`
               : '<span class="pkg-none">—</span>'}</td>
           </tr>
         `).join('')
-        : '<tr><td colspan="4" style="text-align:center;padding:40px 0;color:var(--text-dim)">No skills found.</td></tr>';
+        : '<tr><td colspan="7" style="text-align:center;padding:40px 0;color:var(--text-dim)">No skills found.</td></tr>';
     }
 
     $('search').addEventListener('input', renderTable);

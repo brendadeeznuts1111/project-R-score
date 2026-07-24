@@ -74,6 +74,8 @@ export const DEFAULTS_VERIFY_DOC_KEYS: Record<string, string> = {
 export type DocIndexProof = {
   schemaVersion: 1;
   timestamp: string;
+  subsystem: 'other';
+  reportPath: '/registry/doc-index.json';
   bunVersion: string;
   bunRevision: string;
   catalogGenerated: string | null;
@@ -177,6 +179,8 @@ export async function buildDocIndex(opts: { now?: () => Date } = {}): Promise<Do
   const body = {
     schemaVersion: 1 as const,
     timestamp: now().toISOString(),
+    subsystem: 'other' as const,
+    reportPath: '/registry/doc-index.json' as const,
     bunVersion: Bun.version,
     bunRevision: Bun.revision,
     catalogGenerated: catalogMeta?.generated ?? null,
@@ -186,6 +190,11 @@ export async function buildDocIndex(opts: { now?: () => Date } = {}): Promise<Do
     byKind,
     entries,
     defaultsCoverage,
+    _links: {
+      docs: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/BUN_DOCS_OPERATE.md',
+      source: 'tools/build-doc-index.ts',
+      report: '/registry/doc-index.json',
+    },
   };
 
   const proofHash = sha256Hex(

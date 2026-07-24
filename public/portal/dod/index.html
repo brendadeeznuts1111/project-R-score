@@ -10,33 +10,174 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
-    .hidden { display: none; }
-    .dod-dashboard { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    .dod-filters { display: flex; gap: 8px; margin-bottom: 20px; }
-    .dod-filter { padding: 4px 14px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); color: var(--text-dim); cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .hidden { display: none !important; }
+    .dod-dashboard { max-width: 1100px; margin: 0 auto; padding: 24px; }
+    .dod-head {
+      display: flex; flex-wrap: wrap; gap: 16px 24px;
+      justify-content: space-between; align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .dod-title { font-size: 22px; font-weight: 650; letter-spacing: -0.02em; margin: 0 0 6px; }
+    .dod-sub { margin: 0; font-size: 13px; color: var(--text-dim); max-width: 42ch; line-height: 1.45; }
+    .dod-mode {
+      display: flex; flex-direction: column; gap: 4px; align-items: flex-end;
+      text-align: right; min-width: 220px;
+    }
+    .dod-mode-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-dim);
+    }
+    .dod-mode.live .dod-mode-pill { color: var(--green, #3fb950); border-color: rgba(63,185,80,.45); background: rgba(63,185,80,.1); }
+    .dod-mode.snapshot .dod-mode-pill { color: var(--text-dim); }
+    .dod-mode.warn .dod-mode-pill { color: var(--yellow, #d29922); border-color: rgba(210,153,34,.5); background: rgba(210,153,34,.12); }
+    .dod-mode-detail { font-size: 12px; color: var(--text-dim); max-width: 36ch; line-height: 1.4; }
+    .dod-mode-time { font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; opacity: .8; }
+    .dod-help {
+      margin: 0 0 16px; padding: 10px 14px; border: 1px solid var(--border);
+      border-radius: var(--radius); background: var(--surface); color: var(--text-dim); font-size: 12px;
+    }
+    .dod-help summary { cursor: pointer; color: var(--text); font-weight: 500; }
+    .dod-help p { margin: 10px 0 8px; line-height: 1.45; }
+    .dod-help pre {
+      margin: 0; padding: 10px 12px; border-radius: 6px; overflow: auto;
+      background: var(--bg); border: 1px solid var(--border); font-size: 12px;
+    }
+    .dod-stats {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px;
+      margin-bottom: 18px;
+    }
+    .dod-stat {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .dod-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+    .dod-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .dod-stat.hot { border-color: rgba(248,81,73,.45); }
+    .dod-stat.hot .v { color: var(--red, #f85149); }
+    .dod-stat.ok .v { color: var(--green, #3fb950); }
+    .dod-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .dod-filter {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px;
+      background: var(--surface); color: var(--text-dim); cursor: pointer; font-size: 12px;
+    }
+    .dod-filter-label { text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+    .dod-filter-count {
+      min-width: 1.4em; text-align: center; font-variant-numeric: tabular-nums;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: .85;
+    }
     .dod-filter.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent); }
-    .dod-filter.flagged { border-color: var(--red); color: var(--red); }
-    .dod-filter.flagged.active { background: rgba(248,81,73,.15); }
+    .dod-filter.flagged { border-color: rgba(248,81,73,.35); }
+    .dod-filter.flagged.active { background: rgba(248,81,73,.12); border-color: var(--red); color: var(--red); }
     .dod-list { display: flex; flex-direction: column; gap: 12px; }
-    .dod-card { display: flex; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; align-items: flex-start; }
-    .dod-card.flagged { border-color: var(--red); }
-    .dod-card.verified { border-color: var(--green); }
-    .dod-card.rejected { opacity: .6; }
-    .dod-preview img { width: 180px; height: auto; border-radius: 4px; background: var(--surface-hover); }
-    .dod-details { flex: 1; font-size: 13px; line-height: 1.6; }
-    .dod-details p { margin: 2px 0; }
-    .dod-actions { display: flex; flex-direction: column; gap: 8px; }
-    .dod-actions button { padding: 6px 14px; border-radius: 4px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
-    .btn-approve { background: rgba(46,204,113,.15); color: var(--green); border: 1px solid var(--green); }
-    .btn-approve:hover { background: var(--green); color: var(--bg); }
-    .btn-reject { background: rgba(231,76,60,.15); color: var(--red); border: 1px solid var(--red); }
-    .btn-reject:hover { background: var(--red); color: var(--bg); }
-    .tamper-badge { font-size: 12px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+    .dod-card {
+      display: grid; grid-template-columns: 160px 1fr auto; gap: 16px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px; align-items: start;
+    }
+    .dod-card.flagged { border-color: rgba(248,81,73,.4); }
+    .dod-card.verified { border-color: rgba(63,185,80,.35); }
+    .dod-card.rejected { opacity: .72; }
+    .dod-preview { display: flex; flex-direction: column; gap: 8px; }
+    .dod-preview img {
+      width: 160px; height: 110px; object-fit: cover; border-radius: 6px;
+      background: var(--surface-hover); border: 1px solid var(--border);
+    }
+    .dod-preview-empty {
+      width: 160px; height: 110px; border-radius: 6px; border: 1px dashed var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim); font-size: 12px; background: var(--surface-hover);
+    }
+    .dod-card-top { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+    .dod-status-pill {
+      font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: .04em;
+      padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-dim);
+    }
+    .dod-status-pill.flagged { color: var(--red); border-color: rgba(248,81,73,.45); background: rgba(248,81,73,.1); }
+    .dod-status-pill.verified { color: var(--green); border-color: rgba(63,185,80,.45); background: rgba(63,185,80,.1); }
+    .dod-status-pill.rejected { color: var(--text-dim); }
+    .dod-status-pill.pending { color: var(--yellow, #d29922); border-color: rgba(210,153,34,.4); background: rgba(210,153,34,.1); }
+    .dod-type { font-size: 12px; color: var(--text-dim); text-transform: capitalize; }
+    .dod-meta {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin: 0;
+    }
+    .dod-meta div { min-width: 0; }
+    .dod-meta dt {
+      margin: 0; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim);
+    }
+    .dod-meta dd { margin: 2px 0 0; font-size: 13px; word-break: break-word; }
+    .dod-meta code { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .dod-ocr {
+      margin: 12px 0 0; padding: 8px 10px; border-radius: 6px;
+      background: var(--surface-hover); color: var(--text-dim); font-size: 12px; line-height: 1.45;
+    }
+    .dod-actions { display: flex; flex-direction: column; gap: 8px; min-width: 110px; }
+    .dod-actions button {
+      padding: 8px 12px; border-radius: 6px; border: 1px solid transparent;
+      cursor: pointer; font-size: 12px; font-weight: 650;
+    }
+    .dod-actions button:disabled { opacity: .5; cursor: wait; }
+    .btn-approve { background: rgba(46,204,113,.12); color: var(--green); border-color: rgba(63,185,80,.45); }
+    .btn-approve:hover:not(:disabled) { background: var(--green); color: var(--bg); }
+    .btn-reject { background: rgba(231,76,60,.12); color: var(--red); border-color: rgba(248,81,73,.45); }
+    .btn-reject:hover:not(:disabled) { background: var(--red); color: var(--bg); }
+    .tamper-badge {
+      font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 650; text-align: center;
+    }
     .tamper-low { background: rgba(46,204,113,.15); color: var(--green); }
     .tamper-high { background: rgba(231,76,60,.15); color: var(--red); }
-    .reject-reason { margin-top: 8px; padding: 8px; background: var(--surface-hover); border-radius: 4px; font-size: 12px; color: var(--text-dim); }
-    @media (max-width: 768px) { .dod-card { flex-direction: column; } .dod-preview img { width: 100%; } }
+    .reject-reason {
+      margin-top: 10px; padding: 8px 10px; background: rgba(248,81,73,.08);
+      border: 1px solid rgba(248,81,73,.25); border-radius: 6px; font-size: 12px; color: var(--text-dim);
+    }
+    .dod-empty { text-align: center; padding: 56px 20px; color: var(--text-dim); border: 1px dashed var(--border); border-radius: var(--radius); }
+    .dod-empty-title { margin: 0; font-size: 16px; font-weight: 600; color: var(--text); }
+    .dod-empty-sub { font-size: 13px; margin: 10px auto 0; max-width: 48ch; line-height: 1.5; }
+    .dod-toast {
+      position: fixed; right: 16px; bottom: 16px; z-index: 40;
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+    }
+    .dod-toast-item {
+      min-width: 180px; max-width: 320px; padding: 10px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font-size: 13px; opacity: 0; transform: translateY(8px); transition: .18s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    .dod-toast-item.show { opacity: 1; transform: translateY(0); }
+    .dod-toast-item.ok { border-color: rgba(63,185,80,.45); }
+    .dod-toast-item.err { border-color: rgba(248,81,73,.5); color: var(--red); }
+    .dod-modal {
+      position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.55); padding: 20px;
+    }
+    .dod-modal-card {
+      width: min(420px, 100%); background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px;
+    }
+    .dod-modal-card h3 { margin: 0 0 8px; font-size: 16px; }
+    .dod-modal-card p { margin: 0 0 12px; font-size: 13px; color: var(--text-dim); }
+    .dod-modal-card textarea {
+      width: 100%; min-height: 90px; resize: vertical; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text);
+      padding: 10px; font: inherit; margin-bottom: 12px;
+    }
+    .dod-modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .dod-modal-actions button {
+      padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--surface-hover); color: var(--text); cursor: pointer; font-size: 12px; font-weight: 600;
+    }
+    .dod-modal-actions .primary { background: rgba(248,81,73,.15); border-color: rgba(248,81,73,.45); color: var(--red); }
+    @media (max-width: 800px) {
+      .dod-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dod-card { grid-template-columns: 1fr; }
+      .dod-preview img, .dod-preview-empty { width: 100%; height: 160px; }
+      .dod-mode { align-items: flex-start; text-align: left; }
+      .dod-meta { grid-template-columns: 1fr; }
+    }
   </style>
+  <script type="application/json" id="dod-embed">{"generatedAt":"2026-07-24T06:23:58.185Z","source":"snapshot","readOnly":true,"byStatus":{},"pendingCount":0,"entries":[]}</script>
 </head>
 <body>
   <header class="topbar">
@@ -49,26 +190,27 @@
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link">Home</a>
-        <a href="/portal/ops" class="nav-link">Ops</a>
+        <a href="/portal/ops/" class="nav-link">Ops</a>
         <a href="/portal/" class="nav-link">Registry</a>
-        <a href="/portal/health" class="nav-link">Health</a>
-        <a href="/portal/dod" class="nav-link active">DOD</a>
+        <a href="/portal/health/" class="nav-link">Health</a>
+        <a href="/portal/dod/" class="nav-link active">DOD</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog" class="nav-link" role="menuitem">Catalog</a>
-            <a href="/portal/env" class="nav-link" role="menuitem">Env</a>
-            <a href="/portal/dashboard" class="nav-link" role="menuitem">Dashboard</a>
-            <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
+            <a href="/portal/catalog/" class="nav-link" role="menuitem">Catalog</a>
+            <a href="/portal/skills/" class="nav-link" role="menuitem">Skills</a>
+            <a href="/portal/env/" class="nav-link" role="menuitem">Env</a>
+            <a href="/portal/dashboard/" class="nav-link" role="menuitem">Dashboard</a>
+            <a href="/monitoring/" class="nav-link" role="menuitem">Monitoring</a>
             <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">Wiki</a>
           </div>
         </div>
       </nav>
       <div class="topbar-status">
         <a href="/portal/dod.md" class="nav-link nav-md" title="Markdown view">MD</a>
-        <a href="/portal/health" class="topbar-health-link" title="System health">
+        <a href="/portal/health/" class="topbar-health-link" title="System health">
           <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">…</span>
+          <span id="health-label" class="health-label">Connecting…</span>
         </a>
       </div>
     </div>
@@ -77,100 +219,34 @@
   <main class="dod-dashboard">
     <div id="loading" class="ops-loading"><div class="spinner"></div><p>Loading DOD queue…</p></div>
     <div id="dashboard" class="hidden">
+      <div id="dod-meta"></div>
       <div class="dod-filters" id="dod-filters"></div>
       <div class="dod-list" id="dod-list"></div>
     </div>
   </main>
 
-  <script type="module">
-    const $ = id => document.getElementById(id);
-    let entries = [];
-    let currentFilter = 'flagged';
+  <div id="dod-toast" class="dod-toast" aria-live="polite"></div>
 
-    async function load(status = 'flagged') {
-      currentFilter = status;
-      $('loading').classList.remove('hidden');
-      $('dashboard').classList.add('hidden');
-      try {
-        const res = await fetch('/api/dod?status=' + status);
-        const data = await res.json();
-        entries = Array.isArray(data) ? data : [];
-        if (!Array.isArray(data)) console.warn('[dod] unexpected API shape:', data);
-        render();
-      } catch {
-        entries = [];
-        render();
-      }
-    }
+  <div id="dod-reject-modal" class="dod-modal hidden" role="dialog" aria-modal="true" aria-labelledby="dod-reject-title">
+    <div class="dod-modal-card">
+      <h3 id="dod-reject-title">Reject submission</h3>
+      <p>Give a short reason — this is stored on the DOD record.</p>
+      <textarea id="dod-reject-reason" placeholder="e.g. Blurry balance slip, amount unreadable"></textarea>
+      <div class="dod-modal-actions">
+        <button type="button" id="dod-reject-cancel">Cancel</button>
+        <button type="button" class="primary" id="dod-reject-confirm">Reject</button>
+      </div>
+    </div>
+  </div>
 
-    function render() {
-      $('loading').classList.add('hidden');
-      $('dashboard').classList.remove('hidden');
-      renderFilters();
-      renderList();
-    }
+  <notification-center aria-live="polite"></notification-center>
 
-    function renderFilters() {
-      const statuses = ['flagged', 'pending', 'verified', 'rejected', 'all'];
-      $('dod-filters').innerHTML = statuses.map(s => `
-        <button class="dod-filter ${s} ${currentFilter === s ? 'active' : ''}" data-status="${s}">
-          ${s.toUpperCase()}${s === 'flagged' ? ` (${entries.filter(e => e.status === 'flagged').length})` : ''}
-        </button>
-      `).join('');
-      $('dod-filters').querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => load(btn.dataset.status));
-      });
-    }
+  <footer class="footer">
+    <p>FactoryWager · <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a></p>
+  </footer>
 
-    function renderList() {
-      $('dod-list').innerHTML = entries.length
-        ? entries.map(e => `
-          <div class="dod-card ${e.status}">
-            <div class="dod-preview">
-              ${e.s3_path ? `<img src="/evidence/${e.s3_path}" alt="DOD evidence" loading="lazy" />` : '<div style="width:180px;height:120px;background:var(--surface-hover);display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px">No image</div>'}
-              <span class="tamper-badge ${e.tamper_score > 50 ? 'tamper-high' : 'tamper-low'}" style="display:block;margin-top:6px;text-align:center">Tamper: ${e.tamper_score}/100</span>
-            </div>
-            <div class="dod-details">
-              <p><strong>ID:</strong> <code>${(e.id || '').slice(0, 8)}</code></p>
-              <p><strong>Agent:</strong> <code>${(e.agent_id || '').slice(0, 8)}</code></p>
-              <p><strong>Type:</strong> ${e.type}</p>
-              <p><strong>Submitted:</strong> ${e.submitted_at ? new Date(e.submitted_at).toLocaleString() : '—'}</p>
-              ${e.extracted_text ? `<p><strong>OCR:</strong> ${e.extracted_text.slice(0, 120)}…</p>` : ''}
-              ${e.geo_lat ? `<p>📍 ${e.geo_lat.toFixed(4)}, ${e.geo_lng.toFixed(4)}</p>` : ''}
-              ${e.device_model ? `<p>📱 ${e.device_model}</p>` : ''}
-              ${e.signature ? `<p>🔏 <code>${e.signature.slice(0, 16)}...</code></p>` : ''}
-              ${e.rejection_reason ? `<div class="reject-reason">🚫 ${e.rejection_reason}</div>` : ''}
-            </div>
-            ${e.status !== 'verified' && e.status !== 'rejected' ? `
-              <div class="dod-actions">
-                <button class="btn-approve" data-id="${e.id}">✓ Approve</button>
-                <button class="btn-reject" data-id="${e.id}">✗ Reject</button>
-              </div>
-            ` : ''}
-          </div>
-        `).join('')
-        : '<div style="text-align:center;padding:60px;color:var(--text-dim)">No DODs in this queue.</div>';
-
-      // Wire approve/reject buttons
-      $('dod-list').querySelectorAll('.btn-approve').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          await fetch('/api/dod/approve', { method: 'POST', body: JSON.stringify({ id: btn.dataset.id }) });
-          load(currentFilter);
-        });
-      });
-      $('dod-list').querySelectorAll('.btn-reject').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          const reason = prompt('Rejection reason:');
-          if (!reason) return;
-          await fetch('/api/dod/reject', { method: 'POST', body: JSON.stringify({ id: btn.dataset.id, reason }) });
-          load(currentFilter);
-        });
-      });
-    }
-
-    load();
-  </script>
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/dod/dod-dashboard.js"></script>
 </body>
 </html>

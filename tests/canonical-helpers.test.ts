@@ -73,6 +73,36 @@ describe('canonical-helpers', () => {
     expect(resolved.introducedIn).toBe('1.3.14');
   });
 
+  test('resolveCanonicalForProbe defaults kind/introducedIn for blog anchors without token map', () => {
+    const resolved = resolveCanonicalForProbe(
+      'tls-getcacertificates-system-now-works-without-use-system-ca',
+      {
+        reportPath: '/registry/release-features.json',
+        sourcePath: 'tools/verify-bun-release.ts',
+        fallback:
+          'https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca',
+      }
+    );
+    expect(resolved.canonicalKind).toBeTruthy();
+    expect(resolved.canonicalKind).toBe('ShipNote');
+    expect(resolved.introducedIn).toBe('1.3.14');
+    expect(resolved.canonicalStability).toBe('stable');
+  });
+
+  test('inferIntroducedInFromUrl defaults external HTTPS docs to all', async () => {
+    const { inferIntroducedInFromUrl, inferKindFromUrl } = await import(
+      '../tools/canonical-helpers.ts'
+    );
+    expect(
+      inferIntroducedInFromUrl(
+        'https://developers.cloudflare.com/pages/functions/bindings/#r2-bucket-bindings'
+      )
+    ).toBe('all');
+    expect(inferKindFromUrl('https://bun.com/blog/bun-v1.3.14#event-loop-refactor')).toBe(
+      'ShipNote'
+    );
+  });
+
   test('getCanonicalEntry resolves plain CANONICAL_REFS keys', () => {
     const entry = getCanonicalEntry('BunInspectOptions');
     expect(entry?.url).toContain('BunInspectOptions');
@@ -106,6 +136,8 @@ describe('canonical-helpers', () => {
     expect(resolved.canonicalKind).toBe('SDK');
     expect(resolved.canonicalStability).toBe('stable');
     expect(resolved.canonicalDescription).toContain('download()');
+    expect(resolved.subsystem).toBe('package-manager');
+    expect(resolved.introducedIn).toBe('all');
     expect(resolved._links.docs).toBe(resolved.canonical);
     expect(resolved._links.report).toBe('/registry/registry-client-proof.json');
   });

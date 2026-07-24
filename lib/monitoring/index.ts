@@ -16,3 +16,5 @@ export {
 } from './collect.ts';
 export { ensureMonitoringSchema } from './schema.ts';
 export { renderMonitoringHtml } from './page.ts';
+export { enrichMonitoringForSnapshot, type MonitoringSnapshotExtras } from './enrich-snapshot.ts';
+export { bakeMonitoringPage, bakeMonitoringPageDefault } from './bake-page.ts';

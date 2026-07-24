@@ -14,6 +14,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher
 import { CryptoHasher, revision, version } from 'bun';
 import { logTable } from '../lib/console-depth.ts';
+import { buildSemanticTags } from '../lib/verification/channels.ts';
 import {
   buildDocsCoverageReport,
   parseReviewJsonl,
@@ -88,6 +89,9 @@ export async function runDocsCoverageVerification(): Promise<DocsCoverageReport>
   hasher.update(JSON.stringify(report.canonical));
   hasher.update(String(report.summary.ok));
   report.proofHash = hasher.digest('hex');
+
+  const semanticTags = await buildSemanticTags('runtime');
+  report.semanticTags = { ...semanticTags, subsystems: ['other'] };
 
   return report;
 }

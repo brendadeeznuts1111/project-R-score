@@ -30,6 +30,8 @@ describe('verification proof taxonomy contract', () => {
       expect(audit.ok).toBe(true);
       if (contract.requireRowSubsystem && audit.rows > 0) {
         expect(audit.missingSubsystem).toBe(0);
+        expect(audit.missingIntroducedIn).toBe(0);
+        expect(audit.missingCanonicalKind).toBe(0);
       }
     });
   }
