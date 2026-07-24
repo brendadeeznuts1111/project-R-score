@@ -32,7 +32,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | TokenRef (interior) / BunToken (export) | [`lib/docs/token-ref.ts`](lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](lib/docs/bun-token.ts) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
-| Cloudflare / R2 / Pages | [`config/r2-env.ts`](config/r2-env.ts) · `bun run cloudflare:env` / `:assert` / `:assert-apex` / `:assert-live` / `:validate` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
+| Cloudflare / R2 / Pages | [`config/r2-env.ts`](config/r2-env.ts) · `bun run cloudflare:env` / `:assert` / `:assert-apex` / `:assert-live` / `:validate` · `cloudflare:preflight` · `cloudflare:deploy:verify` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
 
 ## Communication precision

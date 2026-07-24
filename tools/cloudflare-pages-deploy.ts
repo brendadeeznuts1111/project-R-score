@@ -1,0 +1,161 @@
+#!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+/**
+ * Trigger Cloudflare Pages deploy, optionally wait for completion, then smoke-verify.
+ *
+ *   bun tools/cloudflare-pages-deploy.ts
+ *   bun tools/cloudflare-pages-deploy.ts --wait
+ *   bun tools/cloudflare-pages-deploy.ts --wait --verify
+ *
+ * @see docs/harness/tenants/cloudflare-pages.md
+ * @see scripts/cloudflare-pages-deploy.sh — thin wrapper
+ */
+import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
+
+/** Load Reasonix global env when token not already set (matches setup script). */
+function loadReasonixEnv(): void {
+  if (Bun.env.CLOUDFLARE_API_TOKEN?.trim()) return;
+  const path = `${Bun.env.HOME}/.reasonix/.env`;
+  try {
+    const text = Bun.file(path).textSync();
+    for (const line of text.split('\n')) {
+      const m = /^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/.exec(line.trim());
+      if (m && !Bun.env[m[1]]) Bun.env[m[1]] = m[2];
+    }
+  } catch {
+    /* optional */
+  }
+}
+
+const ACCOUNT_ID = Bun.env.CLOUDFLARE_ACCOUNT_ID?.trim() || CLOUDFLARE_DEFAULTS.accountId;
+const PROJECT = Bun.env.PAGES_PROJECT?.trim() || CLOUDFLARE_DEFAULTS.pages.project;
+const BRANCH = Bun.argv.find((a, i) => Bun.argv[i - 1] === '--branch') ?? 'main';
+const WAIT = Bun.argv.includes('--wait') || Bun.argv.includes('--verify');
+const VERIFY = Bun.argv.includes('--verify');
+const POLL_MS = 15_000;
+const MAX_POLLS = 12;
+
+type CfResponse<T> = {
+  success: boolean;
+  result?: T;
+  errors?: Array<{ message: string }>;
+};
+
+type DeployStage = { name: string; status: string };
+type Deployment = {
+  id: string; // brand-ok — Cloudflare Pages deployment UUID
+  url?: string;
+  latest_stage?: DeployStage;
+  stages?: DeployStage[];
+  deployment_trigger?: { metadata?: { commit_hash?: string } };
+};
+
+async function cf<T>(path: string, init?: RequestInit): Promise<CfResponse<T>> {
+  const token = Bun.env.CLOUDFLARE_API_TOKEN?.trim();
+  if (!token) {
+    throw new Error('CLOUDFLARE_API_TOKEN not set (~/.reasonix/.env)');
+  }
+  const res = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...(init?.headers ?? {}),
+    },
+  });
+  return (await res.json()) as CfResponse<T>;
+}
+
+async function triggerDeploy(): Promise<string> {
+  console.log(`🚀 Triggering Pages deploy → ${PROJECT} (${BRANCH})`);
+  const body = await cf<Deployment>(
+    `/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments`,
+    { method: 'POST', body: JSON.stringify({ branch: BRANCH }) }
+  );
+  if (!body.success || !body.result?.id) {
+    throw new Error(body.errors?.map(e => e.message).join('; ') || 'deploy trigger failed');
+  }
+  console.log(`   deploy id: ${body.result.id}`);
+  console.log(`   preview:   ${body.result.url ?? '—'}`);
+  return body.result.id;
+}
+
+async function fetchDeploy(
+  deployId: string // brand-ok — Cloudflare Pages deployment UUID (wire/API)
+): Promise<Deployment> {
+  const body = await cf<Deployment>(
+    `/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments/${deployId}`
+  );
+  if (!body.success || !body.result) {
+    throw new Error(body.errors?.map(e => e.message).join('; ') || 'deploy fetch failed');
+  }
+  return body.result;
+}
+
+async function deployLogTail(
+  deployId: string // brand-ok — Cloudflare Pages deployment UUID (wire/API)
+): Promise<string[]> {
+  const body = await cf<{ data?: Array<{ line?: string }> }>(
+    `/accounts/${ACCOUNT_ID}/pages/projects/${PROJECT}/deployments/${deployId}/history/logs`
+  );
+  return (body.result?.data ?? []).map(r => r.line).filter((l): l is string => Boolean(l));
+}
+
+async function waitForDeploy(
+  deployId: string // brand-ok — Cloudflare Pages deployment UUID (wire/API)
+): Promise<void> {
+  for (let i = 1; i <= MAX_POLLS; i++) {
+    const d = await fetchDeploy(deployId);
+    const stage = d.latest_stage;
+    const label = stage ? `${stage.name}:${stage.status}` : 'unknown';
+    console.log(`   [${i}/${MAX_POLLS}] ${label}`);
+    if (stage?.status === 'success' && stage.name === 'deploy') {
+      console.log('✅ Deploy succeeded');
+      console.log(`   https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`);
+      return;
+    }
+    if (stage?.status === 'failure') {
+      const tail = (await deployLogTail(deployId)).slice(-15);
+      console.error('❌ Deploy failed — log tail:');
+      for (const line of tail) console.error(`   ${line}`);
+      process.exit(1);
+    }
+    await Bun.sleep(POLL_MS);
+  }
+  console.error('❌ Deploy poll timeout — check Cloudflare dashboard');
+  process.exit(1);
+}
+
+async function runEdgeVerify(): Promise<void> {
+  const base = `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
+  console.log(`\n🔍 Pages edge verify → ${base}`);
+  const proc = Bun.spawn({
+    cmd: ['bun', 'tools/verify-pages-edge.ts'],
+    cwd: import.meta.dir + '/..',
+    env: { ...Bun.env, PAGES_VERIFY_BASE: base },
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  if ((await proc.exited) !== 0) process.exit(1);
+}
+
+async function main() {
+  loadReasonixEnv();
+  const deployId = await triggerDeploy();
+  if (WAIT) await waitForDeploy(deployId);
+  if (VERIFY) await runEdgeVerify();
+  else if (!WAIT) {
+    console.log('   tip: bun run cloudflare:deploy:wait — poll until live');
+    console.log('   tip: bun run cloudflare:deploy:verify — wait + edge smoke');
+  }
+}
+
+if (import.meta.main) {
+  main().catch(e => {
+    console.error(e instanceof Error ? e.message : e);
+    process.exit(1);
+  });
+}

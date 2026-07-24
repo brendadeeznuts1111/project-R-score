@@ -2,7 +2,7 @@
   "type": "CloudflareTokenScopeProof",
   "version": "1.0.0",
   "subsystem": "other",
-  "timestamp": "2026-07-24T05:25:47.098Z",
+  "timestamp": "2026-07-24T05:37:51.242Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "reportPath": "/registry/cloudflare-token-scope-proof.json",
@@ -10,9 +10,9 @@
     "channel": "stable",
     "targetVersion": "1.4.0",
     "latestAtTestTime": "1.4.0",
-    "testSuiteCommit": "9e110c3d29ff4768e33a725ca7d19935f219c22e",
-    "provenanceId": "local-2026-07-24T05-25-45-142Z",
-    "testedAt": "2026-07-24T05:25:45.142Z",
+    "testSuiteCommit": "b4308c195837774287c0333fe31d995c71869282",
+    "provenanceId": "local-2026-07-24T05-37-51-021Z",
+    "testedAt": "2026-07-24T05:37:51.021Z",
     "bunRevision": "a227ad991b62",
     "runtimeVersion": "1.4.0",
     "platform": "darwin",
@@ -86,27 +86,20 @@
     "repoCatalog": ".mcp.json"
   },
   "liveProbe": {
-    "available": true,
-    "ok": true,
-    "tier": "minimal",
-    "verify": {
-      "status": "active",
-      "id": "0c3c250a88db2435395ac54f8d5fb777"
-    },
-    "permissions": [],
-    "warnings": []
+    "available": false,
+    "skippedReason": "live probe disabled"
   },
   "summary": {
     "ok": true,
     "status": "pass",
     "tier": "minimal",
     "staticOk": true,
-    "liveOk": true
+    "liveOk": null
   },
   "_links": {
     "self": "/registry/cloudflare-token-scope-proof.json",
     "wellKnown": "/.well-known/mcp.json",
     "tenant": "/docs/harness/tenants/cloudflare-pages.md"
   },
-  "proofHash": "26ba79cfe4b3ead250a98f44ec75353bfbc77b9e1e481ae11016a90e3fd36cab"
+  "proofHash": "f68e8f68ac68cc5c361a181922639c26a9cc002e56e6142add76f1536c2c1807"
 }

@@ -54,14 +54,21 @@ fi
 echo ""
 echo "Step 3: Run Cloudflare env validate + assert-live"
 cd "$(dirname "$0")/.."
-bun run cloudflare:env:validate 2>/dev/null || echo "  ⚠️  validate needs bun + narrow token; run: bun run cloudflare:env:validate"
-bun run cloudflare:env:assert-live 2>/dev/null || echo "  ⚠️  assert-live needs bun; run: bun run cloudflare:env:assert-live"
+if ! bun run cloudflare:env:validate; then
+  echo "  ⚠️  validate failed — check token permissions (docs/harness/tenants/cloudflare-pages.md)"
+fi
+if ! bun run cloudflare:env:assert-live; then
+  echo "  ⚠️  assert-live failed — Pages API unreachable or token too narrow"
+fi
 bun run cloudflare:env 2>/dev/null || true
 
 echo ""
-echo "✅ Done. Next: connect MCP servers via:"
-echo "   mcp__cloudflare__connect"
-echo "   mcp__cloudflare-builds__connect"
-echo "   mcp__cloudflare-bindings__connect"
-echo "   mcp__cloudflare-docs__connect"
-echo "   mcp__cloudflare-observability__connect"
+echo "Step 4: Preflight (static — no token for proof save when --no-live)"
+bun run cloudflare:preflight 2>/dev/null || echo "  ⚠️  preflight failed — run: bun run cloudflare:preflight"
+
+echo ""
+echo "✅ Done. Next steps:"
+echo "   1. Connect MCP in Cursor — servers already in .mcp.json / .cursor/mcp.json"
+echo "      (cloudflare, cloudflare-docs, cloudflare-bindings, cloudflare-builds, cloudflare-observability)"
+echo "   2. Deploy:  bun run cloudflare:deploy:verify"
+echo "   3. Verify:  curl https://project-r-score.pages.dev/.well-known/mcp.json"

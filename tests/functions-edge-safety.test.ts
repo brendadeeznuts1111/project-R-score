@@ -40,4 +40,19 @@ describe("functions/ edge safety", () => {
   test("functions-bun-only exists as the Bun runtime home", async () => {
     expect(await Bun.file("functions-bun-only/api/dod/index.ts").exists()).toBe(true);
   });
+
+  test("r2-env Pages Functions boundary — no Bun-only transitive imports", async () => {
+    const text = await Bun.file("config/r2-env.ts").text();
+    const stripped = text
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/(^|[^:])\/\/.*$/gm, "$1");
+    const forbidden = [
+      [/lib\/verification\/cloudflare-token-scope/, "cloudflare-token-scope import"],
+      [/from\s+['"]\.\.\/lib\/types\/branded/, "branded types import (Bun at module load)"],
+      [/await import\([^)]*cloudflare-token-scope/, "dynamic cloudflare-token-scope import"],
+      [/from\s+['"]bun['"]/, "bare bun import"],
+    ] as const;
+    const hits = forbidden.filter(([re]) => re.test(stripped)).map(([, label]) => label);
+    expect(hits).toEqual([]);
+  });
 });

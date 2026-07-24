@@ -11,6 +11,11 @@
  * R2 S3 credentials ≠ Cloudflare API token (`requireR2Config` vs `requireCloudflareApiToken`).
  *
  * Claim: `cloudflare-pages-env-ssot` · Tenant: docs/harness/tenants/cloudflare-pages.md
+ *
+ * **Pages Functions boundary:** this module is imported transitively by edge handlers
+ * (lib/docs/repo-docs.ts ← functions/api script handlers). Do not import
+ * lib/verification, lib/types/branded, or dynamic-import Bun-only probes here —
+ * see tests/functions-edge-safety.test.ts (r2-env Pages Functions boundary).
  */
 
 /** Non-secret identity proven live (wrangler whoami + Pages/zones API). */

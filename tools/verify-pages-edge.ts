@@ -4,21 +4,33 @@
  * Post-deploy smoke for Cloudflare Pages (production or preview URL).
  *
  *   bun tools/verify-pages-edge.ts
+ *   bun tools/verify-pages-edge.ts --taxonomy   # also gate proof subsystem fields
  *   PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun tools/verify-pages-edge.ts
  *
  * @see docs/harness/tenants/cloudflare-pages.md
  */
+import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 
-const BASE = Bun.env.PAGES_VERIFY_BASE || 'https://score.factory-wager.com';
+const BASE = Bun.env.PAGES_VERIFY_BASE?.trim() || `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
+const TAXONOMY = Bun.argv.includes('--taxonomy');
 
-type Check = { name: string; ok: boolean; detail: string };
+type Check = { name: string; ok: boolean; detail: string; tier: 'core' | 'taxonomy' };
 
-async function check(name: string, fn: () => Promise<string | void>): Promise<Check> {
+type ProofRow = { subsystem?: string };
+type SemanticTags = { subsystems?: string[] };
+type SummaryRollup = { bySubsystem?: Record<string, unknown> };
+type DefaultsCoverage = { passed?: boolean };
+
+async function check(
+  name: string,
+  tier: Check['tier'],
+  fn: () => Promise<string | void>
+): Promise<Check> {
   try {
     const detail = (await fn()) ?? 'ok';
-    return { name, ok: true, detail };
+    return { name, ok: true, detail, tier };
   } catch (e) {
-    return { name, ok: false, detail: e instanceof Error ? e.message : String(e) };
+    return { name, ok: false, detail: e instanceof Error ? e.message : String(e), tier };
   }
 }
 
@@ -40,33 +52,33 @@ async function expectJson(path: string, assert: (j: Record<string, unknown>) => 
   const ct = res.headers.get('content-type') ?? '';
   if (!res.ok) throw new Error(`${path} → ${res.status}`);
   if (ct.includes('text/html'))
-    throw new Error(`${path} → HTML (missing Function or SPA fallback)`);
+    throw new Error(`${path} → HTML (missing static file or SPA fallback)`);
   const j = (await res.json()) as Record<string, unknown>;
   assert(j);
   return `${path} ok`;
 }
 
 async function main() {
-  console.log(`Pages edge verify → ${BASE}`);
+  console.log(`Pages edge verify → ${BASE}${TAXONOMY ? ' (--taxonomy)' : ''}`);
   const checks = await Promise.all([
-    check('portal/data.js', () => expectJs('/portal/data.js')),
-    check('portal/topbar.js', () => expectJs('/portal/topbar.js')),
-    check('/api/health schemaVersion', () =>
+    check('portal/data.js', 'core', () => expectJs('/portal/data.js')),
+    check('portal/topbar.js', 'core', () => expectJs('/portal/topbar.js')),
+    check('/api/health schemaVersion', 'core', () =>
       expectJson('/api/health', j => {
         if (j.schemaVersion !== 1) throw new Error(`schemaVersion=${j.schemaVersion}`);
       })
     ),
-    check('/api/env contract', () =>
+    check('/api/env contract', 'core', () =>
       expectJson('/api/env', j => {
         if (!j.summary || !Array.isArray(j.table)) throw new Error('missing summary/table');
       })
     ),
-    check('/api/content-type', () =>
+    check('/api/content-type', 'core', () =>
       expectJson('/api/content-type', j => {
         if (!Array.isArray(j.rows)) throw new Error('missing rows');
       })
     ),
-    check('/portal/env/ page', async () => {
+    check('/portal/env/ page', 'core', async () => {
       const res = await fetch(`${BASE}/portal/env/`, { redirect: 'follow' });
       const html = await res.text();
       if (!res.ok) throw new Error(String(res.status));
@@ -74,7 +86,25 @@ async function main() {
       if (!html.includes('/portal/topbar.js')) throw new Error('missing topbar.js script tag');
       return 'includes shared portal scripts';
     }),
-    check('proof-taxonomy-audit.json', () =>
+    check('well-known/mcp.json', 'core', () =>
+      expectJson('/.well-known/mcp.json', j => {
+        if (!Array.isArray(j.servers) || j.servers.length < 5) throw new Error('missing servers[]');
+        const names = (j.servers as Array<{ name: string }>).map(s => s.name);
+        if (!names.includes('cloudflare') || !names.includes('cloudflare-docs')) {
+          throw new Error(`unexpected servers: ${names.join(', ')}`);
+        }
+      })
+    ),
+    check('cloudflare-token-scope-proof.json', 'core', () =>
+      expectJson('/registry/cloudflare-token-scope-proof.json', j => {
+        if (j.type !== 'CloudflareTokenScopeProof') throw new Error(`type=${j.type}`);
+        const catalog = j.mcpCatalog as { ok?: boolean; serverCount?: number } | undefined;
+        if (!catalog?.ok || (catalog.serverCount ?? 0) < 5) {
+          throw new Error('mcpCatalog incomplete');
+        }
+      })
+    ),
+    check('proof-taxonomy-audit.json', 'taxonomy', () =>
       expectJson('/registry/proof-taxonomy-audit.json', j => {
         if (j.type !== 'ProofTaxonomyAuditReport') throw new Error(`type=${j.type}`);
         if (!Array.isArray(j.audits)) throw new Error('missing audits[]');
@@ -86,50 +116,58 @@ async function main() {
         }
       })
     ),
-    check('docs-coverage-proof.json subsystem', () =>
+    check('docs-coverage-proof.json subsystem', 'taxonomy', () =>
       expectJson('/registry/docs-coverage-proof.json', j => {
         if (j.subsystem !== 'other') throw new Error(`subsystem=${j.subsystem}`);
-        if (!Array.isArray(j.lanes) || j.lanes.length < 5) throw new Error('missing lanes[]');
-        if (!j.semanticTags?.subsystems?.includes('other')) throw new Error('missing semanticTags');
+        if (!Array.isArray(j.lanes) || (j.lanes as unknown[]).length < 5) {
+          throw new Error('missing lanes[]');
+        }
+        const tags = j.semanticTags as SemanticTags | undefined;
+        if (!tags?.subsystems?.includes('other')) throw new Error('missing semanticTags');
       })
     ),
-    check('registry-client-proof.json taxonomy', () =>
+    check('registry-client-proof.json taxonomy', 'taxonomy', () =>
       expectJson('/registry/registry-client-proof.json', j => {
-        if (!j.results?.every(r => r.subsystem === 'package-manager')) {
+        const results = j.results as ProofRow[] | undefined;
+        if (!results?.every(r => r.subsystem === 'package-manager')) {
           throw new Error('registry-client rows not package-manager');
         }
-        if (!j.semanticTags?.subsystems?.includes('package-manager')) {
+        const tags = j.semanticTags as SemanticTags | undefined;
+        if (!tags?.subsystems?.includes('package-manager')) {
           throw new Error('missing package-manager semanticTags');
         }
-        if (!j.summary?.bySubsystem?.['package-manager']) {
+        const summary = j.summary as SummaryRollup | undefined;
+        if (!summary?.bySubsystem?.['package-manager']) {
           throw new Error('missing summary.bySubsystem');
         }
       })
     ),
-    check('doc-index.json taxonomy', () =>
+    check('doc-index.json taxonomy', 'taxonomy', () =>
       expectJson('/registry/doc-index.json', j => {
         if (j.subsystem !== 'other') throw new Error(`subsystem=${j.subsystem}`);
-        if (!j.defaultsCoverage?.passed) throw new Error('defaultsCoverage not passed');
-      })
-    ),
-    check('well-known/mcp.json', () =>
-      expectJson('/.well-known/mcp.json', j => {
-        if (!Array.isArray(j.servers) || j.servers.length < 5) throw new Error('missing servers[]');
-        const names = j.servers.map((s: { name: string }) => s.name);
-        if (!names.includes('cloudflare') || !names.includes('cloudflare-docs')) {
-          throw new Error(`unexpected servers: ${names.join(', ')}`);
-        }
+        const dc = j.defaultsCoverage as DefaultsCoverage | undefined;
+        if (!dc?.passed) throw new Error('defaultsCoverage not passed');
       })
     ),
   ]);
 
-  for (const c of checks) {
+  const active = TAXONOMY ? checks : checks.filter(c => c.tier === 'core');
+  for (const c of active) {
     console.log(c.ok ? `✓ ${c.name}: ${c.detail}` : `✗ ${c.name}: ${c.detail}`);
   }
-  const failed = checks.filter(c => !c.ok);
+  const failed = active.filter(c => !c.ok);
   if (failed.length) {
     console.error(`\n❌ ${failed.length} edge check(s) failed`);
+    if (!TAXONOMY) {
+      const skipped = checks.filter(c => c.tier === 'taxonomy').length;
+      console.error(
+        `   (${skipped} taxonomy checks skipped — run with --taxonomy after ops:snapshot deploy)`
+      );
+    }
     process.exit(1);
+  }
+  if (!TAXONOMY) {
+    console.log('\nℹ️  taxonomy checks skipped (use --taxonomy for full 12·18 gate)');
   }
   console.log('\n✅ Pages edge verify passed');
 }

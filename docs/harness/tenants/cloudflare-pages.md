@@ -112,7 +112,24 @@ echo 'CLOUDFLARE_API_TOKEN=…' >> ~/.reasonix/.env
 bun run cloudflare:env:validate
 bun run cloudflare:env:validate --strict   # fail if permissions are over-broad
 bun run verify:cloudflare-token:save       # optional proof artifact (live probe when token set)
+bun run cloudflare:preflight               # static gate before deploy (well-known + edge safety)
 ```
+
+**9. Deploy + smoke (prefer MCP or CLI — no manual curl polling)**
+
+```bash
+bun run cloudflare:deploy:verify           # trigger → poll → core edge checks
+curl https://project-r-score.pages.dev/.well-known/mcp.json
+```
+
+Use Cloudflare MCP `execute` in Cursor to inspect failed builds (`deployments/{id}/history/logs`) when `cloudflare:deploy:verify` fails at the build stage. **Do not** import `lib/verification/*` or `lib/types/branded.ts` from `config/r2-env.ts` — Pages Functions bundle it transitively (`repo-docs` ← `functions/api/*/script.ts`).
+
+| Script | Role |
+|--------|------|
+| `cloudflare:preflight` | Static: well-known parity, token proof (no live), edge-safety test |
+| `cloudflare:deploy` | Trigger deploy only |
+| `cloudflare:deploy:wait` | Trigger + poll until success/failure (log tail on fail) |
+| `cloudflare:deploy:verify` | Wait + `verify:pages-edge` (core checks; `--taxonomy` for full 12·18) |
 
 Discovery manifest (Layer 5): `/.well-known/mcp.json` on Pages (see [`public/.well-known/mcp.json`](../../../public/.well-known/mcp.json)). Regenerate: `bun run sync:well-known-mcp`. Proof artifact: `bun run verify:cloudflare-token:save` → [`public/registry/cloudflare-token-scope-proof.json`](../../../public/registry/cloudflare-token-scope-proof.json).
 
@@ -140,7 +157,7 @@ Local ops station chart PNG (optional): `bun run ops:prediction report --webview
 
 ### Pages Functions (edge-safe only)
 
-Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**. Full inventory:
+Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **no `import 'bun'`**, **no `lib/verification/*` via `config/r2-env.ts`**. Guard: `tests/functions-edge-safety.test.ts`. Full inventory:
 
 | Path | Role |
 |------|------|
