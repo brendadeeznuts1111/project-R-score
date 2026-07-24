@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
@@ -394,7 +395,7 @@ export function buildReportHtml(opts: {
       <a href="/registry/static.json">static</a>
       <a href="/registry/prediction/coverage-chart.svg">SVG</a>
       ${opts.pngHref ? `<a href="${escapeXml(opts.pngHref)}">PNG</a>` : ''}
-      <a href="/registry/prediction/report.html" class="active">Report</a>
+      <a href="/registry/prediction/report/" class="active">Report</a>
     </nav>
   </header>
   <main>
@@ -571,7 +572,7 @@ export async function writePredictionReport(
   const generated = new Date().toISOString();
   const svgPath = `${outDir}/coverage-chart.svg`;
   const errorSvgPath = `${outDir}/error-chart.svg`;
-  const htmlPath = `${outDir}/report.html`;
+  const htmlPath = `${outDir}/report/index.html`;
   const pngOut = `${outDir}/coverage-chart.png`;
 
   await Bun.write(svgPath, svg);
@@ -605,6 +606,7 @@ export async function writePredictionReport(
     });
   }
 
+  await Bun.$`mkdir -p ${outDir}/report`.quiet();
   await Bun.write(htmlPath, html);
 
   return {

@@ -13,7 +13,7 @@ describe('portal weave', () => {
     expect(p.surfaces.length).toBeGreaterThan(8);
     expect(p.scripts.some(s => s.cmd.includes('reference:discover'))).toBe(true);
     const pred = p.surfaces.find(s => s.label === 'Prediction report');
-    expect(pred?.href).toBe('/registry/prediction/report.html');
+    expect(pred?.href).toBe('/registry/prediction/report/');
   });
 
   test('markdown slugs include dashboard', () => {

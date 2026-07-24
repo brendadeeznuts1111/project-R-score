@@ -217,6 +217,22 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
+          <section class="ops-panel" data-subsystem="runtime">
+            <h2>Ratchet <span class="version-badge subsystem-runtime">ratchet</span></h2>
+            <div class="ops-metric" id="ratchet-pass">—</div>
+            <div class="ops-sub" id="ratchet-detail"></div>
+            <div class="ops-mono" id="ratchet-hash"></div>
+            <a class="ops-link" href="/registry/ratchet.json">Ratchet DB JSON</a>
+            <a class="ops-link" href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/verification/ratchet.ts" target="_blank" rel="noopener">Ratchet source</a>
+          </section>
+          <section class="ops-panel" data-subsystem="other">
+            <h2>Official guides <span class="version-badge subsystem-other">guides</span></h2>
+            <div class="ops-metric" id="guides-pass">—</div>
+            <div class="ops-sub" id="guides-detail"></div>
+            <div class="ops-mono" id="guides-hash"></div>
+            <a class="ops-link" href="/registry/guides-proof.json">Guides proof JSON</a>
+            <a class="ops-link" href="https://bun.com/guides" target="_blank" rel="noopener">Bun guides</a>
+          </section>
           <section class="ops-panel wide" data-subsystem="bundler">
             <h2>Bundler loaders (Asset Processing) <span class="version-badge subsystem-bundler">bundler</span></h2>
             <div class="ops-metric" id="bundler-loaders-pass">—</div>
@@ -280,11 +296,11 @@ class OperationsDashboard extends HTMLElement {
               No backtest rows yet —
               <code>bun run ops:snapshot:demo</code> or
               <code>bun run ops:prediction backtest</code>.
-              <a href="/registry/prediction/report.html">Open report</a>
+              <a href="/registry/prediction/report/">Open report</a>
             </div>
             <div class="ops-metric" id="pred-mae">—</div>
             <div class="ops-sub" id="pred-detail"></div>
-            <a class="ops-link" id="pred-report-link" href="/registry/prediction/report.html">Open report</a>
+            <a class="ops-link" id="pred-report-link" href="/registry/prediction/report/">Open report</a>
             <img id="pred-chart" class="ops-chart hidden" alt="Coverage prediction chart" width="100%" />
           </section>
           <section class="ops-panel wide">
@@ -439,6 +455,26 @@ class OperationsDashboard extends HTMLElement {
     }
   }
 
+  async loadRatchet() {
+    this.ratchet = null;
+    try {
+      const res = await fetch('/registry/ratchet.json');
+      if (res.ok) this.ratchet = await res.json();
+    } catch {
+      /* ratchet optional */
+    }
+  }
+
+  async loadGuides() {
+    this.guides = null;
+    try {
+      const res = await fetch('/registry/guides-proof.json');
+      if (res.ok) this.guides = await res.json();
+    } catch {
+      /* snapshot optional */
+    }
+  }
+
   async loadBundlerLoaders() {
     this.bundlerLoaders = null;
     try {
@@ -480,6 +516,8 @@ class OperationsDashboard extends HTMLElement {
     await this.loadDocsCoverage();
     await this.loadCloudflareTokenScope();
     await this.loadBunRuntimeNits();
+    await this.loadRatchet();
+    await this.loadGuides();
     await this.loadBundlerLoaders();
     await this.loadProofTaxonomyAudit();
     await this.loadPortalWeave();
@@ -1532,7 +1570,7 @@ class OperationsDashboard extends HTMLElement {
             { label: 'Monitoring', href: '/monitoring/' },
             { label: 'DOD', href: '/portal/dod/' },
             { label: 'Skills', href: '/portal/skills/' },
-            { label: 'Prediction', href: '/registry/prediction/report.html' },
+            { label: 'Prediction', href: '/registry/prediction/report/' },
           ];
       weaveSurfaces.innerHTML = surfaces
         .map(

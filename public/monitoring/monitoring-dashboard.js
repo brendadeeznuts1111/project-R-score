@@ -234,7 +234,7 @@ export function renderMonitoringDashboard(payload) {
       card('DOD queue', mon.dodQueue ?? 0, Object.keys(mon.dodByStatus || {}).length ? JSON.stringify(mon.dodByStatus) : 'empty', '', '/portal/dod/'),
       card('Platforms', Object.values(mon.platformSummary || {}).reduce((a, b) => a + b, 0) || '0', `api yes ${mon.platformApiAvailable?.yes ?? 0} · no ${mon.platformApiAvailable?.no ?? 0}`),
       card('Experiments', mon.experimentsActive ?? 0),
-      card('Prediction', mon.predictionN ?? 0, mon.predictionN ? 'coverage report available' : '', mon.predictionN ? 'ok' : '', mon.predictionN ? '/registry/prediction/report.html' : ''),
+      card('Prediction', mon.predictionN ?? 0, mon.predictionN ? 'coverage report available' : '', mon.predictionN ? 'ok' : '', mon.predictionN ? '/registry/prediction/report/' : ''),
     ].join(''),
     sectionsHtml: `
       <section class="mon-section"><h2 class="mon-h2">Proof artifacts</h2>${renderProofTiles(mon, ops)}</section>
@@ -249,7 +249,7 @@ export function renderMonitoringDashboard(payload) {
         <a href="/portal/health/">Health</a>
         <a href="/api/monitoring">JSON</a>
         <a href="/registry/monitoring.json">Snapshot</a>
-        <a href="/registry/prediction/report.html">Prediction report</a>
+        <a href="/registry/prediction/report/">Prediction report</a>
         <a href="/registry/portal-weave.json">Portal weave</a>
       </section>`,
   };

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24T06:30:01.124Z",
+  "generated": "2026-07-24T06:33:36.350Z",
   "surfaces": [
     {
       "label": "Home",
@@ -48,7 +48,7 @@
     },
     {
       "label": "Prediction report",
-      "href": "/registry/prediction/report.html"
+      "href": "/registry/prediction/report/"
     }
   ],
   "artifacts": [

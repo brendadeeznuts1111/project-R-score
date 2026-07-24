@@ -36,7 +36,7 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
   { label: 'Catalog', href: '/portal/catalog/' },
   { label: 'Health', href: '/portal/health/' },
   { label: 'Env', href: '/portal/env/' },
-  { label: 'Prediction report', href: '/registry/prediction/report.html' },
+  { label: 'Prediction report', href: '/registry/prediction/report/' },
 ];
 
 /** Static registry artifacts the portal surfaces depend on. */
