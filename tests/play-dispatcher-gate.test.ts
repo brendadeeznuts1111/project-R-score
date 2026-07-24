@@ -69,6 +69,21 @@ describe('play-dispatcher gate', () => {
       .query('SELECT COUNT(*) as n FROM play_distribution WHERE play_id = $pid')
       .get({ $pid: result.id }) as { n: number };
     expect(dist.n).toBe(0);
+
+    const denied = db
+      .query(
+        `SELECT event_type, payload_json FROM ops_channel_outbox
+         WHERE topic = 'plays' AND event_type = 'play.gate.denied'`
+      )
+      .get() as { event_type: string; payload_json: string } | null;
+    expect(denied?.event_type).toBe('play.gate.denied');
+    expect(denied?.payload_json).toContain(agentId);
+
+    const gateRow = db
+      .query('SELECT allowed, action FROM play_gate_decisions WHERE play_id = $pid')
+      .get({ $pid: result.id }) as { allowed: number; action: string };
+    expect(gateRow.allowed).toBe(0);
+    expect(gateRow.action).toBe('block');
     db.close();
   });
 

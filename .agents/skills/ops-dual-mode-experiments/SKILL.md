@@ -205,6 +205,8 @@ bun run ops:snapshot --out /tmp/ops-summary.json
 | C4b | phases · runner · cluster · switchback · champion shadow | shipped |
 | C5 | `prediction_accuracy` + coverage backtest + report | shipped |
 | I1 | partner profile bindings + bridge + ops-summary partners | shipped |
+| I2 | evaluateForNode + gate decisions on publishAndDispatch | shipped |
+| I3 | partner.bound + play.gate.* ops channel events | shipped |
 
 ## Prove
 

@@ -63,11 +63,36 @@ bun test tests/partner-profile-bridge.test.ts tests/ops-summary.test.ts
 3. Bind via `bindPartnerProfile(db, treeNodeId, { templateId: asPartnerTemplateId(slug) })`.
 4. Re-run `ops:snapshot` and confirm portal **Partner profiles** panel.
 
-## Explicit non-goals (later phases)
+## Phase I2 — policy gate on dispatch
 
-- **I2** — play gate fully driven by template SoR on every dispatch path.
-- **I3** — fan-out of `partner_bound` to Telegram / external channels (outbox topic `identity` already exists).
+`publishAndDispatch` (play-dispatcher):
+
+1. Auto-bind missing profiles (`default-prospect`).
+2. `inferSignalTypeFromPlay` → `evaluateForNode` (template SoR).
+3. `recordGateDecision` on every recipient.
+4. Deny → skip reserve/distribution + `play.gate.denied` outbox event.
+5. Adjust → use capped stake + `play.gate.adjusted` event.
+6. Reserve fail → `play.gate.denied` with reserve reason.
+
+Tests: `tests/play-dispatcher-gate.test.ts`.
+
+## Phase I3 — identity channel
+
+| Event | Topic | When |
+|-------|-------|------|
+| `partner.bound` | `identity` | First `bindPartnerProfile` insert via ops-sync (`created === true`) |
+| `play.gate.denied` / `play.gate.adjusted` | `plays` | Dispatch gate outcomes |
+| `play.settled` | `plays` | Settlement (profileKey attached when bound) |
+
+Helpers: `enqueueIdentityChannelEvent`, `enqueuePlayGatedChannelEvent` in [`lib/channels/outbox.ts`](../../lib/channels/outbox.ts).
+
+Process: `processChannelOutbox` (R2 projector default for identity; tests use `deliver: false` → local MemoryChannelStore).
+
+## Explicit non-goals (later)
+
 - Importing full Sports Terminal PartnerGateway / nested monorepo UI.
+- Slack/Telegram projectors on every identity event (identity defaults to R2 only).
+- Multi-template referral routing beyond `templateIdForSource` stub.
 
 ## Related
 

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
@@ -89,10 +90,24 @@ export type MaterializedPartnerProfile = {
 
 export type StakeContext = {
   suggestedStake: number;
-  bookSlug?: string;
+  bookSlug?: string; // brand-ok — sportsbook slug (DRAFTKINGS), not domain BookId
   signalType?: 'steam' | 'arb' | 'clv' | 'manual' | 'predictive';
   tier?: string;
 };
+
+/** Heuristic signal type from play market / selection text (I2 gate input). */
+export function inferSignalTypeFromPlay(play: {
+  market?: string;
+  selection?: string;
+  event?: string;
+}): NonNullable<StakeContext['signalType']> {
+  const hay = `${play.market ?? ''} ${play.selection ?? ''} ${play.event ?? ''}`.toLowerCase();
+  if (/\barb\b|arbitrage/.test(hay)) return 'arb';
+  if (/\bsteam\b|line.?move/.test(hay)) return 'steam';
+  if (/\bclv\b|closing.?line/.test(hay)) return 'clv';
+  if (/\bpredict|model|ml\b/.test(hay)) return 'predictive';
+  return 'manual';
+}
 
 export type GateEvaluation = {
   allowed: boolean;
@@ -184,12 +199,27 @@ export async function loadPartnerTemplate(
   return fallback;
 }
 
-/** Sync load for hot paths (uses cache or inline default). */
+/** Sync load for hot paths (reads TOML from disk when present). */
 export function loadPartnerTemplateSync(
   templateId: string = DEFAULT_TEMPLATE_ID // brand-ok
 ): PartnerTemplate {
   const cached = templateCache.get(templateId);
   if (cached) return cached;
+
+  const path = `${PARTNER_TEMPLATES_DIR}/${templateId}.toml`;
+  try {
+    const file = Bun.file(path);
+    if (file.size > 0) {
+      const text = new TextDecoder().decode(Bun.mmap(path));
+      const raw = Bun.TOML.parse(text) as Record<string, unknown>;
+      const parsed = parseTemplate(raw, templateId);
+      templateCache.set(templateId, parsed);
+      return parsed;
+    }
+  } catch {
+    /* fall through to default */
+  }
+
   const fallback = parseTemplate({}, templateId);
   templateCache.set(templateId, fallback);
   return fallback;
@@ -208,12 +238,17 @@ function profileKeyForNode(treeNodeId: TreeNodeId): PartnerProfileKey {
   return asPartnerProfileKey(`pp-${String(treeNodeId).slice(0, 32)}`);
 }
 
+export type BindPartnerProfileResult = PartnerProfileBinding & {
+  /** True when a new row was inserted (not an update). */
+  created: boolean;
+};
+
 /** Create or refresh partner_profile_bindings for a tree node. */
 export function bindPartnerProfile(
   db: Database,
   treeNodeId: TreeNodeId,
   opts?: { templateId?: PartnerTemplateId; lifecycleStatus?: PartnerLifecycleStatus }
-): PartnerProfileBinding {
+): BindPartnerProfileResult {
   const node = db
     .query('SELECT id, status FROM tree_nodes WHERE id = $id')
     .get({ $id: treeNodeId as string }) as { id: string; status: string } | null; // brand-ok
@@ -264,6 +299,7 @@ export function bindPartnerProfile(
     lifecycleStatus,
     createdAt: (existing?.created_at as string) ?? now,
     updatedAt: now,
+    created: existing == null,
   };
 }
 

@@ -307,3 +307,33 @@ export function enqueueIdentityChannelEvent(
     projectors: ['r2'],
   });
 }
+
+/** Helper: play gated (policy denied or adjusted) for observability projectors. */
+export function enqueuePlayGatedChannelEvent(
+  db: Database,
+  input: {
+    playId: string; // brand-ok — plays.id
+    treeNodeId: TreeNodeId;
+    allowed: boolean;
+    action: string;
+    reason?: string;
+    adjustedStake?: number;
+    templateId?: PartnerTemplateId | string;
+  }
+): OpsChannelEvent {
+  return enqueueOpsChannelEvent(db, {
+    topic: 'plays',
+    eventType: input.allowed ? 'play.gate.adjusted' : 'play.gate.denied',
+    idempotencyKey: `gate:${input.playId}:${input.treeNodeId as string}`,
+    payload: {
+      playId: input.playId,
+      treeNodeId: input.treeNodeId as string,
+      allowed: input.allowed,
+      action: input.action,
+      reason: input.reason,
+      adjustedStake: input.adjustedStake,
+      templateId: input.templateId != null ? String(input.templateId) : undefined,
+    },
+    projectors: ['r2'],
+  });
+}

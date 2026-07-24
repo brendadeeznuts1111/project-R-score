@@ -18,6 +18,7 @@ export {
   backfillPartnerBindings,
   evaluateForNode,
   recordGateDecision,
+  inferSignalTypeFromPlay,
   loadPartnerTemplate,
   DEFAULT_TEMPLATE_ID,
   type GateEvaluation,

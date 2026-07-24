@@ -73,12 +73,15 @@ export function applyOpsSyncEvent(
     });
     if (db) {
       const binding = bindPartnerProfile(db, asTreeNodeId(node.id));
-      enqueueIdentityChannelEvent(db, {
-        treeNodeId: binding.treeNodeId,
-        profileKey: binding.profileKey as string,
-        partnerTemplate: binding.templateId,
-        lifecycleStatus: binding.lifecycleStatus,
-      });
+      // I3: emit partner.bound on first insert (idempotency_key = bind:nodeId)
+      if (binding.created) {
+        enqueueIdentityChannelEvent(db, {
+          treeNodeId: binding.treeNodeId,
+          profileKey: binding.profileKey as string,
+          partnerTemplate: binding.templateId,
+          lifecycleStatus: binding.lifecycleStatus,
+        });
+      }
     }
     return true;
   }

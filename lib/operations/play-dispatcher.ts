@@ -9,14 +9,19 @@
  */
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
-import { enqueuePlayTelegramEvent, processChannelOutbox } from '../channels/outbox.ts';
+import {
+  enqueuePlayGatedChannelEvent,
+  enqueuePlayTelegramEvent,
+  processChannelOutbox,
+} from '../channels/outbox.ts';
 import { asTreeNodeId } from '../types/branded/operations.ts';
 import { AccountService } from './account-service.ts';
 import { detectFraudSignals } from './fraud-guard.ts';
-import { reservePlay } from './liquidity.ts';
+import { reservePlay, releasePlay } from './liquidity.ts';
 import {
   bindPartnerProfile,
   evaluateForNode,
+  inferSignalTypeFromPlay,
   recordGateDecision,
 } from './partner-profile-bridge.ts';
 import { validatePlay } from './play-validation.ts';
@@ -126,6 +131,8 @@ export async function publishAndDispatch(
 
   let enqueued = 0;
 
+  const signalType = inferSignalTypeFromPlay(play);
+
   for (const { id: nodeId, telegram_id: telegramId } of recipients) {
     const treeNodeId = asTreeNodeId(nodeId);
 
@@ -138,49 +145,59 @@ export async function publishAndDispatch(
 
     const gate = evaluateForNode(db, treeNodeId, {
       suggestedStake: play.stakeRecommended,
-      signalType: 'manual',
+      signalType,
     });
     recordGateDecision(db, id, treeNodeId, gate);
-    if (!gate.allowed) continue;
+    if (!gate.allowed) {
+      enqueuePlayGatedChannelEvent(db, {
+        playId: id,
+        treeNodeId,
+        allowed: false,
+        action: gate.action,
+        reason: gate.reason,
+        adjustedStake: gate.adjustedStake,
+        templateId: gate.templateId,
+      });
+      continue;
+    }
 
     const stake = gate.adjustedStake ?? play.stakeRecommended;
     const reserve = reservePlay(db, nodeId, stake);
-    if (!reserve.ok) continue;
-
-    db.transaction(() => {
-      db.run(
-        `INSERT OR IGNORE INTO play_distribution (play_id, node_id, channel, received_at)
-         VALUES ($pid, $nid, 'telegram', $now)`,
-        { $pid: id, $nid: nodeId, $now: now }
-      );
-
-      const outboxId = randomUUIDv7(); // brand-ok
-      db.run(
-        `INSERT INTO telegram_outbox (id, node_id, play_id, telegram_id, payload, status, retries, created_at)
-         VALUES ($id, $nid, $pid, $tg, $payload, 'pending', 0, $now)`,
-        {
-          $id: outboxId,
-          $nid: nodeId,
-          $pid: id,
-          $tg: telegramId,
-          $payload: payload,
-          $now: now,
-        }
-      );
-
-      enqueuePlayTelegramEvent(db, {
+    if (!reserve.ok) {
+      enqueuePlayGatedChannelEvent(db, {
         playId: id,
-        nodeId: treeNodeId,
-        telegramId,
-        text: payload,
+        treeNodeId,
+        allowed: false,
+        action: 'block',
+        reason: reserve.reason ?? 'reserve failed',
+        templateId: gate.templateId,
       });
+      continue;
+    }
 
-      if (recordMetrics) {
-        new AccountService(db).recordPlayReceived(nodeId);
-      }
-    })();
+    try {
+      db.transaction(() => {
+        db.run(
+          `INSERT OR IGNORE INTO play_distribution (play_id, node_id, channel, received_at, stake_actual)
+           VALUES ($pid, $nid, 'telegram', $now, $stake)`,
+          { $pid: id, $nid: nodeId, $now: now, $stake: stake }
+        );
 
-    enqueued++;
+        enqueuePlayTelegramEvent(db, {
+          playId: id,
+          nodeId: treeNodeId,
+          telegramId,
+          text: payload,
+        });
+
+        if (recordMetrics) {
+          new AccountService(db).recordPlayReceived(nodeId);
+        }
+      })();
+      enqueued++;
+    } catch {
+      releasePlay(db, nodeId, stake);
+    }
   }
 
   if (doFlush) {
@@ -196,7 +213,7 @@ export async function publishAndDispatch(
 }
 
 /**
- * Flush legacy telegram_outbox and unified ops_channel_outbox projectors.
+ * Flush unified ops_channel_outbox (Telegram via projector) and legacy telegram_outbox rows.
  */
 export async function flushOutbox(
   db: Database,

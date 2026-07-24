@@ -72,9 +72,9 @@ describe('play-dispatcher', () => {
     expect(dist.n).toBe(1);
 
     const outbox = db
-      .query("SELECT COUNT(*) as n FROM telegram_outbox WHERE play_id = $pid AND status = 'pending'")
-      .get({ $pid: result.id }) as { n: number };
-    expect(outbox.n).toBe(1);
+      .query("SELECT COUNT(*) as n FROM ops_channel_outbox WHERE topic = 'plays' AND status = 'pending'")
+      .get() as { n: number };
+    expect(outbox.n).toBeGreaterThanOrEqual(1);
 
     const flushed = await flushOutbox(db, { token: 'test-token' });
     expect(flushed.sent).toBeGreaterThanOrEqual(1);

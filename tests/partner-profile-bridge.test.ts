@@ -5,6 +5,7 @@ import {
   backfillPartnerBindings,
   bindPartnerProfile,
   evaluateForNode,
+  inferSignalTypeFromPlay,
   materializePartnerProfile,
   queryPartnersSlice,
   templateIdForSource,
@@ -41,6 +42,12 @@ describe('partner-profile-bridge', () => {
   test('templateIdForSource defaults to default-prospect', () => {
     expect(String(templateIdForSource())).toBe(DEFAULT_TEMPLATE_ID);
     expect(String(templateIdForSource('referral'))).toBe(DEFAULT_TEMPLATE_ID);
+  });
+
+  test('inferSignalTypeFromPlay maps market text', () => {
+    expect(inferSignalTypeFromPlay({ market: 'arbitrage', selection: 'side a' })).toBe('arb');
+    expect(inferSignalTypeFromPlay({ market: 'steam move' })).toBe('steam');
+    expect(inferSignalTypeFromPlay({ market: 'spread', selection: 'home' })).toBe('manual');
   });
 
   test('bindPartnerProfile creates binding and materialize reads it', () => {
@@ -119,24 +126,30 @@ describe('partner-profile-bridge', () => {
     db.close();
   });
 
-  test('ops-sync account_assigned binds partner profile when db provided', () => {
+  test('ops-sync account_assigned binds partner profile and emits partner.bound once', () => {
     const db = openOperationsDb({ path: ':memory:' });
     const svc = new AccountService(db);
-    const ok = applyOpsSyncEvent(
-      svc,
-      {
-        type: 'account_assigned',
-        tenantId: 'factory',
-        oidcSubject: 'oidc-test-subject',
-        email: 'agent@example.com',
-        name: 'Portal Agent',
-      },
-      db
-    );
-    expect(ok).toBe(true);
+    const event = {
+      type: 'account_assigned',
+      tenantId: 'factory',
+      oidcSubject: 'oidc-test-subject',
+      email: 'agent@example.com',
+      name: 'Portal Agent',
+    };
+    expect(applyOpsSyncEvent(svc, event, db)).toBe(true);
+    expect(applyOpsSyncEvent(svc, event, db)).toBe(true); // re-sync is update, no second identity event
+
     const slice = queryPartnersSlice(db);
     expect(slice.bound).toBe(1);
     expect(slice.recent[0]?.name).toBe('Portal Agent');
+
+    const identity = db
+      .query(
+        `SELECT COUNT(*) AS n FROM ops_channel_outbox
+         WHERE topic = 'identity' AND event_type = 'partner.bound'`
+      )
+      .get() as { n: number };
+    expect(identity.n).toBe(1);
     svc.close();
     db.close();
   });
