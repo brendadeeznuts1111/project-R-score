@@ -45,6 +45,8 @@ export async function getMonitoringData(
     ['bunApiProof', 'tools/bun-api-coverage-proof.json'],
     ['networkingProof', 'public/registry/networking-proof.json'],
     ['installEnvProof', 'public/registry/install-env-proof.json'],
+    ['registryClientProof', 'public/registry/registry-client-proof.json'],
+    ['bunRuntimeNitsProof', 'public/registry/bun-runtime-nits-proof.json'],
     ['defaultsProof', 'public/registry/defaults-proof.json'],
   ];
   for (const [key, path] of proofFiles) {

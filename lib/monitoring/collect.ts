@@ -6,10 +6,6 @@
  */
 import type { Database } from 'bun:sqlite';
 import { joinPath } from '../path-bun';
-import {
-  parseNetworkingProofArtifact,
-  toMonitoringNetworkingReport,
-} from '../http/networking-proof.ts';
 import { ensureMonitoringSchema } from './schema.ts';
 
 export type IntegritySnapshot = {
@@ -20,8 +16,28 @@ export type IntegritySnapshot = {
   source?: 'sqlite' | 'file' | 'unknown';
 };
 
-/** Networking connection reuse proof (from verify-networking.ts). */
-export type { NetworkingMonitoringReport as NetworkingChecksReport } from '../http/networking-proof.ts';
+/** Networking proof — connection reuse, preconnect efficiency, fetch perf. */
+export type NetworkingChecksReport = {
+  schemaVersion: number;
+  bunVersion: string;
+  bunRevision: string;
+  timestamp: string;
+  base: string;
+  totalTargets: number;
+  allOk: boolean;
+  proofHash: string;
+  targets: Array<{
+    name: string;
+    summary: {
+      protocol: string;
+      reuseEfficiency: number;
+      coldFetchMs: number;
+      warmFetchMs: number;
+      statusCode: number;
+      bodySize: number;
+    };
+  }>;
+};
 
 export type MonitoringPayload = {
   source: 'live' | 'snapshot';
@@ -36,9 +52,41 @@ export type MonitoringPayload = {
   dodByStatus: Record<string, number>;
   experimentsActive: number;
   predictionN: number;
+  /** ISO timestamp when this payload was built (same as snapshotAt for Pages). */
   timestamp: string;
+  /** Alias of timestamp — Pages has no process uptime; prefer this label in UI. */
+  snapshotAt: string;
   /** Networking connection reuse proof (from verify-networking.ts). */
   networkingProof?: NetworkingChecksReport;
+  /** Optional Bun API demo proof (attached by serve-public / enriched snapshots). */
+  bunApiProof?: {
+    demosPassed?: number;
+    demosTotal?: number;
+    apisVerified?: number;
+    demoPassRate?: string;
+    generated?: string;
+  };
+  /** Optional route probe stats. */
+  routeStats?: {
+    routing?: {
+      passed?: number;
+      total?: number;
+      httpOk?: number;
+      criticalFailed?: number;
+      p95Ms?: number;
+      errorRate?: number;
+      proofHash?: string;
+    };
+  };
+  /** Optional env check summary. */
+  env?: {
+    summary?: {
+      total?: number;
+      ok?: number;
+      missing?: number;
+      requiredMissing?: number;
+    };
+  };
 };
 
 const REGISTRY_INTEGRITY_FILE = joinPath(import.meta.dir, '../../reports/registry-integrity.json');
@@ -239,16 +287,7 @@ export async function collectMonitoring(
     predictionN = row?.c ?? 0;
   }
 
-  let networkingProof: import('../http/networking-proof.ts').NetworkingMonitoringReport | undefined;
-  const netFile = Bun.file('public/registry/networking-proof.json');
-  if (await netFile.exists()) {
-    try {
-      const parsed = parseNetworkingProofArtifact(await netFile.json());
-      if (parsed) networkingProof = toMonitoringNetworkingReport(parsed);
-    } catch {
-      /* ignore malformed artifact */
-    }
-  }
+  const timestamp = new Date().toISOString();
 
   return {
     source: opts?.source ?? 'live',
@@ -263,7 +302,7 @@ export async function collectMonitoring(
     dodByStatus,
     experimentsActive,
     predictionN,
-    timestamp: new Date().toISOString(),
-    networkingProof,
+    timestamp,
+    snapshotAt: timestamp,
   };
 }

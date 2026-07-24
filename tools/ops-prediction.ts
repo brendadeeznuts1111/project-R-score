@@ -21,6 +21,7 @@ import {
   runDailyCoveragePredictionCycle,
   writePredictionReport,
 } from '../lib/prediction/index.ts';
+import { evaluateShadow, shadowLog } from '../lib/experiments/champion-challenger.ts';
 
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
 const args = process.argv.slice(2);
@@ -46,9 +47,12 @@ Commands:
                               SVG+HTML under public/registry/prediction/
                               --webview: Bun.WebView screenshot → Bun.Image PNG
   accuracy
+  shadow-eval [--min-n N] [--margin M]   Champion/challenger MAE promote rule
+  shadow-log  --champion NAME --challenger NAME --cpred N --gpred N [--actual N]
 
 Compares naive coverage predictor (prod accounts / launched platforms)
 against coverage_snapshots in the ops DB, writing rows to prediction_accuracy.
+System-model shadow logs live in prediction_shadow (not per-partner factorials).
 
 Env: OPS_DB_PATH (default ${DEFAULT_OPS_DB_PATH})
 Flags: --json · --webview (report only)
@@ -114,6 +118,35 @@ async function main(): Promise<number> {
       }
       case 'accuracy': {
         out(getPredictionAccuracy(db, 'coverage'));
+        return 0;
+      }
+      case 'shadow-eval': {
+        out(
+          evaluateShadow(db, {
+            minN: Number(flag('min-n') ?? 100),
+            margin: Number(flag('margin') ?? 0.01),
+          })
+        );
+        return 0;
+      }
+      case 'shadow-log': {
+        const champion = flag('champion');
+        const challenger = flag('challenger');
+        const cpred = flag('cpred');
+        const gpred = flag('gpred');
+        if (!champion || !challenger || cpred === undefined || gpred === undefined) {
+          console.error('shadow-log requires --champion --challenger --cpred --gpred');
+          return 1;
+        }
+        const actual = flag('actual');
+        const id = shadowLog(db, {
+          championModel: champion,
+          challengerModel: challenger,
+          championPred: Number(cpred),
+          challengerPred: Number(gpred),
+          actual: actual !== undefined ? Number(actual) : undefined,
+        });
+        out({ id });
         return 0;
       }
       default:

@@ -1,3 +1,4 @@
+// @see https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md — RegistryClient
 /**
  * @factorywager/registry-client
  *
@@ -129,6 +130,11 @@ async function sha256Hex(data: Uint8Array): Promise<string> {
   return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
+/** Total bytes in a Uint8Array view (length × BYTES_PER_ELEMENT; always 1 for Uint8). */
+export function uint8TotalBytes(data: Uint8Array): number {
+  return data.length * Uint8Array.BYTES_PER_ELEMENT;
+}
+
 export class RegistryClient {
   readonly baseUrl: string;
   readonly publishUrl: string;
@@ -185,9 +191,10 @@ export class RegistryClient {
       throw new RegistryHttpError(`Artifact download failed (${response.status})`, response.status);
     }
     const data = new Uint8Array(await response.arrayBuffer());
-    if (data.byteLength !== resolved.release.storage.size) {
+    const receivedBytes = uint8TotalBytes(data);
+    if (receivedBytes !== resolved.release.storage.size) {
       throw new Error(
-        `Artifact size mismatch: expected ${resolved.release.storage.size}, received ${data.byteLength}`
+        `Artifact size mismatch: expected ${resolved.release.storage.size}, received ${receivedBytes}`
       );
     }
     const checksum = await sha256Hex(data);

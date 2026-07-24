@@ -254,4 +254,12 @@ describe('docs-grounded runtime behavior (verified Bun 1.4.0)', () => {
     expect(Bun.inspect(withGetter, { getters: true } as never)).toContain('[Getter]');
     expect(Bun.inspect([1, 2, 3, 4], { maxArrayLength: 2 } as never)).toContain('4');
   });
+
+  test('runtime nits inspect probes align with console-depth SSOT', async () => {
+    const { probeInspectSorted, probeInspectCompact } = await import(
+      '../lib/verification/bun-runtime-nits-probes.ts'
+    );
+    expect(probeInspectSorted().passed).toBe(true);
+    expect(probeInspectCompact().passed).toBe(true);
+  });
 });

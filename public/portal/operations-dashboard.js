@@ -779,9 +779,10 @@ class OperationsDashboard extends HTMLElement {
           ? ` · sources ${cm.sources.release}/${cm.sources.nits}/${cm.sources.bundler}/${cm.sources.networking}`
           : '';
         const when = cm.updatedAt ? ` · baked ${String(cm.updatedAt).slice(0, 19)}` : '';
-        relBake.textContent = `meta bake ${cm.passed ?? '—'}/${cm.total ?? '—'} ${cm.status ?? ''}${src}${when}`;
-        relBake.classList.toggle('ok', cm.ok === true);
-        relBake.classList.toggle('bad', cm.ok === false);
+        const stale = cm.stale ? ' · STALE vs release-features' : '';
+        relBake.textContent = `meta bake ${cm.passed ?? '—'}/${cm.total ?? '—'} ${cm.status ?? ''}${src}${when}${stale}`;
+        relBake.classList.toggle('ok', cm.ok === true && !cm.stale);
+        relBake.classList.toggle('bad', cm.ok === false || cm.stale === true);
       } else {
         relBake.textContent = 'meta bake — run bun run verify:channel:meta';
         relBake.classList.remove('ok', 'bad');
@@ -1134,13 +1135,22 @@ class OperationsDashboard extends HTMLElement {
       const liq = d.liquidity?.total ?? 0;
       const exp = d.experiments?.active ?? 0;
       const predN = d.prediction?.coverage?.n ?? 0;
-      snapDetail.textContent = `liquidity $${Number(liq).toLocaleString()} · experiments ${exp} · prediction n=${predN}`;
+      const cm = d.channelMeta;
+      const metaBit = cm?.available
+        ? ` · meta ${cm.passed ?? '—'}/${cm.total ?? '—'}${cm.stale ? ' stale' : ''}`
+        : '';
+      snapDetail.textContent = `liquidity $${Number(liq).toLocaleString()} · experiments ${exp} · prediction n=${predN}${metaBit}`;
     }
     const snapSource = this.querySelector('#snap-source');
     if (snapSource) {
+      const cm = d.channelMeta;
+      const metaSrc =
+        cm?.sources != null
+          ? ` · meta ${cm.sources.release}/${cm.sources.nits}/${cm.sources.bundler}/${cm.sources.networking}`
+          : '';
       snapSource.textContent = d.generated
-        ? `${d.source || 'snapshot'} · ${String(d.generated).slice(0, 19)}`
-        : '';
+        ? `${d.source || 'snapshot'} · ${String(d.generated).slice(0, 19)}${metaSrc}`
+        : metaSrc.trim();
     }
 
     // Experiments (C4)

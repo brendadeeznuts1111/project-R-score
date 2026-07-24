@@ -23,9 +23,16 @@
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import {
   FactorialEngine,
+  analyzeSwitchback,
+  assignClustered,
+  createSwitchbackSchedule,
+  dailyCheckById,
   ensureAssignedToActiveExperiments,
   generateDesign,
+  launchPhase,
   resolveExperimentSubject,
+  type ClusterBy,
+  type ExperimentProtocol,
   type Factor,
   type FactorLevel,
 } from '../lib/experiments/index.ts';
@@ -86,34 +93,34 @@ Commands:
   create        --name NAME --factors SPEC [--fraction N] [--metric win_rate]
                   [--min-partners-per-variant N] [--min-duration-days N]
                   [--allow-exploratory-subset]
+  phase         --n 1..4 [--protocol switchback|between]
+                  [--period-days N] [--washout N] [--cluster-by expert|parent]
+                  (sandbox: OPS_EXPERIMENT_SANDBOX=1)
   list
   show          --id EXPERIMENT_ID
   activate      --id EXPERIMENT_ID
   pause         --id EXPERIMENT_ID
   assign        --id EXPERIMENT_ID --partner ID[,ID2,...]
+  assign-cluster --id EXPERIMENT_ID --partner ID --cluster-by expert|parent
   assign-active --partner ID[,ID2,...]            Sticky-assign into all active experiments
+  switchback-schedule --id EXPERIMENT_ID --partner ID
+                  [--period-days N] [--washout N]
+  switchback-analyze --id EXPERIMENT_ID [--metric win_rate]
+  check         --id EXPERIMENT_ID                Daily operational check (no cron)
   record        --id EXPERIMENT_ID --partner ID --value N [--metric NAME]
   analyze       --id EXPERIMENT_ID
   predict       --id EXPERIMENT_ID --config 'routing:dynamic;cut:0.15'
 
-Factors SPEC:
-  name:level1,level2;name2:a,b,c
-  example: routing:static,dynamic;cut:0.10,0.15;min_coverage_pct:30,40
+Phased timeline (sequential — do not run all domains at once):
+  Phase 1 (mo 1-2): routing static|dynamic
+  Phase 2 (mo 3-4): + cut 0.10|0.15
+  Phase 3 (mo 5-6): + stake fixed|kelly
+  Phase 4 (mo 7-8): + timing immediate|batched
 
-Typical flow:
-  create --name routing-cut --factors 'routing:static,dynamic;cut:0.10,0.15;min_coverage_pct:30,40'
-  activate --id <experimentId>
-  assign --id <experimentId> --partner <treeNodeId>
-  record --id <experimentId> --partner <treeNodeId> --value 0.58
-  analyze --id <experimentId>
+Protocols: between (sticky cluster) OR switchback (within-partner periods) — not both.
+System factors → champion/challenger shadow (ops:prediction shadow-eval).
 
-Settlement auto-records win_rate/pnl for active experiments (see lib/experiments/outcomes.ts).
-Launch policy defaults: Resolution IV, 10 active partners per variant, 28 days.
-Sandbox/demo: pass --min-partners-per-variant 1 --min-duration-days 0 on create.
-System factors (model, automation_frequency, reconciliation_mode, infrastructure)
-are blocked from per-partner experiments. Use shadow/challenger evaluation instead.
-
-Env: OPS_DB_PATH (default ${DEFAULT_OPS_DB_PATH})
+Env: OPS_DB_PATH (default ${DEFAULT_OPS_DB_PATH}) · OPS_EXPERIMENT_SANDBOX=1
 Flags: --json
 `);
 }
@@ -257,6 +264,35 @@ function main(): number {
         out({ id, status: cmd === 'activate' ? 'active' : 'paused' });
         return 0;
       }
+      case 'phase': {
+        const n = flagNum('--n', 0);
+        if (n < 1 || n > 4) {
+          console.error('phase requires --n 1..4');
+          return 1;
+        }
+        const protocol = (flag('--protocol') as ExperimentProtocol | undefined) ?? undefined;
+        const clusterBy = (flag('--cluster-by') as ClusterBy | undefined) ?? 'expert';
+        const result = launchPhase(db, {
+          phase: n as 1 | 2 | 3 | 4,
+          protocol,
+          periodDays:
+            flag('--period-days') !== undefined ? flagNum('--period-days', 14) : undefined,
+          washoutDays: flag('--washout') !== undefined ? flagNum('--washout', 3) : undefined,
+          clusterBy,
+          sandbox: Bun.env.OPS_EXPERIMENT_SANDBOX === '1' || argv.includes('--sandbox'),
+        });
+        out({
+          id: unbrand(result.experiment.id),
+          name: result.experiment.name,
+          status: result.experiment.status,
+          protocol: result.protocol,
+          assigned: result.assigned,
+          switchbackScheduled: result.switchbackScheduled,
+          clusterBy: result.clusterBy,
+          variants: result.experiment.design.variants.length,
+        });
+        return 0;
+      }
       case 'assign': {
         const id = flag('--id');
         const partners = partnerIdsFromFlag();
@@ -277,6 +313,96 @@ function main(): number {
           };
         });
         out(results.length === 1 ? results[0]! : results);
+        return 0;
+      }
+      case 'assign-cluster': {
+        const id = flag('--id');
+        const partner = flag('--partner');
+        if (!id || !partner || partner.includes(',')) {
+          console.error('assign-cluster requires --id and a single --partner');
+          return 1;
+        }
+        const clusterBy = (flag('--cluster-by') as ClusterBy | undefined) ?? 'expert';
+        const node = db
+          .query(`SELECT id, expert_id, parent_id, type FROM tree_nodes WHERE id = $id`)
+          .get({ $id: partner }) as {
+          id: string; // brand-ok — opaque tree_nodes primary key
+          expert_id: string | null; // brand-ok — opaque FK from SQLite row
+          parent_id: string | null; // brand-ok — opaque FK from SQLite row
+          type: string;
+        } | null;
+        if (!node) {
+          console.error('partner not found');
+          return 1;
+        }
+        const key =
+          clusterBy === 'expert' && node.expert_id
+            ? `expert:${node.expert_id}`
+            : node.parent_id
+              ? `parent:${node.parent_id}`
+              : node.expert_id
+                ? `expert:${node.expert_id}`
+                : 'default';
+        const result = assignClustered(db, engine, {
+          experimentId: parseExperimentId(id),
+          partnerId: parseTreeNodeId(partner),
+          clusterKey: key,
+        });
+        out({
+          clusterKey: key,
+          assignmentId: result.assignmentId,
+          variantId: unbrand(result.variantId),
+          config: result.config,
+        });
+        return 0;
+      }
+      case 'switchback-schedule': {
+        const id = flag('--id');
+        const partner = flag('--partner');
+        if (!id || !partner) {
+          console.error('switchback-schedule requires --id and --partner');
+          return 1;
+        }
+        const periods = createSwitchbackSchedule(db, engine, {
+          experimentId: parseExperimentId(id),
+          partnerId: parseTreeNodeId(partner),
+          periodDays: flagNum('--period-days', 14),
+          washoutDays: flagNum('--washout', 3),
+        });
+        out({
+          periods: periods.length,
+          first: periods[0]
+            ? {
+                startsAt: periods[0].startsAt,
+                endsAt: periods[0].endsAt,
+                config: periods[0].config,
+              }
+            : null,
+        });
+        return 0;
+      }
+      case 'switchback-analyze': {
+        const id = flag('--id');
+        if (!id) {
+          console.error('switchback-analyze requires --id');
+          return 1;
+        }
+        const analysis = analyzeSwitchback(
+          db,
+          engine,
+          parseExperimentId(id),
+          flag('--metric') ?? 'win_rate'
+        );
+        out(analysis);
+        return 0;
+      }
+      case 'check': {
+        const id = flag('--id');
+        if (!id) {
+          console.error('check requires --id');
+          return 1;
+        }
+        out(dailyCheckById(db, id));
         return 0;
       }
       case 'assign-active': {

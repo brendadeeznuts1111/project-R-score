@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   RegistryClient,
   RegistryHttpError,
+  uint8TotalBytes,
   type RegistryFetch,
   type RegistryIndex,
 } from '../packages/registry-client/src/index';
@@ -29,7 +30,7 @@ async function fixtureIndex(data: Uint8Array): Promise<RegistryIndex> {
             publisher: 'test',
             storage: {
               r2Key: '@factorywager/routing-algorithms/1.0.0.tgz',
-              size: data.byteLength,
+              size: uint8TotalBytes(data),
               checksum: await checksum(data),
               contentType: 'application/gzip',
             },
@@ -41,6 +42,13 @@ async function fixtureIndex(data: Uint8Array): Promise<RegistryIndex> {
 }
 
 describe('@factorywager/registry-client', () => {
+  test('Uint8Array.BYTES_PER_ELEMENT is 1 for artifact byte math', () => {
+    expect(Uint8Array.BYTES_PER_ELEMENT).toBe(1);
+    const data = new Uint8Array([1, 2, 3]);
+    expect(uint8TotalBytes(data)).toBe(data.byteLength);
+    expect(uint8TotalBytes(data)).toBe(data.length);
+  });
+
   test('resolves dist-tags and verifies downloads', async () => {
     const data = new Uint8Array([1, 2, 3]);
     const index = await fixtureIndex(data);

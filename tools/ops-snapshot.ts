@@ -158,34 +158,8 @@ export async function buildRegistrySnapshot(options?: {
       }
     }
 
-    // 1b. Proof taxonomy + channel-meta bake (before ops-summary so disk slices are fresh)
+    // 1b. Channel-meta bake first, then taxonomy (so bake↔release consistency is fresh)
     const root = resolvePath(import.meta.dir, '..');
-    let proofTaxonomySummary: {
-      ok: boolean;
-      contractsOk: number;
-      contracts: number;
-      consistencyOk: number;
-      proofHash?: string;
-    } | null = null;
-    try {
-      const tax = await saveProofTaxonomyAudit(root);
-      proofTaxonomySummary = {
-        ok: tax.ok,
-        contractsOk: tax.audits.filter(a => a.ok).length,
-        contracts: tax.audits.length,
-        consistencyOk: tax.consistency.filter(c => c.ok).length,
-        proofHash: tax.proofHash,
-      };
-      if (!tax.ok) {
-        console.warn('[ops-snapshot] proof taxonomy audit degraded — run verify:proof-taxonomy');
-      }
-    } catch (e) {
-      console.warn(
-        '[ops-snapshot] proof taxonomy audit skipped:',
-        e instanceof Error ? e.message : e
-      );
-    }
-
     let channelMetaSummary: {
       ok: boolean;
       passed?: number;
@@ -220,6 +194,32 @@ export async function buildRegistrySnapshot(options?: {
         };
         console.warn('[ops-snapshot] channel-meta skipped:', channelMetaSummary.error);
       }
+    }
+
+    let proofTaxonomySummary: {
+      ok: boolean;
+      contractsOk: number;
+      contracts: number;
+      consistencyOk: number;
+      proofHash?: string;
+    } | null = null;
+    try {
+      const tax = await saveProofTaxonomyAudit(root);
+      proofTaxonomySummary = {
+        ok: tax.ok,
+        contractsOk: tax.audits.filter(a => a.ok).length,
+        contracts: tax.audits.length,
+        consistencyOk: tax.consistency.filter(c => c.ok).length,
+        proofHash: tax.proofHash,
+      };
+      if (!tax.ok) {
+        console.warn('[ops-snapshot] proof taxonomy audit degraded — run verify:proof-taxonomy');
+      }
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] proof taxonomy audit skipped:',
+        e instanceof Error ? e.message : e
+      );
     }
 
     // 2. Ops summary (embeds disk routing / taxonomy / channel-meta slices)

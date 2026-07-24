@@ -221,10 +221,22 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
     audits.push(auditProofTaxonomy(contract, raw));
   }
 
+  const bakePath = joinPath(rootDir, 'public/registry/channel-meta-bake.json');
+  const bakeFile = Bun.file(bakePath);
+  let channelMetaBake: Record<string, unknown> | null = null;
+  if (await bakeFile.exists()) {
+    try {
+      channelMetaBake = (await bakeFile.json()) as Record<string, unknown>;
+    } catch {
+      channelMetaBake = { type: 'invalid' };
+    }
+  }
+
   const consistency = auditProofConsistency({
     release: loaded['public/registry/release-features.json'] as {
       results?: VerificationResult[];
       summary?: { bySubsystem?: Record<string, { passed: number; total: number }> };
+      proofHash?: string;
     },
     installPlatform: loaded['public/registry/install-platform.json'] as {
       results?: VerificationResult[];
@@ -238,6 +250,16 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
       results?: VerificationResult[];
       summary?: { bySubsystem?: Record<string, { passed: number; total: number }> };
     },
+    bundlerLoaders: loaded['public/registry/bundler-loaders-proof.json'] as {
+      results?: VerificationResult[];
+      summary?: { bySubsystem?: Record<string, { passed: number; total: number }> };
+    },
+    networkingChannel: loaded['public/registry/networking-channel-proof.json'] as {
+      results?: VerificationResult[];
+      summary?: { bySubsystem?: Record<string, { passed: number; total: number }> };
+    },
+    // Always evaluate bake consistency when release exists (missing → fail row)
+    channelMetaBake: loaded['public/registry/release-features.json'] ? channelMetaBake : undefined,
   });
 
   const contractsOk = audits.every(a => a.ok);

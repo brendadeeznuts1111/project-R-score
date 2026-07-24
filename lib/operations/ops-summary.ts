@@ -115,6 +115,8 @@ export type OpsSummaryProofTaxonomy = {
 export type OpsSummaryChannelMeta = {
   available: boolean;
   ok?: boolean;
+  /** bake.proofHash ≠ release-features.proofHash */
+  stale?: boolean;
   passed?: number;
   total?: number;
   status?: 'pass' | 'fail';
@@ -399,9 +401,22 @@ export function loadChannelMetaSlice(
       sources?: OpsSummaryChannelMeta['sources'];
     };
     if (bake.type === 'ChannelMetaBake' || bake.proofHash) {
+      let stale = false;
+      try {
+        const relMapped = Bun.mmap(releasePath);
+        const rel = JSON.parse(new TextDecoder().decode(relMapped)) as {
+          proofHash?: string;
+        };
+        if (bake.proofHash && rel.proofHash && bake.proofHash !== rel.proofHash) {
+          stale = true;
+        }
+      } catch {
+        /* release missing — bake alone is still available */
+      }
       return {
         available: true,
-        ok: bake.status === 'pass',
+        ok: bake.status === 'pass' && !stale,
+        stale,
         passed: bake.passed,
         total: bake.total,
         status: bake.status,

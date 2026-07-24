@@ -44,6 +44,31 @@ export {
   type ExperimentPolicy,
 } from './policy.ts';
 export {
+  EXPERIMENT_PHASES,
+  getPhase,
+  phaseDesignSize,
+  type ExperimentProtocol,
+  type PhasePreset,
+} from './phases.ts';
+export {
+  clusterKeyForNode,
+  dailyCheck,
+  dailyCheckById,
+  launchPhase,
+  type ClusterBy,
+  type DailyCheckResult,
+  type LaunchPhaseOpts,
+  type LaunchPhaseResult,
+} from './runner.ts';
+export {
+  ensurePredictionShadowSchema,
+  evaluateShadow,
+  resolveShadowActual,
+  shadowLog,
+  type ShadowEvalResult,
+  type ShadowLogInput,
+} from './champion-challenger.ts';
+export {
   FactorialEngine,
   resolveExperimentCoverageFloor,
   getPartnerVariantConfig,
