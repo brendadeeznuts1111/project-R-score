@@ -698,10 +698,21 @@ class OperationsDashboard extends HTMLElement {
             d.toc.principalOutstandingTotal != null
               ? `principal $${Math.round(d.toc.principalOutstandingTotal)}`
               : '';
+          const settled =
+            d.toc.playsSettled != null ? `${d.toc.playsSettled} settled` : '';
+          const openTasks =
+            d.toc.openTasks != null ? `${d.toc.openTasks} open tasks` : '';
+          const bn =
+            d.toc.openBottlenecks != null
+              ? `${d.toc.openBottlenecks} bottlenecks`
+              : '';
           tocDetail.textContent =
             `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''}${topProc ? ` · ${topProc}` : ''}${settle ? ` · ${settle}` : ''}${principal ? ` · ${principal}` : ''} · ` +
             `${d.toc.warming ?? 0} warming · ${d.toc.onboarding ?? 0} onboarding · ` +
-            `${d.toc.openOnb ?? 0} ONB · ${d.toc.playsPending ?? 0} plays · ` +
+            `${d.toc.openOnb ?? 0} ONB · ${d.toc.playsPending ?? 0} plays` +
+            `${settled ? ` · ${settled}` : ''}` +
+            `${openTasks ? ` · ${openTasks}` : ''}` +
+            `${bn ? ` · ${bn}` : ''} · ` +
             `${d.toc.activeExperiments ?? 0} experiments`;
         }
         if (tocEnf) {
@@ -711,10 +722,13 @@ class OperationsDashboard extends HTMLElement {
           const crit = d.toc.enforcementCritical;
           const top = d.toc.topRankedProcess;
           const avgRP = d.toc.avgRP;
+          const playable =
+            d.toc.playableDrums != null ? ` · ${d.toc.playableDrums} playable` : '';
           const tioe =
             t != null
               ? `T $${Math.round(t)} · I $${Math.round(i ?? 0)} · OE $${Math.round(oe ?? 0)}` +
-                (crit != null ? ` · ${crit} critical` : '')
+                (crit != null ? ` · ${crit} critical` : '') +
+                playable
               : 'T/I/OE not baked — reseed toc';
           const ret =
             top != null

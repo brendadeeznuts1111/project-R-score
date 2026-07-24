@@ -196,6 +196,17 @@ function renderOpsPlane(ops) {
     loop && typeof loop.loopCompletionRate === 'number'
       ? `${Math.round(loop.loopCompletionRate * 100)}%`
       : '—';
+  const capParts = [];
+  if (loop?.capitalEfficiencyProxy != null) {
+    capParts.push(`CE ${Number(loop.capitalEfficiencyProxy).toFixed(2)}`);
+  }
+  if (loop?.limitEfficiencyProxy != null) {
+    capParts.push(`LE ${Number(loop.limitEfficiencyProxy).toFixed(2)}`);
+  }
+  if (loop?.processReturnProxy != null) {
+    capParts.push(`RP ${Number(loop.processReturnProxy).toFixed(2)}`);
+  }
+  const capLine = capParts.length ? ` · ${capParts.join(' · ')}` : '';
   const failRate =
     ops.channels?.failRate != null
       ? `${Math.round(ops.channels.failRate * 100)}%`
@@ -217,7 +228,7 @@ function renderOpsPlane(ops) {
             `dispatch ${loop.dispatched ?? 0} · reserve ${loop.reserved ?? 0} · settle ${loop.settled ?? 0} · outbox ${loop.outboxSent ?? 0}/${(loop.outboxSent ?? 0) + (loop.outboxFailed ?? 0)}`
           )
         : 'No loop slice'
-    }${failRate != null ? esc(` · fail ${failRate}`) : ''}</p>
+    }${failRate != null ? esc(` · fail ${failRate}`) : ''}${esc(capLine)}</p>
     <div class="plane-actions">
       <a class="ops-link" href="/portal/ops/">Full Ops</a>
       <a class="ops-link" href="/registry/ops-summary.json">ops-summary.json</a>

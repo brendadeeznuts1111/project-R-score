@@ -430,6 +430,18 @@ function renderPartners(partners, assetBySign, limitBySign) {
                     : ''
                 }
               </ul>
+              ${(() => {
+                const entries = [...(p.softBalance?.recentEntries || [])]
+                  .sort((a, b) => String(b.timestamp || '').localeCompare(String(a.timestamp || '')))
+                  .slice(0, 5);
+                if (!entries.length) return '';
+                return `<ul class="toc-soft-journal">${entries
+                  .map(
+                    e =>
+                      `<li class="toc-sub">${pill(e.entryType, e.entryType === 'ProfitSplit' ? 'ok' : e.entryType === 'Loss' ? 'hot' : 'dim')} ${esc(e.stakeholder)} ${money(e.amount)} · <code>${esc(e.callSign || '—')}</code></li>`
+                  )
+                  .join('')}</ul>`;
+              })()}
             </section>
             <section>
               <h4>Bottlenecks</h4>

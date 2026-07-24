@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-24T07:23:56.889Z",
+  "generatedAt": "2026-07-24T07:28:18.737Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -94,10 +94,10 @@
     "houseFloatHard": 42500,
     "floatRatio": 0.85,
     "throttleOnboarding": false,
-    "settlementFloatRatio": 0.3656491110365649,
+    "settlementFloatRatio": 0.5249937201708114,
     "primedDrums": 3,
     "playableDrums": 1,
-    "principalOutstandingTotal": 14800
+    "principalOutstandingTotal": 19800
   },
   "experts": [
     {
@@ -118,6 +118,15 @@
         "Tennis"
       ],
       "weight": 1
+    },
+    {
+      "expertId": "kai",
+      "displayName": "Kai",
+      "markets": [
+        "MLB",
+        "Soccer"
+      ],
+      "weight": 0.95
     }
   ],
   "experiments": [
@@ -166,6 +175,12 @@
           "variantKey": "dynamic",
           "metricValue": 0.88,
           "assignedAt": "2026-07-18T12:00:00.000Z"
+        },
+        {
+          "partnerCode": "NOV",
+          "variantKey": "static",
+          "metricValue": 0.12,
+          "assignedAt": "2026-07-22T10:00:00.000Z"
         }
       ],
       "clusterBy": "partner_code"
@@ -207,8 +222,14 @@
         {
           "partnerCode": "PAT",
           "variantKey": "std_70",
-          "metricValue": 1200,
+          "metricValue": 2760,
           "assignedAt": "2026-06-01T00:00:00.000Z"
+        },
+        {
+          "partnerCode": "ASH",
+          "variantKey": "alt_65",
+          "metricValue": 408,
+          "assignedAt": "2026-06-15T00:00:00.000Z"
         }
       ],
       "clusterBy": "package_id"
@@ -278,6 +299,16 @@
           "destinationHint": "@ash.hr.fl",
           "dailyLimit": 10000,
           "monthlyLimit": 40000
+        },
+        {
+          "id": "rail-ash-cashapp-1",
+          "railType": "CashApp",
+          "label": "CASHOUT-CASHAPP",
+          "confirmed": true,
+          "profileScreenshotRef": "proof:ash-cashapp-profile",
+          "destinationHint": "$ashHRFL",
+          "dailyLimit": 8000,
+          "monthlyLimit": 30000
         }
       ],
       "accounts": [
@@ -419,9 +450,9 @@
       ],
       "softBalance": {
         "byStakeholder": {
-          "Partner": 0,
-          "Expert": 0,
-          "House": 10000
+          "Partner": 403,
+          "Expert": 115,
+          "House": 10058
         },
         "recentEntries": [
           {
@@ -449,6 +480,14 @@
             "timestamp": "2026-07-16T14:31:00.000Z"
           },
           {
+            "entryType": "Loss",
+            "stakeholder": "House",
+            "amount": 40,
+            "callSign": "ASH-001",
+            "taskId": "WARM-ASH-001-20260716-120000-001",
+            "timestamp": "2026-07-16T14:32:00.000Z"
+          },
+          {
             "entryType": "CapitalDeployment",
             "stakeholder": "House",
             "amount": 5000,
@@ -463,6 +502,54 @@
             "callSign": "ASH-003",
             "taskId": "FUND-ASH-003-20260719-100000-001",
             "timestamp": "2026-07-19T10:00:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Partner",
+            "amount": 168,
+            "callSign": "ASH-001",
+            "taskId": "WD-ASH-001-20260718-000000-001",
+            "timestamp": "2026-07-18T00:15:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Expert",
+            "amount": 48,
+            "callSign": "ASH-001",
+            "taskId": "WD-ASH-001-20260718-000000-001",
+            "timestamp": "2026-07-18T00:15:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "House",
+            "amount": 24,
+            "callSign": "ASH-001",
+            "taskId": "WD-ASH-001-20260718-000000-001",
+            "timestamp": "2026-07-18T00:15:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Partner",
+            "amount": 235,
+            "callSign": "ASH-001",
+            "taskId": "WD-ASH-001-20260721-210000-001",
+            "timestamp": "2026-07-21T21:10:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Expert",
+            "amount": 67,
+            "callSign": "ASH-001",
+            "taskId": "WD-ASH-001-20260721-210000-001",
+            "timestamp": "2026-07-21T21:10:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "House",
+            "amount": 34,
+            "callSign": "ASH-001",
+            "taskId": "WD-ASH-001-20260721-210000-001",
+            "timestamp": "2026-07-21T21:10:00.000Z"
           }
         ],
         "pendingDeployments": {
@@ -525,6 +612,46 @@
           "variantKey": "static",
           "placedAt": "2026-07-17T19:10:00.000Z",
           "settledAt": "2026-07-17T23:40:00.000Z"
+        },
+        {
+          "playId": "play-ash-001-tennis-001",
+          "taskId": "PLAY-ASH-001-20260721-150000-001",
+          "callSign": "ASH-001",
+          "partnerCode": "ASH",
+          "expertId": "elena",
+          "market": "Tennis",
+          "event": "Alcaraz vs Sinner",
+          "selection": "Alcaraz ML",
+          "odds": -125,
+          "stake": 900,
+          "confidence": 0.66,
+          "status": "settled",
+          "result": "win",
+          "pnl": 336,
+          "experimentId": "exp-routing-phase1-2026-07",
+          "variantKey": "static",
+          "placedAt": "2026-07-21T15:05:00.000Z",
+          "settledAt": "2026-07-21T20:40:00.000Z"
+        },
+        {
+          "playId": "play-ash-001-mlb-loss-001",
+          "taskId": "PLAY-ASH-001-20260719-170000-001",
+          "callSign": "ASH-001",
+          "partnerCode": "ASH",
+          "expertId": "kai",
+          "market": "MLB",
+          "event": "LAD @ SF",
+          "selection": "LAD -1.5",
+          "odds": 140,
+          "stake": 600,
+          "confidence": 0.51,
+          "status": "settled",
+          "result": "loss",
+          "pnl": -600,
+          "experimentId": "exp-routing-phase1-2026-07",
+          "variantKey": "static",
+          "placedAt": "2026-07-19T17:20:00.000Z",
+          "settledAt": "2026-07-19T22:05:00.000Z"
         },
         {
           "playId": "play-ash-002-blocked-001",
@@ -591,7 +718,7 @@
       },
       "flowStage": "PLAY",
       "readiness": {
-        "score": 0.52,
+        "score": 0.35366666666666663,
         "playableAccountCount": 1,
         "accountScores": [
           {
@@ -617,6 +744,18 @@
               "limits_fresh",
               "gate12_principal_out"
             ]
+          },
+          {
+            "callSign": "PAT-003",
+            "score": 0.020999999999999998,
+            "playable": false,
+            "weightedScore": 0,
+            "factors": [
+              "Funded",
+              "warmup_0_of_2",
+              "limits_unknown",
+              "gate12_principal_out"
+            ]
           }
         ]
       },
@@ -635,7 +774,8 @@
           "id": "rail-pat-paypal-1",
           "railType": "PayPal",
           "label": "CASHOUT-PAYPAL",
-          "confirmed": false,
+          "confirmed": true,
+          "profileScreenshotRef": "proof:pat-paypal-profile",
           "destinationHint": "pat@example.com",
           "dailyLimit": 5000,
           "monthlyLimit": 20000
@@ -704,6 +844,35 @@
             "screenshotRef": "proof:pat-002-limits",
             "freshness": "fresh"
           }
+        },
+        {
+          "callSign": "PAT-003",
+          "status": "Funded",
+          "warmupCount": 0,
+          "warmupProgress": {
+            "completed": 0,
+            "required": 2,
+            "tags": [
+              "#FUNDED",
+              "#AWAIT-WARM"
+            ]
+          },
+          "capitalLocation": "WithPartner",
+          "hardBalance": 5000,
+          "primaryRailId": "rail-pat-paypal-1",
+          "gate12": {
+            "housePrincipalOutstanding": 5000,
+            "withdrawalMode": "warmup_capital_return"
+          },
+          "sportsbook": "Hard Rock Florida",
+          "expertId": "kai",
+          "flowStage": "WARM",
+          "limits": {
+            "dailyMax": null,
+            "weeklyMax": null,
+            "checkedAt": null,
+            "freshness": "unknown"
+          }
         }
       ],
       "openTasks": [
@@ -756,14 +925,39 @@
           "status": "Completed",
           "ballInCourt": "Ops",
           "nextAction": "Done — Soft location WithPartner → InSportsbook verified",
+          "proofRefs": [
+            "proof:pat-002-fund"
+          ],
           "createdAt": "2026-07-21T11:00:00.000Z"
+        },
+        {
+          "taskId": "FUND-PAT-003-20260723-090000-001",
+          "taskType": "FUND",
+          "callSign": "PAT-003",
+          "status": "Completed",
+          "ballInCourt": "Ops",
+          "nextAction": "Done — PayPal corridor funded; Soft pending InSportsbook confirm",
+          "proofRefs": [
+            "proof:pat-003-fund",
+            "proof:pat-paypal-profile"
+          ],
+          "createdAt": "2026-07-23T09:00:00.000Z"
+        },
+        {
+          "taskId": "WARM-PAT-003-20260723-120000-001",
+          "taskType": "WARM",
+          "callSign": "PAT-003",
+          "status": "PendingPartner",
+          "ballInCourt": "Partner",
+          "nextAction": "Start cycle 1 dummy bet (ML near-even); post slip + settlement",
+          "createdAt": "2026-07-23T12:00:00.000Z"
         }
       ],
       "softBalance": {
         "byStakeholder": {
-          "Partner": 840,
-          "Expert": 240,
-          "House": 12420
+          "Partner": 1400,
+          "Expert": 400,
+          "House": 17500
         },
         "recentEntries": [
           {
@@ -781,6 +975,38 @@
             "callSign": "PAT-002",
             "taskId": "FUND-PAT-002-20260721-110000-001",
             "timestamp": "2026-07-21T11:20:00.000Z"
+          },
+          {
+            "entryType": "CapitalDeployment",
+            "stakeholder": "House",
+            "amount": 5000,
+            "callSign": "PAT-003",
+            "taskId": "FUND-PAT-003-20260723-090000-001",
+            "timestamp": "2026-07-23T09:20:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Partner",
+            "amount": 560,
+            "callSign": "PAT-001",
+            "taskId": "WD-PAT-001-20260712-190000-001",
+            "timestamp": "2026-07-12T19:30:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Expert",
+            "amount": 160,
+            "callSign": "PAT-001",
+            "taskId": "WD-PAT-001-20260712-190000-001",
+            "timestamp": "2026-07-12T19:30:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "House",
+            "amount": 80,
+            "callSign": "PAT-001",
+            "taskId": "WD-PAT-001-20260712-190000-001",
+            "timestamp": "2026-07-12T19:30:00.000Z"
           },
           {
             "entryType": "ProfitSplit",
@@ -805,11 +1031,19 @@
             "callSign": "PAT-001",
             "taskId": "WD-PAT-001-20260720-180000-001",
             "timestamp": "2026-07-20T18:45:00.000Z"
+          },
+          {
+            "entryType": "Loss",
+            "stakeholder": "House",
+            "amount": 180,
+            "callSign": "PAT-001",
+            "taskId": "PLAY-PAT-001-20260714-180000-001",
+            "timestamp": "2026-07-14T23:10:00.000Z"
           }
         ],
         "pendingDeployments": {
-          "count": 0,
-          "totalAmount": 0
+          "count": 1,
+          "totalAmount": 5000
         }
       },
       "bottlenecks": [
@@ -828,13 +1062,64 @@
           "severity": "warn",
           "metric": "pending_partner_tasks",
           "threshold": 3,
-          "observed": 1,
+          "observed": 2,
           "taskId": "PLAY-PAT-001-20260722-150000-001",
           "resolvedAt": null,
-          "nextAction": "Partner holds PLAY ball — ping at 30m / escalate 60m"
+          "nextAction": "Partner holds PLAY + WARM balls — ping at 30m / escalate 60m"
+        },
+        {
+          "ruleKey": "warmup_cycle_aging",
+          "severity": "info",
+          "metric": "hours_open",
+          "threshold": 12,
+          "observed": 4,
+          "callSign": "PAT-003",
+          "taskId": "WARM-PAT-003-20260723-120000-001",
+          "resolvedAt": null,
+          "nextAction": "Kick off cycle 1 before capital idles WithPartner"
         }
       ],
       "recentPlays": [
+        {
+          "playId": "play-pat-001-prior-cycle-001",
+          "taskId": "PLAY-PAT-001-20260712-160000-001",
+          "callSign": "PAT-001",
+          "partnerCode": "PAT",
+          "expertId": "marcus",
+          "market": "NFL",
+          "event": "KC @ DEN",
+          "selection": "KC -6.5",
+          "odds": -110,
+          "stake": 1100,
+          "confidence": 0.68,
+          "status": "settled",
+          "result": "win",
+          "pnl": 800,
+          "experimentId": "exp-routing-phase1-2026-07",
+          "variantKey": "dynamic",
+          "placedAt": "2026-07-12T16:10:00.000Z",
+          "settledAt": "2026-07-12T22:00:00.000Z"
+        },
+        {
+          "playId": "play-pat-001-mlb-loss-001",
+          "taskId": "PLAY-PAT-001-20260714-180000-001",
+          "callSign": "PAT-001",
+          "partnerCode": "PAT",
+          "expertId": "kai",
+          "market": "MLB",
+          "event": "ATL @ PHI",
+          "selection": "ATL ML",
+          "odds": 105,
+          "stake": 180,
+          "confidence": 0.54,
+          "status": "settled",
+          "result": "loss",
+          "pnl": -180,
+          "experimentId": "exp-routing-phase1-2026-07",
+          "variantKey": "dynamic",
+          "placedAt": "2026-07-14T18:05:00.000Z",
+          "settledAt": "2026-07-14T23:00:00.000Z"
+        },
         {
           "playId": "play-pat-001-nfl-spread-001",
           "taskId": "PLAY-PAT-001-20260720-160000-001",
@@ -963,10 +1248,20 @@
           "id": "rail-nov-venmo-1",
           "railType": "Venmo",
           "label": "CASHOUT-VENMO",
-          "confirmed": false,
+          "confirmed": true,
+          "profileScreenshotRef": "proof:nov-venmo-profile",
           "destinationHint": "@nov.newpartner",
           "dailyLimit": 5000,
           "monthlyLimit": 20000
+        },
+        {
+          "id": "rail-nov-cashapp-1",
+          "railType": "CashApp",
+          "label": "CASHOUT-CASHAPP",
+          "confirmed": false,
+          "destinationHint": "$novNew",
+          "dailyLimit": 4000,
+          "monthlyLimit": 15000
         }
       ],
       "accounts": [
@@ -977,7 +1272,9 @@
           "warmupProgress": {
             "completed": 0,
             "required": 2,
-            "tags": []
+            "tags": [
+              "#RAIL-OK"
+            ]
           },
           "capitalLocation": "HouseFloat",
           "hardBalance": 0,
@@ -1030,17 +1327,23 @@
           "callSign": "NOV-001",
           "status": "PendingPartner",
           "ballInCourt": "Partner",
-          "nextAction": "Upload Venmo profile screenshot + confirm Ready (ONB Hard Gates)",
+          "nextAction": "Finish KYC checklist + Ready ack (Venmo rail already confirmed)",
+          "proofRefs": [
+            "proof:nov-venmo-profile"
+          ],
           "createdAt": "2026-07-22T10:00:00.000Z"
         },
         {
           "taskId": "FUND-NOV-002-20260722-140000-001",
           "taskType": "FUND",
           "callSign": "NOV-002",
-          "status": "PendingPartner",
+          "status": "Processing",
           "ballInCourt": "Partner",
-          "nextAction": "Confirm receipt screenshot before Soft location update (FUND-EX-02 if idle)",
+          "nextAction": "Confirm receipt screenshot before Soft location → InSportsbook (FUND-EX-02 if idle)",
           "linkedExceptionId": "FUND-EX-02",
+          "proofRefs": [
+            "proof:nov-002-send"
+          ],
           "createdAt": "2026-07-22T14:00:00.000Z"
         },
         {
@@ -1049,7 +1352,7 @@
           "callSign": "NOV-001",
           "status": "New",
           "ballInCourt": "Ops",
-          "nextAction": "Blocked until ONB + rail confirmed — queue after Ready",
+          "nextAction": "Blocked until ONB Ready — queue after partner ack",
           "createdAt": "2026-07-22T11:00:00.000Z"
         }
       ],
@@ -1096,6 +1399,12 @@
         }
       ],
       "recentPlays": [],
+      "experimentAssignment": {
+        "experimentId": "exp-routing-phase1-2026-07",
+        "variantKey": "static",
+        "metricName": "placement_rate",
+        "metricValue": 0.12
+      },
       "knownExceptions": [
         {
           "id": "ONB-EX-01",
@@ -1117,26 +1426,26 @@
   ],
   "summary": {
     "partners": 3,
-    "accounts": 7,
+    "accounts": 8,
     "warmed": 3,
     "warming": 1,
     "onboarding": 1,
-    "confirmedRails": 2,
-    "unconfirmedRails": 2,
-    "openTasks": 8,
+    "confirmedRails": 5,
+    "unconfirmedRails": 1,
+    "openTasks": 9,
     "openOnb": 1,
     "openLimit": 2,
-    "openWarm": 1,
+    "openWarm": 2,
     "openPlay": 1,
-    "openBottlenecks": 7,
+    "openBottlenecks": 8,
     "criticalBottlenecks": 1,
-    "principalOutstandingTotal": 14800,
+    "principalOutstandingTotal": 19800,
     "playsPending": 1,
-    "playsSettled": 2,
+    "playsSettled": 6,
     "playsBlocked": 2,
     "activeExperiments": 1,
     "byTaskType": {
-      "WARM": 1,
+      "WARM": 2,
       "LIMIT": 2,
       "WD": 2,
       "PLAY": 1,
@@ -1144,7 +1453,7 @@
       "FUND": 1
     },
     "byBallInCourt": {
-      "Partner": 5,
+      "Partner": 6,
       "Ops": 3
     },
     "byFlowStage": {
@@ -1157,9 +1466,9 @@
     "plane": "linked",
     "linked": true,
     "linkedPartners": 3,
-    "linkedAccounts": 7,
-    "linkedRails": 4,
-    "generatedAt": "2026-07-24T07:23:56.889Z",
+    "linkedAccounts": 8,
+    "linkedRails": 6,
+    "generatedAt": "2026-07-24T07:28:18.738Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -1174,6 +1483,13 @@
             "tocRailId": "rail-ash-venmo-1",
             "opsRailId": "019f92bf-40d6-72ed-9859-0c12138526b8",
             "railType": "Venmo",
+            "confirmed": true,
+            "identifier": "ops@factory-wager.com"
+          },
+          {
+            "tocRailId": "rail-ash-cashapp-1",
+            "opsRailId": "019f92bf-40d6-72ed-9859-0c12138526b8",
+            "railType": "CashApp",
             "confirmed": true,
             "identifier": "ops@factory-wager.com"
           }
@@ -1224,7 +1540,7 @@
             "tocRailId": "rail-pat-paypal-1",
             "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
             "railType": "PayPal",
-            "confirmed": false,
+            "confirmed": true,
             "identifier": "@factory-rail"
           }
         ],
@@ -1244,6 +1560,14 @@
             "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
             "book": "hardrock",
             "balance": 4800
+          },
+          {
+            "callSign": "PAT-003",
+            "treeNodeId": "019f9305-fe33-7640-96ae-fa7af0b5a8d6",
+            "sbAccountId": "019f9305-fe33-7641-861d-4f757b2f47f3",
+            "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
+            "book": "hardrock",
+            "balance": 5000
           }
         ]
       },
@@ -1259,6 +1583,13 @@
             "tocRailId": "rail-nov-venmo-1",
             "opsRailId": "019f92ee-5efa-755a-878a-29ff243ad341",
             "railType": "Venmo",
+            "confirmed": true,
+            "identifier": "@nov.newpartner"
+          },
+          {
+            "tocRailId": "rail-nov-cashapp-1",
+            "opsRailId": "019f92ee-5efa-755a-878a-29ff243ad341",
+            "railType": "CashApp",
             "confirmed": false,
             "identifier": "@nov.newpartner"
           }
@@ -1285,7 +1616,7 @@
     ]
   },
   "enforcement": {
-    "evaluatedAt": "2026-07-24T07:23:56.893Z",
+    "evaluatedAt": "2026-07-24T07:28:18.742Z",
     "plane": "operate-lite",
     "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
     "warmupRequiredForPlay": 2,
@@ -1615,6 +1946,48 @@
         "tag": "#ROPE"
       },
       {
+        "gateId": "confirmed_rail",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "reason": "Rail confirmed: CASHOUT-PAYPAL",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "reason": "Limit freshness N/A (not on Drum)"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "reason": "WARM sequence ok: PAT-003 status=Funded count=0"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "reason": "Gate 12 mode ok: warmup_capital_return"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "critical",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "reason": "PLAY blocked: warmup_count=0 status=Funded (need WARMED + 2)",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
         "gateId": "play_warmed",
         "ok": true,
         "severity": "info",
@@ -1727,13 +2100,48 @@
       },
       {
         "gateId": "screenshot_first",
-        "ok": false,
-        "severity": "warn",
+        "ok": true,
+        "severity": "info",
         "partnerCode": "PAT",
         "callSign": "PAT-002",
         "taskId": "FUND-PAT-002-20260721-110000-001",
-        "reason": "Missing proofRefs on FUND-PAT-002-20260721-110000-001",
-        "tag": "#HARDGATE-VIOLATION"
+        "reason": "Screenshot-first ok / waiting Partner (Completed)"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "taskId": "FUND-PAT-003-20260723-090000-001",
+        "reason": "Soft present for FUND-PAT-003-20260723-090000-001"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "taskId": "FUND-PAT-003-20260723-090000-001",
+        "reason": "Screenshot-first ok / waiting Partner (Completed)"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "taskId": "WARM-PAT-003-20260723-120000-001",
+        "reason": "Soft check N/A (task not money-close)"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-003",
+        "taskId": "WARM-PAT-003-20260723-120000-001",
+        "reason": "Screenshot check deferred (early status)"
       },
       {
         "gateId": "partner_ready",
@@ -1748,16 +2156,16 @@
         "ok": true,
         "severity": "info",
         "partnerCode": "NOV",
-        "reason": "ONB — FUND gated until Ready + confirmed rail (current confirmed=false)"
+        "reason": "ONB — FUND gated until Ready + confirmed rail (current confirmed=true)"
       },
       {
         "gateId": "confirmed_rail",
-        "ok": false,
-        "severity": "critical",
+        "ok": true,
+        "severity": "info",
         "partnerCode": "NOV",
         "callSign": "NOV-001",
-        "reason": "Rail not confirmed for NOV-001 — FUND/WD Rope cut",
-        "tag": "#HARDGATE-VIOLATION"
+        "reason": "Rail confirmed: CASHOUT-VENMO",
+        "tag": "#ROPE"
       },
       {
         "gateId": "limit_fresh_drum",
@@ -1794,12 +2202,12 @@
       },
       {
         "gateId": "confirmed_rail",
-        "ok": false,
-        "severity": "critical",
+        "ok": true,
+        "severity": "info",
         "partnerCode": "NOV",
         "callSign": "NOV-002",
-        "reason": "Rail not confirmed for NOV-002 — FUND/WD Rope cut",
-        "tag": "#HARDGATE-VIOLATION"
+        "reason": "Rail confirmed: CASHOUT-VENMO",
+        "tag": "#ROPE"
       },
       {
         "gateId": "limit_fresh_drum",
@@ -1868,7 +2276,7 @@
         "partnerCode": "NOV",
         "callSign": "NOV-002",
         "taskId": "FUND-NOV-002-20260722-140000-001",
-        "reason": "Screenshot-first ok / waiting Partner (PendingPartner)"
+        "reason": "Screenshot-first ok / waiting Partner (Processing)"
       },
       {
         "gateId": "soft_posted",
@@ -1889,23 +2297,23 @@
         "reason": "Screenshot check deferred (early status)"
       }
     ],
-    "passed": 57,
-    "failed": 12,
-    "criticalFailed": 7,
+    "passed": 69,
+    "failed": 9,
+    "criticalFailed": 5,
     "throughput": {
-      "T": 1200,
-      "I": 29810,
-      "OE": 20,
+      "T": 2576,
+      "I": 39810,
+      "OE": 240,
       "byPartner": {
         "ASH": {
-          "T": 0,
+          "T": 576,
           "I": 9810,
-          "OE": 20
+          "OE": 60
         },
         "PAT": {
-          "T": 1200,
-          "I": 10000,
-          "OE": 0
+          "T": 2000,
+          "I": 20000,
+          "OE": 180
         },
         "NOV": {
           "T": 0,
@@ -1929,27 +2337,27 @@
     }
   },
   "returnEfficiency": {
-    "computedAt": "2026-07-24T07:23:56.889Z",
+    "computedAt": "2026-07-24T07:28:18.737Z",
     "byProcess": [
       {
         "process": "WARM",
         "callSign": "ASH-002",
         "partnerCode": "ASH",
-        "deltaT": 441.6,
+        "deltaT": 273.7,
         "iPeak": 5000,
-        "tauDays": 7.808297326388889,
+        "tauDays": 7.811327974537037,
         "oe": 0,
-        "rP": 0.011311044688515397
+        "rP": 0.0070077713006595835
       },
       {
         "process": "LIMIT",
         "callSign": "ASH-001",
         "partnerCode": "ASH",
-        "deltaT": 297.3142857142857,
+        "deltaT": 279.325,
         "iPeak": 0,
-        "tauDays": 3.933297326388889,
+        "tauDays": 3.936327974537037,
         "oe": 0,
-        "rP": 75.58906968958948
+        "rP": 70.96080453835968
       },
       {
         "process": "WD",
@@ -1957,19 +2365,19 @@
         "partnerCode": "ASH",
         "deltaT": 4800,
         "iPeak": 4800,
-        "tauDays": 0.8082973263888888,
+        "tauDays": 0.8113279745370371,
         "oe": 0,
-        "rP": 1.2371685113293063
+        "rP": 1.2325471712849834
       },
       {
         "process": "PLAY",
         "callSign": "PAT-001",
         "partnerCode": "PAT",
-        "deltaT": 441.6,
+        "deltaT": 273.7,
         "iPeak": 5200,
-        "tauDays": 1.6832973263888888,
+        "tauDays": 1.686327974537037,
         "oe": 0,
-        "rP": 0.050450431775626386
+        "rP": 0.03121256136373213
       },
       {
         "process": "WD",
@@ -1977,56 +2385,66 @@
         "partnerCode": "PAT",
         "deltaT": 5000,
         "iPeak": 5000,
-        "tauDays": 1.6416306597222223,
+        "tauDays": 1.6446613078703705,
         "oe": 0,
-        "rP": 0.609150416433626
+        "rP": 0.6080279235697922
+      },
+      {
+        "process": "WARM",
+        "callSign": "PAT-003",
+        "partnerCode": "PAT",
+        "deltaT": 273.7,
+        "iPeak": 5000,
+        "tauDays": 0.8113279745370371,
+        "oe": 0,
+        "rP": 0.06746963215613998
       },
       {
         "process": "ONB",
         "callSign": "NOV-001",
         "partnerCode": "NOV",
-        "deltaT": 441.6,
+        "deltaT": 273.7,
         "iPeak": 0,
-        "tauDays": 1.8916306597222223,
+        "tauDays": 1.8946613078703705,
         "oe": 0,
-        "rP": 233.44937751476658
+        "rP": 144.4585366593268
       },
       {
         "process": "FUND",
         "callSign": "NOV-002",
         "partnerCode": "NOV",
-        "deltaT": 66.24,
+        "deltaT": 41.055,
         "iPeak": 5000,
-        "tauDays": 1.7249639930555556,
+        "tauDays": 1.7279946412037037,
         "oe": 0,
-        "rP": 0.007680160312525041
+        "rP": 0.004751750847028264
       },
       {
         "process": "LIMIT",
         "callSign": "NOV-001",
         "partnerCode": "NOV",
-        "deltaT": 110.4,
+        "deltaT": 68.425,
         "iPeak": 0,
-        "tauDays": 1.8499639930555556,
+        "tauDays": 1.8529946412037037,
         "oe": 0,
-        "rP": 59.67683717868157
+        "rP": 36.92671229505077
       }
     ],
     "byAsset": [
       {
         "callSign": "ASH-001",
         "partnerCode": "ASH",
-        "profitSplitTotal": 0,
+        "profitSplitTotal": 576,
         "peakCapital": 5000,
-        "capitalDaysInI": 8.558297326388889,
-        "ce": 0
+        "capitalDaysInI": 8.561327974537036,
+        "ce": 0.01345585642117975
       },
       {
         "callSign": "ASH-002",
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5010,
-        "capitalDaysInI": 5.641630659722222,
+        "capitalDaysInI": 5.64466130787037,
         "ce": 0
       },
       {
@@ -2034,23 +2452,31 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 4.891630659722222,
+        "capitalDaysInI": 4.89466130787037,
         "ce": 0
       },
       {
         "callSign": "PAT-001",
         "partnerCode": "PAT",
-        "profitSplitTotal": 1200,
+        "profitSplitTotal": 2000,
         "peakCapital": 5200,
-        "capitalDaysInI": 5.870797326388889,
-        "ce": 0.03930798798519864
+        "capitalDaysInI": 5.873827974537037,
+        "ce": 0.06547951119486083
       },
       {
         "callSign": "PAT-002",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 2.8360751041666665,
+        "capitalDaysInI": 2.839105752314815,
+        "ce": 0
+      },
+      {
+        "callSign": "PAT-003",
+        "partnerCode": "PAT",
+        "profitSplitTotal": 0,
+        "peakCapital": 5000,
+        "capitalDaysInI": 1,
         "ce": 0
       },
       {
@@ -2066,7 +2492,7 @@
         "partnerCode": "NOV",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 1.7214917708333333,
+        "capitalDaysInI": 1.7245224189814814,
         "ce": 0
       }
     ],
@@ -2084,8 +2510,8 @@
         "partnerCode": "ASH",
         "deltaL": 0.3,
         "cAsset": 10010,
-        "daysToUsableLimit": 5.641630659722222,
-        "le": 0.00000531229918753767
+        "daysToUsableLimit": 5.64466130787037,
+        "le": 0.0000053094469863484375
       },
       {
         "callSign": "ASH-003",
@@ -2112,6 +2538,14 @@
         "le": 0
       },
       {
+        "callSign": "PAT-003",
+        "partnerCode": "PAT",
+        "deltaL": 0.3,
+        "cAsset": 10000,
+        "daysToUsableLimit": 0.9224390856481481,
+        "le": 0.00003252247272124275
+      },
+      {
         "callSign": "NOV-001",
         "partnerCode": "NOV",
         "deltaL": 0.3,
@@ -2124,18 +2558,18 @@
         "partnerCode": "NOV",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 1.7214917708333333,
-        "le": 0.000017426746097936737
+        "daysToUsableLimit": 1.7245224189814814,
+        "le": 0.00001739612061275392
       }
     ],
-    "avgRP": 46.32888061844715,
+    "avgRP": 28.255230033695508,
     "processTypeAvgRP": {
-      "LIMIT": 67.63295343413553,
-      "ONB": 233.44937751476658,
-      "WD": 0.9231594638814662,
-      "PLAY": 0.050450431775626386,
-      "WARM": 0.011311044688515397,
-      "FUND": 0.007680160312525041
+      "LIMIT": 53.94375841670522,
+      "ONB": 144.4585366593268,
+      "WD": 0.9202875474273877,
+      "PLAY": 0.03121256136373213,
+      "WARM": 0.037238701728399784,
+      "FUND": 0.004751750847028264
     }
   },
   "rankedActions": [
@@ -2144,7 +2578,7 @@
       "process": "LIMIT",
       "callSign": "ASH-001",
       "partnerCode": "ASH",
-      "rP": 75.58906968958948,
+      "rP": 70.96080453835968,
       "weightedScore": 0.24,
       "reason": "Stale/missing limit on WARMED seat — LIMIT first (highest R)",
       "ropeSafe": true
@@ -2154,7 +2588,7 @@
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
-      "rP": 1.2371685113293063,
+      "rP": 1.2325471712849834,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -2164,7 +2598,7 @@
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
-      "rP": 0.609150416433626,
+      "rP": 0.6080279235697922,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -2174,7 +2608,7 @@
       "process": "PLAY",
       "callSign": "PAT-001",
       "partnerCode": "PAT",
-      "rP": 0.050450431775626386,
+      "rP": 0.03121256136373213,
       "weightedScore": 0.8800000000000001,
       "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
@@ -2182,21 +2616,21 @@
     {
       "rank": 5,
       "process": "WARM",
-      "callSign": "ASH-002",
-      "partnerCode": "ASH",
-      "rP": 0.011311044688515397,
-      "weightedScore": 0.022000000000000006,
+      "callSign": "PAT-003",
+      "partnerCode": "PAT",
+      "rP": 0.06746963215613998,
+      "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
     },
     {
       "rank": 6,
-      "process": "WD",
-      "callSign": "ASH-001",
+      "process": "WARM",
+      "callSign": "ASH-002",
       "partnerCode": "ASH",
-      "rP": 0,
-      "weightedScore": 0.24,
-      "reason": "Low CE / Limited — WD + reallocate capital",
+      "rP": 0.0070077713006595835,
+      "weightedScore": 0.022000000000000006,
+      "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
     },
     {
@@ -2242,6 +2676,16 @@
     {
       "rank": 11,
       "process": "WD",
+      "callSign": "PAT-003",
+      "partnerCode": "PAT",
+      "rP": 0,
+      "weightedScore": 0,
+      "reason": "Low CE / Limited — WD + reallocate capital",
+      "ropeSafe": true
+    },
+    {
+      "rank": 12,
+      "process": "WD",
       "callSign": "NOV-002",
       "partnerCode": "NOV",
       "rP": 0,
@@ -2250,16 +2694,26 @@
       "ropeSafe": true
     },
     {
-      "rank": 12,
+      "rank": 13,
       "process": "ONB",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
-      "rP": 233.44937751476658,
+      "rP": 144.4585366593268,
       "reason": "ONB new asset — buffer allows",
       "ropeSafe": true
     },
     {
-      "rank": 13,
+      "rank": 14,
+      "process": "WD",
+      "callSign": "PAT-003",
+      "partnerCode": "PAT",
+      "rP": 0,
+      "weightedScore": 0,
+      "reason": "Gate 12 principal_recovery first",
+      "ropeSafe": false
+    },
+    {
+      "rank": 15,
       "process": "WD",
       "callSign": "NOV-002",
       "partnerCode": "NOV",

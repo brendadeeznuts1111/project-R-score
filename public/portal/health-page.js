@@ -173,6 +173,18 @@ function renderPlane(opsLike) {
 
   const failRate =
     channels?.failRate != null ? `${Math.round(channels.failRate * 100)}%` : null;
+  const capParts = [];
+  if (loop?.capitalEfficiencyProxy != null) {
+    capParts.push(`CE ${Number(loop.capitalEfficiencyProxy).toFixed(2)}`);
+  }
+  if (loop?.limitEfficiencyProxy != null) {
+    capParts.push(`LE ${Number(loop.limitEfficiencyProxy).toFixed(2)}`);
+  }
+  if (loop?.processReturnProxy != null) {
+    capParts.push(`RP ${Number(loop.processReturnProxy).toFixed(2)}`);
+  }
+  const capLine = capParts.length ? ` · ${capParts.join(' · ')}` : '';
+
   const loopBlock = `<article class="plane-card" data-plane="loop">
     <h3>Channels · loop</h3>
     <div class="plane-metric">${esc(
@@ -192,7 +204,7 @@ function renderPlane(opsLike) {
                 : '')
           )
         : 'loop slice n/a on edge health'
-    }</p>
+    }${esc(capLine)}</p>
     <div class="plane-actions">
       <a class="ops-link" href="/portal/ops/">Full Ops</a>
       <a class="ops-link" href="/registry/ops-summary.json">ops-summary</a>
