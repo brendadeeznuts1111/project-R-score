@@ -19,6 +19,7 @@ import {
 import { ensurePosition, reservePlayWithRetry } from '../lib/operations/liquidity.ts';
 import { settlePlay } from '../lib/operations/play-settlement.ts';
 import { queryLoopMetricsSlice, loopThroughputLift } from '../lib/operations/ops-loop-metrics.ts';
+import { backfillOpsLoopGateAttribution } from '../lib/operations/ops-loop-gate-backfill.ts';
 import { runOpsLoopFixture } from '../lib/operations/ops-loop-fixture.ts';
 import { asPartnerTemplateId, asTreeNodeId } from '../lib/types/branded.ts';
 
@@ -168,6 +169,51 @@ describe('ops loop throughput proof', () => {
 
     const lift = loopThroughputLift(baseline, post);
     expect(lift).toBeGreaterThanOrEqual(0.6);
+  });
+});
+
+describe('backfillOpsLoopGateAttribution', () => {
+  test('fills missing gates and settle outbox on :memory:', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const playId = randomUUIDv7();
+    const nodeId = randomUUIDv7();
+
+    db.run(
+      `INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at, result, pnl, closed_at)
+       VALUES ($id, $eid, 'NBA', 'totals', 'Game', 'over', -110, 500, 0.8, 'hash', $now, 'win', 100, $now)`,
+      { $id: playId, $eid: randomUUIDv7(), $now: now }
+    );
+    db.run(
+      `INSERT INTO play_distribution (play_id, node_id, channel, received_at, stake_actual)
+       VALUES ($pid, $nid, 'telegram', $now, 250)`,
+      { $pid: playId, $nid: nodeId, $now: now }
+    );
+
+    const before = queryLoopMetricsSlice(db);
+    expect(before.dispatched).toBe(1);
+    expect(before.gatedAllow).toBe(0);
+    expect(before.settledViaFullLoop).toBe(0);
+
+    const dry = await backfillOpsLoopGateAttribution(db, { dryRun: true });
+    expect(dry.gatesInserted).toBe(1);
+    expect(dry.settleOutboxEnqueued).toBe(1);
+    expect(queryLoopMetricsSlice(db).settledViaFullLoop).toBe(0);
+
+    const result = await backfillOpsLoopGateAttribution(db, { outbox: { deliver: false } });
+    expect(result.gatesInserted).toBe(1);
+    expect(result.settleOutboxEnqueued).toBe(1);
+    expect(result.outboxProcessed?.sent).toBe(1);
+
+    const after = queryLoopMetricsSlice(db);
+    expect(after.gatedAllow).toBe(1);
+    expect(after.settledViaFullLoop).toBe(1);
+    expect(after.loopCompletionRate).toBe(1);
+
+    const again = await backfillOpsLoopGateAttribution(db, { outbox: { deliver: false } });
+    expect(again.gatesInserted).toBe(0);
+    expect(again.settleOutboxEnqueued).toBe(0);
+    db.close();
   });
 });
 

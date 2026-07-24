@@ -1,23 +1,26 @@
 {
-  "capturedAt": "2026-07-24T07:09:58.295Z",
+  "capturedAt": "2026-07-24T07:13:24.135Z",
   "source": "live",
   "metrics": {
-    "dispatched": 22,
-    "gatedAllow": 3,
+    "dispatched": 25,
+    "gatedAllow": 25,
     "gatedAdjust": 0,
     "gatedDeny": 0,
-    "reserved": 22,
-    "settled": 5,
-    "settledViaFullLoop": 1,
-    "outboxSent": 16,
+    "reserved": 25,
+    "settled": 6,
+    "settledViaFullLoop": 6,
+    "outboxSent": 42,
     "outboxFailed": 1,
     "outboxPending": 0,
     "oldestPendingAgeSec": null,
     "manualStepsPerCycle": 0,
-    "loopCompletionRate": 0.045454545454545456
+    "loopCompletionRate": 0.24,
+    "capitalEfficiencyProxy": 0.07989347536617843,
+    "limitEfficiencyProxy": 0.39050235478806905,
+    "processReturnProxy": 0.2117579908675799
   },
   "velocity": {
-    "harnessGateSumMs": 2302,
-    "harnessGeneratedAt": "2026-07-24T07:09:50.044Z"
+    "harnessGateSumMs": 3605,
+    "harnessGeneratedAt": "2026-07-24T07:13:23.371Z"
   }
 }

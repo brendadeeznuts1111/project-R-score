@@ -11,6 +11,7 @@
 | Portal panel | **Ops loop** on `/portal/ops/` · `<notification-center>` topics `identity` + `plays` |
 | Reports | [`reports/ops-loop-baseline.json`](../../../reports/ops-loop-baseline.json) · [`reports/ops-loop-post.json`](../../../reports/ops-loop-post.json) · [`reports/ops-loop-post-live.json`](../../../reports/ops-loop-post-live.json) |
 | Live proof caller | [`tools/ops-loop-live-proof.ts`](../../../tools/ops-loop-live-proof.ts) |
+| Legacy gate backfill | [`lib/operations/ops-loop-gate-backfill.ts`](../../lib/operations/ops-loop-gate-backfill.ts) · [`tools/ops-loop-gate-backfill.ts`](../../../tools/ops-loop-gate-backfill.ts) |
 
 ## Metric definitions
 
@@ -47,9 +48,25 @@ bun run ops:snapshot:once   # also runs sync + settle ticks
 # Cron daemon (snapshot + sync + settle UTC schedules)
 bun run ops:snapshot:cron
 
+# Legacy gate + settle outbox backfill (live DB repair — not re-dispatch)
+bun run ops:loop:backfill -- --dry-run
+bun run ops:loop:backfill
+bun tools/ops-loop-report.ts --out reports/ops-loop-post-live.json --compare reports/ops-loop-baseline.json
+
 # Tests
 bun test tests/ops-loop-hardening.test.ts tests/ops-summary.test.ts
 ```
+
+## Legacy gate backfill semantics
+
+Dispatches that predate `play_gate_decisions` (and settled plays missing `play.settled` outbox rows) under-count `settledViaFullLoop`. The backfill **attributes** history; it does **not** re-dispatch, re-settle, or mutate `plays.result` / liquidity.
+
+| Step | Action |
+|------|--------|
+| Gate | For each `play_distribution` row with no matching `play_gate_decisions`, insert `allowed=1`, `action='allow'`, `adjusted_stake` from `stake_actual` or `plays.stake_recommended`, reason `Legacy gate attribution (backfill — not re-dispatch)`. |
+| Settle outbox | For each settled play (`result != pending`) and distribution node lacking a **sent** `play.settled` row (`idempotency_key` `settle:{playId}:{nodeId}`), enqueue via `enqueueSettlementChannelEvent` then drain with `processChannelOutbox` (`deliver: false` by default). |
+
+**60% ceiling on live DB:** `loopCompletionRate = settledViaFullLoop / dispatched` uses `COUNT(DISTINCT play_id)` in the numerator but `COUNT(*)` on `play_distribution` in the denominator. Multi-node fan-out inflates `dispatched` faster than distinct settled plays can lift the rate. After backfill, report the achieved rate in `reports/ops-loop-post-live.json`; reaching ≥60% absolute may require a clean slate or fewer legacy distribution rows, not more attribution alone.
 
 ## Closed loop (target)
 
