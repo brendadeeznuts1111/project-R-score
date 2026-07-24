@@ -1,7 +1,7 @@
 {
   "type": "ProofTaxonomyAuditReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T04:47:10.666Z",
+  "timestamp": "2026-07-24T04:49:45.761Z",
   "ok": true,
   "reportPath": "/registry/proof-taxonomy-audit.json",
   "audits": [
@@ -10,6 +10,7 @@
       "ok": true,
       "rows": 75,
       "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
       "notes": [],
       "primarySubsystem": "runtime",
       "reportPath": "/registry/release-features.json",
@@ -20,6 +21,7 @@
       "ok": true,
       "rows": 11,
       "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
       "notes": [],
       "primarySubsystem": "package-manager",
       "reportPath": "/registry/install-platform.json",
@@ -30,6 +32,7 @@
       "ok": true,
       "rows": 8,
       "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
       "notes": [],
       "primarySubsystem": "package-manager",
       "reportPath": "/registry/install-env-proof.json",
@@ -40,6 +43,7 @@
       "ok": true,
       "rows": 0,
       "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
       "notes": [],
       "primarySubsystem": "networking",
       "reportPath": "/registry/networking-proof.json",
@@ -50,6 +54,7 @@
       "ok": true,
       "rows": 16,
       "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
       "notes": [],
       "primarySubsystem": "runtime",
       "reportPath": "/registry/bun-runtime-nits-proof.json",
@@ -60,6 +65,7 @@
       "ok": true,
       "rows": 6,
       "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
       "notes": [],
       "primarySubsystem": "bundler",
       "reportPath": "/registry/bundler-loaders-proof.json",
@@ -70,6 +76,7 @@
       "ok": true,
       "rows": 7,
       "missingSubsystem": 0,
+      "missingIntroducedIn": 0,
       "notes": [],
       "primarySubsystem": "networking",
       "reportPath": "/registry/networking-channel-proof.json",
@@ -133,5 +140,5 @@
       "notes": []
     }
   ],
-  "proofHash": "57aee896b02b4f3d9c78619c4dab82b09816789c3dfa05dd4b6807d95cdfe0dc"
+  "proofHash": "d65cb8bc1cf8327dd71e37998ebe4358faadbfce34f3d80fa0610f6cc308def3"
 }
