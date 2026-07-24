@@ -1,8 +1,8 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T07:09:24.928Z",
+  "generated": "2026-07-24T07:23:56.895Z",
   "liquidity": {
-    "total": 67910
+    "total": 72710
   },
   "experts": [
     {
@@ -29,11 +29,37 @@
   ],
   "tree": {
     "partners": 3,
-    "agents": 9,
+    "agents": 10,
     "subAgents": 1,
-    "downstreamLiquidity": 67910
+    "downstreamLiquidity": 72710
   },
   "plays": [
+    {
+      "sport": "NBA",
+      "market": "totals live-proof",
+      "event": "Loop throughput proof",
+      "selection": "over 220",
+      "odds": -110,
+      "confidence": 0,
+      "sent_at": "2026-07-24T07:10:39.995Z",
+      "result": "win",
+      "expert_name": "Edge NBA",
+      "sent_count": 3,
+      "placed_count": 0
+    },
+    {
+      "sport": "NBA",
+      "market": "totals live-proof",
+      "event": "Loop throughput proof",
+      "selection": "over 220",
+      "odds": -110,
+      "confidence": 0,
+      "sent_at": "2026-07-24T07:09:56.105Z",
+      "result": "win",
+      "expert_name": "Edge NBA",
+      "sent_count": 3,
+      "placed_count": 0
+    },
     {
       "sport": "NBA",
       "market": "spread",
@@ -119,7 +145,7 @@
         "metricName": "placement_rate",
         "variants": 2,
         "assignments": 2,
-        "metrics": 2
+        "metrics": 4
       },
       {
         "id": "019f92bf-40d7-7426-b3c3-ba48f35435a9",
@@ -143,11 +169,11 @@
   },
   "growth": {
     "period": "2026-07",
-    "playsReceived": 46,
+    "playsReceived": 52,
     "playsPlaced": 32,
     "volume": 158500,
     "pnl": 15800,
-    "nodes": 4,
+    "nodes": 5,
     "top": [
       {
         "nodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
@@ -158,14 +184,14 @@
       },
       {
         "nodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
-        "playsReceived": 12,
+        "playsReceived": 14,
         "playsPlaced": 9,
         "volume": 48000,
         "pnl": 6200
       },
       {
         "nodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
-        "playsReceived": 8,
+        "playsReceived": 10,
         "playsPlaced": 5,
         "volume": 22000,
         "pnl": -1100
@@ -176,17 +202,24 @@
         "playsPlaced": 4,
         "volume": 18500,
         "pnl": 2800
+      },
+      {
+        "nodeId": "019f92bf-40d6-72e8-96ba-f05db1d93df0",
+        "playsReceived": 2,
+        "playsPlaced": 0,
+        "volume": 0,
+        "pnl": 0
       }
     ]
   },
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "923787816288e65691bd8e3a0b42deacb41caf99071500d544a6543b7f594518",
+    "proofHash": "f66a0a671b2e44c2e4977a840fedaf58442ea50a9241f66b7693d94a809944aa",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T07:09:24.929Z"
+    "timestamp": "2026-07-24T07:23:56.895Z"
   },
   "registryClient": {
     "available": true,
@@ -260,7 +293,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-24T07:09:24.902Z",
+    "timestamp": "2026-07-24T07:23:56.866Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -446,8 +479,8 @@
         "ok": true
       }
     ],
-    "proofHash": "4cc7b813be0dc19eee1c93d0e492283468d0e3d72c89256f1ff993d2fa39569c",
-    "timestamp": "2026-07-24T07:09:24.482Z",
+    "proofHash": "58e1d61c21f27c246af69ba8322fd310eb79f430b598ebce8b6f6e84a2f0d392",
+    "timestamp": "2026-07-24T07:23:56.420Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -458,7 +491,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-24T07:09:24.477Z",
+    "updatedAt": "2026-07-24T07:23:56.416Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -642,89 +675,108 @@
     ]
   },
   "partners": {
-    "bound": 7,
-    "unboundAgents": 6,
+    "bound": 14,
+    "unboundAgents": 0,
     "byLifecycle": {
-      "active": 2,
-      "kyc_pending": 2,
-      "materialized": 1,
-      "signup": 1,
-      "suspended": 1
+      "active": 1,
+      "materialized": 12,
+      "signup": 1
     },
     "recent": [
+      {
+        "treeNodeId": "019f92ee-5ef9-728f-812a-c5b3fa642f33",
+        "profileKey": "pp-019f92ee-5ef9-728f-812a-c5b3fa64",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC PAT-001"
+      },
+      {
+        "treeNodeId": "019f92ee-5efb-7449-899b-de7d263645e7",
+        "profileKey": "pp-019f92ee-5efb-7449-899b-de7d2636",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC NOV-002"
+      },
+      {
+        "treeNodeId": "019f92ee-5efa-7558-bcb4-05414ee32210",
+        "profileKey": "pp-019f92ee-5efa-7558-bcb4-05414ee3",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC NOV-001"
+      },
+      {
+        "treeNodeId": "019f92ee-5efa-7556-98a2-d56a1d369df6",
+        "profileKey": "pp-019f92ee-5efa-7556-98a2-d56a1d36",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC PAT-002"
+      },
+      {
+        "treeNodeId": "019f92ee-5ef9-728d-950c-6c02a59903a2",
+        "profileKey": "pp-019f92ee-5ef9-728d-950c-6c02a599",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC ASH-002"
+      },
+      {
+        "treeNodeId": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+        "profileKey": "pp-019f92ee-5ef8-71e9-b207-5ae20c07",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC ASH-001"
+      },
+      {
+        "treeNodeId": "019f92f9-2e3f-74f4-8262-720202846493",
+        "profileKey": "pp-019f92f9-2e3f-74f4-8262-72020284",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC ASH-003"
+      },
       {
         "treeNodeId": "019f92ee-5ef6-758e-bb1a-fae541f29506",
         "profileKey": "pp-019f92ee-5ef6-758e-bb1a-fae541f2",
         "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "kyc_pending",
-        "name": "NOV Onboarding"
-      },
-      {
-        "treeNodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
-        "profileKey": "pp-019f92bf-40d6-72e3-aa09-f0a9b8a9",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "active",
-        "name": "Cascade Partner"
-      },
-      {
-        "treeNodeId": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-        "profileKey": "pp-019f92bf-40d6-72e4-bfd9-0c06e589",
-        "partnerTemplate": "default-prospect",
         "lifecycleStatus": "materialized",
-        "name": "Factory Rail Co"
+        "name": "NOV Onboarding"
       },
       {
         "treeNodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
         "profileKey": "pp-019f92bf-40d6-72e5-80da-8aaa4cd7",
         "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "kyc_pending",
+        "lifecycleStatus": "materialized",
         "name": "Agent Alpha"
       },
       {
         "treeNodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
         "profileKey": "pp-019f92bf-40d6-72e6-9a91-8f3f3c09",
         "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "active",
+        "lifecycleStatus": "materialized",
         "name": "Agent Beta"
-      },
-      {
-        "treeNodeId": "019f92bf-40d6-72e7-8927-9528b1e3aff6",
-        "profileKey": "pp-019f92bf-40d6-72e7-8927-9528b1e3",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "signup",
-        "name": "Agent Gamma"
-      },
-      {
-        "treeNodeId": "019f92bf-40d6-72e8-96ba-f05db1d93df0",
-        "profileKey": "pp-019f92bf-40d6-72e8-96ba-f05db1d9",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "suspended",
-        "name": "Sub Scout"
       }
     ]
   },
   "channels": {
-    "pending": 0,
+    "pending": 64,
     "failed": 1,
-    "sent": 12,
-    "oldestPendingAt": null,
-    "failRate": 0.07692307692307693
+    "sent": 42,
+    "oldestPendingAt": "2026-07-24T07:19:52.354Z",
+    "failRate": 0.023255813953488372
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-24T07:09:24.926Z",
+    "generatedAt": "2026-07-24T07:23:56.889Z",
     "partners": 3,
     "warmed": 3,
     "warming": 1,
     "onboarding": 1,
     "confirmedRails": 2,
-    "openTasks": 7,
+    "openTasks": 8,
     "openOnb": 1,
     "openLimit": 2,
-    "openBottlenecks": 6,
-    "criticalBottlenecks": 0,
-    "principalOutstandingTotal": 10000,
+    "openBottlenecks": 7,
+    "criticalBottlenecks": 1,
+    "principalOutstandingTotal": 14800,
     "throttleOnboarding": false,
     "primedDrums": 3,
     "playableDrums": 1,
@@ -735,25 +787,31 @@
     "identityLinked": true,
     "identityPartners": 3,
     "enforcementFocus": "rope",
-    "enforcementFailed": 10,
-    "enforcementCritical": 6,
+    "enforcementFailed": 12,
+    "enforcementCritical": 7,
     "throughputT": 1200,
-    "throughputI": 25010,
-    "throughputOE": 20
+    "throughputI": 29810,
+    "throughputOE": 20,
+    "topRankedProcess": "LIMIT",
+    "avgRP": 46.32888061844715,
+    "settlementFloatRatio": 0.3656491110365649
   },
   "loop": {
-    "dispatched": 19,
-    "gatedAllow": 0,
+    "dispatched": 25,
+    "gatedAllow": 25,
     "gatedAdjust": 0,
     "gatedDeny": 0,
-    "reserved": 19,
-    "settled": 4,
-    "settledViaFullLoop": 0,
-    "outboxSent": 12,
+    "reserved": 25,
+    "settled": 6,
+    "settledViaFullLoop": 6,
+    "outboxSent": 42,
     "outboxFailed": 1,
-    "outboxPending": 0,
-    "oldestPendingAgeSec": null,
-    "manualStepsPerCycle": 0,
-    "loopCompletionRate": 0
+    "outboxPending": 64,
+    "oldestPendingAgeSec": 244,
+    "manualStepsPerCycle": 64,
+    "loopCompletionRate": 0.24,
+    "capitalEfficiencyProxy": 0.047961630695443645,
+    "limitEfficiencyProxy": 0.39050235478806905,
+    "processReturnProxy": 0.2117579908675799
   }
 }

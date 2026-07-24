@@ -57,6 +57,7 @@ export const SIMD_ROUTES: PublicRouteDef[] = [
     kind: 'simd-route',
     critical: true,
     okStatuses: [200],
+    note: 'Pages: functions/health.ts · origin: serve-public health()',
   },
   {
     path: '/health/pre',
@@ -65,7 +66,7 @@ export const SIMD_ROUTES: PublicRouteDef[] = [
     kind: 'simd-route',
     critical: true,
     okStatuses: [200],
-    note: 'shared data ETag with /health (Vary: Accept)',
+    note: 'text/plain · shared data ETag with /health (Vary: Accept) · Pages: functions/health/pre.ts',
   },
   {
     path: '/api/health',
@@ -238,12 +239,27 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     okStatuses: [200],
   },
   {
+    path: '/registry/toc-ops-bake-proof.json',
+    name: 'TOC Ops bake proof',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'operate-lite gates · T/I/OE · R_P evidence',
+  },
+  {
     path: '/api/toc',
     name: 'TOC Ops API',
     category: 'api',
     kind: 'fetch-handler',
     okStatuses: [200, 404],
-    note: 'Pages Function ASSETS snapshot; POST → 503',
+    note: 'Pages Function ASSETS snapshot; summary/partners/proof; POST → 503',
+  },
+  {
+    path: '/api/toc/proof',
+    name: 'TOC Ops bake proof API',
+    category: 'api',
+    kind: 'fetch-handler',
+    okStatuses: [200, 404],
   },
   {
     path: '/portal/catalog/',

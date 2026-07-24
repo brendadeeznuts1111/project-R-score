@@ -99,3 +99,12 @@ Installed Kimi skills registry (name, description, last updated) with downloadab
 # Monitoring
 
 Registry + integrity metrics. Regenerate: `bun run ops:snapshot` bakes JSON embed into this page.
+
+
+---
+
+# portal/dashboard.md
+
+# Dashboard
+
+Executive proof summary — routing, channel meta, release features.

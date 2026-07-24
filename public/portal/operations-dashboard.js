@@ -694,8 +694,12 @@ class OperationsDashboard extends HTMLElement {
             d.toc.settlementFloatRatio != null
               ? `settle ${Math.round(d.toc.settlementFloatRatio * 100)}%`
               : '';
+          const principal =
+            d.toc.principalOutstandingTotal != null
+              ? `principal $${Math.round(d.toc.principalOutstandingTotal)}`
+              : '';
           tocDetail.textContent =
-            `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''}${topProc ? ` · ${topProc}` : ''}${settle ? ` · ${settle}` : ''} · ` +
+            `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''}${topProc ? ` · ${topProc}` : ''}${settle ? ` · ${settle}` : ''}${principal ? ` · ${principal}` : ''} · ` +
             `${d.toc.warming ?? 0} warming · ${d.toc.onboarding ?? 0} onboarding · ` +
             `${d.toc.openOnb ?? 0} ONB · ${d.toc.playsPending ?? 0} plays · ` +
             `${d.toc.activeExperiments ?? 0} experiments`;

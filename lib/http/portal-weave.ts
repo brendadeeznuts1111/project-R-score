@@ -29,6 +29,7 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Registry', href: '/portal/' },
   { label: 'Ops', href: '/portal/ops/', note: 'C4 experiments · C5 prediction' },
+  { label: 'TOC Ops', href: '/portal/toc/', note: 'Drum/Buffer/Rope · operate-lite' },
   { label: 'Monitoring', href: '/monitoring/', note: 'routing · env · proof tiles' },
   { label: 'DOD queue', href: '/portal/dod/', note: 'visual proof review' },
   { label: 'Skills', href: '/portal/skills/', note: 'catalog · .skill packages' },
@@ -42,6 +43,8 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
 /** Static registry artifacts the portal surfaces depend on. */
 export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   { label: 'ops-summary', href: '/registry/ops-summary.json' },
+  { label: 'toc-ops', href: '/registry/toc-ops.json', note: 'operate-lite bake' },
+  { label: 'toc-ops bake proof', href: '/registry/toc-ops-bake-proof.json' },
   { label: 'monitoring', href: '/registry/monitoring.json' },
   { label: 'skills-catalog', href: '/registry/skills-catalog.json' },
   { label: 'dod-queue', href: '/registry/dod-queue.json' },
@@ -58,6 +61,11 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     doc: 'docs/harness/tenants/ops-snapshot.md',
   },
   { label: 'Prediction seed', cmd: 'bun run ops:seed:prediction' },
+  {
+    label: 'TOC Ops seed',
+    cmd: 'bun run ops:seed:toc',
+    doc: 'docs/harness/tenants/toc-ops.md',
+  },
   {
     label: 'Reference discovery',
     cmd: 'bun run reference:discover:check',

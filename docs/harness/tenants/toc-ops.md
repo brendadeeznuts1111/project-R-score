@@ -56,8 +56,10 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 | `lib/channels/toc-outbox.ts` | Outbox topic `toc` — bake · gates · ranked · Soft posts |
 | `lib/operations/toc-identity-bridge.ts` | TOC ↔ tree_nodes / rails / sb_accounts |
 | `public/registry/toc-ops.json` | Pages ASSETS |
+| `public/registry/toc-ops-bake-proof.json` | Bake evidence (gates · T/I/OE · R_P) |
+| `lib/toc-ops/bake-proof.ts` | Proof builder written on export |
 | `public/portal/toc/` | Board UI (gates + T/I/OE) |
-| `functions/api/toc/[[path]].ts` | GET snapshot; POST → 503 |
+| `functions/api/toc/[[path]].ts` | GET index/summary/partners/proof; POST → 503 |
 | `ops-summary.json` → `toc` | Compact rollup for `/portal/ops/` card |
 
 ## Commands
@@ -66,7 +68,8 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 bun run ops:seed:toc              # write fixture (skip if present)
 bun run ops:seed:toc -- --force   # rebuild
 bun run ops:snapshot --no-routing # bake + embed + ops-summary.toc
-bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts tests/toc-ops-return-efficiency.test.ts
+bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
+  tests/toc-ops-return-efficiency.test.ts tests/toc-ops-contract.test.ts tests/toc-api-edge.test.ts
 ```
 
 ## Gap map (discovery)
@@ -87,6 +90,11 @@ bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts tests/t
 | SQLite Soft journal in FactoryWager ops DB | **Closed (local)** — append-only `toc_soft_entries` via `toc-soft-balance.ts`; seeded by `ops:seed:toc` |
 | R_P · CE · LE return efficiency | **Closed (bake)** — `lib/toc-ops/return-efficiency.ts` via `withTocMetrics`; ranked actions + avg R_P on board / ops-summary (not ops-loop LCR) |
 | Channel outbox integration | **Closed** — topic `toc` (`lib/channels/toc-outbox.ts`); seed enqueues bake; Soft post enqueues `toc.soft.posted` |
+| ops-summary.toc contract depth | **Closed** — `validateTocOpsSummarySlice` (focus · fails · T/I/OE · R_P) |
+| Bake proof artifact | **Closed** — `/registry/toc-ops-bake-proof.json` + `GET /api/toc/proof` |
+| `/api/toc` agent headers + summary | **Closed** — `X-TOC-*` · summary includes enforcement / returnEfficiency |
+| Portal weave + llms parity | **Closed** — TOC surface/artifact/script + `portal/toc.md` |
+| Soft `force` wipe under append-only | **Open by design** — insert-missing only; no truncate |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |
 | Full CT Soft mutations / DoD close on Pages | **Open by design** — use toc-ops-repo `ct` |
 

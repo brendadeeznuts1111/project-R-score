@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24T06:39:50.510Z",
+  "generated": "2026-07-24T07:23:56.895Z",
   "surfaces": [
     {
       "label": "Home",
@@ -13,6 +13,11 @@
       "label": "Ops",
       "href": "/portal/ops/",
       "note": "C4 experiments · C5 prediction"
+    },
+    {
+      "label": "TOC Ops",
+      "href": "/portal/toc/",
+      "note": "Drum/Buffer/Rope · operate-lite"
     },
     {
       "label": "Monitoring",
@@ -57,6 +62,15 @@
       "href": "/registry/ops-summary.json"
     },
     {
+      "label": "toc-ops",
+      "href": "/registry/toc-ops.json",
+      "note": "operate-lite bake"
+    },
+    {
+      "label": "toc-ops bake proof",
+      "href": "/registry/toc-ops-bake-proof.json"
+    },
+    {
       "label": "monitoring",
       "href": "/registry/monitoring.json"
     },
@@ -90,6 +104,11 @@
     {
       "label": "Prediction seed",
       "cmd": "bun run ops:seed:prediction"
+    },
+    {
+      "label": "TOC Ops seed",
+      "cmd": "bun run ops:seed:toc",
+      "doc": "docs/harness/tenants/toc-ops.md"
     },
     {
       "label": "Reference discovery",

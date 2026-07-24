@@ -76,12 +76,100 @@ export function validateOpsSummary(v: unknown): ContractResult {
     ['networking, when present, is object', v.networking === undefined || isRecord(v.networking)],
     ['env, when present, is object', v.env === undefined || isRecord(v.env)],
     [
-      'toc, when present, is object',
-      v.toc === undefined ||
-        (isRecord(v.toc) && typeof v.toc.available === 'boolean' && typeof v.toc.path === 'string'),
+      'toc, when present, passes TocOpsSummarySlice contract',
+      v.toc === undefined || validateTocOpsSummarySlice(v.toc).ok,
     ],
   ];
-  return check('ops-summary', v, rules);
+  const base = check('ops-summary', v, rules);
+  if (v.toc !== undefined) {
+    const toc = validateTocOpsSummarySlice(v.toc);
+    if (!toc.ok) return { ok: false, errors: [...base.errors, ...toc.errors] };
+  }
+  return base;
+}
+
+const TOC_FOCUS = new Set(['rope', 'drum', 'buffer', 'elevate']);
+const TOC_PROCESSES = new Set(['ONB', 'FUND', 'LIMIT', 'WARM', 'PLAY', 'WD']);
+
+/** Contract for `ops-summary.toc` / TocOpsSummarySlice (operate-lite bake). */
+// eslint-disable-next-line harness/no-unknown-function-param
+export function validateTocOpsSummarySlice(v: unknown): ContractResult {
+  if (!isRecord(v)) return { ok: false, errors: ['ops-summary.toc: not an object'] };
+  const available = v.available === true;
+  const rules: [string, boolean][] = [
+    ['available is boolean', typeof v.available === 'boolean'],
+    ['path is /registry/toc-ops.json', v.path === '/registry/toc-ops.json'],
+    ['generatedAt is null or ISO', v.generatedAt === null || isIsoDate(v.generatedAt)],
+    ['plane is demo-readonly', v.plane === 'demo-readonly'],
+    ['identityLinked is boolean', typeof v.identityLinked === 'boolean'],
+    ['identityPartners is number', typeof v.identityPartners === 'number'],
+    [
+      'enforcementFocus is null or rope|drum|buffer|elevate',
+      v.enforcementFocus === null ||
+        (typeof v.enforcementFocus === 'string' && TOC_FOCUS.has(v.enforcementFocus)),
+    ],
+    ['enforcementFailed is number', typeof v.enforcementFailed === 'number'],
+    ['enforcementCritical is number', typeof v.enforcementCritical === 'number'],
+    [
+      'throughputT/I/OE are null or numbers',
+      (v.throughputT === null || typeof v.throughputT === 'number') &&
+        (v.throughputI === null || typeof v.throughputI === 'number') &&
+        (v.throughputOE === null || typeof v.throughputOE === 'number'),
+    ],
+    [
+      'topRankedProcess is null or task type',
+      v.topRankedProcess === null ||
+        v.topRankedProcess === undefined ||
+        (typeof v.topRankedProcess === 'string' && TOC_PROCESSES.has(v.topRankedProcess)),
+    ],
+    [
+      'avgRP is null or number',
+      v.avgRP === null || v.avgRP === undefined || typeof v.avgRP === 'number',
+    ],
+  ];
+  if (available) {
+    rules.push(
+      ['available toc has partners number', typeof v.partners === 'number'],
+      ['available toc has warmed number', typeof v.warmed === 'number'],
+      [
+        'available toc has non-null T/I/OE when enforcement baked',
+        // Soft: allow null only if enforcementFailed is 0 and no bake — prefer non-null numbers
+        typeof v.throughputT === 'number' &&
+          typeof v.throughputI === 'number' &&
+          typeof v.throughputOE === 'number',
+      ]
+    );
+  }
+  return check('ops-summary.toc', v, rules);
+}
+
+/** Contract for `public/registry/toc-ops-bake-proof.json`. */
+// eslint-disable-next-line harness/no-unknown-function-param
+export function validateTocOpsBakeProof(v: unknown): ContractResult {
+  if (!isRecord(v)) return { ok: false, errors: ['toc-ops-bake-proof: not an object'] };
+  const rules: [string, boolean][] = [
+    [
+      'schema is factorywager.toc-ops.bake-proof.v1',
+      v.schema === 'factorywager.toc-ops.bake-proof.v1',
+    ],
+    ['ok is boolean', typeof v.ok === 'boolean'],
+    ['generatedAt is ISO', isIsoDate(v.generatedAt)],
+    ['fixturePath is string', typeof v.fixturePath === 'string'],
+    ['plane is demo-readonly', v.plane === 'demo-readonly'],
+    [
+      'enforcementPlane is operate-lite or null',
+      v.enforcementPlane === 'operate-lite' || v.enforcementPlane === null,
+    ],
+    ['partners is number', typeof v.partners === 'number'],
+    ['gatesFailed is number', typeof v.gatesFailed === 'number'],
+    ['gatesCritical is number', typeof v.gatesCritical === 'number'],
+    [
+      'focus is null or rope|drum|buffer|elevate',
+      v.focus === null || (typeof v.focus === 'string' && TOC_FOCUS.has(v.focus)),
+    ],
+    ['checks is array', Array.isArray(v.checks)],
+  ];
+  return check('toc-ops-bake-proof', v, rules);
 }
 
 // ── dod-registry.json ────────────────────────────────────────────

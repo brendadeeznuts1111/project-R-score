@@ -3,4 +3,5 @@ export * from './identity.ts';
 export * from './fixture.ts';
 export * from './enforcement.ts';
 export * from './return-efficiency.ts';
+export * from './bake-proof.ts';
 export * from './export-snapshot.ts';

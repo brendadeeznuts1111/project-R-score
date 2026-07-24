@@ -168,6 +168,13 @@ export async function exportTocOpsSnapshot(opts?: {
   const outPath = tocOpsAbsPath(root);
   await Bun.write(outPath, `${JSON.stringify(snap, null, 2)}\n`);
 
+  try {
+    const { writeTocOpsBakeProof } = await import('./bake-proof.ts');
+    await writeTocOpsBakeProof(snap, root);
+  } catch {
+    // Proof write is best-effort during first bake
+  }
+
   if (opts?.bakeEmbed !== false) {
     try {
       const { bakeJsonEmbed } = await import('../http/portal-embed-bake.ts');

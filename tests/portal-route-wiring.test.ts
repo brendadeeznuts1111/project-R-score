@@ -10,8 +10,12 @@ import { PORTAL_DASHBOARD_ROUTES } from '../lib/http/public-routes.ts';
 describe('portal route wiring', () => {
   test('_redirects covers all trailing-slash sources', async () => {
     const redirects = await Bun.file('public/_redirects').text();
+    const rules = redirects
+      .split('\n')
+      .map(l => l.trim())
+      .filter(l => l && !l.startsWith('#'));
     for (const src of PORTAL_TRAILING_SLASH_SOURCES) {
-      expect(redirects.includes(`${src} `) || redirects.includes(`${src}\t`)).toBe(true);
+      expect(rules.some(l => l.startsWith(`${src} `) || l.startsWith(`${src}\t`))).toBe(true);
     }
   });
 
@@ -29,6 +33,9 @@ describe('portal route wiring', () => {
     const paths = new Set(PORTAL_DASHBOARD_ROUTES.map(r => r.path));
     expect(paths.has('/portal/')).toBe(true);
     expect(paths.has('/portal/ops/')).toBe(true);
+    expect(paths.has('/portal/toc/')).toBe(true);
+    expect(paths.has('/registry/toc-ops.json')).toBe(true);
+    expect(paths.has('/api/toc')).toBe(true);
     expect(paths.has('/portal/skills/')).toBe(true);
     expect(paths.has('/monitoring/')).toBe(true);
   });

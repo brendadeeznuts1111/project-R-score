@@ -14,6 +14,8 @@ operate-lite Hard Gate bake (`enforcement` slice).
 | [`types.ts`](types.ts) | Snapshot + ops-summary slice types |
 | [`fixture.ts`](fixture.ts) | ASH (Drum) · PAT (PLAY) · NOV (ONB); bottleneck keys (`reconcile_*` is CT-only) |
 | [`enforcement.ts`](enforcement.ts) | Operate-lite Hard Gates · T/I/OE · Rope→Drum→Buffer diagnosis |
+| [`bake-proof.ts`](bake-proof.ts) | `/registry/toc-ops-bake-proof.json` evidence on export |
+| [`return-efficiency.ts`](return-efficiency.ts) | R_P · CE · LE · ranked next actions |
 | [`return-efficiency.ts`](return-efficiency.ts) | R_P / CE / LE · dynamic buffer · ranked next actions |
 | [`identity.ts`](identity.ts) | TOC ↔ ops binding types |
 | [`export-snapshot.ts`](export-snapshot.ts) | Bake via `withTocMetrics` + summary slice |

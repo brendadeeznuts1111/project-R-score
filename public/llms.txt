@@ -20,6 +20,7 @@ Fetch with `Accept: text/markdown` for raw markdown; HTML renders otherwise.
 
 - [GET /api/monitoring](api/monitoring): registry + ops metrics, integrity snapshot
 - [GET /api/operations/summary](api/operations/summary): live ops summary
+- [GET /api/toc](api/toc): TOC Ops fixture (summary · partners · proof; POST 503)
 - [GET /api/registry](api/registry): npm-compatible registry index
 - [GET /api/env](api/env): env var status (redacted values)
 - [GET /health](health): uptime + artifact freshness probe
@@ -28,6 +29,7 @@ Fetch with `Accept: text/markdown` for raw markdown; HTML renders otherwise.
 
 - [ops-summary.json](registry/ops-summary.json): portal ops snapshot
 - [toc-ops.json](registry/toc-ops.json): TOC Ops fixture + operate-lite enforcement
+- [toc-ops-bake-proof.json](registry/toc-ops-bake-proof.json): TOC bake evidence (gates · T/I/OE · R_P)
 - [dod-registry.json](registry/dod-registry.json): DOD snapshot registry
 - [dod-queue.json](registry/dod-queue.json): DOD review queue snapshot (Pages read-only)
 - [registry.json](registry/registry.json): package index
