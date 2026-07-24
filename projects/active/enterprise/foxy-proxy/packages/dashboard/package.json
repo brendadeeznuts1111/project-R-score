@@ -5,7 +5,7 @@
   "description": "IPFoxy Proxy Management Dashboard",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch src/main.tsx",
+    "dev": "bun --watch src/main.tsx",
     "build": "node scripts/build-with-defines.js",
     "preview": "bun run dist/index.mjs",
     "typecheck": "tsc --noEmit",

@@ -8,11 +8,13 @@
       "projects/active/development/kal-poly-bot/ — Kalshi/Polymarket bot; dev scripts already bun --watch|--hot",
       "projects/active/factorywager/registry/ — dev-dashboard:watch|hot already correct",
       "projects/active/dashboards/secrets-dashboard/ — dev already bun --hot",
-      "public/portal/ — static HTML/JS; no package.json (served by scripts/serve-public.ts)"
+      "public/portal/ — static HTML/JS; no package.json (served by scripts/serve-public.ts)",
+      "projects/active/enterprise/fantasy42-fire22-registry/ — root + dashboard-worker dev fixed",
+      "projects/active/enterprise/foxy-proxy/packages/dashboard/ — dev fixed"
     ],
     "notScanned": [
-      "package.linked.json (6 fantasy42 workspace templates)",
-      "Generator scripts (enhanced-workspace-isolator.ts, etc.)"
+      "Generator scripts (fixed: enhanced-workspace-isolator.ts, cloudflare-department-automation.ts, setup-fantasy42-registry.ts)",
+      "package.linked.json (6 fantasy42 templates — fixed to bun --watch; not scanned by gate)"
     ]
   },
   "tiers": {
@@ -25,10 +27,6 @@
     "projects/active/dashboards/enterprise-dashboard/package.json:config:watch",
     "projects/active/dashboards/enterprise-dashboard/package.json:dev:config",
     "projects/active/dashboards/quantum-terminal-dashboard/package.json:dev:legacy",
-    "projects/active/enterprise/fantasy42-fire22-registry/package.json:dev",
-    "projects/active/enterprise/fantasy42-fire22-registry/package.json:api-server:dev",
-    "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/package.json:dev",
-    "projects/active/enterprise/foxy-proxy/packages/dashboard/package.json:dev",
     "projects/active/utilities/bun-file-analyzer/package.json:dev",
     "projects/active/utilities/bun-file-analyzer/package.json:dev:api",
     "projects/active/utilities/toml-cli/package.json:dev"
@@ -48,26 +46,6 @@
       "key": "projects/active/dashboards/quantum-terminal-dashboard/package.json:dev:legacy",
       "tier": "legacy",
       "product": "Quantum terminal — primary dev does not use watch/hot"
-    },
-    {
-      "key": "projects/active/enterprise/fantasy42-fire22-registry/package.json:dev",
-      "tier": "dormant",
-      "product": "Fire22 registry monolith (128+ package.json; many children already correct)"
-    },
-    {
-      "key": "projects/active/enterprise/fantasy42-fire22-registry/package.json:api-server:dev",
-      "tier": "dormant",
-      "product": "Fire22 api-server dev"
-    },
-    {
-      "key": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/package.json:dev",
-      "tier": "dormant",
-      "product": "Fire22 dashboard-worker (subpackages use bun --watch)"
-    },
-    {
-      "key": "projects/active/enterprise/foxy-proxy/packages/dashboard/package.json:dev",
-      "tier": "dormant",
-      "product": "IPFoxy proxy dashboard"
     },
     {
       "key": "projects/active/utilities/bun-file-analyzer/package.json:dev",

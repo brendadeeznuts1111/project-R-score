@@ -136,7 +136,7 @@ async function setupRegistryStructure(): Promise<void> {
         scripts: {
           build: 'bun build ./src/index.ts',
           test: 'bun test',
-          dev: 'bun run --hot ./src/index.ts',
+          dev: 'bun --hot ./src/index.ts',
         },
         dependencies: {},
         devDependencies: {

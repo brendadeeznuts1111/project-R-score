@@ -204,7 +204,7 @@ export class EnhancedWorkspaceIsolator {
         ...config.scripts,
         build:
           'bun build src/index.ts --outdir dist/linked --target bun --format esm --external @fire22/*',
-        dev: 'bun run --watch src/index.ts',
+        dev: 'bun --watch src/index.ts',
         install: 'bun install --linker isolated',
       },
       dependencies: config.dependencies, // Keep workspace:* dependencies

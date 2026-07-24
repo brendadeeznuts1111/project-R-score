@@ -5,7 +5,7 @@
   "type": "module",
   "main": "src/telegram-bot.ts",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
+    "dev": "bun --watch src/index.ts",
     "build": "bun build src/index.ts --outdir dist/linked --target bun --format esm --external @fire22/*",
     "build:standalone": "bun build src/index.ts --outdir dist/standalone --target bun --format esm --minify",
     "build:cloudflare": "bun build src/index.ts --outdir dist/cloudflare --target bun --format esm --minify",

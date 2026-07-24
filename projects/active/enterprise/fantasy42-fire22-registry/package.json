@@ -59,10 +59,10 @@
   },
   "optionalDependencies": {},
   "scripts": {
-    "dev": "bun run --hot --console-depth=6 src/index.ts",
+    "dev": "bun --hot --console-depth=6 src/index.ts",
     "start": "NODE_ENV=production bun run --sql-preconnect src/index.ts",
     "api-server": "bun run api-server-bun-fixed.ts",
-    "api-server:dev": "bun run --hot api-server-bun-fixed.ts",
+    "api-server:dev": "bun --hot api-server-bun-fixed.ts",
     "start:fast": "NODE_ENV=production bun run --sql-preconnect --console-depth=2 src/index.ts",
     "test": "bun test",
     "test:unit": "bun test testing/unit",

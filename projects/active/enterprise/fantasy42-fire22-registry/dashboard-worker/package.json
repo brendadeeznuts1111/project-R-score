@@ -61,7 +61,7 @@
     "version:compare": "bun run scripts/version-cli.ts compare",
     "version:validate": "bun run scripts/version-cli.ts validate",
     "version:satisfies": "bun run scripts/version-cli.ts satisfies",
-    "dev": "bun run session:init && bun run --hot src/index.ts",
+    "dev": "bun run session:init && bun --hot src/index.ts",
     "dev:hmr": "bun run session:init && bun run src/hmr-dev-server.ts",
     "session:init": "bun run scripts/session-init.ts",
     "session:status": "bun run scripts/session-init.ts status",

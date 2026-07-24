@@ -67,6 +67,11 @@ Two shapes on the same listener:
 
 `serve-public` uses `serveBindSnapshot()` for typed startup + loopback URLs when bound to `0.0.0.0`.
 
+### Portal spine + flag-order
+
+Local portal wiring: root `package.json` (`serve:public:hot` / `serve:public:watch`) → [`scripts/serve-public.ts`](../../scripts/serve-public.ts) → this directory (`bun-serve-shape`, `live-reload`, `public-routes` in [`public-routes.ts`](public-routes.ts)).
+
+**Flag-order verification:** `bun run verify:flag-order` scans all repo `package.json` scripts for `bun run --watch|--hot` (use `bun --watch` / `bun --hot` immediately after `bun`). See [`docs/portal-foundation.md`](../../docs/portal-foundation.md#dev-reload-watch-hot-browser-sse) (dev reload + verification note).
 
 Canonical: [content-type-handling](https://bun.com/docs/runtime/networking/fetch#content-type-handling)
 

@@ -16,7 +16,7 @@ import { joinPath } from '../lib/path-bun.ts';
 const ROOT = joinPath(import.meta.dir, '..');
 const BASELINE_PATH = joinPath(import.meta.dir, 'verify-script-flags-baseline.json');
 
-/** Anti-pattern: Bun ignores flags after `run` (passed to the script). */
+/** Anti-pattern Type A: `bun run --watch|--hot` before file (repo convention: use `bun --watch`). Type B (after script name) is documented in portal-foundation.md but not gated yet. */
 const BAD = /\bbun run\s+--(watch|hot)\b/;
 
 const IGNORE_DIR = new Set(['node_modules', 'dist', 'build', 'coverage', '.git', '.tmp']);

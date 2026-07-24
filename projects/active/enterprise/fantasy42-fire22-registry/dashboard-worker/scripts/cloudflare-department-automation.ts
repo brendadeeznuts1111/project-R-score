@@ -501,7 +501,7 @@ jobs:
     const scripts: Record<string, string> = {
       'build:pages': 'bun run scripts/build-all-departments.ts',
       'deploy:all': 'wrangler pages deploy dist/pages',
-      'preview:local': 'bun run --hot src/index.ts',
+      'preview:local': 'bun --hot src/index.ts',
     };
 
     // Add department-specific scripts
