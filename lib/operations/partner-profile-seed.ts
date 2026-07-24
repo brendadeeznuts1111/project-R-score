@@ -175,7 +175,7 @@ function seedChannelMix(
         payload: {
           treeNodeId: b.treeNodeId as string,
           profileKey: b.profileKey,
-          templateId: b.partnerTemplate as string,
+          partnerTemplate: b.partnerTemplate as string,
           lifecycleStatus: b.lifecycleStatus,
         },
         projectors: ['r2'],
@@ -184,7 +184,7 @@ function seedChannelMix(
       enqueueIdentityChannelEvent(db, {
         treeNodeId: b.treeNodeId,
         profileKey: b.profileKey,
-        templateId: b.partnerTemplate as string,
+        partnerTemplate: b.partnerTemplate,
         lifecycleStatus: b.lifecycleStatus,
       });
     }
