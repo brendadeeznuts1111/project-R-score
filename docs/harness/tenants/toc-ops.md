@@ -50,8 +50,10 @@ bun test tests/toc-ops-fixture.test.ts
 | No TOC board on Pages | **Closed** — `/portal/toc/` + fixture |
 | Soft Balance / WARMED / Gate 12 invisible | **Closed** — fixture fields + UI |
 | FUND/WARM/PLAY/WD + Ball-in-Court | **Closed** — openTasks in fixture |
-| Rails confirmation | **Closed** — confirmed/unconfirmed rails |
-| Bottleneck rule keys | **Closed** — demo open events |
+| ONB + LIMIT / account limits freshness | **Closed** — v2 NOV onboarding + stale/fresh/unknown |
+| Rails confirmation + daily/monthly | **Closed** — confirmed/unconfirmed rails |
+| Plays / bets + experiment routing | **Closed** — `recentPlays` + active switchback |
+| Bottleneck rule keys | **Closed** — demo open events (`TOC_BOTTLENECK_RULE_KEYS`; dynamic `reconcile_*` lives in toc-ops-repo only) |
 | Live Central Tool mutations on Pages | **Open by design** — POST 503; use toc-ops-repo `ct` |
 | SQLite Soft journal in FactoryWager ops DB | **Open** — next elevation after portal UX |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |

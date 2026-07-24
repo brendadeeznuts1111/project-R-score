@@ -17,31 +17,45 @@ import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 
 describe('toc-ops demo fixture', () => {
-  test('ASH + PAT cover WARMED, Warming, Gate 12, rails, Soft, bottlenecks', () => {
+  test('v2 covers ONB→PLAY, limits, plays, experiments', () => {
     const snap = buildDemoTocOpsFixture('2026-07-24T00:00:00.000Z');
-    expect(snap.schema).toBe('factorywager.toc-ops.portal-fixture.v1');
+    expect(snap.schema).toBe('factorywager.toc-ops.portal-fixture.v2');
     expect(snap.readOnly).toBe(true);
-    expect(snap.partners.map(p => p.partnerCode)).toEqual(['ASH', 'PAT']);
-    expect(snap.summary.warmed).toBeGreaterThanOrEqual(2);
-    expect(snap.summary.warming).toBeGreaterThanOrEqual(1);
-    expect(snap.summary.confirmedRails).toBeGreaterThanOrEqual(2);
-    expect(snap.buffer.floatTarget).toBe(50_000);
-    expect(snap.catalog.warmupRequiredForPlay).toBe(2);
+    expect(snap.partners.map(p => p.partnerCode)).toEqual(['ASH', 'PAT', 'NOV']);
+    expect(snap.catalog.flowOrder[0]).toBe('ONB');
+    expect(snap.catalog.depositCorridor.target).toBe(5000);
     expect(snap.catalog.bottleneckRuleKeys).toEqual([...TOC_BOTTLENECK_RULE_KEYS]);
 
-    const ash = snap.partners[0]!;
-    expect(ash.accounts.some(a => a.status === 'WARMED' && a.warmupCount === 2)).toBe(true);
-    expect(ash.accounts.some(a => a.status === 'Warming' && a.warmupCount === 1)).toBe(true);
-    expect(ash.rails.every(r => r.confirmed)).toBe(true);
+    expect(snap.summary.warmed).toBeGreaterThanOrEqual(3);
+    expect(snap.summary.warming).toBeGreaterThanOrEqual(1);
+    expect(snap.summary.onboarding).toBe(1);
+    expect(snap.summary.openOnb).toBeGreaterThanOrEqual(1);
+    expect(snap.summary.openLimit).toBeGreaterThanOrEqual(1);
+    expect(snap.summary.playsSettled).toBeGreaterThanOrEqual(2);
+    expect(snap.summary.playsBlocked).toBeGreaterThanOrEqual(1);
+    expect(snap.summary.activeExperiments).toBe(1);
+    expect(snap.summary.unconfirmedRails).toBeGreaterThanOrEqual(1);
 
-    const pat = snap.partners[1]!;
-    const principal = pat.accounts.find(a => a.callSign === 'PAT-002');
-    expect(principal?.gate12.withdrawalMode).toBe('principal_recovery');
-    expect(principal?.gate12.housePrincipalOutstanding).toBe(5000);
-    expect(pat.rails.some(r => !r.confirmed)).toBe(true);
+    const nov = snap.partners.find(p => p.partnerCode === 'NOV')!;
+    expect(nov.status).toBe('Onboarding');
+    expect(nov.flowStage).toBe('ONB');
+    expect(nov.openTasks.some(t => t.taskType === 'ONB' && t.status === 'PendingPartner')).toBe(
+      true
+    );
+    expect(nov.rails.every(r => !r.confirmed)).toBe(true);
 
-    const openBn = snap.partners.flatMap(p => p.bottlenecks).filter(b => b.resolvedAt == null);
-    expect(openBn.some(b => b.ruleKey === 'warmup_cycle_aging')).toBe(true);
+    const ash = snap.partners.find(p => p.partnerCode === 'ASH')!;
+    expect(ash.accounts.find(a => a.callSign === 'ASH-001')?.limits.freshness).toBe('stale');
+    expect(ash.recentPlays.some(p => p.status === 'blocked')).toBe(true);
+
+    const pat = snap.partners.find(p => p.partnerCode === 'PAT')!;
+    expect(pat.accounts.find(a => a.callSign === 'PAT-001')?.limits.freshness).toBe('fresh');
+    expect(pat.experimentAssignment?.variantKey).toBe('dynamic');
+    expect(pat.recentPlays.some(p => p.status === 'placed')).toBe(true);
+
+    expect(snap.experts.length).toBeGreaterThanOrEqual(2);
+    expect(snap.experiments.some(e => e.status === 'active')).toBe(true);
+    expect(snap.experiments.some(e => e.status === 'completed')).toBe(true);
   });
 
   test('export + summary slice + seed ifEmpty', async () => {
@@ -49,14 +63,16 @@ describe('toc-ops demo fixture', () => {
     try {
       const first = await seedTocOpsDemo({ root, force: true });
       expect(first.seeded).toBe(true);
-      expect(first.partners).toBe(2);
+      expect(first.partners).toBe(3);
 
       const skip = await seedTocOpsDemo({ root, ifEmpty: true });
       expect(skip.seeded).toBe(false);
 
       const slice = loadTocOpsSummarySlice(root);
       expect(slice.available).toBe(true);
-      expect(slice.warmed).toBeGreaterThan(0);
+      expect(slice.onboarding).toBe(1);
+      expect(slice.openOnb).toBeGreaterThan(0);
+      expect(slice.activeExperiments).toBe(1);
       expect(slice.path).toBe('/registry/toc-ops.json');
 
       const again = await exportTocOpsSnapshot({
@@ -64,8 +80,8 @@ describe('toc-ops demo fixture', () => {
         fixture: buildDemoTocOpsFixture(),
         bakeEmbed: false,
       });
-      expect(again.partners).toBe(2);
-      expect(tocOpsToSummarySlice(buildDemoTocOpsFixture()).available).toBe(true);
+      expect(again.partners).toBe(3);
+      expect(tocOpsToSummarySlice(buildDemoTocOpsFixture()).playsSettled).toBeGreaterThan(0);
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
@@ -74,8 +90,6 @@ describe('toc-ops demo fixture', () => {
   test('ops-summary.toc is contract-valid when present', () => {
     const db = openOperationsDb({ path: ':memory:' });
     try {
-      // Ensure toc-ops.json exists in cwd for loadTocOpsSummarySlice
-      // (test may run before bake — tolerate empty slice)
       const payload = buildOpsSummary(db, 'snapshot');
       expect(payload.toc).toBeDefined();
       expect(typeof payload.toc.available).toBe('boolean');

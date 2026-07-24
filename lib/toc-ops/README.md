@@ -3,12 +3,15 @@
 Fixture-first Drum / Buffer / Rope surface for Cloudflare Pages + portal.
 Theory SSOT stays in `toc-ops-repo` (TOC-REF · ACCOUNTING · SOPs).
 
+**Schema** `factorywager.toc-ops.portal-fixture.v2` — ONB→FUND→LIMIT→WARM→PLAY→WD,
+account limits, rails, Soft/Gate 12, recent plays, switchback experiments.
+
 ## Files
 
 | File | Purpose |
 |------|---------|
 | [`types.ts`](types.ts) | Snapshot + ops-summary slice types |
-| [`fixture.ts`](fixture.ts) | Deterministic ASH + PAT demo partners/rails/tasks |
+| [`fixture.ts`](fixture.ts) | ASH (Drum) · PAT (PLAY) · NOV (ONB); bottleneck keys (`reconcile_*` is CT-only) |
 | [`export-snapshot.ts`](export-snapshot.ts) | Bake `public/registry/toc-ops.json` + summary slice |
 | [`index.ts`](index.ts) | Barrel exports |
 

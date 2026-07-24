@@ -1,6 +1,6 @@
-// @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io — Bun.mmap (sync path read)
+// @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
 /**
  * Bake TOC Ops fixture → public/registry/toc-ops.json (+ optional portal embed).
  *
@@ -25,14 +25,20 @@ export function emptyTocOpsSummarySlice(): TocOpsSummarySlice {
     partners: 0,
     warmed: 0,
     warming: 0,
+    onboarding: 0,
     confirmedRails: 0,
     openTasks: 0,
+    openOnb: 0,
+    openLimit: 0,
     openBottlenecks: 0,
     criticalBottlenecks: 0,
     principalOutstandingTotal: 0,
     throttleOnboarding: false,
     primedDrums: 0,
     playableDrums: 0,
+    playsPending: 0,
+    playsSettled: 0,
+    activeExperiments: 0,
   };
 }
 
@@ -44,14 +50,20 @@ export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
     partners: snap.summary.partners,
     warmed: snap.summary.warmed,
     warming: snap.summary.warming,
+    onboarding: snap.summary.onboarding,
     confirmedRails: snap.summary.confirmedRails,
     openTasks: snap.summary.openTasks,
+    openOnb: snap.summary.openOnb,
+    openLimit: snap.summary.openLimit,
     openBottlenecks: snap.summary.openBottlenecks,
     criticalBottlenecks: snap.summary.criticalBottlenecks,
     principalOutstandingTotal: snap.summary.principalOutstandingTotal,
     throttleOnboarding: snap.buffer.throttleOnboarding,
     primedDrums: snap.buffer.primedDrums,
     playableDrums: snap.buffer.playableDrums,
+    playsPending: snap.summary.playsPending,
+    playsSettled: snap.summary.playsSettled,
+    activeExperiments: snap.summary.activeExperiments,
   };
 }
 

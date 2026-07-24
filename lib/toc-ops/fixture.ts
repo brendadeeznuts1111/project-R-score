@@ -1,11 +1,13 @@
 /**
- * Deterministic TOC Ops demo fixture (ASH + PAT) for Pages / portal build-out.
- * Mirrors toc-ops-repo seed shapes without requiring Central Tool SQLite.
+ * Deterministic TOC Ops demo fixture (ASH · PAT · NOV) for Pages / portal.
+ * Full ONB→FUND→LIMIT→WARM→PLAY→WD narrative + limits, plays, experiments.
  *
  * @see toc-ops-repo/src/db/seed.ts
+ * @see toc-ops-repo/docs/system/EXPERIMENTS.md
  */
-import type { TocOpsSnapshot, TocPartner } from './types.ts';
+import type { TocExperiment, TocExpert, TocOpsSnapshot, TocPartner, TocPlay } from './types.ts';
 
+/** Exact registered rule keys mirrored from toc-ops-repo bottleneck-rules. */
 export const TOC_BOTTLENECK_RULE_KEYS = [
   'open_pending_partner_queue',
   'warmup_cycle_aging',
@@ -16,30 +18,60 @@ export const TOC_BOTTLENECK_RULE_KEYS = [
   'rotor_drift_detected',
 ] as const;
 
-function summarize(partners: TocPartner[]): TocOpsSnapshot['summary'] {
+export const TOC_BOTTLENECK_RECONCILE_PREFIX = 'reconcile_' as const;
+
+const PKG = {
+  id: 'pkg-default-70-20-10',
+  partnerPct: 70,
+  expertPct: 20,
+  housePct: 10,
+} as const;
+
+function summarize(
+  partners: TocPartner[],
+  experiments: TocExperiment[],
+  plays: TocPlay[]
+): TocOpsSnapshot['summary'] {
   const byTaskType: Record<string, number> = {};
   const byBallInCourt: Record<string, number> = {};
+  const byFlowStage: Record<string, number> = {};
   let warmed = 0;
   let warming = 0;
+  let onboarding = 0;
   let confirmedRails = 0;
+  let unconfirmedRails = 0;
   let openTasks = 0;
+  let openOnb = 0;
+  let openLimit = 0;
+  let openWarm = 0;
+  let openPlay = 0;
   let openBottlenecks = 0;
   let criticalBottlenecks = 0;
   let accounts = 0;
   let principalOutstandingTotal = 0;
 
   for (const p of partners) {
+    if (p.status === 'Onboarding') onboarding++;
+    byFlowStage[p.flowStage] = (byFlowStage[p.flowStage] ?? 0) + 1;
     for (const a of p.accounts) {
       accounts++;
       if (a.status === 'WARMED') warmed++;
       if (a.status === 'Warming') warming++;
       principalOutstandingTotal += a.gate12.housePrincipalOutstanding;
     }
-    confirmedRails += p.rails.filter(r => r.confirmed).length;
-    openTasks += p.openTasks.length;
+    for (const r of p.rails) {
+      if (r.confirmed) confirmedRails++;
+      else unconfirmedRails++;
+    }
     for (const t of p.openTasks) {
+      if (t.status === 'Completed') continue;
+      openTasks++;
       byTaskType[t.taskType] = (byTaskType[t.taskType] ?? 0) + 1;
       byBallInCourt[t.ballInCourt] = (byBallInCourt[t.ballInCourt] ?? 0) + 1;
+      if (t.taskType === 'ONB') openOnb++;
+      if (t.taskType === 'LIMIT') openLimit++;
+      if (t.taskType === 'WARM') openWarm++;
+      if (t.taskType === 'PLAY') openPlay++;
     }
     for (const b of p.bottlenecks) {
       if (b.resolvedAt == null) {
@@ -54,26 +86,109 @@ function summarize(partners: TocPartner[]): TocOpsSnapshot['summary'] {
     accounts,
     warmed,
     warming,
+    onboarding,
     confirmedRails,
+    unconfirmedRails,
     openTasks,
+    openOnb,
+    openLimit,
+    openWarm,
+    openPlay,
     openBottlenecks,
     criticalBottlenecks,
     principalOutstandingTotal,
+    playsPending: plays.filter(p => p.result === 'pending' || p.status === 'placed').length,
+    playsSettled: plays.filter(p => p.status === 'settled').length,
+    playsBlocked: plays.filter(p => p.status === 'blocked').length,
+    activeExperiments: experiments.filter(e => e.status === 'active').length,
     byTaskType,
     byBallInCourt,
+    byFlowStage,
   };
+}
+
+function experts(): TocExpert[] {
+  return [
+    {
+      expertId: 'marcus',
+      displayName: 'Marcus',
+      markets: ['NFL', 'NBA', 'MLB'],
+      weight: 1.2,
+    },
+    {
+      expertId: 'elena',
+      displayName: 'Elena',
+      markets: ['NFL', 'Tennis'],
+      weight: 1.0,
+    },
+  ];
+}
+
+function experiments(): TocExperiment[] {
+  return [
+    {
+      id: 'exp-routing-phase1-2026-07',
+      name: 'Phase-1 play routing (static vs dynamic)',
+      status: 'active',
+      phase: 1,
+      designMethod: 'switchback',
+      metricName: 'placement_rate',
+      hypothesis:
+        'Dynamic expert routing raises placement_rate without ↑OE on Ball-in-Court thrash',
+      factors: [{ name: 'routing', levels: ['static', 'dynamic'] }],
+      variants: [
+        { key: 'static', name: 'Static expert rank', config: { routing: 'static' } },
+        { key: 'dynamic', name: 'Dynamic readiness weight', config: { routing: 'dynamic' } },
+      ],
+      assignments: [
+        {
+          partnerCode: 'ASH',
+          variantKey: 'static',
+          metricValue: 0.72,
+          assignedAt: '2026-07-18T12:00:00.000Z',
+        },
+        {
+          partnerCode: 'PAT',
+          variantKey: 'dynamic',
+          metricValue: 0.88,
+          assignedAt: '2026-07-18T12:00:00.000Z',
+        },
+      ],
+      clusterBy: 'partner_code',
+    },
+    {
+      id: 'exp-cut-ab-2026-06',
+      name: 'Cut cascade A/B (completed)',
+      status: 'completed',
+      phase: 2,
+      designMethod: 'factorial',
+      metricName: 'throughput_t',
+      hypothesis: 'Lower partner cut on recycle WD does not reduce T when Soft posts on time',
+      factors: [{ name: 'cut', levels: ['std_70', 'alt_65'] }],
+      variants: [
+        { key: 'std_70', name: '70/20/10', config: { partnerPct: 70 } },
+        { key: 'alt_65', name: '65/25/10', config: { partnerPct: 65 } },
+      ],
+      assignments: [
+        {
+          partnerCode: 'PAT',
+          variantKey: 'std_70',
+          metricValue: 1200,
+          assignedAt: '2026-06-01T00:00:00.000Z',
+        },
+      ],
+      clusterBy: 'package_id',
+    },
+  ];
 }
 
 function ashPartner(): TocPartner {
   return {
     partnerCode: 'ASH',
     status: 'Ready',
-    package: {
-      id: 'pkg-default-70-20-10',
-      partnerPct: 70,
-      expertPct: 20,
-      housePct: 10,
-    },
+    telegramRef: 'tg:group:ash-demo',
+    package: { ...PKG },
+    flowStage: 'WARM',
     readiness: {
       score: 0.72,
       playableAccountCount: 0,
@@ -82,13 +197,13 @@ function ashPartner(): TocPartner {
           callSign: 'ASH-001',
           score: 0.85,
           playable: false,
-          factors: ['WARMED', 'needs_exact_stake_fund'],
+          factors: ['WARMED', 'limits_stale', 'needs_exact_stake_fund'],
         },
         {
           callSign: 'ASH-002',
           score: 0.4,
           playable: false,
-          factors: ['Warming', 'warmup_1_of_2', 'ball_partner'],
+          factors: ['Warming', 'warmup_1_of_2', 'ball_partner', 'limits_unknown'],
         },
       ],
     },
@@ -99,6 +214,9 @@ function ashPartner(): TocPartner {
         label: 'CASHOUT-VENMO',
         confirmed: true,
         profileScreenshotRef: 'proof:ash-venmo-profile',
+        destinationHint: '@ash.hr.fl',
+        dailyLimit: 10_000,
+        monthlyLimit: 40_000,
       },
     ],
     accounts: [
@@ -116,6 +234,16 @@ function ashPartner(): TocPartner {
         primaryRailId: 'rail-ash-venmo-1',
         gate12: { housePrincipalOutstanding: 0, withdrawalMode: 'profit_split' },
         sportsbook: 'Hard Rock Florida',
+        expertId: 'marcus',
+        flowStage: 'LIMIT',
+        limits: {
+          dailyMax: 2500,
+          weeklyMax: 10_000,
+          rawText: 'Daily $2,500 · Weekly $10,000',
+          checkedAt: '2026-07-12T09:00:00.000Z',
+          screenshotRef: 'proof:ash-001-limits-stale',
+          freshness: 'stale',
+        },
       },
       {
         callSign: 'ASH-002',
@@ -134,9 +262,26 @@ function ashPartner(): TocPartner {
           withdrawalMode: 'warmup_capital_return',
         },
         sportsbook: 'Hard Rock Florida',
+        flowStage: 'WARM',
+        limits: {
+          dailyMax: null,
+          weeklyMax: null,
+          checkedAt: null,
+          freshness: 'unknown',
+        },
       },
     ],
     openTasks: [
+      {
+        taskId: 'ONB-ASH-000-20260710-080000-001',
+        taskType: 'ONB',
+        callSign: 'ASH-001',
+        status: 'Completed',
+        ballInCourt: 'Ops',
+        nextAction: 'Done — partner Ready + package bound',
+        proofRefs: ['proof:ash-onb-kyc'],
+        createdAt: '2026-07-10T08:00:00.000Z',
+      },
       {
         taskId: 'WARM-ASH-002-20260716-120000-001',
         taskType: 'WARM',
@@ -145,6 +290,7 @@ function ashPartner(): TocPartner {
         ballInCourt: 'Partner',
         nextAction: 'Complete cycle 2 dummy bet → settlement → WD',
         linkedExceptionId: 'WARM-EX-01',
+        createdAt: '2026-07-16T12:00:00.000Z',
       },
       {
         taskId: 'LIMIT-ASH-001-20260720-090000-001',
@@ -153,6 +299,7 @@ function ashPartner(): TocPartner {
         status: 'PendingPartner',
         ballInCourt: 'Partner',
         nextAction: 'Screenshot limit screen (UTC stamp) — do not interrupt PLAY',
+        createdAt: '2026-07-20T09:00:00.000Z',
       },
     ],
     softBalance: {
@@ -217,6 +364,52 @@ function ashPartner(): TocPartner {
         nextAction: 'Refresh limit screenshot before next PLAY release',
       },
     ],
+    recentPlays: [
+      {
+        playId: 'play-ash-001-nfl-ml-001',
+        taskId: 'PLAY-ASH-001-20260717-190000-001',
+        callSign: 'ASH-001',
+        partnerCode: 'ASH',
+        expertId: 'marcus',
+        market: 'NFL',
+        event: 'KC @ BUF',
+        selection: 'BUF ML',
+        odds: -110,
+        stake: 1200,
+        confidence: 0.62,
+        status: 'settled',
+        result: 'win',
+        pnl: 240,
+        experimentId: 'exp-routing-phase1-2026-07',
+        variantKey: 'static',
+        placedAt: '2026-07-17T19:10:00.000Z',
+        settledAt: '2026-07-17T23:40:00.000Z',
+      },
+      {
+        playId: 'play-ash-002-blocked-001',
+        callSign: 'ASH-002',
+        partnerCode: 'ASH',
+        expertId: 'marcus',
+        market: 'NBA',
+        event: 'LAL @ BOS',
+        selection: 'LAL +4.5',
+        odds: -105,
+        stake: 800,
+        status: 'blocked',
+        result: 'blocked',
+        pnl: null,
+        blockedReason: 'PLAY-EX-02 warmup_count<2 / not WARMED',
+        experimentId: 'exp-routing-phase1-2026-07',
+        variantKey: 'static',
+        placedAt: '2026-07-19T18:00:00.000Z',
+      },
+    ],
+    experimentAssignment: {
+      experimentId: 'exp-routing-phase1-2026-07',
+      variantKey: 'static',
+      metricName: 'placement_rate',
+      metricValue: 0.72,
+    },
     knownExceptions: [
       {
         id: 'WARM-EX-01',
@@ -228,6 +421,11 @@ function ashPartner(): TocPartner {
         trigger: 'Typed rail ≠ profile screenshot',
         action: 'Block send; re-upload + re-confirm',
       },
+      {
+        id: 'LIMIT-EX-03',
+        trigger: 'Active Expert Play in progress',
+        action: 'Queue Limit Check; never interrupt PLAY',
+      },
     ],
   };
 }
@@ -236,12 +434,9 @@ function patPartner(): TocPartner {
   return {
     partnerCode: 'PAT',
     status: 'Ready',
-    package: {
-      id: 'pkg-default-70-20-10',
-      partnerPct: 70,
-      expertPct: 20,
-      housePct: 10,
-    },
+    telegramRef: 'tg:group:pat-demo',
+    package: { ...PKG },
+    flowStage: 'PLAY',
     readiness: {
       score: 0.91,
       playableAccountCount: 1,
@@ -250,7 +445,7 @@ function patPartner(): TocPartner {
           callSign: 'PAT-001',
           score: 0.92,
           playable: true,
-          factors: ['WARMED', 'limits_fresh', 'capital_in_book'],
+          factors: ['WARMED', 'limits_fresh', 'capital_in_book', 'exp_dynamic'],
         },
         {
           callSign: 'PAT-002',
@@ -267,13 +462,18 @@ function patPartner(): TocPartner {
         label: 'CASHOUT-CASHAPP',
         confirmed: true,
         profileScreenshotRef: 'proof:pat-cashapp-profile',
+        destinationHint: '$patHRFL',
+        dailyLimit: 8_000,
+        monthlyLimit: 35_000,
       },
       {
         id: 'rail-pat-paypal-1',
         railType: 'PayPal',
         label: 'CASHOUT-PAYPAL',
         confirmed: false,
-        profileScreenshotRef: undefined,
+        destinationHint: 'pat@example.com',
+        dailyLimit: 5_000,
+        monthlyLimit: 20_000,
       },
     ],
     accounts: [
@@ -291,6 +491,16 @@ function patPartner(): TocPartner {
         primaryRailId: 'rail-pat-cashapp-1',
         gate12: { housePrincipalOutstanding: 0, withdrawalMode: 'profit_split' },
         sportsbook: 'Hard Rock Florida',
+        expertId: 'elena',
+        flowStage: 'PLAY',
+        limits: {
+          dailyMax: 3000,
+          weeklyMax: 12_000,
+          rawText: 'Daily $3,000 · Weekly $12,000',
+          checkedAt: '2026-07-21T14:00:00.000Z',
+          screenshotRef: 'proof:pat-001-limits',
+          freshness: 'fresh',
+        },
       },
       {
         callSign: 'PAT-002',
@@ -309,9 +519,29 @@ function patPartner(): TocPartner {
           withdrawalMode: 'principal_recovery',
         },
         sportsbook: 'Hard Rock Florida',
+        expertId: 'marcus',
+        flowStage: 'WD',
+        limits: {
+          dailyMax: 2000,
+          weeklyMax: 8_000,
+          rawText: 'Daily $2,000 · Weekly $8,000',
+          checkedAt: '2026-07-20T11:00:00.000Z',
+          screenshotRef: 'proof:pat-002-limits',
+          freshness: 'fresh',
+        },
       },
     ],
     openTasks: [
+      {
+        taskId: 'LIMIT-PAT-001-20260721-140000-001',
+        taskType: 'LIMIT',
+        callSign: 'PAT-001',
+        status: 'Completed',
+        ballInCourt: 'Ops',
+        nextAction: 'Done — limits fresh for PLAY',
+        proofRefs: ['proof:pat-001-limits'],
+        createdAt: '2026-07-21T14:00:00.000Z',
+      },
       {
         taskId: 'PLAY-PAT-001-20260722-150000-001',
         taskType: 'PLAY',
@@ -319,6 +549,7 @@ function patPartner(): TocPartner {
         status: 'Processing',
         ballInCourt: 'Partner',
         nextAction: 'Place expert instruction; post bet-slip screenshot',
+        createdAt: '2026-07-22T15:00:00.000Z',
       },
       {
         taskId: 'WD-PAT-002-20260722-160000-001',
@@ -327,6 +558,7 @@ function patPartner(): TocPartner {
         status: 'GateCheck',
         ballInCourt: 'Ops',
         nextAction: 'Gate 12 principal_recovery only — Soft CapitalReturn 100% House',
+        createdAt: '2026-07-22T16:00:00.000Z',
       },
       {
         taskId: 'FUND-PAT-002-20260721-110000-001',
@@ -335,6 +567,7 @@ function patPartner(): TocPartner {
         status: 'Completed',
         ballInCourt: 'Ops',
         nextAction: 'Done — Soft location WithPartner → InSportsbook verified',
+        createdAt: '2026-07-21T11:00:00.000Z',
       },
     ],
     softBalance: {
@@ -397,7 +630,77 @@ function patPartner(): TocPartner {
         nextAction: 'Partner holds PLAY ball — ping at 30m / escalate 60m',
       },
     ],
+    recentPlays: [
+      {
+        playId: 'play-pat-001-nfl-spread-001',
+        taskId: 'PLAY-PAT-001-20260720-160000-001',
+        callSign: 'PAT-001',
+        partnerCode: 'PAT',
+        expertId: 'elena',
+        market: 'NFL',
+        event: 'DAL @ PHI',
+        selection: 'PHI -3',
+        odds: -115,
+        stake: 1500,
+        confidence: 0.71,
+        status: 'settled',
+        result: 'win',
+        pnl: 1200,
+        experimentId: 'exp-routing-phase1-2026-07',
+        variantKey: 'dynamic',
+        placedAt: '2026-07-20T16:05:00.000Z',
+        settledAt: '2026-07-20T22:10:00.000Z',
+      },
+      {
+        playId: 'play-pat-001-nba-open-001',
+        taskId: 'PLAY-PAT-001-20260722-150000-001',
+        callSign: 'PAT-001',
+        partnerCode: 'PAT',
+        expertId: 'elena',
+        market: 'NBA',
+        event: 'MIA @ NYK',
+        selection: 'MIA ML',
+        odds: +130,
+        stake: 900,
+        confidence: 0.58,
+        status: 'placed',
+        result: 'pending',
+        pnl: null,
+        experimentId: 'exp-routing-phase1-2026-07',
+        variantKey: 'dynamic',
+        placedAt: '2026-07-22T15:20:00.000Z',
+      },
+      {
+        playId: 'play-pat-002-limit-reject-001',
+        callSign: 'PAT-002',
+        partnerCode: 'PAT',
+        expertId: 'marcus',
+        market: 'MLB',
+        event: 'NYY @ BOS',
+        selection: 'NYY -1.5',
+        odds: +145,
+        stake: 2500,
+        status: 'blocked',
+        result: 'blocked',
+        pnl: null,
+        blockedReason: 'PLAY-EX-01 stake > dailyMax ($2000)',
+        experimentId: 'exp-routing-phase1-2026-07',
+        variantKey: 'dynamic',
+        placedAt: '2026-07-22T12:00:00.000Z',
+      },
+    ],
+    experimentAssignment: {
+      experimentId: 'exp-routing-phase1-2026-07',
+      variantKey: 'dynamic',
+      metricName: 'placement_rate',
+      metricValue: 0.88,
+    },
     knownExceptions: [
+      {
+        id: 'PLAY-EX-01',
+        trigger: 'Limit < requested stake',
+        action: 'Reduce (if Expert permits) or reject; never replace live instruction',
+      },
       {
         id: 'PLAY-EX-02',
         trigger: 'Warm-up count ≠ 2 / not WARMED',
@@ -412,16 +715,183 @@ function patPartner(): TocPartner {
   };
 }
 
+/** NOV — onboarding partner (Rope before Drum). */
+function novPartner(): TocPartner {
+  return {
+    partnerCode: 'NOV',
+    status: 'Onboarding',
+    telegramRef: 'tg:dm:nov-onboarding',
+    package: { ...PKG },
+    flowStage: 'ONB',
+    readiness: {
+      score: 0.18,
+      playableAccountCount: 0,
+      accountScores: [
+        {
+          callSign: 'NOV-001',
+          score: 0.15,
+          playable: false,
+          factors: ['onboarding', 'rail_unconfirmed', 'no_limits'],
+        },
+        {
+          callSign: 'NOV-002',
+          score: 0.22,
+          playable: false,
+          factors: ['funded', 'awaiting_warm', 'rail_pending'],
+        },
+      ],
+    },
+    rails: [
+      {
+        id: 'rail-nov-venmo-1',
+        railType: 'Venmo',
+        label: 'CASHOUT-VENMO',
+        confirmed: false,
+        destinationHint: '@nov.newpartner',
+        dailyLimit: 5_000,
+        monthlyLimit: 20_000,
+      },
+    ],
+    accounts: [
+      {
+        callSign: 'NOV-001',
+        status: 'New',
+        warmupCount: 0,
+        warmupProgress: { completed: 0, required: 2, tags: [] },
+        capitalLocation: 'HouseFloat',
+        hardBalance: 0,
+        primaryRailId: 'rail-nov-venmo-1',
+        gate12: {
+          housePrincipalOutstanding: 0,
+          withdrawalMode: 'warmup_capital_return',
+        },
+        sportsbook: 'Hard Rock Florida',
+        flowStage: 'ONB',
+        limits: {
+          dailyMax: null,
+          weeklyMax: null,
+          checkedAt: null,
+          freshness: 'unknown',
+        },
+      },
+      {
+        callSign: 'NOV-002',
+        status: 'Funded',
+        warmupCount: 0,
+        warmupProgress: { completed: 0, required: 2, tags: ['#FUNDED'] },
+        capitalLocation: 'WithPartner',
+        hardBalance: 5000,
+        primaryRailId: 'rail-nov-venmo-1',
+        gate12: {
+          housePrincipalOutstanding: 5000,
+          withdrawalMode: 'warmup_capital_return',
+        },
+        sportsbook: 'Hard Rock Florida',
+        flowStage: 'FUND',
+        limits: {
+          dailyMax: null,
+          weeklyMax: null,
+          checkedAt: null,
+          freshness: 'unknown',
+        },
+      },
+    ],
+    openTasks: [
+      {
+        taskId: 'ONB-NOV-001-20260722-100000-001',
+        taskType: 'ONB',
+        callSign: 'NOV-001',
+        status: 'PendingPartner',
+        ballInCourt: 'Partner',
+        nextAction: 'Upload Venmo profile screenshot + confirm Ready (ONB Hard Gates)',
+        createdAt: '2026-07-22T10:00:00.000Z',
+      },
+      {
+        taskId: 'FUND-NOV-002-20260722-140000-001',
+        taskType: 'FUND',
+        callSign: 'NOV-002',
+        status: 'PendingPartner',
+        ballInCourt: 'Partner',
+        nextAction: 'Confirm receipt screenshot before Soft location update (FUND-EX-02 if idle)',
+        linkedExceptionId: 'FUND-EX-02',
+        createdAt: '2026-07-22T14:00:00.000Z',
+      },
+      {
+        taskId: 'LIMIT-NOV-001-20260722-110000-001',
+        taskType: 'LIMIT',
+        callSign: 'NOV-001',
+        status: 'New',
+        ballInCourt: 'Ops',
+        nextAction: 'Blocked until ONB + rail confirmed — queue after Ready',
+        createdAt: '2026-07-22T11:00:00.000Z',
+      },
+    ],
+    softBalance: {
+      byStakeholder: { Partner: 0, Expert: 0, House: 5000 },
+      recentEntries: [
+        {
+          entryType: 'CapitalDeployment',
+          stakeholder: 'House',
+          amount: 5000,
+          callSign: 'NOV-002',
+          taskId: 'FUND-NOV-002-20260722-140000-001',
+          timestamp: '2026-07-22T14:05:00.000Z',
+        },
+      ],
+      pendingDeployments: { count: 1, totalAmount: 5000 },
+    },
+    bottlenecks: [
+      {
+        ruleKey: 'open_pending_partner_queue',
+        severity: 'warn',
+        metric: 'pending_partner_tasks',
+        threshold: 3,
+        observed: 2,
+        taskId: 'ONB-NOV-001-20260722-100000-001',
+        resolvedAt: null,
+        nextAction: 'ONB + FUND ball with Partner — ping 30m / escalate 60m',
+      },
+      {
+        ruleKey: 'telegram_lane_undelivered_cards',
+        severity: 'info',
+        metric: 'undelivered_cards',
+        threshold: 1,
+        observed: 1,
+        resolvedAt: null,
+        nextAction: 'Confirm Telegram DM lane for NOV onboarding pack',
+      },
+    ],
+    recentPlays: [],
+    knownExceptions: [
+      {
+        id: 'ONB-EX-01',
+        trigger: 'Partner cannot provide rail profile screenshot',
+        action: 'Pause ONB; no FUND until screenshot-first Hard Gate clears',
+      },
+      {
+        id: 'FUND-EX-02',
+        trigger: 'Partner not ready / no confirm in window',
+        action: 'Pause; do not send; re-trigger only after re-confirm',
+      },
+      {
+        id: 'FUND-EX-03',
+        trigger: 'Insufficient House clean capital',
+        action: 'Pause; notify Ops Lead; may reduce/delay',
+      },
+    ],
+  };
+}
+
 /** Build the demo TOC Ops snapshot used for Pages bake + local portal. */
 export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): TocOpsSnapshot {
-  const partners = [ashPartner(), patPartner()];
-  const summary = summarize(partners);
-  const openWarmTasks = partners.flatMap(p =>
-    p.openTasks.filter(t => t.taskType === 'WARM' && t.status !== 'Completed')
-  );
+  const partners = [ashPartner(), patPartner(), novPartner()];
+  const exps = experiments();
+  const expertList = experts();
+  const allPlays = partners.flatMap(p => p.recentPlays);
+  const summary = summarize(partners, exps, allPlays);
 
   return {
-    schema: 'factorywager.toc-ops.portal-fixture.v1',
+    schema: 'factorywager.toc-ops.portal-fixture.v2',
     source: 'demo',
     readOnly: true,
     generatedAt,
@@ -452,6 +922,9 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
         LIMIT: 'LIMIT-EX-',
         ONB: 'ONB-EX-',
       },
+      flowOrder: ['ONB', 'FUND', 'LIMIT', 'WARM', 'PLAY', 'WD', 'RECYCLE'],
+      depositCorridor: { min: 4500, max: 5500, target: 5000 },
+      limitFreshnessDays: 7,
     },
     buffer: {
       floatTarget: 50_000,
@@ -464,26 +937,9 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
       playableDrums: partners.reduce((n, p) => n + p.readiness.playableAccountCount, 0),
       principalOutstandingTotal: summary.principalOutstandingTotal,
     },
+    experts: expertList,
+    experiments: exps,
     partners,
-    summary: {
-      ...summary,
-      // Keep openTasks count to non-Completed operational work for portal cards
-      openTasks: partners.reduce(
-        (n, p) => n + p.openTasks.filter(t => t.status !== 'Completed').length,
-        0
-      ),
-      byTaskType: (() => {
-        const m: Record<string, number> = {};
-        for (const p of partners) {
-          for (const t of p.openTasks) {
-            if (t.status === 'Completed') continue;
-            m[t.taskType] = (m[t.taskType] ?? 0) + 1;
-          }
-        }
-        // Ensure warm aging signal visible even when filtered
-        if (openWarmTasks.length > 0) m.WARM = openWarmTasks.length;
-        return m;
-      })(),
-    },
+    summary,
   };
 }

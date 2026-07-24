@@ -6,7 +6,7 @@
  * @see docs/harness/tenants/toc-ops.md
  */
 
-export type TocPartnerStatus = 'Ready' | 'Limited' | 'Inactive';
+export type TocPartnerStatus = 'Ready' | 'Limited' | 'Inactive' | 'Onboarding';
 export type TocAccountStatus = 'New' | 'Funded' | 'Warming' | 'WARMED' | 'Limited' | 'Inactive';
 export type TocCapitalLocation =
   | 'HouseFloat'
@@ -34,6 +34,10 @@ export type TocSoftEntryType =
   | 'CostOfPriming'
   | 'Adjustment';
 export type TocBottleneckSeverity = 'info' | 'warn' | 'critical';
+export type TocPlayStatus = 'instruction' | 'placed' | 'settled' | 'blocked';
+export type TocPlayResult = 'pending' | 'win' | 'loss' | 'push' | 'void' | 'blocked';
+export type TocExperimentStatus = 'draft' | 'active' | 'paused' | 'completed';
+export type TocFlowStage = 'ONB' | 'FUND' | 'LIMIT' | 'WARM' | 'PLAY' | 'WD' | 'RECYCLE';
 
 export type TocOpsCatalog = {
   taskTypes: TocTaskType[];
@@ -43,6 +47,9 @@ export type TocOpsCatalog = {
   warmupRequiredForPlay: 2;
   defaultSplit: { partnerPct: number; expertPct: number; housePct: number };
   exceptionFamilies: Record<string, string>;
+  flowOrder: TocFlowStage[];
+  depositCorridor: { min: number; max: number; target: number };
+  limitFreshnessDays: number;
 };
 
 export type TocOpsBuffer = {
@@ -63,6 +70,18 @@ export type TocRail = {
   label: string;
   confirmed: boolean;
   profileScreenshotRef?: string;
+  destinationHint?: string;
+  dailyLimit?: number;
+  monthlyLimit?: number;
+};
+
+export type TocAccountLimits = {
+  dailyMax: number | null;
+  weeklyMax: number | null;
+  rawText?: string;
+  checkedAt: string | null;
+  screenshotRef?: string;
+  freshness: 'fresh' | 'stale' | 'unknown';
 };
 
 export type TocAccount = {
@@ -78,6 +97,9 @@ export type TocAccount = {
     withdrawalMode: TocWdMode;
   };
   sportsbook?: string;
+  limits: TocAccountLimits;
+  expertId?: string; // brand-ok
+  flowStage: TocFlowStage;
 };
 
 export type TocOpenTask = {
@@ -88,6 +110,8 @@ export type TocOpenTask = {
   ballInCourt: TocBallInCourt;
   nextAction: string;
   linkedExceptionId?: string; // brand-ok — e.g. WARM-EX-01
+  proofRefs?: string[];
+  createdAt?: string;
 };
 
 export type TocSoftEntry = {
@@ -117,9 +141,66 @@ export type TocBottleneck = {
   nextAction: string;
 };
 
+export type TocPlay = {
+  playId: string; // brand-ok
+  taskId?: string; // brand-ok
+  callSign: string; // brand-ok
+  partnerCode: string; // brand-ok
+  expertId: string; // brand-ok
+  market: string;
+  event: string;
+  selection: string;
+  odds: number;
+  stake: number;
+  confidence?: number;
+  status: TocPlayStatus;
+  result: TocPlayResult;
+  pnl: number | null;
+  blockedReason?: string;
+  experimentId?: string; // brand-ok
+  variantKey?: string;
+  placedAt: string;
+  settledAt?: string;
+};
+
+export type TocExperimentVariant = {
+  key: string;
+  name: string;
+  config: Record<string, string | number | boolean>;
+};
+
+export type TocExperimentAssignment = {
+  partnerCode: string; // brand-ok
+  variantKey: string;
+  metricValue?: number;
+  assignedAt: string;
+};
+
+export type TocExperiment = {
+  id: string; // brand-ok
+  name: string;
+  status: TocExperimentStatus;
+  phase: 1 | 2 | 3 | 4;
+  designMethod: 'full' | 'switchback' | 'cluster' | 'factorial';
+  metricName: 'win_rate' | 'placement_rate' | 'throughput_t';
+  hypothesis: string;
+  factors: Array<{ name: string; levels: string[] }>;
+  variants: TocExperimentVariant[];
+  assignments: TocExperimentAssignment[];
+  clusterBy?: 'package_id' | 'partner_code';
+};
+
+export type TocExpert = {
+  expertId: string; // brand-ok
+  displayName: string;
+  markets: string[];
+  weight: number;
+};
+
 export type TocPartner = {
   partnerCode: string; // brand-ok — 3–6 letter TOC partner code
   status: TocPartnerStatus;
+  telegramRef?: string;
   package: {
     id: string; // brand-ok
     partnerPct: number;
@@ -136,11 +217,20 @@ export type TocPartner = {
       factors: string[];
     }>;
   };
+  /** Furthest healthy stage in ONB→…→WD for this partner */
+  flowStage: TocFlowStage;
   rails: TocRail[];
   accounts: TocAccount[];
   openTasks: TocOpenTask[];
   softBalance: TocSoftBalance;
   bottlenecks: TocBottleneck[];
+  recentPlays: TocPlay[];
+  experimentAssignment?: {
+    experimentId: string; // brand-ok
+    variantKey: string;
+    metricName: string;
+    metricValue: number;
+  };
   knownExceptions: Array<{
     id: string; // brand-ok — FUND-EX-01 …
     trigger: string;
@@ -149,7 +239,7 @@ export type TocPartner = {
 };
 
 export type TocOpsSnapshot = {
-  schema: 'factorywager.toc-ops.portal-fixture.v1';
+  schema: 'factorywager.toc-ops.portal-fixture.v2';
   source: 'snapshot' | 'demo';
   readOnly: true;
   generatedAt: string;
@@ -160,6 +250,8 @@ export type TocOpsSnapshot = {
   };
   catalog: TocOpsCatalog;
   buffer: TocOpsBuffer;
+  experts: TocExpert[];
+  experiments: TocExperiment[];
   partners: TocPartner[];
   /** Rollups for ops-summary.toc + portal cards */
   summary: {
@@ -167,13 +259,24 @@ export type TocOpsSnapshot = {
     accounts: number;
     warmed: number;
     warming: number;
+    onboarding: number;
     confirmedRails: number;
+    unconfirmedRails: number;
     openTasks: number;
+    openOnb: number;
+    openLimit: number;
+    openWarm: number;
+    openPlay: number;
     openBottlenecks: number;
     criticalBottlenecks: number;
     principalOutstandingTotal: number;
+    playsPending: number;
+    playsSettled: number;
+    playsBlocked: number;
+    activeExperiments: number;
     byTaskType: Record<string, number>;
     byBallInCourt: Record<string, number>;
+    byFlowStage: Record<string, number>;
   };
 };
 
@@ -185,12 +288,18 @@ export type TocOpsSummarySlice = {
   partners: number;
   warmed: number;
   warming: number;
+  onboarding: number;
   confirmedRails: number;
   openTasks: number;
+  openOnb: number;
+  openLimit: number;
   openBottlenecks: number;
   criticalBottlenecks: number;
   principalOutstandingTotal: number;
   throttleOnboarding: boolean;
   primedDrums: number;
   playableDrums: number;
+  playsPending: number;
+  playsSettled: number;
+  activeExperiments: number;
 };

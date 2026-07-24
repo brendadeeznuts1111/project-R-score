@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T06:49:31.499Z",
+  "generated": "2026-07-24T06:57:42.679Z",
   "liquidity": {
     "total": 47900
   },
@@ -182,11 +182,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "01625e604761b97d9d5a2049ba20cad0a32a1ddeec0a27f8cc5d363cc8744c8f",
+    "proofHash": "e0e11f78ed3602465d322e9ab783f0d7d3107db29058a63317801d05c2a093cc",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T06:49:31.500Z"
+    "timestamp": "2026-07-24T06:57:42.680Z"
   },
   "registryClient": {
     "available": true,
@@ -260,7 +260,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-24T06:49:31.466Z",
+    "timestamp": "2026-07-24T06:57:42.649Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -446,8 +446,8 @@
         "ok": true
       }
     ],
-    "proofHash": "e9c0e70343d9771bb930843d30fb4c8f455fe8d34dd42a85a5dd2c163a73601a",
-    "timestamp": "2026-07-24T06:49:31.060Z",
+    "proofHash": "3a8ec9cfe470e860359bc2a2eb7ffd07048151a216619275c39df2a75092ed11",
+    "timestamp": "2026-07-24T06:57:42.166Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -706,17 +706,38 @@
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-24T06:49:31.497Z",
-    "partners": 2,
+    "generatedAt": "2026-07-24T06:57:42.676Z",
+    "partners": 3,
     "warmed": 3,
     "warming": 1,
+    "onboarding": 1,
     "confirmedRails": 2,
-    "openTasks": 4,
-    "openBottlenecks": 4,
+    "openTasks": 7,
+    "openOnb": 1,
+    "openLimit": 2,
+    "openBottlenecks": 6,
     "criticalBottlenecks": 0,
-    "principalOutstandingTotal": 5000,
+    "principalOutstandingTotal": 10000,
     "throttleOnboarding": false,
     "primedDrums": 3,
-    "playableDrums": 1
+    "playableDrums": 1,
+    "playsPending": 1,
+    "playsSettled": 2,
+    "activeExperiments": 1
+  },
+  "loop": {
+    "dispatched": 19,
+    "gatedAllow": 0,
+    "gatedAdjust": 0,
+    "gatedDeny": 0,
+    "reserved": 19,
+    "settled": 3,
+    "settledViaFullLoop": 0,
+    "outboxSent": 3,
+    "outboxFailed": 1,
+    "outboxPending": 8,
+    "oldestPendingAgeSec": 1072,
+    "manualStepsPerCycle": 9,
+    "loopCompletionRate": 0
   }
 }

@@ -119,6 +119,11 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-sub" id="channels-detail"></div>
           </section>
           <section class="ops-panel">
+            <h2>Ops loop</h2>
+            <div class="ops-metric" id="loop-completion">0%</div>
+            <div class="ops-sub" id="loop-detail"></div>
+          </section>
+          <section class="ops-panel">
             <h2>TOC Ops</h2>
             <div class="ops-metric" id="toc-warmed">—</div>
             <div class="ops-sub" id="toc-detail"></div>
@@ -677,8 +682,10 @@ class OperationsDashboard extends HTMLElement {
         tocWarmed.textContent = String(d.toc.warmed ?? 0);
         if (tocDetail) {
           tocDetail.textContent =
-            `${d.toc.warming ?? 0} warming · ${d.toc.playableDrums ?? 0} playable · ` +
-            `${d.toc.openTasks ?? 0} open tasks · ${d.toc.openBottlenecks ?? 0} bottlenecks`;
+            `${d.toc.warming ?? 0} warming · ${d.toc.onboarding ?? 0} onboarding · ` +
+            `${d.toc.playableDrums ?? 0} playable · ${d.toc.openOnb ?? 0} ONB · ` +
+            `${d.toc.openLimit ?? 0} LIMIT · ${d.toc.playsPending ?? 0} plays pending · ` +
+            `${d.toc.activeExperiments ?? 0} experiments`;
         }
       } else if (tocDetail) {
         tocDetail.textContent = 'Fixture missing — bun run ops:seed:toc';
