@@ -1,9 +1,9 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 654,
-  "packageCount": 16,
-  "versionCount": 25,
+  "uptimeMs": 562,
+  "packageCount": 17,
+  "versionCount": 26,
   "lastIntegrity": {
     "status": "ok",
     "timestamp": "2026-07-23T17:59:09.433Z",
@@ -21,5 +21,168 @@
   "dodByStatus": {},
   "experimentsActive": 0,
   "predictionN": 10,
-  "timestamp": "2026-07-23T19:38:47.463Z"
+  "timestamp": "2026-07-23T23:23:22.107Z",
+  "snapshotAt": "2026-07-23T23:23:22.107Z",
+  "env": {
+    "ok": true,
+    "source": "env-check",
+    "checkedAt": "2026-07-23T23:23:22.107Z",
+    "summary": {
+      "total": 21,
+      "ok": 20,
+      "missing": 7,
+      "placeholder": 0,
+      "requiredMissing": 0
+    },
+    "table": [
+      {
+        "Key": "CLOUDFLARE_ACCOUNT_ID",
+        "Group": "cloudflare",
+        "Severity": "required",
+        "Status": "set",
+        "Detail": "7a470541a704caaf91e71efccc78fd36 · via R2_ACCOUNT_ID · default 7a470541…"
+      },
+      {
+        "Key": "CLOUDFLARE_ZONE_ID",
+        "Group": "cloudflare",
+        "Severity": "recommended",
+        "Status": "default",
+        "Detail": "unset · code default · a3b7ba4b…"
+      },
+      {
+        "Key": "CLOUDFLARE_ZONE_NAME",
+        "Group": "cloudflare",
+        "Severity": "optional",
+        "Status": "default",
+        "Detail": "unset · code default · factory-wager.com"
+      },
+      {
+        "Key": "CLOUDFLARE_API_TOKEN",
+        "Group": "cloudflare",
+        "Severity": "required",
+        "Status": "set",
+        "Detail": "set (len 53, cfa…43)"
+      },
+      {
+        "Key": "CLOUDFLARE_DNS_API_TOKEN",
+        "Group": "cloudflare",
+        "Severity": "recommended",
+        "Status": "✗ missing",
+        "Detail": "Zone.DNS Edit for score CNAME"
+      },
+      {
+        "Key": "R2_ACCESS_KEY_ID",
+        "Group": "r2",
+        "Severity": "required",
+        "Status": "set",
+        "Detail": "set (len 32, 582…bd)"
+      },
+      {
+        "Key": "R2_SECRET_ACCESS_KEY",
+        "Group": "r2",
+        "Severity": "required",
+        "Status": "set",
+        "Detail": "set (len 64, 35e…65)"
+      },
+      {
+        "Key": "R2_ENDPOINT",
+        "Group": "r2",
+        "Severity": "recommended",
+        "Status": "default",
+        "Detail": "unset · code default · or derived from account id"
+      },
+      {
+        "Key": "R2_REGISTRY_BUCKET",
+        "Group": "r2",
+        "Severity": "recommended",
+        "Status": "set",
+        "Detail": "bun-secrets · via R2_BUCKET_NAME · factory-wager-registry"
+      },
+      {
+        "Key": "REGISTRY_URL",
+        "Group": "registry",
+        "Severity": "recommended",
+        "Status": "default",
+        "Detail": "unset · code default · https://registry.factory-wager.com or score.factory-wager.com"
+      },
+      {
+        "Key": "REGISTRY_PUBLIC_URL",
+        "Group": "registry",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "—"
+      },
+      {
+        "Key": "REGISTRY_SECRET",
+        "Group": "registry",
+        "Severity": "required",
+        "Status": "set",
+        "Detail": "set (len 7)"
+      },
+      {
+        "Key": "API_KEY",
+        "Group": "registry",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "optional proof POST publish"
+      },
+      {
+        "Key": "OPS_DB_PATH",
+        "Group": "ops",
+        "Severity": "recommended",
+        "Status": "default",
+        "Detail": "unset · code default · data/operations.db"
+      },
+      {
+        "Key": "TELEGRAM_BOT_TOKEN",
+        "Group": "ops",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "outbox / alerts"
+      },
+      {
+        "Key": "TELEGRAM_OPS_CHAT_ID",
+        "Group": "ops",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "alert chat"
+      },
+      {
+        "Key": "PLAY_SIGNING_SECRET",
+        "Group": "ops",
+        "Severity": "recommended",
+        "Status": "default",
+        "Detail": "unset · code default · defaults to operations-dev-secret if unset"
+      },
+      {
+        "Key": "PROVISION_ENCRYPTION_KEY",
+        "Group": "ops",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "—"
+      },
+      {
+        "Key": "SNAPSHOT_PHASE",
+        "Group": "ops",
+        "Severity": "optional",
+        "Status": "default",
+        "Detail": "unset · code default · pre | post"
+      },
+      {
+        "Key": "BUN_CONSOLE_DEPTH",
+        "Group": "runtime",
+        "Severity": "optional",
+        "Status": "set",
+        "Detail": "4 · wrapper default 4"
+      },
+      {
+        "Key": "SLACK_WEBHOOK_URL",
+        "Group": "alerts",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "—"
+      }
+    ],
+    "requiredMissingKeys": []
+  }
 }
