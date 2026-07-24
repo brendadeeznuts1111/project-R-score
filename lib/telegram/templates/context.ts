@@ -42,6 +42,7 @@ const TEMPLATE_IDS = new Set<string>([
   'gate.blocked.v1',
 ]);
 
+// eslint-disable-next-line harness/no-unknown-function-param -- metadata_json wire leaf
 function asTemplateId(raw: unknown, fallback: TemplateId): TemplateId {
   return typeof raw === 'string' && TEMPLATE_IDS.has(raw) ? (raw as TemplateId) : fallback;
 }
@@ -116,9 +117,7 @@ export function getPhoneForSeat(
 
   let phone = node.phone_id
     ? (db
-        .query(
-          `SELECT id, model, carrier, status FROM phones WHERE id = $id`
-        )
+        .query(`SELECT id, model, carrier, status FROM phones WHERE id = $id`)
         .get({ $id: node.phone_id }) as {
         id: string; // brand-ok
         model: string | null;

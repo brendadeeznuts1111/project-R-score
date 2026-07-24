@@ -1,0 +1,7 @@
+display_name: Partner Profile Bridge
+short_description: tree_nodes bindings, play gate, identity/play.gate channels
+default_prompt: >-
+  Use the FactoryWager partner-profile bridge — bind/materialize profiles on
+  tree_nodes, gate plays via evaluateForNode on dispatch, emit partner.bound
+  only on create. Do not dual-write Sports Terminal as a peer ledger. Prove with
+  partner-profile-bridge and play-dispatcher-gate tests; backfill if unbound.

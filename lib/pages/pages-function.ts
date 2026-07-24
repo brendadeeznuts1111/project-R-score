@@ -15,6 +15,7 @@ export type PagesContext = {
 };
 
 export function jsonResponse(
+  // eslint-disable-next-line harness/no-unknown-function-param -- HTTP JSON wire envelope
   body: unknown,
   status = 200,
   extraHeaders: Record<string, string> = {}
