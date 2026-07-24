@@ -102,6 +102,7 @@ import {
   renderPortalMarkdownPage,
 } from '../lib/http/portal-markdown.ts';
 import { llmsFullTxtBody, llmsTxtBody, PORTAL_MD_SLUGS } from '../lib/http/llms-txt.ts';
+import { buildSkillsCatalog } from '../lib/http/skills-catalog.ts';
 import {
   serveVerificationScript,
   serveVerificationScriptMeta,
@@ -572,6 +573,7 @@ const WATCH_PATHS = [
   ...HOT_STATIC_PATHS,
   'public/portal/index.html',
   'public/portal/ops/index.html',
+  'public/portal/skills/index.html',
   'public/portal/operations-dashboard.js',
   'public/portal/app.js',
   'public/portal/style.css',
@@ -684,7 +686,9 @@ function withMarkdownAlternate(res: Response, path: string): Response {
   let slug: string | null = null;
   if (path === '/portal/index.html') slug = 'index';
   else {
-    const m = path.match(/^\/portal\/(ops|catalog|dod|health|env|monitoring)\/index\.html$/);
+    const m = path.match(
+      /^\/portal\/(ops|catalog|dod|health|env|monitoring|skills|dashboard)\/index\.html$/
+    );
     if (m) slug = m[1]!;
   }
   if (!slug) return res;
@@ -1367,6 +1371,9 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
       '/api/channels',
       '/api/operations/summary',
       '/api/catalog',
+      '/api/skills',
+      // Packaged .skill archives under public/skills/ — public read plane.
+      '/skills/',
       // Portal static chrome (HTML is route-matched; CSS/JS/modules hit fetch)
       '/portal/',
       // Static proof plane under public/registry/ (Pages parity; dashboard fetches JSON)
@@ -1384,6 +1391,8 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/operations/summary' || path === '/api/operations/summary/')
     return liveOpsSummary();
   if (path === '/api/catalog' || path === '/api/catalog/') return liveCatalog(req);
+  // Skills registry — local SKILL.md scan + *.skill package drop (never crashes)
+  if (path === '/api/skills' || path === '/api/skills/') return json(await buildSkillsCatalog());
 
   // Registry
   if (path === '/api/registry' || path === '/api/registry/') return serveRegistryIndex();
@@ -1759,6 +1768,8 @@ function buildPublicRoutes() {
     '/portal/dashboard/': portalPage('/portal/dashboard/'),
     '/portal/catalog': portalPage('/portal/catalog/'),
     '/portal/catalog/': portalPage('/portal/catalog/'),
+    '/portal/skills': portalPage('/portal/skills/'),
+    '/portal/skills/': portalPage('/portal/skills/'),
   };
 }
 

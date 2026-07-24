@@ -176,6 +176,15 @@ export const SIMD_ROUTES: PublicRouteDef[] = [
 /** Portal dashboard HTML surfaces (file/static via fetch or directory index). */
 export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
   {
+    path: '/portal/',
+    name: 'Registry portal',
+    category: 'portal',
+    kind: 'file-static',
+    critical: true,
+    okStatuses: [200],
+    note: 'app.js · static /registry/registry.json fallback',
+  },
+  {
     path: '/portal/ops/',
     name: 'Ops dashboard',
     category: 'portal',
@@ -212,6 +221,29 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
+  },
+  {
+    path: '/portal/skills/',
+    name: 'Skills registry',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: '/api/skills JSON · *.skill package downloads under /skills/',
+  },
+  {
+    path: '/portal/dashboard/',
+    name: 'Legacy dashboard',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+  },
+  {
+    path: '/monitoring/',
+    name: 'Monitoring page',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'static HTML · /api/monitoring JSON',
   },
 ];
 

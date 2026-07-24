@@ -26,23 +26,26 @@ let registrySource = 'snapshot';
 
 async function fetchRegistry(tenantId = resolveTenantId(), tenants = tenantsCache) {
   const paths = tenantRegistryPaths(tenantId, tenants);
-  try {
-    const res = await fetch(paths.proxy, { signal: AbortSignal.timeout(5000) });
-    if (res.ok) {
-      registrySource = 'live';
-      updateRegistryBanner('live');
-      return await res.json();
-    }
-  } catch { /* fall through */ }
+  const attempts: Array<{ mode: 'live' | 'snapshot'; url: string }> = [
+    { mode: 'live', url: paths.proxy },
+    { mode: 'snapshot', url: paths.static },
+  ];
 
-  try {
-    const res = await fetch(paths.static, { signal: AbortSignal.timeout(3000) });
-    if (res.ok) {
-      registrySource = 'snapshot';
-      updateRegistryBanner('snapshot');
-      return await res.json();
+  for (const { mode, url } of attempts) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+      if (!res.ok) continue;
+      const ct = res.headers.get('content-type') ?? '';
+      if (!ct.includes('json') && !ct.includes('javascript')) continue;
+      const data = await res.json();
+      if (!data || typeof data !== 'object' || !data.packages) continue;
+      registrySource = mode === 'live' ? 'live' : 'snapshot';
+      updateRegistryBanner(registrySource);
+      return data;
+    } catch {
+      /* try next source */
     }
-  } catch { /* fall through */ }
+  }
 
   throw new Error('Cannot load registry from proxy or static snapshot.');
 }

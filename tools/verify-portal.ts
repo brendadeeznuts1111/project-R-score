@@ -12,22 +12,17 @@
  */
 import { joinPath } from '../lib/path-bun.ts';
 import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
+import {
+  PORTAL_MARKDOWN_SLUGS,
+  PORTAL_NAV_PROBE_PATHS,
+  PORTAL_TRAILING_SLASH_SOURCES,
+} from '../lib/http/portal-route-manifest.ts';
 
 const PORTAL_ROOT = joinPath(import.meta.dir, '../public/portal');
 const BASE =
   Bun.env.PORTAL_VERIFY_BASE || `http://127.0.0.1:${resolveBunServeDefaultPort(Bun.env, Bun.argv)}`;
 
-const NAV_PATHS = [
-  '/',
-  '/portal/',
-  '/portal/ops/',
-  '/portal/catalog/',
-  '/portal/dod/',
-  '/portal/health/',
-  '/portal/env/',
-  '/portal/dashboard/',
-  '/monitoring',
-];
+const NAV_PATHS = [...PORTAL_NAV_PROBE_PATHS];
 
 /** Pages allowed to fetch /api/health directly (diagnostic SSOT). */
 const INLINE_HEALTH_ALLOW = new Set(['data.js', 'health/index.html']);
@@ -201,8 +196,45 @@ async function checkVerificationTaxonomyChrome() {
   console.log('✓ verification taxonomy portal chrome (subsystem filter + dedupe + audit panel)');
 }
 
+async function checkPortalRouteWiring() {
+  const redirects = await Bun.file('public/_redirects').text();
+  const missingRedirects = PORTAL_TRAILING_SLASH_SOURCES.filter(
+    src => !redirects.includes(`${src} `) && !redirects.includes(`${src}\t`)
+  );
+  if (missingRedirects.length) {
+    throw new Error(
+      `public/_redirects missing trailing-slash rules: ${missingRedirects.join(', ')}`
+    );
+  }
+
+  for (const slug of PORTAL_MARKDOWN_SLUGS) {
+    const rel =
+      slug === 'index'
+        ? 'public/portal/index.md'
+        : slug === 'monitoring'
+          ? 'public/portal/monitoring.md'
+          : `public/portal/${slug}.md`;
+    if (!(await Bun.file(rel).exists())) {
+      throw new Error(`missing portal markdown stub: ${rel}`);
+    }
+  }
+
+  const indexHtml = await Bun.file('public/portal/index.html').text();
+  if (!indexHtml.includes('href="/portal/style.css"')) {
+    throw new Error('portal/index.html must use absolute /portal/style.css');
+  }
+  if (!indexHtml.includes('src="/portal/app.js"')) {
+    throw new Error('portal/index.html must use absolute /portal/app.js');
+  }
+
+  console.log(
+    `✓ portal route wiring (${PORTAL_TRAILING_SLASH_SOURCES.length} redirects · ${PORTAL_MARKDOWN_SLUGS.length} markdown stubs)`
+  );
+}
+
 async function runStatic() {
   await checkFoundationDoc();
+  await checkPortalRouteWiring();
   await checkInlineHealthFetch();
   await checkNoProcessEnv();
   await checkHtmlIncludes();
