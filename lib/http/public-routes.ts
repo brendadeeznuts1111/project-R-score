@@ -232,10 +232,11 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
   },
   {
     path: '/portal/dashboard/',
-    name: 'Legacy dashboard',
+    name: 'Executive dashboard',
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
+    note: 'dashboard.js · monitoring + ops-summary + defaults command center',
   },
   {
     path: '/monitoring/',

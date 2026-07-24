@@ -2,21 +2,35 @@
 name: ops-dual-mode-experiments
 description: >-
   Dual-mode provisioning (manual vs automated_test), factorial partner-policy
-  experiments (FactorialEngine), and coverage prediction backtests on
-  FactoryWager operations. Use when working on provisioning queues,
-  sandbox-gated WebView signup, experiment variants, or prediction_accuracy.
+  experiments (FactorialEngine, phases, switchback, cluster), coverage prediction
+  backtests, and champion/challenger shadow eval on FactoryWager operations.
+  Use when working on provisioning queues, sandbox-gated WebView signup,
+  experiment variants/phases, prediction_accuracy, ops-summary C4/C5 panels,
+  or ops:diagnose / ops:snapshot freshness.
 ---
 
 # Ops dual-mode + experiments
+
+## When to use
+
+- Provisioning queue / WebView signup / sandbox gate / `is_test` coverage exclude
+- Factorial designs, sticky assign, switchback schedules, phased rollouts
+- Coverage floor variants (`min_coverage_pct` …) affecting `canOfferOnPlatform`
+- Prediction backtest / report / shadow champion-challenger
+- Ops summary empty or stale on `/portal/ops/` · `/portal/dashboard/` · Pages
+
+Deep maps (do not duplicate here): [`lib/experiments/README.md`](../../../lib/experiments/README.md) · [`lib/prediction/README.md`](../../../lib/prediction/README.md) · [`lib/provisioning/README.md`](../../../lib/provisioning/README.md) · [`docs/harness/ops-summary-endpoint.md`](../../../docs/harness/ops-summary-endpoint.md)
 
 ## Defaults
 
 | Item | Value |
 |------|--------|
 | DB | `data/operations.db` via `openOperationsDb` ([`lib/operations/db.ts`](../../../lib/operations/db.ts)) |
-| Modes | `manual` \| `automated_test` only |
+| Modes | `manual` \| `automated_test` only ([`lib/provisioning/queue.ts`](../../../lib/provisioning/queue.ts)) |
 | Crypto | AES-GCM via `encryptAesGcm` + `PROVISION_ENCRYPTION_KEY` |
 | Automation | Extend `lib/automation/provision-accounts.ts` — no parallel provisioner |
+| Experiments SSOT | [`lib/experiments/`](../../../lib/experiments/) — not under `lib/operations/` |
+| Prediction SSOT | [`lib/prediction/`](../../../lib/prediction/) |
 
 ## Agent lanes (do not cross)
 
@@ -24,12 +38,52 @@ description: >-
 |-------|-----------------|
 | Schema | `lib/operations/schema.ts`, `lib/operations/platform-coverage.ts` (migrate helpers), `tests/operations-schema.test.ts` |
 | Provision | `lib/provisioning/**`, `lib/automation/provision-accounts.ts`, `tools/provision-*.ts`, provision tests |
-| Experiment | `lib/experiments/**`, `tools/ops-experiments.ts`, coverage hook in `lib/operations/platform-coverage.ts` / `liquidity.ts`, `tests/experiments-*.test.ts` |
-| Prediction | `lib/prediction/**`, `tools/ops-prediction.ts`, `tests/prediction-*.test.ts` |
+| Experiment | `lib/experiments/**`, `tools/ops-experiments.ts`, coverage hook in `platform-coverage.ts` / `liquidity.ts`, `tests/experiments-*.test.ts` |
+| Prediction | `lib/prediction/**`, `tools/ops-prediction.ts`, shadow helpers in `lib/experiments/champion-challenger.ts`, `tests/prediction-*.test.ts` |
+| Portal / summary | `lib/operations/ops-summary.ts`, `tools/ops-snapshot.ts`, `tools/ops-summary-diagnose.ts`, portal ops/dashboard clients — only when the task is summary/UI |
 | Prove | Fix failing tests in owned files only |
 | Orchestrator | Commits, `package.json` scripts, this skill |
 
-## Sandbox gate
+Stage named files only. Never sweep unrelated dirty portal/DOD trees.
+
+## Job loop
+
+1. **Classify** — provision · experiment · prediction · summary/UI.
+2. **Claim lane** — write only the allowlist above; name the split in the commit.
+3. **Sandbox / policy** — live books fail closed; system factors are not partner-randomized.
+4. **Prove** — lane tests + CLI `--help` smoke (below).
+5. **Freeze for Pages** — `bun run ops:snapshot` when C4/C5 panels must ship; triage with `bun run ops:diagnose`.
+
+## Env
+
+| Variable | Role |
+|----------|------|
+| `PROVISION_ENCRYPTION_KEY` | credential AES-GCM key material |
+| `OPS_DB_PATH` | ops DB path (default `data/operations.db`) |
+| `OPS_MIN_PLATFORM_COVERAGE` | default coverage floor (variants may override) |
+| `OPS_EXPERIMENT_SANDBOX=1` | relax partners/cell + duration gates for demos |
+
+## Package scripts
+
+| Script | Entry |
+|--------|--------|
+| `ops:experiments` | `bun tools/ops-experiments.ts` |
+| `ops:prediction` | `bun tools/ops-prediction.ts` |
+| `ops:snapshot` | `bun tools/ops-snapshot.ts` → `public/registry/ops-summary.json` |
+| `ops:diagnose` | `bun tools/ops-summary-diagnose.ts` |
+| `ops:provision-queue` | `bun tools/provision-queue.ts` |
+| `ops:automation` | cron / `--once --coverage-prediction` |
+
+## Dual-mode provision
+
+| Path | Role |
+|------|------|
+| [`lib/provisioning/`](../../../lib/provisioning/) | Queue schema · enqueue · automated runner |
+| [`lib/automation/provision-accounts.ts`](../../../lib/automation/provision-accounts.ts) | Sandbox-gated WebView signup |
+| [`tools/provision-queue.ts`](../../../tools/provision-queue.ts) | CLI |
+| Brands | provision task / account IDs via [`lib/types/branded.ts`](../../../lib/types/branded.ts) |
+
+### Sandbox gate
 
 Automated WebView provisioning is allowed only when:
 
@@ -37,6 +91,105 @@ Automated WebView provisioning is allowed only when:
 - `platforms.sub_category = 'sandbox'`
 
 Live books must fail closed. Test accounts set `partner_platform_accounts.is_test = 1` and are excluded from coverage “covered” counts.
+
+## C4 — factorial experiments
+
+| Path | Role |
+|------|------|
+| [`lib/experiments/`](../../../lib/experiments/) | Design · engine · phases · runner · analyze · policy · cluster · switchback · champion · outcomes |
+| [`lib/experiments/engine.ts`](../../../lib/experiments/engine.ts) | `FactorialEngine` — create → sticky assign → metrics → analyze |
+| [`lib/experiments/phases.ts`](../../../lib/experiments/phases.ts) | Sequential phase presets (1→4 factors) |
+| [`lib/experiments/runner.ts`](../../../lib/experiments/runner.ts) | `launchPhase` + `dailyCheck` (no Bun.cron) |
+| [`lib/experiments/outcomes.ts`](../../../lib/experiments/outcomes.ts) | Settlement metrics + `canOfferStakeForNode` |
+| [`tools/ops-experiments.ts`](../../../tools/ops-experiments.ts) | CLI |
+| Coverage | `resolveExperimentCoverageFloor` · `canOfferOnPlatform(..., partnerId?)` · `reservePlay(..., { checkCoverage })` |
+| Brands | `ExperimentId` · `ExperimentVariantId` · `ExperimentAssignmentId` · `TreeNodeId` |
+
+### Protocols (pick one per partner)
+
+| Protocol | Use when | Mechanism |
+|----------|----------|-----------|
+| **between** | Cross-partner comparison | Sticky `assign` / `assign-cluster` |
+| **switchback** | Control partner FE / time trends | `switchback-schedule` — **no** sticky assign for that partner |
+
+Do not run both protocols for the same partner in one experiment.
+
+### Phased timeline
+
+Do **not** factorial all domains at once:
+
+| Phase | Factors | Cells |
+|-------|---------|-------|
+| 1 | `routing` static\|dynamic | 2 |
+| 2 | + `cut` 0.10\|0.15 | 4 |
+| 3 | + `stake` fixed\|kelly | 8 |
+| 4 | + `timing` immediate\|batched | 16 |
+
+### Coverage floor keys (`COVERAGE_FLOOR_KEYS`)
+
+Variant config may set: `min_coverage_pct` · `coverage_floor` · `minPlatformCoverage`.
+
+### CLI (sandbox)
+
+Production defaults: **10** partners/cell, **28**-day min duration (`OPS_EXPERIMENT_SANDBOX=1` or `--sandbox` relaxes).
+
+```bash
+OPS_EXPERIMENT_SANDBOX=1 bun run ops:experiments phase --n 1 --protocol switchback --period-days 7 --washout 1
+bun run ops:experiments create --name routing-cut \
+  --factors 'routing:static,dynamic;cut:0.10,0.15;min_coverage_pct:30,40' \
+  --min-partners-per-variant 1 --min-duration-days 0
+bun run ops:experiments activate --id <experimentId>
+bun run ops:experiments assign --id <experimentId> --partner <treeNodeId>
+bun run ops:experiments assign-cluster --id <experimentId> --partner <treeNodeId> --cluster-by expert
+bun run ops:experiments switchback-schedule --id <experimentId> --partner <treeNodeId> --period-days 14
+bun run ops:experiments check --id <experimentId>
+bun run ops:experiments record --id <experimentId> --partner <treeNodeId> --value 0.58
+bun run ops:experiments analyze --id <experimentId>
+bun run ops:experiments switchback-analyze --id <experimentId>
+```
+
+`dailyCheck` harm pause is **operational** (mean gap + min n), not statistical significance. System-scoped factors (`model`, `automation_frequency`, …) → champion/challenger shadow, not partner randomization.
+
+## C5 — coverage prediction + shadow
+
+| Path | Role |
+|------|------|
+| [`lib/prediction/`](../../../lib/prediction/) | Backtest + accuracy rollup + report |
+| [`lib/experiments/champion-challenger.ts`](../../../lib/experiments/champion-challenger.ts) | Shadow MAE promote (not p-values) |
+| [`tools/ops-prediction.ts`](../../../tools/ops-prediction.ts) | CLI |
+| Artifacts | `public/registry/prediction/*.{svg,html,png}` |
+
+```bash
+bun run ops:prediction daily --lookback 30
+bun run ops:prediction backtest --from 2025-01-01 --to 2025-12-31
+bun run ops:prediction report              # SVG+HTML
+bun run ops:prediction report --webview    # + Bun.WebView → Bun.Image PNG
+bun run ops:prediction accuracy --json
+bun run ops:prediction shadow-log --champion naive --challenger rf --cpred 50 --gpred 48 --actual 49
+bun run ops:prediction shadow-eval --min-n 100 --margin 0.01
+bun run ops:automation --once --coverage-prediction
+```
+
+## Portal + summary
+
+| Path | Role |
+|------|------|
+| [`/portal/ops/`](../../../public/portal/ops/) | Full verification + C4/C5 panels ([`operations-dashboard.js`](../../../public/portal/operations-dashboard.js)) |
+| [`/portal/dashboard/`](../../../public/portal/dashboard/) | Executive KPIs (liquidity · growth · experiments · channel) |
+| [`/monitoring/`](../../../public/monitoring/) | Routing/env/integrity compose |
+| [`lib/operations/ops-summary.ts`](../../../lib/operations/ops-summary.ts) | Shared payload (`experiments`, `prediction`, `growth`, …) |
+| [`functions/api/operations/summary.ts`](../../../functions/api/operations/summary.ts) | Pages: snapshot-only |
+| `public/registry/ops-summary.json` | Deploy artifact from `ops:snapshot` |
+| [`docs/harness/ops-summary-endpoint.md`](../../../docs/harness/ops-summary-endpoint.md) | Two-pipeline triage |
+
+**Local:** `bun run serve:public` → `/api/operations/summary` is **live** `buildOpsSummary`.  
+**Pages:** snapshot only — freeze with `bun run ops:snapshot` then deploy `public/`. Empty liquidity/plays with green proofs = empty DB, not a broken API.
+
+```bash
+bun run ops:diagnose
+bun run ops:diagnose --compare-routing
+bun run ops:snapshot --out /tmp/ops-summary.json
+```
 
 ## Commit groups
 
@@ -47,118 +200,30 @@ Live books must fail closed. Test accounts set `partner_platform_accounts.is_tes
 | C2 | `provisioning_tasks` queue + CLI + automated_test wire | shipped |
 | C3 | manual path + Telegram/KYC DOD | shipped |
 | C4 | `FactorialEngine` + coverage / settlement hooks | shipped |
-| C5 | `prediction_accuracy` + coverage backtest | shipped |
+| C4b | phases · runner · cluster · switchback · champion shadow | shipped |
+| C5 | `prediction_accuracy` + coverage backtest + report | shipped |
 
-Stage named files only. Never sweep unrelated dirty portal/DOD trees.
-
-## Env
-
-| Variable | Role |
-|----------|------|
-| `PROVISION_ENCRYPTION_KEY` | credential AES-GCM key material |
-| `OPS_DB_PATH` | ops DB path (default `data/operations.db`) |
-| `OPS_MIN_PLATFORM_COVERAGE` | default coverage floor (variants may override) |
-
-## Package scripts
-
-| Script | Entry |
-|--------|--------|
-| `ops:experiments` | `bun tools/ops-experiments.ts` |
-| `ops:prediction` | `bun tools/ops-prediction.ts` |
-| `ops:snapshot` | `bun tools/ops-snapshot.ts` → `public/registry/ops-summary.json` |
-| `ops:provision-queue` | `bun tools/provision-queue.ts` |
-
-## Portal + Cloudflare Pages
-
-| Path | Role |
-|------|------|
-| `public/portal/ops/` | Ops dashboard UI |
-| `public/portal/operations-dashboard.js` | Fetches summary; panels for experiments + prediction |
-| `functions/api/operations/summary.ts` | Live `buildOpsSummary` or snapshot fallback |
-| `lib/operations/ops-summary.ts` | Shared payload builder (C4/C5 fields) |
-| `public/registry/ops-summary.json` | Static seed / Pages deploy artifact |
-| `public/registry/prediction/` | SVG/HTML report (+ optional PNG from WebView) |
-| `public/_redirects` · `_headers` | No SPA catch-all; JSON content-type |
-
-**Local API (aligned):** `bun run serve:public` → `/api/operations/summary` is **live** `buildOpsSummary` (same JSON keys as snapshot).  
-**Pages API:** snapshot-only (`functions/api/operations/summary.ts` → `/registry/ops-summary.json`).  
-**Freeze for Pages:** `bun run ops:snapshot` then deploy `public/`. Disable CF Pages SPA rewrite or every path returns the landing shell.
-## Prove commands
+## Prove
 
 ```bash
-bun test tests/operations-schema.test.ts tests/ops-summary.test.ts tests/platform-coverage.test.ts
+bun test tests/operations-schema.test.ts tests/ops-summary.test.ts tests/ops-summary-diagnose.test.ts
+bun test tests/platform-coverage.test.ts
 bun test tests/provision-*.test.ts tests/provisioning-*.test.ts
-bun test tests/experiments-*.test.ts tests/prediction-*.test.ts
+bun test tests/experiments-*.test.ts
+bun test tests/prediction-*.test.ts
 bun run ops:provision-queue --help
 bun run ops:experiments --help
 bun run ops:prediction --help
+bun run ops:diagnose
 bun run ops:snapshot --out /tmp/ops-summary.json
 ```
 
-## C4 surface — factorial experiments
+## Do not
 
-| Path | Role |
-|------|------|
-| [`lib/experiments/`](../../../lib/experiments/) | Design · `FactorialEngine` · analyze · policy · schema · cluster · switchback |
-| [`lib/experiments/outcomes.ts`](../../../lib/experiments/outcomes.ts) | Settlement metrics + `canOfferStakeForNode` / subject resolution |
-| [`lib/experiments/README.md`](../../../lib/experiments/README.md) | Agent map (paths, naming, CLI, prove) |
-| [`tools/ops-experiments.ts`](../../../tools/ops-experiments.ts) | CLI |
-| [`lib/operations/db.ts`](../../../lib/operations/db.ts) | `openOperationsDb` / `DEFAULT_OPS_DB_PATH` |
-| [`lib/operations/liquidity.ts`](../../../lib/operations/liquidity.ts) | `ensurePosition` · `reservePlay(..., { checkCoverage })` |
-| [`lib/operations/platform-coverage.ts`](../../../lib/operations/platform-coverage.ts) | `canOfferOnPlatform(..., partnerId?)` |
-| `settlePlay` | Auto-records win_rate/pnl for active experiments via outcomes |
-| Brands | `ExperimentId` · `ExperimentVariantId` · `ExperimentAssignmentId` · `TreeNodeId` |
-| Tests | `tests/experiments-factorial.test.ts` · `tests/experiments-outcomes.test.ts` |
-
-### Coverage floor keys (`COVERAGE_FLOOR_KEYS`)
-
-Variant config may set: `min_coverage_pct` · `coverage_floor` · `minPlatformCoverage`.
-
-Resolved by `resolveExperimentCoverageFloor(db, partnerId)` for active assignments.
-
-### Sandbox CLI (relax launch policy)
-
-Production defaults: **10** partners/cell, **28**-day min duration.
-
-```bash
-bun run ops:experiments create --name routing-cut \
-  --factors 'routing:static,dynamic;cut:0.10,0.15;min_coverage_pct:30,40' \
-  --min-partners-per-variant 1 --min-duration-days 0
-bun run ops:experiments activate --id <experimentId>
-bun run ops:experiments assign --id <experimentId> --partner <treeNodeId>
-bun run ops:experiments record --id <experimentId> --partner <treeNodeId> --value 0.58
-bun run ops:experiments analyze --id <experimentId>
-```
-
-## C5 surface — coverage prediction
-
-| Path | Role |
-|------|------|
-| [`lib/prediction/`](../../../lib/prediction/) | Coverage backtest + accuracy rollup |
-| [`lib/prediction/report.ts`](../../../lib/prediction/report.ts) | SVG chart · HTML · optional WebView→Image PNG |
-| [`lib/prediction/schema.ts`](../../../lib/prediction/schema.ts) | `prediction_accuracy` via `ensurePredictionSchema` |
-| [`lib/prediction/tester.ts`](../../../lib/prediction/tester.ts) | `runCoverageBacktest` · `getPredictionAccuracy` |
-| [`lib/prediction/README.md`](../../../lib/prediction/README.md) | Model notes + CLI |
-| [`tools/ops-prediction.ts`](../../../tools/ops-prediction.ts) | CLI |
-| Tests | `tests/prediction-backtest.test.ts` · `tests/prediction-report.test.ts` |
-
-```bash
-bun test tests/prediction-backtest.test.ts tests/prediction-report.test.ts
-bun run ops:prediction daily --lookback 30
-bun run ops:prediction backtest --from 2024-01-01 --to 2024-12-31
-bun run ops:prediction report              # public/registry/prediction/*.svg+html
-bun run ops:prediction report --webview    # Bun.WebView → Bun.Image PNG
-bun run ops:snapshot                       # summary JSON + report for Pages
-bun run ops:prediction accuracy
-# cron process (daily snapshot+backtest at 01:00 UTC)
-bun run ops:automation --once --coverage-prediction
-```
-
-### C4 extensions (policy · cluster · switchback)
-
-| Path | Role |
-|------|------|
-| `lib/experiments/policy.ts` | Launch guardrails (resolution, partners/cell, duration, system-factor block) |
-| `lib/experiments/cluster.ts` | `assignClustered` — shared cell per `clusterKey` |
-| `lib/experiments/switchback.ts` | Within-partner schedules + washout + `analyzeSwitchback` |
-| Tests | `tests/experiments-policy-cluster-switchback.test.ts` |
+- Parallel provisioners outside `lib/automation/provision-accounts.ts`
+- Randomize system-scoped factors per partner
+- Run **between** + **switchback** for the same partner in one experiment
+- Factorial all four phase domains at once
+- Treat `dailyCheck` pause or shadow MAE as statistical significance
+- Sweep unrelated dirty portal/DOD trees into experiment/provision commits
+- Expect live SQLite on Cloudflare Pages (snapshot only)

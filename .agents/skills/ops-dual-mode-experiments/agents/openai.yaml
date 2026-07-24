@@ -1,0 +1,3 @@
+display_name: Ops Dual-Mode Experiments
+short_description: Provision dual-mode, factorial experiments, prediction backtests
+default_prompt: "Use ops dual-mode lanes — classify provision vs experiment vs prediction vs summary, respect sandbox/system-factor guardrails, then prove with the lane tests and ops:* CLI."

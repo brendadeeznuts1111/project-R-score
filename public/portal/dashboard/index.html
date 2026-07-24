@@ -1,38 +1,157 @@
 <!DOCTYPE html>
 <!-- @see docs/portal-foundation.md -->
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="refresh" content="60" />
+  <meta name="portal-poll-ms" content="30000" />
   <title>Operations Dashboard · FactoryWager</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
-    .dash { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
-    .dash h1 { display: flex; align-items: center; gap: 12px; font-size: 22px; }
-    .dash .sub { color: var(--text-dim); font-size: 13px; margin: -8px 0 24px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin: 20px 0; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-    .card .lbl { font-size: 11px; text-transform: uppercase; color: var(--text-dim); letter-spacing: .5px; }
-    .card .val { font-size: 26px; font-weight: 600; margin: 4px 0 6px; }
-    .card .d { font-size: 12px; color: var(--text-dim); }
-    .ok { color: var(--green); } .warn { color: var(--yellow); } .err { color: var(--red); }
-    .section { margin: 28px 0; }
-    .section h2 { font-size: 16px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
-    th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text-dim); font-weight: 500; background: var(--surface-hover); }
-    td { padding: 7px 10px; border-bottom: 1px solid var(--border); }
-    .mono { font-family: monospace; font-size: 11px; }
-    .phash { font-family: monospace; background: var(--surface-hover); padding: 2px 8px; border-radius: 4px; font-size: 11px; }
-    .btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-    .btn:hover { background: var(--surface-hover); }
-    .top { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
-    .err-box { background: rgba(248,81,73,.1); border: 1px solid var(--red); border-radius: var(--radius); padding: 12px 16px; margin: 12px 0; font-size: 13px; color: var(--red); }
-    .nav-links { margin: 16px 0; display: flex; gap: 12px; flex-wrap: wrap; font-size: 13px; }
-    .nav-links a { color: var(--accent); }
+    .dash-page { max-width: 1120px; margin: 0 auto; padding: 24px; }
+    .dash-hero {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 16px;
+      margin-bottom: 16px;
+    }
+    .dash-hero h1 {
+      font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 600; margin: 0;
+      font-family: var(--font-sans, Inter, system-ui, sans-serif);
+    }
+    .dash-hero .lead { color: var(--text-dim); font-size: 13px; margin: 0; flex: 1 1 220px; }
+    .dash-hero .btn {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
+    }
+    .dash-hero .btn:hover { background: var(--surface-hover); border-color: var(--accent); }
+    .dash-banner {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px; border-radius: var(--radius);
+      border: 1px solid var(--border); background: var(--surface); margin-bottom: 12px;
+    }
+    .dash-banner .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--text-dim); flex-shrink: 0; }
+    .dash-banner.ok .dot { background: var(--green, #3fb950); box-shadow: 0 0 8px var(--green, #3fb950); }
+    .dash-banner.warn .dot { background: var(--yellow, #d29922); }
+    .dash-banner.bad .dot { background: var(--red, #f85149); }
+    .dash-banner .title { font-weight: 600; font-size: 16px; }
+    .dash-meta { font-size: 12px; color: var(--text-dim); margin: 0 0 20px; }
+    .dash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .dash-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .dash-card h3 {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .4px;
+      color: var(--text-dim); margin: 0 0 6px; font-weight: 500;
+    }
+    .dash-card .val {
+      font-size: 22px; font-weight: 600;
+      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+      font-variant-numeric: tabular-nums;
+    }
+    .dash-card .sub { font-size: 11px; color: var(--text-dim); margin-top: 6px; word-break: break-word; }
+    .dash-card.ok .val { color: var(--green, #3fb950); }
+    .dash-card.bad .val { color: var(--red, #f85149); }
+    .dash-card.warn .val { color: var(--yellow, #d29922); }
+    .dash-h2 {
+      font-size: 13px; text-transform: uppercase; letter-spacing: .35px;
+      color: var(--text-dim); margin: 0 0 10px; font-weight: 600;
+    }
+    .dash-section { margin-bottom: 28px; }
+    .dash-section-meta { font-size: 12px; color: var(--text-dim); margin: 0 0 10px; }
+    .dash-strip, .dash-channel {
+      display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center;
+      padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--surface); margin-bottom: 16px; font-size: 13px;
+    }
+    .dash-strip .lbl, .dash-channel .lbl {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--text-dim); margin-right: 6px;
+    }
+    .dash-channel { flex-direction: column; align-items: stretch; gap: 8px; }
+    .dash-channel-main .val { font-weight: 600; font-size: 16px; margin-right: 10px; }
+    .dash-channel.ok { border-color: rgba(63, 185, 80, .35); }
+    .dash-channel.bad { border-color: rgba(248, 81, 73, .4); }
+    .dash-two {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px;
+    }
+    @media (max-width: 720px) { .dash-two { grid-template-columns: 1fr; } }
+    .dash-list { list-style: none; padding: 0; margin: 0; }
+    .dash-list li {
+      padding: 7px 0; border-bottom: 1px solid rgba(48,54,61,.4);
+      display: flex; justify-content: space-between; gap: 12px; font-size: 13px;
+    }
+    .dash-list li small { color: var(--text-dim); }
+    .dash-list li.active small { color: var(--green, #3fb950); }
+    .dash-tree { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; }
+    .dash-tree b { color: var(--accent); font-variant-numeric: tabular-nums; }
+    .dash-table-wrap {
+      overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
+    }
+    .dash-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .dash-table th {
+      text-align: left; padding: 8px 10px; color: var(--text-dim); font-weight: 500;
+      border-bottom: 1px solid var(--border); background: rgba(255,255,255,.03); position: sticky; top: 0;
+    }
+    .dash-table td { padding: 7px 10px; border-bottom: 1px solid rgba(48,54,61,.35); vertical-align: top; }
+    .dash-table .mono, .mono {
+      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 11px;
+    }
+    .dim { color: var(--text-dim); }
+    .st-ok, .ok { color: var(--green, #3fb950); }
+    .st-bad, .bad { color: var(--red, #f85149); }
+    .st-warn, .warn { color: var(--yellow, #d29922); }
+    .dash-empty { font-size: 13px; color: var(--text-dim); }
+    .dash-hash { font-size: 11px; color: var(--text-dim); margin: 0 0 8px; word-break: break-all; }
+    .dash-proof-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px;
+    }
+    .dash-proof {
+      display: block; padding: 14px; border-radius: var(--radius);
+      border: 1px solid var(--border); background: var(--surface);
+      text-decoration: none; color: inherit;
+    }
+    .dash-proof:hover { border-color: var(--accent); }
+    .dash-proof h4 { font-size: 11px; text-transform: uppercase; color: var(--text-dim); margin: 0 0 6px; }
+    .dash-proof .val {
+      font-size: 18px; font-weight: 600;
+      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+      font-variant-numeric: tabular-nums;
+    }
+    .dash-proof .sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+    .dash-proof.ok .val { color: var(--green, #3fb950); }
+    .dash-proof.bad .val { color: var(--red, #f85149); }
+    .dash-proof.warn .val { color: var(--yellow, #d29922); }
+    .dash-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .dash-actions.tight { margin-top: 4px; }
+    .dash-actions a {
+      font-size: 13px; padding: 6px 12px; border-radius: 6px;
+      border: 1px solid var(--border); color: var(--accent); text-decoration: none; background: var(--surface);
+    }
+    .dash-actions a:hover { border-color: var(--accent); }
+    .dash-loading { margin: 12px 0 24px; }
+    .dash-error {
+      padding: 16px; border: 1px solid var(--red, #f85149); border-radius: var(--radius);
+      background: rgba(248,81,73,.08); font-size: 13px;
+    }
+    .dash-error .error-code {
+      display: inline-block; margin: 8px 0; padding: 2px 8px; border-radius: 4px;
+      background: var(--surface-hover); font-family: var(--font-mono, monospace); font-size: 11px;
+    }
+    .retry-btn {
+      display: inline-block; margin-top: 8px; padding: 4px 16px;
+      background: var(--accent-glow, rgba(88,166,255,.12)); border: 1px solid var(--accent);
+      border-radius: 4px; color: var(--accent); cursor: pointer;
+    }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -46,93 +165,66 @@
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link">Home</a>
-        <a href="/portal/ops" class="nav-link">Ops</a>
+        <a href="/portal/ops/" class="nav-link">Ops</a>
         <a href="/portal/" class="nav-link">Registry</a>
-        <a href="/portal/health" class="nav-link">Health</a>
-        <a href="/portal/dod" class="nav-link">DOD</a>
+        <a href="/portal/health/" class="nav-link">Health</a>
+        <a href="/portal/dod/" class="nav-link">DOD</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog" class="nav-link" role="menuitem">Catalog</a>
-            <a href="/portal/env" class="nav-link" role="menuitem">Env</a>
-            <a href="/portal/dashboard" class="nav-link active" role="menuitem">Dashboard</a>
-            <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
+            <a href="/portal/catalog/" class="nav-link" role="menuitem">Catalog</a>
+            <a href="/portal/skills/" class="nav-link" role="menuitem">Skills</a>
+            <a href="/portal/env/" class="nav-link" role="menuitem">Env</a>
+            <a href="/portal/dashboard/" class="nav-link active" role="menuitem" aria-current="page">Dashboard</a>
+            <a href="/monitoring/" class="nav-link" role="menuitem">Monitoring</a>
             <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">Wiki</a>
           </div>
         </div>
       </nav>
       <div class="topbar-status">
-        <a href="/portal/health" class="topbar-health-link" title="System health">
+        <a href="/portal/health/" class="topbar-health-link" title="System health">
           <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">…</span>
+          <span id="health-label" class="health-label">Connecting…</span>
         </a>
       </div>
     </div>
   </header>
 
-  <main class="dash">
-    <div class="top">
-      <h1>📊 Operations Dashboard</h1>
-      <button class="btn" onclick="window.location.reload()">🔄 Refresh</button>
-      <span id="ts" style="color:var(--text-dim);font-size:12px"></span>
+  <main class="main dash-page">
+    <div class="dash-hero">
+      <h1>Operations Dashboard</h1>
+      <p class="lead">Executive command center — monitoring, ops summary, channel meta, and Bun defaults.</p>
+      <button type="button" class="btn" id="dash-refresh">Refresh</button>
     </div>
 
-    <div class="grid" id="cards"></div>
-    <div id="net" class="section"></div>
-    <div id="defaults-tbl" class="section"></div>
-    <div id="proofs" class="section"></div>
-    <div id="errors"></div>
+    <div id="dash-banner" class="dash-banner">
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <div id="dash-banner-title" class="title">Loading dashboard…</div>
+      </div>
+    </div>
+    <p id="dash-meta" class="dash-meta">Fetching monitoring, ops summary, and defaults…</p>
+
+    <div id="dash-loading" class="dash-loading" aria-busy="true" aria-label="Loading operations data">
+      <div class="skeleton skeleton-card">
+        <div class="skeleton-line" style="width:40%"></div>
+        <div class="skeleton-line" style="width:80%"></div>
+        <div class="skeleton-line" style="width:60%"></div>
+      </div>
+    </div>
+
+    <div id="dash-cards" class="dash-grid"></div>
+    <div id="dash-sections"></div>
   </main>
 
-  <script>
-    async function load() {
-      const $ = id => document.getElementById(id);
+  <notification-center aria-live="polite"></notification-center>
 
-      const res = await Promise.all([
-        fetch('/api/defaults').then(r => r.json()).catch(() => ({})),
-        fetch('/api/monitoring').then(r => r.json()).catch(() => ({})),
-        fetch('/api/registry').then(r => r.json()).catch(() => ({})),
-        fetch('/api/release').then(r => r.json()).catch(() => ({})),
-      ]);
-      const [def, mon, reg, rel] = res;
+  <footer class="footer">
+    <p>FactoryWager · <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a></p>
+  </footer>
 
-      const pkgCount = reg?.packages ? Object.keys(reg.packages).length : mon?.packageCount || 0;
-      const verCount = reg?.packages ? Object.values(reg.packages).reduce((s, p) => s + (p.versions?.length || 0), 0) : mon?.versionCount || 0;
-
-      const cards = [
-        { lbl: 'Registry Packages', val: pkgCount || '—', d: verCount + ' versions', cls: pkgCount > 0 ? 'ok' : 'err' },
-        { lbl: 'Bun Defaults', val: (def.passed ?? '?') + '/' + (def.total ?? '?'), d: def.status || 'N/A', cls: def.passed === def.total ? 'ok' : 'warn' },
-        { lbl: 'DOD Queue', val: mon?.dodQueue ?? 0, d: 'pending reviews', cls: mon?.dodQueue === 0 ? 'ok' : 'warn' },
-        { lbl: 'Platforms', val: mon?.platformSummary ? Object.values(mon.platformSummary).reduce((a,b) => a+b, 0) : '—', d: mon?.platformApiAvailable?.yes + ' API up', cls: mon?.platformApiAvailable?.yes > 0 ? 'ok' : 'warn' },
-        { lbl: 'Experiments', val: mon?.experimentsActive ?? 0, d: 'active', cls: 'ok' },
-        { lbl: 'Prediction', val: mon?.predictionN ?? 0, d: 'data points', cls: (mon?.predictionN ?? 0) > 0 ? 'ok' : 'warn' },
-      ];
-      $('cards').innerHTML = cards.map(c => '<div class="card"><div class="lbl">'+c.lbl+'</div><div class="val '+c.cls+'">'+c.val+'</div><div class="d">'+c.d+'</div></div>').join('');
-
-      // Defaults table
-      if (def.tests?.length) {
-        $('defaults-tbl').innerHTML = '<h2>🔍 Bun Defaults Verification</h2><table><thead><tr><th>Test</th><th>Expected</th><th>Result</th></tr></thead><tbody>' +
-          def.tests.map(t => '<tr><td>'+t.name+'</td><td>'+t.expected+'</td><td>'+(t.passed ? '✅' : '❌')+'</td></tr>').join('') +
-          '</tbody></table><p style="margin-top:8px"><span class="phash">🔒 Proof hash: '+(def.proofHash||'N/A')+'</span></p>';
-      }
-
-      // Proof hashes
-      const hashes = [];
-      if (def.proofHash) hashes.push(['Defaults', def.proofHash]);
-      if (mon?.env?.summary) hashes.push(['Env checks', mon.env.summary.ok + '/' + mon.env.summary.total + ' ok']);
-      const r = rel?.results?.[0] || {};
-      const chan = r.channel || '—';
-      const tgt = r.targetVersion || '—';
-      const lat = r.latestAtTestTime || '—';
-      hashes.push(['Bun runtime', `${def.bunVersion || '?'} · channel:${chan} · target:${tgt} · latest:${lat}`]);
-      $('proofs').innerHTML = '<h2>🔐 Proof Hashes & Channels</h2><table><thead><tr><th>Proof</th><th>Value</th></tr></thead><tbody>' +
-        hashes.map(h => '<tr><td>'+h[0]+'</td><td class="mono">'+h[1]+'</td></tr>').join('') + '</tbody></table>';
-
-      $('ts').textContent = new Date().toLocaleTimeString();
-    }
-    load();
-  </script>
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/dashboard.js?v=2026-07-24"></script>
 </body>
 </html>

@@ -202,15 +202,29 @@ Live probe checks CSS/JS assets (`checkPortalStyles`), ops dashboard panels (inc
 
 Wired into `ci:harness` as gate `portal-foundation` and appended to `verify-all` for live checks.
 
+### Executive dashboard (`/portal/dashboard/`)
+
+[`dashboard.js`](../public/portal/dashboard.js) is the at-a-glance command center (not a duplicate of Ops):
+
+- Data: `/api/monitoring` → `/registry/monitoring.json`, `/api/operations/summary` → `/registry/ops-summary.json`, `/api/defaults`, `/registry/release-features.json`
+- Surfaces: health banner, KPI cards (registry · defaults · routing · liquidity · growth · channel · env · experiments), experts/plays, proof tiles, Bun defaults table
+- Soft refresh every 30s; deep links to `/portal/ops/` and `/monitoring/`
+
 ### Ops dashboard (`/portal/ops/`)
 
-[`operations-dashboard.js`](../public/portal/operations-dashboard.js) loads:
+[`operations-dashboard.js`](../public/portal/operations-dashboard.js) uses **two pipelines**:
 
-| Source | Path | Notes |
-|--------|------|-------|
-| Ops summary | `/api/operations/summary` (local SQLite) or `/registry/ops-summary.json` (Pages) | Regenerate: `bun run ops:snapshot` |
-| Proof artifacts | `/registry/*.json` | release-features · install-* · networking · runtime-nits · bundler · proof-taxonomy-audit |
-| Release preview | release-features rows | install-platform rows deduped via [`lib/verification/release-preview.ts`](../lib/verification/release-preview.ts) |
+**Layer 1 — summary API (embedded slices)**
+
+- Local: `GET /api/operations/summary` → [`buildOpsSummary`](../lib/operations/ops-summary.ts) (`source: live`)
+- Pages: same path → snapshot [`ops-summary.json`](../public/registry/ops-summary.json)
+- Regenerate snapshot: `bun run ops:snapshot`
+- Triage: `bun run ops:diagnose` · runbook [`docs/harness/ops-summary-endpoint.md`](../harness/ops-summary-endpoint.md)
+
+**Layer 2 — portal registry fetches (full panels)**
+
+- `/registry/*.json` — release-features · install-* · networking · runtime-nits · bundler · proof-taxonomy-audit
+- Release preview rows deduped via [`lib/verification/release-preview.ts`](../lib/verification/release-preview.ts)
 
 Filters: `<channel-filter>` composes release channel + verification subsystem checkboxes. Cards expose `data-channel`, `data-subsystem`, `data-introduced-in`.
 
