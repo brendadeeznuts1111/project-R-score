@@ -1,3 +1,10 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations — --minify
 /**
  * Bun release-note cross-reference — changelog items → verification + doc links.
  *
@@ -50,11 +57,26 @@ export const BUN_V1314_ANCHORS = {
   'tls-getcacertificates-system-no-longer-stalls-on-managed-macs': `${BUN_V1314_BLOG}#tls-getcacertificates-system-no-longer-stalls-on-managed-macs`,
   'use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates': `${BUN_V1314_BLOG}#use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates`,
   'event-loop-refactor': `${BUN_V1314_BLOG}#event-loop-refactor`,
-  'bun-archive-api': 'https://bun.sh/docs/runtime/archive',
-  'bun-stringwidth-accuracy': 'https://bun.sh/docs/runtime/utils#bun-stringwidth',
-  'bun-terminal-api': 'https://bun.sh/docs/runtime/terminal',
-  'bun-compile-features': 'https://bun.sh/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination',
+  'bun-archive-api': 'https://bun.com/docs/runtime/archive',
 } as const;
+
+/** Base URL for Bun v1.3.5 blog post (PTY, feature flags, stringWidth, S3, npmrc). */
+export const BUN_V135_BLOG = 'https://bun.com/blog/bun-v1.3.5' as const;
+
+/** Permanent canonical anchors from the v1.3.5 blog post. */
+export const BUN_V135_ANCHORS = {
+  'bun-terminal-api-for-pseudo-terminal-pty-support': `${BUN_V135_BLOG}#bun-terminal-api-for-pseudo-terminal-pty-support`,
+  'compile-time-feature-flags-for-dead-code-elimination': `${BUN_V135_BLOG}#compile-time-feature-flags-for-dead-code-elimination`,
+  'improved-bun-stringwidth-accuracy': `${BUN_V135_BLOG}#improved-bun-stringwidth-accuracy`,
+  'content-disposition-support-for-s3-uploads': `${BUN_V135_BLOG}#content-disposition-support-for-s3-uploads`,
+  'environment-variable-expansion-in-npmrc-quoted-values': `${BUN_V135_BLOG}#environment-variable-expansion-in-npmrc-quoted-values`,
+} as const;
+
+export type BunV135AnchorKey = keyof typeof BUN_V135_ANCHORS;
+
+export function bunV135Url(anchor: BunV135AnchorKey): string {
+  return BUN_V135_ANCHORS[anchor];
+}
 
 export type BunV1314AnchorKey = keyof typeof BUN_V1314_ANCHORS;
 
@@ -72,7 +94,12 @@ export type BunReleaseNoteId =
   | 'using-await-using-native'
   | 'no-orphans'
   | 'faster-esm'
-  | 'cross-language-lto';
+  | 'cross-language-lto'
+  | 'bun-terminal-pty'
+  | 'compile-time-feature-flags'
+  | 'stringwidth-accuracy'
+  | 's3-content-disposition'
+  | 'npmrc-env-expansion';
 
 export type BunReleaseNoteRow = {
   id: BunReleaseNoteId;
@@ -117,7 +144,10 @@ export const BUN_RELEASE_NOTE_ROWS: readonly BunReleaseNoteRow[] = [
       'Codegen classes (Request, Response, Subprocess, …) no longer re-scan all live instances after every mutator yield; only visitChildren runs. Hand-written types unchanged.',
     canonical: BUN_V1314_ANCHORS['reduced-gc-overhead-for-built-in-objects'],
     verify: 'smoke',
-    refs: [BUN_V1314_ANCHORS['reduced-gc-overhead-for-built-in-objects'], 'https://bun.com/docs/runtime/gc'],
+    refs: [
+      BUN_V1314_ANCHORS['reduced-gc-overhead-for-built-in-objects'],
+      'https://bun.com/docs/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects',
+    ],
   },
   {
     id: 'binary-size-linux-windows',
@@ -140,7 +170,8 @@ export const BUN_RELEASE_NOTE_ROWS: readonly BunReleaseNoteRow[] = [
   {
     id: 'using-await-using-native',
     title: 'using / await using no longer lowered when targeting Bun',
-    summary: 'JavaScriptCore native Explicit Resource Management — no __using helper transpile for bun target.',
+    summary:
+      'JavaScriptCore native Explicit Resource Management — no __using helper transpile for bun target.',
     canonical: BUN_V1314_ANCHORS['using-await-using-no-longer-lowered-when-targeting-bun'],
     verify: 'automated',
     refs: [BUN_V1314_ANCHORS['using-await-using-no-longer-lowered-when-targeting-bun']],
@@ -168,6 +199,64 @@ export const BUN_RELEASE_NOTE_ROWS: readonly BunReleaseNoteRow[] = [
     canonical: BUN_V1314_ANCHORS['cross-language-lto-for-zig-c-on-linux'],
     verify: 'smoke',
     refs: [BUN_V1314_ANCHORS['cross-language-lto-for-zig-c-on-linux']],
+  },
+  {
+    id: 'bun-terminal-pty',
+    title: 'Bun.Terminal API for pseudo-terminal (PTY) support',
+    summary:
+      'Bun.spawn({ terminal }) and reusable new Bun.Terminal(); POSIX at ship (ConPTY in 1.3.14).',
+    canonical: BUN_V135_ANCHORS['bun-terminal-api-for-pseudo-terminal-pty-support'],
+    verify: 'automated',
+    refs: [
+      BUN_V135_ANCHORS['bun-terminal-api-for-pseudo-terminal-pty-support'],
+      'https://bun.com/docs/runtime/child-process#terminal-pty-support',
+    ],
+  },
+  {
+    id: 'compile-time-feature-flags',
+    title: 'Compile-time feature flags (bun:bundle)',
+    summary:
+      'import { feature } from "bun:bundle" — dead-code elimination via --feature / Bun.build features.',
+    canonical: BUN_V135_ANCHORS['compile-time-feature-flags-for-dead-code-elimination'],
+    verify: 'automated',
+    refs: [
+      BUN_V135_ANCHORS['compile-time-feature-flags-for-dead-code-elimination'],
+      'https://bun.com/docs/bundler/index#features',
+      'https://bun.com/docs/guides/runtime/build-time-constants#feature-flags',
+    ],
+  },
+  {
+    id: 'stringwidth-accuracy',
+    title: 'Improved Bun.stringWidth accuracy',
+    summary: 'Grapheme-aware emoji, zero-width chars, CSI/OSC ANSI sequences.',
+    canonical: BUN_V135_ANCHORS['improved-bun-stringwidth-accuracy'],
+    verify: 'automated',
+    refs: [
+      BUN_V135_ANCHORS['improved-bun-stringwidth-accuracy'],
+      'https://bun.com/docs/runtime/utils#bun-stringwidth',
+    ],
+  },
+  {
+    id: 's3-content-disposition',
+    title: 'S3 contentDisposition uploads',
+    summary: 'contentDisposition option on s3.file / s3.write for inline vs attachment filenames.',
+    canonical: BUN_V135_ANCHORS['content-disposition-support-for-s3-uploads'],
+    verify: 'informational',
+    refs: [
+      BUN_V135_ANCHORS['content-disposition-support-for-s3-uploads'],
+      'https://bun.com/docs/runtime/s3',
+    ],
+  },
+  {
+    id: 'npmrc-env-expansion',
+    title: '.npmrc quoted env expansion + ? modifier',
+    summary: 'Quoted ${NPM_TOKEN} values expand; ${VAR?} → empty when unset (npm parity).',
+    canonical: BUN_V135_ANCHORS['environment-variable-expansion-in-npmrc-quoted-values'],
+    verify: 'informational',
+    refs: [
+      BUN_V135_ANCHORS['environment-variable-expansion-in-npmrc-quoted-values'],
+      'https://bun.com/docs/pm/npmrc',
+    ],
   },
 ] as const;
 
@@ -211,6 +300,13 @@ export const BUN_RELEASE_TEST_CANONICAL: Readonly<Record<string, string>> = {
   'Bun.inspect depth': BUN_V1314_ANCHORS['upgraded-javascriptcore-engine'],
   'Bun.hash returns bigint': resolveCanonicalUrl('Bun.hash'),
   'Bun.version / Bun.revision': resolveCanonicalUrl('Bun.version'),
+  'Bun.Archive (create, extract, gzip, read)': BUN_V1314_ANCHORS['bun-archive-api'],
+  'Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)':
+    BUN_V135_ANCHORS['improved-bun-stringwidth-accuracy'],
+  'Bun.spawn PTY (echo capture)':
+    BUN_V135_ANCHORS['bun-terminal-api-for-pseudo-terminal-pty-support'],
+  'Compile-time feature flags (bun:bundle)':
+    BUN_V135_ANCHORS['compile-time-feature-flags-for-dead-code-elimination'],
   ...INSTALL_PLATFORM_TEST_CANONICAL,
 };
 
@@ -258,7 +354,10 @@ export type PushReleaseResultContext = {
 /** Push a result with optional explicit anchor override and report-level semantic tags. */
 export function pushReleaseResult(
   results: VerificationResult[],
-  row: Omit<VerificationResult, 'canonical' | '_links' | 'channel' | 'targetVersion' | 'latestAtTestTime'> & {
+  row: Omit<
+    VerificationResult,
+    'canonical' | '_links' | 'channel' | 'targetVersion' | 'latestAtTestTime'
+  > & {
     anchor?: BunV1314AnchorKey;
     /** Explicit canonical URL override (e.g. install platform row). */
     canonical?: string;
@@ -267,8 +366,7 @@ export function pushReleaseResult(
 ): void {
   const { anchor, canonical: explicitCanonical, ...rest } = row;
   const canonical =
-    explicitCanonical ??
-    (anchor ? BUN_V1314_ANCHORS[anchor] : canonicalForReleaseTest(row.name));
+    explicitCanonical ?? (anchor ? BUN_V1314_ANCHORS[anchor] : canonicalForReleaseTest(row.name));
   results.push({
     ...rest,
     canonical,
@@ -326,10 +424,7 @@ async function spawnProbe(
     timedOut = true;
     proc.kill();
   }, timeoutMs);
-  const [out, code] = await Promise.all([
-    new Response(proc.stdout).text(),
-    proc.exited,
-  ]);
+  const [out, code] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
   clearTimeout(timer);
   return { out, code: timedOut ? null : code, timedOut };
 }
@@ -395,6 +490,81 @@ export function smokeBuiltinObjectsGc(): { ok: boolean; count: number } {
     return { ok: true, count: 2000 };
   } catch {
     return { ok: false, count: 2000 };
+  }
+}
+
+/** v1.3.5 stringWidth vectors from release notes. */
+export function probeStringWidthV135Accuracy(): { ok: boolean; note: string } {
+  const checks: Array<[string, number]> = [
+    ['🇺🇸', 2],
+    ['👋🏽', 2],
+    ['👨‍👩‍👧', 2],
+    ['\u00AD', 0],
+    ['\u2060', 0],
+  ];
+  const bad = checks.filter(([text, width]) => Bun.stringWidth(text) !== width);
+  return {
+    ok: bad.length === 0,
+    note:
+      bad.length === 0
+        ? 'flag=2 skin=2 zwj=2 hyphen=0 joiner=0'
+        : bad.map(([t, w]) => `${JSON.stringify(t)}≠${w}`).join(', '),
+  };
+}
+
+/** v1.3.5 Bun.Terminal PTY — echo through reusable terminal. */
+export async function probeBunTerminalPty(): Promise<{ ok: boolean; note: string }> {
+  try {
+    const { spawnWithTerminal } = await import('../terminal.ts');
+    const result = await spawnWithTerminal({ cmd: ['echo', 'pty-probe'] });
+    const text = result.output.replace(/\r/g, '');
+    const ok = result.exitCode === 0 && text.includes('pty-probe');
+    return {
+      ok,
+      note: ok
+        ? `exit=0 captured pty output (${result.chunks.length} chunks)`
+        : `exit=${result.exitCode} out=${text.slice(0, 40)}`,
+    };
+  } catch (e) {
+    return { ok: false, note: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/** v1.3.5 compile-time feature flags via bun:bundle + bun build --feature. */
+export async function probeCompileTimeFeatureFlags(): Promise<{ ok: boolean; note: string }> {
+  const { mkdtemp, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const dir = await mkdtemp(join(tmpdir(), 'fw-feature-probe-'));
+  try {
+    const entry = join(dir, 'entry.ts');
+    const outdir = join(dir, 'out');
+    await Bun.write(
+      entry,
+      'import { feature } from "bun:bundle";\nexport const mode = feature("FW_PROBE_PREMIUM") ? "premium" : "free";\n'
+    );
+    const proc = Bun.spawnSync(
+      ['bun', 'build', '--feature=FW_PROBE_PREMIUM', entry, '--outdir', outdir, '--minify'],
+      { cwd: dir, stdout: 'pipe', stderr: 'pipe' }
+    );
+    if (proc.exitCode !== 0) {
+      return {
+        ok: false,
+        note: `build exit=${proc.exitCode} ${new TextDecoder().decode(proc.stderr).slice(0, 120)}`,
+      };
+    }
+    const built = await Bun.file(join(outdir, 'entry.js')).text();
+    const ok = built.includes('premium') && !built.includes('free');
+    return {
+      ok,
+      note: ok
+        ? 'PREMIUM branch kept; free eliminated'
+        : `unexpected bundle: ${built.slice(0, 80)}`,
+    };
+  } catch (e) {
+    return { ok: false, note: e instanceof Error ? e.message : String(e) };
+  } finally {
+    await rm(dir, { recursive: true, force: true }).catch(() => {});
   }
 }
 

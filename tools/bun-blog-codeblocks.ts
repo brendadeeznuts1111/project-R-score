@@ -6,7 +6,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
 // @see https://bun.com/rss.xml — Bun blog RSS
-// @see https://bun.com/docs/guides/process/argv#parse-command-line-arguments — util.parseArgs
+// @see https://bun.com/docs/guides/process/argv — util.parseArgs (page restructured, section anchors removed)
 /**
  * Extract `<div class="CodeBlock">` regions from a Bun blog HTML post.
  *

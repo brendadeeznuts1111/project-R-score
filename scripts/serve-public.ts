@@ -221,7 +221,10 @@ async function serveStaticRegistry(): Promise<Response> {
   const f = Bun.file('public/registry/static.json');
   if (await f.exists())
     return new Response(f, {
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=60',
+      },
     });
   // Fallback to live aggregation
   const reg = await readRegistry();
@@ -1142,6 +1145,14 @@ async function bunApiProof(): Promise<Response> {
       ? `${Math.round((proof.summary.demosPassed / proof.summary.demos) * 100)}%`
       : '0%',
     allPassed: proof.summary?.demosPassed === proof.summary?.demos,
+    _links: {
+      self: '/api/proof',
+      // Contract note: when the proof asset is hot-preloaded this route serves
+      // the raw manifest; otherwise this normalized summary. Edge /api/proof
+      // (functions/api/proof.ts) is always normalized.
+      manifest: '/api/proof?format=manifest',
+      contract: 'normalized summary (default) | raw manifest when hot-preloaded',
+    },
   });
 }
 
@@ -1347,7 +1358,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (tenantM) {
     const f = Bun.file(`public/registry/${tenantM[1]}/registry.json`);
     if (await f.exists())
-      return new Response(f, { headers: { 'Content-Type': 'application/json' } });
+      return new Response(f, { headers: { 'Content-Type': 'application/json; charset=utf-8' } });
     return json({ error: `No registry for tenant: ${tenantM[1]}` }, 404);
   }
 
@@ -1483,6 +1494,9 @@ function buildPublicRoutes() {
           text: '/api/defaults?format=text',
           proof: '/registry/defaults-proof.json',
           script: '/api/defaults/script',
+          // Contract note: local serves this normalized shape; the Pages edge
+          // (functions/api/defaults.ts) passes the raw proof through.
+          contract: 'normalized/local vs raw/edge — use ?format=raw for the edge shape',
           scriptMeta: '/api/defaults/script.meta',
           docs: 'https://bun.com/docs/runtime/utils',
         },
@@ -1520,7 +1534,10 @@ function buildPublicRoutes() {
       const f = Bun.file('public/registry/release-features.json');
       if (await f.exists())
         return new Response(f, {
-          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Cache-Control': 'public, max-age=60',
+          },
         });
       return json({ error: 'Not generated' }, 404);
     },
@@ -1528,7 +1545,10 @@ function buildPublicRoutes() {
       const f = Bun.file('public/registry/release-features.json');
       if (await f.exists())
         return new Response(f, {
-          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60' },
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Cache-Control': 'public, max-age=60',
+          },
         });
       return json({ error: 'Not generated' }, 404);
     },

@@ -62,6 +62,13 @@ export function validateOpsSummary(v: unknown): ContractResult {
         typeof (v.prediction.coverage as Record<string, unknown>).mae === 'number' &&
         typeof (v.prediction.coverage as Record<string, unknown>).rmse === 'number',
     ],
+    // Writer-always-emits sections (buildOpsSummary)
+    ['growth is object', isRecord(v.growth)],
+    ['bunUtils is object', isRecord(v.bunUtils)],
+    ['routing is object', isRecord(v.routing)],
+    // Optional sections (ops-snapshot extras)
+    ['networking, when present, is object', v.networking === undefined || isRecord(v.networking)],
+    ['env, when present, is object', v.env === undefined || isRecord(v.env)],
   ];
   return check('ops-summary', v, rules);
 }
@@ -70,7 +77,7 @@ export function validateOpsSummary(v: unknown): ContractResult {
 const DOD_TYPES = new Set(['balance', 'slip', 'receipt', 'id', 'location', 'device']);
 const DOD_STATUSES = new Set(['pending', 'verified', 'rejected', 'flagged']);
 
-/** Contract for one `dod-registry.json` entry. `signature` required for new entries. */
+/** Contract for one `dod-registry.json` entry. `signature`/`modelVersion` are optional for legacy entries but required in format when present (written for all new entries since the signature chain landed). */
 // eslint-disable-next-line harness/no-unknown-function-param
 export function validateDodRegistryEntry(v: unknown, index: number): ContractResult {
   const name = `dod-registry.entries[${index}]`;
@@ -117,9 +124,87 @@ export function validateDodRegistry(v: unknown): ContractResult {
 
 /** Validate a named artifact with its registered contract. */
 export function validateArtifact(
-  name: 'ops-summary' | 'dod-registry',
+  name: 'ops-summary' | 'dod-registry' | 'monitoring' | 'registry-index' | 'defaults-proof',
   // eslint-disable-next-line harness/no-unknown-function-param
   value: unknown
 ): ContractResult {
-  return name === 'ops-summary' ? validateOpsSummary(value) : validateDodRegistry(value);
+  switch (name) {
+    case 'ops-summary':
+      return validateOpsSummary(value);
+    case 'dod-registry':
+      return validateDodRegistry(value);
+    case 'monitoring':
+      return validateMonitoring(value);
+    case 'registry-index':
+      return validateRegistryIndex(value);
+    case 'defaults-proof':
+      return validateDefaultsProof(value);
+  }
+}
+
+// ── monitoring.json ──────────────────────────────────────────────
+/** Contract for `public/registry/monitoring.json` (/api/monitoring snapshot). */
+// eslint-disable-next-line harness/no-unknown-function-param
+export function validateMonitoring(v: unknown): ContractResult {
+  if (!isRecord(v)) return { ok: false, errors: ['monitoring: not an object'] };
+  const rules: [string, boolean][] = [
+    ['uptime is string', typeof v.uptime === 'string'],
+    ['uptimeMs is number', typeof v.uptimeMs === 'number'],
+    ['packageCount is number', typeof v.packageCount === 'number'],
+    ['versionCount is number', typeof v.versionCount === 'number'],
+    ['dodQueue is number', typeof v.dodQueue === 'number'],
+    ['timestamp is ISO date', isIsoDate(v.timestamp)],
+    ['lastIntegrity is object', isRecord(v.lastIntegrity)],
+    ['platformSummary is object', isRecord(v.platformSummary)],
+  ];
+  return check('monitoring', v, rules);
+}
+
+// ── registry.json (package index) ────────────────────────────────
+/** Contract for `public/registry/registry.json` — incl. versions↔releases invariant. */
+// eslint-disable-next-line harness/no-unknown-function-param
+export function validateRegistryIndex(v: unknown): ContractResult {
+  if (!isRecord(v)) return { ok: false, errors: ['registry-index: not an object'] };
+  if (!isRecord(v.packages))
+    return { ok: false, errors: ['registry-index: packages not an object'] };
+  const errors: string[] = [];
+  for (const [pkgName, pkg] of Object.entries(v.packages)) {
+    if (!isRecord(pkg)) {
+      errors.push(`registry-index.${pkgName}: not an object`);
+      continue;
+    }
+    const versions = Array.isArray(pkg.versions) ? pkg.versions : null;
+    const releases = isRecord(pkg.releases) ? pkg.releases : null;
+    if (!versions) errors.push(`registry-index.${pkgName}: versions not an array`);
+    if (!releases) errors.push(`registry-index.${pkgName}: releases not an object`);
+    if (versions && releases) {
+      // Phantom-version invariant: every listed version has a release entry.
+      for (const ver of versions) {
+        if (!(ver in releases)) {
+          errors.push(
+            `registry-index.${pkgName}: version ${String(ver)} listed but missing from releases`
+          );
+        }
+      }
+    }
+    if (pkg['dist-tags'] != null && !isRecord(pkg['dist-tags'])) {
+      errors.push(`registry-index.${pkgName}: dist-tags not an object`);
+    }
+  }
+  return { ok: errors.length === 0, errors };
+}
+
+// ── defaults-proof.json ──────────────────────────────────────────
+/** Contract for `public/registry/defaults-proof.json` (Bun defaults proof). */
+// eslint-disable-next-line harness/no-unknown-function-param
+export function validateDefaultsProof(v: unknown): ContractResult {
+  if (!isRecord(v)) return { ok: false, errors: ['defaults-proof: not an object'] };
+  const rules: [string, boolean][] = [
+    ['timestamp or generated is ISO date', isIsoDate(v.timestamp) || isIsoDate(v.generated)],
+    [
+      'summary or tests present',
+      isRecord(v.summary) || Array.isArray(v.tests) || Array.isArray(v.results),
+    ],
+  ];
+  return check('defaults-proof', v, rules);
 }

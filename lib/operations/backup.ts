@@ -5,7 +5,7 @@
 /**
  * Operations DB backup — local snapshot + optional R2 upload.
  */
-import { joinPath } from '../lib/path-bun.ts';
+import { joinPath } from '../path-bun.ts';
 import { S3Client } from 'bun';
 import { DEFAULT_OPS_DB_PATH } from './db.ts';
 

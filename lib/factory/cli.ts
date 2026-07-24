@@ -13,9 +13,9 @@
 // @see https://bun.com/docs/guides/process/argv — Bun.argv
 // @see https://bun.com/docs/guides/process/argv — util.parseArgs
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
-// @see https://bun.com/docs/runtime/utils#bun-sliceansi — Bun.sliceAnsi
+// @see https://bun.com/docs/runtime/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
-// @see https://bun.com/docs/runtime/jsonc#bun-jsonc-parse — Bun.JSONC.parse
+// @see https://bun.com/docs/reference/bun/JSONC — Bun.JSONC.parse
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — console depth

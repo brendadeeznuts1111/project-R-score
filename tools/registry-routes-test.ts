@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
-// @see https://bun.com/docs/runtime/utils#bun-inspect-table — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**

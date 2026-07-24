@@ -13,7 +13,7 @@
  * Run: bun run integrity:check
  */
 
-import { validateDodRegistry, validateOpsSummary } from '../registry/contracts.ts';
+import { validateArtifact } from '../registry/contracts.ts';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 import { recordIntegrityCheck } from './collect.ts';
 
@@ -28,6 +28,9 @@ export type IntegrityCheckResult = {
 const ARTIFACTS = [
   { name: 'ops-summary', path: 'public/registry/ops-summary.json' },
   { name: 'dod-registry', path: 'public/registry/dod-registry.json' },
+  { name: 'monitoring', path: 'public/registry/monitoring.json' },
+  { name: 'registry-index', path: 'public/registry/registry.json' },
+  { name: 'defaults-proof', path: 'public/registry/defaults-proof.json' },
 ] as const;
 
 function resolveOpsDbPath(override?: string): string {
@@ -48,22 +51,10 @@ export async function runIntegrityCheck(dbPath?: string): Promise<IntegrityCheck
     }
     try {
       const value = await file.json();
-      const result =
-        artifact.name === 'ops-summary' ? validateOpsSummary(value) : validateDodRegistry(value);
+      const result = validateArtifact(artifact.name, value);
       failures.push(...result.errors);
     } catch (err) {
       failures.push(`${artifact.name}: invalid JSON (${err instanceof Error ? err.message : err})`);
-    }
-  }
-
-  // registry.json index: exists + parses (shape owned by lib/factory)
-  const index = Bun.file('public/registry/registry.json');
-  if (!(await index.exists())) failures.push('registry-index: missing');
-  else {
-    try {
-      await index.json();
-    } catch {
-      failures.push('registry-index: invalid JSON');
     }
   }
 

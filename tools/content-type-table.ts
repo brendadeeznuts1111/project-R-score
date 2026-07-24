@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-// @see https://bun.com/docs/runtime/utils#bun-inspect-table — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — Content-Type
 /**
  * Deep Content-Type matrix:

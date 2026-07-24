@@ -43,7 +43,8 @@ Projects/
 │   ├── organization/        # Root cleanup history
 │   └── packages/            # REGISTRY.md snapshot (regenerate via packages:list tooling)
 ├── examples/                # Demos & Bun feature showcases (opt-in context)
-├── functions/               # Cloudflare Pages Functions (/api/registry R2 proxy)
+├── functions/               # Cloudflare Pages edge Functions (/api/* — edge-safe only, see tests/functions-edge-safety.test.ts)
+├── functions-bun-only/      # Bun-runtime API modules (DOD review, telegram, catalog — not deployed to Pages edge)
 ├── Kalshi-bot/              # Nested product submodule (own remote; see .gitmodules)
 ├── lib/                     # Shared library — README.md inventory + domain/*/README.md indexes
 │   └── docs/repo-docs.ts    # CANONICAL_REPO_DOCS path SSOT

@@ -20,7 +20,7 @@ export function jsonResponse(
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
       ...extraHeaders,
     },
@@ -32,7 +32,7 @@ export function requireBucket(env: RegistryPagesEnv): NonNullable<RegistryPagesE
   if (!bucket || typeof bucket.get !== 'function') {
     throw new Response(JSON.stringify({ error: 'Registry binding unavailable' }), {
       status: 503,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
     });
   }
   return bucket;
@@ -43,7 +43,7 @@ export function requireSessionSecret(env: RegistryPagesEnv): string {
   if (!secret) {
     throw new Response(JSON.stringify({ error: 'Session not configured' }), {
       status: 503,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
     });
   }
   return secret;

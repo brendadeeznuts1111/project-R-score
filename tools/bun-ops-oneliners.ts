@@ -279,7 +279,7 @@ export const OPS_ONELINERS: readonly OpsOneliner[] = [
     id: 'daily-pnl-report',
     summary: 'P&L table via Bun.inspect.table',
     apis: ['bun:sqlite', 'Bun.inspect.table'],
-    docs: 'https://bun.com/docs/runtime/utils#bun-inspect-table',
+    docs: 'https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options',
     run: async () => {
       const db = memoryOpsDb();
       const expert = db.query(`SELECT id FROM experts LIMIT 1`).get() as { id: string }; // brand-ok — opaque SQL primary key

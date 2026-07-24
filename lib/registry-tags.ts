@@ -1,4 +1,6 @@
-// @see https://bun.com/docs/runtime/semver#bun-semver-order-versiona-string-versionb-string--0-|-1-|-1 — Bun.semver.order
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/semver#bun-semver-order-versiona-string-versionb-string-0-1-1 — Bun.semver.order
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -12,6 +14,7 @@
  *
  * Upgrade path: consumers resolve `pre` → smoke → promote → `post`/`latest`.
  */
+// eslint-disable-next-line no-restricted-imports
 import { existsSync, readFileSync } from 'node:fs';
 import { sha256Hex } from './bun-utils-proof.ts';
 
@@ -87,10 +90,7 @@ export function resolveSnapshotPhase(
  * - pre: pre + latest (if no post yet handled by index merge)
  * - post: post + latest + stable (optional)
  */
-export function tagsForPhase(
-  phase: SnapshotPhase,
-  opts: { pinStable?: boolean } = {}
-): string[] {
+export function tagsForPhase(phase: SnapshotPhase, opts: { pinStable?: boolean } = {}): string[] {
   if (phase === 'post') {
     const tags = [REGISTRY_DIST_TAGS.post, REGISTRY_DIST_TAGS.latest];
     if (opts.pinStable) tags.push(REGISTRY_DIST_TAGS.stable);
@@ -238,8 +238,10 @@ export async function writeProofIndex(
  * - post.json when phase=post
  * - versioned file
  */
+
 export async function writeTaggedProofArtifact(
   packageName: ProofPackageId,
+  // eslint-disable-next-line harness/no-unknown-function-param
   body: unknown,
   opts: {
     phase: SnapshotPhase;

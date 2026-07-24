@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/nodejs-compat#nodecrypto — node:crypto
-// @see https://bun.com/docs/runtime/web-crypto — SubtleCrypto
+// @see https://bun.com/docs/runtime/web-apis — SubtleCrypto
 /**
  * Spine smoke: SHA3 + X25519 deriveBits (Bun WebCrypto / node:crypto).
  * Vectors from Bun release notes (Hello, world! → sha3-256).

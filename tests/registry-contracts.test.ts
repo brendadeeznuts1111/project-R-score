@@ -39,8 +39,39 @@ describe("registry contracts — negative cases", () => {
         phones: { inventory: 0, issued: 0, returned: 0 },
         experiments: { byStatus: {}, active: 0, recent: [] },
         prediction: { coverage: { mae: 0, rmse: 0 } },
+        growth: {},
+        bunUtils: {},
+        routing: {},
       }).ok,
     ).toBe(true);
+    // Missing writer-always-emits sections must fail
+    expect(
+      validateArtifact("ops-summary", {
+        source: "snapshot",
+        generated: "2026-07-23T00:00:00Z",
+        liquidity: { total: 0 },
+        experts: [],
+        tree: { partners: 0, agents: 0, subAgents: 0, downstreamLiquidity: 0 },
+        plays: [],
+        rails: [],
+        phones: { inventory: 0, issued: 0, returned: 0 },
+        experiments: { byStatus: {}, active: 0, recent: [] },
+        prediction: { coverage: { mae: 0, rmse: 0 } },
+      }).ok,
+    ).toBe(false);
+  });
+
+  test("registry-index enforces the versions↔releases invariant", async () => {
+    const { validateRegistryIndex } = await import("../lib/registry/contracts.ts");
+    expect(
+      validateRegistryIndex({ packages: { a: { versions: ["1.0.0"], releases: { "1.0.0": {} } } } }).ok,
+    ).toBe(true);
+    // Phantom version: listed but no release
+    const phantom = validateRegistryIndex({
+      packages: { a: { versions: ["1.0.0", "2.0.0"], releases: { "1.0.0": {} } } },
+    });
+    expect(phantom.ok).toBe(false);
+    expect(phantom.errors[0]).toContain("2.0.0");
   });
 
   test("dod-registry entry validation", () => {

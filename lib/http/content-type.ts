@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/runtime/networking/fetch#content-type-handling — request body Content-Type
 // @see https://bun.com/docs/runtime/networking/fetch — fetch
 // @see https://bun.com/docs/guides/http/file-uploads#upload-files-via-http-using-formdata — FormData upload
-// @see https://bun.com/docs/runtime/utils#bun-inspect-table — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 /**
  * Content-Type decision matrix — four+ columns, never a single fuzzy string.
  *

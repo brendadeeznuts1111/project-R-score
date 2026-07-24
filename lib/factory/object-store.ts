@@ -1,5 +1,5 @@
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
-// @see https://bun.com/docs/runtime/s3#basics — S3File read/write/stat/exists
+// @see https://bun.com/docs/runtime/s3#basic-usage — S3File read/write/stat/exists
 // @see https://bun.com/blog/bun-v1.3.6#s3-requester-pays-support — requestPayer
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**

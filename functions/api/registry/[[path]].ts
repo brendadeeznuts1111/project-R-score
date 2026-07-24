@@ -48,7 +48,7 @@ export function jsonError(
   return new Response(JSON.stringify({ error }), {
     status,
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
       ...cors,
     },
@@ -135,7 +135,7 @@ export async function onRequest(context: RegistryPagesContext): Promise<Response
       return jsonError(res.status === 404 ? 404 : 503, res.status === 404 ? 'Not found' : 'Registry binding unavailable', cors);
     }
     const headers: Record<string, string> = {
-      'Content-Type': res.headers.get('Content-Type') || 'application/json',
+      'Content-Type': res.headers.get('Content-Type') || 'application/json; charset=utf-8',
       'Cache-Control': 'public, max-age=60, s-maxage=300',
       ...cors,
     };

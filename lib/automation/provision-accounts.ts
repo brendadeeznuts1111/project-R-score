@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/webview — Bun.WebView
-// @see https://bun.com/docs/runtime/webview#navigate — view.navigate
-// @see https://bun.com/docs/runtime/webview#evaluate — view.evaluate
+// @see https://bun.com/docs/runtime/webview#navigation — view.navigate
+// @see https://bun.com/docs/runtime/webview#evaluating-javascript — view.evaluate
 // @see https://bun.com/docs/runtime/sqlite
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
