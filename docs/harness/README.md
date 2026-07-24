@@ -186,3 +186,27 @@ Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown
 6. **Feedback → infrastructure** — lesson template promotes into type/lint/skill/doc-map.
 7. **Attention budget** — JIT this index; deep docs stay linked.
 8. **Whole job + lanes** — one trajectory owns closeout; disjoint files for parallel agents.
+
+## Discovery wave (platform + proof)
+
+Parallel agent lanes for platform mapping — run from broad to narrow:
+
+| Wave | Command / owner | Output |
+|------|-----------------|--------|
+| 0 | `bun run harness:status` | ratchet + claim inventory |
+| 1 | `bun run cloudflare:env` · MCP `cloudflare` Pages API | domain pins · deploy state |
+| 2 | `bun run verify:proof-taxonomy:save` · `bun run check:release-tracker` | 6 contracts + consistency |
+| 3 | `bun run ops:snapshot` · `bun run verify:portal` · `verify:pages-edge` | live portal + Pages edge |
+
+Routing SSOT: [`docs/platform-routing.md`](../platform-routing.md) · proof taxonomy: [`PROOF.md`](PROOF.md#verification-lane-taxonomy-bun-product-pillars).
+
+### `verify-all` pipeline (ordered)
+
+1. defaults · networking · release · package-info
+2. install-env · registry-client · install-platform (dry-run)
+3. runtime-nits · bundler · doc-index · docs-coverage
+4. channel-meta merge · proof-taxonomy audit · portal live · script-flag order
+
+### `check:release-tracker`
+
+Tests + release verify: `bun-release-tracker` · `bun-runtime-nits-probes` · install-platform/env · verification-channels · canonical-coverage · proof-taxonomy (+ tool) · proof-consistency · release-preview · docs-coverage · resolve-bun-binary · `bun tools/verify-bun-release.ts`.

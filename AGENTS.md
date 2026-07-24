@@ -4,7 +4,9 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
 **Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote only — do not default-push there). Runtime identity: [`lib/github-repository-ref.ts`](lib/github-repository-ref.ts) (`owner`/`name`/`host`/`remote` — not `REPO_URL`); parts SSOT in [`CANONICAL_REMOTES`](lib/docs/repo-docs.ts).
 
-**Remote SSH:** Reasonix remote hosts live in `~/.reasonix/config.toml` under `[remote]`. Active: `factorywager-staging` (internal.staging, `~/.ssh/id_ed25519`, workspace `~/Projects`). `cloudflare-pages` (API-based, no SSH — deploy via `bash scripts/cloudflare-pages-deploy.sh`). Cascade Mover host is placeholder (uncomment when IP known). Tunnel: `scripts/cloudflared-reasonix.yml` → `reasonix.factory-wager.com`. CLI: `reasonix remote test/connect/list`. First-time bootstrap: `bun run remote:setup`. Reasonix binary: `/Applications/Reasonix.app/Contents/MacOS/reasonix`. Cloudflare MCP servers: 5 connected in `.mcp.json` (`mcp__cloudflare__*`). Env: `CLOUDFLARE_API_TOKEN` in `~/.reasonix/.env`.
+**Remote SSH:** Reasonix remote hosts live in `~/.reasonix/config.toml` under `[remote]`. Active: `factorywager-staging` (internal.staging, `~/.ssh/id_ed25519`, workspace `~/Projects`). `cloudflare-pages` (API-based, no SSH — deploy via `bash scripts/cloudflare-pages-deploy.sh`). Cascade Mover host is placeholder (uncomment when IP known). Tunnel: `scripts/cloudflared-reasonix.yml` → `reasonix.factory-wager.com`. CLI: `reasonix remote test/connect/list`. First-time bootstrap: `bun run remote:setup`. Reasonix binary: `/Applications/Reasonix.app/Contents/MacOS/reasonix`.
+
+**Cloudflare MCP** (`.mcp.json`): `cloudflare` (account/API) · `cloudflare-docs` (search) · `cloudflare-bindings` (Workers bindings) · `cloudflare-builds` (Workers Builds CI — not Pages deploy history) · `cloudflare-observability` (logs/metrics). Token: `CLOUDFLARE_API_TOKEN` in `~/.reasonix/.env`. Pages project pins: `bun run cloudflare:env`.
 
 ## Canonical docs
 
@@ -23,6 +25,8 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
+| Portal foundation (static UI) | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `serve:public:hot` |
+| Platform routing (local vs Pages) | [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run check:routes` · `bun run verify:pages-edge` |
 | Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) |
 | Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`) |
 | TokenRef (interior) / BunToken (export) | [`lib/docs/token-ref.ts`](lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](lib/docs/bun-token.ts) |
@@ -85,6 +89,7 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
   - Audit findings/concepts → `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · [`docs/audit/README.md`](docs/audit/README.md) · claim `audit-findings-catalog`
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs staged)
+  - Verification taxonomy / proof JSON → [`lib/verification/types.ts`](lib/verification/types.ts) · [`lib/verification/README.md`](lib/verification/README.md) · [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run verify:proof-taxonomy:save` · `bun run check:release-tracker` · `bun run verify-all`
   - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
   - Testing → nearest `*.test.ts` / [`tests/`](tests/console-depth.test.ts) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))
 
@@ -111,7 +116,7 @@ bun run docs:catalog:export                       # compact TSV for agents
 
 Commands: `url` `list` `suggest` (catalog → canonical map → index) · `catalog` · `check`/`annotate` (find/insert `@see` refs) · `audit` (map anchors vs index) · `deepcheck` (repo links vs index) · `validate` (HTTP links) · `integrity` (4-layer proof; `--fix` self-heals taxonomy aliases, `--fix-dry` previews) · `status` (includes tier-A coverage) · `schedule` (Bun.cron daemon; `--once` for single runs) · `export` (hierarchical llms-full.txt)
 
-Operate loop (RSS → scrape → catalog → integrity): [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · `bun run docs:refresh`
+Operate loop (RSS → reference index → scrape → catalog → integrity): [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · `bun run docs:refresh` · strict tracked-token gate: `bun run verify:docs-coverage:save`
 
 Rules:
 

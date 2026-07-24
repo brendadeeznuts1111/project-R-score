@@ -19,6 +19,10 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 |------|------|---------|
 | Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
+| Portal foundation (static UI) | [portal-foundation.md](./portal-foundation.md) | data.js · topbar · verify · dev reload |
+| Platform routing (local vs Pages) | [platform-routing.md](./platform-routing.md) | domains · functions · auth plane |
+| Registry client SDK | [registry-client.md](./registry-client.md) | resolve · download · publish |
+| Bun runtime nits (Phase 1) | [bun-runtime-nits.md](./bun-runtime-nits.md) | inspect · streams · url · file-io |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
 | Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | [TOC](./BUN_NATIVE_CAPABILITIES.md#table-of-contents) |
 | Bun DX catalog | `bun run dx:catalog <id>` | SSOT [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts) |
@@ -44,6 +48,9 @@ bun tools/bun-doc-refs.ts suggest "Bun.secrets"
 bun run harness:status
 bun run docs:map:check
 bun run docs:refresh
+bun run verify:proof-taxonomy:save   # proof JSON contracts + cross-proof parity
+PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun run verify:pages-edge
+PORTAL_VERIFY_BASE=http://127.0.0.1:3000 bun run verify:portal
 ```
 
 ## Not SSOT / archives

@@ -21,6 +21,10 @@ Same JSON contract: `lib/operations/ops-summary.ts` (`OpsSummaryPayload`).
 ```bash
 bun run ops:snapshot          # refresh Pages snapshot (+ prediction report assets)
 bun run serve:public          # local portal + live API
+bun run serve:public:hot      # server TS soft reload (bun --hot)
+bun run serve:public:watch    # full process restart (bun --watch)
 # http://localhost:3000/portal/ops/
 # http://localhost:3000/api/operations/summary
 ```
+
+Dev reload layers (Bun flags, browser SSE): [`docs/portal-foundation.md`](../docs/portal-foundation.md#dev-reload-watch-hot-browser-sse).

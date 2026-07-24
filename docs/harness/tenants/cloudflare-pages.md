@@ -36,6 +36,7 @@ Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps +
 |------|--------|
 | `/portal/ops/` | Operations dashboard (experiments + prediction panels) |
 | `/registry/ops-summary.json` | Snapshot from `bun run ops:snapshot` |
+| `/registry/proof-taxonomy-audit.json` | Subsystem contracts + cross-proof consistency |
 | `/registry/prediction/report.html` | Backtest report (+ `coverage-chart.svg`) |
 
 **Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + `public/_redirects` (trailing-slash only) + `public/_headers` (JSON content-type).
@@ -51,13 +52,28 @@ Local ops station chart PNG (optional): `bun run ops:prediction report --webview
 
 ### Pages Functions (edge-safe only)
 
-Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**.
+Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**. Full inventory:
 
 | Path | Role |
 |------|------|
 | `functions/api/operations/summary.ts` | Serves `public/registry/ops-summary.json` (C4/C5 portal data) |
 | `functions/api/registry/[[path]].ts` | R2 registry proxy (`REGISTRY_BUCKET` binding) |
+| `functions/api/registry/health.ts` | Registry health probe |
+| `functions/api/health.ts` | Portal health schema v1 |
+| `functions/api/env.ts` | Env-check table (redacted) |
+| `functions/api/monitoring.ts` | Monitoring snapshot |
+| `functions/api/content-type.ts` | Content-Type matrix |
+| `functions/api/proof.ts` | Proof metadata |
+| `functions/api/defaults.ts` · `defaults/script.ts` | Defaults proof scripts |
+| `functions/api/networking/script.ts` · `script.meta.ts` | Networking proof scripts |
+| `functions/api/release/script.ts` · `script.meta.ts` | Release proof scripts |
+| `functions/api/doc-refs/index.ts` · `script.ts` · `script.meta.ts` | Doc refs API |
+| `functions/api/sqlite/version.ts` | SQLite version (edge-safe) |
 | `functions-bun-only/` | Local Bun handlers (auth/DOD/catalog) — **not** deployed to Pages |
+
+Static routing: [`public/_redirects`](../../../public/_redirects) (trailing-slash 301 only) · [`public/_headers`](../../../public/_headers) (JSON content-type, cache). **No SPA rewrite.**
+
+Routing map: [`docs/platform-routing.md`](../../platform-routing.md).
 
 Ops experiments/prediction on the portal:
 

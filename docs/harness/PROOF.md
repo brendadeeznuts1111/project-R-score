@@ -205,6 +205,17 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
 - **`telegram-webhook-v1`** — Per-tenant Telegram webhooks validate their
   secret, route commands, and publish channel events (`unit`) _Ratchet_ →
   `bun test tests/telegram-bot.test.ts`
+- **`ops-snapshot-cron-v1`** — In-process Bun.cron ops-snapshot refreshes
+  portal/Pages artifacts (ops-summary, monitoring, static, routing/bun-utils)
+  (`unit` + `boundary`) _Ratchet_ → `bun test tests/ops-snapshot-cron.test.ts` ·
+  [`tenants/ops-snapshot.md`](tenants/ops-snapshot.md)
+- **`channel-meta-verification-v1`** — Channel-aware Bun verification tags rows
+  by subsystem; suite-aware saves isolate bundler/networking from
+  release-features; suite=all merges meta-proof; prefer-artifact meta refresh
+  bakes Pages via `ops:snapshot` / `verify:channel:meta`; `channelMeta` slice in
+  ops-summary / static.json / ops dashboard (`unit` + `boundary`) _Ratchet_ →
+  `bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts`
+  · [`tenants/channel-meta-verification.md`](tenants/channel-meta-verification.md)
 - **`spine-multi-tenant`** — spine runs ≥2 in-process tenants (docs-integrity +
   install-verify) (`journey` + `boundary`) _Ratchet_ →
   `bun run spine:schedule:once -- --tenant=install-verify` ·
@@ -288,6 +299,8 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `accounts-r2-v1`                   | human-only | `bun test tests/accounts-r2.test.ts`                                                          |
 | `operations-ssot-v1`               | human-only | operations Phase 1–3 unit suites                                                              |
 | `telegram-webhook-v1`              | human-only | `bun test tests/telegram-bot.test.ts`                                                         |
+| `ops-snapshot-cron-v1`             | human-only | `bun test tests/ops-snapshot-cron.test.ts`                                                    |
+| `channel-meta-verification-v1`     | human-only | channel-suite + subsystem + bundler + networking-channel + taxonomy + meta-refresh tests      |
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                              |
 | `bun-http-server-docs`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts`                    |
 | `path-bun`                         | continuous | pre-commit (lib\|tools staged) · `ci:harness`                                                 |
@@ -319,7 +332,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 24 · workflow 8 · human-only 28.
+continuous 24 · workflow 8 · human-only 30.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.
@@ -384,6 +397,24 @@ full), `claim` / `kinds` / `gateClass` / `gateRef` / `evidence` / `freshRerun` /
 `freshRerunKind`, contract asserts, and PR paste are decided before code.
 _Ratchet_ → `bun run docs:claim-discovery` · answered questionnaire in the PR or
 commit trail
+
+## Verification lane taxonomy (Bun product pillars)
+
+Each proof row carries `subsystem` (orthogonal to release `channel` in `semanticTags`). SSOT: [`lib/verification/types.ts`](../../lib/verification/types.ts) · [`lib/verification/subsystem.ts`](../../lib/verification/subsystem.ts) · [`tools/canonical-helpers.ts`](../../tools/canonical-helpers.ts).
+
+| Subsystem | Script | Lib module | Proof JSON | Canonical source |
+|-----------|--------|------------|------------|------------------|
+| `runtime` | `tools/verify-bun-release.ts` | `lib/docs/bun-release-tracker.ts` | `public/registry/release-features.json` | Blog anchors + living runtime docs |
+| `runtime` | `tools/verify-bun-runtime-nits.ts` | `lib/verification/bun-runtime-nits-probes.ts` | `public/registry/bun-runtime-nits-proof.json` | `CANONICAL_RUNTIME_NITS_TOKENS` |
+| `package-manager` | `tools/verify-install-platform.ts` | `lib/verification/install-platform.ts` | `public/registry/install-platform.json` | `CANONICAL_INSTALL_PLATFORM_TOKENS` |
+| `package-manager` | `tools/verify-install-env.ts` | `lib/verification/install-env-probes.ts` | `public/registry/install-env-proof.json` | `CANONICAL_INSTALL_ENV_TOKENS` |
+| `networking` | `tools/verify-networking.ts --save` · `tools/verify-channel.ts --suite=networking` | `lib/http/networking-proof.ts` | `public/registry/networking-proof.json` · `networking-channel-proof.json` | fetch/DNS/preconnect docs |
+| `bundler` | `tools/verify-bundler.ts` (optional) | `lib/verification/bundler-loader-probes.ts` | `public/registry/bundler-loaders-proof.json` | bundler/loaders docs |
+| *(meta)* | `tools/verify-proof-taxonomy.ts --save` | `lib/verification/proof-taxonomy.ts` · `proof-consistency.ts` | `public/registry/proof-taxonomy-audit.json` | contract shape + cross-proof parity |
+
+Each proof row may carry `subsystem`, `introducedIn`, `canonicalKey`, `canonicalKind`, `canonicalStability` (see [`tools/canonical-helpers.ts`](../../tools/canonical-helpers.ts)).
+
+_Ratchet_ → `bun run verify-all` · `bun run verify:proof-taxonomy` · `bun run check:release-tracker` · `bun test tests/verification-canonical-coverage.test.ts` · `bun test tests/canonical-helpers.test.ts` · `bun test tests/verification-proof-consistency.test.ts` · `bun test tests/verification-proof-taxonomy.test.ts`
 
 ## Agent checklist before “done”
 

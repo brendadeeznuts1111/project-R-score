@@ -1,0 +1,82 @@
+# Platform routing map
+
+Local dev vs Cloudflare Pages — how URLs reach code and static files.
+
+**Route catalog SSOT:** [`lib/http/public-routes.ts`](../lib/http/public-routes.ts) mirrors `buildPublicRoutes()` in [`scripts/serve-public.ts`](../scripts/serve-public.ts). Update both when adding portal or API paths.
+
+**Domain SSOT:** [`config/r2-env.ts`](../config/r2-env.ts) · tenant [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md)
+
+## Surfaces
+
+| Surface | Domain(s) | Artifact tree |
+|---------|-------------|---------------|
+| Portal + registry proofs | `project-r-score.pages.dev`, `score.factory-wager.com` | `public/` + `functions/` |
+| npm/R2 registry | `registry.factory-wager.com` | Worker + R2 (not Pages portal) |
+| Reasonix UI | `reasonix.factory-wager.com` | Cloudflare Tunnel → local `:8787` |
+| Local dev | `http://127.0.0.1:<port>` | `serve-public.ts` + `functions-bun-only/` |
+
+Port resolution: [`lib/http/bun-serve-shape.ts`](../lib/http/bun-serve-shape.ts) — `--port` → `BUN_PORT` → `PORT` → `NODE_PORT` → `3000`.
+
+## Three routing layers
+
+### 1. Static (`public/`)
+
+- Portal UI: `public/portal/*`
+- Proof JSON: `public/registry/*`
+- Trailing slashes: [`public/_redirects`](../public/_redirects) (301 only — **no** SPA `/* → index.html`)
+- Content-Type / cache: [`public/_headers`](../public/_headers)
+
+### 2. Edge (`functions/` — deployed to Pages)
+
+Edge-safe only (no `bun:sqlite`). Key handlers:
+
+| Path | Module |
+|------|--------|
+| `/api/operations/summary` | `functions/api/operations/summary.ts` → snapshot JSON |
+| `/api/registry/*` | `functions/api/registry/[[path]].ts` → R2 binding |
+| `/api/health`, `/api/env`, `/api/monitoring` | `functions/api/*.ts` |
+
+Full inventory: [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md).
+
+### 3. Local-only (`functions-bun-only/` + `serve-public.ts` fetch)
+
+- Live SQLite ops summary, catalog, DOD, auth — wired in `serve-public.ts`
+- **Not** deployed to Pages — see [`functions-bun-only/README.md`](../functions-bun-only/README.md)
+
+## Auth when `REGISTRY_SECRET` is set
+
+Local `serve-public` protects most paths via Bearer auth. **Public read plane** (matches Pages static deploy):
+
+- `/portal/*` — HTML, CSS, JS, modules
+- `/registry/*` — proof JSON consumed by ops dashboard
+- `/api/monitoring`, `/api/registry`, `/api/operations/summary`, … (see `publicReadPaths` in `serve-public.ts`)
+
+Publish remains auth-gated.
+
+## Verification commands
+
+| Concern | Command |
+|---------|---------|
+| Local portal + styles | `bun run verify:portal` · override `PORTAL_VERIFY_BASE` |
+| Live Pages edge | `PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun run verify:pages-edge` |
+| Route catalog | `bun run check:routes` |
+| Routing proof | `bun run routing:proof` |
+| Proof taxonomy | `bun run verify:proof-taxonomy:save` |
+| Ops snapshot | `bun run ops:snapshot` |
+| Cloudflare pins | `bun run cloudflare:env` |
+
+## Ops dashboard data flow
+
+`/portal/ops/` → `operations-dashboard.js` fetches:
+
+- Live local: `/api/operations/summary` (SQLite)
+- Pages: same path via edge function → `public/registry/ops-summary.json`
+- Proofs: `/registry/*.json` including `proof-taxonomy-audit.json`
+
+Regenerate: `bun run ops:snapshot` (writes summary + taxonomy audit + routing proofs).
+
+## Agent MCP (Cloudflare)
+
+HTTP MCP servers in [`.mcp.json`](../.mcp.json): `cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`. Token: `CLOUDFLARE_API_TOKEN` (`~/.reasonix/.env`). See [`AGENTS.md`](../AGENTS.md).
+
+**Note:** `cloudflare-builds` is Workers Builds CI — not Cloudflare Pages deploy history. Use `cloudflare` `execute` for Pages API (`/accounts/{id}/pages/projects/...`).

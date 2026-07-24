@@ -31,6 +31,10 @@ export const CANONICAL_REPO_DOCS = {
   importBoundaries: 'docs/IMPORT_BOUNDARIES.md',
   /** Wire / parse-once boundary (unknown → domain) */
   wireBoundary: 'docs/WIRE_BOUNDARY.md',
+  /** Portal shared data + topbar foundation */
+  portalFoundation: 'docs/portal-foundation.md',
+  /** Local vs Pages routing map (domains · functions · auth) */
+  platformRouting: 'docs/platform-routing.md',
   /** Newer Bun runtime APIs (WebView, markdown.ansi, cron, UDP) */
   bunNativeCapabilities: 'docs/BUN_NATIVE_CAPABILITIES.md',
   /** Bun token/catalog operate loop (RSS → scrape → catalog → integrity) */
@@ -142,6 +146,8 @@ export const CANONICAL_DOC_ROLES: Record<CanonicalRepoDocKey, string> = {
   unified: 'Bun install policy (machine + workspace)',
   importBoundaries: 'Import / package boundaries',
   wireBoundary: 'Wire boundary (parse once / unknown → domain)',
+  portalFoundation: 'Portal static UI foundation',
+  platformRouting: 'Local vs Pages routing map',
   bunNativeCapabilities: 'Bun native capabilities note (browser, md, scheduler, datagram)',
   bunDocsOperate: 'Bun token/catalog operate (RSS → scrape → catalog)',
   tokenRef: 'TokenRef interior knowledge-unit schema',

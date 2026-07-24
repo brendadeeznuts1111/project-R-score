@@ -17,8 +17,12 @@
 | Status | `bun tools/bun-doc-refs.ts status` |
 | Catalog export | `bun run docs:catalog:export` |
 | Locus | `bun tools/bun-doc-refs.ts locus --depth=20` |
+| Reference index | `bun run docs:reference-index` — conditional GET of `bun.com/reference` → `tools/reference-index.json` |
+| Docs coverage verify | `bun run verify:docs-coverage:save` — strict gate on tracked catalog/overlay/review tokens → `public/registry/docs-coverage-proof.json` |
 
-Loop: RSS index → scrape → catalog build → integrity log (`docs:refresh`).
+Loop: RSS index → reference index → scrape → catalog build → integrity log (`docs:refresh`). `verify-all` runs `verify:docs-coverage:save` (reads committed indexes; use `--refresh-rss` / `--refresh-reference` for live fetch).
+
+**Coverage model:** RSS = *what shipped* · reference index = *what exists on bun.com/reference* · `canonical-helpers` = *traceability* · `verify-docs-coverage` = *strict gate on FactoryWager-tracked tokens* (not every generated symbol).
 
 ## When integrity fails
 
