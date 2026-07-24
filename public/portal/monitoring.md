@@ -1,3 +1,3 @@
 # Monitoring
 
-Registry + integrity metrics.
+Registry + integrity metrics. Regenerate: `bun run ops:snapshot` bakes JSON embed into this page.

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24T06:23:58.188Z",
+  "generated": "2026-07-24T06:30:01.136Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -627,7 +627,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 473,
+    "uptimeMs": 565,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
@@ -647,12 +647,12 @@
     "dodByStatus": {},
     "experimentsActive": 1,
     "predictionN": 30,
-    "timestamp": "2026-07-24T06:23:58.181Z",
-    "snapshotAt": "2026-07-24T06:23:58.181Z"
+    "timestamp": "2026-07-24T06:30:01.129Z",
+    "snapshotAt": "2026-07-24T06:30:01.129Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-24T06:23:58.175Z",
+    "generated": "2026-07-24T06:30:01.124Z",
     "liquidity": {
       "total": 47900
     },
@@ -834,11 +834,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "00397ce1224fb539b77e24e9a86da7cd27a0974333c8b558ff3febfdf86c6e62",
+      "proofHash": "d29ed733931305993597a0d05952c5b5d3153a819f86dd9734efb6b6cf18b4d2",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-24T06:23:58.177Z"
+      "timestamp": "2026-07-24T06:30:01.125Z"
     },
     "registryClient": {
       "available": true,
@@ -912,7 +912,7 @@
           "detail": "13 contracts · 20 consistency"
         }
       ],
-      "timestamp": "2026-07-24T06:23:58.154Z",
+      "timestamp": "2026-07-24T06:30:01.097Z",
       "pagesUrl": "https://project-r-score.pages.dev",
       "path": "/registry/cloudflare-pages-preflight.json"
     },
@@ -1098,8 +1098,8 @@
           "ok": true
         }
       ],
-      "proofHash": "ddd2d191be2f40ffe2aa4089918395947b43b1abf4b89396b02af5663ce680c0",
-      "timestamp": "2026-07-24T06:23:57.727Z",
+      "proofHash": "473c5f19a9ec70cd9e92efdc6d98347632b97bf9c01ddd2537456053bf4082f8",
+      "timestamp": "2026-07-24T06:30:00.586Z",
       "path": "/registry/proof-taxonomy-audit.json"
     },
     "channelMeta": {
@@ -1110,7 +1110,7 @@
       "total": 75,
       "status": "pass",
       "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-      "updatedAt": "2026-07-24T06:23:57.722Z",
+      "updatedAt": "2026-07-24T06:30:00.582Z",
       "channel": "stable",
       "targetVersion": "1.4.0",
       "runtimeVersion": "1.4.0",
@@ -1291,13 +1291,11 @@
           "timeMs": 29.1,
           "contentType": "application/json"
         }
-      ],
-      "cached": true,
-      "stale": false
+      ]
     }
   },
   "bunUtils": {
-    "proofHash": "a740b8a21e5ab186a229122a012a0a7bb0bbb1a2ba9bdef722e02738aff0b5f8",
+    "proofHash": "f00e6a999d7d10e7451d7088eab3c732ffedcaa66d8da5901d82ac931bb80e97",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -1449,9 +1447,7 @@
         "timeMs": 29.1,
         "contentType": "application/json"
       }
-    ],
-    "cached": true,
-    "stale": false
+    ]
   },
   "channelMeta": {
     "available": true,
@@ -1461,7 +1457,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-24T06:23:57.722Z",
+    "updatedAt": "2026-07-24T06:30:00.582Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -1678,8 +1674,8 @@
         "ok": true
       }
     ],
-    "proofHash": "ddd2d191be2f40ffe2aa4089918395947b43b1abf4b89396b02af5663ce680c0",
-    "timestamp": "2026-07-24T06:23:57.727Z",
+    "proofHash": "473c5f19a9ec70cd9e92efdc6d98347632b97bf9c01ddd2537456053bf4082f8",
+    "timestamp": "2026-07-24T06:30:00.586Z",
     "path": "/registry/proof-taxonomy-audit.json"
   }
 }

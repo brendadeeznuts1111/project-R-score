@@ -120,6 +120,13 @@ export const SIMD_ROUTES: PublicRouteDef[] = [
     okStatuses: [200],
   },
   {
+    path: '/api/skills',
+    name: 'Skills catalog API',
+    category: 'api',
+    kind: 'simd-route',
+    okStatuses: [200],
+  },
+  {
     path: '/api/channels/events',
     name: 'Channels events',
     category: 'api',
@@ -302,6 +309,22 @@ export const HOT_STATIC_ROUTES: PublicRouteDef[] = [
     kind: 'hot-static',
     okStatuses: [200],
     note: 'origin scan via ops:snapshot · /api/skills on Pages',
+  },
+  {
+    path: '/registry/dod-queue.json',
+    name: 'DOD queue snapshot',
+    category: 'registry',
+    kind: 'hot-static',
+    okStatuses: [200],
+    note: 'exported by ops:snapshot · /api/dod on Pages',
+  },
+  {
+    path: '/registry/portal-weave.json',
+    name: 'Portal weave index',
+    category: 'registry',
+    kind: 'hot-static',
+    okStatuses: [200],
+    note: 'cross-surface links + operator scripts from ops:snapshot',
   },
   {
     path: '/registry/registry.json',
