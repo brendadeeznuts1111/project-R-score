@@ -16,10 +16,14 @@ function fmtTime(iso) {
   return s.length >= 19 ? s.slice(0, 19).replace('T', ' ') + ' UTC' : s;
 }
 
-function card(title, val, sub = '', cls = '') {
-  return `<div class="mon-card ${cls}"><h3>${esc(title)}</h3><div class="val">${esc(val)}</div>${
+function card(title, val, sub = '', cls = '', href = '') {
+  const inner = `<h3>${esc(title)}</h3><div class="val">${esc(val)}</div>${
     sub ? `<div class="sub">${esc(sub)}</div>` : ''
-  }</div>`;
+  }`;
+  if (href) {
+    return `<a class="mon-card mon-card-link ${cls}" href="${esc(href)}">${inner}</a>`;
+  }
+  return `<div class="mon-card ${cls}">${inner}</div>`;
 }
 
 function statusClass(ok, warn) {
@@ -227,10 +231,10 @@ export function renderMonitoringDashboard(payload) {
       card('Routing', routing.total ? `${routing.passed}/${routing.total}` : '—', routing.baseUrl || '', statusClass(routeOk)),
       card('Integrity', integrity.status || 'unknown', fmtTime(integrity.timestamp), statusClass(intOk)),
       card('Env checks', env.summary ? `${env.summary.ok}/${env.summary.total}` : '—', `${env.summary?.requiredMissing ?? 0} required missing`, statusClass(envOk)),
-      card('DOD queue', mon.dodQueue ?? 0, Object.keys(mon.dodByStatus || {}).length ? JSON.stringify(mon.dodByStatus) : 'empty'),
+      card('DOD queue', mon.dodQueue ?? 0, Object.keys(mon.dodByStatus || {}).length ? JSON.stringify(mon.dodByStatus) : 'empty', '', '/portal/dod/'),
       card('Platforms', Object.values(mon.platformSummary || {}).reduce((a, b) => a + b, 0) || '0', `api yes ${mon.platformApiAvailable?.yes ?? 0} · no ${mon.platformApiAvailable?.no ?? 0}`),
       card('Experiments', mon.experimentsActive ?? 0),
-      card('Prediction', mon.predictionN ?? 0, mon.predictionN ? 'coverage report available' : '', mon.predictionN ? 'ok' : ''),
+      card('Prediction', mon.predictionN ?? 0, mon.predictionN ? 'coverage report available' : '', mon.predictionN ? 'ok' : '', mon.predictionN ? '/registry/prediction/report.html' : ''),
     ].join(''),
     sectionsHtml: `
       <section class="mon-section"><h2 class="mon-h2">Proof artifacts</h2>${renderProofTiles(mon, ops)}</section>
@@ -240,10 +244,13 @@ export function renderMonitoringDashboard(payload) {
       ${renderKvTable('DOD by status', mon.dodByStatus)}
       <section class="mon-section mon-actions">
         <a href="/portal/ops/">Ops dashboard</a>
+        <a href="/portal/dod/">DOD queue</a>
+        <a href="/portal/skills/">Skills</a>
         <a href="/portal/health/">Health</a>
         <a href="/api/monitoring">JSON</a>
         <a href="/registry/monitoring.json">Snapshot</a>
         <a href="/registry/prediction/report.html">Prediction report</a>
+        <a href="/registry/portal-weave.json">Portal weave</a>
       </section>`,
   };
 }

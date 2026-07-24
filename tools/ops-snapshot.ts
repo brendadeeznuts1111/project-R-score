@@ -386,6 +386,17 @@ export async function buildRegistrySnapshot(options?: {
       console.warn('[ops-snapshot] dod queue export skipped:', e instanceof Error ? e.message : e);
     }
 
+    const portalWeavePath = `${root}/public/registry/portal-weave.json`;
+    try {
+      const { buildPortalWeavePayload } = await import('../lib/http/portal-weave.ts');
+      await Bun.write(
+        portalWeavePath,
+        `${JSON.stringify(buildPortalWeavePayload(payload.generated), null, 2)}\n`
+      );
+    } catch (e) {
+      console.warn('[ops-snapshot] portal weave skipped:', e instanceof Error ? e.message : e);
+    }
+
     try {
       const { bakeMonitoringPage } = await import('../lib/monitoring/bake-page.ts');
       await bakeMonitoringPage({

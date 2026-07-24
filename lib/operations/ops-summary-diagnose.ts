@@ -34,7 +34,7 @@ const CRITICAL_ROUTE_PATHS = [
   '/registry/ops-summary.json',
   '/portal/ops/',
   '/portal/dashboard/',
-  '/portal/dashboard.js',
+  '/portal/dashboard-app.js',
   '/api/monitoring',
 ] as const;
 

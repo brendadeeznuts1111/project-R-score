@@ -1,0 +1,77 @@
+/**
+ * Portal weave — cross-surface links and operator runbooks baked into registry.
+ *
+ * @see public/registry/portal-weave.json
+ * @see docs/portal-foundation.md
+ */
+
+export type PortalWeaveLink = {
+  label: string;
+  href: string;
+  note?: string;
+};
+
+export type PortalWeaveScript = {
+  label: string;
+  cmd: string;
+  doc?: string;
+};
+
+export type PortalWeavePayload = {
+  generated: string;
+  surfaces: PortalWeaveLink[];
+  artifacts: PortalWeaveLink[];
+  scripts: PortalWeaveScript[];
+};
+
+/** HTML portal surfaces (trailing slash). */
+export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Registry', href: '/portal/' },
+  { label: 'Ops', href: '/portal/ops/', note: 'C4 experiments · C5 prediction' },
+  { label: 'Monitoring', href: '/monitoring/', note: 'routing · env · proof tiles' },
+  { label: 'DOD queue', href: '/portal/dod/', note: 'visual proof review' },
+  { label: 'Skills', href: '/portal/skills/', note: 'catalog · .skill packages' },
+  { label: 'Dashboard', href: '/portal/dashboard/', note: 'executive proof summary' },
+  { label: 'Catalog', href: '/portal/catalog/' },
+  { label: 'Health', href: '/portal/health/' },
+  { label: 'Env', href: '/portal/env/' },
+  { label: 'Prediction report', href: '/registry/prediction/report.html' },
+];
+
+/** Static registry artifacts the portal surfaces depend on. */
+export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
+  { label: 'ops-summary', href: '/registry/ops-summary.json' },
+  { label: 'monitoring', href: '/registry/monitoring.json' },
+  { label: 'skills-catalog', href: '/registry/skills-catalog.json' },
+  { label: 'dod-queue', href: '/registry/dod-queue.json' },
+  { label: 'static aggregate', href: '/registry/static.json' },
+  { label: 'proof taxonomy', href: '/registry/proof-taxonomy-audit.json' },
+  { label: 'portal weave', href: '/registry/portal-weave.json' },
+];
+
+/** Operator scripts linked from ops/monitoring panels. */
+export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
+  {
+    label: 'Demo snapshot',
+    cmd: 'bun run ops:snapshot:demo',
+    doc: 'docs/harness/tenants/ops-snapshot.md',
+  },
+  { label: 'Prediction seed', cmd: 'bun run ops:seed:prediction' },
+  {
+    label: 'Reference discovery',
+    cmd: 'bun run reference:discover:check',
+    doc: 'docs/harness/tenants/reference-discovery.md',
+  },
+  { label: 'Sync R2 registry index', cmd: 'bun run registry:sync-index-r2' },
+  { label: 'Pages edge verify', cmd: 'bun run verify:pages-edge --taxonomy' },
+];
+
+export function buildPortalWeavePayload(generated?: string): PortalWeavePayload {
+  return {
+    generated: generated ?? new Date().toISOString(),
+    surfaces: PORTAL_WEAVE_SURFACES,
+    artifacts: PORTAL_WEAVE_ARTIFACTS,
+    scripts: PORTAL_WEAVE_SCRIPTS,
+  };
+}

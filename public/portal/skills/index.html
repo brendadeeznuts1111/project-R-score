@@ -122,8 +122,19 @@
         }
         render();
         return;
+      } catch {
+        /* fall through to static catalog */
+      }
+      try {
+        const res = await fetch('/registry/skills-catalog.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        skills = data.skills ?? [];
+        $('error-banner').innerHTML = `<p>ℹ️ Static catalog from <code>/registry/skills-catalog.json</code>${data.warning ? ` — ${esc(data.warning)}` : ''}</p>`;
+        $('error-banner').classList.remove('hidden');
+        render();
       } catch (err) {
-        $('error-banner').innerHTML = `<p>⚠️ Could not load /api/skills — ${esc(err?.message ?? err)}</p>`;
+        $('error-banner').innerHTML = `<p>⚠️ Could not load skills — ${esc(err?.message ?? err)}</p>`;
         $('error-banner').classList.remove('hidden');
         $('loading').classList.add('hidden');
       }

@@ -40,6 +40,10 @@ export function renderVerificationArticle(result, semanticTags) {
     subsystem && subsystem !== 'other'
       ? `<span class="version-badge subsystem-${esc(String(subsystem))}" title="verification subsystem">${esc(String(subsystem))}</span>`
       : '';
+  const introducedIn = result.introducedIn || '';
+  const introducedBadge = introducedIn
+    ? `<span class="version-badge introduced-in" title="introduced in Bun ${esc(String(introducedIn))}">since ${esc(String(introducedIn))}</span>`
+    : '';
 
   return `
 <article
@@ -47,6 +51,7 @@ export function renderVerificationArticle(result, semanticTags) {
   data-test-id="${esc(result.name)}"
   data-channel="${esc(String(channel))}"
   data-subsystem="${esc(String(subsystem))}"
+  data-introduced-in="${esc(String(introducedIn))}"
   data-version="${esc(String(version))}"
   data-passed="${result.passed ? 'true' : 'false'}"
   data-tested-at="${esc(testedAt)}"
@@ -57,6 +62,7 @@ export function renderVerificationArticle(result, semanticTags) {
     <h3 class="verification-title" itemprop="name">${esc(result.name)}</h3>
     <span class="channel-badge ${esc(String(channel))}" itemprop="applicationSubCategory">${esc(String(channel))}</span>
     ${subsystemBadge}
+    ${introducedBadge}
     ${version ? `<span class="version-badge" itemprop="softwareVersion">${esc(String(version))}</span>` : ''}
     ${canary}
     ${matchBadge}

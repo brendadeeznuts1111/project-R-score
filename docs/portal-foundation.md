@@ -204,11 +204,12 @@ Wired into `ci:harness` as gate `portal-foundation` and appended to `verify-all`
 
 ### Executive dashboard (`/portal/dashboard/`)
 
-[`dashboard.js`](../public/portal/dashboard.js) is the at-a-glance command center (not a duplicate of Ops):
+[`dashboard-app.js`](../public/portal/dashboard-app.js) is the at-a-glance proof command center (not a duplicate of Ops):
 
-- Data: `/api/monitoring` → `/registry/monitoring.json`, `/api/operations/summary` → `/registry/ops-summary.json`, `/api/defaults`, `/registry/release-features.json`
-- Surfaces: health banner, KPI cards (registry · defaults · routing · liquidity · growth · channel · env · experiments), experts/plays, proof tiles, Bun defaults table
-- Soft refresh every 30s; deep links to `/portal/ops/` and `/monitoring/`
+- Data: `/registry/*` proofs first (Pages), with `/api/defaults` · `/api/monitoring` fallbacks
+- Surfaces: proof KPIs, subsystem rollup, `<channel-filter>` release cards, Bun defaults, taxonomy audit
+- Soft refresh via Refresh control; deep links to `/portal/ops/`
+- Cross-surface map: [`portal-weave.json`](../public/registry/portal-weave.json) from [`lib/http/portal-weave.ts`](../lib/http/portal-weave.ts) (`ops:snapshot`)
 
 ### Ops dashboard (`/portal/ops/`)
 

@@ -25,6 +25,7 @@ type PageKey =
   | 'health'
   | 'env'
   | 'dashboard'
+  | 'skills'
   | 'template';
 
 const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: string }[] = [
@@ -35,6 +36,7 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
   { file: 'health/index.html', active: 'health', pageLabel: 'Health', brandBadge: 'ops' },
   { file: 'env/index.html', active: 'env', pageLabel: 'Env', brandBadge: 'ops' },
   { file: 'dashboard/index.html', active: 'dashboard', pageLabel: 'Dashboard', brandBadge: 'ops' },
+  { file: 'skills/index.html', active: 'skills', pageLabel: 'Skills', brandBadge: 'ops' },
   { file: '_page-template.html', active: 'template', pageLabel: 'New Page', brandBadge: 'ops' },
 ];
 
@@ -53,6 +55,7 @@ function renderNav(active: PageKey): string {
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
             <a href="/portal/catalog" class="${cls(active, 'catalog')}" role="menuitem">Catalog</a>
+            <a href="/portal/skills" class="${cls(active, 'skills')}" role="menuitem">Skills</a>
             <a href="/portal/env" class="${cls(active, 'env')}" role="menuitem">Env</a>
             <a href="/portal/dashboard" class="${cls(active, 'dashboard')}" role="menuitem">Dashboard</a>
             <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>

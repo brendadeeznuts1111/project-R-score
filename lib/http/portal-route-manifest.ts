@@ -42,6 +42,7 @@ export const PORTAL_MARKDOWN_SLUGS = [
   'env',
   'skills',
   'monitoring',
+  'dashboard',
 ] as const;
 
 export type PortalMarkdownSlug = (typeof PORTAL_MARKDOWN_SLUGS)[number];

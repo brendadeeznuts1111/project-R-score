@@ -4,154 +4,225 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="portal-poll-ms" content="30000" />
+  <meta name="portal-poll-ms" content="60000" />
+  <meta name="description" content="FactoryWager operations dashboard — verification taxonomy, release meta, install, bundler, and proof hashes." />
   <title>Operations Dashboard · FactoryWager</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
-    .dash-page { max-width: 1120px; margin: 0 auto; padding: 24px; }
+    .dash {
+      max-width: min(1400px, 100%);
+      margin: 0 auto;
+      padding: 0 var(--pad-inline, 24px) 48px;
+    }
     .dash-hero {
-      display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 16px;
-      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      align-items: center;
+      margin-block: 20px 8px;
     }
     .dash-hero h1 {
-      font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 600; margin: 0;
-      font-family: var(--font-sans, Inter, system-ui, sans-serif);
+      font-size: clamp(1.25rem, 2vw, 1.5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .dash-hero .lead { color: var(--text-dim); font-size: 13px; margin: 0; flex: 1 1 220px; }
-    .dash-hero .btn {
-      background: var(--surface); border: 1px solid var(--border); color: var(--text);
-      padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
+    .dash-hero .sub {
+      color: var(--text-dim);
+      font-size: 13px;
+      width: 100%;
+      margin: 0;
     }
-    .dash-hero .btn:hover { background: var(--surface-hover); border-color: var(--accent); }
-    .dash-banner {
-      display: flex; align-items: center; gap: 12px;
-      padding: 14px 18px; border-radius: var(--radius);
-      border: 1px solid var(--border); background: var(--surface); margin-bottom: 12px;
+    .dash-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-inline-start: auto;
     }
-    .dash-banner .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--text-dim); flex-shrink: 0; }
-    .dash-banner.ok .dot { background: var(--green, #3fb950); box-shadow: 0 0 8px var(--green, #3fb950); }
-    .dash-banner.warn .dot { background: var(--yellow, #d29922); }
-    .dash-banner.bad .dot { background: var(--red, #f85149); }
-    .dash-banner .title { font-weight: 600; font-size: 16px; }
-    .dash-meta { font-size: 12px; color: var(--text-dim); margin: 0 0 20px; }
-    .dash-grid {
+    .btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    .btn:hover { background: var(--surface-hover); }
+    .btn-primary {
+      background: var(--accent-glow, rgba(88, 166, 255, 0.12));
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-primary:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .ts {
+      color: var(--text-dim);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      margin: 16px 0 8px;
     }
-    .dash-card {
+    .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0.55;
+    }
+    .card .lbl {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+    }
+    .card .val {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 6px 0 4px;
+      font-variant-numeric: tabular-nums;
+      text-decoration: none;
+      color: inherit;
+      display: inline-block;
+    }
+    .card a.val:hover { color: var(--accent); }
+    .card .d { font-size: 12px; color: var(--text-dim); line-height: 1.35; }
+    .ok { color: var(--green, #3fb950); }
+    .warn { color: var(--yellow, #d29922); }
+    .err { color: var(--red, #f85149); }
+    .section {
+      margin: 28px 0;
+    }
+    .section h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .section-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin: -4px 0 12px;
+    }
+    .ops-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .ops-table th {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+      font-weight: 500;
+      background: var(--surface-hover);
+    }
+    .ops-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid rgba(48, 54, 61, 0.45);
+    }
+    .ops-table tbody tr:nth-child(odd) { background: rgba(22, 27, 34, 0.35); }
+    .mono { font-family: var(--font-mono); font-size: 11px; }
+    .phash {
+      font-family: var(--font-mono);
+      background: var(--surface-hover);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .proof-line { margin-top: 10px; }
+    .ops-link { font-size: 12px; color: var(--accent); margin-inline-end: 12px; }
+    .empty-hint {
+      font-size: 13px;
+      color: var(--text-dim);
+      padding: 12px 0;
+    }
+    .empty-hint code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--surface-hover);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .err-box {
+      background: rgba(248, 81, 73, 0.1);
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
       padding: 14px 16px;
+      margin: 12px 0;
+      font-size: 13px;
+      color: var(--red);
     }
-    .dash-card h3 {
-      font-size: 11px; text-transform: uppercase; letter-spacing: .4px;
-      color: var(--text-dim); margin: 0 0 6px; font-weight: 500;
-    }
-    .dash-card .val {
-      font-size: 22px; font-weight: 600;
-      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
-      font-variant-numeric: tabular-nums;
-    }
-    .dash-card .sub { font-size: 11px; color: var(--text-dim); margin-top: 6px; word-break: break-word; }
-    .dash-card.ok .val { color: var(--green, #3fb950); }
-    .dash-card.bad .val { color: var(--red, #f85149); }
-    .dash-card.warn .val { color: var(--yellow, #d29922); }
-    .dash-h2 {
-      font-size: 13px; text-transform: uppercase; letter-spacing: .35px;
-      color: var(--text-dim); margin: 0 0 10px; font-weight: 600;
-    }
-    .dash-section { margin-bottom: 28px; }
-    .dash-section-meta { font-size: 12px; color: var(--text-dim); margin: 0 0 10px; }
-    .dash-strip, .dash-channel {
-      display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center;
-      padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius);
-      background: var(--surface); margin-bottom: 16px; font-size: 13px;
-    }
-    .dash-strip .lbl, .dash-channel .lbl {
-      font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--text-dim); margin-right: 6px;
-    }
-    .dash-channel { flex-direction: column; align-items: stretch; gap: 8px; }
-    .dash-channel-main .val { font-weight: 600; font-size: 16px; margin-right: 10px; }
-    .dash-channel.ok { border-color: rgba(63, 185, 80, .35); }
-    .dash-channel.bad { border-color: rgba(248, 81, 73, .4); }
-    .dash-two {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px;
-    }
-    @media (max-width: 720px) { .dash-two { grid-template-columns: 1fr; } }
-    .dash-list { list-style: none; padding: 0; margin: 0; }
-    .dash-list li {
-      padding: 7px 0; border-bottom: 1px solid rgba(48,54,61,.4);
-      display: flex; justify-content: space-between; gap: 12px; font-size: 13px;
-    }
-    .dash-list li small { color: var(--text-dim); }
-    .dash-list li.active small { color: var(--green, #3fb950); }
-    .dash-tree { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; }
-    .dash-tree b { color: var(--accent); font-variant-numeric: tabular-nums; }
-    .dash-table-wrap {
-      overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
-    }
-    .dash-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .dash-table th {
-      text-align: left; padding: 8px 10px; color: var(--text-dim); font-weight: 500;
-      border-bottom: 1px solid var(--border); background: rgba(255,255,255,.03); position: sticky; top: 0;
-    }
-    .dash-table td { padding: 7px 10px; border-bottom: 1px solid rgba(48,54,61,.35); vertical-align: top; }
-    .dash-table .mono, .mono {
-      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 11px;
-    }
-    .dim { color: var(--text-dim); }
-    .st-ok, .ok { color: var(--green, #3fb950); }
-    .st-bad, .bad { color: var(--red, #f85149); }
-    .st-warn, .warn { color: var(--yellow, #d29922); }
-    .dash-empty { font-size: 13px; color: var(--text-dim); }
-    .dash-hash { font-size: 11px; color: var(--text-dim); margin: 0 0 8px; word-break: break-all; }
-    .dash-proof-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px;
-    }
-    .dash-proof {
-      display: block; padding: 14px; border-radius: var(--radius);
-      border: 1px solid var(--border); background: var(--surface);
-      text-decoration: none; color: inherit;
-    }
-    .dash-proof:hover { border-color: var(--accent); }
-    .dash-proof h4 { font-size: 11px; text-transform: uppercase; color: var(--text-dim); margin: 0 0 6px; }
-    .dash-proof .val {
-      font-size: 18px; font-weight: 600;
-      font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
-      font-variant-numeric: tabular-nums;
-    }
-    .dash-proof .sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
-    .dash-proof.ok .val { color: var(--green, #3fb950); }
-    .dash-proof.bad .val { color: var(--red, #f85149); }
-    .dash-proof.warn .val { color: var(--yellow, #d29922); }
-    .dash-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-    .dash-actions.tight { margin-top: 4px; }
-    .dash-actions a {
-      font-size: 13px; padding: 6px 12px; border-radius: 6px;
-      border: 1px solid var(--border); color: var(--accent); text-decoration: none; background: var(--surface);
-    }
-    .dash-actions a:hover { border-color: var(--accent); }
-    .dash-loading { margin: 12px 0 24px; }
-    .dash-error {
-      padding: 16px; border: 1px solid var(--red, #f85149); border-radius: var(--radius);
-      background: rgba(248,81,73,.08); font-size: 13px;
-    }
-    .dash-error .error-code {
-      display: inline-block; margin: 8px 0; padding: 2px 8px; border-radius: 4px;
-      background: var(--surface-hover); font-family: var(--font-mono, monospace); font-size: 11px;
-    }
-    .retry-btn {
-      display: inline-block; margin-top: 8px; padding: 4px 16px;
-      background: var(--accent-glow, rgba(88,166,255,.12)); border: 1px solid var(--accent);
-      border-radius: 4px; color: var(--accent); cursor: pointer;
-    }
+    .err-box ul { margin: 8px 0 12px 1.2em; color: var(--text); }
+    .err-box .btn { margin-inline-end: 10px; }
     .hidden { display: none !important; }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin: 8px 0 4px;
+      font-size: 13px;
+    }
+    .verification-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .skeleton-card {
+      min-height: 88px;
+      background: linear-gradient(
+        90deg,
+        var(--surface) 25%,
+        var(--surface-hover) 50%,
+        var(--surface) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.2s ease-in-out infinite;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    channel-filter {
+      display: block;
+      margin: 12px 0;
+    }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+      .card .val { font-size: 20px; }
+    }
   </style>
 </head>
 <body>
@@ -165,66 +236,106 @@
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link">Home</a>
-        <a href="/portal/ops/" class="nav-link">Ops</a>
+        <a href="/portal/ops" class="nav-link">Ops</a>
         <a href="/portal/" class="nav-link">Registry</a>
-        <a href="/portal/health/" class="nav-link">Health</a>
-        <a href="/portal/dod/" class="nav-link">DOD</a>
+        <a href="/portal/health" class="nav-link">Health</a>
+        <a href="/portal/dod" class="nav-link">DOD</a>
         <div class="nav-overflow">
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog/" class="nav-link" role="menuitem">Catalog</a>
-            <a href="/portal/skills/" class="nav-link" role="menuitem">Skills</a>
-            <a href="/portal/env/" class="nav-link" role="menuitem">Env</a>
-            <a href="/portal/dashboard/" class="nav-link active" role="menuitem" aria-current="page">Dashboard</a>
-            <a href="/monitoring/" class="nav-link" role="menuitem">Monitoring</a>
+            <a href="/portal/catalog" class="nav-link" role="menuitem">Catalog</a>
+            <a href="/portal/skills" class="nav-link" role="menuitem">Skills</a>
+            <a href="/portal/env" class="nav-link" role="menuitem">Env</a>
+            <a href="/portal/dashboard" class="nav-link active" role="menuitem" aria-current="page">Dashboard</a>
+            <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
             <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">Wiki</a>
           </div>
         </div>
       </nav>
       <div class="topbar-status">
-        <a href="/portal/health/" class="topbar-health-link" title="System health">
+        <a href="/portal/health" class="topbar-health-link" title="System health">
           <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">Connecting…</span>
+          <span id="health-label" class="health-label">…</span>
         </a>
       </div>
     </div>
   </header>
 
-  <main class="main dash-page">
+  <main class="dash">
     <div class="dash-hero">
       <h1>Operations Dashboard</h1>
-      <p class="lead">Executive command center — monitoring, ops summary, channel meta, and Bun defaults.</p>
-      <button type="button" class="btn" id="dash-refresh">Refresh</button>
-    </div>
-
-    <div id="dash-banner" class="dash-banner">
-      <span class="dot" aria-hidden="true"></span>
-      <div>
-        <div id="dash-banner-title" class="title">Loading dashboard…</div>
+      <div class="dash-actions">
+        <button type="button" class="btn" id="refresh-btn">Refresh</button>
+        <a class="btn btn-primary" href="/portal/ops">Full Ops</a>
+        <span class="ts" id="ts">—</span>
       </div>
-    </div>
-    <p id="dash-meta" class="dash-meta">Fetching monitoring, ops summary, and defaults…</p>
-
-    <div id="dash-loading" class="dash-loading" aria-busy="true" aria-label="Loading operations data">
-      <div class="skeleton skeleton-card">
-        <div class="skeleton-line" style="width:40%"></div>
-        <div class="skeleton-line" style="width:80%"></div>
-        <div class="skeleton-line" style="width:60%"></div>
-      </div>
+      <p class="sub">
+        Verification taxonomy across runtime, package-manager, networking, and bundler —
+        static registry proofs with live API fallbacks.
+      </p>
     </div>
 
-    <div id="dash-cards" class="dash-grid"></div>
-    <div id="dash-sections"></div>
+    <nav class="nav-links" aria-label="Proof artifacts">
+      <a class="ops-link" href="/registry/release-features.json">release-features</a>
+      <a class="ops-link" href="/registry/proof-taxonomy-audit.json">taxonomy audit</a>
+      <a class="ops-link" href="/registry/bundler-loaders-proof.json">bundler</a>
+      <a class="ops-link" href="/registry/install-platform.json">install platform</a>
+      <a class="ops-link" href="/registry/channel-meta-bake.json">channel meta bake</a>
+      <a class="ops-link" href="/registry/ops-summary.json">ops-summary</a>
+    </nav>
+
+    <div id="errors" class="hidden" aria-live="polite"></div>
+
+    <section class="section" aria-labelledby="kpi-heading">
+      <h2 id="kpi-heading">Proof KPIs</h2>
+      <div class="grid" id="kpi-grid"></div>
+    </section>
+
+    <section class="section" aria-labelledby="sub-heading">
+      <h2 id="sub-heading">Release by subsystem</h2>
+      <p class="section-sub">Rollup from <code>summary.bySubsystem</code> on the meta release proof.</p>
+      <div class="grid" id="subsystem-grid"></div>
+    </section>
+
+    <section class="section" aria-labelledby="release-heading">
+      <h2 id="release-heading">
+        Release verification
+        <span class="version-badge" id="release-mode">—</span>
+      </h2>
+      <p class="section-sub" id="release-detail">Loading release proof…</p>
+      <p class="mono" id="release-hash"></p>
+      <channel-filter></channel-filter>
+      <div id="release-cards" class="verification-cards"></div>
+      <p class="proof-line">
+        <a class="ops-link" href="/registry/release-features.json">Full release JSON</a>
+        <a class="ops-link" href="/portal/ops">Ops deep dive</a>
+      </p>
+    </section>
+
+    <section class="section" id="taxonomy-tbl" aria-labelledby="tax-heading">
+      <h2 id="tax-heading">Proof taxonomy</h2>
+    </section>
+
+    <section class="section" id="defaults-tbl" aria-labelledby="def-heading">
+      <h2 id="def-heading">Bun defaults</h2>
+    </section>
   </main>
 
   <notification-center aria-live="polite"></notification-center>
 
   <footer class="footer">
-    <p>FactoryWager · <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a></p>
+    <p>
+      FactoryWager ·
+      <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a>
+      ·
+      <a href="/portal/ops">Ops</a>
+      ·
+      <a href="https://bun.com/docs">Bun docs</a>
+    </p>
   </footer>
 
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/dashboard.js?v=2026-07-24"></script>
+  <script type="module" src="/portal/dashboard-app.js"></script>
 </body>
 </html>

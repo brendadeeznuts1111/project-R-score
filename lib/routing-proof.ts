@@ -226,7 +226,7 @@ export const DEFAULT_ROUTING_SPECS: RoutingProbeSpec[] = [
     note: 'executive dashboard',
   },
   {
-    path: '/portal/dashboard.js',
+    path: '/portal/dashboard-app.js',
     requireOk: true,
     expectContentType: 'application/javascript',
     critical: true,
