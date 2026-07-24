@@ -307,6 +307,8 @@ export const BUN_RELEASE_TEST_CANONICAL: Readonly<Record<string, string>> = {
     BUN_V135_ANCHORS['bun-terminal-api-for-pseudo-terminal-pty-support'],
   'Compile-time feature flags (bun:bundle)':
     BUN_V135_ANCHORS['compile-time-feature-flags-for-dead-code-elimination'],
+  'Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)':
+    'https://bun.sh/reference/globals/Uint8Array',
   ...INSTALL_PLATFORM_TEST_CANONICAL,
 };
 

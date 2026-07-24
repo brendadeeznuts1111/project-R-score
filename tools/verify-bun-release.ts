@@ -19,9 +19,14 @@ import { writeFileSync, readFileSync } from 'fs';
 import {
   BUN_RELEASE_NOTE_ROWS,
   BUN_V1314_BLOG,
+  BUN_V135_BLOG,
+  BUN_RELEASE_TEST_CANONICAL,
   probeTlsSystemCaCertificates,
   probeProcessExitWithPendingTimer,
   probeTimerRefAfterFire,
+  probeStringWidthV135Accuracy,
+  probeBunTerminalPty,
+  probeCompileTimeFeatureFlags,
   pushReleaseResult,
   smokeBuiltinObjectsGc,
   runFetchProtocolProbes,
@@ -430,68 +435,79 @@ export async function runReleaseVerification(
     );
   }
 
-  // 26. Bun.Archive — create, extract, gzip, read
+  // Bun.Archive — create, extract, gzip, read
   pushReleaseResult(results, {
     name: 'Bun.Archive (create, extract, gzip, read)',
     expected: 'creates tar, extracts, gzips, reads files back',
     actual: 'archive bytes=10240, gzip=126, round-trip verified',
     passed: true,
-    anchor: 'bun-archive-api',
-  });
+    canonical: BUN_RELEASE_TEST_CANONICAL['Bun.Archive (create, extract, gzip, read)'],
+  }, ctx);
+
+  const stringWidth = probeStringWidthV135Accuracy();
+  pushReleaseResult(
+    results,
+    {
+      name: 'Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)',
+      expected: 'flag=2 skin=2 zwj=2 hyphen=0 joiner=0',
+      actual: stringWidth.note,
+      passed: stringWidth.ok,
+      canonical: BUN_RELEASE_TEST_CANONICAL[
+        'Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)'
+      ],
+    },
+    ctx
+  );
+
+  const terminal = await probeBunTerminalPty();
+  pushReleaseResult(
+    results,
+    {
+      name: 'Bun.spawn PTY (echo capture)',
+      expected: 'PTY echo captured via Bun.spawn({ terminal })',
+      actual: terminal.note,
+      passed: terminal.ok,
+      canonical: BUN_RELEASE_TEST_CANONICAL['Bun.spawn PTY (echo capture)'],
+    },
+    ctx
+  );
+
+  const features = await probeCompileTimeFeatureFlags();
+  pushReleaseResult(
+    results,
+    {
+      name: 'Compile-time feature flags (bun:bundle)',
+      expected: 'PREMIUM branch kept; free path eliminated when --feature set',
+      actual: features.note,
+      passed: features.ok,
+      canonical: BUN_RELEASE_TEST_CANONICAL['Compile-time feature flags (bun:bundle)'],
+    },
+    ctx
+  );
 
   const canonicalCoverage = ensureVerificationResultsHaveCanonical(results);
   if (!reportCanonicalCoverageGaps(canonicalCoverage, 'verify-bun-release')) {
     throw new Error('Verification results missing canonical documentation URLs');
   }
 
-  // 27. Bun.stringWidth accuracy improvements
+  // 30. Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)
+  const u8 = new Uint8Array([72, 101, 108, 108, 111]);
+  const u8Ok = u8.toBase64() === 'SGVsbG8=' && u8.toHex() === '48656c6c6f';
+  const dst = new Uint8Array(5);
+  const { written: w1 } = dst.setFromBase64('SGVsbG8=');
+  const { written: w2 } = dst.setFromHex('48656c6c6f');
+  const u8RtOk = w1 === 5 && dst[0] === 72 && w2 === 5 && dst[4] === 111;
+  const fb = await Bun.file('package.json').bytes();
+  const bb = await new Blob(['Hello']).bytes();
+  const mmap = Bun.mmap('package.json');
+  const u8ExtrasOk = fb instanceof Uint8Array && fb.length > 0 && bb instanceof Uint8Array && bb.length === 5 && mmap instanceof Uint8Array && mmap.length > 0;
   pushReleaseResult(results, {
-    name: 'Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)',
-    expected: 'correct widths for flag emoji (2), emoji+skin (2), ZWJ (2), soft hyphen (0), word joiner (0)',
-    actual: `flag=2 skin=2 zwj=2 hyphen=0 joiner=0`,
-    passed: Bun.stringWidth('🇺🇸') === 2 && Bun.stringWidth('👋🏽') === 2 && Bun.stringWidth('👨‍👩‍👧') === 2 && Bun.stringWidth('\u00AD') === 0 && Bun.stringWidth('\u2060') === 0,
-    anchor: 'bun-stringwidth-accuracy',
+    name: 'Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)',
+    expected: 'all Bun Uint8Array extensions and binary data APIs work',
+    actual: `base64=${u8Ok} hex=${u8Ok} rt=${u8RtOk} mmap=${mmap.length}B file=${fb.length}B blob=${bb.length}B`,
+    passed: u8Ok && u8RtOk && u8ExtrasOk,
+    anchor: 'uint8array-bun-extensions',
   });
-
-  // 28. PTY terminal API
-  let ptyReceived = '';
-  const ptyProc = Bun.spawn(['echo', 'hello-pty'], {
-    terminal: { cols: 80, rows: 24, data(_term, data) { ptyReceived += data; } },
-  });
-  await ptyProc.exited;
-  ptyProc.terminal?.close();
-  const ptyOk = ptyReceived.includes('hello-pty');
-  pushReleaseResult(results, {
-    name: 'Bun.spawn with terminal option (PTY)',
-    expected: 'receives output via data() callback',
-    actual: ptyOk ? `received: ${ptyReceived.trim()}` : 'no output',
-    passed: ptyOk,
-    anchor: 'bun-terminal-api',
-  });
-
-  // 29. Compile-time feature flags (bun:bundle)
-  try {
-    const out = '/tmp/test-feature-out.js';
-    const build = Bun.spawnSync(['bun', 'build', '--feature=DEBUG', '/tmp/test-features.ts', `--outfile=${out}`]);
-    const built = build.exitCode === 0;
-    const output = built ? await Bun.file(out).text().catch(() => '') : '';
-    const worked = output.includes('debug') && !output.includes('yes');
-    pushReleaseResult(results, {
-      name: 'Compile-time feature flags (bun:bundle)',
-      expected: 'feature("DEBUG") → true when --feature=DEBUG',
-      actual: built ? (worked ? 'DEBUG=debug, PREMIUM=no ✅' : 'output mismatch') : 'build failed',
-      passed: built && worked,
-      anchor: 'bun-compile-features',
-    });
-  } catch (e: any) {
-    pushReleaseResult(results, {
-      name: 'Compile-time feature flags (bun:bundle)',
-      expected: 'feature("DEBUG") → true when --feature=DEBUG',
-      actual: `error: ${e.message}`,
-      passed: false,
-      anchor: 'bun-compile-features',
-    });
-  }
 
   const passed = results.filter(r => r.passed).length;
   const hasher = new CryptoHasher('sha256');

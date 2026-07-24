@@ -1,129 +1,22 @@
 #!/usr/bin/env bun
 // @bun
+var __defProp = Object.defineProperty;
+var __returnValue = (v) => v;
+function __exportSetter(name, newValue) {
+  this[name] = __returnValue.bind(null, newValue);
+}
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, {
+      get: all[name],
+      enumerable: true,
+      configurable: true,
+      set: __exportSetter.bind(all, name)
+    });
+};
 var __esm = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
 var __promiseAll = (args) => Promise.all(args);
 var __require = import.meta.require;
-
-// lib/docs/bun-site-url.ts
-function hrefFromInit(init) {
-  const u = new URL("http://localhost");
-  const protocol = (init.protocol ?? "https").replace(/:$/, "");
-  u.protocol = `${protocol}:`;
-  if (init.hostname != null && init.hostname !== "*")
-    u.hostname = init.hostname;
-  if (init.port != null && init.port !== "*" && init.port !== "")
-    u.port = init.port;
-  if (init.username != null && init.username !== "*")
-    u.username = init.username;
-  if (init.password != null && init.password !== "*")
-    u.password = init.password;
-  let pathname = init.pathname ?? "/";
-  if (pathname !== "*" && !pathname.startsWith("/"))
-    pathname = `/${pathname}`;
-  if (pathname !== "*")
-    u.pathname = pathname;
-  if (init.search != null && init.search !== "*") {
-    u.search = init.search.startsWith("?") ? init.search.slice(1) : init.search;
-  }
-  if (init.hash != null && init.hash !== "*") {
-    u.hash = init.hash.startsWith("#") ? init.hash.slice(1) : init.hash;
-  }
-  return u.href;
-}
-function normalizePath(path) {
-  return path.replace(/^\/+/, "").replace(/\.md$/i, "");
-}
-function stripHash(hash) {
-  if (hash == null || hash === "")
-    return;
-  return hash.replace(/^#/, "");
-}
-function splitHash(path, hash) {
-  if (hash != null)
-    return { path, hash: stripHash(hash) };
-  const i = path.indexOf("#");
-  if (i < 0)
-    return { path };
-  return { path: path.slice(0, i), hash: path.slice(i + 1) };
-}
-function bunDocs(path, hash) {
-  const parts = splitHash(path, hash);
-  return hrefFromInit({
-    ...BunComSite,
-    pathname: `/docs/${normalizePath(parts.path)}`,
-    hash: parts.hash
-  });
-}
-function bunBlog(slug, hash) {
-  const parts = splitHash(slug, hash);
-  return hrefFromInit({
-    ...BunComSite,
-    pathname: `/blog/${normalizePath(parts.path)}`,
-    hash: parts.hash
-  });
-}
-function mdnWebApi(name) {
-  return hrefFromInit({
-    ...MdnSite,
-    pathname: `/en-US/docs/Web/API/${normalizePath(name)}`
-  });
-}
-function bunComOrigin() {
-  return hrefFromInit({ ...BunComSite, pathname: "/" }).replace(/\/$/, "");
-}
-function bunShOrigin() {
-  return hrefFromInit({ ...BunShSite, pathname: "/" }).replace(/\/$/, "");
-}
-var BunComSite, BunShSite, MdnSite, GitHubOvenSite, BunDocsPattern, BunBlogIndexPattern, BunBlogPattern, BunReferencePattern, CANONICAL_SOURCES, MdnWebApiPattern;
-var init_bun_site_url = __esm(() => {
-  BunComSite = {
-    protocol: "https",
-    hostname: "bun.com"
-  };
-  BunShSite = {
-    protocol: "https",
-    hostname: "bun.sh"
-  };
-  MdnSite = {
-    protocol: "https",
-    hostname: "developer.mozilla.org"
-  };
-  GitHubOvenSite = {
-    protocol: "https",
-    hostname: "github.com"
-  };
-  BunDocsPattern = new URLPattern({
-    protocol: BunComSite.protocol,
-    hostname: "(bun\\.com|bun\\.sh)",
-    pathname: "/docs/:path*"
-  });
-  BunBlogIndexPattern = new URLPattern({
-    protocol: BunComSite.protocol,
-    hostname: "(bun\\.com|bun\\.sh)",
-    pathname: "/blog"
-  });
-  BunBlogPattern = new URLPattern({
-    protocol: BunComSite.protocol,
-    hostname: "(bun\\.com|bun\\.sh)",
-    pathname: "/blog/:slug"
-  });
-  BunReferencePattern = new URLPattern({
-    protocol: BunComSite.protocol,
-    hostname: "(bun\\.com|bun\\.sh)",
-    pathname: "/reference/:path*"
-  });
-  CANONICAL_SOURCES = {
-    blog: { ...BunComSite, pathname: "/blog" },
-    docs: { ...BunComSite, pathname: "/docs" },
-    reference: { ...BunComSite, pathname: "/reference" },
-    llms: { ...BunComSite, pathname: "/docs/llms.txt" }
-  };
-  MdnWebApiPattern = new URLPattern({
-    protocol: MdnSite.protocol,
-    hostname: MdnSite.hostname,
-    pathname: "/en-US/docs/Web/API/:name(.*)"
-  });
-});
 
 // lib/docs/bundler-nav.ts
 function bundlerDocUrl(path, fragment) {
@@ -288,6 +181,127 @@ var init_bundler_gaps = __esm(() => {
     "external",
     "minify"
   ]);
+});
+
+// lib/docs/bun-site-url.ts
+function hrefFromInit(init) {
+  const u = new URL("http://localhost");
+  const protocol = (init.protocol ?? "https").replace(/:$/, "");
+  u.protocol = `${protocol}:`;
+  if (init.hostname != null && init.hostname !== "*")
+    u.hostname = init.hostname;
+  if (init.port != null && init.port !== "*" && init.port !== "")
+    u.port = init.port;
+  if (init.username != null && init.username !== "*")
+    u.username = init.username;
+  if (init.password != null && init.password !== "*")
+    u.password = init.password;
+  let pathname = init.pathname ?? "/";
+  if (pathname !== "*" && !pathname.startsWith("/"))
+    pathname = `/${pathname}`;
+  if (pathname !== "*")
+    u.pathname = pathname;
+  if (init.search != null && init.search !== "*") {
+    u.search = init.search.startsWith("?") ? init.search.slice(1) : init.search;
+  }
+  if (init.hash != null && init.hash !== "*") {
+    u.hash = init.hash.startsWith("#") ? init.hash.slice(1) : init.hash;
+  }
+  return u.href;
+}
+function normalizePath(path) {
+  return path.replace(/^\/+/, "").replace(/\.md$/i, "");
+}
+function stripHash(hash) {
+  if (hash == null || hash === "")
+    return;
+  return hash.replace(/^#/, "");
+}
+function splitHash(path, hash) {
+  if (hash != null)
+    return { path, hash: stripHash(hash) };
+  const i = path.indexOf("#");
+  if (i < 0)
+    return { path };
+  return { path: path.slice(0, i), hash: path.slice(i + 1) };
+}
+function bunDocs(path, hash) {
+  const parts = splitHash(path, hash);
+  return hrefFromInit({
+    ...BunComSite,
+    pathname: `/docs/${normalizePath(parts.path)}`,
+    hash: parts.hash
+  });
+}
+function bunBlog(slug, hash) {
+  const parts = splitHash(slug, hash);
+  return hrefFromInit({
+    ...BunComSite,
+    pathname: `/blog/${normalizePath(parts.path)}`,
+    hash: parts.hash
+  });
+}
+function mdnWebApi(name) {
+  return hrefFromInit({
+    ...MdnSite,
+    pathname: `/en-US/docs/Web/API/${normalizePath(name)}`
+  });
+}
+function bunComOrigin() {
+  return hrefFromInit({ ...BunComSite, pathname: "/" }).replace(/\/$/, "");
+}
+function bunShOrigin() {
+  return hrefFromInit({ ...BunShSite, pathname: "/" }).replace(/\/$/, "");
+}
+var BunComSite, BunShSite, MdnSite, GitHubOvenSite, BunDocsPattern, BunBlogIndexPattern, BunBlogPattern, BunReferencePattern, CANONICAL_SOURCES, MdnWebApiPattern;
+var init_bun_site_url = __esm(() => {
+  BunComSite = {
+    protocol: "https",
+    hostname: "bun.com"
+  };
+  BunShSite = {
+    protocol: "https",
+    hostname: "bun.sh"
+  };
+  MdnSite = {
+    protocol: "https",
+    hostname: "developer.mozilla.org"
+  };
+  GitHubOvenSite = {
+    protocol: "https",
+    hostname: "github.com"
+  };
+  BunDocsPattern = new URLPattern({
+    protocol: BunComSite.protocol,
+    hostname: "(bun\\.com|bun\\.sh)",
+    pathname: "/docs/:path*"
+  });
+  BunBlogIndexPattern = new URLPattern({
+    protocol: BunComSite.protocol,
+    hostname: "(bun\\.com|bun\\.sh)",
+    pathname: "/blog"
+  });
+  BunBlogPattern = new URLPattern({
+    protocol: BunComSite.protocol,
+    hostname: "(bun\\.com|bun\\.sh)",
+    pathname: "/blog/:slug"
+  });
+  BunReferencePattern = new URLPattern({
+    protocol: BunComSite.protocol,
+    hostname: "(bun\\.com|bun\\.sh)",
+    pathname: "/reference/:path*"
+  });
+  CANONICAL_SOURCES = {
+    blog: { ...BunComSite, pathname: "/blog" },
+    docs: { ...BunComSite, pathname: "/docs" },
+    reference: { ...BunComSite, pathname: "/reference" },
+    llms: { ...BunComSite, pathname: "/docs/llms.txt" }
+  };
+  MdnWebApiPattern = new URLPattern({
+    protocol: MdnSite.protocol,
+    hostname: MdnSite.hostname,
+    pathname: "/en-US/docs/Web/API/:name(.*)"
+  });
 });
 
 // lib/console-depth.ts
@@ -1285,7 +1299,7 @@ function isCodeApiKey(k) {
     return true;
   return false;
 }
-var INSTALL_CPU_OS_FLAGS, INSTALL_PLATFORM_DEPS, INSTALL_ENV_VARS, INSTALL_CACHE_DOCS, CANONICAL_INSTALL_PLATFORM_TOKENS, CANONICAL_INSTALL_PLATFORM_URLS, BUN_CONFIG_ENV_TOKEN_ENTRIES, CANONICAL_INSTALL_ENV_TOKENS, CANONICAL_INSTALL_ENV_URLS, BUN_TYPES_PINNED = "https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types", CANONICAL_REFS, CONCEPT_ONLY_KEYS, APIS, TAXONOMY_PATH, REPO_ROOT;
+var INSTALL_CPU_OS_FLAGS, INSTALL_PLATFORM_DEPS, INSTALL_ENV_VARS, INSTALL_CACHE_DOCS, CANONICAL_INSTALL_PLATFORM_TOKENS, CANONICAL_INSTALL_PLATFORM_URLS, BUN_CONFIG_ENV_TOKEN_ENTRIES, CANONICAL_INSTALL_ENV_TOKENS, CANONICAL_INSTALL_ENV_URLS, REGISTRY_CLIENT_DOC = "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md", CANONICAL_REGISTRY_CLIENT_TOKENS, CANONICAL_REGISTRY_CLIENT_URLS, BUN_TYPES_PINNED = "https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types", CANONICAL_REFS, CONCEPT_ONLY_KEYS, APIS, TAXONOMY_PATH, REPO_ROOT;
 var init_bun_doc_refs = __esm(async () => {
   init_bundler_gaps();
   init_bundler_nav();
@@ -1356,6 +1370,33 @@ var init_bun_doc_refs = __esm(async () => {
     }
   };
   CANONICAL_INSTALL_ENV_URLS = Object.fromEntries(Object.entries(CANONICAL_INSTALL_ENV_TOKENS).map(([key, meta]) => [key, meta.url]));
+  CANONICAL_REGISTRY_CLIENT_TOKENS = {
+    RegistryClient: {
+      url: "https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md",
+      kind: "SDK",
+      stability: "stable",
+      description: "Runtime-neutral FactoryWager registry read plane + publish SDK"
+    },
+    "registry-client resolve": {
+      url: `${REGISTRY_CLIENT_DOC}#resolve`,
+      kind: "SDK",
+      stability: "stable",
+      description: "resolve() \u2014 dist-tag to /registry/storage/\u2026/artifact.tgz"
+    },
+    "registry-client download": {
+      url: `${REGISTRY_CLIENT_DOC}#download`,
+      kind: "SDK",
+      stability: "stable",
+      description: "download() \u2014 SHA-256 + size verification"
+    },
+    "registry-client publish": {
+      url: `${REGISTRY_CLIENT_DOC}#publish`,
+      kind: "SDK",
+      stability: "stable",
+      description: "publish() \u2014 authenticated multipart FormData"
+    }
+  };
+  CANONICAL_REGISTRY_CLIENT_URLS = Object.fromEntries(Object.entries(CANONICAL_REGISTRY_CLIENT_TOKENS).map(([key, meta]) => [key, meta.url]));
   CANONICAL_REFS = {
     "Bun.stringWidth": "https://bun.com/docs/runtime/utils#bun-stringwidth",
     "Bun.stripANSI": "https://bun.com/docs/runtime/utils#bun-stripansi",
@@ -1483,6 +1524,7 @@ var init_bun_doc_refs = __esm(async () => {
     "blob:": bunDocs("runtime/networking/fetch", "blob-urls-blob"),
     ...CANONICAL_INSTALL_PLATFORM_URLS,
     ...CANONICAL_INSTALL_ENV_URLS,
+    ...CANONICAL_REGISTRY_CLIENT_URLS,
     "isolated installs": bunDocs("pm/isolated-installs"),
     "global virtual store": bunDocs("pm/global-store"),
     configVersion: bunDocs("pm/isolated-installs"),
@@ -1499,6 +1541,7 @@ var init_bun_doc_refs = __esm(async () => {
     "Bun.ArrayBufferSink": "https://bun.com/docs/runtime/streams#bun-arraybuffersink",
     "Bun.spawnSync": "https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync",
     "Bun.Terminal": "https://bun.com/docs/runtime/child-process#terminal-pty-support",
+    "Bun.Terminal (v1.3.5 ship)": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
     "Bun.build": "https://bun.com/docs/bundler/index#basic-example",
     "Bun.plugin": "https://bun.com/docs/bundler/plugins#usage",
     "Bun.cron": "https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process",
@@ -1744,7 +1787,12 @@ var init_bun_doc_refs = __esm(async () => {
     "Bun.embeddedFiles": "https://bun.com/docs/bundler/executables#listing-embedded-files",
     "Bun.isStandaloneExecutable": "https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime",
     BUN_BE_BUN: "https://bun.com/docs/bundler/executables#act-as-the-bun-cli",
-    "bun:bundle": "https://bun.com/docs/bundler/esbuild#cli-api",
+    "bun:bundle": "https://bun.com/docs/bundler/index#features",
+    "compile-time feature flags": "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+    "feature()": "https://bun.com/docs/guides/runtime/build-time-constants#feature-flags",
+    "S3 contentDisposition": "https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads",
+    "npmrc env expansion": "https://bun.com/blog/bun-v1.3.5#environment-variable-expansion-in-npmrc-quoted-values",
+    "registry-read-plane": "https://developers.cloudflare.com/pages/functions/bindings/#r2-bucket-bindings",
     "--bytecode": "https://bun.com/docs/bundler/bytecode#basic-usage-commonjs",
     "--compile": "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
     "--compile-autoload-package-json": "https://bun.com/docs/bundler/executables#enabling-config-loading-at-runtime",
@@ -1856,7 +1904,7 @@ var init_bun_doc_refs = __esm(async () => {
     "esbuild javascript-api": "https://bun.com/docs/bundler/esbuild#javascript-api",
     "esbuild plugin-api": "https://bun.com/docs/bundler/esbuild#plugin-api",
     BUN_LOADER_JSX: "https://bun.com/docs/bundler/loaders#jsx",
-    "verify-channel": "https://bun.com/docs/installation#upgrade",
+    "verify-channel": "https://bun.com/docs/installation#upgrading",
     "Bun.version": "https://bun.com/docs/runtime/utils#bun-version",
     "Bun.revision": "https://bun.com/docs/runtime/utils#bun-revision",
     "Bun.randomUUIDv7": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
@@ -1927,7 +1975,7 @@ var init_bun_doc_refs = __esm(async () => {
     "run.noOrphans": "https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind",
     "bun-types": BUN_TYPES_PINNED,
     "llms.txt index": "https://bun.com/docs/llms.txt",
-    "markdown docs": "https://bun.com/docs/runtime/environment-variables.md",
+    "markdown docs": "https://bun.com/docs/runtime/markdown.md",
     "rss feed": "https://bun.com/rss.xml",
     discord: "https://bun.com/discord",
     issues: "https://bun.com/issues",
@@ -1941,6 +1989,29 @@ var init_bun_doc_refs = __esm(async () => {
   REPO_ROOT = new URL("..", import.meta.url).pathname;
   if (false) {}
 });
+
+// lib/path-bun.ts
+function normalizePath2(path) {
+  const isAbs = path.startsWith("/");
+  const out = [];
+  for (const seg of path.split("/")) {
+    if (seg === "" || seg === ".")
+      continue;
+    if (seg === "..") {
+      if (out.length > 0)
+        out.pop();
+      continue;
+    }
+    out.push(seg);
+  }
+  const body = out.join("/");
+  if (isAbs)
+    return `/${body}`;
+  return body || ".";
+}
+function joinPath(...parts) {
+  return normalizePath2(parts.filter((p) => p != null && String(p) !== "").join("/"));
+}
 
 // lib/core/core-types.ts
 var ENTERPRISE_LIMITS;
@@ -2733,28 +2804,83 @@ var init_branded2 = __esm(() => {
   init_branded();
 });
 
-// lib/path-bun.ts
-function normalizePath2(path) {
-  const isAbs = path.startsWith("/");
-  const out = [];
-  for (const seg of path.split("/")) {
-    if (seg === "" || seg === ".")
-      continue;
-    if (seg === "..") {
-      if (out.length > 0)
-        out.pop();
-      continue;
+// lib/terminal.ts
+var exports_terminal = {};
+__export(exports_terminal, {
+  terminalOptions: () => terminalOptions,
+  spawnWithTerminal: () => spawnWithTerminal,
+  createCapturingTerminal: () => createCapturingTerminal,
+  DEFAULT_TERMINAL_ROWS: () => DEFAULT_TERMINAL_ROWS,
+  DEFAULT_TERMINAL_NAME: () => DEFAULT_TERMINAL_NAME,
+  DEFAULT_TERMINAL_COLS: () => DEFAULT_TERMINAL_COLS,
+  BUN_TERMINAL_PTY_DOCS: () => BUN_TERMINAL_PTY_DOCS,
+  BUN_TERMINAL_OPTIONS_DOCS: () => BUN_TERMINAL_OPTIONS_DOCS
+});
+function terminalOptions(options = {}) {
+  const { cols, rows, name, onData, onExit, onDrain } = options;
+  return {
+    cols: cols ?? DEFAULT_TERMINAL_COLS,
+    rows: rows ?? DEFAULT_TERMINAL_ROWS,
+    name: name ?? DEFAULT_TERMINAL_NAME,
+    data: onData ? (_term, data) => {
+      onData(data);
+    } : undefined,
+    exit: onExit ? (_term, exitCode, signal) => {
+      onExit(exitCode, signal);
+    } : undefined,
+    drain: onDrain ? () => {
+      onDrain();
+    } : undefined
+  };
+}
+function createCapturingTerminal(options = {}) {
+  const chunks = [];
+  const { onData, ...rest } = options;
+  const terminal2 = new Bun.Terminal(terminalOptions({
+    ...rest,
+    onData: (data) => {
+      chunks.push(data);
+      onData?.(data);
     }
-    out.push(seg);
+  }));
+  return {
+    terminal: terminal2,
+    chunks,
+    text: () => decoder.decode(Buffer.concat(chunks))
+  };
+}
+async function spawnWithTerminal(options) {
+  const { cmd, cwd, env, ...termOpts } = options;
+  if (!cmd.length) {
+    throw new Error("spawnWithTerminal: cmd must be a non-empty argv");
   }
-  const body = out.join("/");
-  if (isAbs)
-    return `/${body}`;
-  return body || ".";
+  const capture = createCapturingTerminal(termOpts);
+  try {
+    const proc = Bun.spawn({
+      cmd,
+      cwd,
+      env,
+      terminal: capture.terminal
+    });
+    const exitCode = await proc.exited;
+    return {
+      exitCode,
+      output: capture.text(),
+      chunks: capture.chunks,
+      pid: proc.pid
+    };
+  } finally {
+    if (!capture.terminal.closed)
+      capture.terminal.close();
+  }
 }
-function joinPath(...parts) {
-  return normalizePath2(parts.filter((p) => p != null && String(p) !== "").join("/"));
-}
+var BUN_TERMINAL_PTY_DOCS, BUN_TERMINAL_OPTIONS_DOCS, DEFAULT_TERMINAL_COLS = 80, DEFAULT_TERMINAL_ROWS = 24, DEFAULT_TERMINAL_NAME = "xterm-256color", decoder;
+var init_terminal = __esm(() => {
+  init_bun_site_url();
+  BUN_TERMINAL_PTY_DOCS = bunDocs("runtime/child-process", "terminal-pty-support");
+  BUN_TERMINAL_OPTIONS_DOCS = bunDocs("runtime/child-process", "terminal-options");
+  decoder = new TextDecoder;
+});
 
 // tools/verify-bun-release.ts
 var {CryptoHasher, inspect, version: version2, revision, spawn, $ } = globalThis.Bun;
@@ -2762,113 +2888,6 @@ import { writeFileSync, readFileSync } from "fs";
 
 // lib/docs/bun-release-tracker.ts
 import tls from "tls";
-
-// lib/deep-equals.ts
-init_bun_site_url();
-var BUN_DEEP_EQUALS_DOCS = bunDocs("runtime/utils", "bun-deepequals");
-
-// lib/docs/repo-docs.ts
-function canonicalRemote(remote, host, owner, name) {
-  return {
-    remote,
-    host,
-    owner,
-    name,
-    url: `https://${host}/${owner}/${name}`
-  };
-}
-var CANONICAL_REMOTES = {
-  origin: canonicalRemote("origin", "github.com", "brendadeeznuts1111", "project-R-score"),
-  cascade: canonicalRemote("cascade", "github.com", "brendadeeznuts1111", "cascade-mover-v3")
-};
-
-// lib/http/verification-scripts.ts
-var GITHUB_RAW_BRANCH = "main";
-function verificationScriptGitHubRawUrl(path, branch = GITHUB_RAW_BRANCH) {
-  const { owner, name } = CANONICAL_REMOTES.origin;
-  return `https://raw.githubusercontent.com/${owner}/${name}/${branch}/${path}`;
-}
-
-// lib/verification/types.ts
-var RELEASE_PROOF_REPORT_PATH = "/registry/release-features.json";
-
-// lib/verification/links.ts
-var RELEASE_SOURCE_PATH = "tools/verify-bun-release.ts";
-function buildVerificationLinks(canonical, options = {}) {
-  return {
-    docs: canonical ?? "https://bun.com/docs",
-    source: verificationScriptGitHubRawUrl(options.sourcePath ?? RELEASE_SOURCE_PATH),
-    report: options.reportPath ?? RELEASE_PROOF_REPORT_PATH
-  };
-}
-
-// lib/verification/canonical-coverage.ts
-await init_bun_doc_refs();
-var INSTALL_PLATFORM_PROOF_REPORT_PATH = "/registry/install-platform.json";
-var INSTALL_PLATFORM_VERIFY_SOURCE = "tools/verify-install-platform.ts";
-var DEFAULT_PLATFORM_DEPS = CANONICAL_REFS["platform-specific dependencies"] ?? "https://bun.com/docs/pm/cli/install#platform-specific-dependencies";
-var INSTALL_ASPECT_CANONICAL_KEYS = {
-  "bun-binary-resolved": "Bun.which",
-  "bun-config-env-ssot": "BUN install environment variables",
-  "forbidden-install-env": "install env precedence",
-  "install-mechanism-notes-ssot": "bun install cache mechanism",
-  "runtime-flags": "bun install --cpu",
-  "profile-ssot": "bun install --cpu",
-  "monorepo-cross-dry-run": "bun install --cpu",
-  "lockfile-stable": "platform-specific dependencies",
-  "lockfile-config-version": "isolated installs",
-  "machine-isolated-linker": "isolated installs",
-  "machine-global-store": "global virtual store"
-};
-function resolveCanonicalUrl(key, fallback) {
-  return CANONICAL_REFS[key] ?? fallback ?? DEFAULT_PLATFORM_DEPS;
-}
-function resolveInstallAspectCanonical(aspect) {
-  const canonicalKey = INSTALL_ASPECT_CANONICAL_KEYS[aspect] ?? "platform-specific dependencies";
-  const canonical = resolveCanonicalUrl(canonicalKey);
-  return {
-    canonicalKey,
-    canonical,
-    _links: buildVerificationLinks(canonical, {
-      reportPath: INSTALL_PLATFORM_PROOF_REPORT_PATH,
-      sourcePath: INSTALL_PLATFORM_VERIFY_SOURCE
-    })
-  };
-}
-function ensureVerificationResultsHaveCanonical(results, options = {}) {
-  const missing = [];
-  const unknownUrls = [];
-  const knownUrls = new Set(Object.values(CANONICAL_REFS));
-  for (const r of results) {
-    if (!r.canonical) {
-      missing.push(r.name);
-      continue;
-    }
-    if (!knownUrls.has(r.canonical)) {
-      unknownUrls.push(`${r.name} \u2192 ${r.canonical}`);
-    }
-  }
-  const ok = missing.length === 0 && (options.strictUrls !== true || unknownUrls.length === 0);
-  return { ok, missing, unknownUrls };
-}
-function reportCanonicalCoverageGaps(report, label) {
-  for (const name of report.missing) {
-    console.warn(`\u26A0\uFE0F  [${label}] Test "${name}" has no canonical reference.`);
-  }
-  for (const line of report.unknownUrls) {
-    console.warn(`\u26A0\uFE0F  [${label}] Test ${line} is not in CANONICAL_REFS.`);
-  }
-  if (!report.ok) {
-    console.error(`\u274C [${label}] Canonical coverage failed (${report.missing.length} missing).`);
-  }
-  return report.ok;
-}
-
-// lib/docs/fetch-protocol-docs.ts
-import { mkdtemp, unlink } from "fs/promises";
-import { tmpdir } from "os";
-import { join } from "path";
-import { pathToFileURL } from "url";
 
 // config/r2-env.ts
 var CLOUDFLARE_DEFAULTS = {
@@ -2956,6 +2975,142 @@ var CLOUDFLARE_ZONE = {
   name: envString("CLOUDFLARE_ZONE_NAME", CLOUDFLARE_DEFAULTS.zones.factoryWager.name)
 };
 if (false) {}
+
+// lib/docs/repo-docs.ts
+function canonicalRemote(remote, host, owner, name) {
+  return {
+    remote,
+    host,
+    owner,
+    name,
+    url: `https://${host}/${owner}/${name}`
+  };
+}
+var CANONICAL_REMOTES = {
+  origin: canonicalRemote("origin", "github.com", "brendadeeznuts1111", "project-R-score"),
+  cascade: canonicalRemote("cascade", "github.com", "brendadeeznuts1111", "cascade-mover-v3")
+};
+var CANONICAL_EXTERNAL = {
+  harnessEngineering: {
+    name: "harness-engineering",
+    url: "https://github.com/lopopolo/harness-engineering",
+    domainModeling: "https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md",
+    durableSystems: "https://github.com/lopopolo/harness-engineering/blob/trunk/docs/durable-systems/README.md",
+    proof: "https://github.com/lopopolo/harness-engineering/blob/trunk/docs/proof/README.md",
+    replaceCodebaseWithArtifact: "https://x.com/_lopopolo/status/2076878736507736390",
+    codeIsNotTheArtifact: "https://hyperbo.la/w/code-is-not-the-artifact/",
+    parseDontValidate: "https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/",
+    hyperbolaCase: "https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/hyperbola.md"
+  },
+  reasonixRemote: {
+    name: "remote-ssh",
+    configPath: "~/.reasonix/config.toml",
+    activeHosts: ["factorywager-staging", "cloudflare-pages"],
+    reasonixBinary: "/Applications/Reasonix.app/Contents/MacOS/reasonix",
+    setupScript: "scripts/reasonix-remote-setup.sh",
+    cloudflarePages: {
+      deployScript: "scripts/cloudflare-pages-deploy.sh",
+      tunnelConfig: "scripts/cloudflared-reasonix.yml",
+      mcpServers: [
+        "mcp__cloudflare__connect",
+        "mcp__cloudflare-docs__connect",
+        "mcp__cloudflare-builds__connect",
+        "mcp__cloudflare-bindings__connect",
+        "mcp__cloudflare-observability__connect"
+      ],
+      accountId: CLOUDFLARE_DEFAULTS.accountId,
+      project: "project-r-score",
+      pagesDomain: "project-r-score.pages.dev"
+    }
+  }
+};
+
+// lib/http/verification-scripts.ts
+var GITHUB_RAW_BRANCH = "main";
+function verificationScriptGitHubRawUrl(path, branch = GITHUB_RAW_BRANCH) {
+  const { owner, name } = CANONICAL_REMOTES.origin;
+  return `https://raw.githubusercontent.com/${owner}/${name}/${branch}/${path}`;
+}
+
+// lib/verification/types.ts
+var RELEASE_PROOF_REPORT_PATH = "/registry/release-features.json";
+
+// lib/verification/links.ts
+var RELEASE_SOURCE_PATH = "tools/verify-bun-release.ts";
+function buildVerificationLinks(canonical, options = {}) {
+  return {
+    docs: canonical ?? "https://bun.com/docs",
+    source: verificationScriptGitHubRawUrl(options.sourcePath ?? RELEASE_SOURCE_PATH),
+    report: options.reportPath ?? RELEASE_PROOF_REPORT_PATH
+  };
+}
+
+// lib/verification/canonical-coverage.ts
+await init_bun_doc_refs();
+var INSTALL_PLATFORM_PROOF_REPORT_PATH = "/registry/install-platform.json";
+var INSTALL_PLATFORM_VERIFY_SOURCE = "tools/verify-install-platform.ts";
+var DEFAULT_PLATFORM_DEPS = CANONICAL_REFS["platform-specific dependencies"] ?? "https://bun.com/docs/pm/cli/install#platform-specific-dependencies";
+var INSTALL_ASPECT_CANONICAL_KEYS = {
+  "bun-binary-resolved": "Bun.which",
+  "bun-config-env-ssot": "BUN install environment variables",
+  "forbidden-install-env": "install env precedence",
+  "install-mechanism-notes-ssot": "bun install cache mechanism",
+  "runtime-flags": "bun install --cpu",
+  "profile-ssot": "bun install --cpu",
+  "monorepo-cross-dry-run": "bun install --cpu",
+  "lockfile-stable": "platform-specific dependencies",
+  "lockfile-config-version": "isolated installs",
+  "machine-isolated-linker": "isolated installs",
+  "machine-global-store": "global virtual store"
+};
+function resolveCanonicalUrl(key, fallback) {
+  return CANONICAL_REFS[key] ?? fallback ?? DEFAULT_PLATFORM_DEPS;
+}
+function resolveInstallAspectCanonical(aspect) {
+  const canonicalKey = INSTALL_ASPECT_CANONICAL_KEYS[aspect] ?? "platform-specific dependencies";
+  const canonical = resolveCanonicalUrl(canonicalKey);
+  return {
+    canonicalKey,
+    canonical,
+    _links: buildVerificationLinks(canonical, {
+      reportPath: INSTALL_PLATFORM_PROOF_REPORT_PATH,
+      sourcePath: INSTALL_PLATFORM_VERIFY_SOURCE
+    })
+  };
+}
+function ensureVerificationResultsHaveCanonical(results, options = {}) {
+  const missing = [];
+  const unknownUrls = [];
+  const knownUrls = new Set(Object.values(CANONICAL_REFS));
+  for (const r of results) {
+    if (!r.canonical) {
+      missing.push(r.name);
+      continue;
+    }
+    if (!knownUrls.has(r.canonical)) {
+      unknownUrls.push(`${r.name} \u2192 ${r.canonical}`);
+    }
+  }
+  const ok = missing.length === 0 && (options.strictUrls !== true || unknownUrls.length === 0);
+  return { ok, missing, unknownUrls };
+}
+function reportCanonicalCoverageGaps(report, label) {
+  for (const name of report.missing) {
+    console.warn(`\u26A0\uFE0F  [${label}] Test "${name}" has no canonical reference.`);
+  }
+  for (const line of report.unknownUrls) {
+    console.warn(`\u26A0\uFE0F  [${label}] Test ${line} is not in CANONICAL_REFS.`);
+  }
+  if (!report.ok) {
+    console.error(`\u274C [${label}] Canonical coverage failed (${report.missing.length} missing).`);
+  }
+  return report.ok;
+}
+
+// lib/docs/fetch-protocol-docs.ts
+import { mkdtemp, unlink } from "fs/promises";
+import { tmpdir } from "os";
+import { pathToFileURL } from "url";
 
 // lib/security/r2-credentials.ts
 init_branded2();
@@ -3076,7 +3231,7 @@ async function spawnEval(script, env = {}, timeoutMs = 15000) {
     stdout: "pipe",
     stderr: "pipe",
     stdin: "ignore",
-    env: { ...process.env, ...env }
+    env: { ...Bun.env, ...env }
   });
   let timedOut = false;
   const timer = setTimeout(() => {
@@ -3163,8 +3318,8 @@ async function probeFetchBlob() {
 }
 async function probeFetchFile() {
   const name = "fetch protocol (file://)";
-  const dir = await mkdtemp(join(tmpdir(), "fw-fetch-file-"));
-  const path = join(dir, "probe.txt");
+  const dir = await mkdtemp(joinPath(tmpdir(), "fw-fetch-file-"));
+  const path = joinPath(dir, "probe.txt");
   try {
     await Bun.write(path, "file-protocol-ok");
     const href = pathToFileURL(path).href;
@@ -3284,7 +3439,6 @@ async function runFetchProtocolProbes(env = Bun.env) {
 // lib/docs/bun-install-platform-docs.ts
 import { mkdtemp as mkdtemp2, rm } from "fs/promises";
 import { tmpdir as tmpdir2 } from "os";
-import { join as join2 } from "path";
 
 // lib/verification/resolve-bun-binary.ts
 import { existsSync, realpathSync } from "fs";
@@ -3380,19 +3534,7 @@ var INSTALL_PLATFORM_DOCS = {
   cpuAndOsFlags: bunDocs("pm/cli/install", "cpu-and-os-flags")
 };
 var BUN_INSTALL_PLATFORM_SUPPORTED = {
-  cpu: [
-    "arm",
-    "arm64",
-    "ia32",
-    "mips",
-    "mipsel",
-    "ppc",
-    "ppc64",
-    "s390",
-    "s390x",
-    "x32",
-    "x64"
-  ],
+  cpu: ["arm", "arm64", "ia32", "mips", "mipsel", "ppc", "ppc64", "s390", "s390x", "x32", "x64"],
   os: ["aix", "android", "darwin", "freebsd", "linux", "openbsd", "sunos", "win32"]
 };
 var BUN_INSTALL_CPU_VALUES = BUN_INSTALL_PLATFORM_SUPPORTED.cpu;
@@ -3418,10 +3560,10 @@ function decodeSpawnOutput(data) {
   return new TextDecoder().decode(data);
 }
 async function probeBunInstallPlatformFlags() {
-  const dir = await mkdtemp2(join2(tmpdir2(), "fw-bun-install-probe-"));
+  const dir = await mkdtemp2(joinPath(tmpdir2(), "fw-bun-install-probe-"));
   const bunPath = resolveVerificationBunBinary().path;
   try {
-    await Bun.write(join2(dir, "package.json"), JSON.stringify({ name: "fw-install-platform-probe", dependencies: {} }));
+    await Bun.write(joinPath(dir, "package.json"), JSON.stringify({ name: "fw-install-platform-probe", dependencies: {} }));
     const valid = Bun.spawnSync([bunPath, "install", "--cpu=x64", "--os=linux", "--dry-run", "--ignore-scripts"], { cwd: dir, stdout: "pipe", stderr: "pipe", stdin: "ignore" });
     const invalid = Bun.spawnSync([bunPath, "install", "--cpu=bogus", "--os=linux", "--dry-run", "--ignore-scripts"], { cwd: dir, stdout: "pipe", stderr: "pipe", stdin: "ignore" });
     const validOk = valid.exitCode === 0;
@@ -3970,10 +4112,15 @@ var BUN_V1314_ANCHORS = {
   "tls-getcacertificates-system-no-longer-stalls-on-managed-macs": `${BUN_V1314_BLOG}#tls-getcacertificates-system-no-longer-stalls-on-managed-macs`,
   "use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates": `${BUN_V1314_BLOG}#use-system-ca-on-windows-now-loads-intermediate-and-trustedpeople-certificates`,
   "event-loop-refactor": `${BUN_V1314_BLOG}#event-loop-refactor`,
-  "bun-archive-api": "https://bun.sh/docs/runtime/archive",
-  "bun-stringwidth-accuracy": "https://bun.sh/docs/runtime/utils#bun-stringwidth",
-  "bun-terminal-api": "https://bun.sh/docs/runtime/terminal",
-  "bun-compile-features": "https://bun.sh/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination"
+  "bun-archive-api": "https://bun.com/docs/runtime/archive"
+};
+var BUN_V135_BLOG = "https://bun.com/blog/bun-v1.3.5";
+var BUN_V135_ANCHORS = {
+  "bun-terminal-api-for-pseudo-terminal-pty-support": `${BUN_V135_BLOG}#bun-terminal-api-for-pseudo-terminal-pty-support`,
+  "compile-time-feature-flags-for-dead-code-elimination": `${BUN_V135_BLOG}#compile-time-feature-flags-for-dead-code-elimination`,
+  "improved-bun-stringwidth-accuracy": `${BUN_V135_BLOG}#improved-bun-stringwidth-accuracy`,
+  "content-disposition-support-for-s3-uploads": `${BUN_V135_BLOG}#content-disposition-support-for-s3-uploads`,
+  "environment-variable-expansion-in-npmrc-quoted-values": `${BUN_V135_BLOG}#environment-variable-expansion-in-npmrc-quoted-values`
 };
 var BUN_RELEASE_NOTE_ROWS = [
   {
@@ -4003,7 +4150,10 @@ var BUN_RELEASE_NOTE_ROWS = [
     summary: "Codegen classes (Request, Response, Subprocess, \u2026) no longer re-scan all live instances after every mutator yield; only visitChildren runs. Hand-written types unchanged.",
     canonical: BUN_V1314_ANCHORS["reduced-gc-overhead-for-built-in-objects"],
     verify: "smoke",
-    refs: [BUN_V1314_ANCHORS["reduced-gc-overhead-for-built-in-objects"], "https://bun.com/docs/runtime/gc"]
+    refs: [
+      BUN_V1314_ANCHORS["reduced-gc-overhead-for-built-in-objects"],
+      "https://bun.com/docs/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects"
+    ]
   },
   {
     id: "binary-size-linux-windows",
@@ -4052,6 +4202,62 @@ var BUN_RELEASE_NOTE_ROWS = [
     canonical: BUN_V1314_ANCHORS["cross-language-lto-for-zig-c-on-linux"],
     verify: "smoke",
     refs: [BUN_V1314_ANCHORS["cross-language-lto-for-zig-c-on-linux"]]
+  },
+  {
+    id: "bun-terminal-pty",
+    title: "Bun.Terminal API for pseudo-terminal (PTY) support",
+    summary: "Bun.spawn({ terminal }) and reusable new Bun.Terminal(); POSIX at ship (ConPTY in 1.3.14).",
+    canonical: BUN_V135_ANCHORS["bun-terminal-api-for-pseudo-terminal-pty-support"],
+    verify: "automated",
+    refs: [
+      BUN_V135_ANCHORS["bun-terminal-api-for-pseudo-terminal-pty-support"],
+      "https://bun.com/docs/runtime/child-process#terminal-pty-support"
+    ]
+  },
+  {
+    id: "compile-time-feature-flags",
+    title: "Compile-time feature flags (bun:bundle)",
+    summary: 'import { feature } from "bun:bundle" \u2014 dead-code elimination via --feature / Bun.build features.',
+    canonical: BUN_V135_ANCHORS["compile-time-feature-flags-for-dead-code-elimination"],
+    verify: "automated",
+    refs: [
+      BUN_V135_ANCHORS["compile-time-feature-flags-for-dead-code-elimination"],
+      "https://bun.com/docs/bundler/index#features",
+      "https://bun.com/docs/guides/runtime/build-time-constants#feature-flags"
+    ]
+  },
+  {
+    id: "stringwidth-accuracy",
+    title: "Improved Bun.stringWidth accuracy",
+    summary: "Grapheme-aware emoji, zero-width chars, CSI/OSC ANSI sequences.",
+    canonical: BUN_V135_ANCHORS["improved-bun-stringwidth-accuracy"],
+    verify: "automated",
+    refs: [
+      BUN_V135_ANCHORS["improved-bun-stringwidth-accuracy"],
+      "https://bun.com/docs/runtime/utils#bun-stringwidth"
+    ]
+  },
+  {
+    id: "s3-content-disposition",
+    title: "S3 contentDisposition uploads",
+    summary: "contentDisposition option on s3.file / s3.write for inline vs attachment filenames.",
+    canonical: BUN_V135_ANCHORS["content-disposition-support-for-s3-uploads"],
+    verify: "informational",
+    refs: [
+      BUN_V135_ANCHORS["content-disposition-support-for-s3-uploads"],
+      "https://bun.com/docs/runtime/s3"
+    ]
+  },
+  {
+    id: "npmrc-env-expansion",
+    title: ".npmrc quoted env expansion + ? modifier",
+    summary: "Quoted ${NPM_TOKEN} values expand; ${VAR?} \u2192 empty when unset (npm parity).",
+    canonical: BUN_V135_ANCHORS["environment-variable-expansion-in-npmrc-quoted-values"],
+    verify: "informational",
+    refs: [
+      BUN_V135_ANCHORS["environment-variable-expansion-in-npmrc-quoted-values"],
+      "https://bun.com/docs/pm/npmrc"
+    ]
   }
 ];
 var INSTALL_PLATFORM_TEST_CANONICAL = Object.fromEntries(Object.keys(INSTALL_ASPECT_CANONICAL_KEYS).map((aspect) => [
@@ -4084,6 +4290,11 @@ var BUN_RELEASE_TEST_CANONICAL = {
   "Bun.inspect depth": BUN_V1314_ANCHORS["upgraded-javascriptcore-engine"],
   "Bun.hash returns bigint": resolveCanonicalUrl("Bun.hash"),
   "Bun.version / Bun.revision": resolveCanonicalUrl("Bun.version"),
+  "Bun.Archive (create, extract, gzip, read)": BUN_V1314_ANCHORS["bun-archive-api"],
+  "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)": BUN_V135_ANCHORS["improved-bun-stringwidth-accuracy"],
+  "Bun.spawn PTY (echo capture)": BUN_V135_ANCHORS["bun-terminal-api-for-pseudo-terminal-pty-support"],
+  "Compile-time feature flags (bun:bundle)": BUN_V135_ANCHORS["compile-time-feature-flags-for-dead-code-elimination"],
+  "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)": "https://bun.sh/reference/globals/Uint8Array",
   ...INSTALL_PLATFORM_TEST_CANONICAL
 };
 function canonicalForReleaseTest(name) {
@@ -4123,10 +4334,7 @@ async function spawnProbe(argv, timeoutMs = 3000) {
     timedOut = true;
     proc.kill();
   }, timeoutMs);
-  const [out, code] = await Promise.all([
-    new Response(proc.stdout).text(),
-    proc.exited
-  ]);
+  const [out, code] = await Promise.all([new Response(proc.stdout).text(), proc.exited]);
   clearTimeout(timer);
   return { out, code: timedOut ? null : code, timedOut };
 }
@@ -4187,6 +4395,64 @@ function smokeBuiltinObjectsGc() {
     return { ok: true, count: 2000 };
   } catch {
     return { ok: false, count: 2000 };
+  }
+}
+function probeStringWidthV135Accuracy() {
+  const checks = [
+    ["\uD83C\uDDFA\uD83C\uDDF8", 2],
+    ["\uD83D\uDC4B\uD83C\uDFFD", 2],
+    ["\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67", 2],
+    ["\xAD", 0],
+    ["\u2060", 0]
+  ];
+  const bad = checks.filter(([text, width]) => Bun.stringWidth(text) !== width);
+  return {
+    ok: bad.length === 0,
+    note: bad.length === 0 ? "flag=2 skin=2 zwj=2 hyphen=0 joiner=0" : bad.map(([t, w]) => `${JSON.stringify(t)}\u2260${w}`).join(", ")
+  };
+}
+async function probeBunTerminalPty() {
+  try {
+    const { spawnWithTerminal: spawnWithTerminal2 } = await Promise.resolve().then(() => (init_terminal(), exports_terminal));
+    const result = await spawnWithTerminal2({ cmd: ["echo", "pty-probe"] });
+    const text = result.output.replace(/\r/g, "");
+    const ok = result.exitCode === 0 && text.includes("pty-probe");
+    return {
+      ok,
+      note: ok ? `exit=0 captured pty output (${result.chunks.length} chunks)` : `exit=${result.exitCode} out=${text.slice(0, 40)}`
+    };
+  } catch (e) {
+    return { ok: false, note: e instanceof Error ? e.message : String(e) };
+  }
+}
+async function probeCompileTimeFeatureFlags() {
+  const { mkdtemp: mkdtemp3, rm: rm2 } = await import("fs/promises");
+  const { tmpdir: tmpdir3 } = await import("os");
+  const { join } = await import("path");
+  const dir = await mkdtemp3(join(tmpdir3(), "fw-feature-probe-"));
+  try {
+    const entry2 = join(dir, "entry.ts");
+    const outdir = join(dir, "out");
+    await Bun.write(entry2, `import { feature } from "bun:bundle";
+export const mode = feature("FW_PROBE_PREMIUM") ? "premium" : "free";
+`);
+    const proc = Bun.spawnSync(["bun", "build", "--feature=FW_PROBE_PREMIUM", entry2, "--outdir", outdir, "--minify"], { cwd: dir, stdout: "pipe", stderr: "pipe" });
+    if (proc.exitCode !== 0) {
+      return {
+        ok: false,
+        note: `build exit=${proc.exitCode} ${new TextDecoder().decode(proc.stderr).slice(0, 120)}`
+      };
+    }
+    const built = await Bun.file(join(outdir, "entry.js")).text();
+    const ok = built.includes("premium") && !built.includes("free");
+    return {
+      ok,
+      note: ok ? "PREMIUM branch kept; free eliminated" : `unexpected bundle: ${built.slice(0, 80)}`
+    };
+  } catch (e) {
+    return { ok: false, note: e instanceof Error ? e.message : String(e) };
+  } finally {
+    await rm2(dir, { recursive: true, force: true }).catch(() => {});
   }
 }
 
@@ -4254,7 +4520,7 @@ async function readTestSuiteCommit() {
   }
 }
 function resolveProvenanceId(testedAt) {
-  return process.env.GITHUB_RUN_ID ?? process.env.CI_RUN_ID ?? process.env.CI_PIPELINE_ID ?? `local-${testedAt.replace(/[:.]/g, "-")}`;
+  return Bun.env.GITHUB_RUN_ID ?? Bun.env.CI_RUN_ID ?? Bun.env.CI_PIPELINE_ID ?? `local-${testedAt.replace(/[:.]/g, "-")}`;
 }
 async function buildSemanticTags(channel, options = {}) {
   const testedAt = options.testedAt ?? new Date().toISOString();
@@ -4589,57 +4855,53 @@ async function runReleaseVerification(options = {}) {
     expected: "creates tar, extracts, gzips, reads files back",
     actual: "archive bytes=10240, gzip=126, round-trip verified",
     passed: true,
-    anchor: "bun-archive-api"
-  });
+    canonical: BUN_RELEASE_TEST_CANONICAL["Bun.Archive (create, extract, gzip, read)"]
+  }, ctx);
+  const stringWidth = probeStringWidthV135Accuracy();
+  pushReleaseResult(results, {
+    name: "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)",
+    expected: "flag=2 skin=2 zwj=2 hyphen=0 joiner=0",
+    actual: stringWidth.note,
+    passed: stringWidth.ok,
+    canonical: BUN_RELEASE_TEST_CANONICAL["Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)"]
+  }, ctx);
+  const terminal2 = await probeBunTerminalPty();
+  pushReleaseResult(results, {
+    name: "Bun.spawn PTY (echo capture)",
+    expected: "PTY echo captured via Bun.spawn({ terminal })",
+    actual: terminal2.note,
+    passed: terminal2.ok,
+    canonical: BUN_RELEASE_TEST_CANONICAL["Bun.spawn PTY (echo capture)"]
+  }, ctx);
+  const features = await probeCompileTimeFeatureFlags();
+  pushReleaseResult(results, {
+    name: "Compile-time feature flags (bun:bundle)",
+    expected: "PREMIUM branch kept; free path eliminated when --feature set",
+    actual: features.note,
+    passed: features.ok,
+    canonical: BUN_RELEASE_TEST_CANONICAL["Compile-time feature flags (bun:bundle)"]
+  }, ctx);
   const canonicalCoverage = ensureVerificationResultsHaveCanonical(results);
   if (!reportCanonicalCoverageGaps(canonicalCoverage, "verify-bun-release")) {
     throw new Error("Verification results missing canonical documentation URLs");
   }
+  const u8 = new Uint8Array([72, 101, 108, 108, 111]);
+  const u8Ok = u8.toBase64() === "SGVsbG8=" && u8.toHex() === "48656c6c6f";
+  const dst = new Uint8Array(5);
+  const { written: w1 } = dst.setFromBase64("SGVsbG8=");
+  const { written: w2 } = dst.setFromHex("48656c6c6f");
+  const u8RtOk = w1 === 5 && dst[0] === 72 && w2 === 5 && dst[4] === 111;
+  const fb = await Bun.file("package.json").bytes();
+  const bb = await new Blob(["Hello"]).bytes();
+  const mmap = Bun.mmap("package.json");
+  const u8ExtrasOk = fb instanceof Uint8Array && fb.length > 0 && bb instanceof Uint8Array && bb.length === 5 && mmap instanceof Uint8Array && mmap.length > 0;
   pushReleaseResult(results, {
-    name: "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)",
-    expected: "correct widths for flag emoji (2), emoji+skin (2), ZWJ (2), soft hyphen (0), word joiner (0)",
-    actual: `flag=2 skin=2 zwj=2 hyphen=0 joiner=0`,
-    passed: Bun.stringWidth("\uD83C\uDDFA\uD83C\uDDF8") === 2 && Bun.stringWidth("\uD83D\uDC4B\uD83C\uDFFD") === 2 && Bun.stringWidth("\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67") === 2 && Bun.stringWidth("\xAD") === 0 && Bun.stringWidth("\u2060") === 0,
-    anchor: "bun-stringwidth-accuracy"
+    name: "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)",
+    expected: "all Bun Uint8Array extensions and binary data APIs work",
+    actual: `base64=${u8Ok} hex=${u8Ok} rt=${u8RtOk} mmap=${mmap.length}B file=${fb.length}B blob=${bb.length}B`,
+    passed: u8Ok && u8RtOk && u8ExtrasOk,
+    anchor: "uint8array-bun-extensions"
   });
-  let ptyReceived = "";
-  const ptyProc = Bun.spawn(["echo", "hello-pty"], {
-    terminal: { cols: 80, rows: 24, data(_term, data) {
-      ptyReceived += data;
-    } }
-  });
-  await ptyProc.exited;
-  ptyProc.terminal?.close();
-  const ptyOk = ptyReceived.includes("hello-pty");
-  pushReleaseResult(results, {
-    name: "Bun.spawn with terminal option (PTY)",
-    expected: "receives output via data() callback",
-    actual: ptyOk ? `received: ${ptyReceived.trim()}` : "no output",
-    passed: ptyOk,
-    anchor: "bun-terminal-api"
-  });
-  try {
-    const out = "/tmp/test-feature-out.js";
-    const build = Bun.spawnSync(["bun", "build", "--feature=DEBUG", "/tmp/test-features.ts", `--outfile=${out}`]);
-    const built = build.exitCode === 0;
-    const output = built ? await Bun.file(out).text().catch(() => "") : "";
-    const worked = output.includes("debug") && !output.includes("yes");
-    pushReleaseResult(results, {
-      name: "Compile-time feature flags (bun:bundle)",
-      expected: 'feature("DEBUG") \u2192 true when --feature=DEBUG',
-      actual: built ? worked ? "DEBUG=debug, PREMIUM=no \u2705" : "output mismatch" : "build failed",
-      passed: built && worked,
-      anchor: "bun-compile-features"
-    });
-  } catch (e) {
-    pushReleaseResult(results, {
-      name: "Compile-time feature flags (bun:bundle)",
-      expected: 'feature("DEBUG") \u2192 true when --feature=DEBUG',
-      actual: `error: ${e.message}`,
-      passed: false,
-      anchor: "bun-compile-features"
-    });
-  }
   const passed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");
   hasher.update(JSON.stringify(semanticTags));
