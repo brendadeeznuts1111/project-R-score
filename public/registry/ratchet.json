@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "channels": {
+    "latest": {
+      "version": "1.4.0",
+      "verifiedAt": "2026-07-24T03:48:10.845Z",
+      "proofHash": "99b0bd8b1dad58487fb2854f5305dfc39f2120a877e6b5c40558b3cbf7937291",
+      "provenance": {
+        "testSuiteCommit": "449c840565c8fc81c10d178634c4bb78cb6ba4af"
+      },
+      "summary": {
+        "total": 46,
+        "passed": 46
+      }
+    }
+  }
+}
