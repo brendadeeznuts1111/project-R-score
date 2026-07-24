@@ -25,7 +25,7 @@ const BASE =
 const NAV_PATHS = [...PORTAL_NAV_PROBE_PATHS];
 
 /** Pages allowed to fetch /api/health directly (diagnostic SSOT). */
-const INLINE_HEALTH_ALLOW = new Set(['data.js', 'health/index.html']);
+const INLINE_HEALTH_ALLOW = new Set(['data.js', 'health/index.html', 'health-page.js']);
 
 /** HTML shells excluded from script-include checks. */
 const HTML_SKIP = new Set(['_page-template.html']);

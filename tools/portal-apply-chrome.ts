@@ -58,6 +58,7 @@ function renderNav(active: PageKey): string {
             <a href="/portal/skills" class="${cls(active, 'skills')}" role="menuitem">Skills</a>
             <a href="/portal/env" class="${cls(active, 'env')}" role="menuitem">Env</a>
             <a href="/portal/dashboard" class="${cls(active, 'dashboard')}" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" role="menuitem">TOC</a>
             <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
             <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">Wiki</a>
           </div>

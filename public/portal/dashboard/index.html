@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="portal-poll-ms" content="60000" />
-  <meta name="description" content="FactoryWager operations dashboard — verification taxonomy, release meta, install, bundler, and proof hashes." />
-  <title>Operations Dashboard · FactoryWager</title>
+  <meta name="description" content="FactoryWager executive dashboard — proof KPIs, channel meta, TOC Ops glance, and release verification." />
+  <title>Executive Dashboard · FactoryWager</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -219,6 +219,74 @@
       display: block;
       margin: 12px 0;
     }
+    .plane {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 14px;
+      margin: 16px 0 4px;
+    }
+    @media (max-width: 900px) {
+      .plane { grid-template-columns: 1fr; }
+    }
+    .plane-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .plane-card::before {
+      content: "";
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0.55;
+    }
+    .plane-card h3 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .plane-metric {
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      font-weight: 650;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      margin: 4px 0 8px;
+      line-height: 1.1;
+    }
+    .plane-detail,
+    .plane-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.45;
+      margin: 0 0 6px;
+    }
+    .plane-sub { font-family: var(--font-mono); font-size: 11px; }
+    .plane-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+    .badge-demo {
+      font-size: 10px;
+      font-weight: 650;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
     @media (max-width: 640px) {
       .grid { grid-template-columns: 1fr 1fr; }
       .card .val { font-size: 20px; }
@@ -246,7 +314,7 @@
             <a href="/portal/catalog" class="nav-link" role="menuitem">Catalog</a>
             <a href="/portal/skills" class="nav-link" role="menuitem">Skills</a>
             <a href="/portal/env" class="nav-link" role="menuitem">Env</a>
-            <a href="/portal/dashboard" class="nav-link active" role="menuitem" aria-current="page">Dashboard</a>
+            <a href="/portal/dashboard" class="nav-link active" role="menuitem">Dashboard</a>
             <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
             <a href="https://wiki.factory-wager.com" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem">Wiki</a>
           </div>
@@ -263,33 +331,44 @@
 
   <main class="dash">
     <div class="dash-hero">
-      <h1>Operations Dashboard</h1>
+      <h1>Executive Dashboard</h1>
       <div class="dash-actions">
         <button type="button" class="btn" id="refresh-btn">Refresh</button>
-        <a class="btn btn-primary" href="/portal/ops">Full Ops</a>
+        <a class="btn" href="/portal/toc/">TOC board</a>
+        <a class="btn btn-primary" href="/portal/ops/">Full Ops</a>
         <span class="ts" id="ts">—</span>
       </div>
       <p class="sub">
-        Verification taxonomy across runtime, package-manager, networking, and bundler —
-        static registry proofs with live API fallbacks.
+        At-a-glance proof command center — release taxonomy, install/bundler proofs,
+        plus TOC Ops and loop slices from <code>ops-summary</code> (not a Full Ops duplicate).
       </p>
     </div>
 
     <nav class="nav-links" aria-label="Proof artifacts">
+      <a class="ops-link" href="/portal/toc/">TOC Ops</a>
+      <a class="ops-link" href="/portal/ops/">Full Ops</a>
       <a class="ops-link" href="/portal/dod/">DOD queue</a>
-      <a class="ops-link" href="/portal/skills/">Skills</a>
       <a class="ops-link" href="/monitoring/">Monitoring</a>
-      <a class="ops-link" href="/registry/prediction/report/">Prediction</a>
+      <a class="ops-link" href="/registry/ops-summary.json">ops-summary</a>
+      <a class="ops-link" href="/registry/toc-ops.json">toc-ops</a>
       <a class="ops-link" href="/registry/portal-weave.json">Portal weave</a>
       <a class="ops-link" href="/registry/release-features.json">release-features</a>
       <a class="ops-link" href="/registry/proof-taxonomy-audit.json">taxonomy audit</a>
       <a class="ops-link" href="/registry/bundler-loaders-proof.json">bundler</a>
       <a class="ops-link" href="/registry/install-platform.json">install platform</a>
       <a class="ops-link" href="/registry/channel-meta-bake.json">channel meta bake</a>
-      <a class="ops-link" href="/registry/ops-summary.json">ops-summary</a>
     </nav>
 
     <div id="errors" class="hidden" aria-live="polite"></div>
+
+    <section class="section" aria-labelledby="plane-heading">
+      <h2 id="plane-heading">Operate planes</h2>
+      <p class="section-sub">
+        Snapshot slices from <code>ops-summary</code> — TOC desk is demo-readonly on Pages;
+        Soft mutations stay in <code>toc-ops-repo</code>.
+      </p>
+      <div class="plane" id="ops-plane" aria-live="polite"></div>
+    </section>
 
     <section class="section" aria-labelledby="kpi-heading">
       <h2 id="kpi-heading">Proof KPIs</h2>
@@ -313,7 +392,8 @@
       <div id="release-cards" class="verification-cards"></div>
       <p class="proof-line">
         <a class="ops-link" href="/registry/release-features.json">Full release JSON</a>
-        <a class="ops-link" href="/portal/ops">Ops deep dive</a>
+        <a class="ops-link" href="/portal/ops/">Ops deep dive</a>
+        <a class="ops-link" href="/portal/toc/">TOC board</a>
       </p>
     </section>
 
@@ -333,7 +413,11 @@
       FactoryWager ·
       <a href="https://github.com/brendadeeznuts1111/project-R-score">GitHub</a>
       ·
-      <a href="/portal/ops">Ops</a>
+      <a href="/portal/ops/">Ops</a>
+      ·
+      <a href="/portal/toc/">TOC</a>
+      ·
+      <a href="/portal/dashboard/">Dashboard</a>
       ·
       <a href="https://bun.com/docs">Bun docs</a>
     </p>

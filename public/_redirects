@@ -13,4 +13,4 @@
 /portal/dod              /portal/dod/              301
 /portal/dashboard        /portal/dashboard/        301
 /portal/skills           /portal/skills/           301
-/health                  /health/                  301
+# bare /health → Functions JSON (functions/health.ts); /health/ → portal UI redirect

@@ -242,6 +242,7 @@ export const FUNCTIONS_LIB_IMPORT_ALLOWLIST = [
   'lib/docs/repo-docs.ts',
   'lib/factory/http-keys.ts',
   'lib/http/portal-env-edge.ts',
+  'lib/http/portal-health-edge.ts',
   'lib/http/sha256.ts',
   'lib/http/verification-scripts.ts',
 ] as const;

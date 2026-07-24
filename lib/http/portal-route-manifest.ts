@@ -31,7 +31,7 @@ export const PORTAL_TRAILING_SLASH_SOURCES = [
   '/portal/dashboard',
   '/portal/skills',
   '/monitoring',
-  '/health',
+  // /health is Functions JSON (not a trailing-slash HTML surface)
 ] as const;
 
 /** Markdown stubs (static file + lib/http/portal-markdown.ts slug). */

@@ -23,7 +23,7 @@ data.js  ──fetch──►  /api/health  (schemaVersion: 1)
 
 Pages **must not** poll `/api/health` directly for the topbar dot. Use `portal:data` or `getHealthData()` from [`public/portal/data.js`](../public/portal/data.js).
 
-Exception: [`public/portal/health/index.html`](../public/portal/health/index.html) is a diagnostic surface that probes `/api/health` and `/health` for its own banner.
+Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (shell [`health/index.html`](../public/portal/health/index.html)) is a diagnostic surface that probes `/api/health` and `/health` for its own banner. It must not own the topbar dot (still `data.js` / `topbar.js`). Surfaces routing proof rows, env checklist, defaults proof, and operate glance (TOC/loop via `ops-summary` enrich).
 
 ---
 
@@ -31,7 +31,7 @@ Exception: [`public/portal/health/index.html`](../public/portal/health/index.htm
 
 ### `GET /api/health` (schema v1)
 
-Origin: `collectHealthData()` in [`scripts/serve-public.ts`](../scripts/serve-public.ts). Pages Function: [`functions/api/health.ts`](../functions/api/health.ts).
+Origin: `collectHealthData()` in [`scripts/serve-public.ts`](../scripts/serve-public.ts). Pages: shared [`lib/http/portal-health-edge.ts`](../lib/http/portal-health-edge.ts) via [`functions/api/health.ts`](../functions/api/health.ts) (`/api/health`), [`functions/health.ts`](../functions/health.ts) (`/health` JSON), and [`functions/health/pre.ts`](../functions/health/pre.ts) (`/health/pre` plain text).
 
 | Field | Type | Notes |
 |-------|------|-------|
@@ -206,9 +206,9 @@ Wired into `ci:harness` as gate `portal-foundation` and appended to `verify-all`
 
 [`dashboard-app.js`](../public/portal/dashboard-app.js) is the at-a-glance proof command center (not a duplicate of Ops):
 
-- Data: `/registry/*` proofs first (Pages), with `/api/defaults` · `/api/monitoring` fallbacks
-- Surfaces: proof KPIs, subsystem rollup, `<channel-filter>` release cards, Bun defaults, taxonomy audit
-- Soft refresh via Refresh control; deep links to `/portal/ops/`
+- Data: `/registry/*` proofs first (Pages), with `/api/defaults` · `/api/monitoring` · `/api/operations/summary` fallbacks
+- Surfaces: **Operate planes** (TOC Ops + tree/loop from `ops-summary`), proof KPIs, subsystem rollup, `<channel-filter>` release cards, Bun defaults, taxonomy audit
+- Soft refresh via Refresh control; deep links to `/portal/ops/` and `/portal/toc/`
 - Cross-surface map: [`portal-weave.json`](../public/registry/portal-weave.json) from [`lib/http/portal-weave.ts`](../lib/http/portal-weave.ts) (`ops:snapshot`)
 
 ### Ops dashboard (`/portal/ops/`)

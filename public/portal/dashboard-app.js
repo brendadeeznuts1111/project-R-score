@@ -1,5 +1,6 @@
 /**
- * Operations Dashboard app — /portal/dashboard/
+ * Executive Dashboard app — /portal/dashboard/
+ * Proof command center + operate-plane glance (TOC / loop from ops-summary).
  * Prefers static /registry/* proofs (Cloudflare Pages) with /api/* fallbacks.
  *
  * @see docs/portal-foundation.md
@@ -105,10 +106,125 @@ function renderSkeleton() {
     Array.from({ length: n }, () => '<div class="card skeleton skeleton-card" aria-hidden="true"></div>').join(
       ''
     );
-  $('kpi-grid').innerHTML = sk(8);
+  const plane = $('ops-plane');
+  if (plane) {
+    plane.innerHTML =
+      '<div class="plane-card skeleton skeleton-card" style="min-height:140px" aria-hidden="true"></div>' +
+      '<div class="plane-card skeleton skeleton-card" style="min-height:140px" aria-hidden="true"></div>';
+  }
+  $('kpi-grid').innerHTML = sk(10);
   $('subsystem-grid').innerHTML = sk(4);
   $('release-cards').innerHTML =
     '<div class="skeleton skeleton-card" style="min-height:120px"></div>';
+}
+
+function fmtMoney(n) {
+  if (typeof n !== 'number' || !Number.isFinite(n)) return '—';
+  return `$${Math.round(n).toLocaleString()}`;
+}
+
+function renderOpsPlane(ops) {
+  const el = $('ops-plane');
+  if (!el) return;
+
+  if (!ops || ops._error) {
+    el.innerHTML = `<article class="plane-card">
+      <h3>TOC Ops <span class="badge-demo">snapshot</span></h3>
+      <p class="plane-detail empty-hint">
+        ops-summary unavailable — open <a class="ops-link" href="/registry/ops-summary.json">ops-summary.json</a>
+        or run <code>bun run ops:snapshot</code>.
+      </p>
+      <div class="plane-actions">
+        <a class="ops-link" href="/portal/toc/">TOC board</a>
+        <a class="ops-link" href="/portal/ops/">Full Ops</a>
+      </div>
+    </article>
+    <article class="plane-card">
+      <h3>Ops loop</h3>
+      <p class="plane-detail empty-hint">No loop slice until ops-summary loads.</p>
+    </article>`;
+    return;
+  }
+
+  const toc = ops.toc;
+  const loop = ops.loop;
+  let tocHtml;
+  if (toc?.available) {
+    const crit = toc.criticalBottlenecks ?? 0;
+    const openBn = toc.openBottlenecks ?? 0;
+    const metricCls = crit > 0 ? 'err' : openBn > 0 ? 'warn' : 'ok';
+    const tioe =
+      toc.throughputT != null && toc.throughputI != null && toc.throughputOE != null
+        ? `T ${toc.throughputT} · I ${toc.throughputI} · OE ${toc.throughputOE}`
+        : 'T/I/OE not baked — reseed toc';
+    const retBits = [
+      toc.avgRP != null ? `avg R_P ${Number(toc.avgRP).toFixed(2)}` : '',
+      toc.topRankedProcess ? `next ${toc.topRankedProcess}` : '',
+      toc.settlementFloatRatio != null
+        ? `settle ${Math.round(toc.settlementFloatRatio * 100)}%`
+        : '',
+    ].filter(Boolean);
+    const focus = toc.enforcementFocus ? `focus ${toc.enforcementFocus}` : 'no enf';
+    const enfFails =
+      toc.enforcementFailed != null ? `${toc.enforcementFailed} gate fails` : '';
+    tocHtml = `<article class="plane-card" data-plane="toc">
+      <h3>TOC Ops <span class="badge-demo" title="Operate-lite gates baked; Soft mutations not on Pages">DEMO</span></h3>
+      <div class="plane-metric ${metricCls}">${esc(String(toc.warmed ?? 0))} <span style="font-size:0.45em;font-weight:500;color:var(--text-dim)">warmed</span></div>
+      <p class="plane-detail">
+        ${esc(String(toc.warming ?? 0))} warming · ${esc(String(toc.onboarding ?? 0))} onboarding ·
+        ${esc(String(toc.confirmedRails ?? 0))} rails · ${esc(String(openBn))} bottlenecks
+        ${crit ? ` · ${esc(String(crit))} critical` : ''}
+      </p>
+      <p class="plane-sub">${esc(tioe)}${retBits.length ? ` · ${esc(retBits.join(' · '))}` : ''}</p>
+      <p class="plane-sub">${esc([focus, enfFails, toc.identityLinked ? `identity ${toc.identityPartners ?? 0}` : 'identity unlinked'].filter(Boolean).join(' · '))}</p>
+      <div class="plane-actions">
+        <a class="ops-link" href="/portal/toc/">Open TOC board</a>
+        <a class="ops-link" href="/registry/toc-ops.json">toc-ops.json</a>
+      </div>
+    </article>`;
+  } else {
+    tocHtml = `<article class="plane-card" data-plane="toc">
+      <h3>TOC Ops <span class="badge-demo">DEMO</span></h3>
+      <p class="plane-detail empty-hint">Fixture missing — run <code>bun run ops:seed:toc</code>.</p>
+      <div class="plane-actions"><a class="ops-link" href="/portal/toc/">TOC board</a></div>
+    </article>`;
+  }
+
+  const partners = ops.tree?.partners;
+  const liq = ops.liquidity?.total;
+  const completion =
+    loop && typeof loop.loopCompletionRate === 'number'
+      ? `${Math.round(loop.loopCompletionRate * 100)}%`
+      : '—';
+  const failRate =
+    ops.channels?.failRate != null
+      ? `${Math.round(ops.channels.failRate * 100)}%`
+      : ops.outbox?.failRate != null
+        ? `${Math.round(ops.outbox.failRate * 100)}%`
+        : null;
+  const loopHtml = `<article class="plane-card" data-plane="loop">
+    <h3>Tree · loop · liquidity</h3>
+    <div class="plane-metric ${partners != null ? 'ok' : 'warn'}">${esc(
+      partners != null ? String(partners) : '—'
+    )} <span style="font-size:0.45em;font-weight:500;color:var(--text-dim)">partners</span></div>
+    <p class="plane-detail">
+      ${esc(String(ops.tree?.agents ?? 0))} agents · liquidity ${esc(fmtMoney(liq))} ·
+      loop complete ${esc(completion)}
+    </p>
+    <p class="plane-sub">${
+      loop
+        ? esc(
+            `dispatch ${loop.dispatched ?? 0} · reserve ${loop.reserved ?? 0} · settle ${loop.settled ?? 0} · outbox ${loop.outboxSent ?? 0}/${(loop.outboxSent ?? 0) + (loop.outboxFailed ?? 0)}`
+          )
+        : 'No loop slice'
+    }${failRate != null ? esc(` · fail ${failRate}`) : ''}</p>
+    <div class="plane-actions">
+      <a class="ops-link" href="/portal/ops/">Full Ops</a>
+      <a class="ops-link" href="/registry/ops-summary.json">ops-summary.json</a>
+    </div>
+  </article>`;
+
+  el.innerHTML = tocHtml + loopHtml;
 }
 
 function proofStatusCls(sum) {
@@ -209,6 +325,38 @@ function renderKpis(ctx) {
             ? `${mon.experimentsActive} experiments`
             : 'ops-summary',
       cls: partners != null || ops?.liquidity ? 'ok' : 'warn',
+      href: '/registry/ops-summary.json',
+    },
+    {
+      label: 'TOC warmed',
+      value: ops?.toc?.available ? String(ops.toc.warmed ?? 0) : '—',
+      detail: ops?.toc?.available
+        ? `${ops.toc.warming ?? 0} warming · ${ops.toc.openBottlenecks ?? 0} bottlenecks`
+        : 'seed toc fixture',
+      cls: ops?.toc?.available
+        ? ops.toc.criticalBottlenecks > 0
+          ? 'err'
+          : ops.toc.openBottlenecks > 0
+            ? 'warn'
+            : 'ok'
+        : 'warn',
+      href: '/portal/toc/',
+    },
+    {
+      label: 'Loop settle',
+      value:
+        ops?.loop?.settled != null
+          ? String(ops.loop.settled)
+          : '—',
+      detail:
+        ops?.loop != null
+          ? `${ops.loop.dispatched ?? 0} dispatched · ${
+              typeof ops.loop.loopCompletionRate === 'number'
+                ? `${Math.round(ops.loop.loopCompletionRate * 100)}% complete`
+                : 'rate n/a'
+            }`
+          : 'ops-summary.loop',
+      cls: ops?.loop?.settled != null ? 'ok' : 'warn',
       href: '/registry/ops-summary.json',
     },
   ];
@@ -380,7 +528,7 @@ export async function load() {
     bundler: ['/registry/bundler-loaders-proof.json'],
     nits: ['/registry/bun-runtime-nits-proof.json'],
     taxonomy: ['/registry/proof-taxonomy-audit.json'],
-    ops: ['/registry/ops-summary.json'],
+    ops: ['/api/operations/summary', '/registry/ops-summary.json'],
     bake: ['/registry/channel-meta-bake.json'],
   };
 
@@ -433,6 +581,7 @@ export async function load() {
     bake,
   };
 
+  renderOpsPlane(ops);
   renderKpis(ctx);
   renderSubsystems(isOk(release) ? release : null);
   renderReleaseSection(isOk(release) ? release : null, isOk(bake) ? bake : null);

@@ -174,7 +174,10 @@ Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **
 | `functions/api/operations/summary.ts` | Serves `public/registry/ops-summary.json` (C4/C5 portal data) |
 | `functions/api/registry/[[path]].ts` | R2 registry proxy (`REGISTRY_BUCKET` binding) |
 | `functions/api/registry/health.ts` | Registry health probe |
-| `functions/api/health.ts` | Portal health schema v1 |
+| `functions/api/health.ts` | Portal health schema v1 (`/api/health`) |
+| `functions/health.ts` | Same snapshot as JSON at `/health` |
+| `functions/health/pre.ts` | Plain-text diagnostics at `/health/pre` (curl / Accept: text/plain) |
+| `lib/http/portal-health-edge.ts` | Shared edge collect + plain renderer + ETag |
 | `functions/api/env.ts` | Env-check table (redacted) |
 | `functions/api/monitoring.ts` | Monitoring snapshot |
 | `functions/api/content-type.ts` | Content-Type matrix |

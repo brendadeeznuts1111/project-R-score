@@ -30,7 +30,7 @@ export type TocOpsBakeProof = {
   avgRP: number | null;
   topRankedProcess: string | null;
   identityLinked: boolean;
-  checks: Array<{ id: string; ok: boolean; detail?: string }>;
+  checks: Array<{ id: string; ok: boolean; detail?: string }>; // brand-ok — check slug, not domain PK
 };
 
 export function buildTocOpsBakeProof(snap: TocOpsSnapshot): TocOpsBakeProof {

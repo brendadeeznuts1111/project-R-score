@@ -8,6 +8,10 @@ import { PlaySigner } from '../lib/operations/play-signing.ts';
 import { publishAndDispatch } from '../lib/operations/play-dispatcher.ts';
 import { bindPartnerProfile } from '../lib/operations/partner-profile-bridge.ts';
 import { ensurePosition } from '../lib/operations/liquidity.ts';
+import { rankPlayRecipients } from '../lib/operations/toc-play-routing.ts';
+import { withTocMetrics } from '../lib/toc-ops/export-snapshot.ts';
+import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
+import { loadTocRoutingContext } from '../lib/operations/toc-play-routing.ts';
 import { asTreeNodeId } from '../lib/types/branded/operations.ts';
 
 function seedExpertAndAgent(db: ReturnType<typeof openOperationsDb>) {
@@ -120,6 +124,44 @@ describe('play-dispatcher gate', () => {
       .query("SELECT COUNT(*) as n FROM ops_channel_outbox WHERE topic = 'plays'")
       .get() as { n: number };
     expect(outbox.n).toBe(1);
+    db.close();
+  });
+
+  test('rankPlayRecipients orders by TOC weightedScore', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const expertId = randomUUIDv7();
+    const highId = randomUUIDv7();
+    const lowId = randomUUIDv7();
+    db.run(
+      `INSERT INTO experts (id, name, sport, market, edge_score, active, created_at)
+       VALUES ($id, 'Rank Expert', 'NBA', 'totals', 0.8, 1, $now)`,
+      { $id: expertId, $now: now }
+    );
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, call_sign, telegram_id, active, status, created_at)
+       VALUES ($hid, 'agent', NULL, $eid, 'High', 'PAT-001', '111', 1, 'active', $now),
+              ($lid, 'agent', NULL, $eid, 'Low', 'NOV-001', '222', 1, 'active', $now)`,
+      { $hid: highId, $lid: lowId, $eid: expertId, $now: now }
+    );
+
+    const ctx = loadTocRoutingContext();
+    const ranked = rankPlayRecipients(db, expertId, {
+      context: {
+        ...ctx,
+        snap: withTocMetrics(buildDemoTocOpsFixture('2026-07-24T00:00:00.000Z')),
+        scoreByCallSign: new Map([
+          ['PAT-001', 0.95],
+          ['NOV-001', 0.1],
+        ]),
+        ropeBroken: false,
+        throttleOnboarding: false,
+      },
+    });
+
+    expect(ranked).toHaveLength(2);
+    expect(ranked[0]!.callSign).toBe('PAT-001');
+    expect(ranked[0]!.weightedScore).toBeGreaterThan(ranked[1]!.weightedScore);
     db.close();
   });
 });

@@ -99,5 +99,6 @@ North-star metric: **`loopCompletionRate`** = `settledViaFullLoop / dispatched`.
 | Slice | `loopCompletionRate` | `settledViaFullLoop` | `manualStepsPerCycle` | ≥60% claim |
 |-------|---------------------:|---------------------:|----------------------:|------------|
 | Live baseline | 0 | 0 / 19 | 9 | — |
-| Live post (`ops-loop-live-proof`) | **4.5%** | **1 / 22** | **0** | **No** — legacy dispatches predate `play_gate_decisions`; fixture path still proves ≥60% |
+| Live post (after `ops-loop-live-proof` + `ops:loop:backfill`) | **24%** | **6 / 25** | **0** | **No (row metric)** — fan-out inflates denominator (6 distinct plays, all full-loop); see tenant doc ceiling |
+| Live post (play-level) | **100%** | **6 / 6** distinct plays | **0** | **Yes** — all settled plays have gate + outbox attribution |
 | Fixture post | ≥60% | 1 / 1 | 0 | **Yes** |

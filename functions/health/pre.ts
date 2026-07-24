@@ -1,20 +1,17 @@
 /**
- * Pages Function — combined health for edge + static artifacts.
- *
- * GET /api/health
- * Shared on portal UI (/portal/health) and topbar probes.
+ * Pages Function — GET /health/pre (text/plain diagnostics).
+ * Matches origin serve-public `healthHtml` / `renderHealthPlain` contract on the edge.
  *
  * @see https://developers.cloudflare.com/pages/functions/
  * @see lib/http/portal-health-edge.ts
+ * @see docs/platform-routing.md
  */
 import {
   collectEdgeHealth,
   edgeHealthOptionsResponse,
-  respondEdgeHealthJson,
+  respondEdgeHealthPlain,
   type HealthEnv,
 } from '../../lib/http/portal-health-edge.ts';
-
-export type { HealthEnv };
 
 export async function onRequest(context: {
   request: Request;
@@ -26,5 +23,5 @@ export async function onRequest(context: {
 
   const origin = new URL(context.request.url).origin;
   const body = await collectEdgeHealth(context.env, origin);
-  return respondEdgeHealthJson(context.request, body);
+  return respondEdgeHealthPlain(context.request, body);
 }
