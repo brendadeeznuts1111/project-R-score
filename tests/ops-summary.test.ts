@@ -39,6 +39,8 @@ describe('buildOpsSummary', () => {
     expect(s.registryClient.path).toBe('/registry/registry-client-proof.json');
     expect(s.cloudflareTokenScope).toHaveProperty('available');
     expect(s.cloudflareTokenScope.path).toBe('/registry/cloudflare-token-scope-proof.json');
+    expect(s.cloudflarePages).toHaveProperty('available');
+    expect(s.cloudflarePages.path).toBe('/registry/cloudflare-pages-preflight.json');
     expect(s.proofTaxonomy).toHaveProperty('available');
     expect(s.proofTaxonomy.path).toBe('/registry/proof-taxonomy-audit.json');
     if (s.proofTaxonomy.available) {

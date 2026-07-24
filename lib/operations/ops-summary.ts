@@ -5,6 +5,7 @@
  * Used by Pages Function `/api/operations/summary` and `ops:snapshot`.
  *
  * Metrics panels: growth_metrics (ops) + Bun utils proof (runtime fingerprint).
+ * Triage runbook: docs/harness/ops-summary-endpoint.md · bun run ops:diagnose
  */
 import type { Database } from 'bun:sqlite';
 import { buildBunUtilsProof } from '../bun-utils-proof.ts';
@@ -118,6 +119,16 @@ export type OpsSummaryCloudflareTokenScope = {
   wellKnownPath: '/.well-known/mcp.json';
 };
 
+/** Pages deploy preflight report (public/registry/cloudflare-pages-preflight.json). */
+export type OpsSummaryCloudflarePages = {
+  available: boolean;
+  ok?: boolean;
+  steps?: Array<{ id: string; ok: boolean; detail?: string }>; // brand-ok — step id keys
+  timestamp?: string;
+  pagesUrl?: string;
+  path: '/registry/cloudflare-pages-preflight.json';
+};
+
 export type OpsSummaryProofTaxonomyAuditRow = {
   path: string;
   reportPath: string;
@@ -212,6 +223,11 @@ export type OpsSummaryPayload = {
    * (`bun run verify:cloudflare-token:save`).
    */
   cloudflareTokenScope: OpsSummaryCloudflareTokenScope;
+  /**
+   * Pages preflight from public/registry/cloudflare-pages-preflight.json
+   * (`bun run cloudflare:preflight --save` / `ops:snapshot`).
+   */
+  cloudflarePages: OpsSummaryCloudflarePages;
   /**
    * Proof taxonomy audit from public/registry/proof-taxonomy-audit.json
    * (`bun run verify:proof-taxonomy:save` / `verify-all` / `ops:snapshot`).
@@ -414,6 +430,7 @@ export function loadRegistryClientProofSlice(
 
 const DOCS_COVERAGE_PROOF_PATH = 'public/registry/docs-coverage-proof.json';
 const CLOUDFLARE_TOKEN_SCOPE_PROOF_PATH = 'public/registry/cloudflare-token-scope-proof.json';
+const CLOUDFLARE_PAGES_PREFLIGHT_PATH = 'public/registry/cloudflare-pages-preflight.json';
 const PROOF_TAXONOMY_AUDIT_PATH = 'public/registry/proof-taxonomy-audit.json';
 const CHANNEL_META_BAKE_PATH = 'public/registry/channel-meta-bake.json';
 const RELEASE_FEATURES_PATH = 'public/registry/release-features.json';
@@ -655,6 +672,38 @@ export function loadCloudflareTokenScopeSlice(
   }
 }
 
+/** Disk snapshot of Cloudflare Pages preflight (deploy gate). */
+export function loadCloudflarePagesPreflightSlice(
+  path: string = CLOUDFLARE_PAGES_PREFLIGHT_PATH
+): OpsSummaryCloudflarePages {
+  try {
+    const mapped = Bun.mmap(path);
+    const data = JSON.parse(new TextDecoder().decode(mapped)) as {
+      ok?: boolean;
+      steps?: Array<{ id?: string; ok?: boolean; detail?: string }>; // brand-ok — preflight step key
+      timestamp?: string;
+      pagesUrl?: string;
+    };
+    return {
+      available: true,
+      ok: data.ok,
+      steps: data.steps?.map(s => ({
+        id: s.id ?? 'unknown', // brand-ok — preflight step key
+        ok: Boolean(s.ok),
+        detail: s.detail,
+      })),
+      timestamp: data.timestamp,
+      pagesUrl: data.pagesUrl,
+      path: '/registry/cloudflare-pages-preflight.json',
+    };
+  } catch {
+    return {
+      available: false,
+      path: '/registry/cloudflare-pages-preflight.json',
+    };
+  }
+}
+
 /** Build full ops summary from an open operations DB. */
 export function buildOpsSummary(
   db: Database,
@@ -743,6 +792,7 @@ export function buildOpsSummary(
     registryClient: loadRegistryClientProofSlice(),
     docsCoverage: loadDocsCoverageProofSlice(),
     cloudflareTokenScope: loadCloudflareTokenScopeSlice(),
+    cloudflarePages: loadCloudflarePagesPreflightSlice(),
     proofTaxonomy: loadProofTaxonomySlice(),
     channelMeta: loadChannelMetaSlice(),
     routing: loadRoutingOpsSliceSync(),

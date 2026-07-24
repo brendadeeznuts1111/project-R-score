@@ -275,7 +275,23 @@ const CHANNEL_META_FIXTURES: Step = {
 };
 
 if (!fast) {
-  await runSerial([BOUNDARY_FIXTURES, CHANNEL_META_FIXTURES], verbose, timings, wantFailJson, mode);
+  await runSerial(
+    [
+      {
+        name: 'cloudflare-pages-preflight',
+        cmd: ['bun', 'run', 'cloudflare:preflight'],
+        owner: 'tools/cloudflare-pages-preflight.ts · docs/harness/tenants/cloudflare-pages.md',
+        repair:
+          'bun run cloudflare:preflight · bun test tests/functions-edge-safety.test.ts tests/functions-import-graph.test.ts',
+      },
+      BOUNDARY_FIXTURES,
+      CHANNEL_META_FIXTURES,
+    ],
+    verbose,
+    timings,
+    wantFailJson,
+    mode
+  );
 }
 
 /** Dual-catalog parents + catalog meta — was human-only / test:changed luck. */

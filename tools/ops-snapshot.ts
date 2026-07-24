@@ -35,13 +35,21 @@ import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
-import { getRoutingProof, routingToOpsSlice } from '../lib/routing-proof.ts';
+import {
+  getRoutingProof,
+  resolveRoutingProbeBaseUrl,
+  routingToOpsSlice,
+} from '../lib/routing-proof.ts';
 import { collectMonitoring } from '../lib/monitoring/index.ts';
 import { writePredictionReport } from '../lib/prediction/index.ts';
 import { runNetworkingVerification } from './verify-networking.ts';
 import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
 import { writeLlmsStatic } from './llms-static.ts';
 import { saveProofTaxonomyAudit } from '../lib/verification/proof-taxonomy.ts';
+import {
+  runCloudflarePagesPreflight,
+  saveCloudflarePagesPreflight,
+} from '../lib/verification/cloudflare-pages-preflight.ts';
 import {
   refreshChannelMetaProof,
   saveChannelMetaProof,
@@ -142,10 +150,8 @@ export async function buildRegistrySnapshot(options?: {
     // 1. Routing proof (retry + cache + artifact)
     let routingSlice: ReturnType<typeof routingToOpsSlice> | null = null;
     if (cfg.withRouting) {
-      const baseUrl =
-        Bun.env.REGISTRY_URL || Bun.env.FACTORY_REGISTRY_URL || 'https://score.factory-wager.com';
       const got = await getRoutingProof({
-        baseUrl,
+        baseUrl: resolveRoutingProbeBaseUrl(),
         forceRefresh: cfg.forceRouting,
         writeArtifact: true,
       });
@@ -202,7 +208,17 @@ export async function buildRegistrySnapshot(options?: {
       contractsOk: number;
       contracts: number;
       consistencyOk: number;
+      consistencyTotal: number;
       proofHash?: string;
+      timestamp?: string;
+      audits?: Array<{
+        path: string;
+        reportPath: string;
+        ok: boolean;
+        primarySubsystem: string;
+        rows: number;
+      }>;
+      consistency?: Array<{ id: string; ok: boolean }>; // brand-ok — consistency row id
     } | null = null;
     try {
       const tax = await saveProofTaxonomyAudit(root);
@@ -211,7 +227,17 @@ export async function buildRegistrySnapshot(options?: {
         contractsOk: tax.audits.filter(a => a.ok).length,
         contracts: tax.audits.length,
         consistencyOk: tax.consistency.filter(c => c.ok).length,
+        consistencyTotal: tax.consistency.length,
         proofHash: tax.proofHash,
+        timestamp: tax.timestamp,
+        audits: tax.audits.map(a => ({
+          path: a.path,
+          reportPath: a.reportPath,
+          ok: a.ok,
+          primarySubsystem: a.primarySubsystem,
+          rows: a.rows,
+        })),
+        consistency: tax.consistency.map(c => ({ id: c.id, ok: c.ok })),
       };
       if (!tax.ok) {
         console.warn('[ops-snapshot] proof taxonomy audit degraded — run verify:proof-taxonomy');
@@ -219,6 +245,21 @@ export async function buildRegistrySnapshot(options?: {
     } catch (e) {
       console.warn(
         '[ops-snapshot] proof taxonomy audit skipped:',
+        e instanceof Error ? e.message : e
+      );
+    }
+
+    try {
+      const pf = await runCloudflarePagesPreflight({ rootDir: root });
+      await saveCloudflarePagesPreflight(pf, root);
+      if (!pf.ok) {
+        console.warn(
+          '[ops-snapshot] cloudflare preflight degraded — run bun run cloudflare:preflight'
+        );
+      }
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] cloudflare preflight skipped:',
         e instanceof Error ? e.message : e
       );
     }

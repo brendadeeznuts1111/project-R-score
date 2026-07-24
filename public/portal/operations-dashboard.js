@@ -146,6 +146,8 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-mono" id="cloudflare-token-hash"></div>
             <a class="ops-link" id="cloudflare-token-link" href="/registry/cloudflare-token-scope-proof.json">Token scope proof JSON</a>
             <a class="ops-link" href="/.well-known/mcp.json">/.well-known/mcp.json</a>
+            <a class="ops-link" href="/registry/cloudflare-pages-preflight.json">Preflight report JSON</a>
+            <div class="ops-sub" id="cloudflare-preflight-detail"></div>
             <table id="cloudflare-token-table" class="ops-table hidden">
               <thead><tr><th>Server</th><th>Status</th><th>URL</th></tr></thead>
               <tbody></tbody>
@@ -464,7 +466,8 @@ class OperationsDashboard extends HTMLElement {
     } else {
       error.innerHTML = `<div class="error-state">
           <h3>Operations summary unavailable</h3>
-          <p>Could not load live ops data. Local: run <code>bun run serve:public</code>. Pages: generate a snapshot then deploy <code>public/registry/*</code>.</p>
+          <p>Could not load live ops data. Local: run <code>bun run serve:public</code> then <code>bun run ops:diagnose</code>. Pages: generate a snapshot then deploy <code>public/registry/*</code>.</p>
+          <p class="error-hint"><a class="ops-link" href="/portal/ops.md">Ops runbook (MD)</a> · two pipelines: API assemble vs portal registry fetches</p>
           <code class="error-code">OPS_SUMMARY_UNAVAILABLE: /api/operations/summary</code>
           <button type="button" class="retry-btn error-action">Retry</button>
         </div>`;
@@ -507,7 +510,12 @@ class OperationsDashboard extends HTMLElement {
     const src = this.querySelector('#ops-source');
     if (src) {
       const when = d.generated ? ` · ${String(d.generated).slice(0, 19)}Z` : '';
-      src.textContent = (d.source === 'live' ? 'Live' : 'Snapshot') + when;
+      let label = 'Unknown';
+      if (d.source === 'live') label = 'Live';
+      else if (d.source === 'snapshot' && d.fallback === 'db-unavailable') {
+        label = 'Snapshot (DB fallback)';
+      } else if (d.source === 'snapshot') label = 'Snapshot';
+      src.textContent = `${label}${when}`;
     }
 
     const liq = this.querySelector('#total-liquidity');
@@ -1087,6 +1095,18 @@ class OperationsDashboard extends HTMLElement {
       const catalog = cf.mcpCatalog?.ok ? `catalog ${cf.mcpCatalog.serverCount ?? 5}/5` : 'catalog ❌';
       cfDetail.textContent = `${catalog} · tier ${tier} · ${live}`;
     }
+    const cfPreflight = this.querySelector('#cloudflare-preflight-detail');
+    const pf = d.cloudflarePages;
+    if (cfPreflight) {
+      if (pf?.available && pf.steps?.length) {
+        const bad = pf.steps.filter(s => !s.ok);
+        cfPreflight.textContent = pf.ok
+          ? `preflight ✅ (${pf.steps.length} steps)`
+          : `preflight ❌ — ${bad.map(s => s.id).join(', ')}`;
+      } else {
+        cfPreflight.textContent = 'Run bun run cloudflare:preflight --save';
+      }
+    }
     const cfHash = this.querySelector('#cloudflare-token-hash');
     if (cfHash) {
       cfHash.textContent = cf.proofHash ? `sha256 ${String(cf.proofHash).slice(0, 16)}…` : '';
@@ -1111,6 +1131,24 @@ class OperationsDashboard extends HTMLElement {
       } else {
         cfTable.classList.add('hidden');
         cfTbody.innerHTML = '';
+        fetch('/.well-known/mcp.json')
+          .then(r => (r.ok ? r.json() : null))
+          .then(wk => {
+            if (!wk?.servers?.length || !cfTable || !cfTbody) return;
+            cfTable.classList.remove('hidden');
+            cfTbody.innerHTML = wk.servers
+              .map(s =>
+                renderVerificationTableRow({
+                  name: s.name,
+                  passed: true,
+                  subsystem: 'other',
+                  expected: s.url ?? '—',
+                  actual: s.transport ?? 'http',
+                })
+              )
+              .join('');
+          })
+          .catch(() => {});
       }
     }
 

@@ -1,43 +1,43 @@
 #!/usr/bin/env bun
-// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * Pre-deploy gate — static checks before Cloudflare Pages push (no live token required).
  *
  *   bun tools/cloudflare-pages-preflight.ts
+ *   bun tools/cloudflare-pages-preflight.ts --save
  *
  * @see docs/harness/tenants/cloudflare-pages.md
+ * @see lib/verification/cloudflare-pages-preflight.ts
  */
+import {
+  runCloudflarePagesPreflight,
+  saveCloudflarePagesPreflight,
+} from '../lib/verification/cloudflare-pages-preflight.ts';
 
-const steps: Array<{ name: string; cmd: string[] }> = [
-  { name: 'well-known MCP parity', cmd: ['bun', 'tools/sync-well-known-mcp.ts', '--check'] },
-  {
-    name: 'cloudflare token proof (static)',
-    cmd: ['bun', 'tools/verify-cloudflare-token.ts', '--no-live', '--save'],
-  },
-  { name: 'functions edge safety', cmd: ['bun', 'test', 'tests/functions-edge-safety.test.ts'] },
-];
+const shouldSave = Bun.argv.includes('--save');
+const skipTaxonomy = Bun.argv.includes('--no-taxonomy');
 
 async function main() {
   console.log('Cloudflare Pages preflight');
-  for (const step of steps) {
-    process.stdout.write(`  ${step.name}… `);
-    const proc = Bun.spawn({
-      cmd: step.cmd,
-      cwd: import.meta.dir + '/..',
-      stdout: 'pipe',
-      stderr: 'pipe',
-    });
-    const code = await proc.exited;
-    if (code !== 0) {
-      console.log('FAIL');
-      const err = await new Response(proc.stderr).text();
-      console.error(err.trim() || `exit ${code}`);
-      process.exit(1);
-    }
-    console.log('OK');
+  const report = await runCloudflarePagesPreflight({
+    taxonomy: !skipTaxonomy,
+  });
+
+  for (const step of report.steps) {
+    console.log(`  ${step.ok ? '✅' : '❌'} ${step.id}${step.detail ? ` — ${step.detail}` : ''}`);
+  }
+
+  if (shouldSave) {
+    const path = await saveCloudflarePagesPreflight(report);
+    console.log(`\n💾 ${path}`);
+  }
+
+  if (!report.ok) {
+    console.error('\n❌ Preflight failed');
+    process.exit(1);
   }
   console.log('\n✅ Preflight passed — commit refreshed public/registry/* then deploy');
-  console.log('   bun run cloudflare:deploy:verify');
+  console.log(`   ${report.commands.deployVerify}`);
 }
 
 if (import.meta.main) {

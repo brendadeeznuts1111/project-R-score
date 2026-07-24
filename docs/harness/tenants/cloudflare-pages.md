@@ -157,7 +157,9 @@ Local ops station chart PNG (optional): `bun run ops:prediction report --webview
 
 ### Pages Functions (edge-safe only)
 
-Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **no `import 'bun'`**, **no `lib/verification/*` via `config/r2-env.ts`**. Guard: `tests/functions-edge-safety.test.ts`. Full inventory:
+Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **no `import 'bun'`**, **no `lib/verification/*` via `config/r2-env.ts`**. Guards: `tests/functions-edge-safety.test.ts` · `tests/functions-import-graph.test.ts` (static allowlist in `lib/verification/cloudflare-pages-preflight.ts`).
+
+**Allowed transitive imports (2026-07):** `lib/http/verification-scripts.ts` → `sha256.ts` + `repo-docs.ts` → `config/r2-env.ts`; `lib/http/portal-env-edge.ts`; `lib/factory/http-keys.ts`. Full inventory:
 
 | Path | Role |
 |------|------|

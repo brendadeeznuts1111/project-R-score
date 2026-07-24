@@ -16,11 +16,11 @@
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 
 /** Load Reasonix global env when token not already set (matches setup script). */
-function loadReasonixEnv(): void {
+async function loadReasonixEnv(): Promise<void> {
   if (Bun.env.CLOUDFLARE_API_TOKEN?.trim()) return;
   const path = `${Bun.env.HOME}/.reasonix/.env`;
   try {
-    const text = Bun.file(path).textSync();
+    const text = await Bun.file(path).text();
     for (const line of text.split('\n')) {
       const m = /^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/.exec(line.trim());
       if (m && !Bun.env[m[1]]) Bun.env[m[1]] = m[2];
@@ -35,6 +35,7 @@ const PROJECT = Bun.env.PAGES_PROJECT?.trim() || CLOUDFLARE_DEFAULTS.pages.proje
 const BRANCH = Bun.argv.find((a, i) => Bun.argv[i - 1] === '--branch') ?? 'main';
 const WAIT = Bun.argv.includes('--wait') || Bun.argv.includes('--verify');
 const VERIFY = Bun.argv.includes('--verify');
+const VERIFY_TAXONOMY = Bun.argv.includes('--taxonomy') || Bun.env.PAGES_VERIFY_TAXONOMY === '1';
 const POLL_MS = 15_000;
 const MAX_POLLS = 12;
 
@@ -129,12 +130,14 @@ async function waitForDeploy(
   process.exit(1);
 }
 
-async function runEdgeVerify(): Promise<void> {
+async function runEdgeVerify(taxonomy = false): Promise<void> {
   const base = `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
-  console.log(`\n🔍 Pages edge verify → ${base}`);
+  console.log(`\n🔍 Pages edge verify → ${base}${taxonomy ? ' (--taxonomy)' : ''}`);
+  const args = ['bun', 'tools/verify-pages-edge.ts'];
+  if (taxonomy) args.push('--taxonomy');
   const proc = Bun.spawn({
-    cmd: ['bun', 'tools/verify-pages-edge.ts'],
-    cwd: import.meta.dir + '/..',
+    cmd: args,
+    cwd: `${import.meta.dir}/..`,
     env: { ...Bun.env, PAGES_VERIFY_BASE: base },
     stdout: 'inherit',
     stderr: 'inherit',
@@ -143,13 +146,14 @@ async function runEdgeVerify(): Promise<void> {
 }
 
 async function main() {
-  loadReasonixEnv();
+  await loadReasonixEnv();
   const deployId = await triggerDeploy();
   if (WAIT) await waitForDeploy(deployId);
-  if (VERIFY) await runEdgeVerify();
+  if (VERIFY) await runEdgeVerify(VERIFY_TAXONOMY);
   else if (!WAIT) {
     console.log('   tip: bun run cloudflare:deploy:wait — poll until live');
     console.log('   tip: bun run cloudflare:deploy:verify — wait + edge smoke');
+    console.log('   tip: bun run cloudflare:deploy:verify:taxonomy — full 12·18 edge gate');
   }
 }
 

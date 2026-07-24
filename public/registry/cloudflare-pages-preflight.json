@@ -1,0 +1,41 @@
+{
+  "type": "CloudflarePagesPreflightReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T05:42:37.299Z",
+  "ok": true,
+  "steps": [
+    {
+      "id": "well-known-mcp-parity",
+      "ok": true,
+      "detail": "5 servers"
+    },
+    {
+      "id": "cloudflare-token-static",
+      "ok": true,
+      "detail": "catalog 5/5 · tier minimal"
+    },
+    {
+      "id": "functions-import-graph",
+      "ok": true,
+      "detail": "allowlist ok"
+    },
+    {
+      "id": "functions-edge-safety",
+      "ok": true,
+      "detail": "regex + r2-env boundary"
+    },
+    {
+      "id": "proof-taxonomy-audit",
+      "ok": true,
+      "detail": "12 contracts · 18 consistency"
+    }
+  ],
+  "pagesUrl": "https://project-r-score.pages.dev",
+  "commands": {
+    "preflight": "bun run cloudflare:preflight",
+    "deployVerify": "bun run cloudflare:deploy:verify",
+    "deployVerifyTaxonomy": "bun run cloudflare:deploy:verify:taxonomy",
+    "edgeCore": "bun run verify:pages-edge",
+    "edgeTaxonomy": "bun run verify:pages-edge:taxonomy"
+  }
+}
