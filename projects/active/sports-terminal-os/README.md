@@ -51,7 +51,7 @@ bun run dev                   # Start dev server (http://localhost:3000)
 
 | Command | Scope | Description |
 |---------|-------|-------------|
-| `dev` | `bun run --watch src/index.ts` | Dev server with hot reload |
+| `dev` | `bun --watch src/index.ts` | Dev server with hot reload |
 | `start` | `bun run src/index.ts` | Production server |
 | `build` | `tsc --noEmit && vite build` | Full production build |
 | `test` | `bun test` | Run test suite |

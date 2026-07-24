@@ -1,5 +1,26 @@
 {
-  "description": "Grandfathered package.json scripts with bun run --watch|--hot (fix incrementally; root package.json must stay clean).",
+  "description": "Grandfathered package.json scripts with bun run --watch|--hot. Root monorepo (portal, dev, serve:public) must stay clean — not listed here.",
+  "scanScope": {
+    "includes": ["**/package.json (excludes node_modules, dist, build, coverage)"],
+    "excludesFromBaseline": [
+      "Root package.json — portal via serve:public:hot|watch, dev fixed in 8e8cec833",
+      "Kalshi-bot/ — submodule at repo root; serve uses bun --hot (already correct)",
+      "projects/active/development/kal-poly-bot/ — Kalshi/Polymarket bot; dev scripts already bun --watch|--hot",
+      "projects/active/factorywager/registry/ — dev-dashboard:watch|hot already correct",
+      "projects/active/dashboards/secrets-dashboard/ — dev already bun --hot",
+      "public/portal/ — static HTML/JS; no package.json (served by scripts/serve-public.ts)"
+    ],
+    "notScanned": [
+      "package.linked.json (6 fantasy42 workspace templates)",
+      "Generator scripts (enhanced-workspace-isolator.ts, etc.)"
+    ]
+  },
+  "tiers": {
+    "hot": "Root workspace or recent churn — fix first when cleaning baseline",
+    "dormant": "Under projects/active/ but low maintenance (often bulk-imported)",
+    "legacy": "Script name or path marked legacy; optional fix",
+    "partial": "Main dev script already correct; only secondary scripts baselined"
+  },
   "entries": [
     "projects/active/dashboards/enterprise-dashboard/package.json:config:watch",
     "projects/active/dashboards/enterprise-dashboard/package.json:dev:config",
@@ -8,10 +29,60 @@
     "projects/active/enterprise/fantasy42-fire22-registry/package.json:api-server:dev",
     "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/package.json:dev",
     "projects/active/enterprise/foxy-proxy/packages/dashboard/package.json:dev",
-    "projects/active/sports-terminal-os/package.json:dev",
-    "projects/active/sports-terminal-os/integrations/kimi-plugin/sports-mcp-server/package.json:dev",
     "projects/active/utilities/bun-file-analyzer/package.json:dev",
     "projects/active/utilities/bun-file-analyzer/package.json:dev:api",
     "projects/active/utilities/toml-cli/package.json:dev"
+  ],
+  "catalog": [
+    {
+      "key": "projects/active/dashboards/enterprise-dashboard/package.json:config:watch",
+      "tier": "partial",
+      "product": "Enterprise dashboard — main dev already bun --hot"
+    },
+    {
+      "key": "projects/active/dashboards/enterprise-dashboard/package.json:dev:config",
+      "tier": "partial",
+      "product": "Enterprise dashboard config dev-server only"
+    },
+    {
+      "key": "projects/active/dashboards/quantum-terminal-dashboard/package.json:dev:legacy",
+      "tier": "legacy",
+      "product": "Quantum terminal — primary dev does not use watch/hot"
+    },
+    {
+      "key": "projects/active/enterprise/fantasy42-fire22-registry/package.json:dev",
+      "tier": "dormant",
+      "product": "Fire22 registry monolith (128+ package.json; many children already correct)"
+    },
+    {
+      "key": "projects/active/enterprise/fantasy42-fire22-registry/package.json:api-server:dev",
+      "tier": "dormant",
+      "product": "Fire22 api-server dev"
+    },
+    {
+      "key": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/package.json:dev",
+      "tier": "dormant",
+      "product": "Fire22 dashboard-worker (subpackages use bun --watch)"
+    },
+    {
+      "key": "projects/active/enterprise/foxy-proxy/packages/dashboard/package.json:dev",
+      "tier": "dormant",
+      "product": "IPFoxy proxy dashboard"
+    },
+    {
+      "key": "projects/active/utilities/bun-file-analyzer/package.json:dev",
+      "tier": "dormant",
+      "product": "File analyzer — compound dev (dev:serve already bun --hot)"
+    },
+    {
+      "key": "projects/active/utilities/bun-file-analyzer/package.json:dev:api",
+      "tier": "dormant",
+      "product": "File analyzer API-only dev"
+    },
+    {
+      "key": "projects/active/utilities/toml-cli/package.json:dev",
+      "tier": "dormant",
+      "product": "TOML CLI utility"
+    }
   ]
 }

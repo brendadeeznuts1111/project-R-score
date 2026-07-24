@@ -21,7 +21,7 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
+    "dev": "bun --watch src/index.ts",
     "build": "tsc --noEmit && vite build",
     "test": "bun test",
     "test:watch": "bun test --watch",

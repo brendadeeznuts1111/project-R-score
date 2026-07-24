@@ -23,9 +23,16 @@ const IGNORE_DIR = new Set(['node_modules', 'dist', 'build', 'coverage', '.git',
 
 type Violation = { file: string; script: string; cmd: string };
 
-async function loadBaseline(): Promise<Set<string>> {
-  const raw = JSON.parse(await Bun.file(BASELINE_PATH).text()) as { entries?: string[] };
-  return new Set(raw.entries ?? []);
+async function loadBaseline(): Promise<{
+  keys: Set<string>;
+  catalog: Map<string, { tier?: string; product?: string }>;
+}> {
+  const raw = JSON.parse(await Bun.file(BASELINE_PATH).text()) as {
+    entries?: string[];
+    catalog?: Array<{ key: string; tier?: string; product?: string }>;
+  };
+  const catalog = new Map((raw.catalog ?? []).map(c => [c.key, c]));
+  return { keys: new Set(raw.entries ?? []), catalog };
 }
 
 async function findPackageJsonFiles(): Promise<string[]> {
@@ -61,12 +68,13 @@ function key(v: Violation): string {
 
 async function main() {
   const strict = Bun.argv.includes('--strict');
-  const baseline = strict ? new Set<string>() : await loadBaseline();
+  const { keys: baseline, catalog } = await loadBaseline();
+  const effectiveBaseline = strict ? new Set<string>() : baseline;
   const violations = await collectViolations();
 
   const unbaseline: Violation[] = [];
   for (const v of violations) {
-    if (!baseline.has(key(v))) unbaseline.push(v);
+    if (!effectiveBaseline.has(key(v))) unbaseline.push(v);
   }
 
   if (violations.length === 0) {
@@ -83,8 +91,10 @@ async function main() {
 
   const show = strict ? violations : unbaseline;
   for (const v of show) {
+    const meta = catalog.get(key(v));
+    const tag = meta?.tier ? ` [${meta.tier}${meta.product ? `: ${meta.product}` : ''}]` : '';
     console.error(
-      `❌ ${v.file}: script "${v.script}" uses "bun run --watch|--hot" — use "bun --watch ..." or "bun --hot ..."\n` +
+      `❌ ${v.file}: script "${v.script}"${tag} uses "bun run --watch|--hot" — use "bun --watch ..." or "bun --hot ..."\n` +
         `   ${v.cmd}`
     );
   }

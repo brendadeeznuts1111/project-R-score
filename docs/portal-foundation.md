@@ -167,4 +167,6 @@ bun run serve:public:hot --hot
 
 Disable browser SSE: `SERVE_PUBLIC_HMR=0`. Force on when bound `0.0.0.0`: `SERVE_PUBLIC_HMR=1` or `HOST=127.0.0.1`.
 
-**Verification:** `bun run verify:flag-order` scans all `package.json` scripts for `bun run --watch|--hot` (anti-pattern). Grandfathered entries live in `tools/verify-script-flags-baseline.json`; new violations fail CI/`verify-all`. Use `--strict` for a repo-wide cleanup pass.
+**Verification:** `bun run verify:flag-order` scans all `package.json` scripts for `bun run --watch|--hot` (anti-pattern). Grandfathered entries live in `tools/verify-script-flags-baseline.json` (with **hot / dormant / legacy / partial** tiers); new violations fail CI/`verify-all`. Use `--strict` for a repo-wide cleanup pass.
+
+**In scope vs not:** The portal is **not** a `projects/` package — it is `public/portal/` + root `serve:public:*` in `package.json` (already `bun --hot` / `bun --watch`). **Kalshi-bot** is a **repo-root submodule** (`Kalshi-bot/package.json`, `serve`: `bun --hot`). **kal-poly-bot** lives at `projects/active/development/kal-poly-bot/` and already uses `bun --watch` / `bun --hot`. Only **12 scripts in 9 `projects/active/` package.json files** are baselined; `projects/active/` has 350+ other package.json files with correct flag order.
