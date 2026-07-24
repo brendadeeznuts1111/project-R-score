@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24T07:23:56.908Z",
+  "generated": "2026-07-24T07:34:46.074Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -627,7 +627,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 497,
+    "uptimeMs": 461,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
@@ -652,14 +652,14 @@
     },
     "experimentsActive": 1,
     "predictionN": 30,
-    "timestamp": "2026-07-24T07:23:56.902Z",
-    "snapshotAt": "2026-07-24T07:23:56.902Z"
+    "timestamp": "2026-07-24T07:34:46.068Z",
+    "snapshotAt": "2026-07-24T07:34:46.068Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-24T07:23:56.895Z",
+    "generated": "2026-07-24T07:34:46.061Z",
     "liquidity": {
-      "total": 72710
+      "total": 85710
     },
     "experts": [
       {
@@ -686,11 +686,24 @@
     ],
     "tree": {
       "partners": 3,
-      "agents": 10,
+      "agents": 14,
       "subAgents": 1,
-      "downstreamLiquidity": 72710
+      "downstreamLiquidity": 85710
     },
     "plays": [
+      {
+        "sport": "NBA",
+        "market": "totals live-proof",
+        "event": "Loop throughput proof",
+        "selection": "over 220",
+        "odds": -110,
+        "confidence": 0,
+        "sent_at": "2026-07-24T07:25:23.196Z",
+        "result": "win",
+        "expert_name": "Edge NBA",
+        "sent_count": 4,
+        "placed_count": 0
+      },
       {
         "sport": "NBA",
         "market": "totals live-proof",
@@ -802,7 +815,7 @@
           "metricName": "placement_rate",
           "variants": 2,
           "assignments": 2,
-          "metrics": 4
+          "metrics": 5
         },
         {
           "id": "019f92bf-40d7-7426-b3c3-ba48f35435a9",
@@ -826,11 +839,11 @@
     },
     "growth": {
       "period": "2026-07",
-      "playsReceived": 52,
+      "playsReceived": 56,
       "playsPlaced": 32,
       "volume": 158500,
       "pnl": 15800,
-      "nodes": 5,
+      "nodes": 6,
       "top": [
         {
           "nodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
@@ -841,14 +854,14 @@
         },
         {
           "nodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
-          "playsReceived": 14,
+          "playsReceived": 15,
           "playsPlaced": 9,
           "volume": 48000,
           "pnl": 6200
         },
         {
           "nodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
-          "playsReceived": 10,
+          "playsReceived": 11,
           "playsPlaced": 5,
           "volume": 22000,
           "pnl": -1100
@@ -862,7 +875,7 @@
         },
         {
           "nodeId": "019f92bf-40d6-72e8-96ba-f05db1d93df0",
-          "playsReceived": 2,
+          "playsReceived": 3,
           "playsPlaced": 0,
           "volume": 0,
           "pnl": 0
@@ -872,11 +885,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "f66a0a671b2e44c2e4977a840fedaf58442ea50a9241f66b7693d94a809944aa",
+      "proofHash": "c0e51d7ae444a1093946dc4a2615a6c7862d132920c18dc5401bc0f80a40e58d",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-24T07:23:56.895Z"
+      "timestamp": "2026-07-24T07:34:46.062Z"
     },
     "registryClient": {
       "available": true,
@@ -922,7 +935,7 @@
     },
     "cloudflarePages": {
       "available": true,
-      "ok": true,
+      "ok": false,
       "steps": [
         {
           "id": "well-known-mcp-parity",
@@ -936,8 +949,8 @@
         },
         {
           "id": "functions-import-graph",
-          "ok": true,
-          "detail": "allowlist ok"
+          "ok": false,
+          "detail": "exit 1"
         },
         {
           "id": "functions-edge-safety",
@@ -950,7 +963,7 @@
           "detail": "13 contracts · 20 consistency"
         }
       ],
-      "timestamp": "2026-07-24T07:23:56.866Z",
+      "timestamp": "2026-07-24T07:34:46.032Z",
       "pagesUrl": "https://project-r-score.pages.dev",
       "path": "/registry/cloudflare-pages-preflight.json"
     },
@@ -1136,8 +1149,8 @@
           "ok": true
         }
       ],
-      "proofHash": "58e1d61c21f27c246af69ba8322fd310eb79f430b598ebce8b6f6e84a2f0d392",
-      "timestamp": "2026-07-24T07:23:56.420Z",
+      "proofHash": "b208260178c5cbbc7ab0c504977291e19f3f4944dd6fb8167fbfc3ab9cd2211c",
+      "timestamp": "2026-07-24T07:34:45.630Z",
       "path": "/registry/proof-taxonomy-audit.json"
     },
     "channelMeta": {
@@ -1148,7 +1161,7 @@
       "total": 75,
       "status": "pass",
       "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-      "updatedAt": "2026-07-24T07:23:56.416Z",
+      "updatedAt": "2026-07-24T07:34:45.623Z",
       "channel": "stable",
       "targetVersion": "1.4.0",
       "runtimeVersion": "1.4.0",
@@ -1333,13 +1346,41 @@
     },
     "partners": {
       "bound": 14,
-      "unboundAgents": 0,
+      "unboundAgents": 4,
       "byLifecycle": {
         "active": 1,
         "materialized": 12,
         "signup": 1
       },
       "recent": [
+        {
+          "treeNodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
+          "profileKey": "pp-019f92bf-40d6-72e5-80da-8aaa4cd7",
+          "partnerTemplate": "default-prospect",
+          "lifecycleStatus": "materialized",
+          "name": "Agent Alpha"
+        },
+        {
+          "treeNodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
+          "profileKey": "pp-019f92bf-40d6-72e6-9a91-8f3f3c09",
+          "partnerTemplate": "default-prospect",
+          "lifecycleStatus": "materialized",
+          "name": "Agent Beta"
+        },
+        {
+          "treeNodeId": "019f92bf-40d6-72e8-96ba-f05db1d93df0",
+          "profileKey": "pp-019f92bf-40d6-72e8-96ba-f05db1d9",
+          "partnerTemplate": "default-prospect",
+          "lifecycleStatus": "materialized",
+          "name": "Sub Scout"
+        },
+        {
+          "treeNodeId": "019f92ee-5ef6-758e-bb1a-fae541f29506",
+          "profileKey": "pp-019f92ee-5ef6-758e-bb1a-fae541f2",
+          "partnerTemplate": "default-prospect",
+          "lifecycleStatus": "materialized",
+          "name": "NOV Onboarding"
+        },
         {
           "treeNodeId": "019f92ee-5ef9-728f-812a-c5b3fa642f33",
           "profileKey": "pp-019f92ee-5ef9-728f-812a-c5b3fa64",
@@ -1381,99 +1422,82 @@
           "partnerTemplate": "default-prospect",
           "lifecycleStatus": "materialized",
           "name": "TOC ASH-001"
-        },
-        {
-          "treeNodeId": "019f92f9-2e3f-74f4-8262-720202846493",
-          "profileKey": "pp-019f92f9-2e3f-74f4-8262-72020284",
-          "partnerTemplate": "default-prospect",
-          "lifecycleStatus": "materialized",
-          "name": "TOC ASH-003"
-        },
-        {
-          "treeNodeId": "019f92ee-5ef6-758e-bb1a-fae541f29506",
-          "profileKey": "pp-019f92ee-5ef6-758e-bb1a-fae541f2",
-          "partnerTemplate": "default-prospect",
-          "lifecycleStatus": "materialized",
-          "name": "NOV Onboarding"
-        },
-        {
-          "treeNodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
-          "profileKey": "pp-019f92bf-40d6-72e5-80da-8aaa4cd7",
-          "partnerTemplate": "default-prospect",
-          "lifecycleStatus": "materialized",
-          "name": "Agent Alpha"
-        },
-        {
-          "treeNodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
-          "profileKey": "pp-019f92bf-40d6-72e6-9a91-8f3f3c09",
-          "partnerTemplate": "default-prospect",
-          "lifecycleStatus": "materialized",
-          "name": "Agent Beta"
         }
       ]
     },
     "channels": {
-      "pending": 64,
+      "pending": 72,
       "failed": 1,
-      "sent": 42,
-      "oldestPendingAt": "2026-07-24T07:19:52.354Z",
-      "failRate": 0.023255813953488372
+      "sent": 114,
+      "oldestPendingAt": "2026-07-24T07:27:51.352Z",
+      "failRate": 0.008695652173913044
     },
     "toc": {
       "available": true,
       "path": "/registry/toc-ops.json",
-      "generatedAt": "2026-07-24T07:23:56.889Z",
+      "generatedAt": "2026-07-24T07:34:46.055Z",
       "partners": 3,
-      "warmed": 3,
-      "warming": 1,
+      "warmed": 4,
+      "warming": 2,
       "onboarding": 1,
-      "confirmedRails": 2,
-      "openTasks": 8,
+      "confirmedRails": 5,
+      "openTasks": 11,
       "openOnb": 1,
       "openLimit": 2,
-      "openBottlenecks": 7,
+      "openBottlenecks": 8,
       "criticalBottlenecks": 1,
-      "principalOutstandingTotal": 14800,
+      "principalOutstandingTotal": 20300,
       "throttleOnboarding": false,
-      "primedDrums": 3,
-      "playableDrums": 1,
+      "primedDrums": 4,
+      "playableDrums": 2,
       "playsPending": 1,
-      "playsSettled": 2,
+      "playsSettled": 6,
       "activeExperiments": 1,
       "plane": "demo-readonly",
       "identityLinked": true,
       "identityPartners": 3,
       "enforcementFocus": "rope",
-      "enforcementFailed": 12,
-      "enforcementCritical": 7,
-      "throughputT": 1200,
-      "throughputI": 29810,
-      "throughputOE": 20,
+      "enforcementFailed": 10,
+      "enforcementCritical": 6,
+      "throughputT": 2576,
+      "throughputI": 47810,
+      "throughputOE": 240,
       "topRankedProcess": "LIMIT",
-      "avgRP": 46.32888061844715,
-      "settlementFloatRatio": 0.3656491110365649
+      "avgRP": 23.082899577095038,
+      "settlementFloatRatio": 0.44760510353482535,
+      "presencePartners": 3,
+      "presenceIpv6": 21,
+      "presenceUniqueZips": 11,
+      "presenceUniqueAsns": 3,
+      "presenceDnsResolved": 21,
+      "presenceAvgDistanceKm": 231,
+      "venueKinds": 9,
+      "venueExchanges": 2,
+      "venueCrypto": 2,
+      "venueCreditLines": 2,
+      "venueLegalStates": 5
     },
     "loop": {
-      "dispatched": 25,
-      "gatedAllow": 25,
+      "dispatched": 29,
+      "gatedAllow": 29,
       "gatedAdjust": 0,
       "gatedDeny": 0,
-      "reserved": 25,
-      "settled": 6,
-      "settledViaFullLoop": 6,
-      "outboxSent": 42,
+      "reserved": 29,
+      "settled": 7,
+      "settledViaFullLoop": 29,
+      "outboxSent": 114,
       "outboxFailed": 1,
-      "outboxPending": 64,
-      "oldestPendingAgeSec": 244,
-      "manualStepsPerCycle": 64,
-      "loopCompletionRate": 0.24,
-      "capitalEfficiencyProxy": 0.047961630695443645,
-      "limitEfficiencyProxy": 0.39050235478806905,
-      "processReturnProxy": 0.2117579908675799
+      "outboxPending": 72,
+      "oldestPendingAgeSec": 414,
+      "manualStepsPerCycle": 72,
+      "loopCompletionRate": 1,
+      "capitalEfficiencyProxy": 0.08580946035976016,
+      "limitEfficiencyProxy": 0.9547793476364905,
+      "processReturnProxy": 0.2178074245939675
     }
   },
   "bunUtils": {
-    "proofHash": "8561e91edd7e9e52e43daceda325b54bfecf83381c35d077cf162ca3bcc1da8b",
+    "proofHash": "34f4b85c3db68993487464959c0f37227984823614d698a613d52fa9bb147537",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -1635,7 +1659,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-24T07:23:56.416Z",
+    "updatedAt": "2026-07-24T07:34:45.623Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -1852,8 +1876,8 @@
         "ok": true
       }
     ],
-    "proofHash": "58e1d61c21f27c246af69ba8322fd310eb79f430b598ebce8b6f6e84a2f0d392",
-    "timestamp": "2026-07-24T07:23:56.420Z",
+    "proofHash": "b208260178c5cbbc7ab0c504977291e19f3f4944dd6fb8167fbfc3ab9cd2211c",
+    "timestamp": "2026-07-24T07:34:45.630Z",
     "path": "/registry/proof-taxonomy-audit.json"
   }
 }

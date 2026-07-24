@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 497,
+  "uptimeMs": 461,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -26,16 +26,16 @@
   },
   "experimentsActive": 1,
   "predictionN": 30,
-  "timestamp": "2026-07-24T07:23:56.902Z",
-  "snapshotAt": "2026-07-24T07:23:56.902Z",
+  "timestamp": "2026-07-24T07:34:46.068Z",
+  "snapshotAt": "2026-07-24T07:34:46.068Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-24T07:23:56.902Z",
+    "checkedAt": "2026-07-24T07:34:46.068Z",
     "summary": {
-      "total": 23,
-      "ok": 23,
-      "missing": 7,
+      "total": 26,
+      "ok": 25,
+      "missing": 11,
       "placeholder": 0,
       "requiredMissing": 0
     },
@@ -45,7 +45,7 @@
         "Group": "cloudflare",
         "Severity": "required",
         "Status": "set",
-        "Detail": "7a470541a704caaf91e71efccc78fd36 · default 7a470541…"
+        "Detail": "7a470541a704caaf91e71efccc78fd36 · via R2_ACCOUNT_ID · default 7a470541…"
       },
       {
         "Key": "CLOUDFLARE_ZONE_ID",
@@ -72,29 +72,29 @@
         "Key": "CLOUDFLARE_DNS_API_TOKEN",
         "Group": "cloudflare",
         "Severity": "recommended",
-        "Status": "set",
-        "Detail": "set (len 53, cfa…9f)"
+        "Status": "✗ missing",
+        "Detail": "Zone.DNS Edit for score CNAME"
       },
       {
         "Key": "R2_ACCESS_KEY_ID",
         "Group": "r2",
         "Severity": "required",
         "Status": "set",
-        "Detail": "set (len 32, 890…1b)"
+        "Detail": "set (len 32, 582…bd)"
       },
       {
         "Key": "R2_SECRET_ACCESS_KEY",
         "Group": "r2",
         "Severity": "required",
         "Status": "set",
-        "Detail": "set (len 64, 026…0a)"
+        "Detail": "set (len 64, 35e…65)"
       },
       {
         "Key": "R2_ENDPOINT",
         "Group": "r2",
         "Severity": "recommended",
-        "Status": "set",
-        "Detail": "https://7a470541a704caaf91e71efccc78fd36… · via R2_S3_ENDPOINT · or derived from account id"
+        "Status": "default",
+        "Detail": "unset · code default · or derived from account id"
       },
       {
         "Key": "R2_REGISTRY_BUCKET",
@@ -153,18 +153,39 @@
         "Detail": "aliases: GITHUB_ACCESS_TOKEN · GH_TOKEN · or `gh auth login` (channels.ts gh-cli fallback)"
       },
       {
+        "Key": "TELEGRAM_BOT_FACTORY",
+        "Group": "ops",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "factory portal webhook + ops consumer; verify: bun run telegram:verify"
+      },
+      {
         "Key": "TELEGRAM_BOT_TOKEN",
         "Group": "ops",
         "Severity": "optional",
         "Status": "missing",
-        "Detail": "outbox / alerts"
+        "Detail": "legacy alias for factory bot token"
       },
       {
         "Key": "TELEGRAM_OPS_CHAT_ID",
         "Group": "ops",
         "Severity": "optional",
         "Status": "missing",
-        "Detail": "alert chat"
+        "Detail": "supergroup chat id for ops/alerts projector (forum topics via TELEGRAM_TOPICS)"
+      },
+      {
+        "Key": "TELEGRAM_TOPICS",
+        "Group": "ops",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "JSON map logical topic → message_thread_id (e.g. {\"ops\":2,\"alerts\":5})"
+      },
+      {
+        "Key": "TELEGRAM_WEBHOOK_SECRET",
+        "Group": "ops",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "setWebhook secret_token for factory tenant"
       },
       {
         "Key": "PLAY_SIGNING_SECRET",
@@ -350,7 +371,7 @@
     "demosPassed": 30,
     "demosTotal": 30,
     "demoPassRate": "100.0%",
-    "generated": "2026-07-24T07:23:56.899Z",
+    "generated": "2026-07-24T07:34:46.066Z",
     "apisVerified": 30
   },
   "registryClientProof": {

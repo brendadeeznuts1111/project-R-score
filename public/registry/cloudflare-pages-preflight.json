@@ -1,8 +1,8 @@
 {
   "type": "CloudflarePagesPreflightReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T07:32:20.227Z",
-  "ok": true,
+  "timestamp": "2026-07-24T07:34:46.032Z",
+  "ok": false,
   "steps": [
     {
       "id": "well-known-mcp-parity",
@@ -16,8 +16,8 @@
     },
     {
       "id": "functions-import-graph",
-      "ok": true,
-      "detail": "allowlist ok"
+      "ok": false,
+      "detail": "exit 1"
     },
     {
       "id": "functions-edge-safety",

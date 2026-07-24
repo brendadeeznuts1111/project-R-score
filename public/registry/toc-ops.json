@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-24T07:28:18.737Z",
+  "generatedAt": "2026-07-24T07:34:46.055Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -86,6 +86,65 @@
         "WARM",
         "FUND"
       ]
+    },
+    "venues": {
+      "kinds": [
+        "sportsbook",
+        "exchange",
+        "prediction_market",
+        "crypto",
+        "pph",
+        "postup_credit",
+        "casino",
+        "kiosk",
+        "in_person"
+      ],
+      "venueIds": [
+        "hardrock",
+        "draftkings",
+        "fanduel",
+        "betmgm",
+        "caesars",
+        "bovada",
+        "stake",
+        "kalshi",
+        "polymarket",
+        "prophet_x",
+        "pph_southfl",
+        "postup_desk",
+        "hr_casino_tampa",
+        "hr_kiosk_mia"
+      ],
+      "sports": [
+        "NFL",
+        "NBA",
+        "MLB",
+        "NHL",
+        "NCAAF",
+        "NCAAB",
+        "Soccer",
+        "Tennis",
+        "Golf",
+        "MMA",
+        "Boxing",
+        "Politics",
+        "Economics",
+        "Crypto",
+        "Other"
+      ],
+      "legalStatuses": [
+        "legal",
+        "restricted",
+        "prohibited",
+        "grey",
+        "unknown"
+      ],
+      "accessModes": [
+        "online",
+        "in_person",
+        "kiosk",
+        "hybrid"
+      ]
     }
   },
   "buffer": {
@@ -94,10 +153,52 @@
     "houseFloatHard": 42500,
     "floatRatio": 0.85,
     "throttleOnboarding": false,
-    "settlementFloatRatio": 0.5249937201708114,
-    "primedDrums": 3,
-    "playableDrums": 1,
-    "principalOutstandingTotal": 19800
+    "settlementFloatRatio": 0.44760510353482535,
+    "primedDrums": 4,
+    "playableDrums": 2,
+    "principalOutstandingTotal": 20300
+  },
+  "housePresence": {
+    "geo": {
+      "lat": 27.9506,
+      "lon": -82.4572,
+      "accuracyM": 50,
+      "source": "demo",
+      "observedAt": "2026-07-23T18:00:00.000Z"
+    },
+    "postal": {
+      "country": "US",
+      "region": "FL",
+      "city": "Tampa",
+      "zip": "33602",
+      "timezone": "America/New_York"
+    },
+    "network": {
+      "ipv4": "104.21.48.12",
+      "ipv6": "2606:4700:3030::ac43:3012",
+      "asn": 13335,
+      "asOrg": "CLOUDFLARENET",
+      "isp": "Cloudflare",
+      "reverseDns": "ops.factory-wager.com",
+      "dns": {
+        "hostname": "ops.factory-wager.com",
+        "resolvedAt": "2026-07-23T18:00:00.000Z",
+        "a": [
+          "104.21.48.12"
+        ],
+        "aaaa": [
+          "2606:4700:3030::ac43:3012"
+        ],
+        "cname": [
+          "pages.factory-wager.com"
+        ],
+        "ttlSec": 300,
+        "resolver": "1.1.1.1"
+      },
+      "lastSeenAt": "2026-07-23T18:00:00.000Z",
+      "vpnSuspected": false,
+      "connectionType": "datacenter"
+    }
   },
   "experts": [
     {
@@ -248,7 +349,7 @@
       },
       "flowStage": "WARM",
       "readiness": {
-        "score": 0.17800000000000002,
+        "score": 0.15975,
         "playableAccountCount": 0,
         "accountScores": [
           {
@@ -283,6 +384,18 @@
             "factors": [
               "Limited",
               "warmup_2_of_2",
+              "limits_fresh",
+              "gate12_principal_out"
+            ]
+          },
+          {
+            "callSign": "ASH-004",
+            "score": 0.105,
+            "playable": false,
+            "weightedScore": 0,
+            "factors": [
+              "Funded",
+              "warmup_0_of_2",
               "limits_fresh",
               "gate12_principal_out"
             ]
@@ -342,6 +455,89 @@
             "checkedAt": "2026-07-12T09:00:00.000Z",
             "screenshotRef": "proof:ash-001-limits-stale",
             "freshness": "stale"
+          },
+          "venue": {
+            "kind": "sportsbook",
+            "venueId": "hardrock",
+            "displayName": "Hard Rock Bet (Florida)",
+            "access": "hybrid",
+            "sports": [
+              "NFL",
+              "NBA",
+              "MLB",
+              "NHL",
+              "Tennis"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "legal",
+                "notes": "Retail + online where licensed"
+              },
+              {
+                "state": "NJ",
+                "status": "legal",
+                "notes": "Online sports / casino"
+              },
+              {
+                "state": "NY",
+                "status": "restricted",
+                "notes": "Exchange / prediction vary"
+              },
+              {
+                "state": "TX",
+                "status": "prohibited",
+                "notes": "No statewide retail sportsbook"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USD"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 25.7987,
+              "lon": -80.134,
+              "accuracyM": 80,
+              "source": "profile",
+              "observedAt": "2026-07-21T10:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Miami Beach",
+              "zip": "33139",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "73.145.22.92",
+              "ipv6": "2601:58:4000:a1b2::10",
+              "asn": 7922,
+              "asOrg": "COMCAST-7922",
+              "isp": "Comcast Cable",
+              "reverseDns": "c-73-145-22-91.hsd1.fl.comcast.net",
+              "dns": {
+                "hostname": "ash-001.drum.toc.local",
+                "resolvedAt": "2026-07-21T10:30:00.000Z",
+                "a": [
+                  "73.145.22.92"
+                ],
+                "aaaa": [
+                  "2601:58:4000:a1b2::10"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-21T10:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "residential"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 332.2,
+              "sameMetroAsHouse": false
+            }
           }
         },
         {
@@ -370,6 +566,91 @@
             "weeklyMax": null,
             "checkedAt": null,
             "freshness": "unknown"
+          },
+          "venue": {
+            "kind": "in_person",
+            "venueId": "hardrock",
+            "displayName": "Hard Rock — Retail Counter",
+            "access": "in_person",
+            "sports": [
+              "NFL",
+              "NBA",
+              "MLB"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "legal",
+                "notes": "Retail + online where licensed"
+              },
+              {
+                "state": "NJ",
+                "status": "legal",
+                "notes": "Online sports / casino"
+              },
+              {
+                "state": "NY",
+                "status": "restricted",
+                "notes": "Exchange / prediction vary"
+              },
+              {
+                "state": "TX",
+                "status": "prohibited",
+                "notes": "No statewide retail sportsbook"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USD"
+            },
+            "casino": {
+              "property": "Hard Rock Hollywood",
+              "floor": "sportsbook_window"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 25.8067,
+              "lon": -80.138,
+              "accuracyM": 90,
+              "source": "ip",
+              "observedAt": "2026-07-22T11:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Miami Beach",
+              "zip": "33140",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "73.145.22.93",
+              "ipv6": "2601:58:4000:a1b2::11",
+              "asn": 7922,
+              "asOrg": "COMCAST-7922",
+              "isp": "Comcast Cable",
+              "reverseDns": "c-73-145-22-91.hsd1.fl.comcast.net",
+              "dns": {
+                "hostname": "ash-002.drum.toc.local",
+                "resolvedAt": "2026-07-22T11:30:00.000Z",
+                "a": [
+                  "73.145.22.93"
+                ],
+                "aaaa": [
+                  "2601:58:4000:a1b2::11"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-22T11:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "mobile"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 331.3,
+              "sameMetroAsHouse": false
+            }
           }
         },
         {
@@ -402,6 +683,197 @@
             "checkedAt": "2026-07-22T10:00:00.000Z",
             "screenshotRef": "proof:ash-003-limits-low",
             "freshness": "fresh"
+          },
+          "venue": {
+            "kind": "casino",
+            "venueId": "hr_casino_tampa",
+            "displayName": "Seminole Hard Rock Casino Tampa",
+            "access": "in_person",
+            "sports": [
+              "Other"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "legal",
+                "notes": "Tribal casino floor"
+              },
+              {
+                "state": "NJ",
+                "status": "legal"
+              },
+              {
+                "state": "TX",
+                "status": "prohibited"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USD"
+            },
+            "casino": {
+              "property": "Hard Rock Tampa",
+              "floor": "main"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 25.8147,
+              "lon": -80.142,
+              "accuracyM": 100,
+              "source": "ip",
+              "observedAt": "2026-07-23T12:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Miami Beach",
+              "zip": "33141",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "73.145.22.94",
+              "ipv6": "2601:58:4000:a1b2::12",
+              "asn": 7922,
+              "asOrg": "COMCAST-7922",
+              "isp": "Comcast Cable",
+              "reverseDns": "c-73-145-22-91.hsd1.fl.comcast.net",
+              "dns": {
+                "hostname": "ash-003.drum.toc.local",
+                "resolvedAt": "2026-07-23T12:30:00.000Z",
+                "a": [
+                  "73.145.22.94"
+                ],
+                "aaaa": [
+                  "2601:58:4000:a1b2::12"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-23T12:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "residential"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 330.3,
+              "sameMetroAsHouse": false
+            }
+          }
+        },
+        {
+          "callSign": "ASH-004",
+          "status": "Funded",
+          "warmupCount": 0,
+          "warmupProgress": {
+            "completed": 0,
+            "required": 2,
+            "tags": [
+              "#KIOSK",
+              "#FUNDED"
+            ]
+          },
+          "capitalLocation": "WithPartner",
+          "hardBalance": 500,
+          "primaryRailId": "rail-ash-cashapp-1",
+          "gate12": {
+            "housePrincipalOutstanding": 500,
+            "withdrawalMode": "warmup_capital_return"
+          },
+          "sportsbook": "Hard Rock Kiosk — Miami",
+          "flowStage": "FUND",
+          "limits": {
+            "dailyMax": 1000,
+            "weeklyMax": 3000,
+            "rawText": "Kiosk daily $1,000",
+            "checkedAt": "2026-07-23T10:00:00.000Z",
+            "screenshotRef": "proof:ash-004-kiosk",
+            "freshness": "fresh"
+          },
+          "venue": {
+            "kind": "kiosk",
+            "venueId": "hr_kiosk_mia",
+            "displayName": "Hard Rock Bet Kiosk — Miami Beach",
+            "access": "kiosk",
+            "sports": [
+              "NFL",
+              "NBA",
+              "MLB"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "legal",
+                "notes": "Retail + online where licensed"
+              },
+              {
+                "state": "NJ",
+                "status": "legal",
+                "notes": "Online sports / casino"
+              },
+              {
+                "state": "NY",
+                "status": "restricted",
+                "notes": "Exchange / prediction vary"
+              },
+              {
+                "state": "TX",
+                "status": "prohibited",
+                "notes": "No statewide retail sportsbook"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USD"
+            },
+            "kiosk": {
+              "locationLabel": "Miami Beach walk-up #12",
+              "deviceId": "kiosk-mia-12"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 25.8227,
+              "lon": -80.146,
+              "accuracyM": 110,
+              "source": "ip",
+              "observedAt": "2026-07-23T13:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Miami Beach",
+              "zip": "33142",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "73.145.22.95",
+              "ipv6": "2601:58:4000:a1b2::13",
+              "asn": 7922,
+              "asOrg": "COMCAST-7922",
+              "isp": "Comcast Cable",
+              "reverseDns": "c-73-145-22-91.hsd1.fl.comcast.net",
+              "dns": {
+                "hostname": "ash-004.drum.toc.local",
+                "resolvedAt": "2026-07-23T13:30:00.000Z",
+                "a": [
+                  "73.145.22.95"
+                ],
+                "aaaa": [
+                  "2601:58:4000:a1b2::13"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-23T13:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "mobile"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 329.4,
+              "sameMetroAsHouse": false
+            }
           }
         }
       ],
@@ -446,6 +918,15 @@
           "nextAction": "LIMIT-EX-02 — principal_recovery WD; reallocate to PAT-001",
           "linkedExceptionId": "LIMIT-EX-02",
           "createdAt": "2026-07-23T12:00:00.000Z"
+        },
+        {
+          "taskId": "WARM-ASH-004-20260723-130000-001",
+          "taskType": "WARM",
+          "callSign": "ASH-004",
+          "status": "New",
+          "ballInCourt": "Ops",
+          "nextAction": "Kiosk funded — start cycle 1 dummy bet at device kiosk-mia-12",
+          "createdAt": "2026-07-23T13:00:00.000Z"
         }
       ],
       "softBalance": {
@@ -611,7 +1092,26 @@
           "experimentId": "exp-routing-phase1-2026-07",
           "variantKey": "static",
           "placedAt": "2026-07-17T19:10:00.000Z",
-          "settledAt": "2026-07-17T23:40:00.000Z"
+          "settledAt": "2026-07-17T23:40:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 25.7987,
+              "lon": -80.134,
+              "accuracyM": 80,
+              "source": "ip",
+              "observedAt": "2026-07-17T19:10:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Miami Beach",
+              "zip": "33139"
+            },
+            "ipv4": "73.145.22.92",
+            "ipv6": "2601:58:4000:a1b2::10",
+            "asn": 7922,
+            "dnsHostname": "ash-001.drum.toc.local"
+          }
         },
         {
           "playId": "play-ash-001-tennis-001",
@@ -631,7 +1131,26 @@
           "experimentId": "exp-routing-phase1-2026-07",
           "variantKey": "static",
           "placedAt": "2026-07-21T15:05:00.000Z",
-          "settledAt": "2026-07-21T20:40:00.000Z"
+          "settledAt": "2026-07-21T20:40:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 25.7987,
+              "lon": -80.134,
+              "accuracyM": 80,
+              "source": "ip",
+              "observedAt": "2026-07-21T15:05:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Miami Beach",
+              "zip": "33139"
+            },
+            "ipv4": "73.145.22.92",
+            "ipv6": "2601:58:4000:a1b2::10",
+            "asn": 7922,
+            "dnsHostname": "ash-001.drum.toc.local"
+          }
         },
         {
           "playId": "play-ash-001-mlb-loss-001",
@@ -651,7 +1170,26 @@
           "experimentId": "exp-routing-phase1-2026-07",
           "variantKey": "static",
           "placedAt": "2026-07-19T17:20:00.000Z",
-          "settledAt": "2026-07-19T22:05:00.000Z"
+          "settledAt": "2026-07-19T22:05:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 25.7987,
+              "lon": -80.134,
+              "accuracyM": 80,
+              "source": "ip",
+              "observedAt": "2026-07-19T17:20:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Miami Beach",
+              "zip": "33139"
+            },
+            "ipv4": "73.145.22.92",
+            "ipv6": "2601:58:4000:a1b2::10",
+            "asn": 7922,
+            "dnsHostname": "ash-001.drum.toc.local"
+          }
         },
         {
           "playId": "play-ash-002-blocked-001",
@@ -704,7 +1242,50 @@
           "trigger": "Parlay/prop/live dummy bet triggers early limit flag",
           "action": "Use major-league ML/totals near-even only; avoid WARM-EX-02 scrutiny"
         }
-      ]
+      ],
+      "presence": {
+        "geo": {
+          "lat": 25.7907,
+          "lon": -80.13,
+          "accuracyM": 35,
+          "source": "demo",
+          "observedAt": "2026-07-23T16:00:00.000Z"
+        },
+        "postal": {
+          "country": "US",
+          "region": "FL",
+          "city": "Miami Beach",
+          "zip": "33139",
+          "timezone": "America/New_York"
+        },
+        "network": {
+          "ipv4": "73.145.22.91",
+          "ipv6": "2601:58:4000:a1b2::91",
+          "asn": 7922,
+          "asOrg": "COMCAST-7922",
+          "isp": "Comcast Cable",
+          "reverseDns": "c-73-145-22-91.hsd1.fl.comcast.net",
+          "dns": {
+            "hostname": "ash.partner.toc.local",
+            "resolvedAt": "2026-07-23T16:00:00.000Z",
+            "a": [
+              "73.145.22.91"
+            ],
+            "aaaa": [
+              "2601:58:4000:a1b2::91"
+            ],
+            "ttlSec": 600,
+            "resolver": "1.1.1.1"
+          },
+          "lastSeenAt": "2026-07-23T16:00:00.000Z",
+          "vpnSuspected": false,
+          "connectionType": "residential"
+        },
+        "metrics": {
+          "distanceKmFromHouse": 333.1,
+          "sameMetroAsHouse": false
+        }
+      }
     },
     {
       "partnerCode": "PAT",
@@ -718,8 +1299,8 @@
       },
       "flowStage": "PLAY",
       "readiness": {
-        "score": 0.35366666666666663,
-        "playableAccountCount": 1,
+        "score": 0.3942,
+        "playableAccountCount": 2,
         "accountScores": [
           {
             "callSign": "PAT-001",
@@ -755,6 +1336,30 @@
               "warmup_0_of_2",
               "limits_unknown",
               "gate12_principal_out"
+            ]
+          },
+          {
+            "callSign": "PAT-004",
+            "score": 0.8,
+            "playable": true,
+            "weightedScore": 0.8360000000000001,
+            "factors": [
+              "WARMED",
+              "warmup_2_of_2",
+              "limits_fresh",
+              "gate12_clear"
+            ]
+          },
+          {
+            "callSign": "PAT-005",
+            "score": 0.11000000000000001,
+            "playable": false,
+            "weightedScore": 0.022000000000000006,
+            "factors": [
+              "Warming",
+              "warmup_1_of_2",
+              "limits_unknown",
+              "gate12_clear"
             ]
           }
         ]
@@ -812,6 +1417,90 @@
             "checkedAt": "2026-07-21T14:00:00.000Z",
             "screenshotRef": "proof:pat-001-limits",
             "freshness": "fresh"
+          },
+          "venue": {
+            "kind": "sportsbook",
+            "venueId": "draftkings",
+            "displayName": "DraftKings",
+            "access": "online",
+            "sports": [
+              "NFL",
+              "NBA",
+              "MLB",
+              "NCAAF",
+              "Soccer",
+              "MMA"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "legal",
+                "notes": "Retail + online where licensed"
+              },
+              {
+                "state": "NJ",
+                "status": "legal",
+                "notes": "Online sports / casino"
+              },
+              {
+                "state": "NY",
+                "status": "restricted",
+                "notes": "Exchange / prediction vary"
+              },
+              {
+                "state": "TX",
+                "status": "prohibited",
+                "notes": "No statewide retail sportsbook"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USD"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 28.5463,
+              "lon": -81.3832,
+              "accuracyM": 80,
+              "source": "profile",
+              "observedAt": "2026-07-21T10:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32801",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "98.203.44.18",
+              "ipv6": "2600:1700:2a10:8c80::10",
+              "asn": 7018,
+              "asOrg": "ATT-INTERNET4",
+              "isp": "AT&T Fiber",
+              "reverseDns": "98-203-44-17.lightspeed.orlnfl.sbcglobal.net",
+              "dns": {
+                "hostname": "pat-001.drum.toc.local",
+                "resolvedAt": "2026-07-21T10:30:00.000Z",
+                "a": [
+                  "98.203.44.18"
+                ],
+                "aaaa": [
+                  "2600:1700:2a10:8c80::10"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-21T10:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "residential"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 124.3,
+              "sameMetroAsHouse": false
+            }
           }
         },
         {
@@ -843,6 +1532,93 @@
             "checkedAt": "2026-07-20T11:00:00.000Z",
             "screenshotRef": "proof:pat-002-limits",
             "freshness": "fresh"
+          },
+          "venue": {
+            "kind": "exchange",
+            "venueId": "kalshi",
+            "displayName": "Kalshi",
+            "access": "online",
+            "sports": [
+              "Politics",
+              "Economics",
+              "NFL",
+              "Other"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "legal",
+                "notes": "CFTC-regulated event contracts"
+              },
+              {
+                "state": "NY",
+                "status": "legal"
+              },
+              {
+                "state": "TX",
+                "status": "legal"
+              },
+              {
+                "state": "CA",
+                "status": "legal"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USD"
+            },
+            "exchange": {
+              "clearing": "cftc",
+              "markets": [
+                "politics",
+                "economics",
+                "sports_event_contracts"
+              ]
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 28.5543,
+              "lon": -81.3872,
+              "accuracyM": 90,
+              "source": "ip",
+              "observedAt": "2026-07-22T11:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32802",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "98.203.44.19",
+              "ipv6": "2600:1700:2a10:8c80::11",
+              "asn": 7018,
+              "asOrg": "ATT-INTERNET4",
+              "isp": "AT&T Fiber",
+              "reverseDns": "98-203-44-17.lightspeed.orlnfl.sbcglobal.net",
+              "dns": {
+                "hostname": "pat-002.drum.toc.local",
+                "resolvedAt": "2026-07-22T11:30:00.000Z",
+                "a": [
+                  "98.203.44.19"
+                ],
+                "aaaa": [
+                  "2600:1700:2a10:8c80::11"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-22T11:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "mobile"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 124.5,
+              "sameMetroAsHouse": false
+            }
           }
         },
         {
@@ -872,6 +1648,339 @@
             "weeklyMax": null,
             "checkedAt": null,
             "freshness": "unknown"
+          },
+          "venue": {
+            "kind": "prediction_market",
+            "venueId": "polymarket",
+            "displayName": "Polymarket",
+            "access": "online",
+            "sports": [
+              "Politics",
+              "Crypto",
+              "Economics",
+              "Other"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "grey",
+                "notes": "Geo / product restrictions apply"
+              },
+              {
+                "state": "NY",
+                "status": "restricted"
+              },
+              {
+                "state": "TX",
+                "status": "grey"
+              },
+              {
+                "state": "CA",
+                "status": "grey"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USDC"
+            },
+            "crypto": {
+              "networks": [
+                "polygon",
+                "ethereum"
+              ],
+              "assets": [
+                "USDC"
+              ],
+              "walletHint": "0xpat…demo"
+            },
+            "exchange": {
+              "clearing": "p2p",
+              "markets": [
+                "politics",
+                "crypto",
+                "culture"
+              ]
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 28.5623,
+              "lon": -81.3912,
+              "accuracyM": 100,
+              "source": "ip",
+              "observedAt": "2026-07-23T12:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32803",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "98.203.44.20",
+              "ipv6": "2600:1700:2a10:8c80::12",
+              "asn": 7018,
+              "asOrg": "ATT-INTERNET4",
+              "isp": "AT&T Fiber",
+              "reverseDns": "98-203-44-17.lightspeed.orlnfl.sbcglobal.net",
+              "dns": {
+                "hostname": "pat-003.drum.toc.local",
+                "resolvedAt": "2026-07-23T12:30:00.000Z",
+                "a": [
+                  "98.203.44.20"
+                ],
+                "aaaa": [
+                  "2600:1700:2a10:8c80::12"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-23T12:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "residential"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 124.6,
+              "sameMetroAsHouse": false
+            }
+          }
+        },
+        {
+          "callSign": "PAT-004",
+          "status": "WARMED",
+          "warmupCount": 2,
+          "warmupProgress": {
+            "completed": 2,
+            "required": 2,
+            "tags": [
+              "#WARMED",
+              "#CRYPTO",
+              "#STAKE"
+            ]
+          },
+          "capitalLocation": "InSportsbook",
+          "hardBalance": 2400,
+          "primaryRailId": "rail-pat-cashapp-1",
+          "gate12": {
+            "housePrincipalOutstanding": 0,
+            "withdrawalMode": "profit_split"
+          },
+          "sportsbook": "Stake.com",
+          "expertId": "kai",
+          "flowStage": "PLAY",
+          "limits": {
+            "dailyMax": 5000,
+            "weeklyMax": 20000,
+            "rawText": "Crypto book — soft limits",
+            "checkedAt": "2026-07-22T08:00:00.000Z",
+            "screenshotRef": "proof:pat-004-stake",
+            "freshness": "fresh"
+          },
+          "venue": {
+            "kind": "crypto",
+            "venueId": "stake",
+            "displayName": "Stake.com",
+            "access": "online",
+            "sports": [
+              "NFL",
+              "Soccer",
+              "Tennis",
+              "MMA",
+              "Crypto"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "grey",
+                "notes": "Offshore crypto book"
+              },
+              {
+                "state": "NJ",
+                "status": "prohibited"
+              },
+              {
+                "state": "NY",
+                "status": "prohibited"
+              },
+              {
+                "state": "TX",
+                "status": "grey"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USDT"
+            },
+            "crypto": {
+              "networks": [
+                "ethereum",
+                "tron",
+                "bitcoin"
+              ],
+              "assets": [
+                "USDT",
+                "BTC",
+                "ETH"
+              ],
+              "walletHint": "stake:pat-demo"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 28.5703,
+              "lon": -81.3952,
+              "accuracyM": 110,
+              "source": "ip",
+              "observedAt": "2026-07-23T13:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32804",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "98.203.44.21",
+              "ipv6": "2600:1700:2a10:8c80::13",
+              "asn": 7018,
+              "asOrg": "ATT-INTERNET4",
+              "isp": "AT&T Fiber",
+              "reverseDns": "98-203-44-17.lightspeed.orlnfl.sbcglobal.net",
+              "dns": {
+                "hostname": "pat-004.drum.toc.local",
+                "resolvedAt": "2026-07-23T13:30:00.000Z",
+                "a": [
+                  "98.203.44.21"
+                ],
+                "aaaa": [
+                  "2600:1700:2a10:8c80::13"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-23T13:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "mobile"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 124.8,
+              "sameMetroAsHouse": false
+            }
+          }
+        },
+        {
+          "callSign": "PAT-005",
+          "status": "Warming",
+          "warmupCount": 1,
+          "warmupProgress": {
+            "completed": 1,
+            "required": 2,
+            "tags": [
+              "#CYCLE-1",
+              "#FANDUEL"
+            ]
+          },
+          "capitalLocation": "InSportsbook",
+          "hardBalance": 5100,
+          "primaryRailId": "rail-pat-paypal-1",
+          "gate12": {
+            "housePrincipalOutstanding": 0,
+            "withdrawalMode": "warmup_capital_return"
+          },
+          "sportsbook": "FanDuel",
+          "expertId": "elena",
+          "flowStage": "WARM",
+          "limits": {
+            "dailyMax": 2500,
+            "weeklyMax": 10000,
+            "checkedAt": null,
+            "freshness": "unknown"
+          },
+          "venue": {
+            "kind": "sportsbook",
+            "venueId": "fanduel",
+            "displayName": "FanDuel",
+            "access": "online",
+            "sports": [
+              "NFL",
+              "NBA",
+              "NCAAB",
+              "Golf"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "legal",
+                "notes": "Retail + online where licensed"
+              },
+              {
+                "state": "NJ",
+                "status": "legal",
+                "notes": "Online sports / casino"
+              },
+              {
+                "state": "NY",
+                "status": "restricted",
+                "notes": "Exchange / prediction vary"
+              },
+              {
+                "state": "TX",
+                "status": "prohibited",
+                "notes": "No statewide retail sportsbook"
+              }
+            ],
+            "credit": {
+              "mode": "cash",
+              "currency": "USD"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 28.5783,
+              "lon": -81.3992,
+              "accuracyM": 120,
+              "source": "ip",
+              "observedAt": "2026-07-23T14:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32805",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "98.203.44.22",
+              "ipv6": "2600:1700:2a10:8c80::14",
+              "asn": 7018,
+              "asOrg": "ATT-INTERNET4",
+              "isp": "AT&T Fiber",
+              "reverseDns": "98-203-44-17.lightspeed.orlnfl.sbcglobal.net",
+              "dns": {
+                "hostname": "pat-005.drum.toc.local",
+                "resolvedAt": "2026-07-23T14:30:00.000Z",
+                "a": [
+                  "98.203.44.22"
+                ],
+                "aaaa": [
+                  "2600:1700:2a10:8c80::14"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-23T14:30:00.000Z",
+              "vpnSuspected": false,
+              "connectionType": "residential"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 124.9,
+              "sameMetroAsHouse": false
+            }
           }
         }
       ],
@@ -951,6 +2060,15 @@
           "ballInCourt": "Partner",
           "nextAction": "Start cycle 1 dummy bet (ML near-even); post slip + settlement",
           "createdAt": "2026-07-23T12:00:00.000Z"
+        },
+        {
+          "taskId": "WARM-PAT-005-20260723-110000-001",
+          "taskType": "WARM",
+          "callSign": "PAT-005",
+          "status": "PendingPartner",
+          "ballInCourt": "Partner",
+          "nextAction": "Complete FanDuel cycle 2 WD after settlement",
+          "createdAt": "2026-07-23T11:00:00.000Z"
         }
       ],
       "softBalance": {
@@ -1098,7 +2216,26 @@
           "experimentId": "exp-routing-phase1-2026-07",
           "variantKey": "dynamic",
           "placedAt": "2026-07-12T16:10:00.000Z",
-          "settledAt": "2026-07-12T22:00:00.000Z"
+          "settledAt": "2026-07-12T22:00:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 28.5463,
+              "lon": -81.3832,
+              "accuracyM": 80,
+              "source": "ip",
+              "observedAt": "2026-07-12T16:10:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32801"
+            },
+            "ipv4": "98.203.44.18",
+            "ipv6": "2600:1700:2a10:8c80::10",
+            "asn": 7018,
+            "dnsHostname": "pat-001.drum.toc.local"
+          }
         },
         {
           "playId": "play-pat-001-mlb-loss-001",
@@ -1118,7 +2255,26 @@
           "experimentId": "exp-routing-phase1-2026-07",
           "variantKey": "dynamic",
           "placedAt": "2026-07-14T18:05:00.000Z",
-          "settledAt": "2026-07-14T23:00:00.000Z"
+          "settledAt": "2026-07-14T23:00:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 28.5463,
+              "lon": -81.3832,
+              "accuracyM": 80,
+              "source": "ip",
+              "observedAt": "2026-07-14T18:05:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32801"
+            },
+            "ipv4": "98.203.44.18",
+            "ipv6": "2600:1700:2a10:8c80::10",
+            "asn": 7018,
+            "dnsHostname": "pat-001.drum.toc.local"
+          }
         },
         {
           "playId": "play-pat-001-nfl-spread-001",
@@ -1138,7 +2294,26 @@
           "experimentId": "exp-routing-phase1-2026-07",
           "variantKey": "dynamic",
           "placedAt": "2026-07-20T16:05:00.000Z",
-          "settledAt": "2026-07-20T22:10:00.000Z"
+          "settledAt": "2026-07-20T22:10:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 28.5463,
+              "lon": -81.3832,
+              "accuracyM": 80,
+              "source": "ip",
+              "observedAt": "2026-07-20T16:05:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32801"
+            },
+            "ipv4": "98.203.44.18",
+            "ipv6": "2600:1700:2a10:8c80::10",
+            "asn": 7018,
+            "dnsHostname": "pat-001.drum.toc.local"
+          }
         },
         {
           "playId": "play-pat-001-nba-open-001",
@@ -1157,7 +2332,26 @@
           "pnl": null,
           "experimentId": "exp-routing-phase1-2026-07",
           "variantKey": "dynamic",
-          "placedAt": "2026-07-22T15:20:00.000Z"
+          "placedAt": "2026-07-22T15:20:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 28.5463,
+              "lon": -81.3832,
+              "accuracyM": 80,
+              "source": "ip",
+              "observedAt": "2026-07-22T15:20:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32801"
+            },
+            "ipv4": "98.203.44.18",
+            "ipv6": "2600:1700:2a10:8c80::10",
+            "asn": 7018,
+            "dnsHostname": "pat-001.drum.toc.local"
+          }
         },
         {
           "playId": "play-pat-002-limit-reject-001",
@@ -1200,7 +2394,50 @@
           "trigger": "Rail payment under review",
           "action": "PendingRailReview; recheck 30 min"
         }
-      ]
+      ],
+      "presence": {
+        "geo": {
+          "lat": 28.5383,
+          "lon": -81.3792,
+          "accuracyM": 35,
+          "source": "demo",
+          "observedAt": "2026-07-23T16:00:00.000Z"
+        },
+        "postal": {
+          "country": "US",
+          "region": "FL",
+          "city": "Orlando",
+          "zip": "32801",
+          "timezone": "America/New_York"
+        },
+        "network": {
+          "ipv4": "98.203.44.17",
+          "ipv6": "2600:1700:2a10:8c80::17",
+          "asn": 7018,
+          "asOrg": "ATT-INTERNET4",
+          "isp": "AT&T Fiber",
+          "reverseDns": "98-203-44-17.lightspeed.orlnfl.sbcglobal.net",
+          "dns": {
+            "hostname": "pat.partner.toc.local",
+            "resolvedAt": "2026-07-23T16:00:00.000Z",
+            "a": [
+              "98.203.44.17"
+            ],
+            "aaaa": [
+              "2600:1700:2a10:8c80::17"
+            ],
+            "ttlSec": 600,
+            "resolver": "1.1.1.1"
+          },
+          "lastSeenAt": "2026-07-23T16:00:00.000Z",
+          "vpnSuspected": false,
+          "connectionType": "residential"
+        },
+        "metrics": {
+          "distanceKmFromHouse": 124.2,
+          "sameMetroAsHouse": false
+        }
+      }
     },
     {
       "partnerCode": "NOV",
@@ -1290,6 +2527,89 @@
             "weeklyMax": null,
             "checkedAt": null,
             "freshness": "unknown"
+          },
+          "venue": {
+            "kind": "pph",
+            "venueId": "pph_southfl",
+            "displayName": "SouthFL PPH Desk",
+            "access": "online",
+            "sports": [
+              "NFL",
+              "NBA",
+              "MLB",
+              "Soccer",
+              "Boxing"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "grey",
+                "notes": "PPH agent desk — compliance review"
+              },
+              {
+                "state": "NJ",
+                "status": "prohibited"
+              },
+              {
+                "state": "TX",
+                "status": "grey"
+              }
+            ],
+            "credit": {
+              "mode": "pph",
+              "creditLimit": 10000,
+              "postedBalance": 0,
+              "settlementDays": 7,
+              "currency": "USD"
+            },
+            "pph": {
+              "shopName": "SouthFL Agents",
+              "agentRef": "agent:nov-onboard"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 30.3402,
+              "lon": -81.6597,
+              "accuracyM": 80,
+              "source": "profile",
+              "observedAt": "2026-07-21T10:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Jacksonville",
+              "zip": "32202",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "174.64.88.204",
+              "ipv6": "2607:fb90:1a2b:3c4d::10",
+              "asn": 22394,
+              "asOrg": "CELLCO",
+              "isp": "Verizon Wireless",
+              "reverseDns": "mobile-174-64-88-203.fl.vzwnet.com",
+              "dns": {
+                "hostname": "nov-001.drum.toc.local",
+                "resolvedAt": "2026-07-21T10:30:00.000Z",
+                "a": [
+                  "174.64.88.204"
+                ],
+                "aaaa": [
+                  "2607:fb90:1a2b:3c4d::10"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-21T10:30:00.000Z",
+              "vpnSuspected": true,
+              "connectionType": "mobile"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 276.8,
+              "sameMetroAsHouse": false
+            }
           }
         },
         {
@@ -1317,6 +2637,90 @@
             "weeklyMax": null,
             "checkedAt": null,
             "freshness": "unknown"
+          },
+          "venue": {
+            "kind": "postup_credit",
+            "venueId": "postup_desk",
+            "displayName": "House Post-Up Credit Line",
+            "access": "hybrid",
+            "sports": [
+              "NFL",
+              "NBA",
+              "MLB",
+              "Tennis"
+            ],
+            "primaryState": "FL",
+            "legalByState": [
+              {
+                "state": "FL",
+                "status": "restricted"
+              },
+              {
+                "state": "NJ",
+                "status": "legal",
+                "notes": "Online sports / casino"
+              },
+              {
+                "state": "NY",
+                "status": "restricted",
+                "notes": "Exchange / prediction vary"
+              },
+              {
+                "state": "TX",
+                "status": "prohibited",
+                "notes": "No statewide retail sportsbook"
+              }
+            ],
+            "credit": {
+              "mode": "postup",
+              "creditLimit": 5000,
+              "postedBalance": 5000,
+              "settlementDays": 3,
+              "currency": "USD"
+            }
+          },
+          "presence": {
+            "geo": {
+              "lat": 30.3482,
+              "lon": -81.6637,
+              "accuracyM": 90,
+              "source": "ip",
+              "observedAt": "2026-07-22T11:30:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Jacksonville",
+              "zip": "32203",
+              "timezone": "America/New_York"
+            },
+            "network": {
+              "ipv4": "174.64.88.205",
+              "ipv6": "2607:fb90:1a2b:3c4d::11",
+              "asn": 22394,
+              "asOrg": "CELLCO",
+              "isp": "Verizon Wireless",
+              "reverseDns": "mobile-174-64-88-203.fl.vzwnet.com",
+              "dns": {
+                "hostname": "nov-002.drum.toc.local",
+                "resolvedAt": "2026-07-22T11:30:00.000Z",
+                "a": [
+                  "174.64.88.205"
+                ],
+                "aaaa": [
+                  "2607:fb90:1a2b:3c4d::11"
+                ],
+                "ttlSec": 600,
+                "resolver": "1.1.1.1"
+              },
+              "lastSeenAt": "2026-07-22T11:30:00.000Z",
+              "vpnSuspected": true,
+              "connectionType": "mobile"
+            },
+            "metrics": {
+              "distanceKmFromHouse": 277.5,
+              "sameMetroAsHouse": false
+            }
           }
         }
       ],
@@ -1421,31 +2825,166 @@
           "trigger": "Insufficient House clean capital",
           "action": "Pause; notify Ops Lead; may reduce/delay"
         }
-      ]
+      ],
+      "presence": {
+        "geo": {
+          "lat": 30.3322,
+          "lon": -81.6557,
+          "accuracyM": 35,
+          "source": "demo",
+          "observedAt": "2026-07-23T16:00:00.000Z"
+        },
+        "postal": {
+          "country": "US",
+          "region": "FL",
+          "city": "Jacksonville",
+          "zip": "32202",
+          "timezone": "America/New_York"
+        },
+        "network": {
+          "ipv4": "174.64.88.203",
+          "ipv6": "2607:fb90:1a2b:3c4d::203",
+          "asn": 22394,
+          "asOrg": "CELLCO",
+          "isp": "Verizon Wireless",
+          "reverseDns": "mobile-174-64-88-203.fl.vzwnet.com",
+          "dns": {
+            "hostname": "nov.partner.toc.local",
+            "resolvedAt": "2026-07-23T16:00:00.000Z",
+            "a": [
+              "174.64.88.203"
+            ],
+            "aaaa": [
+              "2607:fb90:1a2b:3c4d::203"
+            ],
+            "ttlSec": 600,
+            "resolver": "1.1.1.1"
+          },
+          "lastSeenAt": "2026-07-23T16:00:00.000Z",
+          "vpnSuspected": true,
+          "connectionType": "mobile"
+        },
+        "metrics": {
+          "distanceKmFromHouse": 276,
+          "sameMetroAsHouse": false
+        }
+      }
     }
   ],
+  "presence": {
+    "partnersWithGeo": 3,
+    "accountsWithGeo": 11,
+    "playsWithPlacement": 7,
+    "uniqueZips": 11,
+    "uniqueCities": 3,
+    "uniqueAsns": 3,
+    "ipv4Count": 21,
+    "ipv6Count": 21,
+    "dnsResolved": 21,
+    "vpnSuspected": 3,
+    "byCountry": {
+      "US": 21
+    },
+    "byTimezone": {
+      "America/New_York": 14
+    },
+    "byAsn": {
+      "7018": 10,
+      "7922": 8,
+      "22394": 3
+    },
+    "byConnectionType": {
+      "residential": 7,
+      "mobile": 7
+    },
+    "avgDistanceKmFromHouse": 231
+  },
+  "venues": {
+    "accountsWithVenue": 11,
+    "byVenueKind": {
+      "sportsbook": 3,
+      "in_person": 1,
+      "casino": 1,
+      "kiosk": 1,
+      "exchange": 1,
+      "prediction_market": 1,
+      "crypto": 1,
+      "pph": 1,
+      "postup_credit": 1
+    },
+    "byVenueId": {
+      "hardrock": 2,
+      "hr_casino_tampa": 1,
+      "hr_kiosk_mia": 1,
+      "draftkings": 1,
+      "kalshi": 1,
+      "polymarket": 1,
+      "stake": 1,
+      "fanduel": 1,
+      "pph_southfl": 1,
+      "postup_desk": 1
+    },
+    "byAccess": {
+      "hybrid": 2,
+      "in_person": 2,
+      "kiosk": 1,
+      "online": 6
+    },
+    "byPrimaryState": {
+      "FL": 11
+    },
+    "byLegalStatus": {
+      "legal": 17,
+      "restricted": 8,
+      "prohibited": 10,
+      "grey": 7
+    },
+    "bySport": {
+      "NFL": 9,
+      "NBA": 7,
+      "MLB": 6,
+      "NHL": 1,
+      "Tennis": 3,
+      "Other": 3,
+      "NCAAF": 1,
+      "Soccer": 3,
+      "MMA": 2,
+      "Politics": 2,
+      "Economics": 2,
+      "Crypto": 2,
+      "NCAAB": 1,
+      "Golf": 1,
+      "Boxing": 1
+    },
+    "legalStatesCovered": 5,
+    "creditLines": 2,
+    "cryptoAccounts": 2,
+    "exchangeAccounts": 2,
+    "kioskAccounts": 1,
+    "inPersonAccounts": 2
+  },
   "summary": {
     "partners": 3,
-    "accounts": 8,
-    "warmed": 3,
-    "warming": 1,
+    "accounts": 11,
+    "warmed": 4,
+    "warming": 2,
     "onboarding": 1,
     "confirmedRails": 5,
     "unconfirmedRails": 1,
-    "openTasks": 9,
+    "openTasks": 11,
     "openOnb": 1,
     "openLimit": 2,
-    "openWarm": 2,
+    "openWarm": 4,
     "openPlay": 1,
     "openBottlenecks": 8,
     "criticalBottlenecks": 1,
-    "principalOutstandingTotal": 19800,
+    "principalOutstandingTotal": 20300,
     "playsPending": 1,
     "playsSettled": 6,
     "playsBlocked": 2,
     "activeExperiments": 1,
     "byTaskType": {
-      "WARM": 2,
+      "WARM": 4,
       "LIMIT": 2,
       "WD": 2,
       "PLAY": 1,
@@ -1453,22 +2992,32 @@
       "FUND": 1
     },
     "byBallInCourt": {
-      "Partner": 6,
-      "Ops": 3
+      "Partner": 7,
+      "Ops": 4
     },
     "byFlowStage": {
       "WARM": 1,
       "PLAY": 1,
       "ONB": 1
-    }
+    },
+    "presencePartners": 3,
+    "presenceIpv6": 21,
+    "presenceUniqueZips": 11,
+    "presenceUniqueAsns": 3,
+    "presenceDnsResolved": 21,
+    "venueKinds": 9,
+    "venueExchanges": 2,
+    "venueCrypto": 2,
+    "venueCreditLines": 2,
+    "venueLegalStates": 5
   },
   "identity": {
     "plane": "linked",
     "linked": true,
     "linkedPartners": 3,
-    "linkedAccounts": 8,
+    "linkedAccounts": 11,
     "linkedRails": 6,
-    "generatedAt": "2026-07-24T07:28:18.738Z",
+    "generatedAt": "2026-07-24T07:34:46.057Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -1518,6 +3067,14 @@
             "opsRailId": "019f92bf-40d6-72ed-9859-0c12138526b8",
             "book": "hardrock",
             "balance": 4800
+          },
+          {
+            "callSign": "ASH-004",
+            "treeNodeId": "019f930b-71e5-7729-91d6-a82589cf488c",
+            "sbAccountId": "019f930b-71e5-772a-95e3-5c0ca8fa7f28",
+            "opsRailId": "019f92bf-40d6-72ed-9859-0c12138526b8",
+            "book": "hardrock",
+            "balance": 500
           }
         ]
       },
@@ -1568,6 +3125,22 @@
             "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
             "book": "hardrock",
             "balance": 5000
+          },
+          {
+            "callSign": "PAT-004",
+            "treeNodeId": "019f930b-71e6-7709-a473-7c0234f96a0b",
+            "sbAccountId": "019f930b-71e6-770a-a317-c88a679d9e1d",
+            "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
+            "book": "hardrock",
+            "balance": 2400
+          },
+          {
+            "callSign": "PAT-005",
+            "treeNodeId": "019f930b-71e6-770b-8881-e6749dae0b29",
+            "sbAccountId": "019f930b-71e6-770c-8a27-3d1fafe1e110",
+            "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
+            "book": "hardrock",
+            "balance": 5100
           }
         ]
       },
@@ -1616,7 +3189,7 @@
     ]
   },
   "enforcement": {
-    "evaluatedAt": "2026-07-24T07:28:18.742Z",
+    "evaluatedAt": "2026-07-24T07:34:46.059Z",
     "plane": "operate-lite",
     "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
     "warmupRequiredForPlay": 2,
@@ -1764,6 +3337,48 @@
         "tag": "#HARDGATE-VIOLATION"
       },
       {
+        "gateId": "confirmed_rail",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-004",
+        "reason": "Rail confirmed: CASHOUT-CASHAPP",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-004",
+        "reason": "Limit freshness N/A (not on Drum)"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-004",
+        "reason": "WARM sequence ok: ASH-004 status=Funded count=0"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-004",
+        "reason": "Gate 12 mode ok: warmup_capital_return"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "critical",
+        "partnerCode": "ASH",
+        "callSign": "ASH-004",
+        "reason": "PLAY blocked: warmup_count=0 status=Funded (need WARMED + 2)",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
         "gateId": "play_limit",
         "ok": true,
         "severity": "info",
@@ -1845,6 +3460,24 @@
         "taskId": "WD-ASH-003-20260723-120000-001",
         "reason": "Missing proofRefs on WD-ASH-003-20260723-120000-001",
         "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-004",
+        "taskId": "WARM-ASH-004-20260723-130000-001",
+        "reason": "Soft check N/A (task not money-close)"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "ASH",
+        "callSign": "ASH-004",
+        "taskId": "WARM-ASH-004-20260723-130000-001",
+        "reason": "Screenshot check deferred (early status)"
       },
       {
         "gateId": "partner_ready",
@@ -1985,6 +3618,90 @@
         "partnerCode": "PAT",
         "callSign": "PAT-003",
         "reason": "PLAY blocked: warmup_count=0 status=Funded (need WARMED + 2)",
+        "tag": "#HARDGATE-VIOLATION"
+      },
+      {
+        "gateId": "confirmed_rail",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-004",
+        "reason": "Rail confirmed: CASHOUT-CASHAPP",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-004",
+        "reason": "Drum limits fresh on PAT-004"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-004",
+        "reason": "WARM sequence ok: PAT-004 status=WARMED count=2"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-004",
+        "reason": "Gate 12 mode ok: profit_split"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-004",
+        "reason": "PLAY Rope ok: PAT-004 WARMED warmup=2",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "confirmed_rail",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-005",
+        "reason": "Rail confirmed: CASHOUT-PAYPAL",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "limit_fresh_drum",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-005",
+        "reason": "Limit freshness N/A (not on Drum)"
+      },
+      {
+        "gateId": "warm_sequential",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-005",
+        "reason": "WARM sequence ok: PAT-005 status=Warming count=1"
+      },
+      {
+        "gateId": "gate12_wd_mode",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-005",
+        "reason": "Gate 12 mode ok: warmup_capital_return"
+      },
+      {
+        "gateId": "play_warmed",
+        "ok": false,
+        "severity": "critical",
+        "partnerCode": "PAT",
+        "callSign": "PAT-005",
+        "reason": "PLAY blocked: warmup_count=1 status=Warming (need WARMED + 2)",
         "tag": "#HARDGATE-VIOLATION"
       },
       {
@@ -2144,6 +3861,24 @@
         "reason": "Screenshot check deferred (early status)"
       },
       {
+        "gateId": "soft_posted",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-005",
+        "taskId": "WARM-PAT-005-20260723-110000-001",
+        "reason": "Soft check N/A (task not money-close)"
+      },
+      {
+        "gateId": "screenshot_first",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-005",
+        "taskId": "WARM-PAT-005-20260723-110000-001",
+        "reason": "Screenshot check deferred (early status)"
+      },
+      {
         "gateId": "partner_ready",
         "ok": false,
         "severity": "warn",
@@ -2297,22 +4032,22 @@
         "reason": "Screenshot check deferred (early status)"
       }
     ],
-    "passed": 69,
-    "failed": 9,
-    "criticalFailed": 5,
+    "passed": 87,
+    "failed": 10,
+    "criticalFailed": 6,
     "throughput": {
       "T": 2576,
-      "I": 39810,
+      "I": 47810,
       "OE": 240,
       "byPartner": {
         "ASH": {
           "T": 576,
-          "I": 9810,
+          "I": 10310,
           "OE": 60
         },
         "PAT": {
           "T": 2000,
-          "I": 20000,
+          "I": 27500,
           "OE": 180
         },
         "NOV": {
@@ -2337,7 +4072,7 @@
     }
   },
   "returnEfficiency": {
-    "computedAt": "2026-07-24T07:28:18.737Z",
+    "computedAt": "2026-07-24T07:34:46.055Z",
     "byProcess": [
       {
         "process": "WARM",
@@ -2345,9 +4080,9 @@
         "partnerCode": "ASH",
         "deltaT": 273.7,
         "iPeak": 5000,
-        "tauDays": 7.811327974537037,
+        "tauDays": 7.81581082175926,
         "oe": 0,
-        "rP": 0.0070077713006595835
+        "rP": 0.007003751913698261
       },
       {
         "process": "LIMIT",
@@ -2355,9 +4090,9 @@
         "partnerCode": "ASH",
         "deltaT": 279.325,
         "iPeak": 0,
-        "tauDays": 3.936327974537037,
+        "tauDays": 3.9408108217592592,
         "oe": 0,
-        "rP": 70.96080453835968
+        "rP": 70.88008347360952
       },
       {
         "process": "WD",
@@ -2365,9 +4100,19 @@
         "partnerCode": "ASH",
         "deltaT": 4800,
         "iPeak": 4800,
-        "tauDays": 0.8113279745370371,
+        "tauDays": 0.8158108217592592,
         "oe": 0,
-        "rP": 1.2325471712849834
+        "rP": 1.2257743748036403
+      },
+      {
+        "process": "WARM",
+        "callSign": "ASH-004",
+        "partnerCode": "ASH",
+        "deltaT": 273.7,
+        "iPeak": 5000,
+        "tauDays": 0.7741441550925926,
+        "oe": 0,
+        "rP": 0.07071034463013254
       },
       {
         "process": "PLAY",
@@ -2375,9 +4120,9 @@
         "partnerCode": "PAT",
         "deltaT": 273.7,
         "iPeak": 5200,
-        "tauDays": 1.686327974537037,
+        "tauDays": 1.6908108217592592,
         "oe": 0,
-        "rP": 0.03121256136373213
+        "rP": 0.03112980749073393
       },
       {
         "process": "WD",
@@ -2385,9 +4130,9 @@
         "partnerCode": "PAT",
         "deltaT": 5000,
         "iPeak": 5000,
-        "tauDays": 1.6446613078703705,
+        "tauDays": 1.6491441550925925,
         "oe": 0,
-        "rP": 0.6080279235697922
+        "rP": 0.6063751291310578
       },
       {
         "process": "WARM",
@@ -2395,9 +4140,19 @@
         "partnerCode": "PAT",
         "deltaT": 273.7,
         "iPeak": 5000,
-        "tauDays": 0.8113279745370371,
+        "tauDays": 0.8158108217592592,
         "oe": 0,
-        "rP": 0.06746963215613998
+        "rP": 0.06709888927675127
+      },
+      {
+        "process": "WARM",
+        "callSign": "PAT-005",
+        "partnerCode": "PAT",
+        "deltaT": 273.7,
+        "iPeak": 5000,
+        "tauDays": 0.857477488425926,
+        "oe": 0,
+        "rP": 0.06383841061587096
       },
       {
         "process": "ONB",
@@ -2405,9 +4160,9 @@
         "partnerCode": "NOV",
         "deltaT": 273.7,
         "iPeak": 0,
-        "tauDays": 1.8946613078703705,
+        "tauDays": 1.8991441550925925,
         "oe": 0,
-        "rP": 144.4585366593268
+        "rP": 144.11754856316097
       },
       {
         "process": "FUND",
@@ -2415,9 +4170,9 @@
         "partnerCode": "NOV",
         "deltaT": 41.055,
         "iPeak": 5000,
-        "tauDays": 1.7279946412037037,
+        "tauDays": 1.732477488425926,
         "oe": 0,
-        "rP": 0.004751750847028264
+        "rP": 0.004739455522426588
       },
       {
         "process": "LIMIT",
@@ -2425,9 +4180,9 @@
         "partnerCode": "NOV",
         "deltaT": 68.425,
         "iPeak": 0,
-        "tauDays": 1.8529946412037037,
+        "tauDays": 1.857477488425926,
         "oe": 0,
-        "rP": 36.92671229505077
+        "rP": 36.83759314789064
       }
     ],
     "byAsset": [
@@ -2436,15 +4191,15 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 576,
         "peakCapital": 5000,
-        "capitalDaysInI": 8.561327974537036,
-        "ce": 0.01345585642117975
+        "capitalDaysInI": 8.565810821759259,
+        "ce": 0.013448814408481188
       },
       {
         "callSign": "ASH-002",
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5010,
-        "capitalDaysInI": 5.64466130787037,
+        "capitalDaysInI": 5.649144155092593,
         "ce": 0
       },
       {
@@ -2452,7 +4207,15 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 4.89466130787037,
+        "capitalDaysInI": 4.899144155092593,
+        "ce": 0
+      },
+      {
+        "callSign": "ASH-004",
+        "partnerCode": "ASH",
+        "profitSplitTotal": 0,
+        "peakCapital": 500,
+        "capitalDaysInI": 7,
         "ce": 0
       },
       {
@@ -2460,15 +4223,15 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 2000,
         "peakCapital": 5200,
-        "capitalDaysInI": 5.873827974537037,
-        "ce": 0.06547951119486083
+        "capitalDaysInI": 5.87831082175926,
+        "ce": 0.06542957599174332
       },
       {
         "callSign": "PAT-002",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 2.839105752314815,
+        "capitalDaysInI": 2.843588599537037,
         "ce": 0
       },
       {
@@ -2477,6 +4240,22 @@
         "profitSplitTotal": 0,
         "peakCapital": 5000,
         "capitalDaysInI": 1,
+        "ce": 0
+      },
+      {
+        "callSign": "PAT-004",
+        "partnerCode": "PAT",
+        "profitSplitTotal": 0,
+        "peakCapital": 2400,
+        "capitalDaysInI": 7,
+        "ce": 0
+      },
+      {
+        "callSign": "PAT-005",
+        "partnerCode": "PAT",
+        "profitSplitTotal": 0,
+        "peakCapital": 5100,
+        "capitalDaysInI": 7,
         "ce": 0
       },
       {
@@ -2492,7 +4271,7 @@
         "partnerCode": "NOV",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 1.7245224189814814,
+        "capitalDaysInI": 1.7290052662037037,
         "ce": 0
       }
     ],
@@ -2510,8 +4289,8 @@
         "partnerCode": "ASH",
         "deltaL": 0.3,
         "cAsset": 10010,
-        "daysToUsableLimit": 5.64466130787037,
-        "le": 0.0000053094469863484375
+        "daysToUsableLimit": 5.649144155092593,
+        "le": 0.000005305233703943025
       },
       {
         "callSign": "ASH-003",
@@ -2519,6 +4298,14 @@
         "deltaL": 0,
         "cAsset": 9800,
         "daysToUsableLimit": 3,
+        "le": 0
+      },
+      {
+        "callSign": "ASH-004",
+        "partnerCode": "ASH",
+        "deltaL": 0,
+        "cAsset": 500,
+        "daysToUsableLimit": 0.5,
         "le": 0
       },
       {
@@ -2542,8 +4329,24 @@
         "partnerCode": "PAT",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 0.9224390856481481,
-        "le": 0.00003252247272124275
+        "daysToUsableLimit": 0.9269219328703704,
+        "le": 0.0000323651851748722
+      },
+      {
+        "callSign": "PAT-004",
+        "partnerCode": "PAT",
+        "deltaL": 0,
+        "cAsset": 2400,
+        "daysToUsableLimit": 0.5,
+        "le": 0
+      },
+      {
+        "callSign": "PAT-005",
+        "partnerCode": "PAT",
+        "deltaL": 0,
+        "cAsset": 5100,
+        "daysToUsableLimit": 0.5,
+        "le": 0
       },
       {
         "callSign": "NOV-001",
@@ -2558,18 +4361,18 @@
         "partnerCode": "NOV",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 1.7245224189814814,
-        "le": 0.00001739612061275392
+        "daysToUsableLimit": 1.7290052662037037,
+        "le": 0.000017351017134765358
       }
     ],
-    "avgRP": 28.255230033695508,
+    "avgRP": 23.082899577095038,
     "processTypeAvgRP": {
-      "LIMIT": 53.94375841670522,
-      "ONB": 144.4585366593268,
-      "WD": 0.9202875474273877,
-      "PLAY": 0.03121256136373213,
-      "WARM": 0.037238701728399784,
-      "FUND": 0.004751750847028264
+      "LIMIT": 53.85883831075007,
+      "ONB": 144.11754856316097,
+      "WD": 0.9160747519673491,
+      "PLAY": 0.03112980749073393,
+      "WARM": 0.05216284910911326,
+      "FUND": 0.004739455522426588
     }
   },
   "rankedActions": [
@@ -2578,7 +4381,7 @@
       "process": "LIMIT",
       "callSign": "ASH-001",
       "partnerCode": "ASH",
-      "rP": 70.96080453835968,
+      "rP": 70.88008347360952,
       "weightedScore": 0.24,
       "reason": "Stale/missing limit on WARMED seat — LIMIT first (highest R)",
       "ropeSafe": true
@@ -2588,7 +4391,7 @@
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
-      "rP": 1.2325471712849834,
+      "rP": 1.2257743748036403,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -2598,7 +4401,7 @@
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
-      "rP": 0.6080279235697922,
+      "rP": 0.6063751291310578,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -2608,33 +4411,73 @@
       "process": "PLAY",
       "callSign": "PAT-001",
       "partnerCode": "PAT",
-      "rP": 0.03121256136373213,
+      "rP": 0.03112980749073393,
       "weightedScore": 0.8800000000000001,
       "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
     },
     {
       "rank": 5,
-      "process": "WARM",
-      "callSign": "PAT-003",
+      "process": "PLAY",
+      "callSign": "PAT-004",
       "partnerCode": "PAT",
-      "rP": 0.06746963215613998,
-      "weightedScore": 0,
-      "reason": "Complete WARM corridor (min capital path)",
+      "rP": 0,
+      "weightedScore": 0.8360000000000001,
+      "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
     },
     {
       "rank": 6,
       "process": "WARM",
-      "callSign": "ASH-002",
+      "callSign": "ASH-004",
       "partnerCode": "ASH",
-      "rP": 0.0070077713006595835,
-      "weightedScore": 0.022000000000000006,
+      "rP": 0.07071034463013254,
+      "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
     },
     {
       "rank": 7,
+      "process": "WARM",
+      "callSign": "PAT-003",
+      "partnerCode": "PAT",
+      "rP": 0.06709888927675127,
+      "weightedScore": 0,
+      "reason": "Complete WARM corridor (min capital path)",
+      "ropeSafe": true
+    },
+    {
+      "rank": 8,
+      "process": "WARM",
+      "callSign": "PAT-005",
+      "partnerCode": "PAT",
+      "rP": 0.06383841061587096,
+      "weightedScore": 0.022000000000000006,
+      "reason": "Complete WARM corridor (min capital path)",
+      "ropeSafe": true
+    },
+    {
+      "rank": 9,
+      "process": "WARM",
+      "callSign": "ASH-002",
+      "partnerCode": "ASH",
+      "rP": 0.007003751913698261,
+      "weightedScore": 0.022000000000000006,
+      "reason": "Complete WARM corridor (min capital path)",
+      "ropeSafe": true
+    },
+    {
+      "rank": 10,
+      "process": "WD",
+      "callSign": "PAT-004",
+      "partnerCode": "PAT",
+      "rP": 0,
+      "weightedScore": 0.8360000000000001,
+      "reason": "Low CE / Limited — WD + reallocate capital",
+      "ropeSafe": true
+    },
+    {
+      "rank": 11,
       "process": "WD",
       "callSign": "ASH-002",
       "partnerCode": "ASH",
@@ -2644,7 +4487,17 @@
       "ropeSafe": true
     },
     {
-      "rank": 8,
+      "rank": 12,
+      "process": "WD",
+      "callSign": "PAT-005",
+      "partnerCode": "PAT",
+      "rP": 0,
+      "weightedScore": 0.022000000000000006,
+      "reason": "Low CE / Limited — WD + reallocate capital",
+      "ropeSafe": true
+    },
+    {
+      "rank": 13,
       "process": "WD",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
@@ -2654,7 +4507,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 9,
+      "rank": 14,
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
@@ -2664,7 +4517,17 @@
       "ropeSafe": true
     },
     {
-      "rank": 10,
+      "rank": 15,
+      "process": "WD",
+      "callSign": "ASH-004",
+      "partnerCode": "ASH",
+      "rP": 0,
+      "weightedScore": 0,
+      "reason": "Low CE / Limited — WD + reallocate capital",
+      "ropeSafe": true
+    },
+    {
+      "rank": 16,
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
@@ -2674,7 +4537,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 11,
+      "rank": 17,
       "process": "WD",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
@@ -2684,7 +4547,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 12,
+      "rank": 18,
       "process": "WD",
       "callSign": "NOV-002",
       "partnerCode": "NOV",
@@ -2694,16 +4557,26 @@
       "ropeSafe": true
     },
     {
-      "rank": 13,
+      "rank": 19,
       "process": "ONB",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
-      "rP": 144.4585366593268,
+      "rP": 144.11754856316097,
       "reason": "ONB new asset — buffer allows",
       "ropeSafe": true
     },
     {
-      "rank": 14,
+      "rank": 20,
+      "process": "WD",
+      "callSign": "ASH-004",
+      "partnerCode": "ASH",
+      "rP": 0,
+      "weightedScore": 0,
+      "reason": "Gate 12 principal_recovery first",
+      "ropeSafe": false
+    },
+    {
+      "rank": 21,
       "process": "WD",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
@@ -2713,7 +4586,7 @@
       "ropeSafe": false
     },
     {
-      "rank": 15,
+      "rank": 22,
       "process": "WD",
       "callSign": "NOV-002",
       "partnerCode": "NOV",

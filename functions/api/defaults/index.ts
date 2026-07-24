@@ -5,7 +5,7 @@
  * @see public/registry/defaults-proof.json
  * @see lib/http/portal-cors.ts
  */
-import { portalCorsHeaders, portalOptionsResponse } from '../../lib/http/portal-cors.ts';
+import { portalCorsHeaders, portalOptionsResponse } from '../../../lib/http/portal-cors.ts';
 
 export type DefaultsEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
