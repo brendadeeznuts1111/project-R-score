@@ -1,6 +1,8 @@
 {
   "schemaVersion": 1,
-  "timestamp": "2026-07-24T04:32:05.757Z",
+  "timestamp": "2026-07-24T05:00:12.597Z",
+  "subsystem": "other",
+  "reportPath": "/registry/doc-index.json",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
   "catalogGenerated": "2026-07-24T00:08:46.051Z",
@@ -4659,5 +4661,10 @@
       }
     ]
   },
-  "proofHash": "ac6a2a848df6bbe7bdbcbe125e7449794b8ca884848451368b0004d10729c8bb"
+  "_links": {
+    "docs": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/BUN_DOCS_OPERATE.md",
+    "source": "tools/build-doc-index.ts",
+    "report": "/registry/doc-index.json"
+  },
+  "proofHash": "2f221ed47452762a899ffa8788b683b0b005662fa5cd95848af6809b29305c30"
 }

@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 27,
+  "uptimeMs": 462,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -21,16 +21,16 @@
   "dodByStatus": {},
   "experimentsActive": 0,
   "predictionN": 10,
-  "timestamp": "2026-07-24T04:51:50.359Z",
-  "snapshotAt": "2026-07-24T04:51:50.359Z",
+  "timestamp": "2026-07-24T05:43:32.985Z",
+  "snapshotAt": "2026-07-24T05:43:32.985Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-24T04:51:50.359Z",
+    "checkedAt": "2026-07-24T05:43:32.985Z",
     "summary": {
-      "total": 22,
-      "ok": 21,
-      "missing": 8,
+      "total": 23,
+      "ok": 23,
+      "missing": 7,
       "placeholder": 0,
       "requiredMissing": 0
     },
@@ -40,7 +40,7 @@
         "Group": "cloudflare",
         "Severity": "required",
         "Status": "set",
-        "Detail": "7a470541a704caaf91e71efccc78fd36 · via R2_ACCOUNT_ID · default 7a470541…"
+        "Detail": "7a470541a704caaf91e71efccc78fd36 · default 7a470541…"
       },
       {
         "Key": "CLOUDFLARE_ZONE_ID",
@@ -67,29 +67,29 @@
         "Key": "CLOUDFLARE_DNS_API_TOKEN",
         "Group": "cloudflare",
         "Severity": "recommended",
-        "Status": "✗ missing",
-        "Detail": "Zone.DNS Edit for score CNAME"
+        "Status": "set",
+        "Detail": "set (len 53, cfa…9f)"
       },
       {
         "Key": "R2_ACCESS_KEY_ID",
         "Group": "r2",
         "Severity": "required",
         "Status": "set",
-        "Detail": "set (len 32, 582…bd)"
+        "Detail": "set (len 32, 890…1b)"
       },
       {
         "Key": "R2_SECRET_ACCESS_KEY",
         "Group": "r2",
         "Severity": "required",
         "Status": "set",
-        "Detail": "set (len 64, 35e…65)"
+        "Detail": "set (len 64, 026…0a)"
       },
       {
         "Key": "R2_ENDPOINT",
         "Group": "r2",
         "Severity": "recommended",
-        "Status": "default",
-        "Detail": "unset · code default · or derived from account id"
+        "Status": "set",
+        "Detail": "https://7a470541a704caaf91e71efccc78fd36… · via R2_S3_ENDPOINT · or derived from account id"
       },
       {
         "Key": "R2_REGISTRY_BUCKET",
@@ -103,7 +103,14 @@
         "Group": "registry",
         "Severity": "recommended",
         "Status": "default",
-        "Detail": "unset · code default · https://registry.factory-wager.com or score.factory-wager.com"
+        "Detail": "unset · code default · npm publish/install plane (default https://registry.factory-wager.com); see bun publish --registry"
+      },
+      {
+        "Key": "ROUTING_PROBE_BASE_URL",
+        "Group": "registry",
+        "Severity": "optional",
+        "Status": "default",
+        "Detail": "unset · code default · Pages public origin for routing proof (default https://score.factory-wager.com); not REGISTRY_URL"
       },
       {
         "Key": "REGISTRY_PUBLIC_URL",

@@ -2,10 +2,27 @@
   "type": "RegistryClientVerificationReport",
   "version": "1.0.0",
   "sdkVersion": "1.0.0",
-  "timestamp": "2026-07-24T04:32:05.528Z",
+  "timestamp": "2026-07-24T04:59:00.755Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "reportPath": "/registry/registry-client-proof.json",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "9e110c3d29ff4768e33a725ca7d19935f219c22e",
+    "provenanceId": "local-2026-07-24T04-59-00-679Z",
+    "testedAt": "2026-07-24T04:59:00.679Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none",
+    "subsystems": [
+      "package-manager"
+    ]
+  },
   "results": [
     {
       "probe": "registry-client.resolve",
@@ -14,7 +31,8 @@
       "canonicalKind": "SDK",
       "canonicalStability": "stable",
       "canonicalDescription": "resolve() — dist-tag to /registry/storage/…/artifact.tgz",
-      "subsystem": "other",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#resolve",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-registry-client.ts",
@@ -33,7 +51,8 @@
       "canonicalKind": "SDK",
       "canonicalStability": "stable",
       "canonicalDescription": "download() — SHA-256 + size verification",
-      "subsystem": "other",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#download",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-registry-client.ts",
@@ -52,7 +71,8 @@
       "canonicalKind": "SDK",
       "canonicalStability": "stable",
       "canonicalDescription": "publish() — authenticated multipart FormData",
-      "subsystem": "other",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md#publish",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-registry-client.ts",
@@ -67,7 +87,13 @@
   "summary": {
     "passed": 3,
     "total": 3,
-    "status": "pass"
+    "status": "pass",
+    "bySubsystem": {
+      "package-manager": {
+        "passed": 3,
+        "total": 3
+      }
+    }
   },
   "proofHash": "38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f"
 }

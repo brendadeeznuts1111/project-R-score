@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24T04:51:50.361Z",
+  "generated": "2026-07-24T05:43:32.986Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -627,7 +627,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 27,
+    "uptimeMs": 462,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
@@ -647,12 +647,12 @@
     "dodByStatus": {},
     "experimentsActive": 0,
     "predictionN": 10,
-    "timestamp": "2026-07-24T04:51:50.359Z",
-    "snapshotAt": "2026-07-24T04:51:50.359Z"
+    "timestamp": "2026-07-24T05:43:32.985Z",
+    "snapshotAt": "2026-07-24T05:43:32.985Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-24T04:51:50.351Z",
+    "generated": "2026-07-24T05:43:32.981Z",
     "liquidity": {
       "total": 0
     },
@@ -695,11 +695,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "1eb388f2f5e7803fd19045981ecbeeb1c3c1c2c9562a6e49ccb1340bfd59b883",
+      "proofHash": "07394577d64ac5318ce31daffd8c3f98b6b2c6a8852f731c8b34d7f8f13f71c5",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-24T04:51:50.353Z"
+      "timestamp": "2026-07-24T05:43:32.982Z"
     },
     "registryClient": {
       "available": true,
@@ -707,13 +707,15 @@
       "passed": 3,
       "total": 3,
       "status": "pass",
+      "subsystem": "package-manager",
       "proofHash": "38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f",
-      "timestamp": "2026-07-24T04:32:05.528Z",
+      "timestamp": "2026-07-24T04:59:00.755Z",
       "path": "/registry/registry-client-proof.json"
     },
     "docsCoverage": {
       "available": true,
       "ok": true,
+      "subsystem": "other",
       "missingCanonicalCount": 0,
       "catalogTracked": 13,
       "catalogTotal": 13,
@@ -723,18 +725,227 @@
       "referencePageCount": 57,
       "indexStale": false,
       "proofHash": "c74594ac19fd2bc94162c4ab8943ccec771c0430e51c6ef43317c712385c2fdc",
-      "timestamp": "2026-07-24T04:32:05.792Z",
+      "timestamp": "2026-07-24T04:59:00.392Z",
       "path": "/registry/docs-coverage-proof.json"
+    },
+    "cloudflareTokenScope": {
+      "available": true,
+      "ok": true,
+      "status": "pass",
+      "tier": "minimal",
+      "staticOk": true,
+      "liveOk": null,
+      "liveAvailable": false,
+      "mcpCatalogOk": true,
+      "serverCount": 5,
+      "proofHash": "f68e8f68ac68cc5c361a181922639c26a9cc002e56e6142add76f1536c2c1807",
+      "timestamp": "2026-07-24T05:37:51.242Z",
+      "path": "/registry/cloudflare-token-scope-proof.json",
+      "wellKnownPath": "/.well-known/mcp.json"
+    },
+    "cloudflarePages": {
+      "available": true,
+      "ok": true,
+      "steps": [
+        {
+          "id": "well-known-mcp-parity",
+          "ok": true,
+          "detail": "5 servers"
+        },
+        {
+          "id": "cloudflare-token-static",
+          "ok": true,
+          "detail": "catalog 5/5 · tier minimal"
+        },
+        {
+          "id": "functions-import-graph",
+          "ok": true,
+          "detail": "allowlist ok"
+        },
+        {
+          "id": "functions-edge-safety",
+          "ok": true,
+          "detail": "regex + r2-env boundary"
+        },
+        {
+          "id": "proof-taxonomy-audit",
+          "ok": true,
+          "detail": "12 contracts · 18 consistency"
+        }
+      ],
+      "timestamp": "2026-07-24T05:43:32.980Z",
+      "pagesUrl": "https://project-r-score.pages.dev",
+      "path": "/registry/cloudflare-pages-preflight.json"
     },
     "proofTaxonomy": {
       "available": true,
       "ok": true,
-      "contracts": 7,
-      "contractsOk": 7,
-      "consistencyOk": 11,
-      "consistencyTotal": 11,
-      "proofHash": "ac6bf1a124d95b9e2fa3799e268f1bee6ed5bf58b3f8b890915495e85dd4e698",
-      "timestamp": "2026-07-24T04:51:50.349Z",
+      "contracts": 12,
+      "contractsOk": 12,
+      "consistencyOk": 18,
+      "consistencyTotal": 18,
+      "audits": [
+        {
+          "path": "public/registry/release-features.json",
+          "reportPath": "/registry/release-features.json",
+          "ok": true,
+          "primarySubsystem": "runtime",
+          "rows": 75
+        },
+        {
+          "path": "public/registry/install-platform.json",
+          "reportPath": "/registry/install-platform.json",
+          "ok": true,
+          "primarySubsystem": "package-manager",
+          "rows": 11
+        },
+        {
+          "path": "public/registry/install-env-proof.json",
+          "reportPath": "/registry/install-env-proof.json",
+          "ok": true,
+          "primarySubsystem": "package-manager",
+          "rows": 8
+        },
+        {
+          "path": "public/registry/networking-proof.json",
+          "reportPath": "/registry/networking-proof.json",
+          "ok": true,
+          "primarySubsystem": "networking",
+          "rows": 0
+        },
+        {
+          "path": "public/registry/bun-runtime-nits-proof.json",
+          "reportPath": "/registry/bun-runtime-nits-proof.json",
+          "ok": true,
+          "primarySubsystem": "runtime",
+          "rows": 16
+        },
+        {
+          "path": "public/registry/bundler-loaders-proof.json",
+          "reportPath": "/registry/bundler-loaders-proof.json",
+          "ok": true,
+          "primarySubsystem": "bundler",
+          "rows": 6
+        },
+        {
+          "path": "public/registry/networking-channel-proof.json",
+          "reportPath": "/registry/networking-channel-proof.json",
+          "ok": true,
+          "primarySubsystem": "networking",
+          "rows": 7
+        },
+        {
+          "path": "public/registry/docs-coverage-proof.json",
+          "reportPath": "/registry/docs-coverage-proof.json",
+          "ok": true,
+          "primarySubsystem": "other",
+          "rows": 0
+        },
+        {
+          "path": "public/registry/registry-client-proof.json",
+          "reportPath": "/registry/registry-client-proof.json",
+          "ok": true,
+          "primarySubsystem": "package-manager",
+          "rows": 3
+        },
+        {
+          "path": "public/registry/doc-index.json",
+          "reportPath": "/registry/doc-index.json",
+          "ok": true,
+          "primarySubsystem": "other",
+          "rows": 0
+        },
+        {
+          "path": "public/registry/cloudflare-token-scope-proof.json",
+          "reportPath": "/registry/cloudflare-token-scope-proof.json",
+          "ok": true,
+          "primarySubsystem": "other",
+          "rows": 5
+        },
+        {
+          "path": "public/.well-known/mcp.json",
+          "reportPath": "/.well-known/mcp.json",
+          "ok": true,
+          "primarySubsystem": "other",
+          "rows": 5
+        }
+      ],
+      "consistency": [
+        {
+          "id": "install-platform-embed",
+          "ok": true
+        },
+        {
+          "id": "channel-meta-bake",
+          "ok": true
+        },
+        {
+          "id": "channel-meta-nits-embed",
+          "ok": true
+        },
+        {
+          "id": "channel-meta-bundler-embed",
+          "ok": true
+        },
+        {
+          "id": "channel-meta-networking-embed",
+          "ok": true
+        },
+        {
+          "id": "by-subsystem:release-features",
+          "ok": true
+        },
+        {
+          "id": "by-subsystem:install-platform",
+          "ok": true
+        },
+        {
+          "id": "by-subsystem:install-env",
+          "ok": true
+        },
+        {
+          "id": "by-subsystem:runtime-nits",
+          "ok": true
+        },
+        {
+          "id": "by-subsystem:bundler-loaders",
+          "ok": true
+        },
+        {
+          "id": "by-subsystem:networking-channel",
+          "ok": true
+        },
+        {
+          "id": "by-subsystem:registry-client",
+          "ok": true
+        },
+        {
+          "id": "registry-client-install-env",
+          "ok": true
+        },
+        {
+          "id": "docs-coverage-reference-parity",
+          "ok": true
+        },
+        {
+          "id": "docs-coverage-doc-index",
+          "ok": true
+        },
+        {
+          "id": "cloudflare-token-scope-ssot",
+          "ok": true
+        },
+        {
+          "id": "well-known-mcp-catalog-parity",
+          "ok": true
+        },
+        {
+          "id": "taxonomy-contract-registry",
+          "ok": true
+        }
+      ],
+      "proofHash": "f1d773e126677a012c8fcde85dd52db4dd0d44ee9f86217dae01d9ab6e81e692",
+      "timestamp": "2026-07-24T05:43:32.539Z",
       "path": "/registry/proof-taxonomy-audit.json"
     },
     "channelMeta": {
@@ -744,8 +955,8 @@
       "passed": 75,
       "total": 75,
       "status": "pass",
-      "proofHash": "a41c73515b9808ddbaa1a7665de3b26665828a5166be56ba8997a0b80ecd525e",
-      "updatedAt": "2026-07-24T04:51:50.347Z",
+      "proofHash": "eed4b848643c4f84c6d0b903d267be6f749148fe8be25c91eac2cd1d077e2a43",
+      "updatedAt": "2026-07-24T05:43:32.535Z",
       "channel": "stable",
       "targetVersion": "1.4.0",
       "runtimeVersion": "1.4.0",
@@ -783,67 +994,43 @@
     "routing": {
       "available": true,
       "baseUrl": "https://score.factory-wager.com",
-      "passed": 14,
+      "passed": 16,
       "total": 16,
-      "failed": 2,
+      "failed": 0,
       "httpOk": 14,
       "criticalFailed": 0,
-      "errorRate": 0.125,
-      "meanMs": 149.41,
-      "p50Ms": 122.51,
-      "p95Ms": 288.01,
-      "maxMs": 288.01,
-      "proofHash": "b78ca5087e3d0720ec0014cde8d4eaba31c6314f0bc9cfa750190400ec680b47",
-      "timestamp": "2026-07-24T03:13:28.891Z",
+      "errorRate": 0,
+      "meanMs": 135.05,
+      "p50Ms": 100.04,
+      "p95Ms": 341.06,
+      "maxMs": 341.06,
+      "proofHash": "932682c78bd481ff7002f3310e8b4d25c022e39def49eb5004ce5c97d678b462",
+      "timestamp": "2026-07-24T05:39:35.215Z",
       "regressions": 0,
       "criticalFailedPaths": [],
       "routes": [
-        {
-          "path": "/api/registry/@factorywager/test-pkg",
-          "status": 200,
-          "pass": false,
-          "critical": false,
-          "timeMs": 285.92,
-          "contentType": "text/html"
-        },
-        {
-          "path": "/api/registry/static",
-          "status": 400,
-          "pass": false,
-          "critical": false,
-          "timeMs": 82.17,
-          "contentType": "application/json"
-        },
         {
           "path": "/portal/ops/",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 142.83,
+          "timeMs": 100.04,
           "contentType": "text/html"
-        },
-        {
-          "path": "/api/monitoring",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 96.42,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/registry/@factorywager/bun-utils-test/latest.json",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 94.26,
-          "contentType": "application/json"
         },
         {
           "path": "/api/operations/summary",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 43.7,
+          "timeMs": 97.45,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/monitoring",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 94.11,
           "contentType": "application/json"
         },
         {
@@ -851,31 +1038,39 @@
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 33.98,
+          "timeMs": 36.52,
           "contentType": "application/json"
         },
         {
-          "path": "/portal",
+          "path": "/registry/@factorywager/bun-utils-test/latest.json",
           "status": 200,
           "pass": true,
-          "critical": false,
-          "timeMs": 288.01,
-          "contentType": "text/html"
+          "critical": true,
+          "timeMs": 30.44,
+          "contentType": "application/json"
         },
         {
           "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 260.71,
+          "timeMs": 341.06,
           "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/test-pkg",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 319.34,
+          "contentType": "text/html"
         },
         {
           "path": "/api/registry/@factorywager/routing-test/latest.json",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 227.72,
+          "timeMs": 243.42,
           "contentType": "application/json"
         },
         {
@@ -883,15 +1078,7 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 216.19,
-          "contentType": "text/html"
-        },
-        {
-          "path": "/monitoring",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 205.6,
+          "timeMs": 191.02,
           "contentType": "text/html"
         },
         {
@@ -899,7 +1086,7 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 135.49,
+          "timeMs": 151.75,
           "contentType": "text/html"
         },
         {
@@ -907,15 +1094,31 @@
           "status": 400,
           "pass": true,
           "critical": false,
-          "timeMs": 122.51,
+          "timeMs": 149.98,
           "contentType": "application/json"
+        },
+        {
+          "path": "/portal",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 129.43,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/monitoring",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 119.67,
+          "contentType": "text/html"
         },
         {
           "path": "/registry/@factorywager/routing-test/latest.json",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 117.98,
+          "timeMs": 89.61,
           "contentType": "application/json"
         },
         {
@@ -923,14 +1126,22 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 37.07,
+          "timeMs": 33.91,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/static",
+          "status": 400,
+          "pass": true,
+          "critical": false,
+          "timeMs": 33,
           "contentType": "application/json"
         }
       ]
     }
   },
   "bunUtils": {
-    "proofHash": "6f1e7d58a71df36f43d239838868d3bf7597c19661f6d12c1aeaec36d7d64603",
+    "proofHash": "26b261d6297ba854a881baafb4a17530edd4b1f18c08461f397ff8822695013f",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -939,67 +1150,43 @@
   "routing": {
     "available": true,
     "baseUrl": "https://score.factory-wager.com",
-    "passed": 14,
+    "passed": 16,
     "total": 16,
-    "failed": 2,
+    "failed": 0,
     "httpOk": 14,
     "criticalFailed": 0,
-    "errorRate": 0.125,
-    "meanMs": 149.41,
-    "p50Ms": 122.51,
-    "p95Ms": 288.01,
-    "maxMs": 288.01,
-    "proofHash": "b78ca5087e3d0720ec0014cde8d4eaba31c6314f0bc9cfa750190400ec680b47",
-    "timestamp": "2026-07-24T03:13:28.891Z",
+    "errorRate": 0,
+    "meanMs": 135.05,
+    "p50Ms": 100.04,
+    "p95Ms": 341.06,
+    "maxMs": 341.06,
+    "proofHash": "932682c78bd481ff7002f3310e8b4d25c022e39def49eb5004ce5c97d678b462",
+    "timestamp": "2026-07-24T05:39:35.215Z",
     "regressions": 0,
     "criticalFailedPaths": [],
     "routes": [
-      {
-        "path": "/api/registry/@factorywager/test-pkg",
-        "status": 200,
-        "pass": false,
-        "critical": false,
-        "timeMs": 285.92,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/api/registry/static",
-        "status": 400,
-        "pass": false,
-        "critical": false,
-        "timeMs": 82.17,
-        "contentType": "application/json"
-      },
       {
         "path": "/portal/ops/",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 142.83,
+        "timeMs": 100.04,
         "contentType": "text/html"
-      },
-      {
-        "path": "/api/monitoring",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 96.42,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/registry/@factorywager/bun-utils-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 94.26,
-        "contentType": "application/json"
       },
       {
         "path": "/api/operations/summary",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 43.7,
+        "timeMs": 97.45,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/monitoring",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 94.11,
         "contentType": "application/json"
       },
       {
@@ -1007,31 +1194,39 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 33.98,
+        "timeMs": 36.52,
         "contentType": "application/json"
       },
       {
-        "path": "/portal",
+        "path": "/registry/@factorywager/bun-utils-test/latest.json",
         "status": 200,
         "pass": true,
-        "critical": false,
-        "timeMs": 288.01,
-        "contentType": "text/html"
+        "critical": true,
+        "timeMs": 30.44,
+        "contentType": "application/json"
       },
       {
         "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 260.71,
+        "timeMs": 341.06,
         "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry/@factorywager/test-pkg",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 319.34,
+        "contentType": "text/html"
       },
       {
         "path": "/api/registry/@factorywager/routing-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 227.72,
+        "timeMs": 243.42,
         "contentType": "application/json"
       },
       {
@@ -1039,15 +1234,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 216.19,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/monitoring",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 205.6,
+        "timeMs": 191.02,
         "contentType": "text/html"
       },
       {
@@ -1055,7 +1242,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 135.49,
+        "timeMs": 151.75,
         "contentType": "text/html"
       },
       {
@@ -1063,15 +1250,31 @@
         "status": 400,
         "pass": true,
         "critical": false,
-        "timeMs": 122.51,
+        "timeMs": 149.98,
         "contentType": "application/json"
+      },
+      {
+        "path": "/portal",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 129.43,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/monitoring",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 119.67,
+        "contentType": "text/html"
       },
       {
         "path": "/registry/@factorywager/routing-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 117.98,
+        "timeMs": 89.61,
         "contentType": "application/json"
       },
       {
@@ -1079,7 +1282,15 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 37.07,
+        "timeMs": 33.91,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry/static",
+        "status": 400,
+        "pass": true,
+        "critical": false,
+        "timeMs": 33,
         "contentType": "application/json"
       }
     ]
@@ -1091,8 +1302,8 @@
     "passed": 75,
     "total": 75,
     "status": "pass",
-    "proofHash": "a41c73515b9808ddbaa1a7665de3b26665828a5166be56ba8997a0b80ecd525e",
-    "updatedAt": "2026-07-24T04:51:50.347Z",
+    "proofHash": "eed4b848643c4f84c6d0b903d267be6f749148fe8be25c91eac2cd1d077e2a43",
+    "updatedAt": "2026-07-24T05:43:32.535Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -1130,12 +1341,172 @@
   "proofTaxonomy": {
     "available": true,
     "ok": true,
-    "contracts": 7,
-    "contractsOk": 7,
-    "consistencyOk": 11,
-    "consistencyTotal": 11,
-    "proofHash": "ac6bf1a124d95b9e2fa3799e268f1bee6ed5bf58b3f8b890915495e85dd4e698",
-    "timestamp": "2026-07-24T04:51:50.349Z",
+    "contracts": 12,
+    "contractsOk": 12,
+    "consistencyOk": 18,
+    "consistencyTotal": 18,
+    "audits": [
+      {
+        "path": "public/registry/release-features.json",
+        "reportPath": "/registry/release-features.json",
+        "ok": true,
+        "primarySubsystem": "runtime",
+        "rows": 75
+      },
+      {
+        "path": "public/registry/install-platform.json",
+        "reportPath": "/registry/install-platform.json",
+        "ok": true,
+        "primarySubsystem": "package-manager",
+        "rows": 11
+      },
+      {
+        "path": "public/registry/install-env-proof.json",
+        "reportPath": "/registry/install-env-proof.json",
+        "ok": true,
+        "primarySubsystem": "package-manager",
+        "rows": 8
+      },
+      {
+        "path": "public/registry/networking-proof.json",
+        "reportPath": "/registry/networking-proof.json",
+        "ok": true,
+        "primarySubsystem": "networking",
+        "rows": 0
+      },
+      {
+        "path": "public/registry/bun-runtime-nits-proof.json",
+        "reportPath": "/registry/bun-runtime-nits-proof.json",
+        "ok": true,
+        "primarySubsystem": "runtime",
+        "rows": 16
+      },
+      {
+        "path": "public/registry/bundler-loaders-proof.json",
+        "reportPath": "/registry/bundler-loaders-proof.json",
+        "ok": true,
+        "primarySubsystem": "bundler",
+        "rows": 6
+      },
+      {
+        "path": "public/registry/networking-channel-proof.json",
+        "reportPath": "/registry/networking-channel-proof.json",
+        "ok": true,
+        "primarySubsystem": "networking",
+        "rows": 7
+      },
+      {
+        "path": "public/registry/docs-coverage-proof.json",
+        "reportPath": "/registry/docs-coverage-proof.json",
+        "ok": true,
+        "primarySubsystem": "other",
+        "rows": 0
+      },
+      {
+        "path": "public/registry/registry-client-proof.json",
+        "reportPath": "/registry/registry-client-proof.json",
+        "ok": true,
+        "primarySubsystem": "package-manager",
+        "rows": 3
+      },
+      {
+        "path": "public/registry/doc-index.json",
+        "reportPath": "/registry/doc-index.json",
+        "ok": true,
+        "primarySubsystem": "other",
+        "rows": 0
+      },
+      {
+        "path": "public/registry/cloudflare-token-scope-proof.json",
+        "reportPath": "/registry/cloudflare-token-scope-proof.json",
+        "ok": true,
+        "primarySubsystem": "other",
+        "rows": 5
+      },
+      {
+        "path": "public/.well-known/mcp.json",
+        "reportPath": "/.well-known/mcp.json",
+        "ok": true,
+        "primarySubsystem": "other",
+        "rows": 5
+      }
+    ],
+    "consistency": [
+      {
+        "id": "install-platform-embed",
+        "ok": true
+      },
+      {
+        "id": "channel-meta-bake",
+        "ok": true
+      },
+      {
+        "id": "channel-meta-nits-embed",
+        "ok": true
+      },
+      {
+        "id": "channel-meta-bundler-embed",
+        "ok": true
+      },
+      {
+        "id": "channel-meta-networking-embed",
+        "ok": true
+      },
+      {
+        "id": "by-subsystem:release-features",
+        "ok": true
+      },
+      {
+        "id": "by-subsystem:install-platform",
+        "ok": true
+      },
+      {
+        "id": "by-subsystem:install-env",
+        "ok": true
+      },
+      {
+        "id": "by-subsystem:runtime-nits",
+        "ok": true
+      },
+      {
+        "id": "by-subsystem:bundler-loaders",
+        "ok": true
+      },
+      {
+        "id": "by-subsystem:networking-channel",
+        "ok": true
+      },
+      {
+        "id": "by-subsystem:registry-client",
+        "ok": true
+      },
+      {
+        "id": "registry-client-install-env",
+        "ok": true
+      },
+      {
+        "id": "docs-coverage-reference-parity",
+        "ok": true
+      },
+      {
+        "id": "docs-coverage-doc-index",
+        "ok": true
+      },
+      {
+        "id": "cloudflare-token-scope-ssot",
+        "ok": true
+      },
+      {
+        "id": "well-known-mcp-catalog-parity",
+        "ok": true
+      },
+      {
+        "id": "taxonomy-contract-registry",
+        "ok": true
+      }
+    ],
+    "proofHash": "f1d773e126677a012c8fcde85dd52db4dd0d44ee9f86217dae01d9ab6e81e692",
+    "timestamp": "2026-07-24T05:43:32.539Z",
     "path": "/registry/proof-taxonomy-audit.json"
   }
 }
