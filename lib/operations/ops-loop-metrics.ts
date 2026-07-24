@@ -3,8 +3,18 @@
  * Ops closed-loop throughput counters — dispatch → gate → reserve → settle → durable delivery.
  *
  * Metric SSOT: docs/harness/tenants/ops-loop-throughput.md
+ *
+ * Capital-return proxies (mirror toc-ops RETURN_EFFICIENCY; null when inputs missing):
+ * - **CE** `capitalEfficiencyProxy` — Σ ProfitSplit / peak I from `toc_soft_entries`
+ *   (peak I = max net deployed: Σ CapitalDeployment − Σ CapitalReturn).
+ * - **LE** `limitEfficiencyProxy` — avg ΔL / (C_asset × days) on WARMED accounts with fresh
+ *   limits in baked `/registry/toc-ops.json` (ΔL = dailyMax, C_asset = hardBalance + principal).
+ * - **RP** `processReturnProxy` — settled Σ plays.pnl / (peak exposure + OE), where peak exposure
+ *   is max(`operations.total_exposure`, Σ positions.in_play) and OE is Σ |CostOfPriming|+|Loss|
+ *   from `toc_soft_entries` (0 when journal empty).
  */
 import type { Database } from 'bun:sqlite';
+import { loadTocOpsSnapshotSync } from '../toc-ops/export-snapshot.ts';
 
 export type OpsLoopMetricsSlice = {
   /** play_distribution fan-out rows (recipient dispatches). */
@@ -27,6 +37,12 @@ export type OpsLoopMetricsSlice = {
   manualStepsPerCycle: number;
   /** settledViaFullLoop / dispatched (0 when dispatched = 0). */
   loopCompletionRate: number;
+  /** Σ ProfitSplit / peak I from toc_soft_entries; null when journal empty or peak I = 0. */
+  capitalEfficiencyProxy: number | null;
+  /** Avg usable-limit uplift from baked toc-ops fixture; null when no fresh WARMED limits. */
+  limitEfficiencyProxy: number | null;
+  /** Settled plays.pnl / (peak exposure + OE); null when no settled pnl or denominator = 0. */
+  processReturnProxy: number | null;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -136,6 +152,11 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
 
   const loopCompletionRate = dispatched > 0 ? settledViaFullLoop / dispatched : 0;
 
+  const soft = querySoftBalanceRollup(db);
+  const capitalEfficiencyProxy = computeCapitalEfficiencyProxy(soft);
+  const limitEfficiencyProxy = computeLimitEfficiencyProxy();
+  const processReturnProxy = computeProcessReturnProxy(db, soft?.oe ?? 0);
+
   return {
     dispatched,
     gatedAllow,
@@ -150,7 +171,99 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
     oldestPendingAgeSec,
     manualStepsPerCycle,
     loopCompletionRate,
+    capitalEfficiencyProxy,
+    limitEfficiencyProxy,
+    processReturnProxy,
   };
+}
+
+type SoftBalanceRollup = {
+  profitSplit: number;
+  peakCapital: number;
+  oe: number;
+};
+
+function querySoftBalanceRollup(db: Database): SoftBalanceRollup | null {
+  if (!tableExists(db, 'toc_soft_entries')) return null;
+  const row = db
+    .query(
+      `SELECT
+         COALESCE(SUM(CASE WHEN entry_type = 'ProfitSplit' THEN amount ELSE 0 END), 0) AS profit_split,
+         COALESCE(SUM(CASE WHEN entry_type = 'CapitalDeployment' THEN amount ELSE 0 END), 0) AS deployed,
+         COALESCE(SUM(CASE WHEN entry_type = 'CapitalReturn' THEN amount ELSE 0 END), 0) AS returned,
+         COALESCE(SUM(CASE WHEN entry_type IN ('CostOfPriming', 'Loss') THEN ABS(amount) ELSE 0 END), 0) AS oe,
+         COUNT(*) AS n
+       FROM toc_soft_entries`
+    )
+    .get() as {
+    profit_split: number;
+    deployed: number;
+    returned: number;
+    oe: number;
+    n: number;
+  };
+  if (!row?.n) return null;
+  const peakCapital = Math.max(row.deployed - row.returned, 0);
+  return { profitSplit: row.profit_split, peakCapital, oe: row.oe };
+}
+
+function computeCapitalEfficiencyProxy(soft: SoftBalanceRollup | null): number | null {
+  if (!soft || soft.peakCapital <= 0) return null;
+  return soft.profitSplit / soft.peakCapital;
+}
+
+function computeLimitEfficiencyProxy(): number | null {
+  const snap = loadTocOpsSnapshotSync();
+  if (!snap) return null;
+
+  const values: number[] = [];
+  for (const partner of snap.partners) {
+    for (const account of partner.accounts) {
+      if (account.status !== 'WARMED') continue;
+      const deltaL = account.limits.dailyMax;
+      if (deltaL == null || deltaL <= 0) continue;
+      if (account.limits.freshness !== 'fresh') continue;
+      const cAsset = account.hardBalance + account.gate12.housePrincipalOutstanding;
+      if (cAsset <= 0) continue;
+      values.push(deltaL / cAsset);
+    }
+  }
+  if (values.length === 0) return null;
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function queryPeakExposureProxy(db: Database): number {
+  let exposure = 0;
+  if (tableExists(db, 'operations')) {
+    const row = db
+      .query(`SELECT COALESCE(total_exposure, 0) AS exposure FROM operations WHERE id = 'main'`)
+      .get() as { exposure: number } | null;
+    exposure = row?.exposure ?? 0;
+  }
+  if (tableExists(db, 'positions')) {
+    const inPlay = db
+      .query(`SELECT COALESCE(SUM(in_play), 0) AS exposure FROM positions`)
+      .get() as { exposure: number };
+    exposure = Math.max(exposure, inPlay.exposure ?? 0);
+  }
+  return exposure;
+}
+
+function computeProcessReturnProxy(db: Database, oeProxy: number): number | null {
+  if (!tableExists(db, 'plays')) return null;
+  const settled = db
+    .query(
+      `SELECT COALESCE(SUM(pnl), 0) AS pnl, COUNT(*) AS n
+       FROM plays
+       WHERE result IS NOT NULL AND result != 'pending' AND pnl IS NOT NULL`
+    )
+    .get() as { pnl: number; n: number };
+  if (!settled?.n) return null;
+
+  const iPeak = queryPeakExposureProxy(db);
+  const denominator = iPeak + oeProxy;
+  if (denominator <= 0) return null;
+  return settled.pnl / denominator;
 }
 
 function emptyLoopSlice(): OpsLoopMetricsSlice {
@@ -168,6 +281,9 @@ function emptyLoopSlice(): OpsLoopMetricsSlice {
     oldestPendingAgeSec: null,
     manualStepsPerCycle: 0,
     loopCompletionRate: 0,
+    capitalEfficiencyProxy: null,
+    limitEfficiencyProxy: null,
+    processReturnProxy: null,
   };
 }
 

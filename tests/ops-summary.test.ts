@@ -81,11 +81,8 @@ describe('buildOpsSummary', () => {
       dispatched: 0,
       loopCompletionRate: 0,
       manualStepsPerCycle: 0,
-    });
-    expect(s.loop).toMatchObject({
-      dispatched: 0,
-      loopCompletionRate: 0,
-      manualStepsPerCycle: 0,
+      capitalEfficiencyProxy: null,
+      processReturnProxy: null,
     });
     db.close();
   });
