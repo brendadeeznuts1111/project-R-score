@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/globals/CompressionStream — CompressionStream
+// @see https://bun.com/reference/globals/DecompressionStream — DecompressionStream
+// @see https://bun.com/reference/globals/TextEncoderStream — TextEncoderStream
+// @see https://bun.com/reference/globals/TextDecoderStream — TextDecoderStream
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve routes
 // @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — Bun.serve port
@@ -62,7 +66,7 @@ import {
   formatBundlerNavTree,
   type BundlerNavGroup,
 } from '../lib/docs/bundler-nav';
-import { bunBlog, bunDocs, mdnWebApi } from '../lib/docs/bun-site-url.ts';
+import { bunBlog, bunDocs, bunReference, mdnWebApi } from '../lib/docs/bun-site-url.ts';
 import type { BunTokenKind, BunTokenStability } from '../lib/docs/bun-token.ts';
 import { BUN_CONFIG_INSTALL_VARS } from './bun-install-env.ts';
 import { getCuratedEntry } from './bun-docs-curated.ts';
@@ -158,6 +162,202 @@ const CANONICAL_INSTALL_ENV_URLS = Object.fromEntries(
   Object.entries(CANONICAL_INSTALL_ENV_TOKENS).map(([key, meta]) => [key, meta.url])
 ) as Record<string, string>;
 
+export type CanonicalRegistryClientToken = {
+  url: string;
+  kind: 'SDK';
+  stability: 'stable';
+  description?: string;
+};
+
+const REGISTRY_CLIENT_DOC =
+  'https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md';
+
+export const CANONICAL_REGISTRY_CLIENT_TOKENS: Record<string, CanonicalRegistryClientToken> = {
+  RegistryClient: {
+    url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md',
+    kind: 'SDK',
+    stability: 'stable',
+    description: 'Runtime-neutral FactoryWager registry read plane + publish SDK',
+  },
+  'registry-client resolve': {
+    url: `${REGISTRY_CLIENT_DOC}#resolve`,
+    kind: 'SDK',
+    stability: 'stable',
+    description: 'resolve() — dist-tag to /registry/storage/…/artifact.tgz',
+  },
+  'registry-client download': {
+    url: `${REGISTRY_CLIENT_DOC}#download`,
+    kind: 'SDK',
+    stability: 'stable',
+    description: 'download() — SHA-256 + size verification',
+  },
+  'registry-client publish': {
+    url: `${REGISTRY_CLIENT_DOC}#publish`,
+    kind: 'SDK',
+    stability: 'stable',
+    description: 'publish() — authenticated multipart FormData',
+  },
+};
+
+export type RegistryClientToken = keyof typeof CANONICAL_REGISTRY_CLIENT_TOKENS;
+
+const CANONICAL_REGISTRY_CLIENT_URLS = Object.fromEntries(
+  Object.entries(CANONICAL_REGISTRY_CLIENT_TOKENS).map(([key, meta]) => [key, meta.url])
+) as Record<string, string>;
+
+const BUN_INSPECT_DOC = 'https://bun.com/docs/runtime/utils#bun-inspect';
+const BUN_FILE_DOC = 'https://bun.com/docs/runtime/file-io#reading-files-bun-file';
+const BUN_WRITE_DOC = 'https://bun.com/docs/runtime/file-io#writing-files-bun-write';
+const RUNTIME_NITS_DOC =
+  'https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/bun-runtime-nits.md';
+
+export type CanonicalRuntimeNitsToken = {
+  url: string;
+  kind: BunTokenKind | 'Global';
+  stability: BunTokenStability;
+  description?: string;
+};
+
+export const CANONICAL_RUNTIME_NITS_TOKENS: Record<string, CanonicalRuntimeNitsToken> = {
+  'Bun.inspect.sorted': {
+    url: BUN_INSPECT_DOC,
+    kind: 'API',
+    stability: 'stable',
+    description: 'Bun.inspect sorted — deterministic key order for snapshots',
+  },
+  'Bun.inspect.compact': {
+    url: BUN_INSPECT_DOC,
+    kind: 'API',
+    stability: 'stable',
+    description: 'Bun.inspect compact — single-line output',
+  },
+  'inspect.showProxy': {
+    url: 'https://bun.com/reference/bun/BunInspectOptions',
+    kind: 'Global',
+    stability: 'stable',
+    description: 'showProxy — Proxy target/handler in inspect output',
+  },
+  'inspect.getters': {
+    url: 'https://bun.com/reference/bun/BunInspectOptions',
+    kind: 'Global',
+    stability: 'stable',
+    description: 'getters — evaluate or suppress property getters',
+  },
+  'inspect.numericSeparator': {
+    url: 'https://bun.com/reference/bun/BunInspectOptions',
+    kind: 'Global',
+    stability: 'stable',
+    description: 'numericSeparator — underscore separators in numbers (Node compat)',
+  },
+  'util.inspect options': {
+    url: 'https://nodejs.org/api/util.html#utilinspectobject-options',
+    kind: 'Concept',
+    stability: 'stable',
+    description: 'Node util.inspect option delta vs BunInspectOptions',
+  },
+  CompressionStream: {
+    url: bunReference('globals/CompressionStream'),
+    kind: 'Global',
+    stability: 'stable',
+    description: 'WHATWG gzip/deflate compression stream',
+  },
+  DecompressionStream: {
+    url: bunReference('globals/DecompressionStream'),
+    kind: 'Global',
+    stability: 'stable',
+    description: 'WHATWG gzip/deflate decompression stream',
+  },
+  TextEncoderStream: {
+    url: bunReference('globals/TextEncoderStream'),
+    kind: 'Global',
+    stability: 'stable',
+    description: 'Streaming string to Uint8Array',
+  },
+  TextDecoderStream: {
+    url: bunReference('globals/TextDecoderStream'),
+    kind: 'Global',
+    stability: 'stable',
+    description: 'Streaming Uint8Array to string',
+  },
+  'URL.origin': {
+    url: bunReference('globals/URL/origin'),
+    kind: 'Global',
+    stability: 'stable',
+    description: 'protocol + host + port',
+  },
+  'URL.searchParams': {
+    url: bunReference('globals/URL/searchParams'),
+    kind: 'Global',
+    stability: 'stable',
+    description: 'Query parameter interface on URL',
+  },
+  'bun.file.lazy-stat': {
+    url: BUN_FILE_DOC,
+    kind: 'API',
+    stability: 'stable',
+    description: 'Bun.file is lazy until .text/.bytes/.exists',
+  },
+  'bun.write.auto-dir': {
+    url: BUN_WRITE_DOC,
+    kind: 'API',
+    stability: 'stable',
+    description: 'Bun.write creates parent directories',
+  },
+  'bun.file.bytes-vs-buffer': {
+    url: BUN_FILE_DOC,
+    kind: 'API',
+    stability: 'stable',
+    description: 'Bun.file().bytes() matches fs read bytes',
+  },
+  'bun-runtime-nits': {
+    url: RUNTIME_NITS_DOC,
+    kind: 'Concept',
+    stability: 'stable',
+    description: 'Phase 1 runtime nits verification lane',
+  },
+};
+
+export type RuntimeNitsToken = keyof typeof CANONICAL_RUNTIME_NITS_TOKENS;
+
+const CANONICAL_RUNTIME_NITS_URLS = Object.fromEntries(
+  Object.entries(CANONICAL_RUNTIME_NITS_TOKENS).map(([key, meta]) => [key, meta.url])
+) as Record<string, string>;
+
+// ── Official guides & onboarding paths (verify-guides.ts lane) ─────────────
+export type CanonicalGuidesToken = {
+  url: string;
+  kind: 'Documentation' | 'Tooling';
+  stability: 'stable';
+  description: string;
+};
+
+export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
+  'Bun Guides': {
+    url: 'https://bun.com/guides',
+    kind: 'Documentation',
+    stability: 'stable',
+    description: 'Index of all official guides (installation, migration, deployment)',
+  },
+  'Bun Install Guide': {
+    url: 'https://bun.com/guides/install/from-npm-install-to-bun-install',
+    kind: 'Documentation',
+    stability: 'stable',
+    description: 'Step-by-step migration from npm install to bun install',
+  },
+  'Bun Get': {
+    url: 'https://bun.com/get',
+    kind: 'Tooling',
+    stability: 'stable',
+    description: 'Install landing page (serves 200 directly, no redirect on 2026-07)',
+  },
+};
+
+export type GuidesToken = keyof typeof CANONICAL_GUIDES_TOKENS;
+
+const CANONICAL_GUIDES_URLS = Object.fromEntries(
+  Object.entries(CANONICAL_GUIDES_TOKENS).map(([key, meta]) => [key, meta.url])
+) as Record<string, string>;
+
 // Canonical doc map — the reference thesis for this repo's terminal layer:
 //
 //   Bun ships native, SIMD-accelerated replacements for the terminal npm
@@ -186,12 +386,6 @@ export const BUN_TYPES_PINNED =
 export const BUN_TYPES_MAIN = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
 
 export const CANONICAL_REFS: Record<string, string> = {
-  // ── FactoryWager SDK (repo packages; not Bun docs) ────────────────────────
-  'registry-client resolve':
-    'https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/src/index.ts',
-  'registry-client download':
-    'https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md',
-
   // ── Terminal width & ANSI (replaces string-width / strip-ansi / wrap-ansi /
   //    slice-ansi) ────────────────────────────────────────────────────────
   'Bun.stringWidth': 'https://bun.com/docs/runtime/utils#bun-stringwidth',
@@ -366,6 +560,9 @@ export const CANONICAL_REFS: Record<string, string> = {
   'blob:': bunDocs('runtime/networking/fetch', 'blob-urls-blob'),
   ...CANONICAL_INSTALL_PLATFORM_URLS,
   ...CANONICAL_INSTALL_ENV_URLS,
+  ...CANONICAL_REGISTRY_CLIENT_URLS,
+  ...CANONICAL_RUNTIME_NITS_URLS,
+  ...CANONICAL_GUIDES_URLS,
   'isolated installs': bunDocs('pm/isolated-installs'),
   'global virtual store': bunDocs('pm/global-store'),
   configVersion: bunDocs('pm/isolated-installs'),
@@ -672,6 +869,10 @@ export const CANONICAL_REFS: Record<string, string> = {
   'URLPattern.pathname': bunBlog('bun-v1.3.4', 'urlpattern-api'),
   'URLPattern.search': bunBlog('bun-v1.3.4', 'urlpattern-api'),
   'URLPattern.hash': bunBlog('bun-v1.3.4', 'urlpattern-api'),
+  // WHATWG URL — host includes port; hostname excludes port
+  'URL.host': bunReference('globals/URL/host'),
+  'URL.hostname': bunReference('globals/URL/hostname'),
+  'URL.port': bunReference('globals/URL/port'),
   'URLPattern.test': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
   'URLPattern.exec': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
   'URLPattern perf': bunBlog('bun-v1.3.12', 'urlpattern-is-up-to-2-3x-faster'),
@@ -1573,6 +1774,11 @@ async function suggest(query: string): Promise<void> {
     CANONICAL_INSTALL_PLATFORM_TOKENS[resolveApiAlias(query)];
   const envToken =
     CANONICAL_INSTALL_ENV_TOKENS[query] ?? CANONICAL_INSTALL_ENV_TOKENS[resolveApiAlias(query)];
+  const registryClientToken =
+    CANONICAL_REGISTRY_CLIENT_TOKENS[query] ??
+    CANONICAL_REGISTRY_CLIENT_TOKENS[resolveApiAlias(query)];
+  const runtimeNitsToken =
+    CANONICAL_RUNTIME_NITS_TOKENS[query] ?? CANONICAL_RUNTIME_NITS_TOKENS[resolveApiAlias(query)];
   if (mapped) {
     if (platformToken) {
       console.info(`${query} → ${platformToken.url}`);
@@ -1585,6 +1791,24 @@ async function suggest(query: string): Promise<void> {
       console.info(`  kind: ${envToken.kind}  stability: ${envToken.stability}`);
       if (envToken.description) console.info(`  description: ${envToken.description}`);
       console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_INSTALL_ENV_TOKENS)');
+      return;
+    }
+    if (registryClientToken) {
+      console.info(`${query} → ${registryClientToken.url}`);
+      console.info(
+        `  kind: ${registryClientToken.kind}  stability: ${registryClientToken.stability}`
+      );
+      if (registryClientToken.description)
+        console.info(`  description: ${registryClientToken.description}`);
+      console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_REGISTRY_CLIENT_TOKENS)');
+      return;
+    }
+    if (runtimeNitsToken) {
+      console.info(`${query} → ${runtimeNitsToken.url}`);
+      console.info(`  kind: ${runtimeNitsToken.kind}  stability: ${runtimeNitsToken.stability}`);
+      if (runtimeNitsToken.description)
+        console.info(`  description: ${runtimeNitsToken.description}`);
+      console.info('  (canonical map — tools/bun-doc-refs.ts CANONICAL_RUNTIME_NITS_TOKENS)');
       return;
     }
     try {

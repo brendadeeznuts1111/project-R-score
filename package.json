@@ -1869,7 +1869,9 @@
     "ops:snapshot:post": "bun tools/ops-snapshot.ts --post",
     "env:check": "bun tools/env-check.ts",
     "env:check:reasonix": "bun tools/env-check.ts --reasonix",
-    "env:check:strict": "bun tools/env-check.ts --reasonix --strict"
+    "env:check:strict": "bun tools/env-check.ts --reasonix --strict",
+    "verify:guides": "bun tools/verify-guides.ts",
+    "verify:guides:save": "bun tools/verify-guides.ts --save"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",

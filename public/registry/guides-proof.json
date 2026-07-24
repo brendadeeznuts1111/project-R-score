@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-07-24T02:00:38.485Z",
+  "bunVersion": "1.4.0",
+  "results": [
+    {
+      "name": "Bun Guides",
+      "expected": "200 OK",
+      "actual": "200",
+      "passed": true,
+      "canonical": "https://bun.com/guides"
+    },
+    {
+      "name": "Bun Install Guide",
+      "expected": "200 OK",
+      "actual": "200",
+      "passed": true,
+      "canonical": "https://bun.com/guides/install/from-npm-install-to-bun-install"
+    },
+    {
+      "name": "Bun Get",
+      "expected": "200 OK",
+      "actual": "200",
+      "passed": true,
+      "canonical": "https://bun.com/get"
+    },
+    {
+      "name": "install guide: bun install --dry-run works",
+      "expected": "exit 0",
+      "actual": "exit 0",
+      "passed": true,
+      "canonical": "https://bun.com/guides/install/from-npm-install-to-bun-install"
+    },
+    {
+      "name": "install guide: bun install --production --dry-run works",
+      "expected": "exit 0",
+      "actual": "exit 0",
+      "passed": true,
+      "canonical": "https://bun.com/guides/install/from-npm-install-to-bun-install"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "total": 5,
+    "status": "pass"
+  },
+  "proofHash": "81c2287e9cf23324acf922ec3d87920d63b6ccd7da457250690d799d5587a35e"
+}
