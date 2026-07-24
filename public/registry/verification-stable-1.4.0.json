@@ -1,0 +1,3053 @@
+{
+  "type": "ChannelAwareVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T04:43:29.398Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "blogPost": "https://bun.com/blog/bun-v1.3.14",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "9d0180ccfdba2dffdb2f9ab91f207e1947b1abf7",
+    "provenanceId": "local-2026-07-24T04-32-25-009Z",
+    "testedAt": "2026-07-24T04:32:25.009Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none",
+    "subsystems": [
+      "runtime",
+      "bundler",
+      "package-manager",
+      "networking",
+      "other"
+    ]
+  },
+  "releaseNotes": [
+    {
+      "id": "bun-image",
+      "title": "Bun.Image — built-in image processing",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#bun-image",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#bun-image",
+        "https://bun.com/blog/bun-v1.3.14#terminal-methods"
+      ]
+    },
+    {
+      "id": "tls-system-ca-no-flag",
+      "title": "tls.getCACertificates('system') without --use-system-ca",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+        "https://bun.com/reference/node/tls/getCACertificates",
+        "https://github.com/oven-sh/bun/issues/24339",
+        "https://github.com/oven-sh/bun/pull/29526"
+      ]
+    },
+    {
+      "id": "gc-builtins-incremental",
+      "title": "Reduced incremental GC overhead for built-in objects",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+        "https://bun.com/docs/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects"
+      ]
+    },
+    {
+      "id": "binary-size-linux-windows",
+      "title": "Smaller Bun binary on Windows and Linux",
+      "verify": "informational",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#smaller-binary-size",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#smaller-binary-size",
+        "https://github.com/oven-sh/bun/releases"
+      ]
+    },
+    {
+      "id": "event-loop-refactor",
+      "title": "Event loop refactor (reliability + memory)",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#event-loop-refactor"
+      ]
+    },
+    {
+      "id": "using-await-using-native",
+      "title": "using / await using no longer lowered when targeting Bun",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun"
+      ]
+    },
+    {
+      "id": "no-orphans",
+      "title": "--no-orphans — exit when parent process dies",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#no-orphans"
+      ]
+    },
+    {
+      "id": "faster-esm",
+      "title": "Faster ESM module loading",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading"
+      ]
+    },
+    {
+      "id": "cross-language-lto",
+      "title": "Cross-language LTO for Zig ↔ C++ on Linux",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux"
+      ]
+    },
+    {
+      "id": "bun-terminal-pty",
+      "title": "Bun.Terminal API for pseudo-terminal (PTY) support",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+        "https://bun.com/docs/runtime/child-process#terminal-pty-support"
+      ]
+    },
+    {
+      "id": "compile-time-feature-flags",
+      "title": "Compile-time feature flags (bun:bundle)",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+        "https://bun.com/docs/bundler/index#features",
+        "https://bun.com/docs/guides/runtime/build-time-constants#feature-flags"
+      ]
+    },
+    {
+      "id": "stringwidth-accuracy",
+      "title": "Improved Bun.stringWidth accuracy",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
+        "https://bun.com/docs/runtime/utils#bun-stringwidth"
+      ]
+    },
+    {
+      "id": "s3-content-disposition",
+      "title": "S3 contentDisposition uploads",
+      "verify": "informational",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads",
+        "https://bun.com/docs/runtime/s3"
+      ]
+    },
+    {
+      "id": "npmrc-env-expansion",
+      "title": ".npmrc quoted env expansion + ? modifier",
+      "verify": "informational",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#environment-variable-expansion-in-npmrc-quoted-values",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#environment-variable-expansion-in-npmrc-quoted-values",
+        "https://bun.com/docs/pm/npmrc"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "name": "tls.getCACertificates('system')",
+      "expected": "non-empty on linux/win32; array on macOS (no --use-system-ca)",
+      "actual": "1 certs · darwin · non-empty without --use-system-ca",
+      "passed": true,
+      "canonicalKey": "tls-getcacertificates-system-now-works-without-use-system-ca",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Built-in objects GC smoke (Request/Response)",
+      "expected": "2000 allocs + optional Bun.gc without crash",
+      "actual": "ok (2000 allocs)",
+      "passed": true,
+      "canonicalKey": "reduced-gc-overhead-for-built-in-objects",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Bun.escapeHTML performance",
+      "expected": "< 500 ns per call",
+      "actual": "146.0 ns",
+      "passed": true,
+      "canonicalKey": "cross-language-lto-for-zig-c-on-linux",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "ESM module load (node:fs)",
+      "expected": "loads successfully",
+      "actual": "0.08ms",
+      "passed": true,
+      "canonicalKey": "faster-esm-module-loading",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Process exit with pending timer",
+      "expected": "exits before unref timer fires",
+      "actual": "exits before unref timer fires",
+      "passed": true,
+      "canonicalKey": "event-loop-refactor",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "timer.ref() after fired setTimeout",
+      "expected": "process exits (ref does not keep loop alive)",
+      "actual": "exits after ref on fired timer",
+      "passed": true,
+      "canonicalKey": "event-loop-refactor",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "WebSocket cleanup on close",
+      "expected": "no crash or leak",
+      "actual": "ok",
+      "passed": true,
+      "canonicalKey": "websocket-permessagedeflate-false-now-respected-in-upgrade-requests",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#websocket-permessagedeflate-false-now-respected-in-upgrade-requests",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#websocket-permessagedeflate-false-now-respected-in-upgrade-requests",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Child process stdin pipe cleanup",
+      "expected": "exits without hanging",
+      "actual": "exited",
+      "passed": true,
+      "canonicalKey": "event-loop-refactor",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Bun Shell basics",
+      "expected": "echo works",
+      "actual": "\"hello\"",
+      "passed": true,
+      "canonicalKey": "Bun Shell basics",
+      "canonical": "https://bun.com/docs/runtime/shell#getting-started",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/shell#getting-started",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "structuredClone Blob",
+      "expected": "clone works",
+      "actual": "ok",
+      "passed": true,
+      "canonicalKey": "structuredClone Blob",
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "Bun.password.hash",
+      "expected": "returns a string",
+      "actual": "string",
+      "passed": true,
+      "canonicalKey": "Bun.password.hash",
+      "canonical": "https://bun.com/docs/runtime/hashing#bun-password",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/hashing#bun-password",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "Bun.inspect depth",
+      "expected": "unlimited in canary",
+      "actual": "unlimited",
+      "passed": true,
+      "canonicalKey": "upgraded-javascriptcore-engine",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#upgraded-javascriptcore-engine",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#upgraded-javascriptcore-engine",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Bun.hash returns bigint",
+      "expected": "bigint",
+      "actual": "bigint",
+      "passed": true,
+      "canonicalKey": "Bun.hash returns bigint",
+      "canonical": "https://bun.com/docs/runtime/hashing#bun-hash",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/hashing#bun-hash",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "Bun.version / Bun.revision",
+      "expected": "both available",
+      "actual": "1.4.0 (a227ad99)",
+      "passed": true,
+      "canonicalKey": "Bun.version / Bun.revision",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-version",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-version",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "using / await using (Explicit Resource Mgmt)",
+      "expected": "works without lowering",
+      "actual": "using=42, await using=84",
+      "passed": true,
+      "canonicalKey": "using-await-using-no-longer-lowered-when-targeting-bun",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+      "subsystem": "bundler",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Built-in objects (Request, Response)",
+      "expected": "created without crash",
+      "actual": "ok",
+      "passed": true,
+      "canonicalKey": "reduced-gc-overhead-for-built-in-objects",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "--no-orphans support",
+      "expected": "configured in bunfig + env",
+      "actual": "bunfig=true, env=true",
+      "passed": true,
+      "canonicalKey": "no-orphans",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "subsystem": "package-manager",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Bun.Image (all terminal methods: bytes, buffer, blob, toBase64, dataurl, placeholder, metadata, write)",
+      "expected": "all terminal methods produce correct output",
+      "actual": "fmt=png 1x1 webp=0.1KB buf=0.1KB blob=0.1KB b64=136B dataurl=159B placeholder=2638B write=true",
+      "passed": true,
+      "canonicalKey": "terminal-methods",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#terminal-methods",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.14",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#terminal-methods",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "fetch protocol (data:)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "data: round-trip (200)",
+      "passed": true,
+      "canonicalKey": "fetch protocol (data:)",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#data-urls-data",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#data-urls-data",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "fetch protocol (blob:)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "blob: round-trip (200)",
+      "passed": true,
+      "canonicalKey": "fetch protocol (blob:)",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#blob-urls-blob",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#blob-urls-blob",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "fetch protocol (file://)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "fetch(file://) + Bun.file(path) round-trip (200)",
+      "passed": true,
+      "canonicalKey": "fetch protocol (file://)",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#file-urls-file",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#file-urls-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "fetch s3:// (explicit s3: creds)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "explicit s3: → HTTP 404 ct=application/xml etag=— bytes=0B",
+      "passed": true,
+      "canonicalKey": "fetch s3:// (explicit s3: creds)",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "fetch s3:// (env credentials)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "env AWS_* → HTTP 404 ct=application/xml bytes=0B",
+      "passed": true,
+      "canonicalKey": "fetch s3:// (env credentials)",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "fetch s3:// (Bun.file)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "Bun.file env creds → exists=false size=0B",
+      "passed": true,
+      "canonicalKey": "fetch s3:// (Bun.file)",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: bun-binary-resolved",
+      "expected": "Verification toolchain (runtime execPath / Bun.which): bun-binary-resolved",
+      "actual": "spawned=bun source=runtime runtime=1.4.0 cli=1.4.0",
+      "passed": true,
+      "canonicalKey": "Bun.which",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-which",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-which",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: bun-config-env-ssot",
+      "expected": "tools/bun-install-env.ts BUN_CONFIG_INSTALL_VARS: bun-config-env-ssot",
+      "actual": "env > bunfig; 6 vars (BUN_CONFIG_REGISTRY, BUN_CONFIG_SKIP_INSTALL_PACKAGES, BUN_CONFIG_SKIP_LOAD_LOCKFILE, BUN_CONFIG_SKIP_SAVE_LOCKFILE, BUN_CONFIG_TOKEN, BUN_CONFIG_YARN_LOCKFILE)",
+      "passed": true,
+      "canonicalKey": "BUN install environment variables",
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Environment variables take priority over bunfig.toml",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: forbidden-install-env",
+      "expected": "shell env (docs/UNIFIED.md machine layer): forbidden-install-env",
+      "actual": "no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in shell env",
+      "passed": true,
+      "canonicalKey": "install env precedence",
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "canonicalDescription": "CLI flags → BUN_CONFIG_* → bunfig (project overlays machine)",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: install-mechanism-notes-ssot",
+      "expected": "tools/bun-install-env.ts INSTALL_MECHANISM_NOTES: install-mechanism-notes-ssot",
+      "actual": "5 mechanism notes (backend, cache, node_modules, eager/lazy resolve)",
+      "passed": true,
+      "canonicalKey": "bun install cache mechanism",
+      "canonical": "https://bun.com/docs/pm/cli/install#cache",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cache",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: runtime-flags",
+      "expected": "Bun CLI (isolated probe dir): runtime-flags",
+      "actual": "dry-run --cpu=x64 --os=linux exit=0; invalid cpu rejected",
+      "passed": true,
+      "canonicalKey": "bun install --cpu",
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: profile-ssot",
+      "expected": ".agents/skills/ast-grep/bun-install-profiles.json: profile-ssot",
+      "actual": "cross-linux-x64=x64/linux; cross-linux-arm64=arm64/linux; cross-darwin-arm64=arm64/darwin",
+      "passed": true,
+      "canonicalKey": "bun install --cpu",
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: lockfile-config-version",
+      "expected": "bun.lock configVersion + workspaces: lockfile-config-version",
+      "actual": "configVersion=1 + workspaces → isolated linker default per Bun docs",
+      "passed": true,
+      "canonicalKey": "isolated installs",
+      "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/isolated-installs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: machine-isolated-linker",
+      "expected": "~/.bunfig.toml (docs/UNIFIED.md machine SSOT): machine-isolated-linker",
+      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
+      "passed": true,
+      "canonicalKey": "isolated installs",
+      "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/isolated-installs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: machine-global-store",
+      "expected": "~/.bunfig.toml globalStore + isolated linker: machine-global-store",
+      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
+      "passed": true,
+      "canonicalKey": "global virtual store",
+      "canonical": "https://bun.com/docs/pm/global-store",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/global-store",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: monorepo-cross-dry-run",
+      "expected": "FactoryWager monorepo root (package.json + bun.lock): monorepo-cross-dry-run",
+      "actual": "cross-linux-x64:ok; cross-linux-arm64:ok; cross-darwin-arm64:ok",
+      "passed": true,
+      "canonicalKey": "bun install --cpu",
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: lockfile-stable",
+      "expected": "bun.lock shared lockfile (docs/UNIFIED.md): lockfile-stable",
+      "actual": "hash unchanged (07fd9c865b3b6ba6) after cross dry-runs",
+      "passed": true,
+      "canonicalKey": "platform-specific dependencies",
+      "canonical": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "Bun.Archive (create, extract, gzip, read)",
+      "expected": "creates tar, extracts, gzips, reads files back",
+      "actual": "archive bytes=10240, gzip=126, round-trip verified",
+      "passed": true,
+      "canonicalKey": "Bun.Archive (create, extract, gzip, read)",
+      "canonical": "https://bun.com/docs/runtime/archive",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/archive",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)",
+      "expected": "flag=2 skin=2 zwj=2 hyphen=0 joiner=0",
+      "actual": "flag=2 skin=2 zwj=2 hyphen=0 joiner=0",
+      "passed": true,
+      "canonicalKey": "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.5",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Bun.spawn PTY (echo capture)",
+      "expected": "PTY echo captured via Bun.spawn({ terminal })",
+      "actual": "exit=0 captured pty output (1 chunks)",
+      "passed": true,
+      "canonicalKey": "Bun.spawn PTY (echo capture)",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+      "subsystem": "runtime",
+      "introducedIn": "1.3.5",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "Compile-time feature flags (bun:bundle)",
+      "expected": "PREMIUM branch kept; free path eliminated when --feature set",
+      "actual": "PREMIUM branch kept; free eliminated",
+      "passed": true,
+      "canonicalKey": "Compile-time feature flags (bun:bundle)",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+      "subsystem": "bundler",
+      "introducedIn": "1.3.5",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "blog"
+    },
+    {
+      "name": "URL.host (hostname + port)",
+      "expected": "host includes port; hostname excludes port; host setter updates href",
+      "actual": "host=example.com:8080; set host=test.com:9000",
+      "passed": true,
+      "canonicalKey": "URL.host (hostname + port)",
+      "canonical": "https://bun.com/reference/globals/URL/host",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/host",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "reference"
+    },
+    {
+      "name": "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)",
+      "expected": "all Bun Uint8Array extensions and binary data APIs work",
+      "actual": "base64=true hex=true rt=true mmap=71995B file=71995B blob=5B",
+      "passed": true,
+      "canonicalKey": "uint8array-bun-extensions",
+      "canonical": "https://bun.com/docs",
+      "subsystem": "other",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "R2/S3 binary roundtrip (upload, download, verify)",
+      "expected": "uploaded bytes match downloaded bytes exactly",
+      "actual": "5/5 bytes match",
+      "passed": true,
+      "canonicalKey": "r2-binary-roundtrip",
+      "canonical": "https://bun.com/docs",
+      "subsystem": "other",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "URL.host / hostname / port (WHATWG)",
+      "expected": "host includes port, hostname excludes port, default ports hidden",
+      "actual": "host:pass set:pass defaults:pass",
+      "passed": true,
+      "canonicalKey": "url-host-whatwg",
+      "canonical": "https://bun.com/docs",
+      "subsystem": "other",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "S3 contentDisposition option",
+      "expected": "accepts contentDisposition without error",
+      "actual": "ok",
+      "passed": true,
+      "canonicalKey": "s3-content-disposition",
+      "canonical": "https://bun.com/docs",
+      "subsystem": "other",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "Response.clone() after body access (v1.3.5 fix)",
+      "expected": "clone succeeds after body was accessed",
+      "actual": "ok",
+      "passed": true,
+      "canonicalKey": "response-clone-fix",
+      "canonical": "https://bun.com/docs",
+      "subsystem": "other",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "URL.domainToASCII / domainToUnicode (Node.js compat)",
+      "expected": "returns punycode for IDN domains",
+      "actual": "bücher → xn--bcher-kva",
+      "passed": true,
+      "canonicalKey": "url-domain-to-ascii",
+      "canonical": "https://bun.com/docs",
+      "subsystem": "other",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      },
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "inspect.sorted",
+      "category": "inspect",
+      "canonicalKey": "Bun.inspect.sorted",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.inspect sorted — deterministic key order for snapshots",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.sorted",
+      "expected": "sorted:true orders keys alphabetically (recursive)",
+      "actual": "alpha before zebra; bravo before delta",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.compact",
+      "category": "inspect",
+      "canonicalKey": "Bun.inspect.compact",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.inspect compact — single-line output",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.compact",
+      "expected": "compact:true produces single-line output",
+      "actual": "no newlines",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.showProxy",
+      "category": "inspect",
+      "canonicalKey": "inspect.showProxy",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "showProxy — Proxy target/handler in inspect output",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.showProxy",
+      "expected": "showProxy:true surfaces Proxy or target (runtime truth)",
+      "actual": "showProxy ignored; target inspected directly",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.getters",
+      "category": "inspect",
+      "canonicalKey": "inspect.getters",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "getters — evaluate or suppress property getters",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.getters",
+      "expected": "getters:true shows [Getter] (Bun 1.4 runtime truth)",
+      "actual": "getters:true shows [Getter]",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.numericSeparator",
+      "category": "inspect",
+      "canonicalKey": "inspect.numericSeparator",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "numericSeparator — underscore separators in numbers (Node compat)",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.numericSeparator",
+      "expected": "numericSeparator:true or ignored (record runtime)",
+      "actual": "no separator (ignored on runtime)",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.maxStringLength",
+      "category": "inspect",
+      "canonicalKey": "util.inspect options",
+      "canonical": "https://nodejs.org/api/util.html#utilinspectobject-options",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Node util.inspect option delta vs BunInspectOptions",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://nodejs.org/api/util.html#utilinspectobject-options",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.maxStringLength",
+      "expected": "maxStringLength honored or ignored (record runtime)",
+      "actual": "full string shown (ignored on Bun 1.4)",
+      "passed": true,
+      "canonicalSource": "other",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "inspect.customInspect",
+      "category": "inspect",
+      "canonicalKey": "BunInspectOptions",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:inspect.customInspect",
+      "expected": "custom symbol honored; false suppresses when supported",
+      "actual": "customInspect:false ignored; custom still shown",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "inspect"
+      ]
+    },
+    {
+      "probe": "streams.gzip-roundtrip",
+      "category": "streams",
+      "canonicalKey": "CompressionStream",
+      "canonical": "https://bun.com/reference/globals/CompressionStream",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "WHATWG gzip/deflate compression stream",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/CompressionStream",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:streams.gzip-roundtrip",
+      "expected": "gzip compress then decompress restores bytes",
+      "actual": "36 bytes round-trip ok",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "streams"
+      ]
+    },
+    {
+      "probe": "streams.text-encoder-decoder",
+      "category": "streams",
+      "canonicalKey": "TextEncoderStream",
+      "canonical": "https://bun.com/reference/globals/TextEncoderStream",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Streaming string to Uint8Array",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/TextEncoderStream",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:streams.text-encoder-decoder",
+      "expected": "TextEncoderStream → TextDecoderStream restores string",
+      "actual": "\"registry-client-probe\" round-trip ok",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "streams"
+      ]
+    },
+    {
+      "probe": "url.host",
+      "category": "url",
+      "canonicalKey": "URL.host",
+      "canonical": "https://bun.com/reference/globals/URL/host",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/host",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:url.host",
+      "expected": "host includes port; hostname excludes; host setter updates href",
+      "actual": "host=example.com:8080; set host=test.com:9000",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "url"
+      ]
+    },
+    {
+      "probe": "url.origin",
+      "category": "url",
+      "canonicalKey": "URL.origin",
+      "canonical": "https://bun.com/reference/globals/URL/origin",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "protocol + host + port",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/origin",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:url.origin",
+      "expected": "origin is protocol + host + port",
+      "actual": "https://example.com:8080",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "url"
+      ]
+    },
+    {
+      "probe": "url.searchParams",
+      "category": "url",
+      "canonicalKey": "URL.searchParams",
+      "canonical": "https://bun.com/reference/globals/URL/searchParams",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Query parameter interface on URL",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/searchParams",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:url.searchParams",
+      "expected": "searchParams set/get/delete roundtrip",
+      "actual": "?b=2",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "url"
+      ]
+    },
+    {
+      "probe": "url.host-setter",
+      "category": "url",
+      "canonicalKey": "URL.host",
+      "canonical": "https://bun.com/reference/globals/URL/host",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/host",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:url.host-setter",
+      "expected": "host setter updates origin and preserves path",
+      "actual": "https://new.example.com:9090/api/v1",
+      "passed": true,
+      "canonicalSource": "reference",
+      "features": [
+        "runtime-nits",
+        "url"
+      ]
+    },
+    {
+      "probe": "bun.file.lazy-stat",
+      "category": "file-io",
+      "canonicalKey": "bun.file.lazy-stat",
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.file is lazy until .text/.bytes/.exists",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:bun.file.lazy-stat",
+      "expected": "Bun.file size matches fs.stat after write",
+      "actual": "size=4 exists=true",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "file-io"
+      ]
+    },
+    {
+      "probe": "bun.write.auto-dir",
+      "category": "file-io",
+      "canonicalKey": "bun.write.auto-dir",
+      "canonical": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.write creates parent directories",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:bun.write.auto-dir",
+      "expected": "Bun.write creates parent directories",
+      "actual": "nested path written without mkdir",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "file-io"
+      ]
+    },
+    {
+      "probe": "bun.file.bytes-vs-buffer",
+      "category": "file-io",
+      "canonicalKey": "bun.file.bytes-vs-buffer",
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.file().bytes() matches fs read bytes",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "runtime-nits:bun.file.bytes-vs-buffer",
+      "expected": "Bun.file().bytes() equals fs read bytes",
+      "actual": "5 bytes match",
+      "passed": true,
+      "canonicalSource": "docs",
+      "features": [
+        "runtime-nits",
+        "file-io"
+      ]
+    },
+    {
+      "probe": "loader.css.explicit",
+      "loader": "css",
+      "name": "bundler:loader.css.explicit",
+      "expected": "CSS output contains entry rule",
+      "actual": "css bytes=126",
+      "passed": true,
+      "canonicalKey": "loader:css",
+      "canonical": "https://bun.com/docs/bundler/loaders#css",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "CSS loader — bundles stylesheets via Bun.build",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#css",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "css"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.css.default",
+      "loader": "css",
+      "name": "bundler:loader.css.default",
+      "expected": "default .css → css loader succeeds",
+      "actual": "outputs=1",
+      "passed": true,
+      "canonicalKey": "Asset Processing",
+      "canonical": "https://bun.com/docs/bundler#content-types",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.build content-type / Asset Processing table",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler#content-types",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "css"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.jsonc",
+      "loader": "jsonc",
+      "name": "bundler:loader.jsonc",
+      "expected": "jsonc output has data, comments stripped",
+      "actual": "js bytes=233",
+      "passed": true,
+      "canonicalKey": "loader:jsonc",
+      "canonical": "https://bun.com/docs/bundler/loaders#jsonc",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "JSONC loader — comments stripped (portal theme.jsonc)",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#jsonc",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "jsonc"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.text",
+      "loader": "text",
+      "name": "bundler:loader.text",
+      "expected": "text loader embeds file contents",
+      "actual": "js bytes=172",
+      "passed": true,
+      "canonicalKey": "loader:text",
+      "canonical": "https://bun.com/docs/bundler/loaders#text",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Text loader — file contents as string export",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#text",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "text"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.ts",
+      "loader": "ts",
+      "name": "bundler:loader.ts",
+      "expected": "transpiles TypeScript to JavaScript (types stripped)",
+      "actual": "js bytes=150 typesStripped=true",
+      "passed": true,
+      "canonicalKey": "loader:ts",
+      "canonical": "https://bun.com/docs/bundler/loaders#ts",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "TypeScript loader — strips types via Bun.build",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#ts",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "ts"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.file",
+      "loader": "file",
+      "name": "bundler:loader.file",
+      "expected": "copies asset / exports path via file loader",
+      "actual": "outputs=2 hasAsset=true jsMentions=true",
+      "passed": true,
+      "canonicalKey": "loader:file",
+      "canonical": "https://bun.com/docs/bundler/loaders#file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "File loader — copy asset to outdir and export path",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "file"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Health",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=4.9ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "ops"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Prediction report",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=0.3ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "registry"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:CF Dashboard",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=126.3ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "dashboard"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Registry (Pages)",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=81.5ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "pages"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Kalshi exchange",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=61.7ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "trading"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Bun docs",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=138.4ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "control"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:global-checks",
+      "expected": "36 checks pass",
+      "actual": "36/36",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "aggregate"
+      ],
+      "canonicalSource": "docs"
+    }
+  ],
+  "summary": {
+    "passed": 75,
+    "total": 75,
+    "status": "pass",
+    "channel": "stable",
+    "version": "1.4.0",
+    "bySubsystem": {
+      "runtime": {
+        "passed": 36,
+        "total": 36
+      },
+      "bundler": {
+        "passed": 8,
+        "total": 8
+      },
+      "package-manager": {
+        "passed": 12,
+        "total": 12
+      },
+      "networking": {
+        "passed": 13,
+        "total": 13
+      },
+      "other": {
+        "passed": 6,
+        "total": 6
+      }
+    }
+  },
+  "proofHash": "1a203210514d7f7e03753ab2ba667a6adf8b60590ec4d6e3e1bdb9cf7e33f62b",
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "FactoryWager Bun Release Verification",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "softwareVersion": "1.4.0",
+    "dateModified": "2026-07-24T04:32:25.009Z",
+    "identifier": "1.4.0",
+    "featureList": [
+      "runtime-nits",
+      "inspect",
+      "streams",
+      "url",
+      "file-io",
+      "bundler",
+      "loaders",
+      "css",
+      "jsonc",
+      "text",
+      "ts",
+      "file",
+      "networking",
+      "ops",
+      "registry",
+      "dashboard",
+      "pages",
+      "trading",
+      "control",
+      "aggregate"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": 5,
+      "reviewCount": 75,
+      "bestRating": 5,
+      "worstRating": 0
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "name": "tls.getCACertificates('system')",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Built-in objects GC smoke (Request/Response)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.escapeHTML performance",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "ESM module load (node:fs)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Process exit with pending timer",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "timer.ref() after fired setTimeout",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "WebSocket cleanup on close",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Child process stdin pipe cleanup",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun Shell basics",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "structuredClone Blob",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.password.hash",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.inspect depth",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.hash returns bigint",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.version / Bun.revision",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "using / await using (Explicit Resource Mgmt)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Built-in objects (Request, Response)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "--no-orphans support",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.Image (all terminal methods: bytes, buffer, blob, toBase64, dataurl, placeholder, metadata, write)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch protocol (data:)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch protocol (blob:)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch protocol (file://)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch s3:// (explicit s3: creds)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch s3:// (env credentials)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch s3:// (Bun.file)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: bun-binary-resolved",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: bun-config-env-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: forbidden-install-env",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: install-mechanism-notes-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: runtime-flags",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: profile-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: lockfile-config-version",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: machine-isolated-linker",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: machine-global-store",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: monorepo-cross-dry-run",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: lockfile-stable",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.Archive (create, extract, gzip, read)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.spawn PTY (echo capture)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Compile-time feature flags (bun:bundle)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "URL.host (hostname + port)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "R2/S3 binary roundtrip (upload, download, verify)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "URL.host / hostname / port (WHATWG)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "S3 contentDisposition option",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Response.clone() after body access (v1.3.5 fix)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "URL.domainToASCII / domainToUnicode (Node.js compat)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.sorted",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.compact",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.showProxy",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.getters",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.numericSeparator",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.maxStringLength",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:inspect.customInspect",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:streams.gzip-roundtrip",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:streams.text-encoder-decoder",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:url.host",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:url.origin",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:url.searchParams",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:url.host-setter",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:bun.file.lazy-stat",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:bun.write.auto-dir",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "runtime-nits:bun.file.bytes-vs-buffer",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.css.explicit",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.css.default",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.jsonc",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.text",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.ts",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.file",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Health",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Prediction report",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:CF Dashboard",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Registry (Pages)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Kalshi exchange",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Bun docs",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:global-checks",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:25.009Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      }
+    ]
+  }
+}

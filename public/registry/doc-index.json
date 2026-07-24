@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "timestamp": "2026-07-24T03:14:06.967Z",
+  "timestamp": "2026-07-24T04:32:05.757Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
   "catalogGenerated": "2026-07-24T00:08:46.051Z",
   "catalogBunVersion": "1.4.0",
-  "totalEntries": 209,
+  "totalEntries": 210,
   "byStability": {
-    "stable": 207,
+    "stable": 208,
     "experimental": 2
   },
   "byKind": {
     "CLI": 67,
     "API": 135,
-    "Other": 7
+    "Other": 8
   },
   "entries": [
     {
@@ -2002,6 +2002,19 @@
         "catalogHit": true,
         "section": "runtime",
         "verifiedOn": "1.4.0"
+      }
+    },
+    {
+      "key": "Bun.build css",
+      "url": "https://bun.com/docs/bundler/css",
+      "kind": "Other",
+      "stability": "stable",
+      "since": "unknown",
+      "description": "",
+      "examples": [],
+      "related": [],
+      "meta": {
+        "catalogHit": false
       }
     },
     {
@@ -4646,5 +4659,5 @@
       }
     ]
   },
-  "proofHash": "16e9cbf7ca892b44911041d77c82adb96ead4ddafacb90e319ce6dd4c9da0f28"
+  "proofHash": "ac6a2a848df6bbe7bdbcbe125e7449794b8ca884848451368b0004d10729c8bb"
 }

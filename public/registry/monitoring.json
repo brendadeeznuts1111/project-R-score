@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 525,
+  "uptimeMs": 14,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -21,16 +21,16 @@
   "dodByStatus": {},
   "experimentsActive": 0,
   "predictionN": 10,
-  "timestamp": "2026-07-24T03:13:29.404Z",
-  "snapshotAt": "2026-07-24T03:13:29.404Z",
+  "timestamp": "2026-07-24T04:43:10.735Z",
+  "snapshotAt": "2026-07-24T04:43:10.735Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-24T03:13:29.405Z",
+    "checkedAt": "2026-07-24T04:43:10.735Z",
     "summary": {
-      "total": 21,
-      "ok": 20,
-      "missing": 7,
+      "total": 22,
+      "ok": 21,
+      "missing": 8,
       "placeholder": 0,
       "requiredMissing": 0
     },
@@ -132,6 +132,13 @@
         "Severity": "recommended",
         "Status": "default",
         "Detail": "unset · code default · data/operations.db"
+      },
+      {
+        "Key": "GITHUB_TOKEN",
+        "Group": "github",
+        "Severity": "optional",
+        "Status": "missing",
+        "Detail": "aliases: GITHUB_ACCESS_TOKEN · GH_TOKEN · or `gh auth login` (channels.ts gh-cli fallback)"
       },
       {
         "Key": "TELEGRAM_BOT_TOKEN",

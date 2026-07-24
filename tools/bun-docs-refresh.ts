@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * bun-docs-refresh.ts — canonical docs stack refresh loop.
  *
- *   release-index → release-scrape → catalog build → integrity log
+ *   release-index → reference-index → release-scrape → catalog build → integrity log
  *
  * Run:
  *   bun tools/bun-docs-refresh.ts
@@ -34,6 +35,10 @@ async function main(): Promise<void> {
 
   const steps: Step[] = [
     { name: 'Phase 0: RSS release-index', cmd: ['bun', 'tools/bun-docs-releases.ts', 'index'] },
+    {
+      name: 'Phase 0b: API reference-index',
+      cmd: ['bun', 'tools/bun-docs-reference-index.ts', 'index'],
+    },
   ];
 
   if (!skipScrape) {

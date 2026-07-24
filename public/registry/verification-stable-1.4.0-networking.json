@@ -1,0 +1,335 @@
+{
+  "type": "ChannelAwareVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T04:32:24.833Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "9d0180ccfdba2dffdb2f9ab91f207e1947b1abf7",
+    "provenanceId": "local-2026-07-24T04-32-24-833Z",
+    "testedAt": "2026-07-24T04:32:24.833Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none",
+    "subsystems": [
+      "networking"
+    ]
+  },
+  "results": [
+    {
+      "name": "networking:Health",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=4.9ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "ops"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Prediction report",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=0.3ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "registry"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:CF Dashboard",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=126.3ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "dashboard"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Registry (Pages)",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=81.5ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "pages"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Kalshi exchange",
+      "expected": "7 hard checks pass",
+      "actual": "7/7 · cold=61.7ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "trading"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:Bun docs",
+      "expected": "5 hard checks pass",
+      "actual": "5/5 · cold=138.4ms",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "control"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "networking:global-checks",
+      "expected": "36 checks pass",
+      "actual": "36/36",
+      "passed": true,
+      "canonicalKey": "fetch protocol support",
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "networking",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#protocol-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-channel.ts",
+        "report": "/registry/networking-channel-proof.json"
+      },
+      "features": [
+        "networking",
+        "aggregate"
+      ],
+      "canonicalSource": "docs"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "total": 7,
+    "status": "pass",
+    "channel": "stable",
+    "version": "1.4.0",
+    "bySubsystem": {
+      "networking": {
+        "passed": 7,
+        "total": 7
+      }
+    }
+  },
+  "proofHash": "3222441d065c3f1efc7e4a6e9f89c81c86ab04956f19e4bd05452b9ae66f1f83",
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "FactoryWager Bun Release Verification",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "softwareVersion": "1.4.0",
+    "dateModified": "2026-07-24T04:32:24.833Z",
+    "identifier": "1.4.0",
+    "featureList": [
+      "networking",
+      "ops",
+      "registry",
+      "dashboard",
+      "pages",
+      "trading",
+      "control",
+      "aggregate"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": 5,
+      "reviewCount": 7,
+      "bestRating": 5,
+      "worstRating": 0
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "name": "networking:Health",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:24.833Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Prediction report",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:24.833Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:CF Dashboard",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:24.833Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Registry (Pages)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:24.833Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Kalshi exchange",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:24.833Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:Bun docs",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:24.833Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "networking:global-checks",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:32:24.833Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      }
+    ]
+  }
+}

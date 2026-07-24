@@ -1,0 +1,218 @@
+{
+  "type": "ChannelAwareVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T04:24:21.351Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "64bd1d3b1e0f080984bf2658037fa359a5213b91",
+    "provenanceId": "local-2026-07-24T04-24-21-351Z",
+    "testedAt": "2026-07-24T04:24:21.351Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none",
+    "subsystems": [
+      "bundler"
+    ]
+  },
+  "results": [
+    {
+      "probe": "loader.css.explicit",
+      "loader": "css",
+      "name": "bundler:loader.css.explicit",
+      "expected": "CSS output contains entry rule",
+      "actual": "css bytes=126",
+      "passed": true,
+      "canonical": "https://bun.com/docs/bundler/loaders#css",
+      "canonicalKey": "loader:css",
+      "subsystem": "bundler",
+      "features": [
+        "bundler",
+        "loaders",
+        "css"
+      ],
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#css",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.css.default",
+      "loader": "css",
+      "name": "bundler:loader.css.default",
+      "expected": "default .css → css loader succeeds",
+      "actual": "outputs=1",
+      "passed": true,
+      "canonical": "https://bun.com/docs/bundler#content-types",
+      "canonicalKey": "Asset Processing",
+      "subsystem": "bundler",
+      "features": [
+        "bundler",
+        "loaders",
+        "css"
+      ],
+      "_links": {
+        "docs": "https://bun.com/docs/bundler#content-types",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.jsonc",
+      "loader": "jsonc",
+      "name": "bundler:loader.jsonc",
+      "expected": "jsonc output has data, comments stripped",
+      "actual": "js bytes=233",
+      "passed": true,
+      "canonical": "https://bun.com/docs/bundler/loaders#jsonc",
+      "canonicalKey": "loader:jsonc",
+      "subsystem": "bundler",
+      "features": [
+        "bundler",
+        "loaders",
+        "jsonc"
+      ],
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#jsonc",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.text",
+      "loader": "text",
+      "name": "bundler:loader.text",
+      "expected": "text loader embeds file contents",
+      "actual": "js bytes=172",
+      "passed": true,
+      "canonical": "https://bun.com/docs/bundler/loaders#text",
+      "canonicalKey": "loader:text",
+      "subsystem": "bundler",
+      "features": [
+        "bundler",
+        "loaders",
+        "text"
+      ],
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#text",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "canonicalSource": "docs"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "total": 4,
+    "status": "pass",
+    "channel": "stable",
+    "version": "1.4.0",
+    "bySubsystem": {
+      "bundler": {
+        "passed": 4,
+        "total": 4
+      }
+    }
+  },
+  "proofHash": "9f3052447f2b2a8dc2050fb54fb3b07072df38db5360cacd7dd4d73f69fa4552",
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "FactoryWager Bun Release Verification",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "softwareVersion": "1.4.0",
+    "dateModified": "2026-07-24T04:24:21.351Z",
+    "identifier": "1.4.0",
+    "featureList": [
+      "bundler",
+      "loaders",
+      "css",
+      "jsonc",
+      "text"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": 5,
+      "reviewCount": 4,
+      "bestRating": 5,
+      "worstRating": 0
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "name": "bundler:loader.css.explicit",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:24:21.351Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.css.default",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:24:21.351Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.jsonc",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:24:21.351Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.text",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:24:21.351Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      }
+    ]
+  }
+}

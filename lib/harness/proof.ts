@@ -253,6 +253,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
+      'bun test ./tests/deep-equals.test.ts ./tests/bun-utils-proof.test.ts',
       'bun test ./tests/deep-equals.test.ts',
       'tests/deep-equals.test.ts',
       'lib/deep-equals.ts',
@@ -1109,6 +1110,36 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun test tests/telegram-bot.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/telegram/',
+  },
+  {
+    id: 'channel-meta-verification-v1',
+    claim:
+      'Channel-aware Bun verification tags rows by subsystem, suite-aware saves never clobber release-features with bundler/networking, suite=all merges a meta-proof, prefer-artifact meta refresh bakes Pages via ops:snapshot / verify:channel:meta, and channelMeta slice lands in ops-summary / static.json / ops dashboard',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts',
+      'lib/verification/channel-suite.ts',
+      'lib/verification/channel-meta-refresh.ts',
+      'lib/verification/channel-proof.ts',
+      'lib/verification/subsystem.ts',
+      'lib/verification/networking-channel.ts',
+      'lib/verification/bundler-loader-probes.ts',
+      'tools/verify-channel.ts',
+      'tools/verify-channel-meta.ts',
+      'tools/ops-snapshot.ts',
+      'lib/operations/ops-summary.ts',
+      'public/portal/operations-dashboard.js',
+      'public/portal/portal-types.d.ts',
+      'public/registry/release-features.json',
+      'public/registry/channel-meta-bake.json',
+      'docs/harness/tenants/channel-meta-verification.md',
+    ],
+    freshRerun:
+      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/verification/',
   },
 ] as const;
 

@@ -1,4 +1,14 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
+// @see https://bun.com/docs/runtime/archive#quickstart — Bun.Archive
+// @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
+// @see https://bun.com/docs/runtime/hashing#bun-hash — Bun.hash
+// @see https://bun.com/docs/runtime/hashing#bun-password — Bun.password
+// @see https://bun.com/docs/runtime/image#input — Bun.Image
+// @see https://bun.com/docs/bundler/index#features — bun:bundle
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 /**
  * verify-bun-release.ts — Verify Bun release features (TLS, perf, runtime, release notes).
  *
@@ -15,7 +25,6 @@
 // @see https://bun.com/docs/runtime/networking/fetch#protocol-support — fetch data:/blob:
 // @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — bun install --cpu/--os
 import { CryptoHasher, inspect, version, revision, spawn, $ } from 'bun';
-import { writeFileSync, readFileSync } from 'fs';
 import {
   BUN_RELEASE_NOTE_ROWS,
   BUN_V1314_BLOG,
@@ -39,7 +48,12 @@ import {
   reportCanonicalCoverageGaps,
 } from '../lib/verification/canonical-coverage.ts';
 import { generateJSONLD } from '../lib/verification/jsonld.ts';
-import type { ChannelAwareVerificationReport, SemanticTags, VerificationResult } from '../lib/verification/types.ts';
+import { summarizeBySubsystem } from '../lib/verification/subsystem.ts';
+import type {
+  ChannelAwareVerificationReport,
+  SemanticTags,
+  VerificationResult,
+} from '../lib/verification/types.ts';
 
 export const SAVE_PATH = 'public/registry/release-features.json';
 
@@ -49,12 +63,10 @@ export type RunReleaseVerificationOptions = {
   channel?: string;
 };
 
-/** Read bunfig.toml once at module init. */
-const bunfigText = readFileSync(new URL('../bunfig.toml', import.meta.url), 'utf-8');
-
 export async function runReleaseVerification(
   options: RunReleaseVerificationOptions = {}
 ): Promise<ChannelAwareVerificationReport> {
+  const bunfigText = await Bun.file(new URL('../bunfig.toml', import.meta.url)).text();
   const semanticTags =
     options.semanticTags ?? (await buildSemanticTags(options.channel ?? 'runtime'));
   const ctx = { semanticTags };
@@ -204,10 +216,23 @@ export async function runReleaseVerification(
 
   try {
     const result = await $`echo -n "hello"`.text();
-    pushReleaseResult(results, { name: 'Bun Shell basics', expected: 'echo works', actual: `"${result}"`, passed: result === 'hello' }, ctx);
+    pushReleaseResult(
+      results,
+      {
+        name: 'Bun Shell basics',
+        expected: 'echo works',
+        actual: `"${result}"`,
+        passed: result === 'hello',
+      },
+      ctx
+    );
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
-    pushReleaseResult(results, { name: 'Bun Shell basics', expected: 'echo works', actual: `error: ${msg}`, passed: false }, ctx);
+    pushReleaseResult(
+      results,
+      { name: 'Bun Shell basics', expected: 'echo works', actual: `error: ${msg}`, passed: false },
+      ctx
+    );
   }
 
   try {
@@ -226,19 +251,42 @@ export async function runReleaseVerification(
     );
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
-    pushReleaseResult(results, { name: 'structuredClone Blob', expected: 'clone works', actual: `error: ${msg}`, passed: false }, ctx);
+    pushReleaseResult(
+      results,
+      {
+        name: 'structuredClone Blob',
+        expected: 'clone works',
+        actual: `error: ${msg}`,
+        passed: false,
+      },
+      ctx
+    );
   }
 
   try {
     const hash = await Bun.password.hash('test');
     pushReleaseResult(
       results,
-      { name: 'Bun.password.hash', expected: 'returns a string', actual: typeof hash, passed: typeof hash === 'string' },
+      {
+        name: 'Bun.password.hash',
+        expected: 'returns a string',
+        actual: typeof hash,
+        passed: typeof hash === 'string',
+      },
       ctx
     );
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e);
-    pushReleaseResult(results, { name: 'Bun.password.hash', expected: 'returns a string', actual: `error: ${msg}`, passed: false }, ctx);
+    pushReleaseResult(
+      results,
+      {
+        name: 'Bun.password.hash',
+        expected: 'returns a string',
+        actual: `error: ${msg}`,
+        passed: false,
+      },
+      ctx
+    );
   }
 
   pushReleaseResult(
@@ -255,7 +303,12 @@ export async function runReleaseVerification(
 
   pushReleaseResult(
     results,
-    { name: 'Bun.hash returns bigint', expected: 'bigint', actual: typeof Bun.hash('hello'), passed: typeof Bun.hash('hello') === 'bigint' },
+    {
+      name: 'Bun.hash returns bigint',
+      expected: 'bigint',
+      actual: typeof Bun.hash('hello'),
+      passed: typeof Bun.hash('hello') === 'bigint',
+    },
     ctx
   );
 
@@ -346,8 +399,8 @@ export async function runReleaseVerification(
     {
       name: '--no-orphans support',
       expected: 'configured in bunfig + env',
-      actual: `bunfig=${bunfigText.includes('noOrphans')}, env=${!!process.env.BUN_FEATURE_FLAG_NO_ORPHANS}`,
-      passed: process.env.BUN_FEATURE_FLAG_NO_ORPHANS === '1',
+      actual: `bunfig=${bunfigText.includes('noOrphans')}, env=${!!Bun.env.BUN_FEATURE_FLAG_NO_ORPHANS}`,
+      passed: Bun.env.BUN_FEATURE_FLAG_NO_ORPHANS === '1',
       anchor: 'no-orphans',
     },
     ctx
@@ -431,19 +484,25 @@ export async function runReleaseVerification(
         actual: row.note,
         passed: row.ok,
         canonical: row.canonical,
+        canonicalKey: row.canonicalKey,
+        subsystem: 'package-manager',
       },
       ctx
     );
   }
 
   // Bun.Archive — create, extract, gzip, read
-  pushReleaseResult(results, {
-    name: 'Bun.Archive (create, extract, gzip, read)',
-    expected: 'creates tar, extracts, gzips, reads files back',
-    actual: 'archive bytes=10240, gzip=126, round-trip verified',
-    passed: true,
-    canonical: BUN_RELEASE_TEST_CANONICAL['Bun.Archive (create, extract, gzip, read)'],
-  }, ctx);
+  pushReleaseResult(
+    results,
+    {
+      name: 'Bun.Archive (create, extract, gzip, read)',
+      expected: 'creates tar, extracts, gzips, reads files back',
+      actual: 'archive bytes=10240, gzip=126, round-trip verified',
+      passed: true,
+      canonical: BUN_RELEASE_TEST_CANONICAL['Bun.Archive (create, extract, gzip, read)'],
+    },
+    ctx
+  );
 
   const stringWidth = probeStringWidthV135Accuracy();
   pushReleaseResult(
@@ -453,9 +512,10 @@ export async function runReleaseVerification(
       expected: 'flag=2 skin=2 zwj=2 hyphen=0 joiner=0',
       actual: stringWidth.note,
       passed: stringWidth.ok,
-      canonical: BUN_RELEASE_TEST_CANONICAL[
-        'Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)'
-      ],
+      canonical:
+        BUN_RELEASE_TEST_CANONICAL[
+          'Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)'
+        ],
     },
     ctx
   );
@@ -514,21 +574,37 @@ export async function runReleaseVerification(
   const fb = await Bun.file('package.json').bytes();
   const bb = await new Blob(['Hello']).bytes();
   const mmap = Bun.mmap('package.json');
-  const u8ExtrasOk = fb instanceof Uint8Array && fb.length > 0 && bb instanceof Uint8Array && bb.length === 5 && mmap instanceof Uint8Array && mmap.length > 0;
-  pushReleaseResult(results, {
-    name: 'Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)',
-    expected: 'all Bun Uint8Array extensions and binary data APIs work',
-    actual: `base64=${u8Ok} hex=${u8Ok} rt=${u8RtOk} mmap=${mmap.length}B file=${fb.length}B blob=${bb.length}B`,
-    passed: u8Ok && u8RtOk && u8ExtrasOk,
-    anchor: 'uint8array-bun-extensions',
-  });
+  const u8ExtrasOk =
+    fb instanceof Uint8Array &&
+    fb.length > 0 &&
+    bb instanceof Uint8Array &&
+    bb.length === 5 &&
+    mmap instanceof Uint8Array &&
+    mmap.length > 0;
+  pushReleaseResult(
+    results,
+    {
+      name: 'Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)',
+      expected: 'all Bun Uint8Array extensions and binary data APIs work',
+      actual: `base64=${u8Ok} hex=${u8Ok} rt=${u8RtOk} mmap=${mmap.length}B file=${fb.length}B blob=${bb.length}B`,
+      passed: u8Ok && u8RtOk && u8ExtrasOk,
+      anchor: 'uint8array-bun-extensions',
+    },
+    ctx
+  );
 
   // 31. R2/S3 binary roundtrip (upload → download → verify)
   let s3Ok = false;
   try {
-    const ep = Bun.env.R2_S3_ENDPOINT || 'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com';
+    const ep =
+      Bun.env.R2_S3_ENDPOINT || 'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com';
     const { S3Client } = await import('bun');
-    const client = new S3Client({ accessKeyId: Bun.env.R2_ACCESS_KEY_ID, secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY, bucket: 'factory-wager-registry', endpoint: ep });
+    const client = new S3Client({
+      accessKeyId: Bun.env.R2_ACCESS_KEY_ID,
+      secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY,
+      bucket: 'factory-wager-registry',
+      endpoint: ep,
+    });
     const key = `verify-binary-${Date.now()}.bin`;
     const original = new Uint8Array([1, 2, 3, 4, 5]);
     await client.write(key, original);
@@ -536,61 +612,88 @@ export async function runReleaseVerification(
     s3Ok = dl.length === 5 && dl[0] === 1;
     await client.delete(key);
   } catch {}
-  pushReleaseResult(results, {
-    name: 'R2/S3 binary roundtrip (upload, download, verify)',
-    expected: 'uploaded bytes match downloaded bytes exactly',
-    actual: s3Ok ? '5/5 bytes match' : 'failed',
-    passed: s3Ok,
-    anchor: 'r2-binary-roundtrip',
-  });
+  pushReleaseResult(
+    results,
+    {
+      name: 'R2/S3 binary roundtrip (upload, download, verify)',
+      expected: 'uploaded bytes match downloaded bytes exactly',
+      actual: s3Ok ? '5/5 bytes match' : 'failed',
+      passed: s3Ok,
+      anchor: 'r2-binary-roundtrip',
+    },
+    ctx
+  );
 
   // 32. URL.host / hostname / port (WHATWG compliance)
   const uHost = new URL('https://example.com:8080/path');
-  const uHostOk = uHost.host === 'example.com:8080' && uHost.hostname === 'example.com' && uHost.port === '8080';
-  const uSet = new URL('https://example.com/path'); uSet.host = 'test.com:9000';
+  const uHostOk =
+    uHost.host === 'example.com:8080' && uHost.hostname === 'example.com' && uHost.port === '8080';
+  const uSet = new URL('https://example.com/path');
+  uSet.host = 'test.com:9000';
   const uSetOk = uSet.href === 'https://test.com:9000/path';
-  const uDef = new URL('https://example.com/path').port === '' && new URL('http://example.com/path').port === '';
-  pushReleaseResult(results, {
-    name: 'URL.host / hostname / port (WHATWG)',
-    expected: 'host includes port, hostname excludes port, default ports hidden',
-    actual: `${uHostOk ? 'host:pass' : 'host:fail'} ${uSetOk ? 'set:pass' : 'set:fail'} ${uDef ? 'defaults:pass' : 'defaults:fail'}`,
-    passed: uHostOk && uSetOk && uDef,
-    anchor: 'url-host-whatwg',
-  });
+  const uDef =
+    new URL('https://example.com/path').port === '' &&
+    new URL('http://example.com/path').port === '';
+  pushReleaseResult(
+    results,
+    {
+      name: 'URL.host / hostname / port (WHATWG)',
+      expected: 'host includes port, hostname excludes port, default ports hidden',
+      actual: `${uHostOk ? 'host:pass' : 'host:fail'} ${uSetOk ? 'set:pass' : 'set:fail'} ${uDef ? 'defaults:pass' : 'defaults:fail'}`,
+      passed: uHostOk && uSetOk && uDef,
+      anchor: 'url-host-whatwg',
+    },
+    ctx
+  );
 
   // 33. S3 contentDisposition option
   try {
     const { s3 } = await import('bun');
     const f = s3.file('test.txt', { contentDisposition: 'inline' });
-    pushReleaseResult(results, {
-      name: 'S3 contentDisposition option',
-      expected: 'accepts contentDisposition without error',
-      actual: typeof f === 'object' ? 'ok' : 'unexpected',
-      passed: typeof f === 'object',
-      anchor: 's3-content-disposition',
-    });
+    pushReleaseResult(
+      results,
+      {
+        name: 'S3 contentDisposition option',
+        expected: 'accepts contentDisposition without error',
+        actual: typeof f === 'object' ? 'ok' : 'unexpected',
+        passed: typeof f === 'object',
+        anchor: 's3-content-disposition',
+      },
+      ctx
+    );
   } catch (e: any) {
-    pushReleaseResult(results, {
-      name: 'S3 contentDisposition option',
-      expected: 'accepts contentDisposition without error',
-      actual: `error: ${e.message}`,
-      passed: false,
-      anchor: 's3-content-disposition',
-    });
+    pushReleaseResult(
+      results,
+      {
+        name: 'S3 contentDisposition option',
+        expected: 'accepts contentDisposition without error',
+        actual: `error: ${e.message}`,
+        passed: false,
+        anchor: 's3-content-disposition',
+      },
+      ctx
+    );
   }
 
   // 34. Response.clone() after body access (v1.3.5 fix)
   const cloneRes = new Response('hello');
   cloneRes.body; // access body before clone
   let cloneOk = false;
-  try { const cloned = cloneRes.clone(); cloneOk = (await cloned.text()) === 'hello'; } catch {}
-  pushReleaseResult(results, {
-    name: 'Response.clone() after body access (v1.3.5 fix)',
-    expected: 'clone succeeds after body was accessed',
-    actual: cloneOk ? 'ok' : 'failed',
-    passed: cloneOk,
-    anchor: 'response-clone-fix',
-  });
+  try {
+    const cloned = cloneRes.clone();
+    cloneOk = (await cloned.text()) === 'hello';
+  } catch {}
+  pushReleaseResult(
+    results,
+    {
+      name: 'Response.clone() after body access (v1.3.5 fix)',
+      expected: 'clone succeeds after body was accessed',
+      actual: cloneOk ? 'ok' : 'failed',
+      passed: cloneOk,
+      anchor: 'response-clone-fix',
+    },
+    ctx
+  );
 
   // 35. URL.domainToASCII (Node.js compat)
   let domainOk = false;
@@ -598,19 +701,24 @@ export async function runReleaseVerification(
     const { domainToASCII } = await import('url');
     domainOk = domainToASCII('bücher.example') === 'xn--bcher-kva.example';
   } catch {}
-  pushReleaseResult(results, {
-    name: 'URL.domainToASCII / domainToUnicode (Node.js compat)',
-    expected: 'returns punycode for IDN domains',
-    actual: domainOk ? 'bücher → xn--bcher-kva' : 'failed',
-    passed: domainOk,
-    anchor: 'url-domain-to-ascii',
-  });
+  pushReleaseResult(
+    results,
+    {
+      name: 'URL.domainToASCII / domainToUnicode (Node.js compat)',
+      expected: 'returns punycode for IDN domains',
+      actual: domainOk ? 'bücher → xn--bcher-kva' : 'failed',
+      passed: domainOk,
+      anchor: 'url-domain-to-ascii',
+    },
+    ctx
+  );
 
   const finalPassed = results.filter(r => r.passed).length;
 
   const hasher = new CryptoHasher('sha256');
   hasher.update(JSON.stringify(semanticTags));
-  for (const r of results) hasher.update(r.name + r.passed + (r.canonical ?? '') + JSON.stringify(r._links ?? {}));
+  for (const r of results)
+    hasher.update(r.name + r.passed + (r.canonical ?? '') + JSON.stringify(r._links ?? {}));
   const proofHash = hasher.digest('hex');
 
   const proof: ChannelAwareVerificationReport = {
@@ -635,9 +743,17 @@ export async function runReleaseVerification(
       status: finalPassed === results.length ? 'pass' : 'fail',
       channel: String(semanticTags.channel),
       version: semanticTags.targetVersion,
+      bySubsystem: summarizeBySubsystem(results),
     },
     proofHash,
-    jsonLd: generateJSONLD(results, semanticTags),
+    jsonLd: generateJSONLD(results, {
+      ...semanticTags,
+      subsystems: [
+        ...new Set(
+          results.map(r => r.subsystem).filter((s): s is NonNullable<typeof s> => Boolean(s))
+        ),
+      ],
+    }),
   };
 
   return proof;
@@ -678,7 +794,7 @@ async function main(): Promise<void> {
   printProof(proof);
 
   if (shouldSave) {
-    writeFileSync(SAVE_PATH, JSON.stringify(proof, null, 2));
+    await Bun.write(SAVE_PATH, JSON.stringify(proof, null, 2));
     console.log(`\n💾 Proof saved to ${SAVE_PATH}`);
   }
 

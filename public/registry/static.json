@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24T03:13:29.406Z",
+  "generated": "2026-07-24T04:43:10.736Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -524,13 +524,14 @@
           "name": "@factorywager/registry-client",
           "version": "1.0.0",
           "type": "library",
-          "description": "Published via bun publish",
-          "publishedAt": "2026-07-23T17:31:15.266Z",
-          "publisher": "bun-publish",
+          "description": "",
+          "tags": [],
+          "publishedAt": "2026-07-24T04:02:27.943Z",
+          "publisher": "api",
           "storage": {
             "r2Key": "@factorywager/@factorywager/registry-client/1.0.0.tgz",
-            "size": 636,
-            "checksum": "e2fd9f16c4d3fa285c8a8fc63ce475b8f4d6445f687de28c10d77d582f5f4049",
+            "size": 69,
+            "checksum": "76f15dd931dcd2f9ee0d36473e58b879561a6df6bdd9a4c276cdebc9ad76b792",
             "contentType": "application/gzip"
           }
         }
@@ -626,7 +627,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 525,
+    "uptimeMs": 14,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
@@ -646,12 +647,12 @@
     "dodByStatus": {},
     "experimentsActive": 0,
     "predictionN": 10,
-    "timestamp": "2026-07-24T03:13:29.404Z",
-    "snapshotAt": "2026-07-24T03:13:29.404Z"
+    "timestamp": "2026-07-24T04:43:10.735Z",
+    "snapshotAt": "2026-07-24T04:43:10.735Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-24T03:13:29.401Z",
+    "generated": "2026-07-24T04:43:10.733Z",
     "liquidity": {
       "total": 0
     },
@@ -694,11 +695,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "bff319614310a9e340415e2182c0c3de4ea92a01ec0b09dfc388c47fc6abab47",
+      "proofHash": "088a7e7398c6f6243fddb32bdbab2814c66fd2a670117ccedc0f9d8b38d905d6",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-24T03:13:29.401Z"
+      "timestamp": "2026-07-24T04:43:10.733Z"
     },
     "registryClient": {
       "available": true,
@@ -707,7 +708,7 @@
       "total": 3,
       "status": "pass",
       "proofHash": "38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f",
-      "timestamp": "2026-07-24T01:24:55.940Z",
+      "timestamp": "2026-07-24T04:32:05.528Z",
       "path": "/registry/registry-client-proof.json"
     },
     "docsCoverage": {
@@ -722,8 +723,61 @@
       "referencePageCount": 57,
       "indexStale": false,
       "proofHash": "c74594ac19fd2bc94162c4ab8943ccec771c0430e51c6ef43317c712385c2fdc",
-      "timestamp": "2026-07-24T02:09:05.741Z",
+      "timestamp": "2026-07-24T04:32:05.792Z",
       "path": "/registry/docs-coverage-proof.json"
+    },
+    "proofTaxonomy": {
+      "available": true,
+      "ok": true,
+      "contracts": 7,
+      "contractsOk": 7,
+      "consistencyOk": 5,
+      "consistencyTotal": 5,
+      "proofHash": "9cd8ec513038d2ed2a914c03981d23ccf353e66ad1bffe62a48252652594c006",
+      "timestamp": "2026-07-24T04:43:10.729Z",
+      "path": "/registry/proof-taxonomy-audit.json"
+    },
+    "channelMeta": {
+      "available": true,
+      "ok": true,
+      "passed": 75,
+      "total": 75,
+      "status": "pass",
+      "proofHash": "1a203210514d7f7e03753ab2ba667a6adf8b60590ec4d6e3e1bdb9cf7e33f62b",
+      "updatedAt": "2026-07-24T04:43:10.731Z",
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "runtimeVersion": "1.4.0",
+      "bySubsystem": {
+        "runtime": {
+          "passed": 36,
+          "total": 36
+        },
+        "bundler": {
+          "passed": 8,
+          "total": 8
+        },
+        "package-manager": {
+          "passed": 12,
+          "total": 12
+        },
+        "networking": {
+          "passed": 13,
+          "total": 13
+        },
+        "other": {
+          "passed": 6,
+          "total": 6
+        }
+      },
+      "sources": {
+        "release": "artifact",
+        "nits": "artifact",
+        "bundler": "artifact",
+        "networking": "artifact"
+      },
+      "path": "/registry/release-features.json",
+      "bakePath": "/registry/channel-meta-bake.json"
     },
     "routing": {
       "available": true,
@@ -871,13 +925,11 @@
           "timeMs": 37.07,
           "contentType": "application/json"
         }
-      ],
-      "cached": false,
-      "stale": false
+      ]
     }
   },
   "bunUtils": {
-    "proofHash": "7d244be530b18e423083e177239a07c1f3c11339387aeb5dd67cd5c14b00f0b3",
+    "proofHash": "6cd46c17ed60b5723ab22caf321693c22e58ea9597a18727631f2e08e2a5dbc8",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -1029,8 +1081,59 @@
         "timeMs": 37.07,
         "contentType": "application/json"
       }
-    ],
-    "cached": false,
-    "stale": false
+    ]
+  },
+  "channelMeta": {
+    "available": true,
+    "ok": true,
+    "passed": 75,
+    "total": 75,
+    "status": "pass",
+    "proofHash": "1a203210514d7f7e03753ab2ba667a6adf8b60590ec4d6e3e1bdb9cf7e33f62b",
+    "updatedAt": "2026-07-24T04:43:10.731Z",
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "runtimeVersion": "1.4.0",
+    "bySubsystem": {
+      "runtime": {
+        "passed": 36,
+        "total": 36
+      },
+      "bundler": {
+        "passed": 8,
+        "total": 8
+      },
+      "package-manager": {
+        "passed": 12,
+        "total": 12
+      },
+      "networking": {
+        "passed": 13,
+        "total": 13
+      },
+      "other": {
+        "passed": 6,
+        "total": 6
+      }
+    },
+    "sources": {
+      "release": "artifact",
+      "nits": "artifact",
+      "bundler": "artifact",
+      "networking": "artifact"
+    },
+    "path": "/registry/release-features.json",
+    "bakePath": "/registry/channel-meta-bake.json"
+  },
+  "proofTaxonomy": {
+    "available": true,
+    "ok": true,
+    "contracts": 7,
+    "contractsOk": 7,
+    "consistencyOk": 5,
+    "consistencyTotal": 5,
+    "proofHash": "9cd8ec513038d2ed2a914c03981d23ccf353e66ad1bffe62a48252652594c006",
+    "timestamp": "2026-07-24T04:43:10.729Z",
+    "path": "/registry/proof-taxonomy-audit.json"
   }
 }

@@ -16,10 +16,10 @@ import { tmpdir } from 'node:os';
 import { joinPath } from '../path-bun.ts';
 import { factoryWagerRegistryUrlFromEnv } from '../../config/r2-env.ts';
 import { RegistryClient } from '../../packages/registry-client/src/index.ts';
-import { CANONICAL_REFS } from '../../tools/bun-doc-refs.ts';
-import { buildVerificationLinks } from './links.ts';
+import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import { resolveVerificationBunBinary } from './resolve-bun-binary.ts';
-import type { VerificationLinks, VerificationResult } from './types.ts';
+import { withSubsystem } from './subsystem.ts';
+import type { VerificationResult } from './types.ts';
 
 export const INSTALL_ENV_PROOF_REPORT_PATH = '/registry/install-env-proof.json';
 export const INSTALL_ENV_VERIFY_SOURCE = 'tools/verify-install-env.ts';
@@ -47,13 +47,9 @@ export const SCOPED_REGISTRY_LANES = [
 ] as const;
 
 const INSTALL_ENV_DOCS =
-  CANONICAL_REFS['BUN install environment variables'] ??
   'https://bun.com/docs/pm/cli/install#configuring-with-environment-variables';
 
-const SCOPED_REGISTRY_DOCS =
-  CANONICAL_REFS['install.scopes'] ??
-  CANONICAL_REFS['install.registry'] ??
-  'https://bun.com/docs/runtime/bunfig#install-registry';
+const SCOPED_REGISTRY_DOCS = 'https://bun.com/docs/runtime/bunfig#install-registry';
 
 export type InstallEnvVarName =
   | 'BUN_CONFIG_REGISTRY'
@@ -64,7 +60,6 @@ export type InstallEnvVarName =
   | 'BUN_CONFIG_SKIP_INSTALL_PACKAGES';
 
 const REGISTRY_READ_PLANE_DOCS =
-  CANONICAL_REFS['registry-read-plane'] ??
   'https://developers.cloudflare.com/pages/functions/bindings/#r2-bucket-bindings';
 
 export type InstallEnvProbeKind = InstallEnvVarName | 'install.scopes' | 'registry-read-plane';
@@ -123,22 +118,33 @@ function resultRow(
   passed: boolean,
   opts?: { canonicalKey?: string; canonical?: string; lane?: string }
 ): InstallEnvProbeRow {
-  const canonicalKey = opts?.canonicalKey ?? envVar;
-  const canonical = opts?.canonical ?? CANONICAL_REFS[canonicalKey] ?? INSTALL_ENV_DOCS;
-  return {
+  const canonicalKey =
+    opts?.canonicalKey ??
+    (envVar === 'install.scopes'
+      ? 'install.scopes'
+      : envVar === 'registry-read-plane'
+        ? 'registry-read-plane'
+        : envVar);
+  const docs = resolveCanonicalForProbe(canonicalKey, {
+    reportPath: INSTALL_ENV_PROOF_REPORT_PATH,
+    sourcePath: INSTALL_ENV_VERIFY_SOURCE,
+    fallback:
+      opts?.canonical ??
+      (envVar === 'registry-read-plane' ? REGISTRY_READ_PLANE_DOCS : INSTALL_ENV_DOCS),
+    subsystem: 'package-manager',
+  });
+  return withSubsystem({
     envVar,
+    ...docs,
     canonicalKey,
     name: envVar,
     expected,
     actual,
     passed,
-    canonical,
+    canonical: opts?.canonical ?? docs.canonical,
     lane: opts?.lane,
-    _links: buildVerificationLinks(canonical, {
-      reportPath: INSTALL_ENV_PROOF_REPORT_PATH,
-      sourcePath: INSTALL_ENV_VERIFY_SOURCE,
-    }),
-  };
+    subsystem: 'package-manager',
+  });
 }
 
 function normalizeRegistryUrl(url: string): string {
@@ -426,7 +432,7 @@ export async function probeRegistryReadPlane(): Promise<InstallEnvProbeRow> {
   return resultRow(
     'registry-read-plane',
     'RegistryClient.health() on /api/registry/health',
-    attempts.length > 0 ? attempts.joinPath('; ') : 'no read-plane lanes',
+    attempts.length > 0 ? attempts.join('; ') : 'no read-plane lanes',
     false,
     { canonicalKey: 'registry-read-plane', canonical: REGISTRY_READ_PLANE_DOCS }
   );

@@ -1,20 +1,21 @@
 {
-  "proofHash": "243ca6ee4dd9e79d1dca0ab9653f83221acd91d157af707d086f07f6a49c0392",
   "schemaVersion": 1,
   "reportType": "networking-verification",
-  "timestamp": "2026-07-23T19:44:27.255Z",
+  "timestamp": "2026-07-24T04:32:02.865Z",
+  "subsystem": "networking",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
   "base": "http://127.0.0.1:3000",
-  "remote": false,
+  "remote": true,
   "allOk": true,
   "targets": [
     {
       "name": "Health",
       "category": "ops",
+      "subsystem": "networking",
       "optimizations": {
         "DNS Prefetch": {
-          "metric": "0.309ms",
+          "metric": "0.280ms",
           "status": "PASS",
           "detail": "dns.prefetch(\"127.0.0.1\", 3000)"
         },
@@ -24,49 +25,50 @@
           "detail": "hits=0 miss=1 err=0"
         },
         "Preconnect": {
-          "metric": "dns-only",
+          "metric": "tcp",
           "status": "PASS",
-          "detail": "fetch.preconnect is not a function. (In 'fetch.preconnect(target)', 'fetch.preconnect' is undefined)"
+          "detail": "fetch.preconnect(http://127.0.0.1:3000)"
         },
         "Cold Fetch": {
-          "metric": "4.1ms (200)",
+          "metric": "4.9ms (200)",
           "status": "PASS"
         },
         "Warm Fetch": {
-          "metric": "0.3ms (200)",
+          "metric": "0.2ms (200)",
           "status": "PASS",
           "detail": "faster than cold (likely reuse)"
         },
-        "Buffer": {
-          "metric": "0.2ms (4264 B)",
+        "response.bytes()": {
+          "metric": "0.2ms (11933 B)",
           "status": "PASS"
         },
         "Disk Write": {
-          "metric": "0.8ms",
+          "metric": "0.4ms",
           "status": "PASS",
-          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-ops-1784835867250.bin"
+          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-ops-1784867521967.bin"
         }
       },
       "summary": {
-        "coldFetchMs": 4.108916,
-        "warmFetchMs": 0.2555,
-        "reuseEfficiency": 16.08186301369863,
+        "coldFetchMs": 4.9,
+        "warmFetchMs": 0.2,
+        "reuseEfficiency": 24.5,
         "protocol": "unknown",
         "compression": "none",
         "dnsCacheHit": true,
         "keepAlive": false,
         "http3": false,
         "statusCode": 200,
-        "bodySize": 4264
+        "bodySize": 11933
       },
-      "timestamp": "2026-07-23T19:44:27.245Z"
+      "timestamp": "2026-07-24T04:32:02.865Z"
     },
     {
       "name": "Prediction report",
       "category": "registry",
+      "subsystem": "networking",
       "optimizations": {
         "DNS Prefetch": {
-          "metric": "0.023ms",
+          "metric": "0.016ms",
           "status": "PASS",
           "detail": "dns.prefetch(\"127.0.0.1\", 3000)"
         },
@@ -76,55 +78,238 @@
           "detail": "hits=0 miss=1 err=0"
         },
         "Preconnect": {
-          "metric": "dns-only",
+          "metric": "tcp",
           "status": "PASS",
-          "detail": "fetch.preconnect is not a function. (In 'fetch.preconnect(target)', 'fetch.preconnect' is undefined)"
+          "detail": "fetch.preconnect(http://127.0.0.1:3000)"
         },
         "Cold Fetch": {
-          "metric": "0.8ms (200)",
+          "metric": "0.3ms (401)",
           "status": "PASS"
         },
         "Warm Fetch": {
-          "metric": "0.3ms (200)",
+          "metric": "0.1ms (401)",
           "status": "PASS",
           "detail": "faster than cold (likely reuse)"
         },
-        "Buffer": {
-          "metric": "0.3ms (17789 B)",
+        "response.bytes()": {
+          "metric": "0.1ms (24 B)",
+          "status": "PASS"
+        },
+        "Disk Write": {
+          "metric": "0.2ms",
+          "status": "PASS",
+          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-registry-1784867521969.bin"
+        }
+      },
+      "summary": {
+        "coldFetchMs": 0.3,
+        "warmFetchMs": 0.1,
+        "reuseEfficiency": 3,
+        "protocol": "unknown",
+        "compression": "none",
+        "dnsCacheHit": true,
+        "keepAlive": false,
+        "http3": false,
+        "statusCode": 401,
+        "bodySize": 24
+      },
+      "timestamp": "2026-07-24T04:32:02.865Z"
+    },
+    {
+      "name": "CF Dashboard",
+      "category": "dashboard",
+      "subsystem": "networking",
+      "optimizations": {
+        "DNS Prefetch": {
+          "metric": "0.016ms",
+          "status": "PASS",
+          "detail": "dns.prefetch(\"dash.cloudflare.com\", 443)"
+        },
+        "DNS Cache": {
+          "metric": "size=2 total=5",
+          "status": "PASS",
+          "detail": "hits=0 miss=2 err=0"
+        },
+        "Preconnect": {
+          "metric": "dns-only",
+          "status": "PASS",
+          "detail": "fetch.preconnect HTTPS throws Invalid port — use CLI: bun --fetch-preconnect https://dash.cloudflare.com:443 ./app.ts (dns.prefetch host+port still applied)"
+        },
+        "Cold Fetch": {
+          "metric": "126.3ms (200)",
+          "status": "PASS"
+        },
+        "Warm Fetch": {
+          "metric": "199.9ms (200)",
+          "status": "PASS",
+          "detail": "timing only — not a pool guarantee"
+        }
+      },
+      "summary": {
+        "coldFetchMs": 126.3,
+        "warmFetchMs": 199.9,
+        "reuseEfficiency": 0.631816,
+        "protocol": "unknown",
+        "compression": "none",
+        "dnsCacheHit": true,
+        "keepAlive": false,
+        "http3": false,
+        "statusCode": 200
+      },
+      "timestamp": "2026-07-24T04:32:02.865Z"
+    },
+    {
+      "name": "Registry (Pages)",
+      "category": "pages",
+      "subsystem": "networking",
+      "optimizations": {
+        "DNS Prefetch": {
+          "metric": "0.027ms",
+          "status": "PASS",
+          "detail": "dns.prefetch(\"registry.factory-wager.com\", 443)"
+        },
+        "DNS Cache": {
+          "metric": "size=3 total=9",
+          "status": "PASS",
+          "detail": "hits=1 miss=3 err=0"
+        },
+        "Preconnect": {
+          "metric": "dns-only",
+          "status": "PASS",
+          "detail": "fetch.preconnect HTTPS throws Invalid port — use CLI: bun --fetch-preconnect https://registry.factory-wager.com:443 ./app.ts (dns.prefetch host+port still applied)"
+        },
+        "Cold Fetch": {
+          "metric": "81.5ms (200)",
+          "status": "PASS"
+        },
+        "Warm Fetch": {
+          "metric": "87.3ms (200)",
+          "status": "PASS",
+          "detail": "timing only — not a pool guarantee"
+        }
+      },
+      "summary": {
+        "coldFetchMs": 81.5,
+        "warmFetchMs": 87.3,
+        "reuseEfficiency": 0.933562,
+        "protocol": "unknown",
+        "compression": "none",
+        "dnsCacheHit": true,
+        "keepAlive": false,
+        "http3": false,
+        "statusCode": 200
+      },
+      "timestamp": "2026-07-24T04:32:02.865Z"
+    },
+    {
+      "name": "Kalshi exchange",
+      "category": "trading",
+      "subsystem": "networking",
+      "optimizations": {
+        "DNS Prefetch": {
+          "metric": "0.029ms",
+          "status": "PASS",
+          "detail": "dns.prefetch(\"api.elections.kalshi.com\", 443)"
+        },
+        "DNS Cache": {
+          "metric": "size=4 total=13",
+          "status": "PASS",
+          "detail": "hits=2 miss=4 err=0"
+        },
+        "Preconnect": {
+          "metric": "dns-only",
+          "status": "PASS",
+          "detail": "fetch.preconnect HTTPS throws Invalid port — use CLI: bun --fetch-preconnect https://api.elections.kalshi.com:443 ./app.ts (dns.prefetch host+port still applied)"
+        },
+        "Cold Fetch": {
+          "metric": "61.7ms (200)",
+          "status": "PASS"
+        },
+        "Warm Fetch": {
+          "metric": "22.3ms (200)",
+          "status": "PASS",
+          "detail": "faster than cold (likely reuse)"
+        },
+        "response.bytes()": {
+          "metric": "21.1ms (218 B)",
           "status": "PASS"
         },
         "Disk Write": {
           "metric": "0.3ms",
           "status": "PASS",
-          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-registry-1784835867254.bin"
+          "detail": "/var/folders/26/vcnd_q_j4pv26q21n5zcn8qw0000gn/T/bun-net-trading-1784867522571.bin"
         }
       },
       "summary": {
-        "coldFetchMs": 0.840042,
-        "warmFetchMs": 0.333541,
-        "reuseEfficiency": 2.518556939026986,
+        "coldFetchMs": 61.7,
+        "warmFetchMs": 22.3,
+        "reuseEfficiency": 2.766816,
         "protocol": "unknown",
         "compression": "none",
         "dnsCacheHit": true,
         "keepAlive": false,
         "http3": false,
         "statusCode": 200,
-        "bodySize": 17789
+        "bodySize": 218
       },
-      "timestamp": "2026-07-23T19:44:27.252Z"
+      "timestamp": "2026-07-24T04:32:02.865Z"
+    },
+    {
+      "name": "Bun docs",
+      "category": "control",
+      "subsystem": "networking",
+      "optimizations": {
+        "DNS Prefetch": {
+          "metric": "0.021ms",
+          "status": "PASS",
+          "detail": "dns.prefetch(\"bun.com\", 443)"
+        },
+        "DNS Cache": {
+          "metric": "size=5 total=16",
+          "status": "PASS",
+          "detail": "hits=2 miss=5 err=0"
+        },
+        "Preconnect": {
+          "metric": "dns-only",
+          "status": "PASS",
+          "detail": "fetch.preconnect HTTPS throws Invalid port — use CLI: bun --fetch-preconnect https://bun.com:443 ./app.ts (dns.prefetch host+port still applied)"
+        },
+        "Cold Fetch": {
+          "metric": "138.4ms (200)",
+          "status": "PASS"
+        },
+        "Warm Fetch": {
+          "metric": "150.1ms (200)",
+          "status": "PASS",
+          "detail": "timing only — not a pool guarantee"
+        }
+      },
+      "summary": {
+        "coldFetchMs": 138.4,
+        "warmFetchMs": 150.1,
+        "reuseEfficiency": 0.922052,
+        "protocol": "unknown",
+        "compression": "none",
+        "dnsCacheHit": true,
+        "keepAlive": false,
+        "http3": false,
+        "statusCode": 200
+      },
+      "timestamp": "2026-07-24T04:32:02.865Z"
     }
   ],
   "global": {
-    "elapsedMs": 10.788917,
-    "checksPassed": 14,
-    "checksTotal": 14,
+    "elapsedMs": 899.369209,
+    "checksPassed": 36,
+    "checksTotal": 36,
     "dnsCache": {
-      "cacheHitsCompleted": 0,
-      "cacheHitsInflight": 0,
-      "cacheMisses": 1,
-      "size": 1,
+      "cacheHitsCompleted": 3,
+      "cacheHitsInflight": 4,
+      "cacheMisses": 5,
+      "size": 5,
       "errors": 0,
-      "totalCount": 4
+      "totalCount": 19
     }
-  }
+  },
+  "proofHash": "01b9ebb427fd904a612884a84effaebdc8648618627eb5a16b5794082167b8e2"
 }

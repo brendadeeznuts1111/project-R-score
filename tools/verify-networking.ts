@@ -69,6 +69,10 @@ import { padEndWidth } from '../lib/console-depth.ts';
 import { factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
 import { BUN_DEEP_EQUALS_DOCS } from '../lib/deep-equals.ts';
 import {
+  buildNetworkingProofArtifact,
+  NETWORKING_PROOF_PATH,
+} from '../lib/http/networking-proof.ts';
+import {
   BUN_STRING_WIDTH_DOCS,
   NetworkingChecksReport,
   RouteProbeReport,
@@ -127,6 +131,7 @@ const LOCAL_ONLY = has('local-only');
 const ROUTES = has('routes') || has('routes-only') || has('local-only');
 const ROUTES_ONLY = has('routes-only');
 const SKIP_WRITE = has('skip-write');
+const SHOULD_SAVE = has('save');
 const AS_JSON = has('json');
 const TIMEOUT_MS = Number(flag('timeout-ms') ?? 10_000);
 const BOX_INNER = 62;
@@ -149,9 +154,10 @@ export type NetTarget = {
   okStatuses?: number[];
 };
 
-function buildTargets(): NetTarget[] {
-  const local = LOCAL_BASE.replace(/\/$/, '');
-  const out: NetTarget[] = [
+/** Local-only targets (health + prediction) — safe for channel suite / CI without remote. */
+export function buildLocalNetworkingTargets(base: string = LOCAL_BASE): NetTarget[] {
+  const local = base.replace(/\/$/, '');
+  return [
     {
       name: 'Health',
       url: `${local}/health`,
@@ -167,6 +173,10 @@ function buildTargets(): NetTarget[] {
       okStatuses: [200, 401, 403],
     },
   ];
+}
+
+function buildTargets(): NetTarget[] {
+  const out: NetTarget[] = buildLocalNetworkingTargets();
 
   if (LOCAL_ONLY) return out;
 
@@ -657,6 +667,29 @@ async function main(): Promise<void> {
     console.log('     JSON: --json  →  .tables.rendered.routes  (or omit --json for live tables)');
   }
 
+  if (SHOULD_SAVE && rows.length > 0) {
+    const stats = dnsCacheStats();
+    const proof = buildNetworkingProofArtifact({
+      rows,
+      targets: targets.map(t => ({ name: t.name, category: t.category })),
+      base: LOCAL_BASE,
+      remote: !LOCAL_ONLY,
+      elapsedMs: elapsed,
+      bunVersion: Bun.version,
+      bunRevision: Bun.revision || undefined,
+      dnsCache: {
+        cacheHitsCompleted: stats.cacheHitsCompleted,
+        cacheHitsInflight: stats.cacheHitsInflight,
+        cacheMisses: stats.cacheMisses,
+        size: stats.size,
+        errors: stats.errors,
+        totalCount: stats.totalCount,
+      },
+    });
+    await Bun.write(NETWORKING_PROOF_PATH, `${JSON.stringify(proof, null, 2)}\n`);
+    if (!AS_JSON) console.log(`\n💾 Proof saved to ${NETWORKING_PROOF_PATH}`);
+  }
+
   if (failed > 0 || routeCritFailed > 0) process.exit(1);
   if (routeFailed > 0 && has('strict-routes')) process.exit(1);
 }
@@ -682,11 +715,35 @@ export async function runNetworkingVerification(opts: {
   proofHash: string;
   proofObj: { global: { checksPassed: number; checksTotal: number } };
 }> {
-  const { rows } = await runNetworkingSuite({ skipWrite: !opts.saveProof });
-  const checksPassed = rows.filter(r => r.status === 'PASS').length;
-  const checksTotal = rows.length;
-  const proofObj = { global: { checksPassed, checksTotal } };
-  const h = new Bun.CryptoHasher('sha256');
-  h.update(JSON.stringify(proofObj));
-  return { ok: checksPassed === checksTotal, proofHash: h.digest('hex'), proofObj };
+  const base = opts.base ?? LOCAL_BASE;
+  const targets = buildTargets();
+  const { rows } = await runNetworkingSuite({ skipWrite: !opts.saveProof, targets });
+  const hard = rows.filter(r => r.status === 'PASS' || r.status === 'FAIL');
+  const checksPassed = hard.filter(r => r.status === 'PASS').length;
+  const checksTotal = hard.length;
+  const stats = dnsCacheStats();
+  const proof = buildNetworkingProofArtifact({
+    rows,
+    targets: targets.map(t => ({ name: t.name, category: t.category })),
+    base,
+    remote: Boolean(opts.remote),
+    bunVersion: Bun.version,
+    bunRevision: Bun.revision || undefined,
+    dnsCache: {
+      cacheHitsCompleted: stats.cacheHitsCompleted,
+      cacheHitsInflight: stats.cacheHitsInflight,
+      cacheMisses: stats.cacheMisses,
+      size: stats.size,
+      errors: stats.errors,
+      totalCount: stats.totalCount,
+    },
+  });
+  if (opts.saveProof) {
+    await Bun.write(NETWORKING_PROOF_PATH, `${JSON.stringify(proof, null, 2)}\n`);
+  }
+  return {
+    ok: proof.allOk,
+    proofHash: proof.proofHash,
+    proofObj: { global: { checksPassed, checksTotal } },
+  };
 }

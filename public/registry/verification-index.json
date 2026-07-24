@@ -1,0 +1,61 @@
+{
+  "type": "VerificationSnapshotIndex",
+  "version": "1.0.0",
+  "updatedAt": "2026-07-24T04:43:29.399Z",
+  "canonical": "public/registry/release-features.json",
+  "snapshots": [
+    {
+      "id": "stable@1.4.0",
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "suite": "all",
+      "runtimeVersion": "1.4.0",
+      "path": "public/registry/verification-stable-1.4.0.json",
+      "proofHash": "1a203210514d7f7e03753ab2ba667a6adf8b60590ec4d6e3e1bdb9cf7e33f62b",
+      "testedAt": "2026-07-24T04:32:25.009Z",
+      "status": "pass"
+    },
+    {
+      "id": "stable@1.4.0+networking",
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "suite": "networking",
+      "runtimeVersion": "1.4.0",
+      "path": "public/registry/verification-stable-1.4.0-networking.json",
+      "proofHash": "3222441d065c3f1efc7e4a6e9f89c81c86ab04956f19e4bd05452b9ae66f1f83",
+      "testedAt": "2026-07-24T04:32:24.833Z",
+      "status": "pass"
+    },
+    {
+      "id": "stable@1.4.0+bundler",
+      "channel": "stable",
+      "targetVersion": "1.4.0",
+      "suite": "bundler",
+      "runtimeVersion": "1.4.0",
+      "path": "public/registry/verification-stable-1.4.0-bundler.json",
+      "proofHash": "9f3052447f2b2a8dc2050fb54fb3b07072df38db5360cacd7dd4d73f69fa4552",
+      "testedAt": "2026-07-24T04:24:21.351Z",
+      "status": "pass"
+    },
+    {
+      "id": "pinned@1.3.14",
+      "channel": "pinned",
+      "targetVersion": "1.3.14",
+      "runtimeVersion": "1.4.0",
+      "path": "public/registry/release-features.json",
+      "proofHash": "de86bf0bd19bbb35d186408cf764198795d912558d724743c4f4d186a8cb0547",
+      "testedAt": "2026-07-24T03:19:27.571Z",
+      "status": "pass"
+    },
+    {
+      "id": "pinned@1.3.14",
+      "channel": "pinned",
+      "targetVersion": "1.3.14",
+      "runtimeVersion": "1.4.0",
+      "path": "public/registry/verification-pinned-1.3.14.json",
+      "proofHash": "de86bf0bd19bbb35d186408cf764198795d912558d724743c4f4d186a8cb0547",
+      "testedAt": "2026-07-24T03:19:27.571Z",
+      "status": "pass"
+    }
+  ]
+}

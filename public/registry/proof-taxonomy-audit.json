@@ -1,0 +1,107 @@
+{
+  "type": "ProofTaxonomyAuditReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T04:43:50.620Z",
+  "ok": true,
+  "reportPath": "/registry/proof-taxonomy-audit.json",
+  "audits": [
+    {
+      "path": "public/registry/release-features.json",
+      "ok": true,
+      "rows": 46,
+      "missingSubsystem": 0,
+      "notes": [],
+      "primarySubsystem": "runtime",
+      "reportPath": "/registry/release-features.json",
+      "verifyScript": "tools/verify-bun-release.ts"
+    },
+    {
+      "path": "public/registry/install-platform.json",
+      "ok": true,
+      "rows": 11,
+      "missingSubsystem": 0,
+      "notes": [],
+      "primarySubsystem": "package-manager",
+      "reportPath": "/registry/install-platform.json",
+      "verifyScript": "tools/verify-install-platform.ts"
+    },
+    {
+      "path": "public/registry/install-env-proof.json",
+      "ok": true,
+      "rows": 8,
+      "missingSubsystem": 0,
+      "notes": [],
+      "primarySubsystem": "package-manager",
+      "reportPath": "/registry/install-env-proof.json",
+      "verifyScript": "tools/verify-install-env.ts"
+    },
+    {
+      "path": "public/registry/networking-proof.json",
+      "ok": true,
+      "rows": 0,
+      "missingSubsystem": 0,
+      "notes": [],
+      "primarySubsystem": "networking",
+      "reportPath": "/registry/networking-proof.json",
+      "verifyScript": "tools/verify-networking.ts"
+    },
+    {
+      "path": "public/registry/bun-runtime-nits-proof.json",
+      "ok": true,
+      "rows": 16,
+      "missingSubsystem": 0,
+      "notes": [],
+      "primarySubsystem": "runtime",
+      "reportPath": "/registry/bun-runtime-nits-proof.json",
+      "verifyScript": "tools/verify-bun-runtime-nits.ts"
+    },
+    {
+      "path": "public/registry/bundler-loaders-proof.json",
+      "ok": true,
+      "rows": 6,
+      "missingSubsystem": 0,
+      "notes": [],
+      "primarySubsystem": "bundler",
+      "reportPath": "/registry/bundler-loaders-proof.json",
+      "verifyScript": "tools/verify-bundler.ts"
+    },
+    {
+      "path": "public/registry/networking-channel-proof.json",
+      "ok": true,
+      "rows": 7,
+      "missingSubsystem": 0,
+      "notes": [],
+      "primarySubsystem": "networking",
+      "reportPath": "/registry/networking-channel-proof.json",
+      "verifyScript": "tools/verify-channel.ts --suite=networking"
+    }
+  ],
+  "consistency": [
+    {
+      "id": "install-platform-embed",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "by-subsystem:release-features",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "by-subsystem:install-platform",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "by-subsystem:install-env",
+      "ok": true,
+      "notes": []
+    },
+    {
+      "id": "by-subsystem:runtime-nits",
+      "ok": true,
+      "notes": []
+    }
+  ],
+  "proofHash": "4aa1e5e7c0b7447654d317aaff9b40aeca861e571549a7bb120496fd36bf0c37"
+}

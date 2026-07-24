@@ -1,9 +1,23 @@
 {
   "type": "InstallPlatformVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T03:14:06.935Z",
+  "timestamp": "2026-07-24T04:32:05.630Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "6d890bce70dc413cbf5dfd05e8b58f8da32a5a34",
+    "provenanceId": "local-2026-07-24T04-32-05-560Z",
+    "testedAt": "2026-07-24T04:32:05.560Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none"
+  },
   "dryRun": true,
   "reportPath": "/registry/install-platform.json",
   "toolchain": {
@@ -20,6 +34,11 @@
       "actual": "spawned=bun source=runtime runtime=1.4.0 cli=1.4.0",
       "passed": true,
       "canonical": "https://bun.com/docs/runtime/utils#bun-which",
+      "canonicalKey": "Bun.which",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/runtime/utils#bun-which",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -32,6 +51,11 @@
       "actual": "env > bunfig; 6 vars (BUN_CONFIG_REGISTRY, BUN_CONFIG_SKIP_INSTALL_PACKAGES, BUN_CONFIG_SKIP_LOAD_LOCKFILE, BUN_CONFIG_SKIP_SAVE_LOCKFILE, BUN_CONFIG_TOKEN, BUN_CONFIG_YARN_LOCKFILE)",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKey": "BUN install environment variables",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -44,6 +68,11 @@
       "actual": "no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in shell env",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKey": "install env precedence",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -56,6 +85,11 @@
       "actual": "5 mechanism notes (backend, cache, node_modules, eager/lazy resolve)",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#cache",
+      "canonicalKey": "bun install cache mechanism",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#cache",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -68,6 +102,11 @@
       "actual": "skipped (--dry-run) — would run bun install --cpu=x64 --os=linux --dry-run in isolated dir",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKey": "bun install --cpu",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -80,6 +119,11 @@
       "actual": "cross-linux-x64=x64/linux; cross-linux-arm64=arm64/linux; cross-darwin-arm64=arm64/darwin",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKey": "bun install --cpu",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -92,6 +136,11 @@
       "actual": "configVersion=1 + workspaces → isolated linker default per Bun docs",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "canonicalKey": "isolated installs",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/isolated-installs",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -104,6 +153,11 @@
       "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "canonicalKey": "isolated installs",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/isolated-installs",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -116,6 +170,11 @@
       "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/global-store",
+      "canonicalKey": "global virtual store",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/global-store",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -128,6 +187,11 @@
       "actual": "skipped (--dry-run) — would run: cross-linux-x64=bun install --cpu=x64 --os=linux --dry-run (x64/linux); cross-linux-arm64=bun install --cpu=arm64 --os=linux --dry-run (arm64/linux); cross-darwin-arm64=bun install --cpu=arm64 --os=darwin --dry-run (arm64/darwin)",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKey": "bun install --cpu",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -140,6 +204,11 @@
       "actual": "skipped (--dry-run) — would hash bun.lock before/after cross dry-runs",
       "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+      "canonicalKey": "platform-specific dependencies",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
@@ -151,6 +220,12 @@
     "passed": 11,
     "total": 11,
     "skipped": 3,
-    "status": "pass"
+    "status": "pass",
+    "bySubsystem": {
+      "package-manager": {
+        "passed": 11,
+        "total": 11
+      }
+    }
   }
 }

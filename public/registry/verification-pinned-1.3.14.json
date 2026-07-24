@@ -1,0 +1,1471 @@
+{
+  "type": "ChannelAwareVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T03:19:27.571Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "blogPost": "https://bun.com/blog/bun-v1.3.14",
+  "semanticTags": {
+    "channel": "pinned",
+    "targetVersion": "1.3.14",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "449c840565c8fc81c10d178634c4bb78cb6ba4af",
+    "provenanceId": "local-2026-07-24T03-19-27-571Z",
+    "testedAt": "2026-07-24T03:19:27.571Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "releaseNotes": [
+    {
+      "id": "bun-image",
+      "title": "Bun.Image — built-in image processing",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#bun-image",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#bun-image",
+        "https://bun.com/blog/bun-v1.3.14#terminal-methods"
+      ]
+    },
+    {
+      "id": "tls-system-ca-no-flag",
+      "title": "tls.getCACertificates('system') without --use-system-ca",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+        "https://bun.com/reference/node/tls/getCACertificates",
+        "https://github.com/oven-sh/bun/issues/24339",
+        "https://github.com/oven-sh/bun/pull/29526"
+      ]
+    },
+    {
+      "id": "gc-builtins-incremental",
+      "title": "Reduced incremental GC overhead for built-in objects",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+        "https://bun.com/docs/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects"
+      ]
+    },
+    {
+      "id": "binary-size-linux-windows",
+      "title": "Smaller Bun binary on Windows and Linux",
+      "verify": "informational",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#smaller-binary-size",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#smaller-binary-size",
+        "https://github.com/oven-sh/bun/releases"
+      ]
+    },
+    {
+      "id": "event-loop-refactor",
+      "title": "Event loop refactor (reliability + memory)",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#event-loop-refactor"
+      ]
+    },
+    {
+      "id": "using-await-using-native",
+      "title": "using / await using no longer lowered when targeting Bun",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun"
+      ]
+    },
+    {
+      "id": "no-orphans",
+      "title": "--no-orphans — exit when parent process dies",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#no-orphans"
+      ]
+    },
+    {
+      "id": "faster-esm",
+      "title": "Faster ESM module loading",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading"
+      ]
+    },
+    {
+      "id": "cross-language-lto",
+      "title": "Cross-language LTO for Zig ↔ C++ on Linux",
+      "verify": "smoke",
+      "canonical": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux"
+      ]
+    },
+    {
+      "id": "bun-terminal-pty",
+      "title": "Bun.Terminal API for pseudo-terminal (PTY) support",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+        "https://bun.com/docs/runtime/child-process#terminal-pty-support"
+      ]
+    },
+    {
+      "id": "compile-time-feature-flags",
+      "title": "Compile-time feature flags (bun:bundle)",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+        "https://bun.com/docs/bundler/index#features",
+        "https://bun.com/docs/guides/runtime/build-time-constants#feature-flags"
+      ]
+    },
+    {
+      "id": "stringwidth-accuracy",
+      "title": "Improved Bun.stringWidth accuracy",
+      "verify": "automated",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
+        "https://bun.com/docs/runtime/utils#bun-stringwidth"
+      ]
+    },
+    {
+      "id": "s3-content-disposition",
+      "title": "S3 contentDisposition uploads",
+      "verify": "informational",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads",
+        "https://bun.com/docs/runtime/s3"
+      ]
+    },
+    {
+      "id": "npmrc-env-expansion",
+      "title": ".npmrc quoted env expansion + ? modifier",
+      "verify": "informational",
+      "canonical": "https://bun.com/blog/bun-v1.3.5#environment-variable-expansion-in-npmrc-quoted-values",
+      "refs": [
+        "https://bun.com/blog/bun-v1.3.5#environment-variable-expansion-in-npmrc-quoted-values",
+        "https://bun.com/docs/pm/npmrc"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "name": "tls.getCACertificates('system')",
+      "expected": "non-empty on linux/win32; array on macOS (no --use-system-ca)",
+      "actual": "1 certs · darwin · non-empty without --use-system-ca",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Built-in objects GC smoke (Request/Response)",
+      "expected": "2000 allocs + optional Bun.gc without crash",
+      "actual": "ok (2000 allocs)",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.escapeHTML performance",
+      "expected": "< 500 ns per call",
+      "actual": "111.6 ns",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "ESM module load (node:fs)",
+      "expected": "loads successfully",
+      "actual": "0.05ms",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Process exit with pending timer",
+      "expected": "exits before unref timer fires",
+      "actual": "exits before unref timer fires",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "timer.ref() after fired setTimeout",
+      "expected": "process exits (ref does not keep loop alive)",
+      "actual": "exits after ref on fired timer",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "WebSocket cleanup on close",
+      "expected": "no crash or leak",
+      "actual": "ok",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#websocket-permessagedeflate-false-now-respected-in-upgrade-requests",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#websocket-permessagedeflate-false-now-respected-in-upgrade-requests",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Child process stdin pipe cleanup",
+      "expected": "exits without hanging",
+      "actual": "exited",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun Shell basics",
+      "expected": "echo works",
+      "actual": "\"hello\"",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/shell#getting-started",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/shell#getting-started",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "structuredClone Blob",
+      "expected": "clone works",
+      "actual": "ok",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.password.hash",
+      "expected": "returns a string",
+      "actual": "string",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/hashing#bun-password",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/hashing#bun-password",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.inspect depth",
+      "expected": "unlimited in canary",
+      "actual": "unlimited",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#upgraded-javascriptcore-engine",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#upgraded-javascriptcore-engine",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.hash returns bigint",
+      "expected": "bigint",
+      "actual": "bigint",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/hashing#bun-hash",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/hashing#bun-hash",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.version / Bun.revision",
+      "expected": "both available",
+      "actual": "1.4.0 (a227ad99)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/utils#bun-version",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-version",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "using / await using (Explicit Resource Mgmt)",
+      "expected": "works without lowering",
+      "actual": "using=42, await using=84",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Built-in objects (Request, Response)",
+      "expected": "created without crash",
+      "actual": "ok",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#reduced-gc-overhead-for-built-in-objects",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "--no-orphans support",
+      "expected": "configured in bunfig + env",
+      "actual": "bunfig=true, env=true",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.Image (all terminal methods: bytes, buffer, blob, toBase64, dataurl, placeholder, metadata, write)",
+      "expected": "all terminal methods produce correct output",
+      "actual": "fmt=png 1x1 webp=0.1KB buf=0.1KB blob=0.1KB b64=136B dataurl=159B placeholder=2638B write=true",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.14#terminal-methods",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.14#terminal-methods",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "fetch protocol (data:)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "data: round-trip (200)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#data-urls-data",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#data-urls-data",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "fetch protocol (blob:)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "blob: round-trip (200)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#blob-urls-blob",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#blob-urls-blob",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "fetch protocol (file://)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "fetch(file://) + Bun.file(path) round-trip (200)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#file-urls-file",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#file-urls-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "fetch s3:// (explicit s3: creds)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "explicit s3: → HTTP 404 ct=application/xml etag=— bytes=0B",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "fetch s3:// (env credentials)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "env AWS_* → HTTP 404 ct=application/xml bytes=0B",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "fetch s3:// (Bun.file)",
+      "expected": "fetch protocol round-trip per Bun docs",
+      "actual": "Bun.file env creds → exists=false size=0B",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/networking/fetch#s3-urls-s3",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: bun-binary-resolved",
+      "expected": "Verification toolchain (runtime execPath / Bun.which): bun-binary-resolved",
+      "actual": "spawned=bun source=runtime runtime=1.4.0 cli=1.4.0",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/utils#bun-which",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-which",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: bun-config-env-ssot",
+      "expected": "tools/bun-install-env.ts BUN_CONFIG_INSTALL_VARS: bun-config-env-ssot",
+      "actual": "env > bunfig; 6 vars (BUN_CONFIG_REGISTRY, BUN_CONFIG_SKIP_INSTALL_PACKAGES, BUN_CONFIG_SKIP_LOAD_LOCKFILE, BUN_CONFIG_SKIP_SAVE_LOCKFILE, BUN_CONFIG_TOKEN, BUN_CONFIG_YARN_LOCKFILE)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: forbidden-install-env",
+      "expected": "shell env (docs/UNIFIED.md machine layer): forbidden-install-env",
+      "actual": "no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in shell env",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: install-mechanism-notes-ssot",
+      "expected": "tools/bun-install-env.ts INSTALL_MECHANISM_NOTES: install-mechanism-notes-ssot",
+      "actual": "5 mechanism notes (backend, cache, node_modules, eager/lazy resolve)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cache",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cache",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: runtime-flags",
+      "expected": "Bun CLI (isolated probe dir): runtime-flags",
+      "actual": "dry-run --cpu=x64 --os=linux exit=0; invalid cpu rejected",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: profile-ssot",
+      "expected": ".agents/skills/ast-grep/bun-install-profiles.json: profile-ssot",
+      "actual": "cross-linux-x64=x64/linux; cross-linux-arm64=arm64/linux; cross-darwin-arm64=arm64/darwin",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: lockfile-config-version",
+      "expected": "bun.lock configVersion + workspaces: lockfile-config-version",
+      "actual": "configVersion=1 + workspaces → isolated linker default per Bun docs",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/isolated-installs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: machine-isolated-linker",
+      "expected": "~/.bunfig.toml (docs/UNIFIED.md machine SSOT): machine-isolated-linker",
+      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/isolated-installs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: machine-global-store",
+      "expected": "~/.bunfig.toml globalStore + isolated linker: machine-global-store",
+      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/global-store",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/global-store",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: monorepo-cross-dry-run",
+      "expected": "FactoryWager monorepo root (package.json + bun.lock): monorepo-cross-dry-run",
+      "actual": "cross-linux-x64:ok; cross-linux-arm64:ok; cross-darwin-arm64:ok",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "install platform: lockfile-stable",
+      "expected": "bun.lock shared lockfile (docs/UNIFIED.md): lockfile-stable",
+      "actual": "hash unchanged (07fd9c865b3b6ba6) after cross dry-runs",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.Archive (create, extract, gzip, read)",
+      "expected": "creates tar, extracts, gzips, reads files back",
+      "actual": "archive bytes=10240, gzip=126, round-trip verified",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/archive",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/archive",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)",
+      "expected": "flag=2 skin=2 zwj=2 hyphen=0 joiner=0",
+      "actual": "flag=2 skin=2 zwj=2 hyphen=0 joiner=0",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.5#improved-bun-stringwidth-accuracy",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Bun.spawn PTY (echo capture)",
+      "expected": "PTY echo captured via Bun.spawn({ terminal })",
+      "actual": "exit=0 captured pty output (1 chunks)",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Compile-time feature flags (bun:bundle)",
+      "expected": "PREMIUM branch kept; free path eliminated when --feature set",
+      "actual": "PREMIUM branch kept; free eliminated",
+      "passed": true,
+      "canonical": "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+      "_links": {
+        "docs": "https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "URL.host (hostname + port)",
+      "expected": "host includes port; hostname excludes port; host setter updates href",
+      "actual": "host=example.com:8080; set host=test.com:9000",
+      "passed": true,
+      "canonical": "https://bun.com/reference/globals/URL/host",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/host",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)",
+      "expected": "all Bun Uint8Array extensions and binary data APIs work",
+      "actual": "base64=true hex=true rt=true mmap=69923B file=69923B blob=5B",
+      "passed": true,
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "R2/S3 binary roundtrip (upload, download, verify)",
+      "expected": "uploaded bytes match downloaded bytes exactly",
+      "actual": "5/5 bytes match",
+      "passed": true,
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "URL.host / hostname / port (WHATWG)",
+      "expected": "host includes port, hostname excludes port, default ports hidden",
+      "actual": "host:pass set:pass defaults:pass",
+      "passed": true,
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "S3 contentDisposition option",
+      "expected": "accepts contentDisposition without error",
+      "actual": "ok",
+      "passed": true,
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "Response.clone() after body access (v1.3.5 fix)",
+      "expected": "clone succeeds after body was accessed",
+      "actual": "ok",
+      "passed": true,
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    },
+    {
+      "name": "URL.domainToASCII / domainToUnicode (Node.js compat)",
+      "expected": "returns punycode for IDN domains",
+      "actual": "bücher → xn--bcher-kva",
+      "passed": true,
+      "_links": {
+        "docs": "https://bun.com/docs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
+        "report": "/registry/release-features.json"
+      }
+    }
+  ],
+  "summary": {
+    "passed": 46,
+    "total": 46,
+    "status": "pass",
+    "channel": "pinned",
+    "version": "1.3.14"
+  },
+  "proofHash": "de86bf0bd19bbb35d186408cf764198795d912558d724743c4f4d186a8cb0547",
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "FactoryWager Bun Release Verification",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "softwareVersion": "1.4.0",
+    "dateModified": "2026-07-24T03:19:27.571Z",
+    "featureList": [],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": 5,
+      "reviewCount": 46,
+      "bestRating": 5,
+      "worstRating": 0
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "name": "tls.getCACertificates('system')",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Built-in objects GC smoke (Request/Response)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.escapeHTML performance",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "ESM module load (node:fs)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Process exit with pending timer",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "timer.ref() after fired setTimeout",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "WebSocket cleanup on close",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Child process stdin pipe cleanup",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun Shell basics",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "structuredClone Blob",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.password.hash",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.inspect depth",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.hash returns bigint",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.version / Bun.revision",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "using / await using (Explicit Resource Mgmt)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Built-in objects (Request, Response)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "--no-orphans support",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.Image (all terminal methods: bytes, buffer, blob, toBase64, dataurl, placeholder, metadata, write)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch protocol (data:)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch protocol (blob:)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch protocol (file://)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch s3:// (explicit s3: creds)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch s3:// (env credentials)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "fetch s3:// (Bun.file)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: bun-binary-resolved",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: bun-config-env-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: forbidden-install-env",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: install-mechanism-notes-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: runtime-flags",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: profile-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: lockfile-config-version",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: machine-isolated-linker",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: machine-global-store",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: monorepo-cross-dry-run",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: lockfile-stable",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.Archive (create, extract, gzip, read)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Bun.spawn PTY (echo capture)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Compile-time feature flags (bun:bundle)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "URL.host (hostname + port)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "R2/S3 binary roundtrip (upload, download, verify)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "URL.host / hostname / port (WHATWG)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "S3 contentDisposition option",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "Response.clone() after body access (v1.3.5 fix)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "URL.domainToASCII / domainToUnicode (Node.js compat)",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T03:19:27.571Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: pinned, Target: 1.3.14, Runtime: 1.4.0"
+      }
+    ]
+  }
+}

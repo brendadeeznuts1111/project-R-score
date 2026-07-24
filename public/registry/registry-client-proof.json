@@ -2,7 +2,7 @@
   "type": "RegistryClientVerificationReport",
   "version": "1.0.0",
   "sdkVersion": "1.0.0",
-  "timestamp": "2026-07-24T04:25:02.035Z",
+  "timestamp": "2026-07-24T04:32:05.528Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "reportPath": "/registry/registry-client-proof.json",

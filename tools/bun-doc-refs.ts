@@ -68,6 +68,7 @@ import {
 } from '../lib/docs/bundler-nav';
 import { bunBlog, bunDocs, bunReference, mdnWebApi } from '../lib/docs/bun-site-url.ts';
 import type { BunTokenKind, BunTokenStability } from '../lib/docs/bun-token.ts';
+import type { VerificationSubsystem } from '../lib/verification/types.ts';
 import { BUN_CONFIG_INSTALL_VARS } from './bun-install-env.ts';
 import { getCuratedEntry } from './bun-docs-curated.ts';
 
@@ -80,30 +81,45 @@ const INSTALL_ENV_VARS = bunDocs('pm/cli/install', 'configuring-with-environment
 /** @see https://bun.com/docs/pm/cli/install#cache */
 const INSTALL_CACHE_DOCS = bunDocs('pm/cli/install', 'cache');
 
+/** Token metadata shared by verification maps (url + BunToken + subsystem). */
+export type CanonicalVerificationToken = {
+  url: string;
+  kind: BunTokenKind | 'SDK' | 'Global' | 'Meta' | 'Documentation' | 'Tooling';
+  stability: BunTokenStability | 'stable';
+  description?: string;
+  subsystem?: VerificationSubsystem;
+  introducedIn?: string;
+};
+
+const PM_TOKEN = {
+  subsystem: 'package-manager' as const,
+  introducedIn: 'all' as const,
+};
+
 /** Curated install platform tokens — url + BunToken metadata (canonical map SSOT). */
-export const CANONICAL_INSTALL_PLATFORM_TOKENS: Record<
-  string,
-  { url: string; kind: BunTokenKind; stability: BunTokenStability }
-> = {
-  'bun install --cpu': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable' },
-  'bun install --os': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable' },
-  '--cpu': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable' },
-  '--os': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable' },
-  'cpu-and-os-flags': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable' },
+export const CANONICAL_INSTALL_PLATFORM_TOKENS: Record<string, CanonicalVerificationToken> = {
+  'bun install --cpu': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable', ...PM_TOKEN },
+  'bun install --os': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable', ...PM_TOKEN },
+  '--cpu': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable', ...PM_TOKEN },
+  '--os': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable', ...PM_TOKEN },
+  'cpu-and-os-flags': { url: INSTALL_CPU_OS_FLAGS, kind: 'CLI', stability: 'stable', ...PM_TOKEN },
   'platform-specific dependencies': {
     url: INSTALL_PLATFORM_DEPS,
     kind: 'Concept',
     stability: 'stable',
+    ...PM_TOKEN,
   },
   'bun install platform-specific dependencies': {
     url: INSTALL_PLATFORM_DEPS,
     kind: 'Concept',
     stability: 'stable',
+    ...PM_TOKEN,
   },
   'platform-specific-dependencies': {
     url: INSTALL_PLATFORM_DEPS,
     kind: 'Concept',
     stability: 'stable',
+    ...PM_TOKEN,
   },
 };
 
@@ -112,12 +128,7 @@ const CANONICAL_INSTALL_PLATFORM_URLS = Object.fromEntries(
 ) as Record<string, string>;
 
 /** Install env + mechanism tokens — BUN_CONFIG_* table and resolver behavior. */
-export type CanonicalInstallEnvToken = {
-  url: string;
-  kind: BunTokenKind;
-  stability: BunTokenStability;
-  description?: string;
-};
+export type CanonicalInstallEnvToken = CanonicalVerificationToken;
 
 const BUN_CONFIG_ENV_TOKEN_ENTRIES = Object.fromEntries(
   BUN_CONFIG_INSTALL_VARS.map(v => [
@@ -127,6 +138,7 @@ const BUN_CONFIG_ENV_TOKEN_ENTRIES = Object.fromEntries(
       kind: 'Env' as const,
       stability: 'stable' as const,
       description: v.description,
+      ...PM_TOKEN,
     },
   ])
 ) as Record<(typeof BUN_CONFIG_INSTALL_VARS)[number]['name'], CanonicalInstallEnvToken>;
@@ -137,12 +149,14 @@ export const CANONICAL_INSTALL_ENV_TOKENS: Record<string, CanonicalInstallEnvTok
     kind: 'Concept',
     stability: 'stable',
     description: 'Environment variables take priority over bunfig.toml',
+    ...PM_TOKEN,
   },
   'install env precedence': {
     url: INSTALL_ENV_VARS,
     kind: 'Concept',
     stability: 'stable',
     description: 'CLI flags → BUN_CONFIG_* → bunfig (project overlays machine)',
+    ...PM_TOKEN,
   },
   ...BUN_CONFIG_ENV_TOKEN_ENTRIES,
   'install.scopes': {
@@ -150,11 +164,13 @@ export const CANONICAL_INSTALL_ENV_TOKENS: Record<string, CanonicalInstallEnvTok
     kind: 'Config',
     stability: 'stable',
     description: 'Scoped npm registry URLs — FactoryWager R2-backed registry via bunfig',
+    ...PM_TOKEN,
   },
   'bun install cache mechanism': {
     url: INSTALL_CACHE_DOCS,
     kind: 'Concept',
     stability: 'stable',
+    ...PM_TOKEN,
   },
 };
 
@@ -162,11 +178,60 @@ const CANONICAL_INSTALL_ENV_URLS = Object.fromEntries(
   Object.entries(CANONICAL_INSTALL_ENV_TOKENS).map(([key, meta]) => [key, meta.url])
 ) as Record<string, string>;
 
-export type CanonicalRegistryClientToken = {
-  url: string;
+/** Release-note blog anchors — versioned ship notes (runtime / pm by topic). */
+export const CANONICAL_RELEASE_TOKENS: Record<string, CanonicalVerificationToken> = {
+  'bun-image': {
+    url: 'https://bun.com/blog/bun-v1.3.14#bun-image',
+    kind: 'API',
+    stability: 'stable',
+    subsystem: 'runtime',
+    introducedIn: '1.3.14',
+    description: 'Bun.Image — built-in image processing',
+  },
+  'tls-getcacertificates-system': {
+    url: 'https://bun.com/blog/bun-v1.3.14#tls-getcacertificates-system-now-works-without-use-system-ca',
+    kind: 'API',
+    stability: 'stable',
+    subsystem: 'runtime',
+    introducedIn: '1.3.14',
+  },
+  'event-loop-refactor': {
+    url: 'https://bun.com/blog/bun-v1.3.14#event-loop-refactor',
+    kind: 'Concept',
+    stability: 'stable',
+    subsystem: 'runtime',
+    introducedIn: '1.3.14',
+  },
+  'global-virtual-store': {
+    url: 'https://bun.com/blog/bun-v1.3.14#global-virtual-store',
+    kind: 'Concept',
+    stability: 'stable',
+    subsystem: 'package-manager',
+    introducedIn: '1.3.14',
+  },
+  'bun-terminal-pty': {
+    url: 'https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support',
+    kind: 'API',
+    stability: 'stable',
+    subsystem: 'runtime',
+    introducedIn: '1.3.5',
+  },
+  'compile-time-feature-flags': {
+    url: 'https://bun.com/blog/bun-v1.3.5#compile-time-feature-flags-for-dead-code-elimination',
+    kind: 'Concept',
+    stability: 'stable',
+    subsystem: 'bundler',
+    introducedIn: '1.3.5',
+  },
+};
+
+const CANONICAL_RELEASE_URLS = Object.fromEntries(
+  Object.entries(CANONICAL_RELEASE_TOKENS).map(([key, meta]) => [key, meta.url])
+) as Record<string, string>;
+
+export type CanonicalRegistryClientToken = CanonicalVerificationToken & {
   kind: 'SDK';
   stability: 'stable';
-  description?: string;
 };
 
 const REGISTRY_CLIENT_DOC =
@@ -211,11 +276,14 @@ const BUN_WRITE_DOC = 'https://bun.com/docs/runtime/file-io#writing-files-bun-wr
 const RUNTIME_NITS_DOC =
   'https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/bun-runtime-nits.md';
 
-export type CanonicalRuntimeNitsToken = {
-  url: string;
-  kind: BunTokenKind | 'Global';
+export type CanonicalRuntimeNitsToken = CanonicalVerificationToken & {
+  kind: BunTokenKind | 'Global' | 'Concept';
   stability: BunTokenStability;
-  description?: string;
+};
+
+const RUNTIME_NITS_TOKEN = {
+  subsystem: 'runtime' as const,
+  introducedIn: 'all' as const,
 };
 
 export const CANONICAL_RUNTIME_NITS_TOKENS: Record<string, CanonicalRuntimeNitsToken> = {
@@ -224,96 +292,112 @@ export const CANONICAL_RUNTIME_NITS_TOKENS: Record<string, CanonicalRuntimeNitsT
     kind: 'API',
     stability: 'stable',
     description: 'Bun.inspect sorted — deterministic key order for snapshots',
+    ...RUNTIME_NITS_TOKEN,
   },
   'Bun.inspect.compact': {
     url: BUN_INSPECT_DOC,
     kind: 'API',
     stability: 'stable',
     description: 'Bun.inspect compact — single-line output',
+    ...RUNTIME_NITS_TOKEN,
   },
   'inspect.showProxy': {
     url: 'https://bun.com/reference/bun/BunInspectOptions',
     kind: 'Global',
     stability: 'stable',
     description: 'showProxy — Proxy target/handler in inspect output',
+    ...RUNTIME_NITS_TOKEN,
   },
   'inspect.getters': {
     url: 'https://bun.com/reference/bun/BunInspectOptions',
     kind: 'Global',
     stability: 'stable',
     description: 'getters — evaluate or suppress property getters',
+    ...RUNTIME_NITS_TOKEN,
   },
   'inspect.numericSeparator': {
     url: 'https://bun.com/reference/bun/BunInspectOptions',
     kind: 'Global',
     stability: 'stable',
     description: 'numericSeparator — underscore separators in numbers (Node compat)',
+    ...RUNTIME_NITS_TOKEN,
   },
   'util.inspect options': {
     url: 'https://nodejs.org/api/util.html#utilinspectobject-options',
     kind: 'Concept',
     stability: 'stable',
     description: 'Node util.inspect option delta vs BunInspectOptions',
+    ...RUNTIME_NITS_TOKEN,
   },
   CompressionStream: {
     url: bunReference('globals/CompressionStream'),
     kind: 'Global',
     stability: 'stable',
     description: 'WHATWG gzip/deflate compression stream',
+    ...RUNTIME_NITS_TOKEN,
   },
   DecompressionStream: {
     url: bunReference('globals/DecompressionStream'),
     kind: 'Global',
     stability: 'stable',
     description: 'WHATWG gzip/deflate decompression stream',
+    ...RUNTIME_NITS_TOKEN,
   },
   TextEncoderStream: {
     url: bunReference('globals/TextEncoderStream'),
     kind: 'Global',
     stability: 'stable',
     description: 'Streaming string to Uint8Array',
+    ...RUNTIME_NITS_TOKEN,
   },
   TextDecoderStream: {
     url: bunReference('globals/TextDecoderStream'),
     kind: 'Global',
     stability: 'stable',
     description: 'Streaming Uint8Array to string',
+    ...RUNTIME_NITS_TOKEN,
   },
   'URL.origin': {
     url: bunReference('globals/URL/origin'),
     kind: 'Global',
     stability: 'stable',
     description: 'protocol + host + port',
+    ...RUNTIME_NITS_TOKEN,
   },
   'URL.searchParams': {
     url: bunReference('globals/URL/searchParams'),
     kind: 'Global',
     stability: 'stable',
     description: 'Query parameter interface on URL',
+    ...RUNTIME_NITS_TOKEN,
   },
   'bun.file.lazy-stat': {
     url: BUN_FILE_DOC,
     kind: 'API',
     stability: 'stable',
     description: 'Bun.file is lazy until .text/.bytes/.exists',
+    ...RUNTIME_NITS_TOKEN,
   },
   'bun.write.auto-dir': {
     url: BUN_WRITE_DOC,
     kind: 'API',
     stability: 'stable',
     description: 'Bun.write creates parent directories',
+    ...RUNTIME_NITS_TOKEN,
   },
   'bun.file.bytes-vs-buffer': {
     url: BUN_FILE_DOC,
     kind: 'API',
     stability: 'stable',
     description: 'Bun.file().bytes() matches fs read bytes',
+    ...RUNTIME_NITS_TOKEN,
   },
   'bun-runtime-nits': {
     url: RUNTIME_NITS_DOC,
     kind: 'Concept',
     stability: 'stable',
     description: 'Phase 1 runtime nits verification lane',
+    ...RUNTIME_NITS_TOKEN,
   },
 };
 
@@ -324,8 +408,7 @@ const CANONICAL_RUNTIME_NITS_URLS = Object.fromEntries(
 ) as Record<string, string>;
 
 // ── Official guides & onboarding paths (verify-guides.ts lane) ─────────────
-export type CanonicalGuidesToken = {
-  url: string;
+export type CanonicalGuidesToken = CanonicalVerificationToken & {
   kind: 'Documentation' | 'Tooling';
   stability: 'stable';
   description: string;
@@ -337,18 +420,24 @@ export const CANONICAL_GUIDES_TOKENS: Record<string, CanonicalGuidesToken> = {
     kind: 'Documentation',
     stability: 'stable',
     description: 'Index of all official guides (installation, migration, deployment)',
+    subsystem: 'other',
+    introducedIn: 'all',
   },
   'Bun Install Guide': {
     url: 'https://bun.com/guides/install/from-npm-install-to-bun-install',
     kind: 'Documentation',
     stability: 'stable',
     description: 'Step-by-step migration from npm install to bun install',
+    subsystem: 'package-manager',
+    introducedIn: 'all',
   },
   'Bun Get': {
     url: 'https://bun.com/get',
     kind: 'Tooling',
     stability: 'stable',
     description: 'Install landing page (serves 200 directly, no redirect on 2026-07)',
+    subsystem: 'other',
+    introducedIn: 'all',
   },
 };
 
@@ -356,6 +445,133 @@ export type GuidesToken = keyof typeof CANONICAL_GUIDES_TOKENS;
 
 const CANONICAL_GUIDES_URLS = Object.fromEntries(
   Object.entries(CANONICAL_GUIDES_TOKENS).map(([key, meta]) => [key, meta.url])
+) as Record<string, string>;
+
+/** Meta / pipeline tokens — RSS, reference index, docs coverage. */
+export type CanonicalMetaToken = {
+  url: string;
+  kind: 'Meta';
+  stability: 'stable';
+  description?: string;
+};
+
+export const CANONICAL_META_TOKENS: Record<string, CanonicalMetaToken> = {
+  'Bun API Reference': {
+    url: bunReference(''),
+    kind: 'Meta',
+    stability: 'stable',
+    description: 'Complete generated API reference for Bun, sourced from bun-types',
+  },
+  'rss feed verification': {
+    url: 'https://bun.com/rss.xml',
+    kind: 'Meta',
+    stability: 'stable',
+    description: 'RSS feed used to track Bun release blog posts (release-index Phase 0)',
+  },
+  'docs coverage verification': {
+    url: 'https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/BUN_DOCS_OPERATE.md',
+    kind: 'Meta',
+    stability: 'stable',
+    description: 'RSS + reference + canonical alignment gate (verify-docs-coverage)',
+  },
+};
+
+export type MetaToken = keyof typeof CANONICAL_META_TOKENS;
+
+const CANONICAL_META_URLS = Object.fromEntries(
+  Object.entries(CANONICAL_META_TOKENS).map(([key, meta]) => [key, meta.url])
+) as Record<string, string>;
+
+/** Bundler Asset Processing / loader tokens — used by verify-bundler probes. */
+const BUNDLER_TOKEN = {
+  subsystem: 'bundler' as const,
+  introducedIn: 'all' as const,
+};
+
+export const CANONICAL_BUNDLER_TOKENS: Record<string, CanonicalVerificationToken> = {
+  'Asset Processing': {
+    url: 'https://bun.com/docs/bundler#content-types',
+    kind: 'Concept',
+    stability: 'stable',
+    description: 'Bun.build content-type / Asset Processing table',
+    ...BUNDLER_TOKEN,
+  },
+  'bundler.asset-processing': {
+    url: 'https://bun.com/docs/bundler#content-types',
+    kind: 'Concept',
+    stability: 'stable',
+    description: 'Alias for Asset Processing content-types',
+    ...BUNDLER_TOKEN,
+  },
+  Loaders: {
+    url: 'https://bun.com/docs/bundler/loaders',
+    kind: 'Concept',
+    stability: 'stable',
+    description: 'Built-in Bun.build loaders',
+    ...BUNDLER_TOKEN,
+  },
+  'loader:css': {
+    url: 'https://bun.com/docs/bundler/loaders#css',
+    kind: 'API',
+    stability: 'stable',
+    description: 'CSS loader — bundles stylesheets via Bun.build',
+    ...BUNDLER_TOKEN,
+  },
+  'bundler.loader.css': {
+    url: 'https://bun.com/docs/bundler/loaders#css',
+    kind: 'API',
+    stability: 'stable',
+    description: 'Alias for loader:css',
+    ...BUNDLER_TOKEN,
+  },
+  'loader:jsonc': {
+    url: 'https://bun.com/docs/bundler/loaders#jsonc',
+    kind: 'API',
+    stability: 'stable',
+    description: 'JSONC loader — comments stripped (portal theme.jsonc)',
+    ...BUNDLER_TOKEN,
+  },
+  'bundler.loader.jsonc': {
+    url: 'https://bun.com/docs/bundler/loaders#jsonc',
+    kind: 'API',
+    stability: 'stable',
+    description: 'Alias for loader:jsonc',
+    ...BUNDLER_TOKEN,
+  },
+  'loader:text': {
+    url: 'https://bun.com/docs/bundler/loaders#text',
+    kind: 'API',
+    stability: 'stable',
+    description: 'Text loader — file contents as string export',
+    ...BUNDLER_TOKEN,
+  },
+  'loader:ts': {
+    url: 'https://bun.com/docs/bundler/loaders#ts',
+    kind: 'API',
+    stability: 'stable',
+    description: 'TypeScript loader — strips types via Bun.build',
+    ...BUNDLER_TOKEN,
+  },
+  'bundler.loader.ts': {
+    url: 'https://bun.com/docs/bundler/loaders#ts',
+    kind: 'API',
+    stability: 'stable',
+    description: 'Alias for loader:ts',
+    ...BUNDLER_TOKEN,
+  },
+  'loader:file': {
+    url: 'https://bun.com/docs/bundler/loaders#file',
+    kind: 'API',
+    stability: 'stable',
+    description: 'File loader — copy asset to outdir and export path',
+    ...BUNDLER_TOKEN,
+  },
+};
+
+export type BundlerToken = keyof typeof CANONICAL_BUNDLER_TOKENS;
+
+const CANONICAL_BUNDLER_URLS = Object.fromEntries(
+  Object.entries(CANONICAL_BUNDLER_TOKENS).map(([key, meta]) => [key, meta.url])
 ) as Record<string, string>;
 
 // Canonical doc map — the reference thesis for this repo's terminal layer:
@@ -560,9 +776,12 @@ export const CANONICAL_REFS: Record<string, string> = {
   'blob:': bunDocs('runtime/networking/fetch', 'blob-urls-blob'),
   ...CANONICAL_INSTALL_PLATFORM_URLS,
   ...CANONICAL_INSTALL_ENV_URLS,
+  ...CANONICAL_RELEASE_URLS,
   ...CANONICAL_REGISTRY_CLIENT_URLS,
   ...CANONICAL_RUNTIME_NITS_URLS,
   ...CANONICAL_GUIDES_URLS,
+  ...CANONICAL_META_URLS,
+  ...CANONICAL_BUNDLER_URLS,
   'isolated installs': bunDocs('pm/isolated-installs'),
   'global virtual store': bunDocs('pm/global-store'),
   configVersion: bunDocs('pm/isolated-installs'),
@@ -585,6 +804,8 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.Terminal (v1.3.5 ship)':
     'https://bun.com/blog/bun-v1.3.5#bun-terminal-api-for-pseudo-terminal-pty-support',
   'Bun.build': 'https://bun.com/docs/bundler/index#basic-example',
+  'Bun.build css': 'https://bun.com/docs/bundler/css',
+  'portal css build': 'https://bun.com/docs/bundler/css',
   // Universal plugin API — bundler page is SSOT; runtime/plugins mirrors it
   'Bun.plugin': 'https://bun.com/docs/bundler/plugins#usage',
   // In-process scheduler (returns CronJob with stop/ref/unref)
@@ -1034,7 +1255,12 @@ export const CANONICAL_REFS: Record<string, string> = {
   'import.meta.hot.dispose': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-dispose',
   'import.meta.hot.prune': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-prune',
   'import.meta.hot.on': 'https://bun.com/docs/bundler/hot-reloading#import-meta-hot-on-and-off',
-  // Asset Processing
+  // Asset Processing (bundler nav group: HTML · CSS · Loaders)
+  'Asset Processing': 'https://bun.com/docs/bundler#content-types',
+  'content types': 'https://bun.com/docs/bundler#content-types',
+  'Content types': 'https://bun.com/docs/bundler#content-types',
+  Loaders: 'https://bun.com/docs/bundler/loaders',
+  loaders: 'https://bun.com/docs/bundler/loaders',
   'html-static inline-env': 'https://bun.com/docs/bundler/html-static#inline-environment-variables',
   'HTML & static sites inline-environment-variables':
     'https://bun.com/docs/bundler/html-static#inline-environment-variables',
@@ -1044,6 +1270,30 @@ export const CANONICAL_REFS: Record<string, string> = {
   'HTML & static sites plugin-api': 'https://bun.com/docs/bundler/html-static#plugin-api',
   'Standalone HTML javascript-api': 'https://bun.com/docs/bundler/standalone-html#javascript-api',
   'CSS css-modules': 'https://bun.com/docs/bundler/css#css-modules',
+  'CSS nesting': 'https://bun.com/docs/bundler/css#nesting',
+  nesting: 'https://bun.com/docs/bundler/css#nesting',
+  'CSS logical-properties': 'https://bun.com/docs/bundler/css#logical-properties',
+  'logical properties': 'https://bun.com/docs/bundler/css#logical-properties',
+  'CSS is-selector': 'https://bun.com/docs/bundler/css#is-selector',
+  ':is()': 'https://bun.com/docs/bundler/css#is-selector',
+  'CSS light-dark': 'https://bun.com/docs/bundler/css#light-dark',
+  'light-dark': 'https://bun.com/docs/bundler/css#light-dark',
+  'light-dark()': 'https://bun.com/docs/bundler/css#light-dark',
+  'CSS color-mix': 'https://bun.com/docs/bundler/css#color-mix',
+  'color-mix': 'https://bun.com/docs/bundler/css#color-mix',
+  'color-mix()': 'https://bun.com/docs/bundler/css#color-mix',
+  'CSS media-query-ranges': 'https://bun.com/docs/bundler/css#media-query-ranges',
+  'media query ranges': 'https://bun.com/docs/bundler/css#media-query-ranges',
+  'CSS dir-selector': 'https://bun.com/docs/bundler/css#dir-selector',
+  ':dir()': 'https://bun.com/docs/bundler/css#dir-selector',
+  'dir selector': 'https://bun.com/docs/bundler/css#dir-selector',
+  'CSS lang-selector': 'https://bun.com/docs/bundler/css#lang-selector',
+  ':lang()': 'https://bun.com/docs/bundler/css#lang-selector',
+  'CSS not-selector': 'https://bun.com/docs/bundler/css#not-selector',
+  ':not()': 'https://bun.com/docs/bundler/css#not-selector',
+  'CSS shorthands': 'https://bun.com/docs/bundler/css#shorthands',
+  'CSS system-ui': 'https://bun.com/docs/bundler/css#system-ui-font',
+  'system-ui': 'https://bun.com/docs/bundler/css#system-ui-font',
   'loader:built-in-loaders': 'https://bun.com/docs/bundler/loaders#built-in-loaders',
   'loader:js': 'https://bun.com/docs/bundler/loaders#js',
   'loader:jsx': 'https://bun.com/docs/bundler/loaders#jsx',
@@ -1058,8 +1308,11 @@ export const CANONICAL_REFS: Record<string, string> = {
   'loader:sqlite': 'https://bun.com/docs/bundler/loaders#sqlite',
   'loader:html': 'https://bun.com/docs/bundler/loaders#html',
   'loader:css': 'https://bun.com/docs/bundler/loaders#css',
+  'bundler.loader.css': 'https://bun.com/docs/bundler/loaders#css',
   'loader:sh': 'https://bun.com/docs/bundler/loaders#sh',
   'loader:file': 'https://bun.com/docs/bundler/loaders#file',
+  'bundler.loader.jsonc': 'https://bun.com/docs/bundler/loaders#jsonc',
+  'bundler.asset-processing': 'https://bun.com/docs/bundler#content-types',
   // Single File Executable
   'build-time-constants': 'https://bun.com/docs/bundler/executables#build-time-constants',
   'Single-file executable build-time-constants':

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils — Bun.inspect.table
 /**
@@ -9,10 +10,12 @@
  *   bun tools/env-check.ts --strict   # exit 1 if required missing
  */
 import { checkEnv } from '../lib/env-check.ts';
+import { describeChannelAuth, probeChannelAuth } from '../lib/verification/channels.ts';
 
 const args = Bun.argv.slice(2);
 const json = args.includes('--json');
 const strict = args.includes('--strict');
+const channelAuth = args.includes('--channel-auth');
 
 // Optional: load ~/.reasonix/.env into process without printing
 if (args.includes('--reasonix') || args.includes('--load-reasonix')) {
@@ -26,10 +29,7 @@ if (args.includes('--reasonix') || args.includes('--load-reasonix')) {
       if (i < 1) continue;
       const k = t.slice(0, i).trim();
       let v = t.slice(i + 1).trim();
-      if (
-        (v.startsWith('"') && v.endsWith('"')) ||
-        (v.startsWith("'") && v.endsWith("'"))
-      ) {
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
         v = v.slice(1, -1);
       }
       if (!Bun.env[k]) Bun.env[k] = v;
@@ -58,6 +58,25 @@ if (json) {
     const keys = report.rows.filter(r => r.severity === 'required' && !r.ok).map(r => r.key);
     console.log('\nRequired missing:', keys.join(', '));
     console.log('Tip: bun run env:check --reasonix   # merge ~/.reasonix/.env');
+  }
+}
+
+if (!json) {
+  const presence = describeChannelAuth();
+  console.log(`\nChannel GitHub auth: ${presence.source} · ${presence.message}`);
+  console.log('Tip: bun run env:check:channel-auth  # probe /rate_limit');
+}
+
+if (channelAuth) {
+  try {
+    const auth = await probeChannelAuth();
+    const line = `Channel GitHub auth (probed): ${auth.source} · valid=${auth.valid ?? 'n/a'} · ${auth.message}`;
+    if (json) console.error(line);
+    else console.log(line);
+    if (auth.configured && auth.valid === false) process.exit(1);
+  } catch (e) {
+    console.error('Channel auth probe failed:', e instanceof Error ? e.message : e);
+    process.exit(1);
   }
 }
 

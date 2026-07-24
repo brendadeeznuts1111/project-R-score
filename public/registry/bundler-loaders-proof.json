@@ -1,0 +1,320 @@
+{
+  "type": "ChannelAwareVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T04:33:08.160Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "9d0180ccfdba2dffdb2f9ab91f207e1947b1abf7",
+    "provenanceId": "local-2026-07-24T04-33-08-160Z",
+    "testedAt": "2026-07-24T04:33:08.160Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none",
+    "subsystems": [
+      "bundler"
+    ]
+  },
+  "results": [
+    {
+      "probe": "loader.css.explicit",
+      "loader": "css",
+      "name": "bundler:loader.css.explicit",
+      "expected": "CSS output contains entry rule",
+      "actual": "css bytes=126",
+      "passed": true,
+      "canonicalKey": "loader:css",
+      "canonical": "https://bun.com/docs/bundler/loaders#css",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "CSS loader — bundles stylesheets via Bun.build",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#css",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "css"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.css.default",
+      "loader": "css",
+      "name": "bundler:loader.css.default",
+      "expected": "default .css → css loader succeeds",
+      "actual": "outputs=1",
+      "passed": true,
+      "canonicalKey": "Asset Processing",
+      "canonical": "https://bun.com/docs/bundler#content-types",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.build content-type / Asset Processing table",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler#content-types",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "css"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.jsonc",
+      "loader": "jsonc",
+      "name": "bundler:loader.jsonc",
+      "expected": "jsonc output has data, comments stripped",
+      "actual": "js bytes=233",
+      "passed": true,
+      "canonicalKey": "loader:jsonc",
+      "canonical": "https://bun.com/docs/bundler/loaders#jsonc",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "JSONC loader — comments stripped (portal theme.jsonc)",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#jsonc",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "jsonc"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.text",
+      "loader": "text",
+      "name": "bundler:loader.text",
+      "expected": "text loader embeds file contents",
+      "actual": "js bytes=172",
+      "passed": true,
+      "canonicalKey": "loader:text",
+      "canonical": "https://bun.com/docs/bundler/loaders#text",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Text loader — file contents as string export",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#text",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "text"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.ts",
+      "loader": "ts",
+      "name": "bundler:loader.ts",
+      "expected": "transpiles TypeScript to JavaScript (types stripped)",
+      "actual": "js bytes=150 typesStripped=true",
+      "passed": true,
+      "canonicalKey": "loader:ts",
+      "canonical": "https://bun.com/docs/bundler/loaders#ts",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "TypeScript loader — strips types via Bun.build",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#ts",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "ts"
+      ],
+      "canonicalSource": "docs"
+    },
+    {
+      "probe": "loader.file",
+      "loader": "file",
+      "name": "bundler:loader.file",
+      "expected": "copies asset / exports path via file loader",
+      "actual": "outputs=2 hasAsset=true jsMentions=true",
+      "passed": true,
+      "canonicalKey": "loader:file",
+      "canonical": "https://bun.com/docs/bundler/loaders#file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "File loader — copy asset to outdir and export path",
+      "subsystem": "bundler",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/bundler/loaders#file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
+        "report": "/registry/bundler-loaders-proof.json"
+      },
+      "features": [
+        "bundler",
+        "loaders",
+        "file"
+      ],
+      "canonicalSource": "docs"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "total": 6,
+    "status": "pass",
+    "channel": "stable",
+    "version": "1.4.0",
+    "bySubsystem": {
+      "bundler": {
+        "passed": 6,
+        "total": 6
+      }
+    }
+  },
+  "proofHash": "987f18a5433a4e5b1056f488a26ff3147b30da268884869164e3ee11e86c254d",
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "FactoryWager Bun Release Verification",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "softwareVersion": "1.4.0",
+    "dateModified": "2026-07-24T04:33:08.160Z",
+    "identifier": "1.4.0",
+    "featureList": [
+      "bundler",
+      "loaders",
+      "css",
+      "jsonc",
+      "text",
+      "ts",
+      "file"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": 5,
+      "reviewCount": 6,
+      "bestRating": 5,
+      "worstRating": 0
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "name": "bundler:loader.css.explicit",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:33:08.160Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.css.default",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:33:08.160Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.jsonc",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:33:08.160Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.text",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:33:08.160Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.ts",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:33:08.160Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "bundler:loader.file",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-24T04:33:08.160Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+# Channel meta-verification
+
+**Proof** `channel-meta-verification-v1` (claim in `lib/harness/proof.ts`)
+
+Orthogonal lanes for Bun product pillars under a release **channel**:
+
+| Suite | Artifact | Subsystem |
+|-------|----------|-----------|
+| `release` / `all` | `public/registry/release-features.json` | mixed (meta) |
+| `bundler` | `public/registry/bundler-loaders-proof.json` | bundler |
+| `networking` | `public/registry/networking-channel-proof.json` | networking |
+
+Native networking proof (`networking-proof.json`) stays the optimization artifact; the channel suite bridges it to `VerificationResult` rows.
+
+```bash
+bun run verify:channel:all          # live suite=all (re-runs release + pillars)
+bun run verify:channel:meta         # prefer-artifact merge → release-features.json
+bun run verify:channel:bundler
+bun run verify:channel:networking
+bun run ops:snapshot                # refreshes channel meta unless --no-channel-meta
+bun run harness:status              # discover claim
+```
+
+`verify:channel:meta` / `ops:snapshot` strip prior `runtime-nits:` / `bundler:` / `networking:` rows, then merge pillar artifacts — idempotent for Pages bake without a full release re-run.
+
+Bake sidecar: `public/registry/channel-meta-bake.json` (sources + rollup). Embedded in `ops-summary.json` / `static.json` as `channelMeta`; ops dashboard shows bake line on the release panel.
+
+Ops UI: `/portal/ops/` (Pages: `project-r-score.pages.dev/portal/ops/`). Portal JSDoc: `public/portal/portal-types.d.ts`.

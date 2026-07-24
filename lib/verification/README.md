@@ -7,9 +7,12 @@ Verification helpers — install-env probes and channel checks.
 | `channels.ts` | Channel resolve via GitHub Releases (`bun upgrade` feeds) |
 | `types.ts` | `SemanticTags` / `ChannelAwareVerificationReport` / snapshot index |
 | `subsystem.ts` | Meta-verification pillar: `runtime` \| `package-manager` \| `networking` \| `bundler` (+ DocSection map) |
-| `bundler-loader-probes.ts` | Thin Asset Processing loader proofs (css / jsonc) |
+| `bundler-loader-probes.ts` | Thin Asset Processing loader proofs (css / jsonc / ts / text / file) |
 | `jsonld.ts` | Schema.org JSON-LD for proofs |
 | `proof-diff.ts` | Diff two channel-aware proofs by probe name |
+| `proof-taxonomy.ts` | Proof JSON contracts — subsystem audit for dashboard artifacts |
+| `proof-consistency.ts` | Cross-proof parity (install-platform embed · bySubsystem rollups) |
+| `release-preview.ts` | SSOT for omitting install-platform rows from release preview |
 | `ratchet.ts` | Version-locked verification per channel — `ratchet.json` DB, regression detection, force-accept (`bun run ratchet[:force]`) |
 | `install-env-probes.ts` | Install-environment probe definitions |
 
@@ -19,7 +22,7 @@ Verification helpers — install-env probes and channel checks.
 |--------|----------------|
 | `runtime` | `verify:channel` release + `verify:bun-runtime-nits` |
 | `package-manager` | install-platform rows in release · `verify:install-env` · `verify:install-platform` |
-| `networking` | fetch/DNS/preconnect rows (inferred from docs URLs) |
+| `networking` | fetch/DNS/preconnect rows · `verify:channel:networking` bridge |
 | `bundler` | `verify:bundler` / `--suite=bundler` (loaders; portal *build* stays separate) |
 
 **Channel sources (not npm, not bun.sh text):**
@@ -36,12 +39,21 @@ Catalogued in `lib/env-check.ts` (group `github`, optional).
 
 **Fetch policy:** anonymous-first for public Bun release feeds; escalate with a token only on HTTP 403/429. Use `--prefer-auth` when CI is already rate-limited.
 
-**Artifacts on `--save`:**
-- `public/registry/release-features.json` (canonical dashboard proof)
+**Artifacts on `--save` (suite-aware for channel runner):**
+- `suite=release|all` → `public/registry/release-features.json` (canonical dashboard / meta-proof)
+- `suite=bundler` → `public/registry/bundler-loaders-proof.json` (**does not** clobber release)
+- `suite=networking` → `public/registry/networking-channel-proof.json` (channel-shaped; native proof stays `networking-proof.json`)
 - `public/registry/install-platform.json` · `install-env-proof.json` (package-manager subsystem)
 - `public/registry/networking-proof.json` (`check:networking:save` / `verify-all`)
-- `public/registry/verification-<channel>-<version>.json` (per-channel snapshot; `+` → `-`)
-- `public/registry/verification-index.json` (multi-snapshot switcher for the ops portal)
+- `public/registry/bun-runtime-nits-proof.json` (`verify:bun-runtime-nits:save` / `verify-all`)
+- `public/registry/proof-taxonomy-audit.json` (`verify:proof-taxonomy:save` / `verify-all`)
+- `public/registry/verification-<channel>-<version>[-suite].json` (snapshots; bundler gets `-bundler`)
+- `public/registry/verification-index.json` (`canonical` updates only for release/all)
+
+```bash
+bun run verify:proof-taxonomy
+bun run verify:proof-taxonomy:save
+```
 
 **Canonical metadata SSOT:** [`tools/canonical-helpers.ts`](../../tools/canonical-helpers.ts) (`getCanonicalEntry`, `resolveCanonicalForProbe`) merges token maps from [`tools/bun-doc-refs.ts`](../../tools/bun-doc-refs.ts). Each proof row may carry `subsystem`, `introducedIn`, `canonicalKey`, `canonicalKind`, `canonicalStability`.
 
@@ -49,8 +61,9 @@ Catalogued in `lib/env-check.ts` (group `github`, optional).
 bun run verify:channel:auth
 bun run verify:channel:resolve -- --channel=latest
 bun run verify:channel:canary
-bun run verify:channel:all          # release + runtime-nits + bundler loaders
+bun run verify:channel:all          # release + nits + bundler + networking
 bun run verify:channel:bundler      # bundler loaders only
+bun run verify:channel:networking   # networking channel bridge
 bun run verify:bundler              # same suite, standalone tool
 bun run verify:channel:diff         # compare two saved proofs (human table)
 bun run env:check:channel-auth

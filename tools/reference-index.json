@@ -1,0 +1,283 @@
+{
+  "generated": "2026-07-24T02:04:57.869Z",
+  "source": "https://bun.com/reference",
+  "lastModified": "Fri, 17 Jul 2026 03:01:05 GMT",
+  "count": 57,
+  "moduleCount": 44,
+  "modules": [
+    "bun:bundle",
+    "bun:ffi",
+    "bun:jsc",
+    "bun:sqlite",
+    "bun:test",
+    "node:assert",
+    "node:async_hooks",
+    "node:buffer",
+    "node:child_process",
+    "node:cluster",
+    "node:crypto",
+    "node:dgram",
+    "node:diagnostics_channel",
+    "node:dns",
+    "node:events",
+    "node:ffi",
+    "node:fs",
+    "node:http",
+    "node:http2",
+    "node:https",
+    "node:inspector",
+    "node:module",
+    "node:net",
+    "node:os",
+    "node:path",
+    "node:perf_hooks",
+    "node:punycode",
+    "node:querystring",
+    "node:quic",
+    "node:readline",
+    "node:stream",
+    "node:string_decoder",
+    "node:test",
+    "node:timers",
+    "node:tls",
+    "node:trace_events",
+    "node:tty",
+    "node:url",
+    "node:util",
+    "node:v8",
+    "node:vm",
+    "node:wasi",
+    "node:worker_threads",
+    "node:zlib"
+  ],
+  "pages": [
+    {
+      "url": "https://bun.com/reference/bun",
+      "path": "bun"
+    },
+    {
+      "url": "https://bun.com/reference/bun/bundle",
+      "path": "bun/bundle"
+    },
+    {
+      "url": "https://bun.com/reference/bun/ffi",
+      "path": "bun/ffi"
+    },
+    {
+      "url": "https://bun.com/reference/bun/jsc",
+      "path": "bun/jsc"
+    },
+    {
+      "url": "https://bun.com/reference/bun/sqlite",
+      "path": "bun/sqlite"
+    },
+    {
+      "url": "https://bun.com/reference/bun/test",
+      "path": "bun/test"
+    },
+    {
+      "url": "https://bun.com/reference/globals",
+      "path": "globals"
+    },
+    {
+      "url": "https://bun.com/reference/node/assert",
+      "path": "node/assert"
+    },
+    {
+      "url": "https://bun.com/reference/node/async_hooks",
+      "path": "node/async_hooks"
+    },
+    {
+      "url": "https://bun.com/reference/node/buffer",
+      "path": "node/buffer"
+    },
+    {
+      "url": "https://bun.com/reference/node/child_process",
+      "path": "node/child_process"
+    },
+    {
+      "url": "https://bun.com/reference/node/cluster",
+      "path": "node/cluster"
+    },
+    {
+      "url": "https://bun.com/reference/node/crypto",
+      "path": "node/crypto"
+    },
+    {
+      "url": "https://bun.com/reference/node/dgram",
+      "path": "node/dgram"
+    },
+    {
+      "url": "https://bun.com/reference/node/diagnostics_channel",
+      "path": "node/diagnostics_channel"
+    },
+    {
+      "url": "https://bun.com/reference/node/dns",
+      "path": "node/dns"
+    },
+    {
+      "url": "https://bun.com/reference/node/dns/promises",
+      "path": "node/dns/promises"
+    },
+    {
+      "url": "https://bun.com/reference/node/events",
+      "path": "node/events"
+    },
+    {
+      "url": "https://bun.com/reference/node/ffi",
+      "path": "node/ffi"
+    },
+    {
+      "url": "https://bun.com/reference/node/fs",
+      "path": "node/fs"
+    },
+    {
+      "url": "https://bun.com/reference/node/fs/promises",
+      "path": "node/fs/promises"
+    },
+    {
+      "url": "https://bun.com/reference/node/http",
+      "path": "node/http"
+    },
+    {
+      "url": "https://bun.com/reference/node/http2",
+      "path": "node/http2"
+    },
+    {
+      "url": "https://bun.com/reference/node/https",
+      "path": "node/https"
+    },
+    {
+      "url": "https://bun.com/reference/node/inspector",
+      "path": "node/inspector"
+    },
+    {
+      "url": "https://bun.com/reference/node/inspector/promises",
+      "path": "node/inspector/promises"
+    },
+    {
+      "url": "https://bun.com/reference/node/module",
+      "path": "node/module"
+    },
+    {
+      "url": "https://bun.com/reference/node/net",
+      "path": "node/net"
+    },
+    {
+      "url": "https://bun.com/reference/node/os",
+      "path": "node/os"
+    },
+    {
+      "url": "https://bun.com/reference/node/path",
+      "path": "node/path"
+    },
+    {
+      "url": "https://bun.com/reference/node/perf_hooks",
+      "path": "node/perf_hooks"
+    },
+    {
+      "url": "https://bun.com/reference/node/punycode",
+      "path": "node/punycode"
+    },
+    {
+      "url": "https://bun.com/reference/node/querystring",
+      "path": "node/querystring"
+    },
+    {
+      "url": "https://bun.com/reference/node/quic",
+      "path": "node/quic"
+    },
+    {
+      "url": "https://bun.com/reference/node/readline",
+      "path": "node/readline"
+    },
+    {
+      "url": "https://bun.com/reference/node/readline/promises",
+      "path": "node/readline/promises"
+    },
+    {
+      "url": "https://bun.com/reference/node/stream",
+      "path": "node/stream"
+    },
+    {
+      "url": "https://bun.com/reference/node/stream/consumers",
+      "path": "node/stream/consumers"
+    },
+    {
+      "url": "https://bun.com/reference/node/stream/iter",
+      "path": "node/stream/iter"
+    },
+    {
+      "url": "https://bun.com/reference/node/stream/promises",
+      "path": "node/stream/promises"
+    },
+    {
+      "url": "https://bun.com/reference/node/stream/web",
+      "path": "node/stream/web"
+    },
+    {
+      "url": "https://bun.com/reference/node/string_decoder",
+      "path": "node/string_decoder"
+    },
+    {
+      "url": "https://bun.com/reference/node/test",
+      "path": "node/test"
+    },
+    {
+      "url": "https://bun.com/reference/node/test/reporters",
+      "path": "node/test/reporters"
+    },
+    {
+      "url": "https://bun.com/reference/node/timers/promises",
+      "path": "node/timers/promises"
+    },
+    {
+      "url": "https://bun.com/reference/node/tls",
+      "path": "node/tls"
+    },
+    {
+      "url": "https://bun.com/reference/node/trace_events",
+      "path": "node/trace_events"
+    },
+    {
+      "url": "https://bun.com/reference/node/tty",
+      "path": "node/tty"
+    },
+    {
+      "url": "https://bun.com/reference/node/url",
+      "path": "node/url"
+    },
+    {
+      "url": "https://bun.com/reference/node/util",
+      "path": "node/util"
+    },
+    {
+      "url": "https://bun.com/reference/node/util/types",
+      "path": "node/util/types"
+    },
+    {
+      "url": "https://bun.com/reference/node/v8",
+      "path": "node/v8"
+    },
+    {
+      "url": "https://bun.com/reference/node/vm",
+      "path": "node/vm"
+    },
+    {
+      "url": "https://bun.com/reference/node/wasi",
+      "path": "node/wasi"
+    },
+    {
+      "url": "https://bun.com/reference/node/worker_threads",
+      "path": "node/worker_threads"
+    },
+    {
+      "url": "https://bun.com/reference/node/zlib",
+      "path": "node/zlib"
+    },
+    {
+      "url": "https://bun.com/reference/node/zlib/iter",
+      "path": "node/zlib/iter"
+    }
+  ]
+}

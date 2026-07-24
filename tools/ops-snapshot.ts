@@ -13,6 +13,7 @@
  *   bunx --bun ops-snapshot
  *   bunx --bun ops-snapshot --no-routing --no-report
  *   bunx --bun ops-snapshot --force-routing
+ *   bunx --bun ops-snapshot --no-channel-meta
  *
  * Writes (SSOT paths):
  *   public/registry/ops-summary.json
@@ -21,6 +22,7 @@
  *   public/registry/@factorywager/bun-utils-test/latest.json
  *   public/registry/@factorywager/routing-test/latest.json  (when routing runs)
  *   public/registry/prediction/*         (unless --no-report)
+ *   public/registry/release-features.json — channel meta merge (unless --no-channel-meta)
  *
  * Local portal uses live SQLite; Pages serves these static artifacts.
  *
@@ -29,6 +31,7 @@
  * @see functions/api/operations/summary.ts
  */
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
+import { resolvePath } from '../lib/path-bun.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
 import { getRoutingProof, routingToOpsSlice } from '../lib/routing-proof.ts';
@@ -37,6 +40,11 @@ import { writePredictionReport } from '../lib/prediction/index.ts';
 import { runNetworkingVerification } from './verify-networking.ts';
 import { buildPortalEnvStatus } from '../lib/http/portal-env-status.ts';
 import { writeLlmsStatic } from './llms-static.ts';
+import { saveProofTaxonomyAudit } from '../lib/verification/proof-taxonomy.ts';
+import {
+  refreshChannelMetaProof,
+  saveChannelMetaProof,
+} from '../lib/verification/channel-meta-refresh.ts';
 
 const argv = Bun.argv.slice(2);
 const outIdx = argv.indexOf('--out');
@@ -51,6 +59,9 @@ const withRouting = !argv.includes('--no-routing');
 const withStatic = !argv.includes('--no-static');
 const forceRouting = argv.includes('--force-routing');
 const publishProofs = argv.includes('--publish') || Bun.env.OPS_SNAPSHOT_PUBLISH === '1';
+/** Prefer-artifact suite=all merge for Pages (disable with --no-channel-meta). */
+const withChannelMeta =
+  !argv.includes('--no-channel-meta') && Bun.env.OPS_SNAPSHOT_CHANNEL_META !== '0';
 
 const monitoringPath = Bun.env.MONITORING_SNAPSHOT_PATH ?? 'public/registry/monitoring.json';
 const staticRegistryPath = Bun.env.REGISTRY_STATIC_PATH ?? 'public/registry/static.json';
@@ -104,6 +115,7 @@ export async function buildRegistrySnapshot(options?: {
   withStatic?: boolean;
   forceRouting?: boolean;
   publish?: boolean;
+  withChannelMeta?: boolean;
   outPath?: string;
   dbPath?: string;
 }): Promise<Record<string, unknown>> {
@@ -114,6 +126,7 @@ export async function buildRegistrySnapshot(options?: {
     withStatic: options?.withStatic ?? withStatic,
     forceRouting: options?.forceRouting ?? forceRouting,
     publish: options?.publish ?? publishProofs,
+    withChannelMeta: options?.withChannelMeta ?? withChannelMeta,
     outPath: options?.outPath ?? outPath,
     dbPath: options?.dbPath ?? dbPath,
   };
@@ -145,7 +158,71 @@ export async function buildRegistrySnapshot(options?: {
       }
     }
 
-    // 2. Ops summary (embeds disk routing by default; override with fresh slice)
+    // 1b. Proof taxonomy + channel-meta bake (before ops-summary so disk slices are fresh)
+    const root = resolvePath(import.meta.dir, '..');
+    let proofTaxonomySummary: {
+      ok: boolean;
+      contractsOk: number;
+      contracts: number;
+      consistencyOk: number;
+      proofHash?: string;
+    } | null = null;
+    try {
+      const tax = await saveProofTaxonomyAudit(root);
+      proofTaxonomySummary = {
+        ok: tax.ok,
+        contractsOk: tax.audits.filter(a => a.ok).length,
+        contracts: tax.audits.length,
+        consistencyOk: tax.consistency.filter(c => c.ok).length,
+        proofHash: tax.proofHash,
+      };
+      if (!tax.ok) {
+        console.warn('[ops-snapshot] proof taxonomy audit degraded — run verify:proof-taxonomy');
+      }
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] proof taxonomy audit skipped:',
+        e instanceof Error ? e.message : e
+      );
+    }
+
+    let channelMetaSummary: {
+      ok: boolean;
+      passed?: number;
+      total?: number;
+      proofHash?: string;
+      sources?: Record<string, string>;
+      error?: string;
+    } | null = null;
+    if (cfg.withChannelMeta) {
+      try {
+        const { report, sources } = await refreshChannelMetaProof({
+          root,
+          preferArtifacts: true,
+        });
+        await saveChannelMetaProof(report, sources);
+        channelMetaSummary = {
+          ok: report.summary.status === 'pass',
+          passed: report.summary.passed,
+          total: report.summary.total,
+          proofHash: report.proofHash,
+          sources,
+        };
+        if (!channelMetaSummary.ok) {
+          console.warn(
+            `[ops-snapshot] channel-meta degraded: ${report.summary.passed}/${report.summary.total}`
+          );
+        }
+      } catch (e) {
+        channelMetaSummary = {
+          ok: false,
+          error: e instanceof Error ? e.message : String(e),
+        };
+        console.warn('[ops-snapshot] channel-meta skipped:', channelMetaSummary.error);
+      }
+    }
+
+    // 2. Ops summary (embeds disk routing / taxonomy / channel-meta slices)
     const payload = buildOpsSummary(db, 'snapshot');
     if (routingSlice) payload.routing = routingSlice;
 
@@ -277,6 +354,8 @@ export async function buildRegistrySnapshot(options?: {
           path: '/registry/@factorywager/bun-utils-test/latest.json',
         },
         routing: payload.routing,
+        channelMeta: payload.channelMeta,
+        proofTaxonomy: payload.proofTaxonomy,
       };
       await Bun.write(staticRegistryPath, `${JSON.stringify(staticSnapshot, null, 2)}\n`);
       staticWritten = staticRegistryPath;
@@ -330,6 +409,13 @@ export async function buildRegistrySnapshot(options?: {
               .map(r => r.path),
           }
         : { available: false },
+      proofTaxonomy: proofTaxonomySummary ?? {
+        ok: false,
+        contractsOk: 0,
+        contracts: 0,
+        consistencyOk: 0,
+      },
+      channelMeta: channelMetaSummary ?? { ok: false, skipped: true },
       dodQueue: monitoring.dodQueue,
       packageCount: monitoring.packageCount,
       liquidity: payload.liquidity.total,

@@ -183,6 +183,15 @@ export const ENV_CHECK_SPECS: Spec[] = [
     hasCodeDefault: true,
     note: 'data/operations.db',
   },
+  // GitHub (Bun create auth · channel resolve / bun upgrade rate limits)
+  {
+    key: 'GITHUB_TOKEN',
+    group: 'github',
+    severity: 'optional',
+    secret: true,
+    anyOf: ['GITHUB_TOKEN', 'GITHUB_ACCESS_TOKEN', 'GH_TOKEN'],
+    note: 'aliases: GITHUB_ACCESS_TOKEN · GH_TOKEN · or `gh auth login` (channels.ts gh-cli fallback)',
+  },
   {
     key: 'TELEGRAM_BOT_TOKEN',
     group: 'ops',
@@ -253,7 +262,9 @@ function resolveValue(spec: Spec): { value: string; sourceKey: string } {
   return { value: '', sourceKey: spec.key };
 }
 
-export function checkEnv(env: NodeJS.ProcessEnv | Record<string, string | undefined> = Bun.env): EnvCheckReport {
+export function checkEnv(
+  env: NodeJS.ProcessEnv | Record<string, string | undefined> = Bun.env
+): EnvCheckReport {
   // Temporarily not needed — we read Bun.env via raw(); keep param for tests
   void env;
   const rows: EnvCheckRow[] = [];
@@ -347,6 +358,8 @@ export function envCheckForHealth(): {
   return {
     summary: report.summary,
     table: report.table,
-    requiredMissingKeys: report.rows.filter(r => r.severity === 'required' && !r.ok).map(r => r.key),
+    requiredMissingKeys: report.rows
+      .filter(r => r.severity === 'required' && !r.ok)
+      .map(r => r.key),
   };
 }

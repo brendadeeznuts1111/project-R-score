@@ -15,7 +15,8 @@ describe('bun-defaults-proof', () => {
       console.error(failed);
     }
     expect(failed).toEqual([]);
-    expect(cases.length).toBe(12);
+    expect(cases.length).toBe(13);
+    expect(cases.some(c => c.id === 'serve-identity-protocol-sync' && c.pass)).toBe(true);
   });
 
   test('password default is argon2id not bcrypt', async () => {

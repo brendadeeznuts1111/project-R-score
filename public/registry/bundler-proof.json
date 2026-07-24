@@ -1,0 +1,46 @@
+{
+  "timestamp": "2026-07-24T04:12:24.292Z",
+  "bunVersion": "1.4.0",
+  "results": [
+    {
+      "name": "bundler.loader.ts",
+      "category": "bundler",
+      "expected": "transpiles TypeScript to JS",
+      "actual": "built",
+      "passed": true
+    },
+    {
+      "name": "bundler.loader.css",
+      "category": "bundler",
+      "expected": "bundles CSS",
+      "actual": "built",
+      "passed": true
+    },
+    {
+      "name": "bundler.loader.txt",
+      "category": "bundler",
+      "expected": "imports text as string",
+      "actual": "built",
+      "passed": true
+    },
+    {
+      "name": "bundler.loader.json",
+      "category": "bundler",
+      "expected": "imports JSON as object",
+      "actual": "built",
+      "passed": true
+    },
+    {
+      "name": "bundler.asset-processing",
+      "category": "bundler",
+      "expected": "copies asset",
+      "actual": "fail error: cannot write multiple output file",
+      "passed": false
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "total": 5
+  },
+  "proofHash": "3f4cda321e982221e9cb529db056d51a5cfe760a02561a29148ccceef3b24378"
+}

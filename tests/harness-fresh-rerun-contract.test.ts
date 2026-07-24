@@ -271,6 +271,19 @@ describe('fresh-rerun contract', () => {
     expect(p?.evidence).toContain('docs/harness/tenants/cloudflare-pages.md');
   });
 
+  test('channel-meta-verification-v1 freshRerun is verification suite cluster', () => {
+    const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'channel-meta-verification-v1');
+    expect(p?.gateClass).toBe('human-only');
+    expect(p?.owner).toBe('lib/verification/');
+    expect(p?.kinds).toEqual(['unit', 'boundary']);
+    expect(p?.freshRerun).toBe(
+      'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts'
+    );
+    expect(p?.evidence).toContain(p!.freshRerun);
+    expect(p?.evidence).toContain('docs/harness/tenants/channel-meta-verification.md');
+    expect(p?.evidence).toContain('lib/verification/channel-meta-refresh.ts');
+  });
+
   test('console-depth-boundaries freshRerun is console-depth suite', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'console-depth-boundaries');
     expect(p?.freshRerun).toBe('bun test tests/console-depth.test.ts');

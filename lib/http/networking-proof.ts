@@ -4,6 +4,10 @@
  *
  * @see tools/verify-networking.ts
  */
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+import type { NetCheckRow, NetTargetCategory } from './networking-report.ts';
+
+export const NETWORKING_PROOF_PATH = 'public/registry/networking-proof.json';
 
 export const NETWORKING_PROOF_SCHEMA_VERSION = 1 as const;
 
@@ -19,17 +23,121 @@ export type NetworkingProofArtifact = {
   reportType: string;
   proofHash: string;
   timestamp: string;
+  subsystem?: 'networking';
   bunVersion?: string;
   bunRevision?: string;
   base?: string;
+  remote?: boolean;
   allOk: boolean;
   targets: unknown[];
   global: {
     checksPassed: number;
     checksTotal: number;
     elapsedMs?: number;
+    dnsCache?: Record<string, number>;
   };
 };
+
+export type NetworkingProofTargetInput = {
+  name: string;
+  category: NetTargetCategory;
+};
+
+function parseMs(metric: string): number | undefined {
+  const m = metric.match(/^([\d.]+)ms/);
+  return m ? Number(m[1]) : undefined;
+}
+
+function parseStatusCode(metric: string): number | undefined {
+  const m = metric.match(/\((\d{3})\)/);
+  return m ? Number(m[1]) : undefined;
+}
+
+function parseBodySize(metric: string): number | undefined {
+  const m = metric.match(/\((\d+)\s+B\)/);
+  return m ? Number(m[1]) : undefined;
+}
+
+/** Build monitoring proof JSON from flat NetCheckRow[] grouped by target name. */
+export function buildNetworkingProofArtifact(input: {
+  rows: NetCheckRow[];
+  targets: NetworkingProofTargetInput[];
+  base: string;
+  remote?: boolean;
+  elapsedMs?: number;
+  bunVersion?: string;
+  bunRevision?: string;
+  dnsCache?: Record<string, number>;
+}): NetworkingProofArtifact {
+  const hard = input.rows.filter(r => r.status === 'PASS' || r.status === 'FAIL');
+  const checksPassed = hard.filter(r => r.status === 'PASS').length;
+  const checksTotal = hard.length;
+  const allOk = checksPassed === checksTotal && checksTotal > 0;
+
+  const targets = input.targets.map(t => {
+    const targetRows = input.rows.filter(r => r.target === t.name);
+    const optimizations: Record<string, { metric: string; status: string; detail?: string }> = {};
+    for (const r of targetRows) {
+      optimizations[r.optimization] = {
+        metric: r.metric,
+        status: r.status,
+        ...(r.detail ? { detail: r.detail } : {}),
+      };
+    }
+    const cold = targetRows.find(r => r.type === 'cold-fetch');
+    const warm = targetRows.find(r => r.type === 'warm-fetch');
+    const coldMs = cold ? parseMs(cold.metric) : undefined;
+    const warmMs = warm ? parseMs(warm.metric) : undefined;
+    return {
+      name: t.name,
+      category: t.category,
+      subsystem: 'networking' as const,
+      optimizations,
+      summary: {
+        coldFetchMs: coldMs,
+        warmFetchMs: warmMs,
+        reuseEfficiency:
+          coldMs && warmMs && warmMs > 0 ? Number((coldMs / warmMs).toFixed(6)) : undefined,
+        protocol: 'unknown',
+        compression: 'none',
+        dnsCacheHit: targetRows.some(r => r.type === 'dns-cache' && r.status === 'PASS'),
+        keepAlive: false,
+        http3: false,
+        statusCode: cold ? parseStatusCode(cold.metric) : undefined,
+        bodySize: targetRows
+          .filter(r => r.type === 'response-bytes')
+          .map(r => parseBodySize(r.metric))
+          .find(n => n != null),
+      },
+      timestamp: new Date().toISOString(),
+    };
+  });
+
+  const body = {
+    schemaVersion: NETWORKING_PROOF_SCHEMA_VERSION,
+    reportType: NETWORKING_REPORT_TYPES.verification,
+    timestamp: new Date().toISOString(),
+    subsystem: 'networking' as const,
+    bunVersion: input.bunVersion,
+    bunRevision: input.bunRevision,
+    base: input.base,
+    remote: input.remote ?? false,
+    allOk,
+    targets,
+    global: {
+      elapsedMs: input.elapsedMs,
+      checksPassed,
+      checksTotal,
+      ...(input.dnsCache ? { dnsCache: input.dnsCache } : {}),
+    },
+  };
+
+  const hasher = new Bun.CryptoHasher('sha256');
+  hasher.update(JSON.stringify({ ...body, proofHash: undefined }));
+  const proofHash = hasher.digest('hex');
+
+  return { ...body, proofHash };
+}
 
 /** Soft-parse unknown JSON into a networking proof artifact. */
 export function parseNetworkingProofArtifact(raw: unknown): NetworkingProofArtifact | null {
@@ -37,7 +145,11 @@ export function parseNetworkingProofArtifact(raw: unknown): NetworkingProofArtif
   const o = raw as Record<string, unknown>;
   const global = o.global as Record<string, unknown> | undefined;
   if (typeof o.proofHash !== 'string') return null;
-  if (!global || typeof global.checksPassed !== 'number' || typeof global.checksTotal !== 'number') {
+  if (
+    !global ||
+    typeof global.checksPassed !== 'number' ||
+    typeof global.checksTotal !== 'number'
+  ) {
     return null;
   }
   return {
@@ -60,7 +172,9 @@ export function parseNetworkingProofArtifact(raw: unknown): NetworkingProofArtif
 }
 
 /** Compact projection for /api/monitoring and health tables. */
-export function toMonitoringNetworkingReport(parsed: NetworkingProofArtifact): Record<string, unknown> {
+export function toMonitoringNetworkingReport(
+  parsed: NetworkingProofArtifact
+): Record<string, unknown> {
   return {
     available: true,
     reportType: parsed.reportType,

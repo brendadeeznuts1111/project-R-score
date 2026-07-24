@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-24T03:14:01.344Z",
+  "timestamp": "2026-07-24T04:32:05.243Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "results": [
@@ -13,23 +13,23 @@
     {
       "name": "@factorywager/registry-client",
       "registry": "custom",
-      "version": "—",
-      "readme": "—",
-      "status": "❌ error"
+      "version": "1.0.0",
+      "readme": "❌ empty",
+      "status": "✅ OK"
     },
     {
       "name": "@factorywager/bun-test",
       "registry": "custom",
-      "version": "—",
-      "readme": "—",
-      "status": "❌ error"
+      "version": "0.2.0",
+      "readme": "❌ empty",
+      "status": "✅ OK"
     },
     {
       "name": "@factory/health-check",
       "registry": "custom",
-      "version": "—",
-      "readme": "—",
-      "status": "❌ error"
+      "version": "1.1.0",
+      "readme": "❌ empty",
+      "status": "✅ OK"
     },
     {
       "name": "event-store",
@@ -40,8 +40,8 @@
     }
   ],
   "summary": {
-    "passed": 1,
+    "passed": 4,
     "total": 5
   },
-  "proofHash": "fbeaac1080eba2f9ff27c2384b95d878b338d4c829338125484f3e3288470962"
+  "proofHash": "c6281abaf16f8213e4d3a0f264690698628ba0b0db0bda47e3107058d70f8288"
 }

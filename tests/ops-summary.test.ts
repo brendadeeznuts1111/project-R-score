@@ -35,6 +35,25 @@ describe('buildOpsSummary', () => {
     expect(s.bunUtils.total).toBeGreaterThan(0);
     expect(s.bunUtils.passed).toBe(s.bunUtils.total);
     expect(s.bunUtils.proofHash).toMatch(/^[a-f0-9]{64}$/);
+    expect(s.registryClient).toHaveProperty('available');
+    expect(s.registryClient.path).toBe('/registry/registry-client-proof.json');
+    expect(s.proofTaxonomy).toHaveProperty('available');
+    expect(s.proofTaxonomy.path).toBe('/registry/proof-taxonomy-audit.json');
+    if (s.proofTaxonomy.available) {
+      expect(s.proofTaxonomy.contracts).toBeGreaterThan(0);
+      expect(s.proofTaxonomy.proofHash).toMatch(/^[a-f0-9]{64}$/);
+    }
+    expect(s.channelMeta).toHaveProperty('available');
+    expect(s.channelMeta.path).toBe('/registry/release-features.json');
+    expect(s.channelMeta.bakePath).toBe('/registry/channel-meta-bake.json');
+    if (s.channelMeta.available) {
+      expect(s.channelMeta.total).toBeGreaterThan(0);
+      expect(s.channelMeta.proofHash).toMatch(/^[a-f0-9]{64}$/);
+    }
+    if (s.registryClient.available) {
+      expect(s.registryClient.total).toBeGreaterThan(0);
+      expect(s.registryClient.proofHash).toMatch(/^[a-f0-9]{64}$/);
+    }
     expect(s.routing).toHaveProperty('available');
     // Slice present when artifact exists on disk (repo may ship latest.json)
     if (s.routing.available) {

@@ -18,4 +18,12 @@ describe('env-check', () => {
   test('specs include cloudflare token', () => {
     expect(ENV_CHECK_SPECS.some(s => s.key === 'CLOUDFLARE_API_TOKEN')).toBe(true);
   });
+
+  test('specs include GitHub auth token aliases for channel resolve', () => {
+    const github = ENV_CHECK_SPECS.find(s => s.key === 'GITHUB_TOKEN');
+    expect(github).toBeDefined();
+    expect(github?.group).toBe('github');
+    expect(github?.secret).toBe(true);
+    expect(github?.anyOf).toEqual(['GITHUB_TOKEN', 'GITHUB_ACCESS_TOKEN', 'GH_TOKEN']);
+  });
 });

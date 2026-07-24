@@ -16,6 +16,12 @@
  */
 
 import { CANONICAL_RUNTIME_NITS_TOKENS } from './bun-doc-refs.ts';
+import { buildSemanticTags } from '../lib/verification/channels.ts';
+import {
+  BUN_RUNTIME_NITS_PROOF_REPORT_PATH,
+  runBunRuntimeNitsVerification,
+} from '../lib/verification/bun-runtime-nits-probes.ts';
+import { summarizeBySubsystem } from '../lib/verification/subsystem.ts';
 
 export type NitProbe = {
   name: string;
@@ -344,8 +350,29 @@ export async function buildNitsProof(): Promise<NitsProof> {
 }
 
 if (import.meta.main) {
-  const proof = await buildNitsProof();
-  const rows = proof.results.map(r => ({
+  const report = await runBunRuntimeNitsVerification();
+  const semanticTags = await buildSemanticTags('runtime');
+  const passed = report.results.filter(r => r.passed).length;
+  const body = {
+    type: 'BunRuntimeNitsVerificationReport' as const,
+    version: '1.0.0' as const,
+    timestamp: new Date().toISOString(),
+    bunVersion: Bun.version,
+    bunRevision: (Bun.revision || '').slice(0, 12) || 'unknown',
+    semanticTags,
+    reportPath: BUN_RUNTIME_NITS_PROOF_REPORT_PATH,
+    results: report.results,
+    summary: {
+      passed,
+      total: report.results.length,
+      status: (passed === report.results.length ? 'pass' : 'fail') as 'pass' | 'fail',
+      bySubsystem: summarizeBySubsystem(report.results),
+    },
+  };
+  const proofHash = new Bun.CryptoHasher('sha256').update(JSON.stringify(body)).digest('hex');
+  const proof = { ...body, proofHash };
+
+  const rows = report.results.map(r => ({
     Test: r.name,
     Expected: r.expected,
     Actual: r.actual,

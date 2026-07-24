@@ -41,6 +41,9 @@ describe("registry contracts — negative cases", () => {
         prediction: { coverage: { mae: 0, rmse: 0 } },
         growth: {},
         bunUtils: {},
+        registryClient: { available: false, path: '/registry/registry-client-proof.json' },
+        docsCoverage: { available: false, path: '/registry/docs-coverage-proof.json' },
+        proofTaxonomy: { available: false, path: '/registry/proof-taxonomy-audit.json' },
         routing: {},
       }).ok,
     ).toBe(true);

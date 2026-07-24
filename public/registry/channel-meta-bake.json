@@ -1,0 +1,41 @@
+{
+  "type": "ChannelMetaBake",
+  "version": "1.0.0",
+  "updatedAt": "2026-07-24T04:43:29.400Z",
+  "proofHash": "1a203210514d7f7e03753ab2ba667a6adf8b60590ec4d6e3e1bdb9cf7e33f62b",
+  "passed": 75,
+  "total": 75,
+  "status": "pass",
+  "channel": "stable",
+  "targetVersion": "1.4.0",
+  "runtimeVersion": "1.4.0",
+  "bySubsystem": {
+    "runtime": {
+      "passed": 36,
+      "total": 36
+    },
+    "bundler": {
+      "passed": 8,
+      "total": 8
+    },
+    "package-manager": {
+      "passed": 12,
+      "total": 12
+    },
+    "networking": {
+      "passed": 13,
+      "total": 13
+    },
+    "other": {
+      "passed": 6,
+      "total": 6
+    }
+  },
+  "sources": {
+    "release": "artifact",
+    "nits": "artifact",
+    "bundler": "artifact",
+    "networking": "artifact"
+  },
+  "path": "/registry/release-features.json"
+}

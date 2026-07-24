@@ -65,6 +65,12 @@ export function validateOpsSummary(v: unknown): ContractResult {
     // Writer-always-emits sections (buildOpsSummary)
     ['growth is object', isRecord(v.growth)],
     ['bunUtils is object', isRecord(v.bunUtils)],
+    ['registryClient is object', isRecord(v.registryClient)],
+    ['docsCoverage is object', isRecord(v.docsCoverage)],
+    [
+      'proofTaxonomy, when present, is object',
+      v.proofTaxonomy === undefined || isRecord(v.proofTaxonomy),
+    ],
     ['routing is object', isRecord(v.routing)],
     // Optional sections (ops-snapshot extras)
     ['networking, when present, is object', v.networking === undefined || isRecord(v.networking)],

@@ -1,129 +1,196 @@
 {
   "type": "InstallEnvVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T03:14:06.667Z",
+  "timestamp": "2026-07-24T04:32:05.494Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "6d890bce70dc413cbf5dfd05e8b58f8da32a5a34",
+    "provenanceId": "local-2026-07-24T04-32-05-267Z",
+    "testedAt": "2026-07-24T04:32:05.267Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none"
+  },
   "reportPath": "/registry/install-env-proof.json",
   "results": [
     {
       "envVar": "BUN_CONFIG_REGISTRY",
       "canonicalKey": "BUN_CONFIG_REGISTRY",
-      "name": "BUN_CONFIG_REGISTRY",
-      "expected": "custom registry URL overrides default (unreachable registry fails dry-run)",
-      "actual": "baseline exit=0; BUN_CONFIG_REGISTRY=http://127.0.0.1:9 exit≠0",
-      "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKind": "Env",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Set an npm registry (default: https://registry.npmjs.org)",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
-      }
+      },
+      "name": "BUN_CONFIG_REGISTRY",
+      "expected": "custom registry URL overrides default (unreachable registry fails dry-run)",
+      "actual": "baseline=1 custom=1",
+      "passed": false,
+      "canonicalSource": "docs"
     },
     {
       "envVar": "BUN_CONFIG_TOKEN",
       "canonicalKey": "BUN_CONFIG_TOKEN",
-      "name": "BUN_CONFIG_TOKEN",
-      "expected": "auth token env accepted (public registry dry-run)",
-      "actual": "exit=0 with BUN_CONFIG_TOKEN set",
-      "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKind": "Env",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Set an auth token for the default registry",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
-      }
+      },
+      "name": "BUN_CONFIG_TOKEN",
+      "expected": "auth token env accepted (public registry dry-run)",
+      "actual": "exit=1",
+      "passed": false,
+      "canonicalSource": "docs"
     },
     {
       "envVar": "BUN_CONFIG_YARN_LOCKFILE",
       "canonicalKey": "BUN_CONFIG_YARN_LOCKFILE",
-      "name": "BUN_CONFIG_YARN_LOCKFILE",
-      "expected": "yarn.lock created alongside bun.lock",
-      "actual": "yarn.lock present after install",
-      "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKind": "Env",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Save a Yarn v1-style yarn.lock",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
-      }
+      },
+      "name": "BUN_CONFIG_YARN_LOCKFILE",
+      "expected": "yarn.lock created alongside bun.lock",
+      "actual": "exit=1 yarn.lock=false",
+      "passed": false,
+      "canonicalSource": "docs"
     },
     {
       "envVar": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
       "canonicalKey": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
-      "name": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
-      "expected": "bun.lock not written when skip-save env set",
-      "actual": "no bun.lock after install",
-      "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKind": "Env",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Don't save a lockfile",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
-      }
+      },
+      "name": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
+      "expected": "bun.lock not written when skip-save env set",
+      "actual": "exit=1 lock=false",
+      "passed": false,
+      "canonicalSource": "docs"
     },
     {
       "envVar": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
       "canonicalKey": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
-      "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
-      "expected": "dry-run succeeds with stub bun.lock when skip-load env set",
-      "actual": "skip-load dry-run exit=0 with bun.lock present",
-      "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKind": "Env",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Don't load a lockfile",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
-      }
+      },
+      "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
+      "expected": "dry-run succeeds with stub bun.lock when skip-load env set",
+      "actual": "exit=1",
+      "passed": false,
+      "canonicalSource": "docs"
     },
     {
       "envVar": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
       "canonicalKey": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
-      "name": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
-      "expected": "node_modules not created when skip-install env set",
-      "actual": "exit=0; node_modules absent",
-      "passed": true,
       "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKind": "Env",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Don't install any packages",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
-      }
+      },
+      "name": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
+      "expected": "node_modules not created when skip-install env set",
+      "actual": "exit=1 node_modules=false",
+      "passed": false,
+      "canonicalSource": "docs"
     },
     {
       "envVar": "install.scopes",
       "canonicalKey": "install.scopes",
-      "name": "install.scopes",
-      "expected": "scoped @factorywager dry-run or bun info via bunfig registry URL",
-      "actual": "local-serve-public: no npm packument; production-apex: no npm packument",
-      "passed": false,
       "canonical": "https://bun.com/docs/runtime/bunfig#install-registry",
+      "canonicalKind": "Config",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Scoped npm registry URLs — FactoryWager R2-backed registry via bunfig",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
       "_links": {
         "docs": "https://bun.com/docs/runtime/bunfig#install-registry",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
-      }
+      },
+      "name": "install.scopes",
+      "expected": "scoped @factorywager resolves via bunfig registry URL",
+      "actual": "local-serve-public bun info exit=0; dry-run exit=1 (http://localhost:3000/)",
+      "passed": true,
+      "lane": "local-serve-public",
+      "canonicalSource": "docs"
     },
     {
       "envVar": "registry-read-plane",
       "canonicalKey": "registry-read-plane",
-      "name": "registry-read-plane",
-      "expected": "RegistryClient.health() succeeds against R2-backed read plane",
-      "actual": "production-apex health status=ok packages=17",
-      "passed": true,
       "canonical": "https://developers.cloudflare.com/pages/functions/bindings/#r2-bucket-bindings",
-      "lane": "production-apex",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
       "_links": {
         "docs": "https://developers.cloudflare.com/pages/functions/bindings/#r2-bucket-bindings",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-env.ts",
         "report": "/registry/install-env-proof.json"
-      }
+      },
+      "name": "registry-read-plane",
+      "expected": "RegistryClient.health() succeeds against R2-backed read plane",
+      "actual": "production-apex health status=ok packages=17",
+      "passed": true,
+      "lane": "production-apex",
+      "canonicalSource": "other"
     }
   ],
   "summary": {
-    "passed": 7,
+    "passed": 2,
     "total": 8,
-    "status": "fail"
+    "status": "fail",
+    "bySubsystem": {
+      "package-manager": {
+        "passed": 2,
+        "total": 8
+      }
+    }
   },
-  "proofHash": "e0090d6a15c2dc5361f4d896be5eee19491a17d5b72b2f7894fa138cc3fb263d"
+  "proofHash": "64e94f84fc3d445f91c7c04e9aacf53e2ff9bf4bc41ce560a0ceb71d07f6a9e6"
 }

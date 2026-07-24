@@ -22,6 +22,8 @@ export const INSTALL_LOCI = {
   configuration: bunDocs('pm/cli/install', 'configuration'),
   cache: bunDocs('pm/cli/install', 'cache'),
   backends: bunDocs('pm/cli/install', 'platform-specific-backends'),
+  platformDependencies: bunDocs('pm/cli/install', 'platform-specific-dependencies'),
+  cpuAndOs: bunDocs('pm/cli/install', 'cpu-and-os-flags'),
   strategies: bunDocs('pm/cli/install', 'installation-strategies'),
   hoisted: bunDocs('pm/cli/install', 'hoisted-installs'),
   isolated: bunDocs('pm/cli/install', 'isolated-installs'),

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/bun-apis — Bun.mmap
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 /**
  * Operations portal summary payload — live SQLite → JSON.
@@ -7,10 +8,7 @@
  */
 import type { Database } from 'bun:sqlite';
 import { buildBunUtilsProof } from '../bun-utils-proof.ts';
-import {
-  loadRoutingOpsSliceSync,
-  type RoutingOpsSlice,
-} from '../routing-proof.ts';
+import { loadRoutingOpsSliceSync, type RoutingOpsSlice } from '../routing-proof.ts';
 import { getPredictionAccuracy } from '../prediction/index.ts';
 
 export type OpsSummaryExpert = {
@@ -74,6 +72,68 @@ export type OpsSummaryBunUtils = {
   timestamp: string;
 };
 
+export type OpsSummaryRegistryClient = {
+  available: boolean;
+  sdkVersion?: string;
+  passed?: number;
+  total?: number;
+  status?: 'pass' | 'fail';
+  proofHash?: string;
+  timestamp?: string;
+  path: '/registry/registry-client-proof.json';
+};
+
+export type OpsSummaryDocsCoverage = {
+  available: boolean;
+  ok?: boolean;
+  missingCanonicalCount?: number;
+  catalogTracked?: number;
+  catalogTotal?: number;
+  overlayTracked?: number;
+  overlayTotal?: number;
+  referenceModuleCount?: number;
+  referencePageCount?: number;
+  indexStale?: boolean;
+  proofHash?: string;
+  timestamp?: string;
+  path: '/registry/docs-coverage-proof.json';
+};
+
+export type OpsSummaryProofTaxonomy = {
+  available: boolean;
+  ok?: boolean;
+  contracts?: number;
+  contractsOk?: number;
+  consistencyOk?: number;
+  consistencyTotal?: number;
+  proofHash?: string;
+  timestamp?: string;
+  path: '/registry/proof-taxonomy-audit.json';
+};
+
+/** Channel meta bake rollup (suite=all → release-features + sources sidecar). */
+export type OpsSummaryChannelMeta = {
+  available: boolean;
+  ok?: boolean;
+  passed?: number;
+  total?: number;
+  status?: 'pass' | 'fail';
+  proofHash?: string;
+  updatedAt?: string;
+  channel?: string;
+  targetVersion?: string;
+  runtimeVersion?: string;
+  bySubsystem?: Partial<Record<string, { passed: number; total: number }>>;
+  sources?: {
+    release: string;
+    nits: string;
+    bundler: string;
+    networking: string;
+  };
+  path: '/registry/release-features.json';
+  bakePath: '/registry/channel-meta-bake.json';
+};
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -100,6 +160,26 @@ export type OpsSummaryPayload = {
   growth: OpsSummaryGrowth;
   /** Self-verifying Bun.stringWidth / deepEquals / inspect fingerprint. */
   bunUtils: OpsSummaryBunUtils;
+  /**
+   * Registry client SDK proof from public/registry/registry-client-proof.json
+   * (refreshed by `bun run verify:registry-client:save`).
+   */
+  registryClient: OpsSummaryRegistryClient;
+  /**
+   * Docs coverage proof from public/registry/docs-coverage-proof.json
+   * (RSS + reference + canonical alignment; `bun run verify:docs-coverage:save`).
+   */
+  docsCoverage: OpsSummaryDocsCoverage;
+  /**
+   * Proof taxonomy audit from public/registry/proof-taxonomy-audit.json
+   * (`bun run verify:proof-taxonomy:save` / `verify-all` / `ops:snapshot`).
+   */
+  proofTaxonomy: OpsSummaryProofTaxonomy;
+  /**
+   * Channel meta bake from public/registry/channel-meta-bake.json
+   * (`bun run verify:channel:meta` / `ops:snapshot` / suite=all).
+   */
+  channelMeta: OpsSummaryChannelMeta;
   /**
    * Last routing proof from public/registry/@factorywager/routing-test/latest.json
    * (refreshed by `bun run routing:proof:write` or `ops:snapshot --routing`).
@@ -259,6 +339,194 @@ export function queryBunUtilsProof(): OpsSummaryBunUtils {
   };
 }
 
+const REGISTRY_CLIENT_PROOF_PATH = 'public/registry/registry-client-proof.json';
+
+/** Disk snapshot of registry client verification (resolve · download · publish). */
+export function loadRegistryClientProofSlice(
+  path: string = REGISTRY_CLIENT_PROOF_PATH
+): OpsSummaryRegistryClient {
+  try {
+    const mapped = Bun.mmap(path);
+    const data = JSON.parse(new TextDecoder().decode(mapped)) as {
+      sdkVersion?: string;
+      summary?: { passed?: number; total?: number; status?: 'pass' | 'fail' };
+      proofHash?: string;
+      timestamp?: string;
+    };
+    return {
+      available: true,
+      sdkVersion: data.sdkVersion,
+      passed: data.summary?.passed,
+      total: data.summary?.total,
+      status: data.summary?.status,
+      proofHash: data.proofHash,
+      timestamp: data.timestamp,
+      path: '/registry/registry-client-proof.json',
+    };
+  } catch {
+    return { available: false, path: '/registry/registry-client-proof.json' };
+  }
+}
+
+const DOCS_COVERAGE_PROOF_PATH = 'public/registry/docs-coverage-proof.json';
+const PROOF_TAXONOMY_AUDIT_PATH = 'public/registry/proof-taxonomy-audit.json';
+const CHANNEL_META_BAKE_PATH = 'public/registry/channel-meta-bake.json';
+const RELEASE_FEATURES_PATH = 'public/registry/release-features.json';
+
+/** Disk snapshot of channel meta bake (prefer sidecar; fall back to release-features). */
+export function loadChannelMetaSlice(
+  bakePath: string = CHANNEL_META_BAKE_PATH,
+  releasePath: string = RELEASE_FEATURES_PATH
+): OpsSummaryChannelMeta {
+  const empty: OpsSummaryChannelMeta = {
+    available: false,
+    path: '/registry/release-features.json',
+    bakePath: '/registry/channel-meta-bake.json',
+  };
+  try {
+    const mapped = Bun.mmap(bakePath);
+    const bake = JSON.parse(new TextDecoder().decode(mapped)) as {
+      type?: string;
+      status?: 'pass' | 'fail';
+      passed?: number;
+      total?: number;
+      proofHash?: string;
+      updatedAt?: string;
+      channel?: string;
+      targetVersion?: string;
+      runtimeVersion?: string;
+      bySubsystem?: OpsSummaryChannelMeta['bySubsystem'];
+      sources?: OpsSummaryChannelMeta['sources'];
+    };
+    if (bake.type === 'ChannelMetaBake' || bake.proofHash) {
+      return {
+        available: true,
+        ok: bake.status === 'pass',
+        passed: bake.passed,
+        total: bake.total,
+        status: bake.status,
+        proofHash: bake.proofHash,
+        updatedAt: bake.updatedAt,
+        channel: bake.channel,
+        targetVersion: bake.targetVersion,
+        runtimeVersion: bake.runtimeVersion,
+        bySubsystem: bake.bySubsystem,
+        sources: bake.sources,
+        path: '/registry/release-features.json',
+        bakePath: '/registry/channel-meta-bake.json',
+      };
+    }
+  } catch {
+    /* fall through to release-features */
+  }
+  try {
+    const mapped = Bun.mmap(releasePath);
+    const rel = JSON.parse(new TextDecoder().decode(mapped)) as {
+      type?: string;
+      summary?: {
+        passed?: number;
+        total?: number;
+        status?: 'pass' | 'fail';
+        bySubsystem?: OpsSummaryChannelMeta['bySubsystem'];
+      };
+      proofHash?: string;
+      timestamp?: string;
+      semanticTags?: {
+        channel?: string;
+        targetVersion?: string;
+        runtimeVersion?: string;
+      };
+    };
+    if (rel.type !== 'ChannelAwareVerificationReport' || !rel.summary) return empty;
+    return {
+      available: true,
+      ok: rel.summary.status === 'pass',
+      passed: rel.summary.passed,
+      total: rel.summary.total,
+      status: rel.summary.status,
+      proofHash: rel.proofHash,
+      updatedAt: rel.timestamp,
+      channel: rel.semanticTags?.channel,
+      targetVersion: rel.semanticTags?.targetVersion,
+      runtimeVersion: rel.semanticTags?.runtimeVersion,
+      bySubsystem: rel.summary.bySubsystem,
+      path: '/registry/release-features.json',
+      bakePath: '/registry/channel-meta-bake.json',
+    };
+  } catch {
+    return empty;
+  }
+}
+
+/** Disk snapshot of proof taxonomy audit (contracts + cross-proof consistency). */
+export function loadProofTaxonomySlice(
+  path: string = PROOF_TAXONOMY_AUDIT_PATH
+): OpsSummaryProofTaxonomy {
+  try {
+    const mapped = Bun.mmap(path);
+    const data = JSON.parse(new TextDecoder().decode(mapped)) as {
+      ok?: boolean;
+      proofHash?: string;
+      timestamp?: string;
+      audits?: unknown[];
+      consistency?: unknown[];
+    };
+    const audits = data.audits ?? [];
+    const consistency = data.consistency ?? [];
+    return {
+      available: true,
+      ok: data.ok,
+      contracts: audits.length,
+      contractsOk: audits.filter((a: { ok?: boolean }) => a.ok).length,
+      consistencyOk: consistency.filter((c: { ok?: boolean }) => c.ok).length,
+      consistencyTotal: consistency.length,
+      proofHash: data.proofHash,
+      timestamp: data.timestamp,
+      path: '/registry/proof-taxonomy-audit.json',
+    };
+  } catch {
+    return { available: false, path: '/registry/proof-taxonomy-audit.json' };
+  }
+}
+
+/** Disk snapshot of docs coverage verification (RSS · reference · canonical). */
+export function loadDocsCoverageProofSlice(
+  path: string = DOCS_COVERAGE_PROOF_PATH
+): OpsSummaryDocsCoverage {
+  try {
+    const mapped = Bun.mmap(path);
+    const data = JSON.parse(new TextDecoder().decode(mapped)) as {
+      summary?: { ok?: boolean; missingCanonicalCount?: number; indexStale?: boolean };
+      canonical?: {
+        catalogTracked?: number;
+        catalogTotal?: number;
+        overlayTracked?: number;
+        overlayTotal?: number;
+      };
+      reference?: { moduleCount?: number; pageCount?: number };
+      proofHash?: string;
+      timestamp?: string;
+    };
+    return {
+      available: true,
+      ok: data.summary?.ok,
+      missingCanonicalCount: data.summary?.missingCanonicalCount,
+      catalogTracked: data.canonical?.catalogTracked,
+      catalogTotal: data.canonical?.catalogTotal,
+      overlayTracked: data.canonical?.overlayTracked,
+      overlayTotal: data.canonical?.overlayTotal,
+      referenceModuleCount: data.reference?.moduleCount,
+      referencePageCount: data.reference?.pageCount,
+      indexStale: data.summary?.indexStale,
+      proofHash: data.proofHash,
+      timestamp: data.timestamp,
+      path: '/registry/docs-coverage-proof.json',
+    };
+  } catch {
+    return { available: false, path: '/registry/docs-coverage-proof.json' };
+  }
+}
+
 /** Build full ops summary from an open operations DB. */
 export function buildOpsSummary(
   db: Database,
@@ -344,6 +612,10 @@ export function buildOpsSummary(
     prediction: queryPrediction(db),
     growth: queryGrowth(db),
     bunUtils: queryBunUtilsProof(),
+    registryClient: loadRegistryClientProofSlice(),
+    docsCoverage: loadDocsCoverageProofSlice(),
+    proofTaxonomy: loadProofTaxonomySlice(),
+    channelMeta: loadChannelMetaSlice(),
     routing: loadRoutingOpsSliceSync(),
   };
 }

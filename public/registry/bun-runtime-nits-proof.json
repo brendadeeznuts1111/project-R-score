@@ -1,140 +1,369 @@
 {
-  "timestamp": "2026-07-24T01:50:57.357Z",
+  "type": "BunRuntimeNitsVerificationReport",
+  "version": "1.0.0",
+  "timestamp": "2026-07-24T04:32:05.727Z",
   "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62",
+  "semanticTags": {
+    "channel": "stable",
+    "targetVersion": "1.4.0",
+    "latestAtTestTime": "1.4.0",
+    "testSuiteCommit": "6d890bce70dc413cbf5dfd05e8b58f8da32a5a34",
+    "provenanceId": "local-2026-07-24T04-32-05-669Z",
+    "testedAt": "2026-07-24T04:32:05.669Z",
+    "bunRevision": "a227ad991b62",
+    "runtimeVersion": "1.4.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "channelResolveSource": "runtime",
+    "githubAuthSource": "none"
+  },
+  "reportPath": "/registry/bun-runtime-nits-proof.json",
   "results": [
     {
-      "name": "sorted: true sorts keys",
+      "probe": "inspect.sorted",
       "category": "inspect",
-      "expected": "a before b",
-      "actual": "{ a: 2, b: 1, }",
+      "canonicalKey": "Bun.inspect.sorted",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.inspect sorted — deterministic key order for snapshots",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.sorted",
+      "expected": "sorted:true orders keys alphabetically (recursive)",
+      "actual": "alpha before zebra; bravo before delta",
       "passed": true,
-      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect"
+      "canonicalSource": "docs"
     },
     {
-      "name": "compact: false renders multi-line",
+      "probe": "inspect.compact",
       "category": "inspect",
-      "expected": "multi-line",
-      "actual": "multi-line",
+      "canonicalKey": "Bun.inspect.compact",
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.inspect compact — single-line output",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-inspect",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.compact",
+      "expected": "compact:true produces single-line output",
+      "actual": "no newlines",
       "passed": true,
-      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect"
+      "canonicalSource": "docs"
     },
     {
-      "name": "showProxy: true shows target without Proxy metadata",
+      "probe": "inspect.showProxy",
       "category": "inspect",
-      "expected": "plain target",
-      "actual": "{ a: 1, }",
+      "canonicalKey": "inspect.showProxy",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "showProxy — Proxy target/handler in inspect output",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.showProxy",
+      "expected": "showProxy:true surfaces Proxy or target (runtime truth)",
+      "actual": "showProxy ignored; target inspected directly",
       "passed": true,
-      "canonical": "https://bun.com/reference/bun/BunInspectOptions"
+      "canonicalSource": "reference"
     },
     {
-      "name": "getters option: [Getter] shown either way (option ignored)",
+      "probe": "inspect.getters",
       "category": "inspect",
-      "expected": "[Getter] in both",
-      "actual": "true:true false:true",
+      "canonicalKey": "inspect.getters",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "getters — evaluate or suppress property getters",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.getters",
+      "expected": "getters:true shows [Getter] (Bun 1.4 runtime truth)",
+      "actual": "getters:true shows [Getter]",
       "passed": true,
-      "canonical": "https://bun.com/reference/bun/BunInspectOptions"
+      "canonicalSource": "reference"
     },
     {
-      "name": "numericSeparator ignored by Bun.inspect (Node honors it)",
+      "probe": "inspect.numericSeparator",
       "category": "inspect",
-      "expected": "ignored",
-      "actual": "ignored",
+      "canonicalKey": "inspect.numericSeparator",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "numericSeparator — underscore separators in numbers (Node compat)",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.numericSeparator",
+      "expected": "numericSeparator:true or ignored (record runtime)",
+      "actual": "no separator (ignored on runtime)",
       "passed": true,
-      "canonical": "https://bun.com/reference/bun/BunInspectOptions"
+      "canonicalSource": "reference"
     },
     {
-      "name": "maxStringLength ignored (full string shown)",
+      "probe": "inspect.maxStringLength",
       "category": "inspect",
-      "expected": "ignored",
-      "actual": "ignored",
+      "canonicalKey": "util.inspect options",
+      "canonical": "https://nodejs.org/api/util.html#utilinspectobject-options",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Node util.inspect option delta vs BunInspectOptions",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://nodejs.org/api/util.html#utilinspectobject-options",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.maxStringLength",
+      "expected": "maxStringLength honored or ignored (record runtime)",
+      "actual": "full string shown (ignored on Bun 1.4)",
       "passed": true,
-      "canonical": "https://nodejs.org/api/util.html#utilinspectobject-options"
+      "canonicalSource": "other"
     },
     {
-      "name": "customInspect: false does not suppress Bun.inspect.custom",
+      "probe": "inspect.customInspect",
       "category": "inspect",
-      "expected": "CUSTOM still shown",
-      "actual": "CUSTOM",
+      "canonicalKey": "BunInspectOptions",
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/bun/BunInspectOptions",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "inspect.customInspect",
+      "expected": "custom symbol honored; false suppresses when supported",
+      "actual": "customInspect:false ignored; custom still shown",
       "passed": true,
-      "canonical": "https://nodejs.org/api/util.html#utilinspectobject-options"
+      "canonicalSource": "reference"
     },
     {
-      "name": "gzip CompressionStream/DecompressionStream roundtrip",
+      "probe": "streams.gzip-roundtrip",
       "category": "streams",
-      "expected": "match",
-      "actual": "match",
+      "canonicalKey": "CompressionStream",
+      "canonical": "https://bun.com/reference/globals/CompressionStream",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "WHATWG gzip/deflate compression stream",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/CompressionStream",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "streams.gzip-roundtrip",
+      "expected": "gzip compress then decompress restores bytes",
+      "actual": "36 bytes round-trip ok",
       "passed": true,
-      "canonical": "https://bun.com/reference/globals/CompressionStream"
+      "canonicalSource": "reference"
     },
     {
-      "name": "TextEncoderStream/TextDecoderStream roundtrip",
+      "probe": "streams.text-encoder-decoder",
       "category": "streams",
-      "expected": "héllo streams",
-      "actual": "héllo streams",
+      "canonicalKey": "TextEncoderStream",
+      "canonical": "https://bun.com/reference/globals/TextEncoderStream",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Streaming string to Uint8Array",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/TextEncoderStream",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "streams.text-encoder-decoder",
+      "expected": "TextEncoderStream → TextDecoderStream restores string",
+      "actual": "\"registry-client-probe\" round-trip ok",
       "passed": true,
-      "canonical": "https://bun.com/reference/globals/TextEncoderStream"
+      "canonicalSource": "reference"
     },
     {
-      "name": "URL.host includes port",
+      "probe": "url.host",
       "category": "url",
-      "expected": "example.com:8080",
-      "actual": "example.com:8080",
+      "canonicalKey": "URL.host",
+      "canonical": "https://bun.com/reference/globals/URL/host",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/host",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "url.host",
+      "expected": "host includes port; hostname excludes; host setter updates href",
+      "actual": "host=example.com:8080; set host=test.com:9000",
       "passed": true,
-      "canonical": "https://bun.com/reference/globals/URL/host"
+      "canonicalSource": "reference"
     },
     {
-      "name": "URL.origin = protocol + host",
+      "probe": "url.origin",
       "category": "url",
-      "expected": "https://example.com:8080",
+      "canonicalKey": "URL.origin",
+      "canonical": "https://bun.com/reference/globals/URL/origin",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "protocol + host + port",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/origin",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "url.origin",
+      "expected": "origin is protocol + host + port",
       "actual": "https://example.com:8080",
       "passed": true,
-      "canonical": "https://bun.com/reference/globals/URL/origin"
+      "canonicalSource": "reference"
     },
     {
-      "name": "URL.searchParams.get reads query",
+      "probe": "url.searchParams",
       "category": "url",
-      "expected": "1",
-      "actual": "1",
+      "canonicalKey": "URL.searchParams",
+      "canonical": "https://bun.com/reference/globals/URL/searchParams",
+      "canonicalKind": "Global",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Query parameter interface on URL",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/searchParams",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "url.searchParams",
+      "expected": "searchParams set/get/delete roundtrip",
+      "actual": "?b=2",
       "passed": true,
-      "canonical": "https://bun.com/reference/globals/URL/searchParams"
+      "canonicalSource": "reference"
     },
     {
-      "name": "URL.host setter rewrites host+port",
+      "probe": "url.host-setter",
       "category": "url",
-      "expected": "b.example:9000",
-      "actual": "b.example:9000",
+      "canonicalKey": "URL.host",
+      "canonical": "https://bun.com/reference/globals/URL/host",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/reference/globals/URL/host",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "url.host-setter",
+      "expected": "host setter updates origin and preserves path",
+      "actual": "https://new.example.com:9090/api/v1",
       "passed": true,
-      "canonical": "https://bun.com/reference/globals/URL/host"
+      "canonicalSource": "reference"
     },
     {
-      "name": "Bun.file is lazy; .size works without explicit open",
+      "probe": "bun.file.lazy-stat",
       "category": "file-io",
-      "expected": "5",
-      "actual": "5",
+      "canonicalKey": "bun.file.lazy-stat",
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.file is lazy until .text/.bytes/.exists",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "bun.file.lazy-stat",
+      "expected": "Bun.file size matches fs.stat after write",
+      "actual": "size=4 exists=true",
       "passed": true,
-      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file"
+      "canonicalSource": "docs"
     },
     {
-      "name": "Bun.write auto-creates parent directories",
+      "probe": "bun.write.auto-dir",
       "category": "file-io",
-      "expected": "exists",
-      "actual": "exists",
+      "canonicalKey": "bun.write.auto-dir",
+      "canonical": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.write creates parent directories",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "bun.write.auto-dir",
+      "expected": "Bun.write creates parent directories",
+      "actual": "nested path written without mkdir",
       "passed": true,
-      "canonical": "https://bun.com/docs/runtime/file-io#writing-files-bun-write"
+      "canonicalSource": "docs"
     },
     {
-      "name": "Bun.file().bytes() matches fs.readFile content",
+      "probe": "bun.file.bytes-vs-buffer",
       "category": "file-io",
-      "expected": "match",
-      "actual": "match",
+      "canonicalKey": "bun.file.bytes-vs-buffer",
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "canonicalDescription": "Bun.file().bytes() matches fs read bytes",
+      "subsystem": "runtime",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/file-io#reading-files-bun-file",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-runtime-nits.ts",
+        "report": "/registry/bun-runtime-nits-proof.json"
+      },
+      "name": "bun.file.bytes-vs-buffer",
+      "expected": "Bun.file().bytes() equals fs read bytes",
+      "actual": "5 bytes match",
       "passed": true,
-      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file"
+      "canonicalSource": "docs"
     }
   ],
   "summary": {
     "passed": 16,
     "total": 16,
-    "status": "pass"
+    "status": "pass",
+    "bySubsystem": {
+      "runtime": {
+        "passed": 16,
+        "total": 16
+      }
+    }
   },
-  "proofHash": "88aa6022017e80de9087c016094c78bef63cc3c0f217f56b2cb128622ef91bca"
+  "proofHash": "3a15a2cae4d4a0e6862e08b301e81748744b911ed7580deaf725f1260c0a27be"
 }

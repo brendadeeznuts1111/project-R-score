@@ -1,9 +1,12 @@
 #!/usr/bin/env bun
 
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
+import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
+
 function parseSemver(version: string): { major: number; minor: number; patch: number } | null {
   const match = version.trim().match(/^(\d+)\.(\d+)\.(\d+)/);
   if (!match) return null;
@@ -30,27 +33,42 @@ let cliVersion = '';
 let cliRevision = '';
 
 try {
-  const versionProc = Bun.spawnSync(['bun', '--version'], {
+  const resolved = resolveVerificationBunBinary({ fresh: true });
+  const versionProc = Bun.spawnSync([resolved.path, '--version'], {
     stdout: 'pipe',
     stderr: 'pipe',
   });
   if (versionProc.exitCode === 0) {
     cliVersion = new TextDecoder().decode(versionProc.stdout).trim();
   }
-} catch {
-  // Fall back to Bun.version-only checks.
-}
-
-try {
-  const revisionProc = Bun.spawnSync(['bun', '--revision'], {
+  const revisionProc = Bun.spawnSync([resolved.path, '--revision'], {
     stdout: 'pipe',
     stderr: 'pipe',
   });
   if (revisionProc.exitCode === 0) {
     cliRevision = new TextDecoder().decode(revisionProc.stdout).trim();
   }
-} catch {
-  // Fall back to Bun.revision-only checks.
+  if (cliVersion && cliVersion.split(/[\s+]/)[0] !== version.split(/[\s+]/)[0]) {
+    console.error(
+      `Bun PATH skew: runtime ${version} but spawned CLI ${cliVersion} at ${resolved.path} (source=${resolved.source})`
+    );
+    process.exit(1);
+  }
+} catch (e: unknown) {
+  console.warn(
+    `resolveVerificationBunBinary failed: ${e instanceof Error ? e.message : String(e)} — falling back to bare bun spawn`
+  );
+  try {
+    const versionProc = Bun.spawnSync(['bun', '--version'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    if (versionProc.exitCode === 0) {
+      cliVersion = new TextDecoder().decode(versionProc.stdout).trim();
+    }
+  } catch {
+    // Fall back to Bun.version-only checks.
+  }
 }
 
 // Only inspect semantic version strings; revision hashes may contain arbitrary

@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
 /**
- * Bundler loader verification — Asset Processing (css / jsonc).
+ * Bundler loader verification — Asset Processing (css / jsonc / ts / text / file).
  *
  * Usage:
  *   bun tools/verify-bundler.ts
@@ -11,6 +14,9 @@
  * @see https://bun.com/docs/bundler#content-types
  * @see https://bun.com/docs/bundler/loaders#css
  * @see https://bun.com/docs/bundler/loaders#jsonc
+ * @see https://bun.com/docs/bundler/loaders#ts
+ * @see https://bun.com/docs/bundler/loaders#text
+ * @see https://bun.com/docs/bundler/loaders#file
  */
 import { CryptoHasher } from 'bun';
 import { parseArgs } from 'util';
@@ -18,26 +24,17 @@ import { runBundlerLoaderVerification } from '../lib/verification/bundler-loader
 import { buildSemanticTags } from '../lib/verification/channels.ts';
 import { generateJSONLD } from '../lib/verification/jsonld.ts';
 import { summarizeBySubsystem, withSubsystem } from '../lib/verification/subsystem.ts';
-import type { ChannelAwareVerificationReport } from '../lib/verification/types.ts';
+import type { ChannelAwareVerificationReport, SemanticTags } from '../lib/verification/types.ts';
 import { BUNDLER_PROOF_REPORT_PATH } from '../lib/verification/types.ts';
 
 const SAVE_PATH = `public${BUNDLER_PROOF_REPORT_PATH}`;
 
-const { values } = parseArgs({
-  args: Bun.argv.slice(2),
-  options: {
-    save: { type: 'boolean', default: false },
-    channel: { type: 'string', default: 'runtime' },
-  },
-  strict: true,
-  allowPositionals: false,
-});
-
 export async function runBundlerVerification(options?: {
-  semanticTags?: Awaited<ReturnType<typeof buildSemanticTags>>;
+  semanticTags?: SemanticTags;
+  channel?: string;
 }): Promise<ChannelAwareVerificationReport> {
   const semanticTags =
-    options?.semanticTags ?? (await buildSemanticTags(values.channel ?? 'runtime'));
+    options?.semanticTags ?? (await buildSemanticTags(options?.channel ?? 'runtime'));
   const { results: raw } = await runBundlerLoaderVerification();
   const results = raw.map(r => withSubsystem(r, 'bundler'));
   const bySubsystem = summarizeBySubsystem(results);
@@ -74,7 +71,17 @@ export async function runBundlerVerification(options?: {
 }
 
 async function main(): Promise<void> {
-  const proof = await runBundlerVerification();
+  const { values } = parseArgs({
+    args: Bun.argv.slice(2),
+    options: {
+      save: { type: 'boolean', default: false },
+      channel: { type: 'string', default: 'runtime' },
+    },
+    strict: true,
+    allowPositionals: false,
+  });
+
+  const proof = await runBundlerVerification({ channel: values.channel });
   console.log(
     `\nBundler loaders: ${proof.summary.passed}/${proof.summary.total} (${proof.summary.status})`
   );

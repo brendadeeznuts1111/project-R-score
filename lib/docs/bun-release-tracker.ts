@@ -23,7 +23,10 @@ import {
   resolveCanonicalUrl,
 } from '../verification/canonical-coverage.ts';
 import type { InstallPlatformAspectId } from '../verification/install-platform.ts';
+import { withSubsystem } from '../verification/subsystem.ts';
 import type { SemanticTags, VerificationResult } from '../verification/types.ts';
+import { RELEASE_PROOF_REPORT_PATH } from '../verification/types.ts';
+import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import { FETCH_PROTOCOL_DOCS } from './fetch-protocol-docs.ts';
 import { INSTALL_PLATFORM_DOCS } from './bun-install-platform-docs.ts';
 import { INSTALL_LINKER_DOCS } from './bun-install-linker-docs.ts';
@@ -311,14 +314,11 @@ export const BUN_RELEASE_TEST_CANONICAL: Readonly<Record<string, string>> = {
   'URL.host (hostname + port)': resolveCanonicalUrl('URL.host'),
   'Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)':
     'https://bun.sh/reference/globals/Uint8Array',
-  'R2/S3 binary roundtrip (upload, download, verify)':
-    'https://bun.sh/docs/runtime/s3',
-  'URL.host / hostname / port (WHATWG)':
-    'https://bun.sh/reference/globals/URL/host',
+  'R2/S3 binary roundtrip (upload, download, verify)': 'https://bun.sh/docs/runtime/s3',
+  'URL.host / hostname / port (WHATWG)': 'https://bun.sh/reference/globals/URL/host',
   'S3 contentDisposition option':
     'https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads',
-  'Response.clone() after body access (v1.3.5 fix)':
-    'https://bun.com/blog/bun-v1.3.5#bug-fixes',
+  'Response.clone() after body access (v1.3.5 fix)': 'https://bun.com/blog/bun-v1.3.5#bug-fixes',
   'URL.domainToASCII / domainToUnicode (Node.js compat)':
     'https://bun.com/blog/bun-v1.3.5#bug-fixes',
   ...INSTALL_PLATFORM_TEST_CANONICAL,
@@ -375,17 +375,48 @@ export function pushReleaseResult(
     anchor?: BunV1314AnchorKey;
     /** Explicit canonical URL override (e.g. install platform row). */
     canonical?: string;
+    /** CANONICAL_REFS / token key for metadata lookup. */
+    canonicalKey?: string;
+    /** Override subsystem (e.g. package-manager for embedded install rows). */
+    subsystem?: VerificationResult['subsystem'];
   },
-  ctx: PushReleaseResultContext
+  ctx?: PushReleaseResultContext
 ): void {
-  const { anchor, canonical: explicitCanonical, ...rest } = row;
+  const {
+    anchor,
+    canonical: explicitCanonical,
+    canonicalKey,
+    subsystem: explicitSubsystem,
+    ...rest
+  } = row;
   const canonical =
     explicitCanonical ?? (anchor ? BUN_V1314_ANCHORS[anchor] : canonicalForReleaseTest(row.name));
-  results.push({
-    ...rest,
-    canonical,
-    _links: buildVerificationLinks(canonical),
+  const lookupKey = canonicalKey ?? anchor ?? row.name;
+  const meta = resolveCanonicalForProbe(lookupKey, {
+    reportPath: RELEASE_PROOF_REPORT_PATH,
+    sourcePath: 'tools/verify-bun-release.ts',
+    fallback: canonical,
+    subsystem: explicitSubsystem,
   });
+  const tags = ctx?.semanticTags;
+  results.push(
+    withSubsystem(
+      {
+        ...rest,
+        ...meta,
+        canonical: explicitCanonical ?? meta.canonical,
+        _links: meta._links.docs ? meta._links : buildVerificationLinks(canonical),
+        ...(tags
+          ? {
+              channel: tags.channel,
+              targetVersion: tags.targetVersion,
+              latestAtTestTime: tags.latestAtTestTime,
+            }
+          : {}),
+      },
+      explicitSubsystem
+    )
+  );
 }
 
 export type TlsSystemCaProbe = {
