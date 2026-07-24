@@ -241,6 +241,14 @@ function bunBlog(slug, hash) {
     hash: parts.hash
   });
 }
+function bunReference(path, hash) {
+  const parts = splitHash(path, hash);
+  return hrefFromInit({
+    ...BunComSite,
+    pathname: `/reference/${normalizePath(parts.path)}`,
+    hash: parts.hash
+  });
+}
 function mdnWebApi(name) {
   return hrefFromInit({
     ...MdnSite,
@@ -1299,7 +1307,7 @@ function isCodeApiKey(k) {
     return true;
   return false;
 }
-var INSTALL_CPU_OS_FLAGS, INSTALL_PLATFORM_DEPS, INSTALL_ENV_VARS, INSTALL_CACHE_DOCS, CANONICAL_INSTALL_PLATFORM_TOKENS, CANONICAL_INSTALL_PLATFORM_URLS, BUN_CONFIG_ENV_TOKEN_ENTRIES, CANONICAL_INSTALL_ENV_TOKENS, CANONICAL_INSTALL_ENV_URLS, REGISTRY_CLIENT_DOC = "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md", CANONICAL_REGISTRY_CLIENT_TOKENS, CANONICAL_REGISTRY_CLIENT_URLS, BUN_TYPES_PINNED = "https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types", CANONICAL_REFS, CONCEPT_ONLY_KEYS, APIS, TAXONOMY_PATH, REPO_ROOT;
+var INSTALL_CPU_OS_FLAGS, INSTALL_PLATFORM_DEPS, INSTALL_ENV_VARS, INSTALL_CACHE_DOCS, CANONICAL_INSTALL_PLATFORM_TOKENS, CANONICAL_INSTALL_PLATFORM_URLS, BUN_CONFIG_ENV_TOKEN_ENTRIES, CANONICAL_INSTALL_ENV_TOKENS, CANONICAL_INSTALL_ENV_URLS, REGISTRY_CLIENT_DOC = "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md", CANONICAL_REGISTRY_CLIENT_TOKENS, CANONICAL_REGISTRY_CLIENT_URLS, BUN_INSPECT_DOC = "https://bun.com/docs/runtime/utils#bun-inspect", BUN_FILE_DOC = "https://bun.com/docs/runtime/file-io#reading-files-bun-file", BUN_WRITE_DOC = "https://bun.com/docs/runtime/file-io#writing-files-bun-write", RUNTIME_NITS_DOC = "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/bun-runtime-nits.md", CANONICAL_RUNTIME_NITS_TOKENS, CANONICAL_RUNTIME_NITS_URLS, BUN_TYPES_PINNED = "https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types", CANONICAL_REFS, CONCEPT_ONLY_KEYS, APIS, TAXONOMY_PATH, REPO_ROOT;
 var init_bun_doc_refs = __esm(async () => {
   init_bundler_gaps();
   init_bundler_nav();
@@ -1397,6 +1405,105 @@ var init_bun_doc_refs = __esm(async () => {
     }
   };
   CANONICAL_REGISTRY_CLIENT_URLS = Object.fromEntries(Object.entries(CANONICAL_REGISTRY_CLIENT_TOKENS).map(([key, meta]) => [key, meta.url]));
+  CANONICAL_RUNTIME_NITS_TOKENS = {
+    "Bun.inspect.sorted": {
+      url: BUN_INSPECT_DOC,
+      kind: "API",
+      stability: "stable",
+      description: "Bun.inspect sorted \u2014 deterministic key order for snapshots"
+    },
+    "Bun.inspect.compact": {
+      url: BUN_INSPECT_DOC,
+      kind: "API",
+      stability: "stable",
+      description: "Bun.inspect compact \u2014 single-line output"
+    },
+    "inspect.showProxy": {
+      url: "https://bun.com/reference/bun/BunInspectOptions",
+      kind: "Global",
+      stability: "stable",
+      description: "showProxy \u2014 Proxy target/handler in inspect output"
+    },
+    "inspect.getters": {
+      url: "https://bun.com/reference/bun/BunInspectOptions",
+      kind: "Global",
+      stability: "stable",
+      description: "getters \u2014 evaluate or suppress property getters"
+    },
+    "inspect.numericSeparator": {
+      url: mdnWebApi("URL"),
+      kind: "Global",
+      stability: "stable",
+      description: "numericSeparator \u2014 underscore separators in numbers (Node compat)"
+    },
+    "util.inspect options": {
+      url: "https://nodejs.org/api/util.html#utilinspectobject-options",
+      kind: "Concept",
+      stability: "stable",
+      description: "Node util.inspect option delta vs BunInspectOptions"
+    },
+    CompressionStream: {
+      url: bunReference("globals/CompressionStream"),
+      kind: "Global",
+      stability: "stable",
+      description: "WHATWG gzip/deflate compression stream"
+    },
+    DecompressionStream: {
+      url: bunReference("globals/DecompressionStream"),
+      kind: "Global",
+      stability: "stable",
+      description: "WHATWG gzip/deflate decompression stream"
+    },
+    TextEncoderStream: {
+      url: bunReference("globals/TextEncoderStream"),
+      kind: "Global",
+      stability: "stable",
+      description: "Streaming string to Uint8Array"
+    },
+    TextDecoderStream: {
+      url: bunReference("globals/TextDecoderStream"),
+      kind: "Global",
+      stability: "stable",
+      description: "Streaming Uint8Array to string"
+    },
+    "URL.origin": {
+      url: bunReference("globals/URL/origin"),
+      kind: "Global",
+      stability: "stable",
+      description: "protocol + host + port"
+    },
+    "URL.searchParams": {
+      url: bunReference("globals/URL/searchParams"),
+      kind: "Global",
+      stability: "stable",
+      description: "Query parameter interface on URL"
+    },
+    "bun.file.lazy-stat": {
+      url: BUN_FILE_DOC,
+      kind: "API",
+      stability: "stable",
+      description: "Bun.file is lazy until .text/.bytes/.exists"
+    },
+    "bun.write.auto-dir": {
+      url: BUN_WRITE_DOC,
+      kind: "API",
+      stability: "stable",
+      description: "Bun.write creates parent directories"
+    },
+    "bun.file.bytes-vs-buffer": {
+      url: BUN_FILE_DOC,
+      kind: "API",
+      stability: "stable",
+      description: "Bun.file().bytes() matches fs read bytes"
+    },
+    "bun-runtime-nits": {
+      url: RUNTIME_NITS_DOC,
+      kind: "Concept",
+      stability: "stable",
+      description: "Phase 1 runtime nits verification lane"
+    }
+  };
+  CANONICAL_RUNTIME_NITS_URLS = Object.fromEntries(Object.entries(CANONICAL_RUNTIME_NITS_TOKENS).map(([key, meta]) => [key, meta.url]));
   CANONICAL_REFS = {
     "Bun.stringWidth": "https://bun.com/docs/runtime/utils#bun-stringwidth",
     "Bun.stripANSI": "https://bun.com/docs/runtime/utils#bun-stripansi",
@@ -1525,6 +1632,7 @@ var init_bun_doc_refs = __esm(async () => {
     ...CANONICAL_INSTALL_PLATFORM_URLS,
     ...CANONICAL_INSTALL_ENV_URLS,
     ...CANONICAL_REGISTRY_CLIENT_URLS,
+    ...CANONICAL_RUNTIME_NITS_URLS,
     "isolated installs": bunDocs("pm/isolated-installs"),
     "global virtual store": bunDocs("pm/global-store"),
     configVersion: bunDocs("pm/isolated-installs"),
@@ -1736,6 +1844,9 @@ var init_bun_doc_refs = __esm(async () => {
     "URLPattern.pathname": bunBlog("bun-v1.3.4", "urlpattern-api"),
     "URLPattern.search": bunBlog("bun-v1.3.4", "urlpattern-api"),
     "URLPattern.hash": bunBlog("bun-v1.3.4", "urlpattern-api"),
+    "URL.host": bunReference("globals/URL/host"),
+    "URL.hostname": bunReference("globals/URL/hostname"),
+    "URL.port": bunReference("globals/URL/port"),
     "URLPattern.test": bunBlog("bun-v1.3.12", "urlpattern-is-up-to-2-3x-faster"),
     "URLPattern.exec": bunBlog("bun-v1.3.12", "urlpattern-is-up-to-2-3x-faster"),
     "URLPattern perf": bunBlog("bun-v1.3.12", "urlpattern-is-up-to-2-3x-faster"),
@@ -4294,8 +4405,10 @@ var BUN_RELEASE_TEST_CANONICAL = {
   "Bun.stringWidth accuracy (emoji, ZWJ, soft hyphen, word joiner)": BUN_V135_ANCHORS["improved-bun-stringwidth-accuracy"],
   "Bun.spawn PTY (echo capture)": BUN_V135_ANCHORS["bun-terminal-api-for-pseudo-terminal-pty-support"],
   "Compile-time feature flags (bun:bundle)": BUN_V135_ANCHORS["compile-time-feature-flags-for-dead-code-elimination"],
+  "URL.host (hostname + port)": resolveCanonicalUrl("URL.host"),
   "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)": "https://bun.sh/reference/globals/Uint8Array",
   "R2/S3 binary roundtrip (upload, download, verify)": "https://bun.sh/docs/runtime/s3",
+  "URL.host / hostname / port (WHATWG)": "https://bun.sh/reference/globals/URL/host",
   ...INSTALL_PLATFORM_TEST_CANONICAL
 };
 function canonicalForReleaseTest(name) {
@@ -4397,6 +4510,16 @@ function smokeBuiltinObjectsGc() {
   } catch {
     return { ok: false, count: 2000 };
   }
+}
+function probeUrlHost() {
+  const url = new URL("https://example.com:8080/path");
+  const readOk = url.host === "example.com:8080" && url.hostname === "example.com" && url.port === "8080";
+  url.host = "test.com:9000";
+  const writeOk = url.href === "https://test.com:9000/path";
+  return {
+    ok: readOk && writeOk,
+    note: readOk && writeOk ? "host=example.com:8080; set host=test.com:9000" : `read=${readOk} write=${writeOk} href=${url.href}`
+  };
 }
 function probeStringWidthV135Accuracy() {
   const checks = [
@@ -4882,6 +5005,14 @@ async function runReleaseVerification(options = {}) {
     passed: features.ok,
     canonical: BUN_RELEASE_TEST_CANONICAL["Compile-time feature flags (bun:bundle)"]
   }, ctx);
+  const urlHost = probeUrlHost();
+  pushReleaseResult(results, {
+    name: "URL.host (hostname + port)",
+    expected: "host includes port; hostname excludes port; host setter updates href",
+    actual: urlHost.note,
+    passed: urlHost.ok,
+    canonical: BUN_RELEASE_TEST_CANONICAL["URL.host (hostname + port)"]
+  }, ctx);
   const canonicalCoverage = ensureVerificationResultsHaveCanonical(results);
   if (!reportCanonicalCoverageGaps(canonicalCoverage, "verify-bun-release")) {
     throw new Error("Verification results missing canonical documentation URLs");
@@ -4903,7 +5034,6 @@ async function runReleaseVerification(options = {}) {
     passed: u8Ok && u8RtOk && u8ExtrasOk,
     anchor: "uint8array-bun-extensions"
   });
-  const passed = results.filter((r) => r.passed).length;
   let s3Ok = false;
   try {
     const ep = Bun.env.R2_S3_ENDPOINT || "https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com";
@@ -4922,6 +5052,19 @@ async function runReleaseVerification(options = {}) {
     actual: s3Ok ? "5/5 bytes match" : "failed",
     passed: s3Ok,
     anchor: "r2-binary-roundtrip"
+  });
+  const uHost = new URL("https://example.com:8080/path");
+  const uHostOk = uHost.host === "example.com:8080" && uHost.hostname === "example.com" && uHost.port === "8080";
+  const uSet = new URL("https://example.com/path");
+  uSet.host = "test.com:9000";
+  const uSetOk = uSet.href === "https://test.com:9000/path";
+  const uDef = new URL("https://example.com/path").port === "" && new URL("http://example.com/path").port === "";
+  pushReleaseResult(results, {
+    name: "URL.host / hostname / port (WHATWG)",
+    expected: "host includes port, hostname excludes port, default ports hidden",
+    actual: `${uHostOk ? "host:pass" : "host:fail"} ${uSetOk ? "set:pass" : "set:fail"} ${uDef ? "defaults:pass" : "defaults:fail"}`,
+    passed: uHostOk && uSetOk && uDef,
+    anchor: "url-host-whatwg"
   });
   const finalPassed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");

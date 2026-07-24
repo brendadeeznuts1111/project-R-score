@@ -307,10 +307,13 @@ export const BUN_RELEASE_TEST_CANONICAL: Readonly<Record<string, string>> = {
     BUN_V135_ANCHORS['bun-terminal-api-for-pseudo-terminal-pty-support'],
   'Compile-time feature flags (bun:bundle)':
     BUN_V135_ANCHORS['compile-time-feature-flags-for-dead-code-elimination'],
+  'URL.host (hostname + port)': resolveCanonicalUrl('URL.host'),
   'Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)':
     'https://bun.sh/reference/globals/Uint8Array',
   'R2/S3 binary roundtrip (upload, download, verify)':
     'https://bun.sh/docs/runtime/s3',
+  'URL.host / hostname / port (WHATWG)':
+    'https://bun.sh/reference/globals/URL/host',
   ...INSTALL_PLATFORM_TEST_CANONICAL,
 };
 
@@ -495,6 +498,24 @@ export function smokeBuiltinObjectsGc(): { ok: boolean; count: number } {
   } catch {
     return { ok: false, count: 2000 };
   }
+}
+
+/** WHATWG URL.host — hostname plus port when present. */
+export function probeUrlHost(): { ok: boolean; note: string } {
+  const url = new URL('https://example.com:8080/path');
+  const readOk =
+    url.host === 'example.com:8080' &&
+    url.hostname === 'example.com' &&
+    url.port === '8080';
+  url.host = 'test.com:9000';
+  const writeOk = url.href === 'https://test.com:9000/path';
+  return {
+    ok: readOk && writeOk,
+    note:
+      readOk && writeOk
+        ? 'host=example.com:8080; set host=test.com:9000'
+        : `read=${readOk} write=${writeOk} href=${url.href}`,
+  };
 }
 
 /** v1.3.5 stringWidth vectors from release notes. */

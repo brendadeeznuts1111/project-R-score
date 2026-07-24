@@ -27,6 +27,7 @@ import {
   probeStringWidthV135Accuracy,
   probeBunTerminalPty,
   probeCompileTimeFeatureFlags,
+  probeUrlHost,
   pushReleaseResult,
   smokeBuiltinObjectsGc,
   runFetchProtocolProbes,
@@ -485,6 +486,19 @@ export async function runReleaseVerification(
     ctx
   );
 
+  const urlHost = probeUrlHost();
+  pushReleaseResult(
+    results,
+    {
+      name: 'URL.host (hostname + port)',
+      expected: 'host includes port; hostname excludes port; host setter updates href',
+      actual: urlHost.note,
+      passed: urlHost.ok,
+      canonical: BUN_RELEASE_TEST_CANONICAL['URL.host (hostname + port)'],
+    },
+    ctx
+  );
+
   const canonicalCoverage = ensureVerificationResultsHaveCanonical(results);
   if (!reportCanonicalCoverageGaps(canonicalCoverage, 'verify-bun-release')) {
     throw new Error('Verification results missing canonical documentation URLs');
@@ -509,7 +523,6 @@ export async function runReleaseVerification(
     anchor: 'uint8array-bun-extensions',
   });
 
-  const passed = results.filter(r => r.passed).length;
   // 31. R2/S3 binary roundtrip (upload → download → verify)
   let s3Ok = false;
   try {
@@ -529,6 +542,20 @@ export async function runReleaseVerification(
     actual: s3Ok ? '5/5 bytes match' : 'failed',
     passed: s3Ok,
     anchor: 'r2-binary-roundtrip',
+  });
+
+  // 32. URL.host / hostname / port (WHATWG compliance)
+  const uHost = new URL('https://example.com:8080/path');
+  const uHostOk = uHost.host === 'example.com:8080' && uHost.hostname === 'example.com' && uHost.port === '8080';
+  const uSet = new URL('https://example.com/path'); uSet.host = 'test.com:9000';
+  const uSetOk = uSet.href === 'https://test.com:9000/path';
+  const uDef = new URL('https://example.com/path').port === '' && new URL('http://example.com/path').port === '';
+  pushReleaseResult(results, {
+    name: 'URL.host / hostname / port (WHATWG)',
+    expected: 'host includes port, hostname excludes port, default ports hidden',
+    actual: `${uHostOk ? 'host:pass' : 'host:fail'} ${uSetOk ? 'set:pass' : 'set:fail'} ${uDef ? 'defaults:pass' : 'defaults:fail'}`,
+    passed: uHostOk && uSetOk && uDef,
+    anchor: 'url-host-whatwg',
   });
 
   const finalPassed = results.filter(r => r.passed).length;
