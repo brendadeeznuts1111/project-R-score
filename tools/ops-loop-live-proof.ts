@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/sqlite
 /**
  * Dispatch one gated play on the live operations DB, settle, and drain outbox.
@@ -46,7 +47,11 @@ async function main(): Promise<void> {
       });
       db.run(`UPDATE partner_profile_bindings SET metadata_json = $meta WHERE tree_node_id = $id`, {
         $id: id,
-        $meta: JSON.stringify({ opsecScore: 12, riskLevel: 'green', source: 'ops-loop-live-proof' }),
+        $meta: JSON.stringify({
+          opsecScore: 12,
+          riskLevel: 'green',
+          source: 'ops-loop-live-proof',
+        }),
       });
       ensurePosition(db, id, '_all', 10_000);
     }
