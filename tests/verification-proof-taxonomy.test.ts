@@ -4,11 +4,17 @@ import { joinPath, resolvePath } from '../lib/path-bun.ts';
 import {
   auditProofTaxonomy,
   PROOF_TAXONOMY_CONTRACTS,
+  PROOF_TAXONOMY_CONTRACT_COUNT,
 } from '../lib/verification/proof-taxonomy.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 
 describe('verification proof taxonomy contract', () => {
+  test('contract registry count is exported for edge gates', () => {
+    expect(PROOF_TAXONOMY_CONTRACT_COUNT).toBe(PROOF_TAXONOMY_CONTRACTS.length);
+    expect(PROOF_TAXONOMY_CONTRACT_COUNT).toBeGreaterThanOrEqual(13);
+  });
+
   for (const contract of PROOF_TAXONOMY_CONTRACTS) {
     test(`${contract.path} satisfies subsystem contract`, async () => {
       const file = Bun.file(joinPath(ROOT, contract.path));
@@ -119,6 +125,19 @@ describe('verification proof taxonomy contract', () => {
     expect(proof.mcpCatalog?.ok).toBe(true);
     expect(proof.mcpCatalog?.serverCount).toBe(5);
     expect(proof.summary?.staticOk).toBe(true);
+  });
+
+  test('cloudflare-pages-preflight.json is a valid preflight report', async () => {
+    const file = Bun.file(joinPath(ROOT, 'public/registry/cloudflare-pages-preflight.json'));
+    if (!(await file.exists())) return;
+    const proof = (await file.json()) as {
+      type?: string;
+      ok?: boolean;
+      steps?: Array<{ id?: string; ok?: boolean }>; // brand-ok — preflight step key in wire DTO
+    };
+    expect(proof.type).toBe('CloudflarePagesPreflightReport');
+    expect(proof.steps?.length).toBeGreaterThanOrEqual(5);
+    if (proof.ok) expect(proof.steps?.every(s => s.ok)).toBe(true);
   });
 
   test('well-known/mcp.json lists five Cloudflare MCP servers', async () => {

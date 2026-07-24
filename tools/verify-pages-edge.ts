@@ -10,6 +10,7 @@
  * @see docs/harness/tenants/cloudflare-pages.md
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
+import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
 const BASE = Bun.env.PAGES_VERIFY_BASE?.trim() || `https://${CLOUDFLARE_DEFAULTS.pages.subdomain}`;
 const TAXONOMY = Bun.argv.includes('--taxonomy');
@@ -93,6 +94,24 @@ async function main() {
         if (!names.includes('cloudflare') || !names.includes('cloudflare-docs')) {
           throw new Error(`unexpected servers: ${names.join(', ')}`);
         }
+        const auth = j.auth as { type?: string; env?: string } | undefined;
+        if (auth?.type !== 'bearer' || auth?.env !== 'CLOUDFLARE_API_TOKEN') {
+          throw new Error(`auth mismatch: ${JSON.stringify(auth)}`);
+        }
+      })
+    ),
+    check('cloudflare-pages-preflight.json', 'core', () =>
+      expectJson('/registry/cloudflare-pages-preflight.json', j => {
+        if (j.type !== 'CloudflarePagesPreflightReport') throw new Error(`type=${j.type}`);
+        if (j.ok !== true) throw new Error('preflight ok is false');
+        const steps = j.steps as Array<{ id?: string; ok?: boolean }> | undefined; // brand-ok — preflight step key
+        if (!Array.isArray(steps) || steps.length < 5) {
+          throw new Error(`expected ≥5 steps, got ${steps?.length ?? 0}`);
+        }
+        const failed = steps.filter(s => !s.ok);
+        if (failed.length) {
+          throw new Error(`failed steps: ${failed.map(s => s.id).join(', ')}`);
+        }
       })
     ),
     check('cloudflare-token-scope-proof.json', 'core', () =>
@@ -108,12 +127,19 @@ async function main() {
       expectJson('/registry/proof-taxonomy-audit.json', j => {
         if (j.type !== 'ProofTaxonomyAuditReport') throw new Error(`type=${j.type}`);
         if (!Array.isArray(j.audits)) throw new Error('missing audits[]');
-        if (j.audits.length !== 12)
-          throw new Error(`expected 12 contracts, got ${j.audits.length}`);
-        if (!Array.isArray(j.consistency)) throw new Error('missing consistency[]');
-        if (j.consistency.length < 18) {
-          throw new Error(`expected ≥18 consistency rows, got ${j.consistency.length}`);
+        if (j.audits.length !== PROOF_TAXONOMY_CONTRACT_COUNT) {
+          throw new Error(
+            `expected ${PROOF_TAXONOMY_CONTRACT_COUNT} contracts, got ${j.audits.length}`
+          );
         }
+        if (!Array.isArray(j.consistency)) throw new Error('missing consistency[]');
+        const bad = (j.consistency as Array<{ id?: string; ok?: boolean }>).filter(c => !c.ok); // brand-ok — consistency row id
+        if (bad.length) {
+          throw new Error(
+            `${bad.length} consistency row(s) failed: ${bad.map(c => c.id).join(', ')}`
+          );
+        }
+        if (j.ok !== true) throw new Error('report ok is false');
       })
     ),
     check('docs-coverage-proof.json subsystem', 'taxonomy', () =>
@@ -167,7 +193,9 @@ async function main() {
     process.exit(1);
   }
   if (!TAXONOMY) {
-    console.log('\nℹ️  taxonomy checks skipped (use --taxonomy for full 12·18 gate)');
+    console.log(
+      `\nℹ️  taxonomy checks skipped (use --taxonomy for full ${PROOF_TAXONOMY_CONTRACT_COUNT}-contract gate)`
+    );
   }
   console.log('\n✅ Pages edge verify passed');
 }

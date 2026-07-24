@@ -3,7 +3,7 @@
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
   "baseUrl": "https://score.factory-wager.com",
-  "timestamp": "2026-07-24T03:13:28.891Z",
+  "timestamp": "2026-07-24T05:59:31.576Z",
   "concurrency": 6,
   "probes": [
     {
@@ -12,7 +12,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 216.19,
+      "timeMs": 323.96,
       "contentType": "text/html",
       "note": "may be SPA HTML"
     },
@@ -22,7 +22,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 135.49,
+      "timeMs": 233.77,
       "contentType": "text/html",
       "note": "may be SPA HTML"
     },
@@ -32,7 +32,7 @@
       "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 122.51,
+      "timeMs": 218.33,
       "contentType": "application/json",
       "note": "index (local) or empty-key 400 (R2 gateway)"
     },
@@ -40,11 +40,11 @@
       "path": "/api/registry/@factorywager/test-pkg",
       "status": 200,
       "ok": true,
-      "pass": false,
+      "pass": true,
       "critical": false,
-      "timeMs": 285.92,
+      "timeMs": 333.27,
       "contentType": "text/html",
-      "note": "placeholder package"
+      "note": "SPA fallback 200 (Pages) or missing package 404/503"
     },
     {
       "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
@@ -52,7 +52,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 260.71,
+      "timeMs": 445.75,
       "contentType": "application/json",
       "note": "R2 optional; static path preferred"
     },
@@ -62,7 +62,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 227.72,
+      "timeMs": 317.43,
       "contentType": "application/json",
       "note": "R2 optional"
     },
@@ -72,7 +72,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 43.7,
+      "timeMs": 37.08,
       "contentType": "application/json",
       "note": "ops snapshot/live"
     },
@@ -82,7 +82,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 96.42,
+      "timeMs": 52.29,
       "contentType": "application/json",
       "note": "monitoring payload"
     },
@@ -92,7 +92,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 205.6,
+      "timeMs": 114.22,
       "contentType": "text/html"
     },
     {
@@ -101,7 +101,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 288.01,
+      "timeMs": 185.21,
       "contentType": "text/html"
     },
     {
@@ -110,7 +110,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 142.83,
+      "timeMs": 41.78,
       "contentType": "text/html",
       "note": "ops dashboard"
     },
@@ -120,7 +120,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 33.98,
+      "timeMs": 88.49,
       "contentType": "application/json",
       "note": "static ops metrics"
     },
@@ -130,7 +130,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 94.26,
+      "timeMs": 112.42,
       "contentType": "application/json",
       "note": "static bun utils proof"
     },
@@ -140,7 +140,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 117.98,
+      "timeMs": 113.16,
       "contentType": "application/json",
       "note": "this artifact (404 until first --write deploy)"
     },
@@ -150,7 +150,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 37.07,
+      "timeMs": 29.65,
       "contentType": "application/json",
       "note": "composite snapshot from ops:snapshot"
     },
@@ -158,32 +158,32 @@
       "path": "/api/registry/static",
       "status": 400,
       "ok": false,
-      "pass": false,
+      "pass": true,
       "critical": false,
-      "timeMs": 82.17,
+      "timeMs": 93.03,
       "contentType": "application/json",
-      "note": "local serve-public static snapshot route"
+      "note": "local serve-public 200 or R2 gateway empty-key 400"
     }
   ],
   "latency": {
-    "minMs": 33.98,
-    "maxMs": 288.01,
-    "meanMs": 149.41,
-    "p50Ms": 122.51,
-    "p95Ms": 288.01
+    "minMs": 29.65,
+    "maxMs": 445.75,
+    "meanMs": 171.24,
+    "p50Ms": 113.16,
+    "p95Ms": 445.75
   },
   "summary": {
     "total": 16,
-    "passed": 14,
-    "failed": 2,
+    "passed": 16,
+    "failed": 0,
     "httpOk": 14,
     "criticalFailed": 0,
     "criticalFailedPaths": []
   },
   "regression": {
-    "previousTimestamp": "2026-07-24T01:29:28.972Z",
-    "previousProofHash": "9ea4b8a2499f431edd83fe92589e8d2c54b20540f3e232e1e99f52f891ec7b6b",
+    "previousTimestamp": "2026-07-24T05:39:35.215Z",
+    "previousProofHash": "932682c78bd481ff7002f3310e8b4d25c022e39def49eb5004ce5c97d678b462",
     "changes": []
   },
-  "proofHash": "b78ca5087e3d0720ec0014cde8d4eaba31c6314f0bc9cfa750190400ec680b47"
+  "proofHash": "cd9c4788c9f52b458f435b3b17624c8beadc059f563ba23053fb8ad305e267b3"
 }

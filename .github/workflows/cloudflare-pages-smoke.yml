@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       taxonomy:
-        description: Run full 12·18 taxonomy edge checks
+        description: Run full taxonomy edge checks (13 contracts)
         type: boolean
         default: false
 

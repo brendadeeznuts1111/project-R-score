@@ -319,6 +319,36 @@ export function auditWellKnownMcpCatalogParity(
   return { id: 'well-known-mcp-catalog-parity', ok: notes.length === 0, notes };
 }
 
+/** Preflight aggregate ok must match every step ok. */
+export function auditCloudflarePreflightAggregate(preflight: {
+  ok?: boolean;
+  steps?: Array<{ ok?: boolean }>;
+}): ProofConsistencyRow {
+  const notes: string[] = [];
+  const steps = preflight.steps ?? [];
+  const allStepsOk = steps.length > 0 && steps.every(s => s.ok);
+  if (preflight.ok !== allStepsOk) {
+    notes.push(`preflight.ok=${preflight.ok} but allStepsOk=${allStepsOk}`);
+  }
+  return { id: 'cloudflare-preflight-aggregate', ok: notes.length === 0, notes };
+}
+
+/** Preflight token-static step must agree with token scope proof staticOk. */
+export function auditCloudflarePreflightTokenScope(
+  preflight: { steps?: Array<{ id?: string; ok?: boolean }> }, // brand-ok — preflight step key in wire DTO
+  tokenScope: { summary?: { staticOk?: boolean } }
+): ProofConsistencyRow {
+  const notes: string[] = [];
+  const staticStep = preflight.steps?.find(s => s.id === 'cloudflare-token-static');
+  const staticOk = tokenScope.summary?.staticOk;
+  if (staticStep && staticOk != null && staticStep.ok !== staticOk) {
+    notes.push(`token-static step ${staticStep.ok} ≠ scope.summary.staticOk ${staticOk}`);
+  }
+  if (staticStep?.ok === false) notes.push('cloudflare-token-static preflight step failed');
+  if (staticOk === false) notes.push('cloudflare-token-scope summary.staticOk is false');
+  return { id: 'cloudflare-preflight-token-scope', ok: notes.length === 0, notes };
+}
+
 /** Audit row count must match PROOF_TAXONOMY_CONTRACTS registry length. */
 export function auditTaxonomyContractRegistry(
   auditCount: number,
@@ -348,6 +378,10 @@ export type ProofConsistencyInput = {
     mcpCatalog?: { ok?: boolean; rows?: Array<{ name: string; ok: boolean }> };
   };
   wellKnownMcp?: { servers?: Array<{ name: string; url: string }> };
+  cloudflarePagesPreflight?: {
+    ok?: boolean;
+    steps?: Array<{ id?: string; ok?: boolean }>; // brand-ok — preflight step key in wire DTO
+  };
   cloudflareTokenExpected?: { accountId: AccountId; pagesProject: string; zoneName: string };
   taxonomyAuditCount?: number;
   taxonomyExpectedCount?: number;
@@ -436,6 +470,16 @@ export function auditProofConsistency(input: ProofConsistencyInput): ProofConsis
 
   if (input.cloudflareTokenScope && input.wellKnownMcp) {
     rows.push(auditWellKnownMcpCatalogParity(input.cloudflareTokenScope, input.wellKnownMcp));
+  }
+
+  if (input.cloudflarePagesPreflight) {
+    rows.push(auditCloudflarePreflightAggregate(input.cloudflarePagesPreflight));
+  }
+
+  if (input.cloudflarePagesPreflight && input.cloudflareTokenScope) {
+    rows.push(
+      auditCloudflarePreflightTokenScope(input.cloudflarePagesPreflight, input.cloudflareTokenScope)
+    );
   }
 
   if (input.taxonomyAuditCount != null && input.taxonomyExpectedCount != null) {

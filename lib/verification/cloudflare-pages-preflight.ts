@@ -38,7 +38,7 @@ export type CloudflarePagesPreflightReport = {
 
 export type RunCloudflarePagesPreflightOpts = {
   rootDir?: string;
-  /** Include proof-taxonomy audit (12 contracts + consistency). Default true. */
+  /** Include proof-taxonomy audit (contracts + consistency). Default true. */
   taxonomy?: boolean;
   /** Run functions-edge-safety via bun test subprocess. Default true. */
   edgeSafetyTest?: boolean;

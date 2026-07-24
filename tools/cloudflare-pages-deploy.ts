@@ -14,6 +14,7 @@
  * @see scripts/cloudflare-pages-deploy.sh — thin wrapper
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
+import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 
 /** Load Reasonix global env when token not already set (matches setup script). */
 async function loadReasonixEnv(): Promise<void> {
@@ -153,7 +154,9 @@ async function main() {
   else if (!WAIT) {
     console.log('   tip: bun run cloudflare:deploy:wait — poll until live');
     console.log('   tip: bun run cloudflare:deploy:verify — wait + edge smoke');
-    console.log('   tip: bun run cloudflare:deploy:verify:taxonomy — full 12·18 edge gate');
+    console.log(
+      `   tip: bun run cloudflare:deploy:verify:taxonomy — full taxonomy edge gate (${PROOF_TAXONOMY_CONTRACT_COUNT} contracts)`
+    );
   }
 }
 

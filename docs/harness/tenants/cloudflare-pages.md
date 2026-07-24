@@ -129,7 +129,10 @@ Use Cloudflare MCP `execute` in Cursor to inspect failed builds (`deployments/{i
 | `cloudflare:preflight` | Static: well-known parity, token proof (no live), edge-safety test |
 | `cloudflare:deploy` | Trigger deploy only |
 | `cloudflare:deploy:wait` | Trigger + poll until success/failure (log tail on fail) |
-| `cloudflare:deploy:verify` | Wait + `verify:pages-edge` (core checks; `--taxonomy` for full 12·18) |
+| `cloudflare:deploy:verify` | Wait + `verify:pages-edge` (core checks; `--taxonomy` for full 13-contract gate) |
+| `cloudflare:deploy:verify:taxonomy` | Wait + full edge taxonomy gate |
+| `cloudflare:publish` | `ops:snapshot` → registry git gate → optional `--commit --push` → deploy + taxonomy |
+| `cloudflare:publish:push` | Same with commit + push |
 
 Discovery manifest (Layer 5): `/.well-known/mcp.json` on Pages (see [`public/.well-known/mcp.json`](../../../public/.well-known/mcp.json)). Regenerate: `bun run sync:well-known-mcp`. Proof artifact: `bun run verify:cloudflare-token:save` → [`public/registry/cloudflare-token-scope-proof.json`](../../../public/registry/cloudflare-token-scope-proof.json).
 

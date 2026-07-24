@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T05:43:32.981Z",
+  "generated": "2026-07-24T06:04:02.045Z",
   "liquidity": {
     "total": 0
   },
@@ -43,11 +43,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "07394577d64ac5318ce31daffd8c3f98b6b2c6a8852f731c8b34d7f8f13f71c5",
+    "proofHash": "6ae7f0e0378694df7b6e0e115aa6b5fa975cec00b1be3f66eb6ad38985b26e9b",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T05:43:32.982Z"
+    "timestamp": "2026-07-24T06:04:02.046Z"
   },
   "registryClient": {
     "available": true,
@@ -118,20 +118,20 @@
       {
         "id": "proof-taxonomy-audit",
         "ok": true,
-        "detail": "12 contracts · 18 consistency"
+        "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-24T05:43:32.980Z",
+    "timestamp": "2026-07-24T06:04:02.043Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
   "proofTaxonomy": {
     "available": true,
     "ok": true,
-    "contracts": 12,
-    "contractsOk": 12,
-    "consistencyOk": 18,
-    "consistencyTotal": 18,
+    "contracts": 13,
+    "contractsOk": 13,
+    "consistencyOk": 20,
+    "consistencyTotal": 20,
     "audits": [
       {
         "path": "public/registry/release-features.json",
@@ -216,6 +216,13 @@
         "ok": true,
         "primarySubsystem": "other",
         "rows": 5
+      },
+      {
+        "path": "public/registry/cloudflare-pages-preflight.json",
+        "reportPath": "/registry/cloudflare-pages-preflight.json",
+        "ok": true,
+        "primarySubsystem": "other",
+        "rows": 5
       }
     ],
     "consistency": [
@@ -288,12 +295,20 @@
         "ok": true
       },
       {
+        "id": "cloudflare-preflight-aggregate",
+        "ok": true
+      },
+      {
+        "id": "cloudflare-preflight-token-scope",
+        "ok": true
+      },
+      {
         "id": "taxonomy-contract-registry",
         "ok": true
       }
     ],
-    "proofHash": "f1d773e126677a012c8fcde85dd52db4dd0d44ee9f86217dae01d9ab6e81e692",
-    "timestamp": "2026-07-24T05:43:32.539Z",
+    "proofHash": "d3d973c134467e203d7b65fb223088766f3f92624f8ec9acb349e5800196fcb5",
+    "timestamp": "2026-07-24T06:04:01.636Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -304,7 +319,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "eed4b848643c4f84c6d0b903d267be6f749148fe8be25c91eac2cd1d077e2a43",
-    "updatedAt": "2026-07-24T05:43:32.535Z",
+    "updatedAt": "2026-07-24T06:04:01.633Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -348,37 +363,21 @@
     "httpOk": 14,
     "criticalFailed": 0,
     "errorRate": 0,
-    "meanMs": 135.05,
-    "p50Ms": 100.04,
-    "p95Ms": 341.06,
-    "maxMs": 341.06,
-    "proofHash": "932682c78bd481ff7002f3310e8b4d25c022e39def49eb5004ce5c97d678b462",
-    "timestamp": "2026-07-24T05:39:35.215Z",
+    "meanMs": 171.24,
+    "p50Ms": 113.16,
+    "p95Ms": 445.75,
+    "maxMs": 445.75,
+    "proofHash": "cd9c4788c9f52b458f435b3b17624c8beadc059f563ba23053fb8ad305e267b3",
+    "timestamp": "2026-07-24T05:59:31.576Z",
     "regressions": 0,
     "criticalFailedPaths": [],
     "routes": [
       {
-        "path": "/portal/ops/",
+        "path": "/registry/@factorywager/bun-utils-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 100.04,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/api/operations/summary",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 97.45,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/monitoring",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 94.11,
+        "timeMs": 112.42,
         "contentType": "application/json"
       },
       {
@@ -386,15 +385,31 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 36.52,
+        "timeMs": 88.49,
         "contentType": "application/json"
       },
       {
-        "path": "/registry/@factorywager/bun-utils-test/latest.json",
+        "path": "/api/monitoring",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 30.44,
+        "timeMs": 52.29,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/portal/ops/",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 41.78,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/api/operations/summary",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 37.08,
         "contentType": "application/json"
       },
       {
@@ -402,7 +417,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 341.06,
+        "timeMs": 445.75,
         "contentType": "application/json"
       },
       {
@@ -410,7 +425,15 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 319.34,
+        "timeMs": 333.27,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/health",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 323.96,
         "contentType": "text/html"
       },
       {
@@ -418,23 +441,15 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 243.42,
+        "timeMs": 317.43,
         "contentType": "application/json"
-      },
-      {
-        "path": "/health",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 191.02,
-        "contentType": "text/html"
       },
       {
         "path": "/ready",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 151.75,
+        "timeMs": 233.77,
         "contentType": "text/html"
       },
       {
@@ -442,7 +457,7 @@
         "status": 400,
         "pass": true,
         "critical": false,
-        "timeMs": 149.98,
+        "timeMs": 218.33,
         "contentType": "application/json"
       },
       {
@@ -450,7 +465,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 129.43,
+        "timeMs": 185.21,
         "contentType": "text/html"
       },
       {
@@ -458,7 +473,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 119.67,
+        "timeMs": 114.22,
         "contentType": "text/html"
       },
       {
@@ -466,15 +481,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 89.61,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/registry/static.json",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 33.91,
+        "timeMs": 113.16,
         "contentType": "application/json"
       },
       {
@@ -482,7 +489,15 @@
         "status": 400,
         "pass": true,
         "critical": false,
-        "timeMs": 33,
+        "timeMs": 93.03,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/registry/static.json",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 29.65,
         "contentType": "application/json"
       }
     ]

@@ -28,6 +28,6 @@ Bake sidecar: `public/registry/channel-meta-bake.json` (sources + rollup). Embed
 
 Consistency (taxonomy audit): bake.proofHash must match release-features; meta-prefixed rows must mirror nits / bundler-loaders / networking-channel pillars; docs-coverage reference counts mirror `tools/reference-index.json`; docs-coverage ok aligns with doc-index defaults coverage; registry-client pass aligns with install-env registry rows; audit row count matches contract registry (10). Stale bake → `channelMeta.stale` + dashboard badge.
 
-Proof taxonomy sub-gate (`verify:proof-taxonomy`) audits **12 contracts** under this claim — including `docs-coverage-proof.json`, `registry-client-proof.json`, `doc-index.json`, `cloudflare-token-scope-proof.json`, and `public/.well-known/mcp.json` — without a separate ProofPath.
+Proof taxonomy sub-gate (`verify:proof-taxonomy`) audits **13 contracts** under this claim — including `docs-coverage-proof.json`, `registry-client-proof.json`, `doc-index.json`, `cloudflare-token-scope-proof.json`, `cloudflare-pages-preflight.json`, and `public/.well-known/mcp.json` — without a separate ProofPath.
 
 Ops UI: `/portal/ops/` (Pages: `project-r-score.pages.dev/portal/ops/`). Portal JSDoc: `public/portal/portal-types.d.ts`.

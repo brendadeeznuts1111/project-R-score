@@ -1593,6 +1593,8 @@
     "cloudflare:deploy:verify:taxonomy": "bun tools/cloudflare-pages-deploy.ts --wait --verify --taxonomy",
     "cloudflare:preflight": "bun tools/cloudflare-pages-preflight.ts",
     "cloudflare:preflight:save": "bun tools/cloudflare-pages-preflight.ts --save",
+    "cloudflare:publish": "bun tools/cloudflare-pages-publish.ts",
+    "cloudflare:publish:push": "bun tools/cloudflare-pages-publish.ts --commit --push",
     "cloudflare:env:setup": "bash scripts/cloudflare-env-setup.sh",
     "cloudflare:tunnel": "cloudflared tunnel run reasonix-serve",
     "icons:generate": "bun tools/generate-portal-icons.ts --check",

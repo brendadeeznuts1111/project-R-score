@@ -12,8 +12,11 @@ import {
   auditRegistryClientInstallEnvParity,
   auditCloudflareTokenScopeSsot,
   auditWellKnownMcpCatalogParity,
+  auditCloudflarePreflightAggregate,
+  auditCloudflarePreflightTokenScope,
   auditTaxonomyContractRegistry,
 } from '../lib/verification/proof-consistency.ts';
+import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
 import { CLOUDFLARE_TOKEN_PERMISSIONS } from '../config/r2-env.ts';
 import type { VerificationResult } from '../lib/verification/types.ts';
 
@@ -69,7 +72,30 @@ describe('lib/verification/proof-consistency', () => {
   });
 
   test('taxonomy contract registry count matches SSOT', () => {
-    const row = auditTaxonomyContractRegistry(12, 12);
+    const row = auditTaxonomyContractRegistry(
+      PROOF_TAXONOMY_CONTRACT_COUNT,
+      PROOF_TAXONOMY_CONTRACT_COUNT
+    );
+    expect(row.ok).toBe(true);
+  });
+
+  test('cloudflare preflight aggregate ok matches all steps', async () => {
+    const path = joinPath(ROOT, 'public/registry/cloudflare-pages-preflight.json');
+    if (!(await Bun.file(path).exists())) return;
+    const preflight = await Bun.file(path).json();
+    const row = auditCloudflarePreflightAggregate(preflight);
+    expect(row.ok).toBe(true);
+  });
+
+  test('cloudflare preflight token-static aligns with token scope proof', async () => {
+    const preflightPath = joinPath(ROOT, 'public/registry/cloudflare-pages-preflight.json');
+    const scopePath = joinPath(ROOT, 'public/registry/cloudflare-token-scope-proof.json');
+    if (!(await Bun.file(preflightPath).exists()) || !(await Bun.file(scopePath).exists())) {
+      return;
+    }
+    const preflight = await Bun.file(preflightPath).json();
+    const tokenScope = await Bun.file(scopePath).json();
+    const row = auditCloudflarePreflightTokenScope(preflight, tokenScope);
     expect(row.ok).toBe(true);
   });
 

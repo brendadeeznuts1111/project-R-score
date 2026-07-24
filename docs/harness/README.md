@@ -40,6 +40,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Search governance WebView journey (`search-governance-basic`) → `bun run docs:search-governance` · [`search-governance.md`](search-governance.md) · `bun run test:search-governance`
 - Fresh-rerun (claim re-proof before merge) → `bun run docs:fresh-rerun` · [`FRESH-RERUN.md`](FRESH-RERUN.md)
 - Claim discovery questionnaire (new claims) → `bun run docs:claim-discovery` · [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md)
+- Ops summary / portal confusion (two pipelines, `source` switch) → `bun run docs:ops-summary-endpoint` · [`ops-summary-endpoint.md`](ops-summary-endpoint.md) · `bun run ops:diagnose`
 - Improve the harness itself → [`.agents/skills/harness-improve/SKILL.md`](../../.agents/skills/harness-improve/SKILL.md)
 - Coding standards (full) → [`.custom-instructions.md`](../../.custom-instructions.md)
 
@@ -195,7 +196,7 @@ Parallel agent lanes for platform mapping — run from broad to narrow:
 |------|-----------------|--------|
 | 0 | `bun run harness:status` | ratchet + claim inventory |
 | 1 | `bun run cloudflare:env` · MCP `cloudflare` Pages API | domain pins · deploy state |
-| 2 | `bun run verify:proof-taxonomy:save` · `bun run check:release-tracker` | 12 contracts · 18 consistency |
+| 2 | `bun run verify:proof-taxonomy:save` · `bun run check:release-tracker` | 13 contracts · 20 consistency |
 | 3 | `bun run ops:snapshot` · `bun run verify:portal` · `verify:pages-edge` | live portal + Pages edge |
 
 Routing SSOT: [`docs/platform-routing.md`](../platform-routing.md) · proof taxonomy: [`PROOF.md`](PROOF.md#verification-lane-taxonomy-bun-product-pillars).

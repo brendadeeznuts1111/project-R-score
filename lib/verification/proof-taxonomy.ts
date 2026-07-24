@@ -151,7 +151,17 @@ export const PROOF_TAXONOMY_CONTRACTS: readonly ProofTaxonomyContract[] = [
     verifyScript: 'tools/sync-well-known-mcp.ts --check',
     canonicalSource: 'mixed',
   },
+  {
+    path: 'public/registry/cloudflare-pages-preflight.json',
+    reportPath: '/registry/cloudflare-pages-preflight.json',
+    primarySubsystem: 'other',
+    verifyScript: 'tools/cloudflare-pages-preflight.ts --save',
+    canonicalSource: 'mixed',
+  },
 ] as const;
+
+/** Contract count for edge gates and docs (single import avoids drift). */
+export const PROOF_TAXONOMY_CONTRACT_COUNT = PROOF_TAXONOMY_CONTRACTS.length;
 
 export type ProofTaxonomyAuditRow = {
   path: string;
@@ -262,6 +272,28 @@ export function auditProofTaxonomy(
     const summary = raw.summary as { staticOk?: boolean } | undefined;
     if (summary?.staticOk === false) notes.push('summary.staticOk is false');
     rows = mcp?.serverCount ?? 0;
+  }
+
+  if (contract.path.endsWith('cloudflare-pages-preflight.json')) {
+    if (raw.type !== 'CloudflarePagesPreflightReport') {
+      notes.push(`type expected CloudflarePagesPreflightReport, got ${String(raw.type)}`);
+    }
+    const steps = raw.steps as Array<{ id?: string; ok?: boolean }> | undefined; // brand-ok — preflight step key
+    if (!Array.isArray(steps) || steps.length < 5) {
+      notes.push('steps[] incomplete (expected ≥5 preflight gates)');
+    } else {
+      rows = steps.length;
+      const failed = steps.filter(s => !s.ok);
+      if (failed.length) notes.push(`failed steps: ${failed.map(s => s.id).join(', ')}`);
+      if (raw.ok === false) notes.push('report ok is false');
+      if (raw.ok === true && failed.length > 0) {
+        notes.push('report ok true but steps contain failures');
+      }
+    }
+    const pagesUrl = raw.pagesUrl as string | undefined;
+    if (!pagesUrl?.includes('project-r-score.pages.dev')) {
+      notes.push(`pagesUrl unexpected: ${pagesUrl ?? 'missing'}`);
+    }
   }
 
   return {
@@ -377,6 +409,10 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
     },
     wellKnownMcp: loaded['public/.well-known/mcp.json'] as {
       servers?: Array<{ name: string; url: string }>;
+    },
+    cloudflarePagesPreflight: loaded['public/registry/cloudflare-pages-preflight.json'] as {
+      ok?: boolean;
+      steps?: Array<{ id?: string; ok?: boolean }>; // brand-ok — preflight step key in wire DTO
     },
     cloudflareTokenExpected: {
       accountId: asAccountId(CLOUDFLARE_TOKEN_PERMISSIONS.accountId),
