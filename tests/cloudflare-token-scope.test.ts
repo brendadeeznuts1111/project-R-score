@@ -6,9 +6,9 @@ import { join } from 'node:path';
 import {
   CLOUDFLARE_DEFAULTS,
   CLOUDFLARE_TOKEN_PERMISSIONS,
-  assertCloudflareTokenScope,
 } from '../config/r2-env.ts';
 import {
+  assertCloudflareTokenScope,
   auditMcpCatalogParity,
   buildCloudflareTokenScopeProof,
   classifyTokenTier,

@@ -386,6 +386,13 @@ export async function runCloudflareTokenScopeProbe(opts?: {
   return report;
 }
 
+/** Layer 2 scope probe — throws on hard failures (CLI / harness). */
+export async function assertCloudflareTokenScope(opts?: {
+  strict?: boolean;
+}): Promise<CloudflareTokenScopeReport> {
+  return runCloudflareTokenScopeProbe(opts);
+}
+
 export async function buildCloudflareTokenScopeProof(opts?: {
   rootDir?: string;
   strict?: boolean;

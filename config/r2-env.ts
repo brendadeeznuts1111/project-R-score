@@ -477,19 +477,8 @@ export async function assertLiveCloudflarePages(): Promise<{
 }
 
 /**
- * Layer 2 scope probe — token verify + Pages/zone reachability.
- * Harness operational confidence; does not restrict MCP runtime (dashboard-only).
+ * HTTP-only apex check — no API token (CI-safe when Pages is up).
  */
-export async function assertCloudflareTokenScope(opts?: {
-  strict?: boolean;
-}): Promise<import('../lib/verification/cloudflare-token-scope.ts').CloudflareTokenScopeReport> {
-  const { runCloudflareTokenScopeProbe } = await import(
-    '../lib/verification/cloudflare-token-scope.ts'
-  );
-  return runCloudflareTokenScopeProbe(opts);
-}
-
-/** HTTP-only apex check — no API token (CI-safe when Pages is up). */
 export async function assertCloudflarePagesApex(
   url: string = CLOUDFLARE_PAGES.url
 ): Promise<{ url: string; status: number }> {
