@@ -118,6 +118,8 @@ After deploy (SPA rewrite **off**, output dir `public`):
 curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/portal/ops/
 curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/registry/ops-summary.json
 curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/registry/prediction/coverage-chart.svg
+curl -sS -o /dev/null -w "%{http_code} %{content_type}\n" https://project-r-score.pages.dev/portal/data.js
+bun run verify:pages-edge
 ```
 
 Expect: ops HTML title `Operations · FactoryWager`; JSON `application/json`; SVG `image/svg+xml` (not the landing-page HTML shell).

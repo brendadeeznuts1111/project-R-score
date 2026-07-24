@@ -64,8 +64,14 @@ export const CLOUDFLARE_ENV_KEYS = {
   pagesBuild: ['BUN_VERSION', 'SKIP_DEPENDENCY_INSTALL'],
 } as const;
 
+/** Bun runtime or empty on Workers (Pages Functions bundle — use fallbacks). */
+function runtimeEnv(): Record<string, string | undefined> {
+  if (typeof Bun !== 'undefined') return Bun.env as Record<string, string | undefined>;
+  return {};
+}
+
 function envString(key: string, fallback = ''): string {
-  const val = Bun.env[key];
+  const val = runtimeEnv()[key];
   if (val == null) return fallback;
   const trimmed = val.trim();
   return trimmed || fallback;
@@ -247,7 +253,7 @@ export type CloudflareEnvPresence = {
 };
 
 function presence(key: string): CloudflareEnvPresence {
-  const raw = Bun.env[key];
+  const raw = runtimeEnv()[key];
   const set = Boolean(raw && String(raw).trim());
   const placeholder = set && PLACEHOLDER_RE.test(String(raw).trim());
   return { key, set, placeholder };

@@ -1,16 +1,14 @@
-# Explicit static routes — do NOT SPA-fallback the whole site to index.html.
-# Dashboard SPA mode in CF Pages (/* → /index.html 200) breaks JSON + portal;
-# leave that OFF and rely on real files under public/.
+# Cloudflare Pages — trailing-slash only (no /* → index.html SPA mode).
+# Do NOT map /path/ → /path/index.html (200) — CF strips .html and loops.
+# Real files under public/ serve directory indexes natively.
+# @see docs/harness/tenants/cloudflare-pages.md
 
-/portal/ops              /portal/ops/index.html   200
-/portal/ops/             /portal/ops/index.html   200
-/portal                  /portal/index.html       200
-/portal/                 /portal/index.html       200
-/monitoring              /monitoring/index.html   200
-/monitoring/             /monitoring/index.html   200
-/monitoring              /monitoring/index.html   200
-/monitoring/             /monitoring/index.html   200
-/portal/health           /portal/health/index.html   200
-/portal/health/          /portal/health/index.html   200
-/health                  /health/index.html          200
-/health/                 /health/index.html          200
+/portal/ops              /portal/ops/              301
+/portal                  /portal/                  301
+/monitoring              /monitoring/              301
+/portal/health           /portal/health/           301
+/portal/env              /portal/env/              301
+/portal/catalog          /portal/catalog/          301
+/portal/dod              /portal/dod/              301
+/portal/dashboard        /portal/dashboard/        301
+/health                  /health/                  301

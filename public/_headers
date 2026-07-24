@@ -10,5 +10,14 @@
 /registry/prediction/*
   Cache-Control: public, max-age=300
 
+/portal/*.js
+  Content-Type: application/javascript; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: public, max-age=300
+
+/portal/*.css
+  Content-Type: text/css; charset=utf-8
+  Cache-Control: public, max-age=300
+
 /portal/*
   Cache-Control: public, max-age=60

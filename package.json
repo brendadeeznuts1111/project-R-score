@@ -1797,6 +1797,7 @@
     "verify:install-env": "bun tools/verify-install-env.ts",
     "verify:portal": "bun tools/verify-portal.ts",
     "verify:portal:static": "bun tools/verify-portal.ts --static-only",
+    "verify:pages-edge": "bun tools/verify-pages-edge.ts",
     "verify:flag-order": "bun tools/verify-script-flags.ts",
     "verify:install-env:save": "bun tools/verify-install-env.ts --save",
     "verify:registry-client": "bun tools/verify-registry-client.ts",
