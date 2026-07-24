@@ -60,14 +60,12 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
     return healthJson({ error: 'Method not allowed' }, 405, false, cors);
   }
 
-  // Try ASSETS binding first (static files deployed with Pages), then R2, then HTTP fetch
-  async function fromAssets(): Promise<{ text: string } | null> {
+  // Try HTTP fetch first (same-origin, always available), then R2, then ASSETS
+  async function fromHttp(): Promise<{ text: string } | null> {
     try {
       const url = new URL(request.url);
-      if (env.ASSETS && typeof (env.ASSETS as any).fetch === 'function') {
-        const res = await (env.ASSETS as any).fetch(new URL('/registry/registry.json', url.origin));
-        if (res && res.ok) return { text: await res.text() };
-      }
+      const res = await fetch(`${url.origin}/registry/registry.json`);
+      if (res.ok) return { text: await res.text() };
     } catch {}
     return null;
   }
@@ -94,20 +92,16 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
   let source: string;
   let text: string | null = null;
 
-  const assets = await fromAssets();
-  if (assets) { text = assets.text; source = 'assets'; }
+  const http = await fromHttp();
+  if (http) { text = http.text; source = 'http'; }
   else {
     const r2 = await fromR2();
     if (r2) { text = r2.text; source = 'r2'; }
     else {
-      const http = await fromHttp();
-      if (http) { text = http.text; source = 'http'; }
-      else {
-        return healthJson(
-          { status: 'error', indexOk: false, message: 'Registry index unavailable (all sources empty)' },
-          503, head, cors
-        );
-      }
+      return healthJson(
+        { status: 'error', indexOk: false, message: 'Registry index unavailable (all sources empty)' },
+        503, head, cors
+      );
     }
   }
 
