@@ -114,6 +114,23 @@ function sliceProofTaxonomy(
     consistencyTotal: null,
     source: null,
   };
+  // Prefer full audit JSON (SSOT) over a possibly-stale ops-summary embed.
+  if (audit) {
+    const audits = Array.isArray(audit.audits) ? audit.audits : [];
+    const consistency = Array.isArray(audit.consistency) ? audit.consistency : [];
+    const contractsOk = audits.filter((a: { ok?: boolean }) => a && a.ok === true).length;
+    const consistencyOk = consistency.filter((c: { ok?: boolean }) => c && c.ok === true).length;
+    return {
+      available: true,
+      path: '/registry/proof-taxonomy-audit.json',
+      ok: typeof audit.ok === 'boolean' ? audit.ok : null,
+      contracts: audits.length || null,
+      contractsOk: audits.length ? contractsOk : null,
+      consistencyOk: consistency.length ? consistencyOk : null,
+      consistencyTotal: consistency.length || null,
+      source: 'audit-json',
+    };
+  }
   if (opsTax && opsTax.available !== false && (opsTax.ok != null || opsTax.contracts != null)) {
     return {
       available: true,
@@ -127,21 +144,7 @@ function sliceProofTaxonomy(
       source: 'ops-summary',
     };
   }
-  if (!audit) return empty;
-  const audits = Array.isArray(audit.audits) ? audit.audits : [];
-  const consistency = Array.isArray(audit.consistency) ? audit.consistency : [];
-  const contractsOk = audits.filter((a: { ok?: boolean }) => a && a.ok === true).length;
-  const consistencyOk = consistency.filter((c: { ok?: boolean }) => c && c.ok === true).length;
-  return {
-    available: true,
-    path: '/registry/proof-taxonomy-audit.json',
-    ok: typeof audit.ok === 'boolean' ? audit.ok : null,
-    contracts: audits.length || null,
-    contractsOk: audits.length ? contractsOk : null,
-    consistencyOk: consistency.length ? consistencyOk : null,
-    consistencyTotal: consistency.length || null,
-    source: 'audit-json',
-  };
+  return empty;
 }
 
 async function assetJson(
