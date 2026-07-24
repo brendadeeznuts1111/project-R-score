@@ -19,7 +19,7 @@
 import { scheduleInProcess, type InProcessCronJob } from '../harness/cron.ts';
 import { buildRegistrySnapshot } from '../../tools/ops-snapshot.ts';
 import { resolveR2BridgeConfig } from '../../scripts/lib/r2-bridge.ts';
-import { createR2ChannelStoreFromConfig } from '../channels/r2-channel-bucket.ts';
+import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
 import { AccountService } from './account-service.ts';
 import { openOperationsDb } from './db.ts';
 import { settlePendingPlays } from './ops-settle-batch.ts';
@@ -52,12 +52,7 @@ export type OpsSnapshotCronOpts = {
 };
 
 function tryR2OutboxOpts(): Parameters<typeof settlePendingPlays>[1]['outbox'] {
-  try {
-    const r2 = resolveR2BridgeConfig();
-    return { deliver: true, r2Store: createR2ChannelStoreFromConfig(r2) };
-  } catch {
-    return { deliver: false };
-  }
+  return resolveProductionOutboxOpts({ deliver: true });
 }
 
 /** Consume R2 ops-sync queue and bind partner profiles (best-effort). */

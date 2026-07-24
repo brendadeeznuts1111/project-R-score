@@ -58,3 +58,22 @@ Pages onboard → R2 ops-sync → runOpsSyncCycle → bindPartnerProfile
 ## Auth note
 
 `/api/channels/events` on `serve-public` requires `REGISTRY_SECRET` bearer outside `SERVE_PUBLIC_DEV=1` / `NODE_ENV=development`.
+
+## Post-audit closure (e26651c9e → e2f85a6ec)
+
+| Finding | Severity | Status | Evidence |
+|---------|----------|--------|----------|
+| `settlePlay` no production caller | Critical | **Closed** | `tools/ops-settle.ts` · `runOpsSettleCycle` |
+| Stake from `stake_recommended` not `stake_actual` | Critical | **Closed** | `play-settlement.ts` · `tests/ops-loop-hardening.test.ts` |
+| Outbox R2 projector = memory only | Critical | **Closed** | `resolveProductionOutboxOpts` · `flushOutbox` · cron |
+| `ops:sync` manual only | Critical | **Closed** | `registerOpsSyncCron` · snapshot `--once` tick |
+| OpSec TOML not enforced | Critical | **Closed** | `evaluateForNode` + `metadata_json` opsec fields |
+| No `<notification-center>` on `/portal/ops/` | Critical | **Closed** | `public/portal/ops/index.html` |
+| `/api/channels/events` unauthenticated | Critical | **Closed** | `serve-public.ts` `SERVE_DEVELOPMENT` gate |
+| `bindPartnerProfile` race | Medium | **Closed** | `ON CONFLICT DO UPDATE` upsert |
+| `reservePlay` no version retry | Medium | **Closed** | `reservePlayWithRetry` |
+| Book coverage unused at dispatch | Medium | **Closed** | `play.bookSlug` → `checkCoverage` |
+| Demo snapshot vs live DB | Medium | **Tracked** | Legacy dispatches lack `play_gate_decisions`; live `loopCompletionRate` rises only on new gated plays |
+| Topic taxonomy drift | Medium | **Closed** | Tenant doc lists `identity` · `plays` · `ops-sync` |
+
+Production R2 projection is best-effort: when `config/r2-env` credentials are absent, projectors fall back to in-process memory (dev parity only).

@@ -10,6 +10,7 @@ import type { AccountService } from './account-service.ts';
 import { bindPartnerProfile } from './partner-profile-bridge.ts';
 import { asTreeNodeId } from '../types/branded/operations.ts';
 import { enqueueIdentityChannelEvent, processChannelOutbox } from '../channels/outbox.ts';
+import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
 
 const DEFAULT_TOPIC = 'ops-sync';
 const EVENTS_KEY = 'channels/ops-sync/events.jsonl';
@@ -156,7 +157,7 @@ export async function processOpsSyncQueue(
       setSyncCursor(db, maxSeq, DEFAULT_TOPIC);
     }
 
-    await processChannelOutbox(db, { deliver: false });
+    await processChannelOutbox(db, resolveProductionOutboxOpts({ deliver: false }));
 
     return { processed, lastSeq: maxSeq };
   } catch {

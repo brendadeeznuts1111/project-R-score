@@ -14,6 +14,7 @@ import {
   enqueuePlayTelegramEvent,
   processChannelOutbox,
 } from '../channels/outbox.ts';
+import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
 import { asTreeNodeId } from '../types/branded/operations.ts';
 import { AccountService } from './account-service.ts';
 import { detectFraudSignals } from './fraud-guard.ts';
@@ -212,7 +213,7 @@ export async function publishAndDispatch(
     if (token) {
       await flushOutbox(db, { token });
     } else {
-      await processChannelOutbox(db, { deliver: false });
+      await processChannelOutbox(db, resolveProductionOutboxOpts({ deliver: false }));
     }
   }
 
@@ -226,7 +227,10 @@ export async function flushOutbox(
   db: Database,
   opts: FlushOutboxOpts
 ): Promise<{ sent: number; failed: number }> {
-  const unified = await processChannelOutbox(db, { telegramToken: opts.token });
+  const unified = await processChannelOutbox(
+    db,
+    resolveProductionOutboxOpts({ telegramToken: opts.token, deliver: true })
+  );
 
   const pending = db
     .query(
