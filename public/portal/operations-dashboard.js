@@ -1366,6 +1366,59 @@ class OperationsDashboard extends HTMLElement {
       }
     }
 
+    // ── Ratchet panel ──
+    const ratchet = this.ratchet || {};
+    const ratchetStable = ratchet.channels?.stable || ratchet.channels?.latest;
+    const ratchetPass = this.querySelector('#ratchet-pass');
+    if (ratchetPass) {
+      if (ratchetStable?.summary) {
+        const s = ratchetStable.summary;
+        const ok = s.passed === s.total;
+        ratchetPass.textContent = ok ? '✅' : `${s.passed}/${s.total}`;
+        ratchetPass.classList.toggle('ok', ok);
+        ratchetPass.classList.toggle('bad', !ok);
+      } else {
+        ratchetPass.textContent = '—';
+      }
+    }
+    const ratchetDetail = this.querySelector('#ratchet-detail');
+    if (ratchetDetail) {
+      ratchetDetail.textContent = ratchetStable
+        ? `${ratchetStable.version} · verified ${(ratchetStable.verifiedAt || '').slice(0, 10)} · commit ${ratchetStable.provenance?.testSuiteCommit || '—'}`
+        : 'No ratchet record — run bun run ratchet';
+    }
+    const ratchetHash = this.querySelector('#ratchet-hash');
+    if (ratchetHash) {
+      ratchetHash.textContent = ratchetStable?.proofHash
+        ? `🔒 ${ratchetStable.proofHash.slice(0, 16)}…`
+        : '';
+    }
+
+    // ── Official guides panel ──
+    const guides = this.guides || {};
+    const guidesPass = this.querySelector('#guides-pass');
+    if (guidesPass) {
+      const s = guides.summary;
+      if (s?.total) {
+        guidesPass.textContent = s.status === 'pass' ? '✅' : `${s.passed}/${s.total}`;
+        guidesPass.classList.toggle('ok', s.status === 'pass');
+        guidesPass.classList.toggle('bad', s.status !== 'pass');
+      } else {
+        guidesPass.textContent = '—';
+      }
+    }
+    const guidesDetail = this.querySelector('#guides-detail');
+    if (guidesDetail) {
+      const resources = (guides.results || []).filter(r => !r.name.startsWith('install guide:')).length;
+      guidesDetail.textContent = guides.timestamp
+        ? `guides index · install guide · /get · ${resources} URLs + 2 command dry-runs · ${guides.timestamp.slice(0, 10)}`
+        : 'No guides proof — run bun run verify:guides:save';
+    }
+    const guidesHash = this.querySelector('#guides-hash');
+    if (guidesHash) {
+      guidesHash.textContent = guides.proofHash ? `🔒 ${guides.proofHash.slice(0, 16)}…` : '';
+    }
+
     const bundler = this.bundlerLoaders || {};
     const bundlerPass = this.querySelector('#bundler-loaders-pass');
     if (bundlerPass) {
