@@ -3,7 +3,9 @@
  *
  * @see tools/bun-api-coverage-proof.json
  * @see https://developers.cloudflare.com/pages/functions/
+ * @see lib/http/portal-cors.ts
  */
+import { portalCorsHeaders, portalOptionsResponse } from '../../lib/http/portal-cors.ts';
 
 export type ProofEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
@@ -16,10 +18,7 @@ export async function onRequest(context: {
   const url = new URL(context.request.url);
 
   if (context.request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: { 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' },
-    });
+    return portalOptionsResponse();
   }
 
   // Try committed manifest via ASSETS (if tools/ copied to build), else GitHub raw
@@ -54,11 +53,10 @@ export async function onRequest(context: {
           source: 'github-raw',
         },
         {
-          headers: {
+          headers: portalCorsHeaders({
             'Content-Type': 'application/json; charset=utf-8',
             'Cache-Control': 'public, max-age=300',
-            'Access-Control-Allow-Origin': '*',
-          },
+          }),
         }
       );
     } catch (e) {
@@ -71,6 +69,6 @@ export async function onRequest(context: {
       error: 'Failed to load proof manifest',
       detail: lastErr instanceof Error ? lastErr.message : String(lastErr),
     },
-    { status: 503, headers: { 'Access-Control-Allow-Origin': '*' } }
+    { status: 503, headers: portalCorsHeaders() }
   );
 }

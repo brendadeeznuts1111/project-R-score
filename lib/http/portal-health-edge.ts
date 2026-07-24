@@ -7,9 +7,34 @@
  * @see docs/platform-routing.md
  */
 import { buildEdgeEnvTable } from './portal-env-edge.ts';
+import { portalOptionsResponse } from './portal-cors.ts';
 
 export type HealthEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
+};
+
+/** Compact Bun defaults proof slice (from defaults-proof.json). */
+export type EdgeDefaultsSlice = {
+  available: boolean;
+  path: '/registry/defaults-proof.json';
+  passed: number | null;
+  total: number | null;
+  status: string | null;
+  bunVersion: string | null;
+  proofHash: string | null;
+  generated: string | null;
+};
+
+/** Compact proof-taxonomy audit slice (ops-summary or full audit). */
+export type EdgeProofTaxonomySlice = {
+  available: boolean;
+  path: '/registry/proof-taxonomy-audit.json';
+  ok: boolean | null;
+  contracts: number | null;
+  contractsOk: number | null;
+  consistencyOk: number | null;
+  consistencyTotal: number | null;
+  source: 'ops-summary' | 'audit-json' | null;
 };
 
 export type EdgeHealthBody = {
@@ -23,6 +48,8 @@ export type EdgeHealthBody = {
   registry: { packages: number | null; versions: number | null };
   monitoring: Record<string, unknown> | null;
   bunApiProof: Record<string, unknown>;
+  defaults: EdgeDefaultsSlice;
+  proofTaxonomy: EdgeProofTaxonomySlice;
   env: Record<string, unknown>;
   routeStats: Record<string, unknown>;
   toc?: Record<string, unknown> | null;
@@ -30,6 +57,92 @@ export type EdgeHealthBody = {
   loop?: Record<string, unknown> | null;
   serve: Record<string, unknown>;
 };
+
+function sliceDefaults(raw: Record<string, unknown> | null): EdgeDefaultsSlice {
+  const empty: EdgeDefaultsSlice = {
+    available: false,
+    path: '/registry/defaults-proof.json',
+    passed: null,
+    total: null,
+    status: null,
+    bunVersion: null,
+    proofHash: null,
+    generated: null,
+  };
+  if (!raw) return empty;
+  const summary = (raw.summary as Record<string, unknown> | undefined) || {};
+  const passed =
+    typeof summary.passed === 'number'
+      ? summary.passed
+      : typeof raw.passed === 'number'
+        ? raw.passed
+        : null;
+  const total =
+    typeof summary.total === 'number'
+      ? summary.total
+      : typeof raw.total === 'number'
+        ? raw.total
+        : null;
+  return {
+    available: true,
+    path: '/registry/defaults-proof.json',
+    passed,
+    total,
+    status:
+      typeof summary.status === 'string'
+        ? summary.status
+        : passed != null && total != null && passed === total
+          ? 'pass'
+          : null,
+    bunVersion: typeof raw.bunVersion === 'string' ? raw.bunVersion : null,
+    proofHash: typeof raw.proofHash === 'string' ? raw.proofHash : null,
+    generated: typeof raw.timestamp === 'string' ? raw.timestamp : null,
+  };
+}
+
+function sliceProofTaxonomy(
+  opsTax: Record<string, unknown> | null | undefined,
+  audit: Record<string, unknown> | null
+): EdgeProofTaxonomySlice {
+  const empty: EdgeProofTaxonomySlice = {
+    available: false,
+    path: '/registry/proof-taxonomy-audit.json',
+    ok: null,
+    contracts: null,
+    contractsOk: null,
+    consistencyOk: null,
+    consistencyTotal: null,
+    source: null,
+  };
+  if (opsTax && opsTax.available !== false && (opsTax.ok != null || opsTax.contracts != null)) {
+    return {
+      available: true,
+      path: '/registry/proof-taxonomy-audit.json',
+      ok: typeof opsTax.ok === 'boolean' ? opsTax.ok : null,
+      contracts: typeof opsTax.contracts === 'number' ? opsTax.contracts : null,
+      contractsOk: typeof opsTax.contractsOk === 'number' ? opsTax.contractsOk : null,
+      consistencyOk: typeof opsTax.consistencyOk === 'number' ? opsTax.consistencyOk : null,
+      consistencyTotal:
+        typeof opsTax.consistencyTotal === 'number' ? opsTax.consistencyTotal : null,
+      source: 'ops-summary',
+    };
+  }
+  if (!audit) return empty;
+  const audits = Array.isArray(audit.audits) ? audit.audits : [];
+  const consistency = Array.isArray(audit.consistency) ? audit.consistency : [];
+  const contractsOk = audits.filter((a: { ok?: boolean }) => a && a.ok === true).length;
+  const consistencyOk = consistency.filter((c: { ok?: boolean }) => c && c.ok === true).length;
+  return {
+    available: true,
+    path: '/registry/proof-taxonomy-audit.json',
+    ok: typeof audit.ok === 'boolean' ? audit.ok : null,
+    contracts: audits.length || null,
+    contractsOk: audits.length ? contractsOk : null,
+    consistencyOk: consistency.length ? consistencyOk : null,
+    consistencyTotal: consistency.length || null,
+    source: 'audit-json',
+  };
+}
 
 async function assetJson(
   env: HealthEnv,
@@ -71,13 +184,22 @@ export async function computeEdgeHealthETag(body: EdgeHealthBody): Promise<strin
 }
 
 export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise<EdgeHealthBody> {
-  const [ops, monitoring, staticSnap, registry, proof] = await Promise.all([
-    assetJson(env, origin, '/registry/ops-summary.json'),
-    assetJson(env, origin, '/registry/monitoring.json'),
-    assetJson(env, origin, '/registry/static.json'),
-    assetJson(env, origin, '/registry/registry.json'),
-    assetJson(env, origin, '/tools/bun-api-coverage-proof.json'),
-  ]);
+  const [ops, monitoring, staticSnap, registry, proof, defaultsRaw, taxonomyAudit] =
+    await Promise.all([
+      assetJson(env, origin, '/registry/ops-summary.json'),
+      assetJson(env, origin, '/registry/monitoring.json'),
+      assetJson(env, origin, '/registry/static.json'),
+      assetJson(env, origin, '/registry/registry.json'),
+      assetJson(env, origin, '/tools/bun-api-coverage-proof.json'),
+      assetJson(env, origin, '/registry/defaults-proof.json'),
+      assetJson(env, origin, '/registry/proof-taxonomy-audit.json'),
+    ]);
+
+  const defaults = sliceDefaults(defaultsRaw);
+  const proofTaxonomy = sliceProofTaxonomy(
+    ops?.proofTaxonomy as Record<string, unknown> | undefined,
+    taxonomyAudit
+  );
 
   let bunApiProof: Record<string, unknown> = { available: false };
   if (proof) {
@@ -124,8 +246,15 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     hasAssets: Boolean(env?.ASSETS?.fetch),
   });
 
+  const defaultsFail =
+    defaults.available &&
+    ((defaults.status != null && defaults.status !== 'pass') ||
+      (defaults.passed != null && defaults.total != null && defaults.passed < defaults.total));
+  const taxonomyFail = proofTaxonomy.available && proofTaxonomy.ok === false;
+  const status: 'ok' | 'degraded' = defaultsFail || taxonomyFail ? 'degraded' : 'ok';
+
   return {
-    status: 'ok',
+    status,
     schemaVersion: 1,
     runtime: 'cloudflare-pages',
     edge: true,
@@ -140,6 +269,8 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       staticAggregate: { exists: Boolean(staticSnap) },
       monitoring: { exists: Boolean(monitoring) },
       tocOps: { exists: Boolean(ops?.toc) },
+      defaultsProof: { exists: defaults.available },
+      proofTaxonomyAudit: { exists: proofTaxonomy.available },
     },
     registry: {
       packages,
@@ -153,6 +284,8 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
         }
       : null,
     bunApiProof,
+    defaults,
+    proofTaxonomy,
     toc: (ops?.toc as Record<string, unknown> | undefined) ?? null,
     channels: (ops?.channels as Record<string, unknown> | undefined) ?? null,
     loop: (ops?.loop as Record<string, unknown> | undefined) ?? null,
@@ -279,6 +412,31 @@ export function renderEdgeHealthPlain(data: EdgeHealthBody): string {
     }
   }
 
+  const def = data.defaults;
+  lines.push('', '── Bun defaults ──────────────────────────');
+  if (def?.available) {
+    lines.push(`  Proof:       ${def.passed ?? '?'}/${def.total ?? '?'} · ${def.status ?? '—'}`);
+    lines.push(`  Bun:         ${def.bunVersion ?? '—'}`);
+    if (def.proofHash) lines.push(`  Hash:        ${String(def.proofHash).slice(0, 16)}…`);
+    if (def.generated) lines.push(`  Generated:   ${def.generated}`);
+    lines.push(`  Artifact:    ${def.path}`);
+  } else {
+    lines.push('  Missing — bun run verify:defaults:save');
+  }
+
+  const tax = data.proofTaxonomy;
+  lines.push('', '── Proof taxonomy audit ──────────────────');
+  if (tax?.available) {
+    lines.push(`  Contracts:   ${tax.contractsOk ?? '?'}/${tax.contracts ?? '?'} · ok=${tax.ok}`);
+    if (tax.consistencyTotal != null) {
+      lines.push(`  Consistency: ${tax.consistencyOk ?? '?'}/${tax.consistencyTotal}`);
+    }
+    lines.push(`  Source:      ${tax.source ?? '—'}`);
+    lines.push(`  Artifact:    ${tax.path}`);
+  } else {
+    lines.push('  Missing — bun run verify:proof-taxonomy:save');
+  }
+
   lines.push(
     '',
     '── Environment ───────────────────────────',
@@ -289,7 +447,10 @@ export function renderEdgeHealthPlain(data: EdgeHealthBody): string {
     '── Links ─────────────────────────────────',
     '  JSON:     GET /api/health  ·  GET /health',
     '  Plain:    GET /health/pre',
+    '  Defaults: GET /api/defaults  ·  /registry/defaults-proof.json',
+    '  Audit:    GET /registry/proof-taxonomy-audit.json',
     '  UI:       GET /portal/health/',
+    '  OPTIONS:  Allow GET, HEAD (If-None-Match, Accept)',
     ''
   );
 
@@ -297,15 +458,7 @@ export function renderEdgeHealthPlain(data: EdgeHealthBody): string {
 }
 
 export function edgeHealthOptionsResponse(): Response {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Cache-Control': 'no-store',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'If-None-Match, Accept',
-      'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
-    },
-  });
+  return portalOptionsResponse();
 }
 
 export async function respondEdgeHealthJson(

@@ -8,6 +8,7 @@
  * @see lib/http/portal-env-status.ts
  */
 
+import { portalOptionsResponse } from '../../lib/http/portal-cors.ts';
 import {
   buildEdgeEnvStatus,
   isEnvStatusPayload,
@@ -56,14 +57,7 @@ export async function onRequest(context: {
   env: EnvPagesEnv;
 }): Promise<Response> {
   if (context.request.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Cache-Control': 'no-store',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Accept',
-      },
-    });
+    return portalOptionsResponse();
   }
 
   const origin = new URL(context.request.url).origin;

@@ -321,9 +321,16 @@ function renderKpis(ctx) {
           : def?.passed != null
             ? `${def.passed}/${def.total}`
             : '—',
-      detail: def?.bunVersion ? `Bun ${def.bunVersion}` : def?.status || 'defaults proof',
+      detail: def?.bunVersion
+        ? `Bun ${def.bunVersion}${def.summary?.status ? ` · ${def.summary.status}` : ''}`
+        : def?.status || 'defaults proof',
       cls:
-        (def?.summary?.passed ?? def?.passed) === (def?.summary?.total ?? def?.total) ? 'ok' : 'warn',
+        def?.summary?.status === 'pass' ||
+        (def?.summary?.passed ?? def?.passed) === (def?.summary?.total ?? def?.total)
+          ? 'ok'
+          : def?._error
+            ? 'warn'
+            : 'err',
       href: '/registry/defaults-proof.json',
     },
     {

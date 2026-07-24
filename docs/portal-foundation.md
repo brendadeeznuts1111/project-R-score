@@ -40,6 +40,8 @@ Origin: `collectHealthData()` in [`scripts/serve-public.ts`](../scripts/serve-pu
 | `env` | object | `{ summary, table, requiredMissingKeys }` |
 | `registry` | object | `{ packages, versions }` |
 | `artifacts` | object | ops summary, proofs |
+| `defaults` | object | Bun defaults proof slice (`passed`/`total`/`status`) |
+| `proofTaxonomy` | object | taxonomy audit rollup (`contracts`/`ok`) |
 
 ### `GET /api/env`
 

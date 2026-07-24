@@ -234,27 +234,43 @@ async function enrichFromOpsSummary(d) {
   }
 }
 
-async function fillDefaultsCard() {
-  const urls = ['/registry/defaults-proof.json', '/api/defaults', '/registry/bun-defaults-proof.json'];
+function applyDefaultsCard(sliceOrProof, sourceLabel) {
+  const cardEl = document.querySelector('#cards [data-card="defaults"]');
+  if (!cardEl) return true;
+  const passed = sliceOrProof.passed ?? sliceOrProof.summary?.passed;
+  const total = sliceOrProof.total ?? sliceOrProof.summary?.total;
+  const status = sliceOrProof.status ?? sliceOrProof.summary?.status;
+  const allOk =
+    status === 'pass' || (passed != null && total != null && passed === total);
+  cardEl.querySelector('.val').textContent =
+    passed != null && total != null ? `${passed}/${total}` : '—';
+  cardEl.querySelector('.sub').textContent = [
+    sliceOrProof.bunVersion ? `Bun ${sliceOrProof.bunVersion}` : null,
+    sliceOrProof.proofHash
+      ? `sha ${String(sliceOrProof.proofHash).slice(0, 12)}…`
+      : sourceLabel,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  cardEl.className = `health-card ${allOk ? 'ok' : sliceOrProof.available === false ? 'warn' : 'bad'}`;
+  return true;
+}
+
+async function fillDefaultsCard(embedded) {
+  if (embedded?.available) {
+    applyDefaultsCard(embedded, embedded.path || 'health.defaults');
+    return;
+  }
+  const urls = [
+    '/registry/defaults-proof.json',
+    '/api/defaults',
+    '/registry/bun-defaults-proof.json',
+  ];
   for (const url of urls) {
     try {
       const res = await fetch(url, { credentials: 'same-origin' });
       if (!res.ok) continue;
-      const dp = await res.json();
-      const passed = dp.passed ?? dp.summary?.passed;
-      const total = dp.total ?? dp.summary?.total;
-      const allOk = passed != null && passed === total;
-      const cardEl = document.querySelector('#cards [data-card="defaults"]');
-      if (!cardEl) return;
-      cardEl.querySelector('.val').textContent =
-        passed != null && total != null ? `${passed}/${total}` : '—';
-      cardEl.querySelector('.sub').textContent = [
-        dp.bunVersion ? `Bun ${dp.bunVersion}` : null,
-        dp.proofHash ? `sha ${(String(dp.proofHash)).slice(0, 12)}…` : url,
-      ]
-        .filter(Boolean)
-        .join(' · ');
-      cardEl.className = `health-card ${allOk ? 'ok' : 'bad'}`;
+      applyDefaultsCard(await res.json(), url);
       return;
     } catch {
       /* next */
@@ -368,6 +384,20 @@ function renderCards(d) {
             : 'ok'
         : 'warn'
     ),
+    card(
+      'Taxonomy audit',
+      d.proofTaxonomy?.available && d.proofTaxonomy.contracts != null
+        ? `${d.proofTaxonomy.contractsOk ?? '?'}/${d.proofTaxonomy.contracts}`
+        : '—',
+      d.proofTaxonomy?.available
+        ? `ok=${d.proofTaxonomy.ok} · ${d.proofTaxonomy.source || 'audit'}`
+        : 'proof-taxonomy-audit',
+      d.proofTaxonomy?.available
+        ? d.proofTaxonomy.ok
+          ? 'ok'
+          : 'bad'
+        : 'warn'
+    ),
     `<article class="health-card warn" data-card="defaults">
       <h3>Defaults</h3>
       <div class="val">…</div>
@@ -376,7 +406,7 @@ function renderCards(d) {
   ];
 
   $('cards').innerHTML = html.join('');
-  void fillDefaultsCard();
+  void fillDefaultsCard(d.defaults);
 }
 
 function renderEnv(d) {

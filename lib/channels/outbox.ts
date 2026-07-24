@@ -24,6 +24,8 @@ import type {
   OpsChannelTopic,
 } from './ops-channel-event.ts';
 import { parseProjectors } from './ops-channel-event.ts';
+import { sendTelegramBotMessage } from '../telegram/telegram-api.ts';
+import { loadTelegramEnv, threadIdForOutboxTopic } from '../telegram/telegram-config.ts';
 
 /** Inline keyboard for play ack callbacks (placed / skip). */
 export function playAckReplyMarkup(
@@ -156,32 +158,43 @@ async function projectTelegram(
   payload: Record<string, unknown>,
   token: string
 ): Promise<{ ok: boolean; messageId?: number }> {
-  const telegramId = payload.telegramId ?? payload.telegram_id;
+  const env = loadTelegramEnv();
+  const dmTarget = payload.telegramId ?? payload.telegram_id;
   const text = typeof payload.text === 'string' ? payload.text : JSON.stringify(payload);
-  if (!telegramId || !token) return { ok: false };
+  if (!token) return { ok: false };
 
-  const body: Record<string, unknown> = {
-    chat_id: String(telegramId),
-    text,
-    parse_mode: payload.parseMode === 'Markdown' ? 'Markdown' : undefined,
-  };
-  if (payload.replyMarkup && typeof payload.replyMarkup === 'object') {
-    body.reply_markup = payload.replyMarkup;
+  const explicitThread =
+    typeof payload.messageThreadId === 'number'
+      ? payload.messageThreadId
+      : typeof payload.message_thread_id === 'number'
+        ? payload.message_thread_id
+        : undefined;
+
+  let chatId: string | number | null = dmTarget != null ? String(dmTarget) : null; // brand-ok — Telegram chat_id wire
+  let messageThreadId = explicitThread;
+
+  if (!chatId && env.opsChatId) {
+    chatId = env.opsChatId;
+    messageThreadId ??= threadIdForOutboxTopic(env.topics, row.topic, row.event_type);
   }
 
-  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+  if (!chatId) return { ok: false };
+
+  const parseMode =
+    payload.parseMode === 'Markdown' || payload.parse_mode === 'Markdown' ? 'Markdown' : undefined;
+
+  const result = await sendTelegramBotMessage(token, {
+    chatId,
+    text,
+    parseMode,
+    replyMarkup:
+      payload.replyMarkup && typeof payload.replyMarkup === 'object'
+        ? (payload.replyMarkup as Record<string, unknown>)
+        : undefined,
+    messageThreadId,
   });
-  const json = (await res.json().catch(() => ({}))) as {
-    ok?: boolean;
-    result?: { message_id?: number };
-  };
-  return {
-    ok: res.ok && json.ok !== false,
-    messageId: json.result?.message_id,
-  };
+
+  return { ok: result.ok, messageId: result.messageId };
 }
 
 async function projectSlack(
@@ -202,7 +215,7 @@ export async function processChannelOutbox(
   opts: ProcessOutboxOpts = {}
 ): Promise<{ sent: number; failed: number }> {
   const deliver = opts.deliver !== false;
-  const token = opts.telegramToken ?? Bun.env.TELEGRAM_BOT_TOKEN ?? '';
+  const token = opts.telegramToken ?? loadTelegramEnv().effectiveToken ?? '';
   const r2Store = opts.r2Store ?? localOpsChannelStore;
   const pending = db
     .query(
