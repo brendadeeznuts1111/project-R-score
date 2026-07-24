@@ -27,7 +27,11 @@ Fetch with `Accept: text/markdown` for raw markdown; HTML renders otherwise.
 
 - [ops-summary.json](registry/ops-summary.json): portal ops snapshot
 - [dod-registry.json](registry/dod-registry.json): DOD snapshot registry
+- [dod-queue.json](registry/dod-queue.json): DOD review queue snapshot (Pages read-only)
 - [registry.json](registry/registry.json): package index
+- [registry-client latest.json](registry/@factorywager/registry-client/latest.json): `@factorywager/registry-client` packument
+- [registry-client-proof.json](registry/registry-client-proof.json): resolve/download/publish probes (3/3)
+- [registry-client.md](https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md): SDK docs
 
 ## Full corpus
 
