@@ -41,7 +41,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Fresh-rerun (claim re-proof before merge) → `bun run docs:fresh-rerun` · [`FRESH-RERUN.md`](FRESH-RERUN.md)
 - Claim discovery questionnaire (new claims) → `bun run docs:claim-discovery` · [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md)
 - Ops summary / portal confusion (two pipelines, `source` switch) → `bun run docs:ops-summary-endpoint` · [`ops-summary-endpoint.md`](ops-summary-endpoint.md) · `bun run ops:diagnose`
-- TOC Ops fixture (Drum / rails / WARMED / Gate 12 on Pages) → `bun run ops:seed:toc` · [`tenants/toc-ops.md`](tenants/toc-ops.md) · `/portal/toc/` · `bun test tests/toc-ops-fixture.test.ts`
+- TOC Ops fixture (Drum / rails / WARMED / Gate 12 on Pages) → `bun run ops:seed:toc` · [`tenants/toc-ops.md`](tenants/toc-ops.md) · `/portal/toc/` · surface map (channels/rails/phones/ROI/bots vs MCP) · `bun test tests/toc-ops-fixture.test.ts`
 - Ops loop throughput (dispatch → gate → settle → channels) → `bun run ops:loop:baseline` / `ops:loop:post` · [`tenants/ops-loop-throughput.md`](tenants/ops-loop-throughput.md) · claim `ops-loop-throughput` · `bun test tests/ops-loop-hardening.test.ts`
 - Stale / similar naming references (planes, env aliases) → `bun run docs:reference-discovery` · [`.agents/skills/reference-discovery/SKILL.md`](../../.agents/skills/reference-discovery/SKILL.md) · `bun run reference:discover:check`
 - Improve the harness itself → [`.agents/skills/harness-improve/SKILL.md`](../../.agents/skills/harness-improve/SKILL.md)

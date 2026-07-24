@@ -229,6 +229,23 @@ Wired into `ci:harness` as gate `portal-foundation` and appended to `verify-all`
 
 Filters: `<channel-filter>` composes release channel + verification subsystem checkboxes. Cards expose `data-channel`, `data-subsystem`, `data-introduced-in`.
 
+TOC Ops rollup card on this page reads `ops-summary.toc` (warmed / warming / bottlenecks). Full board: [`/portal/toc/`](../public/portal/toc/) · tenant [`docs/harness/tenants/toc-ops.md`](harness/tenants/toc-ops.md).
+
+### TOC Ops board (`/portal/toc/`)
+
+Fixture-first Drum / Buffer / Rope desk for Pages (no `toc-ops-repo` SQLite on the edge).
+
+| Piece | Path |
+|-------|------|
+| UI | [`public/portal/toc/`](../public/portal/toc/) · `toc-dashboard.js` |
+| Baked artifact | [`public/registry/toc-ops.json`](../public/registry/toc-ops.json) |
+| Edge API | `GET /api/toc` · `GET /api/toc/summary` · POST → **503** |
+| Seed / bake | `bun run ops:seed:toc` · `bun run ops:snapshot` |
+| Types / fixture | [`lib/toc-ops/`](../lib/toc-ops/) |
+| Live mutations | **toc-ops-repo** Central Tool (`ct`) only |
+
+**Plane split:** `/portal/toc` = demo-readonly mirror of TOC edge (rails, accounts, Soft/Gate 12, Ball-in-Court, bottlenecks). `/portal/ops` = live FactoryWager ops (partner-profile bridge, channels outbox, phones inventory) **plus** a TOC summary card. Cloudflare MCP does **not** expose TOC desk data — use it for Pages deploy/inspect only. Full concern matrix: [`docs/harness/tenants/toc-ops.md`](harness/tenants/toc-ops.md)#surface-map-portal-vs-live.
+
 ### Local auth (`REGISTRY_SECRET`)
 
 When auth is enabled, static read plane is public (Pages parity):

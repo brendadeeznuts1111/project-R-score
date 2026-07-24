@@ -26,7 +26,7 @@ TOC Ops fixture + tenants) then snapshot. Snapshot itself auto-seeds empty ops /
 prediction / DOD / partner bindings / missing `toc-ops.json` unless `--no-seed`,
 and always refreshes `catalog-snapshot.json` + `toc-ops.json`.
 
-TOC board: [`toc-ops.md`](toc-ops.md) · `/portal/toc/`.
+TOC board: [`toc-ops.md`](toc-ops.md) · `/portal/toc/` · concern matrix (rails/accounts/Soft/bots vs Cloudflare MCP) in that tenant.
 
 Uses routing proof **retry + TTL cache** (`lib/routing-proof.ts` ·
 `getRoutingProof`). Next fire waits for the snapshot Promise (**no overlap**).

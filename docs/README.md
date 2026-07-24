@@ -19,7 +19,8 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 |------|------|---------|
 | Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
-| Portal foundation (static UI) | [portal-foundation.md](./portal-foundation.md) | data.js · topbar · verify · dev reload |
+| Portal foundation (static UI) | [portal-foundation.md](./portal-foundation.md) | data.js · topbar · verify · dev reload · TOC board § |
+| TOC Ops portal tenant | [harness/tenants/toc-ops.md](./harness/tenants/toc-ops.md) | `/portal/toc` fixture · surface map · MCP boundary |
 | Platform routing (local vs Pages) | [platform-routing.md](./platform-routing.md) | domains · functions · auth plane |
 | Registry client SDK | [registry-client.md](./registry-client.md) | resolve · download · publish |
 | Bun runtime nits (Phase 1) | [bun-runtime-nits.md](./bun-runtime-nits.md) | inspect · streams · url · file-io |

@@ -73,11 +73,23 @@ Publish remains auth-gated.
 - Pages: same path via edge function → `public/registry/ops-summary.json`
 - Proofs: `/registry/*.json` including `proof-taxonomy-audit.json`
 - Ops summary embeds a `proofTaxonomy` slice (contracts/consistency/hash); dashboard uses slice first, full audit JSON for the contract table
+- Optional `toc` slice from `/registry/toc-ops.json` (TOC rollup card → `/portal/toc/`)
 
-Regenerate: `bun run ops:snapshot` (writes summary + taxonomy audit + routing proofs).
+Regenerate: `bun run ops:snapshot` (writes summary + taxonomy audit + routing proofs + TOC bake).
+
+## TOC Ops board data flow
+
+`/portal/toc/` → `toc-dashboard.js` fetches:
+
+- `/registry/toc-ops.json` (baked fixture) or `GET /api/toc` (same ASSETS on Pages)
+- POST `/api/toc/*` → **503** (mutations stay in `toc-ops-repo` `ct`)
+
+Routes: [`lib/http/public-routes.ts`](../lib/http/public-routes.ts) · tenant [`docs/harness/tenants/toc-ops.md`](harness/tenants/toc-ops.md) · portal foundation § TOC Ops board.
 
 ## Agent MCP (Cloudflare)
 
 HTTP MCP servers in [`.mcp.json`](../.mcp.json): `cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`. Token: `CLOUDFLARE_API_TOKEN` (`~/.reasonix/.env`). Scope probe: `bun run cloudflare:env:validate`. Discovery: `/.well-known/mcp.json` on Pages. See [`AGENTS.md`](../AGENTS.md) and [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md).
 
 **Note:** `cloudflare-builds` is Workers Builds CI — not Cloudflare Pages deploy history. Use `cloudflare` `execute` for Pages API (`/accounts/{id}/pages/projects/...`).
+
+**TOC Ops is not an MCP server.** MCP is platform deploy/inspect only. Partner desk (Soft Balance, rails, MessageLog, phones, package bot) lives in `toc-ops-repo` Central Tool; Pages serves the baked fixture under `/registry/toc-ops.json`.

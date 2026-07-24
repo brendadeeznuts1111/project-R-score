@@ -21,12 +21,32 @@ without embedding toc-ops-repo SQLite on the edge.
 SOPs §13/§14 specialize only. New edges land in toc-ops-repo first, then mirror
 into `lib/toc-ops/fixture.ts`.
 
+## Surface map (portal vs live)
+
+Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/inspect Pages.
+
+| Concern | Live SSOT (`toc-ops-repo` `ct`) | `/portal/toc` (fixture) | `/portal/ops` |
+|---------|--------------------------------|-------------------------|---------------|
+| Channels / MessageLog / Ball-in-Court | MessageLog + package Telegram | BIC tasks + `telegramRef` | FW channel outbox (separate) |
+| Rails (partner payment) | Rail profiles + confirm | Confirmed/unconfirmed rails | FW agent `rails` usage totals |
+| Accounts (call signs, WARMED, capital) | Accounts + journals | Demo ASH/PAT/NOV | TOC rollup card |
+| Cellphone / data plan | `ct phone-*` logistics | Not on TOC board | FW phone inventory counts |
+| Places / ROI (T/I/OE) | Soft + `ct t-ioe` / expert ROI | Capital location + buffer | Ops-loop ≠ TOC T |
+| Message return / SLA | Bottlenecks + `partner-health` | PendingPartner + bottleneck list | Channel oldest-pending |
+| Accounting (Soft / Gate 12) | Soft journal + principal | Soft + Gate 12 pills | `toc.principalOutstandingTotal` |
+| Deal structure (70/20/10) | Package split | Catalog `defaultSplit` | FW `cut_percentage` (plays) |
+| Bots | `@TOC_Op_bot` / package `/status` | Labels only | Portal/ops bots (separate) |
+
+**Partner identity bridge** ([`ops-partner-bridge.md`](ops-partner-bridge.md)) gates FactoryWager plays; it does not own Soft Balance, rail confirm, or MessageLog.
+
+**Cloudflare MCP** ([`cloudflare-pages.md`](cloudflare-pages.md) · [`.mcp.json`](../../../.mcp.json)): platform account/docs/bindings/builds/observability only. No TOC Ops MCP server. Pages serves baked `/registry/toc-ops.json` as ASSETS.
+
 ## Artifacts
 
 | Path | Role |
 |------|------|
 | `lib/toc-ops/types.ts` | Fixture types |
-| `lib/toc-ops/fixture.ts` | ASH + PAT demo (WARMED / Warming / Gate 12 / rails) |
+| `lib/toc-ops/fixture.ts` | ASH + PAT + NOV demo (WARMED / Warming / Gate 12 / rails / plays) |
 | `lib/toc-ops/export-snapshot.ts` | Bake + ops-summary slice |
 | `lib/operations/toc-ops-seed.ts` | `ops:seed:toc` |
 | `public/registry/toc-ops.json` | Pages ASSETS |
@@ -55,7 +75,10 @@ bun test tests/toc-ops-fixture.test.ts
 | Plays / bets + experiment routing | **Closed** — `recentPlays` + active switchback |
 | Bottleneck rule keys | **Closed** — demo open events (`TOC_BOTTLENECK_RULE_KEYS`; dynamic `reconcile_*` lives in toc-ops-repo only) |
 | Live Central Tool mutations on Pages | **Open by design** — POST 503; use toc-ops-repo `ct` |
-| SQLite Soft journal in FactoryWager ops DB | **Open** — next elevation after portal UX |
+| Demo/read-only labeling | **Closed (P0)** — banner + `plane: demo-readonly` |
+| Identity bridge TOC ↔ ops | **Closed (P0)** — `toc_identity_bindings` + call_sign / hardrock accounts |
+| Soft/Hard Gate enforcement | **Open** — operate plane (CT or bun-only Soft port) |
+| SQLite Soft journal in FactoryWager ops DB | **Open** — next elevation after identity |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |
 
 ## Signal

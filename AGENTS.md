@@ -6,7 +6,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
 **Remote SSH:** Reasonix remote hosts live in `~/.reasonix/config.toml` under `[remote]`. Active: `factorywager-staging` (internal.staging, `~/.ssh/id_ed25519`, workspace `~/Projects`). `cloudflare-pages` (API-based, no SSH — deploy via `bash scripts/cloudflare-pages-deploy.sh`). Cascade Mover host is placeholder (uncomment when IP known). Tunnel: `scripts/cloudflared-reasonix.yml` → `reasonix.factory-wager.com`. CLI: `reasonix remote test/connect/list`. First-time bootstrap: `bun run remote:setup`. Reasonix binary: `/Applications/Reasonix.app/Contents/MacOS/reasonix`.
 
-**Cloudflare MCP** (`.mcp.json`): `cloudflare` (account/API) · `cloudflare-docs` (search) · `cloudflare-bindings` (Workers bindings) · `cloudflare-builds` (Workers Builds CI — not Pages deploy history) · `cloudflare-observability` (logs/metrics). Token: `CLOUDFLARE_API_TOKEN` in `~/.reasonix/.env`. Pages project pins: `bun run cloudflare:env`. Token scope probe (`bun run cloudflare:env:validate`) proves harness operational confidence — **not** MCP runtime authorization (dashboard token policy only).
+**Cloudflare MCP** (`.mcp.json`): `cloudflare` (account/API) · `cloudflare-docs` (search) · `cloudflare-bindings` (Workers bindings) · `cloudflare-builds` (Workers Builds CI — not Pages deploy history) · `cloudflare-observability` (logs/metrics). Token: `CLOUDFLARE_API_TOKEN` in `~/.reasonix/.env`. Pages project pins: `bun run cloudflare:env`. Token scope probe (`bun run cloudflare:env:validate`) proves harness operational confidence — **not** MCP runtime authorization (dashboard token policy only). **Not a TOC/partner desk:** Soft Balance, rails, MessageLog, phones, and package Telegram stay in `toc-ops-repo` (`ct`); Pages exposes the baked board at `/portal/toc/` · [`docs/harness/tenants/toc-ops.md`](docs/harness/tenants/toc-ops.md).
 
 ## Canonical docs
 
@@ -26,6 +26,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation (static UI) | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `serve:public:hot` |
+| TOC Ops portal board (fixture) | [`docs/harness/tenants/toc-ops.md`](docs/harness/tenants/toc-ops.md) · `/portal/toc/` · `bun run ops:seed:toc` · `bun test tests/toc-ops-fixture.test.ts` |
 | Platform routing (local vs Pages) | [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run check:routes` · `bun run verify:pages-edge` |
 | Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) |
 | Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`) |

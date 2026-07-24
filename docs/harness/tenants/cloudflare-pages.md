@@ -142,10 +142,15 @@ Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps +
 
 | Path | Asset |
 |------|--------|
-| `/portal/ops/` | Operations dashboard (experiments + prediction panels) |
-| `/registry/ops-summary.json` | Snapshot from `bun run ops:snapshot` |
+| `/portal/ops/` | Operations dashboard (experiments + prediction + TOC rollup card) |
+| `/portal/toc/` | TOC Ops board (fixture Drum/Buffer/Rope · Soft/Gate 12) |
+| `/registry/toc-ops.json` | Baked TOC fixture (`bun run ops:seed:toc` / `ops:snapshot`) |
+| `/api/toc` | Pages Function GET snapshot; POST → 503 (mutations = toc-ops-repo `ct`) |
+| `/registry/ops-summary.json` | Snapshot from `bun run ops:snapshot` (includes optional `toc` slice) |
 | `/registry/proof-taxonomy-audit.json` | Subsystem contracts + cross-proof consistency |
 | `/registry/prediction/report.html` | Backtest report (+ `coverage-chart.svg`) |
+
+TOC tenant runbook: [`toc-ops.md`](toc-ops.md). **MCP does not serve TOC desk data** — use MCP for Pages deploy/logs; use `/portal/toc` or `ct` for partner ops.
 
 **Do not enable Pages “Single-page application” rewrites** (`/* → /index.html 200`). That serves the landing shell for every path (including `.json`) and hides the portal. Prefer real files + `public/_redirects` (trailing-slash only) + `public/_headers` (JSON content-type).
 
