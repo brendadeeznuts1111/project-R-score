@@ -1670,6 +1670,7 @@
     "ops:settle": "bun tools/ops-settle.ts",
     "ops:loop:baseline": "bun tools/ops-loop-report.ts --out reports/ops-loop-baseline.json",
     "ops:loop:post": "bun tools/ops-loop-report.ts --out reports/ops-loop-post.json --fixture --compare reports/ops-loop-baseline.json",
+    "ops:loop:live": "bun tools/ops-loop-live-proof.ts && bun tools/ops-loop-report.ts --out reports/ops-loop-post-live.json --compare reports/ops-loop-baseline.json",
     "ops:automation": "bun run lib/accounts/automation.ts",
     "ops:registry-snapshot": "bun run lib/accounts/automation.ts --once --registry-snapshot",
     "test:showcase": "bun test tests/bun-api-showcase.test.ts",

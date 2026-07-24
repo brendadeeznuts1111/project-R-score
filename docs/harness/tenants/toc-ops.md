@@ -14,6 +14,7 @@ without embedding toc-ops-repo SQLite on the edge.
 |---------|--------|
 | TOC theory | `toc-ops-repo/docs/reference/TOC-Production-Reference.md` |
 | Soft / Gate 12 / T/I/OE | `toc-ops-repo/docs/system/ACCOUNTING.md` |
+| Return efficiency · CE · LE · next action | `toc-ops-repo/docs/system/RETURN_EFFICIENCY.md` · `ct return-efficiency` |
 | Enums / exception families | `toc-ops-repo/docs/DOMAIN_CONSTANTS.md` |
 | SOP Known Exceptions | `toc-ops-repo/docs/sop/*-sop.md` |
 | Pages fixture + portal | this tenant · `lib/toc-ops/` |

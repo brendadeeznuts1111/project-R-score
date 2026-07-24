@@ -9,7 +9,8 @@
 | Sync consumer cron | `runOpsSyncCycle` · [`tools/ops-sync-consumer.ts`](../../../tools/ops-sync-consumer.ts) |
 | Durable projector | [`lib/channels/outbox.ts`](../../lib/channels/outbox.ts) · `opts.r2Store` |
 | Portal panel | **Ops loop** on `/portal/ops/` · `<notification-center>` topics `identity` + `plays` |
-| Reports | [`reports/ops-loop-baseline.json`](../../../reports/ops-loop-baseline.json) · [`reports/ops-loop-post.json`](../../../reports/ops-loop-post.json) |
+| Reports | [`reports/ops-loop-baseline.json`](../../../reports/ops-loop-baseline.json) · [`reports/ops-loop-post.json`](../../../reports/ops-loop-post.json) · [`reports/ops-loop-post-live.json`](../../../reports/ops-loop-post-live.json) |
+| Live proof caller | [`tools/ops-loop-live-proof.ts`](../../../tools/ops-loop-live-proof.ts) |
 
 ## Metric definitions
 
@@ -33,6 +34,10 @@ Developer velocity is tracked separately via `bun run harness:status` → `repor
 # Capture baseline (before hardening) / post (after)
 bun tools/ops-loop-report.ts --out reports/ops-loop-baseline.json
 bun tools/ops-loop-report.ts --out reports/ops-loop-post.json --fixture --compare reports/ops-loop-baseline.json
+
+# Live DB proof (one gated play → settle → outbox)
+bun tools/ops-loop-live-proof.ts
+bun tools/ops-loop-report.ts --out reports/ops-loop-post-live.json --compare reports/ops-loop-baseline.json
 
 # Production callers
 bun run ops:settle -- --help
@@ -73,7 +78,7 @@ Pages onboard → R2 ops-sync → runOpsSyncCycle → bindPartnerProfile
 | `bindPartnerProfile` race | Medium | **Closed** | `ON CONFLICT DO UPDATE` upsert |
 | `reservePlay` no version retry | Medium | **Closed** | `reservePlayWithRetry` |
 | Book coverage unused at dispatch | Medium | **Closed** | `play.bookSlug` → `checkCoverage` |
-| Demo snapshot vs live DB | Medium | **Tracked** | Legacy dispatches lack `play_gate_decisions`; live `loopCompletionRate` rises only on new gated plays |
+| Demo snapshot vs live DB | Medium | **Proven** | Live proof 2026-07-24: `ops-loop-live-proof` → `settledViaFullLoop` 0→1; rate 0→4.5% (19 legacy rows lack gates; ≥60% absolute needs gated backfill or clean slate) |
 | Topic taxonomy drift | Medium | **Closed** | Tenant doc lists `identity` · `plays` · `ops-sync` |
 
 Production R2 projection is best-effort: when `config/r2-env` credentials are absent, projectors fall back to in-process memory (dev parity only).

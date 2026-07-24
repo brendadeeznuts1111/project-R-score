@@ -86,10 +86,18 @@ Post-audit hardening closes dispatch → settle → durable delivery with automa
 
 | Artifact | Path |
 |----------|------|
-| Baseline | [`reports/ops-loop-baseline.json`](../../reports/ops-loop-baseline.json) |
-| Post | [`reports/ops-loop-post.json`](../../reports/ops-loop-post.json) |
+| Baseline (live) | [`reports/ops-loop-baseline.json`](../../reports/ops-loop-baseline.json) |
+| Post (fixture) | [`reports/ops-loop-post.json`](../../reports/ops-loop-post.json) |
+| Post (live) | [`reports/ops-loop-post-live.json`](../../reports/ops-loop-post-live.json) |
 | Tenant runbook | [`docs/harness/tenants/ops-loop-throughput.md`](../harness/tenants/ops-loop-throughput.md) |
+| Live proof | `bun tools/ops-loop-live-proof.ts` |
 | Capture | `bun run ops:loop:baseline` · `bun run ops:loop:post` |
 | Proof test | `bun test tests/ops-loop-hardening.test.ts` |
 
-North-star metric: **`loopCompletionRate`** = `settledViaFullLoop / dispatched`. Target ≥60% lift vs baseline (fixture-backed post report).
+North-star metric: **`loopCompletionRate`** = `settledViaFullLoop / dispatched`.
+
+| Slice | `loopCompletionRate` | `settledViaFullLoop` | `manualStepsPerCycle` | ≥60% claim |
+|-------|---------------------:|---------------------:|----------------------:|------------|
+| Live baseline | 0 | 0 / 19 | 9 | — |
+| Live post (`ops-loop-live-proof`) | **4.5%** | **1 / 22** | **0** | **No** — legacy dispatches predate `play_gate_decisions`; fixture path still proves ≥60% |
+| Fixture post | ≥60% | 1 / 1 | 0 | **Yes** |
