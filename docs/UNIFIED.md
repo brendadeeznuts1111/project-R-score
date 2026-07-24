@@ -12,7 +12,7 @@ Not wire/brands — see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
 |-----|--------------------------|-----------|-------|
 | `linker` / `globalStore` | isolated / true | strip if identical | machine owns; [global store](https://bun.com/docs/pm/global-store) requires [isolated linker](https://bun.com/docs/pm/isolated-installs) |
 | `[install.cache].dir` | **absolute** | never `~` | avoids `./~` ([bun#6237](https://github.com/oven-sh/bun/issues/6237)); store lives under `<cache>/links/` |
-| `frozenLockfile` | true | root `false` for local | CI locked by default |
+| `frozenLockfile` | true | root **`true`** (hardened) | intentional dep edits: temporarily set `false`, then restore; nested workspaces may override |
 | `minimumReleaseAge` | 259200 | prefer inherit | supply-chain floor |
 | scopes / `[test]` / `[console]` / `[run].noOrphans` | — | project | keep local; orphans → [bunfig run.noOrphans](https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind) |
 
@@ -54,7 +54,7 @@ Docs: [platform-specific dependencies](https://bun.com/docs/pm/cli/install#platf
 
 - **Scope→registry mapping: bunfig `[install.scopes]` owns it for Bun** (Bun itself recommends migrating `.npmrc` → bunfig — [pm/npmrc](https://bun.com/docs/pm/npmrc)). `.npmrc` registry/auth lines remain only for non-Bun tooling (vite/npm clients). Both scope spellings exist (`@factorywager` ×42, `@factory-wager` ×1). **Registry URL variants:** root `bunfig.toml` scopes use `http://localhost:3000/` for local `serve-public`; production/apex is `https://registry.factory-wager.com/` — do not assume one URL in docs or scripts without naming which lane.
 - **`bunfig.toml` does not inherit upward.** A nested workspace root (e.g. `projects/active/factorywager/registry/`) reads only its own `./bunfig.toml` + `~/.bunfig.toml` — it needs its own `frozenLockfile = false` dev override.
-- **`frozenLockfile` has no runtime override** (no `BUN_CONFIG_*` key, no negated flag). Intentional dep change at **root**: keep `frozenLockfile = false` in repo `bunfig.toml`, run `bun install`, commit lockfile — **do not** set root to `true` (that is machine/CI). Nested workspace roots follow the same dev override pattern. Details: `kimi-toolchain/docs/references/bun-install-config.md`.
+- **`frozenLockfile` has no runtime override** (no `BUN_CONFIG_*` key, no negated flag). Root `bunfig.toml` is **`frozenLockfile = true`** (hardened / CI-parity). Intentional dep change: temporarily set root to `false`, run `bun add`/`bun update`, commit lockfile, restore `true`. Nested workspace roots may keep a local `false` override — bunfig does not inherit upward. Details: `kimi-toolchain/docs/references/bun-install-config.md`.
 - **Known drift (pending removal):** root `.npmrc` `cache=${HOME}/.npm` splits the global virtual store into a shadow store at `~/.npm/links`; machine SSOT is `~/.bun/install/cache`. Single cache root is the target state.
 - **Forbidden in normal shell/IDE env** (see Machine layer): `BUN_INSTALL_CACHE_DIR`, `BUN_INSTALL_GLOBAL_STORE` — use `~/.bunfig.toml` instead. Exception: ephemeral CI via `bun scripts/with-bun-cache-env.ts ci` only.
 
@@ -69,7 +69,7 @@ Docs: [platform-specific dependencies](https://bun.com/docs/pm/cli/install#platf
 | `cache.dir = "~/.bun/..."` in project bunfig | unexpanded `~` → literal `./~` dirs ([bun#6237](https://github.com/oven-sh/bun/issues/6237)) | absolute path on machine only |
 | Cross `--cpu`/`--os` install that **mutates** `bun.lock` | lockfile should stay platform-agnostic | `--dry-run` first; see `lockfile-stable` aspect |
 | Trusting `.npmrc` for Bun scope URLs | Bun reads `[install.scopes]` in bunfig, not `.npmrc` | bunfig SSOT; `.npmrc` for npm/vite clients only |
-| `frozenLockfile = true` in **root** repo bunfig | blocks local dep edits; duplicates CI machine policy | root stays `false`; machine/CI stays `true` |
+| Leaving root `frozenLockfile = false` long-term | drift from hardened CI-parity policy | root stays `true`; flip only for intentional dep edits |
 | Spawning bare `'bun'` in verify scripts | PATH may resolve a different binary than the runtime interpreter | `lib/verification/resolve-bun-binary.ts` — `process.execPath` first, `Bun.which('bun')` fallback |
 | `BUN_CONFIG_REGISTRY` in project `.env` for default registry | env overrides bunfig unpredictably in dev/CI | use `[install].registry` in bunfig, scoped `.npmrc`, or `bun publish --registry` ([docs](https://bun.com/docs/pm/cli/publish#registry-configuration)); tool overlay `REGISTRY_URL` is npm API only — not Pages routing probes |
 
@@ -77,7 +77,7 @@ Docs: [platform-specific dependencies](https://bun.com/docs/pm/cli/install#platf
 
 | Variant | Where | Notes |
 |---------|-------|-------|
-| `frozenLockfile = false` | root + most nested workspace roots | dev override; machine `true` for CI |
+| `frozenLockfile = false` | nested workspace roots (dev) | root is `true`; nested may override |
 | `linker = "hoisted"` | e.g. `projects/experimental/keyboard-shortcuts-lite/bunfig.toml` | legacy/tooling compatibility; audit before expanding |
 | `frozenLockfile = true` | e.g. `projects/experimental/codepoint/template/...` | template/CI-simulation nested roots |
 | Registry `localhost:3000` vs apex | root bunfig vs production deploy | same token env; different host |
@@ -108,11 +108,12 @@ Symptom: literal `./~` under a repo. Cause: unexpanded `~` in cache dir. Fix: ab
 ```toml
 [install]
 exact = true
-frozenLockfile = false
+frozenLockfile = true
 # linker / globalStore / cache.dir / minimumReleaseAge: machine ~/.bunfig.toml only
 # Scope mapping SSOT here [install.scopes] — local dev: http://localhost:3000/
 # Production apex: https://registry.factory-wager.com/ · token "$FACTORY_WAGER_TOKEN"
-# Nested workspace roots need their own frozenLockfile override — bunfig does not inherit upward.
+# Nested workspace roots may set frozenLockfile = false — bunfig does not inherit upward.
+# Intentional root dep edit: temporarily false → bun add/update → restore true.
 ```
 
 ## Tooling

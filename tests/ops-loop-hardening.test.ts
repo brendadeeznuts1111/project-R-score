@@ -7,6 +7,7 @@ import { MemoryChannelStore, R2ChannelStore } from '../lib/channels/channels.ts'
 import {
   enqueueSettlementChannelEvent,
   processChannelOutbox,
+  requeueFailedChannelOutbox,
 } from '../lib/channels/outbox.ts';
 import type { R2PutBucket } from '../lib/pages/r2-types.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
@@ -84,6 +85,63 @@ describe('settlePlay stake_actual', () => {
       .get({ $nid: nodeId }) as { in_play: number; available: number };
     expect(pos.in_play).toBe(0);
     expect(pos.available).toBeGreaterThan(5000);
+    db.close();
+  });
+
+  test('releases liquidity for every distribution node on settle', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const playId = randomUUIDv7();
+    const nodeA = randomUUIDv7();
+    const nodeB = randomUUIDv7();
+
+    db.run(
+      `INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at, result)
+       VALUES ($id, $eid, 'NBA', 'totals', 'Game', 'over', -110, 500, 0.8, 'hash', $now, 'pending')`,
+      { $id: playId, $eid: randomUUIDv7(), $now: now }
+    );
+    for (const [nodeId, stake] of [
+      [nodeA, 200],
+      [nodeB, 300],
+    ] as const) {
+      db.run(
+        `INSERT INTO play_distribution (play_id, node_id, channel, received_at, stake_actual)
+         VALUES ($pid, $nid, 'telegram', $now, $stake)`,
+        { $pid: playId, $nid: nodeId, $now: now, $stake: stake }
+      );
+      ensurePosition(db, nodeId, '_all', 5000);
+      db.run(
+        `UPDATE positions SET available = available - $stake, in_play = in_play + $stake
+         WHERE node_id = $nid AND book = '_all'`,
+        { $nid: nodeId, $stake: stake }
+      );
+    }
+    db.run(
+      `INSERT INTO operations (id, total_liquidity, total_exposure, version, updated_at)
+       VALUES ('main', 10000, 500, 0, $now)
+       ON CONFLICT(id) DO UPDATE SET total_exposure = 500`,
+      { $now: now }
+    );
+
+    const result = settlePlay(db, {
+      playId,
+      leafNodeId: nodeA,
+      result: 'win',
+      pnl: 100,
+      skipExperimentOutcomes: true,
+    });
+    expect(result.nodesSettled).toBe(2);
+
+    for (const nodeId of [nodeA, nodeB]) {
+      const pos = db
+        .query(`SELECT in_play FROM positions WHERE node_id = $nid AND book = '_all'`)
+        .get({ $nid: nodeId }) as { in_play: number };
+      expect(pos.in_play).toBe(0);
+    }
+    const ops = db
+      .query(`SELECT total_exposure FROM operations WHERE id = 'main'`)
+      .get() as { total_exposure: number } | null;
+    expect(ops?.total_exposure).toBe(0);
     db.close();
   });
 
@@ -198,6 +256,30 @@ describe('processChannelOutbox R2 projector', () => {
 
     const events = await r2Store.readSince('plays', 0);
     expect(events.length).toBe(1);
+    db.close();
+  });
+
+  test('requeueFailedChannelOutbox flips failed rows to pending', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    enqueueSettlementChannelEvent(db, {
+      playId: 'play-fail',
+      leafNodeId: asTreeNodeId('node-fail'),
+      result: 'win',
+      pnl: 1,
+    });
+    db.run(
+      `UPDATE ops_channel_outbox SET status = 'failed', retries = 1, last_error = 'demo'
+       WHERE event_type = 'play.settled'`
+    );
+    expect(requeueFailedChannelOutbox(db)).toBe(1);
+    const row = db
+      .query(`SELECT status, last_error FROM ops_channel_outbox WHERE event_type = 'play.settled'`)
+      .get() as { status: string; last_error: string | null };
+    expect(row.status).toBe('pending');
+    expect(row.last_error).toBeNull();
+
+    const drained = await processChannelOutbox(db, { deliver: false });
+    expect(drained.sent).toBe(1);
     db.close();
   });
 });

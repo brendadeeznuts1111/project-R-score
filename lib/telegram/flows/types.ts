@@ -87,10 +87,13 @@ export type TelegramInlineKeyboard = {
 
 export type ChatChannelMeta = {
   chatId: string; // brand-ok
+  treeNodeIds: string[]; // brand-ok — TreeNodeId wires allowed in this chat
+  callSigns: string[];
+  locale: FlowLocale;
   topics: Partial<Record<'identity' | 'plays' | 'alerts' | 'toc' | 'ops', number>>;
-  locale?: FlowLocale;
-  linkedCallSigns?: string[];
   imageBundleId?: string; // brand-ok
+  lastTemplateIds?: Partial<Record<import('../templates/types.ts').TemplateId, number>>;
+  linkedAt?: string;
 };
 
 export type FlowHandler = (input: FlowInput, ctx: FlowContext) => FlowOutput;

@@ -6,15 +6,19 @@ Input → handler → `FlowOutput` → `deliverFlowOutput` (send or edit + inlin
 
 ```text
 lib/telegram/flows/
-  types.ts           FlowInput / FlowOutput / KeyboardSpec
+  types.ts           FlowInput / FlowOutput / KeyboardSpec / ChatChannelMeta
   i18n.ts            en / es label keys
   keyboards.ts       translateKeyboard · playAckKeyboard · f:* callbacks
   balances-snapshot.ts  read-only Soft / hard (TOC-aligned)
+  channel-meta.ts    ChatChannelMeta store + telegram-link-chat backing
   registry.ts        runFlow · commandToFlowId
   deliver.ts         sendMessage / editMessageText
   callbacks.ts       play:* + f:* router
   media.ts           ops_chat_media per chat_id
-  cards/             menu · status · balances · accounts · plays · tree · welcome
+  cards/             thin callers of lib/telegram/templates (renderForNode)
+
+lib/telegram/templates/
+  types.ts · registry.ts · context.ts · render.ts · escape.ts
 ```
 
 ## Callback contract
@@ -41,3 +45,5 @@ lib/telegram/flows/
 ## Related
 
 - [`docs/harness/tenants/telegram-factory.md`](../../../docs/harness/tenants/telegram-factory.md)
+- [`docs/harness/tenants/partner-onboarding-package.md`](../../../docs/harness/tenants/partner-onboarding-package.md)
+- [`../templates/`](../templates/) — `renderForNode` · TemplateId pack

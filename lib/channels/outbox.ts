@@ -25,8 +25,10 @@ import type {
 } from './ops-channel-event.ts';
 import { parseProjectors } from './ops-channel-event.ts';
 import { sendTelegramBotMessage } from '../telegram/telegram-api.ts';
-import { playAckKeyboard } from '../telegram/flows/keyboards.ts';
+import { playAckKeyboard, translateKeyboard } from '../telegram/flows/keyboards.ts';
 import { loadTelegramEnv, threadIdForOutboxTopic } from '../telegram/telegram-config.ts';
+import { renderForNode } from '../telegram/templates/render.ts';
+import type { TemplateId } from '../telegram/templates/types.ts';
 
 /** Inline keyboard for play ack callbacks (placed / skip). */
 export function playAckReplyMarkup(
@@ -175,8 +177,11 @@ async function projectTelegram(
 
   if (!chatId) return { ok: false, error: 'no chat target' };
 
+  const rawParse = payload.parseMode ?? payload.parse_mode;
   const parseMode =
-    payload.parseMode === 'Markdown' || payload.parse_mode === 'Markdown' ? 'Markdown' : undefined;
+    rawParse === 'HTML' || rawParse === 'Markdown'
+      ? (rawParse as 'HTML' | 'Markdown')
+      : undefined;
 
   const result = await sendTelegramBotMessage(token, {
     chatId,
@@ -298,24 +303,34 @@ export async function processChannelOutbox(
             results.push(await projectR2(row, payload, r2Store));
           }
         } else if (deliver && projector === 'telegram') {
-          const tg = await projectTelegram(row, payload, token);
-          results.push(tg.ok);
-          if (!tg.ok && tg.error) telegramErr = tg.error;
-          if (
-            tg.ok &&
-            tg.messageId != null &&
-            typeof payload.playId === 'string' &&
-            typeof payload.nodeId === 'string'
-          ) {
-            db.run(
-              `UPDATE play_distribution SET telegram_message_id = $mid
-               WHERE play_id = $pid AND node_id = $nid`,
-              { $mid: tg.messageId, $pid: payload.playId, $nid: payload.nodeId }
-            );
+          if (!token) {
+            // Skip optional telegram when token absent — do not poison R2-ok rows.
+            results.push(true);
+          } else {
+            const tg = await projectTelegram(row, payload, token);
+            results.push(tg.ok);
+            if (!tg.ok && tg.error) telegramErr = tg.error;
+            if (
+              tg.ok &&
+              tg.messageId != null &&
+              typeof payload.playId === 'string' &&
+              typeof payload.nodeId === 'string'
+            ) {
+              db.run(
+                `UPDATE play_distribution SET telegram_message_id = $mid
+                 WHERE play_id = $pid AND node_id = $nid`,
+                { $mid: tg.messageId, $pid: payload.playId, $nid: payload.nodeId }
+              );
+            }
           }
-        } else if (deliver && projector === 'slack')
-          results.push(await projectSlack(row, payload, opts.slackWebhookUrl));
-        else if (!deliver && projector !== 'r2') results.push(true);
+        } else if (deliver && projector === 'slack') {
+          const webhook = opts.slackWebhookUrl?.trim() || Bun.env.SLACK_WEBHOOK_URL?.trim();
+          if (!webhook) {
+            results.push(true);
+          } else {
+            results.push(await projectSlack(row, payload, webhook));
+          }
+        } else if (!deliver && projector !== 'r2') results.push(true);
       }
       const ok = results.length === 0 || results.every(Boolean);
       if (ok) {
@@ -430,7 +445,7 @@ export function enqueueIdentityChannelEvent(
   });
 }
 
-/** Helper: welcome DM when Telegram is linked (R2 + Telegram). */
+/** Helper: welcome DM when Telegram is linked (R2 + Telegram) — HTML template pack. */
 export function enqueuePartnerWelcomeEvent(
   db: Database,
   input: {
@@ -440,19 +455,24 @@ export function enqueuePartnerWelcomeEvent(
     lifecycleStatus: string;
     telegramId?: string; // brand-ok
     nodeName?: string;
+    templateId?: TemplateId;
   }
 ): OpsChannelEvent | null {
   if (!input.telegramId || input.telegramId.startsWith('pending-')) return null;
 
-  const text = [
-    `👋 Welcome${input.nodeName ? `, ${input.nodeName}` : ''}!`,
-    '',
-    'Your partner profile is active.',
-    `Template: *${input.partnerTemplate as string}*`,
-    '',
-    '/status — accounts & P&L',
-    '/plays — pending plays with ack buttons',
-  ].join('\n');
+  const templateId = input.templateId ?? 'partner.welcome.v1';
+  const rendered = renderForNode(db, templateId, input.treeNodeId);
+  const text =
+    rendered?.text ??
+    [
+      `<b>Welcome${input.nodeName ? ` · ${input.nodeName}` : ''}</b>`,
+      `Template: <code>${input.partnerTemplate as string}</code>`,
+      '',
+      '<i>Profile active · use Status / Balances keyboards.</i>',
+    ].join('\n');
+  const replyMarkup = rendered?.keyboard
+    ? translateKeyboard(rendered.keyboard, 'en')
+    : undefined;
 
   return enqueueOpsChannelEvent(db, {
     topic: 'identity',
@@ -464,8 +484,45 @@ export function enqueuePartnerWelcomeEvent(
       partnerTemplate: input.partnerTemplate as string,
       lifecycleStatus: input.lifecycleStatus,
       telegramId: input.telegramId,
+      templateId,
       text,
-      parseMode: 'Markdown',
+      parseMode: 'HTML',
+      replyMarkup,
+    },
+    projectors: ['r2', 'telegram'],
+  });
+}
+
+/** Helper: onboard.complete.v1 after package bind (R2 + Telegram when linked). */
+export function enqueueOnboardCompleteEvent(
+  db: Database,
+  input: {
+    treeNodeId: TreeNodeId;
+    profileKey: string;
+    partnerTemplate: PartnerTemplateId;
+    telegramId?: string; // brand-ok
+  }
+): OpsChannelEvent | null {
+  if (!input.telegramId || input.telegramId.startsWith('pending-')) return null;
+
+  const rendered = renderForNode(db, 'onboard.complete.v1', input.treeNodeId);
+  if (!rendered) return null;
+
+  return enqueueOpsChannelEvent(db, {
+    topic: 'identity',
+    eventType: 'partner.onboard.complete',
+    idempotencyKey: `onboard.complete:${input.treeNodeId as string}`,
+    payload: {
+      treeNodeId: input.treeNodeId as string,
+      profileKey: input.profileKey,
+      partnerTemplate: input.partnerTemplate as string,
+      telegramId: input.telegramId,
+      templateId: 'onboard.complete.v1',
+      text: rendered.text,
+      parseMode: 'HTML',
+      replyMarkup: rendered.keyboard
+        ? translateKeyboard(rendered.keyboard, 'en')
+        : undefined,
     },
     projectors: ['r2', 'telegram'],
   });

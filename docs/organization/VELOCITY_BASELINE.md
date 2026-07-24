@@ -33,11 +33,11 @@ Replaced by [`scripts/affected-workspaces.ts`](../../scripts/affected-workspaces
 
 | File | Lines |
 |------|------:|
-| AGENTS.md | 146 |
-| docs/AGENTS.md | 149 |
-| .custom-instructions.md | 268 |
-| docs/WIRE_BOUNDARY.md | 155 |
-| **Total** | **718** |
+| AGENTS.md | 173 |
+| docs/AGENTS.md | 22 (thin pointer → root AGENTS) |
+| .custom-instructions.md | 271 |
+| docs/WIRE_BOUNDARY.md | 56 |
+| **Total** | **522** |
 
 Mitigation: JIT index at [`docs/harness/README.md`](../harness/README.md).
 
@@ -98,7 +98,8 @@ North-star metric: **`loopCompletionRate`** = `settledViaFullLoop / dispatched`.
 
 | Slice | `loopCompletionRate` | `settledViaFullLoop` | `manualStepsPerCycle` | ≥60% claim |
 |-------|---------------------:|---------------------:|----------------------:|------------|
-| Live baseline | 0 | 0 / 19 | 9 | — |
-| Live post (after `ops-loop-live-proof` + `ops:loop:backfill`) | **≥65%** (row-aligned) | **fullLoopRows / dispatched** | **0** | **Yes** when gate + settle outbox cover all distribution rows |
-| Live post (legacy distinct-play formula) | **24%** | 7 distinct / 29 rows | **0** | Superseded by row-aligned metric |
+| Live baseline (`reports/ops-loop-baseline.json`) | **24%** | **6 / 25** | **64** | — |
+| Live post (row-aligned + backfill + outbox drain) | **100%** | **29 / 29** | **0** | **Yes** |
 | Fixture post | ≥60% | 1 / 1 | 0 | **Yes** |
+
+Live bake also surfaces `projectorBackend: r2` / `projectorDurable: true` on the ops-summary loop slice. Manual steps can rise again when TOC `r2` projectors fail (e.g. missing bucket) — attribution complete ≠ every outbox topic healthy.

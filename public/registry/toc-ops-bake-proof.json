@@ -1,23 +1,23 @@
 {
   "schema": "factorywager.toc-ops.bake-proof.v1",
   "ok": true,
-  "generatedAt": "2026-07-24T07:41:12.476Z",
+  "generatedAt": "2026-07-24T07:59:50.552Z",
   "fixturePath": "/registry/toc-ops.json",
   "proofPath": "/registry/toc-ops-bake-proof.json",
   "plane": "demo-readonly",
   "enforcementPlane": "operate-lite",
   "partners": 3,
   "warmed": 4,
-  "gatesPassed": 89,
+  "gatesPassed": 93,
   "gatesFailed": 10,
   "gatesCritical": 6,
   "focus": "rope",
   "throughput": {
-    "T": 3976,
+    "T": 5116,
     "I": 47810,
-    "OE": 240
+    "OE": 1600
   },
-  "avgRP": 23.53183140860398,
+  "avgRP": 22.782287252665,
   "topRankedProcess": "LIMIT",
   "identityLinked": true,
   "checks": [
@@ -50,7 +50,7 @@
     {
       "id": "return-efficiency-present",
       "ok": true,
-      "detail": "avgRP=23.53183140860398"
+      "detail": "avgRP=22.782287252665"
     }
   ]
 }

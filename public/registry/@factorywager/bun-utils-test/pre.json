@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "bunVersion": "1.3.6",
-  "bunRevision": "d8bebc386121d5ebfe04397963d9053c7ad2ae12",
-  "timestamp": "2026-07-23T18:16:47.630Z",
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
+  "timestamp": "2026-07-24T07:51:44.682Z",
   "testCases": [
     {
       "utility": "stringWidth",
@@ -26,32 +26,172 @@
       "note": "CJK fullwidth (Bun baseline)"
     },
     {
-      "utility": "deepEquals",
+      "utility": "deepEquals(strict)",
       "input": "{a:1} == {a:1}",
       "expected": true,
       "actual": true,
-      "note": "Same plain object"
+      "note": "Same plain object · Bun.deepEquals(a,b,true)"
     },
     {
-      "utility": "deepEquals",
+      "utility": "deepEquals(strict)",
       "input": "{a:1} == {a:2}",
       "expected": false,
       "actual": false,
       "note": "Different value"
     },
     {
-      "utility": "deepEquals",
+      "utility": "deepEquals(strict)",
       "input": "[1,2] == [1,2]",
       "expected": true,
       "actual": true,
       "note": "Same array"
     },
     {
-      "utility": "deepEquals",
+      "utility": "deepEquals(strict)",
       "input": "[1,2] == [1,3]",
       "expected": false,
       "actual": false,
       "note": "Different array"
+    },
+    {
+      "utility": "deepEquals(strict)",
+      "input": "{entries:[1,2]} vs +extra:undefined",
+      "expected": false,
+      "actual": false,
+      "note": "undefined key ≠ missing (docs shape we want)"
+    },
+    {
+      "utility": "deepEquals(loose)",
+      "input": "{entries:[1,2]} vs +extra:undefined",
+      "expected": true,
+      "actual": true,
+      "note": "Bun.deepEquals(a,b) loose for contrast"
+    },
+    {
+      "utility": "deepEquals(strict)",
+      "input": "{entries:[1,2]} vs +extra:undefined",
+      "expected": false,
+      "actual": false,
+      "note": "docs matrix · extra-undefined-key · strict"
+    },
+    {
+      "utility": "deepEquals(loose)",
+      "input": "{entries:[1,2]} vs +extra:undefined",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · extra-undefined-key · loose"
+    },
+    {
+      "utility": "deepEquals(diverges)",
+      "input": "{entries:[1,2]} vs +extra:undefined",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · extra-undefined-key · strict≠loose"
+    },
+    {
+      "utility": "deepEquals(strict)",
+      "input": "{} vs {a:undefined}",
+      "expected": false,
+      "actual": false,
+      "note": "docs matrix · undefined-value · strict"
+    },
+    {
+      "utility": "deepEquals(loose)",
+      "input": "{} vs {a:undefined}",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · undefined-value · loose"
+    },
+    {
+      "utility": "deepEquals(diverges)",
+      "input": "{} vs {a:undefined}",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · undefined-value · strict≠loose"
+    },
+    {
+      "utility": "deepEquals(strict)",
+      "input": "[\"asdf\"] vs [\"asdf\", undefined]",
+      "expected": false,
+      "actual": false,
+      "note": "docs matrix · array-trailing-undefined · strict"
+    },
+    {
+      "utility": "deepEquals(loose)",
+      "input": "[\"asdf\"] vs [\"asdf\", undefined]",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · array-trailing-undefined · loose"
+    },
+    {
+      "utility": "deepEquals(diverges)",
+      "input": "[\"asdf\"] vs [\"asdf\", undefined]",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · array-trailing-undefined · strict≠loose"
+    },
+    {
+      "utility": "deepEquals(strict)",
+      "input": "[,1] vs [undefined,1]",
+      "expected": false,
+      "actual": false,
+      "note": "docs matrix · sparse-array · strict"
+    },
+    {
+      "utility": "deepEquals(loose)",
+      "input": "[,1] vs [undefined,1]",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · sparse-array · loose"
+    },
+    {
+      "utility": "deepEquals(diverges)",
+      "input": "[,1] vs [undefined,1]",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · sparse-array · strict≠loose"
+    },
+    {
+      "utility": "deepEquals(strict)",
+      "input": "new Foo() vs {a:1}",
+      "expected": false,
+      "actual": false,
+      "note": "docs matrix · class-vs-plain · strict"
+    },
+    {
+      "utility": "deepEquals(loose)",
+      "input": "new Foo() vs {a:1}",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · class-vs-plain · loose"
+    },
+    {
+      "utility": "deepEquals(diverges)",
+      "input": "new Foo() vs {a:1}",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · class-vs-plain · strict≠loose"
+    },
+    {
+      "utility": "deepEquals(strict)",
+      "input": "{a:{b:undefined}} vs {a:{}}",
+      "expected": false,
+      "actual": false,
+      "note": "docs matrix · nested-undefined-key · strict"
+    },
+    {
+      "utility": "deepEquals(loose)",
+      "input": "{a:{b:undefined}} vs {a:{}}",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · nested-undefined-key · loose"
+    },
+    {
+      "utility": "deepEquals(diverges)",
+      "input": "{a:{b:undefined}} vs {a:{}}",
+      "expected": true,
+      "actual": true,
+      "note": "docs matrix · nested-undefined-key · strict≠loose"
     },
     {
       "utility": "inspect (depth:0)",
@@ -79,9 +219,9 @@
     }
   ],
   "summary": {
-    "total": 10,
-    "passed": 10,
+    "total": 30,
+    "passed": 30,
     "failed": 0
   },
-  "proofHash": "acdadb6aea2004d62ccc1ab611db178293e29fcb3c258eaf7bad908d3c53f079"
+  "proofHash": "f1b56a96a597945a899c8fd719c90bf71624a6a09f7ffd77173ae0a1d763a15e"
 }

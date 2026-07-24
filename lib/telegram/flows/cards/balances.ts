@@ -1,9 +1,9 @@
 /**
- * Balances flow card — read-only TOC Soft / hard snapshot.
+ * Balances flow card — thin caller of balances.v1 (read-only Soft / hard).
  */
-import { fmt, getBalancesSnapshot } from '../balances-snapshot.ts';
+import { asTreeNodeId } from '../../../types/branded/operations.ts';
+import { renderForNode, resolveTemplateIdForCard } from '../../templates/render.ts';
 import { t } from '../i18n.ts';
-import { balancesKeyboard } from '../keyboards.ts';
 import type { FlowContext, FlowInput, FlowOutput } from '../types.ts';
 
 export function balancesFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
@@ -15,25 +15,20 @@ export function balancesFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
     };
   }
 
-  const snap = getBalancesSnapshot(ctx.db, {
-    treeNodeId: input.treeNodeId,
-    callSign: input.callSign ?? ctx.node.call_sign,
-  });
+  const treeNodeId = input.treeNodeId ?? asTreeNodeId(ctx.node.id);
+  const templateId = resolveTemplateIdForCard(ctx.db, treeNodeId, 'balances');
+  const rendered = renderForNode(ctx.db, templateId, treeNodeId, { locale });
+  if (!rendered) {
+    return {
+      text: `<b>${t('card.not_registered', locale)}</b>`,
+      parseMode: 'HTML',
+    };
+  }
 
   return {
-    text: [
-      `<b>${t('card.balances.title', locale)} · ${snap.label}</b>`,
-      `Soft Partner: ${fmt(snap.soft.partner)}`,
-      `Soft Expert:  ${fmt(snap.soft.expert)}`,
-      `Soft House:   ${fmt(snap.soft.house)}`,
-      `Principal out: ${fmt(snap.principalOut)}`,
-      `Hard (seat):  ${fmt(snap.hard)}`,
-      `Pending plays: ${snap.pending}`,
-      '',
-      '<i>Read-only · no Soft post from bot</i>',
-    ].join('\n'),
+    text: rendered.text,
     parseMode: 'HTML',
-    keyboard: balancesKeyboard(),
+    keyboard: rendered.keyboard,
     editMessageId: input.editMessageId,
   };
 }

@@ -401,7 +401,8 @@ export async function sendTelegramMessage(
   lines: string[],
   token?: string
 ): Promise<boolean> {
-  const botToken = token ?? Bun.env.TELEGRAM_BOT_TOKEN;
+  const botToken =
+    token ?? Bun.env.TELEGRAM_BOT_FACTORY?.trim() ?? Bun.env.TELEGRAM_BOT_TOKEN?.trim();
   if (!botToken || chatId.startsWith('pending-')) return false;
   const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
     method: 'POST',

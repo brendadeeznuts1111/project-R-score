@@ -13,6 +13,7 @@ import {
   summarizePresence,
 } from './presence.ts';
 import { attachProfiles } from './profiles.ts';
+import { deepenSeedNarrative } from './seed-deepen.ts';
 import type { TocExperiment, TocExpert, TocOpsSnapshot, TocPartner, TocPlay } from './types.ts';
 import { attachVenuesToPartners, summarizeVenues, TOC_VENUE_CATALOG } from './venues.ts';
 
@@ -1471,13 +1472,15 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
   const attached = attachDemoPresence(withVenues);
   const exps = experiments();
   const profiled = attachProfiles(attached.partners, experts());
-  const partners = profiled.partners;
-  const expertList = profiled.experts;
-  const profiles = profiled.profiles;
+  const deep = deepenSeedNarrative(profiled.partners, profiled.experts);
+  const partners = deep.partners;
+  const expertList = deep.experts;
+  const profiles = deep.profiles;
   const venues = summarizeVenues(partners);
   const allPlays = partners.flatMap(p => p.recentPlays);
   const baseSummary = summarize(partners, exps, allPlays);
-  const presence = attached.presence;
+  // Recompute after deepenSeedNarrative appends plays/placement
+  const presence = summarizePresence(partners, attached.housePresence);
   const summary: TocOpsSnapshot['summary'] = {
     ...baseSummary,
     presencePartners: presence.partnersWithGeo,

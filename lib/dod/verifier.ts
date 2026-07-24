@@ -508,8 +508,10 @@ export class DODVerifier {
 
   // ── Notify Ops ───────────────────────────────────────────────────
   private async notifyOps(sub: DODSubmission, ver: DODVerification) {
-    const token = Bun.env.TELEGRAM_BOT_TOKEN;
-    const chatId = Bun.env.TELEGRAM_OPS_CHAT_ID;
+    const { loadTelegramEnv } = await import('../telegram/telegram-config.ts');
+    const tg = loadTelegramEnv();
+    const token = tg.effectiveToken;
+    const chatId = tg.opsChatId;
     if (!token || !chatId) return;
     await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',

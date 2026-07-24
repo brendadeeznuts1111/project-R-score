@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T07:41:12.478Z",
+  "generated": "2026-07-24T07:59:50.554Z",
   "liquidity": {
     "total": 85710
   },
@@ -228,11 +228,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "03dd1581fcacfefd539c55e438b68426c929ba1bcdd98cdd64369cb39fca5674",
+    "proofHash": "b865be63a09c922e49c438c2288c75bf8d2bedaca034939cbade608e9cb2362f",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T07:41:12.479Z"
+    "timestamp": "2026-07-24T07:59:50.555Z"
   },
   "registryClient": {
     "available": true,
@@ -278,7 +278,7 @@
   },
   "cloudflarePages": {
     "available": true,
-    "ok": true,
+    "ok": false,
     "steps": [
       {
         "id": "well-known-mcp-parity",
@@ -292,8 +292,8 @@
       },
       {
         "id": "functions-import-graph",
-        "ok": true,
-        "detail": "allowlist ok"
+        "ok": false,
+        "detail": "exit 1"
       },
       {
         "id": "functions-edge-safety",
@@ -303,18 +303,18 @@
       {
         "id": "proof-taxonomy-audit",
         "ok": true,
-        "detail": "13 contracts · 20 consistency"
+        "detail": "13 contracts · 20 consistency · preflight self-contract deferred"
       }
     ],
-    "timestamp": "2026-07-24T07:41:12.444Z",
+    "timestamp": "2026-07-24T07:59:50.523Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
   "proofTaxonomy": {
     "available": true,
-    "ok": true,
+    "ok": false,
     "contracts": 13,
-    "contractsOk": 13,
+    "contractsOk": 12,
     "consistencyOk": 20,
     "consistencyTotal": 20,
     "audits": [
@@ -405,7 +405,7 @@
       {
         "path": "public/registry/cloudflare-pages-preflight.json",
         "reportPath": "/registry/cloudflare-pages-preflight.json",
-        "ok": true,
+        "ok": false,
         "primarySubsystem": "other",
         "rows": 5
       }
@@ -492,8 +492,8 @@
         "ok": true
       }
     ],
-    "proofHash": "97437c5699f3a44e9f9bbe64ff90448d235dcd12f2773d8889f06d67d4f7a91f",
-    "timestamp": "2026-07-24T07:41:12.099Z",
+    "proofHash": "01c1366c637ec2f188ea742c94862e0e34026dfd94edc0ca3b68752b96acb554",
+    "timestamp": "2026-07-24T07:59:50.084Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -504,7 +504,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-24T07:41:12.095Z",
+    "updatedAt": "2026-07-24T07:59:50.080Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -542,27 +542,59 @@
   "routing": {
     "available": true,
     "baseUrl": "https://score.factory-wager.com",
-    "passed": 16,
-    "total": 16,
+    "passed": 18,
+    "total": 18,
     "failed": 0,
-    "httpOk": 14,
+    "httpOk": 16,
     "criticalFailed": 0,
     "errorRate": 0,
-    "meanMs": 126.51,
-    "p50Ms": 90.94,
-    "p95Ms": 364.42,
-    "maxMs": 364.42,
-    "proofHash": "75d9b2c07b050d001316547e5a0cb35ac708935a2d5fc52a49a3d86d3946f928",
-    "timestamp": "2026-07-24T06:20:14.023Z",
+    "meanMs": 103.82,
+    "p50Ms": 92.99,
+    "p95Ms": 217.07,
+    "maxMs": 217.07,
+    "proofHash": "d98558e8a967d253ca52717ad5f03908724303b91136425fff3b2c0c0c98ba6d",
+    "timestamp": "2026-07-24T07:59:49.740Z",
     "regressions": 0,
     "criticalFailedPaths": [],
     "routes": [
+      {
+        "path": "/portal/ops/",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 101.15,
+        "contentType": "text/html"
+      },
       {
         "path": "/registry/@factorywager/bun-utils-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 65.39,
+        "timeMs": 92.99,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/portal/dashboard/",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 89.25,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/registry/ops-summary.json",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 42.75,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/operations/summary",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 35.96,
         "contentType": "application/json"
       },
       {
@@ -570,31 +602,31 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 54.11,
+        "timeMs": 34.29,
         "contentType": "application/json"
       },
       {
-        "path": "/portal/ops/",
+        "path": "/portal/dashboard-app.js",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 54.03,
+        "timeMs": 30.63,
+        "contentType": "application/javascript"
+      },
+      {
+        "path": "/api/registry/@factorywager/test-pkg",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 217.07,
         "contentType": "text/html"
       },
       {
-        "path": "/api/operations/summary",
+        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
         "status": 200,
         "pass": true,
-        "critical": true,
-        "timeMs": 37.93,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/registry/ops-summary.json",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 36.96,
+        "critical": false,
+        "timeMs": 201.58,
         "contentType": "application/json"
       },
       {
@@ -602,23 +634,15 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 364.42,
+        "timeMs": 190.12,
         "contentType": "application/json"
       },
       {
-        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+        "path": "/portal",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 308.31,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/registry/@factorywager/test-pkg",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 210.46,
+        "timeMs": 174.09,
         "contentType": "text/html"
       },
       {
@@ -626,15 +650,15 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 185.43,
-        "contentType": "text/html"
+        "timeMs": 141.52,
+        "contentType": "application/json"
       },
       {
-        "path": "/portal",
+        "path": "/monitoring",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 143.95,
+        "timeMs": 139.62,
         "contentType": "text/html"
       },
       {
@@ -642,31 +666,23 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 128.91,
+        "timeMs": 118.84,
         "contentType": "text/html"
-      },
-      {
-        "path": "/monitoring",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 128.74,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/registry/@factorywager/routing-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 101.47,
-        "contentType": "application/json"
       },
       {
         "path": "/api/registry",
         "status": 400,
         "pass": true,
         "critical": false,
-        "timeMs": 90.94,
+        "timeMs": 112.35,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/registry/@factorywager/routing-test/latest.json",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 78.75,
         "contentType": "application/json"
       },
       {
@@ -674,7 +690,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 84.07,
+        "timeMs": 38.64,
         "contentType": "application/json"
       },
       {
@@ -682,10 +698,12 @@
         "status": 400,
         "pass": true,
         "critical": false,
-        "timeMs": 29.1,
+        "timeMs": 29.14,
         "contentType": "application/json"
       }
-    ]
+    ],
+    "cached": false,
+    "stale": false
   },
   "partners": {
     "bound": 14,
@@ -769,16 +787,16 @@
     ]
   },
   "channels": {
-    "pending": 63,
-    "failed": 0,
-    "sent": 187,
-    "oldestPendingAt": "2026-07-24T07:38:43.560Z",
-    "failRate": 0
+    "pending": 0,
+    "failed": 18,
+    "sent": 259,
+    "oldestPendingAt": null,
+    "failRate": 0.06498194945848375
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-24T07:41:12.467Z",
+    "generatedAt": "2026-07-24T07:59:50.543Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -793,8 +811,8 @@
     "throttleOnboarding": false,
     "primedDrums": 4,
     "playableDrums": 2,
-    "playsPending": 2,
-    "playsSettled": 8,
+    "playsPending": 4,
+    "playsSettled": 13,
     "activeExperiments": 2,
     "plane": "demo-readonly",
     "identityLinked": true,
@@ -802,17 +820,17 @@
     "enforcementFocus": "rope",
     "enforcementFailed": 10,
     "enforcementCritical": 6,
-    "throughputT": 3976,
+    "throughputT": 5116,
     "throughputI": 47810,
-    "throughputOE": 240,
+    "throughputOE": 1600,
     "topRankedProcess": "LIMIT",
-    "avgRP": 23.53183140860398,
-    "settlementFloatRatio": 0.4643380046015478,
+    "avgRP": 22.782287252665,
+    "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
-    "presenceIpv6": 24,
+    "presenceIpv6": 31,
     "presenceUniqueZips": 11,
     "presenceUniqueAsns": 3,
-    "presenceDnsResolved": 24,
+    "presenceDnsResolved": 31,
     "presenceAvgDistanceKm": 231,
     "venueKinds": 9,
     "venueExchanges": 2,
@@ -833,14 +851,16 @@
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 187,
-    "outboxFailed": 0,
-    "outboxPending": 63,
-    "oldestPendingAgeSec": 148,
-    "manualStepsPerCycle": 63,
+    "outboxSent": 259,
+    "outboxFailed": 18,
+    "outboxPending": 0,
+    "oldestPendingAgeSec": null,
+    "manualStepsPerCycle": 18,
     "loopCompletionRate": 1,
-    "capitalEfficiencyProxy": 0.0993503248375812,
+    "capitalEfficiencyProxy": 0.1278360819590205,
     "limitEfficiencyProxy": 0.9547793476364905,
-    "processReturnProxy": 0.2178074245939675
+    "processReturnProxy": 0.20188172043010752,
+    "projectorBackend": "r2",
+    "projectorDurable": true
   }
 }

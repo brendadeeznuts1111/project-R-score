@@ -379,6 +379,12 @@ function renderAgents(experts) {
                   ${(pr.wagerPlaces || [])
                     .map(w => `<li class="toc-sub"><code>${esc(w.venueId)}</code> ${esc(w.label)}</li>`)
                     .join('')}
+                  ${(pr.bookPermissions || [])
+                    .map(
+                      b =>
+                        `<li class="toc-sub">${b.allowed ? pill('ok', 'ok') : pill('deny', 'hot')} <code>${esc(b.venueId)}</code> max ${money(b.maxStake)}</li>`
+                    )
+                    .join('')}
                 </ul>
               </section>
               <section>
@@ -392,6 +398,20 @@ function renderAgents(experts) {
                     )
                     .join('')}
                   <li class="toc-sub">limits d ${money(pr.limits?.dailyMax)} / w ${money(pr.limits?.weeklyMax)}</li>
+                  ${(pr.exposureLadder || [])
+                    .map(
+                      x =>
+                        `<li class="toc-sub">band ${esc(x.band)} open ${money(x.openStake)} / cap ${money(x.cap)}</li>`
+                    )
+                    .join('')}
+                  ${
+                    pr.clvDailyBps?.length
+                      ? `<li class="toc-sub">CLV daily ${pr.clvDailyBps
+                          .slice(-7)
+                          .map(b => `${b}bps`)
+                          .join(' · ')}</li>`
+                      : ''
+                  }
                 </ul>
               </section>
             </div>
@@ -445,7 +465,43 @@ function formatPartnerProfile(pr) {
           ? `<li class="toc-sub">7d T ${money(pr.velocity.t7d)} · ${pr.velocity.plays7d} plays · ${pr.velocity.settles7d} settled · avg stake ${money(pr.velocity.avgStake7d)}</li>`
           : ''
       }
+      ${
+        pr.deskScorecard
+          ? `<li class="toc-sub">trust ${Number(pr.deskScorecard.trustScore).toFixed(2)} · SLA ${(pr.deskScorecard.slaOnTimePct * 100).toFixed(0)}% · proof ${(pr.deskScorecard.proofCompletenessPct * 100).toFixed(0)}% · resp ${pr.deskScorecard.avgPartnerResponseMin}m</li>`
+          : ''
+      }
     </ul>
+    ${
+      pr.softDailyT?.length
+        ? `<h4 class="toc-subhead">Soft T / day</h4><ul>${pr.softDailyT
+            .slice(-7)
+            .map(d => `<li class="toc-sub">${esc(d.day)} T ${money(d.t)}${d.oe ? ` · OE ${money(d.oe)}` : ''}</li>`)
+            .join('')}</ul>`
+        : ''
+    }
+    ${
+      pr.railHealth?.length
+        ? `<h4 class="toc-subhead">Rail health</h4><ul>${pr.railHealth
+            .map(
+              r =>
+                `<li class="toc-sub"><code>${esc(r.railId)}</code> ${(r.successRate * 100).toFixed(0)}% · ${r.avgSettleMin}m · vol ${money(r.volume30d)}</li>`
+            )
+            .join('')}</ul>`
+        : ''
+    }
+    ${
+      pr.proofVault?.length
+        ? `<h4 class="toc-subhead">Proof vault</h4><ul>${pr.proofVault
+            .slice(0, 8)
+            .map(
+              p =>
+                `<li class="toc-sub">${pill(p.kind, 'dim')} <code>${esc(p.ref)}</code>${
+                  p.callSign ? ` · ${esc(p.callSign)}` : ''
+                }</li>`
+            )
+            .join('')}</ul>`
+        : ''
+    }
     <h4 class="toc-subhead">Phones / data</h4>
     <ul>${phones || '<li class="toc-sub">None</li>'}</ul>
     <h4 class="toc-subhead">Assets / rails</h4>

@@ -1,51 +1,55 @@
 #!/usr/bin/env bun
 /**
- * Apply standard partner onboarding package to a tree node.
+ * Apply standard partner onboarding package to a tree node / call-sign.
  *
- * Usage: bun tools/onboard-partner-package.ts <tree-node-id> [--expert-id=...] [--parent-id=...]
+ * Usage:
+ *   bun tools/onboard-partner-package.ts ASH-001
+ *   bun tools/onboard-partner-package.ts ASH-001 --dry-run
+ *   bun tools/onboard-partner-package.ts ASH-001 --expert-id=… --parent-id=…
+ *   bun tools/onboard-partner-package.ts ASH-001 --force
  */
 import { openOperationsDb } from '../lib/operations/db.ts';
-import { asTreeNodeId } from '../lib/types/branded/operations.ts';
 import {
-  assignOnboardingDefaults,
-  onboardPartnerProfile,
-} from '../lib/operations/partner-onboarding.ts';
-import { enqueuePartnerWelcomeEvent } from '../lib/channels/outbox.ts';
+  applyPartnerOnboardPackage,
+  buildOnboardChecklist,
+  formatOnboardPlanLines,
+  formatOnboardStatusLine,
+  planPartnerOnboardPackage,
+  resolveOnboardTreeNodeId,
+} from '../lib/operations/partner-onboard-package.ts';
 
-const nodeId = process.argv[2];
-if (!nodeId) {
-  console.error('Usage: bun tools/onboard-partner-package.ts <tree-node-id>');
+const ref = process.argv[2];
+if (!ref || ref.startsWith('--')) {
+  console.error(
+    'Usage: bun tools/onboard-partner-package.ts <call-sign|tree-node-id> [--dry-run] [--force] [--expert-id=…] [--parent-id=…]'
+  );
   process.exit(1);
 }
 
+const dryRun = process.argv.includes('--dry-run');
+const force = process.argv.includes('--force');
 const expertFlag = process.argv.find(a => a.startsWith('--expert-id='));
 const parentFlag = process.argv.find(a => a.startsWith('--parent-id='));
 
 const db = openOperationsDb();
 try {
-  const tid = asTreeNodeId(nodeId);
-  const assigned = assignOnboardingDefaults(db, tid, {
+  const treeNodeId = resolveOnboardTreeNodeId(db, ref);
+  const opts = {
+    source: 'portal' as const,
+    dryRun,
+    force,
     preferredExpertId: expertFlag?.split('=')[1],
     referralNodeId: parentFlag?.split('=')[1],
-    source: 'portal',
-  });
-  const binding = onboardPartnerProfile(db, tid, { source: 'portal' });
+  };
 
-  const node = db
-    .query('SELECT name, telegram_id FROM tree_nodes WHERE id = $id')
-    .get({ $id: nodeId }) as { name: string; telegram_id: string }; // brand-ok
+  const plan = planPartnerOnboardPackage(db, treeNodeId, opts);
+  for (const line of formatOnboardPlanLines(plan)) console.log(line);
 
-  enqueuePartnerWelcomeEvent(db, {
-    treeNodeId: binding.treeNodeId,
-    profileKey: binding.profileKey as string,
-    partnerTemplate: binding.templateId,
-    lifecycleStatus: binding.lifecycleStatus,
-    telegramId:
-      node.telegram_id && !node.telegram_id.startsWith('pending-') ? node.telegram_id : undefined,
-    nodeName: node.name,
-  });
+  const result = applyPartnerOnboardPackage(db, plan, opts);
+  console.log(formatOnboardStatusLine(result));
 
-  console.log(JSON.stringify({ assigned, binding: { templateId: binding.templateId } }, null, 2));
+  const { lines } = buildOnboardChecklist(db, treeNodeId);
+  for (const line of lines) console.log(line);
 } finally {
   db.close();
 }

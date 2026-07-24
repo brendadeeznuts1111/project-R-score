@@ -15,7 +15,12 @@ import { queryPartnersSlice, type PartnersSummarySlice } from './partner-profile
 import { queryOpsChannelHealth } from '../channels/outbox.ts';
 import type { OpsChannelHealthSlice } from '../channels/ops-channel-event.ts';
 import { loadTocOpsSummarySlice, type TocOpsSummarySlice } from '../toc-ops/export-snapshot.ts';
-import { queryLoopMetricsSlice, type OpsLoopMetricsSlice } from './ops-loop-metrics.ts';
+import {
+  queryLoopMetricsSlice,
+  withProjectorBackendSignal,
+  type OpsLoopMetricsSlice,
+} from './ops-loop-metrics.ts';
+import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
 
 export type OpsSummaryExpert = {
   name: string;
@@ -827,6 +832,9 @@ export function buildOpsSummary(
     partners: queryPartnersSlice(db),
     channels: queryOpsChannelHealth(db),
     toc: loadTocOpsSummarySlice(),
-    loop: queryLoopMetricsSlice(db),
+    loop: withProjectorBackendSignal(
+      queryLoopMetricsSlice(db),
+      resolveProductionOutboxOpts({ deliver: false }).projectorBackend
+    ),
   };
 }

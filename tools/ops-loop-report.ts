@@ -8,9 +8,11 @@
  *   bun tools/ops-loop-report.ts --out reports/ops-loop-post.json --fixture
  */
 import { openOperationsDb } from '../lib/operations/db.ts';
+import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
 import {
   loopThroughputLift,
   queryLoopMetricsSlice,
+  withProjectorBackendSignal,
   type OpsLoopReport,
 } from '../lib/operations/ops-loop-metrics.ts';
 import { runOpsLoopFixture } from '../lib/operations/ops-loop-fixture.ts';
@@ -58,10 +60,13 @@ async function main(): Promise<void> {
       source = 'fixture';
     }
 
+    const projectorBackend = useFixture
+      ? null
+      : resolveProductionOutboxOpts({ deliver: false }).projectorBackend;
     const report: OpsLoopReport = {
       capturedAt: new Date().toISOString(),
       source,
-      metrics: queryLoopMetricsSlice(db),
+      metrics: withProjectorBackendSignal(queryLoopMetricsSlice(db), projectorBackend),
       velocity: await loadVelocity(),
     };
 

@@ -49,10 +49,14 @@ describe('toc-ops profiles', () => {
     expect(pat.profile?.assets.some(a => a.kind === 'wallet')).toBe(true);
     expect(pat.profile?.bot?.status).toBe('live');
     expect(pat.profile?.payments.length).toBeGreaterThanOrEqual(5);
-    expect(pat.recentPlays.length).toBeGreaterThanOrEqual(7);
+    expect(pat.recentPlays.length).toBeGreaterThanOrEqual(10);
     expect(pat.softBalance.recentEntries.filter(e => e.entryType === 'ProfitSplit').length).toBeGreaterThanOrEqual(
-      12
+      15
     );
+    expect(pat.profile?.deskScorecard?.trustScore).toBeGreaterThan(0.8);
+    expect(pat.profile?.railHealth?.length).toBeGreaterThanOrEqual(1);
+    expect(pat.profile?.proofVault?.length).toBeGreaterThanOrEqual(2);
+    expect(pat.profile?.softDailyT?.length).toBeGreaterThanOrEqual(3);
 
     const nov = snap.partners.find(p => p.partnerCode === 'NOV')!;
     expect(nov.profile?.tier).toBe('T4');
@@ -68,7 +72,10 @@ describe('toc-ops profiles', () => {
       expect(e.profile?.releaseStats?.placementRate).toBeGreaterThan(0.5);
       expect(e.profile?.liquidity.openReservations?.length).toBeGreaterThanOrEqual(1);
       expect(e.profile?.payments.length).toBeGreaterThanOrEqual(3);
-      expect(e.profile?.history.length).toBeGreaterThanOrEqual(4);
+      expect(e.profile?.history.length).toBeGreaterThanOrEqual(5);
+      expect(e.profile?.bookPermissions?.length).toBeGreaterThanOrEqual(1);
+      expect(e.profile?.exposureLadder?.length).toBe(3);
+      expect(e.profile?.clvDailyBps?.length).toBeGreaterThanOrEqual(14);
     }
   });
 

@@ -29,8 +29,13 @@ describe('ops loop capital proxies', () => {
     expect(summary.loop).toHaveProperty('capitalEfficiencyProxy');
     expect(summary.loop).toHaveProperty('limitEfficiencyProxy');
     expect(summary.loop).toHaveProperty('processReturnProxy');
+    expect(summary.loop).toHaveProperty('projectorBackend');
+    expect(summary.loop).toHaveProperty('projectorDurable');
     expect(summary.loop.capitalEfficiencyProxy).toBeNull();
     expect(summary.loop.processReturnProxy).toBeNull();
+    expect(
+      summary.loop.projectorBackend === 'r2' || summary.loop.projectorBackend === 'memory'
+    ).toBe(true);
     db.close();
   });
 

@@ -3,7 +3,15 @@
  * Partner onboard package — plan/apply CLI backing (call-sign resolve, dry-run, idempotency).
  */
 import type { Database } from 'bun:sqlite';
-import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
+import {
+  enqueueOnboardCompleteEvent,
+  enqueuePartnerWelcomeEvent,
+} from '../channels/outbox.ts';
+import {
+  getPhoneForSeat,
+  mergeProfileMessageMetadata,
+} from '../telegram/templates/context.ts';
+import { DEFAULT_MESSAGE_TEMPLATES } from '../telegram/templates/registry.ts';
 import { loadTelegramEnv, telegramTransportReady } from '../telegram/telegram-config.ts';
 import {
   asPartnerTemplateId,
@@ -52,9 +60,13 @@ export type PartnerOnboardPlan = {
   name: string;
   parentName: string | null;
   expertLabel: string | null;
+  phoneLabel: string | null;
+  phoneWarning: string | null;
   wouldAssign: AssignOnboardingResult;
   wouldBind: { templateId: PartnerTemplateId };
+  messageTemplates: typeof DEFAULT_MESSAGE_TEMPLATES;
   wouldEnqueueWelcome: boolean;
+  wouldEnqueueOnboardComplete: boolean;
   welcomeSkipReason: string | null;
   alreadyOnboarded: boolean;
   skipReason: string | null;
@@ -65,6 +77,7 @@ export type PartnerOnboardApplyResult = {
   plan: PartnerOnboardPlan;
   binding?: PartnerProfileBinding;
   outboxEventId?: string; // brand-ok — opaque ops_channel_outbox id
+  onboardCompleteEventId?: string; // brand-ok
 };
 
 export type PartnerOnboardPackageOpts = AssignOnboardingOpts & {
@@ -255,6 +268,13 @@ export function planPartnerOnboardPackage(
   let welcomeSkipReason: string | null = null;
   if (!linked) welcomeSkipReason = 'no linked telegram id';
   const wouldEnqueueWelcome = linked;
+  const wouldEnqueueOnboardComplete = linked;
+
+  const phone = getPhoneForSeat(db, { treeNodeId, callSign: ctx.callSign });
+  const phoneLabel = phone?.displayName ?? null;
+  const phoneWarning = phone
+    ? null
+    : 'no phone asset on seat (welcome still allowed; attach via phones.assigned_to / tree_nodes.phone_id)';
 
   const expertMatches =
     ctx.expertId != null && wouldAssign.expertId != null && ctx.expertId === wouldAssign.expertId;
@@ -278,13 +298,44 @@ export function planPartnerOnboardPackage(
     name: ctx.name,
     parentName,
     expertLabel,
+    phoneLabel,
+    phoneWarning,
     wouldAssign,
     wouldBind,
+    messageTemplates: { ...DEFAULT_MESSAGE_TEMPLATES },
     wouldEnqueueWelcome,
+    wouldEnqueueOnboardComplete,
     welcomeSkipReason,
     alreadyOnboarded,
     skipReason,
   };
+}
+
+/** Persist welcome/balances/status template ids + phone label on profile metadata. */
+export function attachProfileMessageTemplates(
+  db: Database,
+  treeNodeId: TreeNodeId,
+  opts?: { phoneLabel?: string | null }
+): void {
+  const row = db
+    .query('SELECT metadata_json FROM partner_profile_bindings WHERE tree_node_id = $id')
+    .get({ $id: treeNodeId as string }) as { metadata_json: string | null } | null;
+  if (!row) return;
+
+  const phone =
+    opts?.phoneLabel ??
+    getPhoneForSeat(db, { treeNodeId })?.displayName ??
+    null;
+
+  const merged = mergeProfileMessageMetadata(row.metadata_json, {
+    ...DEFAULT_MESSAGE_TEMPLATES,
+    ...(phone ? { phoneLabel: phone } : {}),
+  });
+
+  db.run(
+    `UPDATE partner_profile_bindings SET metadata_json = $meta, updated_at = $now WHERE tree_node_id = $id`,
+    { $meta: merged, $now: new Date().toISOString(), $id: treeNodeId as string }
+  );
 }
 
 /** Apply onboard package (respects dryRun + idempotency). */
@@ -303,12 +354,14 @@ export function applyPartnerOnboardPackage(
 
   const assigned = assignOnboardingDefaults(db, plan.treeNodeId, opts);
   const binding = onboardPartnerProfile(db, plan.treeNodeId, opts);
+  attachProfileMessageTemplates(db, plan.treeNodeId, { phoneLabel: plan.phoneLabel });
 
   const node = db
     .query('SELECT name, telegram_id FROM tree_nodes WHERE id = $id')
     .get({ $id: plan.treeNodeId as string }) as { name: string; telegram_id: string | null }; // brand-ok
 
   let outboxEventId: string | undefined; // brand-ok — opaque outbox row id
+  let onboardCompleteEventId: string | undefined; // brand-ok
   const shouldWelcome = plan.wouldEnqueueWelcome && (!plan.alreadyOnboarded || opts?.force);
   if (shouldWelcome) {
     const evt = enqueuePartnerWelcomeEvent(db, {
@@ -318,8 +371,21 @@ export function applyPartnerOnboardPackage(
       lifecycleStatus: binding.lifecycleStatus,
       telegramId: node.telegram_id ?? undefined,
       nodeName: node.name,
+      templateId: plan.messageTemplates.welcomeTemplate,
     });
     if (evt) outboxEventId = evt.id as string;
+  }
+
+  const shouldComplete =
+    plan.wouldEnqueueOnboardComplete && (!plan.alreadyOnboarded || opts?.force);
+  if (shouldComplete) {
+    const complete = enqueueOnboardCompleteEvent(db, {
+      treeNodeId: binding.treeNodeId,
+      profileKey: binding.profileKey as string,
+      partnerTemplate: binding.templateId,
+      telegramId: node.telegram_id ?? undefined,
+    });
+    if (complete) onboardCompleteEventId = complete.id as string;
   }
 
   return {
@@ -331,6 +397,7 @@ export function applyPartnerOnboardPackage(
     },
     binding,
     outboxEventId,
+    onboardCompleteEventId,
   };
 }
 
@@ -361,13 +428,19 @@ export function formatOnboardPlanLines(plan: PartnerOnboardPlan): string[] {
     `PLAN ${ref}`,
     `  would assign expert=${plan.expertLabel ?? '—'} parent=${plan.parentName ?? '—'} cut=${plan.wouldAssign.cutPercentage}`,
     `  would bind template=${plan.wouldBind.templateId as string}`,
+    `  message templates welcome=${plan.messageTemplates.welcomeTemplate} balances=${plan.messageTemplates.balancesTemplate} status=${plan.messageTemplates.statusTemplate}`,
+    `  phone=${plan.phoneLabel ?? '—'}`,
   ];
+  if (plan.phoneWarning) lines.push(`  warn: ${plan.phoneWarning}`);
   if (plan.wouldEnqueueWelcome) {
-    lines.push('  would enqueue partner.welcome');
+    lines.push('  would enqueue partner.welcome (HTML template)');
   } else {
     lines.push(
       `  would enqueue partner.welcome (telegram: ${plan.welcomeSkipReason ?? 'skipped'})`
     );
+  }
+  if (plan.wouldEnqueueOnboardComplete) {
+    lines.push('  would enqueue partner.onboard.complete');
   }
   lines.push(`  already bound? ${plan.alreadyOnboarded ? 'yes' : 'no'}`);
   return lines;
@@ -396,14 +469,22 @@ export function buildOnboardChecklist(
     consumeReady: transport.ready && linked,
   };
 
+  const phone = getPhoneForSeat(db, { treeNodeId, callSign: ctx.callSign });
   const lines = [
-    'Checklist:',
+    'Checklist (cellphone → first DM):',
+    `  [${phone ? 'x' : ' '}] Phone asset on seat (optional warn if missing)`,
+    `  [${ctx.existingTemplateId ? 'x' : ' '}] Profile bound (${ctx.existingTemplateId ?? '—'})`,
     `  [${transport.ready ? 'x' : ' '}] TELEGRAM_BOT_FACTORY or TELEGRAM_BOT_TOKEN`,
     `  [${linked ? 'x' : ' '}] Telegram linked for ${ctx.callSign ?? ctx.name}`,
     `  [ ] Welcome outbox pending: ${ctx.pendingWelcomeCount}`,
   ];
   if (!transport.ready && transport.missing.length) {
     lines.push(`  → missing: ${transport.missing.join(', ')} (bun run telegram:verify)`);
+  }
+  if (!linked) {
+    lines.push(
+      `  → bun tools/telegram-link-chat.ts ${ctx.callSign ?? (treeNodeId as string)} tg:chat:<id>`
+    );
   }
   if (checklist.consumeReady) {
     lines.push('  → bun run telegram:ops:consume');

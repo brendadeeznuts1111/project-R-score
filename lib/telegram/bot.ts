@@ -17,24 +17,17 @@ import { handleFlowCallback } from './flows/callbacks.ts';
 import { deliverFlowOutput } from './flows/deliver.ts';
 import { findFlowNodeByTelegram } from './flows/registry.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
+import type {
+  TelegramCallbackQuery,
+  TelegramMessage,
+  TelegramUpdate,
+} from './telegram-update.ts';
 
-export type TelegramMessage = {
-  chat: { id: number };
-  from: { id: number; username?: string };
-  text?: string;
-};
-
-export type TelegramCallbackQuery = {
-  id: string; // brand-ok — Telegram callback_query id
-  from: { id: number };
-  data?: string;
-  message?: { chat: { id: number } };
-};
-
-export type TelegramUpdate = {
-  message?: TelegramMessage;
-  callback_query?: TelegramCallbackQuery;
-};
+export type {
+  TelegramCallbackQuery,
+  TelegramMessage,
+  TelegramUpdate,
+} from './telegram-update.ts';
 
 export type CommandContext = {
   msg: TelegramMessage;

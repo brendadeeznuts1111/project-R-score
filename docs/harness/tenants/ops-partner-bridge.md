@@ -93,12 +93,16 @@ Override baked snapshot in tests via `publishAndDispatch(..., { routingContext }
 | Event | Topic | When |
 |-------|-------|------|
 | `partner.bound` | `identity` | First `bindPartnerProfile` insert via ops-sync (`created === true`) |
+| `partner.welcome` | `identity` | Telegram linked · HTML template pack + keyboard (`r2` + `telegram`) |
+| `partner.onboard.complete` | `identity` | Package apply · `onboard.complete.v1` (`r2` + `telegram`) |
 | `play.gate.denied` / `play.gate.adjusted` / `play.gate.defer` | `plays` | Dispatch gate / TOC routing defer |
 | `play.settled` | `plays` | Settlement (profileKey attached when bound) |
 
-Helpers: `enqueueIdentityChannelEvent`, `enqueuePlayGatedChannelEvent` in [`lib/channels/outbox.ts`](../../lib/channels/outbox.ts).
+Helpers: `enqueueIdentityChannelEvent`, `enqueuePartnerWelcomeEvent`, `enqueueOnboardCompleteEvent`, `enqueuePlayGatedChannelEvent` in [`lib/channels/outbox.ts`](../../lib/channels/outbox.ts).
 
-Process: `processChannelOutbox` (R2 projector default for identity; tests use `deliver: false` → local MemoryChannelStore).
+Deep identity (cellphone → profile → seat → ChatChannelMeta → templates): [`partner-onboarding-package.md`](partner-onboarding-package.md).
+
+Process: `processChannelOutbox` (welcome/onboard.complete use `telegram` projector with `parseMode: HTML`; other identity events default R2; tests use `deliver: false` → local MemoryChannelStore).
 
 ## Explicit non-goals (later)
 
@@ -108,6 +112,7 @@ Process: `processChannelOutbox` (R2 projector default for identity; tests use `d
 
 ## Related
 
+- Deep onboarding + Telegram templates: [`partner-onboarding-package.md`](partner-onboarding-package.md)
 - Ops dual-mode experiments skill: [`.agents/skills/ops-dual-mode-experiments/`](../../../.agents/skills/ops-dual-mode-experiments/)
 - Partner Profile OS product skill: [`.agents/skills/partner-profile-os/`](../../../.agents/skills/partner-profile-os/)
 - Ops snapshot tenant: [`ops-snapshot.md`](ops-snapshot.md)

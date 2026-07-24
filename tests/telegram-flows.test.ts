@@ -54,7 +54,7 @@ describe('telegram flows', () => {
       chatId: '1',
       userId: '999',
     });
-    expect(output.text).toContain('Hard (seat)');
+    expect(output.text).toContain('Hard:');
     expect(output.keyboard?.rows.some(r => r.some(b => b.callbackData === 'f:balances:r'))).toBe(true);
     db.close();
   });

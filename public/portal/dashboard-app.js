@@ -225,7 +225,8 @@ function renderOpsPlane(ops) {
     <p class="plane-sub">${
       loop
         ? esc(
-            `dispatch ${loop.dispatched ?? 0} · reserve ${loop.reserved ?? 0} · settle ${loop.settled ?? 0} · outbox ${loop.outboxSent ?? 0}/${(loop.outboxSent ?? 0) + (loop.outboxFailed ?? 0)}`
+            `dispatch ${loop.dispatched ?? 0} · reserve ${loop.reserved ?? 0} · settle ${loop.settled ?? 0} · outbox ${loop.outboxSent ?? 0}/${(loop.outboxSent ?? 0) + (loop.outboxFailed ?? 0)}` +
+              (loop.projectorBackend ? ` · projector ${loop.projectorBackend}` : '')
           )
         : 'No loop slice'
     }${failRate != null ? esc(` · fail ${failRate}`) : ''}${esc(capLine)}</p>

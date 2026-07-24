@@ -6,10 +6,17 @@ Unified ops messaging: R2 append log + SQLite outbox projectors (R2 · Telegram 
 |--------|------|
 | [`channels.ts`](channels.ts) | `R2ChannelStore` / `MemoryChannelStore` event log |
 | [`ops-channel-event.ts`](ops-channel-event.ts) | Topics: identity · plays · dod · experiments · alerts · provisioning · **toc** |
-| [`outbox.ts`](outbox.ts) | `enqueueOpsChannelEvent` · `processChannelOutbox` · play/identity helpers |
+| [`outbox.ts`](outbox.ts) | `enqueueOpsChannelEvent` · `processChannelOutbox` · `requeueFailedChannelOutbox` · play/identity helpers |
 | [`toc-outbox.ts`](toc-outbox.ts) | TOC bake · Soft post · critical gates · ranked capital actions |
-| [`outbox-prod-opts.ts`](outbox-prod-opts.ts) | Production R2 projector resolution |
+| [`outbox-prod-opts.ts`](outbox-prod-opts.ts) | `resolveProductionOutboxOpts` — `projectorBackend: 'r2'\|'memory'`, `requireR2`, token via `loadTelegramEnv` |
 | [`r2-channel-bucket.ts`](r2-channel-bucket.ts) | R2 store factory |
+
+```bash
+bun run ops:outbox:requeue -- --dry-run
+bun run ops:outbox:requeue -- --drain          # local memory (attribution)
+bun run ops:outbox:requeue -- --drain --r2     # durable R2 (requireR2)
+bun test tests/ops-channel-outbox.test.ts tests/outbox-prod-opts.test.ts
+```
 
 ## TOC topic
 

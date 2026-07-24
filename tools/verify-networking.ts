@@ -16,6 +16,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/http/server#reference — Server (fetch/reload/stop/…)
+import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 /**
  * Multi-target Bun networking optimization suite.
  *
@@ -28,7 +29,7 @@
  *   - Local serve-public health + prediction report
  *   - Kalshi public exchange status
  *   - bun.com docs (HTTPS DNS control)
- *   - optional Telegram getMe when TELEGRAM_BOT_TOKEN is set
+ *   - optional Telegram getMe when TELEGRAM_BOT_FACTORY or TELEGRAM_BOT_TOKEN is set
  *   - optional R2 public base via R2_PUBLIC_BASE
  *
  * Runtime matrix (Bun 1.4):
@@ -215,7 +216,7 @@ function buildTargets(): NetTarget[] {
     }
   );
 
-  const tg = Bun.env.TELEGRAM_BOT_TOKEN?.trim();
+  const tg = loadTelegramEnv().effectiveToken;
   if (tg) {
     out.push({
       name: 'Telegram getMe',
@@ -651,8 +652,10 @@ async function main(): Promise<void> {
     console.log(
       `HTTP request limit: ${Bun.env.BUN_CONFIG_MAX_HTTP_REQUESTS ?? '256 (default)'} · BUN_CONFIG_MAX_HTTP_REQUESTS`
     );
-    if (!ROUTES_ONLY && !Bun.env.TELEGRAM_BOT_TOKEN) {
-      console.log('(Telegram skipped — set TELEGRAM_BOT_TOKEN to include messaging)');
+    if (!ROUTES_ONLY && !loadTelegramEnv().effectiveToken) {
+      console.log(
+        '(Telegram skipped — set TELEGRAM_BOT_FACTORY or TELEGRAM_BOT_TOKEN to include messaging)'
+      );
     }
     if (!ROUTES_ONLY && !Bun.env.R2_PUBLIC_BASE && !Bun.env.R2_PUBLIC_URL) {
       console.log('(R2 skipped — set R2_PUBLIC_BASE to a public object/URL)');

@@ -1,11 +1,17 @@
 /**
- * Telegram webhook — per-tenant bot command router.
+ * Local Bun webhook — sync handler (full bot.ts + optional SQLite).
+ *
+ * Pages deploy uses `functions/api/telegram/webhook/` (R2 enqueue). Local
+ * `serve:public` / bun-only keeps low-latency direct handling.
+ *
+ * @see lib/telegram/webhook-pages.ts — edge enqueue path
+ * @see lib/telegram/bot.ts — command router
  */
-
 import { getTenant, isTenantSlug } from '../../../../config/tenants.ts';
 import { AccountR2Store } from '../../../../lib/accounts/account-r2-store.ts';
 import { R2ChannelStore } from '../../../../lib/channels/channels.ts';
 import { createTenantBot } from '../../../../lib/telegram/bot.ts';
+import type { TelegramUpdate } from '../../../../lib/telegram/telegram-update.ts';
 import { jsonResponse, requireBucket, type PagesContext } from '../../_shared/pages-env.ts';
 
 export async function onRequest(context: PagesContext): Promise<Response> {
@@ -41,7 +47,7 @@ export async function onRequest(context: PagesContext): Promise<Response> {
 
   const tenant = getTenant(tenantSlug)!;
   const bot = createTenantBot(tenantSlug);
-  const update = (await request.json()) as import('../../../../lib/telegram/bot.ts').TelegramUpdate;
+  const update = (await request.json()) as TelegramUpdate;
 
   const work = bot.handleUpdate(update, {
     tenant,
@@ -51,9 +57,8 @@ export async function onRequest(context: PagesContext): Promise<Response> {
     env: env as Record<string, string | undefined>,
   });
 
-  const waitUntil = (context as { waitUntil?: (p: Promise<unknown>) => void }).waitUntil;
-  if (waitUntil) {
-    waitUntil(work);
+  if (context.waitUntil) {
+    context.waitUntil(work);
     return new Response('OK', { status: 200, headers: { 'Cache-Control': 'no-store' } });
   }
 

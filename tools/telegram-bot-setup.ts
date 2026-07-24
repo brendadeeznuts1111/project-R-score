@@ -4,11 +4,13 @@
  * Factory Telegram bot setup — getMe, setMyCommands, setWebhook.
  */
 import { FACTORY_BOT_COMMANDS, getBotMe, setBotCommands } from '../lib/telegram/telegram-api.ts';
+import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const BASE = process.argv[2] ?? 'https://project-r-score.pages.dev';
 
 async function main(): Promise<void> {
-  const token = Bun.env.TELEGRAM_BOT_FACTORY ?? Bun.env.TELEGRAM_BOT_TOKEN;
+  const tg = loadTelegramEnv();
+  const token = tg.effectiveToken;
   if (!token) {
     console.error('TELEGRAM_BOT_FACTORY or TELEGRAM_BOT_TOKEN required');
     process.exit(1);
@@ -20,7 +22,7 @@ async function main(): Promise<void> {
   const cmdsOk = await setBotCommands(token, FACTORY_BOT_COMMANDS);
   console.log('setMyCommands:', cmdsOk ? 'ok' : 'failed');
 
-  const secret = Bun.env.TELEGRAM_WEBHOOK_SECRET;
+  const secret = tg.webhookSecret;
   const url = `${BASE}/api/telegram/webhook/factory`;
   const body = new URLSearchParams({ url });
   if (secret) body.set('secret_token', secret);

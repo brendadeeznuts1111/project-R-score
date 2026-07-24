@@ -52,7 +52,12 @@ export type OpsSnapshotCronOpts = {
 };
 
 function tryR2OutboxOpts(): Parameters<typeof settlePendingPlays>[1]['outbox'] {
-  return resolveProductionOutboxOpts({ deliver: true });
+  const opts = resolveProductionOutboxOpts({ deliver: true });
+  // Empty token would fail telegram projectors and poison the DLQ — keep R2, skip network.
+  if (!opts.telegramToken?.trim()) {
+    return { ...opts, deliver: false };
+  }
+  return opts;
 }
 
 /** Consume R2 ops-sync queue and bind partner profiles (best-effort). */
@@ -97,7 +102,9 @@ export async function runOpsSettleCycle(): Promise<{
       outbox: tryR2OutboxOpts(),
     });
     console.info(
-      `[${OPS_SETTLE_CRON_TITLE}] settled=${batch.settled} outboxSent=${batch.outbox?.sent ?? 0}`
+      `[${OPS_SETTLE_CRON_TITLE}] settled=${batch.settled}` +
+        ` outboxSent=${batch.outbox?.sent ?? 0}` +
+        ` outboxFailed=${batch.outbox?.failed ?? 0}`
     );
     return {
       code: batch.errors.length > 0 ? 1 : 0,

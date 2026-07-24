@@ -2,6 +2,10 @@
 /**
  * Play settlement — close result, apply cut cascade, adjust liquidity,
  * and feed active factorial experiments (best-effort).
+ *
+ * Multi-node: every `play_distribution` row releases its own `stake_actual`
+ * and receives a stake-proportional share of `pnl` / cut cascade. Outbox
+ * fans out `play.settled` per node (idempotent).
  */
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
@@ -21,7 +25,7 @@ export type SettlePlayInput = {
   playId: string; // brand-ok — plays.id
   result: PlayResult;
   pnl: number;
-  /** Agent/sub-agent node that placed the play (cut cascade leaf). */
+  /** Primary leaf for experiment outcomes (cuts/liquidity still cover all dist nodes). */
   leafNodeId: string; // brand-ok — TreeNodeId at call site
   stakeReserved?: number;
   /** Skip experiment metric writes (tests / migrations). Default false. */
@@ -35,6 +39,13 @@ export type SettlePlayResult = {
   cuts: CutCascadeResult;
   /** Active-experiment metrics recorded for the partner subject (may be empty). */
   experimentOutcomes: SettlementOutcomeRecord[];
+  /** Distribution nodes whose liquidity was released. */
+  nodesSettled: number;
+};
+
+type DistStakeRow = {
+  node_id: string; // brand-ok
+  stake_actual: number | null;
 };
 
 /** Close a play, persist cut ledger entries, and adjust position liquidity. */
@@ -50,15 +61,26 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
   if (!play) throw new Error(`Play not found: ${input.playId}`);
   if (play.result !== 'pending') throw new Error(`Play already settled: ${input.playId}`);
 
-  const distStake = db
+  const distRows = db
     .query(
-      `SELECT stake_actual FROM play_distribution
-       WHERE play_id = $pid AND node_id = $nid
-       ORDER BY received_at DESC LIMIT 1`
+      `SELECT node_id, stake_actual FROM play_distribution
+       WHERE play_id = $pid ORDER BY received_at ASC`
     )
-    .get({ $pid: input.playId, $nid: input.leafNodeId }) as { stake_actual: number | null } | null;
+    .all({ $pid: input.playId }) as DistStakeRow[];
 
-  const stake = input.stakeReserved ?? distStake?.stake_actual ?? play.stake_recommended;
+  if (distRows.length === 0) {
+    distRows.push({ node_id: input.leafNodeId, stake_actual: input.stakeReserved ?? null });
+  }
+
+  const stakes = distRows.map(row => ({
+    nodeId: row.node_id,
+    stake:
+      (row.node_id === input.leafNodeId ? input.stakeReserved : undefined) ??
+      row.stake_actual ??
+      play.stake_recommended,
+  }));
+  const totalStake = stakes.reduce((sum, row) => sum + row.stake, 0);
+
   const now = new Date().toISOString();
 
   db.run(`UPDATE plays SET result = $res, pnl = $pnl, closed_at = $now WHERE id = $id`, {
@@ -68,34 +90,52 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
     $id: input.playId,
   });
 
-  const cuts = calculateCutCascade(db, input.leafNodeId, input.pnl);
-  for (const alloc of cuts.allocations) {
-    db.run(
-      `INSERT INTO cut_ledger (id, play_id, node_id, amount, created_at)
-       VALUES ($id, $pid, $nid, $amt, $now)`,
-      {
-        $id: randomUUIDv7(),
-        $pid: input.playId,
-        $nid: alloc.nodeId,
-        $amt: alloc.amount,
-        $now: now,
-      }
-    );
+  let primaryCuts: CutCascadeResult = { grossPnl: input.pnl, netToOrigin: input.pnl, allocations: [] };
+  let exposureRelease = 0;
+
+  for (const { nodeId, stake } of stakes) {
+    const nodePnl = totalStake > 0 ? input.pnl * (stake / totalStake) : input.pnl;
+    const cuts = calculateCutCascade(db, nodeId, nodePnl);
+    if (nodeId === input.leafNodeId) primaryCuts = cuts;
+
+    for (const alloc of cuts.allocations) {
+      db.run(
+        `INSERT INTO cut_ledger (id, play_id, node_id, amount, created_at)
+         VALUES ($id, $pid, $nid, $amt, $now)`,
+        {
+          $id: randomUUIDv7(),
+          $pid: input.playId,
+          $nid: alloc.nodeId,
+          $amt: alloc.amount,
+          $now: now,
+        }
+      );
+    }
+
+    if (input.result === 'void' || input.result === 'push') {
+      releasePlay(db, nodeId, stake);
+    } else {
+      db.run(
+        `UPDATE positions SET in_play = MAX(0, in_play - $stake),
+         available = available + $stake + $pnl, version = version + 1
+         WHERE node_id = $nid AND book = '_all'`,
+        { $stake: stake, $pnl: nodePnl, $nid: nodeId }
+      );
+    }
+    exposureRelease += stake;
   }
 
-  if (input.result === 'void' || input.result === 'push') {
-    releasePlay(db, input.leafNodeId, stake);
-  } else {
-    db.run(
-      `UPDATE positions SET in_play = MAX(0, in_play - $stake),
-       available = available + $stake + $pnl, version = version + 1
-       WHERE node_id = $nid AND book = '_all'`,
-      { $stake: stake, $pnl: input.pnl, $nid: input.leafNodeId }
-    );
+  if (input.result !== 'void' && input.result !== 'push') {
     db.run(
       `UPDATE operations SET total_exposure = MAX(0, total_exposure - $stake),
        total_liquidity = total_liquidity + $pnl, updated_at = $now WHERE id = 'main'`,
-      { $stake: stake, $pnl: input.pnl, $now: now }
+      { $stake: exposureRelease, $pnl: input.pnl, $now: now }
+    );
+  } else {
+    db.run(
+      `UPDATE operations SET total_exposure = MAX(0, total_exposure - $stake),
+       updated_at = $now WHERE id = 'main'`,
+      { $stake: exposureRelease, $now: now }
     );
   }
 
@@ -109,7 +149,6 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
         playId: input.playId,
       });
     } catch {
-      // Settlement must not fail closed on experiment plumbing
       experimentOutcomes = [];
     }
   }
@@ -120,8 +159,9 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
     playId: input.playId,
     result: input.result,
     pnl: input.pnl,
-    cuts,
+    cuts: primaryCuts,
     experimentOutcomes,
+    nodesSettled: stakes.length,
   };
 }
 

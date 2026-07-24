@@ -2,6 +2,7 @@
 /**
  * Registry ops alerts — Slack webhook + Telegram bot.
  */
+import { loadTelegramEnv } from '../telegram/telegram-config.ts';
 
 export type AlertSeverity = 'info' | 'warning' | 'critical';
 export type RegistryAlertFetch = (
@@ -28,8 +29,9 @@ export async function sendRegistryAlert(
   options: RegistryAlertOptions = {}
 ): Promise<{ slack: boolean; telegram: boolean }> {
   const webhook = options.slackWebhookUrl?.trim() || Bun.env.SLACK_WEBHOOK_URL?.trim();
-  const token = options.telegramBotToken?.trim() || Bun.env.TELEGRAM_BOT_TOKEN?.trim();
-  const chatTarget = options.telegramChatTarget?.trim() || Bun.env.TELEGRAM_OPS_CHAT_ID?.trim();
+  const tg = loadTelegramEnv();
+  const token = options.telegramBotToken?.trim() || tg.effectiveToken || undefined;
+  const chatTarget = options.telegramChatTarget?.trim() || tg.opsChatId || undefined;
   const fetcher = options.fetcher ?? fetch;
   const formatted = `${severityEmoji(severity)} [Registry] ${message}`;
 

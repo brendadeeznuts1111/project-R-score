@@ -3,6 +3,7 @@ export * from './identity.ts';
 export * from './presence.ts';
 export * from './venues.ts';
 export * from './profiles.ts';
+export * from './seed-deepen.ts';
 export * from './fixture.ts';
 export * from './enforcement.ts';
 export * from './return-efficiency.ts';

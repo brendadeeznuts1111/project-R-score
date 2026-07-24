@@ -84,6 +84,8 @@ describe('buildOpsSummary', () => {
       capitalEfficiencyProxy: null,
       processReturnProxy: null,
     });
+    expect(s.loop.projectorBackend === 'r2' || s.loop.projectorBackend === 'memory').toBe(true);
+    expect(typeof s.loop.projectorDurable).toBe('boolean');
     db.close();
   });
 

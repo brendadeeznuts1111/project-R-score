@@ -1,26 +1,28 @@
 {
-  "capturedAt": "2026-07-24T07:13:24.135Z",
+  "capturedAt": "2026-07-24T08:00:00.491Z",
   "source": "live",
   "metrics": {
-    "dispatched": 25,
-    "gatedAllow": 25,
+    "dispatched": 29,
+    "gatedAllow": 29,
     "gatedAdjust": 0,
     "gatedDeny": 0,
-    "reserved": 25,
-    "settled": 6,
-    "settledViaFullLoop": 6,
-    "outboxSent": 42,
-    "outboxFailed": 1,
+    "reserved": 29,
+    "settled": 7,
+    "settledViaFullLoop": 29,
+    "outboxSent": 259,
+    "outboxFailed": 18,
     "outboxPending": 0,
     "oldestPendingAgeSec": null,
-    "manualStepsPerCycle": 0,
-    "loopCompletionRate": 0.24,
-    "capitalEfficiencyProxy": 0.07989347536617843,
-    "limitEfficiencyProxy": 0.39050235478806905,
-    "processReturnProxy": 0.2117579908675799
+    "manualStepsPerCycle": 18,
+    "loopCompletionRate": 1,
+    "capitalEfficiencyProxy": 0.1278360819590205,
+    "limitEfficiencyProxy": 0.9547793476364905,
+    "processReturnProxy": 0.20188172043010752,
+    "projectorBackend": "r2",
+    "projectorDurable": true
   },
   "velocity": {
-    "harnessGateSumMs": 3605,
-    "harnessGeneratedAt": "2026-07-24T07:13:23.371Z"
+    "harnessGateSumMs": 2180,
+    "harnessGeneratedAt": "2026-07-24T07:44:23.081Z"
   }
 }

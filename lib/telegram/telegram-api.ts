@@ -1,20 +1,40 @@
 // @see https://bun.com/docs/runtime/networking/fetch
 /**
  * Telegram Bot API helpers for factory ops webhook + outbox projectors.
+ *
+ * Includes per-token min-interval rate limiting and a single 429 retry.
  */
+import { loadTelegramEnv } from './telegram-config.ts';
 
 export type TelegramApiResult = {
   ok: boolean;
   result?: unknown;
   description?: string;
   error_code?: number;
+  parameters?: { retry_after?: number };
 };
+
+const lastSendAtByToken = new Map<string, number>();
+
+/** Test helper — clear in-process rate-limit clocks. */
+export function resetTelegramRateLimiters(): void {
+  lastSendAtByToken.clear();
+}
+
+async function respectRateLimit(token: string): Promise<void> {
+  const minInterval = loadTelegramEnv().rateLimitMinIntervalMs;
+  const last = lastSendAtByToken.get(token) ?? 0;
+  const wait = minInterval - (Date.now() - last);
+  if (wait > 0) await Bun.sleep(wait);
+  lastSendAtByToken.set(token, Date.now());
+}
 
 export async function telegramApiCall(
   token: string,
   method: string,
   body: Record<string, unknown>
 ): Promise<TelegramApiResult> {
+  await respectRateLimit(token);
   const res = await fetch(`https://api.telegram.org/bot${token}/` + method, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -77,7 +97,15 @@ export type SendTelegramBotMessageResult = {
   messageId?: number;
   description?: string;
   errorCode?: number;
+  retriedAfter429?: boolean;
 };
+
+async function callSendMessage(
+  token: string,
+  body: Record<string, unknown>
+): Promise<TelegramApiResult> {
+  return telegramApiCall(token, 'sendMessage', body);
+}
 
 /** sendMessage — used by ops outbox telegram projector + flow deliver. */
 export async function sendTelegramBotMessage(
@@ -92,7 +120,17 @@ export async function sendTelegramBotMessage(
   if (input.replyMarkup) body.reply_markup = input.replyMarkup;
   if (input.messageThreadId != null) body.message_thread_id = input.messageThreadId;
 
-  const r = await telegramApiCall(token, 'sendMessage', body);
+  let r = await callSendMessage(token, body);
+  let retriedAfter429 = false;
+
+  if (!r.ok && r.error_code === 429) {
+    const retryAfterSec = r.parameters?.retry_after ?? 1;
+    await Bun.sleep(Math.max(0, retryAfterSec * 1000));
+    resetTelegramRateLimiters();
+    r = await callSendMessage(token, body);
+    retriedAfter429 = true;
+  }
+
   const messageId =
     r.ok && r.result && typeof r.result === 'object'
       ? (r.result as { message_id?: number }).message_id
@@ -102,6 +140,7 @@ export async function sendTelegramBotMessage(
     messageId: typeof messageId === 'number' ? messageId : undefined,
     description: r.description,
     errorCode: r.error_code,
+    retriedAfter429: retriedAfter429 || undefined,
   };
 }
 

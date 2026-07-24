@@ -17,7 +17,7 @@ import { buildBunUtilsProof, type BunUtilsProofResult } from './bun-utils-proof.
 import { collectMonitoring, type MonitoringPayload } from './monitoring/index.ts';
 import { writePredictionReport } from './prediction/index.ts';
 import {
-  getRoutingProofCached,
+  getRoutingProof,
   resolveRoutingProbeBaseUrl,
   routingToOpsSlice,
   type RoutingOpsSlice,
@@ -154,13 +154,18 @@ export async function buildRegistrySnapshot(
   let routingProof: RoutingProofResult | null = null;
   try {
     if (withRouting) {
-      const { proof, cache } = await getRoutingProofCached({
+      const routed = await getRoutingProof({
         baseUrl,
         forceRefresh: opts.forceRoutingRefresh,
         writeArtifact: true,
       });
-      routingProof = proof;
-      routingSlice = routingToOpsSlice(proof, { cache });
+      if (routed) {
+        routingProof = routed.proof;
+        routingSlice = routingToOpsSlice(routed.proof, {
+          cached: routed.cached,
+          stale: routed.stale,
+        });
+      }
     }
   } catch (e) {
     console.error('Routing proof failed:', e instanceof Error ? e.message : e);

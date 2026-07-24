@@ -1629,6 +1629,7 @@
     "telegram:factory:setup": "bun tools/telegram-bot-setup.ts",
     "telegram:verify": "bun tools/telegram-verify-env.ts",
     "telegram:ops:consume": "bun tools/telegram-ops-consumer.ts",
+    "telegram:link-chat": "bun tools/telegram-link-chat.ts",
     "factory:create": "bun lib/factory/cli.ts create",
     "ci:harness": "bun scripts/ci-harness.ts",
     "ci:harness:fast": "bun scripts/ci-harness.ts --fast",

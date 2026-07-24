@@ -97,6 +97,10 @@ export const CANONICAL_HARNESS = {
   r2Env: 'config/r2-env.ts',
   envExample: '.env.example',
   cloudflarePagesTenant: 'docs/harness/tenants/cloudflare-pages.md',
+  opsLoopThroughputTenant: 'docs/harness/tenants/ops-loop-throughput.md',
+  telegramFactoryTenant: 'docs/harness/tenants/telegram-factory.md',
+  telegramPackageReadme: 'lib/telegram/README.md',
+  channelsPackageReadme: 'lib/channels/README.md',
 } as const;
 
 /** Tools / skills (repo-relative). */

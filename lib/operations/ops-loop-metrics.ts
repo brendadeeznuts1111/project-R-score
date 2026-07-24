@@ -33,9 +33,9 @@ export type OpsLoopMetricsSlice = {
   outboxPending: number;
   /** Seconds since oldest pending outbox row; null when none pending. */
   oldestPendingAgeSec: number | null;
-  /** Manual intervention points still open (unsettled distributed, pending outbox). */
+  /** Manual intervention points still open (unsettled distributed, pending + failed outbox). */
   manualStepsPerCycle: number;
-  /** settledViaFullLoop / dispatched (0 when dispatched = 0). */
+  /** settledViaFullLoop / dispatched (0 when dispatched = 0). Attribution only — not R2 durability. */
   loopCompletionRate: number;
   /** Σ ProfitSplit / peak I from toc_soft_entries; null when journal empty or peak I = 0. */
   capitalEfficiencyProxy: number | null;
@@ -43,6 +43,13 @@ export type OpsLoopMetricsSlice = {
   limitEfficiencyProxy: number | null;
   /** Settled plays.pnl / (peak exposure + OE); null when no settled pnl or denominator = 0. */
   processReturnProxy: number | null;
+  /**
+   * Host projector backend at snapshot time (`r2` durable · `memory` attribution-only).
+   * Null when not probed (pure SQL query without host opts).
+   */
+  projectorBackend: 'r2' | 'memory' | null;
+  /** True when projectorBackend === 'r2'. */
+  projectorDurable: boolean | null;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -148,7 +155,7 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
       .get() as { n: number }
   ).n;
 
-  const manualStepsPerCycle = manualUnsettled + outboxPending;
+  const manualStepsPerCycle = manualUnsettled + outboxPending + outboxFailed;
 
   const loopCompletionRate = dispatched > 0 ? settledViaFullLoop / dispatched : 0;
 
@@ -174,6 +181,20 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
     capitalEfficiencyProxy,
     limitEfficiencyProxy,
     processReturnProxy,
+    projectorBackend: null,
+    projectorDurable: null,
+  };
+}
+
+/** Attach host projector durability signal (R2 vs memory) for portal honesty. */
+export function withProjectorBackendSignal(
+  slice: OpsLoopMetricsSlice,
+  backend: 'r2' | 'memory' | null
+): OpsLoopMetricsSlice {
+  return {
+    ...slice,
+    projectorBackend: backend,
+    projectorDurable: backend == null ? null : backend === 'r2',
   };
 }
 
@@ -284,6 +305,8 @@ function emptyLoopSlice(): OpsLoopMetricsSlice {
     capitalEfficiencyProxy: null,
     limitEfficiencyProxy: null,
     processReturnProxy: null,
+    projectorBackend: null,
+    projectorDurable: null,
   };
 }
 

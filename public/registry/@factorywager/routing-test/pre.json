@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 2,
+  "bunVersion": "1.4.0",
+  "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
+  "baseUrl": "https://score.factory-wager.com",
+  "timestamp": "2026-07-24T07:51:44.238Z",
+  "concurrency": 6,
+  "probes": [
+    {
+      "path": "/health",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 150.58,
+      "contentType": "application/json",
+      "note": "may be SPA HTML"
+    },
+    {
+      "path": "/ready",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 123.43,
+      "contentType": "text/html",
+      "note": "may be SPA HTML"
+    },
+    {
+      "path": "/api/registry",
+      "status": 400,
+      "ok": false,
+      "pass": true,
+      "critical": false,
+      "timeMs": 104.88,
+      "contentType": "application/json",
+      "note": "index (local) or empty-key 400 (R2 gateway)"
+    },
+    {
+      "path": "/api/registry/@factorywager/test-pkg",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 203.84,
+      "contentType": "text/html",
+      "note": "SPA fallback 200 (Pages) or missing package 404/503"
+    },
+    {
+      "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 291.42,
+      "contentType": "application/json",
+      "note": "R2 optional; static path preferred"
+    },
+    {
+      "path": "/api/registry/@factorywager/routing-test/latest.json",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 318.28,
+      "contentType": "application/json",
+      "note": "R2 optional"
+    },
+    {
+      "path": "/api/operations/summary",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 37.36,
+      "contentType": "application/json",
+      "note": "ops snapshot/live"
+    },
+    {
+      "path": "/api/monitoring",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 91.41,
+      "contentType": "application/json",
+      "note": "monitoring payload"
+    },
+    {
+      "path": "/monitoring",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 207.31,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/portal",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 206.11,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/portal/ops/",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 107.92,
+      "contentType": "text/html",
+      "note": "ops dashboard"
+    },
+    {
+      "path": "/portal/dashboard/",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 127.9,
+      "contentType": "text/html",
+      "note": "executive dashboard"
+    },
+    {
+      "path": "/portal/dashboard-app.js",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 78.93,
+      "contentType": "application/javascript",
+      "note": "executive dashboard client"
+    },
+    {
+      "path": "/registry/ops-summary.json",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 86.07,
+      "contentType": "application/json",
+      "note": "static ops metrics"
+    },
+    {
+      "path": "/registry/@factorywager/bun-utils-test/latest.json",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 89.36,
+      "contentType": "application/json",
+      "note": "static bun utils proof"
+    },
+    {
+      "path": "/registry/@factorywager/routing-test/latest.json",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 91.66,
+      "contentType": "application/json",
+      "note": "this artifact (404 until first --write deploy)"
+    },
+    {
+      "path": "/registry/static.json",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": false,
+      "timeMs": 31.37,
+      "contentType": "application/json",
+      "note": "composite snapshot from ops:snapshot"
+    },
+    {
+      "path": "/api/registry/static",
+      "status": 400,
+      "ok": false,
+      "pass": true,
+      "critical": false,
+      "timeMs": 51.86,
+      "contentType": "application/json",
+      "note": "local serve-public 200 or R2 gateway empty-key 400"
+    }
+  ],
+  "latency": {
+    "minMs": 31.37,
+    "maxMs": 318.28,
+    "meanMs": 133.32,
+    "p50Ms": 104.88,
+    "p95Ms": 318.28
+  },
+  "summary": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "httpOk": 16,
+    "criticalFailed": 0,
+    "criticalFailedPaths": []
+  },
+  "regression": {
+    "previousTimestamp": "2026-07-24T06:20:14.023Z",
+    "previousProofHash": "75d9b2c07b050d001316547e5a0cb35ac708935a2d5fc52a49a3d86d3946f928",
+    "changes": []
+  },
+  "proofHash": "52e8890d4acb641bebd05ae36bb8808737def909ae7bca69074cd74738c062ea"
+}

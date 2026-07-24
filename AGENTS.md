@@ -27,6 +27,8 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation (static UI) | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `serve:public:hot` |
 | TOC Ops portal board (fixture) | [`docs/harness/tenants/toc-ops.md`](docs/harness/tenants/toc-ops.md) · `/portal/toc/` · `bun run ops:seed:toc` · `bun test tests/toc-ops-fixture.test.ts` |
+| Ops loop throughput | [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) · `bun run ops:loop:baseline` / `ops:loop:post` / `ops:outbox:requeue` · claim `ops-loop-throughput` |
+| Factory Telegram | [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` · `telegram:ops:consume` · [`lib/telegram/`](lib/telegram/) |
 | Platform routing (local vs Pages) | [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run check:routes` · `bun run verify:pages-edge` |
 | Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) |
 | Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`) |
@@ -86,6 +88,8 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
   - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
   - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
   - Harness JIT / proof / authority / review → [`docs/harness/README.md`](docs/harness/README.md) · [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md) · `bun run harness:status` · `bun run proof:install`
+  - Ops loop / outbox → [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) · `bun run ops:settle` · `ops:outbox:requeue` · `bun test tests/ops-loop-hardening.test.ts`
+  - Factory Telegram → [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `loadTelegramEnv` in [`lib/telegram/telegram-config.ts`](lib/telegram/telegram-config.ts) · `bun run telegram:verify`
   - Cloudflare / R2 / Pages → Canonical docs table above · `bun run cloudflare:env` · claim `cloudflare-pages-env-ssot`
   - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
   - Audit findings/concepts → `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · [`docs/audit/README.md`](docs/audit/README.md) · claim `audit-findings-catalog`
@@ -100,7 +104,7 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
 
 Machine SSOT is `~/.bunfig.toml` (`linker = "isolated"`, `globalStore = true`, `frozenLockfile = true`, `minimumReleaseAge = 259200`, absolute `[install.cache].dir`); env in `~/.config/shell/bun.sh` (`BUN_INSTALL`, `NO_PROXY` — **no** `BUN_INSTALL_GLOBAL_STORE`); PATH in `~/.config/shell/path.sh`. Full component table: [`docs/UNIFIED.md`](docs/UNIFIED.md).
 
-- Workspace `bunfig.toml` holds **project-specific** overrides only (`frozenLockfile`, scopes, `[test]`, etc.) — do **not** duplicate `linker`, `globalStore`, or `cache.dir` unless intentionally overriding.
+- Workspace `bunfig.toml` holds **project-specific** overrides only (`frozenLockfile = true` hardened, scopes, `[test]`, etc.) — do **not** duplicate `linker`, `globalStore`, or `cache.dir` unless intentionally overriding. Intentional dep edits: temporarily set `frozenLockfile = false`, then restore.
 - Do **not** set `BUN_INSTALL_CACHE_DIR` or `BUN_INSTALL_GLOBAL_STORE` in shell or IDE — fails `bunfig-policy` / `bun_verify`.
 - Verify: `bun run install:verify` · `bun run audit:bunfig` · `kimi-doctor --gate bunfig-policy` · `bhealth` / `bmachine`.
 

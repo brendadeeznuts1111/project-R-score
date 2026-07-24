@@ -820,7 +820,14 @@ class OperationsDashboard extends HTMLElement {
         loopDetail.textContent =
           `disp ${d.loop.dispatched ?? 0} · full ${d.loop.settledViaFullLoop ?? 0}` +
           ` · manual ${d.loop.manualStepsPerCycle ?? 0}` +
+          ` · outbox fail ${d.loop.outboxFailed ?? 0}` +
+          (d.loop.oldestPendingAgeSec != null
+            ? ` · oldest ${d.loop.oldestPendingAgeSec}s`
+            : '') +
           ` · gate +${d.loop.gatedAllow ?? 0}/~${d.loop.gatedAdjust ?? 0}/-${d.loop.gatedDeny ?? 0}` +
+          (d.loop.projectorBackend
+            ? ` · projector ${d.loop.projectorBackend}${d.loop.projectorDurable ? '' : ' (attr)'}`
+            : '') +
           (capParts.length ? ` · ${capParts.join(' · ')}` : '');
       }
     }

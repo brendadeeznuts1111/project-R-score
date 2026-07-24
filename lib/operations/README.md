@@ -24,11 +24,19 @@ Tree-structured agent management with HMAC-signed play distribution.
 | [`platform-coverage.ts`](platform-coverage.ts) | Platforms, coverage snapshots, `canOfferOnPlatform` |
 | [`liquidity.ts`](liquidity.ts) | `ensurePosition` · `reservePlay` / `releasePlay` · coverage-gated reserve |
 | [`play-signing.ts`](play-signing.ts) | `Bun.CryptoHasher("sha256")` HMAC play signing |
-| [`play-settlement.ts`](play-settlement.ts) | Settle play + experiment outcome hook |
+| [`play-settlement.ts`](play-settlement.ts) | Settle play — per-node liquidity + `play.settled` outbox fan-out + experiment outcomes |
+| [`ops-settle-batch.ts`](ops-settle-batch.ts) | Batch settle pending distributed plays + drain outbox |
+| [`ops-loop-metrics.ts`](ops-loop-metrics.ts) | Row-aligned `loopCompletionRate` + CE/LE/RP proxies |
+| [`ops-loop-gate-backfill.ts`](ops-loop-gate-backfill.ts) | Legacy gate + settle outbox attribution |
+| [`ops-loop-fixture.ts`](ops-loop-fixture.ts) | Single- + multi-node throughput fixtures |
+| [`snapshot-cron.ts`](snapshot-cron.ts) | In-process cron: snapshot · sync · settle |
+| [`play-dispatcher.ts`](play-dispatcher.ts) | Publish + gate + reserve + Telegram outbox |
 | [`account-service.ts`](account-service.ts) | Tree nodes, portal sync |
 | [`cut-engine.ts`](cut-engine.ts) | Cut cascade allocations |
 | [`backup.ts`](backup.ts) | DB backup helpers |
 | [`index.ts`](index.ts) | Barrel exports |
+
+Prove loop: `bun run ops:settle` · `ops:outbox:requeue` · `bun test tests/ops-loop-hardening.test.ts` · tenant [`docs/harness/tenants/ops-loop-throughput.md`](../../docs/harness/tenants/ops-loop-throughput.md).
 
 ## Quick start
 

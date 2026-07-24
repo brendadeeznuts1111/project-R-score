@@ -126,4 +126,46 @@ describe('ops channel outbox', () => {
     expect(local.length).toBeGreaterThanOrEqual(1);
     db.close();
   });
+
+  test('telegram projector uses ops chat + forum thread when no telegramId', async () => {
+    const prevChat = Bun.env.TELEGRAM_OPS_CHAT_ID;
+    const prevTopics = Bun.env.TELEGRAM_TOPICS;
+    Bun.env.TELEGRAM_OPS_CHAT_ID = '-100999';
+    Bun.env.TELEGRAM_TOPICS = JSON.stringify({ alerts: 12 });
+
+    const bodies: Record<string, unknown>[] = [];
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async (_input: RequestInfo, init?: RequestInit) => {
+      bodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+      return new Response(JSON.stringify({ ok: true, result: { message_id: 1 } }), {
+        status: 200,
+      });
+    }) as typeof fetch;
+
+    const db = openOperationsDb({ path: ':memory:' });
+    enqueueOpsChannelEvent(db, {
+      topic: 'alerts',
+      eventType: 'ops.alert',
+      idempotencyKey: 'tg-group-1',
+      payload: { message: 'gate breach', severity: 'critical' },
+      projectors: ['telegram'],
+    });
+
+    try {
+      const result = await processChannelOutbox(db, {
+        deliver: true,
+        telegramToken: 'test-token-abcdef',
+      });
+      expect(result.sent).toBe(1);
+      expect(bodies[0]?.chat_id).toBe('-100999');
+      expect(bodies[0]?.message_thread_id).toBe(12);
+    } finally {
+      globalThis.fetch = origFetch;
+      if (prevChat === undefined) delete Bun.env.TELEGRAM_OPS_CHAT_ID;
+      else Bun.env.TELEGRAM_OPS_CHAT_ID = prevChat;
+      if (prevTopics === undefined) delete Bun.env.TELEGRAM_TOPICS;
+      else Bun.env.TELEGRAM_TOPICS = prevTopics;
+      db.close();
+    }
+  });
 });

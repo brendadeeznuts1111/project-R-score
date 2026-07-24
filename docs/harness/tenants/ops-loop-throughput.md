@@ -4,14 +4,15 @@
 
 | Piece | Path |
 |-------|------|
-| Metrics | [`lib/operations/ops-loop-metrics.ts`](../../lib/operations/ops-loop-metrics.ts) · `buildOpsSummary().loop` |
-| Settlement caller | [`tools/ops-settle.ts`](../../../tools/ops-settle.ts) · `runOpsSettleCycle` in [`snapshot-cron.ts`](../../lib/operations/snapshot-cron.ts) |
+| Metrics | [`lib/operations/ops-loop-metrics.ts`](../../../lib/operations/ops-loop-metrics.ts) · `buildOpsSummary().loop` |
+| Settlement | [`lib/operations/play-settlement.ts`](../../../lib/operations/play-settlement.ts) · [`ops-settle-batch.ts`](../../../lib/operations/ops-settle-batch.ts) · [`tools/ops-settle.ts`](../../../tools/ops-settle.ts) · `runOpsSettleCycle` in [`snapshot-cron.ts`](../../../lib/operations/snapshot-cron.ts) |
 | Sync consumer cron | `runOpsSyncCycle` · [`tools/ops-sync-consumer.ts`](../../../tools/ops-sync-consumer.ts) |
-| Durable projector | [`lib/channels/outbox.ts`](../../lib/channels/outbox.ts) · `opts.r2Store` |
+| Durable projector | [`lib/channels/outbox.ts`](../../../lib/channels/outbox.ts) · [`outbox-prod-opts.ts`](../../../lib/channels/outbox-prod-opts.ts) (`projectorBackend`) |
+| Outbox requeue | [`tools/ops-outbox-requeue.ts`](../../../tools/ops-outbox-requeue.ts) · `bun run ops:outbox:requeue` |
 | Portal panel | **Ops loop** on `/portal/ops/` · `<notification-center>` topics `identity` + `plays` |
 | Reports | [`reports/ops-loop-baseline.json`](../../../reports/ops-loop-baseline.json) · [`reports/ops-loop-post.json`](../../../reports/ops-loop-post.json) · [`reports/ops-loop-post-live.json`](../../../reports/ops-loop-post-live.json) |
-| Live proof caller | [`tools/ops-loop-live-proof.ts`](../../../tools/ops-loop-live-proof.ts) |
-| Legacy gate backfill | [`lib/operations/ops-loop-gate-backfill.ts`](../../lib/operations/ops-loop-gate-backfill.ts) · [`tools/ops-loop-gate-backfill.ts`](../../../tools/ops-loop-gate-backfill.ts) |
+| Live proof caller | [`tools/ops-loop-live-proof.ts`](../../../tools/ops-loop-live-proof.ts) · `bun run ops:loop:live` |
+| Legacy gate backfill | [`lib/operations/ops-loop-gate-backfill.ts`](../../../lib/operations/ops-loop-gate-backfill.ts) · [`tools/ops-loop-gate-backfill.ts`](../../../tools/ops-loop-gate-backfill.ts) |
 
 ## Metric definitions
 
@@ -22,12 +23,15 @@
 | `reserved` | Same as dispatched (successful reserve + enqueue). |
 | `settled` | `plays.result` closed (not `pending`). |
 | `settledViaFullLoop` | Distribution rows with gate allow/adjust on same node + `play.settled` outbox row `sent`. |
-| `manualStepsPerCycle` | Pending distributed plays + pending outbox rows. |
-| **`loopCompletionRate`** | `settledViaFullLoop / dispatched` — row-aligned (same unit as `dispatched`). |
+| `manualStepsPerCycle` | Unsettled distributed plays + pending outbox + **failed** outbox rows. |
+| **`loopCompletionRate`** | `settledViaFullLoop / dispatched` — row-aligned (same unit as `dispatched`). Attribution only — not R2 durability. |
+| `capitalEfficiencyProxy` / `limitEfficiencyProxy` / `processReturnProxy` | CE / LE / RP capital-return proxies (see module header). |
 
 **60% claim:** `(post.loopCompletionRate - baseline.loopCompletionRate) / baseline.loopCompletionRate ≥ 0.6` when baseline rate > 0; when baseline ≈ 0, post rate must be ≥ 0.6 absolute.
 
-**Row-aligned numerator (2026-07-24):** `settledViaFullLoop` counts distribution rows with full gate + settle attribution (not `COUNT(DISTINCT play_id)`). `settlePlay` fans out `play.settled` to every `play_distribution` node. Legacy DBs still need one `ops:loop:backfill` pass for pre-fan-out history.
+**Row-aligned numerator (2026-07-24):** `settledViaFullLoop` counts distribution rows with full gate + settle attribution (not `COUNT(DISTINCT play_id)`). `settlePlay` fans out `play.settled` **and** releases per-node liquidity (stake-proportional PnL/cuts). Legacy DBs still need one `ops:loop:backfill` pass for pre-fan-out history.
+
+**Attribution ≠ durability:** `loopCompletionRate` is SQLite outbox `sent` status. `ops:outbox:requeue --drain` (no `--r2`) uses in-process memory projectors — LCR can be 100% while R2 is empty. Prefer `bun run ops:outbox:requeue -- --drain --r2` for durable proof. `resolveProductionOutboxOpts` surfaces `projectorBackend: 'r2'|'memory'`; ops-summary / portal loop slice expose `projectorBackend` + `projectorDurable` at bake time.
 
 Developer velocity is tracked separately via `bun run harness:status` → `reports/harness-gate-timing.json` gate sum.
 
@@ -38,7 +42,7 @@ Developer velocity is tracked separately via `bun run harness:status` → `repor
 bun tools/ops-loop-report.ts --out reports/ops-loop-baseline.json
 bun tools/ops-loop-report.ts --out reports/ops-loop-post.json --fixture --compare reports/ops-loop-baseline.json
 
-# Live DB proof (one gated play → settle → outbox)
+# Live DB proof (one gated play → settle → outbox) — or: bun run ops:loop:live
 bun tools/ops-loop-live-proof.ts
 bun tools/ops-loop-report.ts --out reports/ops-loop-post-live.json --compare reports/ops-loop-baseline.json
 
@@ -54,6 +58,11 @@ bun run ops:snapshot:cron
 bun run ops:loop:backfill -- --dry-run
 bun run ops:loop:backfill
 bun tools/ops-loop-report.ts --out reports/ops-loop-post-live.json --compare reports/ops-loop-baseline.json
+
+# Requeue failed outbox → pending, optionally drain (local memory projectors; add --r2 for durable)
+bun run ops:outbox:requeue -- --dry-run
+bun run ops:outbox:requeue -- --drain
+bun run ops:outbox:requeue -- --drain --r2
 
 # Tests
 bun test tests/ops-loop-hardening.test.ts tests/ops-summary.test.ts
@@ -97,7 +106,7 @@ Pages onboard → R2 ops-sync → runOpsSyncCycle → bindPartnerProfile
 | `bindPartnerProfile` race | Medium | **Closed** | `ON CONFLICT DO UPDATE` upsert |
 | `reservePlay` no version retry | Medium | **Closed** | `reservePlayWithRetry` |
 | Book coverage unused at dispatch | Medium | **Closed** | `play.bookSlug` → `checkCoverage` |
-| Demo snapshot vs live DB | Medium | **Proven** | Live proof 2026-07-24: `ops-loop-live-proof` → `settledViaFullLoop` 0→1; rate 0→4.5% (19 legacy rows lack gates; ≥60% absolute needs gated backfill or clean slate) |
+| Demo snapshot vs live DB | Medium | **Closed** | Row-aligned LCR + settle fan-out + backfill: live `loopCompletionRate` can reach ≥65% when all distribution rows have gate + `play.settled` sent; drain pending via `ops:settle` / `ops:outbox:requeue --drain` |
 | Topic taxonomy drift | Medium | **Closed** | Tenant doc lists `identity` · `plays` · `ops-sync` |
 
 Production R2 projection is best-effort: when `config/r2-env` credentials are absent, projectors fall back to in-process memory (dev parity only).

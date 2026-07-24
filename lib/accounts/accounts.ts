@@ -340,7 +340,8 @@ export class AccountSystem {
   // ── Helpers ─────────────────────────────────────────────────────────
 
   private async notify(telegramId: TelegramUserId, lines: string[]): Promise<void> {
-    const token = Bun.env.TELEGRAM_BOT_TOKEN;
+    const { loadTelegramEnv } = await import('../telegram/telegram-config.ts');
+    const token = loadTelegramEnv().effectiveToken;
     if (!token) return;
     await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',

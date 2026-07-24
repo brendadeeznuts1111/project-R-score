@@ -22,6 +22,7 @@ import type { TreeNode } from './ops-bot-types.ts';
 export type { TreeNode } from './ops-bot-types.ts';
 export type { BotConfig } from './ops-bot-types.ts';
 import type { BotConfig } from './ops-bot-types.ts';
+import { loadTelegramEnv } from './telegram-config.ts';
 
 export class OpsTelegramBot {
   private db: Database;
@@ -30,11 +31,7 @@ export class OpsTelegramBot {
   private polling = false;
 
   constructor(config: BotConfig) {
-    this.token =
-      config.token ||
-      Bun.env.TELEGRAM_BOT_FACTORY?.trim() ||
-      Bun.env.TELEGRAM_BOT_TOKEN?.trim() ||
-      '';
+    this.token = config.token || loadTelegramEnv().effectiveToken || '';
     this.dbPath = config.dbPath;
     this.db = new Database(config.dbPath);
     this.db.run('PRAGMA journal_mode=WAL');

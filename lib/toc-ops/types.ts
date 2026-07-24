@@ -680,6 +680,32 @@ export type TocPartnerProfile = {
     settles7d: number;
     avgStake7d: number;
   };
+  /** Ops desk scorecard (SLA · trust · proof). */
+  deskScorecard?: {
+    trustScore: number;
+    slaOnTimePct: number;
+    proofCompletenessPct: number;
+    avgPartnerResponseMin: number;
+    openExceptions: number;
+    lastReviewAt: string;
+  };
+  /** Rail health for confirmed payout paths. */
+  railHealth?: Array<{
+    railId: string; // brand-ok
+    successRate: number;
+    avgSettleMin: number;
+    lastFailureAt: string | null;
+    volume30d: number;
+  }>;
+  /** Screenshot / proof vault refs. */
+  proofVault?: Array<{
+    ref: string;
+    kind: 'limits' | 'rail' | 'kyc' | 'slip' | 'receipt' | 'other';
+    callSign?: string; // brand-ok
+    at: string;
+  }>;
+  /** Daily Soft T series (oldest→newest, demo). */
+  softDailyT?: Array<{ day: string; t: number; oe: number }>;
 };
 
 /** Rich expert / agent profile + liquidity. */
@@ -707,6 +733,23 @@ export type TocAgentProfile = {
     placementRate: number;
     avgStake: number;
   };
+  /** Per-book / venue permission matrix. */
+  bookPermissions?: Array<{
+    venueId: string; // brand-ok
+    allowed: boolean;
+    maxStake: number;
+    markets: string[];
+    note?: string;
+  }>;
+  /** Exposure ladder by stake band. */
+  exposureLadder?: Array<{
+    band: string;
+    openStake: number;
+    reserved: number;
+    cap: number;
+  }>;
+  /** Daily CLV samples (bps) oldest→newest. */
+  clvDailyBps?: number[];
 };
 
 export type TocProfilesSummary = {

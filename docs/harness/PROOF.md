@@ -203,8 +203,14 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   _Ratchet_ →
   `bun test tests/operations-schema.test.ts tests/play-dispatcher.test.ts tests/account-service.test.ts tests/operations-phase2.test.ts tests/operations-phase3.test.ts`
 - **`telegram-webhook-v1`** — Per-tenant Telegram webhooks validate their
-  secret, route commands, and publish channel events (`unit`) _Ratchet_ →
-  `bun test tests/telegram-bot.test.ts`
+  secret, enqueue to R2 on Pages, and route commands on Bun (`unit`) _Ratchet_ →
+  `bun test tests/telegram-bot.test.ts tests/telegram-webhook-pages.test.ts` ·
+  Pages `functions/api/telegram/webhook/` + Bun consume ·
+  [`tenants/telegram-factory.md`](tenants/telegram-factory.md)
+- **`ops-loop-throughput`** — Closed loop dispatch → gate → settle → channels
+  with row-aligned `loopCompletionRate` ≥60% (`journey` + `unit`) _Ratchet_ →
+  `bun test tests/ops-loop-hardening.test.ts` · `bun run ops:loop:baseline` /
+  `ops:loop:post` · [`tenants/ops-loop-throughput.md`](tenants/ops-loop-throughput.md)
 - **`ops-snapshot-cron-v1`** — In-process Bun.cron ops-snapshot refreshes
   portal/Pages artifacts (ops-summary, monitoring, static, routing/bun-utils)
   (`unit` + `boundary`) _Ratchet_ → `bun test tests/ops-snapshot-cron.test.ts` ·
@@ -299,6 +305,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `accounts-r2-v1`                   | human-only | `bun test tests/accounts-r2.test.ts`                                                          |
 | `operations-ssot-v1`               | human-only | operations Phase 1–3 unit suites                                                              |
 | `telegram-webhook-v1`              | human-only | `bun test tests/telegram-bot.test.ts`                                                         |
+| `ops-loop-throughput`              | human-only | `bun test tests/ops-loop-hardening.test.ts`                                                   |
 | `ops-snapshot-cron-v1`             | human-only | `bun test tests/ops-snapshot-cron.test.ts`                                                    |
 | `channel-meta-verification-v1`     | continuous | `ci:harness` channel-meta step · also `check:release-tracker`                                 |
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                              |

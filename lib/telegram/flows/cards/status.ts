@@ -1,8 +1,9 @@
 /**
- * Status flow card.
+ * Status flow card — thin caller of status.v1.
  */
+import { asTreeNodeId } from '../../../types/branded/operations.ts';
+import { renderForNode, resolveTemplateIdForCard } from '../../templates/render.ts';
 import { t } from '../i18n.ts';
-import { navFooterKeyboard } from '../keyboards.ts';
 import type { FlowContext, FlowInput, FlowOutput } from '../types.ts';
 
 export function statusFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
@@ -31,15 +32,26 @@ export function statusFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
     )
     .get({ $n: node.id }) as { total: number };
 
+  const treeNodeId = input.treeNodeId ?? asTreeNodeId(node.id);
+  const templateId = resolveTemplateIdForCard(ctx.db, treeNodeId, 'status');
+  const rendered = renderForNode(ctx.db, templateId, treeNodeId, {
+    locale,
+    accountsCount: accts.c,
+    placedCount: placed.c,
+    pnl: pnl.total,
+  });
+
+  if (!rendered) {
+    return {
+      text: `<b>${t('card.not_registered', locale)}</b>`,
+      parseMode: 'HTML',
+    };
+  }
+
   return {
-    text: [
-      `<b>${t('card.status.title', locale)}</b>`,
-      `Accounts: ${accts.c}`,
-      `Placed: ${placed.c}`,
-      `P&amp;L: $${pnl.total.toFixed(2)}`,
-    ].join('\n'),
+    text: rendered.text,
     parseMode: 'HTML',
-    keyboard: navFooterKeyboard('status', 'f:status:r'),
+    keyboard: rendered.keyboard,
     editMessageId: input.editMessageId,
   };
 }

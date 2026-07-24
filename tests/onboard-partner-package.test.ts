@@ -154,4 +154,46 @@ describe('partner onboard package', () => {
     expect(seats[0]!.callSign).toBe('ASH-003');
     db.close();
   });
+
+  test('apply attaches message template ids and enqueues onboard.complete', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const expertId = seedExpert(db, now);
+    const agentId = seedAgent(db, { callSign: 'ASH-010', expertId }, now);
+    const phoneId = randomUUIDv7();
+    db.run(
+      `INSERT INTO phones (id, model, carrier, status, assigned_to, issued_at)
+       VALUES ($id, 'Pixel 7', 'T-Mobile', 'issued', $agent, $now)`,
+      { $id: phoneId, $agent: agentId, $now: now }
+    );
+    db.run(`UPDATE tree_nodes SET telegram_id = '777', phone_id = $p WHERE id = $id`, {
+      $p: phoneId,
+      $id: agentId,
+    });
+    const tid = asTreeNodeId(agentId);
+
+    const plan = planPartnerOnboardPackage(db, tid, { source: 'portal' });
+    expect(plan.phoneLabel).toBe('Pixel 7');
+    expect(plan.messageTemplates.welcomeTemplate).toBe('partner.welcome.v1');
+
+    const result = applyPartnerOnboardPackage(db, plan, { source: 'portal' });
+    expect(result.status).toBe('ok');
+    expect(result.onboardCompleteEventId).toBeDefined();
+
+    const meta = db
+      .query('SELECT metadata_json FROM partner_profile_bindings WHERE tree_node_id = $id')
+      .get({ $id: agentId }) as { metadata_json: string };
+    const parsed = JSON.parse(meta.metadata_json) as {
+      welcomeTemplate: string;
+      phoneLabel: string;
+    };
+    expect(parsed.welcomeTemplate).toBe('partner.welcome.v1');
+    expect(parsed.phoneLabel).toBe('Pixel 7');
+
+    const complete = db
+      .query('SELECT COUNT(*) AS n FROM ops_channel_outbox WHERE event_type = $e')
+      .get({ $e: 'partner.onboard.complete' }) as { n: number };
+    expect(complete.n).toBe(1);
+    db.close();
+  });
 });

@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-07-24T07:10:35.100Z",
+  "capturedAt": "2026-07-24T07:24:49.239Z",
   "source": "fixture",
   "metrics": {
     "dispatched": 1,
@@ -14,10 +14,13 @@
     "outboxPending": 0,
     "oldestPendingAgeSec": null,
     "manualStepsPerCycle": 0,
-    "loopCompletionRate": 1
+    "loopCompletionRate": 1,
+    "capitalEfficiencyProxy": null,
+    "limitEfficiencyProxy": 0.39050235478806905,
+    "processReturnProxy": null
   },
   "velocity": {
-    "harnessGateSumMs": 0,
-    "harnessGeneratedAt": "2026-07-24T07:10:26.107Z"
+    "harnessGateSumMs": 2106,
+    "harnessGeneratedAt": "2026-07-24T07:24:20.646Z"
   }
 }

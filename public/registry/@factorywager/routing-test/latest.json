@@ -3,7 +3,7 @@
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
   "baseUrl": "https://score.factory-wager.com",
-  "timestamp": "2026-07-24T06:20:14.023Z",
+  "timestamp": "2026-07-24T07:59:49.740Z",
   "concurrency": 6,
   "probes": [
     {
@@ -12,8 +12,8 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 185.43,
-      "contentType": "text/html",
+      "timeMs": 141.52,
+      "contentType": "application/json",
       "note": "may be SPA HTML"
     },
     {
@@ -22,7 +22,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 128.91,
+      "timeMs": 118.84,
       "contentType": "text/html",
       "note": "may be SPA HTML"
     },
@@ -32,7 +32,7 @@
       "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 90.94,
+      "timeMs": 112.35,
       "contentType": "application/json",
       "note": "index (local) or empty-key 400 (R2 gateway)"
     },
@@ -42,7 +42,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 210.46,
+      "timeMs": 217.07,
       "contentType": "text/html",
       "note": "SPA fallback 200 (Pages) or missing package 404/503"
     },
@@ -52,7 +52,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 308.31,
+      "timeMs": 201.58,
       "contentType": "application/json",
       "note": "R2 optional; static path preferred"
     },
@@ -62,7 +62,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 364.42,
+      "timeMs": 190.12,
       "contentType": "application/json",
       "note": "R2 optional"
     },
@@ -72,7 +72,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 37.93,
+      "timeMs": 35.96,
       "contentType": "application/json",
       "note": "ops snapshot/live"
     },
@@ -82,7 +82,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 54.11,
+      "timeMs": 34.29,
       "contentType": "application/json",
       "note": "monitoring payload"
     },
@@ -92,7 +92,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 128.74,
+      "timeMs": 139.62,
       "contentType": "text/html"
     },
     {
@@ -101,7 +101,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 143.95,
+      "timeMs": 174.09,
       "contentType": "text/html"
     },
     {
@@ -110,9 +110,29 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 54.03,
+      "timeMs": 101.15,
       "contentType": "text/html",
       "note": "ops dashboard"
+    },
+    {
+      "path": "/portal/dashboard/",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 89.25,
+      "contentType": "text/html",
+      "note": "executive dashboard"
+    },
+    {
+      "path": "/portal/dashboard-app.js",
+      "status": 200,
+      "ok": true,
+      "pass": true,
+      "critical": true,
+      "timeMs": 30.63,
+      "contentType": "application/javascript",
+      "note": "executive dashboard client"
     },
     {
       "path": "/registry/ops-summary.json",
@@ -120,7 +140,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 36.96,
+      "timeMs": 42.75,
       "contentType": "application/json",
       "note": "static ops metrics"
     },
@@ -130,7 +150,7 @@
       "ok": true,
       "pass": true,
       "critical": true,
-      "timeMs": 65.39,
+      "timeMs": 92.99,
       "contentType": "application/json",
       "note": "static bun utils proof"
     },
@@ -140,7 +160,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 101.47,
+      "timeMs": 78.75,
       "contentType": "application/json",
       "note": "this artifact (404 until first --write deploy)"
     },
@@ -150,7 +170,7 @@
       "ok": true,
       "pass": true,
       "critical": false,
-      "timeMs": 84.07,
+      "timeMs": 38.64,
       "contentType": "application/json",
       "note": "composite snapshot from ops:snapshot"
     },
@@ -160,30 +180,30 @@
       "ok": false,
       "pass": true,
       "critical": false,
-      "timeMs": 29.1,
+      "timeMs": 29.14,
       "contentType": "application/json",
       "note": "local serve-public 200 or R2 gateway empty-key 400"
     }
   ],
   "latency": {
-    "minMs": 29.1,
-    "maxMs": 364.42,
-    "meanMs": 126.51,
-    "p50Ms": 90.94,
-    "p95Ms": 364.42
+    "minMs": 29.14,
+    "maxMs": 217.07,
+    "meanMs": 103.82,
+    "p50Ms": 92.99,
+    "p95Ms": 217.07
   },
   "summary": {
-    "total": 16,
-    "passed": 16,
+    "total": 18,
+    "passed": 18,
     "failed": 0,
-    "httpOk": 14,
+    "httpOk": 16,
     "criticalFailed": 0,
     "criticalFailedPaths": []
   },
   "regression": {
-    "previousTimestamp": "2026-07-24T06:12:29.470Z",
-    "previousProofHash": "de478dc713f5d6c0971a40c63f2d9f8e0fb256cae6a524497c6736c407a42e7f",
+    "previousTimestamp": "2026-07-24T07:51:44.238Z",
+    "previousProofHash": "52e8890d4acb641bebd05ae36bb8808737def909ae7bca69074cd74738c062ea",
     "changes": []
   },
-  "proofHash": "75d9b2c07b050d001316547e5a0cb35ac708935a2d5fc52a49a3d86d3946f928"
+  "proofHash": "d98558e8a967d253ca52717ad5f03908724303b91136425fff3b2c0c0c98ba6d"
 }

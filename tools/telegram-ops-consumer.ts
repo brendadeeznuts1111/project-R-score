@@ -2,25 +2,39 @@
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
- * Consume queued factory Telegram ops commands from R2 → SQLite → sendMessage.
+ * Drain factory Telegram R2 queues → SQLite / bot handler / outbox projectors.
+ *
+ * Queues:
+ * - `telegram-updates` — Pages webhook enqueue (full TelegramUpdate)
+ * - `telegram-commands` — ops-bridge command queue (legacy / direct enqueue)
+ * - `ops_channel_outbox` — durable channel projectors (via processChannelOutbox)
  */
-import { resolveR2BridgeConfig } from '../scripts/lib/r2-bridge.ts';
-import { R2ChannelStore } from '../lib/channels/channels.ts';
-import { openOperationsDb } from '../lib/operations/db.ts';
-import { dispatchOpsCommand } from '../lib/telegram/ops-commands.ts';
-import { TELEGRAM_COMMANDS_TOPIC } from '../lib/telegram/ops-bridge.ts';
-import { sendTelegramMessage } from '../lib/telegram/bot.ts';
-import { getTenant } from '../config/tenants.ts';
-import { S3Client } from 'bun';
+import { getTenant, isTenantSlug } from '../config/tenants.ts';
+import { AccountR2Store } from '../lib/accounts/account-r2-store.ts';
+import {
+  createR2ChannelStoreFromConfig,
+  createR2PutBucketFromConfig,
+} from '../lib/channels/r2-channel-bucket.ts';
 import { processChannelOutbox } from '../lib/channels/outbox.ts';
+import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
+import { openOperationsDb } from '../lib/operations/db.ts';
+import { createTenantBot, sendTelegramMessage } from '../lib/telegram/bot.ts';
+import { TELEGRAM_COMMANDS_TOPIC } from '../lib/telegram/ops-bridge.ts';
+import { dispatchOpsCommand } from '../lib/telegram/ops-commands.ts';
+import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
+import type { TelegramUpdateEnqueuePayload } from '../lib/telegram/webhook-pages.ts';
+import { TELEGRAM_UPDATES_TOPIC } from '../lib/telegram/webhook-pages.ts';
 import type { TelegramUserId } from '../lib/types/branded/portal.ts';
+import { resolveR2BridgeConfig } from '../scripts/lib/r2-bridge.ts';
+import { S3Client } from 'bun';
 
-const CURSOR_KEY = 'telegram-ops-consumer/cursor.json';
+const UPDATES_CURSOR_KEY = 'telegram-ops-consumer/updates-cursor.json';
+const COMMANDS_CURSOR_KEY = 'telegram-ops-consumer/cursor.json';
 
 type Cursor = { lastSeq: number };
 
-async function loadCursor(client: S3Client): Promise<number> {
-  const f = client.file(CURSOR_KEY);
+async function loadCursor(client: S3Client, key: string): Promise<number> {
+  const f = client.file(key);
   if (!(await f.exists())) return 0;
   try {
     const c = (await f.json()) as Cursor;
@@ -30,12 +44,14 @@ async function loadCursor(client: S3Client): Promise<number> {
   }
 }
 
-async function saveCursor(client: S3Client, lastSeq: number): Promise<void> {
-  await client.write(CURSOR_KEY, JSON.stringify({ lastSeq, updatedAt: new Date().toISOString() }));
+async function saveCursor(client: S3Client, key: string, lastSeq: number): Promise<void> {
+  await client.write(key, JSON.stringify({ lastSeq, updatedAt: new Date().toISOString() }));
 }
 
 async function main(): Promise<void> {
-  const token = Bun.env.TELEGRAM_BOT_FACTORY ?? Bun.env.TELEGRAM_BOT_TOKEN;
+  const dryRun = process.argv.includes('--dry-run');
+  const tg = loadTelegramEnv();
+  const token = tg.effectiveToken;
   if (!token) {
     console.error('TELEGRAM_BOT_FACTORY or TELEGRAM_BOT_TOKEN required');
     process.exit(1);
@@ -49,25 +65,62 @@ async function main(): Promise<void> {
     endpoint: r2.endpoint,
   });
 
-  const bucket = {
-    get: (key: string) => client.file(key).text(),
-    put: (key: string, body: string, opts?: { httpMetadata?: { contentType?: string } }) =>
-      client.write(key, body, opts),
+  const bucket = createR2PutBucketFromConfig(r2);
+  const channel = createR2ChannelStoreFromConfig(r2);
+  const env: Record<string, string | undefined> = {
+    ...Bun.env,
+    TELEGRAM_BOT_FACTORY: token,
   };
 
-  const channel = new R2ChannelStore(bucket);
-  const lastSeq = await loadCursor(client);
-  const events = await channel.readSince(TELEGRAM_COMMANDS_TOPIC, lastSeq);
+  const updatesSince = await loadCursor(client, UPDATES_CURSOR_KEY);
+  const commandsSince = await loadCursor(client, COMMANDS_CURSOR_KEY);
+  const updates = await channel.readSince(TELEGRAM_UPDATES_TOPIC, updatesSince);
+  const commands = await channel.readSince(TELEGRAM_COMMANDS_TOPIC, commandsSince);
+
+  if (dryRun) {
+    console.log(
+      JSON.stringify(
+        {
+          dryRun: true,
+          updatesPending: updates.length,
+          commandsPending: commands.length,
+          updatesCursor: updatesSince,
+          commandsCursor: commandsSince,
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
 
   const db = openOperationsDb();
   const dbPath = Bun.env.OPS_DB_PATH ?? 'data/operations.db';
-  const tenant = getTenant('factory')!;
-  let maxSeq = lastSeq;
-  let processed = 0;
+  let updatesMax = updatesSince;
+  let commandsMax = commandsSince;
+  let updatesProcessed = 0;
+  let commandsProcessed = 0;
 
   try {
-    for (const ev of events) {
-      if (ev.seq > maxSeq) maxSeq = ev.seq;
+    for (const ev of updates) {
+      if (ev.seq > updatesMax) updatesMax = ev.seq;
+      const p = ev.payload as TelegramUpdateEnqueuePayload;
+      if (!p?.tenantSlug || !p.update || !isTenantSlug(p.tenantSlug)) continue;
+      const tenant = getTenant(p.tenantSlug);
+      if (!tenant) continue;
+      const bot = createTenantBot(p.tenantSlug);
+      await bot.handleUpdate(p.update, {
+        tenant,
+        accounts: new AccountR2Store(bucket),
+        bucket,
+        channel,
+        env: { ...env, OPS_DB_PATH: dbPath },
+      });
+      updatesProcessed++;
+    }
+
+    for (const ev of commands) {
+      if (ev.seq > commandsMax) commandsMax = ev.seq;
       const p = ev.payload as {
         telegramUserId?: TelegramUserId;
         chatId?: string; // brand-ok — Telegram Bot API chat id wire string
@@ -81,17 +134,25 @@ async function main(): Promise<void> {
         args: p.args ?? [],
       });
       const chatId = Number(p.chatId ?? p.telegramUserId);
+      const tenant = getTenant('factory')!;
       await sendTelegramMessage({ TELEGRAM_BOT_FACTORY: token }, tenant, chatId, reply);
-      processed++;
+      commandsProcessed++;
     }
 
-    await processChannelOutbox(db, {
+    const outboxOpts = resolveProductionOutboxOpts({
       telegramToken: token,
       deliver: true,
+      requireR2: true,
     });
+    await processChannelOutbox(db, outboxOpts);
+    console.log(
+      `telegram-ops-consumer: updates=${updatesProcessed} commands=${commandsProcessed}` +
+        ` updatesSeq=${updatesMax} commandsSeq=${commandsMax}` +
+        ` projectorBackend=${outboxOpts.projectorBackend}`
+    );
 
-    if (maxSeq > lastSeq) await saveCursor(client, maxSeq);
-    console.log(`telegram-ops-consumer: processed=${processed} lastSeq=${maxSeq}`);
+    if (updatesMax > updatesSince) await saveCursor(client, UPDATES_CURSOR_KEY, updatesMax);
+    if (commandsMax > commandsSince) await saveCursor(client, COMMANDS_CURSOR_KEY, commandsMax);
   } finally {
     db.close();
   }
