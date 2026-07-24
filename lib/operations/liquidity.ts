@@ -138,6 +138,28 @@ export function reservePlay(
   }
 }
 
+const RESERVE_RETRYABLE = /Concurrent modification/i;
+
+/**
+ * Reserve with bounded retry on optimistic-lock conflict (M4).
+ */
+export function reservePlayWithRetry(
+  db: Database,
+  nodeId: string, // brand-ok — TreeNodeId
+  amount: number,
+  book = '_all',
+  opts?: ReservePlayOpts,
+  maxAttempts = 3
+): ReserveResult {
+  let last: ReserveResult = { ok: false, reason: 'No attempts' };
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    last = reservePlay(db, nodeId, amount, book, opts);
+    if (last.ok) return last;
+    if (!RESERVE_RETRYABLE.test(last.reason)) return last;
+  }
+  return last;
+}
+
 /** Release reserved stake back to available (play void/push). */
 export function releasePlay(
   db: Database,
@@ -153,10 +175,7 @@ export function releasePlay(
 }
 
 /** Reserve against operations pool (global liquidity). */
-export function reserveOperationsLiquidity(
-  db: Database,
-  amount: number
-): ReserveResult {
+export function reserveOperationsLiquidity(db: Database, amount: number): ReserveResult {
   if (amount <= 0) return { ok: false, reason: 'Amount must be positive' };
   try {
     return runImmediate(db, () => {

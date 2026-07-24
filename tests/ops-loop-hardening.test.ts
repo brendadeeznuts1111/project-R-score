@@ -1,0 +1,197 @@
+/**
+ * Ops loop throughput + settlement hardening tests.
+ */
+import { describe, expect, test } from 'bun:test';
+import { randomUUIDv7 } from 'bun';
+import { MemoryChannelStore, R2ChannelStore } from '../lib/channels/channels.ts';
+import {
+  enqueueSettlementChannelEvent,
+  processChannelOutbox,
+} from '../lib/channels/outbox.ts';
+import type { R2PutBucket } from '../lib/pages/r2-types.ts';
+import { openOperationsDb } from '../lib/operations/db.ts';
+import { PlaySigner } from '../lib/operations/play-signing.ts';
+import { publishAndDispatch } from '../lib/operations/play-dispatcher.ts';
+import {
+  bindPartnerProfile,
+  evaluateForNode,
+} from '../lib/operations/partner-profile-bridge.ts';
+import { ensurePosition, reservePlayWithRetry } from '../lib/operations/liquidity.ts';
+import { settlePlay } from '../lib/operations/play-settlement.ts';
+import { queryLoopMetricsSlice, loopThroughputLift } from '../lib/operations/ops-loop-metrics.ts';
+import { runOpsLoopFixture } from '../lib/operations/ops-loop-fixture.ts';
+import { asPartnerTemplateId, asTreeNodeId } from '../lib/types/branded.ts';
+
+function mockR2Bucket(): R2PutBucket {
+  const store = new Map<string, string>();
+  return {
+    async get(key: string) {
+      const body = store.get(key);
+      if (!body) return null;
+      return {
+        body: new ReadableStream({
+          start(c) {
+            c.enqueue(new TextEncoder().encode(body));
+            c.close();
+          },
+        }),
+      };
+    },
+    async put(key: string, value: string) {
+      const prev = store.get(key) ?? '';
+      store.set(key, key.endsWith('.jsonl') ? `${prev}${value}` : value);
+    },
+  };
+}
+
+describe('settlePlay stake_actual', () => {
+  test('uses play_distribution.stake_actual over stake_recommended after gate adjust', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const playId = randomUUIDv7();
+    const nodeId = randomUUIDv7();
+
+    db.run(
+      `INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at, result)
+       VALUES ($id, $eid, 'NBA', 'totals', 'Game', 'over', -110, 500, 0.8, 'hash', $now, 'pending')`,
+      { $id: playId, $eid: randomUUIDv7(), $now: now }
+    );
+    db.run(
+      `INSERT INTO play_distribution (play_id, node_id, channel, received_at, stake_actual)
+       VALUES ($pid, $nid, 'telegram', $now, 250)`,
+      { $pid: playId, $nid: nodeId, $now: now }
+    );
+    ensurePosition(db, nodeId, '_all', 5000);
+    db.run(
+      `UPDATE positions SET available = available - 250, in_play = in_play + 250 WHERE node_id = $nid AND book = '_all'`,
+      { $nid: nodeId }
+    );
+    db.run(
+      `UPDATE operations SET total_exposure = total_exposure + 250 WHERE id = 'main'`
+    );
+
+    settlePlay(db, {
+      playId,
+      leafNodeId: nodeId,
+      result: 'win',
+      pnl: 100,
+      skipExperimentOutcomes: true,
+    });
+
+    const pos = db
+      .query(`SELECT in_play, available FROM positions WHERE node_id = $nid AND book = '_all'`)
+      .get({ $nid: nodeId }) as { in_play: number; available: number };
+    expect(pos.in_play).toBe(0);
+    expect(pos.available).toBeGreaterThan(5000);
+    db.close();
+  });
+});
+
+describe('evaluateForNode opsec', () => {
+  test('denies when opsec score exceeds template max', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const nodeId = randomUUIDv7();
+    const now = new Date().toISOString();
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, active, status, created_at)
+       VALUES ($id, 'agent', NULL, $eid, 'Agent', '1', 1, 'active', $now)`,
+      { $id: nodeId, $eid: randomUUIDv7(), $now: now }
+    );
+    bindPartnerProfile(db, asTreeNodeId(nodeId));
+    db.run(
+      `UPDATE partner_profile_bindings SET metadata_json = $meta WHERE tree_node_id = $id`,
+      { $id: nodeId, $meta: JSON.stringify({ opsecScore: 90, riskLevel: 'red' }) }
+    );
+
+    const gate = evaluateForNode(db, asTreeNodeId(nodeId), { suggestedStake: 100 });
+    expect(gate.allowed).toBe(false);
+    expect(gate.reason).toContain('OpSec');
+    db.close();
+  });
+});
+
+describe('reservePlayWithRetry', () => {
+  test('succeeds on normal reserve path', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const nodeId = randomUUIDv7();
+    ensurePosition(db, nodeId, '_all', 1000);
+    const result = reservePlayWithRetry(db, nodeId, 100, '_all');
+    expect(result.ok).toBe(true);
+    db.close();
+  });
+
+  test('does not retry non-retryable liquidity errors', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const nodeId = randomUUIDv7();
+    ensurePosition(db, nodeId, '_all', 50);
+    const result = reservePlayWithRetry(db, nodeId, 100, '_all', undefined, 5);
+    expect(result.ok).toBe(false);
+    expect(result.reason).toMatch(/Insufficient/i);
+    db.close();
+  });
+});
+
+describe('processChannelOutbox R2 projector', () => {
+  test('persists r2 events to injected R2ChannelStore', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const r2Store = new R2ChannelStore(mockR2Bucket());
+    enqueueSettlementChannelEvent(db, {
+      playId: 'play-1',
+      leafNodeId: asTreeNodeId('node-1'),
+      result: 'win',
+      pnl: 10,
+    });
+
+    const result = await processChannelOutbox(db, { deliver: false, r2Store });
+    expect(result.sent).toBe(1);
+
+    const events = await r2Store.readSince('plays', 0);
+    expect(events.length).toBe(1);
+    db.close();
+  });
+});
+
+describe('ops loop throughput proof', () => {
+  test('fixture achieves >=60% lift vs empty baseline', async () => {
+    const baselineDb = openOperationsDb({ path: ':memory:' });
+    const baseline = queryLoopMetricsSlice(baselineDb);
+    baselineDb.close();
+
+    const fixtureDb = await runOpsLoopFixture();
+    const post = queryLoopMetricsSlice(fixtureDb);
+    fixtureDb.close();
+
+    expect(post.dispatched).toBeGreaterThan(0);
+    expect(post.settledViaFullLoop).toBeGreaterThan(0);
+    expect(post.loopCompletionRate).toBeGreaterThanOrEqual(0.6);
+    expect(post.manualStepsPerCycle).toBe(0);
+
+    const lift = loopThroughputLift(baseline, post);
+    expect(lift).toBeGreaterThanOrEqual(0.6);
+  });
+});
+
+describe('bindPartnerProfile atomic upsert', () => {
+  test('concurrent bind does not throw', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const nodeId = randomUUIDv7();
+    const now = new Date().toISOString();
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, active, status, created_at)
+       VALUES ($id, 'agent', NULL, $eid, 'Agent', '1', 1, 'active', $now)`,
+      { $id: nodeId, $eid: randomUUIDv7(), $now: now }
+    );
+
+    const a = bindPartnerProfile(db, asTreeNodeId(nodeId));
+    const b = bindPartnerProfile(db, asTreeNodeId(nodeId), {
+      templateId: asPartnerTemplateId('default-prospect'),
+    });
+    expect(a.created).toBe(true);
+    expect(b.created).toBe(false);
+    const count = db
+      .query('SELECT COUNT(*) AS n FROM partner_profile_bindings WHERE tree_node_id = $id')
+      .get({ $id: nodeId }) as { n: number };
+    expect(count.n).toBe(1);
+    db.close();
+  });
+});

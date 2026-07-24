@@ -24,6 +24,8 @@ export interface PlayInput {
   odds: number;
   stakeRecommended: number;
   confidence?: number;
+  /** Sportsbook slug for coverage reserve + SoR book lists (DRAFTKINGS). */
+  bookSlug?: string; // brand-ok — platform slug, not domain BookId
 }
 
 export interface PlayRecord {

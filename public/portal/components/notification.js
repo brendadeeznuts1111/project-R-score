@@ -9,6 +9,8 @@ export class NotificationCenter extends HTMLElement {
     this.timer = null;
     this.eventSource = null;
     this.topic = 'identity';
+    this.topics = ['identity'];
+    this.sinceByTopic = new Map();
   }
 
   connectedCallback() {
@@ -18,61 +20,89 @@ export class NotificationCenter extends HTMLElement {
   }
 
   start(topic) {
-    this.topic = topic;
+    this.startTopics(Array.isArray(topic) ? topic : [topic]);
+  }
+
+  startTopics(topics) {
+    this.topics = topics.length ? topics : ['identity'];
+    this.topic = this.topics[0];
+    this.sinceByTopic = new Map(this.topics.map(t => [t, 0]));
     this.since = 0;
     this.stop();
-    this.connectSse();
-    this.timer = setInterval(() => this.poll(), 15000);
-    this.poll();
+    for (const t of this.topics) {
+      this.connectSse(t);
+    }
+    this.timer = setInterval(() => this.pollAll(), 15000);
+    this.pollAll();
   }
 
   stop() {
     if (this.timer) clearInterval(this.timer);
     this.timer = null;
+    if (this.eventSources) {
+      for (const es of this.eventSources) es.close();
+      this.eventSources = [];
+    }
     if (this.eventSource) {
       this.eventSource.close();
       this.eventSource = null;
     }
   }
 
-  connectSse() {
+  connectSse(topic = this.topic) {
     if (typeof EventSource === 'undefined') return;
+    if (!this.eventSources) this.eventSources = [];
     try {
-      const url = `/api/channels/events?topic=${encodeURIComponent(this.topic)}&since=${this.since}&stream=1`;
-      this.eventSource = new EventSource(url);
-      this.eventSource.onmessage = ev => {
+      const since = this.sinceByTopic?.get(topic) ?? this.since ?? 0;
+      const url = `/api/channels/events?topic=${encodeURIComponent(topic)}&since=${since}&stream=1`;
+      const es = new EventSource(url);
+      es.onmessage = ev => {
         try {
           const msg = JSON.parse(ev.data);
-          this.since = Math.max(this.since, msg.seq ?? 0);
+          const seq = msg.seq ?? 0;
+          if (this.sinceByTopic) this.sinceByTopic.set(topic, Math.max(this.sinceByTopic.get(topic) ?? 0, seq));
+          this.since = Math.max(this.since, seq);
           this.showToast(this.formatEvent(msg), this.toastType(msg));
         } catch {
           /* ignore */
         }
       };
-      this.eventSource.onerror = () => {
-        if (this.eventSource) {
-          this.eventSource.close();
-          this.eventSource = null;
-        }
+      es.onerror = () => {
+        es.close();
       };
+      this.eventSources.push(es);
     } catch {
       /* offline / no session */
     }
   }
 
-  async poll() {
+  async pollAll() {
+    for (const topic of this.topics ?? [this.topic]) {
+      await this.pollTopic(topic);
+    }
+  }
+
+  async pollTopic(topic) {
     try {
-      const url = `/api/channels/events?topic=${encodeURIComponent(this.topic)}&since=${this.since}`;
+      const since = this.sinceByTopic?.get(topic) ?? this.since ?? 0;
+      const url = `/api/channels/events?topic=${encodeURIComponent(topic)}&since=${since}`;
       const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
       if (!res.ok) return;
       const data = await res.json();
       for (const ev of data.events ?? []) {
-        this.since = Math.max(this.since, ev.seq);
+        const seq = ev.seq ?? 0;
+        if (this.sinceByTopic) this.sinceByTopic.set(topic, Math.max(this.sinceByTopic.get(topic) ?? 0, seq));
+        this.since = Math.max(this.since, seq);
         this.showToast(this.formatEvent(ev), this.toastType(ev));
       }
     } catch {
       /* offline / no session */
     }
+  }
+
+  /** @deprecated use pollTopic */
+  async poll() {
+    return this.pollTopic(this.topic);
   }
 
   toastType(ev) {
@@ -90,6 +120,8 @@ export class NotificationCenter extends HTMLElement {
     if (p.event === 'alert.set') return `Alert: ${p.market} @ ${p.price}`;
     if (p.eventType === 'partner.bound') return `Partner bound: ${p.profileKey ?? p.treeNodeId ?? 'node'}`;
     if (p.eventType === 'play.dispatched') return `Play dispatched · ${String(p.playId ?? '').slice(0, 8)}`;
+    if (p.eventType === 'play.gate.denied') return `Play gated (deny) · ${String(p.playId ?? '').slice(0, 8)}`;
+    if (p.eventType === 'play.gate.adjusted') return `Play gated (adjust) · ${String(p.playId ?? '').slice(0, 8)}`;
     if (p.eventType === 'play.settled') return `Play settled · ${p.result} · pnl $${p.pnl ?? 0}`;
     return JSON.stringify(p);
   }

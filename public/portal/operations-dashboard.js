@@ -725,6 +725,21 @@ class OperationsDashboard extends HTMLElement {
       }
     }
 
+    const loopCompletion = this.querySelector('#loop-completion');
+    const loopDetail = this.querySelector('#loop-detail');
+    if (loopCompletion && d.loop) {
+      const rate = Number(d.loop.loopCompletionRate ?? 0);
+      loopCompletion.textContent = `${(rate * 100).toFixed(0)}%`;
+      loopCompletion.classList.toggle('ok', rate >= 0.6);
+      loopCompletion.classList.toggle('bad', rate < 0.6 && d.loop.dispatched > 0);
+      if (loopDetail) {
+        loopDetail.textContent =
+          `disp ${d.loop.dispatched ?? 0} · full ${d.loop.settledViaFullLoop ?? 0}` +
+          ` · manual ${d.loop.manualStepsPerCycle ?? 0}` +
+          ` · gate +${d.loop.gatedAllow ?? 0}/~${d.loop.gatedAdjust ?? 0}/-${d.loop.gatedDeny ?? 0}`;
+      }
+    }
+
     // Growth metrics (period rollup)
     const growth = d.growth || {
       period: '—',

@@ -4,12 +4,13 @@
 /**
  * Unified ops channel outbox — one envelope, many projectors (R2 · Telegram · Slack).
  *
- * Local dev reads via MemoryChannelStore; Pages uses R2ChannelStore projector.
+ * `projectLocal` → in-process MemoryChannelStore (serve-public dev feed).
+ * `projectR2` → durable R2ChannelStore when `opts.r2Store` is supplied.
  */
 import type { Database } from 'bun:sqlite';
 import { randomUUIDv7 } from 'bun';
 import { sendRegistryAlert } from '../factory/alerts.ts';
-import { MemoryChannelStore, type ChannelMessage } from './channels.ts';
+import { MemoryChannelStore, R2ChannelStore, type ChannelMessage } from './channels.ts';
 import {
   asOpsChannelEventId,
   asPartnerTemplateId,
@@ -40,6 +41,8 @@ export type ProcessOutboxOpts = {
   slackWebhookUrl?: string;
   /** When false, skip network projectors (tests). Default true. */
   deliver?: boolean;
+  /** Durable R2 projector; when omitted, `r2` rows use {@link localOpsChannelStore}. */
+  r2Store?: R2ChannelStore | MemoryChannelStore;
 };
 
 function defaultProjectors(topic: OpsChannelTopic): OpsChannelProjector[] {
@@ -119,8 +122,17 @@ type OutboxRow = {
   retries: number;
 };
 
-async function projectR2(row: OutboxRow, payload: Record<string, unknown>): Promise<boolean> {
+async function projectLocal(row: OutboxRow, payload: Record<string, unknown>): Promise<boolean> {
   await localOpsChannelStore.publish(row.topic, payload, { sender: 'ops-outbox' });
+  return true;
+}
+
+async function projectR2(
+  row: OutboxRow,
+  payload: Record<string, unknown>,
+  store: R2ChannelStore | MemoryChannelStore
+): Promise<boolean> {
+  await store.publish(row.topic, payload, { sender: 'ops-outbox' });
   return true;
 }
 
@@ -165,6 +177,7 @@ export async function processChannelOutbox(
 ): Promise<{ sent: number; failed: number }> {
   const deliver = opts.deliver !== false;
   const token = opts.telegramToken ?? Bun.env.TELEGRAM_BOT_TOKEN ?? '';
+  const r2Store = opts.r2Store ?? localOpsChannelStore;
   const pending = db
     .query(
       `SELECT id, topic, event_type, payload_json, projectors, retries
@@ -192,8 +205,13 @@ export async function processChannelOutbox(
     try {
       const results: boolean[] = [];
       for (const projector of projectors) {
-        if (projector === 'r2') results.push(await projectR2(row, payload));
-        else if (deliver && projector === 'telegram')
+        if (projector === 'r2') {
+          if (r2Store === localOpsChannelStore) {
+            results.push(await projectLocal(row, payload));
+          } else {
+            results.push(await projectR2(row, payload, r2Store));
+          }
+        } else if (deliver && projector === 'telegram')
           results.push(await projectTelegram(row, payload, token));
         else if (deliver && projector === 'slack')
           results.push(await projectSlack(row, payload, opts.slackWebhookUrl));

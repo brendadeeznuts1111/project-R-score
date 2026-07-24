@@ -17,7 +17,7 @@ import {
 import { asTreeNodeId } from '../types/branded/operations.ts';
 import { AccountService } from './account-service.ts';
 import { detectFraudSignals } from './fraud-guard.ts';
-import { reservePlay, releasePlay } from './liquidity.ts';
+import { reservePlayWithRetry, releasePlay } from './liquidity.ts';
 import {
   bindPartnerProfile,
   evaluateForNode,
@@ -133,19 +133,23 @@ export async function publishAndDispatch(
 
   const signalType = inferSignalTypeFromPlay(play);
 
-  for (const { id: nodeId, telegram_id: telegramId } of recipients) {
+  for (const { id: nodeId } of recipients) {
     const treeNodeId = asTreeNodeId(nodeId);
-
     const hasBinding = db
       .query('SELECT 1 FROM partner_profile_bindings WHERE tree_node_id = $id')
       .get({ $id: nodeId });
     if (!hasBinding) {
       bindPartnerProfile(db, treeNodeId);
     }
+  }
+
+  for (const { id: nodeId, telegram_id: telegramId } of recipients) {
+    const treeNodeId = asTreeNodeId(nodeId);
 
     const gate = evaluateForNode(db, treeNodeId, {
       suggestedStake: play.stakeRecommended,
       signalType,
+      bookSlug: play.bookSlug,
     });
     recordGateDecision(db, id, treeNodeId, gate);
     if (!gate.allowed) {
@@ -162,7 +166,10 @@ export async function publishAndDispatch(
     }
 
     const stake = gate.adjustedStake ?? play.stakeRecommended;
-    const reserve = reservePlay(db, nodeId, stake);
+    const book = play.bookSlug?.trim() || '_all';
+    const reserve = reservePlayWithRetry(db, nodeId, stake, book, {
+      checkCoverage: book !== '_all',
+    });
     if (!reserve.ok) {
       enqueuePlayGatedChannelEvent(db, {
         playId: id,

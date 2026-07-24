@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T06:57:42.679Z",
+  "generated": "2026-07-24T06:58:30.190Z",
   "liquidity": {
     "total": 47900
   },
@@ -182,11 +182,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "e0e11f78ed3602465d322e9ab783f0d7d3107db29058a63317801d05c2a093cc",
+    "proofHash": "9f82570727a6535472ccdbd73b689aa65f7f0913f76c1dbdcd73069afd58d434",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T06:57:42.680Z"
+    "timestamp": "2026-07-24T06:58:30.190Z"
   },
   "registryClient": {
     "available": true,
@@ -260,7 +260,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-24T06:57:42.649Z",
+    "timestamp": "2026-07-24T06:58:30.159Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -446,8 +446,8 @@
         "ok": true
       }
     ],
-    "proofHash": "3a8ec9cfe470e860359bc2a2eb7ffd07048151a216619275c39df2a75092ed11",
-    "timestamp": "2026-07-24T06:57:42.166Z",
+    "proofHash": "8f2839e977764c35c2436901eb58a2b5ada4ea489a53d5a9339c629821239e70",
+    "timestamp": "2026-07-24T06:58:29.072Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -458,7 +458,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-24T06:39:50.037Z",
+    "updatedAt": "2026-07-24T06:58:29.068Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -706,7 +706,7 @@
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-24T06:57:42.676Z",
+    "generatedAt": "2026-07-24T06:58:30.188Z",
     "partners": 3,
     "warmed": 3,
     "warming": 1,
@@ -736,7 +736,7 @@
     "outboxSent": 3,
     "outboxFailed": 1,
     "outboxPending": 8,
-    "oldestPendingAgeSec": 1072,
+    "oldestPendingAgeSec": 1120,
     "manualStepsPerCycle": 9,
     "loopCompletionRate": 0
   }

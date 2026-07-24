@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-07-24T06:58:21.986Z",
+  "source": "fixture",
+  "metrics": {
+    "dispatched": 1,
+    "gatedAllow": 1,
+    "gatedAdjust": 0,
+    "gatedDeny": 0,
+    "reserved": 1,
+    "settled": 1,
+    "settledViaFullLoop": 1,
+    "outboxSent": 2,
+    "outboxFailed": 0,
+    "outboxPending": 0,
+    "oldestPendingAgeSec": null,
+    "manualStepsPerCycle": 0,
+    "loopCompletionRate": 1
+  },
+  "velocity": {
+    "harnessGateSumMs": 1950,
+    "harnessGeneratedAt": "2026-07-24T06:57:52.190Z"
+  }
+}

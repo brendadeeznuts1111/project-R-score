@@ -15,6 +15,7 @@ import { queryPartnersSlice, type PartnersSummarySlice } from './partner-profile
 import { queryOpsChannelHealth } from '../channels/outbox.ts';
 import type { OpsChannelHealthSlice } from '../channels/ops-channel-event.ts';
 import { loadTocOpsSummarySlice, type TocOpsSummarySlice } from '../toc-ops/export-snapshot.ts';
+import { queryLoopMetricsSlice, type OpsLoopMetricsSlice } from './ops-loop-metrics.ts';
 
 export type OpsSummaryExpert = {
   name: string;
@@ -195,6 +196,9 @@ export type OpsSummaryChannels = OpsChannelHealthSlice;
 /** TOC Ops Drum/rails/warmup rollup from /registry/toc-ops.json (optional). */
 export type OpsSummaryToc = TocOpsSummarySlice;
 
+/** Closed-loop throughput (dispatch → gate → reserve → settle → durable delivery). */
+export type OpsSummaryLoop = OpsLoopMetricsSlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -265,6 +269,8 @@ export type OpsSummaryPayload = {
    * Baked by `bun run ops:seed:toc` / `ops:snapshot` → `/registry/toc-ops.json`.
    */
   toc: OpsSummaryToc;
+  /** Ops integration loop counters — baseline/post in reports/ops-loop-*.json. */
+  loop: OpsSummaryLoop;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -821,5 +827,6 @@ export function buildOpsSummary(
     partners: queryPartnersSlice(db),
     channels: queryOpsChannelHealth(db),
     toc: loadTocOpsSummarySlice(),
+    loop: queryLoopMetricsSlice(db),
   };
 }

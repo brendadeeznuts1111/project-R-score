@@ -77,6 +77,16 @@ describe('buildOpsSummary', () => {
       recent: [],
     });
     expect(s.channels).toMatchObject({ pending: 0, failed: 0, sent: 0 });
+    expect(s.loop).toMatchObject({
+      dispatched: 0,
+      loopCompletionRate: 0,
+      manualStepsPerCycle: 0,
+    });
+    expect(s.loop).toMatchObject({
+      dispatched: 0,
+      loopCompletionRate: 0,
+      manualStepsPerCycle: 0,
+    });
     db.close();
   });
 

@@ -238,6 +238,33 @@ function profileKeyForNode(treeNodeId: TreeNodeId): PartnerProfileKey {
   return asPartnerProfileKey(`pp-${String(treeNodeId).slice(0, 32)}`);
 }
 
+type OpsecMetadata = {
+  opsecScore?: number;
+  riskLevel?: string;
+};
+
+function readOpsecMetadata(metadataJson: string | null | undefined): OpsecMetadata {
+  if (!metadataJson) return {};
+  try {
+    const parsed = JSON.parse(metadataJson) as Record<string, unknown>;
+    const opsecScore =
+      typeof parsed.opsecScore === 'number'
+        ? parsed.opsecScore
+        : typeof parsed.opsec_score === 'number'
+          ? parsed.opsec_score
+          : undefined;
+    const riskLevel =
+      typeof parsed.riskLevel === 'string'
+        ? parsed.riskLevel
+        : typeof parsed.risk_level === 'string'
+          ? parsed.risk_level
+          : undefined;
+    return { opsecScore, riskLevel };
+  } catch {
+    return {};
+  }
+}
+
 export type BindPartnerProfileResult = PartnerProfileBinding & {
   /** True when a new row was inserted (not an update). */
   created: boolean;
@@ -266,38 +293,33 @@ export function bindPartnerProfile(
   const profileKey = profileKeyForNode(treeNodeId);
 
   const existing = db
-    .query('SELECT * FROM partner_profile_bindings WHERE tree_node_id = $id')
-    .get({ $id: treeNodeId as string }) as Record<string, unknown> | null;
+    .query('SELECT created_at FROM partner_profile_bindings WHERE tree_node_id = $id')
+    .get({ $id: treeNodeId as string }) as { created_at: string } | null;
 
-  if (existing) {
-    db.run(
-      `UPDATE partner_profile_bindings
-       SET template_id = $tid, lifecycle_status = $ls, updated_at = $now
-       WHERE tree_node_id = $id`,
-      { $tid: templateId as string, $ls: lifecycleStatus, $now: now, $id: treeNodeId as string }
-    );
-  } else {
-    db.run(
-      `INSERT INTO partner_profile_bindings
-       (tree_node_id, template_id, profile_key, lifecycle_status, metadata_json, created_at, updated_at)
-       VALUES ($nid, $tid, $pk, $ls, NULL, $created, $updated)`,
-      {
-        $nid: treeNodeId as string,
-        $tid: templateId as string,
-        $pk: profileKey as string,
-        $ls: lifecycleStatus,
-        $created: now,
-        $updated: now,
-      }
-    );
-  }
+  db.run(
+    `INSERT INTO partner_profile_bindings
+     (tree_node_id, template_id, profile_key, lifecycle_status, metadata_json, created_at, updated_at)
+     VALUES ($nid, $tid, $pk, $ls, NULL, $created, $updated)
+     ON CONFLICT(tree_node_id) DO UPDATE SET
+       template_id = excluded.template_id,
+       lifecycle_status = excluded.lifecycle_status,
+       updated_at = excluded.updated_at`,
+    {
+      $nid: treeNodeId as string,
+      $tid: templateId as string,
+      $pk: profileKey as string,
+      $ls: lifecycleStatus,
+      $created: now,
+      $updated: now,
+    }
+  );
 
   return {
     treeNodeId,
     templateId,
     profileKey,
     lifecycleStatus,
-    createdAt: (existing?.created_at as string) ?? now,
+    createdAt: existing?.created_at ?? now,
     updatedAt: now,
     created: existing == null,
   };
@@ -361,11 +383,12 @@ export function evaluateForNode(
   const decisionId = asGateDecisionId(randomUUIDv7());
   const binding = db
     .query(
-      `SELECT template_id, lifecycle_status FROM partner_profile_bindings WHERE tree_node_id = $id`
+      `SELECT template_id, lifecycle_status, metadata_json FROM partner_profile_bindings WHERE tree_node_id = $id`
     )
     .get({ $id: treeNodeId as string }) as {
     template_id: string; // brand-ok — PartnerTemplateId from SQLite
     lifecycle_status: string;
+    metadata_json: string | null;
   } | null;
 
   if (!binding) {
@@ -450,6 +473,38 @@ export function evaluateForNode(
       allowed: false,
       action: 'block',
       reason: `Signal type ${signalType} not allowed`,
+      decisionId,
+      templateId: template.template_id,
+    };
+  }
+
+  const opsec = readOpsecMetadata(binding.metadata_json);
+  if (sor.require_opsec_green && opsec.riskLevel !== 'green') {
+    return {
+      allowed: false,
+      action: 'block',
+      reason:
+        opsec.riskLevel != null
+          ? `OpSec risk level ${opsec.riskLevel} (green required)`
+          : 'OpSec risk level unavailable (green required)',
+      decisionId,
+      templateId: template.template_id,
+    };
+  }
+  if (opsec.opsecScore != null && opsec.opsecScore > sor.opsec_score_max) {
+    return {
+      allowed: false,
+      action: 'block',
+      reason: `OpSec score ${opsec.opsecScore} exceeds max ${sor.opsec_score_max}`,
+      decisionId,
+      templateId: template.template_id,
+    };
+  }
+  if (sor.require_opsec_green && opsec.opsecScore == null && opsec.riskLevel == null) {
+    return {
+      allowed: false,
+      action: 'block',
+      reason: 'OpSec metadata missing (require_opsec_green)',
       decisionId,
       templateId: template.template_id,
     };

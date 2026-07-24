@@ -1040,6 +1040,28 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/operations/snapshot-cron.ts',
   },
   {
+    id: 'ops-loop-throughput',
+    claim:
+      'Ops closed loop (dispatch → gate → reserve → settle → durable channel delivery) with loopCompletionRate baseline/post proof ≥60%',
+    kinds: ['journey', 'unit'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun test tests/ops-loop-hardening.test.ts',
+      'bun run ops:loop:baseline',
+      'bun run ops:loop:post',
+      'lib/operations/ops-loop-metrics.ts',
+      'tools/ops-settle.ts',
+      'lib/operations/snapshot-cron.ts',
+      'docs/harness/tenants/ops-loop-throughput.md',
+      'reports/ops-loop-baseline.json',
+      'reports/ops-loop-post.json',
+    ],
+    freshRerun: 'bun test tests/ops-loop-hardening.test.ts',
+    freshRerunKind: 'claim',
+    owner: 'lib/operations/ops-loop-metrics.ts',
+  },
+  {
     id: 'multi-tenant-portal-v1',
     claim:
       'Multi-tenant portal: config/tenants SSOT, per-tenant registry paths, sidebar + manifest, proof badge from registry.meta',

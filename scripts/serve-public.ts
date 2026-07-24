@@ -543,6 +543,11 @@ async function dodApi(req: Request): Promise<Response> {
 }
 
 async function channelsEvents(req: Request): Promise<Response> {
+  if (!SERVE_DEVELOPMENT) {
+    const authErr = requireReadAuth(req);
+    if (authErr) return authErr;
+  }
+
   const url = new URL(req.url);
   const topicParam = url.searchParams.get('topic') || 'identity';
   const topic = parseOpsChannelTopic(topicParam) ?? 'identity';

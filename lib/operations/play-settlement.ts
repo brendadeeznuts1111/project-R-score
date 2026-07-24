@@ -50,7 +50,15 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
   if (!play) throw new Error(`Play not found: ${input.playId}`);
   if (play.result !== 'pending') throw new Error(`Play already settled: ${input.playId}`);
 
-  const stake = input.stakeReserved ?? play.stake_recommended;
+  const distStake = db
+    .query(
+      `SELECT stake_actual FROM play_distribution
+       WHERE play_id = $pid AND node_id = $nid
+       ORDER BY received_at DESC LIMIT 1`
+    )
+    .get({ $pid: input.playId, $nid: input.leafNodeId }) as { stake_actual: number | null } | null;
+
+  const stake = input.stakeReserved ?? distStake?.stake_actual ?? play.stake_recommended;
   const now = new Date().toISOString();
 
   db.run(`UPDATE plays SET result = $res, pnl = $pnl, closed_at = $now WHERE id = $id`, {

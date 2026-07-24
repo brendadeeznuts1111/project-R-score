@@ -79,3 +79,17 @@ Local parity: `bun run ci:core` · `bun run ci:harness:fast`. Required check: Ha
 ## Polish (harness-engineering mapping)
 
 2026-07-21 follow-on: map all twelve upstream theses → local owners in [`docs/harness/README.md`](../harness/README.md); add [`AUTHORITY.md`](../harness/AUTHORITY.md); expand proof paths; retain velocity lessons in FEEDBACK.md; tool-legibility via `harness:status`.
+
+## Ops loop throughput (2026-07-24)
+
+Post-audit hardening closes dispatch → settle → durable delivery with automated callers (`ops:settle`, `runOpsSyncCycle`, `runOpsSettleCycle` in snapshot-cron).
+
+| Artifact | Path |
+|----------|------|
+| Baseline | [`reports/ops-loop-baseline.json`](../../reports/ops-loop-baseline.json) |
+| Post | [`reports/ops-loop-post.json`](../../reports/ops-loop-post.json) |
+| Tenant runbook | [`docs/harness/tenants/ops-loop-throughput.md`](../harness/tenants/ops-loop-throughput.md) |
+| Capture | `bun run ops:loop:baseline` · `bun run ops:loop:post` |
+| Proof test | `bun test tests/ops-loop-hardening.test.ts` |
+
+North-star metric: **`loopCompletionRate`** = `settledViaFullLoop / dispatched`. Target ≥60% lift vs baseline (fixture-backed post report).
