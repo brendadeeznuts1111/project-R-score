@@ -24,6 +24,46 @@ function releasePreviewRows(results) {
   return (results || []).filter(r => !String(r.name || '').startsWith('install platform:'));
 }
 
+/** Diverse preview: up to limitPer per subsystem so filters see non-runtime rows. */
+function releasePreviewRowsBySubsystem(results, limitPer = 3, maxTotal = 12) {
+  const filtered = releasePreviewRows(results);
+  const order = [
+    'runtime',
+    'package-manager',
+    'networking',
+    'bundler',
+    'test',
+    'other',
+  ];
+  const bySub = new Map();
+  for (const r of filtered) {
+    const key = r.subsystem || 'other';
+    if (!bySub.has(key)) bySub.set(key, []);
+    bySub.get(key).push(r);
+  }
+  const out = [];
+  const used = new Set();
+  for (const sub of [...order, ...[...bySub.keys()].filter(k => !order.includes(k))]) {
+    for (const r of (bySub.get(sub) || []).slice(0, limitPer)) {
+      if (out.length >= maxTotal) return out;
+      out.push(r);
+      used.add(r.name);
+    }
+  }
+  for (const r of filtered) {
+    if (out.length >= maxTotal) break;
+    if (used.has(r.name)) continue;
+    out.push(r);
+  }
+  return out;
+}
+
+function releaseHasChannelMetaEmbeds(results) {
+  return (results || []).some(r =>
+    /^(runtime-nits:|bundler:|networking:)/.test(String(r.name || ''))
+  );
+}
+
 class OperationsDashboard extends HTMLElement {
   data = null;
   docIndex = null;
@@ -98,16 +138,16 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/api/doc-refs">Full doc index JSON</a>
             <a class="ops-link" href="/api/doc-refs/script.meta">Pipe metadata</a>
           </section>
-          <section class="ops-panel wide">
-            <h2>Networking verification</h2>
+          <section class="ops-panel wide" data-subsystem="networking">
+            <h2>Networking verification <span class="version-badge subsystem-networking">networking</span></h2>
             <div class="ops-metric" id="networking-pass">—</div>
             <div class="ops-sub" id="networking-detail"></div>
             <div class="ops-mono" id="networking-hash"></div>
             <a class="ops-link" id="networking-link" href="/registry/networking-proof.json">Full networking proof JSON</a>
             <a class="ops-link" href="https://bun.com/docs/runtime/networking/fetch" target="_blank" rel="noopener">Bun fetch networking</a>
           </section>
-          <section class="ops-panel wide">
-            <h2>Install platform verification</h2>
+          <section class="ops-panel wide" data-subsystem="package-manager">
+            <h2>Install platform verification <span class="version-badge subsystem-package-manager">package-manager</span></h2>
             <div class="ops-metric" id="install-platform-pass">—</div>
             <div class="ops-sub" id="install-platform-detail"></div>
             <a class="ops-link" id="install-platform-link" href="/registry/install-platform.json">Full install platform proof JSON</a>
@@ -116,8 +156,8 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
-          <section class="ops-panel wide">
-            <h2>Install env + scoped registry verification</h2>
+          <section class="ops-panel wide" data-subsystem="package-manager">
+            <h2>Install env + scoped registry verification <span class="version-badge subsystem-package-manager">package-manager</span></h2>
             <div class="ops-metric" id="install-env-pass">—</div>
             <div class="ops-sub" id="install-env-detail"></div>
             <a class="ops-link" id="install-env-link" href="/registry/install-env-proof.json">Full install env proof JSON</a>
@@ -165,8 +205,8 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
-          <section class="ops-panel wide">
-            <h2>Bun runtime nits (Phase 1)</h2>
+          <section class="ops-panel wide" data-subsystem="runtime">
+            <h2>Bun runtime nits (Phase 1) <span class="version-badge subsystem-runtime">runtime</span></h2>
             <div class="ops-metric" id="runtime-nits-pass">—</div>
             <div class="ops-sub" id="runtime-nits-detail"></div>
             <div class="ops-mono" id="runtime-nits-hash"></div>
@@ -177,8 +217,8 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
-          <section class="ops-panel wide">
-            <h2>Bundler loaders (Asset Processing)</h2>
+          <section class="ops-panel wide" data-subsystem="bundler">
+            <h2>Bundler loaders (Asset Processing) <span class="version-badge subsystem-bundler">bundler</span></h2>
             <div class="ops-metric" id="bundler-loaders-pass">—</div>
             <div class="ops-sub" id="bundler-loaders-detail"></div>
             <div class="ops-mono" id="bundler-loaders-hash"></div>
@@ -190,8 +230,8 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
-          <section class="ops-panel wide">
-            <h2>Proof taxonomy audit</h2>
+          <section class="ops-panel wide" data-subsystem="mixed">
+            <h2>Proof taxonomy audit <span class="version-badge">mixed</span></h2>
             <div class="ops-metric" id="taxonomy-pass">—</div>
             <div class="ops-sub" id="taxonomy-detail"></div>
             <div class="ops-mono" id="taxonomy-hash"></div>
@@ -202,8 +242,8 @@ class OperationsDashboard extends HTMLElement {
               <tbody></tbody>
             </table>
           </section>
-          <section class="ops-panel wide">
-            <h2>Bun release verification</h2>
+          <section class="ops-panel wide" data-subsystem="mixed">
+            <h2>Bun release verification <span class="version-badge" id="release-mode-badge">—</span></h2>
             <div class="ops-metric" id="release-pass">—</div>
             <div class="ops-sub" id="release-detail"></div>
             <div class="ops-mono" id="release-hash"></div>
@@ -236,9 +276,15 @@ class OperationsDashboard extends HTMLElement {
           </section>
           <section class="ops-panel">
             <h2>Coverage prediction</h2>
+            <div class="ops-callout hidden" id="pred-empty-callout">
+              No backtest rows yet —
+              <code>bun run ops:snapshot:demo</code> or
+              <code>bun run ops:prediction backtest</code>.
+              <a href="/registry/prediction/report">Open report</a>
+            </div>
             <div class="ops-metric" id="pred-mae">—</div>
             <div class="ops-sub" id="pred-detail"></div>
-            <a class="ops-link" id="pred-report-link" href="/registry/prediction/report.html">Open report</a>
+            <a class="ops-link" id="pred-report-link" href="/registry/prediction/report">Open report</a>
             <img id="pred-chart" class="ops-chart hidden" alt="Coverage prediction chart" width="100%" />
           </section>
           <section class="ops-panel wide">
@@ -842,7 +888,25 @@ class OperationsDashboard extends HTMLElement {
     const relTbody = relTable?.querySelector('tbody');
     const relJsonLd = this.querySelector('#release-jsonld');
     const rows = rel.results || [];
-    const previewRows = releasePreviewRows(rows);
+    const modeBadge = this.querySelector('#release-mode-badge');
+    if (modeBadge) {
+      const hasMeta = releaseHasChannelMetaEmbeds(rows);
+      const cm = d.channelMeta;
+      if (hasMeta && cm?.stale) {
+        modeBadge.textContent = `meta · ${rows.length} rows · STALE bake`;
+        modeBadge.className = 'version-badge match-no';
+      } else if (hasMeta) {
+        modeBadge.textContent = `meta · ${rows.length} rows`;
+        modeBadge.className = 'version-badge match-ok';
+      } else if (cm?.type === 'ChannelMetaBakeInvalid' || cm?.stale) {
+        modeBadge.textContent = 'bare release · bake invalid';
+        modeBadge.className = 'version-badge match-no';
+      } else {
+        modeBadge.textContent = rows.length ? `bare release · ${rows.length} rows` : '—';
+        modeBadge.className = 'version-badge';
+      }
+    }
+    const previewRows = releasePreviewRowsBySubsystem(rows, 3, 12);
     const previewProof = rel.semanticTags ? { ...rel, results: previewRows } : rel;
 
     if (rel.semanticTags && relCards && previewRows.length > 0) {
@@ -1364,6 +1428,10 @@ class OperationsDashboard extends HTMLElement {
 
     // Prediction (C5)
     const cov = d.prediction?.coverage || { mae: 0, rmse: 0, bias: 0, n: 0 };
+    const predEmpty = this.querySelector('#pred-empty-callout');
+    if (predEmpty) {
+      predEmpty.classList.toggle('hidden', cov.n > 0);
+    }
     const predMae = this.querySelector('#pred-mae');
     if (predMae) {
       predMae.textContent = cov.n > 0 ? `MAE ${Number(cov.mae).toFixed(2)}` : 'No rows';
@@ -1373,7 +1441,7 @@ class OperationsDashboard extends HTMLElement {
       predDetail.textContent =
         cov.n > 0
           ? `n=${cov.n} · RMSE ${Number(cov.rmse).toFixed(2)} · bias ${Number(cov.bias).toFixed(2)}`
-          : 'Run ops:prediction backtest + report, then ops:snapshot for Pages';
+          : 'Run bun run ops:snapshot:demo to seed + bake for Pages';
     }
     const chart = this.querySelector('#pred-chart');
     if (chart) {

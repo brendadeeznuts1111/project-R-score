@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="200" viewBox="0 0 720 200">
   <rect width="100%" height="100%" fill="#0d1117"/>
-  <text x="48" y="20" fill="#e6edf3" font-family="ui-sans-serif,system-ui" font-size="13" font-weight="600">Residuals (error) · ±56.3</text>
+  <text x="48" y="20" fill="#e6edf3" font-family="ui-sans-serif,system-ui" font-size="13" font-weight="600">Residuals (error) · ±10.0</text>
   <line x1="48" y1="98.0" x2="704" y2="98.0" stroke="#30363d" stroke-width="1" stroke-dasharray="4 3"/>
-  <rect x="39.0" y="78.9" width="18.0" height="19.1" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="111.9" y="73.0" width="18.0" height="25.0" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="184.8" y="67.2" width="18.0" height="30.8" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="257.7" y="55.4" width="18.0" height="42.6" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="330.6" y="49.6" width="18.0" height="48.4" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="403.4" y="43.7" width="18.0" height="54.3" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="476.3" y="37.9" width="18.0" height="60.1" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="549.2" y="46.1" width="18.0" height="51.9" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="622.1" y="41.4" width="18.0" height="56.6" fill="#f85149" opacity="0.85" rx="1"/>
-  <rect x="695.0" y="32.0" width="18.0" height="66.0" fill="#f85149" opacity="0.85" rx="1"/>
-  <text x="48" y="190" fill="#8b949e" font-size="11" font-family="ui-sans-serif,system-ui">2024-03-01</text>
-  <text x="704" y="190" fill="#8b949e" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">2024-12-01</text>
+  <rect x="42.0" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="64.6" y="65.0" width="12.0" height="33.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="87.2" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="109.8" y="78.2" width="12.0" height="19.8" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="132.5" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="155.1" y="32.0" width="12.0" height="66.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="177.7" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="200.3" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="223.0" y="45.2" width="12.0" height="52.8" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="245.6" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="268.2" y="58.4" width="12.0" height="39.6" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="290.8" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="313.4" y="71.6" width="12.0" height="26.4" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="336.1" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="358.7" y="51.8" width="12.0" height="46.2" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="381.3" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="403.9" y="65.0" width="12.0" height="33.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="426.5" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="449.2" y="78.2" width="12.0" height="19.8" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="471.8" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="494.4" y="32.0" width="12.0" height="66.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="517.0" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="539.6" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="562.3" y="45.2" width="12.0" height="52.8" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="584.9" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="607.5" y="58.4" width="12.0" height="39.6" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="630.1" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="652.7" y="71.6" width="12.0" height="26.4" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="675.4" y="98.0" width="12.0" height="1.0" fill="#f85149" opacity="0.85" rx="1"/>
+  <rect x="698.0" y="51.8" width="12.0" height="46.2" fill="#f85149" opacity="0.85" rx="1"/>
+  <text x="48" y="190" fill="#8b949e" font-size="11" font-family="ui-sans-serif,system-ui">2026-06-25</text>
+  <text x="704" y="190" fill="#8b949e" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">2026-07-24</text>
   <g font-family="ui-sans-serif,system-ui" font-size="10">
     <rect x="560" y="28" width="10" height="10" fill="#f85149" rx="1"/>
     <text x="574" y="36" fill="#e6edf3">over (err&gt;0)</text>

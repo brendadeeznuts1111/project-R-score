@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
-  "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 505,
+  "uptime": "0d 0h 0m 1s",
+  "uptimeMs": 1193,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -10,21 +10,23 @@
     "failures": 0,
     "source": "unknown"
   },
-  "platformSummary": {},
+  "platformSummary": {
+    "active": 4
+  },
   "platformApiAvailable": {
-    "yes": 0,
+    "yes": 4,
     "no": 0
   },
   "dodQueue": 0,
   "dodByStatus": {},
   "experimentsActive": 1,
-  "predictionN": 0,
-  "timestamp": "2026-07-24T06:10:35.910Z",
-  "snapshotAt": "2026-07-24T06:10:35.910Z",
+  "predictionN": 30,
+  "timestamp": "2026-07-24T06:20:15.208Z",
+  "snapshotAt": "2026-07-24T06:20:15.208Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-24T06:10:35.910Z",
+    "checkedAt": "2026-07-24T06:20:15.210Z",
     "summary": {
       "total": 23,
       "ok": 23,
@@ -59,7 +61,7 @@
         "Group": "cloudflare",
         "Severity": "required",
         "Status": "set",
-        "Detail": "set (len 53, cfa…43)"
+        "Detail": "set (len 53, cfa…15)"
       },
       {
         "Key": "CLOUDFLARE_DNS_API_TOKEN",
@@ -196,5 +198,181 @@
       }
     ],
     "requiredMissingKeys": []
+  },
+  "routeStats": {
+    "routing": {
+      "passed": 16,
+      "total": 16,
+      "httpOk": 14,
+      "criticalFailed": 0,
+      "p95Ms": 364.42,
+      "errorRate": 0,
+      "proofHash": "75d9b2c07b050d001316547e5a0cb35ac708935a2d5fc52a49a3d86d3946f928",
+      "baseUrl": "https://score.factory-wager.com",
+      "routes": [
+        {
+          "path": "/registry/@factorywager/bun-utils-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 65.39,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/monitoring",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 54.11,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/portal/ops/",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 54.03,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/api/operations/summary",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 37.93,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/registry/ops-summary.json",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 36.96,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/routing-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 364.42,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 308.31,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/test-pkg",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 210.46,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/health",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 185.43,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/portal",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 143.95,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/ready",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 128.91,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/monitoring",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 128.74,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/registry/@factorywager/routing-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 101.47,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry",
+          "status": 400,
+          "pass": true,
+          "critical": false,
+          "timeMs": 90.94,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/registry/static.json",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 84.07,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/static",
+          "status": 400,
+          "pass": true,
+          "critical": false,
+          "timeMs": 29.1,
+          "contentType": "application/json"
+        }
+      ]
+    }
+  },
+  "bunApiProof": {
+    "demosPassed": 30,
+    "demosTotal": 30,
+    "demoPassRate": "100.0%",
+    "generated": "2026-07-24T06:20:15.204Z",
+    "apisVerified": 30
+  },
+  "registryClientProof": {
+    "available": true,
+    "sdkVersion": "1.0.0",
+    "passed": 3,
+    "total": 3,
+    "status": "pass",
+    "subsystem": "package-manager",
+    "proofHash": "38542ede96aad679d33a4c8baec9651ad940db3cd75a80f2cb10fc714f116c1f",
+    "timestamp": "2026-07-24T04:59:00.755Z",
+    "path": "/registry/registry-client-proof.json"
+  },
+  "docsCoverageProof": {
+    "available": true,
+    "ok": true,
+    "subsystem": "other",
+    "missingCanonicalCount": 0,
+    "catalogTracked": 13,
+    "catalogTotal": 13,
+    "overlayTracked": 232,
+    "overlayTotal": 232,
+    "referenceModuleCount": 44,
+    "referencePageCount": 57,
+    "indexStale": false,
+    "proofHash": "c74594ac19fd2bc94162c4ab8943ccec771c0430e51c6ef43317c712385c2fdc",
+    "timestamp": "2026-07-24T04:59:00.392Z",
+    "path": "/registry/docs-coverage-proof.json"
   }
 }

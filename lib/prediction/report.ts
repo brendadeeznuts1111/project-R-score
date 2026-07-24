@@ -285,6 +285,16 @@ export function buildReportHtml(opts: {
       ? `${escapeXml(opts.points[0]!.date)} → ${escapeXml(opts.points[opts.points.length - 1]!.date)}`
       : '—';
 
+  const emptyBanner =
+    a.n === 0
+      ? `<div class="empty-banner">
+      <strong>No backtest data.</strong>
+      Run <code>bun run ops:snapshot:demo</code> (seed + snapshot) or
+      <code>bun run ops:prediction backtest</code> then <code>bun run ops:snapshot</code>.
+      <a href="/portal/ops/">← Ops dashboard</a>
+    </div>`
+      : '';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -365,6 +375,13 @@ export function buildReportHtml(opts: {
     }
     .footer code { background: var(--surface); padding: 1px 6px; border-radius: 4px; font-size: 11px; border: 1px solid var(--border); }
     .links { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 0; font-size: 13px; }
+    .empty-banner {
+      margin: 0 0 16px; padding: 12px 14px; border-radius: var(--radius);
+      background: rgba(210,153,34,.08); border: 1px solid rgba(210,153,34,.35);
+      color: var(--yellow); font-size: 13px;
+    }
+    .empty-banner code { background: var(--surface); padding: 1px 6px; border-radius: 4px; font-size: 11px; border: 1px solid var(--border); }
+    .empty-banner a { margin-left: 8px; }
   </style>
 </head>
 <body>
@@ -385,6 +402,8 @@ export function buildReportHtml(opts: {
       <span class="badge ${quality}">${qualityLabel}</span>
     </h1>
     <p class="lede">Generated ${escapeXml(opts.generated)} · range ${range} · model naive coverage % · static Pages artifact from <code>ops:prediction report</code> / <code>ops:snapshot</code></p>
+
+    ${emptyBanner}
 
     <div class="cards">
       <div class="card">
@@ -472,7 +491,7 @@ ${rows || '<tr><td colspan="5">No rows — run <code>bun run ops:prediction back
     </section>
 
     <footer class="footer">
-      <p>Regenerate: <code>bun run ops:prediction report</code> · <code>bunx --bun ops-snapshot</code> · optional PNG: <code>bun run ops:prediction report --webview</code></p>
+      <p>Regenerate: <code>bun run ops:snapshot:demo</code> · <code>bun run ops:prediction report</code> · <code>bun run ops:snapshot</code> · optional PNG: <code>bun run ops:prediction report --webview</code></p>
       <p>Error coloring: green ≤5 · amber ≤15 · red &gt;15 absolute points of coverage %.</p>
     </footer>
   </main>
