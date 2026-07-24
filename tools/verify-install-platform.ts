@@ -21,7 +21,7 @@ import {
   reportCanonicalCoverageGaps,
 } from '../lib/verification/canonical-coverage.ts';
 import { runProjectInstallPlatformVerification } from '../lib/verification/install-platform.ts';
-import { summarizeBySubsystem } from '../lib/verification/subsystem.ts';
+import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 import type { VerificationResult } from '../lib/verification/types.ts';
 
 export const SAVE_PATH = 'public/registry/install-platform.json';
@@ -56,7 +56,7 @@ const proof = {
   timestamp: new Date().toISOString(),
   bunVersion: version,
   bunRevision: (revision || '').slice(0, 12) || 'unknown',
-  semanticTags,
+  semanticTags: { ...semanticTags, subsystems: subsystemsFromResults(results) },
   dryRun: report.dryRun,
   reportPath: INSTALL_PLATFORM_PROOF_REPORT_PATH,
   toolchain: {

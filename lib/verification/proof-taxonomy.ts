@@ -113,6 +113,8 @@ export type ProofTaxonomyAuditRow = {
   ok: boolean;
   rows: number;
   missingSubsystem: number;
+  /** Rows missing introducedIn when requireRowSubsystem (taxonomy completeness). */
+  missingIntroducedIn: number;
   notes: string[];
   primarySubsystem: VerificationSubsystem;
   reportPath: string;
@@ -139,6 +141,7 @@ export function auditProofTaxonomy(
 ): ProofTaxonomyAuditRow {
   const notes: string[] = [];
   let missingSubsystem = 0;
+  let missingIntroducedIn = 0;
   let rows = 0;
 
   if (contract.requireReportSubsystem && raw.subsystem !== contract.primarySubsystem) {
@@ -149,6 +152,15 @@ export function auditProofTaxonomy(
 
   if (contract.expectSemanticTags && !raw.semanticTags) {
     notes.push('missing semanticTags');
+  } else if (contract.expectSemanticTags && raw.semanticTags) {
+    const tags = raw.semanticTags as { subsystems?: unknown };
+    if (!Array.isArray(tags.subsystems) || tags.subsystems.length === 0) {
+      notes.push('semanticTags.subsystems missing or empty');
+    } else if (!tags.subsystems.includes(contract.primarySubsystem)) {
+      notes.push(
+        `semanticTags.subsystems lacks primary ${contract.primarySubsystem} (got ${tags.subsystems.join(',')})`
+      );
+    }
   }
 
   if (contract.requireBySubsystem) {
@@ -173,6 +185,7 @@ export function auditProofTaxonomy(
         for (const row of list) {
           const r = row as Record<string, unknown>;
           if (!r.subsystem) missingSubsystem++;
+          if (r.introducedIn == null || r.introducedIn === '') missingIntroducedIn++;
         }
       }
     }
@@ -181,12 +194,16 @@ export function auditProofTaxonomy(
   if (missingSubsystem > 0) {
     notes.push(`${missingSubsystem}/${rows} rows missing subsystem`);
   }
+  if (missingIntroducedIn > 0) {
+    notes.push(`${missingIntroducedIn}/${rows} rows missing introducedIn`);
+  }
 
   return {
     path: contract.path,
     ok: notes.length === 0,
     rows,
     missingSubsystem,
+    missingIntroducedIn,
     notes,
     primarySubsystem: contract.primarySubsystem,
     reportPath: contract.reportPath,
@@ -209,6 +226,7 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
         ok: false,
         rows: 0,
         missingSubsystem: 0,
+        missingIntroducedIn: 0,
         notes: [`missing file — run ${contract.verifyScript} --save`],
         primarySubsystem: contract.primarySubsystem,
         reportPath: contract.reportPath,

@@ -21,7 +21,7 @@ import {
   BUN_RUNTIME_NITS_PROOF_REPORT_PATH,
   runBunRuntimeNitsVerification,
 } from '../lib/verification/bun-runtime-nits-probes.ts';
-import { summarizeBySubsystem } from '../lib/verification/subsystem.ts';
+import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 
 export type NitProbe = {
   name: string;
@@ -359,7 +359,7 @@ if (import.meta.main) {
     timestamp: new Date().toISOString(),
     bunVersion: Bun.version,
     bunRevision: (Bun.revision || '').slice(0, 12) || 'unknown',
-    semanticTags,
+    semanticTags: { ...semanticTags, subsystems: subsystemsFromResults(report.results) },
     reportPath: BUN_RUNTIME_NITS_PROOF_REPORT_PATH,
     results: report.results,
     summary: {

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * verify-install-env.ts — Runtime probes for Bun install BUN_CONFIG_* env vars.
  *
@@ -17,7 +18,7 @@ import {
   ensureVerificationResultsHaveCanonical,
   reportCanonicalCoverageGaps,
 } from '../lib/verification/canonical-coverage.ts';
-import { summarizeBySubsystem } from '../lib/verification/subsystem.ts';
+import { summarizeBySubsystem, subsystemsFromResults } from '../lib/verification/subsystem.ts';
 import {
   INSTALL_ENV_PROOF_REPORT_PATH,
   runInstallEnvVerification,
@@ -43,7 +44,7 @@ const proof = {
   timestamp: new Date().toISOString(),
   bunVersion: version,
   bunRevision: (revision || '').slice(0, 12) || 'unknown',
-  semanticTags,
+  semanticTags: { ...semanticTags, subsystems: subsystemsFromResults(report.results) },
   reportPath: INSTALL_ENV_PROOF_REPORT_PATH,
   results: report.results,
   summary: {
@@ -71,7 +72,9 @@ if (asJson) {
     })),
     ['env', 'expected', 'actual', 'docs', 'status']
   );
-  console.log(`\n  ${report.ok && canonicalOk ? '✅' : '❌'} ${proof.summary.passed}/${proof.summary.total} passed`);
+  console.log(
+    `\n  ${report.ok && canonicalOk ? '✅' : '❌'} ${proof.summary.passed}/${proof.summary.total} passed`
+  );
   console.log(`  🔒 Proof hash: ${proofHash.slice(0, 16)}…`);
   for (const r of report.results) {
     console.log(`  📖 ${r.envVar}: ${r.canonical}`);
@@ -85,7 +88,12 @@ if (shouldSave) {
 
 // Non-blocking exit — env var readability confirmed, install tests are sandbox-dependent
 if (!report.ok) {
-  const failed = report.results?.filter((r: any) => !r.passed).map((r: any) => r.name).join(', ');
-  console.log(`\n  ⚠️  ${report.results?.filter((r: any) => !r.passed).length || 0} install env test(s) skipped (sandbox): ${failed || '—'}`);
+  const failed = report.results
+    ?.filter((r: any) => !r.passed)
+    .map((r: any) => r.name)
+    .join(', ');
+  console.log(
+    `\n  ⚠️  ${report.results?.filter((r: any) => !r.passed).length || 0} install env test(s) skipped (sandbox): ${failed || '—'}`
+  );
 }
 process.exit(0); // env vars verified as readable, sandbox-constrained tests are non-blocking

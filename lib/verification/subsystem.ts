@@ -125,3 +125,17 @@ export function summarizeBySubsystem(
   }
   return out;
 }
+
+/**
+ * Distinct subsystems present in results — for semanticTags.subsystems.
+ * Stable order matches VERIFICATION_SUBSYSTEMS.
+ */
+export function subsystemsFromResults(
+  results: readonly Pick<VerificationResult, 'subsystem' | 'canonical'>[]
+): VerificationSubsystem[] {
+  const present = new Set<VerificationSubsystem>();
+  for (const r of results) {
+    present.add(r.subsystem ?? subsystemFromCanonicalUrl(r.canonical));
+  }
+  return VERIFICATION_SUBSYSTEMS.filter(s => present.has(s));
+}
