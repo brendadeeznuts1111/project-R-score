@@ -14,6 +14,8 @@
  *   bunx --bun ops-snapshot --no-routing --no-report
  *   bunx --bun ops-snapshot --force-routing
  *   bunx --bun ops-snapshot --no-channel-meta
+ *   bunx --bun ops-snapshot --no-seed          # skip auto demo seed when DB empty
+ *   bun run ops:seed && bun run ops:snapshot    # refresh Pages ops panels
  *
  * Writes (SSOT paths):
  *   public/registry/ops-summary.json
@@ -34,6 +36,7 @@
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { isOperationsDbEmpty, seedOperationsDemo } from '../lib/operations/ops-seed.ts';
 import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
 import {
   getRoutingProof,
@@ -276,6 +279,22 @@ export async function buildRegistrySnapshot(options?: {
     }
 
     // 2. Ops summary (embeds disk routing / taxonomy / channel-meta slices)
+    if (!argv.includes('--no-seed')) {
+      const forceSeed = argv.includes('--seed-force');
+      const shouldSeed = forceSeed || argv.includes('--seed') || isOperationsDbEmpty(db);
+      if (shouldSeed) {
+        const seed = await seedOperationsDemo(db, {
+          force: forceSeed,
+          ifEmpty: !forceSeed && !argv.includes('--seed'),
+        });
+        if (seed.seeded) {
+          console.log(
+            `[ops-snapshot] demo seed → ${seed.experts} experts · ${seed.plays} plays · $${seed.liquidity} sb liquidity`
+          );
+        }
+      }
+    }
+
     const payload = buildOpsSummary(db, 'snapshot');
     if (routingSlice) payload.routing = routingSlice;
 

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24T06:06:14.063Z",
+  "generated": "2026-07-24T06:10:35.913Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -627,79 +627,216 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 481,
+    "uptimeMs": 505,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
-      "status": "ok",
-      "timestamp": "2026-07-24T00:12:25.225Z",
+      "status": "unknown",
+      "timestamp": null,
       "failures": 0,
-      "source": "sqlite"
+      "source": "unknown"
     },
-    "platformSummary": {
-      "active": 27
-    },
+    "platformSummary": {},
     "platformApiAvailable": {
       "yes": 0,
-      "no": 27
+      "no": 0
     },
     "dodQueue": 0,
     "dodByStatus": {},
-    "experimentsActive": 0,
-    "predictionN": 10,
-    "timestamp": "2026-07-24T06:06:14.060Z",
-    "snapshotAt": "2026-07-24T06:06:14.060Z"
+    "experimentsActive": 1,
+    "predictionN": 0,
+    "timestamp": "2026-07-24T06:10:35.910Z",
+    "snapshotAt": "2026-07-24T06:10:35.910Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-24T06:06:14.054Z",
+    "generated": "2026-07-24T06:10:35.904Z",
     "liquidity": {
-      "total": 0
+      "total": 47900
     },
-    "experts": [],
+    "experts": [
+      {
+        "name": "Edge NBA",
+        "sport": "NBA",
+        "market": "totals",
+        "edge_score": 0.74,
+        "active": 1
+      },
+      {
+        "name": "Sharp NFL",
+        "sport": "NFL",
+        "market": "spread",
+        "edge_score": 0.68,
+        "active": 1
+      },
+      {
+        "name": "Kalshi Tennis",
+        "sport": "Tennis",
+        "market": "moneyline",
+        "edge_score": 0.61,
+        "active": 1
+      }
+    ],
     "tree": {
-      "partners": 3,
-      "agents": 1,
-      "subAgents": 0,
-      "downstreamLiquidity": 0
+      "partners": 2,
+      "agents": 3,
+      "subAgents": 1,
+      "downstreamLiquidity": 47900
     },
-    "plays": [],
-    "rails": [],
+    "plays": [
+      {
+        "sport": "NBA",
+        "market": "spread",
+        "event": "BOS vs MIA",
+        "selection": "BOS -3.5",
+        "odds": -105,
+        "confidence": 0.66,
+        "sent_at": "2026-07-24T06:10:35.351Z",
+        "result": "loss",
+        "expert_name": "Edge NBA",
+        "sent_count": 5,
+        "placed_count": 1
+      },
+      {
+        "sport": "NFL",
+        "market": "spread",
+        "event": "KC vs BUF",
+        "selection": "KC -2.5",
+        "odds": -110,
+        "confidence": 0.63,
+        "sent_at": "2026-07-24T06:10:35.351Z",
+        "result": "pending",
+        "expert_name": "Sharp NFL",
+        "sent_count": 5,
+        "placed_count": 1
+      },
+      {
+        "sport": "Tennis",
+        "market": "moneyline",
+        "event": "Sinner vs Alcaraz",
+        "selection": "Sinner ML",
+        "odds": 125,
+        "confidence": 0.58,
+        "sent_at": "2026-07-24T06:10:35.351Z",
+        "result": "win",
+        "expert_name": "Kalshi Tennis",
+        "sent_count": 4,
+        "placed_count": 2
+      },
+      {
+        "sport": "NBA",
+        "market": "totals",
+        "event": "LAL vs GSW",
+        "selection": "over 228.5",
+        "odds": -108,
+        "confidence": 0.71,
+        "sent_at": "2026-07-24T06:10:35.350Z",
+        "result": "win",
+        "expert_name": "Edge NBA",
+        "sent_count": 5,
+        "placed_count": 1
+      }
+    ],
+    "rails": [
+      {
+        "type": "paypal",
+        "total_sent": 42000,
+        "monthly_limit": 300000
+      },
+      {
+        "type": "venmo",
+        "total_sent": 12800,
+        "monthly_limit": 100000
+      }
+    ],
     "phones": {
-      "inventory": 0,
-      "issued": 0,
-      "returned": 0
+      "inventory": 1,
+      "issued": 1,
+      "returned": 1
     },
     "experiments": {
-      "byStatus": {},
-      "active": 0,
-      "recent": []
+      "byStatus": {
+        "active": 1,
+        "completed": 1
+      },
+      "active": 1,
+      "recent": [
+        {
+          "id": "019f92bf-40d7-7425-9dbc-ec95e761e283",
+          "name": "Partner policy factorial",
+          "status": "active",
+          "designMethod": "full",
+          "metricName": "placement_rate",
+          "variants": 2,
+          "assignments": 2,
+          "metrics": 2
+        },
+        {
+          "id": "019f92bf-40d7-7426-b3c3-ba48f35435a9",
+          "name": "Rail timing switchback",
+          "status": "completed",
+          "designMethod": "switchback",
+          "metricName": "win_rate",
+          "variants": 0,
+          "assignments": 0,
+          "metrics": 0
+        }
+      ]
     },
     "prediction": {
       "coverage": {
-        "mae": 38.800000000000004,
-        "rmse": 40.834911534127265,
-        "bias": -38.800000000000004,
-        "n": 10
+        "mae": 0,
+        "rmse": 0,
+        "bias": 0,
+        "n": 0
       }
     },
     "growth": {
       "period": "2026-07",
-      "playsReceived": 0,
-      "playsPlaced": 0,
-      "volume": 0,
-      "pnl": 0,
-      "nodes": 0,
-      "top": []
+      "playsReceived": 46,
+      "playsPlaced": 32,
+      "volume": 158500,
+      "pnl": 15800,
+      "nodes": 4,
+      "top": [
+        {
+          "nodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+          "playsReceived": 20,
+          "playsPlaced": 14,
+          "volume": 70000,
+          "pnl": 7900
+        },
+        {
+          "nodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
+          "playsReceived": 12,
+          "playsPlaced": 9,
+          "volume": 48000,
+          "pnl": 6200
+        },
+        {
+          "nodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
+          "playsReceived": 8,
+          "playsPlaced": 5,
+          "volume": 22000,
+          "pnl": -1100
+        },
+        {
+          "nodeId": "019f92bf-40d6-72e7-8927-9528b1e3aff6",
+          "playsReceived": 6,
+          "playsPlaced": 4,
+          "volume": 18500,
+          "pnl": 2800
+        }
+      ]
     },
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "ee8f184b0901e6f80ddf8b8fdb556077be2cb869920a89a7156a68dc8161e5bf",
+      "proofHash": "c531d2bbd796e150cad9a0e92333da568d17b1248794253217a77a24164553eb",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-24T06:06:14.055Z"
+      "timestamp": "2026-07-24T06:10:35.905Z"
     },
     "registryClient": {
       "available": true,
@@ -773,7 +910,7 @@
           "detail": "13 contracts · 20 consistency"
         }
       ],
-      "timestamp": "2026-07-24T06:06:14.033Z",
+      "timestamp": "2026-07-24T06:10:35.889Z",
       "pagesUrl": "https://project-r-score.pages.dev",
       "path": "/registry/cloudflare-pages-preflight.json"
     },
@@ -959,8 +1096,8 @@
           "ok": true
         }
       ],
-      "proofHash": "7ed32dc04275d8298821580579f7ff453a75134c5f8f3c8713fe6e87eb8d93fa",
-      "timestamp": "2026-07-24T06:06:13.598Z",
+      "proofHash": "353f0368d1397ad66383636c8713dd371fb811bb7bc15ebb7271e39f89ce7081",
+      "timestamp": "2026-07-24T06:10:35.417Z",
       "path": "/registry/proof-taxonomy-audit.json"
     },
     "channelMeta": {
@@ -971,7 +1108,7 @@
       "total": 75,
       "status": "pass",
       "proofHash": "eed4b848643c4f84c6d0b903d267be6f749148fe8be25c91eac2cd1d077e2a43",
-      "updatedAt": "2026-07-24T06:06:13.595Z",
+      "updatedAt": "2026-07-24T06:10:35.415Z",
       "channel": "stable",
       "targetVersion": "1.4.0",
       "runtimeVersion": "1.4.0",
@@ -1156,7 +1293,7 @@
     }
   },
   "bunUtils": {
-    "proofHash": "bea760d98ee0e5593c5dc008531548e730e208dff68ed2e14ce9fea3221b0c22",
+    "proofHash": "bd263a174a4b5e066eecead8d0740a1362b9a24d01b8ffce982547319e3dfdb9",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -1318,7 +1455,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "eed4b848643c4f84c6d0b903d267be6f749148fe8be25c91eac2cd1d077e2a43",
-    "updatedAt": "2026-07-24T06:06:13.595Z",
+    "updatedAt": "2026-07-24T06:10:35.415Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -1535,8 +1672,8 @@
         "ok": true
       }
     ],
-    "proofHash": "7ed32dc04275d8298821580579f7ff453a75134c5f8f3c8713fe6e87eb8d93fa",
-    "timestamp": "2026-07-24T06:06:13.598Z",
+    "proofHash": "353f0368d1397ad66383636c8713dd371fb811bb7bc15ebb7271e39f89ce7081",
+    "timestamp": "2026-07-24T06:10:35.417Z",
     "path": "/registry/proof-taxonomy-audit.json"
   }
 }
