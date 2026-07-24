@@ -20,8 +20,10 @@ Refreshes portal/Pages artifacts:
   `channel-meta-verification-v1`
 
 **Populate demos (Pages “looks live”):** `bun run ops:snapshot:demo` runs
-`ops:seed:all` (ops + prediction + DOD + tenants) then snapshot. Snapshot itself
-auto-seeds empty ops / prediction / DOD queues unless `--no-seed`.
+`ops:seed:all` (ops + prediction + DOD + partner profiles/channels/accounts +
+tenants) then snapshot. Snapshot itself auto-seeds empty ops / prediction /
+DOD / partner bindings unless `--no-seed`, and always refreshes
+`catalog-snapshot.json`.
 
 Uses routing proof **retry + TTL cache** (`lib/routing-proof.ts` ·
 `getRoutingProof`). Next fire waits for the snapshot Promise (**no overlap**).

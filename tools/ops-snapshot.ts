@@ -40,6 +40,11 @@ import { isOperationsDbEmpty, seedOperationsDemo } from '../lib/operations/ops-s
 import { isPredictionDataEmpty, seedPredictionDemo } from '../lib/operations/prediction-seed.ts';
 import { isDodQueueEmpty, seedDodDemo } from '../lib/operations/dod-seed.ts';
 import { seedTenantRegistries } from '../lib/operations/tenant-registry-seed.ts';
+import {
+  exportCatalogSnapshot,
+  isPartnerProfileBindingsEmpty,
+  seedPartnerProfilesDemo,
+} from '../lib/operations/partner-profile-seed.ts';
 import { buildBunUtilsProof } from '../lib/bun-utils-proof.ts';
 import {
   getRoutingProof,
@@ -321,6 +326,18 @@ export async function buildRegistrySnapshot(options?: {
         }
       }
 
+      if (wantSeed || isPartnerProfileBindingsEmpty(db)) {
+        const partners = await seedPartnerProfilesDemo(db, {
+          force: forceSeed,
+          ifEmpty: ifEmptyOnly,
+        });
+        if (partners.seeded) {
+          console.log(
+            `[ops-snapshot] partner profiles → ${partners.bindings} bound · channels ${partners.channelEvents} · accounts +${partners.platformAccounts}`
+          );
+        }
+      }
+
       try {
         const tenants = await seedTenantRegistries({
           force: forceSeed || argv.includes('--seed-tenants'),
@@ -334,6 +351,13 @@ export async function buildRegistrySnapshot(options?: {
           e instanceof Error ? e.message : e
         );
       }
+    }
+
+    try {
+      const catalog = await exportCatalogSnapshot(db);
+      console.log(`[ops-snapshot] catalog snapshot → ${catalog.accounts} accounts`);
+    } catch (e) {
+      console.warn('[ops-snapshot] catalog snapshot skipped:', e instanceof Error ? e.message : e);
     }
 
     const payload = buildOpsSummary(db, 'snapshot');

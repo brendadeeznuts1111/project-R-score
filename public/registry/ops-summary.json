@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T06:33:36.350Z",
+  "generated": "2026-07-24T06:39:50.510Z",
   "liquidity": {
     "total": 47900
   },
@@ -182,11 +182,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "ec06e5412c053abb8808560485c701621cd3aa145f66f959f4f098a41f1b88f1",
+    "proofHash": "c08bec558c5fdc9d74bc3abc659397477526e3f13aae968655cc0f87070e13c3",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T06:33:36.350Z"
+    "timestamp": "2026-07-24T06:39:50.511Z"
   },
   "registryClient": {
     "available": true,
@@ -260,7 +260,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-24T06:33:36.312Z",
+    "timestamp": "2026-07-24T06:39:50.481Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -446,8 +446,8 @@
         "ok": true
       }
     ],
-    "proofHash": "d593f3da95d18cabf30661110c80336d6f6a33ad2a7b001a93dee6f0127b45da",
-    "timestamp": "2026-07-24T06:33:35.614Z",
+    "proofHash": "707104bed603b9697edfa214db2aa3cac2e376bf4055d73a7864b13826c99a86",
+    "timestamp": "2026-07-24T06:39:50.039Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -458,7 +458,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-24T06:33:35.606Z",
+    "updatedAt": "2026-07-24T06:39:50.037Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -640,5 +640,67 @@
         "contentType": "application/json"
       }
     ]
+  },
+  "partners": {
+    "bound": 6,
+    "unboundAgents": 0,
+    "byLifecycle": {
+      "active": 2,
+      "kyc_pending": 1,
+      "materialized": 1,
+      "signup": 1,
+      "suspended": 1
+    },
+    "recent": [
+      {
+        "treeNodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "profileKey": "pp-019f92bf-40d6-72e3-aa09-f0a9b8a9",
+        "templateId": "default-prospect",
+        "lifecycleStatus": "active",
+        "name": "Cascade Partner"
+      },
+      {
+        "treeNodeId": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "profileKey": "pp-019f92bf-40d6-72e4-bfd9-0c06e589",
+        "templateId": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "Factory Rail Co"
+      },
+      {
+        "treeNodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
+        "profileKey": "pp-019f92bf-40d6-72e5-80da-8aaa4cd7",
+        "templateId": "default-prospect",
+        "lifecycleStatus": "kyc_pending",
+        "name": "Agent Alpha"
+      },
+      {
+        "treeNodeId": "019f92bf-40d6-72e6-9a91-8f3f3c099c7b",
+        "profileKey": "pp-019f92bf-40d6-72e6-9a91-8f3f3c09",
+        "templateId": "default-prospect",
+        "lifecycleStatus": "active",
+        "name": "Agent Beta"
+      },
+      {
+        "treeNodeId": "019f92bf-40d6-72e7-8927-9528b1e3aff6",
+        "profileKey": "pp-019f92bf-40d6-72e7-8927-9528b1e3",
+        "templateId": "default-prospect",
+        "lifecycleStatus": "signup",
+        "name": "Agent Gamma"
+      },
+      {
+        "treeNodeId": "019f92bf-40d6-72e8-96ba-f05db1d93df0",
+        "profileKey": "pp-019f92bf-40d6-72e8-96ba-f05db1d9",
+        "templateId": "default-prospect",
+        "lifecycleStatus": "suspended",
+        "name": "Sub Scout"
+      }
+    ]
+  },
+  "channels": {
+    "pending": 8,
+    "failed": 1,
+    "sent": 3,
+    "oldestPendingAt": "2026-07-24T06:39:49.965Z",
+    "failRate": 0.25
   }
 }
