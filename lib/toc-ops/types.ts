@@ -92,6 +92,17 @@ export type TocPlayResult = 'pending' | 'win' | 'loss' | 'push' | 'void' | 'bloc
 export type TocExperimentStatus = 'draft' | 'active' | 'paused' | 'completed';
 export type TocFlowStage = 'ONB' | 'FUND' | 'LIMIT' | 'WARM' | 'PLAY' | 'WD' | 'RECYCLE';
 
+/** Return-efficiency catalog knobs (mirror toc-ops-repo ACCOUNTING; fixture defaults). */
+export type TocReturnCatalog = {
+  daysCover: number;
+  staticFloatFloor: number;
+  settlementThrottleRatio: number;
+  tVelocityWindowDays: number;
+  /** Expected ProfitSplit per settled win when upstream ΔT is projected. */
+  defaultExpectedPlayT: number;
+  processRank: TocTaskType[];
+};
+
 export type TocOpsCatalog = {
   taskTypes: TocTaskType[];
   accountStatuses: TocAccountStatus[];
@@ -103,6 +114,65 @@ export type TocOpsCatalog = {
   flowOrder: TocFlowStage[];
   depositCorridor: { min: number; max: number; target: number };
   limitFreshnessDays: number;
+  returnEfficiency?: TocReturnCatalog;
+};
+
+export type TocProcessReturn = {
+  process: TocTaskType;
+  callSign: string; // brand-ok
+  partnerCode: string; // brand-ok
+  deltaT: number;
+  iPeak: number;
+  tauDays: number;
+  oe: number;
+  rP: number;
+};
+
+export type TocAssetEfficiency = {
+  callSign: string; // brand-ok
+  partnerCode: string; // brand-ok
+  profitSplitTotal: number;
+  peakCapital: number;
+  capitalDaysInI: number;
+  ce: number;
+};
+
+export type TocLimitEnhancement = {
+  callSign: string; // brand-ok
+  partnerCode: string; // brand-ok
+  deltaL: number;
+  cAsset: number;
+  daysToUsableLimit: number;
+  le: number;
+};
+
+export type TocRankedAction = {
+  rank: number;
+  process: TocTaskType;
+  callSign: string; // brand-ok
+  partnerCode: string; // brand-ok
+  rP: number;
+  weightedScore?: number;
+  reason: string;
+  ropeSafe: boolean;
+};
+
+export type TocReturnEfficiencySlice = {
+  computedAt: string;
+  byProcess: TocProcessReturn[];
+  byAsset: TocAssetEfficiency[];
+  byLimit: TocLimitEnhancement[];
+  avgRP: number;
+  processTypeAvgRP: Partial<Record<TocTaskType, number>>;
+};
+
+/** Unified T/I/OE + return metrics + dynamic buffer (getTioeSnapshot output). */
+export type TocTioeSnapshot = {
+  throughput: TocThroughputSlice;
+  buffer: TocOpsBuffer;
+  returnEfficiency: TocReturnEfficiencySlice;
+  rankedActions: TocRankedAction[];
+  partners: TocPartner[];
 };
 
 export type TocOpsBuffer = {
@@ -268,6 +338,7 @@ export type TocPartner = {
       score: number;
       playable: boolean;
       factors: string[];
+      weightedScore?: number;
     }>;
   };
   /** Furthest healthy stage in ONB→…→WD for this partner */
@@ -300,6 +371,9 @@ export type TocOpsSnapshot = {
   identity?: TocIdentityBridge;
   /** Baked operate-lite Rope/Hard Gate evaluation (read-only on Pages). */
   enforcement?: TocEnforcementSlice;
+  /** Baked R_P / CE / LE + ranked next actions. */
+  returnEfficiency?: TocReturnEfficiencySlice;
+  rankedActions?: TocRankedAction[];
   generatedAt: string;
   ssot: {
     theory: 'toc-ops-repo/docs/reference/TOC-Production-Reference.md';
@@ -369,4 +443,7 @@ export type TocOpsSummarySlice = {
   throughputT: number | null;
   throughputI: number | null;
   throughputOE: number | null;
+  topRankedProcess: TocTaskType | null;
+  avgRP: number | null;
+  settlementFloatRatio: number | null;
 };

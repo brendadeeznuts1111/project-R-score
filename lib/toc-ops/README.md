@@ -14,8 +14,9 @@ operate-lite Hard Gate bake (`enforcement` slice).
 | [`types.ts`](types.ts) | Snapshot + ops-summary slice types |
 | [`fixture.ts`](fixture.ts) | ASH (Drum) · PAT (PLAY) · NOV (ONB); bottleneck keys (`reconcile_*` is CT-only) |
 | [`enforcement.ts`](enforcement.ts) | Operate-lite Hard Gates · T/I/OE · Rope→Drum→Buffer diagnosis |
+| [`return-efficiency.ts`](return-efficiency.ts) | R_P / CE / LE · dynamic buffer · ranked next actions |
 | [`identity.ts`](identity.ts) | TOC ↔ ops binding types |
-| [`export-snapshot.ts`](export-snapshot.ts) | Bake `public/registry/toc-ops.json` + summary slice |
+| [`export-snapshot.ts`](export-snapshot.ts) | Bake via `withTocMetrics` + summary slice |
 | [`index.ts`](index.ts) | Barrel exports |
 | [`../operations/toc-identity-bridge.ts`](../operations/toc-identity-bridge.ts) | Seed/bind `tree_nodes.call_sign` · hardrock `sb_accounts` |
 | [`../operations/toc-soft-balance.ts`](../operations/toc-soft-balance.ts) | Append-only Soft journal in ops SQLite |
@@ -25,8 +26,12 @@ operate-lite Hard Gate bake (`enforcement` slice).
 ```bash
 bun run ops:seed:toc
 bun run ops:snapshot --no-routing
-bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts
+bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts tests/toc-ops-return-efficiency.test.ts
 ```
+
+## Return efficiency
+
+`return-efficiency.ts` bakes R_P / CE_asset / LE, dynamic buffer (`floatTarget`, `settlementFloatRatio`, `throttleOnboarding`), and `rankedActions` into the fixture at export. Theory SSOT: `toc-ops-repo/docs/system/ACCOUNTING.md`.
 
 ## Portal
 

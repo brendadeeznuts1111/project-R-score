@@ -6,17 +6,19 @@
  *
  * Fixture-first (Pages-safe): writes `public/registry/toc-ops.json`.
  * When ops DB is available, binds ASH/PAT/NOV → tree_nodes / rails / sb_accounts
- * and seeds append-only toc_soft_entries. Always bakes operate-lite enforcement.
+ * and seeds append-only toc_soft_entries. Bake applies withTocMetrics
+ * (R_P / CE / LE + operate-lite enforcement).
  *
  * @see tools/ops-seed-toc.ts
  * @see lib/toc-ops/fixture.ts
  * @see lib/operations/toc-identity-bridge.ts
+ * @see lib/toc-ops/return-efficiency.ts
  * @see lib/toc-ops/enforcement.ts
  */
-import { withTocEnforcement } from '../toc-ops/enforcement.ts';
 import { buildDemoTocOpsFixture } from '../toc-ops/fixture.ts';
 import {
   exportTocOpsSnapshot,
+  loadTocOpsSnapshotSync,
   TOC_OPS_REGISTRY_REL,
   type ExportTocOpsSnapshotResult,
 } from '../toc-ops/export-snapshot.ts';
@@ -46,6 +48,8 @@ export type SeedTocOpsDemoResult = {
   softInserted?: number;
   enforcementFailed?: number;
   enforcementFocus?: string;
+  topRankedProcess?: string;
+  avgRP?: number;
 } & Partial<ExportTocOpsSnapshotResult>;
 
 export function isTocOpsSnapshotMissing(root = process.cwd()): boolean {
@@ -100,15 +104,17 @@ export async function seedTocOpsDemo(opts: SeedTocOpsDemoOpts = {}): Promise<See
     ownedDb?.close();
   }
 
-  fixture = withTocEnforcement(fixture);
   const exported = await exportTocOpsSnapshot({ root, fixture, bakeEmbed: true });
+  const baked = loadTocOpsSnapshotSync(root);
   return {
     seeded: true,
     identityLinked,
     identityPartners,
     softInserted,
-    enforcementFailed: fixture.enforcement?.failed,
-    enforcementFocus: fixture.enforcement?.diagnosis.focus,
+    enforcementFailed: baked?.enforcement?.failed,
+    enforcementFocus: baked?.enforcement?.diagnosis.focus,
+    topRankedProcess: baked?.rankedActions?.[0]?.process,
+    avgRP: baked?.returnEfficiency?.avgRP,
     ...exported,
   };
 }

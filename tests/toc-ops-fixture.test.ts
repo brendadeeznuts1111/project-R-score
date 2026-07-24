@@ -82,6 +82,13 @@ describe('toc-ops demo fixture', () => {
         bakeEmbed: false,
       });
       expect(again.partners).toBe(3);
+      const baked = JSON.parse(await Bun.file(again.path).text());
+      expect(baked.enforcement?.plane).toBe('operate-lite');
+      expect(baked.enforcement?.failed).toBeGreaterThan(0);
+      expect(baked.enforcement?.throughput?.T).toBeGreaterThan(0);
+      const enfSlice = tocOpsToSummarySlice(baked);
+      expect(enfSlice.enforcementFocus).toBe(baked.enforcement.diagnosis.focus);
+      expect(enfSlice.throughputT).toBe(baked.enforcement.throughput.T);
       expect(tocOpsToSummarySlice(buildDemoTocOpsFixture()).playsSettled).toBeGreaterThan(0);
     } finally {
       rmSync(root, { recursive: true, force: true });

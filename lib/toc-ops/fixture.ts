@@ -270,6 +270,34 @@ function ashPartner(): TocPartner {
           freshness: 'unknown',
         },
       },
+      {
+        callSign: 'ASH-003',
+        status: 'Limited',
+        warmupCount: 2,
+        warmupProgress: {
+          completed: 2,
+          required: 2,
+          tags: ['#WARMED', '#LIMIT-EX-02', '#REALLOCATE'],
+        },
+        capitalLocation: 'InSportsbook',
+        hardBalance: 4800,
+        primaryRailId: 'rail-ash-venmo-1',
+        gate12: {
+          housePrincipalOutstanding: 4800,
+          withdrawalMode: 'principal_recovery',
+        },
+        sportsbook: 'Hard Rock Florida',
+        expertId: 'marcus',
+        flowStage: 'WD',
+        limits: {
+          dailyMax: 200,
+          weeklyMax: 500,
+          rawText: 'Daily $200 · Weekly $500 — LIMIT-EX-02',
+          checkedAt: '2026-07-22T10:00:00.000Z',
+          screenshotRef: 'proof:ash-003-limits-low',
+          freshness: 'fresh',
+        },
+      },
     ],
     openTasks: [
       {
@@ -300,6 +328,16 @@ function ashPartner(): TocPartner {
         ballInCourt: 'Partner',
         nextAction: 'Screenshot limit screen (UTC stamp) — do not interrupt PLAY',
         createdAt: '2026-07-20T09:00:00.000Z',
+      },
+      {
+        taskId: 'WD-ASH-003-20260723-120000-001',
+        taskType: 'WD',
+        callSign: 'ASH-003',
+        status: 'Processing',
+        ballInCourt: 'Ops',
+        nextAction: 'LIMIT-EX-02 — principal_recovery WD; reallocate to PAT-001',
+        linkedExceptionId: 'LIMIT-EX-02',
+        createdAt: '2026-07-23T12:00:00.000Z',
       },
     ],
     softBalance: {
@@ -337,6 +375,14 @@ function ashPartner(): TocPartner {
           taskId: 'FUND-ASH-002-20260718-100000-001',
           timestamp: '2026-07-18T16:00:00.000Z',
         },
+        {
+          entryType: 'CapitalDeployment',
+          stakeholder: 'House',
+          amount: 5000,
+          callSign: 'ASH-003',
+          taskId: 'FUND-ASH-003-20260719-100000-001',
+          timestamp: '2026-07-19T10:00:00.000Z',
+        },
       ],
       pendingDeployments: { count: 0, totalAmount: 0 },
     },
@@ -362,6 +408,17 @@ function ashPartner(): TocPartner {
         taskId: 'LIMIT-ASH-001-20260720-090000-001',
         resolvedAt: null,
         nextAction: 'Refresh limit screenshot before next PLAY release',
+      },
+      {
+        ruleKey: 'capital_in_book_warming',
+        severity: 'critical',
+        metric: 'daily_max',
+        threshold: 500,
+        observed: 200,
+        callSign: 'ASH-003',
+        taskId: 'WD-ASH-003-20260723-120000-001',
+        resolvedAt: null,
+        nextAction: 'LIMIT-EX-02 — withdraw and reallocate; do not feed constrained Drum',
       },
     ],
     recentPlays: [
@@ -425,6 +482,16 @@ function ashPartner(): TocPartner {
         id: 'LIMIT-EX-03',
         trigger: 'Active Expert Play in progress',
         action: 'Queue Limit Check; never interrupt PLAY',
+      },
+      {
+        id: 'LIMIT-EX-02',
+        trigger: 'Hard limit below useful expert stakes',
+        action: 'Flag Limited; WD capital quickly; reallocate to higher-CE seat',
+      },
+      {
+        id: 'WARM-EX-02',
+        trigger: 'Parlay/prop/live dummy bet triggers early limit flag',
+        action: 'Use major-league ML/totals near-even only; avoid WARM-EX-02 scrutiny',
       },
     ],
   };
@@ -533,6 +600,16 @@ function patPartner(): TocPartner {
     ],
     openTasks: [
       {
+        taskId: 'FUND-PAT-001-20260718-100000-001',
+        taskType: 'FUND',
+        callSign: 'PAT-001',
+        status: 'Completed',
+        ballInCourt: 'Ops',
+        nextAction: 'Done — FUND $5000 corridor',
+        proofRefs: ['proof:pat-001-fund'],
+        createdAt: '2026-07-18T10:00:00.000Z',
+      },
+      {
         taskId: 'LIMIT-PAT-001-20260721-140000-001',
         taskType: 'LIMIT',
         callSign: 'PAT-001',
@@ -573,6 +650,14 @@ function patPartner(): TocPartner {
     softBalance: {
       byStakeholder: { Partner: 840, Expert: 240, House: 12_420 },
       recentEntries: [
+        {
+          entryType: 'CapitalDeployment',
+          stakeholder: 'House',
+          amount: 5000,
+          callSign: 'PAT-001',
+          taskId: 'FUND-PAT-001-20260718-100000-001',
+          timestamp: '2026-07-18T10:30:00.000Z',
+        },
         {
           entryType: 'CapitalDeployment',
           stakeholder: 'House',
@@ -926,6 +1011,14 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
       flowOrder: ['ONB', 'FUND', 'LIMIT', 'WARM', 'PLAY', 'WD', 'RECYCLE'],
       depositCorridor: { min: 4500, max: 5500, target: 5000 },
       limitFreshnessDays: 7,
+      returnEfficiency: {
+        daysCover: 14,
+        staticFloatFloor: 50_000,
+        settlementThrottleRatio: 0.6,
+        tVelocityWindowDays: 30,
+        defaultExpectedPlayT: 840,
+        processRank: ['LIMIT', 'ONB', 'WD', 'PLAY', 'WARM', 'FUND'],
+      },
     },
     buffer: {
       floatTarget: 50_000,

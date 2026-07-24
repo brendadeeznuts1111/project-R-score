@@ -678,6 +678,7 @@ class OperationsDashboard extends HTMLElement {
     const partnersRecent = this.querySelector('#partners-recent');
     const tocWarmed = this.querySelector('#toc-warmed');
     const tocDetail = this.querySelector('#toc-detail');
+    const tocEnf = this.querySelector('#toc-enforcement');
     if (tocWarmed && d.toc) {
       if (d.toc.available) {
         tocWarmed.textContent = String(d.toc.warmed ?? 0);
@@ -688,14 +689,38 @@ class OperationsDashboard extends HTMLElement {
           const focus = d.toc.enforcementFocus ? `focus ${d.toc.enforcementFocus}` : 'no enf';
           const fails =
             d.toc.enforcementFailed != null ? `${d.toc.enforcementFailed} gate fails` : '';
+          const topProc = d.toc.topRankedProcess ? `next ${d.toc.topRankedProcess}` : '';
+          const settle =
+            d.toc.settlementFloatRatio != null
+              ? `settle ${Math.round(d.toc.settlementFloatRatio * 100)}%`
+              : '';
           tocDetail.textContent =
-            `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''} · ` +
+            `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''}${topProc ? ` · ${topProc}` : ''}${settle ? ` · ${settle}` : ''} · ` +
             `${d.toc.warming ?? 0} warming · ${d.toc.onboarding ?? 0} onboarding · ` +
             `${d.toc.openOnb ?? 0} ONB · ${d.toc.playsPending ?? 0} plays · ` +
             `${d.toc.activeExperiments ?? 0} experiments`;
         }
+        if (tocEnf) {
+          const t = d.toc.throughputT;
+          const i = d.toc.throughputI;
+          const oe = d.toc.throughputOE;
+          const crit = d.toc.enforcementCritical;
+          const top = d.toc.topRankedProcess;
+          const avgRP = d.toc.avgRP;
+          const tioe =
+            t != null
+              ? `T $${Math.round(t)} · I $${Math.round(i ?? 0)} · OE $${Math.round(oe ?? 0)}` +
+                (crit != null ? ` · ${crit} critical` : '')
+              : 'T/I/OE not baked — reseed toc';
+          const ret =
+            top != null
+              ? ` · next ${top}` + (avgRP != null ? ` · avg R_P ${Number(avgRP).toFixed(3)}` : '')
+              : '';
+          tocEnf.textContent = tioe + ret;
+        }
       } else if (tocDetail) {
         tocDetail.textContent = 'Fixture missing — bun run ops:seed:toc';
+        if (tocEnf) tocEnf.textContent = '';
       }
     }
 
@@ -740,10 +765,21 @@ class OperationsDashboard extends HTMLElement {
       loopCompletion.classList.toggle('ok', rate >= 0.6);
       loopCompletion.classList.toggle('bad', rate < 0.6 && d.loop.dispatched > 0);
       if (loopDetail) {
+        const capParts = [];
+        if (d.loop.capitalEfficiencyProxy != null) {
+          capParts.push(`CE ${Number(d.loop.capitalEfficiencyProxy).toFixed(2)}`);
+        }
+        if (d.loop.limitEfficiencyProxy != null) {
+          capParts.push(`LE ${Number(d.loop.limitEfficiencyProxy).toFixed(2)}`);
+        }
+        if (d.loop.processReturnProxy != null) {
+          capParts.push(`RP ${Number(d.loop.processReturnProxy).toFixed(2)}`);
+        }
         loopDetail.textContent =
           `disp ${d.loop.dispatched ?? 0} · full ${d.loop.settledViaFullLoop ?? 0}` +
           ` · manual ${d.loop.manualStepsPerCycle ?? 0}` +
-          ` · gate +${d.loop.gatedAllow ?? 0}/~${d.loop.gatedAdjust ?? 0}/-${d.loop.gatedDeny ?? 0}`;
+          ` · gate +${d.loop.gatedAllow ?? 0}/~${d.loop.gatedAdjust ?? 0}/-${d.loop.gatedDeny ?? 0}` +
+          (capParts.length ? ` · ${capParts.join(' · ')}` : '');
       }
     }
 

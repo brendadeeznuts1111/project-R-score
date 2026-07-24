@@ -9,6 +9,7 @@
  */
 import { withTocEnforcement } from './enforcement.ts';
 import { buildDemoTocOpsFixture } from './fixture.ts';
+import { getTioeSnapshot } from './return-efficiency.ts';
 import type { TocOpsSnapshot, TocOpsSummarySlice } from './types.ts';
 
 export const TOC_OPS_REGISTRY_REL = 'public/registry/toc-ops.json';
@@ -49,11 +50,15 @@ export function emptyTocOpsSummarySlice(): TocOpsSummarySlice {
     throughputT: null,
     throughputI: null,
     throughputOE: null,
+    topRankedProcess: null,
+    avgRP: null,
+    settlementFloatRatio: null,
   };
 }
 
 export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
   const enf = snap.enforcement;
+  const top = snap.rankedActions?.[0];
   return {
     available: true,
     path: TOC_OPS_REGISTRY_PATH,
@@ -84,7 +89,39 @@ export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
     throughputT: enf?.throughput.T ?? null,
     throughputI: enf?.throughput.I ?? null,
     throughputOE: enf?.throughput.OE ?? null,
+    topRankedProcess: top?.process ?? null,
+    avgRP: snap.returnEfficiency?.avgRP ?? null,
+    settlementFloatRatio: snap.buffer.settlementFloatRatio ?? null,
   };
+}
+
+/** Apply return-efficiency metrics then operate-lite enforcement. */
+export function withTocMetrics(snap: TocOpsSnapshot): TocOpsSnapshot {
+  const now = Date.parse(snap.generatedAt);
+  const tioe = getTioeSnapshot(snap, Number.isFinite(now) ? now : Date.now());
+  const enriched: TocOpsSnapshot = {
+    ...snap,
+    catalog: {
+      ...snap.catalog,
+      returnEfficiency: {
+        ...snap.catalog.returnEfficiency,
+        daysCover: snap.catalog.returnEfficiency?.daysCover ?? 14,
+        staticFloatFloor: snap.catalog.returnEfficiency?.staticFloatFloor ?? 50_000,
+        settlementThrottleRatio: snap.catalog.returnEfficiency?.settlementThrottleRatio ?? 0.6,
+        tVelocityWindowDays: snap.catalog.returnEfficiency?.tVelocityWindowDays ?? 30,
+        defaultExpectedPlayT: snap.catalog.returnEfficiency?.defaultExpectedPlayT ?? 840,
+        // WD (Gate 12 principal) before profit PLAY
+        processRank:
+          snap.catalog.returnEfficiency?.processRank ??
+          (['LIMIT', 'ONB', 'WD', 'PLAY', 'WARM', 'FUND'] as const),
+      },
+    },
+    buffer: tioe.buffer,
+    partners: tioe.partners,
+    returnEfficiency: tioe.returnEfficiency,
+    rankedActions: tioe.rankedActions,
+  };
+  return withTocEnforcement(enriched);
 }
 
 export function loadTocOpsSnapshotSync(root = process.cwd()): TocOpsSnapshot | null {
@@ -127,7 +164,7 @@ export async function exportTocOpsSnapshot(opts?: {
 }): Promise<ExportTocOpsSnapshotResult> {
   const root = opts?.root ?? process.cwd();
   const base = opts?.fixture ?? buildDemoTocOpsFixture();
-  const snap = opts?.enforce === false ? base : withTocEnforcement(base);
+  const snap = opts?.enforce === false ? base : withTocMetrics(base);
   const outPath = tocOpsAbsPath(root);
   await Bun.write(outPath, `${JSON.stringify(snap, null, 2)}\n`);
 
