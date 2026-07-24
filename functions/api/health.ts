@@ -7,6 +7,8 @@
  * @see https://developers.cloudflare.com/pages/functions/
  */
 
+import { buildEdgeEnvTable } from '../../lib/http/portal-env-edge.ts';
+
 export type HealthEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
 };
@@ -98,30 +100,9 @@ export async function onRequest(context: {
         )
       : null;
 
-  // Edge workers rarely have CF/R2 secrets in process.env — surface expected checklist.
-  const envTable = [
-    {
-      Key: 'CLOUDFLARE_API_TOKEN',
-      Group: 'cloudflare',
-      Severity: 'required',
-      Status: 'edge-n/a',
-      Detail: 'set on build host / reasonix; not in Pages Function env by default',
-    },
-    {
-      Key: 'R2 binding REGISTRY_BUCKET',
-      Group: 'r2',
-      Severity: 'required',
-      Status: 'binding',
-      Detail: 'Pages dashboard binding → factory-wager-registry',
-    },
-    {
-      Key: 'ASSETS',
-      Group: 'pages',
-      Severity: 'required',
-      Status: context.env?.ASSETS?.fetch ? 'set' : 'missing',
-      Detail: 'static file fetch for /registry/*',
-    },
-  ];
+  const envTable = buildEdgeEnvTable({
+    hasAssets: Boolean(context.env?.ASSETS?.fetch),
+  });
 
   const body = {
     status: 'ok',
