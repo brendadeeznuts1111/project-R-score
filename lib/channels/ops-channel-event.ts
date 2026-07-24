@@ -1,7 +1,10 @@
 /**
  * Ops channel event envelope — distinct from Bun release-channel meta.
  *
- * Topics: identity · plays · dod · experiments · alerts · provisioning
+ * Topics: identity · plays · dod · experiments · alerts · provisioning · toc
+ *
+ * `toc` carries TOC operate-lite + return-efficiency bake signals
+ * (not Soft mutations on Pages — local journal / CT remain mutate plane).
  */
 import type { OpsChannelEventId } from '../types/branded/operations.ts';
 
@@ -12,6 +15,7 @@ export const OPS_CHANNEL_TOPICS = [
   'experiments',
   'alerts',
   'provisioning',
+  'toc',
 ] as const;
 
 export type OpsChannelTopic = (typeof OPS_CHANNEL_TOPICS)[number];

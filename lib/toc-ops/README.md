@@ -19,7 +19,8 @@ operate-lite Hard Gate bake (`enforcement` slice).
 | [`export-snapshot.ts`](export-snapshot.ts) | Bake via `withTocMetrics` + summary slice |
 | [`index.ts`](index.ts) | Barrel exports |
 | [`../operations/toc-identity-bridge.ts`](../operations/toc-identity-bridge.ts) | Seed/bind `tree_nodes.call_sign` · hardrock `sb_accounts` |
-| [`../operations/toc-soft-balance.ts`](../operations/toc-soft-balance.ts) | Append-only Soft journal in ops SQLite |
+| [`../operations/toc-soft-balance.ts`](../operations/toc-soft-balance.ts) | Append-only Soft journal in ops SQLite (+ `toc.soft.posted`) |
+| [`../channels/toc-outbox.ts`](../channels/toc-outbox.ts) | Outbox topic `toc` — bake · gates · ranked · Soft |
 
 ## Commands
 

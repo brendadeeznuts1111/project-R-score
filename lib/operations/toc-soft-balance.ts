@@ -9,6 +9,7 @@
  */
 import { randomUUIDv7 } from 'bun';
 import type { Database } from 'bun:sqlite';
+import { enqueueTocSoftPostedEvent } from '../channels/toc-outbox.ts';
 import type { TocOpsSnapshot, TocSoftEntryType } from '../toc-ops/types.ts';
 
 export type TocSoftJournalRow = {
@@ -66,6 +67,8 @@ export function postTocSoftBalance(
     correctsEntryId?: string; // brand-ok — Soft Adjustment self-reference
     reason?: string;
     createdAt?: string;
+    /** When false, skip topic=`toc` outbox event (bulk seed). Default true. */
+    notifyChannel?: boolean;
   }
 ): TocSoftJournalRow {
   ensureTocSoftBalanceSchema(db);
@@ -91,7 +94,7 @@ export function postTocSoftBalance(
       $now: createdAt,
     }
   );
-  return {
+  const row = {
     id,
     entryType: entry.entryType,
     stakeholder: entry.stakeholder,
@@ -103,6 +106,23 @@ export function postTocSoftBalance(
     correctsEntryId: entry.correctsEntryId ?? null,
     reason: entry.reason ?? null,
   };
+  if (entry.notifyChannel !== false) {
+    try {
+      enqueueTocSoftPostedEvent(db, {
+        entryType: row.entryType,
+        stakeholder: row.stakeholder,
+        amount: row.amount,
+        callSign: row.callSign,
+        partnerCode: row.partnerCode,
+        taskId: row.taskId,
+        entryId: row.id,
+        correctsEntryId: row.correctsEntryId,
+      });
+    } catch {
+      // ops_channel_outbox may be absent when Soft is used standalone (:memory: unit tests)
+    }
+  }
+  return row;
 }
 
 /** Seed Soft journal from fixture recentEntries when empty (or force). */
@@ -137,6 +157,8 @@ export function seedTocSoftFromFixture(
         partnerCode: p.partnerCode,
         taskId: e.taskId,
         createdAt: e.timestamp,
+        // Bulk fixture seed — one toc.metrics.baked covers the batch
+        notifyChannel: false,
       });
       inserted++;
     }

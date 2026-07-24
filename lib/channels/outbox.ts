@@ -62,7 +62,7 @@ export type ProcessOutboxOpts = {
 
 function defaultProjectors(topic: OpsChannelTopic): OpsChannelProjector[] {
   if (topic === 'alerts') return ['r2', 'slack', 'telegram'];
-  if (topic === 'identity') return ['r2'];
+  if (topic === 'identity' || topic === 'toc') return ['r2'];
   return ['r2', 'telegram'];
 }
 

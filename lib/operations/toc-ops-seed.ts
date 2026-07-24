@@ -5,16 +5,18 @@
  * Seed / bake TOC Ops portal fixture (partners · rails · WARMED · Soft · Gate 12).
  *
  * Fixture-first (Pages-safe): writes `public/registry/toc-ops.json`.
- * When ops DB is available, binds ASH/PAT/NOV → tree_nodes / rails / sb_accounts
- * and seeds append-only toc_soft_entries. Bake applies withTocMetrics
- * (R_P / CE / LE + operate-lite enforcement).
+ * When ops DB is available, binds ASH/PAT/NOV → tree_nodes / rails / sb_accounts,
+ * seeds append-only toc_soft_entries, and enqueues topic=`toc` outbox events
+ * (metrics bake · critical gates · ranked actions).
  *
  * @see tools/ops-seed-toc.ts
  * @see lib/toc-ops/fixture.ts
  * @see lib/operations/toc-identity-bridge.ts
+ * @see lib/channels/toc-outbox.ts
  * @see lib/toc-ops/return-efficiency.ts
  * @see lib/toc-ops/enforcement.ts
  */
+import { enqueueTocBakeChannelEvents } from '../channels/toc-outbox.ts';
 import { buildDemoTocOpsFixture } from '../toc-ops/fixture.ts';
 import {
   exportTocOpsSnapshot,
@@ -38,6 +40,8 @@ export type SeedTocOpsDemoOpts = {
   linkIdentity?: boolean;
   /** Seed append-only toc_soft_entries from fixture Soft rows (default with identity). */
   seedSoft?: boolean;
+  /** Enqueue topic=`toc` channel events after bake (default when DB open). */
+  enqueueChannels?: boolean;
 };
 
 export type SeedTocOpsDemoResult = {
@@ -46,6 +50,7 @@ export type SeedTocOpsDemoResult = {
   identityLinked?: boolean;
   identityPartners?: number;
   softInserted?: number;
+  channelEnqueued?: number;
   enforcementFailed?: number;
   enforcementFocus?: string;
   topRankedProcess?: string;
@@ -78,11 +83,15 @@ export async function seedTocOpsDemo(opts: SeedTocOpsDemoOpts = {}): Promise<See
   let identityLinked = false;
   let identityPartners = 0;
   let softInserted = 0;
+  let channelEnqueued = 0;
   let ownedDb: Database | null = null;
+  let db: Database | null = null;
 
   try {
-    if (opts.linkIdentity !== false || opts.seedSoft !== false) {
-      const db = opts.db ?? openOperationsDb({ path: opts.dbPath ?? DEFAULT_OPS_DB_PATH });
+    const needsDb =
+      opts.linkIdentity !== false || opts.seedSoft !== false || opts.enqueueChannels !== false;
+    if (needsDb) {
+      db = opts.db ?? openOperationsDb({ path: opts.dbPath ?? DEFAULT_OPS_DB_PATH });
       if (!opts.db) ownedDb = db;
       if (opts.linkIdentity !== false) {
         fixture = enrichTocFixtureWithIdentity(db, fixture, {
@@ -97,20 +106,31 @@ export async function seedTocOpsDemo(opts: SeedTocOpsDemoOpts = {}): Promise<See
       }
     }
   } catch (e) {
-    // Ops DB optional — still bake fixture without links / Soft journal
+    // Ops DB optional — still bake fixture without links / Soft / channels
     fixture = { ...fixture, plane: 'demo-readonly' };
+    db = null;
     void e;
-  } finally {
-    ownedDb?.close();
   }
 
   const exported = await exportTocOpsSnapshot({ root, fixture, bakeEmbed: true });
   const baked = loadTocOpsSnapshotSync(root);
+
+  try {
+    if (db && baked && opts.enqueueChannels !== false) {
+      channelEnqueued = enqueueTocBakeChannelEvents(db, baked).enqueued;
+    }
+  } catch {
+    // Channel enqueue best-effort — fixture bake already succeeded
+  } finally {
+    ownedDb?.close();
+  }
+
   return {
     seeded: true,
     identityLinked,
     identityPartners,
     softInserted,
+    channelEnqueued,
     enforcementFailed: baked?.enforcement?.failed,
     enforcementFocus: baked?.enforcement?.diagnosis.focus,
     topRankedProcess: baked?.rankedActions?.[0]?.process,

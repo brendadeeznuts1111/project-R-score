@@ -193,7 +193,7 @@ function seedChannelMix(
 
   // Extra topics so channels health shows pending/sent/failed mix.
   const extras: Array<{
-    topic: 'plays' | 'dod' | 'alerts' | 'provisioning' | 'experiments';
+    topic: 'plays' | 'dod' | 'alerts' | 'provisioning' | 'experiments' | 'toc';
     type: string;
   }> = [
     { topic: 'plays', type: 'play.placed' },
@@ -202,6 +202,7 @@ function seedChannelMix(
     { topic: 'alerts', type: 'ops.alert' },
     { topic: 'provisioning', type: 'provision.queued' },
     { topic: 'experiments', type: 'experiment.assigned' },
+    { topic: 'toc', type: 'toc.metrics.baked' },
   ];
 
   for (let i = 0; i < extras.length; i++) {

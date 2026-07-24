@@ -28,7 +28,7 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 
 | Concern | Live SSOT (`toc-ops-repo` `ct`) | `/portal/toc` (fixture) | `/portal/ops` |
 |---------|--------------------------------|-------------------------|---------------|
-| Channels / MessageLog / Ball-in-Court | MessageLog + package Telegram | BIC tasks + `telegramRef` | FW channel outbox (separate) |
+| Channels / MessageLog / Ball-in-Court | MessageLog + package Telegram | BIC tasks + `telegramRef` | FW outbox topic `toc` (metrics / gates / ranked / Soft posts) |
 | Rails (partner payment) | Rail profiles + confirm | Confirmed/unconfirmed rails | FW agent `rails` usage totals |
 | Accounts (call signs, WARMED, capital) | Accounts + journals | Demo ASH/PAT/NOV | TOC rollup card |
 | Cellphone / data plan | `ct phone-*` logistics | Not on TOC board | FW phone inventory counts |
@@ -53,6 +53,7 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 | `lib/toc-ops/export-snapshot.ts` | Bake via `withTocMetrics` (return-efficiency + enforce) |
 | `lib/operations/toc-ops-seed.ts` | `ops:seed:toc` (+ Soft seed when DB open) |
 | `lib/operations/toc-soft-balance.ts` | Append-only `toc_soft_entries` (local ops DB) |
+| `lib/channels/toc-outbox.ts` | Outbox topic `toc` — bake · gates · ranked · Soft posts |
 | `lib/operations/toc-identity-bridge.ts` | TOC ↔ tree_nodes / rails / sb_accounts |
 | `public/registry/toc-ops.json` | Pages ASSETS |
 | `public/portal/toc/` | Board UI (gates + T/I/OE) |
@@ -85,6 +86,7 @@ bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts tests/t
 | Soft/Hard Gate enforcement | **Closed (operate-lite)** — `lib/toc-ops/enforcement.ts` baked into fixture; portal board + ops-summary T/I/OE + focus; Pages POST still 503 |
 | SQLite Soft journal in FactoryWager ops DB | **Closed (local)** — append-only `toc_soft_entries` via `toc-soft-balance.ts`; seeded by `ops:seed:toc` |
 | R_P · CE · LE return efficiency | **Closed (bake)** — `lib/toc-ops/return-efficiency.ts` via `withTocMetrics`; ranked actions + avg R_P on board / ops-summary (not ops-loop LCR) |
+| Channel outbox integration | **Closed** — topic `toc` (`lib/channels/toc-outbox.ts`); seed enqueues bake; Soft post enqueues `toc.soft.posted` |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |
 | Full CT Soft mutations / DoD close on Pages | **Open by design** — use toc-ops-repo `ct` |
 

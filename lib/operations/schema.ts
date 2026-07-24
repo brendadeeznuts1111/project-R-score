@@ -137,7 +137,7 @@ export function migrateSchema(db: Database): void {
 
     CREATE TABLE IF NOT EXISTS ops_channel_outbox (
       id TEXT PRIMARY KEY,
-      topic TEXT NOT NULL CHECK(topic IN ('identity', 'plays', 'dod', 'experiments', 'alerts', 'provisioning')),
+      topic TEXT NOT NULL CHECK(topic IN ('identity', 'plays', 'dod', 'experiments', 'alerts', 'provisioning', 'toc')),
       event_type TEXT NOT NULL,
       idempotency_key TEXT NOT NULL UNIQUE,
       payload_json TEXT NOT NULL,
@@ -148,6 +148,41 @@ export function migrateSchema(db: Database): void {
       sent_at TEXT,
       last_error TEXT
     );
+    CREATE INDEX IF NOT EXISTS idx_ops_outbox_status ON ops_channel_outbox(status, created_at);
+    CREATE INDEX IF NOT EXISTS idx_ops_outbox_topic ON ops_channel_outbox(topic, created_at);
+  `);
+
+  // Existing DBs created with topic CHECK excluding `toc` — rebuild table once.
+  migrateOpsChannelOutboxTopicToc(db);
+}
+
+/** Allow topic=`toc` on ops_channel_outbox (SQLite CHECK is not ALTER-friendly). */
+function migrateOpsChannelOutboxTopicToc(db: Database): void {
+  const row = db
+    .query(`SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'ops_channel_outbox'`)
+    .get() as { sql: string } | null;
+  if (!row?.sql || row.sql.includes("'toc'")) return;
+
+  db.run(`
+    CREATE TABLE ops_channel_outbox__toc (
+      id TEXT PRIMARY KEY,
+      topic TEXT NOT NULL CHECK(topic IN ('identity', 'plays', 'dod', 'experiments', 'alerts', 'provisioning', 'toc')),
+      event_type TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      payload_json TEXT NOT NULL,
+      projectors TEXT NOT NULL DEFAULT 'r2,telegram',
+      status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'sent', 'failed')),
+      retries INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL,
+      sent_at TEXT,
+      last_error TEXT
+    );
+    INSERT INTO ops_channel_outbox__toc
+      (id, topic, event_type, idempotency_key, payload_json, projectors, status, retries, created_at, sent_at, last_error)
+    SELECT id, topic, event_type, idempotency_key, payload_json, projectors, status, retries, created_at, sent_at, last_error
+    FROM ops_channel_outbox;
+    DROP TABLE ops_channel_outbox;
+    ALTER TABLE ops_channel_outbox__toc RENAME TO ops_channel_outbox;
     CREATE INDEX IF NOT EXISTS idx_ops_outbox_status ON ops_channel_outbox(status, created_at);
     CREATE INDEX IF NOT EXISTS idx_ops_outbox_topic ON ops_channel_outbox(topic, created_at);
   `);
