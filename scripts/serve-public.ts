@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect — Bun.connect
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -1776,12 +1777,48 @@ function createServer(options: Pick<BunServeOptions, 'port' | 'hostname'> = {}):
 }
 
 /**
+ * Probe whether something already listens on the resolved default port.
+ * Bun's listener uses SO_REUSEPORT on some platforms, so a second bind can
+ * SUCCEED (no EADDRINUSE) while traffic round-robins across stale instances —
+ * the bind-time check alone is not enough. A connect probe is deterministic.
+ */
+async function probeDefaultPortBusy(): Promise<boolean> {
+  const port = resolveBunServeDefaultPort();
+  if (port === 0) return false;
+  const host = HOST_OVERRIDE ?? '127.0.0.1';
+  try {
+    const socket = await Bun.connect({
+      hostname: host,
+      port,
+      socket: {
+        data() {},
+        open(s) {
+          s.end();
+        },
+        error() {},
+      },
+    });
+    socket.end();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Start with Bun-native bind: omit `port`/`hostname` so `--port`, env chain, and docs defaults apply.
- * On EADDRINUSE, retry once with `port: 0` (ephemeral).
+ * On EADDRINUSE (or a positive busy probe), retry once with `port: 0` (ephemeral).
  * @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname
  * @see https://bun.com/docs/runtime/http/server#configuring-a-default-port
  */
-function startServer(): ServeBindSnapshot & { ephemeralFallback: boolean } {
+async function startServer(): Promise<ServeBindSnapshot & { ephemeralFallback: boolean }> {
+  if (await probeDefaultPortBusy()) {
+    console.warn(
+      `[serve] default port ${resolveBunServeDefaultPort()} already listening — binding ephemeral port instead`
+    );
+    return { ...serveBindSnapshot(createServer({ port: 0 })), ephemeralFallback: true };
+  }
+
   let lastErr: unknown;
   try {
     return { ...serveBindSnapshot(createServer()), ephemeralFallback: false };
@@ -1814,7 +1851,7 @@ Failed to bind serve-public on ${HOST_OVERRIDE ?? '(Bun default hostname)'} port
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
 }
 
-const bind = startServer();
+const bind = await startServer();
 const { port: boundPort, hostname: boundHost, protocol: boundProtocol, ephemeralFallback } = bind;
 activeServer = bind.server;
 const base = bind.loopbackOrigin;
