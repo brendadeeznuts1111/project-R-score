@@ -175,7 +175,7 @@
           "name": "cascade-mover",
           "version": "3.1.1",
           "type": "project",
-          "description": "Global Liquidity & Predictive Risk Command Center \u2014 6-indicator confidence engine",
+          "description": "Global Liquidity & Predictive Risk Command Center — 6-indicator confidence engine",
           "tags": [
             "risk",
             "liquidity",
@@ -195,7 +195,7 @@
           "name": "cascade-mover",
           "version": "3.0.0",
           "type": "project",
-          "description": "Cascade Mover v3 stable \u2014 recursive multi-market cascade detection",
+          "description": "Cascade Mover v3 stable — recursive multi-market cascade detection",
           "tags": [
             "risk",
             "stable"
@@ -224,7 +224,7 @@
           "name": "sports-terminal-os",
           "version": "5.2.0",
           "type": "project",
-          "description": "Partner Profile OS for Sports Terminal v5.2 \u2014 TOML templates, PartnerGateway kernel",
+          "description": "Partner Profile OS for Sports Terminal v5.2 — TOML templates, PartnerGateway kernel",
           "tags": [
             "partner",
             "toml",
@@ -254,7 +254,7 @@
           "name": "factory-cli",
           "version": "0.1.0",
           "type": "cli-tool",
-          "description": "R2-backed artifact registry CLI \u2014 publish, install, list, search, create, and readme",
+          "description": "R2-backed artifact registry CLI — publish, install, list, search, create, and readme",
           "dependencies": {
             "@factorywager/event-store": "^1.0.0"
           },
@@ -313,13 +313,13 @@
           "name": "quantum-domain-ops",
           "version": "0.1.0",
           "type": "library",
-          "description": "Protocols for operating QuantumDomain instances \u2014 state collapse, entanglement, coherence monitoring",
+          "description": "Protocols for operating QuantumDomain instances — state collapse, entanglement, coherence monitoring",
           "tags": [
             "quantum",
             "state-management",
             "experimental"
           ],
-          "readme": "# Quantum Domain Ops\n\nExperimental quantum state management.\n\n> \u26a0\ufe0f Requires Bun \u22651.3.0 with `--experimental-quantum` flag.\n\n```ts\nimport { QuantumDomain } from '@factorywager/quantum-domain-ops';\nconst domain = new QuantumDomain({ qubits: 8 });\nawait domain.collapse('entangled');\n```",
+          "readme": "# Quantum Domain Ops\n\nExperimental quantum state management.\n\n> ⚠️ Requires Bun ≥1.3.0 with `--experimental-quantum` flag.\n\n```ts\nimport { QuantumDomain } from '@factorywager/quantum-domain-ops';\nconst domain = new QuantumDomain({ qubits: 8 });\nawait domain.collapse('entangled');\n```",
           "publishedAt": "2026-07-20T03:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -522,13 +522,14 @@
           "name": "@factorywager/registry-client",
           "version": "1.0.0",
           "type": "library",
-          "description": "Published via bun publish",
-          "publishedAt": "2026-07-23T17:31:15.266Z",
-          "publisher": "bun-publish",
+          "description": "",
+          "tags": [],
+          "publishedAt": "2026-07-24T04:02:27.943Z",
+          "publisher": "api",
           "storage": {
             "r2Key": "@factorywager/@factorywager/registry-client/1.0.0.tgz",
-            "size": 636,
-            "checksum": "e2fd9f16c4d3fa285c8a8fc63ce475b8f4d6445f687de28c10d77d582f5f4049",
+            "size": 69,
+            "checksum": "76f15dd931dcd2f9ee0d36473e58b879561a6df6bdd9a4c276cdebc9ad76b792",
             "contentType": "application/gzip"
           }
         }

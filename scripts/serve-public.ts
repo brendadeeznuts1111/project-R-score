@@ -1367,6 +1367,11 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
       '/api/channels',
       '/api/operations/summary',
       '/api/catalog',
+      // Tarball downloads are public (read plane) like npm metadata — auth is
+      // publish-only. SDK download() must work without credentials.
+      '/registry/storage/',
+      // Scoped npm packuments (/@scope%2Fname) — public read plane.
+      '/@',
     ];
     if (!publicReadPaths.some(p => path.startsWith(p))) return authErr;
   }
