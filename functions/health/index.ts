@@ -10,7 +10,7 @@ import {
   edgeHealthOptionsResponse,
   respondEdgeHealthJson,
   type HealthEnv,
-} from '../lib/http/portal-health-edge.ts';
+} from '../../lib/http/portal-health-edge.ts';
 
 export async function onRequest(context: {
   request: Request;

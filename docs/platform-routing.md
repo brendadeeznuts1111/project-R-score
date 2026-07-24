@@ -35,7 +35,7 @@ Edge-safe only (no `bun:sqlite`). Key handlers:
 | `/api/operations/summary` | `functions/api/operations/summary.ts` → snapshot JSON |
 | `/api/registry/*` | `functions/api/registry/[[path]].ts` → R2 binding |
 | `/api/health`, `/api/env`, `/api/monitoring` | `functions/api/*.ts` |
-| `/health` (JSON) · `/health/pre` (plain) | `functions/health.ts` · `functions/health/pre.ts` → [`portal-health-edge.ts`](../lib/http/portal-health-edge.ts) |
+| `/health` (JSON) · `/health/pre` (plain) | `functions/health/index.ts` · `functions/health/pre.ts` → [`portal-health-edge.ts`](../lib/http/portal-health-edge.ts) (no `functions/health.ts` file — CF rejects file+dir same name) |
 
 Full inventory: [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md).
 

@@ -31,7 +31,7 @@ Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (sh
 
 ### `GET /api/health` (schema v1)
 
-Origin: `collectHealthData()` in [`scripts/serve-public.ts`](../scripts/serve-public.ts). Pages: shared [`lib/http/portal-health-edge.ts`](../lib/http/portal-health-edge.ts) via [`functions/api/health.ts`](../functions/api/health.ts) (`/api/health`), [`functions/health.ts`](../functions/health.ts) (`/health` JSON), and [`functions/health/pre.ts`](../functions/health/pre.ts) (`/health/pre` plain text).
+Origin: `collectHealthData()` in [`scripts/serve-public.ts`](../scripts/serve-public.ts). Pages: shared [`lib/http/portal-health-edge.ts`](../lib/http/portal-health-edge.ts) via [`functions/api/health.ts`](../functions/api/health.ts) (`/api/health`), [`functions/health/index.ts`](../functions/health/index.ts) (`/health` JSON), and [`functions/health/pre.ts`](../functions/health/pre.ts) (`/health/pre` plain text).
 
 | Field | Type | Notes |
 |-------|------|-------|

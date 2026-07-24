@@ -57,7 +57,7 @@ export const SIMD_ROUTES: PublicRouteDef[] = [
     kind: 'simd-route',
     critical: true,
     okStatuses: [200],
-    note: 'Pages: functions/health.ts · origin: serve-public health()',
+    note: 'Pages: functions/health/index.ts · origin: serve-public health()',
   },
   {
     path: '/health/pre',
