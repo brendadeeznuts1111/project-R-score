@@ -49,6 +49,10 @@ do not register both on the same host.
 The runtime-neutral SDK lives at `packages/registry-client`. It uses Web APIs
 only and works in Bun, browsers, and Cloudflare Workers.
 
+Full usage, URL format, and verification: [`docs/registry-client.md`](../registry-client.md)
+· proof JSON at `/registry/registry-client-proof.json` ·
+`bun run verify:registry-client:save`.
+
 ```bash
 cd packages/registry-client
 bun run build
@@ -65,6 +69,11 @@ bun publish --registry https://registry.factory-wager.com --access public
 The SDK resolves dist-tags, produces allowlisted asset URLs, and verifies both
 byte length and SHA-256 on download. Its `publish()` method targets the private
 multipart endpoint; the Pages/R2 read plane rejects writes.
+
+> **Lane note (ADR-0002):** `bun publish --registry https://registry.factory-wager.com`
+> does **not** work against the Pages deployment today (read-only, 405 on non-GET).
+> Publish via `RegistryClient.publish` (R2) or the loopback serve-public lane,
+> then refresh the snapshot.
 
 Configure the two origins independently so the bearer token is never sent to the
 public read plane:
