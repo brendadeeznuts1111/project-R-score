@@ -58,7 +58,7 @@ describe('Pages TOC API', () => {
     expect(body.partners.length).toBe(3);
   });
 
-  test('GET summary includes enforcement + returnEfficiency', async () => {
+  test('GET summary includes enforcement + returnEfficiency + presence', async () => {
     const res = await onRequest({
       request: new Request('https://example.com/api/toc/summary'),
       env: assetsFrom({ '/registry/toc-ops.json': snap }),
@@ -68,11 +68,20 @@ describe('Pages TOC API', () => {
       enforcement: { focus: string; throughput: { T: number } };
       returnEfficiency: { avgRP: number };
       rankedActions: unknown[];
+      presence: { partnersWithGeo: number; ipv6Count: number; uniqueZips: number };
+      housePresence: { postal: { zip: string }; network: { ipv4?: string } };
     };
     expect(body.enforcement.focus).toBeTruthy();
     expect(body.enforcement.throughput.T).toBeGreaterThanOrEqual(0);
     expect(typeof body.returnEfficiency.avgRP).toBe('number');
     expect(body.rankedActions.length).toBeGreaterThan(0);
+    expect(body.presence.partnersWithGeo).toBe(3);
+    expect(body.presence.ipv6Count).toBeGreaterThanOrEqual(11);
+    expect(body.presence.uniqueZips).toBeGreaterThanOrEqual(3);
+    expect(body.housePresence.postal.zip).toBe('33602');
+    expect((body as { venues?: { accountsWithVenue: number } }).venues?.accountsWithVenue).toBeGreaterThanOrEqual(
+      11
+    );
   });
 
   test('GET proof returns bake proof', async () => {

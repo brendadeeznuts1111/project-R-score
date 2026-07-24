@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Telegram bot command router for multi-tenant portal.
  */
@@ -12,7 +13,9 @@ import { asTelegramUserId } from '../types/branded/portal.ts';
 import type { TenantConfig } from '../../config/tenants.ts';
 import { consumeLinkNonce } from './link-nonce.ts';
 import { runOpsCommand, tryOpenOpsDb } from './ops-bridge.ts';
-import { handlePlayCallback } from './play-callback.ts';
+import { handleFlowCallback } from './flows/callbacks.ts';
+import { deliverFlowOutput } from './flows/deliver.ts';
+import { findFlowNodeByTelegram } from './flows/registry.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
 
 export type TelegramMessage = {
@@ -171,27 +174,45 @@ export class TelegramBot {
     deps: Omit<CommandContext, 'msg' | 'account'>
   ): Promise<void> {
     if ((deps.tenant.id as string) !== 'factory') return;
-    const data = cq.data?.trim();
-    if (!data?.startsWith('play:')) return;
 
     const token = resolveTelegramToken(deps.env, deps.tenant);
     if (!token) return;
 
     const telegramUserId = String(cq.from.id);
-    let message: string;
+    const chatId = String(cq.message?.chat.id ?? cq.from.id);
+    const msgId = (cq as { message?: { message_id?: number } }).message?.message_id;
+
     const db = tryOpenOpsDb(deps.env);
-    if (db) {
-      try {
-        const result = handlePlayCallback(db, telegramUserId, data);
-        message = result.message;
-      } finally {
-        db.close();
-      }
-    } else {
-      message = 'Play ack unavailable — set OPS_DB_PATH on Bun host.';
+    if (!db) {
+      await answerCallbackQuery(token, cq.id, 'Ops DB unavailable.');
+      return;
     }
 
-    await answerCallbackQuery(token, cq.id, message);
+    try {
+      const dbPath = deps.env.OPS_DB_PATH ?? Bun.env.OPS_DB_PATH ?? 'data/operations.db';
+      const node = findFlowNodeByTelegram(db, telegramUserId);
+      const output = handleFlowCallback(cq.data?.trim() ?? '', {
+        db,
+        dbPath,
+        chatId,
+        userId: telegramUserId,
+        messageId: msgId,
+        node,
+      });
+
+      if (output) {
+        await deliverFlowOutput(output, {
+          token,
+          chatId,
+          editMessageId: msgId,
+        });
+        await answerCallbackQuery(token, cq.id, output.text.replace(/<[^>]+>/g, '').slice(0, 80));
+      } else {
+        await answerCallbackQuery(token, cq.id, 'Unknown action.');
+      }
+    } finally {
+      db.close();
+    }
   }
 }
 
@@ -216,7 +237,7 @@ export function registerFactoryCommands(bot: TelegramBot): void {
     description: 'Ops status or registry health',
     handler: async ctx => {
       const opsReply = await dispatchFactoryOpsCommand(ctx, '/status');
-      if (!opsReply.startsWith('❌ Not registered')) return opsReply;
+      if (!/not registered/i.test(opsReply)) return opsReply;
       if (!ctx.account || (ctx.account.tenantId as string) !== 'factory') {
         return opsReply;
       }

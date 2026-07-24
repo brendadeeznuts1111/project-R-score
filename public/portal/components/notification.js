@@ -121,6 +121,10 @@ export class NotificationCenter extends HTMLElement {
     if (p.eventType === 'partner.bound') return `Partner bound: ${p.profileKey ?? p.treeNodeId ?? 'node'}`;
     if (p.eventType === 'play.dispatched') return `Play dispatched · ${String(p.playId ?? '').slice(0, 8)}`;
     if (p.eventType === 'play.gate.denied') return `Play gated (deny) · ${String(p.playId ?? '').slice(0, 8)}`;
+    if (p.eventType === 'play.gate.defer') {
+      const w = p.weightedScore != null ? ` w=${Number(p.weightedScore).toFixed(2)}` : '';
+      return `Play TOC defer${w} · ${String(p.playId ?? '').slice(0, 8)}`;
+    }
     if (p.eventType === 'play.gate.adjusted') return `Play gated (adjust) · ${String(p.playId ?? '').slice(0, 8)}`;
     if (p.eventType === 'play.settled') return `Play settled · ${p.result} · pnl $${p.pnl ?? 0}`;
     return JSON.stringify(p);

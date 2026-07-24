@@ -5,7 +5,16 @@
  * @see toc-ops-repo/src/db/seed.ts
  * @see toc-ops-repo/docs/system/EXPERIMENTS.md
  */
+import {
+  demoAccountPresence,
+  demoHousePresence,
+  demoPartnerPresence,
+  demoPlacementFromPresence,
+  summarizePresence,
+} from './presence.ts';
+import { attachProfiles } from './profiles.ts';
 import type { TocExperiment, TocExpert, TocOpsSnapshot, TocPartner, TocPlay } from './types.ts';
+import { attachVenuesToPartners, summarizeVenues, TOC_VENUE_CATALOG } from './venues.ts';
 
 /** Exact registered rule keys mirrored from toc-ops-repo bottleneck-rules. */
 export const TOC_BOTTLENECK_RULE_KEYS = [
@@ -107,6 +116,48 @@ function summarize(
   };
 }
 
+function isDemoPartnerCode(code: string): code is 'ASH' | 'PAT' | 'NOV' {
+  return code === 'ASH' || code === 'PAT' || code === 'NOV';
+}
+
+/** Attach geo / IP / DNS presence + play placement context for the demo board. */
+function attachDemoPresence(partners: TocPartner[]): {
+  partners: TocPartner[];
+  housePresence: ReturnType<typeof demoHousePresence>;
+  presence: ReturnType<typeof summarizePresence>;
+} {
+  const housePresence = demoHousePresence();
+  const enriched = partners.map(p => {
+    if (!isDemoPartnerCode(p.partnerCode)) return p;
+    const code = p.partnerCode;
+    const accounts = p.accounts.map((a, i) => ({
+      ...a,
+      presence: demoAccountPresence(a.callSign, code, housePresence, i),
+    }));
+    const bySign = new Map(accounts.map(a => [a.callSign, a.presence]));
+    const recentPlays = p.recentPlays.map(play => {
+      if (play.status === 'blocked') return play;
+      const accPresence = bySign.get(play.callSign);
+      if (!accPresence) return play;
+      return {
+        ...play,
+        placement: demoPlacementFromPresence(accPresence, play.placedAt),
+      };
+    });
+    return {
+      ...p,
+      presence: demoPartnerPresence(code, housePresence),
+      accounts,
+      recentPlays,
+    };
+  });
+  return {
+    partners: enriched,
+    housePresence,
+    presence: summarizePresence(enriched, housePresence),
+  };
+}
+
 function experts(): TocExpert[] {
   return [
     {
@@ -185,7 +236,7 @@ function experiments(): TocExperiment[] {
         {
           partnerCode: 'PAT',
           variantKey: 'std_70',
-          metricValue: 2760,
+          metricValue: 4200,
           assignedAt: '2026-06-01T00:00:00.000Z',
         },
         {
@@ -196,6 +247,35 @@ function experiments(): TocExperiment[] {
         },
       ],
       clusterBy: 'package_id',
+    },
+    {
+      id: 'exp-liquidity-weight-2026-07',
+      name: 'Expert liquidity weight vs static cap',
+      status: 'active',
+      phase: 2,
+      designMethod: 'cluster',
+      metricName: 'placement_rate',
+      hypothesis: 'Dynamic liquidity weight raises placement_rate without ↑ blocked PLAY',
+      factors: [{ name: 'liq_mode', levels: ['static_cap', 'dynamic_weight'] }],
+      variants: [
+        { key: 'static_cap', name: 'Static market caps', config: { mode: 'static' } },
+        { key: 'dynamic_weight', name: 'CLV-weighted available', config: { mode: 'dynamic' } },
+      ],
+      assignments: [
+        {
+          partnerCode: 'PAT',
+          variantKey: 'dynamic_weight',
+          metricValue: 0.81,
+          assignedAt: '2026-07-20T00:00:00.000Z',
+        },
+        {
+          partnerCode: 'ASH',
+          variantKey: 'static_cap',
+          metricValue: 0.66,
+          assignedAt: '2026-07-20T00:00:00.000Z',
+        },
+      ],
+      clusterBy: 'partner_code',
     },
   ];
 }
@@ -832,8 +912,8 @@ function patPartner(): TocPartner {
       },
     ],
     softBalance: {
-      // Prior cycle $800 pnl → 560/160/80; NFL $1200 → 840/240/120; +PAT-003 deploy
-      byStakeholder: { Partner: 1400, Expert: 400, House: 17_500 },
+      // Prior + NFL + Kalshi $800 (60/25/15) + Stake $600 (60/25/15); +PAT-003/004/005 deploys
+      byStakeholder: { Partner: 2240, Expert: 750, House: 27_710 },
       recentEntries: [
         {
           entryType: 'CapitalDeployment',
@@ -858,6 +938,22 @@ function patPartner(): TocPartner {
           callSign: 'PAT-003',
           taskId: 'FUND-PAT-003-20260723-090000-001',
           timestamp: '2026-07-23T09:20:00.000Z',
+        },
+        {
+          entryType: 'CapitalDeployment',
+          stakeholder: 'House',
+          amount: 5000,
+          callSign: 'PAT-004',
+          taskId: 'FUND-PAT-004-20260720-090000-001',
+          timestamp: '2026-07-20T09:15:00.000Z',
+        },
+        {
+          entryType: 'CapitalDeployment',
+          stakeholder: 'House',
+          amount: 5000,
+          callSign: 'PAT-005',
+          taskId: 'FUND-PAT-005-20260722-100000-001',
+          timestamp: '2026-07-22T10:20:00.000Z',
         },
         {
           entryType: 'ProfitSplit',
@@ -906,6 +1002,54 @@ function patPartner(): TocPartner {
           callSign: 'PAT-001',
           taskId: 'WD-PAT-001-20260720-180000-001',
           timestamp: '2026-07-20T18:45:00.000Z',
+        },
+        {
+          entryType: 'ProfitSplit',
+          stakeholder: 'Partner',
+          amount: 480,
+          callSign: 'PAT-002',
+          taskId: 'WD-PAT-002-20260721-160000-001',
+          timestamp: '2026-07-21T16:10:00.000Z',
+        },
+        {
+          entryType: 'ProfitSplit',
+          stakeholder: 'Expert',
+          amount: 200,
+          callSign: 'PAT-002',
+          taskId: 'WD-PAT-002-20260721-160000-001',
+          timestamp: '2026-07-21T16:10:00.000Z',
+        },
+        {
+          entryType: 'ProfitSplit',
+          stakeholder: 'House',
+          amount: 120,
+          callSign: 'PAT-002',
+          taskId: 'WD-PAT-002-20260721-160000-001',
+          timestamp: '2026-07-21T16:10:00.000Z',
+        },
+        {
+          entryType: 'ProfitSplit',
+          stakeholder: 'Partner',
+          amount: 360,
+          callSign: 'PAT-004',
+          taskId: 'WD-PAT-004-20260722-083000-001',
+          timestamp: '2026-07-22T08:30:00.000Z',
+        },
+        {
+          entryType: 'ProfitSplit',
+          stakeholder: 'Expert',
+          amount: 150,
+          callSign: 'PAT-004',
+          taskId: 'WD-PAT-004-20260722-083000-001',
+          timestamp: '2026-07-22T08:30:00.000Z',
+        },
+        {
+          entryType: 'ProfitSplit',
+          stakeholder: 'House',
+          amount: 90,
+          callSign: 'PAT-004',
+          taskId: 'WD-PAT-004-20260722-083000-001',
+          timestamp: '2026-07-22T08:30:00.000Z',
         },
         {
           entryType: 'Loss',
@@ -1048,6 +1192,65 @@ function patPartner(): TocPartner {
         experimentId: 'exp-routing-phase1-2026-07',
         variantKey: 'dynamic',
         placedAt: '2026-07-22T12:00:00.000Z',
+      },
+      {
+        playId: 'play-pat-002-kalshi-pol-001',
+        taskId: 'PLAY-PAT-002-20260721-140000-001',
+        callSign: 'PAT-002',
+        partnerCode: 'PAT',
+        expertId: 'kai',
+        market: 'Politics',
+        event: 'Fed rate decision Aug',
+        selection: 'Hold',
+        odds: -120,
+        stake: 2000,
+        confidence: 0.64,
+        status: 'settled',
+        result: 'win',
+        pnl: 800,
+        experimentId: 'exp-routing-phase1-2026-07',
+        variantKey: 'dynamic',
+        placedAt: '2026-07-21T14:10:00.000Z',
+        settledAt: '2026-07-21T15:55:00.000Z',
+      },
+      {
+        playId: 'play-pat-004-stake-soccer-001',
+        taskId: 'PLAY-PAT-004-20260722-070000-001',
+        callSign: 'PAT-004',
+        partnerCode: 'PAT',
+        expertId: 'kai',
+        market: 'Soccer',
+        event: 'Arsenal vs Chelsea',
+        selection: 'Arsenal ML',
+        odds: +110,
+        stake: 900,
+        confidence: 0.59,
+        status: 'settled',
+        result: 'win',
+        pnl: 600,
+        experimentId: 'exp-routing-phase1-2026-07',
+        variantKey: 'dynamic',
+        placedAt: '2026-07-22T07:15:00.000Z',
+        settledAt: '2026-07-22T08:10:00.000Z',
+      },
+      {
+        playId: 'play-pat-004-stake-open-001',
+        taskId: 'PLAY-PAT-004-20260723-100000-001',
+        callSign: 'PAT-004',
+        partnerCode: 'PAT',
+        expertId: 'kai',
+        market: 'Soccer',
+        event: 'Inter vs Milan',
+        selection: 'Over 2.5',
+        odds: -105,
+        stake: 800,
+        confidence: 0.55,
+        status: 'placed',
+        result: 'pending',
+        pnl: null,
+        experimentId: 'exp-routing-phase1-2026-07',
+        variantKey: 'dynamic',
+        placedAt: '2026-07-23T10:05:00.000Z',
       },
     ],
     experimentAssignment: {
@@ -1264,11 +1467,35 @@ function novPartner(): TocPartner {
 
 /** Build the demo TOC Ops snapshot used for Pages bake + local portal. */
 export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): TocOpsSnapshot {
-  const partners = [ashPartner(), patPartner(), novPartner()];
+  const withVenues = attachVenuesToPartners([ashPartner(), patPartner(), novPartner()]);
+  const attached = attachDemoPresence(withVenues);
   const exps = experiments();
-  const expertList = experts();
+  const profiled = attachProfiles(attached.partners, experts());
+  const partners = profiled.partners;
+  const expertList = profiled.experts;
+  const profiles = profiled.profiles;
+  const venues = summarizeVenues(partners);
   const allPlays = partners.flatMap(p => p.recentPlays);
-  const summary = summarize(partners, exps, allPlays);
+  const baseSummary = summarize(partners, exps, allPlays);
+  const presence = attached.presence;
+  const summary: TocOpsSnapshot['summary'] = {
+    ...baseSummary,
+    presencePartners: presence.partnersWithGeo,
+    presenceIpv6: presence.ipv6Count,
+    presenceUniqueZips: presence.uniqueZips,
+    presenceUniqueAsns: presence.uniqueAsns,
+    presenceDnsResolved: presence.dnsResolved,
+    venueKinds: Object.keys(venues.byVenueKind).length,
+    venueExchanges: venues.exchangeAccounts,
+    venueCrypto: venues.cryptoAccounts,
+    venueCreditLines: venues.creditLines,
+    venueLegalStates: venues.legalStatesCovered,
+    profilePhones: profiles.phonesActive,
+    profileTelegramLanes: profiles.telegramLanes,
+    expertLiquidityAvailable: profiles.expertLiquidityAvailable,
+    avgAgentClvBps: profiles.avgAgentClvBps,
+    openDeals: profiles.openDeals,
+  };
 
   return {
     schema: 'factorywager.toc-ops.portal-fixture.v2',
@@ -1314,6 +1541,7 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
         defaultExpectedPlayT: 840,
         processRank: ['LIMIT', 'ONB', 'WD', 'PLAY', 'WARM', 'FUND'],
       },
+      venues: TOC_VENUE_CATALOG,
     },
     buffer: {
       floatTarget: 50_000,
@@ -1326,9 +1554,13 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
       playableDrums: partners.reduce((n, p) => n + p.readiness.playableAccountCount, 0),
       principalOutstandingTotal: summary.principalOutstandingTotal,
     },
+    housePresence: attached.housePresence,
     experts: expertList,
     experiments: exps,
     partners,
+    presence,
+    venues,
+    profiles,
     summary,
   };
 }

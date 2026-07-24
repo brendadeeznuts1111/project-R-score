@@ -172,6 +172,40 @@ export async function onRequest(context: {
           : null,
         returnEfficiency: snap.returnEfficiency ?? null,
         rankedActions: (snap.rankedActions ?? []).slice(0, 5),
+        housePresence: snap.housePresence ?? null,
+        presence: snap.presence ?? null,
+        venues: snap.venues ?? null,
+        venueCatalog: snap.catalog?.venues ?? null,
+        profiles: snap.profiles ?? null,
+        experts: (snap.experts ?? []).map(
+          (e: {
+            expertId?: string; // brand-ok — fixture expert key
+            displayName?: string;
+            markets?: string[];
+            weight?: number;
+            profile?: {
+              clv?: unknown;
+              liquidity?: unknown;
+              style?: unknown;
+              telegram?: unknown;
+              bot?: unknown;
+              deals?: unknown[];
+              accounting?: unknown;
+            };
+          }) => ({
+            expertId: e.expertId,
+            displayName: e.displayName,
+            markets: e.markets,
+            weight: e.weight,
+            clv: e.profile?.clv ?? null,
+            liquidity: e.profile?.liquidity ?? null,
+            style: e.profile?.style ?? null,
+            telegram: e.profile?.telegram ?? null,
+            bot: e.profile?.bot ?? null,
+            deals: e.profile?.deals?.length ?? 0,
+            accounting: e.profile?.accounting ?? null,
+          })
+        ),
       },
       { headers: tocHeaders(snap) }
     );

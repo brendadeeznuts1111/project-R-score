@@ -103,6 +103,111 @@ export type TocReturnCatalog = {
   processRank: TocTaskType[];
 };
 
+/** Where / how a Drum places risk. */
+export type TocVenueKind =
+  | 'sportsbook'
+  | 'exchange'
+  | 'prediction_market'
+  | 'crypto'
+  | 'pph'
+  | 'postup_credit'
+  | 'casino'
+  | 'kiosk'
+  | 'in_person';
+
+export type TocSportMarket =
+  | 'NFL'
+  | 'NBA'
+  | 'MLB'
+  | 'NHL'
+  | 'NCAAF'
+  | 'NCAAB'
+  | 'Soccer'
+  | 'Tennis'
+  | 'Golf'
+  | 'MMA'
+  | 'Boxing'
+  | 'Politics'
+  | 'Economics'
+  | 'Crypto'
+  | 'Other';
+
+export type TocLegalStatus = 'legal' | 'restricted' | 'prohibited' | 'grey' | 'unknown';
+
+export type TocVenueAccess = 'online' | 'in_person' | 'kiosk' | 'hybrid';
+
+export type TocStateLegal = {
+  state: string; // brand-ok — USPS / region code
+  status: TocLegalStatus;
+  notes?: string;
+  licenseRef?: string;
+};
+
+export type TocCreditTerms = {
+  mode: 'cash' | 'postup' | 'pph' | 'mixed';
+  creditLimit?: number;
+  postedBalance?: number;
+  settlementDays?: number;
+  currency?: string; // brand-ok — USD / USDC / USDT
+};
+
+/** Per-account venue / channel profile. */
+export type TocAccountVenue = {
+  kind: TocVenueKind;
+  venueId: string; // brand-ok — slug e.g. hardrock, kalshi, polymarket
+  displayName: string;
+  access: TocVenueAccess;
+  sports: TocSportMarket[];
+  primaryState: string; // brand-ok
+  legalByState: TocStateLegal[];
+  credit?: TocCreditTerms;
+  crypto?: {
+    networks: string[]; // brand-ok
+    assets: string[]; // brand-ok
+    walletHint?: string;
+  };
+  exchange?: {
+    clearing: 'cftc' | 'offshore' | 'p2p' | 'unknown';
+    markets: string[];
+  };
+  pph?: {
+    shopName: string;
+    agentRef?: string;
+  };
+  casino?: {
+    property: string;
+    floor?: string;
+  };
+  kiosk?: {
+    locationLabel: string;
+    deviceId?: string; // brand-ok
+  };
+};
+
+export type TocVenueCatalog = {
+  kinds: TocVenueKind[];
+  venueIds: string[];
+  sports: TocSportMarket[];
+  legalStatuses: TocLegalStatus[];
+  accessModes: TocVenueAccess[];
+};
+
+export type TocVenueSummary = {
+  accountsWithVenue: number;
+  byVenueKind: Record<string, number>;
+  byVenueId: Record<string, number>;
+  byAccess: Record<string, number>;
+  byPrimaryState: Record<string, number>;
+  byLegalStatus: Record<string, number>;
+  bySport: Record<string, number>;
+  legalStatesCovered: number;
+  creditLines: number;
+  cryptoAccounts: number;
+  exchangeAccounts: number;
+  kioskAccounts: number;
+  inPersonAccounts: number;
+};
+
 export type TocOpsCatalog = {
   taskTypes: TocTaskType[];
   accountStatuses: TocAccountStatus[];
@@ -115,6 +220,7 @@ export type TocOpsCatalog = {
   depositCorridor: { min: number; max: number; target: number };
   limitFreshnessDays: number;
   returnEfficiency?: TocReturnCatalog;
+  venues?: TocVenueCatalog;
 };
 
 export type TocProcessReturn = {
@@ -187,6 +293,91 @@ export type TocOpsBuffer = {
   principalOutstandingTotal: number;
 };
 
+/** WGS84 point — fixture/demo plane (not live GeoIP). */
+export type TocGeoPoint = {
+  lat: number;
+  lon: number;
+  accuracyM?: number;
+  source: 'profile' | 'ip' | 'manual' | 'demo';
+  observedAt?: string;
+};
+
+/** Postal / administrative place. */
+export type TocPostal = {
+  country: string; // brand-ok — ISO 3166-1 alpha-2
+  region?: string; // brand-ok — state/province
+  city?: string;
+  zip: string; // brand-ok — postal / ZIP
+  timezone?: string; // brand-ok — IANA tz
+};
+
+/** Resolved DNS snapshot for a partner/account hostname. */
+export type TocDnsRecord = {
+  hostname: string; // brand-ok
+  resolvedAt: string;
+  a?: string[]; // brand-ok — A (IPv4)
+  aaaa?: string[]; // brand-ok — AAAA (IPv6)
+  cname?: string[];
+  mx?: string[];
+  ttlSec?: number;
+  resolver?: string; // brand-ok — e.g. 1.1.1.1
+};
+
+/** Network endpoint / last-seen egress. */
+export type TocNetworkEndpoint = {
+  ipv4?: string; // brand-ok
+  ipv6?: string; // brand-ok
+  asn?: number;
+  asOrg?: string;
+  isp?: string;
+  reverseDns?: string; // brand-ok — PTR
+  dns?: TocDnsRecord;
+  lastSeenAt?: string;
+  vpnSuspected?: boolean;
+  /** Connected interface hint for desk triage */
+  connectionType?: 'residential' | 'mobile' | 'datacenter' | 'unknown';
+};
+
+/** Geo + network presence for partner HQ, drum, or house desk. */
+export type TocPresence = {
+  geo: TocGeoPoint;
+  postal: TocPostal;
+  network: TocNetworkEndpoint;
+  metrics?: {
+    distanceKmFromHouse?: number;
+    sameMetroAsHouse?: boolean;
+  };
+};
+
+/** Placement-time geo/IP context on a play (subset of presence). */
+export type TocPlacementContext = {
+  geo?: TocGeoPoint;
+  postal?: Pick<TocPostal, 'country' | 'region' | 'city' | 'zip'>;
+  ipv4?: string; // brand-ok
+  ipv6?: string; // brand-ok
+  asn?: number;
+  dnsHostname?: string; // brand-ok
+};
+
+/** Rollup metrics for presence coverage on the board / ops card. */
+export type TocPresenceSummary = {
+  partnersWithGeo: number;
+  accountsWithGeo: number;
+  playsWithPlacement: number;
+  uniqueZips: number;
+  uniqueCities: number;
+  uniqueAsns: number;
+  ipv4Count: number;
+  ipv6Count: number;
+  dnsResolved: number;
+  vpnSuspected: number;
+  byCountry: Record<string, number>;
+  byTimezone: Record<string, number>;
+  byAsn: Record<string, number>;
+  byConnectionType: Record<string, number>;
+  avgDistanceKmFromHouse: number | null;
+};
+
 export type TocRail = {
   id: string; // brand-ok — fixture rail id
   railType: TocRailType;
@@ -219,10 +410,15 @@ export type TocAccount = {
     housePrincipalOutstanding: number;
     withdrawalMode: TocWdMode;
   };
+  /** @deprecated Prefer `venue.displayName` — kept for older portal readers. */
   sportsbook?: string;
+  /** Venue / channel profile (book · exchange · crypto · PPH · …). */
+  venue?: TocAccountVenue;
   limits: TocAccountLimits;
   expertId?: string; // brand-ok
   flowStage: TocFlowStage;
+  /** Last-seen device / session geo+IP for this Drum. */
+  presence?: TocPresence;
 };
 
 export type TocOpenTask = {
@@ -284,6 +480,8 @@ export type TocPlay = {
   variantKey?: string;
   placedAt: string;
   settledAt?: string;
+  /** Egress / place context when the slip was posted. */
+  placement?: TocPlacementContext;
 };
 
 export type TocExperimentVariant = {
@@ -313,11 +511,224 @@ export type TocExperiment = {
   clusterBy?: 'package_id' | 'partner_code';
 };
 
+/** Phone / SIM asset on a partner or agent. */
+export type TocPhoneAsset = {
+  id: string; // brand-ok
+  label: string;
+  e164?: string; // brand-ok — +1…
+  carrier?: string;
+  dataPlan?: {
+    name: string;
+    gbMonth: number;
+    usedGb: number;
+    hotspot: boolean;
+    renewsAt?: string;
+  };
+  status: 'active' | 'warming' | 'suspended' | 'retired';
+  assignedCallSign?: string; // brand-ok
+};
+
+export type TocPartnerAsset = {
+  id: string; // brand-ok
+  kind: 'phone' | 'device' | 'wallet' | 'document' | 'rail' | 'other';
+  label: string;
+  ref?: string;
+  status: 'active' | 'pending' | 'retired';
+  meta?: Record<string, string | number | boolean>;
+};
+
+export type TocTelegramLane = {
+  chatId?: string; // brand-ok
+  groupId?: string; // brand-ok
+  channelId?: string; // brand-ok — plays channel
+  botUsername?: string; // brand-ok — @TOC_…
+  dmRef?: string;
+  topics?: Array<{ name: string; threadId?: number }>;
+};
+
+export type TocPlayChannel = {
+  kind: 'telegram' | 'bot' | 'portal' | 'sms' | 'voice';
+  ref: string; // brand-ok
+  primary: boolean;
+  status: 'live' | 'paused' | 'setup';
+};
+
+export type TocPaymentRecord = {
+  id: string; // brand-ok
+  method: 'venmo' | 'cashapp' | 'paypal' | 'ach' | 'wire' | 'crypto' | 'cash' | 'other';
+  direction: 'in' | 'out';
+  amount: number;
+  currency: string; // brand-ok
+  status: 'posted' | 'pending' | 'failed';
+  at: string;
+  railId?: string; // brand-ok
+  note?: string;
+};
+
+export type TocAccountingBalance = {
+  softPartner: number;
+  softExpert: number;
+  softHouse: number;
+  hardInBook: number;
+  hardFloat: number;
+  pendingDeploy: number;
+  pendingPayout: number;
+  currency: string; // brand-ok
+};
+
+export type TocDealTerms = {
+  dealId: string; // brand-ok
+  name: string;
+  partnerPct: number;
+  expertPct: number;
+  housePct: number;
+  payoutCadence: 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  payoutMethod: 'rail' | 'ach' | 'crypto' | 'mixed';
+  termMonths?: number;
+  effectiveAt: string;
+  notes?: string;
+};
+
+export type TocHistoryEvent = {
+  at: string;
+  kind: string;
+  summary: string;
+  callSign?: string; // brand-ok
+  amount?: number;
+};
+
+export type TocClvStats = {
+  sampleN: number;
+  avgClvBps: number;
+  winRateWhenPositiveClv: number;
+  last30dAvgClvBps: number;
+  beatsClosePct: number;
+  /** Optional per-market CLV breakdown. */
+  byMarket?: Array<{ market: string; sampleN: number; avgClvBps: number }>;
+  /** Optional weekly avg CLV (bps) oldest→newest. */
+  weeklySeriesBps?: number[];
+};
+
+export type TocAgentStyle = {
+  aggression: 'conservative' | 'balanced' | 'aggressive';
+  stakeBand: { min: number; max: number; typical: number };
+  marketFocus: string[];
+  holdTimeHint: 'same_game' | 'early' | 'mixed';
+  notes?: string;
+};
+
+/** Expert / agent liquidity pool (allocated capacity by market). */
+export type TocLiquidityPool = {
+  allocated: number;
+  available: number;
+  reserved: number;
+  currency: string; // brand-ok
+  byMarket: Array<{
+    market: string;
+    allocated: number;
+    available: number;
+    reserved?: number;
+    openPlays?: number;
+  }>;
+  lastReconciledAt?: string;
+  /** Open reservations (demo desk view). */
+  openReservations?: Array<{
+    reservationId: string; // brand-ok
+    callSign: string; // brand-ok
+    market: string;
+    stake: number;
+    at: string;
+  }>;
+};
+
+export type TocLimitProfile = {
+  dailyMax: number | null;
+  weeklyMax: number | null;
+  perPlayMax?: number | null;
+  exposureCap?: number | null;
+  notes?: string;
+};
+
+/** Rich partner operating profile (demo plane). */
+export type TocPartnerProfile = {
+  displayName: string;
+  tier: 'T1' | 'T2' | 'T3' | 'T4';
+  risk: 'green' | 'yellow' | 'orange' | 'red';
+  phones: TocPhoneAsset[];
+  assets: TocPartnerAsset[];
+  telegram: TocTelegramLane;
+  playChannels: TocPlayChannel[];
+  payments: TocPaymentRecord[];
+  accounting: TocAccountingBalance;
+  deals: TocDealTerms[];
+  history: TocHistoryEvent[];
+  limits: TocLimitProfile;
+  wagerPlaces: Array<{ venueId: string; label: string; kind: string }>; // brand-ok venueId
+  preferredMarkets: string[];
+  bot?: { username: string; status: 'live' | 'paused' | 'setup'; commands?: string[] };
+  /** SMS / voice ops log (demo). */
+  commsLog?: Array<{
+    at: string;
+    channel: 'sms' | 'voice' | 'telegram';
+    direction: 'in' | 'out';
+    summary: string;
+  }>;
+  /** Rolling 7d Soft / play velocity (demo desk). */
+  velocity?: {
+    t7d: number;
+    plays7d: number;
+    settles7d: number;
+    avgStake7d: number;
+  };
+};
+
+/** Rich expert / agent profile + liquidity. */
+export type TocAgentProfile = {
+  handle: string;
+  style: TocAgentStyle;
+  clv: TocClvStats;
+  liquidity: TocLiquidityPool;
+  telegram: TocTelegramLane;
+  playChannels: TocPlayChannel[];
+  payments: TocPaymentRecord[];
+  accounting: { pendingCut: number; paidYtd: number; currency: string };
+  deals: TocDealTerms[];
+  history: TocHistoryEvent[];
+  limits: TocLimitProfile;
+  phones: TocPhoneAsset[];
+  markets: string[];
+  wagerPlaces: Array<{ venueId: string; label: string }>; // brand-ok — venue catalog slug
+  bot?: { username: string; status: 'live' | 'paused' | 'setup' };
+  /** Release / hit-rate desk metrics. */
+  releaseStats?: {
+    releases30d: number;
+    placed30d: number;
+    blocked30d: number;
+    placementRate: number;
+    avgStake: number;
+  };
+};
+
+export type TocProfilesSummary = {
+  partnersWithProfile: number;
+  agentsWithProfile: number;
+  phonesActive: number;
+  telegramLanes: number;
+  playChannelsLive: number;
+  expertLiquidityAllocated: number;
+  expertLiquidityAvailable: number;
+  avgAgentClvBps: number | null;
+  openDeals: number;
+  pendingPayouts: number;
+};
+
 export type TocExpert = {
   expertId: string; // brand-ok
   displayName: string;
   markets: string[];
   weight: number;
+  /** Enriched agent profile (style · CLV · liquidity · telegram · deals). */
+  profile?: TocAgentProfile;
 };
 
 export type TocPartner = {
@@ -343,6 +754,10 @@ export type TocPartner = {
   };
   /** Furthest healthy stage in ONB→…→WD for this partner */
   flowStage: TocFlowStage;
+  /** Partner HQ / onboarding geo + egress network. */
+  presence?: TocPresence;
+  /** Operating profile: phones · assets · telegram · deals · accounting. */
+  profile?: TocPartnerProfile;
   rails: TocRail[];
   accounts: TocAccount[];
   openTasks: TocOpenTask[];
@@ -382,9 +797,17 @@ export type TocOpsSnapshot = {
   };
   catalog: TocOpsCatalog;
   buffer: TocOpsBuffer;
+  /** Ops desk / house float geo+network (demo). */
+  housePresence?: TocPresence;
   experts: TocExpert[];
   experiments: TocExperiment[];
   partners: TocPartner[];
+  /** Geo / IP / DNS coverage rollup. */
+  presence?: TocPresenceSummary;
+  /** Venue / channel rollup (books · exchanges · crypto · PPH · …). */
+  venues?: TocVenueSummary;
+  /** Partner + agent profile rollup. */
+  profiles?: TocProfilesSummary;
   /** Rollups for ops-summary.toc + portal cards */
   summary: {
     partners: number;
@@ -409,6 +832,23 @@ export type TocOpsSnapshot = {
     byTaskType: Record<string, number>;
     byBallInCourt: Record<string, number>;
     byFlowStage: Record<string, number>;
+    /** Compact presence counts mirrored from `presence` for ops cards. */
+    presencePartners?: number;
+    presenceIpv6?: number;
+    presenceUniqueZips?: number;
+    presenceUniqueAsns?: number;
+    presenceDnsResolved?: number;
+    /** Compact venue counts */
+    venueKinds?: number;
+    venueExchanges?: number;
+    venueCrypto?: number;
+    venueCreditLines?: number;
+    venueLegalStates?: number;
+    profilePhones?: number;
+    profileTelegramLanes?: number;
+    expertLiquidityAvailable?: number;
+    avgAgentClvBps?: number | null;
+    openDeals?: number;
   };
 };
 
@@ -446,4 +886,21 @@ export type TocOpsSummarySlice = {
   topRankedProcess: TocTaskType | null;
   avgRP: number | null;
   settlementFloatRatio: number | null;
+  /** Presence / geo-network rollups (optional until fixture baked). */
+  presencePartners?: number;
+  presenceIpv6?: number;
+  presenceUniqueZips?: number;
+  presenceUniqueAsns?: number;
+  presenceDnsResolved?: number;
+  presenceAvgDistanceKm?: number | null;
+  venueKinds?: number;
+  venueExchanges?: number;
+  venueCrypto?: number;
+  venueCreditLines?: number;
+  venueLegalStates?: number;
+  profilePhones?: number;
+  profileTelegramLanes?: number;
+  expertLiquidityAvailable?: number;
+  avgAgentClvBps?: number | null;
+  openDeals?: number;
 };

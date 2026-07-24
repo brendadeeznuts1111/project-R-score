@@ -724,11 +724,35 @@ class OperationsDashboard extends HTMLElement {
           const avgRP = d.toc.avgRP;
           const playable =
             d.toc.playableDrums != null ? ` · ${d.toc.playableDrums} playable` : '';
+          const geo =
+            d.toc.presenceUniqueZips != null
+              ? ` · ${d.toc.presenceUniqueZips} zips` +
+                (d.toc.presenceIpv6 != null ? ` · ${d.toc.presenceIpv6} ipv6` : '') +
+                (d.toc.presenceUniqueAsns != null ? ` · ${d.toc.presenceUniqueAsns} ASN` : '')
+              : '';
+          const venue =
+            d.toc.venueKinds != null
+              ? ` · ${d.toc.venueKinds} venue kinds` +
+                (d.toc.venueExchanges != null ? ` · ${d.toc.venueExchanges} exch` : '') +
+                (d.toc.venueCrypto != null ? ` · ${d.toc.venueCrypto} crypto` : '')
+              : '';
+          const prof =
+            d.toc.expertLiquidityAvailable != null
+              ? ` · liq $${Math.round(d.toc.expertLiquidityAvailable)}` +
+                (d.toc.avgAgentClvBps != null
+                  ? ` · CLV ${Number(d.toc.avgAgentClvBps).toFixed(1)}bps`
+                  : '') +
+                (d.toc.openDeals != null ? ` · ${d.toc.openDeals} deals` : '') +
+                (d.toc.profilePhones != null ? ` · ${d.toc.profilePhones} phones` : '')
+              : '';
           const tioe =
             t != null
               ? `T $${Math.round(t)} · I $${Math.round(i ?? 0)} · OE $${Math.round(oe ?? 0)}` +
                 (crit != null ? ` · ${crit} critical` : '') +
-                playable
+                playable +
+                geo +
+                venue +
+                prof
               : 'T/I/OE not baked — reseed toc';
           const ret =
             top != null

@@ -15,6 +15,7 @@ import {
   processChannelOutbox,
 } from '../channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
+import { loadTelegramEnv } from '../telegram/telegram-config.ts';
 import { asTreeNodeId, asGateDecisionId } from '../types/branded/operations.ts';
 import { AccountService } from './account-service.ts';
 import { detectFraudSignals } from './fraud-guard.ts';
@@ -26,7 +27,7 @@ import {
   recordGateDecision,
 } from './partner-profile-bridge.ts';
 import { validatePlay } from './play-validation.ts';
-import { rankPlayRecipients } from './toc-play-routing.ts';
+import { rankPlayRecipients, type TocRoutingContext } from './toc-play-routing.ts';
 import type { PlayInput, PlaySigner } from './play-signing.ts';
 
 export type PublishDispatchOpts = {
@@ -34,10 +35,12 @@ export type PublishDispatchOpts = {
   validate?: boolean;
   /** When true (default true), flush outbox after enqueue. Tests pass false. */
   flush?: boolean;
-  /** Telegram bot token for flush; falls back to TELEGRAM_BOT_TOKEN env. */
+  /** Telegram bot token for flush; falls back to TELEGRAM_BOT_FACTORY / TELEGRAM_BOT_TOKEN. */
   telegramToken?: string;
   /** When true (default true), record growth metrics per recipient. */
   recordMetrics?: boolean;
+  /** Override baked TOC snapshot for recipient ranking (tests / dry-run). */
+  routingContext?: TocRoutingContext;
 };
 
 export type PublishDispatchResult = {
@@ -101,7 +104,9 @@ export async function publishAndDispatch(
   const sentAt = new Date().toISOString();
   const confidence = play.confidence ?? 0;
 
-  const recipients = rankPlayRecipients(db, play.expertId);
+  const recipients = rankPlayRecipients(db, play.expertId, {
+    context: opts.routingContext,
+  });
 
   const payload = formatPlayMessage({ ...play, id, signedHash });
   const now = sentAt;
@@ -140,14 +145,21 @@ export async function publishAndDispatch(
     }
   }
 
-  for (const { nodeId, telegramId, weightedScore, ropeBlocked } of recipients) {
+  for (const {
+    nodeId,
+    telegramId,
+    callSign,
+    weightedScore,
+    ropeBlocked,
+    rankedRank,
+  } of recipients) {
     const treeNodeId = asTreeNodeId(nodeId);
 
     if (ropeBlocked) {
       const evaluation = {
         allowed: false as const,
         action: 'defer' as const,
-        reason: `TOC routing defer (weightedScore=${weightedScore.toFixed(2)})`,
+        reason: `TOC routing defer (weightedScore=${weightedScore.toFixed(2)}${callSign ? ` · ${callSign}` : ''})`,
         decisionId: asGateDecisionId(randomUUIDv7()),
       };
       recordGateDecision(db, id, treeNodeId, evaluation);
@@ -157,6 +169,9 @@ export async function publishAndDispatch(
         allowed: false,
         action: 'defer',
         reason: evaluation.reason,
+        rankedRank,
+        callSign,
+        weightedScore,
       });
       continue;
     }
@@ -223,7 +238,7 @@ export async function publishAndDispatch(
   }
 
   if (doFlush) {
-    const token = opts.telegramToken ?? Bun.env.TELEGRAM_BOT_TOKEN ?? '';
+    const token = opts.telegramToken?.trim() || loadTelegramEnv().effectiveToken || '';
     if (token) {
       await flushOutbox(db, { token });
     } else {

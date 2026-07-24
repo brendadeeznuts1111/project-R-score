@@ -13,6 +13,9 @@ operate-lite Hard Gate bake (`enforcement` slice).
 |------|---------|
 | [`types.ts`](types.ts) | Snapshot + ops-summary slice types |
 | [`fixture.ts`](fixture.ts) | ASH (Drum) · PAT (PLAY) · NOV (ONB); bottleneck keys (`reconcile_*` is CT-only) |
+| [`presence.ts`](presence.ts) | Geo · ZIP · IPv4/IPv6 · DNS · ASN presence + rollup metrics |
+| [`venues.ts`](venues.ts) | Sportsbooks · Kalshi/Polymarket · crypto · PPH · post-up · casino · kiosk · legal-by-state |
+| [`profiles.ts`](profiles.ts) | Partner + agent profiles: phones · telegram · deals · CLV · expert liquidity |
 | [`enforcement.ts`](enforcement.ts) | Operate-lite Hard Gates · T/I/OE · Rope→Drum→Buffer diagnosis |
 | [`bake-proof.ts`](bake-proof.ts) | `/registry/toc-ops-bake-proof.json` evidence on export |
 | [`return-efficiency.ts`](return-efficiency.ts) | R_P · CE · LE · dynamic buffer · ranked next actions |
@@ -28,8 +31,30 @@ operate-lite Hard Gate bake (`enforcement` slice).
 ```bash
 bun run ops:seed:toc
 bun run ops:snapshot --no-routing
-bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts tests/toc-ops-return-efficiency.test.ts
+bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
+  tests/toc-ops-return-efficiency.test.ts tests/toc-ops-presence.test.ts
 ```
+
+## Presence (geo / network)
+
+Demo-plane only — not live GeoIP on Pages. Partner HQ + each Drum get `presence`
+(lat/lon, postal ZIP, IPv4/IPv6, ASN/ISP, reverse DNS, A/AAAA). Plays carry
+`placement` at slip time. Rollup: `presence` on snapshot + compact counts on
+`ops-summary.toc`.
+
+## Venues (account channels)
+
+Each account has `venue`: kind (sportsbook / exchange / prediction_market /
+crypto / pph / postup_credit / casino / kiosk / in_person), sports markets,
+`legalByState`, access mode, plus optional crypto / exchange / PPH / kiosk /
+casino blobs. Catalog on `catalog.venues`; rollup on `venues` + ops-summary.
+
+## Profiles (partners + agents)
+
+`partner.profile` — phones/data plans, assets, telegram group/channel/bot,
+play channels, payments, Soft/hard accounting, deals, history, limits,
+wager places. `expert.profile` — style, CLV, **liquidity pool by market**,
+telegram/bot, deals, accounting. Rollup: `profiles` + ops-summary.
 
 ## Return efficiency
 

@@ -25,21 +25,16 @@ import type {
 } from './ops-channel-event.ts';
 import { parseProjectors } from './ops-channel-event.ts';
 import { sendTelegramBotMessage } from '../telegram/telegram-api.ts';
+import { playAckKeyboard } from '../telegram/flows/keyboards.ts';
 import { loadTelegramEnv, threadIdForOutboxTopic } from '../telegram/telegram-config.ts';
 
 /** Inline keyboard for play ack callbacks (placed / skip). */
 export function playAckReplyMarkup(
   playId: string, // brand-ok — opaque plays.id wire
-  nodeId: string // brand-ok — opaque tree_nodes.id wire
+  nodeId: string, // brand-ok — opaque tree_nodes.id wire
+  locale: 'en' | 'es' = 'en'
 ) {
-  return {
-    inline_keyboard: [
-      [
-        { text: '✅ Placed', callback_data: `play:${playId}:${nodeId}:placed` },
-        { text: '⏭ Skip', callback_data: `play:${playId}:${nodeId}:skip` },
-      ],
-    ],
-  };
+  return playAckKeyboard(playId, nodeId, locale);
 }
 
 /** Process-local feed for serve-public /api/channels/events (not release-channel meta). */
@@ -157,7 +152,7 @@ async function projectTelegram(
   row: OutboxRow,
   payload: Record<string, unknown>,
   token: string
-): Promise<{ ok: boolean; messageId?: number }> {
+): Promise<{ ok: boolean; messageId?: number; error?: string }> {
   const env = loadTelegramEnv();
   const dmTarget = payload.telegramId ?? payload.telegram_id;
   const text = typeof payload.text === 'string' ? payload.text : JSON.stringify(payload);
@@ -178,7 +173,7 @@ async function projectTelegram(
     messageThreadId ??= threadIdForOutboxTopic(env.topics, row.topic, row.event_type);
   }
 
-  if (!chatId) return { ok: false };
+  if (!chatId) return { ok: false, error: 'no chat target' };
 
   const parseMode =
     payload.parseMode === 'Markdown' || payload.parse_mode === 'Markdown' ? 'Markdown' : undefined;
@@ -194,7 +189,13 @@ async function projectTelegram(
     messageThreadId,
   });
 
-  return { ok: result.ok, messageId: result.messageId };
+  return {
+    ok: result.ok,
+    messageId: result.messageId,
+    error: result.ok
+      ? undefined
+      : (result.description ?? `telegram error ${result.errorCode ?? '?'}`),
+  };
 }
 
 async function projectSlack(
@@ -207,6 +208,51 @@ async function projectSlack(
   const severity = (payload.severity as 'info' | 'warning' | 'critical') ?? 'info';
   const result = await sendRegistryAlert(message, severity, { slackWebhookUrl: webhookUrl });
   return result.slack;
+}
+
+export type RequeueFailedOutboxOpts = {
+  /** Only requeue rows with retries below this ceiling (default: no ceiling). */
+  maxRetries?: number;
+  /** Max rows to flip per call (default 500). */
+  limit?: number;
+};
+
+/**
+ * Flip failed outbox rows back to pending so `processChannelOutbox` can retry.
+ * Inspired by DLQ requeue patterns (eventferry / pg-transactional-outbox).
+ */
+export function requeueFailedChannelOutbox(
+  db: Database,
+  opts: RequeueFailedOutboxOpts = {}
+): number {
+  const limit = opts.limit ?? 500;
+  const maxRetries = opts.maxRetries;
+  if (maxRetries != null) {
+    const result = db.run(
+      `UPDATE ops_channel_outbox
+       SET status = 'pending', last_error = NULL
+       WHERE id IN (
+         SELECT id FROM ops_channel_outbox
+         WHERE status = 'failed' AND retries < $max
+         ORDER BY created_at ASC
+         LIMIT $lim
+       )`,
+      { $max: maxRetries, $lim: limit }
+    );
+    return result.changes;
+  }
+  const result = db.run(
+    `UPDATE ops_channel_outbox
+     SET status = 'pending', last_error = NULL
+     WHERE id IN (
+       SELECT id FROM ops_channel_outbox
+       WHERE status = 'failed'
+       ORDER BY created_at ASC
+       LIMIT $lim
+     )`,
+    { $lim: limit }
+  );
+  return result.changes;
 }
 
 /** Drain pending outbox rows through configured projectors. */
@@ -243,6 +289,7 @@ export async function processChannelOutbox(
     const projectors = parseProjectors(row.projectors);
     try {
       const results: boolean[] = [];
+      let telegramErr: string | undefined;
       for (const projector of projectors) {
         if (projector === 'r2') {
           if (r2Store === localOpsChannelStore) {
@@ -253,6 +300,7 @@ export async function processChannelOutbox(
         } else if (deliver && projector === 'telegram') {
           const tg = await projectTelegram(row, payload, token);
           results.push(tg.ok);
+          if (!tg.ok && tg.error) telegramErr = tg.error;
           if (
             tg.ok &&
             tg.messageId != null &&
@@ -279,7 +327,10 @@ export async function processChannelOutbox(
       } else {
         db.run(
           `UPDATE ops_channel_outbox SET status = 'failed', retries = retries + 1, last_error = $err WHERE id = $id`,
-          { $err: 'Projector returned false', $id: row.id }
+          {
+            $err: telegramErr ?? 'Projector returned false',
+            $id: row.id,
+          }
         );
         failed++;
       }
@@ -431,11 +482,21 @@ export function enqueuePlayGatedChannelEvent(
     reason?: string;
     adjustedStake?: number;
     templateId?: PartnerTemplateId | string;
+    /** TOC routing rank (1 = highest weightedScore). */
+    rankedRank?: number;
+    callSign?: string | null;
+    weightedScore?: number;
   }
 ): OpsChannelEvent {
+  const eventType =
+    input.allowed && input.action === 'adjust'
+      ? 'play.gate.adjusted'
+      : input.action === 'defer'
+        ? 'play.gate.defer'
+        : 'play.gate.denied';
   return enqueueOpsChannelEvent(db, {
     topic: 'plays',
-    eventType: input.allowed ? 'play.gate.adjusted' : 'play.gate.denied',
+    eventType,
     idempotencyKey: `gate:${input.playId}:${input.treeNodeId as string}`,
     payload: {
       playId: input.playId,
@@ -445,6 +506,9 @@ export function enqueuePlayGatedChannelEvent(
       reason: input.reason,
       adjustedStake: input.adjustedStake,
       templateId: input.templateId != null ? String(input.templateId) : undefined,
+      rankedRank: input.rankedRank,
+      callSign: input.callSign ?? undefined,
+      weightedScore: input.weightedScore,
     },
     projectors: ['r2'],
   });

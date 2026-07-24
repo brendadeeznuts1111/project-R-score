@@ -240,6 +240,301 @@ function renderExperiments(experiments) {
     </section>`;
 }
 
+function formatPresenceLine(pr) {
+  if (!pr?.postal && !pr?.network) return '';
+  const city = [pr.postal?.city, pr.postal?.region, pr.postal?.zip].filter(Boolean).join(', ');
+  const coords =
+    pr.geo?.lat != null && pr.geo?.lon != null
+      ? `${Number(pr.geo.lat).toFixed(4)}, ${Number(pr.geo.lon).toFixed(4)}`
+      : '';
+  const net = [
+    pr.network?.ipv4 ? `v4 ${pr.network.ipv4}` : '',
+    pr.network?.ipv6 ? `v6 ${pr.network.ipv6}` : '',
+    pr.network?.asn != null ? `AS${pr.network.asn}` : '',
+    pr.network?.dns?.hostname ? `dns ${pr.network.dns.hostname}` : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  const dist =
+    pr.metrics?.distanceKmFromHouse != null
+      ? `${pr.metrics.distanceKmFromHouse} km from house`
+      : '';
+  const vpn = pr.network?.vpnSuspected ? pill('vpn?', 'hot') : '';
+  return `<div class="toc-sub">${esc(city)}${coords ? ` · ${esc(coords)}` : ''}${
+    dist ? ` · ${esc(dist)}` : ''
+  }${vpn ? ` ${vpn}` : ''}${net ? `<br>${esc(net)}` : ''}</div>`;
+}
+
+function formatVenueLine(v) {
+  if (!v) return '';
+  const sports = (v.sports || []).slice(0, 5).join('/');
+  const legal = (v.legalByState || [])
+    .slice(0, 4)
+    .map(L => `${L.state}:${L.status}`)
+    .join(' ');
+  const extras = [
+    v.credit?.mode && v.credit.mode !== 'cash' ? `credit ${v.credit.mode}` : '',
+    v.crypto ? `crypto ${(v.crypto.assets || []).join(',')}` : '',
+    v.exchange ? `clearing ${v.exchange.clearing}` : '',
+    v.pph ? `pph ${v.pph.shopName}` : '',
+    v.kiosk ? `kiosk ${v.kiosk.locationLabel}` : '',
+    v.casino ? `casino ${v.casino.property}` : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  return `<div class="toc-sub">${pill(v.kind, v.kind === 'sportsbook' ? 'ok' : 'dim')} ${pill(v.access, 'dim')}
+    <code>${esc(v.venueId)}</code> ${esc(v.displayName)} · ${esc(v.primaryState)}
+    ${sports ? `<br>sports ${esc(sports)}` : ''}
+    ${legal ? `<br>legal ${esc(legal)}` : ''}
+    ${extras ? `<br>${esc(extras)}` : ''}
+  </div>`;
+}
+
+function renderProfilesRollup(profiles) {
+  if (!profiles) return '';
+  return `<section class="toc-section" id="profiles">
+    ${sectionHead('Profiles', 'Partners · agents · phones · telegram · deals · liquidity · CLV')}
+    <div class="toc-stats">
+      <div class="toc-stat ok"><span class="k">Partner profiles</span><span class="v">${profiles.partnersWithProfile ?? 0}</span></div>
+      <div class="toc-stat ok"><span class="k">Agent profiles</span><span class="v">${profiles.agentsWithProfile ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Phones active</span><span class="v">${profiles.phonesActive ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">TG lanes</span><span class="v">${profiles.telegramLanes ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Play channels</span><span class="v">${profiles.playChannelsLive ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Open deals</span><span class="v">${profiles.openDeals ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Expert liq avail</span><span class="v">${money(profiles.expertLiquidityAvailable)}</span></div>
+      <div class="toc-stat"><span class="k">Avg CLV</span><span class="v">${profiles.avgAgentClvBps != null ? `${Number(profiles.avgAgentClvBps).toFixed(1)} bps` : '—'}</span></div>
+    </div>
+    <div class="toc-buffer">
+      <span class="toc-buffer-label">Pools</span>
+      <span>allocated ${money(profiles.expertLiquidityAllocated)}</span>
+      <span>pending payouts / cuts ${profiles.pendingPayouts ?? 0}</span>
+    </div>
+  </section>`;
+}
+
+function renderAgents(experts) {
+  if (!experts?.length) return '';
+  return `<section class="toc-section" id="agents">
+    ${sectionHead('Agents', 'Style · CLV · liquidity pool · telegram · markets')}
+    <div class="toc-partners">
+      ${experts
+        .map(e => {
+          const pr = e.profile;
+          if (!pr) {
+            return `<article class="toc-partner"><h3>${esc(e.displayName)}</h3><p class="toc-sub">No profile</p></article>`;
+          }
+          const liq = pr.liquidity || {};
+          const markets = (liq.byMarket || [])
+            .map(m => `${m.market} ${money(m.available)}`)
+            .join(' · ');
+          return `<article class="toc-partner" id="agent-${esc(e.expertId)}">
+            <header class="toc-partner-head">
+              <div>
+                <h3 class="toc-partner-code">${esc(e.displayName)} <span class="toc-sub">${esc(pr.handle || '')}</span></h3>
+                <p class="toc-sub">${pill(pr.style?.aggression || '—', 'dim')}
+                  stake ${money(pr.style?.stakeBand?.typical)} typical
+                  · CLV ${Number(pr.clv?.avgClvBps ?? 0).toFixed(1)} bps (n=${pr.clv?.sampleN ?? 0})
+                  · weight ${e.weight ?? '—'}
+                  ${pr.releaseStats ? ` · place ${(pr.releaseStats.placementRate * 100).toFixed(0)}%` : ''}
+                </p>
+                ${
+                  pr.clv?.weeklySeriesBps?.length
+                    ? `<p class="toc-sub">CLV weeks ${pr.clv.weeklySeriesBps.map(n => Number(n).toFixed(0)).join('→')}</p>`
+                    : ''
+                }
+              </div>
+            </header>
+            <div class="toc-cols">
+              <section>
+                <h4>Liquidity</h4>
+                <ul>
+                  <li>avail ${money(liq.available)} / ${money(liq.allocated)}</li>
+                  <li class="toc-sub">reserved ${money(liq.reserved)}</li>
+                  <li class="toc-sub">${esc(markets || '—')}</li>
+                  ${(liq.openReservations || [])
+                    .map(
+                      r =>
+                        `<li class="toc-sub">res <code>${esc(r.callSign)}</code> ${esc(r.market)} ${money(r.stake)}</li>`
+                    )
+                    .join('')}
+                </ul>
+              </section>
+              <section>
+                <h4>Telegram / bot</h4>
+                <ul>
+                  <li>${esc(pr.telegram?.channelId || pr.telegram?.groupId || '—')}</li>
+                  <li class="toc-sub">${esc(pr.bot?.username || '—')} ${pill(pr.bot?.status || '—', pr.bot?.status === 'live' ? 'ok' : 'dim')}</li>
+                  ${(pr.playChannels || [])
+                    .map(
+                      c =>
+                        `<li class="toc-sub">${pill(c.kind, c.primary ? 'ok' : 'dim')} ${esc(c.ref)}</li>`
+                    )
+                    .join('')}
+                </ul>
+              </section>
+              <section>
+                <h4>Markets / places</h4>
+                <ul>
+                  <li>${esc((pr.markets || e.markets || []).join(' · '))}</li>
+                  ${(pr.wagerPlaces || [])
+                    .map(w => `<li class="toc-sub"><code>${esc(w.venueId)}</code> ${esc(w.label)}</li>`)
+                    .join('')}
+                </ul>
+              </section>
+              <section>
+                <h4>Accounting / deals</h4>
+                <ul>
+                  <li>pending cut ${money(pr.accounting?.pendingCut)} · YTD ${money(pr.accounting?.paidYtd)}</li>
+                  ${(pr.deals || [])
+                    .map(
+                      d =>
+                        `<li class="toc-sub">${esc(d.name)} ${d.partnerPct}/${d.expertPct}/${d.housePct}</li>`
+                    )
+                    .join('')}
+                  <li class="toc-sub">limits d ${money(pr.limits?.dailyMax)} / w ${money(pr.limits?.weeklyMax)}</li>
+                </ul>
+              </section>
+            </div>
+          </article>`;
+        })
+        .join('')}
+    </div>
+  </section>`;
+}
+
+function formatPartnerProfile(pr) {
+  if (!pr) return '';
+  const phones = (pr.phones || [])
+    .map(
+      ph =>
+        `<li class="toc-sub">${esc(ph.label)} ${esc(ph.e164 || '')} · ${esc(ph.carrier || '')}${
+          ph.dataPlan
+            ? ` · ${ph.dataPlan.usedGb}/${ph.dataPlan.gbMonth}GB`
+            : ''
+        } ${pill(ph.status, ph.status === 'active' ? 'ok' : 'dim')}</li>`
+    )
+    .join('');
+  const assets = (pr.assets || [])
+    .slice(0, 6)
+    .map(a => `<li class="toc-sub">${pill(a.kind, 'dim')} ${esc(a.label)}</li>`)
+    .join('');
+  const deals = (pr.deals || [])
+    .map(
+      d =>
+        `<li class="toc-sub">${esc(d.name)} ${d.partnerPct}/${d.expertPct}/${d.housePct} · ${esc(d.payoutCadence)}</li>`
+    )
+    .join('');
+  const hist = (pr.history || [])
+    .slice(0, 4)
+    .map(h => `<li class="toc-sub">${esc(h.at?.slice(0, 10) || '')} ${esc(h.summary)}</li>`)
+    .join('');
+  return `<section>
+    <h4>Profile</h4>
+    <ul>
+      <li>${pill(pr.tier, 'ok')} ${pill(pr.risk, pr.risk === 'green' ? 'ok' : 'hot')} ${esc(pr.displayName)}</li>
+      <li class="toc-sub">TG ${esc(pr.telegram?.groupId || pr.telegram?.dmRef || '—')}
+        · ch ${esc(pr.telegram?.channelId || '—')}
+        · ${esc(pr.bot?.username || '—')}</li>
+      <li>Soft P/E/H ${money(pr.accounting?.softPartner)} / ${money(pr.accounting?.softExpert)} / ${money(pr.accounting?.softHouse)}
+        · hard book ${money(pr.accounting?.hardInBook)}
+        ${pr.accounting?.pendingPayout ? ` · pending payout ${money(pr.accounting.pendingPayout)}` : ''}</li>
+      <li class="toc-sub">limits d ${money(pr.limits?.dailyMax)} / w ${money(pr.limits?.weeklyMax)}
+        · markets ${esc((pr.preferredMarkets || []).slice(0, 6).join('/'))}</li>
+      ${
+        pr.velocity
+          ? `<li class="toc-sub">7d T ${money(pr.velocity.t7d)} · ${pr.velocity.plays7d} plays · ${pr.velocity.settles7d} settled · avg stake ${money(pr.velocity.avgStake7d)}</li>`
+          : ''
+      }
+    </ul>
+    <h4 class="toc-subhead">Phones / data</h4>
+    <ul>${phones || '<li class="toc-sub">None</li>'}</ul>
+    <h4 class="toc-subhead">Assets / rails</h4>
+    <ul>${assets || '<li class="toc-sub">None</li>'}</ul>
+    <h4 class="toc-subhead">Deals</h4>
+    <ul>${deals || '<li class="toc-sub">None</li>'}</ul>
+    <h4 class="toc-subhead">History</h4>
+    <ul>${hist || '<li class="toc-sub">None</li>'}</ul>
+  </section>`;
+}
+
+function renderVenuesRollup(venues, catalog) {
+  if (!venues) return '';
+  const kinds = Object.entries(venues.byVenueKind || {})
+    .map(([k, n]) => `${k} ${n}`)
+    .join(' · ');
+  const ids = Object.entries(venues.byVenueId || {})
+    .map(([k, n]) => `${k}:${n}`)
+    .join(' ');
+  const sports = Object.entries(venues.bySport || {})
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([k, n]) => `${k} ${n}`)
+    .join(' · ');
+  const legal = Object.entries(venues.byLegalStatus || {})
+    .map(([k, n]) => `${k}:${n}`)
+    .join(' ');
+  const catalogHint = catalog?.venueIds?.length
+    ? `catalog ${catalog.venueIds.length} venues`
+    : '';
+  return `<section class="toc-section" id="venues">
+    ${sectionHead('Venues', 'Sportsbooks · exchanges · crypto · PPH · post-up · casino · kiosk')}
+    <div class="toc-stats">
+      <div class="toc-stat ok"><span class="k">With venue</span><span class="v">${venues.accountsWithVenue ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Kinds</span><span class="v">${Object.keys(venues.byVenueKind || {}).length}</span></div>
+      <div class="toc-stat"><span class="k">Exchanges</span><span class="v">${venues.exchangeAccounts ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Crypto</span><span class="v">${venues.cryptoAccounts ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Credit / PPH</span><span class="v">${venues.creditLines ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Kiosk</span><span class="v">${venues.kioskAccounts ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">In-person</span><span class="v">${venues.inPersonAccounts ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Legal states</span><span class="v">${venues.legalStatesCovered ?? 0}</span></div>
+    </div>
+    <div class="toc-buffer">
+      <span class="toc-buffer-label">Mix</span>
+      <span>${esc(kinds || '—')}</span>
+      <span>${esc(ids || '—')}</span>
+      ${catalogHint ? `<span>${esc(catalogHint)}</span>` : ''}
+    </div>
+    <div class="toc-buffer">
+      <span class="toc-buffer-label">Sports / legal</span>
+      <span>${esc(sports || '—')}</span>
+      <span>${esc(legal || '—')}</span>
+    </div>
+  </section>`;
+}
+
+function renderPresenceRollup(presence, house) {
+  if (!presence) return '';
+  const houseLine = house
+    ? `${esc(house.postal?.city || 'House')} ${esc(house.postal?.zip || '')} · ${esc(house.network?.ipv4 || '—')}`
+    : '—';
+  const countries = Object.entries(presence.byCountry || {})
+    .map(([k, v]) => `${k}:${v}`)
+    .join(' ');
+  const conns = Object.entries(presence.byConnectionType || {})
+    .map(([k, v]) => `${k} ${v}`)
+    .join(' · ');
+  return `<section class="toc-section" id="presence">
+    ${sectionHead('Presence', 'Geo · ZIP · IPv4/IPv6 · DNS · ASN (demo)')}
+    <div class="toc-stats">
+      <div class="toc-stat ok"><span class="k">Partners geo</span><span class="v">${presence.partnersWithGeo ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Accounts geo</span><span class="v">${presence.accountsWithGeo ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Unique ZIPs</span><span class="v">${presence.uniqueZips ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">IPv6</span><span class="v">${presence.ipv6Count ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">DNS resolved</span><span class="v">${presence.dnsResolved ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">ASNs</span><span class="v">${presence.uniqueAsns ?? 0}</span></div>
+      <div class="toc-stat"><span class="k">Plays w/ place</span><span class="v">${presence.playsWithPlacement ?? 0}</span></div>
+      <div class="toc-stat ${presence.vpnSuspected ? 'hot' : ''}"><span class="k">VPN suspected</span><span class="v">${presence.vpnSuspected ?? 0}</span></div>
+    </div>
+    <div class="toc-buffer">
+      <span class="toc-buffer-label">House</span>
+      <span>${houseLine}</span>
+      <span>avg distance ${presence.avgDistanceKmFromHouse ?? '—'} km</span>
+      <span>${esc(countries || 'US')}</span>
+      <span>${esc(conns || '—')}</span>
+    </div>
+  </section>`;
+}
+
 function renderPlays(plays) {
   if (!plays?.length) return '<li class="toc-sub">No recent plays</li>';
   return plays
@@ -252,12 +547,20 @@ function renderPlays(plays) {
             : p.result === 'pending'
               ? pill('pending', 'dim')
               : pill(p.result || p.status, 'dim');
+      const place = p.placement
+        ? `<div class="toc-sub">${esc(
+            [p.placement.postal?.city, p.placement.postal?.zip].filter(Boolean).join(' ')
+          )}${p.placement.ipv4 ? ` · ${esc(p.placement.ipv4)}` : ''}${
+            p.placement.ipv6 ? ` · v6` : ''
+          }${p.placement.asn != null ? ` · AS${p.placement.asn}` : ''}</div>`
+        : '';
       return `<li>
         <code>${esc(p.callSign)}</code> ${esc(p.market)} ${esc(p.selection)} @ ${esc(p.odds)}
         · stake ${money(p.stake)} ${res}
         ${p.variantKey ? pill(`exp:${p.variantKey}`, 'dim') : ''}
         ${p.blockedReason ? `<div class="toc-sub">${esc(p.blockedReason)}</div>` : ''}
         ${p.pnl != null ? `<div class="toc-sub">pnl ${money(p.pnl)}</div>` : ''}
+        ${place}
       </li>`;
     })
     .join('');
@@ -353,9 +656,11 @@ function renderPartners(partners, assetBySign, limitBySign) {
                 · split ${p.package?.partnerPct}/${p.package?.expertPct}/${p.package?.housePct}
                 ${exp ? ` · exp ${esc(exp.variantKey)}` : ''}
               </p>
+              ${formatPresenceLine(p.presence)}
             </div>
           </header>
           <div class="toc-cols">
+            ${formatPartnerProfile(p.profile)}
             <section>
               <h4>Rails</h4>
               <ul>${(p.rails || [])
@@ -397,6 +702,8 @@ function renderPartners(partners, assetBySign, limitBySign) {
                         ? ` daily ${money(a.limits.dailyMax)} / weekly ${money(a.limits.weeklyMax)}`
                         : ''
                     }</div>${metrics}
+                    ${formatVenueLine(a.venue)}
+                    ${formatPresenceLine(a.presence)}
                   </li>`;
                 })
                 .join('')}</ul>
@@ -508,6 +815,10 @@ function render(root, { mode, data }) {
 
     ${renderEnforcement(enf)}
     ${renderReturnEfficiency(re, ranked, buf)}
+    ${renderProfilesRollup(data.profiles)}
+    ${renderAgents(data.experts)}
+    ${renderVenuesRollup(data.venues, catalog.venues)}
+    ${renderPresenceRollup(data.presence, data.housePresence)}
     ${renderIdentity(identity)}
     ${renderExperiments(data.experiments)}
     ${renderPartners(partners, assetBySign, limitBySign)}

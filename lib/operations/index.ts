@@ -126,6 +126,30 @@ export {
   type OnboardingDefaults,
 } from './onboarding-config.ts';
 export {
+  CALL_SIGN_PATTERN,
+  applyPartnerOnboardPackage,
+  buildOnboardChecklist,
+  displayRef,
+  formatOnboardPlanLines,
+  formatOnboardStatusLine,
+  listUnboundAgentSeats,
+  loadOnboardNodeContext,
+  planPartnerOnboardPackage,
+  resolveOnboardTreeNodeId,
+  type OnboardChecklist,
+  type OnboardNodeContext,
+  type PartnerOnboardApplyResult,
+  type PartnerOnboardPackageOpts,
+  type PartnerOnboardPlan,
+  type UnboundAgentSeat,
+} from './partner-onboard-package.ts';
+export {
+  loadTocRoutingContext,
+  rankPlayRecipients,
+  type TocPlayRecipient,
+  type TocRoutingContext,
+} from './toc-play-routing.ts';
+export {
   loadActiveSbAccounts,
   scrapeBookBalance,
   applyBookScrapes,

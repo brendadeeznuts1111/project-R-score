@@ -34,7 +34,7 @@ describe('toc-ops demo fixture', () => {
     expect(snap.summary.openLimit).toBeGreaterThanOrEqual(1);
     expect(snap.summary.playsSettled).toBeGreaterThanOrEqual(2);
     expect(snap.summary.playsBlocked).toBeGreaterThanOrEqual(1);
-    expect(snap.summary.activeExperiments).toBe(1);
+    expect(snap.summary.activeExperiments).toBeGreaterThanOrEqual(2);
     expect(snap.summary.unconfirmedRails).toBeGreaterThanOrEqual(1);
 
     const nov = snap.partners.find(p => p.partnerCode === 'NOV')!;
@@ -43,18 +43,28 @@ describe('toc-ops demo fixture', () => {
     expect(nov.openTasks.some(t => t.taskType === 'ONB' && t.status === 'PendingPartner')).toBe(
       true
     );
-    expect(nov.rails.every(r => !r.confirmed)).toBe(true);
+    expect(nov.rails.some(r => r.confirmed)).toBe(true);
+    expect(nov.rails.some(r => !r.confirmed)).toBe(true);
+    expect(nov.softBalance.pendingDeployments.count).toBeGreaterThanOrEqual(1);
 
     const ash = snap.partners.find(p => p.partnerCode === 'ASH')!;
     expect(ash.accounts.find(a => a.callSign === 'ASH-001')?.limits.freshness).toBe('stale');
     expect(ash.recentPlays.some(p => p.status === 'blocked')).toBe(true);
+    expect(
+      ash.softBalance.recentEntries.filter(e => e.entryType === 'ProfitSplit').length
+    ).toBeGreaterThanOrEqual(6);
 
     const pat = snap.partners.find(p => p.partnerCode === 'PAT')!;
     expect(pat.accounts.find(a => a.callSign === 'PAT-001')?.limits.freshness).toBe('fresh');
+    expect(pat.accounts.some(a => a.callSign === 'PAT-003' && a.status === 'Funded')).toBe(true);
     expect(pat.experimentAssignment?.variantKey).toBe('dynamic');
     expect(pat.recentPlays.some(p => p.status === 'placed')).toBe(true);
+    expect(pat.recentPlays.filter(p => p.status === 'settled').length).toBeGreaterThanOrEqual(3);
 
-    expect(snap.experts.length).toBeGreaterThanOrEqual(2);
+    expect(snap.experts.length).toBeGreaterThanOrEqual(3);
+    expect(snap.summary.playsSettled).toBeGreaterThanOrEqual(5);
+    expect(snap.presence?.partnersWithGeo).toBe(3);
+    expect(snap.summary.presenceUniqueZips).toBeGreaterThanOrEqual(3);
     expect(snap.experiments.some(e => e.status === 'active')).toBe(true);
     expect(snap.experiments.some(e => e.status === 'completed')).toBe(true);
   });
@@ -73,7 +83,7 @@ describe('toc-ops demo fixture', () => {
       expect(slice.available).toBe(true);
       expect(slice.onboarding).toBe(1);
       expect(slice.openOnb).toBeGreaterThan(0);
-      expect(slice.activeExperiments).toBe(1);
+      expect(slice.activeExperiments).toBeGreaterThanOrEqual(2);
       expect(slice.path).toBe('/registry/toc-ops.json');
 
       const again = await exportTocOpsSnapshot({

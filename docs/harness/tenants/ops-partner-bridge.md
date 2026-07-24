@@ -74,14 +74,26 @@ bun test tests/partner-profile-bridge.test.ts tests/ops-summary.test.ts
 5. Adjust → use capped stake + `play.gate.adjusted` event.
 6. Reserve fail → `play.gate.denied` with reserve reason.
 
-Tests: `tests/play-dispatcher-gate.test.ts`.
+Tests: `tests/play-dispatcher-gate.test.ts` · `tests/toc-play-routing.test.ts`.
+
+## Phase I2b — TOC weightedScore routing (before template gate)
+
+After auto-bind, `rankPlayRecipients` orders agents by baked TOC `weightedScore` (readiness × expertWeight × limit freshness × Gate 12 — see [`lib/toc-ops/return-efficiency.ts`](../../lib/toc-ops/return-efficiency.ts)).
+
+When `buffer.throttleOnboarding` is true and an agent has a TOC-bound call sign with `0 < weightedScore < 0.5`, dispatch **defers** before `evaluateForNode`:
+
+1. `recordGateDecision` with `action: 'defer'`.
+2. `play.gate.defer` outbox (payload includes `callSign`, `weightedScore`, `rankedRank`).
+3. Skip reserve/distribution for that recipient; higher-score recipients still dispatch.
+
+Override baked snapshot in tests via `publishAndDispatch(..., { routingContext })`.
 
 ## Phase I3 — identity channel
 
 | Event | Topic | When |
 |-------|-------|------|
 | `partner.bound` | `identity` | First `bindPartnerProfile` insert via ops-sync (`created === true`) |
-| `play.gate.denied` / `play.gate.adjusted` | `plays` | Dispatch gate outcomes |
+| `play.gate.denied` / `play.gate.adjusted` / `play.gate.defer` | `plays` | Dispatch gate / TOC routing defer |
 | `play.settled` | `plays` | Settlement (profileKey attached when bound) |
 
 Helpers: `enqueueIdentityChannelEvent`, `enqueuePlayGatedChannelEvent` in [`lib/channels/outbox.ts`](../../lib/channels/outbox.ts).

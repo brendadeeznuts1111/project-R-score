@@ -2,56 +2,26 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
-// @see https://bun.sh/docs/runtime/sqlite — bun:sqlite
-// @see https://bun.sh/docs/runtime/networking/fetch#sending-an-http-request — fetch
 /**
- * Operations Telegram bot — tree-aware commands for agents and sub-agents.
+ * Operations Telegram bot — tree-aware commands via flow cards + inline keyboards.
  *
- * Commands:
- *   /start          — welcome + registration check
- *   /status         — accounts, plays placed, P&L
- *   /accounts       — list sportsbook accounts with balances
- *   /plays          — today's pending plays
- *   /tree           — downstream tree (partners/agents only)
- *   /register <ref> <name> — register as sub-agent
- *   /verifydod <id> — DOD delivery receipt (status + hashes)
- *
- * Each node is identified by their Telegram user ID stored in
- * tree_nodes.telegram_id.
+ * @see lib/telegram/flows/README.md
  */
-
 import { Database } from 'bun:sqlite';
 import { DODVerifier } from '../dod/verifier.ts';
 import { asTreeNodeId } from '../types/branded/operations.ts';
 import { asTelegramUserId } from '../types/branded/portal.ts';
 import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
 import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
+import { answerCallbackQuery } from './telegram-api.ts';
+import { handleFlowCallback } from './flows/callbacks.ts';
+import { deliverFlowOutput } from './flows/deliver.ts';
+import { commandToFlowId, findFlowNodeByTelegram, runFlow } from './flows/registry.ts';
+import type { TreeNode } from './ops-bot-types.ts';
 
-const COMMANDS = [
-  '/start',
-  '/status',
-  '/accounts',
-  '/plays',
-  '/tree',
-  '/register',
-  '/verifydod',
-] as const;
-
-type BotCommand = (typeof COMMANDS)[number] | null;
-
-export interface BotConfig {
-  token: string;
-  dbPath: string;
-}
-
-export interface TreeNode {
-  id: string; // brand-ok — opaque UUID
-  type: 'partner' | 'agent' | 'sub_agent';
-  parent_id: string | null; // brand-ok
-  expert_id: string | null; // brand-ok
-  name: string;
-  telegram_id: string; // brand-ok — external Telegram user ID
-}
+export type { TreeNode } from './ops-bot-types.ts';
+export type { BotConfig } from './ops-bot-types.ts';
+import type { BotConfig } from './ops-bot-types.ts';
 
 export class OpsTelegramBot {
   private db: Database;
@@ -60,13 +30,16 @@ export class OpsTelegramBot {
   private polling = false;
 
   constructor(config: BotConfig) {
-    this.token = config.token || Bun.env.TELEGRAM_BOT_TOKEN || '';
+    this.token =
+      config.token ||
+      Bun.env.TELEGRAM_BOT_FACTORY?.trim() ||
+      Bun.env.TELEGRAM_BOT_TOKEN?.trim() ||
+      '';
     this.dbPath = config.dbPath;
     this.db = new Database(config.dbPath);
     this.db.run('PRAGMA journal_mode=WAL');
   }
 
-  /** Start long-polling for updates. */
   async start(): Promise<void> {
     let offset = 0;
     this.polling = true;
@@ -79,9 +52,10 @@ export class OpsTelegramBot {
           await Bun.sleep(5000);
           continue;
         }
-        const data = await res.json();
-        for (const update of data.result) {
-          offset = Math.max(offset, update.update_id + 1);
+        const data = (await res.json()) as { result?: Record<string, unknown>[] };
+        for (const update of data.result ?? []) {
+          const uid = update.update_id;
+          if (typeof uid === 'number') offset = Math.max(offset, uid + 1);
           await this.handleUpdate(update);
         }
       } catch {
@@ -94,283 +68,155 @@ export class OpsTelegramBot {
     this.polling = false;
   }
 
-  /** Handle a raw Telegram update — wire boundary. */
-
   async handleUpdate(update: Record<string, unknown>): Promise<void> {
+    const cq = update.callback_query as Record<string, unknown> | undefined;
+    if (cq) {
+      await this.handleCallbackQuery(cq);
+      return;
+    }
+
     const msg = update.message as Record<string, unknown> | undefined;
     if (!msg?.text) return;
 
     const text = (msg.text as string).trim();
     const [cmd, ...args] = text.split(/\s+/);
-    const userId = String(msg.from && (msg.from as Record<string, unknown>).id);
-    const chatId = Number(msg.chat && (msg.chat as Record<string, unknown>).id);
+    const userId = String((msg.from as Record<string, unknown>)?.id);
+    const chatId = Number((msg.chat as Record<string, unknown>)?.id);
 
-    const node = this.db
-      .query('SELECT * FROM tree_nodes WHERE telegram_id = $t AND active = 1')
-      .get({ $t: userId }) as TreeNode | null;
+    const node = findFlowNodeByTelegram(this.db, userId);
 
-    switch (cmd) {
-      case '/start':
-        await this.handleStart(chatId, node);
-        break;
-      case '/status':
-        await this.handleStatus(chatId, node);
-        break;
-      case '/accounts':
-        await this.handleAccounts(chatId, node);
-        break;
-      case '/plays':
-        await this.handlePlays(chatId, node);
-        break;
-      case '/tree':
-        await this.handleTree(chatId, node);
-        break;
-      case '/register':
-        await this.handleRegister(chatId, userId, node, args);
-        break;
-      case '/verifydod':
-        await this.handleVerifyDod(chatId, node, args);
-        break;
+    if (cmd === '/register') {
+      await this.handleRegister(chatId, userId, node as TreeNode | null, args);
+      return;
+    }
+    if (cmd === '/verifydod') {
+      await this.handleVerifyDod(chatId, node as TreeNode | null, args);
+      return;
+    }
+
+    const flowId = commandToFlowId(cmd);
+    if (flowId) {
+      const output = runFlow(this.db, this.dbPath, {
+        flowId: cmd === '/start' && !node ? 'menu' : flowId,
+        chatId: String(chatId),
+        userId,
+      });
+      await deliverFlowOutput(output, { token: this.token, chatId });
+      return;
+    }
+
+    if (!cmd.startsWith('/')) return;
+
+    const fallback = runFlow(this.db, this.dbPath, {
+      flowId: 'menu',
+      chatId: String(chatId),
+      userId,
+    });
+    await deliverFlowOutput(fallback, { token: this.token, chatId });
+  }
+
+  private async handleCallbackQuery(cq: Record<string, unknown>): Promise<void> {
+    const data = String(cq.data ?? '');
+    const userId = String((cq.from as Record<string, unknown>)?.id);
+    const chatId = String(
+      (cq.message as Record<string, unknown> | undefined)?.chat
+        ? ((cq.message as Record<string, unknown>).chat as Record<string, unknown>).id
+        : userId
+    );
+    const messageId = (cq.message as Record<string, unknown> | undefined)?.message_id;
+    const node = findFlowNodeByTelegram(this.db, userId);
+
+    const output = handleFlowCallback(data, {
+      db: this.db,
+      dbPath: this.dbPath,
+      chatId,
+      userId,
+      messageId: typeof messageId === 'number' ? messageId : undefined,
+      node,
+    });
+
+    if (output) {
+      await deliverFlowOutput(output, {
+        token: this.token,
+        chatId,
+        editMessageId: typeof messageId === 'number' ? messageId : undefined,
+      });
+    }
+
+    const cqId = String(cq.id ?? '');
+    if (cqId) {
+      await answerCallbackQuery(this.token, cqId, output?.text.slice(0, 80) ?? 'OK');
     }
   }
 
-  // ── Command handlers ──────────────────────────────────────────────
-
-  /** /verifydod <dod-id> — agent-side delivery receipt (own submissions only). */
   private async handleVerifyDod(
     chatId: number,
     node: TreeNode | null,
     args: string[]
   ): Promise<void> {
     if (!node) {
-      await this.send(chatId, ['❌ Not registered']);
+      await deliverFlowOutput(
+        { text: '❌ Not registered', parseMode: 'HTML' },
+        { token: this.token, chatId }
+      );
       return;
     }
     const dodId = args[0]?.trim();
     if (!dodId) {
-      await this.send(chatId, ['Usage: `/verifydod <dod-id>`']);
+      await deliverFlowOutput(
+        { text: 'Usage: /verifydod &lt;dod-id&gt;', parseMode: 'HTML' },
+        { token: this.token, chatId }
+      );
       return;
     }
     const verifier = new DODVerifier(this.dbPath);
     try {
       const r = verifier.receipt(dodId) as Record<string, unknown> | null;
       if (!r || r.agent_id !== node.id) {
-        await this.send(chatId, ['❌ DOD not found']);
+        await deliverFlowOutput(
+          { text: '❌ DOD not found', parseMode: 'HTML' },
+          { token: this.token, chatId }
+        );
         return;
       }
-      await this.send(chatId, [
-        '📄 *DOD Receipt*',
-        `ID: \`${String(r.id).slice(0, 8)}…\``,
-        `Type: ${r.type}`,
-        `Status: *${r.status}*`,
-        `Visual hash: \`${String(r.visual_hash).slice(0, 12)}…\``,
-        `Signature: \`${String(r.signature).slice(0, 12)}…\``,
-        `Submitted: ${r.submitted_at}`,
-        '',
-        'Keep the full ID + signature for your records.',
-      ]);
+      await deliverFlowOutput(
+        {
+          text: [
+            '<b>DOD Receipt</b>',
+            `ID: ${String(r.id).slice(0, 8)}…`,
+            `Type: ${r.type}`,
+            `Status: <b>${r.status}</b>`,
+            `Submitted: ${r.submitted_at}`,
+          ].join('\n'),
+          parseMode: 'HTML',
+        },
+        { token: this.token, chatId }
+      );
     } finally {
       verifier.close();
     }
   }
 
-  private async handleStart(chatId: number, node: TreeNode | null): Promise<void> {
-    if (!node) {
-      const experts = this.db
-        .query('SELECT name, sport, market FROM experts WHERE active = 1')
-        .all() as { name: string; sport: string; market: string }[];
-
-      const list = experts.length
-        ? experts.map(e => `• ${e.name} (${e.sport} ${e.market})`).join('\n')
-        : 'No experts available.';
-
-      await this.send(chatId, [
-        '👋 *Operations Platform*',
-        '',
-        'You are not registered. Contact your referrer or use:',
-        '`/register <referral-id> <your-name>`',
-        '',
-        '*Available experts:*',
-        list,
-      ]);
-      return;
-    }
-
-    await this.send(chatId, [
-      `👋 ${node.name}`,
-      '',
-      `Type: *${node.type.toUpperCase()}*`,
-      '',
-      '/status — Your status',
-      '/accounts — Sportsbook accounts',
-      "/plays — Today's plays",
-      '/tree — Your down-tree',
-      '/verifydod <id> — DOD delivery receipt',
-    ]);
-  }
-
-  private async handleStatus(chatId: number, node: TreeNode | null): Promise<void> {
-    if (!node) {
-      await this.send(chatId, ['❌ Not registered']);
-      return;
-    }
-
-    const accts = this.db
-      .query('SELECT COUNT(*) as c FROM sb_accounts WHERE agent_id = $a')
-      .get({ $a: node.id }) as { c: number };
-
-    const placed = this.db
-      .query(
-        "SELECT COUNT(*) as c FROM play_distribution WHERE node_id = $n AND ack_status = 'placed'"
-      )
-      .get({ $n: node.id }) as { c: number };
-
-    const pnl = this.db
-      .query(
-        `
-      SELECT COALESCE(SUM(p.pnl), 0) as total
-      FROM plays p
-      JOIN play_distribution d ON p.id = d.play_id
-      WHERE d.node_id = $n AND p.result IN ('win', 'loss')
-    `
-      )
-      .get({ $n: node.id }) as { total: number };
-
-    await this.send(chatId, [
-      '📊 *Status*',
-      `Accounts: ${accts.c}`,
-      `Placed: ${placed.c}`,
-      `P&L: $${pnl.total.toFixed(2)}`,
-    ]);
-  }
-
-  private async handleAccounts(chatId: number, node: TreeNode | null): Promise<void> {
-    if (!node) {
-      await this.send(chatId, ['❌ Not registered']);
-      return;
-    }
-
-    const accounts = this.db
-      .query(
-        'SELECT book, username, balance, status FROM sb_accounts WHERE agent_id = $a ORDER BY book'
-      )
-      .all({ $a: node.id }) as {
-      book: string;
-      username: string;
-      balance: number;
-      status: string;
-    }[];
-
-    if (!accounts.length) {
-      await this.send(chatId, ['📋 No accounts. Contact your referrer to get funded.']);
-      return;
-    }
-
-    const rows = accounts.map(
-      a => `${a.book}: **${a.username || '—'}** — $${a.balance.toFixed(0)} (${a.status})`
-    );
-
-    await this.send(chatId, ['📋 *Your Accounts*', '', ...rows]);
-  }
-
-  private async handlePlays(chatId: number, node: TreeNode | null): Promise<void> {
-    if (!node) {
-      await this.send(chatId, ['❌ Not registered']);
-      return;
-    }
-
-    const plays = this.db
-      .query(
-        `
-      SELECT p.sport, p.market, p.event, p.selection, p.odds, p.confidence, p.sent_at, d.ack_status
-      FROM plays p
-      JOIN play_distribution d ON p.id = d.play_id
-      WHERE d.node_id = $n AND p.result = 'pending'
-      ORDER BY p.sent_at DESC
-      LIMIT 5
-    `
-      )
-      .all({ $n: node.id }) as {
-      sport: string;
-      market: string;
-      event: string;
-      selection: string;
-      odds: number;
-      confidence: number;
-      sent_at: string;
-      ack_status: string;
-    }[];
-
-    if (!plays.length) {
-      await this.send(chatId, ['📋 No pending plays.']);
-      return;
-    }
-
-    const rows = plays
-      .map(p => [
-        `🎯 *${p.sport} ${p.market}* (${p.ack_status})`,
-        `${p.event}: ${p.selection} @ ${p.odds > 0 ? '+' : ''}${p.odds}`,
-        `   Confidence: ${p.confidence}% · ${p.sent_at.slice(11, 16)}`,
-        '',
-      ])
-      .flat();
-
-    await this.send(chatId, ['📋 *Pending Plays*', '', ...rows]);
-  }
-
-  private async handleTree(chatId: number, node: TreeNode | null): Promise<void> {
-    if (!node || node.type === 'sub_agent') {
-      await this.send(chatId, ['❌ Tree view available for partners and agents only.']);
-      return;
-    }
-
-    const children = this.db
-      .query(
-        'SELECT type, COUNT(*) as c FROM tree_nodes WHERE parent_id = $p AND active = 1 GROUP BY type'
-      )
-      .all({ $p: node.id }) as { type: string; c: number }[];
-
-    const downstream = this.db
-      .query(
-        `
-      WITH RECURSIVE down_tree AS (
-        SELECT id FROM tree_nodes WHERE parent_id = $p AND active = 1
-        UNION ALL
-        SELECT n.id FROM tree_nodes n JOIN down_tree t ON n.parent_id = t.id
-      )
-      SELECT COALESCE(SUM(a.balance), 0) as total
-      FROM sb_accounts a
-      JOIN down_tree d ON a.agent_id = d.id
-      WHERE a.status = 'active'
-    `
-      )
-      .get({ $p: node.id }) as { total: number };
-
-    const rows = children.map(r => `${r.type}: ${r.c}`);
-
-    await this.send(chatId, [
-      '🌳 *Your Tree*',
-      '',
-      ...rows,
-      '',
-      `Downstream liquidity: $${downstream.total.toLocaleString()}`,
-    ]);
-  }
-
   private async handleRegister(
     chatId: number,
-    userId: string, // brand-ok — external Telegram user ID
+    userId: string, // brand-ok — Telegram user id wire
     node: TreeNode | null,
     args: string[]
   ): Promise<void> {
     if (node) {
-      await this.send(chatId, ['✅ Already registered.']);
+      await deliverFlowOutput(
+        { text: '✅ Already registered.', parseMode: 'HTML' },
+        { token: this.token, chatId }
+      );
       return;
     }
 
     const [refId, ...nameParts] = args;
     if (!refId || !nameParts.length) {
-      await this.send(chatId, ['Usage: `/register <referral-id> <your-name>`']);
+      await deliverFlowOutput(
+        { text: 'Usage: /register &lt;referral-id&gt; &lt;your-name&gt;', parseMode: 'HTML' },
+        { token: this.token, chatId }
+      );
       return;
     }
 
@@ -380,7 +226,10 @@ export class OpsTelegramBot {
       .get({ $r: refId }) as TreeNode | null;
 
     if (!parent) {
-      await this.send(chatId, ['❌ Invalid referral ID.']);
+      await deliverFlowOutput(
+        { text: '❌ Invalid referral ID.', parseMode: 'HTML' },
+        { token: this.token, chatId }
+      );
       return;
     }
 
@@ -388,10 +237,8 @@ export class OpsTelegramBot {
     const now = new Date().toISOString();
 
     this.db.run(
-      `
-      INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, active, status, created_at)
-      VALUES ($id, 'sub_agent', $pid, $eid, $name, $tg, 1, 'active', $now)
-    `,
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, active, status, created_at)
+       VALUES ($id, 'sub_agent', $pid, $eid, $name, $tg, 1, 'active', $now)`,
       {
         $id: newId,
         $pid: parent.id,
@@ -417,40 +264,19 @@ export class OpsTelegramBot {
       });
     }
 
-    await this.send(chatId, [
-      `✅ Registered as sub-agent of *${parent.name}*`,
-      `Your ID: \`${newId}\``,
-    ]);
+    await deliverFlowOutput(
+      {
+        text: `✅ Registered as sub-agent of <b>${parent.name}</b>\nYour ID: <code>${newId}</code>`,
+        parseMode: 'HTML',
+      },
+      { token: this.token, chatId }
+    );
 
     if (parent.telegram_id) {
-      await this.sendToUser(parent.telegram_id, `📢 New sub-agent: ${name}`);
+      await deliverFlowOutput(
+        { text: `📢 New sub-agent: ${name}`, parseMode: 'HTML' },
+        { token: this.token, chatId: parent.telegram_id }
+      );
     }
-  }
-
-  // ── Helpers ────────────────────────────────────────────────────────
-
-  private async send(chatId: number, lines: string[]): Promise<void> {
-    await fetch(`https://api.telegram.org/bot${this.token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: lines.join('\n'),
-        parse_mode: 'Markdown',
-        disable_web_page_preview: true,
-      }),
-    });
-  }
-
-  private async sendToUser(telegramId: string /* brand-ok */, text: string): Promise<void> {
-    await fetch(`https://api.telegram.org/bot${this.token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: telegramId,
-        text,
-        parse_mode: 'Markdown',
-      }),
-    });
   }
 }

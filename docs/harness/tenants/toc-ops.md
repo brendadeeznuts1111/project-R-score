@@ -94,6 +94,9 @@ bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
 | Bake proof artifact | **Closed** — `/registry/toc-ops-bake-proof.json` + `GET /api/toc/proof` |
 | `/api/toc` agent headers + summary | **Closed** — `X-TOC-*` · summary includes enforcement / returnEfficiency |
 | Portal weave + llms parity | **Closed** — TOC surface/artifact/script + `portal/toc.md` |
+| Geo / ZIP / IPv4 / IPv6 / DNS / ASN presence | **Closed (demo)** — `lib/toc-ops/presence.ts` on partner · account · play placement; rollup on board + ops-summary |
+| Venue kinds (book · Kalshi/Polymarket · crypto · PPH · post-up · casino · kiosk · in-person) + sports + legal-by-state | **Closed (demo)** — `lib/toc-ops/venues.ts` on each account; catalog + rollup on board / ops-summary |
+| Partner + agent profiles (phones/data · assets/rails · telegram/bot · deals · accounting · CLV · expert liquidity · history · limits · wager places) | **Closed (demo)** — `lib/toc-ops/profiles.ts`; board Agents + Profile sections; ops-summary rollups |
 | Soft `force` wipe under append-only | **Open by design** — insert-missing only; no truncate |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |
 | Full CT Soft mutations / DoD close on Pages | **Open by design** — use toc-ops-repo `ct` |

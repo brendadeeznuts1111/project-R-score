@@ -70,7 +70,7 @@ describe('TelegramBot factory', () => {
           accounts,
           bucket,
           channel,
-          env: { TELEGRAM_BOT_FACTORY: 'test-token' },
+          env: { TELEGRAM_BOT_FACTORY: 'test-token', OPS_DB_PATH: ':memory:' },
         }
       );
       expect(sent[0]).toContain('Factory Status');

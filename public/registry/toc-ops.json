@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-24T07:34:46.055Z",
+  "generatedAt": "2026-07-24T07:41:12.467Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -153,7 +153,7 @@
     "houseFloatHard": 42500,
     "floatRatio": 0.85,
     "throttleOnboarding": false,
-    "settlementFloatRatio": 0.44760510353482535,
+    "settlementFloatRatio": 0.4643380046015478,
     "primedDrums": 4,
     "playableDrums": 2,
     "principalOutstandingTotal": 20300
@@ -209,7 +209,254 @@
         "NBA",
         "MLB"
       ],
-      "weight": 1.2
+      "weight": 1.2,
+      "profile": {
+        "handle": "@marcus.nfl",
+        "style": {
+          "aggression": "balanced",
+          "stakeBand": {
+            "min": 500,
+            "max": 2500,
+            "typical": 1200
+          },
+          "marketFocus": [
+            "NFL",
+            "NBA",
+            "MLB"
+          ],
+          "holdTimeHint": "early",
+          "notes": "Favors sides with CLV history on HR / DK"
+        },
+        "clv": {
+          "sampleN": 86,
+          "avgClvBps": 18.4,
+          "winRateWhenPositiveClv": 0.57,
+          "last30dAvgClvBps": 21.2,
+          "beatsClosePct": 0.62,
+          "byMarket": [
+            {
+              "market": "NFL",
+              "sampleN": 40,
+              "avgClvBps": 22.1
+            },
+            {
+              "market": "NBA",
+              "sampleN": 28,
+              "avgClvBps": 15.4
+            },
+            {
+              "market": "MLB",
+              "sampleN": 18,
+              "avgClvBps": 12
+            }
+          ],
+          "weeklySeriesBps": [
+            12,
+            14,
+            16,
+            19,
+            18,
+            21,
+            22,
+            21.2
+          ]
+        },
+        "liquidity": {
+          "allocated": 40000,
+          "available": 28500,
+          "reserved": 4200,
+          "currency": "USD",
+          "byMarket": [
+            {
+              "market": "NFL",
+              "allocated": 18000,
+              "available": 12000,
+              "reserved": 2100,
+              "openPlays": 0
+            },
+            {
+              "market": "NBA",
+              "allocated": 12000,
+              "available": 9000,
+              "reserved": 1050,
+              "openPlays": 0
+            },
+            {
+              "market": "MLB",
+              "allocated": 10000,
+              "available": 7500,
+              "reserved": 875,
+              "openPlays": 0
+            }
+          ],
+          "lastReconciledAt": "2026-07-23T20:00:00.000Z",
+          "openReservations": [
+            {
+              "reservationId": "res-marcus-pat002-001",
+              "callSign": "PAT-002",
+              "market": "MLB",
+              "stake": 0,
+              "at": "2026-07-22T12:00:00.000Z"
+            }
+          ]
+        },
+        "telegram": {
+          "chatId": "tg:chat:marcus",
+          "groupId": "tg:group:experts",
+          "channelId": "tg:channel:marcus-plays",
+          "botUsername": "@TOC_Expert_Marcus_bot",
+          "topics": [
+            {
+              "name": "releases",
+              "threadId": 101
+            },
+            {
+              "name": "clv",
+              "threadId": 102
+            }
+          ]
+        },
+        "playChannels": [
+          {
+            "kind": "telegram",
+            "ref": "tg:channel:marcus-plays",
+            "primary": true,
+            "status": "live"
+          },
+          {
+            "kind": "bot",
+            "ref": "@TOC_Expert_Marcus_bot",
+            "primary": true,
+            "status": "live"
+          }
+        ],
+        "payments": [
+          {
+            "id": "pay-marcus-cut-001",
+            "method": "ach",
+            "direction": "out",
+            "amount": 480,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-21T12:00:00.000Z",
+            "note": "Expert cut week 29"
+          },
+          {
+            "id": "pay-marcus-cut-w28",
+            "method": "ach",
+            "direction": "out",
+            "amount": 610,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-14T12:00:00.000Z",
+            "note": "Expert cut week 28"
+          },
+          {
+            "id": "pay-marcus-cut-w30-pending",
+            "method": "ach",
+            "direction": "out",
+            "amount": 240,
+            "currency": "USD",
+            "status": "pending",
+            "at": "2026-07-23T18:00:00.000Z",
+            "note": "Pending expert cut week 30"
+          }
+        ],
+        "accounting": {
+          "pendingCut": 240,
+          "paidYtd": 12400,
+          "currency": "USD"
+        },
+        "deals": [
+          {
+            "dealId": "deal-marcus-house",
+            "name": "Marcus house cut 20%",
+            "partnerPct": 70,
+            "expertPct": 20,
+            "housePct": 10,
+            "payoutCadence": "weekly",
+            "payoutMethod": "rail",
+            "termMonths": 12,
+            "effectiveAt": "2026-01-01T00:00:00.000Z"
+          }
+        ],
+        "history": [
+          {
+            "at": "2026-07-10T12:00:00.000Z",
+            "kind": "capacity",
+            "summary": "Liquidity reconcile · avail $28500"
+          },
+          {
+            "at": "2026-07-17T19:10:00.000Z",
+            "kind": "release",
+            "summary": "ASH-001 BUF ML released",
+            "callSign": "ASH-001"
+          },
+          {
+            "at": "2026-07-18T09:00:00.000Z",
+            "kind": "clv",
+            "summary": "30d CLV 21.2 bps · beat-close 62%"
+          },
+          {
+            "at": "2026-07-22T12:00:00.000Z",
+            "kind": "block",
+            "summary": "PAT-002 PLAY-EX-01 stake > limit",
+            "callSign": "PAT-002"
+          },
+          {
+            "at": "2026-07-22T18:00:00.000Z",
+            "kind": "release",
+            "summary": "Desk review PAT-002 blocked stake"
+          }
+        ],
+        "limits": {
+          "dailyMax": 8000,
+          "weeklyMax": 40000,
+          "perPlayMax": 2500,
+          "exposureCap": 40000
+        },
+        "phones": [
+          {
+            "id": "phone-marcus",
+            "label": "Marcus desk",
+            "e164": "+18135550201",
+            "carrier": "Verizon",
+            "dataPlan": {
+              "name": "Business",
+              "gbMonth": 50,
+              "usedGb": 22,
+              "hotspot": true
+            },
+            "status": "active"
+          }
+        ],
+        "markets": [
+          "NFL",
+          "NBA",
+          "MLB"
+        ],
+        "wagerPlaces": [
+          {
+            "venueId": "hardrock",
+            "label": "Hard Rock Bet"
+          },
+          {
+            "venueId": "draftkings",
+            "label": "DraftKings"
+          }
+        ],
+        "bot": {
+          "username": "@TOC_Expert_Marcus_bot",
+          "status": "live"
+        },
+        "releaseStats": {
+          "releases30d": 42,
+          "placed30d": 31,
+          "blocked30d": 4,
+          "placementRate": 0.74,
+          "avgStake": 1180
+        }
+      }
     },
     {
       "expertId": "elena",
@@ -218,7 +465,253 @@
         "NFL",
         "Tennis"
       ],
-      "weight": 1
+      "weight": 1,
+      "profile": {
+        "handle": "@elena.edges",
+        "style": {
+          "aggression": "conservative",
+          "stakeBand": {
+            "min": 400,
+            "max": 1800,
+            "typical": 900
+          },
+          "marketFocus": [
+            "NFL",
+            "Tennis",
+            "NBA"
+          ],
+          "holdTimeHint": "mixed",
+          "notes": "Tennis CLV specialist; smaller tickets"
+        },
+        "clv": {
+          "sampleN": 64,
+          "avgClvBps": 24.1,
+          "winRateWhenPositiveClv": 0.61,
+          "last30dAvgClvBps": 26.8,
+          "beatsClosePct": 0.68,
+          "byMarket": [
+            {
+              "market": "Tennis",
+              "sampleN": 30,
+              "avgClvBps": 31.2
+            },
+            {
+              "market": "NFL",
+              "sampleN": 22,
+              "avgClvBps": 19.5
+            },
+            {
+              "market": "NBA",
+              "sampleN": 12,
+              "avgClvBps": 14.8
+            }
+          ],
+          "weeklySeriesBps": [
+            18,
+            20,
+            22,
+            24,
+            25,
+            27,
+            28,
+            26.8
+          ]
+        },
+        "liquidity": {
+          "allocated": 25000,
+          "available": 19200,
+          "reserved": 2100,
+          "currency": "USD",
+          "byMarket": [
+            {
+              "market": "NFL",
+              "allocated": 10000,
+              "available": 7500,
+              "reserved": 875,
+              "openPlays": 0
+            },
+            {
+              "market": "Tennis",
+              "allocated": 9000,
+              "available": 7200,
+              "reserved": 630,
+              "openPlays": 0
+            },
+            {
+              "market": "NBA",
+              "allocated": 6000,
+              "available": 4500,
+              "reserved": 525,
+              "openPlays": 1
+            }
+          ],
+          "lastReconciledAt": "2026-07-23T20:00:00.000Z",
+          "openReservations": [
+            {
+              "reservationId": "res-elena-pat001-nba",
+              "callSign": "PAT-001",
+              "market": "NBA",
+              "stake": 900,
+              "at": "2026-07-22T15:20:00.000Z"
+            }
+          ]
+        },
+        "telegram": {
+          "chatId": "tg:chat:elena",
+          "groupId": "tg:group:experts",
+          "channelId": "tg:channel:elena-plays",
+          "botUsername": "@TOC_Expert_Elena_bot",
+          "topics": [
+            {
+              "name": "releases",
+              "threadId": 201
+            }
+          ]
+        },
+        "playChannels": [
+          {
+            "kind": "telegram",
+            "ref": "tg:channel:elena-plays",
+            "primary": true,
+            "status": "live"
+          },
+          {
+            "kind": "bot",
+            "ref": "@TOC_Expert_Elena_bot",
+            "primary": true,
+            "status": "live"
+          }
+        ],
+        "payments": [
+          {
+            "id": "pay-elena-cut-001",
+            "method": "paypal",
+            "direction": "out",
+            "amount": 320,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-21T12:05:00.000Z"
+          },
+          {
+            "id": "pay-elena-cut-w28",
+            "method": "ach",
+            "direction": "out",
+            "amount": 440,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-14T12:00:00.000Z",
+            "note": "Expert cut week 28"
+          },
+          {
+            "id": "pay-elena-cut-w30-pending",
+            "method": "paypal",
+            "direction": "out",
+            "amount": 180,
+            "currency": "USD",
+            "status": "pending",
+            "at": "2026-07-23T18:00:00.000Z",
+            "note": "Pending expert cut week 30"
+          }
+        ],
+        "accounting": {
+          "pendingCut": 180,
+          "paidYtd": 8900,
+          "currency": "USD"
+        },
+        "deals": [
+          {
+            "dealId": "deal-elena-house",
+            "name": "Elena house cut 20%",
+            "partnerPct": 70,
+            "expertPct": 20,
+            "housePct": 10,
+            "payoutCadence": "weekly",
+            "payoutMethod": "rail",
+            "termMonths": 12,
+            "effectiveAt": "2026-02-01T00:00:00.000Z"
+          }
+        ],
+        "history": [
+          {
+            "at": "2026-07-10T12:00:00.000Z",
+            "kind": "capacity",
+            "summary": "Liquidity reconcile · avail $19200"
+          },
+          {
+            "at": "2026-07-18T09:00:00.000Z",
+            "kind": "clv",
+            "summary": "30d CLV 26.8 bps · beat-close 68%"
+          },
+          {
+            "at": "2026-07-20T16:05:00.000Z",
+            "kind": "release",
+            "summary": "PAT-001 PHI -3",
+            "callSign": "PAT-001"
+          },
+          {
+            "at": "2026-07-21T15:05:00.000Z",
+            "kind": "release",
+            "summary": "ASH-001 Alcaraz ML",
+            "callSign": "ASH-001"
+          },
+          {
+            "at": "2026-07-22T18:00:00.000Z",
+            "kind": "release",
+            "summary": "PAT-001 NBA card released"
+          }
+        ],
+        "limits": {
+          "dailyMax": 5000,
+          "weeklyMax": 25000,
+          "perPlayMax": 1800,
+          "exposureCap": 25000
+        },
+        "phones": [
+          {
+            "id": "phone-elena",
+            "label": "Elena travel",
+            "e164": "+13055550303",
+            "carrier": "AT&T",
+            "dataPlan": {
+              "name": "Intl+",
+              "gbMonth": 30,
+              "usedGb": 11,
+              "hotspot": true
+            },
+            "status": "active"
+          }
+        ],
+        "markets": [
+          "NFL",
+          "Tennis",
+          "NBA"
+        ],
+        "wagerPlaces": [
+          {
+            "venueId": "draftkings",
+            "label": "DraftKings"
+          },
+          {
+            "venueId": "fanduel",
+            "label": "FanDuel"
+          },
+          {
+            "venueId": "hardrock",
+            "label": "Hard Rock Bet"
+          }
+        ],
+        "bot": {
+          "username": "@TOC_Expert_Elena_bot",
+          "status": "live"
+        },
+        "releaseStats": {
+          "releases30d": 36,
+          "placed30d": 29,
+          "blocked30d": 1,
+          "placementRate": 0.81,
+          "avgStake": 920
+        }
+      }
     },
     {
       "expertId": "kai",
@@ -227,7 +720,265 @@
         "MLB",
         "Soccer"
       ],
-      "weight": 0.95
+      "weight": 0.95,
+      "profile": {
+        "handle": "@kai.alts",
+        "style": {
+          "aggression": "aggressive",
+          "stakeBand": {
+            "min": 200,
+            "max": 3000,
+            "typical": 800
+          },
+          "marketFocus": [
+            "MLB",
+            "Soccer",
+            "Crypto",
+            "Politics"
+          ],
+          "holdTimeHint": "same_game",
+          "notes": "Alt venues: Stake · Kalshi · Polymarket"
+        },
+        "clv": {
+          "sampleN": 41,
+          "avgClvBps": 9.2,
+          "winRateWhenPositiveClv": 0.52,
+          "last30dAvgClvBps": 11,
+          "beatsClosePct": 0.55,
+          "byMarket": [
+            {
+              "market": "MLB",
+              "sampleN": 14,
+              "avgClvBps": 8.1
+            },
+            {
+              "market": "Soccer",
+              "sampleN": 12,
+              "avgClvBps": 11.4
+            },
+            {
+              "market": "Politics",
+              "sampleN": 10,
+              "avgClvBps": 6.2
+            },
+            {
+              "market": "Crypto",
+              "sampleN": 5,
+              "avgClvBps": 4
+            }
+          ],
+          "weeklySeriesBps": [
+            4,
+            5,
+            7,
+            8,
+            9,
+            10,
+            12,
+            11
+          ]
+        },
+        "liquidity": {
+          "allocated": 18000,
+          "available": 11400,
+          "reserved": 3600,
+          "currency": "USD",
+          "byMarket": [
+            {
+              "market": "MLB",
+              "allocated": 6000,
+              "available": 4000,
+              "reserved": 700,
+              "openPlays": 0
+            },
+            {
+              "market": "Soccer",
+              "allocated": 5000,
+              "available": 3200,
+              "reserved": 630,
+              "openPlays": 1
+            },
+            {
+              "market": "Politics",
+              "allocated": 4000,
+              "available": 2800,
+              "reserved": 420,
+              "openPlays": 0
+            },
+            {
+              "market": "Crypto",
+              "allocated": 3000,
+              "available": 1400,
+              "reserved": 560,
+              "openPlays": 0
+            }
+          ],
+          "lastReconciledAt": "2026-07-23T20:00:00.000Z",
+          "openReservations": [
+            {
+              "reservationId": "res-kai-pat004-open",
+              "callSign": "PAT-004",
+              "market": "Soccer",
+              "stake": 800,
+              "at": "2026-07-23T10:00:00.000Z"
+            }
+          ]
+        },
+        "telegram": {
+          "chatId": "tg:chat:kai",
+          "groupId": "tg:group:experts",
+          "channelId": "tg:channel:kai-plays",
+          "botUsername": "@TOC_Expert_Kai_bot",
+          "topics": [
+            {
+              "name": "releases",
+              "threadId": 301
+            },
+            {
+              "name": "crypto",
+              "threadId": 302
+            }
+          ]
+        },
+        "playChannels": [
+          {
+            "kind": "telegram",
+            "ref": "tg:channel:kai-plays",
+            "primary": true,
+            "status": "live"
+          },
+          {
+            "kind": "bot",
+            "ref": "@TOC_Expert_Kai_bot",
+            "primary": true,
+            "status": "live"
+          }
+        ],
+        "payments": [
+          {
+            "id": "pay-kai-usdc-001",
+            "method": "crypto",
+            "direction": "out",
+            "amount": 210,
+            "currency": "USDC",
+            "status": "posted",
+            "at": "2026-07-21T13:00:00.000Z"
+          },
+          {
+            "id": "pay-kai-cut-w28",
+            "method": "crypto",
+            "direction": "out",
+            "amount": 190,
+            "currency": "USDC",
+            "status": "posted",
+            "at": "2026-07-14T12:00:00.000Z",
+            "note": "Expert cut week 28"
+          },
+          {
+            "id": "pay-kai-cut-w30-pending",
+            "method": "crypto",
+            "direction": "out",
+            "amount": 95,
+            "currency": "USDC",
+            "status": "pending",
+            "at": "2026-07-23T18:00:00.000Z",
+            "note": "Pending expert cut week 30"
+          }
+        ],
+        "accounting": {
+          "pendingCut": 95,
+          "paidYtd": 4100,
+          "currency": "USD"
+        },
+        "deals": [
+          {
+            "dealId": "deal-kai-alts",
+            "name": "Kai alts 25% expert",
+            "partnerPct": 60,
+            "expertPct": 25,
+            "housePct": 15,
+            "payoutCadence": "weekly",
+            "payoutMethod": "crypto",
+            "effectiveAt": "2026-06-15T00:00:00.000Z"
+          }
+        ],
+        "history": [
+          {
+            "at": "2026-07-10T12:00:00.000Z",
+            "kind": "capacity",
+            "summary": "Liquidity reconcile · avail $11400"
+          },
+          {
+            "at": "2026-07-18T09:00:00.000Z",
+            "kind": "clv",
+            "summary": "30d CLV 11 bps · beat-close 55%"
+          },
+          {
+            "at": "2026-07-19T17:20:00.000Z",
+            "kind": "release",
+            "summary": "ASH-001 LAD -1.5 (loss)",
+            "callSign": "ASH-001",
+            "amount": -600
+          },
+          {
+            "at": "2026-07-22T18:00:00.000Z",
+            "kind": "release",
+            "summary": "PAT-004 Stake soccer ticket"
+          }
+        ],
+        "limits": {
+          "dailyMax": 6000,
+          "weeklyMax": 20000,
+          "perPlayMax": 3000,
+          "exposureCap": 18000
+        },
+        "phones": [
+          {
+            "id": "phone-kai",
+            "label": "Kai crypto desk",
+            "e164": "+14075550404",
+            "carrier": "Visible",
+            "dataPlan": {
+              "name": "Unlimited",
+              "gbMonth": 40,
+              "usedGb": 28,
+              "hotspot": true
+            },
+            "status": "active"
+          }
+        ],
+        "markets": [
+          "MLB",
+          "Soccer",
+          "Crypto",
+          "Politics"
+        ],
+        "wagerPlaces": [
+          {
+            "venueId": "stake",
+            "label": "Stake.com"
+          },
+          {
+            "venueId": "kalshi",
+            "label": "Kalshi"
+          },
+          {
+            "venueId": "polymarket",
+            "label": "Polymarket"
+          }
+        ],
+        "bot": {
+          "username": "@TOC_Expert_Kai_bot",
+          "status": "live"
+        },
+        "releaseStats": {
+          "releases30d": 24,
+          "placed30d": 17,
+          "blocked30d": 3,
+          "placementRate": 0.71,
+          "avgStake": 760
+        }
+      }
     }
   ],
   "experiments": [
@@ -323,7 +1074,7 @@
         {
           "partnerCode": "PAT",
           "variantKey": "std_70",
-          "metricValue": 2760,
+          "metricValue": 4200,
           "assignedAt": "2026-06-01T00:00:00.000Z"
         },
         {
@@ -334,6 +1085,55 @@
         }
       ],
       "clusterBy": "package_id"
+    },
+    {
+      "id": "exp-liquidity-weight-2026-07",
+      "name": "Expert liquidity weight vs static cap",
+      "status": "active",
+      "phase": 2,
+      "designMethod": "cluster",
+      "metricName": "placement_rate",
+      "hypothesis": "Dynamic liquidity weight raises placement_rate without ↑ blocked PLAY",
+      "factors": [
+        {
+          "name": "liq_mode",
+          "levels": [
+            "static_cap",
+            "dynamic_weight"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "key": "static_cap",
+          "name": "Static market caps",
+          "config": {
+            "mode": "static"
+          }
+        },
+        {
+          "key": "dynamic_weight",
+          "name": "CLV-weighted available",
+          "config": {
+            "mode": "dynamic"
+          }
+        }
+      ],
+      "assignments": [
+        {
+          "partnerCode": "PAT",
+          "variantKey": "dynamic_weight",
+          "metricValue": 0.81,
+          "assignedAt": "2026-07-20T00:00:00.000Z"
+        },
+        {
+          "partnerCode": "ASH",
+          "variantKey": "static_cap",
+          "metricValue": 0.66,
+          "assignedAt": "2026-07-20T00:00:00.000Z"
+        }
+      ],
+      "clusterBy": "partner_code"
     }
   ],
   "partners": [
@@ -1285,6 +2085,327 @@
           "distanceKmFromHouse": 333.1,
           "sameMetroAsHouse": false
         }
+      },
+      "profile": {
+        "displayName": "Cascade Partner (ASH)",
+        "tier": "T2",
+        "risk": "yellow",
+        "phones": [
+          {
+            "id": "phone-ash-001",
+            "label": "ASH primary iPhone",
+            "e164": "+13055550101",
+            "carrier": "Verizon",
+            "dataPlan": {
+              "name": "Unlimited+",
+              "gbMonth": 50,
+              "usedGb": 18.4,
+              "hotspot": true,
+              "renewsAt": "2026-08-01T00:00:00.000Z"
+            },
+            "status": "active",
+            "assignedCallSign": "ASH-001"
+          },
+          {
+            "id": "phone-ash-002",
+            "label": "ASH warm burner",
+            "e164": "+13055550102",
+            "carrier": "T-Mobile",
+            "dataPlan": {
+              "name": "Essentials",
+              "gbMonth": 15,
+              "usedGb": 6.1,
+              "hotspot": false
+            },
+            "status": "warming",
+            "assignedCallSign": "ASH-002"
+          }
+        ],
+        "assets": [
+          {
+            "id": "asset-ash-mac",
+            "kind": "device",
+            "label": "MacBook desk",
+            "status": "active",
+            "meta": {
+              "os": "macOS",
+              "role": "ops"
+            }
+          },
+          {
+            "id": "asset-ash-venmo",
+            "kind": "rail",
+            "label": "Venmo CASHOUT",
+            "ref": "rail-ash-venmo-1",
+            "status": "active"
+          },
+          {
+            "id": "asset-ash-kyc",
+            "kind": "document",
+            "label": "KYC pack",
+            "ref": "proof:ash-onb-kyc",
+            "status": "active"
+          },
+          {
+            "id": "asset-ash-kiosk-badge",
+            "kind": "other",
+            "label": "Kiosk attendant badge",
+            "ref": "kiosk-mia-12",
+            "status": "active"
+          }
+        ],
+        "telegram": {
+          "chatId": "tg:chat:ash-ops",
+          "groupId": "tg:group:ash-demo",
+          "channelId": "tg:channel:ash-plays",
+          "botUsername": "@TOC_Ash_bot",
+          "dmRef": "tg:group:ash-demo",
+          "topics": [
+            {
+              "name": "plays",
+              "threadId": 11
+            },
+            {
+              "name": "rails",
+              "threadId": 12
+            },
+            {
+              "name": "limits",
+              "threadId": 13
+            }
+          ]
+        },
+        "playChannels": [
+          {
+            "kind": "telegram",
+            "ref": "tg:channel:ash-plays",
+            "primary": true,
+            "status": "live"
+          },
+          {
+            "kind": "bot",
+            "ref": "@TOC_Ash_bot",
+            "primary": false,
+            "status": "live"
+          },
+          {
+            "kind": "portal",
+            "ref": "/portal/toc/#partner-ASH",
+            "primary": false,
+            "status": "live"
+          }
+        ],
+        "payments": [
+          {
+            "id": "pay-ash-wd-001",
+            "method": "venmo",
+            "direction": "out",
+            "amount": 403,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-21T21:15:00.000Z",
+            "railId": "rail-ash-venmo-1",
+            "note": "Partner ProfitSplit"
+          },
+          {
+            "id": "pay-ash-fund-002",
+            "method": "cashapp",
+            "direction": "in",
+            "amount": 5000,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-18T16:05:00.000Z",
+            "railId": "rail-ash-cashapp-1",
+            "note": "FUND ASH-002"
+          },
+          {
+            "id": "pay-ash-tennis-001",
+            "method": "venmo",
+            "direction": "out",
+            "amount": 235,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-21T21:20:00.000Z",
+            "railId": "rail-ash-venmo-1",
+            "note": "Partner cut tennis settle"
+          },
+          {
+            "id": "pay-ash-kiosk-fund",
+            "method": "cashapp",
+            "direction": "in",
+            "amount": 500,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-23T10:05:00.000Z",
+            "railId": "rail-ash-cashapp-1",
+            "note": "ASH-004 kiosk seed"
+          },
+          {
+            "id": "pay-ash-expert-cut",
+            "method": "ach",
+            "direction": "out",
+            "amount": 115,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-22T09:00:00.000Z",
+            "note": "Expert Soft settlement batch"
+          }
+        ],
+        "accounting": {
+          "softPartner": 403,
+          "softExpert": 115,
+          "softHouse": 10058,
+          "hardInBook": 10310,
+          "hardFloat": 0,
+          "pendingDeploy": 0,
+          "pendingPayout": 0,
+          "currency": "USD"
+        },
+        "deals": [
+          {
+            "dealId": "deal-ash-std-2026",
+            "name": "ASH standard 70/20/10",
+            "partnerPct": 70,
+            "expertPct": 20,
+            "housePct": 10,
+            "payoutCadence": "weekly",
+            "payoutMethod": "rail",
+            "termMonths": 12,
+            "effectiveAt": "2026-06-01T00:00:00.000Z"
+          },
+          {
+            "dealId": "deal-ash-kiosk-add",
+            "name": "Kiosk addendum",
+            "partnerPct": 65,
+            "expertPct": 25,
+            "housePct": 10,
+            "payoutCadence": "weekly",
+            "payoutMethod": "rail",
+            "effectiveAt": "2026-07-20T00:00:00.000Z",
+            "notes": "ASH-004 kiosk stakes only"
+          }
+        ],
+        "history": [
+          {
+            "at": "2026-07-10T08:00:00.000Z",
+            "kind": "onboard",
+            "summary": "Partner Ready + package bound"
+          },
+          {
+            "at": "2026-07-15T18:00:00.000Z",
+            "kind": "fund",
+            "summary": "ASH-001 corridor FUND $5000",
+            "callSign": "ASH-001",
+            "amount": 5000
+          },
+          {
+            "at": "2026-07-16T14:30:00.000Z",
+            "kind": "warm",
+            "summary": "ASH-001 cycle complete · CostOfPriming $20",
+            "callSign": "ASH-001",
+            "amount": -20
+          },
+          {
+            "at": "2026-07-17T23:40:00.000Z",
+            "kind": "play_settle",
+            "summary": "ASH-001 NFL win +$240",
+            "callSign": "ASH-001",
+            "amount": 240
+          },
+          {
+            "at": "2026-07-19T22:05:00.000Z",
+            "kind": "play_settle",
+            "summary": "ASH-001 MLB loss −$600",
+            "callSign": "ASH-001",
+            "amount": -600
+          },
+          {
+            "at": "2026-07-21T20:40:00.000Z",
+            "kind": "play_settle",
+            "summary": "ASH-001 Tennis win +$336",
+            "callSign": "ASH-001",
+            "amount": 336
+          },
+          {
+            "at": "2026-07-23T12:00:00.000Z",
+            "kind": "limit_flag",
+            "summary": "ASH-003 LIMIT-EX-02 — reallocate",
+            "callSign": "ASH-003"
+          },
+          {
+            "at": "2026-07-23T13:00:00.000Z",
+            "kind": "fund",
+            "summary": "ASH-004 kiosk funded $500",
+            "callSign": "ASH-004",
+            "amount": 500
+          }
+        ],
+        "limits": {
+          "dailyMax": 2500,
+          "weeklyMax": 10000,
+          "perPlayMax": 1500,
+          "exposureCap": 20000,
+          "notes": "Stale LIMIT on ASH-001 blocks new PLAY until refresh"
+        },
+        "wagerPlaces": [
+          {
+            "venueId": "hardrock",
+            "label": "Hard Rock Bet (Florida)",
+            "kind": "sportsbook"
+          },
+          {
+            "venueId": "hardrock",
+            "label": "Hard Rock — Retail Counter",
+            "kind": "in_person"
+          },
+          {
+            "venueId": "hr_casino_tampa",
+            "label": "Seminole Hard Rock Casino Tampa",
+            "kind": "casino"
+          },
+          {
+            "venueId": "hr_kiosk_mia",
+            "label": "Hard Rock Bet Kiosk — Miami Beach",
+            "kind": "kiosk"
+          }
+        ],
+        "preferredMarkets": [
+          "NFL",
+          "NBA",
+          "MLB",
+          "NHL",
+          "Tennis",
+          "Other"
+        ],
+        "bot": {
+          "username": "@TOC_Ash_bot",
+          "status": "live",
+          "commands": [
+            "/status",
+            "/limits",
+            "/rails"
+          ]
+        },
+        "commsLog": [
+          {
+            "at": "2026-07-20T09:10:00.000Z",
+            "channel": "telegram",
+            "direction": "out",
+            "summary": "LIMIT refresh request ASH-001"
+          },
+          {
+            "at": "2026-07-23T12:05:00.000Z",
+            "channel": "telegram",
+            "direction": "out",
+            "summary": "LIMIT-EX-02 WD instructions ASH-003"
+          }
+        ],
+        "velocity": {
+          "t7d": 576,
+          "plays7d": 4,
+          "settles7d": 3,
+          "avgStake7d": 875
+        }
       }
     },
     {
@@ -2073,9 +3194,9 @@
       ],
       "softBalance": {
         "byStakeholder": {
-          "Partner": 1400,
-          "Expert": 400,
-          "House": 17500
+          "Partner": 2240,
+          "Expert": 750,
+          "House": 27710
         },
         "recentEntries": [
           {
@@ -2101,6 +3222,22 @@
             "callSign": "PAT-003",
             "taskId": "FUND-PAT-003-20260723-090000-001",
             "timestamp": "2026-07-23T09:20:00.000Z"
+          },
+          {
+            "entryType": "CapitalDeployment",
+            "stakeholder": "House",
+            "amount": 5000,
+            "callSign": "PAT-004",
+            "taskId": "FUND-PAT-004-20260720-090000-001",
+            "timestamp": "2026-07-20T09:15:00.000Z"
+          },
+          {
+            "entryType": "CapitalDeployment",
+            "stakeholder": "House",
+            "amount": 5000,
+            "callSign": "PAT-005",
+            "taskId": "FUND-PAT-005-20260722-100000-001",
+            "timestamp": "2026-07-22T10:20:00.000Z"
           },
           {
             "entryType": "ProfitSplit",
@@ -2149,6 +3286,54 @@
             "callSign": "PAT-001",
             "taskId": "WD-PAT-001-20260720-180000-001",
             "timestamp": "2026-07-20T18:45:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Partner",
+            "amount": 480,
+            "callSign": "PAT-002",
+            "taskId": "WD-PAT-002-20260721-160000-001",
+            "timestamp": "2026-07-21T16:10:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Expert",
+            "amount": 200,
+            "callSign": "PAT-002",
+            "taskId": "WD-PAT-002-20260721-160000-001",
+            "timestamp": "2026-07-21T16:10:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "House",
+            "amount": 120,
+            "callSign": "PAT-002",
+            "taskId": "WD-PAT-002-20260721-160000-001",
+            "timestamp": "2026-07-21T16:10:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Partner",
+            "amount": 360,
+            "callSign": "PAT-004",
+            "taskId": "WD-PAT-004-20260722-083000-001",
+            "timestamp": "2026-07-22T08:30:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "Expert",
+            "amount": 150,
+            "callSign": "PAT-004",
+            "taskId": "WD-PAT-004-20260722-083000-001",
+            "timestamp": "2026-07-22T08:30:00.000Z"
+          },
+          {
+            "entryType": "ProfitSplit",
+            "stakeholder": "House",
+            "amount": 90,
+            "callSign": "PAT-004",
+            "taskId": "WD-PAT-004-20260722-083000-001",
+            "timestamp": "2026-07-22T08:30:00.000Z"
           },
           {
             "entryType": "Loss",
@@ -2370,6 +3555,122 @@
           "experimentId": "exp-routing-phase1-2026-07",
           "variantKey": "dynamic",
           "placedAt": "2026-07-22T12:00:00.000Z"
+        },
+        {
+          "playId": "play-pat-002-kalshi-pol-001",
+          "taskId": "PLAY-PAT-002-20260721-140000-001",
+          "callSign": "PAT-002",
+          "partnerCode": "PAT",
+          "expertId": "kai",
+          "market": "Politics",
+          "event": "Fed rate decision Aug",
+          "selection": "Hold",
+          "odds": -120,
+          "stake": 2000,
+          "confidence": 0.64,
+          "status": "settled",
+          "result": "win",
+          "pnl": 800,
+          "experimentId": "exp-routing-phase1-2026-07",
+          "variantKey": "dynamic",
+          "placedAt": "2026-07-21T14:10:00.000Z",
+          "settledAt": "2026-07-21T15:55:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 28.5543,
+              "lon": -81.3872,
+              "accuracyM": 90,
+              "source": "ip",
+              "observedAt": "2026-07-21T14:10:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32802"
+            },
+            "ipv4": "98.203.44.19",
+            "ipv6": "2600:1700:2a10:8c80::11",
+            "asn": 7018,
+            "dnsHostname": "pat-002.drum.toc.local"
+          }
+        },
+        {
+          "playId": "play-pat-004-stake-soccer-001",
+          "taskId": "PLAY-PAT-004-20260722-070000-001",
+          "callSign": "PAT-004",
+          "partnerCode": "PAT",
+          "expertId": "kai",
+          "market": "Soccer",
+          "event": "Arsenal vs Chelsea",
+          "selection": "Arsenal ML",
+          "odds": 110,
+          "stake": 900,
+          "confidence": 0.59,
+          "status": "settled",
+          "result": "win",
+          "pnl": 600,
+          "experimentId": "exp-routing-phase1-2026-07",
+          "variantKey": "dynamic",
+          "placedAt": "2026-07-22T07:15:00.000Z",
+          "settledAt": "2026-07-22T08:10:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 28.5703,
+              "lon": -81.3952,
+              "accuracyM": 110,
+              "source": "ip",
+              "observedAt": "2026-07-22T07:15:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32804"
+            },
+            "ipv4": "98.203.44.21",
+            "ipv6": "2600:1700:2a10:8c80::13",
+            "asn": 7018,
+            "dnsHostname": "pat-004.drum.toc.local"
+          }
+        },
+        {
+          "playId": "play-pat-004-stake-open-001",
+          "taskId": "PLAY-PAT-004-20260723-100000-001",
+          "callSign": "PAT-004",
+          "partnerCode": "PAT",
+          "expertId": "kai",
+          "market": "Soccer",
+          "event": "Inter vs Milan",
+          "selection": "Over 2.5",
+          "odds": -105,
+          "stake": 800,
+          "confidence": 0.55,
+          "status": "placed",
+          "result": "pending",
+          "pnl": null,
+          "experimentId": "exp-routing-phase1-2026-07",
+          "variantKey": "dynamic",
+          "placedAt": "2026-07-23T10:05:00.000Z",
+          "placement": {
+            "geo": {
+              "lat": 28.5703,
+              "lon": -81.3952,
+              "accuracyM": 110,
+              "source": "ip",
+              "observedAt": "2026-07-23T10:05:00.000Z"
+            },
+            "postal": {
+              "country": "US",
+              "region": "FL",
+              "city": "Orlando",
+              "zip": "32804"
+            },
+            "ipv4": "98.203.44.21",
+            "ipv6": "2600:1700:2a10:8c80::13",
+            "asn": 7018,
+            "dnsHostname": "pat-004.drum.toc.local"
+          }
         }
       ],
       "experimentAssignment": {
@@ -2436,6 +3737,379 @@
         "metrics": {
           "distanceKmFromHouse": 124.2,
           "sameMetroAsHouse": false
+        }
+      },
+      "profile": {
+        "displayName": "Factory Rail Co (PAT)",
+        "tier": "T1",
+        "risk": "green",
+        "phones": [
+          {
+            "id": "phone-pat-001",
+            "label": "PAT PLAY phone",
+            "e164": "+14075550111",
+            "carrier": "AT&T",
+            "dataPlan": {
+              "name": "Unlimited Elite",
+              "gbMonth": 100,
+              "usedGb": 42,
+              "hotspot": true,
+              "renewsAt": "2026-08-05T00:00:00.000Z"
+            },
+            "status": "active",
+            "assignedCallSign": "PAT-001"
+          },
+          {
+            "id": "phone-pat-crypto",
+            "label": "PAT crypto desk tablet SIM",
+            "e164": "+14075550114",
+            "carrier": "Visible",
+            "dataPlan": {
+              "name": "Basic",
+              "gbMonth": 20,
+              "usedGb": 9.2,
+              "hotspot": true
+            },
+            "status": "active",
+            "assignedCallSign": "PAT-004"
+          },
+          {
+            "id": "phone-pat-005",
+            "label": "PAT FanDuel warm phone",
+            "e164": "+14075550115",
+            "carrier": "AT&T",
+            "dataPlan": {
+              "name": "Unlimited Elite",
+              "gbMonth": 50,
+              "usedGb": 8.5,
+              "hotspot": true
+            },
+            "status": "warming",
+            "assignedCallSign": "PAT-005"
+          }
+        ],
+        "assets": [
+          {
+            "id": "asset-pat-cashapp",
+            "kind": "rail",
+            "label": "CashApp CASHOUT",
+            "ref": "rail-pat-cashapp-1",
+            "status": "active"
+          },
+          {
+            "id": "asset-pat-paypal",
+            "kind": "rail",
+            "label": "PayPal CASHOUT",
+            "ref": "rail-pat-paypal-1",
+            "status": "active"
+          },
+          {
+            "id": "asset-pat-wallet",
+            "kind": "wallet",
+            "label": "Polymarket USDC",
+            "ref": "0xpat…demo",
+            "status": "active",
+            "meta": {
+              "chain": "polygon",
+              "asset": "USDC"
+            }
+          },
+          {
+            "id": "asset-pat-kalshi-key",
+            "kind": "other",
+            "label": "Kalshi API key (env)",
+            "ref": "KALSHI_API_KEY",
+            "status": "active",
+            "meta": {
+              "venue": "kalshi"
+            }
+          },
+          {
+            "id": "asset-pat-ipad",
+            "kind": "device",
+            "label": "PAT exchange iPad",
+            "status": "active",
+            "meta": {
+              "role": "kalshi_desk"
+            }
+          }
+        ],
+        "telegram": {
+          "chatId": "tg:chat:pat-ops",
+          "groupId": "tg:group:pat-demo",
+          "channelId": "tg:channel:pat-plays",
+          "botUsername": "@TOC_Pat_bot",
+          "dmRef": "tg:group:pat-demo",
+          "topics": [
+            {
+              "name": "plays",
+              "threadId": 21
+            },
+            {
+              "name": "exchanges",
+              "threadId": 22
+            },
+            {
+              "name": "crypto",
+              "threadId": 23
+            }
+          ]
+        },
+        "playChannels": [
+          {
+            "kind": "telegram",
+            "ref": "tg:channel:pat-plays",
+            "primary": true,
+            "status": "live"
+          },
+          {
+            "kind": "bot",
+            "ref": "@TOC_Pat_bot",
+            "primary": true,
+            "status": "live"
+          },
+          {
+            "kind": "portal",
+            "ref": "/portal/toc/#partner-PAT",
+            "primary": false,
+            "status": "live"
+          }
+        ],
+        "payments": [
+          {
+            "id": "pay-pat-split-001",
+            "method": "cashapp",
+            "direction": "out",
+            "amount": 840,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-20T18:50:00.000Z",
+            "railId": "rail-pat-cashapp-1",
+            "note": "Partner ProfitSplit NFL"
+          },
+          {
+            "id": "pay-pat-poly-001",
+            "method": "crypto",
+            "direction": "in",
+            "amount": 5000,
+            "currency": "USDC",
+            "status": "pending",
+            "at": "2026-07-23T09:25:00.000Z",
+            "note": "PAT-003 Polymarket fund confirm"
+          },
+          {
+            "id": "pay-pat-prior-001",
+            "method": "cashapp",
+            "direction": "out",
+            "amount": 560,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-12T19:40:00.000Z",
+            "railId": "rail-pat-cashapp-1",
+            "note": "Prior-cycle Partner ProfitSplit"
+          },
+          {
+            "id": "pay-pat-stake-001",
+            "method": "crypto",
+            "direction": "out",
+            "amount": 420,
+            "currency": "USDT",
+            "status": "posted",
+            "at": "2026-07-22T08:30:00.000Z",
+            "note": "Stake.com Partner share"
+          },
+          {
+            "id": "pay-pat-kalshi-001",
+            "method": "ach",
+            "direction": "in",
+            "amount": 800,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-21T16:00:00.000Z",
+            "note": "Kalshi event contract settle"
+          },
+          {
+            "id": "pay-pat-pending-wd",
+            "method": "paypal",
+            "direction": "out",
+            "amount": 5000,
+            "currency": "USD",
+            "status": "pending",
+            "at": "2026-07-23T16:30:00.000Z",
+            "railId": "rail-pat-paypal-1",
+            "note": "PAT-002 principal_recovery WD queued"
+          }
+        ],
+        "accounting": {
+          "softPartner": 2240,
+          "softExpert": 750,
+          "softHouse": 27710,
+          "hardInBook": 22500,
+          "hardFloat": 0,
+          "pendingDeploy": 5000,
+          "pendingPayout": 5000,
+          "currency": "USD"
+        },
+        "deals": [
+          {
+            "dealId": "deal-pat-std-2026",
+            "name": "PAT standard 70/20/10",
+            "partnerPct": 70,
+            "expertPct": 20,
+            "housePct": 10,
+            "payoutCadence": "weekly",
+            "payoutMethod": "rail",
+            "termMonths": 12,
+            "effectiveAt": "2026-05-01T00:00:00.000Z",
+            "notes": "Includes Kalshi + Stake addenda"
+          },
+          {
+            "dealId": "deal-pat-exchange",
+            "name": "Exchange / prediction cut",
+            "partnerPct": 60,
+            "expertPct": 25,
+            "housePct": 15,
+            "payoutCadence": "weekly",
+            "payoutMethod": "crypto",
+            "effectiveAt": "2026-07-01T00:00:00.000Z",
+            "notes": "Kalshi + Polymarket only"
+          }
+        ],
+        "history": [
+          {
+            "at": "2026-07-12T22:00:00.000Z",
+            "kind": "play_settle",
+            "summary": "PAT-001 prior cycle win +$800",
+            "callSign": "PAT-001",
+            "amount": 800
+          },
+          {
+            "at": "2026-07-14T23:00:00.000Z",
+            "kind": "play_settle",
+            "summary": "PAT-001 MLB loss −$180",
+            "callSign": "PAT-001",
+            "amount": -180
+          },
+          {
+            "at": "2026-07-20T22:10:00.000Z",
+            "kind": "play_settle",
+            "summary": "PAT-001 NFL win +$1200",
+            "callSign": "PAT-001",
+            "amount": 1200
+          },
+          {
+            "at": "2026-07-21T16:00:00.000Z",
+            "kind": "exchange_settle",
+            "summary": "PAT-002 Kalshi politics +$800",
+            "callSign": "PAT-002",
+            "amount": 800
+          },
+          {
+            "at": "2026-07-22T08:20:00.000Z",
+            "kind": "play_settle",
+            "summary": "PAT-004 Stake soccer +$600",
+            "callSign": "PAT-004",
+            "amount": 600
+          },
+          {
+            "at": "2026-07-22T15:20:00.000Z",
+            "kind": "play_open",
+            "summary": "PAT-001 NBA pending",
+            "callSign": "PAT-001"
+          },
+          {
+            "at": "2026-07-23T09:00:00.000Z",
+            "kind": "fund",
+            "summary": "PAT-003 PayPal corridor funded",
+            "callSign": "PAT-003",
+            "amount": 5000
+          },
+          {
+            "at": "2026-07-23T11:00:00.000Z",
+            "kind": "warm",
+            "summary": "PAT-005 FanDuel cycle 1 open",
+            "callSign": "PAT-005"
+          }
+        ],
+        "limits": {
+          "dailyMax": 3000,
+          "weeklyMax": 12000,
+          "perPlayMax": 2000,
+          "exposureCap": 35000,
+          "notes": "PAT-002 Gate12 principal recovery before profit PLAY"
+        },
+        "wagerPlaces": [
+          {
+            "venueId": "draftkings",
+            "label": "DraftKings",
+            "kind": "sportsbook"
+          },
+          {
+            "venueId": "kalshi",
+            "label": "Kalshi",
+            "kind": "exchange"
+          },
+          {
+            "venueId": "polymarket",
+            "label": "Polymarket",
+            "kind": "prediction_market"
+          },
+          {
+            "venueId": "stake",
+            "label": "Stake.com",
+            "kind": "crypto"
+          },
+          {
+            "venueId": "fanduel",
+            "label": "FanDuel",
+            "kind": "sportsbook"
+          }
+        ],
+        "preferredMarkets": [
+          "NFL",
+          "NBA",
+          "MLB",
+          "NCAAF",
+          "Soccer",
+          "MMA",
+          "Politics",
+          "Economics"
+        ],
+        "bot": {
+          "username": "@TOC_Pat_bot",
+          "status": "live",
+          "commands": [
+            "/status",
+            "/play",
+            "/kalshi",
+            "/stake"
+          ]
+        },
+        "commsLog": [
+          {
+            "at": "2026-07-22T15:25:00.000Z",
+            "channel": "telegram",
+            "direction": "out",
+            "summary": "PLAY card — MIA ML @ +130"
+          },
+          {
+            "at": "2026-07-22T16:00:00.000Z",
+            "channel": "telegram",
+            "direction": "in",
+            "summary": "Partner ack — placing"
+          },
+          {
+            "at": "2026-07-23T12:05:00.000Z",
+            "channel": "sms",
+            "direction": "out",
+            "summary": "WARM PAT-003 kickoff nudge"
+          }
+        ],
+        "velocity": {
+          "t7d": 2600,
+          "plays7d": 6,
+          "settles7d": 3,
+          "avgStake7d": 1433
         }
       }
     },
@@ -2868,28 +4542,259 @@
           "distanceKmFromHouse": 276,
           "sameMetroAsHouse": false
         }
+      },
+      "profile": {
+        "displayName": "NOV Onboarding",
+        "tier": "T4",
+        "risk": "orange",
+        "phones": [
+          {
+            "id": "phone-nov-001",
+            "label": "NOV onboarding phone",
+            "e164": "+19045550199",
+            "carrier": "Mint Mobile",
+            "dataPlan": {
+              "name": "15GB",
+              "gbMonth": 15,
+              "usedGb": 2,
+              "hotspot": false,
+              "renewsAt": "2026-08-10T00:00:00.000Z"
+            },
+            "status": "active",
+            "assignedCallSign": "NOV-001"
+          }
+        ],
+        "assets": [
+          {
+            "id": "asset-nov-venmo",
+            "kind": "rail",
+            "label": "Venmo (confirmed)",
+            "ref": "rail-nov-venmo-1",
+            "status": "active"
+          },
+          {
+            "id": "asset-nov-cashapp",
+            "kind": "rail",
+            "label": "CashApp (pending)",
+            "ref": "rail-nov-cashapp-1",
+            "status": "pending"
+          },
+          {
+            "id": "asset-nov-kyc",
+            "kind": "document",
+            "label": "KYC incomplete",
+            "status": "pending"
+          },
+          {
+            "id": "asset-nov-checklist",
+            "kind": "document",
+            "label": "ONB checklist PDF",
+            "ref": "proof:nov-onb-checklist",
+            "status": "pending"
+          }
+        ],
+        "telegram": {
+          "chatId": "tg:dm:nov-onboarding",
+          "dmRef": "tg:dm:nov-onboarding",
+          "botUsername": "@TOC_Onboard_bot",
+          "topics": [
+            {
+              "name": "onboarding",
+              "threadId": 1
+            }
+          ]
+        },
+        "playChannels": [
+          {
+            "kind": "telegram",
+            "ref": "tg:dm:nov-onboarding",
+            "primary": true,
+            "status": "setup"
+          },
+          {
+            "kind": "bot",
+            "ref": "@TOC_Onboard_bot",
+            "primary": true,
+            "status": "setup"
+          },
+          {
+            "kind": "sms",
+            "ref": "+19045550199",
+            "primary": false,
+            "status": "paused"
+          }
+        ],
+        "payments": [
+          {
+            "id": "pay-nov-fund-001",
+            "method": "venmo",
+            "direction": "in",
+            "amount": 5000,
+            "currency": "USD",
+            "status": "pending",
+            "at": "2026-07-22T14:05:00.000Z",
+            "railId": "rail-nov-venmo-1",
+            "note": "FUND-NOV-002 awaiting receipt screenshot"
+          },
+          {
+            "id": "pay-nov-rail-test",
+            "method": "venmo",
+            "direction": "out",
+            "amount": 1,
+            "currency": "USD",
+            "status": "posted",
+            "at": "2026-07-22T10:30:00.000Z",
+            "railId": "rail-nov-venmo-1",
+            "note": "Rail confirm $1 test"
+          },
+          {
+            "id": "pay-nov-package-fee",
+            "method": "cashapp",
+            "direction": "in",
+            "amount": 0,
+            "currency": "USD",
+            "status": "pending",
+            "at": "2026-07-23T08:00:00.000Z",
+            "note": "Onboarding package fee hold"
+          }
+        ],
+        "accounting": {
+          "softPartner": 0,
+          "softExpert": 0,
+          "softHouse": 5000,
+          "hardInBook": 5000,
+          "hardFloat": 0,
+          "pendingDeploy": 5000,
+          "pendingPayout": 0,
+          "currency": "USD"
+        },
+        "deals": [
+          {
+            "dealId": "deal-nov-onboard",
+            "name": "NOV provisional 70/20/10",
+            "partnerPct": 70,
+            "expertPct": 20,
+            "housePct": 10,
+            "payoutCadence": "weekly",
+            "payoutMethod": "rail",
+            "termMonths": 3,
+            "effectiveAt": "2026-07-22T00:00:00.000Z",
+            "notes": "Activates on Ready; PPH desk provisional"
+          }
+        ],
+        "history": [
+          {
+            "at": "2026-07-22T10:00:00.000Z",
+            "kind": "onboard",
+            "summary": "ONB opened — Venmo rail confirmed"
+          },
+          {
+            "at": "2026-07-22T10:30:00.000Z",
+            "kind": "rail",
+            "summary": "Venmo profile confirmed + $1 test"
+          },
+          {
+            "at": "2026-07-22T11:00:00.000Z",
+            "kind": "comms",
+            "summary": "Onboarding pack sent via @TOC_Onboard_bot"
+          },
+          {
+            "at": "2026-07-22T14:00:00.000Z",
+            "kind": "fund",
+            "summary": "FUND-NOV-002 Processing — receipt pending",
+            "callSign": "NOV-002",
+            "amount": 5000
+          },
+          {
+            "at": "2026-07-23T09:00:00.000Z",
+            "kind": "ping",
+            "summary": "Partner ping — KYC checklist incomplete"
+          }
+        ],
+        "limits": {
+          "dailyMax": null,
+          "weeklyMax": null,
+          "perPlayMax": null,
+          "exposureCap": 5000,
+          "notes": "No PLAY until ONB Ready + WARM complete"
+        },
+        "wagerPlaces": [
+          {
+            "venueId": "pph_southfl",
+            "label": "SouthFL PPH Desk",
+            "kind": "pph"
+          },
+          {
+            "venueId": "postup_desk",
+            "label": "House Post-Up Credit Line",
+            "kind": "postup_credit"
+          }
+        ],
+        "preferredMarkets": [
+          "NFL",
+          "NBA",
+          "MLB",
+          "Soccer",
+          "Boxing",
+          "Tennis"
+        ],
+        "bot": {
+          "username": "@TOC_Onboard_bot",
+          "status": "setup",
+          "commands": [
+            "/start",
+            "/upload",
+            "/ready"
+          ]
+        },
+        "commsLog": [
+          {
+            "at": "2026-07-22T10:05:00.000Z",
+            "channel": "telegram",
+            "direction": "out",
+            "summary": "Welcome + KYC checklist"
+          },
+          {
+            "at": "2026-07-22T14:10:00.000Z",
+            "channel": "sms",
+            "direction": "out",
+            "summary": "FUND receipt reminder"
+          },
+          {
+            "at": "2026-07-23T09:15:00.000Z",
+            "channel": "telegram",
+            "direction": "in",
+            "summary": "Partner: uploading Venmo screenshot"
+          }
+        ],
+        "velocity": {
+          "t7d": 0,
+          "plays7d": 0,
+          "settles7d": 0,
+          "avgStake7d": 0
+        }
       }
     }
   ],
   "presence": {
     "partnersWithGeo": 3,
     "accountsWithGeo": 11,
-    "playsWithPlacement": 7,
+    "playsWithPlacement": 10,
     "uniqueZips": 11,
     "uniqueCities": 3,
     "uniqueAsns": 3,
-    "ipv4Count": 21,
-    "ipv6Count": 21,
-    "dnsResolved": 21,
+    "ipv4Count": 24,
+    "ipv6Count": 24,
+    "dnsResolved": 24,
     "vpnSuspected": 3,
     "byCountry": {
-      "US": 21
+      "US": 24
     },
     "byTimezone": {
       "America/New_York": 14
     },
     "byAsn": {
-      "7018": 10,
+      "7018": 13,
       "7922": 8,
       "22394": 3
     },
@@ -2963,6 +4868,18 @@
     "kioskAccounts": 1,
     "inPersonAccounts": 2
   },
+  "profiles": {
+    "partnersWithProfile": 3,
+    "agentsWithProfile": 3,
+    "phonesActive": 7,
+    "telegramLanes": 6,
+    "playChannelsLive": 12,
+    "expertLiquidityAllocated": 83000,
+    "expertLiquidityAvailable": 59100,
+    "avgAgentClvBps": 17.2,
+    "openDeals": 8,
+    "pendingPayouts": 5007
+  },
   "summary": {
     "partners": 3,
     "accounts": 11,
@@ -2979,10 +4896,10 @@
     "openBottlenecks": 8,
     "criticalBottlenecks": 1,
     "principalOutstandingTotal": 20300,
-    "playsPending": 1,
-    "playsSettled": 6,
+    "playsPending": 2,
+    "playsSettled": 8,
     "playsBlocked": 2,
-    "activeExperiments": 1,
+    "activeExperiments": 2,
     "byTaskType": {
       "WARM": 4,
       "LIMIT": 2,
@@ -3001,15 +4918,20 @@
       "ONB": 1
     },
     "presencePartners": 3,
-    "presenceIpv6": 21,
+    "presenceIpv6": 24,
     "presenceUniqueZips": 11,
     "presenceUniqueAsns": 3,
-    "presenceDnsResolved": 21,
+    "presenceDnsResolved": 24,
     "venueKinds": 9,
     "venueExchanges": 2,
     "venueCrypto": 2,
     "venueCreditLines": 2,
-    "venueLegalStates": 5
+    "venueLegalStates": 5,
+    "profilePhones": 7,
+    "profileTelegramLanes": 6,
+    "expertLiquidityAvailable": 59100,
+    "avgAgentClvBps": 17.2,
+    "openDeals": 8
   },
   "identity": {
     "plane": "linked",
@@ -3017,7 +4939,7 @@
     "linkedPartners": 3,
     "linkedAccounts": 11,
     "linkedRails": 6,
-    "generatedAt": "2026-07-24T07:34:46.057Z",
+    "generatedAt": "2026-07-24T07:41:12.471Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -3189,7 +5111,7 @@
     ]
   },
   "enforcement": {
-    "evaluatedAt": "2026-07-24T07:34:46.059Z",
+    "evaluatedAt": "2026-07-24T07:41:12.474Z",
     "plane": "operate-lite",
     "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
     "warmupRequiredForPlay": 2,
@@ -3733,6 +5655,25 @@
         "tag": "#HARDGATE-VIOLATION"
       },
       {
+        "gateId": "play_warmed",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-004",
+        "taskId": "PLAY-PAT-004-20260723-100000-001",
+        "reason": "PLAY Rope ok: PAT-004 WARMED warmup=2",
+        "tag": "#ROPE"
+      },
+      {
+        "gateId": "play_limit",
+        "ok": true,
+        "severity": "info",
+        "partnerCode": "PAT",
+        "callSign": "PAT-004",
+        "taskId": "PLAY-PAT-004-20260723-100000-001",
+        "reason": "PLAY limit ok: stake 800 ≤ dailyMax 5000"
+      },
+      {
         "gateId": "soft_posted",
         "ok": true,
         "severity": "info",
@@ -4032,11 +5973,11 @@
         "reason": "Screenshot check deferred (early status)"
       }
     ],
-    "passed": 87,
+    "passed": 89,
     "failed": 10,
     "criticalFailed": 6,
     "throughput": {
-      "T": 2576,
+      "T": 3976,
       "I": 47810,
       "OE": 240,
       "byPartner": {
@@ -4046,7 +5987,7 @@
           "OE": 60
         },
         "PAT": {
-          "T": 2000,
+          "T": 3400,
           "I": 27500,
           "OE": 180
         },
@@ -4072,27 +6013,27 @@
     }
   },
   "returnEfficiency": {
-    "computedAt": "2026-07-24T07:34:46.055Z",
+    "computedAt": "2026-07-24T07:41:12.467Z",
     "byProcess": [
       {
         "process": "WARM",
         "callSign": "ASH-002",
         "partnerCode": "ASH",
-        "deltaT": 273.7,
+        "deltaT": 281.6333333333333,
         "iPeak": 5000,
-        "tauDays": 7.81581082175926,
+        "tauDays": 7.82028318287037,
         "oe": 0,
-        "rP": 0.007003751913698261
+        "rP": 0.007202637724174131
       },
       {
         "process": "LIMIT",
         "callSign": "ASH-001",
         "partnerCode": "ASH",
-        "deltaT": 279.325,
+        "deltaT": 280.17499999999995,
         "iPeak": 0,
-        "tauDays": 3.9408108217592592,
+        "tauDays": 3.9452831828703703,
         "oe": 0,
-        "rP": 70.88008347360952
+        "rP": 71.01518117038181
       },
       {
         "process": "WD",
@@ -4100,29 +6041,29 @@
         "partnerCode": "ASH",
         "deltaT": 4800,
         "iPeak": 4800,
-        "tauDays": 0.8158108217592592,
+        "tauDays": 0.8202831828703704,
         "oe": 0,
-        "rP": 1.2257743748036403
+        "rP": 1.2190911881196402
       },
       {
         "process": "WARM",
         "callSign": "ASH-004",
         "partnerCode": "ASH",
-        "deltaT": 273.7,
+        "deltaT": 281.6333333333333,
         "iPeak": 5000,
-        "tauDays": 0.7741441550925926,
+        "tauDays": 0.7786165162037038,
         "oe": 0,
-        "rP": 0.07071034463013254
+        "rP": 0.07234198799339409
       },
       {
         "process": "PLAY",
         "callSign": "PAT-001",
         "partnerCode": "PAT",
-        "deltaT": 273.7,
+        "deltaT": 281.6333333333333,
         "iPeak": 5200,
-        "tauDays": 1.6908108217592592,
+        "tauDays": 1.6952831828703703,
         "oe": 0,
-        "rP": 0.03112980749073393
+        "rP": 0.03194761616083215
       },
       {
         "process": "WD",
@@ -4130,59 +6071,59 @@
         "partnerCode": "PAT",
         "deltaT": 5000,
         "iPeak": 5000,
-        "tauDays": 1.6491441550925925,
+        "tauDays": 1.6536165162037038,
         "oe": 0,
-        "rP": 0.6063751291310578
+        "rP": 0.6047351306672685
       },
       {
         "process": "WARM",
         "callSign": "PAT-003",
         "partnerCode": "PAT",
-        "deltaT": 273.7,
+        "deltaT": 281.6333333333333,
         "iPeak": 5000,
-        "tauDays": 0.8158108217592592,
+        "tauDays": 0.8202831828703704,
         "oe": 0,
-        "rP": 0.06709888927675127
+        "rP": 0.06866734298948561
       },
       {
         "process": "WARM",
         "callSign": "PAT-005",
         "partnerCode": "PAT",
-        "deltaT": 273.7,
+        "deltaT": 281.6333333333333,
         "iPeak": 5000,
-        "tauDays": 0.857477488425926,
+        "tauDays": 0.861949849537037,
         "oe": 0,
-        "rP": 0.06383841061587096
+        "rP": 0.06534796275783371
       },
       {
         "process": "ONB",
         "callSign": "NOV-001",
         "partnerCode": "NOV",
-        "deltaT": 273.7,
+        "deltaT": 281.6333333333333,
         "iPeak": 0,
-        "tauDays": 1.8991441550925925,
+        "tauDays": 1.9036165162037038,
         "oe": 0,
-        "rP": 144.11754856316097
+        "rP": 147.94646449852303
       },
       {
         "process": "FUND",
         "callSign": "NOV-002",
         "partnerCode": "NOV",
-        "deltaT": 41.055,
+        "deltaT": 42.245,
         "iPeak": 5000,
-        "tauDays": 1.732477488425926,
+        "tauDays": 1.736949849537037,
         "oe": 0,
-        "rP": 0.004739455522426588
+        "rP": 0.004864274004371501
       },
       {
         "process": "LIMIT",
         "callSign": "NOV-001",
         "partnerCode": "NOV",
-        "deltaT": 68.425,
+        "deltaT": 70.40833333333333,
         "iPeak": 0,
-        "tauDays": 1.857477488425926,
+        "tauDays": 1.861949849537037,
         "oe": 0,
-        "rP": 36.83759314789064
+        "rP": 37.81430168532195
       }
     ],
     "byAsset": [
@@ -4191,15 +6132,15 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 576,
         "peakCapital": 5000,
-        "capitalDaysInI": 8.565810821759259,
-        "ce": 0.013448814408481188
+        "capitalDaysInI": 8.570283182870371,
+        "ce": 0.013441796209284308
       },
       {
         "callSign": "ASH-002",
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5010,
-        "capitalDaysInI": 5.649144155092593,
+        "capitalDaysInI": 5.653616516203703,
         "ce": 0
       },
       {
@@ -4207,7 +6148,7 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 4.899144155092593,
+        "capitalDaysInI": 4.903616516203703,
         "ce": 0
       },
       {
@@ -4223,16 +6164,16 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 2000,
         "peakCapital": 5200,
-        "capitalDaysInI": 5.87831082175926,
-        "ce": 0.06542957599174332
+        "capitalDaysInI": 5.88278318287037,
+        "ce": 0.0653798334324673
       },
       {
         "callSign": "PAT-002",
         "partnerCode": "PAT",
-        "profitSplitTotal": 0,
+        "profitSplitTotal": 800,
         "peakCapital": 5000,
-        "capitalDaysInI": 2.843588599537037,
-        "ce": 0
+        "capitalDaysInI": 2.848060960648148,
+        "ce": 0.05617857279416799
       },
       {
         "callSign": "PAT-003",
@@ -4245,17 +6186,17 @@
       {
         "callSign": "PAT-004",
         "partnerCode": "PAT",
-        "profitSplitTotal": 0,
-        "peakCapital": 2400,
-        "capitalDaysInI": 7,
-        "ce": 0
+        "profitSplitTotal": 600,
+        "peakCapital": 5000,
+        "capitalDaysInI": 3.9348665162037038,
+        "ce": 0.030496587242754572
       },
       {
         "callSign": "PAT-005",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5100,
-        "capitalDaysInI": 7,
+        "capitalDaysInI": 1.889727627314815,
         "ce": 0
       },
       {
@@ -4271,7 +6212,7 @@
         "partnerCode": "NOV",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 1.7290052662037037,
+        "capitalDaysInI": 1.733477627314815,
         "ce": 0
       }
     ],
@@ -4289,8 +6230,8 @@
         "partnerCode": "ASH",
         "deltaL": 0.3,
         "cAsset": 10010,
-        "daysToUsableLimit": 5.649144155092593,
-        "le": 0.000005305233703943025
+        "daysToUsableLimit": 5.653616516203703,
+        "le": 0.000005301036935231376
       },
       {
         "callSign": "ASH-003",
@@ -4329,23 +6270,23 @@
         "partnerCode": "PAT",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 0.9269219328703704,
-        "le": 0.0000323651851748722
+        "daysToUsableLimit": 0.9313942939814814,
+        "le": 0.000032209774307031
       },
       {
         "callSign": "PAT-004",
         "partnerCode": "PAT",
         "deltaL": 0,
-        "cAsset": 2400,
-        "daysToUsableLimit": 0.5,
+        "cAsset": 7400,
+        "daysToUsableLimit": 1.9479166666666667,
         "le": 0
       },
       {
         "callSign": "PAT-005",
         "partnerCode": "PAT",
         "deltaL": 0,
-        "cAsset": 5100,
-        "daysToUsableLimit": 0.5,
+        "cAsset": 10100,
+        "daysToUsableLimit": 1.889727627314815,
         "le": 0
       },
       {
@@ -4361,18 +6302,18 @@
         "partnerCode": "NOV",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 1.7290052662037037,
-        "le": 0.000017351017134765358
+        "daysToUsableLimit": 1.733477627314815,
+        "le": 0.0000173062516223359
       }
     ],
-    "avgRP": 23.082899577095038,
+    "avgRP": 23.53183140860398,
     "processTypeAvgRP": {
-      "LIMIT": 53.85883831075007,
-      "ONB": 144.11754856316097,
-      "WD": 0.9160747519673491,
-      "PLAY": 0.03112980749073393,
-      "WARM": 0.05216284910911326,
-      "FUND": 0.004739455522426588
+      "LIMIT": 54.41474142785188,
+      "ONB": 147.94646449852303,
+      "WD": 0.9119131593934544,
+      "PLAY": 0.03194761616083215,
+      "WARM": 0.05338998286622189,
+      "FUND": 0.004864274004371501
     }
   },
   "rankedActions": [
@@ -4381,7 +6322,7 @@
       "process": "LIMIT",
       "callSign": "ASH-001",
       "partnerCode": "ASH",
-      "rP": 70.88008347360952,
+      "rP": 71.01518117038181,
       "weightedScore": 0.24,
       "reason": "Stale/missing limit on WARMED seat — LIMIT first (highest R)",
       "ropeSafe": true
@@ -4391,7 +6332,7 @@
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
-      "rP": 1.2257743748036403,
+      "rP": 1.2190911881196402,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -4401,7 +6342,7 @@
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
-      "rP": 0.6063751291310578,
+      "rP": 0.6047351306672685,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -4411,7 +6352,7 @@
       "process": "PLAY",
       "callSign": "PAT-001",
       "partnerCode": "PAT",
-      "rP": 0.03112980749073393,
+      "rP": 0.03194761616083215,
       "weightedScore": 0.8800000000000001,
       "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
@@ -4431,7 +6372,7 @@
       "process": "WARM",
       "callSign": "ASH-004",
       "partnerCode": "ASH",
-      "rP": 0.07071034463013254,
+      "rP": 0.07234198799339409,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -4441,7 +6382,7 @@
       "process": "WARM",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
-      "rP": 0.06709888927675127,
+      "rP": 0.06866734298948561,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -4451,7 +6392,7 @@
       "process": "WARM",
       "callSign": "PAT-005",
       "partnerCode": "PAT",
-      "rP": 0.06383841061587096,
+      "rP": 0.06534796275783371,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -4461,23 +6402,13 @@
       "process": "WARM",
       "callSign": "ASH-002",
       "partnerCode": "ASH",
-      "rP": 0.007003751913698261,
+      "rP": 0.007202637724174131,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
     },
     {
       "rank": 10,
-      "process": "WD",
-      "callSign": "PAT-004",
-      "partnerCode": "PAT",
-      "rP": 0,
-      "weightedScore": 0.8360000000000001,
-      "reason": "Low CE / Limited — WD + reallocate capital",
-      "ropeSafe": true
-    },
-    {
-      "rank": 11,
       "process": "WD",
       "callSign": "ASH-002",
       "partnerCode": "ASH",
@@ -4487,7 +6418,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 12,
+      "rank": 11,
       "process": "WD",
       "callSign": "PAT-005",
       "partnerCode": "PAT",
@@ -4497,7 +6428,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 13,
+      "rank": 12,
       "process": "WD",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
@@ -4507,7 +6438,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 14,
+      "rank": 13,
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
@@ -4517,7 +6448,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 15,
+      "rank": 14,
       "process": "WD",
       "callSign": "ASH-004",
       "partnerCode": "ASH",
@@ -4527,17 +6458,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 16,
-      "process": "WD",
-      "callSign": "PAT-002",
-      "partnerCode": "PAT",
-      "rP": 0,
-      "weightedScore": 0,
-      "reason": "Low CE / Limited — WD + reallocate capital",
-      "ropeSafe": true
-    },
-    {
-      "rank": 17,
+      "rank": 15,
       "process": "WD",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
@@ -4547,7 +6468,7 @@
       "ropeSafe": true
     },
     {
-      "rank": 18,
+      "rank": 16,
       "process": "WD",
       "callSign": "NOV-002",
       "partnerCode": "NOV",
@@ -4557,16 +6478,16 @@
       "ropeSafe": true
     },
     {
-      "rank": 19,
+      "rank": 17,
       "process": "ONB",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
-      "rP": 144.11754856316097,
+      "rP": 147.94646449852303,
       "reason": "ONB new asset — buffer allows",
       "ropeSafe": true
     },
     {
-      "rank": 20,
+      "rank": 18,
       "process": "WD",
       "callSign": "ASH-004",
       "partnerCode": "ASH",
@@ -4576,7 +6497,7 @@
       "ropeSafe": false
     },
     {
-      "rank": 21,
+      "rank": 19,
       "process": "WD",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
@@ -4586,7 +6507,7 @@
       "ropeSafe": false
     },
     {
-      "rank": 22,
+      "rank": 20,
       "process": "WD",
       "callSign": "NOV-002",
       "partnerCode": "NOV",

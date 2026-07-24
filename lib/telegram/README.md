@@ -11,7 +11,8 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `ops-bridge.ts` | Edge webhook → SQLite or R2 `telegram-commands` queue |
 | `ops-commands.ts` | Pure ops command handlers shared by bridge + consumer |
 | `play-callback.ts` | Inline keyboard ack (`play:{id}:{node}:placed\|skip`) |
-| `telegram-api.ts` | Bot API helpers (`setMyCommands`, `answerCallbackQuery`) |
+| `flows/` | Flow cards — menu, balances, i18n keyboards, callbacks ([`flows/README.md`](flows/README.md)) |
+| `telegram-api.ts` | Bot API helpers (`setMyCommands`, `answerCallbackQuery`, rate-limited send/edit) |
 
 ## Factory webhook commands
 

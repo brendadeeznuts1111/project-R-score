@@ -9,6 +9,8 @@ import { asTreeNodeId } from '../types/branded/operations.ts';
 import { asTelegramUserId, type TelegramUserId } from '../types/branded/portal.ts';
 import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
 import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
+import { deliverFlowOutput, flowOutputToPlainText } from './flows/deliver.ts';
+import { commandToFlowId, runFlow } from './flows/registry.ts';
 
 export type OpsTreeNode = {
   id: string; // brand-ok
@@ -241,6 +243,17 @@ export function handleOpsVerifyDod(
 export function dispatchOpsCommand(db: Database, dbPath: string, input: OpsCommandInput): string {
   const telegramUserId = asTelegramUserId(input.telegramUserId);
   const node = findNodeByTelegram(db, telegramUserId);
+
+  const flowId = commandToFlowId(input.command);
+  if (flowId && input.command !== '/register' && input.command !== '/verifydod') {
+    const output = runFlow(db, dbPath, {
+      flowId: input.command === '/start' && !node ? 'menu' : flowId,
+      chatId: input.telegramUserId,
+      userId: input.telegramUserId,
+    });
+    return flowOutputToPlainText(output);
+  }
+
   switch (input.command) {
     case '/start':
       return handleOpsStart(db, node);

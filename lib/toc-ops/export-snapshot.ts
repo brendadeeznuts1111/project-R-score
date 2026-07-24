@@ -53,6 +53,22 @@ export function emptyTocOpsSummarySlice(): TocOpsSummarySlice {
     topRankedProcess: null,
     avgRP: null,
     settlementFloatRatio: null,
+    presencePartners: 0,
+    presenceIpv6: 0,
+    presenceUniqueZips: 0,
+    presenceUniqueAsns: 0,
+    presenceDnsResolved: 0,
+    presenceAvgDistanceKm: null,
+    venueKinds: 0,
+    venueExchanges: 0,
+    venueCrypto: 0,
+    venueCreditLines: 0,
+    venueLegalStates: 0,
+    profilePhones: 0,
+    profileTelegramLanes: 0,
+    expertLiquidityAvailable: 0,
+    avgAgentClvBps: null,
+    openDeals: 0,
   };
 }
 
@@ -92,6 +108,26 @@ export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
     topRankedProcess: top?.process ?? null,
     avgRP: snap.returnEfficiency?.avgRP ?? null,
     settlementFloatRatio: snap.buffer.settlementFloatRatio ?? null,
+    presencePartners: snap.presence?.partnersWithGeo ?? snap.summary.presencePartners ?? 0,
+    presenceIpv6: snap.presence?.ipv6Count ?? snap.summary.presenceIpv6 ?? 0,
+    presenceUniqueZips: snap.presence?.uniqueZips ?? snap.summary.presenceUniqueZips ?? 0,
+    presenceUniqueAsns: snap.presence?.uniqueAsns ?? snap.summary.presenceUniqueAsns ?? 0,
+    presenceDnsResolved: snap.presence?.dnsResolved ?? snap.summary.presenceDnsResolved ?? 0,
+    presenceAvgDistanceKm: snap.presence?.avgDistanceKmFromHouse ?? null,
+    venueKinds:
+      snap.venues != null
+        ? Object.keys(snap.venues.byVenueKind).length
+        : (snap.summary.venueKinds ?? 0),
+    venueExchanges: snap.venues?.exchangeAccounts ?? snap.summary.venueExchanges ?? 0,
+    venueCrypto: snap.venues?.cryptoAccounts ?? snap.summary.venueCrypto ?? 0,
+    venueCreditLines: snap.venues?.creditLines ?? snap.summary.venueCreditLines ?? 0,
+    venueLegalStates: snap.venues?.legalStatesCovered ?? snap.summary.venueLegalStates ?? 0,
+    profilePhones: snap.profiles?.phonesActive ?? snap.summary.profilePhones ?? 0,
+    profileTelegramLanes: snap.profiles?.telegramLanes ?? snap.summary.profileTelegramLanes ?? 0,
+    expertLiquidityAvailable:
+      snap.profiles?.expertLiquidityAvailable ?? snap.summary.expertLiquidityAvailable ?? 0,
+    avgAgentClvBps: snap.profiles?.avgAgentClvBps ?? snap.summary.avgAgentClvBps ?? null,
+    openDeals: snap.profiles?.openDeals ?? snap.summary.openDeals ?? 0,
   };
 }
 
