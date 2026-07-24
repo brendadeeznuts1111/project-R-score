@@ -11,6 +11,9 @@ import type { Database } from 'bun:sqlite';
 import { buildBunUtilsProof } from '../bun-utils-proof.ts';
 import { loadRoutingOpsSliceSync, type RoutingOpsSlice } from '../routing-proof.ts';
 import { getPredictionAccuracy } from '../prediction/index.ts';
+import { queryPartnersSlice, type PartnersSummarySlice } from './partner-profile-bridge.ts';
+import { queryOpsChannelHealth } from '../channels/outbox.ts';
+import type { OpsChannelHealthSlice } from '../channels/ops-channel-event.ts';
 
 export type OpsSummaryExpert = {
   name: string;
@@ -182,6 +185,12 @@ export type OpsSummaryChannelMeta = {
   bakePath: '/registry/channel-meta-bake.json';
 };
 
+/** Partner profile bindings (I1 identity lane). */
+export type OpsSummaryPartners = PartnersSummarySlice;
+
+/** Unified ops channel outbox health (distinct from release channelMeta). */
+export type OpsSummaryChannels = OpsChannelHealthSlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -243,6 +252,10 @@ export type OpsSummaryPayload = {
    * (refreshed by `bun run routing:proof:write` or `ops:snapshot --routing`).
    */
   routing: RoutingOpsSlice;
+  /** Partner profile bindings (Identity lane — tree_nodes ↔ template). */
+  partners: OpsSummaryPartners;
+  /** Ops channel outbox health (not Bun release channelMeta). */
+  channels: OpsSummaryChannels;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -796,5 +809,7 @@ export function buildOpsSummary(
     proofTaxonomy: loadProofTaxonomySlice(),
     channelMeta: loadChannelMetaSlice(),
     routing: loadRoutingOpsSliceSync(),
+    partners: queryPartnersSlice(db),
+    channels: queryOpsChannelHealth(db),
   };
 }

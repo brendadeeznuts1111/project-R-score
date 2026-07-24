@@ -86,7 +86,7 @@ describe('ops-sync apply', () => {
       tenantId: 'factory',
       oidcSubject: 'oidc-abc',
       email: 'user@factory-wager.com',
-    });
+    }, db);
     expect(ok).toBe(true);
 
     const node = db
@@ -94,6 +94,11 @@ describe('ops-sync apply', () => {
       .get({ $o: 'oidc-abc' }) as { email: string; status: string };
     expect(node.email).toBe('user@factory-wager.com');
     expect(node.status).toBe('prospect');
+
+    const binding = db
+      .query('SELECT profile_key FROM partner_profile_bindings WHERE tree_node_id IN (SELECT id FROM tree_nodes WHERE oidc_subject = $o)')
+      .get({ $o: 'oidc-abc' }) as { profile_key: string } | null;
+    expect(binding?.profile_key).toMatch(/^pp-/);
     db.close();
   });
 

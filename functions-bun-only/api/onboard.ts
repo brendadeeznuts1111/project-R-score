@@ -5,6 +5,8 @@
 import { TENANTS, getTenant, isTenantSlug } from '../../config/tenants.ts';
 import { AccountR2Store } from '../../lib/accounts/account-r2-store.ts';
 import { AccountService } from '../../lib/operations/account-service.ts';
+import { applyOpsSyncEvent } from '../../lib/operations/ops-sync.ts';
+import { openOperationsDb } from '../../lib/operations/db.ts';
 import { asPortalTenantId, asPortalAccountId } from '../../lib/types/branded/portal.ts';
 import { sessionFromRequest } from '../../lib/auth/session.ts';
 import { R2ChannelStore, publishEvent } from '../../lib/channels/channels.ts';
@@ -134,9 +136,15 @@ function maybeSyncOpsTree(
   const dbPath = (env as Record<string, string | undefined>).OPS_DB_PATH ?? Bun.env.OPS_DB_PATH;
   if (syncFlag !== '1' || !dbPath || tenantId !== 'factory') return;
   try {
-    const accounts = new AccountService(dbPath);
-    accounts.syncProspectFromPortal({ oidcSubject, email });
+    const db = openOperationsDb({ path: dbPath });
+    const accounts = new AccountService(db);
+    applyOpsSyncEvent(
+      accounts,
+      { type: 'account_assigned', tenantId: 'factory', oidcSubject, email },
+      db
+    );
     accounts.close();
+    db.close();
   } catch {
     // Edge / read-only filesystem — sync requires Bun runtime with writable OPS_DB_PATH
   }

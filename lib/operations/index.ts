@@ -8,12 +8,31 @@
 export { initSchema, migrateSchema } from './schema.ts';
 export { openOperationsDb, DEFAULT_OPS_DB_PATH, type OpenOperationsDbOpts } from './db.ts';
 export {
+  bindPartnerProfile,
+  bindTemplate,
+  materializePartnerProfile,
+  materializeProfile,
+  queryPartnersSlice,
+  getPartnersSummary,
+  templateIdForSource,
+  backfillPartnerBindings,
+  evaluateForNode,
+  recordGateDecision,
+  loadPartnerTemplate,
+  DEFAULT_TEMPLATE_ID,
+  type GateEvaluation,
+  type PartnersSummarySlice,
+  type PartnerProfileBinding,
+  type MaterializedPartnerProfile,
+} from './partner-profile-bridge.ts';
+export {
   buildOpsSummary,
   queryGrowth,
   queryBunUtilsProof,
   type OpsSummaryPayload,
   type OpsSummaryGrowth,
   type OpsSummaryBunUtils,
+  type OpsSummaryPartners,
 } from './ops-summary.ts';
 export type { RoutingOpsSlice } from '../routing-proof.ts';
 export { PlaySigner } from './play-signing.ts';
@@ -61,10 +80,7 @@ export {
   maxStakeForEdge,
   type PlayValidation,
 } from './play-validation.ts';
-export {
-  FRAUD_GUARDRAILS,
-  detectFraudSignals,
-} from './fraud-guard.ts';
+export { FRAUD_GUARDRAILS, detectFraudSignals } from './fraud-guard.ts';
 export {
   publishAndDispatch,
   flushOutbox,

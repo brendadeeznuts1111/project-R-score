@@ -7,6 +7,9 @@
 import type { Database } from 'bun:sqlite';
 import { S3Client } from 'bun';
 import type { AccountService } from './account-service.ts';
+import { bindPartnerProfile } from './partner-profile-bridge.ts';
+import { asTreeNodeId } from '../types/branded/operations.ts';
+import { enqueueIdentityChannelEvent, processChannelOutbox } from '../channels/outbox.ts';
 
 const DEFAULT_TOPIC = 'ops-sync';
 const EVENTS_KEY = 'channels/ops-sync/events.jsonl';
@@ -54,19 +57,29 @@ function coerceEvent(event: OpsSyncEvent | Record<string, unknown>): OpsSyncEven
  */
 export function applyOpsSyncEvent(
   svc: AccountService,
-  event: OpsSyncEvent | Record<string, unknown>
+  event: OpsSyncEvent | Record<string, unknown>,
+  db?: Database
 ): boolean {
   const e = coerceEvent(event);
   if (!e || e.tenantId !== 'factory') return false;
 
   if (e.type === 'account_assigned' || e.type === 'telegram_linked') {
     if (!e.oidcSubject || !e.email) return false;
-    svc.syncProspectFromPortal({
+    const node = svc.syncProspectFromPortal({
       oidcSubject: e.oidcSubject,
       email: e.email,
       name: e.name,
       telegramId: e.telegramUserId,
     });
+    if (db) {
+      const binding = bindPartnerProfile(db, asTreeNodeId(node.id));
+      enqueueIdentityChannelEvent(db, {
+        treeNodeId: binding.treeNodeId,
+        profileKey: binding.profileKey as string,
+        partnerTemplate: binding.templateId,
+        lifecycleStatus: binding.lifecycleStatus,
+      });
+    }
     return true;
   }
 
@@ -125,7 +138,7 @@ export async function processOpsSyncQueue(
 
         const payload = msg.payload;
         if (payload !== null && typeof payload === 'object') {
-          if (applyOpsSyncEvent(svc, payload as Record<string, unknown>)) {
+          if (applyOpsSyncEvent(svc, payload as Record<string, unknown>, db)) {
             processed += 1;
           }
         }
@@ -139,6 +152,8 @@ export async function processOpsSyncQueue(
     if (maxSeq > lastSeq) {
       setSyncCursor(db, maxSeq, DEFAULT_TOPIC);
     }
+
+    await processChannelOutbox(db, { deliver: false });
 
     return { processed, lastSeq: maxSeq };
   } catch {

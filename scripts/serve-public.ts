@@ -57,6 +57,8 @@ import type { BunRequest } from 'bun';
 import { Database } from 'bun:sqlite';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { readLocalChannelEvents } from '../lib/channels/outbox.ts';
+import { parseOpsChannelTopic } from '../lib/channels/ops-channel-event.ts';
 import { collectMonitoring, renderMonitoringHtml } from '../lib/monitoring/index.ts';
 import { DODVerifier } from '../lib/dod/verifier.ts';
 import {
@@ -542,10 +544,39 @@ async function dodApi(req: Request): Promise<Response> {
 
 async function channelsEvents(req: Request): Promise<Response> {
   const url = new URL(req.url);
+  const topicParam = url.searchParams.get('topic') || 'identity';
+  const topic = parseOpsChannelTopic(topicParam) ?? 'identity';
+  const since = parseInt(url.searchParams.get('since') || '0', 10);
+
+  if (url.searchParams.get('stream') === '1') {
+    let cursor = since;
+    const stream = new ReadableStream({
+      async pull(controller) {
+        const events = await readLocalChannelEvents(topic, cursor);
+        if (events.length === 0) {
+          await new Promise(r => setTimeout(r, 2000));
+          return;
+        }
+        for (const ev of events) {
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(ev)}\n\n`));
+          cursor = ev.seq;
+        }
+      },
+    });
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-store',
+        Connection: 'keep-alive',
+      },
+    });
+  }
+
+  const events = await readLocalChannelEvents(topic, since);
   return json({
-    topic: url.searchParams.get('topic') || 'factory',
-    since: parseInt(url.searchParams.get('since') || '0', 10),
-    events: [],
+    topic,
+    since,
+    events,
     ok: true,
   });
 }

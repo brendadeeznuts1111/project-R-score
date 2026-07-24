@@ -177,6 +177,13 @@ describe('play-settlement', () => {
 
     const period = now.slice(0, 7);
     expect(sumCutsForNode(db, 'partner1', period)).toBe(90);
+
+    const channel = db
+      .query(
+        `SELECT event_type FROM ops_channel_outbox WHERE idempotency_key = 'settle:play1:agent1'`
+      )
+      .get() as { event_type: string };
+    expect(channel.event_type).toBe('play.settled');
     db.close();
   });
 });

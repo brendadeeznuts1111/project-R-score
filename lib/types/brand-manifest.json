@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-23T16:07:28.116Z",
+  "generatedAt": "2026-07-24T06:41:03.409Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 41,
+  "brandCount": 45,
   "domains": [
     "audit",
     "deployment",
@@ -529,6 +529,59 @@
         "system-internal"
       ],
       "description": "Sticky partner-to-variant assignment row"
+    },
+    {
+      "name": "PartnerProfileKey",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Partner profile binding key for tree node ↔ template"
+    },
+    {
+      "name": "PartnerTemplateId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "Partner onboarding template identifier"
+    },
+    {
+      "name": "GateDecisionId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Policy gate decision row for play dispatch"
+    },
+    {
+      "name": "OpsChannelEventId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal"
+      ],
+      "description": "Unified ops channel outbox event id"
     },
     {
       "name": "PortalTenantId",

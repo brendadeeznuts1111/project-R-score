@@ -9,6 +9,9 @@ import {
   recordPlaySettlementOutcomes,
   type SettlementOutcomeRecord,
 } from '../experiments/outcomes.ts';
+import { enqueueSettlementChannelEvent } from '../channels/outbox.ts';
+import { asTreeNodeId } from '../types/branded/operations.ts';
+import { materializePartnerProfile } from './partner-profile-bridge.ts';
 import { calculateCutCascade, type CutCascadeResult } from './cut-engine.ts';
 import { releasePlay } from './liquidity.ts';
 
@@ -50,10 +53,12 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
   const stake = input.stakeReserved ?? play.stake_recommended;
   const now = new Date().toISOString();
 
-  db.run(
-    `UPDATE plays SET result = $res, pnl = $pnl, closed_at = $now WHERE id = $id`,
-    { $res: input.result, $pnl: input.pnl, $now: now, $id: input.playId }
-  );
+  db.run(`UPDATE plays SET result = $res, pnl = $pnl, closed_at = $now WHERE id = $id`, {
+    $res: input.result,
+    $pnl: input.pnl,
+    $now: now,
+    $id: input.playId,
+  });
 
   const cuts = calculateCutCascade(db, input.leafNodeId, input.pnl);
   for (const alloc of cuts.allocations) {
@@ -100,6 +105,16 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
       experimentOutcomes = [];
     }
   }
+
+  const leafId = asTreeNodeId(input.leafNodeId);
+  const profile = materializePartnerProfile(db, leafId);
+  enqueueSettlementChannelEvent(db, {
+    playId: input.playId,
+    leafNodeId: leafId,
+    result: input.result,
+    pnl: input.pnl,
+    profileKey: profile?.binding.profileKey as string | undefined,
+  });
 
   return {
     playId: input.playId,

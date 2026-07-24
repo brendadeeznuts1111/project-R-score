@@ -27,6 +27,14 @@ export type ExperimentId = BrandedString<'ExperimentId'>;
 export type ExperimentVariantId = BrandedString<'ExperimentVariantId'>;
 /** Sticky partner → variant assignment row. */
 export type ExperimentAssignmentId = BrandedString<'ExperimentAssignmentId'>;
+/** Partner profile binding key (tree node ↔ template). */
+export type PartnerProfileKey = BrandedString<'PartnerProfileKey'>;
+/** Partner onboarding template identifier. */
+export type PartnerTemplateId = BrandedString<'PartnerTemplateId'>;
+/** Policy gate decision row id. */
+export type GateDecisionId = BrandedString<'GateDecisionId'>;
+/** Unified ops channel outbox event id. */
+export type OpsChannelEventId = BrandedString<'OpsChannelEventId'>;
 
 const operation = defineBrandConstructors('OperationId');
 const resource = defineBrandConstructors('ResourceId');
@@ -43,6 +51,10 @@ const treeNode = defineBrandConstructors('TreeNodeId');
 const experiment = defineBrandConstructors('ExperimentId');
 const experimentVariant = defineBrandConstructors('ExperimentVariantId');
 const experimentAssignment = defineBrandConstructors('ExperimentAssignmentId');
+const partnerProfileKey = defineBrandConstructors('PartnerProfileKey');
+const partnerTemplateId = defineBrandConstructors('PartnerTemplateId');
+const gateDecisionId = defineBrandConstructors('GateDecisionId');
+const opsChannelEventId = defineBrandConstructors('OpsChannelEventId');
 
 export const asOperationId = operation.as;
 export const tryOperationId = operation.try;
@@ -103,6 +115,22 @@ export const parseExperimentVariantId = experimentVariant.parse;
 export const asExperimentAssignmentId = experimentAssignment.as;
 export const tryExperimentAssignmentId = experimentAssignment.try;
 export const parseExperimentAssignmentId = experimentAssignment.parse;
+
+export const asPartnerProfileKey = partnerProfileKey.as;
+export const tryPartnerProfileKey = partnerProfileKey.try;
+export const parsePartnerProfileKey = partnerProfileKey.parse;
+
+export const asPartnerTemplateId = partnerTemplateId.as;
+export const tryPartnerTemplateId = partnerTemplateId.try;
+export const parsePartnerTemplateId = partnerTemplateId.parse;
+
+export const asGateDecisionId = gateDecisionId.as;
+export const tryGateDecisionId = gateDecisionId.try;
+export const parseGateDecisionId = gateDecisionId.parse;
+
+export const asOpsChannelEventId = opsChannelEventId.as;
+export const tryOpsChannelEventId = opsChannelEventId.try;
+export const parseOpsChannelEventId = opsChannelEventId.parse;
 
 export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
   {
@@ -209,5 +237,33 @@ export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal'],
     description: 'Sticky partner-to-variant assignment row',
+  },
+  {
+    name: 'PartnerProfileKey',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Partner profile binding key for tree node ↔ template',
+  },
+  {
+    name: 'PartnerTemplateId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['user-input', 'wire-input'],
+    description: 'Partner onboarding template identifier',
+  },
+  {
+    name: 'GateDecisionId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Policy gate decision row for play dispatch',
+  },
+  {
+    name: 'OpsChannelEventId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal'],
+    description: 'Unified ops channel outbox event id',
   },
 ] as const;

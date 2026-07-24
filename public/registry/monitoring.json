@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 765,
+  "uptimeMs": 493,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -17,16 +17,21 @@
     "yes": 4,
     "no": 0
   },
-  "dodQueue": 0,
-  "dodByStatus": {},
+  "dodQueue": 2,
+  "dodByStatus": {
+    "flagged": 2,
+    "pending": 2,
+    "rejected": 1,
+    "verified": 1
+  },
   "experimentsActive": 1,
   "predictionN": 30,
-  "timestamp": "2026-07-24T06:33:36.354Z",
-  "snapshotAt": "2026-07-24T06:33:36.354Z",
+  "timestamp": "2026-07-24T06:39:50.515Z",
+  "snapshotAt": "2026-07-24T06:39:50.515Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-24T06:33:36.354Z",
+    "checkedAt": "2026-07-24T06:39:50.516Z",
     "summary": {
       "total": 23,
       "ok": 23,
@@ -61,7 +66,7 @@
         "Group": "cloudflare",
         "Severity": "required",
         "Status": "set",
-        "Detail": "set (len 53, cfa…43)"
+        "Detail": "set (len 53, cfa…15)"
       },
       {
         "Key": "CLOUDFLARE_DNS_API_TOKEN",
@@ -345,7 +350,7 @@
     "demosPassed": 30,
     "demosTotal": 30,
     "demoPassRate": "100.0%",
-    "generated": "2026-07-24T06:33:36.351Z",
+    "generated": "2026-07-24T06:39:50.513Z",
     "apisVerified": 30
   },
   "registryClientProof": {

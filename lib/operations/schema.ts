@@ -96,6 +96,51 @@ export function migrateSchema(db: Database): void {
   ensurePredictionSchema(db);
   ensurePredictionShadowSchema(db);
   ensureMonitoringSchema(db);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS partner_profile_bindings (
+      tree_node_id TEXT PRIMARY KEY REFERENCES tree_nodes(id),
+      template_id TEXT NOT NULL,
+      profile_key TEXT NOT NULL UNIQUE,
+      lifecycle_status TEXT NOT NULL DEFAULT 'materialized'
+        CHECK(lifecycle_status IN ('signup', 'materialized', 'kyc_pending', 'active', 'suspended', 'terminated')),
+      metadata_json TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_ppb_template ON partner_profile_bindings(template_id);
+    CREATE INDEX IF NOT EXISTS idx_ppb_lifecycle ON partner_profile_bindings(lifecycle_status);
+
+    CREATE TABLE IF NOT EXISTS play_gate_decisions (
+      id TEXT PRIMARY KEY,
+      play_id TEXT NOT NULL REFERENCES plays(id),
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      allowed INTEGER NOT NULL,
+      action TEXT NOT NULL CHECK(action IN ('allow', 'block', 'adjust', 'defer')),
+      reason TEXT,
+      adjusted_stake REAL,
+      decision_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE(play_id, node_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_gate_play ON play_gate_decisions(play_id);
+
+    CREATE TABLE IF NOT EXISTS ops_channel_outbox (
+      id TEXT PRIMARY KEY,
+      topic TEXT NOT NULL CHECK(topic IN ('identity', 'plays', 'dod', 'experiments', 'alerts', 'provisioning')),
+      event_type TEXT NOT NULL,
+      idempotency_key TEXT NOT NULL UNIQUE,
+      payload_json TEXT NOT NULL,
+      projectors TEXT NOT NULL DEFAULT 'r2,telegram',
+      status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'sent', 'failed')),
+      retries INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL,
+      sent_at TEXT,
+      last_error TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_ops_outbox_status ON ops_channel_outbox(status, created_at);
+    CREATE INDEX IF NOT EXISTS idx_ops_outbox_topic ON ops_channel_outbox(topic, created_at);
+  `);
 }
 
 export function initSchema(db: Database): void {

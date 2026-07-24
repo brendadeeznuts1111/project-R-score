@@ -53,6 +53,8 @@ describe('buildOpsSummary', () => {
     expect(s.channelMeta).toHaveProperty('available');
     expect(s.channelMeta.path).toBe('/registry/release-features.json');
     expect(s.channelMeta.bakePath).toBe('/registry/channel-meta-bake.json');
+    expect(s.partners).toHaveProperty('bound');
+    expect(s.channels).toHaveProperty('pending');
     if (s.channelMeta.available) {
       expect(s.channelMeta.total).toBeGreaterThan(0);
       expect(s.channelMeta.proofHash).toMatch(/^[a-f0-9]{64}$/);
@@ -67,6 +69,14 @@ describe('buildOpsSummary', () => {
       expect(s.routing.total).toBeGreaterThan(0);
       expect(s.routing.proofHash).toMatch(/^[a-f0-9]{64}$/);
     }
+    // Identity lane (partner profile bridge)
+    expect(s.partners).toEqual({
+      bound: 0,
+      unboundAgents: 0,
+      byLifecycle: {},
+      recent: [],
+    });
+    expect(s.channels).toMatchObject({ pending: 0, failed: 0, sent: 0 });
     db.close();
   });
 

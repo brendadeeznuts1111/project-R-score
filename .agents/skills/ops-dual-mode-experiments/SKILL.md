@@ -41,6 +41,8 @@ Deep maps (do not duplicate here): [`lib/experiments/README.md`](../../../lib/ex
 | Experiment | `lib/experiments/**`, `tools/ops-experiments.ts`, coverage hook in `platform-coverage.ts` / `liquidity.ts`, `tests/experiments-*.test.ts` |
 | Prediction | `lib/prediction/**`, `tools/ops-prediction.ts`, shadow helpers in `lib/experiments/champion-challenger.ts`, `tests/prediction-*.test.ts` |
 | Portal / summary | `lib/operations/ops-summary.ts`, `tools/ops-snapshot.ts`, `tools/ops-summary-diagnose.ts`, portal ops/dashboard clients — only when the task is summary/UI |
+| Identity / bridge | `lib/operations/partner-profile-bridge.ts`, `lib/operations/ops-sync.ts`, `config/partner-templates/**`, `tests/partner-profile-bridge.test.ts`, [`docs/harness/tenants/ops-partner-bridge.md`](../../../docs/harness/tenants/ops-partner-bridge.md) |
+| Channels harness | `lib/channels/ops-channel-event.ts`, `lib/channels/outbox.ts`, `tests/ops-channel-outbox.test.ts`, `public/portal/components/notification.js`, local `/api/channels/events` in `scripts/serve-public.ts` |
 | Prove | Fix failing tests in owned files only |
 | Orchestrator | Commits, `package.json` scripts, this skill |
 
@@ -202,11 +204,13 @@ bun run ops:snapshot --out /tmp/ops-summary.json
 | C4 | `FactorialEngine` + coverage / settlement hooks | shipped |
 | C4b | phases · runner · cluster · switchback · champion shadow | shipped |
 | C5 | `prediction_accuracy` + coverage backtest + report | shipped |
+| I1 | partner profile bindings + bridge + ops-summary partners | shipped |
 
 ## Prove
 
 ```bash
 bun test tests/operations-schema.test.ts tests/ops-summary.test.ts tests/ops-summary-diagnose.test.ts
+bun test tests/partner-profile-bridge.test.ts
 bun test tests/platform-coverage.test.ts
 bun test tests/provision-*.test.ts tests/provisioning-*.test.ts
 bun test tests/experiments-*.test.ts
@@ -215,6 +219,7 @@ bun run ops:provision-queue --help
 bun run ops:experiments --help
 bun run ops:prediction --help
 bun run ops:diagnose
+bun scripts/backfill-partner-bindings.ts --dry-run
 bun run ops:snapshot --out /tmp/ops-summary.json
 ```
 

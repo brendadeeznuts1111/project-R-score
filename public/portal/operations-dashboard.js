@@ -108,6 +108,17 @@ class OperationsDashboard extends HTMLElement {
             <div id="tree-viz"></div>
           </section>
           <section class="ops-panel">
+            <h2>Partner profiles</h2>
+            <div class="ops-metric" id="partners-bound">0</div>
+            <div class="ops-sub" id="partners-detail"></div>
+            <ul id="partners-recent"></ul>
+          </section>
+          <section class="ops-panel">
+            <h2>Ops channels</h2>
+            <div class="ops-metric" id="channels-pending">0</div>
+            <div class="ops-sub" id="channels-detail"></div>
+          </section>
+          <section class="ops-panel">
             <h2>Growth</h2>
             <div class="ops-metric" id="growth-plays">0</div>
             <div class="ops-sub" id="growth-detail"></div>
@@ -648,6 +659,42 @@ class OperationsDashboard extends HTMLElement {
         </div>
         <div>Downstream: $${(t.downstreamLiquidity ?? 0).toLocaleString()}</div>
       `;
+    }
+
+    const partnersBound = this.querySelector('#partners-bound');
+    const partnersDetail = this.querySelector('#partners-detail');
+    const partnersRecent = this.querySelector('#partners-recent');
+    if (partnersBound && d.partners) {
+      partnersBound.textContent = String(d.partners.bound ?? 0);
+      const lifecycle = d.partners.byLifecycle ?? {};
+      const parts = Object.entries(lifecycle).map(([k, v]) => `${k}: ${v}`);
+      if (partnersDetail) {
+        partnersDetail.textContent =
+          `${d.partners.unboundAgents ?? 0} unbound nodes` +
+          (parts.length ? ` · ${parts.join(' · ')}` : '');
+      }
+      if (partnersRecent) {
+        partnersRecent.innerHTML = (d.partners.recent ?? [])
+          .slice(0, 5)
+          .map(
+            p => `<li><span>${p.name}</span><small>${p.partnerTemplate ?? p.templateId} · ${p.lifecycleStatus}</small></li>`
+          )
+          .join('');
+      }
+    }
+
+    const channelsPending = this.querySelector('#channels-pending');
+    const channelsDetail = this.querySelector('#channels-detail');
+    if (channelsPending && d.channels) {
+      channelsPending.textContent = String(d.channels.pending ?? 0);
+      const failPct = ((d.channels.failRate ?? 0) * 100).toFixed(1);
+      if (channelsDetail) {
+        channelsDetail.textContent =
+          `sent ${d.channels.sent ?? 0} · failed ${d.channels.failed ?? 0} · fail ${failPct}%` +
+          (d.channels.oldestPendingAt
+            ? ` · oldest ${String(d.channels.oldestPendingAt).slice(0, 19)}`
+            : '');
+      }
     }
 
     // Growth metrics (period rollup)
