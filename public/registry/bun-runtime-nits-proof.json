@@ -1,0 +1,140 @@
+{
+  "timestamp": "2026-07-24T01:50:57.357Z",
+  "bunVersion": "1.4.0",
+  "results": [
+    {
+      "name": "sorted: true sorts keys",
+      "category": "inspect",
+      "expected": "a before b",
+      "actual": "{ a: 2, b: 1, }",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect"
+    },
+    {
+      "name": "compact: false renders multi-line",
+      "category": "inspect",
+      "expected": "multi-line",
+      "actual": "multi-line",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/utils#bun-inspect"
+    },
+    {
+      "name": "showProxy: true shows target without Proxy metadata",
+      "category": "inspect",
+      "expected": "plain target",
+      "actual": "{ a: 1, }",
+      "passed": true,
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions"
+    },
+    {
+      "name": "getters option: [Getter] shown either way (option ignored)",
+      "category": "inspect",
+      "expected": "[Getter] in both",
+      "actual": "true:true false:true",
+      "passed": true,
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions"
+    },
+    {
+      "name": "numericSeparator ignored by Bun.inspect (Node honors it)",
+      "category": "inspect",
+      "expected": "ignored",
+      "actual": "ignored",
+      "passed": true,
+      "canonical": "https://bun.com/reference/bun/BunInspectOptions"
+    },
+    {
+      "name": "maxStringLength ignored (full string shown)",
+      "category": "inspect",
+      "expected": "ignored",
+      "actual": "ignored",
+      "passed": true,
+      "canonical": "https://nodejs.org/api/util.html#utilinspectobject-options"
+    },
+    {
+      "name": "customInspect: false does not suppress Bun.inspect.custom",
+      "category": "inspect",
+      "expected": "CUSTOM still shown",
+      "actual": "CUSTOM",
+      "passed": true,
+      "canonical": "https://nodejs.org/api/util.html#utilinspectobject-options"
+    },
+    {
+      "name": "gzip CompressionStream/DecompressionStream roundtrip",
+      "category": "streams",
+      "expected": "match",
+      "actual": "match",
+      "passed": true,
+      "canonical": "https://bun.com/reference/globals/CompressionStream"
+    },
+    {
+      "name": "TextEncoderStream/TextDecoderStream roundtrip",
+      "category": "streams",
+      "expected": "héllo streams",
+      "actual": "héllo streams",
+      "passed": true,
+      "canonical": "https://bun.com/reference/globals/TextEncoderStream"
+    },
+    {
+      "name": "URL.host includes port",
+      "category": "url",
+      "expected": "example.com:8080",
+      "actual": "example.com:8080",
+      "passed": true,
+      "canonical": "https://bun.com/reference/globals/URL/host"
+    },
+    {
+      "name": "URL.origin = protocol + host",
+      "category": "url",
+      "expected": "https://example.com:8080",
+      "actual": "https://example.com:8080",
+      "passed": true,
+      "canonical": "https://bun.com/reference/globals/URL/origin"
+    },
+    {
+      "name": "URL.searchParams.get reads query",
+      "category": "url",
+      "expected": "1",
+      "actual": "1",
+      "passed": true,
+      "canonical": "https://bun.com/reference/globals/URL/searchParams"
+    },
+    {
+      "name": "URL.host setter rewrites host+port",
+      "category": "url",
+      "expected": "b.example:9000",
+      "actual": "b.example:9000",
+      "passed": true,
+      "canonical": "https://bun.com/reference/globals/URL/host"
+    },
+    {
+      "name": "Bun.file is lazy; .size works without explicit open",
+      "category": "file-io",
+      "expected": "5",
+      "actual": "5",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file"
+    },
+    {
+      "name": "Bun.write auto-creates parent directories",
+      "category": "file-io",
+      "expected": "exists",
+      "actual": "exists",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/file-io#writing-files-bun-write"
+    },
+    {
+      "name": "Bun.file().bytes() matches fs.readFile content",
+      "category": "file-io",
+      "expected": "match",
+      "actual": "match",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/file-io#reading-files-bun-file"
+    }
+  ],
+  "summary": {
+    "passed": 16,
+    "total": 16,
+    "status": "pass"
+  },
+  "proofHash": "88aa6022017e80de9087c016094c78bef63cc3c0f217f56b2cb128622ef91bca"
+}
