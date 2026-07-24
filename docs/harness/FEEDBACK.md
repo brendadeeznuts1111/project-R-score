@@ -75,7 +75,7 @@ Fresh-rerun is mandatory for improve-harness retain/revise/remove: run the affec
 - **tools/ path dual-era (closed)** (`type`)  
   *Ratchet* → `bun run check:path-bun` covers `lib/**` + `tools/**` · claim `path-bun`
 - **Discover / gate timing dumps in `git status`** (`script-gate`)  
-  *Ratchet* → gitignore `artifacts/bun-native-discover*.json` · `reports/` · hygiene `harness-regenerable-staged` · `bun run clean`
+  *Ratchet* → gitignore `reports/` · hygiene `harness-regenerable-staged` · `bun run clean`
 - **Ephemeral scratch dumps polluting status** (`script-gate`)  
   *Ratchet* → default-deny `/scratch/**` · allowlist `README.md` + `bun-v1.3.9-examples/**` (session dumps / toc-ops / audit helpers stay local)
 - **Pre-commit ESLint cold** (`script-gate`)  

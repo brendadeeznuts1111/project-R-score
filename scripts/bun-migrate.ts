@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -234,7 +235,6 @@ const SKIP_PATH_PARTS = [
   '/.git/',
   '/artifacts/',
   'bun-migrate.ts',
-  'bun-native-discover.ts',
   'migrate-crypto.ts',
   'migrate-fs.ts',
   'migrate-shell.ts',
@@ -251,7 +251,6 @@ export const VALIDATE_WHITELIST = new Set([
   'scripts/validate-integrity.ts',
   'tools/bun-docs-changelog.ts',
   'lib/console-depth.ts',
-  'scripts/bun-native-discover.ts',
   'scripts/dx-mcp.ts',
   'scripts/lib/fs-bun.ts',
   'packages/guards/src/bun-first-guard.ts',

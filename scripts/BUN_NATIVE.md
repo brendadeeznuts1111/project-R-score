@@ -1,19 +1,23 @@
-# Bun-native discovery & migrate
+# Bun-native migrate
+
+Node → Bun inventory and phase apply. Prefer matrix / canonical refs live elsewhere.
 
 ```bash
-bun run discover:bun-native
-bun run discover:bun-native:json
-bun scripts/bun-native-discover.ts --apply --dry-run --roots=scripts
-bun run discover:bun-native:apply
-
 bun run migrate:inventory
 bun run migrate:status
 bun run bun-migrate apply --phase 6 --section crypto   # dry-run; add --write
 bun run validate:integrity:all
 ```
 
-Docs: [File I/O](https://bun.com/docs/runtime/file-io) · [Glob](https://bun.com/docs/runtime/glob) · helpers [`scripts/lib/fs-bun.ts`](lib/fs-bun.ts).
+| Concern | Command / SSOT |
+|---------|----------------|
+| Product debt | `bun run migrate:status` · `scripts/bun-migrate.ts` |
+| Prefer use/avoid | `tools/bun-prefer-matrix.ts` |
+| Canonical API URL | `bun tools/bun-doc-refs.ts suggest "<api>"` |
+| File I/O helpers (scripts) | [`scripts/lib/fs-bun.ts`](lib/fs-bun.ts) |
 
-Reports (gitignored): `artifacts/bun-native-discover.latest.json` · `reports/bun-usage-inventory.json`.
+Docs: [File I/O](https://bun.com/docs/runtime/file-io) · [Glob](https://bun.com/docs/runtime/glob) · [Child process](https://bun.com/docs/runtime/child-process).
 
-Phases 6–9 product debt clear last measured — re-run `migrate:status` after edits. Longer historical notes: `git log -- scripts/BUN_NATIVE.md`.
+Report (gitignored): `reports/bun-usage-inventory.json`.
+
+Harness tenant: [`docs/harness/tenants/bun-migrate.md`](../docs/harness/tenants/bun-migrate.md) · claim `bun-migrate-status`.

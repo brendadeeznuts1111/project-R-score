@@ -5,7 +5,7 @@
 Prefer Bun native APIs over Node compat when an equivalent exists. Enforce via:
 
 - `bun run lint:bun-native:changed` / `lint:bun-native:rollout`
-- `bun run guard:bun-first:harness` · `bun run discover:bun-native`
+- `bun run guard:bun-first:harness` · `bun run migrate:status`
 - [BUN_FIRST_GUARDS.md](../BUN_FIRST_GUARDS.md) · [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md)
 - `bun run dx:catalog` · `bun tools/bun-doc-refs.ts suggest "<api>"`
 

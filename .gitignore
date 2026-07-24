@@ -342,8 +342,7 @@ artifacts/*.docx
 artifacts/*.zip
 
 # Harness / pre-commit regenerable (local only — never stage)
-# Docs claim these are gitignored: scripts/BUN_NATIVE.md · docs/harness/FEEDBACK.md
-artifacts/bun-native-discover*.json
+# Docs: scripts/BUN_NATIVE.md · docs/harness/FEEDBACK.md
 artifacts/reports/
 # reports/ already ignored above (harness-gate-timing · ci-*-timing · inventories)
 

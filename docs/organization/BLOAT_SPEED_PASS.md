@@ -18,7 +18,7 @@ Path SSOT: [`lib/docs/repo-docs.ts`](../../lib/docs/repo-docs.ts). Maps: [`STRUC
 ## What changed
 
 1. **CLI SSOT** — `help` + `cli:docs` share cli-categories; day-loop docs.
-2. **Script trim** — aliases / fan-outs / scoped install / bunx / docs-cli noise; r5 dropped `pool-telemetry`, `security-tests`, `discover:bun-native:apply:dry`.
+2. **Script trim** — aliases / fan-outs / scoped install / bunx / docs-cli noise; r5 dropped `pool-telemetry`, `security-tests`, discover apply dry-run; later dropped `discover:bun-native` entirely (use `migrate:status`).
 3. **Tier moves** — demos + utility sandboxes → experimental (11).
 4. **Bun-native (r5)**
    - [`fs-bun.ts`](../../scripts/lib/fs-bun.ts): `resolvePath` / `joinPath` / `normalizePath` without `path` / `node:path`.
@@ -40,7 +40,7 @@ bun run cli:docs
 
 Harness JIT: [`docs/harness/README.md`](../harness/README.md). Baseline: [`docs/organization/VELOCITY_BASELINE.md`](VELOCITY_BASELINE.md).
 
-Protocol: `bun run dashboard:protocol:check`. Discover Node leftovers: `bun run discover:bun-native`.
+Protocol: `bun run dashboard:protocol:check`. Node leftovers inventory: `bun run migrate:status`.
 
 ## Out of scope (still later)
 

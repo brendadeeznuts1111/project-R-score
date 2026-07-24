@@ -52,8 +52,6 @@ const STRAY_PATTERNS = [
   // Root telemetry/db artifacts
   /^.*\.(db|rdb)$/,
   /^telemetry.*$/,
-  // Regenerable discover dump (also gitignored — catch force-add)
-  /^bun-native-discover(\.latest)?\.json$/,
 ];
 
 // Files that must never be staged (contain secrets)
@@ -68,7 +66,6 @@ const SECRETS_FILES = [
 
 /** Path prefixes / exact paths that must never be staged (regenerable harness noise). */
 const FORBIDDEN_STAGED = [
-  'artifacts/bun-native-discover',
   'reports/harness-gate-timing.json',
   'reports/ci-harness-timing.json',
   'reports/ci-core-timing.json',
