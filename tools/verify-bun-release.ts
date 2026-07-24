@@ -558,6 +558,54 @@ export async function runReleaseVerification(
     anchor: 'url-host-whatwg',
   });
 
+  // 33. S3 contentDisposition option
+  try {
+    const { s3 } = await import('bun');
+    const f = s3.file('test.txt', { contentDisposition: 'inline' });
+    pushReleaseResult(results, {
+      name: 'S3 contentDisposition option',
+      expected: 'accepts contentDisposition without error',
+      actual: typeof f === 'object' ? 'ok' : 'unexpected',
+      passed: typeof f === 'object',
+      anchor: 's3-content-disposition',
+    });
+  } catch (e: any) {
+    pushReleaseResult(results, {
+      name: 'S3 contentDisposition option',
+      expected: 'accepts contentDisposition without error',
+      actual: `error: ${e.message}`,
+      passed: false,
+      anchor: 's3-content-disposition',
+    });
+  }
+
+  // 34. Response.clone() after body access (v1.3.5 fix)
+  const cloneRes = new Response('hello');
+  cloneRes.body; // access body before clone
+  let cloneOk = false;
+  try { const cloned = cloneRes.clone(); cloneOk = (await cloned.text()) === 'hello'; } catch {}
+  pushReleaseResult(results, {
+    name: 'Response.clone() after body access (v1.3.5 fix)',
+    expected: 'clone succeeds after body was accessed',
+    actual: cloneOk ? 'ok' : 'failed',
+    passed: cloneOk,
+    anchor: 'response-clone-fix',
+  });
+
+  // 35. URL.domainToASCII (Node.js compat)
+  let domainOk = false;
+  try {
+    const { domainToASCII } = await import('url');
+    domainOk = domainToASCII('bücher.example') === 'xn--bcher-kva.example';
+  } catch {}
+  pushReleaseResult(results, {
+    name: 'URL.domainToASCII / domainToUnicode (Node.js compat)',
+    expected: 'returns punycode for IDN domains',
+    actual: domainOk ? 'bücher → xn--bcher-kva' : 'failed',
+    passed: domainOk,
+    anchor: 'url-domain-to-ascii',
+  });
+
   const finalPassed = results.filter(r => r.passed).length;
 
   const hasher = new CryptoHasher('sha256');

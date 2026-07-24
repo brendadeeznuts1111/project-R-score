@@ -18,6 +18,35 @@ var __esm = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
 var __promiseAll = (args) => Promise.all(args);
 var __require = import.meta.require;
 
+// lib/console-depth.ts
+var inspectCustom;
+var init_console_depth = __esm(() => {
+  inspectCustom = Bun.inspect.custom;
+});
+
+// lib/path-bun.ts
+function normalizePath(path) {
+  const isAbs = path.startsWith("/");
+  const out = [];
+  for (const seg of path.split("/")) {
+    if (seg === "" || seg === ".")
+      continue;
+    if (seg === "..") {
+      if (out.length > 0)
+        out.pop();
+      continue;
+    }
+    out.push(seg);
+  }
+  const body = out.join("/");
+  if (isAbs)
+    return `/${body}`;
+  return body || ".";
+}
+function joinPath(...parts) {
+  return normalizePath(parts.filter((p) => p != null && String(p) !== "").join("/"));
+}
+
 // lib/docs/bundler-nav.ts
 function bundlerDocUrl(path, fragment) {
   const base = `${DOCS}/${path.replace(/^\//, "").replace(/\.md$/, "")}`;
@@ -209,7 +238,7 @@ function hrefFromInit(init) {
   }
   return u.href;
 }
-function normalizePath(path) {
+function normalizePath2(path) {
   return path.replace(/^\/+/, "").replace(/\.md$/i, "");
 }
 function stripHash(hash) {
@@ -229,7 +258,7 @@ function bunDocs(path, hash) {
   const parts = splitHash(path, hash);
   return hrefFromInit({
     ...BunComSite,
-    pathname: `/docs/${normalizePath(parts.path)}`,
+    pathname: `/docs/${normalizePath2(parts.path)}`,
     hash: parts.hash
   });
 }
@@ -237,7 +266,7 @@ function bunBlog(slug, hash) {
   const parts = splitHash(slug, hash);
   return hrefFromInit({
     ...BunComSite,
-    pathname: `/blog/${normalizePath(parts.path)}`,
+    pathname: `/blog/${normalizePath2(parts.path)}`,
     hash: parts.hash
   });
 }
@@ -245,14 +274,14 @@ function bunReference(path, hash) {
   const parts = splitHash(path, hash);
   return hrefFromInit({
     ...BunComSite,
-    pathname: `/reference/${normalizePath(parts.path)}`,
+    pathname: `/reference/${normalizePath2(parts.path)}`,
     hash: parts.hash
   });
 }
 function mdnWebApi(name) {
   return hrefFromInit({
     ...MdnSite,
-    pathname: `/en-US/docs/Web/API/${normalizePath(name)}`
+    pathname: `/en-US/docs/Web/API/${normalizePath2(name)}`
   });
 }
 function bunComOrigin() {
@@ -310,12 +339,6 @@ var init_bun_site_url = __esm(() => {
     hostname: MdnSite.hostname,
     pathname: "/en-US/docs/Web/API/:name(.*)"
   });
-});
-
-// lib/console-depth.ts
-var inspectCustom;
-var init_console_depth = __esm(() => {
-  inspectCustom = Bun.inspect.custom;
 });
 
 // tools/cli-table.ts
@@ -1431,7 +1454,7 @@ var init_bun_doc_refs = __esm(async () => {
       description: "getters \u2014 evaluate or suppress property getters"
     },
     "inspect.numericSeparator": {
-      url: mdnWebApi("URL"),
+      url: "https://bun.com/reference/bun/BunInspectOptions",
       kind: "Global",
       stability: "stable",
       description: "numericSeparator \u2014 underscore separators in numbers (Node compat)"
@@ -2100,29 +2123,6 @@ var init_bun_doc_refs = __esm(async () => {
   REPO_ROOT = new URL("..", import.meta.url).pathname;
   if (false) {}
 });
-
-// lib/path-bun.ts
-function normalizePath2(path) {
-  const isAbs = path.startsWith("/");
-  const out = [];
-  for (const seg of path.split("/")) {
-    if (seg === "" || seg === ".")
-      continue;
-    if (seg === "..") {
-      if (out.length > 0)
-        out.pop();
-      continue;
-    }
-    out.push(seg);
-  }
-  const body = out.join("/");
-  if (isAbs)
-    return `/${body}`;
-  return body || ".";
-}
-function joinPath(...parts) {
-  return normalizePath2(parts.filter((p) => p != null && String(p) !== "").join("/"));
-}
 
 // lib/core/core-types.ts
 var ENTERPRISE_LIMITS;
@@ -2994,11 +2994,14 @@ var init_terminal = __esm(() => {
 });
 
 // tools/verify-bun-release.ts
-var {CryptoHasher, inspect, version: version2, revision, spawn, $ } = globalThis.Bun;
+var {CryptoHasher, inspect: inspect2, version: version2, revision, spawn, $ } = globalThis.Bun;
 import { writeFileSync, readFileSync } from "fs";
 
 // lib/docs/bun-release-tracker.ts
 import tls from "tls";
+
+// lib/verification/bun-runtime-nits-probes.ts
+init_console_depth();
 
 // config/r2-env.ts
 var CLOUDFLARE_DEFAULTS = {
@@ -3156,11 +3159,112 @@ function buildVerificationLinks(canonical, options = {}) {
   };
 }
 
+// tools/canonical-helpers.ts
+await init_bun_doc_refs();
+var TOKEN_MAPS = [
+  CANONICAL_REGISTRY_CLIENT_TOKENS,
+  CANONICAL_RUNTIME_NITS_TOKENS,
+  CANONICAL_INSTALL_ENV_TOKENS,
+  CANONICAL_INSTALL_PLATFORM_TOKENS
+];
+var DEFAULT_FALLBACK = "https://bun.com/docs";
+function entryFromToken(meta) {
+  return {
+    url: meta.url,
+    kind: meta.kind,
+    stability: meta.stability,
+    description: meta.description
+  };
+}
+function inferKindFromRefKey(key) {
+  if (key.startsWith("registry-client"))
+    return "SDK";
+  if (/install|env|mechanism|dependencies|store|scopes/i.test(key))
+    return "Concept";
+  if (/^[A-Z][A-Za-z0-9]*$/.test(key))
+    return "Global";
+  if (key.startsWith("Bun.") || key.startsWith("bun."))
+    return "API";
+  return "API";
+}
+function getCanonicalEntry(key) {
+  for (const map of TOKEN_MAPS) {
+    const token = map[key];
+    if (token)
+      return entryFromToken(token);
+  }
+  const url = CANONICAL_REFS[key];
+  if (url) {
+    return { url, kind: inferKindFromRefKey(key), stability: "stable" };
+  }
+  return null;
+}
+function getCanonicalUrl(key, fallback = DEFAULT_FALLBACK) {
+  return getCanonicalEntry(key)?.url ?? fallback;
+}
+function getAllCanonicalUrls() {
+  const urls = new Set(Object.values(CANONICAL_REFS));
+  for (const map of TOKEN_MAPS) {
+    for (const meta of Object.values(map))
+      urls.add(meta.url);
+  }
+  return urls;
+}
+function resolveCanonicalForProbe(key, options) {
+  const entry = getCanonicalEntry(key);
+  const canonical = entry?.url ?? options.fallback ?? getCanonicalUrl(key);
+  return {
+    canonicalKey: key,
+    canonical,
+    canonicalKind: entry?.kind,
+    canonicalStability: entry?.stability,
+    canonicalDescription: entry?.description,
+    _links: buildVerificationLinks(canonical, {
+      reportPath: options.reportPath,
+      sourcePath: options.sourcePath
+    })
+  };
+}
+
+// lib/verification/bun-runtime-nits-probes.ts
+var BUN_RUNTIME_NITS_PROOF_REPORT_PATH = "/registry/bun-runtime-nits-proof.json";
+var BUN_RUNTIME_NITS_VERIFY_SOURCE = "tools/verify-bun-runtime-nits.ts";
+function resultRow(probe, category, expected, actual, passed, opts) {
+  const canonicalKey = opts?.canonicalKey ?? probe;
+  const docs = resolveCanonicalForProbe(canonicalKey, {
+    reportPath: BUN_RUNTIME_NITS_PROOF_REPORT_PATH,
+    sourcePath: BUN_RUNTIME_NITS_VERIFY_SOURCE,
+    fallback: opts?.canonical ?? "https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/bun-runtime-nits.md"
+  });
+  return {
+    probe,
+    category,
+    ...docs,
+    name: probe,
+    expected,
+    actual,
+    passed,
+    canonical: opts?.canonical ?? docs.canonical
+  };
+}
+function probeUrlHost() {
+  const url = new URL("https://example.com:8080/path");
+  const readOk = url.host === "example.com:8080" && url.hostname === "example.com" && url.port === "8080";
+  url.host = "test.com:9000";
+  const writeOk = url.href === "https://test.com:9000/path";
+  const ok = readOk && writeOk;
+  return resultRow("url.host", "url", "host includes port; hostname excludes; host setter updates href", ok ? "host=example.com:8080; set host=test.com:9000" : `read=${readOk} write=${writeOk}`, ok, { canonicalKey: "URL.host" });
+}
+function probeUrlHostLegacy() {
+  const row = probeUrlHost();
+  return { ok: row.passed, note: row.actual };
+}
+
 // lib/verification/canonical-coverage.ts
 await init_bun_doc_refs();
 var INSTALL_PLATFORM_PROOF_REPORT_PATH = "/registry/install-platform.json";
 var INSTALL_PLATFORM_VERIFY_SOURCE = "tools/verify-install-platform.ts";
-var DEFAULT_PLATFORM_DEPS = CANONICAL_REFS["platform-specific dependencies"] ?? "https://bun.com/docs/pm/cli/install#platform-specific-dependencies";
+var DEFAULT_PLATFORM_DEPS = getCanonicalUrl("platform-specific dependencies", "https://bun.com/docs/pm/cli/install#platform-specific-dependencies");
 var INSTALL_ASPECT_CANONICAL_KEYS = {
   "bun-binary-resolved": "Bun.which",
   "bun-config-env-ssot": "BUN install environment variables",
@@ -3175,7 +3279,7 @@ var INSTALL_ASPECT_CANONICAL_KEYS = {
   "machine-global-store": "global virtual store"
 };
 function resolveCanonicalUrl(key, fallback) {
-  return CANONICAL_REFS[key] ?? fallback ?? DEFAULT_PLATFORM_DEPS;
+  return getCanonicalUrl(key, fallback ?? DEFAULT_PLATFORM_DEPS);
 }
 function resolveInstallAspectCanonical(aspect) {
   const canonicalKey = INSTALL_ASPECT_CANONICAL_KEYS[aspect] ?? "platform-specific dependencies";
@@ -3192,7 +3296,7 @@ function resolveInstallAspectCanonical(aspect) {
 function ensureVerificationResultsHaveCanonical(results, options = {}) {
   const missing = [];
   const unknownUrls = [];
-  const knownUrls = new Set(Object.values(CANONICAL_REFS));
+  const knownUrls = getAllCanonicalUrls();
   for (const r of results) {
     if (!r.canonical) {
       missing.push(r.name);
@@ -3210,7 +3314,7 @@ function reportCanonicalCoverageGaps(report, label) {
     console.warn(`\u26A0\uFE0F  [${label}] Test "${name}" has no canonical reference.`);
   }
   for (const line of report.unknownUrls) {
-    console.warn(`\u26A0\uFE0F  [${label}] Test ${line} is not in CANONICAL_REFS.`);
+    console.warn(`\u26A0\uFE0F  [${label}] Test ${line} is not in the canonical URL index.`);
   }
   if (!report.ok) {
     console.error(`\u274C [${label}] Canonical coverage failed (${report.missing.length} missing).`);
@@ -4409,6 +4513,9 @@ var BUN_RELEASE_TEST_CANONICAL = {
   "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)": "https://bun.sh/reference/globals/Uint8Array",
   "R2/S3 binary roundtrip (upload, download, verify)": "https://bun.sh/docs/runtime/s3",
   "URL.host / hostname / port (WHATWG)": "https://bun.sh/reference/globals/URL/host",
+  "S3 contentDisposition option": "https://bun.com/blog/bun-v1.3.5#content-disposition-support-for-s3-uploads",
+  "Response.clone() after body access (v1.3.5 fix)": "https://bun.com/blog/bun-v1.3.5#bug-fixes",
+  "URL.domainToASCII / domainToUnicode (Node.js compat)": "https://bun.com/blog/bun-v1.3.5#bug-fixes",
   ...INSTALL_PLATFORM_TEST_CANONICAL
 };
 function canonicalForReleaseTest(name) {
@@ -4511,15 +4618,8 @@ function smokeBuiltinObjectsGc() {
     return { ok: false, count: 2000 };
   }
 }
-function probeUrlHost() {
-  const url = new URL("https://example.com:8080/path");
-  const readOk = url.host === "example.com:8080" && url.hostname === "example.com" && url.port === "8080";
-  url.host = "test.com:9000";
-  const writeOk = url.href === "https://test.com:9000/path";
-  return {
-    ok: readOk && writeOk,
-    note: readOk && writeOk ? "host=example.com:8080; set host=test.com:9000" : `read=${readOk} write=${writeOk} href=${url.href}`
-  };
+function probeUrlHost2() {
+  return probeUrlHostLegacy();
 }
 function probeStringWidthV135Accuracy() {
   const checks = [
@@ -5005,7 +5105,7 @@ async function runReleaseVerification(options = {}) {
     passed: features.ok,
     canonical: BUN_RELEASE_TEST_CANONICAL["Compile-time feature flags (bun:bundle)"]
   }, ctx);
-  const urlHost = probeUrlHost();
+  const urlHost = probeUrlHost2();
   pushReleaseResult(results, {
     name: "URL.host (hostname + port)",
     expected: "host includes port; hostname excludes port; host setter updates href",
@@ -5066,6 +5166,51 @@ async function runReleaseVerification(options = {}) {
     passed: uHostOk && uSetOk && uDef,
     anchor: "url-host-whatwg"
   });
+  try {
+    const { s3 } = await Promise.resolve(globalThis.Bun);
+    const f = s3.file("test.txt", { contentDisposition: "inline" });
+    pushReleaseResult(results, {
+      name: "S3 contentDisposition option",
+      expected: "accepts contentDisposition without error",
+      actual: typeof f === "object" ? "ok" : "unexpected",
+      passed: typeof f === "object",
+      anchor: "s3-content-disposition"
+    });
+  } catch (e) {
+    pushReleaseResult(results, {
+      name: "S3 contentDisposition option",
+      expected: "accepts contentDisposition without error",
+      actual: `error: ${e.message}`,
+      passed: false,
+      anchor: "s3-content-disposition"
+    });
+  }
+  const cloneRes = new Response("hello");
+  cloneRes.body;
+  let cloneOk = false;
+  try {
+    const cloned = cloneRes.clone();
+    cloneOk = await cloned.text() === "hello";
+  } catch {}
+  pushReleaseResult(results, {
+    name: "Response.clone() after body access (v1.3.5 fix)",
+    expected: "clone succeeds after body was accessed",
+    actual: cloneOk ? "ok" : "failed",
+    passed: cloneOk,
+    anchor: "response-clone-fix"
+  });
+  let domainOk = false;
+  try {
+    const { domainToASCII } = await import("url");
+    domainOk = domainToASCII("b\xFCcher.example") === "xn--bcher-kva.example";
+  } catch {}
+  pushReleaseResult(results, {
+    name: "URL.domainToASCII / domainToUnicode (Node.js compat)",
+    expected: "returns punycode for IDN domains",
+    actual: domainOk ? "b\xFCcher \u2192 xn--bcher-kva" : "failed",
+    passed: domainOk,
+    anchor: "url-domain-to-ascii"
+  });
   const finalPassed = results.filter((r) => r.passed).length;
   const hasher = new CryptoHasher("sha256");
   hasher.update(JSON.stringify(semanticTags));
@@ -5109,7 +5254,7 @@ function printProof(proof) {
   console.log(`  Channel: ${proof.semanticTags.channel} \u2192 ${proof.semanticTags.targetVersion} (runtime ${proof.semanticTags.runtimeVersion})`);
   console.log(`  Provenance: ${proof.semanticTags.provenanceId}
 `);
-  const table = inspect(proof.results.map((r) => [
+  const table = inspect2(proof.results.map((r) => [
     r.name,
     r.canonical?.replace(BUN_V1314_BLOG, "blog") ?? "\u2014",
     r.expected,
