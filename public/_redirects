@@ -13,4 +13,4 @@
 /portal/dashboard        /portal/dashboard/        301
 /portal/skills           /portal/skills/           301
 /health                  /health/                  301
-/registry/prediction/report  /registry/prediction/report.html  200
+/registry/prediction/report  /registry/prediction/report.html  301
