@@ -39,6 +39,9 @@ export function emptyTocOpsSummarySlice(): TocOpsSummarySlice {
     playsPending: 0,
     playsSettled: 0,
     activeExperiments: 0,
+    plane: 'demo-readonly',
+    identityLinked: false,
+    identityPartners: 0,
   };
 }
 
@@ -64,6 +67,9 @@ export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
     playsPending: snap.summary.playsPending,
     playsSettled: snap.summary.playsSettled,
     activeExperiments: snap.summary.activeExperiments,
+    plane: 'demo-readonly',
+    identityLinked: snap.identity?.linked ?? false,
+    identityPartners: snap.identity?.linkedPartners ?? 0,
   };
 }
 

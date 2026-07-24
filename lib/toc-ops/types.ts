@@ -5,6 +5,7 @@
  * @see toc-ops-repo/docs/reference/TOC-Production-Reference.md
  * @see docs/harness/tenants/toc-ops.md
  */
+import type { TocIdentityBridge } from './identity.ts';
 
 export type TocPartnerStatus = 'Ready' | 'Limited' | 'Inactive' | 'Onboarding';
 export type TocAccountStatus = 'New' | 'Funded' | 'Warming' | 'WARMED' | 'Limited' | 'Inactive';
@@ -242,6 +243,9 @@ export type TocOpsSnapshot = {
   schema: 'factorywager.toc-ops.portal-fixture.v2';
   source: 'snapshot' | 'demo';
   readOnly: true;
+  /** Always demo-readonly on Pages — Soft/Hard Gates are not enforced here. */
+  plane: 'demo-readonly';
+  identity?: TocIdentityBridge;
   generatedAt: string;
   ssot: {
     theory: 'toc-ops-repo/docs/reference/TOC-Production-Reference.md';
@@ -302,4 +306,7 @@ export type TocOpsSummarySlice = {
   playsPending: number;
   playsSettled: number;
   activeExperiments: number;
+  plane: 'demo-readonly';
+  identityLinked: boolean;
+  identityPartners: number;
 };

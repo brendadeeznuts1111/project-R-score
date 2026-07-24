@@ -21,6 +21,7 @@ describe('toc-ops demo fixture', () => {
     const snap = buildDemoTocOpsFixture('2026-07-24T00:00:00.000Z');
     expect(snap.schema).toBe('factorywager.toc-ops.portal-fixture.v2');
     expect(snap.readOnly).toBe(true);
+    expect(snap.plane).toBe('demo-readonly');
     expect(snap.partners.map(p => p.partnerCode)).toEqual(['ASH', 'PAT', 'NOV']);
     expect(snap.catalog.flowOrder[0]).toBe('ONB');
     expect(snap.catalog.depositCorridor.target).toBe(5000);

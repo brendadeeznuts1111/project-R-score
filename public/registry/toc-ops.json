@@ -2,7 +2,8 @@
   "schema": "factorywager.toc-ops.portal-fixture.v2",
   "source": "demo",
   "readOnly": true,
-  "generatedAt": "2026-07-24T06:57:42.676Z",
+  "plane": "demo-readonly",
+  "generatedAt": "2026-07-24T07:02:07.187Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -1022,5 +1023,128 @@
       "PLAY": 1,
       "ONB": 1
     }
+  },
+  "identity": {
+    "plane": "linked",
+    "linked": true,
+    "linkedPartners": 3,
+    "linkedAccounts": 6,
+    "linkedRails": 4,
+    "generatedAt": "2026-07-24T07:02:07.188Z",
+    "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
+    "partners": [
+      {
+        "partnerCode": "ASH",
+        "treeNodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "opsName": "Cascade Partner",
+        "lifecycleStatus": "active",
+        "profileKey": "pp-019f92bf-40d6-72e3-aa09-f0a9b8a9",
+        "linked": true,
+        "rails": [
+          {
+            "tocRailId": "rail-ash-venmo-1",
+            "opsRailId": "019f92bf-40d6-72ed-9859-0c12138526b8",
+            "railType": "Venmo",
+            "confirmed": true,
+            "identifier": "ops@factory-wager.com"
+          }
+        ],
+        "accounts": [
+          {
+            "callSign": "ASH-001",
+            "treeNodeId": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+            "sbAccountId": "019f92ee-5ef9-728c-9a11-7bde068cb017",
+            "opsRailId": "019f92bf-40d6-72ed-9859-0c12138526b8",
+            "book": "hardrock",
+            "balance": 0
+          },
+          {
+            "callSign": "ASH-002",
+            "treeNodeId": "019f92ee-5ef9-728d-950c-6c02a59903a2",
+            "sbAccountId": "019f92ee-5ef9-728e-9ce4-aa4454d3c37e",
+            "opsRailId": "019f92bf-40d6-72ed-9859-0c12138526b8",
+            "book": "hardrock",
+            "balance": 5010
+          }
+        ]
+      },
+      {
+        "partnerCode": "PAT",
+        "treeNodeId": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "opsName": "Factory Rail Co",
+        "lifecycleStatus": "materialized",
+        "profileKey": "pp-019f92bf-40d6-72e4-bfd9-0c06e589",
+        "linked": true,
+        "rails": [
+          {
+            "tocRailId": "rail-pat-cashapp-1",
+            "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
+            "railType": "CashApp",
+            "confirmed": true,
+            "identifier": "@factory-rail"
+          },
+          {
+            "tocRailId": "rail-pat-paypal-1",
+            "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
+            "railType": "PayPal",
+            "confirmed": false,
+            "identifier": "@factory-rail"
+          }
+        ],
+        "accounts": [
+          {
+            "callSign": "PAT-001",
+            "treeNodeId": "019f92ee-5ef9-728f-812a-c5b3fa642f33",
+            "sbAccountId": "019f92ee-5ef9-7290-9feb-c4fbba8bc7a5",
+            "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
+            "book": "hardrock",
+            "balance": 5200
+          },
+          {
+            "callSign": "PAT-002",
+            "treeNodeId": "019f92ee-5efa-7556-98a2-d56a1d369df6",
+            "sbAccountId": "019f92ee-5efa-7557-bc92-236af959444c",
+            "opsRailId": "019f92bf-40d6-72ee-8974-a0e14ec6f59d",
+            "book": "hardrock",
+            "balance": 4800
+          }
+        ]
+      },
+      {
+        "partnerCode": "NOV",
+        "treeNodeId": "019f92ee-5ef6-758e-bb1a-fae541f29506",
+        "opsName": "NOV Onboarding",
+        "lifecycleStatus": "kyc_pending",
+        "profileKey": "pp-019f92ee-5ef6-758e-bb1a-fae541f2",
+        "linked": true,
+        "rails": [
+          {
+            "tocRailId": "rail-nov-venmo-1",
+            "opsRailId": "019f92ee-5efa-755a-878a-29ff243ad341",
+            "railType": "Venmo",
+            "confirmed": false,
+            "identifier": "@nov.newpartner"
+          }
+        ],
+        "accounts": [
+          {
+            "callSign": "NOV-001",
+            "treeNodeId": "019f92ee-5efa-7558-bcb4-05414ee32210",
+            "sbAccountId": "019f92ee-5efa-7559-b326-1a5bfbe6dc35",
+            "opsRailId": "019f92ee-5efa-755a-878a-29ff243ad341",
+            "book": "hardrock",
+            "balance": 0
+          },
+          {
+            "callSign": "NOV-002",
+            "treeNodeId": "019f92ee-5efb-7449-899b-de7d263645e7",
+            "sbAccountId": "019f92ee-5efb-744a-ae38-444de279aa6f",
+            "opsRailId": "019f92ee-5efa-755a-878a-29ff243ad341",
+            "book": "hardrock",
+            "balance": 5000
+          }
+        ]
+      }
+    ]
   }
 }

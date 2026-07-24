@@ -1,8 +1,8 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-24T06:58:30.190Z",
+  "generated": "2026-07-24T07:02:07.190Z",
   "liquidity": {
-    "total": 47900
+    "total": 67910
   },
   "experts": [
     {
@@ -28,10 +28,10 @@
     }
   ],
   "tree": {
-    "partners": 2,
-    "agents": 3,
+    "partners": 3,
+    "agents": 9,
     "subAgents": 1,
-    "downstreamLiquidity": 47900
+    "downstreamLiquidity": 67910
   },
   "plays": [
     {
@@ -96,7 +96,7 @@
     {
       "type": "venmo",
       "total_sent": 12800,
-      "monthly_limit": 100000
+      "monthly_limit": 140000
     }
   ],
   "phones": {
@@ -182,11 +182,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "9f82570727a6535472ccdbd73b689aa65f7f0913f76c1dbdcd73069afd58d434",
+    "proofHash": "a36cbacb96ddc528d941bb568d0ad0fadd59e1fcda15898653cb0f4263f2ec45",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-24T06:58:30.190Z"
+    "timestamp": "2026-07-24T07:02:07.190Z"
   },
   "registryClient": {
     "available": true,
@@ -260,7 +260,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-24T06:58:30.159Z",
+    "timestamp": "2026-07-24T07:02:07.145Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -446,8 +446,8 @@
         "ok": true
       }
     ],
-    "proofHash": "8f2839e977764c35c2436901eb58a2b5ada4ea489a53d5a9339c629821239e70",
-    "timestamp": "2026-07-24T06:58:29.072Z",
+    "proofHash": "e0364546a3219fe34b6781e52f6e033205dd56092b15ed8c404bd6dacb0aa4f0",
+    "timestamp": "2026-07-24T07:02:06.675Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -642,16 +642,23 @@
     ]
   },
   "partners": {
-    "bound": 6,
-    "unboundAgents": 0,
+    "bound": 7,
+    "unboundAgents": 6,
     "byLifecycle": {
       "active": 2,
-      "kyc_pending": 1,
+      "kyc_pending": 2,
       "materialized": 1,
       "signup": 1,
       "suspended": 1
     },
     "recent": [
+      {
+        "treeNodeId": "019f92ee-5ef6-758e-bb1a-fae541f29506",
+        "profileKey": "pp-019f92ee-5ef6-758e-bb1a-fae541f2",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "kyc_pending",
+        "name": "NOV Onboarding"
+      },
       {
         "treeNodeId": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
         "profileKey": "pp-019f92bf-40d6-72e3-aa09-f0a9b8a9",
@@ -706,7 +713,7 @@
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-24T06:58:30.188Z",
+    "generatedAt": "2026-07-24T07:02:07.187Z",
     "partners": 3,
     "warmed": 3,
     "warming": 1,
@@ -723,7 +730,10 @@
     "playableDrums": 1,
     "playsPending": 1,
     "playsSettled": 2,
-    "activeExperiments": 1
+    "activeExperiments": 1,
+    "plane": "demo-readonly",
+    "identityLinked": true,
+    "identityPartners": 3
   },
   "loop": {
     "dispatched": 19,
@@ -736,7 +746,7 @@
     "outboxSent": 3,
     "outboxFailed": 1,
     "outboxPending": 8,
-    "oldestPendingAgeSec": 1120,
+    "oldestPendingAgeSec": 1337,
     "manualStepsPerCycle": 9,
     "loopCompletionRate": 0
   }

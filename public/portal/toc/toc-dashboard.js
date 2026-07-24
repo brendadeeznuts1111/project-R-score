@@ -117,18 +117,58 @@ function render(root, { mode, data }) {
   const catalog = data.catalog || {};
   const flow = (catalog.flowOrder || ['ONB', 'FUND', 'LIMIT', 'WARM', 'PLAY', 'WD']).join(' → ');
 
+  const identity = data.identity;
+  const plane = data.plane || 'demo-readonly';
+
   root.innerHTML = `
+    <div class="toc-banner" role="status">
+      <strong>DEMO · read-only</strong>
+      Soft Balance, Hard Gates, and DoD are <em>not</em> enforced on Pages.
+      ${identity?.linked ? `Identity linked: ${identity.linkedPartners} partners · ${identity.linkedAccounts} accounts · ${identity.linkedRails} rails.` : 'Identity not linked — run <code>bun run ops:seed:toc -- --force</code> with ops DB.'}
+      Operate via toc-ops-repo <code>ct</code> or local bun-only APIs.
+    </div>
+
     <div class="toc-head">
       <div>
         <h2 class="toc-title">TOC Ops · Drum / Buffer / Rope</h2>
-        <p class="toc-sub">ONB→PLAY flow, limits, rails, Soft Balance, Gate 12, experiment-routed plays. Theory SSOT in toc-ops-repo.</p>
+        <p class="toc-sub">ONB→PLAY storyboard + ops identity bridge. Theory SSOT in toc-ops-repo — this plane does not redefine Soft/T/I/OE.</p>
         <p class="toc-flow">${flow}</p>
       </div>
       <div class="toc-mode ${mode === 'embed' ? 'snapshot' : mode}">
+        <span class="toc-mode-pill">${plane}</span>
         <span class="toc-mode-pill">${mode === 'embed' ? 'Snapshot' : mode === 'api' ? 'API' : 'Registry'}</span>
         <span class="toc-mode-time">${data.generatedAt || '—'}</span>
       </div>
     </div>
+
+    ${
+      identity
+        ? `<section class="toc-identity">
+      <h3>Identity bridge (TOC ↔ ops)</h3>
+      <ul class="toc-identity-list">
+        ${(identity.partners || [])
+          .map(
+            p => `<li>
+              <code>${p.partnerCode}</code>
+              ${p.linked ? pill('linked', 'ok') : pill('unlinked', 'hot')}
+              ${p.opsName ? `→ <strong>${p.opsName}</strong>` : ''}
+              ${p.treeNodeId ? `<span class="toc-sub mono">${p.treeNodeId.slice(0, 8)}…</span>` : ''}
+              ${p.lifecycleStatus ? pill(p.lifecycleStatus, 'dim') : ''}
+              <div class="toc-sub">${(p.accounts || [])
+                .map(
+                  a =>
+                    `${a.callSign}${a.sbAccountId ? `↔${a.book || 'acct'}` : ' (no sb)'}${
+                      a.balance != null ? ` $${Math.round(a.balance)}` : ''
+                    }`
+                )
+                .join(' · ')}</div>
+            </li>`
+          )
+          .join('')}
+      </ul>
+    </section>`
+        : ''
+    }
 
     <div class="toc-stats">
       <div class="toc-stat ok"><span class="k">WARMED</span><span class="v">${s.warmed ?? 0}</span></div>

@@ -894,6 +894,7 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
     schema: 'factorywager.toc-ops.portal-fixture.v2',
     source: 'demo',
     readOnly: true,
+    plane: 'demo-readonly',
     generatedAt,
     ssot: {
       theory: 'toc-ops-repo/docs/reference/TOC-Production-Reference.md',

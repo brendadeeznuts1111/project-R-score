@@ -727,6 +727,21 @@ body {
   letter-spacing: -0.03em;
 }
 
+.ops-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(210, 153, 34, 0.5);
+  background: rgba(210, 153, 34, 0.12);
+  color: var(--yellow, #d29922);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}
+
 .ops-mono,
 .proof-hash,
 .code-block,
