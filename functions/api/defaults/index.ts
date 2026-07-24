@@ -29,29 +29,38 @@ export async function onRequest(context: {
     });
   }
 
-  const sources = [
-    async () => {
-      if (!context.env?.ASSETS?.fetch) throw new Error('no ASSETS');
-      return context.env.ASSETS.fetch(
-        new Request(new URL('/registry/defaults-proof.json', url.origin).toString())
-      );
+  const proofUrl = new URL('/registry/defaults-proof.json', url.origin).toString();
+  const sources: Array<{ label: string; load: () => Promise<Response> }> = [
+    {
+      label: 'assets',
+      load: async () => {
+        if (!context.env?.ASSETS?.fetch) throw new Error('no ASSETS');
+        return context.env.ASSETS.fetch(new Request(proofUrl));
+      },
     },
-    async () =>
-      fetch(
-        'https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/public/registry/defaults-proof.json'
-      ),
+    {
+      label: 'origin',
+      load: () => fetch(proofUrl),
+    },
+    {
+      label: 'github',
+      load: () =>
+        fetch(
+          'https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/public/registry/defaults-proof.json'
+        ),
+    },
   ];
 
   let lastErr: unknown;
   for (const src of sources) {
     try {
-      const res = await src();
+      const res = await src.load();
       if (!res.ok) continue;
       return new Response(await res.text(), {
         headers: portalCorsHeaders({
           'Content-Type': 'application/json; charset=utf-8',
           'Cache-Control': 'public, max-age=300',
-          'X-Defaults-Source': 'artifact',
+          'X-Defaults-Source': src.label,
         }),
       });
     } catch (e) {

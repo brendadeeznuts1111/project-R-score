@@ -5,7 +5,10 @@
 import { describe, expect, test } from 'bun:test';
 import {
   edgeHealthETagPayload,
+  edgeTaxonomyDegradesHealth,
   renderEdgeHealthPlain,
+  sliceDefaults,
+  sliceProofTaxonomy,
   type EdgeHealthBody,
 } from '../lib/http/portal-health-edge.ts';
 import { portalOptionsResponse } from '../lib/http/portal-cors.ts';
@@ -121,6 +124,63 @@ describe('portal-health-edge', () => {
     expect(res.status).toBe(204);
     expect(res.headers.get('Access-Control-Allow-Methods')).toContain('GET');
     expect(res.headers.get('Access-Control-Allow-Headers')).toContain('If-None-Match');
+    expect(res.headers.get('Access-Control-Allow-Headers')).toContain('Content-Type');
     expect(res.headers.get('Access-Control-Allow-Origin')).toBe('*');
+  });
+
+  test('sliceProofTaxonomy prefers audit-json over stale ops embed', () => {
+    const slice = sliceProofTaxonomy(
+      {
+        available: true,
+        ok: false,
+        contracts: 12,
+        contractsOk: 11,
+        consistencyOk: 19,
+        consistencyTotal: 20,
+      },
+      {
+        ok: true,
+        audits: [{ ok: true }, { ok: true }],
+        consistency: [{ ok: true }, { ok: true }],
+      }
+    );
+    expect(slice.source).toBe('audit-json');
+    expect(slice.ok).toBe(true);
+    expect(slice.contracts).toBe(2);
+    expect(slice.contractsOk).toBe(2);
+    expect(edgeTaxonomyDegradesHealth(slice)).toBe(false);
+  });
+
+  test('stale ops-summary ok:false does not degrade health', () => {
+    const slice = sliceProofTaxonomy(
+      { available: true, ok: false, contracts: 12, contractsOk: 11 },
+      null
+    );
+    expect(slice.source).toBe('ops-summary');
+    expect(slice.ok).toBe(false);
+    expect(edgeTaxonomyDegradesHealth(slice)).toBe(false);
+  });
+
+  test('audit-json ok:false degrades health', () => {
+    const slice = sliceProofTaxonomy(null, {
+      ok: false,
+      audits: [{ ok: true }, { ok: false }],
+      consistency: [{ ok: true }],
+    });
+    expect(slice.source).toBe('audit-json');
+    expect(edgeTaxonomyDegradesHealth(slice)).toBe(true);
+  });
+
+  test('sliceDefaults reads summary + top-level fields', () => {
+    const fromSummary = sliceDefaults({
+      summary: { passed: 12, total: 12, status: 'pass' },
+      bunVersion: '1.4.0',
+      proofHash: 'abc',
+      timestamp: '2026-07-24T00:00:00.000Z',
+    });
+    expect(fromSummary.available).toBe(true);
+    expect(fromSummary.passed).toBe(12);
+    expect(fromSummary.status).toBe('pass');
+    expect(sliceDefaults(null).available).toBe(false);
   });
 });

@@ -1,7 +1,7 @@
 {
   "type": "ProofTaxonomyAuditReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T07:34:45.630Z",
+  "timestamp": "2026-07-24T07:38:46.989Z",
   "ok": true,
   "reportPath": "/registry/proof-taxonomy-audit.json",
   "audits": [
@@ -264,5 +264,5 @@
       "notes": []
     }
   ],
-  "proofHash": "b208260178c5cbbc7ab0c504977291e19f3f4944dd6fb8167fbfc3ab9cd2211c"
+  "proofHash": "0866647e885be26594316d9efa789b8e856226f80cf3030a6684498afb7dad15"
 }

@@ -58,7 +58,8 @@ export type EdgeHealthBody = {
   serve: Record<string, unknown>;
 };
 
-function sliceDefaults(raw: Record<string, unknown> | null): EdgeDefaultsSlice {
+/** @internal exported for unit tests */
+export function sliceDefaults(raw: Record<string, unknown> | null): EdgeDefaultsSlice {
   const empty: EdgeDefaultsSlice = {
     available: false,
     path: '/registry/defaults-proof.json',
@@ -100,7 +101,32 @@ function sliceDefaults(raw: Record<string, unknown> | null): EdgeDefaultsSlice {
   };
 }
 
-function sliceProofTaxonomy(
+function taxonomyFromAuditShape(
+  data: Record<string, unknown>,
+  source: 'audit-json' | 'ops-summary'
+): EdgeProofTaxonomySlice {
+  const audits = Array.isArray(data.audits) ? data.audits : [];
+  const consistency = Array.isArray(data.consistency) ? data.consistency : [];
+  const contractsOk = audits.filter((a: { ok?: boolean }) => a && a.ok === true).length;
+  const consistencyOk = consistency.filter((c: { ok?: boolean }) => c && c.ok === true).length;
+  return {
+    available: true,
+    path: '/registry/proof-taxonomy-audit.json',
+    ok: typeof data.ok === 'boolean' ? data.ok : null,
+    contracts: audits.length || null,
+    contractsOk: audits.length ? contractsOk : null,
+    consistencyOk: consistency.length ? consistencyOk : null,
+    consistencyTotal: consistency.length || null,
+    source,
+  };
+}
+
+/**
+ * Prefer proof-taxonomy-audit.json (SSOT). Fall back to ops-summary embed
+ * (full audits[] when present, else scalar fields).
+ * @internal exported for unit tests
+ */
+export function sliceProofTaxonomy(
   opsTax: Record<string, unknown> | null | undefined,
   audit: Record<string, unknown> | null
 ): EdgeProofTaxonomySlice {
@@ -114,22 +140,9 @@ function sliceProofTaxonomy(
     consistencyTotal: null,
     source: null,
   };
-  // Prefer full audit JSON (SSOT) over a possibly-stale ops-summary embed.
-  if (audit) {
-    const audits = Array.isArray(audit.audits) ? audit.audits : [];
-    const consistency = Array.isArray(audit.consistency) ? audit.consistency : [];
-    const contractsOk = audits.filter((a: { ok?: boolean }) => a && a.ok === true).length;
-    const consistencyOk = consistency.filter((c: { ok?: boolean }) => c && c.ok === true).length;
-    return {
-      available: true,
-      path: '/registry/proof-taxonomy-audit.json',
-      ok: typeof audit.ok === 'boolean' ? audit.ok : null,
-      contracts: audits.length || null,
-      contractsOk: audits.length ? contractsOk : null,
-      consistencyOk: consistency.length ? consistencyOk : null,
-      consistencyTotal: consistency.length || null,
-      source: 'audit-json',
-    };
+  if (audit) return taxonomyFromAuditShape(audit, 'audit-json');
+  if (opsTax && Array.isArray(opsTax.audits) && opsTax.audits.length > 0) {
+    return taxonomyFromAuditShape(opsTax, 'ops-summary');
   }
   if (opsTax && opsTax.available !== false && (opsTax.ok != null || opsTax.contracts != null)) {
     return {
@@ -147,21 +160,39 @@ function sliceProofTaxonomy(
   return empty;
 }
 
+/** Degrade overall health only on SSOT audit failure — not a stale ops embed. */
+export function edgeTaxonomyDegradesHealth(slice: EdgeProofTaxonomySlice): boolean {
+  return slice.source === 'audit-json' && slice.ok === false;
+}
+
+async function readJsonResponse(res: Response): Promise<Record<string, unknown> | null> {
+  if (!res.ok) return null;
+  try {
+    return (await res.json()) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+/** ASSETS first, then origin fetch — parallel ASSETS misses are common under load. */
 async function assetJson(
   env: HealthEnv,
   origin: string,
   path: string
 ): Promise<Record<string, unknown> | null> {
-  try {
-    const url = new URL(path, origin);
-    let res: Response;
-    if (env.ASSETS?.fetch) {
-      res = await env.ASSETS.fetch(new Request(url.toString()));
-    } else {
-      res = await fetch(url.toString());
+  const url = new URL(path, origin);
+  if (env.ASSETS?.fetch) {
+    try {
+      const fromAssets = await readJsonResponse(
+        await env.ASSETS.fetch(new Request(url.toString()))
+      );
+      if (fromAssets) return fromAssets;
+    } catch {
+      /* fall through to origin */
     }
-    if (!res.ok) return null;
-    return (await res.json()) as Record<string, unknown>;
+  }
+  try {
+    return await readJsonResponse(await fetch(url.toString()));
   } catch {
     return null;
   }
@@ -253,7 +284,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     defaults.available &&
     ((defaults.status != null && defaults.status !== 'pass') ||
       (defaults.passed != null && defaults.total != null && defaults.passed < defaults.total));
-  const taxonomyFail = proofTaxonomy.available && proofTaxonomy.ok === false;
+  const taxonomyFail = edgeTaxonomyDegradesHealth(proofTaxonomy);
   const status: 'ok' | 'degraded' = defaultsFail || taxonomyFail ? 'degraded' : 'ok';
 
   return {
@@ -272,8 +303,8 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       staticAggregate: { exists: Boolean(staticSnap) },
       monitoring: { exists: Boolean(monitoring) },
       tocOps: { exists: Boolean(ops?.toc) },
-      defaultsProof: { exists: defaults.available },
-      proofTaxonomyAudit: { exists: proofTaxonomy.available },
+      defaultsProof: { exists: Boolean(defaultsRaw) },
+      proofTaxonomyAudit: { exists: Boolean(taxonomyAudit) },
     },
     registry: {
       packages,
@@ -453,7 +484,7 @@ export function renderEdgeHealthPlain(data: EdgeHealthBody): string {
     '  Defaults: GET /api/defaults  ·  /registry/defaults-proof.json',
     '  Audit:    GET /registry/proof-taxonomy-audit.json',
     '  UI:       GET /portal/health/',
-    '  OPTIONS:  Allow GET, HEAD (If-None-Match, Accept)',
+    '  OPTIONS:  Allow GET, HEAD, OPTIONS (If-None-Match, Accept, Content-Type)',
     ''
   );
 
