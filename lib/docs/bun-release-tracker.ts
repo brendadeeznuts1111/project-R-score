@@ -309,6 +309,8 @@ export const BUN_RELEASE_TEST_CANONICAL: Readonly<Record<string, string>> = {
     BUN_V135_ANCHORS['compile-time-feature-flags-for-dead-code-elimination'],
   'Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)':
     'https://bun.sh/reference/globals/Uint8Array',
+  'R2/S3 binary roundtrip (upload, download, verify)':
+    'https://bun.sh/docs/runtime/s3',
   ...INSTALL_PLATFORM_TEST_CANONICAL,
 };
 

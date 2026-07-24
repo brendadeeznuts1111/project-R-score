@@ -510,6 +510,29 @@ export async function runReleaseVerification(
   });
 
   const passed = results.filter(r => r.passed).length;
+  // 31. R2/S3 binary roundtrip (upload → download → verify)
+  let s3Ok = false;
+  try {
+    const ep = Bun.env.R2_S3_ENDPOINT || 'https://7a470541a704caaf91e71efccc78fd36.r2.cloudflarestorage.com';
+    const { S3Client } = await import('bun');
+    const client = new S3Client({ accessKeyId: Bun.env.R2_ACCESS_KEY_ID, secretAccessKey: Bun.env.R2_SECRET_ACCESS_KEY, bucket: 'factory-wager-registry', endpoint: ep });
+    const key = `verify-binary-${Date.now()}.bin`;
+    const original = new Uint8Array([1, 2, 3, 4, 5]);
+    await client.write(key, original);
+    const dl = await client.file(key).bytes();
+    s3Ok = dl.length === 5 && dl[0] === 1;
+    await client.delete(key);
+  } catch {}
+  pushReleaseResult(results, {
+    name: 'R2/S3 binary roundtrip (upload, download, verify)',
+    expected: 'uploaded bytes match downloaded bytes exactly',
+    actual: s3Ok ? '5/5 bytes match' : 'failed',
+    passed: s3Ok,
+    anchor: 'r2-binary-roundtrip',
+  });
+
+  const finalPassed = results.filter(r => r.passed).length;
+
   const hasher = new CryptoHasher('sha256');
   hasher.update(JSON.stringify(semanticTags));
   for (const r of results) hasher.update(r.name + r.passed + (r.canonical ?? '') + JSON.stringify(r._links ?? {}));
@@ -532,9 +555,9 @@ export async function runReleaseVerification(
     })),
     results,
     summary: {
-      passed,
+      passed: finalPassed,
       total: results.length,
-      status: passed === results.length ? 'pass' : 'fail',
+      status: finalPassed === results.length ? 'pass' : 'fail',
       channel: String(semanticTags.channel),
       version: semanticTags.targetVersion,
     },
