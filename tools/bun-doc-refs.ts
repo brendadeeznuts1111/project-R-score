@@ -186,6 +186,12 @@ export const BUN_TYPES_PINNED =
 export const BUN_TYPES_MAIN = 'https://github.com/oven-sh/bun/tree/main/packages/bun-types';
 
 export const CANONICAL_REFS: Record<string, string> = {
+  // ── FactoryWager SDK (repo packages; not Bun docs) ────────────────────────
+  'registry-client resolve':
+    'https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/src/index.ts',
+  'registry-client download':
+    'https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md',
+
   // ── Terminal width & ANSI (replaces string-width / strip-ansi / wrap-ansi /
   //    slice-ansi) ────────────────────────────────────────────────────────
   'Bun.stringWidth': 'https://bun.com/docs/runtime/utils#bun-stringwidth',

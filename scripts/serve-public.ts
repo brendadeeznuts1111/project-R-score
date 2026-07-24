@@ -453,7 +453,7 @@ async function npmPackageMetadata(req: Request): Promise<Response> {
       readme: rel.readme || undefined,
       readmeFilename: rel.readmeFilename || (rel.readme ? 'README.md' : undefined),
       dist: {
-        tarball: `${url.origin}/registry/storage/${encodeURIComponent(name)}/${v}/artifact.tgz`,
+        tarball: `${url.origin}/registry/storage/${name.split('/').map(encodeURIComponent).join('/')}/${v}/artifact.tgz`,
         // npm SRI: sha256-<base64 of the 32 digest bytes> (hex string mislabeled
         // as SRI breaks install-time integrity verification).
         shasum: rel.storage?.checksum?.slice(0, 40) || '',

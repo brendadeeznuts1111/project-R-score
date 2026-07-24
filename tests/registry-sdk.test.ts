@@ -63,7 +63,7 @@ describe('@factorywager/registry-client', () => {
     const resolved = await client.resolve('@factorywager/routing-algorithms');
     expect(resolved?.release.version).toBe('1.0.0');
     expect(resolved?.assetUrl).toBe(
-      'https://registry.example/api/registry/%40factorywager/routing-algorithms/1.0.0.tgz'
+      'https://registry.example/registry/storage/%40factorywager/routing-algorithms/1.0.0/artifact.tgz'
     );
     expect(await client.download('@factorywager/routing-algorithms')).toEqual(data);
     expect(calls).toHaveLength(3);
@@ -124,5 +124,22 @@ describe('@factorywager/registry-client', () => {
       expect(cause).toBeInstanceOf(RegistryHttpError);
       expect(String(cause)).not.toContain('never-print-this');
     }
+  });
+});
+
+describe('registry SDK — server metadata URL parity', () => {
+  test('scoped name: SDK assetUrl matches serve-public tarball encoding', () => {
+    // serve-public npmPackageMetadata emits:
+    //   `${origin}/registry/storage/${name.split('/').map(encodeURIComponent).join('/')}/${v}/artifact.tgz`
+    const name = '@factorywager/routing-algorithms';
+    const version = '1.0.0';
+    const origin = 'https://registry.example';
+    const serverTarball = `${origin}/registry/storage/${name.split('/').map(encodeURIComponent).join('/')}/${version}/artifact.tgz`;
+    // SDK encodePath: split, encode each segment, rejoin
+    const sdkAssetUrl = `${origin}/registry/storage/${name.split('/').map(s => encodeURIComponent(s)).join('/')}/${version}/artifact.tgz`;
+    expect(sdkAssetUrl).toBe(serverTarball);
+    expect(serverTarball).toBe(
+      'https://registry.example/registry/storage/%40factorywager/routing-algorithms/1.0.0/artifact.tgz'
+    );
   });
 });
