@@ -6,17 +6,17 @@ import { Database } from 'bun:sqlite';
 import {
   evaluateTocEnforcement,
   withTocEnforcement,
-} from '../lib/toc-ops/enforcement.ts';
-import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
-import { tocOpsToSummarySlice } from '../lib/toc-ops/export-snapshot.ts';
+} from '../../lib/toc-ops/enforcement.ts';
+import { buildDemoTocOpsFixture } from '../../lib/toc-ops/fixture.ts';
+import { tocOpsToSummarySlice } from '../../lib/toc-ops/export-snapshot.ts';
 import {
   ensureTocSoftBalanceSchema,
   listTocSoftEntries,
   postTocSoftBalance,
   seedTocSoftFromFixture,
-} from '../lib/operations/toc-soft-balance.ts';
+} from '../../lib/operations/toc-soft-balance.ts';
 
-describe('toc-ops operate-lite enforcement', () => {
+describe('toc-ops · enforcement', () => {
   test('evaluates gates + T/I/OE + Rope focus on demo fixture', () => {
     const snap = withTocEnforcement(buildDemoTocOpsFixture('2026-07-24T00:00:00.000Z'));
     expect(snap.enforcement?.plane).toBe('operate-lite');

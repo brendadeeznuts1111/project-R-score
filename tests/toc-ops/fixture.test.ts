@@ -5,18 +5,18 @@ import { describe, expect, test } from 'bun:test';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { buildDemoTocOpsFixture, TOC_BOTTLENECK_RULE_KEYS } from '../lib/toc-ops/fixture.ts';
+import { buildDemoTocOpsFixture, TOC_BOTTLENECK_RULE_KEYS } from '../../lib/toc-ops/fixture.ts';
 import {
   exportTocOpsSnapshot,
   loadTocOpsSummarySlice,
   tocOpsToSummarySlice,
-} from '../lib/toc-ops/export-snapshot.ts';
-import { seedTocOpsDemo } from '../lib/operations/toc-ops-seed.ts';
-import { validateOpsSummary } from '../lib/registry/contracts.ts';
-import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
-import { openOperationsDb } from '../lib/operations/db.ts';
+} from '../../lib/toc-ops/export-snapshot.ts';
+import { seedTocOpsDemo } from '../../lib/operations/toc-ops-seed.ts';
+import { validateOpsSummary } from '../../lib/registry/contracts.ts';
+import { buildOpsSummary } from '../../lib/operations/ops-summary.ts';
+import { openOperationsDb } from '../../lib/operations/db.ts';
 
-describe('toc-ops demo fixture', () => {
+describe('toc-ops · fixture', () => {
   test('v2 covers ONB→PLAY, limits, plays, experiments', () => {
     const snap = buildDemoTocOpsFixture('2026-07-24T00:00:00.000Z');
     expect(snap.schema).toBe('factorywager.toc-ops.portal-fixture.v2');

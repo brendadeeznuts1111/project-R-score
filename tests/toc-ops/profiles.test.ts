@@ -2,11 +2,11 @@
  * TOC Ops partner + agent profiles — phones, telegram, deals, CLV, liquidity.
  */
 import { describe, expect, test } from 'bun:test';
-import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
-import { tocOpsToSummarySlice, withTocMetrics } from '../lib/toc-ops/export-snapshot.ts';
-import { attachProfiles, demoAgentProfile, demoPartnerProfile } from '../lib/toc-ops/profiles.ts';
+import { buildDemoTocOpsFixture } from '../../lib/toc-ops/fixture.ts';
+import { tocOpsToSummarySlice, withTocMetrics } from '../../lib/toc-ops/export-snapshot.ts';
+import { attachProfiles, demoAgentProfile, demoPartnerProfile } from '../../lib/toc-ops/profiles.ts';
 
-describe('toc-ops profiles', () => {
+describe('toc-ops · profiles', () => {
   test('agent profiles include liquidity pool + CLV + telegram bot', () => {
     const marcus = demoAgentProfile('marcus')!;
     expect(marcus.liquidity.available).toBeGreaterThan(0);

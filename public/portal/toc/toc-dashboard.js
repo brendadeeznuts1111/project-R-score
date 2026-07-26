@@ -382,6 +382,14 @@ function renderAgents(experts) {
                         `<li class="toc-sub">res <code>${esc(r.callSign)}</code> ${esc(r.market)} ${money(r.stake)}</li>`
                     )
                     .join('')}
+                  ${
+                    pr.liquidityUtilSeries?.length
+                      ? `<li class="toc-sub">util ${pr.liquidityUtilSeries
+                          .slice(-3)
+                          .map(u => `${esc(u.day.slice(5))} ${u.utilPct}%`)
+                          .join(' · ')}</li>`
+                      : ''
+                  }
                 </ul>
               </section>
               <section>
@@ -550,6 +558,17 @@ function formatPartnerProfile(pr) {
     }
     <h4 class="toc-subhead">Phones / data</h4>
     <ul>${phones || '<li class="toc-sub">None</li>'}</ul>
+    ${
+      pr.phoneLog?.length
+        ? `<h4 class="toc-subhead">Phone log</h4><ul>${pr.phoneLog
+            .slice(0, 5)
+            .map(
+              e =>
+                `<li class="toc-sub">${esc(e.at.slice(5, 16))} ${pill(e.event, 'dim')} <code>${esc(e.phoneId)}</code> · ${esc(e.summary.slice(0, 56))}</li>`
+            )
+            .join('')}</ul>`
+        : ''
+    }
     <h4 class="toc-subhead">Assets / rails</h4>
     <ul>${assets || '<li class="toc-sub">None</li>'}</ul>
     <h4 class="toc-subhead">Deals</h4>
@@ -661,6 +680,13 @@ function renderPlays(plays) {
         · stake ${money(p.stake)} ${res}
         ${p.variantKey ? pill(`exp:${p.variantKey}`, 'dim') : ''}
         ${p.blockedReason ? `<div class="toc-sub">${esc(p.blockedReason)}</div>` : ''}
+        ${
+          p.instructionAgeMin != null
+            ? `<div class="toc-sub">instruction ${p.instructionAgeMin}m${
+                p.ackDueAt ? ` · due ${esc(p.ackDueAt.slice(0, 16))}` : ''
+              }</div>`
+            : ''
+        }
         ${p.pnl != null ? `<div class="toc-sub">pnl ${money(p.pnl)}</div>` : ''}
         ${place}
       </li>`;
@@ -774,6 +800,14 @@ function renderPartners(partners, assetBySign, limitBySign) {
               </p>
               ${formatPresenceLine(p.presence)}
               ${
+                (p.readinessTrend || []).length
+                  ? `<p class="toc-sub">readiness trend ${[...(p.readinessTrend || [])]
+                      .slice(-3)
+                      .map(r => `${r.day.slice(5)} ${(r.score * 100).toFixed(0)}%`)
+                      .join(' · ')}</p>`
+                  : ''
+              }
+              ${
                 (p.healthPulse || []).length
                   ? `<p class="toc-sub">health ${[...(p.healthPulse || [])]
                       .slice(-3)
@@ -794,6 +828,29 @@ function renderPartners(partners, assetBySign, limitBySign) {
                   ? `<p class="toc-sub">net capital ${money(p.netCapital.net)} (dep ${money(p.netCapital.deposits)} − wd ${money(p.netCapital.withdrawals)} − loss ${money(p.netCapital.losses)} − prime ${money(p.netCapital.priming)})</p>`
                   : ''
               }
+              ${
+                p.exposureAging &&
+                (p.exposureAging.bucket0_24h +
+                  p.exposureAging.bucket24_72h +
+                  p.exposureAging.bucket72hPlus >
+                  0)
+                  ? `<p class="toc-sub">exposure aging 0-24h ${money(p.exposureAging.bucket0_24h)} · 24-72h ${money(p.exposureAging.bucket24_72h)} · 72h+ ${money(p.exposureAging.bucket72hPlus)}</p>`
+                  : ''
+              }
+              ${
+                p.fundCorridor
+                  ? `<p class="toc-sub">FUND corridor ${money(p.fundCorridor.fundedAmount)}/${money(p.fundCorridor.targetAmount)} ${pill(p.fundCorridor.status, p.fundCorridor.status === 'blocked' ? 'hot' : p.fundCorridor.status === 'funded' ? 'ok' : 'dim')}${
+                      p.fundCorridor.blockReason ? ` — ${esc(p.fundCorridor.blockReason)}` : ''
+                    }</p>`
+                  : ''
+              }
+              ${
+                (p.wdPipeline || []).length
+                  ? `<p class="toc-sub">WD queue ${(p.wdPipeline || [])
+                      .map(w => `${w.callSign}:${w.status} ${money(w.amount)}`)
+                      .join(' · ')}</p>`
+                  : ''
+              }
             </div>
           </header>
           <div class="toc-cols">
@@ -812,6 +869,10 @@ function renderPartners(partners, assetBySign, limitBySign) {
                         ? `<div class="toc-sub">${[...(r.confirmHistory || [])]
                             .map(h => `${h.action}@${h.at.slice(5, 10)}`)
                             .join(' · ')}</div>`
+                        : ''
+                    }${
+                      r.utilization
+                        ? `<div class="toc-sub">util daily ${r.utilization.pctDaily}% · monthly ${r.utilization.pctMonthly}%</div>`
                         : ''
                     }</li>`
                 )
@@ -876,7 +937,11 @@ function renderPartners(partners, assetBySign, limitBySign) {
                       : '';
                   const expos =
                     a.pendingExposure != null && a.pendingExposure > 0
-                      ? `<div class="toc-sub">pending exposure ${money(a.pendingExposure)}</div>`
+                      ? `<div class="toc-sub">pending exposure ${money(a.pendingExposure)}${
+                          a.exposureAging
+                            ? ` · aging 0-24h ${money(a.exposureAging.bucket0_24h)} / 72h+ ${money(a.exposureAging.bucket72hPlus)}`
+                            : ''
+                        }</div>`
                       : '';
                   const recycle =
                     (a.recycleCycles || []).length
@@ -893,7 +958,34 @@ function renderPartners(partners, assetBySign, limitBySign) {
                       a.limits?.dailyMax != null
                         ? ` daily ${money(a.limits.dailyMax)} / weekly ${money(a.limits.weeklyMax)}`
                         : ''
-                    }</div>${metrics}${warm}${cap}${g12led}${limHist}${expos}${recycle}
+                    }${
+                      a.constraint
+                        ? ` · focus ${pill(a.constraint.focus, a.constraint.ropeBroken ? 'hot' : 'dim')}`
+                        : ''
+                    }</div>${metrics}${warm}${cap}${g12led}${limHist}${expos}${recycle}${
+                      (a.warmPlaybook || []).length
+                        ? `<div class="toc-sub">warm SOP ${(a.warmPlaybook || [])
+                            .filter(s => s.status === 'done')
+                            .length}/${(a.warmPlaybook || []).length} done${
+                            (a.warmPlaybook || []).some(s => s.status === 'blocked')
+                              ? ' · blocked'
+                              : ''
+                          }</div>`
+                        : ''
+                    }${
+                      a.gateSnapshot
+                        ? `<div class="toc-sub">gates ${a.gateSnapshot.passed}/${a.gateSnapshot.passed + a.gateSnapshot.failed} pass${
+                            a.gateSnapshot.failed ? ` · fail ${a.gateSnapshot.failed}` : ''
+                          }</div>`
+                        : ''
+                    }${
+                      (a.capitalLocationSeries || []).length > 1
+                        ? `<div class="toc-sub">capital drift ${(a.capitalLocationSeries || [])
+                            .slice(-2)
+                            .map(c => `${esc(c.location)}@${c.at.slice(5, 10)}`)
+                            .join(' → ')}</div>`
+                        : ''
+                    }
                     ${formatVenueLine(a.venue)}
                     ${formatPresenceLine(a.presence)}
                   </li>`;
@@ -917,6 +1009,28 @@ function renderPartners(partners, assetBySign, limitBySign) {
                   : '<li class="toc-sub">None</li>'
               }</ul>
               ${
+                (p.taskTimeline || []).length
+                  ? `<h4 class="toc-subhead">Task timeline</h4><ul>${(p.taskTimeline || [])
+                      .slice(-6)
+                      .map(
+                        e =>
+                          `<li class="toc-sub">${esc(e.at.slice(5, 16))} ${pill(e.event, e.event === 'blocked' || e.event === 'sla_breach' ? 'hot' : 'dim')} ${pill(e.taskType, 'dim')} ${esc(e.ballInCourt)} · ${esc(e.summary.slice(0, 52))}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
+                (p.bicHandoffs || []).length
+                  ? `<h4 class="toc-subhead">BIC handoffs</h4><ul>${(p.bicHandoffs || [])
+                      .slice(0, 5)
+                      .map(
+                        h =>
+                          `<li class="toc-sub">${esc(h.at.slice(5, 16))} ${pill(h.taskType, 'dim')} ${esc(h.from)}→${esc(h.to)} · ${esc(h.reason.slice(0, 48))}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
                 (p.complianceFlags || []).length
                   ? `<h4 class="toc-subhead">Compliance</h4><ul>${(p.complianceFlags || [])
                       .filter(f => !f.clearedAt)
@@ -937,6 +1051,64 @@ function renderPartners(partners, assetBySign, limitBySign) {
                           `<li class="toc-sub">${esc(r.at.slice(5, 16))} ${pill(r.kind, 'dim')}${
                             r.amount != null ? ` ${money(r.amount)}` : ''
                           } · ${esc(r.summary)}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
+                (p.onbChecklist || []).length
+                  ? `<h4 class="toc-subhead">ONB checklist</h4><ul>${(p.onbChecklist || [])
+                      .map(
+                        s =>
+                          `<li class="toc-sub">${pill(s.status, s.status === 'done' ? 'ok' : s.status === 'blocked' ? 'hot' : 'dim')} ${esc(s.label)}${
+                            s.blockReason ? ` — ${esc(s.blockReason)}` : ''
+                          }</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
+                (p.settlementCalendar || []).length
+                  ? `<h4 class="toc-subhead">Settlement calendar</h4><ul>${(p.settlementCalendar || [])
+                      .slice(0, 4)
+                      .map(
+                        s =>
+                          `<li class="toc-sub">${esc(s.at.slice(5, 16))} ${pill(s.kind, 'dim')} ${
+                            s.callSign ? `<code>${esc(s.callSign)}</code> ` : ''
+                          }${money(s.amount)} · ${esc(s.note)}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
+                (p.exceptionResolution || []).length
+                  ? `<h4 class="toc-subhead">Exception resolution</h4><ul>${(p.exceptionResolution || [])
+                      .slice(0, 4)
+                      .map(
+                        r =>
+                          `<li class="toc-sub">${pill(r.status, r.status === 'resolved' ? 'ok' : 'hot')} <code>${esc(r.exceptionId)}</code> → ${esc(r.owner)} · ${esc(r.summary.slice(0, 48))}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
+                (p.playSettlementQueue || []).length
+                  ? `<h4 class="toc-subhead">Play settlement</h4><ul>${(p.playSettlementQueue || [])
+                      .slice(0, 3)
+                      .map(
+                        s =>
+                          `<li class="toc-sub"><code>${esc(s.callSign)}</code> ${esc(s.market)} ${money(s.stake)} · due ${esc(s.expectedSettleAt.slice(5, 16))}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
+                (p.profile?.botCommandLog || []).length
+                  ? `<h4 class="toc-subhead">Bot commands</h4><ul>${(p.profile?.botCommandLog || [])
+                      .slice(0, 3)
+                      .map(
+                        c =>
+                          `<li class="toc-sub">${esc(c.at.slice(5, 16))} ${pill(c.outcome, c.outcome === 'ok' ? 'ok' : 'hot')} <code>${esc(c.command)}</code> · ${esc(c.note || c.actor)}</li>`
                       )
                       .join('')}</ul>`
                   : ''
@@ -998,6 +1170,12 @@ function renderPartners(partners, assetBySign, limitBySign) {
                     ? `<li class="toc-sub">pending deploy ${p.softBalance.pendingDeployments.count} · ${money(p.softBalance.pendingDeployments.totalAmount)}</li>`
                     : ''
                 }
+                ${(p.softBalance?.pendingDeploymentItems || [])
+                  .map(
+                    i =>
+                      `<li class="toc-sub">${pill(i.status, i.status === 'blocked' ? 'hot' : 'dim')} <code>${esc(i.callSign)}</code> ${money(i.amount)} · ${esc(i.queuedAt.slice(5, 16))}</li>`
+                  )
+                  .join('')}
               </ul>
               ${(() => {
                 const entries = [...(p.softBalance?.recentEntries || [])]
@@ -1018,6 +1196,17 @@ function renderPartners(partners, assetBySign, limitBySign) {
                         ? pill('A=L+E', 'ok')
                         : pill(`Δ ${p.softBalance.balanceSheet.delta}`, 'hot')
                     }</div>`
+                  : ''
+              }
+              ${
+                p.dealSplitAudit?.rows?.length
+                  ? `<h4 class="toc-subhead">Deal split audit</h4><ul>${p.dealSplitAudit.rows
+                      .slice(0, 4)
+                      .map(
+                        r =>
+                          `<li class="toc-sub">${r.ok ? pill('ok', 'ok') : pill('drift', 'hot')} ${esc(r.at.slice(5, 16))} P/E/H ${r.actual.partner}/${r.actual.expert}/${r.actual.house}</li>`
+                      )
+                      .join('')}</ul>`
                   : ''
               }
             </section>

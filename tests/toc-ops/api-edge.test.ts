@@ -2,9 +2,9 @@
  * Pages TOC Ops API — snapshot envelope + agent headers.
  */
 import { describe, expect, test } from 'bun:test';
-import { onRequest } from '../functions/api/toc/[[path]].ts';
-import { buildDemoTocOpsFixture, withTocMetrics } from '../lib/toc-ops/index.ts';
-import { buildTocOpsBakeProof } from '../lib/toc-ops/bake-proof.ts';
+import { onRequest } from '../../functions/api/toc/[[path]].ts';
+import { buildDemoTocOpsFixture, withTocMetrics } from '../../lib/toc-ops/index.ts';
+import { buildTocOpsBakeProof } from '../../lib/toc-ops/bake-proof.ts';
 
 function assetsFrom(map: Record<string, unknown>) {
   return {
@@ -32,7 +32,7 @@ function assetsFrom(map: Record<string, unknown>) {
   };
 }
 
-describe('Pages TOC API', () => {
+describe('toc-ops · api-edge', () => {
   const snap = withTocMetrics(buildDemoTocOpsFixture('2026-07-24T00:00:00.000Z'));
   const proof = buildTocOpsBakeProof(snap);
 

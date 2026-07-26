@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-26T06:22:58.064Z",
+  "generatedAt": "2026-07-26T19:28:37.103Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -598,6 +598,50 @@
           22,
           22
         ],
+        "liquidityUtilSeries": [
+          {
+            "day": "2026-07-20",
+            "utilPct": 55,
+            "allocated": 40000,
+            "inUse": 22000
+          },
+          {
+            "day": "2026-07-21",
+            "utilPct": 59,
+            "allocated": 40000,
+            "inUse": 23600
+          },
+          {
+            "day": "2026-07-22",
+            "utilPct": 63,
+            "allocated": 40000,
+            "inUse": 25200
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 67,
+            "allocated": 40000,
+            "inUse": 26800
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 71,
+            "allocated": 40000,
+            "inUse": 28400
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 75,
+            "allocated": 40000,
+            "inUse": 30000
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 79,
+            "allocated": 40000,
+            "inUse": 31600
+          }
+        ],
         "roi": {
           "t30d": 1460,
           "plays30d": 7,
@@ -1055,6 +1099,50 @@
           28,
           28
         ],
+        "liquidityUtilSeries": [
+          {
+            "day": "2026-07-20",
+            "utilPct": 42,
+            "allocated": 25000,
+            "inUse": 10500
+          },
+          {
+            "day": "2026-07-21",
+            "utilPct": 45,
+            "allocated": 25000,
+            "inUse": 11250
+          },
+          {
+            "day": "2026-07-22",
+            "utilPct": 48,
+            "allocated": 25000,
+            "inUse": 12000
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 51,
+            "allocated": 25000,
+            "inUse": 12750
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 54,
+            "allocated": 25000,
+            "inUse": 13500
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 57,
+            "allocated": 25000,
+            "inUse": 14250
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 60,
+            "allocated": 25000,
+            "inUse": 15000
+          }
+        ],
         "roi": {
           "t30d": 2256,
           "plays30d": 5,
@@ -1501,6 +1589,50 @@
           11,
           12,
           12
+        ],
+        "liquidityUtilSeries": [
+          {
+            "day": "2026-07-20",
+            "utilPct": 35,
+            "allocated": 18000,
+            "inUse": 6300
+          },
+          {
+            "day": "2026-07-21",
+            "utilPct": 37.5,
+            "allocated": 18000,
+            "inUse": 6750
+          },
+          {
+            "day": "2026-07-22",
+            "utilPct": 40,
+            "allocated": 18000,
+            "inUse": 7200
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 42.5,
+            "allocated": 18000,
+            "inUse": 7650
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 45,
+            "allocated": 18000,
+            "inUse": 8100
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 47.5,
+            "allocated": 18000,
+            "inUse": 8550
+          },
+          {
+            "day": "2026-07-23",
+            "utilPct": 50,
+            "allocated": 18000,
+            "inUse": 9000
+          }
         ],
         "roi": {
           "t30d": 1400,
@@ -2003,7 +2135,14 @@
               "screenshotRef": "proof:ash-venmo-profile",
               "note": "Ops confirmed destination"
             }
-          ]
+          ],
+          "utilization": {
+            "usedDaily": 6100,
+            "usedMonthly": 23200,
+            "pctDaily": 61,
+            "pctMonthly": 58,
+            "asOf": "2026-07-23T18:00:00.000Z"
+          }
         },
         {
           "id": "rail-ash-cashapp-1",
@@ -2029,7 +2168,14 @@
               "screenshotRef": "proof:ash-cashapp-profile",
               "note": "Ops confirmed destination"
             }
-          ]
+          ],
+          "utilization": {
+            "usedDaily": 4880,
+            "usedMonthly": 17400,
+            "pctDaily": 61,
+            "pctMonthly": 58,
+            "asOf": "2026-07-23T18:00:00.000Z"
+          }
         }
       ],
       "accounts": [
@@ -2374,7 +2520,133 @@
               "at": "2026-07-12T09:00:00.000Z",
               "clearedAt": null
             }
-          ]
+          ],
+          "exposureAging": {
+            "bucket0_24h": 0,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "buffer",
+            "ropeBroken": false,
+            "drumStarved": false,
+            "bufferWrongSized": true,
+            "summary": "Limit screenshot stale — buffer wrong-sized"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-12T09:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-20T14:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-21T15:00:00.000Z"
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-22T08:00:00.000Z"
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-23T10:00:00.000Z"
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5000,
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 750,
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-18T23:40:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 1000,
+              "note": "Profit WD after settle"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 1000,
+              "note": "Warm cycle 2 complete — WARMED"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 0,
+              "note": "Drum float after warm"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 4,
+            "failed": 1,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": true,
+                "reason": "WARMED warmup=2"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-VENMO confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": false,
+                "reason": "limits stale"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": true,
+                "reason": "warm 2/2"
+              }
+            ]
+          }
         },
         {
           "callSign": "ASH-002",
@@ -2551,7 +2823,111 @@
             }
           ],
           "recycleCycles": [],
-          "complianceFlags": []
+          "complianceFlags": [],
+          "exposureAging": {
+            "bucket0_24h": 0,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "drum",
+            "ropeBroken": false,
+            "drumStarved": true,
+            "bufferWrongSized": false,
+            "summary": "Warm 1/2 starves PLAY"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-20T14:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "in_progress",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "pending",
+              "requiredForPlay": true
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5010,
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5010,
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5010,
+              "note": "Drum float after warm"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 2,
+            "failed": 3,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": false,
+                "reason": "warmup=1 status=Warming"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-VENMO confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": false,
+                "reason": "limits unknown"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": false,
+                "reason": "warm 1/2"
+              }
+            ]
+          }
         },
         {
           "callSign": "ASH-003",
@@ -2785,7 +3161,125 @@
               "blockReason": "Gate 12 principal outstanding"
             }
           ],
-          "complianceFlags": []
+          "complianceFlags": [],
+          "exposureAging": {
+            "bucket0_24h": 900,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "elevate",
+            "ropeBroken": false,
+            "drumStarved": false,
+            "bufferWrongSized": false,
+            "summary": "Gate 12 principal — WD before PLAY"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-22T10:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-20T14:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-21T15:00:00.000Z"
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "in_progress",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "pending",
+              "requiredForPlay": true
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5000,
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 750,
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-20T15:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 4800,
+              "note": "Recycle deploy — principal still out"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 4800,
+              "note": "Drum float after warm"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 4,
+            "failed": 1,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": false,
+                "reason": "warmup=2 status=Limited"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-VENMO confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": true,
+                "reason": "limits fresh"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": true,
+                "reason": "warm 2/2"
+              }
+            ]
+          }
         },
         {
           "callSign": "ASH-004",
@@ -2952,7 +3446,105 @@
             }
           ],
           "recycleCycles": [],
-          "complianceFlags": []
+          "complianceFlags": [],
+          "exposureAging": {
+            "bucket0_24h": 500,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "elevate",
+            "ropeBroken": false,
+            "drumStarved": false,
+            "bufferWrongSized": false,
+            "summary": "Gate 12 principal — WD before PLAY"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-23T10:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "pending",
+              "requiredForPlay": true
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-22T11:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "Corridor FUND pending sportsbook proof"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 500,
+              "note": "Drum float after warm"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 3,
+            "failed": 2,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": false,
+                "reason": "warmup=0 status=Funded"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-CASHAPP confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": true,
+                "reason": "limits fresh"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": false,
+                "reason": "warm 0/2"
+              }
+            ]
+          }
         }
       ],
       "openTasks": [
@@ -3202,7 +3794,8 @@
               "note": "Loss Soft rollup"
             }
           ]
-        }
+        },
+        "pendingDeploymentItems": []
       },
       "bottlenecks": [
         {
@@ -3499,7 +4092,9 @@
             "ipv6": "2601:58:4000:a1b2::10",
             "asn": 7922,
             "dnsHostname": "ash-001.drum.toc.local"
-          }
+          },
+          "instructionAgeMin": 300,
+          "ackDueAt": "2026-07-23T20:00:00.000Z"
         }
       ],
       "experimentAssignment": {
@@ -4009,6 +4604,55 @@
             "t": 336,
             "oe": 0
           }
+        ],
+        "botCommandLog": [
+          {
+            "at": "2026-07-22T09:00:00.000Z",
+            "command": "/status",
+            "actor": "@TOC_Ash_bot",
+            "outcome": "ok",
+            "note": "ASH readiness 0.72"
+          },
+          {
+            "at": "2026-07-22T14:00:00.000Z",
+            "command": "/limits",
+            "actor": "Partner",
+            "outcome": "ok",
+            "note": "Limits refreshed"
+          },
+          {
+            "at": "2026-07-23T08:00:00.000Z",
+            "command": "/play defer",
+            "actor": "Expert",
+            "outcome": "denied",
+            "note": "Gate 12 principal outstanding on ASH-003"
+          }
+        ],
+        "phoneLog": [
+          {
+            "at": "2026-07-19T08:00:00.000Z",
+            "phoneId": "phone-ash-001",
+            "event": "assign",
+            "summary": "Assigned to ASH-001"
+          },
+          {
+            "at": "2026-07-19T08:00:00.000Z",
+            "phoneId": "phone-ash-002",
+            "event": "assign",
+            "summary": "Assigned to ASH-002"
+          },
+          {
+            "at": "2026-07-21T07:00:00.000Z",
+            "phoneId": "phone-ash-002",
+            "event": "renew",
+            "summary": "Essentials renewal queued"
+          },
+          {
+            "at": "2026-07-23T12:00:00.000Z",
+            "phoneId": "phone-ash-001",
+            "event": "hotspot_on",
+            "summary": "Hotspot enabled for slip capture"
+          }
         ]
       },
       "messageLog": [
@@ -4297,6 +4941,363 @@
         "net": 9075,
         "asOf": "2026-07-23T18:00:00.000Z"
       },
+      "wdPipeline": [
+        {
+          "wdId": "wd-ASH-004-ASH",
+          "callSign": "ASH-004",
+          "amount": 500,
+          "mode": "warmup_capital_return",
+          "status": "blocked",
+          "requestedAt": "2026-07-22T14:00:00.000Z",
+          "slaDueAt": "2026-07-23T18:00:00.000Z",
+          "blockReason": "Gate 12 principal outstanding"
+        },
+        {
+          "wdId": "wd-ASH-003-ASH",
+          "callSign": "ASH-003",
+          "amount": 4800,
+          "mode": "principal_recovery",
+          "status": "blocked",
+          "requestedAt": "2026-07-23T12:00:00.000Z",
+          "slaDueAt": "2026-07-23T16:00:00.000Z",
+          "blockReason": "Gate 12 principal outstanding"
+        }
+      ],
+      "exposureAging": {
+        "bucket0_24h": 1400,
+        "bucket24_72h": 0,
+        "bucket72hPlus": 0
+      },
+      "settlementCalendar": [
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "ASH-002",
+          "amount": 0,
+          "note": "Warm cycle 1 return"
+        },
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "ASH-003",
+          "amount": 0,
+          "note": "Warm cycle 2 return"
+        },
+        {
+          "at": "2026-07-23T16:00:00.000Z",
+          "kind": "wd",
+          "callSign": "ASH-003",
+          "amount": 4800,
+          "note": "Gate 12 principal outstanding"
+        },
+        {
+          "at": "2026-07-23T18:00:00.000Z",
+          "kind": "wd",
+          "callSign": "ASH-004",
+          "amount": 500,
+          "note": "Gate 12 principal outstanding"
+        },
+        {
+          "at": "2026-07-23T20:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "ASH-003",
+          "amount": 900,
+          "note": "Pending play settlement window"
+        },
+        {
+          "at": "2026-07-23T20:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "ASH-004",
+          "amount": 500,
+          "note": "Pending play settlement window"
+        }
+      ],
+      "exceptionResolution": [
+        {
+          "exceptionId": "WARM-EX-01",
+          "family": "WARM",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "ASH-001",
+          "summary": "Dummy bet loses (balance < deposit) → WD remaining; Soft CostOfPriming; cycle still counts"
+        },
+        {
+          "exceptionId": "FUND-EX-01",
+          "family": "FUND",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "ASH-001",
+          "summary": "Typed rail ≠ profile screenshot → Block send; re-upload + re-confirm"
+        },
+        {
+          "exceptionId": "LIMIT-EX-03",
+          "family": "LIMIT",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "ASH-001",
+          "summary": "Active Expert Play in progress → Queue Limit Check; never interrupt PLAY"
+        },
+        {
+          "exceptionId": "LIMIT-EX-02",
+          "family": "LIMIT",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "ASH-001",
+          "summary": "Hard limit below useful expert stakes → Flag Limited; WD capital quickly; reallocate to higher-CE seat"
+        },
+        {
+          "exceptionId": "WARM-EX-02",
+          "family": "WARM",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "ASH-001",
+          "summary": "Parlay/prop/live dummy bet triggers early limit flag → Use major-league ML/totals near-even only; avoid WARM-EX-02 scrutiny"
+        },
+        {
+          "exceptionId": "PLAY-EX-02",
+          "family": "PLAY",
+          "status": "open",
+          "owner": "Partner",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "ASH-001",
+          "summary": "Pending instruction SLA > 60m — Ball-in-Court Partner"
+        },
+        {
+          "exceptionId": "bn-warmup_cycle_aging-ASH-002",
+          "family": "warmup_cycle_aging",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T20:00:00.000Z",
+          "callSign": "ASH-002",
+          "summary": "Ping Partner; complete cycle 2 WD; record AAR if delayed"
+        },
+        {
+          "exceptionId": "bn-stale_limit_on_drum-ASH-001",
+          "family": "stale_limit_on_drum",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T20:00:00.000Z",
+          "callSign": "ASH-001",
+          "summary": "Refresh limit screenshot before next PLAY release"
+        }
+      ],
+      "playSettlementQueue": [
+        {
+          "playId": "play-ash-001-pending-deep",
+          "callSign": "ASH-001",
+          "stake": 700,
+          "status": "instruction",
+          "expectedSettleAt": "2026-07-23T18:00:00.000Z",
+          "market": "MLB"
+        }
+      ],
+      "bicHandoffs": [
+        {
+          "at": "2026-07-21T10:00:00.000Z",
+          "taskId": "LIMIT-ASH-001-20260720-090000-001",
+          "taskType": "LIMIT",
+          "from": "Ops",
+          "to": "Partner",
+          "reason": "Limit screenshot refresh after rotor drift"
+        },
+        {
+          "at": "2026-07-23T20:05:00.000Z",
+          "taskId": "PLAY-ASH-001-20260723-190000-001",
+          "taskType": "PLAY",
+          "from": "Partner",
+          "to": "Ops",
+          "reason": "SLA breach — escalate to ops desk"
+        }
+      ],
+      "fundCorridor": {
+        "targetAmount": 12000,
+        "fundedAmount": 10310,
+        "railId": "rail-ash-venmo-1",
+        "status": "partial",
+        "updatedAt": "2026-07-23T18:00:00.000Z"
+      },
+      "taskTimeline": [
+        {
+          "at": "2026-07-10T08:00:00.000Z",
+          "taskId": "ONB-ASH-000-20260710-080000-001",
+          "taskType": "ONB",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "ONB opened on ASH-001"
+        },
+        {
+          "at": "2026-07-16T12:00:00.000Z",
+          "taskId": "WARM-ASH-002-20260716-120000-001",
+          "taskType": "WARM",
+          "event": "created",
+          "ballInCourt": "Partner",
+          "summary": "WARM opened on ASH-002"
+        },
+        {
+          "at": "2026-07-16T13:00:00.000Z",
+          "taskId": "WARM-ASH-002-20260716-120000-001",
+          "taskType": "WARM",
+          "event": "sla_breach",
+          "ballInCourt": "Partner",
+          "summary": "Complete cycle 2 dummy bet → settlement → WD"
+        },
+        {
+          "at": "2026-07-20T09:00:00.000Z",
+          "taskId": "LIMIT-ASH-001-20260720-090000-001",
+          "taskType": "LIMIT",
+          "event": "created",
+          "ballInCourt": "Partner",
+          "summary": "LIMIT opened on ASH-001"
+        },
+        {
+          "at": "2026-07-20T10:00:00.000Z",
+          "taskId": "LIMIT-ASH-001-20260720-090000-001",
+          "taskType": "LIMIT",
+          "event": "sla_breach",
+          "ballInCourt": "Partner",
+          "summary": "Screenshot limit screen (UTC stamp) — do not interrupt PLAY"
+        },
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "taskId": "WD-ASH-003-20260723-120000-001",
+          "taskType": "WD",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "WD opened on ASH-003"
+        },
+        {
+          "at": "2026-07-23T13:00:00.000Z",
+          "taskId": "WARM-ASH-004-20260723-130000-001",
+          "taskType": "WARM",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "WARM opened on ASH-004"
+        },
+        {
+          "at": "2026-07-23T16:00:00.000Z",
+          "taskId": "WD-ASH-003-20260723-120000-001",
+          "taskType": "WD",
+          "event": "sla_breach",
+          "ballInCourt": "Ops",
+          "summary": "LIMIT-EX-02 — principal_recovery WD; reallocate to PAT-001"
+        },
+        {
+          "at": "2026-07-23T17:00:00.000Z",
+          "taskId": "WARM-ASH-004-20260723-130000-001",
+          "taskType": "WARM",
+          "event": "sla_breach",
+          "ballInCourt": "Ops",
+          "summary": "Kiosk funded — start cycle 1 dummy bet at device kiosk-mia-12"
+        }
+      ],
+      "readinessTrend": [
+        {
+          "day": "2026-07-20",
+          "score": 0.6,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-21",
+          "score": 0.64,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-22",
+          "score": 0.67,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.71,
+          "playableAccounts": 0,
+          "openBic": 1
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.74,
+          "playableAccounts": 0,
+          "openBic": 2
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.77,
+          "playableAccounts": 0,
+          "openBic": 3
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.81,
+          "playableAccounts": 1,
+          "openBic": 4
+        }
+      ],
+      "dealSplitAudit": {
+        "asOf": "2026-07-23T18:00:00.000Z",
+        "packagePct": {
+          "partner": 70,
+          "expert": 20,
+          "house": 10
+        },
+        "rows": [
+          {
+            "taskId": "WD-ASH-001-20260718-000000-001",
+            "at": "2026-07-18T00:15:00.000Z",
+            "expected": {
+              "partner": 168,
+              "expert": 48,
+              "house": 24
+            },
+            "actual": {
+              "partner": 168,
+              "expert": 48,
+              "house": 24
+            },
+            "ok": true,
+            "deltaTotal": 0
+          },
+          {
+            "taskId": "WD-ASH-001-20260718-233000-001",
+            "at": "2026-07-18T23:35:00.000Z",
+            "expected": {
+              "partner": 294,
+              "expert": 84,
+              "house": 42
+            },
+            "actual": {
+              "partner": 294,
+              "expert": 84,
+              "house": 42
+            },
+            "ok": true,
+            "deltaTotal": 0
+          },
+          {
+            "taskId": "WD-ASH-001-20260721-210000-001",
+            "at": "2026-07-21T21:10:00.000Z",
+            "expected": {
+              "partner": 235,
+              "expert": 67,
+              "house": 34
+            },
+            "actual": {
+              "partner": 235,
+              "expert": 67,
+              "house": 34
+            },
+            "ok": true,
+            "deltaTotal": 0
+          }
+        ],
+        "driftCount": 0
+      },
       "healthPulse": [
         {
           "day": "2026-07-20",
@@ -4451,7 +5452,14 @@
               "screenshotRef": "proof:pat-cashapp-profile",
               "note": "Ops confirmed destination"
             }
-          ]
+          ],
+          "utilization": {
+            "usedDaily": 6560,
+            "usedMonthly": 25900,
+            "pctDaily": 82,
+            "pctMonthly": 74,
+            "asOf": "2026-07-23T18:00:00.000Z"
+          }
         },
         {
           "id": "rail-pat-paypal-1",
@@ -4477,7 +5485,14 @@
               "screenshotRef": "proof:pat-paypal-profile",
               "note": "Ops confirmed destination"
             }
-          ]
+          ],
+          "utilization": {
+            "usedDaily": 4100,
+            "usedMonthly": 14800,
+            "pctDaily": 82,
+            "pctMonthly": 74,
+            "asOf": "2026-07-23T18:00:00.000Z"
+          }
         }
       ],
       "accounts": [
@@ -4798,7 +5813,127 @@
               "status": "open"
             }
           ],
-          "complianceFlags": []
+          "complianceFlags": [],
+          "exposureAging": {
+            "bucket0_24h": 0,
+            "bucket24_72h": 900,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "drum",
+            "ropeBroken": false,
+            "drumStarved": false,
+            "bufferWrongSized": false,
+            "summary": "Drum ready — PLAY eligible"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-21T14:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-20T14:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-21T15:00:00.000Z"
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-22T08:00:00.000Z"
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-23T10:00:00.000Z"
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5200,
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5200,
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 780,
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 1040,
+              "note": "Warm cycle 2 complete — WARMED"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5200,
+              "note": "Latest book balance"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 5,
+            "failed": 0,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": true,
+                "reason": "WARMED warmup=2"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-CASHAPP confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": true,
+                "reason": "limits fresh"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": true,
+                "reason": "warm 2/2"
+              }
+            ]
+          }
         },
         {
           "callSign": "PAT-002",
@@ -5085,7 +6220,133 @@
               "blockReason": "Gate 12 principal outstanding"
             }
           ],
-          "complianceFlags": []
+          "complianceFlags": [],
+          "exposureAging": {
+            "bucket0_24h": 1500,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "elevate",
+            "ropeBroken": false,
+            "drumStarved": false,
+            "bufferWrongSized": false,
+            "summary": "Gate 12 principal — WD before PLAY"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-20T11:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-20T14:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-21T15:00:00.000Z"
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-22T08:00:00.000Z"
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-23T10:00:00.000Z"
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5000,
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 750,
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 1000,
+              "note": "Warm cycle 2 complete — WARMED"
+            },
+            {
+              "at": "2026-07-20T15:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5000,
+              "note": "Recycle deploy — principal still out"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 4800,
+              "note": "Latest book balance"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 5,
+            "failed": 0,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": true,
+                "reason": "WARMED warmup=2"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-CASHAPP confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": true,
+                "reason": "limits fresh"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": true,
+                "reason": "warm 2/2"
+              }
+            ]
+          }
         },
         {
           "callSign": "PAT-003",
@@ -5255,7 +6516,104 @@
             }
           ],
           "recycleCycles": [],
-          "complianceFlags": []
+          "complianceFlags": [],
+          "exposureAging": {
+            "bucket0_24h": 900,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "elevate",
+            "ropeBroken": false,
+            "drumStarved": false,
+            "bufferWrongSized": false,
+            "summary": "Gate 12 principal — WD before PLAY"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "pending",
+              "requiredForPlay": true
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-22T11:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "Corridor FUND pending sportsbook proof"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "Latest book balance"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 2,
+            "failed": 3,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": false,
+                "reason": "warmup=0 status=Funded"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-PAYPAL confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": false,
+                "reason": "limits unknown"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": false,
+                "reason": "warm 0/2"
+              }
+            ]
+          }
         },
         {
           "callSign": "PAT-004",
@@ -5549,7 +6907,127 @@
               "status": "open"
             }
           ],
-          "complianceFlags": []
+          "complianceFlags": [],
+          "exposureAging": {
+            "bucket0_24h": 800,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "drum",
+            "ropeBroken": false,
+            "drumStarved": false,
+            "bufferWrongSized": false,
+            "summary": "Drum ready — PLAY eligible"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-22T08:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-20T14:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-21T15:00:00.000Z"
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-22T08:00:00.000Z"
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-23T10:00:00.000Z"
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5000,
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 750,
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 1000,
+              "note": "Warm cycle 2 complete — WARMED"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 2400,
+              "note": "Latest book balance"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 5,
+            "failed": 0,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": true,
+                "reason": "WARMED warmup=2"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-CASHAPP confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": true,
+                "reason": "limits fresh"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": true,
+                "reason": "warm 2/2"
+              }
+            ]
+          }
         },
         {
           "callSign": "PAT-005",
@@ -5722,7 +7200,111 @@
           "pendingExposure": 0,
           "exposureJournal": [],
           "recycleCycles": [],
-          "complianceFlags": []
+          "complianceFlags": [],
+          "exposureAging": {
+            "bucket0_24h": 0,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "drum",
+            "ropeBroken": false,
+            "drumStarved": true,
+            "bufferWrongSized": false,
+            "summary": "Warm 1/2 starves PLAY"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-20T14:00:00.000Z"
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "in_progress",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "pending",
+              "requiredForPlay": true
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5100,
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5100,
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "InSportsbook",
+              "hardBalance": 5100,
+              "note": "Latest book balance"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 2,
+            "failed": 3,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": false,
+                "reason": "warmup=1 status=Warming"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-PAYPAL confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": false,
+                "reason": "limits unknown"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": false,
+                "reason": "warm 1/2"
+              }
+            ]
+          }
         }
       ],
       "openTasks": [
@@ -6055,7 +7637,16 @@
               "note": "CostOfPriming Soft rollup"
             }
           ]
-        }
+        },
+        "pendingDeploymentItems": [
+          {
+            "id": "pdep-pat-1",
+            "callSign": "PAT-001",
+            "amount": 5000,
+            "queuedAt": "2026-07-21T09:00:00.000Z",
+            "status": "gate_check"
+          }
+        ]
       },
       "bottlenecks": [
         {
@@ -7143,6 +8734,73 @@
             "t": 0,
             "oe": 35
           }
+        ],
+        "botCommandLog": [
+          {
+            "at": "2026-07-22T09:00:00.000Z",
+            "command": "/status",
+            "actor": "@TOC_Pat_bot",
+            "outcome": "ok",
+            "note": "PAT readiness 0.88"
+          },
+          {
+            "at": "2026-07-22T14:00:00.000Z",
+            "command": "/limits",
+            "actor": "Partner",
+            "outcome": "ok",
+            "note": "Limits refreshed"
+          },
+          {
+            "at": "2026-07-23T16:00:00.000Z",
+            "command": "/wd queue",
+            "actor": "Partner",
+            "outcome": "ok",
+            "note": "Profit-split WD processing"
+          }
+        ],
+        "phoneLog": [
+          {
+            "at": "2026-07-19T08:00:00.000Z",
+            "phoneId": "phone-pat-001",
+            "event": "assign",
+            "summary": "Assigned to PAT-001"
+          },
+          {
+            "at": "2026-07-19T08:00:00.000Z",
+            "phoneId": "phone-pat-crypto",
+            "event": "assign",
+            "summary": "Assigned to PAT-004"
+          },
+          {
+            "at": "2026-07-19T08:00:00.000Z",
+            "phoneId": "phone-pat-005",
+            "event": "assign",
+            "summary": "Assigned to PAT-005"
+          },
+          {
+            "at": "2026-07-21T07:00:00.000Z",
+            "phoneId": "phone-pat-005",
+            "event": "renew",
+            "summary": "Unlimited Elite renewal queued"
+          },
+          {
+            "at": "2026-07-23T12:00:00.000Z",
+            "phoneId": "phone-pat-001",
+            "event": "hotspot_on",
+            "summary": "Hotspot enabled for slip capture"
+          },
+          {
+            "at": "2026-07-23T12:00:00.000Z",
+            "phoneId": "phone-pat-crypto",
+            "event": "hotspot_on",
+            "summary": "Hotspot enabled for slip capture"
+          },
+          {
+            "at": "2026-07-23T12:00:00.000Z",
+            "phoneId": "phone-pat-005",
+            "event": "hotspot_on",
+            "summary": "Hotspot enabled for slip capture"
+          }
         ]
       },
       "messageLog": [
@@ -7413,6 +9071,438 @@
         "net": 24227,
         "asOf": "2026-07-23T18:00:00.000Z"
       },
+      "wdPipeline": [
+        {
+          "wdId": "wd-PAT-003-PAT",
+          "callSign": "PAT-003",
+          "amount": 5000,
+          "mode": "warmup_capital_return",
+          "status": "blocked",
+          "requestedAt": "2026-07-22T14:00:00.000Z",
+          "slaDueAt": "2026-07-23T18:00:00.000Z",
+          "blockReason": "Gate 12 principal outstanding"
+        },
+        {
+          "wdId": "wd-PAT-002-PAT",
+          "callSign": "PAT-002",
+          "amount": 5000,
+          "mode": "principal_recovery",
+          "status": "blocked",
+          "requestedAt": "2026-07-22T16:00:00.000Z",
+          "slaDueAt": "2026-07-22T20:00:00.000Z",
+          "blockReason": "Gate 12 principal outstanding"
+        },
+        {
+          "wdId": "wd-pat-profit-split",
+          "callSign": "PAT-001",
+          "amount": 420,
+          "mode": "profit_split",
+          "status": "processing",
+          "requestedAt": "2026-07-23T10:00:00.000Z",
+          "slaDueAt": "2026-07-23T12:00:00.000Z"
+        }
+      ],
+      "exposureAging": {
+        "bucket0_24h": 3200,
+        "bucket24_72h": 900,
+        "bucket72hPlus": 0
+      },
+      "settlementCalendar": [
+        {
+          "at": "2026-07-22T20:00:00.000Z",
+          "kind": "wd",
+          "callSign": "PAT-002",
+          "amount": 5000,
+          "note": "Gate 12 principal outstanding"
+        },
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "PAT-005",
+          "amount": 0,
+          "note": "Warm cycle 1 return"
+        },
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "kind": "wd",
+          "callSign": "PAT-001",
+          "amount": 420,
+          "note": "WD processing"
+        },
+        {
+          "at": "2026-07-23T18:00:00.000Z",
+          "kind": "wd",
+          "callSign": "PAT-003",
+          "amount": 5000,
+          "note": "Gate 12 principal outstanding"
+        },
+        {
+          "at": "2026-07-23T20:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "PAT-001",
+          "amount": 900,
+          "note": "Pending play settlement window"
+        },
+        {
+          "at": "2026-07-23T20:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "PAT-002",
+          "amount": 1500,
+          "note": "Pending play settlement window"
+        },
+        {
+          "at": "2026-07-23T20:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "PAT-003",
+          "amount": 900,
+          "note": "Pending play settlement window"
+        },
+        {
+          "at": "2026-07-23T20:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "PAT-004",
+          "amount": 800,
+          "note": "Pending play settlement window"
+        }
+      ],
+      "exceptionResolution": [
+        {
+          "exceptionId": "PLAY-EX-01",
+          "family": "PLAY",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "PAT-001",
+          "summary": "Limit < requested stake → Reduce (if Expert permits) or reject; never replace live instruction"
+        },
+        {
+          "exceptionId": "PLAY-EX-02",
+          "family": "PLAY",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "PAT-001",
+          "summary": "Warm-up count ≠ 2 / not WARMED → Block PLAY; escalate if Expert insists"
+        },
+        {
+          "exceptionId": "WTH-EX-02",
+          "family": "WTH",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "PAT-001",
+          "summary": "Rail payment under review → PendingRailReview; recheck 30 min"
+        },
+        {
+          "exceptionId": "bn-capital_in_book_warming-PAT-002",
+          "family": "capital_in_book_warming",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T20:00:00.000Z",
+          "callSign": "PAT-002",
+          "summary": "Principal recovery WD after settlement; do not profit_split"
+        },
+        {
+          "exceptionId": "bn-open_pending_partner_queue-PAT",
+          "family": "open_pending_partner_queue",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T20:00:00.000Z",
+          "summary": "Partner holds PLAY + WARM balls — ping at 30m / escalate 60m"
+        }
+      ],
+      "playSettlementQueue": [
+        {
+          "playId": "play-pat-001-nba-open-001",
+          "callSign": "PAT-001",
+          "stake": 900,
+          "status": "placed",
+          "expectedSettleAt": "2026-07-23T18:00:00.000Z",
+          "market": "NBA"
+        },
+        {
+          "playId": "play-pat-004-stake-open-001",
+          "callSign": "PAT-004",
+          "stake": 800,
+          "status": "placed",
+          "expectedSettleAt": "2026-07-23T19:00:00.000Z",
+          "market": "Soccer"
+        },
+        {
+          "playId": "play-pat-002-kalshi-deep-002",
+          "callSign": "PAT-002",
+          "stake": 1500,
+          "status": "placed",
+          "expectedSettleAt": "2026-07-23T20:00:00.000Z",
+          "market": "Politics"
+        }
+      ],
+      "bicHandoffs": [
+        {
+          "at": "2026-07-20T18:30:00.000Z",
+          "taskId": "PLAY-PAT-001-20260716-140000-001",
+          "taskType": "PLAY",
+          "from": "Partner",
+          "to": "Expert",
+          "reason": "Stake confirmed on Kalshi rail"
+        },
+        {
+          "at": "2026-07-20T18:45:00.000Z",
+          "taskId": "PLAY-PAT-001-20260716-140000-001",
+          "taskType": "PLAY",
+          "from": "Expert",
+          "to": "Ops",
+          "reason": "Settle window — ops monitors exposure"
+        },
+        {
+          "at": "2026-07-22T15:00:00.000Z",
+          "taskId": "PLAY-PAT-001-20260722-150000-001",
+          "taskType": "PLAY",
+          "from": "Expert",
+          "to": "Partner",
+          "reason": "PLAY instruction delivered — ack required"
+        }
+      ],
+      "fundCorridor": {
+        "targetAmount": 15000,
+        "fundedAmount": 15000,
+        "railId": "rail-pat-cashapp-1",
+        "status": "funded",
+        "updatedAt": "2026-07-23T18:00:00.000Z"
+      },
+      "taskTimeline": [
+        {
+          "at": "2026-07-18T10:00:00.000Z",
+          "taskId": "FUND-PAT-001-20260718-100000-001",
+          "taskType": "FUND",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "FUND opened on PAT-001"
+        },
+        {
+          "at": "2026-07-21T11:00:00.000Z",
+          "taskId": "FUND-PAT-002-20260721-110000-001",
+          "taskType": "FUND",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "FUND opened on PAT-002"
+        },
+        {
+          "at": "2026-07-21T14:00:00.000Z",
+          "taskId": "LIMIT-PAT-001-20260721-140000-001",
+          "taskType": "LIMIT",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "LIMIT opened on PAT-001"
+        },
+        {
+          "at": "2026-07-22T15:00:00.000Z",
+          "taskId": "PLAY-PAT-001-20260722-150000-001",
+          "taskType": "PLAY",
+          "event": "created",
+          "ballInCourt": "Partner",
+          "summary": "PLAY opened on PAT-001"
+        },
+        {
+          "at": "2026-07-22T16:00:00.000Z",
+          "taskId": "PLAY-PAT-001-20260722-150000-001",
+          "taskType": "PLAY",
+          "event": "sla_breach",
+          "ballInCourt": "Partner",
+          "summary": "Place expert instruction; post bet-slip screenshot"
+        },
+        {
+          "at": "2026-07-22T16:00:00.000Z",
+          "taskId": "WD-PAT-002-20260722-160000-001",
+          "taskType": "WD",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "WD opened on PAT-002"
+        },
+        {
+          "at": "2026-07-22T20:00:00.000Z",
+          "taskId": "WD-PAT-002-20260722-160000-001",
+          "taskType": "WD",
+          "event": "sla_breach",
+          "ballInCourt": "Ops",
+          "summary": "Gate 12 principal_recovery only — Soft CapitalReturn 100% House"
+        },
+        {
+          "at": "2026-07-23T09:00:00.000Z",
+          "taskId": "FUND-PAT-003-20260723-090000-001",
+          "taskType": "FUND",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "FUND opened on PAT-003"
+        },
+        {
+          "at": "2026-07-23T11:00:00.000Z",
+          "taskId": "WARM-PAT-005-20260723-110000-001",
+          "taskType": "WARM",
+          "event": "created",
+          "ballInCourt": "Partner",
+          "summary": "WARM opened on PAT-005"
+        },
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "taskId": "WARM-PAT-003-20260723-120000-001",
+          "taskType": "WARM",
+          "event": "created",
+          "ballInCourt": "Partner",
+          "summary": "WARM opened on PAT-003"
+        },
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "taskId": "WARM-PAT-005-20260723-110000-001",
+          "taskType": "WARM",
+          "event": "sla_breach",
+          "ballInCourt": "Partner",
+          "summary": "Complete FanDuel cycle 2 WD after settlement"
+        },
+        {
+          "at": "2026-07-23T13:00:00.000Z",
+          "taskId": "WARM-PAT-003-20260723-120000-001",
+          "taskType": "WARM",
+          "event": "sla_breach",
+          "ballInCourt": "Partner",
+          "summary": "Start cycle 1 dummy bet (ML near-even); post slip + settlement"
+        }
+      ],
+      "readinessTrend": [
+        {
+          "day": "2026-07-20",
+          "score": 0.76,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-21",
+          "score": 0.8,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-22",
+          "score": 0.83,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.87,
+          "playableAccounts": 0,
+          "openBic": 1
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.9,
+          "playableAccounts": 1,
+          "openBic": 2
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.94,
+          "playableAccounts": 2,
+          "openBic": 3
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.97,
+          "playableAccounts": 2,
+          "openBic": 4
+        }
+      ],
+      "dealSplitAudit": {
+        "asOf": "2026-07-23T18:00:00.000Z",
+        "packagePct": {
+          "partner": 70,
+          "expert": 20,
+          "house": 10
+        },
+        "rows": [
+          {
+            "taskId": "WD-PAT-001-20260712-190000-001",
+            "at": "2026-07-12T19:30:00.000Z",
+            "expected": {
+              "partner": 560,
+              "expert": 160,
+              "house": 80
+            },
+            "actual": {
+              "partner": 560,
+              "expert": 160,
+              "house": 80
+            },
+            "ok": true,
+            "deltaTotal": 0
+          },
+          {
+            "taskId": "WD-PAT-001-20260716-190000-001",
+            "at": "2026-07-16T19:00:00.000Z",
+            "expected": {
+              "partner": 504,
+              "expert": 144,
+              "house": 72
+            },
+            "actual": {
+              "partner": 504,
+              "expert": 144,
+              "house": 72
+            },
+            "ok": true,
+            "deltaTotal": 0
+          },
+          {
+            "taskId": "WD-PAT-001-20260720-180000-001",
+            "at": "2026-07-20T18:45:00.000Z",
+            "expected": {
+              "partner": 840,
+              "expert": 240,
+              "house": 120
+            },
+            "actual": {
+              "partner": 840,
+              "expert": 240,
+              "house": 120
+            },
+            "ok": true,
+            "deltaTotal": 0
+          },
+          {
+            "taskId": "WD-PAT-002-20260721-160000-001",
+            "at": "2026-07-21T16:10:00.000Z",
+            "expected": {
+              "partner": 560,
+              "expert": 160,
+              "house": 80
+            },
+            "actual": {
+              "partner": 480,
+              "expert": 200,
+              "house": 120
+            },
+            "ok": false,
+            "deltaTotal": 160
+          },
+          {
+            "taskId": "WD-PAT-004-20260722-083000-001",
+            "at": "2026-07-22T08:30:00.000Z",
+            "expected": {
+              "partner": 420,
+              "expert": 120,
+              "house": 60
+            },
+            "actual": {
+              "partner": 360,
+              "expert": 150,
+              "house": 90
+            },
+            "ok": false,
+            "deltaTotal": 120
+          }
+        ],
+        "driftCount": 2
+      },
       "healthPulse": [
         {
           "day": "2026-07-20",
@@ -7531,7 +9621,14 @@
               "screenshotRef": "proof:nov-venmo-profile",
               "note": "Ops confirmed destination"
             }
-          ]
+          ],
+          "utilization": {
+            "usedDaily": 0,
+            "usedMonthly": 0,
+            "pctDaily": 0,
+            "pctMonthly": 0,
+            "asOf": "2026-07-23T18:00:00.000Z"
+          }
         },
         {
           "id": "rail-nov-cashapp-1",
@@ -7554,7 +9651,14 @@
               "action": "expired",
               "note": "Confirm SLA elapsed"
             }
-          ]
+          ],
+          "utilization": {
+            "usedDaily": 0,
+            "usedMonthly": 0,
+            "pctDaily": 0,
+            "pctMonthly": 0,
+            "asOf": "2026-07-23T18:00:00.000Z"
+          }
         }
       ],
       "accounts": [
@@ -7708,7 +9812,103 @@
               "at": "2026-07-21T10:30:00.000Z",
               "clearedAt": null
             }
-          ]
+          ],
+          "exposureAging": {
+            "bucket0_24h": 0,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "rope",
+            "ropeBroken": true,
+            "drumStarved": false,
+            "bufferWrongSized": false,
+            "summary": "ONB — partner ack blocks Drum"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "blocked",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "pending",
+              "requiredForPlay": true
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-22T11:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "Corridor FUND pending sportsbook proof"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "HouseFloat",
+              "hardBalance": 0,
+              "note": "Latest book balance"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 2,
+            "failed": 3,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": false,
+                "reason": "warmup=0 status=New"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-VENMO confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": false,
+                "reason": "limits unknown"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": false,
+                "reason": "warm 0/2"
+              }
+            ]
+          }
         },
         {
           "callSign": "NOV-002",
@@ -7871,7 +10071,104 @@
               "at": "2026-07-22T11:30:00.000Z",
               "clearedAt": null
             }
-          ]
+          ],
+          "exposureAging": {
+            "bucket0_24h": 900,
+            "bucket24_72h": 0,
+            "bucket72hPlus": 0
+          },
+          "constraint": {
+            "focus": "rope",
+            "ropeBroken": true,
+            "drumStarved": false,
+            "bufferWrongSized": false,
+            "summary": "ONB — partner ack blocks Drum"
+          },
+          "warmPlaybook": [
+            {
+              "stepId": "fund-received",
+              "label": "FUND received on primary rail",
+              "status": "done",
+              "requiredForPlay": true,
+              "completedAt": "2026-07-18T09:00:00.000Z"
+            },
+            {
+              "stepId": "limits-screenshot",
+              "label": "LIMIT screenshot on file",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-1",
+              "label": "Warm play 1 (low stake)",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warm-play-2",
+              "label": "Warm play 2 (tagged)",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "limits-refresh",
+              "label": "Post-warm LIMIT refresh",
+              "status": "pending",
+              "requiredForPlay": true
+            },
+            {
+              "stepId": "warmed-clear",
+              "label": "WARMED clearance",
+              "status": "pending",
+              "requiredForPlay": true
+            }
+          ],
+          "capitalLocationSeries": [
+            {
+              "at": "2026-07-22T11:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "Corridor FUND pending sportsbook proof"
+            },
+            {
+              "at": "2026-07-23T18:00:00.000Z",
+              "location": "WithPartner",
+              "hardBalance": 5000,
+              "note": "Latest book balance"
+            }
+          ],
+          "gateSnapshot": {
+            "evaluatedAt": "2026-07-23T18:00:00.000Z",
+            "passed": 2,
+            "failed": 3,
+            "gates": [
+              {
+                "gateId": "play_warmed",
+                "ok": false,
+                "reason": "warmup=0 status=Funded"
+              },
+              {
+                "gateId": "confirmed_rail",
+                "ok": true,
+                "reason": "CASHOUT-VENMO confirmed"
+              },
+              {
+                "gateId": "limit_fresh_drum",
+                "ok": false,
+                "reason": "limits unknown"
+              },
+              {
+                "gateId": "fund_rail_ready",
+                "ok": true,
+                "reason": "FUND rail ready"
+              },
+              {
+                "gateId": "warm_sequential",
+                "ok": false,
+                "reason": "warm 0/2"
+              }
+            ]
+          }
         }
       ],
       "openTasks": [
@@ -7981,7 +10278,18 @@
               "note": "CostOfPriming Soft rollup"
             }
           ]
-        }
+        },
+        "pendingDeploymentItems": [
+          {
+            "id": "pdep-nov-1",
+            "callSign": "NOV-002",
+            "amount": 5000,
+            "taskId": "FUND-NOV-002-20260722-140000-001",
+            "queuedAt": "2026-07-22T14:00:00.000Z",
+            "status": "blocked",
+            "blockReason": "Rail or ONB gate blocks deploy"
+          }
+        ]
       },
       "bottlenecks": [
         {
@@ -8384,6 +10692,36 @@
             "t": 0,
             "oe": 15
           }
+        ],
+        "botCommandLog": [
+          {
+            "at": "2026-07-22T09:00:00.000Z",
+            "command": "/status",
+            "actor": "@TOC_Onboard_bot",
+            "outcome": "ok",
+            "note": "NOV readiness 0.28"
+          },
+          {
+            "at": "2026-07-22T14:00:00.000Z",
+            "command": "/limits",
+            "actor": "Partner",
+            "outcome": "deferred",
+            "note": "Awaiting screenshot-first"
+          }
+        ],
+        "phoneLog": [
+          {
+            "at": "2026-07-19T08:00:00.000Z",
+            "phoneId": "phone-nov-001",
+            "event": "assign",
+            "summary": "Assigned to NOV-001"
+          },
+          {
+            "at": "2026-07-22T09:00:00.000Z",
+            "phoneId": "phone-nov-001",
+            "event": "sim_swap",
+            "summary": "SIM swap pending carrier KYC"
+          }
         ]
       },
       "messageLog": [
@@ -8559,6 +10897,277 @@
         "priming": 55,
         "net": 4931,
         "asOf": "2026-07-23T18:00:00.000Z"
+      },
+      "wdPipeline": [
+        {
+          "wdId": "wd-NOV-002-NOV",
+          "callSign": "NOV-002",
+          "amount": 5000,
+          "mode": "warmup_capital_return",
+          "status": "blocked",
+          "requestedAt": "2026-07-22T14:00:00.000Z",
+          "slaDueAt": "2026-07-23T18:00:00.000Z",
+          "blockReason": "Gate 12 principal outstanding"
+        }
+      ],
+      "exposureAging": {
+        "bucket0_24h": 900,
+        "bucket24_72h": 0,
+        "bucket72hPlus": 0
+      },
+      "onbChecklist": [
+        {
+          "stepId": "onb-package",
+          "label": "Package agreement signed",
+          "status": "done",
+          "completedAt": "2026-07-20T14:00:00.000Z"
+        },
+        {
+          "stepId": "onb-kyc",
+          "label": "KYC / identity docs",
+          "status": "blocked",
+          "blockReason": "NOV-001 still New — government ID pending"
+        },
+        {
+          "stepId": "onb-rail",
+          "label": "All payout rails screenshot-first",
+          "status": "blocked",
+          "blockReason": "CashApp rail unconfirmed — confirm SLA elapsed"
+        },
+        {
+          "stepId": "onb-telegram",
+          "label": "Telegram bot linked",
+          "status": "done",
+          "completedAt": "2026-07-22T09:30:00.000Z"
+        },
+        {
+          "stepId": "onb-first-account",
+          "label": "First Drum call sign minted",
+          "status": "done",
+          "completedAt": "2026-07-15T08:00:00.000Z"
+        },
+        {
+          "stepId": "onb-fund",
+          "label": "First FUND corridor ($4.5k–$5.5k)",
+          "status": "blocked",
+          "blockReason": "Blocked until limits screenshot + all rails clear"
+        }
+      ],
+      "settlementCalendar": [
+        {
+          "at": "2026-07-23T17:00:00.000Z",
+          "kind": "rail",
+          "amount": 0,
+          "note": "CASHOUT-CASHAPP confirm deadline"
+        },
+        {
+          "at": "2026-07-23T18:00:00.000Z",
+          "kind": "wd",
+          "callSign": "NOV-002",
+          "amount": 5000,
+          "note": "Gate 12 principal outstanding"
+        },
+        {
+          "at": "2026-07-23T20:00:00.000Z",
+          "kind": "exposure",
+          "callSign": "NOV-002",
+          "amount": 900,
+          "note": "Pending play settlement window"
+        }
+      ],
+      "exceptionResolution": [
+        {
+          "exceptionId": "ONB-EX-01",
+          "family": "ONB",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "NOV-001",
+          "summary": "Partner cannot provide rail profile screenshot → Pause ONB; no FUND until screenshot-first Hard Gate clears"
+        },
+        {
+          "exceptionId": "FUND-EX-02",
+          "family": "FUND",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "NOV-001",
+          "summary": "Partner not ready / no confirm in window → Pause; do not send; re-trigger only after re-confirm"
+        },
+        {
+          "exceptionId": "FUND-EX-03",
+          "family": "FUND",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "NOV-001",
+          "summary": "Insufficient House clean capital → Pause; notify Ops Lead; may reduce/delay"
+        },
+        {
+          "exceptionId": "ONB-EX-01",
+          "family": "ONB",
+          "status": "open",
+          "owner": "Partner",
+          "dueAt": "2026-07-23T17:00:00.000Z",
+          "callSign": "NOV-001",
+          "summary": "Rail unconfirmed blocks FUND corridor"
+        },
+        {
+          "exceptionId": "bn-open_pending_partner_queue-NOV",
+          "family": "open_pending_partner_queue",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T20:00:00.000Z",
+          "summary": "ONB + FUND ball with Partner — ping 30m / escalate 60m"
+        },
+        {
+          "exceptionId": "bn-telegram_lane_undelivered_cards-NOV",
+          "family": "telegram_lane_undelivered_cards",
+          "status": "assigned",
+          "owner": "Ops",
+          "dueAt": "2026-07-23T20:00:00.000Z",
+          "summary": "Confirm Telegram DM lane for NOV onboarding pack"
+        }
+      ],
+      "playSettlementQueue": [],
+      "bicHandoffs": [
+        {
+          "at": "2026-07-22T10:20:00.000Z",
+          "taskId": "ONB-NOV-001-20260722-100000-001",
+          "taskType": "ONB",
+          "from": "Ops",
+          "to": "Partner",
+          "reason": "KYC checklist issued"
+        },
+        {
+          "at": "2026-07-23T09:05:00.000Z",
+          "taskId": "FUND-NOV-001-20260723-090000-001",
+          "taskType": "FUND",
+          "from": "System",
+          "to": "Ops",
+          "reason": "Rail unconfirmed — block FUND corridor"
+        }
+      ],
+      "fundCorridor": {
+        "targetAmount": 5000,
+        "fundedAmount": 5000,
+        "railId": "rail-nov-venmo-1",
+        "status": "blocked",
+        "blockReason": "Unconfirmed payout rail blocks FUND corridor",
+        "taskId": "FUND-NOV-002-20260722-140000-001",
+        "updatedAt": "2026-07-23T18:00:00.000Z"
+      },
+      "taskTimeline": [
+        {
+          "at": "2026-07-22T10:00:00.000Z",
+          "taskId": "ONB-NOV-001-20260722-100000-001",
+          "taskType": "ONB",
+          "event": "created",
+          "ballInCourt": "Partner",
+          "summary": "ONB opened on NOV-001"
+        },
+        {
+          "at": "2026-07-22T11:00:00.000Z",
+          "taskId": "ONB-NOV-001-20260722-100000-001",
+          "taskType": "ONB",
+          "event": "sla_breach",
+          "ballInCourt": "Partner",
+          "summary": "Finish KYC checklist + Ready ack (Venmo rail already confirmed)"
+        },
+        {
+          "at": "2026-07-22T11:00:00.000Z",
+          "taskId": "LIMIT-NOV-001-20260722-110000-001",
+          "taskType": "LIMIT",
+          "event": "created",
+          "ballInCourt": "Ops",
+          "summary": "LIMIT opened on NOV-001"
+        },
+        {
+          "at": "2026-07-22T14:00:00.000Z",
+          "taskId": "FUND-NOV-002-20260722-140000-001",
+          "taskType": "FUND",
+          "event": "created",
+          "ballInCourt": "Partner",
+          "summary": "FUND opened on NOV-002"
+        },
+        {
+          "at": "2026-07-22T15:00:00.000Z",
+          "taskId": "FUND-NOV-002-20260722-140000-001",
+          "taskType": "FUND",
+          "event": "sla_breach",
+          "ballInCourt": "Partner",
+          "summary": "Confirm receipt screenshot before Soft location → InSportsbook (FUND-EX-02 if idle)"
+        },
+        {
+          "at": "2026-07-22T15:00:00.000Z",
+          "taskId": "LIMIT-NOV-001-20260722-110000-001",
+          "taskType": "LIMIT",
+          "event": "sla_breach",
+          "ballInCourt": "Ops",
+          "summary": "Blocked until ONB Ready — queue after partner ack"
+        },
+        {
+          "at": "2026-07-23T09:10:00.000Z",
+          "taskId": "FUND-NOV-001-20260723-090000-001",
+          "taskType": "FUND",
+          "event": "blocked",
+          "ballInCourt": "System",
+          "summary": "FUND blocked pending rail confirm"
+        }
+      ],
+      "readinessTrend": [
+        {
+          "day": "2026-07-20",
+          "score": 0.16,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-21",
+          "score": 0.2,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-22",
+          "score": 0.23,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.27,
+          "playableAccounts": 0,
+          "openBic": 0
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.3,
+          "playableAccounts": 0,
+          "openBic": 1
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.34,
+          "playableAccounts": 0,
+          "openBic": 2
+        },
+        {
+          "day": "2026-07-23",
+          "score": 0.37,
+          "playableAccounts": 0,
+          "openBic": 3
+        }
+      ],
+      "dealSplitAudit": {
+        "asOf": "2026-07-23T18:00:00.000Z",
+        "packagePct": {
+          "partner": 70,
+          "expert": 20,
+          "house": 10
+        },
+        "rows": [],
+        "driftCount": 0
       },
       "healthPulse": [
         {
@@ -8788,7 +11397,27 @@
     "recycleCyclesOpen": 4,
     "complianceOpen": 5,
     "auditTrailRows": 36,
-    "slaBreaches7d": 13
+    "slaBreaches7d": 13,
+    "wdQueuedTotal": 0,
+    "wdBlockedTotal": 5,
+    "exposureAging72hPlus": 0,
+    "onbChecklistPending": 3,
+    "settlementSlots7d": 17,
+    "constraintRopeCount": 2,
+    "playSettlementPending": 4,
+    "exceptionResolutionOpen": 19,
+    "botCommands24h": 8,
+    "bicHandoffsTotal": 7,
+    "warmPlaybookPending": 27,
+    "phoneLogEvents": 13,
+    "avgLiquidityUtilPct": 63,
+    "fundCorridorsBlocked": 1,
+    "railUtilHighCount": 2,
+    "accountGatesFailed": 19,
+    "capitalLocationMoves": 4,
+    "pendingDeployItems": 2,
+    "playInstructionsStale": 1,
+    "dealSplitDrift": 2
   },
   "identity": {
     "plane": "linked",
@@ -8796,7 +11425,7 @@
     "linkedPartners": 3,
     "linkedAccounts": 11,
     "linkedRails": 6,
-    "generatedAt": "2026-07-26T06:22:58.068Z",
+    "generatedAt": "2026-07-26T19:28:37.107Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -8968,7 +11597,7 @@
     ]
   },
   "enforcement": {
-    "evaluatedAt": "2026-07-26T06:22:58.070Z",
+    "evaluatedAt": "2026-07-26T19:28:37.109Z",
     "plane": "operate-lite",
     "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
     "warmupRequiredForPlay": 2,
@@ -9908,7 +12537,7 @@
     }
   },
   "returnEfficiency": {
-    "computedAt": "2026-07-26T06:22:58.064Z",
+    "computedAt": "2026-07-26T19:28:37.103Z",
     "byProcess": [
       {
         "process": "WARM",
@@ -9916,9 +12545,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 9.765949814814816,
+        "tauDays": 10.311540543981481,
         "oe": 0,
-        "rP": 0.0055660228683072285
+        "rP": 0.005271520755618495
       },
       {
         "process": "LIMIT",
@@ -9926,9 +12555,9 @@
         "partnerCode": "ASH",
         "deltaT": 279.12008928571424,
         "iPeak": 0,
-        "tauDays": 5.890949814814815,
+        "tauDays": 6.436540543981481,
         "oe": 0,
-        "rP": 47.38116909157348
+        "rP": 43.36492365401269
       },
       {
         "process": "WD",
@@ -9936,9 +12565,9 @@
         "partnerCode": "ASH",
         "deltaT": 4800,
         "iPeak": 4800,
-        "tauDays": 2.7659498148148147,
+        "tauDays": 3.3115405439814816,
         "oe": 0,
-        "rP": 0.36153945911956176
+        "rP": 0.30197425842103537
       },
       {
         "process": "WARM",
@@ -9946,9 +12575,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.724283148148148,
+        "tauDays": 3.2698738773148146,
         "oe": 0,
-        "rP": 0.019952955344215935
+        "rP": 0.016623729856100077
       },
       {
         "process": "PLAY",
@@ -9956,9 +12585,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5200,
-        "tauDays": 3.6409498148148147,
+        "tauDays": 4.186540543981481,
         "oe": 0,
-        "rP": 0.01435527254740129
+        "rP": 0.012484490804278743
       },
       {
         "process": "WD",
@@ -9966,9 +12595,9 @@
         "partnerCode": "PAT",
         "deltaT": 5000,
         "iPeak": 5000,
-        "tauDays": 3.599283148148148,
+        "tauDays": 4.144873877314815,
         "oe": 0,
-        "rP": 0.27783310143701967
+        "rP": 0.241261864558309
       },
       {
         "process": "WARM",
@@ -9976,9 +12605,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.7659498148148147,
+        "tauDays": 3.3115405439814816,
         "oe": 0,
-        "rP": 0.019652381149091576
+        "rP": 0.016414565752121434
       },
       {
         "process": "WARM",
@@ -9986,9 +12615,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.8076164814814817,
+        "tauDays": 3.353207210648148,
         "oe": 35,
-        "rP": 0.019312577879665074
+        "rP": 0.016176829758518085
       },
       {
         "process": "ONB",
@@ -9996,9 +12625,9 @@
         "partnerCode": "NOV",
         "deltaT": 271.7875,
         "iPeak": 0,
-        "tauDays": 3.849283148148148,
+        "tauDays": 4.394873877314815,
         "oe": 40,
-        "rP": 70.60730259106927
+        "rP": 61.84193394101609
       },
       {
         "process": "FUND",
@@ -10006,9 +12635,9 @@
         "partnerCode": "NOV",
         "deltaT": 40.768125000000005,
         "iPeak": 5000,
-        "tauDays": 3.6826164814814817,
+        "tauDays": 4.228207210648148,
         "oe": 0,
-        "rP": 0.0022140847522411225
+        "rP": 0.0019283882255028179
       },
       {
         "process": "LIMIT",
@@ -10016,9 +12645,9 @@
         "partnerCode": "NOV",
         "deltaT": 67.946875,
         "iPeak": 0,
-        "tauDays": 3.8076164814814817,
+        "tauDays": 4.353207210648148,
         "oe": 0,
-        "rP": 17.844989202684346
+        "rP": 15.608463303515343
       }
     ],
     "byAsset": [
@@ -10027,15 +12656,15 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 996,
         "peakCapital": 5000,
-        "capitalDaysInI": 10.515949814814816,
-        "ce": 0.018942654111887076
+        "capitalDaysInI": 11.061540543981481,
+        "ce": 0.01800834153325809
       },
       {
         "callSign": "ASH-002",
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5010,
-        "capitalDaysInI": 7.599283148148148,
+        "capitalDaysInI": 8.144873877314815,
         "ce": 0
       },
       {
@@ -10043,7 +12672,7 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 6.849283148148148,
+        "capitalDaysInI": 7.394873877314815,
         "ce": 0
       },
       {
@@ -10059,23 +12688,23 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 2720,
         "peakCapital": 5200,
-        "capitalDaysInI": 7.828449814814815,
-        "ce": 0.06681743326591111
+        "capitalDaysInI": 8.374040543981481,
+        "ce": 0.062464102046038514
       },
       {
         "callSign": "PAT-002",
         "partnerCode": "PAT",
         "profitSplitTotal": 800,
         "peakCapital": 5000,
-        "capitalDaysInI": 4.793727592592592,
-        "ce": 0.033376948712571124
+        "capitalDaysInI": 5.33931832175926,
+        "ce": 0.029966372176754085
       },
       {
         "callSign": "PAT-003",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 2.877060925925926,
+        "capitalDaysInI": 3.4226516550925927,
         "ce": 0
       },
       {
@@ -10083,15 +12712,15 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 600,
         "peakCapital": 5000,
-        "capitalDaysInI": 5.880533148148148,
-        "ce": 0.020406312995240827
+        "capitalDaysInI": 6.426123877314815,
+        "ce": 0.018673776337181744
       },
       {
         "callSign": "PAT-005",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5100,
-        "capitalDaysInI": 3.8353942592592594,
+        "capitalDaysInI": 4.380984988425926,
         "ce": 0
       },
       {
@@ -10107,7 +12736,7 @@
         "partnerCode": "NOV",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 3.6791442592592594,
+        "capitalDaysInI": 4.224734988425926,
         "ce": 0
       }
     ],
@@ -10125,8 +12754,8 @@
         "partnerCode": "ASH",
         "deltaL": 0.3,
         "cAsset": 10010,
-        "daysToUsableLimit": 7.599283148148148,
-        "le": 0.000003943796985289764
+        "daysToUsableLimit": 8.144873877314815,
+        "le": 0.0000036796186683139196
       },
       {
         "callSign": "ASH-003",
@@ -10165,8 +12794,8 @@
         "partnerCode": "PAT",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 2.877060925925926,
-        "le": 0.000010427307857703807
+        "daysToUsableLimit": 3.4226516550925927,
+        "le": 0.000008765133885408041
       },
       {
         "callSign": "PAT-004",
@@ -10181,7 +12810,7 @@
         "partnerCode": "PAT",
         "deltaL": 0,
         "cAsset": 10100,
-        "daysToUsableLimit": 3.8353942592592594,
+        "daysToUsableLimit": 4.380984988425926,
         "le": 0
       },
       {
@@ -10197,18 +12826,18 @@
         "partnerCode": "NOV",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 3.6791442592592594,
-        "le": 0.000008154070046179718
+        "daysToUsableLimit": 4.224734988425926,
+        "le": 0.000007101037125923384
       }
     ],
-    "avgRP": 12.413989703674964,
+    "avgRP": 11.03885968606142,
     "processTypeAvgRP": {
-      "LIMIT": 32.613079147128914,
-      "ONB": 70.60730259106927,
-      "WD": 0.3196862802782907,
-      "PLAY": 0.01435527254740129,
-      "WARM": 0.016120984310319955,
-      "FUND": 0.0022140847522411225
+      "LIMIT": 29.486693478764018,
+      "ONB": 61.84193394101609,
+      "WD": 0.27161806148967216,
+      "PLAY": 0.012484490804278743,
+      "WARM": 0.013621661530589522,
+      "FUND": 0.0019283882255028179
     }
   },
   "rankedActions": [
@@ -10217,7 +12846,7 @@
       "process": "LIMIT",
       "callSign": "ASH-001",
       "partnerCode": "ASH",
-      "rP": 47.38116909157348,
+      "rP": 43.36492365401269,
       "weightedScore": 0.24,
       "reason": "Stale/missing limit on WARMED seat — LIMIT first (highest R)",
       "ropeSafe": true
@@ -10227,7 +12856,7 @@
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
-      "rP": 0.36153945911956176,
+      "rP": 0.30197425842103537,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -10237,7 +12866,7 @@
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
-      "rP": 0.27783310143701967,
+      "rP": 0.241261864558309,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -10247,7 +12876,7 @@
       "process": "PLAY",
       "callSign": "PAT-001",
       "partnerCode": "PAT",
-      "rP": 0.01435527254740129,
+      "rP": 0.012484490804278743,
       "weightedScore": 0.8800000000000001,
       "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
@@ -10267,7 +12896,7 @@
       "process": "WARM",
       "callSign": "ASH-004",
       "partnerCode": "ASH",
-      "rP": 0.019952955344215935,
+      "rP": 0.016623729856100077,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -10277,7 +12906,7 @@
       "process": "WARM",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
-      "rP": 0.019652381149091576,
+      "rP": 0.016414565752121434,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -10287,7 +12916,7 @@
       "process": "WARM",
       "callSign": "PAT-005",
       "partnerCode": "PAT",
-      "rP": 0.019312577879665074,
+      "rP": 0.016176829758518085,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -10297,7 +12926,7 @@
       "process": "WARM",
       "callSign": "ASH-002",
       "partnerCode": "ASH",
-      "rP": 0.0055660228683072285,
+      "rP": 0.005271520755618495,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -10377,7 +13006,7 @@
       "process": "ONB",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
-      "rP": 70.60730259106927,
+      "rP": 61.84193394101609,
       "reason": "ONB new asset — buffer allows",
       "ropeSafe": true
     },

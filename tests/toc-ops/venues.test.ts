@@ -2,16 +2,16 @@
  * TOC Ops account venue taxonomy — books, exchanges, crypto, PPH, legality.
  */
 import { describe, expect, test } from 'bun:test';
-import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
-import { tocOpsToSummarySlice, withTocMetrics } from '../lib/toc-ops/export-snapshot.ts';
+import { buildDemoTocOpsFixture } from '../../lib/toc-ops/fixture.ts';
+import { tocOpsToSummarySlice, withTocMetrics } from '../../lib/toc-ops/export-snapshot.ts';
 import {
   demoVenueForCallSign,
   summarizeVenues,
   TOC_VENUE_CATALOG,
   TOC_VENUE_KINDS,
-} from '../lib/toc-ops/venues.ts';
+} from '../../lib/toc-ops/venues.ts';
 
-describe('toc-ops venues', () => {
+describe('toc-ops · venues', () => {
   test('catalog covers sportsbook → exchange → crypto → PPH → kiosk', () => {
     expect(TOC_VENUE_KINDS).toContain('sportsbook');
     expect(TOC_VENUE_KINDS).toContain('exchange');

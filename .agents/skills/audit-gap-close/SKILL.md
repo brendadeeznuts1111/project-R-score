@@ -17,7 +17,7 @@ Compose **Discovery → Audit → Tenant gap map → Execute → Re-gate**. Reje
 bun tools/reference-discovery.ts --json > /tmp/ref-discover.json
 bun run reference:discover:check
 bun run audit:verify
-bun test tests/toc-ops-*.test.ts tests/toc-api-edge.test.ts   # when tenant is toc-ops
+bun run test:toc-ops   # when tenant is toc-ops
 ```
 
 ## Agent loop
@@ -40,9 +40,10 @@ bun test tests/toc-ops-*.test.ts tests/toc-api-edge.test.ts   # when tenant is t
    - **Do not** implement dual-write toc-ops-repo → Pages unless explicitly requested
 5. **Re-gate**
    ```bash
-   bun run harness:status          # harness velocity
+   bun run harness:status
    bun run reference:discover:check
    bun run audit:verify
+   bun run test:toc-ops              # toc-ops tenant (59 tests · tests/toc-ops/)
    ```
 
 ## Lane rules

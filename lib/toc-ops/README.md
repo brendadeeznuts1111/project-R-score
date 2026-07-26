@@ -16,7 +16,7 @@ operate-lite Hard Gate bake (`enforcement` slice).
 | [`presence.ts`](presence.ts) | Geo · ZIP · IPv4/IPv6 · DNS · ASN presence + rollup metrics |
 | [`venues.ts`](venues.ts) | Sportsbooks · Kalshi/Polymarket · crypto · PPH · post-up · casino · kiosk · legal-by-state |
 | [`profiles.ts`](profiles.ts) | Partner + agent profiles: phones · telegram · deals · CLV · expert liquidity |
-| [`seed-deepen.ts`](seed-deepen.ts) | Soft/play · desk · MessageLog · capital/Gate12 · A=L+E · exposure/recycle · SLA/compliance/audit · release cards |
+| [`seed-deepen.ts`](seed-deepen.ts) | … · BIC/warm/phone/liquidity · FUND corridor/task timeline/rail util/drum gates |
 | [`enforcement.ts`](enforcement.ts) | Operate-lite Hard Gates · T/I/OE · Rope→Drum→Buffer diagnosis |
 | [`bake-proof.ts`](bake-proof.ts) | `/registry/toc-ops-bake-proof.json` evidence on export |
 | [`return-efficiency.ts`](return-efficiency.ts) | R_P · CE · LE · dynamic buffer · ranked next actions |
@@ -32,8 +32,7 @@ operate-lite Hard Gate bake (`enforcement` slice).
 ```bash
 bun run ops:seed:toc
 bun run ops:snapshot --no-routing
-bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
-  tests/toc-ops-return-efficiency.test.ts tests/toc-ops-presence.test.ts
+bun run test:toc-ops
 ```
 
 ## Presence (geo / network)

@@ -1,8 +1,8 @@
 {
   "type": "CloudflarePagesPreflightReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T07:59:50.523Z",
-  "ok": false,
+  "timestamp": "2026-07-26T19:28:37.077Z",
+  "ok": true,
   "steps": [
     {
       "id": "well-known-mcp-parity",
@@ -16,8 +16,8 @@
     },
     {
       "id": "functions-import-graph",
-      "ok": false,
-      "detail": "exit 1"
+      "ok": true,
+      "detail": "allowlist ok"
     },
     {
       "id": "functions-edge-safety",
@@ -27,7 +27,7 @@
     {
       "id": "proof-taxonomy-audit",
       "ok": true,
-      "detail": "13 contracts · 20 consistency · preflight self-contract deferred"
+      "detail": "13 contracts · 20 consistency"
     }
   ],
   "pagesUrl": "https://project-r-score.pages.dev",

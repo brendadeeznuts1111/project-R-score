@@ -1907,6 +1907,7 @@
     "docs:tenant-docs-integrity": "bun scripts/docs-tenant-docs-integrity.ts",
     "docs:reference-discovery": "bun scripts/docs-reference-discovery.ts",
     "test:tenant-runbooks": "bun test tests/harness-tenant-runbooks.test.ts tests/journey/tenant-heal.test.ts && bun run test:code-quality && bun run test:ci-deploy",
+    "test:toc-ops": "bun test tests/toc-ops/",
     "test:tenant-heal": "bun test tests/journey/tenant-heal.test.ts",
     "test:code-quality": "bun test tests/harness-code-quality.test.ts",
     "test:ci-deploy": "bun test tests/harness-ci-deploy.test.ts",

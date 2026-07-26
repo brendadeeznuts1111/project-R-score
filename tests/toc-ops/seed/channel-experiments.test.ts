@@ -1,28 +1,29 @@
 /**
- * Third-pass seed densification — MessageLog, rotor, experiment outcomes.
+ * Seed narrative — MessageLog, rotor drift, experiment outcomes.
  */
 import { describe, expect, test } from 'bun:test';
-import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
-import { withTocMetrics, tocOpsToSummarySlice } from '../lib/toc-ops/export-snapshot.ts';
+import { buildDemoTocOpsFixture } from '../../../lib/toc-ops/fixture.ts';
+import { tocOpsToSummarySlice, withTocMetrics } from '../../../lib/toc-ops/export-snapshot.ts';
+import { DEMO_GENERATED_AT, DEMO_PARTNER_CODES, partnerByCode } from '../_helpers.ts';
 
-describe('toc-ops channel deepen', () => {
-  test('partners carry MessageLog · rotor · exception timeline', () => {
-    const snap = buildDemoTocOpsFixture('2026-07-24T00:00:00.000Z');
-    for (const code of ['ASH', 'PAT', 'NOV'] as const) {
-      const p = snap.partners.find(x => x.partnerCode === code)!;
+describe('toc-ops · seed · channel & experiments', () => {
+  test('each partner carries MessageLog, rotor series, and exception timeline', () => {
+    const snap = buildDemoTocOpsFixture(DEMO_GENERATED_AT);
+    for (const code of DEMO_PARTNER_CODES) {
+      const p = partnerByCode(snap.partners, code);
       expect(p.messageLog?.length).toBeGreaterThanOrEqual(3);
       expect(p.rotorSeries?.length).toBeGreaterThanOrEqual(1);
       expect(p.exceptionTimeline?.length).toBeGreaterThanOrEqual(1);
     }
-    const ash = snap.partners.find(p => p.partnerCode === 'ASH')!;
+    const ash = partnerByCode(snap.partners, 'ASH');
     expect(ash.messageLog?.some(m => m.slaBreached)).toBe(true);
     expect(ash.rotorSeries?.some(r => r.driftBps > 0)).toBe(true);
-    const nov = snap.partners.find(p => p.partnerCode === 'NOV')!;
+    const nov = partnerByCode(snap.partners, 'NOV');
     expect(nov.softBalance.recentEntries.some(e => e.entryType === 'CostOfPriming')).toBe(true);
   });
 
-  test('experiments expose outcome lift + decision', () => {
-    const snap = buildDemoTocOpsFixture('2026-07-24T00:00:00.000Z');
+  test('experiments record outcome lift and keep/kill decision', () => {
+    const snap = buildDemoTocOpsFixture(DEMO_GENERATED_AT);
     expect(snap.experiments.every(e => e.outcome != null)).toBe(true);
     const completed = snap.experiments.find(e => e.status === 'completed')!;
     expect(completed.outcome?.decision).toMatch(/keep|kill/);

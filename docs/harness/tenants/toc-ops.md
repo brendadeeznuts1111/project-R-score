@@ -68,10 +68,10 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 bun run ops:seed:toc              # write fixture (skip if present)
 bun run ops:seed:toc -- --force   # rebuild
 bun run ops:snapshot --no-routing # bake + embed + ops-summary.toc
-bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
-  tests/toc-ops-return-efficiency.test.ts tests/toc-ops-contract.test.ts tests/toc-api-edge.test.ts \
-  tests/toc-ops-channel-deepen.test.ts tests/toc-ops-capital-deepen.test.ts tests/toc-ops-accounting-deepen.test.ts \
-  tests/toc-ops-exposure-deepen.test.ts
+bun run test:toc-ops
+# or: bun test tests/toc-ops/fixture.test.ts tests/toc-ops/enforcement.test.ts \
+  tests/toc-ops/return-efficiency.test.ts tests/toc-ops/contract.test.ts tests/toc-ops/api-edge.test.ts \
+  tests/toc-ops/seed/
 ```
 
 ## Gap map (discovery)
@@ -99,10 +99,15 @@ bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
 | Geo / ZIP / IPv4 / IPv6 / DNS / ASN presence | **Closed (demo)** — `lib/toc-ops/presence.ts` on partner · account · play placement; rollup on board + ops-summary |
 | Venue kinds (book · Kalshi/Polymarket · crypto · PPH · post-up · casino · kiosk · in-person) + sports + legal-by-state | **Closed (demo)** — `lib/toc-ops/venues.ts` on each account; catalog + rollup on board / ops-summary |
 | Partner + agent profiles (phones/data · assets/rails · telegram/bot · deals · accounting · CLV · expert liquidity · history · limits · wager places) | **Closed (demo)** — `lib/toc-ops/profiles.ts`; board Agents + Profile sections; ops-summary rollups |
-| MessageLog / BIC handoffs · rotor drift · experiment outcomes | **Closed (demo)** — `lib/toc-ops/seed-deepen.ts` pass-3; partner MessageLog + rotor + exception timeline; experiment `outcome` lift/decision; ops-summary channel rollups |
-| Capital moves · warm cycles · Gate 12 ledger · expert ROI · buffer history | **Closed (demo)** — `seed-deepen` pass-4; per-account ledgers + healthPulse; agent `roi` eligibility; `buffer.history`; ops-summary capital/warm/g12 counts |
-| Soft A=L+E sheet · limit refresh · rail confirm · switchback windows · release/defer cards | **Closed (demo)** — `seed-deepen` pass-5; `softBalance.balanceSheet`; `limitHistory` / `confirmHistory`; experiment `switchbackWindows`; agent `releaseCards` |
-| Pending exposure · recycle · SLA board · compliance · Soft audit trail · net capital flow | **Closed (demo)** — `seed-deepen` pass-6; per-account `pendingExposure` / `recycleCycles`; partner `slaBoard` / `auditTrail` / `complianceFlags` / `netCapital` |
+| MessageLog / BIC handoffs · rotor drift · experiment outcomes | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/channel-experiments.test.ts` · MessageLog + rotor + exception timeline; experiment `outcome`; ops-summary channel rollups |
+| Capital moves · warm cycles · Gate 12 ledger · expert ROI · buffer history | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/capital-buffer.test.ts` · ledgers + `healthPulse` · agent `roi` · `buffer.history` |
+| Soft A=L+E sheet · limit refresh · rail confirm · switchback windows · release/defer cards | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/accounting-releases.test.ts` · `balanceSheet` · `limitHistory` / `confirmHistory` · `switchbackWindows` · `releaseCards` |
+| Pending exposure · recycle · SLA board · compliance · Soft audit trail · net capital flow | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/exposure-compliance.test.ts` · `pendingExposure` / `recycleCycles` · `slaBoard` / `auditTrail` / `complianceFlags` / `netCapital` |
+| WD pipeline · exposure aging · ONB checklist · settlement calendar | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/settlement-wd.test.ts` · `wdPipeline` / `exposureAging` / `onbChecklist` / `settlementCalendar` |
+| Constraint focus · exception resolution · play settlement · bot command audit | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/constraint-ops.test.ts` · account `constraint` · `exceptionResolution` / `playSettlementQueue` · `botCommandLog` |
+| BIC handoffs · warm playbook · phone logistics · liquidity utilization | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/ops-handoffs.test.ts` · `bicHandoffs` / account `warmPlaybook` / profile `phoneLog` / agent `liquidityUtilSeries` |
+| FUND corridor · task timeline · rail utilization · drum gate snapshots | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/fund-rails-gates.test.ts` · `fundCorridor` / `taskTimeline` / rail `utilization` / account `gateSnapshot` / `capitalLocationSeries` |
+| Pending deploy queue · readiness trend · instruction SLA · deal split audit | **Closed (demo)** — `seed-deepen.ts` · `tests/toc-ops/seed/soft-desk.test.ts` · `pendingDeploymentItems` / `readinessTrend` / play `instructionAgeMin` / `dealSplitAudit` |
 | Soft `force` wipe under append-only | **Open by design** — insert-missing only; no truncate |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |
 | Full CT Soft mutations / DoD close on Pages | **Open by design** — use toc-ops-repo `ct` |
@@ -118,3 +123,20 @@ Missing/stale `public/registry/toc-ops.json`, or ops card shows “Fixture missi
 3. Open `/portal/toc/` and `/registry/toc-ops.json`
 
 **Owner** `// owner: platform / ops portal` **Fresh-rerun** `bun run ops:seed:toc -- --force`
+
+## Audit evidence (Discovery → Audit → Re-gate)
+
+Compose loop: [`.agents/skills/audit-gap-close/`](../../../.agents/skills/audit-gap-close/) · [`docs/audit/README.md`](../../audit/README.md)
+
+```bash
+bun run reference:discover:check   # plane-mismatch must be 0
+bun run audit:verify               # catalog · evidence · graph parity
+bun run test:toc-ops               # 71 tests · seed + core planes
+```
+
+| Gate | Last run (session) | Result |
+|------|-------------------|--------|
+| `reference:discover:check` | 2026-07-26 | 0 errors · 12 warn (`similar-env`) |
+| `audit:verify` | 2026-07-26 | pass · 4 findings · 5 concepts |
+| `test:toc-ops` | 2026-07-26 | 71 pass · 18 files |
+| Registry bake | 2026-07-26 | pass-11 fields (`pendingDeploymentItems`, `readinessTrend`, `dealSplitAudit`) |

@@ -6,18 +6,18 @@ import {
   validateOpsSummary,
   validateTocOpsBakeProof,
   validateTocOpsSummarySlice,
-} from '../lib/registry/contracts.ts';
+} from '../../lib/registry/contracts.ts';
 import {
   buildDemoTocOpsFixture,
   buildTocOpsBakeProof,
   tocOpsToSummarySlice,
   withTocMetrics,
-} from '../lib/toc-ops/index.ts';
-import { emptyTocOpsSummarySlice } from '../lib/toc-ops/export-snapshot.ts';
-import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
-import { openOperationsDb } from '../lib/operations/db.ts';
+} from '../../lib/toc-ops/index.ts';
+import { emptyTocOpsSummarySlice } from '../../lib/toc-ops/export-snapshot.ts';
+import { buildOpsSummary } from '../../lib/operations/ops-summary.ts';
+import { openOperationsDb } from '../../lib/operations/db.ts';
 
-describe('toc-ops contracts', () => {
+describe('toc-ops · contract', () => {
   test('empty slice validates (unavailable)', () => {
     const v = validateTocOpsSummarySlice(emptyTocOpsSummarySlice());
     expect(v.ok).toBe(true);

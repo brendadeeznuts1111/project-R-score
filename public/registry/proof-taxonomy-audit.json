@@ -1,8 +1,8 @@
 {
   "type": "ProofTaxonomyAuditReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-24T07:59:50.084Z",
-  "ok": false,
+  "timestamp": "2026-07-26T19:28:36.664Z",
+  "ok": true,
   "reportPath": "/registry/proof-taxonomy-audit.json",
   "audits": [
     {
@@ -151,15 +151,12 @@
     },
     {
       "path": "public/registry/cloudflare-pages-preflight.json",
-      "ok": false,
+      "ok": true,
       "rows": 5,
       "missingSubsystem": 0,
       "missingIntroducedIn": 0,
       "missingCanonicalKind": 0,
-      "notes": [
-        "failed steps: functions-import-graph",
-        "report ok is false"
-      ],
+      "notes": [],
       "primarySubsystem": "other",
       "reportPath": "/registry/cloudflare-pages-preflight.json",
       "verifyScript": "tools/cloudflare-pages-preflight.ts --save"
@@ -267,5 +264,5 @@
       "notes": []
     }
   ],
-  "proofHash": "01c1366c637ec2f188ea742c94862e0e34026dfd94edc0ca3b68752b96acb554"
+  "proofHash": "0ebac615475841a521a466a5eb163a8e83557b7899c2e880f12e2ecbb2bb18a2"
 }

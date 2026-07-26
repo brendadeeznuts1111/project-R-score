@@ -2,17 +2,17 @@
  * TOC return efficiency — R_P, CE, LE, buffer, ranked actions.
  */
 import { describe, expect, test } from 'bun:test';
-import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
-import { withTocMetrics } from '../lib/toc-ops/export-snapshot.ts';
+import { buildDemoTocOpsFixture } from '../../lib/toc-ops/fixture.ts';
+import { withTocMetrics } from '../../lib/toc-ops/export-snapshot.ts';
 import {
   computeLimitFreshness,
   getTioeSnapshot,
   rankNextActions,
   resolveReturnCatalog,
-} from '../lib/toc-ops/return-efficiency.ts';
-import { tocOpsToSummarySlice } from '../lib/toc-ops/export-snapshot.ts';
+} from '../../lib/toc-ops/return-efficiency.ts';
+import { tocOpsToSummarySlice } from '../../lib/toc-ops/export-snapshot.ts';
 
-describe('toc-ops return efficiency', () => {
+describe('toc-ops · return-efficiency', () => {
   const generatedAt = '2026-07-24T00:00:00.000Z';
   const now = Date.parse(generatedAt);
 

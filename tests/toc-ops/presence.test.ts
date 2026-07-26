@@ -2,16 +2,16 @@
  * TOC Ops geo / network presence — types, demo seeds, rollup metrics.
  */
 import { describe, expect, test } from 'bun:test';
-import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
+import { buildDemoTocOpsFixture } from '../../lib/toc-ops/fixture.ts';
 import {
   demoHousePresence,
   demoPartnerPresence,
   haversineKm,
   summarizePresence,
-} from '../lib/toc-ops/presence.ts';
-import { tocOpsToSummarySlice, withTocMetrics } from '../lib/toc-ops/export-snapshot.ts';
+} from '../../lib/toc-ops/presence.ts';
+import { tocOpsToSummarySlice, withTocMetrics } from '../../lib/toc-ops/export-snapshot.ts';
 
-describe('toc-ops presence', () => {
+describe('toc-ops · presence', () => {
   test('haversine Tampa→Miami is ~330 km class', () => {
     const house = demoHousePresence();
     const ash = demoPartnerPresence('ASH', house);

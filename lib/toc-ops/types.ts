@@ -432,6 +432,17 @@ export type TocRail = {
   monthlyLimit?: number;
   /** Confirm / reject lifecycle (demo). */
   confirmHistory?: TocRailConfirmEvent[];
+  /** Daily / monthly utilization vs limits (demo). */
+  utilization?: TocRailUtilization;
+};
+
+/** Rail volume vs daily/monthly caps (demo). */
+export type TocRailUtilization = {
+  usedDaily: number;
+  usedMonthly: number;
+  pctDaily: number;
+  pctMonthly: number;
+  asOf: string;
 };
 
 export type TocAccountLimits = {
@@ -480,6 +491,32 @@ export type TocAccount = {
   recycleCycles?: TocRecycleCycle[];
   /** Compliance / risk flags on the Drum. */
   complianceFlags?: TocComplianceFlag[];
+  /** Exposure aging buckets for open stake. */
+  exposureAging?: TocExposureAging;
+  /** Drum constraint focus (Rope · Drum · Buffer · Elevate). */
+  constraint?: TocAccountConstraint;
+  /** WARM SOP checklist (fund → limits → warm 1/2 → refresh). */
+  warmPlaybook?: TocWarmPlaybookStep[];
+  /** Capital location drift (oldest→newest). */
+  capitalLocationSeries?: TocCapitalLocationPoint[];
+  /** Per-drum Hard Gate snapshot (operate-lite mirror). */
+  gateSnapshot?: TocAccountGateSnapshot;
+};
+
+/** Capital location time sample on a Drum. */
+export type TocCapitalLocationPoint = {
+  at: string;
+  location: TocCapitalLocation;
+  hardBalance: number;
+  note?: string;
+};
+
+/** Compact gate eval on a single Drum (demo bake). */
+export type TocAccountGateSnapshot = {
+  evaluatedAt: string;
+  passed: number;
+  failed: number;
+  gates: Array<{ gateId: TocGateId; ok: boolean; reason: string }>;
 };
 
 /** Pending-exposure journal row (placement → settle/expire). */
@@ -544,6 +581,139 @@ export type TocNetCapitalPosition = {
   asOf: string;
 };
 
+/** Pending-exposure aging buckets (demo). */
+export type TocExposureAging = {
+  bucket0_24h: number;
+  bucket24_72h: number;
+  bucket72hPlus: number;
+};
+
+/** WD queue item (Gate 12 · rail · partner ack). */
+export type TocWdPipelineItem = {
+  wdId: string; // brand-ok
+  callSign: string; // brand-ok
+  amount: number;
+  mode: TocWdMode;
+  status: 'queued' | 'gate_check' | 'pending_rail' | 'processing' | 'completed' | 'blocked';
+  requestedAt: string;
+  slaDueAt?: string;
+  blockReason?: string;
+};
+
+/** ONB checklist step (NOV narrative). */
+export type TocOnbChecklistItem = {
+  stepId: string; // brand-ok
+  label: string;
+  status: 'done' | 'pending' | 'blocked';
+  completedAt?: string;
+  blockReason?: string;
+};
+
+/** Upcoming settlement slot for open exposure / WD. */
+export type TocSettlementSlot = {
+  at: string;
+  kind: 'exposure' | 'wd' | 'rail';
+  callSign?: string; // brand-ok
+  amount: number;
+  note: string;
+};
+
+/** Per-Drum constraint focus (operate-lite mirror). */
+export type TocAccountConstraint = {
+  focus: 'rope' | 'drum' | 'buffer' | 'elevate';
+  ropeBroken: boolean;
+  drumStarved: boolean;
+  bufferWrongSized: boolean;
+  summary: string;
+};
+
+/** Exception resolution desk row (owner · due · status). */
+export type TocExceptionResolution = {
+  exceptionId: string; // brand-ok
+  family: string;
+  status: 'open' | 'assigned' | 'resolved';
+  owner: TocBallInCourt;
+  dueAt: string;
+  callSign?: string; // brand-ok
+  summary: string;
+  resolvedAt?: string;
+};
+
+/** Pending play awaiting settlement window. */
+export type TocPlaySettlementSlot = {
+  playId: string; // brand-ok
+  callSign: string; // brand-ok
+  stake: number;
+  status: TocPlayStatus;
+  expectedSettleAt: string;
+  market: string;
+};
+
+/** Package bot command audit row (demo). */
+export type TocBotCommandEntry = {
+  at: string;
+  command: string;
+  actor: string;
+  outcome: 'ok' | 'deferred' | 'denied';
+  note?: string;
+};
+
+/** Ball-in-Court handoff on an open task (demo MessageLog mirror). */
+export type TocBicHandoff = {
+  at: string;
+  taskId: string; // brand-ok
+  taskType: TocTaskType;
+  from: TocBallInCourt;
+  to: TocBallInCourt;
+  reason: string;
+};
+
+/** WARM SOP checklist step on a Drum (mirrors toc-ops-repo warm playbook). */
+export type TocWarmPlaybookStep = {
+  stepId: string; // brand-ok
+  label: string;
+  status: 'pending' | 'in_progress' | 'done' | 'blocked';
+  requiredForPlay: boolean;
+  completedAt?: string;
+};
+
+/** Phone / SIM logistics event (data · assign · renew). */
+export type TocPhoneLogEntry = {
+  at: string;
+  phoneId: string; // brand-ok
+  event: 'sim_swap' | 'data_threshold' | 'hotspot_on' | 'suspend' | 'assign' | 'renew';
+  summary: string;
+};
+
+/** Daily expert liquidity utilization sample (oldest→newest). */
+export type TocLiquidityUtilPoint = {
+  day: string;
+  utilPct: number;
+  allocated: number;
+  inUse: number;
+};
+
+/** FUND corridor progress (target · rail · block reason). */
+export type TocFundCorridor = {
+  targetAmount: number;
+  fundedAmount: number;
+  railId: string; // brand-ok
+  status: 'open' | 'partial' | 'funded' | 'blocked';
+  blockReason?: string;
+  taskId?: string; // brand-ok
+  updatedAt: string;
+};
+
+/** Open-task lifecycle events (created → ack → SLA). */
+export type TocTaskTimelineEntry = {
+  at: string;
+  taskId: string; // brand-ok
+  taskType: TocTaskType;
+  event: 'created' | 'assigned' | 'ack' | 'blocked' | 'completed' | 'sla_breach';
+  ballInCourt: TocBallInCourt;
+  summary: string;
+};
+
 export type TocOpenTask = {
   taskId: string; // brand-ok — fixture task id
   taskType: TocTaskType;
@@ -573,8 +743,21 @@ export type TocSoftBalance = {
   byStakeholder: { Partner: number; Expert: number; House: number };
   recentEntries: TocSoftEntry[];
   pendingDeployments: { count: number; totalAmount: number };
+  /** Itemized Soft I deployment queue (demo). */
+  pendingDeploymentItems?: TocPendingDeploymentItem[];
   /** Stock identity A = L + E (demo balance-sheet view). */
   balanceSheet?: TocSoftBalanceSheet;
+};
+
+/** Queued capital deployment awaiting gate / rail (Soft I). */
+export type TocPendingDeploymentItem = {
+  id: string; // brand-ok
+  callSign: string; // brand-ok
+  amount: number;
+  taskId?: string; // brand-ok
+  queuedAt: string;
+  status: 'queued' | 'gate_check' | 'blocked';
+  blockReason?: string;
 };
 
 /** Soft balance-sheet stock (mirrors toc-ops-repo `balance-sheet`). */
@@ -662,6 +845,10 @@ export type TocPlay = {
   variantKey?: string;
   placedAt: string;
   settledAt?: string;
+  /** Minutes since instruction when status is instruction (demo SLA). */
+  instructionAgeMin?: number;
+  /** Partner ack due-at for open instructions. */
+  ackDueAt?: string;
   /** Egress / place context when the slip was posted. */
   placement?: TocPlacementContext;
 };
@@ -937,6 +1124,10 @@ export type TocPartnerProfile = {
   }>;
   /** Daily Soft T series (oldest→newest, demo). */
   softDailyT?: Array<{ day: string; t: number; oe: number }>;
+  /** Package bot command audit (demo). */
+  botCommandLog?: TocBotCommandEntry[];
+  /** Phone / SIM logistics (data · assign · renew). */
+  phoneLog?: TocPhoneLogEntry[];
 };
 
 /** Rich expert / agent profile + liquidity. */
@@ -981,6 +1172,8 @@ export type TocAgentProfile = {
   }>;
   /** Daily CLV samples (bps) oldest→newest. */
   clvDailyBps?: number[];
+  /** Daily liquidity utilization (allocated vs in-use). */
+  liquidityUtilSeries?: TocLiquidityUtilPoint[];
   /** Expert ROI + seat eligibility (demo). */
   roi?: {
     t30d: number;
@@ -1092,6 +1285,54 @@ export type TocPartner = {
   complianceFlags?: TocComplianceFlag[];
   /** Soft flow net capital position. */
   netCapital?: TocNetCapitalPosition;
+  /** WD queue (Gate 12 · rail · partner ack). */
+  wdPipeline?: TocWdPipelineItem[];
+  /** Partner-level exposure aging rollup. */
+  exposureAging?: TocExposureAging;
+  /** ONB checklist (onboarding partners). */
+  onbChecklist?: TocOnbChecklistItem[];
+  /** Upcoming settlement / exposure release slots. */
+  settlementCalendar?: TocSettlementSlot[];
+  /** Exception resolution desk (owner · due · status). */
+  exceptionResolution?: TocExceptionResolution[];
+  /** Pending plays awaiting settlement window. */
+  playSettlementQueue?: TocPlaySettlementSlot[];
+  /** Ball-in-Court handoff timeline (open tasks). */
+  bicHandoffs?: TocBicHandoff[];
+  /** FUND corridor target vs funded (ONB/FUND partners). */
+  fundCorridor?: TocFundCorridor;
+  /** Open-task lifecycle timeline. */
+  taskTimeline?: TocTaskTimelineEntry[];
+  /** Readiness score trend (oldest→newest). */
+  readinessTrend?: TocReadinessTrendPoint[];
+  /** 70/20/10 split audit on recent ProfitSplit rows. */
+  dealSplitAudit?: TocDealSplitAudit;
+};
+
+/** Daily partner readiness samples. */
+export type TocReadinessTrendPoint = {
+  day: string;
+  score: number;
+  playableAccounts: number;
+  openBic: number;
+};
+
+/** Package split verification against recent Soft ProfitSplit. */
+export type TocDealSplitAudit = {
+  asOf: string;
+  packagePct: { partner: number; expert: number; house: number };
+  rows: TocDealSplitAuditRow[];
+  driftCount: number;
+};
+
+export type TocDealSplitAuditRow = {
+  playId?: string; // brand-ok
+  taskId?: string; // brand-ok
+  at: string;
+  expected: { partner: number; expert: number; house: number };
+  actual: { partner: number; expert: number; house: number };
+  ok: boolean;
+  deltaTotal: number;
 };
 
 export type TocOpsLoopCrosslink = {
@@ -1200,6 +1441,26 @@ export type TocOpsSnapshot = {
     complianceOpen?: number;
     auditTrailRows?: number;
     slaBreaches7d?: number;
+    wdQueuedTotal?: number;
+    wdBlockedTotal?: number;
+    exposureAging72hPlus?: number;
+    onbChecklistPending?: number;
+    settlementSlots7d?: number;
+    constraintRopeCount?: number;
+    playSettlementPending?: number;
+    exceptionResolutionOpen?: number;
+    botCommands24h?: number;
+    bicHandoffsTotal?: number;
+    warmPlaybookPending?: number;
+    phoneLogEvents?: number;
+    avgLiquidityUtilPct?: number | null;
+    fundCorridorsBlocked?: number;
+    railUtilHighCount?: number;
+    accountGatesFailed?: number;
+    capitalLocationMoves?: number;
+    pendingDeployItems?: number;
+    playInstructionsStale?: number;
+    dealSplitDrift?: number;
   };
 };
 
@@ -1274,4 +1535,24 @@ export type TocOpsSummarySlice = {
   complianceOpen?: number;
   auditTrailRows?: number;
   slaBreaches7d?: number;
+  wdQueuedTotal?: number;
+  wdBlockedTotal?: number;
+  exposureAging72hPlus?: number;
+  onbChecklistPending?: number;
+  settlementSlots7d?: number;
+  constraintRopeCount?: number;
+  playSettlementPending?: number;
+  exceptionResolutionOpen?: number;
+  botCommands24h?: number;
+  bicHandoffsTotal?: number;
+  warmPlaybookPending?: number;
+  phoneLogEvents?: number;
+  avgLiquidityUtilPct?: number | null;
+  fundCorridorsBlocked?: number;
+  railUtilHighCount?: number;
+  accountGatesFailed?: number;
+  capitalLocationMoves?: number;
+  pendingDeployItems?: number;
+  playInstructionsStale?: number;
+  dealSplitDrift?: number;
 };
