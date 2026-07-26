@@ -51,6 +51,21 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   { label: 'static aggregate', href: '/registry/static.json' },
   { label: 'proof taxonomy', href: '/registry/proof-taxonomy-audit.json' },
   { label: 'portal weave', href: '/registry/portal-weave.json' },
+  {
+    label: 'content-type matrix',
+    href: '/registry/content-type-matrix.json',
+    note: 'Pages Functions content-type.ts snapshot',
+  },
+  {
+    label: 'formdata proof',
+    href: '/registry/formdata-proof.json',
+    note: 'verify:formdata bake',
+  },
+  {
+    label: 'package-info',
+    href: '/registry/package-info.json',
+    note: 'verify:package-info bake',
+  },
 ];
 
 /** Operator scripts linked from ops/monitoring panels. */

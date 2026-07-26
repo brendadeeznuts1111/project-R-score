@@ -6,6 +6,7 @@
  * Composes with harness reference-discovery (lib/) and portal verify (tools/verify-portal.ts).
  */
 import { joinPath, resolvePath } from './path-bun.ts';
+import { PORTAL_WEAVE_ARTIFACTS } from './http/portal-weave.ts';
 import { collectPortalStaticViolations } from './portal-static-checks.ts';
 
 const REPO = resolvePath(import.meta.dir, '..');
@@ -215,6 +216,11 @@ async function scanLanderTypescriptLeaks(files: string[]): Promise<PublicFinding
   return findings;
 }
 
+/** Registry JSON wired via portal-weave SSOT (rebaked to public/registry/portal-weave.json). */
+const WEAVE_WIRED_REGISTRY = new Set(
+  PORTAL_WEAVE_ARTIFACTS.map(a => a.href.replace(/^\/registry\//, ''))
+);
+
 async function scanOrphanRegistryArtifacts(files: string[]): Promise<PublicFinding[]> {
   const findings: PublicFinding[] = [];
   const corpus = (
@@ -238,7 +244,7 @@ async function scanOrphanRegistryArtifacts(files: string[]): Promise<PublicFindi
     for (const text of corpus) {
       if (text.includes(needle) || text.includes(`registry/${rel}`) || text.includes(alt)) hits++;
     }
-    if (hits === 0 && !rel.includes('@factorywager/')) {
+    if (hits === 0 && !rel.includes('@factorywager/') && !WEAVE_WIRED_REGISTRY.has(rel)) {
       findings.push({
         kind: 'orphan-registry-artifact',
         severity: 'info',

@@ -39,5 +39,8 @@ describe('portal weave', () => {
     const arts = PORTAL_WEAVE_ARTIFACTS.map(a => a.href);
     expect(arts).toContain('/registry/toc-ops.json');
     expect(arts).toContain('/registry/toc-ops-bake-proof.json');
+    expect(arts).toContain('/registry/content-type-matrix.json');
+    expect(arts).toContain('/registry/formdata-proof.json');
+    expect(arts).toContain('/registry/package-info.json');
   });
 });
