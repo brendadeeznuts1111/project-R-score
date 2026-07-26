@@ -12,6 +12,7 @@ import {
   resolveOnboardTreeNodeId,
 } from '../lib/operations/partner-onboard-package.ts';
 import { bindPartnerProfile } from '../lib/operations/partner-profile-bridge.ts';
+import { getChatChannelMeta } from '../lib/telegram/flows/channel-meta.ts';
 import { asTreeNodeId } from '../lib/types/branded/operations.ts';
 
 function seedExpert(db: ReturnType<typeof openOperationsDb>, now: string): string {
@@ -102,6 +103,9 @@ describe('partner onboard package', () => {
       .query('SELECT COUNT(*) AS n FROM ops_channel_outbox WHERE event_type = $e')
       .get({ $e: 'partner.welcome' }) as { n: number };
     expect(outboxAfterFirst.n).toBe(1);
+
+    const meta = getChatChannelMeta(db, '424242');
+    expect(meta?.callSigns).toContain('NOV-001');
 
     const plan2 = planPartnerOnboardPackage(db, tid, { source: 'portal' });
     expect(plan2.alreadyOnboarded).toBe(true);

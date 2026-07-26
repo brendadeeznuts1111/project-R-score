@@ -411,8 +411,10 @@ bun test tests/ops-channel-outbox.test.ts
 | HTML parseMode in telegram projector | Done |
 | `phone-add` / sportsbook geo journal CLI | Future |
 | Hard-gate welcome on active phone sportsbook | Future |
-| All flow cards on templates (`accounts`/`plays`/`tree`) | Partial (types ready; cards may still be richer local) |
-| Auto `rememberTemplateMessageId` on every deliver | Partial (API ready; wire on deliver path as needed) |
+| All flow cards on templates (`accounts`/`plays`/`tree`/`menu`) | Done |
+| Auto `rememberTemplateMessageId` on every deliver | Done (deliver + outbox projector) |
+| `linkTelegramChat` on register + onboard apply + ops-sync `telegram_linked` | Done |
+| Command queue HTML+keyboard via `dispatchOpsFlowOutput` | Done |
 
 ---
 

@@ -11,6 +11,7 @@ import {
   getPhoneForSeat,
   mergeProfileMessageMetadata,
 } from '../telegram/templates/context.ts';
+import { linkTelegramChat } from '../telegram/flows/channel-meta.ts';
 import { DEFAULT_MESSAGE_TEMPLATES } from '../telegram/templates/registry.ts';
 import { loadTelegramEnv, telegramTransportReady } from '../telegram/telegram-config.ts';
 import {
@@ -357,8 +358,23 @@ export function applyPartnerOnboardPackage(
   attachProfileMessageTemplates(db, plan.treeNodeId, { phoneLabel: plan.phoneLabel });
 
   const node = db
-    .query('SELECT name, telegram_id FROM tree_nodes WHERE id = $id')
-    .get({ $id: plan.treeNodeId as string }) as { name: string; telegram_id: string | null }; // brand-ok
+    .query('SELECT name, telegram_id, call_sign FROM tree_nodes WHERE id = $id')
+    .get({ $id: plan.treeNodeId as string }) as {
+    name: string;
+    telegram_id: string | null; // brand-ok
+    call_sign: string | null;
+  };
+
+  if (telegramLinked(node.telegram_id)) {
+    linkTelegramChat(db, {
+      treeNodeId: binding.treeNodeId,
+      callSign: node.call_sign ?? plan.callSign,
+      chatId: node.telegram_id!,
+      locale: plan.messageTemplates.locale,
+      topics: { identity: 1, plays: 1, toc: 1 },
+      bindTreeNode: false,
+    });
+  }
 
   let outboxEventId: string | undefined; // brand-ok — opaque outbox row id
   let onboardCompleteEventId: string | undefined; // brand-ok

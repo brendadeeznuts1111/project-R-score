@@ -26,8 +26,31 @@ import {
 } from '../toc-ops/export-snapshot.ts';
 import { enrichTocFixtureWithIdentity } from './toc-identity-bridge.ts';
 import { seedTocSoftFromFixture } from './toc-soft-balance.ts';
+import { queryLoopMetricsSlice } from './ops-loop-metrics.ts';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from './db.ts';
 import type { Database } from 'bun:sqlite';
+import type { TocOpsSnapshot } from '../toc-ops/types.ts';
+
+export function attachOpsLoopCrosslink(db: Database, fixture: TocOpsSnapshot): TocOpsSnapshot {
+  try {
+    const loop = queryLoopMetricsSlice(db);
+    return {
+      ...fixture,
+      opsLoop: {
+        gatedDefer: loop.gatedDefer,
+        gatedDeny: loop.gatedDeny,
+        dispatched: loop.dispatched,
+        loopCompletionRate: loop.loopCompletionRate,
+        loopCompletionRateByPlay: loop.loopCompletionRateByPlay,
+        capitalEfficiencyProxy: loop.capitalEfficiencyProxy,
+        limitEfficiencyProxy: loop.limitEfficiencyProxy,
+        processReturnProxy: loop.processReturnProxy,
+      },
+    };
+  } catch {
+    return fixture;
+  }
+}
 
 export type SeedTocOpsDemoOpts = {
   root?: string;
@@ -104,6 +127,7 @@ export async function seedTocOpsDemo(opts: SeedTocOpsDemoOpts = {}): Promise<See
       if (opts.seedSoft !== false) {
         softInserted = seedTocSoftFromFixture(db, fixture, { force: opts.force }).inserted;
       }
+      fixture = attachOpsLoopCrosslink(db, fixture);
     }
   } catch (e) {
     // Ops DB optional — still bake fixture without links / Soft / channels

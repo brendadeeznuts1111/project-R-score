@@ -64,6 +64,13 @@ describe('partner onboarding e2e', () => {
     expect(node.expert_id).toBe(expertId);
     expect(node.telegram_id).toBe('424242');
 
+    const meta = (await import('../lib/telegram/flows/channel-meta.ts')).getChatChannelMeta(
+      db,
+      '424242'
+    );
+    expect(meta?.chatId).toBe('424242');
+    expect(meta?.topics?.identity).toBe(1);
+
     const welcome = db
       .query(
         `SELECT COUNT(*) AS n FROM ops_channel_outbox WHERE event_type = 'partner.welcome' AND projectors LIKE '%telegram%'`

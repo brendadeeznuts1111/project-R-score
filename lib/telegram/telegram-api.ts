@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/networking/fetch
 /**
  * Telegram Bot API helpers for factory ops webhook + outbox projectors.
@@ -77,11 +78,27 @@ export async function setBotCommands(token: string, commands: BotCommandDef[]): 
   return r.ok;
 }
 
-export async function getBotMe(token: string): Promise<{ username?: string } | null> {
+export async function getBotMe(token: string): Promise<{ username?: string; id?: number } | null> {
   const r = await telegramApiCall(token, 'getMe', {});
   if (!r.ok || !r.result || typeof r.result !== 'object') return null;
-  const u = r.result as { username?: string };
-  return { username: u.username };
+  const u = r.result as { username?: string; id?: number };
+  return { username: u.username, id: typeof u.id === 'number' ? u.id : undefined };
+}
+
+export type TelegramWebhookInfo = {
+  url?: string;
+  pending_update_count?: number;
+  last_error_date?: number;
+  last_error_message?: string;
+  max_connections?: number;
+  ip_address?: string;
+};
+
+/** getWebhookInfo — used by telegram:verify transport probe. */
+export async function getWebhookInfo(token: string): Promise<TelegramWebhookInfo | null> {
+  const r = await telegramApiCall(token, 'getWebhookInfo', {});
+  if (!r.ok || !r.result || typeof r.result !== 'object') return null;
+  return r.result as TelegramWebhookInfo;
 }
 
 export type SendTelegramBotMessageInput = {
