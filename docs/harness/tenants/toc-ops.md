@@ -69,7 +69,8 @@ bun run ops:seed:toc              # write fixture (skip if present)
 bun run ops:seed:toc -- --force   # rebuild
 bun run ops:snapshot --no-routing # bake + embed + ops-summary.toc
 bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
-  tests/toc-ops-return-efficiency.test.ts tests/toc-ops-contract.test.ts tests/toc-api-edge.test.ts
+  tests/toc-ops-return-efficiency.test.ts tests/toc-ops-contract.test.ts tests/toc-api-edge.test.ts \
+  tests/toc-ops-channel-deepen.test.ts tests/toc-ops-capital-deepen.test.ts tests/toc-ops-accounting-deepen.test.ts
 ```
 
 ## Gap map (discovery)
