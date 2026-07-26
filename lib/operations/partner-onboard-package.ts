@@ -3,14 +3,8 @@
  * Partner onboard package — plan/apply CLI backing (call-sign resolve, dry-run, idempotency).
  */
 import type { Database } from 'bun:sqlite';
-import {
-  enqueueOnboardCompleteEvent,
-  enqueuePartnerWelcomeEvent,
-} from '../channels/outbox.ts';
-import {
-  getPhoneForSeat,
-  mergeProfileMessageMetadata,
-} from '../telegram/templates/context.ts';
+import { enqueueOnboardCompleteEvent, enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
+import { getPhoneForSeat, mergeProfileMessageMetadata } from '../telegram/templates/context.ts';
 import { linkTelegramChat } from '../telegram/flows/channel-meta.ts';
 import { DEFAULT_MESSAGE_TEMPLATES } from '../telegram/templates/registry.ts';
 import { loadTelegramEnv, telegramTransportReady } from '../telegram/telegram-config.ts';
@@ -323,10 +317,7 @@ export function attachProfileMessageTemplates(
     .get({ $id: treeNodeId as string }) as { metadata_json: string | null } | null;
   if (!row) return;
 
-  const phone =
-    opts?.phoneLabel ??
-    getPhoneForSeat(db, { treeNodeId })?.displayName ??
-    null;
+  const phone = opts?.phoneLabel ?? getPhoneForSeat(db, { treeNodeId })?.displayName ?? null;
 
   const merged = mergeProfileMessageMetadata(row.metadata_json, {
     ...DEFAULT_MESSAGE_TEMPLATES,
