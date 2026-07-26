@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-26T20:53:12.747Z",
+  "generated": "2026-07-26T23:46:57.524Z",
   "surfaces": [
     {
       "label": "Home",
@@ -145,6 +145,11 @@
       "label": "Public audit bundle",
       "cmd": "bun run public:audit:verify",
       "doc": "docs/harness/tenants/public-plane.md"
+    },
+    {
+      "label": "Discovery compose",
+      "cmd": "bun run discover:compose:check",
+      "doc": "docs/harness/tenants/reference-discovery.md"
     },
     {
       "label": "Sync R2 registry index",

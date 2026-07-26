@@ -1093,7 +1093,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     id: 'ops-loop-throughput',
     claim:
       'Ops closed loop (dispatch → gate → reserve → settle → durable channel delivery) with loopCompletionRate baseline/post proof ≥60%',
-    kinds: ['journey', 'unit'],
+    kinds: ['unit', 'journey'],
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [

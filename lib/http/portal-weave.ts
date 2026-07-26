@@ -101,6 +101,11 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     cmd: 'bun run public:audit:verify',
     doc: 'docs/harness/tenants/public-plane.md',
   },
+  {
+    label: 'Discovery compose',
+    cmd: 'bun run discover:compose:check',
+    doc: 'docs/harness/tenants/reference-discovery.md',
+  },
   { label: 'Sync R2 registry index', cmd: 'bun run registry:sync-index-r2' },
   { label: 'Pages edge verify', cmd: 'bun run verify:pages-edge --taxonomy' },
 ];
