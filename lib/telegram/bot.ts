@@ -120,6 +120,25 @@ export class TelegramBot {
         return;
       }
       if ((deps.tenant.id as string) === 'factory') {
+        const token = resolveTelegramToken(deps.env, deps.tenant);
+        const db = tryOpenOpsDb(deps.env);
+        if (token && db) {
+          try {
+            const dbPath = deps.env.OPS_DB_PATH ?? Bun.env.OPS_DB_PATH ?? 'data/operations.db';
+            const output = dispatchOpsFlowOutput(db, dbPath, {
+              telegramUserId: String(msg.from.id),
+              command: '/start',
+              args: [],
+            });
+            if (output) {
+              await deliverFlowOutput(output, { token, chatId: msg.chat.id, db });
+              return;
+            }
+          } finally {
+            db.close();
+          }
+        }
+        // Fallback when OPS DB / token unavailable (queued bridge path).
         const ops = await runOpsCommand(deps.env, deps.bucket, {
           telegramUserId: String(msg.from.id),
           command: '/start',

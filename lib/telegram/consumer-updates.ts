@@ -19,26 +19,56 @@ export type DrainTelegramUpdatesOpts = {
   dbPath: string;
 };
 
-/** Process enqueued webhook updates; returns count handled. */
+export type DrainTelegramUpdatesResult = {
+  processed: number;
+  skipped: number;
+  errors: number;
+};
+
+/** Process enqueued webhook updates; poison events are skipped (cursor can advance). */
 export async function drainTelegramUpdates(opts: DrainTelegramUpdatesOpts): Promise<number> {
+  const result = await drainTelegramUpdatesDetailed(opts);
+  return result.processed;
+}
+
+/** Same as {@link drainTelegramUpdates} with skip/error counts. */
+export async function drainTelegramUpdatesDetailed(
+  opts: DrainTelegramUpdatesOpts
+): Promise<DrainTelegramUpdatesResult> {
   let processed = 0;
-  const bot = createTenantBot(opts.tenant.id as string);
+  let skipped = 0;
+  let errors = 0;
 
   for (const ev of opts.updates) {
     const p = ev.payload as TelegramUpdateEnqueuePayload;
-    if (!p?.tenantSlug || !p.update || !isTenantSlug(p.tenantSlug)) continue;
+    if (!p?.tenantSlug || !p.update || !isTenantSlug(p.tenantSlug)) {
+      skipped++;
+      continue;
+    }
     const tenant = getTenant(p.tenantSlug);
-    if (!tenant) continue;
+    if (!tenant) {
+      skipped++;
+      continue;
+    }
 
-    await bot.handleUpdate(p.update, {
-      tenant,
-      accounts: opts.accounts,
-      bucket: opts.bucket,
-      channel: opts.channel,
-      env: { ...opts.env, OPS_DB_PATH: opts.dbPath },
-    });
-    processed++;
+    try {
+      const bot = createTenantBot(p.tenantSlug);
+      await bot.handleUpdate(p.update, {
+        tenant,
+        accounts: opts.accounts,
+        bucket: opts.bucket,
+        channel: opts.channel,
+        env: { ...opts.env, OPS_DB_PATH: opts.dbPath },
+      });
+      processed++;
+    } catch (e) {
+      errors++;
+      console.warn(
+        `[telegram-updates] poison seq=${ev.seq}:`,
+        e instanceof Error ? e.message : String(e)
+      );
+    }
   }
 
-  return processed;
+  return { processed, skipped, errors };
 }

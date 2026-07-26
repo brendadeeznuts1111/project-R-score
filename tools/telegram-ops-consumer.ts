@@ -20,7 +20,7 @@ import { processChannelOutbox } from '../lib/channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { sendTelegramMessage } from '../lib/telegram/bot.ts';
-import { drainTelegramUpdates } from '../lib/telegram/consumer-updates.ts';
+import { drainTelegramUpdatesDetailed } from '../lib/telegram/consumer-updates.ts';
 import { deliverFlowOutput } from '../lib/telegram/flows/deliver.ts';
 import { TELEGRAM_COMMANDS_TOPIC } from '../lib/telegram/ops-bridge.ts';
 import { dispatchOpsCommand, dispatchOpsFlowOutput } from '../lib/telegram/ops-commands.ts';
@@ -107,7 +107,7 @@ async function main(): Promise<void> {
     const tenant = getTenant('factory')!;
     const accounts = new AccountR2Store(bucket);
 
-    updatesProcessed = await drainTelegramUpdates({
+    const drained = await drainTelegramUpdatesDetailed({
       updates,
       bucket,
       channel,
@@ -116,8 +116,15 @@ async function main(): Promise<void> {
       env: { ...env, OPS_DB_PATH: dbPath },
       dbPath,
     });
+    updatesProcessed = drained.processed;
+    // Advance past poison/skipped events so one bad update cannot stall the queue.
     for (const ev of updates) {
       if (ev.seq > updatesMax) updatesMax = ev.seq;
+    }
+    if (drained.errors > 0 || drained.skipped > 0) {
+      console.warn(
+        `[telegram-ops-consumer] updates processed=${drained.processed} skipped=${drained.skipped} errors=${drained.errors}`
+      );
     }
 
     for (const ev of commands) {

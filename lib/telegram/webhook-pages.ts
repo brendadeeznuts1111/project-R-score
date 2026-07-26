@@ -1,18 +1,14 @@
 /**
  * Telegram webhook — edge-safe Pages handler (R2 enqueue only, no bun:sqlite).
  *
- * Validates secret + tenant, appends the update to R2 `telegram-updates`, ACKs Telegram.
- * Bun `telegram:ops:consume` drains the queue with full bot.ts + SQLite.
+ * Validates secret + tenant, appends the update to R2 `telegram-updates`, ACKs Telegram
+ * only after durable publish succeeds (Telegram retries on non-2xx).
  *
  * @see functions/api/telegram/webhook/[[tenant]].ts
  * @see tools/telegram-ops-consumer.ts
  */
 import { R2ChannelStore } from '../channels/channels.ts';
-import {
-  jsonResponse,
-  requireBucket,
-  type PagesContext,
-} from '../pages/pages-function.ts';
+import { jsonResponse, requireBucket, type PagesContext } from '../pages/pages-function.ts';
 import type { TelegramUpdate } from './telegram-update.ts';
 
 /** R2 channel topic for inbound Telegram updates (Pages → Bun consumer). */
@@ -34,9 +30,7 @@ export type TelegramUpdateEnqueuePayload = {
 export type { PagesContext };
 
 /** Handle Telegram Bot API webhook POST for a tenant slug (edge-safe). */
-export async function onTelegramWebhookRequest(
-  context: PagesContext
-): Promise<Response> {
+export async function onTelegramWebhookRequest(context: PagesContext): Promise<Response> {
   const { request, env, params } = context;
 
   if (request.method !== 'POST') {
@@ -67,22 +61,28 @@ export async function onTelegramWebhookRequest(
     return jsonResponse({ error: 'Invalid tenant' }, 400);
   }
 
-  const update = (await request.json()) as TelegramUpdate;
+  let update: TelegramUpdate;
+  try {
+    update = (await request.json()) as TelegramUpdate;
+  } catch {
+    return jsonResponse({ error: 'Invalid JSON body' }, 400);
+  }
+
   const payload: TelegramUpdateEnqueuePayload = {
     tenantSlug,
     update,
     receivedAt: new Date().toISOString(),
   };
 
-  const work = new R2ChannelStore(bucket).publish(TELEGRAM_UPDATES_TOPIC, payload, {
-    sender: 'telegram-webhook',
-  });
-
-  if (context.waitUntil) {
-    context.waitUntil(work);
-    return new Response('OK', { status: 200, headers: { 'Cache-Control': 'no-store' } });
+  try {
+    // Await publish before ACK — Telegram retries on non-2xx if R2 fails.
+    await new R2ChannelStore(bucket).publish(TELEGRAM_UPDATES_TOPIC, payload, {
+      sender: 'telegram-webhook',
+    });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return jsonResponse({ error: 'Enqueue failed', detail: msg }, 500);
   }
 
-  await work;
   return new Response('OK', { status: 200, headers: { 'Cache-Control': 'no-store' } });
 }

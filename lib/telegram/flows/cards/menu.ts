@@ -10,7 +10,12 @@ export function menuFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
   const locale = input.locale ?? 'en';
   if (!ctx.node) {
     return {
-      text: `<b>${t('card.not_registered', locale)}</b>\n\n/register &lt;referral-id&gt; &lt;name&gt;`,
+      text: [
+        `<b>${t('card.not_registered', locale)}</b>`,
+        '',
+        'Link portal: <code>/start link_&lt;nonce&gt;</code>',
+        'Or register: <code>/register &lt;referral-id&gt; &lt;name&gt;</code>',
+      ].join('\n'),
       parseMode: 'HTML',
     };
   }

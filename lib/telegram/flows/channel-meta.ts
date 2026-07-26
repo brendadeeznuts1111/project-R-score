@@ -123,7 +123,7 @@ export function upsertChatChannelMeta(db: Database, meta: ChatChannelMeta): Chat
   return getChatChannelMeta(db, meta.chatId)!;
 }
 
-/** Record message_id for edit-in-place of a template. */
+/** Record message_id for edit-in-place of a template (upserts meta when missing). */
 export function rememberTemplateMessageId(
   db: Database,
   chatId: string, // brand-ok
@@ -131,10 +131,17 @@ export function rememberTemplateMessageId(
   messageId: number
 ): void {
   const existing = getChatChannelMeta(db, chatId);
-  if (!existing) return;
+  const base: ChatChannelMeta = existing ?? {
+    chatId,
+    treeNodeIds: [],
+    callSigns: [],
+    locale: 'en',
+    topics: {},
+    lastTemplateIds: {},
+  };
   upsertChatChannelMeta(db, {
-    ...existing,
-    lastTemplateIds: { ...existing.lastTemplateIds, [templateId]: messageId },
+    ...base,
+    lastTemplateIds: { ...base.lastTemplateIds, [templateId]: messageId },
   });
 }
 

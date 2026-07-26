@@ -44,6 +44,8 @@ export function handleFlowCallback(data: string, ctx: CallbackContext): FlowOutp
     return {
       text: result.message,
       parseMode: 'HTML',
+      // Clear Placed/Skip buttons on edit-in-place ack.
+      keyboard: { rows: [] },
     };
   }
 

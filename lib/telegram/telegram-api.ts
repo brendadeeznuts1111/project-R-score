@@ -63,11 +63,13 @@ export const FACTORY_BOT_COMMANDS: BotCommandDef[] = [
   { command: 'link', description: 'How to link Telegram to portal' },
   { command: 'help', description: 'List commands' },
   { command: 'status', description: 'Ops status or registry health' },
+  { command: 'balances', description: 'Liquidity / Soft balances' },
   { command: 'accounts', description: 'Sportsbook accounts' },
   { command: 'plays', description: 'Pending plays' },
   { command: 'tree', description: 'Downstream network' },
   { command: 'register', description: 'Register as sub-agent' },
   { command: 'registry', description: 'Factory registry package count' },
+  { command: 'verifydod', description: 'DOD delivery receipt' },
   { command: 'deploy', description: 'Trigger deploy (admin)' },
 ];
 

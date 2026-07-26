@@ -10,7 +10,7 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 | 2. Verify | `bun run telegram:verify` | Calls `getMe` + `getWebhookInfo` |
 | 3. Webhook + menu | `bun run telegram:factory:setup` | `setMyCommands` + `setWebhook` → Pages `/api/telegram/webhook/factory` (R2 enqueue; see Architecture) |
 | 3b. Drain updates | `bun run telegram:ops:consume` | Processes R2 `telegram-updates` + `telegram-commands` + outbox |
-| 4. Linked seats | `/start link_<nonce>` or `bun tools/telegram-link-chat.ts ASH-001 tg:chat:…` | Sets `tree_nodes.telegram_id` + `ChatChannelMeta` — **never invent chat ids** |
+| 4. Linked seats | `/start link_<nonce>` or `bun tools/telegram-link-chat.ts ASH-001 tg:chat:…` | Sets `tree_nodes.telegram_id` + `ChatChannelMeta`; CLI also enqueues `partner.welcome` when a profile binding exists (`--no-welcome` to skip) |
 | 5. Drain | `bun run telegram:ops:consume` | R2 command queue + `ops_channel_outbox` projectors (HTML templates) |
 | 5b. Dry-run drain | `bun run telegram:ops:consume -- --dry-run` | Queue + outbox counts only |
 
@@ -88,10 +88,10 @@ Canonical API reference: [Telegram Bot API](https://core.telegram.org/bots/api).
 **Local Bun plane:** [`functions-bun-only/api/telegram/webhook/[[tenant]].ts`](../../../functions-bun-only/api/telegram/webhook/[[tenant]].ts) keeps sync handling for low-latency local/dev (see [`docs/platform-routing.md`](../../platform-routing.md)).
 
 ```text
-Telegram → Pages webhook (functions/api/telegram/webhook/[[tenant]].ts)
-         → R2 channels/telegram-updates (enqueue)
-         → bun run telegram:ops:consume
-         → lib/telegram/bot.ts (commands + link nonce + SQLite/R2 ops-bridge)
+Telegram → Pages webhook (await R2 publish, then 200 — retries on failure)
+         → R2 channels/telegram-updates
+         → bun run telegram:ops:consume (poison updates skipped; cursor advances)
+         → lib/telegram/bot.ts → deliverFlowOutput (HTML + keyboards; /start included)
 
 Outbox → processChannelOutbox → sendTelegramBotMessage (rate-limited)
        → DM: payload.telegramId
