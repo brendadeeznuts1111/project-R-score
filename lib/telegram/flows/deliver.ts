@@ -1,7 +1,11 @@
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 /**
  * Deliver FlowOutput via Telegram Bot API (send or edit).
  */
+import type { Database } from 'bun:sqlite';
+import { getChatChannelMeta, rememberTemplateMessageId } from './channel-meta.ts';
 import { editTelegramMessage, sendTelegramBotMessage } from '../telegram-api.ts';
+import type { TemplateId } from '../templates/types.ts';
 import { translateKeyboard } from './keyboards.ts';
 import type { FlowLocale, FlowOutput } from './types.ts';
 
@@ -10,6 +14,8 @@ export type DeliverFlowOpts = {
   chatId: string | number; // brand-ok — Telegram chat_id wire
   locale?: FlowLocale;
   editMessageId?: number;
+  db?: Database;
+  templateId?: TemplateId;
 };
 
 export async function deliverFlowOutput(
@@ -18,7 +24,14 @@ export async function deliverFlowOutput(
 ): Promise<{ messageId?: number; ok: boolean }> {
   const locale = opts.locale ?? 'en';
   const replyMarkup = output.keyboard ? translateKeyboard(output.keyboard, locale) : undefined;
-  const messageId = output.editMessageId ?? opts.editMessageId;
+  let messageId = output.editMessageId ?? opts.editMessageId;
+  const templateId = output.templateId ?? opts.templateId;
+
+  if (messageId == null && templateId && opts.db) {
+    const meta = getChatChannelMeta(opts.db, String(opts.chatId));
+    const remembered = meta?.lastTemplateIds?.[templateId];
+    if (remembered != null) messageId = remembered;
+  }
 
   if (messageId != null) {
     const edited = await editTelegramMessage(opts.token, {
@@ -28,7 +41,12 @@ export async function deliverFlowOutput(
       parseMode: output.parseMode === 'Markdown' ? 'Markdown' : 'HTML',
       replyMarkup,
     });
-    if (edited.ok) return { ok: true, messageId };
+    if (edited.ok) {
+      if (opts.db && templateId) {
+        rememberTemplateMessageId(opts.db, String(opts.chatId), templateId, messageId);
+      }
+      return { ok: true, messageId };
+    }
   }
 
   const sent = await sendTelegramBotMessage(opts.token, {
@@ -37,6 +55,10 @@ export async function deliverFlowOutput(
     parseMode: output.parseMode === 'Markdown' ? 'Markdown' : 'HTML',
     replyMarkup,
   });
+
+  if (sent.ok && opts.db && templateId && sent.messageId != null) {
+    rememberTemplateMessageId(opts.db, String(opts.chatId), templateId, sent.messageId);
+  }
 
   return { ok: sent.ok, messageId: sent.messageId };
 }

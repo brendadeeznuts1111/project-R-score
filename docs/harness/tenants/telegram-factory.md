@@ -39,7 +39,7 @@ Token SSOT: [`loadTelegramEnv()`](../../../lib/telegram/telegram-config.ts) → 
 | Variable | Required | Purpose |
 |----------|----------|---------|
 | `TELEGRAM_BOT_FACTORY` | Yes (or legacy `TELEGRAM_BOT_TOKEN`) | Factory tenant token — [`config/tenants.ts`](../../../config/tenants.ts) |
-| `TELEGRAM_WEBHOOK_SECRET` | Recommended | `secret_token` on webhook registration |
+| `TELEGRAM_WEBHOOK_SECRET` | Required on Pages | Same value in local `.env` + Pages Variables/Secrets (prod+preview). Without it the edge webhook returns **503**. Redeploy after setting. |
 | `TELEGRAM_OPS_CHAT_ID` | For group alerts | Supergroup id when outbox row has no `telegramId` |
 | `TELEGRAM_TOPICS` | For forum threads | JSON map → `message_thread_id` (see below) |
 | `TELEGRAM_RATE_LIMIT_MIN_INTERVAL_MS` | Optional | Default `34` (~29 msg/s; Telegram ~30/s) |

@@ -9,8 +9,10 @@ import { asTreeNodeId } from '../types/branded/operations.ts';
 import { asTelegramUserId, type TelegramUserId } from '../types/branded/portal.ts';
 import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
 import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
-import { deliverFlowOutput, flowOutputToPlainText } from './flows/deliver.ts';
+import { flowOutputToPlainText } from './flows/deliver.ts';
 import { commandToFlowId, runFlow } from './flows/registry.ts';
+import { linkTelegramChat } from './flows/channel-meta.ts';
+import type { FlowOutput } from './flows/types.ts';
 
 export type OpsTreeNode = {
   id: string; // brand-ok
@@ -67,104 +69,6 @@ export function handleOpsStart(db: Database, node: OpsTreeNode | null): string {
   ].join('\n');
 }
 
-export function handleOpsStatus(db: Database, node: OpsTreeNode | null): string {
-  if (!node) return '❌ Not registered';
-  const accts = db
-    .query('SELECT COUNT(*) as c FROM sb_accounts WHERE agent_id = $a')
-    .get({ $a: node.id }) as { c: number };
-  const placed = db
-    .query(
-      "SELECT COUNT(*) as c FROM play_distribution WHERE node_id = $n AND ack_status = 'placed'"
-    )
-    .get({ $n: node.id }) as { c: number };
-  const pnl = db
-    .query(
-      `SELECT COALESCE(SUM(p.pnl), 0) as total
-       FROM plays p JOIN play_distribution d ON p.id = d.play_id
-       WHERE d.node_id = $n AND p.result IN ('win', 'loss')`
-    )
-    .get({ $n: node.id }) as { total: number };
-  return [
-    '📊 *Status*',
-    `Accounts: ${accts.c}`,
-    `Placed: ${placed.c}`,
-    `P&L: $${pnl.total.toFixed(2)}`,
-  ].join('\n');
-}
-
-export function handleOpsAccounts(db: Database, node: OpsTreeNode | null): string {
-  if (!node) return '❌ Not registered';
-  const accounts = db
-    .query(
-      'SELECT book, username, balance, status FROM sb_accounts WHERE agent_id = $a ORDER BY book'
-    )
-    .all({ $a: node.id }) as { book: string; username: string; balance: number; status: string }[];
-  if (!accounts.length) return '📋 No accounts. Contact your referrer to get funded.';
-  const rows = accounts.map(
-    a => `${a.book}: **${a.username || '—'}** — $${a.balance.toFixed(0)} (${a.status})`
-  );
-  return ['📋 *Your Accounts*', '', ...rows].join('\n');
-}
-
-export function handleOpsPlays(db: Database, node: OpsTreeNode | null): string {
-  if (!node) return '❌ Not registered';
-  const plays = db
-    .query(
-      `SELECT p.sport, p.market, p.event, p.selection, p.odds, p.confidence, p.sent_at, d.ack_status
-       FROM plays p JOIN play_distribution d ON p.id = d.play_id
-       WHERE d.node_id = $n AND p.result = 'pending'
-       ORDER BY p.sent_at DESC LIMIT 5`
-    )
-    .all({ $n: node.id }) as {
-    sport: string;
-    market: string;
-    event: string;
-    selection: string;
-    odds: number;
-    confidence: number;
-    sent_at: string;
-    ack_status: string;
-  }[];
-  if (!plays.length) return '📋 No pending plays.';
-  const rows = plays.flatMap(p => [
-    `🎯 *${p.sport} ${p.market}* (${p.ack_status})`,
-    `${p.event}: ${p.selection} @ ${p.odds > 0 ? '+' : ''}${p.odds}`,
-    `   Confidence: ${p.confidence}% · ${p.sent_at.slice(11, 16)}`,
-    '',
-  ]);
-  return ['📋 *Pending Plays*', '', ...rows].join('\n');
-}
-
-export function handleOpsTree(db: Database, node: OpsTreeNode | null): string {
-  if (!node || node.type === 'sub_agent')
-    return '❌ Tree view available for partners and agents only.';
-  const children = db
-    .query(
-      'SELECT type, COUNT(*) as c FROM tree_nodes WHERE parent_id = $p AND active = 1 GROUP BY type'
-    )
-    .all({ $p: node.id }) as { type: string; c: number }[];
-  const downstream = db
-    .query(
-      `WITH RECURSIVE down_tree AS (
-         SELECT id FROM tree_nodes WHERE parent_id = $p AND active = 1
-         UNION ALL
-         SELECT n.id FROM tree_nodes n JOIN down_tree t ON n.parent_id = t.id
-       )
-       SELECT COALESCE(SUM(a.balance), 0) as total
-       FROM sb_accounts a JOIN down_tree d ON a.agent_id = d.id
-       WHERE a.status = 'active'`
-    )
-    .get({ $p: node.id }) as { total: number };
-  const rows = children.map(r => `${r.type}: ${r.c}`);
-  return [
-    '🌳 *Your Tree*',
-    '',
-    ...rows,
-    '',
-    `Downstream liquidity: $${downstream.total.toLocaleString()}`,
-  ].join('\n');
-}
-
 export function handleOpsRegister(
   db: Database,
   telegramUserId: TelegramUserId,
@@ -197,7 +101,16 @@ export function handleOpsRegister(
     }
   );
 
-  const binding = onboardPartnerProfile(db, asTreeNodeId(newId), {
+  const treeNodeId = asTreeNodeId(newId);
+  linkTelegramChat(db, {
+    treeNodeId,
+    callSign: null,
+    chatId: telegramUserId as string,
+    bindTreeNode: false,
+    topics: { identity: 1, plays: 1 },
+  });
+
+  const binding = onboardPartnerProfile(db, treeNodeId, {
     referralNodeId: parent.id,
     source: 'telegram',
   });
@@ -234,37 +147,41 @@ export function handleOpsVerifyDod(
       `Type: ${r.type}`,
       `Status: *${r.status}*`,
       `Submitted: ${r.submitted_at}`,
-    ].join('\n');
+      r.visual_hash ? `Visual hash: \`${String(r.visual_hash).slice(0, 16)}…\`` : '',
+      r.signature ? `Signature: \`${String(r.signature).slice(0, 16)}…\`` : '',
+    ]
+      .filter(Boolean)
+      .join('\n');
   } finally {
     verifier.close();
   }
 }
 
+export function dispatchOpsFlowOutput(
+  db: Database,
+  dbPath: string,
+  input: OpsCommandInput
+): FlowOutput | null {
+  const flowId = commandToFlowId(input.command);
+  if (!flowId || input.command === '/register' || input.command === '/verifydod') return null;
+  const node = findNodeByTelegram(db, asTelegramUserId(input.telegramUserId));
+  return runFlow(db, dbPath, {
+    flowId: input.command === '/start' && !node ? 'menu' : flowId,
+    chatId: input.telegramUserId,
+    userId: input.telegramUserId,
+  });
+}
+
 export function dispatchOpsCommand(db: Database, dbPath: string, input: OpsCommandInput): string {
+  const output = dispatchOpsFlowOutput(db, dbPath, input);
+  if (output) return flowOutputToPlainText(output);
+
   const telegramUserId = asTelegramUserId(input.telegramUserId);
   const node = findNodeByTelegram(db, telegramUserId);
-
-  const flowId = commandToFlowId(input.command);
-  if (flowId && input.command !== '/register' && input.command !== '/verifydod') {
-    const output = runFlow(db, dbPath, {
-      flowId: input.command === '/start' && !node ? 'menu' : flowId,
-      chatId: input.telegramUserId,
-      userId: input.telegramUserId,
-    });
-    return flowOutputToPlainText(output);
-  }
 
   switch (input.command) {
     case '/start':
       return handleOpsStart(db, node);
-    case '/status':
-      return handleOpsStatus(db, node);
-    case '/accounts':
-      return handleOpsAccounts(db, node);
-    case '/plays':
-      return handleOpsPlays(db, node);
-    case '/tree':
-      return handleOpsTree(db, node);
     case '/register':
       return handleOpsRegister(db, telegramUserId, input.args);
     case '/verifydod':

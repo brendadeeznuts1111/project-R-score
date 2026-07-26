@@ -47,9 +47,58 @@ function statusKeyboard(): KeyboardSpec {
   };
 }
 
+function menuKeyboard(): KeyboardSpec {
+  return {
+    rows: [
+      [
+        { textKey: 'btn.status', callbackData: 'f:status' },
+        { textKey: 'btn.balances', callbackData: 'f:balances' },
+      ],
+      [
+        { textKey: 'btn.accounts', callbackData: 'f:accounts' },
+        { textKey: 'btn.plays', callbackData: 'f:plays' },
+      ],
+      [{ textKey: 'btn.tree', callbackData: 'f:tree' }],
+    ],
+  };
+}
+
 function menuOnlyKeyboard(): KeyboardSpec {
   return {
     rows: [[{ textKey: 'btn.menu', callbackData: 'f:menu' }]],
+  };
+}
+
+function accountsKeyboard(): KeyboardSpec {
+  return {
+    rows: [
+      [
+        { textKey: 'btn.refresh', callbackData: 'f:accounts:r' },
+        { textKey: 'btn.menu', callbackData: 'f:menu' },
+      ],
+    ],
+  };
+}
+
+function playsKeyboard(): KeyboardSpec {
+  return {
+    rows: [
+      [
+        { textKey: 'btn.refresh', callbackData: 'f:plays:r' },
+        { textKey: 'btn.menu', callbackData: 'f:menu' },
+      ],
+    ],
+  };
+}
+
+function treeKeyboard(): KeyboardSpec {
+  return {
+    rows: [
+      [
+        { textKey: 'btn.refresh', callbackData: 'f:tree:r' },
+        { textKey: 'btn.menu', callbackData: 'f:menu' },
+      ],
+    ],
   };
 }
 
@@ -125,9 +174,12 @@ export function renderTemplate(templateId: TemplateId, ctx: TemplateContext): Re
     case 'balances.v1':
       return {
         templateId,
-        text: [bold(`Balances · ${ctx.callSign ?? '—'}`), ...softLines(ctx), '', '<i>Read-only · no Soft post from bot</i>'].join(
-          '\n'
-        ),
+        text: [
+          bold(`Balances · ${ctx.callSign ?? '—'}`),
+          ...softLines(ctx),
+          '',
+          '<i>Read-only · no Soft post from bot</i>',
+        ].join('\n'),
         parseMode: 'HTML',
         keyboard: balancesKeyboard(),
       };
@@ -147,40 +199,75 @@ export function renderTemplate(templateId: TemplateId, ctx: TemplateContext): Re
         keyboard: statusKeyboard(),
       };
 
-    case 'accounts.v1':
-      return {
-        templateId,
-        text: [
-          bold(`Accounts · ${ctx.callSign ?? display}`),
+    case 'accounts.v1': {
+      const lines = [bold(`Accounts · ${ctx.callSign ?? display}`)];
+      if (ctx.detailLines?.length) {
+        lines.push('', ...ctx.detailLines);
+      } else if (ctx.emptyHint) {
+        lines.push('', escapeHtml(ctx.emptyHint));
+      } else {
+        lines.push(
+          '',
           `Active books: ${ctx.accountsCount ?? 0}`,
-          `Hard (seat): ${formatMoney(ctx.hard ?? 0)}`,
-        ].join('\n'),
+          `Hard (seat): ${formatMoney(ctx.hard ?? 0)}`
+        );
+      }
+      return {
+        templateId,
+        text: lines.join('\n'),
         parseMode: 'HTML',
-        keyboard: statusKeyboard(),
+        keyboard: accountsKeyboard(),
       };
+    }
 
-    case 'plays.v1':
+    case 'plays.v1': {
+      const lines = [bold(`Pending Plays · ${ctx.callSign ?? display}`)];
+      if (ctx.detailLines?.length) {
+        lines.push('', ...ctx.detailLines);
+      } else if (ctx.emptyHint) {
+        lines.push('', escapeHtml(ctx.emptyHint));
+      } else {
+        lines.push('', `Pending: ${ctx.pending ?? 0}`, `Placed: ${ctx.placedCount ?? 0}`);
+      }
+      return {
+        templateId,
+        text: lines.join('\n'),
+        parseMode: 'HTML',
+        keyboard: playsKeyboard(),
+      };
+    }
+
+    case 'tree.v1': {
+      const lines = [bold(`Tree · ${ctx.callSign ?? display}`)];
+      if (ctx.treeHint) {
+        lines.push(escapeHtml(ctx.treeHint));
+      }
+      if (ctx.detailLines?.length) {
+        lines.push('', ...ctx.detailLines);
+      } else if (!ctx.treeHint) {
+        lines.push('', 'Downstream network under your parent.');
+      }
+      lines.push('', `Parent: ${parent}`);
+      return {
+        templateId,
+        text: lines.join('\n'),
+        parseMode: 'HTML',
+        keyboard: treeKeyboard(),
+      };
+    }
+
+    case 'menu.v1':
       return {
         templateId,
         text: [
-          bold(`Plays · ${ctx.callSign ?? display}`),
-          `Pending: ${ctx.pending ?? 0}`,
-          `Placed: ${ctx.placedCount ?? 0}`,
-        ].join('\n'),
+          bold(ctx.menuTitle ?? `Menu · ${ctx.callSign ?? display}`),
+          ctx.menuSubtitle ? escapeHtml(ctx.menuSubtitle) : display,
+          ctx.menuHint ? `<i>${escapeHtml(ctx.menuHint)}</i>` : '',
+        ]
+          .filter(Boolean)
+          .join('\n'),
         parseMode: 'HTML',
-        keyboard: statusKeyboard(),
-      };
-
-    case 'tree.v1':
-      return {
-        templateId,
-        text: [
-          bold(`Tree · ${ctx.callSign ?? display}`),
-          ctx.treeHint ? escapeHtml(ctx.treeHint) : 'Downstream network under your parent.',
-          `Parent: ${parent}`,
-        ].join('\n'),
-        parseMode: 'HTML',
-        keyboard: welcomeKeyboard(),
+        keyboard: menuKeyboard(),
       };
 
     case 'play.ack.v1':

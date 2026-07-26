@@ -98,7 +98,7 @@ export class OpsTelegramBot {
         chatId: String(chatId),
         userId,
       });
-      await deliverFlowOutput(output, { token: this.token, chatId });
+      await deliverFlowOutput(output, { token: this.token, chatId, db: this.db });
       return;
     }
 
@@ -109,7 +109,7 @@ export class OpsTelegramBot {
       chatId: String(chatId),
       userId,
     });
-    await deliverFlowOutput(fallback, { token: this.token, chatId });
+    await deliverFlowOutput(fallback, { token: this.token, chatId, db: this.db });
   }
 
   private async handleCallbackQuery(cq: Record<string, unknown>): Promise<void> {
@@ -137,6 +137,7 @@ export class OpsTelegramBot {
         token: this.token,
         chatId,
         editMessageId: typeof messageId === 'number' ? messageId : undefined,
+        db: this.db,
       });
     }
 
@@ -184,7 +185,11 @@ export class OpsTelegramBot {
             `Type: ${r.type}`,
             `Status: <b>${r.status}</b>`,
             `Submitted: ${r.submitted_at}`,
-          ].join('\n'),
+            r.visual_hash ? `Visual hash: <code>${String(r.visual_hash).slice(0, 16)}…</code>` : '',
+            r.signature ? `Signature: <code>${String(r.signature).slice(0, 16)}…</code>` : '',
+          ]
+            .filter(Boolean)
+            .join('\n'),
           parseMode: 'HTML',
         },
         { token: this.token, chatId }

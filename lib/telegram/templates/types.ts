@@ -13,7 +13,8 @@ export type TemplateId =
   | 'play.ack.v1'
   | 'onboard.complete.v1'
   | 'limit.stale.v1'
-  | 'gate.blocked.v1';
+  | 'gate.blocked.v1'
+  | 'menu.v1';
 
 export type TemplateContext = {
   callSign?: string;
@@ -37,6 +38,12 @@ export type TemplateContext = {
   placedCount?: number;
   pnl?: number;
   treeHint?: string;
+  menuTitle?: string;
+  menuSubtitle?: string;
+  menuHint?: string;
+  /** Card body lines (HTML-safe when pre-escaped by caller). */
+  detailLines?: string[];
+  emptyHint?: string;
 };
 
 export type RenderedMessage = {

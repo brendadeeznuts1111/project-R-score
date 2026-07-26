@@ -14,20 +14,13 @@ import type { TenantConfig } from '../../config/tenants.ts';
 import { consumeLinkNonce } from './link-nonce.ts';
 import { runOpsCommand, tryOpenOpsDb } from './ops-bridge.ts';
 import { handleFlowCallback } from './flows/callbacks.ts';
-import { deliverFlowOutput } from './flows/deliver.ts';
-import { findFlowNodeByTelegram } from './flows/registry.ts';
+import { deliverFlowOutput, flowOutputToPlainText } from './flows/deliver.ts';
+import { commandToFlowId, findFlowNodeByTelegram } from './flows/registry.ts';
+import { dispatchOpsFlowOutput } from './ops-commands.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
-import type {
-  TelegramCallbackQuery,
-  TelegramMessage,
-  TelegramUpdate,
-} from './telegram-update.ts';
+import type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
 
-export type {
-  TelegramCallbackQuery,
-  TelegramMessage,
-  TelegramUpdate,
-} from './telegram-update.ts';
+export type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
 
 export type CommandContext = {
   msg: TelegramMessage;
@@ -152,6 +145,42 @@ export class TelegramBot {
       return;
     }
 
+    if ((deps.tenant.id as string) === 'factory') {
+      const token = resolveTelegramToken(deps.env, deps.tenant);
+      const flowId = commandToFlowId(command!);
+      const skipFlow = command === '/register' || command === '/verifydod';
+      if (token && flowId && !skipFlow) {
+        const db = tryOpenOpsDb(deps.env);
+        if (db) {
+          try {
+            const dbPath = deps.env.OPS_DB_PATH ?? Bun.env.OPS_DB_PATH ?? 'data/operations.db';
+            const output = dispatchOpsFlowOutput(db, dbPath, {
+              telegramUserId: String(msg.from.id),
+              command: command!,
+              args: argParts,
+            });
+            if (output) {
+              const plain = flowOutputToPlainText(output);
+              if (command === '/status' && /not registered/i.test(plain)) {
+                const account = await deps.accounts.getByTelegram(
+                  asTelegramUserId(String(msg.from.id))
+                );
+                if (!account || (account.tenantId as string) !== 'factory') {
+                  await deliverFlowOutput(output, { token, chatId: msg.chat.id, db });
+                  return;
+                }
+              } else {
+                await deliverFlowOutput(output, { token, chatId: msg.chat.id, db });
+                return;
+              }
+            }
+          } finally {
+            db.close();
+          }
+        }
+      }
+    }
+
     const account = await deps.accounts.getByTelegram(asTelegramUserId(String(msg.from.id)));
     const response = await cmd.handler({
       ...deps,
@@ -198,6 +227,7 @@ export class TelegramBot {
           token,
           chatId,
           editMessageId: msgId,
+          db,
         });
         await answerCallbackQuery(token, cq.id, output.text.replace(/<[^>]+>/g, '').slice(0, 80));
       } else {

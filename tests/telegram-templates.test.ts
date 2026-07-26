@@ -39,6 +39,24 @@ describe('telegram templates', () => {
     expect(welcome.text).toContain('Vegas Main');
     expect(welcome.keyboard?.rows[0]?.[0]?.callbackData).toBe('f:status');
 
+    const accounts = renderTemplate('accounts.v1', {
+      locale: 'en',
+      callSign: 'ASH-001',
+      detailLines: ['hardrock: <b>user1</b> — $2500 (active)'],
+    });
+    expect(accounts.text).toContain('user1');
+    expect(accounts.keyboard?.rows[0]?.[0]?.callbackData).toBe('f:accounts:r');
+
+    const menu = renderTemplate('menu.v1', {
+      locale: 'en',
+      callSign: 'ASH-001',
+      menuTitle: 'Menu',
+      menuSubtitle: 'TOC ASH-001 · ASH-001',
+      menuHint: 'Pick a card below.',
+    });
+    expect(menu.text).toContain('Menu');
+    expect(menu.keyboard?.rows.some(r => r.some(b => b.callbackData === 'f:tree'))).toBe(true);
+
     const balances = renderTemplate('balances.v1', {
       locale: 'en',
       callSign: 'ASH-001',
@@ -111,7 +129,7 @@ describe('telegram templates', () => {
     db.close();
   });
 
-  test('linkTelegramChat writes ChatChannelMeta and tree_nodes.telegram_id', () => {
+  test('linkTelegramChat writes ChatChannelMeta and tree_nodes.telegram_id', async () => {
     const db = openOperationsDb({ path: ':memory:' });
     const now = new Date().toISOString();
     const agentId = randomUUIDv7();
@@ -139,6 +157,32 @@ describe('telegram templates', () => {
     rememberTemplateMessageId(db, '-10099', 'balances.v1', 55);
     const again = getChatChannelMeta(db, '-10099');
     expect(again?.lastTemplateIds?.['balances.v1']).toBe(55);
+
+    const { deliverFlowOutput } = await import('../lib/telegram/flows/deliver.ts');
+    let editCalls = 0;
+    const origSend = globalThis.fetch;
+    globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.includes('editMessageText')) {
+        editCalls++;
+        return new Response('{"ok":true}', { status: 200 });
+      }
+      if (url.includes('sendMessage')) {
+        throw new Error('expected edit not send');
+      }
+      return origSend(input, init);
+    }) as typeof fetch;
+    try {
+      const delivered = await deliverFlowOutput(
+        { text: '<b>Balances</b>', parseMode: 'HTML', templateId: 'balances.v1' },
+        { token: 't', chatId: '-10099', db }
+      );
+      expect(delivered.ok).toBe(true);
+      expect(editCalls).toBe(1);
+    } finally {
+      globalThis.fetch = origSend;
+    }
+
     db.close();
   });
 

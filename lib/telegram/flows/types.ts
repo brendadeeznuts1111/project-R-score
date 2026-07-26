@@ -79,6 +79,7 @@ export type FlowOutput = {
   editMessageId?: number;
   nextFlow?: FlowId;
   sideEffects?: Array<'enqueue_outbox' | 'log_message' | 'attach_proof'>;
+  templateId?: import('../templates/types.ts').TemplateId;
 };
 
 export type TelegramInlineKeyboard = {

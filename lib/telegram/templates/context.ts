@@ -40,6 +40,7 @@ const TEMPLATE_IDS = new Set<string>([
   'onboard.complete.v1',
   'limit.stale.v1',
   'gate.blocked.v1',
+  'menu.v1',
 ]);
 
 // eslint-disable-next-line harness/no-unknown-function-param -- metadata_json wire leaf
@@ -199,6 +200,11 @@ export type BuildTemplateContextOpts = {
   placedCount?: number;
   pnl?: number;
   treeHint?: string;
+  menuTitle?: string;
+  menuSubtitle?: string;
+  menuHint?: string;
+  detailLines?: string[];
+  emptyHint?: string;
 };
 
 /** Build full TemplateContext for a tree node (seat Soft + phone + profile). */
@@ -251,5 +257,10 @@ export function buildTemplateContext(
     placedCount: opts?.placedCount,
     pnl: opts?.pnl,
     treeHint: opts?.treeHint,
+    menuTitle: opts?.menuTitle,
+    menuSubtitle: opts?.menuSubtitle,
+    menuHint: opts?.menuHint,
+    detailLines: opts?.detailLines,
+    emptyHint: opts?.emptyHint,
   };
 }

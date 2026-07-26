@@ -25,6 +25,7 @@ import type {
 } from './ops-channel-event.ts';
 import { parseProjectors } from './ops-channel-event.ts';
 import { sendTelegramBotMessage } from '../telegram/telegram-api.ts';
+import { rememberTemplateMessageId } from '../telegram/flows/channel-meta.ts';
 import { playAckKeyboard, translateKeyboard } from '../telegram/flows/keyboards.ts';
 import { loadTelegramEnv, threadIdForOutboxTopic } from '../telegram/telegram-config.ts';
 import { renderForNode } from '../telegram/templates/render.ts';
@@ -57,6 +58,8 @@ export type ProcessOutboxOpts = {
   deliver?: boolean;
   /** Durable R2 projector; when omitted, `r2` rows use {@link localOpsChannelStore}. */
   r2Store?: R2ChannelStore | MemoryChannelStore;
+  /** Max pending rows per drain call (default 250). */
+  limit?: number;
 };
 
 function defaultProjectors(topic: OpsChannelTopic): OpsChannelProjector[] {
@@ -179,9 +182,7 @@ async function projectTelegram(
 
   const rawParse = payload.parseMode ?? payload.parse_mode;
   const parseMode =
-    rawParse === 'HTML' || rawParse === 'Markdown'
-      ? (rawParse as 'HTML' | 'Markdown')
-      : undefined;
+    rawParse === 'HTML' || rawParse === 'Markdown' ? (rawParse as 'HTML' | 'Markdown') : undefined;
 
   const result = await sendTelegramBotMessage(token, {
     chatId,
@@ -268,12 +269,13 @@ export async function processChannelOutbox(
   const deliver = opts.deliver !== false;
   const token = opts.telegramToken ?? loadTelegramEnv().effectiveToken ?? '';
   const r2Store = opts.r2Store ?? localOpsChannelStore;
+  const limit = Math.max(1, Math.min(opts.limit ?? 250, 2000));
   const pending = db
     .query(
       `SELECT id, topic, event_type, payload_json, projectors, retries
-       FROM ops_channel_outbox WHERE status = 'pending' ORDER BY created_at ASC LIMIT 100`
+       FROM ops_channel_outbox WHERE status = 'pending' ORDER BY created_at ASC LIMIT $limit`
     )
-    .all() as OutboxRow[];
+    .all({ $limit: limit }) as OutboxRow[];
 
   let sent = 0;
   let failed = 0;
@@ -321,6 +323,22 @@ export async function processChannelOutbox(
                  WHERE play_id = $pid AND node_id = $nid`,
                 { $mid: tg.messageId, $pid: payload.playId, $nid: payload.nodeId }
               );
+            }
+            if (tg.ok && tg.messageId != null) {
+              const templateId = payload.templateId;
+              const chatRef = payload.telegramId ?? payload.telegram_id;
+              if (
+                typeof templateId === 'string' &&
+                chatRef != null &&
+                !String(chatRef).startsWith('pending-')
+              ) {
+                rememberTemplateMessageId(
+                  db,
+                  String(chatRef),
+                  templateId as import('../telegram/templates/types.ts').TemplateId,
+                  tg.messageId
+                );
+              }
             }
           }
         } else if (deliver && projector === 'slack') {
@@ -470,9 +488,7 @@ export function enqueuePartnerWelcomeEvent(
       '',
       '<i>Profile active · use Status / Balances keyboards.</i>',
     ].join('\n');
-  const replyMarkup = rendered?.keyboard
-    ? translateKeyboard(rendered.keyboard, 'en')
-    : undefined;
+  const replyMarkup = rendered?.keyboard ? translateKeyboard(rendered.keyboard, 'en') : undefined;
 
   return enqueueOpsChannelEvent(db, {
     topic: 'identity',
@@ -520,9 +536,7 @@ export function enqueueOnboardCompleteEvent(
       templateId: 'onboard.complete.v1',
       text: rendered.text,
       parseMode: 'HTML',
-      replyMarkup: rendered.keyboard
-        ? translateKeyboard(rendered.keyboard, 'en')
-        : undefined,
+      replyMarkup: rendered.keyboard ? translateKeyboard(rendered.keyboard, 'en') : undefined,
     },
     projectors: ['r2', 'telegram'],
   });

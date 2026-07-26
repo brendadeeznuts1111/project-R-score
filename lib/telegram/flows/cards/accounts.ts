@@ -1,8 +1,10 @@
 /**
- * Accounts flow card.
+ * Accounts flow card — thin caller of accounts.v1.
  */
+import { asTreeNodeId } from '../../../types/branded/operations.ts';
+import { escapeHtml } from '../../templates/escape.ts';
+import { renderForNode } from '../../templates/render.ts';
 import { t } from '../i18n.ts';
-import { navFooterKeyboard } from '../keyboards.ts';
 import type { FlowContext, FlowInput, FlowOutput } from '../types.ts';
 
 export function accountsFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
@@ -25,23 +27,31 @@ export function accountsFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
     status: string;
   }[];
 
-  if (!accounts.length) {
+  const treeNodeId = input.treeNodeId ?? asTreeNodeId(ctx.node.id);
+  const detailLines = accounts.map(
+    a =>
+      `${escapeHtml(a.book)}: <b>${escapeHtml(a.username || '—')}</b> — $${a.balance.toFixed(0)} (${escapeHtml(a.status)})`
+  );
+
+  const rendered = renderForNode(ctx.db, 'accounts.v1', treeNodeId, {
+    locale,
+    accountsCount: accounts.length,
+    detailLines,
+    emptyHint: accounts.length ? undefined : 'No accounts — contact referrer to get funded.',
+  });
+
+  if (!rendered) {
     return {
-      text: '<b>Accounts</b>\nNo accounts — contact referrer to get funded.',
+      text: `<b>${t('card.not_registered', locale)}</b>`,
       parseMode: 'HTML',
-      keyboard: navFooterKeyboard('accounts', 'f:accounts:r'),
-      editMessageId: input.editMessageId,
     };
   }
 
-  const rows = accounts.map(
-    a => `${a.book}: <b>${a.username || '—'}</b> — $${a.balance.toFixed(0)} (${a.status})`
-  );
-
   return {
-    text: ['<b>Accounts</b>', '', ...rows].join('\n'),
+    text: rendered.text,
     parseMode: 'HTML',
-    keyboard: navFooterKeyboard('accounts', 'f:accounts:r'),
+    keyboard: rendered.keyboard,
+    templateId: rendered.templateId,
     editMessageId: input.editMessageId,
   };
 }

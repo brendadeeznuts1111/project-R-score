@@ -1,8 +1,9 @@
 /**
- * Tree flow card.
+ * Tree flow card — thin caller of tree.v1.
  */
+import { asTreeNodeId } from '../../../types/branded/operations.ts';
+import { renderForNode } from '../../templates/render.ts';
 import { t } from '../i18n.ts';
-import { navFooterKeyboard } from '../keyboards.ts';
 import type { FlowContext, FlowInput, FlowOutput } from '../types.ts';
 
 export function treeFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
@@ -14,11 +15,24 @@ export function treeFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
     };
   }
 
+  const treeNodeId = input.treeNodeId ?? asTreeNodeId(ctx.node.id);
+
   if (ctx.node.type === 'sub_agent') {
+    const rendered = renderForNode(ctx.db, 'tree.v1', treeNodeId, {
+      locale,
+      treeHint: 'Available for partners and agents only.',
+    });
+    if (!rendered) {
+      return {
+        text: `<b>${t('card.not_registered', locale)}</b>`,
+        parseMode: 'HTML',
+      };
+    }
     return {
-      text: '<b>Tree</b>\nAvailable for partners and agents only.',
+      text: rendered.text,
       parseMode: 'HTML',
-      keyboard: navFooterKeyboard('tree', 'f:tree:r'),
+      keyboard: rendered.keyboard,
+      templateId: rendered.templateId,
       editMessageId: input.editMessageId,
     };
   }
@@ -42,18 +56,29 @@ export function treeFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
     )
     .get({ $p: ctx.node.id }) as { total: number };
 
-  const rows = children.map(r => `${r.type}: ${r.c}`);
+  const detailLines = [
+    ...children.map(r => `${r.type}: ${r.c}`),
+    '',
+    `Downstream liquidity: $${downstream.total.toLocaleString()}`,
+  ];
+
+  const rendered = renderForNode(ctx.db, 'tree.v1', treeNodeId, {
+    locale,
+    detailLines,
+  });
+
+  if (!rendered) {
+    return {
+      text: `<b>${t('card.not_registered', locale)}</b>`,
+      parseMode: 'HTML',
+    };
+  }
 
   return {
-    text: [
-      '<b>Your Tree</b>',
-      '',
-      ...rows,
-      '',
-      `Downstream liquidity: $${downstream.total.toLocaleString()}`,
-    ].join('\n'),
+    text: rendered.text,
     parseMode: 'HTML',
-    keyboard: navFooterKeyboard('tree', 'f:tree:r'),
+    keyboard: rendered.keyboard,
+    templateId: rendered.templateId,
     editMessageId: input.editMessageId,
   };
 }

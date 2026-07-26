@@ -10,6 +10,7 @@ import { statusFlow } from './cards/status.ts';
 import { treeFlow } from './cards/tree.ts';
 import { welcomeFlow } from './cards/welcome.ts';
 import { resolveLocale } from './i18n.ts';
+import { getChatChannelMeta } from './channel-meta.ts';
 import type {
   FlowHandler,
   FlowId,
@@ -74,6 +75,20 @@ export function runFlow(db: Database, dbPath: string, input: FlowInput): FlowOut
   if (result instanceof Promise) {
     throw new Error('Async flow handlers not supported in sync runFlow');
   }
+
+  if (
+    result.editMessageId == null &&
+    result.templateId &&
+    input.chatId &&
+    !input.callbackData?.endsWith(':r')
+  ) {
+    const meta = getChatChannelMeta(db, input.chatId);
+    const remembered = meta?.lastTemplateIds?.[result.templateId];
+    if (remembered != null) {
+      return { ...result, editMessageId: remembered };
+    }
+  }
+
   return result;
 }
 
@@ -89,8 +104,6 @@ export function commandToFlowId(command: string): FlowId | null {
       return 'plays';
     case 'tree':
       return 'tree';
-    case 'balances':
-      return 'balances';
     case 'balances':
       return 'balances';
     case 'menu':

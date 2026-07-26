@@ -29,6 +29,7 @@ export function balancesFlow(input: FlowInput, ctx: FlowContext): FlowOutput {
     text: rendered.text,
     parseMode: 'HTML',
     keyboard: rendered.keyboard,
+    templateId: rendered.templateId,
     editMessageId: input.editMessageId,
   };
 }

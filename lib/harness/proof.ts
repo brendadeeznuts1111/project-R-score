@@ -1142,7 +1142,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
-      'bun test tests/telegram-bot.test.ts tests/telegram-webhook-pages.test.ts',
+      'bun test tests/telegram-bot.test.ts tests/telegram-webhook-pages.test.ts tests/telegram-webhook-consumer.test.ts tests/ops-commands-flow.test.ts tests/telegram-flow-edit.test.ts',
       'functions/api/telegram/webhook/[[tenant]].ts',
       'functions-bun-only/api/telegram/webhook/[[tenant]].ts',
       'lib/telegram/webhook-pages.ts',
@@ -1153,8 +1153,12 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'scripts/telegram-webhook-register.sh',
       'tests/telegram-bot.test.ts',
       'tests/telegram-webhook-pages.test.ts',
+      'tests/telegram-webhook-consumer.test.ts',
+      'tests/ops-commands-flow.test.ts',
+      'tests/telegram-flow-edit.test.ts',
     ],
-    freshRerun: 'bun test tests/telegram-bot.test.ts tests/telegram-webhook-pages.test.ts',
+    freshRerun:
+      'bun test tests/telegram-bot.test.ts tests/telegram-webhook-pages.test.ts tests/telegram-webhook-consumer.test.ts tests/ops-commands-flow.test.ts tests/telegram-flow-edit.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/telegram/',
   },
