@@ -757,7 +757,12 @@ class OperationsDashboard extends HTMLElement {
                 (d.toc.rotorSamples != null ? ` · rotor ${d.toc.rotorSamples}` : '') +
                 (d.toc.capitalMoves != null ? ` · cap ${d.toc.capitalMoves}` : '') +
                 (d.toc.warmCyclesOpen != null ? ` · warmΔ ${d.toc.warmCyclesOpen}` : '') +
-                (d.toc.gate12Events != null ? ` · g12 ${d.toc.gate12Events}` : '')
+                (d.toc.gate12Events != null ? ` · g12 ${d.toc.gate12Events}` : '') +
+                (d.toc.balanceSheetsOk != null ? ` · sheet ${d.toc.balanceSheetsOk}` : '') +
+                (d.toc.releaseCards != null ? ` · rel ${d.toc.releaseCards}` : '') +
+                (d.toc.deferredPlays != null && d.toc.deferredPlays > 0
+                  ? ` · defer ${d.toc.deferredPlays}`
+                  : '')
               : '';
           const tioe =
             t != null

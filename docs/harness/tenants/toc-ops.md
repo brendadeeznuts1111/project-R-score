@@ -99,6 +99,7 @@ bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
 | Partner + agent profiles (phones/data · assets/rails · telegram/bot · deals · accounting · CLV · expert liquidity · history · limits · wager places) | **Closed (demo)** — `lib/toc-ops/profiles.ts`; board Agents + Profile sections; ops-summary rollups |
 | MessageLog / BIC handoffs · rotor drift · experiment outcomes | **Closed (demo)** — `lib/toc-ops/seed-deepen.ts` pass-3; partner MessageLog + rotor + exception timeline; experiment `outcome` lift/decision; ops-summary channel rollups |
 | Capital moves · warm cycles · Gate 12 ledger · expert ROI · buffer history | **Closed (demo)** — `seed-deepen` pass-4; per-account ledgers + healthPulse; agent `roi` eligibility; `buffer.history`; ops-summary capital/warm/g12 counts |
+| Soft A=L+E sheet · limit refresh · rail confirm · switchback windows · release/defer cards | **Closed (demo)** — `seed-deepen` pass-5; `softBalance.balanceSheet`; `limitHistory` / `confirmHistory`; experiment `switchbackWindows`; agent `releaseCards` |
 | Soft `force` wipe under append-only | **Open by design** — insert-missing only; no truncate |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |
 | Full CT Soft mutations / DoD close on Pages | **Open by design** — use toc-ops-repo `ct` |

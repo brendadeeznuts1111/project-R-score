@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-26T06:13:58.103Z",
+  "generatedAt": "2026-07-26T06:15:31.948Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -649,7 +649,72 @@
               "reason": "Gate 12 principal outstanding"
             }
           ]
-        }
+        },
+        "releaseCards": [
+          {
+            "releaseId": "rel-marcus-play-ash-001-nfl-ml-001",
+            "at": "2026-07-17T19:10:00.000Z",
+            "callSign": "ASH-001",
+            "partnerCode": "ASH",
+            "stake": 1200,
+            "market": "NFL",
+            "status": "settled",
+            "playId": "play-ash-001-nfl-ml-001"
+          },
+          {
+            "releaseId": "rel-marcus-play-ash-002-blocked-001",
+            "at": "2026-07-19T18:00:00.000Z",
+            "callSign": "ASH-002",
+            "partnerCode": "ASH",
+            "stake": 800,
+            "market": "NBA",
+            "status": "deferred",
+            "deferredReason": "PLAY-EX-02 warmup_count<2 / not WARMED",
+            "playId": "play-ash-002-blocked-001"
+          },
+          {
+            "releaseId": "rel-marcus-play-ash-001-nba-deep-001",
+            "at": "2026-07-18T20:05:00.000Z",
+            "callSign": "ASH-001",
+            "partnerCode": "ASH",
+            "stake": 1000,
+            "market": "NBA",
+            "status": "settled",
+            "playId": "play-ash-001-nba-deep-001"
+          },
+          {
+            "releaseId": "rel-marcus-play-ash-001-pending-deep",
+            "at": "2026-07-23T19:00:00.000Z",
+            "callSign": "ASH-001",
+            "partnerCode": "ASH",
+            "stake": 700,
+            "market": "MLB",
+            "status": "reserved",
+            "deferredReason": "Awaiting partner ack",
+            "playId": "play-ash-001-pending-deep"
+          },
+          {
+            "releaseId": "rel-marcus-play-pat-001-prior-cycle-001",
+            "at": "2026-07-12T16:10:00.000Z",
+            "callSign": "PAT-001",
+            "partnerCode": "PAT",
+            "stake": 1100,
+            "market": "NFL",
+            "status": "settled",
+            "playId": "play-pat-001-prior-cycle-001"
+          },
+          {
+            "releaseId": "rel-marcus-play-pat-002-limit-reject-001",
+            "at": "2026-07-22T12:00:00.000Z",
+            "callSign": "PAT-002",
+            "partnerCode": "PAT",
+            "stake": 2500,
+            "market": "MLB",
+            "status": "deferred",
+            "deferredReason": "PLAY-EX-01 stake > dailyMax ($2000)",
+            "playId": "play-pat-002-limit-reject-001"
+          }
+        ]
       }
     },
     {
@@ -1029,7 +1094,59 @@
               "reason": "Warm 1/2"
             }
           ]
-        }
+        },
+        "releaseCards": [
+          {
+            "releaseId": "rel-elena-play-ash-001-tennis-001",
+            "at": "2026-07-21T15:05:00.000Z",
+            "callSign": "ASH-001",
+            "partnerCode": "ASH",
+            "stake": 900,
+            "market": "Tennis",
+            "status": "settled",
+            "playId": "play-ash-001-tennis-001"
+          },
+          {
+            "releaseId": "rel-elena-play-ash-001-nfl-deep-002",
+            "at": "2026-07-13T17:10:00.000Z",
+            "callSign": "ASH-001",
+            "partnerCode": "ASH",
+            "stake": 800,
+            "market": "NFL",
+            "status": "settled",
+            "playId": "play-ash-001-nfl-deep-002"
+          },
+          {
+            "releaseId": "rel-elena-play-pat-001-nfl-spread-001",
+            "at": "2026-07-20T16:05:00.000Z",
+            "callSign": "PAT-001",
+            "partnerCode": "PAT",
+            "stake": 1500,
+            "market": "NFL",
+            "status": "settled",
+            "playId": "play-pat-001-nfl-spread-001"
+          },
+          {
+            "releaseId": "rel-elena-play-pat-001-nba-open-001",
+            "at": "2026-07-22T15:20:00.000Z",
+            "callSign": "PAT-001",
+            "partnerCode": "PAT",
+            "stake": 900,
+            "market": "NBA",
+            "status": "placed",
+            "playId": "play-pat-001-nba-open-001"
+          },
+          {
+            "releaseId": "rel-elena-play-pat-001-tennis-deep-001",
+            "at": "2026-07-16T14:20:00.000Z",
+            "callSign": "PAT-001",
+            "partnerCode": "PAT",
+            "stake": 1100,
+            "market": "Tennis",
+            "status": "settled",
+            "playId": "play-pat-001-tennis-deep-001"
+          }
+        ]
       }
     },
     {
@@ -1442,7 +1559,69 @@
               "reason": "Gate 12 principal outstanding"
             }
           ]
-        }
+        },
+        "releaseCards": [
+          {
+            "releaseId": "rel-kai-play-ash-001-mlb-loss-001",
+            "at": "2026-07-19T17:20:00.000Z",
+            "callSign": "ASH-001",
+            "partnerCode": "ASH",
+            "stake": 600,
+            "market": "MLB",
+            "status": "settled",
+            "playId": "play-ash-001-mlb-loss-001"
+          },
+          {
+            "releaseId": "rel-kai-play-pat-001-mlb-loss-001",
+            "at": "2026-07-14T18:05:00.000Z",
+            "callSign": "PAT-001",
+            "partnerCode": "PAT",
+            "stake": 180,
+            "market": "MLB",
+            "status": "settled",
+            "playId": "play-pat-001-mlb-loss-001"
+          },
+          {
+            "releaseId": "rel-kai-play-pat-002-kalshi-pol-001",
+            "at": "2026-07-21T14:10:00.000Z",
+            "callSign": "PAT-002",
+            "partnerCode": "PAT",
+            "stake": 2000,
+            "market": "Politics",
+            "status": "settled",
+            "playId": "play-pat-002-kalshi-pol-001"
+          },
+          {
+            "releaseId": "rel-kai-play-pat-004-stake-soccer-001",
+            "at": "2026-07-22T07:15:00.000Z",
+            "callSign": "PAT-004",
+            "partnerCode": "PAT",
+            "stake": 900,
+            "market": "Soccer",
+            "status": "settled",
+            "playId": "play-pat-004-stake-soccer-001"
+          },
+          {
+            "releaseId": "rel-kai-play-pat-004-stake-open-001",
+            "at": "2026-07-23T10:05:00.000Z",
+            "callSign": "PAT-004",
+            "partnerCode": "PAT",
+            "stake": 800,
+            "market": "Soccer",
+            "status": "placed",
+            "playId": "play-pat-004-stake-open-001"
+          },
+          {
+            "releaseId": "rel-kai-play-pat-004-crypto-deep-001",
+            "at": "2026-07-19T11:00:00.000Z",
+            "callSign": "PAT-004",
+            "partnerCode": "PAT",
+            "stake": 500,
+            "market": "Crypto",
+            "status": "settled",
+            "playId": "play-pat-004-crypto-deep-001"
+          }
+        ]
       }
     }
   ],
@@ -1523,7 +1702,33 @@
             "metric": 0.714
           }
         ]
-      }
+      },
+      "switchbackWindows": [
+        {
+          "windowId": "win-exp-routing-phase1-2026-07-ASH-static-0",
+          "startAt": "2026-07-20T00:00:00.000Z",
+          "endAt": "2026-07-21T23:00:00.000Z",
+          "variantKey": "static",
+          "partnerCode": "ASH",
+          "metricValue": 0.72
+        },
+        {
+          "windowId": "win-exp-routing-phase1-2026-07-PAT-dynamic-1",
+          "startAt": "2026-07-22T00:00:00.000Z",
+          "endAt": "2026-07-23T23:00:00.000Z",
+          "variantKey": "dynamic",
+          "partnerCode": "PAT",
+          "metricValue": 0.88
+        },
+        {
+          "windowId": "win-exp-routing-phase1-2026-07-NOV-static-2",
+          "startAt": "2026-07-23T00:00:00.000Z",
+          "endAt": "2026-07-23T23:00:00.000Z",
+          "variantKey": "static",
+          "partnerCode": "NOV",
+          "metricValue": 0.12
+        }
+      ]
     },
     {
       "id": "exp-cut-ab-2026-06",
@@ -1596,7 +1801,25 @@
             "metric": 0
           }
         ]
-      }
+      },
+      "switchbackWindows": [
+        {
+          "windowId": "win-exp-cut-ab-2026-06-PAT-std_70-0",
+          "startAt": "2026-07-20T00:00:00.000Z",
+          "endAt": "2026-07-21T23:00:00.000Z",
+          "variantKey": "std_70",
+          "partnerCode": "PAT",
+          "metricValue": 4200
+        },
+        {
+          "windowId": "win-exp-cut-ab-2026-06-ASH-alt_65-1",
+          "startAt": "2026-07-22T00:00:00.000Z",
+          "endAt": "2026-07-23T23:00:00.000Z",
+          "variantKey": "alt_65",
+          "partnerCode": "ASH",
+          "metricValue": 408
+        }
+      ]
     },
     {
       "id": "exp-liquidity-weight-2026-07",
@@ -1668,7 +1891,25 @@
             "metric": 0
           }
         ]
-      }
+      },
+      "switchbackWindows": [
+        {
+          "windowId": "win-exp-liquidity-weight-2026-07-PAT-dynamic_weight-0",
+          "startAt": "2026-07-20T00:00:00.000Z",
+          "endAt": "2026-07-21T23:00:00.000Z",
+          "variantKey": "dynamic_weight",
+          "partnerCode": "PAT",
+          "metricValue": 0.81
+        },
+        {
+          "windowId": "win-exp-liquidity-weight-2026-07-ASH-static_cap-1",
+          "startAt": "2026-07-22T00:00:00.000Z",
+          "endAt": "2026-07-23T23:00:00.000Z",
+          "variantKey": "static_cap",
+          "partnerCode": "ASH",
+          "metricValue": 0.66
+        }
+      ]
     }
   ],
   "partners": [
@@ -1746,7 +1987,23 @@
           "profileScreenshotRef": "proof:ash-venmo-profile",
           "destinationHint": "@ash.hr.fl",
           "dailyLimit": 10000,
-          "monthlyLimit": 40000
+          "monthlyLimit": 40000,
+          "confirmHistory": [
+            {
+              "at": "2026-07-13T11:00:00.000Z",
+              "railId": "rail-ash-venmo-1",
+              "action": "submitted",
+              "screenshotRef": "proof:ash-venmo-profile",
+              "note": "Profile screenshot uploaded"
+            },
+            {
+              "at": "2026-07-14T15:00:00.000Z",
+              "railId": "rail-ash-venmo-1",
+              "action": "confirmed",
+              "screenshotRef": "proof:ash-venmo-profile",
+              "note": "Ops confirmed destination"
+            }
+          ]
         },
         {
           "id": "rail-ash-cashapp-1",
@@ -1756,7 +2013,23 @@
           "profileScreenshotRef": "proof:ash-cashapp-profile",
           "destinationHint": "$ashHRFL",
           "dailyLimit": 8000,
-          "monthlyLimit": 30000
+          "monthlyLimit": 30000,
+          "confirmHistory": [
+            {
+              "at": "2026-07-13T11:00:00.000Z",
+              "railId": "rail-ash-cashapp-1",
+              "action": "submitted",
+              "screenshotRef": "proof:ash-cashapp-profile",
+              "note": "Profile screenshot uploaded"
+            },
+            {
+              "at": "2026-07-14T15:00:00.000Z",
+              "railId": "rail-ash-cashapp-1",
+              "action": "confirmed",
+              "screenshotRef": "proof:ash-cashapp-profile",
+              "note": "Ops confirmed destination"
+            }
+          ]
         }
       ],
       "accounts": [
@@ -1976,6 +2249,24 @@
               "mode": "profit_split",
               "note": "Principal cleared — profit_split unlocked"
             }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-14T10:00:00.000Z",
+              "dailyMax": 1750,
+              "weeklyMax": 7000,
+              "freshness": "stale",
+              "screenshotRef": "proof:ash-001-limits-stale-v1",
+              "source": "partner"
+            },
+            {
+              "at": "2026-07-12T09:00:00.000Z",
+              "dailyMax": 2500,
+              "weeklyMax": 10000,
+              "freshness": "stale",
+              "screenshotRef": "proof:ash-001-limits-stale",
+              "source": "ops"
+            }
           ]
         },
         {
@@ -2129,6 +2420,15 @@
               "remainingAfter": 5010,
               "mode": "warmup_capital_return",
               "taskId": "FUND-ASH-002-cycle1"
+            }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-22T12:00:00.000Z",
+              "dailyMax": null,
+              "weeklyMax": null,
+              "freshness": "unknown",
+              "source": "ops"
             }
           ]
         },
@@ -2324,6 +2624,24 @@
               "mode": "principal_recovery",
               "note": "Gate 12 cashier Rope — WD profit_split blocked"
             }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-14T10:00:00.000Z",
+              "dailyMax": 140,
+              "weeklyMax": 350,
+              "freshness": "stale",
+              "screenshotRef": "proof:ash-003-limits-low-v1",
+              "source": "partner"
+            },
+            {
+              "at": "2026-07-22T10:00:00.000Z",
+              "dailyMax": 200,
+              "weeklyMax": 500,
+              "freshness": "fresh",
+              "screenshotRef": "proof:ash-003-limits-low",
+              "source": "bot"
+            }
           ]
         },
         {
@@ -2460,6 +2778,24 @@
               "mode": "warmup_capital_return",
               "taskId": "FUND-ASH-004-20260722-110000-001",
               "note": "Principal disclosed — Gate 12 open"
+            }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-14T10:00:00.000Z",
+              "dailyMax": 700,
+              "weeklyMax": 2100,
+              "freshness": "stale",
+              "screenshotRef": "proof:ash-004-kiosk-v1",
+              "source": "partner"
+            },
+            {
+              "at": "2026-07-23T10:00:00.000Z",
+              "dailyMax": 1000,
+              "weeklyMax": 3000,
+              "freshness": "fresh",
+              "screenshotRef": "proof:ash-004-kiosk",
+              "source": "bot"
             }
           ]
         }
@@ -2663,6 +2999,46 @@
         "pendingDeployments": {
           "count": 0,
           "totalAmount": 0
+        },
+        "balanceSheet": {
+          "assets": 11016,
+          "liabilities": 896,
+          "equity": 10120,
+          "identityOk": true,
+          "delta": 0,
+          "asOf": "2026-07-23T18:00:00.000Z",
+          "drill": [
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 10310,
+              "note": "Hard in-book $10310 (memo — not Soft stock)"
+            },
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 5300,
+              "note": "Gate 12 principal out $5300"
+            },
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 15000,
+              "note": "CapitalDeployment Soft rollup"
+            },
+            {
+              "entryType": "CapitalReturn",
+              "amount": 4980,
+              "note": "CapitalReturn Soft rollup"
+            },
+            {
+              "entryType": "ProfitSplit",
+              "amount": 996,
+              "note": "ProfitSplit Soft rollup"
+            },
+            {
+              "entryType": "Loss",
+              "amount": 840,
+              "note": "Loss Soft rollup"
+            }
+          ]
         }
       },
       "bottlenecks": [
@@ -3762,7 +4138,23 @@
           "profileScreenshotRef": "proof:pat-cashapp-profile",
           "destinationHint": "$patHRFL",
           "dailyLimit": 8000,
-          "monthlyLimit": 35000
+          "monthlyLimit": 35000,
+          "confirmHistory": [
+            {
+              "at": "2026-07-13T11:00:00.000Z",
+              "railId": "rail-pat-cashapp-1",
+              "action": "submitted",
+              "screenshotRef": "proof:pat-cashapp-profile",
+              "note": "Profile screenshot uploaded"
+            },
+            {
+              "at": "2026-07-14T15:00:00.000Z",
+              "railId": "rail-pat-cashapp-1",
+              "action": "confirmed",
+              "screenshotRef": "proof:pat-cashapp-profile",
+              "note": "Ops confirmed destination"
+            }
+          ]
         },
         {
           "id": "rail-pat-paypal-1",
@@ -3772,7 +4164,23 @@
           "profileScreenshotRef": "proof:pat-paypal-profile",
           "destinationHint": "pat@example.com",
           "dailyLimit": 5000,
-          "monthlyLimit": 20000
+          "monthlyLimit": 20000,
+          "confirmHistory": [
+            {
+              "at": "2026-07-13T11:00:00.000Z",
+              "railId": "rail-pat-paypal-1",
+              "action": "submitted",
+              "screenshotRef": "proof:pat-paypal-profile",
+              "note": "Profile screenshot uploaded"
+            },
+            {
+              "at": "2026-07-14T15:00:00.000Z",
+              "railId": "rail-pat-paypal-1",
+              "action": "confirmed",
+              "screenshotRef": "proof:pat-paypal-profile",
+              "note": "Ops confirmed destination"
+            }
+          ]
         }
       ],
       "accounts": [
@@ -3984,6 +4392,24 @@
               "remainingAfter": 0,
               "mode": "profit_split",
               "note": "Principal cleared — profit_split unlocked"
+            }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-14T10:00:00.000Z",
+              "dailyMax": 2100,
+              "weeklyMax": 8400,
+              "freshness": "stale",
+              "screenshotRef": "proof:pat-001-limits-v1",
+              "source": "partner"
+            },
+            {
+              "at": "2026-07-21T14:00:00.000Z",
+              "dailyMax": 3000,
+              "weeklyMax": 12000,
+              "freshness": "fresh",
+              "screenshotRef": "proof:pat-001-limits",
+              "source": "bot"
             }
           ]
         },
@@ -4205,6 +4631,24 @@
               "mode": "principal_recovery",
               "note": "Gate 12 cashier Rope — WD profit_split blocked"
             }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-14T10:00:00.000Z",
+              "dailyMax": 1400,
+              "weeklyMax": 5600,
+              "freshness": "stale",
+              "screenshotRef": "proof:pat-002-limits-v1",
+              "source": "partner"
+            },
+            {
+              "at": "2026-07-20T11:00:00.000Z",
+              "dailyMax": 2000,
+              "weeklyMax": 8000,
+              "freshness": "fresh",
+              "screenshotRef": "proof:pat-002-limits",
+              "source": "bot"
+            }
           ]
         },
         {
@@ -4352,6 +4796,15 @@
               "mode": "warmup_capital_return",
               "taskId": "FUND-PAT-003-20260722-110000-001",
               "note": "Principal disclosed — Gate 12 open"
+            }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-22T12:00:00.000Z",
+              "dailyMax": null,
+              "weeklyMax": null,
+              "freshness": "unknown",
+              "source": "ops"
             }
           ]
         },
@@ -4573,6 +5026,24 @@
               "mode": "profit_split",
               "note": "Principal cleared — profit_split unlocked"
             }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-14T10:00:00.000Z",
+              "dailyMax": 3500,
+              "weeklyMax": 14000,
+              "freshness": "stale",
+              "screenshotRef": "proof:pat-004-stake-v1",
+              "source": "partner"
+            },
+            {
+              "at": "2026-07-22T08:00:00.000Z",
+              "dailyMax": 5000,
+              "weeklyMax": 20000,
+              "freshness": "fresh",
+              "screenshotRef": "proof:pat-004-stake",
+              "source": "bot"
+            }
           ]
         },
         {
@@ -4724,6 +5195,23 @@
               "remainingAfter": 5100,
               "mode": "warmup_capital_return",
               "taskId": "FUND-PAT-005-cycle1"
+            }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-14T10:00:00.000Z",
+              "dailyMax": 1750,
+              "weeklyMax": 7000,
+              "freshness": "stale",
+              "screenshotRef": "limits/PAT-005-v1.png",
+              "source": "partner"
+            },
+            {
+              "at": "2026-07-20T09:00:00.000Z",
+              "dailyMax": 2500,
+              "weeklyMax": 10000,
+              "freshness": "unknown",
+              "source": "ops"
             }
           ]
         }
@@ -5010,6 +5498,46 @@
         "pendingDeployments": {
           "count": 1,
           "totalAmount": 5000
+        },
+        "balanceSheet": {
+          "assets": 31348,
+          "liabilities": 3638,
+          "equity": 27710,
+          "identityOk": true,
+          "delta": 0,
+          "asOf": "2026-07-23T18:00:00.000Z",
+          "drill": [
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 22500,
+              "note": "Hard in-book $22500 (memo — not Soft stock)"
+            },
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 10000,
+              "note": "Gate 12 principal out $10000"
+            },
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 25000,
+              "note": "CapitalDeployment Soft rollup"
+            },
+            {
+              "entryType": "ProfitSplit",
+              "amount": 4120,
+              "note": "ProfitSplit Soft rollup"
+            },
+            {
+              "entryType": "Loss",
+              "amount": 680,
+              "note": "Loss Soft rollup"
+            },
+            {
+              "entryType": "CostOfPriming",
+              "amount": 35,
+              "note": "CostOfPriming Soft rollup"
+            }
+          ]
         }
       },
       "bottlenecks": [
@@ -6337,7 +6865,23 @@
           "profileScreenshotRef": "proof:nov-venmo-profile",
           "destinationHint": "@nov.newpartner",
           "dailyLimit": 5000,
-          "monthlyLimit": 20000
+          "monthlyLimit": 20000,
+          "confirmHistory": [
+            {
+              "at": "2026-07-13T11:00:00.000Z",
+              "railId": "rail-nov-venmo-1",
+              "action": "submitted",
+              "screenshotRef": "proof:nov-venmo-profile",
+              "note": "Profile screenshot uploaded"
+            },
+            {
+              "at": "2026-07-14T15:00:00.000Z",
+              "railId": "rail-nov-venmo-1",
+              "action": "confirmed",
+              "screenshotRef": "proof:nov-venmo-profile",
+              "note": "Ops confirmed destination"
+            }
+          ]
         },
         {
           "id": "rail-nov-cashapp-1",
@@ -6346,7 +6890,21 @@
           "confirmed": false,
           "destinationHint": "$novNew",
           "dailyLimit": 4000,
-          "monthlyLimit": 15000
+          "monthlyLimit": 15000,
+          "confirmHistory": [
+            {
+              "at": "2026-07-13T11:00:00.000Z",
+              "railId": "rail-nov-cashapp-1",
+              "action": "submitted",
+              "note": "Profile screenshot uploaded"
+            },
+            {
+              "at": "2026-07-22T09:00:00.000Z",
+              "railId": "rail-nov-cashapp-1",
+              "action": "expired",
+              "note": "Confirm SLA elapsed"
+            }
+          ]
         }
       ],
       "accounts": [
@@ -6470,7 +7028,16 @@
             }
           ],
           "warmCycles": [],
-          "gate12Ledger": []
+          "gate12Ledger": [],
+          "limitHistory": [
+            {
+              "at": "2026-07-22T12:00:00.000Z",
+              "dailyMax": null,
+              "weeklyMax": null,
+              "freshness": "unknown",
+              "source": "ops"
+            }
+          ]
         },
         {
           "callSign": "NOV-002",
@@ -6603,6 +7170,15 @@
               "taskId": "FUND-NOV-002-20260722-110000-001",
               "note": "Principal disclosed — Gate 12 open"
             }
+          ],
+          "limitHistory": [
+            {
+              "at": "2026-07-22T12:00:00.000Z",
+              "dailyMax": null,
+              "weeklyMax": null,
+              "freshness": "unknown",
+              "source": "ops"
+            }
           ]
         }
       ],
@@ -6677,6 +7253,36 @@
         "pendingDeployments": {
           "count": 1,
           "totalAmount": 5000
+        },
+        "balanceSheet": {
+          "assets": 5000,
+          "liabilities": 0,
+          "equity": 5000,
+          "identityOk": true,
+          "delta": 0,
+          "asOf": "2026-07-23T18:00:00.000Z",
+          "drill": [
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 5000,
+              "note": "Hard in-book $5000 (memo — not Soft stock)"
+            },
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 5000,
+              "note": "Gate 12 principal out $5000"
+            },
+            {
+              "entryType": "CapitalDeployment",
+              "amount": 5000,
+              "note": "CapitalDeployment Soft rollup"
+            },
+            {
+              "entryType": "CostOfPriming",
+              "amount": 55,
+              "note": "CostOfPriming Soft rollup"
+            }
+          ]
         }
       },
       "bottlenecks": [
@@ -7385,7 +7991,13 @@
     "capitalMoves": 30,
     "warmCyclesOpen": 3,
     "gate12Events": 24,
-    "bufferHistoryDays": 7
+    "bufferHistoryDays": 7,
+    "balanceSheetsOk": 3,
+    "limitRefreshes": 18,
+    "railConfirmEvents": 12,
+    "switchbackWindows": 7,
+    "releaseCards": 17,
+    "deferredPlays": 2
   },
   "identity": {
     "plane": "linked",
@@ -7393,7 +8005,7 @@
     "linkedPartners": 3,
     "linkedAccounts": 11,
     "linkedRails": 6,
-    "generatedAt": "2026-07-26T06:13:58.106Z",
+    "generatedAt": "2026-07-26T06:15:31.952Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -7565,7 +8177,7 @@
     ]
   },
   "enforcement": {
-    "evaluatedAt": "2026-07-26T06:13:58.108Z",
+    "evaluatedAt": "2026-07-26T06:15:31.953Z",
     "plane": "operate-lite",
     "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
     "warmupRequiredForPlay": 2,
@@ -8505,7 +9117,7 @@
     }
   },
   "returnEfficiency": {
-    "computedAt": "2026-07-26T06:13:58.103Z",
+    "computedAt": "2026-07-26T06:15:31.948Z",
     "byProcess": [
       {
         "process": "WARM",
@@ -8513,9 +9125,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 9.759700266203703,
+        "tauDays": 9.760786435185185,
         "oe": 0,
-        "rP": 0.005569587028018823
+        "rP": 0.005568967250841065
       },
       {
         "process": "LIMIT",
@@ -8523,9 +9135,9 @@
         "partnerCode": "ASH",
         "deltaT": 279.12008928571424,
         "iPeak": 0,
-        "tauDays": 5.884700266203704,
+        "tauDays": 5.885786435185185,
         "oe": 0,
-        "rP": 47.431487868417506
+        "rP": 47.422734813675284
       },
       {
         "process": "WD",
@@ -8533,9 +9145,9 @@
         "partnerCode": "ASH",
         "deltaT": 4800,
         "iPeak": 4800,
-        "tauDays": 2.7597002662037036,
+        "tauDays": 2.760786435185185,
         "oe": 0,
-        "rP": 0.3623581923900812
+        "rP": 0.3622156307548371
       },
       {
         "process": "WARM",
@@ -8543,9 +9155,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.718033599537037,
+        "tauDays": 2.7191197685185187,
         "oe": 0,
-        "rP": 0.019998832983248893
+        "rP": 0.01999084432739646
       },
       {
         "process": "PLAY",
@@ -8553,9 +9165,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5200,
-        "tauDays": 3.6347002662037036,
+        "tauDays": 3.635786435185185,
         "oe": 0,
-        "rP": 0.014379955180642034
+        "rP": 0.014375659256898782
       },
       {
         "process": "WD",
@@ -8563,9 +9175,9 @@
         "partnerCode": "PAT",
         "deltaT": 5000,
         "iPeak": 5000,
-        "tauDays": 3.593033599537037,
+        "tauDays": 3.5941197685185187,
         "oe": 0,
-        "rP": 0.2783163508765546
+        "rP": 0.2782322416629415
       },
       {
         "process": "WARM",
@@ -8573,9 +9185,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.7597002662037036,
+        "tauDays": 2.760786435185185,
         "oe": 0,
-        "rP": 0.019696885442843842
+        "rP": 0.01968913614875606
       },
       {
         "process": "WARM",
@@ -8583,9 +9195,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.8013669328703705,
+        "tauDays": 2.8024531018518517,
         "oe": 35,
-        "rP": 0.019355554775900452
+        "rP": 0.019348071681342626
       },
       {
         "process": "ONB",
@@ -8593,9 +9205,9 @@
         "partnerCode": "NOV",
         "deltaT": 271.7875,
         "iPeak": 0,
-        "tauDays": 3.843033599537037,
+        "tauDays": 3.8441197685185187,
         "oe": 40,
-        "rP": 70.7221243219788
+        "rP": 70.7021415476719
       },
       {
         "process": "FUND",
@@ -8603,9 +9215,9 @@
         "partnerCode": "NOV",
         "deltaT": 40.768125000000005,
         "iPeak": 5000,
-        "tauDays": 3.6763669328703705,
+        "tauDays": 3.6774531018518517,
         "oe": 0,
-        "rP": 0.0022178485305964697
+        "rP": 0.002217193469005516
       },
       {
         "process": "LIMIT",
@@ -8613,9 +9225,9 @@
         "partnerCode": "NOV",
         "deltaT": 67.946875,
         "iPeak": 0,
-        "tauDays": 3.8013669328703705,
+        "tauDays": 3.8024531018518517,
         "oe": 0,
-        "rP": 17.87432684081725
+        "rP": 17.86922104756765
       }
     ],
     "byAsset": [
@@ -8624,15 +9236,15 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 996,
         "peakCapital": 5000,
-        "capitalDaysInI": 10.509700266203703,
-        "ce": 0.018953918280673734
+        "capitalDaysInI": 10.510786435185185,
+        "ce": 0.018951959611049826
       },
       {
         "callSign": "ASH-002",
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5010,
-        "capitalDaysInI": 7.593033599537037,
+        "capitalDaysInI": 7.594119768518518,
         "ce": 0
       },
       {
@@ -8640,7 +9252,7 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 6.843033599537037,
+        "capitalDaysInI": 6.844119768518518,
         "ce": 0
       },
       {
@@ -8656,23 +9268,23 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 2720,
         "peakCapital": 5200,
-        "capitalDaysInI": 7.822200266203704,
-        "ce": 0.06687081706881234
+        "capitalDaysInI": 7.823286435185185,
+        "ce": 0.06686153286224926
       },
       {
         "callSign": "PAT-002",
         "partnerCode": "PAT",
         "profitSplitTotal": 800,
         "peakCapital": 5000,
-        "capitalDaysInI": 4.787478043981482,
-        "ce": 0.03342051880554147
+        "capitalDaysInI": 4.788564212962963,
+        "ce": 0.033412938176096564
       },
       {
         "callSign": "PAT-003",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 2.8708113773148147,
+        "capitalDaysInI": 2.8718975462962963,
         "ce": 0
       },
       {
@@ -8680,15 +9292,15 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 600,
         "peakCapital": 5000,
-        "capitalDaysInI": 5.874283599537037,
-        "ce": 0.020428022918310824
+        "capitalDaysInI": 5.875369768518518,
+        "ce": 0.020424246426665016
       },
       {
         "callSign": "PAT-005",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5100,
-        "capitalDaysInI": 3.829144710648148,
+        "capitalDaysInI": 3.83023087962963,
         "ce": 0
       },
       {
@@ -8704,7 +9316,7 @@
         "partnerCode": "NOV",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 3.672894710648148,
+        "capitalDaysInI": 3.67398087962963,
         "ce": 0
       }
     ],
@@ -8722,8 +9334,8 @@
         "partnerCode": "ASH",
         "deltaL": 0.3,
         "cAsset": 10010,
-        "daysToUsableLimit": 7.593033599537037,
-        "le": 0.000003947042980536436
+        "daysToUsableLimit": 7.594119768518518,
+        "le": 0.000003946478444318321
       },
       {
         "callSign": "ASH-003",
@@ -8762,8 +9374,8 @@
         "partnerCode": "PAT",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 2.8708113773148147,
-        "le": 0.000010450007352297804
+        "daysToUsableLimit": 2.8718975462962963,
+        "le": 0.00001044605509646021
       },
       {
         "callSign": "PAT-004",
@@ -8778,7 +9390,7 @@
         "partnerCode": "PAT",
         "deltaL": 0,
         "cAsset": 10100,
-        "daysToUsableLimit": 3.829144710648148,
+        "daysToUsableLimit": 3.83023087962963,
         "le": 0
       },
       {
@@ -8794,18 +9406,18 @@
         "partnerCode": "NOV",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 3.672894710648148,
-        "le": 0.000008167944458910439
+        "daysToUsableLimit": 3.67398087962963,
+        "le": 0.00000816552970276325
       }
     ],
-    "avgRP": 12.431802930765583,
+    "avgRP": 12.428703195769714,
     "processTypeAvgRP": {
-      "LIMIT": 32.652907354617376,
-      "ONB": 70.7221243219788,
-      "WD": 0.32033727163331793,
-      "PLAY": 0.014379955180642034,
-      "WARM": 0.016155215057503003,
-      "FUND": 0.0022178485305964697
+      "LIMIT": 32.64597793062147,
+      "ONB": 70.7021415476719,
+      "WD": 0.32022393620888934,
+      "PLAY": 0.014375659256898782,
+      "WARM": 0.016149254852084054,
+      "FUND": 0.002217193469005516
     }
   },
   "rankedActions": [
@@ -8814,7 +9426,7 @@
       "process": "LIMIT",
       "callSign": "ASH-001",
       "partnerCode": "ASH",
-      "rP": 47.431487868417506,
+      "rP": 47.422734813675284,
       "weightedScore": 0.24,
       "reason": "Stale/missing limit on WARMED seat — LIMIT first (highest R)",
       "ropeSafe": true
@@ -8824,7 +9436,7 @@
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
-      "rP": 0.3623581923900812,
+      "rP": 0.3622156307548371,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -8834,7 +9446,7 @@
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
-      "rP": 0.2783163508765546,
+      "rP": 0.2782322416629415,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -8844,7 +9456,7 @@
       "process": "PLAY",
       "callSign": "PAT-001",
       "partnerCode": "PAT",
-      "rP": 0.014379955180642034,
+      "rP": 0.014375659256898782,
       "weightedScore": 0.8800000000000001,
       "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
@@ -8864,7 +9476,7 @@
       "process": "WARM",
       "callSign": "ASH-004",
       "partnerCode": "ASH",
-      "rP": 0.019998832983248893,
+      "rP": 0.01999084432739646,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -8874,7 +9486,7 @@
       "process": "WARM",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
-      "rP": 0.019696885442843842,
+      "rP": 0.01968913614875606,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -8884,7 +9496,7 @@
       "process": "WARM",
       "callSign": "PAT-005",
       "partnerCode": "PAT",
-      "rP": 0.019355554775900452,
+      "rP": 0.019348071681342626,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -8894,7 +9506,7 @@
       "process": "WARM",
       "callSign": "ASH-002",
       "partnerCode": "ASH",
-      "rP": 0.005569587028018823,
+      "rP": 0.005568967250841065,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -8974,7 +9586,7 @@
       "process": "ONB",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
-      "rP": 70.7221243219788,
+      "rP": 70.7021415476719,
       "reason": "ONB new asset — buffer allows",
       "ropeSafe": true
     },

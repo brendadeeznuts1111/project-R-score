@@ -24,14 +24,26 @@ async function fetchJson(url) {
 async function loadToc() {
   const embed = parseEmbed();
   if (embed?.partners) {
-    return { mode: 'embed', data: embed };
+    const loop = await loadOpsLoopSlice();
+    return { mode: 'embed', data: embed, loop };
   }
   try {
     const data = await fetchJson('/api/toc');
-    return { mode: data.mode || 'api', data };
+    const loop = await loadOpsLoopSlice();
+    return { mode: data.mode || 'api', data, loop };
   } catch {
     const data = await fetchJson('/registry/toc-ops.json');
-    return { mode: 'registry', data };
+    const loop = await loadOpsLoopSlice();
+    return { mode: 'registry', data, loop };
+  }
+}
+
+async function loadOpsLoopSlice() {
+  try {
+    const summary = await fetchJson('/registry/ops-summary.json');
+    return summary?.loop ?? null;
+  } catch {
+    return null;
   }
 }
 
@@ -238,6 +250,13 @@ function renderExperiments(experiments) {
                       · ctrl ${esc(e.outcome.controlMetric)} → tx ${esc(e.outcome.treatmentMetric)}</li>`
                   : ''
               }
+              ${(e.switchbackWindows || [])
+                .slice(0, 4)
+                .map(
+                  w =>
+                    `<li class="toc-sub">win <code>${esc(w.partnerCode)}</code> ${esc(w.variantKey)} ${esc(w.startAt.slice(0, 10))}→${esc(w.endAt.slice(0, 10))}</li>`
+                )
+                .join('')}
             </ul>
           </article>`
           )
@@ -401,6 +420,15 @@ function renderAgents(experts) {
                     .map(
                       x =>
                         `<li class="toc-sub">${x.eligible ? pill('elig', 'ok') : pill('block', 'hot')} <code>${esc(x.callSign)}</code> ${esc(x.reason)}</li>`
+                    )
+                    .join('')}
+                  ${(pr.releaseCards || [])
+                    .slice(0, 4)
+                    .map(
+                      c =>
+                        `<li class="toc-sub">${pill(c.status, c.status === 'deferred' ? 'hot' : c.status === 'settled' ? 'ok' : 'dim')} <code>${esc(c.callSign)}</code> ${money(c.stake)} ${esc(c.market)}${
+                          c.deferredReason ? ` · ${esc(c.deferredReason)}` : ''
+                        }</li>`
                     )
                     .join('')}
                 </ul>
@@ -769,6 +797,12 @@ function renderPartners(partners, assetBySign, limitBySign) {
                       r.dailyLimit != null
                         ? `<div class="toc-sub">daily ${money(r.dailyLimit)} · monthly ${money(r.monthlyLimit)}</div>`
                         : ''
+                    }${
+                      (r.confirmHistory || []).length
+                        ? `<div class="toc-sub">${[...(r.confirmHistory || [])]
+                            .map(h => `${h.action}@${h.at.slice(5, 10)}`)
+                            .join(' · ')}</div>`
+                        : ''
                     }</li>`
                 )
                 .join('')}</ul>
@@ -819,13 +853,24 @@ function renderPartners(partners, assetBySign, limitBySign) {
                           .map(g => `${g.kind} rem ${money(g.remainingAfter)}`)
                           .join(' · ')}</div>`
                       : '';
+                  const limHist =
+                    (a.limitHistory || []).length
+                      ? `<div class="toc-sub">limits ${[...(a.limitHistory || [])]
+                          .map(
+                            h =>
+                              `${h.at.slice(5, 10)} ${h.freshness}${
+                                h.dailyMax != null ? ` d${money(h.dailyMax)}` : ''
+                              }`
+                          )
+                          .join(' · ')}</div>`
+                      : '';
                   return `<li><code>${esc(a.callSign)}</code> ${pill(a.status, a.status === 'WARMED' ? 'ok' : 'dim')} ${pill(a.flowStage, 'dim')}
                     warm ${a.warmupCount}/2 · ${esc(a.capitalLocation)} ${money(a.hardBalance)} ${g12}
                     <div class="toc-sub">${freshnessPill(a.limits?.freshness)}${
                       a.limits?.dailyMax != null
                         ? ` daily ${money(a.limits.dailyMax)} / weekly ${money(a.limits.weeklyMax)}`
                         : ''
-                    }</div>${metrics}${warm}${cap}${g12led}
+                    }</div>${metrics}${warm}${cap}${g12led}${limHist}
                     ${formatVenueLine(a.venue)}
                     ${formatPresenceLine(a.presence)}
                   </li>`;
@@ -914,6 +959,15 @@ function renderPartners(partners, assetBySign, limitBySign) {
                   )
                   .join('')}</ul>`;
               })()}
+              ${
+                p.softBalance?.balanceSheet
+                  ? `<div class="toc-sub">sheet A ${money(p.softBalance.balanceSheet.assets)} = L ${money(p.softBalance.balanceSheet.liabilities)} + E ${money(p.softBalance.balanceSheet.equity)} ${
+                      p.softBalance.balanceSheet.identityOk
+                        ? pill('A=L+E', 'ok')
+                        : pill(`Δ ${p.softBalance.balanceSheet.delta}`, 'hot')
+                    }</div>`
+                  : ''
+              }
             </section>
             <section>
               <h4>Bottlenecks</h4>
@@ -936,7 +990,7 @@ function renderPartners(partners, assetBySign, limitBySign) {
   </section>`;
 }
 
-function render(root, { mode, data }) {
+function render(root, { mode, data, loop }) {
   const s = data.summary || {};
   const buf = data.buffer || {};
   const partners = data.partners || [];
@@ -965,7 +1019,21 @@ function render(root, { mode, data }) {
         <div class="toc-stat"><span class="k">ONB / LIMIT</span><span class="v">${s.openOnb ?? 0}/${s.openLimit ?? 0}</span></div>
         <div class="toc-stat"><span class="k">Plays pend / set</span><span class="v">${s.playsPending ?? 0}/${s.playsSettled ?? 0}</span></div>
         <div class="toc-stat ${enf?.failed ? 'hot' : ''}"><span class="k">Gate fails</span><span class="v">${enf?.failed ?? '—'}</span></div>
+        ${
+          loop?.gatedDefer > 0
+            ? `<div class="toc-stat hot"><span class="k">Rope defer</span><span class="v">${loop.gatedDefer}</span></div>`
+            : loop?.gatedDefer === 0
+              ? `<div class="toc-stat dim"><span class="k">Rope defer</span><span class="v">0</span></div>`
+              : ''
+        }
       </div>
+      ${
+        loop?.gatedDefer > 0
+          ? `<p class="toc-sub">Ops loop deferred ${loop.gatedDefer} play(s) — <a href="/portal/ops/">loop panel</a></p>`
+          : loop
+            ? `<p class="toc-sub">Ops loop LCR ${Math.round(Number(loop.loopCompletionRate ?? 0) * 100)}% · <a href="/portal/ops/">loop panel</a></p>`
+            : ''
+      }
       <div class="toc-buffer">
         <span class="toc-buffer-label">Buffer</span>
         <span>float ${money(buf.houseFloatHard)} / ${money(buf.floatTarget)}

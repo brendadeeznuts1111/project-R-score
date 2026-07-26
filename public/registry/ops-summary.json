@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-26T06:13:58.110Z",
+  "generated": "2026-07-26T06:15:31.956Z",
   "liquidity": {
     "total": 85710
   },
@@ -136,11 +136,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "9ef986518b65f33b3823d6b50168ad36306d0a0004165ec1bfb34f8e534d9cb1",
+    "proofHash": "da8b9ceadc88e694161fc64242a37b683d5f69b52e9ed1fb15781879a4a8fb61",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-26T06:13:58.111Z"
+    "timestamp": "2026-07-26T06:15:31.956Z"
   },
   "registryClient": {
     "available": true,
@@ -214,7 +214,7 @@
         "detail": "13 contracts · 20 consistency · preflight self-contract deferred"
       }
     ],
-    "timestamp": "2026-07-26T06:13:58.087Z",
+    "timestamp": "2026-07-26T06:15:31.925Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -400,8 +400,8 @@
         "ok": true
       }
     ],
-    "proofHash": "144c0ec4187423553cdf5d23e86b2d72a2738830d96d107f8f6e0a6924b2e7a2",
-    "timestamp": "2026-07-26T06:13:57.726Z",
+    "proofHash": "88d00a99de6c06dbcd730ade7f5fdbb065f57e742d79113aea80c9c5917ecdf8",
+    "timestamp": "2026-07-26T06:15:31.548Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -412,7 +412,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-26T06:13:57.723Z",
+    "updatedAt": "2026-07-26T06:15:31.545Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -693,7 +693,7 @@
     ]
   },
   "channels": {
-    "pending": 18,
+    "pending": 36,
     "failed": 72,
     "sent": 259,
     "oldestPendingAt": "2026-07-26T06:12:52.950Z",
@@ -702,7 +702,7 @@
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-26T06:13:58.103Z",
+    "generatedAt": "2026-07-26T06:15:31.948Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -730,7 +730,7 @@
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 12.431802930765583,
+    "avgRP": 12.428703195769714,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -756,7 +756,13 @@
     "capitalMoves": 30,
     "warmCyclesOpen": 3,
     "gate12Events": 24,
-    "bufferHistoryDays": 7
+    "bufferHistoryDays": 7,
+    "balanceSheetsOk": 3,
+    "limitRefreshes": 18,
+    "railConfirmEvents": 12,
+    "switchbackWindows": 7,
+    "releaseCards": 17,
+    "deferredPlays": 2
   },
   "loop": {
     "dispatched": 29,
@@ -769,9 +775,9 @@
     "settledViaFullLoop": 29,
     "outboxSent": 259,
     "outboxFailed": 72,
-    "outboxPending": 18,
-    "oldestPendingAgeSec": 65,
-    "manualStepsPerCycle": 90,
+    "outboxPending": 36,
+    "oldestPendingAgeSec": 159,
+    "manualStepsPerCycle": 108,
     "loopCompletionRate": 1,
     "distinctPlaysDispatched": 7,
     "settledPlaysViaFullLoop": 7,

@@ -1510,6 +1510,12 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
     warmCyclesOpen: channel.warmCyclesOpen,
     gate12Events: channel.gate12Events,
     bufferHistoryDays: channel.bufferHistoryDays,
+    balanceSheetsOk: channel.balanceSheetsOk,
+    limitRefreshes: channel.limitRefreshes,
+    railConfirmEvents: channel.railConfirmEvents,
+    switchbackWindows: channel.switchbackWindows,
+    releaseCards: channel.releaseCards,
+    deferredPlays: channel.deferredPlays,
   };
 
   return {

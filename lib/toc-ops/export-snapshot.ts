@@ -78,6 +78,12 @@ export function emptyTocOpsSummarySlice(): TocOpsSummarySlice {
     warmCyclesOpen: 0,
     gate12Events: 0,
     bufferHistoryDays: 0,
+    balanceSheetsOk: 0,
+    limitRefreshes: 0,
+    railConfirmEvents: 0,
+    switchbackWindows: 0,
+    releaseCards: 0,
+    deferredPlays: 0,
   };
 }
 
@@ -146,6 +152,12 @@ export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
     warmCyclesOpen: snap.summary.warmCyclesOpen ?? 0,
     gate12Events: snap.summary.gate12Events ?? 0,
     bufferHistoryDays: snap.summary.bufferHistoryDays ?? snap.buffer.history?.length ?? 0,
+    balanceSheetsOk: snap.summary.balanceSheetsOk ?? 0,
+    limitRefreshes: snap.summary.limitRefreshes ?? 0,
+    railConfirmEvents: snap.summary.railConfirmEvents ?? 0,
+    switchbackWindows: snap.summary.switchbackWindows ?? 0,
+    releaseCards: snap.summary.releaseCards ?? 0,
+    deferredPlays: snap.summary.deferredPlays ?? 0,
   };
 }
 

@@ -16,11 +16,16 @@ import type {
   TocExperiment,
   TocExpert,
   TocGate12Event,
+  TocLimitRefresh,
   TocMessageLogEntry,
   TocPartner,
   TocPlay,
+  TocRailConfirmEvent,
+  TocReleaseCard,
   TocRotorPoint,
+  TocSoftBalanceSheet,
   TocSoftEntry,
+  TocSwitchbackWindow,
   TocWarmCycle,
 } from './types.ts';
 
@@ -788,10 +793,27 @@ function novExtraSoft(): TocSoftEntry[] {
   ];
 }
 
+function switchbackWindowsFor(exp: TocExperiment): TocSwitchbackWindow[] {
+  const windows: TocSwitchbackWindow[] = [];
+  let i = 0;
+  for (const a of exp.assignments) {
+    const startDay = 10 + (i % 4) * 2;
+    windows.push({
+      windowId: `win-${exp.id}-${a.partnerCode}-${a.variantKey}-${i}`,
+      startAt: dayIso(startDay, 0),
+      endAt: dayIso(startDay + 1, 23),
+      variantKey: a.variantKey,
+      partnerCode: a.partnerCode,
+      metricValue: a.metricValue,
+    });
+    i++;
+  }
+  return windows;
+}
+
 function deepenExperiments(exps: TocExperiment[], partners: TocPartner[]): TocExperiment[] {
   const plays = partners.flatMap(p => p.recentPlays);
   return exps.map(exp => {
-    if (exp.outcome) return exp;
     const tagged = plays.filter(pl => pl.experimentId === exp.id);
     const byVariant = exp.variants.map(v => {
       const rows = tagged.filter(pl => pl.variantKey === v.key);
@@ -810,9 +832,9 @@ function deepenExperiments(exps: TocExperiment[], partners: TocPartner[]): TocEx
     const liftPct =
       control === 0 ? 0 : Math.round(((treatment - control) / Math.abs(control)) * 1000) / 1000;
     const sampleN = byVariant.reduce((n, v) => n + v.n, 0);
-    return {
-      ...exp,
-      outcome: {
+    const outcome =
+      exp.outcome ??
+      ({
         sampleN,
         controlMetric: control,
         treatmentMetric: treatment,
@@ -828,7 +850,11 @@ function deepenExperiments(exps: TocExperiment[], partners: TocPartner[]): TocEx
               ? 'iterate'
               : 'pending',
         byVariant,
-      },
+      } as const);
+    return {
+      ...exp,
+      outcome,
+      switchbackWindows: exp.switchbackWindows ?? switchbackWindowsFor(exp),
     };
   });
 }
@@ -1007,10 +1033,131 @@ function accountCapitalLedgers(
   };
 }
 
-function attachAccountLedgers(p: TocPartner): TocPartner {
+function softBalanceSheet(p: TocPartner): TocSoftBalanceSheet {
+  const soft = p.softBalance.byStakeholder;
+  const hardInBook = p.accounts.reduce((n, a) => n + a.hardBalance, 0);
+  const principal = p.accounts.reduce((n, a) => n + a.gate12.housePrincipalOutstanding, 0);
+  // Soft stock identity: A = L + E (Partner+Expert Soft = L, House Soft = E)
+  const liabilities = soft.Partner + soft.Expert;
+  const equity = soft.House;
+  const assets = liabilities + equity;
+  const delta = 0;
+  const byType = new Map<string, number>();
+  for (const e of p.softBalance.recentEntries) {
+    byType.set(e.entryType, (byType.get(e.entryType) ?? 0) + e.amount);
+  }
+  const drill = [
+    {
+      entryType: 'CapitalDeployment' as const,
+      amount: hardInBook,
+      note: `Hard in-book $${hardInBook} (memo — not Soft stock)`,
+    },
+    {
+      entryType: 'CapitalDeployment' as const,
+      amount: principal,
+      note: `Gate 12 principal out $${principal}`,
+    },
+    ...[...byType.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([entryType, amount]) => ({
+        entryType: entryType as TocSoftEntry['entryType'],
+        amount,
+        note: `${entryType} Soft rollup`,
+      })),
+  ];
   return {
-    ...p,
-    accounts: p.accounts.map(a => ({ ...a, ...accountCapitalLedgers(a, p.partnerCode) })),
+    assets: Math.round(assets),
+    liabilities: Math.round(liabilities),
+    equity: Math.round(equity),
+    identityOk: true,
+    delta,
+    asOf: '2026-07-23T18:00:00.000Z',
+    drill,
+  };
+}
+
+function limitHistoryFor(a: TocAccount): TocLimitRefresh[] {
+  if (a.limits.dailyMax == null && a.limits.checkedAt == null) {
+    return [
+      {
+        at: '2026-07-22T12:00:00.000Z',
+        dailyMax: null,
+        weeklyMax: null,
+        freshness: 'unknown',
+        source: 'ops',
+      },
+    ];
+  }
+  const daily = a.limits.dailyMax ?? 0;
+  const weekly = a.limits.weeklyMax ?? daily * 5;
+  return [
+    {
+      at: dayIso(4, 10),
+      dailyMax: Math.round(daily * 0.7),
+      weeklyMax: Math.round(weekly * 0.7),
+      freshness: 'stale',
+      screenshotRef: a.limits.screenshotRef
+        ? `${a.limits.screenshotRef}-v1`
+        : `limits/${a.callSign}-v1.png`,
+      source: 'partner',
+    },
+    {
+      at: a.limits.checkedAt ?? dayIso(10, 9),
+      dailyMax: daily,
+      weeklyMax: weekly,
+      freshness: a.limits.freshness,
+      screenshotRef: a.limits.screenshotRef,
+      source: a.limits.freshness === 'fresh' ? 'bot' : 'ops',
+    },
+  ];
+}
+
+function railConfirmHistory(p: TocPartner): TocPartner['rails'] {
+  return p.rails.map(r => {
+    const hist: TocRailConfirmEvent[] = [
+      {
+        at: dayIso(3, 11),
+        railId: r.id,
+        action: 'submitted',
+        screenshotRef: r.profileScreenshotRef,
+        note: 'Profile screenshot uploaded',
+      },
+    ];
+    if (r.confirmed) {
+      hist.push({
+        at: dayIso(4, 15),
+        railId: r.id,
+        action: 'confirmed',
+        screenshotRef: r.profileScreenshotRef,
+        note: 'Ops confirmed destination',
+      });
+    } else {
+      hist.push({
+        at: dayIso(12, 9),
+        railId: r.id,
+        action: p.partnerCode === 'NOV' ? 'expired' : 'rejected',
+        note: p.partnerCode === 'NOV' ? 'Confirm SLA elapsed' : 'Destination mismatch',
+      });
+    }
+    return { ...r, confirmHistory: hist };
+  });
+}
+
+function attachAccountLedgers(p: TocPartner): TocPartner {
+  const accounts = p.accounts.map(a => ({
+    ...a,
+    ...accountCapitalLedgers(a, p.partnerCode),
+    limitHistory: limitHistoryFor(a),
+  }));
+  const withRails = { ...p, accounts, rails: railConfirmHistory(p) };
+  const sheet = softBalanceSheet(withRails);
+  return {
+    ...withRails,
+    softBalance: {
+      ...withRails.softBalance,
+      balanceSheet: sheet,
+    },
     healthPulse: [0, 1, 2, 3, 4, 5, 6].map(i => {
       const day = dayIso(10 + i, 0).slice(0, 10);
       const softT = p.softBalance.recentEntries
@@ -1097,6 +1244,45 @@ function deepenExpertRoi(experts: TocExpert[], partners: TocPartner[]): TocExper
             reason: 'Eligible',
           }));
 
+    const releaseCards: TocReleaseCard[] = mine.slice(0, 6).map(pl => {
+      const deferred = pl.status === 'blocked' || pl.status === 'instruction';
+      return {
+        releaseId: `rel-${e.expertId}-${pl.playId}`,
+        at: pl.placedAt,
+        callSign: pl.callSign,
+        partnerCode: pl.partnerCode,
+        stake: pl.stake,
+        market: pl.market,
+        status: deferred
+          ? pl.status === 'blocked'
+            ? 'deferred'
+            : 'reserved'
+          : pl.status === 'settled'
+            ? 'settled'
+            : pl.status === 'placed'
+              ? 'placed'
+              : 'reserved',
+        deferredReason: deferred
+          ? pl.blockedReason ||
+            (pl.status === 'instruction' ? 'Awaiting partner ack' : 'play.gate.defer')
+          : undefined,
+        playId: pl.playId,
+      };
+    });
+    // Ensure at least one deferred card for marcus narrative
+    if (e.expertId === 'marcus' && !releaseCards.some(c => c.status === 'deferred')) {
+      releaseCards.push({
+        releaseId: `rel-marcus-defer-ash003`,
+        at: '2026-07-23T17:00:00.000Z',
+        callSign: 'ASH-003',
+        partnerCode: 'ASH',
+        stake: 900,
+        market: 'NFL',
+        status: 'deferred',
+        deferredReason: 'Gate 12 principal outstanding — play.gate.defer',
+      });
+    }
+
     return {
       ...e,
       profile: {
@@ -1112,6 +1298,7 @@ function deepenExpertRoi(experts: TocExpert[], partners: TocPartner[]): TocExper
           byCallSign: [...byMap.values()].sort((a, b) => b.t - a.t),
           eligibility: elig,
         },
+        releaseCards,
       },
     };
   });
@@ -1150,6 +1337,12 @@ export type TocDeepenResult = {
     warmCyclesOpen: number;
     gate12Events: number;
     bufferHistoryDays: number;
+    balanceSheetsOk: number;
+    limitRefreshes: number;
+    railConfirmEvents: number;
+    switchbackWindows: number;
+    releaseCards: number;
+    deferredPlays: number;
   };
 };
 
@@ -1233,6 +1426,24 @@ export function deepenSeedNarrative(
     0
   );
   const bufferHistory = demoBufferHistory(principalTotal);
+  const balanceSheetsOk = denserPartners.filter(p => p.softBalance.balanceSheet?.identityOk).length;
+  const limitRefreshes = denserPartners.reduce(
+    (n, p) => n + p.accounts.reduce((m, a) => m + (a.limitHistory?.length ?? 0), 0),
+    0
+  );
+  const railConfirmEvents = denserPartners.reduce(
+    (n, p) => n + p.rails.reduce((m, r) => m + (r.confirmHistory?.length ?? 0), 0),
+    0
+  );
+  const switchbackWindows = denserExps.reduce((n, e) => n + (e.switchbackWindows?.length ?? 0), 0);
+  const releaseCards = denserExperts.reduce(
+    (n, e) => n + (e.profile?.releaseCards?.length ?? 0),
+    0
+  );
+  const deferredPlays = denserExperts.reduce(
+    (n, e) => n + (e.profile?.releaseCards?.filter(c => c.status === 'deferred').length ?? 0),
+    0
+  );
 
   return {
     partners: denserPartners,
@@ -1253,6 +1464,12 @@ export function deepenSeedNarrative(
       warmCyclesOpen,
       gate12Events,
       bufferHistoryDays: bufferHistory.length,
+      balanceSheetsOk,
+      limitRefreshes,
+      railConfirmEvents,
+      switchbackWindows,
+      releaseCards,
+      deferredPlays,
     },
   };
 }

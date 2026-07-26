@@ -430,6 +430,8 @@ export type TocRail = {
   destinationHint?: string;
   dailyLimit?: number;
   monthlyLimit?: number;
+  /** Confirm / reject lifecycle (demo). */
+  confirmHistory?: TocRailConfirmEvent[];
 };
 
 export type TocAccountLimits = {
@@ -468,6 +470,8 @@ export type TocAccount = {
   warmCycles?: TocWarmCycle[];
   /** Gate 12 principal waterfall events. */
   gate12Ledger?: TocGate12Event[];
+  /** Limit refresh history (oldest→newest). */
+  limitHistory?: TocLimitRefresh[];
 };
 
 export type TocOpenTask = {
@@ -495,6 +499,61 @@ export type TocSoftBalance = {
   byStakeholder: { Partner: number; Expert: number; House: number };
   recentEntries: TocSoftEntry[];
   pendingDeployments: { count: number; totalAmount: number };
+  /** Stock identity A = L + E (demo balance-sheet view). */
+  balanceSheet?: TocSoftBalanceSheet;
+};
+
+/** Soft balance-sheet stock (mirrors toc-ops-repo `balance-sheet`). */
+export type TocSoftBalanceSheet = {
+  assets: number;
+  liabilities: number;
+  equity: number;
+  identityOk: boolean;
+  delta: number;
+  asOf: string;
+  drill: Array<{ entryType: TocSoftEntryType; amount: number; note: string }>;
+};
+
+/** Limit screenshot / refresh history on a Drum. */
+export type TocLimitRefresh = {
+  at: string;
+  dailyMax: number | null;
+  weeklyMax: number | null;
+  freshness: 'fresh' | 'stale' | 'unknown';
+  screenshotRef?: string;
+  source: 'partner' | 'ops' | 'bot';
+};
+
+/** Rail confirm lifecycle event. */
+export type TocRailConfirmEvent = {
+  at: string;
+  railId: string; // brand-ok
+  action: 'submitted' | 'confirmed' | 'rejected' | 'expired';
+  screenshotRef?: string;
+  note?: string;
+};
+
+/** Switchback / cluster window for an experiment. */
+export type TocSwitchbackWindow = {
+  windowId: string; // brand-ok
+  startAt: string;
+  endAt: string;
+  variantKey: string;
+  partnerCode: string; // brand-ok
+  metricValue?: number;
+};
+
+/** Expert PLAY release / reservation card. */
+export type TocReleaseCard = {
+  releaseId: string; // brand-ok
+  at: string;
+  callSign: string; // brand-ok
+  partnerCode: string; // brand-ok
+  stake: number;
+  market: string;
+  status: 'reserved' | 'placed' | 'expired' | 'settled' | 'deferred';
+  deferredReason?: string;
+  playId?: string; // brand-ok
 };
 
 export type TocBottleneck = {
@@ -572,6 +631,8 @@ export type TocExperiment = {
   clusterBy?: 'package_id' | 'partner_code';
   /** Desk readout after sample window (demo). */
   outcome?: TocExperimentOutcome;
+  /** Switchback / cluster windows (demo calendar). */
+  switchbackWindows?: TocSwitchbackWindow[];
 };
 
 /** MessageLog / Ball-in-Court handoff (demo mirror of toc-ops-repo MessageLog). */
@@ -865,6 +926,8 @@ export type TocAgentProfile = {
       reason: string;
     }>;
   };
+  /** Active / recent PLAY release cards (demo). */
+  releaseCards?: TocReleaseCard[];
 };
 
 export type TocProfilesSummary = {
@@ -1031,6 +1094,12 @@ export type TocOpsSnapshot = {
     warmCyclesOpen?: number;
     gate12Events?: number;
     bufferHistoryDays?: number;
+    balanceSheetsOk?: number;
+    limitRefreshes?: number;
+    railConfirmEvents?: number;
+    switchbackWindows?: number;
+    releaseCards?: number;
+    deferredPlays?: number;
   };
 };
 
@@ -1094,4 +1163,10 @@ export type TocOpsSummarySlice = {
   warmCyclesOpen?: number;
   gate12Events?: number;
   bufferHistoryDays?: number;
+  balanceSheetsOk?: number;
+  limitRefreshes?: number;
+  railConfirmEvents?: number;
+  switchbackWindows?: number;
+  releaseCards?: number;
+  deferredPlays?: number;
 };
