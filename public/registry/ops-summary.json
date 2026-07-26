@@ -1,6 +1,6 @@
 {
-  "source": "live",
-  "generated": "2026-07-26T19:39:48.449Z",
+  "source": "snapshot",
+  "generated": "2026-07-26T19:58:57.239Z",
   "liquidity": {
     "total": 85710
   },
@@ -136,11 +136,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "b0d6f5f85de8b03dbf0871193f6b6e25cdcb5bad4895c73e7eb3751408206e1e",
+    "proofHash": "58c358cc3f5c17ee6544ae29c70e6047e589df6f50cdb6599388931b09b80869",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-26T19:39:48.450Z"
+    "timestamp": "2026-07-26T19:58:57.239Z"
   },
   "registryClient": {
     "available": true,
@@ -214,7 +214,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-26T19:28:37.077Z",
+    "timestamp": "2026-07-26T19:58:57.205Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -400,8 +400,8 @@
         "ok": true
       }
     ],
-    "proofHash": "0ebac615475841a521a466a5eb163a8e83557b7899c2e880f12e2ecbb2bb18a2",
-    "timestamp": "2026-07-26T19:28:36.664Z",
+    "proofHash": "458b181a3a8ed4af9f381a9cc997c61536fa0cf42bb00c4cdcaf74971a712cbf",
+    "timestamp": "2026-07-26T19:58:56.894Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -412,7 +412,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-26T19:28:36.661Z",
+    "updatedAt": "2026-07-26T19:58:56.891Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -702,7 +702,7 @@
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-26T19:28:37.103Z",
+    "generatedAt": "2026-07-26T19:58:57.229Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -730,7 +730,7 @@
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 11.03885968606142,
+    "avgRP": 10.99202546623915,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,

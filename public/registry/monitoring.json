@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 832,
+  "uptimeMs": 368,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -26,16 +26,16 @@
   },
   "experimentsActive": 1,
   "predictionN": 30,
-  "timestamp": "2026-07-24T07:59:50.564Z",
-  "snapshotAt": "2026-07-24T07:59:50.564Z",
+  "timestamp": "2026-07-26T19:58:57.246Z",
+  "snapshotAt": "2026-07-26T19:58:57.246Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-24T07:59:50.564Z",
+    "checkedAt": "2026-07-26T19:58:57.247Z",
     "summary": {
       "total": 26,
       "ok": 25,
-      "missing": 11,
+      "missing": 9,
       "placeholder": 0,
       "requiredMissing": 0
     },
@@ -156,8 +156,8 @@
         "Key": "TELEGRAM_BOT_FACTORY",
         "Group": "ops",
         "Severity": "optional",
-        "Status": "missing",
-        "Detail": "factory portal webhook + ops consumer; verify: bun run telegram:verify"
+        "Status": "set",
+        "Detail": "set (len 46, 897…70)"
       },
       {
         "Key": "TELEGRAM_BOT_TOKEN",
@@ -184,8 +184,8 @@
         "Key": "TELEGRAM_WEBHOOK_SECRET",
         "Group": "ops",
         "Severity": "optional",
-        "Status": "missing",
-        "Detail": "setWebhook secret_token for factory tenant"
+        "Status": "set",
+        "Detail": "set (len 48, 10d…9b)"
       },
       {
         "Key": "PLAY_SIGNING_SECRET",
@@ -387,7 +387,7 @@
     "demosPassed": 30,
     "demosTotal": 30,
     "demoPassRate": "100.0%",
-    "generated": "2026-07-24T07:59:50.561Z",
+    "generated": "2026-07-26T19:58:57.245Z",
     "apisVerified": 30
   },
   "registryClientProof": {

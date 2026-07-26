@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-24T07:59:50.554Z",
+  "generated": "2026-07-26T19:58:57.239Z",
   "surfaces": [
     {
       "label": "Home",
@@ -93,6 +93,21 @@
     {
       "label": "portal weave",
       "href": "/registry/portal-weave.json"
+    },
+    {
+      "label": "content-type matrix",
+      "href": "/registry/content-type-matrix.json",
+      "note": "Pages Functions content-type.ts snapshot"
+    },
+    {
+      "label": "formdata proof",
+      "href": "/registry/formdata-proof.json",
+      "note": "verify:formdata bake"
+    },
+    {
+      "label": "package-info",
+      "href": "/registry/package-info.json",
+      "note": "verify:package-info bake"
     }
   ],
   "scripts": [
@@ -114,6 +129,16 @@
       "label": "Reference discovery",
       "cmd": "bun run reference:discover:check",
       "doc": "docs/harness/tenants/reference-discovery.md"
+    },
+    {
+      "label": "Public plane discovery",
+      "cmd": "bun run public:discover:check",
+      "doc": "docs/harness/tenants/public-plane.md"
+    },
+    {
+      "label": "Public audit bundle",
+      "cmd": "bun run public:audit:verify",
+      "doc": "docs/harness/tenants/public-plane.md"
     },
     {
       "label": "Sync R2 registry index",
