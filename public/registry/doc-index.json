@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "timestamp": "2026-07-24T07:51:29.234Z",
+  "timestamp": "2026-07-26T20:03:51.933Z",
   "subsystem": "other",
   "reportPath": "/registry/doc-index.json",
   "bunVersion": "1.4.0",
@@ -4666,5 +4666,5 @@
     "source": "tools/build-doc-index.ts",
     "report": "/registry/doc-index.json"
   },
-  "proofHash": "e88b09c5cef40be8ed3fb6925130ba599cfe8c721f1c04dcea2b135fb455747b"
+  "proofHash": "6d49c5e4912360f2906d1d2d6a4ee438ec16735c6980b48e385df21bf749a546"
 }
