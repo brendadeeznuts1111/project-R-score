@@ -1,0 +1,204 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/sqlite
+/**
+ * Package group registry — partner_code → Telegram package forum (Soft plane surface).
+ *
+ * Distinct from ops_chat_channel_meta (per-DM transport). See partner-package-group-handshake.md.
+ */
+import { Database } from 'bun:sqlite';
+import { formatPackageGroupTitle } from './surfaces.ts';
+
+export const PARTNER_CODE_PATTERN = /^[A-Z]{2,4}$/;
+
+export const PENDING_PACKAGE_GROUPS_JSONL = 'reports/telegram/pending-package-groups.jsonl';
+
+export type PackageGroupRegistryRow = {
+  partnerCode: string;
+  chatId: string; // brand-ok — Telegram chat_id wire
+  inviteLink: string | null;
+  title: string;
+  requestedBy: string | null;
+  createdAt: string;
+  linkedAt: string;
+};
+
+type DbRow = {
+  partner_code: string;
+  chat_id: string; // brand-ok
+  invite_link: string | null;
+  title: string;
+  requested_by: string | null;
+  created_at: string;
+  linked_at: string;
+};
+
+export function ensurePackageGroupRegistrySchema(db: Database): void {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS package_group_registry (
+      partner_code TEXT PRIMARY KEY,
+      chat_id TEXT NOT NULL,
+      invite_link TEXT,
+      title TEXT NOT NULL,
+      requested_by TEXT,
+      created_at TEXT NOT NULL,
+      linked_at TEXT NOT NULL
+    );
+  `);
+}
+
+function rowToRegistry(row: DbRow): PackageGroupRegistryRow {
+  return {
+    partnerCode: row.partner_code,
+    chatId: row.chat_id,
+    inviteLink: row.invite_link,
+    title: row.title,
+    requestedBy: row.requested_by,
+    createdAt: row.created_at,
+    linkedAt: row.linked_at,
+  };
+}
+
+export function parsePartnerCode(raw: string): string | null {
+  const code = raw.trim().toUpperCase();
+  return PARTNER_CODE_PATTERN.test(code) ? code : null;
+}
+
+/** Telegram chat_id wire: optional leading minus, digits only. */
+export function parseTelegramChatIdWire(raw: string): string | null {
+  const s = raw.trim();
+  if (!/^-?\d+$/.test(s)) return null;
+  return s;
+}
+
+export function getPackageGroupRegistry(
+  db: Database,
+  partnerCode: string
+): PackageGroupRegistryRow | null {
+  ensurePackageGroupRegistrySchema(db);
+  const code = parsePartnerCode(partnerCode);
+  if (!code) return null;
+  const row = db
+    .query(`SELECT * FROM package_group_registry WHERE partner_code = $c`)
+    .get({ $c: code }) as DbRow | null;
+  return row ? rowToRegistry(row) : null;
+}
+
+/** chat_id → registry row (for directory join). */
+export function packageGroupRegistryByChatId(db: Database): Map<string, PackageGroupRegistryRow> {
+  ensurePackageGroupRegistrySchema(db);
+  const rows = db.query(`SELECT * FROM package_group_registry`).all() as DbRow[];
+  const map = new Map<string, PackageGroupRegistryRow>();
+  for (const row of rows) {
+    map.set(row.chat_id, rowToRegistry(row));
+  }
+  return map;
+}
+
+export type UpsertPackageGroupRegistryInput = {
+  partnerCode: string;
+  chatId: string; // brand-ok
+  displayName: string;
+  inviteLink?: string | null;
+  requestedBy?: string | null;
+  now?: string;
+};
+
+export function upsertPackageGroupRegistry(
+  db: Database,
+  input: UpsertPackageGroupRegistryInput
+): PackageGroupRegistryRow {
+  ensurePackageGroupRegistrySchema(db);
+  const partnerCode = parsePartnerCode(input.partnerCode);
+  if (!partnerCode) {
+    throw new Error(`Invalid partner_code: ${input.partnerCode} (expected ^[A-Z]{2,4}$)`);
+  }
+  const chatId = parseTelegramChatIdWire(input.chatId);
+  if (!chatId) {
+    throw new Error(`Invalid Telegram chat_id: ${input.chatId}`);
+  }
+
+  const now = input.now ?? new Date().toISOString();
+  const title = formatPackageGroupTitle(partnerCode, input.displayName.trim() || partnerCode);
+  const existing = getPackageGroupRegistry(db, partnerCode);
+  const createdAt = existing?.createdAt ?? now;
+
+  db.run(
+    `INSERT INTO package_group_registry (
+       partner_code, chat_id, invite_link, title, requested_by, created_at, linked_at
+     ) VALUES ($pc, $cid, $inv, $title, $req, $created, $linked)
+     ON CONFLICT(partner_code) DO UPDATE SET
+       chat_id = excluded.chat_id,
+       invite_link = COALESCE(excluded.invite_link, package_group_registry.invite_link),
+       title = excluded.title,
+       requested_by = COALESCE(excluded.requested_by, package_group_registry.requested_by),
+       linked_at = excluded.linked_at`,
+    {
+      $pc: partnerCode,
+      $cid: chatId,
+      $inv: input.inviteLink?.trim() || null,
+      $title: title,
+      $req: input.requestedBy?.trim() || null,
+      $created: createdAt,
+      $linked: now,
+    }
+  );
+
+  return getPackageGroupRegistry(db, partnerCode)!;
+}
+
+/** Resolve a DM telegram_id for package-room welcome (any active seat under code). */
+export function resolvePartnerDmTelegramId(
+  db: Database,
+  partnerCode: string,
+  preferredCallSign?: string | null
+): string | null {
+  if (preferredCallSign?.trim()) {
+    const row = db
+      .query(
+        `SELECT telegram_id FROM tree_nodes
+         WHERE active = 1 AND call_sign = $cs AND telegram_id IS NOT NULL
+         LIMIT 1`
+      )
+      .get({ $cs: preferredCallSign.trim() }) as { telegram_id: string | null } | null; // brand-ok
+    const tid = row?.telegram_id?.trim();
+    if (tid && !tid.startsWith('pending-')) return tid;
+  }
+
+  const code = parsePartnerCode(partnerCode);
+  if (!code) return null;
+
+  const row = db
+    .query(
+      `SELECT telegram_id FROM tree_nodes
+       WHERE active = 1 AND telegram_id IS NOT NULL
+         AND call_sign LIKE $prefix
+       ORDER BY call_sign ASC LIMIT 1`
+    )
+    .get({ $prefix: `${code}-%` }) as { telegram_id: string | null } | null; // brand-ok
+  const tid = row?.telegram_id?.trim();
+  if (tid && !tid.startsWith('pending-')) return tid;
+  return null;
+}
+
+export type PackageGroupCreateArtifact = {
+  action: 'create_package_group';
+  partner_code: string;
+  display_name: string;
+  suggested_title: string;
+  requested_by: string | null;
+  tree_node_id: string; // brand-ok
+  timestamp: string;
+};
+
+export async function appendPendingPackageGroupArtifact(
+  artifact: PackageGroupCreateArtifact
+): Promise<string> {
+  const path = PENDING_PACKAGE_GROUPS_JSONL;
+  const dir = path.slice(0, path.lastIndexOf('/'));
+  if (dir) await Bun.$`mkdir -p ${dir}`.quiet();
+  const prev = (await Bun.file(path).exists()) ? await Bun.file(path).text() : '';
+  await Bun.write(path, prev + JSON.stringify(artifact) + '\n');
+  return path;
+}

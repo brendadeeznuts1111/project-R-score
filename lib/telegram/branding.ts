@@ -4,14 +4,21 @@
 /**
  * TOC Ops Telegram branding — bot profile, group titles/photos, forum topics.
  *
- * Naming SSOT:
+ * Naming / concern SSOT: [`surfaces.ts`](./surfaces.ts)
  * - Bot display name: "TOC Ops" (username @TOC_Op_bot is BotFather-owned)
- * - Groups: "TOC Ops · <surface>"
- * - Topics: alerts · day-ops · aar · sandbox
+ * - Groups: `TOC Ops · {CONCERN}[ · {ENV}]` — one group per concern
+ * - Topics: per-surface plan (HQ ≠ partner ≠ sandbox)
  */
 import { Database } from 'bun:sqlite';
 import { letterMarkPng } from '../../tools/generate-portal-icons.ts';
 import { upsertKnownChat } from './known-chats.ts';
+import {
+  allSurfaceTitles,
+  formatTocOpsGroupTitle,
+  getSurface,
+  type TocOpsSurfaceSlug,
+  type TocOpsTopicSlug,
+} from './surfaces.ts';
 import {
   telegramApiCall,
   type TelegramApiResult,
@@ -20,21 +27,60 @@ import {
   getBotMe,
 } from './telegram-api.ts';
 
+export {
+  TOC_OPS_SURFACES,
+  TOC_OPS_TITLE_PREFIX,
+  TOC_OPS_TITLE_SEP,
+  allSurfaceTitles,
+  formatTocOpsGroupTitle,
+  formatPackageGroupTitle,
+  formatSurfaceMatrix,
+  getSurface,
+  listSurfaceSlugs,
+  parseTocOpsGroupTitle,
+  assertTocOpsGroupTitle,
+  loadTelegramSurfacesMap,
+  chatIdForSurface,
+  resolvePrimaryOpsChatId,
+} from './surfaces.ts';
+export {
+  buildSurfaceGraph,
+  formatSurfaceGraphAscii,
+  formatSurfaceGraphMermaid,
+  formatSurfaceGraphEnvBlock,
+  suggestTelegramSurfacesMap,
+} from './surface-graph.ts';
+export type { TocOpsConcern, TocOpsEnv, TocOpsSurfaceDef, TocOpsTopicSlug } from './surfaces.ts';
+
 export const TOC_OPS_BOT_DISPLAY_NAME = 'TOC Ops';
 export const TOC_OPS_BOT_DESCRIPTION =
   'FactoryWager TOC Ops desk — Soft balances, plays, accounts, and partner onboarding.';
 export const TOC_OPS_BOT_SHORT_DESCRIPTION = 'TOC Ops · Soft · plays · partners';
 
-/** Canonical forum topic names (message_thread_id filled after create). */
+/** @deprecated Prefer per-surface `getSurface(slug).topics` — HQ ≠ partner ≠ sandbox. */
 export const TOC_OPS_TOPIC_PLAN = ['alerts', 'day-ops', 'aar', 'sandbox'] as const;
 
-export type TocOpsSurface = 'hq' | 'ash-staging' | 'sandbox';
+/** Surface slug alias (kept for CLI callers). */
+export type TocOpsSurface = TocOpsSurfaceSlug;
 
-export const TOC_OPS_GROUP_TITLES: Record<TocOpsSurface, string> = {
-  hq: 'TOC Ops · HQ',
-  'ash-staging': 'TOC Ops · ASH · staging',
-  sandbox: 'TOC Ops · sandbox',
-};
+/** Canonical titles derived from surfaces SSOT. */
+export const TOC_OPS_GROUP_TITLES: Record<string, string> = allSurfaceTitles();
+
+export function titleForSurface(slug: string): string {
+  const s = getSurface(slug);
+  return s ? formatTocOpsGroupTitle(s) : (TOC_OPS_GROUP_TITLES[slug] ?? `TOC Ops · ${slug}`);
+}
+
+export function topicsForSurface(slug: string): readonly TocOpsTopicSlug[] {
+  return getSurface(slug)?.topics ?? TOC_OPS_TOPIC_PLAN;
+}
+
+export function descriptionForSurface(slug: string): string {
+  const s = getSurface(slug);
+  const title = titleForSurface(slug);
+  if (!s) return `${title} — FactoryWager TOC Ops`;
+  return `${title} — ${s.purpose}`;
+}
 
 /** Brand mark color — deep teal (not default purple/cream AI palette). */
 export const TOC_OPS_BRAND_RGB = { r: 15, g: 118, b: 110 } as const; // #0f766e

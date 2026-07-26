@@ -6,6 +6,7 @@
  * @see docs/harness/tenants/telegram-factory.md
  */
 import type { OpsChannelTopic } from '../channels/ops-channel-event.ts';
+import { loadTelegramSurfacesMap } from './surfaces.ts';
 
 export type TelegramTopicsMap = Record<string, number>;
 
@@ -14,6 +15,8 @@ export type TelegramEnvSnapshot = {
   legacyToken: string | null;
   effectiveToken: string | null;
   opsChatId: string | null; // brand-ok — Telegram ops chat_id wire (TELEGRAM_OPS_CHAT_ID)
+  /** Concern → chat_id map from TELEGRAM_SURFACES. */
+  surfaces: Record<string, string>;
   webhookSecret: string | null;
   topics: TelegramTopicsMap;
   rateLimitMinIntervalMs: number;
@@ -75,6 +78,7 @@ export function loadTelegramEnv(): TelegramEnvSnapshot {
     legacyToken,
     effectiveToken: factoryToken ?? legacyToken,
     opsChatId: trimEnv('TELEGRAM_OPS_CHAT_ID'),
+    surfaces: loadTelegramSurfacesMap(),
     webhookSecret: trimEnv('TELEGRAM_WEBHOOK_SECRET'),
     topics: parseTelegramTopics(trimEnv('TELEGRAM_TOPICS')),
     rateLimitMinIntervalMs:

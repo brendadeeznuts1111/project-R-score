@@ -3,9 +3,10 @@
 // @see https://bun.com/docs/runtime/image#input — Bun.Image
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
- * Apply TOC Ops Telegram branding — bot profile + group titles/photos/topics.
+ * Apply TOC Ops Telegram branding — bot profile + concern-separated groups.
  *
  *   bun run telegram:brand
+ *   bun run telegram:brand -- --matrix
  *   bun run telegram:brand -- --groups
  *   bun run telegram:brand -- --chat -1003937534779 --surface ash-staging
  */
@@ -13,12 +14,16 @@ import { Database } from 'bun:sqlite';
 import { DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import {
   TOC_OPS_BOT_DISPLAY_NAME,
-  TOC_OPS_GROUP_TITLES,
-  TOC_OPS_TOPIC_PLAN,
   applyBotBranding,
   brandGroup,
+  descriptionForSurface,
+  formatSurfaceMatrix,
+  listSurfaceSlugs,
+  loadTelegramSurfacesMap,
+  resolvePrimaryOpsChatId,
+  titleForSurface,
+  topicsForSurface,
   topicsMapFromCreated,
-  type TocOpsSurface,
 } from '../lib/telegram/branding.ts';
 import { upsertKnownChat } from '../lib/telegram/known-chats.ts';
 import {
@@ -29,30 +34,42 @@ import {
 } from '../lib/telegram/telegram-api.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
-/** Known surfaces from audit (screenshot + getChat). */
-const DEFAULT_SURFACES: Array<{ chatId: string; surface: TocOpsSurface }> = [
+/**
+ * Built-in chat bindings when TELEGRAM_SURFACES unset (learned from audit).
+ * HQ omitted until a chat id is known — message HQ once, then add to env.
+ */
+const BUILTIN_SURFACE_CHATS: Record<string, string> = {
   // brand-ok — Telegram chat_id wire
-  { chatId: '-1003937534779', surface: 'ash-staging' },
-  { chatId: '-1004400413853', surface: 'sandbox' },
-];
+  'ash-staging': '-1003937534779',
+  sandbox: '-1004400413853',
+};
+
+function resolveSurfaceBindings(): Array<{ chatId: string; surface: string }> {
+  // brand-ok — Telegram chat_id wire
+  const fromEnv = loadTelegramSurfacesMap();
+  const map = { ...BUILTIN_SURFACE_CHATS, ...fromEnv };
+  return Object.entries(map).map(([surface, chatId]) => ({ surface, chatId }));
+}
 
 function usage(): never {
   console.log(`Usage: bun tools/telegram-brand.ts [options]
 
 Options:
+  --matrix            Print concern separation + naming grammar (no API)
   --bot-only          Only set bot name/description/profile photo
-  --groups            Brand default known groups (ASH staging + sandbox)
+  --groups            Brand all bound surfaces (TELEGRAM_SURFACES or builtins)
   --chat <id>         Brand one chat id
-  --surface <name>    hq | ash-staging | sandbox (with --chat)
+  --surface <slug>    ${listSurfaceSlugs().join(' | ')} (with --chat)
   --no-topics         Skip createForumTopic
   --no-photo          Skip setChatPhoto / setMyProfilePhoto
   --help
 
-Applies:
-  • Bot display name → "${TOC_OPS_BOT_DISPLAY_NAME}"
-  • Bun.Image "T" mark → setMyProfilePhoto (JPG)
-  • Group titles → TOC Ops · …
-  • Topics → ${TOC_OPS_TOPIC_PLAN.join(' · ')} (needs can_manage_topics)
+Naming grammar:  TOC Ops · {CONCERN}[ · {ENV}]
+  HQ            → TOC Ops · HQ
+  partner desk  → TOC Ops · ASH · staging
+  sandbox       → TOC Ops · sandbox
+
+Concerns are separate groups. Topics further split noise inside a group.
 `);
   process.exit(0);
 }
@@ -61,23 +78,28 @@ async function main(): Promise<void> {
   const argv = Bun.argv.slice(2);
   if (argv.includes('--help') || argv.includes('-h')) usage();
 
+  if (argv.includes('--matrix')) {
+    for (const line of formatSurfaceMatrix()) console.log(line);
+    process.exit(0);
+  }
+
   const botOnly = argv.includes('--bot-only');
   const groups = argv.includes('--groups') || !botOnly;
   const noTopics = argv.includes('--no-topics');
   const noPhoto = argv.includes('--no-photo');
 
-  const chats: Array<{ chatId: string; surface: TocOpsSurface }> = []; // brand-ok — Telegram chat_id wire
+  const chats: Array<{ chatId: string; surface: string }> = []; // brand-ok — Telegram chat_id wire
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--chat') {
       const id = argv[++i];
       const surfaceRaw = argv.includes('--surface')
         ? argv[argv.indexOf('--surface') + 1]
         : 'ash-staging';
-      const surface = (surfaceRaw ?? 'ash-staging') as TocOpsSurface;
+      const surface = surfaceRaw ?? 'ash-staging';
       if (id) chats.push({ chatId: id, surface });
     }
   }
-  if (groups && chats.length === 0) chats.push(...DEFAULT_SURFACES);
+  if (groups && chats.length === 0) chats.push(...resolveSurfaceBindings());
 
   const tg = loadTelegramEnv();
   if (!tg.effectiveToken) {
@@ -87,6 +109,10 @@ async function main(): Promise<void> {
   const token = tg.effectiveToken;
   const dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
   const db = new Database(dbPath);
+
+  console.log('→ Concern matrix');
+  for (const line of formatSurfaceMatrix()) console.log(`   ${line}`);
+  console.log('');
 
   console.log('→ Bot branding');
   const bot = await applyBotBranding(token, {
@@ -105,11 +131,14 @@ async function main(): Promise<void> {
   }
 
   const topicMaps: Record<string, Record<string, number>> = {};
+  const surfaceChatJson: Record<string, string> = {};
 
   if (!botOnly) {
     for (const { chatId, surface } of chats) {
-      const title = TOC_OPS_GROUP_TITLES[surface] ?? TOC_OPS_GROUP_TITLES['ash-staging'];
-      console.log(`→ Group ${chatId} → ${title}`);
+      const title = titleForSurface(surface);
+      const topicPlan = topicsForSurface(surface);
+      console.log(`→ Group ${chatId} [${surface}] → ${title}`);
+      console.log(`   topics plan: ${topicPlan.join(' · ') || '(none)'}`);
       const chatProbe = await getChat(token, chatId);
       if (!chatProbe.ok) {
         console.log(`   ✗ getChat: ${chatProbe.description}`);
@@ -120,9 +149,9 @@ async function main(): Promise<void> {
         token,
         chatId,
         title,
-        description: `${title} — FactoryWager TOC Ops desk`,
+        description: descriptionForSurface(surface),
         setPhoto: !noPhoto,
-        ensureTopics: noTopics ? undefined : TOC_OPS_TOPIC_PLAN,
+        ensureTopics: noTopics ? undefined : topicPlan,
         db,
       });
 
@@ -149,13 +178,13 @@ async function main(): Promise<void> {
       if (result.topics.some(t => t.ok)) {
         topicMaps[chatId] = topicsMapFromCreated(result.topics);
       }
+      surfaceChatJson[surface] = chatId;
 
-      // Ensure known_chats even if brand partially failed
       upsertKnownChat(db, {
         chat: {
           id: chatProbe.chat.id,
           type: chatProbe.chat.type,
-          title: title,
+          title,
           is_forum: chatProbe.chat.is_forum,
         },
         source: 'manual',
@@ -173,12 +202,23 @@ async function main(): Promise<void> {
   console.log(`   live description: ${JSON.stringify(liveDesc)}`);
   console.log(`   live short: ${JSON.stringify(liveShort)}`);
 
-  const primaryOps = '-1003937534779';
+  const primaryOps =
+    resolvePrimaryOpsChatId() ??
+    surfaceChatJson['ash-staging'] ??
+    BUILTIN_SURFACE_CHATS['ash-staging']!;
   const topicsJson = topicMaps[primaryOps]
     ? JSON.stringify(topicMaps[primaryOps])
     : '{"ops":1,"alerts":1,"toc":1}';
+
+  const mergedSurfaces = {
+    ...BUILTIN_SURFACE_CHATS,
+    ...loadTelegramSurfacesMap(),
+    ...surfaceChatJson,
+  };
+
   console.log('');
-  console.log('Add to .env (ops hub = ASH staging):');
+  console.log('Add to .env (concern map + ops hub):');
+  console.log(`TELEGRAM_SURFACES=${JSON.stringify(mergedSurfaces)}`);
   console.log(`TELEGRAM_OPS_CHAT_ID=${primaryOps}`);
   console.log(`TELEGRAM_TOPICS=${topicsJson}`);
   console.log('OPS_ADMIN_USER_IDS=8013171035');
@@ -186,6 +226,7 @@ async function main(): Promise<void> {
   console.log(
     'Also in @BotFather: /setprivacy → Disable (so group messages reach the bot without @mention).'
   );
+  console.log('When HQ chat id is known: add "hq":"-100…" to TELEGRAM_SURFACES and re-brand.');
 
   db.close();
 }

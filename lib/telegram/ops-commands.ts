@@ -13,6 +13,7 @@ import { flowOutputToPlainText } from './flows/deliver.ts';
 import { commandToFlowId, runFlow } from './flows/registry.ts';
 import { linkTelegramChat } from './flows/channel-meta.ts';
 import type { FlowOutput } from './flows/types.ts';
+import { gateFactoryCommand } from './ops-acl.ts';
 
 export type OpsTreeNode = {
   id: string; // brand-ok
@@ -27,6 +28,8 @@ export type OpsCommandInput = {
   telegramUserId: string; // brand-ok
   command: string;
   args: string[];
+  /** Telegram chat.type when known (private | group | supergroup | channel). */
+  chatType?: string | null;
 };
 
 export function findNodeByTelegram(
@@ -173,6 +176,13 @@ export function dispatchOpsFlowOutput(
 }
 
 export function dispatchOpsCommand(db: Database, dbPath: string, input: OpsCommandInput): string {
+  const gate = gateFactoryCommand({
+    command: input.command,
+    chatType: input.chatType,
+    telegramUserId: input.telegramUserId,
+  });
+  if (!gate.ok) return gate.reason;
+
   const output = dispatchOpsFlowOutput(db, dbPath, input);
   if (output) return flowOutputToPlainText(output);
 

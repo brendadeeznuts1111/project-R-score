@@ -8,6 +8,8 @@
  * Distinct from ChatChannelMeta (partner seat binding / call-signs).
  */
 import { Database } from 'bun:sqlite';
+import { inferSurfaceSlug } from './surfaces.ts';
+import { packageGroupRegistryByChatId } from './package-group-registry.ts';
 import type { TelegramChatWire, TelegramUpdate } from './telegram-update.ts';
 
 export type KnownChatSource =
@@ -30,6 +32,8 @@ export type KnownChatRow = {
   isForum: boolean;
   botStatus: string | null;
   memberCount: number | null;
+  /** Concern surface slug when known (hq | ash-staging | sandbox | …). */
+  surfaceSlug: string | null;
   source: KnownChatSource;
   tenantSlug: string | null;
   firstSeenAt: string;
@@ -47,6 +51,7 @@ type DbRow = {
   is_forum: number;
   bot_status: string | null;
   member_count: number | null;
+  surface_slug: string | null;
   source: string;
   tenant_slug: string | null;
   first_seen_at: string;
@@ -68,6 +73,7 @@ export function ensureKnownChatsSchema(db: Database): void {
       is_forum INTEGER NOT NULL DEFAULT 0,
       bot_status TEXT,
       member_count INTEGER,
+      surface_slug TEXT,
       source TEXT NOT NULL DEFAULT 'message',
       tenant_slug TEXT,
       first_seen_at TEXT NOT NULL,
@@ -80,9 +86,18 @@ export function ensureKnownChatsSchema(db: Database): void {
   } catch {
     /* already present */
   }
+  try {
+    db.run(`ALTER TABLE ops_telegram_known_chats ADD COLUMN surface_slug TEXT`);
+  } catch {
+    /* already present */
+  }
   db.run(
     `CREATE INDEX IF NOT EXISTS idx_ops_telegram_known_chats_active
      ON ops_telegram_known_chats(active, last_seen_at);`
+  );
+  db.run(
+    `CREATE INDEX IF NOT EXISTS idx_ops_telegram_known_chats_surface
+     ON ops_telegram_known_chats(surface_slug);`
   );
 }
 
@@ -97,6 +112,7 @@ function rowToKnown(row: DbRow): KnownChatRow {
     isForum: row.is_forum === 1,
     botStatus: row.bot_status,
     memberCount: typeof row.member_count === 'number' ? row.member_count : null,
+    surfaceSlug: row.surface_slug ?? null,
     source: row.source as KnownChatSource,
     tenantSlug: row.tenant_slug,
     firstSeenAt: row.first_seen_at,
@@ -110,6 +126,8 @@ export type UpsertKnownChatInput = {
   source: KnownChatSource;
   botStatus?: string | null;
   tenantSlug?: string | null;
+  /** Force surface slug; otherwise inferred from TELEGRAM_SURFACES + title. */
+  surfaceSlug?: string | null;
   inactive?: boolean;
   now?: string;
 };
@@ -141,14 +159,16 @@ export function upsertKnownChat(db: Database, input: UpsertKnownChatInput): Know
   const source = input.source;
   const tenantSlug = input.tenantSlug ?? existing?.tenant_slug ?? null;
   const firstSeenAt = existing?.first_seen_at ?? now;
+  const inferred = inferSurfaceSlug({ chatId, title });
+  const surfaceSlug = input.surfaceSlug?.trim() || inferred || existing?.surface_slug || null;
 
   db.run(
     `INSERT INTO ops_telegram_known_chats (
        chat_id, chat_type, title, username, first_name, last_name, is_forum,
-       bot_status, source, tenant_slug, first_seen_at, last_seen_at, active
+       bot_status, surface_slug, source, tenant_slug, first_seen_at, last_seen_at, active
      ) VALUES (
        $chat_id, $chat_type, $title, $username, $first_name, $last_name, $is_forum,
-       $bot_status, $source, $tenant_slug, $first_seen_at, $last_seen_at, $active
+       $bot_status, $surface_slug, $source, $tenant_slug, $first_seen_at, $last_seen_at, $active
      )
      ON CONFLICT(chat_id) DO UPDATE SET
        chat_type = excluded.chat_type,
@@ -158,6 +178,7 @@ export function upsertKnownChat(db: Database, input: UpsertKnownChatInput): Know
        last_name = COALESCE(excluded.last_name, ops_telegram_known_chats.last_name),
        is_forum = excluded.is_forum,
        bot_status = COALESCE(excluded.bot_status, ops_telegram_known_chats.bot_status),
+       surface_slug = COALESCE(excluded.surface_slug, ops_telegram_known_chats.surface_slug),
        source = excluded.source,
        tenant_slug = COALESCE(excluded.tenant_slug, ops_telegram_known_chats.tenant_slug),
        last_seen_at = excluded.last_seen_at,
@@ -171,6 +192,7 @@ export function upsertKnownChat(db: Database, input: UpsertKnownChatInput): Know
       $last_name: lastName,
       $is_forum: isForum,
       $bot_status: botStatus,
+      $surface_slug: surfaceSlug,
       $source: source,
       $tenant_slug: tenantSlug,
       $first_seen_at: firstSeenAt,
@@ -264,6 +286,8 @@ export type ListKnownChatsOpts = {
   activeOnly?: boolean;
   /** Convenience filters (group = group|supergroup). */
   filter?: KnownChatFilterKind;
+  /** Concern surface slug (hq | ash-staging | sandbox). */
+  surface?: string;
   chatIds?: string[]; // brand-ok — Telegram chat_id wire
   limit?: number;
 };
@@ -309,6 +333,10 @@ export function listKnownChats(db: Database, opts: ListKnownChatsOpts = {}): Kno
 
   let out = rows.map(rowToKnown);
   if (opts.filter) out = out.filter(r => matchesFilter(r, opts.filter));
+  if (opts.surface?.trim()) {
+    const slug = opts.surface.trim().toLowerCase();
+    out = out.filter(r => (r.surfaceSlug ?? '').toLowerCase() === slug);
+  }
   if (opts.chatIds?.length) {
     const want = new Set(opts.chatIds.map(String));
     out = out.filter(r => want.has(r.chatId));
@@ -321,27 +349,113 @@ export function knownChatLabel(row: KnownChatRow): string {
   return row.title ?? (row.username ? `@${row.username}` : null) ?? row.firstName ?? row.chatId;
 }
 
+export type KnownChatDirectoryExtra = {
+  packageCode: string | null;
+  hasInvite: boolean;
+  /** Rich mode: active seats with telegram_id matching this chat (usually private DMs). */
+  linkedSeats: number;
+};
+
+/** Join package_group_registry + optional seat counts for directory display. */
+export function buildKnownChatDirectoryExtras(
+  db: Database,
+  rows: KnownChatRow[],
+  rich = false
+): Map<string, KnownChatDirectoryExtra> {
+  let registryByChat = new Map<string, { partnerCode: string; inviteLink: string | null }>();
+  try {
+    for (const [chatId, reg] of packageGroupRegistryByChatId(db)) {
+      registryByChat.set(chatId, {
+        partnerCode: reg.partnerCode,
+        inviteLink: reg.inviteLink,
+      });
+    }
+  } catch {
+    registryByChat = new Map();
+  }
+
+  const seatCounts = new Map<string, number>();
+  if (rich) {
+    try {
+      const counts = db
+        .query(
+          `SELECT telegram_id AS tid, COUNT(*) AS n FROM tree_nodes
+           WHERE active = 1 AND telegram_id IS NOT NULL
+           GROUP BY telegram_id`
+        )
+        .all() as Array<{ tid: string; n: number }>; // brand-ok
+      for (const c of counts) {
+        if (c.tid?.trim()) seatCounts.set(c.tid.trim(), c.n);
+      }
+    } catch {
+      // tree_nodes absent in minimal DBs
+    }
+  }
+
+  const extras = new Map<string, KnownChatDirectoryExtra>();
+  for (const row of rows) {
+    const reg = registryByChat.get(row.chatId);
+    extras.set(row.chatId, {
+      packageCode: reg?.partnerCode ?? null,
+      hasInvite: Boolean(reg?.inviteLink),
+      linkedSeats: rich ? (seatCounts.get(row.chatId) ?? 0) : 0,
+    });
+  }
+  return extras;
+}
+
 /** Column-aligned directory table (no external deps). */
-export function formatKnownChatsTable(rows: KnownChatRow[]): string[] {
+export function formatKnownChatsTable(
+  rows: KnownChatRow[],
+  extras?: Map<string, KnownChatDirectoryExtra>,
+  opts?: { rich?: boolean }
+): string[] {
   if (rows.length === 0) return ['(no known chats)'];
 
-  const cols = [
+  const rich = opts?.rich ?? false;
+  const showPackage = extras != null;
+
+  type ColKey =
+    | 'chatId'
+    | 'title'
+    | 'surface'
+    | 'package'
+    | 'chatType'
+    | 'active'
+    | 'members'
+    | 'seats'
+    | 'lastSeen';
+
+  const cols: Array<{ key: ColKey; head: string; width: number }> = [
     { key: 'chatId', head: 'ID', width: 16 },
-    { key: 'title', head: 'TITLE', width: 28 },
+    { key: 'title', head: 'TITLE', width: 22 },
+    { key: 'surface', head: 'SURFACE', width: 12 },
+  ];
+  if (showPackage) cols.push({ key: 'package', head: 'PACKAGE', width: 8 });
+  cols.push(
     { key: 'chatType', head: 'TYPE', width: 11 },
     { key: 'active', head: 'ACTIVE', width: 6 },
-    { key: 'members', head: 'MEMBERS', width: 7 },
-    { key: 'lastSeen', head: 'LAST SEEN', width: 20 },
-  ] as const;
+    { key: 'members', head: 'MEMBERS', width: 7 }
+  );
+  if (rich) cols.push({ key: 'seats', head: 'SEATS', width: 5 });
+  cols.push({ key: 'lastSeen', head: 'LAST SEEN', width: 20 });
 
-  const cells = rows.map(r => ({
-    chatId: r.chatId,
-    title: knownChatLabel(r).slice(0, 28),
-    chatType: r.chatType + (r.isForum ? '*' : ''),
-    active: r.active ? 'yes' : 'no',
-    members: r.memberCount != null ? String(r.memberCount) : '—',
-    lastSeen: r.lastSeenAt.slice(0, 19).replace('T', ' '),
-  }));
+  const cells = rows.map(r => {
+    const extra = extras?.get(r.chatId);
+    const pkg = extra?.packageCode ?? '—';
+    const inviteFlag = extra?.hasInvite ? '+' : '';
+    return {
+      chatId: r.chatId,
+      title: knownChatLabel(r).slice(0, 22),
+      surface: r.surfaceSlug ?? '—',
+      package: pkg === '—' ? '—' : `${pkg}${inviteFlag}`,
+      chatType: r.chatType + (r.isForum ? '*' : ''),
+      active: r.active ? 'yes' : 'no',
+      members: r.memberCount != null ? String(r.memberCount) : '—',
+      seats: rich ? String(extra?.linkedSeats ?? 0) : '0',
+      lastSeen: r.lastSeenAt.slice(0, 19).replace('T', ' '),
+    };
+  });
 
   const pad = (s: string, w: number) =>
     s.length >= w ? s.slice(0, w) : s + ' '.repeat(w - s.length);

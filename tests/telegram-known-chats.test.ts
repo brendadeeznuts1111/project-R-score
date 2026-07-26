@@ -62,6 +62,22 @@ describe('observeKnownChatsFromUpdate', () => {
     expect(listKnownChats(db, { activeOnly: true })).toHaveLength(0);
   });
 
+  test('infers surface_slug from canonical title', () => {
+    const db = new Database(':memory:');
+    upsertKnownChat(db, {
+      chat: {
+        id: -1003937534779,
+        type: 'supergroup',
+        title: 'TOC Ops · ASH · staging',
+        is_forum: true,
+      },
+      source: 'manual',
+    });
+    const rows = listKnownChats(db, { filter: 'all', surface: 'ash-staging' });
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.surfaceSlug).toBe('ash-staging');
+  });
+
   test('manual upsert preserves title on sparse message', () => {
     const db = new Database(':memory:');
     upsertKnownChat(db, {

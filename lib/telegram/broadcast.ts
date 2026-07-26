@@ -51,6 +51,8 @@ export type ResolveBroadcastTargetsOpts = {
   chatIds?: string[]; // brand-ok
   all?: boolean;
   filter?: KnownChatFilterKind;
+  /** Concern surface slug (hq | ash-staging | sandbox). */
+  surface?: string;
   limit?: number;
 };
 
@@ -59,6 +61,7 @@ export function resolveBroadcastTargets(opts: ResolveBroadcastTargetsOpts): Know
     return listKnownChats(opts.db, {
       filter: opts.filter ?? 'all',
       chatIds: opts.chatIds,
+      surface: opts.surface,
       activeOnly: false,
       limit: opts.limit ?? 500,
     });
@@ -66,6 +69,7 @@ export function resolveBroadcastTargets(opts: ResolveBroadcastTargetsOpts): Know
   if (!opts.all) return [];
   return listKnownChats(opts.db, {
     filter: opts.filter ?? 'active',
+    surface: opts.surface,
     limit: opts.limit ?? 500,
   });
 }

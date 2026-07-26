@@ -310,6 +310,8 @@ export type SendTelegramBotMessageResult = {
   messageId?: number;
   description?: string;
   errorCode?: number;
+  /** Seconds from Telegram 429 when send still failed after one retry. */
+  retryAfterSec?: number;
   retriedAfter429?: boolean;
 };
 
@@ -335,13 +337,19 @@ export async function sendTelegramBotMessage(
 
   let r = await callSendMessage(token, body);
   let retriedAfter429 = false;
+  let retryAfterSec: number | undefined;
 
   if (!r.ok && r.error_code === 429) {
-    const retryAfterSec = r.parameters?.retry_after ?? 1;
+    retryAfterSec = r.parameters?.retry_after ?? 1;
     await Bun.sleep(Math.max(0, retryAfterSec * 1000));
     resetTelegramRateLimiters();
     r = await callSendMessage(token, body);
     retriedAfter429 = true;
+    if (!r.ok && r.error_code === 429) {
+      retryAfterSec = r.parameters?.retry_after ?? retryAfterSec ?? 1;
+    } else {
+      retryAfterSec = undefined;
+    }
   }
 
   const messageId =
@@ -353,6 +361,7 @@ export async function sendTelegramBotMessage(
     messageId: typeof messageId === 'number' ? messageId : undefined,
     description: r.description,
     errorCode: r.error_code,
+    retryAfterSec,
     retriedAfter429: retriedAfter429 || undefined,
   };
 }

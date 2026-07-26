@@ -9,6 +9,10 @@
  *   bun run telegram:ops -- send --kind group --all --preview "hello {{title}}"
  *   bun run telegram:ops -- directory
  *   bun run telegram:ops -- directory --refresh
+ *   bun run telegram:ops -- surfaces
+ *   bun run telegram:ops -- graph
+ *   bun run telegram:ops -- graph --mermaid
+ *   bun run telegram:ops -- link-package-group ASH -1003937534779 --invite 'https://t.me/+…'
  */
 import { Database } from 'bun:sqlite';
 import { DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
@@ -18,11 +22,24 @@ import {
   resolveBroadcastTargets,
 } from '../lib/telegram/broadcast.ts';
 import {
+  buildKnownChatDirectoryExtras,
   formatKnownChatsTable,
   listKnownChats,
   type KnownChatFilterKind,
 } from '../lib/telegram/known-chats.ts';
 import { refreshKnownChats } from '../lib/telegram/refresh-known-chats.ts';
+import {
+  buildSurfaceGraph,
+  formatSurfaceGraphAscii,
+  formatSurfaceGraphEnvBlock,
+  formatSurfaceGraphMermaid,
+} from '../lib/telegram/surface-graph.ts';
+import { formatSurfaceMatrix, loadTelegramSurfacesMap } from '../lib/telegram/surfaces.ts';
+import {
+  resolvePartnerDmTelegramId,
+  upsertPackageGroupRegistry,
+} from '../lib/telegram/package-group-registry.ts';
+import { sendTelegramBotMessage } from '../lib/telegram/telegram-api.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 function usage(): never {
@@ -31,11 +48,22 @@ function usage(): never {
 Commands:
   send        Broadcast text to known chats
   directory   Print known-chats table (ID / title / type / active / last seen)
+  surfaces    Concern matrix + naming grammar (+ TELEGRAM_SURFACES bindings)
+  graph       Live concern topology (ASCII; --mermaid; --env for .env block)
+  link-package-group  Bind partner package forum chat_id (+ optional DM)
+
+link-package-group:
+  <CODE> <chat_id>   Partner code (ASH) + Telegram chat id
+  --invite <url>      Invite link for registry + DM
+  --requested-by <cs> Prefer seat call-sign for DM target
+  --no-dm             Skip package-room welcome DM
+  --db <path>
 
 send options:
   --all                 Target all chats matching --kind (default kind=active)
   --chat <id>           Target chat id (repeatable)
   --kind <kind>         active|inactive|all|group|private|channel (default: active)
+  --surface <slug>      hq | ash-staging | sandbox (concern filter)
   --preview             Resolve targets only; do not call Telegram
   --html                sendMessage parse_mode=HTML
   --db <path>           Ops DB (default OPS_DB_PATH or data/operations.db)
@@ -43,14 +71,16 @@ send options:
 
 directory options:
   --kind <kind>         Same kinds as send
+  --surface <slug>      Concern surface filter
   --refresh             Call getChat + getChatMemberCount for each row
   --json                Print rows as JSON
   --db <path>
 
 Examples:
   bun run telegram:ops -- send --all "Status OK"
-  bun run telegram:ops -- send --chat -1001 --chat 4242 "ping"
+  bun run telegram:ops -- send --surface ash-staging --all --preview "ping {{title}}"
   bun run telegram:ops -- directory --refresh --kind group
+  bun run telegram:ops -- surfaces
 `);
   process.exit(0);
 }
@@ -74,6 +104,7 @@ function parseFilter(raw: string | undefined): KnownChatFilterKind | undefined {
 
 type CommonOpts = {
   filter?: KnownChatFilterKind;
+  surface?: string;
   dbPath: string;
   chats: string[];
   json: boolean;
@@ -81,6 +112,9 @@ type CommonOpts = {
   all: boolean;
   dryRun: boolean;
   html: boolean;
+  mermaid: boolean;
+  envBlock: boolean;
+  rich: boolean;
   text: string;
 };
 
@@ -96,6 +130,9 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
     all: false,
     dryRun: false,
     html: false,
+    mermaid: false,
+    envBlock: false,
+    rich: false,
     text: '',
   };
 
@@ -124,6 +161,14 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
       opts.html = true;
       continue;
     }
+    if (a === '--mermaid') {
+      opts.mermaid = true;
+      continue;
+    }
+    if (a === '--env') {
+      opts.envBlock = true;
+      continue;
+    }
     if (a === '--json') {
       opts.json = true;
       continue;
@@ -132,12 +177,24 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
       opts.refresh = true;
       continue;
     }
+    if (a === '--rich') {
+      opts.rich = true;
+      continue;
+    }
     if (a === '--kind') {
       opts.filter = parseFilter(rest[++i]);
       continue;
     }
     if (a.startsWith('--kind=')) {
       opts.filter = parseFilter(a.slice('--kind='.length));
+      continue;
+    }
+    if (a === '--surface') {
+      opts.surface = rest[++i]?.trim() || undefined;
+      continue;
+    }
+    if (a.startsWith('--surface=')) {
+      opts.surface = a.slice('--surface='.length).trim() || undefined;
       continue;
     }
     if (a === '--chat') {
@@ -174,6 +231,7 @@ async function cmdDirectory(opts: CommonOpts): Promise<void> {
   try {
     let rows = listKnownChats(db, {
       filter: opts.filter ?? 'all',
+      surface: opts.surface,
       activeOnly: false,
       limit: 500,
     });
@@ -196,16 +254,35 @@ async function cmdDirectory(opts: CommonOpts): Promise<void> {
       }
       rows = refreshed.rows.length
         ? refreshed.rows
-        : listKnownChats(db, { filter: opts.filter ?? 'all', activeOnly: false });
+        : listKnownChats(db, {
+            filter: opts.filter ?? 'all',
+            surface: opts.surface,
+            activeOnly: false,
+          });
+      if (opts.surface?.trim()) {
+        const slug = opts.surface.trim().toLowerCase();
+        rows = rows.filter(r => (r.surfaceSlug ?? '').toLowerCase() === slug);
+      }
     }
 
     if (opts.json) {
-      console.log(JSON.stringify(rows, null, 2));
+      const extras = buildKnownChatDirectoryExtras(db, rows, opts.rich);
+      const payload = rows.map(r => {
+        const extra = extras.get(r.chatId);
+        return {
+          ...r,
+          packageCode: extra?.packageCode ?? null,
+          hasInvite: extra?.hasInvite ?? false,
+          ...(opts.rich ? { linkedSeats: extra?.linkedSeats ?? 0 } : {}),
+        };
+      });
+      console.log(JSON.stringify(payload, null, 2));
       return;
     }
 
-    console.log(`✅ Known chats (${rows.length})  db=${opts.dbPath}`);
-    for (const line of formatKnownChatsTable(rows)) {
+    const extras = buildKnownChatDirectoryExtras(db, rows, opts.rich);
+    console.log(`✅ Known chats (${rows.length})  db=${opts.dbPath}${opts.rich ? '  rich' : ''}`);
+    for (const line of formatKnownChatsTable(rows, extras, { rich: opts.rich })) {
       console.log(`   ${line}`);
     }
   } finally {
@@ -236,6 +313,7 @@ async function cmdSend(opts: CommonOpts): Promise<void> {
       all: opts.all,
       chatIds: opts.chats.length ? opts.chats : undefined,
       filter: opts.filter,
+      surface: opts.surface,
     });
 
     if (targets.length === 0) {
@@ -271,12 +349,199 @@ async function cmdSend(opts: CommonOpts): Promise<void> {
   }
 }
 
+function cmdSurfaces(): void {
+  for (const line of formatSurfaceMatrix()) console.log(line);
+  const map = loadTelegramSurfacesMap();
+  const bindings = Object.entries(map);
+  console.log('');
+  if (bindings.length === 0) {
+    console.log('TELEGRAM_SURFACES: (unset — brand CLI uses builtins for ash-staging + sandbox)');
+  } else {
+    console.log('TELEGRAM_SURFACES bindings:');
+    for (const [slug, chatId] of bindings) {
+      console.log(`  ${slug.padEnd(14)}  ${chatId}`);
+    }
+  }
+  const ops = loadTelegramEnv().opsChatId;
+  console.log(`TELEGRAM_OPS_CHAT_ID: ${ops ?? '(unset)'}`);
+}
+
+function cmdGraph(opts: CommonOpts): void {
+  const db = new Database(opts.dbPath);
+  try {
+    const rows = listKnownChats(db, { filter: 'all', activeOnly: false, limit: 500 });
+    const model = buildSurfaceGraph({ knownChats: rows });
+
+    if (opts.json) {
+      console.log(JSON.stringify(model, null, 2));
+      return;
+    }
+    if (opts.mermaid) {
+      console.log(formatSurfaceGraphMermaid(model));
+      if (opts.envBlock) {
+        console.log('');
+        for (const line of formatSurfaceGraphEnvBlock(model)) console.log(line);
+      }
+      return;
+    }
+
+    for (const line of formatSurfaceGraphAscii(model)) console.log(line);
+    if (opts.envBlock) {
+      console.log('');
+      for (const line of formatSurfaceGraphEnvBlock(model)) console.log(line);
+    }
+  } finally {
+    db.close();
+  }
+}
+
+type LinkPackageGroupOpts = {
+  dbPath: string;
+  partnerCode: string;
+  chatId: string; // brand-ok
+  invite?: string;
+  requestedBy?: string;
+  noDm: boolean;
+};
+
+function parseLinkPackageGroupArgs(argv: string[]): LinkPackageGroupOpts | null {
+  if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') {
+    console.log(`Usage: bun tools/telegram-ops.ts link-package-group <CODE> <chat_id> [options]
+
+Options:
+  --invite <url>        Store invite link; include in welcome DM
+  --requested-by <cs>   Prefer this call-sign for DM telegram_id
+  --no-dm               Skip package-room welcome DM
+  --db <path>
+`);
+    process.exit(0);
+  }
+  const positional: string[] = [];
+  const opts: LinkPackageGroupOpts = {
+    dbPath: Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH,
+    partnerCode: '',
+    chatId: '',
+    noDm: false,
+  };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i]!;
+    if (a === '--no-dm') {
+      opts.noDm = true;
+      continue;
+    }
+    if (a === '--invite') {
+      opts.invite = argv[++i];
+      continue;
+    }
+    if (a.startsWith('--invite=')) {
+      opts.invite = a.slice('--invite='.length);
+      continue;
+    }
+    if (a === '--requested-by') {
+      opts.requestedBy = argv[++i];
+      continue;
+    }
+    if (a.startsWith('--requested-by=')) {
+      opts.requestedBy = a.slice('--requested-by='.length);
+      continue;
+    }
+    if (a === '--db') {
+      const v = argv[++i];
+      if (v) opts.dbPath = v;
+      continue;
+    }
+    if (a.startsWith('--db=')) {
+      opts.dbPath = a.slice('--db='.length);
+      continue;
+    }
+    if (!a.startsWith('-')) positional.push(a);
+  }
+  if (positional.length < 2) {
+    console.error('link-package-group requires <CODE> <chat_id>');
+    process.exit(1);
+  }
+  opts.partnerCode = positional[0]!;
+  opts.chatId = positional[1]!;
+  return opts;
+}
+
+async function cmdLinkPackageGroup(rawArgv: string[]): Promise<void> {
+  const opts = parseLinkPackageGroupArgs(rawArgv);
+  if (!opts) return;
+
+  const db = new Database(opts.dbPath);
+  try {
+    const displayName = `${opts.partnerCode} Ops`;
+    const row = upsertPackageGroupRegistry(db, {
+      partnerCode: opts.partnerCode,
+      chatId: opts.chatId,
+      displayName,
+      inviteLink: opts.invite,
+      requestedBy: opts.requestedBy,
+    });
+
+    console.log(`✅ package_group_registry ${row.partnerCode}`);
+    console.log(`   title: ${row.title}`);
+    console.log(`   chat_id: ${row.chatId}`);
+    if (row.inviteLink) console.log(`   invite: ${row.inviteLink}`);
+
+    if (opts.noDm) {
+      console.log('   dm: skipped (--no-dm)');
+      return;
+    }
+
+    const tg = loadTelegramEnv();
+    if (!tg.effectiveToken) {
+      console.log('   dm: skipped (no TELEGRAM_BOT_FACTORY)');
+      return;
+    }
+
+    const dmId = resolvePartnerDmTelegramId(db, row.partnerCode, opts.requestedBy);
+    if (!dmId) {
+      console.log('   dm: skipped (no linked telegram_id for partner seats)');
+      return;
+    }
+
+    const inviteLine = row.inviteLink ? `\nJoin your package room:\n${row.inviteLink}` : '';
+    const text = [
+      `<b>Package room ready</b>`,
+      `Group: <code>${row.title}</code>`,
+      `Partner: <code>${row.partnerCode}</code>${inviteLine}`,
+    ].join('\n');
+
+    const sent = await sendTelegramBotMessage(tg.effectiveToken, {
+      chatId: dmId,
+      text,
+      parseMode: 'HTML',
+    });
+    console.log(
+      sent.ok
+        ? `   dm: sent to ${dmId} message_id=${sent.messageId ?? '?'}`
+        : `   dm: failed ${sent.description ?? 'sendMessage error'}`
+    );
+  } finally {
+    db.close();
+  }
+}
+
 async function main(): Promise<void> {
-  const { cmd, opts } = parseArgs(Bun.argv.slice(2));
-  if (cmd === 'send') await cmdSend(opts);
-  else if (cmd === 'directory' || cmd === 'dir' || cmd === 'ls') await cmdDirectory(opts);
+  const argv = Bun.argv.slice(2);
+  if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') usage();
+
+  const cmd = argv[0]!;
+  if (cmd === 'link-package-group' || cmd === 'link-package') {
+    await cmdLinkPackageGroup(argv.slice(1));
+    return;
+  }
+
+  const { cmd: parsedCmd, opts } = parseArgs(argv);
+  if (parsedCmd === 'send') await cmdSend(opts);
+  else if (parsedCmd === 'directory' || parsedCmd === 'dir' || parsedCmd === 'ls')
+    await cmdDirectory(opts);
+  else if (parsedCmd === 'surfaces' || parsedCmd === 'matrix') cmdSurfaces();
+  else if (parsedCmd === 'graph' || parsedCmd === 'topo') cmdGraph(opts);
   else {
-    console.error(`Unknown command: ${cmd}`);
+    console.error(`Unknown command: ${parsedCmd}`);
     usage();
   }
 }

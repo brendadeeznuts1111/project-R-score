@@ -9,7 +9,9 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 | 1. Bot token | `TELEGRAM_BOT_FACTORY` in `.env` or `~/.reasonix/.env` | Create via [@BotFather](https://t.me/BotFather); never commit |
 | 2. Verify | `bun run telegram:verify` | Calls `getMe` + `getWebhookInfo` |
 | 2b. Discover | `bun run telegram:discover` | Bot API inventory + `ops_telegram_known_chats` (learned from updates) |
-| 2c. Brand | `bun run telegram:brand -- --groups` | Bun.Image profile, TOC Ops naming, group photos/titles/topics |
+| 2c. Brand | `bun run telegram:brand -- --groups` | Bun.Image profile, concern-separated groups, photos/topics |
+| 2d. Surfaces | `bun run telegram:brand -- --matrix` | Concern matrix + naming grammar (`lib/telegram/surfaces.ts`) |
+| 2e. Graph | `bun run telegram:ops -- graph` | Live topology from known chats (`--mermaid` · `--env`) |
 | 3. Webhook + menu | `bun run telegram:factory:setup` | `setMyCommands` + `setWebhook` → Pages `/api/telegram/webhook/factory` (R2 enqueue; see Architecture) |
 | 3b. Drain updates | `bun run telegram:ops:consume` | Processes R2 `telegram-updates` + `telegram-commands` + outbox |
 | 4. Linked seats | `/start link_<nonce>` or `bun tools/telegram-link-chat.ts ASH-001 tg:chat:…` | Sets `tree_nodes.telegram_id` + `ChatChannelMeta`; CLI also enqueues `partner.welcome` when a profile binding exists (`--no-welcome` to skip) |
@@ -17,6 +19,10 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 | 5b. Dry-run drain | `bun run telegram:ops:consume -- --preview` | Queue + outbox counts only |
 
 **Full identity integration** (cellphone → profile → seat → ChatChannelMeta → HTML templates): [`partner-onboarding-package.md`](partner-onboarding-package.md).
+
+**Package group bridge** (factory emit → manual ct forum → `link-package-group`): [`partner-package-group-handshake.md`](partner-package-group-handshake.md).
+
+**Soft assist** (after factory JSONL): `bun run ct package-group-pending` · `bun run ct package-group-wire CODE --chat tg:chat:-100… --apply` (in `toc-ops-repo`).
 
 Transport health API: [`lib/telegram/telegram-transport-health.ts`](../../../lib/telegram/telegram-transport-health.ts) · `bun run telegram:verify -- --json`
 
@@ -27,10 +33,34 @@ Bot API has no membership list. On each drained update, Bun upserts `chat.id` in
 | Action | Command |
 |--------|---------|
 | Directory table | `bun run telegram:ops -- directory` |
+| Rich directory (package join) | `bun run telegram:ops -- directory --rich` |
 | Refresh titles / member counts | `bun run telegram:ops -- directory --refresh` or `telegram:discover -- --refresh` |
 | Broadcast | `bun run telegram:ops -- send --all "text"` · `--chat <id>` · `--kind group` · `--preview` · templates `{{title}}` `{{chatId}}` `{{type}}` `{{members}}` |
 
-Broadcast audits each attempt in `ops_broadcast_log`. Sends go through rate-limited `sendTelegramBotMessage`. Optional admin whitelist env: `OPS_ADMIN_USER_IDS` (for future in-chat ops gates; CLI send trusts the local token holder).
+Broadcast audits each attempt in `ops_broadcast_log`. Sends go through rate-limited `sendTelegramBotMessage`. In-chat ops gates: `/register` is DM-only; `/deploy` requires portal admin or `OPS_ADMIN_USER_IDS` ([`lib/telegram/ops-acl.ts`](../../../lib/telegram/ops-acl.ts)). CLI `send` trusts the local token holder (no ACL on broadcast).
+
+## Concern separation + naming
+
+**One Telegram group per concern** — do not mix production alerts with staging Soft or bot experiments.
+
+| Slug | Title format | Topics (inside the group) |
+|------|----------------|---------------------------|
+| `hq` | `TOC Ops · HQ` | alerts · day-ops · aar · identity |
+| `ash-staging` | `TOC Ops · ASH · staging` | plays · balances · onboard · alerts |
+| `sandbox` | `TOC Ops · sandbox` | scratch · experiments |
+
+Grammar (middle-dot U+00B7):
+
+| Kind | Format | Example |
+|------|--------|---------|
+| Ops desk | `TOC Ops · HQ` | production |
+| Env desk | `TOC Ops · {CALL_SIGN} · {env}` | `TOC Ops · ASH · staging` |
+| Sandbox | `TOC Ops · sandbox` | experiments |
+| Partner package (ct) | `TOC Ops · {CODE} · {DisplayName}` | `TOC Ops · BILLY · Billy Ops` |
+
+Factory SSOT: [`lib/telegram/surfaces.ts`](../../../lib/telegram/surfaces.ts). Package titles in Soft desk: [`toc-ops-repo` telegram-surfaces](../../../toc-ops-repo/src/central-tool/telegram-surfaces.ts). Bind chat ids with `TELEGRAM_SURFACES` JSON; primary projector fallback remains `TELEGRAM_OPS_CHAT_ID`.
+
+**Outbox routing (no DM `telegramId`):** `alerts`/`dod`/`toc` → `hq` · `plays`/`identity`/`provisioning` → `ash-staging` · `experiments` → `sandbox` · else `TELEGRAM_OPS_CHAT_ID`. Directory tags `surface_slug` from title/env. Broadcast: `telegram:ops -- send --surface ash-staging --all …`. ACL: `/register` DM-only · `/deploy` needs portal admin or `OPS_ADMIN_USER_IDS`.
 
 ## Partner message path (deep)
 
@@ -55,6 +85,7 @@ Token SSOT: [`loadTelegramEnv()`](../../../lib/telegram/telegram-config.ts) → 
 | `TELEGRAM_BOT_FACTORY` | Yes (or legacy `TELEGRAM_BOT_TOKEN`) | Factory tenant token — [`config/tenants.ts`](../../../config/tenants.ts) |
 | `TELEGRAM_WEBHOOK_SECRET` | Required on Pages | Same value in local `.env` + Pages Variables/Secrets (prod+preview). Without it the edge webhook returns **503**. Redeploy after setting. |
 | `TELEGRAM_OPS_CHAT_ID` | For group alerts | Supergroup id when outbox row has no `telegramId` |
+| `TELEGRAM_SURFACES` | Recommended | JSON `{ "hq"|"ash-staging"|"sandbox": chat_id }` — concern map |
 | `TELEGRAM_TOPICS` | For forum threads | JSON map → `message_thread_id` (see below) |
 | `TELEGRAM_RATE_LIMIT_MIN_INTERVAL_MS` | Optional | Default `34` (~29 msg/s; Telegram ~30/s) |
 

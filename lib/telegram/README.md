@@ -21,6 +21,11 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `telegram-discovery.ts` | Granular Bot API + known-chats inventory (`telegram:discover`) |
 | `known-chats.ts` | Self-learning `ops_telegram_known_chats` from updates |
 | `broadcast.ts` | Send-to-known-chats + `ops_broadcast_log` |
+| `surfaces.ts` | Concern separation SSOT · naming · outbox chat routing |
+| `surface-graph.ts` | Live topology ASCII / mermaid / env suggest |
+| `surface-audit.ts` | Title · binding · ACL · routing audit |
+| `package-group-registry.ts` | Partner package forum registry + pending JSONL |
+| `ops-acl.ts` | In-chat ACL — `/register` DM-only · `/deploy` ops-admin |
 | `branding.ts` | TOC Ops profile (Bun.Image) · group titles/photos · forum topics |
 | `refresh-known-chats.ts` | `getChat` / member-count refresh for directory |
 | `telegram-api.ts` | `sendTelegramBotMessage` · `editTelegramMessage` · `setMyCommands` · `answerCallbackQuery` (rate-limited + 429 retry) |
@@ -67,8 +72,22 @@ bun run telegram:verify
 # Known chats + Bot API inventory
 bun run telegram:discover
 bun run telegram:ops -- directory --refresh
+bun run telegram:ops -- directory --rich
+bun run telegram:brand -- --matrix          # concern matrix + naming
 bun run telegram:brand -- --groups
-bun run telegram:ops -- send --all --preview "hello {{title}}"
+bun run telegram:ops -- surfaces
+bun run telegram:ops -- graph                 # live ASCII topology
+bun run telegram:ops -- graph --mermaid       # mermaid for docs
+bun run telegram:ops -- graph --env           # suggested TELEGRAM_SURFACES
+# Parallel lanes (artifacts → reports/telegram/)
+bun run telegram:surfaces:discover -- --refresh --stdout
+bun run telegram:surfaces:audit -- --stdout
+bun run telegram:surfaces:map -- --stdout
+bun run telegram:surfaces:pipeline -- --refresh   # sequential all-three
+bun tools/onboard-partner-package.ts ASH-001 --create-package-group
+bun run telegram:ops -- link-package-group ASH -1003937534779 --invite 'https://t.me/+…'
+bun run telegram:ops -- directory --surface ash-staging
+bun run telegram:ops -- send --surface sandbox --all --preview "hello {{title}}"
 
 # Factory bot menu + webhook
 bun run telegram:factory:setup

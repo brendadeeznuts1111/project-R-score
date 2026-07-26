@@ -16,6 +16,7 @@ import { runOpsCommand, tryOpenOpsDb } from './ops-bridge.ts';
 import { handleFlowCallback } from './flows/callbacks.ts';
 import { deliverFlowOutput, flowOutputToPlainText } from './flows/deliver.ts';
 import { commandToFlowId, findFlowNodeByTelegram } from './flows/registry.ts';
+import { gateFactoryCommand } from './ops-acl.ts';
 import { dispatchOpsFlowOutput } from './ops-commands.ts';
 import { tryObserveKnownChats } from './known-chats.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
@@ -49,11 +50,20 @@ function resolveTelegramToken(
 }
 
 async function dispatchFactoryOpsCommand(ctx: CommandContext, command: string): Promise<string> {
+  const gate = gateFactoryCommand({
+    command,
+    chatType: ctx.msg.chat.type,
+    telegramUserId: ctx.msg.from.id,
+    portalRole: ctx.account?.role ?? null,
+  });
+  if (!gate.ok) return gate.reason;
+
   const args = ctx.opsArgs ?? ctx.msg.text?.split(/\s+/).slice(1) ?? [];
   const result = await runOpsCommand(ctx.env, ctx.bucket, {
     telegramUserId: String(ctx.msg.from.id),
     command,
     args,
+    chatType: ctx.msg.chat.type,
   });
   return result.reply;
 }
@@ -151,6 +161,7 @@ export class TelegramBot {
           telegramUserId: String(msg.from.id),
           command: '/start',
           args: [],
+          chatType: msg.chat.type,
         });
         await sendTelegramMessage(deps.env, deps.tenant, msg.chat.id, ops.reply);
         return;
@@ -344,15 +355,22 @@ export function registerFactoryCommands(bot: TelegramBot): void {
     command: '/deploy',
     description: 'Trigger deploy request',
     handler: async ctx => {
-      if (!ctx.account || ctx.account.role !== 'admin') return 'Admin only.';
+      const gate = gateFactoryCommand({
+        command: '/deploy',
+        chatType: ctx.msg.chat.type,
+        telegramUserId: ctx.msg.from.id,
+        portalRole: ctx.account?.role ?? null,
+      });
+      if (!gate.ok) return gate.reason;
+      const by = ctx.account ? (ctx.account.id as string) : `tg:${ctx.msg.from.id}`;
       await publishEvent(
         ctx.channel,
         'factory',
         {
           event: 'deploy.requested',
-          by: ctx.account.id as string,
+          by,
         },
-        { tenant: ctx.account.tenantId, sender: 'telegram' }
+        { tenant: ctx.account?.tenantId ?? ctx.tenant.id, sender: 'telegram' }
       );
       return 'Deploy triggered.';
     },
