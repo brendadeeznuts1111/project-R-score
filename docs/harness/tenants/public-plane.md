@@ -64,3 +64,25 @@ Portal static anti-patterns live in `lib/portal-static-checks.ts` — consumed b
 **Owner** `// owner: platform / portal`
 
 **Fresh-rerun** `bun run public:audit:verify`
+
+## Audit evidence (Discovery → Audit → Re-gate)
+
+Compose loop: [`.agents/skills/audit-gap-close/`](../../../.agents/skills/audit-gap-close/) · [`docs/audit/README.md`](../../audit/README.md)
+
+```bash
+bun run discover:compose:check    # harness + public planes
+bun run public:audit:verify       # public discover · portal static · audit catalog
+bun run reference:discover:check  # similar-env warn tier
+bun run ops:snapshot --no-routing # portal-weave rebake
+```
+
+| Gate | Last run | Result |
+|------|----------|--------|
+| `discover:compose:check` | 2026-07-26 | 0 errors · harness + public |
+| `public:discover:check` | 2026-07-26 | 0 findings |
+| `public:audit:verify` | 2026-07-26 | pass · portal static · audit catalog |
+| `verify:portal:static` | 2026-07-26 | pass |
+| `reference:discover:check` | 2026-07-26 | 0 errors · 0 warn (`similar-env` trimmed) |
+| `test:toc-ops` | 2026-07-26 | 71 pass · 18 files |
+| `cloudflare:preflight` | 2026-07-26 | pass · 13 contracts · 20 consistency |
+| Registry rebake | 2026-07-26 | `portal-weave.json` includes `public:discover:check` · `public:audit:verify` + weave artifacts |
