@@ -1641,6 +1641,8 @@
     "telegram:brand": "bun tools/telegram-brand.ts",
     "telegram:ops": "bun tools/telegram-ops.ts",
     "telegram:ops:consume": "bun tools/telegram-ops-consumer.ts",
+    "telegram:handshake:verify": "bun tools/verify-package-group-handshake.ts",
+    "test:telegram-handshake": "bun test tests/verify-package-group-handshake.test.ts tests/package-group-registry.test.ts tests/package-group-event-log.test.ts tests/ops-channel-outbox.test.ts tests/telegram-broadcast.test.ts tests/ops-schema-available-at.test.ts",
     "telegram:link-chat": "bun tools/telegram-link-chat.ts",
     "factory:create": "bun lib/factory/cli.ts create",
     "ci:harness": "bun scripts/ci-harness.ts",

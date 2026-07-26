@@ -201,12 +201,23 @@ Do not use staging chat_ids as production package forums.
 
 **Soft plane note:** `ct package-group-wire --apply` requires partner `ASH` in `toc-ops.sqlite` (`seed_profile=demo|test`, or operational partner row). When Soft is unprofiled, append `ack_package_group_wired` via `ct package-group-wire … --apply --ack` after `package-init`, or use factory `appendAckPackageGroupWired` for JSONL-only staging.
 
+**Soft demo DB (isolated wire test):**
+
+```bash
+cd toc-ops-repo
+bun run src/db/migrate.ts --demo-reset --db /tmp/toc-ops-demo.sqlite
+TOC_OPS_DB=/tmp/toc-ops-demo.sqlite bun run src/db/seed.ts --db /tmp/toc-ops-demo.sqlite
+TOC_OPS_DB=/tmp/toc-ops-demo.sqlite bun run ct package-group-wire ASH \
+  --chat tg:chat:-1003937534779 --apply --ack \
+  --path ../reports/telegram/pending-package-groups.jsonl
+```
+
 ### Verify commands
 
 ```bash
 # Handshake lifecycle
-bun test tests/verify-package-group-handshake.test.ts
-bun tools/verify-package-group-handshake.ts ASH --json
+bun run test:telegram-handshake
+bun run telegram:handshake:verify ASH --json
 
 # Broadcast queue
 bun test tests/ops-channel-outbox.test.ts tests/telegram-broadcast.test.ts
@@ -218,12 +229,12 @@ bun run telegram:ops:consume -- --preview
 
 ## Acceptance checklist
 
-- [ ] JSONL line matches title grammar and `partner_code` ≠ call-sign
-- [ ] Manual forum title matches `suggested_title` byte-for-byte
-- [ ] `package_group_registry` row for `ASH` with correct `chat_id`
+- [x] JSONL line matches title grammar and `partner_code` ≠ call-sign (ASH staging)
+- [ ] Manual forum title matches `suggested_title` byte-for-byte (skipped on staging shortcut)
+- [x] `package_group_registry` row for `ASH` with correct `chat_id`
 - [ ] DM received when `--invite` + linked `telegram_id` present
-- [ ] `tree_nodes.telegram_id` unchanged (still DM)
-- [ ] ct surface map can register same title (manual in toc-ops-repo)
+- [x] `tree_nodes.telegram_id` unchanged (still DM)
+- [x] ct surface map can register same title (demo DB wire proved `telegram_ref`)
 
 ---
 
