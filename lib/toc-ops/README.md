@@ -16,7 +16,7 @@ operate-lite Hard Gate bake (`enforcement` slice).
 | [`presence.ts`](presence.ts) | Geo · ZIP · IPv4/IPv6 · DNS · ASN presence + rollup metrics |
 | [`venues.ts`](venues.ts) | Sportsbooks · Kalshi/Polymarket · crypto · PPH · post-up · casino · kiosk · legal-by-state |
 | [`profiles.ts`](profiles.ts) | Partner + agent profiles: phones · telegram · deals · CLV · expert liquidity |
-| [`seed-deepen.ts`](seed-deepen.ts) | Soft/play · desk · MessageLog · capital/Gate12 · Soft A=L+E sheet · limit/rail history · switchback · release cards |
+| [`seed-deepen.ts`](seed-deepen.ts) | Soft/play · desk · MessageLog · capital/Gate12 · A=L+E · exposure/recycle · SLA/compliance/audit · release cards |
 | [`enforcement.ts`](enforcement.ts) | Operate-lite Hard Gates · T/I/OE · Rope→Drum→Buffer diagnosis |
 | [`bake-proof.ts`](bake-proof.ts) | `/registry/toc-ops-bake-proof.json` evidence on export |
 | [`return-efficiency.ts`](return-efficiency.ts) | R_P · CE · LE · dynamic buffer · ranked next actions |

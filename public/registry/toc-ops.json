@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-26T06:15:31.948Z",
+  "generatedAt": "2026-07-26T06:22:58.064Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -2267,6 +2267,113 @@
               "screenshotRef": "proof:ash-001-limits-stale",
               "source": "ops"
             }
+          ],
+          "pendingExposure": 0,
+          "exposureJournal": [
+            {
+              "at": "2026-07-13T17:10:00.000Z",
+              "kind": "place",
+              "amount": 800,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-nfl-deep-002",
+              "expertId": "elena",
+              "note": "NFL settled"
+            },
+            {
+              "at": "2026-07-13T21:00:00.000Z",
+              "kind": "settle",
+              "amount": 800,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-nfl-deep-002",
+              "expertId": "elena"
+            },
+            {
+              "at": "2026-07-17T19:10:00.000Z",
+              "kind": "place",
+              "amount": 1200,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-nfl-ml-001",
+              "expertId": "marcus",
+              "note": "NFL settled"
+            },
+            {
+              "at": "2026-07-17T23:40:00.000Z",
+              "kind": "settle",
+              "amount": 1200,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-nfl-ml-001",
+              "expertId": "marcus"
+            },
+            {
+              "at": "2026-07-18T20:05:00.000Z",
+              "kind": "place",
+              "amount": 1000,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-nba-deep-001",
+              "expertId": "marcus",
+              "note": "NBA settled"
+            },
+            {
+              "at": "2026-07-18T23:20:00.000Z",
+              "kind": "settle",
+              "amount": 1000,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-nba-deep-001",
+              "expertId": "marcus"
+            },
+            {
+              "at": "2026-07-19T17:20:00.000Z",
+              "kind": "place",
+              "amount": 600,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-mlb-loss-001",
+              "expertId": "kai",
+              "note": "MLB settled"
+            },
+            {
+              "at": "2026-07-19T22:05:00.000Z",
+              "kind": "settle",
+              "amount": 600,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-mlb-loss-001",
+              "expertId": "kai"
+            },
+            {
+              "at": "2026-07-21T15:05:00.000Z",
+              "kind": "place",
+              "amount": 900,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-tennis-001",
+              "expertId": "elena",
+              "note": "Tennis settled"
+            },
+            {
+              "at": "2026-07-21T20:40:00.000Z",
+              "kind": "settle",
+              "amount": 900,
+              "pendingAfter": 0,
+              "playId": "play-ash-001-tennis-001",
+              "expertId": "elena"
+            }
+          ],
+          "recycleCycles": [
+            {
+              "cycleId": "recycle-ASH-001-1",
+              "startedAt": "2026-07-21T10:00:00.000Z",
+              "completedAt": "2026-07-23T16:00:00.000Z",
+              "redeployAmount": 2000,
+              "status": "completed"
+            }
+          ],
+          "complianceFlags": [
+            {
+              "id": "cf-limit-ASH-001",
+              "severity": "warn",
+              "code": "LIMIT_STALE",
+              "summary": "Limit screenshot stale on ASH-001",
+              "at": "2026-07-12T09:00:00.000Z",
+              "clearedAt": null
+            }
           ]
         },
         {
@@ -2430,7 +2537,21 @@
               "freshness": "unknown",
               "source": "ops"
             }
-          ]
+          ],
+          "pendingExposure": 0,
+          "exposureJournal": [
+            {
+              "at": "2026-07-19T18:00:00.000Z",
+              "kind": "release",
+              "amount": 800,
+              "pendingAfter": 0,
+              "playId": "play-ash-002-blocked-001",
+              "expertId": "marcus",
+              "note": "PLAY-EX-02 warmup_count<2 / not WARMED"
+            }
+          ],
+          "recycleCycles": [],
+          "complianceFlags": []
         },
         {
           "callSign": "ASH-003",
@@ -2642,7 +2763,29 @@
               "screenshotRef": "proof:ash-003-limits-low",
               "source": "bot"
             }
-          ]
+          ],
+          "pendingExposure": 900,
+          "exposureJournal": [
+            {
+              "at": "2026-07-23T17:05:00.000Z",
+              "kind": "reserve",
+              "amount": 900,
+              "pendingAfter": 900,
+              "expertId": "marcus",
+              "note": "Reservation held — Gate 12 blocks place"
+            }
+          ],
+          "recycleCycles": [
+            {
+              "cycleId": "recycle-ASH-003-1",
+              "startedAt": "2026-07-21T10:00:00.000Z",
+              "completedAt": null,
+              "redeployAmount": 2400,
+              "status": "blocked",
+              "blockReason": "Gate 12 principal outstanding"
+            }
+          ],
+          "complianceFlags": []
         },
         {
           "callSign": "ASH-004",
@@ -2797,7 +2940,19 @@
               "screenshotRef": "proof:ash-004-kiosk",
               "source": "bot"
             }
-          ]
+          ],
+          "pendingExposure": 500,
+          "exposureJournal": [
+            {
+              "at": "2026-07-23T17:05:00.000Z",
+              "kind": "reserve",
+              "amount": 500,
+              "pendingAfter": 500,
+              "note": "Reservation held — Gate 12 blocks place"
+            }
+          ],
+          "recycleCycles": [],
+          "complianceFlags": []
         }
       ],
       "openTasks": [
@@ -2821,7 +2976,9 @@
           "ballInCourt": "Partner",
           "nextAction": "Complete cycle 2 dummy bet → settlement → WD",
           "linkedExceptionId": "WARM-EX-01",
-          "createdAt": "2026-07-16T12:00:00.000Z"
+          "createdAt": "2026-07-16T12:00:00.000Z",
+          "ageMin": 10800,
+          "slaDueAt": "2026-07-16T13:00:00.000Z"
         },
         {
           "taskId": "LIMIT-ASH-001-20260720-090000-001",
@@ -2830,7 +2987,9 @@
           "status": "PendingPartner",
           "ballInCourt": "Partner",
           "nextAction": "Screenshot limit screen (UTC stamp) — do not interrupt PLAY",
-          "createdAt": "2026-07-20T09:00:00.000Z"
+          "createdAt": "2026-07-20T09:00:00.000Z",
+          "ageMin": 5220,
+          "slaDueAt": "2026-07-20T10:00:00.000Z"
         },
         {
           "taskId": "WD-ASH-003-20260723-120000-001",
@@ -2840,7 +2999,9 @@
           "ballInCourt": "Ops",
           "nextAction": "LIMIT-EX-02 — principal_recovery WD; reallocate to PAT-001",
           "linkedExceptionId": "LIMIT-EX-02",
-          "createdAt": "2026-07-23T12:00:00.000Z"
+          "createdAt": "2026-07-23T12:00:00.000Z",
+          "ageMin": 720,
+          "slaDueAt": "2026-07-23T16:00:00.000Z"
         },
         {
           "taskId": "WARM-ASH-004-20260723-130000-001",
@@ -2849,7 +3010,9 @@
           "status": "New",
           "ballInCourt": "Ops",
           "nextAction": "Kiosk funded — start cycle 1 dummy bet at device kiosk-mia-12",
-          "createdAt": "2026-07-23T13:00:00.000Z"
+          "createdAt": "2026-07-23T13:00:00.000Z",
+          "ageMin": 660,
+          "slaDueAt": "2026-07-23T17:00:00.000Z"
         }
       ],
       "softBalance": {
@@ -4000,6 +4163,140 @@
           "summary": "Pending instruction SLA > 60m — Ball-in-Court Partner"
         }
       ],
+      "slaBoard": {
+        "openPartnerTasks": 2,
+        "openOpsTasks": 2,
+        "oldestOpenAgeMin": 10800,
+        "breachCount7d": 5,
+        "onTimePct7d": 0.75,
+        "nextDueTaskId": "WARM-ASH-002-20260716-120000-001"
+      },
+      "auditTrail": [
+        {
+          "at": "2026-07-23T19:12:00.000Z",
+          "kind": "sla.breach",
+          "callSign": "ASH-001",
+          "summary": "Instruction HOU @ TEX waiting partner ack"
+        },
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "kind": "gate12.disclosure",
+          "callSign": "ASH-003",
+          "amount": 4800,
+          "summary": "Gate 12 cashier Rope — WD profit_split blocked"
+        },
+        {
+          "at": "2026-07-22T11:05:00.000Z",
+          "kind": "gate12.deploy",
+          "callSign": "ASH-004",
+          "amount": 500,
+          "summary": "Principal disclosed — Gate 12 open"
+        },
+        {
+          "at": "2026-07-21T21:10:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "ASH-001",
+          "amount": 235,
+          "summary": "Partner ProfitSplit"
+        },
+        {
+          "at": "2026-07-21T21:10:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "ASH-001",
+          "amount": 67,
+          "summary": "Expert ProfitSplit"
+        },
+        {
+          "at": "2026-07-21T21:10:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "ASH-001",
+          "amount": 34,
+          "summary": "House ProfitSplit"
+        },
+        {
+          "at": "2026-07-20T09:00:00.000Z",
+          "kind": "gate12.mode_change",
+          "callSign": "ASH-001",
+          "amount": 0,
+          "summary": "Principal cleared — profit_split unlocked"
+        },
+        {
+          "at": "2026-07-19T16:00:00.000Z",
+          "kind": "gate12.return",
+          "callSign": "ASH-001",
+          "amount": 1000,
+          "summary": "return rem 3250"
+        },
+        {
+          "at": "2026-07-19T10:00:00.000Z",
+          "kind": "soft.CapitalDeployment",
+          "callSign": "ASH-003",
+          "amount": 5000,
+          "summary": "House CapitalDeployment"
+        },
+        {
+          "at": "2026-07-19T10:00:00.000Z",
+          "kind": "soft.CostOfPriming",
+          "callSign": "ASH-001",
+          "amount": 25,
+          "summary": "House CostOfPriming"
+        },
+        {
+          "at": "2026-07-18T23:35:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "ASH-001",
+          "amount": 294,
+          "summary": "Partner ProfitSplit"
+        },
+        {
+          "at": "2026-07-18T23:35:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "ASH-001",
+          "amount": 84,
+          "summary": "Expert ProfitSplit"
+        },
+        {
+          "at": "2026-07-18T23:35:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "ASH-001",
+          "amount": 42,
+          "summary": "House ProfitSplit"
+        },
+        {
+          "at": "2026-07-15T18:00:00.000Z",
+          "kind": "gate12.return",
+          "callSign": "ASH-003",
+          "amount": 750,
+          "summary": "return rem 4250"
+        },
+        {
+          "at": "2026-07-12T14:00:00.000Z",
+          "kind": "gate12.deploy",
+          "callSign": "ASH-002",
+          "amount": 5010,
+          "summary": "deploy rem 5010"
+        }
+      ],
+      "complianceFlags": [
+        {
+          "id": "cf-limit-ASH-001",
+          "severity": "warn",
+          "code": "LIMIT_STALE",
+          "summary": "Limit screenshot stale on ASH-001",
+          "at": "2026-07-12T09:00:00.000Z",
+          "clearedAt": null
+        }
+      ],
+      "netCapital": {
+        "deposits": 15000,
+        "withdrawals": 4980,
+        "expenses": 11,
+        "railFees": 49,
+        "losses": 840,
+        "priming": 45,
+        "net": 9075,
+        "asOf": "2026-07-23T18:00:00.000Z"
+      },
       "healthPulse": [
         {
           "day": "2026-07-20",
@@ -4411,7 +4708,97 @@
               "screenshotRef": "proof:pat-001-limits",
               "source": "bot"
             }
-          ]
+          ],
+          "pendingExposure": 900,
+          "exposureJournal": [
+            {
+              "at": "2026-07-12T16:10:00.000Z",
+              "kind": "place",
+              "amount": 1100,
+              "pendingAfter": 0,
+              "playId": "play-pat-001-prior-cycle-001",
+              "expertId": "marcus",
+              "note": "NFL settled"
+            },
+            {
+              "at": "2026-07-12T22:00:00.000Z",
+              "kind": "settle",
+              "amount": 1100,
+              "pendingAfter": 0,
+              "playId": "play-pat-001-prior-cycle-001",
+              "expertId": "marcus"
+            },
+            {
+              "at": "2026-07-14T18:05:00.000Z",
+              "kind": "place",
+              "amount": 180,
+              "pendingAfter": 0,
+              "playId": "play-pat-001-mlb-loss-001",
+              "expertId": "kai",
+              "note": "MLB settled"
+            },
+            {
+              "at": "2026-07-14T23:00:00.000Z",
+              "kind": "settle",
+              "amount": 180,
+              "pendingAfter": 0,
+              "playId": "play-pat-001-mlb-loss-001",
+              "expertId": "kai"
+            },
+            {
+              "at": "2026-07-16T14:20:00.000Z",
+              "kind": "place",
+              "amount": 1100,
+              "pendingAfter": 0,
+              "playId": "play-pat-001-tennis-deep-001",
+              "expertId": "elena",
+              "note": "Tennis settled"
+            },
+            {
+              "at": "2026-07-16T18:40:00.000Z",
+              "kind": "settle",
+              "amount": 1100,
+              "pendingAfter": 0,
+              "playId": "play-pat-001-tennis-deep-001",
+              "expertId": "elena"
+            },
+            {
+              "at": "2026-07-20T16:05:00.000Z",
+              "kind": "place",
+              "amount": 1500,
+              "pendingAfter": 0,
+              "playId": "play-pat-001-nfl-spread-001",
+              "expertId": "elena",
+              "note": "NFL settled"
+            },
+            {
+              "at": "2026-07-20T22:10:00.000Z",
+              "kind": "settle",
+              "amount": 1500,
+              "pendingAfter": 0,
+              "playId": "play-pat-001-nfl-spread-001",
+              "expertId": "elena"
+            },
+            {
+              "at": "2026-07-22T15:20:00.000Z",
+              "kind": "place",
+              "amount": 900,
+              "pendingAfter": 900,
+              "playId": "play-pat-001-nba-open-001",
+              "expertId": "elena",
+              "note": "NBA placed"
+            }
+          ],
+          "recycleCycles": [
+            {
+              "cycleId": "recycle-PAT-001-1",
+              "startedAt": "2026-07-21T10:00:00.000Z",
+              "completedAt": "2026-07-23T16:00:00.000Z",
+              "redeployAmount": 2600,
+              "status": "open"
+            }
+          ],
+          "complianceFlags": []
         },
         {
           "callSign": "PAT-002",
@@ -4649,7 +5036,56 @@
               "screenshotRef": "proof:pat-002-limits",
               "source": "bot"
             }
-          ]
+          ],
+          "pendingExposure": 1500,
+          "exposureJournal": [
+            {
+              "at": "2026-07-21T14:10:00.000Z",
+              "kind": "place",
+              "amount": 2000,
+              "pendingAfter": 0,
+              "playId": "play-pat-002-kalshi-pol-001",
+              "expertId": "kai",
+              "note": "Politics settled"
+            },
+            {
+              "at": "2026-07-21T15:55:00.000Z",
+              "kind": "settle",
+              "amount": 2000,
+              "pendingAfter": 0,
+              "playId": "play-pat-002-kalshi-pol-001",
+              "expertId": "kai"
+            },
+            {
+              "at": "2026-07-22T12:00:00.000Z",
+              "kind": "release",
+              "amount": 2500,
+              "pendingAfter": 0,
+              "playId": "play-pat-002-limit-reject-001",
+              "expertId": "marcus",
+              "note": "PLAY-EX-01 stake > dailyMax ($2000)"
+            },
+            {
+              "at": "2026-07-23T13:10:00.000Z",
+              "kind": "place",
+              "amount": 1500,
+              "pendingAfter": 1500,
+              "playId": "play-pat-002-kalshi-deep-002",
+              "expertId": "kai",
+              "note": "Politics placed"
+            }
+          ],
+          "recycleCycles": [
+            {
+              "cycleId": "recycle-PAT-002-1",
+              "startedAt": "2026-07-21T10:00:00.000Z",
+              "completedAt": null,
+              "redeployAmount": 2400,
+              "status": "blocked",
+              "blockReason": "Gate 12 principal outstanding"
+            }
+          ],
+          "complianceFlags": []
         },
         {
           "callSign": "PAT-003",
@@ -4806,7 +5242,20 @@
               "freshness": "unknown",
               "source": "ops"
             }
-          ]
+          ],
+          "pendingExposure": 900,
+          "exposureJournal": [
+            {
+              "at": "2026-07-23T17:05:00.000Z",
+              "kind": "reserve",
+              "amount": 900,
+              "pendingAfter": 900,
+              "expertId": "kai",
+              "note": "Reservation held — Gate 12 blocks place"
+            }
+          ],
+          "recycleCycles": [],
+          "complianceFlags": []
         },
         {
           "callSign": "PAT-004",
@@ -5044,7 +5493,63 @@
               "screenshotRef": "proof:pat-004-stake",
               "source": "bot"
             }
-          ]
+          ],
+          "pendingExposure": 800,
+          "exposureJournal": [
+            {
+              "at": "2026-07-19T11:00:00.000Z",
+              "kind": "place",
+              "amount": 500,
+              "pendingAfter": 0,
+              "playId": "play-pat-004-crypto-deep-001",
+              "expertId": "kai",
+              "note": "Crypto settled"
+            },
+            {
+              "at": "2026-07-19T12:00:00.000Z",
+              "kind": "settle",
+              "amount": 500,
+              "pendingAfter": 0,
+              "playId": "play-pat-004-crypto-deep-001",
+              "expertId": "kai"
+            },
+            {
+              "at": "2026-07-22T07:15:00.000Z",
+              "kind": "place",
+              "amount": 900,
+              "pendingAfter": 0,
+              "playId": "play-pat-004-stake-soccer-001",
+              "expertId": "kai",
+              "note": "Soccer settled"
+            },
+            {
+              "at": "2026-07-22T08:10:00.000Z",
+              "kind": "settle",
+              "amount": 900,
+              "pendingAfter": 0,
+              "playId": "play-pat-004-stake-soccer-001",
+              "expertId": "kai"
+            },
+            {
+              "at": "2026-07-23T10:05:00.000Z",
+              "kind": "place",
+              "amount": 800,
+              "pendingAfter": 800,
+              "playId": "play-pat-004-stake-open-001",
+              "expertId": "kai",
+              "note": "Soccer placed"
+            }
+          ],
+          "recycleCycles": [
+            {
+              "cycleId": "recycle-PAT-004-1",
+              "startedAt": "2026-07-21T10:00:00.000Z",
+              "completedAt": "2026-07-23T16:00:00.000Z",
+              "redeployAmount": 2000,
+              "status": "open"
+            }
+          ],
+          "complianceFlags": []
         },
         {
           "callSign": "PAT-005",
@@ -5213,7 +5718,11 @@
               "freshness": "unknown",
               "source": "ops"
             }
-          ]
+          ],
+          "pendingExposure": 0,
+          "exposureJournal": [],
+          "recycleCycles": [],
+          "complianceFlags": []
         }
       ],
       "openTasks": [
@@ -5248,7 +5757,9 @@
           "status": "Processing",
           "ballInCourt": "Partner",
           "nextAction": "Place expert instruction; post bet-slip screenshot",
-          "createdAt": "2026-07-22T15:00:00.000Z"
+          "createdAt": "2026-07-22T15:00:00.000Z",
+          "ageMin": 1980,
+          "slaDueAt": "2026-07-22T16:00:00.000Z"
         },
         {
           "taskId": "WD-PAT-002-20260722-160000-001",
@@ -5257,7 +5768,9 @@
           "status": "GateCheck",
           "ballInCourt": "Ops",
           "nextAction": "Gate 12 principal_recovery only — Soft CapitalReturn 100% House",
-          "createdAt": "2026-07-22T16:00:00.000Z"
+          "createdAt": "2026-07-22T16:00:00.000Z",
+          "ageMin": 1920,
+          "slaDueAt": "2026-07-22T20:00:00.000Z"
         },
         {
           "taskId": "FUND-PAT-002-20260721-110000-001",
@@ -5291,7 +5804,9 @@
           "status": "PendingPartner",
           "ballInCourt": "Partner",
           "nextAction": "Start cycle 1 dummy bet (ML near-even); post slip + settlement",
-          "createdAt": "2026-07-23T12:00:00.000Z"
+          "createdAt": "2026-07-23T12:00:00.000Z",
+          "ageMin": 720,
+          "slaDueAt": "2026-07-23T13:00:00.000Z"
         },
         {
           "taskId": "WARM-PAT-005-20260723-110000-001",
@@ -5300,7 +5815,9 @@
           "status": "PendingPartner",
           "ballInCourt": "Partner",
           "nextAction": "Complete FanDuel cycle 2 WD after settlement",
-          "createdAt": "2026-07-23T11:00:00.000Z"
+          "createdAt": "2026-07-23T11:00:00.000Z",
+          "ageMin": 780,
+          "slaDueAt": "2026-07-23T12:00:00.000Z"
         }
       ],
       "softBalance": {
@@ -6763,6 +7280,139 @@
           "summary": "Rail payment under review → PendingRailReview; recheck 30 min"
         }
       ],
+      "slaBoard": {
+        "openPartnerTasks": 3,
+        "openOpsTasks": 1,
+        "oldestOpenAgeMin": 1980,
+        "breachCount7d": 4,
+        "onTimePct7d": 0.8,
+        "nextDueTaskId": "PLAY-PAT-001-20260722-150000-001"
+      },
+      "auditTrail": [
+        {
+          "at": "2026-07-23T12:00:00.000Z",
+          "kind": "gate12.disclosure",
+          "callSign": "PAT-002",
+          "amount": 5000,
+          "summary": "Gate 12 cashier Rope — WD profit_split blocked"
+        },
+        {
+          "at": "2026-07-23T11:30:00.000Z",
+          "kind": "soft.CostOfPriming",
+          "callSign": "PAT-005",
+          "amount": 35,
+          "summary": "House CostOfPriming"
+        },
+        {
+          "at": "2026-07-23T09:20:00.000Z",
+          "kind": "soft.CapitalDeployment",
+          "callSign": "PAT-003",
+          "amount": 5000,
+          "summary": "House CapitalDeployment"
+        },
+        {
+          "at": "2026-07-22T11:05:00.000Z",
+          "kind": "gate12.deploy",
+          "callSign": "PAT-003",
+          "amount": 5000,
+          "summary": "Principal disclosed — Gate 12 open"
+        },
+        {
+          "at": "2026-07-22T10:20:00.000Z",
+          "kind": "soft.CapitalDeployment",
+          "callSign": "PAT-005",
+          "amount": 5000,
+          "summary": "House CapitalDeployment"
+        },
+        {
+          "at": "2026-07-22T08:30:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "PAT-004",
+          "amount": 360,
+          "summary": "Partner ProfitSplit"
+        },
+        {
+          "at": "2026-07-22T08:30:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "PAT-004",
+          "amount": 150,
+          "summary": "Expert ProfitSplit"
+        },
+        {
+          "at": "2026-07-22T08:30:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "PAT-004",
+          "amount": 90,
+          "summary": "House ProfitSplit"
+        },
+        {
+          "at": "2026-07-21T16:10:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "PAT-002",
+          "amount": 480,
+          "summary": "Partner ProfitSplit"
+        },
+        {
+          "at": "2026-07-21T16:10:00.000Z",
+          "kind": "soft.ProfitSplit",
+          "callSign": "PAT-002",
+          "amount": 200,
+          "summary": "Expert ProfitSplit"
+        },
+        {
+          "at": "2026-07-20T09:00:00.000Z",
+          "kind": "gate12.mode_change",
+          "callSign": "PAT-001",
+          "amount": 0,
+          "summary": "Principal cleared — profit_split unlocked"
+        },
+        {
+          "at": "2026-07-20T09:00:00.000Z",
+          "kind": "gate12.mode_change",
+          "callSign": "PAT-004",
+          "amount": 0,
+          "summary": "Principal cleared — profit_split unlocked"
+        },
+        {
+          "at": "2026-07-19T16:00:00.000Z",
+          "kind": "gate12.return",
+          "callSign": "PAT-001",
+          "amount": 1040,
+          "summary": "return rem 3380"
+        },
+        {
+          "at": "2026-07-19T16:00:00.000Z",
+          "kind": "gate12.return",
+          "callSign": "PAT-002",
+          "amount": 1000,
+          "summary": "return rem 3250"
+        },
+        {
+          "at": "2026-07-19T16:00:00.000Z",
+          "kind": "gate12.return",
+          "callSign": "PAT-004",
+          "amount": 1000,
+          "summary": "return rem 3250"
+        },
+        {
+          "at": "2026-07-12T14:00:00.000Z",
+          "kind": "gate12.deploy",
+          "callSign": "PAT-005",
+          "amount": 5100,
+          "summary": "deploy rem 5100"
+        }
+      ],
+      "complianceFlags": [],
+      "netCapital": {
+        "deposits": 25000,
+        "withdrawals": 0,
+        "expenses": 9,
+        "railFees": 49,
+        "losses": 680,
+        "priming": 35,
+        "net": 24227,
+        "asOf": "2026-07-23T18:00:00.000Z"
+      },
       "healthPulse": [
         {
           "day": "2026-07-20",
@@ -7037,6 +7687,27 @@
               "freshness": "unknown",
               "source": "ops"
             }
+          ],
+          "pendingExposure": 0,
+          "exposureJournal": [],
+          "recycleCycles": [],
+          "complianceFlags": [
+            {
+              "id": "cf-kyc-NOV-001",
+              "severity": "critical",
+              "code": "KYC_INCOMPLETE",
+              "summary": "ONB KYC checklist incomplete",
+              "at": "2026-07-22T10:30:00.000Z",
+              "clearedAt": null
+            },
+            {
+              "id": "cf-vpn-NOV-001",
+              "severity": "info",
+              "code": "VPN_SUSPECTED",
+              "summary": "Egress VPN suspected on last session",
+              "at": "2026-07-21T10:30:00.000Z",
+              "clearedAt": null
+            }
           ]
         },
         {
@@ -7179,6 +7850,27 @@
               "freshness": "unknown",
               "source": "ops"
             }
+          ],
+          "pendingExposure": 900,
+          "exposureJournal": [
+            {
+              "at": "2026-07-23T17:05:00.000Z",
+              "kind": "reserve",
+              "amount": 900,
+              "pendingAfter": 900,
+              "note": "Reservation held — Gate 12 blocks place"
+            }
+          ],
+          "recycleCycles": [],
+          "complianceFlags": [
+            {
+              "id": "cf-vpn-NOV-002",
+              "severity": "info",
+              "code": "VPN_SUSPECTED",
+              "summary": "Egress VPN suspected on last session",
+              "at": "2026-07-22T11:30:00.000Z",
+              "clearedAt": null
+            }
           ]
         }
       ],
@@ -7193,7 +7885,9 @@
           "proofRefs": [
             "proof:nov-venmo-profile"
           ],
-          "createdAt": "2026-07-22T10:00:00.000Z"
+          "createdAt": "2026-07-22T10:00:00.000Z",
+          "ageMin": 2280,
+          "slaDueAt": "2026-07-22T11:00:00.000Z"
         },
         {
           "taskId": "FUND-NOV-002-20260722-140000-001",
@@ -7206,7 +7900,9 @@
           "proofRefs": [
             "proof:nov-002-send"
           ],
-          "createdAt": "2026-07-22T14:00:00.000Z"
+          "createdAt": "2026-07-22T14:00:00.000Z",
+          "ageMin": 2040,
+          "slaDueAt": "2026-07-22T15:00:00.000Z"
         },
         {
           "taskId": "LIMIT-NOV-001-20260722-110000-001",
@@ -7215,7 +7911,9 @@
           "status": "New",
           "ballInCourt": "Ops",
           "nextAction": "Blocked until ONB Ready — queue after partner ack",
-          "createdAt": "2026-07-22T11:00:00.000Z"
+          "createdAt": "2026-07-22T11:00:00.000Z",
+          "ageMin": 2220,
+          "slaDueAt": "2026-07-22T15:00:00.000Z"
         }
       ],
       "softBalance": {
@@ -7774,6 +8472,94 @@
           "summary": "Rail unconfirmed blocks FUND corridor"
         }
       ],
+      "slaBoard": {
+        "openPartnerTasks": 2,
+        "openOpsTasks": 1,
+        "oldestOpenAgeMin": 2280,
+        "breachCount7d": 4,
+        "onTimePct7d": 0.8,
+        "nextDueTaskId": "ONB-NOV-001-20260722-100000-001"
+      },
+      "auditTrail": [
+        {
+          "at": "2026-07-23T09:30:00.000Z",
+          "kind": "soft.CostOfPriming",
+          "callSign": "NOV-001",
+          "amount": 15,
+          "summary": "House CostOfPriming"
+        },
+        {
+          "at": "2026-07-23T09:00:00.000Z",
+          "kind": "sla.breach",
+          "callSign": "NOV-001",
+          "summary": "FUND corridor $5k target — rail unconfirmed"
+        },
+        {
+          "at": "2026-07-22T14:05:00.000Z",
+          "kind": "soft.CapitalDeployment",
+          "callSign": "NOV-002",
+          "amount": 5000,
+          "summary": "House CapitalDeployment"
+        },
+        {
+          "at": "2026-07-22T11:05:00.000Z",
+          "kind": "gate12.deploy",
+          "callSign": "NOV-002",
+          "amount": 5000,
+          "summary": "Principal disclosed — Gate 12 open"
+        },
+        {
+          "at": "2026-07-22T11:00:00.000Z",
+          "kind": "soft.CostOfPriming",
+          "callSign": "NOV-001",
+          "amount": 40,
+          "summary": "House CostOfPriming"
+        }
+      ],
+      "complianceFlags": [
+        {
+          "id": "cf-kyc-NOV-001",
+          "severity": "critical",
+          "code": "KYC_INCOMPLETE",
+          "summary": "ONB KYC checklist incomplete",
+          "at": "2026-07-22T10:30:00.000Z",
+          "clearedAt": null
+        },
+        {
+          "id": "cf-vpn-NOV-001",
+          "severity": "info",
+          "code": "VPN_SUSPECTED",
+          "summary": "Egress VPN suspected on last session",
+          "at": "2026-07-21T10:30:00.000Z",
+          "clearedAt": null
+        },
+        {
+          "id": "cf-vpn-NOV-002",
+          "severity": "info",
+          "code": "VPN_SUSPECTED",
+          "summary": "Egress VPN suspected on last session",
+          "at": "2026-07-22T11:30:00.000Z",
+          "clearedAt": null
+        },
+        {
+          "id": "cf-rail-NOV",
+          "severity": "warn",
+          "code": "RAIL_UNCONFIRMED",
+          "summary": "Unconfirmed payout rail blocks FUND/WD",
+          "at": "2026-07-23T09:00:00.000Z",
+          "clearedAt": null
+        }
+      ],
+      "netCapital": {
+        "deposits": 5000,
+        "withdrawals": 0,
+        "expenses": 14,
+        "railFees": 0,
+        "losses": 0,
+        "priming": 55,
+        "net": 4931,
+        "asOf": "2026-07-23T18:00:00.000Z"
+      },
       "healthPulse": [
         {
           "day": "2026-07-20",
@@ -7997,7 +8783,12 @@
     "railConfirmEvents": 12,
     "switchbackWindows": 7,
     "releaseCards": 17,
-    "deferredPlays": 2
+    "deferredPlays": 2,
+    "pendingExposureTotal": 6400,
+    "recycleCyclesOpen": 4,
+    "complianceOpen": 5,
+    "auditTrailRows": 36,
+    "slaBreaches7d": 13
   },
   "identity": {
     "plane": "linked",
@@ -8005,7 +8796,7 @@
     "linkedPartners": 3,
     "linkedAccounts": 11,
     "linkedRails": 6,
-    "generatedAt": "2026-07-26T06:15:31.952Z",
+    "generatedAt": "2026-07-26T06:22:58.068Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -8177,7 +8968,7 @@
     ]
   },
   "enforcement": {
-    "evaluatedAt": "2026-07-26T06:15:31.953Z",
+    "evaluatedAt": "2026-07-26T06:22:58.070Z",
     "plane": "operate-lite",
     "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
     "warmupRequiredForPlay": 2,
@@ -9117,7 +9908,7 @@
     }
   },
   "returnEfficiency": {
-    "computedAt": "2026-07-26T06:15:31.948Z",
+    "computedAt": "2026-07-26T06:22:58.064Z",
     "byProcess": [
       {
         "process": "WARM",
@@ -9125,9 +9916,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 9.760786435185185,
+        "tauDays": 9.765949814814816,
         "oe": 0,
-        "rP": 0.005568967250841065
+        "rP": 0.0055660228683072285
       },
       {
         "process": "LIMIT",
@@ -9135,9 +9926,9 @@
         "partnerCode": "ASH",
         "deltaT": 279.12008928571424,
         "iPeak": 0,
-        "tauDays": 5.885786435185185,
+        "tauDays": 5.890949814814815,
         "oe": 0,
-        "rP": 47.422734813675284
+        "rP": 47.38116909157348
       },
       {
         "process": "WD",
@@ -9145,9 +9936,9 @@
         "partnerCode": "ASH",
         "deltaT": 4800,
         "iPeak": 4800,
-        "tauDays": 2.760786435185185,
+        "tauDays": 2.7659498148148147,
         "oe": 0,
-        "rP": 0.3622156307548371
+        "rP": 0.36153945911956176
       },
       {
         "process": "WARM",
@@ -9155,9 +9946,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.7191197685185187,
+        "tauDays": 2.724283148148148,
         "oe": 0,
-        "rP": 0.01999084432739646
+        "rP": 0.019952955344215935
       },
       {
         "process": "PLAY",
@@ -9165,9 +9956,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5200,
-        "tauDays": 3.635786435185185,
+        "tauDays": 3.6409498148148147,
         "oe": 0,
-        "rP": 0.014375659256898782
+        "rP": 0.01435527254740129
       },
       {
         "process": "WD",
@@ -9175,9 +9966,9 @@
         "partnerCode": "PAT",
         "deltaT": 5000,
         "iPeak": 5000,
-        "tauDays": 3.5941197685185187,
+        "tauDays": 3.599283148148148,
         "oe": 0,
-        "rP": 0.2782322416629415
+        "rP": 0.27783310143701967
       },
       {
         "process": "WARM",
@@ -9185,9 +9976,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.760786435185185,
+        "tauDays": 2.7659498148148147,
         "oe": 0,
-        "rP": 0.01968913614875606
+        "rP": 0.019652381149091576
       },
       {
         "process": "WARM",
@@ -9195,9 +9986,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 2.8024531018518517,
+        "tauDays": 2.8076164814814817,
         "oe": 35,
-        "rP": 0.019348071681342626
+        "rP": 0.019312577879665074
       },
       {
         "process": "ONB",
@@ -9205,9 +9996,9 @@
         "partnerCode": "NOV",
         "deltaT": 271.7875,
         "iPeak": 0,
-        "tauDays": 3.8441197685185187,
+        "tauDays": 3.849283148148148,
         "oe": 40,
-        "rP": 70.7021415476719
+        "rP": 70.60730259106927
       },
       {
         "process": "FUND",
@@ -9215,9 +10006,9 @@
         "partnerCode": "NOV",
         "deltaT": 40.768125000000005,
         "iPeak": 5000,
-        "tauDays": 3.6774531018518517,
+        "tauDays": 3.6826164814814817,
         "oe": 0,
-        "rP": 0.002217193469005516
+        "rP": 0.0022140847522411225
       },
       {
         "process": "LIMIT",
@@ -9225,9 +10016,9 @@
         "partnerCode": "NOV",
         "deltaT": 67.946875,
         "iPeak": 0,
-        "tauDays": 3.8024531018518517,
+        "tauDays": 3.8076164814814817,
         "oe": 0,
-        "rP": 17.86922104756765
+        "rP": 17.844989202684346
       }
     ],
     "byAsset": [
@@ -9236,15 +10027,15 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 996,
         "peakCapital": 5000,
-        "capitalDaysInI": 10.510786435185185,
-        "ce": 0.018951959611049826
+        "capitalDaysInI": 10.515949814814816,
+        "ce": 0.018942654111887076
       },
       {
         "callSign": "ASH-002",
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5010,
-        "capitalDaysInI": 7.594119768518518,
+        "capitalDaysInI": 7.599283148148148,
         "ce": 0
       },
       {
@@ -9252,7 +10043,7 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 6.844119768518518,
+        "capitalDaysInI": 6.849283148148148,
         "ce": 0
       },
       {
@@ -9268,23 +10059,23 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 2720,
         "peakCapital": 5200,
-        "capitalDaysInI": 7.823286435185185,
-        "ce": 0.06686153286224926
+        "capitalDaysInI": 7.828449814814815,
+        "ce": 0.06681743326591111
       },
       {
         "callSign": "PAT-002",
         "partnerCode": "PAT",
         "profitSplitTotal": 800,
         "peakCapital": 5000,
-        "capitalDaysInI": 4.788564212962963,
-        "ce": 0.033412938176096564
+        "capitalDaysInI": 4.793727592592592,
+        "ce": 0.033376948712571124
       },
       {
         "callSign": "PAT-003",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 2.8718975462962963,
+        "capitalDaysInI": 2.877060925925926,
         "ce": 0
       },
       {
@@ -9292,15 +10083,15 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 600,
         "peakCapital": 5000,
-        "capitalDaysInI": 5.875369768518518,
-        "ce": 0.020424246426665016
+        "capitalDaysInI": 5.880533148148148,
+        "ce": 0.020406312995240827
       },
       {
         "callSign": "PAT-005",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5100,
-        "capitalDaysInI": 3.83023087962963,
+        "capitalDaysInI": 3.8353942592592594,
         "ce": 0
       },
       {
@@ -9316,7 +10107,7 @@
         "partnerCode": "NOV",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 3.67398087962963,
+        "capitalDaysInI": 3.6791442592592594,
         "ce": 0
       }
     ],
@@ -9334,8 +10125,8 @@
         "partnerCode": "ASH",
         "deltaL": 0.3,
         "cAsset": 10010,
-        "daysToUsableLimit": 7.594119768518518,
-        "le": 0.000003946478444318321
+        "daysToUsableLimit": 7.599283148148148,
+        "le": 0.000003943796985289764
       },
       {
         "callSign": "ASH-003",
@@ -9374,8 +10165,8 @@
         "partnerCode": "PAT",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 2.8718975462962963,
-        "le": 0.00001044605509646021
+        "daysToUsableLimit": 2.877060925925926,
+        "le": 0.000010427307857703807
       },
       {
         "callSign": "PAT-004",
@@ -9390,7 +10181,7 @@
         "partnerCode": "PAT",
         "deltaL": 0,
         "cAsset": 10100,
-        "daysToUsableLimit": 3.83023087962963,
+        "daysToUsableLimit": 3.8353942592592594,
         "le": 0
       },
       {
@@ -9406,18 +10197,18 @@
         "partnerCode": "NOV",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 3.67398087962963,
-        "le": 0.00000816552970276325
+        "daysToUsableLimit": 3.6791442592592594,
+        "le": 0.000008154070046179718
       }
     ],
-    "avgRP": 12.428703195769714,
+    "avgRP": 12.413989703674964,
     "processTypeAvgRP": {
-      "LIMIT": 32.64597793062147,
-      "ONB": 70.7021415476719,
-      "WD": 0.32022393620888934,
-      "PLAY": 0.014375659256898782,
-      "WARM": 0.016149254852084054,
-      "FUND": 0.002217193469005516
+      "LIMIT": 32.613079147128914,
+      "ONB": 70.60730259106927,
+      "WD": 0.3196862802782907,
+      "PLAY": 0.01435527254740129,
+      "WARM": 0.016120984310319955,
+      "FUND": 0.0022140847522411225
     }
   },
   "rankedActions": [
@@ -9426,7 +10217,7 @@
       "process": "LIMIT",
       "callSign": "ASH-001",
       "partnerCode": "ASH",
-      "rP": 47.422734813675284,
+      "rP": 47.38116909157348,
       "weightedScore": 0.24,
       "reason": "Stale/missing limit on WARMED seat — LIMIT first (highest R)",
       "ropeSafe": true
@@ -9436,7 +10227,7 @@
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
-      "rP": 0.3622156307548371,
+      "rP": 0.36153945911956176,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -9446,7 +10237,7 @@
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
-      "rP": 0.2782322416629415,
+      "rP": 0.27783310143701967,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -9456,7 +10247,7 @@
       "process": "PLAY",
       "callSign": "PAT-001",
       "partnerCode": "PAT",
-      "rP": 0.014375659256898782,
+      "rP": 0.01435527254740129,
       "weightedScore": 0.8800000000000001,
       "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
@@ -9476,7 +10267,7 @@
       "process": "WARM",
       "callSign": "ASH-004",
       "partnerCode": "ASH",
-      "rP": 0.01999084432739646,
+      "rP": 0.019952955344215935,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -9486,7 +10277,7 @@
       "process": "WARM",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
-      "rP": 0.01968913614875606,
+      "rP": 0.019652381149091576,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -9496,7 +10287,7 @@
       "process": "WARM",
       "callSign": "PAT-005",
       "partnerCode": "PAT",
-      "rP": 0.019348071681342626,
+      "rP": 0.019312577879665074,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -9506,7 +10297,7 @@
       "process": "WARM",
       "callSign": "ASH-002",
       "partnerCode": "ASH",
-      "rP": 0.005568967250841065,
+      "rP": 0.0055660228683072285,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -9586,7 +10377,7 @@
       "process": "ONB",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
-      "rP": 70.7021415476719,
+      "rP": 70.60730259106927,
       "reason": "ONB new asset — buffer allows",
       "ropeSafe": true
     },

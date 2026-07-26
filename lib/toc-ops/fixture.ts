@@ -1516,6 +1516,11 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
     switchbackWindows: channel.switchbackWindows,
     releaseCards: channel.releaseCards,
     deferredPlays: channel.deferredPlays,
+    pendingExposureTotal: channel.pendingExposureTotal,
+    recycleCyclesOpen: channel.recycleCyclesOpen,
+    complianceOpen: channel.complianceOpen,
+    auditTrailRows: channel.auditTrailRows,
+    slaBreaches7d: channel.slaBreaches7d,
   };
 
   return {

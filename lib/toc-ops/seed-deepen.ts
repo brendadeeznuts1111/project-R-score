@@ -9,20 +9,26 @@ import { demoPlacementFromPresence } from './presence.ts';
 import { summarizeProfiles } from './profiles.ts';
 import type {
   TocAccount,
+  TocAuditTrailRow,
   TocBottleneck,
   TocBufferHistoryPoint,
   TocCapitalMove,
+  TocComplianceFlag,
   TocExceptionEvent,
   TocExperiment,
   TocExpert,
+  TocExposureEvent,
   TocGate12Event,
   TocLimitRefresh,
   TocMessageLogEntry,
+  TocNetCapitalPosition,
   TocPartner,
   TocPlay,
   TocRailConfirmEvent,
+  TocRecycleCycle,
   TocReleaseCard,
   TocRotorPoint,
+  TocSlaBoard,
   TocSoftBalanceSheet,
   TocSoftEntry,
   TocSwitchbackWindow,
@@ -1144,16 +1150,254 @@ function railConfirmHistory(p: TocPartner): TocPartner['rails'] {
   });
 }
 
+function exposureAndRecycle(
+  a: TocAccount,
+  partnerCode: string,
+  plays: TocPlay[]
+): {
+  pendingExposure: number;
+  exposureJournal: TocExposureEvent[];
+  recycleCycles: TocRecycleCycle[];
+  complianceFlags: TocComplianceFlag[];
+} {
+  const seatPlays = plays.filter(pl => pl.callSign === a.callSign);
+  const pendingPlays = seatPlays.filter(
+    pl => pl.status === 'placed' || pl.status === 'instruction'
+  );
+  let pending = 0;
+  const journal: TocExposureEvent[] = [];
+  for (const pl of seatPlays.slice(0, 5)) {
+    if (pl.status === 'settled' || pl.status === 'placed' || pl.status === 'instruction') {
+      journal.push({
+        at: pl.placedAt,
+        kind: pl.status === 'instruction' ? 'reserve' : 'place',
+        amount: pl.stake,
+        pendingAfter: pl.status === 'settled' ? 0 : pl.stake,
+        playId: pl.playId,
+        expertId: pl.expertId,
+        note: `${pl.market} ${pl.status}`,
+      });
+      if (pl.status !== 'settled') pending += pl.stake;
+    }
+    if (pl.status === 'settled' && pl.settledAt) {
+      journal.push({
+        at: pl.settledAt,
+        kind: 'settle',
+        amount: pl.stake,
+        pendingAfter: 0,
+        playId: pl.playId,
+        expertId: pl.expertId,
+      });
+    }
+    if (pl.status === 'blocked') {
+      journal.push({
+        at: pl.placedAt,
+        kind: 'release',
+        amount: pl.stake,
+        pendingAfter: 0,
+        playId: pl.playId,
+        expertId: pl.expertId,
+        note: pl.blockedReason || 'released',
+      });
+    }
+  }
+  if (a.gate12.housePrincipalOutstanding > 0 && pending === 0) {
+    // synthetic open exposure blocked by Gate 12 narrative
+    pending = Math.min(900, a.hardBalance || 900);
+    journal.push({
+      at: '2026-07-23T17:05:00.000Z',
+      kind: 'reserve',
+      amount: pending,
+      pendingAfter: pending,
+      expertId: a.expertId,
+      note: 'Reservation held — Gate 12 blocks place',
+    });
+  }
+
+  const recycleCycles: TocRecycleCycle[] = [];
+  if (a.status === 'WARMED' || a.status === 'Limited') {
+    const blocked = a.gate12.housePrincipalOutstanding > 0;
+    recycleCycles.push({
+      cycleId: `recycle-${a.callSign}-1`,
+      startedAt: dayIso(11, 10),
+      completedAt: blocked ? null : dayIso(14, 16),
+      redeployAmount: Math.round(Math.max(a.hardBalance, 4000) * 0.5),
+      status: blocked ? 'blocked' : a.capitalLocation === 'InSportsbook' ? 'open' : 'completed',
+      blockReason: blocked ? 'Gate 12 principal outstanding' : undefined,
+    });
+  }
+
+  const complianceFlags: TocComplianceFlag[] = [];
+  if (a.limits.freshness === 'stale') {
+    complianceFlags.push({
+      id: `cf-limit-${a.callSign}`,
+      severity: 'warn',
+      code: 'LIMIT_STALE',
+      summary: `Limit screenshot stale on ${a.callSign}`,
+      at: a.limits.checkedAt ?? dayIso(8, 12),
+      clearedAt: null,
+    });
+  }
+  if (partnerCode === 'NOV' && a.status === 'New') {
+    complianceFlags.push({
+      id: `cf-kyc-${a.callSign}`,
+      severity: 'critical',
+      code: 'KYC_INCOMPLETE',
+      summary: 'ONB KYC checklist incomplete',
+      at: '2026-07-22T10:30:00.000Z',
+      clearedAt: null,
+    });
+  }
+  if (a.presence?.network?.vpnSuspected) {
+    complianceFlags.push({
+      id: `cf-vpn-${a.callSign}`,
+      severity: 'info',
+      code: 'VPN_SUSPECTED',
+      summary: 'Egress VPN suspected on last session',
+      at: a.presence.geo?.observedAt ?? dayIso(12, 8),
+      clearedAt: null,
+    });
+  }
+
+  return {
+    pendingExposure: pending,
+    exposureJournal: journal.sort((x, y) => x.at.localeCompare(y.at)),
+    recycleCycles,
+    complianceFlags,
+  };
+}
+
+function partnerSlaBoard(p: TocPartner): {
+  slaBoard: TocSlaBoard;
+  openTasks: TocPartner['openTasks'];
+} {
+  const now = Date.parse('2026-07-24T00:00:00.000Z');
+  const openTasks = p.openTasks.map(t => {
+    if (t.status === 'Completed') return t;
+    const created = Date.parse(t.createdAt ?? '2026-07-22T00:00:00.000Z');
+    const ageMin = Math.max(0, Math.round((now - created) / 60_000));
+    const slaDueAt =
+      t.ballInCourt === 'Partner'
+        ? new Date(created + 60 * 60_000).toISOString()
+        : new Date(created + 4 * 60 * 60_000).toISOString();
+    return { ...t, ageMin, slaDueAt };
+  });
+  const open = openTasks.filter(t => t.status !== 'Completed');
+  const openPartnerTasks = open.filter(t => t.ballInCourt === 'Partner').length;
+  const openOpsTasks = open.filter(
+    t => t.ballInCourt === 'Ops' || t.ballInCourt === 'System'
+  ).length;
+  const oldestOpenAgeMin = open.reduce((m, t) => Math.max(m, t.ageMin ?? 0), 0);
+  const breachCount7d =
+    (p.messageLog?.filter(m => m.slaBreached).length ?? 0) +
+    open.filter(t => t.slaDueAt && Date.parse(t.slaDueAt) < now).length;
+  const onTimePct7d = Math.max(0.4, Math.min(0.98, 1 - breachCount7d / 20));
+  const nextDue = [...open]
+    .filter(t => t.slaDueAt)
+    .sort((a, b) => String(a.slaDueAt).localeCompare(String(b.slaDueAt)))[0];
+  return {
+    openTasks,
+    slaBoard: {
+      openPartnerTasks,
+      openOpsTasks,
+      oldestOpenAgeMin,
+      breachCount7d,
+      onTimePct7d: Math.round(onTimePct7d * 100) / 100,
+      nextDueTaskId: nextDue?.taskId,
+    },
+  };
+}
+
+function partnerAuditTrail(p: TocPartner): TocAuditTrailRow[] {
+  const rows: TocAuditTrailRow[] = [];
+  for (const e of [...p.softBalance.recentEntries]
+    .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+    .slice(0, 8)) {
+    rows.push({
+      at: e.timestamp,
+      kind: `soft.${e.entryType}`,
+      callSign: e.callSign,
+      amount: e.amount,
+      summary: `${e.stakeholder} ${e.entryType}`,
+    });
+  }
+  for (const a of p.accounts) {
+    for (const g of (a.gate12Ledger ?? []).slice(-2)) {
+      rows.push({
+        at: g.at,
+        kind: `gate12.${g.kind}`,
+        callSign: a.callSign,
+        amount: g.amount,
+        summary: g.note || `${g.kind} rem ${g.remainingAfter}`,
+      });
+    }
+  }
+  for (const m of (p.messageLog ?? []).filter(x => x.slaBreached).slice(0, 3)) {
+    rows.push({
+      at: m.at,
+      kind: 'sla.breach',
+      callSign: m.callSign,
+      summary: m.summary,
+    });
+  }
+  return rows.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 16);
+}
+
+function partnerNetCapital(p: TocPartner): TocNetCapitalPosition {
+  const entries = p.softBalance.recentEntries;
+  const sum = (type: TocSoftEntry['entryType']) =>
+    entries.filter(e => e.entryType === type).reduce((n, e) => n + e.amount, 0);
+  const deposits = sum('CapitalDeployment');
+  const withdrawals = sum('CapitalReturn');
+  const losses = sum('Loss');
+  const priming = sum('CostOfPriming');
+  const expenses = Math.round(priming * 0.25);
+  const railFees = p.partnerCode === 'NOV' ? 0 : 49;
+  const net = deposits - withdrawals - expenses - railFees - losses - priming;
+  return {
+    deposits,
+    withdrawals,
+    expenses,
+    railFees,
+    losses,
+    priming,
+    net: Math.round(net),
+    asOf: '2026-07-23T18:00:00.000Z',
+  };
+}
+
 function attachAccountLedgers(p: TocPartner): TocPartner {
   const accounts = p.accounts.map(a => ({
     ...a,
     ...accountCapitalLedgers(a, p.partnerCode),
     limitHistory: limitHistoryFor(a),
+    ...exposureAndRecycle(a, p.partnerCode, p.recentPlays),
   }));
   const withRails = { ...p, accounts, rails: railConfirmHistory(p) };
   const sheet = softBalanceSheet(withRails);
+  const { slaBoard, openTasks } = partnerSlaBoard(withRails);
+  const partnerFlags: TocComplianceFlag[] = [
+    ...accounts.flatMap(a => a.complianceFlags ?? []),
+    ...(p.rails.some(r => !r.confirmed)
+      ? [
+          {
+            id: `cf-rail-${p.partnerCode}`,
+            severity: 'warn' as const,
+            code: 'RAIL_UNCONFIRMED',
+            summary: 'Unconfirmed payout rail blocks FUND/WD',
+            at: '2026-07-23T09:00:00.000Z',
+            clearedAt: null,
+          },
+        ]
+      : []),
+  ];
   return {
     ...withRails,
+    openTasks,
+    slaBoard,
+    auditTrail: partnerAuditTrail(withRails),
+    complianceFlags: partnerFlags,
+    netCapital: partnerNetCapital(withRails),
     softBalance: {
       ...withRails.softBalance,
       balanceSheet: sheet,
@@ -1164,7 +1408,7 @@ function attachAccountLedgers(p: TocPartner): TocPartner {
         .filter(e => e.entryType === 'ProfitSplit' && e.timestamp.startsWith(day))
         .reduce((n, e) => n + e.amount, 0);
       const sla = p.messageLog?.filter(m => m.slaBreached && m.at.startsWith(day)).length ?? 0;
-      const openBic = p.openTasks.filter(t => t.status !== 'Completed').length;
+      const openBic = openTasks.filter(t => t.status !== 'Completed').length;
       const readiness = Math.max(
         0.1,
         Math.min(0.99, p.readiness.score - i * 0.01 + softT / 10_000)
@@ -1343,6 +1587,11 @@ export type TocDeepenResult = {
     switchbackWindows: number;
     releaseCards: number;
     deferredPlays: number;
+    pendingExposureTotal: number;
+    recycleCyclesOpen: number;
+    complianceOpen: number;
+    auditTrailRows: number;
+    slaBreaches7d: number;
   };
 };
 
@@ -1444,6 +1693,27 @@ export function deepenSeedNarrative(
     (n, e) => n + (e.profile?.releaseCards?.filter(c => c.status === 'deferred').length ?? 0),
     0
   );
+  const pendingExposureTotal = denserPartners.reduce(
+    (n, p) => n + p.accounts.reduce((m, a) => m + (a.pendingExposure ?? 0), 0),
+    0
+  );
+  const recycleCyclesOpen = denserPartners.reduce(
+    (n, p) =>
+      n +
+      p.accounts.reduce(
+        (m, a) =>
+          m +
+          (a.recycleCycles?.filter(c => c.status === 'open' || c.status === 'blocked').length ?? 0),
+        0
+      ),
+    0
+  );
+  const complianceOpen = denserPartners.reduce(
+    (n, p) => n + (p.complianceFlags?.filter(f => f.clearedAt == null).length ?? 0),
+    0
+  );
+  const auditTrailRows = denserPartners.reduce((n, p) => n + (p.auditTrail?.length ?? 0), 0);
+  const slaBreaches7d = denserPartners.reduce((n, p) => n + (p.slaBoard?.breachCount7d ?? 0), 0);
 
   return {
     partners: denserPartners,
@@ -1470,6 +1740,11 @@ export function deepenSeedNarrative(
       switchbackWindows,
       releaseCards,
       deferredPlays,
+      pendingExposureTotal,
+      recycleCyclesOpen,
+      complianceOpen,
+      auditTrailRows,
+      slaBreaches7d,
     },
   };
 }

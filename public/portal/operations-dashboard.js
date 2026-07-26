@@ -762,6 +762,15 @@ class OperationsDashboard extends HTMLElement {
                 (d.toc.releaseCards != null ? ` · rel ${d.toc.releaseCards}` : '') +
                 (d.toc.deferredPlays != null && d.toc.deferredPlays > 0
                   ? ` · defer ${d.toc.deferredPlays}`
+                  : '') +
+                (d.toc.pendingExposureTotal != null && d.toc.pendingExposureTotal > 0
+                  ? ` · exp $${Math.round(d.toc.pendingExposureTotal)}`
+                  : '') +
+                (d.toc.complianceOpen != null && d.toc.complianceOpen > 0
+                  ? ` · cf ${d.toc.complianceOpen}`
+                  : '') +
+                (d.toc.slaBreaches7d != null && d.toc.slaBreaches7d > 0
+                  ? ` · slaΔ ${d.toc.slaBreaches7d}`
                   : '')
               : '';
           const tioe =

@@ -24,16 +24,16 @@ async function fetchJson(url) {
 async function loadToc() {
   const embed = parseEmbed();
   if (embed?.partners) {
-    const loop = await loadOpsLoopSlice();
+    const loop = embed.opsLoop ?? (await loadOpsLoopSlice());
     return { mode: 'embed', data: embed, loop };
   }
   try {
     const data = await fetchJson('/api/toc');
-    const loop = await loadOpsLoopSlice();
+    const loop = data.opsLoop ?? (await loadOpsLoopSlice());
     return { mode: data.mode || 'api', data, loop };
   } catch {
     const data = await fetchJson('/registry/toc-ops.json');
-    const loop = await loadOpsLoopSlice();
+    const loop = data.opsLoop ?? (await loadOpsLoopSlice());
     return { mode: 'registry', data, loop };
   }
 }
@@ -784,6 +784,16 @@ function renderPartners(partners, assetBySign, limitBySign) {
                       .join(' · ')}</p>`
                   : ''
               }
+              ${
+                p.slaBoard
+                  ? `<p class="toc-sub">SLA partner ${p.slaBoard.openPartnerTasks} · ops ${p.slaBoard.openOpsTasks} · oldest ${p.slaBoard.oldestOpenAgeMin}m · on-time ${(p.slaBoard.onTimePct7d * 100).toFixed(0)}% · breaches ${p.slaBoard.breachCount7d}</p>`
+                  : ''
+              }
+              ${
+                p.netCapital
+                  ? `<p class="toc-sub">net capital ${money(p.netCapital.net)} (dep ${money(p.netCapital.deposits)} − wd ${money(p.netCapital.withdrawals)} − loss ${money(p.netCapital.losses)} − prime ${money(p.netCapital.priming)})</p>`
+                  : ''
+              }
             </div>
           </header>
           <div class="toc-cols">
@@ -864,13 +874,26 @@ function renderPartners(partners, assetBySign, limitBySign) {
                           )
                           .join(' · ')}</div>`
                       : '';
+                  const expos =
+                    a.pendingExposure != null && a.pendingExposure > 0
+                      ? `<div class="toc-sub">pending exposure ${money(a.pendingExposure)}</div>`
+                      : '';
+                  const recycle =
+                    (a.recycleCycles || []).length
+                      ? `<div class="toc-sub">recycle ${(a.recycleCycles || [])
+                          .map(
+                            c =>
+                              `${c.status}${c.blockReason ? ` (${esc(c.blockReason)})` : ''} ${money(c.redeployAmount)}`
+                          )
+                          .join(' · ')}</div>`
+                      : '';
                   return `<li><code>${esc(a.callSign)}</code> ${pill(a.status, a.status === 'WARMED' ? 'ok' : 'dim')} ${pill(a.flowStage, 'dim')}
                     warm ${a.warmupCount}/2 · ${esc(a.capitalLocation)} ${money(a.hardBalance)} ${g12}
                     <div class="toc-sub">${freshnessPill(a.limits?.freshness)}${
                       a.limits?.dailyMax != null
                         ? ` daily ${money(a.limits.dailyMax)} / weekly ${money(a.limits.weeklyMax)}`
                         : ''
-                    }</div>${metrics}${warm}${cap}${g12led}${limHist}
+                    }</div>${metrics}${warm}${cap}${g12led}${limHist}${expos}${recycle}
                     ${formatVenueLine(a.venue)}
                     ${formatPresenceLine(a.presence)}
                   </li>`;
@@ -884,11 +907,40 @@ function renderPartners(partners, assetBySign, limitBySign) {
                   ? open
                       .map(
                         t =>
-                          `<li>${pill(t.taskType, 'dim')} <code>${esc(t.callSign)}</code> → <strong>${esc(t.ballInCourt)}</strong> · ${esc(t.status)}<div class="toc-sub">${esc(t.nextAction)}</div></li>`
+                          `<li>${pill(t.taskType, 'dim')} <code>${esc(t.callSign)}</code> → <strong>${esc(t.ballInCourt)}</strong> · ${esc(t.status)}${
+                            t.ageMin != null ? ` · ${t.ageMin}m` : ''
+                          }<div class="toc-sub">${esc(t.nextAction)}${
+                            t.slaDueAt ? ` · due ${esc(t.slaDueAt.slice(0, 16))}` : ''
+                          }</div></li>`
                       )
                       .join('')
                   : '<li class="toc-sub">None</li>'
               }</ul>
+              ${
+                (p.complianceFlags || []).length
+                  ? `<h4 class="toc-subhead">Compliance</h4><ul>${(p.complianceFlags || [])
+                      .filter(f => !f.clearedAt)
+                      .slice(0, 5)
+                      .map(
+                        f =>
+                          `<li class="toc-sub">${pill(f.severity, f.severity === 'critical' ? 'hot' : 'dim')} <code>${esc(f.code)}</code> ${esc(f.summary)}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
+                (p.auditTrail || []).length
+                  ? `<h4 class="toc-subhead">Audit</h4><ul>${[...(p.auditTrail || [])]
+                      .slice(0, 5)
+                      .map(
+                        r =>
+                          `<li class="toc-sub">${esc(r.at.slice(5, 16))} ${pill(r.kind, 'dim')}${
+                            r.amount != null ? ` ${money(r.amount)}` : ''
+                          } · ${esc(r.summary)}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
             </section>
             <section>
               <h4>MessageLog</h4>
@@ -1027,13 +1079,17 @@ function render(root, { mode, data, loop }) {
               : ''
         }
       </div>
-      ${
-        loop?.gatedDefer > 0
-          ? `<p class="toc-sub">Ops loop deferred ${loop.gatedDefer} play(s) — <a href="/portal/ops/">loop panel</a></p>`
-          : loop
-            ? `<p class="toc-sub">Ops loop LCR ${Math.round(Number(loop.loopCompletionRate ?? 0) * 100)}% · <a href="/portal/ops/">loop panel</a></p>`
-            : ''
-      }
+        ${
+          loop?.gatedDefer > 0
+            ? `<p class="toc-sub">Ops loop deferred ${loop.gatedDefer} play(s) — <a href="/portal/ops/">loop panel</a>${
+                loop.capitalEfficiencyProxy != null
+                  ? ` · CE ${(loop.capitalEfficiencyProxy * 100).toFixed(1)}%`
+                  : ''
+              }</p>`
+            : loop
+              ? `<p class="toc-sub">Ops loop LCR ${Math.round(Number(loop.loopCompletionRate ?? 0) * 100)}% · play ${Math.round(Number(loop.loopCompletionRateByPlay ?? 0) * 100)}% · <a href="/portal/ops/">loop panel</a></p>`
+              : ''
+        }
       <div class="toc-buffer">
         <span class="toc-buffer-label">Buffer</span>
         <span>float ${money(buf.houseFloatHard)} / ${money(buf.floatTarget)}

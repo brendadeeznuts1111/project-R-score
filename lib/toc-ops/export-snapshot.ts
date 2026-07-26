@@ -84,6 +84,11 @@ export function emptyTocOpsSummarySlice(): TocOpsSummarySlice {
     switchbackWindows: 0,
     releaseCards: 0,
     deferredPlays: 0,
+    pendingExposureTotal: 0,
+    recycleCyclesOpen: 0,
+    complianceOpen: 0,
+    auditTrailRows: 0,
+    slaBreaches7d: 0,
   };
 }
 
@@ -158,6 +163,11 @@ export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
     switchbackWindows: snap.summary.switchbackWindows ?? 0,
     releaseCards: snap.summary.releaseCards ?? 0,
     deferredPlays: snap.summary.deferredPlays ?? 0,
+    pendingExposureTotal: snap.summary.pendingExposureTotal ?? 0,
+    recycleCyclesOpen: snap.summary.recycleCyclesOpen ?? 0,
+    complianceOpen: snap.summary.complianceOpen ?? 0,
+    auditTrailRows: snap.summary.auditTrailRows ?? 0,
+    slaBreaches7d: snap.summary.slaBreaches7d ?? 0,
   };
 }
 

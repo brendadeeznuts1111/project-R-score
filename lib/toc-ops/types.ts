@@ -472,6 +472,76 @@ export type TocAccount = {
   gate12Ledger?: TocGate12Event[];
   /** Limit refresh history (oldest→newest). */
   limitHistory?: TocLimitRefresh[];
+  /** Open expert stake not yet settled (demo). */
+  pendingExposure?: number;
+  /** Hard journal of +/− stake exposure events. */
+  exposureJournal?: TocExposureEvent[];
+  /** Recycle / redeploy cycles after WARMED. */
+  recycleCycles?: TocRecycleCycle[];
+  /** Compliance / risk flags on the Drum. */
+  complianceFlags?: TocComplianceFlag[];
+};
+
+/** Pending-exposure journal row (placement → settle/expire). */
+export type TocExposureEvent = {
+  at: string;
+  kind: 'reserve' | 'place' | 'settle' | 'expire' | 'release';
+  amount: number;
+  pendingAfter: number;
+  playId?: string; // brand-ok
+  expertId?: string; // brand-ok
+  note?: string;
+};
+
+/** Post-WARMED recycle / redeploy cycle. */
+export type TocRecycleCycle = {
+  cycleId: string; // brand-ok
+  startedAt: string;
+  completedAt: string | null;
+  redeployAmount: number;
+  status: 'open' | 'completed' | 'blocked';
+  blockReason?: string;
+};
+
+/** Compliance / risk flag on partner or account. */
+export type TocComplianceFlag = {
+  id: string; // brand-ok
+  severity: 'info' | 'warn' | 'critical';
+  code: string;
+  summary: string;
+  at: string;
+  clearedAt: string | null;
+};
+
+/** Compact Soft/Hard audit trail row (demo). */
+export type TocAuditTrailRow = {
+  at: string;
+  kind: string;
+  callSign?: string; // brand-ok
+  amount?: number;
+  summary: string;
+};
+
+/** Partner SLA board (open BIC ages + breaches). */
+export type TocSlaBoard = {
+  openPartnerTasks: number;
+  openOpsTasks: number;
+  oldestOpenAgeMin: number;
+  breachCount7d: number;
+  onTimePct7d: number;
+  nextDueTaskId?: string; // brand-ok
+};
+
+/** Soft flow capital position (not A=L+E stock). */
+export type TocNetCapitalPosition = {
+  deposits: number;
+  withdrawals: number;
+  expenses: number;
+  railFees: number;
+  losses: number;
+  priming: number;
+  net: number;
+  asOf: string;
 };
 
 export type TocOpenTask = {
@@ -484,6 +554,10 @@ export type TocOpenTask = {
   linkedExceptionId?: string; // brand-ok — e.g. WARM-EX-01
   proofRefs?: string[];
   createdAt?: string;
+  /** Age minutes for open BIC (demo). */
+  ageMin?: number;
+  /** SLA due-at for open partner tasks. */
+  slaDueAt?: string;
 };
 
 export type TocSoftEntry = {
@@ -1010,6 +1084,25 @@ export type TocPartner = {
     slaBreaches: number;
     softT: number;
   }>;
+  /** Open-task SLA board. */
+  slaBoard?: TocSlaBoard;
+  /** Compact Soft/Hard audit trail. */
+  auditTrail?: TocAuditTrailRow[];
+  /** Package compliance flags (KYC · geo · rail). */
+  complianceFlags?: TocComplianceFlag[];
+  /** Soft flow net capital position. */
+  netCapital?: TocNetCapitalPosition;
+};
+
+export type TocOpsLoopCrosslink = {
+  gatedDefer: number;
+  gatedDeny: number;
+  dispatched: number;
+  loopCompletionRate: number;
+  loopCompletionRateByPlay: number;
+  capitalEfficiencyProxy?: number | null;
+  limitEfficiencyProxy?: number | null;
+  processReturnProxy?: number | null;
 };
 
 export type TocOpsSnapshot = {
@@ -1024,6 +1117,8 @@ export type TocOpsSnapshot = {
   /** Baked R_P / CE / LE + ranked next actions. */
   returnEfficiency?: TocReturnEfficiencySlice;
   rankedActions?: TocRankedAction[];
+  /** Ops closed-loop slice baked from live DB at seed time (Pages cross-link). */
+  opsLoop?: TocOpsLoopCrosslink;
   generatedAt: string;
   ssot: {
     theory: 'toc-ops-repo/docs/reference/TOC-Production-Reference.md';
@@ -1100,6 +1195,11 @@ export type TocOpsSnapshot = {
     switchbackWindows?: number;
     releaseCards?: number;
     deferredPlays?: number;
+    pendingExposureTotal?: number;
+    recycleCyclesOpen?: number;
+    complianceOpen?: number;
+    auditTrailRows?: number;
+    slaBreaches7d?: number;
   };
 };
 
@@ -1169,4 +1269,9 @@ export type TocOpsSummarySlice = {
   switchbackWindows?: number;
   releaseCards?: number;
   deferredPlays?: number;
+  pendingExposureTotal?: number;
+  recycleCyclesOpen?: number;
+  complianceOpen?: number;
+  auditTrailRows?: number;
+  slaBreaches7d?: number;
 };

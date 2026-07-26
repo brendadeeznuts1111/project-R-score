@@ -70,7 +70,8 @@ bun run ops:seed:toc -- --force   # rebuild
 bun run ops:snapshot --no-routing # bake + embed + ops-summary.toc
 bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
   tests/toc-ops-return-efficiency.test.ts tests/toc-ops-contract.test.ts tests/toc-api-edge.test.ts \
-  tests/toc-ops-channel-deepen.test.ts tests/toc-ops-capital-deepen.test.ts tests/toc-ops-accounting-deepen.test.ts
+  tests/toc-ops-channel-deepen.test.ts tests/toc-ops-capital-deepen.test.ts tests/toc-ops-accounting-deepen.test.ts \
+  tests/toc-ops-exposure-deepen.test.ts
 ```
 
 ## Gap map (discovery)
@@ -90,7 +91,7 @@ bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
 | Soft/Hard Gate enforcement | **Closed (operate-lite)** — `lib/toc-ops/enforcement.ts` baked into fixture; portal board + ops-summary T/I/OE + focus; Pages POST still 503 |
 | SQLite Soft journal in FactoryWager ops DB | **Closed (local)** — append-only `toc_soft_entries` via `toc-soft-balance.ts`; seeded by `ops:seed:toc` |
 | R_P · CE · LE return efficiency | **Closed (bake)** — `lib/toc-ops/return-efficiency.ts` via `withTocMetrics`; ranked actions + avg R_P on board / ops-summary (not ops-loop LCR) |
-| Channel outbox integration | **Closed** — topic `toc` (`lib/channels/toc-outbox.ts`); seed enqueues bake; Soft post enqueues `toc.soft.posted` |
+| TOC board ↔ ops loop cross-link | **Closed** — `opsLoop` baked in `toc-ops.json` at seed; portal defer pill + LCR |
 | ops-summary.toc contract depth | **Closed** — `validateTocOpsSummarySlice` (focus · fails · T/I/OE · R_P) |
 | Bake proof artifact | **Closed** — `/registry/toc-ops-bake-proof.json` + `GET /api/toc/proof` |
 | `/api/toc` agent headers + summary | **Closed** — `X-TOC-*` · summary includes enforcement / returnEfficiency |
@@ -101,6 +102,7 @@ bun test tests/toc-ops-fixture.test.ts tests/toc-ops-enforcement.test.ts \
 | MessageLog / BIC handoffs · rotor drift · experiment outcomes | **Closed (demo)** — `lib/toc-ops/seed-deepen.ts` pass-3; partner MessageLog + rotor + exception timeline; experiment `outcome` lift/decision; ops-summary channel rollups |
 | Capital moves · warm cycles · Gate 12 ledger · expert ROI · buffer history | **Closed (demo)** — `seed-deepen` pass-4; per-account ledgers + healthPulse; agent `roi` eligibility; `buffer.history`; ops-summary capital/warm/g12 counts |
 | Soft A=L+E sheet · limit refresh · rail confirm · switchback windows · release/defer cards | **Closed (demo)** — `seed-deepen` pass-5; `softBalance.balanceSheet`; `limitHistory` / `confirmHistory`; experiment `switchbackWindows`; agent `releaseCards` |
+| Pending exposure · recycle · SLA board · compliance · Soft audit trail · net capital flow | **Closed (demo)** — `seed-deepen` pass-6; per-account `pendingExposure` / `recycleCycles`; partner `slaBoard` / `auditTrail` / `complianceFlags` / `netCapital` |
 | Soft `force` wipe under append-only | **Open by design** — insert-missing only; no truncate |
 | Dual-write from toc-ops-repo read API | **Open** — optional later sync |
 | Full CT Soft mutations / DoD close on Pages | **Open by design** — use toc-ops-repo `ct` |
