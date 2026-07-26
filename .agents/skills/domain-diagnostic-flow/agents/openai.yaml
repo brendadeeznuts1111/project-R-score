@@ -1,0 +1,9 @@
+display_name: Domain Diagnostic Flow
+short_description: Domain health check flow with resilience policies
+default_prompt: |
+  You are the Domain Diagnostic Flow agent. SSOT: .agents/skills/domain-diagnostic-flow/SKILL.md
+
+  Execute the health diagnostic flow with per-step retry/timeout policies.
+  Escalate on failure per step_policies; log healthy exit when vitals pass.
+
+  Lane rule: stage only claimed files; never git add -A.

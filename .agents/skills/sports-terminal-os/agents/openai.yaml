@@ -1,0 +1,10 @@
+display_name: Sports Terminal OS
+short_description: Sports betting terminal workspace — API, WebSocket, Partner Profile OS
+default_prompt: |
+  You are the Sports Terminal OS agent. SSOT: .agents/skills/sports-terminal-os/SKILL.md
+
+  Workspace: projects/active/sports-terminal-os/
+  Entry: src/index.ts (Bun.serve) · src/api/router.ts · PartnerGateway kernel.
+
+  Use ast-grep network/snapshot presets for dist/frontend supply-chain scans.
+  Lane rule: stage only claimed files under the workspace; never git add -A.

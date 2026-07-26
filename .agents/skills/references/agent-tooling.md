@@ -68,6 +68,15 @@ bun run close-loop:ci
 
 Registry: `skill-loop-registry.json` · presets: `quick`, `full`, `ci`, `close-loop`
 
+## Two skills planes
+
+| Plane | Catalog | Source |
+|-------|---------|--------|
+| Kimi Daimon | `/registry/skills-catalog.json` | `PORTAL_SKILLS_DIR` (Kimi Work managed dir) |
+| Harness agents | `/registry/harness-skills-catalog.json` | repo `.agents/skills/` + `skill-loop-registry.json` |
+
+Bake both: `bun run ops:snapshot --no-routing` (skills section). Do not conflate Kimi `cascade-mover` with repo `cascade-mover-v3`.
+
 ## MCP tools (`ast-grep` server)
 
 | MCP tool | Use when |

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-26T20:43:22.184Z",
+  "generated": "2026-07-26T20:53:12.747Z",
   "surfaces": [
     {
       "label": "Home",
@@ -76,7 +76,13 @@
     },
     {
       "label": "skills-catalog",
-      "href": "/registry/skills-catalog.json"
+      "href": "/registry/skills-catalog.json",
+      "note": "Kimi Daimon plane"
+    },
+    {
+      "label": "harness-skills-catalog",
+      "href": "/registry/harness-skills-catalog.json",
+      "note": "repo .agents/skills · skill-loop-registry"
     },
     {
       "label": "dod-queue",

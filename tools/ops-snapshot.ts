@@ -277,11 +277,18 @@ export async function buildRegistrySnapshot(options?: {
     }
 
     try {
-      const { buildSkillsCatalog } = await import('../lib/http/skills-catalog.ts');
+      const { buildHarnessSkillsCatalog, buildSkillsCatalog } = await import(
+        '../lib/http/skills-catalog.ts'
+      );
       const skillsCatalog = await buildSkillsCatalog();
       await Bun.write(
         `${root}/public/registry/skills-catalog.json`,
         `${JSON.stringify(skillsCatalog, null, 2)}\n`
+      );
+      const harnessSkills = await buildHarnessSkillsCatalog(root);
+      await Bun.write(
+        `${root}/public/registry/harness-skills-catalog.json`,
+        `${JSON.stringify(harnessSkills, null, 2)}\n`
       );
     } catch (e) {
       console.warn('[ops-snapshot] skills catalog skipped:', e instanceof Error ? e.message : e);

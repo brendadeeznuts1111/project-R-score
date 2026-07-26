@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
   SkillPackageError,
+  buildHarnessSkillsCatalog,
   buildSkillDetail,
   buildSkillsCatalog,
   packageSkill,
@@ -96,6 +97,18 @@ describe('skills catalog scan', () => {
       await rm(root, { recursive: true, force: true });
       await rm(pkgs, { recursive: true, force: true });
     }
+  });
+});
+
+describe('buildHarnessSkillsCatalog', () => {
+  test('scans repo .agents/skills harness plane', async () => {
+    const root = join(import.meta.dir, '..');
+    const catalog = await buildHarnessSkillsCatalog(root);
+    expect(catalog.plane).toBe('harness-agents');
+    expect(catalog.count).toBeGreaterThan(20);
+    expect(catalog.skills.some((s) => s.name === 'reference-discovery')).toBe(true);
+    expect(catalog.skills.some((s) => s.name === 'audit-gap-close')).toBe(true);
+    expect(catalog.skillLoopRegistry).toContain('skill-loop-registry.json');
   });
 });
 

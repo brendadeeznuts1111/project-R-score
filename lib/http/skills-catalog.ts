@@ -15,6 +15,9 @@
  *   PORTAL_SKILLS_DIR          — skills root (default: Kimi Work managed skills dir)
  *   PORTAL_SKILLS_PACKAGES_DIR — *.skill package drop dir (default: public/skills)
  *
+ * Harness plane (repo `.agents/skills/`) is separate — see `buildHarnessSkillsCatalog()`
+ * and baked `/registry/harness-skills-catalog.json` (not Kimi `skills-catalog.json`).
+ *
  * Missing/inaccessible dirs never crash the route: they yield
  * `{ skills: [], count: 0, error, warning }` with HTTP 200.
  */
@@ -66,6 +69,13 @@ export interface SkillsCatalog {
   error?: string;
   /** Human-readable note for the portal banner. */
   warning?: string;
+}
+
+/** Repo harness agent skills plane — distinct from Kimi PORTAL_SKILLS_DIR catalog. */
+export interface HarnessSkillsCatalog extends SkillsCatalog {
+  plane: 'harness-agents';
+  skillLoopRegistry: string;
+  scannedAt: string;
 }
 
 /** Typed packaging failure — `code` drives the HTTP status mapping. */
@@ -165,13 +175,12 @@ function lineCountOf(text: string): number {
   return text === '' ? 0 : text.split(/\r?\n/).length;
 }
 
-/** Scan the skills dir and build the catalog payload. Never throws. */
-export async function buildSkillsCatalog(): Promise<SkillsCatalog> {
-  const dir = skillsDir();
-  const pkgs = packagesDir();
+async function scanSkillsDirectory(
+  dir: string,
+  pkgs: string | null,
+  unavailableNote?: string
+): Promise<{ skills: SkillEntry[]; error?: string; warning?: string }> {
   try {
-    // Bun.file(dir).exists() is false for directories — rely on Glob.scan,
-    // which throws ENOENT for a missing/inaccessible skills root (caught below).
     const glob = new Bun.Glob('*/SKILL.md');
     const skills: SkillEntry[] = [];
     for await (const path of glob.scan({ cwd: dir, absolute: true, onlyFiles: true })) {
@@ -183,13 +192,13 @@ export async function buildSkillsCatalog(): Promise<SkillsCatalog> {
         const dirName = path.split('/').slice(-2, -1)[0] ?? '';
         const name = fm.name || dirName;
         if (!name) continue;
-        const pkg = Bun.file(`${pkgs}/${name}.skill`);
+        const pkg = pkgs ? Bun.file(`${pkgs}/${name}.skill`) : null;
         const lineCount = lineCountOf(text);
         skills.push({
           name,
           description: fm.description,
           updatedAt: new Date(file.lastModified).toISOString(),
-          hasPackage: await pkg.exists(),
+          hasPackage: pkg ? await pkg.exists() : false,
           lineCount,
           resources: await countResources(path.split('/').slice(0, -1).join('/')),
           validation: validateSkill(fm.name, fm.description, lineCountOf(body)),
@@ -199,15 +208,48 @@ export async function buildSkillsCatalog(): Promise<SkillsCatalog> {
       }
     }
     skills.sort((a, b) => a.name.localeCompare(b.name));
-    return { skills, count: skills.length };
+    return { skills };
   } catch (err) {
     return {
       skills: [],
-      count: 0,
       error: err instanceof Error ? err.message : String(err),
-      warning: `Skills directory unavailable (${dir}) — set PORTAL_SKILLS_DIR.`,
+      warning: unavailableNote ?? `Skills directory unavailable (${dir}) — set PORTAL_SKILLS_DIR.`,
     };
   }
+}
+
+/** Scan repo `.agents/skills/` for harness agent skills (not Kimi plane). Never throws. */
+export async function buildHarnessSkillsCatalog(
+  rootDir: string = process.cwd()
+): Promise<HarnessSkillsCatalog> {
+  const dir = `${rootDir.replace(/\/$/, '')}/.agents/skills`;
+  const result = await scanSkillsDirectory(
+    dir,
+    null,
+    `Harness skills directory unavailable (${dir}).`
+  );
+  return {
+    plane: 'harness-agents',
+    skillLoopRegistry: '.agents/skills/ast-grep/skill-loop-registry.json',
+    scannedAt: new Date().toISOString(),
+    skills: result.skills,
+    count: result.skills.length,
+    error: result.error,
+    warning: result.warning,
+  };
+}
+
+/** Scan the skills dir and build the catalog payload. Never throws. */
+export async function buildSkillsCatalog(): Promise<SkillsCatalog> {
+  const dir = skillsDir();
+  const pkgs = packagesDir();
+  const result = await scanSkillsDirectory(dir, pkgs);
+  return {
+    skills: result.skills,
+    count: result.skills.length,
+    error: result.error,
+    warning: result.warning,
+  };
 }
 
 /**

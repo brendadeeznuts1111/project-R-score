@@ -46,7 +46,12 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   { label: 'toc-ops', href: '/registry/toc-ops.json', note: 'operate-lite bake' },
   { label: 'toc-ops bake proof', href: '/registry/toc-ops-bake-proof.json' },
   { label: 'monitoring', href: '/registry/monitoring.json' },
-  { label: 'skills-catalog', href: '/registry/skills-catalog.json' },
+  { label: 'skills-catalog', href: '/registry/skills-catalog.json', note: 'Kimi Daimon plane' },
+  {
+    label: 'harness-skills-catalog',
+    href: '/registry/harness-skills-catalog.json',
+    note: 'repo .agents/skills · skill-loop-registry',
+  },
   { label: 'dod-queue', href: '/registry/dod-queue.json' },
   { label: 'static aggregate', href: '/registry/static.json' },
   { label: 'proof taxonomy', href: '/registry/proof-taxonomy-audit.json' },

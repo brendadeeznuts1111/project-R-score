@@ -1,0 +1,294 @@
+{
+  "plane": "harness-agents",
+  "skillLoopRegistry": ".agents/skills/ast-grep/skill-loop-registry.json",
+  "scannedAt": "2026-07-26T20:53:06.843Z",
+  "skills": [
+    {
+      "name": "ast-grep",
+      "description": "AST-aware code outline, structural search, rewrite, and rule scans via ast-grep 0.44+. Use when exploring unfamiliar code, mapping symbols/imports/exports before broad file reads, finding syntax-shaped patterns (calls, classes, JSX), writing codemods, or when rg is too noisy. Primary entry point: scripts/ast_grep_helper.py (outline, search, replace, scan, validate).",
+      "updatedAt": "2026-06-25T04:55:29.593Z",
+      "hasPackage": false,
+      "lineCount": 319,
+      "resources": {
+        "scripts": 100,
+        "references": 4,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "audit-gap-close",
+      "description": "Close harness and tenant gaps with audit evidence — compose reference-discovery, audit catalog verify, tenant gap maps, and fresh-rerun gates. Use when a gap map row needs proof (bake/test/proof), audit catalog is stale, or discovery findings need an execute owner after triage.",
+      "updatedAt": "2026-07-26T20:49:05.898Z",
+      "hasPackage": false,
+      "lineCount": 86,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "branded-ids",
+      "description": "Discover and apply FactoryWager branded ID types (SessionId, AccountId, …). Use when minting IDs, fixing unbranded string fields, or choosing as*/try*/parse* constructors. MANDATORY for any domain *Id — pre-commit blocks bare string.",
+      "updatedAt": "2026-07-20T14:39:53.018Z",
+      "hasPackage": false,
+      "lineCount": 95,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "bun-v139-playground",
+      "description": "Bun v1.3.9 feature demos and interactive CLI playground. Covers parallel scripts, process/spawn, HTTP/2, NO_PROXY, profiling, and mock auto-cleanup. Use when: testing Bun v1.3.9+ features, running demos, or benchmarking.",
+      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "hasPackage": false,
+      "lineCount": 56,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "cascade-mover-v3",
+      "description": "Cascade Mover v3 — sports intelligence, confidence engine, multi-market cascading. Use cascade-mover MCP tools. Bun-native, zero npm deps.",
+      "updatedAt": "2026-07-24T04:50:59.589Z",
+      "hasPackage": false,
+      "lineCount": 35,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "domain-diagnostic-flow",
+      "description": "Comprehensive domain health check with automated remediation",
+      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "hasPackage": false,
+      "lineCount": 95,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "domain-orchestrator",
+      "description": "Bridges Kimi Agent Skills with Dynamic Domain APIs. Parses SKILL.md files, executes flow diagrams, and maps skill instructions to domain methods. Core orchestration layer for domain-aware automation.",
+      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "hasPackage": false,
+      "lineCount": 64,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "harness-improve",
+      "description": "Improve FactoryWager harness velocity: observe trajectory, earliest failed handoff, smallest reversible fix at owning boundary, fresh rerun. Use when commit loops thrash, day-loop proof is false, or NFRs are unresolved in prose.",
+      "updatedAt": "2026-07-21T16:45:54.554Z",
+      "hasPackage": false,
+      "lineCount": 59,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "ops-dual-mode-experiments",
+      "description": "Dual-mode provisioning (manual vs automated_test), factorial partner-policy experiments (FactorialEngine, phases, switchback, cluster), coverage prediction backtests, and champion/challenger shadow eval on FactoryWager operations. Use when working on provisioning queues, sandbox-gated WebView signup, experiment variants/phases, prediction_accuracy, ops-summary C4/C5 panels, or ops:diagnose / ops:snapshot freshness.",
+      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "hasPackage": false,
+      "lineCount": 237,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "partner-profile-os",
+      "description": "Partner Profile OS for Sports Terminal v5.2+. TOML templates, PartnerGateway kernel, lifecycle state machine, multi-layered data source routing. Bun-native.",
+      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "hasPackage": false,
+      "lineCount": 37,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "project-r-skill-maintenance",
+      "description": "Create, update, and validate Codex skills under /Users/nolarose/.codex/skills and /Users/nolarose/Projects/.agents/skills. Use when maintaining SKILL.md content, aligning agents/openai.yaml metadata, or tightening trigger/workflow quality.",
+      "updatedAt": "2026-06-25T04:55:29.632Z",
+      "hasPackage": false,
+      "lineCount": 43,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "public-audit-gap-close",
+      "description": "Close public-plane gap rows with discovery + portal verify + audit catalog evidence. Use when Pages portal/registry rows need bake/test/proof closure after public-discovery triage.",
+      "updatedAt": "2026-07-26T20:51:19.490Z",
+      "hasPackage": false,
+      "lineCount": 72,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "public-discovery",
+      "description": "Discover stale references, broken registry paths, and portal static anti-patterns under public/ (portal, registry bake, monitoring, lander). Use when cleaning Pages artifact drift, orphan registry JSON, or portal foundation violations.",
+      "updatedAt": "2026-07-26T20:51:20.015Z",
+      "hasPackage": false,
+      "lineCount": 77,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "quantum-domain-ops",
+      "description": "Protocols for operating QuantumDomain instances including state collapse, entanglement management, coherence monitoring, and tunneling analysis. Safety rules and optimization procedures for quantum domains.",
+      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "hasPackage": false,
+      "lineCount": 65,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "reference-discovery",
+      "description": "Discover unused, stale, and similarly named references in the harness perimeter. Use when cleaning up naming drift (REGISTRY_URL vs ROUTING_PROBE_BASE_URL), orphan CANONICAL_TOOLS paths, legacy domains, broken skill links, or plane mismatches.",
+      "updatedAt": "2026-07-26T19:46:39.968Z",
+      "hasPackage": false,
+      "lineCount": 73,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "self-healing-domain",
+      "description": "Automated diagnostic and healing workflows for SelfHealingDomain instances. Multi-step flows for health checks, diagnosis, treatment, and recovery.",
+      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "hasPackage": false,
+      "lineCount": 61,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "source-command-ast-grep",
+      "description": "ast-grep structural tools — outline, search, audit, semver gates, skill loop",
+      "updatedAt": "2026-06-25T04:55:29.633Z",
+      "hasPackage": false,
+      "lineCount": 46,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "source-command-commit",
+      "description": "Analyze changes, stage intelligently, commit with a precise message, and verify",
+      "updatedAt": "2026-06-25T04:55:29.633Z",
+      "hasPackage": false,
+      "lineCount": 98,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "source-command-precommit",
+      "description": "Run husky pre-commit gates — hygiene, harness lint, ast-grep rules, semver policy",
+      "updatedAt": "2026-06-25T04:55:29.633Z",
+      "hasPackage": false,
+      "lineCount": 52,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "source-command-reference-discovery",
+      "description": "Reference discovery — unused paths, plane mismatches, similar naming clusters",
+      "updatedAt": "2026-07-26T20:49:08.204Z",
+      "hasPackage": false,
+      "lineCount": 28,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "source-command-workflow",
+      "description": "Run ast-grep workflow loop with semver/network scanners and effect plugins",
+      "updatedAt": "2026-06-25T04:55:29.634Z",
+      "hasPackage": false,
+      "lineCount": 56,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "sports-terminal-os",
+      "description": "Sports Terminal OS v5.2 — sports betting trading terminal with 93 proxy endpoints, WebSocket/SSE, Partner Profile OS, Telegram hub. Bun-native monorepo workspace at projects/active/sports-terminal-os/.",
+      "updatedAt": "2026-07-24T07:07:27.625Z",
+      "hasPackage": false,
+      "lineCount": 153,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    }
+  ],
+  "count": 22
+}
