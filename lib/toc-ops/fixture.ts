@@ -1472,13 +1472,16 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
   const attached = attachDemoPresence(withVenues);
   const exps = experiments();
   const profiled = attachProfiles(attached.partners, experts());
-  const deep = deepenSeedNarrative(profiled.partners, profiled.experts);
+  const deep = deepenSeedNarrative(profiled.partners, profiled.experts, exps);
   const partners = deep.partners;
   const expertList = deep.experts;
   const profiles = deep.profiles;
+  const denserExps = deep.experiments;
+  const channel = deep.channelRollup;
+  const bufferHistory = deep.bufferHistory;
   const venues = summarizeVenues(partners);
   const allPlays = partners.flatMap(p => p.recentPlays);
-  const baseSummary = summarize(partners, exps, allPlays);
+  const baseSummary = summarize(partners, denserExps, allPlays);
   // Recompute after deepenSeedNarrative appends plays/placement
   const presence = summarizePresence(partners, attached.housePresence);
   const summary: TocOpsSnapshot['summary'] = {
@@ -1498,6 +1501,15 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
     expertLiquidityAvailable: profiles.expertLiquidityAvailable,
     avgAgentClvBps: profiles.avgAgentClvBps,
     openDeals: profiles.openDeals,
+    messageLogEntries: channel.messageLogEntries,
+    messageLogSlaBreaches: channel.messageLogSlaBreaches,
+    experimentOutcomes: channel.experimentOutcomes,
+    avgExperimentLiftPct: channel.avgExperimentLiftPct,
+    rotorSamples: channel.rotorSamples,
+    capitalMoves: channel.capitalMoves,
+    warmCyclesOpen: channel.warmCyclesOpen,
+    gate12Events: channel.gate12Events,
+    bufferHistoryDays: channel.bufferHistoryDays,
   };
 
   return {
@@ -1556,10 +1568,11 @@ export function buildDemoTocOpsFixture(generatedAt = new Date().toISOString()): 
       primedDrums: summary.warmed,
       playableDrums: partners.reduce((n, p) => n + p.readiness.playableAccountCount, 0),
       principalOutstandingTotal: summary.principalOutstandingTotal,
+      history: bufferHistory,
     },
     housePresence: attached.housePresence,
     experts: expertList,
-    experiments: exps,
+    experiments: denserExps,
     partners,
     presence,
     venues,

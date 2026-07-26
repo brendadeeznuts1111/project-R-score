@@ -7,6 +7,10 @@ import { applyOpsSyncEvent } from '../lib/operations/ops-sync.ts';
 import { publishAndDispatch } from '../lib/operations/play-dispatcher.ts';
 import { PlaySigner } from '../lib/operations/play-signing.ts';
 import { bindPartnerProfile } from '../lib/operations/partner-profile-bridge.ts';
+import {
+  applyPartnerOnboardPackage,
+  planPartnerOnboardPackage,
+} from '../lib/operations/partner-onboard-package.ts';
 import { ensurePosition } from '../lib/operations/liquidity.ts';
 import { handlePlayCallback } from '../lib/telegram/play-callback.ts';
 import { processChannelOutbox } from '../lib/channels/outbox.ts';
@@ -103,6 +107,67 @@ describe('partner onboarding e2e', () => {
     expect(ack.ok).toBe(true);
 
     svc.close();
+    db.close();
+  });
+
+  test('onboard package apply → welcome + onboard.complete → play ack', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const expertId = randomUUIDv7();
+    const agentId = randomUUIDv7();
+
+    db.run(
+      `INSERT INTO experts (id, name, sport, market, edge_score, active, created_at)
+       VALUES ($id, 'Edge NBA', 'NBA', 'totals', 0.74, 1, $n)`,
+      { $id: expertId, $n: now }
+    );
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, call_sign, telegram_id, active, status, created_at)
+       VALUES ($id, 'agent', NULL, $eid, 'TOC PAT', 'PAT-001', '515151', 1, 'active', $n)`,
+      { $id: agentId, $eid: expertId, $n: now }
+    );
+    ensurePosition(db, agentId, '_all', 5000);
+
+    const tid = asTreeNodeId(agentId);
+    const plan = planPartnerOnboardPackage(db, tid, { source: 'portal' });
+    const applied = applyPartnerOnboardPackage(db, plan, { source: 'portal' });
+    expect(applied.status).toBe('ok');
+    expect(applied.onboardCompleteEventId).toBeDefined();
+
+    const welcome = db
+      .query(
+        `SELECT COUNT(*) AS n FROM ops_channel_outbox WHERE event_type = 'partner.welcome'`
+      )
+      .get() as { n: number };
+    expect(welcome.n).toBe(1);
+
+    const complete = db
+      .query(
+        `SELECT COUNT(*) AS n FROM ops_channel_outbox WHERE event_type = 'partner.onboard.complete'`
+      )
+      .get() as { n: number };
+    expect(complete.n).toBe(1);
+
+    const signer = new PlaySigner();
+    const result = await publishAndDispatch(
+      signer,
+      {
+        expertId,
+        sport: 'NBA',
+        market: 'spread',
+        event: 'MIA @ NYK',
+        selection: 'MIA +4',
+        odds: -110,
+        stakeRecommended: 100,
+        confidence: 68,
+      },
+      db,
+      { flush: false }
+    );
+
+    await processChannelOutbox(db, { deliver: false });
+    const ack = handlePlayCallback(db, '515151', `play:${result.id}:${agentId}:placed`);
+    expect(ack.ok).toBe(true);
     db.close();
   });
 });

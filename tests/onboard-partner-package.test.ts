@@ -6,6 +6,7 @@ import { randomUUIDv7 } from 'bun';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   applyPartnerOnboardPackage,
+  buildOnboardChecklist,
   listUnboundAgentSeats,
   planPartnerOnboardPackage,
   resolveOnboardTreeNodeId,
@@ -194,6 +195,27 @@ describe('partner onboard package', () => {
       .query('SELECT COUNT(*) AS n FROM ops_channel_outbox WHERE event_type = $e')
       .get({ $e: 'partner.onboard.complete' }) as { n: number };
     expect(complete.n).toBe(1);
+    db.close();
+  });
+
+  test('buildOnboardChecklist reflects link + template state', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const expertId = seedExpert(db, now);
+    const agentId = seedAgent(db, { callSign: 'PAT-010', expertId }, now);
+    const tid = asTreeNodeId(agentId);
+
+    const unlinked = buildOnboardChecklist(db, tid);
+    expect(unlinked.checklist.telegramLinked).toBe(false);
+    expect(unlinked.checklist.consumeReady).toBe(false);
+    expect(unlinked.lines.some(l => l.includes('telegram-link-chat'))).toBe(true);
+
+    db.run(`UPDATE tree_nodes SET telegram_id = '888001' WHERE id = $id`, { $id: agentId });
+    bindPartnerProfile(db, tid);
+
+    const linked = buildOnboardChecklist(db, tid);
+    expect(linked.checklist.telegramLinked).toBe(true);
+    expect(linked.lines.some(l => l.includes('Profile bound'))).toBe(true);
     db.close();
   });
 });

@@ -281,6 +281,15 @@ export type TocTioeSnapshot = {
   partners: TocPartner[];
 };
 
+export type TocBufferHistoryPoint = {
+  day: string;
+  houseFloatHard: number;
+  floatRatio: number;
+  settlementFloatRatio: number;
+  principalOutstanding: number;
+  throttleOnboarding: boolean;
+};
+
 export type TocOpsBuffer = {
   floatTarget: number;
   floatTargetSource: 'static' | 't_velocity';
@@ -291,6 +300,40 @@ export type TocOpsBuffer = {
   primedDrums: number;
   playableDrums: number;
   principalOutstandingTotal: number;
+  /** Daily float / principal pulse (demo). */
+  history?: TocBufferHistoryPoint[];
+};
+
+/** Capital location transition on a Drum. */
+export type TocCapitalMove = {
+  at: string;
+  from: TocCapitalLocation;
+  to: TocCapitalLocation;
+  amount: number;
+  taskId?: string; // brand-ok
+  note?: string;
+};
+
+/** Warm cycle 1/2 ledger for FUND→WARM→WD. */
+export type TocWarmCycle = {
+  cycle: 1 | 2;
+  startedAt: string;
+  completedAt: string | null;
+  tags: string[];
+  wdTaskId?: string; // brand-ok
+  returnedAmount?: number;
+  status: 'open' | 'completed' | 'aborted';
+};
+
+/** Gate 12 principal waterfall event. */
+export type TocGate12Event = {
+  at: string;
+  kind: 'deploy' | 'return' | 'mode_change' | 'disclosure';
+  amount: number;
+  remainingAfter: number;
+  mode: TocWdMode;
+  taskId?: string; // brand-ok
+  note?: string;
 };
 
 /** WGS84 point — fixture/demo plane (not live GeoIP). */
@@ -419,6 +462,12 @@ export type TocAccount = {
   flowStage: TocFlowStage;
   /** Last-seen device / session geo+IP for this Drum. */
   presence?: TocPresence;
+  /** Capital location moves (demo ledger). */
+  capitalLedger?: TocCapitalMove[];
+  /** Warm cycle 1/2 progress ledger. */
+  warmCycles?: TocWarmCycle[];
+  /** Gate 12 principal waterfall events. */
+  gate12Ledger?: TocGate12Event[];
 };
 
 export type TocOpenTask = {
@@ -497,6 +546,18 @@ export type TocExperimentAssignment = {
   assignedAt: string;
 };
 
+export type TocExperimentOutcome = {
+  sampleN: number;
+  controlMetric: number;
+  treatmentMetric: number;
+  /** Relative lift vs control (e.g. 0.12 = +12%). */
+  liftPct: number;
+  ci95?: [number, number];
+  decidedAt?: string;
+  decision: 'keep' | 'kill' | 'iterate' | 'pending';
+  byVariant: Array<{ variantKey: string; n: number; metric: number }>;
+};
+
 export type TocExperiment = {
   id: string; // brand-ok
   name: string;
@@ -509,6 +570,41 @@ export type TocExperiment = {
   variants: TocExperimentVariant[];
   assignments: TocExperimentAssignment[];
   clusterBy?: 'package_id' | 'partner_code';
+  /** Desk readout after sample window (demo). */
+  outcome?: TocExperimentOutcome;
+};
+
+/** MessageLog / Ball-in-Court handoff (demo mirror of toc-ops-repo MessageLog). */
+export type TocMessageLogEntry = {
+  id: string; // brand-ok — message log row id
+  at: string;
+  channel: 'telegram' | 'sms' | 'voice' | 'system' | 'portal';
+  direction: 'in' | 'out' | 'internal';
+  from: TocBallInCourt | 'Bot';
+  to: TocBallInCourt | 'Bot';
+  taskId?: string; // brand-ok
+  callSign?: string; // brand-ok
+  summary: string;
+  slaBreached?: boolean;
+};
+
+/** Rotor / limit-drift sample for a Drum. */
+export type TocRotorPoint = {
+  at: string;
+  callSign: string; // brand-ok
+  driftBps: number;
+  limitFreshHours: number;
+  action?: string;
+};
+
+/** Known-exception lifecycle event. */
+export type TocExceptionEvent = {
+  id: string; // brand-ok — FUND-EX-01 …
+  at: string;
+  family: string;
+  status: 'open' | 'mitigated' | 'closed';
+  callSign?: string; // brand-ok
+  summary: string;
 };
 
 /** Phone / SIM asset on a partner or agent. */
@@ -750,6 +846,25 @@ export type TocAgentProfile = {
   }>;
   /** Daily CLV samples (bps) oldest→newest. */
   clvDailyBps?: number[];
+  /** Expert ROI + seat eligibility (demo). */
+  roi?: {
+    t30d: number;
+    plays30d: number;
+    winRate: number;
+    avgStake: number;
+    byCallSign: Array<{
+      callSign: string; // brand-ok
+      partnerCode: string; // brand-ok
+      t: number;
+      n: number;
+    }>;
+    eligibility: Array<{
+      callSign: string; // brand-ok
+      partnerCode: string; // brand-ok
+      eligible: boolean;
+      reason: string;
+    }>;
+  };
 };
 
 export type TocProfilesSummary = {
@@ -817,6 +932,20 @@ export type TocPartner = {
     id: string; // brand-ok — FUND-EX-01 …
     trigger: string;
     action: string;
+  }>;
+  /** Channel MessageLog with Ball-in-Court handoffs (demo). */
+  messageLog?: TocMessageLogEntry[];
+  /** Rotor drift series (oldest→newest). */
+  rotorSeries?: TocRotorPoint[];
+  /** Exception family timeline beyond static knownExceptions. */
+  exceptionTimeline?: TocExceptionEvent[];
+  /** Daily partner health pulse (readiness · BIC · Soft T). */
+  healthPulse?: Array<{
+    day: string;
+    readiness: number;
+    openBic: number;
+    slaBreaches: number;
+    softT: number;
   }>;
 };
 
@@ -892,6 +1021,16 @@ export type TocOpsSnapshot = {
     expertLiquidityAvailable?: number;
     avgAgentClvBps?: number | null;
     openDeals?: number;
+    /** MessageLog / experiment / rotor densification rollups. */
+    messageLogEntries?: number;
+    messageLogSlaBreaches?: number;
+    experimentOutcomes?: number;
+    avgExperimentLiftPct?: number | null;
+    rotorSamples?: number;
+    capitalMoves?: number;
+    warmCyclesOpen?: number;
+    gate12Events?: number;
+    bufferHistoryDays?: number;
   };
 };
 
@@ -946,4 +1085,13 @@ export type TocOpsSummarySlice = {
   expertLiquidityAvailable?: number;
   avgAgentClvBps?: number | null;
   openDeals?: number;
+  messageLogEntries?: number;
+  messageLogSlaBreaches?: number;
+  experimentOutcomes?: number;
+  avgExperimentLiftPct?: number | null;
+  rotorSamples?: number;
+  capitalMoves?: number;
+  warmCyclesOpen?: number;
+  gate12Events?: number;
+  bufferHistoryDays?: number;
 };

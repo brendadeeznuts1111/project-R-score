@@ -19,12 +19,13 @@
 | Field | Definition |
 |-------|------------|
 | `dispatched` | Rows in `play_distribution` (recipient fan-out). |
-| `gatedAllow` / `gatedAdjust` / `gatedDeny` | Counts from `play_gate_decisions`. |
+| `gatedAllow` / `gatedAdjust` / `gatedDeny` / `gatedDefer` | Gate counts from `play_gate_decisions` (`defer` split from deny). |
 | `reserved` | Same as dispatched (successful reserve + enqueue). |
 | `settled` | `plays.result` closed (not `pending`). |
 | `settledViaFullLoop` | Distribution rows with gate allow/adjust on same node + `play.settled` outbox row `sent`. |
 | `manualStepsPerCycle` | Unsettled distributed plays + pending outbox + **failed** outbox rows. |
 | **`loopCompletionRate`** | `settledViaFullLoop / dispatched` — row-aligned (same unit as `dispatched`). Attribution only — not R2 durability. |
+| **`loopCompletionRateByPlay`** | `settledPlaysViaFullLoop / distinctPlaysDispatched` — play-level (not fan-out inflated). |
 | `capitalEfficiencyProxy` / `limitEfficiencyProxy` / `processReturnProxy` | CE / LE / RP capital-return proxies (see module header). |
 
 **60% claim:** `(post.loopCompletionRate - baseline.loopCompletionRate) / baseline.loopCompletionRate ≥ 0.6` when baseline rate > 0; when baseline ≈ 0, post rate must be ≥ 0.6 absolute.

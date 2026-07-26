@@ -21,7 +21,10 @@ export type OpsLoopMetricsSlice = {
   dispatched: number;
   gatedAllow: number;
   gatedAdjust: number;
+  /** Gate blocks/denies excluding TOC/lifecycle `defer`. */
   gatedDeny: number;
+  /** `play_gate_decisions.action = 'defer'` (TOC rope / lifecycle hold). */
+  gatedDefer: number;
   /** Rows in play_distribution (successful reserve + enqueue). */
   reserved: number;
   /** plays.result closed (not pending). */
@@ -37,6 +40,12 @@ export type OpsLoopMetricsSlice = {
   manualStepsPerCycle: number;
   /** settledViaFullLoop / dispatched (0 when dispatched = 0). Attribution only — not R2 durability. */
   loopCompletionRate: number;
+  /** Distinct plays with ≥1 play_distribution row. */
+  distinctPlaysDispatched: number;
+  /** Distinct settled plays with gate allow/adjust + play.settled outbox on ≥1 node. */
+  settledPlaysViaFullLoop: number;
+  /** settledPlaysViaFullLoop / distinctPlaysDispatched (play-level; not fan-out inflated). */
+  loopCompletionRateByPlay: number;
   /** Σ ProfitSplit / peak I from toc_soft_entries; null when journal empty or peak I = 0. */
   capitalEfficiencyProxy: number | null;
   /** Avg usable-limit uplift from baked toc-ops fixture; null when no fresh WARMED limits. */
@@ -72,20 +81,27 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
   let gatedAllow = 0;
   let gatedAdjust = 0;
   let gatedDeny = 0;
+  let gatedDefer = 0;
   if (tableExists(db, 'play_gate_decisions')) {
     const gate = db
       .query(
         `SELECT
            COALESCE(SUM(CASE WHEN allowed = 1 AND action = 'allow' THEN 1 ELSE 0 END), 0) AS allow_n,
            COALESCE(SUM(CASE WHEN allowed = 1 AND action = 'adjust' THEN 1 ELSE 0 END), 0) AS adjust_n,
-           COALESCE(SUM(CASE WHEN allowed = 0 THEN 1 ELSE 0 END), 0) AS deny_n
+           COALESCE(SUM(CASE WHEN allowed = 0 AND action = 'defer' THEN 1 ELSE 0 END), 0) AS defer_n,
+           COALESCE(SUM(CASE WHEN allowed = 0 AND action != 'defer' THEN 1 ELSE 0 END), 0) AS deny_n
          FROM play_gate_decisions`
       )
-      .get() as { allow_n: number; adjust_n: number; deny_n: number };
+      .get() as { allow_n: number; adjust_n: number; defer_n: number; deny_n: number };
     gatedAllow = gate.allow_n;
     gatedAdjust = gate.adjust_n;
+    gatedDefer = gate.defer_n;
     gatedDeny = gate.deny_n;
   }
+
+  const distinctPlaysDispatched = (
+    db.query(`SELECT COUNT(DISTINCT play_id) AS n FROM play_distribution`).get() as { n: number }
+  ).n;
 
   const reserved = dispatched;
 
@@ -96,11 +112,26 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
   ).n;
 
   let settledViaFullLoop = 0;
+  let settledPlaysViaFullLoop = 0;
   if (tableExists(db, 'ops_channel_outbox') && tableExists(db, 'play_gate_decisions')) {
     settledViaFullLoop = (
       db
         .query(
           `SELECT COUNT(*) AS n
+           FROM plays p
+           INNER JOIN play_distribution d ON d.play_id = p.id
+           INNER JOIN play_gate_decisions g ON g.play_id = p.id AND g.node_id = d.node_id AND g.allowed = 1
+           INNER JOIN ops_channel_outbox o ON o.status = 'sent'
+             AND o.event_type = 'play.settled'
+             AND o.idempotency_key = ('settle:' || p.id || ':' || d.node_id)
+           WHERE p.result IS NOT NULL AND p.result != 'pending'`
+        )
+        .get() as { n: number }
+    ).n;
+    settledPlaysViaFullLoop = (
+      db
+        .query(
+          `SELECT COUNT(DISTINCT p.id) AS n
            FROM plays p
            INNER JOIN play_distribution d ON d.play_id = p.id
            INNER JOIN play_gate_decisions g ON g.play_id = p.id AND g.node_id = d.node_id AND g.allowed = 1
@@ -158,6 +189,8 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
   const manualStepsPerCycle = manualUnsettled + outboxPending + outboxFailed;
 
   const loopCompletionRate = dispatched > 0 ? settledViaFullLoop / dispatched : 0;
+  const loopCompletionRateByPlay =
+    distinctPlaysDispatched > 0 ? settledPlaysViaFullLoop / distinctPlaysDispatched : 0;
 
   const soft = querySoftBalanceRollup(db);
   const capitalEfficiencyProxy = computeCapitalEfficiencyProxy(soft);
@@ -169,6 +202,7 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
     gatedAllow,
     gatedAdjust,
     gatedDeny,
+    gatedDefer,
     reserved,
     settled,
     settledViaFullLoop,
@@ -178,6 +212,9 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
     oldestPendingAgeSec,
     manualStepsPerCycle,
     loopCompletionRate,
+    distinctPlaysDispatched,
+    settledPlaysViaFullLoop,
+    loopCompletionRateByPlay,
     capitalEfficiencyProxy,
     limitEfficiencyProxy,
     processReturnProxy,
@@ -293,6 +330,7 @@ function emptyLoopSlice(): OpsLoopMetricsSlice {
     gatedAllow: 0,
     gatedAdjust: 0,
     gatedDeny: 0,
+    gatedDefer: 0,
     reserved: 0,
     settled: 0,
     settledViaFullLoop: 0,
@@ -302,6 +340,9 @@ function emptyLoopSlice(): OpsLoopMetricsSlice {
     oldestPendingAgeSec: null,
     manualStepsPerCycle: 0,
     loopCompletionRate: 0,
+    distinctPlaysDispatched: 0,
+    settledPlaysViaFullLoop: 0,
+    loopCompletionRateByPlay: 0,
     capitalEfficiencyProxy: null,
     limitEfficiencyProxy: null,
     processReturnProxy: null,

@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-24T07:59:50.543Z",
+  "generatedAt": "2026-07-26T06:13:58.103Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -156,7 +156,65 @@
     "settlementFloatRatio": 0.5103534825350345,
     "primedDrums": 4,
     "playableDrums": 2,
-    "principalOutstandingTotal": 20300
+    "principalOutstandingTotal": 20300,
+    "history": [
+      {
+        "day": "2026-07-20",
+        "houseFloatHard": 38000,
+        "floatRatio": 0.76,
+        "settlementFloatRatio": 0.55,
+        "principalOutstanding": 23345,
+        "throttleOnboarding": false
+      },
+      {
+        "day": "2026-07-21",
+        "houseFloatHard": 38700,
+        "floatRatio": 0.77,
+        "settlementFloatRatio": 0.53,
+        "principalOutstanding": 22939,
+        "throttleOnboarding": false
+      },
+      {
+        "day": "2026-07-22",
+        "houseFloatHard": 39400,
+        "floatRatio": 0.79,
+        "settlementFloatRatio": 0.51,
+        "principalOutstanding": 22533,
+        "throttleOnboarding": false
+      },
+      {
+        "day": "2026-07-23",
+        "houseFloatHard": 40100,
+        "floatRatio": 0.8,
+        "settlementFloatRatio": 0.49,
+        "principalOutstanding": 22127,
+        "throttleOnboarding": false
+      },
+      {
+        "day": "2026-07-23",
+        "houseFloatHard": 40800,
+        "floatRatio": 0.82,
+        "settlementFloatRatio": 0.47,
+        "principalOutstanding": 21721,
+        "throttleOnboarding": false
+      },
+      {
+        "day": "2026-07-23",
+        "houseFloatHard": 41500,
+        "floatRatio": 0.83,
+        "settlementFloatRatio": 0.45,
+        "principalOutstanding": 21315,
+        "throttleOnboarding": false
+      },
+      {
+        "day": "2026-07-23",
+        "houseFloatHard": 42200,
+        "floatRatio": 0.84,
+        "settlementFloatRatio": 0.43,
+        "principalOutstanding": 20909,
+        "throttleOnboarding": false
+      }
+    ]
   },
   "housePresence": {
     "geo": {
@@ -539,7 +597,59 @@
           21,
           22,
           22
-        ]
+        ],
+        "roi": {
+          "t30d": 1460,
+          "plays30d": 7,
+          "winRate": 0.75,
+          "avgStake": 1229,
+          "byCallSign": [
+            {
+              "callSign": "PAT-001",
+              "partnerCode": "PAT",
+              "t": 800,
+              "n": 2
+            },
+            {
+              "callSign": "ASH-001",
+              "partnerCode": "ASH",
+              "t": 660,
+              "n": 2
+            }
+          ],
+          "eligibility": [
+            {
+              "callSign": "ASH-001",
+              "partnerCode": "ASH",
+              "eligible": true,
+              "reason": "Eligible"
+            },
+            {
+              "callSign": "ASH-002",
+              "partnerCode": "ASH",
+              "eligible": false,
+              "reason": "Warm 1/2"
+            },
+            {
+              "callSign": "ASH-003",
+              "partnerCode": "ASH",
+              "eligible": false,
+              "reason": "Gate 12 principal outstanding"
+            },
+            {
+              "callSign": "PAT-001",
+              "partnerCode": "PAT",
+              "eligible": true,
+              "reason": "Eligible"
+            },
+            {
+              "callSign": "PAT-002",
+              "partnerCode": "PAT",
+              "eligible": false,
+              "reason": "Gate 12 principal outstanding"
+            }
+          ]
+        }
       }
     },
     {
@@ -879,7 +989,47 @@
           27,
           28,
           28
-        ]
+        ],
+        "roi": {
+          "t30d": 2256,
+          "plays30d": 5,
+          "winRate": 0.75,
+          "avgStake": 1040,
+          "byCallSign": [
+            {
+              "callSign": "PAT-001",
+              "partnerCode": "PAT",
+              "t": 1920,
+              "n": 2
+            },
+            {
+              "callSign": "ASH-001",
+              "partnerCode": "ASH",
+              "t": 336,
+              "n": 2
+            }
+          ],
+          "eligibility": [
+            {
+              "callSign": "ASH-001",
+              "partnerCode": "ASH",
+              "eligible": true,
+              "reason": "Eligible"
+            },
+            {
+              "callSign": "PAT-001",
+              "partnerCode": "PAT",
+              "eligible": true,
+              "reason": "Eligible"
+            },
+            {
+              "callSign": "PAT-005",
+              "partnerCode": "PAT",
+              "eligible": false,
+              "reason": "Warm 1/2"
+            }
+          ]
+        }
       }
     },
     {
@@ -1234,7 +1384,65 @@
           11,
           12,
           12
-        ]
+        ],
+        "roi": {
+          "t30d": 1400,
+          "plays30d": 7,
+          "winRate": 0.4,
+          "avgStake": 926,
+          "byCallSign": [
+            {
+              "callSign": "PAT-002",
+              "partnerCode": "PAT",
+              "t": 800,
+              "n": 1
+            },
+            {
+              "callSign": "PAT-004",
+              "partnerCode": "PAT",
+              "t": 600,
+              "n": 2
+            },
+            {
+              "callSign": "ASH-001",
+              "partnerCode": "ASH",
+              "t": 0,
+              "n": 1
+            },
+            {
+              "callSign": "PAT-001",
+              "partnerCode": "PAT",
+              "t": 0,
+              "n": 1
+            }
+          ],
+          "eligibility": [
+            {
+              "callSign": "ASH-001",
+              "partnerCode": "ASH",
+              "eligible": true,
+              "reason": "Eligible"
+            },
+            {
+              "callSign": "PAT-001",
+              "partnerCode": "PAT",
+              "eligible": true,
+              "reason": "Eligible"
+            },
+            {
+              "callSign": "PAT-002",
+              "partnerCode": "PAT",
+              "eligible": false,
+              "reason": "Gate 12 principal outstanding"
+            },
+            {
+              "callSign": "PAT-003",
+              "partnerCode": "PAT",
+              "eligible": false,
+              "reason": "Gate 12 principal outstanding"
+            }
+          ]
+        }
       }
     }
   ],
@@ -1292,7 +1500,30 @@
           "assignedAt": "2026-07-22T10:00:00.000Z"
         }
       ],
-      "clusterBy": "partner_code"
+      "clusterBy": "partner_code",
+      "outcome": {
+        "sampleN": 17,
+        "controlMetric": 0.6,
+        "treatmentMetric": 0.714,
+        "liftPct": 0.19,
+        "ci95": [
+          0.14,
+          0.24
+        ],
+        "decision": "iterate",
+        "byVariant": [
+          {
+            "variantKey": "static",
+            "n": 7,
+            "metric": 0.6
+          },
+          {
+            "variantKey": "dynamic",
+            "n": 10,
+            "metric": 0.714
+          }
+        ]
+      }
     },
     {
       "id": "exp-cut-ab-2026-06",
@@ -1341,7 +1572,31 @@
           "assignedAt": "2026-06-15T00:00:00.000Z"
         }
       ],
-      "clusterBy": "package_id"
+      "clusterBy": "package_id",
+      "outcome": {
+        "sampleN": 2,
+        "controlMetric": 0,
+        "treatmentMetric": 0,
+        "liftPct": 0,
+        "ci95": [
+          -0.05,
+          0.05
+        ],
+        "decidedAt": "2026-07-01T00:00:00.000Z",
+        "decision": "keep",
+        "byVariant": [
+          {
+            "variantKey": "std_70",
+            "n": 1,
+            "metric": 0
+          },
+          {
+            "variantKey": "alt_65",
+            "n": 1,
+            "metric": 0
+          }
+        ]
+      }
     },
     {
       "id": "exp-liquidity-weight-2026-07",
@@ -1390,7 +1645,30 @@
           "assignedAt": "2026-07-20T00:00:00.000Z"
         }
       ],
-      "clusterBy": "partner_code"
+      "clusterBy": "partner_code",
+      "outcome": {
+        "sampleN": 3,
+        "controlMetric": 0.66,
+        "treatmentMetric": 0,
+        "liftPct": -1,
+        "ci95": [
+          -1.05,
+          -0.95
+        ],
+        "decision": "pending",
+        "byVariant": [
+          {
+            "variantKey": "static_cap",
+            "n": 1,
+            "metric": 0.66
+          },
+          {
+            "variantKey": "dynamic_weight",
+            "n": 2,
+            "metric": 0
+          }
+        ]
+      }
     }
   ],
   "partners": [
@@ -1595,7 +1873,110 @@
               "distanceKmFromHouse": 332.2,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5000,
+              "taskId": "FUND-ASH-001-cycle1",
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "from": "WithPartner",
+              "to": "InSportsbook",
+              "amount": 5000,
+              "taskId": "FUND-ASH-001-cycle1",
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "HouseFloat",
+              "amount": 750,
+              "taskId": "WD-ASH-001-cycle1",
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-18T23:40:00.000Z",
+              "from": "InSportsbook",
+              "to": "HouseFloat",
+              "amount": 1000,
+              "taskId": "WD-ASH-001-profit",
+              "note": "Profit WD after settle"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "HouseFloat",
+              "amount": 1000,
+              "taskId": "WD-ASH-001-cycle2",
+              "note": "Warm cycle 2 complete — WARMED"
+            }
+          ],
+          "warmCycles": [
+            {
+              "cycle": 1,
+              "startedAt": "2026-07-13T12:00:00.000Z",
+              "completedAt": "2026-07-15T18:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#CYCLE-2"
+              ],
+              "wdTaskId": "WD-ASH-001-cycle1",
+              "returnedAmount": 750,
+              "status": "completed"
+            },
+            {
+              "cycle": 2,
+              "startedAt": "2026-07-16T12:00:00.000Z",
+              "completedAt": "2026-07-19T16:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#CYCLE-2",
+                "#PRIMED"
+              ],
+              "wdTaskId": "WD-ASH-001-cycle2",
+              "returnedAmount": 1000,
+              "status": "completed"
+            }
+          ],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "kind": "deploy",
+              "amount": 5000,
+              "remainingAfter": 5000,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-ASH-001-cycle1"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "kind": "return",
+              "amount": 750,
+              "remainingAfter": 4250,
+              "mode": "warmup_capital_return",
+              "taskId": "WD-ASH-001-cycle1"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "kind": "return",
+              "amount": 1000,
+              "remainingAfter": 3250,
+              "mode": "principal_recovery",
+              "taskId": "WD-ASH-001-cycle2"
+            },
+            {
+              "at": "2026-07-20T09:00:00.000Z",
+              "kind": "mode_change",
+              "amount": 0,
+              "remainingAfter": 0,
+              "mode": "profit_split",
+              "note": "Principal cleared — profit_split unlocked"
+            }
+          ]
         },
         {
           "callSign": "ASH-002",
@@ -1708,7 +2089,48 @@
               "distanceKmFromHouse": 331.3,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5010,
+              "taskId": "FUND-ASH-002-cycle1",
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "from": "WithPartner",
+              "to": "InSportsbook",
+              "amount": 5010,
+              "taskId": "FUND-ASH-002-cycle1",
+              "note": "Sportsbook funded proof"
+            }
+          ],
+          "warmCycles": [
+            {
+              "cycle": 1,
+              "startedAt": "2026-07-13T12:00:00.000Z",
+              "completedAt": null,
+              "tags": [
+                "#CYCLE-1",
+                "#WARMUP-CYCLE"
+              ],
+              "wdTaskId": "WD-ASH-002-cycle1",
+              "status": "open"
+            }
+          ],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "kind": "deploy",
+              "amount": 5010,
+              "remainingAfter": 5010,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-ASH-002-cycle1"
+            }
+          ]
         },
         {
           "callSign": "ASH-003",
@@ -1816,7 +2238,93 @@
               "distanceKmFromHouse": 330.3,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5000,
+              "taskId": "FUND-ASH-003-cycle1",
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "from": "WithPartner",
+              "to": "InSportsbook",
+              "amount": 5000,
+              "taskId": "FUND-ASH-003-cycle1",
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "HouseFloat",
+              "amount": 750,
+              "taskId": "WD-ASH-003-cycle1",
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-20T15:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "InSportsbook",
+              "amount": 4800,
+              "taskId": "FUND-ASH-003-recycle",
+              "note": "Recycle deploy — principal still out"
+            }
+          ],
+          "warmCycles": [
+            {
+              "cycle": 1,
+              "startedAt": "2026-07-13T12:00:00.000Z",
+              "completedAt": "2026-07-15T18:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#LIMIT-EX-02"
+              ],
+              "wdTaskId": "WD-ASH-003-cycle1",
+              "returnedAmount": 750,
+              "status": "completed"
+            },
+            {
+              "cycle": 2,
+              "startedAt": "2026-07-16T12:00:00.000Z",
+              "completedAt": null,
+              "tags": [
+                "#WARMED",
+                "#LIMIT-EX-02",
+                "#REALLOCATE"
+              ],
+              "wdTaskId": "WD-ASH-003-cycle2",
+              "status": "open"
+            }
+          ],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "kind": "deploy",
+              "amount": 5000,
+              "remainingAfter": 5000,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-ASH-003-cycle1"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "kind": "return",
+              "amount": 750,
+              "remainingAfter": 4250,
+              "mode": "warmup_capital_return",
+              "taskId": "WD-ASH-003-cycle1"
+            },
+            {
+              "at": "2026-07-23T12:00:00.000Z",
+              "kind": "disclosure",
+              "amount": 4800,
+              "remainingAfter": 4800,
+              "mode": "principal_recovery",
+              "note": "Gate 12 cashier Rope — WD profit_split blocked"
+            }
+          ]
         },
         {
           "callSign": "ASH-004",
@@ -1931,7 +2439,29 @@
               "distanceKmFromHouse": 329.4,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-22T11:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5000,
+              "taskId": "FUND-ASH-004-20260722-110000-001",
+              "note": "Corridor FUND pending sportsbook proof"
+            }
+          ],
+          "warmCycles": [],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-22T11:05:00.000Z",
+              "kind": "deploy",
+              "amount": 500,
+              "remainingAfter": 500,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-ASH-004-20260722-110000-001",
+              "note": "Principal disclosed — Gate 12 open"
+            }
+          ]
         }
       ],
       "openTasks": [
@@ -2941,7 +3471,210 @@
             "oe": 0
           }
         ]
-      }
+      },
+      "messageLog": [
+        {
+          "id": "msg-ash-001",
+          "at": "2026-07-18T19:55:00.000Z",
+          "channel": "telegram",
+          "direction": "out",
+          "from": "Expert",
+          "to": "Partner",
+          "taskId": "PLAY-ASH-001-20260718-200000-001",
+          "callSign": "ASH-001",
+          "summary": "PLAY card DEN @ MIN — stake $1000 ack"
+        },
+        {
+          "id": "msg-ash-002",
+          "at": "2026-07-18T20:08:00.000Z",
+          "channel": "telegram",
+          "direction": "in",
+          "from": "Partner",
+          "to": "Ops",
+          "taskId": "PLAY-ASH-001-20260718-200000-001",
+          "callSign": "ASH-001",
+          "summary": "Slip posted · awaiting settle"
+        },
+        {
+          "id": "msg-ash-003",
+          "at": "2026-07-19T10:05:00.000Z",
+          "channel": "sms",
+          "direction": "out",
+          "from": "Ops",
+          "to": "Partner",
+          "callSign": "ASH-001",
+          "summary": "Soft fee correction CostOfPriming $25 logged"
+        },
+        {
+          "id": "msg-ash-004",
+          "at": "2026-07-23T19:12:00.000Z",
+          "channel": "telegram",
+          "direction": "out",
+          "from": "Bot",
+          "to": "Partner",
+          "taskId": "PLAY-ASH-001-20260723-190000-001",
+          "callSign": "ASH-001",
+          "summary": "Instruction HOU @ TEX waiting partner ack",
+          "slaBreached": true
+        },
+        {
+          "id": "msg-ash-005",
+          "at": "2026-07-23T20:40:00.000Z",
+          "channel": "system",
+          "direction": "internal",
+          "from": "System",
+          "to": "Ops",
+          "callSign": "ASH-001",
+          "summary": "Rotor drift 48bps — LIMIT refresh queued"
+        }
+      ],
+      "rotorSeries": [
+        {
+          "at": "2026-07-20T08:00:00.000Z",
+          "callSign": "ASH-001",
+          "driftBps": 28,
+          "limitFreshHours": 72
+        },
+        {
+          "at": "2026-07-21T08:00:00.000Z",
+          "callSign": "ASH-001",
+          "driftBps": 32,
+          "limitFreshHours": 62
+        },
+        {
+          "at": "2026-07-22T08:00:00.000Z",
+          "callSign": "ASH-001",
+          "driftBps": 36,
+          "limitFreshHours": 52
+        },
+        {
+          "at": "2026-07-23T08:00:00.000Z",
+          "callSign": "ASH-001",
+          "driftBps": 40,
+          "limitFreshHours": 42
+        },
+        {
+          "at": "2026-07-23T08:00:00.000Z",
+          "callSign": "ASH-001",
+          "driftBps": 44,
+          "limitFreshHours": 32
+        },
+        {
+          "at": "2026-07-23T08:00:00.000Z",
+          "callSign": "ASH-001",
+          "driftBps": 60,
+          "limitFreshHours": 22,
+          "action": "LIMIT refresh"
+        },
+        {
+          "at": "2026-07-23T08:00:00.000Z",
+          "callSign": "ASH-001",
+          "driftBps": 52,
+          "limitFreshHours": 12,
+          "action": "Stable"
+        }
+      ],
+      "exceptionTimeline": [
+        {
+          "id": "WARM-EX-01",
+          "at": "2026-07-18T11:00:00.000Z",
+          "family": "WARM",
+          "status": "mitigated",
+          "callSign": "ASH-001",
+          "summary": "Dummy bet loses (balance < deposit) → WD remaining; Soft CostOfPriming; cycle still counts"
+        },
+        {
+          "id": "FUND-EX-01",
+          "at": "2026-07-19T11:00:00.000Z",
+          "family": "FUND",
+          "status": "mitigated",
+          "callSign": "ASH-001",
+          "summary": "Typed rail ≠ profile screenshot → Block send; re-upload + re-confirm"
+        },
+        {
+          "id": "LIMIT-EX-03",
+          "at": "2026-07-20T11:00:00.000Z",
+          "family": "LIMIT",
+          "status": "mitigated",
+          "callSign": "ASH-001",
+          "summary": "Active Expert Play in progress → Queue Limit Check; never interrupt PLAY"
+        },
+        {
+          "id": "LIMIT-EX-02",
+          "at": "2026-07-21T11:00:00.000Z",
+          "family": "LIMIT",
+          "status": "mitigated",
+          "callSign": "ASH-001",
+          "summary": "Hard limit below useful expert stakes → Flag Limited; WD capital quickly; reallocate to higher-CE seat"
+        },
+        {
+          "id": "WARM-EX-02",
+          "at": "2026-07-22T11:00:00.000Z",
+          "family": "WARM",
+          "status": "mitigated",
+          "callSign": "ASH-001",
+          "summary": "Parlay/prop/live dummy bet triggers early limit flag → Use major-league ML/totals near-even only; avoid WARM-EX-02 scrutiny"
+        },
+        {
+          "id": "PLAY-EX-02",
+          "at": "2026-07-23T19:30:00.000Z",
+          "family": "PLAY",
+          "status": "open",
+          "callSign": "ASH-001",
+          "summary": "Pending instruction SLA > 60m — Ball-in-Court Partner"
+        }
+      ],
+      "healthPulse": [
+        {
+          "day": "2026-07-20",
+          "readiness": 0.72,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-21",
+          "readiness": 0.74,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 336
+        },
+        {
+          "day": "2026-07-22",
+          "readiness": 0.7,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.69,
+          "openBic": 1,
+          "slaBreaches": 1,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.68,
+          "openBic": 2,
+          "slaBreaches": 1,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.67,
+          "openBic": 3,
+          "slaBreaches": 1,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.66,
+          "openBic": 4,
+          "slaBreaches": 1,
+          "softT": 0
+        }
+      ]
     },
     {
       "partnerCode": "PAT",
@@ -3157,7 +3890,102 @@
               "distanceKmFromHouse": 124.3,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5200,
+              "taskId": "FUND-PAT-001-cycle1",
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "from": "WithPartner",
+              "to": "InSportsbook",
+              "amount": 5200,
+              "taskId": "FUND-PAT-001-cycle1",
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "HouseFloat",
+              "amount": 780,
+              "taskId": "WD-PAT-001-cycle1",
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "InSportsbook",
+              "amount": 1040,
+              "taskId": "WD-PAT-001-cycle2",
+              "note": "Warm cycle 2 complete — WARMED"
+            }
+          ],
+          "warmCycles": [
+            {
+              "cycle": 1,
+              "startedAt": "2026-07-13T12:00:00.000Z",
+              "completedAt": "2026-07-15T18:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#CYCLE-2"
+              ],
+              "wdTaskId": "WD-PAT-001-cycle1",
+              "returnedAmount": 780,
+              "status": "completed"
+            },
+            {
+              "cycle": 2,
+              "startedAt": "2026-07-16T12:00:00.000Z",
+              "completedAt": "2026-07-19T16:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#CYCLE-2",
+                "#READY"
+              ],
+              "wdTaskId": "WD-PAT-001-cycle2",
+              "returnedAmount": 1040,
+              "status": "completed"
+            }
+          ],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "kind": "deploy",
+              "amount": 5200,
+              "remainingAfter": 5200,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-PAT-001-cycle1"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "kind": "return",
+              "amount": 780,
+              "remainingAfter": 4420,
+              "mode": "warmup_capital_return",
+              "taskId": "WD-PAT-001-cycle1"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "kind": "return",
+              "amount": 1040,
+              "remainingAfter": 3380,
+              "mode": "principal_recovery",
+              "taskId": "WD-PAT-001-cycle2"
+            },
+            {
+              "at": "2026-07-20T09:00:00.000Z",
+              "kind": "mode_change",
+              "amount": 0,
+              "remainingAfter": 0,
+              "mode": "profit_split",
+              "note": "Principal cleared — profit_split unlocked"
+            }
+          ]
         },
         {
           "callSign": "PAT-002",
@@ -3275,7 +4103,109 @@
               "distanceKmFromHouse": 124.5,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5000,
+              "taskId": "FUND-PAT-002-cycle1",
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "from": "WithPartner",
+              "to": "InSportsbook",
+              "amount": 5000,
+              "taskId": "FUND-PAT-002-cycle1",
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "HouseFloat",
+              "amount": 750,
+              "taskId": "WD-PAT-002-cycle1",
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "InSportsbook",
+              "amount": 1000,
+              "taskId": "WD-PAT-002-cycle2",
+              "note": "Warm cycle 2 complete — WARMED"
+            },
+            {
+              "at": "2026-07-20T15:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "InSportsbook",
+              "amount": 5000,
+              "taskId": "FUND-PAT-002-recycle",
+              "note": "Recycle deploy — principal still out"
+            }
+          ],
+          "warmCycles": [
+            {
+              "cycle": 1,
+              "startedAt": "2026-07-13T12:00:00.000Z",
+              "completedAt": "2026-07-15T18:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#CYCLE-2"
+              ],
+              "wdTaskId": "WD-PAT-002-cycle1",
+              "returnedAmount": 750,
+              "status": "completed"
+            },
+            {
+              "cycle": 2,
+              "startedAt": "2026-07-16T12:00:00.000Z",
+              "completedAt": "2026-07-19T16:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#CYCLE-2"
+              ],
+              "wdTaskId": "WD-PAT-002-cycle2",
+              "returnedAmount": 1000,
+              "status": "completed"
+            }
+          ],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "kind": "deploy",
+              "amount": 5000,
+              "remainingAfter": 5000,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-PAT-002-cycle1"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "kind": "return",
+              "amount": 750,
+              "remainingAfter": 4250,
+              "mode": "warmup_capital_return",
+              "taskId": "WD-PAT-002-cycle1"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "kind": "return",
+              "amount": 1000,
+              "remainingAfter": 3250,
+              "mode": "principal_recovery",
+              "taskId": "WD-PAT-002-cycle2"
+            },
+            {
+              "at": "2026-07-23T12:00:00.000Z",
+              "kind": "disclosure",
+              "amount": 5000,
+              "remainingAfter": 5000,
+              "mode": "principal_recovery",
+              "note": "Gate 12 cashier Rope — WD profit_split blocked"
+            }
+          ]
         },
         {
           "callSign": "PAT-003",
@@ -3401,7 +4331,29 @@
               "distanceKmFromHouse": 124.6,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-22T11:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5000,
+              "taskId": "FUND-PAT-003-20260722-110000-001",
+              "note": "Corridor FUND pending sportsbook proof"
+            }
+          ],
+          "warmCycles": [],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-22T11:05:00.000Z",
+              "kind": "deploy",
+              "amount": 5000,
+              "remainingAfter": 5000,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-PAT-003-20260722-110000-001",
+              "note": "Principal disclosed — Gate 12 open"
+            }
+          ]
         },
         {
           "callSign": "PAT-004",
@@ -3526,7 +4478,102 @@
               "distanceKmFromHouse": 124.8,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5000,
+              "taskId": "FUND-PAT-004-cycle1",
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "from": "WithPartner",
+              "to": "InSportsbook",
+              "amount": 5000,
+              "taskId": "FUND-PAT-004-cycle1",
+              "note": "Sportsbook funded proof"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "HouseFloat",
+              "amount": 750,
+              "taskId": "WD-PAT-004-cycle1",
+              "note": "Warm cycle 1 capital return"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "from": "InSportsbook",
+              "to": "InSportsbook",
+              "amount": 1000,
+              "taskId": "WD-PAT-004-cycle2",
+              "note": "Warm cycle 2 complete — WARMED"
+            }
+          ],
+          "warmCycles": [
+            {
+              "cycle": 1,
+              "startedAt": "2026-07-13T12:00:00.000Z",
+              "completedAt": "2026-07-15T18:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#CRYPTO"
+              ],
+              "wdTaskId": "WD-PAT-004-cycle1",
+              "returnedAmount": 750,
+              "status": "completed"
+            },
+            {
+              "cycle": 2,
+              "startedAt": "2026-07-16T12:00:00.000Z",
+              "completedAt": "2026-07-19T16:00:00.000Z",
+              "tags": [
+                "#WARMED",
+                "#CRYPTO",
+                "#STAKE"
+              ],
+              "wdTaskId": "WD-PAT-004-cycle2",
+              "returnedAmount": 1000,
+              "status": "completed"
+            }
+          ],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "kind": "deploy",
+              "amount": 5000,
+              "remainingAfter": 5000,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-PAT-004-cycle1"
+            },
+            {
+              "at": "2026-07-15T18:00:00.000Z",
+              "kind": "return",
+              "amount": 750,
+              "remainingAfter": 4250,
+              "mode": "warmup_capital_return",
+              "taskId": "WD-PAT-004-cycle1"
+            },
+            {
+              "at": "2026-07-19T16:00:00.000Z",
+              "kind": "return",
+              "amount": 1000,
+              "remainingAfter": 3250,
+              "mode": "principal_recovery",
+              "taskId": "WD-PAT-004-cycle2"
+            },
+            {
+              "at": "2026-07-20T09:00:00.000Z",
+              "kind": "mode_change",
+              "amount": 0,
+              "remainingAfter": 0,
+              "mode": "profit_split",
+              "note": "Principal cleared — profit_split unlocked"
+            }
+          ]
         },
         {
           "callSign": "PAT-005",
@@ -3637,7 +4684,48 @@
               "distanceKmFromHouse": 124.9,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-12T10:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5100,
+              "taskId": "FUND-PAT-005-cycle1",
+              "note": "FUND verified"
+            },
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "from": "WithPartner",
+              "to": "InSportsbook",
+              "amount": 5100,
+              "taskId": "FUND-PAT-005-cycle1",
+              "note": "Sportsbook funded proof"
+            }
+          ],
+          "warmCycles": [
+            {
+              "cycle": 1,
+              "startedAt": "2026-07-13T12:00:00.000Z",
+              "completedAt": null,
+              "tags": [
+                "#CYCLE-1",
+                "#FANDUEL"
+              ],
+              "wdTaskId": "WD-PAT-005-cycle1",
+              "status": "open"
+            }
+          ],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-12T14:00:00.000Z",
+              "kind": "deploy",
+              "amount": 5100,
+              "remainingAfter": 5100,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-PAT-005-cycle1"
+            }
+          ]
         }
       ],
       "openTasks": [
@@ -5011,7 +6099,193 @@
             "oe": 35
           }
         ]
-      }
+      },
+      "messageLog": [
+        {
+          "id": "msg-pat-001",
+          "at": "2026-07-16T14:05:00.000Z",
+          "channel": "telegram",
+          "direction": "out",
+          "from": "Expert",
+          "to": "Partner",
+          "taskId": "PLAY-PAT-001-20260716-140000-001",
+          "callSign": "PAT-001",
+          "summary": "Tennis PLAY Djokovic — dynamic variant"
+        },
+        {
+          "id": "msg-pat-002",
+          "at": "2026-07-16T14:22:00.000Z",
+          "channel": "telegram",
+          "direction": "in",
+          "from": "Partner",
+          "to": "Expert",
+          "taskId": "PLAY-PAT-001-20260716-140000-001",
+          "callSign": "PAT-001",
+          "summary": "Ack + stake confirmed Kalshi rail"
+        },
+        {
+          "id": "msg-pat-003",
+          "at": "2026-07-20T18:30:00.000Z",
+          "channel": "portal",
+          "direction": "internal",
+          "from": "Ops",
+          "to": "System",
+          "summary": "BIC handoff PLAY→Ops after SLA clear"
+        },
+        {
+          "id": "msg-pat-004",
+          "at": "2026-07-21T08:10:00.000Z",
+          "channel": "telegram",
+          "direction": "out",
+          "from": "Bot",
+          "to": "Partner",
+          "callSign": "PAT-001",
+          "summary": "Limit refresh screenshot request"
+        },
+        {
+          "id": "msg-pat-005",
+          "at": "2026-07-23T13:15:00.000Z",
+          "channel": "telegram",
+          "direction": "out",
+          "from": "Expert",
+          "to": "Partner",
+          "taskId": "PLAY-PAT-002-20260723-130000-001",
+          "callSign": "PAT-002",
+          "summary": "CPI Kalshi ticket placed — pending settle"
+        },
+        {
+          "id": "msg-pat-006",
+          "at": "2026-07-23T15:00:00.000Z",
+          "channel": "voice",
+          "direction": "out",
+          "from": "Ops",
+          "to": "Partner",
+          "summary": "Desk review — trust 0.91 confirmed"
+        }
+      ],
+      "rotorSeries": [
+        {
+          "at": "2026-07-20T08:00:00.000Z",
+          "callSign": "PAT-001",
+          "driftBps": 18,
+          "limitFreshHours": 72
+        },
+        {
+          "at": "2026-07-21T08:00:00.000Z",
+          "callSign": "PAT-001",
+          "driftBps": 21,
+          "limitFreshHours": 62
+        },
+        {
+          "at": "2026-07-22T08:00:00.000Z",
+          "callSign": "PAT-001",
+          "driftBps": 24,
+          "limitFreshHours": 52
+        },
+        {
+          "at": "2026-07-23T08:00:00.000Z",
+          "callSign": "PAT-001",
+          "driftBps": 27,
+          "limitFreshHours": 42
+        },
+        {
+          "at": "2026-07-23T08:00:00.000Z",
+          "callSign": "PAT-001",
+          "driftBps": 30,
+          "limitFreshHours": 32
+        },
+        {
+          "at": "2026-07-23T08:00:00.000Z",
+          "callSign": "PAT-001",
+          "driftBps": 45,
+          "limitFreshHours": 22,
+          "action": "LIMIT refresh"
+        },
+        {
+          "at": "2026-07-23T08:00:00.000Z",
+          "callSign": "PAT-001",
+          "driftBps": 36,
+          "limitFreshHours": 12,
+          "action": "Stable"
+        }
+      ],
+      "exceptionTimeline": [
+        {
+          "id": "PLAY-EX-01",
+          "at": "2026-07-18T11:00:00.000Z",
+          "family": "PLAY",
+          "status": "mitigated",
+          "callSign": "PAT-001",
+          "summary": "Limit < requested stake → Reduce (if Expert permits) or reject; never replace live instruction"
+        },
+        {
+          "id": "PLAY-EX-02",
+          "at": "2026-07-19T11:00:00.000Z",
+          "family": "PLAY",
+          "status": "mitigated",
+          "callSign": "PAT-001",
+          "summary": "Warm-up count ≠ 2 / not WARMED → Block PLAY; escalate if Expert insists"
+        },
+        {
+          "id": "WTH-EX-02",
+          "at": "2026-07-20T11:00:00.000Z",
+          "family": "WTH",
+          "status": "mitigated",
+          "callSign": "PAT-001",
+          "summary": "Rail payment under review → PendingRailReview; recheck 30 min"
+        }
+      ],
+      "healthPulse": [
+        {
+          "day": "2026-07-20",
+          "readiness": 0.99,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 1200
+        },
+        {
+          "day": "2026-07-21",
+          "readiness": 0.95,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 800
+        },
+        {
+          "day": "2026-07-22",
+          "readiness": 0.92,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 600
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.85,
+          "openBic": 1,
+          "slaBreaches": 0,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.84,
+          "openBic": 2,
+          "slaBreaches": 0,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.83,
+          "openBic": 3,
+          "slaBreaches": 0,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.82,
+          "openBic": 4,
+          "slaBreaches": 0,
+          "softT": 0
+        }
+      ]
     },
     {
       "partnerCode": "NOV",
@@ -5184,7 +6458,19 @@
               "distanceKmFromHouse": 276.8,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-22T11:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5000,
+              "taskId": "FUND-NOV-001-20260722-110000-001",
+              "note": "Corridor FUND pending sportsbook proof"
+            }
+          ],
+          "warmCycles": [],
+          "gate12Ledger": []
         },
         {
           "callSign": "NOV-002",
@@ -5295,7 +6581,29 @@
               "distanceKmFromHouse": 277.5,
               "sameMetroAsHouse": false
             }
-          }
+          },
+          "capitalLedger": [
+            {
+              "at": "2026-07-22T11:00:00.000Z",
+              "from": "HouseFloat",
+              "to": "WithPartner",
+              "amount": 5000,
+              "taskId": "FUND-NOV-002-20260722-110000-001",
+              "note": "Corridor FUND pending sportsbook proof"
+            }
+          ],
+          "warmCycles": [],
+          "gate12Ledger": [
+            {
+              "at": "2026-07-22T11:05:00.000Z",
+              "kind": "deploy",
+              "amount": 5000,
+              "remainingAfter": 5000,
+              "mode": "warmup_capital_return",
+              "taskId": "FUND-NOV-002-20260722-110000-001",
+              "note": "Principal disclosed — Gate 12 open"
+            }
+          ]
         }
       ],
       "openTasks": [
@@ -5342,12 +6650,28 @@
         },
         "recentEntries": [
           {
+            "entryType": "CostOfPriming",
+            "stakeholder": "House",
+            "amount": 40,
+            "callSign": "NOV-001",
+            "taskId": "ONB-NOV-001-20260722-100000-001",
+            "timestamp": "2026-07-22T11:00:00.000Z"
+          },
+          {
             "entryType": "CapitalDeployment",
             "stakeholder": "House",
             "amount": 5000,
             "callSign": "NOV-002",
             "taskId": "FUND-NOV-002-20260722-140000-001",
             "timestamp": "2026-07-22T14:05:00.000Z"
+          },
+          {
+            "entryType": "CostOfPriming",
+            "stakeholder": "House",
+            "amount": 15,
+            "callSign": "NOV-001",
+            "taskId": "FUND-NOV-001-20260723-090000-001",
+            "timestamp": "2026-07-23T09:30:00.000Z"
           }
         ],
         "pendingDeployments": {
@@ -5749,10 +7073,152 @@
           {
             "day": "2026-07-22",
             "t": 0,
-            "oe": 0
+            "oe": 40
+          },
+          {
+            "day": "2026-07-23",
+            "t": 0,
+            "oe": 15
           }
         ]
-      }
+      },
+      "messageLog": [
+        {
+          "id": "msg-nov-001",
+          "at": "2026-07-22T10:15:00.000Z",
+          "channel": "telegram",
+          "direction": "out",
+          "from": "Ops",
+          "to": "Partner",
+          "taskId": "ONB-NOV-001-20260722-100000-001",
+          "callSign": "NOV-001",
+          "summary": "ONB welcome + KYC checklist"
+        },
+        {
+          "id": "msg-nov-002",
+          "at": "2026-07-22T14:40:00.000Z",
+          "channel": "sms",
+          "direction": "in",
+          "from": "Partner",
+          "to": "Ops",
+          "callSign": "NOV-001",
+          "summary": "ID selfie uploaded"
+        },
+        {
+          "id": "msg-nov-003",
+          "at": "2026-07-23T09:00:00.000Z",
+          "channel": "telegram",
+          "direction": "out",
+          "from": "Bot",
+          "to": "Partner",
+          "callSign": "NOV-001",
+          "summary": "FUND corridor $5k target — rail unconfirmed",
+          "slaBreached": true
+        },
+        {
+          "id": "msg-nov-004",
+          "at": "2026-07-23T16:20:00.000Z",
+          "channel": "system",
+          "direction": "internal",
+          "from": "System",
+          "to": "Ops",
+          "summary": "Throttle ONB until rail confirm"
+        }
+      ],
+      "rotorSeries": [
+        {
+          "at": "2026-07-22T12:00:00.000Z",
+          "callSign": "NOV-001",
+          "driftBps": 0,
+          "limitFreshHours": 999,
+          "action": "No limits yet"
+        }
+      ],
+      "exceptionTimeline": [
+        {
+          "id": "ONB-EX-01",
+          "at": "2026-07-18T11:00:00.000Z",
+          "family": "ONB",
+          "status": "mitigated",
+          "callSign": "NOV-001",
+          "summary": "Partner cannot provide rail profile screenshot → Pause ONB; no FUND until screenshot-first Hard Gate clears"
+        },
+        {
+          "id": "FUND-EX-02",
+          "at": "2026-07-19T11:00:00.000Z",
+          "family": "FUND",
+          "status": "mitigated",
+          "callSign": "NOV-001",
+          "summary": "Partner not ready / no confirm in window → Pause; do not send; re-trigger only after re-confirm"
+        },
+        {
+          "id": "FUND-EX-03",
+          "at": "2026-07-20T11:00:00.000Z",
+          "family": "FUND",
+          "status": "mitigated",
+          "callSign": "NOV-001",
+          "summary": "Insufficient House clean capital → Pause; notify Ops Lead; may reduce/delay"
+        },
+        {
+          "id": "ONB-EX-01",
+          "at": "2026-07-23T09:05:00.000Z",
+          "family": "ONB",
+          "status": "open",
+          "callSign": "NOV-001",
+          "summary": "Rail unconfirmed blocks FUND corridor"
+        }
+      ],
+      "healthPulse": [
+        {
+          "day": "2026-07-20",
+          "readiness": 0.28,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-21",
+          "readiness": 0.27,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-22",
+          "readiness": 0.26,
+          "openBic": 0,
+          "slaBreaches": 0,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.25,
+          "openBic": 0,
+          "slaBreaches": 1,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.24,
+          "openBic": 1,
+          "slaBreaches": 1,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.23,
+          "openBic": 2,
+          "slaBreaches": 1,
+          "softT": 0
+        },
+        {
+          "day": "2026-07-23",
+          "readiness": 0.22,
+          "openBic": 3,
+          "slaBreaches": 1,
+          "softT": 0
+        }
+      ]
     }
   ],
   "presence": {
@@ -5910,7 +7376,16 @@
     "profileTelegramLanes": 6,
     "expertLiquidityAvailable": 59100,
     "avgAgentClvBps": 17.2,
-    "openDeals": 8
+    "openDeals": 8,
+    "messageLogEntries": 15,
+    "messageLogSlaBreaches": 2,
+    "experimentOutcomes": 3,
+    "avgExperimentLiftPct": -0.27,
+    "rotorSamples": 15,
+    "capitalMoves": 30,
+    "warmCyclesOpen": 3,
+    "gate12Events": 24,
+    "bufferHistoryDays": 7
   },
   "identity": {
     "plane": "linked",
@@ -5918,7 +7393,7 @@
     "linkedPartners": 3,
     "linkedAccounts": 11,
     "linkedRails": 6,
-    "generatedAt": "2026-07-24T07:59:50.548Z",
+    "generatedAt": "2026-07-26T06:13:58.106Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -6090,7 +7565,7 @@
     ]
   },
   "enforcement": {
-    "evaluatedAt": "2026-07-24T07:59:50.550Z",
+    "evaluatedAt": "2026-07-26T06:13:58.108Z",
     "plane": "operate-lite",
     "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
     "warmupRequiredForPlay": 2,
@@ -6996,7 +8471,7 @@
     "throughput": {
       "T": 5116,
       "I": 47810,
-      "OE": 1600,
+      "OE": 1655,
       "byPartner": {
         "ASH": {
           "T": 996,
@@ -7011,7 +8486,7 @@
         "NOV": {
           "T": 0,
           "I": 10000,
-          "OE": 0
+          "OE": 55
         }
       }
     },
@@ -7030,7 +8505,7 @@
     }
   },
   "returnEfficiency": {
-    "computedAt": "2026-07-24T07:59:50.543Z",
+    "computedAt": "2026-07-26T06:13:58.103Z",
     "byProcess": [
       {
         "process": "WARM",
@@ -7038,9 +8513,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 7.833223877314815,
+        "tauDays": 9.759700266203703,
         "oe": 0,
-        "rP": 0.006939352283473028
+        "rP": 0.005569587028018823
       },
       {
         "process": "LIMIT",
@@ -7048,9 +8523,9 @@
         "partnerCode": "ASH",
         "deltaT": 279.12008928571424,
         "iPeak": 0,
-        "tauDays": 3.958223877314815,
+        "tauDays": 5.884700266203704,
         "oe": 0,
-        "rP": 70.51649879770422
+        "rP": 47.431487868417506
       },
       {
         "process": "WD",
@@ -7058,9 +8533,9 @@
         "partnerCode": "ASH",
         "deltaT": 4800,
         "iPeak": 4800,
-        "tauDays": 0.8332238773148148,
+        "tauDays": 2.7597002662037036,
         "oe": 0,
-        "rP": 1.2001576373718976
+        "rP": 0.3623581923900812
       },
       {
         "process": "WARM",
@@ -7068,9 +8543,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 0.7915572106481481,
+        "tauDays": 2.718033599537037,
         "oe": 0,
-        "rP": 0.06867159981461181
+        "rP": 0.019998832983248893
       },
       {
         "process": "PLAY",
@@ -7078,9 +8553,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5200,
-        "tauDays": 1.7082238773148148,
+        "tauDays": 3.6347002662037036,
         "oe": 0,
-        "rP": 0.03059717617648338
+        "rP": 0.014379955180642034
       },
       {
         "process": "WD",
@@ -7088,9 +8563,9 @@
         "partnerCode": "PAT",
         "deltaT": 5000,
         "iPeak": 5000,
-        "tauDays": 1.666557210648148,
+        "tauDays": 3.593033599537037,
         "oe": 0,
-        "rP": 0.6000394067546505
+        "rP": 0.2783163508765546
       },
       {
         "process": "WARM",
@@ -7098,9 +8573,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 0.8332238773148148,
+        "tauDays": 2.7597002662037036,
         "oe": 0,
-        "rP": 0.06523756877344293
+        "rP": 0.019696885442843842
       },
       {
         "process": "WARM",
@@ -7108,9 +8583,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 0.8748905439814815,
+        "tauDays": 2.8013669328703705,
         "oe": 35,
-        "rP": 0.06163746779117459
+        "rP": 0.019355554775900452
       },
       {
         "process": "ONB",
@@ -7118,9 +8593,9 @@
         "partnerCode": "NOV",
         "deltaT": 271.7875,
         "iPeak": 0,
-        "tauDays": 1.916557210648148,
-        "oe": 0,
-        "rP": 141.81027234145856
+        "tauDays": 3.843033599537037,
+        "oe": 40,
+        "rP": 70.7221243219788
       },
       {
         "process": "FUND",
@@ -7128,9 +8603,9 @@
         "partnerCode": "NOV",
         "deltaT": 40.768125000000005,
         "iPeak": 5000,
-        "tauDays": 1.7498905439814816,
+        "tauDays": 3.6763669328703705,
         "oe": 0,
-        "rP": 0.004659505720539678
+        "rP": 0.0022178485305964697
       },
       {
         "process": "LIMIT",
@@ -7138,9 +8613,9 @@
         "partnerCode": "NOV",
         "deltaT": 67.946875,
         "iPeak": 0,
-        "tauDays": 1.8748905439814816,
+        "tauDays": 3.8013669328703705,
         "oe": 0,
-        "rP": 36.24044892546598
+        "rP": 17.87432684081725
       }
     ],
     "byAsset": [
@@ -7149,15 +8624,15 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 996,
         "peakCapital": 5000,
-        "capitalDaysInI": 8.583223877314815,
-        "ce": 0.02320806294316512
+        "capitalDaysInI": 10.509700266203703,
+        "ce": 0.018953918280673734
       },
       {
         "callSign": "ASH-002",
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5010,
-        "capitalDaysInI": 5.666557210648148,
+        "capitalDaysInI": 7.593033599537037,
         "ce": 0
       },
       {
@@ -7165,7 +8640,7 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 4.916557210648148,
+        "capitalDaysInI": 6.843033599537037,
         "ce": 0
       },
       {
@@ -7181,23 +8656,23 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 2720,
         "peakCapital": 5200,
-        "capitalDaysInI": 5.895723877314815,
-        "ce": 0.08872140791558855
+        "capitalDaysInI": 7.822200266203704,
+        "ce": 0.06687081706881234
       },
       {
         "callSign": "PAT-002",
         "partnerCode": "PAT",
         "profitSplitTotal": 800,
         "peakCapital": 5000,
-        "capitalDaysInI": 2.8610016550925925,
-        "ce": 0.05592446957001911
+        "capitalDaysInI": 4.787478043981482,
+        "ce": 0.03342051880554147
       },
       {
         "callSign": "PAT-003",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 1,
+        "capitalDaysInI": 2.8708113773148147,
         "ce": 0
       },
       {
@@ -7205,15 +8680,15 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 600,
         "peakCapital": 5000,
-        "capitalDaysInI": 3.9478072106481483,
-        "ce": 0.030396621110659168
+        "capitalDaysInI": 5.874283599537037,
+        "ce": 0.020428022918310824
       },
       {
         "callSign": "PAT-005",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5100,
-        "capitalDaysInI": 1.9026683217592593,
+        "capitalDaysInI": 3.829144710648148,
         "ce": 0
       },
       {
@@ -7229,7 +8704,7 @@
         "partnerCode": "NOV",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 1.7464183217592593,
+        "capitalDaysInI": 3.672894710648148,
         "ce": 0
       }
     ],
@@ -7247,8 +8722,8 @@
         "partnerCode": "ASH",
         "deltaL": 0.3,
         "cAsset": 10010,
-        "daysToUsableLimit": 5.666557210648148,
-        "le": 0.000005288930978004184
+        "daysToUsableLimit": 7.593033599537037,
+        "le": 0.000003947042980536436
       },
       {
         "callSign": "ASH-003",
@@ -7287,8 +8762,8 @@
         "partnerCode": "PAT",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 0.9443349884259259,
-        "le": 0.00003176838766718344
+        "daysToUsableLimit": 2.8708113773148147,
+        "le": 0.000010450007352297804
       },
       {
         "callSign": "PAT-004",
@@ -7303,7 +8778,7 @@
         "partnerCode": "PAT",
         "deltaL": 0,
         "cAsset": 10100,
-        "daysToUsableLimit": 1.9026683217592593,
+        "daysToUsableLimit": 3.829144710648148,
         "le": 0
       },
       {
@@ -7319,18 +8794,18 @@
         "partnerCode": "NOV",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 1.7464183217592593,
-        "le": 0.000017178014927018986
+        "daysToUsableLimit": 3.672894710648148,
+        "le": 0.000008167944458910439
       }
     ],
-    "avgRP": 22.782287252665,
+    "avgRP": 12.431802930765583,
     "processTypeAvgRP": {
-      "LIMIT": 53.37847386158509,
-      "ONB": 141.81027234145856,
-      "WD": 0.900098522063274,
-      "PLAY": 0.03059717617648338,
-      "WARM": 0.05062149716567559,
-      "FUND": 0.004659505720539678
+      "LIMIT": 32.652907354617376,
+      "ONB": 70.7221243219788,
+      "WD": 0.32033727163331793,
+      "PLAY": 0.014379955180642034,
+      "WARM": 0.016155215057503003,
+      "FUND": 0.0022178485305964697
     }
   },
   "rankedActions": [
@@ -7339,7 +8814,7 @@
       "process": "LIMIT",
       "callSign": "ASH-001",
       "partnerCode": "ASH",
-      "rP": 70.51649879770422,
+      "rP": 47.431487868417506,
       "weightedScore": 0.24,
       "reason": "Stale/missing limit on WARMED seat — LIMIT first (highest R)",
       "ropeSafe": true
@@ -7349,7 +8824,7 @@
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
-      "rP": 1.2001576373718976,
+      "rP": 0.3623581923900812,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -7359,7 +8834,7 @@
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
-      "rP": 0.6000394067546505,
+      "rP": 0.2783163508765546,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -7369,7 +8844,7 @@
       "process": "PLAY",
       "callSign": "PAT-001",
       "partnerCode": "PAT",
-      "rP": 0.03059717617648338,
+      "rP": 0.014379955180642034,
       "weightedScore": 0.8800000000000001,
       "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
@@ -7389,7 +8864,7 @@
       "process": "WARM",
       "callSign": "ASH-004",
       "partnerCode": "ASH",
-      "rP": 0.06867159981461181,
+      "rP": 0.019998832983248893,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -7399,7 +8874,7 @@
       "process": "WARM",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
-      "rP": 0.06523756877344293,
+      "rP": 0.019696885442843842,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -7409,7 +8884,7 @@
       "process": "WARM",
       "callSign": "PAT-005",
       "partnerCode": "PAT",
-      "rP": 0.06163746779117459,
+      "rP": 0.019355554775900452,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -7419,7 +8894,7 @@
       "process": "WARM",
       "callSign": "ASH-002",
       "partnerCode": "ASH",
-      "rP": 0.006939352283473028,
+      "rP": 0.005569587028018823,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -7499,7 +8974,7 @@
       "process": "ONB",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
-      "rP": 141.81027234145856,
+      "rP": 70.7221243219788,
       "reason": "ONB new asset — buffer allows",
       "ropeSafe": true
     },

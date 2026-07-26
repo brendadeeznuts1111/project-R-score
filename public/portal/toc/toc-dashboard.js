@@ -232,6 +232,12 @@ function renderExperiments(experiments) {
                     }</li>`
                 )
                 .join('')}
+              ${
+                e.outcome
+                  ? `<li class="toc-sub">outcome n=${e.outcome.sampleN} · lift ${(e.outcome.liftPct * 100).toFixed(1)}% · ${pill(e.outcome.decision, e.outcome.decision === 'keep' ? 'ok' : e.outcome.decision === 'kill' ? 'hot' : 'dim')}
+                      · ctrl ${esc(e.outcome.controlMetric)} → tx ${esc(e.outcome.treatmentMetric)}</li>`
+                  : ''
+              }
             </ul>
           </article>`
           )
@@ -383,6 +389,18 @@ function renderAgents(experts) {
                     .map(
                       b =>
                         `<li class="toc-sub">${b.allowed ? pill('ok', 'ok') : pill('deny', 'hot')} <code>${esc(b.venueId)}</code> max ${money(b.maxStake)}</li>`
+                    )
+                    .join('')}
+                  ${
+                    pr.roi
+                      ? `<li class="toc-sub">ROI 30d T ${money(pr.roi.t30d)} · ${pr.roi.plays30d} plays · WR ${(pr.roi.winRate * 100).toFixed(0)}% · avg ${money(pr.roi.avgStake)}</li>`
+                      : ''
+                  }
+                  ${(pr.roi?.eligibility || [])
+                    .slice(0, 4)
+                    .map(
+                      x =>
+                        `<li class="toc-sub">${x.eligible ? pill('elig', 'ok') : pill('block', 'hot')} <code>${esc(x.callSign)}</code> ${esc(x.reason)}</li>`
                     )
                     .join('')}
                 </ul>
@@ -640,7 +658,21 @@ function renderReturnEfficiency(re, ranked, buf) {
       ${top[0] ? pill(`next ${top[0].process} ${top[0].callSign}`, 'hot') : ''}
       ${pill(`settlement ${Math.round((buf?.settlementFloatRatio ?? 0) * 100)}%`, 'dim')}
       ${pill(buf?.floatTargetSource || 'static', 'dim')}
+      ${buf?.history?.length ? pill(`buffer ${buf.history.length}d`, 'dim') : ''}
     </div>
+    ${
+      (buf?.history || []).length
+        ? `<h4 class="toc-subhead">Buffer history</h4><ul>${[...(buf.history || [])]
+            .slice(-5)
+            .map(
+              h =>
+                `<li class="toc-sub">${esc(h.day)} float ${money(h.houseFloatHard)} · ratio ${h.floatRatio} · settle ${(h.settlementFloatRatio * 100).toFixed(0)}% · principal ${money(h.principalOutstanding)}${
+                  h.throttleOnboarding ? ` ${pill('throttle', 'hot')}` : ''
+                }</li>`
+            )
+            .join('')}</ul>`
+        : ''
+    }
     ${
       procRank.length
         ? `<table class="toc-rp-table"><thead><tr><th>Process</th><th>avg R_P</th></tr></thead><tbody>${procRank
@@ -713,6 +745,17 @@ function renderPartners(partners, assetBySign, limitBySign) {
                 ${exp ? ` · exp ${esc(exp.variantKey)}` : ''}
               </p>
               ${formatPresenceLine(p.presence)}
+              ${
+                (p.healthPulse || []).length
+                  ? `<p class="toc-sub">health ${[...(p.healthPulse || [])]
+                      .slice(-3)
+                      .map(
+                        h =>
+                          `${h.day.slice(5)} r=${h.readiness} bic=${h.openBic} T=${money(h.softT)}`
+                      )
+                      .join(' · ')}</p>`
+                  : ''
+              }
             </div>
           </header>
           <div class="toc-cols">
@@ -751,13 +794,38 @@ function renderPartners(partners, assetBySign, limitBySign) {
                             : ''
                         }${ce ? ` · CE ${Number(ce.ce).toFixed(5)}` : ''}${le ? ` · LE ${Number(le.le).toFixed(5)}` : ''}</div>`
                       : '';
+                  const warm =
+                    (a.warmCycles || []).length
+                      ? `<div class="toc-sub">warm ${(a.warmCycles || [])
+                          .map(
+                            w =>
+                              `c${w.cycle}:${w.status}${
+                                w.returnedAmount != null ? ` ${money(w.returnedAmount)}` : ''
+                              }`
+                          )
+                          .join(' · ')}</div>`
+                      : '';
+                  const cap =
+                    (a.capitalLedger || []).length
+                      ? `<div class="toc-sub">cap ${[...(a.capitalLedger || [])]
+                          .slice(-2)
+                          .map(m => `${m.from}→${m.to} ${money(m.amount)}`)
+                          .join(' · ')}</div>`
+                      : '';
+                  const g12led =
+                    (a.gate12Ledger || []).length
+                      ? `<div class="toc-sub">g12 ${[...(a.gate12Ledger || [])]
+                          .slice(-2)
+                          .map(g => `${g.kind} rem ${money(g.remainingAfter)}`)
+                          .join(' · ')}</div>`
+                      : '';
                   return `<li><code>${esc(a.callSign)}</code> ${pill(a.status, a.status === 'WARMED' ? 'ok' : 'dim')} ${pill(a.flowStage, 'dim')}
                     warm ${a.warmupCount}/2 · ${esc(a.capitalLocation)} ${money(a.hardBalance)} ${g12}
                     <div class="toc-sub">${freshnessPill(a.limits?.freshness)}${
                       a.limits?.dailyMax != null
                         ? ` daily ${money(a.limits.dailyMax)} / weekly ${money(a.limits.weeklyMax)}`
                         : ''
-                    }</div>${metrics}
+                    }</div>${metrics}${warm}${cap}${g12led}
                     ${formatVenueLine(a.venue)}
                     ${formatPresenceLine(a.presence)}
                   </li>`;
@@ -776,6 +844,47 @@ function renderPartners(partners, assetBySign, limitBySign) {
                       .join('')
                   : '<li class="toc-sub">None</li>'
               }</ul>
+            </section>
+            <section>
+              <h4>MessageLog</h4>
+              <ul>${
+                (p.messageLog || []).length
+                  ? [...(p.messageLog || [])]
+                      .sort((a, b) => String(b.at).localeCompare(String(a.at)))
+                      .slice(0, 6)
+                      .map(
+                        m =>
+                          `<li class="toc-sub">${pill(m.channel, m.slaBreached ? 'hot' : 'dim')} ${esc(m.from)}→${esc(m.to)} · ${esc(m.summary)}${
+                            m.slaBreached ? ` ${pill('SLA', 'hot')}` : ''
+                          }</li>`
+                      )
+                      .join('')
+                  : '<li class="toc-sub">None</li>'
+              }</ul>
+              ${
+                (p.rotorSeries || []).length
+                  ? `<h4 class="toc-subhead">Rotor</h4><ul>${[...(p.rotorSeries || [])]
+                      .slice(-4)
+                      .map(
+                        r =>
+                          `<li class="toc-sub"><code>${esc(r.callSign)}</code> ${r.driftBps}bps · fresh ${r.limitFreshHours}h${
+                            r.action ? ` · ${esc(r.action)}` : ''
+                          }</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
+              ${
+                (p.exceptionTimeline || []).length
+                  ? `<h4 class="toc-subhead">Exceptions</h4><ul>${[...(p.exceptionTimeline || [])]
+                      .slice(-4)
+                      .map(
+                        x =>
+                          `<li class="toc-sub">${pill(x.status, x.status === 'open' ? 'hot' : 'ok')} <code>${esc(x.id)}</code> ${esc(x.summary)}</li>`
+                      )
+                      .join('')}</ul>`
+                  : ''
+              }
             </section>
             <section>
               <h4>Plays</h4>

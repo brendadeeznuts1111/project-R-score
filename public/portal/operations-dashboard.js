@@ -745,6 +745,20 @@ class OperationsDashboard extends HTMLElement {
                 (d.toc.openDeals != null ? ` · ${d.toc.openDeals} deals` : '') +
                 (d.toc.profilePhones != null ? ` · ${d.toc.profilePhones} phones` : '')
               : '';
+          const channel =
+            d.toc.messageLogEntries != null
+              ? ` · ${d.toc.messageLogEntries} msgs` +
+                (d.toc.messageLogSlaBreaches
+                  ? ` · ${d.toc.messageLogSlaBreaches} SLA`
+                  : '') +
+                (d.toc.avgExperimentLiftPct != null
+                  ? ` · lift ${(Number(d.toc.avgExperimentLiftPct) * 100).toFixed(0)}%`
+                  : '') +
+                (d.toc.rotorSamples != null ? ` · rotor ${d.toc.rotorSamples}` : '') +
+                (d.toc.capitalMoves != null ? ` · cap ${d.toc.capitalMoves}` : '') +
+                (d.toc.warmCyclesOpen != null ? ` · warmΔ ${d.toc.warmCyclesOpen}` : '') +
+                (d.toc.gate12Events != null ? ` · g12 ${d.toc.gate12Events}` : '')
+              : '';
           const tioe =
             t != null
               ? `T $${Math.round(t)} · I $${Math.round(i ?? 0)} · OE $${Math.round(oe ?? 0)}` +
@@ -752,7 +766,8 @@ class OperationsDashboard extends HTMLElement {
                 playable +
                 geo +
                 venue +
-                prof
+                prof +
+                channel
               : 'T/I/OE not baked — reseed toc';
           const ret =
             top != null
@@ -825,6 +840,12 @@ class OperationsDashboard extends HTMLElement {
             ? ` · oldest ${d.loop.oldestPendingAgeSec}s`
             : '') +
           ` · gate +${d.loop.gatedAllow ?? 0}/~${d.loop.gatedAdjust ?? 0}/-${d.loop.gatedDeny ?? 0}` +
+          (d.loop.gatedDefer != null && d.loop.gatedDefer > 0
+            ? ` · defer ${d.loop.gatedDefer}`
+            : '') +
+          (d.loop.loopCompletionRateByPlay != null
+            ? ` · play ${Math.round(Number(d.loop.loopCompletionRateByPlay) * 100)}%`
+            : '') +
           (d.loop.projectorBackend
             ? ` · projector ${d.loop.projectorBackend}${d.loop.projectorDurable ? '' : ' (attr)'}`
             : '') +

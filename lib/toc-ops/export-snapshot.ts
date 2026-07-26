@@ -69,6 +69,15 @@ export function emptyTocOpsSummarySlice(): TocOpsSummarySlice {
     expertLiquidityAvailable: 0,
     avgAgentClvBps: null,
     openDeals: 0,
+    messageLogEntries: 0,
+    messageLogSlaBreaches: 0,
+    experimentOutcomes: 0,
+    avgExperimentLiftPct: null,
+    rotorSamples: 0,
+    capitalMoves: 0,
+    warmCyclesOpen: 0,
+    gate12Events: 0,
+    bufferHistoryDays: 0,
   };
 }
 
@@ -128,6 +137,15 @@ export function tocOpsToSummarySlice(snap: TocOpsSnapshot): TocOpsSummarySlice {
       snap.profiles?.expertLiquidityAvailable ?? snap.summary.expertLiquidityAvailable ?? 0,
     avgAgentClvBps: snap.profiles?.avgAgentClvBps ?? snap.summary.avgAgentClvBps ?? null,
     openDeals: snap.profiles?.openDeals ?? snap.summary.openDeals ?? 0,
+    messageLogEntries: snap.summary.messageLogEntries ?? 0,
+    messageLogSlaBreaches: snap.summary.messageLogSlaBreaches ?? 0,
+    experimentOutcomes: snap.summary.experimentOutcomes ?? 0,
+    avgExperimentLiftPct: snap.summary.avgExperimentLiftPct ?? null,
+    rotorSamples: snap.summary.rotorSamples ?? 0,
+    capitalMoves: snap.summary.capitalMoves ?? 0,
+    warmCyclesOpen: snap.summary.warmCyclesOpen ?? 0,
+    gate12Events: snap.summary.gate12Events ?? 0,
+    bufferHistoryDays: snap.summary.bufferHistoryDays ?? snap.buffer.history?.length ?? 0,
   };
 }
 
@@ -152,7 +170,11 @@ export function withTocMetrics(snap: TocOpsSnapshot): TocOpsSnapshot {
           (['LIMIT', 'ONB', 'WD', 'PLAY', 'WARM', 'FUND'] as const),
       },
     },
-    buffer: tioe.buffer,
+    buffer: {
+      ...tioe.buffer,
+      // Preserve demo buffer history densification (return-efficiency rebuilds scalars only)
+      history: snap.buffer.history ?? tioe.buffer.history,
+    },
     partners: tioe.partners,
     returnEfficiency: tioe.returnEfficiency,
     rankedActions: tioe.rankedActions,

@@ -1,6 +1,6 @@
 /**
- * Second-pass demo seed densification — Soft/play calendar, desk scorecards,
- * rail health, proof vault, book permissions, exposure ladders.
+ * Demo seed densification — Soft/play calendar, desk scorecards, MessageLog,
+ * rotor, experiment outcomes, capital/warm/Gate12 ledgers, expert ROI.
  *
  * @see lib/toc-ops/profiles.ts
  * @see lib/toc-ops/fixture.ts
@@ -8,11 +8,20 @@
 import { demoPlacementFromPresence } from './presence.ts';
 import { summarizeProfiles } from './profiles.ts';
 import type {
+  TocAccount,
   TocBottleneck,
+  TocBufferHistoryPoint,
+  TocCapitalMove,
+  TocExceptionEvent,
+  TocExperiment,
   TocExpert,
+  TocGate12Event,
+  TocMessageLogEntry,
   TocPartner,
   TocPlay,
+  TocRotorPoint,
   TocSoftEntry,
+  TocWarmCycle,
 } from './types.ts';
 
 function withPlacement(partner: TocPartner, plays: TocPlay[]): TocPlay[] {
@@ -370,8 +379,7 @@ function deepenPartnerDesk(p: TocPartner): TocPartner {
     railId: r.id,
     successRate: r.confirmed ? (code === 'PAT' ? 0.97 : code === 'ASH' ? 0.93 : 0.8) : 0.4,
     avgSettleMin: r.railType === 'CashApp' ? 18 : r.railType === 'Venmo' ? 22 : 45,
-    lastFailureAt:
-      r.confirmed && code === 'ASH' ? '2026-07-11T09:00:00.000Z' : null,
+    lastFailureAt: r.confirmed && code === 'ASH' ? '2026-07-11T09:00:00.000Z' : null,
     volume30d: r.confirmed ? (code === 'PAT' ? 28_400 : code === 'ASH' ? 14_200 : 5001) : 0,
   }));
 
@@ -535,11 +543,622 @@ function deepenAgentDesk(e: TocExpert): TocExpert {
   };
 }
 
-/** Append Soft/play calendar + desk scorecards / book permissions. */
+function partnerMessageLog(code: string): TocMessageLogEntry[] {
+  if (code === 'ASH') {
+    return [
+      {
+        id: 'msg-ash-001',
+        at: '2026-07-18T19:55:00.000Z',
+        channel: 'telegram',
+        direction: 'out',
+        from: 'Expert',
+        to: 'Partner',
+        taskId: 'PLAY-ASH-001-20260718-200000-001',
+        callSign: 'ASH-001',
+        summary: 'PLAY card DEN @ MIN — stake $1000 ack',
+      },
+      {
+        id: 'msg-ash-002',
+        at: '2026-07-18T20:08:00.000Z',
+        channel: 'telegram',
+        direction: 'in',
+        from: 'Partner',
+        to: 'Ops',
+        taskId: 'PLAY-ASH-001-20260718-200000-001',
+        callSign: 'ASH-001',
+        summary: 'Slip posted · awaiting settle',
+      },
+      {
+        id: 'msg-ash-003',
+        at: '2026-07-19T10:05:00.000Z',
+        channel: 'sms',
+        direction: 'out',
+        from: 'Ops',
+        to: 'Partner',
+        callSign: 'ASH-001',
+        summary: 'Soft fee correction CostOfPriming $25 logged',
+      },
+      {
+        id: 'msg-ash-004',
+        at: '2026-07-23T19:12:00.000Z',
+        channel: 'telegram',
+        direction: 'out',
+        from: 'Bot',
+        to: 'Partner',
+        taskId: 'PLAY-ASH-001-20260723-190000-001',
+        callSign: 'ASH-001',
+        summary: 'Instruction HOU @ TEX waiting partner ack',
+        slaBreached: true,
+      },
+      {
+        id: 'msg-ash-005',
+        at: '2026-07-23T20:40:00.000Z',
+        channel: 'system',
+        direction: 'internal',
+        from: 'System',
+        to: 'Ops',
+        callSign: 'ASH-001',
+        summary: 'Rotor drift 48bps — LIMIT refresh queued',
+      },
+    ];
+  }
+  if (code === 'PAT') {
+    return [
+      {
+        id: 'msg-pat-001',
+        at: '2026-07-16T14:05:00.000Z',
+        channel: 'telegram',
+        direction: 'out',
+        from: 'Expert',
+        to: 'Partner',
+        taskId: 'PLAY-PAT-001-20260716-140000-001',
+        callSign: 'PAT-001',
+        summary: 'Tennis PLAY Djokovic — dynamic variant',
+      },
+      {
+        id: 'msg-pat-002',
+        at: '2026-07-16T14:22:00.000Z',
+        channel: 'telegram',
+        direction: 'in',
+        from: 'Partner',
+        to: 'Expert',
+        taskId: 'PLAY-PAT-001-20260716-140000-001',
+        callSign: 'PAT-001',
+        summary: 'Ack + stake confirmed Kalshi rail',
+      },
+      {
+        id: 'msg-pat-003',
+        at: '2026-07-20T18:30:00.000Z',
+        channel: 'portal',
+        direction: 'internal',
+        from: 'Ops',
+        to: 'System',
+        summary: 'BIC handoff PLAY→Ops after SLA clear',
+      },
+      {
+        id: 'msg-pat-004',
+        at: '2026-07-21T08:10:00.000Z',
+        channel: 'telegram',
+        direction: 'out',
+        from: 'Bot',
+        to: 'Partner',
+        callSign: 'PAT-001',
+        summary: 'Limit refresh screenshot request',
+      },
+      {
+        id: 'msg-pat-005',
+        at: '2026-07-23T13:15:00.000Z',
+        channel: 'telegram',
+        direction: 'out',
+        from: 'Expert',
+        to: 'Partner',
+        taskId: 'PLAY-PAT-002-20260723-130000-001',
+        callSign: 'PAT-002',
+        summary: 'CPI Kalshi ticket placed — pending settle',
+      },
+      {
+        id: 'msg-pat-006',
+        at: '2026-07-23T15:00:00.000Z',
+        channel: 'voice',
+        direction: 'out',
+        from: 'Ops',
+        to: 'Partner',
+        summary: 'Desk review — trust 0.91 confirmed',
+      },
+    ];
+  }
+  return [
+    {
+      id: 'msg-nov-001',
+      at: '2026-07-22T10:15:00.000Z',
+      channel: 'telegram',
+      direction: 'out',
+      from: 'Ops',
+      to: 'Partner',
+      taskId: 'ONB-NOV-001-20260722-100000-001',
+      callSign: 'NOV-001',
+      summary: 'ONB welcome + KYC checklist',
+    },
+    {
+      id: 'msg-nov-002',
+      at: '2026-07-22T14:40:00.000Z',
+      channel: 'sms',
+      direction: 'in',
+      from: 'Partner',
+      to: 'Ops',
+      callSign: 'NOV-001',
+      summary: 'ID selfie uploaded',
+    },
+    {
+      id: 'msg-nov-003',
+      at: '2026-07-23T09:00:00.000Z',
+      channel: 'telegram',
+      direction: 'out',
+      from: 'Bot',
+      to: 'Partner',
+      callSign: 'NOV-001',
+      summary: 'FUND corridor $5k target — rail unconfirmed',
+      slaBreached: true,
+    },
+    {
+      id: 'msg-nov-004',
+      at: '2026-07-23T16:20:00.000Z',
+      channel: 'system',
+      direction: 'internal',
+      from: 'System',
+      to: 'Ops',
+      summary: 'Throttle ONB until rail confirm',
+    },
+  ];
+}
+
+function partnerRotor(code: string): TocRotorPoint[] {
+  if (code === 'NOV') {
+    return [
+      {
+        at: '2026-07-22T12:00:00.000Z',
+        callSign: 'NOV-001',
+        driftBps: 0,
+        limitFreshHours: 999,
+        action: 'No limits yet',
+      },
+    ];
+  }
+  const sign = code === 'ASH' ? 'ASH-001' : 'PAT-001';
+  const base = code === 'ASH' ? 28 : 18;
+  return [0, 1, 2, 3, 4, 5, 6].map(i => ({
+    at: dayIso(10 + i, 8),
+    callSign: sign,
+    driftBps: base + i * (code === 'ASH' ? 4 : 3) + (i === 5 ? 12 : 0),
+    limitFreshHours: Math.max(2, 72 - i * 10),
+    action: i === 5 ? 'LIMIT refresh' : i === 6 ? 'Stable' : undefined,
+  }));
+}
+
+function partnerExceptionTimeline(p: TocPartner): TocExceptionEvent[] {
+  const fromKnown = p.knownExceptions.map((ex, i) => ({
+    id: ex.id,
+    at: dayIso(8 + i, 11),
+    family: ex.id.split('-')[0] ?? 'UNK',
+    status: 'mitigated' as const,
+    callSign: p.accounts[0]?.callSign,
+    summary: `${ex.trigger} → ${ex.action}`,
+  }));
+  if (p.partnerCode === 'ASH') {
+    fromKnown.push({
+      id: 'PLAY-EX-02',
+      at: '2026-07-23T19:30:00.000Z',
+      family: 'PLAY',
+      status: 'open',
+      callSign: 'ASH-001',
+      summary: 'Pending instruction SLA > 60m — Ball-in-Court Partner',
+    });
+  }
+  if (p.partnerCode === 'NOV') {
+    fromKnown.push({
+      id: 'ONB-EX-01',
+      at: '2026-07-23T09:05:00.000Z',
+      family: 'ONB',
+      status: 'open',
+      callSign: 'NOV-001',
+      summary: 'Rail unconfirmed blocks FUND corridor',
+    });
+  }
+  return fromKnown.sort((a, b) => a.at.localeCompare(b.at));
+}
+
+function novExtraSoft(): TocSoftEntry[] {
+  return [
+    {
+      entryType: 'CostOfPriming',
+      stakeholder: 'House',
+      amount: 40,
+      callSign: 'NOV-001',
+      taskId: 'ONB-NOV-001-20260722-100000-001',
+      timestamp: '2026-07-22T11:00:00.000Z',
+    },
+    {
+      entryType: 'CostOfPriming',
+      stakeholder: 'House',
+      amount: 15,
+      callSign: 'NOV-001',
+      taskId: 'FUND-NOV-001-20260723-090000-001',
+      timestamp: '2026-07-23T09:30:00.000Z',
+    },
+  ];
+}
+
+function deepenExperiments(exps: TocExperiment[], partners: TocPartner[]): TocExperiment[] {
+  const plays = partners.flatMap(p => p.recentPlays);
+  return exps.map(exp => {
+    if (exp.outcome) return exp;
+    const tagged = plays.filter(pl => pl.experimentId === exp.id);
+    const byVariant = exp.variants.map(v => {
+      const rows = tagged.filter(pl => pl.variantKey === v.key);
+      const settled = rows.filter(pl => pl.status === 'settled');
+      const wins = settled.filter(pl => pl.result === 'win').length;
+      const metric =
+        exp.metricName === 'throughput_t'
+          ? settled.reduce((n, pl) => n + Math.max(0, pl.pnl ?? 0), 0)
+          : settled.length === 0
+            ? (exp.assignments.find(a => a.variantKey === v.key)?.metricValue ?? 0)
+            : wins / settled.length;
+      return { variantKey: v.key, n: rows.length || 1, metric: Math.round(metric * 1000) / 1000 };
+    });
+    const control = byVariant[0]?.metric ?? 0;
+    const treatment = byVariant[1]?.metric ?? control;
+    const liftPct =
+      control === 0 ? 0 : Math.round(((treatment - control) / Math.abs(control)) * 1000) / 1000;
+    const sampleN = byVariant.reduce((n, v) => n + v.n, 0);
+    return {
+      ...exp,
+      outcome: {
+        sampleN,
+        controlMetric: control,
+        treatmentMetric: treatment,
+        liftPct,
+        ci95: [liftPct - 0.05, liftPct + 0.05] as [number, number],
+        decidedAt: exp.status === 'completed' ? '2026-07-01T00:00:00.000Z' : undefined,
+        decision:
+          exp.status === 'completed'
+            ? liftPct >= 0
+              ? 'keep'
+              : 'kill'
+            : liftPct > 0.05
+              ? 'iterate'
+              : 'pending',
+        byVariant,
+      },
+    };
+  });
+}
+
+function accountCapitalLedgers(
+  a: TocAccount,
+  partnerCode: string
+): {
+  capitalLedger: TocCapitalMove[];
+  warmCycles: TocWarmCycle[];
+  gate12Ledger: TocGate12Event[];
+} {
+  const cs = a.callSign;
+  const deploy = Math.max(a.hardBalance, a.gate12.housePrincipalOutstanding, 5000);
+  const outstanding = a.gate12.housePrincipalOutstanding;
+
+  const capitalLedger: TocCapitalMove[] = [];
+  const warmCycles: TocWarmCycle[] = [];
+  const gate12Ledger: TocGate12Event[] = [];
+
+  if (partnerCode === 'NOV' || a.status === 'New' || a.status === 'Funded') {
+    capitalLedger.push({
+      at: '2026-07-22T11:00:00.000Z',
+      from: 'HouseFloat',
+      to: 'WithPartner',
+      amount: Math.min(deploy, 5000),
+      taskId: `FUND-${cs}-20260722-110000-001`,
+      note: 'Corridor FUND pending sportsbook proof',
+    });
+    if (outstanding > 0) {
+      gate12Ledger.push({
+        at: '2026-07-22T11:05:00.000Z',
+        kind: 'deploy',
+        amount: outstanding,
+        remainingAfter: outstanding,
+        mode: 'warmup_capital_return',
+        taskId: `FUND-${cs}-20260722-110000-001`,
+        note: 'Principal disclosed — Gate 12 open',
+      });
+    }
+    return { capitalLedger, warmCycles, gate12Ledger };
+  }
+
+  capitalLedger.push(
+    {
+      at: dayIso(2, 10),
+      from: 'HouseFloat',
+      to: 'WithPartner',
+      amount: deploy,
+      taskId: `FUND-${cs}-cycle1`,
+      note: 'FUND verified',
+    },
+    {
+      at: dayIso(2, 14),
+      from: 'WithPartner',
+      to: 'InSportsbook',
+      amount: deploy,
+      taskId: `FUND-${cs}-cycle1`,
+      note: 'Sportsbook funded proof',
+    }
+  );
+  gate12Ledger.push({
+    at: dayIso(2, 14),
+    kind: 'deploy',
+    amount: deploy,
+    remainingAfter: deploy,
+    mode: 'warmup_capital_return',
+    taskId: `FUND-${cs}-cycle1`,
+  });
+
+  if (a.warmupCount >= 1) {
+    warmCycles.push({
+      cycle: 1,
+      startedAt: dayIso(3, 12),
+      completedAt: a.warmupCount >= 2 ? dayIso(5, 18) : null,
+      tags: a.warmupProgress.tags.slice(0, 2),
+      wdTaskId: `WD-${cs}-cycle1`,
+      returnedAmount: a.warmupCount >= 2 ? Math.round(deploy * 0.15) : undefined,
+      status: a.warmupCount >= 2 ? 'completed' : 'open',
+    });
+    if (a.warmupCount >= 2) {
+      capitalLedger.push({
+        at: dayIso(5, 18),
+        from: 'InSportsbook',
+        to: 'HouseFloat',
+        amount: Math.round(deploy * 0.15),
+        taskId: `WD-${cs}-cycle1`,
+        note: 'Warm cycle 1 capital return',
+      });
+      gate12Ledger.push({
+        at: dayIso(5, 18),
+        kind: 'return',
+        amount: Math.round(deploy * 0.15),
+        remainingAfter: Math.max(0, deploy - Math.round(deploy * 0.15)),
+        mode: 'warmup_capital_return',
+        taskId: `WD-${cs}-cycle1`,
+      });
+    }
+  }
+
+  if (a.warmupCount >= 2) {
+    warmCycles.push({
+      cycle: 2,
+      startedAt: dayIso(6, 12),
+      completedAt: a.status === 'WARMED' ? dayIso(9, 16) : null,
+      tags: a.warmupProgress.tags.slice(0, 3),
+      wdTaskId: `WD-${cs}-cycle2`,
+      returnedAmount: a.status === 'WARMED' ? Math.round(deploy * 0.2) : undefined,
+      status: a.status === 'WARMED' ? 'completed' : 'open',
+    });
+    if (a.status === 'WARMED') {
+      capitalLedger.push({
+        at: dayIso(9, 16),
+        from: 'InSportsbook',
+        to: a.capitalLocation === 'HouseFloat' ? 'HouseFloat' : 'InSportsbook',
+        amount: Math.round(deploy * 0.2),
+        taskId: `WD-${cs}-cycle2`,
+        note: 'Warm cycle 2 complete — WARMED',
+      });
+      const remAfterWarm = Math.max(0, deploy - Math.round(deploy * 0.35));
+      gate12Ledger.push({
+        at: dayIso(9, 16),
+        kind: 'return',
+        amount: Math.round(deploy * 0.2),
+        remainingAfter: remAfterWarm,
+        mode: remAfterWarm > 0 ? 'principal_recovery' : 'profit_split',
+        taskId: `WD-${cs}-cycle2`,
+      });
+      if (remAfterWarm === 0 || a.gate12.withdrawalMode === 'profit_split') {
+        gate12Ledger.push({
+          at: dayIso(10, 9),
+          kind: 'mode_change',
+          amount: 0,
+          remainingAfter: outstanding,
+          mode: 'profit_split',
+          note: 'Principal cleared — profit_split unlocked',
+        });
+      }
+    }
+  }
+
+  if (outstanding > 0 && a.gate12.withdrawalMode === 'principal_recovery') {
+    gate12Ledger.push({
+      at: '2026-07-23T12:00:00.000Z',
+      kind: 'disclosure',
+      amount: outstanding,
+      remainingAfter: outstanding,
+      mode: 'principal_recovery',
+      note: 'Gate 12 cashier Rope — WD profit_split blocked',
+    });
+    capitalLedger.push({
+      at: '2026-07-20T15:00:00.000Z',
+      from: 'HouseFloat',
+      to: 'InSportsbook',
+      amount: outstanding,
+      taskId: `FUND-${cs}-recycle`,
+      note: 'Recycle deploy — principal still out',
+    });
+  }
+
+  if (a.capitalLocation === 'HouseFloat' && a.status === 'WARMED') {
+    capitalLedger.push({
+      at: '2026-07-18T23:40:00.000Z',
+      from: 'InSportsbook',
+      to: 'HouseFloat',
+      amount: a.hardBalance || 1000,
+      taskId: `WD-${cs}-profit`,
+      note: 'Profit WD after settle',
+    });
+  }
+
+  return {
+    capitalLedger: capitalLedger.sort((x, y) => x.at.localeCompare(y.at)),
+    warmCycles,
+    gate12Ledger: gate12Ledger.sort((x, y) => x.at.localeCompare(y.at)),
+  };
+}
+
+function attachAccountLedgers(p: TocPartner): TocPartner {
+  return {
+    ...p,
+    accounts: p.accounts.map(a => ({ ...a, ...accountCapitalLedgers(a, p.partnerCode) })),
+    healthPulse: [0, 1, 2, 3, 4, 5, 6].map(i => {
+      const day = dayIso(10 + i, 0).slice(0, 10);
+      const softT = p.softBalance.recentEntries
+        .filter(e => e.entryType === 'ProfitSplit' && e.timestamp.startsWith(day))
+        .reduce((n, e) => n + e.amount, 0);
+      const sla = p.messageLog?.filter(m => m.slaBreached && m.at.startsWith(day)).length ?? 0;
+      const openBic = p.openTasks.filter(t => t.status !== 'Completed').length;
+      const readiness = Math.max(
+        0.1,
+        Math.min(0.99, p.readiness.score - i * 0.01 + softT / 10_000)
+      );
+      return {
+        day,
+        readiness: Math.round(readiness * 100) / 100,
+        openBic: Math.max(0, openBic - (6 - i)),
+        slaBreaches: sla,
+        softT,
+      };
+    }),
+  };
+}
+
+function deepenExpertRoi(experts: TocExpert[], partners: TocPartner[]): TocExpert[] {
+  const plays = partners.flatMap(p =>
+    p.recentPlays.map(pl => ({ ...pl, partnerCode: p.partnerCode }))
+  );
+  return experts.map(e => {
+    if (!e.profile) return e;
+    const mine = plays.filter(pl => pl.expertId === e.expertId);
+    const settled = mine.filter(pl => pl.status === 'settled');
+    const wins = settled.filter(pl => pl.result === 'win').length;
+    const t30d = settled.reduce((n, pl) => n + Math.max(0, pl.pnl ?? 0), 0);
+    const byMap = new Map<
+      string,
+      { callSign: string; partnerCode: string; t: number; n: number }
+    >();
+    for (const pl of settled) {
+      const key = pl.callSign;
+      const cur = byMap.get(key) ?? {
+        callSign: pl.callSign,
+        partnerCode: pl.partnerCode,
+        t: 0,
+        n: 0,
+      };
+      cur.t += Math.max(0, pl.pnl ?? 0);
+      cur.n += 1;
+      byMap.set(key, cur);
+    }
+    const eligibility = partners.flatMap(p =>
+      p.accounts
+        .filter(
+          a =>
+            a.expertId === e.expertId ||
+            p.recentPlays.some(pl => pl.expertId === e.expertId && pl.callSign === a.callSign)
+        )
+        .slice(0, 3)
+        .map(a => {
+          const g12Block = a.gate12.housePrincipalOutstanding > 0;
+          const warmBlock = a.warmupCount < 2;
+          const eligible = a.status === 'WARMED' && !g12Block && !warmBlock;
+          const reason = g12Block
+            ? 'Gate 12 principal outstanding'
+            : warmBlock
+              ? `Warm ${a.warmupCount}/2`
+              : a.status !== 'WARMED'
+                ? `Status ${a.status}`
+                : 'Eligible';
+          return {
+            callSign: a.callSign,
+            partnerCode: p.partnerCode,
+            eligible,
+            reason,
+          };
+        })
+    );
+    // Ensure at least one row per expert from plays
+    const elig =
+      eligibility.length > 0
+        ? eligibility
+        : mine.slice(0, 2).map(pl => ({
+            callSign: pl.callSign,
+            partnerCode: pl.partnerCode,
+            eligible: true,
+            reason: 'Eligible',
+          }));
+
+    return {
+      ...e,
+      profile: {
+        ...e.profile,
+        roi: {
+          t30d,
+          plays30d: mine.length,
+          winRate: settled.length === 0 ? 0 : Math.round((wins / settled.length) * 1000) / 1000,
+          avgStake:
+            mine.length === 0
+              ? 0
+              : Math.round(mine.reduce((n, pl) => n + pl.stake, 0) / mine.length),
+          byCallSign: [...byMap.values()].sort((a, b) => b.t - a.t),
+          eligibility: elig,
+        },
+      },
+    };
+  });
+}
+
+function demoBufferHistory(principalTotal: number): TocBufferHistoryPoint[] {
+  return [0, 1, 2, 3, 4, 5, 6].map(i => {
+    const principal = Math.round(principalTotal * (1.15 - i * 0.02));
+    const houseFloatHard = 38_000 + i * 700;
+    const floatRatio = Math.round((houseFloatHard / 50_000) * 100) / 100;
+    const settlementFloatRatio = Math.round((0.55 - i * 0.02) * 1000) / 1000;
+    return {
+      day: dayIso(10 + i, 0).slice(0, 10),
+      houseFloatHard,
+      floatRatio,
+      settlementFloatRatio,
+      principalOutstanding: principal,
+      throttleOnboarding: settlementFloatRatio >= 0.6,
+    };
+  });
+}
+
+export type TocDeepenResult = {
+  partners: TocPartner[];
+  experts: TocExpert[];
+  experiments: TocExperiment[];
+  profiles: ReturnType<typeof summarizeProfiles>;
+  bufferHistory: TocBufferHistoryPoint[];
+  channelRollup: {
+    messageLogEntries: number;
+    messageLogSlaBreaches: number;
+    experimentOutcomes: number;
+    avgExperimentLiftPct: number | null;
+    rotorSamples: number;
+    capitalMoves: number;
+    warmCyclesOpen: number;
+    gate12Events: number;
+    bufferHistoryDays: number;
+  };
+};
+
+/** Soft/play calendar + desk scorecards + MessageLog / rotor / experiment outcomes. */
 export function deepenSeedNarrative(
   partners: TocPartner[],
-  experts: TocExpert[]
-): { partners: TocPartner[]; experts: TocExpert[]; profiles: ReturnType<typeof summarizeProfiles> } {
+  experts: TocExpert[],
+  experiments: TocExperiment[] = []
+): TocDeepenResult {
   const denserPartners = partners.map(p => {
     let recentPlays = p.recentPlays;
     let entries = [...p.softBalance.recentEntries];
@@ -553,16 +1172,21 @@ export function deepenSeedNarrative(
       recentPlays = [...recentPlays, ...withPlacement(p, patExtraPlays())];
       entries = [...entries, ...patExtraSoft()];
     }
+    if (p.partnerCode === 'NOV') {
+      entries = [...entries, ...novExtraSoft()];
+    }
     bottlenecks = [...bottlenecks, ...resolvedBottlenecks(p.partnerCode)];
 
     const byStakeholder = recomputeSoftTotals(entries);
-    // Preserve elevated House float from prior narrative when recompute undershoots
     byStakeholder.House = Math.max(byStakeholder.House, p.softBalance.byStakeholder.House);
 
     const next: TocPartner = {
       ...p,
       recentPlays,
       bottlenecks,
+      messageLog: partnerMessageLog(p.partnerCode),
+      rotorSeries: partnerRotor(p.partnerCode),
+      exceptionTimeline: partnerExceptionTimeline(p),
       softBalance: {
         ...p.softBalance,
         recentEntries: entries.sort((a, b) => a.timestamp.localeCompare(b.timestamp)),
@@ -573,13 +1197,62 @@ export function deepenSeedNarrative(
         },
       },
     };
-    return deepenPartnerDesk(next);
+    return attachAccountLedgers(deepenPartnerDesk(next));
   });
 
-  const denserExperts = experts.map(deepenAgentDesk);
+  const denserExperts = deepenExpertRoi(experts.map(deepenAgentDesk), denserPartners);
+  const denserExps = deepenExperiments(experiments, denserPartners);
+  const lifts = denserExps
+    .map(e => e.outcome?.liftPct)
+    .filter((x): x is number => typeof x === 'number');
+  const messageLogEntries = denserPartners.reduce((n, p) => n + (p.messageLog?.length ?? 0), 0);
+  const messageLogSlaBreaches = denserPartners.reduce(
+    (n, p) => n + (p.messageLog?.filter(m => m.slaBreached).length ?? 0),
+    0
+  );
+  const rotorSamples = denserPartners.reduce((n, p) => n + (p.rotorSeries?.length ?? 0), 0);
+  const capitalMoves = denserPartners.reduce(
+    (n, p) => n + p.accounts.reduce((m, a) => m + (a.capitalLedger?.length ?? 0), 0),
+    0
+  );
+  const warmCyclesOpen = denserPartners.reduce(
+    (n, p) =>
+      n +
+      p.accounts.reduce(
+        (m, a) => m + (a.warmCycles?.filter(w => w.status === 'open').length ?? 0),
+        0
+      ),
+    0
+  );
+  const gate12Events = denserPartners.reduce(
+    (n, p) => n + p.accounts.reduce((m, a) => m + (a.gate12Ledger?.length ?? 0), 0),
+    0
+  );
+  const principalTotal = denserPartners.reduce(
+    (n, p) => n + p.accounts.reduce((m, a) => m + a.gate12.housePrincipalOutstanding, 0),
+    0
+  );
+  const bufferHistory = demoBufferHistory(principalTotal);
+
   return {
     partners: denserPartners,
     experts: denserExperts,
+    experiments: denserExps,
     profiles: summarizeProfiles(denserPartners, denserExperts),
+    bufferHistory,
+    channelRollup: {
+      messageLogEntries,
+      messageLogSlaBreaches,
+      experimentOutcomes: denserExps.filter(e => e.outcome).length,
+      avgExperimentLiftPct:
+        lifts.length === 0
+          ? null
+          : Math.round((lifts.reduce((a, b) => a + b, 0) / lifts.length) * 1000) / 1000,
+      rotorSamples,
+      capitalMoves,
+      warmCyclesOpen,
+      gate12Events,
+      bufferHistoryDays: bufferHistory.length,
+    },
   };
 }

@@ -20,6 +20,7 @@ import { scheduleInProcess, type InProcessCronJob } from '../harness/cron.ts';
 import { buildRegistrySnapshot } from '../../tools/ops-snapshot.ts';
 import { resolveR2BridgeConfig } from '../../scripts/lib/r2-bridge.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
+import { requeueFailedChannelOutbox } from '../channels/outbox.ts';
 import { AccountService } from './account-service.ts';
 import { openOperationsDb } from './db.ts';
 import { settlePendingPlays } from './ops-settle-batch.ts';
@@ -95,6 +96,10 @@ export async function runOpsSettleCycle(): Promise<{
 }> {
   const db = openOperationsDb();
   try {
+    const requeued = requeueFailedChannelOutbox(db, { maxRetries: 5, limit: 100 });
+    if (requeued > 0) {
+      console.info(`[${OPS_SETTLE_CRON_TITLE}] requeued failed outbox=${requeued}`);
+    }
     const batch = await settlePendingPlays(db, {
       limit: 50,
       defaultResult: 'push',
