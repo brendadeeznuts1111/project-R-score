@@ -1,6 +1,6 @@
 {
-  "source": "snapshot",
-  "generated": "2026-07-26T19:28:37.113Z",
+  "source": "live",
+  "generated": "2026-07-26T19:39:48.449Z",
   "liquidity": {
     "total": 85710
   },
@@ -136,11 +136,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "bf269f8cd5bf4b282710b216187f0cef935af2da903dc83ce4725d64f25a6e6e",
+    "proofHash": "b0d6f5f85de8b03dbf0871193f6b6e25cdcb5bad4895c73e7eb3751408206e1e",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-26T19:28:37.113Z"
+    "timestamp": "2026-07-26T19:39:48.450Z"
   },
   "registryClient": {
     "available": true,
@@ -693,10 +693,10 @@
     ]
   },
   "channels": {
-    "pending": 18,
+    "pending": 0,
     "failed": 0,
-    "sent": 565,
-    "oldestPendingAt": "2026-07-26T19:28:36.490Z",
+    "sent": 601,
+    "oldestPendingAt": null,
     "failRate": 0
   },
   "toc": {
@@ -798,11 +798,11 @@
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 565,
+    "outboxSent": 601,
     "outboxFailed": 0,
-    "outboxPending": 18,
-    "oldestPendingAgeSec": 0,
-    "manualStepsPerCycle": 18,
+    "outboxPending": 0,
+    "oldestPendingAgeSec": null,
+    "manualStepsPerCycle": 0,
     "loopCompletionRate": 1,
     "distinctPlaysDispatched": 7,
     "settledPlaysViaFullLoop": 7,

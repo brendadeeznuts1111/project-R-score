@@ -14,6 +14,7 @@ import {
   processChannelOutbox,
 } from '../channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
+import { linkTelegramChat } from '../telegram/flows/channel-meta.ts';
 import { onboardPartnerProfile } from './partner-onboarding.ts';
 
 const DEFAULT_TOPIC = 'ops-sync';
@@ -97,6 +98,16 @@ export function applyOpsSyncEvent(
         });
       }
       if (e.type === 'telegram_linked' && e.telegramUserId) {
+        const seat = db
+          .query('SELECT call_sign FROM tree_nodes WHERE id = $id')
+          .get({ $id: node.id as string }) as { call_sign: string | null } | null;
+        linkTelegramChat(db, {
+          treeNodeId: asTreeNodeId(node.id),
+          callSign: seat?.call_sign ?? null,
+          chatId: e.telegramUserId,
+          bindTreeNode: false,
+          topics: { identity: 1, plays: 1, toc: 1 },
+        });
         enqueuePartnerWelcomeEvent(db, {
           treeNodeId: binding.treeNodeId,
           profileKey: binding.profileKey as string,
@@ -180,7 +191,11 @@ export async function processOpsSyncQueue(
       setSyncCursor(db, maxSeq, DEFAULT_TOPIC);
     }
 
-    await processChannelOutbox(db, resolveProductionOutboxOpts({ deliver: false }));
+    // R2 durable drain on channel plane; skip Telegram here (no token in sync path).
+    await processChannelOutbox(
+      db,
+      resolveProductionOutboxOpts({ deliver: false, requireR2: true })
+    );
 
     return { processed, lastSeq: maxSeq };
   } catch {
