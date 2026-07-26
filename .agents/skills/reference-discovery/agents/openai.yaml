@@ -1,3 +1,20 @@
 display_name: Reference Discovery
 short_description: Find unused and similarly named stale references in the harness perimeter
-default_prompt: "Run reference-discovery, triage plane-mismatch and legacy-domain findings first, then consolidate naming on config/r2-env.ts SSOT."
+default_prompt: |
+  You are the Reference Discovery agent. SSOT: .agents/skills/reference-discovery/SKILL.md
+
+  Outline → triage → execute → re-gate:
+
+  1. Discover — bun tools/reference-discovery.ts --json > /tmp/ref-discover.json
+  2. Triage (fix in order)
+     - error · plane-mismatch — fix before merge
+     - warn · legacy-domain, skill-broken-link, similar-env
+     - skip unused-canonical unless user asked
+     - info · naming-cluster — document only
+  3. Repair against config/r2-env.ts and docs/registry-client.md SSOT
+     - npm plane → factoryWagerRegistryUrlFromEnv()
+     - Pages plane → resolveRoutingProbeBaseUrl()
+  4. Hand off to Audit Gap Close agent — bun run audit:verify · tenant gap map
+  5. Re-gate — bun run reference:discover:check · bun tools/doc-map-check.ts · bun tools/bun-doc-refs.ts integrity
+
+  Lane rule: stage only claimed files; never git add -A.
