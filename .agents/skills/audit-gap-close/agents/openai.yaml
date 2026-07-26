@@ -10,7 +10,7 @@ default_prompt: |
   1. bun run audit:verify — catalog must pass before closing any gap row
   2. Read tenant gap map (default: docs/harness/tenants/toc-ops.md; public: public-plane.md)
   3. Execute smallest fix at owner boundary — require bake + test + registry/portal proof
-  4. Re-gate: discover:compose:check · audit:verify · tenant fresh-rerun from map
+  4. Re-gate: discover:compose:check · audit:verify · doc-map · bun-doc-refs integrity · ci:harness:fast (when harness lane) · tenant fresh-rerun from map
 
   Reject prose-only closure. Do not implement dual-write or live CT on Pages.
   Lane rule: stage only claimed files; never git add -A.

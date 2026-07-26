@@ -16,7 +16,10 @@ Compose **Discovery → Audit → Tenant gap map → Execute → Re-gate**. Reje
 ```bash
 bun tools/reference-discovery.ts --json > /tmp/ref-discover.json
 bun run reference:discover:check
+bun run discover:compose:check
 bun run audit:verify
+bun tools/doc-map-check.ts
+bun tools/bun-doc-refs.ts integrity
 bun run test:toc-ops   # when tenant is toc-ops
 ```
 
@@ -45,6 +48,9 @@ bun run test:toc-ops   # when tenant is toc-ops
    bun run reference:discover:check
    bun run public:discover:check
    bun run audit:verify
+   bun tools/doc-map-check.ts
+   bun tools/bun-doc-refs.ts integrity
+   bun run ci:harness:fast           # when harness/docs/skills lane touched
    bun run test:toc-ops              # toc-ops tenant (71 tests · tests/toc-ops/)
    ```
 

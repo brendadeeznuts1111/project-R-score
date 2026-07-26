@@ -11,7 +11,8 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 | 2b. Discover | `bun run telegram:discover` | Bot API inventory + `ops_telegram_known_chats` (learned from updates) |
 | 2c. Brand | `bun run telegram:brand -- --groups` | Bun.Image profile, concern-separated groups, photos/topics |
 | 2d. Surfaces | `bun run telegram:brand -- --matrix` | Concern matrix + naming grammar (`lib/telegram/surfaces.ts`) |
-| 2e. Graph | `bun run telegram:ops -- graph` | Live topology from known chats (`--mermaid` · `--env`) |
+| 2e. Surfaces pipeline | `bun run telegram:surfaces:pipeline` | discover → audit → map (`telegram:surfaces:discover` · `:audit` · `:map`) |
+| 2f. Graph | `bun run telegram:ops -- graph` | Live topology from known chats (`--mermaid` · `--env`) |
 | 3. Webhook + menu | `bun run telegram:factory:setup` | `setMyCommands` + `setWebhook` → Pages `/api/telegram/webhook/factory` (R2 enqueue; see Architecture) |
 | 3b. Drain updates | `bun run telegram:ops:consume` | Processes R2 `telegram-updates` + `telegram-commands` + outbox |
 | 4. Linked seats | `/start link_<nonce>` or `bun tools/telegram-link-chat.ts ASH-001 tg:chat:…` | Sets `tree_nodes.telegram_id` + `ChatChannelMeta`; CLI also enqueues `partner.welcome` when a profile binding exists (`--no-welcome` to skip) |

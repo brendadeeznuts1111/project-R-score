@@ -349,7 +349,7 @@
       "phases": {
         "doctor": {
           "enabled": true,
-          "note": "bun run audit:verify"
+          "note": "bun run discover:compose:check && bun run audit:verify"
         },
         "rate": {
           "enabled": true,
@@ -398,6 +398,116 @@
         "precommit": {
           "enabled": false,
           "note": "compose with public-discovery doctor"
+        }
+      }
+    },
+    "harness-improve": {
+      "path": ".agents/skills/harness-improve",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run harness:status"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to harness-improve fresh-rerun on failed handoff"
+        }
+      }
+    },
+    "ops-dual-mode-experiments": {
+      "path": ".agents/skills/ops-dual-mode-experiments",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run ops:diagnose"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep staged gate"
+        }
+      }
+    },
+    "source-command-ast-grep": {
+      "path": ".agents/skills/source-command-ast-grep",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "cd .agents/skills/ast-grep && bun run doctor"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": true,
+          "script": "precommit",
+          "note": "bun run precommit:ast-grep from repo root"
+        }
+      }
+    },
+    "source-command-precommit": {
+      "path": ".agents/skills/source-command-precommit",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run precommit:ast-grep:staged"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": true,
+          "script": "precommit",
+          "note": ".husky/pre-commit hook chain"
+        }
+      }
+    },
+    "source-command-reference-discovery": {
+      "path": ".agents/skills/source-command-reference-discovery",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run reference:discover:check && bun run discover:compose:check"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to reference-discovery doctor"
+        }
+      }
+    },
+    "source-command-workflow": {
+      "path": ".agents/skills/source-command-workflow",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "cd .agents/skills/ast-grep && bun run workflow:plan"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "delegates to ast-grep workflow loop"
         }
       }
     }

@@ -35,9 +35,35 @@ New env keys: prefer SSOT helpers in `config/r2-env.ts` over raw `Bun.env` reads
 
 ## Compose
 
-- Bun doc refs → `docs-integrity` tenant · `bun tools/bun-doc-refs.ts schedule --once`
-- Code symbol collisions → ast-grep `collisions` / `anchors`
-- Registry live → `bun run verify:registry-client`
+| Layer | Gate |
+|-------|------|
+| Harness plane | `bun run reference:discover:check` |
+| Public plane | `bun run public:discover:check` |
+| Both planes | `bun run discover:compose:check` |
+| Markdown SSOT | `bun tools/doc-map-check.ts` |
+| Bun `@see` / taxonomy | `bun tools/bun-doc-refs.ts integrity` |
+| Audit catalog | `bun run audit:verify` |
+| Tenant gap rows | skill `audit-gap-close` · tenant gap map |
+| Code symbol collisions | ast-grep `collisions` / `anchors` |
+| Registry live | `bun run verify:registry-client` |
+
+## Audit evidence (Discovery → Audit → Re-gate)
+
+```bash
+bun run discover:compose:check
+bun run reference:discover:check
+bun run audit:verify
+bun tools/doc-map-check.ts
+bun tools/bun-doc-refs.ts integrity
+```
+
+| Gate | Last run | Result |
+|------|----------|--------|
+| `discover:compose:check` | 2026-07-26 | 0 errors · harness + public |
+| `reference:discover:check` | 2026-07-26 | 0 errors · 0 warn · 36 info |
+| `audit:verify` | 2026-07-26 | pass · 4 findings · 5 concepts |
+| `docs:map:check` | 2026-07-26 | pass |
+| `bun-doc-refs integrity` | 2026-07-26 | pass · 2277 links |
 
 ## Retirement
 

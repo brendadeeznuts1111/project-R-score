@@ -12,7 +12,10 @@ Use when the user asks to find stale references, naming drift, or unused canonic
 ```bash
 bun tools/reference-discovery.ts
 bun run reference:discover:check
+bun run discover:compose:check
 bun run docs:reference-discovery
+bun tools/doc-map-check.ts
+bun tools/bun-doc-refs.ts integrity
 ```
 
 Full skill: `.agents/skills/reference-discovery/SKILL.md`
