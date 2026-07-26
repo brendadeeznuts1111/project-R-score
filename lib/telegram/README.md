@@ -20,6 +20,8 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `telegram-transport-health.ts` | `getMe` + webhook probe for `telegram:verify` |
 | `telegram-discovery.ts` | Granular Bot API + known-chats inventory (`telegram:discover`) |
 | `known-chats.ts` | Self-learning `ops_telegram_known_chats` from updates |
+| `broadcast.ts` | Send-to-known-chats + `ops_broadcast_log` |
+| `refresh-known-chats.ts` | `getChat` / member-count refresh for directory |
 | `telegram-api.ts` | `sendTelegramBotMessage` · `editTelegramMessage` · `setMyCommands` · `answerCallbackQuery` (rate-limited + 429 retry) |
 
 ## Factory webhook commands
@@ -63,6 +65,8 @@ bun run telegram:verify
 
 # Known chats + Bot API inventory
 bun run telegram:discover
+bun run telegram:ops -- directory --refresh
+bun run telegram:ops -- send --all --preview "hello {{title}}"
 
 # Factory bot menu + webhook
 bun run telegram:factory:setup

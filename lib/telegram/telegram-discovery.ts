@@ -11,7 +11,7 @@
  */
 import { Database } from 'bun:sqlite';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
-import { listKnownChats, type KnownChatRow } from './known-chats.ts';
+import { formatKnownChatsTable, listKnownChats, type KnownChatRow } from './known-chats.ts';
 import {
   FACTORY_BOT_COMMANDS,
   getBotMe,
@@ -635,6 +635,12 @@ export function formatDiscoveryDigest(report: TelegramDiscoveryReport): string[]
   lines.push(
     `local: seats=${report.local.linkedSeats.length} meta=${report.local.channelMeta.length} known_chats=${knownActive}/${report.local.knownChats.length} fixture_ids=${report.local.fixtureLikeTelegramIds}`
   );
+  if (report.local.knownChats.length) {
+    lines.push('known chats directory:');
+    for (const row of formatKnownChatsTable(report.local.knownChats)) {
+      lines.push(`  ${row}`);
+    }
+  }
   lines.push(
     `chats: accessible=${report.summary.accessibleChats} inaccessible=${report.summary.inaccessibleChats} skipped=${report.summary.skippedNonProbeable}`
   );

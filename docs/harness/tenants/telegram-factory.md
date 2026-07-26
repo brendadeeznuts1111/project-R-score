@@ -13,7 +13,7 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 | 3b. Drain updates | `bun run telegram:ops:consume` | Processes R2 `telegram-updates` + `telegram-commands` + outbox |
 | 4. Linked seats | `/start link_<nonce>` or `bun tools/telegram-link-chat.ts ASH-001 tg:chat:…` | Sets `tree_nodes.telegram_id` + `ChatChannelMeta`; CLI also enqueues `partner.welcome` when a profile binding exists (`--no-welcome` to skip) |
 | 5. Drain | `bun run telegram:ops:consume` | R2 command queue + `ops_channel_outbox` projectors (HTML templates) |
-| 5b. Dry-run drain | `bun run telegram:ops:consume -- --dry-run` | Queue + outbox counts only |
+| 5b. Dry-run drain | `bun run telegram:ops:consume -- --preview` | Queue + outbox counts only |
 
 **Full identity integration** (cellphone → profile → seat → ChatChannelMeta → HTML templates): [`partner-onboarding-package.md`](partner-onboarding-package.md).
 
@@ -22,6 +22,14 @@ Transport health API: [`lib/telegram/telegram-transport-health.ts`](../../../lib
 ## Known chats (self-learning)
 
 Bot API has no membership list. On each drained update, Bun upserts `chat.id` into `ops_telegram_known_chats` (`lib/telegram/known-chats.ts`) from `message`, `callback_query`, and `my_chat_member`. Leave/kick sets `active=0`. Webhook `allowed_updates` includes `my_chat_member` via `telegram:factory:setup`.
+
+| Action | Command |
+|--------|---------|
+| Directory table | `bun run telegram:ops -- directory` |
+| Refresh titles / member counts | `bun run telegram:ops -- directory --refresh` or `telegram:discover -- --refresh` |
+| Broadcast | `bun run telegram:ops -- send --all "text"` · `--chat <id>` · `--kind group` · `--preview` · templates `{{title}}` `{{chatId}}` `{{type}}` `{{members}}` |
+
+Broadcast audits each attempt in `ops_broadcast_log`. Sends go through rate-limited `sendTelegramBotMessage`. Optional admin whitelist env: `OPS_ADMIN_USER_IDS` (for future in-chat ops gates; CLI send trusts the local token holder).
 
 ## Partner message path (deep)
 

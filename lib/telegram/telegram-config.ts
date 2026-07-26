@@ -17,6 +17,8 @@ export type TelegramEnvSnapshot = {
   webhookSecret: string | null;
   topics: TelegramTopicsMap;
   rateLimitMinIntervalMs: number;
+  /** Telegram user ids allowed for sensitive ops (comma-separated env). */
+  opsAdminUserIds: number[];
 };
 
 const DEFAULT_RATE_LIMIT_MIN_INTERVAL_MS = 34; // ~29 msg/s (Telegram global ~30/s)
@@ -43,6 +45,25 @@ export function parseTelegramTopics(raw: string | null | undefined): TelegramTop
   }
 }
 
+/** Parse OPS_ADMIN_USER_IDS / TELEGRAM_OPS_ADMIN_USER_IDS comma list. */
+export function parseOpsAdminUserIds(raw: string | null | undefined): number[] {
+  if (!raw?.trim()) return [];
+  const out: number[] = [];
+  for (const part of raw.split(/[,\s]+/)) {
+    const n = Number(part.trim());
+    if (Number.isFinite(n) && n > 0) out.push(Math.trunc(n));
+  }
+  return [...new Set(out)];
+}
+
+export function isOpsAdminUserId(
+  userId: number,
+  admins: number[] = loadTelegramEnv().opsAdminUserIds
+): boolean {
+  if (admins.length === 0) return false;
+  return admins.includes(userId);
+}
+
 export function loadTelegramEnv(): TelegramEnvSnapshot {
   const factoryToken = trimEnv('TELEGRAM_BOT_FACTORY');
   const legacyToken = trimEnv('TELEGRAM_BOT_TOKEN');
@@ -60,6 +81,9 @@ export function loadTelegramEnv(): TelegramEnvSnapshot {
       Number.isFinite(parsedRate) && parsedRate > 0
         ? parsedRate
         : DEFAULT_RATE_LIMIT_MIN_INTERVAL_MS,
+    opsAdminUserIds: parseOpsAdminUserIds(
+      trimEnv('OPS_ADMIN_USER_IDS') ?? trimEnv('TELEGRAM_OPS_ADMIN_USER_IDS')
+    ),
   };
 }
 

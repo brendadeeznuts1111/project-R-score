@@ -29,6 +29,7 @@ export type KnownChatRow = {
   lastName: string | null;
   isForum: boolean;
   botStatus: string | null;
+  memberCount: number | null;
   source: KnownChatSource;
   tenantSlug: string | null;
   firstSeenAt: string;
@@ -45,6 +46,7 @@ type DbRow = {
   last_name: string | null;
   is_forum: number;
   bot_status: string | null;
+  member_count: number | null;
   source: string;
   tenant_slug: string | null;
   first_seen_at: string;
@@ -65,6 +67,7 @@ export function ensureKnownChatsSchema(db: Database): void {
       last_name TEXT,
       is_forum INTEGER NOT NULL DEFAULT 0,
       bot_status TEXT,
+      member_count INTEGER,
       source TEXT NOT NULL DEFAULT 'message',
       tenant_slug TEXT,
       first_seen_at TEXT NOT NULL,
@@ -72,6 +75,11 @@ export function ensureKnownChatsSchema(db: Database): void {
       active INTEGER NOT NULL DEFAULT 1
     );
   `);
+  try {
+    db.run(`ALTER TABLE ops_telegram_known_chats ADD COLUMN member_count INTEGER`);
+  } catch {
+    /* already present */
+  }
   db.run(
     `CREATE INDEX IF NOT EXISTS idx_ops_telegram_known_chats_active
      ON ops_telegram_known_chats(active, last_seen_at);`
@@ -88,6 +96,7 @@ function rowToKnown(row: DbRow): KnownChatRow {
     lastName: row.last_name,
     isForum: row.is_forum === 1,
     botStatus: row.bot_status,
+    memberCount: typeof row.member_count === 'number' ? row.member_count : null,
     source: row.source as KnownChatSource,
     tenantSlug: row.tenant_slug,
     firstSeenAt: row.first_seen_at,
@@ -248,16 +257,42 @@ export function observeKnownChatsFromUpdate(opts: ObserveKnownChatsOpts): Observ
   return { upserted: chatIds.length, chatIds };
 }
 
+/** Filter aliases for CLI `--filter`. */
+export type KnownChatFilterKind = 'active' | 'inactive' | 'all' | 'group' | 'private' | 'channel';
+
 export type ListKnownChatsOpts = {
   activeOnly?: boolean;
+  /** Convenience filters (group = group|supergroup). */
+  filter?: KnownChatFilterKind;
+  chatIds?: string[]; // brand-ok — Telegram chat_id wire
   limit?: number;
 };
+
+function matchesFilter(row: KnownChatRow, filter: KnownChatFilterKind | undefined): boolean {
+  if (!filter || filter === 'all') return true;
+  if (filter === 'active') return row.active;
+  if (filter === 'inactive') return !row.active;
+  if (filter === 'group') return row.chatType === 'group' || row.chatType === 'supergroup';
+  if (filter === 'private') return row.chatType === 'private';
+  if (filter === 'channel') return row.chatType === 'channel';
+  return true;
+}
 
 export function listKnownChats(db: Database, opts: ListKnownChatsOpts = {}): KnownChatRow[] {
   ensureKnownChatsSchema(db);
   const limit = opts.limit ?? 200;
+  const activeOnly =
+    opts.filter === 'inactive' || opts.filter === 'all'
+      ? false
+      : opts.filter === 'active' ||
+          opts.filter === 'group' ||
+          opts.filter === 'private' ||
+          opts.filter === 'channel'
+        ? true
+        : (opts.activeOnly ?? true);
+
   const rows =
-    opts.activeOnly === false
+    activeOnly === false
       ? (db
           .query(
             `SELECT * FROM ops_telegram_known_chats
@@ -271,7 +306,69 @@ export function listKnownChats(db: Database, opts: ListKnownChatsOpts = {}): Kno
              ORDER BY last_seen_at DESC LIMIT $lim`
           )
           .all({ $lim: limit }) as DbRow[]);
-  return rows.map(rowToKnown);
+
+  let out = rows.map(rowToKnown);
+  if (opts.filter) out = out.filter(r => matchesFilter(r, opts.filter));
+  if (opts.chatIds?.length) {
+    const want = new Set(opts.chatIds.map(String));
+    out = out.filter(r => want.has(r.chatId));
+  }
+  return out;
+}
+
+/** Display label for directory / broadcast templates. */
+export function knownChatLabel(row: KnownChatRow): string {
+  return row.title ?? (row.username ? `@${row.username}` : null) ?? row.firstName ?? row.chatId;
+}
+
+/** Column-aligned directory table (no external deps). */
+export function formatKnownChatsTable(rows: KnownChatRow[]): string[] {
+  if (rows.length === 0) return ['(no known chats)'];
+
+  const cols = [
+    { key: 'chatId', head: 'ID', width: 16 },
+    { key: 'title', head: 'TITLE', width: 28 },
+    { key: 'chatType', head: 'TYPE', width: 11 },
+    { key: 'active', head: 'ACTIVE', width: 6 },
+    { key: 'members', head: 'MEMBERS', width: 7 },
+    { key: 'lastSeen', head: 'LAST SEEN', width: 20 },
+  ] as const;
+
+  const cells = rows.map(r => ({
+    chatId: r.chatId,
+    title: knownChatLabel(r).slice(0, 28),
+    chatType: r.chatType + (r.isForum ? '*' : ''),
+    active: r.active ? 'yes' : 'no',
+    members: r.memberCount != null ? String(r.memberCount) : '—',
+    lastSeen: r.lastSeenAt.slice(0, 19).replace('T', ' '),
+  }));
+
+  const pad = (s: string, w: number) =>
+    s.length >= w ? s.slice(0, w) : s + ' '.repeat(w - s.length);
+  const header = cols.map(c => pad(c.head, c.width)).join('  ');
+  const rule = cols.map(c => '-'.repeat(c.width)).join('  ');
+  const body = cells.map(cell =>
+    cols.map(c => pad(cell[c.key as keyof typeof cell] as string, c.width)).join('  ')
+  );
+  return [header, rule, ...body];
+}
+
+export function updateKnownChatMemberCount(
+  db: Database,
+  chatId: string, // brand-ok
+  memberCount: number | null
+): void {
+  ensureKnownChatsSchema(db);
+  db.run(
+    `UPDATE ops_telegram_known_chats
+     SET member_count = $n, last_seen_at = $now
+     WHERE chat_id = $id`,
+    {
+      $n: memberCount,
+      $now: new Date().toISOString(),
+      $id: chatId,
+    }
+  );
 }
 
 /** Open ops DB for observe — returns null if path unusable. */
