@@ -84,6 +84,12 @@ const CHEAP: Step[] = [
     repair: 'bun run audit:verify · bun run audit:catalog:build',
   },
   {
+    name: 'public-discover',
+    cmd: ['bun', 'run', 'public:discover:check'],
+    owner: 'lib/public-discovery.ts · docs/harness/tenants/public-plane.md',
+    repair: 'bun run public:discover:check · bun run public:audit:verify',
+  },
+  {
     name: 'portal-foundation',
     cmd: ['bun', 'run', 'verify:portal:static'],
     owner: 'docs/portal-foundation.md · tools/verify-portal.ts',

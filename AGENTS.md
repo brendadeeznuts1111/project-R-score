@@ -25,7 +25,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
-| Portal foundation (static UI) | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `serve:public:hot` |
+| Portal foundation (static UI) | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `bun run public:audit:verify` · [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) · `serve:public:hot` |
 | TOC Ops portal board (fixture) | [`docs/harness/tenants/toc-ops.md`](docs/harness/tenants/toc-ops.md) · `/portal/toc/` · `bun run ops:seed:toc` · `bun run test:toc-ops` |
 | Ops loop throughput | [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) · `bun run ops:loop:baseline` / `ops:loop:post` / `ops:outbox:requeue` · claim `ops-loop-throughput` |
 | Factory Telegram | [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` · `telegram:ops:consume` · [`lib/telegram/`](lib/telegram/) |

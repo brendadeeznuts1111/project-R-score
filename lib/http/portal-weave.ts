@@ -71,6 +71,16 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     cmd: 'bun run reference:discover:check',
     doc: 'docs/harness/tenants/reference-discovery.md',
   },
+  {
+    label: 'Public plane discovery',
+    cmd: 'bun run public:discover:check',
+    doc: 'docs/harness/tenants/public-plane.md',
+  },
+  {
+    label: 'Public audit bundle',
+    cmd: 'bun run public:audit:verify',
+    doc: 'docs/harness/tenants/public-plane.md',
+  },
   { label: 'Sync R2 registry index', cmd: 'bun run registry:sync-index-r2' },
   { label: 'Pages edge verify', cmd: 'bun run verify:pages-edge --taxonomy' },
 ];

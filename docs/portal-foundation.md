@@ -3,7 +3,9 @@
 Single source of truth for the FactoryWager static portal (`public/portal/`). New pages and edits must follow these patterns so health, env, and navigation stay consistent.
 
 **Template:** [`public/portal/_page-template.html`](../public/portal/_page-template.html)  
-**Verify:** `bun run verify:portal:static` (CI) · `bun run verify:portal` (live server)
+**Verify:** `bun run verify:portal:static` (CI) · `bun run verify:portal` (live server) · `bun run public:audit:verify` (discovery + static + audit)
+
+**Agents:** Public Discovery · Public Audit Gap Close — [`docs/harness/tenants/public-plane.md`](harness/tenants/public-plane.md)
 
 ---
 

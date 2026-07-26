@@ -14,6 +14,8 @@ describe('portal weave', () => {
     expect(p.generated).toBe('2026-01-01T00:00:00.000Z');
     expect(p.surfaces.length).toBeGreaterThan(8);
     expect(p.scripts.some(s => s.cmd.includes('reference:discover'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd.includes('public:discover'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd.includes('public:audit:verify'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:seed:toc'))).toBe(true);
     const pred = p.surfaces.find(s => s.label === 'Prediction report');
     expect(pred?.href).toBe('/registry/prediction/report/');

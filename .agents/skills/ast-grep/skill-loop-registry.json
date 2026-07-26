@@ -360,6 +360,46 @@
           "note": "compose with reference-discovery doctor"
         }
       }
+    },
+    "public-discovery": {
+      "path": ".agents/skills/public-discovery",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run public:discover:check"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 60
+        },
+        "test": {
+          "enabled": true,
+          "note": "bun test tests/public-discovery.test.ts tests/portal-static-checks.test.ts"
+        }
+      }
+    },
+    "public-audit-gap-close": {
+      "path": ".agents/skills/public-audit-gap-close",
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run public:audit:verify"
+        },
+        "test": {
+          "enabled": true,
+          "note": "bun test tests/discovery-compose.test.ts"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 60
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "compose with public-discovery doctor"
+        }
+      }
     }
   }
 }

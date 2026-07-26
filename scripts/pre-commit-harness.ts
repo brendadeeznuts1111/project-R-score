@@ -54,6 +54,19 @@ function isDocMapPath(file: string): boolean {
   return DOC_MAP_SSOT.has(file.replace(/^\.\//, ''));
 }
 
+/** Pages static plane — portal/registry/monitoring shells. */
+function isPublicPlanePath(file: string): boolean {
+  const n = file.replace(/^\.\//, '');
+  return (
+    n.startsWith('public/portal/') ||
+    n.startsWith('public/registry/') ||
+    n.startsWith('public/monitoring/') ||
+    n === 'public/index.html' ||
+    n === 'public/_redirects' ||
+    n === 'public/_headers'
+  );
+}
+
 /** Audit findings/concepts SSOT — verify even when no harness .ts is staged. */
 export function isAuditSsotPath(file: string): boolean {
   const n = file.replace(/^\.\//, '');
@@ -222,14 +235,33 @@ async function main(): Promise<void> {
     }
   }
 
+  const publicFiles = staged.filter(isPublicPlanePath);
+  if (publicFiles.length > 0) {
+    console.info(`🌐 Public plane discovery (${publicFiles.length} path(s) staged)...`);
+    const code = await runGate('public-discover', ['bun', 'run', 'public:discover:check'], timings);
+    if (code !== 0) {
+      console.error(
+        '❌ Public plane discovery failed — broken registry ref or portal anti-pattern\n' +
+          '   bun run public:discover:check\n' +
+          '   bun run verify:portal:static\n' +
+          '   docs/harness/tenants/public-plane.md'
+      );
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
   if (harnessFiles.length === 0) {
     if (
       docMapFiles.length > 0 ||
       projectsFiles.length > 0 ||
       libFiles.length > 0 ||
-      auditFiles.length > 0
+      auditFiles.length > 0 ||
+      publicFiles.length > 0
     ) {
-      console.info('✅ Harness pre-commit checks passed (doc/projects/lib/audit gates only)');
+      console.info(
+        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public gates only)'
+      );
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');
     }

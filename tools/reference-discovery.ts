@@ -16,22 +16,49 @@ import {
   type ReferenceDiscoveryReport,
   type ReferenceSeverity,
 } from '../lib/reference-discovery.ts';
+import {
+  publicReportPasses,
+  runPublicDiscovery,
+  type PublicDiscoveryReport,
+} from '../lib/public-discovery.ts';
 
 const args = Bun.argv.slice(2);
 const jsonOut = args.includes('--json');
 const check = args.includes('--check');
 const skipUnused = args.includes('--skip-unused');
+const publicOnly = args.includes('--public');
+const allPlanes = args.includes('--all');
 const minSeverity = (args.find((a, i) => args[i - 1] === '--min-severity') ??
   'warn') as ReferenceSeverity;
 
-const report: ReferenceDiscoveryReport = await runReferenceDiscovery({ skipUnused });
+let report: ReferenceDiscoveryReport | PublicDiscoveryReport;
+if (publicOnly) {
+  report = await runPublicDiscovery();
+} else {
+  report = await runReferenceDiscovery({ skipUnused });
+}
 
 if (jsonOut) {
   console.log(JSON.stringify(report, null, 2));
+} else if (publicOnly) {
+  const pub = report as PublicDiscoveryReport;
+  console.log(`public-discovery · ${pub.summary.total} findings`);
+  console.log(`  errors=${pub.summary.errors} warnings=${pub.summary.warnings}`);
+  for (const f of pub.findings.slice(0, 40)) {
+    const tag = f.severity.toUpperCase().padEnd(5);
+    console.log(`  [${tag}] ${f.kind} · ${f.title}`);
+    if (f.repair) console.log(`         repair: ${f.repair}`);
+    const sample = f.samples?.[0];
+    if (sample) console.log(`         @ ${sample.file}${sample.line ? `:${sample.line}` : ''}`);
+  }
+  if (pub.findings.length > 40) {
+    console.log(`  … ${pub.findings.length - 40} more (--json for full report)`);
+  }
 } else {
-  console.log(`reference-discovery · ${report.summary.total} findings`);
-  console.log(`  errors=${report.summary.errors} warnings=${report.summary.warnings}`);
-  for (const f of report.findings.slice(0, 40)) {
+  const harness = report as ReferenceDiscoveryReport;
+  console.log(`reference-discovery · ${harness.summary.total} findings`);
+  console.log(`  errors=${harness.summary.errors} warnings=${harness.summary.warnings}`);
+  for (const f of harness.findings.slice(0, 40)) {
     const tag = f.severity.toUpperCase().padEnd(5);
     console.log(`  [${tag}] ${f.kind} · ${f.title}`);
     if (f.canonical) console.log(`         canonical: ${f.canonical}`);
@@ -39,12 +66,27 @@ if (jsonOut) {
     const sample = f.samples?.[0];
     if (sample) console.log(`         @ ${sample.file}${sample.line ? `:${sample.line}` : ''}`);
   }
-  if (report.findings.length > 40) {
-    console.log(`  … ${report.findings.length - 40} more (--json for full report)`);
+  if (harness.findings.length > 40) {
+    console.log(`  … ${harness.findings.length - 40} more (--json for full report)`);
   }
 }
 
-if (check && !reportPasses(report, minSeverity)) {
-  console.error(`reference-discovery: FAIL (min-severity=${minSeverity})`);
-  process.exit(1);
+if (check) {
+  const ok = publicOnly
+    ? publicReportPasses(report as PublicDiscoveryReport, minSeverity as 'error' | 'warn' | 'info')
+    : reportPasses(report as ReferenceDiscoveryReport, minSeverity);
+  if (!ok) {
+    console.error(
+      `${publicOnly ? 'public-discovery' : 'reference-discovery'}: FAIL (min-severity=${minSeverity})`
+    );
+    process.exit(1);
+  }
+}
+
+if (allPlanes && check) {
+  const pub = await runPublicDiscovery();
+  if (!publicReportPasses(pub, 'error')) {
+    console.error('public-discovery: FAIL (composed with --all --check)');
+    process.exit(1);
+  }
 }

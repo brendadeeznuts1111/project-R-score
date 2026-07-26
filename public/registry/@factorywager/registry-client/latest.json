@@ -1,0 +1,25 @@
+{
+  "name": "@factorywager/registry-client",
+  "description": "Runtime-neutral HTTP SDK for the FactoryWager artifact registry",
+  "dist-tags": {
+    "latest": "1.0.0"
+  },
+  "versions": {
+    "1.0.0": {
+      "name": "@factorywager/registry-client",
+      "version": "1.0.0",
+      "description": "Runtime-neutral HTTP SDK for the FactoryWager artifact registry",
+      "type": "module",
+      "dist": {
+        "tarball": "https://score.factory-wager.com/registry/storage/%40factorywager/registry-client/1.0.0/artifact.tgz",
+        "shasum": "76f15dd931dcd2f9ee0d36473e58b879561a6df6",
+        "integrity": "sha512-76f15dd931dcd2f9ee0d36473e58b879561a6df6bdd9a4c276cdebc9ad76b792"
+      },
+      "publishedAt": "2026-07-24T04:02:27.943Z"
+    }
+  },
+  "time": {
+    "1.0.0": "2026-07-24T04:02:27.943Z",
+    "modified": "2026-07-24T04:02:27.943Z"
+  }
+}

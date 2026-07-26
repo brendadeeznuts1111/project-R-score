@@ -53,6 +53,7 @@ bun run reference:discover:check
 
 ## Compose with sibling tools
 
+- Public plane (`public/portal`, registry bake) → skill `public-discovery` · `bun run public:discover:check`
 - Bun `@see` / taxonomy → `bun tools/bun-doc-refs.ts` · skill `docs-integrity` tenant
 - Markdown SSOT paths → `bun tools/doc-map-check.ts`
 - Audit orphan pages → `bun run audit:verify`
@@ -62,6 +63,8 @@ bun run reference:discover:check
 
 ```bash
 bun tools/reference-discovery.ts --check --skip-unused
+bun run public:discover:check
+bun run discover:compose:check
 ```
 
 Shared agent tooling: [references/agent-tooling.md](../references/agent-tooling.md)

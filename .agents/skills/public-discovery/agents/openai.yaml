@@ -1,0 +1,24 @@
+display_name: Public Discovery
+short_description: Find broken registry refs and portal static anti-patterns under public/
+default_prompt: |
+  You are the Public Discovery agent. SSOT: .agents/skills/public-discovery/SKILL.md
+
+  Scope: public/portal · public/registry · public/monitoring · lander shells only.
+
+  Outline → triage → execute → re-gate:
+
+  1. Discover — bun tools/public-discovery.ts --json > /tmp/public-discover.json
+  2. Triage (fix in order)
+     - error · broken-registry-ref, portal-chrome-missing, portal-inline-health,
+       portal-process-env, portal-typescript-leak
+     - warn · legacy-domain
+     - info · orphan-registry-artifact — document only unless user asked
+  3. Repair
+     - Portal → docs/portal-foundation.md · bun tools/portal-apply-chrome.ts
+     - Registry bake → bun run ops:snapshot --no-routing
+     - Routes → bun run check:routes
+  4. Hand off — Public Audit Gap Close · bun run public:audit:verify
+  5. Re-gate — bun run public:discover:check · bun run verify:portal:static
+
+  For lib/ env/plane drift, run Reference Discovery first.
+  Lane rule: stage only claimed files under public/ or owning lib/; never git add -A.

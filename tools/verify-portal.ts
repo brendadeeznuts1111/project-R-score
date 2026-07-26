@@ -12,6 +12,7 @@
  */
 import { joinPath } from '../lib/path-bun.ts';
 import { resolveBunServeDefaultPort } from '../lib/http/bun-serve-shape.ts';
+import { collectPortalStaticViolations, PORTAL_ROOT_REL } from '../lib/portal-static-checks.ts';
 import {
   PORTAL_MARKDOWN_SLUGS,
   PORTAL_NAV_PROBE_PATHS,
@@ -23,12 +24,6 @@ const BASE =
   Bun.env.PORTAL_VERIFY_BASE || `http://127.0.0.1:${resolveBunServeDefaultPort(Bun.env, Bun.argv)}`;
 
 const NAV_PATHS = [...PORTAL_NAV_PROBE_PATHS];
-
-/** Pages allowed to fetch /api/health directly (diagnostic SSOT). */
-const INLINE_HEALTH_ALLOW = new Set(['data.js', 'health/index.html', 'health-page.js']);
-
-/** HTML shells excluded from script-include checks. */
-const HTML_SKIP = new Set(['_page-template.html']);
 
 async function walkPortalFiles(): Promise<string[]> {
   const out: string[] = [];
@@ -43,41 +38,15 @@ async function readPortalFile(rel: string): Promise<string> {
   return Bun.file(joinPath(PORTAL_ROOT, rel)).text();
 }
 
-async function checkInlineHealthFetch() {
-  for (const file of await walkPortalFiles()) {
-    if (INLINE_HEALTH_ALLOW.has(file)) continue;
-    const content = await readPortalFile(file);
-    if (/fetch\s*\(\s*['"`]\/api\/health/.test(content)) {
-      throw new Error(
-        `${file}: inline fetch('/api/health') — use data.js / portal:data (see docs/portal-foundation.md)`
-      );
-    }
+async function checkPortalStaticContract() {
+  const violations = await collectPortalStaticViolations();
+  if (violations.length > 0) {
+    const first = violations[0]!;
+    throw new Error(`${first.file}: ${first.message}`);
   }
-  console.log('✓ no forbidden inline /api/health fetches');
-}
-
-async function checkNoProcessEnv() {
-  for (const file of await walkPortalFiles()) {
-    const content = await readPortalFile(file);
-    if (/\bprocess\.env\b/.test(content)) {
-      throw new Error(`${file}: process.env on client — use /api/env`);
-    }
-  }
-  console.log('✓ no process.env in portal client');
-}
-
-async function checkHtmlIncludes() {
-  const files = (await walkPortalFiles()).filter(f => f.endsWith('.html') && !HTML_SKIP.has(f));
-  for (const file of files) {
-    const content = await readPortalFile(file);
-    if (!content.includes('src="/portal/data.js"')) {
-      throw new Error(`${file}: missing <script src="/portal/data.js">`);
-    }
-    if (!content.includes('src="/portal/topbar.js"')) {
-      throw new Error(`${file}: missing <script src="/portal/topbar.js">`);
-    }
-  }
-  console.log(`✓ ${files.length} HTML pages include data.js + topbar.js`);
+  console.log(
+    `✓ portal static contract (${PORTAL_ROOT_REL}: chrome · inline-health · process.env · ts-leak)`
+  );
 }
 
 async function checkFoundationDoc() {
@@ -235,9 +204,7 @@ async function checkPortalRouteWiring() {
 async function runStatic() {
   await checkFoundationDoc();
   await checkPortalRouteWiring();
-  await checkInlineHealthFetch();
-  await checkNoProcessEnv();
-  await checkHtmlIncludes();
+  await checkPortalStaticContract();
   await checkClientContract();
   await checkVerificationTaxonomyChrome();
 }

@@ -41,9 +41,11 @@ bun run test:toc-ops   # when tenant is toc-ops
 5. **Re-gate**
    ```bash
    bun run harness:status
+   bun run discover:compose:check
    bun run reference:discover:check
+   bun run public:discover:check
    bun run audit:verify
-   bun run test:toc-ops              # toc-ops tenant (59 tests · tests/toc-ops/)
+   bun run test:toc-ops              # toc-ops tenant (71 tests · tests/toc-ops/)
    ```
 
 ## Lane rules
@@ -65,6 +67,8 @@ bun run test:toc-ops   # when tenant is toc-ops
 
 | Tool | When |
 |------|------|
+| public-audit-gap-close | Portal/registry gap map under `public/` |
+| public-discovery | Broken `/registry/` refs · portal chrome |
 | reference-discovery | Naming/plane/env drift |
 | harness-improve | Commit thrash / failed handoff |
 | ast-grep `audit` | Code-shape rules, not domain gaps |

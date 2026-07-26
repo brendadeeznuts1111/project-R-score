@@ -1,0 +1,66 @@
+# Tenant: public-plane
+
+**Tenant** `public-plane` (agent-operated)
+**Discovery** `bun run public:discover:check`
+**Audit bundle** `bun run public:audit:verify`
+**Skills** `.agents/skills/public-discovery/SKILL.md` · `.agents/skills/public-audit-gap-close/SKILL.md`
+
+Pages static artifact plane — portal UI, registry bake, monitoring shells. Distinct from harness `reference-discovery` (code/env in `lib/`) and from live edge behavior in `functions/`.
+
+## Signal (failure)
+
+| Gate | Failure |
+|------|---------|
+| `public:discover:check` | Broken `/registry/` ref, missing portal chrome, TS in `.js`, inline `/api/health` |
+| `verify:portal:static` | Portal foundation contract (data.js, topbar, redirects) |
+| `audit:verify` | Audit catalog graph/evidence drift |
+
+## Intervention (repair)
+
+1. Report: `bun tools/public-discovery.ts --json`
+2. Fix **errors** first (`broken-registry-ref`, portal anti-patterns)
+3. Rebake when registry missing: `bun run ops:snapshot --no-routing`
+4. Portal chrome: `bun tools/portal-apply-chrome.ts` · [`docs/portal-foundation.md`](../../portal-foundation.md)
+5. Re-run: `bun run public:audit:verify`
+
+## Gap map
+
+| Gap | Status | Evidence |
+|-----|--------|----------|
+| Portal shells include `data.js` + `topbar.js` | **Closed** | `verify:portal:static` · `public-discovery` `portal-chrome-missing` |
+| No inline `/api/health` on client pages | **Closed** | `verify:portal:static` · `portal-inline-health` |
+| Browser `.js` free of TS annotations | **Closed** | `portal-typescript-leak` · `public/portal/app.js` history |
+| `/registry/` fetches resolve to baked JSON | **Closed (ops loop)** | `ops:snapshot` · `broken-registry-ref` gate |
+| Proof taxonomy panel on ops dashboard | **Closed** | `verify-portal.ts` taxonomy chrome check |
+| Live `/api/health` schema v1 on Pages | **Partial** | `verify:portal` live probe · env-dependent |
+| Orphan registry JSON without portal link | **Open (info)** | `orphan-registry-artifact` — triage only |
+
+## Compose
+
+| Layer | Gate |
+|-------|------|
+| CI (`ci:harness`) | `public:discover:check` ∥ cheap ratchets |
+| Pre-commit | staged `public/portal|registry|…` → `public:discover:check` |
+| Proof catalog | `public-plane-discovery-v1` · `freshRerun: public:audit:verify` |
+| Portal weave | operator scripts on `/registry/portal-weave.json` |
+| Combined agents | `discover:compose:check` = harness + public planes |
+
+- Harness naming/planes → `reference-discovery` · `bun run reference:discover:check`
+- Both planes → `bun run discover:compose:check`
+- TOC fixture rows → `audit-gap-close` · `docs/harness/tenants/toc-ops.md`
+- Platform routing → `docs/platform-routing.md` · `bun run check:routes`
+
+## Shared SSOT
+
+Portal static anti-patterns live in `lib/portal-static-checks.ts` — consumed by `tools/verify-portal.ts` and `lib/public-discovery.ts` (no duplicate rules).
+
+## Agents
+
+| Agent | Entry |
+|-------|-------|
+| Public Discovery | `.agents/skills/public-discovery/agents/openai.yaml` |
+| Public Audit Gap Close | `.agents/skills/public-audit-gap-close/agents/openai.yaml` |
+
+**Owner** `// owner: platform / portal`
+
+**Fresh-rerun** `bun run public:audit:verify`
