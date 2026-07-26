@@ -85,6 +85,15 @@ export function getPackageGroupRegistry(
   return row ? rowToRegistry(row) : null;
 }
 
+/** All package_group_registry rows, sorted by partner code. */
+export function listPackageGroupRegistry(db: Database): PackageGroupRegistryRow[] {
+  ensurePackageGroupRegistrySchema(db);
+  const rows = db
+    .query(`SELECT * FROM package_group_registry ORDER BY partner_code`)
+    .all() as DbRow[];
+  return rows.map(rowToRegistry);
+}
+
 /** chat_id → registry row (for directory join). */
 export function packageGroupRegistryByChatId(db: Database): Map<string, PackageGroupRegistryRow> {
   ensurePackageGroupRegistrySchema(db);

@@ -86,5 +86,6 @@ bun run ops:snapshot --no-routing # portal-weave rebake
 | `reference:discover:check` | 2026-07-26 | 0 errors · 0 warn (`similar-env` trimmed) |
 | `test:toc-ops` | 2026-07-26 | 71 pass · 18 files |
 | `cloudflare:preflight` | 2026-07-26 | pass · 13 contracts · 20 consistency |
-| `ci:harness:fast` | 2026-07-26 | pass · health probe timeout fix · invisible-char ratchet |
-| Registry rebake | 2026-07-26 | `portal-weave.json` includes `public:discover:check` · `public:audit:verify` + weave artifacts |
+| `ci:harness:fast` | 2026-07-26 | pass |
+| `harness-skills-catalog` | 2026-07-26 | 22 skills baked · portal-weave artifact |
+| Registry rebake | 2026-07-26 | `portal-weave.json` · `harness-skills-catalog.json` + weave artifacts |

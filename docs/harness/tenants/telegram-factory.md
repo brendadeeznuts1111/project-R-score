@@ -27,6 +27,8 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 
 **Handshake verify:** `bun tools/verify-package-group-handshake.ts ASH` — see [`partner-package-group-handshake.md`](partner-package-group-handshake.md#e2e-validation-runbook).
 
+**Handshake desk:** `bun run telegram:handshake:desk` — registry + known chats + verify in one table ([ADR-0003](../../adr/0003-telegram-handshake-desk.md)).
+
 Transport health API: [`lib/telegram/telegram-transport-health.ts`](../../../lib/telegram/telegram-transport-health.ts) · `bun run telegram:verify -- --json`
 
 ## Known chats (self-learning)
@@ -39,6 +41,7 @@ Bot API has no membership list. On each drained update, Bun upserts `chat.id` in
 | Rich directory (package join) | `bun run telegram:ops -- directory --rich` |
 | Refresh titles / member counts | `bun run telegram:ops -- directory --refresh` or `telegram:discover -- --refresh` |
 | Verify handshake | `bun tools/verify-package-group-handshake.ts ASH` | JSONL + registry lifecycle checks |
+| Desk (registry + metadata + verify) | `bun run telegram:handshake:desk` | Read-side SSOT; `--live` · `--detail` · `--json` |
 | Broadcast (direct) | `bun run telegram:ops -- send --all "text"` | Rate-limited immediate send + `ops_broadcast_log` |
 | Broadcast (queued) | `bun run telegram:ops -- send --all --queue "text"` | Enqueue per chat; drain via `telegram:ops:consume` |
 

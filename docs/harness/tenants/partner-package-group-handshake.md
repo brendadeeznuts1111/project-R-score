@@ -234,6 +234,11 @@ bun run test:telegram-handshake
 bun run telegram:handshake:verify ASH --json
 bun run telegram:handshake:verify ASH --live
 
+# Unified desk (registry + known chats + handshake)
+bun run telegram:handshake:desk
+bun run telegram:handshake:desk ASH PAT --refresh --live --detail
+bun run telegram:handshake:desk --json
+
 # Broadcast queue
 bun test tests/ops-channel-outbox.test.ts tests/telegram-broadcast.test.ts
 bun run telegram:ops -- send --all --queue --preview "hello {{title}}"

@@ -65,6 +65,7 @@ bun tools/bun-doc-refs.ts integrity
 | `audit:verify` | 2026-07-26 | pass · 4 findings · 5 concepts |
 | `docs:map:check` | 2026-07-26 | pass |
 | `bun-doc-refs integrity` | 2026-07-26 | pass · 2277 links |
+| `harness-skills-catalog` | 2026-07-26 | 22 skills · `skill-loop-registry.json` |
 
 ## Retirement
 

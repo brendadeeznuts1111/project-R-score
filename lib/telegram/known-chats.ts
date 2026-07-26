@@ -101,6 +101,18 @@ export function ensureKnownChatsSchema(db: Database): void {
   );
 }
 
+/** Direct lookup by chat_id (avoids listKnownChats limit when joining registry rows). */
+export function getKnownChatById(
+  db: Database,
+  chatId: string // brand-ok
+): KnownChatRow | null {
+  ensureKnownChatsSchema(db);
+  const row = db
+    .query(`SELECT * FROM ops_telegram_known_chats WHERE chat_id = $id`)
+    .get({ $id: chatId.trim() }) as DbRow | null;
+  return row ? rowToKnown(row) : null;
+}
+
 function rowToKnown(row: DbRow): KnownChatRow {
   return {
     chatId: row.chat_id,
