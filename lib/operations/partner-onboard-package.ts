@@ -26,8 +26,15 @@ import {
   type AssignOnboardingResult,
 } from './partner-onboarding.ts';
 import type { PartnerProfileBinding } from './partner-profile-bridge.ts';
+import { formatPackageGroupTitle } from '../telegram/surfaces.ts';
+import {
+  appendPendingPackageGroupArtifact,
+  type PackageGroupCreateArtifact,
+} from '../telegram/package-group-registry.ts';
 
 export const CALL_SIGN_PATTERN = /^[A-Z]{2,4}-\d{3}$/;
+
+export const PARTNER_CODE_FROM_CALL_SIGN = /^([A-Z]{2,4})-\d{3}$/;
 
 export type UnboundAgentSeat = {
   treeNodeId: TreeNodeId;
@@ -503,4 +510,122 @@ export function buildOnboardChecklist(
   );
 
   return { lines, checklist };
+}
+
+export type PackageGroupRequest = {
+  partnerCode: string;
+  displayName: string;
+  suggestedTitle: string;
+  requestedBy: string | null;
+  treeNodeId: TreeNodeId;
+};
+
+/** Extract partner package code from seat call-sign (ASH-001 → ASH). */
+export function partnerCodeFromCallSign(callSign: string | null): string | null {
+  if (!callSign?.trim()) return null;
+  const m = callSign.trim().match(PARTNER_CODE_FROM_CALL_SIGN);
+  return m ? m[1]! : null;
+}
+
+/** Resolve package group title inputs for a seat (code + display name). */
+export function resolvePackageGroupRequest(
+  db: Database,
+  treeNodeId: TreeNodeId
+): PackageGroupRequest {
+  const ctx = loadOnboardNodeContext(db, treeNodeId);
+  let partnerCode = partnerCodeFromCallSign(ctx.callSign);
+
+  if (!partnerCode && ctx.parentId) {
+    const parent = db
+      .query(`SELECT call_sign, name, type FROM tree_nodes WHERE id = $id AND active = 1`)
+      .get({ $id: ctx.parentId }) as {
+      call_sign: string | null;
+      name: string;
+      type: string;
+    } | null;
+    if (parent?.type === 'partner') {
+      partnerCode =
+        partnerCodeFromCallSign(parent.call_sign) ??
+        parent.call_sign?.replace(/-\d+$/, '').toUpperCase() ??
+        null;
+      if (!partnerCode && parent.name) {
+        const fromName = parent.name.replace(/^TOC\s+/i, '').trim();
+        const token = fromName.split(/\s+/)[0]?.toUpperCase();
+        if (token && /^[A-Z]{2,4}$/.test(token)) partnerCode = token;
+      }
+    }
+  }
+
+  if (!partnerCode) {
+    throw new Error(
+      `Cannot derive partner_code for ${ctx.callSign ?? treeNodeId} — use call-sign ASH-001 or parent partner node`
+    );
+  }
+
+  let displayName = `${partnerCode} Ops`;
+  if (ctx.parentId) {
+    const parent = db
+      .query(`SELECT name, type FROM tree_nodes WHERE id = $id`)
+      .get({ $id: ctx.parentId }) as { name: string; type: string } | null;
+    if (parent?.type === 'partner' && parent.name?.trim()) {
+      displayName = parent.name.replace(/^TOC\s+/i, '').trim() || displayName;
+    }
+  }
+  if (displayName === `${partnerCode} Ops` && ctx.name?.trim()) {
+    displayName = ctx.name.replace(/^TOC\s+/i, '').trim() || displayName;
+  }
+
+  const suggestedTitle = formatPackageGroupTitle(partnerCode, displayName);
+  return {
+    partnerCode,
+    displayName,
+    suggestedTitle,
+    requestedBy: ctx.callSign,
+    treeNodeId,
+  };
+}
+
+export function formatPackageGroupOperatorRecipe(req: PackageGroupRequest): string[] {
+  return [
+    'Package group (manual ct / Telegram — Soft plane):',
+    `  1. Create supergroup + Topics titled exactly: ${req.suggestedTitle}`,
+    '  2. Add @TOC_Op_bot as administrator (Manage Topics when using forum topics)',
+    '  3. Copy chat_id (-100…) and invite link',
+    `  4. bun run telegram:ops -- link-package-group ${req.partnerCode} <chat_id> --invite '<url>'`,
+    `  5. ct: register partner ${req.partnerCode} telegram_ref when live (toc-ops-repo)`,
+    `  SSOT title: formatPackageGroupTitle("${req.partnerCode}", "${req.displayName}")`,
+  ];
+}
+
+export type EmitPackageGroupCreateOpts = {
+  /** When true, skip JSONL append (still prints recipe). */
+  dryRun?: boolean;
+  now?: string;
+};
+
+/** Append pending JSONL + return artifact + operator recipe lines. */
+export async function emitPackageGroupCreateRequest(
+  db: Database,
+  treeNodeId: TreeNodeId,
+  opts?: EmitPackageGroupCreateOpts
+): Promise<{ artifact: PackageGroupCreateArtifact; jsonlPath: string | null; recipe: string[] }> {
+  const req = resolvePackageGroupRequest(db, treeNodeId);
+  const artifact: PackageGroupCreateArtifact = {
+    action: 'create_package_group',
+    partner_code: req.partnerCode,
+    display_name: req.displayName,
+    suggested_title: req.suggestedTitle,
+    requested_by: req.requestedBy,
+    tree_node_id: treeNodeId as string,
+    timestamp: opts?.now ?? new Date().toISOString(),
+  };
+  let jsonlPath: string | null = null;
+  if (!opts?.dryRun) {
+    jsonlPath = await appendPendingPackageGroupArtifact(artifact);
+  }
+  return {
+    artifact,
+    jsonlPath,
+    recipe: formatPackageGroupOperatorRecipe(req),
+  };
 }

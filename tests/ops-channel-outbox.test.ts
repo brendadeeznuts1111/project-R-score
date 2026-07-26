@@ -130,8 +130,10 @@ describe('ops channel outbox', () => {
   test('telegram projector uses ops chat + forum thread when no telegramId', async () => {
     const prevChat = Bun.env.TELEGRAM_OPS_CHAT_ID;
     const prevTopics = Bun.env.TELEGRAM_TOPICS;
+    const prevSurfaces = Bun.env.TELEGRAM_SURFACES;
     Bun.env.TELEGRAM_OPS_CHAT_ID = '-100999';
     Bun.env.TELEGRAM_TOPICS = JSON.stringify({ alerts: 12 });
+    delete Bun.env.TELEGRAM_SURFACES;
 
     const bodies: Record<string, unknown>[] = [];
     const origFetch = globalThis.fetch;
@@ -165,6 +167,131 @@ describe('ops channel outbox', () => {
       else Bun.env.TELEGRAM_OPS_CHAT_ID = prevChat;
       if (prevTopics === undefined) delete Bun.env.TELEGRAM_TOPICS;
       else Bun.env.TELEGRAM_TOPICS = prevTopics;
+      if (prevSurfaces === undefined) delete Bun.env.TELEGRAM_SURFACES;
+      else Bun.env.TELEGRAM_SURFACES = prevSurfaces;
+      db.close();
+    }
+  });
+
+  test('telegram projector routes alerts to HQ surface when mapped', async () => {
+    const prevChat = Bun.env.TELEGRAM_OPS_CHAT_ID;
+    const prevTopics = Bun.env.TELEGRAM_TOPICS;
+    const prevSurfaces = Bun.env.TELEGRAM_SURFACES;
+    Bun.env.TELEGRAM_OPS_CHAT_ID = '-1003937534779';
+    Bun.env.TELEGRAM_TOPICS = JSON.stringify({ alerts: 12 });
+    Bun.env.TELEGRAM_SURFACES = JSON.stringify({
+      hq: '-100111',
+      'ash-staging': '-1003937534779',
+    });
+
+    const bodies: Record<string, unknown>[] = [];
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async (_input: RequestInfo, init?: RequestInit) => {
+      bodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+      return new Response(JSON.stringify({ ok: true, result: { message_id: 1 } }), {
+        status: 200,
+      });
+    }) as typeof fetch;
+
+    const db = openOperationsDb({ path: ':memory:' });
+    enqueueOpsChannelEvent(db, {
+      topic: 'alerts',
+      eventType: 'ops.alert',
+      idempotencyKey: 'tg-hq-1',
+      payload: { message: 'hq alert', severity: 'critical' },
+      projectors: ['telegram'],
+    });
+
+    try {
+      const result = await processChannelOutbox(db, {
+        deliver: true,
+        telegramToken: 'test-token-abcdef',
+      });
+      expect(result.sent).toBe(1);
+      expect(bodies[0]?.chat_id).toBe('-100111');
+    } finally {
+      globalThis.fetch = origFetch;
+      if (prevChat === undefined) delete Bun.env.TELEGRAM_OPS_CHAT_ID;
+      else Bun.env.TELEGRAM_OPS_CHAT_ID = prevChat;
+      if (prevTopics === undefined) delete Bun.env.TELEGRAM_TOPICS;
+      else Bun.env.TELEGRAM_TOPICS = prevTopics;
+      if (prevSurfaces === undefined) delete Bun.env.TELEGRAM_SURFACES;
+      else Bun.env.TELEGRAM_SURFACES = prevSurfaces;
+      db.close();
+    }
+  });
+
+  test('skips pending rows until available_at', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    enqueueOpsChannelEvent(db, {
+      topic: 'identity',
+      eventType: 'partner.bound',
+      idempotencyKey: 'defer-key',
+      payload: { treeNodeId: 'n1' },
+      projectors: ['r2'],
+    });
+    const future = new Date(Date.now() + 60_000).toISOString();
+    db.run(`UPDATE ops_channel_outbox SET available_at = $at WHERE idempotency_key = 'defer-key'`, {
+      $at: future,
+    });
+    const result = await processChannelOutbox(db, { deliver: false, limit: 10 });
+    expect(result.sent).toBe(0);
+    const row = db
+      .query(`SELECT status FROM ops_channel_outbox WHERE idempotency_key = 'defer-key'`)
+      .get() as { status: string };
+    expect(row.status).toBe('pending');
+    db.close();
+  });
+
+  test('429 defers telegram row with available_at', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = async () =>
+      ({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({
+          ok: false,
+          error_code: 429,
+          description: 'Too Many Requests',
+          parameters: { retry_after: 0 },
+        }),
+        arrayBuffer: async () => new ArrayBuffer(0),
+      }) as Response;
+
+    enqueueOpsChannelEvent(db, {
+      topic: 'alerts',
+      eventType: 'ops.alert',
+      idempotencyKey: 'rate-key',
+      payload: { text: 'hello', telegramId: '8013171035' },
+      projectors: ['telegram'],
+    });
+
+    try {
+      const result = await processChannelOutbox(db, {
+        deliver: true,
+        telegramToken: 'test-token',
+        limit: 1,
+      });
+      expect(result.sent).toBe(0);
+      expect(result.failed).toBe(0);
+      const row = db
+        .query(
+          `SELECT status, retries, last_error, available_at FROM ops_channel_outbox WHERE idempotency_key = 'rate-key'`
+        )
+        .get() as {
+        status: string;
+        retries: number;
+        last_error: string | null;
+        available_at: string | null;
+      };
+      expect(row.status).toBe('pending');
+      expect(row.retries).toBe(1);
+      expect(row.last_error).toContain('rate_limit:429');
+      expect(row.available_at).not.toBeNull();
+    } finally {
+      globalThis.fetch = origFetch;
       db.close();
     }
   });

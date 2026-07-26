@@ -27,6 +27,7 @@ import { parseProjectors } from './ops-channel-event.ts';
 import { sendTelegramBotMessage } from '../telegram/telegram-api.ts';
 import { rememberTemplateMessageId } from '../telegram/flows/channel-meta.ts';
 import { playAckKeyboard, translateKeyboard } from '../telegram/flows/keyboards.ts';
+import { resolveOpsChatForOutbox } from '../telegram/surfaces.ts';
 import { loadTelegramEnv, threadIdForOutboxTopic } from '../telegram/telegram-config.ts';
 import { renderForNode } from '../telegram/templates/render.ts';
 import type { TemplateId } from '../telegram/templates/types.ts';
@@ -137,7 +138,10 @@ type OutboxRow = {
   payload_json: string;
   projectors: string;
   retries: number;
+  available_at: string | null;
 };
+
+const MAX_RATE_LIMIT_DEFERRALS = 5;
 
 async function projectLocal(row: OutboxRow, payload: Record<string, unknown>): Promise<boolean> {
   await localOpsChannelStore.publish(row.topic, payload, { sender: 'ops-outbox' });
@@ -157,7 +161,13 @@ async function projectTelegram(
   row: OutboxRow,
   payload: Record<string, unknown>,
   token: string
-): Promise<{ ok: boolean; messageId?: number; error?: string }> {
+): Promise<{
+  ok: boolean;
+  messageId?: number;
+  error?: string;
+  errorCode?: number;
+  retryAfterSec?: number;
+}> {
   const env = loadTelegramEnv();
   const dmTarget = payload.telegramId ?? payload.telegram_id;
   const text = typeof payload.text === 'string' ? payload.text : JSON.stringify(payload);
@@ -173,9 +183,17 @@ async function projectTelegram(
   let chatId: string | number | null = dmTarget != null ? String(dmTarget) : null; // brand-ok — Telegram chat_id wire
   let messageThreadId = explicitThread;
 
-  if (!chatId && env.opsChatId) {
-    chatId = env.opsChatId;
-    messageThreadId ??= threadIdForOutboxTopic(env.topics, row.topic, row.event_type);
+  if (!chatId) {
+    const resolved = resolveOpsChatForOutbox({ topic: row.topic });
+    if (resolved) {
+      chatId = resolved.chatId;
+      // Forum threads only when posting to the primary ops hub (shared TELEGRAM_TOPICS map).
+      if (resolved.chatId === env.opsChatId || resolved.source === 'ops_chat') {
+        messageThreadId ??= threadIdForOutboxTopic(env.topics, row.topic, row.event_type);
+      } else if (resolved.surfaceSlug === 'hq' || resolved.surfaceSlug === 'ash-staging') {
+        messageThreadId ??= threadIdForOutboxTopic(env.topics, row.topic, row.event_type);
+      }
+    }
   }
 
   if (!chatId) return { ok: false, error: 'no chat target' };
@@ -201,6 +219,8 @@ async function projectTelegram(
     error: result.ok
       ? undefined
       : (result.description ?? `telegram error ${result.errorCode ?? '?'}`),
+    errorCode: result.errorCode,
+    retryAfterSec: result.retryAfterSec,
   };
 }
 
@@ -236,7 +256,7 @@ export function requeueFailedChannelOutbox(
   if (maxRetries != null) {
     const result = db.run(
       `UPDATE ops_channel_outbox
-       SET status = 'pending', last_error = NULL
+       SET status = 'pending', last_error = NULL, available_at = NULL
        WHERE id IN (
          SELECT id FROM ops_channel_outbox
          WHERE status = 'failed' AND retries < $max
@@ -249,7 +269,7 @@ export function requeueFailedChannelOutbox(
   }
   const result = db.run(
     `UPDATE ops_channel_outbox
-     SET status = 'pending', last_error = NULL
+     SET status = 'pending', last_error = NULL, available_at = NULL
      WHERE id IN (
        SELECT id FROM ops_channel_outbox
        WHERE status = 'failed'
@@ -270,12 +290,15 @@ export async function processChannelOutbox(
   const token = opts.telegramToken ?? loadTelegramEnv().effectiveToken ?? '';
   const r2Store = opts.r2Store ?? localOpsChannelStore;
   const limit = Math.max(1, Math.min(opts.limit ?? 250, 2000));
+  const now = new Date().toISOString();
   const pending = db
     .query(
-      `SELECT id, topic, event_type, payload_json, projectors, retries
-       FROM ops_channel_outbox WHERE status = 'pending' ORDER BY created_at ASC LIMIT $limit`
+      `SELECT id, topic, event_type, payload_json, projectors, retries, available_at
+       FROM ops_channel_outbox
+       WHERE status = 'pending' AND (available_at IS NULL OR available_at <= $now)
+       ORDER BY created_at ASC LIMIT $limit`
     )
-    .all({ $limit: limit }) as OutboxRow[];
+    .all({ $now: now, $limit: limit }) as OutboxRow[];
 
   let sent = 0;
   let failed = 0;
@@ -297,6 +320,7 @@ export async function processChannelOutbox(
     try {
       const results: boolean[] = [];
       let telegramErr: string | undefined;
+      let telegramRateLimit: { retryAfterSec: number } | undefined;
       for (const projector of projectors) {
         if (projector === 'r2') {
           if (r2Store === localOpsChannelStore) {
@@ -312,6 +336,14 @@ export async function processChannelOutbox(
             const tg = await projectTelegram(row, payload, token);
             results.push(tg.ok);
             if (!tg.ok && tg.error) telegramErr = tg.error;
+            if (
+              !tg.ok &&
+              tg.errorCode === 429 &&
+              row.retries < MAX_RATE_LIMIT_DEFERRALS &&
+              tg.retryAfterSec != null
+            ) {
+              telegramRateLimit = { retryAfterSec: tg.retryAfterSec };
+            }
             if (
               tg.ok &&
               tg.messageId != null &&
@@ -353,10 +385,24 @@ export async function processChannelOutbox(
       const ok = results.length === 0 || results.every(Boolean);
       if (ok) {
         db.run(
-          `UPDATE ops_channel_outbox SET status = 'sent', sent_at = $now, last_error = NULL WHERE id = $id`,
+          `UPDATE ops_channel_outbox SET status = 'sent', sent_at = $now, last_error = NULL, available_at = NULL WHERE id = $id`,
           { $now: new Date().toISOString(), $id: row.id }
         );
         sent++;
+      } else if (telegramRateLimit) {
+        const availableAt = new Date(
+          Date.now() + telegramRateLimit.retryAfterSec * 1000
+        ).toISOString();
+        db.run(
+          `UPDATE ops_channel_outbox
+           SET status = 'pending', available_at = $at, retries = retries + 1, last_error = $err
+           WHERE id = $id`,
+          {
+            $at: availableAt,
+            $err: `rate_limit:429 retry_after=${telegramRateLimit.retryAfterSec}s`,
+            $id: row.id,
+          }
+        );
       } else {
         db.run(
           `UPDATE ops_channel_outbox SET status = 'failed', retries = retries + 1, last_error = $err WHERE id = $id`,

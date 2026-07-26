@@ -7,9 +7,12 @@ import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   applyPartnerOnboardPackage,
   buildOnboardChecklist,
+  emitPackageGroupCreateRequest,
   listUnboundAgentSeats,
+  partnerCodeFromCallSign,
   planPartnerOnboardPackage,
   resolveOnboardTreeNodeId,
+  resolvePackageGroupRequest,
 } from '../lib/operations/partner-onboard-package.ts';
 import { bindPartnerProfile } from '../lib/operations/partner-profile-bridge.ts';
 import { getChatChannelMeta } from '../lib/telegram/flows/channel-meta.ts';
@@ -220,6 +223,37 @@ describe('partner onboard package', () => {
     const linked = buildOnboardChecklist(db, tid);
     expect(linked.checklist.telegramLinked).toBe(true);
     expect(linked.lines.some(l => l.includes('Profile bound'))).toBe(true);
+    db.close();
+  });
+
+  test('resolvePackageGroupRequest derives ASH from ASH-001 call-sign', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    seedExpert(db, now);
+    const parentId = randomUUIDv7();
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, call_sign, telegram_id, active, created_at)
+       VALUES ($id, 'partner', NULL, NULL, 'TOC Ash Ops', 'ASH', NULL, 1, $now)`,
+      { $id: parentId, $now: now }
+    );
+    const agentId = seedAgent(db, { callSign: 'ASH-001', parentId }, now);
+    const req = resolvePackageGroupRequest(db, asTreeNodeId(agentId));
+    expect(req.partnerCode).toBe('ASH');
+    expect(req.suggestedTitle).toBe('TOC Ops · ASH · Ash Ops');
+    expect(partnerCodeFromCallSign('ASH-001')).toBe('ASH');
+    db.close();
+  });
+
+  test('emitPackageGroupCreateRequest skips JSONL on dry-run', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    seedExpert(db, now);
+    const agentId = seedAgent(db, { callSign: 'NOV-001' }, now);
+    const tid = asTreeNodeId(agentId);
+    const emitted = await emitPackageGroupCreateRequest(db, tid, { dryRun: true });
+    expect(emitted.artifact.partner_code).toBe('NOV');
+    expect(emitted.jsonlPath).toBeNull();
+    expect(emitted.recipe.some(l => l.includes('link-package-group'))).toBe(true);
     db.close();
   });
 });

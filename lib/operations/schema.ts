@@ -146,14 +146,27 @@ export function migrateSchema(db: Database): void {
       retries INTEGER DEFAULT 0,
       created_at TEXT NOT NULL,
       sent_at TEXT,
-      last_error TEXT
+      last_error TEXT,
+      available_at TEXT
     );
     CREATE INDEX IF NOT EXISTS idx_ops_outbox_status ON ops_channel_outbox(status, created_at);
     CREATE INDEX IF NOT EXISTS idx_ops_outbox_topic ON ops_channel_outbox(topic, created_at);
+    CREATE INDEX IF NOT EXISTS idx_ops_outbox_available ON ops_channel_outbox(status, available_at, created_at);
   `);
 
   // Existing DBs created with topic CHECK excluding `toc` — rebuild table once.
   migrateOpsChannelOutboxTopicToc(db);
+  migrateOpsChannelOutboxAvailableAt(db);
+}
+
+/** Nullable defer-until for rate-limit backoff (Telegram 429). */
+function migrateOpsChannelOutboxAvailableAt(db: Database): void {
+  const cols = db.query(`PRAGMA table_info(ops_channel_outbox)`).all() as Array<{ name: string }>;
+  if (cols.some(c => c.name === 'available_at')) return;
+  db.run(`ALTER TABLE ops_channel_outbox ADD COLUMN available_at TEXT`);
+  db.run(
+    `CREATE INDEX IF NOT EXISTS idx_ops_outbox_available ON ops_channel_outbox(status, available_at, created_at)`
+  );
 }
 
 /** Allow topic=`toc` on ops_channel_outbox (SQLite CHECK is not ALTER-friendly). */

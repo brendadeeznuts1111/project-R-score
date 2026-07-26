@@ -11,6 +11,7 @@
 | Templates | [`lib/telegram/templates/`](../../../lib/telegram/templates/) |
 | Chat meta | [`lib/telegram/flows/channel-meta.ts`](../../../lib/telegram/flows/channel-meta.ts) |
 | Package apply | [`lib/operations/partner-onboard-package.ts`](../../../lib/operations/partner-onboard-package.ts) |
+| Package group handshake | [`partner-package-group-handshake.md`](partner-package-group-handshake.md) |
 
 ---
 
