@@ -199,7 +199,7 @@ bun tools/verify-package-group-handshake.ts ASH
 
 Do not use staging chat_ids as production package forums.
 
-**Soft plane note:** `ct package-group-wire --apply` requires partner `ASH` in `toc-ops.sqlite` (`seed_profile=demo|test`, or operational partner row). When Soft is unprofiled, append `ack_package_group_wired` via `ct package-group-wire … --apply --ack` after `package-init`, or use factory `appendAckPackageGroupWired` for JSONL-only staging.
+**Soft plane note:** `ct package-group-wire --apply` requires partner `ASH` in `toc-ops.sqlite`. Use `bun scripts/bootstrap-handshake-partner.ts CODE --confirm-operational` on operational `data/toc-ops.sqlite`, or demo seed on `/tmp/toc-ops-demo.sqlite` (see below).
 
 **Soft demo DB (isolated wire test):**
 
@@ -211,6 +211,20 @@ TOC_OPS_DB=/tmp/toc-ops-demo.sqlite bun run ct package-group-wire ASH \
   --chat tg:chat:-1003937534779 --apply --ack \
   --path ../reports/telegram/pending-package-groups.jsonl
 ```
+
+**Operational Soft DB (`data/toc-ops.sqlite`):**
+
+```bash
+cd toc-ops-repo
+bun scripts/bootstrap-handshake-partner.ts ASH --confirm-operational \
+  --display-name "Cascade Partner" \
+  --wire --chat tg:chat:-1003937534779 --ack \
+  --path ../reports/telegram/pending-package-groups.jsonl
+bun run ct package-group-wire ASH --chat tg:chat:-1003937534779 --apply --ack \
+  --path ../reports/telegram/pending-package-groups.jsonl
+```
+
+Requires `--confirm-operational` once (Decision #36). Creates operational partner row + optional wire; no demo `seed_profile`.
 
 ### Verify commands
 
