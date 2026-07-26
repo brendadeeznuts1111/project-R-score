@@ -273,6 +273,34 @@ async function scanNamingClusters(files: string[]): Promise<ReferenceFinding[]> 
 
 const ENV_RE = /\b(?:Bun\.env|process\.env)\.([A-Z][A-Z0-9_]{2,})\b/g;
 
+/** Documented intentional pairs — see docs/harness/tenants/reference-discovery.md */
+function isAllowedSimilarEnvPair(a: string, b: string): boolean {
+  const secretsCluster = new Set([
+    'FW_INFRA_SECRETS_SERVICE',
+    'FW_R2_SECRETS_SERVICE',
+    'FW_SECRETS_SERVICE',
+  ]);
+  if (secretsCluster.has(a) && secretsCluster.has(b)) return true;
+
+  if (
+    (a === 'R2_BUCKET_NAME' && b === 'S3_BUCKET_NAME') ||
+    (a === 'S3_BUCKET_NAME' && b === 'R2_BUCKET_NAME')
+  ) {
+    return true;
+  }
+
+  if (a.startsWith('SEARCH_BENCH_PIN_') && b.startsWith('SEARCH_BENCH_PIN_')) return true;
+
+  if (
+    (a === 'SEARCH_BENCH_PROXY_AUTH' && b === 'SEARCH_BENCH_PROXY_URL') ||
+    (a === 'SEARCH_BENCH_PROXY_URL' && b === 'SEARCH_BENCH_PROXY_AUTH')
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 async function scanSimilarEnvVars(files: string[]): Promise<ReferenceFinding[]> {
   const counts = new Map<string, number>();
   const tsFiles = files.filter(f => f.endsWith('.ts'));
@@ -301,6 +329,7 @@ async function scanSimilarEnvVars(files: string[]): Promise<ReferenceFinding[]> 
       }
       const sim = nameSimilarity(a, b);
       if (sim < 0.72 || sim >= 0.999) continue;
+      if (isAllowedSimilarEnvPair(a, b)) continue;
       const pairId = [a, b].sort().join('|');
       if (seen.has(pairId)) continue;
       seen.add(pairId);
