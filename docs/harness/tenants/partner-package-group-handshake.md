@@ -152,6 +152,24 @@ bun run ct package-group-wire ASH --chat tg:chat:-100… [--invite-create] --app
 
 Soft writes `partners.telegram_ref`; prints factory `link-package-group` handoff + allowlist CSV (manual `.env` paste).
 
+Use `--apply --ack` on wire to append `ack_package_group_wired` and remove the partner from `package-group-pending`.
+
+### JSONL lifecycle (append-only acks)
+
+| Action | Plane | When |
+|--------|-------|------|
+| `create_package_group` | Factory | `--create-package-group` |
+| `ack_package_group_wired` | Soft | `package-group-wire --apply --ack` |
+| `ack_package_group_linked` | Factory | `link-package-group` (default) or `acknowledge-pending` |
+
+Open pending = latest `create_package_group` per code without a matching `ack_package_group_wired`. The JSONL file is never rewritten — only appended.
+
+```bash
+bun run ct package-group-wire ASH --chat tg:chat:-100… --apply --ack
+bun run telegram:ops -- link-package-group ASH -100… --invite '…'
+bun run telegram:ops -- acknowledge-pending ASH
+```
+
 Future: MTProto auto-create — out of scope until needed.
 
 ---

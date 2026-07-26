@@ -195,10 +195,223 @@ export type PackageGroupCreateArtifact = {
 export async function appendPendingPackageGroupArtifact(
   artifact: PackageGroupCreateArtifact
 ): Promise<string> {
-  const path = PENDING_PACKAGE_GROUPS_JSONL;
+  return appendPackageGroupEventLog(PENDING_PACKAGE_GROUPS_JSONL, artifact);
+}
+
+export type AckPackageGroupWiredArtifact = {
+  action: 'ack_package_group_wired';
+  partner_code: string;
+  chat_id: string; // brand-ok
+  telegram_ref: string;
+  wired_by: 'ct';
+  timestamp: string;
+};
+
+export type AckPackageGroupLinkedArtifact = {
+  action: 'ack_package_group_linked';
+  partner_code: string;
+  chat_id: string; // brand-ok
+  linked_by: 'factory';
+  registry_title?: string;
+  timestamp: string;
+};
+
+export type PackageGroupEventLogEntry =
+  | PackageGroupCreateArtifact
+  | AckPackageGroupWiredArtifact
+  | AckPackageGroupLinkedArtifact;
+
+function parseEventLogLine(raw: string, lineNo: number): PackageGroupEventLogEntry | null {
+  const line = raw.trim();
+  if (!line || line.startsWith('#')) return null;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(line);
+  } catch {
+    throw new Error(`package group JSONL line ${lineNo}: invalid JSON`);
+  }
+  if (typeof parsed !== 'object' || parsed == null) return null;
+  const action = (parsed as { action?: string }).action;
+  if (action === 'create_package_group') {
+    const row = parsed as Record<string, unknown>;
+    const partnerCode = String(row.partner_code ?? '')
+      .toUpperCase()
+      .trim();
+    return {
+      action: 'create_package_group',
+      partner_code: partnerCode,
+      display_name: String(row.display_name ?? '').trim(),
+      suggested_title: String(row.suggested_title ?? '').trim(),
+      requested_by:
+        row.requested_by == null || row.requested_by === ''
+          ? null
+          : String(row.requested_by).trim(),
+      tree_node_id: String(row.tree_node_id ?? ''), // brand-ok
+      timestamp: String(row.timestamp ?? ''),
+    };
+  }
+  if (action === 'ack_package_group_wired') {
+    const row = parsed as Record<string, unknown>;
+    return {
+      action: 'ack_package_group_wired',
+      partner_code: String(row.partner_code ?? '')
+        .toUpperCase()
+        .trim(),
+      chat_id: String(row.chat_id ?? ''), // brand-ok
+      telegram_ref: String(row.telegram_ref ?? ''),
+      wired_by: 'ct',
+      timestamp: String(row.timestamp ?? ''),
+    };
+  }
+  if (action === 'ack_package_group_linked') {
+    const row = parsed as Record<string, unknown>;
+    return {
+      action: 'ack_package_group_linked',
+      partner_code: String(row.partner_code ?? '')
+        .toUpperCase()
+        .trim(),
+      chat_id: String(row.chat_id ?? ''), // brand-ok
+      linked_by: 'factory',
+      registry_title: row.registry_title != null ? String(row.registry_title) : undefined,
+      timestamp: String(row.timestamp ?? ''),
+    };
+  }
+  return null;
+}
+
+export function parsePackageGroupEventLog(text: string): PackageGroupEventLogEntry[] {
+  const entries: PackageGroupEventLogEntry[] = [];
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const entry = parseEventLogLine(lines[i]!, i + 1);
+    if (entry) entries.push(entry);
+  }
+  return entries;
+}
+
+export async function readPackageGroupEventLog(
+  path: string = PENDING_PACKAGE_GROUPS_JSONL
+): Promise<PackageGroupEventLogEntry[]> {
+  const file = Bun.file(path);
+  if (!(await file.exists())) return [];
+  return parsePackageGroupEventLog(await file.text());
+}
+
+/** Creates still awaiting Soft wire (no ack_package_group_wired for that code). */
+export function resolveOpenPendingCreates(
+  log: PackageGroupEventLogEntry[]
+): PackageGroupCreateArtifact[] {
+  const open = new Map<string, PackageGroupCreateArtifact>();
+  const wired = new Set<string>();
+
+  for (const entry of log) {
+    if (entry.action === 'create_package_group') {
+      open.set(entry.partner_code, entry);
+      wired.delete(entry.partner_code);
+    } else if (entry.action === 'ack_package_group_wired') {
+      wired.add(entry.partner_code);
+      open.delete(entry.partner_code);
+    }
+  }
+
+  return [...open.values()].filter(row => !wired.has(row.partner_code));
+}
+
+export function hasAckPackageGroupWired(
+  log: PackageGroupEventLogEntry[],
+  partnerCode: string,
+  chatId: string // brand-ok — Telegram chat_id wire
+): boolean {
+  const code = parsePartnerCode(partnerCode);
+  if (!code) return false;
+  return log.some(
+    e => e.action === 'ack_package_group_wired' && e.partner_code === code && e.chat_id === chatId
+  );
+}
+
+export function hasAckPackageGroupLinked(
+  log: PackageGroupEventLogEntry[],
+  partnerCode: string,
+  chatId?: string // brand-ok — Telegram chat_id wire
+): boolean {
+  const code = parsePartnerCode(partnerCode);
+  if (!code) return false;
+  return log.some(
+    e =>
+      e.action === 'ack_package_group_linked' &&
+      e.partner_code === code &&
+      (chatId == null || e.chat_id === chatId)
+  );
+}
+
+export async function appendPackageGroupEventLog(
+  path: string,
+  entry: PackageGroupEventLogEntry
+): Promise<string> {
   const dir = path.slice(0, path.lastIndexOf('/'));
   if (dir) await Bun.$`mkdir -p ${dir}`.quiet();
   const prev = (await Bun.file(path).exists()) ? await Bun.file(path).text() : '';
-  await Bun.write(path, prev + JSON.stringify(artifact) + '\n');
+  await Bun.write(path, prev + JSON.stringify(entry) + '\n');
   return path;
+}
+
+export async function appendAckPackageGroupWired(input: {
+  partnerCode: string;
+  chatId: string; // brand-ok — Telegram chat_id wire
+  telegramRef: string;
+  path?: string;
+  now?: string;
+}): Promise<{ path: string; appended: boolean }> {
+  const code = parsePartnerCode(input.partnerCode);
+  if (!code) throw new Error(`Invalid partner_code: ${input.partnerCode}`);
+  const chatId = parseTelegramChatIdWire(input.chatId);
+  if (!chatId) throw new Error(`Invalid chat_id: ${input.chatId}`);
+  const path = input.path ?? PENDING_PACKAGE_GROUPS_JSONL;
+  const log = await readPackageGroupEventLog(path);
+  if (hasAckPackageGroupWired(log, code, chatId)) {
+    return { path, appended: false };
+  }
+  await appendPackageGroupEventLog(path, {
+    action: 'ack_package_group_wired',
+    partner_code: code,
+    chat_id: chatId,
+    telegram_ref: input.telegramRef,
+    wired_by: 'ct',
+    timestamp: input.now ?? new Date().toISOString(),
+  });
+  return { path, appended: true };
+}
+
+export async function appendAckPackageGroupLinked(input: {
+  partnerCode: string;
+  chatId: string; // brand-ok — Telegram chat_id wire
+  registryTitle?: string;
+  path?: string;
+  now?: string;
+}): Promise<{ path: string; appended: boolean }> {
+  const code = parsePartnerCode(input.partnerCode);
+  if (!code) throw new Error(`Invalid partner_code: ${input.partnerCode}`);
+  const chatId = parseTelegramChatIdWire(input.chatId);
+  if (!chatId) throw new Error(`Invalid chat_id: ${input.chatId}`);
+  const path = input.path ?? PENDING_PACKAGE_GROUPS_JSONL;
+  const log = await readPackageGroupEventLog(path);
+  if (hasAckPackageGroupLinked(log, code, chatId)) {
+    return { path, appended: false };
+  }
+  await appendPackageGroupEventLog(path, {
+    action: 'ack_package_group_linked',
+    partner_code: code,
+    chat_id: chatId,
+    linked_by: 'factory',
+    registry_title: input.registryTitle,
+    timestamp: input.now ?? new Date().toISOString(),
+  });
+  return { path, appended: true };
+}
+
+export async function readOpenPendingPackageGroups(
+  path: string = PENDING_PACKAGE_GROUPS_JSONL
+): Promise<PackageGroupCreateArtifact[]> {
+  const log = await readPackageGroupEventLog(path);
+  return resolveOpenPendingCreates(log);
 }

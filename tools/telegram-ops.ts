@@ -38,6 +38,10 @@ import { formatSurfaceMatrix, loadTelegramSurfacesMap } from '../lib/telegram/su
 import {
   resolvePartnerDmTelegramId,
   upsertPackageGroupRegistry,
+  appendAckPackageGroupLinked,
+  getPackageGroupRegistry,
+  parsePartnerCode,
+  parseTelegramChatIdWire,
 } from '../lib/telegram/package-group-registry.ts';
 import { sendTelegramBotMessage } from '../lib/telegram/telegram-api.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
@@ -51,12 +55,19 @@ Commands:
   surfaces    Concern matrix + naming grammar (+ TELEGRAM_SURFACES bindings)
   graph       Live concern topology (ASCII; --mermaid; --env for .env block)
   link-package-group  Bind partner package forum chat_id (+ optional DM)
+  acknowledge-pending Mark factory linked ack on JSONL event log
 
 link-package-group:
   <CODE> <chat_id>   Partner code (ASH) + Telegram chat id
   --invite <url>      Invite link for registry + DM
   --requested-by <cs> Prefer seat call-sign for DM target
   --no-dm             Skip package-room welcome DM
+  --no-ack            Skip ack_package_group_linked JSONL append
+  --db <path>
+
+acknowledge-pending:
+  <CODE>              Partner code with registry row
+  --chat <id>         Override chat_id (default from registry)
   --db <path>
 
 send options:
@@ -402,6 +413,7 @@ type LinkPackageGroupOpts = {
   invite?: string;
   requestedBy?: string;
   noDm: boolean;
+  noAck: boolean;
 };
 
 function parseLinkPackageGroupArgs(argv: string[]): LinkPackageGroupOpts | null {
@@ -412,6 +424,7 @@ Options:
   --invite <url>        Store invite link; include in welcome DM
   --requested-by <cs>   Prefer this call-sign for DM telegram_id
   --no-dm               Skip package-room welcome DM
+  --no-ack              Skip ack_package_group_linked JSONL append
   --db <path>
 `);
     process.exit(0);
@@ -422,11 +435,16 @@ Options:
     partnerCode: '',
     chatId: '',
     noDm: false,
+    noAck: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     if (a === '--no-dm') {
       opts.noDm = true;
+      continue;
+    }
+    if (a === '--no-ack') {
+      opts.noAck = true;
       continue;
     }
     if (a === '--invite') {
@@ -485,6 +503,19 @@ async function cmdLinkPackageGroup(rawArgv: string[]): Promise<void> {
     console.log(`   chat_id: ${row.chatId}`);
     if (row.inviteLink) console.log(`   invite: ${row.inviteLink}`);
 
+    if (!opts.noAck) {
+      const ack = await appendAckPackageGroupLinked({
+        partnerCode: row.partnerCode,
+        chatId: row.chatId,
+        registryTitle: row.title,
+      });
+      console.log(
+        ack.appended
+          ? `   jsonl: ack_package_group_linked appended (${ack.path})`
+          : `   jsonl: ack_package_group_linked already present (skipped)`
+      );
+    }
+
     if (opts.noDm) {
       console.log('   dm: skipped (--no-dm)');
       return;
@@ -524,6 +555,72 @@ async function cmdLinkPackageGroup(rawArgv: string[]): Promise<void> {
   }
 }
 
+async function cmdAcknowledgePending(rawArgv: string[]): Promise<void> {
+  if (rawArgv.length === 0 || rawArgv[0] === '--help' || rawArgv[0] === '-h') {
+    console.log(
+      `Usage: bun tools/telegram-ops.ts acknowledge-pending <CODE> [--chat <id>] [--db <path>]`
+    );
+    process.exit(0);
+  }
+  let partnerCode = '';
+  let chatId: string | undefined; // brand-ok — Telegram chat_id wire
+  let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
+  const positional: string[] = [];
+  for (let i = 0; i < rawArgv.length; i++) {
+    const a = rawArgv[i]!;
+    if (a === '--chat') {
+      chatId = rawArgv[++i];
+      continue;
+    }
+    if (a.startsWith('--chat=')) {
+      chatId = a.slice('--chat='.length);
+      continue;
+    }
+    if (a === '--db') {
+      const v = rawArgv[++i];
+      if (v) dbPath = v;
+      continue;
+    }
+    if (a.startsWith('--db=')) {
+      dbPath = a.slice('--db='.length);
+      continue;
+    }
+    if (!a.startsWith('-')) positional.push(a);
+  }
+  partnerCode = positional[0] ?? '';
+  if (!parsePartnerCode(partnerCode)) {
+    console.error('Invalid partner CODE (expected ^[A-Z]{2,4}$)');
+    process.exit(1);
+  }
+
+  const db = new Database(dbPath);
+  try {
+    const reg = getPackageGroupRegistry(db, partnerCode);
+    if (!reg) {
+      console.error(`No package_group_registry row for ${partnerCode.toUpperCase()}`);
+      process.exit(1);
+    }
+    const resolvedChat = chatId ?? reg.chatId;
+    if (!parseTelegramChatIdWire(resolvedChat)) {
+      console.error(`Invalid chat_id: ${resolvedChat}`);
+      process.exit(1);
+    }
+    const ack = await appendAckPackageGroupLinked({
+      partnerCode: reg.partnerCode,
+      chatId: resolvedChat,
+      registryTitle: reg.title,
+    });
+    console.log(
+      ack.appended
+        ? `✅ ack_package_group_linked ${reg.partnerCode} ${resolvedChat}`
+        : `note: ack_package_group_linked already present for ${reg.partnerCode}`
+    );
+    console.log(`   path: ${ack.path}`);
+  } finally {
+    db.close();
+  }
+}
+
 async function main(): Promise<void> {
   const argv = Bun.argv.slice(2);
   if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') usage();
@@ -531,6 +628,10 @@ async function main(): Promise<void> {
   const cmd = argv[0]!;
   if (cmd === 'link-package-group' || cmd === 'link-package') {
     await cmdLinkPackageGroup(argv.slice(1));
+    return;
+  }
+  if (cmd === 'acknowledge-pending' || cmd === 'ack-pending') {
+    await cmdAcknowledgePending(argv.slice(1));
     return;
   }
 
