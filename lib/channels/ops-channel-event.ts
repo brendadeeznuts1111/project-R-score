@@ -30,6 +30,8 @@ export type OpsChannelEvent = {
   idempotencyKey: string;
   projectors: OpsChannelProjector[];
   createdAt: string;
+  /** False when INSERT OR IGNORE skipped a duplicate idempotency_key. */
+  inserted?: boolean;
 };
 
 export type OpsChannelHealthSlice = {

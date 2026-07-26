@@ -14,10 +14,10 @@
  *   bun run telegram:ops -- graph --mermaid
  *   bun run telegram:ops -- link-package-group ASH -1003937534779 --invite 'https://t.me/+…'
  */
-import { Database } from 'bun:sqlite';
-import { DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
+import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../lib/operations/db.ts';
 import {
   broadcastToKnownChats,
+  enqueueBroadcastToOutbox,
   formatBroadcastSummary,
   resolveBroadcastTargets,
 } from '../lib/telegram/broadcast.ts';
@@ -42,6 +42,7 @@ import {
   getPackageGroupRegistry,
   parsePartnerCode,
   parseTelegramChatIdWire,
+  resolvePackageGroupDisplayName,
 } from '../lib/telegram/package-group-registry.ts';
 import { sendTelegramBotMessage } from '../lib/telegram/telegram-api.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
@@ -76,6 +77,8 @@ send options:
   --kind <kind>         active|inactive|all|group|private|channel (default: active)
   --surface <slug>      hq | ash-staging | sandbox (concern filter)
   --preview             Resolve targets only; do not call Telegram
+  --queue               Enqueue per chat via ops_channel_outbox (drain: telegram:ops:consume)
+  --direct              Immediate send (default when --queue omitted)
   --html                sendMessage parse_mode=HTML
   --db <path>           Ops DB (default OPS_DB_PATH or data/operations.db)
   -- <text...>          Message body (supports {{title}} {{chatId}} {{type}} {{members}})
@@ -89,6 +92,8 @@ directory options:
 
 Examples:
   bun run telegram:ops -- send --all "Status OK"
+  bun run telegram:ops -- send --all --queue "Status OK"
+  bun run telegram:ops -- send --all --queue --preview "hello {{title}}"
   bun run telegram:ops -- send --surface ash-staging --all --preview "ping {{title}}"
   bun run telegram:ops -- directory --refresh --kind group
   bun run telegram:ops -- surfaces
@@ -113,6 +118,13 @@ function parseFilter(raw: string | undefined): KnownChatFilterKind | undefined {
   process.exit(1);
 }
 
+/** Negative Telegram chat ids (-100…) are positional, not flags. */
+function isCliFlagToken(a: string): boolean {
+  if (a.startsWith('--')) return true;
+  if (/^-\d/.test(a)) return false;
+  return a.startsWith('-');
+}
+
 type CommonOpts = {
   filter?: KnownChatFilterKind;
   surface?: string;
@@ -123,6 +135,8 @@ type CommonOpts = {
   all: boolean;
   dryRun: boolean;
   html: boolean;
+  queue: boolean;
+  direct: boolean;
   mermaid: boolean;
   envBlock: boolean;
   rich: boolean;
@@ -141,6 +155,8 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
     all: false,
     dryRun: false,
     html: false,
+    queue: false,
+    direct: false,
     mermaid: false,
     envBlock: false,
     rich: false,
@@ -166,6 +182,14 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
     }
     if (a === '--preview') {
       opts.dryRun = true;
+      continue;
+    }
+    if (a === '--queue') {
+      opts.queue = true;
+      continue;
+    }
+    if (a === '--direct') {
+      opts.direct = true;
       continue;
     }
     if (a === '--html') {
@@ -226,7 +250,7 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
       opts.dbPath = a.slice('--db='.length);
       continue;
     }
-    if (!a.startsWith('-')) {
+    if (!isCliFlagToken(a)) {
       textParts.push(a);
       continue;
     }
@@ -238,7 +262,7 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
 }
 
 async function cmdDirectory(opts: CommonOpts): Promise<void> {
-  const db = new Database(opts.dbPath);
+  const db = openOperationsDb({ path: opts.dbPath });
   try {
     let rows = listKnownChats(db, {
       filter: opts.filter ?? 'all',
@@ -310,14 +334,18 @@ async function cmdSend(opts: CommonOpts): Promise<void> {
     console.error('Specify --all or --chat <id>');
     process.exit(1);
   }
+  if (opts.queue && opts.direct) {
+    console.error('Use --queue or --direct, not both');
+    process.exit(1);
+  }
 
   const tg = loadTelegramEnv();
-  if (!tg.effectiveToken && !opts.dryRun) {
+  if (!tg.effectiveToken && !opts.dryRun && !opts.queue) {
     console.error('TELEGRAM_BOT_FACTORY or TELEGRAM_BOT_TOKEN required');
     process.exit(1);
   }
 
-  const db = new Database(opts.dbPath);
+  const db = openOperationsDb({ path: opts.dbPath });
   try {
     const targets = resolveBroadcastTargets({
       db,
@@ -339,6 +367,24 @@ async function cmdSend(opts: CommonOpts): Promise<void> {
     );
     for (const line of formatKnownChatsTable(targets)) {
       console.log(`   ${line}`);
+    }
+
+    if (opts.queue) {
+      if (opts.dryRun) {
+        console.log(`✅ Broadcast queue preview: would enqueue ${targets.length} row(s)`);
+        process.exit(0);
+      }
+      const queued = enqueueBroadcastToOutbox({
+        db,
+        targets,
+        textTemplate: opts.text,
+        parseMode: opts.html ? 'HTML' : undefined,
+      });
+      console.log('✅ Broadcast queued');
+      console.log(`   batch: ${queued.batchId}`);
+      console.log(`   enqueued=${queued.enqueued} skipped=${queued.skipped}`);
+      console.log('   drain: bun run telegram:ops:consume');
+      process.exit(0);
     }
 
     const result = await broadcastToKnownChats({
@@ -378,7 +424,7 @@ function cmdSurfaces(): void {
 }
 
 function cmdGraph(opts: CommonOpts): void {
-  const db = new Database(opts.dbPath);
+  const db = openOperationsDb({ path: opts.dbPath });
   try {
     const rows = listKnownChats(db, { filter: 'all', activeOnly: false, limit: 500 });
     const model = buildSurfaceGraph({ knownChats: rows });
@@ -472,7 +518,7 @@ Options:
       opts.dbPath = a.slice('--db='.length);
       continue;
     }
-    if (!a.startsWith('-')) positional.push(a);
+    if (!isCliFlagToken(a)) positional.push(a);
   }
   if (positional.length < 2) {
     console.error('link-package-group requires <CODE> <chat_id>');
@@ -487,13 +533,14 @@ async function cmdLinkPackageGroup(rawArgv: string[]): Promise<void> {
   const opts = parseLinkPackageGroupArgs(rawArgv);
   if (!opts) return;
 
-  const db = new Database(opts.dbPath);
+  const db = openOperationsDb({ path: opts.dbPath });
   try {
-    const displayName = `${opts.partnerCode} Ops`;
+    const displayNameFromLog =
+      (await resolvePackageGroupDisplayName(opts.partnerCode)) ?? `${opts.partnerCode} Ops`;
     const row = upsertPackageGroupRegistry(db, {
       partnerCode: opts.partnerCode,
       chatId: opts.chatId,
-      displayName,
+      displayName: displayNameFromLog,
       inviteLink: opts.invite,
       requestedBy: opts.requestedBy,
     });
@@ -585,7 +632,7 @@ async function cmdAcknowledgePending(rawArgv: string[]): Promise<void> {
       dbPath = a.slice('--db='.length);
       continue;
     }
-    if (!a.startsWith('-')) positional.push(a);
+    if (!isCliFlagToken(a)) positional.push(a);
   }
   partnerCode = positional[0] ?? '';
   if (!parsePartnerCode(partnerCode)) {
@@ -593,7 +640,7 @@ async function cmdAcknowledgePending(rawArgv: string[]): Promise<void> {
     process.exit(1);
   }
 
-  const db = new Database(dbPath);
+  const db = openOperationsDb({ path: dbPath });
   try {
     const reg = getPackageGroupRegistry(db, partnerCode);
     if (!reg) {

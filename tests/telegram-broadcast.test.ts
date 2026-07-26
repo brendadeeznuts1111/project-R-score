@@ -3,8 +3,10 @@
  */
 import { describe, expect, test } from 'bun:test';
 import { Database } from 'bun:sqlite';
+import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   broadcastToKnownChats,
+  enqueueBroadcastToOutbox,
   renderBroadcastText,
   resolveBroadcastTargets,
 } from '../lib/telegram/broadcast.ts';
@@ -115,6 +117,31 @@ describe('broadcast', () => {
       globalThis.fetch = orig;
       resetTelegramRateLimiters();
     }
+  });
+
+  test('enqueueBroadcastToOutbox idempotent per batchId+chatId', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    upsertKnownChat(db, {
+      chat: { id: -1001, type: 'supergroup', title: 'Ops' },
+      source: 'message',
+    });
+    const targets = resolveBroadcastTargets({ db, all: true });
+    const first = enqueueBroadcastToOutbox({
+      db,
+      targets,
+      textTemplate: 'hello',
+      batchId: 'fixed-batch',
+    });
+    expect(first.enqueued).toBe(1);
+    const again = enqueueBroadcastToOutbox({
+      db,
+      targets,
+      textTemplate: 'hello',
+      batchId: 'fixed-batch',
+    });
+    expect(again.enqueued).toBe(0);
+    expect(again.skipped).toBe(1);
+    db.close();
   });
 });
 

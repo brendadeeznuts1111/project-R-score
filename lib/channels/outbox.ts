@@ -25,6 +25,7 @@ import type {
 } from './ops-channel-event.ts';
 import { parseProjectors } from './ops-channel-event.ts';
 import { sendTelegramBotMessage } from '../telegram/telegram-api.ts';
+import { recordBroadcastOutboxSend } from '../telegram/broadcast.ts';
 import { rememberTemplateMessageId } from '../telegram/flows/channel-meta.ts';
 import { playAckKeyboard, translateKeyboard } from '../telegram/flows/keyboards.ts';
 import { resolveOpsChatForOutbox } from '../telegram/surfaces.ts';
@@ -50,6 +51,8 @@ export type EnqueueOpsChannelOpts = {
   payload: Record<string, unknown>;
   idempotencyKey: string;
   projectors?: OpsChannelProjector[];
+  /** Defer drain until this ISO timestamp (rate-limit stagger / 429 backoff). */
+  availableAt?: string | null;
 };
 
 export type ProcessOutboxOpts = {
@@ -76,10 +79,10 @@ export function enqueueOpsChannelEvent(db: Database, opts: EnqueueOpsChannelOpts
   const projectors = opts.projectors ?? defaultProjectors(opts.topic);
   const payloadJson = JSON.stringify(opts.payload);
 
-  db.run(
+  const result = db.run(
     `INSERT OR IGNORE INTO ops_channel_outbox
-     (id, topic, event_type, idempotency_key, payload_json, projectors, status, retries, created_at)
-     VALUES ($id, $topic, $etype, $ikey, $payload, $proj, 'pending', 0, $created)`,
+     (id, topic, event_type, idempotency_key, payload_json, projectors, status, retries, created_at, available_at)
+     VALUES ($id, $topic, $etype, $ikey, $payload, $proj, 'pending', 0, $created, $avail)`,
     {
       $id: id as string,
       $topic: opts.topic,
@@ -88,6 +91,7 @@ export function enqueueOpsChannelEvent(db: Database, opts: EnqueueOpsChannelOpts
       $payload: payloadJson,
       $proj: projectors.join(','),
       $created: createdAt,
+      $avail: opts.availableAt ?? null,
     }
   );
 
@@ -99,6 +103,7 @@ export function enqueueOpsChannelEvent(db: Database, opts: EnqueueOpsChannelOpts
     idempotencyKey: opts.idempotencyKey,
     projectors,
     createdAt,
+    inserted: result.changes > 0,
   };
 }
 
@@ -371,6 +376,12 @@ export async function processChannelOutbox(
                   tg.messageId
                 );
               }
+            }
+            if (tg.ok && row.event_type === 'ops.broadcast') {
+              recordBroadcastOutboxSend(db, payload, {
+                ok: true,
+                messageId: tg.messageId,
+              });
             }
           }
         } else if (deliver && projector === 'slack') {

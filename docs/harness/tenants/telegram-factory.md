@@ -23,7 +23,9 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 
 **Package group bridge** (factory emit → manual ct forum → `link-package-group`): [`partner-package-group-handshake.md`](partner-package-group-handshake.md).
 
-**Soft assist** (after factory JSONL): `bun run ct package-group-pending` · `bun run ct package-group-wire CODE --chat tg:chat:-100… --apply` (in `toc-ops-repo`).
+**Soft assist** (after factory JSONL): `bun run ct package-group-pending` · `bun run ct package-group-wire CODE --chat tg:chat:-100… --apply --ack` (in `toc-ops-repo`).
+
+**Handshake verify:** `bun tools/verify-package-group-handshake.ts ASH` — see [`partner-package-group-handshake.md`](partner-package-group-handshake.md#e2e-validation-runbook).
 
 Transport health API: [`lib/telegram/telegram-transport-health.ts`](../../../lib/telegram/telegram-transport-health.ts) · `bun run telegram:verify -- --json`
 
@@ -36,7 +38,9 @@ Bot API has no membership list. On each drained update, Bun upserts `chat.id` in
 | Directory table | `bun run telegram:ops -- directory` |
 | Rich directory (package join) | `bun run telegram:ops -- directory --rich` |
 | Refresh titles / member counts | `bun run telegram:ops -- directory --refresh` or `telegram:discover -- --refresh` |
-| Broadcast | `bun run telegram:ops -- send --all "text"` · `--chat <id>` · `--kind group` · `--preview` · templates `{{title}}` `{{chatId}}` `{{type}}` `{{members}}` |
+| Verify handshake | `bun tools/verify-package-group-handshake.ts ASH` | JSONL + registry lifecycle checks |
+| Broadcast (direct) | `bun run telegram:ops -- send --all "text"` | Rate-limited immediate send + `ops_broadcast_log` |
+| Broadcast (queued) | `bun run telegram:ops -- send --all --queue "text"` | Enqueue per chat; drain via `telegram:ops:consume` |
 
 Broadcast audits each attempt in `ops_broadcast_log`. Sends go through rate-limited `sendTelegramBotMessage`. In-chat ops gates: `/register` is DM-only; `/deploy` requires portal admin or `OPS_ADMIN_USER_IDS` ([`lib/telegram/ops-acl.ts`](../../../lib/telegram/ops-acl.ts)). CLI `send` trusts the local token holder (no ACL on broadcast).
 

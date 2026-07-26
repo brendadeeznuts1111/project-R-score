@@ -14,6 +14,8 @@ import {
   ensureKnownChatsSchema,
 } from './known-chats.ts';
 import { sendTelegramBotMessage } from './telegram-api.ts';
+import { loadTelegramEnv } from './telegram-config.ts';
+import { enqueueOpsChannelEvent } from '../channels/outbox.ts';
 
 export type BroadcastLogRow = {
   id: string; // brand-ok — broadcast log row id
@@ -195,4 +197,87 @@ export function formatBroadcastSummary(result: BroadcastSendResult): string[] {
     }
   }
   return lines;
+}
+
+function previewTextForLog(text: string): string {
+  return text.length > 160 ? `${text.slice(0, 157)}…` : text;
+}
+
+/** Audit row when ops.broadcast outbox row is projected. */
+export function recordBroadcastOutboxSend(
+  db: Database,
+  payload: Record<string, unknown>,
+  result: { ok: boolean; messageId?: number; error?: string }
+): void {
+  ensureBroadcastLogSchema(db);
+  const batchId = typeof payload.batchId === 'string' ? payload.batchId : Bun.randomUUIDv7();
+  const chatId = String(payload.telegramId ?? payload.telegram_id ?? ''); // brand-ok
+  const text = typeof payload.text === 'string' ? payload.text : JSON.stringify(payload);
+  db.run(
+    `INSERT INTO ops_broadcast_log (
+       id, batch_id, chat_id, text_preview, ok, message_id, error, created_at
+     ) VALUES ($id, $batch, $chat, $preview, $ok, $mid, $err, $at)`,
+    {
+      $id: Bun.randomUUIDv7(),
+      $batch: batchId,
+      $chat: chatId,
+      $preview: previewTextForLog(text),
+      $ok: result.ok ? 1 : 0,
+      $mid: result.messageId ?? null,
+      $err: result.ok ? null : (result.error ?? 'failed'),
+      $at: new Date().toISOString(),
+    }
+  );
+}
+
+export type EnqueueBroadcastToOutboxOpts = {
+  db: Database;
+  targets: KnownChatRow[];
+  textTemplate: string;
+  parseMode?: 'HTML' | 'Markdown';
+  batchId?: string; // brand-ok
+};
+
+export type EnqueueBroadcastToOutboxResult = {
+  batchId: string; // brand-ok
+  enqueued: number;
+  skipped: number;
+};
+
+/** Queue one outbox row per target (alerts · ops.broadcast · telegram only). */
+export function enqueueBroadcastToOutbox(
+  opts: EnqueueBroadcastToOutboxOpts
+): EnqueueBroadcastToOutboxResult {
+  const batchId = opts.batchId ?? Bun.randomUUIDv7();
+  const minInterval = loadTelegramEnv().rateLimitMinIntervalMs;
+  const nowMs = Date.now();
+  let enqueued = 0;
+  let skipped = 0;
+
+  for (let i = 0; i < opts.targets.length; i++) {
+    const row = opts.targets[i]!;
+    const body = renderBroadcastText(opts.textTemplate, row);
+    const staggerMs = i * minInterval;
+    const availableAt = staggerMs > 0 ? new Date(nowMs + staggerMs).toISOString() : null;
+
+    const event = enqueueOpsChannelEvent(opts.db, {
+      topic: 'alerts',
+      eventType: 'ops.broadcast',
+      idempotencyKey: `broadcast:${batchId}:${row.chatId}`,
+      projectors: ['telegram'],
+      availableAt,
+      payload: {
+        telegramId: row.chatId,
+        text: body,
+        parseMode: opts.parseMode,
+        batchId,
+        chatLabel: knownChatLabel(row),
+      },
+    });
+
+    if (event.inserted) enqueued++;
+    else skipped++;
+  }
+
+  return { batchId, enqueued, skipped };
 }

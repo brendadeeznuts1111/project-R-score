@@ -174,6 +174,48 @@ Future: MTProto auto-create — out of scope until needed.
 
 ---
 
+## E2E validation runbook
+
+Validate the full lifecycle before production use:
+
+| Step | Command | Pass criteria |
+|------|---------|---------------|
+| 1 Emit | `bun tools/onboard-partner-package.ts ASH-001 --create-package-group` | JSONL `create_package_group`; title matches `formatPackageGroupTitle` |
+| 2 Pending | `bun run ct package-group-pending --path reports/telegram/pending-package-groups.jsonl` | ASH listed with operator recipe |
+| 3 Human | Create forum with exact `suggested_title`; add `@TOC_Op_bot` admin | Manual (Bot API cannot create groups) |
+| 4 Soft wire | `bun run ct package-group-wire ASH --chat tg:chat:-100… --apply --ack` | `ack_package_group_wired`; pending list empty for ASH |
+| 5 Factory link | `bun run telegram:ops -- link-package-group ASH -100… --invite '…'` | `package_group_registry` row; `ack_package_group_linked` |
+| 6 Verify | `bun tools/verify-package-group-handshake.ts ASH` | All checks green (exit 0) |
+
+### Staging shortcut (non-prod)
+
+To skip human forum create when a house surface already exists (e.g. ash-staging `-1003937534779`):
+
+```bash
+bun run ct package-group-wire ASH --chat tg:chat:-1003937534779 --apply --ack
+bun run telegram:ops -- link-package-group ASH -1003937534779
+bun tools/verify-package-group-handshake.ts ASH
+```
+
+Do not use staging chat_ids as production package forums.
+
+**Soft plane note:** `ct package-group-wire --apply` requires partner `ASH` in `toc-ops.sqlite` (`seed_profile=demo|test`, or operational partner row). When Soft is unprofiled, append `ack_package_group_wired` via `ct package-group-wire … --apply --ack` after `package-init`, or use factory `appendAckPackageGroupWired` for JSONL-only staging.
+
+### Verify commands
+
+```bash
+# Handshake lifecycle
+bun test tests/verify-package-group-handshake.test.ts
+bun tools/verify-package-group-handshake.ts ASH --json
+
+# Broadcast queue
+bun test tests/ops-channel-outbox.test.ts tests/telegram-broadcast.test.ts
+bun run telegram:ops -- send --all --queue --preview "hello {{title}}"
+bun run telegram:ops:consume -- --preview
+```
+
+---
+
 ## Acceptance checklist
 
 - [ ] JSONL line matches title grammar and `partner_code` ≠ call-sign

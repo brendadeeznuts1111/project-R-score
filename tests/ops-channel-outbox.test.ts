@@ -295,4 +295,119 @@ describe('ops channel outbox', () => {
       db.close();
     }
   });
+
+  test('ops.broadcast enqueue drains two rows and writes broadcast_log', async () => {
+    const { upsertKnownChat } = await import('../lib/telegram/known-chats.ts');
+    const { enqueueBroadcastToOutbox, resolveBroadcastTargets } = await import(
+      '../lib/telegram/broadcast.ts'
+    );
+
+    const origFetch = globalThis.fetch;
+    let sendCount = 0;
+    globalThis.fetch = (async (_input: RequestInfo, init?: RequestInit) => {
+      sendCount++;
+      const body = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      expect(typeof body.text).toBe('string');
+      return new Response(JSON.stringify({ ok: true, result: { message_id: sendCount } }), {
+        status: 200,
+      });
+    }) as typeof fetch;
+
+    const db = openOperationsDb({ path: ':memory:' });
+    upsertKnownChat(db, {
+      chat: { id: -1001, type: 'supergroup', title: 'Ops A' },
+      source: 'message',
+    });
+    upsertKnownChat(db, {
+      chat: { id: -1002, type: 'supergroup', title: 'Ops B' },
+      source: 'message',
+    });
+    const targets = resolveBroadcastTargets({ db, chatIds: ['-1001', '-1002'] });
+
+    try {
+      const batchId = 'batch-test-1';
+      const enq = enqueueBroadcastToOutbox({
+        db,
+        targets,
+        textTemplate: 'ping {{title}}',
+        batchId,
+      });
+      expect(enq.enqueued).toBe(2);
+      expect(enq.skipped).toBe(0);
+
+      const dup = enqueueBroadcastToOutbox({
+        db,
+        targets,
+        textTemplate: 'ping {{title}}',
+        batchId,
+      });
+      expect(dup.enqueued).toBe(0);
+      expect(dup.skipped).toBe(2);
+
+      db.run(`UPDATE ops_channel_outbox SET available_at = NULL WHERE event_type = 'ops.broadcast'`);
+
+      const result = await processChannelOutbox(db, {
+        deliver: true,
+        telegramToken: 'test-token-abcdef',
+        limit: 10,
+      });
+      expect(result.sent).toBe(2);
+      expect(sendCount).toBe(2);
+
+      const logged = db.query(`SELECT COUNT(*) AS n FROM ops_broadcast_log`).get() as { n: number };
+      expect(logged.n).toBe(2);
+    } finally {
+      globalThis.fetch = origFetch;
+      db.close();
+    }
+  });
+
+  test('ops.broadcast 429 defers with available_at', async () => {
+    const { ensureBroadcastLogSchema } = await import('../lib/telegram/broadcast.ts');
+    const db = openOperationsDb({ path: ':memory:' });
+    ensureBroadcastLogSchema(db);
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = async () =>
+      ({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({
+          ok: false,
+          error_code: 429,
+          description: 'Too Many Requests',
+          parameters: { retry_after: 0 },
+        }),
+        arrayBuffer: async () => new ArrayBuffer(0),
+      }) as Response;
+
+    enqueueOpsChannelEvent(db, {
+      topic: 'alerts',
+      eventType: 'ops.broadcast',
+      idempotencyKey: 'broadcast-rate-1',
+      payload: { text: 'hello', telegramId: '-1001', batchId: 'b1' },
+      projectors: ['telegram'],
+    });
+
+    try {
+      const result = await processChannelOutbox(db, {
+        deliver: true,
+        telegramToken: 'test-token',
+        limit: 1,
+      });
+      expect(result.sent).toBe(0);
+      const row = db
+        .query(
+          `SELECT status, available_at FROM ops_channel_outbox WHERE idempotency_key = 'broadcast-rate-1'`
+        )
+        .get() as { status: string; available_at: string | null };
+      expect(row.status).toBe('pending');
+      expect(row.available_at).not.toBeNull();
+      const logged = db.query(`SELECT COUNT(*) AS n FROM ops_broadcast_log`).get() as { n: number };
+      expect(logged.n).toBe(0);
+    } finally {
+      globalThis.fetch = origFetch;
+      db.close();
+    }
+  });
 });

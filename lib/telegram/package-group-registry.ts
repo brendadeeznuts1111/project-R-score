@@ -317,6 +317,30 @@ export function resolveOpenPendingCreates(
   return [...open.values()].filter(row => !wired.has(row.partner_code));
 }
 
+/** Latest create_package_group line for a partner code (append-only log). */
+export function latestPackageGroupCreate(
+  log: PackageGroupEventLogEntry[],
+  partnerCode: string
+): PackageGroupCreateArtifact | null {
+  const code = parsePartnerCode(partnerCode);
+  if (!code) return null;
+  let latest: PackageGroupCreateArtifact | null = null;
+  for (const entry of log) {
+    if (entry.action === 'create_package_group' && entry.partner_code === code) {
+      latest = entry;
+    }
+  }
+  return latest;
+}
+
+export async function resolvePackageGroupDisplayName(
+  partnerCode: string,
+  jsonlPath: string = PENDING_PACKAGE_GROUPS_JSONL
+): Promise<string | null> {
+  const log = await readPackageGroupEventLog(jsonlPath);
+  return latestPackageGroupCreate(log, partnerCode)?.display_name ?? null;
+}
+
 export function hasAckPackageGroupWired(
   log: PackageGroupEventLogEntry[],
   partnerCode: string,
