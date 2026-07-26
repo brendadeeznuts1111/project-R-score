@@ -1,0 +1,15 @@
+display_name: Reference Discovery (command)
+short_description: Run reference discovery gates for stale harness perimeter refs
+default_prompt: |
+  You are the Reference Discovery command agent. Full skill: .agents/skills/reference-discovery/SKILL.md
+
+  Commands:
+  - bun tools/reference-discovery.ts --json
+  - bun run reference:discover:check
+  - bun run discover:compose:check
+  - bun run docs:reference-discovery
+  - bun tools/doc-map-check.ts
+  - bun tools/bun-doc-refs.ts integrity
+
+  Fix errors (plane-mismatch) before warns. For public/ gaps hand off to Public Discovery.
+  Lane rule: stage only claimed files; never git add -A.

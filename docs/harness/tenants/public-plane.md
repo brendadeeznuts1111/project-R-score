@@ -34,6 +34,7 @@ Pages static artifact plane — portal UI, registry bake, monitoring shells. Dis
 | Proof taxonomy panel on ops dashboard | **Closed** | `verify-portal.ts` taxonomy chrome check |
 | Live `/api/health` schema v1 on Pages | **Partial** | `verify:portal` live probe · env-dependent |
 | Orphan registry JSON without portal link | **Closed** | weave SSOT (`PORTAL_WEAVE_ARTIFACTS`) · `content-type-matrix` · `formdata-proof` · `package-info` |
+| `skills-catalog.json` scope | **Open (documented)** | Kimi Daimon plane (`PORTAL_SKILLS_DIR`) — not repo `.agents/skills/`; harness skills live under `.agents/skills/` + `skill-loop-registry.json` |
 
 ## Compose
 

@@ -319,11 +319,21 @@
     },
     "branded-ids": {
       "path": ".agents/skills/branded-ids",
-      "phases": [
-        "doctor",
-        "rate"
-      ],
-      "description": "Branded ID catalog and boundary constructors"
+      "zone": "agents",
+      "phases": {
+        "doctor": {
+          "enabled": true,
+          "note": "bun run check:brands:types"
+        },
+        "rate": {
+          "enabled": true,
+          "minRating": 50
+        },
+        "precommit": {
+          "enabled": false,
+          "note": "bun tools/branded-id-check.ts --staged --strict on harness paths"
+        }
+      }
     },
     "reference-discovery": {
       "path": ".agents/skills/reference-discovery",

@@ -12,10 +12,11 @@ Compose **Public Discovery → Portal verify → Audit catalog → Execute → R
 ## Quick start
 
 ```bash
+bun run discover:compose:check
 bun run public:discover:check
 bun run verify:portal:static
 bun run audit:verify
-bun run public:audit:verify   # all three
+bun run public:audit:verify   # bundle: public discover + portal static + audit catalog
 ```
 
 ## Agent loop
@@ -39,9 +40,15 @@ bun run public:audit:verify   # all three
    - Edge functions → `functions/` (not `public/` mutations for API behavior)
 6. **Re-gate**
    ```bash
+   bun run discover:compose:check
    bun run public:discover:check
    bun run verify:portal:static
+   bun run check:routes
    bun run audit:verify
+   bun run public:audit:verify
+   bun tools/doc-map-check.ts
+   bun tools/bun-doc-refs.ts integrity
+   bun run ci:harness:fast           # when harness/docs/skills lane touched
    ```
 
 ## Lane rules

@@ -30,7 +30,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Discover day-loop + ratchet status (live) → `bun run harness:status` (local ratchets + timings SSOT · `ansiMarkdown`) · `--table` · `--show-actions-noise`
 - Bun.cron (OS-persistent primary · in-process complement) → `bun run docs:cron` · [`cron.md`](cron.md) · `bun run test:cron` · `bun run test:cron-os`
 - Spine multi-tenant (docs-integrity + install-verify) → `bun run spine:schedule:once` · claim `spine-multi-tenant` · [`cron.md`](cron.md)
-- Spine maintenance runbooks (typed signal · intervention · proof · retirement) → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · claim `spine-maintenance-runbooks`
+- Spine maintenance runbooks (typed signal · intervention · proof · retirement) → `bun run test:tenant-runbooks` · [`spine-tenants.md`](spine-tenants.md) · claim `spine-maintenance-runbooks` · agent-operated discovery tenants (reference · public-plane) indexed there
 - Spine tenant E2E heal (sandboxed break → signal → intervene → recover) → `bun run test:tenant-heal` · claim `spine-tenant-heal`
 - Code quality tenants (types · coverage · orphans · complexity) → `bun run test:code-quality` · [`code-quality.md`](code-quality.md)
 - Bun harness control plane (`noOrphans`, freshRerun timeout, `--smol`, stdin vs `bun run -`) → [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md#harness-control-plane) · workspace `bunfig.toml` `[run]`

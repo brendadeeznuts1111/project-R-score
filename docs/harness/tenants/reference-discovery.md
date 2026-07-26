@@ -46,6 +46,7 @@ New env keys: prefer SSOT helpers in `config/r2-env.ts` over raw `Bun.env` reads
 | Tenant gap rows | skill `audit-gap-close` · tenant gap map |
 | Code symbol collisions | ast-grep `collisions` / `anchors` |
 | Registry live | `bun run verify:registry-client` |
+| Proof catalog | `reference-discovery-v1` · `freshRerun: discover:compose:check` |
 
 ## Audit evidence (Discovery → Audit → Re-gate)
 

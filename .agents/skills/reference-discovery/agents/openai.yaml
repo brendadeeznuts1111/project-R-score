@@ -16,6 +16,6 @@ default_prompt: |
      - Pages plane → resolveRoutingProbeBaseUrl()
   4. Hand off to Audit Gap Close agent — bun run audit:verify · tenant gap map
      For public/portal/registry gaps → Public Discovery · bun run public:discover:check
-  5. Re-gate — bun run reference:discover:check · bun run discover:compose:check · bun tools/doc-map-check.ts
+  5. Re-gate — bun run reference:discover:check · bun run discover:compose:check · bun tools/doc-map-check.ts · bun tools/bun-doc-refs.ts integrity
 
   Lane rule: stage only claimed files; never git add -A.

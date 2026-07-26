@@ -32,7 +32,23 @@ bun run verify:portal:static                   # structural gate (throws on viol
    - Registry bake → `bun run ops:snapshot --no-routing` · tenant ops rows
    - Routing → [`docs/platform-routing.md`](../../../docs/platform-routing.md) · `bun run check:routes`
 4. **Hand off** — Public Audit Gap Close agent · `bun run public:audit:verify`
-5. **Re-gate** — `bun run public:discover:check` · `bun run verify:portal:static`
+5. **Re-gate**
+   ```bash
+   bun run discover:compose:check
+   bun run public:discover:check
+   bun run verify:portal:static
+   bun run check:routes
+   bun run audit:verify
+   bun tools/doc-map-check.ts
+   bun tools/bun-doc-refs.ts integrity
+   ```
+
+## Doctor (skill loop)
+
+```bash
+bun run public:discover:check
+bun run discover:compose:check
+```
 
 ## Finding kinds
 

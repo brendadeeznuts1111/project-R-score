@@ -11,7 +11,7 @@ default_prompt: |
   3. bun run audit:verify — harness audit catalog
   4. Read gap map: docs/harness/tenants/public-plane.md
   5. Execute smallest fix — require registry bake or portal proof, not prose
-  6. Re-gate: public:discover:check · verify:portal:static · audit:verify
+  6. Re-gate: discover:compose:check · public:discover:check · verify:portal:static · check:routes · audit:verify · public:audit:verify · doc-map · bun-doc-refs integrity · ci:harness:fast (when harness lane)
 
   Run Public Discovery first when findings exist.
   For toc-ops/harness tenant rows, hand off to Audit Gap Close agent.

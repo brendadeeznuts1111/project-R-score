@@ -64,6 +64,16 @@ Required CI envelopes and deploy scripts:
 
 → [`ci-deploy.md`](ci-deploy.md) · `bun run test:ci-deploy` · claim `ci-deploy-runbooks`
 
+## Agent-operated discovery (not spine cron)
+
+Reference and public-plane discovery tenants use the same runbook shape but are **not** in `SPINE_TENANTS` (agent-operated; promote to spine cron when warn tier stays zero):
+
+→ [`tenants/reference-discovery.md`](tenants/reference-discovery.md) · `bun run reference:discover:check` · `bun run discover:compose:check` · skill `.agents/skills/reference-discovery/` · `.agents/skills/audit-gap-close/`
+
+→ [`tenants/public-plane.md`](tenants/public-plane.md) · `bun run public:audit:verify` · skills `.agents/skills/public-discovery/` · `.agents/skills/public-audit-gap-close/`
+
+Compose both planes: `bun run discover:compose:check` · `bun test tests/discovery-compose.test.ts`
+
 ## E2E heal (sandboxed)
 
 Production `SPINE_TENANTS` are not mutated. A fixture tenant (`heal-fixture`) lives under `tests/fixtures/tenant-heal/` and is copied into `.cache/journey-tenant-heal/` for the journey:
