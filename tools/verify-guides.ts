@@ -8,7 +8,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/guides — official guides index
-// @see https://bun.com/docs/runtime/networking/fetch#aborting-a-request — AbortSignal.timeout
+// @see https://bun.com/docs/runtime/networking/fetch#fetching-a-url-with-a-timeout — AbortSignal.timeout
 /**
  * verify-guides.ts — accessibility + command verification for official Bun
  * onboarding resources (guides index, npm→bun install guide, /get).

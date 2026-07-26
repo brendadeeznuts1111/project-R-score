@@ -1,5 +1,5 @@
 // @see https://bun.com/docs/test/index#run-tests
-// @see https://bun.com/docs/test/mocks#mock-functions — mock.module / mock fn
+// @see https://bun.com/docs/guides/test/mock-functions — mock.module / mock fn
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';

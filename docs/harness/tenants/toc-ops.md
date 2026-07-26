@@ -136,7 +136,7 @@ bun run test:toc-ops               # 71 tests · seed + core planes
 
 | Gate | Last run (session) | Result |
 |------|-------------------|--------|
-| `reference:discover:check` | 2026-07-26 | 0 errors · 12 warn (`similar-env`) |
+| `reference:discover:check` | 2026-07-26 | 0 errors · 0 warn (`similar-env` trimmed) |
 | `audit:verify` | 2026-07-26 | pass · 4 findings · 5 concepts |
 | `test:toc-ops` | 2026-07-26 | 71 pass · 18 files |
 | Registry bake | 2026-07-26 | pass-11 fields (`pendingDeploymentItems`, `readinessTrend`, `dealSplitAudit`) |
