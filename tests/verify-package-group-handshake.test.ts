@@ -82,4 +82,63 @@ describe('verify-package-group-handshake', () => {
     db.close();
     await rm(dir, { recursive: true, force: true });
   });
+
+  test('live_forum_title check uses getChat when --live', async () => {
+    const dir = join(tmpdir(), `verify-live-${Date.now()}`);
+    await mkdir(dir, { recursive: true });
+    const path = join(dir, 'pending.jsonl');
+    const lines = [
+      createArtifact,
+      {
+        action: 'ack_package_group_wired',
+        partner_code: 'ASH',
+        chat_id: '-1001',
+        telegram_ref: 'tg:chat:-1001',
+        wired_by: 'ct',
+        timestamp: '2026-07-26T21:00:00.000Z',
+      },
+      {
+        action: 'ack_package_group_linked',
+        partner_code: 'ASH',
+        chat_id: '-1001',
+        linked_by: 'factory',
+        timestamp: '2026-07-26T22:00:00.000Z',
+      },
+    ];
+    await writeFile(path, lines.map(l => JSON.stringify(l)).join('\n') + '\n');
+
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response(
+        JSON.stringify({
+          ok: true,
+          result: { id: -1001, type: 'supergroup', title: 'TOC Ops · ASH · Ash Ops' },
+        }),
+        { status: 200 }
+      )) as typeof fetch;
+
+    const db = new Database(':memory:');
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-1001',
+      displayName: 'Ash Ops',
+    });
+
+    try {
+      const result = await verifyPackageGroupHandshake({
+        db,
+        partnerCode: 'ASH',
+        jsonlPath: path,
+        live: true,
+        telegramToken: 'test-token',
+      });
+      const liveCheck = result.checks.find(c => c.id === 'live_forum_title');
+      expect(liveCheck?.ok).toBe(true);
+      expect(result.ok).toBe(true);
+    } finally {
+      globalThis.fetch = origFetch;
+      db.close();
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
 });

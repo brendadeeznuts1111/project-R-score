@@ -218,6 +218,7 @@ TOC_OPS_DB=/tmp/toc-ops-demo.sqlite bun run ct package-group-wire ASH \
 # Handshake lifecycle
 bun run test:telegram-handshake
 bun run telegram:handshake:verify ASH --json
+bun run telegram:handshake:verify ASH --live
 
 # Broadcast queue
 bun test tests/ops-channel-outbox.test.ts tests/telegram-broadcast.test.ts
@@ -230,9 +231,9 @@ bun run telegram:ops:consume -- --preview
 ## Acceptance checklist
 
 - [x] JSONL line matches title grammar and `partner_code` ≠ call-sign (ASH staging)
-- [ ] Manual forum title matches `suggested_title` byte-for-byte (skipped on staging shortcut)
+- [x] Manual forum title matches `suggested_title` byte-for-byte (`setChatTitle` on `-1003937534779`)
 - [x] `package_group_registry` row for `ASH` with correct `chat_id`
-- [ ] DM received when `--invite` + linked `telegram_id` present
+- [x] DM received when `--invite` + linked `telegram_id` present (ASH-001 → 8013171035)
 - [x] `tree_nodes.telegram_id` unchanged (still DM)
 - [x] ct surface map can register same title (demo DB wire proved `telegram_ref`)
 

@@ -12,23 +12,26 @@ import {
   verifyPackageGroupHandshake,
 } from '../lib/telegram/verify-package-group-handshake.ts';
 import { PENDING_PACKAGE_GROUPS_JSONL } from '../lib/telegram/package-group-registry.ts';
+import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const argv = Bun.argv.slice(2);
 let partnerCode = '';
 let jsonlPath = PENDING_PACKAGE_GROUPS_JSONL;
 let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
 let wantJson = false;
+let live = false;
 
 for (let i = 0; i < argv.length; i++) {
   const a = argv[i]!;
   if (a === '--json') wantJson = true;
+  else if (a === '--live') live = true;
   else if (a === '--path' && argv[i + 1]) jsonlPath = argv[++i]!;
   else if (a.startsWith('--path=')) jsonlPath = a.slice('--path='.length);
   else if (a === '--db' && argv[i + 1]) dbPath = argv[++i]!;
   else if (a.startsWith('--db=')) dbPath = a.slice('--db='.length);
   else if (a === '--help' || a === '-h') {
     console.log(
-      `Usage: bun tools/verify-package-group-handshake.ts <CODE> [--path jsonl] [--db path] [--json]`
+      `Usage: bun tools/verify-package-group-handshake.ts <CODE> [--path jsonl] [--db path] [--json] [--live]`
     );
     process.exit(0);
   } else if (!a.startsWith('-')) partnerCode = a.toUpperCase();
@@ -40,8 +43,15 @@ if (!partnerCode) {
 }
 
 const db = openOperationsDb({ path: dbPath });
+const tg = loadTelegramEnv();
 try {
-  const result = await verifyPackageGroupHandshake({ db, partnerCode, jsonlPath });
+  const result = await verifyPackageGroupHandshake({
+    db,
+    partnerCode,
+    jsonlPath,
+    live,
+    telegramToken: tg.effectiveToken,
+  });
   if (wantJson) {
     console.log(JSON.stringify(result, null, 2));
   } else {

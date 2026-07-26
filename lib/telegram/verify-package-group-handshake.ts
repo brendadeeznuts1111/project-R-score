@@ -4,6 +4,7 @@
  */
 import type { Database } from 'bun:sqlite';
 import { formatPackageGroupTitle } from './surfaces.ts';
+import { getChat } from './telegram-api.ts';
 import {
   getPackageGroupRegistry,
   parsePartnerCode,
@@ -79,6 +80,9 @@ export async function verifyPackageGroupHandshake(opts: {
   db: Database;
   partnerCode: string;
   jsonlPath?: string;
+  /** Call Telegram getChat on registry chat_id and assert forum title byte-match. */
+  live?: boolean;
+  telegramToken?: string | null;
 }): Promise<HandshakeVerifyResult> {
   const code = parsePartnerCode(opts.partnerCode);
   const jsonlPath = opts.jsonlPath ?? PENDING_PACKAGE_GROUPS_JSONL;
@@ -179,6 +183,37 @@ export async function verifyPackageGroupHandshake(opts: {
     });
   }
 
+  if (opts.live && registry) {
+    const expectedLive = formatPackageGroupTitle(code, create?.display_name ?? code);
+    const token = opts.telegramToken?.trim() || null;
+    if (!token) {
+      checks.push({
+        id: 'live_forum_title',
+        ok: false,
+        detail: 'live check skipped (no TELEGRAM_BOT_FACTORY / --live token)',
+      });
+    } else {
+      const live = await getChat(token, registry.chatId);
+      if (!live.ok) {
+        checks.push({
+          id: 'live_forum_title',
+          ok: false,
+          detail: live.description ?? `getChat failed for ${registry.chatId}`,
+        });
+      } else {
+        const actual = live.chat.title ?? '';
+        checks.push({
+          id: 'live_forum_title',
+          ok: actual === expectedLive,
+          detail:
+            actual === expectedLive
+              ? `Telegram title OK: ${actual}`
+              : `Telegram "${actual}" != expected "${expectedLive}"`,
+        });
+      }
+    }
+  }
+
   const ok = checks.every(c => c.ok);
   let nextAction: string | undefined;
   if (!ok) {
@@ -190,6 +225,8 @@ export async function verifyPackageGroupHandshake(opts: {
       nextAction = `bun run telegram:ops -- link-package-group ${code} -100… --invite '…'`;
     } else if (!linked) {
       nextAction = `bun run telegram:ops -- acknowledge-pending ${code}`;
+    } else if (opts.live && checks.some(c => c.id === 'live_forum_title' && !c.ok)) {
+      nextAction = `Rename forum to ${formatPackageGroupTitle(code, create?.display_name ?? code)} (setChatTitle or Telegram UI)`;
     }
   }
 
