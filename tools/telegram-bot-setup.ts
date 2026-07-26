@@ -5,6 +5,7 @@
  */
 import { FACTORY_BOT_COMMANDS, getBotMe, setBotCommands } from '../lib/telegram/telegram-api.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
+import { FACTORY_WEBHOOK_ALLOWED_UPDATES } from '../lib/telegram/telegram-update.ts';
 
 const BASE = process.argv[2] ?? 'https://project-r-score.pages.dev';
 
@@ -26,6 +27,7 @@ async function main(): Promise<void> {
   const url = `${BASE}/api/telegram/webhook/factory`;
   const body = new URLSearchParams({ url });
   if (secret) body.set('secret_token', secret);
+  body.set('allowed_updates', JSON.stringify([...FACTORY_WEBHOOK_ALLOWED_UPDATES]));
 
   const res = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
     method: 'POST',
@@ -33,6 +35,7 @@ async function main(): Promise<void> {
   });
   const json = await res.json();
   console.log('setWebhook:', json);
+  console.log('allowed_updates:', [...FACTORY_WEBHOOK_ALLOWED_UPDATES]);
 
   console.log('✅ factory telegram setup complete');
 }

@@ -17,6 +17,7 @@ import { handleFlowCallback } from './flows/callbacks.ts';
 import { deliverFlowOutput, flowOutputToPlainText } from './flows/deliver.ts';
 import { commandToFlowId, findFlowNodeByTelegram } from './flows/registry.ts';
 import { dispatchOpsFlowOutput } from './ops-commands.ts';
+import { tryObserveKnownChats } from './known-chats.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
 import type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
 
@@ -72,12 +73,19 @@ export class TelegramBot {
     update: TelegramUpdate,
     deps: Omit<CommandContext, 'msg' | 'account'>
   ): Promise<void> {
+    const dbPath = deps.env.OPS_DB_PATH ?? Bun.env.OPS_DB_PATH ?? 'data/operations.db';
+    tryObserveKnownChats(dbPath, update, String(deps.tenant.id));
+
+    if (update.my_chat_member || update.chat_member) {
+      if (!update.message && !update.callback_query && !update.channel_post) return;
+    }
+
     if (update.callback_query) {
       await this.handleCallbackQuery(update.callback_query, deps);
       return;
     }
 
-    const msg = update.message;
+    const msg = update.message ?? update.channel_post;
     if (!msg?.text) return;
 
     const text = msg.text.trim();

@@ -7,6 +7,7 @@ import type { R2PutBucket } from '../pages/r2-types.ts';
 import type { TenantConfig } from '../../config/tenants.ts';
 import { getTenant, isTenantSlug } from '../../config/tenants.ts';
 import { createTenantBot } from './bot.ts';
+import { tryObserveKnownChats } from './known-chats.ts';
 import type { TelegramUpdateEnqueuePayload } from './webhook-pages.ts';
 
 export type DrainTelegramUpdatesOpts = {
@@ -52,6 +53,8 @@ export async function drainTelegramUpdatesDetailed(
     }
 
     try {
+      tryObserveKnownChats(opts.dbPath, p.update, p.tenantSlug);
+
       const bot = createTenantBot(p.tenantSlug);
       await bot.handleUpdate(p.update, {
         tenant,

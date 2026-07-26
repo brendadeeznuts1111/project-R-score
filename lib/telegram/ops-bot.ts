@@ -14,6 +14,8 @@ import { asTelegramUserId } from '../types/branded/portal.ts';
 import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
 import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
+import { observeKnownChatsFromUpdate } from './known-chats.ts';
+import type { TelegramUpdate } from './telegram-update.ts';
 import { handleFlowCallback } from './flows/callbacks.ts';
 import { deliverFlowOutput } from './flows/deliver.ts';
 import { commandToFlowId, findFlowNodeByTelegram, runFlow } from './flows/registry.ts';
@@ -66,6 +68,15 @@ export class OpsTelegramBot {
   }
 
   async handleUpdate(update: Record<string, unknown>): Promise<void> {
+    observeKnownChatsFromUpdate({
+      db: this.db,
+      update: update as TelegramUpdate,
+    });
+
+    if (update.my_chat_member || update.chat_member) {
+      if (!update.message && !update.callback_query) return;
+    }
+
     const cq = update.callback_query as Record<string, unknown> | undefined;
     if (cq) {
       await this.handleCallbackQuery(cq);

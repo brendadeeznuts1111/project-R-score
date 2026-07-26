@@ -18,6 +18,8 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `flows/channel-meta.ts` | `ChatChannelMeta` store · `linkTelegramChat` |
 | `telegram-config.ts` | Env SSOT — `loadTelegramEnv()` / `effectiveToken` (FACTORY → TOKEN) · topics |
 | `telegram-transport-health.ts` | `getMe` + webhook probe for `telegram:verify` |
+| `telegram-discovery.ts` | Granular Bot API + known-chats inventory (`telegram:discover`) |
+| `known-chats.ts` | Self-learning `ops_telegram_known_chats` from updates |
 | `telegram-api.ts` | `sendTelegramBotMessage` · `editTelegramMessage` · `setMyCommands` · `answerCallbackQuery` (rate-limited + 429 retry) |
 
 ## Factory webhook commands
@@ -58,6 +60,9 @@ Tenant runbook: [`docs/harness/tenants/telegram-factory.md`](../../docs/harness/
 ```bash
 # Token + webhook probe
 bun run telegram:verify
+
+# Known chats + Bot API inventory
+bun run telegram:discover
 
 # Factory bot menu + webhook
 bun run telegram:factory:setup

@@ -1633,6 +1633,7 @@
     "portal:telegram:webhook": "bash scripts/telegram-webhook-register.sh",
     "telegram:factory:setup": "bun tools/telegram-bot-setup.ts",
     "telegram:verify": "bun tools/telegram-verify-env.ts",
+    "telegram:discover": "bun tools/telegram-discover.ts",
     "telegram:ops:consume": "bun tools/telegram-ops-consumer.ts",
     "telegram:link-chat": "bun tools/telegram-link-chat.ts",
     "factory:create": "bun lib/factory/cli.ts create",

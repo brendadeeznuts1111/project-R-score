@@ -8,6 +8,7 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 |------|----------------|-------|
 | 1. Bot token | `TELEGRAM_BOT_FACTORY` in `.env` or `~/.reasonix/.env` | Create via [@BotFather](https://t.me/BotFather); never commit |
 | 2. Verify | `bun run telegram:verify` | Calls `getMe` + `getWebhookInfo` |
+| 2b. Discover | `bun run telegram:discover` | Bot API inventory + `ops_telegram_known_chats` (learned from updates) |
 | 3. Webhook + menu | `bun run telegram:factory:setup` | `setMyCommands` + `setWebhook` → Pages `/api/telegram/webhook/factory` (R2 enqueue; see Architecture) |
 | 3b. Drain updates | `bun run telegram:ops:consume` | Processes R2 `telegram-updates` + `telegram-commands` + outbox |
 | 4. Linked seats | `/start link_<nonce>` or `bun tools/telegram-link-chat.ts ASH-001 tg:chat:…` | Sets `tree_nodes.telegram_id` + `ChatChannelMeta`; CLI also enqueues `partner.welcome` when a profile binding exists (`--no-welcome` to skip) |
@@ -17,6 +18,10 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 **Full identity integration** (cellphone → profile → seat → ChatChannelMeta → HTML templates): [`partner-onboarding-package.md`](partner-onboarding-package.md).
 
 Transport health API: [`lib/telegram/telegram-transport-health.ts`](../../../lib/telegram/telegram-transport-health.ts) · `bun run telegram:verify -- --json`
+
+## Known chats (self-learning)
+
+Bot API has no membership list. On each drained update, Bun upserts `chat.id` into `ops_telegram_known_chats` (`lib/telegram/known-chats.ts`) from `message`, `callback_query`, and `my_chat_member`. Leave/kick sets `active=0`. Webhook `allowed_updates` includes `my_chat_member` via `telegram:factory:setup`.
 
 ## Partner message path (deep)
 
