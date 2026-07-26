@@ -32,7 +32,7 @@
 
 **Row-aligned numerator (2026-07-24):** `settledViaFullLoop` counts distribution rows with full gate + settle attribution (not `COUNT(DISTINCT play_id)`). `settlePlay` fans out `play.settled` **and** releases per-node liquidity (stake-proportional PnL/cuts). Legacy DBs still need one `ops:loop:backfill` pass for pre-fan-out history.
 
-**Attribution ≠ durability:** `loopCompletionRate` is SQLite outbox `sent` status. `ops:outbox:requeue --drain` (no `--r2`) uses in-process memory projectors — LCR can be 100% while R2 is empty. Prefer `bun run ops:outbox:requeue -- --drain --r2` for durable proof. `resolveProductionOutboxOpts` surfaces `projectorBackend: 'r2'|'memory'`; ops-summary / portal loop slice expose `projectorBackend` + `projectorDurable` at bake time.
+**Attribution ≠ durability:** `loopCompletionRate` is SQLite outbox `sent` status. Drain requires an explicit plane: `bun run ops:outbox:requeue -- --drain --r2` (Pages registry bucket via `resolveChannelR2BridgeConfig`) or `--drain --memory` (attribution-only). Ops-summary exposes `projectorBackend`, `projectorBucket`, and `projectorDurable` (false when `outboxFailed > 0`). Do not point channel/outbox at the bench cascade (`R2_BUCKET_NAME=bun-secrets`).
 
 Developer velocity is tracked separately via `bun run harness:status` → `reports/harness-gate-timing.json` gate sum.
 

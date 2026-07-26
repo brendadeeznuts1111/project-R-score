@@ -173,6 +173,7 @@ Root `functions/` is bundled by Wrangler for Workers — **no `bun:sqlite`**, **
 |------|------|
 | `functions/api/operations/summary.ts` | Serves `public/registry/ops-summary.json` (C4/C5 portal data) |
 | `functions/api/registry/[[path]].ts` | R2 registry proxy (`REGISTRY_BUCKET` binding) |
+| `functions/api/telegram/webhook/[[tenant]].ts` | Telegram edge enqueue → R2 `telegram-updates` (needs `TELEGRAM_WEBHOOK_SECRET`) |
 | `functions/api/registry/health.ts` | Registry health probe |
 | `functions/api/health.ts` | Portal health schema v1 (`/api/health`) |
 | `functions/health/index.ts` | Same snapshot as JSON at `/health` |

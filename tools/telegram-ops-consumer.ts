@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
@@ -9,7 +10,7 @@
  * - `telegram-commands` — ops-bridge command queue (legacy / direct enqueue)
  * - `ops_channel_outbox` — durable channel projectors (via processChannelOutbox)
  */
-import { getTenant, isTenantSlug } from '../config/tenants.ts';
+import { getTenant } from '../config/tenants.ts';
 import { AccountR2Store } from '../lib/accounts/account-r2-store.ts';
 import {
   createR2ChannelStoreFromConfig,
@@ -18,14 +19,15 @@ import {
 import { processChannelOutbox } from '../lib/channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
-import { createTenantBot, sendTelegramMessage } from '../lib/telegram/bot.ts';
+import { sendTelegramMessage } from '../lib/telegram/bot.ts';
+import { drainTelegramUpdates } from '../lib/telegram/consumer-updates.ts';
+import { deliverFlowOutput } from '../lib/telegram/flows/deliver.ts';
 import { TELEGRAM_COMMANDS_TOPIC } from '../lib/telegram/ops-bridge.ts';
-import { dispatchOpsCommand } from '../lib/telegram/ops-commands.ts';
+import { dispatchOpsCommand, dispatchOpsFlowOutput } from '../lib/telegram/ops-commands.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
-import type { TelegramUpdateEnqueuePayload } from '../lib/telegram/webhook-pages.ts';
 import { TELEGRAM_UPDATES_TOPIC } from '../lib/telegram/webhook-pages.ts';
 import type { TelegramUserId } from '../lib/types/branded/portal.ts';
-import { resolveR2BridgeConfig } from '../scripts/lib/r2-bridge.ts';
+import { resolveChannelR2BridgeConfig } from '../scripts/lib/r2-bridge.ts';
 import { S3Client } from 'bun';
 
 const UPDATES_CURSOR_KEY = 'telegram-ops-consumer/updates-cursor.json';
@@ -57,7 +59,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const r2 = resolveR2BridgeConfig();
+  const r2 = resolveChannelR2BridgeConfig();
   const client = new S3Client({
     accessKeyId: r2.accessKeyId,
     secretAccessKey: r2.secretAccessKey,
@@ -102,21 +104,20 @@ async function main(): Promise<void> {
   let commandsProcessed = 0;
 
   try {
+    const tenant = getTenant('factory')!;
+    const accounts = new AccountR2Store(bucket);
+
+    updatesProcessed = await drainTelegramUpdates({
+      updates,
+      bucket,
+      channel,
+      accounts,
+      tenant,
+      env: { ...env, OPS_DB_PATH: dbPath },
+      dbPath,
+    });
     for (const ev of updates) {
       if (ev.seq > updatesMax) updatesMax = ev.seq;
-      const p = ev.payload as TelegramUpdateEnqueuePayload;
-      if (!p?.tenantSlug || !p.update || !isTenantSlug(p.tenantSlug)) continue;
-      const tenant = getTenant(p.tenantSlug);
-      if (!tenant) continue;
-      const bot = createTenantBot(p.tenantSlug);
-      await bot.handleUpdate(p.update, {
-        tenant,
-        accounts: new AccountR2Store(bucket),
-        bucket,
-        channel,
-        env: { ...env, OPS_DB_PATH: dbPath },
-      });
-      updatesProcessed++;
     }
 
     for (const ev of commands) {
@@ -128,14 +129,26 @@ async function main(): Promise<void> {
         args?: string[];
       };
       if (!p.telegramUserId || !p.command) continue;
-      const reply = dispatchOpsCommand(db, dbPath, {
+      const chatId = Number(p.chatId ?? p.telegramUserId);
+      const flowOutput = dispatchOpsFlowOutput(db, dbPath, {
         telegramUserId: p.telegramUserId as string,
         command: p.command,
         args: p.args ?? [],
       });
-      const chatId = Number(p.chatId ?? p.telegramUserId);
-      const tenant = getTenant('factory')!;
-      await sendTelegramMessage({ TELEGRAM_BOT_FACTORY: token }, tenant, chatId, reply);
+      if (flowOutput) {
+        await deliverFlowOutput(flowOutput, {
+          token,
+          chatId,
+          db,
+        });
+      } else {
+        const reply = dispatchOpsCommand(db, dbPath, {
+          telegramUserId: p.telegramUserId as string,
+          command: p.command,
+          args: p.args ?? [],
+        });
+        await sendTelegramMessage({ TELEGRAM_BOT_FACTORY: token }, tenant, chatId, reply);
+      }
       commandsProcessed++;
     }
 

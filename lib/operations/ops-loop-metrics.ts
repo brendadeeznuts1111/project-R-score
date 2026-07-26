@@ -57,7 +57,12 @@ export type OpsLoopMetricsSlice = {
    * Null when not probed (pure SQL query without host opts).
    */
   projectorBackend: 'r2' | 'memory' | null;
-  /** True when projectorBackend === 'r2'. */
+  /** Resolved channel R2 bucket when backend is r2 (Pages REGISTRY twin). */
+  projectorBucket: string | null;
+  /**
+   * True when backend is r2, bucket is set, and outbox has no open failures.
+   * Config-presence alone is not durable — failed rows clear this flag.
+   */
   projectorDurable: boolean | null;
 };
 
@@ -219,19 +224,30 @@ export function queryLoopMetricsSlice(db: Database): OpsLoopMetricsSlice {
     limitEfficiencyProxy,
     processReturnProxy,
     projectorBackend: null,
+    projectorBucket: null,
     projectorDurable: null,
   };
 }
 
+export type ProjectorBackendSignal = {
+  backend: 'r2' | 'memory' | null;
+  bucket?: string | null;
+};
+
 /** Attach host projector durability signal (R2 vs memory) for portal honesty. */
 export function withProjectorBackendSignal(
   slice: OpsLoopMetricsSlice,
-  backend: 'r2' | 'memory' | null
+  signal: ProjectorBackendSignal | 'r2' | 'memory' | null
 ): OpsLoopMetricsSlice {
+  const backend = typeof signal === 'object' && signal != null ? signal.backend : signal;
+  const bucket = typeof signal === 'object' && signal != null ? (signal.bucket ?? null) : null;
+  const durable =
+    backend == null ? null : backend === 'r2' && Boolean(bucket) && slice.outboxFailed === 0;
   return {
     ...slice,
     projectorBackend: backend,
-    projectorDurable: backend == null ? null : backend === 'r2',
+    projectorBucket: backend === 'r2' ? bucket : null,
+    projectorDurable: durable,
   };
 }
 
@@ -347,6 +363,7 @@ function emptyLoopSlice(): OpsLoopMetricsSlice {
     limitEfficiencyProxy: null,
     processReturnProxy: null,
     projectorBackend: null,
+    projectorBucket: null,
     projectorDurable: null,
   };
 }

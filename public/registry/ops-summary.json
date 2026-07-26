@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-26T06:22:58.072Z",
+  "generated": "2026-07-26T19:28:37.113Z",
   "liquidity": {
     "total": 85710
   },
@@ -136,11 +136,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "c169921594456d91449c76c2714e63d439abbe6c6779b57cd5a2d51f45e8a82e",
+    "proofHash": "bf269f8cd5bf4b282710b216187f0cef935af2da903dc83ce4725d64f25a6e6e",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-26T06:22:58.072Z"
+    "timestamp": "2026-07-26T19:28:37.113Z"
   },
   "registryClient": {
     "available": true,
@@ -186,7 +186,7 @@
   },
   "cloudflarePages": {
     "available": true,
-    "ok": false,
+    "ok": true,
     "steps": [
       {
         "id": "well-known-mcp-parity",
@@ -200,8 +200,8 @@
       },
       {
         "id": "functions-import-graph",
-        "ok": false,
-        "detail": "exit 1"
+        "ok": true,
+        "detail": "allowlist ok"
       },
       {
         "id": "functions-edge-safety",
@@ -211,18 +211,18 @@
       {
         "id": "proof-taxonomy-audit",
         "ok": true,
-        "detail": "13 contracts · 20 consistency · preflight self-contract deferred"
+        "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-26T06:22:58.039Z",
+    "timestamp": "2026-07-26T19:28:37.077Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
   "proofTaxonomy": {
     "available": true,
-    "ok": false,
+    "ok": true,
     "contracts": 13,
-    "contractsOk": 12,
+    "contractsOk": 13,
     "consistencyOk": 20,
     "consistencyTotal": 20,
     "audits": [
@@ -313,7 +313,7 @@
       {
         "path": "public/registry/cloudflare-pages-preflight.json",
         "reportPath": "/registry/cloudflare-pages-preflight.json",
-        "ok": false,
+        "ok": true,
         "primarySubsystem": "other",
         "rows": 5
       }
@@ -400,8 +400,8 @@
         "ok": true
       }
     ],
-    "proofHash": "ed4130f911eefad960a2f059d940981fe8ba1a973a2e9f1fa0bc16c4c3352e56",
-    "timestamp": "2026-07-26T06:22:57.656Z",
+    "proofHash": "0ebac615475841a521a466a5eb163a8e83557b7899c2e880f12e2ecbb2bb18a2",
+    "timestamp": "2026-07-26T19:28:36.664Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -412,7 +412,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-26T06:22:57.650Z",
+    "updatedAt": "2026-07-26T19:28:36.661Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -693,16 +693,16 @@
     ]
   },
   "channels": {
-    "pending": 54,
-    "failed": 72,
-    "sent": 259,
-    "oldestPendingAt": "2026-07-26T06:12:52.950Z",
-    "failRate": 0.2175226586102719
+    "pending": 18,
+    "failed": 0,
+    "sent": 565,
+    "oldestPendingAt": "2026-07-26T19:28:36.490Z",
+    "failRate": 0
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-26T06:22:58.064Z",
+    "generatedAt": "2026-07-26T19:28:37.103Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -730,7 +730,7 @@
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 12.413989703674964,
+    "avgRP": 11.03885968606142,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -767,7 +767,27 @@
     "recycleCyclesOpen": 4,
     "complianceOpen": 5,
     "auditTrailRows": 36,
-    "slaBreaches7d": 13
+    "slaBreaches7d": 13,
+    "wdQueuedTotal": 0,
+    "wdBlockedTotal": 5,
+    "exposureAging72hPlus": 0,
+    "onbChecklistPending": 3,
+    "settlementSlots7d": 17,
+    "constraintRopeCount": 2,
+    "playSettlementPending": 4,
+    "exceptionResolutionOpen": 19,
+    "botCommands24h": 8,
+    "bicHandoffsTotal": 7,
+    "warmPlaybookPending": 27,
+    "phoneLogEvents": 13,
+    "avgLiquidityUtilPct": 63,
+    "fundCorridorsBlocked": 1,
+    "railUtilHighCount": 2,
+    "accountGatesFailed": 19,
+    "capitalLocationMoves": 4,
+    "pendingDeployItems": 2,
+    "playInstructionsStale": 1,
+    "dealSplitDrift": 2
   },
   "loop": {
     "dispatched": 29,
@@ -778,11 +798,11 @@
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 259,
-    "outboxFailed": 72,
-    "outboxPending": 54,
-    "oldestPendingAgeSec": 605,
-    "manualStepsPerCycle": 126,
+    "outboxSent": 565,
+    "outboxFailed": 0,
+    "outboxPending": 18,
+    "oldestPendingAgeSec": 0,
+    "manualStepsPerCycle": 18,
     "loopCompletionRate": 1,
     "distinctPlaysDispatched": 7,
     "settledPlaysViaFullLoop": 7,
@@ -791,6 +811,7 @@
     "limitEfficiencyProxy": 0.9547793476364905,
     "processReturnProxy": 0.20128651835968908,
     "projectorBackend": "r2",
+    "projectorBucket": "factory-wager-registry",
     "projectorDurable": true
   }
 }

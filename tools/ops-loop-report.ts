@@ -60,13 +60,14 @@ async function main(): Promise<void> {
       source = 'fixture';
     }
 
-    const projectorBackend = useFixture
-      ? null
-      : resolveProductionOutboxOpts({ deliver: false }).projectorBackend;
+    const outbox = useFixture ? null : resolveProductionOutboxOpts({ deliver: false });
     const report: OpsLoopReport = {
       capturedAt: new Date().toISOString(),
       source,
-      metrics: withProjectorBackendSignal(queryLoopMetricsSlice(db), projectorBackend),
+      metrics: withProjectorBackendSignal(queryLoopMetricsSlice(db), {
+        backend: outbox?.projectorBackend ?? null,
+        bucket: outbox?.projectorBucket ?? null,
+      }),
       velocity: await loadVelocity(),
     };
 

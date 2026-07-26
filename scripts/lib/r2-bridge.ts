@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { S3Client, semver } from 'bun';
 import {
+  factoryRegistryBucketFromEnv,
   r2BucketFromEnv,
   r2EndpointFromAccount,
   r2RequestPayerFromEnv,
@@ -48,6 +49,21 @@ export function resolveR2BridgeConfig(input?: {
     );
   }
   return { endpoint, bucket, accessKeyId, secretAccessKey, requestPayer };
+}
+
+/**
+ * Channel / outbox / telegram consumer plane — twin of Pages `REGISTRY_BUCKET`.
+ *
+ * Must not use the bench cascade (`r2BucketFromEnv` → `R2_BUCKET_NAME=bun-secrets`).
+ * SSOT: `factoryRegistryBucketFromEnv()` → `factory-wager-registry`.
+ */
+export function resolveChannelR2BridgeConfig(
+  input?: Parameters<typeof resolveR2BridgeConfig>[0]
+): R2BridgeConfig {
+  return resolveR2BridgeConfig({
+    ...input,
+    bucket: input?.bucket?.trim() || factoryRegistryBucketFromEnv(),
+  });
 }
 
 export async function uploadJsonToR2(

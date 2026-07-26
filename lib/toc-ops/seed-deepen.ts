@@ -10,38 +10,68 @@ import { summarizeProfiles } from './profiles.ts';
 import type {
   TocAccount,
   TocAuditTrailRow,
+  TocBicHandoff,
+  TocBotCommandEntry,
   TocBottleneck,
   TocBufferHistoryPoint,
   TocCapitalMove,
   TocComplianceFlag,
+  TocDealSplitAudit,
+  TocExceptionResolution,
   TocExceptionEvent,
   TocExperiment,
   TocExpert,
+  TocExposureAging,
   TocExposureEvent,
+  TocFundCorridor,
   TocGate12Event,
+  TocGateId,
   TocLimitRefresh,
+  TocLiquidityUtilPoint,
   TocMessageLogEntry,
   TocNetCapitalPosition,
+  TocOnbChecklistItem,
   TocPartner,
+  TocPendingDeploymentItem,
+  TocPhoneLogEntry,
   TocPlay,
+  TocPlaySettlementSlot,
+  TocReadinessTrendPoint,
   TocRailConfirmEvent,
   TocRecycleCycle,
   TocReleaseCard,
   TocRotorPoint,
   TocSlaBoard,
+  TocSettlementSlot,
   TocSoftBalanceSheet,
   TocSoftEntry,
+  TocTaskTimelineEntry,
   TocSwitchbackWindow,
+  TocAccountConstraint,
   TocWarmCycle,
+  TocWarmPlaybookStep,
+  TocWdPipelineItem,
 } from './types.ts';
 
 function withPlacement(partner: TocPartner, plays: TocPlay[]): TocPlay[] {
   const bySign = new Map(partner.accounts.map(a => [a.callSign, a.presence]));
+  const now = Date.parse('2026-07-24T00:00:00.000Z');
   return plays.map(play => {
-    if (play.status === 'blocked' || play.placement) return play;
-    const pr = bySign.get(play.callSign);
-    if (!pr) return play;
-    return { ...play, placement: demoPlacementFromPresence(pr, play.placedAt) };
+    let next = play;
+    if (play.status !== 'blocked' && !play.placement) {
+      const pr = bySign.get(play.callSign);
+      if (pr) next = { ...next, placement: demoPlacementFromPresence(pr, play.placedAt) };
+    }
+    if (play.status === 'instruction') {
+      const placed = Date.parse(play.placedAt);
+      const ageMin = Math.max(0, Math.round((now - placed) / 60_000));
+      next = {
+        ...next,
+        instructionAgeMin: ageMin,
+        ackDueAt: new Date(placed + 60 * 60_000).toISOString(),
+      };
+    }
+    return next;
   });
 }
 
@@ -530,6 +560,23 @@ function deepenAgentDesk(e: TocExpert): TocExpert {
     (w, i) => [w - 1, w, w + (i % 2)]
   );
 
+  const allocated = e.profile.liquidity.allocated;
+  const liquidityUtilSeries: TocLiquidityUtilPoint[] = [0, 1, 2, 3, 4, 5, 6].map(i => {
+    const inUse =
+      e.expertId === 'marcus'
+        ? Math.round(allocated * (0.55 + i * 0.04))
+        : e.expertId === 'elena'
+          ? Math.round(allocated * (0.42 + i * 0.03))
+          : Math.round(allocated * (0.35 + i * 0.025));
+    const utilPct = allocated === 0 ? 0 : Math.round((inUse / allocated) * 1000) / 10;
+    return {
+      day: dayIso(10 + i, 0).slice(0, 10),
+      utilPct,
+      allocated,
+      inUse: Math.min(inUse, allocated),
+    };
+  });
+
   return {
     ...e,
     profile: {
@@ -537,6 +584,7 @@ function deepenAgentDesk(e: TocExpert): TocExpert {
       bookPermissions: venues,
       exposureLadder,
       clvDailyBps: clvDailyBps.slice(0, 21),
+      liquidityUtilSeries,
       history: [
         ...e.profile.history,
         {
@@ -1146,8 +1194,342 @@ function railConfirmHistory(p: TocPartner): TocPartner['rails'] {
         note: p.partnerCode === 'NOV' ? 'Confirm SLA elapsed' : 'Destination mismatch',
       });
     }
-    return { ...r, confirmHistory: hist };
+    const dailyCap = r.dailyLimit ?? (p.partnerCode === 'PAT' ? 8_000 : 4_000);
+    const monthlyCap = r.monthlyLimit ?? dailyCap * 20;
+    const usedDaily =
+      p.partnerCode === 'PAT' && r.confirmed
+        ? Math.round(dailyCap * 0.82)
+        : p.partnerCode === 'ASH' && r.confirmed
+          ? Math.round(dailyCap * 0.61)
+          : p.partnerCode === 'NOV'
+            ? 0
+            : Math.round(dailyCap * 0.35);
+    const usedMonthly =
+      p.partnerCode === 'PAT' && r.confirmed
+        ? Math.round(monthlyCap * 0.74)
+        : p.partnerCode === 'ASH' && r.confirmed
+          ? Math.round(monthlyCap * 0.58)
+          : Math.round(usedDaily * 8);
+    const pctDaily = dailyCap === 0 ? 0 : Math.round((usedDaily / dailyCap) * 1000) / 10;
+    const pctMonthly = monthlyCap === 0 ? 0 : Math.round((usedMonthly / monthlyCap) * 1000) / 10;
+    return {
+      ...r,
+      confirmHistory: hist,
+      utilization: {
+        usedDaily,
+        usedMonthly,
+        pctDaily,
+        pctMonthly,
+        asOf: '2026-07-23T18:00:00.000Z',
+      },
+    };
   });
+}
+
+function exposureAgingFromJournal(
+  journal: TocExposureEvent[],
+  pending: number,
+  nowMs = Date.parse('2026-07-24T00:00:00.000Z')
+): TocExposureAging {
+  const aging: TocExposureAging = { bucket0_24h: 0, bucket24_72h: 0, bucket72hPlus: 0 };
+  if (pending <= 0) return aging;
+  const openEvents = journal.filter(
+    e => (e.kind === 'reserve' || e.kind === 'place') && e.pendingAfter > 0
+  );
+  if (openEvents.length === 0) {
+    aging.bucket0_24h = pending;
+    return aging;
+  }
+  for (const e of openEvents) {
+    const ageH = (nowMs - Date.parse(e.at)) / 3_600_000;
+    const amt = e.pendingAfter;
+    if (ageH <= 24) aging.bucket0_24h += amt;
+    else if (ageH <= 72) aging.bucket24_72h += amt;
+    else aging.bucket72hPlus += amt;
+  }
+  return aging;
+}
+
+function partnerWdPipeline(p: TocPartner): TocWdPipelineItem[] {
+  const items: TocWdPipelineItem[] = [];
+  for (const a of p.accounts) {
+    const principal = a.gate12.housePrincipalOutstanding;
+    if (principal <= 0 && a.flowStage !== 'WD') continue;
+    const wdTask = p.openTasks.find(t => t.callSign === a.callSign && t.taskType === 'WD');
+    const blocked = principal > 0;
+    const unconfirmedRail = p.rails.some(r => r.id === a.primaryRailId && !r.confirmed);
+    items.push({
+      wdId: `wd-${a.callSign}-${p.partnerCode}`,
+      callSign: a.callSign,
+      amount: principal > 0 ? principal : Math.round(a.hardBalance * 0.4),
+      mode: a.gate12.withdrawalMode,
+      status: blocked
+        ? 'blocked'
+        : unconfirmedRail
+          ? 'pending_rail'
+          : wdTask?.status === 'Processing'
+            ? 'processing'
+            : wdTask?.status === 'GateCheck'
+              ? 'gate_check'
+              : principal > 0
+                ? 'queued'
+                : 'completed',
+      requestedAt: wdTask?.createdAt ?? dayIso(12, 14),
+      slaDueAt: wdTask?.slaDueAt ?? dayIso(13, 18),
+      blockReason: blocked
+        ? 'Gate 12 principal outstanding'
+        : unconfirmedRail
+          ? 'Rail unconfirmed'
+          : undefined,
+    });
+  }
+  if (p.partnerCode === 'PAT' && !items.some(i => i.status === 'processing')) {
+    items.push({
+      wdId: 'wd-pat-profit-split',
+      callSign: 'PAT-001',
+      amount: 420,
+      mode: 'profit_split',
+      status: 'processing',
+      requestedAt: dayIso(13, 10),
+      slaDueAt: dayIso(14, 12),
+    });
+  }
+  return items.sort((a, b) => a.requestedAt.localeCompare(b.requestedAt));
+}
+
+function partnerOnbChecklist(p: TocPartner): TocOnbChecklistItem[] | undefined {
+  if (p.status !== 'Onboarding' && p.partnerCode !== 'NOV') return undefined;
+  const allRailsConfirmed = p.rails.length > 0 && p.rails.every(r => r.confirmed);
+  const kycComplete = !p.accounts.some(a => a.status === 'New');
+  const limitsFresh = p.accounts.some(a => a.limits.freshness === 'fresh');
+  return [
+    {
+      stepId: 'onb-package',
+      label: 'Package agreement signed',
+      status: 'done',
+      completedAt: '2026-07-20T14:00:00.000Z',
+    },
+    {
+      stepId: 'onb-kyc',
+      label: 'KYC / identity docs',
+      status: kycComplete ? 'done' : 'blocked',
+      completedAt: kycComplete ? '2026-07-21T11:00:00.000Z' : undefined,
+      blockReason: kycComplete ? undefined : 'NOV-001 still New — government ID pending',
+    },
+    {
+      stepId: 'onb-rail',
+      label: 'All payout rails screenshot-first',
+      status: allRailsConfirmed ? 'done' : 'blocked',
+      completedAt: allRailsConfirmed ? dayIso(4, 15) : undefined,
+      blockReason: allRailsConfirmed ? undefined : 'CashApp rail unconfirmed — confirm SLA elapsed',
+    },
+    {
+      stepId: 'onb-telegram',
+      label: 'Telegram bot linked',
+      status: p.telegramRef ? 'done' : 'pending',
+      completedAt: p.telegramRef ? '2026-07-22T09:30:00.000Z' : undefined,
+    },
+    {
+      stepId: 'onb-first-account',
+      label: 'First Drum call sign minted',
+      status: p.accounts.length > 0 ? 'done' : 'pending',
+      completedAt: p.accounts[0]?.callSign ? dayIso(5, 8) : undefined,
+    },
+    {
+      stepId: 'onb-fund',
+      label: 'First FUND corridor ($4.5k–$5.5k)',
+      status: limitsFresh ? 'pending' : 'blocked',
+      blockReason: limitsFresh ? undefined : 'Blocked until limits screenshot + all rails clear',
+    },
+  ];
+}
+
+function partnerSettlementCalendar(p: TocPartner): TocSettlementSlot[] {
+  const slots: TocSettlementSlot[] = [];
+  for (const a of p.accounts) {
+    if ((a.pendingExposure ?? 0) > 0) {
+      slots.push({
+        at: dayIso(14, 20),
+        kind: 'exposure',
+        callSign: a.callSign,
+        amount: a.pendingExposure!,
+        note: 'Pending play settlement window',
+      });
+    }
+    for (const w of a.warmCycles?.filter(x => x.status === 'open') ?? []) {
+      slots.push({
+        at: dayIso(15, 12),
+        kind: 'exposure',
+        callSign: a.callSign,
+        amount: w.returnedAmount ?? 0,
+        note: `Warm cycle ${w.cycle} return`,
+      });
+    }
+  }
+  for (const w of p.wdPipeline ?? []) {
+    if (w.status === 'blocked' || w.status === 'queued' || w.status === 'processing') {
+      slots.push({
+        at: w.slaDueAt ?? dayIso(14, 18),
+        kind: 'wd',
+        callSign: w.callSign,
+        amount: w.amount,
+        note: w.blockReason ?? `WD ${w.status}`,
+      });
+    }
+  }
+  for (const r of p.rails.filter(x => !x.confirmed)) {
+    slots.push({
+      at: dayIso(13, 17),
+      kind: 'rail',
+      amount: 0,
+      note: `${r.label} confirm deadline`,
+    });
+  }
+  return slots.sort((a, b) => a.at.localeCompare(b.at)).slice(0, 12);
+}
+
+function rollupExposureAging(accounts: TocAccount[]): TocExposureAging {
+  return accounts.reduce(
+    (acc, a) => {
+      const ag = a.exposureAging;
+      if (!ag) return acc;
+      acc.bucket0_24h += ag.bucket0_24h;
+      acc.bucket24_72h += ag.bucket24_72h;
+      acc.bucket72hPlus += ag.bucket72hPlus;
+      return acc;
+    },
+    { bucket0_24h: 0, bucket24_72h: 0, bucket72hPlus: 0 }
+  );
+}
+
+function accountConstraint(a: TocAccount, partnerCode: string): TocAccountConstraint {
+  const g12 = a.gate12.housePrincipalOutstanding > 0;
+  const warm = a.warmupCount < 2;
+  const stale = a.limits.freshness === 'stale';
+  if (partnerCode === 'NOV') {
+    return {
+      focus: 'rope',
+      ropeBroken: true,
+      drumStarved: false,
+      bufferWrongSized: false,
+      summary: 'ONB — partner ack blocks Drum',
+    };
+  }
+  if (g12) {
+    return {
+      focus: 'elevate',
+      ropeBroken: false,
+      drumStarved: false,
+      bufferWrongSized: false,
+      summary: 'Gate 12 principal — WD before PLAY',
+    };
+  }
+  if (warm) {
+    return {
+      focus: 'drum',
+      ropeBroken: false,
+      drumStarved: true,
+      bufferWrongSized: false,
+      summary: `Warm ${a.warmupCount}/2 starves PLAY`,
+    };
+  }
+  if (stale) {
+    return {
+      focus: 'buffer',
+      ropeBroken: false,
+      drumStarved: false,
+      bufferWrongSized: true,
+      summary: 'Limit screenshot stale — buffer wrong-sized',
+    };
+  }
+  return {
+    focus: 'drum',
+    ropeBroken: false,
+    drumStarved: false,
+    bufferWrongSized: false,
+    summary: 'Drum ready — PLAY eligible',
+  };
+}
+
+function partnerExceptionResolution(p: TocPartner): TocExceptionResolution[] {
+  const rows: TocExceptionResolution[] = [];
+  for (const ev of p.exceptionTimeline ?? []) {
+    rows.push({
+      exceptionId: ev.id,
+      family: ev.family,
+      status: ev.status === 'closed' ? 'resolved' : ev.status === 'mitigated' ? 'assigned' : 'open',
+      owner: ev.status === 'open' ? 'Partner' : 'Ops',
+      dueAt: dayIso(14, 17),
+      callSign: ev.callSign,
+      summary: ev.summary,
+      resolvedAt: ev.status === 'closed' ? dayIso(13, 11) : undefined,
+    });
+  }
+  for (const b of p.bottlenecks.filter(x => !x.resolvedAt).slice(0, 2)) {
+    rows.push({
+      exceptionId: `bn-${b.ruleKey}-${b.callSign ?? p.partnerCode}`,
+      family: b.ruleKey,
+      status: 'assigned',
+      owner: 'Ops',
+      dueAt: dayIso(13, 20),
+      callSign: b.callSign,
+      summary: b.nextAction,
+    });
+  }
+  return rows.slice(0, 8);
+}
+
+function partnerPlaySettlementQueue(p: TocPartner): TocPlaySettlementSlot[] {
+  return p.recentPlays
+    .filter(pl => pl.status === 'placed' || pl.status === 'instruction')
+    .slice(0, 6)
+    .map((pl, i) => ({
+      playId: pl.playId,
+      callSign: pl.callSign,
+      stake: pl.stake,
+      status: pl.status,
+      expectedSettleAt: dayIso(13 + (i % 3), 18 + i),
+      market: pl.market,
+    }));
+}
+
+function partnerBotCommandLog(p: TocPartner): TocBotCommandEntry[] {
+  const bot = p.profile?.bot?.username ?? `@TOC_${p.partnerCode}_bot`;
+  const base: TocBotCommandEntry[] = [
+    {
+      at: dayIso(12, 9),
+      command: '/status',
+      actor: bot,
+      outcome: 'ok',
+      note: `${p.partnerCode} readiness ${p.readiness.score.toFixed(2)}`,
+    },
+    {
+      at: dayIso(12, 14),
+      command: '/limits',
+      actor: 'Partner',
+      outcome: p.partnerCode === 'NOV' ? 'deferred' : 'ok',
+      note: p.partnerCode === 'NOV' ? 'Awaiting screenshot-first' : 'Limits refreshed',
+    },
+  ];
+  if (p.partnerCode === 'ASH') {
+    base.push({
+      at: dayIso(13, 8),
+      command: '/play defer',
+      actor: 'Expert',
+      outcome: 'denied',
+      note: 'Gate 12 principal outstanding on ASH-003',
+    });
+  }
+  if (p.partnerCode === 'PAT') {
+    base.push({
+      at: dayIso(13, 16),
+      command: '/wd queue',
+      actor: 'Partner',
+      outcome: 'ok',
+      note: 'Profit-split WD processing',
+    });
+  }
+  return base;
 }
 
 function exposureAndRecycle(
@@ -1159,6 +1541,7 @@ function exposureAndRecycle(
   exposureJournal: TocExposureEvent[];
   recycleCycles: TocRecycleCycle[];
   complianceFlags: TocComplianceFlag[];
+  exposureAging: TocExposureAging;
 } {
   const seatPlays = plays.filter(pl => pl.callSign === a.callSign);
   const pendingPlays = seatPlays.filter(
@@ -1264,6 +1647,7 @@ function exposureAndRecycle(
     exposureJournal: journal.sort((x, y) => x.at.localeCompare(y.at)),
     recycleCycles,
     complianceFlags,
+    exposureAging: exposureAgingFromJournal(journal, pending),
   };
 }
 
@@ -1343,6 +1727,450 @@ function partnerAuditTrail(p: TocPartner): TocAuditTrailRow[] {
   return rows.sort((a, b) => b.at.localeCompare(a.at)).slice(0, 16);
 }
 
+function partnerBicHandoffs(p: TocPartner): TocBicHandoff[] {
+  const rows: TocBicHandoff[] = [];
+  for (const t of p.openTasks.filter(x => x.status !== 'Completed')) {
+    if (t.taskType === 'PLAY' && t.ballInCourt === 'Partner') {
+      rows.push({
+        at: t.createdAt ?? dayIso(12, 19),
+        taskId: t.taskId,
+        taskType: t.taskType,
+        from: 'Expert',
+        to: 'Partner',
+        reason: 'PLAY instruction delivered — ack required',
+      });
+    }
+    if (t.taskType === 'LIMIT' && t.ballInCourt === 'Partner') {
+      rows.push({
+        at: dayIso(11, 10),
+        taskId: t.taskId,
+        taskType: t.taskType,
+        from: 'Ops',
+        to: 'Partner',
+        reason: 'Limit screenshot refresh after rotor drift',
+      });
+    }
+  }
+  if (p.partnerCode === 'ASH') {
+    rows.push({
+      at: '2026-07-23T20:05:00.000Z',
+      taskId: 'PLAY-ASH-001-20260723-190000-001',
+      taskType: 'PLAY',
+      from: 'Partner',
+      to: 'Ops',
+      reason: 'SLA breach — escalate to ops desk',
+    });
+  }
+  if (p.partnerCode === 'PAT') {
+    rows.push({
+      at: '2026-07-20T18:30:00.000Z',
+      taskId: 'PLAY-PAT-001-20260716-140000-001',
+      taskType: 'PLAY',
+      from: 'Partner',
+      to: 'Expert',
+      reason: 'Stake confirmed on Kalshi rail',
+    });
+    rows.push({
+      at: '2026-07-20T18:45:00.000Z',
+      taskId: 'PLAY-PAT-001-20260716-140000-001',
+      taskType: 'PLAY',
+      from: 'Expert',
+      to: 'Ops',
+      reason: 'Settle window — ops monitors exposure',
+    });
+  }
+  if (p.partnerCode === 'NOV') {
+    rows.push({
+      at: '2026-07-22T10:20:00.000Z',
+      taskId: 'ONB-NOV-001-20260722-100000-001',
+      taskType: 'ONB',
+      from: 'Ops',
+      to: 'Partner',
+      reason: 'KYC checklist issued',
+    });
+    rows.push({
+      at: '2026-07-23T09:05:00.000Z',
+      taskId: 'FUND-NOV-001-20260723-090000-001',
+      taskType: 'FUND',
+      from: 'System',
+      to: 'Ops',
+      reason: 'Rail unconfirmed — block FUND corridor',
+    });
+  }
+  return rows.sort((a, b) => a.at.localeCompare(b.at));
+}
+
+function accountWarmPlaybook(a: TocAccount, partnerCode: string): TocWarmPlaybookStep[] {
+  const warm1Done = a.warmupProgress.completed >= 1 || a.warmupCount >= 1;
+  const warm2Done = a.warmupProgress.completed >= 2 || a.warmupCount >= 2;
+  const limitsOk = a.limits.freshness === 'fresh' || a.status === 'WARMED';
+  const funded = a.status !== 'New';
+  const steps: TocWarmPlaybookStep[] = [
+    {
+      stepId: 'fund-received',
+      label: 'FUND received on primary rail',
+      status: funded ? 'done' : partnerCode === 'NOV' ? 'blocked' : 'pending',
+      requiredForPlay: true,
+      completedAt: funded ? dayIso(8, 9) : undefined,
+    },
+    {
+      stepId: 'limits-screenshot',
+      label: 'LIMIT screenshot on file',
+      status: limitsOk ? 'done' : a.limits.freshness === 'stale' ? 'in_progress' : 'pending',
+      requiredForPlay: true,
+      completedAt: limitsOk ? (a.limits.checkedAt ?? dayIso(9)) : undefined,
+    },
+    {
+      stepId: 'warm-play-1',
+      label: 'Warm play 1 (low stake)',
+      status: warm1Done ? 'done' : a.status === 'Warming' ? 'in_progress' : 'pending',
+      requiredForPlay: true,
+      completedAt: warm1Done ? dayIso(10, 14) : undefined,
+    },
+    {
+      stepId: 'warm-play-2',
+      label: 'Warm play 2 (tagged)',
+      status: warm2Done ? 'done' : warm1Done ? 'in_progress' : 'pending',
+      requiredForPlay: true,
+      completedAt: warm2Done ? dayIso(11, 15) : undefined,
+    },
+    {
+      stepId: 'limits-refresh',
+      label: 'Post-warm LIMIT refresh',
+      status:
+        a.status === 'WARMED'
+          ? 'done'
+          : warm2Done
+            ? 'in_progress'
+            : a.limits.freshness === 'stale'
+              ? 'blocked'
+              : 'pending',
+      requiredForPlay: true,
+      completedAt: a.status === 'WARMED' ? dayIso(12, 8) : undefined,
+    },
+    {
+      stepId: 'warmed-clear',
+      label: 'WARMED clearance',
+      status:
+        a.status === 'WARMED'
+          ? 'done'
+          : a.status === 'Warming' && warm2Done
+            ? 'in_progress'
+            : 'pending',
+      requiredForPlay: true,
+      completedAt: a.status === 'WARMED' ? dayIso(13, 10) : undefined,
+    },
+  ];
+  if (partnerCode === 'NOV' && a.status === 'New') {
+    const fund = steps.find(s => s.stepId === 'fund-received');
+    if (fund) fund.status = 'blocked';
+  }
+  return steps;
+}
+
+function partnerPhoneLog(p: TocPartner): TocPhoneLogEntry[] {
+  const phones = p.profile?.phones ?? [];
+  if (phones.length === 0) return [];
+  const rows: TocPhoneLogEntry[] = [];
+  for (const ph of phones) {
+    rows.push({
+      at: dayIso(9, 8),
+      phoneId: ph.id,
+      event: 'assign',
+      summary: `Assigned to ${ph.assignedCallSign ?? p.partnerCode}`,
+    });
+    if (ph.dataPlan && ph.dataPlan.usedGb / ph.dataPlan.gbMonth > 0.75) {
+      rows.push({
+        at: dayIso(14, 17),
+        phoneId: ph.id,
+        event: 'data_threshold',
+        summary: `Data ${ph.dataPlan.usedGb.toFixed(1)}/${ph.dataPlan.gbMonth} GB — renew ${ph.dataPlan.renewsAt?.slice(0, 10) ?? 'soon'}`,
+      });
+    }
+    if (ph.dataPlan?.hotspot) {
+      rows.push({
+        at: dayIso(15, 12),
+        phoneId: ph.id,
+        event: 'hotspot_on',
+        summary: 'Hotspot enabled for slip capture',
+      });
+    }
+    if (ph.status === 'warming') {
+      rows.push({
+        at: dayIso(11, 7),
+        phoneId: ph.id,
+        event: 'renew',
+        summary: `${ph.dataPlan?.name ?? 'Plan'} renewal queued`,
+      });
+    }
+    if (p.partnerCode === 'NOV' && ph.status === 'active') {
+      rows.push({
+        at: dayIso(12, 9),
+        phoneId: ph.id,
+        event: 'sim_swap',
+        summary: 'SIM swap pending carrier KYC',
+      });
+    }
+  }
+  return rows.sort((a, b) => a.at.localeCompare(b.at));
+}
+
+function softPendingDeploymentItems(p: TocPartner): TocPendingDeploymentItem[] {
+  const pending = p.softBalance.pendingDeployments;
+  if (pending.count === 0) return [];
+  const items: TocPendingDeploymentItem[] = [];
+  const fundTasks = p.openTasks.filter(t => t.taskType === 'FUND' && t.status !== 'Completed');
+  let remaining = pending.totalAmount;
+  for (let i = 0; i < pending.count && remaining > 0; i++) {
+    const task = fundTasks[i];
+    const acct = p.accounts.find(a => a.callSign === task?.callSign) ?? p.accounts[i];
+    const amount = Math.min(
+      remaining,
+      task ? Math.round(remaining / (pending.count - i)) : remaining
+    );
+    const blocked = p.partnerCode === 'NOV' || p.rails.some(r => !r.confirmed);
+    items.push({
+      id: `pdep-${p.partnerCode.toLowerCase()}-${i + 1}`,
+      callSign: acct?.callSign ?? p.accounts[0]!.callSign,
+      amount,
+      taskId: task?.taskId,
+      queuedAt: task?.createdAt ?? dayIso(11 + i, 9),
+      status: blocked ? 'blocked' : i === 0 ? 'gate_check' : 'queued',
+      blockReason: blocked ? 'Rail or ONB gate blocks deploy' : undefined,
+    });
+    remaining -= amount;
+  }
+  return items;
+}
+
+function partnerReadinessTrend(p: TocPartner, openBic: number): TocReadinessTrendPoint[] {
+  return [0, 1, 2, 3, 4, 5, 6].map(i => {
+    const day = dayIso(10 + i, 0).slice(0, 10);
+    const score = Math.max(0.08, Math.min(0.99, p.readiness.score - (6 - i) * 0.02 + i * 0.015));
+    const playable = Math.max(
+      0,
+      Math.min(
+        p.readiness.playableAccountCount,
+        p.readiness.playableAccountCount - (6 - i) + (p.partnerCode === 'PAT' ? 1 : 0)
+      )
+    );
+    return {
+      day,
+      score: Math.round(score * 100) / 100,
+      playableAccounts: playable,
+      openBic: Math.max(0, openBic - (6 - i)),
+    };
+  });
+}
+
+function partnerDealSplitAudit(p: TocPartner): TocDealSplitAudit {
+  const pkg = p.package;
+  const byTask = new Map<
+    string,
+    { partner: number; expert: number; house: number; at: string; playId?: string } // brand-ok — Soft ProfitSplit fixture join key
+  >();
+  for (const e of p.softBalance.recentEntries) {
+    if (e.entryType !== 'ProfitSplit') continue;
+    const cur = byTask.get(e.taskId) ?? {
+      partner: 0,
+      expert: 0,
+      house: 0,
+      at: e.timestamp,
+    };
+    if (e.stakeholder === 'Partner') cur.partner += e.amount;
+    if (e.stakeholder === 'Expert') cur.expert += e.amount;
+    if (e.stakeholder === 'House') cur.house += e.amount;
+    cur.at = e.timestamp;
+    byTask.set(e.taskId, cur);
+  }
+  const rows = [...byTask.entries()].slice(-8).map(([taskId, splits]) => {
+    const total = splits.partner + splits.expert + splits.house;
+    const pPct = pkg.partnerPct > 1 ? pkg.partnerPct / 100 : pkg.partnerPct;
+    const ePct = pkg.expertPct > 1 ? pkg.expertPct / 100 : pkg.expertPct;
+    const expected = {
+      partner: Math.round(total * pPct),
+      expert: Math.round(total * ePct),
+      house: total - Math.round(total * pPct) - Math.round(total * ePct),
+    };
+    const deltaTotal =
+      Math.abs(splits.partner - expected.partner) +
+      Math.abs(splits.expert - expected.expert) +
+      Math.abs(splits.house - expected.house);
+    const play = p.recentPlays.find(pl => pl.taskId === taskId);
+    return {
+      taskId,
+      playId: play?.playId,
+      at: splits.at,
+      expected,
+      actual: { partner: splits.partner, expert: splits.expert, house: splits.house },
+      ok: deltaTotal <= 2,
+      deltaTotal,
+    };
+  });
+  return {
+    asOf: '2026-07-23T18:00:00.000Z',
+    packagePct: {
+      partner: pkg.partnerPct,
+      expert: pkg.expertPct,
+      house: pkg.housePct,
+    },
+    rows,
+    driftCount: rows.filter(r => !r.ok).length,
+  };
+}
+
+function partnerFundCorridor(p: TocPartner): TocFundCorridor | undefined {
+  const fundTask = p.openTasks.find(t => t.taskType === 'FUND' && t.status !== 'Completed');
+  const primaryRail = p.rails.find(r => r.confirmed) ?? p.rails[0];
+  const show =
+    p.partnerCode === 'NOV' ||
+    fundTask != null ||
+    p.flowStage === 'FUND' ||
+    p.flowStage === 'PLAY' ||
+    p.flowStage === 'WD' ||
+    p.flowStage === 'WARM';
+  if (!show) return undefined;
+  const target = p.partnerCode === 'NOV' ? 5_000 : p.partnerCode === 'ASH' ? 12_000 : 15_000;
+  const funded = p.accounts.reduce((n, a) => n + (a.status !== 'New' ? a.hardBalance : 0), 0);
+  const hasUnconfirmedRail = p.rails.some(r => !r.confirmed);
+  const railBlocked =
+    !primaryRail?.confirmed ||
+    (hasUnconfirmedRail && (p.partnerCode === 'NOV' || p.flowStage === 'ONB'));
+  let status: TocFundCorridor['status'] = 'funded';
+  if (railBlocked) status = 'blocked';
+  else if (funded === 0) status = 'open';
+  else if (funded < target) status = 'partial';
+  return {
+    targetAmount: target,
+    fundedAmount: Math.min(funded, target),
+    railId: primaryRail?.id ?? 'rail-unknown',
+    status,
+    blockReason: railBlocked
+      ? hasUnconfirmedRail
+        ? 'Unconfirmed payout rail blocks FUND corridor'
+        : 'Rail unconfirmed — FUND corridor blocked'
+      : undefined,
+    taskId: fundTask?.taskId,
+    updatedAt: '2026-07-23T18:00:00.000Z',
+  };
+}
+
+function partnerTaskTimeline(p: TocPartner): TocTaskTimelineEntry[] {
+  const rows: TocTaskTimelineEntry[] = [];
+  for (const t of p.openTasks) {
+    rows.push({
+      at: t.createdAt ?? dayIso(10, 9),
+      taskId: t.taskId,
+      taskType: t.taskType,
+      event: 'created',
+      ballInCourt: t.ballInCourt,
+      summary: `${t.taskType} opened on ${t.callSign}`,
+    });
+    if (t.status !== 'Completed' && t.ageMin != null && t.ageMin > 45) {
+      rows.push({
+        at: t.slaDueAt ?? dayIso(12, 14),
+        taskId: t.taskId,
+        taskType: t.taskType,
+        event: 'sla_breach',
+        ballInCourt: t.ballInCourt,
+        summary: t.nextAction,
+      });
+    }
+    if (t.taskType === 'PLAY' && t.status === 'PendingPartner') {
+      rows.push({
+        at: dayIso(11, 19),
+        taskId: t.taskId,
+        taskType: t.taskType,
+        event: 'assigned',
+        ballInCourt: 'Partner',
+        summary: 'Instruction delivered — awaiting partner ack',
+      });
+    }
+  }
+  if (p.partnerCode === 'NOV') {
+    rows.push({
+      at: '2026-07-23T09:10:00.000Z',
+      taskId: 'FUND-NOV-001-20260723-090000-001',
+      taskType: 'FUND',
+      event: 'blocked',
+      ballInCourt: 'System',
+      summary: 'FUND blocked pending rail confirm',
+    });
+  }
+  return rows.sort((a, b) => a.at.localeCompare(b.at));
+}
+
+function accountCapitalLocationSeries(
+  a: TocAccount,
+  partnerCode: string
+): TocAccount['capitalLocationSeries'] {
+  const ledger = a.capitalLedger ?? [];
+  if (ledger.length === 0) {
+    return [
+      {
+        at: dayIso(8, 10),
+        location: a.capitalLocation,
+        hardBalance: a.hardBalance,
+        note: 'Current snapshot',
+      },
+    ];
+  }
+  const points = ledger.map(m => ({
+    at: m.at,
+    location: m.to,
+    hardBalance: m.amount,
+    note: m.note,
+  }));
+  points.push({
+    at: '2026-07-23T18:00:00.000Z',
+    location: a.capitalLocation,
+    hardBalance: a.hardBalance,
+    note: partnerCode === 'ASH' ? 'Drum float after warm' : 'Latest book balance',
+  });
+  return points.sort((x, y) => x.at.localeCompare(y.at));
+}
+
+function accountGateSnapshot(a: TocAccount, p: TocPartner): TocAccount['gateSnapshot'] {
+  const rail = p.rails.find(r => r.id === a.primaryRailId) ?? p.rails[0];
+  const gates: Array<{ gateId: TocGateId; ok: boolean; reason: string }> = [
+    {
+      gateId: 'play_warmed',
+      ok: a.warmupCount >= 2 && a.status === 'WARMED',
+      reason:
+        a.status === 'WARMED'
+          ? `WARMED warmup=${a.warmupCount}`
+          : `warmup=${a.warmupCount} status=${a.status}`,
+    },
+    {
+      gateId: 'confirmed_rail',
+      ok: !!rail?.confirmed,
+      reason: rail?.confirmed ? `${rail.label} confirmed` : 'Rail unconfirmed',
+    },
+    {
+      gateId: 'limit_fresh_drum',
+      ok: a.limits.freshness === 'fresh',
+      reason: `limits ${a.limits.freshness}`,
+    },
+    {
+      gateId: 'fund_rail_ready',
+      ok: !!rail?.confirmed,
+      reason: rail?.confirmed ? 'FUND rail ready' : 'FUND blocked — confirm rail',
+    },
+    {
+      gateId: 'warm_sequential',
+      ok: a.warmupProgress.completed >= a.warmupProgress.required || a.warmupCount >= 2,
+      reason: `warm ${a.warmupProgress.completed}/${a.warmupProgress.required}`,
+    },
+  ];
+  const passed = gates.filter(g => g.ok).length;
+  return {
+    evaluatedAt: '2026-07-23T18:00:00.000Z',
+    passed,
+    failed: gates.length - passed,
+    gates,
+  };
+}
+
 function partnerNetCapital(p: TocPartner): TocNetCapitalPosition {
   const entries = p.softBalance.recentEntries;
   const sum = (type: TocSoftEntry['entryType']) =>
@@ -1367,15 +2195,23 @@ function partnerNetCapital(p: TocPartner): TocNetCapitalPosition {
 }
 
 function attachAccountLedgers(p: TocPartner): TocPartner {
-  const accounts = p.accounts.map(a => ({
+  const accountsBase = p.accounts.map(a => ({
     ...a,
     ...accountCapitalLedgers(a, p.partnerCode),
     limitHistory: limitHistoryFor(a),
     ...exposureAndRecycle(a, p.partnerCode, p.recentPlays),
+    constraint: accountConstraint(a, p.partnerCode),
+    warmPlaybook: accountWarmPlaybook(a, p.partnerCode),
   }));
-  const withRails = { ...p, accounts, rails: railConfirmHistory(p) };
+  const withRails = { ...p, accounts: accountsBase, rails: railConfirmHistory(p) };
   const sheet = softBalanceSheet(withRails);
   const { slaBoard, openTasks } = partnerSlaBoard(withRails);
+  const withTasks = { ...withRails, openTasks };
+  const accounts = withTasks.accounts.map(a => ({
+    ...a,
+    capitalLocationSeries: accountCapitalLocationSeries(a, p.partnerCode),
+    gateSnapshot: accountGateSnapshot(a, withTasks),
+  }));
   const partnerFlags: TocComplianceFlag[] = [
     ...accounts.flatMap(a => a.complianceFlags ?? []),
     ...(p.rails.some(r => !r.confirmed)
@@ -1391,16 +2227,39 @@ function attachAccountLedgers(p: TocPartner): TocPartner {
         ]
       : []),
   ];
-  return {
-    ...withRails,
-    openTasks,
+  const wdPipeline = partnerWdPipeline({ ...withTasks, accounts });
+  const withPass7 = {
+    ...withTasks,
+    accounts,
     slaBoard,
-    auditTrail: partnerAuditTrail(withRails),
+    auditTrail: partnerAuditTrail(withTasks),
     complianceFlags: partnerFlags,
-    netCapital: partnerNetCapital(withRails),
+    netCapital: partnerNetCapital(withTasks),
+    wdPipeline,
+    exposureAging: rollupExposureAging(accounts),
+    onbChecklist: partnerOnbChecklist(withTasks),
+    settlementCalendar: partnerSettlementCalendar({ ...withTasks, accounts, wdPipeline }),
+    exceptionResolution: partnerExceptionResolution(withTasks),
+    playSettlementQueue: partnerPlaySettlementQueue(withTasks),
+    bicHandoffs: partnerBicHandoffs(withTasks),
+    fundCorridor: partnerFundCorridor(withTasks),
+    taskTimeline: partnerTaskTimeline(withTasks),
+    readinessTrend: partnerReadinessTrend(
+      withTasks,
+      openTasks.filter(t => t.status !== 'Completed').length
+    ),
+    dealSplitAudit: partnerDealSplitAudit(withTasks),
+    profile: withTasks.profile
+      ? {
+          ...withTasks.profile,
+          botCommandLog: partnerBotCommandLog(withTasks),
+          phoneLog: partnerPhoneLog(withTasks),
+        }
+      : withTasks.profile,
     softBalance: {
-      ...withRails.softBalance,
+      ...withTasks.softBalance,
       balanceSheet: sheet,
+      pendingDeploymentItems: softPendingDeploymentItems(withTasks),
     },
     healthPulse: [0, 1, 2, 3, 4, 5, 6].map(i => {
       const day = dayIso(10 + i, 0).slice(0, 10);
@@ -1422,6 +2281,7 @@ function attachAccountLedgers(p: TocPartner): TocPartner {
       };
     }),
   };
+  return withPass7;
 }
 
 function deepenExpertRoi(experts: TocExpert[], partners: TocPartner[]): TocExpert[] {
@@ -1592,6 +2452,26 @@ export type TocDeepenResult = {
     complianceOpen: number;
     auditTrailRows: number;
     slaBreaches7d: number;
+    wdQueuedTotal: number;
+    wdBlockedTotal: number;
+    exposureAging72hPlus: number;
+    onbChecklistPending: number;
+    settlementSlots7d: number;
+    constraintRopeCount: number;
+    playSettlementPending: number;
+    exceptionResolutionOpen: number;
+    botCommands24h: number;
+    bicHandoffsTotal: number;
+    warmPlaybookPending: number;
+    phoneLogEvents: number;
+    avgLiquidityUtilPct: number | null;
+    fundCorridorsBlocked: number;
+    railUtilHighCount: number;
+    accountGatesFailed: number;
+    capitalLocationMoves: number;
+    pendingDeployItems: number;
+    playInstructionsStale: number;
+    dealSplitDrift: number;
   };
 };
 
@@ -1714,6 +2594,102 @@ export function deepenSeedNarrative(
   );
   const auditTrailRows = denserPartners.reduce((n, p) => n + (p.auditTrail?.length ?? 0), 0);
   const slaBreaches7d = denserPartners.reduce((n, p) => n + (p.slaBoard?.breachCount7d ?? 0), 0);
+  const wdQueuedTotal = denserPartners.reduce(
+    (n, p) =>
+      n +
+      (p.wdPipeline?.filter(w => w.status === 'queued' || w.status === 'gate_check').length ?? 0),
+    0
+  );
+  const wdBlockedTotal = denserPartners.reduce(
+    (n, p) => n + (p.wdPipeline?.filter(w => w.status === 'blocked').length ?? 0),
+    0
+  );
+  const exposureAging72hPlus = denserPartners.reduce(
+    (n, p) => n + (p.exposureAging?.bucket72hPlus ?? 0),
+    0
+  );
+  const onbChecklistPending = denserPartners.reduce(
+    (n, p) =>
+      n +
+      (p.onbChecklist?.filter(s => s.status === 'pending' || s.status === 'blocked').length ?? 0),
+    0
+  );
+  const settlementSlots7d = denserPartners.reduce(
+    (n, p) => n + (p.settlementCalendar?.length ?? 0),
+    0
+  );
+  const constraintRopeCount = denserPartners.reduce(
+    (n, p) =>
+      n + p.accounts.filter(a => a.constraint?.focus === 'rope' || a.constraint?.ropeBroken).length,
+    0
+  );
+  const playSettlementPending = denserPartners.reduce(
+    (n, p) => n + (p.playSettlementQueue?.length ?? 0),
+    0
+  );
+  const exceptionResolutionOpen = denserPartners.reduce(
+    (n, p) =>
+      n +
+      (p.exceptionResolution?.filter(r => r.status === 'open' || r.status === 'assigned').length ??
+        0),
+    0
+  );
+  const botCommands24h = denserPartners.reduce(
+    (n, p) => n + (p.profile?.botCommandLog?.length ?? 0),
+    0
+  );
+  const bicHandoffsTotal = denserPartners.reduce((n, p) => n + (p.bicHandoffs?.length ?? 0), 0);
+  const warmPlaybookPending = denserPartners.reduce(
+    (n, p) =>
+      n +
+      p.accounts.reduce(
+        (m, a) =>
+          m +
+          (a.warmPlaybook?.filter(s => s.status === 'pending' || s.status === 'blocked').length ??
+            0),
+        0
+      ),
+    0
+  );
+  const phoneLogEvents = denserPartners.reduce((n, p) => n + (p.profile?.phoneLog?.length ?? 0), 0);
+  const utilSamples = denserExperts.flatMap(
+    e => e.profile?.liquidityUtilSeries?.slice(-1).map(u => u.utilPct) ?? []
+  );
+  const avgLiquidityUtilPct =
+    utilSamples.length === 0
+      ? null
+      : Math.round((utilSamples.reduce((a, b) => a + b, 0) / utilSamples.length) * 10) / 10;
+  const fundCorridorsBlocked = denserPartners.filter(
+    p => p.fundCorridor?.status === 'blocked'
+  ).length;
+  const railUtilHighCount = denserPartners.reduce(
+    (n, p) => n + p.rails.filter(r => (r.utilization?.pctDaily ?? 0) >= 80).length,
+    0
+  );
+  const accountGatesFailed = denserPartners.reduce(
+    (n, p) => n + p.accounts.reduce((m, a) => m + (a.gateSnapshot?.failed ?? 0), 0),
+    0
+  );
+  const capitalLocationMoves = denserPartners.reduce(
+    (n, p) =>
+      n + p.accounts.reduce((m, a) => Math.max(0, (a.capitalLocationSeries?.length ?? 1) - 1), 0),
+    0
+  );
+  const pendingDeployItems = denserPartners.reduce(
+    (n, p) => n + (p.softBalance.pendingDeploymentItems?.length ?? 0),
+    0
+  );
+  const playInstructionsStale = denserPartners.reduce(
+    (n, p) =>
+      n +
+      p.recentPlays.filter(pl => pl.status === 'instruction' && (pl.instructionAgeMin ?? 0) > 60)
+        .length,
+    0
+  );
+  const dealSplitDrift = denserPartners.reduce(
+    (n, p) => n + (p.dealSplitAudit?.driftCount ?? 0),
+    0
+  );
 
   return {
     partners: denserPartners,
@@ -1745,6 +2721,26 @@ export function deepenSeedNarrative(
       complianceOpen,
       auditTrailRows,
       slaBreaches7d,
+      wdQueuedTotal,
+      wdBlockedTotal,
+      exposureAging72hPlus,
+      onbChecklistPending,
+      settlementSlots7d,
+      constraintRopeCount,
+      playSettlementPending,
+      exceptionResolutionOpen,
+      botCommands24h,
+      bicHandoffsTotal,
+      warmPlaybookPending,
+      phoneLogEvents,
+      avgLiquidityUtilPct,
+      fundCorridorsBlocked,
+      railUtilHighCount,
+      accountGatesFailed,
+      capitalLocationMoves,
+      pendingDeployItems,
+      playInstructionsStale,
+      dealSplitDrift,
     },
   };
 }

@@ -7,7 +7,7 @@
  *   bun tools/ops-settle.ts --limit 20 --result win --pnl 120
  *   bun tools/ops-settle.ts --dry-run
  */
-import { resolveR2BridgeConfig } from '../scripts/lib/r2-bridge.ts';
+import { resolveChannelR2BridgeConfig } from '../scripts/lib/r2-bridge.ts';
 import { createR2ChannelStoreFromConfig } from '../lib/channels/r2-channel-bucket.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { settlePendingPlays } from '../lib/operations/ops-settle-batch.ts';
@@ -71,7 +71,7 @@ async function main(): Promise<void> {
       outboxOpts = null;
     } else if (useR2) {
       try {
-        const r2 = resolveR2BridgeConfig();
+        const r2 = resolveChannelR2BridgeConfig();
         outboxOpts = { deliver: true, r2Store: createR2ChannelStoreFromConfig(r2) };
       } catch {
         outboxOpts = { deliver: false };

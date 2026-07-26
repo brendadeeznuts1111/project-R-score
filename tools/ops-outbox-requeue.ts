@@ -1,26 +1,36 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/sqlite
 /**
  * Requeue failed ops_channel_outbox rows → pending, then optionally drain.
  *
  *   bun tools/ops-outbox-requeue.ts
  *   bun tools/ops-outbox-requeue.ts --dry-run
- *   bun tools/ops-outbox-requeue.ts --drain --max-retries=5
+ *   bun tools/ops-outbox-requeue.ts --drain --r2 --max-retries=5
+ *   bun tools/ops-outbox-requeue.ts --drain --memory   # attribution-only
  */
-import {
-  processChannelOutbox,
-  requeueFailedChannelOutbox,
-} from '../lib/channels/outbox.ts';
+import { processChannelOutbox, requeueFailedChannelOutbox } from '../lib/channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../lib/channels/outbox-prod-opts.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import { queryLoopMetricsSlice } from '../lib/operations/ops-loop-metrics.ts';
 
 const dryRun = Bun.argv.includes('--dry-run');
 const drain = Bun.argv.includes('--drain');
+const useR2 = Bun.argv.includes('--r2');
+const useMemory = Bun.argv.includes('--memory');
 const maxRetriesArg = Bun.argv.find(a => a.startsWith('--max-retries='));
 const maxRetries = maxRetriesArg ? Number(maxRetriesArg.split('=')[1]) : undefined;
 
 async function main(): Promise<void> {
+  if (drain && !useR2 && !useMemory) {
+    console.error(
+      'Drain requires --r2 (durable Pages registry bucket) or --memory (attribution-only).\n' +
+        '  bun run ops:outbox:requeue -- --drain --r2\n' +
+        '  bun run ops:outbox:requeue -- --drain --memory'
+    );
+    process.exit(1);
+  }
+
   const db = openOperationsDb();
   try {
     const before = queryLoopMetricsSlice(db);
@@ -60,17 +70,18 @@ async function main(): Promise<void> {
 
     let outbox: { sent: number; failed: number } | undefined;
     let projectorBackend: 'r2' | 'memory' | 'local' = 'local';
+    let projectorBucket: string | null = null;
     if (drain) {
-      // Default: local memory projectors (attribution / hygiene). Pass --r2 for durable R2.
-      const useR2 = Bun.argv.includes('--r2');
       if (useR2) {
         const opts = resolveProductionOutboxOpts({ deliver: false, requireR2: true });
         projectorBackend = opts.projectorBackend;
+        projectorBucket = opts.projectorBucket ?? null;
         outbox = await processChannelOutbox(db, opts);
       } else {
         console.warn(
           '[ops-outbox-requeue] draining with local memory — LCR attribution only, not durable R2'
         );
+        projectorBackend = 'memory';
         outbox = await processChannelOutbox(db, { deliver: false });
       }
     }
@@ -82,6 +93,7 @@ async function main(): Promise<void> {
           requeued,
           drain: drain ? outbox : null,
           projectorBackend,
+          projectorBucket,
           before: {
             outboxPending: before.outboxPending,
             outboxFailed: before.outboxFailed,

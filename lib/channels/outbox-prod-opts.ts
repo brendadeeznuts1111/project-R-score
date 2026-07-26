@@ -2,10 +2,13 @@
 /**
  * Resolve production outbox projector opts — R2 when credentials exist, else local memory.
  *
- * Always surfaces `projectorBackend` so callers can distinguish attribution drains
- * (memory) from durable projection (r2). Use `requireR2: true` to fail closed.
+ * Always surfaces `projectorBackend` + `projectorBucket` so callers can distinguish
+ * attribution drains (memory) from durable projection (r2 on Pages registry bucket).
+ * Use `requireR2: true` to fail closed.
+ *
+ * Channel plane SSOT: {@link resolveChannelR2BridgeConfig} (not bench `bun-secrets`).
  */
-import { resolveR2BridgeConfig } from '../../scripts/lib/r2-bridge.ts';
+import { resolveChannelR2BridgeConfig } from '../../scripts/lib/r2-bridge.ts';
 import { loadTelegramEnv } from '../telegram/telegram-config.ts';
 import { createR2ChannelStoreFromConfig } from './r2-channel-bucket.ts';
 import type { ProcessOutboxOpts } from './outbox.ts';
@@ -14,6 +17,8 @@ export type ProjectorBackend = 'r2' | 'memory';
 
 export type ProductionOutboxOpts = ProcessOutboxOpts & {
   projectorBackend: ProjectorBackend;
+  /** Resolved R2 bucket when backend is r2 (Pages registry twin). */
+  projectorBucket?: string;
   r2Error?: string;
 };
 
@@ -35,12 +40,13 @@ export function resolveProductionOutboxOpts(
   const deliver = input.deliver !== false;
   const telegramToken = resolveTelegramToken(input.telegramToken);
   try {
-    const r2 = resolveR2BridgeConfig();
+    const r2 = resolveChannelR2BridgeConfig();
     return {
       deliver,
       telegramToken,
       r2Store: createR2ChannelStoreFromConfig(r2),
       projectorBackend: 'r2',
+      projectorBucket: r2.bucket,
     };
   } catch (e) {
     const r2Error = e instanceof Error ? e.message : String(e);

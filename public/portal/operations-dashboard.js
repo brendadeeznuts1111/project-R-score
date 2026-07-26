@@ -771,6 +771,21 @@ class OperationsDashboard extends HTMLElement {
                   : '') +
                 (d.toc.slaBreaches7d != null && d.toc.slaBreaches7d > 0
                   ? ` · slaΔ ${d.toc.slaBreaches7d}`
+                  : '') +
+                (d.toc.wdQueuedTotal != null && d.toc.wdQueuedTotal > 0
+                  ? ` · wd ${d.toc.wdQueuedTotal}`
+                  : '') +
+                (d.toc.wdBlockedTotal != null && d.toc.wdBlockedTotal > 0
+                  ? ` · wd⛔ ${d.toc.wdBlockedTotal}`
+                  : '') +
+                (d.toc.onbChecklistPending != null && d.toc.onbChecklistPending > 0
+                  ? ` · onb ${d.toc.onbChecklistPending}`
+                  : '') +
+                (d.toc.playSettlementPending != null && d.toc.playSettlementPending > 0
+                  ? ` · settle ${d.toc.playSettlementPending}`
+                  : '') +
+                (d.toc.exceptionResolutionOpen != null && d.toc.exceptionResolutionOpen > 0
+                  ? ` · ex ${d.toc.exceptionResolutionOpen}`
                   : '')
               : '';
           const tioe =
@@ -861,7 +876,9 @@ class OperationsDashboard extends HTMLElement {
             ? ` · play ${Math.round(Number(d.loop.loopCompletionRateByPlay) * 100)}%`
             : '') +
           (d.loop.projectorBackend
-            ? ` · projector ${d.loop.projectorBackend}${d.loop.projectorDurable ? '' : ' (attr)'}`
+            ? ` · projector ${d.loop.projectorBackend}` +
+              (d.loop.projectorBucket ? `:${d.loop.projectorBucket}` : '') +
+              (d.loop.projectorDurable ? '' : ' (attr)')
             : '') +
           (capParts.length ? ` · ${capParts.join(' · ')}` : '');
       }

@@ -832,9 +832,12 @@ export function buildOpsSummary(
     partners: queryPartnersSlice(db),
     channels: queryOpsChannelHealth(db),
     toc: loadTocOpsSummarySlice(),
-    loop: withProjectorBackendSignal(
-      queryLoopMetricsSlice(db),
-      resolveProductionOutboxOpts({ deliver: false }).projectorBackend
-    ),
+    loop: (() => {
+      const outbox = resolveProductionOutboxOpts({ deliver: false });
+      return withProjectorBackendSignal(queryLoopMetricsSlice(db), {
+        backend: outbox.projectorBackend,
+        bucket: outbox.projectorBucket ?? null,
+      });
+    })(),
   };
 }

@@ -1,28 +1,33 @@
 {
-  "capturedAt": "2026-07-24T08:00:00.491Z",
+  "capturedAt": "2026-07-26T07:20:43.023Z",
   "source": "live",
   "metrics": {
     "dispatched": 29,
     "gatedAllow": 29,
     "gatedAdjust": 0,
     "gatedDeny": 0,
+    "gatedDefer": 0,
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 259,
-    "outboxFailed": 18,
+    "outboxSent": 565,
+    "outboxFailed": 0,
     "outboxPending": 0,
     "oldestPendingAgeSec": null,
-    "manualStepsPerCycle": 18,
+    "manualStepsPerCycle": 0,
     "loopCompletionRate": 1,
+    "distinctPlaysDispatched": 7,
+    "settledPlaysViaFullLoop": 7,
+    "loopCompletionRateByPlay": 1,
     "capitalEfficiencyProxy": 0.1278360819590205,
     "limitEfficiencyProxy": 0.9547793476364905,
-    "processReturnProxy": 0.20188172043010752,
+    "processReturnProxy": 0.20128651835968908,
     "projectorBackend": "r2",
+    "projectorBucket": "factory-wager-registry",
     "projectorDurable": true
   },
   "velocity": {
-    "harnessGateSumMs": 2180,
-    "harnessGeneratedAt": "2026-07-24T07:44:23.081Z"
+    "harnessGateSumMs": 50,
+    "harnessGeneratedAt": "2026-07-26T06:29:42.349Z"
   }
 }

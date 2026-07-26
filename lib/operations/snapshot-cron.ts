@@ -18,7 +18,7 @@
  */
 import { scheduleInProcess, type InProcessCronJob } from '../harness/cron.ts';
 import { buildRegistrySnapshot } from '../../tools/ops-snapshot.ts';
-import { resolveR2BridgeConfig } from '../../scripts/lib/r2-bridge.ts';
+import { resolveChannelR2BridgeConfig } from '../../scripts/lib/r2-bridge.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
 import { requeueFailedChannelOutbox } from '../channels/outbox.ts';
 import { AccountService } from './account-service.ts';
@@ -68,7 +68,7 @@ export async function runOpsSyncCycle(): Promise<{
   error?: string;
 }> {
   try {
-    const r2 = resolveR2BridgeConfig();
+    const r2 = resolveChannelR2BridgeConfig();
     const db = openOperationsDb();
     const svc = new AccountService(db);
     try {

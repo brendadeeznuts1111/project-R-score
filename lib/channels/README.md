@@ -8,15 +8,16 @@ Unified ops messaging: R2 append log + SQLite outbox projectors (R2 · Telegram 
 | [`ops-channel-event.ts`](ops-channel-event.ts) | Topics: identity · plays · dod · experiments · alerts · provisioning · **toc** |
 | [`outbox.ts`](outbox.ts) | `enqueueOpsChannelEvent` · `processChannelOutbox` · `requeueFailedChannelOutbox` · play/identity helpers |
 | [`toc-outbox.ts`](toc-outbox.ts) | TOC bake · Soft post · critical gates · ranked capital actions |
-| [`outbox-prod-opts.ts`](outbox-prod-opts.ts) | `resolveProductionOutboxOpts` — `projectorBackend: 'r2'\|'memory'`, `requireR2`, token via `loadTelegramEnv` |
+| [`outbox-prod-opts.ts`](outbox-prod-opts.ts) | `resolveProductionOutboxOpts` — channel R2 via `resolveChannelR2BridgeConfig` (Pages registry bucket), `projectorBackend`/`projectorBucket`, `requireR2` |
 | [`r2-channel-bucket.ts`](r2-channel-bucket.ts) | R2 store factory |
 
 ```bash
 bun run ops:outbox:requeue -- --dry-run
-bun run ops:outbox:requeue -- --drain          # local memory (attribution)
-bun run ops:outbox:requeue -- --drain --r2     # durable R2 (requireR2)
+bun run ops:outbox:requeue -- --drain --r2     # durable R2 (Pages registry bucket)
+bun run ops:outbox:requeue -- --drain --memory # attribution-only (explicit)
 bun test tests/ops-channel-outbox.test.ts tests/outbox-prod-opts.test.ts
 ```
+
 
 ## TOC topic
 
@@ -32,5 +33,5 @@ bun test tests/ops-channel-outbox.test.ts tests/outbox-prod-opts.test.ts
 Default projectors: **r2** (critical gates also **slack**). Pages remains read-only.
 
 ```bash
-bun test tests/ops-channel-outbox.test.ts tests/toc-ops-enforcement.test.ts
+bun test tests/ops-channel-outbox.test.ts tests/toc-ops/enforcement.test.ts
 ```
