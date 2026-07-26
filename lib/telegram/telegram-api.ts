@@ -80,20 +80,49 @@ export async function setBotCommands(token: string, commands: BotCommandDef[]): 
   return r.ok;
 }
 
-export async function getBotMe(token: string): Promise<{ username?: string; id?: number } | null> {
+/** Bot User from getMe (Bot API). */
+export type TelegramBotUser = {
+  id: number;
+  is_bot: boolean;
+  first_name: string;
+  username?: string;
+  can_join_groups?: boolean;
+  can_read_all_group_messages?: boolean;
+  supports_inline_queries?: boolean;
+  can_connect_to_business?: boolean;
+  has_main_web_app?: boolean;
+  has_topics_enabled?: boolean;
+};
+
+export async function getBotMe(token: string): Promise<TelegramBotUser | null> {
   const r = await telegramApiCall(token, 'getMe', {});
   if (!r.ok || !r.result || typeof r.result !== 'object') return null;
-  const u = r.result as { username?: string; id?: number };
-  return { username: u.username, id: typeof u.id === 'number' ? u.id : undefined };
+  const u = r.result as Partial<TelegramBotUser>;
+  if (typeof u.id !== 'number' || typeof u.first_name !== 'string') return null;
+  return {
+    id: u.id,
+    is_bot: Boolean(u.is_bot),
+    first_name: u.first_name,
+    username: typeof u.username === 'string' ? u.username : undefined,
+    can_join_groups: u.can_join_groups,
+    can_read_all_group_messages: u.can_read_all_group_messages,
+    supports_inline_queries: u.supports_inline_queries,
+    can_connect_to_business: u.can_connect_to_business,
+    has_main_web_app: u.has_main_web_app,
+    has_topics_enabled: u.has_topics_enabled,
+  };
 }
 
 export type TelegramWebhookInfo = {
   url?: string;
+  has_custom_certificate?: boolean;
   pending_update_count?: number;
+  ip_address?: string;
   last_error_date?: number;
   last_error_message?: string;
+  last_synchronization_error_date?: number;
   max_connections?: number;
-  ip_address?: string;
+  allowed_updates?: string[];
 };
 
 /** getWebhookInfo — used by telegram:verify transport probe. */
@@ -101,6 +130,171 @@ export async function getWebhookInfo(token: string): Promise<TelegramWebhookInfo
   const r = await telegramApiCall(token, 'getWebhookInfo', {});
   if (!r.ok || !r.result || typeof r.result !== 'object') return null;
   return r.result as TelegramWebhookInfo;
+}
+
+export type TelegramBotCommand = { command: string; description: string };
+
+export type TelegramBotCommandScope =
+  | { type: 'default' }
+  | { type: 'all_private_chats' }
+  | { type: 'all_group_chats' }
+  | { type: 'all_chat_administrators' }
+  | { type: 'chat'; chat_id: string | number } // brand-ok — Telegram chat_id wire
+  | { type: 'chat_administrators'; chat_id: string | number } // brand-ok — Telegram chat_id wire
+  | { type: 'chat_member'; chat_id: string | number; user_id: number }; // brand-ok — Telegram chat_id / user_id wire
+
+export async function getMyCommands(
+  token: string,
+  scope?: TelegramBotCommandScope
+): Promise<TelegramBotCommand[] | null> {
+  const body: Record<string, unknown> = {};
+  if (scope) body.scope = scope;
+  const r = await telegramApiCall(token, 'getMyCommands', body);
+  if (!r.ok || !Array.isArray(r.result)) return null;
+  return r.result as TelegramBotCommand[];
+}
+
+export async function getMyName(token: string): Promise<string | null> {
+  const r = await telegramApiCall(token, 'getMyName', {});
+  if (!r.ok || !r.result || typeof r.result !== 'object') return null;
+  const name = (r.result as { name?: string }).name;
+  return typeof name === 'string' ? name : null;
+}
+
+export async function getMyDescription(token: string): Promise<string | null> {
+  const r = await telegramApiCall(token, 'getMyDescription', {});
+  if (!r.ok || !r.result || typeof r.result !== 'object') return null;
+  const description = (r.result as { description?: string }).description;
+  return typeof description === 'string' ? description : null;
+}
+
+export async function getMyShortDescription(token: string): Promise<string | null> {
+  const r = await telegramApiCall(token, 'getMyShortDescription', {});
+  if (!r.ok || !r.result || typeof r.result !== 'object') return null;
+  const shortDescription = (r.result as { short_description?: string }).short_description;
+  return typeof shortDescription === 'string' ? shortDescription : null;
+}
+
+export type TelegramMenuButton = {
+  type: string;
+  text?: string;
+  web_app?: { url?: string };
+};
+
+export async function getChatMenuButton(
+  token: string,
+  chatId?: string | number // brand-ok — Telegram chat_id wire
+): Promise<TelegramMenuButton | null> {
+  const body: Record<string, unknown> = {};
+  if (chatId != null) body.chat_id = chatId;
+  const r = await telegramApiCall(token, 'getChatMenuButton', body);
+  if (!r.ok || !r.result || typeof r.result !== 'object') return null;
+  return r.result as TelegramMenuButton;
+}
+
+export type TelegramChatAdministratorRights = {
+  is_anonymous?: boolean;
+  can_manage_chat?: boolean;
+  can_delete_messages?: boolean;
+  can_manage_video_chats?: boolean;
+  can_restrict_members?: boolean;
+  can_promote_members?: boolean;
+  can_change_info?: boolean;
+  can_invite_users?: boolean;
+  can_post_messages?: boolean;
+  can_edit_messages?: boolean;
+  can_pin_messages?: boolean;
+  can_post_stories?: boolean;
+  can_edit_stories?: boolean;
+  can_delete_stories?: boolean;
+  can_manage_topics?: boolean;
+  can_manage_direct_messages?: boolean;
+};
+
+export async function getMyDefaultAdministratorRights(
+  token: string,
+  forChannels = false
+): Promise<TelegramChatAdministratorRights | null> {
+  const r = await telegramApiCall(token, 'getMyDefaultAdministratorRights', {
+    for_channels: forChannels,
+  });
+  if (!r.ok || !r.result || typeof r.result !== 'object') return null;
+  return r.result as TelegramChatAdministratorRights;
+}
+
+export type TelegramChatInfo = {
+  id: number;
+  type: string;
+  title?: string;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  is_forum?: boolean;
+  description?: string;
+  invite_link?: string;
+  permissions?: Record<string, unknown>;
+  active_usernames?: string[];
+};
+
+export async function getChat(
+  token: string,
+  chatId: string | number // brand-ok — Telegram chat_id wire
+): Promise<
+  { ok: true; chat: TelegramChatInfo } | { ok: false; description?: string; errorCode?: number }
+> {
+  const r = await telegramApiCall(token, 'getChat', { chat_id: chatId });
+  if (!r.ok || !r.result || typeof r.result !== 'object') {
+    return { ok: false, description: r.description, errorCode: r.error_code };
+  }
+  return { ok: true, chat: r.result as TelegramChatInfo };
+}
+
+export type TelegramChatMember = {
+  status: string;
+  user?: { id?: number; username?: string; is_bot?: boolean };
+  can_manage_chat?: boolean;
+  can_delete_messages?: boolean;
+  can_manage_video_chats?: boolean;
+  can_restrict_members?: boolean;
+  can_promote_members?: boolean;
+  can_change_info?: boolean;
+  can_invite_users?: boolean;
+  can_pin_messages?: boolean;
+  can_manage_topics?: boolean;
+  can_post_messages?: boolean;
+  can_edit_messages?: boolean;
+  is_anonymous?: boolean;
+};
+
+export async function getChatMember(
+  token: string,
+  chatId: string | number, // brand-ok — Telegram chat_id wire
+  userId: number
+): Promise<
+  { ok: true; member: TelegramChatMember } | { ok: false; description?: string; errorCode?: number }
+> {
+  const r = await telegramApiCall(token, 'getChatMember', { chat_id: chatId, user_id: userId });
+  if (!r.ok || !r.result || typeof r.result !== 'object') {
+    return { ok: false, description: r.description, errorCode: r.error_code };
+  }
+  return { ok: true, member: r.result as TelegramChatMember };
+}
+
+export async function getChatMemberCount(
+  token: string,
+  chatId: string | number // brand-ok — Telegram chat_id wire
+): Promise<number | null> {
+  const r = await telegramApiCall(token, 'getChatMemberCount', { chat_id: chatId });
+  return r.ok && typeof r.result === 'number' ? r.result : null;
+}
+
+export async function getChatAdministrators(
+  token: string,
+  chatId: string | number // brand-ok — Telegram chat_id wire
+): Promise<TelegramChatMember[] | null> {
+  const r = await telegramApiCall(token, 'getChatAdministrators', { chat_id: chatId });
+  if (!r.ok || !Array.isArray(r.result)) return null;
+  return r.result as TelegramChatMember[];
 }
 
 export type SendTelegramBotMessageInput = {

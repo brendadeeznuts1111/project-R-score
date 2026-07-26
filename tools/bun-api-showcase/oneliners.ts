@@ -234,7 +234,7 @@ export const demos: ShowcaseDemo[] = [
     run() {
       const ansi = '\x1b[31mred\x1b[0m';
       console.log(
-        `  escape=${Bun.escapeHTML('<div>')} width=${Bun.stringWidth('👨‍👩‍👧‍👦')} strip=${Bun.stripANSI(ansi)} slice="${Bun.sliceAnsi(ansi, 0, 2)}" wrap=${JSON.stringify(Bun.wrapAnsi('long line', 6))}`
+        `  escape=${Bun.escapeHTML('<div>')} width=${Bun.stringWidth('👨\u200d👩\u200d👧\u200d👦')} strip=${Bun.stripANSI(ansi)} slice="${Bun.sliceAnsi(ansi, 0, 2)}" wrap=${JSON.stringify(Bun.wrapAnsi('long line', 6))}`
       );
     },
   },

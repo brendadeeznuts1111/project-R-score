@@ -49,10 +49,12 @@ export type BuildBunUtilsProofOpts = {
 };
 
 /** Stable JSON for hashing (sorted object keys, no whitespace variance). */
+// eslint-disable-next-line harness/no-unknown-function-param -- canonical JSON wire normalization
 export function canonicalJson(value: unknown): string {
   return JSON.stringify(sortKeys(value));
 }
 
+// eslint-disable-next-line harness/no-unknown-function-param -- recursive JSON sort
 function sortKeys(value: unknown): unknown {
   if (value === null || typeof value !== 'object') return value;
   if (Array.isArray(value)) return value.map(sortKeys);
@@ -94,7 +96,7 @@ export function buildTestCases(): BunUtilsCase[] {
   const iDef = inspect(deep);
 
   const widthHello = stringWidth('hello');
-  const widthEmoji = stringWidth('👨‍👩‍👧‍👦');
+  const widthEmoji = stringWidth('👨\u200d👩\u200d👧\u200d👦');
   const widthCjk = stringWidth('こんにちは');
 
   return [
@@ -107,7 +109,7 @@ export function buildTestCases(): BunUtilsCase[] {
     },
     {
       utility: 'stringWidth',
-      input: '👨‍👩‍👧‍👦',
+      input: '👨\u200d👩\u200d👧\u200d👦',
       // Bun measures ZWJ family as width 2 (not npm string-width's 1 / 2 variants).
       expected: 2,
       actual: widthEmoji,
