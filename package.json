@@ -1634,6 +1634,7 @@
     "telegram:factory:setup": "bun tools/telegram-bot-setup.ts",
     "telegram:verify": "bun tools/telegram-verify-env.ts",
     "telegram:discover": "bun tools/telegram-discover.ts",
+    "telegram:brand": "bun tools/telegram-brand.ts",
     "telegram:ops": "bun tools/telegram-ops.ts",
     "telegram:ops:consume": "bun tools/telegram-ops-consumer.ts",
     "telegram:link-chat": "bun tools/telegram-link-chat.ts",
