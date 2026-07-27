@@ -20,57 +20,25 @@
  * Note: pass-cli may be Killed:9 in restricted agent hosts — use mint-local path.
  */
 import { resolve } from 'node:path';
+import { logDepth } from '../lib/console-depth.ts';
 import {
-  listMintedSecretKeys,
   mintLocalAll,
   mintedSecretPath,
   readMintedSecret,
   MINTABLE_SECRET_KEYS,
 } from '../lib/security/mintable-secret.ts';
 import { parseEnvTemplate } from './lib/env-defaults-scan.ts';
-import { RUNTIME_MINTABLE_SECRETS, VAULT_REQUIRED_SECRETS } from './lib/env-secret-policy.ts';
+import { RUNTIME_MINTABLE_SECRETS } from './lib/env-secret-policy.ts';
+import {
+  getGapList,
+  getVaultGapReport,
+  listVaultGapItems,
+  secretRatchetOk,
+} from './lib/vault-gap-status.ts';
 
 const ROOT = resolve(import.meta.dir, '..');
 const TEMPLATE = resolve(ROOT, 'env.template');
 const VAULT = 'factorywager';
-
-export const GAP_ITEMS: Array<{
-  envKey: string;
-  title: string;
-  mintable: boolean;
-  note: string;
-}> = [
-  {
-    envKey: 'DOD_PROOF_SECRET',
-    title: 'DOD Proof Secret',
-    mintable: true,
-    note: 'HMAC material — local mint or Pass',
-  },
-  {
-    envKey: 'DOD_ID_ENCRYPTION_KEY',
-    title: 'DOD ID Encryption Key',
-    mintable: true,
-    note: 'DoD id encryption — local mint or Pass',
-  },
-  {
-    envKey: 'PROVISION_ENCRYPTION_KEY',
-    title: 'Provision Encryption Key',
-    mintable: true,
-    note: 'Provision AES material — local mint or Pass',
-  },
-  {
-    envKey: 'OPENAI_API_KEY',
-    title: 'OpenAI API Key',
-    mintable: false,
-    note: 'Paste from OpenAI dashboard',
-  },
-  {
-    envKey: 'SLACK_WEBHOOK_URL',
-    title: 'Slack Webhook URL',
-    mintable: false,
-    note: 'Incoming webhook URL',
-  },
-];
 
 const argv = Bun.argv.slice(2);
 const SHOW = argv.includes('--show');
@@ -130,39 +98,28 @@ function passRef(title: string): string {
 }
 
 async function status(): Promise<void> {
-  const titles = await tryListVaultTitles();
-  const tpl = await Bun.file(TEMPLATE).text();
-  const minted = new Set(listMintedSecretKeys());
-
-  console.log('== Vault gap close status ==');
-  console.log(`Vault: ${VAULT}  template: env.template`);
-  console.log(
-    `pass-cli: ${titles ? `ok (${titles.size} items)` : 'UNAVAILABLE (offline / Killed:9)'}`
+  const report = await getVaultGapReport();
+  // Prefer Bun.inspect via project console-depth (TTY colors + depth SSOT)
+  logDepth(
+    {
+      title: 'vault-gap-status',
+      passCli: report.passCli,
+      localMinted: report.localMinted,
+      mintable: report.mintable,
+      human: report.human,
+      gapList: getGapList(),
+      ratchetOk: secretRatchetOk(report),
+      items: report.items,
+    },
+    { depth: 6, colors: true }
   );
-  console.log(`local minted: ${[...minted].join(', ') || '(none)'}`);
-  console.log('');
-
-  for (const g of GAP_ITEMS) {
-    const inVault = titles?.has(g.title) ?? false;
-    const wired = templateHasKey(tpl, g.envKey);
-    const local = minted.has(g.envKey);
-    let flag = '✗ open';
-    if (inVault && wired) flag = '✓ vault+template';
-    else if (inVault) flag = '○ in vault, not wired';
-    else if (local && g.mintable) flag = '◆ local mint (export to Pass when ready)';
-    else if (g.mintable) flag = '· mintable (run vault:gap:mint-local)';
-    console.log(`${flag}  ${g.envKey}`);
-    console.log(`         title: "${g.title}"`);
-    console.log(`         ${g.note}`);
-  }
-
-  console.log('');
-  console.log('Human paste still required (ratchet):');
-  for (const k of VAULT_REQUIRED_SECRETS) console.log(`  · ${k}`);
-  console.log('Runtime-mintable (not ratchet-blocking):');
-  for (const k of RUNTIME_MINTABLE_SECRETS) console.log(`  · ${k}`);
-  console.log('');
-  console.log('Next: bun run vault:gap:mint-local && bun run vault:gap:export-minted');
+  console.info('');
+  console.info(
+    report.passCli.available
+      ? 'Next: bun run vault:gap:wire (when Pass items exist)'
+      : 'Next: bun run vault:gap:mint-local && bun run vault:gap:export-minted'
+  );
+  console.info('Watch: bun run test:secrets:watch');
 }
 
 function mintLocal(): void {
@@ -190,7 +147,7 @@ function exportMinted(): void {
   console.log('# source scripts/agent-env.sh factorywager');
   console.log('');
   for (const key of keys) {
-    const item = GAP_ITEMS.find(g => g.envKey === key);
+    const item = listVaultGapItems().find(g => g.envKey === key);
     const title = item?.title ?? key.replace(/_/g, ' ');
     const value = readMintedSecret(key);
     if (!value) continue;
@@ -219,7 +176,7 @@ async function mintPass(): Promise<void> {
     process.exit(1);
   }
   let created = 0;
-  for (const g of GAP_ITEMS.filter(x => x.mintable)) {
+  for (const g of listVaultGapItems().filter(x => x.mintable)) {
     if (titles.has(g.title)) {
       console.log(`· exists: ${g.title}`);
       continue;
@@ -264,7 +221,7 @@ async function wire(): Promise<void> {
   let tpl = await Bun.file(TEMPLATE).text();
   const linesToAdd: string[] = [];
   const added: string[] = [];
-  for (const g of GAP_ITEMS) {
+  for (const g of listVaultGapItems()) {
     if (templateHasKey(tpl, g.envKey)) continue;
     if (!titles.has(g.title)) {
       console.log(`· skip ${g.envKey} (no vault item "${g.title}")`);

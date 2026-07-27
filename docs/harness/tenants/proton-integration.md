@@ -151,14 +151,24 @@ After adding vault coverage, re-run `bun run env:inventory:vault` — the secret
 | **Proton Pass inject** | `env.template` `pass://` → `.env` | multi-host SSOT |
 
 ```bash
-bun run vault:gap:status         # offline-capable status
+bun run vault:gap:status         # Bun.inspect dashboard (offline-capable)
+bun run vault:cli status         # same via tools/vault-cli.ts
 bun run vault:gap:mint-local     # mint DOD + provision (+ play) to disk
 bun run vault:gap:export-minted  # print pass-cli create lines for Terminal.app
 bun run vault:gap:mint           # Pass CLI create (needs working pass-cli)
 bun run vault:gap:wire           # env.template pass:// when Pass items exist
 bun run vault:gap:close          # mint-local (+ Pass if available) + rebaseline
 bun run env:inventory:ratchet    # human gaps only (OPENAI, SLACK)
+bun run test:secrets             # one-shot secret ratchet tests
+bun run test:secrets:watch       # continuous: bun test --watch secret-ratchet
+bun run vault:cli:compile        # standalone ./vault binary (bun build --compile)
 ```
+
+Continuous validation (`tests/secret-ratchet.test.ts`):
+
+- Mintable keys resolve (env or `~/.factorywager/minted-secrets`)
+- `getGapList()` is empty for **new** human gaps (within baseline)
+- `SECRET_RATCHET_STRICT=1` → fail until OPENAI + SLACK are injected/vaulted
 
 | Env key | Pass title | Ratchet? | Local mint? |
 |---------|------------|----------|-------------|

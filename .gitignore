@@ -406,3 +406,4 @@ public/registry/@factorywager/*/0.0.0+*.json
 
 # Proton Pass agent tokens (gitignored — loaded by scripts/agent-env.sh)
 .env.pass-tokens
+/vault
