@@ -15,7 +15,9 @@
  *     only its SHA-256 hex digest (token_hash PK). SessionId is derived
  *     from that digest, so resolveSession round-trips without an id column.
  *   - Lockout: failed_attempts is tracked and locked_until is HONORED when
- *     set; automatic lockout escalation is Phase 1 (columns already exist).
+ *     set; login() escalates to a lock at LOCKOUT_THRESHOLD consecutive
+ *     failures (see lockout.ts). Expired locks stop rejecting automatically
+ *     and the next successful login resets failed_attempts.
  *
  * Note: parameterized writes use `db.query(sql).run(params)` — the typed
  * pattern (bun-types: `db.run(sql, paramsObj)` trips TS2353).
@@ -34,6 +36,7 @@ import {
   type TokenId,
   type TreeNodeId,
 } from '../types/branded.ts';
+import { LOCKOUT_DURATION_SECONDS, LOCKOUT_THRESHOLD } from './lockout.ts';
 import { migrateIdentity } from './schema.ts';
 
 // ── Types ────────────────────────────────────────────────────────────────
@@ -220,6 +223,7 @@ export class IdentitySystem {
 
     const ok = await Bun.password.verify(password, cred.passwordHash);
     if (!ok) {
+      const failedAttempts = cred.failedAttempts + 1;
       this.db
         .query(
           'UPDATE auth_alias_credentials SET failed_attempts = failed_attempts + 1 WHERE alias_slug = $slug'
@@ -228,10 +232,33 @@ export class IdentitySystem {
       this.logAuthEvent({
         nodeId,
         action: 'login_failed',
-        details: { slug, failedAttempts: cred.failedAttempts + 1 },
+        details: { slug, failedAttempts },
         ip: ctx.ip,
         success: false,
       });
+      if (failedAttempts >= LOCKOUT_THRESHOLD) {
+        const lockedUntil = now + LOCKOUT_DURATION_SECONDS;
+        this.db
+          .query(
+            `UPDATE auth_alias_credentials SET locked_until = $until, lock_reason = $reason
+             WHERE alias_slug = $slug`
+          )
+          .run({ $until: lockedUntil, $reason: 'too_many_failed_attempts', $slug: slug });
+        this.logAuthEvent({
+          nodeId,
+          action: 'account_locked',
+          details: {
+            slug,
+            reason: 'too_many_failed_attempts',
+            failedAttempts,
+            durationSeconds: LOCKOUT_DURATION_SECONDS,
+            lockedUntil,
+          },
+          ip: ctx.ip,
+        });
+      }
+      // The escalating attempt itself stays InvalidCredentialsError (no
+      // enumeration); subsequent attempts hit AccountLockedError above.
       throw new InvalidCredentialsError();
     }
 
@@ -317,6 +344,54 @@ export class IdentitySystem {
   isLocked(slug: string): boolean {
     const cred = this.credentialBySlug(slug);
     return cred !== null && cred.lockedUntil !== null && cred.lockedUntil > unixNow();
+  }
+
+  /** Manually lock an alias. Audits `account_locked` (success: true). */
+  lockAccount(slug: string, reason: string, durationSeconds: number): void {
+    const cred = this.credentialBySlug(slug);
+    if (!cred) throw new IdentityError('Alias not found');
+
+    const lockedUntil = unixNow() + durationSeconds;
+    this.db
+      .query(
+        `UPDATE auth_alias_credentials SET locked_until = $until, lock_reason = $reason
+         WHERE alias_slug = $slug`
+      )
+      .run({ $until: lockedUntil, $reason: reason, $slug: slug });
+
+    this.logAuthEvent({
+      nodeId: cred.nodeId,
+      action: 'account_locked',
+      details: { slug, reason, durationSeconds, lockedUntil },
+    });
+  }
+
+  /**
+   * Admin-only unlock: clears locked_until / lock_reason / failed_attempts.
+   * Audits `account_unlocked` with details.adminNodeId.
+   */
+  unlockAccount(adminNodeId: TreeNodeId, slug: string): void {
+    const role = this.getRole(adminNodeId);
+    if (role !== 'admin' && role !== 'superadmin') {
+      throw new IdentityError('Admin role required to unlock accounts');
+    }
+
+    const cred = this.credentialBySlug(slug);
+    if (!cred) throw new IdentityError('Alias not found');
+
+    this.db
+      .query(
+        `UPDATE auth_alias_credentials
+         SET locked_until = NULL, lock_reason = NULL, failed_attempts = 0
+         WHERE alias_slug = $slug`
+      )
+      .run({ $slug: slug });
+
+    this.logAuthEvent({
+      nodeId: cred.nodeId,
+      action: 'account_unlocked',
+      details: { slug, adminNodeId },
+    });
   }
 
   // ── Audit ─────────────────────────────────────────────────────────────
