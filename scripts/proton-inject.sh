@@ -4,7 +4,8 @@
 #   bash scripts/proton-inject.sh factorywager
 #   bash scripts/proton-inject.sh bet-ticker
 #   bash scripts/proton-inject.sh cascade-mover
-#   bash scripts/proton-inject.sh factorywager --reasonix   # also refresh ~/.reasonix/.env CF token
+#   bash scripts/proton-inject.sh scanner
+#   bash scripts/proton-inject.sh factorywager --reasonix   # also refresh ~/.reasonix/.env keys
 #
 # Never paste API tokens into shell history. Mint once in the dashboard,
 # store in Proton Pass (pass://factorywager/Cloudflare API Token/password),
@@ -20,14 +21,14 @@ for arg in "$@"; do
     --reasonix) SYNC_REASONIX=1 ;;
     *)
       echo "Unknown flag: $arg" >&2
-      echo "Usage: $0 <factorywager|bet-ticker|cascade-mover|cloudflare> [--reasonix]" >&2
+      echo "Usage: $0 <factorywager|bet-ticker|cascade-mover|scanner|cloudflare> [--reasonix]" >&2
       exit 1
       ;;
   esac
 done
 
 if [ -z "$PROJECT" ]; then
-  echo "Usage: $0 <factorywager|bet-ticker|cascade-mover|cloudflare> [--reasonix]" >&2
+  echo "Usage: $0 <factorywager|bet-ticker|cascade-mover|scanner|cloudflare> [--reasonix]" >&2
   exit 1
 fi
 
@@ -44,16 +45,21 @@ case "$PROJECT" in
   bet-ticker)
     AGENT="bet-ticker"
     TEMPLATE="$ROOT/projects/active/enterprise/bet-ticker-worker-v1.1/env.template"
-    OUT="$ROOT/.env"
+    OUT="$ROOT/projects/active/enterprise/bet-ticker-worker-v1.1/.env"
     ;;
   cascade-mover)
     AGENT="cascade-mover"
     TEMPLATE="$ROOT/projects/active/enterprise/cascade-mover-v3/env.template"
-    OUT="$ROOT/.env"
+    OUT="$ROOT/projects/active/enterprise/cascade-mover-v3/.env"
+    ;;
+  scanner)
+    AGENT="factorywager"
+    TEMPLATE="$ROOT/projects/active/analysis/scanner/env.template"
+    OUT="$ROOT/projects/active/analysis/scanner/.env"
     ;;
   *)
     echo "Unknown project: $PROJECT" >&2
-    echo "Projects: factorywager, cloudflare, bet-ticker, cascade-mover" >&2
+    echo "Projects: factorywager, cloudflare, bet-ticker, cascade-mover, scanner" >&2
     exit 1
     ;;
 esac
@@ -72,18 +78,20 @@ PROTON_PASS_AGENT_REASON="Inject env secrets for $PROJECT" \
 echo "✅ Wrote $OUT (mode $(stat -f '%Lp' "$OUT" 2>/dev/null || stat -c '%a' "$OUT" 2>/dev/null || echo '?'))"
 
 if [ "$SYNC_REASONIX" -eq 1 ]; then
-  REASONIX_ENV="${REASONIX_ENV:-$HOME/.reasonix/.env}"
-  mkdir -p "$(dirname "$REASONIX_ENV")"
-  touch "$REASONIX_ENV"
-  chmod 600 "$REASONIX_ENV" 2>/dev/null || true
+  if [ "$PROJECT" != "factorywager" ] && [ "$PROJECT" != "cloudflare" ]; then
+    echo "⚠️  --reasonix only applies to factorywager/cloudflare inject (CF + Telegram keys)" >&2
+  else
+    REASONIX_ENV="${REASONIX_ENV:-$HOME/.reasonix/.env}"
+    mkdir -p "$(dirname "$REASONIX_ENV")"
+    touch "$REASONIX_ENV"
+    chmod 600 "$REASONIX_ENV" 2>/dev/null || true
 
-  # Pull only non-secret-ref keys we need for MCP / Reasonix from the injected file
-  python3 - "$OUT" "$REASONIX_ENV" <<'PY'
-import re, sys
+    # Pull only keys MCP / Reasonix need (derived cache, not SSOT)
+    python3 - "$OUT" "$REASONIX_ENV" <<'PY'
+import sys
 from pathlib import Path
 
 src, dst = Path(sys.argv[1]), Path(sys.argv[2])
-# Keys that tools / MCP read from ~/.reasonix/.env (derived cache, not SSOT)
 KEYS = (
     "CLOUDFLARE_API_TOKEN",
     "CLOUDFLARE_ACCOUNT_ID",
@@ -116,7 +124,6 @@ for line in lines:
         continue  # drop stale copies (including duplicate CF token lines)
     kept.append(line)
 
-# Ensure trailing newline hygiene
 while kept and kept[-1] == "":
     kept.pop()
 
@@ -125,8 +132,8 @@ for k in KEYS:
     if k in got:
         block.append(f"{k}={got[k]}")
 
-new_text = "\n".join(kept + block) + "\n"
-dst.write_text(new_text)
+dst.write_text("\n".join(kept + block) + "\n")
 print(f"✅ Synced {len(got)} key(s) into {dst} (duplicates stripped)")
 PY
+  fi
 fi

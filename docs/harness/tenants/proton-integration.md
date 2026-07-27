@@ -33,6 +33,20 @@ bun run proton:inject:factorywager
 # Same + strip/replace derived keys in ~/.reasonix/.env (MCP / Reasonix)
 bun run proton:inject:factorywager:reasonix
 
+# Per-product inject (writes product-local .env, not monorepo root)
+bun run proton:inject:cascade
+bun run proton:inject:bet-ticker
+bun run proton:inject:scanner
+
+# Prove all pass:// refs resolve (no secret values printed)
+bun run proton:check
+bun run proton:check:list   # refs only
+
+# Inject then run a command with secrets in the environment
+bun run proton:run -- factorywager --reasonix -- bun run cloudflare:env:validate
+# or package alias:
+bun run cloudflare:validate:vault
+
 # Guided CF bootstrap (inject + verify + harness gates)
 bash scripts/cloudflare-env-setup.sh
 
@@ -42,12 +56,17 @@ bun run proton:deploy:pages
 bun run cloudflare:deploy:vault
 ```
 
-| Command | Script |
-|---------|--------|
-| `bun run proton:inject:factorywager` | [`scripts/proton-inject.sh`](../../../scripts/proton-inject.sh) |
-| `bun run proton:inject:factorywager:reasonix` | same + `--reasonix` |
-| `bun run proton:deploy:pages` | [`scripts/proton-deploy.sh`](../../../scripts/proton-deploy.sh) |
-| Agent session | [`scripts/agent-env.sh`](../../../scripts/agent-env.sh) |
+| Command | Script | Output `.env` |
+|---------|--------|----------------|
+| `proton:inject:factorywager` | [`scripts/proton-inject.sh`](../../../scripts/proton-inject.sh) | monorepo root `.env` |
+| `proton:inject:factorywager:reasonix` | same + `--reasonix` | root `.env` + derived `~/.reasonix/.env` |
+| `proton:inject:cascade` | same | `projects/active/enterprise/cascade-mover-v3/.env` |
+| `proton:inject:bet-ticker` | same | `projects/active/enterprise/bet-ticker-worker-v1.1/.env` |
+| `proton:inject:scanner` | same | `projects/active/analysis/scanner/.env` |
+| `proton:check` | [`scripts/proton-vault-check.sh`](../../../scripts/proton-vault-check.sh) | temp only (deleted) |
+| `proton:run` | [`scripts/proton-run.sh`](../../../scripts/proton-run.sh) | inject then `exec` |
+| `proton:deploy:pages` | [`scripts/proton-deploy.sh`](../../../scripts/proton-deploy.sh) | root `.env` then deploy |
+| Agent session | [`scripts/agent-env.sh`](../../../scripts/agent-env.sh) | — |
 
 Template refs use `{{ pass://<vault>/<item>/<field> }}` — see root [`env.template`](../../../env.template).
 
@@ -85,6 +104,17 @@ Daemon manages SSH keys from Personal vault.
 - Users: admin@, dev@, bot@factory-wager.com
 - Group: team@factory-wager.com
 
+## Vault gaps (known)
+
+| Template | Status | Notes |
+|----------|--------|--------|
+| root `env.template` | green | `bun run proton:check` factorywager |
+| bet-ticker | green | R2 + INITIAL_TOKEN |
+| cascade-mover | partial | Security items OK; **R2 login items not in vault yet** — commented in `cascade-mover-v3/env.template` until `R2 cascade-mover bucket` exists |
+| scanner | green | CF token only |
+
+When adding a secret: create the Proton Pass item first, then add `{{ pass://vault/item/field }}` to the matching `env.template`, then `bun run proton:check`.
+
 ## Anti-patterns
 
 | Do not | Do instead |
@@ -93,3 +123,4 @@ Daemon manages SSH keys from Personal vault.
 | Paste tokens into chat / shell history | Dashboard → Proton Pass item → inject |
 | Treat `.env` as source of truth | Treat `.env` as generated; re-inject after rotation |
 | Use `/user/tokens/verify` for `cfat_` tokens | Use account verify or `bun run cloudflare:env:validate` |
+| Point template at vault items that do not exist | `bun run proton:check` before shipping template changes |

@@ -1994,6 +1994,10 @@
     "proton:inject:factorywager:reasonix": "bash scripts/proton-inject.sh factorywager --reasonix",
     "proton:inject:bet-ticker": "bash scripts/proton-inject.sh bet-ticker",
     "proton:inject:cascade": "bash scripts/proton-inject.sh cascade-mover",
+    "proton:inject:scanner": "bash scripts/proton-inject.sh scanner",
+    "proton:check": "bash scripts/proton-vault-check.sh",
+    "proton:check:list": "bash scripts/proton-vault-check.sh --list-only",
+    "proton:run": "bash scripts/proton-run.sh",
     "proton:deploy": "bash scripts/proton-deploy.sh",
     "proton:agent:factorywager": "source scripts/agent-env.sh factorywager",
     "proton:agent:bet-ticker": "source scripts/agent-env.sh bet-ticker",
@@ -2002,6 +2006,7 @@
     "proton:deploy:pages": "bash scripts/proton-deploy.sh pages",
     "proton:deploy:staging": "bash scripts/proton-deploy.sh staging",
     "cloudflare:deploy:vault": "bash scripts/proton-deploy.sh pages --wait --verify",
+    "cloudflare:validate:vault": "bash scripts/proton-run.sh factorywager --reasonix -- bun run cloudflare:env:validate",
     "proton:audit:quick": "PROTON_PASS_KEY_PROVIDER=fs PROTON_PASS_SESSION_DIR=/tmp/pass-agent-admin pass-cli share list --output json"
   },
   "dependencies": {
