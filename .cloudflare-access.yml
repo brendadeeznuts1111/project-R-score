@@ -1,0 +1,41 @@
+# .cloudflare-access.yml — policy-as-code for `kimi-cloudflare-access plan/apply`.
+#
+# STATUS: STAGED — NOT APPLIED. No available token has Cloudflare Access scope
+# (main account token verified 403 on Access; the DNS token is Zone.DNS-only).
+# To apply: human mints a token with `Account > Access: Edit` (+ Read) for
+# account 7a470541a704caaf91e71efccc78fd36, stores it in the Proton vault,
+# re-runs `bun run proton:inject:factorywager:reasonix`, then:
+#   kimi-cloudflare-access plan   # review diff
+#   kimi-cloudflare-access apply  # after confirming the plan
+#
+# Schema matches src/lib/cloudflare-access-policy.ts (kimi-toolchain):
+# apps[].policies[].include/require/exclude entries are Cloudflare Access
+# rule groups. `email_domain` + `auth_method: otp` = one-time PIN sent to
+# @factory-wager.com mailboxes (Proton-hosted).
+apps:
+  - name: ledger.factory-wager.com
+    domain: ledger.factory-wager.com
+    type: self_hosted
+    session_duration: 8h
+    policies:
+      - name: Allow factory-wager.com OTP
+        decision: allow
+        include:
+          - email_domain:
+              domain: factory-wager.com
+        require:
+          - auth_method:
+              auth_method: otp
+  - name: reasonix.factory-wager.com
+    domain: reasonix.factory-wager.com
+    type: self_hosted
+    session_duration: 8h
+    policies:
+      - name: Allow factory-wager.com OTP
+        decision: allow
+        include:
+          - email_domain:
+              domain: factory-wager.com
+        require:
+          - auth_method:
+              auth_method: otp
