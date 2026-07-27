@@ -18,6 +18,10 @@
  *     set; login() escalates to a lock at LOCKOUT_THRESHOLD consecutive
  *     failures (see lockout.ts). Expired locks stop rejecting automatically
  *     and the next successful login resets failed_attempts.
+ *   - Anomaly scoring: after password verification, login() runs
+ *     checkAnomaly() (anomaly.ts) when ctx.ip is present — high risk audits
+ *     login_blocked_anomaly and throws AnomalyBlockedError, medium audits
+ *     login_suspicious and allows. No ctx.ip → check skipped ('no-ip', low).
  *
  * Note: parameterized writes use `db.query(sql).run(params)` — the typed
  * pattern (bun-types: `db.run(sql, paramsObj)` trips TS2353).
@@ -36,6 +40,7 @@ import {
   type TokenId,
   type TreeNodeId,
 } from '../types/branded.ts';
+import { checkAnomaly, type GeoResolver } from './anomaly.ts';
 import { LOCKOUT_DURATION_SECONDS, LOCKOUT_THRESHOLD } from './lockout.ts';
 import { migrateIdentity } from './schema.ts';
 
@@ -89,6 +94,47 @@ export interface AuditQuery {
   limit?: number;
 }
 
+/** Deserialized auth_device_fingerprints row (returned by fingerprint queries). */
+export interface DeviceFingerprint {
+  fingerprintHash: string;
+  firstSeen: number; // unix seconds
+  lastSeen: number; // unix seconds
+  countryCode: string | null;
+  trusted: boolean;
+}
+
+/** GDPR-style export row for auth_sessions — NEVER includes token_hash. */
+export interface SessionExportRow {
+  createdAt: string;
+  expiresAt: number; // unix seconds
+  revokedAt: number | null; // unix seconds
+  ip: string | null;
+  userAgent: string | null;
+}
+
+/** GDPR-style export row for auth_alias_credentials — NEVER includes password_hash. */
+export interface AliasSummary {
+  slug: string;
+  role: IdentityRole;
+  createdAt: string;
+  rotatedAt: string | null;
+}
+
+export interface IdentityOptions {
+  /**
+   * Geo resolver used by login anomaly scoring. Undefined → no geo signal
+   * (hermetic default — tests and offline deploys never touch the network).
+   * Production wires `defaultGeoResolver()` from anomaly.ts.
+   */
+  geoResolver?: GeoResolver;
+  /**
+   * Best-effort hook fired when a high-risk login is blocked (e.g. a
+   * Telegram ops alert). Invoked inside try/catch — alerting must never
+   * break or mask the login flow.
+   */
+  onHighRisk?: (nodeId: TreeNodeId, reason: string) => void;
+}
+
 // ── Errors ───────────────────────────────────────────────────────────────
 
 export class IdentityError extends Error {}
@@ -107,6 +153,16 @@ export class AccountLockedError extends IdentityError {
     super('Account is locked');
     this.name = 'AccountLockedError';
     this.lockedUntil = lockedUntil;
+  }
+}
+
+/** High-risk login (new country, …) blocked by anomaly scoring. Carries the human reason. */
+export class AnomalyBlockedError extends IdentityError {
+  readonly reason: string;
+  constructor(reason: string) {
+    super('Login blocked by anomaly detection');
+    this.name = 'AnomalyBlockedError';
+    this.reason = reason;
   }
 }
 
@@ -143,9 +199,17 @@ interface Credential {
 export class IdentitySystem {
   private db: Database;
   private tenantId: PortalTenantId;
+  private geoResolver: GeoResolver | undefined;
+  private onHighRisk: ((nodeId: TreeNodeId, reason: string) => void) | undefined;
 
-  constructor(tenantId: PortalTenantId = asPortalTenantId('operations'), dbPath?: string) {
+  constructor(
+    tenantId: PortalTenantId = asPortalTenantId('operations'),
+    dbPath?: string,
+    options: IdentityOptions = {}
+  ) {
     this.tenantId = tenantId;
+    this.geoResolver = options.geoResolver;
+    this.onHighRisk = options.onHighRisk;
     if (dbPath) {
       this.db = new Database(dbPath);
     } else {
@@ -260,6 +324,33 @@ export class IdentitySystem {
       // The escalating attempt itself stays InvalidCredentialsError (no
       // enumeration); subsequent attempts hit AccountLockedError above.
       throw new InvalidCredentialsError();
+    }
+
+    // Anomaly scoring (anomaly.ts) — runs only when ctx.ip is present; no ip
+    // is treated as low/'no-ip' and the check is skipped entirely.
+    if (ctx.ip) {
+      const risk = await checkAnomaly(this, nodeId, ctx.ip, ctx.userAgent ?? '', this.geoResolver);
+      if (risk.risk === 'high') {
+        const reason = risk.reason ?? 'high-risk login';
+        this.logAuthEvent({
+          nodeId,
+          action: 'login_blocked_anomaly',
+          details: { slug, reason, risk: risk.risk },
+          ip: ctx.ip,
+          success: false,
+        });
+        this.notifyHighRisk(nodeId, reason);
+        throw new AnomalyBlockedError(reason);
+      }
+      if (risk.risk === 'medium') {
+        this.logAuthEvent({
+          nodeId,
+          action: 'login_suspicious',
+          details: { slug, reason: risk.reason },
+          ip: ctx.ip,
+          success: true,
+        });
+      }
     }
 
     this.db
@@ -448,7 +539,122 @@ export class IdentitySystem {
     this.db.close();
   }
 
+  // ── Device fingerprints / export (narrow typed accessors for anomaly.ts / export.ts) ──
+
+  fingerprintFor(nodeId: TreeNodeId, fingerprintHash: string): DeviceFingerprint | null {
+    const row = this.db
+      .query(
+        `SELECT fingerprint_hash, first_seen, last_seen, country_code, trusted
+         FROM auth_device_fingerprints WHERE node_id = $node AND fingerprint_hash = $hash`
+      )
+      .get({ $node: nodeId, $hash: fingerprintHash }) as Record<string, unknown> | null;
+    return row ? this.toDeviceFingerprint(row) : null;
+  }
+
+  /**
+   * Insert a new fingerprint (first_seen = last_seen = now) or refresh an
+   * existing one (last_seen = now). country_code is only overwritten when a
+   * non-null country is known — a missing geo signal never erases history.
+   */
+  upsertFingerprint(nodeId: TreeNodeId, fingerprintHash: string, countryCode: string | null): void {
+    const now = unixNow();
+    this.db
+      .query(
+        `INSERT INTO auth_device_fingerprints
+           (node_id, fingerprint_hash, first_seen, last_seen, country_code)
+         VALUES ($node, $hash, $now, $now, $country)
+         ON CONFLICT(node_id, fingerprint_hash) DO UPDATE SET
+           last_seen = $now,
+           country_code = COALESCE($country, auth_device_fingerprints.country_code)`
+      )
+      .run({ $node: nodeId, $hash: fingerprintHash, $now: now, $country: countryCode });
+  }
+
+  trustFingerprint(nodeId: TreeNodeId, fingerprintHash: string): void {
+    this.db
+      .query(
+        `UPDATE auth_device_fingerprints SET trusted = 1
+         WHERE node_id = $node AND fingerprint_hash = $hash`
+      )
+      .run({ $node: nodeId, $hash: fingerprintHash });
+  }
+
+  /** Distinct non-null historical country codes for a node (geo baseline). */
+  countriesFor(nodeId: TreeNodeId): string[] {
+    const rows = this.db
+      .query(
+        `SELECT DISTINCT country_code FROM auth_device_fingerprints
+         WHERE node_id = $node AND country_code IS NOT NULL`
+      )
+      .all({ $node: nodeId }) as Record<string, unknown>[];
+    return rows.map(row => row.country_code as string);
+  }
+
+  fingerprintsFor(nodeId: TreeNodeId): DeviceFingerprint[] {
+    const rows = this.db
+      .query(
+        `SELECT fingerprint_hash, first_seen, last_seen, country_code, trusted
+         FROM auth_device_fingerprints WHERE node_id = $node ORDER BY first_seen ASC`
+      )
+      .all({ $node: nodeId }) as Record<string, unknown>[];
+    return rows.map(row => this.toDeviceFingerprint(row));
+  }
+
+  /** Export-safe alias summary — explicit columns, password_hash never selected. */
+  aliasSummaryFor(nodeId: TreeNodeId): AliasSummary | null {
+    const row = this.db
+      .query(
+        `SELECT alias_slug, role, created_at, rotated_at
+         FROM auth_alias_credentials WHERE node_id = $node`
+      )
+      .get({ $node: nodeId }) as Record<string, unknown> | null;
+    if (!row) return null;
+    return {
+      slug: row.alias_slug as string,
+      role: row.role as IdentityRole,
+      createdAt: row.created_at as string,
+      rotatedAt: (row.rotated_at as string | null) ?? null,
+    };
+  }
+
+  /** Export-safe session list — explicit columns, token_hash never selected. */
+  sessionsFor(nodeId: TreeNodeId): SessionExportRow[] {
+    const rows = this.db
+      .query(
+        `SELECT created_at, expires_at, revoked_at, ip, user_agent
+         FROM auth_sessions WHERE node_id = $node ORDER BY created_at ASC`
+      )
+      .all({ $node: nodeId }) as Record<string, unknown>[];
+    return rows.map(row => ({
+      createdAt: row.created_at as string,
+      expiresAt: row.expires_at as number,
+      revokedAt: (row.revoked_at as number | null) ?? null,
+      ip: (row.ip as string | null) ?? null,
+      userAgent: (row.user_agent as string | null) ?? null,
+    }));
+  }
+
   // ── Internals ─────────────────────────────────────────────────────────
+
+  private toDeviceFingerprint(row: Record<string, unknown>): DeviceFingerprint {
+    return {
+      fingerprintHash: row.fingerprint_hash as string,
+      firstSeen: row.first_seen as number,
+      lastSeen: row.last_seen as number,
+      countryCode: (row.country_code as string | null) ?? null,
+      trusted: row.trusted === 1,
+    };
+  }
+
+  /** Best-effort high-risk notification — hook errors are swallowed by design. */
+  private notifyHighRisk(nodeId: TreeNodeId, reason: string): void {
+    if (!this.onHighRisk) return;
+    try {
+      this.onHighRisk(nodeId, reason);
+    } catch {
+      // Alerting must never break or mask the login flow.
+    }
+  }
 
   private credentialBySlug(slug: string): Credential | null {
     const row = this.db

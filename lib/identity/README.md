@@ -1,13 +1,13 @@
-# lib/identity — Identity & Auth (Phase 0)
+# lib/identity — Identity & Auth
 
 Authentication layer for the operations platform. Lives in the **same SQLite
 file** as `AccountSystem` (`data/accounts-<tenant>.db`, WAL) so auth tables can
 `REFERENCES tree_nodes(id)`.
 
-Phase 0 scope: alias credentials (argon2id), sessions (hash-only storage),
-audit log, role hierarchy, lockout *columns* (enforcement escalation is Phase 1 —
-`failed_attempts` is tracked and a set `locked_until` is honored, but nothing
-sets it automatically yet).
+Phase 0: alias credentials (argon2id), sessions (hash-only storage), audit log,
+role hierarchy. Phase 1a: lockout enforcement (`lockout.ts`). Phase 2: login
+anomaly detection (`anomaly.ts`) and GDPR-style export (`export.ts` +
+`GET /auth/export`).
 
 ## Schema (`schema.ts` — `migrateIdentity(db)`, idempotent)
 
@@ -16,13 +16,35 @@ sets it automatically yet).
 | `auth_alias_credentials` | `node_id → alias_slug` login, argon2id `password_hash`, `role` (`operator`/`admin`/`superadmin`), lockout columns (`failed_attempts`, `locked_until`, `lock_reason`) |
 | `auth_sessions` | `token_hash` (SHA-256) PK — **raw bearer tokens are never stored** — `node_id`, `expires_at` (unix s), `revoked_at`, `ip`, `user_agent` |
 | `auth_audit` | Append-only auth event log (`id`, `node_id`, `action`, `details_json`, `ip`, `success`, `created_at`) |
-| `auth_device_fingerprints` | `(node_id, fingerprint_hash)` trust registry — Phase 1+ |
+| `auth_device_fingerprints` | `(node_id, fingerprint_hash)` trust registry — `first_seen`/`last_seen`, `country_code`, `trusted` |
+
+## Anomaly detection (`anomaly.ts`)
+
+`login()` scores every attempt that carries `ctx.ip` via `checkAnomaly()`:
+trusted device → `low`; geo country outside the node's country baseline →
+`high` (audits `login_blocked_anomaly`, throws `AnomalyBlockedError`);
+first-ever device or known-but-untrusted → `medium` (audits
+`login_suspicious`, allowed). An empty country baseline is never anomalous.
+Geo is best-effort: constructor option `geoResolver` (production:
+`defaultGeoResolver()`, ipapi.co with a 2s timeout, failures → null); no
+resolver → no geo signal. `onHighRisk(nodeId, reason)` is a best-effort
+alert hook (errors swallowed). `trustDevice(identity, nodeId, hash)` marks a
+fingerprint trusted (audits `device_trusted`).
+
+## Export (`export.ts`)
+
+`exportData(identity, nodeId)` → `{ alias, sessions, audit, deviceFingerprints }`.
+`password_hash` / `token_hash` are NEVER selected (explicit column lists).
 
 ## API (`identity.ts`)
 
 ```ts
 const identity = new IdentitySystem();                        // default tenant 'operations'
 const identity = new IdentitySystem(tenantId, dbPath);        // explicit DB (tests)
+const identity = new IdentitySystem(tenantId, dbPath, {       // Phase 2 options
+  geoResolver: defaultGeoResolver(),                          //   geo signal for anomaly scoring
+  onHighRisk: (nodeId, reason) => { /* ops alert */ },        //   best-effort, errors swallowed
+});
 
 await identity.createAlias(nodeId, 'slug-name', 'password', 'operator');
 const { token, sessionId, expiresAt } = await identity.login('slug-name', 'password', { ip, userAgent });
@@ -48,9 +70,11 @@ returns `null` for non-`/auth/` paths so hosts can chain. This file is the
 **wire boundary** — bodies are parsed/type-guarded here, branded values flow
 inward.
 
-- `POST /auth/login` `{ slug, password }` → `{ token, sessionId, expiresAt }` · 400/401/423
+- `POST /auth/login` `{ slug, password }` → `{ token, sessionId, expiresAt }` · 400/401/403 (anomaly-blocked)/423
 - `POST /auth/logout` `Authorization: Bearer <token>` → `{ ok: true }`
 - `GET /auth/session` `Authorization: Bearer <token>` → `{ sessionId, nodeId, role }` · 401
+- `GET /auth/export` `Authorization: Bearer <token>` → JSON attachment `export-<nodeId>.json`;
+  `?node=<TreeNodeId>` for another node requires admin|superadmin · 401/403
 
 Client IP from `CF-Connecting-IP`, else `X-Forwarded-For`.
 

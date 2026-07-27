@@ -9,11 +9,15 @@
  *   POST /auth/login    { slug, password } → { token, sessionId, expiresAt }
  *   POST /auth/logout   Authorization: Bearer <token>
  *   GET  /auth/session  Authorization: Bearer <token> → { sessionId, nodeId, role }
+ *   GET  /auth/export   Authorization: Bearer <token> → JSON attachment (own data;
+ *                       ?node=<TreeNodeId> for another node requires admin|superadmin)
  */
 
-import { asTokenId } from '../types/branded.ts';
+import { asTokenId, tryTreeNodeId } from '../types/branded.ts';
+import { exportData } from './export.ts';
 import {
   AccountLockedError,
+  AnomalyBlockedError,
   IdentityError,
   InvalidCredentialsError,
   type IdentitySystem,
@@ -80,6 +84,7 @@ export function createIdentityHandler(
         });
       } catch (err) {
         if (err instanceof AccountLockedError) return jsonError(423, 'Account is locked');
+        if (err instanceof AnomalyBlockedError) return jsonError(403, err.reason);
         if (err instanceof InvalidCredentialsError) return jsonError(401, 'Invalid credentials');
         if (err instanceof IdentityError) return jsonError(400, err.message);
         throw err;
@@ -102,6 +107,33 @@ export function createIdentityHandler(
         sessionId: session.sessionId as string,
         nodeId: session.nodeId as string,
         role: session.role,
+      });
+    }
+
+    if (url.pathname === '/auth/export' && req.method === 'GET') {
+      const token = bearerToken(req);
+      if (!token) return jsonError(401, 'Missing bearer token');
+      const session = identity.resolveSession(asTokenId(token));
+      if (!session) return jsonError(401, 'Invalid or expired session');
+
+      let targetNode = session.nodeId;
+      const nodeParam = url.searchParams.get('node');
+      if (nodeParam !== null && nodeParam !== (session.nodeId as string)) {
+        if (!identity.requireRole(session.nodeId, 'admin')) {
+          return jsonError(403, 'Admin role required to export another node');
+        }
+        const parsed = tryTreeNodeId(nodeParam);
+        if (!parsed) return jsonError(400, 'Invalid node id');
+        targetNode = parsed;
+      }
+
+      const data = exportData(identity, targetNode);
+      return new Response(JSON.stringify(data, null, 2), {
+        status: 200,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'content-disposition': `attachment; filename="export-${targetNode as string}.json"`,
+        },
       });
     }
 
