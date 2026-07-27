@@ -77,17 +77,17 @@ describe('identity-foundation', () => {
   test('createAlias rejects duplicate slug', async () => {
     const otherNode = asTreeNodeId(Bun.randomUUIDv7());
     seedTreeNode(otherNode);
-    await expect(identity.createAlias(otherNode, 'test-agent', 'pw')).rejects.toThrow(
+    await expect(identity.createAlias(otherNode, 'test-agent', 'correct horse battery staple')).rejects.toThrow(
       'already taken'
     );
   });
 
   test('createAlias rejects invalid slug and nonexistent node', async () => {
-    await expect(identity.createAlias(nodeId, 'BAD SLUG!!', 'pw')).rejects.toThrow(
+    await expect(identity.createAlias(nodeId, 'BAD SLUG!!', 'correct horse battery staple')).rejects.toThrow(
       'Invalid alias slug'
     );
     await expect(
-      identity.createAlias(asTreeNodeId(Bun.randomUUIDv7()), 'ghost-node', 'pw')
+      identity.createAlias(asTreeNodeId(Bun.randomUUIDv7()), 'ghost-node', 'correct horse battery staple')
     ).rejects.toThrow('Node not found');
   });
 
@@ -204,7 +204,7 @@ describe('identity-foundation', () => {
   test('requireRole honors operator < admin < superadmin hierarchy', async () => {
     const adminNode = asTreeNodeId(Bun.randomUUIDv7());
     seedTreeNode(adminNode);
-    await identity.createAlias(adminNode, 'admin-alias', 'pw', 'admin');
+    await identity.createAlias(adminNode, 'admin-alias', 'correct horse battery staple', 'admin');
 
     expect(identity.requireRole(adminNode, 'operator')).toBe(true);
     expect(identity.requireRole(adminNode, 'admin')).toBe(true);

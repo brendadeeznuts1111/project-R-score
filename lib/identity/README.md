@@ -7,7 +7,9 @@ file** as `AccountSystem` (`data/accounts-<tenant>.db`, WAL) so auth tables can
 Phase 0: alias credentials (argon2id), sessions (hash-only storage), audit log,
 role hierarchy. Phase 1a: lockout enforcement (`lockout.ts`). Phase 2: login
 anomaly detection (`anomaly.ts`) and GDPR-style export (`export.ts` +
-`GET /auth/export`). Phase 3: audit-safe impersonation (`impersonate.ts`).
+`GET /auth/export`). Phase 2b: geo blocking (`geo-policy.ts`), password
+strength (`password-strength.ts`), JIT provisioning (`jit.ts`). Phase 3:
+audit-safe impersonation (`impersonate.ts`).
 
 ## Schema (`schema.ts` — `migrateIdentity(db)`, idempotent)
 
@@ -30,6 +32,46 @@ Geo is best-effort: constructor option `geoResolver` (production:
 resolver → no geo signal. `onHighRisk(nodeId, reason)` is a best-effort
 alert hook (errors swallowed). `trustDevice(identity, nodeId, hash)` marks a
 fingerprint trusted (audits `device_trusted`).
+
+## Geo blocking (`geo-policy.ts`)
+
+Constructor option `geoPolicy: { mode: 'off' | 'allowlist' | 'blocklist';
+countries: string[] }` (ISO alpha-2, case-insensitive). Config only — nothing
+persisted. `login()` enforces it BEFORE password verification (fail cheap, no
+credential oracle): a blocked country audits `login_blocked_geo` (success 0)
+and throws `GeoBlockedError` (carries `country`; HTTP → 403). **Offline-allow:**
+skipped when the policy is off, `ctx.ip` is absent, no `geoResolver` is
+configured, or the resolver returns null — a missing geo signal never blocks.
+
+## Password strength (`password-strength.ts`)
+
+Bun-native scorer (no npm deps): score 0-4 from length, character-class
+variety, repeat/sequence penalties, and a small embedded top-100 common-
+password blocklist (clearly marked as minimal). `validatePasswordStrength(pw)`
+→ `{ score, ok, feedback }` (`ok` = score ≥ 3). `createAlias` enforces the
+constructor option `minPasswordScore` (default 3, `0` disables) and throws
+`WeakPasswordError` (carries `feedback`; HTTP → 400 via `IdentityError`).
+
+## JIT provisioning (`jit.ts`)
+
+`jitProvision(identity, accounts, profile, opts?)` — provisions an agent tree
+node + alias credentials from an OIDC profile.
+
+> ⚠ **The caller MUST verify the OIDC token** (signature, `iss`, `aud`, `exp`)
+> before calling — `OidcProfile` is the shape AFTER verification; JWKS/OIDC
+> verification is out of scope here. The returned `password` is PLAINTEXT,
+> shown once: deliver it over a secure channel, never log it.
+
+- Existing node (`oidc_subject = sub`) → ensures alias credentials exist
+  (mints when missing), returns `created: false`.
+- No node → creates `type: 'agent'`, `status: 'active'` node + alias (email
+  local-part, sanitized, numeric-suffix dedup) + random 20-char password
+  (generated until it clears `minPasswordScore`), returns `created: true`.
+- **telegram_id placeholder:** `tree_nodes.telegram_id` is UNIQUE NOT NULL, so
+  OIDC-only nodes carry the deterministic placeholder `oidc:<sub>`.
+- Always audits `jit_provision` (details: `sub`, `email`, `created`).
+- Standalone function — `IdentitySystem` and `AccountSystem` stay
+  constructor-decoupled.
 
 ## Export (`export.ts`)
 
@@ -62,6 +104,8 @@ const identity = new IdentitySystem(tenantId, dbPath);        // explicit DB (te
 const identity = new IdentitySystem(tenantId, dbPath, {       // Phase 2 options
   geoResolver: defaultGeoResolver(),                          //   geo signal for anomaly scoring
   onHighRisk: (nodeId, reason) => { /* ops alert */ },        //   best-effort, errors swallowed
+  geoPolicy: { mode: 'blocklist', countries: ['KP'] },        //   Phase 2b geo blocking (default off)
+  minPasswordScore: 3,                                        //   Phase 2b strength bar (0 disables)
 });
 
 await identity.createAlias(nodeId, 'slug-name', 'password', 'operator');
@@ -78,8 +122,9 @@ identity.close();
 ```
 
 Failures: `InvalidCredentialsError` (unknown slug **or** wrong password — never
-distinguish), `AccountLockedError` (carries `lockedUntil`), `IdentityError`
-(validation, duplicate slug, unknown node).
+distinguish), `AccountLockedError` (carries `lockedUntil`), `GeoBlockedError`
+(carries `country`, HTTP 403), `WeakPasswordError` (carries `feedback`),
+`IdentityError` (validation, duplicate slug, unknown node).
 
 ## HTTP (`http.ts`)
 

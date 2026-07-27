@@ -144,7 +144,7 @@ describe('identity-lockout', () => {
 
     const adminNode = asTreeNodeId(Bun.randomUUIDv7());
     seedTreeNode(adminNode);
-    await identity.createAlias(adminNode, 'admin-alias', 'pw', 'admin');
+    await identity.createAlias(adminNode, 'admin-alias', 'correct horse battery staple', 'admin');
 
     unlockAccount(identity, adminNode, 'test-agent');
 
@@ -172,7 +172,7 @@ describe('identity-lockout', () => {
 
     const operatorNode = asTreeNodeId(Bun.randomUUIDv7());
     seedTreeNode(operatorNode);
-    await identity.createAlias(operatorNode, 'operator-alias', 'pw', 'operator');
+    await identity.createAlias(operatorNode, 'operator-alias', 'correct horse battery staple', 'operator');
 
     expect(() => unlockAccount(identity, operatorNode, 'test-agent')).toThrow(IdentityError);
     expect(() => unlockAccount(identity, nodeId, 'test-agent')).toThrow(IdentityError);
@@ -187,7 +187,7 @@ describe('identity-lockout', () => {
 
     const superNode = asTreeNodeId(Bun.randomUUIDv7());
     seedTreeNode(superNode);
-    await identity.createAlias(superNode, 'super-alias', 'pw', 'superadmin');
+    await identity.createAlias(superNode, 'super-alias', 'correct horse battery staple', 'superadmin');
 
     unlockAccount(identity, superNode, 'test-agent');
     expect(identity.isLocked('test-agent')).toBe(false);
@@ -237,7 +237,7 @@ describe('identity-lockout', () => {
   test('lockAccount on unknown slug throws; unlockAccount on unknown slug throws', async () => {
     const adminNode = asTreeNodeId(Bun.randomUUIDv7());
     seedTreeNode(adminNode);
-    await identity.createAlias(adminNode, 'admin-alias', 'pw', 'admin');
+    await identity.createAlias(adminNode, 'admin-alias', 'correct horse battery staple', 'admin');
 
     expect(() => lockAccount(identity, 'ghost-alias', 'manual')).toThrow(IdentityError);
     expect(() => unlockAccount(identity, adminNode, 'ghost-alias')).toThrow(IdentityError);

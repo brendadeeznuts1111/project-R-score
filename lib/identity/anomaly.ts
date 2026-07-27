@@ -73,7 +73,11 @@ export function defaultGeoResolver(): GeoResolver {
   };
 }
 
-async function safeResolveCountry(resolveGeo: GeoResolver, ip: string): Promise<string | null> {
+/** Exported for geo-policy gate in identity.ts — one resolver-safety implementation. */
+export async function safeResolveCountry(
+  resolveGeo: GeoResolver,
+  ip: string
+): Promise<string | null> {
   try {
     const country = await resolveGeo(ip);
     return typeof country === 'string' && country.length > 0 ? country : null;

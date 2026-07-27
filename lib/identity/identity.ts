@@ -40,8 +40,10 @@ import {
   type TokenId,
   type TreeNodeId,
 } from '../types/branded.ts';
-import { checkAnomaly, type GeoResolver } from './anomaly.ts';
+import { checkAnomaly, safeResolveCountry, type GeoResolver } from './anomaly.ts';
+import { isGeoBlocked, type GeoPolicy } from './geo-policy.ts';
 import { LOCKOUT_DURATION_SECONDS, LOCKOUT_THRESHOLD } from './lockout.ts';
+import { validatePasswordStrength } from './password-strength.ts';
 import { migrateIdentity } from './schema.ts';
 
 // ── Types ────────────────────────────────────────────────────────────────
@@ -140,6 +142,10 @@ export interface IdentityOptions {
    * break or mask the login flow.
    */
   onHighRisk?: (nodeId: TreeNodeId, reason: string) => void;
+  /** Phase 2b geo blocking — default off (offline-allow when signal missing). */
+  geoPolicy?: GeoPolicy;
+  /** Phase 2b password bar for createAlias (default 3; 0 disables). */
+  minPasswordScore?: number;
 }
 
 // ── Errors ───────────────────────────────────────────────────────────────
@@ -173,6 +179,24 @@ export class AnomalyBlockedError extends IdentityError {
   }
 }
 
+export class GeoBlockedError extends IdentityError {
+  readonly country: string;
+  constructor(country: string) {
+    super('Login blocked by geo policy');
+    this.name = 'GeoBlockedError';
+    this.country = country;
+  }
+}
+
+export class WeakPasswordError extends IdentityError {
+  readonly feedback: string[];
+  constructor(feedback: string[]) {
+    super('Password does not meet strength requirements');
+    this.name = 'WeakPasswordError';
+    this.feedback = feedback;
+  }
+}
+
 // ── Helpers ──────────────────────────────────────────────────────────────
 
 function sha256Hex(input: string): string {
@@ -203,11 +227,15 @@ interface Credential {
 
 // ── IdentitySystem ───────────────────────────────────────────────────────
 
+const DEFAULT_GEO_POLICY: GeoPolicy = { mode: 'off', countries: [] };
+
 export class IdentitySystem {
   private db: Database;
   private tenantId: PortalTenantId;
   private geoResolver: GeoResolver | undefined;
   private onHighRisk: ((nodeId: TreeNodeId, reason: string) => void) | undefined;
+  private geoPolicy: GeoPolicy;
+  readonly minPasswordScore: number;
 
   constructor(
     tenantId: PortalTenantId = asPortalTenantId('operations'),
@@ -217,6 +245,8 @@ export class IdentitySystem {
     this.tenantId = tenantId;
     this.geoResolver = options.geoResolver;
     this.onHighRisk = options.onHighRisk;
+    this.geoPolicy = options.geoPolicy ?? DEFAULT_GEO_POLICY;
+    this.minPasswordScore = options.minPasswordScore ?? 3;
     if (dbPath) {
       this.db = new Database(dbPath);
     } else {
@@ -250,6 +280,13 @@ export class IdentitySystem {
       .get({ $slug: slug }) as Record<string, unknown> | null;
     if (existing) throw new IdentityError('Alias slug already taken');
 
+    if (this.minPasswordScore > 0) {
+      const strength = validatePasswordStrength(password);
+      if (strength.score < this.minPasswordScore) {
+        throw new WeakPasswordError(strength.feedback);
+      }
+    }
+
     const passwordHash = await Bun.password.hash(password, { algorithm: 'argon2id' });
 
     this.db
@@ -280,6 +317,20 @@ export class IdentitySystem {
 
     const nodeId = cred.nodeId;
     const now = unixNow();
+
+    if (this.geoPolicy.mode !== 'off' && ctx.ip && this.geoResolver) {
+      const country = await safeResolveCountry(this.geoResolver, ctx.ip);
+      if (country && isGeoBlocked(this.geoPolicy, country)) {
+        this.logAuthEvent({
+          nodeId,
+          action: 'login_blocked_geo',
+          details: { slug, country },
+          ip: ctx.ip,
+          success: false,
+        });
+        throw new GeoBlockedError(country);
+      }
+    }
 
     if (cred.lockedUntil !== null && cred.lockedUntil > now) {
       this.logAuthEvent({
@@ -649,6 +700,10 @@ export class IdentitySystem {
   }
 
   /** Export-safe alias summary — explicit columns, password_hash never selected. */
+  aliasSlugTaken(slug: string): boolean {
+    return this.credentialBySlug(slug) !== null;
+  }
+
   aliasSummaryFor(nodeId: TreeNodeId): AliasSummary | null {
     const row = this.db
       .query(

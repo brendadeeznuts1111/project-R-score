@@ -50,7 +50,7 @@ describe('identity-impersonate', () => {
   }
 
   async function superToken(): Promise<TokenId> {
-    const { token } = await identity.login('root-admin', 'pw');
+    const { token } = await identity.login('root-admin', 'correct horse battery staple');
     return token;
   }
 
@@ -80,10 +80,10 @@ describe('identity-impersonate', () => {
     seedTreeNode(partnerNode, 'Partner');
 
     identity = new IdentitySystem(undefined, dbPath);
-    await identity.createAlias(superNode, 'root-admin', 'pw', 'superadmin');
-    await identity.createAlias(super2Node, 'root-two', 'pw', 'superadmin');
-    await identity.createAlias(adminNode, 'ops-admin', 'pw', 'admin');
-    await identity.createAlias(partnerNode, 'partner-acct', 'pw', 'operator');
+    await identity.createAlias(superNode, 'root-admin', 'correct horse battery staple', 'superadmin');
+    await identity.createAlias(super2Node, 'root-two', 'correct horse battery staple', 'superadmin');
+    await identity.createAlias(adminNode, 'ops-admin', 'correct horse battery staple', 'admin');
+    await identity.createAlias(partnerNode, 'partner-acct', 'correct horse battery staple', 'operator');
     handler = createIdentityHandler(identity);
   });
 
@@ -117,7 +117,7 @@ describe('identity-impersonate', () => {
     );
     await expect(impersonate(identity, partnerNode, adminNode)).rejects.toThrow(IdentityError);
 
-    const { token } = await identity.login('ops-admin', 'pw');
+    const { token } = await identity.login('ops-admin', 'correct horse battery staple');
     const res = await impersonateReq(token, JSON.stringify({ nodeId: partnerNode as string }));
     expect(res!.status).toBe(403);
   });
@@ -166,7 +166,7 @@ describe('identity-impersonate', () => {
   });
 
   test('X-Impersonator header on /auth/session only for impersonated tokens', async () => {
-    const { token: normalToken } = await identity.login('partner-acct', 'pw');
+    const { token: normalToken } = await identity.login('partner-acct', 'correct horse battery staple');
     const normal = await handler(
       new Request('http://test/auth/session', {
         headers: { authorization: `Bearer ${normalToken as string}` },

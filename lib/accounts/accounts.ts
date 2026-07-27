@@ -190,6 +190,13 @@ export class AccountSystem {
     return row ? this.deserialize(row) : null;
   }
 
+  getByOidcSubject(oidcSubject: string): TreeNode | null {
+    const row = this.db
+      .query('SELECT * FROM tree_nodes WHERE oidc_subject = $sub')
+      .get({ $sub: oidcSubject }) as Record<string, unknown> | null;
+    return row ? this.deserialize(row) : null;
+  }
+
   private deserialize(row: Record<string, unknown>): TreeNode {
     return {
       id: asTreeNodeId(row.id as string),

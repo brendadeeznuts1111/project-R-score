@@ -23,8 +23,10 @@ import { exportData } from './export.ts';
 import {
   AccountLockedError,
   AnomalyBlockedError,
+  GeoBlockedError,
   IdentityError,
   InvalidCredentialsError,
+  WeakPasswordError,
   type IdentitySystem,
   type SessionInfo,
 } from './identity.ts';
@@ -109,8 +111,13 @@ export function createIdentityHandler(
         });
       } catch (err) {
         if (err instanceof AccountLockedError) return jsonError(423, 'Account is locked');
+        if (err instanceof GeoBlockedError)
+          return jsonError(403, `Login not permitted from ${err.country}`);
         if (err instanceof AnomalyBlockedError) return jsonError(403, err.reason);
         if (err instanceof InvalidCredentialsError) return jsonError(401, 'Invalid credentials');
+        if (err instanceof WeakPasswordError) {
+          return Response.json({ error: err.message, feedback: err.feedback }, { status: 400 });
+        }
         if (err instanceof IdentityError) return jsonError(400, err.message);
         throw err;
       }
