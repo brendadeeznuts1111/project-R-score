@@ -32,6 +32,11 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
   { label: 'TOC Ops', href: '/portal/toc/', note: 'Drum/Buffer/Rope · operate-lite' },
   { label: 'Monitoring', href: '/monitoring/', note: 'routing · env · proof tiles' },
   { label: 'DOD queue', href: '/portal/dod/', note: 'visual proof review' },
+  {
+    label: 'Compliance',
+    href: '/portal/compliance/',
+    note: 'MA/NJ enhancements · shadow matrix · deepEquals',
+  },
   { label: 'Skills', href: '/portal/skills/', note: 'catalog · .skill packages' },
   { label: 'Dashboard', href: '/portal/dashboard/', note: 'executive proof summary' },
   { label: 'Catalog', href: '/portal/catalog/' },
@@ -63,6 +68,21 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     note: 'repo .agents/skills · skill-loop-registry',
   },
   { label: 'dod-queue', href: '/registry/dod-queue.json' },
+  {
+    label: 'compliance-board',
+    href: '/registry/compliance-board.json',
+    note: 'enhancements + shadow · portal/compliance',
+  },
+  {
+    label: 'compliance-enhancements',
+    href: '/registry/compliance-enhancements.json',
+    note: 'deepEquals · escapeHTML proof rows',
+  },
+  {
+    label: 'compliance-shadow',
+    href: '/registry/compliance-shadow.json',
+    note: 'real vs shadow check matrix',
+  },
   { label: 'static aggregate', href: '/registry/static.json' },
   { label: 'proof taxonomy', href: '/registry/proof-taxonomy-audit.json' },
   { label: 'portal weave', href: '/registry/portal-weave.json' },
@@ -110,6 +130,16 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'Seat capital desk refresh',
     cmd: 'bun run seat:desk:refresh',
     doc: 'docs/harness/tenants/seat-capital-desk.md',
+  },
+  {
+    label: 'Compliance board bake',
+    cmd: 'bun run compliance:bake',
+    doc: 'docs/harness/tenants/compliance-portal.md',
+  },
+  {
+    label: 'Compliance bake (Proton vault)',
+    cmd: 'bun run compliance:bake:vault',
+    doc: 'docs/harness/tenants/proton-integration.md',
   },
   {
     label: 'Reference discovery',

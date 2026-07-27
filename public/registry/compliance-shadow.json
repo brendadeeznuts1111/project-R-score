@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-07-27T17:08:51.836Z",
+  "base": "http://127.0.0.1:59915/",
+  "rows": [
+    {
+      "state": "MA",
+      "partner": "demo-ma-licensed",
+      "licenseStatus": "active",
+      "realAllowed": true,
+      "shadowAllowed": true,
+      "match": true
+    },
+    {
+      "state": "NJ",
+      "partner": "demo-ma-licensed",
+      "licenseStatus": null,
+      "realAllowed": false,
+      "shadowAllowed": false,
+      "match": true,
+      "reason": "Partner not licensed in NJ"
+    },
+    {
+      "state": "MA",
+      "partner": "demo-nj-licensed",
+      "licenseStatus": null,
+      "realAllowed": false,
+      "shadowAllowed": false,
+      "match": true,
+      "reason": "Partner not licensed in MA"
+    },
+    {
+      "state": "NJ",
+      "partner": "demo-nj-licensed",
+      "licenseStatus": "active",
+      "realAllowed": true,
+      "shadowAllowed": true,
+      "match": true
+    },
+    {
+      "state": "MA",
+      "partner": "demo-dual-licensed",
+      "licenseStatus": "active",
+      "realAllowed": true,
+      "shadowAllowed": true,
+      "match": true
+    },
+    {
+      "state": "NJ",
+      "partner": "demo-dual-licensed",
+      "licenseStatus": "active",
+      "realAllowed": true,
+      "shadowAllowed": true,
+      "match": true
+    },
+    {
+      "state": "MA",
+      "partner": "demo-unlicensed",
+      "licenseStatus": null,
+      "realAllowed": false,
+      "shadowAllowed": false,
+      "match": true,
+      "reason": "Partner not licensed in MA"
+    },
+    {
+      "state": "NJ",
+      "partner": "demo-unlicensed",
+      "licenseStatus": null,
+      "realAllowed": false,
+      "shadowAllowed": false,
+      "match": true,
+      "reason": "Partner not licensed in NJ"
+    }
+  ],
+  "summary": {
+    "allow": 4,
+    "block": 4,
+    "mismatches": 0
+  },
+  "signature": "d2a877f130fc5fb8a8ba8f687154685aa95cf4d00f20fd6284d3be27c4f464bc"
+}
