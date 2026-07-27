@@ -129,6 +129,39 @@ bun run telegram:ops -- link-package-group ASH -1003937534779 --requested-by ASH
 | `--no-dm` | Skip package-room DM |
 | `--requested-by <call-sign>` | Audit trail + prefer that seat's telegram_id for DM |
 
+### `designate-dm-seat` (pre-link operator ack)
+
+Acknowledge which seat receives package-room DMs **before** `tree_nodes.telegram_id` exists:
+
+```bash
+bun run telegram:ops -- designate-dm-seat NOV NOV-001
+bun run telegram:ops -- designate-dm-seat PAT PAT-001 --force
+```
+
+SSOT: `package_group_registry.requested_by`. Appends `ack_dm_seat_designated` to JSONL. Welcome DM + bot commands stay blocked until:
+
+```bash
+bun tools/telegram-link-chat.ts NOV-001 <telegram_user_id>
+```
+
+`link-package-group … --requested-by NOV-001` also designates + JSONL acks (use `--no-dm` when telegram not ready).
+
+### Readiness (phased E2E)
+
+```bash
+bun run telegram:handshake:readiness              # summary table
+bun run telegram:handshake:readiness NOV --detail --deep   # per-lane audit
+bun run telegram:handshake:verify NOV --live      # live Telegram title match
+```
+
+| Phase | Meaning |
+|-------|---------|
+| `forum_ready` | Registry + forum metadata OK; DM seat not designated |
+| `designated` | Seat acknowledged — forum routing + outbox threads work; operator telegram pending |
+| `operator_ready` | Telegram linked — welcome DM + `/status` + play callbacks |
+
+Deep lanes (`--deep`): forum · audit (JSONL) · routing (outbox thread map) · operator (blocked-until-link explicit).
+
 ---
 
 ## Error handling
@@ -172,6 +205,7 @@ Use `--apply --ack` on wire to append `ack_package_group_wired` and remove the p
 | `create_package_group` | Factory | `--create-package-group` |
 | `ack_package_group_wired` | Soft | `package-group-wire --apply --ack` |
 | `ack_package_group_linked` | Factory | `link-package-group` (default) or `acknowledge-pending` |
+| `ack_dm_seat_designated` | Factory | `designate-dm-seat` or `link-package-group --requested-by` |
 
 Open pending = latest `create_package_group` per code without a matching `ack_package_group_wired`. The JSONL file is never rewritten — only appended.
 
