@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "timestamp": "2026-07-26T20:03:51.933Z",
+  "timestamp": "2026-07-27T00:55:48.198Z",
   "subsystem": "other",
   "reportPath": "/registry/doc-index.json",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-  "catalogGenerated": "2026-07-24T00:08:46.051Z",
+  "catalogGenerated": "2026-07-27T00:55:38.604Z",
   "catalogBunVersion": "1.4.0",
   "totalEntries": 210,
   "byStability": {
@@ -14,8 +14,8 @@
   },
   "byKind": {
     "CLI": 67,
-    "API": 135,
-    "Other": 8
+    "API": 142,
+    "Other": 1
   },
   "entries": [
     {
@@ -2009,14 +2009,18 @@
     {
       "key": "Bun.build css",
       "url": "https://bun.com/docs/bundler/css",
-      "kind": "Other",
+      "kind": "API",
       "stability": "stable",
       "since": "unknown",
-      "description": "",
+      "description": "Bun’s bundler has built-in support for CSS with modern features",
       "examples": [],
-      "related": [],
+      "related": [
+        "CSS"
+      ],
       "meta": {
-        "catalogHit": false
+        "catalogHit": true,
+        "section": "bundler",
+        "verifiedOn": "1.4.0"
       }
     },
     {
@@ -2474,9 +2478,9 @@
         "Bun.inspect.table",
         "BunInspectOptions",
         "--console-depth",
-        "Bun.inspect.table(tabularData, properties, options)",
-        "Bun.inspect()",
-        "Bun.deepEquals"
+        "Bun.inspect.compact",
+        "Bun.inspect.sorted",
+        "Bun.inspect.table(tabularData, properties, options)"
       ],
       "meta": {
         "catalogHit": true,
@@ -2499,8 +2503,8 @@
         "Bun.inspect.table",
         "BunInspectOptions",
         "Bun.inspect",
-        "Bun.inspect.table(tabularData, properties, options)",
-        "Bun.deepEquals"
+        "Bun.inspect.compact",
+        "Bun.inspect.sorted"
       ],
       "meta": {
         "catalogHit": true,
@@ -2511,14 +2515,22 @@
     {
       "key": "Bun.inspect.compact",
       "url": "https://bun.com/docs/runtime/utils#bun-inspect",
-      "kind": "Other",
+      "kind": "API",
       "stability": "stable",
       "since": "unknown",
-      "description": "",
+      "description": "Use Bun’s utility functions to work with the runtime",
       "examples": [],
-      "related": [],
+      "related": [
+        "Bun.inspect",
+        "Bun.inspect.custom",
+        "Bun.inspect.sorted",
+        "Bun.inspect.table",
+        "Bun.inspect.table(tabularData, properties, options)"
+      ],
       "meta": {
-        "catalogHit": false
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
       }
     },
     {
@@ -2535,9 +2547,9 @@
         "Bun.inspect",
         "Bun.inspect.table",
         "BunInspectOptions",
-        "Bun.inspect.table(tabularData, properties, options)",
-        "Bun.inspect()",
-        "Bun.deepEquals"
+        "Bun.inspect.compact",
+        "Bun.inspect.sorted",
+        "Bun.inspect.table(tabularData, properties, options)"
       ],
       "meta": {
         "catalogHit": true,
@@ -2548,14 +2560,22 @@
     {
       "key": "Bun.inspect.sorted",
       "url": "https://bun.com/docs/runtime/utils#bun-inspect",
-      "kind": "Other",
+      "kind": "API",
       "stability": "stable",
       "since": "unknown",
-      "description": "",
+      "description": "Use Bun’s utility functions to work with the runtime",
       "examples": [],
-      "related": [],
+      "related": [
+        "Bun.inspect",
+        "Bun.inspect.compact",
+        "Bun.inspect.custom",
+        "Bun.inspect.table",
+        "Bun.inspect.table(tabularData, properties, options)"
+      ],
       "meta": {
-        "catalogHit": false
+        "catalogHit": true,
+        "section": "runtime",
+        "verifiedOn": "1.4.0"
       }
     },
     {
@@ -2574,9 +2594,9 @@
         "Bun.inspect",
         "Bun.inspect.custom",
         "BunInspectOptions",
-        "Bun.inspect.table(tabularData, properties, options)",
-        "Bun.inspect()",
-        "Bun.deepEquals"
+        "Bun.inspect.compact",
+        "Bun.inspect.sorted",
+        "Bun.inspect.table(tabularData, properties, options)"
       ],
       "meta": {
         "catalogHit": true,
@@ -2600,9 +2620,9 @@
         "Bun.inspect",
         "Bun.inspect.custom",
         "BunInspectOptions",
-        "Bun.inspect.table",
-        "Bun.inspect()",
-        "Bun.deepEquals"
+        "Bun.inspect.compact",
+        "Bun.inspect.sorted",
+        "Bun.inspect.table"
       ],
       "meta": {
         "catalogHit": true,
@@ -3865,7 +3885,10 @@
         "Bun.inspect",
         "Bun.inspect.custom",
         "Bun.inspect.table",
-        "--console-depth"
+        "--console-depth",
+        "inspect.getters",
+        "inspect.numericSeparator",
+        "inspect.showProxy"
       ],
       "meta": {
         "catalogHit": true,
@@ -3876,14 +3899,16 @@
     {
       "key": "CompressionStream",
       "url": "https://bun.com/reference/globals/CompressionStream",
-      "kind": "Other",
+      "kind": "API",
       "stability": "stable",
       "since": "unknown",
-      "description": "",
+      "description": "MDN Reference",
       "examples": [],
       "related": [],
       "meta": {
-        "catalogHit": false
+        "catalogHit": true,
+        "section": "reference",
+        "verifiedOn": "1.4.0"
       }
     },
     {
@@ -3930,14 +3955,16 @@
     {
       "key": "DecompressionStream",
       "url": "https://bun.com/reference/globals/DecompressionStream",
-      "kind": "Other",
+      "kind": "API",
       "stability": "stable",
       "since": "unknown",
-      "description": "",
+      "description": "MDN Reference",
       "examples": [],
       "related": [],
       "meta": {
-        "catalogHit": false
+        "catalogHit": true,
+        "section": "reference",
+        "verifiedOn": "1.4.0"
       }
     },
     {
@@ -4175,27 +4202,31 @@
     {
       "key": "TextDecoderStream",
       "url": "https://bun.com/reference/globals/TextDecoderStream",
-      "kind": "Other",
+      "kind": "API",
       "stability": "stable",
       "since": "unknown",
-      "description": "",
+      "description": "MDN Reference",
       "examples": [],
       "related": [],
       "meta": {
-        "catalogHit": false
+        "catalogHit": true,
+        "section": "reference",
+        "verifiedOn": "1.4.0"
       }
     },
     {
       "key": "TextEncoderStream",
       "url": "https://bun.com/reference/globals/TextEncoderStream",
-      "kind": "Other",
+      "kind": "API",
       "stability": "stable",
       "since": "unknown",
-      "description": "",
+      "description": "MDN Reference",
       "examples": [],
       "related": [],
       "meta": {
-        "catalogHit": false
+        "catalogHit": true,
+        "section": "reference",
+        "verifiedOn": "1.4.0"
       }
     },
     {
@@ -4666,5 +4697,5 @@
     "source": "tools/build-doc-index.ts",
     "report": "/registry/doc-index.json"
   },
-  "proofHash": "6d49c5e4912360f2906d1d2d6a4ee438ec16735c6980b48e385df21bf749a546"
+  "proofHash": "1e8e98cf78187c4c135853bb5c3f45ae421ed3303b3e9b64455b2367021c8cbb"
 }
