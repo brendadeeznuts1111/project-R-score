@@ -1846,7 +1846,9 @@
     "check:brands:types": "bun x tsc -p tests/tsconfig.branded.json",
     "check:brands:all": "bun run brand:manifest:check && bun run check:brands && bun run check:brands:types",
     "check:env-defaults": "bun scripts/check-env-defaults.ts",
-    "check:env-defaults:dry": "bun scripts/check-env-defaults.ts --dry-run",
+    "check:env-defaults:staged": "bun scripts/check-env-defaults.ts --staged",
+    "check:env-defaults:full": "bun scripts/check-env-defaults.ts --full --summary",
+    "check:env-defaults:dry": "bun scripts/check-env-defaults.ts --dry-run --summary",
     "check:etag": "bun tools/verify-etag.ts",
     "check:bun-defaults": "bun tools/verify-bun-defaults.ts",
     "check:bun-defaults:once": "bun lib/http/defaults-cron.ts --once",
@@ -2007,7 +2009,8 @@
     "proton:deploy:staging": "bash scripts/proton-deploy.sh staging",
     "cloudflare:deploy:vault": "bash scripts/proton-deploy.sh pages --wait --verify",
     "cloudflare:validate:vault": "bash scripts/proton-run.sh factorywager --reasonix -- bun run cloudflare:env:validate",
-    "proton:audit:quick": "PROTON_PASS_KEY_PROVIDER=fs PROTON_PASS_SESSION_DIR=/tmp/pass-agent-admin pass-cli share list --output json"
+    "proton:audit:quick": "PROTON_PASS_KEY_PROVIDER=fs PROTON_PASS_SESSION_DIR=/tmp/pass-agent-admin pass-cli share list --output json",
+    "proton:snapshot:vps": "bun scripts/vps-health-snapshot.ts"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",

@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-07-27T08:24:52.226Z",
+  "hostname": "srv1666710",
+  "uptime": "up 10 weeks, 5 days, 29 minutes",
+  "disk": {
+    "used": "23G",
+    "free": "74G",
+    "percent": "24%"
+  },
+  "memory": {
+    "total": "7.8Gi",
+    "used": "1.8Gi",
+    "available": "6.0Gi"
+  },
+  "services": {
+    "bet-ticker-poller": "active",
+    "cascade-mover": "active",
+    "cascade-mover-mcp": "active",
+    "cascade-token": "active"
+  },
+  "docker": {
+    "prometheus": "Up 55 minutes",
+    "grafana": "Up 2 months",
+    "st-cloudflared": "Up 2 months",
+    "st-integration": "Up 19 minutes (unhealthy)"
+  }
+}
