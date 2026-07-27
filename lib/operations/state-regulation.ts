@@ -1,26 +1,55 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 /**
- * State-level regulatory compliance (MA / NJ).
+ * State-level regulatory compliance (MA / NJ) + granular geo dimensions.
  *
- * Schema: state_code on core play surfaces + regulatory_limits,
- * partner_state_licenses, regulatory_violations.
+ * Geo columns are **always separate** — never packed into one string/JSON for filters:
+ *   state_code | age | location | zip_code
  *
- * Isolation: license/violation rows are always filtered by (node_id, state_code)
+ * Isolation: license/violation/scope rows filter by discrete columns only
  * inside this module / ScopedRepository — no raw dimension filters at call sites.
  */
 import type { Database } from 'bun:sqlite';
-import { asStateCode, asTreeNodeId, type StateCode, type TreeNodeId } from '../types/branded.ts';
+import {
+  asStateCode,
+  asTreeNodeId,
+  asZipCode,
+  tryZipCode,
+  type StateCode,
+  type TreeNodeId,
+  type ZipCode,
+} from '../types/branded.ts';
 import { REGULATED_STATE_CODES } from '../types/branded/operations.ts';
 
 // ── Schema ─────────────────────────────────────────────────────────
 
-const PLAY_STATE_TABLES = [
+/**
+ * Discrete geo/demographic columns.
+ * Order is intentional for docs/UX: state → age → location → zip.
+ */
+export const GEO_DIMENSION_COLUMNS = [
+  ['state_code', 'TEXT'],
+  ['age', 'INTEGER'],
+  ['location', 'TEXT'],
+  ['zip_code', 'TEXT'],
+] as const;
+
+export type GeoDimensions = {
+  stateCode?: StateCode | null;
+  /** Whole years (e.g. 21). Null = unknown — not packed into location. */
+  age?: number | null;
+  /** Locality / city only — not "City, ST 02101". */
+  location?: string | null;
+  /** US ZIP or ZIP+4 — discrete from location. */
+  zipCode?: ZipCode | string | null;
+};
+
+const GEO_SURFACE_TABLES = [
   'plays',
   'play_distribution',
-  // Optional analysis / snapshot surfaces if present (no-op when missing).
   'play_analysis',
   'market_snapshots',
   'play_zip_enrichment',
+  'regulatory_violations',
 ] as const;
 
 function tableExists(db: Database, name: string): boolean {
@@ -36,14 +65,39 @@ function columnNames(db: Database, table: string): Set<string> {
   );
 }
 
-/** Add state_code + regulatory tables (idempotent). */
-export function ensureStateRegulationSchema(db: Database): void {
-  for (const table of PLAY_STATE_TABLES) {
-    if (!tableExists(db, table)) continue;
-    const cols = columnNames(db, table);
-    if (!cols.has('state_code')) {
-      db.run(`ALTER TABLE ${table} ADD COLUMN state_code TEXT`);
+/** Ensure each discrete geo column exists on a table (idempotent ALTER). */
+function ensureGeoColumns(db: Database, table: string): void {
+  if (!tableExists(db, table)) return;
+  const cols = columnNames(db, table);
+  for (const [name, def] of GEO_DIMENSION_COLUMNS) {
+    if (!cols.has(name)) {
+      db.run(`ALTER TABLE ${table} ADD COLUMN ${name} ${def}`);
     }
+  }
+}
+
+/** Add geo columns + regulatory tables (idempotent). */
+export function ensureStateRegulationSchema(db: Database): void {
+  // Dedicated enrichment surface (create before column ensure).
+  db.run(`
+    CREATE TABLE IF NOT EXISTS play_zip_enrichment (
+      play_id TEXT NOT NULL,
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      state_code TEXT,
+      age INTEGER,
+      location TEXT,
+      zip_code TEXT,
+      enriched_at TEXT NOT NULL,
+      PRIMARY KEY (play_id, node_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_play_zip_enrich_node_state
+      ON play_zip_enrichment(node_id, state_code);
+    CREATE INDEX IF NOT EXISTS idx_play_zip_enrich_zip
+      ON play_zip_enrichment(zip_code);
+  `);
+
+  for (const table of GEO_SURFACE_TABLES) {
+    ensureGeoColumns(db, table);
   }
 
   db.run(`
@@ -78,13 +132,31 @@ export function ensureStateRegulationSchema(db: Database): void {
       node_id TEXT NOT NULL REFERENCES tree_nodes(id),
       play_id TEXT,
       state_code TEXT NOT NULL,
+      age INTEGER,
+      location TEXT,
+      zip_code TEXT,
       reason TEXT NOT NULL,
       details TEXT,
       blocked_at INTEGER DEFAULT (unixepoch())
     );
     CREATE INDEX IF NOT EXISTS idx_reg_violations_node_state
       ON regulatory_violations(node_id, state_code, blocked_at);
+
+    -- Partner-level geo profile: four discrete columns (state, age, location, zip).
+    CREATE TABLE IF NOT EXISTS partner_geo_profiles (
+      node_id TEXT PRIMARY KEY REFERENCES tree_nodes(id),
+      state_code TEXT NOT NULL,
+      age INTEGER,
+      location TEXT,
+      zip_code TEXT,
+      updated_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_partner_geo_state ON partner_geo_profiles(state_code);
+    CREATE INDEX IF NOT EXISTS idx_partner_geo_zip ON partner_geo_profiles(zip_code);
   `);
+
+  // Legacy DBs created regulatory_violations without geo cols — backfill columns.
+  ensureGeoColumns(db, 'regulatory_violations');
 }
 
 // ── Catalog normalization (play wire → regulatory keys) ────────────
@@ -152,7 +224,7 @@ export function seedStateRegulations(db: Database): void {
       max_wager: 5000,
       min_wager: 0.5,
       allowed_bet_types: '["straight","parlay"]',
-      special_rules: '{"max_daily_total":25000}',
+      special_rules: '{"max_daily_total":25000,"min_age":21}',
     },
     {
       state_code: 'MA',
@@ -161,7 +233,7 @@ export function seedStateRegulations(db: Database): void {
       max_wager: 10000,
       min_wager: 1,
       allowed_bet_types: '["straight"]',
-      special_rules: '{"max_daily_total":50000}',
+      special_rules: '{"max_daily_total":50000,"min_age":21}',
     },
     {
       state_code: 'NJ',
@@ -170,7 +242,7 @@ export function seedStateRegulations(db: Database): void {
       max_wager: 10000,
       min_wager: 1,
       allowed_bet_types: '["straight","parlay","teaser"]',
-      special_rules: '{"require_identity_verification":true}',
+      special_rules: '{"require_identity_verification":true,"min_age":21}',
     },
     {
       state_code: 'NJ',
@@ -179,7 +251,7 @@ export function seedStateRegulations(db: Database): void {
       max_wager: 15000,
       min_wager: 1,
       allowed_bet_types: '["straight","parlay"]',
-      special_rules: '{"require_identity_verification":true,"max_daily_total":75000}',
+      special_rules: '{"require_identity_verification":true,"max_daily_total":75000,"min_age":21}',
     },
   ];
 
@@ -215,8 +287,14 @@ export function seedStateRegulations(db: Database): void {
 
 export type Scope = {
   nodeId: TreeNodeId;
-  /** When set, all queries include state_code = state. When null/omitted, state not filtered. */
+  /** When set → filter state_code (exact). */
   state?: StateCode | null;
+  /** When set → filter age (exact whole years). */
+  age?: number | null;
+  /** When set → filter location (exact locality string). */
+  location?: string | null;
+  /** When set → filter zip_code (exact). */
+  zip?: ZipCode | string | null;
   country?: string | null;
   sport?: string | null;
   market?: string | null;
@@ -226,14 +304,17 @@ export type Scope = {
 const SCOPED_DIMENSIONS = [
   'node_id',
   'state_code',
+  'age',
+  'location',
+  'zip_code',
   'country_code',
   'sport_id',
   'market_id',
 ] as const;
 
 /**
- * Repository that injects partner (+ optional state) scope into every query.
- * Rejects SQL that already filters on scoped dimensions (no raw node/state leaks).
+ * Repository that injects partner + optional geo/sport scope into every query.
+ * Rejects SQL that already filters on scoped dimensions (no raw dimension leaks).
  */
 export class ScopedRepository {
   constructor(
@@ -241,9 +322,17 @@ export class ScopedRepository {
     private readonly scope: Scope
   ) {}
 
-  private scopeParams(): Record<string, string> {
-    const p: Record<string, string> = { $scope_node_id: this.scope.nodeId };
+  private scopeParams(): Record<string, string | number> {
+    const p: Record<string, string | number> = { $scope_node_id: this.scope.nodeId };
     if (this.scope.state) p.$scope_state_code = this.scope.state;
+    if (this.scope.age != null && Number.isFinite(this.scope.age)) {
+      p.$scope_age = Math.trunc(this.scope.age);
+    }
+    if (this.scope.location?.trim()) p.$scope_location = this.scope.location.trim();
+    if (this.scope.zip) {
+      const z = tryZipCode(String(this.scope.zip)) ?? String(this.scope.zip).trim();
+      if (z) p.$scope_zip_code = z;
+    }
     if (this.scope.country) p.$scope_country_code = this.scope.country;
     if (this.scope.sport) p.$scope_sport_id = this.scope.sport;
     if (this.scope.market) p.$scope_market_id = this.scope.market;
@@ -263,6 +352,11 @@ export class ScopedRepository {
 
     const parts = ['node_id = $scope_node_id'];
     if (this.scope.state) parts.push('state_code = $scope_state_code');
+    if (this.scope.age != null && Number.isFinite(this.scope.age)) {
+      parts.push('age = $scope_age');
+    }
+    if (this.scope.location?.trim()) parts.push('location = $scope_location');
+    if (this.scope.zip) parts.push('zip_code = $scope_zip_code');
     if (this.scope.country) parts.push('country_code = $scope_country_code');
     if (this.scope.sport) parts.push('sport_id = $scope_sport_id');
     if (this.scope.market) parts.push('market_id = $scope_market_id');
@@ -289,6 +383,146 @@ export class ScopedRepository {
   }
 }
 
+// ── Partner geo profile (state | age | location | zip) ──────────────
+
+export type PartnerGeoProfile = {
+  nodeId: TreeNodeId;
+  stateCode: StateCode;
+  age: number | null;
+  location: string | null;
+  zipCode: ZipCode | null;
+  updatedAt: string;
+};
+
+/** Upsert discrete geo columns for a partner — never merges into a single blob. */
+export function upsertPartnerGeoProfile(
+  db: Database,
+  nodeId: TreeNodeId | string,
+  geo: {
+    stateCode: StateCode | string;
+    age?: number | null;
+    location?: string | null;
+    zipCode?: ZipCode | string | null;
+  }
+): PartnerGeoProfile {
+  ensureStateRegulationSchema(db);
+  const nid = asTreeNodeId(nodeId);
+  const state = asStateCode(geo.stateCode);
+  const age = geo.age == null || !Number.isFinite(geo.age) ? null : Math.trunc(Number(geo.age));
+  if (age != null && (age < 0 || age > 150)) {
+    throw new Error(`partner-geo: invalid age ${age}`);
+  }
+  const location = geo.location?.trim() || null;
+  // Guard: location must not smuggle zip/state ("Boston, MA 02108" is wrong shape).
+  if (location && /\b\d{5}(-\d{4})?\b/.test(location)) {
+    throw new Error('partner-geo: location must not contain a ZIP — use discrete zipCode column');
+  }
+  let zip: string | null = null;
+  if (geo.zipCode != null && String(geo.zipCode).trim()) {
+    zip = asZipCode(String(geo.zipCode));
+  }
+  const updatedAt = new Date().toISOString();
+  db.run(
+    `INSERT INTO partner_geo_profiles (node_id, state_code, age, location, zip_code, updated_at)
+     VALUES ($nid, $st, $age, $loc, $zip, $upd)
+     ON CONFLICT(node_id) DO UPDATE SET
+       state_code = excluded.state_code,
+       age = excluded.age,
+       location = excluded.location,
+       zip_code = excluded.zip_code,
+       updated_at = excluded.updated_at`,
+    {
+      $nid: nid,
+      $st: state,
+      $age: age,
+      $loc: location,
+      $zip: zip,
+      $upd: updatedAt,
+    }
+  );
+  return {
+    nodeId: nid,
+    stateCode: state,
+    age,
+    location,
+    zipCode: zip as ZipCode | null,
+    updatedAt,
+  };
+}
+
+export function getPartnerGeoProfile(
+  db: Database,
+  nodeId: TreeNodeId | string
+): PartnerGeoProfile | null {
+  ensureStateRegulationSchema(db);
+  const nid = asTreeNodeId(nodeId);
+  const row = db
+    .query(
+      `SELECT node_id, state_code, age, location, zip_code, updated_at
+       FROM partner_geo_profiles WHERE node_id = $nid`
+    )
+    .get({ $nid: nid }) as {
+    node_id: string; // brand-ok — TreeNodeId via asTreeNodeId below
+    state_code: string;
+    age: number | null;
+    location: string | null;
+    zip_code: string | null;
+    updated_at: string;
+  } | null;
+  if (!row) return null;
+  return {
+    nodeId: asTreeNodeId(row.node_id),
+    stateCode: asStateCode(row.state_code),
+    age: row.age,
+    location: row.location,
+    zipCode: row.zip_code ? (tryZipCode(row.zip_code) ?? null) : null,
+    updatedAt: row.updated_at,
+  };
+}
+
+/**
+ * Stamp discrete geo columns onto play_zip_enrichment (create/replace).
+ * Columns stay separate: state_code, age, location, zip_code.
+ */
+export function upsertPlayZipEnrichment(
+  db: Database,
+  playId: string, // brand-ok — plays.id
+  nodeId: TreeNodeId | string,
+  geo: GeoDimensions
+): void {
+  ensureStateRegulationSchema(db);
+  const nid = asTreeNodeId(nodeId);
+  const state = geo.stateCode ? asStateCode(geo.stateCode) : null;
+  const age = geo.age == null || !Number.isFinite(geo.age) ? null : Math.trunc(Number(geo.age));
+  const location = geo.location?.trim() || null;
+  if (location && /\b\d{5}(-\d{4})?\b/.test(location)) {
+    throw new Error('play-zip-enrichment: location must not contain a ZIP — use discrete zipCode');
+  }
+  const zip =
+    geo.zipCode != null && String(geo.zipCode).trim() ? asZipCode(String(geo.zipCode)) : null;
+  const now = new Date().toISOString();
+  db.run(
+    `INSERT INTO play_zip_enrichment
+       (play_id, node_id, state_code, age, location, zip_code, enriched_at)
+     VALUES ($pid, $nid, $st, $age, $loc, $zip, $now)
+     ON CONFLICT(play_id, node_id) DO UPDATE SET
+       state_code = excluded.state_code,
+       age = excluded.age,
+       location = excluded.location,
+       zip_code = excluded.zip_code,
+       enriched_at = excluded.enriched_at`,
+    {
+      $pid: playId,
+      $nid: nid,
+      $st: state,
+      $age: age,
+      $loc: location,
+      $zip: zip,
+      $now: now,
+    }
+  );
+}
+
 // ── Compliance ─────────────────────────────────────────────────────
 
 export type BetComplianceInput = {
@@ -302,6 +536,12 @@ export type BetComplianceInput = {
   betType: string;
   /** When true (default), map NBA→basketball, totals→over_under, etc. */
   normalizeCatalog?: boolean;
+  /** Whole years; falls back to partner_geo_profiles.age when omitted. */
+  age?: number | null;
+  /** Locality only; falls back to partner profile. Must not embed ZIP. */
+  location?: string | null;
+  /** Discrete ZIP; falls back to partner profile. */
+  zipCode?: ZipCode | string | null;
 };
 
 export type BetComplianceResult = { allowed: true } | { allowed: false; reason: string };
@@ -309,6 +549,10 @@ export type BetComplianceResult = { allowed: true } | { allowed: false; reason: 
 export type SpecialRules = {
   max_daily_total?: number;
   require_identity_verification?: boolean;
+  /** Minimum legal age for wagers (MA/NJ sports: 21). */
+  min_age?: number;
+  /** Optional zip prefixes allowed in-state (e.g. ["021","022"] for Boston area demos). */
+  allowed_zip_prefixes?: string[];
 };
 
 type LimitsRow = {
@@ -330,10 +574,41 @@ export function parseSpecialRules(raw: string | null | undefined): SpecialRules 
     if (v.require_identity_verification === true) {
       out.require_identity_verification = true;
     }
+    if (typeof v.min_age === 'number' && Number.isFinite(v.min_age)) {
+      out.min_age = Math.trunc(v.min_age);
+    }
+    if (Array.isArray(v.allowed_zip_prefixes)) {
+      out.allowed_zip_prefixes = v.allowed_zip_prefixes
+        .filter((x): x is string => typeof x === 'string' && x.trim().length > 0)
+        .map(x => x.trim());
+    }
     return out;
   } catch {
     return {};
   }
+}
+
+/** Resolve age/location/zip from request, else partner_geo_profiles. */
+export function resolveGeoForNode(
+  db: Database,
+  nodeId: TreeNodeId | string,
+  input?: Pick<BetComplianceInput, 'age' | 'location' | 'zipCode' | 'stateCode'>
+): {
+  age: number | null;
+  location: string | null;
+  zipCode: string | null;
+  stateCode: StateCode | null;
+} {
+  const profile = getPartnerGeoProfile(db, nodeId);
+  const age =
+    input?.age != null && Number.isFinite(input.age)
+      ? Math.trunc(Number(input.age))
+      : (profile?.age ?? null);
+  const location = input?.location?.trim() || profile?.location || null;
+  const zipRaw = input?.zipCode != null ? String(input.zipCode).trim() : profile?.zipCode;
+  const zipCode = zipRaw ? (tryZipCode(zipRaw) ?? zipRaw) : null;
+  const stateCode = input?.stateCode ? asStateCode(input.stateCode) : (profile?.stateCode ?? null);
+  return { age, location, zipCode, stateCode };
 }
 
 /**
@@ -431,6 +706,8 @@ export class ComplianceRepository {
         ? params.marketId
         : normalizeMarketCatalogKey(params.marketId);
 
+    const geo = resolveGeoForNode(this.db, nodeId, params);
+
     const license = this.db
       .query(
         `SELECT status FROM partner_state_licenses
@@ -464,7 +741,10 @@ export class ComplianceRepository {
       }) as LimitsRow | null;
 
     if (!limits) {
-      // No explicit rule → allow (license already required)
+      // No explicit rule → still enforce default legal age when age known
+      if (geo.age != null && geo.age < 21) {
+        return { allowed: false, reason: `Minimum age 21 required in ${stateCode}` };
+      }
       return { allowed: true };
     }
 
@@ -497,6 +777,22 @@ export class ComplianceRepository {
         };
       }
     }
+    const minAge = rules.min_age ?? 21;
+    if (geo.age != null && geo.age < minAge) {
+      return {
+        allowed: false,
+        reason: `Minimum age ${minAge} required in ${stateCode} (got ${geo.age})`,
+      };
+    }
+    if (rules.allowed_zip_prefixes?.length && geo.zipCode) {
+      const ok = rules.allowed_zip_prefixes.some(pfx => String(geo.zipCode).startsWith(pfx));
+      if (!ok) {
+        return {
+          allowed: false,
+          reason: `ZIP ${geo.zipCode} not in allowed prefixes for ${stateCode}`,
+        };
+      }
+    }
     if (rules.max_daily_total != null && rules.max_daily_total > 0) {
       const used = sumDailyStateWagerVolume(this.db, nodeId, stateCode);
       if (used + params.wagerAmount > rules.max_daily_total) {
@@ -518,13 +814,20 @@ export class ComplianceRepository {
   ): BetComplianceResult {
     const result = this.isBetAllowed(params);
     if (!result.allowed) {
+      const geo = resolveGeoForNode(this.db, params.nodeId, params);
       this.logViolation(params.nodeId, params.stateCode, result.reason, {
         playId: params.playId,
+        age: geo.age,
+        location: geo.location,
+        zipCode: geo.zipCode,
         details: JSON.stringify({
           sportId: params.sportId,
           marketId: params.marketId,
           wagerAmount: params.wagerAmount,
           betType: params.betType,
+          age: geo.age,
+          location: geo.location,
+          zipCode: geo.zipCode,
         }),
       });
     }
@@ -536,17 +839,27 @@ export class ComplianceRepository {
     nodeId: TreeNodeId | string,
     stateCode: StateCode | string,
     reason: string,
-    opts?: { playId?: string; details?: string } // brand-ok — optional play ref on audit row
+    opts?: {
+      playId?: string; // brand-ok — optional play ref on audit row
+      details?: string;
+      age?: number | null;
+      location?: string | null;
+      zipCode?: string | null;
+    }
   ): void {
     const nid = asTreeNodeId(nodeId);
     const st = asStateCode(stateCode);
     this.db.run(
-      `INSERT INTO regulatory_violations (node_id, play_id, state_code, reason, details, blocked_at)
-       VALUES ($nid, $pid, $st, $reason, $details, unixepoch())`,
+      `INSERT INTO regulatory_violations
+         (node_id, play_id, state_code, age, location, zip_code, reason, details, blocked_at)
+       VALUES ($nid, $pid, $st, $age, $loc, $zip, $reason, $details, unixepoch())`,
       {
         $nid: nid,
         $pid: opts?.playId ?? null,
         $st: st,
+        $age: opts?.age ?? null,
+        $loc: opts?.location ?? null,
+        $zip: opts?.zipCode ?? null,
         $reason: reason,
         $details: opts?.details ?? null,
       }

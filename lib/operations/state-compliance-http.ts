@@ -25,8 +25,10 @@ import {
   ComplianceRepository,
   ensureStateRegulationSchema,
   getPartnerRegulatoryStatus,
+  resolveGeoForNode,
   seedStateRegulations,
   setPartnerIdentityVerified,
+  upsertPartnerGeoProfile,
   type BetComplianceResult,
 } from './state-regulation.ts';
 
@@ -71,6 +73,36 @@ export function seedDemoCompliancePartners(db: Database): void {
   ];
 
   const compliance = new ComplianceRepository(db);
+  const geoByPartner: Record<
+    string,
+    { state: string; age: number; location: string; zip: string }
+  > = {
+    'demo-ma-licensed': {
+      state: 'MA',
+      age: 28,
+      location: 'Boston',
+      zip: '02108',
+    },
+    'demo-nj-licensed': {
+      state: 'NJ',
+      age: 32,
+      location: 'Atlantic City',
+      zip: '08401',
+    },
+    'demo-dual-licensed': {
+      state: 'MA',
+      age: 40,
+      location: 'Cambridge',
+      zip: '02139',
+    },
+    'demo-unlicensed': {
+      state: 'MA',
+      age: 22,
+      location: 'Worcester',
+      zip: '01608',
+    },
+  };
+
   for (const p of partners) {
     db.run(
       `INSERT OR IGNORE INTO tree_nodes
@@ -88,6 +120,16 @@ export function seedDemoCompliancePartners(db: Database): void {
     if (p.identity) {
       setPartnerIdentityVerified(db, p.id, true);
     }
+    const g = geoByPartner[p.id];
+    if (g) {
+      // Four discrete columns — state, age, location, zip (never concatenated).
+      upsertPartnerGeoProfile(db, p.id, {
+        stateCode: g.state,
+        age: g.age,
+        location: g.location,
+        zipCode: g.zip,
+      });
+    }
   }
 }
 
@@ -99,6 +141,12 @@ export type ComplianceCheckBody = {
   wagerAmount: number;
   betType?: string;
   playId?: string; // brand-ok
+  /** Discrete age (years) — not packed into location. */
+  age?: number;
+  /** Locality/city only. */
+  location?: string;
+  /** Discrete US ZIP / ZIP+4. */
+  zipCode?: string;
   /** When true (default), write regulatory_violations on block. */
   logViolation?: boolean;
 };
@@ -111,6 +159,9 @@ export type ComplianceCheckOk = {
   marketId: string; // brand-ok
   wagerAmount: number;
   betType: string;
+  age: number | null;
+  location: string | null;
+  zipCode: string | null;
 };
 
 export type ComplianceCheckDenied = {
@@ -119,6 +170,9 @@ export type ComplianceCheckDenied = {
   reason: string;
   nodeId: string; // brand-ok
   stateCode: string;
+  age: number | null;
+  location: string | null;
+  zipCode: string | null;
 };
 
 /**
@@ -158,30 +212,34 @@ export async function handleComplianceCheck(db: Database, req: Request): Promise
 
   const betType = body.betType?.trim() || 'straight';
   const wagerAmount = Number(body.wagerAmount);
+  const age = body.age != null ? Number(body.age) : undefined;
+  const location = body.location?.trim() || undefined;
+  const zipCode = body.zipCode?.trim() || undefined;
   const compliance = new ComplianceRepository(db);
   const logViolation = body.logViolation !== false;
 
+  const checkInput = {
+    nodeId: body.nodeId,
+    stateCode: state,
+    sportId: body.sportId,
+    marketId: body.marketId,
+    wagerAmount,
+    betType,
+    age,
+    location,
+    zipCode,
+    playId: body.playId,
+  };
+
   let result: BetComplianceResult;
   if (logViolation) {
-    result = compliance.checkAndRecord({
-      nodeId: body.nodeId,
-      stateCode: state,
-      sportId: body.sportId,
-      marketId: body.marketId,
-      wagerAmount,
-      betType,
-      playId: body.playId,
-    });
+    result = compliance.checkAndRecord(checkInput);
   } else {
-    result = compliance.isBetAllowed({
-      nodeId: body.nodeId,
-      stateCode: state,
-      sportId: body.sportId,
-      marketId: body.marketId,
-      wagerAmount,
-      betType,
-    });
+    result = compliance.isBetAllowed(checkInput);
   }
+
+  // Echo resolved geo from profile when request omitted fields
+  const geo = resolveGeoForNode(db, body.nodeId, checkInput);
 
   if (!result.allowed) {
     const denied: ComplianceCheckDenied = {
@@ -190,6 +248,9 @@ export async function handleComplianceCheck(db: Database, req: Request): Promise
       reason: result.reason,
       nodeId: body.nodeId,
       stateCode: state,
+      age: geo.age,
+      location: geo.location,
+      zipCode: geo.zipCode,
     };
     return json(denied, 403);
   }
@@ -202,6 +263,9 @@ export async function handleComplianceCheck(db: Database, req: Request): Promise
     marketId: body.marketId,
     wagerAmount,
     betType,
+    age: geo.age,
+    location: geo.location,
+    zipCode: geo.zipCode,
   };
   return json(ok, 200);
 }

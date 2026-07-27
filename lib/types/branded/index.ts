@@ -60,6 +60,7 @@ import type {
   ExperimentVariantId,
   ExperimentAssignmentId,
   StateCode,
+  ZipCode,
 } from './operations.ts';
 import type { PortalTenantId, TelegramUserId, PortalAccountId, LinkNonceId } from './portal.ts';
 
@@ -115,6 +116,7 @@ export type AnyId =
   | ExperimentVariantId
   | ExperimentAssignmentId
   | StateCode
+  | ZipCode
   | PortalTenantId
   | TelegramUserId
   | PortalAccountId

@@ -41,6 +41,11 @@ export type OpsChannelEventId = BrandedString<'OpsChannelEventId'>;
  * Always stored uppercase two-letter.
  */
 export type StateCode = BrandedString<'StateCode'>;
+/**
+ * US ZIP or ZIP+4 postal code (digits only; ZIP+4 uses hyphen).
+ * Discrete column — never packed into location text.
+ */
+export type ZipCode = BrandedString<'ZipCode'>;
 
 const operation = defineBrandConstructors('OperationId');
 const resource = defineBrandConstructors('ResourceId');
@@ -168,6 +173,31 @@ export function parseStateCode(value: unknown): StateCode {
     throw new BrandValidationError('StateCode', value as never);
   }
   return asStateCode(value);
+}
+
+/** US ZIP (`12345`) or ZIP+4 (`12345-6789`). */
+const ZIP_CODE_RE = /^\d{5}(-\d{4})?$/;
+
+export function asZipCode(value: string): ZipCode {
+  const z = value.trim();
+  if (!ZIP_CODE_RE.test(z)) {
+    throw new BrandValidationError('ZipCode', value);
+  }
+  return z as ZipCode;
+}
+
+export function tryZipCode(value: string | undefined | null): ZipCode | undefined {
+  if (value == null) return undefined;
+  const z = String(value).trim();
+  if (!z || !ZIP_CODE_RE.test(z)) return undefined;
+  return z as ZipCode;
+}
+
+export function parseZipCode(value: unknown): ZipCode {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new BrandValidationError('ZipCode', value as never);
+  }
+  return asZipCode(value);
 }
 
 export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
@@ -310,5 +340,12 @@ export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
     tiers: ['as', 'try', 'parse'],
     mint: ['user-input', 'wire-input'],
     description: 'US state jurisdiction code for regulatory scoping (MA, NJ, …)',
+  },
+  {
+    name: 'ZipCode',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['user-input', 'wire-input'],
+    description: 'US ZIP or ZIP+4 postal code (discrete geo column)',
   },
 ] as const;

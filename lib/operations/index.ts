@@ -90,6 +90,11 @@ export {
   isPartnerIdentityVerified,
   setPartnerIdentityVerified,
   sumDailyStateWagerVolume,
+  upsertPartnerGeoProfile,
+  getPartnerGeoProfile,
+  upsertPlayZipEnrichment,
+  resolveGeoForNode,
+  GEO_DIMENSION_COLUMNS,
   ScopedRepository,
   ComplianceRepository,
   getPartnerRegulatoryStatus,
@@ -102,6 +107,8 @@ export {
   type PartnerRegulatoryStatus,
   type StateComplianceBody,
   type SpecialRules,
+  type GeoDimensions,
+  type PartnerGeoProfile,
 } from './state-regulation.ts';
 export {
   createMockComplianceDb,

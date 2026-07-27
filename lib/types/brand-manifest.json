@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-27T09:31:47.676Z",
+  "generatedAt": "2026-07-27T16:50:32.325Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 46,
+  "brandCount": 47,
   "domains": [
     "audit",
     "deployment",
@@ -596,6 +596,20 @@
         "wire-input"
       ],
       "description": "US state jurisdiction code for regulatory scoping (MA, NJ, …)"
+    },
+    {
+      "name": "ZipCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "US ZIP or ZIP+4 postal code (discrete geo column)"
     },
     {
       "name": "PortalTenantId",
