@@ -103,6 +103,22 @@ export {
   type StateComplianceBody,
   type SpecialRules,
 } from './state-regulation.ts';
+export {
+  createMockComplianceDb,
+  seedDemoCompliancePartners,
+  handleComplianceCheck,
+  handleComplianceStatus,
+  handleComplianceLicense,
+  handleComplianceIdentity,
+  createStateComplianceRoutes,
+  createStateComplianceFetchHandler,
+  startStateComplianceMock,
+  type MockComplianceSeedOpts,
+  type ComplianceCheckBody,
+  type ComplianceCheckOk,
+  type ComplianceCheckDenied,
+  type StartStateComplianceMockOpts,
+} from './state-compliance-http.ts';
 export { FRAUD_GUARDRAILS, detectFraudSignals } from './fraud-guard.ts';
 export {
   publishAndDispatch,

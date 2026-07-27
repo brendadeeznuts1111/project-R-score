@@ -32,6 +32,7 @@ Tree-structured agent management with HMAC-signed play distribution.
 | [`snapshot-cron.ts`](snapshot-cron.ts) | In-process cron: snapshot · sync · settle |
 | [`play-dispatcher.ts`](play-dispatcher.ts) | Publish + gate + reserve + Telegram outbox |
 | [`state-regulation.ts`](state-regulation.ts) | MA/NJ limits · licenses · special rules · catalog normalize · dispatcher gate |
+| [`state-compliance-http.ts`](state-compliance-http.ts) | Mock Bun.serve API · `ops:compliance:mock` · demo partners |
 | [`account-service.ts`](account-service.ts) | Tree nodes, portal sync |
 | [`cut-engine.ts`](cut-engine.ts) | Cut cascade allocations |
 | [`backup.ts`](backup.ts) | DB backup helpers |
