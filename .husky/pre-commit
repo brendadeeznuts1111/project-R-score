@@ -72,10 +72,11 @@ fi
 
 echo ""
 echo "== pre-commit: env defaults check =="
+# Staged-only + harness heuristics (not full-tree 600+ noise). Non-blocking until clean.
 if [ "$1" = "--dry-run" ]; then
-  echo "  [dry-run] bun scripts/check-env-defaults.ts --dry-run"
+  echo "  [dry-run] bun scripts/check-env-defaults.ts --staged --dry-run"
 else
-  bun scripts/check-env-defaults.ts || echo "  ⚠️  env-defaults check failed (non-blocking in pre-commit)"
+  bun scripts/check-env-defaults.ts --staged || echo "  ⚠️  env-defaults: staged optional config without fallback (non-blocking)"
 fi
 
 echo ""
