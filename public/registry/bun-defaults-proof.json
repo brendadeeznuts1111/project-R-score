@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-  "timestamp": "2026-07-23T20:18:56.752Z",
+  "timestamp": "2026-07-27T09:08:29.660Z",
   "summary": {
-    "total": 12,
-    "passed": 12,
+    "total": 13,
+    "passed": 13,
     "failed": 0
   },
   "cases": [
@@ -58,6 +58,14 @@
       "docs": "https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname"
     },
     {
+      "id": "serve-identity-protocol-sync",
+      "name": "server.protocol syncs with url.protocol and port",
+      "pass": true,
+      "actual": "protocol + url fields aligned",
+      "expected": "protocol=http, url.protocol=http:, url.port=String(port)",
+      "docs": "https://bun.com/docs/runtime/http/server#reference"
+    },
+    {
       "id": "which-missing-null",
       "name": "which returns null for missing",
       "pass": true,
@@ -106,5 +114,5 @@
       "docs": "https://bun.com/docs/runtime/hashing#bun-hash"
     }
   ],
-  "proofHash": "224c20110dfd439cb5b9040e6e6c3489400759fadf767f30e99df4e6eba0da80"
+  "proofHash": "679dc1570ce79e8bf83a8aeb23626efdb868af8b23929482ec74908c48f6c1c9"
 }

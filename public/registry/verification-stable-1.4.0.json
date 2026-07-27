@@ -1,7 +1,7 @@
 {
   "type": "ChannelAwareVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-27T06:32:03.536Z",
+  "timestamp": "2026-07-27T17:09:28.450Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "blogPost": "https://bun.com/blog/bun-v1.3.14",
@@ -9,9 +9,9 @@
     "channel": "stable",
     "targetVersion": "1.4.0",
     "latestAtTestTime": "1.4.0",
-    "testSuiteCommit": "22c1a4728c52415a189f663608df51f312cb8c70",
-    "provenanceId": "local-2026-07-24T06-13-01-447Z",
-    "testedAt": "2026-07-24T06:13:01.447Z",
+    "testSuiteCommit": "45f5f6ed4ffbc6c90796a577a0abf0aa6f3413b8",
+    "provenanceId": "local-2026-07-27T16-55-11-034Z",
+    "testedAt": "2026-07-27T16:55:11.034Z",
     "bunRevision": "a227ad991b62",
     "runtimeVersion": "1.4.0",
     "platform": "darwin",
@@ -212,7 +212,7 @@
     {
       "name": "Bun.escapeHTML performance",
       "expected": "< 500 ns per call",
-      "actual": "138.1 ns",
+      "actual": "152.4 ns",
       "passed": true,
       "canonicalKey": "cross-language-lto-for-zig-c-on-linux",
       "canonical": "https://bun.com/blog/bun-v1.3.14#cross-language-lto-for-zig-c-on-linux",
@@ -233,7 +233,7 @@
     {
       "name": "ESM module load (node:fs)",
       "expected": "loads successfully",
-      "actual": "0.06ms",
+      "actual": "0.12ms",
       "passed": true,
       "canonicalKey": "faster-esm-module-loading",
       "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
@@ -672,239 +672,6 @@
       "canonicalSource": "docs"
     },
     {
-      "name": "install platform: bun-binary-resolved",
-      "expected": "Verification toolchain (runtime execPath / Bun.which): bun-binary-resolved",
-      "actual": "spawned=bun source=runtime runtime=1.4.0 cli=1.4.0",
-      "passed": true,
-      "canonicalKey": "Bun.which",
-      "canonical": "https://bun.com/docs/runtime/utils#bun-which",
-      "canonicalKind": "API",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/runtime/utils#bun-which",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: bun-config-env-ssot",
-      "expected": "tools/bun-install-env.ts BUN_CONFIG_INSTALL_VARS: bun-config-env-ssot",
-      "actual": "env > bunfig; 6 vars (BUN_CONFIG_REGISTRY, BUN_CONFIG_SKIP_INSTALL_PACKAGES, BUN_CONFIG_SKIP_LOAD_LOCKFILE, BUN_CONFIG_SKIP_SAVE_LOCKFILE, BUN_CONFIG_TOKEN, BUN_CONFIG_YARN_LOCKFILE)",
-      "passed": true,
-      "canonicalKey": "BUN install environment variables",
-      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-      "canonicalKind": "Concept",
-      "canonicalStability": "stable",
-      "canonicalDescription": "Environment variables take priority over bunfig.toml",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: forbidden-install-env",
-      "expected": "shell env (docs/UNIFIED.md machine layer): forbidden-install-env",
-      "actual": "no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in shell env",
-      "passed": true,
-      "canonicalKey": "install env precedence",
-      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-      "canonicalKind": "Concept",
-      "canonicalStability": "stable",
-      "canonicalDescription": "CLI flags → BUN_CONFIG_* → bunfig (project overlays machine)",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: install-mechanism-notes-ssot",
-      "expected": "tools/bun-install-env.ts INSTALL_MECHANISM_NOTES: install-mechanism-notes-ssot",
-      "actual": "5 mechanism notes (backend, cache, node_modules, eager/lazy resolve)",
-      "passed": true,
-      "canonicalKey": "bun install cache mechanism",
-      "canonical": "https://bun.com/docs/pm/cli/install#cache",
-      "canonicalKind": "Concept",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/cli/install#cache",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: runtime-flags",
-      "expected": "Bun CLI (isolated probe dir): runtime-flags",
-      "actual": "dry-run --cpu=x64 --os=linux exit=0; invalid cpu rejected",
-      "passed": true,
-      "canonicalKey": "bun install --cpu",
-      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
-      "canonicalKind": "CLI",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: profile-ssot",
-      "expected": ".agents/skills/ast-grep/bun-install-profiles.json: profile-ssot",
-      "actual": "cross-linux-x64=x64/linux; cross-linux-arm64=arm64/linux; cross-darwin-arm64=arm64/darwin",
-      "passed": true,
-      "canonicalKey": "bun install --cpu",
-      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
-      "canonicalKind": "CLI",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: lockfile-config-version",
-      "expected": "bun.lock configVersion + workspaces: lockfile-config-version",
-      "actual": "configVersion=1 + workspaces → isolated linker default per Bun docs",
-      "passed": true,
-      "canonicalKey": "isolated installs",
-      "canonical": "https://bun.com/docs/pm/isolated-installs",
-      "canonicalKind": "Concept",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/isolated-installs",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: machine-isolated-linker",
-      "expected": "~/.bunfig.toml (docs/UNIFIED.md machine SSOT): machine-isolated-linker",
-      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
-      "passed": true,
-      "canonicalKey": "isolated installs",
-      "canonical": "https://bun.com/docs/pm/isolated-installs",
-      "canonicalKind": "Concept",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/isolated-installs",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: machine-global-store",
-      "expected": "~/.bunfig.toml globalStore + isolated linker: machine-global-store",
-      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
-      "passed": true,
-      "canonicalKey": "global virtual store",
-      "canonical": "https://bun.com/docs/pm/global-store",
-      "canonicalKind": "Concept",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/global-store",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: monorepo-cross-dry-run",
-      "expected": "FactoryWager monorepo root (package.json + bun.lock): monorepo-cross-dry-run",
-      "actual": "cross-linux-x64:ok; cross-linux-arm64:ok; cross-darwin-arm64:ok",
-      "passed": true,
-      "canonicalKey": "bun install --cpu",
-      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
-      "canonicalKind": "CLI",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
-      "name": "install platform: lockfile-stable",
-      "expected": "bun.lock shared lockfile (docs/UNIFIED.md): lockfile-stable",
-      "actual": "hash unchanged (07fd9c865b3b6ba6) after cross dry-runs",
-      "passed": true,
-      "canonicalKey": "platform-specific dependencies",
-      "canonical": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
-      "canonicalKind": "Concept",
-      "canonicalStability": "stable",
-      "subsystem": "package-manager",
-      "introducedIn": "all",
-      "_links": {
-        "docs": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
-        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bun-release.ts",
-        "report": "/registry/release-features.json"
-      },
-      "channel": "stable",
-      "targetVersion": "1.4.0",
-      "latestAtTestTime": "1.4.0",
-      "canonicalSource": "docs"
-    },
-    {
       "name": "Bun.Archive (create, extract, gzip, read)",
       "expected": "creates tar, extracts, gzips, reads files back",
       "actual": "archive bytes=10240, gzip=126, round-trip verified",
@@ -1012,7 +779,7 @@
     {
       "name": "Uint8Array Bun extensions (toBase64, toHex, setFromBase64, setFromHex, mmap, file.bytes, blob.bytes)",
       "expected": "all Bun Uint8Array extensions and binary data APIs work",
-      "actual": "base64=true hex=true rt=true mmap=74055B file=74055B blob=5B",
+      "actual": "base64=true hex=true rt=true mmap=85889B file=85889B blob=5B",
       "passed": true,
       "canonicalKey": "uint8array-bun-extensions",
       "canonical": "https://bun.com/docs",
@@ -1133,6 +900,204 @@
       "channel": "stable",
       "targetVersion": "1.4.0",
       "latestAtTestTime": "1.4.0",
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: bun-binary-resolved",
+      "expected": "Verification toolchain (runtime execPath / Bun.which): bun-binary-resolved",
+      "actual": "spawned=bun source=runtime runtime=1.4.0 cli=1.4.0",
+      "passed": true,
+      "canonical": "https://bun.com/docs/runtime/utils#bun-which",
+      "canonicalKey": "Bun.which",
+      "canonicalKind": "API",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/runtime/utils#bun-which",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: bun-config-env-ssot",
+      "expected": "tools/bun-install-env.ts BUN_CONFIG_INSTALL_VARS: bun-config-env-ssot",
+      "actual": "env > bunfig; 6 vars (BUN_CONFIG_REGISTRY, BUN_CONFIG_SKIP_INSTALL_PACKAGES, BUN_CONFIG_SKIP_LOAD_LOCKFILE, BUN_CONFIG_SKIP_SAVE_LOCKFILE, BUN_CONFIG_TOKEN, BUN_CONFIG_YARN_LOCKFILE)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKey": "BUN install environment variables",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: forbidden-install-env",
+      "expected": "shell env (docs/UNIFIED.md machine layer): forbidden-install-env",
+      "actual": "no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in shell env",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+      "canonicalKey": "install env precedence",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#configuring-with-environment-variables",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: install-mechanism-notes-ssot",
+      "expected": "tools/bun-install-env.ts INSTALL_MECHANISM_NOTES: install-mechanism-notes-ssot",
+      "actual": "5 mechanism notes (backend, cache, node_modules, eager/lazy resolve)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cache",
+      "canonicalKey": "bun install cache mechanism",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cache",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: runtime-flags",
+      "expected": "Bun CLI (isolated probe dir): runtime-flags",
+      "actual": "skipped (--dry-run) — would run bun install --cpu=x64 --os=linux --dry-run in isolated dir",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKey": "bun install --cpu",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: profile-ssot",
+      "expected": ".agents/skills/ast-grep/bun-install-profiles.json: profile-ssot",
+      "actual": "cross-linux-x64=x64/linux; cross-linux-arm64=arm64/linux; cross-darwin-arm64=arm64/darwin",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKey": "bun install --cpu",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: lockfile-config-version",
+      "expected": "bun.lock configVersion + workspaces: lockfile-config-version",
+      "actual": "configVersion=1 + workspaces → isolated linker default per Bun docs",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "canonicalKey": "isolated installs",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/isolated-installs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: machine-isolated-linker",
+      "expected": "~/.bunfig.toml (docs/UNIFIED.md machine SSOT): machine-isolated-linker",
+      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/isolated-installs",
+      "canonicalKey": "isolated installs",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/isolated-installs",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: machine-global-store",
+      "expected": "~/.bunfig.toml globalStore + isolated linker: machine-global-store",
+      "actual": "linker=isolated (inherited from ~/.bunfig.toml); globalStore=true (inherited from ~/.bunfig.toml)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/global-store",
+      "canonicalKey": "global virtual store",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/global-store",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: monorepo-cross-dry-run",
+      "expected": "FactoryWager monorepo root (package.json + bun.lock): monorepo-cross-dry-run",
+      "actual": "skipped (--dry-run) — would run: cross-linux-x64=bun install --cpu=x64 --os=linux --dry-run (x64/linux); cross-linux-arm64=bun install --cpu=arm64 --os=linux --dry-run (arm64/linux); cross-darwin-arm64=bun install --cpu=arm64 --os=darwin --dry-run (arm64/darwin)",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+      "canonicalKey": "bun install --cpu",
+      "canonicalKind": "CLI",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
+      "canonicalSource": "docs"
+    },
+    {
+      "name": "install platform: lockfile-stable",
+      "expected": "bun.lock shared lockfile (docs/UNIFIED.md): lockfile-stable",
+      "actual": "skipped (--dry-run) — would hash bun.lock before/after cross dry-runs",
+      "passed": true,
+      "canonical": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+      "canonicalKey": "platform-specific dependencies",
+      "canonicalKind": "Concept",
+      "canonicalStability": "stable",
+      "subsystem": "package-manager",
+      "introducedIn": "all",
+      "_links": {
+        "docs": "https://bun.com/docs/pm/cli/install#platform-specific-dependencies",
+        "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-install-platform.ts",
+        "report": "/registry/install-platform.json"
+      },
       "canonicalSource": "docs"
     },
     {
@@ -1872,7 +1837,7 @@
       }
     }
   },
-  "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
+  "proofHash": "6c3b796b77f71b668eaca7b6a703ffce1109063a325965c30405011494dcd651",
   "jsonLd": {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -1880,7 +1845,7 @@
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Any",
     "softwareVersion": "1.4.0",
-    "dateModified": "2026-07-24T06:13:01.447Z",
+    "dateModified": "2026-07-27T16:55:11.034Z",
     "identifier": "1.4.0",
     "featureList": [
       "runtime-nits",
@@ -1921,7 +1886,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1937,7 +1902,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1953,7 +1918,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1969,7 +1934,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -1985,7 +1950,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2001,7 +1966,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2017,7 +1982,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2033,7 +1998,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2049,7 +2014,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2065,7 +2030,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2081,7 +2046,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2097,7 +2062,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2113,7 +2078,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2129,7 +2094,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2145,7 +2110,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2161,7 +2126,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2177,7 +2142,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2193,7 +2158,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2209,7 +2174,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2225,7 +2190,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2241,7 +2206,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2257,7 +2222,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2273,7 +2238,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2289,183 +2254,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: bun-binary-resolved",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: bun-config-env-ssot",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: forbidden-install-env",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: install-mechanism-notes-ssot",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: runtime-flags",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: profile-ssot",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: lockfile-config-version",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: machine-isolated-linker",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: machine-global-store",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: monorepo-cross-dry-run",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
-        "author": {
-          "@type": "Organization",
-          "name": "FactoryWager Operations"
-        },
-        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
-      },
-      {
-        "@type": "Review",
-        "name": "install platform: lockfile-stable",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": 5,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2481,7 +2270,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2497,7 +2286,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2513,7 +2302,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2529,7 +2318,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2545,7 +2334,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2561,7 +2350,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2577,7 +2366,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2593,7 +2382,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2609,7 +2398,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2625,7 +2414,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2641,7 +2430,183 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: bun-binary-resolved",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: bun-config-env-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: forbidden-install-env",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: install-mechanism-notes-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: runtime-flags",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: profile-ssot",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: lockfile-config-version",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: machine-isolated-linker",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: machine-global-store",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: monorepo-cross-dry-run",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
+        "author": {
+          "@type": "Organization",
+          "name": "FactoryWager Operations"
+        },
+        "reviewBody": "Channel: stable, Target: 1.4.0, Runtime: 1.4.0"
+      },
+      {
+        "@type": "Review",
+        "name": "install platform: lockfile-stable",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": 5,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2657,7 +2622,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2673,7 +2638,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2689,7 +2654,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2705,7 +2670,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2721,7 +2686,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2737,7 +2702,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2753,7 +2718,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2769,7 +2734,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2785,7 +2750,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2801,7 +2766,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2817,7 +2782,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2833,7 +2798,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2849,7 +2814,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2865,7 +2830,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2881,7 +2846,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2897,7 +2862,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2913,7 +2878,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2929,7 +2894,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2945,7 +2910,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2961,7 +2926,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2977,7 +2942,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -2993,7 +2958,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3009,7 +2974,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3025,7 +2990,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3041,7 +3006,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3057,7 +3022,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3073,7 +3038,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3089,7 +3054,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"
@@ -3105,7 +3070,7 @@
           "bestRating": 5,
           "worstRating": 1
         },
-        "datePublished": "2026-07-24T06:13:01.447Z",
+        "datePublished": "2026-07-27T16:55:11.034Z",
         "author": {
           "@type": "Organization",
           "name": "FactoryWager Operations"

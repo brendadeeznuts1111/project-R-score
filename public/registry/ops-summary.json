@@ -1,8 +1,8 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-27T08:11:19.212Z",
+  "generated": "2026-07-27T17:09:30.907Z",
   "liquidity": {
-    "total": 85710
+    "total": 108210
   },
   "experts": [
     {
@@ -29,9 +29,9 @@
   ],
   "tree": {
     "partners": 4,
-    "agents": 15,
+    "agents": 20,
     "subAgents": 1,
-    "downstreamLiquidity": 85710
+    "downstreamLiquidity": 108210
   },
   "plays": [],
   "rails": [
@@ -136,11 +136,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "f5a53f3c2454bd73b770227f8883827332cf27869b64a105e7b1596c2500da91",
+    "proofHash": "a79afeea7c7f4831b1c52ff7259a176a72d1d2fac5470e16cb5c62e021729f42",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-27T08:11:19.214Z"
+    "timestamp": "2026-07-27T17:09:30.908Z"
   },
   "registryClient": {
     "available": true,
@@ -214,7 +214,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-27T08:11:17.705Z",
+    "timestamp": "2026-07-27T17:09:29.095Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -400,8 +400,8 @@
         "ok": true
       }
     ],
-    "proofHash": "3f249b699f12a0382cbf82ca4ffc74d865be7c7cf37bbe791283780ab801426f",
-    "timestamp": "2026-07-27T08:11:17.449Z",
+    "proofHash": "f08342bc53c84ba4162604c8e605b9711b219fff75b0af9559046065a851bb04",
+    "timestamp": "2026-07-27T17:09:28.460Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -411,8 +411,8 @@
     "passed": 75,
     "total": 75,
     "status": "pass",
-    "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-27T08:11:17.444Z",
+    "proofHash": "6c3b796b77f71b668eaca7b6a703ffce1109063a325965c30405011494dcd651",
+    "updatedAt": "2026-07-27T17:09:28.454Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -456,61 +456,53 @@
     "httpOk": 16,
     "criticalFailed": 0,
     "errorRate": 0,
-    "meanMs": 137.1,
-    "p50Ms": 107.88,
-    "p95Ms": 343.89,
-    "maxMs": 343.89,
-    "proofHash": "2eefdb6e3b5317bdd5f34c77a645f88718169dc897a0793d9c6a049ec9139208",
-    "timestamp": "2026-07-27T08:11:16.959Z",
+    "meanMs": 154.92,
+    "p50Ms": 67.34,
+    "p95Ms": 398.79,
+    "maxMs": 398.79,
+    "proofHash": "2d3f00aa4fe03f133ed48c56050215f18f9fa824137a2b92f781cc4e06928e7d",
+    "timestamp": "2026-07-27T17:08:31.636Z",
     "regressions": 0,
     "criticalFailedPaths": [],
     "routes": [
+      {
+        "path": "/api/operations/summary",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 67.34,
+        "contentType": "application/json"
+      },
       {
         "path": "/portal/dashboard-app.js",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 148.93,
+        "timeMs": 61.59,
         "contentType": "application/javascript"
-      },
-      {
-        "path": "/registry/@factorywager/bun-utils-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 107.88,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/portal/dashboard/",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 58.93,
-        "contentType": "text/html"
       },
       {
         "path": "/portal/ops/",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 49.93,
+        "timeMs": 54.07,
         "contentType": "text/html"
       },
       {
-        "path": "/api/operations/summary",
+        "path": "/portal/dashboard/",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 49.11,
-        "contentType": "application/json"
+        "timeMs": 51.52,
+        "contentType": "text/html"
       },
       {
         "path": "/api/monitoring",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 44.08,
+        "timeMs": 48.18,
         "contentType": "application/json"
       },
       {
@@ -518,7 +510,23 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 35.54,
+        "timeMs": 34.84,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/registry/@factorywager/bun-utils-test/latest.json",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 31.94,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/health",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 398.79,
         "contentType": "application/json"
       },
       {
@@ -526,31 +534,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 343.89,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 303.5,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/monitoring",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 299.12,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/health",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 261.6,
+        "timeMs": 310.88,
         "contentType": "application/json"
       },
       {
@@ -558,23 +542,31 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 232.45,
+        "timeMs": 306.48,
         "contentType": "text/html"
+      },
+      {
+        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 289.36,
+        "contentType": "application/json"
       },
       {
         "path": "/portal",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 155.25,
+        "timeMs": 288.2,
         "contentType": "text/html"
       },
       {
-        "path": "/ready",
+        "path": "/monitoring",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 137.59,
+        "timeMs": 266.69,
         "contentType": "text/html"
       },
       {
@@ -582,23 +574,23 @@
         "status": 400,
         "pass": true,
         "critical": false,
-        "timeMs": 125.9,
+        "timeMs": 182.69,
         "contentType": "application/json"
+      },
+      {
+        "path": "/ready",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 178.66,
+        "contentType": "text/html"
       },
       {
         "path": "/registry/static.json",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 41.15,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/registry/static",
-        "status": 400,
-        "pass": true,
-        "critical": false,
-        "timeMs": 37.22,
+        "timeMs": 149.64,
         "contentType": "application/json"
       },
       {
@@ -606,16 +598,22 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 35.66,
+        "timeMs": 39.7,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry/static",
+        "status": 400,
+        "pass": true,
+        "critical": false,
+        "timeMs": 28.05,
         "contentType": "application/json"
       }
-    ],
-    "cached": false,
-    "stale": false
+    ]
   },
   "partners": {
     "bound": 15,
-    "unboundAgents": 5,
+    "unboundAgents": 10,
     "byLifecycle": {
       "active": 1,
       "materialized": 13,
@@ -697,14 +695,14 @@
   "channels": {
     "pending": 0,
     "failed": 0,
-    "sent": 679,
+    "sent": 778,
     "oldestPendingAt": null,
     "failRate": 0
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-27T08:11:17.737Z",
+    "generatedAt": "2026-07-27T17:09:29.202Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -726,13 +724,13 @@
     "identityLinked": true,
     "identityPartners": 3,
     "enforcementFocus": "rope",
-    "enforcementFailed": 10,
+    "enforcementFailed": 11,
     "enforcementCritical": 6,
     "throughputT": 5116,
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 9.973508494816247,
+    "avgRP": 9.340179869988143,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -800,7 +798,7 @@
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 679,
+    "outboxSent": 778,
     "outboxFailed": 0,
     "outboxPending": 0,
     "oldestPendingAgeSec": null,
@@ -810,7 +808,7 @@
     "settledPlaysViaFullLoop": 7,
     "loopCompletionRateByPlay": 1,
     "capitalEfficiencyProxy": 0.1278360819590205,
-    "limitEfficiencyProxy": 0.9547793476364905,
+    "limitEfficiencyProxy": 1.3301282051282053,
     "processReturnProxy": 0.20128651835968908,
     "projectorBackend": "r2",
     "projectorBucket": "factory-wager-registry",
@@ -819,7 +817,7 @@
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-27T08:11:19.208Z",
+    "generatedAt": "2026-07-27T17:09:30.901Z",
     "partners": 4,
     "inviteGaps": 0,
     "blocked": 0,
@@ -841,8 +839,8 @@
         "callSign": "ASH-001",
         "gapCount": 0,
         "topGap": null,
-        "verifyPassed": 10,
-        "verifyTotal": 10,
+        "verifyPassed": 11,
+        "verifyTotal": 11,
         "verifyFails": [],
         "lanesOk": 23,
         "lanesTotal": 23,
@@ -864,8 +862,8 @@
         "callSign": "BIL-001",
         "gapCount": 0,
         "topGap": null,
-        "verifyPassed": 10,
-        "verifyTotal": 10,
+        "verifyPassed": 11,
+        "verifyTotal": 11,
         "verifyFails": [],
         "lanesOk": 23,
         "lanesTotal": 23,
@@ -887,8 +885,8 @@
         "callSign": "NOV-001",
         "gapCount": 0,
         "topGap": null,
-        "verifyPassed": 10,
-        "verifyTotal": 10,
+        "verifyPassed": 11,
+        "verifyTotal": 11,
         "verifyFails": [],
         "lanesOk": 23,
         "lanesTotal": 23,
@@ -910,8 +908,8 @@
         "callSign": "SPEN-001",
         "gapCount": 0,
         "topGap": null,
-        "verifyPassed": 10,
-        "verifyTotal": 10,
+        "verifyPassed": 11,
+        "verifyTotal": 11,
         "verifyFails": [],
         "lanesOk": 23,
         "lanesTotal": 23,
@@ -933,7 +931,7 @@
   "seatCapitalDesk": {
     "available": true,
     "path": "/registry/seat-capital-desk.json",
-    "generatedAt": "2026-07-27T08:11:19.211Z",
+    "generatedAt": "2026-07-27T17:09:30.905Z",
     "desks": 4,
     "blocked": 0,
     "partial": 0,
@@ -991,7 +989,7 @@
           }
         ],
         "incompleteOuts": 0,
-        "pinned": false,
+        "pinned": true,
         "hasTelegramDesk": true,
         "deskUpdatedAt": "2026-07-27T08:11:10.082Z"
       },
@@ -1029,7 +1027,7 @@
           }
         ],
         "incompleteOuts": 0,
-        "pinned": false,
+        "pinned": true,
         "hasTelegramDesk": true,
         "deskUpdatedAt": "2026-07-27T08:11:11.257Z"
       },
@@ -1083,7 +1081,7 @@
           }
         ],
         "incompleteOuts": 0,
-        "pinned": false,
+        "pinned": true,
         "hasTelegramDesk": true,
         "deskUpdatedAt": "2026-07-27T08:11:12.398Z"
       },
@@ -1170,7 +1168,7 @@
           }
         ],
         "incompleteOuts": 0,
-        "pinned": false,
+        "pinned": true,
         "hasTelegramDesk": true,
         "deskUpdatedAt": "2026-07-27T08:11:13.534Z"
       }

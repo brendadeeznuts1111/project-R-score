@@ -1,7 +1,7 @@
 {
   "plane": "harness-agents",
   "skillLoopRegistry": ".agents/skills/ast-grep/skill-loop-registry.json",
-  "scannedAt": "2026-07-27T06:32:03.887Z",
+  "scannedAt": "2026-07-27T17:09:29.194Z",
   "skills": [
     {
       "name": "ast-grep",
@@ -132,6 +132,22 @@
         "assets": 0
       },
       "validation": []
+    },
+    {
+      "name": "project-r-agent-team",
+      "description": "",
+      "updatedAt": "2026-07-27T08:35:11.355Z",
+      "hasPackage": false,
+      "lineCount": 50,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": [
+        "name \"\" is not hyphen-case (^[a-z0-9-]+$)",
+        "frontmatter missing description"
+      ]
     },
     {
       "name": "project-r-skill-maintenance",
@@ -290,5 +306,5 @@
       "validation": []
     }
   ],
-  "count": 22
+  "count": 23
 }

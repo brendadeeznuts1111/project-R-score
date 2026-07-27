@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
-  "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 394,
+  "uptime": "0d 0h 0m 2s",
+  "uptimeMs": 2504,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -26,16 +26,16 @@
   },
   "experimentsActive": 1,
   "predictionN": 30,
-  "timestamp": "2026-07-27T06:32:03.921Z",
-  "snapshotAt": "2026-07-27T06:32:03.921Z",
+  "timestamp": "2026-07-27T17:09:30.920Z",
+  "snapshotAt": "2026-07-27T17:09:30.920Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-27T06:32:03.921Z",
+    "checkedAt": "2026-07-27T17:09:30.921Z",
     "summary": {
       "total": 26,
-      "ok": 25,
-      "missing": 7,
+      "ok": 26,
+      "missing": 6,
       "placeholder": 0,
       "requiredMissing": 0
     },
@@ -45,7 +45,7 @@
         "Group": "cloudflare",
         "Severity": "required",
         "Status": "set",
-        "Detail": "7a470541a704caaf91e71efccc78fd36 · via R2_ACCOUNT_ID · default 7a470541…"
+        "Detail": "7a470541a704caaf91e71efccc78fd36 · default 7a470541…"
       },
       {
         "Key": "CLOUDFLARE_ZONE_ID",
@@ -72,8 +72,8 @@
         "Key": "CLOUDFLARE_DNS_API_TOKEN",
         "Group": "cloudflare",
         "Severity": "recommended",
-        "Status": "✗ missing",
-        "Detail": "Zone.DNS Edit for score CNAME"
+        "Status": "set",
+        "Detail": "set (len 53, cfa…22)"
       },
       {
         "Key": "R2_ACCESS_KEY_ID",
@@ -93,8 +93,8 @@
         "Key": "R2_ENDPOINT",
         "Group": "r2",
         "Severity": "recommended",
-        "Status": "default",
-        "Detail": "unset · code default · or derived from account id"
+        "Status": "set",
+        "Detail": "https://7a470541a704caaf91e71efccc78fd36… · via R2_S3_ENDPOINT · or derived from account id"
       },
       {
         "Key": "R2_REGISTRY_BUCKET",
@@ -171,7 +171,7 @@
         "Group": "ops",
         "Severity": "optional",
         "Status": "set",
-        "Detail": "-1003937534779 · supergroup chat id for ops/alerts projector (forum topics via TELEGRAM_TOPICS)"
+        "Detail": "-1004377517723 · supergroup chat id for ops/alerts projector (forum topics via TELEGRAM_TOPICS)"
       },
       {
         "Key": "TELEGRAM_TOPICS",
@@ -191,8 +191,8 @@
         "Key": "PLAY_SIGNING_SECRET",
         "Group": "ops",
         "Severity": "recommended",
-        "Status": "set",
-        "Detail": "set (len 64, 019…33)"
+        "Status": "default",
+        "Detail": "unset · code default · defaults to operations-dev-secret if unset"
       },
       {
         "Key": "PROVISION_ENCRYPTION_KEY",
@@ -231,33 +231,41 @@
       "total": 18,
       "httpOk": 16,
       "criticalFailed": 0,
-      "p95Ms": 380.07,
+      "p95Ms": 398.79,
       "errorRate": 0,
-      "proofHash": "00717bb837ce8fa2ce557d182714d4c53ec4d31edb7106e7431fb357799c343b",
+      "proofHash": "2d3f00aa4fe03f133ed48c56050215f18f9fa824137a2b92f781cc4e06928e7d",
       "baseUrl": "https://score.factory-wager.com",
       "routes": [
         {
-          "path": "/portal/ops/",
+          "path": "/api/operations/summary",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 63.86,
-          "contentType": "text/html"
+          "timeMs": 67.34,
+          "contentType": "application/json"
         },
         {
           "path": "/portal/dashboard-app.js",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 50.01,
+          "timeMs": 61.59,
           "contentType": "application/javascript"
+        },
+        {
+          "path": "/portal/ops/",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 54.07,
+          "contentType": "text/html"
         },
         {
           "path": "/portal/dashboard/",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 48.82,
+          "timeMs": 51.52,
           "contentType": "text/html"
         },
         {
@@ -265,23 +273,7 @@
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 48.12,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/api/operations/summary",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 46.07,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/registry/@factorywager/bun-utils-test/latest.json",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 42.82,
+          "timeMs": 48.18,
           "contentType": "application/json"
         },
         {
@@ -289,7 +281,15 @@
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 30.68,
+          "timeMs": 34.84,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/registry/@factorywager/bun-utils-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 31.94,
           "contentType": "application/json"
         },
         {
@@ -297,7 +297,15 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 380.07,
+          "timeMs": 398.79,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/routing-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 310.88,
           "contentType": "application/json"
         },
         {
@@ -305,47 +313,23 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 328.03,
+          "timeMs": 306.48,
           "contentType": "text/html"
-        },
-        {
-          "path": "/api/registry/@factorywager/routing-test/latest.json",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 318.14,
-          "contentType": "application/json"
         },
         {
           "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 313.78,
+          "timeMs": 289.36,
           "contentType": "application/json"
-        },
-        {
-          "path": "/api/registry",
-          "status": 400,
-          "pass": true,
-          "critical": false,
-          "timeMs": 203.98,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/ready",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 201.08,
-          "contentType": "text/html"
         },
         {
           "path": "/portal",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 149.75,
+          "timeMs": 288.2,
           "contentType": "text/html"
         },
         {
@@ -353,23 +337,39 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 133.07,
+          "timeMs": 266.69,
           "contentType": "text/html"
         },
         {
-          "path": "/registry/@factorywager/routing-test/latest.json",
+          "path": "/api/registry",
+          "status": 400,
+          "pass": true,
+          "critical": false,
+          "timeMs": 182.69,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/ready",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 103.69,
-          "contentType": "application/json"
+          "timeMs": 178.66,
+          "contentType": "text/html"
         },
         {
           "path": "/registry/static.json",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 40.94,
+          "timeMs": 149.64,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/registry/@factorywager/routing-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 39.7,
           "contentType": "application/json"
         },
         {
@@ -377,7 +377,7 @@
           "status": 400,
           "pass": true,
           "critical": false,
-          "timeMs": 27.04,
+          "timeMs": 28.05,
           "contentType": "application/json"
         }
       ]
@@ -387,7 +387,7 @@
     "demosPassed": 30,
     "demosTotal": 30,
     "demoPassRate": "100.0%",
-    "generated": "2026-07-27T06:32:03.920Z",
+    "generated": "2026-07-27T17:09:30.917Z",
     "apisVerified": 30
   },
   "registryClientProof": {
