@@ -31,7 +31,10 @@ export type PackageGroupForumMetadata = {
   iconUploaded: boolean;
   iconError?: string;
   backfilled?: boolean;
+  topicsComplete?: boolean;
+  topicsThreadMap?: Record<string, number>;
   createdAt: string;
+  updatedAt?: string;
 };
 
 export function packageGroupForumMetadataPath(
@@ -89,8 +92,59 @@ export function parsePackageGroupForumMetadata(raw: unknown): PackageGroupForumM
     iconUploaded: o.iconUploaded === true,
     iconError: typeof o.iconError === 'string' ? o.iconError : undefined,
     backfilled: o.backfilled === true,
+    topicsComplete: o.topicsComplete === true,
+    topicsThreadMap:
+      o.topicsThreadMap && typeof o.topicsThreadMap === 'object'
+        ? (o.topicsThreadMap as Record<string, number>)
+        : undefined,
     createdAt: typeof o.createdAt === 'string' ? o.createdAt : new Date(0).toISOString(),
+    updatedAt: typeof o.updatedAt === 'string' ? o.updatedAt : undefined,
   };
+}
+
+export function topicsPlanComplete(topics: readonly PackageGroupForumTopicMeta[]): boolean {
+  return topics.every(t => t.messageThreadId != null && t.messageThreadId > 0);
+}
+
+export type ForumMetadataAssessment = {
+  present: boolean;
+  topicsComplete: boolean;
+  iconState: 'uploaded' | 'failed' | 'missing' | 'backfilled';
+};
+
+export function assessForumMetadata(
+  meta: PackageGroupForumMetadata | null | undefined
+): ForumMetadataAssessment {
+  if (!meta) {
+    return { present: false, topicsComplete: false, iconState: 'missing' };
+  }
+  const topicsComplete = meta.topicsComplete === true || topicsPlanComplete(meta.topics);
+  let iconState: ForumMetadataAssessment['iconState'] = 'missing';
+  if (meta.iconUploaded) iconState = 'uploaded';
+  else if (meta.iconError) iconState = 'failed';
+  else if (meta.backfilled) iconState = 'backfilled';
+  return { present: true, topicsComplete, iconState };
+}
+
+/** Suggested TELEGRAM_TOPICS JSON snippet for package forum routing. */
+export function formatPackageGroupTopicsEnv(meta: PackageGroupForumMetadata): string {
+  const map = meta.topicsThreadMap ?? packageGroupTopicsThreadMap(meta.topics);
+  return JSON.stringify(map, null, 2);
+}
+
+export async function savePackageGroupForumMetadata(
+  meta: PackageGroupForumMetadata,
+  opts?: { rootDir?: string }
+): Promise<string> {
+  const path = packageGroupForumMetadataPath(meta.partnerCode, opts?.rootDir);
+  const enriched: PackageGroupForumMetadata = {
+    ...meta,
+    topicsComplete: topicsPlanComplete(meta.topics),
+    topicsThreadMap: packageGroupTopicsThreadMap(meta.topics),
+    updatedAt: new Date().toISOString(),
+  };
+  await Bun.write(path, `${JSON.stringify(enriched, null, 2)}\n`);
+  return path;
 }
 
 export async function loadPackageGroupForumMetadata(
@@ -133,6 +187,12 @@ export function validateForumMetadataAgainstRegistry(
   }
   if (meta.iconError) {
     return { ok: true, detail: `metadata OK (icon failed: ${meta.iconError})` };
+  }
+  if (!topicsPlanComplete(meta.topics)) {
+    return {
+      ok: true,
+      detail: 'metadata OK · topic thread ids incomplete (run ct forum-metadata-sync --apply)',
+    };
   }
   return {
     ok: true,

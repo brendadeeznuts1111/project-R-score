@@ -14,7 +14,11 @@ import { getKnownChatById, upsertKnownChat, type KnownChatRow } from './known-ch
 import { refreshKnownChats } from './refresh-known-chats.ts';
 import { getChat } from './telegram-api.ts';
 import { verifyPackageGroupHandshake } from './verify-package-group-handshake.ts';
-import { PACKAGE_GROUP_FORUMS_META_DIR } from './package-group-forum.ts';
+import {
+  assessForumMetadata,
+  loadPackageGroupForumMetadata,
+  PACKAGE_GROUP_FORUMS_META_DIR,
+} from './package-group-forum.ts';
 
 export type HandshakeDeskRow = {
   partnerCode: string;
@@ -35,6 +39,9 @@ export type HandshakeDeskRow = {
   hasInvite: boolean;
   requestedBy: string | null;
   dmTelegramId: string | null; // brand-ok — Telegram user id wire
+  forumMetaPresent: boolean;
+  forumTopicsComplete: boolean;
+  forumIconState: 'uploaded' | 'failed' | 'missing' | 'backfilled';
 };
 
 export type BuildHandshakeDeskOpts = {
@@ -100,6 +107,11 @@ async function deskRowForRegistry(
     }
   })();
 
+  const forumMeta = await loadPackageGroupForumMetadata(reg.partnerCode, {
+    rootDir: opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR,
+  });
+  const forumAssessment = assessForumMetadata(forumMeta);
+
   return {
     partnerCode: reg.partnerCode,
     handshakeOk,
@@ -119,6 +131,9 @@ async function deskRowForRegistry(
     hasInvite: Boolean(reg.inviteLink?.trim()),
     requestedBy: reg.requestedBy,
     dmTelegramId: dmId,
+    forumMetaPresent: forumAssessment.present,
+    forumTopicsComplete: forumAssessment.topicsComplete,
+    forumIconState: forumAssessment.iconState,
   };
 }
 
@@ -232,6 +247,7 @@ export function formatHandshakeDeskDetail(rows: HandshakeDeskRow[]): string[] {
       `  chat: ${r.chatId}  registry: ${r.registryTitle}`,
       `  known: ${r.telegramTitle ?? '—'}  live: ${r.liveTitle ?? '—'}  type: ${r.chatType ?? '—'}${r.isForum ? '+forum' : ''}  members: ${r.memberCount ?? '—'}`,
       `  surface: ${r.surfaceSlug ?? '—'}  bot: ${r.botStatus ?? '—'}  invite: ${r.hasInvite ? 'yes' : 'no'}`,
+      `  forum meta: ${r.forumMetaPresent ? (r.forumTopicsComplete ? 'topics OK' : 'topics partial') : 'none'}  icon: ${r.forumIconState}`,
       `  dm seat: ${r.requestedBy ?? '—'} → ${r.dmTelegramId ?? '(none)'}`,
       ''
     );

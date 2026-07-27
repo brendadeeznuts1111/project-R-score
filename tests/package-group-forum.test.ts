@@ -3,6 +3,7 @@ import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import {
+  assessForumMetadata,
   loadPackageGroupForumMetadata,
   packageGroupTopicsThreadMap,
   parsePackageGroupForumMetadata,
@@ -76,5 +77,27 @@ describe('package-group-forum', () => {
     const v = validateForumMetadataAgainstRegistry(meta, 'TST', '-1002');
     expect(v.ok).toBe(false);
     expect(v.detail).toContain('registry');
+  });
+
+  test('assessForumMetadata reports completeness and icon state', () => {
+    expect(assessForumMetadata(null).present).toBe(false);
+    const partial = assessForumMetadata({
+      partnerCode: 'TST',
+      title: 'x',
+      displayName: 'x',
+      chatId: '-1',
+      chatRef: 'tg:chat:-1',
+      inviteLink: '',
+      topics: [
+        { title: 'General', messageThreadId: 1 },
+        { title: 'Ops', messageThreadId: null },
+        { title: 'Alerts', messageThreadId: null },
+      ],
+      iconUploaded: false,
+      backfilled: true,
+      createdAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(partial.topicsComplete).toBe(false);
+    expect(partial.iconState).toBe('backfilled');
   });
 });
