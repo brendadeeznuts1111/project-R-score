@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-26T23:46:57.524Z",
+  "generated": "2026-07-27T02:00:53.209Z",
   "liquidity": {
     "total": 85710
   },
@@ -28,8 +28,8 @@
     }
   ],
   "tree": {
-    "partners": 3,
-    "agents": 14,
+    "partners": 4,
+    "agents": 15,
     "subAgents": 1,
     "downstreamLiquidity": 85710
   },
@@ -136,11 +136,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "63f7aabebfb5ec6a09564b9a70bb5c43a45d620a2f6c2cd2f10c1ff9cefd3adb",
+    "proofHash": "568dc27b15dc2b416bb997f654a7420d399c88a98285636504b4658d2bf375af",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-26T23:46:57.525Z"
+    "timestamp": "2026-07-27T02:00:53.210Z"
   },
   "registryClient": {
     "available": true,
@@ -158,15 +158,15 @@
     "ok": true,
     "subsystem": "other",
     "missingCanonicalCount": 0,
-    "catalogTracked": 13,
-    "catalogTotal": 13,
-    "overlayTracked": 232,
-    "overlayTotal": 232,
+    "catalogTracked": 26,
+    "catalogTotal": 26,
+    "overlayTracked": 213,
+    "overlayTotal": 213,
     "referenceModuleCount": 44,
     "referencePageCount": 57,
     "indexStale": false,
-    "proofHash": "c74594ac19fd2bc94162c4ab8943ccec771c0430e51c6ef43317c712385c2fdc",
-    "timestamp": "2026-07-24T04:59:00.392Z",
+    "proofHash": "9820d84a3f27f610657f8b00c2e3a51272423b881242ff672d4fed3675d1e1ee",
+    "timestamp": "2026-07-27T00:55:47.957Z",
     "path": "/registry/docs-coverage-proof.json"
   },
   "cloudflareTokenScope": {
@@ -214,7 +214,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-26T23:46:57.489Z",
+    "timestamp": "2026-07-27T02:00:53.164Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -400,8 +400,8 @@
         "ok": true
       }
     ],
-    "proofHash": "b6a5fea98a64aebaf80a1c5ef9cfc7945796b8d2b154b64d04fdb57c38156cce",
-    "timestamp": "2026-07-26T23:46:57.188Z",
+    "proofHash": "42568675be461b4674ba03849946eab708f02bdb3627f0b02383b781d05f7d50",
+    "timestamp": "2026-07-27T02:00:52.779Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -412,7 +412,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-26T23:46:57.184Z",
+    "updatedAt": "2026-07-27T02:00:52.777Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -612,14 +612,21 @@
     ]
   },
   "partners": {
-    "bound": 14,
-    "unboundAgents": 4,
+    "bound": 15,
+    "unboundAgents": 5,
     "byLifecycle": {
       "active": 1,
-      "materialized": 12,
+      "materialized": 13,
       "signup": 1
     },
     "recent": [
+      {
+        "treeNodeId": "019fa102-4349-7047-b839-cb8a0d43c12f",
+        "profileKey": "pp-019fa102-4349-7047-b839-cb8a0d43",
+        "partnerTemplate": "default-prospect",
+        "lifecycleStatus": "materialized",
+        "name": "TOC BIL-001"
+      },
       {
         "treeNodeId": "019f92bf-40d6-72e5-80da-8aaa4cd7e0d2",
         "profileKey": "pp-019f92bf-40d6-72e5-80da-8aaa4cd7",
@@ -682,27 +689,20 @@
         "partnerTemplate": "default-prospect",
         "lifecycleStatus": "materialized",
         "name": "TOC ASH-002"
-      },
-      {
-        "treeNodeId": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
-        "profileKey": "pp-019f92ee-5ef8-71e9-b207-5ae20c07",
-        "partnerTemplate": "default-prospect",
-        "lifecycleStatus": "materialized",
-        "name": "TOC ASH-001"
       }
     ]
   },
   "channels": {
     "pending": 0,
     "failed": 0,
-    "sent": 668,
+    "sent": 677,
     "oldestPendingAt": null,
     "failRate": 0
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-26T23:46:57.512Z",
+    "generatedAt": "2026-07-27T02:00:53.194Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -730,7 +730,7 @@
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 10.65268865972934,
+    "avgRP": 10.463222978248693,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -798,7 +798,7 @@
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 668,
+    "outboxSent": 677,
     "outboxFailed": 0,
     "outboxPending": 0,
     "oldestPendingAgeSec": null,
@@ -813,5 +813,74 @@
     "projectorBackend": "r2",
     "projectorBucket": "factory-wager-registry",
     "projectorDurable": true
+  },
+  "telegramHandshake": {
+    "available": true,
+    "path": "/registry/telegram-handshake.json",
+    "generatedAt": "2026-07-27T02:00:53.209Z",
+    "partners": 4,
+    "inviteGaps": 2,
+    "blocked": 0,
+    "operatorReady": 2,
+    "rows": [
+      {
+        "partnerCode": "ASH",
+        "phase": "operator_ready",
+        "membershipCell": "2·house!",
+        "handshakeOk": true,
+        "needsPartnerInForum": true,
+        "inviteLink": "https://t.me/+iBXudtg48psyMTkx",
+        "inviteSentAt": "2026-07-27T01:53:19.678Z",
+        "dmSeatStatus": "linked",
+        "callSign": "ASH-001",
+        "gapCount": 1,
+        "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)"
+      },
+      {
+        "partnerCode": "BIL",
+        "phase": "operator_ready",
+        "membershipCell": "2·house!",
+        "handshakeOk": true,
+        "needsPartnerInForum": true,
+        "inviteLink": "https://t.me/+eMgvmRzz2qpkZDYx",
+        "inviteSentAt": "2026-07-27T01:53:19.637Z",
+        "dmSeatStatus": "linked (shared DM)",
+        "callSign": "BIL-001",
+        "gapCount": 1,
+        "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)"
+      },
+      {
+        "partnerCode": "NOV",
+        "phase": "designated",
+        "membershipCell": "2·house",
+        "handshakeOk": true,
+        "needsPartnerInForum": false,
+        "inviteLink": "https://t.me/+0oVv4f5CxzVhNDYx",
+        "inviteSentAt": null,
+        "dmSeatStatus": "designated (awaiting telegram)",
+        "callSign": "NOV-001",
+        "gapCount": 1,
+        "topGap": "operator NOV-001 designated — telegram id not linked yet"
+      },
+      {
+        "partnerCode": "PAT",
+        "phase": "designated",
+        "membershipCell": "2·house",
+        "handshakeOk": true,
+        "needsPartnerInForum": false,
+        "inviteLink": "https://t.me/+3lqb3fA0yIllM2Yx",
+        "inviteSentAt": null,
+        "dmSeatStatus": "designated (awaiting telegram)",
+        "callSign": "PAT-001",
+        "gapCount": 1,
+        "topGap": "operator PAT-001 designated — telegram id not linked yet"
+      }
+    ],
+    "commands": {
+      "inviteGap": "bun run telegram:handshake:invite-gap",
+      "sendInviteAll": "bun run telegram:ops -- send-forum-invite --all",
+      "desk": "bun run telegram:handshake:desk",
+      "readiness": "bun run telegram:handshake:readiness --invite-gap"
+    }
   }
 }

@@ -86,6 +86,9 @@ describe('buildOpsSummary', () => {
     });
     expect(s.loop.projectorBackend === 'r2' || s.loop.projectorBackend === 'memory').toBe(true);
     expect(typeof s.loop.projectorDurable).toBe('boolean');
+    expect(s.telegramHandshake).toHaveProperty('available');
+    expect(s.telegramHandshake.path).toBe('/registry/telegram-handshake.json');
+    expect(s.telegramHandshake.rows).toEqual([]);
     db.close();
   });
 

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-26T23:46:57.524Z",
+  "generated": "2026-07-27T02:00:53.209Z",
   "surfaces": [
     {
       "label": "Home",
@@ -60,6 +60,11 @@
     {
       "label": "ops-summary",
       "href": "/registry/ops-summary.json"
+    },
+    {
+      "label": "telegram-handshake",
+      "href": "/registry/telegram-handshake.json",
+      "note": "package-group readiness · invite gaps"
     },
     {
       "label": "toc-ops",
@@ -130,6 +135,11 @@
       "label": "TOC Ops seed",
       "cmd": "bun run ops:seed:toc",
       "doc": "docs/harness/tenants/toc-ops.md"
+    },
+    {
+      "label": "Telegram handshake gap",
+      "cmd": "bun run telegram:handshake:invite-gap",
+      "doc": "docs/harness/tenants/partner-package-group-handshake.md"
     },
     {
       "label": "Reference discovery",

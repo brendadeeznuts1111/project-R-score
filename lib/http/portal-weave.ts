@@ -43,6 +43,11 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
 /** Static registry artifacts the portal surfaces depend on. */
 export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   { label: 'ops-summary', href: '/registry/ops-summary.json' },
+  {
+    label: 'telegram-handshake',
+    href: '/registry/telegram-handshake.json',
+    note: 'package-group readiness · invite gaps',
+  },
   { label: 'toc-ops', href: '/registry/toc-ops.json', note: 'operate-lite bake' },
   { label: 'toc-ops bake proof', href: '/registry/toc-ops-bake-proof.json' },
   { label: 'monitoring', href: '/registry/monitoring.json' },
@@ -85,6 +90,11 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'TOC Ops seed',
     cmd: 'bun run ops:seed:toc',
     doc: 'docs/harness/tenants/toc-ops.md',
+  },
+  {
+    label: 'Telegram handshake gap',
+    cmd: 'bun run telegram:handshake:invite-gap',
+    doc: 'docs/harness/tenants/partner-package-group-handshake.md',
   },
   {
     label: 'Reference discovery',

@@ -21,6 +21,7 @@
  *   public/registry/ops-summary.json
  *   public/registry/proof-taxonomy-audit.json
  *   public/registry/monitoring.json
+ *   public/registry/telegram-handshake.json
  *   public/registry/static.json          — composite fast snapshot
  *   public/registry/@factorywager/bun-utils-test/latest.json
  *   public/registry/@factorywager/routing-test/latest.json  (when routing runs)
@@ -415,7 +416,28 @@ export async function buildRegistrySnapshot(options?: {
       console.warn('[ops-snapshot] toc-ops export skipped:', e instanceof Error ? e.message : e);
     }
 
+    let telegramHandshakeSlice = (
+      await import('../lib/telegram/handshake-snapshot.ts')
+    ).emptyTelegramHandshakeSummarySlice();
+    try {
+      const { exportTelegramHandshakeSnapshot } = await import(
+        '../lib/telegram/handshake-snapshot.ts'
+      );
+      telegramHandshakeSlice = await exportTelegramHandshakeSnapshot(db, root);
+      if (telegramHandshakeSlice.available) {
+        console.log(
+          `[ops-snapshot] telegram-handshake → ${telegramHandshakeSlice.partners} partners · invite gaps ${telegramHandshakeSlice.inviteGaps} · operator_ready ${telegramHandshakeSlice.operatorReady}`
+        );
+      }
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] telegram-handshake export skipped:',
+        e instanceof Error ? e.message : e
+      );
+    }
+
     const payload = buildOpsSummary(db, 'snapshot');
+    payload.telegramHandshake = telegramHandshakeSlice;
     if (routingSlice) payload.routing = routingSlice;
 
     if (Bun.env.NETWORKING_VERIFY === '1') {
@@ -598,6 +620,7 @@ export async function buildRegistrySnapshot(options?: {
         routing: payload.routing,
         channelMeta: payload.channelMeta,
         proofTaxonomy: payload.proofTaxonomy,
+        telegramHandshake: payload.telegramHandshake,
       };
       await Bun.write(staticRegistryPath, `${JSON.stringify(staticSnapshot, null, 2)}\n`);
       staticWritten = staticRegistryPath;

@@ -118,6 +118,25 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-metric" id="channels-pending">0</div>
             <div class="ops-sub" id="channels-detail"></div>
           </section>
+          <section class="ops-panel wide" data-subsystem="telegram">
+            <h2>Package handshake <span class="version-badge subsystem-other">telegram</span></h2>
+            <div class="ops-metric" id="telegram-handshake-gaps">—</div>
+            <div class="ops-sub" id="telegram-handshake-detail"></div>
+            <table id="telegram-handshake-table" class="ops-table hidden" aria-label="Package group handshake partners">
+              <thead>
+                <tr>
+                  <th>CODE</th>
+                  <th>Phase</th>
+                  <th>MEM</th>
+                  <th>Seat</th>
+                  <th>HS</th>
+                  <th>Invite</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <a class="ops-link" id="telegram-handshake-json" href="/registry/telegram-handshake.json">Full handshake JSON</a>
+          </section>
           <section class="ops-panel">
             <h2>Ops loop</h2>
             <div class="ops-metric" id="loop-completion">0%</div>
@@ -840,6 +859,69 @@ class OperationsDashboard extends HTMLElement {
           (d.channels.oldestPendingAt
             ? ` · oldest ${String(d.channels.oldestPendingAt).slice(0, 19)}`
             : '');
+      }
+    }
+
+    const tgHs = d.telegramHandshake;
+    const tgGaps = this.querySelector('#telegram-handshake-gaps');
+    const tgDetail = this.querySelector('#telegram-handshake-detail');
+    const tgTable = this.querySelector('#telegram-handshake-table');
+    const tgTbody = tgTable?.querySelector('tbody');
+    if (tgGaps && tgHs) {
+      if (tgHs.available) {
+        tgGaps.textContent = String(tgHs.inviteGaps ?? 0);
+        tgGaps.classList.toggle('ok', (tgHs.inviteGaps ?? 0) === 0);
+        tgGaps.classList.toggle('bad', (tgHs.inviteGaps ?? 0) > 0);
+        const when = tgHs.generatedAt ? ` · baked ${String(tgHs.generatedAt).slice(0, 19)}` : '';
+        if (tgDetail) {
+          tgDetail.textContent =
+            `${tgHs.partners ?? 0} linked · ${tgHs.operatorReady ?? 0} operator_ready · ${tgHs.blocked ?? 0} blocked${when}` +
+            (tgHs.inviteGaps > 0 && tgHs.commands?.sendInviteAll
+              ? ` · ${tgHs.commands.sendInviteAll}`
+              : '');
+        }
+        const rows = tgHs.rows ?? [];
+        if (tgTable && tgTbody && rows.length > 0) {
+          tgTable.classList.remove('hidden');
+          tgTbody.innerHTML = rows
+            .map(r => {
+              const invite =
+                r.needsPartnerInForum && r.inviteLink
+                  ? r.inviteSentAt
+                    ? `sent ${String(r.inviteSentAt).slice(0, 10)}`
+                    : 'pending'
+                  : r.inviteLink
+                    ? 'stored'
+                    : '—';
+              const phaseClass =
+                r.phase === 'blocked'
+                  ? 'match-no'
+                  : r.phase === 'operator_ready'
+                    ? 'match-ok'
+                    : '';
+              const memClass = r.needsPartnerInForum ? 'match-no' : '';
+              return `<tr class="${r.needsPartnerInForum ? 'ops-row-warn' : ''}">
+                <td><code>${r.partnerCode}</code></td>
+                <td><span class="version-badge ${phaseClass}">${r.phase}</span></td>
+                <td><span class="version-badge ${memClass}">${r.membershipCell}</span></td>
+                <td>${r.callSign ?? '—'}</td>
+                <td>${r.handshakeOk ? 'OK' : 'FAIL'}</td>
+                <td>${invite}</td>
+              </tr>`;
+            })
+            .join('');
+        } else if (tgTable) {
+          tgTable.classList.add('hidden');
+          if (tgTbody) tgTbody.innerHTML = '';
+        }
+      } else {
+        tgGaps.textContent = '—';
+        tgGaps.classList.remove('ok', 'bad');
+        if (tgDetail) {
+          tgDetail.textContent =
+            'No package groups — link via telegram:ops link-package-group, then bun run ops:snapshot';
+        }
+        if (tgTable) tgTable.classList.add('hidden');
       }
     }
 

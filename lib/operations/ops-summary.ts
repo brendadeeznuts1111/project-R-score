@@ -21,6 +21,10 @@ import {
   type OpsLoopMetricsSlice,
 } from './ops-loop-metrics.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
+import {
+  loadTelegramHandshakeSummarySlice,
+  type TelegramHandshakeSummarySlice,
+} from '../telegram/handshake-snapshot.ts';
 
 export type OpsSummaryExpert = {
   name: string;
@@ -204,6 +208,9 @@ export type OpsSummaryToc = TocOpsSummarySlice;
 /** Closed-loop throughput (dispatch → gate → reserve → settle → durable delivery). */
 export type OpsSummaryLoop = OpsLoopMetricsSlice;
 
+/** Package-group Telegram handshake (registry + readiness + invite gaps). */
+export type OpsSummaryTelegramHandshake = TelegramHandshakeSummarySlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -276,6 +283,11 @@ export type OpsSummaryPayload = {
   toc: OpsSummaryToc;
   /** Ops integration loop counters — baseline/post in reports/ops-loop-*.json. */
   loop: OpsSummaryLoop;
+  /**
+   * Package-group handshake bake from public/registry/telegram-handshake.json
+   * (`ops:snapshot` / `exportTelegramHandshakeSnapshot`).
+   */
+  telegramHandshake: OpsSummaryTelegramHandshake;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -839,5 +851,6 @@ export function buildOpsSummary(
         bucket: outbox.projectorBucket ?? null,
       });
     })(),
+    telegramHandshake: loadTelegramHandshakeSummarySlice(),
   };
 }

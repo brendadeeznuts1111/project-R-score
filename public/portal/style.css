@@ -742,6 +742,10 @@ body {
   vertical-align: middle;
 }
 
+.ops-table tbody tr.ops-row-warn td {
+  background: rgba(248, 81, 73, 0.06);
+}
+
 .ops-mono,
 .proof-hash,
 .code-block,

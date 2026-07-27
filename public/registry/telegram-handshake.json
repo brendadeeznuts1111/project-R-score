@@ -1,0 +1,69 @@
+{
+  "schema": "factorywager.telegram-handshake.v1",
+  "generatedAt": "2026-07-27T02:00:53.209Z",
+  "source": "snapshot",
+  "partners": 4,
+  "inviteGaps": 2,
+  "blocked": 0,
+  "operatorReady": 2,
+  "rows": [
+    {
+      "partnerCode": "ASH",
+      "phase": "operator_ready",
+      "membershipCell": "2·house!",
+      "handshakeOk": true,
+      "needsPartnerInForum": true,
+      "inviteLink": "https://t.me/+iBXudtg48psyMTkx",
+      "inviteSentAt": "2026-07-27T01:53:19.678Z",
+      "dmSeatStatus": "linked",
+      "callSign": "ASH-001",
+      "gapCount": 1,
+      "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)"
+    },
+    {
+      "partnerCode": "BIL",
+      "phase": "operator_ready",
+      "membershipCell": "2·house!",
+      "handshakeOk": true,
+      "needsPartnerInForum": true,
+      "inviteLink": "https://t.me/+eMgvmRzz2qpkZDYx",
+      "inviteSentAt": "2026-07-27T01:53:19.637Z",
+      "dmSeatStatus": "linked (shared DM)",
+      "callSign": "BIL-001",
+      "gapCount": 1,
+      "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)"
+    },
+    {
+      "partnerCode": "NOV",
+      "phase": "designated",
+      "membershipCell": "2·house",
+      "handshakeOk": true,
+      "needsPartnerInForum": false,
+      "inviteLink": "https://t.me/+0oVv4f5CxzVhNDYx",
+      "inviteSentAt": null,
+      "dmSeatStatus": "designated (awaiting telegram)",
+      "callSign": "NOV-001",
+      "gapCount": 1,
+      "topGap": "operator NOV-001 designated — telegram id not linked yet"
+    },
+    {
+      "partnerCode": "PAT",
+      "phase": "designated",
+      "membershipCell": "2·house",
+      "handshakeOk": true,
+      "needsPartnerInForum": false,
+      "inviteLink": "https://t.me/+3lqb3fA0yIllM2Yx",
+      "inviteSentAt": null,
+      "dmSeatStatus": "designated (awaiting telegram)",
+      "callSign": "PAT-001",
+      "gapCount": 1,
+      "topGap": "operator PAT-001 designated — telegram id not linked yet"
+    }
+  ],
+  "commands": {
+    "inviteGap": "bun run telegram:handshake:invite-gap",
+    "sendInviteAll": "bun run telegram:ops -- send-forum-invite --all",
+    "desk": "bun run telegram:handshake:desk",
+    "readiness": "bun run telegram:handshake:readiness --invite-gap"
+  }
+}
