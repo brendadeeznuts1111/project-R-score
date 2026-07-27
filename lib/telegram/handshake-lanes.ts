@@ -9,6 +9,7 @@ import { assessPackageGroupDmSeat } from './dm-seat-designation.ts';
 import {
   interpretPackageGroupMemberCount,
   membershipForumLaneOk,
+  probeLinkedSeatInForum,
 } from './package-group-membership.ts';
 import { getKnownChatById } from './known-chats.ts';
 import {
@@ -90,6 +91,7 @@ export async function assessHandshakeLanes(opts: {
   jsonlPath?: string;
   forumsMetaDir?: string;
   env?: Record<string, string | undefined>;
+  telegramToken?: string | null;
 }): Promise<HandshakeLaneReport> {
   const code = opts.partnerCode.toUpperCase().trim();
   const forumsMetaDir = opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR;
@@ -198,6 +200,12 @@ export async function assessHandshakeLanes(opts: {
     );
     const membership = interpretPackageGroupMemberCount(known?.memberCount ?? null, {
       dmSeatStatus: dmSeat.status,
+      linkedSeatInForum:
+        opts.telegramToken &&
+        dmSeat.telegramId &&
+        (dmSeat.status === 'linked' || dmSeat.status === 'shared')
+          ? await probeLinkedSeatInForum(opts.telegramToken, reg.chatId, dmSeat.telegramId)
+          : false,
     });
     lanes.push(
       lane(
@@ -236,7 +244,9 @@ export async function assessHandshakeLanes(opts: {
           'forum',
           true,
           membership.status === 'partner_present'
-            ? '3·OK — partner in forum'
+            ? membership.memberCount === 2
+              ? '2·OK — linked seat in forum (single-operator harness)'
+              : '3·OK — partner in forum'
             : 'n/a (pre-link or partner present)'
         )
       );
@@ -266,7 +276,9 @@ export async function assessHandshakeLanes(opts: {
           'forum_topics',
           'forum',
           topicsPlanComplete(meta.topics),
-          topicsPlanComplete(meta.topics) ? 'general/ops/alerts complete' : 'partial topic plan'
+          topicsPlanComplete(meta.topics)
+            ? 'partner plan complete: general/ops/alerts/liquidity/outs/accounting'
+            : 'partial topic plan'
         )
       );
     } else {

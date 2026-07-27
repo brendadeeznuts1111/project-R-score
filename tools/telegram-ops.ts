@@ -32,6 +32,8 @@ import {
 } from '../lib/telegram/known-chats.ts';
 import { listPackageGroupRegistry } from '../lib/telegram/package-group-registry.ts';
 import { refreshKnownChats } from '../lib/telegram/refresh-known-chats.ts';
+import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
+import { syncTelegramEnvToReasonix } from '../lib/telegram/telegram-env-bind.ts';
 import {
   buildSurfaceGraph,
   formatSurfaceGraphAscii,
@@ -175,6 +177,7 @@ type CommonOpts = {
   direct: boolean;
   mermaid: boolean;
   envBlock: boolean;
+  syncEnv: boolean;
   rich: boolean;
   text: string;
 };
@@ -195,6 +198,7 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
     direct: false,
     mermaid: false,
     envBlock: false,
+    syncEnv: false,
     rich: false,
     text: '',
   };
@@ -238,6 +242,10 @@ function parseArgs(argv: string[]): { cmd: string; opts: CommonOpts } {
     }
     if (a === '--env') {
       opts.envBlock = true;
+      continue;
+    }
+    if (a === '--sync-env') {
+      opts.syncEnv = true;
       continue;
     }
     if (a === '--json') {
@@ -459,12 +467,28 @@ function cmdSurfaces(): void {
   console.log(`TELEGRAM_OPS_CHAT_ID: ${ops ?? '(unset)'}`);
 }
 
-function cmdGraph(opts: CommonOpts): void {
+async function cmdGraph(opts: CommonOpts): Promise<void> {
   const db = openOperationsDb({ path: opts.dbPath });
   try {
     const rows = listKnownChats(db, { filter: 'all', activeOnly: false, limit: 500 });
     const packageGroups = listPackageGroupRegistry(db);
     const model = buildSurfaceGraph({ knownChats: rows, packageGroups });
+
+    if (opts.syncEnv) {
+      const tg = loadTelegramEnv();
+      const suggested = JSON.parse(model.suggestedSurfacesJson) as Record<string, string>;
+      const opsChatId = suggested.hq ?? model.opsChatId ?? tg.opsChatId ?? null;
+      const accountingChatId = suggested['all-accounting'] ?? tg.accountingChatId ?? null;
+      const synced = await syncTelegramEnvToReasonix({
+        surfaces: suggested,
+        opsChatId,
+        accountingChatId,
+      });
+      console.log(`synced Reasonix env → ${synced.envPath}`);
+      console.log(`  TELEGRAM_SURFACES keys=${Object.keys(suggested).length}`);
+      if (opsChatId) console.log(`  TELEGRAM_OPS_CHAT_ID=${opsChatId}`);
+      if (accountingChatId) console.log(`  TELEGRAM_ACCOUNTING_CHAT_ID=${accountingChatId}`);
+    }
 
     if (opts.json) {
       console.log(JSON.stringify(model, null, 2));
@@ -1029,6 +1053,7 @@ async function cmdSeatMap(opts: CommonOpts): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  await loadReasonixEnv();
   const argv = Bun.argv.slice(2);
   if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') usage();
 
@@ -1064,7 +1089,7 @@ async function main(): Promise<void> {
   else if (parsedCmd === 'directory' || parsedCmd === 'dir' || parsedCmd === 'ls')
     await cmdDirectory(opts);
   else if (parsedCmd === 'surfaces' || parsedCmd === 'matrix') cmdSurfaces();
-  else if (parsedCmd === 'graph' || parsedCmd === 'topo') cmdGraph(opts);
+  else if (parsedCmd === 'graph' || parsedCmd === 'topo') await cmdGraph(opts);
   else {
     console.error(`Unknown command: ${parsedCmd}`);
     usage();

@@ -70,7 +70,13 @@ describe('enhance-package-group-forum', () => {
         forumsMetaDir: forumsDir,
       });
       expect(result.ok).toBe(true);
-      expect(result.topics.map(t => t.title)).toEqual(['General', 'Ops', 'Alerts']);
+      expect(result.topics.map(t => t.title)).toEqual([
+        'General',
+        'Ops',
+        'Alerts',
+        'Liquidity/Outs',
+        'Accounting',
+      ]);
       expect(result.topics[0]?.messageThreadId).toBe(1);
       expect(result.metadataPath).toBeNull();
     } finally {

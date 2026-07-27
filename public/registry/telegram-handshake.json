@@ -1,175 +1,107 @@
 {
   "schema": "factorywager.telegram-handshake.v1",
-  "generatedAt": "2026-07-27T02:07:50.344Z",
+  "generatedAt": "2026-07-27T07:13:20.689Z",
   "source": "snapshot",
   "partners": 4,
-  "inviteGaps": 2,
+  "inviteGaps": 0,
   "blocked": 0,
-  "operatorReady": 2,
+  "operatorReady": 4,
   "forumReady": 0,
-  "designated": 2,
+  "designated": 0,
   "verifyFailPartners": 0,
-  "laneFailPartners": 4,
+  "laneFailPartners": 0,
   "catalogPath": "/registry/telegram-handshake-catalog.json",
   "rows": [
     {
       "partnerCode": "ASH",
       "phase": "operator_ready",
-      "membershipCell": "2·house!",
+      "membershipCell": "2·OK",
       "handshakeOk": true,
-      "needsPartnerInForum": true,
+      "needsPartnerInForum": false,
       "inviteLink": "https://t.me/+iBXudtg48psyMTkx",
-      "inviteSentAt": "2026-07-27T01:53:19.678Z",
+      "inviteSentAt": null,
       "dmSeatStatus": "linked",
       "callSign": "ASH-001",
-      "gapCount": 1,
-      "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)",
+      "gapCount": 0,
+      "topGap": null,
       "verifyPassed": 10,
       "verifyTotal": 10,
       "verifyFails": [],
-      "lanesOk": 22,
-      "lanesTotal": 24,
+      "lanesOk": 23,
+      "lanesTotal": 23,
       "lanesBlocked": [],
-      "laneFails": [
-        {
-          "id": "forum_members",
-          "group": "forum",
-          "detail": "bot + house operator only — send forum invite (expect 3·OK when partner joins)"
-        },
-        {
-          "id": "forum_invite_gap",
-          "group": "forum",
-          "detail": "2·house! — invite DM sent 2026-07-27T01:53:19.678Z"
-        }
-      ],
+      "laneFails": [],
       "nextSteps": [
-        "ready for welcome DM + bot commands",
-        "invite DM sent at 2026-07-27T01:53:19.678Z — awaiting partner join",
-        "join forum: https://t.me/+iBXudtg48psyMTkx"
+        "ready for welcome DM + bot commands"
       ]
     },
     {
       "partnerCode": "BIL",
       "phase": "operator_ready",
-      "membershipCell": "2·house!",
+      "membershipCell": "2·OK",
       "handshakeOk": true,
-      "needsPartnerInForum": true,
+      "needsPartnerInForum": false,
       "inviteLink": "https://t.me/+eMgvmRzz2qpkZDYx",
-      "inviteSentAt": "2026-07-27T01:53:19.637Z",
+      "inviteSentAt": null,
       "dmSeatStatus": "linked (shared DM)",
       "callSign": "BIL-001",
-      "gapCount": 1,
-      "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)",
+      "gapCount": 0,
+      "topGap": null,
       "verifyPassed": 10,
       "verifyTotal": 10,
       "verifyFails": [],
-      "lanesOk": 22,
-      "lanesTotal": 24,
+      "lanesOk": 23,
+      "lanesTotal": 23,
       "lanesBlocked": [],
-      "laneFails": [
-        {
-          "id": "forum_members",
-          "group": "forum",
-          "detail": "bot + house operator only — send forum invite (expect 3·OK when partner joins)"
-        },
-        {
-          "id": "forum_invite_gap",
-          "group": "forum",
-          "detail": "2·house! — invite DM sent 2026-07-27T01:53:19.637Z"
-        }
-      ],
+      "laneFails": [],
       "nextSteps": [
-        "ready for welcome DM + bot commands",
-        "invite DM sent at 2026-07-27T01:53:19.637Z — awaiting partner join",
-        "join forum: https://t.me/+eMgvmRzz2qpkZDYx"
+        "ready for welcome DM + bot commands"
       ]
     },
     {
       "partnerCode": "NOV",
-      "phase": "designated",
-      "membershipCell": "2·house",
+      "phase": "operator_ready",
+      "membershipCell": "2·OK",
       "handshakeOk": true,
       "needsPartnerInForum": false,
       "inviteLink": "https://t.me/+0oVv4f5CxzVhNDYx",
       "inviteSentAt": null,
-      "dmSeatStatus": "designated (awaiting telegram)",
+      "dmSeatStatus": "linked (shared DM)",
       "callSign": "NOV-001",
-      "gapCount": 1,
-      "topGap": "operator NOV-001 designated — telegram id not linked yet",
+      "gapCount": 0,
+      "topGap": null,
       "verifyPassed": 10,
       "verifyTotal": 10,
       "verifyFails": [],
-      "lanesOk": 20,
+      "lanesOk": 23,
       "lanesTotal": 23,
-      "lanesBlocked": [
-        "dm_telegram",
-        "welcome_dm",
-        "bot_commands"
-      ],
-      "laneFails": [
-        {
-          "id": "dm_telegram",
-          "group": "operator",
-          "detail": "awaiting bun tools/telegram-link-chat.ts"
-        },
-        {
-          "id": "welcome_dm",
-          "group": "operator",
-          "detail": "blocked until telegram link"
-        },
-        {
-          "id": "bot_commands",
-          "group": "operator",
-          "detail": "blocked until operator telegram linked"
-        }
-      ],
+      "lanesBlocked": [],
+      "laneFails": [],
       "nextSteps": [
-        "forum + routing OK — awaiting operator telegram for NOV-001",
-        "bun tools/telegram-link-chat.ts NOV-001 <telegram_user_id>  # when operator ready"
+        "ready for welcome DM + bot commands"
       ]
     },
     {
-      "partnerCode": "PAT",
-      "phase": "designated",
-      "membershipCell": "2·house",
+      "partnerCode": "SPEN",
+      "phase": "operator_ready",
+      "membershipCell": "2·OK",
       "handshakeOk": true,
       "needsPartnerInForum": false,
       "inviteLink": "https://t.me/+3lqb3fA0yIllM2Yx",
       "inviteSentAt": null,
-      "dmSeatStatus": "designated (awaiting telegram)",
-      "callSign": "PAT-001",
-      "gapCount": 1,
-      "topGap": "operator PAT-001 designated — telegram id not linked yet",
+      "dmSeatStatus": "linked (shared DM)",
+      "callSign": "SPEN-001",
+      "gapCount": 0,
+      "topGap": null,
       "verifyPassed": 10,
       "verifyTotal": 10,
       "verifyFails": [],
-      "lanesOk": 20,
+      "lanesOk": 23,
       "lanesTotal": 23,
-      "lanesBlocked": [
-        "dm_telegram",
-        "welcome_dm",
-        "bot_commands"
-      ],
-      "laneFails": [
-        {
-          "id": "dm_telegram",
-          "group": "operator",
-          "detail": "awaiting bun tools/telegram-link-chat.ts"
-        },
-        {
-          "id": "welcome_dm",
-          "group": "operator",
-          "detail": "blocked until telegram link"
-        },
-        {
-          "id": "bot_commands",
-          "group": "operator",
-          "detail": "blocked until operator telegram linked"
-        }
-      ],
+      "lanesBlocked": [],
+      "laneFails": [],
       "nextSteps": [
-        "forum + routing OK — awaiting operator telegram for PAT-001",
-        "bun tools/telegram-link-chat.ts PAT-001 <telegram_user_id>  # when operator ready"
+        "ready for welcome DM + bot commands"
       ]
     }
   ],

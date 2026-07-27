@@ -15,6 +15,8 @@ export type TelegramEnvSnapshot = {
   legacyToken: string | null;
   effectiveToken: string | null;
   opsChatId: string | null; // brand-ok — Telegram ops chat_id wire (TELEGRAM_OPS_CHAT_ID)
+  /** Cross-partner accounting rollup supergroup (TELEGRAM_ACCOUNTING_CHAT_ID). */
+  accountingChatId: string | null; // brand-ok — Telegram accounting chat_id wire
   /** Concern → chat_id map from TELEGRAM_SURFACES. */
   surfaces: Record<string, string>;
   webhookSecret: string | null;
@@ -22,6 +24,8 @@ export type TelegramEnvSnapshot = {
   rateLimitMinIntervalMs: number;
   /** Telegram user ids allowed for sensitive ops (comma-separated env). */
   opsAdminUserIds: number[];
+  /** Prefer sendRichMessage for seat capital desk (TELEGRAM_SEAT_DESK_RICH=0 to disable). */
+  seatDeskRichMessages: boolean;
 };
 
 const DEFAULT_RATE_LIMIT_MIN_INTERVAL_MS = 34; // ~29 msg/s (Telegram global ~30/s)
@@ -78,6 +82,7 @@ export function loadTelegramEnv(): TelegramEnvSnapshot {
     legacyToken,
     effectiveToken: factoryToken ?? legacyToken,
     opsChatId: trimEnv('TELEGRAM_OPS_CHAT_ID'),
+    accountingChatId: trimEnv('TELEGRAM_ACCOUNTING_CHAT_ID'),
     surfaces: loadTelegramSurfacesMap(),
     webhookSecret: trimEnv('TELEGRAM_WEBHOOK_SECRET'),
     topics: parseTelegramTopics(trimEnv('TELEGRAM_TOPICS')),
@@ -88,6 +93,7 @@ export function loadTelegramEnv(): TelegramEnvSnapshot {
     opsAdminUserIds: parseOpsAdminUserIds(
       trimEnv('OPS_ADMIN_USER_IDS') ?? trimEnv('TELEGRAM_OPS_ADMIN_USER_IDS')
     ),
+    seatDeskRichMessages: trimEnv('TELEGRAM_SEAT_DESK_RICH') !== '0',
   };
 }
 

@@ -81,6 +81,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     href: '/registry/package-info.json',
     note: 'verify:package-info bake',
   },
+  {
+    label: 'seat-capital-desk',
+    href: '/registry/seat-capital-desk.json',
+    note: 'FUND status · outs · checklist',
+  },
 ];
 
 /** Operator scripts linked from ops/monitoring panels. */
@@ -100,6 +105,11 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'Telegram handshake gap',
     cmd: 'bun run telegram:handshake:invite-gap',
     doc: 'docs/harness/tenants/partner-package-group-handshake.md',
+  },
+  {
+    label: 'Seat capital desk refresh',
+    cmd: 'bun run seat:desk:refresh',
+    doc: 'docs/harness/tenants/seat-capital-desk.md',
   },
   {
     label: 'Reference discovery',

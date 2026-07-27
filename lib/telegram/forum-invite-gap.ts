@@ -18,6 +18,7 @@ import { getKnownChatById } from './known-chats.ts';
 import {
   formatMembershipDeskCell,
   interpretPackageGroupMemberCount,
+  probeLinkedSeatInForum,
 } from './package-group-membership.ts';
 import type { HandshakeReadinessRow } from './handshake-readiness.ts';
 import { sendTelegramBotMessage } from './telegram-api.ts';
@@ -55,14 +56,26 @@ export function forumInviteGapFromReadiness(row: HandshakeReadinessRow): ForumIn
 export async function buildForumInviteGapRow(
   db: Database,
   partnerCode: string,
-  jsonlPath = PENDING_PACKAGE_GROUPS_JSONL
+  jsonlPath = PENDING_PACKAGE_GROUPS_JSONL,
+  telegramToken?: string | null
 ): Promise<ForumInviteGapRow | null> {
   const reg = getPackageGroupRegistry(db, partnerCode);
   if (!reg) return null;
   const dmSeat = assessPackageGroupDmSeat(db, partnerCode);
   const known = getKnownChatById(db, reg.chatId);
+
+  let linkedSeatInForum = false;
+  if (
+    telegramToken &&
+    dmSeat.telegramId &&
+    (dmSeat.status === 'linked' || dmSeat.status === 'shared')
+  ) {
+    linkedSeatInForum = await probeLinkedSeatInForum(telegramToken, reg.chatId, dmSeat.telegramId);
+  }
+
   const membershipTell = interpretPackageGroupMemberCount(known?.memberCount ?? null, {
     dmSeatStatus: dmSeat.status,
+    linkedSeatInForum,
   });
   if (!membershipTell.needsPartnerInForum) return null;
 
@@ -138,7 +151,7 @@ export async function sendForumInviteDm(opts: {
 }): Promise<SendForumInviteResult> {
   const code = opts.partnerCode.toUpperCase().trim();
   const jsonlPath = opts.jsonlPath ?? PENDING_PACKAGE_GROUPS_JSONL;
-  const gap = await buildForumInviteGapRow(opts.db, code, jsonlPath);
+  const gap = await buildForumInviteGapRow(opts.db, code, jsonlPath, opts.token);
 
   if (!gap) {
     return { ok: false, partnerCode: code, reason: 'no forum invite gap (not 2·house!)' };
@@ -229,7 +242,7 @@ export async function sendForumInviteDmsForGaps(opts: {
 
   const results: SendForumInviteResult[] = [];
   for (const code of codes) {
-    const gap = await buildForumInviteGapRow(opts.db, code, jsonlPath);
+    const gap = await buildForumInviteGapRow(opts.db, code, jsonlPath, opts.token);
     if (!gap) continue;
     results.push(
       await sendForumInviteDm({

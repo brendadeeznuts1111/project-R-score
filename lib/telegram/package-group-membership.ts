@@ -11,6 +11,9 @@
  * cheap sanity check after `--refresh` / `handshake:desk --live`.
  */
 import type { DmSeatStatus } from './dm-seat-designation.ts';
+import { getChatMember } from './telegram-api.ts';
+
+const FORUM_MEMBER_STATUSES = new Set(['creator', 'administrator', 'member', 'restricted']);
 
 /** Minimum humans + bot before partner joins (bot + house operator). */
 export const PACKAGE_GROUP_MEMBERS_HOUSE_ONLY = 2;
@@ -38,7 +41,7 @@ export type PackageGroupMembershipTell = {
 
 export function interpretPackageGroupMemberCount(
   memberCount: number | null,
-  opts?: { dmSeatStatus?: DmSeatStatus | null }
+  opts?: { dmSeatStatus?: DmSeatStatus | null; linkedSeatInForum?: boolean }
 ): PackageGroupMembershipTell {
   const expectedTypical = PACKAGE_GROUP_MEMBERS_WITH_PARTNER;
 
@@ -78,6 +81,19 @@ export function interpretPackageGroupMemberCount(
   }
 
   if (memberCount === PACKAGE_GROUP_MEMBERS_HOUSE_ONLY) {
+    if (opts?.linkedSeatInForum) {
+      return finish(
+        {
+          memberCount,
+          status: 'partner_present',
+          label: 'OK',
+          expectedTypical,
+          detail:
+            'linked seat telegram id is a forum member (single-operator harness — bot + operator)',
+        },
+        opts?.dmSeatStatus
+      );
+    }
     const dm = opts?.dmSeatStatus;
     const partnerPending =
       dm === 'designated' || dm === 'none'
@@ -147,4 +163,20 @@ export function membershipForumLaneOk(
 
 export function formatPackageGroupMembershipForDesk(tell: PackageGroupMembershipTell): string {
   return formatMembershipDeskCell(tell);
+}
+
+/** True when linked seat user id is present in the forum (getChatMember). */
+export async function probeLinkedSeatInForum(
+  token: string,
+  chatId: string, // brand-ok
+  telegramUserId: string | null | undefined // brand-ok — linked seat wire id
+): Promise<boolean> {
+  const raw = telegramUserId?.trim();
+  if (!raw) return false;
+  const uid = Number(raw);
+  if (!Number.isFinite(uid) || uid <= 0) return false;
+  const res = await getChatMember(token, chatId, uid);
+  if (!res.ok) return false;
+  const status = res.member.status ?? '';
+  return FORUM_MEMBER_STATUSES.has(status) && status !== 'left' && status !== 'kicked';
 }

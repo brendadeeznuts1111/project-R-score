@@ -106,6 +106,13 @@ describe('buildOpsSummary', () => {
     } else {
       expect(s.telegramHandshake.rows).toEqual([]);
     }
+    expect(s.seatCapitalDesk).toHaveProperty('available');
+    expect(s.seatCapitalDesk.path).toBe('/registry/seat-capital-desk.json');
+    if (s.seatCapitalDesk.available) {
+      expect(s.seatCapitalDesk.rows.length).toBe(s.seatCapitalDesk.desks);
+    } else {
+      expect(s.seatCapitalDesk.rows).toEqual([]);
+    }
     db.close();
   });
 

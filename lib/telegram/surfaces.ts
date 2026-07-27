@@ -32,9 +32,16 @@ export const TOC_OPS_TITLE_PREFIX = 'TOC Ops';
  * Concern = why this group exists (separate chat, not a topic).
  * Keep HQ / partner desks / sandbox isolated so staging noise never hits HQ.
  */
+/** House-wide cross-partner accounting rollup (separate supergroup). */
+export const ALL_ACCOUNTING_SURFACE_SLUG = 'all-accounting';
+
+/** Forum topic titles inside `all-accounting` (Bot API createForumTopic names). */
+export const ALL_ACCOUNTING_FORUM_TOPICS = ['Deposits', 'Withdrawals', 'Reconcile'] as const;
+
 export type TocOpsConcern =
   | 'hq' // production ops desk
   | 'partner' // call-sign / partner desk (ASH, NOV, …)
+  | 'accounting' // cross-partner proof rollup
   | 'sandbox'; // experiments, brand tests, noisy bots
 
 export type TocOpsEnv = 'prod' | 'staging' | 'dev';
@@ -49,7 +56,10 @@ export type TocOpsTopicSlug =
   | 'onboard'
   | 'identity'
   | 'scratch'
-  | 'experiments';
+  | 'experiments'
+  | 'deposits'
+  | 'withdrawals'
+  | 'reconcile';
 
 export type TocOpsSurfaceDef = {
   /** Stable slug for env maps / CLI `--surface`. */
@@ -92,6 +102,15 @@ export const TOC_OPS_SURFACES: readonly TocOpsSurfaceDef[] = [
     topics: ['plays', 'balances', 'onboard', 'alerts'],
   },
   {
+    slug: ALL_ACCOUNTING_SURFACE_SLUG,
+    concern: 'accounting',
+    concernLabel: 'Accounting',
+    env: 'prod',
+    purpose:
+      'Cross-partner deposit/withdraw proof rollup — ops mirror; partners post in package forum Accounting topic.',
+    topics: ['deposits', 'withdrawals', 'reconcile'],
+  },
+  {
     slug: 'sandbox',
     concern: 'sandbox',
     concernLabel: 'sandbox',
@@ -124,6 +143,8 @@ export function formatTocOpsGroupTitle(surface: TocOpsSurfaceDef): string {
     if (surface.env && surface.env !== 'prod') parts.push(surface.env);
   } else if (surface.concern === 'hq') {
     parts.push('HQ');
+  } else if (surface.concern === 'accounting') {
+    parts.push('Accounting');
   } else {
     parts.push(surface.concernLabel);
   }
@@ -160,6 +181,14 @@ export function parseTocOpsGroupTitle(title: string): ParsedTocOpsTitle | Parsed
   const [a, b] = segs;
   if (a === 'HQ') {
     return { ok: true, concern: 'hq', env: 'prod', surfaceSlug: 'hq' };
+  }
+  if (a === 'Accounting') {
+    return {
+      ok: true,
+      concern: 'accounting',
+      env: 'prod',
+      surfaceSlug: ALL_ACCOUNTING_SURFACE_SLUG,
+    };
   }
   if (a?.toLowerCase() === 'sandbox') {
     return { ok: true, concern: 'sandbox', env: 'dev', surfaceSlug: 'sandbox' };
@@ -226,7 +255,10 @@ export function parseTelegramSurfacesMap(raw: string | null | undefined): Record
 export function loadTelegramSurfacesMap(
   env: Record<string, string | undefined> = Bun.env
 ): Record<string, string> {
-  return parseTelegramSurfacesMap(env.TELEGRAM_SURFACES?.trim() || null);
+  const map = parseTelegramSurfacesMap(env.TELEGRAM_SURFACES?.trim() || null);
+  const accounting = env.TELEGRAM_ACCOUNTING_CHAT_ID?.trim();
+  if (accounting) map[ALL_ACCOUNTING_SURFACE_SLUG] = accounting;
+  return map;
 }
 
 /** Resolve chat id for a surface slug (env map first). */

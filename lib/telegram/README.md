@@ -25,8 +25,12 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `surface-graph.ts` | Live topology ASCII / mermaid / env suggest |
 | `surface-audit.ts` | Title · binding · ACL · routing audit |
 | `package-group-registry.ts` | Partner package forum registry + pending JSONL |
-| `package-group-forum.ts` | Forum metadata SSOT · `reports/telegram/forums/{CODE}.json` |
-| `handshake-catalog.ts` | **Machine reference** — constants, lanes, verify checks, CLI (`telegram:handshake:catalog`) |
+| `package-group-forum.ts` | Partner forum metadata SSOT · `PARTNER_PACKAGE_FORUM_TOPIC_PLAN` (5 topics, every partner) |
+| `surfaces.ts` | House surface registry + topic slugs (`hq`, `sandbox`, `all-accounting`, …) |
+| `partner-forum-accounting.ts` | Accounting topic ensure + one-shot prompt per partner forum |
+| `seat-desk-partner-message.ts` | Partner paste + Liquidity/Outs/Accounting template SSOT |
+| `handshake-catalog.ts` | **Machine reference** — constants, lanes, verify checks, CLI, templates (`telegram:handshake:catalog`) |
+| `catalog-research/` | Research agent — catalog vs live gaps → `catalog-enhancements.json` (`telegram:catalog:research`) |
 | `handshake-ref.ts` | Partner code / call-sign regex SSOT for package-group CLIs |
 | `handshake-desk.ts` | Unified desk rows (registry + known chats + verify) |
 | `handshake-readiness.ts` | Phased readiness gates + forum invite-gap filter |
@@ -37,7 +41,10 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `ops-acl.ts` | In-chat ACL — `/register` DM-only · `/deploy` ops-admin |
 | `branding.ts` | TOC Ops profile (Bun.Image) · group titles/photos · forum topics |
 | `refresh-known-chats.ts` | `getChat` / member-count refresh for directory |
-| `telegram-api.ts` | `sendTelegramBotMessage` · `editTelegramMessage` · `setMyCommands` · `answerCallbackQuery` (rate-limited + 429 retry) |
+| `telegram-api.ts` | `sendTelegramBotMessage` · `sendRichTelegramMessage` · `editMessageReplyMarkup` · `setMyCommands` · `answerCallbackQuery` (rate-limited + 429 retry) |
+| `seat-capital-desk.ts` | Pinned capital desk per call-sign (rich table + Fill keyboard) |
+| `seat-desk-*.ts` | Desk callbacks (`sd:*`), pending ForceReply, pipe-line intake, partner templates |
+| `rich-message.ts` | Bot API 10.1 `InputRichMessage` HTML helpers + MTProto RichText map |
 
 ## Factory webhook commands
 
@@ -70,7 +77,7 @@ tree_nodes + play_distribution + ops_channel_outbox
 Telegram sendMessage (plays, partner.welcome HTML templates)
 ```
 
-Tenant runbook: [`docs/harness/tenants/telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md).
+Tenant runbook: [`docs/harness/tenants/telegram-factory.md`](../../docs/harness/tenants/telegram-factory.md) · seat desk: [`seat-capital-desk.md`](../../docs/harness/tenants/seat-capital-desk.md).
 
 ## Quick start
 
@@ -107,6 +114,12 @@ bun tools/telegram-link-chat.ts ASH-001 tg:chat:-100…
 # Drain R2 telegram-updates + commands + outbox (Pages path)
 bun run telegram:ops:consume
 
+# Seat capital desk lifecycle
+bun run seat:desk:refresh SPEN-001
+bun run seat:desk:update SPEN-001 --field SPEN-1.rail=Venmo --field SPEN-1.sendTo=@handle
+bun run seat:desk:topic-prompts SPEN-001 --post
+bun run telegram:package-group:accounting
+
 # Long-poll ops bot (Bun host with OPS_DB_PATH)
 bun -e "import { OpsTelegramBot } from './lib/telegram/ops-bot.ts'; import { loadTelegramEnv } from './lib/telegram/telegram-config.ts'; new OpsTelegramBot({ token: loadTelegramEnv().effectiveToken!, dbPath: 'data/operations.db' }).start()"
 ```
@@ -114,6 +127,7 @@ bun -e "import { OpsTelegramBot } from './lib/telegram/ops-bot.ts'; import { loa
 ## Related
 
 - **Handshake machine ref:** `bun run telegram:handshake:catalog`
+- [`docs/harness/tenants/seat-capital-desk.md`](../../docs/harness/tenants/seat-capital-desk.md) — pinned Liquidity/Outs desk + Fill keyboard
 - [`docs/harness/tenants/partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) — operator runbook
 - [`docs/harness/tenants/partner-onboarding-package.md`](../../docs/harness/tenants/partner-onboarding-package.md)
 - [`lib/channels/outbox.ts`](../channels/outbox.ts) — `enqueuePartnerWelcomeEvent`, play inline keyboard

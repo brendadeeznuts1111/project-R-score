@@ -18,6 +18,8 @@ import {
   getSurface,
   type TocOpsSurfaceSlug,
   type TocOpsTopicSlug,
+  ALL_ACCOUNTING_FORUM_TOPICS,
+  ALL_ACCOUNTING_SURFACE_SLUG,
 } from './surfaces.ts';
 import {
   telegramApiCall,
@@ -42,6 +44,7 @@ export {
   loadTelegramSurfacesMap,
   chatIdForSurface,
   resolvePrimaryOpsChatId,
+  ALL_ACCOUNTING_SURFACE_SLUG,
 } from './surfaces.ts';
 export {
   buildSurfaceGraph,
@@ -73,6 +76,12 @@ export function titleForSurface(slug: string): string {
 
 export function topicsForSurface(slug: string): readonly TocOpsTopicSlug[] {
   return getSurface(slug)?.topics ?? TOC_OPS_TOPIC_PLAN;
+}
+
+/** Forum topic display names for `createForumTopic` (capitalized where needed). */
+export function forumTopicNamesForSurface(slug: string): readonly string[] {
+  if (slug === ALL_ACCOUNTING_SURFACE_SLUG) return [...ALL_ACCOUNTING_FORUM_TOPICS];
+  return topicsForSurface(slug);
 }
 
 export function descriptionForSurface(slug: string): string {
@@ -244,6 +253,8 @@ export type BrandGroupOpts = {
   description?: string;
   setPhoto?: boolean;
   ensureTopics?: readonly string[];
+  /** Known-chat surface slug (hq | all-accounting | …). */
+  surfaceSlug?: string;
   db?: Database;
 };
 
@@ -313,6 +324,7 @@ export async function brandGroup(opts: BrandGroupOpts): Promise<BrandGroupResult
         },
         source: 'manual',
         botStatus: botStatus ?? 'administrator',
+        surfaceSlug: opts.surfaceSlug ?? null,
       });
     }
   }

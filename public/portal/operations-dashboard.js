@@ -144,6 +144,26 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" id="telegram-handshake-json" href="/registry/telegram-handshake.json">Handshake JSON</a>
             <a class="ops-link" id="telegram-handshake-catalog" href="/registry/telegram-handshake-catalog.json">Catalog JSON</a>
           </section>
+          <section class="ops-panel wide" id="seat-capital-desk" data-subsystem="telegram">
+            <h2>Seat capital desk <span class="version-badge subsystem-other">telegram</span></h2>
+            <div class="ops-metric" id="seat-capital-desk-metric">—</div>
+            <div class="ops-sub" id="seat-capital-desk-detail"></div>
+            <table id="seat-capital-desk-table" class="ops-table hidden" aria-label="Seat capital desks">
+              <thead>
+                <tr>
+                  <th>Call</th>
+                  <th>FUND</th>
+                  <th>Outs</th>
+                  <th>Incomplete</th>
+                  <th>Pinned</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div id="seat-capital-desk-expand" class="ops-sub"></div>
+            <ul id="seat-capital-desk-commands" class="ops-weave-scripts hidden"></ul>
+            <a class="ops-link" id="seat-capital-desk-json" href="/registry/seat-capital-desk.json">Seat desk JSON</a>
+          </section>
           <section class="ops-panel">
             <h2>Ops loop</h2>
             <div class="ops-metric" id="loop-completion">0%</div>
@@ -992,6 +1012,95 @@ class OperationsDashboard extends HTMLElement {
         if (tgFilterWrap) tgFilterWrap.hidden = true;
         if (tgTable) tgTable.classList.add('hidden');
         if (tgCommands) tgCommands.classList.add('hidden');
+      }
+    }
+
+    const scd = d.seatCapitalDesk;
+    const scdMetric = this.querySelector('#seat-capital-desk-metric');
+    const scdDetail = this.querySelector('#seat-capital-desk-detail');
+    const scdTable = this.querySelector('#seat-capital-desk-table');
+    const scdTbody = scdTable?.querySelector('tbody');
+    const scdExpand = this.querySelector('#seat-capital-desk-expand');
+    const scdCommands = this.querySelector('#seat-capital-desk-commands');
+    if (scdMetric && scd) {
+      if (scd.available && scd.desks > 0) {
+        const incomplete = scd.incompleteOuts ?? 0;
+        const blocked = scd.blocked ?? 0;
+        scdMetric.textContent = String(incomplete);
+        scdMetric.classList.toggle('ok', incomplete === 0 && blocked === 0);
+        scdMetric.classList.toggle('bad', incomplete > 0 || blocked > 0);
+        const when = scd.generatedAt ? ` · baked ${String(scd.generatedAt).slice(0, 19)}` : '';
+        if (scdDetail) {
+          scdDetail.textContent =
+            `${scd.desks} desks · blocked ${blocked} · partial ${scd.partial ?? 0} · ready ${scd.ready ?? 0} · funded ${scd.funded ?? 0}${when}`;
+        }
+
+        const rows = scd.rows ?? [];
+        if (scdTable && scdTbody && rows.length > 0) {
+          scdTable.classList.remove('hidden');
+          scdTbody.innerHTML = rows
+            .map(r => {
+              const fundClass =
+                r.fundStatus === 'blocked'
+                  ? 'match-no'
+                  : r.fundStatus === 'funded' || r.fundStatus === 'ready'
+                    ? 'match-ok'
+                    : '';
+              return `<tr class="${(r.incompleteOuts ?? 0) > 0 ? 'ops-row-warn' : ''}">
+                <td><code>${esc(r.callSign)}</code></td>
+                <td><span class="version-badge ${fundClass}">${esc(r.fundStatus)}</span></td>
+                <td>${esc(String(r.outs?.length ?? 0))}</td>
+                <td>${esc(String(r.incompleteOuts ?? 0))}</td>
+                <td>${r.pinned ? 'yes' : 'no'}</td>
+              </tr>`;
+            })
+            .join('');
+        } else if (scdTable) {
+          scdTable.classList.add('hidden');
+          if (scdTbody) scdTbody.innerHTML = '';
+        }
+
+        if (scdExpand) {
+          const focusRows = rows.filter(r => (r.incompleteOuts ?? 0) > 0);
+          const expandRows = focusRows.length > 0 ? focusRows : rows.slice(0, 1);
+          scdExpand.innerHTML = expandRows
+            .map(r => {
+              const outsSummary =
+                (r.outs ?? [])
+                  .map(o => `${esc(o.outNum)} ${esc(o.book)} · ${esc(o.status)}`)
+                  .join(' · ') || 'no outs on desk';
+              const checklist =
+                (r.checklist ?? [])
+                  .map(c => `<li>${c.done ? '☑' : '☐'} ${esc(c.label)}</li>`)
+                  .join('') || '<li>no checklist items</li>';
+              return `<details class="ops-handshake-detail"><summary>${esc(r.callSign)} — ${esc(r.fundStatus)} (${esc(String(r.incompleteOuts ?? 0))} incomplete)</summary>
+                <p class="ops-mono">${outsSummary}</p>
+                <ul class="ops-weave-scripts">${checklist}</ul>
+              </details>`;
+            })
+            .join('');
+        }
+
+        if (scdCommands && scd.commands) {
+          scdCommands.classList.remove('hidden');
+          scdCommands.innerHTML = Object.entries(scd.commands)
+            .map(
+              ([k, cmd]) =>
+                `<li><span class="ops-mono">${esc(cmd)}</span> <small>(${esc(k)})</small></li>`
+            )
+            .join('');
+        }
+      } else {
+        scdMetric.textContent = '—';
+        scdMetric.classList.remove('ok', 'bad');
+        if (scdDetail) {
+          scdDetail.textContent =
+            'No seat desks — run bun run seat:desk:post, then bun run ops:snapshot';
+        }
+        if (scdTable) scdTable.classList.add('hidden');
+        if (scdTbody) scdTbody.innerHTML = '';
+        if (scdExpand) scdExpand.innerHTML = '';
+        if (scdCommands) scdCommands.classList.add('hidden');
       }
     }
 

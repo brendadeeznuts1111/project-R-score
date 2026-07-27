@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-27T02:07:50.354Z",
+  "generated": "2026-07-27T06:32:03.925Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -627,7 +627,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 481,
+    "uptimeMs": 394,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
@@ -652,12 +652,12 @@
     },
     "experimentsActive": 1,
     "predictionN": 30,
-    "timestamp": "2026-07-27T02:07:50.351Z",
-    "snapshotAt": "2026-07-27T02:07:50.351Z"
+    "timestamp": "2026-07-27T06:32:03.921Z",
+    "snapshotAt": "2026-07-27T06:32:03.921Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-27T02:07:50.345Z",
+    "generated": "2026-07-27T06:32:03.913Z",
     "liquidity": {
       "total": 85710
     },
@@ -793,11 +793,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "089d82667b99d1a466c37cd85af77a7a12393f6e4f446797519c6f3ea8322925",
+      "proofHash": "2e671e08012695788cd9352147e5a1a1c5b4cc49acaed2a68ad5595a570a63c2",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-27T02:07:50.345Z"
+      "timestamp": "2026-07-27T06:32:03.914Z"
     },
     "registryClient": {
       "available": true,
@@ -871,7 +871,7 @@
           "detail": "13 contracts · 20 consistency"
         }
       ],
-      "timestamp": "2026-07-27T02:07:50.298Z",
+      "timestamp": "2026-07-27T06:32:03.869Z",
       "pagesUrl": "https://project-r-score.pages.dev",
       "path": "/registry/cloudflare-pages-preflight.json"
     },
@@ -1057,8 +1057,8 @@
           "ok": true
         }
       ],
-      "proofHash": "76ea3ceb48d6506206d5172e2111a9fefead61c4c3084e2726344f0f7c5bdb63",
-      "timestamp": "2026-07-27T02:07:49.912Z",
+      "proofHash": "2522d86d9c54d6e7e7b65111b1b2034da6df20885254aa193e0dda5a92b8ae2e",
+      "timestamp": "2026-07-27T06:32:03.541Z",
       "path": "/registry/proof-taxonomy-audit.json"
     },
     "channelMeta": {
@@ -1069,7 +1069,7 @@
       "total": 75,
       "status": "pass",
       "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-      "updatedAt": "2026-07-27T02:07:49.904Z",
+      "updatedAt": "2026-07-27T06:32:03.538Z",
       "channel": "stable",
       "targetVersion": "1.4.0",
       "runtimeVersion": "1.4.0",
@@ -1113,53 +1113,21 @@
       "httpOk": 16,
       "criticalFailed": 0,
       "errorRate": 0,
-      "meanMs": 138.91,
-      "p50Ms": 110.85,
-      "p95Ms": 353.21,
-      "maxMs": 353.21,
-      "proofHash": "a05ee514901ef641c6b6b449f4f4ab4a7ff177e283d992d86d8f9e1c890ce92f",
-      "timestamp": "2026-07-27T02:06:34.773Z",
+      "meanMs": 140.55,
+      "p50Ms": 63.86,
+      "p95Ms": 380.07,
+      "maxMs": 380.07,
+      "proofHash": "00717bb837ce8fa2ce557d182714d4c53ec4d31edb7106e7431fb357799c343b",
+      "timestamp": "2026-07-27T06:31:22.482Z",
       "regressions": 0,
       "criticalFailedPaths": [],
       "routes": [
-        {
-          "path": "/api/monitoring",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 129.78,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/api/operations/summary",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 110.85,
-          "contentType": "application/json"
-        },
         {
           "path": "/portal/ops/",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 56.05,
-          "contentType": "text/html"
-        },
-        {
-          "path": "/registry/ops-summary.json",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 50.64,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/portal/dashboard/",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 45.77,
+          "timeMs": 63.86,
           "contentType": "text/html"
         },
         {
@@ -1167,15 +1135,47 @@
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 42.06,
+          "timeMs": 50.01,
           "contentType": "application/javascript"
+        },
+        {
+          "path": "/portal/dashboard/",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 48.82,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/api/monitoring",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 48.12,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/operations/summary",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 46.07,
+          "contentType": "application/json"
         },
         {
           "path": "/registry/@factorywager/bun-utils-test/latest.json",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 36.86,
+          "timeMs": 42.82,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/registry/ops-summary.json",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 30.68,
           "contentType": "application/json"
         },
         {
@@ -1183,23 +1183,7 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 353.21,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 347.77,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/api/registry/@factorywager/routing-test/latest.json",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 326.04,
+          "timeMs": 380.07,
           "contentType": "application/json"
         },
         {
@@ -1207,15 +1191,39 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 304.45,
+          "timeMs": 328.03,
           "contentType": "text/html"
         },
         {
-          "path": "/monitoring",
+          "path": "/api/registry/@factorywager/routing-test/latest.json",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 229.39,
+          "timeMs": 318.14,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 313.78,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry",
+          "status": 400,
+          "pass": true,
+          "critical": false,
+          "timeMs": 203.98,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/ready",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 201.08,
           "contentType": "text/html"
         },
         {
@@ -1223,23 +1231,23 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 134.1,
+          "timeMs": 149.75,
           "contentType": "text/html"
         },
         {
-          "path": "/ready",
+          "path": "/monitoring",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 120.82,
+          "timeMs": 133.07,
           "contentType": "text/html"
         },
         {
-          "path": "/api/registry",
-          "status": 400,
+          "path": "/registry/@factorywager/routing-test/latest.json",
+          "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 114,
+          "timeMs": 103.69,
           "contentType": "application/json"
         },
         {
@@ -1247,15 +1255,7 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 37.02,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/registry/@factorywager/routing-test/latest.json",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 33.49,
+          "timeMs": 40.94,
           "contentType": "application/json"
         },
         {
@@ -1263,10 +1263,12 @@
           "status": 400,
           "pass": true,
           "critical": false,
-          "timeMs": 28.09,
+          "timeMs": 27.04,
           "contentType": "application/json"
         }
-      ]
+      ],
+      "cached": true,
+      "stale": false
     },
     "partners": {
       "bound": 15,
@@ -1317,7 +1319,7 @@
           "profileKey": "pp-019f92ee-5ef9-728f-812a-c5b3fa64",
           "partnerTemplate": "default-prospect",
           "lifecycleStatus": "materialized",
-          "name": "TOC PAT-001"
+          "name": "TOC SPEN-001"
         },
         {
           "treeNodeId": "019f92ee-5efb-7449-899b-de7d263645e7",
@@ -1338,7 +1340,7 @@
           "profileKey": "pp-019f92ee-5efa-7556-98a2-d56a1d36",
           "partnerTemplate": "default-prospect",
           "lifecycleStatus": "materialized",
-          "name": "TOC PAT-002"
+          "name": "TOC SPEN-002"
         },
         {
           "treeNodeId": "019f92ee-5ef9-728d-950c-6c02a59903a2",
@@ -1350,16 +1352,16 @@
       ]
     },
     "channels": {
-      "pending": 0,
+      "pending": 2,
       "failed": 0,
       "sent": 677,
-      "oldestPendingAt": null,
+      "oldestPendingAt": "2026-07-27T06:31:33.552Z",
       "failRate": 0
     },
     "toc": {
       "available": true,
       "path": "/registry/toc-ops.json",
-      "generatedAt": "2026-07-27T02:07:50.328Z",
+      "generatedAt": "2026-07-27T06:32:03.892Z",
       "partners": 3,
       "warmed": 4,
       "warming": 2,
@@ -1387,7 +1389,7 @@
       "throughputI": 47810,
       "throughputOE": 1655,
       "topRankedProcess": "LIMIT",
-      "avgRP": 10.453576698080902,
+      "avgRP": 10.10002916398574,
       "settlementFloatRatio": 0.5103534825350345,
       "presencePartners": 3,
       "presenceIpv6": 31,
@@ -1457,9 +1459,9 @@
       "settledViaFullLoop": 29,
       "outboxSent": 677,
       "outboxFailed": 0,
-      "outboxPending": 0,
-      "oldestPendingAgeSec": null,
-      "manualStepsPerCycle": 0,
+      "outboxPending": 2,
+      "oldestPendingAgeSec": 30,
+      "manualStepsPerCycle": 2,
       "loopCompletionRate": 1,
       "distinctPlaysDispatched": 7,
       "settledPlaysViaFullLoop": 7,
@@ -1474,13 +1476,13 @@
     "telegramHandshake": {
       "available": true,
       "path": "/registry/telegram-handshake.json",
-      "generatedAt": "2026-07-27T02:07:50.344Z",
+      "generatedAt": "2026-07-27T06:32:03.911Z",
       "partners": 4,
-      "inviteGaps": 2,
+      "inviteGaps": 4,
       "blocked": 0,
-      "operatorReady": 2,
+      "operatorReady": 4,
       "forumReady": 0,
-      "designated": 2,
+      "designated": 0,
       "verifyFailPartners": 0,
       "laneFailPartners": 4,
       "rows": [
@@ -1491,7 +1493,7 @@
           "handshakeOk": true,
           "needsPartnerInForum": true,
           "inviteLink": "https://t.me/+iBXudtg48psyMTkx",
-          "inviteSentAt": "2026-07-27T01:53:19.678Z",
+          "inviteSentAt": "2026-07-27T06:31:34.160Z",
           "dmSeatStatus": "linked",
           "callSign": "ASH-001",
           "gapCount": 1,
@@ -1511,12 +1513,12 @@
             {
               "id": "forum_invite_gap",
               "group": "forum",
-              "detail": "2·house! — invite DM sent 2026-07-27T01:53:19.678Z"
+              "detail": "2·house! — invite DM sent 2026-07-27T06:31:34.160Z"
             }
           ],
           "nextSteps": [
             "ready for welcome DM + bot commands",
-            "invite DM sent at 2026-07-27T01:53:19.678Z — awaiting partner join",
+            "invite DM sent at 2026-07-27T06:31:34.160Z — awaiting partner join",
             "join forum: https://t.me/+iBXudtg48psyMTkx"
           ]
         },
@@ -1527,7 +1529,7 @@
           "handshakeOk": true,
           "needsPartnerInForum": true,
           "inviteLink": "https://t.me/+eMgvmRzz2qpkZDYx",
-          "inviteSentAt": "2026-07-27T01:53:19.637Z",
+          "inviteSentAt": "2026-07-27T06:31:34.454Z",
           "dmSeatStatus": "linked (shared DM)",
           "callSign": "BIL-001",
           "gapCount": 1,
@@ -1547,101 +1549,85 @@
             {
               "id": "forum_invite_gap",
               "group": "forum",
-              "detail": "2·house! — invite DM sent 2026-07-27T01:53:19.637Z"
+              "detail": "2·house! — invite DM sent 2026-07-27T06:31:34.454Z"
             }
           ],
           "nextSteps": [
             "ready for welcome DM + bot commands",
-            "invite DM sent at 2026-07-27T01:53:19.637Z — awaiting partner join",
+            "invite DM sent at 2026-07-27T06:31:34.454Z — awaiting partner join",
             "join forum: https://t.me/+eMgvmRzz2qpkZDYx"
           ]
         },
         {
           "partnerCode": "NOV",
-          "phase": "designated",
-          "membershipCell": "2·house",
+          "phase": "operator_ready",
+          "membershipCell": "2·house!",
           "handshakeOk": true,
-          "needsPartnerInForum": false,
+          "needsPartnerInForum": true,
           "inviteLink": "https://t.me/+0oVv4f5CxzVhNDYx",
-          "inviteSentAt": null,
-          "dmSeatStatus": "designated (awaiting telegram)",
+          "inviteSentAt": "2026-07-27T06:31:52.798Z",
+          "dmSeatStatus": "linked (shared DM)",
           "callSign": "NOV-001",
           "gapCount": 1,
-          "topGap": "operator NOV-001 designated — telegram id not linked yet",
+          "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)",
           "verifyPassed": 10,
           "verifyTotal": 10,
           "verifyFails": [],
-          "lanesOk": 20,
-          "lanesTotal": 23,
-          "lanesBlocked": [
-            "dm_telegram",
-            "welcome_dm",
-            "bot_commands"
-          ],
+          "lanesOk": 22,
+          "lanesTotal": 24,
+          "lanesBlocked": [],
           "laneFails": [
             {
-              "id": "dm_telegram",
-              "group": "operator",
-              "detail": "awaiting bun tools/telegram-link-chat.ts"
+              "id": "forum_members",
+              "group": "forum",
+              "detail": "bot + house operator only — send forum invite (expect 3·OK when partner joins)"
             },
             {
-              "id": "welcome_dm",
-              "group": "operator",
-              "detail": "blocked until telegram link"
-            },
-            {
-              "id": "bot_commands",
-              "group": "operator",
-              "detail": "blocked until operator telegram linked"
+              "id": "forum_invite_gap",
+              "group": "forum",
+              "detail": "2·house! — invite DM sent 2026-07-27T06:31:52.798Z"
             }
           ],
           "nextSteps": [
-            "forum + routing OK — awaiting operator telegram for NOV-001",
-            "bun tools/telegram-link-chat.ts NOV-001 <telegram_user_id>  # when operator ready"
+            "ready for welcome DM + bot commands",
+            "invite DM sent at 2026-07-27T06:31:52.798Z — awaiting partner join",
+            "join forum: https://t.me/+0oVv4f5CxzVhNDYx"
           ]
         },
         {
-          "partnerCode": "PAT",
-          "phase": "designated",
-          "membershipCell": "2·house",
+          "partnerCode": "SPEN",
+          "phase": "operator_ready",
+          "membershipCell": "2·house!",
           "handshakeOk": true,
-          "needsPartnerInForum": false,
+          "needsPartnerInForum": true,
           "inviteLink": "https://t.me/+3lqb3fA0yIllM2Yx",
-          "inviteSentAt": null,
-          "dmSeatStatus": "designated (awaiting telegram)",
-          "callSign": "PAT-001",
+          "inviteSentAt": "2026-07-27T06:31:53.110Z",
+          "dmSeatStatus": "linked (shared DM)",
+          "callSign": "SPEN-001",
           "gapCount": 1,
-          "topGap": "operator PAT-001 designated — telegram id not linked yet",
+          "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)",
           "verifyPassed": 10,
           "verifyTotal": 10,
           "verifyFails": [],
-          "lanesOk": 20,
-          "lanesTotal": 23,
-          "lanesBlocked": [
-            "dm_telegram",
-            "welcome_dm",
-            "bot_commands"
-          ],
+          "lanesOk": 22,
+          "lanesTotal": 24,
+          "lanesBlocked": [],
           "laneFails": [
             {
-              "id": "dm_telegram",
-              "group": "operator",
-              "detail": "awaiting bun tools/telegram-link-chat.ts"
+              "id": "forum_members",
+              "group": "forum",
+              "detail": "bot + house operator only — send forum invite (expect 3·OK when partner joins)"
             },
             {
-              "id": "welcome_dm",
-              "group": "operator",
-              "detail": "blocked until telegram link"
-            },
-            {
-              "id": "bot_commands",
-              "group": "operator",
-              "detail": "blocked until operator telegram linked"
+              "id": "forum_invite_gap",
+              "group": "forum",
+              "detail": "2·house! — invite DM sent 2026-07-27T06:31:53.110Z"
             }
           ],
           "nextSteps": [
-            "forum + routing OK — awaiting operator telegram for PAT-001",
-            "bun tools/telegram-link-chat.ts PAT-001 <telegram_user_id>  # when operator ready"
+            "ready for welcome DM + bot commands",
+            "invite DM sent at 2026-07-27T06:31:53.110Z — awaiting partner join",
+            "join forum: https://t.me/+3lqb3fA0yIllM2Yx"
           ]
         }
       ],
@@ -1652,10 +1638,281 @@
         "readiness": "bun run telegram:handshake:readiness --invite-gap"
       },
       "catalogPath": "/registry/telegram-handshake-catalog.json"
+    },
+    "seatCapitalDesk": {
+      "available": true,
+      "path": "/registry/seat-capital-desk.json",
+      "generatedAt": "2026-07-27T06:32:03.913Z",
+      "desks": 4,
+      "blocked": 2,
+      "partial": 0,
+      "ready": 2,
+      "funded": 0,
+      "incompleteOuts": 7,
+      "rows": [
+        {
+          "callSign": "ASH-001",
+          "partnerCode": "ASH",
+          "fundStatus": "ready",
+          "fundDetail": "intake complete — FUND can proceed",
+          "outs": [
+            {
+              "outNum": "1",
+              "book": "Hard Rock Florida",
+              "username": "—",
+              "depositMethod": "Venmo",
+              "sendTo": "@ash.hr.fl",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "ready",
+              "incomplete": true,
+              "note": "WARMED seat · limits stale — confirm rails before play"
+            },
+            {
+              "outNum": "2",
+              "book": "Hard Rock Florida",
+              "username": "—",
+              "depositMethod": "Venmo",
+              "sendTo": "@ash.hr.fl",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "deferred",
+              "incomplete": false,
+              "note": "ASH-002 warming slot — assign after partner ack"
+            }
+          ],
+          "checklist": [
+            {
+              "done": true,
+              "label": "Out 1 deposit method confirmed"
+            },
+            {
+              "done": true,
+              "label": "Out 1 send-to set"
+            },
+            {
+              "done": true,
+              "label": "Out 2 deferred"
+            },
+            {
+              "done": true,
+              "label": "All books ready for FUND"
+            }
+          ],
+          "incompleteOuts": 1,
+          "pinned": false,
+          "hasTelegramDesk": true,
+          "deskUpdatedAt": "2026-07-27T06:31:17.991Z"
+        },
+        {
+          "callSign": "BIL-001",
+          "partnerCode": "BIL",
+          "fundStatus": "blocked",
+          "fundDetail": "awaiting deposit method + send-to on BIL-1",
+          "outs": [
+            {
+              "outNum": "1",
+              "book": "Partner book TBD",
+              "username": "—",
+              "depositMethod": "Venmo",
+              "sendTo": "—",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "blocked",
+              "incomplete": true,
+              "note": "Operator ready — partner assigns book + rails via desk Fill"
+            }
+          ],
+          "checklist": [
+            {
+              "done": true,
+              "label": "Out 1 deposit method confirmed"
+            },
+            {
+              "done": false,
+              "label": "Out 1 send-to set"
+            }
+          ],
+          "incompleteOuts": 1,
+          "pinned": false,
+          "hasTelegramDesk": true,
+          "deskUpdatedAt": "2026-07-27T06:31:19.515Z"
+        },
+        {
+          "callSign": "NOV-001",
+          "partnerCode": "NOV",
+          "fundStatus": "ready",
+          "fundDetail": "intake complete — FUND can proceed",
+          "outs": [
+            {
+              "outNum": "1",
+              "book": "Hard Rock Florida",
+              "username": "—",
+              "depositMethod": "Venmo",
+              "sendTo": "@nov.newpartner",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "ready",
+              "incomplete": true,
+              "note": "SouthFL PPH · ONB seat — book login pending partner ack"
+            },
+            {
+              "outNum": "2",
+              "book": "SouthFL PPH Desk",
+              "username": "—",
+              "depositMethod": "Venmo",
+              "sendTo": "@nov.newpartner",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "deferred",
+              "incomplete": false,
+              "note": "Second out slot — assign after ONB Ready"
+            }
+          ],
+          "checklist": [
+            {
+              "done": true,
+              "label": "Out 1 deposit method confirmed"
+            },
+            {
+              "done": true,
+              "label": "Out 1 send-to set"
+            },
+            {
+              "done": true,
+              "label": "Out 2 deferred"
+            },
+            {
+              "done": true,
+              "label": "All books ready for FUND"
+            }
+          ],
+          "incompleteOuts": 1,
+          "pinned": false,
+          "hasTelegramDesk": true,
+          "deskUpdatedAt": "2026-07-27T06:31:21.168Z"
+        },
+        {
+          "callSign": "SPEN-001",
+          "partnerCode": "SPEN",
+          "fundStatus": "blocked",
+          "fundDetail": "awaiting deposit method + send-to on SPEN-1",
+          "outs": [
+            {
+              "outNum": "1",
+              "book": "parlay21.com",
+              "username": "vc2013",
+              "depositMethod": "—",
+              "sendTo": "—",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "blocked",
+              "incomplete": true
+            },
+            {
+              "outNum": "2",
+              "book": "lonestarwagering.com",
+              "username": "Yungg1",
+              "depositMethod": "—",
+              "sendTo": "—",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "blocked",
+              "incomplete": true
+            },
+            {
+              "outNum": "3",
+              "book": "action92.com",
+              "username": "—",
+              "depositMethod": "—",
+              "sendTo": "—",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "blocked",
+              "incomplete": true,
+              "note": "logged in ~$17,747 (backend.action92.com)"
+            },
+            {
+              "outNum": "4",
+              "book": "betvegas23.com",
+              "username": "Henry019",
+              "depositMethod": "—",
+              "sendTo": "—",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "blocked",
+              "incomplete": true
+            },
+            {
+              "outNum": "5",
+              "book": "Orange777",
+              "username": "dmk1064",
+              "depositMethod": "—",
+              "sendTo": "—",
+              "maxBet": "—",
+              "freeplayPct": "—",
+              "status": "deferred",
+              "incomplete": false,
+              "note": "book label only — pass field was NO"
+            }
+          ],
+          "checklist": [
+            {
+              "done": false,
+              "label": "Out 1 deposit method confirmed"
+            },
+            {
+              "done": false,
+              "label": "Out 1 send-to set"
+            },
+            {
+              "done": false,
+              "label": "Out 2 deposit method confirmed"
+            },
+            {
+              "done": false,
+              "label": "Out 2 send-to set"
+            },
+            {
+              "done": false,
+              "label": "Out 3 username"
+            },
+            {
+              "done": false,
+              "label": "Out 3 deposit method confirmed"
+            },
+            {
+              "done": false,
+              "label": "Out 3 send-to set"
+            },
+            {
+              "done": false,
+              "label": "Out 4 deposit method confirmed"
+            },
+            {
+              "done": false,
+              "label": "Out 4 send-to set"
+            },
+            {
+              "done": true,
+              "label": "Out 5 deferred"
+            }
+          ],
+          "incompleteOuts": 4,
+          "pinned": false,
+          "hasTelegramDesk": true,
+          "deskUpdatedAt": "2026-07-27T06:31:16.492Z"
+        }
+      ],
+      "commands": {
+        "refresh": "bun run seat:desk:refresh",
+        "post": "bun run seat:desk:post",
+        "update": "bun run seat:desk:update"
+      }
     }
   },
   "bunUtils": {
-    "proofHash": "6e41b3e6e96f703125d65e6957ff4e73fc8a263bf26d1c65e28039c8f6beb23b",
+    "proofHash": "04778936c9b85abf4e0269434146d3284a86b779412ee7d5f79946dfa29f587c",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -1670,53 +1927,21 @@
     "httpOk": 16,
     "criticalFailed": 0,
     "errorRate": 0,
-    "meanMs": 138.91,
-    "p50Ms": 110.85,
-    "p95Ms": 353.21,
-    "maxMs": 353.21,
-    "proofHash": "a05ee514901ef641c6b6b449f4f4ab4a7ff177e283d992d86d8f9e1c890ce92f",
-    "timestamp": "2026-07-27T02:06:34.773Z",
+    "meanMs": 140.55,
+    "p50Ms": 63.86,
+    "p95Ms": 380.07,
+    "maxMs": 380.07,
+    "proofHash": "00717bb837ce8fa2ce557d182714d4c53ec4d31edb7106e7431fb357799c343b",
+    "timestamp": "2026-07-27T06:31:22.482Z",
     "regressions": 0,
     "criticalFailedPaths": [],
     "routes": [
-      {
-        "path": "/api/monitoring",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 129.78,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/operations/summary",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 110.85,
-        "contentType": "application/json"
-      },
       {
         "path": "/portal/ops/",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 56.05,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/registry/ops-summary.json",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 50.64,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/portal/dashboard/",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 45.77,
+        "timeMs": 63.86,
         "contentType": "text/html"
       },
       {
@@ -1724,15 +1949,47 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 42.06,
+        "timeMs": 50.01,
         "contentType": "application/javascript"
+      },
+      {
+        "path": "/portal/dashboard/",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 48.82,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/api/monitoring",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 48.12,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/operations/summary",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 46.07,
+        "contentType": "application/json"
       },
       {
         "path": "/registry/@factorywager/bun-utils-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 36.86,
+        "timeMs": 42.82,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/registry/ops-summary.json",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 30.68,
         "contentType": "application/json"
       },
       {
@@ -1740,23 +1997,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 353.21,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 347.77,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/registry/@factorywager/routing-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 326.04,
+        "timeMs": 380.07,
         "contentType": "application/json"
       },
       {
@@ -1764,15 +2005,39 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 304.45,
+        "timeMs": 328.03,
         "contentType": "text/html"
       },
       {
-        "path": "/monitoring",
+        "path": "/api/registry/@factorywager/routing-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 229.39,
+        "timeMs": 318.14,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 313.78,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry",
+        "status": 400,
+        "pass": true,
+        "critical": false,
+        "timeMs": 203.98,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/ready",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 201.08,
         "contentType": "text/html"
       },
       {
@@ -1780,23 +2045,23 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 134.1,
+        "timeMs": 149.75,
         "contentType": "text/html"
       },
       {
-        "path": "/ready",
+        "path": "/monitoring",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 120.82,
+        "timeMs": 133.07,
         "contentType": "text/html"
       },
       {
-        "path": "/api/registry",
-        "status": 400,
+        "path": "/registry/@factorywager/routing-test/latest.json",
+        "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 114,
+        "timeMs": 103.69,
         "contentType": "application/json"
       },
       {
@@ -1804,15 +2069,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 37.02,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/registry/@factorywager/routing-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 33.49,
+        "timeMs": 40.94,
         "contentType": "application/json"
       },
       {
@@ -1820,10 +2077,12 @@
         "status": 400,
         "pass": true,
         "critical": false,
-        "timeMs": 28.09,
+        "timeMs": 27.04,
         "contentType": "application/json"
       }
-    ]
+    ],
+    "cached": true,
+    "stale": false
   },
   "channelMeta": {
     "available": true,
@@ -1833,7 +2092,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-27T02:07:49.904Z",
+    "updatedAt": "2026-07-27T06:32:03.538Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -2050,20 +2309,20 @@
         "ok": true
       }
     ],
-    "proofHash": "76ea3ceb48d6506206d5172e2111a9fefead61c4c3084e2726344f0f7c5bdb63",
-    "timestamp": "2026-07-27T02:07:49.912Z",
+    "proofHash": "2522d86d9c54d6e7e7b65111b1b2034da6df20885254aa193e0dda5a92b8ae2e",
+    "timestamp": "2026-07-27T06:32:03.541Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-27T02:07:50.344Z",
+    "generatedAt": "2026-07-27T06:32:03.911Z",
     "partners": 4,
-    "inviteGaps": 2,
+    "inviteGaps": 4,
     "blocked": 0,
-    "operatorReady": 2,
+    "operatorReady": 4,
     "forumReady": 0,
-    "designated": 2,
+    "designated": 0,
     "verifyFailPartners": 0,
     "laneFailPartners": 4,
     "rows": [
@@ -2074,7 +2333,7 @@
         "handshakeOk": true,
         "needsPartnerInForum": true,
         "inviteLink": "https://t.me/+iBXudtg48psyMTkx",
-        "inviteSentAt": "2026-07-27T01:53:19.678Z",
+        "inviteSentAt": "2026-07-27T06:31:34.160Z",
         "dmSeatStatus": "linked",
         "callSign": "ASH-001",
         "gapCount": 1,
@@ -2094,12 +2353,12 @@
           {
             "id": "forum_invite_gap",
             "group": "forum",
-            "detail": "2·house! — invite DM sent 2026-07-27T01:53:19.678Z"
+            "detail": "2·house! — invite DM sent 2026-07-27T06:31:34.160Z"
           }
         ],
         "nextSteps": [
           "ready for welcome DM + bot commands",
-          "invite DM sent at 2026-07-27T01:53:19.678Z — awaiting partner join",
+          "invite DM sent at 2026-07-27T06:31:34.160Z — awaiting partner join",
           "join forum: https://t.me/+iBXudtg48psyMTkx"
         ]
       },
@@ -2110,7 +2369,7 @@
         "handshakeOk": true,
         "needsPartnerInForum": true,
         "inviteLink": "https://t.me/+eMgvmRzz2qpkZDYx",
-        "inviteSentAt": "2026-07-27T01:53:19.637Z",
+        "inviteSentAt": "2026-07-27T06:31:34.454Z",
         "dmSeatStatus": "linked (shared DM)",
         "callSign": "BIL-001",
         "gapCount": 1,
@@ -2130,101 +2389,85 @@
           {
             "id": "forum_invite_gap",
             "group": "forum",
-            "detail": "2·house! — invite DM sent 2026-07-27T01:53:19.637Z"
+            "detail": "2·house! — invite DM sent 2026-07-27T06:31:34.454Z"
           }
         ],
         "nextSteps": [
           "ready for welcome DM + bot commands",
-          "invite DM sent at 2026-07-27T01:53:19.637Z — awaiting partner join",
+          "invite DM sent at 2026-07-27T06:31:34.454Z — awaiting partner join",
           "join forum: https://t.me/+eMgvmRzz2qpkZDYx"
         ]
       },
       {
         "partnerCode": "NOV",
-        "phase": "designated",
-        "membershipCell": "2·house",
+        "phase": "operator_ready",
+        "membershipCell": "2·house!",
         "handshakeOk": true,
-        "needsPartnerInForum": false,
+        "needsPartnerInForum": true,
         "inviteLink": "https://t.me/+0oVv4f5CxzVhNDYx",
-        "inviteSentAt": null,
-        "dmSeatStatus": "designated (awaiting telegram)",
+        "inviteSentAt": "2026-07-27T06:31:52.798Z",
+        "dmSeatStatus": "linked (shared DM)",
         "callSign": "NOV-001",
         "gapCount": 1,
-        "topGap": "operator NOV-001 designated — telegram id not linked yet",
+        "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)",
         "verifyPassed": 10,
         "verifyTotal": 10,
         "verifyFails": [],
-        "lanesOk": 20,
-        "lanesTotal": 23,
-        "lanesBlocked": [
-          "dm_telegram",
-          "welcome_dm",
-          "bot_commands"
-        ],
+        "lanesOk": 22,
+        "lanesTotal": 24,
+        "lanesBlocked": [],
         "laneFails": [
           {
-            "id": "dm_telegram",
-            "group": "operator",
-            "detail": "awaiting bun tools/telegram-link-chat.ts"
+            "id": "forum_members",
+            "group": "forum",
+            "detail": "bot + house operator only — send forum invite (expect 3·OK when partner joins)"
           },
           {
-            "id": "welcome_dm",
-            "group": "operator",
-            "detail": "blocked until telegram link"
-          },
-          {
-            "id": "bot_commands",
-            "group": "operator",
-            "detail": "blocked until operator telegram linked"
+            "id": "forum_invite_gap",
+            "group": "forum",
+            "detail": "2·house! — invite DM sent 2026-07-27T06:31:52.798Z"
           }
         ],
         "nextSteps": [
-          "forum + routing OK — awaiting operator telegram for NOV-001",
-          "bun tools/telegram-link-chat.ts NOV-001 <telegram_user_id>  # when operator ready"
+          "ready for welcome DM + bot commands",
+          "invite DM sent at 2026-07-27T06:31:52.798Z — awaiting partner join",
+          "join forum: https://t.me/+0oVv4f5CxzVhNDYx"
         ]
       },
       {
-        "partnerCode": "PAT",
-        "phase": "designated",
-        "membershipCell": "2·house",
+        "partnerCode": "SPEN",
+        "phase": "operator_ready",
+        "membershipCell": "2·house!",
         "handshakeOk": true,
-        "needsPartnerInForum": false,
+        "needsPartnerInForum": true,
         "inviteLink": "https://t.me/+3lqb3fA0yIllM2Yx",
-        "inviteSentAt": null,
-        "dmSeatStatus": "designated (awaiting telegram)",
-        "callSign": "PAT-001",
+        "inviteSentAt": "2026-07-27T06:31:53.110Z",
+        "dmSeatStatus": "linked (shared DM)",
+        "callSign": "SPEN-001",
         "gapCount": 1,
-        "topGap": "operator PAT-001 designated — telegram id not linked yet",
+        "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)",
         "verifyPassed": 10,
         "verifyTotal": 10,
         "verifyFails": [],
-        "lanesOk": 20,
-        "lanesTotal": 23,
-        "lanesBlocked": [
-          "dm_telegram",
-          "welcome_dm",
-          "bot_commands"
-        ],
+        "lanesOk": 22,
+        "lanesTotal": 24,
+        "lanesBlocked": [],
         "laneFails": [
           {
-            "id": "dm_telegram",
-            "group": "operator",
-            "detail": "awaiting bun tools/telegram-link-chat.ts"
+            "id": "forum_members",
+            "group": "forum",
+            "detail": "bot + house operator only — send forum invite (expect 3·OK when partner joins)"
           },
           {
-            "id": "welcome_dm",
-            "group": "operator",
-            "detail": "blocked until telegram link"
-          },
-          {
-            "id": "bot_commands",
-            "group": "operator",
-            "detail": "blocked until operator telegram linked"
+            "id": "forum_invite_gap",
+            "group": "forum",
+            "detail": "2·house! — invite DM sent 2026-07-27T06:31:53.110Z"
           }
         ],
         "nextSteps": [
-          "forum + routing OK — awaiting operator telegram for PAT-001",
-          "bun tools/telegram-link-chat.ts PAT-001 <telegram_user_id>  # when operator ready"
+          "ready for welcome DM + bot commands",
+          "invite DM sent at 2026-07-27T06:31:53.110Z — awaiting partner join",
+          "join forum: https://t.me/+3lqb3fA0yIllM2Yx"
         ]
       }
     ],
@@ -2235,5 +2478,276 @@
       "readiness": "bun run telegram:handshake:readiness --invite-gap"
     },
     "catalogPath": "/registry/telegram-handshake-catalog.json"
+  },
+  "seatCapitalDesk": {
+    "available": true,
+    "path": "/registry/seat-capital-desk.json",
+    "generatedAt": "2026-07-27T06:32:03.913Z",
+    "desks": 4,
+    "blocked": 2,
+    "partial": 0,
+    "ready": 2,
+    "funded": 0,
+    "incompleteOuts": 7,
+    "rows": [
+      {
+        "callSign": "ASH-001",
+        "partnerCode": "ASH",
+        "fundStatus": "ready",
+        "fundDetail": "intake complete — FUND can proceed",
+        "outs": [
+          {
+            "outNum": "1",
+            "book": "Hard Rock Florida",
+            "username": "—",
+            "depositMethod": "Venmo",
+            "sendTo": "@ash.hr.fl",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "ready",
+            "incomplete": true,
+            "note": "WARMED seat · limits stale — confirm rails before play"
+          },
+          {
+            "outNum": "2",
+            "book": "Hard Rock Florida",
+            "username": "—",
+            "depositMethod": "Venmo",
+            "sendTo": "@ash.hr.fl",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "deferred",
+            "incomplete": false,
+            "note": "ASH-002 warming slot — assign after partner ack"
+          }
+        ],
+        "checklist": [
+          {
+            "done": true,
+            "label": "Out 1 deposit method confirmed"
+          },
+          {
+            "done": true,
+            "label": "Out 1 send-to set"
+          },
+          {
+            "done": true,
+            "label": "Out 2 deferred"
+          },
+          {
+            "done": true,
+            "label": "All books ready for FUND"
+          }
+        ],
+        "incompleteOuts": 1,
+        "pinned": false,
+        "hasTelegramDesk": true,
+        "deskUpdatedAt": "2026-07-27T06:31:17.991Z"
+      },
+      {
+        "callSign": "BIL-001",
+        "partnerCode": "BIL",
+        "fundStatus": "blocked",
+        "fundDetail": "awaiting deposit method + send-to on BIL-1",
+        "outs": [
+          {
+            "outNum": "1",
+            "book": "Partner book TBD",
+            "username": "—",
+            "depositMethod": "Venmo",
+            "sendTo": "—",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "blocked",
+            "incomplete": true,
+            "note": "Operator ready — partner assigns book + rails via desk Fill"
+          }
+        ],
+        "checklist": [
+          {
+            "done": true,
+            "label": "Out 1 deposit method confirmed"
+          },
+          {
+            "done": false,
+            "label": "Out 1 send-to set"
+          }
+        ],
+        "incompleteOuts": 1,
+        "pinned": false,
+        "hasTelegramDesk": true,
+        "deskUpdatedAt": "2026-07-27T06:31:19.515Z"
+      },
+      {
+        "callSign": "NOV-001",
+        "partnerCode": "NOV",
+        "fundStatus": "ready",
+        "fundDetail": "intake complete — FUND can proceed",
+        "outs": [
+          {
+            "outNum": "1",
+            "book": "Hard Rock Florida",
+            "username": "—",
+            "depositMethod": "Venmo",
+            "sendTo": "@nov.newpartner",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "ready",
+            "incomplete": true,
+            "note": "SouthFL PPH · ONB seat — book login pending partner ack"
+          },
+          {
+            "outNum": "2",
+            "book": "SouthFL PPH Desk",
+            "username": "—",
+            "depositMethod": "Venmo",
+            "sendTo": "@nov.newpartner",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "deferred",
+            "incomplete": false,
+            "note": "Second out slot — assign after ONB Ready"
+          }
+        ],
+        "checklist": [
+          {
+            "done": true,
+            "label": "Out 1 deposit method confirmed"
+          },
+          {
+            "done": true,
+            "label": "Out 1 send-to set"
+          },
+          {
+            "done": true,
+            "label": "Out 2 deferred"
+          },
+          {
+            "done": true,
+            "label": "All books ready for FUND"
+          }
+        ],
+        "incompleteOuts": 1,
+        "pinned": false,
+        "hasTelegramDesk": true,
+        "deskUpdatedAt": "2026-07-27T06:31:21.168Z"
+      },
+      {
+        "callSign": "SPEN-001",
+        "partnerCode": "SPEN",
+        "fundStatus": "blocked",
+        "fundDetail": "awaiting deposit method + send-to on SPEN-1",
+        "outs": [
+          {
+            "outNum": "1",
+            "book": "parlay21.com",
+            "username": "vc2013",
+            "depositMethod": "—",
+            "sendTo": "—",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "blocked",
+            "incomplete": true
+          },
+          {
+            "outNum": "2",
+            "book": "lonestarwagering.com",
+            "username": "Yungg1",
+            "depositMethod": "—",
+            "sendTo": "—",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "blocked",
+            "incomplete": true
+          },
+          {
+            "outNum": "3",
+            "book": "action92.com",
+            "username": "—",
+            "depositMethod": "—",
+            "sendTo": "—",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "blocked",
+            "incomplete": true,
+            "note": "logged in ~$17,747 (backend.action92.com)"
+          },
+          {
+            "outNum": "4",
+            "book": "betvegas23.com",
+            "username": "Henry019",
+            "depositMethod": "—",
+            "sendTo": "—",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "blocked",
+            "incomplete": true
+          },
+          {
+            "outNum": "5",
+            "book": "Orange777",
+            "username": "dmk1064",
+            "depositMethod": "—",
+            "sendTo": "—",
+            "maxBet": "—",
+            "freeplayPct": "—",
+            "status": "deferred",
+            "incomplete": false,
+            "note": "book label only — pass field was NO"
+          }
+        ],
+        "checklist": [
+          {
+            "done": false,
+            "label": "Out 1 deposit method confirmed"
+          },
+          {
+            "done": false,
+            "label": "Out 1 send-to set"
+          },
+          {
+            "done": false,
+            "label": "Out 2 deposit method confirmed"
+          },
+          {
+            "done": false,
+            "label": "Out 2 send-to set"
+          },
+          {
+            "done": false,
+            "label": "Out 3 username"
+          },
+          {
+            "done": false,
+            "label": "Out 3 deposit method confirmed"
+          },
+          {
+            "done": false,
+            "label": "Out 3 send-to set"
+          },
+          {
+            "done": false,
+            "label": "Out 4 deposit method confirmed"
+          },
+          {
+            "done": false,
+            "label": "Out 4 send-to set"
+          },
+          {
+            "done": true,
+            "label": "Out 5 deferred"
+          }
+        ],
+        "incompleteOuts": 4,
+        "pinned": false,
+        "hasTelegramDesk": true,
+        "deskUpdatedAt": "2026-07-27T06:31:16.492Z"
+      }
+    ],
+    "commands": {
+      "refresh": "bun run seat:desk:refresh",
+      "post": "bun run seat:desk:post",
+      "update": "bun run seat:desk:update"
+    }
   }
 }

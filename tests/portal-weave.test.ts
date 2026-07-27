@@ -44,5 +44,6 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/content-type-matrix.json');
     expect(arts).toContain('/registry/formdata-proof.json');
     expect(arts).toContain('/registry/package-info.json');
+    expect(arts).toContain('/registry/seat-capital-desk.json');
   });
 });

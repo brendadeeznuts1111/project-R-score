@@ -29,6 +29,77 @@
 
 ---
 
+## Forum topic plans (SSOT)
+
+Two **different** topic grammars. Do not apply house-surface topics to partner package forums (or vice versa).
+
+| Kind | One chat per | Topic SSOT (code) | Thread ids |
+|------|--------------|-------------------|------------|
+| **Partner package forum** | Partner **CODE** (`SPEN`, `ASH`, `BIL`, …) | [`package-group-forum.ts`](../../../lib/telegram/package-group-forum.ts) `PARTNER_PACKAGE_FORUM_TOPIC_PLAN` | Per chat: `reports/telegram/forums/{CODE}.json` |
+| **House surface** | Concern (`hq`, `sandbox`, `all-accounting`, …) | [`surfaces.ts`](../../../lib/telegram/surfaces.ts) `TOC_OPS_SURFACES` | Per surface via `TELEGRAM_SURFACES` env |
+
+Machine dump: `bun run telegram:handshake:catalog --json` → `packageForumTopics` · `houseForumTopics`.
+
+### Partner package forum (same for every partner)
+
+Title grammar: `TOC Ops · {CODE} · {DisplayName}`. **Identical topic titles** on every linked partner forum. Only numeric thread ids differ per chat.
+
+| Topic title | `topicsThreadMap` key | Role |
+|-------------|----------------------|------|
+| General | `general` | Implicit thread `1` |
+| Ops | `ops` | House ops |
+| Alerts | `alerts` | Outbox alerts |
+| Liquidity/Outs | `liquidity/outs` | Pinned seat desk + rails pipe |
+| Accounting | `accounting` | Deposit/withdraw proof |
+
+Map key rule: **`title.toLowerCase()`** — titles are case-sensitive Bot API names (`Liquidity/Outs`, not `Liquidity-Outs`).
+
+Ensure full plan on all linked partners:
+
+```bash
+bun run telegram:package-group:enhance CODE --ensure-topics
+bun run telegram:package-group:accounting
+```
+
+### House surfaces (not partner forums)
+
+| Surface slug | Group title | Forum topics |
+|--------------|-------------|--------------|
+| `hq` | TOC Ops · HQ | alerts · day-ops · aar · identity |
+| `ash-staging` | TOC Ops · ASH · staging | plays · balances · onboard · alerts |
+| `all-accounting` | TOC Ops · Accounting | Deposits · Withdrawals · Reconcile |
+| `sandbox` | TOC Ops · sandbox | scratch · experiments |
+
+Partners post proof in **their package forum · Accounting** topic. Ops may mirror in **`all-accounting`** (separate supergroup).
+
+`TELEGRAM_SURFACES` key `pkg-{code}` binds the **chat id** only — topic routing for package forums comes from `reports/telegram/forums/{CODE}.json`, not from house `TELEGRAM_TOPICS`.
+
+**Catalog research agent** — compares catalog + live forum metadata and proposes enhancements (icons, pinned templates, missing topics):
+
+```bash
+bun run telegram:catalog:research          # write reports/telegram/catalog-enhancements.json
+bun run telegram:catalog:research --json   # stdout only
+bun run telegram:catalog:research --llm    # optional LLM pass (OPENAI_API_KEY)
+```
+
+Code: [`lib/telegram/catalog-research/`](../../../lib/telegram/catalog-research/) · schema `factorywager.telegram-catalog-enhancement.v1`
+
+**Daily cron (Reasonix / OS Bun.cron — primary):**
+
+```bash
+bun run telegram:catalog:research:cron:preview    # next fire times + system TZ
+bun run telegram:catalog:research:cron:register   # launchd @ 07:00 system local
+bun run telegram:catalog:research:once            # manual tick (structured JSON report)
+bun run telegram:catalog:apply-enhancements       # merge safe changes → catalog-overrides.json
+bun run telegram:catalog:research:cron:remove     # uninstall
+```
+
+Worker pipeline: **load catalog → gather Bot API signals → deterministic + optional LLM → `catalog-enhancements.json`**.
+
+Env: `TELEGRAM_CATALOG_RESEARCH_TZ=America/New_York` · `TELEGRAM_CATALOG_RESEARCH_APPLY_SAFE=1` (auto-merge icon metadata) · `OPENAI_API_KEY` (LLM pass). macOS logs: `/tmp/bun.cron.telegram-catalog-research.stdout.log`.
+
+---
+
 ## Nomenclature
 
 | Concept | Example | Notes |
@@ -330,21 +401,39 @@ Future: MTProto auto-create — **implemented** (Decision #52). See [`toc-ops-re
 
 ### Forum metadata (`reports/telegram/forums/{CODE}.json`)
 
-Written by MTProto `package-group-create-forum` or backfilled for manual forums:
+Written by MTProto `package-group-create-forum`, Bot API `package-group-forum-enhance`, or backfilled for manual forums:
 
 ```bash
 cd toc-ops-repo
 bun run forum-metadata-backfill ASH PAT NOV BIL --apply --factory-db ../data/operations.db
+
+# Factory Bot API — icon + Ops/Alerts/Liquidity/Outs/Accounting topics
+bun run telegram:package-group:enhance ASH --ensure-topics
+bun run telegram:package-group:accounting              # all linked partners
+bun run telegram:package-group:enhance SPEN --accounting-prompt
 ```
 
 Factory verify reads metadata when present (`forum_metadata` check in `verify-package-group-handshake.ts`).
 
+Topic plan: see **[Forum topic plans (SSOT)](#forum-topic-plans-ssot)** above — five topics, identical titles per partner.
+
 | Field | Notes |
 |-------|-------|
 | `chatId` / `chatRef` | Must match registry + wired ack |
-| `topics` | `General` → thread `1` (implicit); `Ops` / `Alerts` via MTProto or unknown when backfilled |
+| `topics` | Five-topic plan above; `topicsComplete` when every thread id is set |
+| `topicsThreadMap` | Lowercase title keys — e.g. `liquidity/outs`, `accounting` |
+| `accountingPromptMessageId` | Set when Accounting bootstrap prompt posted once |
+| `accountingPromptPostedAt` | ISO timestamp of accounting prompt |
 | `iconUploaded` | `true` when Bun.Image JPEG uploaded via MTProto `EditPhoto` |
 | `backfilled` | `true` for manual forums without MTProto branding |
+
+**Accounting bootstrap** — `@TOC_Op_bot` needs **Manage Topics** to create the Accounting thread via Bot API. When missing, create the topic manually and post:
+
+```bash
+bun run seat:desk:accounting-prompt SPEN-001 --thread-id 37 --post
+```
+
+Every desk publish/refresh also tries `ensurePartnerForumAccounting` (non-blocking). See [`seat-capital-desk.md`](seat-capital-desk.md).
 
 ---
 

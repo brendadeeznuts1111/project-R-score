@@ -1,0 +1,250 @@
+{
+  "schema": "factorywager.seat-capital-desk.v1",
+  "generatedAt": "2026-07-27T07:13:19.193Z",
+  "desks": 4,
+  "blocked": 0,
+  "partial": 0,
+  "ready": 4,
+  "funded": 0,
+  "incompleteOuts": 3,
+  "rows": [
+    {
+      "callSign": "ASH-001",
+      "partnerCode": "ASH",
+      "fundStatus": "ready",
+      "fundDetail": "intake complete — FUND can proceed",
+      "outs": [
+        {
+          "outNum": "1",
+          "book": "Hard Rock Florida",
+          "username": "—",
+          "depositMethod": "Venmo",
+          "sendTo": "@ash.hr.fl",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "ready",
+          "incomplete": true,
+          "note": "WARMED seat · limits stale — confirm rails before play"
+        },
+        {
+          "outNum": "2",
+          "book": "Hard Rock Florida",
+          "username": "—",
+          "depositMethod": "Venmo",
+          "sendTo": "@ash.hr.fl",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "deferred",
+          "incomplete": false,
+          "note": "ASH-002 warming slot — assign after partner ack"
+        }
+      ],
+      "checklist": [
+        {
+          "done": true,
+          "label": "Out 1 deposit method confirmed"
+        },
+        {
+          "done": true,
+          "label": "Out 1 send-to set"
+        },
+        {
+          "done": true,
+          "label": "Out 2 deferred"
+        },
+        {
+          "done": true,
+          "label": "All books ready for FUND"
+        }
+      ],
+      "incompleteOuts": 1,
+      "pinned": false,
+      "hasTelegramDesk": true,
+      "deskUpdatedAt": "2026-07-27T06:38:49.933Z"
+    },
+    {
+      "callSign": "BIL-001",
+      "partnerCode": "BIL",
+      "fundStatus": "ready",
+      "fundDetail": "intake complete — FUND can proceed",
+      "outs": [
+        {
+          "outNum": "1",
+          "book": "Partner book TBD",
+          "username": "—",
+          "depositMethod": "Venmo",
+          "sendTo": "@bil.newpartner",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "ready",
+          "incomplete": true,
+          "note": "Operator ready — partner assigns book + rails via desk Fill"
+        }
+      ],
+      "checklist": [
+        {
+          "done": true,
+          "label": "Out 1 deposit method confirmed"
+        },
+        {
+          "done": true,
+          "label": "Out 1 send-to set"
+        },
+        {
+          "done": true,
+          "label": "All books ready for FUND"
+        }
+      ],
+      "incompleteOuts": 1,
+      "pinned": false,
+      "hasTelegramDesk": true,
+      "deskUpdatedAt": "2026-07-27T07:12:59.891Z"
+    },
+    {
+      "callSign": "NOV-001",
+      "partnerCode": "NOV",
+      "fundStatus": "ready",
+      "fundDetail": "intake complete — FUND can proceed",
+      "outs": [
+        {
+          "outNum": "1",
+          "book": "Hard Rock Florida",
+          "username": "—",
+          "depositMethod": "Venmo",
+          "sendTo": "@nov.newpartner",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "ready",
+          "incomplete": true,
+          "note": "SouthFL PPH · ONB seat — book login pending partner ack"
+        },
+        {
+          "outNum": "2",
+          "book": "SouthFL PPH Desk",
+          "username": "—",
+          "depositMethod": "Venmo",
+          "sendTo": "@nov.newpartner",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "deferred",
+          "incomplete": false,
+          "note": "Second out slot — assign after ONB Ready"
+        }
+      ],
+      "checklist": [
+        {
+          "done": true,
+          "label": "Out 1 deposit method confirmed"
+        },
+        {
+          "done": true,
+          "label": "Out 1 send-to set"
+        },
+        {
+          "done": true,
+          "label": "Out 2 deferred"
+        },
+        {
+          "done": true,
+          "label": "All books ready for FUND"
+        }
+      ],
+      "incompleteOuts": 1,
+      "pinned": false,
+      "hasTelegramDesk": true,
+      "deskUpdatedAt": "2026-07-27T06:38:52.087Z"
+    },
+    {
+      "callSign": "SPEN-001",
+      "partnerCode": "SPEN",
+      "fundStatus": "ready",
+      "fundDetail": "intake complete — FUND can proceed",
+      "outs": [
+        {
+          "outNum": "1",
+          "book": "parlay21.com",
+          "username": "vc2013",
+          "depositMethod": "Venmo",
+          "sendTo": "@spen.newpartner",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "ready",
+          "incomplete": false
+        },
+        {
+          "outNum": "2",
+          "book": "lonestarwagering.com",
+          "username": "Yungg1",
+          "depositMethod": "Venmo",
+          "sendTo": "@spen.newpartner",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "ready",
+          "incomplete": false
+        },
+        {
+          "outNum": "3",
+          "book": "action92.com",
+          "username": "action92",
+          "depositMethod": "Venmo",
+          "sendTo": "@spen.newpartner",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "ready",
+          "incomplete": false,
+          "note": "logged in ~$17,747 (backend.action92.com)"
+        },
+        {
+          "outNum": "4",
+          "book": "betvegas23.com",
+          "username": "Henry019",
+          "depositMethod": "Venmo",
+          "sendTo": "@spen.newpartner",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "ready",
+          "incomplete": false
+        },
+        {
+          "outNum": "5",
+          "book": "Orange777",
+          "username": "dmk1064",
+          "depositMethod": "Venmo",
+          "sendTo": "@spen.newpartner",
+          "maxBet": "—",
+          "freeplayPct": "—",
+          "status": "deferred",
+          "incomplete": false,
+          "note": "book label only — pass field was NO"
+        }
+      ],
+      "checklist": [
+        {
+          "done": true,
+          "label": "Out 1 deposit method confirmed"
+        },
+        {
+          "done": true,
+          "label": "Out 1 send-to set"
+        },
+        {
+          "done": true,
+          "label": "Out 5 deferred"
+        },
+        {
+          "done": true,
+          "label": "All books ready for FUND"
+        }
+      ],
+      "incompleteOuts": 0,
+      "pinned": true,
+      "hasTelegramDesk": true,
+      "deskUpdatedAt": "2026-07-27T07:13:10.974Z"
+    }
+  ],
+  "commands": {
+    "refresh": "bun run seat:desk:refresh",
+    "post": "bun run seat:desk:post",
+    "update": "bun run seat:desk:update"
+  }
+}

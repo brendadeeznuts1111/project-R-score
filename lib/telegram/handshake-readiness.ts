@@ -20,6 +20,7 @@ import { getKnownChatById } from './known-chats.ts';
 import {
   formatMembershipDeskCell,
   interpretPackageGroupMemberCount,
+  probeLinkedSeatInForum,
   type PackageGroupMembershipTell,
 } from './package-group-membership.ts';
 import {
@@ -99,8 +100,24 @@ export async function assessHandshakeReadiness(opts: {
   const reg = getPackageGroupRegistry(opts.db, opts.partnerCode);
   const dmSeat = assessPackageGroupDmSeat(opts.db, opts.partnerCode);
   const known = reg ? getKnownChatById(opts.db, reg.chatId) : null;
+
+  let linkedSeatInForum = false;
+  if (
+    opts.telegramToken &&
+    reg &&
+    dmSeat.telegramId &&
+    (dmSeat.status === 'linked' || dmSeat.status === 'shared')
+  ) {
+    linkedSeatInForum = await probeLinkedSeatInForum(
+      opts.telegramToken,
+      reg.chatId,
+      dmSeat.telegramId
+    );
+  }
+
   const membershipTell = interpretPackageGroupMemberCount(known?.memberCount ?? null, {
     dmSeatStatus: dmSeat.status,
+    linkedSeatInForum,
   });
   const meta = reg
     ? await loadPackageGroupForumMetadata(reg.partnerCode, { rootDir: forumsMetaDir })
@@ -203,6 +220,7 @@ export async function assessHandshakeReadiness(opts: {
           partnerCode: opts.partnerCode,
           jsonlPath: opts.jsonlPath ?? PENDING_PACKAGE_GROUPS_JSONL,
           forumsMetaDir,
+          telegramToken: opts.telegramToken,
         })
       : undefined,
   };

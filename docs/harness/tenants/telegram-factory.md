@@ -23,6 +23,8 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 
 **Package group bridge:** [`partner-package-group-handshake.md`](partner-package-group-handshake.md) · machine ref: `bun run telegram:handshake:catalog`
 
+**Seat capital desk** (pinned Liquidity/Outs table + Fill keyboard): [`seat-capital-desk.md`](seat-capital-desk.md) · `bun run seat:desk:refresh SPEN-001`
+
 **Soft assist** (after factory JSONL): `bun run ct package-group-pending` · `bun run ct package-group-wire CODE --chat tg:chat:-100… --apply --ack` (in `toc-ops-repo`).
 
 Transport health API: [`lib/telegram/telegram-transport-health.ts`](../../../lib/telegram/telegram-transport-health.ts) · `bun run telegram:verify -- --json`
@@ -48,6 +50,7 @@ Broadcast audits each attempt in `ops_broadcast_log`. Sends go through rate-limi
 
 | Slug | Title format | Topics (inside the group) |
 |------|----------------|---------------------------|
+| `all-accounting` | `TOC Ops · Accounting` | Deposits · Withdrawals · Reconcile |
 | `hq` | `TOC Ops · HQ` | alerts · day-ops · aar · identity |
 | `ash-staging` | `TOC Ops · ASH · staging` | plays · balances · onboard · alerts |
 | `sandbox` | `TOC Ops · sandbox` | scratch · experiments |
@@ -61,7 +64,9 @@ Grammar (middle-dot U+00B7):
 | Sandbox | `TOC Ops · sandbox` | experiments |
 | Partner package (ct) | `TOC Ops · {CODE} · {DisplayName}` | `TOC Ops · BILLY · Billy Ops` |
 
-Factory SSOT: [`lib/telegram/surfaces.ts`](../../../lib/telegram/surfaces.ts). Package titles in Soft desk: [`toc-ops-repo` telegram-surfaces](../../../toc-ops-repo/src/central-tool/telegram-surfaces.ts). Bind chat ids with `TELEGRAM_SURFACES` JSON; primary projector fallback remains `TELEGRAM_OPS_CHAT_ID`.
+**Partner package forum topics** — identical for every partner CODE. Full plan: [partner-package-group-handshake.md § Forum topic plans](partner-package-group-handshake.md#forum-topic-plans-ssot) · code `PARTNER_PACKAGE_FORUM_TOPIC_PLAN` · `bun run telegram:handshake:catalog --json`.
+
+Factory SSOT: [`lib/telegram/surfaces.ts`](../../../lib/telegram/surfaces.ts) (house surfaces only). Package titles in Soft desk: [`toc-ops-repo` telegram-surfaces](../../../toc-ops-repo/src/central-tool/telegram-surfaces.ts). Bind chat ids with `TELEGRAM_SURFACES` JSON (`pkg-{code}` for package forums); primary projector fallback remains `TELEGRAM_OPS_CHAT_ID`.
 
 **Outbox routing (no DM `telegramId`):** `alerts`/`dod`/`toc` → `hq` · `plays`/`identity`/`provisioning` → `ash-staging` · `experiments` → `sandbox` · else `TELEGRAM_OPS_CHAT_ID`. Directory tags `surface_slug` from title/env. Broadcast: `telegram:ops -- send --surface ash-staging --all …`. ACL: `/register` DM-only · `/deploy` needs portal admin or `OPS_ADMIN_USER_IDS`.
 
@@ -88,7 +93,8 @@ Token SSOT: [`loadTelegramEnv()`](../../../lib/telegram/telegram-config.ts) → 
 | `TELEGRAM_BOT_FACTORY` | Yes (or legacy `TELEGRAM_BOT_TOKEN`) | Factory tenant token — [`config/tenants.ts`](../../../config/tenants.ts) |
 | `TELEGRAM_WEBHOOK_SECRET` | Required on Pages | Same value in local `.env` + Pages Variables/Secrets (prod+preview). Without it the edge webhook returns **503**. Redeploy after setting. |
 | `TELEGRAM_OPS_CHAT_ID` | For group alerts | Supergroup id when outbox row has no `telegramId` |
-| `TELEGRAM_SURFACES` | Recommended | JSON slug→chat_id — house (`hq`, `ash-staging`, `sandbox`) + package `pkg-{code}`; see `telegram:handshake:catalog` |
+| `TELEGRAM_SURFACES` | Recommended | JSON slug→chat_id — house (`hq`, `all-accounting`, `ash-staging`, `sandbox`) + package `pkg-{code}`; see `telegram:handshake:catalog` |
+| `TELEGRAM_ACCOUNTING_CHAT_ID` | Optional | Cross-partner accounting rollup supergroup (also sets `all-accounting` in surfaces map) |
 | `TELEGRAM_TOPICS` | For forum threads | JSON map → `message_thread_id` (see below) |
 | `TELEGRAM_RATE_LIMIT_MIN_INTERVAL_MS` | Optional | Default `34` (~29 msg/s; Telegram ~30/s) |
 
@@ -96,7 +102,11 @@ Science / tennis tenants use `TELEGRAM_BOT_SCIENCE` / `TELEGRAM_BOT_TENNIS` (sam
 
 ## Forum topics (`TELEGRAM_TOPICS`)
 
-For supergroups with **Topics** enabled, route group posts to the correct thread:
+Routes outbox posts to threads inside a **house** supergroup (HQ, staging, sandbox). **Not** used for partner package forum thread ids — those live in `reports/telegram/forums/{CODE}.json`.
+
+Partner vs house topic plans: [partner-package-group-handshake.md § Forum topic plans](partner-package-group-handshake.md#forum-topic-plans-ssot).
+
+Example (house HQ):
 
 ```json
 {"ops": 2, "alerts": 5, "toc": 8, "plays": 3, "welcome": 0}
@@ -120,14 +130,17 @@ No rate limiter on `getMe` / webhook setup (infrequent).
 
 | Method | Module | Used for |
 |--------|--------|----------|
-| `sendMessage` | `telegram-api.ts` | Outbox projector, webhook replies, consumer |
-| `answerCallbackQuery` | `telegram-api.ts` | Play inline keyboard ack |
+| `sendMessage` | `telegram-api.ts` | Outbox projector, webhook replies, ForceReply prompts |
+| `sendRichMessage` | `telegram-api.ts` | Seat capital desk (Bot API 10.1 `InputRichMessage`) |
+| `editMessageText` | `telegram-api.ts` | Flow deliver + rich desk updates |
+| `editMessageReplyMarkup` | `telegram-api.ts` | Seat desk Fill wizard (keyboard-only edits) |
+| `answerCallbackQuery` | `telegram-api.ts` | Play + seat desk (`sd:*`) inline ack |
 | `setMyCommands` | `telegram-api.ts` | `telegram:factory:setup` |
 | `getMe` | `telegram-api.ts` | `telegram:verify` |
 | `getWebhookInfo` | `telegram-api.ts` | `telegram:verify` |
 | `setWebhook` | `tools/telegram-bot-setup.ts` | Webhook URL → Pages edge enqueue |
 
-Canonical API reference: [Telegram Bot API](https://core.telegram.org/bots/api).
+Canonical API reference: [Telegram Bot API](https://core.telegram.org/bots/api) · MTProto rich text (client TL, not bot wire): [RichText](https://core.telegram.org/type/RichText)
 
 ## Architecture
 

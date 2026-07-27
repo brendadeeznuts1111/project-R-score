@@ -25,6 +25,10 @@ import {
   loadTelegramHandshakeSummarySlice,
   type TelegramHandshakeSummarySlice,
 } from '../telegram/handshake-snapshot.ts';
+import {
+  loadSeatCapitalDeskSummarySlice,
+  type SeatCapitalDeskSummarySlice,
+} from '../telegram/seat-desk-snapshot.ts';
 
 export type OpsSummaryExpert = {
   name: string;
@@ -211,6 +215,9 @@ export type OpsSummaryLoop = OpsLoopMetricsSlice;
 /** Package-group Telegram handshake (registry + readiness + invite gaps). */
 export type OpsSummaryTelegramHandshake = TelegramHandshakeSummarySlice;
 
+/** SPEN seat capital desk (FUND status · outs · checklist, no passwords). */
+export type OpsSummarySeatCapitalDesk = SeatCapitalDeskSummarySlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -288,6 +295,11 @@ export type OpsSummaryPayload = {
    * (`ops:snapshot` / `exportTelegramHandshakeSnapshot`).
    */
   telegramHandshake: OpsSummaryTelegramHandshake;
+  /**
+   * SPEN seat capital desk bake from public/registry/seat-capital-desk.json
+   * (`ops:snapshot` / `exportSeatCapitalDeskSnapshot`).
+   */
+  seatCapitalDesk: OpsSummarySeatCapitalDesk;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -852,5 +864,6 @@ export function buildOpsSummary(
       });
     })(),
     telegramHandshake: loadTelegramHandshakeSummarySlice(),
+    seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
   };
 }

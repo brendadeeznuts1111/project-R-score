@@ -23,6 +23,7 @@ import {
   resolvePrimaryOpsChatId,
   titleForSurface,
   topicsForSurface,
+  forumTopicNamesForSurface,
   topicsMapFromCreated,
 } from '../lib/telegram/branding.ts';
 import { upsertKnownChat } from '../lib/telegram/known-chats.ts';
@@ -41,7 +42,6 @@ import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 const BUILTIN_SURFACE_CHATS: Record<string, string> = {
   // brand-ok — Telegram chat_id wire
   'ash-staging': '-1003937534779',
-  sandbox: '-1004400413853',
 };
 
 function resolveSurfaceBindings(): Array<{ chatId: string; surface: string }> {
@@ -136,7 +136,7 @@ async function main(): Promise<void> {
   if (!botOnly) {
     for (const { chatId, surface } of chats) {
       const title = titleForSurface(surface);
-      const topicPlan = topicsForSurface(surface);
+      const topicPlan = forumTopicNamesForSurface(surface);
       console.log(`→ Group ${chatId} [${surface}] → ${title}`);
       console.log(`   topics plan: ${topicPlan.join(' · ') || '(none)'}`);
       const chatProbe = await getChat(token, chatId);

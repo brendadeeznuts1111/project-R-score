@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
- * Bot API package-group forum enhance — icon + Ops/Alerts topics (no MTProto).
+ * Bot API package-group forum enhance — icon + Ops/Alerts/Liquidity/Accounting topics (no MTProto).
  *
  * General stays implicit thread 1 — never createForumTopic for it.
  */
@@ -171,6 +171,8 @@ export async function enhancePackageGroupForum(
     backfilled: existingMeta?.backfilled,
     topicsComplete,
     topicsThreadMap: packageGroupTopicsThreadMap(topics),
+    accountingPromptMessageId: existingMeta?.accountingPromptMessageId,
+    accountingPromptPostedAt: existingMeta?.accountingPromptPostedAt,
     createdAt: existingMeta?.createdAt ?? new Date().toISOString(),
   };
 

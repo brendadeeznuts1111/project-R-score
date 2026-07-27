@@ -1,10 +1,18 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
- * Package-group forum metadata + topic SSOT (factory read plane).
+ * Partner package-group forum metadata + topic SSOT (factory read plane).
  *
- * Written by toc-ops MTProto create-forum; consumed by handshake verify + desk tooling.
- * Keep topic lists aligned with toc-ops-repo `forum-defaults.ts`.
+ * **Partner package forums** (`TOC Ops · {CODE} · {DisplayName}`) share one topic plan
+ * for every partner — see `PARTNER_PACKAGE_FORUM_TOPIC_PLAN` / `PACKAGE_GROUP_FORUM_TOPICS`.
+ * Thread ids differ per chat; titles and map keys do not.
+ *
+ * **House surfaces** (`hq`, `sandbox`, `all-accounting`, …) use a separate topic grammar —
+ * see `lib/telegram/surfaces.ts` · `HANDSHAKE_HOUSE_FORUM_TOPICS` in handshake-catalog.
+ *
+ * Written by toc-ops MTProto create-forum or factory Bot API enhance; consumed by handshake verify + desk tooling.
+ *
+ * Map key rule: `title.toLowerCase()` (e.g. `Liquidity/Outs` → `liquidity/outs`).
  */
 import type { Database } from 'bun:sqlite';
 import type { OpsChannelTopic } from '../channels/ops-channel-event.ts';
@@ -12,10 +20,74 @@ import { joinPath } from '../path-bun.ts';
 import { packageGroupRegistryByChatId } from './package-group-registry.ts';
 
 /** Full topic plan shown to operators (General is implicit thread 1). */
-export const PACKAGE_GROUP_FORUM_TOPICS = ['General', 'Ops', 'Alerts'] as const;
+export const PACKAGE_GROUP_FORUM_TOPICS = [
+  'General',
+  'Ops',
+  'Alerts',
+  'Liquidity/Outs',
+  'Accounting',
+] as const;
 
-/** Topics created via MTProto `CreateForumTopic` (not General). */
-export const PACKAGE_GROUP_FORUM_TOPICS_MTProto = ['Ops', 'Alerts'] as const;
+/** Topics created via MTProto / Bot API `createForumTopic` (not General). */
+export const PACKAGE_GROUP_FORUM_TOPICS_MTProto = [
+  'Ops',
+  'Alerts',
+  'Liquidity/Outs',
+  'Accounting',
+] as const;
+
+/** `topicsThreadMap` keys for package forums (aligned to topic titles). */
+export const PACKAGE_GROUP_FORUM_TOPIC_KEYS = {
+  general: 'general',
+  ops: 'ops',
+  alerts: 'alerts',
+  liquidityOuts: 'liquidity/outs',
+  accounting: 'accounting',
+} as const;
+
+/** @deprecated Prefer `PACKAGE_GROUP_FORUM_TOPIC_KEYS.liquidityOuts`. */
+export const PACKAGE_GROUP_LIQUIDITY_OUTS_TOPIC_KEY = PACKAGE_GROUP_FORUM_TOPIC_KEYS.liquidityOuts;
+
+/** @deprecated Prefer `PACKAGE_GROUP_FORUM_TOPIC_KEYS.accounting`. */
+export const PACKAGE_GROUP_ACCOUNTING_TOPIC_KEY = PACKAGE_GROUP_FORUM_TOPIC_KEYS.accounting;
+
+/** One row in the standardized partner package forum topic plan. */
+export type PartnerPackageForumTopicPlanRow = {
+  /** Bot API / Telegram topic title (case-sensitive). */
+  title: (typeof PACKAGE_GROUP_FORUM_TOPICS)[number];
+  /** Key in `topicsThreadMap` and routing lookups. */
+  mapKey: string;
+  role: string;
+  /** Created via `createForumTopic` (false for implicit General). */
+  botCreated: boolean;
+};
+
+/**
+ * Partner package forum topic plan — identical for every partner CODE (SPEN, ASH, BIL, …).
+ * Machine ref: `bun run telegram:handshake:catalog --json` → `packageForumTopics`.
+ */
+export const PARTNER_PACKAGE_FORUM_TOPIC_PLAN: readonly PartnerPackageForumTopicPlanRow[] = [
+  { title: 'General', mapKey: 'general', role: 'Implicit thread 1', botCreated: false },
+  { title: 'Ops', mapKey: 'ops', role: 'House ops posts', botCreated: true },
+  { title: 'Alerts', mapKey: 'alerts', role: 'Outbox alerts routing', botCreated: true },
+  {
+    title: 'Liquidity/Outs',
+    mapKey: 'liquidity/outs',
+    role: 'Pinned seat capital desk + rails pipe intake',
+    botCreated: true,
+  },
+  {
+    title: 'Accounting',
+    mapKey: 'accounting',
+    role: 'Deposit/withdraw/bet-slip proof (screenshots)',
+    botCreated: true,
+  },
+] as const;
+
+/** Map a partner forum topic title to its `topicsThreadMap` key. */
+export function packageGroupTopicMapKey(title: string): string {
+  return title.trim().toLowerCase();
+}
 
 export const PACKAGE_GROUP_FORUMS_META_DIR = 'reports/telegram/forums';
 
@@ -37,6 +109,9 @@ export type PackageGroupForumMetadata = {
   backfilled?: boolean;
   topicsComplete?: boolean;
   topicsThreadMap?: Record<string, number>;
+  /** Pinned accounting topic prompt (partner forum). */
+  accountingPromptMessageId?: number;
+  accountingPromptPostedAt?: string;
   createdAt: string;
   updatedAt?: string;
 };
@@ -59,7 +134,7 @@ export function packageGroupTopicsThreadMap(
   const out: Record<string, number> = { general: 1 };
   for (const t of topics) {
     if (t.messageThreadId != null && t.messageThreadId > 0) {
-      out[t.title.toLowerCase()] = t.messageThreadId;
+      out[packageGroupTopicMapKey(t.title)] = t.messageThreadId;
     }
   }
   return out;
@@ -101,6 +176,10 @@ export function parsePackageGroupForumMetadata(raw: unknown): PackageGroupForumM
       o.topicsThreadMap && typeof o.topicsThreadMap === 'object'
         ? (o.topicsThreadMap as Record<string, number>)
         : undefined,
+    accountingPromptMessageId:
+      typeof o.accountingPromptMessageId === 'number' ? o.accountingPromptMessageId : undefined,
+    accountingPromptPostedAt:
+      typeof o.accountingPromptPostedAt === 'string' ? o.accountingPromptPostedAt : undefined,
     createdAt: typeof o.createdAt === 'string' ? o.createdAt : new Date(0).toISOString(),
     updatedAt: typeof o.updatedAt === 'string' ? o.updatedAt : undefined,
   };
@@ -149,6 +228,30 @@ export async function savePackageGroupForumMetadata(
   };
   await Bun.write(path, `${JSON.stringify(enriched, null, 2)}\n`);
   return path;
+}
+
+/** Register a live forum topic thread id (manual create or toc-ops sync bootstrap). */
+export async function registerPackageGroupForumTopic(
+  partnerCode: string,
+  title: string,
+  messageThreadId: number,
+  opts?: { rootDir?: string }
+): Promise<{ path: string; meta: PackageGroupForumMetadata }> {
+  if (messageThreadId <= 0) {
+    throw new Error(`Invalid messageThreadId for ${title}`);
+  }
+  const code = partnerCode.toUpperCase().trim();
+  const existing = await loadPackageGroupForumMetadata(code, opts);
+  if (!existing) {
+    throw new Error(`No forum metadata for ${code}`);
+  }
+  const topics = [...existing.topics];
+  const idx = topics.findIndex(t => t.title.toLowerCase() === title.toLowerCase());
+  if (idx >= 0) topics[idx] = { title: topics[idx]!.title, messageThreadId };
+  else topics.push({ title, messageThreadId });
+  const meta: PackageGroupForumMetadata = { ...existing, topics };
+  const path = await savePackageGroupForumMetadata(meta, opts);
+  return { path, meta: (await loadPackageGroupForumMetadata(code, opts))! };
 }
 
 export async function loadPackageGroupForumMetadata(
@@ -232,6 +335,27 @@ export async function resolvePackageGroupTopicsForChat(
   };
 }
 
+/** Resolve a forum thread by logical topic key (`liquidity/outs`, `accounting`, …). */
+export async function resolvePackageGroupForumThread(
+  partnerCode: string,
+  topicKey: string,
+  forumsMetaDir = PACKAGE_GROUP_FORUMS_META_DIR
+): Promise<{ chatId: string; messageThreadId: number }> {
+  // brand-ok — Telegram chat_id wire
+  const code = partnerCode.toUpperCase().trim();
+  const key = topicKey.toLowerCase();
+  const meta = await loadPackageGroupForumMetadata(code, { rootDir: forumsMetaDir });
+  if (!meta?.chatId) {
+    throw new Error(`No forum metadata for ${code}`);
+  }
+  const map = meta.topicsThreadMap ?? packageGroupTopicsThreadMap(meta.topics);
+  const threadId = map[key];
+  if (threadId == null || threadId <= 0) {
+    throw new Error(`No ${key} topic for ${code}`);
+  }
+  return { chatId: meta.chatId, messageThreadId: threadId };
+}
+
 /**
  * Forum thread for ops outbox rows posted to a package-group chat.
  * Keys are lowercase (`general`, `ops`, `alerts`) from metadata `topicsThreadMap`.
@@ -252,7 +376,7 @@ export function threadIdForPackageGroupOutboxTopic(
     plays: ['ops', 'plays'],
     provisioning: ['ops', 'provisioning', 'onboard'],
     identity: ['ops', 'identity', 'welcome'],
-    toc: ['ops', 'toc'],
+    toc: ['liquidity/outs', 'ops', 'toc'],
     experiments: ['general', 'experiments'],
   };
 
@@ -268,8 +392,9 @@ export function threadIdForPackageGroupOutboxTopic(
 export function formatPackageGroupTopicsHandoff(meta: PackageGroupForumMetadata): string[] {
   const map = meta.topicsThreadMap ?? packageGroupTopicsThreadMap(meta.topics);
   const compact = JSON.stringify(map);
-  return [
-    `TELEGRAM_TOPICS=${compact}`,
-    `  general=${map.general ?? 1}  ops=${map.ops ?? '?'}  alerts=${map.alerts ?? '?'}`,
-  ];
+  const threads = Object.entries(map)
+    .filter(([key]) => key !== 'general')
+    .map(([key, id]) => `${key}=${id}`)
+    .join('  ');
+  return [`TELEGRAM_TOPICS=${compact}`, `  general=${map.general ?? 1}  ${threads}`];
 }

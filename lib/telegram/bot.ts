@@ -20,6 +20,8 @@ import { gateFactoryCommand } from './ops-acl.ts';
 import { dispatchOpsFlowOutput } from './ops-commands.ts';
 import { tryObserveKnownChats } from './known-chats.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
+import { handleSeatDeskCallback, isSeatDeskCallback } from './seat-desk-callback.ts';
+import { handleSeatDeskReply } from './seat-desk-reply.ts';
 import type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
 
 export type { TelegramCallbackQuery, TelegramMessage, TelegramUpdate } from './telegram-update.ts';
@@ -175,7 +177,23 @@ export class TelegramBot {
       return;
     }
 
-    if (!text.startsWith('/')) return;
+    if (!text.startsWith('/')) {
+      if ((deps.tenant.id as string) === 'factory') {
+        const token = resolveTelegramToken(deps.env, deps.tenant);
+        if (token) {
+          const seatReply = await handleSeatDeskReply({
+            token,
+            userId: String(msg.from.id),
+            chatId: String(msg.chat.id),
+            text,
+            replyToMessageId: msg.reply_to_message?.message_id,
+            messageThreadId: msg.message_thread_id,
+          });
+          if (seatReply.handled) return;
+        }
+      }
+      return;
+    }
     const [command, ...argParts] = text.split(/\s+/);
     const cmd = this.commands.get(command!);
     if (!cmd) {
@@ -238,9 +256,28 @@ export class TelegramBot {
     const token = resolveTelegramToken(deps.env, deps.tenant);
     if (!token) return;
 
+    const data = cq.data?.trim() ?? '';
     const telegramUserId = String(cq.from.id);
     const chatId = String(cq.message?.chat.id ?? cq.from.id);
     const msgId = (cq as { message?: { message_id?: number } }).message?.message_id;
+    const threadId = cq.message?.message_thread_id;
+
+    if (isSeatDeskCallback(data)) {
+      const seatResult = await handleSeatDeskCallback({
+        token,
+        data,
+        chatId,
+        messageId: typeof msgId === 'number' ? msgId : 0,
+        userId: telegramUserId,
+        messageThreadId: threadId,
+      });
+      await answerCallbackQuery(
+        token,
+        cq.id,
+        seatResult?.toast.slice(0, 80) ?? 'Unknown desk action.'
+      );
+      return;
+    }
 
     const db = tryOpenOpsDb(deps.env);
     if (!db) {

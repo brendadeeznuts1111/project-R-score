@@ -15,7 +15,22 @@ import {
   PACKAGE_GROUP_MEMBERS_WITH_PARTNER,
 } from './package-group-membership.ts';
 import { PENDING_PACKAGE_GROUPS_JSONL } from './package-group-registry.ts';
-import { PACKAGE_GROUP_FORUMS_META_DIR } from './package-group-forum.ts';
+import {
+  PARTNER_PACKAGE_FORUM_TOPIC_PLAN,
+  PACKAGE_GROUP_FORUM_TOPIC_KEYS,
+  PACKAGE_GROUP_FORUM_TOPICS,
+  PACKAGE_GROUP_FORUM_TOPICS_MTProto,
+  PACKAGE_GROUP_FORUMS_META_DIR,
+} from './package-group-forum.ts';
+import {
+  ALL_ACCOUNTING_CHANNEL_TEMPLATE_SPEC,
+  SEAT_DESK_PARTNER_MESSAGE_TEMPLATES,
+} from './seat-desk-partner-message.ts';
+import {
+  ALL_ACCOUNTING_FORUM_TOPICS,
+  formatTocOpsGroupTitle,
+  TOC_OPS_SURFACES,
+} from './surfaces.ts';
 import type { ReadinessPhase } from './handshake-readiness.ts';
 import type { DmSeatStatus } from './dm-seat-designation.ts';
 import type { PackageGroupMembershipStatus } from './package-group-membership.ts';
@@ -94,7 +109,11 @@ export const HANDSHAKE_LANE_CATALOG = [
   { id: 'surface_slug', group: 'forum', summary: 'known chat surface_slug set' },
   { id: 'invite_link', group: 'forum', summary: 'registry invite_link stored' },
   { id: 'forum_metadata', group: 'forum', summary: 'reports/telegram/forums/{CODE}.json' },
-  { id: 'forum_topics', group: 'forum', summary: 'general/ops/alerts topic plan' },
+  {
+    id: 'forum_topics',
+    group: 'forum',
+    summary: 'partner plan: general/ops/alerts/liquidity/outs/accounting',
+  },
   { id: 'route_alerts', group: 'routing', summary: 'alerts → forum thread' },
   { id: 'route_plays', group: 'routing', summary: 'plays → forum thread' },
   { id: 'route_toc', group: 'routing', summary: 'toc → forum thread' },
@@ -169,11 +188,94 @@ export const HANDSHAKE_CLI_CATALOG = [
     script: 'bun tools/telegram-link-chat.ts',
     ref: 'call-sign + telegram ref',
   },
+  {
+    id: 'seat-desk-partner-message',
+    script: 'bun run seat:desk:partner-message',
+    ref: 'call-sign',
+    flags: ['--template', '--post', '--json'],
+    note: 'Templates: confirm-active · todo · reply-hint · topic-intake · topic-rails · topic-accounting',
+  },
+  {
+    id: 'seat-desk-topic-prompts',
+    script: 'bun run seat:desk:topic-prompts',
+    ref: 'call-sign',
+    flags: ['--post'],
+    note: 'Posts topic-intake + topic-rails to Liquidity/Outs thread',
+  },
+  {
+    id: 'seat-desk-accounting-prompt',
+    script: 'bun run seat:desk:accounting-prompt',
+    ref: 'call-sign',
+    flags: ['--post', '--thread-id'],
+    note: 'Accounting topic bootstrap when bot lacks can_manage_topics',
+  },
+  {
+    id: 'package-group-accounting',
+    script: 'bun run telegram:package-group:accounting',
+    ref: 'optional partner CODE',
+    flags: ['--all', '--ensure-topics', '--accounting-prompt'],
+    note: 'Bulk ensure Accounting topic + prompt for all linked forums',
+  },
+  {
+    id: 'all-accounting-channel',
+    script: 'bun run telegram:all-accounting',
+    ref: 'chat id',
+    flags: ['--brand', '--post-prompt'],
+    note: 'House rollup supergroup — TELEGRAM_ACCOUNTING_CHAT_ID',
+  },
+  {
+    id: 'catalog-research',
+    script: 'bun run telegram:catalog:research',
+    ref: 'none',
+    flags: ['--json', '--llm', '--partner'],
+    note: 'Enhancement proposals → reports/telegram/catalog-enhancements.json',
+  },
+  {
+    id: 'catalog-apply-enhancements',
+    script: 'bun run telegram:catalog:apply-enhancements',
+    ref: 'none',
+    flags: ['--dry-run', '--all'],
+    note: 'Merge safe changes → catalog-overrides.json + regenerate handshake catalog',
+  },
 ] as const;
+
+export const HANDSHAKE_PACKAGE_FORUM_TOPICS = {
+  kind: 'partner-package-forum' as const,
+  plan: PACKAGE_GROUP_FORUM_TOPICS,
+  mtproto: PACKAGE_GROUP_FORUM_TOPICS_MTProto,
+  rows: PARTNER_PACKAGE_FORUM_TOPIC_PLAN,
+  threadMapKeys: PACKAGE_GROUP_FORUM_TOPIC_KEYS,
+  mapKeyRule: 'title.toLowerCase()' as const,
+  metadataPath: (code: string) => `${PACKAGE_GROUP_FORUMS_META_DIR}/${code.toUpperCase()}.json`,
+  /** Seat desk pinned in Liquidity/Outs; deposit/withdraw proof in Accounting. */
+  deskTopicKey: PACKAGE_GROUP_FORUM_TOPIC_KEYS.liquidityOuts,
+  accountingTopicKey: PACKAGE_GROUP_FORUM_TOPIC_KEYS.accounting,
+} as const;
+
+/** House supergroup topic plans — NOT partner package forums. SSOT: `surfaces.ts`. */
+export const HANDSHAKE_HOUSE_FORUM_TOPICS = {
+  kind: 'house-surface' as const,
+  surfaces: Object.fromEntries(
+    TOC_OPS_SURFACES.map(s => [
+      s.slug,
+      {
+        groupTitle: formatTocOpsGroupTitle(s),
+        topicSlugs: [...s.topics],
+      },
+    ])
+  ),
+  allAccountingForumTitles: [...ALL_ACCOUNTING_FORUM_TOPICS],
+} as const;
+
+export const HANDSHAKE_SEAT_DESK_TEMPLATES = {
+  partner: SEAT_DESK_PARTNER_MESSAGE_TEMPLATES,
+  allAccountingChannel: ALL_ACCOUNTING_CHANNEL_TEMPLATE_SPEC,
+} as const;
 
 export const HANDSHAKE_DOC_ROUTING = {
   runbook: 'docs/harness/tenants/partner-package-group-handshake.md',
   factoryBot: 'docs/harness/tenants/telegram-factory.md',
+  seatCapitalDesk: 'docs/harness/tenants/seat-capital-desk.md',
   deskAdr: 'docs/adr/0003-telegram-handshake-desk.md',
   moduleIndex: 'lib/telegram/README.md',
   softPlane: 'toc-ops-repo/docs/system/TELEGRAM.md',
@@ -196,6 +298,11 @@ export const HANDSHAKE_ENV_KEYS = [
   { key: 'TELEGRAM_BOT_FACTORY', plane: 'factory', purpose: 'Bot token (preferred)' },
   { key: 'TELEGRAM_OPS_CHAT_ID', plane: 'factory', purpose: 'Default ops supergroup fallback' },
   {
+    key: 'TELEGRAM_ACCOUNTING_CHAT_ID',
+    plane: 'factory',
+    purpose: 'Cross-partner all-accounting supergroup (alias all-accounting surface)',
+  },
+  {
     key: 'TELEGRAM_SURFACES',
     plane: 'factory',
     purpose: 'JSON slug→chat_id; includes pkg-{code} for package forums',
@@ -209,6 +316,9 @@ export type HandshakeCatalog = {
   generatedAt: string;
   docs: typeof HANDSHAKE_DOC_ROUTING;
   constants: typeof HANDSHAKE_CONSTANTS;
+  packageForumTopics: typeof HANDSHAKE_PACKAGE_FORUM_TOPICS;
+  houseForumTopics: typeof HANDSHAKE_HOUSE_FORUM_TOPICS;
+  seatDeskTemplates: typeof HANDSHAKE_SEAT_DESK_TEMPLATES;
   jsonlActions: readonly string[];
   readinessPhases: readonly ReadinessPhase[];
   dmSeatStatuses: readonly DmSeatStatus[];
@@ -225,6 +335,9 @@ export function buildHandshakeCatalog(now = new Date()): HandshakeCatalog {
     generatedAt: now.toISOString(),
     docs: HANDSHAKE_DOC_ROUTING,
     constants: HANDSHAKE_CONSTANTS,
+    packageForumTopics: HANDSHAKE_PACKAGE_FORUM_TOPICS,
+    houseForumTopics: HANDSHAKE_HOUSE_FORUM_TOPICS,
+    seatDeskTemplates: HANDSHAKE_SEAT_DESK_TEMPLATES,
     jsonlActions: [...HANDSHAKE_JSONL_ACTIONS],
     readinessPhases: [...HANDSHAKE_READINESS_PHASES],
     dmSeatStatuses: [...HANDSHAKE_DM_SEAT_STATUSES],
@@ -249,6 +362,20 @@ export function formatHandshakeCatalogHuman(catalog: HandshakeCatalog): string[]
     `  members       house=${catalog.constants.membersHouseOnly} partner=${catalog.constants.membersWithPartner} cells=${catalog.constants.membershipCells.join(' · ')}`,
     `  jsonl         ${catalog.constants.jsonlPath}`,
     `  forums meta   ${catalog.constants.forumsMetaDir}`,
+    '',
+    'Package forum topics (every partner — same titles, per-chat thread ids):',
+    `  plan          ${catalog.packageForumTopics.plan.join(' · ')}`,
+    `  map keys      ${Object.values(catalog.packageForumTopics.threadMapKeys).join(' · ')}`,
+    `  desk thread   ${catalog.packageForumTopics.deskTopicKey}`,
+    `  accounting    ${catalog.packageForumTopics.accountingTopicKey}`,
+    '',
+    'House surface topics (separate supergroups — not partner forums):',
+    ...Object.entries(catalog.houseForumTopics.surfaces).map(
+      ([slug, s]) => `  ${slug.padEnd(16)} ${s.groupTitle} → ${s.topicSlugs.join(' · ')}`
+    ),
+    '',
+    `Seat desk templates (${Object.keys(catalog.seatDeskTemplates.partner).length}): ${Object.keys(catalog.seatDeskTemplates.partner).join(' · ')}`,
+    `  all-accounting ${catalog.seatDeskTemplates.allAccountingChannel.cli}`,
     '',
     `JSONL actions (${catalog.jsonlActions.length}): ${catalog.jsonlActions.join(' · ')}`,
     `Phases: ${catalog.readinessPhases.join(' → ')}`,

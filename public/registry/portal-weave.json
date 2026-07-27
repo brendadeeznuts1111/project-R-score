@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-27T02:06:35.488Z",
+  "generated": "2026-07-27T06:32:03.913Z",
   "surfaces": [
     {
       "label": "Home",
@@ -124,6 +124,11 @@
       "label": "package-info",
       "href": "/registry/package-info.json",
       "note": "verify:package-info bake"
+    },
+    {
+      "label": "seat-capital-desk",
+      "href": "/registry/seat-capital-desk.json",
+      "note": "FUND status · outs · checklist"
     }
   ],
   "scripts": [
@@ -145,6 +150,11 @@
       "label": "Telegram handshake gap",
       "cmd": "bun run telegram:handshake:invite-gap",
       "doc": "docs/harness/tenants/partner-package-group-handshake.md"
+    },
+    {
+      "label": "Seat capital desk refresh",
+      "cmd": "bun run seat:desk:refresh",
+      "doc": "docs/harness/tenants/seat-capital-desk.md"
     },
     {
       "label": "Reference discovery",

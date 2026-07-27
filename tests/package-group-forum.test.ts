@@ -7,8 +7,10 @@ import { upsertPackageGroupRegistry } from '../lib/telegram/package-group-regist
 import {
   assessForumMetadata,
   loadPackageGroupForumMetadata,
+  packageGroupTopicMapKey,
   packageGroupTopicsThreadMap,
   parsePackageGroupForumMetadata,
+  PARTNER_PACKAGE_FORUM_TOPIC_PLAN,
   resolvePackageGroupTopicsForChat,
   threadIdForPackageGroupOutboxTopic,
   validateForumMetadataAgainstRegistry,
@@ -18,8 +20,27 @@ import {
 
 describe('package-group-forum', () => {
   test('topic SSOT lists General + MTProto topics', () => {
-    expect(PACKAGE_GROUP_FORUM_TOPICS).toEqual(['General', 'Ops', 'Alerts']);
-    expect(PACKAGE_GROUP_FORUM_TOPICS_MTProto).toEqual(['Ops', 'Alerts']);
+    expect(PACKAGE_GROUP_FORUM_TOPICS).toEqual([
+      'General',
+      'Ops',
+      'Alerts',
+      'Liquidity/Outs',
+      'Accounting',
+    ]);
+    expect(PACKAGE_GROUP_FORUM_TOPICS_MTProto).toEqual([
+      'Ops',
+      'Alerts',
+      'Liquidity/Outs',
+      'Accounting',
+    ]);
+    expect(PARTNER_PACKAGE_FORUM_TOPIC_PLAN.map(r => r.title)).toEqual([
+      ...PACKAGE_GROUP_FORUM_TOPICS,
+    ]);
+  });
+
+  test('packageGroupTopicMapKey lowercases titles for thread map', () => {
+    expect(packageGroupTopicMapKey('Liquidity/Outs')).toBe('liquidity/outs');
+    expect(packageGroupTopicMapKey('Accounting')).toBe('accounting');
   });
 
   test('packageGroupTopicsThreadMap always includes general=1', () => {
@@ -45,6 +66,8 @@ describe('package-group-forum', () => {
         { title: 'General', messageThreadId: 1 },
         { title: 'Ops', messageThreadId: 2 },
         { title: 'Alerts', messageThreadId: 3 },
+        { title: 'Liquidity/Outs', messageThreadId: 4 },
+        { title: 'Accounting', messageThreadId: 5 },
       ],
       iconUploaded: true,
       createdAt: '2026-01-01T00:00:00.000Z',
@@ -106,10 +129,11 @@ describe('package-group-forum', () => {
   });
 
   test('threadIdForPackageGroupOutboxTopic maps ops channel topics to forum threads', () => {
-    const topics = { general: 1, ops: 12, alerts: 11 };
+    const topics = { general: 1, ops: 12, alerts: 11, 'liquidity/outs': 18 };
     expect(threadIdForPackageGroupOutboxTopic(topics, 'alerts')).toBe(11);
     expect(threadIdForPackageGroupOutboxTopic(topics, 'plays')).toBe(12);
     expect(threadIdForPackageGroupOutboxTopic(topics, 'dod')).toBe(11);
+    expect(threadIdForPackageGroupOutboxTopic(topics, 'toc')).toBe(18);
     expect(threadIdForPackageGroupOutboxTopic(topics, 'identity', 'partner.welcome')).toBeUndefined();
   });
 

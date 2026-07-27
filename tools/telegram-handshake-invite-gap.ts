@@ -70,7 +70,13 @@ try {
 
   const rows = [];
   for (const code of codes) {
-    rows.push(await assessHandshakeReadiness({ db, partnerCode: code }));
+    rows.push(
+      await assessHandshakeReadiness({
+        db,
+        partnerCode: code,
+        telegramToken: tg.effectiveToken,
+      })
+    );
   }
 
   const gaps = filterForumInviteGapRows(rows);

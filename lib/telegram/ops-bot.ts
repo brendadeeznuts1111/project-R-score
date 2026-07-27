@@ -14,6 +14,8 @@ import { asTelegramUserId } from '../types/branded/portal.ts';
 import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
 import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
 import { answerCallbackQuery } from './telegram-api.ts';
+import { handleSeatDeskCallback, isSeatDeskCallback } from './seat-desk-callback.ts';
+import { handleSeatDeskReply } from './seat-desk-reply.ts';
 import { observeKnownChatsFromUpdate } from './known-chats.ts';
 import type { TelegramUpdate } from './telegram-update.ts';
 import { handleFlowCallback } from './flows/callbacks.ts';
@@ -113,7 +115,20 @@ export class OpsTelegramBot {
       return;
     }
 
-    if (!cmd.startsWith('/')) return;
+    if (!cmd.startsWith('/')) {
+      const replyTo = msg.reply_to_message as Record<string, unknown> | undefined;
+      const seatReply = await handleSeatDeskReply({
+        token: this.token,
+        userId,
+        chatId: String(chatId),
+        text,
+        replyToMessageId: typeof replyTo?.message_id === 'number' ? replyTo.message_id : undefined,
+        messageThreadId:
+          typeof msg.message_thread_id === 'number' ? msg.message_thread_id : undefined,
+      });
+      if (seatReply.handled) return;
+      return;
+    }
 
     const fallback = runFlow(this.db, this.dbPath, {
       flowId: 'menu',
@@ -125,6 +140,7 @@ export class OpsTelegramBot {
 
   private async handleCallbackQuery(cq: Record<string, unknown>): Promise<void> {
     const data = String(cq.data ?? '');
+    const cqId = String(cq.id ?? '');
     const userId = String((cq.from as Record<string, unknown>)?.id);
     const chatId = String(
       (cq.message as Record<string, unknown> | undefined)?.chat
@@ -132,6 +148,27 @@ export class OpsTelegramBot {
         : userId
     );
     const messageId = (cq.message as Record<string, unknown> | undefined)?.message_id;
+    const threadId = (cq.message as Record<string, unknown> | undefined)?.message_thread_id;
+
+    if (isSeatDeskCallback(data)) {
+      const seatResult = await handleSeatDeskCallback({
+        token: this.token,
+        data,
+        chatId,
+        messageId: typeof messageId === 'number' ? messageId : 0,
+        userId,
+        messageThreadId: typeof threadId === 'number' ? threadId : undefined,
+      });
+      if (cqId) {
+        await answerCallbackQuery(
+          this.token,
+          cqId,
+          seatResult?.toast.slice(0, 80) ?? 'Unknown desk action.'
+        );
+      }
+      return;
+    }
+
     const node = findFlowNodeByTelegram(this.db, userId);
 
     const output = handleFlowCallback(data, {
@@ -152,7 +189,6 @@ export class OpsTelegramBot {
       });
     }
 
-    const cqId = String(cq.id ?? '');
     if (cqId) {
       await answerCallbackQuery(this.token, cqId, output?.text.slice(0, 80) ?? 'OK');
     }

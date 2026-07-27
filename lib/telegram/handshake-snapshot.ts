@@ -162,7 +162,7 @@ export function emptyTelegramHandshakeSummarySlice(): TelegramHandshakeSummarySl
 
 export async function buildTelegramHandshakeSnapshot(
   db: Database,
-  opts?: { jsonlPath?: string }
+  opts?: { jsonlPath?: string; telegramToken?: string | null }
 ): Promise<TelegramHandshakeSnapshot | null> {
   if (!tableExists(db, 'package_group_registry')) return null;
 
@@ -178,6 +178,7 @@ export async function buildTelegramHandshakeSnapshot(
         partnerCode: reg.partnerCode,
         jsonlPath,
         deep: true,
+        telegramToken: opts?.telegramToken,
       })
     );
   }
@@ -253,7 +254,7 @@ export function loadTelegramHandshakeSummarySlice(
 export async function exportTelegramHandshakeSnapshot(
   db: Database,
   root = process.cwd(),
-  opts?: { jsonlPath?: string }
+  opts?: { jsonlPath?: string; telegramToken?: string | null }
 ): Promise<TelegramHandshakeSummarySlice> {
   const rel = TELEGRAM_HANDSHAKE_REGISTRY_REL;
   const abs = root.endsWith('/') ? `${root}${rel}` : `${root}/${rel}`;
@@ -271,10 +272,15 @@ export async function exportTelegramHandshakeSnapshot(
 
 export async function exportTelegramHandshakeCatalog(root = process.cwd()): Promise<string> {
   const { buildHandshakeCatalog } = await import('./handshake-catalog.ts');
+  const { applyOverridesToCatalog, loadCatalogOverrides } = await import(
+    './catalog-research/merge.ts'
+  );
   const rel = TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_REL;
   const abs = root.endsWith('/') ? `${root}${rel}` : `${root}/${rel}`;
   const dir = abs.slice(0, abs.lastIndexOf('/'));
   if (dir) await Bun.$`mkdir -p ${dir}`.quiet();
-  await Bun.write(abs, `${JSON.stringify(buildHandshakeCatalog(), null, 2)}\n`);
+  const overrides = await loadCatalogOverrides(root);
+  const catalog = applyOverridesToCatalog(buildHandshakeCatalog(), overrides);
+  await Bun.write(abs, `${JSON.stringify(catalog, null, 2)}\n`);
   return abs;
 }

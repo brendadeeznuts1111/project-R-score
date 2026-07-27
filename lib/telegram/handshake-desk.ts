@@ -19,6 +19,7 @@ import {
 } from './dm-seat-designation.ts';
 import {
   interpretPackageGroupMemberCount,
+  probeLinkedSeatInForum,
   formatMembershipDeskCell,
   type PackageGroupMembershipTell,
 } from './package-group-membership.ts';
@@ -115,6 +116,11 @@ async function deskRowForRegistry(
   const dmSeat = assessPackageGroupDmSeat(db, reg.partnerCode);
   const dmId = dmSeat.telegramId;
 
+  let linkedSeatInForum = false;
+  if (opts.telegramToken && dmId && (dmSeat.status === 'linked' || dmSeat.status === 'shared')) {
+    linkedSeatInForum = await probeLinkedSeatInForum(opts.telegramToken, reg.chatId, dmId);
+  }
+
   const forumMeta = await loadPackageGroupForumMetadata(reg.partnerCode, {
     rootDir: opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR,
   });
@@ -135,6 +141,7 @@ async function deskRowForRegistry(
     memberCount: known?.memberCount ?? null,
     membershipTell: interpretPackageGroupMemberCount(known?.memberCount ?? null, {
       dmSeatStatus: dmSeat.status,
+      linkedSeatInForum,
     }),
     surfaceSlug: known?.surfaceSlug ?? null,
     botStatus: known?.botStatus ?? null,

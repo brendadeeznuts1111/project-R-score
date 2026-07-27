@@ -67,6 +67,7 @@ import {
   refreshChannelMetaProof,
   saveChannelMetaProof,
 } from '../lib/verification/channel-meta-refresh.ts';
+import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const argv = Bun.argv.slice(2);
 const outIdx = argv.indexOf('--out');
@@ -423,8 +424,11 @@ export async function buildRegistrySnapshot(options?: {
       const { exportTelegramHandshakeSnapshot, exportTelegramHandshakeCatalog } = await import(
         '../lib/telegram/handshake-snapshot.ts'
       );
+      const tg = loadTelegramEnv();
       await exportTelegramHandshakeCatalog(root);
-      telegramHandshakeSlice = await exportTelegramHandshakeSnapshot(db, root);
+      telegramHandshakeSlice = await exportTelegramHandshakeSnapshot(db, root, {
+        telegramToken: tg.effectiveToken,
+      });
       if (telegramHandshakeSlice.available) {
         console.log(
           `[ops-snapshot] telegram-handshake → ${telegramHandshakeSlice.partners} partners · invite gaps ${telegramHandshakeSlice.inviteGaps} · operator_ready ${telegramHandshakeSlice.operatorReady}`
@@ -437,8 +441,27 @@ export async function buildRegistrySnapshot(options?: {
       );
     }
 
+    let seatCapitalDeskSlice = (
+      await import('../lib/telegram/seat-desk-snapshot.ts')
+    ).emptySeatCapitalDeskSummarySlice();
+    try {
+      const { exportSeatCapitalDeskSnapshot } = await import(
+        '../lib/telegram/seat-desk-snapshot.ts'
+      );
+      seatCapitalDeskSlice = await exportSeatCapitalDeskSnapshot(root);
+      console.log(
+        `[ops-snapshot] seat-capital-desk → ${seatCapitalDeskSlice.desks} desks · blocked ${seatCapitalDeskSlice.blocked} · incomplete outs ${seatCapitalDeskSlice.incompleteOuts}`
+      );
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] seat-capital-desk export skipped:',
+        e instanceof Error ? e.message : e
+      );
+    }
+
     const payload = buildOpsSummary(db, 'snapshot');
     payload.telegramHandshake = telegramHandshakeSlice;
+    payload.seatCapitalDesk = seatCapitalDeskSlice;
     if (routingSlice) payload.routing = routingSlice;
 
     if (Bun.env.NETWORKING_VERIFY === '1') {
@@ -622,6 +645,7 @@ export async function buildRegistrySnapshot(options?: {
         channelMeta: payload.channelMeta,
         proofTaxonomy: payload.proofTaxonomy,
         telegramHandshake: payload.telegramHandshake,
+        seatCapitalDesk: payload.seatCapitalDesk,
       };
       await Bun.write(staticRegistryPath, `${JSON.stringify(staticSnapshot, null, 2)}\n`);
       staticWritten = staticRegistryPath;

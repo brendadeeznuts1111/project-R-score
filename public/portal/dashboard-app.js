@@ -147,6 +147,10 @@ function renderOpsPlane(ops) {
     <article class="plane-card">
       <h3>Package handshake</h3>
       <p class="plane-detail empty-hint">No handshake slice until ops-summary loads.</p>
+    </article>
+    <article class="plane-card">
+      <h3>Seat capital desk</h3>
+      <p class="plane-detail empty-hint">No seat desk slice until ops-summary loads.</p>
     </article>`;
     return;
   }
@@ -280,7 +284,33 @@ function renderOpsPlane(ops) {
     </article>`;
   }
 
-  el.innerHTML = tocHtml + loopHtml + handshakeHtml;
+  const scd = ops.seatCapitalDesk;
+  let seatDeskHtml;
+  if (scd?.available && (scd.desks ?? 0) > 0) {
+    const incomplete = scd.incompleteOuts ?? 0;
+    const blocked = scd.blocked ?? 0;
+    const metricCls = incomplete > 0 || blocked > 0 ? 'err' : 'ok';
+    seatDeskHtml = `<article class="plane-card" data-plane="seat-capital-desk">
+      <h3>Seat capital desk <span class="badge-demo" title="Baked from ops:snapshot">snapshot</span></h3>
+      <div class="plane-metric ${metricCls}">${esc(String(incomplete))} <span style="font-size:0.45em;font-weight:500;color:var(--text-dim)">incomplete outs</span></div>
+      <p class="plane-detail">
+        ${esc(String(scd.desks ?? 0))} desks · blocked ${esc(String(blocked))} · partial ${esc(String(scd.partial ?? 0))} · ready ${esc(String(scd.ready ?? 0))} · funded ${esc(String(scd.funded ?? 0))}
+      </p>
+      <p class="plane-sub">${scd.generatedAt ? `baked ${esc(String(scd.generatedAt).slice(0, 19))}` : ''}</p>
+      <div class="plane-actions">
+        <a class="ops-link" href="/portal/ops/#seat-capital-desk">Ops panel</a>
+        <a class="ops-link" href="/registry/seat-capital-desk.json">seat-capital-desk.json</a>
+      </div>
+    </article>`;
+  } else {
+    seatDeskHtml = `<article class="plane-card" data-plane="seat-capital-desk">
+      <h3>Seat capital desk</h3>
+      <p class="plane-detail empty-hint">No desks — run <code>bun run seat:desk:post</code>, then <code>bun run ops:snapshot</code>.</p>
+      <div class="plane-actions"><a class="ops-link" href="/portal/ops/">Full Ops</a></div>
+    </article>`;
+  }
+
+  el.innerHTML = tocHtml + loopHtml + handshakeHtml + seatDeskHtml;
 }
 
 function proofStatusCls(sum) {

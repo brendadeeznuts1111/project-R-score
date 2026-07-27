@@ -1,5 +1,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/networking/fetch
+// @see https://core.telegram.org/bots/api#sendrichmessage — Bot API 10.1 seat desk
+// @see https://core.telegram.org/type/RichText — MTProto client rich text (not bot wire)
 /**
  * Telegram Bot API helpers for factory ops webhook + outbox projectors.
  *
@@ -14,6 +16,17 @@ export type TelegramApiResult = {
   error_code?: number;
   parameters?: { retry_after?: number };
 };
+
+/** editMessage* returns 400 when body matches the live message — treat as success. */
+export function isTelegramMessageNotModified(result: {
+  ok: boolean;
+  description?: string;
+  errorCode?: number;
+}): boolean {
+  if (result.ok) return false;
+  const d = (result.description ?? '').toLowerCase();
+  return d.includes('message is not modified');
+}
 
 const lastSendAtByToken = new Map<string, number>();
 
@@ -303,6 +316,19 @@ export type SendTelegramBotMessageInput = {
   parseMode?: 'Markdown' | 'HTML';
   replyMarkup?: Record<string, unknown>;
   messageThreadId?: number;
+  replyToMessageId?: number;
+  forceReply?: {
+    selective?: boolean;
+    input_field_placeholder?: string;
+  };
+};
+
+export type SendRichTelegramMessageInput = {
+  chatId: string | number; // brand-ok — Telegram chat_id wire
+  richMessage: import('./rich-message.ts').InputRichMessage;
+  messageThreadId?: number;
+  replyMarkup?: Record<string, unknown>;
+  disableNotification?: boolean;
 };
 
 export type SendTelegramBotMessageResult = {
@@ -334,6 +360,16 @@ export async function sendTelegramBotMessage(
   if (input.parseMode) body.parse_mode = input.parseMode;
   if (input.replyMarkup) body.reply_markup = input.replyMarkup;
   if (input.messageThreadId != null) body.message_thread_id = input.messageThreadId;
+  if (input.replyToMessageId != null) body.reply_to_message_id = input.replyToMessageId;
+  if (input.forceReply) {
+    body.reply_markup = {
+      force_reply: true,
+      selective: input.forceReply.selective ?? true,
+      ...(input.forceReply.input_field_placeholder
+        ? { input_field_placeholder: input.forceReply.input_field_placeholder }
+        : {}),
+    };
+  }
 
   let r = await callSendMessage(token, body);
   let retriedAfter429 = false;
@@ -374,6 +410,28 @@ export type EditTelegramMessageInput = {
   replyMarkup?: Record<string, unknown>;
 };
 
+/** editMessageReplyMarkup — wizard keyboard steps without touching message body. */
+export async function editMessageReplyMarkup(
+  token: string,
+  input: {
+    chatId: string | number; // brand-ok — Telegram chat_id wire
+    messageId: number;
+    replyMarkup: Record<string, unknown>;
+  }
+): Promise<SendTelegramBotMessageResult> {
+  const r = await telegramApiCall(token, 'editMessageReplyMarkup', {
+    chat_id: input.chatId,
+    message_id: input.messageId,
+    reply_markup: input.replyMarkup,
+  });
+  return {
+    ok: r.ok,
+    messageId: input.messageId,
+    description: r.description,
+    errorCode: r.error_code,
+  };
+}
+
 /** editMessageText — used by flow deliver for keyboard updates. */
 export async function editTelegramMessage(
   token: string,
@@ -388,6 +446,81 @@ export async function editTelegramMessage(
   if (input.replyMarkup) body.reply_markup = input.replyMarkup;
 
   const r = await telegramApiCall(token, 'editMessageText', body);
+  return {
+    ok: r.ok,
+    messageId: input.messageId,
+    description: r.description,
+    errorCode: r.error_code,
+  };
+}
+
+async function callRichMessageApi(
+  token: string,
+  method: 'sendRichMessage' | 'editMessageText',
+  body: Record<string, unknown>
+): Promise<TelegramApiResult> {
+  return telegramApiCall(token, method, body);
+}
+
+/** sendRichMessage — Bot API 10.1 structured desk tables. */
+export async function sendRichTelegramMessage(
+  token: string,
+  input: SendRichTelegramMessageInput
+): Promise<SendTelegramBotMessageResult> {
+  const body: Record<string, unknown> = {
+    chat_id: input.chatId,
+    rich_message: input.richMessage,
+  };
+  if (input.messageThreadId != null) body.message_thread_id = input.messageThreadId;
+  if (input.replyMarkup) body.reply_markup = input.replyMarkup;
+  if (input.disableNotification) body.disable_notification = true;
+
+  let r = await callRichMessageApi(token, 'sendRichMessage', body);
+  let retriedAfter429 = false;
+  let retryAfterSec: number | undefined;
+
+  if (!r.ok && r.error_code === 429) {
+    retryAfterSec = r.parameters?.retry_after ?? 1;
+    await Bun.sleep(Math.max(0, retryAfterSec * 1000));
+    resetTelegramRateLimiters();
+    r = await callRichMessageApi(token, 'sendRichMessage', body);
+    retriedAfter429 = true;
+  }
+
+  const messageId =
+    r.ok && r.result && typeof r.result === 'object'
+      ? (r.result as { message_id?: number }).message_id
+      : undefined;
+  return {
+    ok: r.ok,
+    messageId: typeof messageId === 'number' ? messageId : undefined,
+    description: r.description,
+    errorCode: r.error_code,
+    retryAfterSec,
+    retriedAfter429: retriedAfter429 || undefined,
+  };
+}
+
+export type EditRichTelegramMessageInput = {
+  chatId: string | number; // brand-ok — Telegram chat_id wire
+  messageId: number;
+  richMessage: import('./rich-message.ts').InputRichMessage;
+  replyMarkup?: Record<string, unknown>;
+};
+
+/** editMessageText with rich_message (no text field). */
+export async function editRichTelegramMessage(
+  token: string,
+  input: EditRichTelegramMessageInput
+): Promise<SendTelegramBotMessageResult> {
+  const body: Record<string, unknown> = {
+    chat_id: input.chatId,
+    message_id: input.messageId,
+    rich_message: input.richMessage,
+  };
+  if (input.replyMarkup) body.reply_markup = input.replyMarkup;
+
+  const r = await callRichMessageApi(token, 'editMessageText', body);
   return {
     ok: r.ok,
     messageId: input.messageId,

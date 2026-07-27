@@ -33,4 +33,14 @@ describe('package-group-membership', () => {
     expect(tell.needsPartnerInForum).toBe(true);
     expect(formatMembershipDeskCell(tell, 'linked')).toBe('2·house!');
   });
+
+  test('linked seat in forum at count 2 clears invite gap (single-operator harness)', () => {
+    const tell = interpretPackageGroupMemberCount(2, {
+      dmSeatStatus: 'linked',
+      linkedSeatInForum: true,
+    });
+    expect(tell.status).toBe('partner_present');
+    expect(tell.needsPartnerInForum).toBe(false);
+    expect(formatMembershipDeskCell(tell, 'linked')).toBe('2·OK');
+  });
 });
