@@ -539,12 +539,51 @@ export async function load() {
   );
 }
 
+async function loadVpsStatus() {
+  const panel = $('vps-panel');
+  if (!panel) return;
+  try {
+    const res = await fetch('/registry/vps-health.json', { credentials: 'same-origin' });
+    if (!res.ok) { panel.innerHTML = '<p class="st-bad">VPS unreachable</p>'; return; }
+    const d = await res.json();
+    const ok = (s) => s === 'active' || s?.startsWith('Up');
+    const cls = (s) => ok(s) ? 'st-ok' : 'st-bad';
+    panel.innerHTML = `
+      <table class="env-table">
+        <thead><tr><th>Host</th><th>Uptime</th><th>Disk</th><th>Memory</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="mono">${d.hostname || '?'}</td>
+            <td>${d.uptime || '?'}</td>
+            <td class="${cls(d.disk?.percent?.replace('%','') > 85 ? 'st-bad' : 'st-ok')}">${d.disk?.percent || '?'} (${d.disk?.free || '?'} free)</td>
+            <td class="${d.memory?.available?.replace('Gi','') > 2 ? 'st-ok' : 'st-warn'}">${d.memory?.used || '?'} / ${d.memory?.total || '?'} (${d.memory?.available || '?'} free)</td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="env-table" style="margin-top:8px">
+        <thead><tr><th>Service</th><th>Status</th></tr></thead>
+        <tbody>
+          ${Object.entries(d.services || {}).map(([name, status]) => `
+            <tr><td class="mono">${name}</td><td class="${cls(status)}">${status}</td></tr>
+          `).join('')}
+          ${Object.entries(d.docker || {}).map(([name, status]) => `
+            <tr><td class="mono">${name} <span style="opacity:0.5">(docker)</span></td><td class="${cls(status)}">${status}</td></tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch {
+    if (panel) panel.innerHTML = '<p class="st-bad">VPS status unavailable</p>';
+  }
+}
+
 function boot() {
   $('btn-refresh')?.addEventListener('click', e => {
     e.preventDefault();
     void load();
   });
   void load();
+  void loadVpsStatus();
   setInterval(() => void load(), 15_000);
 }
 

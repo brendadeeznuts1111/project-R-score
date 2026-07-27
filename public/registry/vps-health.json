@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-07-27T08:24:52.226Z",
+  "timestamp": "2026-07-27T08:28:38.283Z",
   "hostname": "srv1666710",
-  "uptime": "up 10 weeks, 5 days, 29 minutes",
+  "uptime": "up 10 weeks, 5 days, 33 minutes",
   "disk": {
     "used": "23G",
     "free": "74G",
@@ -19,9 +19,9 @@
     "cascade-token": "active"
   },
   "docker": {
-    "prometheus": "Up 55 minutes",
+    "prometheus": "Up 58 minutes",
     "grafana": "Up 2 months",
     "st-cloudflared": "Up 2 months",
-    "st-integration": "Up 19 minutes (unhealthy)"
+    "st-integration": "Up 23 minutes (unhealthy)"
   }
 }
