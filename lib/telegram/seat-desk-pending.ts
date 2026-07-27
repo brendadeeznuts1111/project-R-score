@@ -7,7 +7,7 @@ export const SEAT_DESK_PENDING_PATH = 'reports/telegram/seat-desk-pending.json';
 export type SeatDeskPendingAction = {
   callSign: string;
   outId: string; // brand-ok — seat out token
-  field: 'sendTo' | 'bookLogin';
+  field: 'sendTo' | 'bookLogin' | 'maxBet' | 'freeplay';
   promptMessageId: number;
   chatId: string; // brand-ok
   threadId: number;

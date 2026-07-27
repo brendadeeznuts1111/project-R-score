@@ -7,6 +7,7 @@
  */
 import {
   formatOutId,
+  formatFreeplayPct,
   loadSeatIntake,
   normalizeSeatIntake,
   parsePaymentLine,
@@ -27,6 +28,8 @@ export type SeatDeskReplyResult =
 
 const SEND_TO_MAX_LEN = 64;
 const BOOK_LOGIN_MAX_LEN = 48;
+const MAX_BET_MAX_LEN = 24;
+const FREEPLAY_MAX_LEN = 16;
 
 export function validateSendTo(raw: string): string | null {
   const t = raw.trim();
@@ -40,6 +43,20 @@ export function validateBookLogin(raw: string): string | null {
   if (!t || t.length > BOOK_LOGIN_MAX_LEN) return null;
   if (/^\s+$/.test(t)) return null;
   return t;
+}
+
+export function validateMaxBet(raw: string): string | null {
+  const t = raw.trim();
+  if (!t || t.length > MAX_BET_MAX_LEN) return null;
+  if (/^\s+$/.test(t)) return null;
+  return t;
+}
+
+export function validateFreeplay(raw: string): string | null {
+  const t = raw.trim();
+  if (!t || t.length > FREEPLAY_MAX_LEN) return null;
+  if (/^\s+$/.test(t)) return null;
+  return formatFreeplayPct(t);
 }
 
 /** Parse `SPEN-1 | Venmo | @handle` or `DEFAULT | CashApp | $sign`. */
@@ -200,11 +217,19 @@ async function handlePendingReply(
 
   const sendTo = pending.field === 'sendTo' ? validateSendTo(opts.text) : null;
   const bookLogin = pending.field === 'bookLogin' ? validateBookLogin(opts.text) : null;
+  const maxBet = pending.field === 'maxBet' ? validateMaxBet(opts.text) : null;
+  const freeplay = pending.field === 'freeplay' ? validateFreeplay(opts.text) : null;
   if (pending.field === 'sendTo' && !sendTo) {
     return { handled: true, ok: false, message: 'Invalid send-to (max 64 chars).' };
   }
   if (pending.field === 'bookLogin' && !bookLogin) {
     return { handled: true, ok: false, message: 'Invalid username (max 48 chars).' };
+  }
+  if (pending.field === 'maxBet' && !maxBet) {
+    return { handled: true, ok: false, message: 'Invalid max bet (max 24 chars).' };
+  }
+  if (pending.field === 'freeplay' && !freeplay) {
+    return { handled: true, ok: false, message: 'Invalid freeplay % (max 16 chars).' };
   }
 
   const record = await loadSeatIntake(pending.callSign);
@@ -216,18 +241,26 @@ async function handlePendingReply(
   const next =
     pending.field === 'sendTo'
       ? patchSeatOut(record, pending.outId, { sendTo: sendTo! })
-      : patchSeatOut(record, pending.outId, { bookLogin: bookLogin! });
+      : pending.field === 'bookLogin'
+        ? patchSeatOut(record, pending.outId, { bookLogin: bookLogin! })
+        : pending.field === 'maxBet'
+          ? patchSeatOut(record, pending.outId, { maxBet: maxBet! })
+          : patchSeatOut(record, pending.outId, { freeplay: freeplay! });
   await saveSeatIntake(next);
   await publishSeatCapitalDesk({ token: opts.token, record: next });
   await clearSeatDeskPending(opts.userId);
 
+  const fieldDone: Record<SeatDeskPendingAction['field'], string> = {
+    sendTo: `${pending.outId} send-to set.`,
+    bookLogin: `${pending.outId} username set.`,
+    maxBet: `${pending.outId} max bet set.`,
+    freeplay: `${pending.outId} freeplay % set.`,
+  };
+
   return {
     handled: true,
     ok: true,
-    message:
-      pending.field === 'sendTo'
-        ? `${pending.outId} send-to set.`
-        : `${pending.outId} username set.`,
+    message: fieldDone[pending.field],
     callSign: pending.callSign,
   };
 }

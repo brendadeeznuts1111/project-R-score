@@ -111,10 +111,15 @@ async function promptSeatDeskForceReply(
     expiresAt: seatDeskPendingExpiry(),
   });
   const ok = await editDeskMarkup(ctx.token, record, buildSeatDeskRootMarkup(record));
-  const fieldLabel = field === 'sendTo' ? 'send-to' : 'username';
+  const fieldLabels: Record<SeatDeskPendingAction['field'], string> = {
+    sendTo: 'send-to',
+    bookLogin: 'username',
+    maxBet: 'max bet',
+    freeplay: 'freeplay %',
+  };
   return {
     ok: sent.ok,
-    toast: ok ? `Reply to the prompt with ${fieldLabel}` : 'Prompt sent.',
+    toast: ok ? `Reply to the prompt with ${fieldLabels[field]}` : 'Prompt sent.',
   };
 }
 
@@ -185,6 +190,26 @@ export async function handleSeatDeskCallback(
     return promptSeatDeskForceReply(ctx, record, parsed, 'bookLogin', {
       prompt: `Out ${outNumLabel(record, parsed.outId)} username — reply with book login:`,
       placeholder: `${outNumLabel(record, parsed.outId)} book login`,
+    });
+  }
+
+  if (parsed.op === 'pick' && parsed.field === 'max') {
+    const record = await loadAuthorizedIntake(parsed.callSign, ctx.chatId);
+    if (!record) return { ok: false, toast: 'Desk not found.' };
+    const num = outNumLabel(record, parsed.outId);
+    return promptSeatDeskForceReply(ctx, record, parsed, 'maxBet', {
+      prompt: `Out ${num} max bet — reply with limit (e.g. 500, $1k):`,
+      placeholder: `${num} max bet`,
+    });
+  }
+
+  if (parsed.op === 'pick' && parsed.field === 'fp') {
+    const record = await loadAuthorizedIntake(parsed.callSign, ctx.chatId);
+    if (!record) return { ok: false, toast: 'Desk not found.' };
+    const num = outNumLabel(record, parsed.outId);
+    return promptSeatDeskForceReply(ctx, record, parsed, 'freeplay', {
+      prompt: `Out ${num} freeplay % — reply with deposit match (e.g. 25 or 25%):`,
+      placeholder: `${num} fp%`,
     });
   }
 

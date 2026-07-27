@@ -661,6 +661,16 @@ export function isSeatOutIncomplete(
   return listOutMissingFieldLabels(out, defaultRail, defaultSendTo).length > 0;
 }
 
+/** True when Fill should offer edits (fund gaps or book terms max/fp%). */
+export function isSeatOutFillable(
+  out: SeatOut,
+  defaultRail?: string,
+  defaultSendTo?: string
+): boolean {
+  if (isOutDeferred(out)) return false;
+  return listOutTodoMissingFieldLabels(out, defaultRail, defaultSendTo).length > 0;
+}
+
 /** First out (desk order) with missing fields — for copy/reply hints. */
 export function firstIncompleteOutIndex(record: SeatIntakeRecord): number | null {
   const hydrated = hydrateRecordDefaults(record);

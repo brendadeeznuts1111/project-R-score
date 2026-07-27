@@ -73,7 +73,7 @@ Wired in [`ops-bot.ts`](../../../lib/telegram/ops-bot.ts) and [`bot.ts`](../../.
 |----------|--------|
 | `sd:r:SPEN-001` | Refresh desk |
 | `sd:f:SPEN-001:SPEN-2` | Open field picker |
-| `sd:p:…:rail` / `:send` / `:user` | Rail picker, ForceReply send-to, or ForceReply username |
+| `sd:p:…:rail` / `:send` / `:user` / `:max` / `:fp` | Rail picker, ForceReply send-to, username, max bet, or freeplay % |
 | `sd:rail:…:v` | Set rail (short codes `v/c/p/z/a`) |
 | `sd:b:SPEN-001` | Back to Fill keyboard |
 

@@ -18,6 +18,8 @@ import {
 import {
   parseSeatDeskPipeLine,
   validateBookLogin,
+  validateFreeplay,
+  validateMaxBet,
   validateSendTo,
 } from '../lib/telegram/seat-desk-reply.ts';
 import type { SeatIntakeRecord } from '../lib/telegram/seat-capital-desk.ts';
@@ -76,6 +78,18 @@ describe('seat-desk callback grammar', () => {
       op: 'fill',
       callSign: 'SPEN-001',
       outId: 'SPEN-2',
+    });
+    expect(parseSeatDeskCallback('sd:p:SPEN-001:SPEN-1:max')).toEqual({
+      op: 'pick',
+      callSign: 'SPEN-001',
+      outId: 'SPEN-1',
+      field: 'max',
+    });
+    expect(parseSeatDeskCallback('sd:p:SPEN-001:SPEN-1:fp')).toEqual({
+      op: 'pick',
+      callSign: 'SPEN-001',
+      outId: 'SPEN-1',
+      field: 'fp',
     });
     expect(parseSeatDeskCallback('play:noop')).toBeNull();
   });
@@ -172,6 +186,51 @@ describe('seat-desk Fill markup', () => {
     expect(row.map(b => b.text)).toContain('Username');
     expect(row.some(b => b.callback_data?.endsWith(':user'))).toBe(true);
   });
+
+  test('field picker offers Max bet and FP% when fund fields complete', () => {
+    const termsOnly: SeatIntakeRecord = {
+      partnerCode: 'SPEN',
+      callSign: 'SPEN-001',
+      outs: [
+        {
+          book: 'parlay21.com',
+          bookLogin: 'vc2013',
+          paymentRail: 'Venmo',
+          sendTo: '@filled',
+          outId: 'SPEN-1',
+          primary: true,
+        },
+      ],
+    };
+    const kb = buildSeatDeskFieldPickerMarkup('SPEN-001', 'SPEN-1', termsOnly) as {
+      inline_keyboard: Array<Array<{ text: string; callback_data?: string }>>;
+    };
+    const labels = kb.inline_keyboard[0]!.map(b => b.text);
+    expect(labels).toContain('Max bet');
+    expect(labels).toContain('FP%');
+    expect(labels).not.toContain('Username');
+  });
+
+  test('root markup shows Fill when only book terms missing', () => {
+    const termsOnly: SeatIntakeRecord = {
+      partnerCode: 'SPEN',
+      callSign: 'SPEN-001',
+      outs: [
+        {
+          book: 'parlay21.com',
+          bookLogin: 'vc2013',
+          paymentRail: 'Venmo',
+          sendTo: '@filled',
+          outId: 'SPEN-1',
+          primary: true,
+        },
+      ],
+    };
+    const kb = buildSeatDeskRootMarkup(termsOnly) as {
+      inline_keyboard: Array<Array<{ text: string }>>;
+    };
+    expect(kb.inline_keyboard.flat().map(b => b.text)).toContain('1 · Fill');
+  });
 });
 
 describe('seat-desk pending + pipe intake', () => {
@@ -211,5 +270,12 @@ describe('seat-desk pending + pipe intake', () => {
   test('validateBookLogin rejects empty and overlong', () => {
     expect(validateBookLogin('  vc2013  ')).toBe('vc2013');
     expect(validateBookLogin('')).toBeNull();
+  });
+
+  test('validateMaxBet and validateFreeplay normalize book terms', () => {
+    expect(validateMaxBet('  $500  ')).toBe('$500');
+    expect(validateMaxBet('')).toBeNull();
+    expect(validateFreeplay('25')).toBe('25%');
+    expect(validateFreeplay('30%')).toBe('30%');
   });
 });

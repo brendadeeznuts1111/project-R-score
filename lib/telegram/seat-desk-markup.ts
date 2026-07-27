@@ -9,11 +9,14 @@ import {
   buildSeatDeskTableCopyText,
   buildSeatDeskTodoCopyText,
   formatOutId,
+  isSeatOutFillable,
   isSeatOutIncomplete,
   listOutMissingFieldLabels,
+  listOutTodoMissingFieldLabels,
   normalizeSeatIntake,
   outSequenceNumber,
   type SeatIntakeRecord,
+  type SeatOut,
 } from './seat-capital-desk.ts';
 
 /** Telegram CopyTextButton payload limit (Bot API 7.11+). */
@@ -67,7 +70,7 @@ export type SeatDeskCallback =
   | { op: 'refresh'; callSign: string }
   | { op: 'back'; callSign: string }
   | { op: 'fill'; callSign: string; outId: string } // brand-ok — seat out token
-  | { op: 'pick'; callSign: string; outId: string; field: 'rail' | 'send' | 'user' } // brand-ok
+  | { op: 'pick'; callSign: string; outId: string; field: 'rail' | 'send' | 'user' | 'max' | 'fp' } // brand-ok
   | { op: 'setRail'; callSign: string; outId: string; railCode: string }; // brand-ok
 
 export function isSeatDeskCallback(data: string): boolean {
@@ -97,13 +100,13 @@ export function parseSeatDeskCallback(data: string): SeatDeskCallback | null {
     };
   }
 
-  const pick = /^sd:p:([A-Z0-9-]+):([A-Z0-9-]+):(rail|send|user)$/i.exec(d);
+  const pick = /^sd:p:([A-Z0-9-]+):([A-Z0-9-]+):(rail|send|user|max|fp)$/i.exec(d);
   if (pick) {
     return {
       op: 'pick',
       callSign: pick[1]!.toUpperCase(),
       outId: pick[2]!.toUpperCase(),
-      field: pick[3]!.toLowerCase() as 'rail' | 'send' | 'user',
+      field: pick[3]!.toLowerCase() as 'rail' | 'send' | 'user' | 'max' | 'fp',
     };
   }
 
@@ -166,7 +169,7 @@ export function buildSeatDeskRootMarkup(record: SeatIntakeRecord): Record<string
 
   for (let i = 0; i < hydrated.outs.length; i++) {
     const out = hydrated.outs[i]!;
-    if (!isSeatOutIncomplete(out, defRail, defSend)) continue;
+    if (!isSeatOutFillable(out, defRail, defSend)) continue;
     const outId = out.outId ?? formatOutId(record.partnerCode, i);
     rows.push([
       {
@@ -191,7 +194,7 @@ export function buildSeatDeskFieldPickerMarkup(
   const defRail = hydrated.defaultPaymentRail?.trim();
   const defSend = hydrated.defaultSendTo?.trim();
   const out = hydrated.outs.find(o => o.outId === oid);
-  const missing = out ? listOutMissingFieldLabels(out, defRail, defSend) : [];
+  const missing = out ? listOutTodoMissingFieldLabels(out, defRail, defSend) : [];
   const row: InlineBtn[] = [];
   if (missing.includes('username')) {
     row.push({ text: 'Username', callback_data: `sd:p:${cs}:${oid}:user` });
@@ -201,6 +204,12 @@ export function buildSeatDeskFieldPickerMarkup(
   }
   if (missing.includes('send-to')) {
     row.push({ text: 'Send-to', callback_data: `sd:p:${cs}:${oid}:send` });
+  }
+  if (missing.includes('max')) {
+    row.push({ text: 'Max bet', callback_data: `sd:p:${cs}:${oid}:max` });
+  }
+  if (missing.includes('fp%')) {
+    row.push({ text: 'FP%', callback_data: `sd:p:${cs}:${oid}:fp` });
   }
   row.push({ text: '← Back', callback_data: `sd:b:${cs}` });
   return inlineKeyboard([row]);
