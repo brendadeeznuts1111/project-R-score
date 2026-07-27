@@ -24,6 +24,11 @@ import { deepEquals } from '../lib/deep-equals.ts';
 import { escapeHtml } from '../lib/escape-html.ts';
 import { getConsoleDepth, inspect as inspectDepth } from '../lib/console-depth.ts';
 import { startStateComplianceMock } from '../lib/operations/state-compliance-http.ts';
+import {
+  buildReportProofFromValue,
+  formatReportProofLines,
+  proofScoreHints,
+} from '../lib/security/report-proof.ts';
 
 const TEST_BET = {
   sportId: 'soccer',
@@ -240,18 +245,6 @@ async function buildRows(base: string): Promise<StateInfo[]> {
   return rows;
 }
 
-function signTable(tableText: string): string {
-  const enc = new TextEncoder();
-  const bytes = enc.encode(tableText);
-  const ts = enc.encode(`\nTimestamp: ${new Date().toISOString()}`);
-  const payload = new Uint8Array(bytes.byteLength + ts.byteLength);
-  payload.set(bytes, 0);
-  payload.set(ts, bytes.byteLength);
-  const hasher = new Bun.CryptoHasher('sha256');
-  hasher.update(payload);
-  return hasher.digest('hex');
-}
-
 function summaryLine(rows: StateInfo[]): string {
   const mismatches = rows.filter(
     r =>
@@ -356,25 +349,58 @@ async function main(): Promise<void> {
   try {
     const data = await buildRows(base);
     const table = new ComplianceReportTable(data);
-    const tableText = String(table);
-    const sig = signTable(tableText);
+
+    const stableBody = {
+      kind: 'enhanced-compliance-report',
+      testBet: TEST_BET,
+      rows: data.map(r => ({
+        state: r.state,
+        partner: r.partner,
+        licenseStatus: r.licenseStatus,
+        limits: r.limits.map(l => ({
+          sport_id: l.sport_id,
+          market_id: l.market_id,
+          max_wager: l.max_wager,
+        })),
+        real: { allowed: r.realCheck.allowed, reason: r.realCheck.reason ?? null },
+        shadow: { allowed: r.shadowCheck.allowed, reason: r.shadowCheck.reason ?? null },
+      })),
+      bunVersion: Bun.version,
+    };
+    const proof = buildReportProofFromValue(stableBody);
+    const hints = proofScoreHints(proof);
 
     if (Bun.argv.includes('--html')) {
-      console.log(reportToHtml(data, base, sig));
+      console.log(reportToHtml(data, base, proof.digest));
       return;
     }
 
     console.log('State-Specific Limits & Shadow Check Report');
     console.log(`Base: ${base}`);
-    console.log(`Depth: ${getConsoleDepth()} (use bun --console-depth=N for deeper inspect)`);
+    console.log(
+      `Depth: ${getConsoleDepth()} · score: ${hints.scoreHint} (use bun --console-depth=N for deeper inspect)`
+    );
     console.log(inspectDepth(table));
     console.log(summaryLine(data));
 
-    console.log(`\n📜 Signature: ${sig}`);
+    console.log('');
+    for (const line of formatReportProofLines(proof)) {
+      console.log(line);
+    }
 
-    // Deep dump of structured rows (honors --console-depth / BUN_CONSOLE_DEPTH)
     console.log('\nFull detail (expand with --console-depth 6):');
     console.log(inspectDepth(data));
+
+    const mismatches = data.filter(
+      r =>
+        !deepEquals(
+          { allowed: r.realCheck.allowed, reason: r.realCheck.reason },
+          { allowed: r.shadowCheck.allowed, reason: r.shadowCheck.reason }
+        )
+    ).length;
+    if (mismatches > 0 && Bun.env.COMPLIANCE_REPORT_STRICT === '1') {
+      process.exitCode = 1;
+    }
   } finally {
     stop?.();
   }

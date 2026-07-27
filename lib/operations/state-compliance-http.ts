@@ -511,8 +511,12 @@ export type ComplianceClientOpts = {
 };
 
 function resolveComplianceBase(opts?: ComplianceClientOpts): string {
+  // Prefer COMPLIANCE_URL (report tools) then COMPLIANCE_MOCK_URL (client alias).
   const raw =
-    opts?.baseUrl?.trim() || Bun.env.COMPLIANCE_MOCK_URL?.trim() || 'http://127.0.0.1:8787';
+    opts?.baseUrl?.trim() ||
+    Bun.env.COMPLIANCE_URL?.trim() ||
+    Bun.env.COMPLIANCE_MOCK_URL?.trim() ||
+    'http://127.0.0.1:8787';
   return raw.endsWith('/') ? raw.slice(0, -1) : raw;
 }
 
