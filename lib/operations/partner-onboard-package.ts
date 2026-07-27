@@ -26,6 +26,11 @@ import {
   type AssignOnboardingOpts,
   type AssignOnboardingResult,
 } from './partner-onboarding.ts';
+import {
+  applyPartnerComplianceOnboard,
+  type PartnerComplianceOnboardOpts,
+  type PartnerComplianceOnboardResult,
+} from './partner-compliance-onboard.ts';
 import type { PartnerProfileBinding } from './partner-profile-bridge.ts';
 import { formatPackageGroupTitle } from '../telegram/surfaces.ts';
 import {
@@ -86,11 +91,14 @@ export type PartnerOnboardApplyResult = {
   binding?: PartnerProfileBinding;
   outboxEventId?: string; // brand-ok — opaque ops_channel_outbox id
   onboardCompleteEventId?: string; // brand-ok
+  compliance?: PartnerComplianceOnboardResult;
 };
 
 export type PartnerOnboardPackageOpts = AssignOnboardingOpts & {
   force?: boolean;
   dryRun?: boolean;
+  /** Optional MA/NJ license + discrete geo after profile bind. */
+  compliance?: PartnerComplianceOnboardOpts;
 };
 
 /** Resolve call sign or UUID to a tree node id. */
@@ -367,6 +375,10 @@ export function applyPartnerOnboardPackage(
   const binding = onboardPartnerProfile(db, plan.treeNodeId, opts);
   attachProfileMessageTemplates(db, plan.treeNodeId, { phoneLabel: plan.phoneLabel });
 
+  // Optional MA/NJ license + discrete geo (state | age | location | zip)
+  const complianceOnboard = opts?.compliance
+    ? applyPartnerComplianceOnboard(db, plan.treeNodeId, opts.compliance)
+    : undefined;
   const node = db
     .query('SELECT name, telegram_id, call_sign FROM tree_nodes WHERE id = $id')
     .get({ $id: plan.treeNodeId as string }) as {
@@ -429,6 +441,7 @@ export function applyPartnerOnboardPackage(
     binding,
     outboxEventId,
     onboardCompleteEventId,
+    compliance: complianceOnboard,
   };
 }
 
