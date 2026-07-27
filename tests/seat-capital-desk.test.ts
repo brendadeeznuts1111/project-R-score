@@ -1,8 +1,10 @@
 import { describe, expect, test } from 'bun:test';
 import {
   applyDefaultPayment,
+  applyHarnessStagingIntake,
   applyHarnessStagingRails,
   applyIntakeField,
+  buildSeatDeskViewModel,
   buildSeatOutDeskLines,
   firstIncompleteOutIndex,
   formatOutId,
@@ -151,6 +153,21 @@ describe('seat-capital-desk', () => {
     expect(next.defaultSendTo).toBe('@bil.newpartner');
     expect(next.outs[0]?.sendTo).toBe('@bil.newpartner');
     expect(resolveFundStatus(next).status).toBe('ready');
+  });
+
+  test('applyHarnessStagingIntake adds staging login and default book terms', () => {
+    const intake: SeatIntakeRecord = {
+      partnerCode: 'ASH',
+      callSign: 'ASH-001',
+      defaultPaymentRail: 'Venmo',
+      defaultSendTo: '@ash.hr.fl',
+      outs: [{ outId: 'ASH-1', book: 'Hard Rock Florida', primary: true }],
+    };
+    const next = applyHarnessStagingIntake(intake);
+    expect(next.outs[0]?.bookLogin).toBe('ash1.staging');
+    expect(next.outs[0]?.maxBet).toBe('500');
+    expect(next.outs[0]?.freeplay).toBe('25%');
+    expect(buildSeatDeskViewModel(next).incompleteOuts).toBe(0);
   });
 
   test('resolveFundStatus: partial when lead ready but others incomplete; ready when all set', () => {

@@ -1,12 +1,12 @@
 {
   "schema": "factorywager.seat-capital-desk.v1",
-  "generatedAt": "2026-07-27T07:13:19.193Z",
+  "generatedAt": "2026-07-27T08:11:19.211Z",
   "desks": 4,
   "blocked": 0,
   "partial": 0,
   "ready": 4,
   "funded": 0,
-  "incompleteOuts": 3,
+  "incompleteOuts": 0,
   "rows": [
     {
       "callSign": "ASH-001",
@@ -17,14 +17,14 @@
         {
           "outNum": "1",
           "book": "Hard Rock Florida",
-          "username": "—",
+          "username": "ash1.staging",
           "depositMethod": "Venmo",
           "sendTo": "@ash.hr.fl",
-          "maxBet": "—",
-          "freeplayPct": "—",
+          "maxBet": "500",
+          "freeplayPct": "25%",
           "status": "ready",
-          "incomplete": true,
-          "note": "WARMED seat · limits stale — confirm rails before play"
+          "incomplete": false,
+          "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username"
         },
         {
           "outNum": "2",
@@ -57,10 +57,10 @@
           "label": "All books ready for FUND"
         }
       ],
-      "incompleteOuts": 1,
+      "incompleteOuts": 0,
       "pinned": false,
       "hasTelegramDesk": true,
-      "deskUpdatedAt": "2026-07-27T06:38:49.933Z"
+      "deskUpdatedAt": "2026-07-27T08:11:10.082Z"
     },
     {
       "callSign": "BIL-001",
@@ -71,14 +71,14 @@
         {
           "outNum": "1",
           "book": "Partner book TBD",
-          "username": "—",
+          "username": "bil1.staging",
           "depositMethod": "Venmo",
           "sendTo": "@bil.newpartner",
-          "maxBet": "—",
-          "freeplayPct": "—",
+          "maxBet": "500",
+          "freeplayPct": "25%",
           "status": "ready",
-          "incomplete": true,
-          "note": "Operator ready — partner assigns book + rails via desk Fill"
+          "incomplete": false,
+          "note": "Operator ready — partner assigns book + rails via desk Fill · harness login — replace via Fill Username"
         }
       ],
       "checklist": [
@@ -95,10 +95,10 @@
           "label": "All books ready for FUND"
         }
       ],
-      "incompleteOuts": 1,
+      "incompleteOuts": 0,
       "pinned": false,
       "hasTelegramDesk": true,
-      "deskUpdatedAt": "2026-07-27T07:12:59.891Z"
+      "deskUpdatedAt": "2026-07-27T08:11:11.257Z"
     },
     {
       "callSign": "NOV-001",
@@ -109,14 +109,14 @@
         {
           "outNum": "1",
           "book": "Hard Rock Florida",
-          "username": "—",
+          "username": "nov1.staging",
           "depositMethod": "Venmo",
           "sendTo": "@nov.newpartner",
-          "maxBet": "—",
-          "freeplayPct": "—",
+          "maxBet": "500",
+          "freeplayPct": "25%",
           "status": "ready",
-          "incomplete": true,
-          "note": "SouthFL PPH · ONB seat — book login pending partner ack"
+          "incomplete": false,
+          "note": "SouthFL PPH · ONB seat — book login pending partner ack · harness login — replace via Fill Username"
         },
         {
           "outNum": "2",
@@ -149,10 +149,10 @@
           "label": "All books ready for FUND"
         }
       ],
-      "incompleteOuts": 1,
+      "incompleteOuts": 0,
       "pinned": false,
       "hasTelegramDesk": true,
-      "deskUpdatedAt": "2026-07-27T06:38:52.087Z"
+      "deskUpdatedAt": "2026-07-27T08:11:12.398Z"
     },
     {
       "callSign": "SPEN-001",
@@ -166,8 +166,8 @@
           "username": "vc2013",
           "depositMethod": "Venmo",
           "sendTo": "@spen.newpartner",
-          "maxBet": "—",
-          "freeplayPct": "—",
+          "maxBet": "500",
+          "freeplayPct": "25%",
           "status": "ready",
           "incomplete": false
         },
@@ -177,8 +177,8 @@
           "username": "Yungg1",
           "depositMethod": "Venmo",
           "sendTo": "@spen.newpartner",
-          "maxBet": "—",
-          "freeplayPct": "—",
+          "maxBet": "500",
+          "freeplayPct": "25%",
           "status": "ready",
           "incomplete": false
         },
@@ -188,8 +188,8 @@
           "username": "action92",
           "depositMethod": "Venmo",
           "sendTo": "@spen.newpartner",
-          "maxBet": "—",
-          "freeplayPct": "—",
+          "maxBet": "500",
+          "freeplayPct": "25%",
           "status": "ready",
           "incomplete": false,
           "note": "logged in ~$17,747 (backend.action92.com)"
@@ -200,8 +200,8 @@
           "username": "Henry019",
           "depositMethod": "Venmo",
           "sendTo": "@spen.newpartner",
-          "maxBet": "—",
-          "freeplayPct": "—",
+          "maxBet": "500",
+          "freeplayPct": "25%",
           "status": "ready",
           "incomplete": false
         },
@@ -237,9 +237,9 @@
         }
       ],
       "incompleteOuts": 0,
-      "pinned": true,
+      "pinned": false,
       "hasTelegramDesk": true,
-      "deskUpdatedAt": "2026-07-27T07:13:10.974Z"
+      "deskUpdatedAt": "2026-07-27T08:11:13.534Z"
     }
   ],
   "commands": {

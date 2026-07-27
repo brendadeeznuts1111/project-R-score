@@ -486,6 +486,37 @@ export function applyHarnessStagingRails(record: SeatIntakeRecord): SeatIntakeRe
   return applyDefaultPayment(withDefaults);
 }
 
+/** Harness book login when partner has not confirmed via Fill yet. */
+export function harnessStagingBookLogin(partnerCode: string, outIndex: number): string {
+  return `${partnerCode.toLowerCase().trim()}${outIndex + 1}.staging`;
+}
+
+const HARNESS_STAGING_TERMS = { maxBet: '500', freeplay: '25%' } as const;
+
+/**
+ * Single-operator harness closure — rails, staging logins, default book terms.
+ * Does not replace real `@partner` send-tos when already set (e.g. ASH `@ash.hr.fl`).
+ */
+export function applyHarnessStagingIntake(record: SeatIntakeRecord): SeatIntakeRecord {
+  let next = applyHarnessStagingRails(record);
+  const code = next.partnerCode.toUpperCase().trim();
+  const outs = normalizeOuts(next).map((out, i) => {
+    if (isOutDeferred(out)) return out;
+    const patched: SeatOut = { ...out };
+    if (!outBookLogin(out)) {
+      patched.bookLogin = harnessStagingBookLogin(code, i);
+      const note = out.note?.trim();
+      patched.note = note
+        ? `${note} · harness login — replace via Fill Username`
+        : 'harness login — replace via Fill Username';
+    }
+    if (!out.maxBet?.trim()) patched.maxBet = HARNESS_STAGING_TERMS.maxBet;
+    if (!out.freeplay?.trim()) patched.freeplay = HARNESS_STAGING_TERMS.freeplay;
+    return patched;
+  });
+  return { ...next, outs };
+}
+
 /** @deprecated use applyDefaultPayment */
 export const applyDefaultDepositTo = applyDefaultPayment;
 

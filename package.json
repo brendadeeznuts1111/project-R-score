@@ -1667,6 +1667,7 @@
     "seat:desk:topic-prompts": "bun tools/seat-desk-cli.ts topic-prompts",
     "seat:desk:accounting-prompt": "bun tools/seat-desk-cli.ts accounting-prompt",
     "seat:desk:harness-rails": "bun tools/seat-desk-cli.ts harness-rails",
+    "seat:desk:harness-staging": "bun tools/seat-desk-cli.ts harness-staging",
     "telegram:all-accounting": "bun tools/all-accounting-channel.ts",
     "telegram:all-accounting:bind": "bun tools/telegram-bind-surface.ts all-accounting",
     "telegram:all-accounting:create": "bun tools/create-house-forum.ts all-accounting",

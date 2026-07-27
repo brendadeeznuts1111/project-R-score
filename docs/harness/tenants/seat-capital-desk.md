@@ -158,6 +158,7 @@ bun run seat:desk:topic-prompts SPEN-001
 
 # Staging harness — fill `@{code}.newpartner` + Venmo when rails missing (single-operator)
 bun run seat:desk:harness-rails BIL-001 SPEN-001
+bun run seat:desk:harness-staging CALL-SIGN [CALL-SIGN…]   # rails + staging login + default max/fp
 
 # JSON snapshot for a future dashboard panel
 bun run seat:desk:partner-message SPEN-001 --json
@@ -194,6 +195,7 @@ bun run seat:desk:accounting-prompt SPEN-001 --thread-id 37 --post
 bun run seat:desk:post SPEN-001
 bun run seat:desk:refresh SPEN-001
 bun run seat:desk:update SPEN-001 --field SPEN-1.rail=Venmo --field SPEN-1.sendTo=@handle
+# `update` republishes with pin by default; pass `--no-pin` to skip pinChatMessage on that pass
 bun run seat:desk:partner-message SPEN-001
 bun run seat:desk:pin SPEN-001
 bun run seat:desk:unpin SPEN-001

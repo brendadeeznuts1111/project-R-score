@@ -16,6 +16,7 @@
 import { registerPackageGroupForumTopic } from '../lib/telegram/package-group-forum.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import {
+  applyHarnessStagingIntake,
   applyHarnessStagingRails,
   applyIntakeField,
   deleteSeatCapitalDesk,
@@ -57,7 +58,8 @@ function usage(): never {
   bun tools/seat-desk-cli.ts partner-message <CALL-SIGN> [--json] [--template confirm-active|todo|reply-hint|topic-intake|topic-rails|topic-accounting] [--post]
   bun tools/seat-desk-cli.ts topic-prompts <CALL-SIGN> [--intake-only|--rails-only]
   bun tools/seat-desk-cli.ts accounting-prompt <CALL-SIGN> [--post] [--thread-id N]
-  bun tools/seat-desk-cli.ts harness-rails <CALL-SIGN> [CALL-SIGN…] [--no-publish]`);
+  bun tools/seat-desk-cli.ts harness-rails <CALL-SIGN> [CALL-SIGN…] [--no-publish]
+  bun tools/seat-desk-cli.ts harness-staging <CALL-SIGN> [CALL-SIGN…] [--no-publish]`);
   process.exit(1);
 }
 
@@ -125,9 +127,10 @@ if (topicIntakeOnly && topicRailsOnly) {
 
 const tg = loadTelegramEnv();
 
-if (command === 'harness-rails') {
+if (command === 'harness-rails' || command === 'harness-staging') {
   const callSigns: string[] = [];
   let harnessPublish = true;
+  const applyStaging = command === 'harness-staging';
   for (let i = 1; i < argv.length; i++) {
     const a = argv[i]!;
     if (a === '--no-publish') harnessPublish = false;
@@ -135,7 +138,7 @@ if (command === 'harness-rails') {
   }
   if (callSigns.length === 0) {
     console.error(
-      'Usage: bun tools/seat-desk-cli.ts harness-rails CALL-SIGN [CALL-SIGN…] [--no-publish]'
+      `Usage: bun tools/seat-desk-cli.ts ${command} CALL-SIGN [CALL-SIGN…] [--no-publish]`
     );
     process.exit(1);
   }
@@ -150,7 +153,7 @@ if (command === 'harness-rails') {
       continue;
     }
     const before = resolveFundStatus(intake);
-    intake = applyHarnessStagingRails(intake);
+    intake = applyStaging ? applyHarnessStagingIntake(intake) : applyHarnessStagingRails(intake);
     const after = resolveFundStatus(intake);
     const path = await saveSeatIntake(intake);
     console.log(`${cs}: ${before.status} → ${after.status} · ${after.detail}`);
@@ -263,7 +266,7 @@ switch (command) {
     const result = await publishSeatCapitalDesk({
       token: tg.effectiveToken!,
       record,
-      pin: false,
+      pin,
     });
     printPublish(result);
     break;
