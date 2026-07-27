@@ -17,11 +17,12 @@ source scripts/agent-env.sh <team>
 
 | Team | Vault | Key Items | MCP Servers |
 |------|-------|-----------|-------------|
-| **factorywager** | factorywager | R2, CF API, Registry Token, Emails | cloudflare, github, dx |
+| **factorywager** | factorywager | R2, CF API, Registry Token, Emails, Telegram bots/webhook/ops chat | cloudflare, github, dx |
 | **cloudflare** | cloudflare | R2 buckets, Account, Zone, Pages, DNS token | cloudflare (DNS) |
 | **bet-ticker** | bet-ticker | VPS SSH, R2, Fantasy402 Token, CF cookies | cascade-mover |
 | **cascade-mover** | cascade-mover | Server config, R2, FP402 login | cascade-mover (50 tools) |
-| **infra** | tenants | Telegram bots, webhook, ops chat | — |
+
+> Telegram secrets moved from the retired `tenants` vault into `factorywager` — the `factorywager-bot` PAT cannot open `tenants`.
 
 ## SSH Hosts
 

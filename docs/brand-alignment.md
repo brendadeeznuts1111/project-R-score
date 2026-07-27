@@ -1,17 +1,24 @@
 # FactoryWager Brand & Infrastructure Alignment
 
 ## Domain Structure
+
+Live DNS (all resolve to Cloudflare proxy IPs):
 ```
 factory-wager.com          → Pages (score app, apex)
+  www.factory-wager.com    → Pages (same as apex)
   score.factory-wager.com  → Pages (score app)
   registry.factory-wager.com → Pages (Bun package registry)
-  www.factory-wager.com    → Pages (same as apex)
   health.factory-wager.com → Pages health endpoint
   telegram.factory-wager.com → Telegram webhook
   support.factory-wager.com → HelpScout
   wiki.factory-wager.com   → GitHub Pages
-  ledger.factory-wager.com → Cloudflare Tunnel (Sports Terminal)
-  terminal.factory-wager.com → Cloudflare Tunnel (Sports Terminal)
+  ledger.factory-wager.com → machine-side cloudflared tunnel (Sports Terminal; no repo config)
+  terminal.factory-wager.com → machine-side cloudflared tunnel (Sports Terminal; no repo config)
+```
+
+Not resolving (no DNS records):
+```
+reasonix.factory-wager.com, api, mail, news, backup, status
 ```
 
 ## Email
@@ -40,12 +47,13 @@ Scope: @factorywager, @factory-wager, @factory
 ## Proton Pass Vaults
 | Vault | Purpose | Agent |
 |-------|---------|-------|
-| factorywager | Monorepo secrets | factorywager-agent |
+| factorywager | Monorepo + Telegram secrets | factorywager-agent |
 | cloudflare | DNS/R2/Pages keys | cloudflare-agent |
 | bet-ticker | Poller/token secrets | bet-ticker-agent |
 | cascade-mover | Sports intelligence | cascade-agent |
 | Personal | Personal SSH key | — |
-| tenants | Portal bot tokens | — |
+
+> Telegram secrets live in the `factorywager` vault — the retired `tenants` vault is not accessible to the `factorywager-bot` PAT.
 
 ## Agent Access
 ```bash
