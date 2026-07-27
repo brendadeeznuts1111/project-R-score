@@ -32,6 +32,8 @@ export type PackageGroupMembershipTell = {
   /** Short label for desk tables. */
   label: string;
   expectedTypical: number;
+  /** Linked/shared DM seat but partner human not in forum yet (still at 2·house). */
+  needsPartnerInForum: boolean;
 };
 
 export function interpretPackageGroupMemberCount(
@@ -40,24 +42,39 @@ export function interpretPackageGroupMemberCount(
 ): PackageGroupMembershipTell {
   const expectedTypical = PACKAGE_GROUP_MEMBERS_WITH_PARTNER;
 
+  const finish = (
+    partial: Omit<PackageGroupMembershipTell, 'needsPartnerInForum'>,
+    dmSeatStatus?: DmSeatStatus | null
+  ): PackageGroupMembershipTell => ({
+    ...partial,
+    needsPartnerInForum:
+      partial.status === 'house_only' && (dmSeatStatus === 'linked' || dmSeatStatus === 'shared'),
+  });
+
   if (memberCount == null) {
-    return {
-      memberCount: null,
-      status: 'unknown',
-      label: '—',
-      expectedTypical,
-      detail: 'member count unknown — run handshake:desk --refresh or directory --refresh',
-    };
+    return finish(
+      {
+        memberCount: null,
+        status: 'unknown',
+        label: '—',
+        expectedTypical,
+        detail: 'member count unknown — run handshake:desk --refresh or directory --refresh',
+      },
+      opts?.dmSeatStatus
+    );
   }
 
   if (memberCount <= 1) {
-    return {
-      memberCount,
-      status: 'understaffed',
-      label: '⚠ low',
-      expectedTypical,
-      detail: `${memberCount} member(s) — expected bot + house operator (≥2); re-check bot admin + invite`,
-    };
+    return finish(
+      {
+        memberCount,
+        status: 'understaffed',
+        label: '⚠ low',
+        expectedTypical,
+        detail: `${memberCount} member(s) — expected bot + house operator (≥2); re-check bot admin + invite`,
+      },
+      opts?.dmSeatStatus
+    );
   }
 
   if (memberCount === PACKAGE_GROUP_MEMBERS_HOUSE_ONLY) {
@@ -66,37 +83,68 @@ export function interpretPackageGroupMemberCount(
       dm === 'designated' || dm === 'none'
         ? ' (normal while partner not in forum / telegram not linked)'
         : dm === 'linked' || dm === 'shared'
-          ? ' — partner may not have accepted forum invite yet'
+          ? ' — send forum invite (expect 3·OK when partner joins)'
           : '';
-    return {
-      memberCount,
-      status: 'house_only',
-      label: 'house',
-      expectedTypical,
-      detail: `bot + house operator only${partnerPending}`,
-    };
+    return finish(
+      {
+        memberCount,
+        status: 'house_only',
+        label: 'house',
+        expectedTypical,
+        detail: `bot + house operator only${partnerPending}`,
+      },
+      dm
+    );
   }
 
   if (memberCount === PACKAGE_GROUP_MEMBERS_WITH_PARTNER) {
-    return {
-      memberCount,
-      status: 'partner_present',
-      label: 'OK',
-      expectedTypical,
-      detail: 'bot + house operator + partner/agent (typical steady state)',
-    };
+    return finish(
+      {
+        memberCount,
+        status: 'partner_present',
+        label: 'OK',
+        expectedTypical,
+        detail: 'bot + house operator + partner/agent (typical steady state)',
+      },
+      opts?.dmSeatStatus
+    );
   }
 
-  return {
-    memberCount,
-    status: 'extended',
-    label: 'ext',
-    expectedTypical,
-    detail: `${memberCount} members — core trio present; extras (experts/observers) likely`,
-  };
+  return finish(
+    {
+      memberCount,
+      status: 'extended',
+      label: 'ext',
+      expectedTypical,
+      detail: `${memberCount} members — core trio present; extras (experts/observers) likely`,
+    },
+    opts?.dmSeatStatus
+  );
+}
+
+/** Desk/readiness cell: `2·house` or `2·house!` when invite still needed. */
+export function formatMembershipDeskCell(
+  tell: PackageGroupMembershipTell,
+  dmSeatStatus?: DmSeatStatus | null
+): string {
+  if (tell.memberCount == null) return '—';
+  const bang =
+    tell.needsPartnerInForum ||
+    (tell.status === 'house_only' && (dmSeatStatus === 'linked' || dmSeatStatus === 'shared'))
+      ? '!'
+      : '';
+  return `${tell.memberCount}·${tell.label}${bang}`;
+}
+
+export function membershipForumLaneOk(
+  tell: PackageGroupMembershipTell,
+  dmSeatStatus?: DmSeatStatus | null
+): boolean {
+  if (tell.status === 'understaffed' || tell.status === 'unknown') return false;
+  if (tell.needsPartnerInForum) return false;
+  return true;
 }
 
 export function formatPackageGroupMembershipForDesk(tell: PackageGroupMembershipTell): string {
-  if (tell.memberCount == null) return '—';
-  return `${tell.memberCount} · ${tell.label}`;
+  return formatMembershipDeskCell(tell);
 }
