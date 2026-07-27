@@ -29,9 +29,9 @@
     {
       "name": "automation",
       "description": "Use when creating, reading, updating, deleting, running, cancelling, scheduling, condition-triggering, or inspecting Daimon Blueprint Automations and their run records.",
-      "updatedAt": "2026-07-16T19:31:14.442Z",
+      "updatedAt": "2026-07-27T01:08:28.175Z",
       "hasPackage": false,
-      "lineCount": 367,
+      "lineCount": 376,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -265,9 +265,9 @@
     {
       "name": "kimi-slides",
       "description": "Create and edit presentations in PPTX format. This skill defines a .pptd intermediate format to simplify OOXML operations. Any task involving the generation or editing of PPTX files must use this skill and no other method. This skill can also be used to read uploaded PPTX files and convert PPTX documents into images. When the user requests an infographic or poster without specifying an image or HTML format, this skill may likewise be used to create it as a PPTX file.",
-      "updatedAt": "2026-07-16T19:31:14.534Z",
+      "updatedAt": "2026-07-27T01:08:28.239Z",
       "hasPackage": false,
-      "lineCount": 97,
+      "lineCount": 104,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -291,7 +291,7 @@
     {
       "name": "kimi-webbridge",
       "description": "Kimi WebBridge lets AI control the user's real browser — navigate, click, type, read, screenshot, and interact with any website using the user's actual login sessions. Use this skill whenever the user wants to interact with websites, automate browser tasks, scrape web content, or perform any action requiring a real browser. Also use when the user mentions \"browser\", \"webpage\", \"open URL\", \"screenshot\", or asks to read/interact with any website. Use even for simple-sounding browser requests — the daemon handles all complexity.",
-      "updatedAt": "2026-07-26T06:07:05.788Z",
+      "updatedAt": "2026-07-27T01:08:28.327Z",
       "hasPackage": false,
       "lineCount": 178,
       "resources": {
@@ -393,6 +393,19 @@
       "validation": []
     },
     {
+      "name": "pricing-strategy",
+      "description": "Design, optimize, and communicate SaaS pricing — tier structure, value metrics, pricing pages, and price increase strategy. Use when building a pricing model from scratch, redesigning existing pricing, planning a price increase, or improving a pricing page. Trigger keywords: pricing tiers, pricing page, price increase, packaging, value metric, per seat pricing, usage-based pricing, freemium, good-better-best, pricing strategy, monetization, pricing page conversion, Van Westendorp.",
+      "updatedAt": "2026-07-27T01:08:28.251Z",
+      "hasPackage": false,
+      "lineCount": 314,
+      "resources": {
+        "scripts": 1,
+        "references": 2,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
       "name": "process-doc",
       "description": "Document a business process — flowcharts, RACI, and SOPs. Use when formalizing a process that lives in someone's head, building a RACI to clarify who owns what, writing an SOP for a handoff or audit, or capturing the exceptions and edge cases of how work actually gets done.",
       "updatedAt": "2026-06-03T23:03:48.579Z",
@@ -434,7 +447,7 @@
     {
       "name": "seaborn-visualization",
       "description": "charting, plotting, graphing, visualization, seaborn, matplotlib, pandas reports, Chinese chart labels, and data-viz code in Daimon's managed Python runtime. Covers both interactive runs via the Bash tool and Blueprint Automation code execution.",
-      "updatedAt": "2026-07-22T11:58:54.829Z",
+      "updatedAt": "2026-07-27T01:08:28.257Z",
       "hasPackage": false,
       "lineCount": 90,
       "resources": {
@@ -499,7 +512,7 @@
     {
       "name": "widget",
       "description": "Use when creating, showing, updating, validating, deleting, rendering, or troubleshooting Daimon Blueprint Widgets, their responsive index.html UI, data slots, submit events, input state, files, and workspace resources. You MUST read widgetdesign skill before creating any widget.",
-      "updatedAt": "2026-07-16T19:31:14.609Z",
+      "updatedAt": "2026-07-27T01:08:28.283Z",
       "hasPackage": false,
       "lineCount": 221,
       "resources": {
@@ -538,5 +551,5 @@
       ]
     }
   ],
-  "count": 41
+  "count": 42
 }

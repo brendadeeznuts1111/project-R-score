@@ -1,7 +1,7 @@
 {
   "plane": "harness-agents",
   "skillLoopRegistry": ".agents/skills/ast-grep/skill-loop-registry.json",
-  "scannedAt": "2026-07-26T23:46:57.509Z",
+  "scannedAt": "2026-07-27T02:02:10.216Z",
   "skills": [
     {
       "name": "ast-grep",

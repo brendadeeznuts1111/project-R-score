@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-27T02:00:53.218Z",
+  "generated": "2026-07-27T02:02:10.241Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -627,7 +627,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 0s",
-    "uptimeMs": 448,
+    "uptimeMs": 441,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
@@ -652,12 +652,12 @@
     },
     "experimentsActive": 1,
     "predictionN": 30,
-    "timestamp": "2026-07-27T02:00:53.216Z",
-    "snapshotAt": "2026-07-27T02:00:53.216Z"
+    "timestamp": "2026-07-27T02:02:10.237Z",
+    "snapshotAt": "2026-07-27T02:02:10.237Z"
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-27T02:00:53.209Z",
+    "generated": "2026-07-27T02:02:10.232Z",
     "liquidity": {
       "total": 85710
     },
@@ -793,11 +793,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "568dc27b15dc2b416bb997f654a7420d399c88a98285636504b4658d2bf375af",
+      "proofHash": "f317f58f2925c0e91e4b3b4a3962f1c29b14aa04a1e5138df3d0822ec9835ddf",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-27T02:00:53.210Z"
+      "timestamp": "2026-07-27T02:02:10.232Z"
     },
     "registryClient": {
       "available": true,
@@ -871,7 +871,7 @@
           "detail": "13 contracts · 20 consistency"
         }
       ],
-      "timestamp": "2026-07-27T02:00:53.164Z",
+      "timestamp": "2026-07-27T02:02:10.187Z",
       "pagesUrl": "https://project-r-score.pages.dev",
       "path": "/registry/cloudflare-pages-preflight.json"
     },
@@ -1057,8 +1057,8 @@
           "ok": true
         }
       ],
-      "proofHash": "42568675be461b4674ba03849946eab708f02bdb3627f0b02383b781d05f7d50",
-      "timestamp": "2026-07-27T02:00:52.779Z",
+      "proofHash": "f1fac6ed0471f8a9cabae81ec1f5fa90926f6a7ac10621f9cb84a212017d7a41",
+      "timestamp": "2026-07-27T02:02:09.813Z",
       "path": "/registry/proof-taxonomy-audit.json"
     },
     "channelMeta": {
@@ -1069,7 +1069,7 @@
       "total": 75,
       "status": "pass",
       "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-      "updatedAt": "2026-07-27T02:00:52.777Z",
+      "updatedAt": "2026-07-27T02:02:09.809Z",
       "channel": "stable",
       "targetVersion": "1.4.0",
       "runtimeVersion": "1.4.0",
@@ -1113,29 +1113,37 @@
       "httpOk": 16,
       "criticalFailed": 0,
       "errorRate": 0,
-      "meanMs": 103.82,
-      "p50Ms": 92.99,
-      "p95Ms": 217.07,
-      "maxMs": 217.07,
-      "proofHash": "d98558e8a967d253ca52717ad5f03908724303b91136425fff3b2c0c0c98ba6d",
-      "timestamp": "2026-07-24T07:59:49.740Z",
+      "meanMs": 212.07,
+      "p50Ms": 134.33,
+      "p95Ms": 546.18,
+      "maxMs": 546.18,
+      "proofHash": "ac5b2004dbcff8c07d3c09cb5baf2e951380b2ad173952f0482bf2932502493d",
+      "timestamp": "2026-07-27T02:01:33.917Z",
       "regressions": 0,
       "criticalFailedPaths": [],
       "routes": [
+        {
+          "path": "/portal/dashboard-app.js",
+          "status": 200,
+          "pass": true,
+          "critical": true,
+          "timeMs": 204.47,
+          "contentType": "application/javascript"
+        },
         {
           "path": "/portal/ops/",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 101.15,
+          "timeMs": 134.33,
           "contentType": "text/html"
         },
         {
-          "path": "/registry/@factorywager/bun-utils-test/latest.json",
+          "path": "/api/operations/summary",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 92.99,
+          "timeMs": 114.7,
           "contentType": "application/json"
         },
         {
@@ -1143,7 +1151,7 @@
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 89.25,
+          "timeMs": 107.37,
           "contentType": "text/html"
         },
         {
@@ -1151,15 +1159,7 @@
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 42.75,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/api/operations/summary",
-          "status": 200,
-          "pass": true,
-          "critical": true,
-          "timeMs": 35.96,
+          "timeMs": 95.4,
           "contentType": "application/json"
         },
         {
@@ -1167,31 +1167,15 @@
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 34.29,
+          "timeMs": 73.2,
           "contentType": "application/json"
         },
         {
-          "path": "/portal/dashboard-app.js",
+          "path": "/registry/@factorywager/bun-utils-test/latest.json",
           "status": 200,
           "pass": true,
           "critical": true,
-          "timeMs": 30.63,
-          "contentType": "application/javascript"
-        },
-        {
-          "path": "/api/registry/@factorywager/test-pkg",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 217.07,
-          "contentType": "text/html"
-        },
-        {
-          "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 201.58,
+          "timeMs": 44.48,
           "contentType": "application/json"
         },
         {
@@ -1199,39 +1183,39 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 190.12,
+          "timeMs": 546.18,
           "contentType": "application/json"
-        },
-        {
-          "path": "/portal",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 174.09,
-          "contentType": "text/html"
         },
         {
           "path": "/health",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 141.52,
+          "timeMs": 490.49,
           "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 483.33,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/api/registry/@factorywager/test-pkg",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 371.58,
+          "contentType": "text/html"
         },
         {
           "path": "/monitoring",
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 139.62,
-          "contentType": "text/html"
-        },
-        {
-          "path": "/ready",
-          "status": 200,
-          "pass": true,
-          "critical": false,
-          "timeMs": 118.84,
+          "timeMs": 292.59,
           "contentType": "text/html"
         },
         {
@@ -1239,7 +1223,31 @@
           "status": 400,
           "pass": true,
           "critical": false,
-          "timeMs": 112.35,
+          "timeMs": 289.5,
+          "contentType": "application/json"
+        },
+        {
+          "path": "/ready",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 262.32,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/portal",
+          "status": 200,
+          "pass": true,
+          "critical": false,
+          "timeMs": 184.36,
+          "contentType": "text/html"
+        },
+        {
+          "path": "/api/registry/static",
+          "status": 400,
+          "pass": true,
+          "critical": false,
+          "timeMs": 55.03,
           "contentType": "application/json"
         },
         {
@@ -1247,7 +1255,7 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 78.75,
+          "timeMs": 34.6,
           "contentType": "application/json"
         },
         {
@@ -1255,18 +1263,12 @@
           "status": 200,
           "pass": true,
           "critical": false,
-          "timeMs": 38.64,
-          "contentType": "application/json"
-        },
-        {
-          "path": "/api/registry/static",
-          "status": 400,
-          "pass": true,
-          "critical": false,
-          "timeMs": 29.14,
+          "timeMs": 33.25,
           "contentType": "application/json"
         }
-      ]
+      ],
+      "cached": true,
+      "stale": false
     },
     "partners": {
       "bound": 15,
@@ -1359,7 +1361,7 @@
     "toc": {
       "available": true,
       "path": "/registry/toc-ops.json",
-      "generatedAt": "2026-07-27T02:00:53.194Z",
+      "generatedAt": "2026-07-27T02:02:10.219Z",
       "partners": 3,
       "warmed": 4,
       "warming": 2,
@@ -1387,7 +1389,7 @@
       "throughputI": 47810,
       "throughputOE": 1655,
       "topRankedProcess": "LIMIT",
-      "avgRP": 10.463222978248693,
+      "avgRP": 10.461440387547915,
       "settlementFloatRatio": 0.5103534825350345,
       "presencePartners": 3,
       "presenceIpv6": 31,
@@ -1474,7 +1476,7 @@
     "telegramHandshake": {
       "available": true,
       "path": "/registry/telegram-handshake.json",
-      "generatedAt": "2026-07-27T02:00:53.209Z",
+      "generatedAt": "2026-07-27T02:02:10.232Z",
       "partners": 4,
       "inviteGaps": 2,
       "blocked": 0,
@@ -1542,7 +1544,7 @@
     }
   },
   "bunUtils": {
-    "proofHash": "15f2add9b6634d0cd833c555b3728dbdcc7cf7ed17708c7e788a4230470a90f6",
+    "proofHash": "cb0c8d0d71a9aa0024b5a4591feb8e07f96dad515e10db7b4b9c7f9c050d2127",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -1557,29 +1559,37 @@
     "httpOk": 16,
     "criticalFailed": 0,
     "errorRate": 0,
-    "meanMs": 103.82,
-    "p50Ms": 92.99,
-    "p95Ms": 217.07,
-    "maxMs": 217.07,
-    "proofHash": "d98558e8a967d253ca52717ad5f03908724303b91136425fff3b2c0c0c98ba6d",
-    "timestamp": "2026-07-24T07:59:49.740Z",
+    "meanMs": 212.07,
+    "p50Ms": 134.33,
+    "p95Ms": 546.18,
+    "maxMs": 546.18,
+    "proofHash": "ac5b2004dbcff8c07d3c09cb5baf2e951380b2ad173952f0482bf2932502493d",
+    "timestamp": "2026-07-27T02:01:33.917Z",
     "regressions": 0,
     "criticalFailedPaths": [],
     "routes": [
+      {
+        "path": "/portal/dashboard-app.js",
+        "status": 200,
+        "pass": true,
+        "critical": true,
+        "timeMs": 204.47,
+        "contentType": "application/javascript"
+      },
       {
         "path": "/portal/ops/",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 101.15,
+        "timeMs": 134.33,
         "contentType": "text/html"
       },
       {
-        "path": "/registry/@factorywager/bun-utils-test/latest.json",
+        "path": "/api/operations/summary",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 92.99,
+        "timeMs": 114.7,
         "contentType": "application/json"
       },
       {
@@ -1587,7 +1597,7 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 89.25,
+        "timeMs": 107.37,
         "contentType": "text/html"
       },
       {
@@ -1595,15 +1605,7 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 42.75,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/operations/summary",
-        "status": 200,
-        "pass": true,
-        "critical": true,
-        "timeMs": 35.96,
+        "timeMs": 95.4,
         "contentType": "application/json"
       },
       {
@@ -1611,31 +1613,15 @@
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 34.29,
+        "timeMs": 73.2,
         "contentType": "application/json"
       },
       {
-        "path": "/portal/dashboard-app.js",
+        "path": "/registry/@factorywager/bun-utils-test/latest.json",
         "status": 200,
         "pass": true,
         "critical": true,
-        "timeMs": 30.63,
-        "contentType": "application/javascript"
-      },
-      {
-        "path": "/api/registry/@factorywager/test-pkg",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 217.07,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 201.58,
+        "timeMs": 44.48,
         "contentType": "application/json"
       },
       {
@@ -1643,39 +1629,39 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 190.12,
+        "timeMs": 546.18,
         "contentType": "application/json"
-      },
-      {
-        "path": "/portal",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 174.09,
-        "contentType": "text/html"
       },
       {
         "path": "/health",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 141.52,
+        "timeMs": 490.49,
         "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry/@factorywager/bun-utils-test/latest.json",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 483.33,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/api/registry/@factorywager/test-pkg",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 371.58,
+        "contentType": "text/html"
       },
       {
         "path": "/monitoring",
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 139.62,
-        "contentType": "text/html"
-      },
-      {
-        "path": "/ready",
-        "status": 200,
-        "pass": true,
-        "critical": false,
-        "timeMs": 118.84,
+        "timeMs": 292.59,
         "contentType": "text/html"
       },
       {
@@ -1683,7 +1669,31 @@
         "status": 400,
         "pass": true,
         "critical": false,
-        "timeMs": 112.35,
+        "timeMs": 289.5,
+        "contentType": "application/json"
+      },
+      {
+        "path": "/ready",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 262.32,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/portal",
+        "status": 200,
+        "pass": true,
+        "critical": false,
+        "timeMs": 184.36,
+        "contentType": "text/html"
+      },
+      {
+        "path": "/api/registry/static",
+        "status": 400,
+        "pass": true,
+        "critical": false,
+        "timeMs": 55.03,
         "contentType": "application/json"
       },
       {
@@ -1691,7 +1701,7 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 78.75,
+        "timeMs": 34.6,
         "contentType": "application/json"
       },
       {
@@ -1699,18 +1709,12 @@
         "status": 200,
         "pass": true,
         "critical": false,
-        "timeMs": 38.64,
-        "contentType": "application/json"
-      },
-      {
-        "path": "/api/registry/static",
-        "status": 400,
-        "pass": true,
-        "critical": false,
-        "timeMs": 29.14,
+        "timeMs": 33.25,
         "contentType": "application/json"
       }
-    ]
+    ],
+    "cached": true,
+    "stale": false
   },
   "channelMeta": {
     "available": true,
@@ -1720,7 +1724,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-27T02:00:52.777Z",
+    "updatedAt": "2026-07-27T02:02:09.809Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -1937,14 +1941,14 @@
         "ok": true
       }
     ],
-    "proofHash": "42568675be461b4674ba03849946eab708f02bdb3627f0b02383b781d05f7d50",
-    "timestamp": "2026-07-27T02:00:52.779Z",
+    "proofHash": "f1fac6ed0471f8a9cabae81ec1f5fa90926f6a7ac10621f9cb84a212017d7a41",
+    "timestamp": "2026-07-27T02:02:09.813Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-27T02:00:53.209Z",
+    "generatedAt": "2026-07-27T02:02:10.232Z",
     "partners": 4,
     "inviteGaps": 2,
     "blocked": 0,
