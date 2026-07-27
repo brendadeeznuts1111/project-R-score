@@ -120,11 +120,15 @@ export {
   createStateComplianceRoutes,
   createStateComplianceFetchHandler,
   startStateComplianceMock,
+  isShadowComplianceRequest,
+  ComplianceClient,
   type MockComplianceSeedOpts,
   type ComplianceCheckBody,
   type ComplianceCheckOk,
   type ComplianceCheckDenied,
+  type ComplianceCheckResponse,
   type StartStateComplianceMockOpts,
+  type ComplianceClientOpts,
 } from './state-compliance-http.ts';
 export { FRAUD_GUARDRAILS, detectFraudSignals } from './fraud-guard.ts';
 export {

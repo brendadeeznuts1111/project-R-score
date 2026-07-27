@@ -32,13 +32,38 @@ Tree-structured agent management with HMAC-signed play distribution.
 | [`snapshot-cron.ts`](snapshot-cron.ts) | In-process cron: snapshot · sync · settle |
 | [`play-dispatcher.ts`](play-dispatcher.ts) | Publish + gate + reserve + Telegram outbox |
 | [`state-regulation.ts`](state-regulation.ts) | MA/NJ limits · geo columns (`state_code`/`age`/`location`/`zip_code`) · scope · dispatcher |
-| [`state-compliance-http.ts`](state-compliance-http.ts) | Mock Bun.serve API · `ops:compliance:mock` · demo partners |
+| [`state-compliance-http.ts`](state-compliance-http.ts) | Mock Bun.serve API · `ComplianceClient` · `ops:compliance:mock` · demo partners |
 | [`account-service.ts`](account-service.ts) | Tree nodes, portal sync |
 | [`cut-engine.ts`](cut-engine.ts) | Cut cascade allocations |
 | [`backup.ts`](backup.ts) | DB backup helpers |
 | [`index.ts`](index.ts) | Barrel exports |
 
 Prove loop: `bun run ops:settle` · `ops:outbox:requeue` · `bun test tests/ops-loop-hardening.test.ts` · tenant [`docs/harness/tenants/ops-loop-throughput.md`](../../docs/harness/tenants/ops-loop-throughput.md).
+
+### Compliance mock · `bun run -` · console depth
+
+```bash
+# File or stdin (TypeScript on stdin — no temp transpile)
+bun run ops:compliance:mock
+printf '%s\n' 'import "./tools/state-compliance-mock.ts";' | bun run -   # ops:compliance:mock:pipe
+
+# Enhancement report (deepEquals rows + table + SHA-256; expand nested states)
+bun --console-depth=6 tools/show-enhancements.ts        # ops:enhancements
+cat tools/show-enhancements.ts | bun --console-depth=6 run -   # ops:enhancements:pipe
+
+# Live partner panel against a running mock (depth expands nested licenses)
+bun --console-depth=6 tools/show-enhancements.ts --status=demo-ma-licensed --state=MA
+
+# Ad-hoc partner query (no temp file)
+partner=demo-ma-licensed
+bun --console-depth=4 run - <<EOF
+import { ComplianceClient } from "./lib/operations/state-compliance-http.ts";
+const client = new ComplianceClient();
+console.log(await client.getStatus("$partner", "MA"));
+EOF
+```
+
+`--console-depth` (and `BUN_CONSOLE_DEPTH` / `lib/console-depth.ts`) controls nested `console.log` / `Bun.inspect` output when debugging `expectedState` / `actualState` in the report.
 
 ## Quick start
 

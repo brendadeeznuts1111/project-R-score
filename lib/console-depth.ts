@@ -51,11 +51,24 @@ function parseDepth(raw: string | undefined): number | null {
   return Number.isFinite(n) && n >= 0 ? n : null;
 }
 
-function argDepth(): number | null {
-  const idx = Bun.argv.findIndex(a => a === '--console-depth');
-  if (idx !== -1) return parseDepth(Bun.argv[idx + 1]);
-  const eq = Bun.argv.find(a => a.startsWith('--console-depth='));
+function depthFromArgList(args: readonly string[]): number | null {
+  const idx = args.findIndex(a => a === '--console-depth');
+  if (idx !== -1) return parseDepth(args[idx + 1]);
+  const eq = args.find(a => a.startsWith('--console-depth='));
   return eq ? parseDepth(eq.split('=')[1]) : null;
+}
+
+/**
+ * CLI flag may appear on Bun.argv **or** process.execArgv.
+ * Bun often strips `--console-depth` from Bun.argv after applying it to
+ * native console.log — execArgv still carries the flag for wrappers.
+ * @see https://bun.com/docs/runtime/console — --console-depth
+ */
+function argDepth(): number | null {
+  return (
+    depthFromArgList(Bun.argv) ??
+    depthFromArgList(typeof process !== 'undefined' ? process.execArgv : [])
+  );
 }
 
 /**

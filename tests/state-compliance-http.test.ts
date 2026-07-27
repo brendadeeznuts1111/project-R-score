@@ -165,6 +165,80 @@ describe('state-compliance-http (handler)', () => {
     );
     expect(res.status).toBe(400);
   });
+
+  test('shadow=true returns 200 with deny decision and does not log violations', async () => {
+    const before = db
+      .query(`SELECT COUNT(*) AS n FROM regulatory_violations WHERE node_id = 'demo-unlicensed'`)
+      .get() as { n: number };
+
+    const res = await fetchHandler(
+      new Request('http://localhost/api/compliance/check?shadow=true', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nodeId: 'demo-unlicensed',
+          stateCode: 'NJ',
+          sportId: 'soccer',
+          marketId: 'match_winner',
+          wagerAmount: 100,
+          betType: 'straight',
+        }),
+      })
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      allowed: boolean;
+      reason: string;
+      shadow?: boolean;
+    };
+    expect(body.allowed).toBe(false);
+    expect(body.shadow).toBe(true);
+    expect(body.reason).toContain('not licensed');
+
+    const after = db
+      .query(`SELECT COUNT(*) AS n FROM regulatory_violations WHERE node_id = 'demo-unlicensed'`)
+      .get() as { n: number };
+    expect(after.n).toBe(before.n);
+  });
+
+  test('shadow and real decisions match on allow path', async () => {
+    const real = await fetchHandler(
+      new Request('http://localhost/api/compliance/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nodeId: 'demo-ma-licensed',
+          stateCode: 'MA',
+          sportId: 'soccer',
+          marketId: 'match_winner',
+          wagerAmount: 100,
+          betType: 'straight',
+          logViolation: false,
+        }),
+      })
+    );
+    const shadow = await fetchHandler(
+      new Request('http://localhost/api/compliance/check?shadow=true', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nodeId: 'demo-ma-licensed',
+          stateCode: 'MA',
+          sportId: 'soccer',
+          marketId: 'match_winner',
+          wagerAmount: 100,
+          betType: 'straight',
+        }),
+      })
+    );
+    expect(real.status).toBe(200);
+    expect(shadow.status).toBe(200);
+    const a = (await real.json()) as { allowed: boolean };
+    const b = (await shadow.json()) as { allowed: boolean; shadow?: boolean };
+    expect(a.allowed).toBe(true);
+    expect(b.allowed).toBe(true);
+    expect(b.shadow).toBe(true);
+  });
 });
 
 describe('state-compliance-http (Bun.serve TCP)', () => {

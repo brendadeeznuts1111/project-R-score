@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 // @see https://bun.com/docs/runtime/http/server#reference — Server interface
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
@@ -162,6 +163,8 @@ export type ComplianceCheckOk = {
   age: number | null;
   location: string | null;
   zipCode: string | null;
+  /** Present when ?shadow=true (or body.shadow) — always HTTP 200. */
+  shadow?: true;
 };
 
 export type ComplianceCheckDenied = {
@@ -173,15 +176,36 @@ export type ComplianceCheckDenied = {
   age: number | null;
   location: string | null;
   zipCode: string | null;
+  /** Present when shadow — decision still deny, HTTP 200 (not blocked). */
+  shadow?: true;
 };
+
+export type ComplianceCheckResponse = ComplianceCheckOk | ComplianceCheckDenied;
+
+/** True when `?shadow=true` or body.shadow is set. */
+export function isShadowComplianceRequest(req: Request, body?: { shadow?: boolean }): boolean {
+  if (body?.shadow === true) return true;
+  try {
+    const url = new URL(req.url);
+    const q = url.searchParams.get('shadow');
+    return q === 'true' || q === '1';
+  } catch {
+    return false;
+  }
+}
 
 /**
  * POST /api/compliance/check — validate a wager against MA/NJ rules.
+ *
+ * Shadow mode (`?shadow=true` or body.shadow):
+ *   - Always HTTP 200
+ *   - Never writes regulatory_violations
+ *   - Body still carries allowed/reason for side-by-side comparison
  */
 export async function handleComplianceCheck(db: Database, req: Request): Promise<Response> {
-  let body: ComplianceCheckBody;
+  let body: ComplianceCheckBody & { shadow?: boolean };
   try {
-    body = (await req.json()) as ComplianceCheckBody;
+    body = (await req.json()) as ComplianceCheckBody & { shadow?: boolean };
   } catch {
     return json({ error: 'Invalid JSON body' }, 400);
   }
@@ -210,13 +234,15 @@ export async function handleComplianceCheck(db: Database, req: Request): Promise
     );
   }
 
+  const shadow = isShadowComplianceRequest(req, body);
   const betType = body.betType?.trim() || 'straight';
   const wagerAmount = Number(body.wagerAmount);
   const age = body.age != null ? Number(body.age) : undefined;
   const location = body.location?.trim() || undefined;
   const zipCode = body.zipCode?.trim() || undefined;
   const compliance = new ComplianceRepository(db);
-  const logViolation = body.logViolation !== false;
+  // Shadow never mutates audit log; real path logs unless logViolation: false
+  const logViolation = !shadow && body.logViolation !== false;
 
   const checkInput = {
     nodeId: body.nodeId,
@@ -251,8 +277,10 @@ export async function handleComplianceCheck(db: Database, req: Request): Promise
       age: geo.age,
       location: geo.location,
       zipCode: geo.zipCode,
+      ...(shadow ? { shadow: true as const } : {}),
     };
-    return json(denied, 403);
+    // Shadow: surface the deny decision without blocking (HTTP 200)
+    return json(denied, shadow ? 200 : 403);
   }
 
   const ok: ComplianceCheckOk = {
@@ -266,6 +294,7 @@ export async function handleComplianceCheck(db: Database, req: Request): Promise
     age: geo.age,
     location: geo.location,
     zipCode: geo.zipCode,
+    ...(shadow ? { shadow: true as const } : {}),
   };
   return json(ok, 200);
 }
@@ -470,4 +499,92 @@ export function startStateComplianceMock(opts?: StartStateComplianceMockOpts) {
     );
   }
   return { server, db, url: server.url.href, fetch: fetchHandler };
+}
+
+// ── HTTP client (for live mock / stdin demos) ─────────────────────
+
+export type ComplianceClientOpts = {
+  /** Base URL ending with or without slash (default COMPLIANCE_MOCK_URL or http://127.0.0.1:8787). */
+  baseUrl?: string;
+  /** Optional AbortSignal for timeout control. */
+  signal?: AbortSignal;
+};
+
+function resolveComplianceBase(opts?: ComplianceClientOpts): string {
+  const raw =
+    opts?.baseUrl?.trim() || Bun.env.COMPLIANCE_MOCK_URL?.trim() || 'http://127.0.0.1:8787';
+  return raw.endsWith('/') ? raw.slice(0, -1) : raw;
+}
+
+/**
+ * Thin client for the mock compliance HTTP surface.
+ *
+ * ```ts
+ * const client = new ComplianceClient({ baseUrl: 'http://127.0.0.1:8787' });
+ * const status = await client.getStatus('demo-ma-licensed', 'MA');
+ * ```
+ *
+ * Pipe-friendly with `bun --console-depth=6 run -` for deep inspection.
+ */
+export class ComplianceClient {
+  readonly baseUrl: string;
+  private signal?: AbortSignal;
+
+  constructor(opts?: ComplianceClientOpts) {
+    this.baseUrl = resolveComplianceBase(opts);
+    this.signal = opts?.signal;
+  }
+
+  private async request(path: string, init?: RequestInit): Promise<Response> {
+    return fetch(`${this.baseUrl}${path}`, {
+      ...init,
+      signal: init?.signal ?? this.signal,
+      headers: {
+        Accept: 'application/json',
+        ...(init?.headers ?? {}),
+      },
+    });
+  }
+
+  async health(): Promise<{ ok: boolean; service?: string; states?: string[] }> {
+    const res = await this.request('/health');
+    if (!res.ok) throw new Error(`compliance health HTTP ${res.status}`);
+    return (await res.json()) as { ok: boolean; service?: string; states?: string[] };
+  }
+
+  async getStatus(
+    nodeId: string, // brand-ok — wire tree node id from CLI/demo clients
+    state?: string
+  ): Promise<unknown> {
+    const q = new URLSearchParams({ nodeId });
+    if (state) q.set('state', state);
+    const res = await this.request(`/api/compliance/status?${q}`);
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`compliance status HTTP ${res.status}: ${body.slice(0, 200)}`);
+    }
+    return res.json();
+  }
+
+  /**
+   * Real or shadow compliance check.
+   * @param shadow when true, appends `?shadow=true` (always HTTP 200, no violation log)
+   */
+  async check(
+    body: ComplianceCheckBody,
+    opts?: { shadow?: boolean }
+  ): Promise<ComplianceCheckResponse> {
+    const path = opts?.shadow ? '/api/compliance/check?shadow=true' : '/api/compliance/check';
+    const res = await this.request(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    // Real deny = 403; shadow deny = 200 with allowed:false
+    if (res.status !== 200 && res.status !== 403) {
+      const text = await res.text();
+      throw new Error(`compliance check HTTP ${res.status}: ${text.slice(0, 200)}`);
+    }
+    return (await res.json()) as ComplianceCheckResponse;
+  }
 }
