@@ -183,7 +183,9 @@ More humans (experts, observers) increase the count — that is normal.
 | `3` | Bot + house + partner — typical steady state |
 | `4+` | Core trio + extras |
 
-Code: [`lib/telegram/package-group-membership.ts`](../../../lib/telegram/package-group-membership.ts) · desk column `MEMBERS` · deep lane `forum_members`.
+**`!` suffix** (e.g. `2·house!`): operator telegram is linked but partner has not joined the forum yet — send the registry invite (expect `3·OK` after join).
+
+Code: [`lib/telegram/package-group-membership.ts`](../../../lib/telegram/package-group-membership.ts) · desk column `MEMBERS` · readiness `MEM` · deep lane `forum_members`.
 
 ---
 

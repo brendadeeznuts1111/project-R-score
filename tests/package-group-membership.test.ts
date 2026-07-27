@@ -1,5 +1,8 @@
 import { describe, expect, test } from 'bun:test';
-import { interpretPackageGroupMemberCount } from '../lib/telegram/package-group-membership.ts';
+import {
+  formatMembershipDeskCell,
+  interpretPackageGroupMemberCount,
+} from '../lib/telegram/package-group-membership.ts';
 
 describe('package-group-membership', () => {
   test('house_only is normal for designated seat', () => {
@@ -27,6 +30,7 @@ describe('package-group-membership', () => {
   test('linked seat with only two members flags invite gap', () => {
     const tell = interpretPackageGroupMemberCount(2, { dmSeatStatus: 'linked' });
     expect(tell.status).toBe('house_only');
-    expect(tell.detail).toContain('invite');
+    expect(tell.needsPartnerInForum).toBe(true);
+    expect(formatMembershipDeskCell(tell, 'linked')).toBe('2·house!');
   });
 });
