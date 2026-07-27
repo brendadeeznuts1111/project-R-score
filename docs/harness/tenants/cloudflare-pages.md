@@ -96,19 +96,26 @@ If you use **all five** HTTP MCP servers in [`.mcp.json`](../../../.mcp.json) (`
 
 - **Create Token** → copy the value immediately (shown once).
 
-**7. Store**
+**7. Store (Proton Pass only — vault SSOT)**
 
 ```bash
-# Reasonix / Cursor (AGENTS.md default)
-echo 'CLOUDFLARE_API_TOKEN=…' >> ~/.reasonix/.env
+# After mint: put the value in Proton Pass item
+#   pass://factorywager/Cloudflare API Token/password
+# Never echo tokens into shell history or treat ~/.reasonix/.env as authority.
 
-# Or project .env for CI
-# Guided setup: bash scripts/cloudflare-env-setup.sh
+# Resolve vault → project .env + derived ~/.reasonix/.env (strips duplicate CF lines)
+bun run proton:inject:factorywager:reasonix
+
+# Or guided inject + verify + harness gates
+bash scripts/cloudflare-env-setup.sh
 ```
+
+Full vault map: [`docs/harness/tenants/proton-integration.md`](./proton-integration.md).
 
 **8. Verify**
 
 ```bash
+# Account tokens (cfat_…) fail /user/tokens/verify by design — use account path or:
 bun run cloudflare:env:validate
 bun run cloudflare:env:validate --strict   # fail if permissions are over-broad
 bun run verify:cloudflare-token:save       # optional proof artifact (live probe when token set)

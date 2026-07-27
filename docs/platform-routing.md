@@ -89,7 +89,7 @@ Routes: [`lib/http/public-routes.ts`](../lib/http/public-routes.ts) · tenant [`
 
 ## Agent MCP (Cloudflare)
 
-HTTP MCP servers in [`.mcp.json`](../.mcp.json): `cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`. Token: `CLOUDFLARE_API_TOKEN` (`~/.reasonix/.env`). Scope probe: `bun run cloudflare:env:validate`. Discovery: `/.well-known/mcp.json` on Pages. See [`AGENTS.md`](../AGENTS.md) and [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md).
+HTTP MCP servers in [`.mcp.json`](../.mcp.json): `cloudflare`, `cloudflare-docs`, `cloudflare-bindings`, `cloudflare-builds`, `cloudflare-observability`. Token: `CLOUDFLARE_API_TOKEN` from **Proton Pass** (`pass://factorywager/Cloudflare API Token/password`) via `bun run proton:inject:factorywager:reasonix` (derived `~/.reasonix/.env` / project `.env` — not paste). Scope probe: `bun run cloudflare:env:validate`. Discovery: `/.well-known/mcp.json` on Pages. See [`AGENTS.md`](../AGENTS.md), [`docs/harness/tenants/proton-integration.md`](harness/tenants/proton-integration.md), and [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md).
 
 **Note:** `cloudflare-builds` is Workers Builds CI — not Cloudflare Pages deploy history. Use `cloudflare` `execute` for Pages API (`/accounts/{id}/pages/projects/...`).
 

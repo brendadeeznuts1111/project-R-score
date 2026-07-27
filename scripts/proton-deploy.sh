@@ -68,11 +68,11 @@ esac
 # Source agent env for the vault
 source "$SCRIPT_DIR/agent-env.sh" "$VAULT"
 
-# Resolve secrets from template
+# Resolve secrets from template (vault SSOT — same path as proton-inject.sh)
 if [ -f "$TEMPLATE" ]; then
   echo "🔐 Resolving secrets from $TEMPLATE..."
   PROTON_PASS_AGENT_REASON="Deploy: resolving env secrets for $PROJECT" \
-    pass-cli inject --in-file "$TEMPLATE" --out-file "$ROOT/.env"
+    pass-cli inject --in-file "$TEMPLATE" --out-file "$ROOT/.env" --force
   echo "✅ .env written with vault secrets"
 fi
 

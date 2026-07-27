@@ -44,15 +44,20 @@ case "${1:-}" in
 esac
 
 if [ -z "$TOKEN" ]; then
-  echo "❌ No token found for '$1'"
-  echo "   Set PROTON_PASS_${1^^}_TOKEN env var or create .env.pass-tokens"
+  # Portable upper-case project label (avoid bash-only ${1^^})
+  _proj_upper=$(printf '%s' "$1" | tr '[:lower:]-' '[:upper:]_')
+  echo "❌ No Proton Pass agent PAT for '$1'"
+  echo "   Set PROTON_PASS_${_proj_upper}_TOKEN or add it to .env.pass-tokens (gitignored)"
+  echo "   PATs live in vault (e.g. pass://factorywager/PAT factorywager-bot) — never commit them"
   echo "   Format: PROTON_PASS_FACTORYWAGER_TOKEN='pst_...'"
+  unset _proj_upper
   return 1
 fi
 
 export PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN"
-PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN" pass-cli login 2>/dev/null
+# login exits non-zero when session already active — must not abort callers with set -e
+PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN" pass-cli login 2>/dev/null || true
 
 echo "✅ Proton Pass editor access loaded for: $1"
 echo "   Session: $PROTON_PASS_SESSION_DIR"
-pass-cli info 2>&1 | grep "Personal Access Token"
+pass-cli info 2>&1 | grep "Personal Access Token" || true

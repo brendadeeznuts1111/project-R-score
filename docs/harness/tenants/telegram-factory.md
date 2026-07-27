@@ -6,7 +6,7 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 
 | Step | Command / env | Notes |
 |------|----------------|-------|
-| 1. Bot token | `TELEGRAM_BOT_FACTORY` in `.env` or `~/.reasonix/.env` | Create via [@BotFather](https://t.me/BotFather); never commit |
+| 1. Bot token | `TELEGRAM_BOT_FACTORY` via Proton Pass (`pass://factorywager/Telegram: factorywager_bot/password`) → `bun run proton:inject:factorywager` | Create via [@BotFather](https://t.me/BotFather); store in vault; never commit |
 | 2. Verify | `bun run telegram:verify` | Calls `getMe` + `getWebhookInfo` |
 | 2b. Discover | `bun run telegram:discover` | Bot API inventory + `ops_telegram_known_chats` (learned from updates) |
 | 2c. Brand | `bun run telegram:brand -- --groups` | Bun.Image profile, concern-separated groups, photos/topics |
