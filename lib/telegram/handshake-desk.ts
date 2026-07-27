@@ -70,6 +70,8 @@ export type BuildHandshakeDeskOpts = {
   live?: boolean;
   /** Run full handshake verify per row (default true). */
   verify?: boolean;
+  /** Env for TELEGRAM_SURFACES surface_env_pkg check (default Bun.env). */
+  env?: Record<string, string | undefined>;
 };
 
 function knownChatForId(
@@ -107,6 +109,7 @@ async function deskRowForRegistry(
       forumsMetaDir: opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR,
       live: opts.live,
       telegramToken: opts.telegramToken,
+      env: opts.env,
     });
     handshakeOk = verify.ok;
     checksPassed = verify.checks.filter(c => c.ok).length;

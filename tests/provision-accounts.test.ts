@@ -9,10 +9,11 @@ import { Database } from 'bun:sqlite';
 import { encryptAesGcm, decryptAesGcm } from '../lib/dod/verifier.ts';
 import { isSandboxPlatform } from '../lib/automation/provision-accounts.ts';
 
-const SCRATCH = '.tmp/provision-test';
+let SCRATCH = `.tmp/provision-test-${Bun.randomUUIDv7().slice(0, 8)}`;
 let db: Database;
 
 beforeEach(async () => {
+  SCRATCH = `.tmp/provision-test-${Bun.randomUUIDv7()}`;
   await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
   db = new Database(`${SCRATCH}/ops.db`);
   // Create the minimal schema needed

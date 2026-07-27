@@ -3,10 +3,12 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { Database } from "bun:sqlite";
 import { runHealthTick } from "../tools/ops-health-tick.ts";
 
-const SCRATCH = ".tmp/ops-health-tick-test";
-const DB = `${SCRATCH}/operations.db`;
+let SCRATCH = `.tmp/ops-health-tick-test-${Bun.randomUUIDv7().slice(0, 8)}`;
+let DB = `${SCRATCH}/operations.db`;
 
 beforeEach(async () => {
+  SCRATCH = `.tmp/ops-health-tick-test-${Bun.randomUUIDv7()}`;
+  DB = `${SCRATCH}/operations.db`;
   await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
 });
 

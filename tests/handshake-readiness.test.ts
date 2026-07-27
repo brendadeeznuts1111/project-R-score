@@ -10,6 +10,16 @@ import {
 } from '../lib/telegram/package-group-registry.ts';
 import { upsertKnownChat, updateKnownChatMemberCount } from '../lib/telegram/known-chats.ts';
 
+
+function pkgSurfaceEnv(
+  partnerCode: string,
+  chatId: string, // brand-ok — Telegram chat_id wire
+): Record<string, string> {
+  return {
+    TELEGRAM_SURFACES: JSON.stringify({ [`pkg-${partnerCode.toLowerCase()}`]: chatId }),
+  };
+}
+
 const novCreate: PackageGroupCreateArtifact = {
   action: 'create_package_group',
   partner_code: 'NOV',
@@ -242,6 +252,7 @@ describe('handshake-readiness', () => {
       partnerCode: 'ASH',
       jsonlPath,
       forumsMetaDir: forumsDir,
+      env: pkgSurfaceEnv('ASH', '-1003937534779'),
     });
 
     expect(row.phase).toBe('operator_ready');

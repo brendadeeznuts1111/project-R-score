@@ -14,6 +14,16 @@ import {
 } from '../lib/telegram/handshake-desk.ts';
 import { formatMembershipDeskCell } from '../lib/telegram/package-group-membership.ts';
 
+
+function pkgSurfaceEnv(
+  partnerCode: string,
+  chatId: string, // brand-ok — Telegram chat_id wire
+): Record<string, string> {
+  return {
+    TELEGRAM_SURFACES: JSON.stringify({ [`pkg-${partnerCode.toLowerCase()}`]: chatId }),
+  };
+}
+
 const createArtifact: PackageGroupCreateArtifact = {
   action: 'create_package_group',
   partner_code: 'ASH',
@@ -72,6 +82,7 @@ describe('handshake-desk', () => {
       db,
       jsonlPath: path,
       verify: true,
+      env: pkgSurfaceEnv('ASH', '-1003937534779'),
     });
 
     expect(rows).toHaveLength(1);

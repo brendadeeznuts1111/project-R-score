@@ -4,8 +4,9 @@ import { OpsTelegramBot } from "../lib/telegram/ops-bot.ts";
 import { DODVerifier } from "../lib/dod/verifier.ts";
 import { initSchema } from "../lib/operations/schema.ts";
 
-const SCRATCH = ".tmp/ops-bot-verifydod-test";
-const DB = `${SCRATCH}/operations.db`;
+// Unique scratch per case — shared .tmp path races under parallel suites.
+let SCRATCH = `.tmp/ops-bot-verifydod-test-${Bun.randomUUIDv7().slice(0, 8)}`;
+let DB = `${SCRATCH}/operations.db`;
 
 const PNG_1PX = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
@@ -22,6 +23,11 @@ function update(text: string, fromId = "4242"): Record<string, unknown> {
 }
 
 beforeEach(async () => {
+  // Keep seed process() fast — no headless WebView watermark / platform OCR.
+  Bun.env.DOD_WATERMARK = "0";
+  Bun.env.DOD_PLATFORM_DETECT = "0";
+  SCRATCH = `.tmp/ops-bot-verifydod-test-${Bun.randomUUIDv7()}`;
+  DB = `${SCRATCH}/operations.db`;
   await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
   sent = [];
   origFetch = globalThis.fetch;

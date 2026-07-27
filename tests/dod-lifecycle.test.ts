@@ -7,8 +7,9 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { Database } from "bun:sqlite";
 import { DODVerifier } from "../lib/dod/verifier.ts";
 
-const SCRATCH = ".tmp/dod-lifecycle-test";
-const DB = `${SCRATCH}/operations.db`;
+// Unique scratch per case — shared .tmp path races under parallel suites.
+let SCRATCH = `.tmp/dod-lifecycle-test-${Bun.randomUUIDv7().slice(0, 8)}`;
+let DB = `${SCRATCH}/operations.db`;
 
 const PNG_1PX = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
@@ -28,6 +29,11 @@ function authed(path: string, init: RequestInit = {}): Promise<Response> {
 }
 
 beforeEach(async () => {
+  // Keep the pipeline fast under parallel test:changed (no headless WebView).
+  Bun.env.DOD_WATERMARK = "0";
+  Bun.env.DOD_PLATFORM_DETECT = "0";
+  SCRATCH = `.tmp/dod-lifecycle-test-${Bun.randomUUIDv7()}`;
+  DB = `${SCRATCH}/operations.db`;
   await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
   Bun.env.DOD_DB_PATH = DB;
   Bun.env.DOD_REVIEW_TOKEN = "lifecycle-token";

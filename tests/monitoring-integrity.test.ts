@@ -5,11 +5,13 @@ import { runIntegrityCheck } from '../lib/monitoring/integrity.ts';
 import { ensureMonitoringSchema } from '../lib/monitoring/schema.ts';
 import { DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 
-const SCRATCH = '.tmp/monitoring-integrity-test';
-/** Ops DB SSOT path shape — never data/registry.db */
-const DB = `${SCRATCH}/operations.db`;
+/** Ops DB SSOT path shape — never data/registry.db; unique per case for parallel. */
+let SCRATCH = `.tmp/monitoring-integrity-test-${Bun.randomUUIDv7().slice(0, 8)}`;
+let DB = `${SCRATCH}/operations.db`;
 
 beforeEach(async () => {
+  SCRATCH = `.tmp/monitoring-integrity-test-${Bun.randomUUIDv7()}`;
+  DB = `${SCRATCH}/operations.db`;
   await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
 });
 

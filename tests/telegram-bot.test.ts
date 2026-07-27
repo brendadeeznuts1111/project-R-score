@@ -84,7 +84,7 @@ describe('TelegramBot factory', () => {
   });
 
   test('/status delivers HTML template card when ops tree node registered', async () => {
-    const SCRATCH = '.tmp/telegram-bot-flow-test';
+    const SCRATCH = `.tmp/telegram-bot-flow-test-${Bun.randomUUIDv7()}`;
     const DB = `${SCRATCH}/operations.db`;
     await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
 

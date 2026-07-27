@@ -107,7 +107,9 @@ describe('platform-coverage', () => {
   });
 
   test('DOD balance with platformHint flags unknown book', async () => {
-    const scratch = `.tmp/dod-cov-${Bun.hash(String(Date.now())).toString(36)}`;
+    // Skip headless WebView watermark only — platform detect must stay on for this case.
+    Bun.env.DOD_WATERMARK = '0';
+    const scratch = `.tmp/dod-cov-${Bun.randomUUIDv7()}`;
     await Bun.$`rm -rf ${scratch} && mkdir -p ${scratch}`.quiet();
 
     const dbPath = `${scratch}/ops.db`;

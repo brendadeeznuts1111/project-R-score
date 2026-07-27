@@ -86,6 +86,8 @@ export async function assessHandshakeReadiness(opts: {
   telegramToken?: string | null;
   live?: boolean;
   deep?: boolean;
+  /** Env for TELEGRAM_SURFACES surface_env_pkg check (default Bun.env). */
+  env?: Record<string, string | undefined>;
 }): Promise<HandshakeReadinessRow> {
   const forumsMetaDir = opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR;
   const verify = await verifyPackageGroupHandshake({
@@ -95,6 +97,7 @@ export async function assessHandshakeReadiness(opts: {
     forumsMetaDir,
     live: opts.live,
     telegramToken: opts.telegramToken,
+    env: opts.env,
   });
 
   const reg = getPackageGroupRegistry(opts.db, opts.partnerCode);
@@ -221,6 +224,7 @@ export async function assessHandshakeReadiness(opts: {
           jsonlPath: opts.jsonlPath ?? PENDING_PACKAGE_GROUPS_JSONL,
           forumsMetaDir,
           telegramToken: opts.telegramToken,
+          env: opts.env,
         })
       : undefined,
   };

@@ -13,8 +13,8 @@ import {
 } from '../lib/telegram/webhook-pages.ts';
 import type { R2PutBucket } from '../lib/pages/r2-types.ts';
 
-const SCRATCH = '.tmp/telegram-webhook-consumer-test';
-const DB = `${SCRATCH}/operations.db`;
+let SCRATCH = `.tmp/telegram-webhook-consumer-test-${Bun.randomUUIDv7().slice(0, 8)}`;
+let DB = `${SCRATCH}/operations.db`;
 
 function memoryBucket(): R2PutBucket & { store: Map<string, string> } {
   const store = new Map<string, string>();
@@ -48,6 +48,8 @@ let sent: string[];
 let origFetch: typeof globalThis.fetch;
 
 beforeEach(async () => {
+  SCRATCH = `.tmp/telegram-webhook-consumer-test-${Bun.randomUUIDv7()}`;
+  DB = `${SCRATCH}/operations.db`;
   await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
   sent = [];
   origFetch = globalThis.fetch;

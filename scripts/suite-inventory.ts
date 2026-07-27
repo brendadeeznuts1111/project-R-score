@@ -10,6 +10,12 @@
  *   bun run test:inventory -- --timeout-ms=15000 --json
  *   bun run test:inventory -- --parallel-probe   # groups of 10 under --parallel
  *
+ * Distinguishes **wall** (this process kills spawn after --timeout-ms, default 20s)
+ * from **bun --timeout** (per-test, capped at min(10s, wall-1s)). A file can pass
+ * under full `bun test` (long per-test timeouts) yet HANG here if wall is too low.
+ * Known slow: harness-tenant-runbooks (freshRerun spawns; needs wall ≥180s),
+ * ops-bot-verifydod / dod-lifecycle (DOD process), guides-verify (live bun.com).
+ *
  * Writes: tmp/test-file-report.json
  */
 import { Glob } from 'bun';
