@@ -117,11 +117,14 @@ function eslintStep(fullLint: boolean): Step {
 function testStep(mainHead: boolean): Step {
   return {
     name: 'test-changed',
+    // bun-test-changed defaults to --parallel (implies --isolate)
     cmd: mainHead
       ? ['bun', 'run', 'test:changed', '--', '--main-head']
       : ['bun', 'run', 'test:changed'],
-    owner: 'scripts/bun-test-changed.ts · --changed / --main-head',
-    repair: mainHead ? 'bun run test:changed:main' : 'bun run test:changed',
+    owner: 'scripts/bun-test-changed.ts · --changed --parallel · --main-head',
+    repair: mainHead
+      ? 'bun run test:changed:main'
+      : 'bun run test:changed  # or --serial / BUN_TEST_SERIAL=1',
   };
 }
 

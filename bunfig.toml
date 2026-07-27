@@ -41,9 +41,21 @@ frozenLockfile = true
 
 # Test runner defaults.  Per-workspace bunfig.toml files
 # (e.g. projects/active/enterprise/bet-ticker-worker-v1.1/bunfig.toml) override these.
-# Speed / isolation are CLI flags (not bunfig): --isolate, --parallel[=N], --shard=M/N, --changed
-# Day-loop: bun run test:changed [-- HEAD~1|main] | test:changed:watch (re-query git)
-#           bun run test:parallel | test:isolate | SHARD=1/3 bun run test:shard
+#
+# Speed / isolation are CLI flags (not bunfig keys):
+#   --parallel[=N]  workers (implies --isolate: fresh global per file)
+#   --shard=M/N     CI matrix split (e.g. SHARD=2/4 bun run test:ci:shard)
+#   --changed[=REF] import-graph filter (wrapper: bun run test:changed)
+#
+# Day-loop:
+#   bun run test:changed | test:changed:watch | test:watch
+#   bun run test:parallel | test:isolate | SHARD=1/4 bun run test:ci:shard
+#   bun run test:ci  → junit at tmp/junit.xml
+#
+# Install linker=isolated lives in ~/.bunfig.toml (machine SSOT) — do not duplicate here.
+# Streaming tarball extract is on by default; disable only if needed:
+#   BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL=1 bun install
+#
 # @see https://bun.com/docs/test/index#run-tests
 # @see https://bun.com/docs/test — per-test timeout (default 5000ms; CLI --timeout overrides)
 # @see https://bun.com/blog/bun-v1.3.13#bun-test-changed

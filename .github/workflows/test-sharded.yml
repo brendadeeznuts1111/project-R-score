@@ -1,0 +1,69 @@
+# Sharded full-suite tests — wall time ≈ max(shard) not sum.
+# Complements harness-gates (test:changed). Use for broader confidence on PR/main.
+name: Test (sharded parallel)
+
+on:
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'scripts/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'bun.lock'
+      - 'bunfig.toml'
+      - '.github/workflows/test-sharded.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'scripts/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'bun.lock'
+  workflow_dispatch:
+
+concurrency:
+  group: test-sharded-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: tests shard ${{ matrix.shard }}/4
+    runs-on: ubuntu-latest
+    # Full tests/ still has hang/flake debt under CI; report signal without blocking merges.
+    # Flip to required after suite is hang-clean (prefer test:ci:shard:parallel then).
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    env:
+      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
+      BUN_INSTALL_GLOBAL_STORE: '1'
+      SHARD: ${{ matrix.shard }}/4
+      JUNIT_OUT: tmp/junit-${{ matrix.shard }}.xml
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
+
+      - name: Sharded tests (tests/ only, serial per shard)
+        run: |
+          mkdir -p tmp
+          # Serial within shard avoids isolate hangs; 4-way matrix still cuts wall time.
+          # Promote to test:ci:shard:parallel once suite is hang-clean under --isolate.
+          bun run test:ci:shard
+
+      - name: Upload JUnit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-shard-${{ matrix.shard }}
+          path: tmp/junit-*.xml
+          if-no-files-found: ignore

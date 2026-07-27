@@ -94,6 +94,26 @@ else
 fi
 
 echo ""
+echo "== pre-commit: test:changed (bail) =="
+# Import-graph filter + parallel workers; short-circuits on docs-only diffs.
+# Hard fail — catch broken tests before push. Opt out: SKIP_TEST_CHANGED=1
+if [ "$1" = "--dry-run" ]; then
+  echo "  [dry-run] bun run test:changed -- --bail=1"
+elif [ "${SKIP_TEST_CHANGED:-}" = "1" ]; then
+  echo "  ⏭️  SKIP_TEST_CHANGED=1"
+else
+  # Staged TS/JS only — skip pure docs/registry bakes
+  if git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.(ts|tsx|js|jsx|mts|cts)$'; then
+    bun run test:changed -- --bail=1 || {
+      echo "❌ test:changed failed (bail=1). Fix or SKIP_TEST_CHANGED=1 for docs-only escape."
+      exit 1
+    }
+  else
+    echo "  ⏭️  no staged TS/JS — skip test:changed"
+  fi
+fi
+
+echo ""
 if [ "$1" = "--dry-run" ]; then
   echo "✅ Pre-commit dry-run complete (no changes made)"
 else

@@ -179,6 +179,7 @@ projects/active/**/archive/
 example*-*
 test*-*
 !scripts/test-*.ts
+!.github/workflows/test-*.yml
 *.tmp
 
 # Generated files
