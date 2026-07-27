@@ -88,7 +88,24 @@ describe('buildOpsSummary', () => {
     expect(typeof s.loop.projectorDurable).toBe('boolean');
     expect(s.telegramHandshake).toHaveProperty('available');
     expect(s.telegramHandshake.path).toBe('/registry/telegram-handshake.json');
-    expect(s.telegramHandshake.rows).toEqual([]);
+    expect(s.telegramHandshake.catalogPath).toBe('/registry/telegram-handshake-catalog.json');
+    if (s.telegramHandshake.available) {
+      expect(s.telegramHandshake.partners).toBeGreaterThan(0);
+      expect(s.telegramHandshake.rows.length).toBe(s.telegramHandshake.partners);
+      expect(s.telegramHandshake.forumReady).toBeGreaterThanOrEqual(0);
+      expect(s.telegramHandshake.designated).toBeGreaterThanOrEqual(0);
+      expect(s.telegramHandshake.verifyFailPartners).toBeGreaterThanOrEqual(0);
+      expect(s.telegramHandshake.laneFailPartners).toBeGreaterThanOrEqual(0);
+      for (const row of s.telegramHandshake.rows) {
+        expect(row).toHaveProperty('verifyPassed');
+        expect(row).toHaveProperty('lanesOk');
+        expect(row).toHaveProperty('nextSteps');
+        expect(row).toHaveProperty('verifyFails');
+        expect(row).toHaveProperty('laneFails');
+      }
+    } else {
+      expect(s.telegramHandshake.rows).toEqual([]);
+    }
     db.close();
   });
 

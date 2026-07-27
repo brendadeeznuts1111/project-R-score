@@ -24,6 +24,17 @@ export const TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_REL =
 export const TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH =
   '/registry/telegram-handshake-catalog.json' as const;
 
+export type TelegramHandshakeVerifyFail = {
+  id: string; // brand-ok — opaque handshake check label
+  detail: string;
+};
+
+export type TelegramHandshakeLaneFail = {
+  id: string; // brand-ok — lane label
+  group: string;
+  detail: string;
+};
+
 export type TelegramHandshakePartnerRow = {
   partnerCode: string;
   phase: HandshakeReadinessRow['phase'];
@@ -38,9 +49,11 @@ export type TelegramHandshakePartnerRow = {
   topGap: string | null;
   verifyPassed: number;
   verifyTotal: number;
+  verifyFails: TelegramHandshakeVerifyFail[];
   lanesOk: number | null;
   lanesTotal: number | null;
   lanesBlocked: string[];
+  laneFails: TelegramHandshakeLaneFail[];
   nextSteps: string[];
 };
 
@@ -54,6 +67,8 @@ export type TelegramHandshakeSnapshot = {
   operatorReady: number;
   forumReady: number;
   designated: number;
+  verifyFailPartners: number;
+  laneFailPartners: number;
   catalogPath: typeof TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH;
   rows: TelegramHandshakePartnerRow[];
   commands: {
@@ -74,6 +89,8 @@ export type TelegramHandshakeSummarySlice = {
   operatorReady: number;
   forumReady: number;
   designated: number;
+  verifyFailPartners: number;
+  laneFailPartners: number;
   rows: TelegramHandshakePartnerRow[];
   commands: TelegramHandshakeSnapshot['commands'];
   catalogPath: typeof TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH;
@@ -102,9 +119,19 @@ function rowToWire(r: HandshakeReadinessRow): TelegramHandshakePartnerRow {
     topGap: r.gaps[0] ?? null,
     verifyPassed: r.verify.checks.filter(c => c.ok).length,
     verifyTotal: r.verify.checks.length,
+    verifyFails: r.verify.checks
+      .filter(c => !c.ok)
+      .slice(0, 6)
+      .map(c => ({ id: c.id, detail: c.detail })),
     lanesOk: lanes ? lanes.lanes.filter(l => l.ok).length : null,
     lanesTotal: lanes ? lanes.lanes.length : null,
     lanesBlocked: lanes?.blockedUntilLink ?? [],
+    laneFails: lanes
+      ? lanes.lanes
+          .filter(l => !l.ok)
+          .slice(0, 8)
+          .map(l => ({ id: l.id, group: l.group, detail: l.detail }))
+      : [],
     nextSteps: r.nextSteps.slice(0, 4),
   };
 }
@@ -120,6 +147,8 @@ export function emptyTelegramHandshakeSummarySlice(): TelegramHandshakeSummarySl
     operatorReady: 0,
     forumReady: 0,
     designated: 0,
+    verifyFailPartners: 0,
+    laneFailPartners: 0,
     rows: [],
     catalogPath: TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH,
     commands: {
@@ -161,6 +190,10 @@ export async function buildTelegramHandshakeSnapshot(
   const operatorReady = rows.filter(r => r.phase === 'operator_ready').length;
   const forumReady = rows.filter(r => r.phase === 'forum_ready').length;
   const designated = rows.filter(r => r.phase === 'designated').length;
+  const verifyFailPartners = rows.filter(r => !r.handshakeOk).length;
+  const laneFailPartners = rows.filter(
+    r => r.lanesTotal != null && r.lanesOk != null && r.lanesOk < r.lanesTotal
+  ).length;
 
   return {
     schema: 'factorywager.telegram-handshake.v1',
@@ -172,6 +205,8 @@ export async function buildTelegramHandshakeSnapshot(
     operatorReady,
     forumReady,
     designated,
+    verifyFailPartners,
+    laneFailPartners,
     catalogPath: TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH,
     rows,
     commands: emptyTelegramHandshakeSummarySlice().commands,
@@ -192,6 +227,8 @@ export function snapshotToSummarySlice(
     operatorReady: snap.operatorReady,
     forumReady: snap.forumReady ?? 0,
     designated: snap.designated ?? 0,
+    verifyFailPartners: snap.verifyFailPartners ?? 0,
+    laneFailPartners: snap.laneFailPartners ?? 0,
     rows: snap.rows,
     commands: snap.commands,
     catalogPath: snap.catalogPath ?? TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH,

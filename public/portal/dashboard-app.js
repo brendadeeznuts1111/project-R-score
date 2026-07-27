@@ -246,16 +246,29 @@ function renderOpsPlane(ops) {
   if (tg?.available) {
     const gaps = tg.inviteGaps ?? 0;
     const gapCls = gaps === 0 ? 'ok' : 'err';
+    const gapRows = (tg.rows ?? []).filter(r => r.needsPartnerInForum).slice(0, 3);
+    const gapList =
+      gapRows.length > 0
+        ? `<ul class="plane-gap-list">${gapRows
+            .map(
+              r =>
+                `<li><code>${esc(r.partnerCode)}</code> · ${esc(r.membershipCell)}${r.inviteSentAt ? ' · sent' : ' · pending'}</li>`
+            )
+            .join('')}</ul>`
+        : '';
     handshakeHtml = `<article class="plane-card" data-plane="telegram-handshake">
       <h3>Package handshake <span class="badge-demo" title="Baked from ops:snapshot">snapshot</span></h3>
       <div class="plane-metric ${gapCls}">${esc(String(gaps))} <span style="font-size:0.45em;font-weight:500;color:var(--text-dim)">invite gaps</span></div>
       <p class="plane-detail">
         ${esc(String(tg.partners ?? 0))} linked · ${esc(String(tg.operatorReady ?? 0))} operator_ready ·
-        ${esc(String(tg.blocked ?? 0))} blocked
+        ${esc(String(tg.designated ?? 0))} designated · ${esc(String(tg.blocked ?? 0))} blocked
       </p>
-      <p class="plane-sub">${tg.generatedAt ? esc(`baked ${String(tg.generatedAt).slice(0, 19)}`) : 'run ops:snapshot'}</p>
+      <p class="plane-sub">verify fail ${esc(String(tg.verifyFailPartners ?? 0))} · lane fail ${esc(String(tg.laneFailPartners ?? 0))}${
+        tg.generatedAt ? ` · baked ${esc(String(tg.generatedAt).slice(0, 19))}` : ''
+      }</p>
+      ${gapList}
       <div class="plane-actions">
-        <a class="ops-link" href="/portal/ops/">Ops panel</a>
+        <a class="ops-link" href="/portal/ops/#telegram-handshake">Ops panel</a>
         <a class="ops-link" href="/registry/telegram-handshake.json">handshake.json</a>
       </div>
     </article>`;

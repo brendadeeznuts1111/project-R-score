@@ -187,7 +187,7 @@ function renderProofTiles(mon, ops) {
         ? `${ops.telegramHandshake.inviteGaps ?? 0} gap(s)`
         : 'n/a',
       sub: ops?.telegramHandshake?.available
-        ? `${ops.telegramHandshake.operatorReady ?? 0}/${ops.telegramHandshake.partners ?? 0} operator_ready`
+        ? `${ops.telegramHandshake.operatorReady ?? 0}/${ops.telegramHandshake.partners ?? 0} ready · verify fail ${ops.telegramHandshake.verifyFailPartners ?? 0} · lane fail ${ops.telegramHandshake.laneFailPartners ?? 0}`
         : '',
       ok: ops?.telegramHandshake?.available
         ? (ops.telegramHandshake.inviteGaps ?? 0) === 0
@@ -252,14 +252,14 @@ export function renderMonitoringDashboard(payload) {
         'TG invite gaps',
         ops?.telegramHandshake?.available ? ops.telegramHandshake.inviteGaps ?? 0 : '—',
         ops?.telegramHandshake?.available
-          ? `${ops.telegramHandshake.partners ?? 0} package groups · ${ops.telegramHandshake.operatorReady ?? 0} ready`
+          ? `${ops.telegramHandshake.partners ?? 0} groups · ${ops.telegramHandshake.verifyFailPartners ?? 0} verify fail · ${ops.telegramHandshake.laneFailPartners ?? 0} lane fail`
           : 'run ops:snapshot',
         ops?.telegramHandshake?.available
           ? (ops.telegramHandshake.inviteGaps ?? 0) === 0
             ? 'ok'
             : 'bad'
           : '',
-        '/portal/ops/'
+        '/portal/ops/#telegram-handshake'
       ),
     ].join(''),
     sectionsHtml: `

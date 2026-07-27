@@ -118,7 +118,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-metric" id="channels-pending">0</div>
             <div class="ops-sub" id="channels-detail"></div>
           </section>
-          <section class="ops-panel wide" data-subsystem="telegram">
+          <section class="ops-panel wide" id="telegram-handshake" data-subsystem="telegram">
             <h2>Package handshake <span class="version-badge subsystem-other">telegram</span></h2>
             <div class="ops-metric" id="telegram-handshake-gaps">—</div>
             <div class="ops-sub" id="telegram-handshake-detail"></div>
@@ -886,7 +886,7 @@ class OperationsDashboard extends HTMLElement {
         const when = tgHs.generatedAt ? ` · baked ${String(tgHs.generatedAt).slice(0, 19)}` : '';
         if (tgDetail) {
           tgDetail.textContent =
-            `${tgHs.partners ?? 0} linked · ${tgHs.operatorReady ?? 0} operator_ready · ${tgHs.designated ?? 0} designated · ${tgHs.forumReady ?? 0} forum_ready · ${tgHs.blocked ?? 0} blocked${when}`;
+            `${tgHs.partners ?? 0} linked · ${tgHs.operatorReady ?? 0} operator_ready · ${tgHs.designated ?? 0} designated · ${tgHs.forumReady ?? 0} forum_ready · ${tgHs.blocked ?? 0} blocked · verify fail ${tgHs.verifyFailPartners ?? 0} · lane fail ${tgHs.laneFailPartners ?? 0}${when}`;
         }
         if (tgFilterWrap) tgFilterWrap.hidden = false;
         if (tgCatalogLink && tgHs.catalogPath) tgCatalogLink.href = tgHs.catalogPath;
@@ -926,18 +926,35 @@ class OperationsDashboard extends HTMLElement {
                   ? `${r.lanesOk ?? '?'}/${r.lanesTotal}`
                   : '—';
               const detail =
-                r.gapCount > 0 || r.needsPartnerInForum
-                  ? `<details class="ops-handshake-detail"><summary>${esc(r.topGap || 'gap')}</summary>${
+                r.gapCount > 0 ||
+                r.needsPartnerInForum ||
+                (r.verifyFails || []).length ||
+                (r.laneFails || []).length
+                  ? `<details class="ops-handshake-detail"><summary>${esc(r.topGap || 'details')}</summary>${
                       r.inviteLink
                         ? `<p class="ops-mono"><a href="${esc(r.inviteLink)}" rel="noopener">${esc(r.inviteLink)}</a></p>`
                         : ''
+                    }${
+                      (r.verifyFails || [])
+                        .map(
+                          f =>
+                            `<p class="ops-sub match-no">verify <code>${esc(f.id)}</code>: ${esc(f.detail)}</p>`
+                        )
+                        .join('') || ''
+                    }${
+                      (r.laneFails || [])
+                        .map(
+                          f =>
+                            `<p class="ops-sub">lane <code>${esc(f.id)}</code> (${esc(f.group)}): ${esc(f.detail)}</p>`
+                        )
+                        .join('') || ''
                     }${
                       (r.nextSteps || [])
                         .map(s => `<p class="ops-sub">→ ${esc(s)}</p>`)
                         .join('') || ''
                     }${
                       (r.lanesBlocked || []).length
-                        ? `<p class="ops-sub">blocked: ${esc(r.lanesBlocked.join(', '))}</p>`
+                        ? `<p class="ops-sub">blocked until link: ${esc(r.lanesBlocked.join(', '))}</p>`
                         : ''
                     }</details>`
                   : '';
