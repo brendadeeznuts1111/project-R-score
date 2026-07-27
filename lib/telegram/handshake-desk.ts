@@ -19,6 +19,7 @@ import {
 } from './dm-seat-designation.ts';
 import {
   interpretPackageGroupMemberCount,
+  formatMembershipDeskCell,
   type PackageGroupMembershipTell,
 } from './package-group-membership.ts';
 import { verifyPackageGroupHandshake } from './verify-package-group-handshake.ts';
@@ -241,7 +242,7 @@ export function formatHandshakeDeskTable(rows: HandshakeDeskRow[]): string[] {
 
   for (const r of rows) {
     const type = r.chatType != null ? r.chatType + (r.isForum ? '*' : '') : '—';
-    const mem = r.memberCount != null ? `${r.memberCount}·${r.membershipTell.label}` : '—';
+    const mem = formatMembershipDeskCell(r.membershipTell, r.dmSeatStatus);
     const surface = (r.surfaceSlug ?? '—').slice(0, 12);
     lines.push(
       `${r.partnerCode.padEnd(4)}  ${r.chatId.padEnd(16)}  ${trunc(r.registryTitle, 22).padEnd(22)}  ${liveCol(r).padEnd(6)}  ${type.padEnd(12)}  ${mem.padEnd(12)}  ${surface.padEnd(12)}  ${(r.hasInvite ? 'yes' : 'no').padEnd(3)}  ${botCol(r).padEnd(6)}  ${verifyCol(r)}`

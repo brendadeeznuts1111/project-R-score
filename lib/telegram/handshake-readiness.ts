@@ -16,6 +16,12 @@ import {
   topicsPlanComplete,
   validateForumMetadataAgainstRegistry,
 } from './package-group-forum.ts';
+import { getKnownChatById } from './known-chats.ts';
+import {
+  formatMembershipDeskCell,
+  interpretPackageGroupMemberCount,
+  type PackageGroupMembershipTell,
+} from './package-group-membership.ts';
 import { getPackageGroupRegistry, PENDING_PACKAGE_GROUPS_JSONL } from './package-group-registry.ts';
 import {
   assessHandshakeLanes,
@@ -37,6 +43,7 @@ export type HandshakeReadinessRow = {
   forumTopicsOk: boolean;
   handshakeOk: boolean;
   dmSeat: DmSeatAssessment;
+  membershipTell: PackageGroupMembershipTell;
   outboxRoutingOk: boolean;
   outboxRoutingDetail: string;
   verify: HandshakeVerifyResult;
@@ -80,6 +87,10 @@ export async function assessHandshakeReadiness(opts: {
 
   const reg = getPackageGroupRegistry(opts.db, opts.partnerCode);
   const dmSeat = assessPackageGroupDmSeat(opts.db, opts.partnerCode);
+  const known = reg ? getKnownChatById(opts.db, reg.chatId) : null;
+  const membershipTell = interpretPackageGroupMemberCount(known?.memberCount ?? null, {
+    dmSeatStatus: dmSeat.status,
+  });
   const meta = reg
     ? await loadPackageGroupForumMetadata(reg.partnerCode, { rootDir: forumsMetaDir })
     : null;
@@ -119,6 +130,15 @@ export async function assessHandshakeReadiness(opts: {
     gaps.push(`operator ${dmSeat.callSign} designated — telegram id not linked yet`);
     nextSteps.push(dmSeat.nextStep);
   }
+  if (membershipTell.status === 'understaffed') {
+    gaps.push(`forum members: ${membershipTell.detail}`);
+    nextSteps.push('bun run telegram:handshake:desk --refresh');
+  } else if (membershipTell.needsPartnerInForum) {
+    gaps.push('forum invite pending — partner linked via DM but not in group (expect 3·OK)');
+    if (reg?.inviteLink) nextSteps.push(`send invite: ${reg.inviteLink}`);
+  } else if (membershipTell.status === 'unknown') {
+    nextSteps.push('bun run telegram:handshake:desk --refresh');
+  }
   if (!outboxRoutingOk && reg)
     nextSteps.push('bun run forum-metadata-sync CODE --apply --ensure-topics (toc-ops)');
   for (const c of verify.checks.filter(c => !c.ok)) {
@@ -144,6 +164,7 @@ export async function assessHandshakeReadiness(opts: {
     forumTopicsOk,
     handshakeOk,
     dmSeat,
+    membershipTell,
     outboxRoutingOk,
     outboxRoutingDetail,
     verify,
@@ -164,16 +185,17 @@ export function formatHandshakeReadinessTable(rows: readonly HandshakeReadinessR
   if (rows.length === 0) return ['(no partners)'];
 
   const lines = [
-    'CODE  PHASE           REG  FORUM  TOPICS  DM_SEAT                      OUTBOX  HS',
-    '----  --------------  ---  -----  ------  ---------------------------  ------  --',
+    'CODE  PHASE           MEM        REG  FORUM  TOPICS  DM_SEAT                      OUTBOX  HS',
+    '----  --------------  ---------  ---  -----  ------  ---------------------------  ------  --',
   ];
 
   for (const r of rows) {
     const dm = r.dmSeat.callSign
       ? `${r.dmSeat.callSign} ${formatDmSeatStatus(r.dmSeat.status)}`
       : formatDmSeatStatus(r.dmSeat.status);
+    const mem = formatMembershipDeskCell(r.membershipTell, r.dmSeat.status).padEnd(9);
     lines.push(
-      `${r.partnerCode.padEnd(4)}  ${r.phase.padEnd(14)}  ${yn(r.registryOk)}   ${yn(r.forumOk)}    ${yn(r.forumTopicsOk)}     ${dm.slice(0, 27).padEnd(27)}  ${yn(r.outboxRoutingOk)}     ${yn(r.handshakeOk)}`
+      `${r.partnerCode.padEnd(4)}  ${r.phase.padEnd(14)}  ${mem}  ${yn(r.registryOk)}   ${yn(r.forumOk)}    ${yn(r.forumTopicsOk)}     ${dm.slice(0, 27).padEnd(27)}  ${yn(r.outboxRoutingOk)}     ${yn(r.handshakeOk)}`
     );
   }
   return lines;
@@ -188,6 +210,7 @@ export function formatHandshakeReadinessDetail(row: HandshakeReadinessRow): stri
     `${row.partnerCode} · phase=${row.phase}`,
     `  registry: ${row.registryOk ? 'OK' : 'missing'}  forum: ${row.forumOk ? 'OK' : 'gap'}  topics: ${row.forumTopicsOk ? 'complete' : 'partial'}`,
     `  dm seat: ${row.dmSeat.callSign ?? '—'} · ${formatDmSeatStatus(row.dmSeat.status)}`,
+    `  members: ${row.membershipTell.detail}${row.membershipTell.memberCount != null ? ` (${formatMembershipDeskCell(row.membershipTell, row.dmSeat.status)})` : ''}`,
     `  outbox routing: ${row.outboxRoutingDetail}`,
     `  handshake verify: ${row.handshakeOk ? 'OK' : 'FAIL'} (${row.verify.checks.filter(c => c.ok).length}/${row.verify.checks.length})`,
   ];

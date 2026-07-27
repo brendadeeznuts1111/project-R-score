@@ -6,7 +6,10 @@
 import type { Database } from 'bun:sqlite';
 import type { OpsChannelTopic } from '../channels/ops-channel-event.ts';
 import { assessPackageGroupDmSeat } from './dm-seat-designation.ts';
-import { interpretPackageGroupMemberCount } from './package-group-membership.ts';
+import {
+  interpretPackageGroupMemberCount,
+  membershipForumLaneOk,
+} from './package-group-membership.ts';
 import { getKnownChatById } from './known-chats.ts';
 import {
   loadPackageGroupForumMetadata,
@@ -195,14 +198,14 @@ export async function assessHandshakeLanes(opts: {
     const membership = interpretPackageGroupMemberCount(known?.memberCount ?? null, {
       dmSeatStatus: dmSeat.status,
     });
-    const membersOk =
-      membership.status !== 'understaffed' &&
-      membership.status !== 'unknown' &&
-      !(
-        membership.status === 'house_only' &&
-        (dmSeat.status === 'linked' || dmSeat.status === 'shared')
-      );
-    lanes.push(lane('forum_members', 'forum', membersOk, membership.detail));
+    lanes.push(
+      lane(
+        'forum_members',
+        'forum',
+        membershipForumLaneOk(membership, dmSeat.status),
+        membership.detail
+      )
+    );
     lanes.push(
       lane(
         'surface_slug',

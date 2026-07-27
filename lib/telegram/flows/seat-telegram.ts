@@ -19,11 +19,17 @@ import {
   loadPackageGroupForumMetadata,
   PACKAGE_GROUP_FORUMS_META_DIR,
 } from '../package-group-forum.ts';
+import { getKnownChatById } from '../known-chats.ts';
 import {
   assessPackageGroupDmSeat,
   formatDmSeatStatus,
   type DmSeatStatus,
 } from '../dm-seat-designation.ts';
+import {
+  formatMembershipDeskCell,
+  interpretPackageGroupMemberCount,
+  type PackageGroupMembershipTell,
+} from '../package-group-membership.ts';
 import { partnerCodeFromCallSign, tryPartnerCodeArg } from '../handshake-ref.ts';
 
 export function telegramIdWireLinked(telegramId: string | null | undefined): boolean {
@@ -431,6 +437,7 @@ export type PartnerPackageMapEntry = {
   dmTelegramId: string | null; // brand-ok
   dmResolvedVia: 'seat' | 'shared-meta' | 'none';
   forumTopics: string | null;
+  membershipTell: PackageGroupMembershipTell;
 };
 
 export async function buildPartnerPackageMap(
@@ -449,6 +456,10 @@ export async function buildPartnerPackageMap(
       dmResolvedVia = onTree ? 'seat' : 'shared-meta';
     }
     const fm = await loadPackageGroupForumMetadata(reg.partnerCode, { rootDir: forumsMetaDir });
+    const known = getKnownChatById(db, reg.chatId);
+    const membershipTell = interpretPackageGroupMemberCount(known?.memberCount ?? null, {
+      dmSeatStatus: dmSeat.status,
+    });
     const forumTopics = fm?.topicsThreadMap
       ? Object.entries(fm.topicsThreadMap)
           .map(([k, v]) => `${k}=${v}`)
@@ -463,6 +474,7 @@ export async function buildPartnerPackageMap(
       dmTelegramId: dmId,
       dmResolvedVia,
       forumTopics,
+      membershipTell,
     });
   }
   return out.sort((a, b) => a.partnerCode.localeCompare(b.partnerCode));
@@ -472,13 +484,14 @@ export function formatPartnerPackageMapTable(entries: readonly PartnerPackageMap
   if (entries.length === 0) return ['(no package_group_registry rows)'];
 
   const lines = [
-    'CODE  FORUM_CHAT_ID      DM_SEAT       DM_STATUS                      DM_TELEGRAM     FORUM_TOPICS',
-    '----  -----------------  ------------  -----------------------------  --------------  ------------------',
+    'CODE  FORUM_CHAT_ID      MEM        DM_SEAT       DM_STATUS                      DM_TELEGRAM     FORUM_TOPICS',
+    '----  -----------------  ---------  ------------  -----------------------------  --------------  ------------------',
   ];
   for (const e of entries) {
     const status = formatDmSeatStatus(e.dmSeatStatus);
+    const mem = formatMembershipDeskCell(e.membershipTell, e.dmSeatStatus).padEnd(9);
     lines.push(
-      `${e.partnerCode.padEnd(4)}  ${e.forumChatId.padEnd(17)}  ${(e.requestedBy ?? '—').padEnd(12)}  ${status.padEnd(29)}  ${(e.dmTelegramId ?? '—').padEnd(14)}  ${e.forumTopics ?? '—'}`
+      `${e.partnerCode.padEnd(4)}  ${e.forumChatId.padEnd(17)}  ${mem}  ${(e.requestedBy ?? '—').padEnd(12)}  ${status.padEnd(29)}  ${(e.dmTelegramId ?? '—').padEnd(14)}  ${e.forumTopics ?? '—'}`
     );
   }
   return lines;
