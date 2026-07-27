@@ -34,6 +34,8 @@ export const MINTABLE_SECRET_KEYS = [
   'DOD_ID_ENCRYPTION_KEY',
   'PROVISION_ENCRYPTION_KEY',
   'PLAY_SIGNING_SECRET',
+  /** Report/board integrity HMAC (portal bake + deep-audit). */
+  'REPORT_SIGNING_SECRET',
 ] as const;
 
 export type MintableSecretKey = (typeof MINTABLE_SECRET_KEYS)[number];

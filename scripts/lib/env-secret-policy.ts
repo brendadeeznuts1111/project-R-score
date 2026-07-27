@@ -46,6 +46,7 @@ export const RUNTIME_MINTABLE_SECRETS = [
   'DOD_ID_ENCRYPTION_KEY',
   'PROVISION_ENCRYPTION_KEY',
   'PLAY_SIGNING_SECRET',
+  'REPORT_SIGNING_SECRET',
 ] as const;
 
 export type SecretDisposition =

@@ -175,6 +175,12 @@ export {
   type OnboardingDefaults,
 } from './onboarding-config.ts';
 export {
+  applyPartnerComplianceOnboard,
+  parseComplianceOnboardFields,
+  type PartnerComplianceOnboardOpts,
+  type PartnerComplianceOnboardResult,
+} from './partner-compliance-onboard.ts';
+export {
   CALL_SIGN_PATTERN,
   applyPartnerOnboardPackage,
   buildOnboardChecklist,

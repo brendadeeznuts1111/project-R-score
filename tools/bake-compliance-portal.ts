@@ -19,6 +19,7 @@
  */
 import { joinPath } from '../lib/path-bun.ts';
 import { bakeJsonEmbed } from '../lib/http/portal-embed-bake.ts';
+import { buildReportProofFromValue, type ReportProof } from '../lib/security/report-proof.ts';
 import { buildEnhancementReport, type EnhancementReport } from './show-enhancements.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
@@ -41,6 +42,7 @@ async function buildShadowMatrix(): Promise<{
   rows: ShadowRow[];
   summary: { allow: number; block: number; mismatches: number };
   signature: string;
+  proof: ReportProof;
 }> {
   // Prefer live URL when set (Proton inject / CI); else embed mock via enhanced report logic.
   const envUrl = Bun.env.COMPLIANCE_URL?.trim();
@@ -125,14 +127,16 @@ async function buildShadowMatrix(): Promise<{
     const block = rows.length - allow;
     const mismatches = rows.filter(r => !r.match).length;
     const generatedAt = new Date().toISOString();
-    const payload = {
+    const stable = { base, rows, summary: { allow, block, mismatches }, bunVersion: Bun.version };
+    const proof = buildReportProofFromValue(stable);
+    return {
       generatedAt,
       base,
       rows,
       summary: { allow, block, mismatches },
+      signature: proof.digest,
+      proof,
     };
-    const signature = new Bun.CryptoHasher('sha256').update(JSON.stringify(payload)).digest('hex');
-    return { ...payload, signature };
   } finally {
     stop?.();
   }
@@ -143,16 +147,33 @@ export type ComplianceBoard = {
   generatedAt: string;
   enhancements: EnhancementReport;
   shadow: Awaited<ReturnType<typeof buildShadowMatrix>>;
+  geo?: {
+    partners: Array<{
+      nodeId: string; // brand-ok
+      stateCode: string;
+      age: number | null;
+      location: string | null;
+      zipCode: string | null;
+    }>;
+  };
+  integrity?: {
+    scoreHint: string;
+    proof: ReportProof;
+    checks: Array<{ id: string; ok: boolean; label: string }>; // brand-ok — checklist key
+  };
   links: {
     portal: string;
     registryEnhancements: string;
     registryShadow: string;
     api: string;
+    deepAudit: string;
   };
   proton: {
     note: string;
     inject: string;
     bakeVault: string;
+    reportSigning: string;
+    vaultMap: string;
   };
 };
 
@@ -162,21 +183,97 @@ async function main(): Promise<void> {
   const shadow = await buildShadowMatrix();
   const generatedAt = new Date().toISOString();
 
+  // Geo demo slice (same mock seed as state-compliance-http)
+  const { createMockComplianceDb } = await import('../lib/operations/state-compliance-http.ts');
+  const { getPartnerGeoProfile } = await import('../lib/operations/state-regulation.ts');
+  const geoDb = createMockComplianceDb();
+  const geoPartners = [
+    'demo-ma-licensed',
+    'demo-nj-licensed',
+    'demo-dual-licensed',
+    'demo-unlicensed',
+  ].map(nodeId => {
+    const g = getPartnerGeoProfile(geoDb, nodeId);
+    return {
+      nodeId,
+      stateCode: g?.stateCode ?? '—',
+      age: g?.age ?? null,
+      location: g?.location ?? null,
+      zipCode: g?.zipCode ?? null,
+    };
+  });
+  geoDb.close();
+
+  const boardProof = buildReportProofFromValue({
+    kind: 'compliance-board',
+    enhancements: {
+      passed: enhancements.passed,
+      total: enhancements.total,
+      signature: enhancements.signature,
+    },
+    shadow: {
+      summary: shadow.summary,
+      digest: shadow.proof?.digest ?? shadow.signature,
+    },
+    geoPartners,
+    bunVersion: Bun.version,
+  });
+
+  const integrityChecks = [
+    {
+      id: 'enhancements',
+      ok: enhancements.passed === enhancements.total,
+      label: `Enhancements ${enhancements.passed}/${enhancements.total}`,
+    },
+    {
+      id: 'shadow',
+      ok: shadow.summary.mismatches === 0,
+      label: `Shadow mismatches ${shadow.summary.mismatches}`,
+    },
+    {
+      id: 'sha3',
+      ok: boardProof.algorithm === 'sha3-256',
+      label: 'Board integrity sha3-256',
+    },
+    {
+      id: 'hmac',
+      ok: Boolean(boardProof.hmac),
+      label: 'HMAC (REPORT_SIGNING_SECRET from vault/mint)',
+    },
+    {
+      id: 'geo',
+      ok: geoPartners.every(p => p.zipCode && p.location && p.stateCode !== '—'),
+      label: 'Geo profiles discrete (state/age/location/zip)',
+    },
+  ];
+
   const board: ComplianceBoard = {
     schemaVersion: 1,
     generatedAt,
     enhancements,
     shadow,
+    geo: { partners: geoPartners },
+    integrity: {
+      scoreHint: boardProof.hmac
+        ? 'integrity+hmac'
+        : 'integrity-only (mint REPORT_SIGNING_SECRET or vault inject)',
+      proof: boardProof,
+      checks: integrityChecks,
+    },
     links: {
       portal: '/portal/compliance/',
       registryEnhancements: '/registry/compliance-enhancements.json',
       registryShadow: '/registry/compliance-shadow.json',
       api: '/api/compliance',
+      deepAudit: 'bun run ops:audit:deep',
     },
     proton: {
-      note: 'Bake is offline-safe. Deploy uses vault-injected CLOUDFLARE_API_TOKEN only.',
+      note: 'Bake is offline-safe. Deploy uses vault-injected CLOUDFLARE_API_TOKEN. Report HMAC uses REPORT_SIGNING_SECRET (mintable or pass://factorywager/Report Signing Secret/password when vaulted).',
       inject: 'bun run proton:inject:factorywager:reasonix',
-      bakeVault: 'bun run proton:run -- factorywager -- bun run compliance:bake',
+      bakeVault: 'bun run compliance:bake:vault',
+      reportSigning:
+        'bun run vault:gap:mint-local  # REPORT_SIGNING_SECRET · or pass://factorywager/Report Signing Secret/password',
+      vaultMap: 'docs/harness/tenants/proton-integration.md',
     },
   };
 

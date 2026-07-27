@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-27T17:08:51.836Z",
-  "base": "http://127.0.0.1:59915/",
+  "generatedAt": "2026-07-27T17:11:49.002Z",
+  "base": "http://127.0.0.1:60355/",
   "rows": [
     {
       "state": "MA",
@@ -76,5 +76,12 @@
     "block": 4,
     "mismatches": 0
   },
-  "signature": "d2a877f130fc5fb8a8ba8f687154685aa95cf4d00f20fd6284d3be27c4f464bc"
+  "signature": "ed8111b6e0680bb7534ed8d194d34daf588e5a5dabf74f0cd1e0c2e40ba777d5",
+  "proof": {
+    "algorithm": "sha3-256",
+    "digest": "ed8111b6e0680bb7534ed8d194d34daf588e5a5dabf74f0cd1e0c2e40ba777d5",
+    "bunVersion": "1.4.0",
+    "generatedAt": "2026-07-27T17:11:49.002Z",
+    "hmac": "457b8c33f90cd1d85f93967d6a577fc1fcbaaaa3482a2d7da3f50835a13ab06a"
+  }
 }

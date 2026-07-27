@@ -83,7 +83,46 @@ function render(board, source) {
         `<tr class="${r.match ? 'pass' : 'fail'}"><td>${esc(r.state)}</td><td>${esc(r.partner)}</td><td>${esc(r.licenseStatus ?? 'unlicensed')}</td><td>${r.realAllowed ? 'ALLOW' : 'BLOCK'}</td><td>${r.shadowAllowed ? 'ALLOW' : 'BLOCK'}</td><td class="match">${r.match ? '✓' : '✗'}</td></tr>`
     )
     .join('');
-  document.getElementById('shadow-sig').textContent = `sha256 ${shadow.signature ?? '—'} · base ${shadow.base ?? '—'}`;
+  const shProof = shadow.proof;
+  document.getElementById('shadow-sig').textContent = shProof
+    ? `${shProof.algorithm} ${shProof.digest ?? shadow.signature ?? '—'} · base ${shadow.base ?? '—'}${shProof.hmac ? ' · HMAC set' : ''}`
+    : `digest ${shadow.signature ?? '—'} · base ${shadow.base ?? '—'}`;
+
+  // Integrity checklist
+  const integrity = board.integrity ?? {};
+  const intStats = document.getElementById('int-stats');
+  if (intStats) {
+    intStats.hidden = false;
+    document.getElementById('st-int').textContent = integrity.scoreHint ?? '—';
+  }
+  const intBody = document.querySelector('#int-table tbody');
+  if (intBody) {
+    intBody.innerHTML = (integrity.checks ?? [])
+      .map(
+        c =>
+          `<tr class="${c.ok ? 'pass' : 'fail'}"><td class="match">${c.ok ? '✓' : '○'}</td><td>${esc(c.label)}</td></tr>`
+      )
+      .join('');
+  }
+  const intSig = document.getElementById('int-sig');
+  if (intSig && integrity.proof) {
+    const p = integrity.proof;
+    intSig.textContent = `${p.algorithm} ${p.digest ?? '—'} · bun ${p.bunVersion ?? '—'}${p.hmac ? ' · HMAC present' : ' · no HMAC (mint REPORT_SIGNING_SECRET)'}`;
+  }
+
+  // Geo discrete columns
+  const geoBody = document.querySelector('#geo-table tbody');
+  if (geoBody) {
+    const partners = board.geo?.partners ?? [];
+    geoBody.innerHTML = partners.length
+      ? partners
+          .map(
+            p =>
+              `<tr><td>${esc(p.nodeId)}</td><td>${esc(p.stateCode)}</td><td>${esc(p.age ?? '—')}</td><td>${esc(p.location ?? '—')}</td><td>${esc(p.zipCode ?? '—')}</td></tr>`
+          )
+          .join('')
+      : '<tr><td colspan="5">Run bun run compliance:bake to populate geo profiles</td></tr>';
+  }
 
   const proton = board.proton ?? {};
   document.getElementById('cmp-cmds').textContent = [
@@ -91,16 +130,27 @@ function render(board, source) {
     'bun run compliance:bake',
     '',
     '# Vault inject + bake (Proton Pass → CLOUDFLARE_API_TOKEN for deploy)',
-    proton.bakeVault ?? 'bun run proton:run -- factorywager -- bun run compliance:bake',
+    proton.bakeVault ?? 'bun run compliance:bake:vault',
     proton.inject ?? 'bun run proton:inject:factorywager:reasonix',
+    '',
+    '# Report HMAC (mintable or vault item)',
+    proton.reportSigning ?? 'bun run vault:gap:mint-local  # REPORT_SIGNING_SECRET',
+    '# Optional: pass://factorywager/Report Signing Secret/password',
     '',
     '# Deploy Pages with vault',
     'bun run proton:deploy:pages',
     '',
-    '# Local mock + status',
+    '# Local mock + deep audit + shadow report',
     'bun run ops:compliance:mock',
-    'bun run ops:compliance:status',
-  ].join('\n');
+    'bun run ops:audit:deep',
+    'bun run ops:compliance:report',
+    '',
+    '# Onboard with MA/NJ geo (code)',
+    '# applyPartnerOnboardPackage(db, plan, { compliance: { stateCode: "NJ", age: 28, location: "Newark", zipCode: "07102" } })',
+    proton.vaultMap ? `# Vault map: ${proton.vaultMap}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 const { board, source } = await loadBoard();

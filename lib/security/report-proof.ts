@@ -10,8 +10,6 @@
  *
  * Not a play signature — use PlaySigner for wager HMACs.
  */
-import { requireSecret } from './require-secret.ts';
-
 export type ReportHashAlgorithm = 'sha3-256' | 'sha256';
 
 export type ReportProof = {

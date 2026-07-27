@@ -46,9 +46,46 @@ bun run proton:deploy:pages
 | `COMPLIANCE_MOCK_PORT` | Local mock listen port (default 8787) |
 | `CLOUDFLARE_API_TOKEN` | **Vaulted** — Pages deploy only |
 
+## Env (signing — mintable / vault)
+
+| Name | Role | Vault path (when wired) |
+|------|------|-------------------------|
+| `REPORT_SIGNING_SECRET` | Board + deep-audit **HMAC** | `pass://factorywager/Report Signing Secret/password` |
+| `PLAY_SIGNING_SECRET` | Play **HMAC** (PlaySigner) | `pass://factorywager/Play Signing Secret/password` |
+
+```bash
+# Local mint (no Pass create required)
+bun run vault:gap:mint-local
+# Export minted material → Proton Pass, then:
+# REPORT_SIGNING_SECRET={{ pass://factorywager/Report Signing Secret/password }}
+bun run proton:inject:factorywager
+bun run compliance:bake:vault
+```
+
+## Onboarding integration
+
+```ts
+import { applyPartnerOnboardPackage } from './lib/operations/partner-onboard-package.ts';
+
+applyPartnerOnboardPackage(db, plan, {
+  compliance: {
+    stateCode: 'NJ',
+    age: 28,
+    location: 'Newark',      // locality only — never pack ZIP
+    zipCode: '07102',
+    identityVerified: true,
+  },
+});
+// → partner_state_licenses + partner_geo_profiles + identity_verified
+```
+
 ## Related
 
 - [`lib/operations/state-compliance-http.ts`](../../../lib/operations/state-compliance-http.ts)
+- [`lib/operations/partner-compliance-onboard.ts`](../../../lib/operations/partner-compliance-onboard.ts)
+- [`lib/security/report-proof.ts`](../../../lib/security/report-proof.ts)
 - [`tools/show-enhancements.ts`](../../../tools/show-enhancements.ts)
+- [`tools/deep-audit-report.ts`](../../../tools/deep-audit-report.ts)
 - [`docs/harness/tenants/proton-integration.md`](proton-integration.md)
+- [`docs/harness/tenants/partner-onboarding-package.md`](partner-onboarding-package.md)
 - [`docs/portal-foundation.md`](../../portal-foundation.md)

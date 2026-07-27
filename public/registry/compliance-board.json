@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T17:08:51.837Z",
+  "generatedAt": "2026-07-27T17:11:49.003Z",
   "enhancements": {
-    "generatedAt": "2026-07-27T17:08:51.818Z",
+    "generatedAt": "2026-07-27T17:11:48.989Z",
     "consoleDepth": 4,
     "rows": [
       {
@@ -130,11 +130,11 @@
     ],
     "passed": 8,
     "total": 8,
-    "signature": "1995537ec129fb029b334e8c149f1a3fae0795f0becb8a5bb2d1ca9664110887"
+    "signature": "7fa6166c85cbfc571da2510ab5ce2151b06585118f8e6f9094a2693e9715d295"
   },
   "shadow": {
-    "generatedAt": "2026-07-27T17:08:51.836Z",
-    "base": "http://127.0.0.1:59915/",
+    "generatedAt": "2026-07-27T17:11:49.002Z",
+    "base": "http://127.0.0.1:60355/",
     "rows": [
       {
         "state": "MA",
@@ -210,17 +210,96 @@
       "block": 4,
       "mismatches": 0
     },
-    "signature": "d2a877f130fc5fb8a8ba8f687154685aa95cf4d00f20fd6284d3be27c4f464bc"
+    "signature": "ed8111b6e0680bb7534ed8d194d34daf588e5a5dabf74f0cd1e0c2e40ba777d5",
+    "proof": {
+      "algorithm": "sha3-256",
+      "digest": "ed8111b6e0680bb7534ed8d194d34daf588e5a5dabf74f0cd1e0c2e40ba777d5",
+      "bunVersion": "1.4.0",
+      "generatedAt": "2026-07-27T17:11:49.002Z",
+      "hmac": "457b8c33f90cd1d85f93967d6a577fc1fcbaaaa3482a2d7da3f50835a13ab06a"
+    }
+  },
+  "geo": {
+    "partners": [
+      {
+        "nodeId": "demo-ma-licensed",
+        "stateCode": "MA",
+        "age": 28,
+        "location": "Boston",
+        "zipCode": "02108"
+      },
+      {
+        "nodeId": "demo-nj-licensed",
+        "stateCode": "NJ",
+        "age": 32,
+        "location": "Atlantic City",
+        "zipCode": "08401"
+      },
+      {
+        "nodeId": "demo-dual-licensed",
+        "stateCode": "MA",
+        "age": 40,
+        "location": "Cambridge",
+        "zipCode": "02139"
+      },
+      {
+        "nodeId": "demo-unlicensed",
+        "stateCode": "MA",
+        "age": 22,
+        "location": "Worcester",
+        "zipCode": "01608"
+      }
+    ]
+  },
+  "integrity": {
+    "scoreHint": "integrity+hmac",
+    "proof": {
+      "algorithm": "sha3-256",
+      "digest": "792ad808d3ed37ece90ffef68b686ba5062e3623f67542126b62e3b7105f1c2a",
+      "bunVersion": "1.4.0",
+      "generatedAt": "2026-07-27T17:11:49.007Z",
+      "hmac": "e021868eddce163efa4da2565f30b91118a9d61b3dcf8ebd3cabe4f9e1dd2320"
+    },
+    "checks": [
+      {
+        "id": "enhancements",
+        "ok": true,
+        "label": "Enhancements 8/8"
+      },
+      {
+        "id": "shadow",
+        "ok": true,
+        "label": "Shadow mismatches 0"
+      },
+      {
+        "id": "sha3",
+        "ok": true,
+        "label": "Board integrity sha3-256"
+      },
+      {
+        "id": "hmac",
+        "ok": true,
+        "label": "HMAC (REPORT_SIGNING_SECRET from vault/mint)"
+      },
+      {
+        "id": "geo",
+        "ok": true,
+        "label": "Geo profiles discrete (state/age/location/zip)"
+      }
+    ]
   },
   "links": {
     "portal": "/portal/compliance/",
     "registryEnhancements": "/registry/compliance-enhancements.json",
     "registryShadow": "/registry/compliance-shadow.json",
-    "api": "/api/compliance"
+    "api": "/api/compliance",
+    "deepAudit": "bun run ops:audit:deep"
   },
   "proton": {
-    "note": "Bake is offline-safe. Deploy uses vault-injected CLOUDFLARE_API_TOKEN only.",
+    "note": "Bake is offline-safe. Deploy uses vault-injected CLOUDFLARE_API_TOKEN. Report HMAC uses REPORT_SIGNING_SECRET (mintable or pass://factorywager/Report Signing Secret/password when vaulted).",
     "inject": "bun run proton:inject:factorywager:reasonix",
-    "bakeVault": "bun run proton:run -- factorywager -- bun run compliance:bake"
+    "bakeVault": "bun run compliance:bake:vault",
+    "reportSigning": "bun run vault:gap:mint-local  # REPORT_SIGNING_SECRET · or pass://factorywager/Report Signing Secret/password",
+    "vaultMap": "docs/harness/tenants/proton-integration.md"
   }
 }
