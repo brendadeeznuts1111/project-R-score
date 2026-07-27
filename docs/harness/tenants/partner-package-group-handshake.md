@@ -127,18 +127,31 @@ bun run telegram:ops -- link-package-group ASH -1003937534779 --requested-by ASH
 |------|--------|
 | `--invite <url>` | Store invite; include in DM |
 | `--no-dm` | Skip package-room DM |
+| `--no-ack` | Skip `ack_package_group_linked` JSONL append |
 | `--requested-by <call-sign>` | Audit trail + prefer that seat's telegram_id for DM |
 
-### `designate-dm-seat` (pre-link operator ack)
+### `designate-dm-seat` (post-link seat ack)
 
-Acknowledge which seat receives package-room DMs **before** `tree_nodes.telegram_id` exists:
+Acknowledge which seat receives package-room DMs **after** a `package_group_registry` row exists (via `link-package-group`). Does **not** require `tree_nodes.telegram_id` yet — only a registry row + active seat.
 
 ```bash
 bun run telegram:ops -- designate-dm-seat NOV NOV-001
 bun run telegram:ops -- designate-dm-seat PAT PAT-001 --force
 ```
 
-SSOT: `package_group_registry.requested_by`. Appends `ack_dm_seat_designated` to JSONL. Welcome DM + bot commands stay blocked until:
+SSOT: `package_group_registry.requested_by`. Appends `ack_dm_seat_designated` to JSONL:
+
+```json
+{
+  "action": "ack_dm_seat_designated",
+  "partner_code": "NOV",
+  "call_sign": "NOV-001",
+  "designated_by": "factory",
+  "timestamp": "2026-07-26T20:00:00.000Z"
+}
+```
+
+Welcome DM + bot commands stay blocked until:
 
 ```bash
 bun tools/telegram-link-chat.ts NOV-001 <telegram_user_id>
@@ -146,21 +159,37 @@ bun tools/telegram-link-chat.ts NOV-001 <telegram_user_id>
 
 `link-package-group … --requested-by NOV-001` also designates + JSONL acks (use `--no-dm` when telegram not ready).
 
+**DM seat status** (`assessPackageGroupDmSeat`):
+
+| Status | Meaning |
+|--------|---------|
+| `none` | No `requested_by` on registry |
+| `designated` | Seat acknowledged; operator telegram pending |
+| `linked` | Telegram id linked to designated seat (primary owner) |
+| `shared` | Telegram id linked but owned by another call-sign; designated seat in `ChatChannelMeta.callSigns` — use `/seat CODE-001` to switch bot context |
+
+Seat map (all seats ↔ telegram ↔ package forum): `bun run telegram:ops -- seat-map`
+
 ### Readiness (phased E2E)
 
 ```bash
 bun run telegram:handshake:readiness              # summary table
-bun run telegram:handshake:readiness NOV --detail --deep   # per-lane audit
+bun run telegram:handshake:readiness NOV --detail   # per-lane audit (--detail alone enables deep lanes)
 bun run telegram:handshake:verify NOV --live      # live Telegram title match
 ```
 
+Flags: `[CODE…]` · `--detail` · `--deep` (optional; `--detail` alone runs deep lanes) · `--live` · `--json` · `--db <path>`
+
 | Phase | Meaning |
 |-------|---------|
+| `blocked` | Missing registry row or forum metadata gap |
 | `forum_ready` | Registry + forum metadata OK; DM seat not designated |
-| `designated` | Seat acknowledged — forum routing + outbox threads work; operator telegram pending |
-| `operator_ready` | Telegram linked — welcome DM + `/status` + play callbacks |
+| `designated` | Seat acknowledged in registry; operator telegram pending — outbox routing tracked in gaps/deep lanes, not a phase gate |
+| `operator_ready` | Linked telegram **and** handshake verify OK — welcome DM + `/status` + play callbacks |
 
-Deep lanes (`--deep`): forum · audit (JSONL) · routing (outbox thread map) · operator (blocked-until-link explicit).
+Exit **`1`** only when any row has phase **`blocked`** (not for `designated` or invite-pending membership).
+
+Deep lanes (`--detail`): forum · audit (JSONL) · routing (outbox thread map) · operator (blocked-until-link explicit). Audit lane **`jsonl_dm_designated`** passes when an `ack_dm_seat_designated` line exists **or** when `create_package_group.requested_by` matches registry `requested_by` (fallback when designate ran via link without a separate ack line).
 
 ### Group membership model (member count tell)
 
@@ -180,10 +209,10 @@ More humans (experts, observers) increase the count — that is normal.
 |-------|----------------|
 | `1` | Understaffed — re-check bot admin |
 | `2` | Bot + house only — **normal** while partner not in forum or telegram not linked |
-| `3` | Bot + house + partner — typical steady state |
-| `4+` | Core trio + extras |
+| `3` | Bot + house + partner — typical steady state (`3·OK`) |
+| `4+` | Core trio + extras — desk cell **`N·ext`** (e.g. `4·ext`, `5·ext`) |
 
-**`!` suffix** (e.g. `2·house!`): operator telegram is linked but partner has not joined the forum yet — send the registry invite (expect `3·OK` after join).
+**`!` suffix** (e.g. `2·house!`): operator telegram is linked but partner has not joined the forum yet — send the registry invite (expect `3·OK` after join). Deep lane **`forum_members`** fails at **`2·house!`** until partner joins.
 
 Code: [`lib/telegram/package-group-membership.ts`](../../../lib/telegram/package-group-membership.ts) · desk column `MEMBERS` · readiness `MEM` · deep lane `forum_members`.
 
@@ -193,11 +222,19 @@ Operator DM linked but partner not in forum yet:
 
 ```bash
 bun run telegram:handshake:invite-gap
-bun run telegram:handshake:invite-gap --refresh
+bun run telegram:handshake:invite-gap ASH BIL --refresh
 bun run telegram:handshake:desk --invite-gap
+bun run telegram:handshake:readiness --invite-gap
+bun run telegram:ops -- send-forum-invite NOV
+bun run telegram:ops -- send-forum-invite --all
+bun run telegram:handshake:invite-gap --send --dry-run
 ```
 
-Exit `1` when gaps exist (scriptable). After partner joins → **`3·OK`**.
+Flags: `[CODE…]` · `--refresh` · `--json` · `--send` · `--dry-run` · `--force` · `--db <path>`
+
+Exit **`1`** when gaps exist (scriptable). Readiness exits **`1`** only on phase **`blocked`**. After partner joins → **`3·OK`**.
+
+Send path appends **`ack_forum_invite_sent`** to package group JSONL. Deep lanes: **`forum_invite_gap`** · **`jsonl_forum_invite_sent`**. Code: [`lib/telegram/forum-invite-gap.ts`](../../../lib/telegram/forum-invite-gap.ts).
 
 ---
 
@@ -207,7 +244,7 @@ Exit `1` when gaps exist (scriptable). After partner joins → **`3·OK`**.
 |-----------|----------|
 | Unknown call-sign / tree node | Throw on resolve |
 | Cannot derive `partner_code` | Throw with hint to set parent partner or valid call-sign |
-| Invalid `partner_code` on link | Exit 1 (`^[A-Z]{2,4}$`) |
+| Invalid `partner_code` on link | Exit 1 (`^[A-Z]{3,6}$` — [`handshake-ref.ts`](../../../lib/telegram/handshake-ref.ts)) |
 | Invalid `chat_id` | Exit 1 (numeric Telegram id) |
 | No DM + no `--no-dm` | Upsert registry; skip DM quietly |
 | No invite + DM requested | Upsert registry; DM without link text |
@@ -260,7 +297,6 @@ Written by MTProto `package-group-create-forum` or backfilled for manual forums:
 
 ```bash
 cd toc-ops-repo
-```bash
 bun run forum-metadata-backfill ASH PAT NOV BIL --apply --factory-db ../data/operations.db
 ```
 
@@ -295,7 +331,7 @@ To skip human forum create when a house surface already exists (e.g. ash-staging
 ```bash
 bun run ct package-group-wire ASH --chat tg:chat:-1003937534779 --apply --ack
 bun run telegram:ops -- link-package-group ASH -1003937534779
-bun tools/verify-package-group-handshake.ts ASH
+bun run telegram:handshake:verify ASH
 ```
 
 Do not use staging chat_ids as production package forums.
@@ -332,13 +368,26 @@ Requires `--confirm-operational` once (Decision #36). Creates operational partne
 ```bash
 # Handshake lifecycle
 bun run test:telegram-handshake
+bun run telegram:handshake:verify ASH
 bun run telegram:handshake:verify ASH --json
 bun run telegram:handshake:verify ASH --live
+# Flags: --path <jsonl> · --forums-dir <dir> · --db <path> · --json · --live
 
 # Unified desk (registry + known chats + handshake)
 bun run telegram:handshake:desk
 bun run telegram:handshake:desk ASH PAT --refresh --live --detail
-bun run telegram:handshake:desk --json
+bun run telegram:handshake:desk --json --invite-gap
+# Flags: --refresh · --live (implies --refresh) · --invite-gap · --detail · --json · --path <jsonl> · --db <path>
+
+# Phased readiness + invite gap
+bun run telegram:handshake:readiness
+bun run telegram:handshake:readiness NOV --detail --live --json
+bun run telegram:handshake:invite-gap --refresh
+# readiness: --detail · --deep · --live · --json · --db
+# invite-gap: --refresh · --json · --db
+
+# Seat map
+bun run telegram:ops -- seat-map
 
 # Broadcast queue
 bun test tests/ops-channel-outbox.test.ts tests/telegram-broadcast.test.ts

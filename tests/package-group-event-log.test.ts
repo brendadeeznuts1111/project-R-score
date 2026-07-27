@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import {
   appendAckPackageGroupLinked,
   appendAckPackageGroupWired,
+  appendAckForumInviteSent,
   appendPackageGroupEventLog,
   parsePackageGroupEventLog,
   readOpenPendingPackageGroups,
@@ -76,6 +77,23 @@ describe('package group event log', () => {
     });
     expect(linked.appended).toBe(true);
 
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('appendAckForumInviteSent round-trip in parse', async () => {
+    const dir = join(tmpdir(), `invite-log-${Date.now()}`);
+    await mkdir(dir, { recursive: true });
+    const path = join(dir, 'pending.jsonl');
+    await appendAckForumInviteSent({
+      partnerCode: 'NOV',
+      callSign: 'NOV-001',
+      chatId: '111',
+      inviteLink: 'https://t.me/+x',
+      path,
+    });
+    const log = parsePackageGroupEventLog(await Bun.file(path).text());
+    expect(log.length).toBe(1);
+    expect(log[0]!.action).toBe('ack_forum_invite_sent');
     await rm(dir, { recursive: true, force: true });
   });
 

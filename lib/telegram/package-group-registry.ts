@@ -232,11 +232,22 @@ export type AckDmSeatDesignatedArtifact = {
   timestamp: string;
 };
 
+export type AckForumInviteSentArtifact = {
+  action: 'ack_forum_invite_sent';
+  partner_code: string;
+  call_sign: string;
+  chat_id: string; // brand-ok — operator DM telegram id wire
+  invite_link: string;
+  sent_by: 'factory';
+  timestamp: string;
+};
+
 export type PackageGroupEventLogEntry =
   | PackageGroupCreateArtifact
   | AckPackageGroupWiredArtifact
   | AckPackageGroupLinkedArtifact
-  | AckDmSeatDesignatedArtifact;
+  | AckDmSeatDesignatedArtifact
+  | AckForumInviteSentArtifact;
 
 function parseEventLogLine(raw: string, lineNo: number): PackageGroupEventLogEntry | null {
   const line = raw.trim();
@@ -302,6 +313,20 @@ function parseEventLogLine(raw: string, lineNo: number): PackageGroupEventLogEnt
         .trim(),
       call_sign: String(row.call_sign ?? '').trim(),
       designated_by: 'factory',
+      timestamp: String(row.timestamp ?? ''),
+    };
+  }
+  if (action === 'ack_forum_invite_sent') {
+    const row = parsed as Record<string, unknown>;
+    return {
+      action: 'ack_forum_invite_sent',
+      partner_code: String(row.partner_code ?? '')
+        .toUpperCase()
+        .trim(),
+      call_sign: String(row.call_sign ?? '').trim(),
+      chat_id: String(row.chat_id ?? ''), // brand-ok
+      invite_link: String(row.invite_link ?? ''),
+      sent_by: 'factory',
       timestamp: String(row.timestamp ?? ''),
     };
   }
@@ -486,6 +511,63 @@ export async function appendAckDmSeatDesignated(input: {
     partner_code: code,
     call_sign: callSign,
     designated_by: 'factory',
+    timestamp: input.now ?? new Date().toISOString(),
+  });
+  return { path, appended: true };
+}
+
+export function latestForumInviteSentAck(
+  log: readonly PackageGroupEventLogEntry[],
+  partnerCode: string
+): AckForumInviteSentArtifact | null {
+  const code = parsePartnerCode(partnerCode);
+  if (!code) return null;
+  let latest: AckForumInviteSentArtifact | null = null;
+  for (const entry of log) {
+    if (entry.action === 'ack_forum_invite_sent' && entry.partner_code === code) {
+      latest = entry;
+    }
+  }
+  return latest;
+}
+
+export async function appendAckForumInviteSent(input: {
+  partnerCode: string;
+  callSign: string;
+  chatId: string; // brand-ok — operator DM telegram id wire
+  inviteLink: string;
+  path?: string;
+  now?: string;
+  force?: boolean;
+}): Promise<{ path: string; appended: boolean }> {
+  const path = input.path ?? PENDING_PACKAGE_GROUPS_JSONL;
+  const code = parsePartnerCode(input.partnerCode);
+  const callSign = input.callSign.trim();
+  const chatId = input.chatId.trim(); // brand-ok
+  const inviteLink = input.inviteLink.trim();
+  if (!code || !callSign || !chatId || !inviteLink) {
+    throw new Error('appendAckForumInviteSent requires partnerCode, callSign, chatId, inviteLink');
+  }
+
+  const log = await readPackageGroupEventLog(path);
+  const existing = latestForumInviteSentAck(log, code);
+  if (
+    existing &&
+    !input.force &&
+    existing.call_sign === callSign &&
+    existing.chat_id === chatId &&
+    existing.invite_link === inviteLink
+  ) {
+    return { path, appended: false };
+  }
+
+  await appendPackageGroupEventLog(path, {
+    action: 'ack_forum_invite_sent',
+    partner_code: code,
+    call_sign: callSign,
+    chat_id: chatId,
+    invite_link: inviteLink,
+    sent_by: 'factory',
     timestamp: input.now ?? new Date().toISOString(),
   });
   return { path, appended: true };

@@ -26,6 +26,13 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `surface-audit.ts` | Title · binding · ACL · routing audit |
 | `package-group-registry.ts` | Partner package forum registry + pending JSONL |
 | `package-group-forum.ts` | Forum metadata SSOT · `reports/telegram/forums/{CODE}.json` |
+| `handshake-ref.ts` | Partner code / call-sign regex SSOT for package-group CLIs |
+| `handshake-desk.ts` | Unified desk rows (registry + known chats + verify) |
+| `handshake-readiness.ts` | Phased readiness gates + forum invite-gap filter |
+| `handshake-lanes.ts` | Deep per-lane audit (forum / audit / routing / operator) |
+| `dm-seat-designation.ts` | DM seat designate / assess (`none` · `designated` · `linked` · `shared`) |
+| `package-group-membership.ts` | Member-count tell (`2·house`, `2·house!`, `3·OK`, `N·ext`) |
+| `verify-package-group-handshake.ts` | JSONL + registry + forum metadata lifecycle checks |
 | `ops-acl.ts` | In-chat ACL — `/register` DM-only · `/deploy` ops-admin |
 | `branding.ts` | TOC Ops profile (Bun.Image) · group titles/photos · forum topics |
 | `refresh-known-chats.ts` | `getChat` / member-count refresh for directory |
@@ -106,5 +113,6 @@ bun -e "import { OpsTelegramBot } from './lib/telegram/ops-bot.ts'; import { loa
 ## Related
 
 - [`docs/harness/tenants/partner-onboarding-package.md`](../../docs/harness/tenants/partner-onboarding-package.md)
+- [`docs/harness/tenants/partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) — factory ↔ ct handshake · readiness · desk · designate-dm-seat
 - [`lib/channels/outbox.ts`](../channels/outbox.ts) — `enqueuePartnerWelcomeEvent`, play inline keyboard
 - [`templates/`](templates/) — `renderForNode` · TemplateId pack

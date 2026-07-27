@@ -12,6 +12,7 @@ import {
   buildHandshakeDesk,
   formatHandshakeDeskTable,
 } from '../lib/telegram/handshake-desk.ts';
+import { formatMembershipDeskCell } from '../lib/telegram/package-group-membership.ts';
 
 const createArtifact: PackageGroupCreateArtifact = {
   action: 'create_package_group',
@@ -117,6 +118,64 @@ describe('handshake-desk', () => {
 
     expect(rows).toHaveLength(1);
     expect(rows[0]!.partnerCode).toBe('PAT');
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('linked seat at house-only count flags forum invite gap', async () => {
+    const dir = join(tmpdir(), `handshake-desk-invite-${Date.now()}`);
+    await mkdir(dir, { recursive: true });
+    const path = join(dir, 'pending.jsonl');
+    await writeFile(path, '');
+
+    const db = new Database(':memory:');
+    db.run(`
+      CREATE TABLE tree_nodes (
+        id TEXT PRIMARY KEY,
+        call_sign TEXT,
+        name TEXT,
+        telegram_id TEXT,
+        active INTEGER DEFAULT 1
+      )
+    `);
+    db.run(
+      `INSERT INTO tree_nodes (id, call_sign, name, telegram_id, active) VALUES (?, ?, ?, ?, 1)`,
+      ['n-ash', 'ASH-001', 'Ash Operator', '8013171035']
+    );
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-1003937534779',
+      displayName: 'Ash Ops',
+      requestedBy: 'ASH-001',
+    });
+    upsertKnownChat(db, {
+      chat: {
+        id: -1003937534779,
+        type: 'supergroup',
+        title: 'TOC Ops · ASH · Ash Ops',
+        is_forum: true,
+      },
+      source: 'manual',
+    });
+    updateKnownChatMemberCount(db, '-1003937534779', 2);
+
+    const { rows } = await buildHandshakeDesk({
+      db,
+      jsonlPath: path,
+      verify: false,
+    });
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.dmSeatStatus).toBe('linked');
+    expect(rows[0]!.memberCount).toBe(2);
+    expect(rows[0]!.membershipTell.needsPartnerInForum).toBe(true);
+    expect(formatMembershipDeskCell(rows[0]!.membershipTell, rows[0]!.dmSeatStatus)).toBe(
+      '2·house!'
+    );
+
+    const table = formatHandshakeDeskTable(rows);
+    expect(table.some(l => l.includes('2·house!'))).toBe(true);
 
     db.close();
     await rm(dir, { recursive: true, force: true });

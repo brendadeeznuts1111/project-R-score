@@ -18,3 +18,16 @@ Do not extend `handshake:verify` or `directory` with overlapping flags.
 
 - Single source of truth for factory package-group surfaces at the ops console.
 - `getKnownChatById` added for direct registry joins (avoids `listKnownChats` limit skew).
+
+## Follow-on (2026-07)
+
+Phased readiness and invite-gap CLIs extend the desk read model without new stores:
+
+- **`bun run telegram:handshake:readiness`** — phased gates (`blocked` → `forum_ready` → `designated` → `operator_ready`); `--detail` enables deep lanes; exit `1` only when any row is `blocked`.
+- **`bun run telegram:handshake:invite-gap`** — `2·house!` rows (operator DM linked, partner not in forum); exit `1` when gaps exist.
+- **`bun run telegram:ops -- designate-dm-seat`** — sets `package_group_registry.requested_by` after a registry row exists (requires `link-package-group`, not a pre-linked telegram id).
+- **Membership tell** — desk `MEMBERS` / readiness `MEM` cells (`2·house`, `2·house!`, `3·OK`, `N·ext`); deep `forum_members` lane fails at `2·house!`.
+
+Desk flags expanded: **`--refresh`**, **`--invite-gap`** (subset report; exit `1` on gaps), plus existing **`--live`**, **`--detail`**, **`--json`**, **`--path`**, **`--db`**.
+
+Spec sections: [`partner-package-group-handshake.md`](../harness/tenants/partner-package-group-handshake.md) — readiness phases, group membership model, forum invite gap, `designate-dm-seat`, verify commands.

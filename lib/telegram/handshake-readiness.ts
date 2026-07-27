@@ -22,7 +22,12 @@ import {
   interpretPackageGroupMemberCount,
   type PackageGroupMembershipTell,
 } from './package-group-membership.ts';
-import { getPackageGroupRegistry, PENDING_PACKAGE_GROUPS_JSONL } from './package-group-registry.ts';
+import {
+  getPackageGroupRegistry,
+  PENDING_PACKAGE_GROUPS_JSONL,
+  readPackageGroupEventLog,
+  latestForumInviteSentAck,
+} from './package-group-registry.ts';
 import {
   assessHandshakeLanes,
   formatHandshakeLaneReport,
@@ -45,6 +50,8 @@ export type HandshakeReadinessRow = {
   dmSeat: DmSeatAssessment;
   membershipTell: PackageGroupMembershipTell;
   inviteLink: string | null;
+  /** Latest ack_forum_invite_sent timestamp when gap active. */
+  inviteSentAt: string | null;
   outboxRoutingOk: boolean;
   outboxRoutingDetail: string;
   verify: HandshakeVerifyResult;
@@ -63,6 +70,9 @@ function derivePhase(row: {
   if (!row.registryOk || !row.forumOk) return 'blocked';
   if (row.dmSeat.status === 'none') return 'forum_ready';
   if (row.dmSeat.status === 'designated') return 'designated';
+  if ((row.dmSeat.status === 'linked' || row.dmSeat.status === 'shared') && !row.handshakeOk) {
+    return 'blocked';
+  }
   if (row.dmSeat.welcomeDmReady && row.handshakeOk) return 'operator_ready';
   return 'forum_ready';
 }
@@ -120,6 +130,14 @@ export async function assessHandshakeReadiness(opts: {
 
   const gaps: string[] = [];
   const nextSteps: string[] = [];
+  const jsonlPath = opts.jsonlPath ?? PENDING_PACKAGE_GROUPS_JSONL;
+  const code = opts.partnerCode.toUpperCase().trim();
+  const eventLog = membershipTell.needsPartnerInForum
+    ? await readPackageGroupEventLog(jsonlPath)
+    : [];
+  const inviteSent = membershipTell.needsPartnerInForum
+    ? latestForumInviteSentAck(eventLog, code)
+    : null;
 
   if (!reg) gaps.push('package_group_registry missing');
   if (!forumOk) gaps.push('forum metadata missing or chat_id mismatch');
@@ -136,7 +154,13 @@ export async function assessHandshakeReadiness(opts: {
     nextSteps.push('bun run telegram:handshake:desk --refresh');
   } else if (membershipTell.needsPartnerInForum) {
     gaps.push('forum invite pending — partner linked via DM but not in group (expect 3·OK)');
-    if (reg?.inviteLink) nextSteps.push(`send invite: ${reg.inviteLink}`);
+    if (inviteSent) {
+      nextSteps.push(`invite DM sent at ${inviteSent.timestamp} — awaiting partner join`);
+      if (reg?.inviteLink) nextSteps.push(`join forum: ${reg.inviteLink}`);
+    } else {
+      if (reg?.inviteLink) nextSteps.push(`send invite: ${reg.inviteLink}`);
+      nextSteps.push(`bun run telegram:ops -- send-forum-invite ${code}`);
+    }
   } else if (membershipTell.status === 'unknown') {
     nextSteps.push('bun run telegram:handshake:desk --refresh');
   }
@@ -167,6 +191,7 @@ export async function assessHandshakeReadiness(opts: {
     dmSeat,
     membershipTell,
     inviteLink: reg?.inviteLink ?? null,
+    inviteSentAt: inviteSent?.timestamp ?? null,
     outboxRoutingOk,
     outboxRoutingDetail,
     verify,
@@ -213,6 +238,9 @@ export function formatHandshakeReadinessDetail(row: HandshakeReadinessRow): stri
     `  registry: ${row.registryOk ? 'OK' : 'missing'}  forum: ${row.forumOk ? 'OK' : 'gap'}  topics: ${row.forumTopicsOk ? 'complete' : 'partial'}`,
     `  dm seat: ${row.dmSeat.callSign ?? '—'} · ${formatDmSeatStatus(row.dmSeat.status)}`,
     `  members: ${row.membershipTell.detail}${row.membershipTell.memberCount != null ? ` (${formatMembershipDeskCell(row.membershipTell, row.dmSeat.status)})` : ''}`,
+    row.membershipTell.needsPartnerInForum && row.inviteLink
+      ? `  forum invite: ${row.inviteLink}${row.inviteSentAt ? ` · sent ${row.inviteSentAt}` : ' · not sent yet'}`
+      : '',
     `  outbox routing: ${row.outboxRoutingDetail}`,
     `  handshake verify: ${row.handshakeOk ? 'OK' : 'FAIL'} (${row.verify.checks.filter(c => c.ok).length}/${row.verify.checks.length})`,
   ];
@@ -230,7 +258,7 @@ export function formatHandshakeReadinessDetail(row: HandshakeReadinessRow): stri
       out.push(line.startsWith('  ') ? line : `  ${line}`);
     }
   }
-  return out;
+  return out.filter(Boolean);
 }
 
 /** Partners where operator DM is linked but forum still bot+house only. */
@@ -247,14 +275,17 @@ export function formatForumInviteGapReport(rows: readonly HandshakeReadinessRow[
   }
   const lines = [
     'FORUM INVITE GAP · operator linked via DM · partner not in group yet',
-    'CODE  MEM        SEAT         INVITE',
-    '----  ---------  -----------  ------',
+    'CODE  MEM        SEAT         SENT                 INVITE',
+    '----  ---------  -----------  -------------------  ------',
   ];
   for (const r of gaps) {
     const invite = r.inviteLink?.trim() || '(no invite in registry)';
     const mem = formatMembershipDeskCell(r.membershipTell, r.dmSeat.status);
     const seat = r.dmSeat.callSign ?? '—';
-    lines.push(`${r.partnerCode.padEnd(4)}  ${mem.padEnd(9)}  ${seat.padEnd(11)}  ${invite}`);
+    const sent = r.inviteSentAt ? r.inviteSentAt.slice(0, 19) : '—';
+    lines.push(
+      `${r.partnerCode.padEnd(4)}  ${mem.padEnd(9)}  ${seat.padEnd(11)}  ${sent.padEnd(19)}  ${invite}`
+    );
   }
   lines.push('', 'After partner joins, expect MEM 3·OK (bot + house + partner).');
   return lines;

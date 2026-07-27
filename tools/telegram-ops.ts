@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --deep
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
@@ -62,7 +63,11 @@ import {
   formatHandshakeReadinessDetail,
   formatHandshakeReadinessTable,
 } from '../lib/telegram/handshake-readiness.ts';
-import { sendTelegramBotMessage } from '../lib/telegram/telegram-api.ts';
+import {
+  sendForumInviteDm,
+  sendForumInviteDmsForGaps,
+  formatForumInviteDmText,
+} from '../lib/telegram/forum-invite-gap.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import {
   buildPartnerPackageMap,
@@ -72,6 +77,7 @@ import {
   resolveFlowNodeForTelegram,
   setActiveCallSignForTelegram,
 } from '../lib/telegram/flows/seat-telegram.ts';
+import { sendTelegramBotMessage } from '../lib/telegram/telegram-api.ts';
 
 function usage(): never {
   console.log(`Usage: bun tools/telegram-ops.ts <command> [options]
@@ -83,6 +89,7 @@ Commands:
   graph       Live concern topology (ASCII; --mermaid; --env for .env block)
   link-package-group  Bind partner package forum chat_id (+ optional DM)
   designate-dm-seat   Acknowledge operator seat before Telegram id exists
+  send-forum-invite   DM linked operator with registry forum invite (2·house!)
   readiness           E2E phased gates (forum → designated → operator linked)
   seat-map            Seat ↔ Telegram ↔ package forum mapping
   acknowledge-pending Mark factory linked ack on JSONL event log
@@ -565,23 +572,34 @@ async function cmdLinkPackageGroup(rawArgv: string[]): Promise<void> {
 
   const db = openOperationsDb({ path: opts.dbPath });
   try {
-    const displayNameFromLog =
-      (await resolvePackageGroupDisplayName(opts.partnerCode)) ?? `${opts.partnerCode} Ops`;
-    const row = upsertPackageGroupRegistry(db, {
-      partnerCode: opts.partnerCode,
-      chatId: opts.chatId,
-      displayName: displayNameFromLog,
-      inviteLink: opts.invite,
-      requestedBy: opts.requestedBy,
-    });
+    let row;
+    try {
+      const displayNameFromLog =
+        (await resolvePackageGroupDisplayName(opts.partnerCode)) ?? `${opts.partnerCode} Ops`;
+      row = upsertPackageGroupRegistry(db, {
+        partnerCode: opts.partnerCode,
+        chatId: opts.chatId,
+        displayName: displayNameFromLog,
+        inviteLink: opts.invite,
+        requestedBy: opts.requestedBy,
+      });
 
-    if (opts.requestedBy?.trim()) {
-      try {
+      if (opts.requestedBy?.trim()) {
         designatePackageGroupDmSeat(db, {
           partnerCode: row.partnerCode,
           callSign: opts.requestedBy.trim(),
           force: true,
         });
+      }
+    } catch (err) {
+      console.error(
+        `link-package-group failed: ${err instanceof Error ? err.message : String(err)}`
+      );
+      process.exit(1);
+    }
+
+    if (opts.requestedBy?.trim()) {
+      try {
         const dmAck = await appendAckDmSeatDesignated({
           partnerCode: row.partnerCode,
           callSign: opts.requestedBy.trim(),
@@ -816,6 +834,106 @@ Examples:
   }
 }
 
+async function cmdSendForumInvite(rawArgv: string[]): Promise<void> {
+  let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
+  let dryRun = false;
+  let force = false;
+  let allGaps = false;
+  const partnerCodes: string[] = [];
+
+  for (let i = 0; i < rawArgv.length; i++) {
+    const a = rawArgv[i]!;
+    if (a === '--dry-run') dryRun = true;
+    else if (a === '--force') force = true;
+    else if (a === '--all') allGaps = true;
+    else if (a === '--db' && rawArgv[i + 1]) dbPath = rawArgv[++i]!;
+    else if (a.startsWith('--db=')) dbPath = a.slice('--db='.length);
+    else if (a === '--help' || a === '-h') {
+      console.log(`Usage: bun tools/telegram-ops.ts send-forum-invite [CODE…] [--all] [--dry-run] [--force]
+
+Sends forum invite DM to linked operator still at 2·house! (partner not in group).
+Appends ack_forum_invite_sent to package group JSONL on success.
+
+  bun run telegram:ops -- send-forum-invite NOV
+  bun run telegram:ops -- send-forum-invite --all
+  bun run telegram:ops -- send-forum-invite NOV --dry-run
+`);
+      process.exit(0);
+    } else if (!a.startsWith('-')) {
+      const code = parsePartnerCode(a);
+      if (code) partnerCodes.push(code);
+    }
+  }
+
+  if (!allGaps && partnerCodes.length === 0) {
+    console.error('Provide partner CODE or --all');
+    process.exit(1);
+  }
+
+  const tg = loadTelegramEnv();
+  if (!tg.effectiveToken && !dryRun) {
+    console.error('TELEGRAM_BOT_FACTORY required (or use --dry-run)');
+    process.exit(1);
+  }
+
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    const results = allGaps
+      ? await sendForumInviteDmsForGaps({
+          db,
+          token: tg.effectiveToken ?? 'dry-run',
+          dryRun,
+          force,
+        })
+      : await Promise.all(
+          partnerCodes.map(code =>
+            sendForumInviteDm({
+              db,
+              token: tg.effectiveToken ?? 'dry-run',
+              partnerCode: code,
+              dryRun,
+              force,
+            })
+          )
+        );
+
+    if (results.length === 0) {
+      console.log('(no forum invite gaps)');
+      return;
+    }
+
+    for (const r of results) {
+      if (!r.ok) {
+        console.log(`   ${r.partnerCode}: FAIL — ${r.reason}`);
+      } else if ('skipped' in r && r.skipped) {
+        console.log(`   ${r.partnerCode}: skip — ${r.reason}`);
+      } else if ('telegramId' in r) {
+        const reg = getPackageGroupRegistry(db, r.partnerCode);
+        if (dryRun && reg) {
+          console.log(`   ${r.partnerCode}: dry-run → ${r.telegramId}`);
+          console.log(
+            formatForumInviteDmText({
+              partnerCode: r.partnerCode,
+              registryTitle: reg.title,
+              inviteLink: reg.inviteLink ?? '',
+              callSign: reg.requestedBy,
+            }).replace(/\n/g, '\n      ')
+          );
+        } else {
+          console.log(
+            `   ${r.partnerCode}: sent to ${r.telegramId} message_id=${r.messageId ?? '?'} ack=${r.ackAppended ? 'new' : 'dup'}`
+          );
+        }
+      }
+    }
+
+    const failed = results.filter(r => !r.ok).length;
+    if (failed > 0) process.exit(1);
+  } finally {
+    db.close();
+  }
+}
+
 async function cmdReadiness(rawArgv: string[]): Promise<void> {
   let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
   let wantJson = false;
@@ -833,7 +951,7 @@ async function cmdReadiness(rawArgv: string[]): Promise<void> {
     else if (a === '--db' && rawArgv[i + 1]) dbPath = rawArgv[++i]!;
     else if (a.startsWith('--db=')) dbPath = a.slice('--db='.length);
     else if (a === '--help' || a === '-h') {
-      console.log(`Usage: bun tools/telegram-ops.ts readiness [CODE…] [--detail] [--live] [--json]
+      console.log(`Usage: bun tools/telegram-ops.ts readiness [CODE…] [--detail] [--deep] [--live] [--json]
 
 Phased E2E gates: forum_ready → designated (awaiting telegram) → operator_ready.
 Use --deep with --detail for per-lane audit (forum / routing / operator).
@@ -934,6 +1052,10 @@ async function main(): Promise<void> {
   }
   if (cmd === 'readiness' || cmd === 'handshake-readiness') {
     await cmdReadiness(argv.slice(1));
+    return;
+  }
+  if (cmd === 'send-forum-invite' || cmd === 'forum-invite') {
+    await cmdSendForumInvite(argv.slice(1));
     return;
   }
 

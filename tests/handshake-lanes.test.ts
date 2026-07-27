@@ -120,6 +120,210 @@ describe('handshake-lanes', () => {
     expect(report.readyNow).toContain('dm_designated');
     expect(report.lanes.find(l => l.id === 'route_alerts')?.ok).toBe(true);
 
+    const forumMembers = report.lanes.find(l => l.id === 'forum_members');
+    expect(forumMembers).toBeDefined();
+    expect(forumMembers!.ok).toBe(true);
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('forum_members lane not ok when linked seat still at house-only count', async () => {
+    const dir = join(tmpdir(), `lanes-linked-${Date.now()}`);
+    await mkdir(dir, { recursive: true });
+    await mkdir(join(dir, 'forums'), { recursive: true });
+    const jsonlPath = join(dir, 'pending.jsonl');
+    await writeFile(
+      jsonlPath,
+      [
+        createArtifact,
+        {
+          action: 'ack_package_group_wired',
+          partner_code: 'NOV',
+          chat_id: '-1004464761699',
+          telegram_ref: 'tg:chat:-1004464761699',
+          wired_by: 'ct',
+          timestamp: '2026-07-26T21:00:00.000Z',
+        },
+        {
+          action: 'ack_package_group_linked',
+          partner_code: 'NOV',
+          chat_id: '-1004464761699',
+          linked_by: 'factory',
+          timestamp: '2026-07-26T22:00:00.000Z',
+        },
+      ]
+        .map(l => JSON.stringify(l))
+        .join('\n') + '\n'
+    );
+
+    const db = new Database(':memory:');
+    db.run(`
+      CREATE TABLE tree_nodes (
+        id TEXT PRIMARY KEY,
+        call_sign TEXT,
+        name TEXT,
+        telegram_id TEXT,
+        active INTEGER DEFAULT 1
+      )
+    `);
+    db.run(
+      `INSERT INTO tree_nodes (id, call_sign, name, telegram_id, active) VALUES (?, ?, ?, ?, 1)`,
+      ['n-nov', 'NOV-001', 'Nov Operator', '8013171035']
+    );
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'NOV',
+      chatId: '-1004464761699',
+      displayName: 'Nov Ops',
+      requestedBy: 'NOV-001',
+      inviteLink: 'https://t.me/+test',
+    });
+    upsertKnownChat(db, {
+      chat: {
+        id: -1004464761699,
+        type: 'supergroup',
+        title: 'TOC Ops · NOV · Nov Ops',
+        is_forum: true,
+      },
+      source: 'manual',
+      surfaceSlug: 'nov-prod',
+      botStatus: 'administrator',
+    });
+    updateKnownChatMemberCount(db, '-1004464761699', 2);
+
+    await writeFile(
+      join(dir, 'forums', 'NOV.json'),
+      JSON.stringify({
+        partnerCode: 'NOV',
+        title: 'TOC Ops · NOV · Nov Ops',
+        displayName: 'Nov Ops',
+        chatId: '-1004464761699',
+        chatRef: 'tg:chat:-1004464761699',
+        inviteLink: 'https://t.me/+test',
+        topics: [
+          { title: 'General', messageThreadId: 1 },
+          { title: 'Ops', messageThreadId: 5 },
+          { title: 'Alerts', messageThreadId: 6 },
+        ],
+        topicsThreadMap: { general: 1, ops: 5, alerts: 6 },
+        topicsComplete: true,
+        iconUploaded: true,
+        createdAt: '2026-07-26T20:00:00.000Z',
+      })
+    );
+
+    const report = await assessHandshakeLanes({
+      db,
+      partnerCode: 'NOV',
+      jsonlPath,
+      forumsMetaDir: join(dir, 'forums'),
+    });
+
+    const forumMembers = report.lanes.find(l => l.id === 'forum_members');
+    expect(forumMembers).toBeDefined();
+    expect(forumMembers!.ok).toBe(false);
+    expect(forumMembers!.detail).toContain('send forum invite');
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('forum_members fails at 2·house! when operator linked', async () => {
+    const dir = join(tmpdir(), `lanes-linked-${Date.now()}`);
+    await mkdir(dir, { recursive: true });
+    await mkdir(join(dir, 'forums'), { recursive: true });
+    const jsonlPath = join(dir, 'pending.jsonl');
+    await writeFile(
+      jsonlPath,
+      [
+        createArtifact,
+        {
+          action: 'ack_package_group_wired',
+          partner_code: 'NOV',
+          chat_id: '-1004464761699',
+          telegram_ref: 'tg:chat:-1004464761699',
+          wired_by: 'ct',
+          timestamp: '2026-07-26T21:00:00.000Z',
+        },
+        {
+          action: 'ack_package_group_linked',
+          partner_code: 'NOV',
+          chat_id: '-1004464761699',
+          linked_by: 'factory',
+          timestamp: '2026-07-26T22:00:00.000Z',
+        },
+      ]
+        .map(l => JSON.stringify(l))
+        .join('\n') + '\n'
+    );
+
+    const db = new Database(':memory:');
+    db.run(`
+      CREATE TABLE tree_nodes (
+        id TEXT PRIMARY KEY,
+        call_sign TEXT,
+        name TEXT,
+        telegram_id TEXT,
+        active INTEGER DEFAULT 1
+      )
+    `);
+    db.run(
+      `INSERT INTO tree_nodes (id, call_sign, name, telegram_id, active) VALUES (?, ?, ?, ?, 1)`,
+      ['n-nov', 'NOV-001', 'Nov Operator', '555666777']
+    );
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'NOV',
+      chatId: '-1004464761699',
+      displayName: 'Nov Ops',
+      requestedBy: 'NOV-001',
+      inviteLink: 'https://t.me/+test',
+    });
+    upsertKnownChat(db, {
+      chat: {
+        id: -1004464761699,
+        type: 'supergroup',
+        title: 'TOC Ops · NOV · Nov Ops',
+        is_forum: true,
+      },
+      source: 'manual',
+      surfaceSlug: 'nov-prod',
+      botStatus: 'administrator',
+    });
+    updateKnownChatMemberCount(db, '-1004464761699', 2);
+
+    await writeFile(
+      join(dir, 'forums', 'NOV.json'),
+      JSON.stringify({
+        partnerCode: 'NOV',
+        title: 'TOC Ops · NOV · Nov Ops',
+        displayName: 'Nov Ops',
+        chatId: '-1004464761699',
+        chatRef: 'tg:chat:-1004464761699',
+        inviteLink: 'https://t.me/+test',
+        topics: [
+          { title: 'General', messageThreadId: 1 },
+          { title: 'Ops', messageThreadId: 5 },
+          { title: 'Alerts', messageThreadId: 6 },
+        ],
+        topicsThreadMap: { general: 1, ops: 5, alerts: 6 },
+        topicsComplete: true,
+        iconUploaded: true,
+        createdAt: '2026-07-26T20:00:00.000Z',
+      })
+    );
+
+    const report = await assessHandshakeLanes({
+      db,
+      partnerCode: 'NOV',
+      jsonlPath,
+      forumsMetaDir: join(dir, 'forums'),
+    });
+
+    expect(report.lanes.find(l => l.id === 'forum_members')?.ok).toBe(false);
+    expect(report.lanes.find(l => l.id === 'forum_invite_gap')?.ok).toBe(false);
+    expect(report.lanes.find(l => l.id === 'jsonl_forum_invite_sent')?.ok).toBe(false);
+    expect(report.allOperatorReady).toBe(true);
+
     db.close();
     await rm(dir, { recursive: true, force: true });
   });

@@ -12,6 +12,8 @@ import {
   assessHandshakeReadiness,
   formatHandshakeReadinessDetail,
   formatHandshakeReadinessTable,
+  filterForumInviteGapRows,
+  formatForumInviteGapReport,
 } from '../lib/telegram/handshake-readiness.ts';
 import {
   listPackageGroupRegistry,
@@ -25,6 +27,7 @@ let wantJson = false;
 let detail = false;
 let live = false;
 let deep = false;
+let inviteGap = false;
 const partnerCodes: string[] = [];
 
 for (let i = 0; i < argv.length; i++) {
@@ -33,6 +36,7 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === '--live') live = true;
   else if (a === '--detail') detail = true;
   else if (a === '--deep') deep = true;
+  else if (a === '--invite-gap') inviteGap = true;
   else if (a === '--db' && argv[i + 1]) dbPath = argv[++i]!;
   else if (a.startsWith('--db=')) dbPath = a.slice('--db='.length);
   else if (a === '--help' || a === '-h') {
@@ -45,6 +49,7 @@ Phases:
   operator_ready   telegram linked + handshake verify OK
 
 Use --deep with --detail for per-lane breakdown (forum / audit / routing / operator).
+Use --invite-gap to list only 2·house! forums (exit 1 when gaps exist).
 `);
     process.exit(0);
   } else if (!a.startsWith('-')) {
@@ -74,6 +79,11 @@ try {
 
   if (wantJson) {
     console.log(JSON.stringify({ rows, dbPath }, null, 2));
+  } else if (inviteGap) {
+    const gaps = filterForumInviteGapRows(rows);
+    console.log(`forum invite gap · ${gaps.length} of ${rows.length} partner(s) · db=${dbPath}`);
+    for (const line of formatForumInviteGapReport(rows)) console.log(`   ${line}`);
+    if (gaps.length > 0) process.exit(1);
   } else if (detail) {
     console.log(`handshake readiness · ${rows.length} partner(s) · db=${dbPath}`);
     for (const row of rows) {

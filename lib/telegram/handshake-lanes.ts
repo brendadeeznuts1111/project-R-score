@@ -32,6 +32,7 @@ import {
   latestLinkedAckForPartner,
   latestWiredAckForPartner,
 } from './verify-package-group-handshake.ts';
+import { latestForumInviteSentAck } from './package-group-registry.ts';
 
 export type HandshakeLaneGroup = 'forum' | 'audit' | 'routing' | 'operator';
 
@@ -206,6 +207,40 @@ export async function assessHandshakeLanes(opts: {
         membership.detail
       )
     );
+    if (membership.needsPartnerInForum) {
+      const inviteSent = latestForumInviteSentAck(log, code);
+      lanes.push(
+        lane(
+          'forum_invite_gap',
+          'forum',
+          false,
+          inviteSent
+            ? `2·house! — invite DM sent ${inviteSent.timestamp}`
+            : '2·house! — partner not in forum; send invite DM'
+        )
+      );
+      lanes.push(
+        lane(
+          'jsonl_forum_invite_sent',
+          'audit',
+          inviteSent != null,
+          inviteSent
+            ? `${inviteSent.call_sign} at ${inviteSent.timestamp}`
+            : 'no ack_forum_invite_sent — run send-forum-invite'
+        )
+      );
+    } else {
+      lanes.push(
+        lane(
+          'forum_invite_gap',
+          'forum',
+          true,
+          membership.status === 'partner_present'
+            ? '3·OK — partner in forum'
+            : 'n/a (pre-link or partner present)'
+        )
+      );
+    }
     lanes.push(
       lane(
         'surface_slug',
@@ -327,6 +362,7 @@ export async function assessHandshakeLanes(opts: {
     'known_forum',
     'bot_forum_admin',
     'forum_members',
+    'forum_invite_gap',
     'forum_metadata',
     'forum_topics',
   ]);
