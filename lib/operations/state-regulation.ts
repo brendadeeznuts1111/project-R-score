@@ -87,6 +87,50 @@ export function ensureStateRegulationSchema(db: Database): void {
   `);
 }
 
+// ── Catalog normalization (play wire → regulatory keys) ────────────
+
+const SPORT_CATALOG: Record<string, string> = {
+  nba: 'basketball',
+  wnba: 'basketball',
+  ncaab: 'basketball',
+  cbb: 'basketball',
+  basketball: 'basketball',
+  soccer: 'soccer',
+  football: 'soccer', // association football alias
+  epl: 'soccer',
+  mls: 'soccer',
+  ucl: 'soccer',
+  nfl: 'american_football',
+  ncaaf: 'american_football',
+  mlb: 'baseball',
+  nhl: 'hockey',
+};
+
+const MARKET_CATALOG: Record<string, string> = {
+  totals: 'over_under',
+  total: 'over_under',
+  ou: 'over_under',
+  over_under: 'over_under',
+  moneyline: 'match_winner',
+  ml: 'match_winner',
+  h2h: 'match_winner',
+  match_winner: 'match_winner',
+  spread: 'spread',
+  handicap: 'spread',
+};
+
+/** Map play.sport (e.g. NBA) → regulatory_limits.sport_id. */
+export function normalizeSportCatalogKey(sport: string): string {
+  const key = sport.trim().toLowerCase();
+  return SPORT_CATALOG[key] ?? key.replace(/\s+/g, '_');
+}
+
+/** Map play.market (e.g. totals) → regulatory_limits.market_id. */
+export function normalizeMarketCatalogKey(market: string): string {
+  const key = market.trim().toLowerCase().replace(/\s+/g, '_');
+  return MARKET_CATALOG[key] ?? key;
+}
+
 // ── Seeds (MA / NJ reference limits) ───────────────────────────────
 
 /** Seed shared MA/NJ regulatory limits (idempotent on natural key). */
@@ -117,7 +161,7 @@ export function seedStateRegulations(db: Database): void {
       max_wager: 10000,
       min_wager: 1,
       allowed_bet_types: '["straight"]',
-      special_rules: null,
+      special_rules: '{"max_daily_total":50000}',
     },
     {
       state_code: 'NJ',
@@ -127,6 +171,15 @@ export function seedStateRegulations(db: Database): void {
       min_wager: 1,
       allowed_bet_types: '["straight","parlay","teaser"]',
       special_rules: '{"require_identity_verification":true}',
+    },
+    {
+      state_code: 'NJ',
+      sport_id: 'basketball',
+      market_id: 'over_under',
+      max_wager: 15000,
+      min_wager: 1,
+      allowed_bet_types: '["straight","parlay"]',
+      special_rules: '{"require_identity_verification":true,"max_daily_total":75000}',
     },
   ];
 
@@ -241,13 +294,22 @@ export class ScopedRepository {
 export type BetComplianceInput = {
   nodeId: TreeNodeId | string;
   stateCode: StateCode | string;
+  /** Sport wire or catalog key — normalized via {@link normalizeSportCatalogKey}. */
   sportId: string; // brand-ok — sport catalog key on wire
+  /** Market wire or catalog key — normalized via {@link normalizeMarketCatalogKey}. */
   marketId: string; // brand-ok — market catalog key on wire
   wagerAmount: number;
   betType: string;
+  /** When true (default), map NBA→basketball, totals→over_under, etc. */
+  normalizeCatalog?: boolean;
 };
 
 export type BetComplianceResult = { allowed: true } | { allowed: false; reason: string };
+
+export type SpecialRules = {
+  max_daily_total?: number;
+  require_identity_verification?: boolean;
+};
 
 type LimitsRow = {
   max_wager: number | null;
@@ -255,6 +317,99 @@ type LimitsRow = {
   allowed_bet_types: string | null;
   special_rules: string | null;
 };
+
+/** Parse special_rules JSON (fail open to empty object). */
+export function parseSpecialRules(raw: string | null | undefined): SpecialRules {
+  if (!raw?.trim()) return {};
+  try {
+    const v = JSON.parse(raw) as Record<string, unknown>;
+    const out: SpecialRules = {};
+    if (typeof v.max_daily_total === 'number' && Number.isFinite(v.max_daily_total)) {
+      out.max_daily_total = v.max_daily_total;
+    }
+    if (v.require_identity_verification === true) {
+      out.require_identity_verification = true;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Partner identity verification from profile metadata.
+ * Accepts identity_verified | identityVerified | kyc_verified boolean flags.
+ */
+export function isPartnerIdentityVerified(db: Database, nodeId: TreeNodeId | string): boolean {
+  const nid = asTreeNodeId(nodeId);
+  const row = db
+    .query(`SELECT metadata_json FROM partner_profile_bindings WHERE tree_node_id = $id`)
+    .get({ $id: nid }) as { metadata_json: string | null } | null;
+  if (!row?.metadata_json) return false;
+  try {
+    const meta = JSON.parse(row.metadata_json) as Record<string, unknown>;
+    return (
+      meta.identity_verified === true ||
+      meta.identityVerified === true ||
+      meta.kyc_verified === true
+    );
+  } catch {
+    return false;
+  }
+}
+
+/** Stamp identity_verified into partner profile metadata (repository layer). */
+export function setPartnerIdentityVerified(
+  db: Database,
+  nodeId: TreeNodeId | string,
+  verified: boolean
+): void {
+  const nid = asTreeNodeId(nodeId);
+  const row = db
+    .query(`SELECT metadata_json FROM partner_profile_bindings WHERE tree_node_id = $id`)
+    .get({ $id: nid }) as { metadata_json: string | null } | null;
+  let meta: Record<string, unknown> = {};
+  if (row?.metadata_json) {
+    try {
+      meta = JSON.parse(row.metadata_json) as Record<string, unknown>;
+    } catch {
+      meta = {};
+    }
+  }
+  meta.identity_verified = verified;
+  const now = new Date().toISOString();
+  db.run(
+    `UPDATE partner_profile_bindings
+     SET metadata_json = $meta, updated_at = $now
+     WHERE tree_node_id = $id`,
+    { $meta: JSON.stringify(meta), $now: now, $id: nid }
+  );
+}
+
+/**
+ * Sum stake_actual for a partner in a state since local day start.
+ * Uses play_distribution.state_code when set, else plays.state_code.
+ */
+export function sumDailyStateWagerVolume(
+  db: Database,
+  nodeId: TreeNodeId | string,
+  stateCode: StateCode | string
+): number {
+  const nid = asTreeNodeId(nodeId);
+  const st = asStateCode(stateCode);
+  const row = db
+    .query(
+      `SELECT COALESCE(SUM(d.stake_actual), 0) AS total
+       FROM play_distribution d
+       LEFT JOIN plays p ON p.id = d.play_id
+       WHERE d.node_id = $nid
+         AND COALESCE(d.state_code, p.state_code) = $st
+         AND d.received_at >= datetime('now', 'start of day')
+         AND COALESCE(d.ack_status, d.status, 'pending') NOT IN ('passed', 'skipped', 'missed')`
+    )
+    .get({ $nid: nid, $st: st }) as { total: number };
+  return Number(row?.total ?? 0);
+}
 
 export class ComplianceRepository {
   constructor(private readonly db: Database) {
@@ -264,10 +419,17 @@ export class ComplianceRepository {
   /**
    * Validate a wager against partner license + state limits.
    * Prefer partner-specific limit rows when present; else global state rules.
+   * Sport/market wire values are normalized to catalog keys by default.
    */
   isBetAllowed(params: BetComplianceInput): BetComplianceResult {
     const nodeId = asTreeNodeId(params.nodeId);
     const stateCode = asStateCode(params.stateCode);
+    const sportId =
+      params.normalizeCatalog === false ? params.sportId : normalizeSportCatalogKey(params.sportId);
+    const marketId =
+      params.normalizeCatalog === false
+        ? params.marketId
+        : normalizeMarketCatalogKey(params.marketId);
 
     const license = this.db
       .query(
@@ -295,8 +457,8 @@ export class ComplianceRepository {
       )
       .get({
         $st: stateCode,
-        $sp: params.sportId,
-        $mk: params.marketId,
+        $sp: sportId,
+        $mk: marketId,
         $nid: nodeId,
         $now: now,
       }) as LimitsRow | null;
@@ -326,18 +488,47 @@ export class ComplianceRepository {
       };
     }
 
-    if (limits.special_rules) {
-      try {
-        const rules = JSON.parse(limits.special_rules) as Record<string, unknown>;
-        if (rules.require_identity_verification === true) {
-          // Soft flag — identity verified is partner vault concern; do not block here.
-        }
-      } catch {
-        // ignore malformed special_rules
+    const rules = parseSpecialRules(limits.special_rules);
+    if (rules.require_identity_verification === true) {
+      if (!isPartnerIdentityVerified(this.db, nodeId)) {
+        return {
+          allowed: false,
+          reason: `Identity verification required in ${stateCode}`,
+        };
+      }
+    }
+    if (rules.max_daily_total != null && rules.max_daily_total > 0) {
+      const used = sumDailyStateWagerVolume(this.db, nodeId, stateCode);
+      if (used + params.wagerAmount > rules.max_daily_total) {
+        return {
+          allowed: false,
+          reason: `Exceeds max daily total $${rules.max_daily_total} (used $${used})`,
+        };
       }
     }
 
     return { allowed: true };
+  }
+
+  /**
+   * Check + log violation when blocked. Used by play dispatcher / HTTP gate.
+   */
+  checkAndRecord(
+    params: BetComplianceInput & { playId?: string /* brand-ok — optional play ref */ }
+  ): BetComplianceResult {
+    const result = this.isBetAllowed(params);
+    if (!result.allowed) {
+      this.logViolation(params.nodeId, params.stateCode, result.reason, {
+        playId: params.playId,
+        details: JSON.stringify({
+          sportId: params.sportId,
+          marketId: params.marketId,
+          wagerAmount: params.wagerAmount,
+          betType: params.betType,
+        }),
+      });
+    }
+    return result;
   }
 
   /** Record a blocked / violated wager attempt (repository layer). */

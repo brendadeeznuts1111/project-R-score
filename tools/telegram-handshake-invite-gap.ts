@@ -19,6 +19,7 @@ import {
   parsePartnerCode,
 } from '../lib/telegram/package-group-registry.ts';
 import { refreshKnownChats } from '../lib/telegram/refresh-known-chats.ts';
+import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 import { sendForumInviteDmsForGaps } from '../lib/telegram/forum-invite-gap.ts';
 
@@ -53,6 +54,7 @@ Use --send to DM operators with registry invite (appends ack_forum_invite_sent).
   }
 }
 
+await loadReasonixEnv();
 const tg = loadTelegramEnv();
 const db = openOperationsDb({ path: dbPath });
 try {

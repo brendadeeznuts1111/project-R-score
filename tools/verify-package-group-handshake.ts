@@ -13,6 +13,7 @@ import {
 } from '../lib/telegram/verify-package-group-handshake.ts';
 import { PENDING_PACKAGE_GROUPS_JSONL } from '../lib/telegram/package-group-registry.ts';
 import { PACKAGE_GROUP_FORUMS_META_DIR } from '../lib/telegram/package-group-forum.ts';
+import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const argv = Bun.argv.slice(2);
@@ -46,6 +47,7 @@ if (!partnerCode) {
   process.exit(2);
 }
 
+await loadReasonixEnv();
 const db = openOperationsDb({ path: dbPath });
 const tg = loadTelegramEnv();
 try {

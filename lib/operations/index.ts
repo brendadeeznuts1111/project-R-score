@@ -84,6 +84,12 @@ export {
 export {
   ensureStateRegulationSchema,
   seedStateRegulations,
+  normalizeSportCatalogKey,
+  normalizeMarketCatalogKey,
+  parseSpecialRules,
+  isPartnerIdentityVerified,
+  setPartnerIdentityVerified,
+  sumDailyStateWagerVolume,
   ScopedRepository,
   ComplianceRepository,
   getPartnerRegulatoryStatus,
@@ -95,6 +101,7 @@ export {
   type BetComplianceResult,
   type PartnerRegulatoryStatus,
   type StateComplianceBody,
+  type SpecialRules,
 } from './state-regulation.ts';
 export { FRAUD_GUARDRAILS, detectFraudSignals } from './fraud-guard.ts';
 export {

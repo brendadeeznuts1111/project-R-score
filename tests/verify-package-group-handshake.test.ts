@@ -19,6 +19,15 @@ const createArtifact: PackageGroupCreateArtifact = {
   timestamp: '2026-07-26T20:00:00.000Z',
 };
 
+function pkgSurfaceEnv(
+  partnerCode: string,
+  chatId: string, // brand-ok — Telegram chat_id wire
+): Record<string, string> {
+  return {
+    TELEGRAM_SURFACES: JSON.stringify({ [`pkg-${partnerCode.toLowerCase()}`]: chatId }),
+  };
+}
+
 describe('verify-package-group-handshake', () => {
   test('passes when create, wired, registry, and linked ack align', async () => {
     const dir = join(tmpdir(), `verify-pkg-${Date.now()}`);
@@ -59,6 +68,7 @@ describe('verify-package-group-handshake', () => {
       partnerCode: 'ASH',
       jsonlPath: path,
       forumsMetaDir: join(dir, 'forums-empty'),
+      env: pkgSurfaceEnv('ASH', '-1003937534779'),
     });
     expect(result.ok).toBe(true);
     expect(result.checks.every(c => c.ok)).toBe(true);
@@ -140,6 +150,7 @@ describe('verify-package-group-handshake', () => {
         forumsMetaDir: forumsDir,
         live: true,
         telegramToken: 'test-token',
+        env: pkgSurfaceEnv('ASH', '-1001'),
       });
       const liveCheck = result.checks.find(c => c.id === 'live_forum_title');
       expect(liveCheck?.ok).toBe(true);
@@ -211,6 +222,7 @@ describe('verify-package-group-handshake', () => {
       partnerCode: 'ASH',
       jsonlPath: path,
       forumsMetaDir: forumsDir,
+      env: pkgSurfaceEnv('ASH', '-1003937534779'),
     });
     const metaCheck = result.checks.find(c => c.id === 'forum_metadata');
     expect(metaCheck?.ok).toBe(true);
@@ -279,11 +291,111 @@ describe('verify-package-group-handshake', () => {
       partnerCode: 'NOV',
       jsonlPath: path,
       forumsMetaDir: join(dir, 'forums-empty'),
+      env: pkgSurfaceEnv('NOV', '-1004464761699'),
     });
     const dm = result.checks.find(c => c.id === 'dm_seat');
     expect(dm?.ok).toBe(true);
     expect(dm?.detail).toContain('awaiting telegram');
     expect(result.ok).toBe(true);
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('surface_env_pkg check passes when TELEGRAM_SURFACES pkg-ash matches registry', async () => {
+    const dir = join(tmpdir(), `verify-surface-${Date.now()}`);
+    await mkdir(dir, { recursive: true });
+    const path = join(dir, 'pending.jsonl');
+    const lines = [
+      createArtifact,
+      {
+        action: 'ack_package_group_wired',
+        partner_code: 'ASH',
+        chat_id: '-1003937534779',
+        telegram_ref: 'tg:chat:-1003937534779',
+        wired_by: 'ct',
+        timestamp: '2026-07-26T21:00:00.000Z',
+      },
+      {
+        action: 'ack_package_group_linked',
+        partner_code: 'ASH',
+        chat_id: '-1003937534779',
+        linked_by: 'factory',
+        timestamp: '2026-07-26T22:00:00.000Z',
+      },
+    ];
+    await writeFile(path, lines.map(l => JSON.stringify(l)).join('\n') + '\n');
+
+    const db = new Database(':memory:');
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-1003937534779',
+      displayName: 'Ash Ops',
+      requestedBy: 'ASH-001',
+    });
+
+    const result = await verifyPackageGroupHandshake({
+      db,
+      partnerCode: 'ASH',
+      jsonlPath: path,
+      forumsMetaDir: join(dir, 'forums-empty'),
+      env: pkgSurfaceEnv('ASH', '-1003937534779'),
+    });
+    const surface = result.checks.find(c => c.id === 'surface_env_pkg');
+    expect(surface?.ok).toBe(true);
+    expect(surface?.detail).toContain('pkg-ash=');
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('surface_env_pkg check fails when pkg-ash missing from TELEGRAM_SURFACES', async () => {
+    const dir = join(tmpdir(), `verify-surface-fail-${Date.now()}`);
+    await mkdir(dir, { recursive: true });
+    const path = join(dir, 'pending.jsonl');
+    await writeFile(
+      path,
+      [
+        createArtifact,
+        {
+          action: 'ack_package_group_wired',
+          partner_code: 'ASH',
+          chat_id: '-1003937534779',
+          telegram_ref: 'tg:chat:-1003937534779',
+          wired_by: 'ct',
+          timestamp: '2026-07-26T21:00:00.000Z',
+        },
+        {
+          action: 'ack_package_group_linked',
+          partner_code: 'ASH',
+          chat_id: '-1003937534779',
+          linked_by: 'factory',
+          timestamp: '2026-07-26T22:00:00.000Z',
+        },
+      ]
+        .map(l => JSON.stringify(l))
+        .join('\n') + '\n'
+    );
+
+    const db = new Database(':memory:');
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-1003937534779',
+      displayName: 'Ash Ops',
+      requestedBy: 'ASH-001',
+    });
+
+    const result = await verifyPackageGroupHandshake({
+      db,
+      partnerCode: 'ASH',
+      jsonlPath: path,
+      forumsMetaDir: join(dir, 'forums-empty'),
+      env: {},
+    });
+    const surface = result.checks.find(c => c.id === 'surface_env_pkg');
+    expect(surface?.ok).toBe(false);
+    expect(surface?.detail).toContain('missing pkg-ash');
+    expect(result.ok).toBe(false);
 
     db.close();
     await rm(dir, { recursive: true, force: true });

@@ -19,6 +19,7 @@ import {
   listPackageGroupRegistry,
   parsePartnerCode,
 } from '../lib/telegram/package-group-registry.ts';
+import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const argv = Bun.argv.slice(2);
@@ -58,6 +59,7 @@ Use --invite-gap to list only 2·house! forums (exit 1 when gaps exist).
   }
 }
 
+await loadReasonixEnv();
 const tg = loadTelegramEnv();
 const db = openOperationsDb({ path: dbPath });
 try {

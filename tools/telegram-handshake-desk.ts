@@ -16,6 +16,7 @@ import {
 import { formatMembershipDeskCell } from '../lib/telegram/package-group-membership.ts';
 import { getPackageGroupRegistry } from '../lib/telegram/package-group-registry.ts';
 import { PENDING_PACKAGE_GROUPS_JSONL } from '../lib/telegram/package-group-registry.ts';
+import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const argv = Bun.argv.slice(2);
@@ -53,6 +54,7 @@ Use --invite-gap to list only forums where partner must accept invite (2·house!
   } else if (!a.startsWith('-')) partnerCodes.push(a.toUpperCase());
 }
 
+await loadReasonixEnv();
 const tg = loadTelegramEnv();
 const db = openOperationsDb({ path: dbPath });
 try {

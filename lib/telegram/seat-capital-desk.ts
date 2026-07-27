@@ -1031,7 +1031,7 @@ export function buildSeatDeskViewModel(record: SeatIntakeRecord): SeatDeskViewMo
     outs: outViews,
     checklist: checklistItems,
     incompleteOuts: outViews.filter(o => o.incomplete).length,
-    pinned: hydrated.desk?.pinned === true,
+    pinned: hydrated.desk?.pinned ?? hydrated.desk?.messageId != null,
     hasTelegramDesk: hydrated.desk?.messageId != null,
     deskUpdatedAt: hydrated.desk?.updatedAt ?? null,
   };
@@ -1371,6 +1371,7 @@ export async function publishSeatCapitalDesk(
       messageThreadId: threadId,
       messageId,
       updatedAt: new Date().toISOString(),
+      ...(pinned ? { pinned: true } : {}),
     },
   };
   const intakePath = await saveSeatIntake(next, opts.intakeDir ?? SEAT_INTAKE_DIR);

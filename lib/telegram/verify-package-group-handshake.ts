@@ -1,9 +1,10 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 /**
  * Read-only validation for package-group handshake lifecycle (JSONL + registry).
  */
 import type { Database } from 'bun:sqlite';
-import { formatPackageGroupTitle } from './surfaces.ts';
+import { formatPackageGroupTitle, loadTelegramSurfacesMap } from './surfaces.ts';
 import { getChat } from './telegram-api.ts';
 import {
   getPackageGroupRegistry,
@@ -90,6 +91,7 @@ export async function verifyPackageGroupHandshake(opts: {
   telegramToken?: string | null;
   /** Root dir for reports/telegram/forums (default cwd-relative). */
   forumsMetaDir?: string;
+  env?: Record<string, string | undefined>;
 }): Promise<HandshakeVerifyResult> {
   const code = parsePartnerCode(opts.partnerCode);
   const jsonlPath = opts.jsonlPath ?? PENDING_PACKAGE_GROUPS_JSONL;
@@ -205,6 +207,17 @@ export async function verifyPackageGroupHandshake(opts: {
   }
 
   if (registry) {
+    const envMap = loadTelegramSurfacesMap(opts.env ?? Bun.env);
+    const pkgKey = `pkg-${code.toLowerCase()}`;
+    const envBound = envMap[pkgKey] === registry.chatId;
+    checks.push({
+      id: 'surface_env_pkg',
+      ok: envBound,
+      detail: envBound
+        ? `TELEGRAM_SURFACES ${pkgKey}=${registry.chatId}`
+        : `missing ${pkgKey} in TELEGRAM_SURFACES (suggested bind)`,
+    });
+
     const meta = await loadPackageGroupForumMetadata(code, {
       rootDir: opts.forumsMetaDir,
     });

@@ -26,6 +26,13 @@ export interface PlayInput {
   confidence?: number;
   /** Sportsbook slug for coverage reserve + SoR book lists (DRAFTKINGS). */
   bookSlug?: string; // brand-ok — platform slug, not domain BookId
+  /**
+   * Optional US state jurisdiction (MA, NJ, …).
+   * When set, HMAC covers state; play row stamps state_code; dispatcher runs compliance.
+   */
+  stateCode?: string;
+  /** Bet type for regulatory allowed_bet_types (default straight at compliance edge). */
+  betType?: string;
 }
 
 export interface PlayRecord {
@@ -40,6 +47,7 @@ export interface PlayRecord {
   confidence: number;
   signedHash: string;
   sentAt: string;
+  stateCode?: string;
 }
 
 export class PlaySigner {
@@ -59,6 +67,8 @@ export class PlaySigner {
       play.selection,
       String(play.odds),
       String(play.stakeRecommended),
+      // State binds signature when present so jurisdiction cannot be swapped post-sign.
+      (play.stateCode ?? '').trim().toUpperCase(),
     ].join(':');
     const hasher = new Bun.CryptoHasher('sha256', this.secret);
     hasher.update(payload);
@@ -77,10 +87,11 @@ export class PlaySigner {
     const sentAt = new Date().toISOString();
     const confidence = play.confidence ?? 0;
 
+    const stateCode = play.stateCode?.trim().toUpperCase() || null;
     db.run(
       `
-      INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at)
-      VALUES ($id, $eid, $sport, $market, $event, $sel, $odds, $stake, $conf, $hash, $sent)
+      INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at, state_code)
+      VALUES ($id, $eid, $sport, $market, $event, $sel, $odds, $stake, $conf, $hash, $sent, $state)
     `,
       {
         $id: id,
@@ -94,6 +105,7 @@ export class PlaySigner {
         $conf: confidence,
         $hash: signedHash,
         $sent: sentAt,
+        $state: stateCode,
       }
     );
 
@@ -113,6 +125,13 @@ export class PlaySigner {
       );
     }
 
-    return { id, ...play, confidence, signedHash, sentAt };
+    return {
+      id,
+      ...play,
+      confidence,
+      signedHash,
+      sentAt,
+      ...(stateCode ? { stateCode } : {}),
+    };
   }
 }

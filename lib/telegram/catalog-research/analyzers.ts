@@ -406,7 +406,7 @@ export function analyzeSeatCapitalDeskGaps(
         `fundStatus=${live.fundStatus}`,
         `incompleteOuts=${live.incompleteOuts}`,
       ],
-      applyCommand: `bun tools/seat-desk-cli.ts harness-rails ${live.callSign}`,
+      applyCommand: `bun run seat:desk:harness-staging ${live.callSign}`,
       autoApplySafe: false,
     });
   }

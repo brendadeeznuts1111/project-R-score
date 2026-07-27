@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import {
   analyzeGeneralTopicBehavior,
   analyzePartnerTopicIconMetadata,
+  analyzeSeatCapitalDeskGaps,
   runDeterministicAnalyzers,
 } from '../lib/telegram/catalog-research/analyzers.ts';
 import { loadCatalogResearchContext } from '../lib/telegram/catalog-research/context.ts';
@@ -28,6 +29,30 @@ describe('telegram-catalog-research', () => {
     expect(proposals.length).toBe(4);
     expect(proposals.every(p => p.action === 'addTopicIconMetadata')).toBe(true);
     expect(proposals.every(p => p.autoApplySafe)).toBe(true);
+  });
+
+  test('analyzeSeatCapitalDeskGaps proposes harness-staging for blocked capital desks', () => {
+    const proposals = analyzeSeatCapitalDeskGaps({
+      catalogPath: '',
+      forumsMetaDir: '',
+      partnerCodes: ['BIL'],
+      forumMetaByPartner: new Map(),
+      houseMetaBySurface: new Map(),
+      seatCapitalByPartner: new Map([
+        [
+          'BIL',
+          {
+            callSign: 'BIL-001',
+            fundStatus: 'blocked',
+            fundDetail: 'lead out missing send-to',
+            incompleteOuts: 1,
+          },
+        ],
+      ]),
+      allAccountingPromptPosted: false,
+    });
+    const blocked = proposals.find(p => p.id.includes('capital-blocked'));
+    expect(blocked?.applyCommand).toBe('bun run seat:desk:harness-staging BIL-001');
   });
 
   test('analyzeGeneralTopicBehavior documents implicit General thread', () => {

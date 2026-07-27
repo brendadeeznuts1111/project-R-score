@@ -1,6 +1,6 @@
 {
   "schema": "factorywager.telegram-handshake-catalog.v1",
-  "generatedAt": "2026-07-27T06:32:03.903Z",
+  "generatedAt": "2026-07-27T16:39:13.030Z",
   "docs": {
     "runbook": "docs/harness/tenants/partner-package-group-handshake.md",
     "factoryBot": "docs/harness/tenants/telegram-factory.md",

@@ -28,6 +28,7 @@ import {
   discoverTelegramAssets,
   formatDiscoveryDigest,
 } from '../lib/telegram/telegram-discovery.ts';
+import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const OUT_DIR = 'reports/telegram';
@@ -238,6 +239,7 @@ async function writeSummary(): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  await loadReasonixEnv();
   const opts = parseArgs(Bun.argv.slice(2));
   await ensureOut();
   if (opts.refresh) {

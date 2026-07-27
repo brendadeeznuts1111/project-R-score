@@ -7,7 +7,12 @@
  *   bun test tests/state-compliance.test.ts
  */
 import { describe, test, expect, beforeEach } from 'bun:test';
+import { randomUUIDv7 } from 'bun';
 import { openOperationsDb } from '../lib/operations/db.ts';
+import { ensurePosition } from '../lib/operations/liquidity.ts';
+import { bindPartnerProfile } from '../lib/operations/partner-profile-bridge.ts';
+import { publishAndDispatch } from '../lib/operations/play-dispatcher.ts';
+import { PlaySigner } from '../lib/operations/play-signing.ts';
 import {
   ComplianceRepository,
   ScopedRepository,
@@ -16,6 +21,10 @@ import {
   requireStateCompliance,
   renderRegulatoryPanelHtml,
   ensureStateRegulationSchema,
+  normalizeSportCatalogKey,
+  normalizeMarketCatalogKey,
+  setPartnerIdentityVerified,
+  sumDailyStateWagerVolume,
 } from '../lib/operations/state-regulation.ts';
 import { asStateCode, asTreeNodeId } from '../lib/types/branded.ts';
 
@@ -115,6 +124,8 @@ describe('state compliance', () => {
     const repo = new ComplianceRepository(db);
     repo.upsertLicense(nodeId, 'MA');
     repo.upsertLicense(nodeId, 'NJ');
+    bindPartnerProfile(db, asTreeNodeId(nodeId));
+    setPartnerIdentityVerified(db, nodeId, true);
 
     const nj = repo.isBetAllowed({
       nodeId,
@@ -234,5 +245,239 @@ describe('state compliance', () => {
     });
     const res = await requireStateCompliance(db, req, { nodeId });
     expect(res).toBeNull();
+  });
+
+  test('NBA/totals normalizes to basketball/over_under catalog', () => {
+    expect(normalizeSportCatalogKey('NBA')).toBe('basketball');
+    expect(normalizeMarketCatalogKey('totals')).toBe('over_under');
+    const nodeId = 'nba-norm';
+    seedPartner(db, nodeId);
+    const repo = new ComplianceRepository(db);
+    repo.upsertLicense(nodeId, 'MA');
+    const ok = repo.isBetAllowed({
+      nodeId,
+      stateCode: 'MA',
+      sportId: 'NBA',
+      marketId: 'totals',
+      wagerAmount: 500,
+      betType: 'straight',
+    });
+    expect(ok).toEqual({ allowed: true });
+  });
+
+  test('NJ requires identity verification for soccer', () => {
+    const nodeId = 'nj-idv';
+    seedPartner(db, nodeId);
+    const repo = new ComplianceRepository(db);
+    repo.upsertLicense(nodeId, 'NJ');
+    bindPartnerProfile(db, asTreeNodeId(nodeId));
+
+    const blocked = repo.isBetAllowed({
+      nodeId,
+      stateCode: 'NJ',
+      sportId: 'soccer',
+      marketId: 'match_winner',
+      wagerAmount: 50,
+      betType: 'straight',
+    });
+    expect(blocked.allowed).toBe(false);
+    if (!blocked.allowed) expect(blocked.reason).toContain('Identity verification');
+
+    setPartnerIdentityVerified(db, nodeId, true);
+    const ok = repo.isBetAllowed({
+      nodeId,
+      stateCode: 'NJ',
+      sportId: 'soccer',
+      marketId: 'match_winner',
+      wagerAmount: 50,
+      betType: 'straight',
+    });
+    expect(ok).toEqual({ allowed: true });
+  });
+
+  test('max_daily_total blocks after prior same-state stakes', () => {
+    const nodeId = 'ma-daily';
+    seedPartner(db, nodeId);
+    const repo = new ComplianceRepository(db);
+    repo.upsertLicense(nodeId, 'MA');
+
+    // Prior distribution volume under MA today
+    const playId = 'play-prior-daily';
+    const now = new Date().toISOString();
+    db.run(
+      `INSERT INTO experts (id, name, sport, market, edge_score, active, created_at)
+       VALUES ('ex-daily', 'E', 'soccer', 'match_winner', 0.5, 1, $now)`,
+      { $now: now }
+    );
+    db.run(
+      `INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at, state_code)
+       VALUES ($id, 'ex-daily', 'soccer', 'match_winner', 'A vs B', 'home', -110, 20000, 0, 'h', $now, 'MA')`,
+      { $id: playId, $now: now }
+    );
+    db.run(
+      `INSERT INTO play_distribution (play_id, node_id, channel, received_at, stake_actual, ack_status, state_code)
+       VALUES ($pid, $nid, 'telegram', $now, 24000, 'pending', 'MA')`,
+      { $pid: playId, $nid: nodeId, $now: now }
+    );
+
+    expect(sumDailyStateWagerVolume(db, nodeId, 'MA')).toBe(24000);
+
+    // Under max_wager ($5k) but 24k + 2k exceeds max_daily_total ($25k)
+    const over = repo.isBetAllowed({
+      nodeId,
+      stateCode: 'MA',
+      sportId: 'soccer',
+      marketId: 'match_winner',
+      wagerAmount: 2000,
+      betType: 'straight',
+    });
+    expect(over.allowed).toBe(false);
+    if (!over.allowed) expect(over.reason).toContain('max daily total');
+  });
+});
+
+describe('state compliance · play dispatcher', () => {
+  test('stateCode play blocks unlicensed partner and logs violation', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    seedStateRegulations(db);
+    const now = new Date().toISOString();
+    const expertId = randomUUIDv7();
+    const agentId = randomUUIDv7();
+    db.run(
+      `INSERT INTO experts (id, name, sport, market, edge_score, active, created_at)
+       VALUES ($id, 'Expert', 'NBA', 'totals', 0.8, 1, $now)`,
+      { $id: expertId, $now: now }
+    );
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, active, status, created_at)
+       VALUES ($aid, 'agent', NULL, $eid, 'Agent', '999', 1, 'active', $now)`,
+      { $aid: agentId, $eid: expertId, $now: now }
+    );
+    bindPartnerProfile(db, asTreeNodeId(agentId));
+    ensurePosition(db, agentId, '_all', 50_000);
+
+    const result = await publishAndDispatch(
+      new PlaySigner(),
+      {
+        expertId,
+        sport: 'NBA',
+        market: 'totals',
+        event: 'LAL vs GSW',
+        selection: 'over 225.5',
+        odds: -110,
+        stakeRecommended: 500,
+        stateCode: 'MA',
+      },
+      db,
+      { flush: false }
+    );
+
+    expect(result.enqueued).toBe(0);
+    const play = db
+      .query('SELECT state_code FROM plays WHERE id = $id')
+      .get({ $id: result.id }) as { state_code: string };
+    expect(play.state_code).toBe('MA');
+
+    const gate = db
+      .query(
+        `SELECT allowed, action, reason FROM play_gate_decisions
+         WHERE play_id = $pid AND node_id = $nid`
+      )
+      .get({ $pid: result.id, $nid: agentId }) as {
+      allowed: number;
+      action: string;
+      reason: string;
+    };
+    expect(gate.allowed).toBe(0);
+    expect(gate.action).toBe('block');
+    expect(gate.reason).toContain('not licensed');
+
+    const viol = db
+      .query(
+        `SELECT COUNT(*) AS n FROM regulatory_violations
+         WHERE node_id = $n AND state_code = 'MA' AND play_id = $p`
+      )
+      .get({ $n: agentId, $p: result.id }) as { n: number };
+    expect(viol.n).toBe(1);
+    db.close();
+  });
+
+  test('licensed MA partner receives NBA/totals with state stamped on distribution', async () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    seedStateRegulations(db);
+    const now = new Date().toISOString();
+    const expertId = randomUUIDv7();
+    const agentId = randomUUIDv7();
+    db.run(
+      `INSERT INTO experts (id, name, sport, market, edge_score, active, created_at)
+       VALUES ($id, 'Expert', 'NBA', 'totals', 0.8, 1, $now)`,
+      { $id: expertId, $now: now }
+    );
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, telegram_id, active, status, created_at)
+       VALUES ($aid, 'agent', NULL, $eid, 'Agent', '888', 1, 'active', $now)`,
+      { $aid: agentId, $eid: expertId, $now: now }
+    );
+    bindPartnerProfile(db, asTreeNodeId(agentId));
+    ensurePosition(db, agentId, '_all', 50_000);
+    new ComplianceRepository(db).upsertLicense(agentId, 'MA', { licenseNumber: 'MA-DISP-1' });
+
+    const result = await publishAndDispatch(
+      new PlaySigner(),
+      {
+        expertId,
+        sport: 'NBA',
+        market: 'totals',
+        event: 'BOS vs MIA',
+        selection: 'over 210.5',
+        odds: -110,
+        stakeRecommended: 500,
+        stateCode: 'MA',
+        betType: 'straight',
+      },
+      db,
+      { flush: false }
+    );
+
+    expect(result.enqueued).toBe(1);
+    const dist = db
+      .query(
+        `SELECT state_code, stake_actual, ack_status FROM play_distribution
+         WHERE play_id = $pid AND node_id = $nid`
+      )
+      .get({ $pid: result.id, $nid: agentId }) as {
+      state_code: string;
+      stake_actual: number;
+      ack_status: string;
+    };
+    expect(dist.state_code).toBe('MA');
+    expect(dist.stake_actual).toBe(500);
+    expect(dist.ack_status).toBe('pending');
+
+    const gate = db
+      .query('SELECT allowed FROM play_gate_decisions WHERE play_id = $pid')
+      .get({ $pid: result.id }) as { allowed: number };
+    expect(gate.allowed).toBe(1);
+    db.close();
+  });
+
+  test('HMAC binds stateCode — MA and NJ signatures differ', () => {
+    const signer = new PlaySigner();
+    const base = {
+      expertId: 'ex-1',
+      sport: 'NBA',
+      market: 'totals',
+      event: 'A vs B',
+      selection: 'over',
+      odds: -110,
+      stakeRecommended: 100,
+    };
+    const ma = signer.sign({ ...base, stateCode: 'MA' });
+    const nj = signer.sign({ ...base, stateCode: 'NJ' });
+    const none = signer.sign(base);
+    expect(ma).not.toBe(nj);
+    expect(ma).not.toBe(none);
+    expect(signer.verify({ ...base, stateCode: 'MA' }, ma)).toBe(true);
+    expect(signer.verify({ ...base, stateCode: 'NJ' }, ma)).toBe(false);
   });
 });

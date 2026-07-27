@@ -205,7 +205,9 @@ bun run seat:desk:delete SPEN-001
 ## Tests
 
 ```bash
-bun test tests/seat-capital-desk.test.ts tests/seat-capital-desk-rich.test.ts tests/seat-desk-callback.test.ts tests/seat-desk-partner-message.test.ts
+bun run test:seat-desk
+# or:
+bun test tests/seat-capital-desk.test.ts tests/seat-desk-callback.test.ts tests/seat-desk-snapshot.test.ts tests/handshake-snapshot.test.ts tests/telegram-catalog-research.test.ts tests/partner-forum-accounting.test.ts
 ```
 
 ## Portal / ops dashboard

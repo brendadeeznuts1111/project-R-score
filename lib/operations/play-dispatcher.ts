@@ -16,7 +16,7 @@ import {
 } from '../channels/outbox.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
 import { loadTelegramEnv } from '../telegram/telegram-config.ts';
-import { asTreeNodeId, asGateDecisionId } from '../types/branded/operations.ts';
+import { asTreeNodeId, asGateDecisionId, tryStateCode } from '../types/branded/operations.ts';
 import { AccountService } from './account-service.ts';
 import { detectFraudSignals } from './fraud-guard.ts';
 import { reservePlayWithRetry, releasePlay } from './liquidity.ts';
@@ -27,6 +27,7 @@ import {
   recordGateDecision,
 } from './partner-profile-bridge.ts';
 import { validatePlay } from './play-validation.ts';
+import { ComplianceRepository, ensureStateRegulationSchema } from './state-regulation.ts';
 import { rankPlayRecipients, type TocRoutingContext } from './toc-play-routing.ts';
 import type { PlayInput, PlaySigner } from './play-signing.ts';
 
@@ -41,6 +42,16 @@ export type PublishDispatchOpts = {
   recordMetrics?: boolean;
   /** Override baked TOC snapshot for recipient ranking (tests / dry-run). */
   routingContext?: TocRoutingContext;
+  /**
+   * Jurisdiction for regulatory gate when play.stateCode is unset.
+   * When neither is set, state compliance is skipped (legacy plays).
+   */
+  stateCode?: string;
+  /**
+   * When true (default), run MA/NJ compliance per recipient when a state is resolved.
+   * Set false only for fixtures that intentionally bypass regulation.
+   */
+  enforceStateCompliance?: boolean;
 };
 
 export type PublishDispatchResult = {
@@ -103,6 +114,12 @@ export async function publishAndDispatch(
   const signedHash = signer.sign(play);
   const sentAt = new Date().toISOString();
   const confidence = play.confidence ?? 0;
+  const playState = tryStateCode(play.stateCode) ?? tryStateCode(opts.stateCode) ?? null;
+  const enforceState = opts.enforceStateCompliance !== false;
+  if (playState || enforceState) {
+    ensureStateRegulationSchema(db);
+  }
+  const compliance = playState && enforceState ? new ComplianceRepository(db) : null;
 
   const recipients = rankPlayRecipients(db, play.expertId, {
     context: opts.routingContext,
@@ -113,8 +130,8 @@ export async function publishAndDispatch(
 
   db.transaction(() => {
     db.run(
-      `INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at)
-       VALUES ($id, $eid, $sport, $market, $event, $sel, $odds, $stake, $conf, $hash, $sent)`,
+      `INSERT INTO plays (id, expert_id, sport, market, event, selection, odds, stake_recommended, confidence, signed_hash, sent_at, state_code)
+       VALUES ($id, $eid, $sport, $market, $event, $sel, $odds, $stake, $conf, $hash, $sent, $state)`,
       {
         $id: id,
         $eid: play.expertId,
@@ -127,6 +144,7 @@ export async function publishAndDispatch(
         $conf: confidence,
         $hash: signedHash,
         $sent: sentAt,
+        $state: playState,
       }
     );
   })();
@@ -134,6 +152,7 @@ export async function publishAndDispatch(
   let enqueued = 0;
 
   const signalType = inferSignalTypeFromPlay(play);
+  const betType = play.betType?.trim() || 'straight';
 
   for (const { nodeId } of recipients) {
     const treeNodeId = asTreeNodeId(nodeId);
@@ -196,6 +215,39 @@ export async function publishAndDispatch(
     }
 
     const stake = gate.adjustedStake ?? play.stakeRecommended;
+
+    // State regulatory gate (license · limits · special rules) — after partner policy, before reserve.
+    if (compliance && playState) {
+      const reg = compliance.checkAndRecord({
+        nodeId: treeNodeId,
+        stateCode: playState,
+        sportId: play.sport,
+        marketId: play.market,
+        wagerAmount: stake,
+        betType,
+        playId: id,
+      });
+      if (!reg.allowed) {
+        const decisionId = asGateDecisionId(randomUUIDv7());
+        recordGateDecision(db, id, treeNodeId, {
+          allowed: false,
+          action: 'block',
+          reason: reg.reason,
+          decisionId,
+          templateId: gate.templateId,
+        });
+        enqueuePlayGatedChannelEvent(db, {
+          playId: id,
+          treeNodeId,
+          allowed: false,
+          action: 'block',
+          reason: reg.reason,
+          templateId: gate.templateId,
+        });
+        continue;
+      }
+    }
+
     const book = play.bookSlug?.trim() || '_all';
     const reserve = reservePlayWithRetry(db, nodeId, stake, book, {
       checkCoverage: book !== '_all',
@@ -215,9 +267,9 @@ export async function publishAndDispatch(
     try {
       db.transaction(() => {
         db.run(
-          `INSERT OR IGNORE INTO play_distribution (play_id, node_id, channel, received_at, stake_actual, ack_status)
-           VALUES ($pid, $nid, 'telegram', $now, $stake, 'pending')`,
-          { $pid: id, $nid: nodeId, $now: now, $stake: stake }
+          `INSERT OR IGNORE INTO play_distribution (play_id, node_id, channel, received_at, stake_actual, ack_status, state_code)
+           VALUES ($pid, $nid, 'telegram', $now, $stake, 'pending', $state)`,
+          { $pid: id, $nid: nodeId, $now: now, $stake: stake, $state: playState }
         );
 
         enqueuePlayTelegramEvent(db, {

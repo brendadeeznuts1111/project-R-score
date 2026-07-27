@@ -1663,6 +1663,7 @@
     "telegram:catalog:research:cron:preview": "bun tools/telegram-catalog-research-cron.ts preview",
     "telegram:package-group:enhance": "bun tools/package-group-forum-enhance.ts",
     "test:telegram-handshake": "bun test tests/verify-package-group-handshake.test.ts tests/handshake-desk.test.ts tests/handshake-lanes.test.ts tests/handshake-readiness.test.ts tests/handshake-catalog.test.ts tests/dm-seat-designation.test.ts tests/package-group-registry.test.ts tests/package-group-event-log.test.ts tests/package-group-membership.test.ts tests/forum-invite-gap.test.ts tests/ops-channel-outbox.test.ts tests/telegram-broadcast.test.ts tests/ops-schema-available-at.test.ts",
+    "test:seat-desk": "bun test tests/seat-capital-desk.test.ts tests/seat-desk-callback.test.ts tests/seat-desk-snapshot.test.ts tests/handshake-snapshot.test.ts tests/telegram-catalog-research.test.ts tests/partner-forum-accounting.test.ts",
     "telegram:link-chat": "bun tools/telegram-link-chat.ts",
     "telegram:seat:desk": "bun tools/telegram-seat-capital-desk.ts",
     "telegram:seat:out": "bun tools/telegram-seat-out.ts",

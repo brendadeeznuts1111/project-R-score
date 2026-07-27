@@ -1,6 +1,6 @@
 {
   "schema": "factorywager.seat-capital-desk.v1",
-  "generatedAt": "2026-07-27T08:11:19.211Z",
+  "generatedAt": "2026-07-27T16:39:14.614Z",
   "desks": 4,
   "blocked": 0,
   "partial": 0,
@@ -58,7 +58,7 @@
         }
       ],
       "incompleteOuts": 0,
-      "pinned": false,
+      "pinned": true,
       "hasTelegramDesk": true,
       "deskUpdatedAt": "2026-07-27T08:11:10.082Z"
     },
@@ -96,7 +96,7 @@
         }
       ],
       "incompleteOuts": 0,
-      "pinned": false,
+      "pinned": true,
       "hasTelegramDesk": true,
       "deskUpdatedAt": "2026-07-27T08:11:11.257Z"
     },
@@ -150,7 +150,7 @@
         }
       ],
       "incompleteOuts": 0,
-      "pinned": false,
+      "pinned": true,
       "hasTelegramDesk": true,
       "deskUpdatedAt": "2026-07-27T08:11:12.398Z"
     },
@@ -237,7 +237,7 @@
         }
       ],
       "incompleteOuts": 0,
-      "pinned": false,
+      "pinned": true,
       "hasTelegramDesk": true,
       "deskUpdatedAt": "2026-07-27T08:11:13.534Z"
     }

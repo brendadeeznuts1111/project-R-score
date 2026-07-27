@@ -196,6 +196,26 @@ describe('seat-capital-desk', () => {
     expect(resolveFundStatus(forced).status).toBe('ready');
   });
 
+  test('buildSeatDeskViewModel infers pinned from desk messageId when flag omitted', () => {
+    const withDesk: SeatIntakeRecord = {
+      ...fixture,
+      desk: {
+        chatId: '-1001',
+        messageThreadId: 4,
+        messageId: 42,
+        updatedAt: '2026-07-27T12:00:00.000Z',
+      },
+    };
+    expect(buildSeatDeskViewModel(withDesk).pinned).toBe(true);
+    expect(buildSeatDeskViewModel(withDesk).hasTelegramDesk).toBe(true);
+
+    const explicitlyUnpinned: SeatIntakeRecord = {
+      ...withDesk,
+      desk: { ...withDesk.desk!, pinned: false },
+    };
+    expect(buildSeatDeskViewModel(explicitlyUnpinned).pinned).toBe(false);
+  });
+
   test('firstIncompleteOutIndex skips deferred outs', () => {
     const record: SeatIntakeRecord = {
       partnerCode: 'SPEN',

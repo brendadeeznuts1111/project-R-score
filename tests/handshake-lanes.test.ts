@@ -21,6 +21,112 @@ const createArtifact: PackageGroupCreateArtifact = {
   timestamp: '2026-07-26T20:00:00.000Z',
 };
 
+const ashCreateArtifact: PackageGroupCreateArtifact = {
+  action: 'create_package_group',
+  partner_code: 'ASH',
+  display_name: 'Ash Ops',
+  suggested_title: 'TOC Ops · ASH · Ash Ops',
+  requested_by: 'ASH-001',
+  tree_node_id: '019f0000-0000-7000-8000-000000000001',
+  timestamp: '2026-07-26T20:00:00.000Z',
+};
+
+const ASH_CHAT_ID = '-1003937534779';
+
+function pkgSurfaceEnv(
+  partnerCode: string,
+  chatId: string, // brand-ok — Telegram chat_id wire
+): Record<string, string> {
+  return {
+    TELEGRAM_SURFACES: JSON.stringify({ [`pkg-${partnerCode.toLowerCase()}`]: chatId }),
+  };
+}
+
+async function seedAshRegistryHarness(dir: string): Promise<{
+  db: Database;
+  jsonlPath: string;
+  forumsMetaDir: string;
+}> {
+  await mkdir(dir, { recursive: true });
+  const forumsMetaDir = join(dir, 'forums');
+  await mkdir(forumsMetaDir, { recursive: true });
+  const jsonlPath = join(dir, 'pending.jsonl');
+  await writeFile(
+    jsonlPath,
+    [
+      ashCreateArtifact,
+      {
+        action: 'ack_package_group_wired',
+        partner_code: 'ASH',
+        chat_id: ASH_CHAT_ID,
+        telegram_ref: `tg:chat:${ASH_CHAT_ID}`,
+        wired_by: 'ct',
+        timestamp: '2026-07-26T21:00:00.000Z',
+      },
+      {
+        action: 'ack_package_group_linked',
+        partner_code: 'ASH',
+        chat_id: ASH_CHAT_ID,
+        linked_by: 'factory',
+        timestamp: '2026-07-26T22:00:00.000Z',
+      },
+    ]
+      .map(l => JSON.stringify(l))
+      .join('\n') + '\n'
+  );
+
+  const db = new Database(':memory:');
+  upsertPackageGroupRegistry(db, {
+    partnerCode: 'ASH',
+    chatId: ASH_CHAT_ID,
+    displayName: 'Ash Ops',
+    requestedBy: 'ASH-001',
+    inviteLink: 'https://t.me/+test',
+  });
+  upsertKnownChat(db, {
+    chat: {
+      id: Number(ASH_CHAT_ID),
+      type: 'supergroup',
+      title: 'TOC Ops · ASH · Ash Ops',
+      is_forum: true,
+    },
+    source: 'manual',
+    surfaceSlug: 'ash-prod',
+    botStatus: 'administrator',
+  });
+
+  await writeFile(
+    join(forumsMetaDir, 'ASH.json'),
+    JSON.stringify({
+      partnerCode: 'ASH',
+      title: 'TOC Ops · ASH · Ash Ops',
+      displayName: 'Ash Ops',
+      chatId: ASH_CHAT_ID,
+      chatRef: `tg:chat:${ASH_CHAT_ID}`,
+      inviteLink: 'https://t.me/+test',
+      topics: [
+        { title: 'General', messageThreadId: 1 },
+        { title: 'Ops', messageThreadId: 5 },
+        { title: 'Alerts', messageThreadId: 6 },
+        { title: 'Liquidity/Outs', messageThreadId: 7 },
+        { title: 'Accounting', messageThreadId: 8 },
+      ],
+      topicsThreadMap: {
+        general: 1,
+        ops: 5,
+        alerts: 6,
+        'liquidity/outs': 7,
+        accounting: 8,
+      },
+      topicsComplete: true,
+      iconUploaded: true,
+      createdAt: '2026-07-26T20:00:00.000Z',
+    })
+  );
+
+  return { db, jsonlPath, forumsMetaDir };
+}
+
 describe('handshake-lanes', () => {
   test('marks operator lanes blocked until telegram for designated seat', async () => {
     const dir = join(tmpdir(), `lanes-${Date.now()}`);
@@ -368,6 +474,48 @@ describe('handshake-lanes', () => {
     });
     expect(first.appended).toBe(true);
     expect(second.appended).toBe(false);
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('surface_env_pkg lane ok when TELEGRAM_SURFACES pkg-ash matches registry chat_id', async () => {
+    const dir = join(tmpdir(), `lanes-surface-ok-${Date.now()}`);
+    const { db, jsonlPath, forumsMetaDir } = await seedAshRegistryHarness(dir);
+
+    const report = await assessHandshakeLanes({
+      db,
+      partnerCode: 'ASH',
+      jsonlPath,
+      forumsMetaDir,
+      env: pkgSurfaceEnv('ASH', ASH_CHAT_ID),
+    });
+
+    const surfaceLane = report.lanes.find(l => l.id === 'surface_env_pkg');
+    expect(surfaceLane).toBeDefined();
+    expect(surfaceLane!.ok).toBe(true);
+    expect(surfaceLane!.detail).toContain(`pkg-ash=${ASH_CHAT_ID}`);
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('surface_env_pkg lane fails when pkg-ash missing from TELEGRAM_SURFACES', async () => {
+    const dir = join(tmpdir(), `lanes-surface-fail-${Date.now()}`);
+    const { db, jsonlPath, forumsMetaDir } = await seedAshRegistryHarness(dir);
+
+    const report = await assessHandshakeLanes({
+      db,
+      partnerCode: 'ASH',
+      jsonlPath,
+      forumsMetaDir,
+      env: { TELEGRAM_SURFACES: JSON.stringify({ hq: '-100111' }) },
+    });
+
+    const surfaceLane = report.lanes.find(l => l.id === 'surface_env_pkg');
+    expect(surfaceLane).toBeDefined();
+    expect(surfaceLane!.ok).toBe(false);
+    expect(surfaceLane!.detail).toContain('missing pkg-ash');
+
+    db.close();
     await rm(dir, { recursive: true, force: true });
   });
 });

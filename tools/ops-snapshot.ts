@@ -67,6 +67,7 @@ import {
   refreshChannelMetaProof,
   saveChannelMetaProof,
 } from '../lib/verification/channel-meta-refresh.ts';
+import { loadReasonixEnv } from '../lib/telegram/catalog-research/load-reasonix-env.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const argv = Bun.argv.slice(2);
@@ -159,6 +160,7 @@ export async function buildRegistrySnapshot(options?: {
   await ensureParent(monitoringPath);
   if (cfg.withStatic) await ensureParent(staticRegistryPath);
 
+  await loadReasonixEnv();
   const db = openOperationsDb({ path: cfg.dbPath });
   try {
     // 1. Routing proof (retry + cache + artifact)
