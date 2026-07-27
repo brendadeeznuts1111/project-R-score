@@ -1855,7 +1855,7 @@
     "env:inventory:vault": "bun scripts/env-inventory.ts --vault-only",
     "env:inventory:ratchet": "bun scripts/env-inventory.ts --ratchet",
     "env:inventory:baseline": "bun scripts/env-inventory.ts --write-baseline",
-    "vault:gap:status": "bun scripts/vault-gap-close.ts status",
+    "vault:gap:status": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts status'",
     "vault:gap:mint": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts mint'",
     "vault:gap:wire": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts wire'",
     "vault:gap:close": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts close'",
