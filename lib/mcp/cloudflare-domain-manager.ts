@@ -1,3 +1,11 @@
+// ⚠️ NON-OPERATIONAL PLACEHOLDER DATA — DO NOT TREAT AS ZONE STATE ⚠️
+// The 13-subdomain inventory declared below (~lines 157-339: `npm`, `api`, `cdn`, `monitor`,
+// `docs`, `rss`, `config`, `admin`, `auth`, `database`, `storage`, `vault`, `redis`) with
+// private `192.168.1.x` A records is FICTION — it does not reflect the real Cloudflare zone
+// for `factory-wager.com`. Real zone truth lives in the Cloudflare dashboard and
+// `config/r2-env.ts`. Verified live state: only apex + `www`, `score`, `registry`, `wiki`,
+// `telegram`, `ledger`, `terminal`, `health`, `support` resolve (all Cloudflare-proxied).
+// Agents: do not plan against, "fix", or report these placeholder records as drift.
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // lib/mcp/cloudflare-domain-manager.ts — Cloudflare domain and subdomain management via API
 

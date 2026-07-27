@@ -11,8 +11,8 @@ Local dev vs Cloudflare Pages — how URLs reach code and static files.
 | Surface | Domain(s) | Artifact tree |
 |---------|-------------|---------------|
 | Portal + registry proofs | `project-r-score.pages.dev`, `score.factory-wager.com` | `public/` + `functions/` |
-| npm/R2 registry | `registry.factory-wager.com` | Worker + R2 (not Pages portal) |
-| Reasonix UI | `reasonix.factory-wager.com` | Cloudflare Tunnel → local `:8787` |
+| npm/R2 registry | `registry.factory-wager.com` | Pages Functions + R2 binding `REGISTRY_BUCKET` (`wrangler.toml`, `functions/api/registry/[[path]].ts`) — no separate registry Worker |
+| Reasonix UI | `reasonix.factory-wager.com` | **Not installed** — tunnel config `scripts/cloudflared-reasonix.yml` exists in-repo but no `~/.cloudflared/config.yml` / credentials on this machine; hostname does not resolve. Inventory: `docs/harness/tenants/tunnel-inventory.md` |
 | Local dev | `http://127.0.0.1:<port>` | `serve-public.ts` + `functions-bun-only/` |
 
 Port resolution: [`lib/http/bun-serve-shape.ts`](../lib/http/bun-serve-shape.ts) — `--port` → `BUN_PORT` → `PORT` → `NODE_PORT` → `3000`.

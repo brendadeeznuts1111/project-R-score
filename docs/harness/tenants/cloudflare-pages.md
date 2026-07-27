@@ -240,7 +240,7 @@ Until DNS exists, use:
 4. CLI publish/install still needs local R2 S3 keys (`bun run factory:env`) via SigV4 `S3Client`.
 5. Portal static fallback: `bun run factory:snapshot` → `public/registry/registry.json` (committed empty seed; refresh after publishes).
 
-This is **not** `bun run deploy:production` (Bun.secrets + R2). Root `wrangler.toml` is Worker `tier1380-production`, not Pages. R2 S3 keys ≠ `CLOUDFLARE_API_TOKEN` (`requireR2Config` vs `requireCloudflareApiToken`). Never hardcode R2 access keys in scripts — use env / Bun.secrets / `requireR2Config`.
+This is **not** `bun run deploy:production` (Bun.secrets + R2). Root [`wrangler.toml`](../../../wrangler.toml) is now the `project-r-score` Pages Functions config (`name = "project-r-score"`) — there is no `tier1380-production` Worker at repo root. R2 S3 keys ≠ `CLOUDFLARE_API_TOKEN` (`requireR2Config` vs `requireCloudflareApiToken`). Never hardcode R2 access keys in scripts — use env / Bun.secrets / `requireR2Config`.
 
 ## Retirement
 
