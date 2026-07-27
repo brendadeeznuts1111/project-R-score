@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
   "uptime": "0d 0h 0m 0s",
-  "uptimeMs": 518,
+  "uptimeMs": 358,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -26,12 +26,12 @@
   },
   "experimentsActive": 1,
   "predictionN": 30,
-  "timestamp": "2026-07-26T20:43:22.193Z",
-  "snapshotAt": "2026-07-26T20:43:22.193Z",
+  "timestamp": "2026-07-26T23:46:57.533Z",
+  "snapshotAt": "2026-07-26T23:46:57.533Z",
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-26T20:43:22.193Z",
+    "checkedAt": "2026-07-26T23:46:57.533Z",
     "summary": {
       "total": 26,
       "ok": 25,
@@ -387,7 +387,7 @@
     "demosPassed": 30,
     "demosTotal": 30,
     "demoPassRate": "100.0%",
-    "generated": "2026-07-26T20:43:22.192Z",
+    "generated": "2026-07-26T23:46:57.532Z",
     "apisVerified": 30
   },
   "registryClientProof": {

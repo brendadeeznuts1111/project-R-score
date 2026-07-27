@@ -1,7 +1,7 @@
 {
   "type": "ChannelAwareVerificationReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-26T20:43:21.682Z",
+  "timestamp": "2026-07-26T23:46:57.183Z",
   "bunVersion": "1.4.0",
   "bunRevision": "a227ad991b62",
   "blogPost": "https://bun.com/blog/bun-v1.3.14",

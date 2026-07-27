@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-26T20:43:22.184Z",
+  "generated": "2026-07-26T23:46:57.524Z",
   "liquidity": {
     "total": 85710
   },
@@ -136,11 +136,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "8e44404abcf4113be2fb3e857e3f5f141206510884e17f96b3c40d95f16bd652",
+    "proofHash": "63f7aabebfb5ec6a09564b9a70bb5c43a45d620a2f6c2cd2f10c1ff9cefd3adb",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-26T20:43:22.184Z"
+    "timestamp": "2026-07-26T23:46:57.525Z"
   },
   "registryClient": {
     "available": true,
@@ -214,7 +214,7 @@
         "detail": "13 contracts · 20 consistency"
       }
     ],
-    "timestamp": "2026-07-26T20:43:22.147Z",
+    "timestamp": "2026-07-26T23:46:57.489Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -400,8 +400,8 @@
         "ok": true
       }
     ],
-    "proofHash": "ba139512d25e477e4ce2a8b7064dca1619eef8c6baae89bc9173e28794122d64",
-    "timestamp": "2026-07-26T20:43:21.688Z",
+    "proofHash": "b6a5fea98a64aebaf80a1c5ef9cfc7945796b8d2b154b64d04fdb57c38156cce",
+    "timestamp": "2026-07-26T23:46:57.188Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -412,7 +412,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "55aef42f0245fd2b506b85516551dc603e96ccd76b430868328c6e121f0574de",
-    "updatedAt": "2026-07-26T20:43:21.683Z",
+    "updatedAt": "2026-07-26T23:46:57.184Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -695,14 +695,14 @@
   "channels": {
     "pending": 0,
     "failed": 0,
-    "sent": 655,
+    "sent": 668,
     "oldestPendingAt": null,
     "failRate": 0
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-26T20:43:22.173Z",
+    "generatedAt": "2026-07-26T23:46:57.512Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -730,7 +730,7 @@
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 10.924186628706794,
+    "avgRP": 10.65268865972934,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -798,7 +798,7 @@
     "reserved": 29,
     "settled": 7,
     "settledViaFullLoop": 29,
-    "outboxSent": 655,
+    "outboxSent": 668,
     "outboxFailed": 0,
     "outboxPending": 0,
     "oldestPendingAgeSec": null,
