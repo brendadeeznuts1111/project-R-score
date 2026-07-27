@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/typescript-6 — types allowlist audit for TS6/7
@@ -74,8 +75,20 @@ const rows: Row[] = [];
 const glob = new Glob('**/tsconfig*.json');
 const root = resolvePath(import.meta.dir, '..');
 
+function isGitIgnored(rel: string): boolean {
+  const proc = Bun.spawnSync(['git', 'check-ignore', '-q', '--', rel], {
+    cwd: root,
+    stdout: 'ignore',
+    stderr: 'ignore',
+  });
+  // exit 0 ⇒ ignored; 1 ⇒ not ignored; other ⇒ treat as not ignored
+  return proc.exitCode === 0;
+}
+
 for await (const rel of glob.scan({ cwd: root, onlyFiles: true })) {
-  if (rel.includes('node_modules') || rel.includes('.git/')) continue;
+  if (rel.includes('node_modules') || rel.includes('.git/') || rel.startsWith('.tmp/')) continue;
+  // Fixture / scratch packages (often gitignored) must not fail the monorepo audit.
+  if (isGitIgnored(rel)) continue;
   const abs = resolvePath(root, rel);
   try {
     const cfg = await loadConfig(abs);
