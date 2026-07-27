@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -12,6 +13,7 @@
  *   # needs mock server (or auto-embeds one when COMPLIANCE_URL unset)
  *   bun run ops:compliance:report
  *   bun --console-depth=6 run tools/enhanced-compliance-report.ts
+ *   bun tools/enhanced-compliance-report.ts --html > /tmp/compliance.html
  *   cat tools/enhanced-compliance-report.ts | bun --console-depth=6 run -
  *
  * Env:
@@ -19,6 +21,7 @@
  *   COMPLIANCE_REPORT_NO_EMBED=1 — require external COMPLIANCE_URL only
  */
 import { deepEquals } from '../lib/deep-equals.ts';
+import { escapeHtml } from '../lib/escape-html.ts';
 import { getConsoleDepth, inspect as inspectDepth } from '../lib/console-depth.ts';
 import { startStateComplianceMock } from '../lib/operations/state-compliance-http.ts';
 
@@ -277,12 +280,89 @@ async function resolveBase(): Promise<{ base: string; stop?: () => void }> {
   };
 }
 
+function reportToHtml(data: StateInfo[], base: string, sig: string): string {
+  const body = data
+    .map(r => {
+      const match = deepEquals(
+        { allowed: r.realCheck.allowed, reason: r.realCheck.reason },
+        { allowed: r.shadowCheck.allowed, reason: r.shadowCheck.reason }
+      );
+      const real = r.realCheck.allowed ? 'ALLOW' : `BLOCK (${r.realCheck.reason ?? 'deny'})`;
+      const shadow = r.shadowCheck.allowed ? 'ALLOW' : `BLOCK (${r.shadowCheck.reason ?? 'deny'})`;
+      const limits =
+        r.limits.length === 0
+          ? 'none'
+          : r.limits
+              .map(l => `${l.sport_id ?? '?'}/${l.market_id ?? '?'}: $${l.max_wager ?? '—'}`)
+              .join(', ');
+      return `<tr class="${match ? 'pass' : 'fail'}">
+  <td>${escapeHtml(r.state)}</td>
+  <td>${escapeHtml(r.partner)}</td>
+  <td>${escapeHtml(r.licenseStatus ?? 'unlicensed')}</td>
+  <td>${escapeHtml(limits)}</td>
+  <td>${escapeHtml(real)}</td>
+  <td>${escapeHtml(shadow)}</td>
+  <td>${match ? 'match' : 'shadow differs'}</td>
+</tr>`;
+    })
+    .join('\n');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>${escapeHtml('State compliance shadow report')}</title>
+  <style>
+    body{font:14px/1.4 system-ui,sans-serif;margin:2rem;background:#0b0f14;color:#e6edf3}
+    table{border-collapse:collapse;width:100%}
+    th,td{border:1px solid #30363d;padding:.4rem .6rem}
+    th{background:#161b22;text-align:left}
+    tr.pass td:last-child{color:#3fb950}
+    tr.fail td:last-child{color:#f85149}
+    .meta{color:#8b949e;margin-bottom:1rem}
+  </style>
+</head>
+<body>
+  <h1>State-Specific Limits &amp; Shadow Check Report</h1>
+  <p class="meta">${escapeHtml(new Date().toISOString())} · base=${escapeHtml(base)} ·
+    depth=${escapeHtml(getConsoleDepth())} · sha256=${escapeHtml(sig)}</p>
+  <table>
+    <thead>
+      <tr>
+        <th>State</th><th>Partner</th><th>License</th><th>Limits</th>
+        <th>Real</th><th>Shadow</th><th>Match</th>
+      </tr>
+    </thead>
+    <tbody>
+${body}
+    </tbody>
+  </table>
+</body>
+</html>
+`;
+}
+
 async function main(): Promise<void> {
+  if (Bun.argv.includes('--help') || Bun.argv.includes('-h')) {
+    console.info(`Usage:
+  bun run ops:compliance:report
+  bun --console-depth=6 tools/enhanced-compliance-report.ts
+  bun tools/enhanced-compliance-report.ts --html > /tmp/compliance.html
+`);
+    return;
+  }
+
   const { base, stop } = await resolveBase();
   try {
     const data = await buildRows(base);
     const table = new ComplianceReportTable(data);
     const tableText = String(table);
+    const sig = signTable(tableText);
+
+    if (Bun.argv.includes('--html')) {
+      console.log(reportToHtml(data, base, sig));
+      return;
+    }
 
     console.log('State-Specific Limits & Shadow Check Report');
     console.log(`Base: ${base}`);
@@ -290,7 +370,6 @@ async function main(): Promise<void> {
     console.log(inspectDepth(table));
     console.log(summaryLine(data));
 
-    const sig = signTable(tableText);
     console.log(`\n📜 Signature: ${sig}`);
 
     // Deep dump of structured rows (honors --console-depth / BUN_CONSOLE_DEPTH)
