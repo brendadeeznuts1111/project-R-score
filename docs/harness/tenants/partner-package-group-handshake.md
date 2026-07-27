@@ -187,6 +187,18 @@ More humans (experts, observers) increase the count — that is normal.
 
 Code: [`lib/telegram/package-group-membership.ts`](../../../lib/telegram/package-group-membership.ts) · desk column `MEMBERS` · readiness `MEM` · deep lane `forum_members`.
 
+### Forum invite gap (`2·house!`)
+
+Operator DM linked but partner not in forum yet:
+
+```bash
+bun run telegram:handshake:invite-gap
+bun run telegram:handshake:invite-gap --refresh
+bun run telegram:handshake:desk --invite-gap
+```
+
+Exit `1` when gaps exist (scriptable). After partner joins → **`3·OK`**.
+
 ---
 
 ## Error handling

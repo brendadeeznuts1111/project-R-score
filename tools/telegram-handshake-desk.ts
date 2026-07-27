@@ -82,10 +82,7 @@ try {
       }
     }
     if (rows.length > 0) process.exit(1);
-    return;
-  }
-
-  if (wantJson) {
+  } else if (wantJson) {
     console.log(JSON.stringify({ rows, jsonlPath, dbPath }, null, 2));
   } else if (detail) {
     console.log(`package-group desk · ${rows.length} row(s) · db=${dbPath}`);
