@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# cloudflare-pages-deploy.sh — thin wrapper (prefer: bun run cloudflare:deploy:verify)
-# Uses: CLOUDFLARE_API_TOKEN (from Reasonix global .env)
-# Run: bash scripts/cloudflare-pages-deploy.sh
-#      bash scripts/cloudflare-pages-deploy.sh --branch main
+# cloudflare-pages-deploy.sh — thin wrapper (prefer: bun run proton:deploy:pages)
+# Uses: CLOUDFLARE_API_TOKEN resolved via Proton Pass inject
+# Run: bash scripts/proton-deploy.sh pages --branch main
+#      bash scripts/cloudflare-pages-deploy.sh --branch main  (direct, no vault)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

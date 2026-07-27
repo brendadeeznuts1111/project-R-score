@@ -23,6 +23,10 @@
       "envFile": "${workspaceFolder}/.env"
     },
     "cascade-mover": {
+      "type": "http",
+      "url": "http://100.64.250.26:8787/mcp"
+    },
+    "cascade-mover-local": {
       "type": "stdio",
       "command": "bun",
       "args": [

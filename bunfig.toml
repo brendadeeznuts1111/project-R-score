@@ -37,6 +37,7 @@ frozenLockfile = true
 "@factorywager" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
 "@factory-wager" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
 "@factory" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
+"@factorywager-prod" = { url = "https://registry.factory-wager.com/", token = "$FACTORY_WAGER_TOKEN" }
 
 # Test runner defaults.  Per-workspace bunfig.toml files
 # (e.g. projects/active/enterprise/bet-ticker-worker-v1.1/bunfig.toml) override these.

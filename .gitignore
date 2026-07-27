@@ -403,3 +403,6 @@ public/registry/@factorywager/routing-test/v*.json
 
 # Snapshot version stamps (keep latest/pre/post.json)
 public/registry/@factorywager/*/0.0.0+*.json
+
+# Proton Pass agent tokens (gitignored — loaded by scripts/agent-env.sh)
+.env.pass-tokens

@@ -54,8 +54,13 @@
       "envFile": "/Users/nolarose/Projects/.env"
     },
     "cascade-mover": {
+      "type": "http",
+      "description": "Cascade Mover v3 \u2014 sports intelligence via VPS (50 tools, live DB)",
+      "url": "http://100.64.250.26:8787/mcp"
+    },
+    "cascade-mover-local": {
       "type": "stdio",
-      "description": "Cascade Mover v3 \u2014 sports intelligence (lines, sources, confidence, 43 tools)",
+      "description": "Cascade Mover v3 \u2014 local (fallback, no live DB)",
       "command": "bun",
       "args": [
         "/Users/nolarose/Projects/projects/active/enterprise/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
