@@ -14,6 +14,7 @@ import { getKnownChatById, upsertKnownChat, type KnownChatRow } from './known-ch
 import { refreshKnownChats } from './refresh-known-chats.ts';
 import { getChat } from './telegram-api.ts';
 import { verifyPackageGroupHandshake } from './verify-package-group-handshake.ts';
+import { PACKAGE_GROUP_FORUMS_META_DIR } from './package-group-forum.ts';
 
 export type HandshakeDeskRow = {
   partnerCode: string;
@@ -40,6 +41,7 @@ export type BuildHandshakeDeskOpts = {
   db: Database;
   partnerCodes?: string[];
   jsonlPath?: string;
+  forumsMetaDir?: string;
   telegramToken?: string | null;
   /** Refresh known-chat rows via getChat before assemble. */
   refresh?: boolean;
@@ -81,6 +83,7 @@ async function deskRowForRegistry(
       db,
       partnerCode: reg.partnerCode,
       jsonlPath: opts.jsonlPath,
+      forumsMetaDir: opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR,
       live: opts.live,
       telegramToken: opts.telegramToken,
     });

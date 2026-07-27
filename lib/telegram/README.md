@@ -25,6 +25,7 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `surface-graph.ts` | Live topology ASCII / mermaid / env suggest |
 | `surface-audit.ts` | Title · binding · ACL · routing audit |
 | `package-group-registry.ts` | Partner package forum registry + pending JSONL |
+| `package-group-forum.ts` | Forum metadata SSOT · `reports/telegram/forums/{CODE}.json` |
 | `ops-acl.ts` | In-chat ACL — `/register` DM-only · `/deploy` ops-admin |
 | `branding.ts` | TOC Ops profile (Bun.Image) · group titles/photos · forum topics |
 | `refresh-known-chats.ts` | `getChat` / member-count refresh for directory |

@@ -5,7 +5,7 @@
  * Written by toc-ops MTProto create-forum; consumed by handshake verify + desk tooling.
  * Keep topic lists aligned with toc-ops-repo `forum-defaults.ts`.
  */
-import { joinPath } from './path-bun.ts';
+import { joinPath } from '../path-bun.ts';
 
 /** Full topic plan shown to operators (General is implicit thread 1). */
 export const PACKAGE_GROUP_FORUM_TOPICS = ['General', 'Ops', 'Alerts'] as const;

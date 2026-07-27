@@ -23,6 +23,7 @@ describe('verify-package-group-handshake', () => {
   test('passes when create, wired, registry, and linked ack align', async () => {
     const dir = join(tmpdir(), `verify-pkg-${Date.now()}`);
     await mkdir(dir, { recursive: true });
+    await mkdir(join(dir, 'forums-empty'), { recursive: true });
     const path = join(dir, 'pending.jsonl');
     const lines = [
       createArtifact,
@@ -56,6 +57,7 @@ describe('verify-package-group-handshake', () => {
       db,
       partnerCode: 'ASH',
       jsonlPath: path,
+      forumsMetaDir: join(dir, 'forums-empty'),
     });
     expect(result.ok).toBe(true);
     expect(result.checks.every(c => c.ok)).toBe(true);
@@ -88,7 +90,8 @@ describe('verify-package-group-handshake', () => {
 
   test('live_forum_title check uses getChat when --live', async () => {
     const dir = join(tmpdir(), `verify-live-${Date.now()}`);
-    await mkdir(dir, { recursive: true });
+    const forumsDir = join(dir, 'forums');
+    await mkdir(forumsDir, { recursive: true });
     const path = join(dir, 'pending.jsonl');
     const lines = [
       createArtifact,
@@ -132,6 +135,7 @@ describe('verify-package-group-handshake', () => {
         db,
         partnerCode: 'ASH',
         jsonlPath: path,
+        forumsMetaDir: forumsDir,
         live: true,
         telegramToken: 'test-token',
       });

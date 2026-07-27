@@ -12,11 +12,13 @@ import {
   verifyPackageGroupHandshake,
 } from '../lib/telegram/verify-package-group-handshake.ts';
 import { PENDING_PACKAGE_GROUPS_JSONL } from '../lib/telegram/package-group-registry.ts';
+import { PACKAGE_GROUP_FORUMS_META_DIR } from '../lib/telegram/package-group-forum.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
 const argv = Bun.argv.slice(2);
 let partnerCode = '';
 let jsonlPath = PENDING_PACKAGE_GROUPS_JSONL;
+let forumsMetaDir = PACKAGE_GROUP_FORUMS_META_DIR;
 let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
 let wantJson = false;
 let live = false;
@@ -27,11 +29,13 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === '--live') live = true;
   else if (a === '--path' && argv[i + 1]) jsonlPath = argv[++i]!;
   else if (a.startsWith('--path=')) jsonlPath = a.slice('--path='.length);
+  else if (a === '--forums-dir' && argv[i + 1]) forumsMetaDir = argv[++i]!;
+  else if (a.startsWith('--forums-dir=')) forumsMetaDir = a.slice('--forums-dir='.length);
   else if (a === '--db' && argv[i + 1]) dbPath = argv[++i]!;
   else if (a.startsWith('--db=')) dbPath = a.slice('--db='.length);
   else if (a === '--help' || a === '-h') {
     console.log(
-      `Usage: bun tools/verify-package-group-handshake.ts <CODE> [--path jsonl] [--db path] [--json] [--live]`
+      `Usage: bun tools/verify-package-group-handshake.ts <CODE> [--path jsonl] [--forums-dir path] [--db path] [--json] [--live]`
     );
     process.exit(0);
   } else if (!a.startsWith('-')) partnerCode = a.toUpperCase();
@@ -49,6 +53,7 @@ try {
     db,
     partnerCode,
     jsonlPath,
+    forumsMetaDir,
     live,
     telegramToken: tg.effectiveToken,
   });

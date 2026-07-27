@@ -189,7 +189,8 @@ Written by MTProto `package-group-create-forum` or backfilled for manual forums:
 
 ```bash
 cd toc-ops-repo
-bun run forum-metadata-backfill ASH PAT NOV BIL --apply --invite 'https://t.me/+…'
+```bash
+bun run forum-metadata-backfill ASH PAT NOV BIL --apply --factory-db ../data/operations.db
 ```
 
 Factory verify reads metadata when present (`forum_metadata` check in `verify-package-group-handshake.ts`).
@@ -214,7 +215,7 @@ Validate the full lifecycle before production use:
 | 3 Human | Create forum with exact `suggested_title`; add `@TOC_Op_bot` admin | Manual (Bot API cannot create groups) |
 | 4 Soft wire | `bun run ct package-group-wire ASH --chat tg:chat:-100… --apply --ack` | `ack_package_group_wired`; pending list empty for ASH |
 | 5 Factory link | `bun run telegram:ops -- link-package-group ASH -100… --invite '…'` | `package_group_registry` row; `ack_package_group_linked` |
-| 6 Verify | `bun tools/verify-package-group-handshake.ts ASH` | All checks green (exit 0) |
+| 6 Verify | `bun run telegram:handshake:verify ASH` | All checks green incl. `forum_metadata` when backfilled (exit 0) |
 
 ### Staging shortcut (non-prod)
 
