@@ -59,6 +59,9 @@ describe('verify-package-group-handshake', () => {
     });
     expect(result.ok).toBe(true);
     expect(result.checks.every(c => c.ok)).toBe(true);
+    const metaCheck = result.checks.find(c => c.id === 'forum_metadata');
+    expect(metaCheck?.ok).toBe(true);
+    expect(metaCheck?.detail).toContain('no forums metadata');
 
     db.close();
     await rm(dir, { recursive: true, force: true });
@@ -140,5 +143,70 @@ describe('verify-package-group-handshake', () => {
       db.close();
       await rm(dir, { recursive: true, force: true });
     }
+  });
+
+  test('forum_metadata check validates metadata file when present', async () => {
+    const dir = join(tmpdir(), `verify-meta-${Date.now()}`);
+    const forumsDir = join(dir, 'forums');
+    await mkdir(forumsDir, { recursive: true });
+    const path = join(dir, 'pending.jsonl');
+    const lines = [
+      createArtifact,
+      {
+        action: 'ack_package_group_wired',
+        partner_code: 'ASH',
+        chat_id: '-1003937534779',
+        telegram_ref: 'tg:chat:-1003937534779',
+        wired_by: 'ct',
+        timestamp: '2026-07-26T21:00:00.000Z',
+      },
+      {
+        action: 'ack_package_group_linked',
+        partner_code: 'ASH',
+        chat_id: '-1003937534779',
+        linked_by: 'factory',
+        timestamp: '2026-07-26T22:00:00.000Z',
+      },
+    ];
+    await writeFile(path, lines.map(l => JSON.stringify(l)).join('\n') + '\n');
+    await writeFile(
+      join(forumsDir, 'ASH.json'),
+      `${JSON.stringify({
+        partnerCode: 'ASH',
+        title: 'TOC Ops · ASH · Ash Ops',
+        displayName: 'Ash Ops',
+        chatId: '-1003937534779',
+        chatRef: 'tg:chat:-1003937534779',
+        inviteLink: 'https://t.me/+x',
+        topics: [
+          { title: 'General', messageThreadId: 1 },
+          { title: 'Ops', messageThreadId: 2 },
+          { title: 'Alerts', messageThreadId: 3 },
+        ],
+        iconUploaded: false,
+        backfilled: true,
+        createdAt: '2026-01-01T00:00:00.000Z',
+      })}\n`
+    );
+
+    const db = new Database(':memory:');
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-1003937534779',
+      displayName: 'Ash Ops',
+    });
+
+    const result = await verifyPackageGroupHandshake({
+      db,
+      partnerCode: 'ASH',
+      jsonlPath: path,
+      forumsMetaDir: forumsDir,
+    });
+    const metaCheck = result.checks.find(c => c.id === 'forum_metadata');
+    expect(metaCheck?.ok).toBe(true);
+    expect(result.ok).toBe(true);
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
   });
 });

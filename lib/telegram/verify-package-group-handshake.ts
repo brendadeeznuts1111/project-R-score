@@ -16,6 +16,10 @@ import {
   type PackageGroupEventLogEntry,
   PENDING_PACKAGE_GROUPS_JSONL,
 } from './package-group-registry.ts';
+import {
+  loadPackageGroupForumMetadata,
+  validateForumMetadataAgainstRegistry,
+} from './package-group-forum.ts';
 
 export type HandshakeCheck = {
   id: string; // brand-ok — opaque handshake check label
@@ -83,6 +87,8 @@ export async function verifyPackageGroupHandshake(opts: {
   /** Call Telegram getChat on registry chat_id and assert forum title byte-match. */
   live?: boolean;
   telegramToken?: string | null;
+  /** Root dir for reports/telegram/forums (default cwd-relative). */
+  forumsMetaDir?: string;
 }): Promise<HandshakeVerifyResult> {
   const code = parsePartnerCode(opts.partnerCode);
   const jsonlPath = opts.jsonlPath ?? PENDING_PACKAGE_GROUPS_JSONL;
@@ -181,6 +187,27 @@ export async function verifyPackageGroupHandshake(opts: {
           ? 'linked ack chat_id matches registry'
           : `linked ${linked.chat_id} != registry ${registry.chatId}`,
     });
+  }
+
+  if (registry) {
+    const meta = await loadPackageGroupForumMetadata(code, {
+      rootDir: opts.forumsMetaDir,
+    });
+    if (!meta) {
+      checks.push({
+        id: 'forum_metadata',
+        ok: true,
+        detail:
+          'no forums metadata file (manual create or pre-branding — run ct forum-metadata-backfill)',
+      });
+    } else {
+      const v = validateForumMetadataAgainstRegistry(meta, code, registry.chatId);
+      checks.push({
+        id: 'forum_metadata',
+        ok: v.ok,
+        detail: v.detail,
+      });
+    }
   }
 
   if (opts.live && registry) {

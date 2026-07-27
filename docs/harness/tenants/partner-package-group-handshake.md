@@ -181,7 +181,25 @@ bun run telegram:ops -- link-package-group ASH -100… --invite '…'
 bun run telegram:ops -- acknowledge-pending ASH
 ```
 
-Future: MTProto auto-create — out of scope until needed.
+Future: MTProto auto-create — **implemented** (Decision #52). See [`toc-ops-repo/docs/system/TELEGRAM.md`](../../../toc-ops-repo/docs/system/TELEGRAM.md) § MTProto user lane.
+
+### Forum metadata (`reports/telegram/forums/{CODE}.json`)
+
+Written by MTProto `package-group-create-forum` or backfilled for manual forums:
+
+```bash
+cd toc-ops-repo
+bun run forum-metadata-backfill ASH PAT NOV BIL --apply --invite 'https://t.me/+…'
+```
+
+Factory verify reads metadata when present (`forum_metadata` check in `verify-package-group-handshake.ts`).
+
+| Field | Notes |
+|-------|-------|
+| `chatId` / `chatRef` | Must match registry + wired ack |
+| `topics` | `General` → thread `1` (implicit); `Ops` / `Alerts` via MTProto or unknown when backfilled |
+| `iconUploaded` | `true` when Bun.Image JPEG uploaded via MTProto `EditPhoto` |
+| `backfilled` | `true` for manual forums without MTProto branding |
 
 ---
 
