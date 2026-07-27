@@ -206,8 +206,25 @@ describe('widthOf options (Bun.stringWidth surface)', () => {
 });
 
 describe('inspect / getConsoleDepth', () => {
-  test('default depth is 4', () => {
-    expect(getConsoleDepth()).toBe(4);
+  test('default depth is 4 when BUN_CONSOLE_DEPTH is unset', () => {
+    const prev = Bun.env.BUN_CONSOLE_DEPTH;
+    delete Bun.env.BUN_CONSOLE_DEPTH;
+    try {
+      expect(getConsoleDepth()).toBe(4);
+    } finally {
+      if (prev === undefined) delete Bun.env.BUN_CONSOLE_DEPTH;
+      else Bun.env.BUN_CONSOLE_DEPTH = prev;
+    }
+  });
+  test('BUN_CONSOLE_DEPTH env overrides default', () => {
+    const prev = Bun.env.BUN_CONSOLE_DEPTH;
+    Bun.env.BUN_CONSOLE_DEPTH = '2';
+    try {
+      expect(getConsoleDepth()).toBe(2);
+    } finally {
+      if (prev === undefined) delete Bun.env.BUN_CONSOLE_DEPTH;
+      else Bun.env.BUN_CONSOLE_DEPTH = prev;
+    }
   });
   test('explicit depth option wins', () => {
     const deep = { a: { b: { c: { d: 1 } } } };

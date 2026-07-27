@@ -33,11 +33,13 @@ async function runOne(path: string, parallel: boolean): Promise<Row> {
   const args = ['test', `--timeout=${Math.min(10_000, timeoutMs - 1000)}`, '--pass-with-no-tests'];
   if (parallel) args.push('--parallel');
   args.push(path);
+  // Do not force BUN_CONSOLE_DEPTH — tests such as console-depth assert the
+  // env/default precedence and would false-fail under a probe override.
   const proc = Bun.spawn(['bun', ...args], {
     cwd: ROOT,
     stdout: 'pipe',
     stderr: 'pipe',
-    env: { ...Bun.env, BUN_CONSOLE_DEPTH: '2' },
+    env: Bun.env,
   });
 
   const killer = setTimeout(() => {
@@ -88,7 +90,7 @@ if (PARALLEL_PROBE) {
     const t0 = performance.now();
     const proc = Bun.spawn(
       ['bun', 'test', '--parallel', '--timeout=8000', '--pass-with-no-tests', ...batch],
-      { cwd: ROOT, stdout: 'pipe', stderr: 'pipe', env: { ...Bun.env, BUN_CONSOLE_DEPTH: '2' } }
+      { cwd: ROOT, stdout: 'pipe', stderr: 'pipe', env: Bun.env }
     );
     const killer = setTimeout(() => {
       try {
