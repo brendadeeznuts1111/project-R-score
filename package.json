@@ -1666,6 +1666,8 @@
     "docs:blog-codeblocks": "bun tools/bun-blog-codeblocks.ts",
     "docs:blog-examples": "bun tools/bun-docs-releases.ts scrape",
     "docs:refresh": "bun tools/bun-docs-refresh.ts",
+    "docs:refresh:fast": "bun tools/bun-docs-refresh.ts --fast",
+    "docs:refresh:feeds": "bun tools/bun-docs-refresh.ts --feeds",
     "docs:catalog:build": "bun tools/bun-docs-catalog.ts build",
     "docs:catalog": "bun tools/bun-docs-catalog.ts list",
     "docs:catalog:export": "bun tools/bun-docs-catalog.ts export --compact",
