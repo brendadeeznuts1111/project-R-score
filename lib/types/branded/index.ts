@@ -59,13 +59,9 @@ import type {
   ExperimentId,
   ExperimentVariantId,
   ExperimentAssignmentId,
+  StateCode,
 } from './operations.ts';
-import type {
-  PortalTenantId,
-  TelegramUserId,
-  PortalAccountId,
-  LinkNonceId,
-} from './portal.ts';
+import type { PortalTenantId, TelegramUserId, PortalAccountId, LinkNonceId } from './portal.ts';
 
 /** Full institutional catalog — SSOT for brand-manifest generation. */
 export const BRAND_CATALOG: readonly BrandSpec[] = [
@@ -118,6 +114,7 @@ export type AnyId =
   | ExperimentId
   | ExperimentVariantId
   | ExperimentAssignmentId
+  | StateCode
   | PortalTenantId
   | TelegramUserId
   | PortalAccountId

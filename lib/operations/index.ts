@@ -81,6 +81,21 @@ export {
   maxStakeForEdge,
   type PlayValidation,
 } from './play-validation.ts';
+export {
+  ensureStateRegulationSchema,
+  seedStateRegulations,
+  ScopedRepository,
+  ComplianceRepository,
+  getPartnerRegulatoryStatus,
+  renderRegulatoryPanelHtml,
+  requireStateCompliance,
+  REGULATED_STATE_CODES,
+  type Scope,
+  type BetComplianceInput,
+  type BetComplianceResult,
+  type PartnerRegulatoryStatus,
+  type StateComplianceBody,
+} from './state-regulation.ts';
 export { FRAUD_GUARDRAILS, detectFraudSignals } from './fraud-guard.ts';
 export {
   publishAndDispatch,

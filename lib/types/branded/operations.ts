@@ -6,6 +6,7 @@
  * Pattern (isomorphic): type + as* + try* + parse* + BRAND_SPECS entry.
  */
 
+import { BrandValidationError } from '../../core/core-errors.ts';
 import { defineBrandConstructors, type BrandSpec, type BrandedString } from './_core.ts';
 
 export type OperationId = BrandedString<'OperationId'>;
@@ -35,6 +36,11 @@ export type PartnerTemplateId = BrandedString<'PartnerTemplateId'>;
 export type GateDecisionId = BrandedString<'GateDecisionId'>;
 /** Unified ops channel outbox event id. */
 export type OpsChannelEventId = BrandedString<'OpsChannelEventId'>;
+/**
+ * US state / jurisdiction code for regulatory scoping (e.g. MA, NJ).
+ * Always stored uppercase two-letter.
+ */
+export type StateCode = BrandedString<'StateCode'>;
 
 const operation = defineBrandConstructors('OperationId');
 const resource = defineBrandConstructors('ResourceId');
@@ -131,6 +137,38 @@ export const parseGateDecisionId = gateDecisionId.parse;
 export const asOpsChannelEventId = opsChannelEventId.as;
 export const tryOpsChannelEventId = opsChannelEventId.try;
 export const parseOpsChannelEventId = opsChannelEventId.parse;
+
+/** Primary regulated jurisdictions for sports-wager compliance (MA / NJ). */
+export const REGULATED_STATE_CODES = ['MA', 'NJ'] as const;
+export type RegulatedStateCode = (typeof REGULATED_STATE_CODES)[number];
+
+const STATE_CODE_RE = /^[A-Z]{2}$/;
+
+function normalizeStateCode(value: string): string {
+  return value.trim().toUpperCase();
+}
+
+export function asStateCode(value: string): StateCode {
+  const code = normalizeStateCode(value);
+  if (!STATE_CODE_RE.test(code)) {
+    throw new BrandValidationError('StateCode', value);
+  }
+  return code as StateCode;
+}
+
+export function tryStateCode(value: string | undefined | null): StateCode | undefined {
+  if (value == null) return undefined;
+  const code = normalizeStateCode(String(value));
+  if (!code || !STATE_CODE_RE.test(code)) return undefined;
+  return code as StateCode;
+}
+
+export function parseStateCode(value: unknown): StateCode {
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new BrandValidationError('StateCode', value as never);
+  }
+  return asStateCode(value);
+}
 
 export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
   {
@@ -265,5 +303,12 @@ export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal'],
     description: 'Unified ops channel outbox event id',
+  },
+  {
+    name: 'StateCode',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['user-input', 'wire-input'],
+    description: 'US state jurisdiction code for regulatory scoping (MA, NJ, …)',
   },
 ] as const;

@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-24T06:41:03.409Z",
+  "generatedAt": "2026-07-27T09:31:47.676Z",
   "source": "lib/types/branded/ BRAND_CATALOG",
-  "brandCount": 45,
+  "brandCount": 46,
   "domains": [
     "audit",
     "deployment",
@@ -582,6 +582,20 @@
         "system-internal"
       ],
       "description": "Unified ops channel outbox event id"
+    },
+    {
+      "name": "StateCode",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "user-input",
+        "wire-input"
+      ],
+      "description": "US state jurisdiction code for regulatory scoping (MA, NJ, …)"
     },
     {
       "name": "PortalTenantId",

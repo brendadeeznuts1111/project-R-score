@@ -12,6 +12,7 @@ import { ensurePredictionSchema } from '../prediction/schema.ts';
 import { ensurePredictionShadowSchema } from '../experiments/champion-challenger.ts';
 import { ensureProvisioningSchema } from '../provisioning/schema.ts';
 import { ensurePlatformCoverageSchema } from './platform-coverage.ts';
+import { ensureStateRegulationSchema } from './state-regulation.ts';
 
 const TREE_NODE_COLUMNS = [
   ['email', 'TEXT'],
@@ -96,6 +97,7 @@ export function migrateSchema(db: Database): void {
   ensurePredictionSchema(db);
   ensurePredictionShadowSchema(db);
   ensureMonitoringSchema(db);
+  ensureStateRegulationSchema(db);
 
   const pdCols = new Set(
     (db.query('PRAGMA table_info(play_distribution)').all() as { name: string }[]).map(c => c.name)
