@@ -31,10 +31,13 @@ import {
   appendPendingPackageGroupArtifact,
   type PackageGroupCreateArtifact,
 } from '../telegram/package-group-registry.ts';
+import {
+  CALL_SIGN_PATTERN,
+  PARTNER_CODE_FROM_CALL_SIGN,
+  coerceHandshakePartnerCode,
+} from '../telegram/handshake-ref.ts';
 
-export const CALL_SIGN_PATTERN = /^[A-Z]{2,4}-\d{3}$/;
-
-export const PARTNER_CODE_FROM_CALL_SIGN = /^([A-Z]{2,4})-\d{3}$/;
+export { CALL_SIGN_PATTERN, PARTNER_CODE_FROM_CALL_SIGN, coerceHandshakePartnerCode };
 
 export type UnboundAgentSeat = {
   treeNodeId: TreeNodeId;
@@ -562,18 +565,7 @@ export function resolvePackageGroupRequest(
     );
   }
 
-  let displayName = `${partnerCode} Ops`;
-  if (ctx.parentId) {
-    const parent = db
-      .query(`SELECT name, type FROM tree_nodes WHERE id = $id`)
-      .get({ $id: ctx.parentId }) as { name: string; type: string } | null;
-    if (parent?.type === 'partner' && parent.name?.trim()) {
-      displayName = parent.name.replace(/^TOC\s+/i, '').trim() || displayName;
-    }
-  }
-  if (displayName === `${partnerCode} Ops` && ctx.name?.trim()) {
-    displayName = ctx.name.replace(/^TOC\s+/i, '').trim() || displayName;
-  }
+  const displayName = resolvePackageGroupDisplayName(db, partnerCode, ctx.parentId);
 
   const suggestedTitle = formatPackageGroupTitle(partnerCode, displayName);
   return {
@@ -583,6 +575,23 @@ export function resolvePackageGroupRequest(
     requestedBy: ctx.callSign,
     treeNodeId,
   };
+}
+
+/** Package group display name — partner parent node only (never seat call-sign). */
+export function resolvePackageGroupDisplayName(
+  db: Database,
+  partnerCode: string,
+  parentId: string | null // brand-ok — tree_nodes.parent_id wire
+): string {
+  const fallback = `${partnerCode} Ops`;
+  if (!parentId) return fallback;
+  const parent = db
+    .query(`SELECT name, type FROM tree_nodes WHERE id = $id`)
+    .get({ $id: parentId }) as { name: string; type: string } | null;
+  if (parent?.type === 'partner' && parent.name?.trim()) {
+    return parent.name.replace(/^TOC\s+/i, '').trim() || fallback;
+  }
+  return fallback;
 }
 
 export function formatPackageGroupOperatorRecipe(req: PackageGroupRequest): string[] {

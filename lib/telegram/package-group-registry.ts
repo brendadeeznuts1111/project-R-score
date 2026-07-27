@@ -9,8 +9,10 @@
  */
 import { Database } from 'bun:sqlite';
 import { formatPackageGroupTitle } from './surfaces.ts';
+import { tryHandshakePartnerCode, HANDSHAKE_PARTNER_CODE_RE } from './handshake-ref.ts';
 
-export const PARTNER_CODE_PATTERN = /^[A-Z]{2,4}$/;
+/** @deprecated use HANDSHAKE_PARTNER_CODE_RE from handshake-ref.ts */
+export const PARTNER_CODE_PATTERN = HANDSHAKE_PARTNER_CODE_RE;
 
 export const PENDING_PACKAGE_GROUPS_JSONL = 'reports/telegram/pending-package-groups.jsonl';
 
@@ -61,8 +63,7 @@ function rowToRegistry(row: DbRow): PackageGroupRegistryRow {
 }
 
 export function parsePartnerCode(raw: string): string | null {
-  const code = raw.trim().toUpperCase();
-  return PARTNER_CODE_PATTERN.test(code) ? code : null;
+  return tryHandshakePartnerCode(raw);
 }
 
 /** Telegram chat_id wire: optional leading minus, digits only. */

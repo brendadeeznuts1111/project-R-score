@@ -244,6 +244,24 @@ describe('partner onboard package', () => {
     db.close();
   });
 
+  test('resolvePackageGroupRequest uses partner parent name not seat name', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    seedExpert(db, now);
+    const parentId = randomUUIDv7();
+    db.run(
+      `INSERT INTO tree_nodes (id, type, parent_id, expert_id, name, call_sign, telegram_id, active, created_at)
+       VALUES ($id, 'partner', NULL, NULL, 'BIL Ops', 'BIL', NULL, 1, $now)`,
+      { $id: parentId, $now: now }
+    );
+    const agentId = seedAgent(db, { callSign: 'BIL-001', parentId }, now);
+    const req = resolvePackageGroupRequest(db, asTreeNodeId(agentId));
+    expect(req.partnerCode).toBe('BIL');
+    expect(req.displayName).toBe('BIL Ops');
+    expect(req.suggestedTitle).toBe('TOC Ops · BIL · BIL Ops');
+    db.close();
+  });
+
   test('emitPackageGroupCreateRequest skips JSONL on dry-run', async () => {
     const db = openOperationsDb({ path: ':memory:' });
     const now = new Date().toISOString();
