@@ -1077,16 +1077,17 @@
         "mx": [
           {
             "priority": 10,
-            "server": "mail.factory-wager.com"
+            "server": "mail.protonmail.ch"
           },
           {
             "priority": 20,
-            "server": "backup.factory-wager.com"
+            "server": "mailsec.protonmail.ch"
           }
         ],
-        "spf": "v=spf1 include:_spf.factory-wager.com ~all",
-        "dkim": "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...",
-        "dmarc": "v=DMARC1; p=quarantine; rua=mailto:dmarc@factory-wager.com; ruf=mailto:dmarc@factory-wager.com"
+        "spf": "v=spf1 include:_spf.protonmail.ch ~all",
+        "dkim": "pending — protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
+        "dmarc": "v=DMARC1; p=quarantine; rua=mailto:admin@factory-wager.com; ruf=mailto:admin@factory-wager.com; fo=1",
+        "verification": "protonmail-verification=96c089f0b6b18c1c28ff042ec54b48c7d6fe4daf"
       }
     },
     "analytics": {
@@ -1854,6 +1855,10 @@
     "env:inventory:vault": "bun scripts/env-inventory.ts --vault-only",
     "env:inventory:ratchet": "bun scripts/env-inventory.ts --ratchet",
     "env:inventory:baseline": "bun scripts/env-inventory.ts --write-baseline",
+    "vault:gap:status": "bun scripts/vault-gap-close.ts status",
+    "vault:gap:mint": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts mint'",
+    "vault:gap:wire": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts wire'",
+    "vault:gap:close": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts close'",
     "check:etag": "bun tools/verify-etag.ts",
     "check:bun-defaults": "bun tools/verify-bun-defaults.ts",
     "check:bun-defaults:once": "bun lib/http/defaults-cron.ts --once",

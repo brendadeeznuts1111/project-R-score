@@ -22,6 +22,7 @@ describe('env-secret-policy', () => {
   test('aliases resolve to canonical', () => {
     expect(resolveCanonicalSecret('TELEGRAM_BOT_TOKEN')).toBe('TELEGRAM_BOT_FACTORY');
     expect(resolveCanonicalSecret('API_KEY')).toBe('FACTORY_WAGER_TOKEN');
+    expect(resolveCanonicalSecret('TELEGRAM_CATALOG_RESEARCH_LLM_KEY')).toBe('OPENAI_API_KEY');
     expect(resolveCanonicalSecret('OPENAI_API_KEY')).toBe('OPENAI_API_KEY');
   });
 

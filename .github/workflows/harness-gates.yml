@@ -44,3 +44,7 @@ jobs:
       # One install: verify + hygiene + ci:harness (was a second repo-hygiene job).
       - name: CI core
         run: bun run ci:core
+
+      # Hard fail if new Proton Pass / env.template secret gaps appear (no live vault needed).
+      - name: Env vault-gap ratchet
+        run: bun run env:inventory:ratchet

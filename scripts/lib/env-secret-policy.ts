@@ -25,6 +25,8 @@ export const SECRET_ALIASES: Record<string, string> = {
   // Registry publish keys — same authority as FactoryWager registry token in practice
   API_KEY: 'FACTORY_WAGER_TOKEN',
   REGISTRY_API_KEY: 'FACTORY_WAGER_TOKEN',
+  // Catalog research uses OPENAI_API_KEY; dedicated key is optional override
+  TELEGRAM_CATALOG_RESEARCH_LLM_KEY: 'OPENAI_API_KEY',
 };
 
 /** Docs / sample names only — never real vault inventory debt. */
@@ -36,11 +38,11 @@ export const DEMO_SECRET_NAMES = new Set(['API_TOKEN', 'API_KEY']); // API_KEY a
  */
 export const VAULT_REQUIRED_SECRETS = [
   'OPENAI_API_KEY',
-  'TELEGRAM_CATALOG_RESEARCH_LLM_KEY',
   'PROVISION_ENCRYPTION_KEY',
   'DOD_PROOF_SECRET',
   'DOD_ID_ENCRYPTION_KEY',
   'SLACK_WEBHOOK_URL',
+  // TELEGRAM_CATALOG_RESEARCH_LLM_KEY is alias → OPENAI_API_KEY (optional override only)
 ] as const;
 
 export type SecretDisposition =

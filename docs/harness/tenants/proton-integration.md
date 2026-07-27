@@ -141,6 +141,29 @@ When adding a secret: create the Proton Pass item first, then add `{{ pass://vau
 
 After adding vault coverage, re-run `bun run env:inventory:vault` — the secret should move from “NOT in any env.template” to “used + vaulted”.
 
+### Closing actionable gaps
+
+```bash
+bun run vault:gap:status     # mintable vs human paste
+bun run vault:gap:mint       # random DOD + provision keys (needs create-capable PAT)
+bun run vault:gap:wire       # env.template pass:// lines when items exist
+bun run vault:gap:close      # mint + wire + inject verify + rebaseline
+bun run env:inventory:ratchet
+```
+
+| Env key | Pass login title | Auto-mint? |
+|---------|------------------|------------|
+| `DOD_PROOF_SECRET` | `DOD Proof Secret` | yes (random) |
+| `DOD_ID_ENCRYPTION_KEY` | `DOD ID Encryption Key` | yes (random) |
+| `PROVISION_ENCRYPTION_KEY` | `Provision Encryption Key` | yes (random) |
+| `OPENAI_API_KEY` | `OpenAI API Key` | no — paste |
+| `SLACK_WEBHOOK_URL` | `Slack Webhook URL` | no — paste |
+| `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` | — | alias of `OPENAI_API_KEY` |
+
+If `pass-cli item create` is **Killed: 9**, the agent PAT cannot create items — add logins in the Proton Pass app under vault **factorywager** with the exact titles above, then `bun run vault:gap:wire`.
+
+CI: `harness-gates` runs `bun run env:inventory:ratchet` (hard fail on **new** gaps only).
+
 ## Anti-patterns
 
 | Do not | Do instead |
