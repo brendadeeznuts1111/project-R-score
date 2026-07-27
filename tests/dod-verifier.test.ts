@@ -18,7 +18,7 @@ const PNG_1PX = Buffer.from(
 const JPEG_MAGIC = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0, 0, 0, 0, 0, 0, 0]);
 const NOT_IMAGE = new TextEncoder().encode("<?php echo 'shell'; ?>");
 
-const SCRATCH = ".tmp/dod-verifier-test";
+let SCRATCH = `.tmp/dod-verifier-test-${Bun.randomUUIDv7().slice(0, 8)}`;
 let verifier: DODVerifier;
 let counter = 0;
 let png2x2: Uint8Array;
@@ -36,6 +36,11 @@ function submission(overrides: Partial<DODSubmission> = {}): DODSubmission {
 }
 
 beforeEach(async () => {
+  // Keep the pipeline fast under parallel test:changed (no headless WebView).
+  Bun.env.DOD_WATERMARK = '0';
+  Bun.env.DOD_PLATFORM_DETECT = '0';
+  // Unique scratch per case — shared .tmp path races when the suite runs concurrent.
+  SCRATCH = `.tmp/dod-verifier-test-${Bun.randomUUIDv7()}`;
   await Bun.$`rm -rf ${SCRATCH} && mkdir -p ${SCRATCH}`.quiet();
   png2x2 = await new Bun.Image(new Uint8Array(PNG_1PX)).resize(2, 2).png().bytes();
   verifier = new DODVerifier(`${SCRATCH}/ops.db`, {

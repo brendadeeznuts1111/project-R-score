@@ -25,6 +25,11 @@ import { averageHash, hammingDistance } from './evidence.ts';
 import { requireSecret } from '../security/require-secret.ts';
 import { requireMintableSecret } from '../security/mintable-secret.ts';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
+import {
+  agentHasPlatformAccount,
+  detectPlatformFromText,
+  platformSlug,
+} from '../operations/platform-coverage.ts';
 
 /** Magic-byte sniffing: PNG, JPEG, WebP (RIFF), GIF. */
 export function validateImage(bytes: Uint8Array): boolean {
@@ -152,6 +157,8 @@ export interface DODSubmission {
   rawImage: Uint8Array;
   submittedAt: string;
   telegramMessageId?: number;
+  /** Optional book slug or display name from caption (`/dod balance draftkings`). */
+  platformHint?: string;
 }
 
 export interface DODVerification {
@@ -166,6 +173,10 @@ export interface DODVerification {
   deviceModel?: string;
   s3Path: string;
   processedAt: string;
+  /** Resolved platform id (hint or OCR) when platform detect is on. */
+  platformId?: string; // brand-ok — platforms.id slug; no PlatformId brand yet
+  /** Human-readable reason when status is flagged for account/coverage. */
+  flagReason?: string;
 }
 
 export class DODVerifier {
@@ -281,23 +292,42 @@ export class DODVerifier {
     const signature = this.sign(submission.id, visualHash, metaHash);
 
     // 8. Tamper detection
-    const tamperScore = this.detectTampering(metadata, submission);
+    let tamperScore = this.detectTampering(metadata, submission);
 
     // 8b. OCR for document types (degrades to '' on CDN/WebView failure).
-    // Balance proofs only pay the OCR cost when a liquidity hook needs the amount.
+    // Balance proofs only pay the OCR cost when a liquidity hook needs the amount,
+    // or when platform detect needs text (no explicit platformHint).
+    const needsOcrForPlatform =
+      submission.type === 'balance' &&
+      !submission.platformHint &&
+      Bun.env.DOD_PLATFORM_DETECT !== '0';
     const extractedText =
       submission.type === 'slip' ||
       submission.type === 'receipt' ||
-      (submission.type === 'balance' && this.onVerifiedBalance != null)
+      (submission.type === 'balance' && this.onVerifiedBalance != null) ||
+      needsOcrForPlatform
         ? await this.extractText(img)
         : undefined;
 
-    // 8c. Auto-approve low-risk submissions (manual review only for the rest)
-    const autoApproved = this.autoApprove(submission, tamperScore, extractedText);
+    // 8c. Platform coverage cross-check (balance DODs): missing book account → flag.
+    const platformCheck = this.checkPlatformAccount(submission, extractedText);
+    if (platformCheck.platformId && platformCheck.missingAccount) {
+      tamperScore = Math.min(100, tamperScore + 30);
+    }
+
+    // 8d. Auto-approve low-risk submissions (manual review only for the rest)
+    const autoApproved =
+      !platformCheck.missingAccount && this.autoApprove(submission, tamperScore, extractedText);
+
+    let status: DODVerification['status'] = autoApproved
+      ? 'verified'
+      : tamperScore > 70 || platformCheck.missingAccount
+        ? 'flagged'
+        : 'pending';
 
     const verification: DODVerification = {
       dodId: submission.id,
-      status: autoApproved ? 'verified' : tamperScore > 70 ? 'flagged' : 'pending',
+      status,
       visualHash,
       metadataHash: metaHash,
       signature,
@@ -307,6 +337,8 @@ export class DODVerifier {
       deviceModel: metadata.exif?.Device?.Model,
       s3Path,
       processedAt: new Date().toISOString(),
+      platformId: platformCheck.platformId,
+      flagReason: platformCheck.flagReason,
     };
 
     // 9. Persist
@@ -384,6 +416,58 @@ export class DODVerifier {
     }
   }
 
+  /**
+   * Balance DODs: resolve platform from `platformHint` or OCR aliases, then
+   * flag when the agent has no active account on that book.
+   * Disable with `DOD_PLATFORM_DETECT=0`.
+   */
+  private checkPlatformAccount(
+    sub: DODSubmission,
+    extractedText?: string
+  ): {
+    platformId?: string; // brand-ok — platforms.id slug; no PlatformId brand yet
+    missingAccount: boolean;
+    flagReason?: string;
+  } {
+    if (Bun.env.DOD_PLATFORM_DETECT === '0') {
+      return { missingAccount: false };
+    }
+    if (sub.type !== 'balance') {
+      return { missingAccount: false };
+    }
+
+    try {
+      let platformId: string | undefined; // brand-ok — platforms.id slug
+      if (sub.platformHint?.trim()) {
+        const slug = platformSlug(sub.platformHint.trim());
+        const exists = this.db
+          .query(`SELECT id FROM platforms WHERE id = $id LIMIT 1`)
+          .get({ $id: slug }) as { id: string } | null; // brand-ok — platforms.id
+        platformId = exists?.id ?? slug;
+      } else {
+        const detected = detectPlatformFromText(this.db, extractedText);
+        if (detected) platformId = detected;
+      }
+
+      if (!platformId) {
+        return { missingAccount: false };
+      }
+
+      if (agentHasPlatformAccount(this.db, sub.agentId, platformId)) {
+        return { platformId, missingAccount: false };
+      }
+
+      return {
+        platformId,
+        missingAccount: true,
+        flagReason: `no active account for platform ${platformId}`,
+      };
+    } catch {
+      // DOD-only DBs without platforms / PPA tables skip the check.
+      return { missingAccount: false };
+    }
+  }
+
   // ── Auto-Approve Rules ─────────────────────────────────────────
   private autoApprove(sub: DODSubmission, tamperScore: number, extractedText?: string): boolean {
     // 20 is the no-EXIF floor (screenshots legitimately lack EXIF); anything
@@ -405,6 +489,8 @@ export class DODVerifier {
 
   // ── Watermark via WebView ──────────────────────────────────────
   private async applyWatermark(img: Bun.Image, sub: DODSubmission): Promise<Bun.Image> {
+    // Tests / batch tooling: skip headless WebView (set DOD_WATERMARK=0).
+    if (Bun.env.DOD_WATERMARK === '0') return img;
     try {
       const text = `OPS-${sub.agentId.slice(0, 8)}-${sub.id.slice(0, 8)}`;
       const meta = await img.metadata();
