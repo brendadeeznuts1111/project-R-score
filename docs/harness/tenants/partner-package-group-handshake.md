@@ -257,7 +257,9 @@ bun run telegram:ops:consume -- --preview
 - [x] ct surface map can register same title (demo DB wire proved `telegram_ref`)
 - [x] NOV package forum wired (`-1004464761699`) · verify 9/9 live · desk OK
 
-Optional Soft automation (Decision #52): `bun run package-group-create-forum CODE` in `toc-ops-repo` when MTProto session configured — see [`toc-ops-repo/docs/system/TELEGRAM.md`](../../../toc-ops-repo/docs/system/TELEGRAM.md).
+Optional Soft automation (Decision #52): `bun run package-group-create-forum CODE` in `toc-ops-repo` when MTProto session configured — see [`toc-ops-repo/docs/system/TELEGRAM.md`](../../../toc-ops-repo/docs/system/TELEGRAM.md) § MTProto App Registry + bootstrap troubleshooting.
+
+- [x] MTProto session bootstrapped (2026-07-26) · `bun run telegram-user-health` → OK in `toc-ops-repo`
 
 ---
 
