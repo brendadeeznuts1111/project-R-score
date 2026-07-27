@@ -56,8 +56,22 @@ fi
 
 export PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN"
 # login exits non-zero when session already active — must not abort callers with set -e
+# Some hosts SIGKILL pass-cli (exit 137) — detect and degrade gracefully
+if ! command -v pass-cli >/dev/null 2>&1; then
+  echo "⚠️  pass-cli not on PATH — vault inject unavailable"
+  echo "   Local mint path: bun run vault:gap:mint-local"
+  return 0
+fi
 PROTON_PASS_PERSONAL_ACCESS_TOKEN="$TOKEN" pass-cli login 2>/dev/null || true
 
-echo "✅ Proton Pass editor access loaded for: $1"
+echo "✅ Proton Pass agent token loaded for: $1"
 echo "   Session: $PROTON_PASS_SESSION_DIR"
-pass-cli info 2>&1 | grep "Personal Access Token" || true
+if ! pass-cli info 2>/dev/null | grep -q "Personal Access Token"; then
+  # Probe: if even info is killed, warn (exit 137 common in restricted sandboxes)
+  if ! pass-cli --version >/dev/null 2>&1; then
+    echo "⚠️  pass-cli not executable here (often Killed:9 / exit 137)"
+    echo "   Use Terminal.app for pass-cli, or: bun run vault:gap:mint-local"
+  fi
+else
+  pass-cli info 2>&1 | grep "Personal Access Token" || true
+fi

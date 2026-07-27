@@ -14,6 +14,7 @@
 import { Database } from 'bun:sqlite';
 import { encryptAesGcm } from '../dod/verifier.ts';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
+import { requireMintableSecret } from '../security/mintable-secret.ts';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -61,7 +62,9 @@ export function isSandboxPlatform(platform: {
 // ── Encryption ─────────────────────────────────────────────────────
 
 function resolveKey(encryptionKey?: string): string | undefined {
-  return encryptionKey ?? Bun.env.PROVISION_ENCRYPTION_KEY;
+  if (encryptionKey?.trim()) return encryptionKey.trim();
+  // env → ~/.factorywager/minted-secrets → mint (vault inject still wins via env)
+  return requireMintableSecret('PROVISION_ENCRYPTION_KEY');
 }
 
 async function encryptCredentials(bundle: CredentialBundle, keyMaterial: string): Promise<string> {

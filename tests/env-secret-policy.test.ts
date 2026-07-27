@@ -26,17 +26,18 @@ describe('env-secret-policy', () => {
     expect(resolveCanonicalSecret('OPENAI_API_KEY')).toBe('OPENAI_API_KEY');
   });
 
-  test('disposition vaulted vs alias vs required', () => {
+  test('disposition vaulted vs alias vs required vs mintable', () => {
     const vaulted = new Set(['FACTORY_WAGER_TOKEN', 'TELEGRAM_BOT_FACTORY', 'CLOUDFLARE_API_TOKEN']);
     expect(dispositionForSecret('CLOUDFLARE_API_TOKEN', vaulted)).toBe('vaulted');
     expect(dispositionForSecret('TELEGRAM_BOT_TOKEN', vaulted)).toBe('alias');
     expect(dispositionForSecret('API_KEY', vaulted)).toBe('alias');
     expect(dispositionForSecret('OPENAI_API_KEY', vaulted)).toBe('vault-required');
+    expect(dispositionForSecret('PROVISION_ENCRYPTION_KEY', vaulted)).toBe('runtime-mintable');
     expect(dispositionForSecret('FW_INFRA_SECRETS_SERVICE', vaulted)).toBe('bun-secrets-service');
     expect(dispositionForSecret('API_TOKEN', vaulted)).toBe('demo');
   });
 
-  test('actionableVaultGaps ignores aliases of vaulted keys and services', () => {
+  test('actionableVaultGaps is human-paste only (mintable excluded)', () => {
     const vaulted = new Set(['FACTORY_WAGER_TOKEN', 'TELEGRAM_BOT_FACTORY']);
     const used = [
       'TELEGRAM_BOT_TOKEN',
@@ -45,10 +46,12 @@ describe('env-secret-policy', () => {
       'API_TOKEN',
       'OPENAI_API_KEY',
       'PROVISION_ENCRYPTION_KEY',
+      'DOD_PROOF_SECRET',
+      'SLACK_WEBHOOK_URL',
     ];
     expect(actionableVaultGaps(used, vaulted)).toEqual([
       'OPENAI_API_KEY',
-      'PROVISION_ENCRYPTION_KEY',
+      'SLACK_WEBHOOK_URL',
     ]);
   });
 });

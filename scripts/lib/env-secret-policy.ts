@@ -3,7 +3,7 @@
  * env-secret-policy.ts — classify harness secret-shaped Bun.env names for vault SSOT.
  *
  * Used by env-inventory + gap ratchet. Not every *TOKEN/*SECRET is a Proton Pass item:
- * some are Bun.secrets service IDs, aliases of vaulted keys, or docs/demo names.
+ * some are Bun.secrets service IDs, aliases of vaulted keys, demos, or machine-mintable.
  */
 
 /** Bun.secrets service / feature flags — string labels, not password material. */
@@ -22,40 +22,43 @@ export const BUN_SECRETS_SERVICE_ENV = new Set([
  */
 export const SECRET_ALIASES: Record<string, string> = {
   TELEGRAM_BOT_TOKEN: 'TELEGRAM_BOT_FACTORY',
-  // Registry publish keys — same authority as FactoryWager registry token in practice
   API_KEY: 'FACTORY_WAGER_TOKEN',
   REGISTRY_API_KEY: 'FACTORY_WAGER_TOKEN',
-  // Catalog research uses OPENAI_API_KEY; dedicated key is optional override
   TELEGRAM_CATALOG_RESEARCH_LLM_KEY: 'OPENAI_API_KEY',
 };
 
 /** Docs / sample names only — never real vault inventory debt. */
-export const DEMO_SECRET_NAMES = new Set(['API_TOKEN', 'API_KEY']); // API_KEY also alias; demo wins in samples
+export const DEMO_SECRET_NAMES = new Set(['API_TOKEN']);
 
 /**
- * Secrets that should eventually have pass:// in env.template (operator material).
- * Used for ratchet baseline — not aliases, not service IDs, not demos.
+ * Third-party / human-paste secrets — must be vaulted (cannot machine-mint).
+ * Ratchet baseline tracks these only.
  */
-export const VAULT_REQUIRED_SECRETS = [
-  'OPENAI_API_KEY',
-  'PROVISION_ENCRYPTION_KEY',
+export const VAULT_REQUIRED_SECRETS = ['OPENAI_API_KEY', 'SLACK_WEBHOOK_URL'] as const;
+
+/**
+ * Machine-mintable material (env inject still preferred multi-host SSOT).
+ * Closed operationally via ~/.factorywager/minted-secrets + vault:gap:mint-local.
+ * Not ratchet-blocking.
+ */
+export const RUNTIME_MINTABLE_SECRETS = [
   'DOD_PROOF_SECRET',
   'DOD_ID_ENCRYPTION_KEY',
-  'SLACK_WEBHOOK_URL',
-  // TELEGRAM_CATALOG_RESEARCH_LLM_KEY is alias → OPENAI_API_KEY (optional override only)
+  'PROVISION_ENCRYPTION_KEY',
+  'PLAY_SIGNING_SECRET',
 ] as const;
 
 export type SecretDisposition =
-  | 'vaulted' // has pass:// in a template (or alias of vaulted)
-  | 'vault-required' // used in code; needs Proton Pass + template
-  | 'alias' // maps to another env key
-  | 'bun-secrets-service' // service name for Bun.secrets, not a password
-  | 'demo' // docs/samples
-  | 'unknown-secret'; // secret-shaped but unclassified
+  | 'vaulted'
+  | 'vault-required'
+  | 'runtime-mintable'
+  | 'alias'
+  | 'bun-secrets-service'
+  | 'demo'
+  | 'unknown-secret';
 
 export function isBunSecretsServiceEnv(name: string): boolean {
   if (BUN_SECRETS_SERVICE_ENV.has(name)) return true;
-  // e.g. FOO_SECRETS_SERVICE
   if (/_SECRETS_SERVICE$/.test(name)) return true;
   if (name.endsWith('_SERVICE') && /SECRET|INFRA|REGISTRY|PROFILE|R2/.test(name)) return true;
   return false;
@@ -67,19 +70,19 @@ export function resolveCanonicalSecret(name: string): string {
 
 export function dispositionForSecret(name: string, vaultedKeys: Set<string>): SecretDisposition {
   if (isBunSecretsServiceEnv(name)) return 'bun-secrets-service';
-  if (DEMO_SECRET_NAMES.has(name) && name === 'API_TOKEN') return 'demo';
+  if (DEMO_SECRET_NAMES.has(name)) return 'demo';
 
   const canonical = resolveCanonicalSecret(name);
-  if (name !== canonical) {
-    if (vaultedKeys.has(canonical)) return 'alias';
-    return 'alias'; // still alias even if target not vaulted yet
-  }
+  if (name !== canonical) return 'alias';
 
   if (vaultedKeys.has(name)) return 'vaulted';
 
+  if ((RUNTIME_MINTABLE_SECRETS as readonly string[]).includes(name)) {
+    return 'runtime-mintable';
+  }
+
   if ((VAULT_REQUIRED_SECRETS as readonly string[]).includes(name)) return 'vault-required';
 
-  // Generic API_KEY used as registry alias when not demo-only
   if (name === 'API_KEY') {
     return vaultedKeys.has('FACTORY_WAGER_TOKEN') ? 'alias' : 'vault-required';
   }
@@ -87,32 +90,40 @@ export function dispositionForSecret(name: string, vaultedKeys: Set<string>): Se
   return 'unknown-secret';
 }
 
-/** Actionable vault debt for ratchet (sorted unique). */
+/**
+ * Actionable vault debt for ratchet — human-paste secrets only.
+ * Runtime-mintable keys are not ratchet-blocking.
+ */
 export function actionableVaultGaps(secretNamesUsed: string[], vaultedKeys: Set<string>): string[] {
   const gaps = new Set<string>();
-  for (const name of secretNamesUsed) {
-    if (isBunSecretsServiceEnv(name)) continue;
-    if (name === 'API_TOKEN') continue; // demo
-    const d = dispositionForSecret(name, vaultedKeys);
-    if (d === 'vault-required' || d === 'unknown-secret') {
-      // Prefer canonical name for aliases that aren't vaulted
-      const canonical = resolveCanonicalSecret(name);
-      if (!vaultedKeys.has(canonical)) {
-        gaps.add(canonical === name || d === 'unknown-secret' ? name : canonical);
-      }
-    }
-    // alias whose target is missing still counts as target gap
-    if (d === 'alias') {
-      const c = resolveCanonicalSecret(name);
-      if (!vaultedKeys.has(c) && !(VAULT_REQUIRED_SECRETS as readonly string[]).includes(c)) {
-        // FACTORY_WAGER_TOKEN should already be vaulted; if not, gap
-        if (!vaultedKeys.has(c)) gaps.add(c);
-      }
-    }
-  }
-  // Always include vault-required that appear in code
+  const used = new Set(secretNamesUsed);
+  const mintable = new Set(RUNTIME_MINTABLE_SECRETS as readonly string[]);
+
+  // Direct human-required
   for (const req of VAULT_REQUIRED_SECRETS) {
-    if (secretNamesUsed.includes(req) && !vaultedKeys.has(req)) gaps.add(req);
+    if (vaultedKeys.has(req)) continue;
+    if (used.has(req)) {
+      gaps.add(req);
+      continue;
+    }
+    // Any alias that maps to this required key
+    for (const [alias, target] of Object.entries(SECRET_ALIASES)) {
+      if (target === req && used.has(alias)) gaps.add(req);
+    }
   }
+
+  // Aliases whose canonical is human-required and missing
+  for (const name of secretNamesUsed) {
+    if (mintable.has(name)) continue;
+    const canonical = resolveCanonicalSecret(name);
+    if (mintable.has(canonical)) continue;
+    if (
+      (VAULT_REQUIRED_SECRETS as readonly string[]).includes(canonical) &&
+      !vaultedKeys.has(canonical)
+    ) {
+      gaps.add(canonical);
+    }
+  }
+
   return [...gaps].sort();
 }

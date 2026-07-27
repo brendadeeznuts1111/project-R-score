@@ -143,26 +143,37 @@ After adding vault coverage, re-run `bun run env:inventory:vault` — the secret
 
 ### Closing actionable gaps
 
+**Two planes:**
+
+| Plane | What | When |
+|-------|------|------|
+| **Machine-local mint** | `~/.factorywager/minted-secrets/<KEY>` | `pass-cli` dead / first boot |
+| **Proton Pass inject** | `env.template` `pass://` → `.env` | multi-host SSOT |
+
 ```bash
-bun run vault:gap:status     # mintable vs human paste
-bun run vault:gap:mint       # random DOD + provision keys (needs create-capable PAT)
-bun run vault:gap:wire       # env.template pass:// lines when items exist
-bun run vault:gap:close      # mint + wire + inject verify + rebaseline
-bun run env:inventory:ratchet
+bun run vault:gap:status         # offline-capable status
+bun run vault:gap:mint-local     # mint DOD + provision (+ play) to disk
+bun run vault:gap:export-minted  # print pass-cli create lines for Terminal.app
+bun run vault:gap:mint           # Pass CLI create (needs working pass-cli)
+bun run vault:gap:wire           # env.template pass:// when Pass items exist
+bun run vault:gap:close          # mint-local (+ Pass if available) + rebaseline
+bun run env:inventory:ratchet    # human gaps only (OPENAI, SLACK)
 ```
 
-| Env key | Pass login title | Auto-mint? |
-|---------|------------------|------------|
-| `DOD_PROOF_SECRET` | `DOD Proof Secret` | yes (random) |
-| `DOD_ID_ENCRYPTION_KEY` | `DOD ID Encryption Key` | yes (random) |
-| `PROVISION_ENCRYPTION_KEY` | `Provision Encryption Key` | yes (random) |
-| `OPENAI_API_KEY` | `OpenAI API Key` | no — paste |
-| `SLACK_WEBHOOK_URL` | `Slack Webhook URL` | no — paste |
-| `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` | — | alias of `OPENAI_API_KEY` |
+| Env key | Pass title | Ratchet? | Local mint? |
+|---------|------------|----------|-------------|
+| `DOD_PROOF_SECRET` | `DOD Proof Secret` | no | yes |
+| `DOD_ID_ENCRYPTION_KEY` | `DOD ID Encryption Key` | no | yes |
+| `PROVISION_ENCRYPTION_KEY` | `Provision Encryption Key` | no | yes |
+| `OPENAI_API_KEY` | `OpenAI API Key` | **yes** | no |
+| `SLACK_WEBHOOK_URL` | `Slack Webhook URL` | **yes** | no |
+| `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` | — | via OPENAI alias | no |
 
-If `pass-cli item create` is **Killed: 9**, the agent PAT cannot create items — add logins in the Proton Pass app under vault **factorywager** with the exact titles above, then `bun run vault:gap:wire`.
+Code path: `requireSecret` / `requireMintableSecret` in [`lib/security/mintable-secret.ts`](../../../lib/security/mintable-secret.ts) — **env inject wins**, then local mint.
 
-CI: `harness-gates` runs `bun run env:inventory:ratchet` (hard fail on **new** gaps only).
+If `pass-cli` is **Killed: 9** (common in restricted agent hosts), use `mint-local` + export in Terminal.app / Pass UI.
+
+CI: `harness-gates` runs `bun run env:inventory:ratchet` (hard fail on **new human** gaps only).
 
 ## Anti-patterns
 
@@ -173,3 +184,16 @@ CI: `harness-gates` runs `bun run env:inventory:ratchet` (hard fail on **new** g
 | Treat `.env` as source of truth | Treat `.env` as generated; re-inject after rotation |
 | Use `/user/tokens/verify` for `cfat_` tokens | Use account verify or `bun run cloudflare:env:validate` |
 | Point template at vault items that do not exist | `bun run proton:check` before shipping template changes |
+
+## DNS token & DKIM remediation
+
+Audit-run findings (2026-07-27): the main account token (`CLOUDFLARE_API_TOKEN`) has **no** `Zone.DNS:Read/Edit` (verified 403) and no Access scope (verified 403). The separate vault item `Cloudflare API Token (DNS)` → `CLOUDFLARE_DNS_API_TOKEN` **has** `Zone.DNS:Read` (verified HTTP 200 on `dns_records`); Edit scope was not exercised (no mutations were needed). The three Proton DKIM CNAMEs (`protonmail[23]._domainkey.factory-wager.com`) **already exist and resolve publicly** — confirmed via the API and DNS-over-HTTPS (plain `dig` to 1.1.1.1 is blocked on this network; use `curl -H 'accept: application/dns-json' https://cloudflare-dns.com/dns-query?name=...&type=CNAME`). DKIM values were not needed from the vault; no vault item holds them (they live in the Proton dashboard).
+
+Human steps if DNS records ever need (re)applying:
+
+1. Mint/confirm a Cloudflare token with `Zone.DNS:Edit` scoped to the `factory-wager.com` zone.
+2. Store it in the Proton vault item `Cloudflare API Token (DNS)` (field `password`).
+3. `bun run proton:inject:factorywager:reasonix` — writes `CLOUDFLARE_DNS_API_TOKEN` into `~/.reasonix/.env`.
+4. Get the three DKIM targets from the Proton dashboard → Domain names → factory-wager.com → DKIM (per-domain, not in the vault). Export as `PROTON_DKIM_TARGET_1/2/3` (order: `protonmail`, `protonmail2`, `protonmail3`).
+5. `bash scripts/cloudflare-dns-sync.sh` (dry-run) → `bash scripts/cloudflare-dns-sync.sh --apply`.
+6. Verify: `dig +short CNAME protonmail._domainkey.factory-wager.com` (or the DoH command above where port 53 is blocked).

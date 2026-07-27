@@ -23,6 +23,7 @@
 import { Database } from 'bun:sqlite';
 import { averageHash, hammingDistance } from './evidence.ts';
 import { requireSecret } from '../security/require-secret.ts';
+import { requireMintableSecret } from '../security/mintable-secret.ts';
 import { DEFAULT_OPS_DB_PATH } from '../operations/db.ts';
 
 /** Magic-byte sniffing: PNG, JPEG, WebP (RIFF), GIF. */
@@ -190,7 +191,8 @@ export class DODVerifier {
     this.evidenceRoot = opts.evidenceRoot ?? 'public/evidence';
     this.registryPath = opts.registryPath ?? 'public/registry/dod-registry.json';
     this.store = opts.store ?? r2EvidenceStoreFromEnv() ?? localEvidenceStore(this.evidenceRoot);
-    this.idEncryptionKey = opts.idEncryptionKey ?? Bun.env.DOD_ID_ENCRYPTION_KEY;
+    // Prefer explicit opt → env → machine-local mint
+    this.idEncryptionKey = opts.idEncryptionKey ?? requireMintableSecret('DOD_ID_ENCRYPTION_KEY');
     this.onVerifiedBalance = opts.onVerifiedBalance;
     this.db = new Database(dbPath);
     this.db.run('PRAGMA journal_mode=WAL');
