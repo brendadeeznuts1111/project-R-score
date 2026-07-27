@@ -36,6 +36,11 @@ case "${1:-}" in
     export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-cascade"
     TOKEN="${PROTON_PASS_CASCADE_TOKEN}"
     ;;
+  partners)
+    export PROTON_PASS_KEY_PROVIDER=fs
+    export PROTON_PASS_SESSION_DIR="/tmp/pass-agent-partners"
+    TOKEN="${PROTON_PASS_PARTNERS_TOKEN}"
+    ;;
   *)
     echo "Usage: source scripts/agent-env.sh <project>"
     echo "Projects: factorywager, cloudflare, bet-ticker, cascade-mover"

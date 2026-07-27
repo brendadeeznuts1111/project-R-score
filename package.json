@@ -1085,7 +1085,7 @@
           }
         ],
         "spf": "v=spf1 include:_spf.protonmail.ch ~all",
-        "dkim": "pending — protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
+        "dkim": "pending \u2014 protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
         "dmarc": "v=DMARC1; p=quarantine; rua=mailto:admin@factory-wager.com; ruf=mailto:admin@factory-wager.com; fo=1",
         "verification": "protonmail-verification=96c089f0b6b18c1c28ff042ec54b48c7d6fe4daf"
       }
@@ -1602,6 +1602,8 @@
     "test:ci": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && bun test --timeout=30000 --pass-with-no-tests tests --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
     "test:ci:shard": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && bun test --timeout=30000 --pass-with-no-tests tests --shard=\"${SHARD:-1/4}\" --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
     "test:ci:shard:parallel": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && bun test --parallel=4 --timeout=30000 --pass-with-no-tests tests --shard=\"${SHARD:-1/4}\" --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
+    "test:inventory": "bun scripts/test-suite-inventory.ts",
+    "test:inventory:json": "bun scripts/test-suite-inventory.ts --json",
     "proof:install": "bun run install:verify",
     "ratchet": "bun tools/ratchet.ts",
     "ratchet:canary": "bun tools/ratchet.ts --channel=canary",
@@ -2035,7 +2037,8 @@
     "cloudflare:deploy:vault": "bash scripts/proton-deploy.sh pages --wait --verify",
     "cloudflare:validate:vault": "bash scripts/proton-run.sh factorywager --reasonix -- bun run cloudflare:env:validate",
     "proton:audit:quick": "PROTON_PASS_KEY_PROVIDER=fs PROTON_PASS_SESSION_DIR=/tmp/pass-agent-admin pass-cli share list --output json",
-    "proton:snapshot:vps": "bun scripts/vps-health-snapshot.ts"
+    "proton:snapshot:vps": "bun scripts/vps-health-snapshot.ts",
+    "proton:partner:provision": "source scripts/agent-env.sh partners && PROTON_PASS_AGENT_REASON=\"Provisioning partner secrets\" bun scripts/provision-partner-secrets.ts"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",
