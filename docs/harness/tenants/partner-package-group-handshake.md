@@ -30,10 +30,20 @@
 
 | Concept | Example | Notes |
 |---------|---------|-------|
-| Partner **code** | `ASH` | Package / parent — **not** seat call-sign |
-| Call-sign **seat** | `ASH-001` | Triggers onboard; maps to code via prefix |
-| CLI ref normalization | `BIL` or `BIL-001` | Handshake CLIs coerce seat → partner **code** (`coerceHandshakePartnerCode` / `partnerCodeFromHandshakeRef`) |
-| Package group title | `TOC Ops · ASH · Ash Ops` | `TOC Ops · {CODE} · {DisplayName}` — display from **partner parent** node name, never seat |
+| Partner **code** | `ASH` | Package / parent — used by **package-group** CLIs only |
+| Call-sign **seat** | `ASH-001` | Agent seat — used by **onboard** CLI only |
+| Package group title | `TOC Ops · ASH · Ash Ops` | `TOC Ops · {CODE} · {DisplayName}` — display from partner parent `name` |
+
+**CLI ref rule (strict — no cross-acceptance):**
+
+| Command | Ref | Example |
+|---------|-----|---------|
+| `onboard-partner-package.ts` | call-sign | `BIL-001` |
+| `package-group-create-forum` | partner CODE | `BIL` |
+| `package-group-wire` | partner CODE | `BIL` |
+| `link-package-group` | partner CODE | `BIL` |
+
+Passing `BIL` to onboard or `BIL-001` to create-forum fails with a redirect message.
 
 House ops groups (`TOC Ops · HQ`, `TOC Ops · ASH · staging`, `TOC Ops · sandbox`) are separate surfaces — see [`telegram-factory.md`](telegram-factory.md).
 

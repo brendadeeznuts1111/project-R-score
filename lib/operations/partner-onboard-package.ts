@@ -34,10 +34,12 @@ import {
 import {
   CALL_SIGN_PATTERN,
   PARTNER_CODE_FROM_CALL_SIGN,
-  coerceHandshakePartnerCode,
+  partnerCodeFromCallSign,
+  assertCallSignArg,
+  HANDSHAKE_PARTNER_CODE_RE,
 } from '../telegram/handshake-ref.ts';
 
-export { CALL_SIGN_PATTERN, PARTNER_CODE_FROM_CALL_SIGN, coerceHandshakePartnerCode };
+export { CALL_SIGN_PATTERN, PARTNER_CODE_FROM_CALL_SIGN, partnerCodeFromCallSign };
 
 export type UnboundAgentSeat = {
   treeNodeId: TreeNodeId;
@@ -94,6 +96,11 @@ export type PartnerOnboardPackageOpts = AssignOnboardingOpts & {
 export function resolveOnboardTreeNodeId(db: Database, ref: string): TreeNodeId {
   const trimmed = ref.trim();
   if (!trimmed) throw new Error('Empty tree node reference');
+
+  const upper = trimmed.toUpperCase();
+  if (HANDSHAKE_PARTNER_CODE_RE.test(upper) && !upper.includes('-')) {
+    assertCallSignArg(trimmed);
+  }
 
   if (CALL_SIGN_PATTERN.test(trimmed)) {
     const row = db
@@ -523,13 +530,6 @@ export type PackageGroupRequest = {
   treeNodeId: TreeNodeId;
 };
 
-/** Extract partner package code from seat call-sign (ASH-001 → ASH). */
-export function partnerCodeFromCallSign(callSign: string | null): string | null {
-  if (!callSign?.trim()) return null;
-  const m = callSign.trim().match(PARTNER_CODE_FROM_CALL_SIGN);
-  return m ? m[1]! : null;
-}
-
 /** Resolve package group title inputs for a seat (code + display name). */
 export function resolvePackageGroupRequest(
   db: Database,
@@ -554,7 +554,7 @@ export function resolvePackageGroupRequest(
       if (!partnerCode && parent.name) {
         const fromName = parent.name.replace(/^TOC\s+/i, '').trim();
         const token = fromName.split(/\s+/)[0]?.toUpperCase();
-        if (token && /^[A-Z]{2,4}$/.test(token)) partnerCode = token;
+        if (token && /^[A-Z]{3,6}$/.test(token)) partnerCode = token;
       }
     }
   }

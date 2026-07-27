@@ -59,6 +59,7 @@ describe('partner onboard package', () => {
     expect(resolveOnboardTreeNodeId(db, 'ASH-001')).toEqual(asTreeNodeId(agentId));
     expect(resolveOnboardTreeNodeId(db, agentId)).toEqual(asTreeNodeId(agentId));
     expect(() => resolveOnboardTreeNodeId(db, 'ZZZ-999')).toThrow(/Unknown call sign/);
+    expect(() => resolveOnboardTreeNodeId(db, 'BIL')).toThrow(/seat call-sign \(BIL-001\)/);
     db.close();
   });
 
