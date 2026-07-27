@@ -14,6 +14,7 @@ import {
   formatHandshakeDeskTable,
 } from '../lib/telegram/handshake-desk.ts';
 import { formatMembershipDeskCell } from '../lib/telegram/package-group-membership.ts';
+import { getPackageGroupRegistry } from '../lib/telegram/package-group-registry.ts';
 import { PENDING_PACKAGE_GROUPS_JSONL } from '../lib/telegram/package-group-registry.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
@@ -73,7 +74,8 @@ try {
       console.log('   CODE  MEMBERS       SEAT       INVITE');
       console.log('   ----  ------------  ---------  ------');
       for (const r of rows) {
-        const invite = r.hasInvite ? 'yes (registry)' : 'missing';
+        const reg = getPackageGroupRegistry(db, r.partnerCode);
+        const invite = reg?.inviteLink?.trim() || '(missing)';
         console.log(
           `   ${r.partnerCode.padEnd(4)}  ${formatMembershipDeskCell(r.membershipTell, r.dmSeatStatus).padEnd(12)}  ${(r.requestedBy ?? '—').padEnd(9)}  ${invite}`
         );

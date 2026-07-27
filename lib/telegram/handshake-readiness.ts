@@ -44,6 +44,7 @@ export type HandshakeReadinessRow = {
   handshakeOk: boolean;
   dmSeat: DmSeatAssessment;
   membershipTell: PackageGroupMembershipTell;
+  inviteLink: string | null;
   outboxRoutingOk: boolean;
   outboxRoutingDetail: string;
   verify: HandshakeVerifyResult;
@@ -165,6 +166,7 @@ export async function assessHandshakeReadiness(opts: {
     handshakeOk,
     dmSeat,
     membershipTell,
+    inviteLink: reg?.inviteLink ?? null,
     outboxRoutingOk,
     outboxRoutingDetail,
     verify,
@@ -249,11 +251,7 @@ export function formatForumInviteGapReport(rows: readonly HandshakeReadinessRow[
     '----  ---------  -----------  ------',
   ];
   for (const r of gaps) {
-    const invite =
-      r.verify && r.gaps.length
-        ? (r.nextSteps.find(s => s.startsWith('send invite:'))?.replace('send invite: ', '') ??
-          '(see registry invite_link)')
-        : '(see registry invite_link)';
+    const invite = r.inviteLink?.trim() || '(no invite in registry)';
     const mem = formatMembershipDeskCell(r.membershipTell, r.dmSeat.status);
     const seat = r.dmSeat.callSign ?? '—';
     lines.push(`${r.partnerCode.padEnd(4)}  ${mem.padEnd(9)}  ${seat.padEnd(11)}  ${invite}`);
