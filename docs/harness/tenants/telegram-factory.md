@@ -21,15 +21,9 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 
 **Full identity integration** (cellphone → profile → seat → ChatChannelMeta → HTML templates): [`partner-onboarding-package.md`](partner-onboarding-package.md).
 
-**Package group bridge** (factory emit → manual ct forum → `link-package-group`): [`partner-package-group-handshake.md`](partner-package-group-handshake.md).
+**Package group bridge:** [`partner-package-group-handshake.md`](partner-package-group-handshake.md) · machine ref: `bun run telegram:handshake:catalog`
 
 **Soft assist** (after factory JSONL): `bun run ct package-group-pending` · `bun run ct package-group-wire CODE --chat tg:chat:-100… --apply --ack` (in `toc-ops-repo`).
-
-**Handshake verify:** `bun run telegram:handshake:verify ASH` — see [`partner-package-group-handshake.md`](partner-package-group-handshake.md#e2e-validation-runbook).
-
-**Handshake desk:** `bun run telegram:handshake:desk` — registry + known chats + verify in one table ([ADR-0003](../../adr/0003-telegram-handshake-desk.md)). **`MEMBERS`** column interprets forum headcount (bot + house + partner) — see [`partner-package-group-handshake.md`](partner-package-group-handshake.md#group-membership-model-member-count-tell). Flags: **`--refresh`**, **`--invite-gap`**, **`--live`**, **`--detail`**, **`--json`**.
-
-**Readiness / invite-gap / designate:** [`partner-package-group-handshake.md`](partner-package-group-handshake.md#readiness-phased-e2e) · `bun run telegram:handshake:readiness` · `bun run telegram:handshake:invite-gap` · `bun run telegram:ops -- designate-dm-seat CODE CODE-001`
 
 Transport health API: [`lib/telegram/telegram-transport-health.ts`](../../../lib/telegram/telegram-transport-health.ts) · `bun run telegram:verify -- --json`
 
@@ -42,8 +36,7 @@ Bot API has no membership list. On each drained update, Bun upserts `chat.id` in
 | Directory table | `bun run telegram:ops -- directory` |
 | Rich directory (package join) | `bun run telegram:ops -- directory --rich` |
 | Refresh titles / member counts | `bun run telegram:ops -- directory --refresh` or `telegram:discover -- --refresh` |
-| Verify handshake | `bun run telegram:handshake:verify ASH` | JSONL + registry lifecycle checks |
-| Desk (registry + metadata + verify) | `bun run telegram:handshake:desk` | Read-side SSOT; `--live` · `--refresh` · `--invite-gap` · `--detail` · `--json` |
+| Handshake (package groups) | [`partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) · `bun run telegram:handshake:catalog` |
 | Broadcast (direct) | `bun run telegram:ops -- send --all "text"` | Rate-limited immediate send + `ops_broadcast_log` |
 | Broadcast (queued) | `bun run telegram:ops -- send --all --queue "text"` | Enqueue per chat; drain via `telegram:ops:consume` |
 
@@ -95,7 +88,7 @@ Token SSOT: [`loadTelegramEnv()`](../../../lib/telegram/telegram-config.ts) → 
 | `TELEGRAM_BOT_FACTORY` | Yes (or legacy `TELEGRAM_BOT_TOKEN`) | Factory tenant token — [`config/tenants.ts`](../../../config/tenants.ts) |
 | `TELEGRAM_WEBHOOK_SECRET` | Required on Pages | Same value in local `.env` + Pages Variables/Secrets (prod+preview). Without it the edge webhook returns **503**. Redeploy after setting. |
 | `TELEGRAM_OPS_CHAT_ID` | For group alerts | Supergroup id when outbox row has no `telegramId` |
-| `TELEGRAM_SURFACES` | Recommended | JSON `{ "hq"|"ash-staging"|"sandbox": chat_id }` — concern map |
+| `TELEGRAM_SURFACES` | Recommended | JSON slug→chat_id — house (`hq`, `ash-staging`, `sandbox`) + package `pkg-{code}`; see `telegram:handshake:catalog` |
 | `TELEGRAM_TOPICS` | For forum threads | JSON map → `message_thread_id` (see below) |
 | `TELEGRAM_RATE_LIMIT_MIN_INTERVAL_MS` | Optional | Default `34` (~29 msg/s; Telegram ~30/s) |
 

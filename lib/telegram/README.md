@@ -26,6 +26,7 @@ Tree-aware Telegram integration for the sports betting operations platform and m
 | `surface-audit.ts` | Title · binding · ACL · routing audit |
 | `package-group-registry.ts` | Partner package forum registry + pending JSONL |
 | `package-group-forum.ts` | Forum metadata SSOT · `reports/telegram/forums/{CODE}.json` |
+| `handshake-catalog.ts` | **Machine reference** — constants, lanes, verify checks, CLI (`telegram:handshake:catalog`) |
 | `handshake-ref.ts` | Partner code / call-sign regex SSOT for package-group CLIs |
 | `handshake-desk.ts` | Unified desk rows (registry + known chats + verify) |
 | `handshake-readiness.ts` | Phased readiness gates + forum invite-gap filter |
@@ -112,7 +113,8 @@ bun -e "import { OpsTelegramBot } from './lib/telegram/ops-bot.ts'; import { loa
 
 ## Related
 
+- **Handshake machine ref:** `bun run telegram:handshake:catalog`
+- [`docs/harness/tenants/partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) — operator runbook
 - [`docs/harness/tenants/partner-onboarding-package.md`](../../docs/harness/tenants/partner-onboarding-package.md)
-- [`docs/harness/tenants/partner-package-group-handshake.md`](../../docs/harness/tenants/partner-package-group-handshake.md) — factory ↔ ct handshake · readiness · desk · designate-dm-seat
 - [`lib/channels/outbox.ts`](../channels/outbox.ts) — `enqueuePartnerWelcomeEvent`, play inline keyboard
 - [`templates/`](templates/) — `renderForNode` · TemplateId pack

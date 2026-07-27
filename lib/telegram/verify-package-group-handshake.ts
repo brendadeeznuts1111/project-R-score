@@ -100,7 +100,7 @@ export async function verifyPackageGroupHandshake(opts: {
       ok: false,
       partnerCode: opts.partnerCode.toUpperCase(),
       jsonlPath,
-      checks: [{ id: 'partner_code', ok: false, detail: 'Invalid partner code (^[A-Z]{2,4}$)' }],
+      checks: [{ id: 'partner_code', ok: false, detail: 'Invalid partner code (^[A-Z]{3,6}$)' }],
       nextAction: 'Use partner package code e.g. ASH (not ASH-001)',
     };
   }

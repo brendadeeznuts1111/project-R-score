@@ -12,6 +12,9 @@
 | Registry | [`lib/telegram/package-group-registry.ts`](../../../lib/telegram/package-group-registry.ts) |
 | Onboard emit | [`lib/operations/partner-onboard-package.ts`](../../../lib/operations/partner-onboard-package.ts) |
 | Link CLI | [`tools/telegram-ops.ts`](../../../tools/telegram-ops.ts) `link-package-group` |
+| **Machine reference** | `bun run telegram:handshake:catalog` — constants, lanes, verify checks, CLI flags (JSON: `--json`) |
+
+**Doc rule:** this file is the operator runbook only. Do not add new constant tables elsewhere — extend [`handshake-catalog.ts`](../../../lib/telegram/handshake-catalog.ts) and regenerate the catalog.
 
 ---
 
@@ -235,6 +238,15 @@ Flags: `[CODE…]` · `--refresh` · `--json` · `--send` · `--dry-run` · `--f
 Exit **`1`** when gaps exist (scriptable). Readiness exits **`1`** only on phase **`blocked`**. After partner joins → **`3·OK`**.
 
 Send path appends **`ack_forum_invite_sent`** to package group JSONL. Deep lanes: **`forum_invite_gap`** · **`jsonl_forum_invite_sent`**. Code: [`lib/telegram/forum-invite-gap.ts`](../../../lib/telegram/forum-invite-gap.ts).
+
+### Portal dashboard
+
+`bun run ops:snapshot` bakes **`public/registry/telegram-handshake.json`** and embeds rollup in **`ops-summary.telegramHandshake`**. The operations dashboard panel shows invite-gap count, per-partner phase/MEM/invite status, and links to full JSON.
+
+```bash
+bun run ops:snapshot          # refresh handshake bake + ops-summary
+bun run serve:public:hot      # local portal with baked panel
+```
 
 ---
 
