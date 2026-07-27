@@ -13,6 +13,7 @@ import {
   formatHandshakeDeskDetail,
   formatHandshakeDeskTable,
 } from '../lib/telegram/handshake-desk.ts';
+import { formatMembershipDeskCell } from '../lib/telegram/package-group-membership.ts';
 import { PENDING_PACKAGE_GROUPS_JSONL } from '../lib/telegram/package-group-registry.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
 
@@ -23,6 +24,7 @@ let wantJson = false;
 let live = false;
 let refresh = false;
 let detail = false;
+let inviteGap = false;
 const partnerCodes: string[] = [];
 
 for (let i = 0; i < argv.length; i++) {
@@ -33,6 +35,7 @@ for (let i = 0; i < argv.length; i++) {
     refresh = true;
   } else if (a === '--refresh') refresh = true;
   else if (a === '--detail') detail = true;
+  else if (a === '--invite-gap') inviteGap = true;
   else if (a === '--path' && argv[i + 1]) jsonlPath = argv[++i]!;
   else if (a.startsWith('--path=')) jsonlPath = a.slice('--path='.length);
   else if (a === '--db' && argv[i + 1]) dbPath = argv[++i]!;
@@ -43,6 +46,7 @@ for (let i = 0; i < argv.length; i++) {
 Shows package_group_registry joined with known chats and handshake verify per partner.
 Use --refresh to update titles/member counts from Telegram before display.
 Use --live for live title match + member refresh (implies --refresh).
+Use --invite-gap to list only forums where partner must accept invite (2·house!).
 `);
     process.exit(0);
   } else if (!a.startsWith('-')) partnerCodes.push(a.toUpperCase());
@@ -51,7 +55,7 @@ Use --live for live title match + member refresh (implies --refresh).
 const tg = loadTelegramEnv();
 const db = openOperationsDb({ path: dbPath });
 try {
-  const { rows } = await buildHandshakeDesk({
+  const { rows: allRows } = await buildHandshakeDesk({
     db,
     partnerCodes: partnerCodes.length ? partnerCodes : undefined,
     jsonlPath,
@@ -59,6 +63,25 @@ try {
     refresh,
     live,
   });
+  const rows = inviteGap ? allRows.filter(r => r.membershipTell.needsPartnerInForum) : allRows;
+
+  if (inviteGap && !wantJson && !detail) {
+    console.log(`forum invite gap · ${rows.length} of ${allRows.length} partner(s) · db=${dbPath}`);
+    if (rows.length === 0) {
+      console.log('   (none — all linked partners at 3·OK or pre-link designated)');
+    } else {
+      console.log('   CODE  MEMBERS       SEAT       INVITE');
+      console.log('   ----  ------------  ---------  ------');
+      for (const r of rows) {
+        const invite = r.hasInvite ? 'yes (registry)' : 'missing';
+        console.log(
+          `   ${r.partnerCode.padEnd(4)}  ${formatMembershipDeskCell(r.membershipTell, r.dmSeatStatus).padEnd(12)}  ${(r.requestedBy ?? '—').padEnd(9)}  ${invite}`
+        );
+      }
+    }
+    if (rows.length > 0) process.exit(1);
+    return;
+  }
 
   if (wantJson) {
     console.log(JSON.stringify({ rows, jsonlPath, dbPath }, null, 2));

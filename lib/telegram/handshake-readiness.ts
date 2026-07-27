@@ -230,3 +230,34 @@ export function formatHandshakeReadinessDetail(row: HandshakeReadinessRow): stri
   }
   return out;
 }
+
+/** Partners where operator DM is linked but forum still bot+house only. */
+export function filterForumInviteGapRows(
+  rows: readonly HandshakeReadinessRow[]
+): HandshakeReadinessRow[] {
+  return rows.filter(r => r.membershipTell.needsPartnerInForum);
+}
+
+export function formatForumInviteGapReport(rows: readonly HandshakeReadinessRow[]): string[] {
+  const gaps = filterForumInviteGapRows(rows);
+  if (gaps.length === 0) {
+    return ['(no forum invite gaps — all linked partners at 3·OK or designated/pre-link)'];
+  }
+  const lines = [
+    'FORUM INVITE GAP · operator linked via DM · partner not in group yet',
+    'CODE  MEM        SEAT         INVITE',
+    '----  ---------  -----------  ------',
+  ];
+  for (const r of gaps) {
+    const invite =
+      r.verify && r.gaps.length
+        ? (r.nextSteps.find(s => s.startsWith('send invite:'))?.replace('send invite: ', '') ??
+          '(see registry invite_link)')
+        : '(see registry invite_link)';
+    const mem = formatMembershipDeskCell(r.membershipTell, r.dmSeat.status);
+    const seat = r.dmSeat.callSign ?? '—';
+    lines.push(`${r.partnerCode.padEnd(4)}  ${mem.padEnd(9)}  ${seat.padEnd(11)}  ${invite}`);
+  }
+  lines.push('', 'After partner joins, expect MEM 3·OK (bot + house + partner).');
+  return lines;
+}

@@ -1644,6 +1644,7 @@
     "telegram:handshake:verify": "bun tools/verify-package-group-handshake.ts",
     "telegram:handshake:desk": "bun tools/telegram-handshake-desk.ts",
     "telegram:handshake:readiness": "bun tools/telegram-handshake-readiness.ts",
+    "telegram:handshake:invite-gap": "bun tools/telegram-handshake-invite-gap.ts",
     "telegram:package-group:enhance": "bun tools/package-group-forum-enhance.ts",
     "test:telegram-handshake": "bun test tests/verify-package-group-handshake.test.ts tests/handshake-desk.test.ts tests/handshake-lanes.test.ts tests/dm-seat-designation.test.ts tests/package-group-registry.test.ts tests/package-group-event-log.test.ts tests/ops-channel-outbox.test.ts tests/telegram-broadcast.test.ts tests/ops-schema-available-at.test.ts",
     "telegram:link-chat": "bun tools/telegram-link-chat.ts",
