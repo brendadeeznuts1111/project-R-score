@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-27T02:02:10.232Z",
+  "generated": "2026-07-27T02:06:35.488Z",
   "surfaces": [
     {
       "label": "Home",
@@ -65,6 +65,11 @@
       "label": "telegram-handshake",
       "href": "/registry/telegram-handshake.json",
       "note": "package-group readiness · invite gaps"
+    },
+    {
+      "label": "telegram-handshake-catalog",
+      "href": "/registry/telegram-handshake-catalog.json",
+      "note": "lanes · CLI · constants SSOT"
     },
     {
       "label": "toc-ops",

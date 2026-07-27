@@ -420,9 +420,10 @@ export async function buildRegistrySnapshot(options?: {
       await import('../lib/telegram/handshake-snapshot.ts')
     ).emptyTelegramHandshakeSummarySlice();
     try {
-      const { exportTelegramHandshakeSnapshot } = await import(
+      const { exportTelegramHandshakeSnapshot, exportTelegramHandshakeCatalog } = await import(
         '../lib/telegram/handshake-snapshot.ts'
       );
+      await exportTelegramHandshakeCatalog(root);
       telegramHandshakeSlice = await exportTelegramHandshakeSnapshot(db, root);
       if (telegramHandshakeSlice.available) {
         console.log(

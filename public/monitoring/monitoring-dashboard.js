@@ -181,6 +181,19 @@ function renderProofTiles(mon, ops) {
       ok: net ? net.allOk : ops?.networking?.allOk,
       href: '/registry/networking-proof.json',
     },
+    {
+      title: 'TG handshake',
+      val: ops?.telegramHandshake?.available
+        ? `${ops.telegramHandshake.inviteGaps ?? 0} gap(s)`
+        : 'n/a',
+      sub: ops?.telegramHandshake?.available
+        ? `${ops.telegramHandshake.operatorReady ?? 0}/${ops.telegramHandshake.partners ?? 0} operator_ready`
+        : '',
+      ok: ops?.telegramHandshake?.available
+        ? (ops.telegramHandshake.inviteGaps ?? 0) === 0
+        : undefined,
+      href: '/portal/ops/#telegram-handshake',
+    },
   ];
   return `<div class="mon-proof-grid">${tiles
     .map(
@@ -235,6 +248,19 @@ export function renderMonitoringDashboard(payload) {
       card('Platforms', Object.values(mon.platformSummary || {}).reduce((a, b) => a + b, 0) || '0', `api yes ${mon.platformApiAvailable?.yes ?? 0} · no ${mon.platformApiAvailable?.no ?? 0}`),
       card('Experiments', mon.experimentsActive ?? 0),
       card('Prediction', mon.predictionN ?? 0, mon.predictionN ? 'coverage report available' : '', mon.predictionN ? 'ok' : '', mon.predictionN ? '/registry/prediction/report/' : ''),
+      card(
+        'TG invite gaps',
+        ops?.telegramHandshake?.available ? ops.telegramHandshake.inviteGaps ?? 0 : '—',
+        ops?.telegramHandshake?.available
+          ? `${ops.telegramHandshake.partners ?? 0} package groups · ${ops.telegramHandshake.operatorReady ?? 0} ready`
+          : 'run ops:snapshot',
+        ops?.telegramHandshake?.available
+          ? (ops.telegramHandshake.inviteGaps ?? 0) === 0
+            ? 'ok'
+            : 'bad'
+          : '',
+        '/portal/ops/'
+      ),
     ].join(''),
     sectionsHtml: `
       <section class="mon-section"><h2 class="mon-h2">Proof artifacts</h2>${renderProofTiles(mon, ops)}</section>

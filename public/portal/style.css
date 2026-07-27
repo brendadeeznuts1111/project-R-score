@@ -746,6 +746,16 @@ body {
   background: rgba(248, 81, 73, 0.06);
 }
 
+.ops-handshake-detail {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.ops-handshake-detail summary {
+  cursor: pointer;
+  color: var(--text-dim);
+}
+
 .ops-mono,
 .proof-hash,
 .code-block,

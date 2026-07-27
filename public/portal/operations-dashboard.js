@@ -122,6 +122,10 @@ class OperationsDashboard extends HTMLElement {
             <h2>Package handshake <span class="version-badge subsystem-other">telegram</span></h2>
             <div class="ops-metric" id="telegram-handshake-gaps">—</div>
             <div class="ops-sub" id="telegram-handshake-detail"></div>
+            <label class="ops-sub" id="telegram-handshake-filter-wrap" hidden>
+              <input type="checkbox" id="telegram-handshake-gaps-only" />
+              gaps only (2·house!)
+            </label>
             <table id="telegram-handshake-table" class="ops-table hidden" aria-label="Package group handshake partners">
               <thead>
                 <tr>
@@ -129,13 +133,16 @@ class OperationsDashboard extends HTMLElement {
                   <th>Phase</th>
                   <th>MEM</th>
                   <th>Seat</th>
-                  <th>HS</th>
+                  <th>Verify</th>
+                  <th>Lanes</th>
                   <th>Invite</th>
                 </tr>
               </thead>
               <tbody></tbody>
             </table>
-            <a class="ops-link" id="telegram-handshake-json" href="/registry/telegram-handshake.json">Full handshake JSON</a>
+            <ul id="telegram-handshake-commands" class="ops-weave-scripts hidden"></ul>
+            <a class="ops-link" id="telegram-handshake-json" href="/registry/telegram-handshake.json">Handshake JSON</a>
+            <a class="ops-link" id="telegram-handshake-catalog" href="/registry/telegram-handshake-catalog.json">Catalog JSON</a>
           </section>
           <section class="ops-panel">
             <h2>Ops loop</h2>
@@ -865,8 +872,12 @@ class OperationsDashboard extends HTMLElement {
     const tgHs = d.telegramHandshake;
     const tgGaps = this.querySelector('#telegram-handshake-gaps');
     const tgDetail = this.querySelector('#telegram-handshake-detail');
+    const tgFilterWrap = this.querySelector('#telegram-handshake-filter-wrap');
+    const tgGapsOnly = this.querySelector('#telegram-handshake-gaps-only');
     const tgTable = this.querySelector('#telegram-handshake-table');
     const tgTbody = tgTable?.querySelector('tbody');
+    const tgCommands = this.querySelector('#telegram-handshake-commands');
+    const tgCatalogLink = this.querySelector('#telegram-handshake-catalog');
     if (tgGaps && tgHs) {
       if (tgHs.available) {
         tgGaps.textContent = String(tgHs.inviteGaps ?? 0);
@@ -875,12 +886,16 @@ class OperationsDashboard extends HTMLElement {
         const when = tgHs.generatedAt ? ` · baked ${String(tgHs.generatedAt).slice(0, 19)}` : '';
         if (tgDetail) {
           tgDetail.textContent =
-            `${tgHs.partners ?? 0} linked · ${tgHs.operatorReady ?? 0} operator_ready · ${tgHs.blocked ?? 0} blocked${when}` +
-            (tgHs.inviteGaps > 0 && tgHs.commands?.sendInviteAll
-              ? ` · ${tgHs.commands.sendInviteAll}`
-              : '');
+            `${tgHs.partners ?? 0} linked · ${tgHs.operatorReady ?? 0} operator_ready · ${tgHs.designated ?? 0} designated · ${tgHs.forumReady ?? 0} forum_ready · ${tgHs.blocked ?? 0} blocked${when}`;
         }
-        const rows = tgHs.rows ?? [];
+        if (tgFilterWrap) tgFilterWrap.hidden = false;
+        if (tgCatalogLink && tgHs.catalogPath) tgCatalogLink.href = tgHs.catalogPath;
+        if (tgGapsOnly && !tgGapsOnly.dataset.bound) {
+          tgGapsOnly.dataset.bound = '1';
+          tgGapsOnly.addEventListener('change', () => this.render());
+        }
+        const gapsOnly = tgGapsOnly?.checked === true;
+        const rows = (tgHs.rows ?? []).filter(r => !gapsOnly || r.needsPartnerInForum);
         if (tgTable && tgTbody && rows.length > 0) {
           tgTable.classList.remove('hidden');
           tgTbody.innerHTML = rows
@@ -900,19 +915,55 @@ class OperationsDashboard extends HTMLElement {
                     ? 'match-ok'
                     : '';
               const memClass = r.needsPartnerInForum ? 'match-no' : '';
+              const verify =
+                r.verifyTotal != null
+                  ? `${r.verifyPassed ?? '?'}/${r.verifyTotal}`
+                  : r.handshakeOk
+                    ? 'OK'
+                    : 'FAIL';
+              const lanes =
+                r.lanesTotal != null
+                  ? `${r.lanesOk ?? '?'}/${r.lanesTotal}`
+                  : '—';
+              const detail =
+                r.gapCount > 0 || r.needsPartnerInForum
+                  ? `<details class="ops-handshake-detail"><summary>${esc(r.topGap || 'gap')}</summary>${
+                      r.inviteLink
+                        ? `<p class="ops-mono"><a href="${esc(r.inviteLink)}" rel="noopener">${esc(r.inviteLink)}</a></p>`
+                        : ''
+                    }${
+                      (r.nextSteps || [])
+                        .map(s => `<p class="ops-sub">→ ${esc(s)}</p>`)
+                        .join('') || ''
+                    }${
+                      (r.lanesBlocked || []).length
+                        ? `<p class="ops-sub">blocked: ${esc(r.lanesBlocked.join(', '))}</p>`
+                        : ''
+                    }</details>`
+                  : '';
               return `<tr class="${r.needsPartnerInForum ? 'ops-row-warn' : ''}">
-                <td><code>${r.partnerCode}</code></td>
-                <td><span class="version-badge ${phaseClass}">${r.phase}</span></td>
-                <td><span class="version-badge ${memClass}">${r.membershipCell}</span></td>
-                <td>${r.callSign ?? '—'}</td>
-                <td>${r.handshakeOk ? 'OK' : 'FAIL'}</td>
-                <td>${invite}</td>
+                <td><code>${esc(r.partnerCode)}</code>${detail}</td>
+                <td><span class="version-badge ${phaseClass}">${esc(r.phase)}</span></td>
+                <td><span class="version-badge ${memClass}">${esc(r.membershipCell)}</span></td>
+                <td>${esc(r.callSign ?? '—')}</td>
+                <td>${esc(verify)}</td>
+                <td>${esc(lanes)}</td>
+                <td>${esc(invite)}</td>
               </tr>`;
             })
             .join('');
         } else if (tgTable) {
           tgTable.classList.add('hidden');
           if (tgTbody) tgTbody.innerHTML = '';
+        }
+        if (tgCommands && tgHs.commands) {
+          tgCommands.classList.remove('hidden');
+          tgCommands.innerHTML = Object.entries(tgHs.commands)
+            .map(
+              ([k, cmd]) =>
+                `<li><span class="ops-mono">${esc(cmd)}</span> <small>(${esc(k)})</small></li>`
+            )
+            .join('');
         }
       } else {
         tgGaps.textContent = '—';
@@ -921,7 +972,9 @@ class OperationsDashboard extends HTMLElement {
           tgDetail.textContent =
             'No package groups — link via telegram:ops link-package-group, then bun run ops:snapshot';
         }
+        if (tgFilterWrap) tgFilterWrap.hidden = true;
         if (tgTable) tgTable.classList.add('hidden');
+        if (tgCommands) tgCommands.classList.add('hidden');
       }
     }
 

@@ -3,7 +3,7 @@
   "source": "demo",
   "readOnly": true,
   "plane": "demo-readonly",
-  "generatedAt": "2026-07-27T02:02:10.219Z",
+  "generatedAt": "2026-07-27T02:06:35.473Z",
   "ssot": {
     "theory": "toc-ops-repo/docs/reference/TOC-Production-Reference.md",
     "accounting": "toc-ops-repo/docs/system/ACCOUNTING.md",
@@ -11425,7 +11425,7 @@
     "linkedPartners": 3,
     "linkedAccounts": 11,
     "linkedRails": 6,
-    "generatedAt": "2026-07-27T02:02:10.224Z",
+    "generatedAt": "2026-07-27T02:06:35.478Z",
     "warning": "DEMO · read-only on Pages — Soft Balance, Hard Gates, and DoD are not enforced here. Operate via toc-ops-repo Central Tool or local bun-only APIs.",
     "partners": [
       {
@@ -11597,7 +11597,7 @@
     ]
   },
   "enforcement": {
-    "evaluatedAt": "2026-07-27T02:02:10.226Z",
+    "evaluatedAt": "2026-07-27T02:06:35.479Z",
     "plane": "operate-lite",
     "note": "Evaluated in-repo against fixture + Soft rollups. Pages cannot mutate; post Soft via bun local APIs / CT.",
     "warmupRequiredForPlay": 2,
@@ -12537,7 +12537,7 @@
     }
   },
   "returnEfficiency": {
-    "computedAt": "2026-07-27T02:02:10.219Z",
+    "computedAt": "2026-07-27T02:06:35.473Z",
     "byProcess": [
       {
         "process": "WARM",
@@ -12545,9 +12545,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 10.584840497685185,
+        "tauDays": 10.58791056712963,
         "oe": 0,
-        "rP": 0.005135410402441825
+        "rP": 0.005133921339376808
       },
       {
         "process": "LIMIT",
@@ -12555,9 +12555,9 @@
         "partnerCode": "ASH",
         "deltaT": 279.12008928571424,
         "iPeak": 0,
-        "tauDays": 6.709840497685185,
+        "tauDays": 6.712910567129629,
         "oe": 0,
-        "rP": 41.59861763957092
+        "rP": 41.57959300879873
       },
       {
         "process": "WD",
@@ -12565,9 +12565,9 @@
         "partnerCode": "ASH",
         "deltaT": 4800,
         "iPeak": 4800,
-        "tauDays": 3.5848404976851853,
+        "tauDays": 3.5879105671296294,
         "oe": 0,
-        "rP": 0.2789524389287956
+        "rP": 0.2787137475391455
       },
       {
         "process": "WARM",
@@ -12575,9 +12575,9 @@
         "partnerCode": "ASH",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 3.5431738310185183,
+        "tauDays": 3.546243900462963,
         "oe": 0,
-        "rP": 0.01534147140175012
+        "rP": 0.015328189917479623
       },
       {
         "process": "PLAY",
@@ -12585,9 +12585,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5200,
-        "tauDays": 4.459840497685185,
+        "tauDays": 4.462910567129629,
         "oe": 0,
-        "rP": 0.01171943861001425
+        "rP": 0.01171137672084093
       },
       {
         "process": "WD",
@@ -12595,9 +12595,9 @@
         "partnerCode": "PAT",
         "deltaT": 5000,
         "iPeak": 5000,
-        "tauDays": 4.418173831018518,
+        "tauDays": 4.421243900462963,
         "oe": 0,
-        "rP": 0.22633785773192877
+        "rP": 0.22618069089002005
       },
       {
         "process": "WARM",
@@ -12605,9 +12605,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 3.5848404976851853,
+        "tauDays": 3.5879105671296294,
         "oe": 0,
-        "rP": 0.01516315719907201
+        "rP": 0.015150182531859104
       },
       {
         "process": "WARM",
@@ -12615,9 +12615,9 @@
         "partnerCode": "PAT",
         "deltaT": 271.7875,
         "iPeak": 5000,
-        "tauDays": 3.626507164351852,
+        "tauDays": 3.6295772337962964,
         "oe": 35,
-        "rP": 0.01496006407619024
+        "rP": 0.01494743449825074
       },
       {
         "process": "ONB",
@@ -12625,9 +12625,9 @@
         "partnerCode": "NOV",
         "deltaT": 271.7875,
         "iPeak": 0,
-        "tauDays": 4.668173831018518,
+        "tauDays": 4.671243900462963,
         "oe": 40,
-        "rP": 58.22137517546138
+        "rP": 58.183110492916754
       },
       {
         "process": "FUND",
@@ -12635,9 +12635,9 @@
         "partnerCode": "NOV",
         "deltaT": 40.768125000000005,
         "iPeak": 5000,
-        "tauDays": 4.501507164351852,
+        "tauDays": 4.504577233796296,
         "oe": 0,
-        "rP": 0.001811310012915196
+        "rP": 0.001810075524696558
       },
       {
         "process": "LIMIT",
@@ -12645,9 +12645,9 @@
         "partnerCode": "NOV",
         "deltaT": 67.946875,
         "iPeak": 0,
-        "tauDays": 4.626507164351852,
+        "tauDays": 4.629577233796296,
         "oe": 0,
-        "rP": 14.686430299631661
+        "rP": 14.676691103451564
       }
     ],
     "byAsset": [
@@ -12656,15 +12656,15 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 996,
         "peakCapital": 5000,
-        "capitalDaysInI": 11.334840497685185,
-        "ce": 0.01757413349051368
+        "capitalDaysInI": 11.33791056712963,
+        "ce": 0.01756937478211478
       },
       {
         "callSign": "ASH-002",
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5010,
-        "capitalDaysInI": 8.41817383101852,
+        "capitalDaysInI": 8.421243900462963,
         "ce": 0
       },
       {
@@ -12672,7 +12672,7 @@
         "partnerCode": "ASH",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 7.668173831018518,
+        "capitalDaysInI": 7.671243900462963,
         "ce": 0
       },
       {
@@ -12688,23 +12688,23 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 2720,
         "peakCapital": 5200,
-        "capitalDaysInI": 8.647340497685185,
-        "ce": 0.06048991863069877
+        "capitalDaysInI": 8.65041056712963,
+        "ce": 0.06046845048771944
       },
       {
         "callSign": "PAT-002",
         "partnerCode": "PAT",
         "profitSplitTotal": 800,
         "peakCapital": 5000,
-        "capitalDaysInI": 5.612618275462963,
-        "ce": 0.02850719435160629
+        "capitalDaysInI": 5.615688344907407,
+        "ce": 0.028491609607412805
       },
       {
         "callSign": "PAT-003",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 3.6959516087962965,
+        "capitalDaysInI": 3.6990216782407406,
         "ce": 0
       },
       {
@@ -12712,15 +12712,15 @@
         "partnerCode": "PAT",
         "profitSplitTotal": 600,
         "peakCapital": 5000,
-        "capitalDaysInI": 6.699423831018518,
-        "ce": 0.017911988109245554
+        "capitalDaysInI": 6.702493900462963,
+        "ce": 0.017903783544168717
       },
       {
         "callSign": "PAT-005",
         "partnerCode": "PAT",
         "profitSplitTotal": 0,
         "peakCapital": 5100,
-        "capitalDaysInI": 4.65428494212963,
+        "capitalDaysInI": 4.657355011574074,
         "ce": 0
       },
       {
@@ -12736,7 +12736,7 @@
         "partnerCode": "NOV",
         "profitSplitTotal": 0,
         "peakCapital": 5000,
-        "capitalDaysInI": 4.49803494212963,
+        "capitalDaysInI": 4.501105011574074,
         "ce": 0
       }
     ],
@@ -12754,8 +12754,8 @@
         "partnerCode": "ASH",
         "deltaL": 0.3,
         "cAsset": 10010,
-        "daysToUsableLimit": 8.41817383101852,
-        "le": 0.000003560158125934527
+        "daysToUsableLimit": 8.421243900462963,
+        "le": 0.000003558860225908235
       },
       {
         "callSign": "ASH-003",
@@ -12794,8 +12794,8 @@
         "partnerCode": "PAT",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 3.6959516087962965,
-        "le": 0.000008116989391473783
+        "daysToUsableLimit": 3.6990216782407406,
+        "le": 0.00000811025255041707
       },
       {
         "callSign": "PAT-004",
@@ -12810,7 +12810,7 @@
         "partnerCode": "PAT",
         "deltaL": 0,
         "cAsset": 10100,
-        "daysToUsableLimit": 4.65428494212963,
+        "daysToUsableLimit": 4.657355011574074,
         "le": 0
       },
       {
@@ -12826,18 +12826,18 @@
         "partnerCode": "NOV",
         "deltaL": 0.3,
         "cAsset": 10000,
-        "daysToUsableLimit": 4.49803494212963,
-        "le": 0.000006669579135327096
+        "daysToUsableLimit": 4.501105011574074,
+        "le": 0.0000066650300143761245
       }
     ],
-    "avgRP": 10.461440387547915,
+    "avgRP": 10.455306384011703,
     "processTypeAvgRP": {
-      "LIMIT": 28.14252396960129,
-      "ONB": 58.22137517546138,
-      "WD": 0.2526451483303622,
-      "PLAY": 0.01171943861001425,
-      "WARM": 0.01265002576986355,
-      "FUND": 0.001811310012915196
+      "LIMIT": 28.12814205612515,
+      "ONB": 58.183110492916754,
+      "WD": 0.2524472192145828,
+      "PLAY": 0.01171137672084093,
+      "WARM": 0.012639932071741569,
+      "FUND": 0.001810075524696558
     }
   },
   "rankedActions": [
@@ -12846,7 +12846,7 @@
       "process": "LIMIT",
       "callSign": "ASH-001",
       "partnerCode": "ASH",
-      "rP": 41.59861763957092,
+      "rP": 41.57959300879873,
       "weightedScore": 0.24,
       "reason": "Stale/missing limit on WARMED seat — LIMIT first (highest R)",
       "ropeSafe": true
@@ -12856,7 +12856,7 @@
       "process": "WD",
       "callSign": "ASH-003",
       "partnerCode": "ASH",
-      "rP": 0.2789524389287956,
+      "rP": 0.2787137475391455,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -12866,7 +12866,7 @@
       "process": "WD",
       "callSign": "PAT-002",
       "partnerCode": "PAT",
-      "rP": 0.22633785773192877,
+      "rP": 0.22618069089002005,
       "weightedScore": 0,
       "reason": "Gate 12 principal_recovery first",
       "ropeSafe": true
@@ -12876,7 +12876,7 @@
       "process": "PLAY",
       "callSign": "PAT-001",
       "partnerCode": "PAT",
-      "rP": 0.01171943861001425,
+      "rP": 0.01171137672084093,
       "weightedScore": 0.8800000000000001,
       "reason": "WARMED + fresh limit — pick-play by weightedScore",
       "ropeSafe": true
@@ -12896,7 +12896,7 @@
       "process": "WARM",
       "callSign": "ASH-004",
       "partnerCode": "ASH",
-      "rP": 0.01534147140175012,
+      "rP": 0.015328189917479623,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -12906,7 +12906,7 @@
       "process": "WARM",
       "callSign": "PAT-003",
       "partnerCode": "PAT",
-      "rP": 0.01516315719907201,
+      "rP": 0.015150182531859104,
       "weightedScore": 0,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -12916,7 +12916,7 @@
       "process": "WARM",
       "callSign": "PAT-005",
       "partnerCode": "PAT",
-      "rP": 0.01496006407619024,
+      "rP": 0.01494743449825074,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -12926,7 +12926,7 @@
       "process": "WARM",
       "callSign": "ASH-002",
       "partnerCode": "ASH",
-      "rP": 0.005135410402441825,
+      "rP": 0.005133921339376808,
       "weightedScore": 0.022000000000000006,
       "reason": "Complete WARM corridor (min capital path)",
       "ropeSafe": true
@@ -13006,7 +13006,7 @@
       "process": "ONB",
       "callSign": "NOV-001",
       "partnerCode": "NOV",
-      "rP": 58.22137517546138,
+      "rP": 58.183110492916754,
       "reason": "ONB new asset — buffer allows",
       "ropeSafe": true
     },

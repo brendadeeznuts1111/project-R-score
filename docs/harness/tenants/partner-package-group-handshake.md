@@ -241,12 +241,37 @@ Send path appends **`ack_forum_invite_sent`** to package group JSONL. Deep lanes
 
 ### Portal dashboard
 
-`bun run ops:snapshot` bakes **`public/registry/telegram-handshake.json`** and embeds rollup in **`ops-summary.telegramHandshake`**. The operations dashboard panel shows invite-gap count, per-partner phase/MEM/invite status, and links to full JSON.
+Read-only on Pages — **no live Telegram API**. Data flows CLI → SQLite → snapshot bake → static JSON → portal panels.
+
+```text
+assessHandshakeReadiness({ deep: true }) (handshake-readiness.ts)
+  → exportTelegramHandshakeSnapshot + exportTelegramHandshakeCatalog (handshake-snapshot.ts)
+  → public/registry/telegram-handshake.json + telegram-handshake-catalog.json
+  → ops-summary.telegramHandshake (buildOpsSummary / ops:snapshot)
+  → public/registry/ops-summary.json + static.json
+  → portal panels (fetch same-origin JSON)
+```
+
+| Surface | URL | What it shows |
+|---------|-----|---------------|
+| **Full Ops panel** | `/portal/ops/` | Invite-gap metric, verify/lanes columns, expandable row details (gap · invite link · blocked lanes · next steps), gaps-only filter, CLI hints, catalog link |
+| **Executive dashboard** | `/portal/dashboard/` | Handshake plane card — invite gaps · operator_ready · blocked · link to ops panel |
+| **Monitoring** | `/monitoring/` | TG invite gaps card + proof tile → ops panel |
+| **Health** | `/portal/health/` | Loads `ops-summary` (enriched TOC/loop; handshake via ops slice) |
+| **Registry artifact** | `/registry/telegram-handshake.json` | Full `factorywager.telegram-handshake.v1` rows (verify, lanes, nextSteps) + CLI hints |
+| **Catalog artifact** | `/registry/telegram-handshake-catalog.json` | Machine SSOT — lanes, CLI flags, constants (`telegram:handshake:catalog`) |
+| **Portal weave** | `/registry/portal-weave.json` | Links handshake + catalog artifacts in registry index |
+| **TOC board** | `/portal/toc/` | Partner profile telegram lanes (Soft fixture) — **not** package-group handshake desk |
+
+Refresh bake after CLI changes:
 
 ```bash
-bun run ops:snapshot          # refresh handshake bake + ops-summary
-bun run serve:public:hot      # local portal with baked panel
+bun run telegram:handshake:desk --refresh
+bun run ops:snapshot          # telegram-handshake.json + catalog + ops-summary slice
+bun run serve:public:hot      # local portal
 ```
+
+Machine reference (constants / CLI flags): `bun run telegram:handshake:catalog`
 
 ---
 

@@ -56,6 +56,10 @@ describe('handshake-snapshot', () => {
     expect(snap!.inviteGaps).toBe(1);
     expect(snap!.rows[0]!.membershipCell).toBe('2·house!');
     expect(snap!.rows[0]!.needsPartnerInForum).toBe(true);
+    expect(snap!.rows[0]!.verifyTotal).toBeGreaterThan(0);
+    expect(snap!.rows[0]!.lanesTotal).toBeGreaterThan(0);
+    expect(snap!.forumReady).toBeGreaterThanOrEqual(0);
+    expect(snap!.catalogPath).toBe('/registry/telegram-handshake-catalog.json');
     db.close();
   });
 

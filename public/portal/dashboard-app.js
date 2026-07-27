@@ -110,6 +110,7 @@ function renderSkeleton() {
   if (plane) {
     plane.innerHTML =
       '<div class="plane-card skeleton skeleton-card" style="min-height:140px" aria-hidden="true"></div>' +
+      '<div class="plane-card skeleton skeleton-card" style="min-height:140px" aria-hidden="true"></div>' +
       '<div class="plane-card skeleton skeleton-card" style="min-height:140px" aria-hidden="true"></div>';
   }
   $('kpi-grid').innerHTML = sk(10);
@@ -142,6 +143,10 @@ function renderOpsPlane(ops) {
     <article class="plane-card">
       <h3>Ops loop</h3>
       <p class="plane-detail empty-hint">No loop slice until ops-summary loads.</p>
+    </article>
+    <article class="plane-card">
+      <h3>Package handshake</h3>
+      <p class="plane-detail empty-hint">No handshake slice until ops-summary loads.</p>
     </article>`;
     return;
   }
@@ -236,7 +241,33 @@ function renderOpsPlane(ops) {
     </div>
   </article>`;
 
-  el.innerHTML = tocHtml + loopHtml;
+  const tg = ops.telegramHandshake;
+  let handshakeHtml;
+  if (tg?.available) {
+    const gaps = tg.inviteGaps ?? 0;
+    const gapCls = gaps === 0 ? 'ok' : 'err';
+    handshakeHtml = `<article class="plane-card" data-plane="telegram-handshake">
+      <h3>Package handshake <span class="badge-demo" title="Baked from ops:snapshot">snapshot</span></h3>
+      <div class="plane-metric ${gapCls}">${esc(String(gaps))} <span style="font-size:0.45em;font-weight:500;color:var(--text-dim)">invite gaps</span></div>
+      <p class="plane-detail">
+        ${esc(String(tg.partners ?? 0))} linked · ${esc(String(tg.operatorReady ?? 0))} operator_ready ·
+        ${esc(String(tg.blocked ?? 0))} blocked
+      </p>
+      <p class="plane-sub">${tg.generatedAt ? esc(`baked ${String(tg.generatedAt).slice(0, 19)}`) : 'run ops:snapshot'}</p>
+      <div class="plane-actions">
+        <a class="ops-link" href="/portal/ops/">Ops panel</a>
+        <a class="ops-link" href="/registry/telegram-handshake.json">handshake.json</a>
+      </div>
+    </article>`;
+  } else {
+    handshakeHtml = `<article class="plane-card" data-plane="telegram-handshake">
+      <h3>Package handshake</h3>
+      <p class="plane-detail empty-hint">No registry rows — link package groups, then <code>bun run ops:snapshot</code>.</p>
+      <div class="plane-actions"><a class="ops-link" href="/portal/ops/">Full Ops</a></div>
+    </article>`;
+  }
+
+  el.innerHTML = tocHtml + loopHtml + handshakeHtml;
 }
 
 function proofStatusCls(sum) {

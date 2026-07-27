@@ -1,11 +1,14 @@
 {
   "schema": "factorywager.telegram-handshake.v1",
-  "generatedAt": "2026-07-27T02:02:10.232Z",
+  "generatedAt": "2026-07-27T02:06:35.488Z",
   "source": "snapshot",
   "partners": 4,
   "inviteGaps": 2,
   "blocked": 0,
   "operatorReady": 2,
+  "forumReady": 0,
+  "designated": 2,
+  "catalogPath": "/registry/telegram-handshake-catalog.json",
   "rows": [
     {
       "partnerCode": "ASH",
@@ -18,7 +21,17 @@
       "dmSeatStatus": "linked",
       "callSign": "ASH-001",
       "gapCount": 1,
-      "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)"
+      "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)",
+      "verifyPassed": 10,
+      "verifyTotal": 10,
+      "lanesOk": 22,
+      "lanesTotal": 24,
+      "lanesBlocked": [],
+      "nextSteps": [
+        "ready for welcome DM + bot commands",
+        "invite DM sent at 2026-07-27T01:53:19.678Z — awaiting partner join",
+        "join forum: https://t.me/+iBXudtg48psyMTkx"
+      ]
     },
     {
       "partnerCode": "BIL",
@@ -31,7 +44,17 @@
       "dmSeatStatus": "linked (shared DM)",
       "callSign": "BIL-001",
       "gapCount": 1,
-      "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)"
+      "topGap": "forum invite pending — partner linked via DM but not in group (expect 3·OK)",
+      "verifyPassed": 10,
+      "verifyTotal": 10,
+      "lanesOk": 22,
+      "lanesTotal": 24,
+      "lanesBlocked": [],
+      "nextSteps": [
+        "ready for welcome DM + bot commands",
+        "invite DM sent at 2026-07-27T01:53:19.637Z — awaiting partner join",
+        "join forum: https://t.me/+eMgvmRzz2qpkZDYx"
+      ]
     },
     {
       "partnerCode": "NOV",
@@ -44,7 +67,20 @@
       "dmSeatStatus": "designated (awaiting telegram)",
       "callSign": "NOV-001",
       "gapCount": 1,
-      "topGap": "operator NOV-001 designated — telegram id not linked yet"
+      "topGap": "operator NOV-001 designated — telegram id not linked yet",
+      "verifyPassed": 10,
+      "verifyTotal": 10,
+      "lanesOk": 20,
+      "lanesTotal": 23,
+      "lanesBlocked": [
+        "dm_telegram",
+        "welcome_dm",
+        "bot_commands"
+      ],
+      "nextSteps": [
+        "forum + routing OK — awaiting operator telegram for NOV-001",
+        "bun tools/telegram-link-chat.ts NOV-001 <telegram_user_id>  # when operator ready"
+      ]
     },
     {
       "partnerCode": "PAT",
@@ -57,7 +93,20 @@
       "dmSeatStatus": "designated (awaiting telegram)",
       "callSign": "PAT-001",
       "gapCount": 1,
-      "topGap": "operator PAT-001 designated — telegram id not linked yet"
+      "topGap": "operator PAT-001 designated — telegram id not linked yet",
+      "verifyPassed": 10,
+      "verifyTotal": 10,
+      "lanesOk": 20,
+      "lanesTotal": 23,
+      "lanesBlocked": [
+        "dm_telegram",
+        "welcome_dm",
+        "bot_commands"
+      ],
+      "nextSteps": [
+        "forum + routing OK — awaiting operator telegram for PAT-001",
+        "bun tools/telegram-link-chat.ts PAT-001 <telegram_user_id>  # when operator ready"
+      ]
     }
   ],
   "commands": {

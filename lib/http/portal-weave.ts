@@ -48,6 +48,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     href: '/registry/telegram-handshake.json',
     note: 'package-group readiness · invite gaps',
   },
+  {
+    label: 'telegram-handshake-catalog',
+    href: '/registry/telegram-handshake-catalog.json',
+    note: 'lanes · CLI · constants SSOT',
+  },
   { label: 'toc-ops', href: '/registry/toc-ops.json', note: 'operate-lite bake' },
   { label: 'toc-ops bake proof', href: '/registry/toc-ops-bake-proof.json' },
   { label: 'monitoring', href: '/registry/monitoring.json' },

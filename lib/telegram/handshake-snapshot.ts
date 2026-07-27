@@ -19,6 +19,10 @@ import { formatMembershipDeskCell } from './package-group-membership.ts';
 
 export const TELEGRAM_HANDSHAKE_REGISTRY_REL = 'public/registry/telegram-handshake.json';
 export const TELEGRAM_HANDSHAKE_REGISTRY_PATH = '/registry/telegram-handshake.json' as const;
+export const TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_REL =
+  'public/registry/telegram-handshake-catalog.json';
+export const TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH =
+  '/registry/telegram-handshake-catalog.json' as const;
 
 export type TelegramHandshakePartnerRow = {
   partnerCode: string;
@@ -32,6 +36,12 @@ export type TelegramHandshakePartnerRow = {
   callSign: string | null;
   gapCount: number;
   topGap: string | null;
+  verifyPassed: number;
+  verifyTotal: number;
+  lanesOk: number | null;
+  lanesTotal: number | null;
+  lanesBlocked: string[];
+  nextSteps: string[];
 };
 
 export type TelegramHandshakeSnapshot = {
@@ -42,6 +52,9 @@ export type TelegramHandshakeSnapshot = {
   inviteGaps: number;
   blocked: number;
   operatorReady: number;
+  forumReady: number;
+  designated: number;
+  catalogPath: typeof TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH;
   rows: TelegramHandshakePartnerRow[];
   commands: {
     inviteGap: string;
@@ -59,8 +72,11 @@ export type TelegramHandshakeSummarySlice = {
   inviteGaps: number;
   blocked: number;
   operatorReady: number;
+  forumReady: number;
+  designated: number;
   rows: TelegramHandshakePartnerRow[];
   commands: TelegramHandshakeSnapshot['commands'];
+  catalogPath: typeof TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -71,6 +87,7 @@ function tableExists(db: Database, name: string): boolean {
 }
 
 function rowToWire(r: HandshakeReadinessRow): TelegramHandshakePartnerRow {
+  const lanes = r.lanes;
   return {
     partnerCode: r.partnerCode,
     phase: r.phase,
@@ -83,6 +100,12 @@ function rowToWire(r: HandshakeReadinessRow): TelegramHandshakePartnerRow {
     callSign: r.dmSeat.callSign,
     gapCount: r.gaps.length,
     topGap: r.gaps[0] ?? null,
+    verifyPassed: r.verify.checks.filter(c => c.ok).length,
+    verifyTotal: r.verify.checks.length,
+    lanesOk: lanes ? lanes.lanes.filter(l => l.ok).length : null,
+    lanesTotal: lanes ? lanes.lanes.length : null,
+    lanesBlocked: lanes?.blockedUntilLink ?? [],
+    nextSteps: r.nextSteps.slice(0, 4),
   };
 }
 
@@ -95,7 +118,10 @@ export function emptyTelegramHandshakeSummarySlice(): TelegramHandshakeSummarySl
     inviteGaps: 0,
     blocked: 0,
     operatorReady: 0,
+    forumReady: 0,
+    designated: 0,
     rows: [],
+    catalogPath: TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH,
     commands: {
       inviteGap: 'bun run telegram:handshake:invite-gap',
       sendInviteAll: 'bun run telegram:ops -- send-forum-invite --all',
@@ -118,7 +144,12 @@ export async function buildTelegramHandshakeSnapshot(
   const readinessRows: HandshakeReadinessRow[] = [];
   for (const reg of registry) {
     readinessRows.push(
-      await assessHandshakeReadiness({ db, partnerCode: reg.partnerCode, jsonlPath })
+      await assessHandshakeReadiness({
+        db,
+        partnerCode: reg.partnerCode,
+        jsonlPath,
+        deep: true,
+      })
     );
   }
 
@@ -128,6 +159,8 @@ export async function buildTelegramHandshakeSnapshot(
   const inviteGaps = rows.filter(r => r.needsPartnerInForum).length;
   const blocked = rows.filter(r => r.phase === 'blocked').length;
   const operatorReady = rows.filter(r => r.phase === 'operator_ready').length;
+  const forumReady = rows.filter(r => r.phase === 'forum_ready').length;
+  const designated = rows.filter(r => r.phase === 'designated').length;
 
   return {
     schema: 'factorywager.telegram-handshake.v1',
@@ -137,6 +170,9 @@ export async function buildTelegramHandshakeSnapshot(
     inviteGaps,
     blocked,
     operatorReady,
+    forumReady,
+    designated,
+    catalogPath: TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH,
     rows,
     commands: emptyTelegramHandshakeSummarySlice().commands,
   };
@@ -154,8 +190,11 @@ export function snapshotToSummarySlice(
     inviteGaps: snap.inviteGaps,
     blocked: snap.blocked,
     operatorReady: snap.operatorReady,
+    forumReady: snap.forumReady ?? 0,
+    designated: snap.designated ?? 0,
     rows: snap.rows,
     commands: snap.commands,
+    catalogPath: snap.catalogPath ?? TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_PATH,
   };
 }
 
@@ -191,4 +230,14 @@ export async function exportTelegramHandshakeSnapshot(
   }
 
   return slice;
+}
+
+export async function exportTelegramHandshakeCatalog(root = process.cwd()): Promise<string> {
+  const { buildHandshakeCatalog } = await import('./handshake-catalog.ts');
+  const rel = TELEGRAM_HANDSHAKE_CATALOG_REGISTRY_REL;
+  const abs = root.endsWith('/') ? `${root}${rel}` : `${root}/${rel}`;
+  const dir = abs.slice(0, abs.lastIndexOf('/'));
+  if (dir) await Bun.$`mkdir -p ${dir}`.quiet();
+  await Bun.write(abs, `${JSON.stringify(buildHandshakeCatalog(), null, 2)}\n`);
+  return abs;
 }
