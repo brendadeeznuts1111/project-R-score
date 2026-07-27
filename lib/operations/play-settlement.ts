@@ -90,7 +90,11 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
     $id: input.playId,
   });
 
-  let primaryCuts: CutCascadeResult = { grossPnl: input.pnl, netToOrigin: input.pnl, allocations: [] };
+  let primaryCuts: CutCascadeResult = {
+    grossPnl: input.pnl,
+    netToOrigin: input.pnl,
+    allocations: [],
+  };
   let exposureRelease = 0;
 
   for (const { nodeId, stake } of stakes) {
@@ -153,7 +157,14 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
     }
   }
 
-  enqueueSettlementEventsForDistributionNodes(db, input.playId, input.result, input.pnl);
+  // Use the same node set that was settled (includes leaf fallback when no distribution rows)
+  enqueueSettlementEventsForNodes(
+    db,
+    input.playId,
+    input.result,
+    input.pnl,
+    stakes.map(s => s.nodeId)
+  );
 
   return {
     playId: input.playId,
@@ -165,18 +176,15 @@ export function settlePlay(db: Database, input: SettlePlayInput): SettlePlayResu
   };
 }
 
-/** Enqueue play.settled for every distribution node (idempotent per node). */
-function enqueueSettlementEventsForDistributionNodes(
+/** Enqueue play.settled for each settled node (idempotent per node). */
+function enqueueSettlementEventsForNodes(
   db: Database,
   playId: string, // brand-ok
   result: PlayResult,
-  pnl: number
+  pnl: number,
+  nodeIds: string[] // brand-ok — TreeNodeId
 ): void {
-  const nodes = db
-    .query(`SELECT node_id FROM play_distribution WHERE play_id = $pid ORDER BY received_at ASC`)
-    .all({ $pid: playId }) as { node_id: string }[]; // brand-ok
-
-  for (const { node_id } of nodes) {
+  for (const node_id of nodeIds) {
     const leafId = asTreeNodeId(node_id);
     const profile = materializePartnerProfile(db, leafId);
     enqueueSettlementChannelEvent(db, {

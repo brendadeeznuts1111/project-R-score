@@ -54,10 +54,29 @@ Escape hatch: `SKIP_TEST_CHANGED=1`.
 | zlib-ng compress | Runtime automatic |
 | `Range` / 206 on static files | [`scripts/serve-public.ts`](../scripts/serve-public.ts) already documents Range |
 
-## Notes
+## Suite inventory
+
+```bash
+bun run test:inventory          # scripts/suite-inventory.ts → tmp/test-file-report.json
+```
+
+Baseline (2026-07-27, serial per-file, 20s wall): **260 files · ~238 pass · ~21 fail · 1 slow/hang-risk**  
+(`tests/harness-tenant-runbooks.test.ts` runs multi-tenant freshReruns — allow **≥180s** timeout).
+
+### Fixed in deep pass (examples)
+
+| File | Issue |
+|------|--------|
+| `play-callback.ts` | missing `AccountService` import (e2e) |
+| `play-settlement.ts` | outbox enqueue skipped when no `play_distribution` rows |
+| `defaults-cron.test.ts` | case count 12→13 |
+| `r2-env.test.ts` | `.env.example` bucket `factory-wager-registry` |
+| `seat-capital-desk-rich.test.ts` | Fill button labels for max/fp todos |
+
+### Notes
 
 - **Changed/watch loops use `--parallel` by default** (few files → isolation wins).
-- Full `tests/` suite: prefer **serial** (`bun run test` / `test:ci:shard`) until known hangers under `--isolate` are cleaned; workers can spin forever on some files.
+- Full `tests/` suite: prefer **serial** (`bun run test` / `test:ci:shard`) until hangers under `--isolate` are cleaned.
 - Small suites (<~10 files) may not beat serial wall time (spawn overhead).
 - Sharding still cuts CI wall time ≈ **N-way** even with serial workers.
 - Secrets continuous watch: `bun run test:secrets:watch`.

@@ -198,9 +198,10 @@ describe('buildSeatDeskReplyMarkup', () => {
     const labels = kb.inline_keyboard.flat().map(b => b.text);
     expect(labels).toContain('📋 Copy table');
     expect(labels).toContain('📋 Copy todo');
+    // Fill when fund gaps and/or book-term (max/fp%) todos remain — out 2 is incomplete;
+    // out 1 may also show Fill for optional term fields (isSeatOutFillable).
     expect(labels).toContain('2 · Fill');
     expect(labels).not.toContain('SPEN-1 · Fill');
-    expect(labels).not.toContain('1 · Fill');
     expect(labels).toContain('↻ Refresh');
   });
 });

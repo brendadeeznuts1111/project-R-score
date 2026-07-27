@@ -28,9 +28,10 @@ describe('defaults-verify in-process Bun.cron', () => {
     const result = await runDefaultsVerification({ savePath: path, quiet: true });
     expect(result.code).toBe(0);
     expect(result.proof?.summary.failed).toBe(0);
-    expect(result.proof?.cases.length).toBe(12);
+    // Case count tracks lib/http/bun-defaults-proof.ts (currently 13 probes)
+    expect(result.proof?.cases.length).toBe(13);
     const disk = await Bun.file(path).json();
     expect(disk.proofHash).toMatch(/^[a-f0-9]{64}$/);
-    expect(disk.summary.total).toBe(12);
+    expect(disk.summary.total).toBe(13);
   });
 });

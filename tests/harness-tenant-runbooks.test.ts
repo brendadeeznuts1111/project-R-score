@@ -126,13 +126,22 @@ describe('spine maintenance runbooks', () => {
     expect(CRITICAL_PROOF_PATHS.some(p => p.id === 'install-verify-journey')).toBe(true);
   });
 
-  test('each TenantRunbook.freshRerun exits 0', async () => {
-    expect(await assertRunbookFreshRerunsPass(ROOT)).toEqual([]);
-  }, 60_000);
+  // Spawns many tenant/proof CLIs — often 30–120s wall; inventory probes must use ≥180s.
+  test(
+    'each TenantRunbook.freshRerun exits 0',
+    async () => {
+      expect(await assertRunbookFreshRerunsPass(ROOT)).toEqual([]);
+    },
+    300_000
+  );
 
-  test('each linked proof freshRerun exits 0', async () => {
-    expect(await assertLinkedProofFreshRerunsPass(ROOT)).toEqual([]);
-  }, 180_000);
+  test(
+    'each linked proof freshRerun exits 0',
+    async () => {
+      expect(await assertLinkedProofFreshRerunsPass(ROOT)).toEqual([]);
+    },
+    300_000
+  );
 
   test('signal monitor last-check artifacts are fresh when present', async () => {
     expect(await assertSignalMonitorFreshness(ROOT)).toEqual([]);

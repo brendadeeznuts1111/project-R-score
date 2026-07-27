@@ -103,7 +103,8 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(text).toContain('BUN_VERSION=1.3.14');
     expect(text).toContain('SKIP_DEPENDENCY_INSTALL=true');
     expect(text).toContain('REGISTRY_URL=https://registry.factory-wager.com');
-    expect(text).toContain('R2_REGISTRY_BUCKET=npm-registry');
+    // Channel/outbox plane bucket (doctor fallback remains CLOUDFLARE_DEFAULTS.registryDoctorBucket)
+    expect(text).toContain('R2_REGISTRY_BUCKET=factory-wager-registry');
     expect(text).not.toContain('CLOUDFLARE_PAGES_PROJECT=');
 
     const index = await Bun.file('public/index.html').text();

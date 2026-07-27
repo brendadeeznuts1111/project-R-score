@@ -2,6 +2,8 @@
 /**
  * Handle Telegram play ack callback_query: play:{playId}:{nodeId}:placed|skip
  */
+import type { Database } from 'bun:sqlite';
+import { AccountService } from '../operations/account-service.ts';
 import { seatAuthorizedForTelegramUser } from './flows/seat-telegram.ts';
 
 export type PlayCallbackResult = { ok: true; message: string } | { ok: false; message: string };
