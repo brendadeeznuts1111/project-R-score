@@ -3,8 +3,8 @@
 /**
  * Docs coverage report — RSS index freshness, reference index, canonical alignment.
  *
- * @see tools/bun-docs-releases.ts — release-index.json
- * @see tools/bun-docs-reference-index.ts — reference-index.json
+ * @see tools/bun-docs-feeds.ts — merged RSS + reference indexes
+ * @see tools/bun-docs-reference-index.ts — reference section parser
  * @see tools/canonical-helpers.ts — getCanonicalEntry
  */
 import { getCanonicalEntry } from '../../tools/canonical-helpers.ts';
@@ -39,6 +39,7 @@ export type CatalogEntryLike = {
   canonicalPage?: string;
   docsUrl?: string;
   locusStatus?: string;
+  releaseHits?: Array<{ version: string }>;
 };
 
 export type OverlayFileLike = {
@@ -119,6 +120,14 @@ export function collectCatalogReferenceTokens(entries: CatalogEntryLike[]): stri
 
 export function collectOverlayTokens(overlay: OverlayFileLike): string[] {
   return overlay.entries.map(e => e.name).sort();
+}
+
+/** Overlay token names from catalog entries with embedded releaseHits. */
+export function collectCatalogOverlayTokens(entries: CatalogEntryLike[]): string[] {
+  return entries
+    .filter(e => (e.releaseHits?.length ?? 0) > 0)
+    .map(e => e.name)
+    .sort();
 }
 
 export function parseReviewJsonl(text: string): ReviewRow[] {
@@ -246,7 +255,7 @@ export type BuildDocsCoverageReportInput = {
   releaseIndex: ReleaseIndexFile;
   referenceIndex: ReferenceIndexFile;
   catalogEntries: CatalogEntryLike[];
-  overlay: OverlayFileLike;
+  overlay?: OverlayFileLike;
   reviewRows: ReviewRow[];
   allowlist: DocsCoverageAllowlist;
   liveNewestVersion?: string | null;
@@ -308,7 +317,9 @@ export function buildDocsCoverageReport(input: BuildDocsCoverageReportInput): Do
   const allow = loadAllowlist(input.allowlist);
 
   const catalogKeys = collectCatalogReferenceTokens(input.catalogEntries);
-  const overlayKeys = collectOverlayTokens(input.overlay);
+  const overlayKeys = input.overlay
+    ? collectOverlayTokens(input.overlay)
+    : collectCatalogOverlayTokens(input.catalogEntries);
   const recentVersions = newestReleaseVersions(input.releaseIndex, input.recentReleaseLimit ?? 3);
   const reviewKeys = collectReviewCandidates(input.reviewRows, recentVersions);
 

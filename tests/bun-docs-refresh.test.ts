@@ -10,8 +10,7 @@ describe('bun-docs-refresh', () => {
     expect(opts.mode).toBe('full');
     const names = buildRefreshSteps(opts).map(s => s.name);
     expect(names).toEqual([
-      'Phase 0: RSS release-index',
-      'Phase 0b: API reference-index',
+      'Phase 0: docs feeds',
       'Phase 2b: release scrape',
       'Catalog build',
       'Integrity + JSONL log',
@@ -35,17 +34,14 @@ describe('bun-docs-refresh', () => {
   test('feeds mode only refreshes RSS and reference indexes', () => {
     const opts = resolveRefreshOptions(['bun', 'tools/bun-docs-refresh.ts', '--feeds']);
     expect(opts.mode).toBe('feeds');
-    expect(buildRefreshSteps(opts).map(s => s.name)).toEqual([
-      'Phase 0: RSS release-index',
-      'Phase 0b: API reference-index',
-    ]);
+    expect(buildRefreshSteps(opts).map(s => s.name)).toEqual(['Phase 0: docs feeds']);
   });
 
   test('--skip-scrape omits scrape but keeps feeds', () => {
     const opts = resolveRefreshOptions(['bun', 'tools/bun-docs-refresh.ts', '--skip-scrape']);
     const names = buildRefreshSteps(opts).map(s => s.name);
     expect(names).not.toContain('Phase 2b: release scrape');
-    expect(names).toContain('Phase 0: RSS release-index');
+    expect(names).toContain('Phase 0: docs feeds');
   });
 
   test('--fast and --feeds together throws', () => {

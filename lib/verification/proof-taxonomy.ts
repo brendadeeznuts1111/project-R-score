@@ -358,13 +358,26 @@ export async function runProofTaxonomyAudit(rootDir: string): Promise<ProofTaxon
   }
 
   let referenceIndex: Record<string, unknown> | undefined;
-  const refIdxPath = joinPath(rootDir, 'tools/reference-index.json');
-  const refIdxFile = Bun.file(refIdxPath);
-  if (await refIdxFile.exists()) {
+  const { DOCS_FEEDS, LEGACY_REFERENCE_INDEX } = await import('../docs/docs-artifact-paths.ts');
+  const feedsPath = joinPath(rootDir, DOCS_FEEDS);
+  const feedsFile = Bun.file(feedsPath);
+  if (await feedsFile.exists()) {
     try {
-      referenceIndex = (await refIdxFile.json()) as Record<string, unknown>;
+      const feeds = (await feedsFile.json()) as { reference?: Record<string, unknown> };
+      referenceIndex = feeds.reference;
     } catch {
       referenceIndex = undefined;
+    }
+  }
+  if (!referenceIndex) {
+    const refIdxPath = joinPath(rootDir, LEGACY_REFERENCE_INDEX);
+    const refIdxFile = Bun.file(refIdxPath);
+    if (await refIdxFile.exists()) {
+      try {
+        referenceIndex = (await refIdxFile.json()) as Record<string, unknown>;
+      } catch {
+        referenceIndex = undefined;
+      }
     }
   }
 

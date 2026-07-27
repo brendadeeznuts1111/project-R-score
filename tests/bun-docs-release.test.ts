@@ -17,8 +17,10 @@ import {
   configKeyPatterns,
   releaseOverlayIndex,
   loadExistingOverlayMap,
+  RELEASE_OVERLAY_PATH,
   type ReleaseOverlayFile,
 } from '../tools/bun-docs-releases.ts';
+import { RELEASE_OVERLAY_CACHE_ABS } from '../lib/docs/docs-artifact-paths.ts';
 import {
   extractNoteFromHtml,
   extractNoteFromMarkdown,
@@ -146,5 +148,10 @@ describe('bun-docs-release-scrape', () => {
   test('loadExistingOverlayMap returns empty when force', async () => {
     const map = await loadExistingOverlayMap(true);
     expect(map.size).toBe(0);
+  });
+
+  test('RELEASE_OVERLAY_PATH points at gitignored cache', () => {
+    expect(RELEASE_OVERLAY_PATH).toBe(RELEASE_OVERLAY_CACHE_ABS);
+    expect(RELEASE_OVERLAY_PATH).toContain('/tools/.cache/bun-release-overlay.json');
   });
 });

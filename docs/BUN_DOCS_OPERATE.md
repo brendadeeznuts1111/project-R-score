@@ -20,21 +20,23 @@
 | Status | `bun tools/bun-doc-refs.ts status` |
 | Catalog export | `bun run docs:catalog:export` |
 | Locus | `bun tools/bun-doc-refs.ts locus --depth=20` |
-| Reference index | `bun run docs:reference-index` — conditional GET of `bun.com/reference` → `tools/reference-index.json` |
+| Feed indexes | `bun run docs:feeds:refresh` — conditional GET RSS + `bun.com/reference` → `tools/bun-docs-feeds.json` |
 | Docs coverage verify | `bun run verify:docs-coverage:save` — strict gate on tracked catalog/overlay/review tokens → `public/registry/docs-coverage-proof.json` |
 
 Loop: RSS index → reference index → scrape → catalog build → integrity log (`docs:refresh`). **Prefer `docs:refresh:fast`** when only llms.txt / `@see` / catalog entries moved — avoids overlay churn. `verify-all` runs `verify:docs-coverage:save` (reads committed indexes; use `--refresh-rss` / `--refresh-reference` for live fetch).
 
 ## Refresh tiers + commit lanes
 
-Catalog (`tools/bun-docs-catalog.json`) is the merged agent artifact; other JSON files are **inputs** with separate cache headers — do not squash into one blob.
+Path SSOT: [`lib/docs/docs-artifact-paths.ts`](../lib/docs/docs-artifact-paths.ts). Daily agent SSOT is **index + catalog**; feeds are one merged file; overlay/supplement are build caches under `tools/.cache/` (gitignored).
 
 | Tier | Command | Typical git commit (if changed) |
 |------|---------|----------------------------------|
 | **Fast** | `bun run docs:refresh:fast` | `tools/bun-docs-index.json` · `tools/bun-docs-catalog.json` |
-| **Feeds** | `bun run docs:refresh:feeds` | `tools/release-index.json` · `tools/reference-index.json` |
-| **Scrape** | `bun run docs:refresh` (full) | above + `tools/bun-docs-release-overlay.json` when scrape ran |
+| **Feeds** | `bun run docs:refresh:feeds` | `tools/bun-docs-feeds.json` |
+| **Scrape** | `bun run docs:refresh` (full) | feeds + catalog (`releaseHits` embedded at build; overlay stays in cache) |
 | **Proof bake** | `bun run verify:docs-coverage:save` | `public/registry/docs-coverage-proof.json` |
+
+Migrate legacy split indexes once: `bun run docs:feeds:migrate` (or `bun tools/bun-docs-feeds.ts --migrate-legacy`)
 
 Dry-run step plan: `bun tools/bun-docs-refresh.ts --dry-run --fast`
 

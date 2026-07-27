@@ -56,12 +56,8 @@ export function buildRefreshSteps(opts: RefreshOptions): RefreshStep[] {
 
   if (!opts.skipFeeds) {
     steps.push({
-      name: 'Phase 0: RSS release-index',
-      cmd: ['bun', 'tools/bun-docs-releases.ts', 'index'],
-    });
-    steps.push({
-      name: 'Phase 0b: API reference-index',
-      cmd: ['bun', 'tools/bun-docs-reference-index.ts', 'index'],
+      name: 'Phase 0: docs feeds',
+      cmd: ['bun', 'tools/bun-docs-feeds.ts', 'refresh'],
     });
   }
 
@@ -142,7 +138,7 @@ async function main(): Promise<void> {
     opts.mode === 'fast'
       ? 'docs refresh (fast) complete — commit tools/bun-docs-index.json + bun-docs-catalog.json'
       : opts.mode === 'feeds'
-        ? 'docs refresh (feeds) complete — commit release-index + reference-index if changed'
+        ? 'docs refresh (feeds) complete — commit tools/bun-docs-feeds.json if changed'
         : 'docs refresh complete';
   console.info(`\n✅ ${label}`);
 }

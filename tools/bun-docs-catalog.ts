@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --cpu
+// @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --os
 // @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — --port
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --format
 // @see https://bun.com/docs/bundler/bytecode#combining-with-other-optimizations — --sourcemap
@@ -30,7 +32,7 @@ import { BUN_GITHUB_RELEASES_URL } from '../lib/shared/tools/bun-urls.ts';
  * (+ commitHash when built against the runtime binary).
  * Bun docs are not versioned on bun.com (/docs/vX.Y.Z/ does not exist);
  * the pin is Bun.version (or --version=…) + GitHub release + blog post.
- * Blog URLs come from tools/release-index.json (RSS Phase 0), not URL guessing.
+ * Blog URLs come from tools/bun-docs-feeds.json (RSS), not URL guessing.
  * Token upgrade notes come from tools/bun-docs-changelog.ts (curated, not scraped).
  * Missing descriptions can be filled from live doc HTML (Phase 1 NOTE).
  *
@@ -48,17 +50,23 @@ import { BUN_GITHUB_RELEASES_URL } from '../lib/shared/tools/bun-urls.ts';
  * Consumed by tools/bun-doc-refs.ts (`catalog` / enriched `suggest`).
  */
 import { resolvePath } from '../lib/path-bun';
+import {
+  LEGACY_RELEASE_OVERLAY_ABS,
+  LEGACY_TOKEN_SUPPLEMENT_ABS,
+  RELEASE_OVERLAY_CACHE_ABS,
+  TOKEN_SUPPLEMENT_CACHE_ABS,
+} from '../lib/docs/docs-artifact-paths.ts';
 import { CURATED_ENTRIES } from './bun-docs-curated.ts';
 import { changelogIndex } from './bun-docs-changelog.ts';
 import {
   cleanBunVersion,
   loadReleaseIndex,
   lookupBlogUrl,
-  RELEASE_OVERLAY_PATH,
   releaseOverlayIndex,
   type ReleaseEntry,
   type ReleaseOverlayEntry,
   type ReleaseOverlayFile,
+  type ReleaseOverlayHit,
 } from './bun-docs-releases.ts';
 import {
   buildPageAnchorIndex,
@@ -71,7 +79,8 @@ import {
 
 const INDEX_PATH = resolvePath(import.meta.dir, 'bun-docs-index.json');
 const OUT_PATH = resolvePath(import.meta.dir, 'bun-docs-catalog.json');
-const TOKEN_SUPPLEMENT_PATH = resolvePath(import.meta.dir, 'bun-docs-token-supplement.json');
+const TOKEN_SUPPLEMENT_PATH = TOKEN_SUPPLEMENT_CACHE_ABS;
+const LEGACY_TOKEN_SUPPLEMENT_PATH = LEGACY_TOKEN_SUPPLEMENT_ABS;
 
 /** Typed token categories where NOTE / LOC / STATUS coverage is tracked closely. */
 export const NOTE_COVERAGE_TYPES: DocRefType[] = [
@@ -163,6 +172,10 @@ export type DocCatalogEntry = {
   locusStatus?: LocusStatus;
   /** Language-tagged usage examples from official docs. */
   examples?: Array<{ lang: string; body: string; fragment?: string }>;
+  /**
+   * Full release-post scrape timeline (embedded at catalog build; replaces tracked overlay file).
+   */
+  releaseHits?: ReleaseOverlayHit[];
   /** Related token names for cross-reference walks. */
   related?: string[];
   /** All known pages (no fragments), deduped, canonical first */
@@ -1000,7 +1013,7 @@ export async function buildCatalog(opts?: {
   force?: boolean;
   /** Skip live HTML NOTE enrichment */
   skipNotes?: boolean;
-  /** Force refresh of release-index.json from RSS (default: refresh if missing) */
+  /** Force refresh of bun-docs-feeds.json RSS section (default: refresh if missing) */
   refreshRss?: boolean;
 }): Promise<DocCatalogEntry[]> {
   const index = await loadIndex();
@@ -1107,14 +1120,21 @@ export async function buildCatalog(opts?: {
       section: DocSection;
       examples?: Array<{ lang: string; body: string; fragment?: string }>;
     };
-    const raw = (await Bun.file(TOKEN_SUPPLEMENT_PATH).json()) as
-      | SuppRow[]
-      | { bunVersion?: string; entries?: SuppRow[] };
-    const supplement: SuppRow[] = Array.isArray(raw)
-      ? raw
-      : Array.isArray(raw.entries)
-        ? raw.entries
-        : [];
+    let supplement: SuppRow[] = [];
+    for (const path of [TOKEN_SUPPLEMENT_PATH, LEGACY_TOKEN_SUPPLEMENT_PATH]) {
+      const f = Bun.file(path);
+      if (!(await f.exists())) continue;
+      const raw = (await f.json()) as SuppRow[] | { bunVersion?: string; entries?: SuppRow[] };
+      supplement = Array.isArray(raw) ? raw : Array.isArray(raw.entries) ? raw.entries : [];
+      if (supplement.length > 0) {
+        if (path === LEGACY_TOKEN_SUPPLEMENT_PATH) {
+          console.warn(
+            'warn: using legacy tools/bun-docs-token-supplement.json — regenerate to cache'
+          );
+        }
+        break;
+      }
+    }
     for (const e of supplement) {
       mergeEntry(map, {
         name: e.name,
@@ -1314,16 +1334,39 @@ export function applyReleaseOverlay(
   if (o.changeNote && !e.changeNote) {
     e.changeNote = o.changeNote;
   }
+  if (o.hits?.length) {
+    e.releaseHits = sortReleaseHits(dedupeReleaseHits(o.hits));
+  }
+}
+
+function dedupeReleaseHits(hits: ReleaseOverlayHit[]): ReleaseOverlayHit[] {
+  const seen = new Set<string>();
+  const out: ReleaseOverlayHit[] = [];
+  for (const h of hits) {
+    const key = `${h.version}|${h.kind}|${h.url}|${h.section}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(h);
+  }
+  return out;
+}
+
+function sortReleaseHits(hits: ReleaseOverlayHit[]): ReleaseOverlayHit[] {
+  return [...hits].sort((a, b) => compareSemver(a.version, b.version));
 }
 
 export async function loadReleaseOverlay(): Promise<Map<string, ReleaseOverlayEntry>> {
-  if (!(await Bun.file(RELEASE_OVERLAY_PATH).exists())) return new Map();
-  try {
-    const file = (await Bun.file(RELEASE_OVERLAY_PATH).json()) as ReleaseOverlayFile;
-    return releaseOverlayIndex(file);
-  } catch {
-    return new Map();
+  for (const path of [RELEASE_OVERLAY_CACHE_ABS, LEGACY_RELEASE_OVERLAY_ABS]) {
+    const f = Bun.file(path);
+    if (!(await f.exists())) continue;
+    try {
+      const file = (await f.json()) as ReleaseOverlayFile;
+      return releaseOverlayIndex(file);
+    } catch {
+      /* try next */
+    }
   }
+  return new Map();
 }
 
 export type CoverageReport = {
@@ -1579,19 +1622,18 @@ export async function writeCatalog(
     ...(commitHash ? { commitHash } : {}),
     docsRoot: 'https://bun.com/docs',
     versionPinned: opts?.versionPinned ?? false,
-    note: 'docsUrl = unversioned latest docs; blogUrl from tools/release-index.json (RSS); releaseUrl = GitHub tag; fixedIn/changeNote from tools/bun-docs-changelog.ts',
+    note: 'docsUrl = unversioned latest docs; blogUrl from tools/bun-docs-feeds.json (RSS); releaseUrl = GitHub tag; fixedIn/changeNote from tools/bun-docs-changelog.ts; releaseHits embedded at build',
     source: {
       index: 'tools/bun-docs-index.json',
       canonicalRefs: 'tools/bun-doc-refs.ts#CANONICAL_REFS',
       curated: 'tools/bun-docs-curated.ts',
       changelog: 'tools/bun-docs-changelog.ts',
-      releaseIndex: 'tools/release-index.json',
-      releaseOverlay: 'tools/bun-docs-release-overlay.json',
-      tokenSupplement: 'tools/bun-docs-token-supplement.json',
+      feeds: 'tools/bun-docs-feeds.json',
     },
     schema: {
       name: 'string',
       type: 'api | cli-flag | config | concept',
+      releaseHits: 'ReleaseOverlayHit[]? — full scrape timeline embedded at build',
       description: 'string?',
       stability: 'stable | experimental | deprecated',
       releasedIn: 'string? — Bun semver when feature shipped (curated)',
@@ -1624,7 +1666,7 @@ export async function writeCatalog(
     byStability: countBy(entries, e => e.stability),
     entries,
   };
-  await Bun.write(OUT_PATH, `${JSON.stringify(payload, null, 2)}\n`);
+  await Bun.write(OUT_PATH, `${JSON.stringify(payload)}\n`);
 }
 
 function countBy<T>(items: T[], key: (t: T) => string): Record<string, number> {
@@ -1683,11 +1725,9 @@ export async function getBunToken(
   const entry = await getCatalogEntry(name);
   if (!entry) return null;
   const { catalogEntryToBunToken } = await import('../lib/docs/token-ref-adapter.ts');
-  const overlay = await loadReleaseOverlay();
-  const hits = overlay.get(normalizeName(entry.name))?.hits;
   const meta = await loadCatalogFile();
   return catalogEntryToBunToken(entry, {
-    hits,
+    hits: entry.releaseHits,
     catalogGenerated: meta.generated,
     catalogCommitHash: meta.commitHash,
   });
@@ -1697,10 +1737,9 @@ export async function getBunToken(
 export async function exportBunTokens(): Promise<import('../lib/docs/bun-token.ts').BunToken[]> {
   const { catalogEntryToBunToken } = await import('../lib/docs/token-ref-adapter.ts');
   const meta = await loadCatalogFile();
-  const overlay = await loadReleaseOverlay();
   return meta.entries.map(e =>
     catalogEntryToBunToken(e, {
-      hits: overlay.get(normalizeName(e.name))?.hits,
+      hits: e.releaseHits,
       catalogGenerated: meta.generated,
       catalogCommitHash: meta.commitHash,
     })

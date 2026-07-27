@@ -203,6 +203,12 @@ export async function writeReferenceIndex(
     pages,
   };
   await Bun.write(REFERENCE_INDEX_PATH, `${JSON.stringify(payload, null, 2)}\n`);
+  try {
+    const { writeFeedsPartial } = await import('./bun-docs-feeds.ts');
+    await writeFeedsPartial({ reference: payload });
+  } catch {
+    /* feeds module optional during partial installs */
+  }
   return payload;
 }
 
@@ -223,13 +229,19 @@ export async function loadReferenceIndex(opts?: {
   refresh?: boolean;
   force?: boolean;
 }): Promise<{ file: ReferenceIndexFile; urlSet: Set<string> }> {
+  const { DOCS_FEEDS_ABS } = await import('../lib/docs/docs-artifact-paths.ts');
   const needsRefresh =
-    opts?.refresh || opts?.force || !(await Bun.file(REFERENCE_INDEX_PATH).exists());
+    opts?.refresh ||
+    opts?.force ||
+    (!(await Bun.file(REFERENCE_INDEX_PATH).exists()) &&
+      !(await Bun.file(DOCS_FEEDS_ABS).exists()));
   if (needsRefresh) {
     const r = await refreshReferenceIndex({ force: opts?.force });
     return { file: r.file, urlSet: new Set(r.file.pages.map(p => p.url)) };
   }
-  const file = (await Bun.file(REFERENCE_INDEX_PATH).json()) as ReferenceIndexFile;
+  const { loadFeeds } = await import('./bun-docs-feeds.ts');
+  const feeds = await loadFeeds();
+  const file = feeds.reference;
   const pages = Array.isArray(file.pages) ? file.pages : [];
   return { file: { ...file, pages }, urlSet: new Set(pages.map(p => p.url)) };
 }
@@ -256,7 +268,7 @@ async function main(): Promise<void> {
   const { file, fetch: fr } = await refreshReferenceIndex({ force });
   const cacheNote = fr.fromCache ? (fr.notModified ? ' (304/cache)' : ' (cache fallback)') : '';
   console.info(
-    `✅ reference-index ${file.count} pages · ${file.moduleCount} modules → tools/reference-index.json${cacheNote}`
+    `✅ reference-index ${file.count} pages · ${file.moduleCount} modules → tools/bun-docs-feeds.json (reference)${cacheNote}`
   );
 }
 

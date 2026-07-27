@@ -51,12 +51,22 @@ describe('lib/verification/proof-consistency', () => {
     expect(row.ok).toBe(true);
   });
 
-  test('docs-coverage reference counts match reference-index.json', async () => {
+  test('docs-coverage reference counts match committed feeds reference section', async () => {
     const dcPath = joinPath(ROOT, 'public/registry/docs-coverage-proof.json');
-    const refPath = joinPath(ROOT, 'tools/reference-index.json');
-    if (!(await Bun.file(dcPath).exists()) || !(await Bun.file(refPath).exists())) return;
+    const feedsPath = joinPath(ROOT, 'tools/bun-docs-feeds.json');
+    const legacyPath = joinPath(ROOT, 'tools/reference-index.json');
+    if (!(await Bun.file(dcPath).exists())) return;
+
+    let referenceIndex: { count?: number; moduleCount?: number } | null = null;
+    if (await Bun.file(feedsPath).exists()) {
+      const feeds = (await Bun.file(feedsPath).json()) as { reference?: { count?: number; moduleCount?: number } };
+      referenceIndex = feeds.reference ?? null;
+    } else if (await Bun.file(legacyPath).exists()) {
+      referenceIndex = await Bun.file(legacyPath).json();
+    }
+    if (!referenceIndex) return;
+
     const docsCoverage = await Bun.file(dcPath).json();
-    const referenceIndex = await Bun.file(refPath).json();
     const row = auditDocsCoverageReferenceParity(docsCoverage, referenceIndex);
     expect(row.ok).toBe(true);
   });

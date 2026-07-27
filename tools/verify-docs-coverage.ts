@@ -20,13 +20,13 @@ import {
   parseReviewJsonl,
   type DocsCoverageReport,
 } from '../lib/docs/docs-coverage-report.ts';
+import { DOCS_CATALOG } from '../lib/docs/docs-artifact-paths.ts';
 import { loadReleaseIndex, parseReleaseEntries, fetchRssXml } from './bun-docs-releases.ts';
 import { loadReferenceIndex } from './bun-docs-reference-index.ts';
 
 export const SAVE_PATH = 'public/registry/docs-coverage-proof.json';
 export const ALLOWLIST_PATH = 'tools/docs-coverage-allowlist.json';
-export const CATALOG_PATH = 'tools/bun-docs-catalog.json';
-export const OVERLAY_PATH = 'tools/bun-docs-release-overlay.json';
+export const CATALOG_PATH = DOCS_CATALOG;
 export const REVIEW_PATH = 'reports/release-scrape-review.jsonl';
 
 const asJson = Bun.argv.includes('--json');
@@ -65,10 +65,7 @@ export async function runDocsCoverageVerification(): Promise<DocsCoverageReport>
   }
 
   const catalog = (await Bun.file(CATALOG_PATH).json()) as {
-    entries: Array<Record<string, unknown>>;
-  };
-  const overlay = (await Bun.file(OVERLAY_PATH).json()) as {
-    entries: Array<{ name: string }>;
+    entries: Array<import('../lib/docs/docs-coverage-report.ts').CatalogEntryLike>;
   };
   const allowlist = (await Bun.file(
     ALLOWLIST_PATH
@@ -77,9 +74,7 @@ export async function runDocsCoverageVerification(): Promise<DocsCoverageReport>
   const report = buildDocsCoverageReport({
     releaseIndex,
     referenceIndex,
-    catalogEntries:
-      catalog.entries as import('../lib/docs/docs-coverage-report.ts').CatalogEntryLike[],
-    overlay,
+    catalogEntries: catalog.entries,
     reviewRows: await loadReviewRows(),
     allowlist,
     liveNewestVersion,

@@ -19,6 +19,7 @@ import {
   parseVersionFlag,
   normalizeBunVersion,
   applyChangelogOverlay,
+  applyReleaseOverlay,
   listCells,
   shortType,
   shortStability,
@@ -143,6 +144,39 @@ describe('bun-docs-catalog helpers', () => {
     expect(parseVersionFlag(['build', '--version', 'v1.4.0'])).toBe('1.4.0');
     expect(parseVersionFlag(['build', '--version=bun-v1.3.12'])).toBe('1.3.12');
     expect(parseVersionFlag(['list'])).toBe(Bun.version);
+  });
+});
+
+describe('bun-docs-release overlay embed', () => {
+  test('applyReleaseOverlay sets releaseHits on entry', () => {
+    const entry: DocCatalogEntry = {
+      name: 'Bun.WebView',
+      type: 'api',
+      stability: 'stable',
+      canonicalPage: 'https://bun.com/docs/runtime/webview',
+      allPages: ['https://bun.com/docs/runtime/webview'],
+      section: 'runtime',
+    };
+    applyReleaseOverlay(entry, new Map([
+      [
+        'bun.webview',
+        {
+          name: 'Bun.WebView',
+          releasedIn: '1.4.0',
+          hits: [
+            {
+              version: '1.4.0',
+              url: 'https://bun.com/blog/bun-v1.4.0',
+              section: 'WebView',
+              kind: 'ship',
+            },
+          ],
+        },
+      ],
+    ]));
+    expect(entry.releasedIn).toBe('1.4.0');
+    expect(entry.releaseHits?.length).toBe(1);
+    expect(entry.releaseHits?.[0]?.kind).toBe('ship');
   });
 });
 

@@ -237,4 +237,40 @@ describe('catalogEntryToBunToken', () => {
     });
     expect(token.docsLocus.anchor).toBeNull();
   });
+
+  test('catalogEntryToBunToken reads releaseHits from entry shape (getBunToken path)', () => {
+    const token = catalogEntryToBunToken(
+      {
+        name: 'Bun.WebView',
+        type: 'api',
+        stability: 'stable',
+        description: 'Headless browser control',
+        releasedIn: '1.4.0',
+        canonicalPage: 'https://bun.com/docs/runtime/webview',
+        allPages: ['https://bun.com/docs/runtime/webview'],
+        section: 'runtime',
+        releaseHits: [
+          {
+            version: '1.4.0',
+            url: 'https://bun.com/blog/bun-v1.4.0',
+            section: 'WebView',
+            kind: 'ship',
+          },
+        ],
+      },
+      {}
+    );
+    expect(token.since).toBe('1.4.0');
+    expect(token.versionEvents.some(e => e.version === '1.4.0')).toBe(true);
+  });
+});
+
+describe('getBunToken embedded hits', () => {
+  test('returns version events from catalog releaseHits without overlay file', async () => {
+    const { getBunToken } = await import('../tools/bun-docs-catalog.ts');
+    const token = await getBunToken('Bun.WebView');
+    if (!token) return;
+    expect(token.versionEvents.length).toBeGreaterThan(0);
+    expect(token.since).toBeTruthy();
+  });
 });

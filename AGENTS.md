@@ -31,7 +31,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Factory Telegram | [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` · `telegram:ops:consume` · [`lib/telegram/`](lib/telegram/) |
 | Platform routing (local vs Pages) | [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run check:routes` · `bun run verify:pages-edge` |
 | Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) |
-| Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) (`bun run docs:refresh`) |
+| Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · [`lib/docs/docs-artifact-paths.ts`](lib/docs/docs-artifact-paths.ts) (`docs:refresh:fast` daily · `docs:feeds:refresh` · full `docs:refresh`) |
 | TokenRef (interior) / BunToken (export) | [`lib/docs/token-ref.ts`](lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](lib/docs/bun-token.ts) |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
@@ -121,14 +121,14 @@ bun run docs:catalog:export                       # compact TSV for agents
 
 Commands: `url` `list` `suggest` (catalog → canonical map → index) · `catalog` · `check`/`annotate` (find/insert `@see` refs) · `audit` (map anchors vs index) · `deepcheck` (repo links vs index) · `validate` (HTTP links) · `integrity` (4-layer proof; `--fix` self-heals taxonomy aliases, `--fix-dry` previews) · `status` (includes tier-A coverage) · `schedule` (Bun.cron daemon; `--once` for single runs) · `export` (hierarchical llms-full.txt)
 
-Operate loop (RSS → reference index → scrape → catalog → integrity): [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · `bun run docs:refresh` · strict tracked-token gate: `bun run verify:docs-coverage:save`
+Operate loop (feeds → scrape → catalog with embedded `releaseHits` → integrity): [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · **daily** `bun run docs:refresh:fast` · feeds `bun run docs:feeds:refresh` · full `bun run docs:refresh` · strict gate `bun run verify:docs-coverage:save`. Committed tool JSON: `bun-docs-index.json` + `bun-docs-catalog.json` (fast) · `bun-docs-feeds.json` (feeds).
 
 Rules:
 
 - When you use a `Bun.*` API in code, add `// @see <canonical-url>` from the `url`/`suggest` output to the file header (or run `bun tools/bun-doc-refs.ts annotate --write <files>` to do it automatically).
 - The pre-commit harness **blocks commits** whose staged files use Bun APIs without canonical refs — run the annotator and re-stage.
 - Only trust options verified against the runtime (see [`lib/console-depth.ts`](lib/console-depth.ts) header for the pattern); Bun silently ignores several Node `util.inspect`-style options.
-- Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) → [`tools/bun-docs-index.json`](tools/bun-docs-index.json) → [`tools/bun-docs-catalog.json`](tools/bun-docs-catalog.json) (NOTE/SHIP/FIX/BLOG) → [`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts) `CANONICAL_REFS`. Refresh: `bun run docs:refresh` (or `bun tools/bun-docs-index-gen.ts && bun tools/bun-doc-refs.ts integrity`).
+- Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) → [`tools/bun-docs-index.json`](tools/bun-docs-index.json) → [`tools/bun-docs-catalog.json`](tools/bun-docs-catalog.json) (NOTE/SHIP/FIX/BLOG + embedded `releaseHits`) → [`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts) `CANONICAL_REFS`. Feeds: [`tools/bun-docs-feeds.json`](tools/bun-docs-feeds.json). Refresh: `bun run docs:refresh:fast` (daily) or `bun run docs:refresh` (full).
 
 ## Branded ID types (harness)
 

@@ -27,7 +27,7 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
 | Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | [TOC](./BUN_NATIVE_CAPABILITIES.md#table-of-contents) |
 | Bun DX catalog | `bun run dx:catalog <id>` | SSOT [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts) |
-| Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) | `bun run docs:refresh:fast` (daily) · `docs:refresh` (full) |
+| Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · [docs-artifact-paths.ts](../lib/docs/docs-artifact-paths.ts) | `docs:refresh:fast` (daily) · `docs:feeds:refresh` · `docs:refresh` (full) |
 | Bun-first policy | [bun/BUN_FIRST_POLICY.md](./bun/BUN_FIRST_POLICY.md) | pin 1.4.0 |
 
 ## Live trees (only)

@@ -8,12 +8,12 @@
  *
  * Phase 0: Fetches https://bun.com/rss.xml (conditional GET via ETag / Last-Modified),
  * filters release-like posts, normalises versions, and writes:
- *   tools/release-index.json
+ *   tools/bun-docs-feeds.json (rss section) + legacy tools/release-index.json during transition
  *
- * Phase 2b: Reads tools/release-index.json, fetches each post HTML (cached), parses
+ * Phase 2b: Reads RSS index, fetches each post HTML (cached), parses
  * sections, exact-matches tokens against the catalog (+ config/pkg path aliases), and
  * writes:
- *   tools/bun-docs-release-overlay.json
+ *   tools/.cache/bun-release-overlay.json
  *   reports/release-scrape-review.jsonl (unmatched token-like candidates)
  *
  * Run:
@@ -23,6 +23,10 @@
  * Consumed by tools/bun-docs-catalog.ts for BLOG population and SHIP/FIX/CHG overlay.
  */
 import { resolvePath } from '../lib/path-bun';
+import {
+  LEGACY_RELEASE_OVERLAY_ABS,
+  RELEASE_OVERLAY_CACHE_ABS,
+} from '../lib/docs/docs-artifact-paths.ts';
 
 export const RSS_URL = 'https://bun.com/rss.xml';
 
@@ -272,6 +276,12 @@ export async function writeReleaseIndex(
     entries,
   };
   await Bun.write(RELEASE_INDEX_PATH, `${JSON.stringify(payload, null, 2)}\n`);
+  try {
+    const { writeFeedsPartial } = await import('./bun-docs-feeds.ts');
+    await writeFeedsPartial({ rss: payload });
+  } catch {
+    /* feeds module optional during partial installs */
+  }
   return payload;
 }
 
@@ -297,12 +307,19 @@ export async function loadReleaseIndex(opts?: {
   force?: boolean;
 }): Promise<{ file: ReleaseIndexFile; map: Map<string, ReleaseEntry> }> {
   const needsRefresh =
-    opts?.refresh || opts?.force || !(await Bun.file(RELEASE_INDEX_PATH).exists());
+    opts?.refresh ||
+    opts?.force ||
+    (!(await Bun.file(RELEASE_INDEX_PATH).exists()) &&
+      !(await Bun.file(
+        (await import('../lib/docs/docs-artifact-paths.ts')).DOCS_FEEDS_ABS
+      ).exists()));
   if (needsRefresh) {
     const r = await refreshReleaseIndex({ force: opts?.force });
     return { file: r.file, map: r.map };
   }
-  const file = (await Bun.file(RELEASE_INDEX_PATH).json()) as ReleaseIndexFile;
+  const { loadFeeds } = await import('./bun-docs-feeds.ts');
+  const feeds = await loadFeeds();
+  const file = feeds.rss;
   const entries = Array.isArray(file.entries) ? file.entries : [];
   return { file, map: buildReleaseMap(entries) };
 }
@@ -314,7 +331,9 @@ const SCRAPE_ALIASES_PATH = resolvePath(ROOT, 'bun-docs-scrape-aliases.json');
 const CATALOG_PATH = resolvePath(ROOT, 'bun-docs-catalog.json');
 const REVIEW_LOG = resolvePath(ROOT, '..', 'reports', 'release-scrape-review.jsonl');
 
-export const RELEASE_OVERLAY_PATH = resolvePath(ROOT, 'bun-docs-release-overlay.json');
+export const RELEASE_OVERLAY_PATH = RELEASE_OVERLAY_CACHE_ABS;
+/** @deprecated tracked overlay — legacy read fallback only */
+export const LEGACY_RELEASE_OVERLAY_PATH = LEGACY_RELEASE_OVERLAY_ABS;
 const BLOG_CACHE_DIR = resolvePath(ROOT, '.cache', 'bun-blog-posts');
 const STATE_PATH = resolvePath(BLOG_CACHE_DIR, 'state.json');
 
@@ -779,6 +798,16 @@ export async function scrapeReleaseOverlay(opts?: {
   return file;
 }
 
+async function readOverlayFile(path: string): Promise<ReleaseOverlayFile | null> {
+  const f = Bun.file(path);
+  if (!(await f.exists())) return null;
+  try {
+    return (await f.json()) as ReleaseOverlayFile;
+  } catch {
+    return null;
+  }
+}
+
 export function releaseOverlayIndex(file: ReleaseOverlayFile): Map<string, ReleaseOverlayEntry> {
   return new Map(file.entries.map(e => [normalizeTokenKey(e.name), e]));
 }
@@ -788,13 +817,11 @@ export async function loadExistingOverlayMap(
   force?: boolean
 ): Promise<Map<string, ReleaseOverlayEntry>> {
   if (force) return new Map();
-  if (!(await Bun.file(RELEASE_OVERLAY_PATH).exists())) return new Map();
-  try {
-    const file = (await Bun.file(RELEASE_OVERLAY_PATH).json()) as ReleaseOverlayFile;
-    return releaseOverlayIndex(file);
-  } catch {
-    return new Map();
+  for (const path of [RELEASE_OVERLAY_PATH, LEGACY_RELEASE_OVERLAY_PATH]) {
+    const file = await readOverlayFile(path);
+    if (file) return releaseOverlayIndex(file);
   }
+  return new Map();
 }
 
 // --- CLI ---
@@ -804,7 +831,7 @@ async function runIndex(force: boolean): Promise<void> {
   const newest = file.entries[file.entries.length - 1];
   const oldest = file.entries[0];
   console.info(
-    `✅ release-index ${file.count} releases → tools/release-index.json` +
+    `✅ release-index ${file.count} releases → tools/bun-docs-feeds.json (rss)` +
       (fr.notModified ? ' (304 not modified)' : fr.fromCache ? ' (from cache)' : ' (fetched)') +
       (file.etag ? ` etag=${file.etag}` : '')
   );
@@ -821,7 +848,7 @@ async function runScrape(force: boolean, limit?: number): Promise<void> {
   const withFix = file.entries.filter(e => e.fixedIn).length;
   const withChg = file.entries.filter(e => e.changedIn).length;
   console.info(
-    `✅ release-overlay ${file.tokenCount} tokens from ${file.postsProcessed} posts → tools/bun-docs-release-overlay.json` +
+    `✅ release-overlay ${file.tokenCount} tokens from ${file.postsProcessed} posts → tools/.cache/bun-release-overlay.json` +
       `  ship=${withShip} fix=${withFix} chg=${withChg}` +
       (file.unmatchedLogged
         ? `  review=${file.unmatchedLogged} → reports/release-scrape-review.jsonl`

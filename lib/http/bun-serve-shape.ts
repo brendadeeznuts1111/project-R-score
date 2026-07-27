@@ -6,7 +6,7 @@
  * Operate loop sources (do not guess):
  * - Published docs: `bun tools/bun-doc-refs.ts suggest "Bun.serve reference"`
  * - bun-types: `packages/bun-types/serve.d.ts` on oven-sh/bun (pinned in package.json)
- * - RSS / releases: `bun tools/bun-docs-releases.ts index` → tools/release-index.json
+ * - RSS / releases: `bun tools/bun-docs-feeds.ts refresh` → tools/bun-docs-feeds.json
  * - Runtime: `probeServerShape()` on this machine
  *
  * @see https://bun.com/docs/runtime/http/server#reference — published Server interface
@@ -26,7 +26,7 @@ export const BUN_SERVE_CROSS_REF = {
   docsRouting: 'https://bun.com/docs/runtime/http/routing',
   bunTypesServe: 'https://github.com/oven-sh/bun/blob/main/packages/bun-types/serve.d.ts',
   rss: 'https://bun.com/rss.xml',
-  releaseIndex: 'tools/release-index.json',
+  releaseIndex: 'tools/bun-docs-feeds.json',
   catalogToken: 'Bun.serve',
 } as const;
 

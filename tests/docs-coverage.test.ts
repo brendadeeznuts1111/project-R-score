@@ -6,6 +6,8 @@ import {
   checkCanonicalCoverage,
   checkReferenceUrlPresence,
   checkRssIndexFreshness,
+  collectCatalogOverlayTokens,
+  collectCatalogOverlayTokens,
   collectCatalogReferenceTokens,
   isTokenTracked,
   loadAllowlist,
@@ -206,6 +208,14 @@ describe('buildDocsCoverageReport', () => {
     });
     const catalog = lanes.find(l => l.name === 'docs-coverage:catalog');
     expect(catalog?.passed).toBe(false);
+  });
+
+  test('collectCatalogOverlayTokens uses embedded releaseHits', () => {
+    const tokens = collectCatalogOverlayTokens([
+      { name: 'a', releaseHits: [{ version: '1.0.0' }] },
+      { name: 'b' },
+    ]);
+    expect(tokens).toEqual(['a']);
   });
 
   test('collectCatalogReferenceTokens includes reference locus and /reference/ pages', () => {

@@ -27,15 +27,16 @@
  *   bun tools/generate-tokens-from-docs.ts --section=runtime
  *   bun tools/generate-tokens-from-docs.ts --version=1.4.0
  * Output:
- *   - tools/bun-docs-token-supplement.json  (merged by bun-docs-catalog.ts build)
+ *   - tools/.cache/bun-token-supplement.json  (merged by bun-docs-catalog.ts build)
  *
  * blogUrl comes from tools/release-index.json (RSS) when present — never synthetic.
  * Docs pages stay unversioned. commitHash is Bun.revision when building against the runtime.
  */
 
 import { BUN_GITHUB_RELEASES_URL, LLMS_URL } from '../lib/shared/tools/bun-urls.ts';
+import { TOKEN_SUPPLEMENT_CACHE_ABS } from '../lib/docs/docs-artifact-paths.ts';
 
-const SUPPLEMENT_OUT = new URL('./bun-docs-token-supplement.json', import.meta.url).pathname;
+const SUPPLEMENT_OUT = TOKEN_SUPPLEMENT_CACHE_ABS;
 
 const DOMAINS = ['runtime', 'bundler', 'test', 'pm'];
 const SKIP_TITLES = new Set(['Package Manager', 'Runtime', 'Bundler', 'Test Runner']);
