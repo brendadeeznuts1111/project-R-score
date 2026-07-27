@@ -1,0 +1,6 @@
+ALTER TABLE plays ADD COLUMN state_code TEXT DEFAULT NULL;
+ALTER TABLE play_analysis ADD COLUMN state_code TEXT DEFAULT NULL;
+CREATE TABLE IF NOT EXISTS regulatory_limits (id INTEGER PRIMARY KEY AUTOINCREMENT, state_code TEXT NOT NULL, sport_id TEXT NOT NULL, market_id TEXT NOT NULL, max_wager REAL NOT NULL, min_wager REAL DEFAULT 0, allowed_bet_types TEXT DEFAULT '["straight","parlay"]', effective_from INTEGER DEFAULT (unixepoch()), effective_to INTEGER DEFAULT NULL);
+CREATE TABLE IF NOT EXISTS partner_state_licenses (node_id TEXT NOT NULL, state_code TEXT NOT NULL, license_number TEXT, status TEXT DEFAULT 'active' CHECK(status IN('active','suspended','revoked')), granted_at INTEGER DEFAULT (unixepoch()), PRIMARY KEY (node_id, state_code));
+CREATE TABLE IF NOT EXISTS regulatory_violations (id INTEGER PRIMARY KEY AUTOINCREMENT, node_id TEXT NOT NULL, play_id TEXT, state_code TEXT NOT NULL, reason TEXT NOT NULL, blocked_at INTEGER DEFAULT (unixepoch()));
+INSERT OR IGNORE INTO regulatory_limits (state_code, sport_id, market_id, max_wager, min_wager, allowed_bet_types) VALUES ('MA', 'soccer', 'match_winner', 5000, 0.5, '["straight","parlay"]'), ('MA', 'basketball', 'over_under', 10000, 1, '["straight"]'), ('NJ', 'soccer', 'match_winner', 10000, 1, '["straight","parlay","teaser"]');
