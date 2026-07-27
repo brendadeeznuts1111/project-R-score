@@ -4,6 +4,7 @@
  * Pure Bun.env hygiene scanner — shared by check-env-defaults CLI + tests.
  * Classifies optional config reads that lack fallbacks (not secrets / ambient).
  */
+import { isBunSecretsServiceEnv } from './env-secret-policy.ts';
 
 /** Process / host ambient — presence is optional by design. */
 export const PROCESS_AMBIENT = new Set([
@@ -186,6 +187,8 @@ export function hasFallbackOrGuard(
 
 export function classifyEnvVar(envVar: string): 'ambient' | 'secret' | 'config' {
   if (envVar.startsWith('NODE_') || PROCESS_AMBIENT.has(envVar)) return 'ambient';
+  // Bun.secrets *service id* envs look secret-shaped (…SECRETS_SERVICE) but are labels
+  if (isBunSecretsServiceEnv(envVar)) return 'config';
   if (REQUIRED_SECRET_RE.test(envVar)) return 'secret';
   return 'config';
 }

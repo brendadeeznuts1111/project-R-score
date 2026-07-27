@@ -29,18 +29,24 @@ pass://factorywager/Cloudflare API Token/password
 Map harness `Bun.env.*` usage to `env.template` / Proton Pass refs (no secret values printed):
 
 ```bash
-bun run env:inventory           # human summary
-bun run env:inventory:vault     # vault coverage focus
-bun run env:inventory:json      # machine JSON
-bun run check:env-defaults      # optional config without fallback (harness)
-bun run proton:check            # inject proof for all templates
+bun run env:inventory              # human summary + dispositions
+bun run env:inventory:vault        # vault coverage focus
+bun run env:inventory:json         # machine JSON
+bun run env:inventory:ratchet      # fail if actionable gaps grow (baseline)
+bun run env:inventory:baseline     # lock current gaps after intentional debt
+bun run check:env-defaults         # optional config without fallback (harness)
+bun run proton:check               # inject proof for all templates
 ```
+
+Policy: [`scripts/lib/env-secret-policy.ts`](../../../scripts/lib/env-secret-policy.ts) · baseline: [`scripts/env-secret-gap-baseline.json`](../../../scripts/env-secret-gap-baseline.json)
 
 | Signal | Meaning |
 |--------|---------|
-| Secrets used + vaulted | Code name appears in an `env.template` `pass://` ref |
-| Secrets used but NOT in template | Candidate to add vault item + template line (or Bun.secrets service) |
-| `check:env-defaults` fail | Optional config read lacks `\|\|` / `??` / guard |
+| Vaulted | Code name has `pass://` in an `env.template` |
+| Alias | e.g. `TELEGRAM_BOT_TOKEN` → `TELEGRAM_BOT_FACTORY` (already vaulted) |
+| Bun.secrets service label | `*_SECRETS_SERVICE` — service id, not password material |
+| **Actionable vault gap** | Real operator secret used in code with no template/vault ref |
+| `env:inventory --ratchet` | New actionable gaps fail (pre-commit soft; CI can hard-fail) |
 
 ## Secret Injection
 

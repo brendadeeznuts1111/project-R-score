@@ -64,19 +64,33 @@ fi
 
 echo ""
 echo "== pre-commit: type-check (tools) =="
+# Only when tools/ is staged — full type-check:tools is ~400 errors on canary types (non-gate CI).
 if [ "$1" = "--dry-run" ]; then
-  echo "  [dry-run] bun run type-check:tools"
+  echo "  [dry-run] type-check:tools if tools/ staged"
 else
-  bun run type-check:tools 2>&1 | tail -3 || echo "  ⚠️  type-check failed (non-blocking in pre-commit)"
+  if git diff --cached --name-only --diff-filter=ACMR | grep -qE '^tools/'; then
+    bun run type-check:tools 2>&1 | tail -5 || echo "  ⚠️  type-check:tools failed (non-blocking)"
+  else
+    echo "  ⏭️  no tools/ staged — skip type-check:tools"
+  fi
 fi
 
 echo ""
 echo "== pre-commit: env defaults check =="
-# Staged-only + harness heuristics (not full-tree 600+ noise). Non-blocking until clean.
+# Staged-only + harness heuristics. Non-blocking until clean.
 if [ "$1" = "--dry-run" ]; then
   echo "  [dry-run] bun scripts/check-env-defaults.ts --staged --dry-run"
 else
   bun scripts/check-env-defaults.ts --staged || echo "  ⚠️  env-defaults: staged optional config without fallback (non-blocking)"
+fi
+
+echo ""
+echo "== pre-commit: env vault-gap ratchet =="
+if [ "$1" = "--dry-run" ]; then
+  echo "  [dry-run] bun scripts/env-inventory.ts --ratchet"
+else
+  # Soft fail for now (baseline exists); promote to hard fail when team is ready
+  bun scripts/env-inventory.ts --ratchet 2>&1 | tail -20 || echo "  ⚠️  vault-gap ratchet failed (non-blocking)"
 fi
 
 echo ""
