@@ -27,7 +27,7 @@ Harness tenant doc for the **factory** Telegram integration (`@factorywager_bot`
 
 **Handshake verify:** `bun tools/verify-package-group-handshake.ts ASH` — see [`partner-package-group-handshake.md`](partner-package-group-handshake.md#e2e-validation-runbook).
 
-**Handshake desk:** `bun run telegram:handshake:desk` — registry + known chats + verify in one table ([ADR-0003](../../adr/0003-telegram-handshake-desk.md)).
+**Handshake desk:** `bun run telegram:handshake:desk` — registry + known chats + verify in one table ([ADR-0003](../../adr/0003-telegram-handshake-desk.md)). **`MEMBERS`** column interprets forum headcount (bot + house + partner) — see [`partner-package-group-handshake.md`](partner-package-group-handshake.md#group-membership-model-member-count-tell).
 
 Transport health API: [`lib/telegram/telegram-transport-health.ts`](../../../lib/telegram/telegram-transport-health.ts) · `bun run telegram:verify -- --json`
 

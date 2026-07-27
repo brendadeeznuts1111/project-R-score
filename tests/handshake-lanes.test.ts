@@ -9,7 +9,7 @@ import {
   upsertPackageGroupRegistry,
   type PackageGroupCreateArtifact,
 } from '../lib/telegram/package-group-registry.ts';
-import { upsertKnownChat } from '../lib/telegram/known-chats.ts';
+import { upsertKnownChat, updateKnownChatMemberCount } from '../lib/telegram/known-chats.ts';
 
 const createArtifact: PackageGroupCreateArtifact = {
   action: 'create_package_group',
@@ -83,6 +83,7 @@ describe('handshake-lanes', () => {
       surfaceSlug: 'nov-prod',
       botStatus: 'administrator',
     });
+    updateKnownChatMemberCount(db, '-1004464761699', 2);
 
     await writeFile(
       join(dir, 'forums', 'NOV.json'),

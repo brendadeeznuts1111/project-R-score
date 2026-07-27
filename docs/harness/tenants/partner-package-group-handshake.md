@@ -162,6 +162,29 @@ bun run telegram:handshake:verify NOV --live      # live Telegram title match
 
 Deep lanes (`--deep`): forum · audit (JSONL) · routing (outbox thread map) · operator (blocked-until-link explicit).
 
+### Group membership model (member count tell)
+
+Every package forum is expected to contain **at least three actors** once fully staffed:
+
+| # | Actor | Notes |
+|---|--------|--------|
+| 1 | **Factory bot** | `@TOC_Op_bot` — administrator |
+| 2 | **House operator** | Your personal Telegram — creates / owns the group |
+| 3 | **Partner / agent** | Human for the designated seat (e.g. `NOV-001`) — joins via invite |
+
+More humans (experts, observers) increase the count — that is normal.
+
+`getChatMemberCount` (via `handshake:desk --refresh` or `directory --refresh`) is a cheap sanity check:
+
+| Count | Interpretation |
+|-------|----------------|
+| `1` | Understaffed — re-check bot admin |
+| `2` | Bot + house only — **normal** while partner not in forum or telegram not linked |
+| `3` | Bot + house + partner — typical steady state |
+| `4+` | Core trio + extras |
+
+Code: [`lib/telegram/package-group-membership.ts`](../../../lib/telegram/package-group-membership.ts) · desk column `MEMBERS` · deep lane `forum_members`.
+
 ---
 
 ## Error handling

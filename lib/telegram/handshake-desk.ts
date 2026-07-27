@@ -17,6 +17,10 @@ import {
   formatDmSeatStatus,
   type DmSeatStatus,
 } from './dm-seat-designation.ts';
+import {
+  interpretPackageGroupMemberCount,
+  type PackageGroupMembershipTell,
+} from './package-group-membership.ts';
 import { verifyPackageGroupHandshake } from './verify-package-group-handshake.ts';
 import {
   assessForumMetadata,
@@ -38,6 +42,7 @@ export type HandshakeDeskRow = {
   chatType: string | null;
   isForum: boolean | null;
   memberCount: number | null;
+  membershipTell: PackageGroupMembershipTell;
   surfaceSlug: string | null;
   botStatus: string | null;
   active: boolean | null;
@@ -127,6 +132,9 @@ async function deskRowForRegistry(
     chatType: known?.chatType ?? null,
     isForum: known?.isForum ?? null,
     memberCount: known?.memberCount ?? null,
+    membershipTell: interpretPackageGroupMemberCount(known?.memberCount ?? null, {
+      dmSeatStatus: dmSeat.status,
+    }),
     surfaceSlug: known?.surfaceSlug ?? null,
     botStatus: known?.botStatus ?? null,
     active: known?.active ?? null,
@@ -227,16 +235,16 @@ export function formatHandshakeDeskTable(rows: HandshakeDeskRow[]): string[] {
         : 'FAIL';
 
   const lines = [
-    'CODE  CHAT_ID           REGISTRY_TITLE          LIVE    TYPE          MEM  SURFACE       INV  BOT     VERIFY',
-    '----  ----------------  ----------------------  ------  ------------  ---  ------------  ---  ------  ------',
+    'CODE  CHAT_ID           REGISTRY_TITLE          LIVE    TYPE          MEMBERS       SURFACE       INV  BOT     VERIFY',
+    '----  ----------------  ----------------------  ------  ------------  ------------  ------------  ---  ------  ------',
   ];
 
   for (const r of rows) {
     const type = r.chatType != null ? r.chatType + (r.isForum ? '*' : '') : '—';
-    const mem = r.memberCount != null ? String(r.memberCount) : '—';
+    const mem = r.memberCount != null ? `${r.memberCount}·${r.membershipTell.label}` : '—';
     const surface = (r.surfaceSlug ?? '—').slice(0, 12);
     lines.push(
-      `${r.partnerCode.padEnd(4)}  ${r.chatId.padEnd(16)}  ${trunc(r.registryTitle, 22).padEnd(22)}  ${liveCol(r).padEnd(6)}  ${type.padEnd(12)}  ${mem.padEnd(3)}  ${surface.padEnd(12)}  ${(r.hasInvite ? 'yes' : 'no').padEnd(3)}  ${botCol(r).padEnd(6)}  ${verifyCol(r)}`
+      `${r.partnerCode.padEnd(4)}  ${r.chatId.padEnd(16)}  ${trunc(r.registryTitle, 22).padEnd(22)}  ${liveCol(r).padEnd(6)}  ${type.padEnd(12)}  ${mem.padEnd(12)}  ${surface.padEnd(12)}  ${(r.hasInvite ? 'yes' : 'no').padEnd(3)}  ${botCol(r).padEnd(6)}  ${verifyCol(r)}`
     );
   }
 
@@ -249,7 +257,8 @@ export function formatHandshakeDeskDetail(rows: HandshakeDeskRow[]): string[] {
     out.push(
       `${r.partnerCode} · ${r.handshakeOk ? 'OK' : 'FAIL'} (${r.checksPassed}/${r.checksTotal})`,
       `  chat: ${r.chatId}  registry: ${r.registryTitle}`,
-      `  known: ${r.telegramTitle ?? '—'}  live: ${r.liveTitle ?? '—'}  type: ${r.chatType ?? '—'}${r.isForum ? '+forum' : ''}  members: ${r.memberCount ?? '—'}`,
+      `  known: ${r.telegramTitle ?? '—'}  live: ${r.liveTitle ?? '—'}  type: ${r.chatType ?? '—'}${r.isForum ? '+forum' : ''}`,
+      `  members: ${r.membershipTell.detail}${r.memberCount != null ? ` (n=${r.memberCount})` : ''}`,
       `  surface: ${r.surfaceSlug ?? '—'}  bot: ${r.botStatus ?? '—'}  invite: ${r.hasInvite ? 'yes' : 'no'}`,
       `  forum meta: ${r.forumMetaPresent ? (r.forumTopicsComplete ? 'topics OK' : 'topics partial') : 'none'}  icon: ${r.forumIconState}`,
       r.forumTopicsEnv ? `  topics env: TELEGRAM_TOPICS=${r.forumTopicsEnv}` : '  topics env: —',
