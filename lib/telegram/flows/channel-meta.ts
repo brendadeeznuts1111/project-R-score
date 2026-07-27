@@ -7,6 +7,7 @@ import type { TreeNodeId } from '../../types/branded/operations.ts';
 import { resolveLocale } from './i18n.ts';
 import type { ChatChannelMeta, FlowLocale } from './types.ts';
 import type { TemplateId } from '../templates/types.ts';
+import { detectTelegramLinkConflict, findTreeNodeOwningTelegramId } from './seat-telegram.ts';
 
 type MetaRow = {
   chat_id: string; // brand-ok
@@ -17,6 +18,7 @@ type MetaRow = {
   image_bundle_id: string | null; // brand-ok
   last_template_ids_json: string;
   linked_at: string | null;
+  active_call_sign: string | null;
 };
 
 export function ensureChatChannelMetaSchema(db: Database): void {
@@ -29,9 +31,18 @@ export function ensureChatChannelMetaSchema(db: Database): void {
       topics_json TEXT NOT NULL DEFAULT '{}',
       image_bundle_id TEXT,
       last_template_ids_json TEXT NOT NULL DEFAULT '{}',
-      linked_at TEXT
+      linked_at TEXT,
+      active_call_sign TEXT
     );
   `);
+  const cols = new Set(
+    (db.query('PRAGMA table_info(ops_chat_channel_meta)').all() as { name: string }[]).map(
+      c => c.name
+    )
+  );
+  if (!cols.has('active_call_sign')) {
+    db.run(`ALTER TABLE ops_chat_channel_meta ADD COLUMN active_call_sign TEXT`);
+  }
 }
 
 function parseStringArray(raw: string): string[] {
@@ -79,6 +90,7 @@ function rowToMeta(row: MetaRow): ChatChannelMeta {
     imageBundleId: row.image_bundle_id ?? undefined,
     lastTemplateIds: parseLastTemplateIds(row.last_template_ids_json),
     linkedAt: row.linked_at ?? undefined,
+    activeCallSign: row.active_call_sign ?? undefined,
   };
 }
 
@@ -99,8 +111,8 @@ export function upsertChatChannelMeta(db: Database, meta: ChatChannelMeta): Chat
   db.run(
     `INSERT INTO ops_chat_channel_meta
      (chat_id, tree_node_ids_json, call_signs_json, locale, topics_json,
-      image_bundle_id, last_template_ids_json, linked_at)
-     VALUES ($c, $nodes, $signs, $locale, $topics, $bundle, $last, $linked)
+      image_bundle_id, last_template_ids_json, linked_at, active_call_sign)
+     VALUES ($c, $nodes, $signs, $locale, $topics, $bundle, $last, $linked, $active)
      ON CONFLICT(chat_id) DO UPDATE SET
        tree_node_ids_json = excluded.tree_node_ids_json,
        call_signs_json = excluded.call_signs_json,
@@ -108,7 +120,8 @@ export function upsertChatChannelMeta(db: Database, meta: ChatChannelMeta): Chat
        topics_json = excluded.topics_json,
        image_bundle_id = COALESCE(excluded.image_bundle_id, ops_chat_channel_meta.image_bundle_id),
        last_template_ids_json = excluded.last_template_ids_json,
-       linked_at = COALESCE(ops_chat_channel_meta.linked_at, excluded.linked_at)`,
+       linked_at = COALESCE(ops_chat_channel_meta.linked_at, excluded.linked_at),
+       active_call_sign = COALESCE(excluded.active_call_sign, ops_chat_channel_meta.active_call_sign)`,
     {
       $c: meta.chatId,
       $nodes: JSON.stringify(meta.treeNodeIds),
@@ -118,6 +131,7 @@ export function upsertChatChannelMeta(db: Database, meta: ChatChannelMeta): Chat
       $bundle: meta.imageBundleId ?? null,
       $last: JSON.stringify(meta.lastTemplateIds ?? {}),
       $linked: linkedAt,
+      $active: meta.activeCallSign ?? null,
     }
   );
   return getChatChannelMeta(db, meta.chatId)!;
@@ -153,6 +167,16 @@ export type LinkTelegramChatOpts = {
   topics?: ChatChannelMeta['topics'];
   /** When true, also SET tree_nodes.telegram_id (default true). */
   bindTreeNode?: boolean;
+  /** When true, clear telegram_id from other seats before binding this one. */
+  reassignTelegramId?: boolean;
+};
+
+export type LinkTelegramChatResult = {
+  meta: ChatChannelMeta;
+  /** Bound via ChatChannelMeta only — another seat owns tree_nodes.telegram_id. */
+  sharedDm?: boolean;
+  /** Prior owner when sharedDm or reassign cleared. */
+  previousOwnerCallSign?: string | null;
 };
 
 /** Normalize `tg:chat:-100…` / bare chat id → wire chat id string. Never invents ids. */
@@ -171,7 +195,7 @@ export function normalizeTelegramChatRef(raw: string): string {
  * Explicit Telegram bind for a call-sign / tree node.
  * Writes ChatChannelMeta and optionally tree_nodes.telegram_id.
  */
-export function linkTelegramChat(db: Database, opts: LinkTelegramChatOpts): ChatChannelMeta {
+export function linkTelegramChat(db: Database, opts: LinkTelegramChatOpts): LinkTelegramChatResult {
   const chatId = normalizeTelegramChatRef(opts.chatId);
   const existing = getChatChannelMeta(db, chatId);
   const treeNodeIds = new Set(existing?.treeNodeIds ?? []);
@@ -179,14 +203,34 @@ export function linkTelegramChat(db: Database, opts: LinkTelegramChatOpts): Chat
   const callSigns = new Set(existing?.callSigns ?? []);
   if (opts.callSign) callSigns.add(opts.callSign);
 
-  if (opts.bindTreeNode !== false) {
+  let sharedDm = false;
+  let previousOwnerCallSign: string | null | undefined;
+  const conflict = detectTelegramLinkConflict(db, chatId, opts.treeNodeId);
+  let bindTree = opts.bindTreeNode !== false;
+
+  if (conflict && !opts.reassignTelegramId) {
+    bindTree = false;
+    sharedDm = true;
+    previousOwnerCallSign = conflict.owner.callSign;
+    treeNodeIds.add(conflict.owner.id);
+    if (conflict.owner.callSign) callSigns.add(conflict.owner.callSign);
+  }
+
+  if (bindTree) {
+    if (opts.reassignTelegramId) {
+      const owner = findTreeNodeOwningTelegramId(db, chatId, opts.treeNodeId as string);
+      if (owner) {
+        previousOwnerCallSign = owner.callSign;
+        db.run(`UPDATE tree_nodes SET telegram_id = NULL WHERE id = $id`, { $id: owner.id });
+      }
+    }
     db.run(`UPDATE tree_nodes SET telegram_id = $tg WHERE id = $id`, {
       $tg: chatId,
       $id: opts.treeNodeId as string,
     });
   }
 
-  return upsertChatChannelMeta(db, {
+  const meta = upsertChatChannelMeta(db, {
     chatId,
     treeNodeIds: [...treeNodeIds],
     callSigns: [...callSigns],
@@ -196,6 +240,12 @@ export function linkTelegramChat(db: Database, opts: LinkTelegramChatOpts): Chat
     lastTemplateIds: existing?.lastTemplateIds,
     linkedAt: existing?.linkedAt ?? new Date().toISOString(),
   });
+
+  return {
+    meta,
+    sharedDm: sharedDm || undefined,
+    previousOwnerCallSign,
+  };
 }
 
 /** True when chat meta allows the call-sign (or meta missing → fall back to tree_nodes only). */

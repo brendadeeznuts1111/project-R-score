@@ -2,9 +2,7 @@
 /**
  * Handle Telegram play ack callback_query: play:{playId}:{nodeId}:placed|skip
  */
-import type { Database } from 'bun:sqlite';
-import { asTreeNodeId } from '../types/branded/operations.ts';
-import { AccountService } from '../operations/account-service.ts';
+import { seatAuthorizedForTelegramUser } from './flows/seat-telegram.ts';
 
 export type PlayCallbackResult = { ok: true; message: string } | { ok: false; message: string };
 
@@ -27,9 +25,9 @@ export function handlePlayCallback(
   if (!parsed) return { ok: false, message: 'Invalid callback.' };
 
   const node = db
-    .query('SELECT id FROM tree_nodes WHERE telegram_id = $t AND active = 1')
-    .get({ $t: telegramUserId }) as { id: string } | null; // brand-ok
-  if (!node || node.id !== parsed.nodeId) {
+    .query('SELECT id FROM tree_nodes WHERE id = $id AND active = 1')
+    .get({ $id: parsed.nodeId }) as { id: string } | null; // brand-ok
+  if (!node || !seatAuthorizedForTelegramUser(db, telegramUserId, parsed.nodeId)) {
     return { ok: false, message: 'Not authorized for this play.' };
   }
 

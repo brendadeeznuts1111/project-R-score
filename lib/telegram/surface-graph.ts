@@ -6,6 +6,8 @@
  *   bun run telegram:ops -- graph --mermaid
  */
 import type { KnownChatRow } from './known-chats.ts';
+import type { PackageGroupRegistryRow } from './package-group-registry.ts';
+import { suggestPackageGroupSurfacesMap } from './package-group-registry.ts';
 import {
   TOC_OPS_SURFACES,
   formatTocOpsGroupTitle,
@@ -57,10 +59,11 @@ function chatById(rows: KnownChatRow[], chatId: string): KnownChatRow | undefine
   return rows.find(r => r.chatId === chatId);
 }
 
-/** Merge TELEGRAM_SURFACES + inferred known-chat surface_slug into a map. */
+/** Merge TELEGRAM_SURFACES + inferred known-chat surface_slug + package groups. */
 export function suggestTelegramSurfacesMap(opts: {
   knownChats: KnownChatRow[];
   env?: Record<string, string | undefined>;
+  packageGroups?: readonly PackageGroupRegistryRow[];
 }): Record<string, string> {
   const envMap = loadTelegramSurfacesMap(opts.env ?? Bun.env);
   const out: Record<string, string> = { ...envMap };
@@ -69,6 +72,12 @@ export function suggestTelegramSurfacesMap(opts: {
     if (row.chatType === 'private' || row.chatType === 'channel') continue;
     if (!out[row.surfaceSlug]) out[row.surfaceSlug] = row.chatId;
   }
+  if (opts.packageGroups?.length) {
+    const pkg = suggestPackageGroupSurfacesMap(opts.packageGroups);
+    for (const [slug, chatId] of Object.entries(pkg)) {
+      if (!out[slug]) out[slug] = chatId;
+    }
+  }
   return out;
 }
 
@@ -76,11 +85,16 @@ export function buildSurfaceGraph(opts: {
   knownChats: KnownChatRow[];
   env?: Record<string, string | undefined>;
   botLabel?: string;
+  packageGroups?: readonly PackageGroupRegistryRow[];
 }): SurfaceGraphModel {
   const env = opts.env ?? Bun.env;
   const envMap = loadTelegramSurfacesMap(env);
   const opsChatId = env.TELEGRAM_OPS_CHAT_ID?.trim() || null;
-  const suggested = suggestTelegramSurfacesMap({ knownChats: opts.knownChats, env });
+  const suggested = suggestTelegramSurfacesMap({
+    knownChats: opts.knownChats,
+    env,
+    packageGroups: opts.packageGroups,
+  });
   const active = opts.knownChats.filter(r => r.active);
 
   const bindings: SurfaceLiveBinding[] = TOC_OPS_SURFACES.map((s: TocOpsSurfaceDef) => {

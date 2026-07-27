@@ -7,6 +7,8 @@
  *   bun tools/telegram-link-chat.ts ASH-001 tg:chat:-1001234567890
  *   bun tools/telegram-link-chat.ts <tree-node-id> -1001234567890 --locale=es
  *   bun tools/telegram-link-chat.ts ASH-001 tg:chat:… --no-welcome
+ *   bun tools/telegram-link-chat.ts BIL-001 8013171035 --share-dm
+ *   bun tools/telegram-link-chat.ts BIL-001 8013171035 --reassign
  *
  * Never invents chat ids — the ref must be a real Telegram chat id.
  * When a partner profile binding exists, enqueues partner.welcome (idempotent).
@@ -20,6 +22,10 @@ import {
   linkTelegramChat,
   normalizeTelegramChatRef,
 } from '../lib/telegram/flows/channel-meta.ts';
+import {
+  resolveSeatTelegramId,
+  telegramIdWireLinked,
+} from '../lib/telegram/flows/seat-telegram.ts';
 import { resolveLocale } from '../lib/telegram/flows/i18n.ts';
 
 const ref = process.argv[2];
@@ -34,6 +40,8 @@ if (!ref || !chatRaw) {
 const localeFlag = process.argv.find(a => a.startsWith('--locale='));
 const locale = resolveLocale(localeFlag?.split('=')[1]);
 const skipWelcome = process.argv.includes('--no-welcome');
+const reassign = process.argv.includes('--reassign');
+const shareDm = process.argv.includes('--share-dm');
 
 const db = openOperationsDb();
 try {
@@ -47,12 +55,16 @@ try {
   };
 
   const chatId = normalizeTelegramChatRef(chatRaw);
-  const wasUnlinked = !node.telegram_id || node.telegram_id.startsWith('pending-');
-  const meta = linkTelegramChat(db, {
+  const priorTelegramId =
+    resolveSeatTelegramId(db, { treeNodeId, callSign: node.call_sign }) ?? node.telegram_id;
+  const wasUnlinked = !telegramIdWireLinked(priorTelegramId);
+  const { meta, sharedDm, previousOwnerCallSign } = linkTelegramChat(db, {
     treeNodeId,
     callSign: node.call_sign,
     chatId,
     locale,
+    reassignTelegramId: reassign,
+    bindTreeNode: shareDm ? false : undefined,
   });
 
   let welcomeEnqueued = false;
@@ -83,8 +95,10 @@ try {
         treeNodeIds: meta.treeNodeIds,
         locale: meta.locale,
         linkedAt: meta.linkedAt,
-        previousTelegramId: node.telegram_id,
+        previousTelegramId: priorTelegramId,
         newlyLinked: wasUnlinked,
+        sharedDm: Boolean(sharedDm),
+        previousOwnerCallSign: previousOwnerCallSign ?? null,
         welcomeEnqueued,
         meta: getChatChannelMeta(db, meta.chatId),
       },

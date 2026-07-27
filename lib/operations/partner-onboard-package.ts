@@ -6,6 +6,7 @@ import type { Database } from 'bun:sqlite';
 import { enqueueOnboardCompleteEvent, enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
 import { getPhoneForSeat, mergeProfileMessageMetadata } from '../telegram/templates/context.ts';
 import { linkTelegramChat } from '../telegram/flows/channel-meta.ts';
+import { resolveSeatTelegramId, telegramIdWireLinked } from '../telegram/flows/seat-telegram.ts';
 import { DEFAULT_MESSAGE_TEMPLATES } from '../telegram/templates/registry.ts';
 import { loadTelegramEnv, telegramTransportReady } from '../telegram/telegram-config.ts';
 import {
@@ -185,7 +186,8 @@ export function loadOnboardNodeContext(db: Database, treeNodeId: TreeNodeId): On
     treeNodeId,
     callSign: node.call_sign,
     name: node.name,
-    telegramId: node.telegram_id,
+    telegramId:
+      resolveSeatTelegramId(db, { treeNodeId, callSign: node.call_sign }) ?? node.telegram_id,
     expertId: node.expert_id,
     parentId: node.parent_id,
     parentName: node.parent_name,
@@ -259,8 +261,8 @@ function resolveParentName(db: Database, parentId: string | null): string | null
 }
 
 function telegramLinked(telegramId: string | null): boolean {
-  // brand-ok — tree_nodes.telegram_id wire
-  return Boolean(telegramId && !telegramId.startsWith('pending-'));
+  // brand-ok — wire gate
+  return telegramIdWireLinked(telegramId);
 }
 
 /** Build read-only onboard plan. */
@@ -373,14 +375,19 @@ export function applyPartnerOnboardPackage(
     call_sign: string | null;
   };
 
-  if (telegramLinked(node.telegram_id)) {
+  const effectiveTelegramId =
+    resolveSeatTelegramId(db, {
+      treeNodeId: binding.treeNodeId,
+      callSign: node.call_sign ?? plan.callSign,
+    }) ?? node.telegram_id;
+
+  if (telegramLinked(effectiveTelegramId)) {
     linkTelegramChat(db, {
       treeNodeId: binding.treeNodeId,
       callSign: node.call_sign ?? plan.callSign,
-      chatId: node.telegram_id!,
+      chatId: effectiveTelegramId!,
       locale: plan.messageTemplates.locale,
       topics: { identity: 1, plays: 1, toc: 1 },
-      bindTreeNode: false,
     });
   }
 
@@ -393,7 +400,7 @@ export function applyPartnerOnboardPackage(
       profileKey: binding.profileKey as string,
       partnerTemplate: binding.templateId,
       lifecycleStatus: binding.lifecycleStatus,
-      telegramId: node.telegram_id ?? undefined,
+      telegramId: effectiveTelegramId ?? undefined,
       nodeName: node.name,
       templateId: plan.messageTemplates.welcomeTemplate,
     });
@@ -407,7 +414,7 @@ export function applyPartnerOnboardPackage(
       treeNodeId: binding.treeNodeId,
       profileKey: binding.profileKey as string,
       partnerTemplate: binding.templateId,
-      telegramId: node.telegram_id ?? undefined,
+      telegramId: effectiveTelegramId ?? undefined,
     });
     if (complete) onboardCompleteEventId = complete.id as string;
   }

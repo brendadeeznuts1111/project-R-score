@@ -29,6 +29,11 @@ import { recordBroadcastOutboxSend } from '../telegram/broadcast.ts';
 import { rememberTemplateMessageId } from '../telegram/flows/channel-meta.ts';
 import { playAckKeyboard, translateKeyboard } from '../telegram/flows/keyboards.ts';
 import { resolveOpsChatForOutbox } from '../telegram/surfaces.ts';
+import {
+  resolvePackageGroupTopicsForChat,
+  threadIdForPackageGroupOutboxTopic,
+  PACKAGE_GROUP_FORUMS_META_DIR,
+} from '../telegram/package-group-forum.ts';
 import { loadTelegramEnv, threadIdForOutboxTopic } from '../telegram/telegram-config.ts';
 import { renderForNode } from '../telegram/templates/render.ts';
 import type { TemplateId } from '../telegram/templates/types.ts';
@@ -64,6 +69,8 @@ export type ProcessOutboxOpts = {
   r2Store?: R2ChannelStore | MemoryChannelStore;
   /** Max pending rows per drain call (default 250). */
   limit?: number;
+  /** Override forum metadata dir for package-group thread routing. */
+  forumsMetaDir?: string;
 };
 
 function defaultProjectors(topic: OpsChannelTopic): OpsChannelProjector[] {
@@ -165,7 +172,12 @@ async function projectR2(
 async function projectTelegram(
   row: OutboxRow,
   payload: Record<string, unknown>,
-  token: string
+  token: string,
+  opts?: {
+    db?: Database;
+    forumsMetaDir?: string;
+    packageTopicsCache?: Map<string, Record<string, number> | null>;
+  }
 ): Promise<{
   ok: boolean;
   messageId?: number;
@@ -187,21 +199,52 @@ async function projectTelegram(
 
   let chatId: string | number | null = dmTarget != null ? String(dmTarget) : null; // brand-ok — Telegram chat_id wire
   let messageThreadId = explicitThread;
+  let resolvedOps: ReturnType<typeof resolveOpsChatForOutbox> = null;
 
   if (!chatId) {
-    const resolved = resolveOpsChatForOutbox({ topic: row.topic });
-    if (resolved) {
-      chatId = resolved.chatId;
-      // Forum threads only when posting to the primary ops hub (shared TELEGRAM_TOPICS map).
-      if (resolved.chatId === env.opsChatId || resolved.source === 'ops_chat') {
-        messageThreadId ??= threadIdForOutboxTopic(env.topics, row.topic, row.event_type);
-      } else if (resolved.surfaceSlug === 'hq' || resolved.surfaceSlug === 'ash-staging') {
-        messageThreadId ??= threadIdForOutboxTopic(env.topics, row.topic, row.event_type);
-      }
-    }
+    resolvedOps = resolveOpsChatForOutbox({ topic: row.topic });
+    if (resolvedOps) chatId = resolvedOps.chatId;
   }
 
   if (!chatId) return { ok: false, error: 'no chat target' };
+
+  if (messageThreadId == null && opts?.db) {
+    const chatKey = String(chatId);
+    let packageTopics = opts.packageTopicsCache?.get(chatKey);
+    if (packageTopics === undefined) {
+      const lookup = await resolvePackageGroupTopicsForChat(
+        opts.db,
+        chatKey,
+        opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR
+      );
+      packageTopics = lookup?.topics ?? null;
+      opts.packageTopicsCache?.set(chatKey, packageTopics);
+    }
+    if (packageTopics) {
+      messageThreadId = threadIdForPackageGroupOutboxTopic(
+        packageTopics,
+        row.topic as OpsChannelTopic,
+        row.event_type
+      );
+    }
+  }
+
+  if (messageThreadId == null && resolvedOps) {
+    // Forum threads for ops hub / concern surfaces (shared TELEGRAM_TOPICS map).
+    if (resolvedOps.chatId === env.opsChatId || resolvedOps.source === 'ops_chat') {
+      messageThreadId = threadIdForOutboxTopic(
+        env.topics,
+        row.topic as OpsChannelTopic,
+        row.event_type
+      );
+    } else if (resolvedOps.surfaceSlug === 'hq' || resolvedOps.surfaceSlug === 'ash-staging') {
+      messageThreadId = threadIdForOutboxTopic(
+        env.topics,
+        row.topic as OpsChannelTopic,
+        row.event_type
+      );
+    }
+  }
 
   const rawParse = payload.parseMode ?? payload.parse_mode;
   const parseMode =
@@ -307,6 +350,7 @@ export async function processChannelOutbox(
 
   let sent = 0;
   let failed = 0;
+  const packageTopicsCache = new Map<string, Record<string, number> | null>();
 
   for (const row of pending) {
     let payload: Record<string, unknown>;
@@ -338,7 +382,11 @@ export async function processChannelOutbox(
             // Skip optional telegram when token absent — do not poison R2-ok rows.
             results.push(true);
           } else {
-            const tg = await projectTelegram(row, payload, token);
+            const tg = await projectTelegram(row, payload, token, {
+              db,
+              forumsMetaDir: opts.forumsMetaDir,
+              packageTopicsCache,
+            });
             results.push(tg.ok);
             if (!tg.ok && tg.error) telegramErr = tg.error;
             if (

@@ -11,7 +11,12 @@ import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
 import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
 import { flowOutputToPlainText } from './flows/deliver.ts';
 import { commandToFlowId, runFlow } from './flows/registry.ts';
-import { linkTelegramChat } from './flows/channel-meta.ts';
+import { linkTelegramChat, getChatChannelMeta } from './flows/channel-meta.ts';
+import {
+  handleOpsSeatCommand,
+  resolveFlowNodeForTelegram,
+  setActiveCallSignForTelegram,
+} from './flows/seat-telegram.ts';
 import type { FlowOutput } from './flows/types.ts';
 import { gateFactoryCommand } from './ops-acl.ts';
 
@@ -34,11 +39,10 @@ export type OpsCommandInput = {
 
 export function findNodeByTelegram(
   db: Database,
-  telegramUserId: TelegramUserId
+  telegramUserId: TelegramUserId,
+  callSignHint?: string | null
 ): OpsTreeNode | null {
-  return db
-    .query('SELECT * FROM tree_nodes WHERE telegram_id = $t AND active = 1')
-    .get({ $t: telegramUserId as string }) as OpsTreeNode | null;
+  return resolveFlowNodeForTelegram(db, telegramUserId as string, { callSignHint });
 }
 
 export function handleOpsStart(db: Database, node: OpsTreeNode | null): string {
@@ -61,6 +65,7 @@ export function handleOpsStart(db: Database, node: OpsTreeNode | null): string {
   }
   return [
     `👋 ${node.name}`,
+    node.call_sign ? `Seat: \`${node.call_sign}\`` : '',
     '',
     `Type: *${node.type.toUpperCase()}*`,
     '',
@@ -68,8 +73,11 @@ export function handleOpsStart(db: Database, node: OpsTreeNode | null): string {
     '/accounts — Sportsbook accounts',
     "/plays — Today's plays",
     '/tree — Your down-tree',
+    '/seat — Switch linked seat (shared DM)',
     '/verifydod <id> — DOD delivery receipt',
-  ].join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 export function handleOpsRegister(
@@ -167,11 +175,13 @@ export function dispatchOpsFlowOutput(
 ): FlowOutput | null {
   const flowId = commandToFlowId(input.command);
   if (!flowId || input.command === '/register' || input.command === '/verifydod') return null;
+  const meta = getChatChannelMeta(db, input.telegramUserId);
   const node = findNodeByTelegram(db, asTelegramUserId(input.telegramUserId));
   return runFlow(db, dbPath, {
     flowId: input.command === '/start' && !node ? 'menu' : flowId,
     chatId: input.telegramUserId,
     userId: input.telegramUserId,
+    callSign: meta?.activeCallSign ?? node?.call_sign ?? null,
   });
 }
 
@@ -192,6 +202,8 @@ export function dispatchOpsCommand(db: Database, dbPath: string, input: OpsComma
   switch (input.command) {
     case '/start':
       return handleOpsStart(db, node);
+    case '/seat':
+      return handleOpsSeatCommand(db, input.telegramUserId, input.args);
     case '/register':
       return handleOpsRegister(db, telegramUserId, input.args);
     case '/verifydod':

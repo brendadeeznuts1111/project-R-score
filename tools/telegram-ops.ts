@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/executables — --force
+// @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --deep
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
@@ -27,6 +29,7 @@ import {
   listKnownChats,
   type KnownChatFilterKind,
 } from '../lib/telegram/known-chats.ts';
+import { listPackageGroupRegistry } from '../lib/telegram/package-group-registry.ts';
 import { refreshKnownChats } from '../lib/telegram/refresh-known-chats.ts';
 import {
   buildSurfaceGraph,
@@ -39,13 +42,36 @@ import {
   resolvePartnerDmTelegramId,
   upsertPackageGroupRegistry,
   appendAckPackageGroupLinked,
+  appendAckDmSeatDesignated,
   getPackageGroupRegistry,
   parsePartnerCode,
   parseTelegramChatIdWire,
   resolvePackageGroupDisplayName,
 } from '../lib/telegram/package-group-registry.ts';
+import {
+  formatPackageGroupTopicsHandoff,
+  loadPackageGroupForumMetadata,
+} from '../lib/telegram/package-group-forum.ts';
+import {
+  designatePackageGroupDmSeat,
+  assessPackageGroupDmSeat,
+  formatDmSeatStatus,
+} from '../lib/telegram/dm-seat-designation.ts';
+import {
+  assessHandshakeReadiness,
+  formatHandshakeReadinessDetail,
+  formatHandshakeReadinessTable,
+} from '../lib/telegram/handshake-readiness.ts';
 import { sendTelegramBotMessage } from '../lib/telegram/telegram-api.ts';
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
+import {
+  buildPartnerPackageMap,
+  buildSeatTelegramMap,
+  formatPartnerPackageMapTable,
+  formatSeatTelegramMapTable,
+  resolveFlowNodeForTelegram,
+  setActiveCallSignForTelegram,
+} from '../lib/telegram/flows/seat-telegram.ts';
 
 function usage(): never {
   console.log(`Usage: bun tools/telegram-ops.ts <command> [options]
@@ -56,6 +82,9 @@ Commands:
   surfaces    Concern matrix + naming grammar (+ TELEGRAM_SURFACES bindings)
   graph       Live concern topology (ASCII; --mermaid; --env for .env block)
   link-package-group  Bind partner package forum chat_id (+ optional DM)
+  designate-dm-seat   Acknowledge operator seat before Telegram id exists
+  readiness           E2E phased gates (forum → designated → operator linked)
+  seat-map            Seat ↔ Telegram ↔ package forum mapping
   acknowledge-pending Mark factory linked ack on JSONL event log
 
 link-package-group:
@@ -427,7 +456,8 @@ function cmdGraph(opts: CommonOpts): void {
   const db = openOperationsDb({ path: opts.dbPath });
   try {
     const rows = listKnownChats(db, { filter: 'all', activeOnly: false, limit: 500 });
-    const model = buildSurfaceGraph({ knownChats: rows });
+    const packageGroups = listPackageGroupRegistry(db);
+    const model = buildSurfaceGraph({ knownChats: rows, packageGroups });
 
     if (opts.json) {
       console.log(JSON.stringify(model, null, 2));
@@ -545,10 +575,39 @@ async function cmdLinkPackageGroup(rawArgv: string[]): Promise<void> {
       requestedBy: opts.requestedBy,
     });
 
+    if (opts.requestedBy?.trim()) {
+      try {
+        designatePackageGroupDmSeat(db, {
+          partnerCode: row.partnerCode,
+          callSign: opts.requestedBy.trim(),
+          force: true,
+        });
+        const dmAck = await appendAckDmSeatDesignated({
+          partnerCode: row.partnerCode,
+          callSign: opts.requestedBy.trim(),
+        });
+        if (dmAck.appended) {
+          console.log(`   dm seat: designated ${opts.requestedBy.trim()} (jsonl ack appended)`);
+        }
+      } catch (err) {
+        console.log(`   dm seat: note — ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
+
     console.log(`✅ package_group_registry ${row.partnerCode}`);
     console.log(`   title: ${row.title}`);
     console.log(`   chat_id: ${row.chatId}`);
     if (row.inviteLink) console.log(`   invite: ${row.inviteLink}`);
+
+    const forumMeta = await loadPackageGroupForumMetadata(row.partnerCode);
+    if (forumMeta) {
+      console.log('   forum topics (per-chat routing — not global TELEGRAM_TOPICS):');
+      for (const line of formatPackageGroupTopicsHandoff(forumMeta)) {
+        console.log(`   ${line}`);
+      }
+    } else {
+      console.log('   forum topics: (no metadata — run ct forum-metadata-backfill + sync)');
+    }
 
     if (!opts.noAck) {
       const ack = await appendAckPackageGroupLinked({
@@ -564,7 +623,12 @@ async function cmdLinkPackageGroup(rawArgv: string[]): Promise<void> {
     }
 
     if (opts.noDm) {
-      console.log('   dm: skipped (--no-dm)');
+      const dmSeat = assessPackageGroupDmSeat(db, row.partnerCode);
+      if (dmSeat.status === 'designated') {
+        console.log(`   dm: skipped (--no-dm) — will DM ${dmSeat.callSign} when telegram linked`);
+      } else {
+        console.log('   dm: skipped (--no-dm)');
+      }
       return;
     }
 
@@ -576,8 +640,29 @@ async function cmdLinkPackageGroup(rawArgv: string[]): Promise<void> {
 
     const dmId = resolvePartnerDmTelegramId(db, row.partnerCode, opts.requestedBy);
     if (!dmId) {
-      console.log('   dm: skipped (no linked telegram_id for partner seats)');
+      const dmSeat = assessPackageGroupDmSeat(db, row.partnerCode);
+      if (dmSeat.status === 'designated') {
+        console.log(`   dm: skipped — ${dmSeat.callSign} designated, awaiting telegram id`);
+        console.log(`   hint: ${dmSeat.nextStep}`);
+      } else {
+        console.log('   dm: skipped (no linked telegram_id for partner seats)');
+        console.log('   hint: bun run telegram:ops -- designate-dm-seat CODE CODE-001');
+      }
       return;
+    }
+
+    const activeSeat = opts.requestedBy?.trim();
+    if (activeSeat) {
+      const switched = setActiveCallSignForTelegram(db, dmId, activeSeat);
+      if (switched.ok) {
+        console.log(`   bot seat: active ${switched.activeCallSign} (/seat to switch)`);
+      }
+    }
+    const botNode = resolveFlowNodeForTelegram(db, dmId, {
+      callSignHint: activeSeat ?? undefined,
+    });
+    if (botNode) {
+      console.log(`   bot context: ${botNode.call_sign ?? '?'} · ${botNode.name}`);
     }
 
     const inviteLine = row.inviteLink ? `\nJoin your package room:\n${row.inviteLink}` : '';
@@ -668,6 +753,163 @@ async function cmdAcknowledgePending(rawArgv: string[]): Promise<void> {
   }
 }
 
+async function cmdDesignateDmSeat(rawArgv: string[]): Promise<void> {
+  if (rawArgv.length === 0 || rawArgv[0] === '--help' || rawArgv[0] === '-h') {
+    console.log(`Usage: bun tools/telegram-ops.ts designate-dm-seat <CODE> <call-sign> [--force] [--db <path>]
+
+Acknowledge which operator seat receives package-room DMs before Telegram id is linked.
+SSOT: package_group_registry.requested_by (e.g. NOV-001).
+
+Examples:
+  bun run telegram:ops -- designate-dm-seat NOV NOV-001
+  bun run telegram:ops -- designate-dm-seat PAT PAT-001 --force
+`);
+    process.exit(0);
+  }
+
+  let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
+  let force = false;
+  const positional: string[] = [];
+  for (let i = 0; i < rawArgv.length; i++) {
+    const a = rawArgv[i]!;
+    if (a === '--force') {
+      force = true;
+      continue;
+    }
+    if (a === '--db') {
+      const v = rawArgv[++i];
+      if (v) dbPath = v;
+      continue;
+    }
+    if (!isCliFlagToken(a)) positional.push(a);
+  }
+  if (positional.length < 2) {
+    console.error('designate-dm-seat requires <CODE> <call-sign>');
+    process.exit(1);
+  }
+
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    const result = designatePackageGroupDmSeat(db, {
+      partnerCode: positional[0]!,
+      callSign: positional[1]!,
+      force,
+    });
+    const ack = await appendAckDmSeatDesignated({
+      partnerCode: result.registry.partnerCode,
+      callSign: result.assessment.callSign!,
+    });
+    console.log(
+      result.changed
+        ? `✅ DM seat designated · ${result.registry.partnerCode} → ${result.assessment.callSign}`
+        : `note: DM seat already ${result.assessment.callSign} for ${result.registry.partnerCode}`
+    );
+    console.log(
+      ack.appended
+        ? `   jsonl: ack_dm_seat_designated appended (${ack.path})`
+        : `   jsonl: ack_dm_seat_designated already present`
+    );
+    console.log(`   status: ${formatDmSeatStatus(result.assessment.status)}`);
+    console.log(`   next: ${result.assessment.nextStep}`);
+  } finally {
+    db.close();
+  }
+}
+
+async function cmdReadiness(rawArgv: string[]): Promise<void> {
+  let dbPath = Bun.env.OPS_DB_PATH?.trim() || DEFAULT_OPS_DB_PATH;
+  let wantJson = false;
+  let detail = false;
+  let live = false;
+  let deep = false;
+  const partnerCodes: string[] = [];
+
+  for (let i = 0; i < rawArgv.length; i++) {
+    const a = rawArgv[i]!;
+    if (a === '--json') wantJson = true;
+    else if (a === '--live') live = true;
+    else if (a === '--detail') detail = true;
+    else if (a === '--deep') deep = true;
+    else if (a === '--db' && rawArgv[i + 1]) dbPath = rawArgv[++i]!;
+    else if (a.startsWith('--db=')) dbPath = a.slice('--db='.length);
+    else if (a === '--help' || a === '-h') {
+      console.log(`Usage: bun tools/telegram-ops.ts readiness [CODE…] [--detail] [--live] [--json]
+
+Phased E2E gates: forum_ready → designated (awaiting telegram) → operator_ready.
+Use --deep with --detail for per-lane audit (forum / routing / operator).
+`);
+      process.exit(0);
+    } else if (!a.startsWith('-')) {
+      const code = parsePartnerCode(a);
+      if (code) partnerCodes.push(code);
+    }
+  }
+
+  const tg = loadTelegramEnv();
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    const codes =
+      partnerCodes.length > 0 ? partnerCodes : listPackageGroupRegistry(db).map(r => r.partnerCode);
+    const rows = [];
+    for (const code of codes) {
+      rows.push(
+        await assessHandshakeReadiness({
+          db,
+          partnerCode: code,
+          telegramToken: tg.effectiveToken,
+          live,
+          deep: deep || detail,
+        })
+      );
+    }
+
+    if (wantJson) {
+      console.log(JSON.stringify({ rows, dbPath }, null, 2));
+      return;
+    }
+
+    console.log(`handshake readiness · ${rows.length} partner(s) · db=${dbPath}`);
+    if (detail) {
+      for (const row of rows) {
+        for (const line of formatHandshakeReadinessDetail(row)) console.log(line);
+        console.log('');
+      }
+    } else {
+      for (const line of formatHandshakeReadinessTable(rows)) console.log(`   ${line}`);
+    }
+
+    const blocked = rows.some(r => r.phase === 'blocked');
+    if (blocked) process.exit(1);
+  } finally {
+    db.close();
+  }
+}
+
+async function cmdSeatMap(opts: CommonOpts): Promise<void> {
+  const db = openOperationsDb({ path: opts.dbPath });
+  try {
+    const seats = await buildSeatTelegramMap(db);
+    const packages = await buildPartnerPackageMap(db);
+    if (opts.json) {
+      console.log(JSON.stringify({ seats, packages, dbPath: opts.dbPath }, null, 2));
+      return;
+    }
+    console.log(`seat-map · db=${opts.dbPath}`);
+    console.log('');
+    console.log('Operator DM seats (bot /status · package welcome DMs):');
+    for (const line of formatSeatTelegramMapTable(seats)) console.log(`   ${line}`);
+    console.log('');
+    console.log('Package groups (all linked partners — forum + DM target):');
+    for (const line of formatPartnerPackageMapTable(packages)) console.log(`   ${line}`);
+    console.log('');
+    console.log(
+      '   Bot: /seat · /seat BIL-001   Link seat: bun tools/telegram-link-chat.ts NOV-001 <id>'
+    );
+  } finally {
+    db.close();
+  }
+}
+
 async function main(): Promise<void> {
   const argv = Bun.argv.slice(2);
   if (argv.length === 0 || argv[0] === '--help' || argv[0] === '-h') usage();
@@ -679,6 +921,19 @@ async function main(): Promise<void> {
   }
   if (cmd === 'acknowledge-pending' || cmd === 'ack-pending') {
     await cmdAcknowledgePending(argv.slice(1));
+    return;
+  }
+  if (cmd === 'seat-map' || cmd === 'seats') {
+    const { opts } = parseArgs([cmd, ...argv.slice(1)]);
+    await cmdSeatMap(opts);
+    return;
+  }
+  if (cmd === 'designate-dm-seat' || cmd === 'designate-dm') {
+    await cmdDesignateDmSeat(argv.slice(1));
+    return;
+  }
+  if (cmd === 'readiness' || cmd === 'handshake-readiness') {
+    await cmdReadiness(argv.slice(1));
     return;
   }
 

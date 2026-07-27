@@ -4,6 +4,9 @@
  * @see lib/channels/toc-outbox.ts
  */
 import { describe, expect, test } from 'bun:test';
+import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   enqueueOpsChannelEvent,
@@ -11,6 +14,7 @@ import {
   queryOpsChannelHealth,
   readLocalChannelEvents,
 } from '../lib/channels/outbox.ts';
+import { upsertPackageGroupRegistry } from '../lib/telegram/package-group-registry.ts';
 import { enqueueTocBakeChannelEvents } from '../lib/channels/toc-outbox.ts';
 import { withTocMetrics } from '../lib/toc-ops/export-snapshot.ts';
 import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
@@ -218,6 +222,85 @@ describe('ops channel outbox', () => {
       if (prevSurfaces === undefined) delete Bun.env.TELEGRAM_SURFACES;
       else Bun.env.TELEGRAM_SURFACES = prevSurfaces;
       db.close();
+    }
+  });
+
+  test('telegram projector prefers package-group forum topics over global TELEGRAM_TOPICS', async () => {
+    const dir = join(tmpdir(), `outbox-pkg-topics-${Date.now()}`);
+    const forumsDir = join(dir, 'forums');
+    await mkdir(forumsDir, { recursive: true });
+    await writeFile(
+      join(forumsDir, 'ASH.json'),
+      `${JSON.stringify({
+        partnerCode: 'ASH',
+        title: 'TOC Ops · ASH · Ash Ops',
+        displayName: 'Ash Ops',
+        chatId: '-1003937534779',
+        chatRef: 'tg:chat:-1003937534779',
+        inviteLink: '',
+        topics: [
+          { title: 'General', messageThreadId: 1 },
+          { title: 'Ops', messageThreadId: 12 },
+          { title: 'Alerts', messageThreadId: 11 },
+        ],
+        topicsThreadMap: { general: 1, ops: 12, alerts: 11 },
+        iconUploaded: true,
+        createdAt: '2026-01-01T00:00:00.000Z',
+      })}\n`
+    );
+
+    const prevChat = Bun.env.TELEGRAM_OPS_CHAT_ID;
+    const prevTopics = Bun.env.TELEGRAM_TOPICS;
+    const prevSurfaces = Bun.env.TELEGRAM_SURFACES;
+    Bun.env.TELEGRAM_OPS_CHAT_ID = '-1003937534779';
+    Bun.env.TELEGRAM_TOPICS = JSON.stringify({ plays: 99 });
+    Bun.env.TELEGRAM_SURFACES = JSON.stringify({
+      hq: '-100111',
+      'ash-staging': '-1003937534779',
+    });
+
+    const bodies: Record<string, unknown>[] = [];
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async (_input: RequestInfo, init?: RequestInit) => {
+      bodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+      return new Response(JSON.stringify({ ok: true, result: { message_id: 1 } }), {
+        status: 200,
+      });
+    }) as typeof fetch;
+
+    const db = openOperationsDb({ path: ':memory:' });
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-1003937534779',
+      displayName: 'Ash Ops',
+    });
+    enqueueOpsChannelEvent(db, {
+      topic: 'plays',
+      eventType: 'play.dispatched',
+      idempotencyKey: 'tg-pkg-forum-1',
+      payload: { message: 'package play', playId: 'p1' },
+      projectors: ['telegram'],
+    });
+
+    try {
+      const result = await processChannelOutbox(db, {
+        deliver: true,
+        telegramToken: 'test-token-abcdef',
+        forumsMetaDir: forumsDir,
+      });
+      expect(result.sent).toBe(1);
+      expect(bodies[0]?.chat_id).toBe('-1003937534779');
+      expect(bodies[0]?.message_thread_id).toBe(12);
+    } finally {
+      globalThis.fetch = origFetch;
+      if (prevChat === undefined) delete Bun.env.TELEGRAM_OPS_CHAT_ID;
+      else Bun.env.TELEGRAM_OPS_CHAT_ID = prevChat;
+      if (prevTopics === undefined) delete Bun.env.TELEGRAM_TOPICS;
+      else Bun.env.TELEGRAM_TOPICS = prevTopics;
+      if (prevSurfaces === undefined) delete Bun.env.TELEGRAM_SURFACES;
+      else Bun.env.TELEGRAM_SURFACES = prevSurfaces;
+      db.close();
+      await rm(dir, { recursive: true, force: true });
     }
   });
 

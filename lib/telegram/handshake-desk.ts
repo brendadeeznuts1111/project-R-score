@@ -7,15 +7,20 @@ import {
   getPackageGroupRegistry,
   listPackageGroupRegistry,
   parsePartnerCode,
-  resolvePartnerDmTelegramId,
   type PackageGroupRegistryRow,
 } from './package-group-registry.ts';
 import { getKnownChatById, upsertKnownChat, type KnownChatRow } from './known-chats.ts';
 import { refreshKnownChats } from './refresh-known-chats.ts';
 import { getChat } from './telegram-api.ts';
+import {
+  assessPackageGroupDmSeat,
+  formatDmSeatStatus,
+  type DmSeatStatus,
+} from './dm-seat-designation.ts';
 import { verifyPackageGroupHandshake } from './verify-package-group-handshake.ts';
 import {
   assessForumMetadata,
+  formatPackageGroupTopicsEnv,
   loadPackageGroupForumMetadata,
   PACKAGE_GROUP_FORUMS_META_DIR,
 } from './package-group-forum.ts';
@@ -38,10 +43,12 @@ export type HandshakeDeskRow = {
   active: boolean | null;
   hasInvite: boolean;
   requestedBy: string | null;
+  dmSeatStatus: DmSeatStatus;
   dmTelegramId: string | null; // brand-ok — Telegram user id wire
   forumMetaPresent: boolean;
   forumTopicsComplete: boolean;
   forumIconState: 'uploaded' | 'failed' | 'missing' | 'backfilled';
+  forumTopicsEnv: string | null;
 };
 
 export type BuildHandshakeDeskOpts = {
@@ -99,13 +106,8 @@ async function deskRowForRegistry(
     checksTotal = verify.checks.length;
   }
 
-  const dmId = (() => {
-    try {
-      return resolvePartnerDmTelegramId(db, reg.partnerCode, reg.requestedBy ?? undefined);
-    } catch {
-      return null;
-    }
-  })();
+  const dmSeat = assessPackageGroupDmSeat(db, reg.partnerCode);
+  const dmId = dmSeat.telegramId;
 
   const forumMeta = await loadPackageGroupForumMetadata(reg.partnerCode, {
     rootDir: opts.forumsMetaDir ?? PACKAGE_GROUP_FORUMS_META_DIR,
@@ -130,10 +132,12 @@ async function deskRowForRegistry(
     active: known?.active ?? null,
     hasInvite: Boolean(reg.inviteLink?.trim()),
     requestedBy: reg.requestedBy,
+    dmSeatStatus: dmSeat.status,
     dmTelegramId: dmId,
     forumMetaPresent: forumAssessment.present,
     forumTopicsComplete: forumAssessment.topicsComplete,
     forumIconState: forumAssessment.iconState,
+    forumTopicsEnv: forumMeta ? formatPackageGroupTopicsEnv(forumMeta) : null,
   };
 }
 
@@ -248,7 +252,8 @@ export function formatHandshakeDeskDetail(rows: HandshakeDeskRow[]): string[] {
       `  known: ${r.telegramTitle ?? '—'}  live: ${r.liveTitle ?? '—'}  type: ${r.chatType ?? '—'}${r.isForum ? '+forum' : ''}  members: ${r.memberCount ?? '—'}`,
       `  surface: ${r.surfaceSlug ?? '—'}  bot: ${r.botStatus ?? '—'}  invite: ${r.hasInvite ? 'yes' : 'no'}`,
       `  forum meta: ${r.forumMetaPresent ? (r.forumTopicsComplete ? 'topics OK' : 'topics partial') : 'none'}  icon: ${r.forumIconState}`,
-      `  dm seat: ${r.requestedBy ?? '—'} → ${r.dmTelegramId ?? '(none)'}`,
+      r.forumTopicsEnv ? `  topics env: TELEGRAM_TOPICS=${r.forumTopicsEnv}` : '  topics env: —',
+      `  dm seat: ${r.requestedBy ?? '—'} · ${formatDmSeatStatus(r.dmSeatStatus)}${r.dmTelegramId ? ` → ${r.dmTelegramId}` : ''}`,
       ''
     );
   }

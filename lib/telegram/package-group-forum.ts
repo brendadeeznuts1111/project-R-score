@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
  * Package-group forum metadata + topic SSOT (factory read plane).
@@ -5,7 +6,10 @@
  * Written by toc-ops MTProto create-forum; consumed by handshake verify + desk tooling.
  * Keep topic lists aligned with toc-ops-repo `forum-defaults.ts`.
  */
+import type { Database } from 'bun:sqlite';
+import type { OpsChannelTopic } from '../channels/ops-channel-event.ts';
 import { joinPath } from '../path-bun.ts';
+import { packageGroupRegistryByChatId } from './package-group-registry.ts';
 
 /** Full topic plan shown to operators (General is implicit thread 1). */
 export const PACKAGE_GROUP_FORUM_TOPICS = ['General', 'Ops', 'Alerts'] as const;
@@ -202,4 +206,70 @@ export function validateForumMetadataAgainstRegistry(
         ? 'metadata OK · backfilled (no icon)'
         : 'metadata OK · icon not uploaded',
   };
+}
+
+export type PackageGroupTopicsLookup = {
+  partnerCode: string;
+  topics: Record<string, number>;
+};
+
+/**
+ * Resolve forum thread map for a package-group chat (registry + metadata file).
+ * Returns null when chat is not a linked package group or metadata is absent.
+ */
+export async function resolvePackageGroupTopicsForChat(
+  db: Database,
+  chatId: string, // brand-ok — Telegram chat_id wire
+  forumsMetaDir = PACKAGE_GROUP_FORUMS_META_DIR
+): Promise<PackageGroupTopicsLookup | null> {
+  const reg = packageGroupRegistryByChatId(db).get(chatId);
+  if (!reg) return null;
+  const meta = await loadPackageGroupForumMetadata(reg.partnerCode, { rootDir: forumsMetaDir });
+  if (!meta) return null;
+  return {
+    partnerCode: reg.partnerCode,
+    topics: meta.topicsThreadMap ?? packageGroupTopicsThreadMap(meta.topics),
+  };
+}
+
+/**
+ * Forum thread for ops outbox rows posted to a package-group chat.
+ * Keys are lowercase (`general`, `ops`, `alerts`) from metadata `topicsThreadMap`.
+ */
+export function threadIdForPackageGroupOutboxTopic(
+  topics: Record<string, number>,
+  topic: OpsChannelTopic,
+  eventType?: string
+): number | undefined {
+  if (eventType === 'partner.welcome') return undefined;
+
+  const direct = topics[topic.toLowerCase()];
+  if (direct != null && direct > 0) return direct;
+
+  const aliases: Partial<Record<OpsChannelTopic, string[]>> = {
+    alerts: ['alerts'],
+    dod: ['alerts', 'dod'],
+    plays: ['ops', 'plays'],
+    provisioning: ['ops', 'provisioning', 'onboard'],
+    identity: ['ops', 'identity', 'welcome'],
+    toc: ['ops', 'toc'],
+    experiments: ['general', 'experiments'],
+  };
+
+  for (const key of aliases[topic] ?? [topic]) {
+    const id = topics[key];
+    if (id != null && id > 0) return id;
+  }
+
+  return undefined;
+}
+
+/** Operator handoff: TELEGRAM_TOPICS snippet for a package forum (per-chat routing). */
+export function formatPackageGroupTopicsHandoff(meta: PackageGroupForumMetadata): string[] {
+  const map = meta.topicsThreadMap ?? packageGroupTopicsThreadMap(meta.topics);
+  const compact = JSON.stringify(map);
+  return [
+    `TELEGRAM_TOPICS=${compact}`,
+    `  general=${map.general ?? 1}  ops=${map.ops ?? '?'}  alerts=${map.alerts ?? '?'}`,
+  ];
 }

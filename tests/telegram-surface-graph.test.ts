@@ -6,6 +6,7 @@ import {
   formatSurfaceGraphMermaid,
   suggestTelegramSurfacesMap,
 } from '../lib/telegram/surface-graph.ts';
+import type { PackageGroupRegistryRow } from '../lib/telegram/package-group-registry.ts';
 
 function chat(partial: Partial<KnownChatRow> & { chatId: string }): KnownChatRow { // brand-ok — test fixture wire id
   return {
@@ -59,6 +60,27 @@ describe('surface graph', () => {
       'ash-staging': '-1003937534779',
       sandbox: '-1004400413853',
     });
+  });
+
+  test('merges package_group_registry into suggested surfaces', () => {
+    const packageGroups: PackageGroupRegistryRow[] = [
+      {
+        partnerCode: 'BIL',
+        chatId: '-1004396694559',
+        inviteLink: null,
+        title: 'TOC Ops · BIL · Billy Ops',
+        requestedBy: null,
+        createdAt: '2026-01-01T00:00:00.000Z',
+        linkedAt: '2026-01-01T00:00:00.000Z',
+      },
+    ];
+    const suggested = suggestTelegramSurfacesMap({
+      knownChats: known,
+      env: {},
+      packageGroups,
+    });
+    expect(suggested['pkg-bil']).toBe('-1004396694559');
+    expect(suggested['ash-staging']).toBe('-1003937534779');
   });
 
   test('buildSurfaceGraph marks live + missing HQ', () => {

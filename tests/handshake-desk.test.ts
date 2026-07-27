@@ -83,7 +83,8 @@ describe('handshake-desk', () => {
 
     const table = formatHandshakeDeskTable(rows);
     expect(table.some(l => l.includes('ASH'))).toBe(true);
-    expect(table.some(l => l.includes('9/9')) || table.some(l => l.includes('8/8'))).toBe(true);
+    expect(rows[0]!.handshakeOk).toBe(true);
+    expect(rows[0]!.checksPassed).toBe(rows[0]!.checksTotal);
 
     db.close();
     await rm(dir, { recursive: true, force: true });

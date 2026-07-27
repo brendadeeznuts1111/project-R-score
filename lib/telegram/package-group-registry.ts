@@ -8,8 +8,9 @@
  * Distinct from ops_chat_channel_meta (per-DM transport). See partner-package-group-handshake.md.
  */
 import { Database } from 'bun:sqlite';
-import { formatPackageGroupTitle } from './surfaces.ts';
+import { formatPackageGroupTitle, TOC_OPS_SURFACES } from './surfaces.ts';
 import { tryPartnerCodeArg, HANDSHAKE_PARTNER_CODE_RE } from './handshake-ref.ts';
+import { resolveSeatTelegramId, telegramIdWireLinked } from './flows/seat-telegram.ts';
 
 /** @deprecated use HANDSHAKE_PARTNER_CODE_RE from handshake-ref.ts */
 export const PARTNER_CODE_PATTERN = HANDSHAKE_PARTNER_CODE_RE;
@@ -165,30 +166,27 @@ export function resolvePartnerDmTelegramId(
   preferredCallSign?: string | null
 ): string | null {
   if (preferredCallSign?.trim()) {
-    const row = db
-      .query(
-        `SELECT telegram_id FROM tree_nodes
-         WHERE active = 1 AND call_sign = $cs AND telegram_id IS NOT NULL
-         LIMIT 1`
-      )
-      .get({ $cs: preferredCallSign.trim() }) as { telegram_id: string | null } | null; // brand-ok
-    const tid = row?.telegram_id?.trim();
-    if (tid && !tid.startsWith('pending-')) return tid;
+    const fromSeat = resolveSeatTelegramId(db, { callSign: preferredCallSign.trim() });
+    if (telegramIdWireLinked(fromSeat)) return fromSeat;
   }
 
   const code = parsePartnerCode(partnerCode);
   if (!code) return null;
 
-  const row = db
+  const rows = db
     .query(
-      `SELECT telegram_id FROM tree_nodes
-       WHERE active = 1 AND telegram_id IS NOT NULL
-         AND call_sign LIKE $prefix
-       ORDER BY call_sign ASC LIMIT 1`
+      `SELECT call_sign FROM tree_nodes
+       WHERE active = 1 AND call_sign LIKE $prefix
+       ORDER BY call_sign ASC`
     )
-    .get({ $prefix: `${code}-%` }) as { telegram_id: string | null } | null; // brand-ok
-  const tid = row?.telegram_id?.trim();
-  if (tid && !tid.startsWith('pending-')) return tid;
+    .all({ $prefix: `${code}-%` }) as Array<{ call_sign: string | null }>;
+
+  for (const row of rows) {
+    if (!row.call_sign?.trim()) continue;
+    const fromSeat = resolveSeatTelegramId(db, { callSign: row.call_sign });
+    if (telegramIdWireLinked(fromSeat)) return fromSeat;
+  }
+
   return null;
 }
 
@@ -226,10 +224,19 @@ export type AckPackageGroupLinkedArtifact = {
   timestamp: string;
 };
 
+export type AckDmSeatDesignatedArtifact = {
+  action: 'ack_dm_seat_designated';
+  partner_code: string;
+  call_sign: string;
+  designated_by: 'factory';
+  timestamp: string;
+};
+
 export type PackageGroupEventLogEntry =
   | PackageGroupCreateArtifact
   | AckPackageGroupWiredArtifact
-  | AckPackageGroupLinkedArtifact;
+  | AckPackageGroupLinkedArtifact
+  | AckDmSeatDesignatedArtifact;
 
 function parseEventLogLine(raw: string, lineNo: number): PackageGroupEventLogEntry | null {
   const line = raw.trim();
@@ -283,6 +290,18 @@ function parseEventLogLine(raw: string, lineNo: number): PackageGroupEventLogEnt
       chat_id: String(row.chat_id ?? ''), // brand-ok
       linked_by: 'factory',
       registry_title: row.registry_title != null ? String(row.registry_title) : undefined,
+      timestamp: String(row.timestamp ?? ''),
+    };
+  }
+  if (action === 'ack_dm_seat_designated') {
+    const row = parsed as Record<string, unknown>;
+    return {
+      action: 'ack_dm_seat_designated',
+      partner_code: String(row.partner_code ?? '')
+        .toUpperCase()
+        .trim(),
+      call_sign: String(row.call_sign ?? '').trim(),
+      designated_by: 'factory',
       timestamp: String(row.timestamp ?? ''),
     };
   }
@@ -443,9 +462,58 @@ export async function appendAckPackageGroupLinked(input: {
   return { path, appended: true };
 }
 
+export async function appendAckDmSeatDesignated(input: {
+  partnerCode: string;
+  callSign: string;
+  path?: string;
+  now?: string;
+}): Promise<{ path: string; appended: boolean }> {
+  const path = input.path ?? PENDING_PACKAGE_GROUPS_JSONL;
+  const code = parsePartnerCode(input.partnerCode);
+  const callSign = input.callSign.trim();
+  if (!code || !callSign)
+    throw new Error('appendAckDmSeatDesignated requires partnerCode + callSign');
+
+  const log = await readPackageGroupEventLog(path);
+  const exists = log.some(
+    e =>
+      e.action === 'ack_dm_seat_designated' && e.partner_code === code && e.call_sign === callSign
+  );
+  if (exists) return { path, appended: false };
+
+  await appendPackageGroupEventLog(path, {
+    action: 'ack_dm_seat_designated',
+    partner_code: code,
+    call_sign: callSign,
+    designated_by: 'factory',
+    timestamp: input.now ?? new Date().toISOString(),
+  });
+  return { path, appended: true };
+}
+
 export async function readOpenPendingPackageGroups(
   path: string = PENDING_PACKAGE_GROUPS_JSONL
 ): Promise<PackageGroupCreateArtifact[]> {
   const log = await readPackageGroupEventLog(path);
   return resolveOpenPendingCreates(log);
+}
+
+/**
+ * Suggested TELEGRAM_SURFACES entries from linked package groups.
+ * Adds `pkg-{code}` plus partner desk slugs when callSign matches (e.g. ASH → ash-staging).
+ */
+export function suggestPackageGroupSurfacesMap(
+  registry: readonly PackageGroupRegistryRow[]
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const row of registry) {
+    const code = row.partnerCode.toUpperCase();
+    out[`pkg-${code.toLowerCase()}`] = row.chatId;
+    for (const surface of TOC_OPS_SURFACES) {
+      if (surface.callSign?.toUpperCase() === code) {
+        out[surface.slug] = row.chatId;
+      }
+    }
+  }
+  return out;
 }

@@ -7,6 +7,7 @@ import {
   parseTelegramChatIdWire,
   resolvePartnerDmTelegramId,
   upsertPackageGroupRegistry,
+  suggestPackageGroupSurfacesMap,
 } from '../lib/telegram/package-group-registry.ts';
 
 describe('package_group_registry', () => {
@@ -53,5 +54,27 @@ describe('package_group_registry', () => {
     expect(resolvePartnerDmTelegramId(db, 'ASH', 'ASH-002')).toBe('222');
     expect(resolvePartnerDmTelegramId(db, 'ASH')).toBe('111');
     db.close();
+  });
+
+  test('suggestPackageGroupSurfacesMap wires pkg slug + partner desk', () => {
+    const db = new Database(':memory:');
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-1003937534779',
+      displayName: 'Ash Ops',
+    });
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'BIL',
+      chatId: '-1004396694559',
+      displayName: 'Billy Ops',
+    });
+    const map = suggestPackageGroupSurfacesMap([
+      getPackageGroupRegistry(db, 'ASH')!,
+      getPackageGroupRegistry(db, 'BIL')!,
+    ]);
+    expect(map['pkg-ash']).toBe('-1003937534779');
+    expect(map['ash-staging']).toBe('-1003937534779');
+    expect(map['pkg-bil']).toBe('-1004396694559');
+    expect(map['ash-staging']).toBe('-1003937534779');
   });
 });

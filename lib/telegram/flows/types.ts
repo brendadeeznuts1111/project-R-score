@@ -95,6 +95,8 @@ export type ChatChannelMeta = {
   imageBundleId?: string; // brand-ok
   lastTemplateIds?: Partial<Record<import('../templates/types.ts').TemplateId, number>>;
   linkedAt?: string;
+  /** Active call-sign for shared-DM bot commands (/status, /plays, …). */
+  activeCallSign?: string | null;
 };
 
 export type FlowHandler = (input: FlowInput, ctx: FlowContext) => FlowOutput;

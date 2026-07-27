@@ -2,11 +2,15 @@ import { describe, expect, test } from 'bun:test';
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { Database } from 'bun:sqlite';
+import { upsertPackageGroupRegistry } from '../lib/telegram/package-group-registry.ts';
 import {
   assessForumMetadata,
   loadPackageGroupForumMetadata,
   packageGroupTopicsThreadMap,
   parsePackageGroupForumMetadata,
+  resolvePackageGroupTopicsForChat,
+  threadIdForPackageGroupOutboxTopic,
   validateForumMetadataAgainstRegistry,
   PACKAGE_GROUP_FORUM_TOPICS,
   PACKAGE_GROUP_FORUM_TOPICS_MTProto,
@@ -99,5 +103,51 @@ describe('package-group-forum', () => {
     });
     expect(partial.topicsComplete).toBe(false);
     expect(partial.iconState).toBe('backfilled');
+  });
+
+  test('threadIdForPackageGroupOutboxTopic maps ops channel topics to forum threads', () => {
+    const topics = { general: 1, ops: 12, alerts: 11 };
+    expect(threadIdForPackageGroupOutboxTopic(topics, 'alerts')).toBe(11);
+    expect(threadIdForPackageGroupOutboxTopic(topics, 'plays')).toBe(12);
+    expect(threadIdForPackageGroupOutboxTopic(topics, 'dod')).toBe(11);
+    expect(threadIdForPackageGroupOutboxTopic(topics, 'identity', 'partner.welcome')).toBeUndefined();
+  });
+
+  test('resolvePackageGroupTopicsForChat joins registry + metadata file', async () => {
+    const dir = join(tmpdir(), `pkg-forum-resolve-${Date.now()}`);
+    const metaDir = join(dir, 'forums');
+    await mkdir(metaDir, { recursive: true });
+    await writeFile(
+      join(metaDir, 'ASH.json'),
+      `${JSON.stringify({
+        partnerCode: 'ASH',
+        title: 'TOC Ops · ASH · Ash Ops',
+        displayName: 'Ash Ops',
+        chatId: '-1003937534779',
+        chatRef: 'tg:chat:-1003937534779',
+        inviteLink: '',
+        topics: [
+          { title: 'General', messageThreadId: 1 },
+          { title: 'Ops', messageThreadId: 12 },
+          { title: 'Alerts', messageThreadId: 11 },
+        ],
+        iconUploaded: true,
+        createdAt: '2026-01-01T00:00:00.000Z',
+      })}\n`
+    );
+
+    const db = new Database(':memory:');
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-1003937534779',
+      displayName: 'Ash Ops',
+    });
+
+    const lookup = await resolvePackageGroupTopicsForChat(db, '-1003937534779', metaDir);
+    expect(lookup?.partnerCode).toBe('ASH');
+    expect(lookup?.topics).toEqual({ general: 1, ops: 12, alerts: 11 });
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
   });
 });

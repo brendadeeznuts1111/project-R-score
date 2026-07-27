@@ -11,6 +11,7 @@ import { treeFlow } from './cards/tree.ts';
 import { welcomeFlow } from './cards/welcome.ts';
 import { resolveLocale } from './i18n.ts';
 import { getChatChannelMeta } from './channel-meta.ts';
+import { resolveFlowNodeForTelegram } from './seat-telegram.ts';
 import type {
   FlowHandler,
   FlowId,
@@ -38,27 +39,24 @@ const handlers: Record<FlowId, FlowHandler> = {
 
 export function findFlowNodeByTelegram(
   db: Database,
-  telegramUserId: string // brand-ok
+  telegramUserId: string, // brand-ok
+  callSignHint?: string | null
 ): OpsFlowNode | null {
-  return db
-    .query(
-      `SELECT id, type, parent_id, expert_id, name, telegram_id, call_sign
-       FROM tree_nodes WHERE telegram_id = $t AND active = 1`
-    )
-    .get({ $t: telegramUserId }) as OpsFlowNode | null;
+  return resolveFlowNodeForTelegram(db, telegramUserId, { callSignHint });
 }
 
 export function buildFlowContext(
   db: Database,
   dbPath: string,
-  telegramUserId?: string // brand-ok
+  telegramUserId?: string, // brand-ok
+  callSignHint?: string | null
 ): FlowContext {
-  const node = telegramUserId ? findFlowNodeByTelegram(db, telegramUserId) : null;
+  const node = telegramUserId ? findFlowNodeByTelegram(db, telegramUserId, callSignHint) : null;
   return { db, dbPath, node };
 }
 
 export function runFlow(db: Database, dbPath: string, input: FlowInput): FlowOutput {
-  const ctx = buildFlowContext(db, dbPath, input.userId);
+  const ctx = buildFlowContext(db, dbPath, input.userId, input.callSign);
   const handler = handlers[input.flowId];
   if (!handler) {
     return { text: 'Unknown flow.', parseMode: 'HTML' };

@@ -140,7 +140,7 @@ describe('telegram templates', () => {
     );
 
     expect(normalizeTelegramChatRef('tg:chat:-10099')).toBe('-10099');
-    const meta = linkTelegramChat(db, {
+    const { meta } = linkTelegramChat(db, {
       treeNodeId: asTreeNodeId(agentId),
       callSign: 'NOV-001',
       chatId: 'tg:chat:-10099',

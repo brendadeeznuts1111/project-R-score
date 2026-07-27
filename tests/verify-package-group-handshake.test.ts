@@ -51,6 +51,7 @@ describe('verify-package-group-handshake', () => {
       partnerCode: 'ASH',
       chatId: '-1003937534779',
       displayName: 'Ash Ops',
+      requestedBy: 'ASH-001',
     });
 
     const result = await verifyPackageGroupHandshake({
@@ -128,6 +129,7 @@ describe('verify-package-group-handshake', () => {
       partnerCode: 'ASH',
       chatId: '-1001',
       displayName: 'Ash Ops',
+      requestedBy: 'ASH-001',
     });
 
     try {
@@ -198,6 +200,7 @@ describe('verify-package-group-handshake', () => {
       partnerCode: 'ASH',
       chatId: '-1003937534779',
       displayName: 'Ash Ops',
+      requestedBy: 'ASH-001',
     });
 
     const result = await verifyPackageGroupHandshake({
@@ -208,6 +211,75 @@ describe('verify-package-group-handshake', () => {
     });
     const metaCheck = result.checks.find(c => c.id === 'forum_metadata');
     expect(metaCheck?.ok).toBe(true);
+    expect(result.ok).toBe(true);
+
+    db.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test('passes dm_seat when designated without telegram id', async () => {
+    const dir = join(tmpdir(), `verify-dm-designated-${Date.now()}`);
+    await mkdir(dir, { recursive: true });
+    await mkdir(join(dir, 'forums-empty'), { recursive: true });
+    const path = join(dir, 'pending.jsonl');
+    const novCreate: PackageGroupCreateArtifact = {
+      ...createArtifact,
+      partner_code: 'NOV',
+      display_name: 'Nov Ops',
+      suggested_title: 'TOC Ops · NOV · Nov Ops',
+      requested_by: 'NOV-001',
+    };
+    const lines = [
+      novCreate,
+      {
+        action: 'ack_package_group_wired',
+        partner_code: 'NOV',
+        chat_id: '-1004464761699',
+        telegram_ref: 'tg:chat:-1004464761699',
+        wired_by: 'ct',
+        timestamp: '2026-07-26T21:00:00.000Z',
+      },
+      {
+        action: 'ack_package_group_linked',
+        partner_code: 'NOV',
+        chat_id: '-1004464761699',
+        linked_by: 'factory',
+        registry_title: 'TOC Ops · NOV · Nov Ops',
+        timestamp: '2026-07-26T22:00:00.000Z',
+      },
+    ];
+    await writeFile(path, lines.map(l => JSON.stringify(l)).join('\n') + '\n');
+
+    const db = new Database(':memory:');
+    db.run(`
+      CREATE TABLE tree_nodes (
+        id TEXT PRIMARY KEY,
+        call_sign TEXT,
+        name TEXT,
+        telegram_id TEXT,
+        active INTEGER DEFAULT 1
+      )
+    `);
+    db.run(
+      `INSERT INTO tree_nodes (id, call_sign, name, telegram_id, active) VALUES (?, ?, ?, ?, 1)`,
+      ['n-nov-001', 'NOV-001', 'Nov Operator', null]
+    );
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'NOV',
+      chatId: '-1004464761699',
+      displayName: 'Nov Ops',
+      requestedBy: 'NOV-001',
+    });
+
+    const result = await verifyPackageGroupHandshake({
+      db,
+      partnerCode: 'NOV',
+      jsonlPath: path,
+      forumsMetaDir: join(dir, 'forums-empty'),
+    });
+    const dm = result.checks.find(c => c.id === 'dm_seat');
+    expect(dm?.ok).toBe(true);
+    expect(dm?.detail).toContain('awaiting telegram');
     expect(result.ok).toBe(true);
 
     db.close();

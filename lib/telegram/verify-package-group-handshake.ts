@@ -16,6 +16,7 @@ import {
   type PackageGroupEventLogEntry,
   PENDING_PACKAGE_GROUPS_JSONL,
 } from './package-group-registry.ts';
+import { assessPackageGroupDmSeat, formatDmSeatStatus } from './dm-seat-designation.ts';
 import {
   loadPackageGroupForumMetadata,
   validateForumMetadataAgainstRegistry,
@@ -190,6 +191,20 @@ export async function verifyPackageGroupHandshake(opts: {
   }
 
   if (registry) {
+    const dm = assessPackageGroupDmSeat(opts.db, code);
+    checks.push({
+      id: 'dm_seat',
+      ok: dm.status === 'designated' || dm.status === 'linked' || dm.status === 'shared',
+      detail:
+        dm.status === 'none'
+          ? 'no DM seat designated — run designate-dm-seat'
+          : dm.status === 'designated'
+            ? `${dm.callSign} ${formatDmSeatStatus(dm.status)} (welcome DM blocked until link)`
+            : `${dm.callSign} → ${dm.telegramId} · ${formatDmSeatStatus(dm.status)}`,
+    });
+  }
+
+  if (registry) {
     const meta = await loadPackageGroupForumMetadata(code, {
       rootDir: opts.forumsMetaDir,
     });
@@ -252,6 +267,8 @@ export async function verifyPackageGroupHandshake(opts: {
       nextAction = `bun run telegram:ops -- link-package-group ${code} -100… --invite '…'`;
     } else if (!linked) {
       nextAction = `bun run telegram:ops -- acknowledge-pending ${code}`;
+    } else if (checks.some(c => c.id === 'dm_seat' && !c.ok)) {
+      nextAction = `bun run telegram:ops -- designate-dm-seat ${code} ${code}-001`;
     } else if (opts.live && checks.some(c => c.id === 'live_forum_title' && !c.ok)) {
       nextAction = `Rename forum to ${formatPackageGroupTitle(code, create?.display_name ?? code)} (setChatTitle or Telegram UI)`;
     }
