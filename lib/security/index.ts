@@ -10,6 +10,28 @@ export { Cookie, CookieMap } from 'bun';
 
 export { zeroTrustManager } from './zero-trust-manager';
 export { auditLogger } from './secret-audit-logger';
+export {
+  PARTNER_VAULT_KEY_VERSION,
+  PARTNER_VAULT_MASTER_ENV,
+  derivePartnerAesKey,
+  encryptPartnerSecret,
+  decryptPartnerSecret,
+  setPartnerSecret,
+  getPartnerSecret,
+  type PartnerVaultOptions,
+} from './partner-vault';
+export {
+  AGENT_API_KEY_PREFIX,
+  AGENT_KEY_PREFIX_LEN,
+  agentKeyPrefix,
+  createAgent,
+  verifyAgent,
+  revokeAgentsForNode,
+  type AgentStatus,
+  type AgentRecord,
+  type CreateAgentResult,
+} from './ai-agents';
+
 /** Security utilities — direct Bun.password / crypto.getRandomValues / Bun.hash */
 export class SecurityUtils {
   static generateSecret(length: number = 32): string {

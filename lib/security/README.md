@@ -12,3 +12,5 @@ Inventory: [`../README.md`](../README.md).
 | [`bun-secrets-adapter.ts`](./bun-secrets-adapter.ts) |
 | [`infra-secrets.ts`](./infra-secrets.ts) |
 | [`secret-audit-logger.ts`](./secret-audit-logger.ts) |
+| [`partner-vault.ts`](./partner-vault.ts) — HKDF per-node secret isolation |
+| [`ai-agents.ts`](./ai-agents.ts) — agent API keys (prefix + Argon2id) |
