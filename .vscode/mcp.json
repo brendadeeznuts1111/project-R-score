@@ -4,7 +4,9 @@
     "bun-docs": {
       "type": "stdio",
       "command": "bun",
-      "args": ["${workspaceFolder}/tools/bun-docs-mcp.ts"],
+      "args": [
+        "${workspaceFolder}/tools/bun-docs-mcp.ts"
+      ],
       "env": {
         "BUN_DOCS_ROOT": "${workspaceFolder}"
       }
@@ -12,11 +14,74 @@
     "dx": {
       "type": "stdio",
       "command": "bun",
-      "args": ["${workspaceFolder}/scripts/dx-mcp.ts"],
+      "args": [
+        "${workspaceFolder}/scripts/dx-mcp.ts"
+      ],
       "env": {
         "DX_SCAN_ROOTS": "projects/active,projects/experimental,projects/archive,projects/active/enterprise/cascade-mover-v3,projects/active/enterprise/bet-ticker-worker-v1.1,packages,lib,tools"
       },
       "envFile": "${workspaceFolder}/.env"
+    },
+    "cascade-mover": {
+      "type": "stdio",
+      "command": "bun",
+      "args": [
+        "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/src/server/cascade-mover-mcp.ts"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      },
+      "envFile": "${workspaceFolder}/projects/active/enterprise/cascade-mover-v3/.env"
+    },
+    "ast-grep": {
+      "type": "stdio",
+      "command": "bun",
+      "args": [
+        "${workspaceFolder}/.agents/skills/ast-grep/mcp/ast-grep-mcp.ts"
+      ],
+      "env": {
+        "AST_GREP_REPO_ROOT": "${workspaceFolder}"
+      }
+    },
+    "github": {
+      "type": "stdio",
+      "command": "${workspaceFolder}/scripts/github-mcp-stdio.sh",
+      "args": []
+    },
+    "cloudflare": {
+      "type": "http",
+      "url": "https://mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
+    },
+    "cloudflare-docs": {
+      "type": "http",
+      "url": "https://docs.mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
+    },
+    "cloudflare-bindings": {
+      "type": "http",
+      "url": "https://bindings.mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
+    },
+    "cloudflare-builds": {
+      "type": "http",
+      "url": "https://builds.mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
+    },
+    "cloudflare-observability": {
+      "type": "http",
+      "url": "https://observability.mcp.cloudflare.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:CLOUDFLARE_API_TOKEN}"
+      }
     }
   }
 }

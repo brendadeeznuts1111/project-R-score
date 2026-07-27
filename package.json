@@ -1916,6 +1916,8 @@
     "verify:cloudflare-token:static": "bun tools/verify-cloudflare-token.ts --no-live --save",
     "sync:well-known-mcp": "bun tools/sync-well-known-mcp.ts",
     "sync:well-known-mcp:check": "bun tools/sync-well-known-mcp.ts --check",
+    "mcp:sync": "bun scripts/mcp-sync.ts",
+    "mcp:sync:check": "bun scripts/mcp-sync.ts --check",
     "docs:harness": "bun ./docs/harness/README.md",
     "docs:cron": "bun scripts/docs-cron.ts",
     "docs:install-verify": "bun scripts/docs-install-verify.ts",

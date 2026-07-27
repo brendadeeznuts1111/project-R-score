@@ -38,6 +38,14 @@ if [ "$p_code" -ne 0 ]; then
   exit "$p_code"
 fi
 
+# Keep generated .vscode/mcp.json in lockstep when the MCP SSOT changes.
+if git diff --cached --name-only | grep -q '^\.mcp\.json$'; then
+  echo ""
+  echo "== pre-commit: mcp sync (.mcp.json staged) =="
+  bun scripts/mcp-sync.ts
+  git add .vscode/mcp.json
+fi
+
 echo ""
 echo "== pre-commit: ast-grep + semver =="
 bun scripts/pre-commit-ast-grep.ts --staged
