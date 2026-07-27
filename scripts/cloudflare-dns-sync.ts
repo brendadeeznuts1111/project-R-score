@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --verify
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
@@ -7,6 +8,8 @@
  * Usage:
  *   bun scripts/cloudflare-dns-sync.ts            # dry-run (default): print diff only
  *   bun scripts/cloudflare-dns-sync.ts --apply    # apply deltas via Cloudflare API
+ *   bun scripts/cloudflare-dns-sync.ts --verify   # also confirm records resolve publicly
+ *                                                 #   via DNS-over-HTTPS (works where port 53 is blocked)
  *   bash scripts/cloudflare-dns-sync.sh --apply   # same, via bash wrapper
  *
  * Auth: CLOUDFLARE_DNS_API_TOKEN (env, or ~/.reasonix/.env as fallback).
@@ -25,6 +28,7 @@
 const ZONE_ID = Bun.env.CF_ZONE_ID ?? 'a3b7ba4bb62cb1b177b04b8675250674'; // factory-wager.com
 const API_BASE = Bun.env.CF_API_BASE ?? 'https://api.cloudflare.com/client/v4';
 const APPLY = Bun.argv.includes('--apply');
+const VERIFY = Bun.argv.includes('--verify');
 
 interface DesiredRecord {
   type: 'MX' | 'TXT' | 'CNAME';
@@ -126,6 +130,73 @@ async function cfApi(
   };
 }
 
+// RFC 1035 type codes for DoH queries
+const DOH_TYPE: Record<DesiredRecord['type'], number> = { CNAME: 5, MX: 15, TXT: 16 };
+
+function normalizeDnsData(data: string): string {
+  return data.replace(/\.$/, '').replace(/^"|"$/g, '').replace(/"\s*"/g, '');
+}
+
+/**
+ * Confirm desired records resolve publicly via DNS-over-HTTPS.
+ * Plain dig/port 53 is blocked on some networks; DoH works everywhere HTTPS does.
+ */
+async function verifyPublic(desired: DesiredRecord[]): Promise<boolean> {
+  let failed = 0;
+  for (const d of desired) {
+    const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(d.name)}&type=${DOH_TYPE[d.type]}`;
+    try {
+      const res = await fetch(url, { headers: { accept: 'application/dns-json' } });
+      const json = (await res.json()) as { Status?: number; Answer?: { data: string }[] };
+      const want = d.type === 'MX' ? `${d.priority} ${d.content}` : normalizeDnsData(d.content);
+      const hit = (json.Answer ?? []).some(a => {
+        const got = normalizeDnsData(a.data);
+        return d.type === 'TXT' ? got === want || got.includes(want) : got === want;
+      });
+      if (hit) {
+        console.log(`  VERIFY OK   ${d.type} ${d.name}`);
+      } else {
+        failed++;
+        console.error(
+          `  VERIFY FAIL ${d.type} ${d.name} (no public answer matching expected content)`
+        );
+      }
+    } catch (err) {
+      failed++;
+      console.error(`  VERIFY FAIL ${d.type} ${d.name} (DoH error: ${String(err)})`);
+    }
+  }
+  // Presence-only check for the three Proton DKIM selectors — their targets are
+  // per-domain dashboard values, so verify they resolve even when
+  // PROTON_DKIM_TARGET_* env vars are unset and they're absent from `desired`.
+  const dkimSelectors = ['protonmail', 'protonmail2', 'protonmail3'].map(
+    s => `${s}._domainkey.factory-wager.com`
+  );
+  for (const name of dkimSelectors) {
+    if (desired.some(d => d.type === 'CNAME' && d.name === name)) continue; // content-checked above
+    const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=5`;
+    try {
+      const res = await fetch(url, { headers: { accept: 'application/dns-json' } });
+      const json = (await res.json()) as { Answer?: { data: string }[] };
+      if ((json.Answer ?? []).length > 0) {
+        console.log(`  VERIFY OK   CNAME ${name} (presence)`);
+      } else {
+        failed++;
+        console.error(`  VERIFY FAIL CNAME ${name} (selector does not resolve)`);
+      }
+    } catch (err) {
+      failed++;
+      console.error(`  VERIFY FAIL CNAME ${name} (DoH error: ${String(err)})`);
+    }
+  }
+  console.log(
+    failed === 0
+      ? `VERIFY: all ${desired.length} desired record(s) resolve publicly.`
+      : `VERIFY: ${failed}/${desired.length} record(s) failed public resolution.`
+  );
+  return failed === 0;
+}
+
 async function main(): Promise<void> {
   const token = await resolveToken();
   const { records: desired, warnings } = desiredRecords();
@@ -181,6 +252,7 @@ async function main(): Promise<void> {
 
   if (ops.length === 0) {
     console.log('IN SYNC: all desired records match live zone state.');
+    if (VERIFY && !(await verifyPublic(desired))) process.exit(1);
     return;
   }
 
@@ -218,6 +290,7 @@ async function main(): Promise<void> {
   }
   if (failed > 0) process.exit(1);
   console.log('APPLIED: all deltas succeeded.');
+  if (VERIFY && !(await verifyPublic(desired))) process.exit(1);
 }
 
 if (import.meta.main) {
