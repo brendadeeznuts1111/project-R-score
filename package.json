@@ -1613,6 +1613,7 @@
     "ops:enhancements": "bun --console-depth=6 tools/show-enhancements.ts",
     "ops:enhancements:pipe": "cat tools/show-enhancements.ts | bun --console-depth=6 run -",
     "ops:enhancements:json": "bun --console-depth=6 tools/show-enhancements.ts --json",
+    "ops:enhancements:html": "bun --console-depth=6 tools/show-enhancements.ts --html",
     "test:isolate": "bun test --isolate --timeout=30000 --pass-with-no-tests tests",
     "test:shard": "bash -c 'bun test --timeout=30000 --pass-with-no-tests tests --shard=\"${SHARD:-1/1}\"'",
     "test:ci": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && bun test --timeout=30000 --pass-with-no-tests tests --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",

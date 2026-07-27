@@ -4,10 +4,15 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/http/server#basic-setup — Bun.serve
 /**
  * Enhancement report — structural proofs for MA/NJ compliance + isolation layers.
+ *
+ * Uses **strict** `Bun.deepEquals(a, b, true)` via {@link deepEqualsStrict} for row
+ * match (same as `expect().toStrictEqual()`). Loose mode treats `undefined` ≈ missing
+ * key; strict does not — see docs matrix rows in the report.
  *
  * Run with elevated inspect depth (Bun.inspect / console.log nested objects):
  *
@@ -15,6 +20,7 @@
  *   cat tools/show-enhancements.ts | bun --console-depth=6 run -
  *   bun run ops:enhancements
  *   bun run ops:enhancements:pipe
+ *   bun tools/show-enhancements.ts --html > /tmp/enhancements.html
  *
  * Live mock status (requires `bun run ops:compliance:mock` in another terminal):
  *
@@ -43,11 +49,14 @@ async function loadModule<T>(rel: string): Promise<T> {
 
 type ConsoleDepthMod = typeof import('../lib/console-depth.ts');
 type DeepEqualsMod = typeof import('../lib/deep-equals.ts');
+type EscapeHtmlMod = typeof import('../lib/escape-html.ts');
 type ComplianceMod = typeof import('../lib/operations/state-compliance-http.ts');
 
 const { getConsoleDepth, inspect, logDepth, logTable } =
   await loadModule<ConsoleDepthMod>('lib/console-depth.ts');
-const { deepEqualsStrict } = await loadModule<DeepEqualsMod>('lib/deep-equals.ts');
+const { deepEqualsStrict, deepEqualsModes, deepEqualsDocsStrictProof } =
+  await loadModule<DeepEqualsMod>('lib/deep-equals.ts');
+const { escapeHtml } = await loadModule<EscapeHtmlMod>('lib/escape-html.ts');
 const { ComplianceClient, createMockComplianceDb, createStateComplianceFetchHandler } =
   await loadModule<ComplianceMod>('lib/operations/state-compliance-http.ts');
 
@@ -206,6 +215,67 @@ export async function buildEnhancementRows(): Promise<EnhancementRow[]> {
         )
       );
     }
+
+    // Bun.deepEquals strict vs loose — docs matrix (undefined key ≠ missing)
+    {
+      const a = { entries: [1, 2] };
+      const b = { entries: [1, 2], extra: undefined };
+      const modes = deepEqualsModes(a, b);
+      rows.push(
+        row(
+          'runtime.deepEquals.strict_vs_loose',
+          {
+            loose: true,
+            strict: false,
+            diverges: true,
+          },
+          {
+            loose: modes.loose,
+            strict: modes.strict,
+            diverges: modes.diverges,
+          },
+          'Bun.deepEquals(a,b) true; Bun.deepEquals(a,b,true) false — same as toStrictEqual'
+        )
+      );
+    }
+
+    // Full docs-matrix proof must all be ok on a healthy runtime
+    {
+      const proof = deepEqualsDocsStrictProof();
+      const allOk = proof.every(p => p.ok);
+      rows.push(
+        row(
+          'runtime.deepEquals.docs_matrix',
+          { ok: true, cases: proof.length },
+          { ok: allOk, cases: proof.length },
+          'docs strict-inequality matrix (undefined, sparse, class vs plain)'
+        )
+      );
+    }
+
+    // Bun.escapeHTML — high-throughput entity escape for report HTML
+    {
+      const raw = `<script>alert("x")</script> & 'MA'`;
+      const escaped = escapeHtml(raw);
+      rows.push(
+        row(
+          'runtime.escapeHTML',
+          {
+            hasLt: true,
+            hasAmp: true,
+            hasQuot: true,
+            rawUnsafe: false,
+          },
+          {
+            hasLt: escaped.includes('&lt;'),
+            hasAmp: escaped.includes('&amp;'),
+            hasQuot: escaped.includes('&quot;'),
+            rawUnsafe: escaped.includes('<script>'),
+          },
+          'Bun.escapeHTML for safe HTML report cells'
+        )
+      );
+    }
   } finally {
     db.close();
   }
@@ -271,6 +341,50 @@ async function printLiveStatus(): Promise<void> {
   }
 }
 
+/** HTML table report — cells escaped with Bun.escapeHTML (not hand-rolled replaces). */
+export function reportToHtml(report: EnhancementReport): string {
+  const rows = report.rows
+    .map(r => {
+      const feature = escapeHtml(r.feature);
+      const match = r.match ? 'pass' : 'fail';
+      const notes = escapeHtml(r.notes ?? '');
+      const expected = escapeHtml(JSON.stringify(r.expectedState));
+      const actual = escapeHtml(JSON.stringify(r.actualState));
+      return `<tr class="${match}"><td>${feature}</td><td>${match}</td><td>${notes}</td><td><code>${expected}</code></td><td><code>${actual}</code></td></tr>`;
+    })
+    .join('\n');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>${escapeHtml(`Enhancement report ${report.passed}/${report.total}`)}</title>
+  <style>
+    body{font:14px/1.4 system-ui,sans-serif;margin:2rem;background:#0b0f14;color:#e6edf3}
+    table{border-collapse:collapse;width:100%}
+    th,td{border:1px solid #30363d;padding:.4rem .6rem;vertical-align:top}
+    th{background:#161b22;text-align:left}
+    tr.pass td:nth-child(2){color:#3fb950}
+    tr.fail td:nth-child(2){color:#f85149}
+    code{font-size:12px;word-break:break-all}
+    .meta{color:#8b949e;margin-bottom:1rem}
+  </style>
+</head>
+<body>
+  <h1>Enhancement report</h1>
+  <p class="meta">${escapeHtml(report.generatedAt)} · depth=${escapeHtml(report.consoleDepth)} ·
+    ${escapeHtml(report.passed)}/${escapeHtml(report.total)} pass ·
+    sha256=${escapeHtml(report.signature)}</p>
+  <table>
+    <thead><tr><th>feature</th><th>match</th><th>notes</th><th>expected</th><th>actual</th></tr></thead>
+    <tbody>
+${rows}
+    </tbody>
+  </table>
+</body>
+</html>
+`;
+}
+
 async function printReport(): Promise<void> {
   const report = await buildEnhancementReport();
   const depth = report.consoleDepth;
@@ -314,6 +428,7 @@ async function main(): Promise<void> {
   cat tools/show-enhancements.ts | bun --console-depth=6 run -
   bun tools/show-enhancements.ts --status=demo-ma-licensed --state=MA
   bun tools/show-enhancements.ts --json
+  bun tools/show-enhancements.ts --html > /tmp/enhancements.html
 `);
     return;
   }
@@ -326,6 +441,13 @@ async function main(): Promise<void> {
   if (Bun.argv.includes('--json')) {
     const report = await buildEnhancementReport();
     console.log(JSON.stringify(report, null, 2));
+    if (report.passed !== report.total) process.exitCode = 1;
+    return;
+  }
+
+  if (Bun.argv.includes('--html')) {
+    const report = await buildEnhancementReport();
+    console.log(reportToHtml(report));
     if (report.passed !== report.total) process.exitCode = 1;
     return;
   }
