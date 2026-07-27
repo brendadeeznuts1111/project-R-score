@@ -255,6 +255,9 @@ bun run telegram:ops:consume -- --preview
 - [x] DM received when `--invite` + linked `telegram_id` present (ASH-001 → 8013171035)
 - [x] `tree_nodes.telegram_id` unchanged (still DM)
 - [x] ct surface map can register same title (demo DB wire proved `telegram_ref`)
+- [x] NOV package forum wired (`-1004464761699`) · verify 9/9 live · desk OK
+
+Optional Soft automation (Decision #52): `bun run package-group-create-forum CODE` in `toc-ops-repo` when MTProto session configured — see [`toc-ops-repo/docs/system/TELEGRAM.md`](../../../toc-ops-repo/docs/system/TELEGRAM.md).
 
 ---
 
@@ -262,5 +265,5 @@ bun run telegram:ops:consume -- --preview
 
 - Bot API `createChat` / `createChatInviteLink` from factory
 - KV / webhook handoff between repos
-- Automating forum creation inside `toc-ops-repo` (Bot API cannot create groups; use `package-group-pending` + human create)
+- MTProto / forum creation inside factory monorepo (Soft `package-group-create-forum` when session set; manual UI otherwise)
 - Soft / FUND / capital from package-room messages
