@@ -236,7 +236,7 @@ export async function probeCompressionStreamsRoundtrip(): Promise<BunRuntimeNits
       new Blob([input]).stream().pipeThrough(new CompressionStream('gzip'))
     );
     const restored = await streamToBytes(
-      new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'))
+      new Blob([new Uint8Array(compressed)]).stream().pipeThrough(new DecompressionStream('gzip'))
     );
     const ok =
       restored.byteLength === input.byteLength && restored.every((byte, i) => byte === input[i]);

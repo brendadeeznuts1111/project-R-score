@@ -2530,7 +2530,7 @@ let lastIntegrityStats: IntegrityStats | null = null;
  */
 async function status(): Promise<void> {
   const LOG = INTEGRITY_LOG;
-  let last: {
+  type StatusLast = {
     ts?: string;
     failures?: number;
     ok?: boolean;
@@ -2542,13 +2542,14 @@ async function status(): Promise<void> {
       ship: { pct: number };
       blog: { pct: number };
     };
-  } | null = null;
+  };
+  let last: StatusLast | null = null;
   if (await Bun.file(LOG).exists()) {
     const lines = (await Bun.file(LOG).text()).trim().split('\n').filter(Boolean);
     const raw = lines.at(-1);
     if (raw) {
       try {
-        last = JSON.parse(raw) as typeof last;
+        last = JSON.parse(raw) as StatusLast;
       } catch {
         last = null;
       }
@@ -2747,14 +2748,16 @@ async function schedule(pattern: string, once: boolean): Promise<void> {
         }) +
         '\n'
     );
+    const regenNote =
+      failures !== 0
+        ? ' — regen skipped'
+        : 'ok' in regen && regen.ok
+          ? ` — regen OK (${regen.pages ?? 0} pages, ${regen.anchors ?? 0} anchors)`
+          : ` — regen FAILED: ${'error' in regen ? String(regen.error) : 'unknown'}`;
     console.info(
       `🕐 [${started}] integrity ${failures === 0 ? 'PASS' : `FAIL (${failures})`}` +
         ` · bun ${Bun.version}` +
-        (failures === 0
-          ? regen.ok
-            ? ` — regen OK (${regen.pages} pages, ${regen.anchors} anchors)`
-            : ` — regen FAILED: ${regen.error}`
-          : ' — regen skipped') +
+        regenNote +
         ` — logged to ${LOG}`
     );
   };
@@ -2876,7 +2879,7 @@ async function locusAudit(args: string[]): Promise<number> {
 
     let suggestion = '';
     let score = '';
-    if (!okStatus(status) && status !== 'inherited') {
+    if (!okStatus(status)) {
       const local = suggestAnchorsForToken(e.name, pageAnchors, {
         pages: e.allPages,
         limit: 1,

@@ -825,7 +825,11 @@ function mergeEntry(
   if (partial.verifiedOn) existing.verifiedOn = partial.verifiedOn;
   // type: prefer api over concept
   if (partial.type === 'api' && existing.type === 'concept') existing.type = 'api';
-  if (partial.type === 'cli-flag' || partial.type === 'config') existing.type = partial.type;
+  // Accept legacy scrape labels; map onto nearest DocRefType.
+  if (partial.type === 'cli-option' || (partial.type as string) === 'cli-flag') {
+    existing.type = 'cli-option';
+  }
+  if ((partial.type as string) === 'config') existing.type = 'config-key';
   // aliases
   if (partial.name !== existing.name) {
     const al = new Set(existing.aliases ?? []);

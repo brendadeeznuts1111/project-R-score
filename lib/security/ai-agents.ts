@@ -71,21 +71,20 @@ export async function createAgent(
   const status: AgentStatus = options?.status ?? 'active';
   const createdAt = Math.floor(Date.now() / 1000);
 
-  db.run(
+  db.query(
     `INSERT INTO ai_agents (
        id, node_id, name, api_key_hash, key_prefix, scope, status, created_at
-     ) VALUES ($id, $nid, $name, $hash, $pfx, $scope, $status, $created)`,
-    {
-      $id: id,
-      $nid: nid,
-      $name: name.trim(),
-      $hash: apiKeyHash,
-      $pfx: keyPrefix,
-      $scope: scope,
-      $status: status,
-      $created: createdAt,
-    }
-  );
+     ) VALUES ($id, $nid, $name, $hash, $pfx, $scope, $status, $created)`
+  ).run({
+    $id: id,
+    $nid: String(nid),
+    $name: name.trim(),
+    $hash: apiKeyHash,
+    $pfx: keyPrefix,
+    $scope: scope,
+    $status: status,
+    $created: createdAt,
+  });
 
   return { id, apiKey, keyPrefix, nodeId: nid };
 }
@@ -131,5 +130,7 @@ export async function verifyAgent(db: Database, apiKey: string): Promise<AgentRe
 /** Mark all agents for a node as revoked (repository-layer node_id filter). */
 export function revokeAgentsForNode(db: Database, nodeId: string | TreeNodeId): void {
   const nid = parseNodeId(nodeId);
-  db.run(`UPDATE ai_agents SET status = 'revoked' WHERE node_id = $nid`, { $nid: nid });
+  db.query(`UPDATE ai_agents SET status = 'revoked' WHERE node_id = $nid`).run({
+    $nid: String(nid),
+  });
 }

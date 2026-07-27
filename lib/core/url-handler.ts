@@ -228,6 +228,9 @@ export class URLHandler {
       throw new ValidationError(`Invalid URL string: ${result.errors.join(', ')}`);
     }
 
+    if (result.data == null) {
+      throw new ValidationError('Invalid URL string: missing parsed data');
+    }
     return new EnhancedURL(result.data, base);
   }
 

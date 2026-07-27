@@ -693,7 +693,9 @@ function upsertOverlay(
     map.set(normalizeTokenKey(tokenName), entry);
   }
 
-  const kind = section.kind === 'stabilize' ? 'stabilize' : section.kind;
+  if (section.kind === 'skip') return;
+  const kind: 'ship' | 'fix' | 'chg' | 'stabilize' =
+    section.kind === 'stabilize' ? 'stabilize' : section.kind;
   entry.hits.push({
     version: release.version,
     url: release.url,

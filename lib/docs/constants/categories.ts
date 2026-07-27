@@ -702,8 +702,9 @@ export class IntelligentRouting {
     const normalizedFormat = format?.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
     // Check format preference first
-    if (normalizedFormat && INTELLIGENT_ROUTING_RULES.formatRouting[normalizedFormat]) {
-      const formatRoute = INTELLIGENT_ROUTING_RULES.formatRouting[normalizedFormat];
+    const formatRouting = INTELLIGENT_ROUTING_RULES.formatRouting as Record<string, any>;
+    if (normalizedFormat && formatRouting[normalizedFormat]) {
+      const formatRoute = formatRouting[normalizedFormat];
       const userRoute = formatRoute[userType] || formatRoute.primary;
       return {
         ...userRoute.primary,
@@ -712,8 +713,9 @@ export class IntelligentRouting {
     }
 
     // Check context preference
-    if (normalizedContext && INTELLIGENT_ROUTING_RULES.contextRouting[normalizedContext]) {
-      const contextRoute = INTELLIGENT_ROUTING_RULES.contextRouting[normalizedContext];
+    const contextRouting = INTELLIGENT_ROUTING_RULES.contextRouting as Record<string, any>;
+    if (normalizedContext && contextRouting[normalizedContext]) {
+      const contextRoute = contextRouting[normalizedContext];
       const userRoute = contextRoute[userType] || contextRoute.primary;
       return {
         ...userRoute.primary,
@@ -722,8 +724,9 @@ export class IntelligentRouting {
     }
 
     // Check topic routing
-    if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
-      const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
+    const topicRouting = INTELLIGENT_ROUTING_RULES.topicRouting as Record<string, any>;
+    if (topicRouting[normalizedTopic]) {
+      const topicRoute = topicRouting[normalizedTopic];
       const userRoute = topicRoute[userType] || topicRoute.developers;
       return {
         ...userRoute.primary,
@@ -762,8 +765,9 @@ export class IntelligentRouting {
       reasoning: string;
     }> = [];
 
-    if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
-      const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
+    const topicRouting = INTELLIGENT_ROUTING_RULES.topicRouting as Record<string, any>;
+    if (topicRouting[normalizedTopic]) {
+      const topicRoute = topicRouting[normalizedTopic];
       const userRoute = topicRoute[userType] || topicRoute.developers;
 
       if (userRoute.secondary) {
@@ -798,22 +802,23 @@ export class IntelligentRouting {
   > {
     const normalizedTopic = topic.toLowerCase().replace(/[^a-z0-9]/g, '-');
     const result: Record<string, any> = {};
+    const topicRouting = INTELLIGENT_ROUTING_RULES.topicRouting as Record<string, any>;
 
-    if (INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic]) {
-      const topicRoute = INTELLIGENT_ROUTING_RULES.topicRouting[normalizedTopic];
+    if (topicRouting[normalizedTopic]) {
+      const topicRoute = topicRouting[normalizedTopic];
 
       Object.keys(topicRoute).forEach(userType => {
-        const userRoute = topicRoute[userType as keyof typeof topicRoute];
+        const userRoute = topicRoute[userType];
         const alternatives: any[] = [];
 
-        if (userRoute.secondary) {
+        if (userRoute?.secondary) {
           alternatives.push({
             ...userRoute.secondary,
             type: 'secondary',
           });
         }
 
-        if (userRoute.fallback) {
+        if (userRoute?.fallback) {
           alternatives.push({
             ...userRoute.fallback,
             type: 'fallback',
@@ -821,7 +826,7 @@ export class IntelligentRouting {
         }
 
         result[userType] = {
-          primary: userRoute.primary,
+          primary: userRoute?.primary,
           alternatives,
         };
       });
@@ -846,9 +851,10 @@ export class IntelligentRouting {
     category: DocumentationCategory,
     pathKey: string
   ): string {
-    const paths = ENTERPRISE_DOCUMENTATION_PATHS[provider];
-    if (paths && paths[category] && paths[category][pathKey]) {
-      return paths[category][pathKey];
+    const paths = ENTERPRISE_DOCUMENTATION_PATHS as Record<string, any>;
+    const providerPaths = paths[provider];
+    if (providerPaths?.[category]?.[pathKey]) {
+      return providerPaths[category][pathKey] as string;
     }
     return `/${pathKey.toLowerCase().replace(/_/g, '-')}`;
   }

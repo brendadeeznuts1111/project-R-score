@@ -148,6 +148,8 @@ export type RefreshChannelMetaOptions = {
   nitsPath?: string;
   bundlerPath?: string;
   networkingPath?: string;
+  /** Optional install-platform pillar (defaults to public/registry/install-platform.json). */
+  installPlatformPath?: string;
 };
 
 /**
@@ -180,9 +182,28 @@ export async function refreshChannelMetaProof(
   }
   sources.release = 'artifact';
 
-  const baseResults = stripChannelMetaRows(releaseDisk.results);
+  let baseResults = stripChannelMetaRows(releaseDisk.results);
   if (baseResults.length === 0) {
     throw new Error('channel-meta-refresh: release base has no non-meta rows');
+  }
+
+  // Prefer dedicated install-platform pillar (not ChannelAware type — plain VerificationResult[])
+  if (prefer) {
+    const ipPath = opts.installPlatformPath ?? `${root}/public/registry/install-platform.json`;
+    try {
+      const ipFile = Bun.file(ipPath);
+      if (await ipFile.exists()) {
+        const ipJson = (await ipFile.json()) as { results?: VerificationResult[] };
+        if (Array.isArray(ipJson.results) && ipJson.results.length > 0) {
+          baseResults = [
+            ...baseResults.filter(r => !String(r.name ?? '').startsWith('install platform:')),
+            ...ipJson.results.map(r => withSubsystem(r, 'package-manager')),
+          ];
+        }
+      }
+    } catch {
+      // keep release-features embed
+    }
   }
 
   let nitsRows: VerificationResult[] | null = null;

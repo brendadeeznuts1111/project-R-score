@@ -63,7 +63,12 @@ export async function runHarnessCoverageProbe(
     proc.exited,
   ]);
   const combined = `${stdout}\n${stderr}`;
-  if (code !== 0) {
+  // bunfig.toml coverageThreshold=0.8 fails the process when the probe suite
+  // only exercises a thin slice of the monorepo — even with 0 test failures.
+  // The ratchet below enforces lib/harness floors; ignore threshold-only exits.
+  const failMatch = combined.match(/^\s*(\d+)\s+fail\b/m);
+  const testFails = failMatch ? Number(failMatch[1]) : undefined;
+  if (code !== 0 && (testFails === undefined || testFails > 0)) {
     throw new Error(`coverage probe tests failed (exit ${code})\n${combined.slice(-2000)}`);
   }
   const totals = parseCoverageTotals(combined);

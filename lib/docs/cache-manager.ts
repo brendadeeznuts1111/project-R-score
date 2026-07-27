@@ -74,7 +74,7 @@ export class EnhancedDocsCacheManager {
         });
       }
     } catch (error) {
-      console.warn('Failed to load cache:', error.message);
+      console.warn('Failed to load cache:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -93,7 +93,7 @@ export class EnhancedDocsCacheManager {
 
       await Bun.write(`${this.cacheDir}/cache.json`, JSON.stringify(dataToSave, null, 2));
     } catch (error) {
-      console.warn('Failed to save cache:', error.message);
+      console.warn('Failed to save cache:', error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -190,7 +190,10 @@ export class EnhancedDocsCacheManager {
       // Fallback to cache even if expired
       const cached = await this.get<T>(cacheKey);
       if (cached) {
-        console.warn(`Using cached data for ${url}:`, error.message);
+        console.warn(
+          `Using cached data for ${url}:`,
+          error instanceof Error ? error.message : String(error)
+        );
         return cached;
       }
 
@@ -326,7 +329,10 @@ export class EnhancedDocsCacheManager {
         await this.fetchWithCache(url);
         await Bun.sleep(100); // Rate limiting
       } catch (error) {
-        console.warn(`Failed to preload ${url}:`, error.message);
+        console.warn(
+          `Failed to preload ${url}:`,
+          error instanceof Error ? error.message : String(error)
+        );
       }
     }
 

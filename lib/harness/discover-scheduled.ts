@@ -134,6 +134,24 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     match: 'issue-automation.yml',
     reason: 'CI issue metrics — not a spine maintenance tenant',
   },
+  {
+    id: 'pkg-telegram-catalog-research-cron-register',
+    source: 'package-script',
+    match: 'telegram:catalog:research:cron:register',
+    reason: 'OS cron register for catalog research — telegram-factory tenant tooling',
+  },
+  {
+    id: 'pkg-telegram-catalog-research-cron-remove',
+    source: 'package-script',
+    match: 'telegram:catalog:research:cron:remove',
+    reason: 'OS cron remove for catalog research — telegram-factory tenant tooling',
+  },
+  {
+    id: 'pkg-telegram-catalog-research-cron-preview',
+    source: 'package-script',
+    match: 'telegram:catalog:research:cron:preview',
+    reason: 'OS cron preview for catalog research — telegram-factory tenant tooling',
+  },
 ];
 
 const CODE_CRON_RE =

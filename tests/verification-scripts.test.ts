@@ -61,7 +61,7 @@ describe('lib/http/verification-scripts', () => {
     const hash = res.headers.get('X-Script-SHA256');
     expect(hash).toMatch(/^[a-f0-9]{64}$/);
     const body = await res.text();
-    expect(verifyScriptSha256(body, hash!)).toBe(true);
+    expect(await verifyScriptSha256(body, hash!)).toBe(true);
   });
 
   test('serveVerificationScript sets X-Script-SHA256 header for release', async () => {
@@ -74,6 +74,6 @@ describe('lib/http/verification-scripts', () => {
     expect(hash).toMatch(/^[a-f0-9]{64}$/);
     const body = await res.text();
     expect(body).toContain('verify-bun-release.ts');
-    expect(verifyScriptSha256(body, hash!)).toBe(true);
+    expect(await verifyScriptSha256(body, hash!)).toBe(true);
   });
 });

@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --cpu
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
@@ -482,14 +483,9 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const html = Bun.markdown.html("some markdown", {\n  tables: true, // GFM tables (default: true)\n  strikethrough: true, // GFM strikethrough (default: true)\n  tasklists: true, // GFM task lists (default: true)\n  tagFilter: true, // GFM tag filter for disallowed HTML tags\n  autolinks: true, // Autolink URLs, emails, and www. links\n});',
     },
   ],
-  // Official docs — Bun.markdown.render Parser options (third arg)
-  'runtime/markdown#parser-options': [
-    {
-      lang: 'ts',
-      body: 'const result = Bun.markdown.render(\n  "Visit www.example.com",\n  {\n    link: (children, { href }) => `[${children}](${href})`,\n    paragraph: children => children,\n  },\n  { autolinks: true },\n);',
-    },
-  ],
-  // Official docs — Bun.markdown.react Parser options (#parser-options)
+  // Official docs — Bun.markdown.react Parser options (#parser-options).
+  // Shared path for both parser-options and parser-options-2 aliases (last-wins
+  // shape from the docs scrape; body must include headings + autolinks).
   'runtime/markdown#parser-options': [
     {
       lang: 'tsx',

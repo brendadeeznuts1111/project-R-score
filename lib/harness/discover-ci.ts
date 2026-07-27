@@ -106,6 +106,30 @@ export const CI_JOB_EXEMPTIONS: readonly CiJobExemption[] = [
     match: 'issue-automation.yml',
     reason: 'Issue metrics — schedule discovery exemption',
   },
+  {
+    id: 'gha-test-sharded',
+    source: 'gha-workflow',
+    match: 'test-sharded.yml',
+    reason: 'Sharded tests/ matrix — signal only (continue-on-error); not deploy tenant',
+  },
+  {
+    id: 'gha-verify-bun-apis',
+    source: 'gha-workflow',
+    match: 'verify-bun-apis.yml',
+    reason: 'Bun API proof schedule — schedule discovery exemption',
+  },
+  {
+    id: 'gha-cloudflare-pages-smoke',
+    source: 'gha-workflow',
+    match: 'cloudflare-pages-smoke.yml',
+    reason: 'Pages smoke — cloudflare-pages tenant, not ci-core envelope',
+  },
+  {
+    id: 'pkg-build-doc-index',
+    source: 'package-script',
+    match: 'build:doc-index',
+    reason: 'Docs index bake — docs-integrity / Bun docs operate, not ci-core deploy',
+  },
 ];
 
 const PKG_CI_RE = /^(?:ci|build|deploy|migrate):/;

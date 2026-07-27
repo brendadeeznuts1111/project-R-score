@@ -127,12 +127,12 @@ export class EnhancedDocsFetcher {
 
           // Extract API names from backticks
           const apiMatches = apiText.match(/`([^`]+)`/g) || [];
-          const apis = apiMatches.map(m => m.replace(/`/g, ''));
+          const apiNames = apiMatches.map(m => m.replace(/`/g, ''));
 
-          if (url) {
+          if (url && topic) {
             apis.push({
               topic,
-              apis,
+              apis: apiNames,
               url: url.startsWith('/') ? url : `/${url}`,
               category: currentCategory,
               domains: {

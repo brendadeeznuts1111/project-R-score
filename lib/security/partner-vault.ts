@@ -38,14 +38,18 @@ export async function derivePartnerAesKey(
   masterKey: string,
   nodeId: TreeNodeId
 ): Promise<CryptoKey> {
-  const ikm = new Bun.CryptoHasher('sha256').update(masterKey).digest();
+  // Copy into a fresh ArrayBuffer — Bun.CryptoHasher.digest() returns a Buffer
+  // whose ArrayBufferLike is not always assignable to BufferSource under tsc.
+  const digest = new Bun.CryptoHasher('sha256').update(masterKey).digest();
+  const ikm = new Uint8Array(digest.byteLength);
+  ikm.set(digest instanceof Uint8Array ? digest : new Uint8Array(digest));
   const baseKey = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveKey']);
   return crypto.subtle.deriveKey(
     {
       name: 'HKDF',
       hash: 'SHA-256',
       salt: HKDF_SALT,
-      info: new TextEncoder().encode(nodeId),
+      info: new TextEncoder().encode(String(nodeId)),
     },
     baseKey,
     { name: 'AES-GCM', length: 256 },
@@ -102,19 +106,18 @@ export async function setPartnerSecret(
   if (!key.trim()) throw new Error('partner-vault: key required');
   const masterKey = resolveMasterKey(options);
   const encrypted = await encryptPartnerSecret(plaintext, masterKey, nid);
-  db.run(
+  db.query(
     `INSERT INTO partner_vault (node_id, key, encrypted_value, key_version)
      VALUES ($nid, $key, $enc, $ver)
      ON CONFLICT(node_id, key) DO UPDATE SET
        encrypted_value = excluded.encrypted_value,
-       key_version = excluded.key_version`,
-    {
-      $nid: nid,
-      $key: key,
-      $enc: encrypted,
-      $ver: PARTNER_VAULT_KEY_VERSION,
-    }
-  );
+       key_version = excluded.key_version`
+  ).run({
+    $nid: String(nid),
+    $key: key,
+    $enc: encrypted,
+    $ver: PARTNER_VAULT_KEY_VERSION,
+  });
 }
 
 /**
@@ -133,7 +136,9 @@ export async function getPartnerSecret(
       `SELECT encrypted_value FROM partner_vault
        WHERE node_id = $nid AND key = $key`
     )
-    .get({ $nid: nid, $key: key }) as { encrypted_value: string } | null;
+    .get({ $nid: String(nid), $key: key } as Record<string, string>) as {
+    encrypted_value: string;
+  } | null;
   if (!row) return null;
   return decryptPartnerSecret(row.encrypted_value, resolveMasterKey(options), nid);
 }

@@ -23,8 +23,11 @@ Agent-submitted image proof pipeline. Agents upload photos (balance, slip, recei
 6. Metadata hash + HMAC-SHA256 signature
 7. Tamper detection scored (0–100)
 8. OCR extracted for slip/receipt types
-9. Persisted to SQLite (`dod_submissions`)
-10. Ops notified via Telegram if flagged (score > 70)
+9. Balance DODs: `platformHint` / OCR aliases cross-checked against
+   `partner_platform_accounts` + `sb_accounts`. Missing account → flagged (+30
+   tamper). Set `DOD_PLATFORM_DETECT=0` to disable.
+10. Persisted to SQLite (`dod_submissions`)
+11. Ops notified via Telegram if flagged (score > 70 or missing platform account)
 
 ## Usage
 

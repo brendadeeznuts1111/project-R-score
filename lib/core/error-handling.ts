@@ -229,11 +229,21 @@ export class ErrorHandler {
  * Standardized error handler function
  */
 export function handleErrorFromUnknown(
-  error: Error | string | number | boolean | object | null | undefined,
+  error: unknown,
   context: string,
   severity: ErrorSeverity = ErrorSeverity.MEDIUM
 ): R2IntegrationError {
-  return ErrorHandler.getInstance().handle(error, context, severity);
+  const normalized: Error | string | number | boolean | object | null | undefined =
+    error instanceof Error ||
+    typeof error === 'string' ||
+    typeof error === 'number' ||
+    typeof error === 'boolean' ||
+    (typeof error === 'object' && error !== null) ||
+    error === null ||
+    error === undefined
+      ? (error as Error | string | number | boolean | object | null | undefined)
+      : String(error);
+  return ErrorHandler.getInstance().handle(normalized, context, severity);
 }
 
 /**

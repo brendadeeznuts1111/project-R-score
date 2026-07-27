@@ -709,7 +709,7 @@ export function searchAuditCatalog(catalog: AuditCatalogFile, query: string): Au
   }
   const concepts = searchAuditConcepts(catalog.concepts, query);
   const findings = searchAuditFindings(catalog.findings, query);
-  return rankHits([...concepts, ...findings], q);
+  return rankHits([...concepts, ...findings] as AuditCatalogEntry[], q);
 }
 
 export function getAuditFinding(
