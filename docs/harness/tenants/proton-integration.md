@@ -24,6 +24,24 @@ pass://factorywager/Cloudflare API Token/password
 - Mint/rotate only in the [Cloudflare dashboard](https://dash.cloudflare.com/profile/api-tokens), then **update the vault item**.
 - Runtime consumers read `CLOUDFLARE_API_TOKEN` after inject (MCP, Pages deploy, `cloudflare:env:*`).
 
+## Env inventory (code ↔ vault)
+
+Map harness `Bun.env.*` usage to `env.template` / Proton Pass refs (no secret values printed):
+
+```bash
+bun run env:inventory           # human summary
+bun run env:inventory:vault     # vault coverage focus
+bun run env:inventory:json      # machine JSON
+bun run check:env-defaults      # optional config without fallback (harness)
+bun run proton:check            # inject proof for all templates
+```
+
+| Signal | Meaning |
+|--------|---------|
+| Secrets used + vaulted | Code name appears in an `env.template` `pass://` ref |
+| Secrets used but NOT in template | Candidate to add vault item + template line (or Bun.secrets service) |
+| `check:env-defaults` fail | Optional config read lacks `\|\|` / `??` / guard |
+
 ## Secret Injection
 
 ```bash
@@ -114,6 +132,8 @@ Daemon manages SSH keys from Personal vault.
 | scanner | green | CF token only |
 
 When adding a secret: create the Proton Pass item first, then add `{{ pass://vault/item/field }}` to the matching `env.template`, then `bun run proton:check`.
+
+After adding vault coverage, re-run `bun run env:inventory:vault` — the secret should move from “NOT in any env.template” to “used + vaulted”.
 
 ## Anti-patterns
 
