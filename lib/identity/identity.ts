@@ -69,6 +69,8 @@ export interface SessionInfo {
   sessionId: SessionId;
   nodeId: TreeNodeId;
   role: IdentityRole;
+  /** Set when the session was minted via impersonation (impersonate.ts); null for normal logins. */
+  impersonatorId: TreeNodeId | null;
 }
 
 export interface AuthEventInput {
@@ -77,6 +79,11 @@ export interface AuthEventInput {
   details?: Record<string, unknown>;
   ip?: string;
   success?: boolean;
+  /**
+   * Stamps the audit row's impersonator_id column. Passed EXPLICITLY by the
+   * caller (no ambient context propagation) — see impersonate.ts.
+   */
+  impersonatorId?: TreeNodeId | null;
 }
 
 export interface AuthAuditEntry {
@@ -402,7 +409,9 @@ export class IdentitySystem {
   resolveSession(token: TokenId): SessionInfo | null {
     const tokenHash = sha256Hex(token as string);
     const row = this.db
-      .query('SELECT node_id, expires_at, revoked_at FROM auth_sessions WHERE token_hash = $hash')
+      .query(
+        'SELECT node_id, expires_at, revoked_at, impersonator_id FROM auth_sessions WHERE token_hash = $hash'
+      )
       .get({ $hash: tokenHash }) as Record<string, unknown> | null;
 
     if (!row) return null;
@@ -414,7 +423,45 @@ export class IdentitySystem {
       sessionId: asSessionId(tokenHash),
       nodeId,
       role: this.getRole(nodeId) ?? 'operator',
+      impersonatorId: row.impersonator_id ? asTreeNodeId(row.impersonator_id as string) : null,
     };
+  }
+
+  /**
+   * Mint a session directly (no password check) — used by impersonation
+   * (impersonate.ts). Same storage invariant as login(): the raw token is
+   * returned once, only its SHA-256 digest is stored. `impersonatorId` marks
+   * the session as impersonated; `ttlSeconds` overrides the 8h default.
+   */
+  createSession(
+    nodeId: TreeNodeId,
+    opts: {
+      impersonatorId?: TreeNodeId | null;
+      ttlSeconds?: number;
+      ip?: string;
+      userAgent?: string;
+    } = {}
+  ): LoginResult {
+    const token = mintBearerToken();
+    const tokenHash = sha256Hex(token as string);
+    const expiresAt = unixNow() + (opts.ttlSeconds ?? SESSION_TTL_SECONDS);
+
+    this.db
+      .query(
+        `INSERT INTO auth_sessions (token_hash, node_id, created_at, expires_at, ip, user_agent, impersonator_id)
+         VALUES ($hash, $node, $created, $expires, $ip, $ua, $impersonator)`
+      )
+      .run({
+        $hash: tokenHash,
+        $node: nodeId,
+        $created: new Date().toISOString(),
+        $expires: expiresAt,
+        $ip: opts.ip ?? null,
+        $ua: opts.userAgent ?? null,
+        $impersonator: opts.impersonatorId ?? null,
+      });
+
+    return { token, sessionId: asSessionId(tokenHash), expiresAt };
   }
 
   // ── Roles / Lockout helpers ───────────────────────────────────────────
@@ -491,8 +538,8 @@ export class IdentitySystem {
     const id = asIdentityId(Bun.randomUUIDv7());
     this.db
       .query(
-        `INSERT INTO auth_audit (id, node_id, action, details_json, ip, success, created_at)
-         VALUES ($id, $node, $action, $details, $ip, $success, $created)`
+        `INSERT INTO auth_audit (id, node_id, action, details_json, ip, success, created_at, impersonator_id)
+         VALUES ($id, $node, $action, $details, $ip, $success, $created, $impersonator)`
       )
       .run({
         $id: id,
@@ -502,6 +549,7 @@ export class IdentitySystem {
         $ip: entry.ip ?? null,
         $success: entry.success === false ? 0 : 1,
         $created: new Date().toISOString(),
+        $impersonator: entry.impersonatorId ?? null,
       });
     return id;
   }

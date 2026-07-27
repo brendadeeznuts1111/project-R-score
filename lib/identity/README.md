@@ -7,15 +7,15 @@ file** as `AccountSystem` (`data/accounts-<tenant>.db`, WAL) so auth tables can
 Phase 0: alias credentials (argon2id), sessions (hash-only storage), audit log,
 role hierarchy. Phase 1a: lockout enforcement (`lockout.ts`). Phase 2: login
 anomaly detection (`anomaly.ts`) and GDPR-style export (`export.ts` +
-`GET /auth/export`).
+`GET /auth/export`). Phase 3: audit-safe impersonation (`impersonate.ts`).
 
 ## Schema (`schema.ts` — `migrateIdentity(db)`, idempotent)
 
 | Table | Purpose |
 |---|---|
 | `auth_alias_credentials` | `node_id → alias_slug` login, argon2id `password_hash`, `role` (`operator`/`admin`/`superadmin`), lockout columns (`failed_attempts`, `locked_until`, `lock_reason`) |
-| `auth_sessions` | `token_hash` (SHA-256) PK — **raw bearer tokens are never stored** — `node_id`, `expires_at` (unix s), `revoked_at`, `ip`, `user_agent` |
-| `auth_audit` | Append-only auth event log (`id`, `node_id`, `action`, `details_json`, `ip`, `success`, `created_at`) |
+| `auth_sessions` | `token_hash` (SHA-256) PK — **raw bearer tokens are never stored** — `node_id`, `expires_at` (unix s), `revoked_at`, `ip`, `user_agent`, `impersonator_id` |
+| `auth_audit` | Append-only auth event log (`id`, `node_id`, `action`, `details_json`, `ip`, `success`, `created_at`, `impersonator_id`) |
 | `auth_device_fingerprints` | `(node_id, fingerprint_hash)` trust registry — `first_seen`/`last_seen`, `country_code`, `trusted` |
 
 ## Anomaly detection (`anomaly.ts`)
@@ -35,6 +35,24 @@ fingerprint trusted (audits `device_trusted`).
 
 `exportData(identity, nodeId)` → `{ alias, sessions, audit, deviceFingerprints }`.
 `password_hash` / `token_hash` are NEVER selected (explicit column lists).
+
+## Impersonation (`impersonate.ts`)
+
+Superadmin → partner support access, fully audited:
+
+- `impersonate(identity, adminNodeId, targetNodeId)` — caller must be
+  `superadmin`; the target must have an identity and must NOT be a superadmin.
+  Mints a session for the TARGET with `impersonator_id = adminNodeId` and a
+  **1h TTL** (`IMPERSONATION_TTL_SECONDS`, vs the 8h login TTL). Audits
+  `impersonation_start` on the target with `details.adminNodeId` +
+  `details.sessionId`, and stamps the audit row's `impersonator_id` column.
+- `endImpersonation(identity, token)` — revokes the impersonated session,
+  audits `impersonation_end` (also `impersonator_id`-stamped).
+- `resolveSession` returns `impersonatorId` (null for normal logins).
+  `SessionInfo`/`AuthEventInput.impersonatorId` are additive.
+- **No ambient context:** when auditing inside an impersonated flow, callers
+  pass `impersonatorId` explicitly to `logAuthEvent` — nothing is propagated
+  magically.
 
 ## API (`identity.ts`)
 
@@ -75,6 +93,13 @@ inward.
 - `GET /auth/session` `Authorization: Bearer <token>` → `{ sessionId, nodeId, role }` · 401
 - `GET /auth/export` `Authorization: Bearer <token>` → JSON attachment `export-<nodeId>.json`;
   `?node=<TreeNodeId>` for another node requires admin|superadmin · 401/403
+- `POST /auth/impersonate` `Authorization: Bearer <token>` (superadmin) + `{ nodeId }`
+  → `{ token, expiresAt }` (1h TTL, impersonated session for the target) · 400/401/403/404
+- `POST /auth/impersonate/end` `Authorization: Bearer <impersonated token>` → `{ ok: true }` · 401
+
+Session-resolving routes (`/auth/session`, `/auth/export`,
+`/auth/impersonate/end`) set the response header `X-Impersonator: <nodeId>`
+when the resolved session is impersonated; absent otherwise.
 
 Client IP from `CF-Connecting-IP`, else `X-Forwarded-For`.
 

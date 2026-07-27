@@ -11,6 +11,11 @@
  *   GET  /auth/session  Authorization: Bearer <token> → { sessionId, nodeId, role }
  *   GET  /auth/export   Authorization: Bearer <token> → JSON attachment (own data;
  *                       ?node=<TreeNodeId> for another node requires admin|superadmin)
+ *   POST /auth/impersonate     Bearer (superadmin) + { nodeId } → { token, expiresAt }
+ *   POST /auth/impersonate/end Bearer (the impersonated token) → { ok: true }
+ *
+ * Responses to session-resolving routes (session, export, impersonate/end)
+ * carry `X-Impersonator: <nodeId>` when the resolved session is impersonated.
  */
 
 import { asTokenId, tryTreeNodeId } from '../types/branded.ts';
@@ -21,7 +26,9 @@ import {
   IdentityError,
   InvalidCredentialsError,
   type IdentitySystem,
+  type SessionInfo,
 } from './identity.ts';
+import { endImpersonation, impersonate } from './impersonate.ts';
 
 interface LoginBody {
   slug: string;
@@ -32,6 +39,16 @@ function isLoginBody(value: unknown): value is LoginBody {
   if (typeof value !== 'object' || value === null) return false;
   const body = value as Record<string, unknown>;
   return typeof body.slug === 'string' && typeof body.password === 'string';
+}
+
+interface ImpersonateBody {
+  nodeId: string; // brand-ok — raw wire body, branded via tryTreeNodeId at this boundary
+}
+
+function isImpersonateBody(value: unknown): value is ImpersonateBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  return typeof body.nodeId === 'string';
 }
 
 async function parseJsonBody(req: Request): Promise<unknown> {
@@ -59,6 +76,14 @@ function clientIp(req: Request): string | undefined {
 
 function jsonError(status: number, error: string): Response {
   return Response.json({ error }, { status });
+}
+
+/** Stamps `X-Impersonator` when the resolved session is impersonated. */
+function withImpersonatorHeader(res: Response, session: SessionInfo): Response {
+  if (session.impersonatorId) {
+    res.headers.set('X-Impersonator', session.impersonatorId as string);
+  }
+  return res;
 }
 
 export function createIdentityHandler(
@@ -103,11 +128,14 @@ export function createIdentityHandler(
       if (!token) return jsonError(401, 'Missing bearer token');
       const session = identity.resolveSession(asTokenId(token));
       if (!session) return jsonError(401, 'Invalid or expired session');
-      return Response.json({
-        sessionId: session.sessionId as string,
-        nodeId: session.nodeId as string,
-        role: session.role,
-      });
+      return withImpersonatorHeader(
+        Response.json({
+          sessionId: session.sessionId as string,
+          nodeId: session.nodeId as string,
+          role: session.role,
+        }),
+        session
+      );
     }
 
     if (url.pathname === '/auth/export' && req.method === 'GET') {
@@ -128,13 +156,55 @@ export function createIdentityHandler(
       }
 
       const data = exportData(identity, targetNode);
-      return new Response(JSON.stringify(data, null, 2), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'content-disposition': `attachment; filename="export-${targetNode as string}.json"`,
-        },
-      });
+      return withImpersonatorHeader(
+        new Response(JSON.stringify(data, null, 2), {
+          status: 200,
+          headers: {
+            'content-type': 'application/json; charset=utf-8',
+            'content-disposition': `attachment; filename="export-${targetNode as string}.json"`,
+          },
+        }),
+        session
+      );
+    }
+
+    if (url.pathname === '/auth/impersonate' && req.method === 'POST') {
+      const token = bearerToken(req);
+      if (!token) return jsonError(401, 'Missing bearer token');
+      const session = identity.resolveSession(asTokenId(token));
+      if (!session) return jsonError(401, 'Invalid or expired session');
+      if (!identity.requireRole(session.nodeId, 'superadmin')) {
+        return jsonError(403, 'Superadmin role required to impersonate');
+      }
+
+      const body = await parseJsonBody(req);
+      if (!isImpersonateBody(body)) return jsonError(400, 'Invalid request body');
+      const targetNodeId = tryTreeNodeId(body.nodeId);
+      if (!targetNodeId) return jsonError(400, 'Invalid node id');
+
+      try {
+        const result = await impersonate(identity, session.nodeId, targetNodeId);
+        return Response.json({
+          token: result.token as string,
+          expiresAt: result.expiresAt,
+        });
+      } catch (err) {
+        if (err instanceof IdentityError) {
+          if (err.message === 'Target node not found') return jsonError(404, err.message);
+          if (err.message.includes('superadmin')) return jsonError(403, err.message);
+          return jsonError(400, err.message);
+        }
+        throw err;
+      }
+    }
+
+    if (url.pathname === '/auth/impersonate/end' && req.method === 'POST') {
+      const token = bearerToken(req);
+      if (!token) return jsonError(401, 'Missing bearer token');
+      const session = identity.resolveSession(asTokenId(token));
+      if (!session) return jsonError(401, 'Invalid or expired session');
+      endImpersonation(identity, asTokenId(token));
+      return withImpersonatorHeader(Response.json({ ok: true }), session);
     }
 
     return jsonError(404, 'Not found');

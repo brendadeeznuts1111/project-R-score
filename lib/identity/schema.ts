@@ -6,9 +6,27 @@
  * Lockout columns (`failed_attempts`, `locked_until`, `lock_reason`) exist NOW
  * so Phase 1 lockout enforcement needs no ALTERs — Phase 0 only tracks
  * the counter.
+ *
+ * Impersonation columns (`impersonator_id` on auth_sessions + auth_audit) are
+ * in the CREATEs for fresh DBs AND added via guarded ALTERs for pre-existing
+ * DBs — CREATE TABLE IF NOT EXISTS never alters an existing table, so the
+ * ALTERs are the upgrade path. `migrateIdentity` stays the single idempotent
+ * entry point for both shapes.
  */
 
 import { Database } from 'bun:sqlite';
+
+/**
+ * Add `column` to `table` only when missing. SQLite has no
+ * ALTER TABLE ... ADD COLUMN IF NOT EXISTS, so guard with PRAGMA table_info.
+ * Runs AFTER the CREATEs above, so the table always exists.
+ */
+function ensureColumn(db: Database, table: string, column: string, ddl: string): void {
+  const columns = db.query(`PRAGMA table_info(${table})`).all() as { name: string }[];
+  if (!columns.some(c => c.name === column)) {
+    db.run(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
+  }
+}
 
 export function migrateIdentity(db: Database): void {
   db.run(`
@@ -31,7 +49,8 @@ export function migrateIdentity(db: Database): void {
       expires_at INTEGER NOT NULL,
       revoked_at INTEGER,
       ip TEXT,
-      user_agent TEXT
+      user_agent TEXT,
+      impersonator_id TEXT REFERENCES tree_nodes(id)
     );
 
     CREATE TABLE IF NOT EXISTS auth_audit (
@@ -41,7 +60,8 @@ export function migrateIdentity(db: Database): void {
       details_json TEXT,
       ip TEXT,
       success INTEGER NOT NULL DEFAULT 1,
-      created_at TEXT NOT NULL
+      created_at TEXT NOT NULL,
+      impersonator_id TEXT REFERENCES tree_nodes(id)
     );
 
     CREATE TABLE IF NOT EXISTS auth_device_fingerprints (
@@ -58,4 +78,19 @@ export function migrateIdentity(db: Database): void {
     CREATE INDEX IF NOT EXISTS idx_auth_audit_node_created ON auth_audit(node_id, created_at);
     CREATE INDEX IF NOT EXISTS idx_auth_audit_action ON auth_audit(action);
   `);
+
+  // Upgrade path for pre-existing DBs (CREATE IF NOT EXISTS leaves old-shaped
+  // tables untouched). NULL default keeps this legal with REFERENCES under FK.
+  ensureColumn(
+    db,
+    'auth_sessions',
+    'impersonator_id',
+    'impersonator_id TEXT REFERENCES tree_nodes(id)'
+  );
+  ensureColumn(
+    db,
+    'auth_audit',
+    'impersonator_id',
+    'impersonator_id TEXT REFERENCES tree_nodes(id)'
+  );
 }
