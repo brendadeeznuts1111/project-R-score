@@ -10,29 +10,15 @@
  */
 import { describe, test, expect, beforeAll, afterAll } from 'bun:test';
 import { Database } from 'bun:sqlite';
+import { createTestDb, seedTestData } from './harness.ts';
 
 // ── Pipeline stages ───────────────────────────────────────────────────────
 describe('limit detection pipeline (E2E)', () => {
   let db: Database;
 
   beforeAll(() => {
-    db = new Database(':memory:');
-
-    // Core schemas needed by pipeline stages
-    const { ensureAccountLimitsSchema } = require('../lib/account-limits-repo.ts');
-    ensureAccountLimitsSchema(db);
-
-    // State regulation schema (for partner_state_licenses)
-    const { ensureStateRegulationSchema } = require('../lib/operations/state-regulation.ts');
-    ensureStateRegulationSchema(db);
-
-    // Prediction schema (for prediction_accuracy table)
-    const { ensurePredictionSchema } = require('../lib/prediction/schema.ts');
-    ensurePredictionSchema(db);
-
-    // Limit prediction schema
-    const { ensureLimitPredictionSchema } = require('../lib/prediction/limit-prediction.ts');
-    ensureLimitPredictionSchema(db);
+    db = createTestDb();
+    seedTestData(db, 'e2e-test');
   });
 
   test('Stage 2: seed demo data and detect raises', () => {
