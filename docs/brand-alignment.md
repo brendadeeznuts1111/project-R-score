@@ -12,17 +12,17 @@ factory-wager.com          → Pages (project-r-score, apex)
   ledger.factory-wager.com → cloudflared tunnel → this Mac :3000 · Cloudflare Access APPLIED (302 → login)
 ```
 
-Resolves but misleading or broken (do not treat as functional endpoints):
+Resolves but misleading (do not treat as functional endpoints):
 ```
   health.factory-wager.com   → Pages vanity CNAME — serves app landing, NOT the health endpoint (real: score.factory-wager.com/health)
   telegram.factory-wager.com → Pages vanity CNAME — serves app landing, NOT the webhook (real: score…/api/telegram/webhook/{tenant})
-  support.factory-wager.com  → 525 SSL handshake failure (HelpScout origin broken)
-  terminal.factory-wager.com → 502 — DNS points at a tunnel with no live config; dangling
 ```
 
 Not resolving (no DNS records):
 ```
-reasonix.factory-wager.com, api, mail, news, backup, status
+reasonix.factory-wager.com, api, mail, news, backup, status,
+terminal.factory-wager.com (CNAME deleted 2026-07-28 — was dangling tunnel),
+support.factory-wager.com (CNAME deleted 2026-07-28 — was broken HelpScout)
 ```
 
 ## Email

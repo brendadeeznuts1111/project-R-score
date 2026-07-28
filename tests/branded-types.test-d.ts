@@ -82,6 +82,8 @@ import {
   asOperationId,
   asOpsChannelEventId,
   asPagesProjectId,
+  asPublishLaneId,
+  asSurfaceBackendCode,
   asPartnerProfileKey,
   asPartnerTemplateId,
   asPipelineId,
@@ -255,7 +257,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 55-value catalog (50 IDs + codes) ─
+// ─── 6. Aggregate unions cover the complete 57-value catalog (51 IDs + codes) ─
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -307,6 +309,7 @@ const everyId: readonly AnyId[] = [
   asSubdomainId('ledger'),
   asSurfaceId('ledger'),
   asPagesProjectId('project-r-score'),
+  asPublishLaneId('prod-write'),
   asAccessDomainId('score.factory-wager.com/portal'),
 ];
 
@@ -317,6 +320,7 @@ const everyBrandedValue: readonly AnyBrandedValue[] = [
   asZipCode('02139'),
   asSurfaceStatusCode('live'),
   asSurfaceAccessCode('public'),
+  asSurfaceBackendCode('cloudflare-pages'),
 ];
 
 // @ts-expect-error — a key is a branded value, not an ID

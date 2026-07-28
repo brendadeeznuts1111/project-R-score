@@ -19,19 +19,27 @@
 
 import {
   accessDomainFromHost,
-  asHostId,
+  asSubdomainId,
+  FACTORY_WAGER_APEX,
+  hostIdFromParts,
   httpsUrlForAccessDomain,
   httpsUrlForHost,
+  pagesDevHostForProject,
+  PROJECT_R_SCORE_PAGES,
   type AccessDomainId,
   type HostId,
 } from '../types/branded.ts';
 
-/** Whole-host Access / tunnel surfaces (HostId). */
-export const LEDGER_HOST: HostId = asHostId('ledger.factory-wager.com');
-export const SCORE_HOST: HostId = asHostId('score.factory-wager.com');
-export const PAGES_DEV_HOST: HostId = asHostId('project-r-score.pages.dev');
-export const TERMINAL_HOST: HostId = asHostId('terminal.factory-wager.com');
-export const REASONIX_HOST: HostId = asHostId('reasonix.factory-wager.com');
+/**
+ * Whole-host Access / tunnel surfaces (HostId).
+ * Composed from ApexDomainId + SubdomainId (or Pages project → pages.dev host).
+ * Never forge path-bearing Access domains as HostId.
+ */
+export const LEDGER_HOST: HostId = hostIdFromParts(FACTORY_WAGER_APEX, asSubdomainId('ledger'));
+export const SCORE_HOST: HostId = hostIdFromParts(FACTORY_WAGER_APEX, asSubdomainId('score'));
+export const PAGES_DEV_HOST: HostId = pagesDevHostForProject(PROJECT_R_SCORE_PAGES);
+export const TERMINAL_HOST: HostId = hostIdFromParts(FACTORY_WAGER_APEX, asSubdomainId('terminal'));
+export const REASONIX_HOST: HostId = hostIdFromParts(FACTORY_WAGER_APEX, asSubdomainId('reasonix'));
 
 /** Access app domain fields — composed from HostId + path (never forged as bare strings). */
 export const LEDGER_ACCESS_DOMAIN: AccessDomainId = accessDomainFromHost(LEDGER_HOST);

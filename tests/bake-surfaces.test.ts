@@ -2,8 +2,10 @@
 import { describe, expect, test } from 'bun:test';
 import {
   asHostId,
+  asPublishLaneId,
   asSurfaceId,
   type HostId,
+  type PublishLaneId,
   type SurfaceId,
 } from '../lib/types/branded.ts';
 import { resolvePath } from '../scripts/lib/fs-bun';
@@ -20,15 +22,19 @@ describe('bake-surfaces', () => {
       surfaces: Array<{
         id: SurfaceId;
         host: HostId;
+        apex?: string;
+        subdomain?: string;
+        backendCode?: string;
+        pagesProject?: string;
         status: string;
         access: string;
         accessSubpaths?: Array<{ path: string; access: string }>;
       }>;
-      publishLanes: Array<{ lane: string }>;
+      publishLanes: Array<{ id: PublishLaneId; lane?: string }>;
       crossCheck: { ok: boolean; issues: string[] };
       summary: { total: number; byStatus: Record<string, number> };
     };
-    expect(state.schemaVersion).toBe(1);
+    expect(state.schemaVersion).toBe(2);
     expect(state.kind).toBe('surfaces-state');
     expect(state.crossCheck.ok).toBe(true);
     expect(state.crossCheck.issues).toEqual([]);
@@ -39,21 +45,23 @@ describe('bake-surfaces', () => {
     );
     // Verified live facts (dig + curl 2026-07-28; portal Access applied)
     expect(byId.get(asSurfaceId('ledger'))?.access).toBe('applied');
-    expect(byId.get(asSurfaceId('terminal'))?.status).toBe('dangling');
-    expect(byId.get(asSurfaceId('support'))?.status).toBe('broken');
+    expect(byId.get(asSurfaceId('terminal'))?.status).toBe('retired');
+    expect(byId.get(asSurfaceId('support'))?.status).toBe('retired');
     expect(byId.get(asSurfaceId('health_host'))?.status).toBe('vanity');
     expect(byId.get(asSurfaceId('reasonix'))?.status).toBe('staged');
     expect(byId.get(asSurfaceId('registry_write'))?.status).toBe('placeholder');
+    expect(byId.get(asSurfaceId('score'))?.apex).toBe('factory-wager.com');
+    expect(byId.get(asSurfaceId('score'))?.subdomain).toBe('score');
+    expect(byId.get(asSurfaceId('score'))?.backendCode).toBe('cloudflare-pages');
+    expect(byId.get(asSurfaceId('score'))?.pagesProject).toBe('project-r-score');
     expect(byId.get(asSurfaceId('score'))?.accessSubpaths?.[0]).toEqual({
       path: '/portal',
       access: 'applied',
     });
-    // Publish lanes per ADR-0002
-    expect(state.publishLanes.map(l => l.lane).sort()).toEqual([
-      'local-gateway',
-      'local-npm',
-      'prod-write',
-    ]);
+    // Publish lanes per ADR-0002 (branded PublishLaneId as `id`)
+    expect(
+      state.publishLanes.map(l => String(asPublishLaneId(String(l.id)))).sort()
+    ).toEqual(['local-gateway', 'local-npm', 'prod-write']);
     // No secrets in the bake
     expect(JSON.stringify(state)).not.toMatch(/cfat_[A-Za-z0-9]+/);
   });

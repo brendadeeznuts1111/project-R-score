@@ -1,43 +1,62 @@
 # lib/surfaces
 
-Public edge surface inventory — hostnames and Access domains with separated brands.
+Public edge surface inventory — hostnames, shortcodes, and type codes stay separated.
 
 | File | Role |
 |------|------|
-| [`inventory.ts`](./inventory.ts) | Parse-once loader for `config/surfaces.toml` → branded `SurfaceRecord`s |
+| [`inventory.ts`](./inventory.ts) | Parse-once loader for `config/surfaces.toml` → branded `SurfaceRecord`s + indexes |
 
 ## Domain brands
 
-Import constructors from [`lib/types/branded.ts`](../types/branded.ts) (domain module
-[`lib/types/branded/surfaces.ts`](../types/branded/surfaces.ts)):
+Import from [`lib/types/branded.ts`](../types/branded.ts)
+([`surfaces.ts`](../types/branded/surfaces.ts)):
 
 | Brand | Meaning |
 |-------|---------|
 | `HostId` | Pure FQDN (no scheme/path) |
-| `ApexDomainId` | Zone apex (`factory-wager.com`) |
-| `SubdomainId` | DNS labels under apex (`score`, `@`) |
-| `SurfaceId` | Inventory key (`ledger`, `score`, …) |
-| `PagesProjectId` | CF Pages shortcode (`project-r-score`) ≠ ops `ProjectId` |
+| `ApexDomainId` | Zone apex (`factory-wager.com`, `pages.dev`) |
+| `SubdomainId` | DNS labels under apex (`score`, `@`) — ≠ `SurfaceId` |
+| `SurfaceId` | Inventory key (`ledger`, `pages_dev`) |
+| `PagesProjectId` | CF Pages shortcode (`project-r-score`) — ≠ ops `ProjectId` |
+| `PublishLaneId` | ADR-0002 lane (`prod-write`, `local-gateway`) |
 | `AccessDomainId` | Access app domain (`host` or `host/path`) |
 | `SurfaceStatusCode` | live \| vanity \| broken \| … |
 | `SurfaceAccessCode` | public \| applied \| staged \| … |
+| `SurfaceBackendCode` | cloudflare-pages \| cloudflared \| github-pages \| … |
 
-Helpers: `splitHostId`, `accessDomainFromHost`, `tryPagesProjectIdFromBackend`,
-`hostIdFromUrl`, `httpsUrlForAccessDomain`.
+## Inventory depth
+
+Every `SurfaceRecord` carries derived shortcodes at parse time:
+
+- `apex` / `subdomain` from `splitHostId(host)`
+- `backendCode` from `surfaceBackendCodeFromBackend(backend)`
+- `pagesProject` when backend is `cloudflare-pages:…`
+
+Indexes: `byId`, `byHost`, `bySubdomain`, `byPagesProject`, `byStatus`, `byAccess`,
+`byBackendCode`. Queries: `surfacesForSubdomain`, `surfacesForStatus`,
+`surfacesForBackendCode`, `summarizeInventory`.
 
 ## Usage
 
 ```ts
 import {
   loadSurfacesInventory,
-  appliedAccessDomains,
-  findSurfaceByHost,
+  surfacesForSubdomain,
+  summarizeInventory,
 } from 'lib/surfaces/inventory.ts';
-import { asHostId } from 'lib/types/branded.ts';
+import { asSubdomainId, hostIdFromParts, FACTORY_WAGER_APEX } from 'lib/types/branded.ts';
 
 const inv = await loadSurfacesInventory('config/surfaces.toml');
-const ledger = findSurfaceByHost(inv, asHostId('ledger.factory-wager.com'));
-const applied = appliedAccessDomains(ledger!);
+const scoreHosts = surfacesForSubdomain(inv, asSubdomainId('score'));
+const summary = summarizeInventory(inv);
+// summary.apexes · byBackendCode · accessDomains · pagesProjects
+```
+
+Access live hosts are composed the same way:
+
+```ts
+hostIdFromParts(FACTORY_WAGER_APEX, asSubdomainId('ledger'));
+// pagesDevHostForProject(PROJECT_R_SCORE_PAGES)
 ```
 
 ## Related
@@ -45,9 +64,9 @@ const applied = appliedAccessDomains(ledger!);
 | Artifact | Path |
 |----------|------|
 | SSOT TOML | [`config/surfaces.toml`](../../config/surfaces.toml) |
-| Bake | `bun run surfaces:bake` → [`scripts/bake-surfaces.ts`](../../scripts/bake-surfaces.ts) |
+| Bake (schema v2) | `bun run surfaces:bake` → [`scripts/bake-surfaces.ts`](../../scripts/bake-surfaces.ts) |
 | Baked state | [`public/registry/surfaces-state.json`](../../public/registry/surfaces-state.json) |
-| Access policy | [`.cloudflare-access.yml`](../../.cloudflare-access.yml) · [`lib/verification/cloudflare-access-policy.ts`](../verification/cloudflare-access-policy.ts) |
+| Access policy | [`.cloudflare-access.yml`](../../.cloudflare-access.yml) |
 | Live probes | [`lib/verification/cloudflare-access-live.ts`](../verification/cloudflare-access-live.ts) |
 
 ```bash

@@ -5,27 +5,26 @@
 /**
  * bake-surfaces.ts — bake the FactoryWager surface inventory → surfaces-state.json
  *
- * SSOT: config/surfaces.toml (verified via dig + curl; see header).
- * Cross-checks the inventory against the other three sources of truth:
+ * SSOT: config/surfaces.toml
+ * Cross-checks:
  *   .cloudflare-access.yml  (Access apps ↔ surface access status)
  *   wrangler.toml           (R2 bucket binding ↔ registry surface backend)
  *   config/r2-env.ts        (registryHost SSOT ↔ registry surface host)
  *
- * Domain types (parse once via lib/surfaces/inventory.ts):
- *   SurfaceId · HostId · AccessDomainId
+ * Domain types (parse once via lib/surfaces/inventory.ts) — HostId, ApexDomainId,
+ * SubdomainId, SurfaceId, PagesProjectId, PublishLaneId, AccessDomainId,
+ * SurfaceStatusCode, SurfaceAccessCode, SurfaceBackendCode.
  *
- *   bun run surfaces:bake            # write public/registry/surfaces-state.json
- *   bun run surfaces:bake -- --check # fail on cross-check drift
- *
- * Offline: no DNS/HTTP probing — statuses in the TOML carry a verified-on date.
+ *   bun run surfaces:bake
+ *   bun run surfaces:bake -- --check
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import {
   appliedAccessDomains,
-  declaredAccessDomains,
   findSurfaceByHost,
   findSurfaceById,
   loadSurfacesInventory,
+  summarizeInventory,
 } from '../lib/surfaces/inventory.ts';
 import {
   asAccessDomainId,
@@ -44,8 +43,8 @@ const TOML = `${ROOT}/config/surfaces.toml`;
 async function main(): Promise<void> {
   const inventory = await loadSurfacesInventory(TOML);
   const { surfaces, publishLanes: lanes } = inventory;
+  const summary = summarizeInventory(inventory);
 
-  // ── Cross-checks ──────────────────────────────────────────────────
   const issues: string[] = [];
 
   // 1. Access apps (.cloudflare-access.yml) ↔ surface access fields
@@ -70,7 +69,6 @@ async function main(): Promise<void> {
       issues.push(`access app "${domain}" but surface "${s.id}" marked access=${s.access}`);
     }
   }
-  // applied Access domains must appear in policy-as-code
   for (const s of surfaces) {
     for (const domain of appliedAccessDomains(s)) {
       if (!appDomains.some(d => d === domain)) {
@@ -96,15 +94,18 @@ async function main(): Promise<void> {
     );
   }
 
-  const byStatus = new Map<string, number>();
-  for (const s of surfaces) byStatus.set(s.status, (byStatus.get(s.status) ?? 0) + 1);
-  const byAccess = new Map<string, number>();
-  for (const s of surfaces) byAccess.set(s.access, (byAccess.get(s.access) ?? 0) + 1);
-
-  const accessDomainList = declaredAccessDomains(inventory).map(String).sort();
+  // 4. Pages project shortcode ↔ r2-env pages.project
+  const pagesDefault = CLOUDFLARE_DEFAULTS.pages.project;
+  for (const s of surfaces) {
+    if (s.pagesProject && String(s.pagesProject) !== pagesDefault) {
+      issues.push(
+        `surface "${s.id}" pagesProject="${s.pagesProject}" ≠ r2-env pages.project "${pagesDefault}"`
+      );
+    }
+  }
 
   const state = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     kind: 'surfaces-state',
     generatedAt: new Date().toISOString(),
     source: 'config/surfaces.toml (dig+curl verified 2026-07-28)',
@@ -112,11 +113,8 @@ async function main(): Promise<void> {
     publishLanes: lanes,
     crossCheck: { ok: issues.length === 0, issues },
     summary: {
-      total: surfaces.length,
-      byStatus: Object.fromEntries(byStatus),
-      byAccess: Object.fromEntries(byAccess),
-      lanes: lanes.length,
-      accessDomains: accessDomainList,
+      ...summary,
+      crossCheckOk: issues.length === 0,
     },
   };
 
@@ -126,7 +124,7 @@ async function main(): Promise<void> {
   );
   console.log('→ public/registry/surfaces-state.json');
   console.log(
-    `surfaces-state  total=${surfaces.length}  byStatus=${JSON.stringify(state.summary.byStatus)}  accessDomains=${accessDomainList.length}  crossCheck=${issues.length === 0 ? 'ok' : 'DRIFT'}`
+    `surfaces-state  total=${summary.total}  apexes=${summary.apexes.length}  backend=${JSON.stringify(summary.byBackendCode)}  accessDomains=${summary.accessDomains.length}  crossCheck=${issues.length === 0 ? 'ok' : 'DRIFT'}`
   );
   for (const i of issues) console.log(`  ✗ ${i}`);
   if (CHECK && issues.length > 0) process.exit(1);

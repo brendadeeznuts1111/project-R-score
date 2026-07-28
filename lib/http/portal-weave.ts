@@ -241,7 +241,7 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   {
     label: 'brand-keymap',
     href: '/registry/brand-keymap.json',
-    note: '55-value catalog · tracked project adoption',
+    note: '57-value catalog · tracked project adoption',
   },
   {
     label: 'telegram-handshake',

@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-28T23:14:26.077Z",
+  "generatedAt": "2026-07-28T23:36:14.223Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 55,
+  "brandCount": 57,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,9 +16,9 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 50,
+    "id": 51,
     "key": 1,
-    "code": 4
+    "code": 5
   },
   "domainCatalog": [
     {
@@ -64,7 +64,7 @@
     {
       "name": "surfaces",
       "module": "lib/types/branded/surfaces.ts",
-      "brandCount": 8
+      "brandCount": 10
     }
   ],
   "brands": [
@@ -1570,10 +1570,10 @@
         "wire-input",
         "system-internal"
       ],
-      "description": "Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external)",
+      "description": "Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external|retired)",
       "validation": {
         "shape": "pattern",
-        "pattern": "^(?:live|vanity|broken|dangling|staged|placeholder|external)$",
+        "pattern": "^(?:live|vanity|broken|dangling|staged|placeholder|external|retired)$",
         "flags": "",
         "ingressNormalization": "trim"
       },
@@ -1617,6 +1617,66 @@
       "guard": "BRAND_GUARDS.isSurfaceAccessCode",
       "shortName": "surfaceAccessCode",
       "envName": "SURFACE_ACCESS_CODE"
+    },
+    {
+      "name": "SurfaceBackendCode",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Backend family shortcode (cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSurfaceBackendCode",
+        "try": "trySurfaceBackendCode",
+        "parse": "parseSurfaceBackendCode"
+      },
+      "guard": "BRAND_GUARDS.isSurfaceBackendCode",
+      "shortName": "surfaceBackendCode",
+      "envName": "SURFACE_BACKEND_CODE"
+    },
+    {
+      "name": "PublishLaneId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Publish-lane shortcode (prod-write, local-gateway, local-npm) — ADR-0002",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z][a-z0-9-]{0,62}$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asPublishLaneId",
+        "try": "tryPublishLaneId",
+        "parse": "parsePublishLaneId"
+      },
+      "guard": "BRAND_GUARDS.isPublishLaneId",
+      "shortName": "publishLaneId",
+      "envName": "PUBLISH_LANE_ID"
     }
   ],
   "constructorTiers": {

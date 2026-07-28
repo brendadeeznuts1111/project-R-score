@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-28T23:14:30.956Z",
+  "generatedAt": "2026-07-28T23:36:15.065Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -10,12 +10,12 @@
     "stableImport": "lib/types/branded.ts"
   },
   "summary": {
-    "brands": 55,
+    "brands": 57,
     "domains": 9,
-    "ids": 50,
+    "ids": 51,
     "keys": 1,
-    "codes": 4,
-    "covered": 35,
+    "codes": 5,
+    "covered": 37,
     "referencedUnconstructed": 5,
     "unused": 15,
     "cataloguedProjects": 35,
@@ -92,7 +92,7 @@
     {
       "name": "surfaces",
       "module": "lib/types/branded/surfaces.ts",
-      "brandCount": 8
+      "brandCount": 10
     }
   ],
   "brands": [
@@ -1604,7 +1604,7 @@
       "envName": "PROJECT_ID",
       "coverage": {
         "status": "covered",
-        "references": 3,
+        "references": 4,
         "constructors": {
           "as": 7,
           "try": 0,
@@ -1612,16 +1612,18 @@
         },
         "guards": 0,
         "files": [
-          "lib/gate-map.ts"
+          "lib/gate-map.ts",
+          "lib/http/host-planes.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 3,
+            "references": 4,
             "constructionCalls": 7,
             "guardCalls": 0,
             "files": [
-              "lib/gate-map.ts"
+              "lib/gate-map.ts",
+              "lib/http/host-planes.ts"
             ]
           },
           "projects": {
@@ -3026,30 +3028,34 @@
       "envName": "HOST_ID",
       "coverage": {
         "status": "covered",
-        "references": 13,
+        "references": 19,
         "constructors": {
-          "as": 7,
-          "try": 1,
+          "as": 2,
+          "try": 3,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/http/host-planes.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
           "scripts/bake-surfaces.ts",
-          "scripts/lib/domain-branding.ts"
+          "scripts/lib/domain-branding.ts",
+          "tools/brand-status.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 13,
-            "constructionCalls": 8,
+            "references": 19,
+            "constructionCalls": 5,
             "guardCalls": 0,
             "files": [
+              "lib/http/host-planes.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
               "scripts/bake-surfaces.ts",
-              "scripts/lib/domain-branding.ts"
+              "scripts/lib/domain-branding.ts",
+              "tools/brand-status.ts"
             ]
           },
           "projects": {
@@ -3093,7 +3099,7 @@
       "envName": "APEX_DOMAIN_ID",
       "coverage": {
         "status": "referenced-unconstructed",
-        "references": 2,
+        "references": 5,
         "constructors": {
           "as": 0,
           "try": 0,
@@ -3101,15 +3107,17 @@
         },
         "guards": 0,
         "files": [
+          "lib/http/host-planes.ts",
           "lib/surfaces/inventory.ts"
         ],
         "scopes": {
           "spine": {
             "status": "referenced-unconstructed",
-            "references": 2,
+            "references": 5,
             "constructionCalls": 0,
             "guardCalls": 0,
             "files": [
+              "lib/http/host-planes.ts",
               "lib/surfaces/inventory.ts"
             ]
           },
@@ -3153,25 +3161,29 @@
       "shortName": "subdomainId",
       "envName": "SUBDOMAIN_ID",
       "coverage": {
-        "status": "referenced-unconstructed",
-        "references": 2,
+        "status": "covered",
+        "references": 7,
         "constructors": {
-          "as": 0,
+          "as": 4,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
-          "lib/surfaces/inventory.ts"
+          "lib/http/host-planes.ts",
+          "lib/surfaces/inventory.ts",
+          "lib/verification/cloudflare-access-live.ts"
         ],
         "scopes": {
           "spine": {
-            "status": "referenced-unconstructed",
-            "references": 2,
-            "constructionCalls": 0,
+            "status": "covered",
+            "references": 7,
+            "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
-              "lib/surfaces/inventory.ts"
+              "lib/http/host-planes.ts",
+              "lib/surfaces/inventory.ts",
+              "lib/verification/cloudflare-access-live.ts"
             ]
           },
           "projects": {
@@ -3215,7 +3227,7 @@
       "envName": "SURFACE_ID",
       "coverage": {
         "status": "covered",
-        "references": 5,
+        "references": 8,
         "constructors": {
           "as": 2,
           "try": 0,
@@ -3223,16 +3235,18 @@
         },
         "guards": 0,
         "files": [
+          "lib/http/host-planes.ts",
           "lib/surfaces/inventory.ts",
           "scripts/bake-surfaces.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 5,
+            "references": 8,
             "constructionCalls": 2,
             "guardCalls": 0,
             "files": [
+              "lib/http/host-planes.ts",
               "lib/surfaces/inventory.ts",
               "scripts/bake-surfaces.ts"
             ]
@@ -3278,7 +3292,7 @@
       "envName": "PAGES_PROJECT_ID",
       "coverage": {
         "status": "referenced-unconstructed",
-        "references": 2,
+        "references": 5,
         "constructors": {
           "as": 0,
           "try": 0,
@@ -3286,15 +3300,17 @@
         },
         "guards": 0,
         "files": [
+          "lib/http/host-planes.ts",
           "lib/surfaces/inventory.ts"
         ],
         "scopes": {
           "spine": {
             "status": "referenced-unconstructed",
-            "references": 2,
+            "references": 5,
             "constructionCalls": 0,
             "guardCalls": 0,
             "files": [
+              "lib/http/host-planes.ts",
               "lib/surfaces/inventory.ts"
             ]
           },
@@ -3339,7 +3355,7 @@
       "envName": "ACCESS_DOMAIN_ID",
       "coverage": {
         "status": "covered",
-        "references": 15,
+        "references": 16,
         "constructors": {
           "as": 5,
           "try": 0,
@@ -3347,6 +3363,7 @@
         },
         "guards": 0,
         "files": [
+          "lib/http/host-planes.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
           "lib/verification/cloudflare-access-policy.ts",
@@ -3355,10 +3372,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 15,
+            "references": 16,
             "constructionCalls": 5,
             "guardCalls": 0,
             "files": [
+              "lib/http/host-planes.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
               "lib/verification/cloudflare-access-policy.ts",
@@ -3387,10 +3405,10 @@
         "wire-input",
         "system-internal"
       ],
-      "description": "Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external)",
+      "description": "Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external|retired)",
       "validation": {
         "shape": "pattern",
-        "pattern": "^(?:live|vanity|broken|dangling|staged|placeholder|external)$",
+        "pattern": "^(?:live|vanity|broken|dangling|staged|placeholder|external|retired)$",
         "flags": "",
         "ingressNormalization": "trim"
       },
@@ -3406,7 +3424,7 @@
       "envName": "SURFACE_STATUS_CODE",
       "coverage": {
         "status": "covered",
-        "references": 3,
+        "references": 5,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -3419,7 +3437,7 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 3,
+            "references": 5,
             "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
@@ -3467,7 +3485,7 @@
       "envName": "SURFACE_ACCESS_CODE",
       "coverage": {
         "status": "covered",
-        "references": 5,
+        "references": 7,
         "constructors": {
           "as": 2,
           "try": 0,
@@ -3480,8 +3498,130 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 5,
+            "references": 7,
             "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/surfaces/inventory.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SurfaceBackendCode",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Backend family shortcode (cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "code",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSurfaceBackendCode",
+        "try": "trySurfaceBackendCode",
+        "parse": "parseSurfaceBackendCode"
+      },
+      "guard": "BRAND_GUARDS.isSurfaceBackendCode",
+      "shortName": "surfaceBackendCode",
+      "envName": "SURFACE_BACKEND_CODE",
+      "coverage": {
+        "status": "referenced-unconstructed",
+        "references": 4,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/surfaces/inventory.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "referenced-unconstructed",
+            "references": 4,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "lib/surfaces/inventory.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "PublishLaneId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Publish-lane shortcode (prod-write, local-gateway, local-npm) — ADR-0002",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z][a-z0-9-]{0,62}$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asPublishLaneId",
+        "try": "tryPublishLaneId",
+        "parse": "parsePublishLaneId"
+      },
+      "guard": "BRAND_GUARDS.isPublishLaneId",
+      "shortName": "publishLaneId",
+      "envName": "PUBLISH_LANE_ID",
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/surfaces/inventory.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
               "lib/surfaces/inventory.ts"

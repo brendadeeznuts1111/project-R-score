@@ -31,12 +31,14 @@ function sampleFor(name: string): { input: string; expected: string } {
   }
   if (name === 'SurfaceStatusCode') return { input: 'Live', expected: 'live' };
   if (name === 'SurfaceAccessCode') return { input: 'Applied', expected: 'applied' };
+  if (name === 'SurfaceBackendCode') return { input: 'Cloudflare-Pages', expected: 'cloudflare-pages' };
+  if (name === 'PublishLaneId') return { input: 'Prod-Write', expected: 'prod-write' };
   return { input: `sample-${name.toLowerCase()}`, expected: `sample-${name.toLowerCase()}` };
 }
 
 describe('branded domain-value catalog', () => {
-  test('catalog is a unique 55-value, 9-domain contract', () => {
-    expect(branded.BRAND_CATALOG).toHaveLength(55);
+  test('catalog is a unique 57-value, 9-domain contract', () => {
+    expect(branded.BRAND_CATALOG).toHaveLength(57);
 
     const names = branded.BRAND_CATALOG.map(spec => spec.name);
     const domains = new Set(branded.BRAND_CATALOG.map(spec => spec.domain));
@@ -45,9 +47,9 @@ describe('branded domain-value catalog', () => {
     expect(new Set(names).size).toBe(names.length);
     expect(domains.size).toBe(9);
     expect(domains.has('surfaces')).toBeTrue();
-    expect(kinds.filter(kind => kind === 'id')).toHaveLength(50);
+    expect(kinds.filter(kind => kind === 'id')).toHaveLength(51);
     expect(kinds.filter(kind => kind === 'key')).toHaveLength(1);
-    expect(kinds.filter(kind => kind === 'code')).toHaveLength(4);
+    expect(kinds.filter(kind => kind === 'code')).toHaveLength(5);
   });
 
   test('every catalog value exports working as/try/parse constructors', () => {
@@ -68,7 +70,7 @@ describe('branded domain-value catalog', () => {
   });
 
   test('generated guards cover every canonical runtime shape', () => {
-    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(55);
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(57);
 
     for (const spec of branded.BRAND_CATALOG) {
       const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;
@@ -147,6 +149,14 @@ describe('branded domain-value catalog', () => {
     expect(branded.BRAND_GUARDS.isSurfaceStatusCode('live')).toBeTrue();
     expect(branded.BRAND_GUARDS.isSurfaceAccessCode('public')).toBeTrue();
     expect(branded.BRAND_GUARDS.isSurfaceAccessCode('Bearer (intended)')).toBeFalse();
+    expect(branded.surfaceBackendCodeFromBackend('cloudflare-pages:project-r-score')).toBe(
+      'cloudflare-pages'
+    );
+    expect(branded.surfaceBackendCodeFromBackend('none — no tunnel')).toBe('none');
+    expect(branded.pagesDevHostForProject(branded.PROJECT_R_SCORE_PAGES)).toBe(
+      'project-r-score.pages.dev'
+    );
+    expect(branded.asPublishLaneId('prod-write')).toBe('prod-write');
   });
 
   test('generic constructors reject blank values and strip a brand explicitly', () => {

@@ -88,17 +88,19 @@ function printDomain(m: Manifest, domain: string, asJson: boolean): void {
   if (domain === 'surfaces') {
     console.info('');
     console.info('  shortcodes / types:');
-    console.info('    SubdomainId · PagesProjectId (≠ operations ProjectId)');
-    console.info('    SurfaceStatusCode · SurfaceAccessCode (closed vocabularies)');
+    console.info('    SubdomainId · PagesProjectId (≠ ops ProjectId) · PublishLaneId');
+    console.info('    SurfaceStatusCode · SurfaceAccessCode · SurfaceBackendCode');
     console.info('  helpers (format-aware compose/split):');
     console.info('    splitHostId / hostIdFromParts / FACTORY_WAGER_APEX / PROJECT_R_SCORE_PAGES');
+    console.info('    pagesDevHostForProject(project) / surfaceBackendCodeFromBackend(backend)');
     console.info('    accessDomainFromHost(host, path?)');
     console.info('    hostIdFromAccessDomain / pathFromAccessDomain / isPathScopedAccessDomain');
     console.info(
       '    hostIdFromUrl / tryHostIdFromUrl / httpsUrlForHost / httpsUrlForAccessDomain'
     );
     console.info('    tryPagesProjectIdFromBackend(backend)');
-    console.info('  inventory: lib/surfaces/inventory.ts (loadSurfacesInventory)');
+    console.info('  inventory: lib/surfaces/inventory.ts');
+    console.info('    loadSurfacesInventory · summarizeInventory · surfacesForSubdomain/Status/…');
   }
   console.info('');
 }

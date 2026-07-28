@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 55 values across 9 domains: 50 IDs, 1 key, and 4 codes
+- **Inventory:** 57 values across 9 domains: 51 IDs, 1 key, and 5 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -36,7 +36,7 @@ authoritative.
 | audit      | 6 version, audit, finding, concept, entry, and evidence IDs             | [`audit.ts`](./audit.ts)           |
 | operations | 21 operational IDs plus `PartnerProfileKey`, `StateCode`, and `ZipCode` | [`operations.ts`](./operations.ts) |
 | portal     | 4 portal tenant, Telegram user, portal account, and link-nonce IDs      | [`portal.ts`](./portal.ts)         |
-| surfaces   | 8 host/apex/subdomain/surface/Pages-project/Access IDs + status & access codes | [`surfaces.ts`](./surfaces.ts) |
+| surfaces   | 10 host/apex/subdomain/surface/Pages/publish/Access IDs + status/access/backend codes | [`surfaces.ts`](./surfaces.ts) |
 
 `StateCode` and `ZipCode` have format-aware constructors. Do not replace those
 constructors with the generic factory. `HostId` / `AccessDomainId` are also

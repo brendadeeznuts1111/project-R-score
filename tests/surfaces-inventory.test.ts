@@ -9,16 +9,23 @@ import {
   hostPartsForSurface,
   loadSurfacesInventory,
   parseSurfacesToml,
+  summarizeInventory,
+  surfacesForBackendCode,
+  surfacesForStatus,
+  surfacesForSubdomain,
 } from '../lib/surfaces/inventory.ts';
 import {
   asApexDomainId,
   asHostId,
   asSubdomainId,
+  asSurfaceBackendCode,
   asSurfaceId,
+  asSurfaceStatusCode,
   FACTORY_WAGER_APEX,
   hostIdFromAccessDomain,
   hostIdFromParts,
   isPathScopedAccessDomain,
+  PROJECT_R_SCORE_PAGES,
   splitHostId,
 } from '../lib/types/branded.ts';
 import { resolvePath } from '../scripts/lib/fs-bun';
@@ -100,5 +107,35 @@ describe('lib/surfaces/inventory', () => {
     const parts = hostPartsForSurface(ledger);
     expect(parts.apex).toBe(FACTORY_WAGER_APEX);
     expect(parts.subdomain).toBe(asSubdomainId('ledger'));
+    expect(ledger.apex).toBe(parts.apex);
+    expect(ledger.subdomain).toBe(parts.subdomain);
+    expect(ledger.backendCode).toBe('cloudflared');
+  });
+
+  test('indexes: subdomain · status · backend · pages project · publish lanes', async () => {
+    const inv = await loadSurfacesInventory(TOML);
+    const scoreRows = surfacesForSubdomain(inv, asSubdomainId('score'));
+    expect(scoreRows.some(s => s.id === asSurfaceId('score'))).toBeTrue();
+
+    const live = surfacesForStatus(inv, asSurfaceStatusCode('live'));
+    expect(live.length).toBeGreaterThanOrEqual(5);
+
+    const pagesBacked = surfacesForBackendCode(inv, asSurfaceBackendCode('cloudflare-pages'));
+    expect(pagesBacked.every(s => s.backendCode === 'cloudflare-pages')).toBeTrue();
+    expect(pagesBacked.some(s => s.pagesProject === PROJECT_R_SCORE_PAGES)).toBeTrue();
+
+    expect(inv.publishLanes.map(l => String(l.id)).sort()).toEqual([
+      'local-gateway',
+      'local-npm',
+      'prod-write',
+    ]);
+
+    const summary = summarizeInventory(inv);
+    expect(summary.total).toBe(inv.surfaces.length);
+    expect(summary.apexes).toContain('factory-wager.com');
+    expect(summary.apexes).toContain('pages.dev');
+    expect(summary.pagesProjects).toContain('project-r-score');
+    expect(summary.accessDomains).toContain('score.factory-wager.com/portal');
+    expect(summary.byBackendCode['cloudflare-pages']).toBeGreaterThan(0);
   });
 });

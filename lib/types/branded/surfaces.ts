@@ -12,16 +12,19 @@
  *   (inventory key — not the same as DNS SubdomainId)
  * - **PagesProjectId** — Cloudflare Pages project shortcode: `project-r-score`
  *   (not operations `ProjectId` — that is a workspace PK)
+ * - **PublishLaneId** — publish-lane shortcode from config/surfaces.toml: `prod-write`
  * - **AccessDomainId** — Cloudflare Access app `domain` (host or host/path):
  *   `score.factory-wager.com/portal`
  *
  * Codes (closed vocabularies from config/surfaces.toml):
  * - **SurfaceStatusCode** — live | vanity | broken | dangling | staged | placeholder | external
  * - **SurfaceAccessCode** — public | allowlist | applied | staged | bearer (intended) | external | none
+ * - **SurfaceBackendCode** — cloudflare-pages | cloudflared | github-pages | helpscout | none | unknown
  *
  * Do not pass a path-bearing Access domain where a HostId is required.
  * Split with `hostIdFromAccessDomain` / `pathFromAccessDomain`.
  * Apex/subdomain: `splitHostId` / `hostIdFromParts`.
+ * Pages.dev host: `pagesDevHostForProject(PagesProjectId)`.
  *
  * SSOT inventory: config/surfaces.toml · bake: scripts/bake-surfaces.ts
  */
@@ -62,6 +65,12 @@ export type SurfaceStatusCode = BrandedString<'SurfaceStatusCode'>;
 /** Surface Access posture vocabulary from config/surfaces.toml. */
 export type SurfaceAccessCode = BrandedString<'SurfaceAccessCode'>;
 
+/** Backend family shortcode parsed from surfaces.toml `backend` field. */
+export type SurfaceBackendCode = BrandedString<'SurfaceBackendCode'>;
+
+/** Publish-lane shortcode (ADR-0002) from config/surfaces.toml `lane`. */
+export type PublishLaneId = BrandedString<'PublishLaneId'>;
+
 /** Hostname: labels + TLD; lowercase; no trailing dot. */
 const HOST_RE = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9-]{2,63}$/;
 
@@ -87,6 +96,7 @@ export const SURFACE_STATUS_CODES = [
   'staged',
   'placeholder',
   'external',
+  'retired',
 ] as const;
 
 /** Closed Access posture vocabulary (config/surfaces.toml). */
@@ -100,14 +110,28 @@ export const SURFACE_ACCESS_CODES = [
   'none',
 ] as const;
 
+export const SURFACE_BACKEND_CODES = [
+  'cloudflare-pages',
+  'cloudflared',
+  'github-pages',
+  'helpscout',
+  'none',
+  'unknown',
+] as const;
+
 const SURFACE_STATUS_SET = new Set<string>(SURFACE_STATUS_CODES);
 const SURFACE_ACCESS_SET = new Set<string>(SURFACE_ACCESS_CODES);
+const SURFACE_BACKEND_SET = new Set<string>(SURFACE_BACKEND_CODES);
 
 const SURFACE_STATUS_PATTERN = `^(?:${SURFACE_STATUS_CODES.join('|')})$`;
 // Escape parentheses in "bearer (intended)" for catalog regex / guard.
 const SURFACE_ACCESS_PATTERN = `^(?:${SURFACE_ACCESS_CODES.map(c =>
   c.replace(/[()]/g, '\\$&')
 ).join('|')})$`;
+const SURFACE_BACKEND_PATTERN = `^(?:${SURFACE_BACKEND_CODES.join('|')})$`;
+
+/** Publish lane keys: kebab-case shortcodes. */
+const PUBLISH_LANE_RE = /^[a-z][a-z0-9-]{0,62}$/;
 
 /** Common multi-part public suffixes (apex = last 3 labels). */
 const THREE_PART_PUBLIC_SUFFIXES = new Set([
@@ -371,6 +395,83 @@ export function parseSurfaceAccessCode(value: unknown): SurfaceAccessCode {
   return asSurfaceAccessCode(value);
 }
 
+export function asSurfaceBackendCode(value: string): SurfaceBackendCode {
+  const s = value.trim().toLowerCase();
+  if (!SURFACE_BACKEND_SET.has(s)) {
+    throw new BrandValidationError('SurfaceBackendCode', value);
+  }
+  return s as SurfaceBackendCode;
+}
+
+export function trySurfaceBackendCode(
+  value: string | undefined | null
+): SurfaceBackendCode | undefined {
+  if (value == null || String(value).trim() === '') return undefined;
+  try {
+    return asSurfaceBackendCode(String(value));
+  } catch {
+    return undefined;
+  }
+}
+
+export function parseSurfaceBackendCode(value: unknown): SurfaceBackendCode {
+  if (typeof value !== 'string') {
+    throw new BrandValidationError('SurfaceBackendCode', value as never);
+  }
+  return asSurfaceBackendCode(value);
+}
+
+/**
+ * Classify a surfaces.toml `backend` free-text field into SurfaceBackendCode.
+ * Prefix match on known families; empty/"none" → none; else unknown.
+ */
+export function surfaceBackendCodeFromBackend(backend: string): SurfaceBackendCode {
+  const raw = backend.trim().toLowerCase();
+  if (!raw || raw === 'none' || raw.startsWith('none ') || raw.startsWith('none —')) {
+    return asSurfaceBackendCode('none');
+  }
+  if (raw.startsWith('cloudflare-pages')) return asSurfaceBackendCode('cloudflare-pages');
+  if (raw.startsWith('cloudflared') || raw.includes('cloudflared tunnel')) {
+    return asSurfaceBackendCode('cloudflared');
+  }
+  if (raw.startsWith('github-pages') || raw.includes('github pages')) {
+    return asSurfaceBackendCode('github-pages');
+  }
+  if (raw.startsWith('helpscout') || raw.includes('helpscout')) {
+    return asSurfaceBackendCode('helpscout');
+  }
+  return asSurfaceBackendCode('unknown');
+}
+
+export function asPublishLaneId(value: string): PublishLaneId {
+  const s = value.trim().toLowerCase();
+  if (!PUBLISH_LANE_RE.test(s)) {
+    throw new BrandValidationError('PublishLaneId', value);
+  }
+  return s as PublishLaneId;
+}
+
+export function tryPublishLaneId(value: string | undefined | null): PublishLaneId | undefined {
+  if (value == null || String(value).trim() === '') return undefined;
+  try {
+    return asPublishLaneId(String(value));
+  } catch {
+    return undefined;
+  }
+}
+
+export function parsePublishLaneId(value: unknown): PublishLaneId {
+  if (typeof value !== 'string') {
+    throw new BrandValidationError('PublishLaneId', value as never);
+  }
+  return asPublishLaneId(value);
+}
+
+/** `project-r-score.pages.dev` host for a Pages project shortcode. */
+export function pagesDevHostForProject(project: PagesProjectId): HostId {
+  return asHostId(`${project}.pages.dev`);
+}
+
 export function asAccessDomainId(value: string): AccessDomainId {
   let raw = value
     .trim()
@@ -539,6 +640,20 @@ export const SURFACE_ACCESS_BRAND_VALIDATION = {
   ingressNormalization: 'trim',
 } as const satisfies BrandValidationSpec;
 
+export const SURFACE_BACKEND_BRAND_VALIDATION = {
+  shape: 'pattern',
+  pattern: SURFACE_BACKEND_PATTERN,
+  flags: '',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+
+export const PUBLISH_LANE_BRAND_VALIDATION = {
+  shape: 'pattern',
+  pattern: PUBLISH_LANE_RE.source,
+  flags: '',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+
 export const SURFACES_BRAND_SPECS = [
   {
     name: 'HostId',
@@ -594,7 +709,7 @@ export const SURFACES_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['wire-input', 'system-internal'],
     description:
-      'Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external)',
+      'Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external|retired)',
     validation: SURFACE_STATUS_BRAND_VALIDATION,
   },
   {
@@ -604,5 +719,22 @@ export const SURFACES_BRAND_SPECS = [
     mint: ['wire-input', 'system-internal'],
     description: 'Surface Access posture (public|allowlist|applied|staged|bearer (intended)|…)',
     validation: SURFACE_ACCESS_BRAND_VALIDATION,
+  },
+  {
+    name: 'SurfaceBackendCode',
+    domain: 'surfaces',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input', 'system-internal'],
+    description:
+      'Backend family shortcode (cloudflare-pages|cloudflared|github-pages|helpscout|none|unknown)',
+    validation: SURFACE_BACKEND_BRAND_VALIDATION,
+  },
+  {
+    name: 'PublishLaneId',
+    domain: 'surfaces',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input', 'system-internal'],
+    description: 'Publish-lane shortcode (prod-write, local-gateway, local-npm) — ADR-0002',
+    validation: PUBLISH_LANE_BRAND_VALIDATION,
   },
 ] as const satisfies readonly BrandSpec[];

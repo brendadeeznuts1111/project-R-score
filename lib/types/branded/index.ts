@@ -102,9 +102,11 @@ import type {
   SubdomainId,
   SurfaceId,
   PagesProjectId,
+  PublishLaneId,
   AccessDomainId,
   SurfaceStatusCode,
   SurfaceAccessCode,
+  SurfaceBackendCode,
 } from './surfaces.ts';
 
 /** Full institutional catalog — SSOT for brand-manifest generation. */
@@ -189,6 +191,7 @@ export type AnyId =
   | SubdomainId
   | SurfaceId
   | PagesProjectId
+  | PublishLaneId
   | AccessDomainId;
 
 /** Union of all branded strings, including IDs, keys, and validated codes. */
@@ -198,4 +201,5 @@ export type AnyBrandedValue =
   | StateCode
   | ZipCode
   | SurfaceStatusCode
-  | SurfaceAccessCode;
+  | SurfaceAccessCode
+  | SurfaceBackendCode;

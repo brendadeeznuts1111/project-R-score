@@ -9,7 +9,7 @@ surface.
 | ---------------------------------------------- | -------------------------------------------------------------------- |
 | [`branded.ts`](./branded.ts)                   | Stable import for brands, constructors, catalog, and aggregate types |
 | [`branded/README.md`](./branded/README.md)     | Agent and maintainer routing                                         |
-| [`brand-manifest.json`](./brand-manifest.json) | Generated 55-value institutional record                              |
+| [`brand-manifest.json`](./brand-manifest.json) | Generated 57-value institutional record                              |
 | [`branded/_core.ts`](./branded/_core.ts)       | Nominal primitive and constructor-tier semantics                     |
 
 Prefer narrow domain imports inside the forge and `lib/types/branded.ts` from
