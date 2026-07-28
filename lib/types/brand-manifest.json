@@ -1,9 +1,9 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-28T20:22:13.843Z",
+  "generatedAt": "2026-07-28T22:31:20.769Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 47,
-  "domainCount": 8,
+  "brandCount": 50,
+  "domainCount": 9,
   "domains": [
     "audit",
     "deployment",
@@ -12,10 +12,11 @@
     "operations",
     "portal",
     "security",
-    "session"
+    "session",
+    "surfaces"
   ],
   "kinds": {
-    "id": 44,
+    "id": 47,
     "key": 1,
     "code": 2
   },
@@ -59,6 +60,11 @@
       "name": "session",
       "module": "lib/types/branded/session.ts",
       "brandCount": 5
+    },
+    {
+      "name": "surfaces",
+      "module": "lib/types/branded/surfaces.ts",
+      "brandCount": 3
     }
   ],
   "brands": [
@@ -1277,6 +1283,90 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isLinkNonceId"
+    },
+    {
+      "name": "HostId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Public edge FQDN (no scheme/path) — config/surfaces.toml host",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9-]{2,63}$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asHostId",
+        "try": "tryHostId",
+        "parse": "parseHostId"
+      },
+      "guard": "BRAND_GUARDS.isHostId"
+    },
+    {
+      "name": "SurfaceId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Surface inventory key (ledger, score, pages_dev, …)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z][a-z0-9_]{0,62}$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSurfaceId",
+        "try": "trySurfaceId",
+        "parse": "parseSurfaceId"
+      },
+      "guard": "BRAND_GUARDS.isSurfaceId"
+    },
+    {
+      "name": "AccessDomainId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Cloudflare Access app domain field (host or host/path)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9-]{2,63}(?:\\/[A-Za-z0-9._~*+/-]+)?",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asAccessDomainId",
+        "try": "tryAccessDomainId",
+        "parse": "parseAccessDomainId"
+      },
+      "guard": "BRAND_GUARDS.isAccessDomainId"
     }
   ],
   "constructorTiers": {

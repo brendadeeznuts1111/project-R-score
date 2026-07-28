@@ -960,7 +960,14 @@ async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promis
       if (!rest[0]) {
         cliError('Usage: portal-cli snapshot cron <register|remove|preview> [args…]');
       }
-      const proc = Bun.spawn(['bun', `${import.meta.dir}/portal-snapshot-cron.ts`, ...rest], {
+      // Compiled binary (dist/portal) has no real tools/ tree — import.meta.dir
+      // is the virtual /$bunfs root there, so fall back to the repo-relative
+      // path (documented usage runs from the repo root).
+      const absCron = `${import.meta.dir}/portal-snapshot-cron.ts`;
+      const cronTool = (await Bun.file(absCron).exists())
+        ? absCron
+        : 'tools/portal-snapshot-cron.ts';
+      const proc = Bun.spawn(['bun', cronTool, ...rest], {
         stdout: 'inherit',
         stderr: 'inherit',
         stdin: 'inherit',
