@@ -2,9 +2,9 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-28T17:28:19.972Z",
+  "generated": "2026-07-28T17:32:17.737Z",
   "summary": {
-    "surfaces": 17,
+    "surfaces": 19,
     "artifacts": 28,
     "components": 11,
     "wiki": 6,
@@ -31,53 +31,18 @@
       "group": "registry"
     },
     {
-      "id": "ops",
-      "label": "Ops",
-      "href": "/portal/ops/",
-      "note": "C4/C5 · TOC · loop · compliance · monorepo-health panel",
-      "group": "ops"
+      "id": "catalog",
+      "label": "Catalog",
+      "href": "/portal/catalog/",
+      "group": "registry"
     },
     {
-      "id": "toc",
-      "label": "TOC Ops",
-      "href": "/portal/toc/",
-      "note": "Drum/Buffer/Rope · harness glance · MA/NJ",
-      "group": "ops"
-    },
-    {
-      "id": "monitoring",
-      "label": "Monitoring",
-      "href": "/monitoring/",
-      "note": "routing · env · compliance tile · limitRaises",
-      "group": "ops"
-    },
-    {
-      "id": "dod",
-      "label": "DOD queue",
-      "href": "/portal/dod/",
-      "note": "visual proof review",
-      "group": "plane"
-    },
-    {
-      "id": "compliance",
-      "label": "Compliance",
-      "href": "/portal/compliance/",
-      "note": "MA/NJ enhancements · shadow · geo · HMAC",
-      "group": "ops"
-    },
-    {
-      "id": "limits",
-      "label": "Limits",
-      "href": "/portal/limits/",
-      "note": "account raises · multi-factor score · drivers",
-      "group": "ops"
-    },
-    {
-      "id": "partner-history",
-      "label": "Partner history",
-      "href": "/portal/partner-history/",
-      "note": "per-partner limit history board",
-      "group": "ops"
+      "id": "packages",
+      "label": "Packages",
+      "href": "/portal/packages/",
+      "note": "graph map · coupling · portal-cli pm graph",
+      "group": "registry",
+      "cli": "bun run portal-cli pm graph"
     },
     {
       "id": "skills",
@@ -87,11 +52,52 @@
       "group": "registry"
     },
     {
-      "id": "packages",
-      "label": "Packages",
-      "href": "/portal/packages/",
-      "note": "metafile map · coupling · archive probes",
-      "group": "harness"
+      "id": "vault",
+      "label": "Vault",
+      "href": "/portal/vault/",
+      "note": "Proton Pass health bake · inventory gate",
+      "group": "secrets",
+      "cli": "bun run portal-cli vault health"
+    },
+    {
+      "id": "env",
+      "label": "Env",
+      "href": "/portal/env/",
+      "note": "vault-map · inject mapping (no secret values)",
+      "group": "secrets",
+      "cli": "bun run portal-cli secret map"
+    },
+    {
+      "id": "health",
+      "label": "Health",
+      "href": "/portal/health/",
+      "note": "system health · monorepo score",
+      "group": "harness",
+      "cli": "bun run monorepo:health:bake"
+    },
+    {
+      "id": "tools",
+      "label": "CLI Tools",
+      "href": "/portal/tools/",
+      "note": "portal-cli surface map · pm · snapshot · secret · vault",
+      "group": "harness",
+      "cli": "bun run portal-cli help"
+    },
+    {
+      "id": "failures",
+      "label": "Failures",
+      "href": "/portal/failures/",
+      "note": "test failures bake · junit",
+      "group": "harness",
+      "cli": "bun run failures:bake"
+    },
+    {
+      "id": "ops",
+      "label": "Ops",
+      "href": "/portal/ops/",
+      "note": "C4/C5 · TOC · loop · compliance · monorepo-health panel",
+      "group": "ops",
+      "cli": "bun run ops:snapshot"
     },
     {
       "id": "dashboard",
@@ -101,35 +107,57 @@
       "group": "ops"
     },
     {
-      "id": "catalog",
-      "label": "Catalog",
-      "href": "/portal/catalog/",
-      "group": "registry"
+      "id": "toc",
+      "label": "TOC Ops",
+      "href": "/portal/toc/",
+      "note": "Drum/Buffer/Rope · harness glance · MA/NJ",
+      "group": "ops",
+      "cli": "bun run ops:seed:toc"
     },
     {
-      "id": "health",
-      "label": "Health",
-      "href": "/portal/health/",
-      "group": "harness"
+      "id": "monitoring",
+      "label": "Monitoring",
+      "href": "/monitoring/",
+      "note": "routing · env · compliance tile · limitRaises",
+      "group": "ops"
     },
     {
-      "id": "env",
-      "label": "Env",
-      "href": "/portal/env/",
-      "group": "harness"
+      "id": "compliance",
+      "label": "Compliance",
+      "href": "/portal/compliance/",
+      "note": "MA/NJ enhancements · shadow · geo · HMAC",
+      "group": "ops",
+      "cli": "bun run compliance:bake"
     },
     {
-      "id": "vault",
-      "label": "Vault",
-      "href": "/portal/vault/",
-      "note": "Proton Pass health bake · inventory gate = portal-cli vault health",
-      "group": "harness"
+      "id": "limits",
+      "label": "Limits",
+      "href": "/portal/limits/",
+      "note": "account raises · multi-factor score · drivers",
+      "group": "ops",
+      "cli": "bun run ops:limits:demo"
+    },
+    {
+      "id": "partner-history",
+      "label": "Partner history",
+      "href": "/portal/partner-history/",
+      "note": "per-partner limit history board",
+      "group": "ops"
     },
     {
       "id": "prediction-report",
       "label": "Prediction report",
       "href": "/registry/prediction/report/",
-      "group": "registry"
+      "note": "latest prediction report HTML",
+      "group": "ops",
+      "cli": "bun run portal-cli snapshot last --scope prediction"
+    },
+    {
+      "id": "dod",
+      "label": "DOD queue",
+      "href": "/portal/dod/",
+      "note": "visual proof review",
+      "group": "plane"
     }
   ],
   "artifacts": [

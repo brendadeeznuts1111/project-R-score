@@ -52,6 +52,16 @@ describe('portal weave', () => {
     expect(hrefs).toContain('/portal/compliance/');
     expect(hrefs).toContain('/portal/limits/');
     expect(hrefs).toContain('/portal/dashboard/');
+    expect(hrefs).toContain('/portal/tools/');
+    expect(hrefs).toContain('/portal/vault/');
+    expect(hrefs).toContain('/portal/failures/');
+    // unique ids / no duplicate env
+    const ids = PORTAL_WEAVE_SURFACES.map(s => s.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids.filter(id => id === 'env')).toHaveLength(1);
+    const vault = PORTAL_WEAVE_SURFACES.find(s => s.id === 'vault');
+    expect(vault?.group).toBe('secrets');
+    expect(vault?.cli).toContain('vault health');
     const arts = PORTAL_WEAVE_ARTIFACTS.map(a => a.href);
     expect(arts).toContain('/registry/toc-ops.json');
     expect(arts).toContain('/registry/telegram-handshake.json');

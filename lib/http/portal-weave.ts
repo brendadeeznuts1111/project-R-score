@@ -11,7 +11,14 @@
 import { PORTAL_WEAVE_WIKI } from './wiki-nav.ts';
 import { PORTAL_CHROME_COMPONENTS } from '../portal/chrome-catalog.ts';
 
-export type PortalWeaveGroup = 'ops' | 'harness' | 'registry' | 'wiki' | 'plane' | 'other';
+export type PortalWeaveGroup =
+  | 'ops'
+  | 'harness'
+  | 'registry'
+  | 'secrets'
+  | 'wiki'
+  | 'plane'
+  | 'other';
 
 export type PortalWeaveLink = {
   /** Stable slug for UI chips / filters */
@@ -20,6 +27,8 @@ export type PortalWeaveLink = {
   href: string;
   note?: string;
   group?: PortalWeaveGroup;
+  /** Grounded portal-cli / bun command */
+  cli?: string;
 };
 
 export type PortalWeaveScript = {
@@ -71,15 +80,86 @@ export type PortalWeavePayload = {
 
 export const PORTAL_WEAVE_REGISTRY_PATH = '/registry/portal-weave.json' as const;
 
-/** HTML portal surfaces (trailing slash). */
+/**
+ * HTML portal surfaces (trailing slash). Unique ids · logical groups · real hrefs only.
+ * CLI notes map to portal-cli / package scripts (see /portal/tools/ hub).
+ */
 export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
+  // ── Registry & packages ──
   { id: 'home', label: 'Home', href: '/', group: 'other' },
   { id: 'registry', label: 'Registry', href: '/portal/', group: 'registry' },
+  { id: 'catalog', label: 'Catalog', href: '/portal/catalog/', group: 'registry' },
+  {
+    id: 'packages',
+    label: 'Packages',
+    href: '/portal/packages/',
+    note: 'graph map · coupling · portal-cli pm graph',
+    group: 'registry',
+    cli: 'bun run portal-cli pm graph',
+  },
+  {
+    id: 'skills',
+    label: 'Skills',
+    href: '/portal/skills/',
+    note: 'catalog · .skill packages',
+    group: 'registry',
+  },
+  // ── Secrets & env ──
+  {
+    id: 'vault',
+    label: 'Vault',
+    href: '/portal/vault/',
+    note: 'Proton Pass health bake · inventory gate',
+    group: 'secrets',
+    cli: 'bun run portal-cli vault health',
+  },
+  {
+    id: 'env',
+    label: 'Env',
+    href: '/portal/env/',
+    note: 'vault-map · inject mapping (no secret values)',
+    group: 'secrets',
+    cli: 'bun run portal-cli secret map',
+  },
+  // ── Harness ──
+  {
+    id: 'health',
+    label: 'Health',
+    href: '/portal/health/',
+    note: 'system health · monorepo score',
+    group: 'harness',
+    cli: 'bun run monorepo:health:bake',
+  },
+  {
+    id: 'tools',
+    label: 'CLI Tools',
+    href: '/portal/tools/',
+    note: 'portal-cli surface map · pm · snapshot · secret · vault',
+    group: 'harness',
+    cli: 'bun run portal-cli help',
+  },
+  {
+    id: 'failures',
+    label: 'Failures',
+    href: '/portal/failures/',
+    note: 'test failures bake · junit',
+    group: 'harness',
+    cli: 'bun run failures:bake',
+  },
+  // ── Ops ──
   {
     id: 'ops',
     label: 'Ops',
     href: '/portal/ops/',
     note: 'C4/C5 · TOC · loop · compliance · monorepo-health panel',
+    group: 'ops',
+    cli: 'bun run ops:snapshot',
+  },
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    href: '/portal/dashboard/',
+    note: 'executive KPIs · TOC · compliance plane',
     group: 'ops',
   },
   {
@@ -88,6 +168,7 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     href: '/portal/toc/',
     note: 'Drum/Buffer/Rope · harness glance · MA/NJ',
     group: 'ops',
+    cli: 'bun run ops:seed:toc',
   },
   {
     id: 'monitoring',
@@ -97,18 +178,12 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     group: 'ops',
   },
   {
-    id: 'dod',
-    label: 'DOD queue',
-    href: '/portal/dod/',
-    note: 'visual proof review',
-    group: 'plane',
-  },
-  {
     id: 'compliance',
     label: 'Compliance',
     href: '/portal/compliance/',
     note: 'MA/NJ enhancements · shadow · geo · HMAC',
     group: 'ops',
+    cli: 'bun run compliance:bake',
   },
   {
     id: 'limits',
@@ -116,6 +191,7 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     href: '/portal/limits/',
     note: 'account raises · multi-factor score · drivers',
     group: 'ops',
+    cli: 'bun run ops:limits:demo',
   },
   {
     id: 'partner-history',
@@ -125,41 +201,20 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     group: 'ops',
   },
   {
-    id: 'skills',
-    label: 'Skills',
-    href: '/portal/skills/',
-    note: 'catalog · .skill packages',
-    group: 'registry',
-  },
-  {
-    id: 'packages',
-    label: 'Packages',
-    href: '/portal/packages/',
-    note: 'metafile map · coupling · archive probes',
-    group: 'harness',
-  },
-  {
-    id: 'dashboard',
-    label: 'Dashboard',
-    href: '/portal/dashboard/',
-    note: 'executive KPIs · TOC · compliance plane',
-    group: 'ops',
-  },
-  { id: 'catalog', label: 'Catalog', href: '/portal/catalog/', group: 'registry' },
-  { id: 'health', label: 'Health', href: '/portal/health/', group: 'harness' },
-  { id: 'env', label: 'Env', href: '/portal/env/', group: 'harness' },
-  {
-    id: 'vault',
-    label: 'Vault',
-    href: '/portal/vault/',
-    note: 'Proton Pass health bake · inventory gate = portal-cli vault health',
-    group: 'harness',
-  },
-  {
     id: 'prediction-report',
     label: 'Prediction report',
     href: '/registry/prediction/report/',
-    group: 'registry',
+    note: 'latest prediction report HTML',
+    group: 'ops',
+    cli: 'bun run portal-cli snapshot last --scope prediction',
+  },
+  // ── Plane ──
+  {
+    id: 'dod',
+    label: 'DOD queue',
+    href: '/portal/dod/',
+    note: 'visual proof review',
+    group: 'plane',
   },
 ];
 

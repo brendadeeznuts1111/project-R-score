@@ -17,6 +17,9 @@
 /portal/dashboard        /portal/dashboard/        301
 /portal/skills           /portal/skills/           301
 /portal/packages         /portal/packages/         301
+/portal/vault            /portal/vault/            301
+/portal/tools            /portal/tools/            301
+/portal/failures         /portal/failures/         301
 # legacy flat report path → directory index (ops:prediction / Pages pretty URL)
 /registry/prediction/report.html  /registry/prediction/report/  301
 # bare /health → Functions JSON (functions/health/index.ts); /health/ → portal UI redirect

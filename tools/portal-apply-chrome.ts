@@ -31,6 +31,9 @@ type PageKey =
   | 'dod'
   | 'health'
   | 'env'
+  | 'vault'
+  | 'tools'
+  | 'failures'
   | 'dashboard'
   | 'skills'
   | 'packages'
@@ -46,6 +49,9 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
   { file: 'dod/index.html', active: 'dod', pageLabel: 'DOD', brandBadge: 'ops' },
   { file: 'health/index.html', active: 'health', pageLabel: 'Health', brandBadge: 'ops' },
   { file: 'env/index.html', active: 'env', pageLabel: 'Env', brandBadge: 'ops' },
+  { file: 'vault/index.html', active: 'vault', pageLabel: 'Vault', brandBadge: 'ops' },
+  { file: 'tools/index.html', active: 'tools', pageLabel: 'CLI Tools', brandBadge: 'ops' },
+  { file: 'failures/index.html', active: 'failures', pageLabel: 'Failures', brandBadge: 'ops' },
   { file: 'dashboard/index.html', active: 'dashboard', pageLabel: 'Dashboard', brandBadge: 'ops' },
   { file: 'skills/index.html', active: 'skills', pageLabel: 'Skills', brandBadge: 'ops' },
   { file: 'packages/index.html', active: 'packages', pageLabel: 'Packages', brandBadge: 'ops' },
