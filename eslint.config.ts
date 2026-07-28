@@ -140,7 +140,10 @@ export default tseslint.config(
       'no-console': [
         'error',
         {
-          allow: ['warn', 'error', 'info', 'table', 'group', 'groupEnd'],
+          // console.table is intentionally NOT allowed — structured tabular
+          // output goes through logTable (lib/console-depth.ts), enforced
+          // for new code by scripts/lint-console-format.ts --staged.
+          allow: ['warn', 'error', 'info', 'group', 'groupEnd'],
         },
       ],
 

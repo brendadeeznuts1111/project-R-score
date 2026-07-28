@@ -500,6 +500,12 @@ async function main(): Promise<void> {
   }
   if (libStaged || scriptsStaged || toolsStaged) {
     parallelJobs.push(spawnGate('oxlint-ratchet', ['bun', 'scripts/check-oxlint-ratchet.ts']));
+    parallelJobs.push(
+      spawnGate('console-format-staged', ['bun', 'scripts/lint-console-format.ts', '--staged'])
+    );
+    parallelJobs.push(
+      spawnGate('console-format-ratchet', ['bun', 'scripts/lint-console-format.ts'])
+    );
   }
   if (npmInstallStaged) {
     parallelJobs.push(spawnGate('npm-install', ['bun', 'run', 'check:npm-install']));
@@ -555,6 +561,10 @@ async function main(): Promise<void> {
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
   const importGraph = parallelResults.find(r => r.name === 'import-graph')?.code ?? 0;
   const oxlintRatchet = parallelResults.find(r => r.name === 'oxlint-ratchet')?.code ?? 0;
+  const consoleFormatStaged =
+    parallelResults.find(r => r.name === 'console-format-staged')?.code ?? 0;
+  const consoleFormatRatchet =
+    parallelResults.find(r => r.name === 'console-format-ratchet')?.code ?? 0;
   const npmInstall = parallelResults.find(r => r.name === 'npm-install')?.code ?? 0;
   const monorepoHealthTests =
     parallelResults.find(r => r.name === 'monorepo-health-tests')?.code ?? 0;
@@ -595,6 +605,18 @@ async function main(): Promise<void> {
   }
   if (oxlintRatchet !== 0) {
     console.error('❌ oxlint warnings grew — bun run check:oxlint-ratchet');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (consoleFormatStaged !== 0) {
+    console.error(
+      '❌ raw console.table / pretty-JSON in staged lines — use logTable/logDepth (bun run check:console-format)'
+    );
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (consoleFormatRatchet !== 0) {
+    console.error('❌ console-format hits grew — bun run check:console-format');
     await writeTimings(timings, full);
     process.exit(1);
   }
