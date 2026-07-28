@@ -186,38 +186,29 @@ Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](
 | Bun | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`inspect` · `.table` · `.custom` · `stringWidth`) · [hashing](https://bun.com/docs/runtime/hashing) |
 | Other external | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |
 
+
 ## Grounded capability map
 
 Each row maps to a documented API — Bun or Proton Pass CLI — with type, version, "Used in", status, and canonical source.
 
-| Capability | Type | Version | Bun API | Proton CLI | Used in | Status | Source |
-|---|---|---|---|---|---|---|---|
-| **Vault config (TOML)** | config | Bun ≥1.4 | `import x from './vault-map.toml' with { type: 'toml' }` | — | `portal secrets autofill` | Available | [Bun TOML loader](https://bun.sh/docs/runtime/loaders#toml) |
-| **Vault inject** | secrets | pass‑cli ≥2.2 | — | `pass-cli inject --in-file --out-file` | `portal secrets autofill` (template patching) | Planned | [pass-cli inject](https://protonpass.github.io/pass-cli/commands/contents/inject/) |
-| **SSH agent load** | ssh | pass‑cli ≥2.2 | — | `pass-cli ssh-agent load --vault-name` | `portal secrets autofill` (SSH key injection) | Planned | [Proton Pass CLI](https://protonpass.github.io/pass-cli/) |
-| **Secure share link** | secrets | pass‑cli ≥2.2 | — | `pass-cli share`, `pass-cli accept` | `portal secrets share` / `accept` | Implemented | [pass-cli share](https://protonpass.github.io/pass-cli/) |
-| **Secret retrieval** | secrets | pass‑cli ≥2.2 | — | `pass-cli item get <vault>/<item>` | `portal secrets autofill` core loop | Implemented | same |
-| **Vault & item listing** | secrets | pass‑cli ≥2.2 | — | `pass-cli vault list`, `pass-cli item list` | `portal secrets autofill` (legacy fallback) | Implemented | same |
-| **Spawn external process** | runtime | Bun ≥1.0 | `Bun.spawn(cmd, { stdout: "inherit", … })` | — | All subcommands (snapshot git, pass-cli wrappers) | Implemented | [Bun.spawn](https://bun.sh/docs/api/spawn) |
-| **Streaming file write** | io | Bun ≥1.0 | `Bun.write(path, response)` | — | `snapshot run` (asset capture) | Implemented | [Bun.write](https://bun.sh/docs/api/file-io#writing-files) |
-| **Glob scanning** | io | Bun ≥1.0 | `Bun.glob(pattern)` → async iterator | — | `snapshot grep` (manifest scanning) | Implemented | [Bun.glob](https://bun.sh/docs/api/glob) |
-| **File existence & read** | io | Bun ≥1.0 | `Bun.file(path).exists()`, `.text()` | — | snapshot index, manifest loading | Implemented | [Bun.file](https://bun.sh/docs/api/file-io#reading-files) |
-| **ANSI color output** | display | Bun ≥1.0 | `Bun.color(hex, "ansi")` | — | `portal secrets autofill` status lines, help text | Implemented | [Bun.color](https://bun.sh/docs/api/color) |
-| **Terminal detection** | display | Bun ≥1.0 | `new Bun.Terminal(Bun.stdout)` | — | Help text formatting (future) | Available | [Bun.Terminal](https://bun.sh/docs/api/terminal) |
-| **Image chart generation** | image | Bun ≥1.0 | `new Bun.Image(file).png()` | — | Report charts (histogram, rolling) – if using server‑side render | Available | [Bun.Image](https://bun.sh/docs/api/image) |
-| **Built‑in test runner** | test | Bun ≥1.0 | `bun:test` – `describe`, `test`, `expect` | — | Unit tests for snapshot, secrets, manifest | Implemented | [Bun test](https://bun.sh/docs/test/writing-tests) |
-| **Environment variables** | runtime | Bun ≥1.0 | `Bun.env` (read‑only) | — | All modules (scope fallback, TMPDIR) | Implemented | [Bun.env](https://bun.sh/docs/api/env) |
-| **Module main detection** | runtime | Bun ≥1.0 | `Bun.main` | — | CLI entry guard | Implemented | [Bun.main](https://bun.sh/docs/api/main) |
-| **Sleep** | runtime | Bun ≥1.0 | `Bun.sleep(ms)` | — | Rate limiting (future) | Available | [Bun.sleep](https://bun.sh/docs/api/sleep) |
-| **String width** | util | Bun ≥1.0 | `Bun.stringWidth(str)` | — | `table-format.ts`, `account-limits-repo.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
-| **Object inspect** | util | Bun ≥1.0 | `Bun.inspect(obj, opts)` | — | `limit-raise-agent-api.ts`, `snapshot-core.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
-| **Inspect table** | util | Bun ≥1.0 | `Bun.inspect.table(data, props)` | — | `limit-prediction-report.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
-| **Inspect custom** | util | Bun ≥1.0 | `Bun.inspect.custom` (symbol) | — | `limit-raise-report.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
-| **WebView** | browser | Bun ≥1.3 | `new Bun.WebView({ headless: true })` | — | Prediction report screenshot (SVG→PNG) | Available | [runtime/webview](https://bun.com/docs/runtime/webview) |
-| **Shell template** | runtime | Bun ≥1.0 | `` Bun.$`cmd` `` | — | `snapshot-core.ts` (mkdir), `report.ts` | Implemented | [runtime/shell](https://bun.com/docs/runtime/shell) |
-| **UUID v7** | util | Bun ≥1.0 | `Bun.randomUUIDv7()` | — | `limit-prediction.ts`, `account-limits-repo.ts` | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
-| **Crypto hasher** | crypto | Bun ≥1.0 | `new Bun.CryptoHasher(algo, key?)` | — | `report-proof.ts` (SHA3-256, HMAC-SHA256) | Implemented | [runtime/hashing](https://bun.com/docs/runtime/hashing) |
-| **Runtime version** | util | Bun ≥1.0 | `Bun.version` | — | All modules (proof, manifest, debug) | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
-| **Current working dir** | runtime | Bun ≥1.0 | `Bun.cwd` | — | `snapshot-core.ts` (manifest metadata) | Implemented | [runtime/utils](https://bun.com/docs/runtime/utils) |
-| **Standalone detection** | runtime | Bun ≥1.0 | `Bun.isStandaloneExecutable` | — | `snapshot-core.ts` (manifest metadata) | Implemented | [bundler/executables](https://bun.com/docs/bundler/executables) |
-| **Sync spawn** | process | Bun ≥1.0 | `Bun.spawnSync(cmd)` | — | `snapshot-core.ts` (git info) | Implemented | [runtime/child-process](https://bun.com/docs/runtime/child-process) |
+| Capability | Type | Version | Bun API | Proton CLI | Used in | Status | Source | Example (snippet) |
+|---|---|---|---|---|---|---|---|---|
+| **Vault config (TOML)** | config | Bun ≥1.4 | `import x from './vault-map.toml' with { type: 'toml' }` | — | autofill map loading | Available | [Bun TOML loader](https://bun.sh/docs/runtime/loaders#toml) | `const map = await import('./vault-map.toml', { with: { type: 'toml' } });` |
+| **Vault inject** | secrets | pass‑cli ≥2.2 | — | `pass-cli inject --in-file --out-file` | template patching | Planned | [pass-cli inject](https://protonpass.github.io/pass-cli/commands/contents/inject/) | `pass-cli inject --in-file .env.template --out-file .env` |
+| **SSH agent load** | ssh | pass‑cli ≥2.2 | — | `pass-cli ssh-agent load --vault-name` | SSH key injection | Planned | [Proton Pass CLI](https://protonpass.github.io/pass-cli/) | `pass-cli ssh-agent load --vault-name portal` |
+| **Secure share link** | secrets | pass‑cli ≥2.2 | — | `pass-cli share`, `pass-cli accept` | secrets share / accept | Implemented | [pass-cli share](https://protonpass.github.io/pass-cli/) | `pass-cli share portal/npm_token` |
+| **Secret retrieval** | secrets | pass‑cli ≥2.2 | — | `pass-cli item get <vault>/<item>` | autofill core loop | Implemented | same | `pass-cli item get portal/github_token` |
+| **Vault & item listing** | secrets | pass‑cli ≥2.2 | — | `pass-cli vault list`, `pass-cli item list` | legacy fallback | Implemented | same | `pass-cli item list portal` |
+| **Spawn external process** | runtime | Bun ≥1.0 | `Bun.spawn(cmd, { stdout: "inherit", stderr: "inherit", stdin: "inherit" })` | — | all subcommands | Implemented | [Bun.spawn](https://bun.sh/docs/api/spawn) | `Bun.spawn(["git", "rev-parse", "HEAD"], { stdout: "inherit", stderr: "inherit" })` |
+| **Streaming file write** | io | Bun ≥1.0 | `Bun.write(path, response)` | — | snapshot asset capture | Implemented | [Bun.write](https://bun.sh/docs/api/file-io) | `await Bun.write(snapshotDir + "/report.html", fetch(url))` |
+| **Glob scanning** | io | Bun ≥1.0 | `Bun.glob(pattern)` → async iterator | — | manifest grep | Implemented | [Bun.glob](https://bun.sh/docs/api/glob) | `for await (const f of Bun.glob("snapshots/*/manifest.txt")) { ... }` |
+| **File existence & read** | io | Bun ≥1.0 | `Bun.file(path).exists()`, `.text()` | — | snapshot index & manifest | Implemented | [Bun.file](https://bun.sh/docs/api/file-io) | `if (await Bun.file("snapshots/index.jsonl").exists()) { ... }` |
+| **ANSI color output** | display | Bun ≥1.0 | `Bun.color(hex, "ansi")` | — | status lines, autofill output | Implemented | [Bun.color](https://bun.sh/docs/api/color) | `console.log(Bun.color("#2DA44E", "ansi") + "✓ set" + Bun.color("reset", "ansi"));` |
+| **Terminal detection** | display | Bun ≥1.0 | `new Bun.Terminal(Bun.stdout)` | — | help text formatting (future) | Available | [Bun.Terminal](https://bun.sh/docs/api/terminal) | `const term = new Bun.Terminal(Bun.stdout); term.write("Hello");` |
+| **Image chart generation** | image | Bun ≥1.0 | `new Bun.Image(file).png()` | — | report chart rendering (future) | Available | [Bun.Image](https://bun.sh/docs/api/image) | `const img = new Bun.Image(await Bun.file("chart.png").arrayBuffer()); img.resize(800,600);` |
+| **Built‑in test runner** | test | Bun ≥1.0 | `bun:test` – `describe`, `test`, `expect` | — | unit tests | Implemented | [Bun test](https://bun.sh/docs/test/writing-tests) | `import { describe, test, expect } from "bun:test";` |
+| **Environment variables** | runtime | Bun ≥1.0 | `Bun.env` (read‑only) | — | all modules | Implemented | [Bun.env](https://bun.sh/docs/api/env) | `const scope = Bun.env.PORTAL_SCOPE || "prediction";` |
+| **Module main detection** | runtime | Bun ≥1.0 | `Bun.main` | — | CLI entry guard | Implemented | [Bun.main](https://bun.sh/docs/api/main) | `if (Bun.main) { ... }` |
+| **Sleep** | runtime | Bun ≥1.0 | `Bun.sleep(ms)` | — | rate limiting (future) | Available | [Bun.sleep](https://bun.sh/docs/api/sleep) | `await Bun.sleep(1000);` |
+| **Structured debug output** | dev | Bun ≥1.0 | `Bun.inspect(obj, { colors: true, depth: 4 })` | — | `snapshot run --debug` | Implemented | [Bun.inspect](https://bun.sh/docs/api/inspect) | `console.log(Bun.inspect(manifest, { colors: true }));` |
+| **Semantic versioning** | dev | Bun ≥1.0 | `Bun.semver` (compare, satisfies) | — | version checks (future) | Available | [Bun.semver](https://bun.sh/docs/api/semver) | `Bun.semver.satisfies("1.4.0", ">=1.4");` |
