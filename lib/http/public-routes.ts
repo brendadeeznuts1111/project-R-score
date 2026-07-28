@@ -132,7 +132,8 @@ export const SIMD_ROUTES: PublicRouteDef[] = [
     name: 'Channels events',
     category: 'api',
     kind: 'simd-route',
-    okStatuses: [200],
+    okStatuses: [200, 401],
+    note: 'production requires read auth; development may expose the local feed',
   },
   {
     path: '/api/registry',
@@ -278,15 +279,16 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     name: 'TOC Ops API',
     category: 'api',
     kind: 'fetch-handler',
-    okStatuses: [200, 404],
-    note: 'Pages Function ASSETS snapshot; summary/partners/proof; POST → 503',
+    okStatuses: [200, 401, 404],
+    note: 'Pages Function ASSETS snapshot; local production may require read auth; POST → 503',
   },
   {
     path: '/api/toc/proof',
     name: 'TOC Ops bake proof API',
     category: 'api',
     kind: 'fetch-handler',
-    okStatuses: [200, 404],
+    okStatuses: [200, 401, 404],
+    note: 'local production may require read auth',
   },
   {
     path: '/portal/catalog/',
@@ -443,7 +445,8 @@ export const HOT_STATIC_ROUTES: PublicRouteDef[] = [
     name: 'API coverage proof',
     category: 'proof',
     kind: 'hot-static',
-    okStatuses: [200],
+    okStatuses: [200, 401],
+    note: 'tool-source proof may require read auth; public mirror lives under /registry/',
   },
 ];
 

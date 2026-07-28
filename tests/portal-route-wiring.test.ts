@@ -59,4 +59,10 @@ describe('portal route wiring', () => {
   test('/api/skills Pages Function exists', async () => {
     expect(await Bun.file('functions/api/skills.ts').exists()).toBe(true);
   });
+
+  test('monitoring href variants share one public handler', async () => {
+    const source = await Bun.file('scripts/serve-public.ts').text();
+    expect(source).toContain("'/monitoring': () => monitoringPage()");
+    expect(source).toContain("'/monitoring/': () => monitoringPage()");
+  });
 });

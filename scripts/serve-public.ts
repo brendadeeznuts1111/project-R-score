@@ -1865,6 +1865,7 @@ function buildPublicRoutes() {
     },
 
     '/monitoring': () => monitoringPage(),
+    '/monitoring/': () => monitoringPage(),
     '/llms.txt': llmsTxt(),
 
     '/__hmr': (req: Request, server: RouteServer) => {

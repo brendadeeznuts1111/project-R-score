@@ -45,6 +45,18 @@ describe('lib/http/public-routes', () => {
     expect(by.health?.length).toBeGreaterThanOrEqual(2);
   });
 
+  test('authenticated read routes treat 401 as an expected signal', () => {
+    const routes = new Map(publicRouteCatalog().map(route => [route.path, route]));
+    for (const path of [
+      '/api/channels/events',
+      '/api/toc',
+      '/api/toc/proof',
+      '/tools/bun-api-coverage-proof.json',
+    ]) {
+      expect(routes.get(path)?.okStatuses).toContain(401);
+    }
+  });
+
   test('mergeHotFromHealth adds unseen hot paths', () => {
     const base = publicRouteCatalog();
     const merged = mergeHotFromHealth(base, {
