@@ -9,7 +9,11 @@
  */
 import { Database } from 'bun:sqlite';
 import { formatPackageGroupTitle, TOC_OPS_SURFACES } from './surfaces.ts';
-import { tryPartnerCodeArg, HANDSHAKE_PARTNER_CODE_RE } from './handshake-ref.ts';
+import {
+  tryPartnerCodeArg,
+  HANDSHAKE_PARTNER_CODE_RE,
+  partnerCodeFromCallSign,
+} from './handshake-ref.ts';
 import { resolveSeatTelegramId, telegramIdWireLinked } from './flows/seat-telegram-id.ts';
 
 /** @deprecated use HANDSHAKE_PARTNER_CODE_RE from handshake-ref.ts */
@@ -105,6 +109,51 @@ export function packageGroupRegistryByChatId(db: Database): Map<string, PackageG
     map.set(row.chat_id, rowToRegistry(row));
   }
   return map;
+}
+
+/**
+ * Resolve package-group forum registry for a tree node (limit-raise dual-route).
+ * Preference: explicit partnerCode → tree_nodes.call_sign partner CODE → node_id as CODE.
+ */
+export function resolvePackageGroupRegistryForTreeNode(
+  db: Database,
+  treeNodeId: string, // brand-ok — TreeNodeId wire
+  opts?: { partnerCode?: string }
+): PackageGroupRegistryRow | null {
+  ensurePackageGroupRegistrySchema(db);
+
+  const tryCode = (raw: string | null | undefined): PackageGroupRegistryRow | null => {
+    if (!raw?.trim()) return null;
+    const code =
+      parsePartnerCode(raw) ??
+      partnerCodeFromCallSign(raw) ??
+      tryPartnerCodeArg(raw.trim().toUpperCase());
+    if (!code) return null;
+    return getPackageGroupRegistry(db, code);
+  };
+
+  const fromOpt = tryCode(opts?.partnerCode);
+  if (fromOpt) return fromOpt;
+
+  try {
+    const row = db
+      .query(
+        `SELECT call_sign, id FROM tree_nodes
+         WHERE id = $id OR call_sign = $id
+         LIMIT 1`
+      )
+      .get({ $id: treeNodeId }) as { call_sign: string | null; id: string } | null; // brand-ok — TreeNodeId wire
+    if (row) {
+      const fromCs = tryCode(row.call_sign);
+      if (fromCs) return fromCs;
+      const fromId = tryCode(row.id);
+      if (fromId) return fromId;
+    }
+  } catch {
+    /* tree_nodes optional in pure unit tests */
+  }
+
+  return tryCode(treeNodeId);
 }
 
 export type UpsertPackageGroupRegistryInput = {

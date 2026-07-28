@@ -187,6 +187,23 @@ export interface EnrichedLimitRaise extends LimitRaise {
   top_clv: ClvMover[];
 }
 
+/** Latest known max_wager snapshot for a node+sportsbook (any sport/market/bet_type). */
+export interface LatestBookLimit {
+  /** partner_account_limits.id */
+  limit_id: number; // brand-ok — limit history row pk
+  sportsbook: string;
+  sport_id: string; // brand-ok
+  market_id: string; // brand-ok
+  bet_type: string;
+  max_wager: number;
+  recorded_at: number;
+  /**
+   * Prior high-water on the same dim when the latest row is a raise; null when
+   * this is the first snapshot or not higher than history.
+   */
+  previous_max: number | null;
+}
+
 // ── Repository ────────────────────────────────────────────────────────────
 
 export class AccountLimitsRepository {
@@ -445,6 +462,115 @@ export class AccountLimitsRepository {
       )
       .all(nodeId, sinceTimestamp) as LimitRaise[];
     return rows;
+  }
+
+  /**
+   * Latest recorded max_wager for a node + sportsbook (any sport/market/bet_type).
+   * `previous_max` is the prior high-water on the same dim when this row raised, else null.
+   * Sportsbook match is case-insensitive exact on `partner_account_limits.sportsbook`.
+   */
+  latestLimitForSportsbook(
+    nodeId: string, // brand-ok — TreeNodeId wire
+    sportsbook: string
+  ): LatestBookLimit | null {
+    const book = sportsbook.trim();
+    if (!book) return null;
+    const row = this.db
+      .query(
+        `
+      SELECT a.id AS limit_id,
+             a.sportsbook,
+             a.sport_id,
+             a.market_id,
+             a.bet_type,
+             a.max_wager,
+             a.recorded_at,
+             (SELECT MAX(b.max_wager) FROM partner_account_limits b
+              WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+                AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+                AND b.bet_type = a.bet_type AND b.id < a.id) AS previous_max
+      FROM partner_account_limits a
+      WHERE a.node_id = ?
+        AND lower(a.sportsbook) = lower(?)
+      ORDER BY a.recorded_at DESC, a.id DESC
+      LIMIT 1
+    `
+      )
+      .get(nodeId, book) as {
+      limit_id: number; // brand-ok — partner_account_limits.id
+      sportsbook: string;
+      sport_id: string; // brand-ok
+      market_id: string; // brand-ok
+      bet_type: string;
+      max_wager: number;
+      recorded_at: number;
+      previous_max: number | null;
+    } | null;
+    if (!row) return null;
+    return {
+      limit_id: row.limit_id,
+      sportsbook: row.sportsbook,
+      sport_id: row.sport_id,
+      market_id: row.market_id,
+      bet_type: row.bet_type,
+      max_wager: row.max_wager,
+      recorded_at: row.recorded_at,
+      previous_max: row.previous_max ?? null,
+    };
+  }
+
+  /**
+   * One latest-limit row per sportsbook for a node (most recent recorded_at wins).
+   * Used by seat capital desk to compare negotiated maxBet vs detected book max.
+   */
+  latestLimitsPerSportsbook(nodeId: string /* brand-ok — TreeNodeId wire */): LatestBookLimit[] {
+    const rows = this.db
+      .query(
+        `
+      SELECT a.id AS limit_id,
+             a.sportsbook,
+             a.sport_id,
+             a.market_id,
+             a.bet_type,
+             a.max_wager,
+             a.recorded_at,
+             (SELECT MAX(b.max_wager) FROM partner_account_limits b
+              WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+                AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+                AND b.bet_type = a.bet_type AND b.id < a.id) AS previous_max
+      FROM partner_account_limits a
+      WHERE a.node_id = ?
+      ORDER BY a.recorded_at DESC, a.id DESC
+    `
+      )
+      .all(nodeId) as Array<{
+      limit_id: number; // brand-ok — partner_account_limits.id
+      sportsbook: string;
+      sport_id: string; // brand-ok
+      market_id: string; // brand-ok
+      bet_type: string;
+      max_wager: number;
+      recorded_at: number;
+      previous_max: number | null;
+    }>;
+    const seen = new Set<string>();
+    const out: LatestBookLimit[] = [];
+    for (const row of rows) {
+      const key = row.sportsbook.trim().toLowerCase();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      out.push({
+        limit_id: row.limit_id,
+        sportsbook: row.sportsbook,
+        sport_id: row.sport_id,
+        market_id: row.market_id,
+        bet_type: row.bet_type,
+        max_wager: row.max_wager,
+        recorded_at: row.recorded_at,
+        previous_max: row.previous_max ?? null,
+      });
+    }
+    return out;
   }
 }
 

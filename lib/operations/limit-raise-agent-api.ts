@@ -221,6 +221,20 @@ export async function handleLimitRecordRequest(request: Request, db: Database): 
 
     if (raise) {
       try {
+        const partner_code = typeof body.partner_code === 'string' ? body.partner_code : undefined;
+        const package_group_chat_id =
+          typeof body.package_group_chat_id === 'string' ? body.package_group_chat_id : undefined;
+        let telegram_id = typeof body.telegram_id === 'string' ? body.telegram_id : undefined;
+        if (!telegram_id) {
+          try {
+            const row = db
+              .query(`SELECT telegram_id FROM tree_nodes WHERE id = ? LIMIT 1`)
+              .get(nodeId) as { telegram_id: string | null } | null; // brand-ok — Telegram chat wire
+            if (row?.telegram_id?.trim()) telegram_id = row.telegram_id.trim();
+          } catch {
+            /* tree_nodes optional */
+          }
+        }
         enqueueLimitRaiseAlert(db, {
           treeNodeId: nodeId,
           sportsbook,
@@ -229,6 +243,9 @@ export async function handleLimitRecordRequest(request: Request, db: Database): 
           betType: bet_type,
           previousMax: raise.previous_max,
           newLimit: raise.new_limit,
+          telegramId: telegram_id,
+          partnerCode: partner_code,
+          packageGroupChatId: package_group_chat_id,
         });
       } catch {
         // outbox optional — record still succeeded

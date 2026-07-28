@@ -12,11 +12,14 @@
  */
 import {
   buildSeatDeskViewModel,
+  formatOutId,
   normalizeSeatIntake,
   SEAT_INTAKE_DIR,
+  type SeatDeskOutView,
   type SeatDeskViewModel,
   type SeatIntakeRecord,
 } from './seat-capital-desk.ts';
+import { formatBookMaxDeltaLine, tryLoadBookMaxComparesForSeatDesk } from './seat-desk-book-max.ts';
 
 export const SEAT_CAPITAL_DESK_REGISTRY_REL = 'public/registry/seat-capital-desk.json';
 export const SEAT_CAPITAL_DESK_REGISTRY_PATH = '/registry/seat-capital-desk.json' as const;
@@ -71,6 +74,30 @@ export function emptySeatCapitalDeskSummarySlice(): SeatCapitalDeskSummarySlice 
 }
 
 /**
+ * Best-effort attach of book-max vs maxBet lines from ops SQLite.
+ * No-op when DB/node missing — never dual-writes desk terms into limits.
+ */
+function enrichViewModelBookMax(
+  record: SeatIntakeRecord,
+  vm: SeatDeskViewModel
+): SeatDeskViewModel {
+  const compares = tryLoadBookMaxComparesForSeatDesk(record);
+  if (!compares) return vm;
+  const outs: SeatDeskOutView[] = vm.outs.map((out, i) => {
+    const outId = (record.outs[i]?.outId ?? formatOutId(record.partnerCode, i)).toUpperCase();
+    const compare = compares.get(outId) ?? null;
+    return {
+      ...out,
+      bookMaxLine: formatBookMaxDeltaLine({
+        bookMax: compare?.bookMax ?? null,
+        deskMaxBet: out.maxBet === '—' ? undefined : out.maxBet,
+      }),
+    };
+  });
+  return { ...vm, outs };
+}
+
+/**
  * Scan `*.json` intake files under `intakeDir` (default `SEAT_INTAKE_DIR`),
  * normalize + map each to the passwordless view model, sorted by callSign.
  */
@@ -83,7 +110,9 @@ export async function buildSeatCapitalDeskSnapshot(
     for await (const rel of glob.scan(intakeDir)) {
       try {
         const raw = (await Bun.file(`${intakeDir}/${rel}`).json()) as SeatIntakeRecord;
-        rows.push(buildSeatDeskViewModel(normalizeSeatIntake(raw)));
+        const record = normalizeSeatIntake(raw);
+        const vm = buildSeatDeskViewModel(record);
+        rows.push(enrichViewModelBookMax(record, vm));
       } catch {
         /* skip malformed intake file */
       }

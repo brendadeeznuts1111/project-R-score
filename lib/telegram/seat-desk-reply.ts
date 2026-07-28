@@ -16,6 +16,7 @@ import {
   saveSeatIntake,
   type SeatIntakeRecord,
 } from './seat-capital-desk.ts';
+import { formatMaxBetSetConfirm, tryLookupBookMaxForOut } from './seat-desk-book-max.ts';
 import {
   clearSeatDeskPending,
   getSeatDeskPending,
@@ -250,10 +251,20 @@ async function handlePendingReply(
   await publishSeatCapitalDesk({ token: opts.token, record: next });
   await clearSeatDeskPending(opts.userId);
 
+  let maxBetMessage = `${pending.outId} max bet set.`;
+  if (pending.field === 'maxBet' && maxBet) {
+    const compare = tryLookupBookMaxForOut(next, pending.outId);
+    maxBetMessage = formatMaxBetSetConfirm({
+      outId: pending.outId,
+      deskMaxBet: maxBet,
+      bookMax: compare?.bookMax ?? null,
+    });
+  }
+
   const fieldDone: Record<SeatDeskPendingAction['field'], string> = {
     sendTo: `${pending.outId} send-to set.`,
     bookLogin: `${pending.outId} username set.`,
-    maxBet: `${pending.outId} max bet set.`,
+    maxBet: maxBetMessage,
     freeplay: `${pending.outId} freeplay % set.`,
   };
 

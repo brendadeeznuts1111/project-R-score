@@ -34,6 +34,7 @@ import {
   threadIdForPackageGroupOutboxTopic,
   PACKAGE_GROUP_FORUMS_META_DIR,
 } from '../telegram/package-group-forum.ts';
+import { resolvePackageGroupRegistryForTreeNode } from '../telegram/package-group-registry.ts';
 import { loadTelegramEnv, threadIdForOutboxTopic } from '../telegram/telegram-config.ts';
 import { renderForNode } from '../telegram/templates/render.ts';
 import type { TemplateId } from '../telegram/templates/types.ts';
@@ -690,42 +691,96 @@ export function enqueuePlayGatedChannelEvent(
   });
 }
 
-/** Helper: limit raise alert (alerts topic, telegram + r2 projectors). */
+export type EnqueueLimitRaiseAlertInput = {
+  treeNodeId: TreeNodeId;
+  sportsbook: string;
+  sportId: string; // brand-ok — SportId wire
+  marketId: string; // brand-ok — MarketId wire
+  betType: string;
+  previousMax: number;
+  newLimit: number;
+  /** Optional DM / explicit chat for the primary ops path. */
+  telegramId?: string; // brand-ok — Telegram chat_id wire
+  /** Partner CODE when already known (skips call_sign derivation). */
+  partnerCode?: string;
+  /** Explicit package-group forum chat_id (overrides registry resolution). */
+  packageGroupChatId?: string; // brand-ok — Telegram chat_id wire
+  /** Skip package-group forum mirror (ops-only). Default false. */
+  skipPackageGroupForum?: boolean;
+};
+
+/**
+ * Limit raise alert: always enqueue ops `alerts` (r2 + telegram → ops hub).
+ * When the tree node maps to a linked package-group forum, also enqueue a
+ * telegram mirror so capital/ops see the raise next to seat-desk traffic
+ * (Liquidity/Outs preferred, else Alerts — see threadIdForPackageGroupOutboxTopic).
+ */
 export function enqueueLimitRaiseAlert(
   db: Database,
-  input: {
-    treeNodeId: TreeNodeId;
-    sportsbook: string;
-    sportId: string; // brand-ok — SportId wire
-    marketId: string; // brand-ok — MarketId wire
-    betType: string;
-    previousMax: number;
-    newLimit: number;
-    telegramId?: string; // brand-ok
-  }
-): OpsChannelEvent | null {
+  input: EnqueueLimitRaiseAlertInput
+): OpsChannelEvent {
   const message = [
     `🚀 <b>Limit raised</b> — ${input.sportsbook}`,
     `${input.sportId}/${input.marketId} ${input.betType}`,
     `$${input.previousMax} → <b>$${input.newLimit}</b>`,
   ].join('\n');
 
-  return enqueueOpsChannelEvent(db, {
+  const treeNodeId = input.treeNodeId as string;
+  const idemBase = `limit.raise:${treeNodeId}:${input.sportsbook}:${input.sportId}:${input.marketId}:${input.betType}:${input.newLimit}`;
+  const basePayload = {
+    treeNodeId,
+    sportsbook: input.sportsbook,
+    sportId: input.sportId,
+    marketId: input.marketId,
+    betType: input.betType,
+    previousMax: input.previousMax,
+    newLimit: input.newLimit,
+    parseMode: 'HTML' as const,
+    text: message,
+  };
+
+  const opsEvent = enqueueOpsChannelEvent(db, {
     topic: 'alerts',
     eventType: 'account.limit_raise',
-    idempotencyKey: `limit.raise:${input.treeNodeId as string}:${input.sportsbook}:${input.sportId}:${input.marketId}:${input.betType}:${input.newLimit}`,
+    idempotencyKey: idemBase,
     payload: {
-      treeNodeId: input.treeNodeId as string,
-      sportsbook: input.sportsbook,
-      sportId: input.sportId,
-      marketId: input.marketId,
-      betType: input.betType,
-      previousMax: input.previousMax,
-      newLimit: input.newLimit,
+      ...basePayload,
       telegramId: input.telegramId,
-      parseMode: 'HTML',
-      text: message,
     },
     projectors: ['r2', 'telegram'],
   });
+
+  if (!input.skipPackageGroupForum) {
+    let forumChatId = input.packageGroupChatId?.trim() || null;
+    let partnerCode = input.partnerCode?.trim().toUpperCase() || undefined;
+
+    if (!forumChatId) {
+      const reg = resolvePackageGroupRegistryForTreeNode(db, treeNodeId, {
+        partnerCode: input.partnerCode,
+      });
+      if (reg) {
+        forumChatId = reg.chatId;
+        partnerCode = reg.partnerCode;
+      }
+    }
+
+    // Mirror only when we have a distinct package-group chat (not the same as DM/ops target).
+    if (forumChatId && forumChatId !== input.telegramId) {
+      enqueueOpsChannelEvent(db, {
+        topic: 'alerts',
+        eventType: 'account.limit_raise',
+        idempotencyKey: `${idemBase}:pkg`,
+        payload: {
+          ...basePayload,
+          telegramId: forumChatId,
+          partnerCode,
+          packageGroupForum: true,
+        },
+        // r2 already carried by the ops row; telegram-only mirror to partner forum.
+        projectors: ['telegram'],
+      });
+    }
+  }
+
+  return opsEvent;
 }

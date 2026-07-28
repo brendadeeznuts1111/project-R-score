@@ -31,6 +31,7 @@ async function loadToc() {
       data: embed,
       loop: extras.loop,
       limitChangeCount: extras.limitChangeCount,
+      limitChanges: extras.limitChanges,
       complianceBoard,
     };
   }
@@ -42,6 +43,7 @@ async function loadToc() {
       data,
       loop: extras.loop,
       limitChangeCount: extras.limitChangeCount,
+      limitChanges: extras.limitChanges,
       complianceBoard,
     };
   } catch {
@@ -52,32 +54,133 @@ async function loadToc() {
       data,
       loop: extras.loop,
       limitChangeCount: extras.limitChangeCount,
+      limitChanges: extras.limitChanges,
       complianceBoard,
     };
   }
 }
 
 /**
- * One ops-summary fetch: loop slice + optional limitChanges length for the
- * sportsbook raises callout (not TOC LIMIT tasks / fixture limitHistory).
+ * One ops-summary fetch: loop slice + limitChanges rows for the sportsbook
+ * raises callout and per-partner join (not TOC LIMIT / fixture limitHistory).
  */
 async function loadOpsSummaryExtras(embedLoop) {
   try {
     const summary = await fetchJson('/registry/ops-summary.json');
+    const limitChanges = Array.isArray(summary?.limitChanges)
+      ? summary.limitChanges
+      : null;
     return {
       loop: embedLoop ?? summary?.loop ?? null,
-      limitChangeCount: Array.isArray(summary?.limitChanges)
-        ? summary.limitChanges.length
-        : null,
+      limitChangeCount: limitChanges ? limitChanges.length : null,
+      limitChanges,
     };
   } catch {
-    return { loop: embedLoop ?? null, limitChangeCount: null };
+    return { loop: embedLoop ?? null, limitChangeCount: null, limitChanges: null };
   }
 }
 
 async function loadOpsLoopSlice() {
   const extras = await loadOpsSummaryExtras(null);
   return extras.loop;
+}
+
+/**
+ * Pure exact join: limitChanges.node_id ↔ partnerCode / callSign / treeNodeId.
+ * Mirrors lib/toc-ops/limit-raises-join.ts (static Pages — no lib import).
+ * Ambiguous keys are not attributed per-partner.
+ */
+function joinLimitChangesToPartners(changes, partners) {
+  const empty = {
+    totalRaises: 0,
+    totalChanges: 0,
+    byPartnerCode: {},
+    byCallSign: {},
+    hasPerPartner: false,
+  };
+  if (!Array.isArray(changes) || !Array.isArray(partners)) return empty;
+
+  const norm = s => String(s ?? '').trim().toLowerCase();
+  const keyToPartner = new Map();
+  const callSignKeys = new Set();
+
+  const claim = (raw, partnerCode) => {
+    const key = norm(raw);
+    if (!key) return;
+    const existing = keyToPartner.get(key);
+    if (existing === undefined) keyToPartner.set(key, partnerCode);
+    else if (existing !== null && existing !== partnerCode) keyToPartner.set(key, null);
+  };
+
+  for (const p of partners) {
+    claim(p.partnerCode, p.partnerCode);
+    for (const cs of p.callSigns || []) {
+      claim(cs, p.partnerCode);
+      callSignKeys.add(norm(cs));
+    }
+    for (const nid of p.treeNodeIds || []) claim(nid, p.partnerCode);
+  }
+
+  const byPartnerCode = {};
+  const byCallSign = {};
+  let totalRaises = 0;
+
+  for (const row of changes) {
+    const nodeId = typeof row?.node_id === 'string' ? row.node_id : '';
+    const key = norm(nodeId);
+    const raise = row?.direction !== 'down';
+    if (raise) totalRaises += 1;
+    if (!key || !raise) continue;
+
+    const owner = keyToPartner.get(key);
+    if (owner == null) continue; // unmatched or ambiguous
+
+    byPartnerCode[owner] = (byPartnerCode[owner] || 0) + 1;
+    if (callSignKeys.has(key)) {
+      for (const p of partners) {
+        if (p.partnerCode !== owner) continue;
+        for (const cs of p.callSigns || []) {
+          if (norm(cs) === key) byCallSign[cs] = (byCallSign[cs] || 0) + 1;
+        }
+      }
+    }
+  }
+
+  return {
+    totalRaises,
+    totalChanges: changes.length,
+    byPartnerCode,
+    byCallSign,
+    hasPerPartner: Object.keys(byPartnerCode).length > 0,
+  };
+}
+
+/** Build join keys from TOC partners + optional identity bridge. */
+function partnerJoinKeysFromToc(partners, identity) {
+  const idByCode = new Map(
+    (identity?.partners || []).map(p => [String(p.partnerCode || '').trim().toLowerCase(), p])
+  );
+  return (partners || []).map(p => {
+    const callSigns = (p.accounts || []).map(a => a.callSign).filter(Boolean);
+    const id = idByCode.get(String(p.partnerCode || '').trim().toLowerCase());
+    const treeNodeIds = [];
+    if (id?.treeNodeId) treeNodeIds.push(id.treeNodeId);
+    for (const a of id?.accounts || []) {
+      if (a.treeNodeId) treeNodeIds.push(a.treeNodeId);
+      if (a.callSign && !callSigns.includes(a.callSign)) callSigns.push(a.callSign);
+    }
+    return {
+      partnerCode: p.partnerCode,
+      callSigns,
+      treeNodeIds: treeNodeIds.length ? treeNodeIds : undefined,
+    };
+  });
+}
+
+/** Badge linking sportsbook raise board — only when N>0. */
+function raises48hPill(n) {
+  if (n == null || n <= 0) return '';
+  return `<a class="toc-pill toc-pill-hot" href="/portal/limits/" title="Sportsbook raises last 48h · ops-summary.limitChanges (not TOC LIMIT tasks)">${esc(`raises 48h: ${n}`)}</a>`;
 }
 
 async function loadComplianceBoard() {
@@ -704,11 +807,19 @@ function renderPresenceRollup(presence, house) {
 /**
  * Lightweight join to partner multi-factor raises board.
  * Not TOC LIMIT task queue · not fixture limitHistory dual-write.
+ * Per-partner counts only when node_id exact-matches partnerCode/callSign/treeNodeId.
  */
-function renderLimitsCallout(limitChangeCount) {
+function renderLimitsCallout(limitChangeCount, raiseJoin) {
+  const raises = raiseJoin?.totalRaises;
   const countLine =
     limitChangeCount != null
-      ? `<span>${esc(String(limitChangeCount))} recent ops-summary change(s)</span>`
+      ? `<span>${esc(String(limitChangeCount))} ops-summary change(s)${
+          raises != null ? ` · ${esc(String(raises))} raise(s) 48h` : ''
+        }${
+          raiseJoin?.hasPerPartner
+            ? ` · per-partner when node_id matches`
+            : ' · no reliable per-partner join'
+        }</span>`
       : `<span>Multi-factor raises · separate from LIMIT task / maxBet desk terms</span>`;
   return `<section class="toc-section" id="limits-callout">
     ${sectionHead(
@@ -889,7 +1000,9 @@ function renderReturnEfficiency(re, ranked, buf) {
   </section>`;
 }
 
-function renderPartners(partners, assetBySign, limitBySign) {
+function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
+  const raisesByPartner = raiseJoin?.byPartnerCode || {};
+  const raisesBySign = raiseJoin?.byCallSign || {};
   return `<section class="toc-section" id="partners">
     ${sectionHead('Partners', 'ASH Drum · PAT PLAY · NOV ONB')}
     <div class="toc-partners">
@@ -900,11 +1013,12 @@ function renderPartners(partners, assetBySign, limitBySign) {
           const exp = p.experimentAssignment;
           const statusKind =
             p.status === 'Ready' ? 'ok' : p.status === 'Onboarding' ? 'hot' : 'dim';
+          const partnerRaises = raisesByPartner[p.partnerCode] || 0;
           return `
         <article class="toc-partner" id="partner-${esc(p.partnerCode)}">
           <header class="toc-partner-head">
             <div>
-              <h3 class="toc-partner-code">${esc(p.partnerCode)}</h3>
+              <h3 class="toc-partner-code">${esc(p.partnerCode)} ${raises48hPill(partnerRaises)}</h3>
               <p class="toc-sub">${pill(p.status, statusKind)} ${pill(p.flowStage, 'dim')}
                 · readiness ${(p.readiness?.score ?? 0).toFixed(2)}
                 · playable ${p.readiness?.playableAccountCount ?? 0}
@@ -1065,9 +1179,12 @@ function renderPartners(partners, assetBySign, limitBySign) {
                           )
                           .join(' · ')}</div>`
                       : '';
+                  const acctRaises = raisesBySign[a.callSign] || 0;
                   return `<li><code>${esc(a.callSign)}</code> ${pill(a.status, a.status === 'WARMED' ? 'ok' : 'dim')} ${pill(a.flowStage, 'dim')}
                     warm ${a.warmupCount}/2 · ${esc(a.capitalLocation)} ${money(a.hardBalance)} ${g12}
                     <div class="toc-sub">${freshnessPill(a.limits?.freshness)}${
+                      acctRaises > 0 ? ` ${raises48hPill(acctRaises)}` : ''
+                    }${
                       a.limits?.dailyMax != null
                         ? ` daily ${money(a.limits.dailyMax)} / weekly ${money(a.limits.weeklyMax)}`
                         : ''
@@ -1344,7 +1461,7 @@ function renderPartners(partners, assetBySign, limitBySign) {
   </section>`;
 }
 
-function render(root, { mode, data, loop, complianceBoard, limitChangeCount }) {
+function render(root, { mode, data, loop, complianceBoard, limitChangeCount, limitChanges }) {
   const s = data.summary || {};
   const buf = data.buffer || {};
   const partners = data.partners || [];
@@ -1357,12 +1474,16 @@ function render(root, { mode, data, loop, complianceBoard, limitChangeCount }) {
   const ranked = data.rankedActions || [];
   const assetBySign = new Map((re?.byAsset || []).map(a => [a.callSign, a]));
   const limitBySign = new Map((re?.byLimit || []).map(l => [l.callSign, l]));
+  const raiseJoin = joinLimitChangesToPartners(
+    limitChanges || [],
+    partnerJoinKeysFromToc(partners, identity)
+  );
 
   root.innerHTML = `
     ${renderHero({ mode, data, plane, enf, flow })}
     ${renderAgentBrief({ mode, data, plane, enf, flow, identity })}
     ${renderComplianceBoard(complianceBoard)}
-    ${renderLimitsCallout(limitChangeCount)}
+    ${renderLimitsCallout(limitChangeCount, raiseJoin)}
 
     <section class="toc-section" id="rollup">
       ${sectionHead('Rollup', 'Drum readiness and open work')}
@@ -1414,7 +1535,7 @@ function render(root, { mode, data, loop, complianceBoard, limitChangeCount }) {
     ${renderPresenceRollup(data.presence, data.housePresence)}
     ${renderIdentity(identity)}
     ${renderExperiments(data.experiments)}
-    ${renderPartners(partners, assetBySign, limitBySign)}
+    ${renderPartners(partners, assetBySign, limitBySign, raiseJoin)}
 
     <footer class="toc-foot">
       <a href="/registry/toc-ops.json"><code>/registry/toc-ops.json</code></a>

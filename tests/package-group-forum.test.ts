@@ -135,6 +135,15 @@ describe('package-group-forum', () => {
     expect(threadIdForPackageGroupOutboxTopic(topics, 'dod')).toBe(11);
     expect(threadIdForPackageGroupOutboxTopic(topics, 'toc')).toBe(18);
     expect(threadIdForPackageGroupOutboxTopic(topics, 'identity', 'partner.welcome')).toBeUndefined();
+    // Limit raises prefer Liquidity/Outs (seat capital desk) then Alerts.
+    expect(threadIdForPackageGroupOutboxTopic(topics, 'alerts', 'account.limit_raise')).toBe(18);
+    expect(
+      threadIdForPackageGroupOutboxTopic(
+        { general: 1, alerts: 11, ops: 12 },
+        'alerts',
+        'account.limit_raise'
+      )
+    ).toBe(11);
   });
 
   test('resolvePackageGroupTopicsForChat joins registry + metadata file', async () => {

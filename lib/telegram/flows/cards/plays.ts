@@ -1,7 +1,7 @@
 /**
  * Plays flow card — thin caller of plays.v1.
  */
-import { asTreeNodeId } from '../../../types/branded/operations.ts';
+import { asTreeNodeId } from '../../brands.ts';
 import { escapeHtml } from '../../templates/escape.ts';
 import { renderForNode } from '../../templates/render.ts';
 import { t } from '../i18n.ts';

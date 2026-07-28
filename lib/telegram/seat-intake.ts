@@ -879,6 +879,11 @@ export type SeatDeskOutView = {
   note?: string;
   balance?: string;
   withdrawPath?: string;
+  /**
+   * Optional book max vs desk maxBet compare line (from partner_account_limits).
+   * Filled only when snapshot/bake enrichment runs — not dual-written.
+   */
+  bookMaxLine?: string;
 };
 
 export type SeatDeskChecklistItem = { done: boolean; label: string };

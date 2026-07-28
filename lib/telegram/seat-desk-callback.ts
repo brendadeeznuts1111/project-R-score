@@ -12,6 +12,7 @@ import {
   findSeatOutIndex,
   type SeatIntakeRecord,
 } from './seat-capital-desk.ts';
+import { formatBookMaxDeltaLine, tryLookupBookMaxForOut } from './seat-desk-book-max.ts';
 import {
   buildSeatDeskFieldPickerMarkup,
   buildSeatDeskRailPickerMarkup,
@@ -197,8 +198,16 @@ export async function handleSeatDeskCallback(
     const record = await loadAuthorizedIntake(parsed.callSign, ctx.chatId);
     if (!record) return { ok: false, toast: 'Desk not found.' };
     const num = outNumLabel(record, parsed.outId);
+    const out = record.outs.find(
+      o => (o.outId ?? '').toUpperCase() === parsed.outId.toUpperCase().trim()
+    );
+    const compare = tryLookupBookMaxForOut(record, parsed.outId);
+    const bookLine = formatBookMaxDeltaLine({
+      bookMax: compare?.bookMax ?? null,
+      deskMaxBet: out?.maxBet,
+    });
     return promptSeatDeskForceReply(ctx, record, parsed, 'maxBet', {
-      prompt: `Out ${num} max bet — reply with limit (e.g. 500, $1k):`,
+      prompt: `Out ${num} max bet — reply with limit (e.g. 500, $1k):\n<i>${bookLine}</i>`,
       placeholder: `${num} max bet`,
     });
   }

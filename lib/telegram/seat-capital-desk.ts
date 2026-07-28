@@ -44,6 +44,7 @@ import {
   type RichTableCellBlock,
 } from './rich-message.ts';
 import { loadTelegramEnv } from './telegram-config.ts';
+import { escapeHtml } from './templates/escape.ts';
 import {
   editTelegramMessage,
   editRichTelegramMessage,
@@ -59,6 +60,11 @@ import {
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../operations/db.ts';
 import { ensurePartnerForumAccounting } from './partner-forum-accounting.ts';
 import { buildSeatDeskRootMarkup } from './seat-desk-markup.ts';
+import {
+  formatOutBookMaxLines,
+  tryLoadBookMaxComparesForSeatDesk,
+  type DeskBookMaxCompare,
+} from './seat-desk-book-max.ts';
 import {
   buildSeatDeskViewModel,
   firstIncompleteOutIndex,
@@ -76,6 +82,15 @@ import {
   type SeatIntakeRecord,
   type SeatOutDisplayStatus,
 } from './seat-intake.ts';
+
+export type SeatCapitalDeskRenderOpts = {
+  /**
+   * Per-outId last-known sportsbook max from partner_account_limits.
+   * When set (including empty map), desk appends book-max vs maxBet lines.
+   * Null/missing compare → "no book history".
+   */
+  bookMaxByOutId?: ReadonlyMap<string, DeskBookMaxCompare | null>;
+};
 
 // ── Backward-compat re-exports (extracted 2026-07 — import the leaf modules directly) ──
 export {
@@ -161,7 +176,8 @@ function outStatusRichText(status: SeatOutDisplayStatus): RichText {
  */
 export function buildSeatCapitalDeskRichBlocks(
   record: SeatIntakeRecord,
-  now = new Date()
+  now = new Date(),
+  opts?: SeatCapitalDeskRenderOpts
 ): InputRichBlock[] {
   const vm = buildSeatDeskViewModel(record);
 
@@ -195,6 +211,15 @@ export function buildSeatCapitalDeskRichBlocks(
   blocks.push(blockTable([header, ...rows], { isBordered: true, isStriped: true }));
   blocks.push(blockDivider());
 
+  // Negotiated maxBet vs last-known sportsbook max (read-only; never dual-write).
+  if (opts?.bookMaxByOutId) {
+    const lines = formatOutBookMaxLines(record, opts.bookMaxByOutId);
+    for (const row of lines) {
+      blocks.push(blockParagraph(`Out ${row.outNum} · ${row.book} — ${row.line}`));
+    }
+    blocks.push(blockDivider());
+  }
+
   const detailBlocks: InputRichBlock[] = [];
   for (const out of vm.outs) {
     const fields: InputRichBlock[] = [];
@@ -222,24 +247,30 @@ export function buildSeatCapitalDeskRichBlocks(
 }
 
 /** Bot API 10.1 extended HTML for sendRichMessage / editMessageText rich_message. */
-export function formatSeatCapitalDeskRichHtml(record: SeatIntakeRecord, now = new Date()): string {
-  return serializeRichBlocksToHtml(buildSeatCapitalDeskRichBlocks(record, now));
+export function formatSeatCapitalDeskRichHtml(
+  record: SeatIntakeRecord,
+  now = new Date(),
+  opts?: SeatCapitalDeskRenderOpts
+): string {
+  return serializeRichBlocksToHtml(buildSeatCapitalDeskRichBlocks(record, now, opts));
 }
 
 /** `InputRichMessage.blocks` (preferred) — typed RichText tree. */
 export function buildSeatCapitalDeskRichMessage(
   record: SeatIntakeRecord,
-  now = new Date()
+  now = new Date(),
+  opts?: SeatCapitalDeskRenderOpts
 ): InputRichMessage {
-  return buildInputRichMessageBlocks(buildSeatCapitalDeskRichBlocks(record, now));
+  return buildInputRichMessageBlocks(buildSeatCapitalDeskRichBlocks(record, now, opts));
 }
 
 /** `InputRichMessage.html` — fallback for servers that reject `blocks`. */
 export function buildSeatCapitalDeskRichMessageHtml(
   record: SeatIntakeRecord,
-  now = new Date()
+  now = new Date(),
+  opts?: SeatCapitalDeskRenderOpts
 ): InputRichMessage {
-  return buildInputRichMessageHtml(formatSeatCapitalDeskRichHtml(record, now));
+  return buildInputRichMessageHtml(formatSeatCapitalDeskRichHtml(record, now, opts));
 }
 
 export { buildSeatDeskRootMarkup as buildSeatDeskReplyMarkup } from './seat-desk-markup.ts';
@@ -288,6 +319,12 @@ export async function publishSeatCapitalDesk(
   let created = false;
   let renderMode: 'rich' | 'legacy' = 'legacy';
 
+  // Best-effort: surface last-known book max vs desk maxBet (read-only).
+  const bookMaxByOutId = tryLoadBookMaxComparesForSeatDesk(record) ?? undefined;
+  const renderOpts: SeatCapitalDeskRenderOpts | undefined = bookMaxByOutId
+    ? { bookMaxByOutId }
+    : undefined;
+
   const canEditExisting =
     existing?.messageId && existing.chatId === meta.chatId && existing.messageThreadId === threadId;
 
@@ -309,10 +346,10 @@ export async function publishSeatCapitalDesk(
   if (preferRich) {
     // 1. Prefer typed `blocks` — falls back to extended HTML, then legacy <pre>
     //    below, whenever the server soft-rejects the payload (old Bot API / disabled feature).
-    let attempt = await sendOrEditRich(buildSeatCapitalDeskRichMessage(record, now));
+    let attempt = await sendOrEditRich(buildSeatCapitalDeskRichMessage(record, now, renderOpts));
 
     if (!attempt.ok && isRichMessageUnsupported(attempt)) {
-      attempt = await sendOrEditRich(buildSeatCapitalDeskRichMessageHtml(record, now));
+      attempt = await sendOrEditRich(buildSeatCapitalDeskRichMessageHtml(record, now, renderOpts));
     }
 
     if (attempt.ok || (canEditExisting && isTelegramMessageNotModified(attempt))) {
@@ -325,7 +362,13 @@ export async function publishSeatCapitalDesk(
   }
 
   if (renderMode === 'legacy') {
-    const text = formatSeatCapitalDeskHtml(record, now);
+    let text = formatSeatCapitalDeskHtml(record, now);
+    if (bookMaxByOutId) {
+      const lines = formatOutBookMaxLines(record, bookMaxByOutId);
+      if (lines.length) {
+        text = `${text}\n\n${lines.map(l => `<i>Out ${l.outNum} · ${escapeHtml(l.book)} — ${escapeHtml(l.line)}</i>`).join('\n')}`;
+      }
+    }
     if (canEditExisting) {
       const edited = await editTelegramMessage(opts.token, {
         chatId: meta.chatId,

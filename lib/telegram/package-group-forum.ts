@@ -367,6 +367,14 @@ export function threadIdForPackageGroupOutboxTopic(
 ): number | undefined {
   if (eventType === 'partner.welcome') return undefined;
 
+  // Limit raises land next to seat capital desk traffic (Liquidity/Outs), then Alerts.
+  if (eventType === 'account.limit_raise') {
+    for (const key of ['liquidity/outs', 'alerts', 'ops'] as const) {
+      const id = topics[key];
+      if (id != null && id > 0) return id;
+    }
+  }
+
   const direct = topics[topic.toLowerCase()];
   if (direct != null && direct > 0) return direct;
 

@@ -1,7 +1,7 @@
 /**
  * Tree flow card — thin caller of tree.v1.
  */
-import { asTreeNodeId } from '../../../types/branded/operations.ts';
+import { asTreeNodeId } from '../../brands.ts';
 import { renderForNode } from '../../templates/render.ts';
 import { t } from '../i18n.ts';
 import type { FlowContext, FlowInput, FlowOutput } from '../types.ts';

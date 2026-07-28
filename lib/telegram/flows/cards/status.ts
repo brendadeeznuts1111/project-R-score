@@ -1,7 +1,7 @@
 /**
  * Status flow card — thin caller of status.v1.
  */
-import { asTreeNodeId } from '../../../types/branded/operations.ts';
+import { asTreeNodeId } from '../../brands.ts';
 import { renderForNode, resolveTemplateIdForCard } from '../../templates/render.ts';
 import { t } from '../i18n.ts';
 import type { FlowContext, FlowInput, FlowOutput } from '../types.ts';

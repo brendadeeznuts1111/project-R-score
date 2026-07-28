@@ -9,3 +9,4 @@ export * from './enforcement.ts';
 export * from './return-efficiency.ts';
 export * from './bake-proof.ts';
 export * from './export-snapshot.ts';
+export * from './limit-raises-join.ts';

@@ -189,6 +189,9 @@ chargebacks / volatility **lower** score). SSOT: `MULTI_FACTOR_WEIGHTS` /
   (alerts may fan out; desk UI is `/portal/limits/`)
 - [`partner-onboarding-package.md`](partner-onboarding-package.md) — onboard
   package · flow cards before raises land
+- **Package-group forum:** `enqueueLimitRaiseAlert` dual-routes ops `alerts` + optional package forum mirror (Liquidity/Outs → Alerts) when `package_group_registry` resolves for the tree node.
+- **Seat desk:** maxBet display compares to last-known book max (`seat-desk-book-max.ts`) — never dual-writes desk terms into `partner_account_limits`.
+- **TOC board:** pure join `limitChanges.node_id` ↔ partnerCode/callSign/treeNodeId (`lib/toc-ops/limit-raises-join.ts`); ambiguous keys stay aggregate-only.
 - [`seat-capital-desk.md`](seat-capital-desk.md) — per-out **maxBet** /
   freeplay desk vocabulary (terms, not raise detection)
 - [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)

@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import {
+  enqueueLimitRaiseAlert,
   enqueueOpsChannelEvent,
   processChannelOutbox,
   queryOpsChannelHealth,
@@ -20,6 +21,7 @@ import { withTocMetrics } from '../lib/toc-ops/export-snapshot.ts';
 import { buildDemoTocOpsFixture } from '../lib/toc-ops/fixture.ts';
 import { postTocSoftBalance } from '../lib/operations/toc-soft-balance.ts';
 import { parseOpsChannelTopic } from '../lib/channels/ops-channel-event.ts';
+import { asTreeNodeId } from '../lib/types/branded.ts';
 
 describe('ops channel outbox', () => {
   test('enqueue + process populates local channel store', async () => {
@@ -302,6 +304,143 @@ describe('ops channel outbox', () => {
       db.close();
       await rm(dir, { recursive: true, force: true });
     }
+  });
+
+  test('enqueueLimitRaiseAlert dual-routes ops alerts + package-group forum', async () => {
+    const dir = join(tmpdir(), `outbox-limit-raise-${Date.now()}`);
+    const forumsDir = join(dir, 'forums');
+    await mkdir(forumsDir, { recursive: true });
+    await writeFile(
+      join(forumsDir, 'ASH.json'),
+      `${JSON.stringify({
+        partnerCode: 'ASH',
+        title: 'TOC Ops · ASH · Ash Ops',
+        displayName: 'Ash Ops',
+        chatId: '-100777888999',
+        chatRef: 'tg:chat:-100777888999',
+        inviteLink: '',
+        topics: [
+          { title: 'General', messageThreadId: 1 },
+          { title: 'Ops', messageThreadId: 12 },
+          { title: 'Alerts', messageThreadId: 11 },
+          { title: 'Liquidity/Outs', messageThreadId: 18 },
+          { title: 'Accounting', messageThreadId: 19 },
+        ],
+        topicsThreadMap: {
+          general: 1,
+          ops: 12,
+          alerts: 11,
+          'liquidity/outs': 18,
+          accounting: 19,
+        },
+        iconUploaded: true,
+        createdAt: '2026-01-01T00:00:00.000Z',
+      })}\n`
+    );
+
+    const prevChat = Bun.env.TELEGRAM_OPS_CHAT_ID;
+    const prevTopics = Bun.env.TELEGRAM_TOPICS;
+    const prevSurfaces = Bun.env.TELEGRAM_SURFACES;
+    Bun.env.TELEGRAM_OPS_CHAT_ID = '-100999';
+    Bun.env.TELEGRAM_TOPICS = JSON.stringify({ alerts: 12 });
+    delete Bun.env.TELEGRAM_SURFACES;
+
+    const bodies: Record<string, unknown>[] = [];
+    const origFetch = globalThis.fetch;
+    globalThis.fetch = (async (_input: RequestInfo, init?: RequestInit) => {
+      bodies.push(JSON.parse(String(init?.body)) as Record<string, unknown>);
+      return new Response(JSON.stringify({ ok: true, result: { message_id: 1 } }), {
+        status: 200,
+      });
+    }) as typeof fetch;
+
+    const db = openOperationsDb({ path: ':memory:' });
+    const nodeId = asTreeNodeId('node-ash-001');
+    db.run(
+      `INSERT INTO tree_nodes (id, type, name, call_sign, active, created_at)
+       VALUES ($id, 'agent', 'Ash Seat', 'ASH-001', 1, datetime('now'))`,
+      { $id: nodeId as string }
+    );
+    upsertPackageGroupRegistry(db, {
+      partnerCode: 'ASH',
+      chatId: '-100777888999',
+      displayName: 'Ash Ops',
+    });
+
+    enqueueLimitRaiseAlert(db, {
+      treeNodeId: nodeId,
+      sportsbook: 'draftkings',
+      sportId: 'nba',
+      marketId: 'spreads',
+      betType: 'straight',
+      previousMax: 500,
+      newLimit: 1500,
+    });
+
+    const rows = db
+      .query(
+        `SELECT idempotency_key, projectors, payload_json FROM ops_channel_outbox
+         WHERE event_type = 'account.limit_raise' ORDER BY idempotency_key`
+      )
+      .all() as Array<{ idempotency_key: string; projectors: string; payload_json: string }>;
+    expect(rows).toHaveLength(2);
+    const opsRow = rows.find(r => !r.idempotency_key.endsWith(':pkg'));
+    const pkgRow = rows.find(r => r.idempotency_key.endsWith(':pkg'));
+    expect(opsRow?.projectors).toContain('r2');
+    expect(opsRow?.projectors).toContain('telegram');
+    expect(pkgRow?.projectors).toBe('telegram');
+    const pkgPayload = JSON.parse(pkgRow!.payload_json) as {
+      telegramId: string; // brand-ok — Telegram chat_id wire
+      packageGroupForum: boolean;
+      partnerCode: string;
+    };
+    expect(pkgPayload.telegramId).toBe('-100777888999');
+    expect(pkgPayload.packageGroupForum).toBe(true);
+    expect(pkgPayload.partnerCode).toBe('ASH');
+
+    try {
+      const result = await processChannelOutbox(db, {
+        deliver: true,
+        telegramToken: 'test-token-abcdef',
+        forumsMetaDir: forumsDir,
+      });
+      expect(result.sent).toBe(2);
+      // Ops hub + package-group forum (Liquidity/Outs thread for limit_raise)
+      const chatIds = bodies.map(b => b.chat_id).sort();
+      expect(chatIds).toEqual(['-100777888999', '-100999']);
+      const pkgBody = bodies.find(b => b.chat_id === '-100777888999');
+      expect(pkgBody?.message_thread_id).toBe(18);
+      const opsBody = bodies.find(b => b.chat_id === '-100999');
+      expect(opsBody?.message_thread_id).toBe(12);
+    } finally {
+      globalThis.fetch = origFetch;
+      if (prevChat === undefined) delete Bun.env.TELEGRAM_OPS_CHAT_ID;
+      else Bun.env.TELEGRAM_OPS_CHAT_ID = prevChat;
+      if (prevTopics === undefined) delete Bun.env.TELEGRAM_TOPICS;
+      else Bun.env.TELEGRAM_TOPICS = prevTopics;
+      if (prevSurfaces === undefined) delete Bun.env.TELEGRAM_SURFACES;
+      else Bun.env.TELEGRAM_SURFACES = prevSurfaces;
+      db.close();
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  test('enqueueLimitRaiseAlert skips package-group mirror when unresolved', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    enqueueLimitRaiseAlert(db, {
+      treeNodeId: asTreeNodeId('orphan-node'),
+      sportsbook: 'fanduel',
+      sportId: 'mlb',
+      marketId: 'totals',
+      betType: 'pregame',
+      previousMax: 100,
+      newLimit: 200,
+    });
+    const n = db
+      .query(`SELECT COUNT(*) AS n FROM ops_channel_outbox WHERE event_type = 'account.limit_raise'`)
+      .get() as { n: number };
+    expect(n.n).toBe(1);
+    db.close();
   });
 
   test('skips pending rows until available_at', async () => {
