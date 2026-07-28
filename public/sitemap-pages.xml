@@ -2,62 +2,44 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://wiki.factory-wager.com/</loc>
-    <lastmod>2026-07-28T02:30:00Z</lastmod>
+    <lastmod>2026-07-28T03:00:00Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://wiki.factory-wager.com/wiki-index.html</loc>
-    <lastmod>2026-07-28T02:30:00Z</lastmod>
+    <lastmod>2026-07-28T03:00:00Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://wiki.factory-wager.com/registry-index.html</loc>
-    <lastmod>2026-07-28T02:30:00Z</lastmod>
+    <lastmod>2026-07-28T03:00:00Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://wiki.factory-wager.com/app-index.html</loc>
-    <lastmod>2026-02-07T20:26:48-06:00</lastmod>
+    <loc>https://wiki.factory-wager.com/AGENTS.html</loc>
+    <lastmod>2026-07-28T03:00:00Z</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://wiki.factory-wager.com/api-index.html</loc>
-    <lastmod>2026-02-07T20:26:48-06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wiki.factory-wager.com/dashboard-index.html</loc>
-    <lastmod>2026-02-08T23:59:37.585Z</lastmod>
+    <loc>https://wiki.factory-wager.com/docs/</loc>
+    <lastmod>2026-07-28T03:00:00Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wiki.factory-wager.com/rss-index.html</loc>
-    <lastmod>2026-02-07T20:26:48-06:00</lastmod>
-    <changefreq>daily</changefreq>
+    <loc>https://wiki.factory-wager.com/docs/harness/</loc>
+    <lastmod>2026-07-28T03:00:00Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://wiki.factory-wager.com/docs/organization/</loc>
+    <lastmod>2026-07-28T03:00:00Z</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://wiki.factory-wager.com/admin-index.html</loc>
-    <lastmod>2026-02-07T20:26:48-06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://wiki.factory-wager.com/storage-index.html</loc>
-    <lastmod>2026-02-07T20:26:48-06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://wiki.factory-wager.com/staging-index.html</loc>
-    <lastmod>2026-02-07T20:26:48-06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.4</priority>
   </url>
 </urlset>

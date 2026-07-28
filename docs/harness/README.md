@@ -1,6 +1,6 @@
 # FactoryWager harness index (JIT)
 
-Wiki hub: [`wiki-index.md`](../../wiki-index.md) · live surfaces: [`README.md`](../../README.md#live-surfaces)
+Wiki hub: [wiki index](../../wiki-index.html) · live surfaces: [Live surfaces](/#live-surfaces)
 
 Hold the model fixed; improve **context + tools**. Upstream: [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (transform ideas into our owners — do not clone their tree). Prefer **artifact** over “codebase.”
 
@@ -18,7 +18,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 
 ## When unresolved → read
 
-- Domain `*Id` / bare string IDs → [`lib/types/branded/README.md`](../../lib/types/branded/README.md) · skill `.agents/skills/branded-ids/`
+- Domain `*Id` / bare string IDs → [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) · skill `.agents/skills/branded-ids/`
 - `unknown` / decode / wire vs interior → [`docs/WIRE_BOUNDARY.md`](../WIRE_BOUNDARY.md)
 - Bun API usage / `@see` refs → `bun tools/bun-doc-refs.ts suggest "<api>"` · [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md)
 - Install / bunfig / machine Bun → [`docs/UNIFIED.md`](../UNIFIED.md)
@@ -37,23 +37,23 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - Code quality tenants (types · coverage · orphans · complexity) → `bun run test:code-quality` · [`code-quality.md`](code-quality.md)
 - Bun harness control plane (`noOrphans`, freshRerun timeout, `--smol`, stdin vs `bun run -`) → [`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md#harness-control-plane) · workspace `bunfig.toml` `[run]`
 - CI / deploy runbooks → `bun run test:ci-deploy` · [`ci-deploy.md`](ci-deploy.md) · claim `ci-deploy-runbooks`
-- Cloudflare / R2 / Pages (`project-r-score`) → `bun run cloudflare:env` · [`config/r2-env.ts`](../../config/r2-env.ts) · [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · claim `cloudflare-pages-env-ssot` · `bun test tests/r2-env.test.ts`
+- Cloudflare / R2 / Pages (`project-r-score`) → `bun run cloudflare:env` · [`config/r2-env.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/r2-env.ts) · [`tenants/cloudflare-pages.md`](tenants/cloudflare-pages.md) · claim `cloudflare-pages-env-ssot` · `bun test tests/r2-env.test.ts`
 - Cloudflare Access SSO / portal identity → `bun run cloudflare:access:verify` · [`tenants/cloudflare-access.md`](tenants/cloudflare-access.md) · `.cloudflare-access.yml` (`scoped: true`)
 - Install-verify WebView journey (`install-verify-journey`) → `bun run docs:install-verify` · [`install-verify.md`](install-verify.md) · `bun run test:install-verify`
 - Search governance WebView journey (`search-governance-basic`) → `bun run docs:search-governance` · [`search-governance.md`](search-governance.md) · `bun run test:search-governance`
 - Fresh-rerun (claim re-proof before merge) → `bun run docs:fresh-rerun` · [`FRESH-RERUN.md`](FRESH-RERUN.md)
 - Claim discovery questionnaire (new claims) → `bun run docs:claim-discovery` · [`CLAIM-DISCOVERY.md`](CLAIM-DISCOVERY.md)
 - Ops summary / portal confusion (two pipelines, `source` switch) → `bun run docs:ops-summary-endpoint` · [`ops-summary-endpoint.md`](ops-summary-endpoint.md) · `bun run ops:diagnose`
-- TOC Ops fixture (Drum / rails / WARMED / Gate 12 on Pages) → `bun run ops:seed:toc` · [`tenants/toc-ops.md`](tenants/toc-ops.md) · `/portal/toc/` · surface map (channels/rails/phones/ROI/bots vs MCP) · `bun run test:toc-ops` · [`tests/toc-ops/README.md`](../../tests/toc-ops/README.md)
+- TOC Ops fixture (Drum / rails / WARMED / Gate 12 on Pages) → `bun run ops:seed:toc` · [`tenants/toc-ops.md`](tenants/toc-ops.md) · `/portal/toc/` · surface map (channels/rails/phones/ROI/bots vs MCP) · `bun run test:toc-ops` · [`tests/toc-ops/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/toc-ops/README.md)
 - Ops loop throughput (dispatch → gate → settle → channels) → `bun run ops:loop:baseline` / `ops:loop:post` / `ops:loop:live` / `ops:loop:backfill` / `ops:outbox:requeue` · [`tenants/ops-loop-throughput.md`](tenants/ops-loop-throughput.md) · claim `ops-loop-throughput` · `bun test tests/ops-loop-hardening.test.ts` · note: LCR is attribution; use `--drain --r2` for durable proof (`projectorBackend`)
 - Partner deep identity (cellphone · profile · seat · ChatChannelMeta · templates) → [`tenants/partner-onboarding-package.md`](tenants/partner-onboarding-package.md) · `bun tools/onboard-partner-package.ts ASH-001 --dry-run` · `bun run telegram:link-chat -- ASH-001 tg:chat:…` · `bun test tests/onboard-partner-package.test.ts tests/telegram-templates.test.ts`
 - Partner package group handshake (factory ↔ ct) → [`tenants/partner-package-group-handshake.md`](tenants/partner-package-group-handshake.md) · `bun run telegram:handshake:catalog` · `bun run test:telegram-handshake`
-- Factory Telegram (token · templates · ChatChannelMeta · flow cards · surfaces) → `bun run telegram:verify` · `telegram:ops:consume` · `bun run telegram:surfaces:pipeline` · [`tenants/telegram-factory.md`](tenants/telegram-factory.md) · [`lib/telegram/templates/`](../../lib/telegram/templates/) · `bun test tests/telegram-flows.test.ts tests/telegram-templates.test.ts`
-- Stale / similar naming references (planes, env aliases) → `bun run docs:reference-discovery` · [`.agents/skills/reference-discovery/SKILL.md`](../../.agents/skills/reference-discovery/SKILL.md) · `bun run reference:discover:check` · `bun run discover:compose:check` · compose with [`.agents/skills/audit-gap-close/SKILL.md`](../../.agents/skills/audit-gap-close/SKILL.md) · `bun run audit:verify`
-- Public plane (portal · registry bake · `/registry/` refs) → [`tenants/public-plane.md`](tenants/public-plane.md) · [`.agents/skills/public-discovery/SKILL.md`](../../.agents/skills/public-discovery/SKILL.md) · [`.agents/skills/public-audit-gap-close/SKILL.md`](../../.agents/skills/public-audit-gap-close/SKILL.md) · `bun run public:audit:verify` · `bun run verify:portal:static`
+- Factory Telegram (token · templates · ChatChannelMeta · flow cards · surfaces) → `bun run telegram:verify` · `telegram:ops:consume` · `bun run telegram:surfaces:pipeline` · [`tenants/telegram-factory.md`](tenants/telegram-factory.md) · [`lib/telegram/templates/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/telegram/templates) · `bun test tests/telegram-flows.test.ts tests/telegram-templates.test.ts`
+- Stale / similar naming references (planes, env aliases) → `bun run docs:reference-discovery` · [`.agents/skills/reference-discovery/SKILL.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.agents/skills/reference-discovery/SKILL.md) · `bun run reference:discover:check` · `bun run discover:compose:check` · compose with [`.agents/skills/audit-gap-close/SKILL.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.agents/skills/audit-gap-close/SKILL.md) · `bun run audit:verify`
+- Public plane (portal · registry bake · `/registry/` refs) → [`tenants/public-plane.md`](tenants/public-plane.md) · [`.agents/skills/public-discovery/SKILL.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.agents/skills/public-discovery/SKILL.md) · [`.agents/skills/public-audit-gap-close/SKILL.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.agents/skills/public-audit-gap-close/SKILL.md) · `bun run public:audit:verify` · `bun run verify:portal:static`
 - Compliance board (MA/NJ mock · enhancements · shadow · HMAC) → `bun run compliance:bake` / `compliance:verify` · owned by `ops:snapshot` companion · [`tenants/compliance-portal.md`](tenants/compliance-portal.md) · `REPORT_SIGNING_SECRET` in [`tenants/proton-integration.md`](tenants/proton-integration.md) · suite: bake · health-artifact · enhancements · state-http · portal-health-edge · monitoring-enrich · routes · diagnose · weave
-- Improve the harness itself → [`.agents/skills/harness-improve/SKILL.md`](../../.agents/skills/harness-improve/SKILL.md)
-- Coding standards (full) → [`.custom-instructions.md`](../../.custom-instructions.md)
+- Improve the harness itself → [`.agents/skills/harness-improve/SKILL.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.agents/skills/harness-improve/SKILL.md)
+- Coding standards (full) → [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)
 
 ## Invariants (always enforced)
 
@@ -68,7 +68,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - **`github-repository-ref-boundaries`** — Actions → git → `CANONICAL_REMOTES`  
   *Ratchet* → `bun test tests/github-repository-ref.test.ts` · [`AUTHORITY.md`](AUTHORITY.md)
 - **`macros-embed-boundaries`** — bundle-time macro inlining  
-  *Ratchet* → `bun test tests/macros/embed-commit.test.ts` · [`lib/macros/README.md`](../../lib/macros/README.md)
+  *Ratchet* → `bun test tests/macros/embed-commit.test.ts` · [`lib/macros/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/macros/README.md)
 - `bun-shell-boundaries` → `bun test tests/fixtures/bun-shell/`
 - `fs-native-boundaries` → `bun test tests/fs-bun.test.ts tests/bun-glob-scan.test.ts`
 - `security-hash-boundaries` → `bun test tests/fixtures/security-hash/`
@@ -88,7 +88,7 @@ Orthogonal to gates: prose is a terminal-readable routing layer; evidence lives 
 - **Audit findings + concepts (sibling SSOT)** — hashed evidence + catalog pages, not BunToken  
   *Ratchet* → claim `audit-findings-catalog` · `bun run audit:verify` · pre-commit + `ci:harness` · [`docs/audit/README.md`](../audit/README.md)
 - **`factory-registry-cli-v1`** — R2 artifact registry + CLI (publish, install, list, search, readme)  
-  *Ratchet* → `bun test tests/registry.test.ts tests/cli.test.ts` · claim `factory-registry-cli-v1` · [`lib/factory/`](../../lib/factory/)
+  *Ratchet* → `bun test tests/registry.test.ts tests/cli.test.ts` · claim `factory-registry-cli-v1` · [`lib/factory/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/factory)
 - **`factory-registry-pages-proxy-v1`** — Pages `/api/registry` R2 binding proxy (allowlisted keys, fail-closed)  
   *Ratchet* → `bun test tests/registry-pages-function.test.ts` · claim `factory-registry-pages-proxy-v1` · [`functions/api/registry/`](../../functions/api/registry/)
 - **Proof journeys** — claim kind matches evidence  
@@ -184,7 +184,7 @@ bun run build:defines           # AST --define BUILD_* + DEBUG=false (prod DCE);
 #   bun run build:defines:compile   # standalone dist/fw-build-info
 ```
 
-`test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](../../scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--isolate` / `--parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel) · [`--shard`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) · [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
+`test:affected` = workspaces; `test:changed` = import-graph ([`bun-test-changed.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/scripts/bun-test-changed.ts)). Empty set exits 0. Docs: [v1.3.13 `--isolate` / `--parallel`](https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel) · [`--shard`](https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs) · [`--changed`](https://bun.com/blog/bun-v1.3.13#bun-test-changed).
 
 Terminal markdown: static files via `bun ./file.md`; live CLIs via `ansiMarkdown` / `Bun.markdown.ansi` ([`docs/BUN_NATIVE_CAPABILITIES.md`](../BUN_NATIVE_CAPABILITIES.md) · [markdown ANSI](https://bun.com/docs/runtime/markdown#ansi-terminal-output)). Opt-in inspect family: `bun run harness:status -- --table` ([`Bun.inspect`](https://bun.com/docs/runtime/utils#bun-inspect) · [`custom`](https://bun.com/docs/runtime/utils#bun-inspect-custom) · [`table`](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)). Actions 0-step / billing checks stay muted; `--show-actions-noise` to show. When Actions is offline, local merge proof remains `bun run ci:core` ([AUTHORITY.md](AUTHORITY.md)).
 

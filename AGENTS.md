@@ -2,7 +2,7 @@
 
 AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 
-**Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote only — do not default-push there). Runtime identity: [`lib/github-repository-ref.ts`](lib/github-repository-ref.ts) (`owner`/`name`/`host`/`remote` — not `REPO_URL`); parts SSOT in [`CANONICAL_REMOTES`](lib/docs/repo-docs.ts).
+**Git remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score) (this monorepo). `cascade` → private nested product `cascade-mover-v3` (git remote only — do not default-push there). Runtime identity: [`lib/github-repository-ref.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/github-repository-ref.ts) (`owner`/`name`/`host`/`remote` — not `REPO_URL`); parts SSOT in [`CANONICAL_REMOTES`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts).
 
 **Remote SSH:** Reasonix remote hosts live in `~/.reasonix/config.toml` under `[remote]`. Active: `factorywager-staging` (internal.staging, `~/.ssh/id_ed25519`, workspace `~/Projects`). `cloudflare-pages` (API-based, no SSH — deploy via `bash scripts/cloudflare-pages-deploy.sh`). Cascade Mover host is placeholder (uncomment when IP known). Tunnel: `scripts/cloudflared-reasonix.yml` → `reasonix.factory-wager.com` — config exists in-repo but **not installed** on this machine (no `~/.cloudflared/config.yml`, no `reasonix-serve.json` credentials, hostname doesn't resolve); real tunnel inventory: `docs/harness/tenants/tunnel-inventory.md`. CLI: `reasonix remote test/connect/list`. First-time bootstrap: `bun run remote:setup`. Reasonix binary: `/Applications/Reasonix.app/Contents/MacOS/reasonix`.
 
@@ -13,44 +13,44 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Role | Doc |
 |------|-----|
 | This file (agent entry) | [`AGENTS.md`](AGENTS.md) |
-| Human hub / wiki homepage | [`README.md`](README.md) · [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
+| Human hub / wiki homepage | [`README.md`](/) · [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
 | Wiki full index | [`wiki-index.md`](wiki-index.md) — portal boards · registry · tenants · proof loop |
 | Registry index | [`registry-index.md`](registry-index.md) — registry bake + portal consumer map |
 | Full agent guide | [`docs/AGENTS.md`](docs/AGENTS.md) (aligned to this entry + UNIFIED / WIRE_BOUNDARY) |
-| Harness JIT index | [`docs/harness/README.md`](docs/harness/README.md) (when NFR unresolved → one owner) |
+| Harness JIT index | [`docs/harness/README.md`](docs/harness/) (when NFR unresolved → one owner) |
 | Authority / lanes | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) |
 | Repository review (JIT) | [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md) |
 | Proof / install journey | [`docs/harness/PROOF.md`](docs/harness/PROOF.md) · `bun run proof:install` |
-| Docs index | [`docs/README.md`](docs/README.md) |
-| Human hub | [`README.md`](README.md) |
+| Docs index | [`docs/README.md`](docs/) |
+| Human hub | [`README.md`](/) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
-| Coding standards | [`.custom-instructions.md`](.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
+| Coding standards | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
 | Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation (static UI) | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `bun run public:audit:verify` · [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) · `serve:public:hot` |
 | TOC Ops portal board (fixture) | [`docs/harness/tenants/toc-ops.md`](docs/harness/tenants/toc-ops.md) · `/portal/toc/` · `bun run ops:seed:toc` · `bun run test:toc-ops` |
 | Ops loop throughput | [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) · `bun run ops:loop:baseline` / `ops:loop:post` / `ops:outbox:requeue` · claim `ops-loop-throughput` |
-| Factory Telegram | [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` · `telegram:ops:consume` · handshake: [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · `telegram:handshake:catalog` · [`lib/telegram/`](lib/telegram/) |
+| Factory Telegram | [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` · `telegram:ops:consume` · handshake: [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · `telegram:handshake:catalog` · [`lib/telegram/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/telegram/) |
 | Seat capital desk | [`docs/harness/tenants/seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) · `bun run seat:desk:refresh` · `seat:desk:topic-prompts` · `telegram:package-group:accounting` |
 | Compliance portal (MA/NJ) | [`docs/harness/tenants/compliance-portal.md`](docs/harness/tenants/compliance-portal.md) · `/portal/compliance/` · `bun run compliance:bake` / `compliance:verify` |
-| Identity / auth (Phase 0–2b) | [`lib/identity/README.md`](lib/identity/README.md) · lockout · anomaly · geo · password strength · JIT |
+| Identity / auth (Phase 0–2b) | [`lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) · lockout · anomaly · geo · password strength · JIT |
 | Ops snapshot / registry bake | [`docs/harness/tenants/ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) · `bun run ops:snapshot` |
 | Proton / vault deploy | [`docs/harness/tenants/proton-integration.md`](docs/harness/tenants/proton-integration.md) · `bun run proton:inject:factorywager:reasonix` |
 | Platform routing (local vs Pages) | [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run check:routes` · `bun run verify:pages-edge` |
 | Bun native capabilities | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) (WebView, markdown.ansi, Terminal/PTY, Bun.Image, cron, UDP) |
-| Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · [`lib/docs/docs-artifact-paths.ts`](lib/docs/docs-artifact-paths.ts) (`docs:refresh:fast` daily · `docs:feeds:refresh` · full `docs:refresh`) |
-| TokenRef (interior) / BunToken (export) | [`lib/docs/token-ref.ts`](lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](lib/docs/bun-token.ts) |
-| Projects triage | [`projects/README.md`](projects/README.md) |
-| Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) |
-| Cloudflare / R2 / Pages | [`config/r2-env.ts`](config/r2-env.ts) · `bun run cloudflare:env` / `:assert` / `:assert-apex` / `:assert-live` / `:validate` · `cloudflare:preflight` · `cloudflare:deploy:verify` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
+| Bun token/catalog operate | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) · [`lib/docs/docs-artifact-paths.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/docs-artifact-paths.ts) (`docs:refresh:fast` daily · `docs:feeds:refresh` · full `docs:refresh`) |
+| TokenRef (interior) / BunToken (export) | [`lib/docs/token-ref.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/token-ref.ts) · [`lib/docs/bun-token.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/bun-token.ts) |
+| Projects triage | [`projects/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/projects/README.md) |
+| Path SSOT (code) | [`lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) |
+| Cloudflare / R2 / Pages | [`config/r2-env.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/r2-env.ts) · `bun run cloudflare:env` / `:assert` / `:assert-apex` / `:assert-live` / `:validate` · `cloudflare:preflight` · `cloudflare:deploy:verify` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
 
 ## Communication precision
 
 Do not append an unrequested caveat, counterargument, or moralizing endcap to a sharp claim merely to demonstrate balance. If a boundary condition changes the truth of the claim, put it in the mechanism or scope the claim correctly. If it does not, cut it. Accuracy belongs in the argument; model self-protection does not.
 
-**Terminology (harness):** prefer **artifact** over **codebase** for what is maintained, delivered, or proven; use **repository** / **source tree** for the git tree. Domain-valued strings use **brands**, not bare `string`, after the boundary — see [`.custom-instructions.md`](.custom-instructions.md) and [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering).
+**Terminology (harness):** prefer **artifact** over **codebase** for what is maintained, delivered, or proven; use **repository** / **source tree** for the git tree. Domain-valued strings use **brands**, not bare `string`, after the boundary — see [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) and [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering).
 
 ## Branded IDs are mandatory (agents)
 
@@ -70,7 +70,7 @@ bun run check:brands                   # repo-wide (baseline may grandfather leg
 bun tools/branded-id-check.ts --staged --strict   # what pre-commit runs on your diff
 ```
 
-Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/types/branded/README.md`](lib/types/branded/README.md). Manifest: [`lib/types/brand-manifest.json`](lib/types/brand-manifest.json). Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/). Intentional opaque passthrough only: `// brand-ok` on that line.
+Import brands from [`lib/types/branded.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded.ts). Map: [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md). Manifest: [`lib/types/brand-manifest.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/brand-manifest.json). Skill: [`.agents/skills/branded-ids/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.agents/skills/branded-ids/). Intentional opaque passthrough only: `// brand-ok` on that line.
 
 ### Wire boundary (parse once)
 
@@ -83,7 +83,7 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
 | Trusted `SessionId`, structs | `parse*` / `is*` / type guards |
 
 - ESLint: `harness/no-decode-unknown-outside-boundary` (**error**), `harness/no-unknown-function-param` (**error** on harness paths)
-- Code: [`config/eslint/plugin-harness/boundary.ts`](config/eslint/plugin-harness/boundary.ts) (`BOUNDARY_POLICY`)
+- Code: [`config/eslint/plugin-harness/boundary.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/eslint/plugin-harness/boundary.ts) (`BOUNDARY_POLICY`)
 - Config: [`eslint.harness.config.ts`](eslint.harness.config.ts)
 - Thesis: [domain-modeling](https://github.com/lopopolo/harness-engineering/blob/trunk/docs/domain-modeling/README.md) · [parse, don’t validate](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/)
 - Authority / lanes: [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · status: `bun run harness:status`
@@ -93,18 +93,18 @@ Import brands from [`lib/types/branded.ts`](lib/types/branded.ts). Map: [`lib/ty
 - **Parallel lanes:** before editing, `git status` for files dirty from other sessions. Claim disjoint lanes (files/directories nobody else is touching), name the lane split in commit messages, never sweep another session's dirty files into your commit (hook-generated formatting re-wraps excepted).
 - **Delivery default:** close every batch with a conventional commit + push; the pre-commit gates (doc-map when SSOT docs staged, doc-refs, branded IDs staged + smart) must pass. Do not leave verified work uncommitted.
 - **Task routing:**
-  - Brands → [`lib/types/branded/README.md`](lib/types/branded/README.md) + [`lib/types/branded.ts`](lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
+  - Brands → [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) + [`lib/types/branded.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded.ts) + `bun run check:brands` (**mandatory** for any `*Id` field)
   - Wire / `unknown` / decode → [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
-  - Harness JIT / proof / authority / review → [`docs/harness/README.md`](docs/harness/README.md) · [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md) · `bun run harness:status` · `bun run proof:install`
+  - Harness JIT / proof / authority / review → [`docs/harness/README.md`](docs/harness/) · [`docs/harness/REVIEW.md`](docs/harness/REVIEW.md) · `bun run harness:status` · `bun run proof:install`
   - Ops loop / outbox → [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) · `bun run ops:settle` · `ops:outbox:requeue` · `bun test tests/ops-loop-hardening.test.ts`
-  - Factory Telegram → [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `loadTelegramEnv` in [`lib/telegram/telegram-config.ts`](lib/telegram/telegram-config.ts) · `bun run telegram:verify` · handshake runbook [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · machine ref `bun run telegram:handshake:catalog`
+  - Factory Telegram → [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `loadTelegramEnv` in [`lib/telegram/telegram-config.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/telegram/telegram-config.ts) · `bun run telegram:verify` · handshake runbook [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · machine ref `bun run telegram:handshake:catalog`
   - Cloudflare / R2 / Pages → Canonical docs table above · `bun run cloudflare:env` · claim `cloudflare-pages-env-ssot`
-  - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts))
+  - Bun APIs → `bun tools/bun-doc-refs.ts suggest "<api>"` ([`tools/bun-doc-refs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/bun-doc-refs.ts))
   - Audit findings/concepts → `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · [`docs/audit/README.md`](docs/audit/README.md) · claim `audit-findings-catalog`
   - Doc map integrity → `bun run docs:map:check` (also pre-commit when SSOT docs staged)
-  - Verification taxonomy / proof JSON → [`lib/verification/types.ts`](lib/verification/types.ts) · [`lib/verification/README.md`](lib/verification/README.md) · [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run verify:proof-taxonomy:save` · `bun run check:release-tracker` · `bun run verify-all`
-  - Coding standards → [`.custom-instructions.md`](.custom-instructions.md)
-  - Testing → nearest `*.test.ts` / [`tests/`](tests/console-depth.test.ts) exemplar (e.g. [`tests/console-depth.test.ts`](tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](tests/wire-boundary-policy.test.ts))
+  - Verification taxonomy / proof JSON → [`lib/verification/types.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/verification/types.ts) · [`lib/verification/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/verification/README.md) · [`docs/platform-routing.md`](docs/platform-routing.md) · `bun run verify:proof-taxonomy:save` · `bun run check:release-tracker` · `bun run verify-all`
+  - Coding standards → [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)
+  - Testing → nearest `*.test.ts` / [`tests/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts) exemplar (e.g. [`tests/console-depth.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts), [`tests/wire-boundary-policy.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/wire-boundary-policy.test.ts))
 
 **Bun install policy (machine + workspace):** [`docs/UNIFIED.md`](docs/UNIFIED.md)
 
@@ -135,14 +135,14 @@ Rules:
 
 - When you use a `Bun.*` API in code, add `// @see <canonical-url>` from the `url`/`suggest` output to the file header (or run `bun tools/bun-doc-refs.ts annotate --write <files>` to do it automatically).
 - The pre-commit harness **blocks commits** whose staged files use Bun APIs without canonical refs — run the annotator and re-stage.
-- Only trust options verified against the runtime (see [`lib/console-depth.ts`](lib/console-depth.ts) header for the pattern); Bun silently ignores several Node `util.inspect`-style options.
-- Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) → [`tools/bun-docs-index.json`](tools/bun-docs-index.json) → [`tools/bun-docs-catalog.json`](tools/bun-docs-catalog.json) (NOTE/SHIP/FIX/BLOG + embedded `releaseHits`) → [`tools/bun-doc-refs.ts`](tools/bun-doc-refs.ts) `CANONICAL_REFS`. Feeds: [`tools/bun-docs-feeds.json`](tools/bun-docs-feeds.json). Refresh: `bun run docs:refresh:fast` (daily) or `bun run docs:refresh` (full).
+- Only trust options verified against the runtime (see [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) header for the pattern); Bun silently ignores several Node `util.inspect`-style options.
+- Ground truth order: [llms.txt](https://bun.com/docs/llms.txt) → [`tools/bun-docs-index.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/bun-docs-index.json) → [`tools/bun-docs-catalog.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/bun-docs-catalog.json) (NOTE/SHIP/FIX/BLOG + embedded `releaseHits`) → [`tools/bun-doc-refs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/bun-doc-refs.ts) `CANONICAL_REFS`. Feeds: [`tools/bun-docs-feeds.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/bun-docs-feeds.json). Refresh: `bun run docs:refresh:fast` (daily) or `bun run docs:refresh` (full).
 
 ## Branded ID types (harness)
 
 **Mandatory for agents.** Domain `*Id` values are never bare `string` after the boundary (see section above).
 
-**Stable import:** [`lib/types/branded.ts`](lib/types/branded.ts) · **Domains:** `lib/types/branded/{session,identity,documents,security,deployment,audit,operations}.ts` · **Manifest:** [`lib/types/brand-manifest.json`](lib/types/brand-manifest.json) · **Agent map:** [`lib/types/branded/README.md`](lib/types/branded/README.md)
+**Stable import:** [`lib/types/branded.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded.ts) · **Domains:** `lib/types/branded/{session,identity,documents,security,deployment,audit,operations}.ts` · **Manifest:** [`lib/types/brand-manifest.json`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/brand-manifest.json) · **Agent map:** [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md)
 
 Each domain module repeats the same pattern: `type` + `as*` + `try*` + `parse*` + `*_BRAND_SPECS`. Agents learn the invariant from structure.
 
@@ -164,18 +164,18 @@ bun tools/brand-manifest.ts --check              # fail if manifest stale (pre-c
 bun tools/branded-id-check.ts --write-baseline   # only when expanding detector (owners)
 ```
 
-Skill: [`.agents/skills/branded-ids/`](.agents/skills/branded-ids/) · Type proof: [`tests/branded-types.test-d.ts`](tests/branded-types.test-d.ts)
+Skill: [`.agents/skills/branded-ids/`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.agents/skills/branded-ids/) · Type proof: [`tests/branded-types.test-d.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/branded-types.test-d.ts)
 
 - Pre-commit: `--staged --strict` on **added** lines (**no** baseline — mid-line params included) + repo-wide `--smart --strict`
 - Suppress intentional dual ports / opaque wire with detector rules or `// brand-ok`
-- Credential normalize: [`lib/security/r2-credentials.ts`](lib/security/r2-credentials.ts) (soft try* merge)
+- Credential normalize: [`lib/security/r2-credentials.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/r2-credentials.ts) (soft try* merge)
 
 ## Console depth (output verbosity)
 
-Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](lib/console-depth.ts) (**wrapper** over `Bun.inspect` / `.table` / `.custom`). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Prefer wrapper helpers (`inspect` / `logDepth` / `logTable` / `inspectCustom`) over raw `console.log(obj)` / `console.table`; forward to children with `depthArgs()` / `withConsoleDepth()`. Hashing wrapper: [`lib/security/index.ts`](lib/security/index.ts) `SecurityUtils` (claim `security-hash-boundaries`). Full wrapper inventory: [`docs/harness/PROOF.md`](docs/harness/PROOF.md#bun-native-utils-wrappers) · `BUN_NATIVE_WRAPPERS` · `bun run harness:status`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work.
+Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) (**wrapper** over `Bun.inspect` / `.table` / `.custom`). Precedence: `--console-depth=N` flag > `BUN_CONSOLE_DEPTH` env (set in root `.env`) > default `4`. Prefer wrapper helpers (`inspect` / `logDepth` / `logTable` / `inspectCustom`) over raw `console.log(obj)` / `console.table`; forward to children with `depthArgs()` / `withConsoleDepth()`. Hashing wrapper: [`lib/security/index.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/security/index.ts) `SecurityUtils` (claim `security-hash-boundaries`). Full wrapper inventory: [`docs/harness/PROOF.md`](docs/harness/PROOF.md#bun-native-utils-wrappers) · `BUN_NATIVE_WRAPPERS` · `bun run harness:status`. Note: Bun's runtime does **not** read `BUN_CONSOLE_DEPTH` itself and `util.inspect.defaultOptions.depth` is a no-op in Bun — only `bun --console-depth=N` and `Bun.inspect({depth})` work.
 
 | Kind | References |
 |------|------------|
-| Repo | claim `console-depth-boundaries` · wrapper [`lib/console-depth.ts`](lib/console-depth.ts) · [`tests/console-depth.test.ts`](tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](tools/benchmarks/console-depth-perf.ts) · wrappers map [`PROOF.md`](docs/harness/PROOF.md#bun-native-utils-wrappers) · hash wrapper `security-hash-boundaries` |
+| Repo | claim `console-depth-boundaries` · wrapper [`lib/console-depth.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/console-depth.ts) · [`tests/console-depth.test.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tests/console-depth.test.ts) · [`tools/benchmarks/console-depth-perf.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/benchmarks/console-depth-perf.ts) · wrappers map [`PROOF.md`](docs/harness/PROOF.md#bun-native-utils-wrappers) · hash wrapper `security-hash-boundaries` |
 | Bun | [runtime/console](https://bun.com/docs/runtime/console) · [runtime/utils](https://bun.com/docs/runtime/utils) (`inspect` · `.table` · `.custom` · `stringWidth`) · [hashing](https://bun.com/docs/runtime/hashing) |
 | Other external | [bun-types pin](https://github.com/oven-sh/bun/tree/98f664962ffe4c6ba9b38382babc623ef0ba8693/packages/bun-types) |

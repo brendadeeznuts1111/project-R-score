@@ -90,6 +90,8 @@ Regenerate: `bun run ops:snapshot` (writes summary + taxonomy audit + routing pr
 
 Ops dashboard (`operations-dashboard.js`) renders `portal-weave.json` **`wiki`** links beside Pages surfaces. Monitoring links to the weave JSON for the same SSOT.
 
+Wiki link gate: `bun run wiki:links:check` (rewrites excluded-tree hrefs to GitHub blob URLs · `--fix`).
+
 ## TOC Ops board data flow
 
 `/portal/toc/` → `toc-dashboard.js` fetches:

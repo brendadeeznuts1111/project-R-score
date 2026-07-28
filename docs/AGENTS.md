@@ -7,8 +7,8 @@
 | Concern | Document |
 |---------|----------|
 | Operating rules / brands / wire summary | [`../AGENTS.md`](../AGENTS.md) |
-| Human hub / live surfaces | [`../README.md`](../README.md) |
-| Coding standards | [`../.custom-instructions.md`](../.custom-instructions.md) · [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) |
+| Human hub / live surfaces | [`../README.md`](/) |
+| Coding standards | [`../.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) · [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) |
 | Install / bunfig | [UNIFIED.md](./UNIFIED.md) |
 | Wire boundary (full) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
 | Bun capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) |
@@ -16,8 +16,8 @@
 | Audit findings/concepts | [audit/README.md](./audit/README.md) · `bun tools/bun-doc-refs.ts suggest --audit "<q>"` · claim `audit-findings-catalog` |
 | Import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) |
 | Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |
-| Harness JIT | [harness/README.md](./harness/README.md) · `bun run harness:status` |
-| Path SSOT | [`../lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) |
+| Harness JIT | [harness/README.md](harness/) · `bun run harness:status` |
+| Path SSOT | [`../lib/docs/repo-docs.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/repo-docs.ts) |
 | Platform routing | [platform-routing.md](./platform-routing.md) · `bun run verify:pages-edge` |
 | Portal foundation | [portal-foundation.md](./portal-foundation.md) · `bun run verify:portal:static` |
 
@@ -34,13 +34,13 @@
 | Package-group handshake | [harness/tenants/partner-package-group-handshake.md](./harness/tenants/partner-package-group-handshake.md) · `telegram:handshake:readiness --deep` |
 | Seat capital desk | [harness/tenants/seat-capital-desk.md](./harness/tenants/seat-capital-desk.md) · `test:seat-desk` |
 | Partner onboard package | [harness/tenants/partner-onboarding-package.md](./harness/tenants/partner-onboarding-package.md) |
-| Identity / auth (Phase 0–2b) | [`../lib/identity/README.md`](../lib/identity/README.md) |
+| Identity / auth (Phase 0–2b) | [`../lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) |
 
 ## Cloudflare · deploy
 
 | Concern | Document |
 |---------|----------|
-| Cloudflare / R2 / Pages | [`../config/r2-env.ts`](../config/r2-env.ts) · `bun run cloudflare:env` · [harness/tenants/cloudflare-pages.md](./harness/tenants/cloudflare-pages.md) |
+| Cloudflare / R2 / Pages | [`../config/r2-env.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/r2-env.ts) · `bun run cloudflare:env` · [harness/tenants/cloudflare-pages.md](./harness/tenants/cloudflare-pages.md) |
 | Proton / vault deploy | [harness/tenants/proton-integration.md](./harness/tenants/proton-integration.md) · `proton:inject:factorywager:reasonix` |
 | Cloudflare Access SSO | [harness/tenants/cloudflare-access.md](./harness/tenants/cloudflare-access.md) |
 

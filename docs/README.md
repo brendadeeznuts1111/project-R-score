@@ -6,15 +6,15 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 
 | Role | Path |
 |------|------|
-| Human hub | [`../README.md`](../README.md) |
-| Wiki full index | [`../wiki-index.md`](../wiki-index.md) |
-| Registry index (wiki) | [`../registry-index.md`](../registry-index.md) |
-| Agent entry | [`../AGENTS.md`](../AGENTS.md) |
+| Human hub | [Home](/) |
+| Wiki full index | [wiki index](../wiki-index.md) |
+| Registry index (wiki) | [registry index](../registry-index.md) |
+| Agent entry | [AGENTS.md](../AGENTS.md) |
 | Agent full guide | [AGENTS.md](./AGENTS.md) |
-| Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |
-| Coding standards | [`../.custom-instructions.md`](../.custom-instructions.md) · [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) |
-| Harness JIT | [harness/README.md](./harness/README.md) · `bun run harness:status` |
-| Live surfaces (wiki vs portal) | [`../README.md`](../README.md#live-surfaces) · [platform-routing.md](./platform-routing.md) |
+| Workspace map | [STRUCTURE.md](../STRUCTURE.md) |
+| Coding standards | [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) · full [custom-instructions.md](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) (repo) |
+| Harness JIT | [harness index](./harness/) · `bun run harness:status` |
+| Live surfaces (wiki vs portal) | [Live surfaces](/#live-surfaces) · [platform-routing.md](./platform-routing.md) |
 
 ## Live surfaces
 
@@ -37,7 +37,7 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Seat capital desk | [harness/tenants/seat-capital-desk.md](./harness/tenants/seat-capital-desk.md) | Telegram desk · intake · registry bake |
 | Factory Telegram | [harness/tenants/telegram-factory.md](./harness/tenants/telegram-factory.md) | surfaces · ops consume · templates |
 | Package-group handshake | [harness/tenants/partner-package-group-handshake.md](./harness/tenants/partner-package-group-handshake.md) | readiness · invite gap · 23 lanes |
-| Identity / auth subsystem | [../lib/identity/README.md](../lib/identity/README.md) | lockout · anomaly · geo · JIT |
+| Identity / auth subsystem | [../lib/identity/README.md](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) | lockout · anomaly · geo · JIT |
 | Ops snapshot / registry bake | [harness/tenants/ops-snapshot.md](./harness/tenants/ops-snapshot.md) | `ops:snapshot` · portal embeds |
 | Public plane | [harness/tenants/public-plane.md](./harness/tenants/public-plane.md) | `public:audit:verify` |
 | Proton / vault | [harness/tenants/proton-integration.md](./harness/tenants/proton-integration.md) | CF token · deploy · signing |
@@ -46,8 +46,8 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Bun runtime nits (Phase 1) | [bun-runtime-nits.md](./bun-runtime-nits.md) | inspect · streams · url · file-io |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
 | Bun native capabilities | [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) | [TOC](./BUN_NATIVE_CAPABILITIES.md#table-of-contents) |
-| Bun DX catalog | `bun run dx:catalog <id>` | SSOT [`config/bun-dx-catalog.ts`](../config/bun-dx-catalog.ts) |
-| Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · [docs-artifact-paths.ts](../lib/docs/docs-artifact-paths.ts) | `docs:refresh:fast` (daily) · `docs:feeds:refresh` · `docs:refresh` (full) |
+| Bun DX catalog | `bun run dx:catalog <id>` | SSOT [`config/bun-dx-catalog.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/bun-dx-catalog.ts) |
+| Bun token/catalog operate | [BUN_DOCS_OPERATE.md](./BUN_DOCS_OPERATE.md) · [docs-artifact-paths.ts](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/docs/docs-artifact-paths.ts) | `docs:refresh:fast` (daily) · `docs:feeds:refresh` · `docs:refresh` (full) |
 | Bun-first policy | [bun/BUN_FIRST_POLICY.md](./bun/BUN_FIRST_POLICY.md) | pin 1.4.0 |
 
 ## Live trees (only)

@@ -4,7 +4,7 @@ title: Wiki index
 
 # FactoryWager Wiki — full index
 
-Navigation hub for [wiki.factory-wager.com](https://wiki.factory-wager.com/). Homepage: [`README.md`](README.md).
+Navigation hub for [wiki.factory-wager.com](https://wiki.factory-wager.com/). Homepage: [README hub](/).
 
 **Quick jump:** [Live surfaces](#live-surfaces) · [Portal boards](#portal-boards) · [Registry](#registry-artifacts-key-bakes) · [Tenants](#harness-tenants) · [Proof loop](#operator-proof-loop)
 
@@ -12,12 +12,12 @@ Navigation hub for [wiki.factory-wager.com](https://wiki.factory-wager.com/). Ho
 
 | Role | Link |
 |------|------|
-| Human hub | [`README.md`](README.md) |
-| Docs index | [`docs/README.md`](docs/README.md) |
+| Human hub | [Home](/) |
+| Docs index | [`docs/`](docs/) |
 | Agent entry | [`AGENTS.md`](AGENTS.md) · [`docs/AGENTS.md`](docs/AGENTS.md) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
-| Harness JIT | [`docs/harness/README.md`](docs/harness/README.md) · `bun run harness:status` |
-| Coding standards | [`.custom-instructions.md`](.custom-instructions.md) |
+| Harness JIT | [`docs/harness/`](docs/harness/) · `bun run harness:status` |
+| Coding standards | [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
 
 ## Live surfaces
 
@@ -39,7 +39,7 @@ Bidirectional SSOT between GitHub Pages (this wiki) and Cloudflare Pages (portal
 | Mechanism | Role |
 |-----------|------|
 | [`portal-weave.json`](https://score.factory-wager.com/registry/portal-weave.json) | Machine cross-links: `surfaces[]`, `artifacts[]`, **`wiki[]`**, `scripts[]` |
-| [`lib/http/wiki-nav.ts`](lib/http/wiki-nav.ts) | Portal chrome wiki URL · weave `wiki[]` bake source |
+| [wiki-nav.ts](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/wiki-nav.ts) (repo) | Portal chrome wiki URL · weave `wiki[]` bake source |
 | [`registry-index.md`](registry-index.md) | Registry-focused wiki companion |
 | Portal ops dashboard | Renders weave surfaces + wiki links from JSON |
 
@@ -120,8 +120,8 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc: [`
 
 | Topic | Doc |
 |-------|-----|
-| Identity / auth | [`lib/identity/README.md`](lib/identity/README.md) · `bun test tests/identity-*.test.ts` |
-| Branded IDs | [`lib/types/branded/README.md`](lib/types/branded/README.md) |
+| Identity / auth | [`lib/identity/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/identity/README.md) · `bun test tests/identity-*.test.ts` |
+| Branded IDs | [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) |
 | Wire boundary | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Bun native | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) |
 
