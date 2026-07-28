@@ -230,6 +230,17 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   portal/Pages artifacts (ops-summary, monitoring, static, routing/bun-utils)
   (`unit` + `boundary`) _Ratchet_ → `bun test tests/ops-snapshot-cron.test.ts` ·
   [`tenants/ops-snapshot.md`](tenants/ops-snapshot.md)
+- **`snapshot-data-plane-v1`** — Scope-aware portal snapshot CLI captures
+  prediction/portal/gaps/limits manifests with flat grep-friendly metadata
+  (incl. `lockHash`) and compile-time type contracts (`unit` + `boundary`)
+  _Ratchet_ →
+  `bun test tests/snapshot-data-plane.test.ts && bun run check:snapshot:types` ·
+  [`tenants/prediction-report.md`](tenants/prediction-report.md)
+- **`portal-snapshot-cron-v1`** — Bun.cron portal-snapshot tenant captures
+  scope-aware data-plane snapshots (OS-persistent primary + in-process
+  complement) with no-overlap UTC schedule (`unit` + `boundary` + `journey`)
+  _Ratchet_ → `bun test tests/portal-snapshot-cron.test.ts` ·
+  [`tenants/portal-snapshot-cron.md`](tenants/portal-snapshot-cron.md)
 - **`channel-meta-verification-v1`** — Channel-aware Bun verification tags rows
   by subsystem; suite-aware saves isolate bundler/networking from
   release-features; suite=all merges meta-proof; prefer-artifact meta refresh
@@ -323,6 +334,8 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `telegram-webhook-v1`              | human-only | `bun test tests/telegram-bot.test.ts`                                                         |
 | `ops-loop-throughput`              | human-only | `bun test tests/ops-loop-hardening.test.ts`                                                   |
 | `ops-snapshot-cron-v1`             | human-only | `bun test tests/ops-snapshot-cron.test.ts`                                                    |
+| `snapshot-data-plane-v1`           | human-only | `bun test tests/snapshot-data-plane.test.ts && bun run check:snapshot:types`                  |
+| `portal-snapshot-cron-v1`          | human-only | `bun test tests/portal-snapshot-cron.test.ts`                                                 |
 | `channel-meta-verification-v1`     | continuous | `ci:harness` channel-meta step · also `check:release-tracker`                                 |
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                              |
 | `bun-http-server-docs`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts`                    |
@@ -357,7 +370,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 28 · workflow 8 · human-only 30.
+continuous 28 · workflow 8 · human-only 32.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.
