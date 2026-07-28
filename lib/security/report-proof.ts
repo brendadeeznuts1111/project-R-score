@@ -32,7 +32,7 @@ export type ReportProof = {
 export type BuildReportProofOpts = {
   /** Override algorithm (default sha3-256). */
   algorithm?: ReportHashAlgorithm;
-  /** When true (default), try requireSecret for HMAC. */
+  /** When true (default), read HMAC material from env or an existing local mint. */
   tryHmac?: boolean;
   /** Secret env key (default REPORT_SIGNING_SECRET, then PLAY_SIGNING_SECRET). */
   secretEnvKey?: string;

@@ -1,10 +1,10 @@
 // @see https://bun.com/docs/test — bun:test
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 import { describe, expect, test } from 'bun:test';
-import { mkdirSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { requireMintableSecret } from '../lib/security/mintable-secret.ts';
+import { mintedSecretPath } from '../lib/security/mintable-secret.ts';
 import {
   buildReportProofFromValue,
   canonicalReportJson,
@@ -45,8 +45,8 @@ describe('report-proof', () => {
     expect(h.scoreHint).toContain('integrity-only');
   });
 
-  test('HMAC resolves from machine-local mint when env unset', () => {
-    const dir = join(tmpdir(), `report-proof-mint-${Date.now()}`);
+  function withSigningEnvironment(run: (dir: string) => void): void {
+    const dir = join(tmpdir(), `report-proof-mint-${Date.now()}-${Math.random()}`);
     mkdirSync(dir, { recursive: true });
     const prevDir = Bun.env.FACTORYWAGER_MINTED_SECRETS_DIR;
     const prevReport = Bun.env.REPORT_SIGNING_SECRET;
@@ -55,10 +55,7 @@ describe('report-proof', () => {
       Bun.env.FACTORYWAGER_MINTED_SECRETS_DIR = dir;
       delete Bun.env.REPORT_SIGNING_SECRET;
       delete Bun.env.PLAY_SIGNING_SECRET;
-      requireMintableSecret('REPORT_SIGNING_SECRET');
-      const p = buildReportProofFromValue({ mint: true }, { tryHmac: true });
-      expect(p.hmac).toBeTruthy();
-      expect(proofScoreHints(p).hasHmac).toBe(true);
+      run(dir);
     } finally {
       if (prevDir === undefined) delete Bun.env.FACTORYWAGER_MINTED_SECRETS_DIR;
       else Bun.env.FACTORYWAGER_MINTED_SECRETS_DIR = prevDir;
@@ -68,5 +65,56 @@ describe('report-proof', () => {
       else Bun.env.PLAY_SIGNING_SECRET = prevPlay;
       rmSync(dir, { recursive: true, force: true });
     }
+  }
+
+  test('HMAC resolves from an existing machine-local mint when env is unset', () => {
+    withSigningEnvironment(() => {
+      const value = { mint: true };
+      const secret = 'existing-machine-local-report-secret';
+      writeFileSync(mintedSecretPath('REPORT_SIGNING_SECRET'), `${secret}\n`);
+
+      const proof = buildReportProofFromValue(value);
+
+      expect(proof.hmac).toBe(hmacSha256Hex(canonicalReportJson(value), secret));
+      expect(proofScoreHints(proof).hasHmac).toBe(true);
+    });
+  });
+
+  test('environment signing secret wins over an existing local mint', () => {
+    withSigningEnvironment(() => {
+      const value = { source: 'env-first' };
+      const mintSecret = 'machine-local-report-secret';
+      const envSecret = 'injected-report-secret';
+      writeFileSync(mintedSecretPath('REPORT_SIGNING_SECRET'), `${mintSecret}\n`);
+      Bun.env.REPORT_SIGNING_SECRET = envSecret;
+
+      const proof = buildReportProofFromValue(value);
+
+      expect(proof.hmac).toBe(hmacSha256Hex(canonicalReportJson(value), envSecret));
+      expect(proof.hmac).not.toBe(hmacSha256Hex(canonicalReportJson(value), mintSecret));
+    });
+  });
+
+  test('tryHmac false skips env and local-mint signing material', () => {
+    withSigningEnvironment(() => {
+      writeFileSync(mintedSecretPath('REPORT_SIGNING_SECRET'), 'machine-local-report-secret\n');
+      Bun.env.REPORT_SIGNING_SECRET = 'injected-report-secret';
+
+      const proof = buildReportProofFromValue({ skipped: true }, { tryHmac: false });
+
+      expect(proof.hmac).toBeUndefined();
+    });
+  });
+
+  test('missing signing material does not auto-mint during proof generation', () => {
+    withSigningEnvironment(() => {
+      const path = mintedSecretPath('REPORT_SIGNING_SECRET');
+      expect(existsSync(path)).toBe(false);
+
+      const proof = buildReportProofFromValue({ unsigned: true });
+
+      expect(proof.hmac).toBeUndefined();
+      expect(existsSync(path)).toBe(false);
+    });
   });
 });
