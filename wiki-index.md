@@ -53,7 +53,7 @@ Rebake weave after doc changes: `bun run ops:snapshot --no-seed` or `bun run com
 | Ops | [/portal/ops/](https://score.factory-wager.com/portal/ops/) | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) |
 | TOC Ops | [/portal/toc/](https://score.factory-wager.com/portal/toc/) | [`toc-ops.md`](docs/harness/tenants/toc-ops.md) |
 | Compliance | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/) | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md) |
-| Limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) | `bun run ops:limits:check` |
+| Limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) · `ops:limits:demo` · `ops:limits:predict` |
 | Dashboard | [/portal/dashboard/](https://score.factory-wager.com/portal/dashboard/) | — |
 | Health · Env | [/portal/health/](https://score.factory-wager.com/portal/health/) · [/portal/env/](https://score.factory-wager.com/portal/env/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
 | DOD | [/portal/dod/](https://score.factory-wager.com/portal/dod/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
@@ -82,6 +82,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc: [`
 | Tenant | Doc |
 |--------|-----|
 | Compliance portal | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md) |
+| Partner limit raises | [`partner-limits.md`](docs/harness/tenants/partner-limits.md) |
 | TOC Ops | [`toc-ops.md`](docs/harness/tenants/toc-ops.md) |
 | Ops loop / outbox | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) |
 | Ops snapshot | [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) |

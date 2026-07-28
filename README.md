@@ -47,7 +47,7 @@ Routing: [`docs/platform-routing.md`](docs/platform-routing.md) · edge verify: 
 | Ops (C4/C5 · loop) | [`/portal/ops/`](https://score.factory-wager.com/portal/ops/) | [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) |
 | TOC Ops | [`/portal/toc/`](https://score.factory-wager.com/portal/toc/) | [`docs/harness/tenants/toc-ops.md`](docs/harness/tenants/toc-ops.md) |
 | Compliance (MA/NJ) | [`/portal/compliance/`](https://score.factory-wager.com/portal/compliance/) | [`docs/harness/tenants/compliance-portal.md`](docs/harness/tenants/compliance-portal.md) |
-| Partner limits | [`/portal/limits/`](https://score.factory-wager.com/portal/limits/) | `bun run ops:limits:check` · raise context: `ops:limits:capture` |
+| Partner limits | [`/portal/limits/`](https://score.factory-wager.com/portal/limits/) | [`docs/harness/tenants/partner-limits.md`](docs/harness/tenants/partner-limits.md) · `ops:limits:demo` · `ops:limits:capture` · `ops:limits:predict` |
 | Dashboard | [`/portal/dashboard/`](https://score.factory-wager.com/portal/dashboard/) | KPIs · TOC · compliance plane |
 | Health / Env | [`/portal/health/`](https://score.factory-wager.com/portal/health/) · [`/portal/env/`](https://score.factory-wager.com/portal/env/) | `/api/health` schema v1 · env checklist |
 | DOD queue | [`/portal/dod/`](https://score.factory-wager.com/portal/dod/) | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) |

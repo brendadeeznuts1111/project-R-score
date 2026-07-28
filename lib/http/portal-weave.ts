@@ -187,10 +187,22 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   {
     label: 'Limit raises multi-factor demo',
     cmd: 'bun run ops:limits:demo',
+    doc: 'docs/harness/tenants/partner-limits.md',
   },
   {
     label: 'Capture raise context',
     cmd: 'bun run ops:limits:capture',
+    doc: 'docs/harness/tenants/partner-limits.md',
+  },
+  {
+    label: 'Limit raise predict',
+    cmd: 'bun run ops:limits:predict',
+    doc: 'docs/harness/tenants/partner-limits.md',
+  },
+  {
+    label: 'Limit raises multi check',
+    cmd: 'bun run ops:limits:check:multi',
+    doc: 'docs/harness/tenants/partner-limits.md',
   },
   {
     label: 'Reference discovery',

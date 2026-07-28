@@ -34,6 +34,7 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Portal foundation (static UI) | [portal-foundation.md](./portal-foundation.md) | data.js · topbar · verify · dev reload · TOC board § |
 | Platform routing (local vs Pages) | [platform-routing.md](./platform-routing.md) | domains · functions · auth plane |
 | Compliance portal (MA/NJ) | [harness/tenants/compliance-portal.md](./harness/tenants/compliance-portal.md) | `/portal/compliance/` · `compliance:bake` |
+| Partner limit raises | [harness/tenants/partner-limits.md](./harness/tenants/partner-limits.md) | `/portal/limits/` · multi-factor · `ops:limits:*` · agent API |
 | Seat capital desk | [harness/tenants/seat-capital-desk.md](./harness/tenants/seat-capital-desk.md) | Telegram desk · intake · registry bake |
 | Factory Telegram | [harness/tenants/telegram-factory.md](./harness/tenants/telegram-factory.md) | surfaces · ops consume · templates |
 | Package-group handshake | [harness/tenants/partner-package-group-handshake.md](./harness/tenants/partner-package-group-handshake.md) | readiness · invite gap · 23 lanes |

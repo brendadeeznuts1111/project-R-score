@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T02:26:36.976Z",
+  "generated": "2026-07-28T03:22:12.758Z",
   "surfaces": [
     {
       "label": "Home",
@@ -250,11 +250,23 @@
     },
     {
       "label": "Limit raises multi-factor demo",
-      "cmd": "bun run ops:limits:demo"
+      "cmd": "bun run ops:limits:demo",
+      "doc": "docs/harness/tenants/partner-limits.md"
     },
     {
       "label": "Capture raise context",
-      "cmd": "bun run ops:limits:capture"
+      "cmd": "bun run ops:limits:capture",
+      "doc": "docs/harness/tenants/partner-limits.md"
+    },
+    {
+      "label": "Limit raise predict",
+      "cmd": "bun run ops:limits:predict",
+      "doc": "docs/harness/tenants/partner-limits.md"
+    },
+    {
+      "label": "Limit raises multi check",
+      "cmd": "bun run ops:limits:check:multi",
+      "doc": "docs/harness/tenants/partner-limits.md"
     },
     {
       "label": "Reference discovery",
