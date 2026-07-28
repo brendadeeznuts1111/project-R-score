@@ -758,23 +758,50 @@ export function publishLimitAlertToChannel(
 }
 
 /**
- * Render limit raises as a formatted table for terminal output.
- * Uses Bun.stringWidth for accurate column widths.
+ * Enhanced table formatter for limit changes (raises + decreases).
+ * Safe defaults, locale-aware numbers, direction icons, score bars.
  */
-export function formatLimitRaisesTable(raises: LimitRaise[]): string {
-  if (raises.length === 0) return '  No limit raises found.';
+export function formatLimitChangeTable(
+  changes: Array<
+    LimitRaise & {
+      direction?: 'up' | 'down';
+      score?: number;
+      top_factors?: string[];
+      multi_factor_score?: number;
+      top_contributing_factors?: string[];
+    }
+  >
+): string {
+  if (!changes || changes.length === 0) return '  No limit changes found.';
 
-  const pad = (s: string, w: number) => s + ' '.repeat(Math.max(0, w - stringWidth(s)));
-  const headers = ['Book', 'Sport', 'Market', 'Type', 'Old', 'New', 'When'];
-  const rows = raises.map(r => [
-    r.sportsbook,
-    r.sport_id,
-    r.market_id,
-    r.bet_type,
-    `$${r.previous_max}`,
-    `$${r.new_limit}`,
-    new Date(r.increased_at * 1000).toLocaleDateString(),
-  ]);
+  const pad = (s: string, w: number) => s + ' '.repeat(Math.max(0, w - stringWidth(String(s))));
+  const headers = ['Dir', 'Book', 'Sport', 'Market', 'Type', 'Old', 'New', '±$', 'Score', 'When'];
+  const rows = changes.map(r => {
+    const dir = r.direction === 'down' ? '⬇' : '🚀';
+    const oldVal = r.previous_max != null ? `$${Number(r.previous_max).toLocaleString()}` : '—';
+    const newVal = r.new_limit != null ? `$${Number(r.new_limit).toLocaleString()}` : '—';
+    const delta =
+      r.previous_max != null && r.new_limit != null
+        ? `${r.new_limit >= r.previous_max ? '+' : ''}$${(r.new_limit - r.previous_max).toLocaleString()}`
+        : '—';
+    const score = r.multi_factor_score ?? r.score;
+    const scoreStr = score != null ? `${(score * 100).toFixed(0)}%` : '···';
+    const when =
+      r.increased_at != null ? new Date(r.increased_at * 1000).toLocaleDateString() : '—';
+    return [
+      dir,
+      r.sportsbook ?? '—',
+      r.sport_id ?? '—',
+      r.market_id ?? '—',
+      r.bet_type ?? '—',
+      oldVal,
+      newVal,
+      delta,
+      scoreStr,
+      when,
+    ];
+  });
+
   const widths = headers.map((h, i) =>
     Math.max(stringWidth(h), ...rows.map(r => stringWidth(r[i] ?? '')))
   );
@@ -792,6 +819,130 @@ export function formatLimitRaisesTable(raises: LimitRaise[]): string {
   ].join('\n');
 }
 
+/** Summary footer: totals, net change, direction breakout. */
+export function formatChangeSummary(
+  changes: Array<LimitRaise & { direction?: 'up' | 'down' }>
+): string {
+  if (!changes || changes.length === 0) return '';
+  const total = changes.length;
+  const raises = changes.filter(r => r.direction !== 'down').length;
+  const downs = changes.filter(r => r.direction === 'down').length;
+  const netDelta = changes.reduce((s, r) => {
+    if (r.previous_max != null && r.new_limit != null) {
+      return s + (r.new_limit - r.previous_max);
+    }
+    return s;
+  }, 0);
+  const hasScore = changes.some(
+    r => (r as any).multi_factor_score != null || (r as any).score != null
+  );
+  const avgScore = hasScore
+    ? changes.reduce((s, r) => s + ((r as any).multi_factor_score ?? (r as any).score ?? 0), 0) /
+      total
+    : null;
+  const parts = [
+    `Total: ${total}`,
+    `🚀 ${raises}`,
+    downs > 0 ? `⬇️ ${downs}` : null,
+    netDelta !== 0 ? `Net: ${netDelta >= 0 ? '+' : ''}$${netDelta.toLocaleString()}` : null,
+    avgScore != null ? `Avg score: ${(avgScore * 100).toFixed(0)}%` : null,
+  ].filter(Boolean);
+  return `  ${parts.join('  ·  ')}`;
+}
+
+/**
+ * Legacy alias. Renders limit raises as a formatted table.
+ * Uses Bun.stringWidth for accurate column widths.
+ */
+export function formatLimitRaisesTable(raises: LimitRaise[]): string {
+  if (!raises || raises.length === 0) return '  No limit raises found.';
+  return formatLimitChangeTable(raises.map(r => ({ ...r, direction: 'up' as const })));
+}
+
+/**
+ * Rich human-readable lines for enriched limit changes with multi-factor.
+ * Shows CLV movers, line movement, multi-factor score + top factors,
+ * direction icons, and driver details.
+ */
+export function formatEnrichedLimitChanges(
+  changes: Array<
+    EnrichedLimitRaise & {
+      direction?: 'up' | 'down';
+      multi_factor_score?: number;
+      top_contributing_factors?: string[];
+      factor_scores?: Record<string, number>;
+      context_available?: boolean;
+      context_proof?: { valid?: boolean; signed?: boolean } | null;
+    }
+  >
+): string {
+  if (!changes || changes.length === 0) return '  No limit changes found.';
+  const out: string[] = [];
+
+  for (const r of changes) {
+    const dir = r.direction === 'down' ? '⬇️' : '🚀';
+    const oldVal = r.previous_max != null ? `$${Number(r.previous_max).toLocaleString()}` : '—';
+    const newVal = r.new_limit != null ? `$${Number(r.new_limit).toLocaleString()}` : '—';
+    const delta =
+      r.previous_max != null && r.new_limit != null
+        ? `${r.new_limit >= r.previous_max ? '+' : ''}$${(r.new_limit - r.previous_max).toLocaleString()}`
+        : '—';
+    const pct =
+      r.previous_max != null && r.previous_max > 0 && r.new_limit != null
+        ? ` (${(((r.new_limit - r.previous_max) / r.previous_max) * 100).toFixed(1)}%)`
+        : '';
+
+    // Header line
+    out.push(
+      `${dir} ${r.sportsbook ?? '—'} ${r.sport_id ?? '—'}/${r.market_id ?? '—'} ` +
+        `${r.bet_type ?? '—'}: ${oldVal} → ${newVal} ${delta}${pct}`
+    );
+
+    // Line move + CLV
+    const lineMove =
+      r.line_move_5m != null && Number.isFinite(r.line_move_5m)
+        ? `📈 5m line ${r.line_move_5m >= 0 ? '+' : ''}${r.line_move_5m.toFixed(3)}`
+        : '📈 5m line N/A';
+    const clvMovers =
+      r.top_clv && r.top_clv.length > 0
+        ? `🎯 CLV: ${r.top_clv.map(p => `${p.player_name}(+$${Number(p.delta).toFixed(0)})`).join(', ')}`
+        : '🎯 CLV: —';
+    out.push(`   ${lineMove}  |  ${clvMovers}`);
+
+    // Multi-factor score with bar visualization
+    const score = r.multi_factor_score;
+    if (score != null && Number.isFinite(score)) {
+      const barLen = Math.round(score * 20);
+      const bar = '█'.repeat(Math.max(1, barLen)) + '░'.repeat(Math.max(0, 20 - barLen));
+      const pctDisplay = (score * 100).toFixed(0);
+      const drivers = (r.top_contributing_factors ?? []).slice(0, 5).join(', ');
+      const proof = r.context_proof?.valid
+        ? '🔏 verified'
+        : r.context_proof?.signed
+          ? '🔏 signed'
+          : '🔓 pending';
+      out.push(`   🧮 Score: ${bar} ${pctDisplay}%  |  Drivers: ${drivers || '—'}  |  ${proof}`);
+    }
+
+    // Factor breakdown when available
+    if (r.factor_scores && Object.keys(r.factor_scores).length > 0) {
+      const topFactors = Object.entries(r.factor_scores)
+        .filter(([, v]) => v > 0.01)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+      if (topFactors.length > 0) {
+        out.push(
+          `   📊 Factors: ${topFactors.map(([k, v]) => `${k}=${(v * 100).toFixed(0)}%`).join(', ')}`
+        );
+      }
+    }
+
+    out.push(''); // blank line between entries
+  }
+
+  return out.join('\n').trimEnd();
+}
+
 /** Human lines matching the bun -e demo (raise + line 5m + top CLV). */
 export function formatEnrichedLimitRaises(
   raises: Array<
@@ -801,23 +952,25 @@ export function formatEnrichedLimitRaises(
     }
   >
 ): string {
-  if (raises.length === 0) return '  No limit raises found.';
-  const out: string[] = [];
-  for (const r of raises) {
-    const clv =
-      r.top_clv.length === 0
-        ? '—'
-        : r.top_clv.map(p => `${p.player_name}(+$${p.delta.toFixed(0)})`).join(', ');
-    const line =
-      r.line_move_5m != null && Number.isFinite(r.line_move_5m) ? r.line_move_5m.toFixed(2) : 'N/A';
-    const score =
-      r.multi_factor_score != null
-        ? `  ·  multi ${r.multi_factor_score.toFixed(2)} [${(r.top_contributing_factors ?? []).join(', ')}]`
-        : '';
-    out.push(
-      `🚀 ${r.sportsbook} ${r.sport_id}/${r.market_id} ${r.bet_type}: $${r.previous_max} → $${r.new_limit}${score}`
-    );
-    out.push(`   📈 Line 5m: ${line}  |  🎯 Top CLV: ${clv}`);
-  }
-  return out.join('\n');
+  if (!raises || raises.length === 0) return '  No limit raises found.';
+  return formatEnrichedLimitChanges(raises.map(r => ({ ...r, direction: 'up' as const })));
+}
+
+/**
+ * Format limit changes as a compact one-liner per entry.
+ * Good for Telegram / Slack messages where tables don't render.
+ */
+export function formatLimitChangeCompact(
+  changes: Array<LimitRaise & { direction?: 'up' | 'down'; score?: number }>
+): string {
+  if (!changes || changes.length === 0) return 'No changes.';
+  return changes
+    .map(r => {
+      const dir = r.direction === 'down' ? '⬇️' : '🚀';
+      const oldVal = r.previous_max != null ? `$${r.previous_max}` : '—';
+      const newVal = r.new_limit != null ? `$${r.new_limit}` : '—';
+      const score = r.score != null ? ` [${(r.score * 100).toFixed(0)}%]` : '';
+      return `${dir} ${r.sportsbook} ${r.sport_id}/${r.market_id}: ${oldVal}→${newVal}${score}`;
+    })
+    .join('\n');
 }

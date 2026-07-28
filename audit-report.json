@@ -1,0 +1,659 @@
+{
+  "files": 28,
+  "entrypoints": 9,
+  "deadCode": [
+    "packages/registry-client/src/index.ts",
+    "packages/package/src/index.ts",
+    "packages/versioning/src/version-tracking.ts",
+    "packages/business/src/habits-pure.ts",
+    "packages/ab-testing/src/manager.ts",
+    "packages/rip/src/config.ts",
+    "config/bun-dx-catalog.ts",
+    "lib/docs/urls.ts",
+    "lib/docs/constants/utils.ts",
+    "lib/docs/constants/cli.ts",
+    "lib/docs/constants/fragments.ts",
+    "lib/docs/constants/enums.ts"
+  ],
+  "buildSuccess": true,
+  "logCount": 0,
+  "metafile": {
+    "inputs": {
+      "packages/registry-client/src/index.ts": {
+        "bytes": 8180,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/package/src/index.ts": {
+        "bytes": 104,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/guards/src/index.ts": {
+        "bytes": 196,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/packages/guards/src/bun-first-guard.ts",
+            "kind": "import-statement",
+            "original": "./bun-first-guard"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/versioning/src/index.ts": {
+        "bytes": 247,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/packages/versioning/src/version-tracking.ts",
+            "kind": "import-statement",
+            "original": "./version-tracking"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/docs-tools/src/index.ts": {
+        "bytes": 168,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/packages/docs-tools/src/documentation-validator.ts",
+            "kind": "import-statement",
+            "original": "./documentation-validator"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/docs-tools/src/builders/url-builder.ts",
+            "kind": "import-statement",
+            "original": "./builders/url-builder"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/docs-tools/src/builders/validator.ts",
+            "kind": "import-statement",
+            "original": "./builders/validator"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/docs-tools/src/builders/validator-enhanced.ts",
+            "kind": "import-statement",
+            "original": "./builders/validator-enhanced"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/p2p/src/index.ts": {
+        "bytes": 392,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/packages/p2p/src/customer-notifier.ts",
+            "kind": "import-statement",
+            "original": "./customer-notifier"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/p2p/src/business-continuity.ts",
+            "kind": "import-statement",
+            "original": "./business-continuity"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/p2p/src/migration-workflow.ts",
+            "kind": "import-statement",
+            "original": "./migration-workflow"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/business/src/index.ts": {
+        "bytes": 534,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/packages/business/src/habits-pure.ts",
+            "kind": "import-statement",
+            "original": "./habits-pure"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/business/src/habits-classifier.ts",
+            "kind": "import-statement",
+            "original": "./habits-classifier"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/business/src/reference-manager.ts",
+            "kind": "import-statement",
+            "original": "./reference-manager"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/ab-testing/src/index.ts": {
+        "bytes": 96,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/packages/ab-testing/src/cookie-manager.ts",
+            "kind": "import-statement",
+            "original": "./cookie-manager"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/ab-testing/src/manager.ts",
+            "kind": "import-statement",
+            "original": "./manager"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/rip/src/index.ts": {
+        "bytes": 7897,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/packages/rip/src/utils.ts",
+            "kind": "import-statement",
+            "original": "./utils"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/rip/src/config.ts",
+            "kind": "import-statement",
+            "original": "./config"
+          },
+          {
+            "path": "bun",
+            "kind": "dynamic-import",
+            "external": true
+          },
+          {
+            "path": "bun",
+            "kind": "dynamic-import",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/guards/src/bun-first-guard.ts": {
+        "bytes": 5126,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/config/bun-dx-catalog.ts",
+            "kind": "import-statement",
+            "original": "../../../config/bun-dx-catalog.ts"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/versioning/src/version-tracking.ts": {
+        "bytes": 20529,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/docs-tools/src/builders/url-builder.ts": {
+        "bytes": 18948,
+        "imports": [
+          {
+            "path": "../../../../lib/docs/constants/domains",
+            "kind": "import-statement"
+          },
+          {
+            "path": "../../../../lib/docs/constants/categories",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "/Users/nolarose/Projects/lib/docs/constants/fragments.ts",
+            "kind": "import-statement",
+            "original": "../../../../lib/docs/constants/fragments"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/docs-tools/src/documentation-validator.ts": {
+        "bytes": 10711,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/lib/docs/constants/cli.ts",
+            "kind": "import-statement",
+            "original": "../../../lib/docs/constants/cli"
+          },
+          {
+            "path": "/Users/nolarose/Projects/lib/docs/constants/utils.ts",
+            "kind": "import-statement",
+            "original": "../../../lib/docs/constants/utils"
+          },
+          {
+            "path": "/Users/nolarose/Projects/packages/docs-tools/src/documentation-validator.internal.ts",
+            "kind": "import-statement",
+            "original": "./documentation-validator.internal"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/docs-tools/src/builders/validator-enhanced.ts": {
+        "bytes": 13890,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/lib/docs/constants/domains.ts",
+            "kind": "import-statement",
+            "original": "../../../../lib/docs/constants/domains"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/docs-tools/src/builders/validator.ts": {
+        "bytes": 37256,
+        "imports": [
+          {
+            "path": "url",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "../../../../lib/docs/constants/domains",
+            "kind": "import-statement"
+          },
+          {
+            "path": "../../../../lib/docs/constants/fragments",
+            "kind": "import-statement"
+          },
+          {
+            "path": "/Users/nolarose/Projects/lib/docs/constants/categories.ts",
+            "kind": "import-statement",
+            "original": "../../../../lib/docs/constants/categories"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/p2p/src/customer-notifier.ts": {
+        "bytes": 5926,
+        "imports": [
+          {
+            "path": "bun",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/p2p/src/migration-workflow.ts": {
+        "bytes": 7144,
+        "imports": [
+          {
+            "path": "./business-continuity",
+            "kind": "import-statement"
+          },
+          {
+            "path": "bun",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/p2p/src/business-continuity.ts": {
+        "bytes": 11266,
+        "imports": [
+          {
+            "path": "bun",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/business/src/habits-pure.ts": {
+        "bytes": 3012,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/business/src/habits-classifier.ts": {
+        "bytes": 3029,
+        "imports": [
+          {
+            "path": "bun",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "./habits-pure",
+            "kind": "import-statement"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/business/src/reference-manager.ts": {
+        "bytes": 2153,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/lib/docs/urls.ts",
+            "kind": "import-statement",
+            "original": "../../../lib/docs/urls"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/ab-testing/src/cookie-manager.ts": {
+        "bytes": 1318,
+        "imports": [
+          {
+            "path": "./manager",
+            "kind": "import-statement"
+          }
+        ],
+        "format": "esm"
+      },
+      "packages/ab-testing/src/manager.ts": {
+        "bytes": 4115,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/rip/src/config.ts": {
+        "bytes": 10066,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/rip/src/utils.ts": {
+        "bytes": 10438,
+        "imports": [
+          {
+            "path": "bun",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "config/bun-dx-catalog.ts": {
+        "bytes": 18723,
+        "imports": [],
+        "format": "esm"
+      },
+      "lib/docs/constants/domains.ts": {
+        "bytes": 24258,
+        "imports": [
+          {
+            "path": "/Users/nolarose/Projects/lib/docs/constants/enums.ts",
+            "kind": "import-statement",
+            "original": "./enums"
+          }
+        ],
+        "format": "esm"
+      },
+      "lib/docs/urls.ts": {
+        "bytes": 5444,
+        "imports": [],
+        "format": "esm"
+      },
+      "lib/docs/constants/utils.ts": {
+        "bytes": 30824,
+        "imports": [],
+        "format": "esm"
+      },
+      "packages/docs-tools/src/documentation-validator.internal.ts": {
+        "bytes": 4620,
+        "imports": [
+          {
+            "path": "../../../lib/docs/constants/cli",
+            "kind": "import-statement"
+          },
+          {
+            "path": "../../../lib/docs/constants/utils",
+            "kind": "import-statement"
+          }
+        ],
+        "format": "esm"
+      },
+      "lib/docs/constants/cli.ts": {
+        "bytes": 3104,
+        "imports": [],
+        "format": "esm"
+      },
+      "lib/docs/constants/fragments.ts": {
+        "bytes": 10098,
+        "imports": [],
+        "format": "esm"
+      },
+      "lib/docs/constants/categories.ts": {
+        "bytes": 32511,
+        "imports": [
+          {
+            "path": "./domains",
+            "kind": "import-statement"
+          }
+        ],
+        "format": "esm"
+      },
+      "lib/docs/constants/enums.ts": {
+        "bytes": 7615,
+        "imports": [],
+        "format": "esm"
+      }
+    },
+    "outputs": {
+      "packages/registry-client/src/index.js": {
+        "bytes": 5043,
+        "inputs": {
+          "packages/registry-client/src/index.ts": {
+            "bytesInOutput": 4861
+          }
+        },
+        "imports": [],
+        "exports": [
+          "uint8TotalBytes",
+          "default",
+          "RegistryHttpError",
+          "RegistryClient"
+        ],
+        "entryPoint": "packages/registry-client/src/index.ts"
+      },
+      "packages/rip/src/index.js": {
+        "bytes": 20981,
+        "inputs": {
+          "packages/rip/src/utils.ts": {
+            "bytesInOutput": 8800
+          },
+          "packages/rip/src/config.ts": {
+            "bytesInOutput": 7104
+          },
+          "packages/rip/src/index.ts": {
+            "bytesInOutput": 4582
+          }
+        },
+        "imports": [],
+        "exports": [
+          "scanDirectory",
+          "quickPurge",
+          "parseRipgrepOutput",
+          "generateSuggestions",
+          "formatReport",
+          "executeRipgrep",
+          "default",
+          "createRipgrepEngine",
+          "checkRipgrepAvailability",
+          "RipgrepEngine",
+          "PRESET_CONFIGS",
+          "PATTERNS",
+          "DEFAULT_SCHEMA",
+          "DEFAULT_GREP_CONFIG",
+          "DEFAULT_DEFAULTS",
+          "DEFAULT_CONFIG",
+          "ConfigValidator",
+          "ConfigManager"
+        ],
+        "entryPoint": "packages/rip/src/index.ts"
+      },
+      "packages/package/src/index.js": {
+        "bytes": 8,
+        "inputs": {
+          "packages/package/src/index.ts": {
+            "bytesInOutput": 0
+          }
+        },
+        "imports": [],
+        "exports": [],
+        "entryPoint": "packages/package/src/index.ts"
+      },
+      "packages/guards/src/index.js": {
+        "bytes": 16655,
+        "inputs": {
+          "config/bun-dx-catalog.ts": {
+            "bytesInOutput": 14041
+          },
+          "packages/guards/src/bun-first-guard.ts": {
+            "bytesInOutput": 2402
+          },
+          "packages/guards/src/index.ts": {
+            "bytesInOutput": 0
+          }
+        },
+        "imports": [],
+        "exports": [
+          "guardBunFirst",
+          "checkBunFirstCompliance",
+          "BUN_FIRST_VIOLATIONS",
+          "API_PATTERNS"
+        ],
+        "entryPoint": "packages/guards/src/index.ts"
+      },
+      "packages/versioning/src/index.js": {
+        "bytes": 13321,
+        "inputs": {
+          "packages/versioning/src/version-tracking.ts": {
+            "bytesInOutput": 13199
+          },
+          "packages/versioning/src/index.ts": {
+            "bytesInOutput": 0
+          }
+        },
+        "imports": [],
+        "exports": [
+          "VersionTracker"
+        ],
+        "entryPoint": "packages/versioning/src/index.ts"
+      },
+      "packages/docs-tools/src/index.js": {
+        "bytes": 126876,
+        "inputs": {
+          "lib/docs/constants/cli.ts": {
+            "bytesInOutput": 1509
+          },
+          "lib/docs/constants/utils.ts": {
+            "bytesInOutput": 15621
+          },
+          "packages/docs-tools/src/documentation-validator.internal.ts": {
+            "bytesInOutput": 3039
+          },
+          "packages/docs-tools/src/documentation-validator.ts": {
+            "bytesInOutput": 6021
+          },
+          "lib/docs/constants/enums.ts": {
+            "bytesInOutput": 0
+          },
+          "lib/docs/constants/domains.ts": {
+            "bytesInOutput": 15272
+          },
+          "lib/docs/constants/fragments.ts": {
+            "bytesInOutput": 5877
+          },
+          "packages/docs-tools/src/builders/url-builder.ts": {
+            "bytesInOutput": 12674
+          },
+          "lib/docs/constants/categories.ts": {
+            "bytesInOutput": 29467
+          },
+          "packages/docs-tools/src/builders/validator.ts": {
+            "bytesInOutput": 26883
+          },
+          "packages/docs-tools/src/builders/validator-enhanced.ts": {
+            "bytesInOutput": 9736
+          },
+          "packages/docs-tools/src/index.ts": {
+            "bytesInOutput": 0
+          }
+        },
+        "imports": [],
+        "exports": [
+          "docsURLBuilder",
+          "EnterpriseDocumentationURLValidator",
+          "EnterpriseDocumentationURLBuilder",
+          "EnhancedDocumentationURLValidator",
+          "DocumentationValidator",
+          "DocumentationURLValidator"
+        ],
+        "entryPoint": "packages/docs-tools/src/index.ts"
+      },
+      "packages/p2p/src/index.js": {
+        "bytes": 16792,
+        "inputs": {
+          "packages/p2p/src/customer-notifier.ts": {
+            "bytesInOutput": 3953
+          },
+          "packages/p2p/src/business-continuity.ts": {
+            "bytesInOutput": 7267
+          },
+          "packages/p2p/src/migration-workflow.ts": {
+            "bytesInOutput": 5291
+          },
+          "packages/p2p/src/index.ts": {
+            "bytesInOutput": 0
+          }
+        },
+        "imports": [],
+        "exports": [
+          "handlePaymentAccountLoss",
+          "executeBusinessMigration",
+          "CustomerNotifier",
+          "BusinessContinuity"
+        ],
+        "entryPoint": "packages/p2p/src/index.ts"
+      },
+      "packages/business/src/index.js": {
+        "bytes": 8909,
+        "inputs": {
+          "packages/business/src/habits-pure.ts": {
+            "bytesInOutput": 2283
+          },
+          "packages/business/src/habits-classifier.ts": {
+            "bytesInOutput": 1073
+          },
+          "lib/docs/urls.ts": {
+            "bytesInOutput": 3487
+          },
+          "packages/business/src/reference-manager.ts": {
+            "bytesInOutput": 1508
+          },
+          "packages/business/src/index.ts": {
+            "bytesInOutput": 0
+          }
+        },
+        "imports": [],
+        "exports": [
+          "storeHabits",
+          "refs",
+          "listAllHabits",
+          "getRecommendationPure",
+          "getRecommendation",
+          "getHabits",
+          "deleteHabits",
+          "classifyHabitsPure",
+          "classifyHabits",
+          "calculateBonusPure",
+          "calculateBonus",
+          "applyVipRiskOverridePure",
+          "applyVipRiskOverride",
+          "ReferenceManager"
+        ],
+        "entryPoint": "packages/business/src/index.ts"
+      },
+      "packages/ab-testing/src/index.js": {
+        "bytes": 3847,
+        "inputs": {
+          "packages/ab-testing/src/manager.ts": {
+            "bytesInOutput": 2872
+          },
+          "packages/ab-testing/src/cookie-manager.ts": {
+            "bytesInOutput": 797
+          },
+          "packages/ab-testing/src/index.ts": {
+            "bytesInOutput": 0
+          }
+        },
+        "imports": [],
+        "exports": [
+          "ABTestingManager",
+          "ABTestManager"
+        ],
+        "entryPoint": "packages/ab-testing/src/index.ts"
+      }
+    }
+  }
+}
