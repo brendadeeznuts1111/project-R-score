@@ -235,6 +235,20 @@ export async function handleLimitRecordRequest(request: Request, db: Database): 
             /* tree_nodes optional */
           }
         }
+        // Optional multi-factor enrich (caller-supplied — outbox does not query analytics).
+        const multiFactorScore =
+          typeof body.multi_factor_score === 'number' && Number.isFinite(body.multi_factor_score)
+            ? body.multi_factor_score
+            : typeof body.multiFactorScore === 'number' && Number.isFinite(body.multiFactorScore)
+              ? body.multiFactorScore
+              : undefined;
+        const rawDrivers = body.top_drivers ?? body.topDrivers;
+        const topDrivers = Array.isArray(rawDrivers)
+          ? rawDrivers
+              .filter((d): d is string => typeof d === 'string' && d.trim().length > 0)
+              .map(d => d.trim())
+              .slice(0, 5)
+          : undefined;
         enqueueLimitRaiseAlert(db, {
           treeNodeId: nodeId,
           sportsbook,
@@ -246,6 +260,8 @@ export async function handleLimitRecordRequest(request: Request, db: Database): 
           telegramId: telegram_id,
           partnerCode: partner_code,
           packageGroupChatId: package_group_chat_id,
+          multiFactorScore,
+          topDrivers,
         });
       } catch {
         // outbox optional — record still succeeded

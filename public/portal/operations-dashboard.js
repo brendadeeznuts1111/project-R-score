@@ -107,6 +107,8 @@ class OperationsDashboard extends HTMLElement {
             <h2>📊 Limit changes</h2>
             <div class="ops-metric" id="limits-count">0</div>
             <div class="ops-sub" id="limits-detail"></div>
+            <div class="ops-sub" id="limits-patterns-detail" hidden></div>
+            <div class="ops-sub" id="limits-predict-detail" hidden></div>
             <table id="limits-table" style="width:100%;font-size:0.85em;margin-top:4px">
               <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
               <tbody id="limits-tbody"></tbody>
@@ -914,6 +916,8 @@ class OperationsDashboard extends HTMLElement {
     // ── Limit changes panel ──
     const limitsCount = this.querySelector('#limits-count');
     const limitsDetail = this.querySelector('#limits-detail');
+    const limitsPatternsDetail = this.querySelector('#limits-patterns-detail');
+    const limitsPredictDetail = this.querySelector('#limits-predict-detail');
     const limitsTbody = this.querySelector('#limits-tbody');
     if (limitsCount && d.limitChanges) {
       const lims = d.limitChanges;
@@ -923,6 +927,49 @@ class OperationsDashboard extends HTMLElement {
         const downs = lims.filter(r => r.direction === 'down').length;
         limitsDetail.textContent =
           `🚀${raises} ⬇️${downs} · Last: ${lims[0]?.message ?? 'none'}`;
+      }
+      if (limitsPatternsDetail) {
+        const p = d.limitPatterns;
+        if (p && (p.books?.length || p.states?.length || p.downlineNodes != null)) {
+          const topBooks = (p.books ?? [])
+            .slice(0, 3)
+            .map(b => b.key)
+            .filter(Boolean)
+            .join(', ');
+          const topStates = (p.states ?? [])
+            .slice(0, 3)
+            .map(s => s.key)
+            .filter(Boolean)
+            .join(', ');
+          const cov =
+            p.audit?.coveragePct != null
+              ? `${Number(p.audit.coveragePct).toFixed(0)}% audit`
+              : null;
+          const bits = [
+            topBooks ? `books ${topBooks}` : null,
+            topStates ? `states ${topStates}` : null,
+            p.downlineNodes != null ? `downline ${p.downlineNodes}` : null,
+            cov,
+          ].filter(Boolean);
+          limitsPatternsDetail.hidden = bits.length === 0;
+          limitsPatternsDetail.innerHTML = bits.length
+            ? `Patterns · ${esc(bits.join(' · '))} · <a class="ops-link" href="/portal/limits/">board</a>`
+            : '';
+        } else {
+          limitsPatternsDetail.hidden = true;
+          limitsPatternsDetail.textContent = '';
+        }
+      }
+      if (limitsPredictDetail) {
+        const lr = d.prediction?.limitRaise;
+        if (lr && (lr.n ?? 0) > 0) {
+          limitsPredictDetail.hidden = false;
+          const last = lr.lastPredicted ? ` · last ${String(lr.lastPredicted).slice(0, 19)}` : '';
+          limitsPredictDetail.textContent = `limitRaise MAE ${Number(lr.mae ?? 0).toFixed(3)} · n=${lr.n}${last}`;
+        } else {
+          limitsPredictDetail.hidden = true;
+          limitsPredictDetail.textContent = '';
+        }
       }
       if (limitsTbody) {
         limitsTbody.innerHTML = lims

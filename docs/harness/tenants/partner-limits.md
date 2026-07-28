@@ -79,6 +79,7 @@ bun run serve:public:hot   # open /portal/limits/ · /registry/limit-raises.json
 | **CLI — predict**        | [`tools/ops-limit-predict.ts`](../../../tools/ops-limit-predict.ts)                                                                                                        | `ops:limits:predict` · `:predict:json` · `--inspect`                                                                                 |
 | **CLI — analyze**        | [`tools/ops-limit-analyze.ts`](../../../tools/ops-limit-analyze.ts)                                                                                                        | `ops:limits:analyze` · `:analyze:json`                                                                                               |
 | **CLI — connected seed** | [`tools/seed-limit-patterns.ts`](../../../tools/seed-limit-patterns.ts)                                                                                                    | `--force` replaces only `limit-demo-*` rows · `--bake` writes the limit registry snapshot                                            |
+| **CLI — TOC bridge seed** | [`tools/seed-toc-limit-bridge.ts`](../../../tools/seed-toc-limit-bridge.ts) · [`lib/operations/toc-limit-bridge-seed.ts`](../../../lib/operations/toc-limit-bridge-seed.ts) | Writes raises on ASH/PAT identity `treeNodeId` UUIDs so TOC board `raises 48h` join lights · scoped `--force` · optional `--bake`   |
 | **Bake**                 | `exportLimitRaisesSnapshot` (analytics) · [`tools/ops-snapshot.ts`](../../../tools/ops-snapshot.ts)                                                                        | companion bake → [`public/registry/limit-raises.json`](../../../public/registry/limit-raises.json)                                   |
 | **Portal UI**            | [`public/portal/limits/index.html`](../../../public/portal/limits/index.html)                                                                                              | board · filters · multi-factor score badges · 48h · summary/registry fallbacks                                                       |
 | **Pages edge**           | [`functions/api/agents/v1/limits/raises.ts`](../../../functions/api/agents/v1/limits/raises.ts) · [`…/record.ts`](../../../functions/api/agents/v1/limits/record.ts) · [`functions/api/limits/summary.ts`](../../../functions/api/limits/summary.ts) | snapshot GET · record **503** stub · summary aggregate                                                                               |
@@ -105,6 +106,7 @@ bun run serve:public:hot   # open /portal/limits/ · /registry/limit-raises.json
 | `bun run ops:limits:analyze`      | Granular book/sport/market breakdown      |
 | `bun run ops:limits:analyze:json` | Analyze JSON only                         |
 | `bun run ops:limits:seed-patterns` | Connected multi-partner seed + registry bake (`seed-limit-patterns --force --bake`) |
+| `bun run ops:limits:seed-toc-bridge` | Seed raises on TOC identity treeNodeIds (ASH/PAT) for board join · `seed-toc-limit-bridge --force` · add `--bake` to refresh registry |
 | `bun run ops:snapshot`            | Bakes `limit-raises.json` (capture + 48h) |
 
 ```bash
@@ -190,8 +192,9 @@ chargebacks / volatility **lower** score). SSOT: `MULTI_FACTOR_WEIGHTS` /
 - [`partner-onboarding-package.md`](partner-onboarding-package.md) — onboard
   package · flow cards before raises land
 - **Package-group forum:** `enqueueLimitRaiseAlert` dual-routes ops `alerts` + optional package forum mirror (Liquidity/Outs → Alerts) when `package_group_registry` resolves for the tree node.
-- **Seat desk:** maxBet display compares to last-known book max (`seat-desk-book-max.ts`) — never dual-writes desk terms into `partner_account_limits`.
-- **TOC board:** pure join `limitChanges.node_id` ↔ partnerCode/callSign/treeNodeId (`lib/toc-ops/limit-raises-join.ts`); ambiguous keys stay aggregate-only.
+- **Alert enrich (optional):** callers may pass `multiFactorScore` / `topDrivers` into `enqueueLimitRaiseAlert` (or agent POST `multi_factor_score` / `top_drivers`) — outbox appends a multi-factor HTML line only when provided; it does **not** query analytics itself.
+- **Seat desk:** maxBet display compares to last-known book max (`seat-desk-book-max.ts`) — never dual-writes desk terms into `partner_account_limits`. Fill path offers `sd:bm:` / `sd:bmy:` to adopt book max onto desk maxBet (one confirm).
+- **TOC board:** pure join `limitChanges.node_id` ↔ partnerCode/callSign/treeNodeId (`lib/toc-ops/limit-raises-join.ts`); ambiguous keys stay aggregate-only. Demo badges: `bun run ops:limits:seed-toc-bridge` seeds sportsbook raises on real identity UUIDs (not `limit-demo-*` dual-write into TOC `limitHistory`).
 - [`seat-capital-desk.md`](seat-capital-desk.md) — per-out **maxBet** /
   freeplay desk vocabulary (terms, not raise detection)
 - [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)

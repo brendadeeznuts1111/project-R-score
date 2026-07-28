@@ -10,6 +10,8 @@ import { tmpdir } from 'node:os';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   enqueueLimitRaiseAlert,
+  formatLimitRaiseAlertMessage,
+  formatLimitRaiseMultiFactorLine,
   enqueueOpsChannelEvent,
   processChannelOutbox,
   queryOpsChannelHealth,
@@ -440,6 +442,68 @@ describe('ops channel outbox', () => {
       .query(`SELECT COUNT(*) AS n FROM ops_channel_outbox WHERE event_type = 'account.limit_raise'`)
       .get() as { n: number };
     expect(n.n).toBe(1);
+    db.close();
+  });
+
+  test('formatLimitRaiseAlertMessage multi-factor line is optional', () => {
+    expect(
+      formatLimitRaiseMultiFactorLine({ multiFactorScore: 0.82, topDrivers: ['📈 Trend', '🧮 Score'] })
+    ).toBe('📊 Multi-factor: 0.82 · 📈 Trend · 🧮 Score');
+    expect(formatLimitRaiseMultiFactorLine({})).toBeNull();
+    expect(formatLimitRaiseMultiFactorLine({ topDrivers: [] })).toBeNull();
+
+    const base = formatLimitRaiseAlertMessage({
+      sportsbook: 'draftkings',
+      sportId: 'nba',
+      marketId: 'spreads',
+      betType: 'straight',
+      previousMax: 500,
+      newLimit: 1500,
+    });
+    expect(base).toContain('Limit raised');
+    expect(base).not.toContain('Multi-factor');
+
+    const rich = formatLimitRaiseAlertMessage({
+      sportsbook: 'draftkings',
+      sportId: 'nba',
+      marketId: 'spreads',
+      betType: 'straight',
+      previousMax: 500,
+      newLimit: 1500,
+      multiFactorScore: 0.75,
+      topDrivers: ['📊 2 raises in 7d'],
+    });
+    expect(rich).toContain('📊 Multi-factor: 0.75');
+    expect(rich).toContain('📊 2 raises in 7d');
+  });
+
+  test('enqueueLimitRaiseAlert stores multiFactorScore/topDrivers when provided', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    enqueueLimitRaiseAlert(db, {
+      treeNodeId: asTreeNodeId('node-mf-1'),
+      sportsbook: 'draftkings',
+      sportId: 'nba',
+      marketId: 'totals',
+      betType: 'straight',
+      previousMax: 500,
+      newLimit: 1500,
+      multiFactorScore: 0.91,
+      topDrivers: ['📈 Trend +$50/day', '🧮 Score 91%'],
+      skipPackageGroupForum: true,
+    });
+    const row = db
+      .query(
+        `SELECT payload_json FROM ops_channel_outbox WHERE event_type = 'account.limit_raise' LIMIT 1`
+      )
+      .get() as { payload_json: string };
+    const payload = JSON.parse(row.payload_json) as {
+      multiFactorScore: number;
+      topDrivers: string[];
+      text: string;
+    };
+    expect(payload.multiFactorScore).toBe(0.91);
+    expect(payload.topDrivers).toEqual(['📈 Trend +$50/day', '🧮 Score 91%']);
+    expect(payload.text).toContain('Multi-factor: 0.91');
     db.close();
   });
 

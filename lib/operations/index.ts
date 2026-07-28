@@ -259,6 +259,17 @@ export {
   type SeedLimitPatternDemoResult,
 } from './limit-patterns.ts';
 export {
+  loadTocIdentityFromRegistry,
+  resolveTocBridgeTargets,
+  seedTocLimitBridge,
+  seedTocLimitBridgeSync,
+  TOC_LIMIT_BRIDGE_DEFAULT_CODES,
+  type SeedTocLimitBridgeOpts,
+  type SeedTocLimitBridgeResult,
+  type TocBridgeIdentityInput,
+  type TocBridgePartnerTarget,
+} from './toc-limit-bridge-seed.ts';
+export {
   LimitRaiseReport,
   printLimitRaiseReport,
   LIMIT_RAISE_TABLE_PROPERTIES,

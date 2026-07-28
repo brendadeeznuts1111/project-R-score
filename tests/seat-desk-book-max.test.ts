@@ -9,9 +9,14 @@ import {
 } from '../lib/account-limits-repo.ts';
 import {
   buildSeatCapitalDeskRichBlocks,
+  patchSeatOut,
   type SeatIntakeRecord,
 } from '../lib/telegram/seat-capital-desk.ts';
 import {
+  deskMaxBetDiffersFromBookMax,
+  formatAdoptBookMaxButtonLabel,
+  formatAdoptBookMaxConfirm,
+  formatBookMaxAsDeskMaxBet,
   formatBookMaxDeltaLine,
   formatMaxBetSetConfirm,
   formatOutBookMaxLines,
@@ -20,6 +25,7 @@ import {
   matchDeskBookToLatestLimit,
   normalizeSportsbookKey,
   parseDeskMaxBetAmount,
+  shouldOfferAdoptBookMax,
   sportsbookKeysMatch,
 } from '../lib/telegram/seat-desk-book-max.ts';
 
@@ -72,6 +78,58 @@ describe('seat-desk-book-max pure helpers', () => {
     expect(
       formatMaxBetSetConfirm({ outId: 'SPEN-2', deskMaxBet: '200', bookMax: null })
     ).toBe('SPEN-2 max bet set. Book max (last known): no book history');
+  });
+
+  test('shouldOfferAdoptBookMax when book known and desk differs', () => {
+    expect(shouldOfferAdoptBookMax({ bookMax: 1500, deskMaxBet: '$500' })).toBe(true);
+    expect(shouldOfferAdoptBookMax({ bookMax: 1500, deskMaxBet: undefined })).toBe(true);
+    expect(shouldOfferAdoptBookMax({ bookMax: 1500, deskMaxBet: '$1,500' })).toBe(false);
+    expect(shouldOfferAdoptBookMax({ bookMax: 1500, deskMaxBet: '1500' })).toBe(false);
+    expect(shouldOfferAdoptBookMax({ bookMax: null, deskMaxBet: '$500' })).toBe(false);
+    expect(shouldOfferAdoptBookMax({ bookMax: 1500, deskMaxBet: '2.5u' })).toBe(true);
+    expect(deskMaxBetDiffersFromBookMax('$500', 1500)).toBe(true);
+    expect(deskMaxBetDiffersFromBookMax('$1,500', 1500)).toBe(false);
+  });
+
+  test('formatBookMaxAsDeskMaxBet and adopt labels are USD display', () => {
+    expect(formatBookMaxAsDeskMaxBet(1500)).toBe('$1,500');
+    expect(formatAdoptBookMaxButtonLabel(1500)).toBe('Use book $1,500');
+    expect(
+      formatAdoptBookMaxConfirm({
+        outId: 'SPEN-1',
+        deskMaxBet: '$1,500',
+        bookMax: 1500,
+      })
+    ).toContain('adopted from book max $1,500');
+    expect(
+      formatAdoptBookMaxConfirm({
+        outId: 'SPEN-1',
+        deskMaxBet: '$1,500',
+        bookMax: 1500,
+      })
+    ).toContain('Δ $0');
+  });
+
+  test('patchSeatOut adopt path sets desk maxBet only (no limits write)', () => {
+    const record: SeatIntakeRecord = {
+      partnerCode: 'SPEN',
+      callSign: 'SPEN-001',
+      outs: [
+        {
+          book: 'draftkings.com',
+          bookLogin: 'dk',
+          maxBet: '$500',
+          outId: 'SPEN-1',
+          primary: true,
+        },
+      ],
+    };
+    const bookMax = 1500;
+    const deskMaxBet = formatBookMaxAsDeskMaxBet(bookMax);
+    const next = patchSeatOut(record, 'SPEN-1', { maxBet: deskMaxBet });
+    expect(next.outs[0]!.maxBet).toBe('$1,500');
+    // Intake-only mutation — partner_account_limits is never touched here.
+    expect(next.outs[0]!.book).toBe('draftkings.com');
   });
 });
 

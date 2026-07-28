@@ -217,6 +217,16 @@
       </div>
     </div>
 
+    <div id="predict-section" class="card">
+      <h2>🎯 Limit raise prediction</h2>
+      <p id="predict-body" style="color: var(--text-dim, #666); margin: 0.25em 0">
+        Loading prediction accuracy…
+      </p>
+      <p class="empty" id="predict-hint" style="display: none; padding: 0.5em 0">
+        No limit_raise samples yet. Run <code>bun run ops:limits:predict</code>
+      </p>
+    </div>
+
     <div class="pattern-grid">
       <div class="card">
         <h2>📚 Sportsbook Patterns</h2>
@@ -338,7 +348,9 @@
         }
         if (summary && Array.isArray(summary.limitChanges)) {
           data = summary;
-          return render();
+          render();
+          loadPredictStrip(summary);
+          return;
         }
         const empty = document.getElementById('empty-state');
         empty.style.display = 'block';
@@ -348,6 +360,39 @@
             ? 'Run <code>bun run ops:snapshot</code> or <code>bun tools/seed-limit-patterns.ts --force --bake</code>.'
             : 'Is the server running?') +
           ' See <code>docs/harness/tenants/partner-limits.md</code>.';
+        loadPredictStrip(summary);
+      }
+
+      /** Soft prediction strip — never throws. */
+      async function loadPredictStrip(summary) {
+        const bodyEl = document.getElementById('predict-body');
+        const hintEl = document.getElementById('predict-hint');
+        if (!bodyEl || !hintEl) return;
+        let acc = null;
+        try {
+          const res = await fetch('/api/limits/predictions');
+          if (res.ok) {
+            const j = await res.json();
+            acc = j.accuracy ?? j;
+            if (j.lastPredicted != null) acc = { ...acc, lastPredicted: j.lastPredicted };
+          }
+        } catch {
+          /* Pages 503 / offline */
+        }
+        if (!acc || !(acc.n > 0)) {
+          const lr = summary?.prediction?.limitRaise;
+          if (lr && (lr.n ?? 0) > 0) acc = lr;
+        }
+        if (acc && (acc.n ?? 0) > 0) {
+          hintEl.style.display = 'none';
+          const last = acc.lastPredicted
+            ? ` · last predicted ${String(acc.lastPredicted).slice(0, 19)}`
+            : '';
+          bodyEl.textContent = `n=${acc.n} · MAE ${Number(acc.mae ?? 0).toFixed(3)} · RMSE ${Number(acc.rmse ?? 0).toFixed(3)}${last}`;
+        } else {
+          bodyEl.textContent = 'No limit_raise accuracy samples on this surface.';
+          hintEl.style.display = 'block';
+        }
       }
 
       function applyFilter() {

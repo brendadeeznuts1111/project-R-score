@@ -12,8 +12,15 @@ import {
   findSeatOutIndex,
   type SeatIntakeRecord,
 } from './seat-capital-desk.ts';
-import { formatBookMaxDeltaLine, tryLookupBookMaxForOut } from './seat-desk-book-max.ts';
 import {
+  formatAdoptBookMaxConfirm,
+  formatBookMaxAsDeskMaxBet,
+  formatBookMaxDeltaLine,
+  shouldOfferAdoptBookMax,
+  tryLookupBookMaxForOut,
+} from './seat-desk-book-max.ts';
+import {
+  buildSeatDeskAdoptBookMaxConfirmMarkup,
   buildSeatDeskFieldPickerMarkup,
   buildSeatDeskRailPickerMarkup,
   buildSeatDeskRootMarkup,
@@ -151,16 +158,66 @@ export async function handleSeatDeskCallback(
   if (parsed.op === 'fill') {
     const record = await loadAuthorizedIntake(parsed.callSign, ctx.chatId);
     if (!record) return { ok: false, toast: 'Desk not found.' };
+    const compare = tryLookupBookMaxForOut(record, parsed.outId);
     const ok = await editDeskMarkup(
       ctx.token,
       record,
-      buildSeatDeskFieldPickerMarkup(parsed.callSign, parsed.outId, record)
+      buildSeatDeskFieldPickerMarkup(parsed.callSign, parsed.outId, record, {
+        bookMax: compare?.bookMax ?? null,
+      })
     );
     return {
       ok,
       toast: ok
         ? `Out ${outNumLabel(record, parsed.outId)} — choose field`
         : 'Keyboard update failed.',
+    };
+  }
+
+  if (parsed.op === 'adoptBookMax') {
+    const record = await loadAuthorizedIntake(parsed.callSign, ctx.chatId);
+    if (!record) return { ok: false, toast: 'Desk not found.' };
+    const compare = tryLookupBookMaxForOut(record, parsed.outId);
+    const out = record.outs.find(
+      o => (o.outId ?? '').toUpperCase() === parsed.outId.toUpperCase().trim()
+    );
+    if (
+      !compare ||
+      !shouldOfferAdoptBookMax({ bookMax: compare.bookMax, deskMaxBet: out?.maxBet })
+    ) {
+      return { ok: false, toast: 'No book max to adopt (or desk already matches).' };
+    }
+    const ok = await editDeskMarkup(
+      ctx.token,
+      record,
+      buildSeatDeskAdoptBookMaxConfirmMarkup(parsed.callSign, parsed.outId, compare.bookMax)
+    );
+    return {
+      ok,
+      toast: ok
+        ? `Confirm set maxBet to $${compare.bookMax.toLocaleString('en-US')}?`
+        : 'Keyboard update failed.',
+    };
+  }
+
+  if (parsed.op === 'confirmAdoptBookMax') {
+    const record = await loadAuthorizedIntake(parsed.callSign, ctx.chatId);
+    if (!record) return { ok: false, toast: 'Desk not found.' };
+    const compare = tryLookupBookMaxForOut(record, parsed.outId);
+    if (!compare || !Number.isFinite(compare.bookMax)) {
+      return { ok: false, toast: 'No book history for this out.' };
+    }
+    const deskMaxBet = formatBookMaxAsDeskMaxBet(compare.bookMax);
+    const next = patchSeatOut(record, parsed.outId, { maxBet: deskMaxBet });
+    await saveSeatIntake(next);
+    await publishSeatCapitalDesk({ token: ctx.token, record: next, pin: false });
+    return {
+      ok: true,
+      toast: formatAdoptBookMaxConfirm({
+        outId: parsed.outId,
+        deskMaxBet,
+        bookMax: compare.bookMax,
+      }),
     };
   }
 

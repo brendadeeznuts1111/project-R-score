@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  buildAdoptBookMaxCallbackData,
+  buildSeatDeskAdoptBookMaxConfirmMarkup,
   buildSeatDeskFieldPickerMarkup,
   buildSeatDeskRailPickerMarkup,
   buildSeatDeskRootMarkup,
@@ -91,7 +93,33 @@ describe('seat-desk callback grammar', () => {
       outId: 'SPEN-1',
       field: 'fp',
     });
+    expect(parseSeatDeskCallback('sd:bm:SPEN-001:SPEN-1')).toEqual({
+      op: 'adoptBookMax',
+      callSign: 'SPEN-001',
+      outId: 'SPEN-1',
+    });
+    expect(parseSeatDeskCallback('sd:bmy:SPEN-001:SPEN-1')).toEqual({
+      op: 'confirmAdoptBookMax',
+      callSign: 'SPEN-001',
+      outId: 'SPEN-1',
+    });
+    // Confirm adopt must not be parsed as bare back (`sd:b:`)
+    expect(parseSeatDeskCallback('sd:b:SPEN-001')).toEqual({
+      op: 'back',
+      callSign: 'SPEN-001',
+    });
     expect(parseSeatDeskCallback('play:noop')).toBeNull();
+  });
+
+  test('buildAdoptBookMaxCallbackData stays under 64 UTF-8 bytes', () => {
+    const offer = buildAdoptBookMaxCallbackData('SPEN-001', 'SPEN-1', 'offer');
+    const confirm = buildAdoptBookMaxCallbackData('SPEN-001', 'SPEN-12', 'confirm');
+    expect(offer).toBe('sd:bm:SPEN-001:SPEN-1');
+    expect(confirm).toBe('sd:bmy:SPEN-001:SPEN-12');
+    expect(callbackDataUtf8ByteLength(offer)).toBeLessThanOrEqual(64);
+    expect(callbackDataUtf8ByteLength(confirm)).toBeLessThanOrEqual(64);
+    expect(parseSeatDeskCallback(offer)?.op).toBe('adoptBookMax');
+    expect(parseSeatDeskCallback(confirm)?.op).toBe('confirmAdoptBookMax');
   });
 
   test('rail code map round-trips names', () => {
@@ -209,6 +237,75 @@ describe('seat-desk Fill markup', () => {
     expect(labels).toContain('Max bet');
     expect(labels).toContain('FP%');
     expect(labels).not.toContain('Username');
+  });
+
+  test('field picker offers Use book max when bookMax differs from desk maxBet', () => {
+    const withDeskMax: SeatIntakeRecord = {
+      partnerCode: 'SPEN',
+      callSign: 'SPEN-001',
+      outs: [
+        {
+          book: 'draftkings.com',
+          bookLogin: 'dk',
+          paymentRail: 'Venmo',
+          sendTo: '@filled',
+          maxBet: '$500',
+          freeplay: '25%',
+          outId: 'SPEN-1',
+          primary: true,
+        },
+      ],
+    };
+    const kb = buildSeatDeskFieldPickerMarkup('SPEN-001', 'SPEN-1', withDeskMax, {
+      bookMax: 1500,
+    }) as {
+      inline_keyboard: Array<Array<{ text: string; callback_data?: string }>>;
+    };
+    const flat = kb.inline_keyboard.flat();
+    const adopt = flat.find(b => b.callback_data?.startsWith('sd:bm:'));
+    expect(adopt?.text).toBe('Use book $1,500');
+    expect(adopt?.callback_data).toBe('sd:bm:SPEN-001:SPEN-1');
+    expect(callbackDataUtf8ByteLength(adopt!.callback_data!)).toBeLessThanOrEqual(64);
+  });
+
+  test('field picker omits adopt when desk maxBet already matches book max', () => {
+    const matched: SeatIntakeRecord = {
+      partnerCode: 'SPEN',
+      callSign: 'SPEN-001',
+      outs: [
+        {
+          book: 'draftkings.com',
+          bookLogin: 'dk',
+          paymentRail: 'Venmo',
+          sendTo: '@filled',
+          maxBet: '$1,500',
+          freeplay: '25%',
+          outId: 'SPEN-1',
+          primary: true,
+        },
+      ],
+    };
+    const kb = buildSeatDeskFieldPickerMarkup('SPEN-001', 'SPEN-1', matched, {
+      bookMax: 1500,
+    }) as {
+      inline_keyboard: Array<Array<{ text: string; callback_data?: string }>>;
+    };
+    const flat = kb.inline_keyboard.flat();
+    expect(flat.some(b => b.callback_data?.startsWith('sd:bm:'))).toBe(false);
+  });
+
+  test('adopt confirm markup uses sd:bmy and stays under 64 bytes', () => {
+    const kb = buildSeatDeskAdoptBookMaxConfirmMarkup('SPEN-001', 'SPEN-1', 1500) as {
+      inline_keyboard: Array<Array<{ text: string; callback_data?: string }>>;
+    };
+    const confirm = kb.inline_keyboard.flat().find(b => b.callback_data?.startsWith('sd:bmy:'));
+    expect(confirm?.text).toBe('✓ Set maxBet $1,500');
+    expect(confirm?.callback_data).toBe('sd:bmy:SPEN-001:SPEN-1');
+    for (const btn of kb.inline_keyboard.flat()) {
+      if (btn.callback_data) {
+        expect(callbackDataUtf8ByteLength(btn.callback_data)).toBeLessThanOrEqual(64);
+      }
+    }
   });
 
   test('root markup shows Fill when only book terms missing', () => {

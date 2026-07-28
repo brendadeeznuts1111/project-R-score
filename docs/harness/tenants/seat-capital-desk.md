@@ -74,6 +74,8 @@ Wired in [`ops-bot.ts`](../../../lib/telegram/ops-bot.ts) and [`bot.ts`](../../.
 | `sd:r:SPEN-001` | Refresh desk |
 | `sd:f:SPEN-001:SPEN-2` | Open field picker |
 | `sd:p:…:rail` / `:send` / `:user` / `:max` / `:fp` | Rail picker, ForceReply send-to, username, max bet, or freeplay % |
+| `sd:bm:SPEN-001:SPEN-1` | Offer adopt book max → desk maxBet (confirm keyboard) |
+| `sd:bmy:SPEN-001:SPEN-1` | Confirm adopt: set desk maxBet from last-known book max (no dual-write to limits) |
 | `sd:rail:…:v` | Set rail (short codes `v/c/p/z/a`) |
 | `sd:b:SPEN-001` | Back to Fill keyboard |
 

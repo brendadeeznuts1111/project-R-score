@@ -707,23 +707,88 @@ export type EnqueueLimitRaiseAlertInput = {
   packageGroupChatId?: string; // brand-ok — Telegram chat_id wire
   /** Skip package-group forum mirror (ops-only). Default false. */
   skipPackageGroupForum?: boolean;
+  /**
+   * Optional multi-factor score 0–1 (caller-supplied).
+   * Outbox does **not** query analytics — pass when already known.
+   */
+  multiFactorScore?: number;
+  /**
+   * Optional short driver labels for the HTML score line (max 5 used).
+   * Caller-supplied; no heavy analytics inside outbox.
+   */
+  topDrivers?: readonly string[];
 };
+
+/**
+ * Pure HTML body for limit-raise alerts.
+ * When multiFactorScore / topDrivers are provided, appends a multi-factor line.
+ */
+export function formatLimitRaiseAlertMessage(input: {
+  sportsbook: string;
+  sportId: string; // brand-ok — SportId wire
+  marketId: string; // brand-ok — MarketId wire
+  betType: string;
+  previousMax: number;
+  newLimit: number;
+  multiFactorScore?: number;
+  topDrivers?: readonly string[];
+}): string {
+  const lines = [
+    `🚀 <b>Limit raised</b> — ${input.sportsbook}`,
+    `${input.sportId}/${input.marketId} ${input.betType}`,
+    `$${input.previousMax} → <b>$${input.newLimit}</b>`,
+  ];
+  const scoreLine = formatLimitRaiseMultiFactorLine({
+    multiFactorScore: input.multiFactorScore,
+    topDrivers: input.topDrivers,
+  });
+  if (scoreLine) lines.push(scoreLine);
+  return lines.join('\n');
+}
+
+/** Multi-factor score line for Telegram HTML (null when nothing to show). */
+export function formatLimitRaiseMultiFactorLine(opts: {
+  multiFactorScore?: number;
+  topDrivers?: readonly string[];
+}): string | null {
+  const parts: string[] = [];
+  if (opts.multiFactorScore != null && Number.isFinite(opts.multiFactorScore)) {
+    parts.push(`📊 Multi-factor: ${Number(opts.multiFactorScore).toFixed(2)}`);
+  }
+  const drivers = (opts.topDrivers ?? [])
+    .filter((d): d is string => typeof d === 'string' && d.trim().length > 0)
+    .map(d => d.trim())
+    .slice(0, 5);
+  if (drivers.length > 0) {
+    parts.push(drivers.join(' · '));
+  }
+  if (parts.length === 0) return null;
+  return parts.join(' · ');
+}
 
 /**
  * Limit raise alert: always enqueue ops `alerts` (r2 + telegram → ops hub).
  * When the tree node maps to a linked package-group forum, also enqueue a
  * telegram mirror so capital/ops see the raise next to seat-desk traffic
  * (Liquidity/Outs preferred, else Alerts — see threadIdForPackageGroupOutboxTopic).
+ *
+ * Optional `multiFactorScore` / `topDrivers` enrich the HTML line only when
+ * the caller already has them — no analytics query inside outbox.
  */
 export function enqueueLimitRaiseAlert(
   db: Database,
   input: EnqueueLimitRaiseAlertInput
 ): OpsChannelEvent {
-  const message = [
-    `🚀 <b>Limit raised</b> — ${input.sportsbook}`,
-    `${input.sportId}/${input.marketId} ${input.betType}`,
-    `$${input.previousMax} → <b>$${input.newLimit}</b>`,
-  ].join('\n');
+  const message = formatLimitRaiseAlertMessage({
+    sportsbook: input.sportsbook,
+    sportId: input.sportId,
+    marketId: input.marketId,
+    betType: input.betType,
+    previousMax: input.previousMax,
+    newLimit: input.newLimit,
+    multiFactorScore: input.multiFactorScore,
+    topDrivers: input.topDrivers,
+  });
 
   const treeNodeId = input.treeNodeId as string;
   const idemBase = `limit.raise:${treeNodeId}:${input.sportsbook}:${input.sportId}:${input.marketId}:${input.betType}:${input.newLimit}`;
@@ -735,6 +800,17 @@ export function enqueueLimitRaiseAlert(
     betType: input.betType,
     previousMax: input.previousMax,
     newLimit: input.newLimit,
+    ...(input.multiFactorScore != null && Number.isFinite(input.multiFactorScore)
+      ? { multiFactorScore: input.multiFactorScore }
+      : {}),
+    ...(input.topDrivers && input.topDrivers.length > 0
+      ? {
+          topDrivers: input.topDrivers
+            .filter((d): d is string => typeof d === 'string' && d.trim().length > 0)
+            .map(d => d.trim())
+            .slice(0, 5),
+        }
+      : {}),
     parseMode: 'HTML' as const,
     text: message,
   };

@@ -41,7 +41,7 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 
 **Partner identity bridge** ([`ops-partner-bridge.md`](ops-partner-bridge.md)) gates FactoryWager plays; it does not own Soft Balance, rail confirm, or MessageLog.
 
-**Sportsbook limit raises** (multi-factor maxBet/account raise detection, SQLite + `/portal/limits/`) are a separate plane from TOC **LIMIT** tasks (freshness / limit-refresh work on the Drum). Do not dual-write fixture `limitHistory` into raise rows — see [`partner-limits.md`](partner-limits.md). The TOC board reads already-fetched `ops-summary.limitChanges` and shows **per-partner** `raises 48h: N` only when `node_id` **exactly** equals partnerCode / callSign / identity `treeNodeId` (case-insensitive); ambiguous keys stay aggregate-only — pure join [`lib/toc-ops/limit-raises-join.ts`](../../../lib/toc-ops/limit-raises-join.ts).
+**Sportsbook limit raises** (multi-factor maxBet/account raise detection, SQLite + `/portal/limits/`) are a separate plane from TOC **LIMIT** tasks (freshness / limit-refresh work on the Drum). Do not dual-write fixture `limitHistory` into raise rows — see [`partner-limits.md`](partner-limits.md). The TOC board reads already-fetched `ops-summary.limitChanges` and shows **per-partner** `raises 48h: N` only when `node_id` **exactly** equals partnerCode / callSign / identity `treeNodeId` (case-insensitive); ambiguous keys stay aggregate-only — pure join [`lib/toc-ops/limit-raises-join.ts`](../../../lib/toc-ops/limit-raises-join.ts). Demo: `bun run ops:limits:seed-toc-bridge` writes raises onto ASH/PAT identity UUIDs so badges light when ops-summary reloads.
 
 **Cloudflare MCP** ([`cloudflare-pages.md`](cloudflare-pages.md) · [`.mcp.json`](../../../.mcp.json)): platform account/docs/bindings/builds/observability only. No TOC Ops MCP server. Pages serves baked `/registry/toc-ops.json` as ASSETS.
 
@@ -70,11 +70,12 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 ```bash
 bun run ops:seed:toc              # write fixture (skip if present)
 bun run ops:seed:toc -- --force   # rebuild
+bun run ops:limits:seed-toc-bridge  # ASH/PAT sportsbook raises on identity treeNodeIds (board join)
 bun run ops:snapshot --no-routing # bake + embed + ops-summary.toc
 bun run test:toc-ops
 # or: bun test tests/toc-ops/fixture.test.ts tests/toc-ops/enforcement.test.ts \
   tests/toc-ops/return-efficiency.test.ts tests/toc-ops/contract.test.ts tests/toc-ops/api-edge.test.ts \
-  tests/toc-ops/seed/
+  tests/toc-ops/seed/ tests/toc-ops/toc-limit-bridge-seed.test.ts tests/toc-ops/limit-raises-join.test.ts
 ```
 
 ## Gap map (discovery)
