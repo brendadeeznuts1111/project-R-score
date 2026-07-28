@@ -66,9 +66,19 @@ bun tools/monorepo-health.ts --validate reports/monorepo-health-latest.json
 |---------|----------|
 | Husky pre-commit | When `lib/harness/monorepo-health*` / `tools/monorepo-health.ts` / gate/baseline/tests staged → `check-monorepo-health --tests-only` |
 | Husky pre-commit | Always (lib/scripts staged): `check:import-graph` (same Transpiler SSOT) |
-| `ci:core` | Full `check:monorepo-health` after import-graph |
-| Proton / vault | Not this tenant — use `audit:packages:env` · `env:inventory` · `vault:gap:*` · [`proton-integration.md`](proton-integration.md) |
-| Portal bake | Packages board via `audit:packages:*` (related tenant section below) |
+| `ci:core` | Full `check:monorepo-health` after import-graph (+ writes `/registry/monorepo-health.json`) |
+| `ops:snapshot` | Bakes monorepo-health before ops-summary (`--no-monorepo-health` to skip) |
+| `ops-summary.json` | `monorepoHealth` compact slice |
+| `/api/health` | `artifacts.monorepoHealth` + top-level `monorepoHealth` (Pages edge) |
+| TOC portal | [`/portal/toc/`](https://score.factory-wager.com/portal/toc/) **Harness** glance · footer links |
+| Packages portal | [`/portal/packages/`](https://score.factory-wager.com/portal/packages/) graph map |
+| Proton / vault | Separate plane — `audit:packages:env` · `env:inventory` · `vault:gap:*` · [`proton-integration.md`](proton-integration.md) |
+
+```bash
+bun run monorepo:health:bake                 # → public/registry/monorepo-health.json
+bun run ops:snapshot --no-routing            # includes monorepo-health + ops-summary.monorepoHealth
+bun run check:monorepo-health                # gate + bake
+```
 
 ### CLI I/O model
 

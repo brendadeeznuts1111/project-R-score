@@ -14,6 +14,12 @@ import {
   projectLimitRaisesHealthArtifact,
   type LimitRaisesHealthArtifact,
 } from '../monitoring/limit-slice.ts';
+import {
+  projectMonorepoHealthBake,
+  projectMonorepoHealthHealthArtifact,
+  type MonorepoHealthHealthArtifact,
+  type MonorepoHealthRegistryBake,
+} from '../monitoring/monorepo-health-slice.ts';
 import { buildEdgeEnvTable } from './portal-env-edge.ts';
 import { portalOptionsResponse } from './portal-cors.ts';
 
@@ -63,6 +69,7 @@ export type EdgeHealthBody = {
   toc?: Record<string, unknown> | null;
   channels?: Record<string, unknown> | null;
   loop?: Record<string, unknown> | null;
+  monorepoHealth?: Record<string, unknown> | null;
   serve: Record<string, unknown>;
 };
 
@@ -236,6 +243,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     taxonomyAudit,
     complianceBoard,
     limitRaisesBoard,
+    monorepoHealthBoard,
   ] = await Promise.all([
     assetJson(env, origin, '/registry/ops-summary.json'),
     assetJson(env, origin, '/registry/monitoring.json'),
@@ -246,6 +254,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     assetJson(env, origin, '/registry/proof-taxonomy-audit.json'),
     assetJson(env, origin, '/registry/compliance-board.json'),
     assetJson(env, origin, '/registry/limit-raises.json'),
+    assetJson(env, origin, '/registry/monorepo-health.json'),
   ]);
 
   const defaults = sliceDefaults(defaultsRaw);
@@ -315,6 +324,24 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
   const limitRaisesArtifact: LimitRaisesHealthArtifact =
     projectLimitRaisesHealthArtifact(limitRaisesBoard);
 
+  // Prefer dedicated bake; fall back to ops-summary.monorepoHealth embed.
+  // Critical monorepo score does not degrade edge health (floor gate is ci:core).
+  const monorepoBake = monorepoHealthBoard as MonorepoHealthRegistryBake | null;
+  const monorepoArtifact: MonorepoHealthHealthArtifact = monorepoBake
+    ? projectMonorepoHealthHealthArtifact(monorepoBake)
+    : ops?.monorepoHealth
+      ? {
+          exists: Boolean((ops.monorepoHealth as { available?: boolean }).available),
+          ok: (ops.monorepoHealth as { ok?: boolean | null }).ok ?? null,
+          score: (ops.monorepoHealth as { score?: number | null }).score ?? null,
+          grade: (ops.monorepoHealth as { grade?: string | null }).grade ?? null,
+          path: '/registry/monorepo-health.json',
+          portal: '/portal/packages/',
+          claim: 'monorepo-health-score',
+          generatedAt: (ops.monorepoHealth as { generatedAt?: string | null }).generatedAt ?? null,
+        }
+      : projectMonorepoHealthHealthArtifact(null);
+
   const status: 'ok' | 'degraded' =
     defaultsFail || taxonomyFail || complianceFail ? 'degraded' : 'ok';
 
@@ -338,6 +365,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       proofTaxonomyAudit: { exists: Boolean(taxonomyAudit) },
       complianceBoard: complianceArtifact,
       limitRaises: limitRaisesArtifact,
+      monorepoHealth: monorepoArtifact,
     },
     registry: {
       packages,
@@ -356,6 +384,9 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     toc: (ops?.toc as Record<string, unknown> | undefined) ?? null,
     channels: (ops?.channels as Record<string, unknown> | undefined) ?? null,
     loop: (ops?.loop as Record<string, unknown> | undefined) ?? null,
+    monorepoHealth: monorepoBake
+      ? (projectMonorepoHealthBake(monorepoBake) as unknown as Record<string, unknown>)
+      : ((ops?.monorepoHealth as Record<string, unknown> | undefined) ?? null),
     env: {
       summary: {
         total: envTable.length,

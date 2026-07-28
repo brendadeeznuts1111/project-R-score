@@ -26,36 +26,45 @@ async function loadToc() {
   const embed = parseEmbed();
   if (embed?.partners) {
     const extras = await loadOpsSummaryExtras(embed.opsLoop);
+    const monorepoHealth = await loadMonorepoHealth(extras.monorepoHealth);
     return {
       mode: 'embed',
       data: embed,
       loop: extras.loop,
       limitChangeCount: extras.limitChangeCount,
       limitChanges: extras.limitChanges,
+      monorepoHealth,
       complianceBoard,
+      complianceSummary: extras.compliance,
     };
   }
   try {
     const data = await fetchJson('/api/toc');
     const extras = await loadOpsSummaryExtras(data.opsLoop);
+    const monorepoHealth = await loadMonorepoHealth(extras.monorepoHealth);
     return {
       mode: data.mode || 'api',
       data,
       loop: extras.loop,
       limitChangeCount: extras.limitChangeCount,
       limitChanges: extras.limitChanges,
+      monorepoHealth,
       complianceBoard,
+      complianceSummary: extras.compliance,
     };
   } catch {
     const data = await fetchJson('/registry/toc-ops.json');
     const extras = await loadOpsSummaryExtras(data.opsLoop);
+    const monorepoHealth = await loadMonorepoHealth(extras.monorepoHealth);
     return {
       mode: 'registry',
       data,
       loop: extras.loop,
       limitChangeCount: extras.limitChangeCount,
       limitChanges: extras.limitChanges,
+      monorepoHealth,
       complianceBoard,
+      complianceSummary: extras.compliance,
     };
   }
 }
@@ -74,10 +83,48 @@ async function loadOpsSummaryExtras(embedLoop) {
       loop: embedLoop ?? summary?.loop ?? null,
       limitChangeCount: limitChanges ? limitChanges.length : null,
       limitChanges,
+      monorepoHealth: summary?.monorepoHealth ?? null,
+      compliance: summary?.compliance ?? null,
+      packagesGraph: null,
     };
   } catch {
-    return { loop: embedLoop ?? null, limitChangeCount: null, limitChanges: null };
+    return {
+      loop: embedLoop ?? null,
+      limitChangeCount: null,
+      limitChanges: null,
+      monorepoHealth: null,
+      compliance: null,
+      packagesGraph: null,
+    };
   }
+}
+
+/** Prefer ops-summary.monorepoHealth; fall back to dedicated registry bake. */
+async function loadMonorepoHealth(fromSummary) {
+  if (fromSummary?.available) return fromSummary;
+  try {
+    const bake = await fetchJson('/registry/monorepo-health.json');
+    if (bake?.kind === 'monorepo-health' || typeof bake?.score === 'number') {
+      return {
+        available: true,
+        ok: bake.grade === 'healthy' || bake.grade === 'needs-improvement',
+        score: bake.score ?? null,
+        grade: bake.grade ?? null,
+        cyclicDependencyCount: bake.metrics?.cyclicDependencyCount ?? null,
+        largeFilePercent: bake.metrics?.largeFilePercent ?? null,
+        deadCodePercent: bake.metrics?.deadCodePercent ?? null,
+        fileCount: bake.fileCount ?? null,
+        generatedAt: bake.generatedAt ?? null,
+        path: bake.path || '/registry/monorepo-health.json',
+        portal: bake.portal || '/portal/packages/',
+        claim: bake.claim || 'monorepo-health-score',
+        gate: bake.gate || 'check:monorepo-health',
+      };
+    }
+  } catch {
+    /* optional plane */
+  }
+  return fromSummary ?? null;
 }
 
 async function loadOpsLoopSlice() {
@@ -253,6 +300,8 @@ function renderAgentBrief({ mode, data, plane, enf, flow, identity }) {
     `mutations: off-Pages (toc-ops-repo ct / local bun)`,
     `flow: ${flow}`,
     `generated_at: ${data.generatedAt || '—'}`,
+    `harness: /registry/monorepo-health.json · /portal/packages/`,
+    `health_api: GET /api/health (artifacts.monorepoHealth)`,
   ];
   return `<aside class="toc-agent" aria-label="Agent brief">
     <header class="toc-section-head">
@@ -279,6 +328,56 @@ function renderHero({ mode, data, plane, enf, flow }) {
       ${fact('Artifact', `<a href="/registry/toc-ops.json"><code>/registry/toc-ops.json</code></a>`)}
     </dl>
   </header>`;
+}
+
+function gradeKind(grade) {
+  if (grade === 'healthy') return 'ok';
+  if (grade === 'needs-improvement') return 'dim';
+  if (grade === 'critical') return 'hot';
+  return 'dim';
+}
+
+/** Harness monorepo-health + packages map glance (ops-summary / registry bake). */
+function renderHarnessGlance(mh, complianceSummary) {
+  if (!mh?.available && !complianceSummary?.available) {
+    return `<section class="toc-section" id="harness">
+      ${sectionHead('Harness', 'Monorepo health + packages map not baked yet')}
+      <p class="toc-sub">Run <code>bun run monorepo:health:bake</code> · <code>bun run audit:packages:full</code> · <code>bun run ops:snapshot --no-routing</code></p>
+    </section>`;
+  }
+  const score = mh?.score != null ? String(mh.score) : '—';
+  const grade = mh?.grade || '—';
+  const gKind = gradeKind(mh?.grade);
+  const cycles = mh?.cyclicDependencyCount ?? '—';
+  const large =
+    mh?.largeFilePercent != null ? `${Number(mh.largeFilePercent).toFixed(1)}%` : '—';
+  const files = mh?.fileCount ?? '—';
+  const comp =
+    complianceSummary?.available
+      ? `${complianceSummary.enhancements || '—'} · ${complianceSummary.ok ? 'ok' : 'degraded'}`
+      : '—';
+  return `<section class="toc-section" id="harness">
+    ${sectionHead('Harness', 'Monorepo health score · packages map · compliance (Pages bake)')}
+    <div class="toc-stats">
+      <div class="toc-stat ${gKind === 'hot' ? 'hot' : gKind === 'ok' ? 'ok' : ''}">
+        <span class="k">Health score</span><span class="v">${esc(score)}</span>
+      </div>
+      <div class="toc-stat"><span class="k">Grade</span><span class="v">${pill(grade, gKind)}</span></div>
+      <div class="toc-stat"><span class="k">Cycles</span><span class="v">${esc(String(cycles))}</span></div>
+      <div class="toc-stat"><span class="k">Large files</span><span class="v">${esc(String(large))}</span></div>
+      <div class="toc-stat"><span class="k">Files</span><span class="v">${esc(String(files))}</span></div>
+      <div class="toc-stat ${complianceSummary?.ok === false ? 'hot' : ''}"><span class="k">Compliance</span><span class="v" style="font-size:14px">${esc(comp)}</span></div>
+    </div>
+    <p class="toc-sub">
+      <a href="/registry/monorepo-health.json"><code>/registry/monorepo-health.json</code></a>
+      · <a href="/portal/packages/">Packages map</a>
+      · <a href="/portal/health/">Portal health</a>
+      · <a href="/portal/compliance/">Compliance board</a>
+      · claim <code>monorepo-health-score</code>
+      · gate <code>check:monorepo-health</code>
+      ${mh?.generatedAt ? `· <time datetime="${esc(mh.generatedAt)}">${esc(mh.generatedAt)}</time>` : ''}
+    </p>
+  </section>`;
 }
 
 function renderEnforcement(enf) {
@@ -1461,7 +1560,10 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
   </section>`;
 }
 
-function render(root, { mode, data, loop, complianceBoard, limitChangeCount, limitChanges }) {
+function render(
+  root,
+  { mode, data, loop, complianceBoard, complianceSummary, monorepoHealth, limitChangeCount, limitChanges }
+) {
   const s = data.summary || {};
   const buf = data.buffer || {};
   const partners = data.partners || [];
@@ -1527,6 +1629,7 @@ function render(root, { mode, data, loop, complianceBoard, limitChangeCount, lim
       </div>
     </section>
 
+    ${renderHarnessGlance(monorepoHealth, complianceSummary)}
     ${renderEnforcement(enf)}
     ${renderReturnEfficiency(re, ranked, buf)}
     ${renderProfilesRollup(data.profiles)}
@@ -1540,10 +1643,14 @@ function render(root, { mode, data, loop, complianceBoard, limitChangeCount, lim
     <footer class="toc-foot">
       <a href="/registry/toc-ops.json"><code>/registry/toc-ops.json</code></a>
       · <a href="/api/toc"><code>/api/toc</code></a>
+      · <a href="/registry/monorepo-health.json"><code>/registry/monorepo-health.json</code></a>
       · <a href="/portal/ops">Ops rollup</a>
+      · <a href="/portal/packages/">Packages map</a>
+      · <a href="/portal/health/">Health</a>
       · <a href="/portal/compliance/">Compliance board</a>
       · <a href="/portal/limits/">Sportsbook limit raises</a>
       · seed <code>bun run ops:seed:toc -- --force</code>
+      · <code>bun run monorepo:health:bake</code>
       · <code>bun run compliance:bake</code>
     </footer>
   `;

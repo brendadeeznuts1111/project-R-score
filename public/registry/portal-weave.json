@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T14:19:10.102Z",
+  "generated": "2026-07-28T14:50:56.581Z",
   "surfaces": [
     {
       "label": "Home",
@@ -118,6 +118,11 @@
       "label": "packages-graph-map",
       "href": "/registry/packages-graph-map.json",
       "note": "workspace coupling · env owners · template defaults · claim packages-graph-map-v12"
+    },
+    {
+      "label": "monorepo-health",
+      "href": "/registry/monorepo-health.json",
+      "note": "score 0–100 · claim monorepo-health-score · gate check:monorepo-health · TOC harness glance"
     },
     {
       "label": "env-inventory",

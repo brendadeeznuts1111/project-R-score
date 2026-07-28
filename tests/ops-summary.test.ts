@@ -45,6 +45,10 @@ describe('buildOpsSummary', () => {
     expect(s.cloudflarePages.path).toBe('/registry/cloudflare-pages-preflight.json');
     expect(s.proofTaxonomy).toHaveProperty('available');
     expect(s.proofTaxonomy.path).toBe('/registry/proof-taxonomy-audit.json');
+    expect(s.monorepoHealth).toHaveProperty('available');
+    expect(s.monorepoHealth.path).toBe('/registry/monorepo-health.json');
+    expect(s.monorepoHealth.portal).toBe('/portal/packages/');
+    expect(s.monorepoHealth.claim).toBe('monorepo-health-score');
     if (s.proofTaxonomy.available) {
       expect(s.proofTaxonomy.contracts).toBeGreaterThan(0);
       expect(s.proofTaxonomy.proofHash).toMatch(/^[a-f0-9]{64}$/);

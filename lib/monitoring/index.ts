@@ -35,6 +35,21 @@ export {
   type LimitRaisesSummarySlice,
   type LimitRaisesHealthArtifact,
 } from './limit-slice.ts';
+export {
+  loadMonorepoHealthSummarySliceSync,
+  loadMonorepoHealthBake,
+  projectMonorepoHealthBake,
+  projectMonorepoHealthHealthArtifact,
+  bakeMonorepoHealthRegistry,
+  reportToRegistryBake,
+  MONOREPO_HEALTH_REGISTRY_PATH,
+  MONOREPO_HEALTH_REGISTRY_REL,
+  MONOREPO_HEALTH_PORTAL_PACKAGES,
+  MONOREPO_HEALTH_CLAIM,
+  type MonorepoHealthSummarySlice,
+  type MonorepoHealthRegistryBake,
+  type MonorepoHealthHealthArtifact,
+} from './monorepo-health-slice.ts';
 export { ensureMonitoringSchema } from './schema.ts';
 export { renderMonitoringHtml } from './page.ts';
 export { enrichMonitoringForSnapshot, type MonitoringSnapshotExtras } from './enrich-snapshot.ts';

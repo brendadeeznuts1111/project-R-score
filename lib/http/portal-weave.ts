@@ -107,6 +107,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     note: 'workspace coupling · env owners · template defaults · claim packages-graph-map-v12',
   },
   {
+    label: 'monorepo-health',
+    href: '/registry/monorepo-health.json',
+    note: 'score 0–100 · claim monorepo-health-score · gate check:monorepo-health · TOC harness glance',
+  },
+  {
     label: 'env-inventory',
     href: '/registry/env-inventory.json',
     note: 'owners · needsInject vs template defaults · packages plane · env:inventory:bake',

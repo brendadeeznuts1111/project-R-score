@@ -89,6 +89,9 @@ const withChannelMeta =
   !argv.includes('--no-channel-meta') && Bun.env.OPS_SNAPSHOT_CHANNEL_META !== '0';
 /** MA/NJ compliance board bake (disable with --no-compliance or OPS_SNAPSHOT_COMPLIANCE=0). */
 const withCompliance = !argv.includes('--no-compliance') && Bun.env.OPS_SNAPSHOT_COMPLIANCE !== '0';
+/** Monorepo health registry bake (disable with --no-monorepo-health or OPS_SNAPSHOT_MONOREPO_HEALTH=0). */
+const withMonorepoHealth =
+  !argv.includes('--no-monorepo-health') && Bun.env.OPS_SNAPSHOT_MONOREPO_HEALTH !== '0';
 
 const monitoringPath = Bun.env.MONITORING_SNAPSHOT_PATH ?? 'public/registry/monitoring.json';
 const staticRegistryPath = Bun.env.REGISTRY_STATIC_PATH ?? 'public/registry/static.json';
@@ -145,6 +148,8 @@ export async function buildRegistrySnapshot(options?: {
   withChannelMeta?: boolean;
   /** Bake compliance-board.json + portal embed before ops-summary (default true). */
   withCompliance?: boolean;
+  /** Bake public/registry/monorepo-health.json before ops-summary (default true). */
+  withMonorepoHealth?: boolean;
   outPath?: string;
   dbPath?: string;
 }): Promise<Record<string, unknown>> {
@@ -157,6 +162,7 @@ export async function buildRegistrySnapshot(options?: {
     publish: options?.publish ?? publishProofs,
     withChannelMeta: options?.withChannelMeta ?? withChannelMeta,
     withCompliance: options?.withCompliance ?? withCompliance,
+    withMonorepoHealth: options?.withMonorepoHealth ?? withMonorepoHealth,
     outPath: options?.outPath ?? outPath,
     dbPath: options?.dbPath ?? dbPath,
   };
@@ -438,6 +444,24 @@ export async function buildRegistrySnapshot(options?: {
         );
       } catch (e) {
         console.warn('[ops-snapshot] compliance bake skipped:', e instanceof Error ? e.message : e);
+      }
+    }
+
+    // Monorepo health before ops-summary so payload.monorepoHealth + /registry/monorepo-health.json are fresh.
+    if (cfg.withMonorepoHealth) {
+      try {
+        const { bakeMonorepoHealthRegistry } = await import(
+          '../lib/monitoring/monorepo-health-slice.ts'
+        );
+        const mh = await bakeMonorepoHealthRegistry({ root, log: false });
+        console.log(
+          `[ops-snapshot] monorepo-health → ${mh.score}/100 (${mh.grade}) · cycles ${mh.metrics.cyclicDependencyCount}`
+        );
+      } catch (e) {
+        console.warn(
+          '[ops-snapshot] monorepo-health bake skipped:',
+          e instanceof Error ? e.message : e
+        );
       }
     }
 

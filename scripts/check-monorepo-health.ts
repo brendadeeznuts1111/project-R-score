@@ -150,6 +150,19 @@ async function main(): Promise<void> {
   }
 
   await writeMonorepoHealthArtifacts(report, { archive: false });
+  // Pages-facing registry bake (ops-summary + TOC + /api/health consume this).
+  try {
+    const { reportToRegistryBake, MONOREPO_HEALTH_REGISTRY_REL } = await import(
+      '../lib/monitoring/monorepo-health-slice.ts'
+    );
+    const bake = reportToRegistryBake(report);
+    await Bun.write(
+      joinPath(ROOT, MONOREPO_HEALTH_REGISTRY_REL),
+      JSON.stringify(bake, null, 2) + '\n'
+    );
+  } catch {
+    /* registry bake optional when public/ not writable */
+  }
   if (!NO_HISTORY) {
     try {
       await appendHealthHistory(report);

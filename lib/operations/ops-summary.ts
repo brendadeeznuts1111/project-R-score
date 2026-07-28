@@ -26,6 +26,10 @@ import {
   type ComplianceSummarySlice,
 } from '../monitoring/compliance-slice.ts';
 import {
+  loadMonorepoHealthSummarySliceSync,
+  type MonorepoHealthSummarySlice,
+} from '../monitoring/monorepo-health-slice.ts';
+import {
   queryLoopMetricsSlice,
   withProjectorBackendSignal,
   type OpsLoopMetricsSlice,
@@ -233,6 +237,9 @@ export type OpsSummarySeatCapitalDesk = SeatCapitalDeskSummarySlice;
 /** MA/NJ compliance board rollup from /registry/compliance-board.json. */
 export type OpsSummaryCompliance = ComplianceSummarySlice;
 
+/** Monorepo health score rollup from /registry/monorepo-health.json. */
+export type OpsSummaryMonorepoHealth = MonorepoHealthSummarySlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -327,6 +334,11 @@ export type OpsSummaryPayload = {
    * (`bun run compliance:bake` / ops:snapshot companion).
    */
   compliance: OpsSummaryCompliance;
+  /**
+   * Monorepo health score from public/registry/monorepo-health.json
+   * (`check:monorepo-health` / `ops:snapshot` / `monorepo:health:bake`).
+   */
+  monorepoHealth: OpsSummaryMonorepoHealth;
   /** Recent account limit changes (partner_account_limits table; live query, 48h window). */
   limitChanges: Array<{
     limit_id: number; // brand-ok — partner_account_limits.id
@@ -963,6 +975,7 @@ export function buildOpsSummary(
     telegramHandshake: loadTelegramHandshakeSummarySlice(),
     seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
     compliance: loadComplianceSummarySliceSync(),
+    monorepoHealth: loadMonorepoHealthSummarySliceSync(),
     limitChanges,
     limitPatterns,
   };
