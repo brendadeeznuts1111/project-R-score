@@ -50,6 +50,19 @@ jobs:
       - name: Vault health snapshots
         run: bun test tests/vault-health.test.ts
 
+      # Capability-map subset bake fingerprint + Bun snapshot SSOT (offline).
+      # Intentional drift: bun run bake:capabilities:update → commit JSON + .snap
+      - name: Capability map snapshots
+        run: bun test tests/capability-map-subset.test.ts
+
+      # Reviewed bun:test snapshot catalog (orphan / header / entry-count).
+      - name: Bun test snapshot SSOT
+        run: bun run check:snapshots
+
+      # minBun floors only (CI has Bun; pass-cli optional).
+      - name: Capability doctor (Bun floors)
+        run: bun run portal-cli capabilities doctor --bun-only
+
       # One install: verify + hygiene + ci:harness (was a second repo-hygiene job).
       - name: CI core
         run: bun run ci:core

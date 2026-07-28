@@ -149,4 +149,15 @@ rg "scope=prediction" snapshots/
 
 **Env overrides:** `PORTAL_SCOPE` (default scope) · `PORTAL_SNAPSHOT_DIR` (default `snapshots`) · `SNAPSHOT_BASE_URL` (fetch origin).
 
+**Manifest metadata** (all greppable via `portal-cli snapshot grep "<key>=<val>"` or numeric `bias>2`):
+
+- **Always:** `status`, `gitDirty`, `cwd`, `standalone`
+- **Provenance:** `lockHash` / `lockBytes` (short sha256 + size of the text `bun.lock`), `pkgName` / `pkgVersion` (root `package.json`), `bunfigHash` (short sha256 of `bunfig.toml`) — dependency/config drift between any two snapshots
+- **prediction:** `mae` `rmse` `bias` `within5Pct` `quality` `schemaVersion` · **limits:** `totalChanges` `raises` `decreases` `netDelta` `avgScore` `uniquePartners` `uniqueSportsbooks` (+ `chart.svg` from the same metadata) · **gaps:** `errors` `warnings` `total`
+
+```bash
+bun run portal-cli snapshot grep "lockHash=5d3b73c22eeb0d0d"
+bun run portal-cli snapshot grep "raises>10"
+```
+
 Auto-detect: `.snapshot-scope` in report dir or cwd path (`public/registry/prediction/report/.snapshot-scope` → `prediction`).

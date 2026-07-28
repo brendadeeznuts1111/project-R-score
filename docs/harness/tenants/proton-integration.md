@@ -183,7 +183,13 @@ bun run portal-cli secret inject -i env.template -o .env -f
 bun run portal-cli secret invite accept <INVITE_ID>
 ```
 
-Maps to real CLI only (verified against pass-cli 2.2.3 source): `item view` / `item list --output json` / `item totp` / `run` / `inject` / `invite accept|reject` / `share list` / `item share` / `vault share` / `vault member` / `item member` / `session lock|unlock|create-lock` / `settings` / `personal-access-token` / `password generate|score` / `login` / `logout`. No phantom flags, no invented secure-link URL accept (use invite id); shares are by email, one per call, roles `viewer|editor|manager`; revoke via `member … remove --member-share-id`. Autofill injects vault item passwords as env names derived from titles (`--parallel` fetches concurrently, capped at 8 spawns; `--json` prints a value-free `{injected, missing, errors}` report for `jq`, report-only when `--` is omitted); prefer `run --env-file` when a template exists. Status lines use vault-map label/color/glyph (never secret values).
+Maps to real CLI only (verified against pass-cli 2.2.3 source): `item view` / `item list --output json` / `item totp` / `run` / `inject` / `invite accept|reject` / `share list` / `item share` / `vault share` / `vault member` / `item member` / `session lock|unlock|create-lock|remove-lock` / `settings` / `personal-access-token` / `password generate|score` (runs pre-auth, no vault session needed) / `login` / `logout`. No phantom flags, no invented secure-link URL accept (use invite id); shares are by email, one per call, roles `viewer|editor|manager`; revoke via `member … remove --member-share-id`. Autofill injects vault item passwords as env names derived from titles (`--parallel` fetches concurrently, capped at 8 spawns; `--json` prints a value-free `{injected, missing, errors}` report for `jq`, report-only when `--` is omitted); prefer `run --env-file` when a template exists. Status lines use vault-map label/color/glyph (never secret values).
+
+**Autofill safety contract** (advisory-board hardening, `tools/portal-secret.ts`):
+
+- **Reserved env keys are rejected** — a vault item title that sanitizes to `PATH`, `HOME`, or a `DYLD_*` / `LD_*` / `BUN_*` / `NODE_*` key is never injected into the child environment (command-resolution hijack / dylib-injection guard); it lands in `missing` with an explicit error.
+- **Unsanitizable titles are accounted** — a title that yields no env key (e.g. `!!!`) appears in `missing` under the title instead of vanishing from the `--json` report.
+- **Child env is unmasked** with `autofill -- <cmd>` (values go into the child's environment raw, stdio inherited). Prefer `secret run --env-file … -- <cmd>` — pass-cli masks secret values in subprocess output (2.1.4+). The `--json` report never serializes secret values.
 
 ### Vault map (display chrome)
 

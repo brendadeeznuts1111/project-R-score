@@ -116,7 +116,7 @@ const CAPABILITY_FALLBACK = [
 ];
 
 /** @type {string[][]} */
-let capabilityRows = CAPABILITY_FALLBACK.slice();
+let capabilityRows = CAPABILITY_FALLBACK.map(padCapabilityRow);
 /** @type {{ generatedAt?: string, source?: string, schemaVersion?: number, summary?: object }|null} */
 let capabilityMeta = null;
 
@@ -134,19 +134,25 @@ function escapeHtml(s) {
  * @param {object|null} data
  * @returns {string[][]}
  */
+function padCapabilityRow(r) {
+  const a = (Array.isArray(r) ? r : []).map(String);
+  while (a.length < 10) a.push('');
+  return a.slice(0, 10);
+}
+
 export function normalizeCapabilityRows(data) {
   if (!data || !Array.isArray(data.rows) || data.rows.length === 0) {
-    return CAPABILITY_FALLBACK.slice();
+    return CAPABILITY_FALLBACK.map(padCapabilityRow);
   }
   return data.rows.map(r => {
     if (Array.isArray(r)) {
       // Legacy 4-tuple → pad type/protocol/version/source
       if (r.length === 4) {
-        return [String(r[0]), '—', '—', '—', String(r[1]), String(r[2]), String(r[3]), ''];
+        return [String(r[0]), '—', '—', '—', String(r[1]), String(r[2]), String(r[3]), '', '', ''];
       }
       const arr = r.map(String);
-      while (arr.length < 8) arr.push('');
-      return arr.slice(0, 8);
+      while (arr.length < 10) arr.push('');
+      return arr.slice(0, 10);
     }
     const bunApi = String(r.bunApi ?? '');
     const protonCli = String(r.protonCli ?? '');
@@ -173,6 +179,8 @@ export function normalizeCapabilityRows(data) {
       String(r.status ?? ''),
       String(r.usedIn ?? r.used_in ?? ''),
       src,
+      typeof r.minBun === 'string' ? r.minBun : '',
+      typeof r.minPassCli === 'string' ? r.minPassCli : '',
     ];
   });
 }
@@ -196,15 +204,21 @@ function fillCapabilityTable() {
   const q = (document.getElementById('capability-filter')?.value || '').toLowerCase();
   const rows = capabilityRows.filter(r => !q || r.join(' ').toLowerCase().includes(q));
   tbody.innerHTML = rows
-    .map(([cap, type, protocol, version, api, status, used, sourceUrl]) => {
+    .map(([cap, type, protocol, version, api, status, used, sourceUrl, minBun, minPassCli]) => {
       const capCell = sourceUrl
         ? `${escapeHtml(cap)} <a class="cap-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer" title="docs">↗</a>`
         : escapeHtml(cap);
+      const floors = [minBun ? `bun≥${minBun}` : '', minPassCli ? `pass≥${minPassCli}` : '']
+        .filter(Boolean)
+        .join(' · ');
+      const verCell = floors
+        ? `${escapeHtml(version)}<div class="dim" style="font-size:10px">${escapeHtml(floors)}</div>`
+        : escapeHtml(version);
       return `<tr>
           <td>${capCell}</td>
           <td><span class="group-tag">${escapeHtml(type)}</span></td>
           <td><code>${escapeHtml(protocol)}</code></td>
-          <td class="dim">${escapeHtml(version)}</td>
+          <td class="dim">${verCell}</td>
           <td><code>${escapeHtml(api)}</code></td>
           <td>${escapeHtml(status)}</td>
           <td><code>${escapeHtml(used)}</code></td>
@@ -219,7 +233,7 @@ function fillCapabilityTable() {
           .map(([k, v]) => `${k}=${v}`)
           .join(' · ')
       : '';
-    meta.textContent = `${capabilityRows.length} rows · schema v${capabilityMeta.schemaVersion ?? '?'} · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'}${proto ? ` · ${proto}` : ''} · columns: type · protocol · version · api · optional source link · rebake: bun run bake:capabilities · gate: portal-cli capabilities health · check:snapshots`;
+    meta.textContent = `${capabilityRows.length} rows · schema v${capabilityMeta.schemaVersion ?? '?'} · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'}${proto ? ` · ${proto}` : ''} · columns: type · protocol · version · api · optional source link · rebake: bun run bake:capabilities · gate: portal-cli capabilities health · doctor: portal-cli capabilities doctor · check:snapshots · full: /registry/capability-map-full.json`;
   }
 }
 

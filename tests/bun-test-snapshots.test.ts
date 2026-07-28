@@ -9,6 +9,7 @@ import { joinPath } from '../lib/path-bun.ts';
 import {
   BUN_SNAPSHOT_HEADER,
   checkTestSnapshots,
+  countMatchSnapshotCalls,
   isBunSnapshotHeader,
   parseSnapExportKeys,
   TEST_SNAPSHOT_SUITES,
@@ -53,6 +54,13 @@ exports[\`other 1\`] = \`"x"\`;
     expect(args.indexOf('test') + 1).not.toBe(args.indexOf('--update-snapshots'));
   });
 
+  test('countMatchSnapshotCalls counts matchers', () => {
+    expect(countMatchSnapshotCalls('expect(x).toMatchSnapshot();\nexpect(y).toMatchSnapshot();')).toBe(
+      2
+    );
+    expect(countMatchSnapshotCalls('expect(() => f()).toThrowErrorMatchingSnapshot()')).toBe(1);
+  });
+
   test('checkTestSnapshots passes for repo inventory', async () => {
     const report = await checkTestSnapshots(ROOT, '2026-07-28T00:00:00.000Z');
     if (!report.ok) {
@@ -69,6 +77,10 @@ exports[\`other 1\`] = \`"x"\`;
       expect(inv?.exists).toBe(true);
       expect(inv?.headerOk).toBe(true);
       expect((inv?.entryCount ?? 0) > 0).toBe(true);
+      const src = await Bun.file(`${ROOT}/${suite.testRel}`).text();
+      expect(countMatchSnapshotCalls(src)).toBe(inv!.entryCount);
     }
+    // no entry-count-mismatch findings
+    expect(report.findings.some(f => f.code === 'entry-count-mismatch')).toBe(false);
   });
 });

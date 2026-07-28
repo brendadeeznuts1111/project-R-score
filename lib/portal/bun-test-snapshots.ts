@@ -126,6 +126,7 @@ export type TestSnapshotCheckFinding = {
     | 'bad-header'
     | 'uncatalogued-toMatchSnapshot'
     | 'empty-snap'
+    | 'entry-count-mismatch'
     | 'ok';
   path: string;
   detail: string;
@@ -197,7 +198,12 @@ export async function listTestsWithFileSnapshots(root: string): Promise<string[]
   for await (const path of glob.scan({ cwd: root, onlyFiles: true })) {
     const rel = path.replace(/\\/g, '/');
     const text = await Bun.file(`${root}/${rel}`).text();
-    if (/\.toMatchSnapshot\s*\(/.test(text) || /\.toThrowErrorMatchingSnapshot\s*\(/.test(text)) {
+    // Ignore matcher mentions inside string literals / comments (meta tests).
+    const code = text
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\/\/.*$/gm, '')
+      .replace(/(['"`])(?:\\.|(?!\1).)*\1/g, '""');
+    if (/\.toMatchSnapshot\s*\(/.test(code) || /\.toThrowErrorMatchingSnapshot\s*\(/.test(code)) {
       out.push(rel);
     }
   }
@@ -210,6 +216,13 @@ function suiteBySnapRel(): Map<string, TestSnapshotSuite> {
 
 function suiteByTestRel(): Map<string, TestSnapshotSuite> {
   return new Map(TEST_SNAPSHOT_SUITES.map(s => [s.testRel, s]));
+}
+
+/** Count file-level toMatchSnapshot / toThrowErrorMatchingSnapshot calls in a test source. */
+export function countMatchSnapshotCalls(testSource: string): number {
+  const a = testSource.match(/\.toMatchSnapshot\s*\(/g)?.length ?? 0;
+  const b = testSource.match(/\.toThrowErrorMatchingSnapshot\s*\(/g)?.length ?? 0;
+  return a + b;
 }
 
 /**
@@ -270,6 +283,19 @@ export async function checkTestSnapshots(
         path: suite.snapRel,
         detail: `${suite.id}: ${inv.entryCount} entr${inv.entryCount === 1 ? 'y' : 'ies'}`,
       });
+    }
+    // Entry-count vs toMatchSnapshot calls (dead/orphan keys or missing snaps inside file)
+    if (testExists && inv.exists) {
+      const src = await Bun.file(`${root}/${suite.testRel}`).text();
+      const calls = countMatchSnapshotCalls(src);
+      if (calls !== inv.entryCount) {
+        findings.push({
+          severity: 'error',
+          code: 'entry-count-mismatch',
+          path: suite.snapRel,
+          detail: `suite ${suite.id}: snap entries=${inv.entryCount} but toMatchSnapshot calls=${calls} in ${suite.testRel} — run: bun test ${suite.testRel} --update-snapshots`,
+        });
+      }
     }
   }
 

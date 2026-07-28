@@ -2039,6 +2039,8 @@
     "bake:capabilities:check": "bun tools/bake-capability-map.ts --check",
     "bake:capabilities:update": "bun run bake:capabilities && bun tools/bun-test-snapshots.ts --update --id capability-map",
     "capabilities:health": "bun tools/portal-cli.ts capabilities health",
+    "capabilities:doctor": "bun tools/portal-cli.ts capabilities doctor",
+    "capabilities:doctor:bun": "bun tools/portal-cli.ts capabilities doctor --bun-only",
     "check:snapshots": "bun tools/bun-test-snapshots.ts --check",
     "test:snapshots": "bun tools/bun-test-snapshots.ts --list && bun test tests/capability-map-subset.test.ts tests/vault-health.test.ts tests/console-depth.test.ts tests/failure-report.test.ts tests/identity-board.test.ts tests/limits-e2e.test.ts tests/table-format.test.ts",
     "test:snapshots:list": "bun tools/bun-test-snapshots.ts --list",

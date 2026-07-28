@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
@@ -127,14 +128,16 @@ Examples:
 const CAPABILITIES_HELP = `Usage: portal-cli capabilities <subcommand> [options]
 
 Subcommands:
-  health              Run capability-map snapshot + bake fingerprint gate (offline)
+  health              Bake fingerprint + capability-map snapshot gate (offline)
   health --update     Intentional drift: refresh tests/__snapshots__/capability-map-subset.test.ts.snap
-                      (after bun run bake:capabilities when AGENTS.md matrix changed)
+  doctor [--json] [--bun-only]  Machine readiness vs minBun / minPassCli ( --bun-only skips pass-cli )
+  docs                Print registry paths + AGENTS SSOT + update recipes
 
 Gate (CI):
   bun test tests/capability-map-subset.test.ts
   bun run bake:capabilities:check
   bun run check:snapshots
+  bun run capabilities:doctor
 
 Registry artifacts:
   /registry/capability-map-subset.json   tools hub rows (schema v3)
@@ -143,6 +146,8 @@ Registry artifacts:
 Examples:
   portal-cli capabilities health
   portal-cli capabilities health --update
+  portal-cli capabilities doctor
+  portal-cli capabilities doctor --json
   bun run bake:capabilities && bun run bake:capabilities:update
 `;
 
@@ -201,6 +206,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
   portal-cli scanner <subcommand>    Bun Security Scanner (policy · estimate · scan --oneshot)
   portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
+  portal-cli bunfig status|check     Bunfig install config provenance + policy gate
   portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
   portal-cli help                    This message
 
@@ -793,6 +799,73 @@ async function printBadgeTable(flags: string[] = []): Promise<void> {
   }
 }
 
+/**
+ * `portal-cli bunfig status` — offline view of the bunfig-state bake:
+ * effective install config with per-key provenance (machine vs project) + gate results.
+ * @see scripts/bake-bunfig.ts · docs/UNIFIED.md
+ */
+async function printBunfigStatus(flags: string[] = []): Promise<void> {
+  const { joinPath } = await import('../lib/path-bun.ts');
+  const { logTable } = await import('../lib/console-depth.ts');
+  const root = joinPath(import.meta.dir, '..');
+  const statePath = joinPath(root, 'public/registry/bunfig-state.json');
+  const file = Bun.file(statePath);
+  if (!(await file.exists())) {
+    cliError(`Missing bunfig-state bake: ${statePath}\nBake offline: bun run bunfig:bake`);
+  }
+  const data = (await file.json()) as {
+    generatedAt?: string;
+    cacheDir?: string | null;
+    keys?: Array<{
+      key: string;
+      effective: string | number | boolean | Array<string | number | boolean> | null;
+      source: string;
+      owner: string;
+      drift: boolean;
+    }>;
+    scopes?: Array<{ scope: string; url: string | null; tokenEnv: string | null }>;
+    securityScanner?: string | null;
+    gates?: {
+      doctor?: { ok: boolean; exitCode: number };
+      audit?: { ok: boolean; exitCode: number };
+    };
+    summary?: { healthy: boolean; driftKeys: string[] };
+  };
+  if (flags.includes('--json')) {
+    console.log(JSON.stringify(data, null, 2));
+    return;
+  }
+  type TomlScalar = string | number | boolean | Array<string | number | boolean> | null | undefined;
+  const fmt = (v: TomlScalar): string =>
+    v == null ? '—' : Array.isArray(v) ? v.join(', ') : String(v);
+  console.log(
+    `bunfig-state  generated=${data.generatedAt ?? '?'}  healthy=${data.summary?.healthy ?? '?'}  cache=${data.cacheDir ?? '?'}`
+  );
+  console.log('\n── install keys (effective = project overlays machine) ──');
+  logTable(
+    (data.keys ?? []).map(k => ({
+      key: k.key,
+      effective: fmt(k.effective),
+      source: k.source,
+      owner: k.owner,
+      drift: k.drift ? 'DRIFT' : '',
+    })),
+    ['key', 'effective', 'source', 'owner', 'drift']
+  );
+  if (data.scopes?.length) {
+    console.log('\n── registry scopes (project) ──');
+    logTable(
+      data.scopes.map(s => ({ scope: s.scope, url: s.url ?? '—', tokenEnv: s.tokenEnv ?? '—' })),
+      ['scope', 'url', 'tokenEnv']
+    );
+  }
+  console.log(`\nsecurity scanner: ${data.securityScanner ?? '—'}`);
+  console.log(
+    `gates: doctor=${data.gates?.doctor?.ok ? 'ok' : 'FAIL'}  audit=${data.gates?.audit?.ok ? 'ok' : 'FAIL'}  drift=${data.summary?.driftKeys?.join(',') || 'none'}`
+  );
+  console.log('\nRebake: bun run bunfig:bake  ·  Gate: portal-cli bunfig check');
+}
+
 async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promise<void> {
   if (!sub || sub === 'help' || sub === '--help' || sub === '-h') {
     console.log(SNAPSHOT_HELP);
@@ -910,6 +983,59 @@ async function dispatchCapabilities(sub: string | undefined, rest: string[]): Pr
     return;
   }
 
+  if (sub === 'docs') {
+    console.log(`Capability map SSOT
+
+  AGENTS.md#grounded-capability-map
+  public/registry/capability-map-subset.json   (tools hub · schema v3)
+  public/registry/capability-map-full.json     (examples + sourceLabel)
+  tests/__snapshots__/capability-map-subset.test.ts.snap
+
+  bun run bake:capabilities
+  bun run bake:capabilities:check
+  bun run check:snapshots
+  bun run portal-cli capabilities health
+  bun run portal-cli capabilities doctor
+  bun run bake:capabilities:update   # intentional AGENTS drift
+`);
+    return;
+  }
+
+  if (sub === 'doctor') {
+    const { joinPath } = await import('../lib/path-bun.ts');
+    const { runCapabilityDoctor } = await import('../lib/portal/capability-doctor.ts');
+    const root = joinPath(import.meta.dir, '..');
+    const bunOnly = rest.includes('--bun-only');
+    const report = await runCapabilityDoctor(root, { bunOnly });
+    if (rest.includes('--json')) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(
+        `capability doctor  bun=${report.bunVersion}  pass-cli=${report.passCliVersion ?? '—'}  ${report.ok ? 'OK' : 'FAIL'}`
+      );
+      console.log(
+        `  checked minBun=${report.checked.minBunRows}  minPassCli=${report.checked.minPassCliRows}  rows=${report.rowCount}`
+      );
+      if (report.failing.length) {
+        console.log(`  failing (${report.failing.length}):`);
+        for (const f of report.failing.slice(0, 20)) {
+          console.log(`    · ${f.capability}  ${f.field} requires ${f.range}  actual=${f.actual}`);
+        }
+        if (report.failing.length > 20) {
+          console.log(`    … +${report.failing.length - 20} more`);
+        }
+      } else {
+        console.log('  all structured version floors satisfied on this machine');
+      }
+      console.log(
+        `  protocols: ${Object.entries(report.summary.protocolCounts)
+          .map(([k, v]) => `${k}=${v}`)
+          .join(' · ')}`
+      );
+    }
+    process.exit(report.ok ? 0 : 1);
+  }
+
   if (sub !== 'health') {
     cliError(`Unknown capabilities subcommand: ${sub}\n\n${CAPABILITIES_HELP}`);
   }
@@ -988,6 +1114,38 @@ async function main(): Promise<void> {
     return;
   }
 
+  if (cmd === 'bunfig') {
+    const sub = argv[1];
+    const rest = argv.slice(2);
+    if (!sub || sub === 'help' || sub === '--help' || sub === '-h') {
+      console.log(`Usage: portal-cli bunfig <subcommand> [options]
+
+Subcommands:
+  status [--json]   Effective bunfig install config + gate results (offline bake)
+  check             Run audit-bunfig --strict (exit 0 if no workspace duplication)
+
+Rebake: bun run bunfig:bake  ·  Policy: docs/UNIFIED.md
+`);
+      return;
+    }
+    if (sub === 'status') {
+      const bad = rest.filter(f => f !== '--json');
+      if (bad.length) cliError(`Unknown bunfig status flag(s): ${bad.join(', ')}\nFlags: --json`);
+      await printBunfigStatus(rest);
+      return;
+    }
+    if (sub === 'check') {
+      const proc = Bun.spawn(['bash', 'scripts/audit-bunfig.sh', '--strict'], {
+        cwd: process.cwd(),
+        stdout: 'inherit',
+        stderr: 'inherit',
+        stdin: 'inherit',
+      });
+      process.exit((await proc.exited) ?? 1);
+    }
+    cliError(`Unknown bunfig subcommand: ${sub}`);
+  }
+
   if (cmd === 'scanner') {
     // Bun Security Scanner control plane (status / configure / scan / init).
     // scan → bun pm scan; configure edits [install.security] in bunfig.toml.
@@ -1040,6 +1198,7 @@ async function main(): Promise<void> {
       vault: '/portal/vault/',
       env: '/portal/env/',
       failures: '/portal/failures/',
+      bunfig: '/portal/bunfig/',
       health: '/portal/health/',
       ops: '/portal/ops/',
       compliance: '/portal/compliance/',
