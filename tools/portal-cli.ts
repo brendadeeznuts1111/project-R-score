@@ -1005,34 +1005,23 @@ async function dispatchCapabilities(sub: string | undefined, rest: string[]): Pr
 
   if (sub === 'doctor') {
     const { joinPath } = await import('../lib/path-bun.ts');
-    const { runCapabilityDoctor } = await import('../lib/portal/capability-doctor.ts');
+    const { formatCapabilityDoctorHuman, runCapabilityDoctor } = await import(
+      '../lib/portal/capability-doctor.ts'
+    );
     const root = joinPath(import.meta.dir, '..');
     const bunOnly = rest.includes('--bun-only');
+    // @see https://bun.com/docs/runtime/utils#bun-nanoseconds
+    const t0 = Bun.nanoseconds();
     const report = await runCapabilityDoctor(root, { bunOnly });
+    const elapsedNs = Bun.nanoseconds() - t0;
     if (rest.includes('--json')) {
-      console.log(JSON.stringify(report, null, 2));
+      console.log(JSON.stringify({ ...report, elapsedNs }, null, 2));
     } else {
       console.log(
-        `capability doctor  bun=${report.bunVersion}  pass-cli=${report.passCliVersion ?? '—'}  ${report.ok ? 'OK' : 'FAIL'}`
-      );
-      console.log(
-        `  checked minBun=${report.checked.minBunRows}  minPassCli=${report.checked.minPassCliRows}  rows=${report.rowCount}`
-      );
-      if (report.failing.length) {
-        console.log(`  failing (${report.failing.length}):`);
-        for (const f of report.failing.slice(0, 20)) {
-          console.log(`    · ${f.capability}  ${f.field} requires ${f.range}  actual=${f.actual}`);
-        }
-        if (report.failing.length > 20) {
-          console.log(`    … +${report.failing.length - 20} more`);
-        }
-      } else {
-        console.log('  all structured version floors satisfied on this machine');
-      }
-      console.log(
-        `  protocols: ${Object.entries(report.summary.protocolCounts)
-          .map(([k, v]) => `${k}=${v}`)
-          .join(' · ')}`
+        formatCapabilityDoctorHuman(report, {
+          columns: process.stdout.columns,
+          elapsedNs,
+        })
       );
     }
     process.exit(report.ok ? 0 : 1);

@@ -5,7 +5,9 @@
  */
 import { describe, expect, test } from 'bun:test';
 import {
+  capabilityDoctorModulePath,
   doctorFromSubset,
+  formatCapabilityDoctorHuman,
   parsePassCliVersion,
   satisfiesMin,
 } from '../lib/portal/capability-doctor.ts';
@@ -96,5 +98,33 @@ describe('capability-doctor', () => {
     expect(report.ok).toBe(true);
     expect(report.checked.minPassCliRows).toBe(0);
     expect(report.failing).toHaveLength(0);
+  });
+
+  test('formatCapabilityDoctorHuman uses inspect.table / stripANSI surfaces', () => {
+    const subset = buildCapabilityMapSubset(SAMPLE, '2026-07-28T00:00:00.000Z');
+    const bad = doctorFromSubset(subset, {
+      bunVersion: '1.0.0',
+      passCliVersion: '1.0.0',
+      passCliAvailable: true,
+      generatedAt: '2026-07-28T00:00:00.000Z',
+    });
+    const text = formatCapabilityDoctorHuman(bad, { columns: 80, elapsedNs: 1_500_000 });
+    expect(text).toContain('capability doctor');
+    expect(text).toContain('FAIL');
+    expect(text).toContain('elapsed:');
+    // table or list of fails present
+    expect(text.toLowerCase()).toMatch(/minbun|minpass|pack workspace|vault inject/);
+    const plain = Bun.stripANSI(text);
+    expect(Bun.stringWidth(plain.split('\n')[0]!)).toBeGreaterThan(10);
+  });
+
+  test('capabilityDoctorModulePath is absolute via fileURLToPath', () => {
+    const p = capabilityDoctorModulePath();
+    expect(p.startsWith('/')).toBe(true);
+    expect(p.endsWith('capability-doctor.ts')).toBe(true);
+    // round-trip path ↔ file URL
+    const url = Bun.pathToFileURL(p);
+    expect(String(url)).toMatch(/^file:\/\//);
+    expect(Bun.fileURLToPath(url)).toBe(p);
   });
 });

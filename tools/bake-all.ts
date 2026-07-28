@@ -2,6 +2,8 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 /**
  * bake:all — offline registry bake orchestrator.
  *
@@ -92,7 +94,7 @@ async function main(): Promise<void> {
   };
   const results: BakeResult[] = [];
   for (const s of steps) {
-    const start = performance.now();
+    const t0 = Bun.nanoseconds();
     console.log(`\n── ${s.id} → ${s.note}`);
     const proc = Bun.spawn(s.cmd, {
       cwd: ROOT,
@@ -101,7 +103,7 @@ async function main(): Promise<void> {
       stdin: 'inherit',
     });
     const code = (await proc.exited) ?? 1;
-    const ms = Math.round(performance.now() - start);
+    const ms = Math.round((Bun.nanoseconds() - t0) / 1e6);
     results.push({ id: s.id, code, ms });
     if (code !== 0) {
       console.error(`❌ bake step "${s.id}" failed (exit ${code}) — stopping`);
@@ -109,15 +111,18 @@ async function main(): Promise<void> {
     }
   }
 
-  const { logTable } = await import('../lib/console-depth.ts');
   console.log('\n── bake:all summary ──');
-  logTable(
-    results.map(r => ({
-      step: r.id,
-      status: r.code === 0 ? 'ok' : `fail(${r.code})`,
-      ms: r.ms,
-    })),
-    ['step', 'status', 'ms']
+  // Native Bun.inspect.table (string return) — same surface as capabilities doctor.
+  console.log(
+    Bun.inspect.table(
+      results.map(r => ({
+        step: r.id,
+        status: r.code === 0 ? 'ok' : `fail(${r.code})`,
+        ms: r.ms,
+      })),
+      ['step', 'status', 'ms'],
+      { colors: true }
+    )
   );
   const failed = results.find(r => r.code !== 0);
   if (failed) {

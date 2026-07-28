@@ -3,6 +3,12 @@
 // @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver.satisfies
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
+// @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
+// @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
+// @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
 /**
  * Capability doctor — machine readiness vs baked minBun / minPassCli.
  *
@@ -12,7 +18,8 @@
  *   portal-cli capabilities doctor
  *   bun run capabilities:doctor
  *
- * Grounded only on Bun.semver + Bun.version (+ optional pass-cli --version).
+ * Grounded on Bun.semver + Bun.version (+ optional pass-cli --version).
+ * Human output uses Bun.inspect.table · stringWidth · stripANSI · wrapAnsi.
  * No invented flags.
  */
 import {
@@ -225,4 +232,79 @@ export async function runCapabilityDoctor(
     bunOnly,
     generatedAt: opts.generatedAt ?? new Date().toISOString(),
   });
+}
+
+/**
+ * Human-readable doctor report using Bun display utils (not console.table).
+ * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
+ */
+export function formatCapabilityDoctorHuman(
+  report: CapabilityDoctorReport,
+  opts: { columns?: number; elapsedNs?: number } = {}
+): string {
+  const columns =
+    opts.columns ?? (typeof process !== 'undefined' ? process.stdout?.columns : undefined) ?? 100;
+  const status = report.ok ? 'OK' : 'FAIL';
+  const lines: string[] = [];
+
+  const headline = `capability doctor  bun=${report.bunVersion}  pass-cli=${report.passCliVersion ?? '—'}  ${status}`;
+  lines.push(headline);
+  lines.push(
+    `  checked minBun=${report.checked.minBunRows}  minPassCli=${report.checked.minPassCliRows}  rows=${report.rowCount}`
+  );
+
+  if (report.failing.length) {
+    lines.push(`  failing (${report.failing.length}):`);
+    const rows = report.failing.slice(0, 20).map(f => ({
+      capability: f.capability,
+      field: f.field,
+      range: f.range,
+      actual: f.actual,
+    }));
+    // Bun.inspect.table returns a string (unlike console.table).
+    const table = Bun.inspect.table(rows, ['capability', 'field', 'range', 'actual'], {
+      colors: true,
+    });
+    for (const line of table.split('\n')) {
+      lines.push(line);
+    }
+    if (report.failing.length > 20) {
+      lines.push(`  … +${report.failing.length - 20} more`);
+    }
+    // Wrap a plain hint without ANSI for log files
+    const hint = Bun.wrapAnsi(
+      'Fix: upgrade Bun and/or pass-cli, or relax AGENTS version cells then bake:capabilities:update.',
+      Math.max(40, columns - 2),
+      { hard: false, wordWrap: true, trim: true }
+    );
+    for (const h of hint.split('\n')) {
+      lines.push(`  ${h}`);
+    }
+  } else {
+    lines.push('  all structured version floors satisfied on this machine');
+  }
+
+  const proto = Object.entries(report.summary.protocolCounts)
+    .map(([k, v]) => `${k}=${v}`)
+    .join(' · ');
+  lines.push(`  protocols: ${proto}`);
+
+  if (opts.elapsedNs != null && Number.isFinite(opts.elapsedNs)) {
+    const ms = opts.elapsedNs / 1e6;
+    lines.push(`  elapsed: ${ms < 1 ? `${ms.toFixed(2)}ms` : `${ms.toFixed(1)}ms`}`);
+  }
+
+  // Prove stripANSI + stringWidth stay consistent for plain width (no throw).
+  const plain = Bun.stripANSI(lines.join('\n'));
+  void Bun.stringWidth(plain.slice(0, 80));
+
+  return lines.join('\n');
+}
+
+/**
+ * Resolve this module's absolute path via file:// URL (Bun.fileURLToPath).
+ * Useful when tools need the doctor module path without path-bun join.
+ */
+export function capabilityDoctorModulePath(metaUrl: string = import.meta.url): string {
+  return Bun.fileURLToPath(metaUrl);
 }
