@@ -61,6 +61,9 @@ import {
   handleLimitRaiseAgentRequest,
   handleLimitRecordRequest,
   handleLimitSummaryRequest,
+  handleLimitAnalyzeRequest,
+  handleLimitPredictCycleRequest,
+  handleLimitPredictionsRequest,
 } from '../lib/operations/limit-raise-agent-api.ts';
 import { readLocalChannelEvents } from '../lib/channels/outbox.ts';
 import { parseOpsChannelTopic } from '../lib/channels/ops-channel-event.ts';
@@ -898,6 +901,36 @@ function limitSummaryApi(req?: Request): Response {
   }
 }
 
+/** GET /api/limits/analyze — granular breakdown by book/sport/market + regulatory. */
+function limitAnalyzeApi(): Response {
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    return handleLimitAnalyzeRequest(db);
+  } finally {
+    db.close();
+  }
+}
+
+/** POST /api/limits/predictions — run prediction cycle. */
+function limitPredictCycleApi(): Response {
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    return handleLimitPredictCycleRequest(db);
+  } finally {
+    db.close();
+  }
+}
+
+/** GET /api/limits/predictions — latest prediction accuracy. */
+function limitPredictionsApi(): Response {
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    return handleLimitPredictionsRequest(db);
+  } finally {
+    db.close();
+  }
+}
+
 /** GET /monitoring — server-rendered Bun.inspect.table dashboard. */
 async function monitoringPage(): Promise<Response> {
   try {
@@ -1494,6 +1527,13 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/limits/summary' || path === '/api/limits/summary/') {
     return limitSummaryApi(req);
   }
+  if (path === '/api/limits/analyze' || path === '/api/limits/analyze/') {
+    return limitAnalyzeApi();
+  }
+  if (path === '/api/limits/predictions' || path === '/api/limits/predictions/') {
+    if (req.method === 'POST') return limitPredictCycleApi();
+    return limitPredictionsApi();
+  }
 
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
@@ -1506,6 +1546,8 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
       '/api/channels',
       '/api/operations/summary',
       '/api/limits/summary',
+      '/api/limits/analyze',
+      '/api/limits/predictions',
       '/api/catalog',
       '/api/skills', // prefix also covers /api/skills/{name} + /package (publish-gated POST)
       // Packaged .skill archives under public/skills/ — public read plane.
@@ -1869,6 +1911,9 @@ function buildPublicRoutes() {
     '/api/agents/v1/limits/record': (req: Request) => agentLimitRecordApi(req),
     '/api/agents/v1/limits/record/': (req: Request) => agentLimitRecordApi(req),
     '/api/limits/summary': (req: Request) => limitSummaryApi(req),
+    '/api/limits/analyze': () => limitAnalyzeApi(),
+    '/api/limits/predictions': (req: Request) =>
+      req.method === 'POST' ? limitPredictCycleApi() : limitPredictionsApi(),
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
     '/api/dod': (req: Request) => dodApi(req),

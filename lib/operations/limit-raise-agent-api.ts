@@ -12,7 +12,10 @@ import { buildReportProofFromValue, proofScoreHints } from '../security/report-p
 import { PartnerAnalyticsRepository } from './partner-analytics-repo.ts';
 import { AccountLimitsRepository, queryRecentLimitChanges } from '../account-limits-repo.ts';
 import { enqueueLimitRaiseAlert } from '../channels/outbox.ts';
+import { runGranularAnalysis } from '../prediction/granular-analysis.ts';
+import { runLimitPredictionCycle } from '../prediction/limit-prediction.ts';
 import { LimitRaiseReport } from './limit-raise-report.ts';
+import { buildLimitPatternSnapshot, scopeLimitPatternSnapshot } from './limit-patterns.ts';
 
 const DEFAULT_LOOKBACK_HOURS = 24;
 const MAX_LOOKBACK_HOURS = 24 * 30;
@@ -64,12 +67,30 @@ export function handleLimitRaiseAgentRequest(request: Request, db: Database): Re
   const sinceTimestamp = Math.floor(Date.now() / 1000) - Math.round(hours * 3600);
   const repository = new PartnerAnalyticsRepository(db, nodeId);
   const raises = repository.getEnrichedRaisesWithContext(sinceTimestamp);
+  const scoreByLimit = new Map(raises.map(raise => [raise.limit_id, raise]));
+  const patterns = scopeLimitPatternSnapshot(
+    buildLimitPatternSnapshot(
+      db,
+      queryRecentLimitChanges(db, hours).map(change => {
+        const scored = scoreByLimit.get(change.limit_id);
+        return {
+          ...change,
+          node_id: parseTreeNodeId(change.node_id),
+          multi_factor_score: scored?.multi_factor_score,
+          context_proof_valid: scored?.context_proof?.valid ?? null,
+        };
+      }),
+      hours
+    ),
+    nodeId
+  );
   const body = {
     schemaVersion: 1,
     node_id: nodeId,
     lookback_hours: hours,
     since_timestamp: sinceTimestamp,
     raises,
+    patterns,
   };
   const proof = buildReportProofFromValue(body);
 
@@ -192,6 +213,57 @@ export function handleLimitSummaryRequest(db: Database, request?: Request): Resp
       uniquePartners: partners,
       changes,
     };
+    const proof = buildReportProofFromValue(body);
+    return json({ ...body, proof, integrity: proofScoreHints(proof) });
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : 'unknown error' }, 500);
+  }
+}
+
+/** GET /api/limits/analyze — granular breakdown by book/sport/market + regulatory correlation. */
+export function handleLimitAnalyzeRequest(db: Database): Response {
+  try {
+    const analysis = runGranularAnalysis(db, 48);
+    const proof = buildReportProofFromValue(analysis);
+    return json({ ...analysis, proof, integrity: proofScoreHints(proof) });
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : 'unknown error' }, 500);
+  }
+}
+
+/** POST /api/limits/predictions — run prediction cycle. */
+export function handleLimitPredictCycleRequest(db: Database): Response {
+  try {
+    const result = runLimitPredictionCycle(db);
+    const proof = buildReportProofFromValue(result);
+    return json({ ...result, proof, integrity: proofScoreHints(proof) });
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : 'unknown error' }, 500);
+  }
+}
+
+/** GET /api/limits/predictions — latest prediction accuracy. */
+export function handleLimitPredictionsRequest(db: Database): Response {
+  try {
+    const { getPredictionAccuracy } =
+      require('../prediction/tester.ts') as typeof import('../prediction/tester.ts');
+    const accuracy = getPredictionAccuracy(db, 'limit_raise');
+    const lastPredicted =
+      accuracy.n > 0
+        ? (() => {
+            try {
+              const row = db
+                .query(
+                  `SELECT MAX(prediction_date) as d FROM prediction_accuracy WHERE prediction_type = 'limit_raise'`
+                )
+                .get() as { d: string | null } | null;
+              return row?.d ?? null;
+            } catch {
+              return null;
+            }
+          })()
+        : null;
+    const body = { schemaVersion: 1, generated: new Date().toISOString(), accuracy, lastPredicted };
     const proof = buildReportProofFromValue(body);
     return json({ ...body, proof, integrity: proofScoreHints(proof) });
   } catch (error) {

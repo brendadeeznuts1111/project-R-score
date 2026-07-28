@@ -293,6 +293,22 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'public — aggregate limit changes across all partners (48h window)',
   },
   {
+    path: '/api/limits/analyze',
+    name: 'Limit granular analysis API',
+    category: 'api',
+    kind: 'simd-route',
+    okStatuses: [200],
+    note: 'public — granular breakdown by book/sport/market + regulatory correlation',
+  },
+  {
+    path: '/api/limits/predictions',
+    name: 'Limit predictions API',
+    category: 'api',
+    kind: 'simd-route',
+    okStatuses: [200],
+    note: 'GET returns accuracy; POST runs prediction cycle',
+  },
+  {
     path: '/portal/toc/',
     name: 'TOC Ops portal',
     category: 'portal',
