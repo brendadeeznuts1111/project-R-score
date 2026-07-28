@@ -1,4 +1,6 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/color#format-colors-as-ansi-for-terminals — Bun.color
 import { describe, expect, test } from 'bun:test';
 import { colorize } from '../lib/security/vault-map.ts';
