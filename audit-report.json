@@ -1,9 +1,9 @@
 {
   "schemaVersion": 13,
   "kind": "packages-metafile-audit",
-  "generatedAt": "2026-07-28T18:09:49.642Z",
+  "generatedAt": "2026-07-28T18:19:15.050Z",
   "bunVersion": "1.4.0",
-  "root": "/Users/nolarose/Projects",
+  "root": ".",
   "glob": "packages/*/src/**/*.{ts,tsx}",
   "target": "bun",
   "score": 100,
@@ -63,6 +63,16 @@
   "cycles": [],
   "hubs": [
     {
+      "path": "packages/p2p/src/business-continuity.ts",
+      "inbound": 2,
+      "bytes": 11266
+    },
+    {
+      "path": "packages/business/src/habits-pure.ts",
+      "inbound": 2,
+      "bytes": 3012
+    },
+    {
       "path": "packages/docs-tools/src/builders/validator.ts",
       "inbound": 1,
       "bytes": 37256
@@ -76,11 +86,6 @@
       "path": "packages/docs-tools/src/builders/validator-enhanced.ts",
       "inbound": 1,
       "bytes": 13890
-    },
-    {
-      "path": "packages/p2p/src/business-continuity.ts",
-      "inbound": 1,
-      "bytes": 11266
     },
     {
       "path": "packages/docs-tools/src/documentation-validator.ts",
@@ -98,19 +103,14 @@
       "bytes": 10066
     },
     {
+      "path": "packages/rip/src/index.ts",
+      "inbound": 1,
+      "bytes": 7897
+    },
+    {
       "path": "packages/p2p/src/migration-workflow.ts",
       "inbound": 1,
       "bytes": 7144
-    },
-    {
-      "path": "packages/p2p/src/customer-notifier.ts",
-      "inbound": 1,
-      "bytes": 5926
-    },
-    {
-      "path": "packages/guards/src/bun-first-guard.ts",
-      "inbound": 1,
-      "bytes": 5126
     }
   ],
   "fanOut": [
@@ -234,8 +234,8 @@
         "targetPrefix": "lib/docs",
         "weight": 11,
         "samples": [
-          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains",
-          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/categories",
+          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/categories.ts",
+          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains.ts",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/fragments.ts"
         ]
       },
@@ -245,9 +245,9 @@
         "targetPrefix": "bare:bun",
         "weight": 3,
         "samples": [
+          "packages/p2p/src/business-continuity.ts → bun",
           "packages/p2p/src/customer-notifier.ts → bun",
-          "packages/p2p/src/migration-workflow.ts → bun",
-          "packages/p2p/src/business-continuity.ts → bun"
+          "packages/p2p/src/migration-workflow.ts → bun"
         ]
       },
       {
@@ -739,7 +739,7 @@
   "surfaces": {
     "schemaVersion": 3,
     "kind": "monorepo-surfaces",
-    "generatedAt": "2026-07-28T18:09:49.620Z",
+    "generatedAt": "2026-07-28T18:19:15.032Z",
     "summary": {
       "workspaceMembers": 8,
       "packagesPlane": 6,
@@ -749,8 +749,8 @@
       "chromeComponents": 12,
       "brandAssets": 20,
       "registryTopLevelJson": 54,
-      "registryStoragePackages": 9,
-      "libTopLevelDirs": 39,
+      "registryStoragePackages": 0,
+      "libTopLevelDirs": 38,
       "stoNestedPackages": 3,
       "portalRegistryRefs": 44,
       "registryOrphanFromPortal": 12,
@@ -1057,7 +1057,7 @@
           "href": "/portal/tools/",
           "slug": "tools",
           "hasIndex": true,
-          "hasMd": false,
+          "hasMd": true,
           "scripts": [
             "/portal/data.js",
             "/portal/topbar.js",
@@ -1485,7 +1485,7 @@
           "file": "cloudflare-pages-preflight.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 1069,
+          "bytes": 1065,
           "family": "ops"
         },
         {
@@ -1590,7 +1590,7 @@
           "file": "harness-skills-catalog.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 18656,
+          "bytes": 11175,
           "family": "catalog"
         },
         {
@@ -1618,14 +1618,14 @@
           "file": "monitoring.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 12176,
+          "bytes": 12173,
           "family": "health"
         },
         {
           "file": "monorepo-health.json",
           "kind": "monorepo-health",
           "schemaVersion": 1,
-          "bytes": 1131,
+          "bytes": 1129,
           "family": "health"
         },
         {
@@ -1646,7 +1646,7 @@
           "file": "ops-summary.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 67452,
+          "bytes": 67399,
           "family": "ops"
         },
         {
@@ -1660,7 +1660,7 @@
           "file": "packages-graph-map.json",
           "kind": "packages-graph-map",
           "schemaVersion": 13,
-          "bytes": 64853,
+          "bytes": 96320,
           "family": "packages"
         },
         {
@@ -1674,7 +1674,7 @@
           "file": "portal-weave.json",
           "kind": "portal-weave",
           "schemaVersion": 2,
-          "bytes": 18186,
+          "bytes": 18204,
           "family": "portal"
         },
         {
@@ -1737,7 +1737,7 @@
           "file": "static.json",
           "kind": null,
           "schemaVersion": 1,
-          "bytes": 115523,
+          "bytes": 115421,
           "family": "catalog"
         },
         {
@@ -1765,7 +1765,7 @@
           "file": "toc-ops.json",
           "kind": null,
           "schemaVersion": null,
-          "bytes": 383949,
+          "bytes": 383955,
           "family": "ops"
         },
         {
@@ -1825,17 +1825,7 @@
           "family": "health"
         }
       ],
-      "storagePackageNames": [
-        "@factory/health-check",
-        "@factorywager/bun-test",
-        "@factorywager/final-test",
-        "@factorywager/registry-client",
-        "__formdata-test",
-        "formdata-test",
-        "sdk-test-pkg",
-        "test-npm-pkg",
-        "test-plugin"
-      ],
+      "storagePackageNames": [],
       "scopedLatest": [
         "@factorywager/bun-utils-test/latest.json",
         "@factorywager/registry-client/latest.json",
@@ -2423,11 +2413,6 @@
           "name": "audit",
           "hasPackageJson": false,
           "tsFiles": 6
-        },
-        {
-          "name": "auth",
-          "hasPackageJson": false,
-          "tsFiles": 2
         },
         {
           "name": "automation",
@@ -3646,7 +3631,7 @@
       {
         "id": "lib-plane",
         "label": "lib/ top-level dirs",
-        "count": 39,
+        "count": 38,
         "note": "interior modules; workspace package only lib/shared · shared=yes"
       },
       {
@@ -3716,7 +3701,7 @@
       {
         "id": "registry-storage",
         "label": "registry storage packages",
-        "count": 9,
+        "count": 0,
         "note": "public/registry/storage published artifact.tgz names"
       }
     ]
@@ -3811,7 +3796,7 @@
     "Actions: business:archive-candidate, p2p:archive-candidate",
     "Summary: avgPkg=95 · openActions=2 · archivePlaceholders=0 · hub=lib/docs",
     "Quarantine: none",
-    "Surfaces v3: workspaces=8 (packagesPlane=6+other=2) · libDirs=39 · stoNested=3 · portalPages=19 · chrome=12 · brand=20 · registryJson=54 · regRefs=44 · regOrphan=12 · themeDark=12 · storagePkgs=9"
+    "Surfaces v3: workspaces=8 (packagesPlane=6+other=2) · libDirs=38 · stoNested=3 · portalPages=19 · chrome=12 · brand=20 · registryJson=54 · regRefs=44 · pageEdges=141 · libHubs=1 · regOrphan=12 · orphanWire=6 · themeDark=12 · storagePkgs=0"
   ],
   "metafile": {
     "inputs": {

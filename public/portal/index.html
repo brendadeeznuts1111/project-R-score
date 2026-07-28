@@ -83,22 +83,33 @@
         <div class="stat-card" id="stat-types">0 <span>types</span></div>
         <div class="stat-card" id="stat-health">— <span>avg health</span></div>
       </div>
-      <div class="registry-banner" id="registry-banner">
+      <div class="registry-banner" id="registry-banner" aria-live="polite">
         <span id="banner-text">Registry snapshot — no live connection</span>
+        <span id="registry-freshness" class="registry-freshness registry-freshness--unknown">Unknown freshness</span>
       </div>
-      <div class="filter-row">
-        <div class="filter-section">
-          <span class="filter-label">Type:</span>
-          <div id="filter-types" class="filter-chips"></div>
+      <div class="filter-row" role="group" aria-label="Package filters">
+        <div class="filter-groups">
+          <div class="filter-section" role="group" aria-labelledby="filter-type-label">
+            <span id="filter-type-label" class="filter-label">Type</span>
+            <div id="filter-types" class="filter-chips"></div>
+          </div>
+          <div class="filter-section" role="group" aria-labelledby="filter-scope-label">
+            <span id="filter-scope-label" class="filter-label">npm scope</span>
+            <div id="filter-scopes" class="filter-chips"></div>
+          </div>
         </div>
         <div class="sort-section">
-          <span class="filter-label">Sort:</span>
-          <select id="sort-select">
+          <label class="filter-label" for="sort-select">Sort</label>
+          <select id="sort-select" aria-label="Sort packages">
             <option value="name">Name</option>
             <option value="version">Version</option>
             <option value="date">Publish date</option>
           </select>
         </div>
+      </div>
+      <div class="filter-context">
+        <p id="filter-summary" class="filter-summary" aria-live="polite">0 of 0 packages</p>
+        <button id="clear-filters" type="button" class="filter-clear" disabled>Clear filters</button>
       </div>
       <div id="package-grid" class="package-grid"></div>
     </section>

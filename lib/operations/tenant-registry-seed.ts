@@ -78,13 +78,21 @@ export async function seedTenantRegistries(
 
   for (const [tenantId, names] of Object.entries(TENANT_PACKAGE_SLICES)) {
     const outPath = joinPath(rootDir, `public/registry/${tenantId}/registry.json`);
+    const packages = pickPackages(root, names);
+    const expectedNames = Object.keys(packages).sort();
     const existing = Bun.file(outPath);
     if ((await existing.exists()) && !opts.force) {
       try {
         const cur = (await existing.json()) as RegistryIndex;
-        const n = Object.keys(cur.packages ?? {}).length;
-        if (n >= minPackages) {
-          tenants[tenantId] = n;
+        const currentNames = Object.keys(cur.packages ?? {}).sort();
+        const currentRootUpdated = (cur.meta as { rootLastUpdated?: unknown } | undefined)
+          ?.rootLastUpdated;
+        const sameRootSnapshot =
+          currentRootUpdated === (root.lastUpdated ?? null) &&
+          currentNames.length === expectedNames.length &&
+          currentNames.every((name, index) => name === expectedNames[index]);
+        if (currentNames.length >= minPackages && sameRootSnapshot) {
+          tenants[tenantId] = currentNames.length;
           continue;
         }
       } catch {
@@ -92,7 +100,6 @@ export async function seedTenantRegistries(
       }
     }
 
-    const packages = pickPackages(root, names);
     const payload = {
       schemaVersion: 1,
       tenantId,

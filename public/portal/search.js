@@ -3,40 +3,85 @@
  * Pure state management, no DOM.
  */
 
+const DEFAULT_STATE = Object.freeze({
+  query: '',
+  types: [],
+  scopes: [],
+  tags: [],
+  sort: 'name',
+  project: '',
+});
+
+function parseList(params, key) {
+  return params.get(key)?.split(',').map(value => value.trim()).filter(Boolean) || [];
+}
+
+/**
+ * Build filter state from a hash string.
+ * @param {string} rawHash
+ * @returns {{ query: string, types: string[], scopes: string[], tags: string[], sort: string, project: string }}
+ */
+export function parseHashState(rawHash = '') {
+  const params = new URLSearchParams(rawHash.replace(/^#/, ''));
+  return {
+    query: params.get('q') || DEFAULT_STATE.query,
+    types: parseList(params, 'type'),
+    scopes: parseList(params, 'scope'),
+    tags: parseList(params, 'tag'),
+    sort: params.get('sort') || DEFAULT_STATE.sort,
+    project: params.get('project') || DEFAULT_STATE.project,
+  };
+}
+
 /**
  * Build filter state from URL hash and merge with defaults.
- * Hash format: #type=library&tag=websocket
- * @returns {{ query: string, types: string[], tags: string[], sort: string }}
+ * Hash format: #type=library&scope=%40factorywager&tag=websocket
+ * @returns {{ query: string, types: string[], scopes: string[], tags: string[], sort: string, project: string }}
  */
 export function readHashState() {
-  const raw = window.location.hash.slice(1);
-  const params = new URLSearchParams(raw);
-  return {
-    query: params.get('q') || '',
-    types: params.get('type')?.split(',').filter(Boolean) || [],
-    tags: params.get('tag')?.split(',').filter(Boolean) || [],
-    sort: params.get('sort') || 'name',
-  };
+  return parseHashState(window.location.hash);
+}
+
+/**
+ * Serialize filter state into a canonical hash string.
+ * @param {{ query?: string, types?: string[], scopes?: string[], tags?: string[], sort?: string, project?: string }} state
+ */
+export function serializeHashState(state) {
+  const params = new URLSearchParams();
+  if (state.query) params.set('q', state.query);
+  if (state.types?.length) params.set('type', state.types.join(','));
+  if (state.scopes?.length) params.set('scope', state.scopes.join(','));
+  if (state.tags?.length) params.set('tag', state.tags.join(','));
+  if (state.sort && state.sort !== DEFAULT_STATE.sort) params.set('sort', state.sort);
+  if (state.project) params.set('project', state.project);
+  const hash = params.toString();
+  return hash ? `#${hash}` : '';
 }
 
 /** Write filter state back to URL hash. */
 export function writeHashState(state) {
-  const params = new URLSearchParams();
-  if (state.query) params.set('q', state.query);
-  if (state.types.length) params.set('type', state.types.join(','));
-  if (state.tags.length) params.set('tag', state.tags.join(','));
-  if (state.sort !== 'name') params.set('sort', state.sort);
-  const hash = params.toString();
-  window.location.hash = hash ? '#' + hash : '';
+  window.location.hash = serializeHashState(state);
+}
+
+/**
+ * Derive an npm scope from a package name.
+ * @param {string} name
+ */
+export function derivePackageScope(name) {
+  const separator = name.indexOf('/');
+  return name.startsWith('@') && separator > 1 ? name.slice(0, separator) : 'unscoped';
 }
 
 /**
  * Apply all filters and sorting to the package list.
  * @param {Array<[string, object]>} packages — entries from registryIndex.packages
- * @param {object} state — { query, types, tags, sort }
+ * @param {object} state — { query, types, scopes, tags, sort }
  * @returns {Array<[string, object]>} filtered + sorted copy
  */
 export function applyFilters(packages, state) {
+  const types = state.types || [];
+  const scopes = state.scopes || [];
+  const tags = state.tags || [];
   let result = packages.filter(([name, info]) => {
     const release = info.releases?.[String(info['dist-tags']?.latest)];
     if (state.query) {
@@ -47,10 +92,13 @@ export function applyFilters(packages, state) {
         return false;
       }
     }
-    if (state.types.length && !state.types.includes(release?.type || 'library')) {
+    if (types.length && !types.includes(release?.type || 'library')) {
       return false;
     }
-    if (state.tags.length && !state.tags.some(t => release?.tags?.includes(t))) {
+    if (scopes.length && !scopes.includes(derivePackageScope(name))) {
+      return false;
+    }
+    if (tags.length && !tags.some(t => release?.tags?.includes(t))) {
       return false;
     }
     return true;
@@ -79,6 +127,13 @@ export function collectTypes(packages) {
     if (r?.type) types.add(r.type);
   }
   return [...types].sort();
+}
+
+/** Collect all unique npm scopes from package names for filter chips. */
+export function collectScopes(packages) {
+  return [...new Set(packages.map(([name]) => derivePackageScope(name)))].sort((a, b) =>
+    a.localeCompare(b),
+  );
 }
 
 /** Collect all unique tags from packages for filter chips. */

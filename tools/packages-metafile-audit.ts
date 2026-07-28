@@ -41,6 +41,7 @@ import { buildMonorepoSurfaces, type MonorepoSurfaces } from '../lib/harness/mon
 import { buildEnvInventoryCompact } from '../scripts/lib/env-inventory-compact.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
+const PORTABLE_ROOT = '.';
 
 type MetaImport = { path: string; kind?: string; original?: string };
 type MetaInput = { bytes?: number; imports?: MetaImport[]; format?: string };
@@ -219,6 +220,30 @@ function rel(absOrRel: string): string {
 function packageName(path: string): string {
   const m = rel(path).match(/^packages\/([^/]+)\//);
   return m?.[1] ?? '(external)';
+}
+
+function compareStableText(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+function resolveStableInputPath(path: string, inputPaths: ReadonlySet<string>): string {
+  if (inputPaths.has(path)) return path;
+  for (const suffix of [
+    '.ts',
+    '.tsx',
+    '.js',
+    '.jsx',
+    '.mts',
+    '.cts',
+    '/index.ts',
+    '/index.tsx',
+    '/index.js',
+    '/index.jsx',
+  ]) {
+    const candidate = `${path}${suffix}`;
+    if (inputPaths.has(candidate)) return candidate;
+  }
+  return path;
 }
 
 function classifyEntrypoint(path: string): EntrypointKind | null {
@@ -664,7 +689,11 @@ export async function runPackagesMetafileAudit(opts?: {
   const inbound = new Map<string, number>();
   const adjacency = new Map<string, string[]>();
 
-  for (const [key, meta] of Object.entries(inputsRaw)) {
+  const stableInputs = Object.entries(inputsRaw).sort(([left], [right]) =>
+    compareStableText(rel(left), rel(right))
+  );
+  const stableInputPaths = new Set(stableInputs.map(([path]) => rel(path)));
+  for (const [key, meta] of stableInputs) {
     const from = rel(key);
     const imports: string[] = [];
     for (const im of meta.imports ?? []) {
@@ -674,8 +703,11 @@ export async function runPackagesMetafileAudit(opts?: {
         imports.push(resolved.name); // bare — mapper classifies as bare:
         continue;
       }
-      imports.push(resolved.path);
+      imports.push(resolveStableInputPath(resolved.path, stableInputPaths));
     }
+    // Bun.build does not promise metafile insertion order. Sort the resolved
+    // graph before sampling so repeated bakes choose the same evidence rows.
+    imports.sort(compareStableText);
     inputs.set(from, {
       bytes: meta.bytes ?? 0,
       imports,
@@ -995,7 +1027,9 @@ export async function runPackagesMetafileAudit(opts?: {
     kind: 'packages-metafile-audit',
     generatedAt: new Date().toISOString(),
     bunVersion: Bun.version,
-    root: ROOT,
+    // Artifact provenance is repository-relative; never bake a machine or
+    // temporary-worktree path into tracked output.
+    root: PORTABLE_ROOT,
     glob: globPat,
     target: 'bun',
     score,

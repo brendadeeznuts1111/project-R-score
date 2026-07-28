@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write
+// @see https://bun.com/docs/runtime/shell#getting-started
+// @see https://bun.com/docs/runtime/utils#bun-randomuuidv7
 // @see https://bun.com/docs/test/index#run-tests
 import { afterEach, describe, expect, test } from 'bun:test';
 import { joinPath } from '../lib/path-bun.ts';
@@ -31,6 +35,22 @@ describe('tenant registry seed', () => {
 
       const skip = await seedTenantRegistries({ rootDir: SCRATCH, force: false, minPackages: 4 });
       expect(skip.seeded).toBe(false);
+
+      const rootPath = `${SCRATCH}/public/registry/registry.json`;
+      const root = await Bun.file(rootPath).json();
+      root.lastUpdated = '2026-07-28T18:30:00.000Z';
+      await Bun.write(rootPath, `${JSON.stringify(root, null, 2)}\n`);
+
+      const refreshed = await seedTenantRegistries({
+        rootDir: SCRATCH,
+        force: false,
+        minPackages: 4,
+      });
+      expect(refreshed.seeded).toBe(true);
+      const refreshedFactory = await Bun.file(
+        `${SCRATCH}/public/registry/factory/registry.json`
+      ).json();
+      expect(refreshedFactory.meta.rootLastUpdated).toBe(root.lastUpdated);
     } finally {
       await Bun.$`rm -rf ${SCRATCH}`.quiet();
     }

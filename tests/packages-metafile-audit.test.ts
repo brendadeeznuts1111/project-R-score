@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/test/index#run-tests
 import { describe, test, expect, beforeAll } from 'bun:test';
 import {
   diffAgainstPrevious,
@@ -23,6 +24,7 @@ describe('packages-metafile-audit', () => {
 
   test('schema v13 score + probes + quarantine + summary', () => {
     expect(deep.schemaVersion).toBe(13);
+    expect(deep.root).toBe('.');
     expect(deep.map.quarantine).toBeDefined();
     expect(deep.map.summary?.quarantineCount).toBe(deep.map.quarantine!.length);
     expect(deep.map.packages.includes('package')).toBe(false);
@@ -49,6 +51,25 @@ describe('packages-metafile-audit', () => {
     expect(deep.orphans.includes('packages/rip/src/cli.ts')).toBe(false);
     // Prefer src over dist for registry-client
     expect(deep.entrypoints.some(e => e.includes('/dist/'))).toBe(false);
+  });
+
+  test('emits portable provenance and deterministic sampled edges', () => {
+    const samples = [...deep.map.packageEdges, ...deep.map.externalEdges].map(edge => edge.samples);
+    for (const evidence of samples) {
+      expect(evidence).toEqual([...evidence].sort());
+    }
+
+    const sampleIndex = (report: PackageAuditReport) => ({
+      package: report.map.packageEdges.map(edge => ({
+        key: `${edge.from}->${edge.to}`,
+        samples: edge.samples,
+      })),
+      external: report.map.externalEdges.map(edge => ({
+        key: `${edge.fromPackage}->${edge.targetPrefix}`,
+        samples: edge.samples,
+      })),
+    });
+    expect(sampleIndex(deep)).toEqual(sampleIndex(shallow));
   });
 
   test('--shallow skips deep-map enrichment', () => {

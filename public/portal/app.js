@@ -11,9 +11,18 @@
  */
 
 import { renderCard, showDetail } from './card.js';
-import { readHashState, writeHashState, applyFilters, collectTypes, collectTags } from './search.js';
+import {
+  readHashState,
+  writeHashState,
+  applyFilters,
+  collectTypes,
+  collectScopes,
+  collectTags,
+} from './search.js';
 import { computeHealth, healthClass } from './health.js';
 import { tenantRegistryPaths, resolveTenantId } from './components/sidebar.js';
+
+const REGISTRY_FRESHNESS_THRESHOLD_MS = 24 * 60 * 60 * 1000;
 
 // ── DOM refs ─────────────────────────────────────────────────────────────
 
@@ -27,7 +36,7 @@ let registrySource = 'snapshot';
 async function fetchRegistry(tenantId = resolveTenantId(), tenants = tenantsCache) {
   const paths = tenantRegistryPaths(tenantId, tenants);
   const attempts = [
-    { mode: 'live', url: paths.proxy },
+    { mode: 'edge', url: paths.proxy },
     { mode: 'snapshot', url: paths.static },
   ];
 
@@ -39,8 +48,7 @@ async function fetchRegistry(tenantId = resolveTenantId(), tenants = tenantsCach
       if (!ct.includes('json') && !ct.includes('javascript')) continue;
       const data = await res.json();
       if (!data || typeof data !== 'object' || !data.packages) continue;
-      registrySource = mode === 'live' ? 'live' : 'snapshot';
-      updateRegistryBanner(registrySource);
+      registrySource = mode;
       return data;
     } catch {
       /* try next source */
@@ -53,14 +61,32 @@ async function fetchRegistry(tenantId = resolveTenantId(), tenants = tenantsCach
 function updateRegistryBanner(mode) {
   const banner = $('registry-banner');
   const text = $('banner-text');
-  if (banner) banner.dataset.source = mode;
-  if (text && registryIndex) {
-    const updated = registryIndex.lastUpdated ? new Date(registryIndex.lastUpdated) : null;
-    const label = updated
-      ? `Registry updated ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
-      : 'Registry snapshot';
-    text.textContent = `${mode === 'live' ? 'Live' : 'Snapshot'} · ${label}`;
-  }
+  const freshness = $('registry-freshness');
+  if (!banner || !text || !freshness || !registryIndex) return;
+
+  const updated = registryIndex.lastUpdated ? new Date(registryIndex.lastUpdated) : null;
+  const updatedAt = updated && Number.isFinite(updated.getTime()) ? updated.getTime() : null;
+  const ageMs = updatedAt === null ? null : Math.max(0, Date.now() - updatedAt);
+  const stale = ageMs !== null && ageMs > REGISTRY_FRESHNESS_THRESHOLD_MS;
+  const ageHours = ageMs === null ? null : Math.floor(ageMs / (60 * 60 * 1000));
+  const ageLabel = ageHours === null
+    ? 'age unknown'
+    : ageHours < 1
+      ? '<1h old'
+      : ageHours < 48
+        ? `${ageHours}h old`
+        : `${Math.floor(ageHours / 24)}d old`;
+
+  banner.dataset.source = mode;
+  banner.dataset.freshness = ageMs === null ? 'unknown' : stale ? 'stale' : 'fresh';
+  text.textContent = updatedAt !== null
+    ? `${mode === 'edge' ? 'Edge' : 'Snapshot'} · updated ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
+    : mode === 'edge' ? 'Edge registry' : 'Registry snapshot';
+  freshness.className = `registry-freshness registry-freshness--${banner.dataset.freshness}`;
+  freshness.textContent = ageMs === null ? 'Unknown freshness' : `${stale ? 'Stale' : 'Fresh'} · ${ageLabel}`;
+  freshness.title = updatedAt !== null
+    ? `Registry data timestamp: ${updated.toLocaleString()}. Freshness threshold: 24 hours.`
+    : 'Registry data does not include a valid last-updated timestamp.';
 }
 
 // ── Render pipeline ──────────────────────────────────────────────────────
@@ -82,8 +108,16 @@ function renderGrid(packages) {
   const filtered = applyFilters(packages, state);
   const grid = $('package-grid');
 
+  updateFilterSummary(filtered.length, packages.length, state);
+  focusedCardIndex = Math.min(focusedCardIndex, filtered.length - 1);
+
   if (filtered.length === 0) {
-    grid.innerHTML = `<div class="pkg-no-results">No packages match</div>`;
+    focusedCardIndex = -1;
+    grid.innerHTML = `<div class="pkg-no-results">
+      <strong>No packages match this filter set.</strong>
+      <button type="button" class="filter-clear filter-clear--empty">Clear filters</button>
+    </div>`;
+    grid.querySelector('.filter-clear')?.addEventListener('click', clearFilters);
     return;
   }
 
@@ -105,7 +139,6 @@ function renderGrid(packages) {
     });
   });
 
-  updateUrlFromState(state);
 }
 
 function updateStats(packages) {
@@ -125,60 +158,100 @@ function updateStats(packages) {
   $('stat-types').innerHTML = `${types.size} <span>types</span>`;
   $('stat-health').innerHTML = `${avgHealth}/100 <span>avg health</span>`;
 
-  // Banner
-  const updated = registryIndex.lastUpdated ? new Date(registryIndex.lastUpdated) : null;
-  const label = updated
-    ? `${registrySource === 'live' ? 'Live' : 'Snapshot'} · ${updated.toLocaleDateString()} · ${updated.toLocaleTimeString()}`
-    : registrySource === 'live' ? 'Live registry' : 'Registry snapshot';
-  $('banner-text').textContent = label;
+  updateRegistryBanner(registrySource);
 }
 
 // ── Search & filter UI ─────────────────────────────────────────────────
 
 function buildFilterUI(packages) {
   const types = collectTypes(packages);
+  const scopes = collectScopes(packages);
   const tags = collectTags(packages);
   const state = readHashState();
 
   // Type chips
   const typeChips = $('filter-types');
-  typeChips.innerHTML = types.map(t => {
-    const active = state.types.includes(t);
-    return `<button class="filter-chip ${active ? 'active' : ''}" data-type="${t}">${t}</button>`;
-  }).join('');
+  renderFilterChips(typeChips, types, 'type', state.types);
+
+  // npm scope chips
+  const scopeChips = $('filter-scopes');
+  renderFilterChips(scopeChips, scopes, 'scope', state.scopes);
 
   // Sort
   $('sort-select').value = state.sort;
 
-  // Events
-  typeChips.querySelectorAll('.filter-chip').forEach(btn => {
-    btn.addEventListener('click', () => toggleFilter('type', btn.dataset.type));
-  });
-
-  $('sort-select').addEventListener('change', e => {
+  $('sort-select').onchange = e => {
     const state = readHashState();
     state.sort = e.target.value;
     writeHashState(state);
-    renderGrid(Object.entries(registryIndex.packages || {}));
-  });
+  };
+  $('clear-filters').onclick = clearFilters;
 
   // Restore search box from hash
   $('search').value = state.query;
+  updateFilterSummary(
+    applyFilters(packages, state).length,
+    packages.length,
+    state,
+  );
+}
+
+function renderFilterChips(container, values, kind, selectedValues) {
+  const fragment = document.createDocumentFragment();
+  for (const value of values) {
+    const active = selectedValues.includes(value);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `filter-chip${kind === 'scope' ? ' filter-chip--scope' : ''}${active ? ' active' : ''}`;
+    button.dataset[kind] = value;
+    button.setAttribute('aria-pressed', String(active));
+    button.textContent = value;
+    button.addEventListener('click', () => toggleFilter(kind, value));
+    fragment.append(button);
+  }
+  container.replaceChildren(fragment);
 }
 
 function toggleFilter(kind, value) {
   const state = readHashState();
-  const arr = kind === 'type' ? state.types : state.tags;
+  const arr = kind === 'type' ? state.types : kind === 'scope' ? state.scopes : state.tags;
   const idx = arr.indexOf(value);
   if (idx === -1) arr.push(value);
   else arr.splice(idx, 1);
   writeHashState(state);
-  renderGrid(Object.entries(registryIndex.packages || {}));
-  buildFilterUI(Object.entries(registryIndex.packages || {}));
 }
 
-function updateUrlFromState(state) {
-  writeHashState(state);
+function hasActiveFilters(state) {
+  return Boolean(state.query || state.types.length || state.scopes.length || state.tags.length);
+}
+
+function updateFilterSummary(filteredCount, totalCount, state) {
+  const summary = $('filter-summary');
+  const clear = $('clear-filters');
+  if (!summary || !clear) return;
+
+  const selectedScopes = state.scopes.length
+    ? ` · ${state.scopes.length === 1 ? 'Scope' : 'Scopes'}: ${state.scopes.join(', ')}`
+    : '';
+  summary.textContent = `${filteredCount} of ${totalCount} ${totalCount === 1 ? 'package' : 'packages'}${selectedScopes}`;
+  clear.disabled = !hasActiveFilters(state);
+}
+
+function clearFilters() {
+  const hadHash = Boolean(window.location.hash);
+  window.location.hash = '';
+  $('search').value = '';
+  focusedCardIndex = -1;
+  if (!hadHash) syncFiltersFromHash();
+  $('search').focus();
+}
+
+function syncFiltersFromHash() {
+  if (!registryIndex) return;
+  focusedCardIndex = -1;
+  const packages = Object.entries(registryIndex.packages || {});
+  buildFilterUI(packages);
+  renderGrid(packages);
 }
 
 // ── Debounced search ────────────────────────────────────────────────────
@@ -191,7 +264,6 @@ function debouncedSearch() {
     const state = readHashState();
     state.query = $('search').value;
     writeHashState(state);
-    renderGrid(Object.entries(registryIndex.packages || {}));
   }, 200);
 }
 
@@ -280,12 +352,13 @@ async function init() {
     });
 
     $('search').addEventListener('input', debouncedSearch);
+    window.addEventListener('hashchange', syncFiltersFromHash);
 
     // Deep-link: auto-open modal if hash contains project=foo
     const hashState = readHashState();
     const deepProject = hashState.query?.startsWith?.('project:')
       ? hashState.query.replace('project:', '')
-      : new URLSearchParams(window.location.hash.slice(1)).get('project');
+      : hashState.project;
     if (deepProject && registryIndex?.packages?.[deepProject]) {
       showDetail(deepProject, registryIndex.packages[deepProject]);
     }
@@ -297,7 +370,7 @@ async function init() {
 
     document.addEventListener('keydown', e => {
       // Don't intercept when typing in input fields
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.target.matches('input, textarea, select, button, [contenteditable="true"]')) return;
       if (e.metaKey || e.ctrlKey) return;
 
       const cardCount = document.querySelectorAll('.pkg-card').length;
@@ -328,14 +401,9 @@ async function init() {
         // Clear filters (mirrors Bun dev server's c + Enter)
         case e.key === 'c':
           e.preventDefault();
-          window.location.hash = '';
-          $('search').value = '';
-          focusedCardIndex = -1;
-          renderGrid(Object.entries(registryIndex.packages || {}));
-          buildFilterUI(Object.entries(registryIndex.packages || {}));
+          clearFilters();
           break;
         // Quick search focus
-        case e.key === '/' && !e.target.closest('input'):
         case e.key === '/' && !e.target.closest('input'):
           e.preventDefault();
           $('search').focus();

@@ -29,6 +29,13 @@ import {
   showScopeConfig,
 } from './snapshot-core.ts';
 import { isSnapshotScope } from './snapshot-scopes.ts';
+import {
+  availablePackageGraphScopes,
+  parsePackageGraphFlags,
+  selectPackageGraphRows,
+  updatePackageGraphBake,
+  type PackageGraphFlags,
+} from './lib/portal-package-scope.ts';
 
 const SNAPSHOT_HELP = `Usage: portal-cli snapshot <subcommand> [options]
 
@@ -102,6 +109,10 @@ bun pm subcommands:
 
 FactoryWager extensions (not bun pm — read offline bake):
   graph             Print packages-graph-map.json as a table
+    --scope <scope> Filter packages/* rows only (surface sections stay global)
+                    Accepts @factorywager, factorywager, unscoped, or all
+    --update         Refresh the complete package audit + graph before reading
+                    Writes audit-report.json and packages-graph-map.json
                     Source: public/registry/packages-graph-map.json
                     Rebake: bun run audit:packages -- --bake
 
@@ -111,6 +122,8 @@ Examples:
   portal-cli pm pkg get name
   portal-cli pm version --no-git-tag-version
   portal-cli pm graph
+  portal-cli pm graph --scope @factorywager
+  portal-cli pm graph --scope unscoped --update  # refreshes tracked bake outputs
 `;
 
 const ROOT_HELP = `FactoryWager portal CLI
@@ -157,7 +170,8 @@ pm (canonical: https://bun.com/docs/pm/cli/pm) — zero invention, only bun pm f
   pm cache | cache rm
   pm trust <names> | untrusted | default-trusted
   pm whoami | migrate | bin [-g]
-  pm graph                     # FW: offline packages-graph-map table
+  pm graph [--scope <scope>] [--update]
+                               # FW: offline packages-graph-map table
 
 Secret (real pass-cli only — https://protonpass.github.io/pass-cli/):
   secret which | login | info | vaults | items <vault>
@@ -178,10 +192,15 @@ function usage(): never {
 }
 
 /** Offline packages-graph-map bake — not bun pm. @see public/registry/packages-graph-map.json */
-async function printPackagesGraphTable(): Promise<void> {
+async function printPackagesGraphTable(flags: PackageGraphFlags): Promise<void> {
   const { joinPath } = await import('../lib/path-bun.ts');
   const { logTable } = await import('../lib/console-depth.ts');
   const root = joinPath(import.meta.dir, '..');
+  if (flags.update) {
+    console.log('Refreshing complete package audit + graph...');
+    const code = await updatePackageGraphBake(root);
+    if (code !== 0) cliError(`Package graph rebake failed with exit code ${code}.`);
+  }
   const mapPath = joinPath(root, 'public/registry/packages-graph-map.json');
   const file = Bun.file(mapPath);
   if (!(await file.exists())) {
@@ -246,8 +265,12 @@ async function printPackagesGraphTable(): Promise<void> {
     };
   };
   const schema = data.schemaVersion ?? 12;
-  const rows = (data.packages ?? []).map(p => ({
-    package: p.name,
+  const packages = data.packages ?? [];
+  const workspaces = data.surfaces?.workspaces ?? [];
+  const selectedPackages = selectPackageGraphRows(packages, workspaces, flags.scope);
+  const availableScopes = availablePackageGraphScopes(packages, workspaces);
+  const rows = selectedPackages.map(({ npmName, package: p }) => ({
+    package: npmName,
     role: p.role ?? '—',
     score: p.score ?? '—',
     grade: p.grade ?? '—',
@@ -257,6 +280,9 @@ async function printPackagesGraphTable(): Promise<void> {
   }));
   console.log(
     `packages-graph-map  schema=v${schema}  generated=${data.generatedAt ?? '?'}  bun=${data.bunVersion ?? '?'}  score=${data.score ?? '?'}  grade=${data.grade ?? '?'}`
+  );
+  console.log(
+    `selection  scope=${flags.scope}  selected=${selectedPackages.length}/${packages.length}  view=packages-only  surfaces=global`
   );
   if (data.map?.summary) {
     const s = data.map.summary;
@@ -297,9 +323,13 @@ async function printPackagesGraphTable(): Promise<void> {
     );
   }
 
-  console.log('\n── packages/* import graph (audit plane) ──');
+  console.log(
+    `\n── packages/* import graph (audit plane; scope=${flags.scope}; selected=${selectedPackages.length}/${packages.length}) ──`
+  );
   if (rows.length === 0) {
-    console.log('(no packages in bake)');
+    console.log(
+      `(no packages match scope ${flags.scope}; available scopes: ${availableScopes.join(', ') || 'none'})`
+    );
   } else {
     logTable(rows, ['package', 'role', 'score', 'grade', 'files', 'orphans', 'kB']);
   }
@@ -677,7 +707,17 @@ async function main(): Promise<void> {
     }
     // FactoryWager extension: offline packages graph bake (not a bun pm subcommand).
     if (pmArgs[0] === 'graph') {
-      await printPackagesGraphTable();
+      let flags: PackageGraphFlags;
+      try {
+        flags = parsePackageGraphFlags(pmArgs.slice(1));
+      } catch (error) {
+        cliError(`${error instanceof Error ? error.message : String(error)}\n\n${PM_HELP}`);
+      }
+      if (flags.help) {
+        console.log(PM_HELP);
+        return;
+      }
+      await printPackagesGraphTable(flags);
       return;
     }
     // Full bun pm surface — https://bun.com/docs/pm/cli/pm
