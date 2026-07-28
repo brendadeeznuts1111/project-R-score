@@ -1,8 +1,510 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T04:24:20.237Z",
+  "generatedAt": "2026-07-28T14:46:43.087Z",
   "lookbackHours": 48,
   "byNode": {
+    "019f92bf-40d6-72e3-aa09-f0a9b8a95824": {
+      "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+      "raises": [
+        {
+          "limit_id": 145,
+          "sportsbook": "fanduel",
+          "sport_id": "nba",
+          "market_id": "spread",
+          "bet_type": "straight",
+          "previous_max": 800,
+          "new_limit": 1200,
+          "increased_at": 1785247270,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 47,
+            "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+            "limit_record_id": 145,
+            "active_players_7d": 42,
+            "new_players_7d": 6,
+            "total_handle_7d": 185000,
+            "avg_clv_7d": 68,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.72,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.41,
+            "partner_profit_30d": 38000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785247271,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "82f2ac6389fd129124431d119a44a6c174fc22e6e73eeb449e9a389a4466e700",
+            "proof_hmac": "14e8c1ee09f278168e32370699767de9ef2c3ada0d5ba357944435b80318c97a"
+          },
+          "multi_factor_score": 0.5935799999999999,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.074,
+            "avg_clv_7d": 0.042,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.06848,
+            "sportsbook_share": 0.0205,
+            "partner_profit_30d": 0.0352,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        },
+        {
+          "limit_id": 143,
+          "sportsbook": "draftkings",
+          "sport_id": "nba",
+          "market_id": "totals",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 1500,
+          "increased_at": 1785244570,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 53,
+            "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+            "limit_record_id": 143,
+            "active_players_7d": 0,
+            "new_players_7d": 0,
+            "total_handle_7d": 0,
+            "avg_clv_7d": 0,
+            "top_tier_player_count": 0,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 1,
+            "market_volatility_index": 0,
+            "peak_betting_hours": "[18,19,20]",
+            "sportsbook_share": 0.5,
+            "partner_profit_30d": 0,
+            "partner_roi_30d": 0,
+            "snapshot_at": 1785244570,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "e2a48146071318dc16137ee4451dbcd7bcaac79a28f50426c10411c61f9fcaf4",
+            "proof_hmac": "c4df94a42cef8fe78d0bc91afa6f82aee91bc3c82e21cc09445a63ffbeb982a8"
+          },
+          "multi_factor_score": 0.49000000000000005,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0,
+            "avg_clv_7d": 0.024999999999999998,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.1,
+            "market_volatility_index": 0.08,
+            "sportsbook_share": 0.025,
+            "partner_profit_30d": 0.020000000000000004,
+            "top_tier_player_count": 0,
+            "active_players_7d": 0
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "019f92bf-40d6-72e4-bfd9-0c06e5891188": {
+      "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+      "raises": [
+        {
+          "limit_id": 153,
+          "sportsbook": "fanduel",
+          "sport_id": "nba",
+          "market_id": "spread",
+          "bet_type": "straight",
+          "previous_max": 800,
+          "new_limit": 1200,
+          "increased_at": 1785247270,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 50,
+            "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+            "limit_record_id": 153,
+            "active_players_7d": 42,
+            "new_players_7d": 6,
+            "total_handle_7d": 185000,
+            "avg_clv_7d": 68,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.72,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.41,
+            "partner_profit_30d": 38000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785247271,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "0d6538c848cf2fa2db5027c9186b7462d2bfcd7bb403a0e0ecc08aa8c50156ad",
+            "proof_hmac": "3e21ac91597aebe4d424bff19a626513c285ee99a0785c2b9148b575360157eb"
+          },
+          "multi_factor_score": 0.5935799999999999,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.074,
+            "avg_clv_7d": 0.042,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.06848,
+            "sportsbook_share": 0.0205,
+            "partner_profit_30d": 0.0352,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        },
+        {
+          "limit_id": 151,
+          "sportsbook": "draftkings",
+          "sport_id": "nba",
+          "market_id": "totals",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 1500,
+          "increased_at": 1785244570,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 54,
+            "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+            "limit_record_id": 151,
+            "active_players_7d": 0,
+            "new_players_7d": 0,
+            "total_handle_7d": 0,
+            "avg_clv_7d": 0,
+            "top_tier_player_count": 0,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 1,
+            "market_volatility_index": 0,
+            "peak_betting_hours": "[18,19,20]",
+            "sportsbook_share": 0.5,
+            "partner_profit_30d": 0,
+            "partner_roi_30d": 0,
+            "snapshot_at": 1785244570,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "050a222fe8ba5209eaa81bc8ebac09610bcaddc4166df41da82c74604ae69937",
+            "proof_hmac": "74e33c81b695d297948fb7c81f5cb73726a327acac14003039c4b9a342189241"
+          },
+          "multi_factor_score": 0.49000000000000005,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0,
+            "avg_clv_7d": 0.024999999999999998,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.1,
+            "market_volatility_index": 0.08,
+            "sportsbook_share": 0.025,
+            "partner_profit_30d": 0.020000000000000004,
+            "top_tier_player_count": 0,
+            "active_players_7d": 0
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "019f92ee-5ef8-71e9-b207-5ae20c07d095": {
+      "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+      "raises": [
+        {
+          "limit_id": 147,
+          "sportsbook": "draftkings",
+          "sport_id": "nba",
+          "market_id": "totals",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 1500,
+          "increased_at": 1785244970,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 48,
+            "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+            "limit_record_id": 147,
+            "active_players_7d": 42,
+            "new_players_7d": 6,
+            "total_handle_7d": 185000,
+            "avg_clv_7d": 68,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.72,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.41,
+            "partner_profit_30d": 38000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785244971,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "036a7ea254151675463a05491f2b41eda52481aa19d610afeab3db84a5dcfe4b",
+            "proof_hmac": "8af53adc15475b06bfee3c64a435899cc47e198fa991f259cc4cfca0d7df5c1c"
+          },
+          "multi_factor_score": 0.5935799999999999,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.074,
+            "avg_clv_7d": 0.042,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.06848,
+            "sportsbook_share": 0.0205,
+            "partner_profit_30d": 0.0352,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "019f92ee-5ef9-728d-950c-6c02a59903a2": {
+      "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
+      "raises": [
+        {
+          "limit_id": 149,
+          "sportsbook": "draftkings",
+          "sport_id": "nba",
+          "market_id": "totals",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 1500,
+          "increased_at": 1785244970,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 49,
+            "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
+            "limit_record_id": 149,
+            "active_players_7d": 42,
+            "new_players_7d": 6,
+            "total_handle_7d": 185000,
+            "avg_clv_7d": 68,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.72,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.41,
+            "partner_profit_30d": 38000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785244971,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "0635ff46f61942f22abf24573e00bd914c3fb7a65472f5f5782e4b0c287408e9",
+            "proof_hmac": "f3789cf84a5f9e07147fbea83aa80b3f65751a2a2a8833e5a02f5782c747e682"
+          },
+          "multi_factor_score": 0.5935799999999999,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.074,
+            "avg_clv_7d": 0.042,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.06848,
+            "sportsbook_share": 0.0205,
+            "partner_profit_30d": 0.0352,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "019fa2d3-c5a0-74f9-b159-730b0c911784": {
+      "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
+      "raises": [
+        {
+          "limit_id": 155,
+          "sportsbook": "draftkings",
+          "sport_id": "nba",
+          "market_id": "totals",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 1500,
+          "increased_at": 1785244970,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 51,
+            "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
+            "limit_record_id": 155,
+            "active_players_7d": 42,
+            "new_players_7d": 6,
+            "total_handle_7d": 185000,
+            "avg_clv_7d": 68,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.72,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.41,
+            "partner_profit_30d": 38000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785244971,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "906682b10422b1758ccd3c3a9426696e0349c466e71612c104f74e95bd813d4e",
+            "proof_hmac": "a66b6a95ba608a51112cbea7471e426b098c56fa384140bc6c77c65506b7474a"
+          },
+          "multi_factor_score": 0.5935799999999999,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.074,
+            "avg_clv_7d": 0.042,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.06848,
+            "sportsbook_share": 0.0205,
+            "partner_profit_30d": 0.0352,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "019fa2d3-c5a1-7113-82c7-212bf22256de": {
+      "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
+      "raises": [
+        {
+          "limit_id": 157,
+          "sportsbook": "draftkings",
+          "sport_id": "nba",
+          "market_id": "totals",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 1500,
+          "increased_at": 1785244970,
+          "line_move_5m": null,
+          "top_clv": [],
+          "context": {
+            "id": 52,
+            "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
+            "limit_record_id": 157,
+            "active_players_7d": 42,
+            "new_players_7d": 6,
+            "total_handle_7d": 185000,
+            "avg_clv_7d": 68,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.72,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.41,
+            "partner_profit_30d": 38000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785244971,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "8d14e65e5dd0e0281e0c6d89bd2837af350ba39632e6e2304b247369a63b44e1",
+            "proof_hmac": "c5c0829eaa75c2a49f52dcaec32c34a6720d58ba65fefbefee63b1a69372822c"
+          },
+          "multi_factor_score": 0.5935799999999999,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.074,
+            "avg_clv_7d": 0.042,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.06848,
+            "sportsbook_share": 0.0205,
+            "partner_profit_30d": 0.0352,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
     "limit-demo-atlantic": {
       "node_id": "limit-demo-atlantic",
       "raises": [
@@ -709,15 +1211,35 @@
       ]
     }
   },
-  "partners": 9,
-  "raises": 11,
+  "partners": 15,
+  "raises": 19,
   "patterns": {
     "schemaVersion": 1,
     "lookbackHours": 48,
-    "partners": 4,
-    "nodes": 9,
-    "downlineNodes": 5,
+    "partners": 6,
+    "nodes": 15,
+    "downlineNodes": 9,
     "books": [
+      {
+        "key": "draftkings",
+        "changes": 9,
+        "raises": 9,
+        "decreases": 0,
+        "net_delta": 9200,
+        "avg_delta_pct": 185.19,
+        "avg_influence_score": 0.598,
+        "partners": 5,
+        "nodes": 9,
+        "states": [
+          "MA",
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "021",
+          "071"
+        ],
+        "top_market": "totals"
+      },
       {
         "key": "caesars",
         "changes": 4,
@@ -740,24 +1262,22 @@
         "top_market": "match_winner"
       },
       {
-        "key": "draftkings",
-        "changes": 3,
-        "raises": 3,
+        "key": "fanduel",
+        "changes": 4,
+        "raises": 4,
         "decreases": 0,
-        "net_delta": 3200,
-        "avg_delta_pct": 155.56,
-        "avg_influence_score": 0.6758,
+        "net_delta": 2300,
+        "avg_delta_pct": 66.67,
+        "avg_influence_score": 0.6301,
         "partners": 3,
-        "nodes": 3,
+        "nodes": 4,
         "states": [
-          "MA",
           "NJ"
         ],
         "zip_prefixes": [
-          "021",
           "071"
         ],
-        "top_market": "over_under"
+        "top_market": "spread"
       },
       {
         "key": "hardrock",
@@ -794,24 +1314,6 @@
         ],
         "zip_prefixes": [
           "021",
-          "071"
-        ],
-        "top_market": "match_winner"
-      },
-      {
-        "key": "fanduel",
-        "changes": 2,
-        "raises": 2,
-        "decreases": 0,
-        "net_delta": 1500,
-        "avg_delta_pct": 83.33,
-        "avg_influence_score": 0.6666,
-        "partners": 1,
-        "nodes": 2,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
           "071"
         ],
         "top_market": "match_winner"
@@ -951,6 +1453,164 @@
       }
     ],
     "nodePatterns": [
+      {
+        "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "partner_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "parent_node_id": null,
+        "node_name": "Cascade Partner",
+        "node_type": "partner",
+        "downline_depth": 0,
+        "state_code": null,
+        "location": null,
+        "zip_code": null,
+        "zip_prefix": null,
+        "license_status": null,
+        "violation_count_30d": 0,
+        "changes": 2,
+        "scored_changes": 2,
+        "proof_verified_changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1400,
+        "avg_delta_pct": 125,
+        "avg_influence_score": 0.5418,
+        "sportsbooks": [
+          "draftkings",
+          "fanduel"
+        ],
+        "top_market": "spread"
+      },
+      {
+        "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+        "partner_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "parent_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "node_name": "TOC ASH-001",
+        "node_type": "agent",
+        "downline_depth": 1,
+        "state_code": null,
+        "location": null,
+        "zip_code": null,
+        "zip_prefix": null,
+        "license_status": null,
+        "violation_count_30d": 0,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 1000,
+        "avg_delta_pct": 200,
+        "avg_influence_score": 0.5936,
+        "sportsbooks": [
+          "draftkings"
+        ],
+        "top_market": "totals"
+      },
+      {
+        "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
+        "partner_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "parent_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "node_name": "TOC ASH-002",
+        "node_type": "agent",
+        "downline_depth": 1,
+        "state_code": null,
+        "location": null,
+        "zip_code": null,
+        "zip_prefix": null,
+        "license_status": null,
+        "violation_count_30d": 0,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 1000,
+        "avg_delta_pct": 200,
+        "avg_influence_score": 0.5936,
+        "sportsbooks": [
+          "draftkings"
+        ],
+        "top_market": "totals"
+      },
+      {
+        "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "parent_node_id": null,
+        "node_name": "Factory Rail Co",
+        "node_type": "partner",
+        "downline_depth": 0,
+        "state_code": null,
+        "location": null,
+        "zip_code": null,
+        "zip_prefix": null,
+        "license_status": null,
+        "violation_count_30d": 0,
+        "changes": 2,
+        "scored_changes": 2,
+        "proof_verified_changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1400,
+        "avg_delta_pct": 125,
+        "avg_influence_score": 0.5418,
+        "sportsbooks": [
+          "draftkings",
+          "fanduel"
+        ],
+        "top_market": "spread"
+      },
+      {
+        "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
+        "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "parent_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "node_name": "TOC PAT-001",
+        "node_type": "agent",
+        "downline_depth": 1,
+        "state_code": null,
+        "location": null,
+        "zip_code": null,
+        "zip_prefix": null,
+        "license_status": null,
+        "violation_count_30d": 0,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 1000,
+        "avg_delta_pct": 200,
+        "avg_influence_score": 0.5936,
+        "sportsbooks": [
+          "draftkings"
+        ],
+        "top_market": "totals"
+      },
+      {
+        "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
+        "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "parent_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "node_name": "TOC PAT-002",
+        "node_type": "agent",
+        "downline_depth": 1,
+        "state_code": null,
+        "location": null,
+        "zip_code": null,
+        "zip_prefix": null,
+        "license_status": null,
+        "violation_count_30d": 0,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 1000,
+        "avg_delta_pct": 200,
+        "avg_influence_score": 0.5936,
+        "sportsbooks": [
+          "draftkings"
+        ],
+        "top_market": "totals"
+      },
       {
         "node_id": "limit-demo-atlantic",
         "partner_node_id": "limit-demo-atlantic",
@@ -1190,13 +1850,13 @@
       }
     ],
     "audit": {
-      "changeRows": 14,
-      "hierarchyLinked": 8,
+      "changeRows": 22,
+      "hierarchyLinked": 14,
       "geoLinked": 8,
       "licensed": 8,
-      "scored": 11,
-      "proofVerified": 10,
-      "coveragePct": 81.8,
+      "scored": 19,
+      "proofVerified": 18,
+      "coveragePct": 75.3,
       "sourceTables": [
         "tree_nodes",
         "partner_account_limits",

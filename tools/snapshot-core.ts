@@ -1,12 +1,15 @@
+// @see https://bun.com/docs/bundler/executables#detecting-standalone-mode-at-runtime — Bun.isStandaloneExecutable
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 /**
  * Scope-aware snapshot core — imported by snapshot-data-plane.ts and portal-cli.ts.
  */
-import { inspect, stringWidth, write, file } from 'bun';
+import { Glob, inspect, stringWidth, write, file } from 'bun';
 import { runPublicDiscovery } from '../lib/public-discovery.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import {
@@ -32,20 +35,57 @@ export type SnapshotManifest = {
   metadata: Record<string, string>;
 };
 
-export const SNAPSHOT_DIR = 'snapshots';
-const INDEX_PATH = `${SNAPSHOT_DIR}/index.jsonl`;
-const SCOPE_MARKER = '.snapshot-scope';
-
 export type SnapshotRunOptions = {
   scope: SnapshotScopeName;
   baseUrl?: string;
   dryRun?: boolean;
+  debug?: boolean;
 };
 
 export type SnapshotFilterOptions = {
   scope?: SnapshotScopeName;
   grep?: string;
+  debug?: boolean;
 };
+
+const SCOPE_MARKER = '.snapshot-scope';
+
+/** Snapshot root — override with PORTAL_SNAPSHOT_DIR. */
+export function getSnapshotDir(): string {
+  const fromEnv = Bun.env.PORTAL_SNAPSHOT_DIR?.trim();
+  return fromEnv && fromEnv.length > 0 ? fromEnv : 'snapshots';
+}
+
+function indexPath(): string {
+  return `${getSnapshotDir()}/index.jsonl`;
+}
+
+export function manifestJsonPath(id: string): string {
+  // brand-ok — opaque snapshot id
+  // brand-ok — opaque snapshot id
+  return `${getSnapshotDir()}/${id}.json`;
+}
+
+export function manifestFlatPath(id: string): string {
+  // brand-ok — opaque snapshot id
+  // brand-ok — opaque snapshot id
+  return `${getSnapshotDir()}/${id}.txt`;
+}
+
+const ANSI_RESET = '\x1b[0m';
+
+function termColor(text: string, color: string): string {
+  const code = Bun.color(color, 'ansi') || Bun.color(color, 'ansi-256') || '';
+  return code ? `${code}${text}${ANSI_RESET}` : text;
+}
+
+function logOk(msg: string): void {
+  console.log(`     ${termColor('✓', 'green')} ${msg}`);
+}
+
+function logHeadline(msg: string): void {
+  console.log(`\n  ${termColor(msg, 'cyan')}`);
+}
 
 function pad(s: string, w: number): string {
   return s + ' '.repeat(Math.max(0, w - stringWidth(s)));
@@ -64,15 +104,16 @@ function isoNow(): string {
   return new Date().toISOString();
 }
 
-async function getGitInfo(): Promise<{ commit: string; branch: string }> {
+async function getGitInfo(): Promise<{ commit: string; branch: string; dirty: boolean }> {
   try {
-    const proc = Bun.spawn(['git', 'rev-parse', 'HEAD'], { stdout: 'pipe' });
-    const commit = (await new Response(proc.stdout).text()).trim();
-    const proc2 = Bun.spawn(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], { stdout: 'pipe' });
-    const branch = (await new Response(proc2.stdout).text()).trim();
-    return { commit, branch };
+    const commit = Bun.spawnSync(['git', 'rev-parse', 'HEAD']).stdout.toString().trim();
+    const branch = Bun.spawnSync(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+      .stdout.toString()
+      .trim();
+    const dirty = Bun.spawnSync(['git', 'diff', '--quiet']).exitCode !== 0;
+    return { commit, branch, dirty };
   } catch {
-    return { commit: 'unknown', branch: 'unknown' };
+    return { commit: 'unknown', branch: 'unknown', dirty: false };
   }
 }
 
@@ -82,14 +123,19 @@ function generateId(scope: string): string {
   return `${scope}-${ts}-${rand}`;
 }
 
-export function manifestJsonPath(id: string): string {
-  // brand-ok — opaque snapshot id
-  return `${SNAPSHOT_DIR}/${id}.json`;
-}
-
-export function manifestFlatPath(id: string): string {
-  // brand-ok — opaque snapshot id
-  return `${SNAPSHOT_DIR}/${id}.txt`;
+export async function globSnapshotFlatFiles(): Promise<string[]> {
+  const dir = getSnapshotDir();
+  const glob = new Glob('*.txt');
+  const out: string[] = [];
+  try {
+    for await (const rel of glob.scan({ cwd: dir, onlyFiles: true })) {
+      if (rel === 'index.jsonl') continue;
+      out.push(`${dir}/${rel}`);
+    }
+  } catch {
+    /* dir may not exist yet */
+  }
+  return out;
 }
 
 export function formatFlatManifest(m: SnapshotManifest): string {
@@ -120,17 +166,17 @@ export function formatFlatManifest(m: SnapshotManifest): string {
 }
 
 async function writeManifest(manifest: SnapshotManifest): Promise<void> {
-  await Bun.$`mkdir -p ${SNAPSHOT_DIR}`.quiet();
+  await Bun.$`mkdir -p ${getSnapshotDir()}`.quiet();
   await write(manifestJsonPath(manifest.id), JSON.stringify(manifest, null, 2));
   await write(manifestFlatPath(manifest.id), formatFlatManifest(manifest));
-  const existing = await file(INDEX_PATH)
+  const existing = await file(indexPath())
     .text()
     .catch(() => '');
-  await write(INDEX_PATH, existing + JSON.stringify(manifest) + '\n');
+  await write(indexPath(), existing + JSON.stringify(manifest) + '\n');
 }
 
 export async function readSnapshotIndex(): Promise<SnapshotManifest[]> {
-  const text = await file(INDEX_PATH)
+  const text = await file(indexPath())
     .text()
     .catch(() => '');
   if (!text.trim()) return [];
@@ -216,7 +262,7 @@ async function fetchAsset(url: string, destPath: string): Promise<boolean> {
     warn(`${url}: ${resp.status}`);
     return false;
   }
-  await write(destPath, await resp.text());
+  await write(destPath, resp);
   return true;
 }
 
@@ -224,7 +270,7 @@ async function captureGapsReport(
   id: string // brand-ok — opaque snapshot id
 ): Promise<{ path: string; data: Record<string, unknown> }> {
   const report = await runPublicDiscovery();
-  const path = `${SNAPSHOT_DIR}/${id}/discovery.json`;
+  const path = `${getSnapshotDir()}/${id}/discovery.json`;
   await write(path, JSON.stringify(report, null, 2));
   return {
     path,
@@ -251,10 +297,10 @@ async function copyLocalAssets(
       continue;
     }
     const base = rel.split('/').pop() ?? 'asset';
-    const dest = `${SNAPSHOT_DIR}/${id}/local-${base}`;
+    const dest = `${getSnapshotDir()}/${id}/local-${base}`;
     await write(dest, f);
     captured.push(dest);
-    console.log(`     ✓ local ${rel}`);
+    console.log(`     ${termColor('✓', 'green')} local ${rel}`);
   }
 }
 
@@ -263,10 +309,12 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   const scope = opts.scope;
   const baseUrl = opts.baseUrl ?? DEFAULT_SNAPSHOT_BASE;
   const dryRun = opts.dryRun ?? false;
+  const debug = opts.debug ?? false;
   const config = scopeConfigs[scope];
   const gitInfo = await getGitInfo();
   const id = generateId(scope);
   const timestamp = isoNow();
+  const snapDir = getSnapshotDir();
 
   const manifest: SnapshotManifest = {
     id,
@@ -279,16 +327,24 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
     baseUrl,
     fileCount: 0,
     files: [],
-    metadata: { status: 'pending' },
+    metadata: {
+      status: 'pending',
+      gitDirty: gitInfo.dirty ? 'true' : 'false',
+      cwd: Bun.cwd,
+      standalone: Bun.isStandaloneExecutable ? 'true' : 'false',
+    },
   };
 
-  console.log(`\n  📸 Snapshot — ${config.label} (scope=${scope})`);
+  logHeadline(`📸 Snapshot — ${config.label} (scope=${scope})`);
   console.log(`     ID: ${id}`);
+  console.log(`     Dir: ${snapDir}`);
   console.log(`     Base: ${baseUrl}`);
-  console.log(`     Git: ${gitInfo.commit.slice(0, 8)} on ${gitInfo.branch}\n`);
+  console.log(
+    `     Git: ${gitInfo.commit.slice(0, 8)} on ${gitInfo.branch}${gitInfo.dirty ? termColor(' (dirty)', 'yellow') : ''}\n`
+  );
 
   if (dryRun) {
-    console.log('  🔍 DRY RUN — would capture:');
+    console.log(`  ${termColor('DRY RUN', 'yellow')} — would capture:`);
     if (scope === 'gaps') {
       console.log('     Report: runPublicDiscovery() → discovery.json');
     } else {
@@ -317,7 +373,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
       manifest.metadata.errors = String(data.errors ?? 0);
       manifest.metadata.warnings = String(data.warnings ?? 0);
       manifest.metadata.total = String(data.total ?? 0);
-      console.log(`     ✓ discovery.json (${data.total} findings)`);
+      logOk(`discovery.json (${data.total} findings)`);
     } catch (e) {
       manifest.metadata.status = 'error';
       manifest.metadata.error = e instanceof Error ? e.message : String(e);
@@ -331,18 +387,18 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
       manifest.metadata.statusCode = String(resp.status);
       if (resp.ok) {
         const ext = config.reportKind === 'html' ? 'html' : 'json';
-        const reportPath = `${SNAPSHOT_DIR}/${id}/report.${ext}`;
-        const body = await resp.text();
-        await write(reportPath, body);
+        const reportPath = `${snapDir}/${id}/report.${ext}`;
+        await write(reportPath, resp);
         capturedFiles.push(reportPath);
         manifest.metadata.status = 'ok';
 
         if (config.reportKind === 'json') {
+          const body = await Bun.file(reportPath).text();
           const data = JSON.parse(body) as Record<string, unknown>;
           if (scope === 'limits') extractLimitsMetadata(data, manifest.metadata);
           if (scope === 'portal') extractPortalMetadata(data, manifest.metadata);
         }
-        console.log(`     ✓ ${resp.status} report.${ext}`);
+        logOk(`${resp.status} report.${ext}`);
       } else {
         manifest.metadata.status = 'error';
         warn(`Report returned ${resp.status}`);
@@ -358,11 +414,11 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
     const url = resolveSnapshotUrl(baseUrl, assetPath);
     const slug = assetPath.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '');
     const ext = assetPath.split('.').pop() ?? 'bin';
-    const dest = `${SNAPSHOT_DIR}/${id}/asset-${slug}.${ext}`;
+    const dest = `${snapDir}/${id}/asset-${slug}.${ext}`;
     try {
       if (await fetchAsset(url, dest)) {
         capturedFiles.push(dest);
-        console.log(`     ✓ ${assetPath}`);
+        logOk(assetPath);
         if (scope === 'prediction' && assetPath.endsWith('summary.json')) {
           const data = JSON.parse(await Bun.file(dest).text()) as Record<string, unknown>;
           extractPredictionMetadata(data, manifest.metadata);
@@ -382,9 +438,18 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   }
 
   await writeManifest(manifest);
-  console.log(`\n  ✅ Snapshot ${id}: ${capturedFiles.length} files`);
+  console.log(`\n  ${termColor(`✅ Snapshot ${id}: ${capturedFiles.length} files`, 'green')}`);
   console.log(`  📝 ${manifestJsonPath(id)}`);
   console.log(`  📝 ${manifestFlatPath(id)}\n`);
+
+  if (debug) {
+    console.log(
+      inspect(
+        { manifest, gitInfo, config: scopeConfigs[scope], capturedFiles },
+        { depth: 5, colors: true }
+      )
+    );
+  }
 
   return manifest;
 }
@@ -402,6 +467,11 @@ export async function listSnapshots(opts: SnapshotFilterOptions = {}): Promise<v
 
   if (filtered.length === 0) {
     console.log(`  No snapshots matching scope=${opts.scope ?? '*'}, grep=${opts.grep ?? '*'}`);
+    return;
+  }
+
+  if (opts.debug) {
+    console.log(inspect(filtered, { depth: 4, colors: true }));
     return;
   }
 
@@ -444,8 +514,17 @@ export async function grepSnapshots(
   if (opts.scope) filtered = filtered.filter(m => m.scope === opts.scope);
 
   if (filtered.length === 0) {
-    console.log('  No matches.');
-    return 0;
+    const flatHits: string[] = [];
+    for (const path of await globSnapshotFlatFiles()) {
+      const text = await Bun.file(path).text();
+      if (text.includes(query)) flatHits.push(path);
+    }
+    if (flatHits.length === 0) {
+      console.log('  No matches.');
+      return 0;
+    }
+    for (const p of flatHits) console.log(p);
+    return flatHits.length;
   }
 
   for (const m of filtered) {
@@ -463,7 +542,12 @@ export async function showLastSnapshot(opts: SnapshotFilterOptions = {}): Promis
     console.log(`  No snapshots for scope=${opts.scope ?? '*'}`);
     return;
   }
-  console.log(inspect(filtered[filtered.length - 1], { depth: 4, colors: true }));
+  console.log(
+    inspect(filtered[filtered.length - 1], {
+      depth: opts.debug ? 6 : 4,
+      colors: true,
+    })
+  );
 }
 
 export function showScopeConfig(scope?: SnapshotScopeName): void {
@@ -511,8 +595,10 @@ export async function resolveScope(explicit?: string): Promise<SnapshotScopeName
     }
     return explicit;
   }
-  const marker = await readScopeMarker(process.cwd());
+  const marker = await readScopeMarker(Bun.cwd);
   if (marker) return marker;
+  const envScope = Bun.env.PORTAL_SCOPE?.trim();
+  if (envScope && isSnapshotScope(envScope)) return envScope;
   return detectScopeFromCwd() ?? 'prediction';
 }
 
@@ -520,14 +606,16 @@ export type ParsedSnapshotFlags = {
   scope?: string;
   baseUrl: string;
   dryRun: boolean;
+  debug: boolean;
   positional: string[];
 };
 
 export function parseSnapshotFlags(argv: string[]): ParsedSnapshotFlags {
   const positional: string[] = [];
   let scope: string | undefined;
-  let baseUrl = DEFAULT_SNAPSHOT_BASE;
+  let baseUrl = Bun.env.SNAPSHOT_BASE_URL?.trim() || DEFAULT_SNAPSHOT_BASE;
   let dryRun = false;
+  let debug = false;
 
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
@@ -543,15 +631,19 @@ export function parseSnapshotFlags(argv: string[]): ParsedSnapshotFlags {
       dryRun = true;
       continue;
     }
+    if (a === '--debug') {
+      debug = true;
+      continue;
+    }
     if (a.startsWith('-')) continue;
     positional.push(a);
   }
 
-  return { scope, baseUrl, dryRun, positional };
+  return { scope, baseUrl, dryRun, debug, positional };
 }
 
 export async function ensureSnapshotDir(): Promise<void> {
-  await Bun.$`mkdir -p ${SNAPSHOT_DIR}`.quiet();
+  await Bun.$`mkdir -p ${getSnapshotDir()}`.quiet();
 }
 
 export { scopeConfigs, DEFAULT_SNAPSHOT_BASE } from './snapshot-scopes.ts';

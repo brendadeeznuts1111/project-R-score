@@ -21,8 +21,13 @@ function tableSection(title: string, rows: Record<string, string | number>[]): s
 }
 
 /** Render networking proof section (target-by-target with reuse metrics). */
-function networkingProofSection(proof: import('./collect.ts').NetworkingChecksReport | undefined | null): string {
-  if (!proof) return tableSection('Networking proof', [{ Metric: 'Status', Value: 'not available — run bun run check:networking:save' }]);
+function networkingProofSection(
+  proof: import('./collect.ts').NetworkingChecksReport | undefined | null
+): string {
+  if (!proof)
+    return tableSection('Networking proof', [
+      { Metric: 'Status', Value: 'not available — run bun run check:networking:save' },
+    ]);
   const targetRows = proof.targets.map(t => ({
     Target: t.name,
     Protocol: t.summary.protocol,
@@ -110,7 +115,7 @@ export function renderMonitoringHtml(data: MonitoringPayload): string {
     <a href="/portal/">Portal</a>
     <a href="/portal/ops/">Ops</a>
     <a href="/api/monitoring">JSON</a>
-    <a href="/registry/prediction/report.html">Prediction report</a>
+    <a href="/registry/prediction/report/">Prediction report</a>
   </nav>
   <h1>Registry monitoring</h1>
   <p class="meta">Last updated: ${escapeHtml(data.timestamp)} · auto-refresh 30s</p>
@@ -120,17 +125,31 @@ export function renderMonitoringHtml(data: MonitoringPayload): string {
   ${api}
   ${dod}
   ${tableSection('Bun API Proof', [
-    { Metric: 'Status', Value: `${data.bunApiProof?.demosPassed ?? '?'}/${data.bunApiProof?.demosTotal ?? '?'} demos` },
+    {
+      Metric: 'Status',
+      Value: `${data.bunApiProof?.demosPassed ?? '?'}/${data.bunApiProof?.demosTotal ?? '?'} demos`,
+    },
     { Metric: 'APIs verified', Value: String(data.bunApiProof?.apisVerified ?? '?') },
     { Metric: 'Pass rate', Value: data.bunApiProof?.demoPassRate ?? '?' },
     { Metric: 'Generated', Value: data.bunApiProof?.generated ?? 'never' },
   ])}
   ${tableSection('Routing proof', [
-    { Metric: 'Routes passed', Value: `${data.routeStats?.routing?.passed ?? '?'}/${data.routeStats?.routing?.total ?? '?'}` },
+    {
+      Metric: 'Routes passed',
+      Value: `${data.routeStats?.routing?.passed ?? '?'}/${data.routeStats?.routing?.total ?? '?'}`,
+    },
     { Metric: 'HTTP 200 ok', Value: String(data.routeStats?.routing?.httpOk ?? '?') },
     { Metric: 'Critical failed', Value: String(data.routeStats?.routing?.criticalFailed ?? '0') },
-    { Metric: 'p95 latency', Value: data.routeStats?.routing?.p95Ms ? `${data.routeStats.routing.p95Ms}ms` : '?' },
-    { Metric: 'Error rate', Value: data.routeStats?.routing?.errorRate ? `${(data.routeStats.routing.errorRate * 100).toFixed(1)}%` : '0%' },
+    {
+      Metric: 'p95 latency',
+      Value: data.routeStats?.routing?.p95Ms ? `${data.routeStats.routing.p95Ms}ms` : '?',
+    },
+    {
+      Metric: 'Error rate',
+      Value: data.routeStats?.routing?.errorRate
+        ? `${(data.routeStats.routing.errorRate * 100).toFixed(1)}%`
+        : '0%',
+    },
     { Metric: 'Proof hash', Value: data.routeStats?.routing?.proofHash?.slice(0, 16) + '…' ?? '—' },
   ])}
   ${tableSection('Environment checks', [

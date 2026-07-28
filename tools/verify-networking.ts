@@ -168,7 +168,7 @@ export function buildLocalNetworkingTargets(base: string = LOCAL_BASE): NetTarge
     },
     {
       name: 'Prediction report',
-      url: `${local}/registry/prediction/report.html`,
+      url: `${local}/registry/prediction/report/`,
       category: 'registry',
       method: 'GET',
       okStatuses: [200, 401, 403],

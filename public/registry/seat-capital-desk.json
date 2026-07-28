@@ -1,6 +1,6 @@
 {
   "schema": "factorywager.seat-capital-desk.v1",
-  "generatedAt": "2026-07-28T04:24:21.435Z",
+  "generatedAt": "2026-07-28T14:46:45.460Z",
   "desks": 4,
   "blocked": 0,
   "partial": 0,
@@ -24,7 +24,8 @@
           "freeplayPct": "25%",
           "status": "ready",
           "incomplete": false,
-          "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username"
+          "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username",
+          "bookMaxLine": "Book max (last known): no book history"
         },
         {
           "outNum": "2",
@@ -36,7 +37,8 @@
           "freeplayPct": "—",
           "status": "deferred",
           "incomplete": false,
-          "note": "ASH-002 warming slot — assign after partner ack"
+          "note": "ASH-002 warming slot — assign after partner ack",
+          "bookMaxLine": "Book max (last known): no book history"
         }
       ],
       "checklist": [
@@ -78,7 +80,8 @@
           "freeplayPct": "25%",
           "status": "ready",
           "incomplete": false,
-          "note": "Operator ready — partner assigns book + rails via desk Fill · harness login — replace via Fill Username"
+          "note": "Operator ready — partner assigns book + rails via desk Fill · harness login — replace via Fill Username",
+          "bookMaxLine": "Book max (last known): no book history"
         }
       ],
       "checklist": [
@@ -116,7 +119,8 @@
           "freeplayPct": "25%",
           "status": "ready",
           "incomplete": false,
-          "note": "SouthFL PPH · ONB seat — book login pending partner ack · harness login — replace via Fill Username"
+          "note": "SouthFL PPH · ONB seat — book login pending partner ack · harness login — replace via Fill Username",
+          "bookMaxLine": "Book max (last known): no book history"
         },
         {
           "outNum": "2",
@@ -128,7 +132,8 @@
           "freeplayPct": "—",
           "status": "deferred",
           "incomplete": false,
-          "note": "Second out slot — assign after ONB Ready"
+          "note": "Second out slot — assign after ONB Ready",
+          "bookMaxLine": "Book max (last known): no book history"
         }
       ],
       "checklist": [
@@ -169,7 +174,8 @@
           "maxBet": "500",
           "freeplayPct": "25%",
           "status": "ready",
-          "incomplete": false
+          "incomplete": false,
+          "bookMaxLine": "Book max (last known): no book history"
         },
         {
           "outNum": "2",
@@ -180,7 +186,8 @@
           "maxBet": "500",
           "freeplayPct": "25%",
           "status": "ready",
-          "incomplete": false
+          "incomplete": false,
+          "bookMaxLine": "Book max (last known): no book history"
         },
         {
           "outNum": "3",
@@ -192,7 +199,8 @@
           "freeplayPct": "25%",
           "status": "ready",
           "incomplete": false,
-          "note": "logged in ~$17,747 (backend.action92.com)"
+          "note": "logged in ~$17,747 (backend.action92.com)",
+          "bookMaxLine": "Book max (last known): no book history"
         },
         {
           "outNum": "4",
@@ -203,7 +211,8 @@
           "maxBet": "500",
           "freeplayPct": "25%",
           "status": "ready",
-          "incomplete": false
+          "incomplete": false,
+          "bookMaxLine": "Book max (last known): no book history"
         },
         {
           "outNum": "5",
@@ -215,7 +224,8 @@
           "freeplayPct": "—",
           "status": "deferred",
           "incomplete": false,
-          "note": "book label only — pass field was NO"
+          "note": "book label only — pass field was NO",
+          "bookMaxLine": "Book max (last known): no book history"
         }
       ],
       "checklist": [

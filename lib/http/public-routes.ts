@@ -493,6 +493,14 @@ export const HOT_STATIC_ROUTES: PublicRouteDef[] = [
     note: 'directory index — Cloudflare pretty URL',
   },
   {
+    path: '/registry/prediction/report.html',
+    name: 'Prediction report (legacy alias)',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'stub → /registry/prediction/report/ (Pages _redirects 301)',
+  },
+  {
     path: '/registry/prediction/report/summary.json',
     name: 'Prediction report summary',
     category: 'registry',

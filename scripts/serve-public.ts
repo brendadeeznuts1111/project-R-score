@@ -607,9 +607,12 @@ const HOT_STATIC_PATHS = [
   'public/registry/@factorywager/routing-test/latest.json',
   'public/registry/@factorywager/registry-snapshot/latest.json',
   'public/registry/@factorywager/proof-packages.json',
-  'public/registry/prediction/report.html',
+  'public/registry/prediction/report/index.html',
+  'public/registry/prediction/report/summary.json',
   'public/registry/prediction/coverage-chart.svg',
   'public/registry/prediction/error-chart.svg',
+  'public/registry/prediction/error-histogram.svg',
+  'public/registry/prediction/rolling-mae.svg',
   'public/registry/networking-proof.json',
   'public/registry/install-env-proof.json',
   'public/registry/registry-client-proof.json',
@@ -2150,7 +2153,7 @@ console.log(`Live API:      ${base}/api/operations/summary`);
 console.log(`Monitoring API ${base}/api/monitoring`);
 console.log(`Registry:      ${base}/api/registry`);
 console.log(`Catalog:       ${base}/api/catalog`);
-console.log(`Prediction:    ${base}/registry/prediction/report.html`);
+console.log(`Prediction:    ${base}/registry/prediction/report/`);
 const publishReady = Boolean(configuredPublishToken());
 console.log(
   publishReady

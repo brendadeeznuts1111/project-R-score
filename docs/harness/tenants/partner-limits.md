@@ -61,6 +61,14 @@ bun run serve:public:hot   # open /portal/limits/ · /registry/limit-raises.json
 #   GET /api/agents/v1/limits/raises?node_id=partner-42&hours=24
 #   GET /api/agents/v1/limits/raises?node_id=partner-42&format=table
 #   GET /api/limits/summary?format=table
+#   GET /api/limits/analyze
+#   POST /api/agents/v1/limits/record — JSON body: { node_id, sportsbook, sport_id, market_id, bet_type, max_wager }
+
+# 5. Snapshot (scope-aware, with manifest + index)
+bun run snapshot:data-plane --scope limits
+
+# 6. Domain matrix (limit impact heatmap)
+bun run scan:domains --limit-only
 ```
 
 ## Code map
@@ -78,6 +86,9 @@ bun run serve:public:hot   # open /portal/limits/ · /registry/limit-raises.json
 | **CLI — capture**        | [`tools/capture-raise-context.ts`](../../../tools/capture-raise-context.ts)                                                                                                | `ops:limits:capture` · optional `--inspect`                                                                                          |
 | **CLI — predict**        | [`tools/ops-limit-predict.ts`](../../../tools/ops-limit-predict.ts)                                                                                                        | `ops:limits:predict` · `:predict:json` · `--inspect`                                                                                 |
 | **CLI — analyze**        | [`tools/ops-limit-analyze.ts`](../../../tools/ops-limit-analyze.ts)                                                                                                        | `ops:limits:analyze` · `:analyze:json`                                                                                               |
+| **CLI — snapshot**       | [`tools/snapshot-data-plane.ts`](../../../tools/snapshot-data-plane.ts) · [`tools/snapshot-core.ts`](../../../tools/snapshot-core.ts)                                        | `snapshot:data-plane` · `--scope limits` · manifest · index · list · grep                                                            |
+| **CLI — domain scanner** | [`tools/scan-domains.ts`](../../../tools/scan-domains.ts)                                                                                                                  | `scan:domains` · matrix · limit hits · `--limit-only` · `--watch` · `--interactive`                                                  |
+| **Table formatter**      | [`lib/table-format.ts`](../../../lib/table-format.ts)                                                                                                                      | ANSI tables · LIMIT_CHANGE_COLUMNS · DIMENSION_COLUMNS · REGULATORY_COLUMNS · formatTableNative (Bun.inspect.table)                  |
 | **CLI — connected seed** | [`tools/seed-limit-patterns.ts`](../../../tools/seed-limit-patterns.ts)                                                                                                    | `--force` replaces only `limit-demo-*` rows · `--bake` writes the limit registry snapshot                                            |
 | **CLI — TOC bridge seed** | [`tools/seed-toc-limit-bridge.ts`](../../../tools/seed-toc-limit-bridge.ts) · [`lib/operations/toc-limit-bridge-seed.ts`](../../../lib/operations/toc-limit-bridge-seed.ts) | Writes raises on ASH/PAT identity `treeNodeId` UUIDs so TOC board `raises 48h` join lights · scoped `--force` · optional `--bake`   |
 | **Bake**                 | `exportLimitRaisesSnapshot` (analytics) · [`tools/ops-snapshot.ts`](../../../tools/ops-snapshot.ts)                                                                        | companion bake → [`public/registry/limit-raises.json`](../../../public/registry/limit-raises.json)                                   |
@@ -101,8 +112,12 @@ bun run serve:public:hot   # open /portal/limits/ · /registry/limit-raises.json
 | `bun run ops:limits:demo`         | Force-seed demo + multi report            |
 | `bun run ops:limits:capture`      | Capture missing raise context rows        |
 | `bun run ops:limits:alerts`       | Deep alerts / channel publish path        |
+| `bun run ops:limits:analyze:json` | Analyze JSON only                         |
 | `bun run ops:limits:predict`      | Forecast next raise (CLI)                 |
 | `bun run ops:limits:predict:json` | Forecast JSON only                        |
+| `bun run snapshot:data-plane`     | Scope-aware snapshot (default: limits)    |
+| `bun run snapshot:data-plane:list`| List all snapshots                        |
+| `bun run snapshot:data-plane:last`| Show latest snapshot manifest             |
 | `bun run ops:limits:analyze`      | Granular book/sport/market breakdown      |
 | `bun run ops:limits:analyze:json` | Analyze JSON only                         |
 | `bun run ops:limits:seed-patterns` | Connected multi-partner seed + registry bake (`seed-limit-patterns --force --bake`) |

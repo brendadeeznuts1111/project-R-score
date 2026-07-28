@@ -1,5 +1,6 @@
 {
-  "generated": "2026-07-27T17:08:34.258Z",
+  "schemaVersion": 3,
+  "generated": "2026-07-28T15:23:48.481Z",
   "model": "naive-coverage-v1",
   "range": {
     "from": "2026-06-25",
@@ -26,14 +27,252 @@
     "firstHalfMae": 2.8666666666666667,
     "secondHalfMae": 2.8666666666666667,
     "maeDelta": 0,
-    "trend": "stable"
+    "trend": "stable",
+    "errorStdDev": 3.422799374131582,
+    "qualityLabel": "Good fit",
+    "biasSeverity": "medium",
+    "within5Status": "above_target",
+    "within5Target": 65,
+    "trendLabel": "stable",
+    "decayDetected": false,
+    "maeRmseRatio": 0.6420771754389194
   },
   "quality": "good",
   "points": 30,
+  "histogramBins": [
+    {
+      "lo": 0,
+      "hi": 1.25,
+      "count": 16,
+      "pct": 53.333333333333336,
+      "containsMae": false
+    },
+    {
+      "lo": 1.25,
+      "hi": 2.5,
+      "count": 0,
+      "pct": 0,
+      "containsMae": false
+    },
+    {
+      "lo": 2.5,
+      "hi": 3.75,
+      "count": 2,
+      "pct": 6.666666666666667,
+      "containsMae": true
+    },
+    {
+      "lo": 3.75,
+      "hi": 5,
+      "count": 2,
+      "pct": 6.666666666666667,
+      "containsMae": false
+    },
+    {
+      "lo": 5,
+      "hi": 6.25,
+      "count": 4,
+      "pct": 13.333333333333334,
+      "containsMae": false
+    },
+    {
+      "lo": 6.25,
+      "hi": 7.5,
+      "count": 2,
+      "pct": 6.666666666666667,
+      "containsMae": false
+    },
+    {
+      "lo": 7.5,
+      "hi": 8.75,
+      "count": 2,
+      "pct": 6.666666666666667,
+      "containsMae": false
+    },
+    {
+      "lo": 8.75,
+      "hi": 10,
+      "count": 2,
+      "pct": 6.666666666666667,
+      "containsMae": false
+    }
+  ],
+  "worstDays": [
+    {
+      "date": "2026-06-30",
+      "predicted": 100,
+      "actual": 90,
+      "error": 10,
+      "absError": 10,
+      "within5": false,
+      "exceedsRmse": true
+    },
+    {
+      "date": "2026-07-15",
+      "predicted": 100,
+      "actual": 90,
+      "error": 10,
+      "absError": 10,
+      "within5": false,
+      "exceedsRmse": true
+    },
+    {
+      "date": "2026-07-03",
+      "predicted": 100,
+      "actual": 92,
+      "error": 8,
+      "absError": 8,
+      "within5": false,
+      "exceedsRmse": true
+    },
+    {
+      "date": "2026-07-18",
+      "predicted": 100,
+      "actual": 92,
+      "error": 8,
+      "absError": 8,
+      "within5": false,
+      "exceedsRmse": true
+    },
+    {
+      "date": "2026-07-09",
+      "predicted": 100,
+      "actual": 93,
+      "error": 7,
+      "absError": 7,
+      "within5": false,
+      "exceedsRmse": true
+    }
+  ],
+  "ops": {
+    "stripTone": "good",
+    "within5Text": "Within 5: 73% · target 65%",
+    "trendText": "Trend: → stable · Δ 0.00"
+  },
+  "previous": {
+    "generatedAt": "2026-07-28T15:23:48.430Z",
+    "mae": 2.8666666666666667,
+    "rmse": 4.464676173400859,
+    "bias": 2.8666666666666667,
+    "within5Pct": 73.33333333333333,
+    "n": 30,
+    "qualityLabel": "Good fit"
+  },
+  "diff": {
+    "available": true,
+    "maeDelta": 0,
+    "maePctBetter": 0,
+    "within5Pp": 0,
+    "biasDelta": 0,
+    "improved": false
+  },
+  "rolling": {
+    "window": 7,
+    "mae": [
+      0,
+      2.5,
+      1.6666666666666667,
+      2,
+      1.6,
+      3,
+      2.5714285714285716,
+      2.5714285714285716,
+      3,
+      3,
+      3.4285714285714284,
+      3.4285714285714284,
+      2.5714285714285716,
+      2.5714285714285716,
+      3.5714285714285716,
+      2.4285714285714284,
+      3.142857142857143,
+      2.2857142857142856,
+      2.7142857142857144,
+      2.142857142857143,
+      3.5714285714285716,
+      2.5714285714285716,
+      2.5714285714285716,
+      3,
+      3,
+      3.4285714285714284,
+      3.4285714285714284,
+      2.5714285714285716,
+      2.5714285714285716,
+      3.5714285714285716
+    ],
+    "stdUpper": [
+      0,
+      5,
+      4.023689270621825,
+      4.121320343559642,
+      3.6591260281974,
+      6.651483716701108,
+      6.11128905524682,
+      6.11128905524682,
+      6.96412483586046,
+      6.96412483586046,
+      7.529342884116378,
+      7.529342884116378,
+      5.727246004910646,
+      5.727246004910646,
+      6.860246980920383,
+      5.349292614322982,
+      5.992848191894286,
+      5.048439943687674,
+      5.317266736898372,
+      4.838280323444744,
+      7.230356707104486,
+      6.11128905524682,
+      6.11128905524682,
+      6.96412483586046,
+      6.96412483586046,
+      7.529342884116378,
+      7.529342884116378,
+      5.727246004910646,
+      5.727246004910646,
+      6.860246980920383
+    ],
+    "stdLower": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.2826101619367605,
+      0,
+      0.29286609381999984,
+      0,
+      0.11130469167305757,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.2826101619367605
+    ],
+    "overallMae": 2.8666666666666667
+  },
   "artifacts": {
     "report": "/registry/prediction/report/",
     "coverageSvg": "/registry/prediction/coverage-chart.svg",
     "errorSvg": "/registry/prediction/error-chart.svg",
-    "summaryJson": "/registry/prediction/report/summary.json"
+    "histogramSvg": "/registry/prediction/error-histogram.svg",
+    "rollingSvg": "/registry/prediction/rolling-mae.svg",
+    "summaryJson": "/registry/prediction/report/summary.json",
+    "coveragePng": "/registry/prediction/coverage-chart.png"
   }
 }

@@ -212,6 +212,10 @@ describe('buildOpsSummary', () => {
     expect(s.experiments.recent[0]?.variants).toBe(2);
     expect(s.prediction.coverage.n).toBe(1);
     expect(s.prediction.coverage.mae).toBe(30);
+    expect(s.prediction.coverage.quality).toBe('poor');
+    expect(s.prediction.coverage.within5Target).toBe(65);
+    expect(s.prediction.coverage.report).toBe('/registry/prediction/report/');
+    expect(s.prediction.coverage.stripTone).toBeDefined();
 
     db.close();
   });

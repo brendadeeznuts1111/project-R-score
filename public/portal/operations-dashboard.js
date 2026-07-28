@@ -392,7 +392,9 @@ class OperationsDashboard extends HTMLElement {
               <a href="/registry/prediction/report/">Open report</a>
             </div>
             <div class="ops-metric" id="pred-mae">—</div>
+            <div class="ops-sub" id="pred-quality"></div>
             <div class="ops-sub" id="pred-detail"></div>
+            <div class="ops-sub" id="pred-strip"></div>
             <a class="ops-link" id="pred-report-link" href="/registry/prediction/report/">Open report</a>
             <img id="pred-chart" class="ops-chart hidden" alt="Coverage prediction chart" width="100%" />
           </section>
@@ -2199,12 +2201,44 @@ class OperationsDashboard extends HTMLElement {
     if (predMae) {
       predMae.textContent = cov.n > 0 ? `MAE ${Number(cov.mae).toFixed(2)}` : 'No rows';
     }
+    const predQuality = this.querySelector('#pred-quality');
+    if (predQuality) {
+      if (cov.n > 0 && cov.quality) {
+        const q =
+          cov.quality === 'good'
+            ? 'Good fit'
+            : cov.quality === 'fair'
+              ? 'Fair fit'
+              : cov.quality === 'poor'
+                ? 'High error'
+                : 'Unknown';
+        const tr = cov.trend || 'unknown';
+        const w5 =
+          cov.within5Pct != null ? ` · ≤5 ${Number(cov.within5Pct).toFixed(0)}%` : '';
+        predQuality.textContent = `${q} · ${tr}${w5}`;
+      } else {
+        predQuality.textContent = '';
+      }
+    }
     const predDetail = this.querySelector('#pred-detail');
     if (predDetail) {
       predDetail.textContent =
         cov.n > 0
-          ? `n=${cov.n} · RMSE ${Number(cov.rmse).toFixed(2)} · bias ${Number(cov.bias).toFixed(2)}`
+          ? `n=${cov.n} · RMSE ${Number(cov.rmse).toFixed(2)} · bias ${Number(cov.bias).toFixed(2)}` +
+            (cov.errorStdDev != null ? ` · σ ${Number(cov.errorStdDev).toFixed(2)}` : '') +
+            (cov.worstDate ? ` · worst ${cov.worstDate}` : '')
           : 'Run bun run ops:snapshot:demo to seed + bake for Pages';
+    }
+    const predStrip = this.querySelector('#pred-strip');
+    if (predStrip) {
+      if (cov.n > 0 && cov.within5Status) {
+        const target = cov.within5Target ?? 65;
+        const tone = cov.stripTone || 'unknown';
+        const decay = cov.decayDetected ? ' · decay warning' : '';
+        predStrip.textContent = `Within 5: ${Number(cov.within5Pct ?? 0).toFixed(0)}% (target ${target}%) · trend ${cov.trend || '—'}${decay} · ${tone}`;
+      } else {
+        predStrip.textContent = '';
+      }
     }
     const chart = this.querySelector('#pred-chart');
     if (chart) {

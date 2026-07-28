@@ -155,7 +155,7 @@ Publish surface is `public/` (includes `index.html` + registry/robots/sitemaps +
 | `/api/toc` | Pages Function GET snapshot; POST → 503 (mutations = toc-ops-repo `ct`) |
 | `/registry/ops-summary.json` | Snapshot from `bun run ops:snapshot` (includes optional `toc` slice) |
 | `/registry/proof-taxonomy-audit.json` | Subsystem contracts + cross-proof consistency |
-| `/registry/prediction/report.html` | Backtest report (+ `coverage-chart.svg`) |
+| `/registry/prediction/report/` | Backtest report (+ `coverage-chart.svg`); legacy `report.html` → 301 |
 
 TOC tenant runbook: [`toc-ops.md`](toc-ops.md). **MCP does not serve TOC desk data** — use MCP for Pages deploy/logs; use `/portal/toc` or `ct` for partner ops.
 

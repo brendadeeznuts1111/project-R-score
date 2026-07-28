@@ -11,7 +11,14 @@ import type { Database } from 'bun:sqlite';
 import { buildBunUtilsProof } from '../bun-utils-proof.ts';
 import { loadRoutingOpsSliceSync, type RoutingOpsSlice } from '../routing-proof.ts';
 import { queryRecentLimitChanges } from '../account-limits-repo.ts';
-import { getPredictionAccuracy } from '../prediction/index.ts';
+import {
+  buildOpsStrip,
+  computeReportDiagnostics,
+  getPredictionAccuracy,
+  loadCoverageSeries,
+  reportQuality,
+  WITHIN5_TARGET_PCT,
+} from '../prediction/index.ts';
 import { queryPartnersSlice, type PartnersSummarySlice } from './partner-profile-bridge.ts';
 import { queryOpsChannelHealth } from '../channels/outbox.ts';
 import {
@@ -260,7 +267,27 @@ export type OpsSummaryPayload = {
     recent: OpsSummaryExperiment[];
   };
   prediction: {
-    coverage: { mae: number; rmse: number; bias: number; n: number };
+    coverage: {
+      mae: number;
+      rmse: number;
+      bias: number;
+      n: number;
+      /** Present when series rows exist (report diagnostics). */
+      quality?: 'good' | 'fair' | 'poor' | 'unknown';
+      trend?: 'improving' | 'worsening' | 'stable' | 'unknown';
+      within5Pct?: number;
+      within15Pct?: number;
+      within5Status?: 'above_target' | 'marginal' | 'below_target' | 'unknown';
+      within5Target?: number;
+      biasSeverity?: 'low' | 'medium' | 'high' | 'unknown';
+      decayDetected?: boolean;
+      errorStdDev?: number;
+      maeDelta?: number;
+      worstDate?: string;
+      maxAbsError?: number;
+      stripTone?: 'good' | 'warn' | 'bad' | 'unknown';
+      report?: '/registry/prediction/report/';
+    };
     limitRaise: {
       mae: number;
       rmse: number;
@@ -382,7 +409,7 @@ function emptyPrediction(): OpsSummaryPayload['prediction'] {
 function queryPrediction(db: Database): OpsSummaryPayload['prediction'] {
   if (!tableExists(db, 'prediction_accuracy')) return emptyPrediction();
   try {
-    const coverage = getPredictionAccuracy(db, 'coverage');
+    const coverageAcc = getPredictionAccuracy(db, 'coverage');
     const limitRaiseAcc = getPredictionAccuracy(db, 'limit_raise');
     let lastPredicted: string | null = null;
     try {
@@ -392,7 +419,39 @@ function queryPrediction(db: Database): OpsSummaryPayload['prediction'] {
         )
         .get() as { d: string | null } | null;
       lastPredicted = row?.d ?? null;
-    } catch {}
+    } catch {
+      /* optional */
+    }
+
+    let coverage: OpsSummaryPayload['prediction']['coverage'] = { ...coverageAcc };
+    if (coverageAcc.n > 0) {
+      try {
+        const series = loadCoverageSeries(db);
+        const d = computeReportDiagnostics(series, coverageAcc);
+        const quality = reportQuality(coverageAcc);
+        const strip = buildOpsStrip(d, quality);
+        coverage = {
+          ...coverageAcc,
+          quality,
+          trend: d.trend,
+          within5Pct: d.within5Pct,
+          within15Pct: d.within15Pct,
+          within5Status: d.within5Status,
+          within5Target: WITHIN5_TARGET_PCT,
+          biasSeverity: d.biasSeverity,
+          decayDetected: d.decayDetected,
+          errorStdDev: d.errorStdDev,
+          maeDelta: d.maeDelta,
+          worstDate: d.worstDate,
+          maxAbsError: d.maxAbsError,
+          stripTone: strip.stripTone,
+          report: '/registry/prediction/report/',
+        };
+      } catch {
+        coverage = { ...coverageAcc, report: '/registry/prediction/report/' };
+      }
+    }
+
     return { coverage, limitRaise: { ...limitRaiseAcc, lastPredicted } };
   } catch {
     return emptyPrediction();

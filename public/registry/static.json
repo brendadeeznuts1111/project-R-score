@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T04:24:19.753Z",
+  "generated": "2026-07-28T14:46:45.497Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -627,7 +627,7 @@
   "monitoring": {
     "source": "snapshot",
     "uptime": "0d 0h 0m 3s",
-    "uptimeMs": 3590,
+    "uptimeMs": 3173,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
@@ -652,8 +652,8 @@
     },
     "experimentsActive": 1,
     "predictionN": 30,
-    "timestamp": "2026-07-28T04:24:19.749Z",
-    "snapshotAt": "2026-07-28T04:24:19.749Z",
+    "timestamp": "2026-07-28T14:46:45.486Z",
+    "snapshotAt": "2026-07-28T14:46:45.486Z",
     "compliance": {
       "available": true,
       "ok": true,
@@ -669,14 +669,25 @@
         "MA",
         "NJ"
       ],
-      "generatedAt": "2026-07-28T04:24:17.749Z",
+      "generatedAt": "2026-07-28T14:46:43.065Z",
       "path": "/registry/compliance-board.json",
       "portal": "/portal/compliance/"
+    },
+    "limitRaises": {
+      "available": true,
+      "ok": true,
+      "partners": 15,
+      "raises": 19,
+      "lookbackHours": 48,
+      "patternNodes": 15,
+      "generatedAt": "2026-07-28T14:46:43.087Z",
+      "path": "/registry/limit-raises.json",
+      "portal": "/portal/limits/"
     }
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-28T04:24:19.740Z",
+    "generated": "2026-07-28T14:46:45.470Z",
     "liquidity": {
       "total": 108210
     },
@@ -819,11 +830,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "355341a7be197a93aeaeff7809953e0995f04cb32789b66bb487607445a59442",
+      "proofHash": "a7afbce8555b90a4f4ebcddcedd6feaf66db7322bd7617af70501626c3f3b133",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-28T04:24:19.742Z"
+      "timestamp": "2026-07-28T14:46:45.472Z"
     },
     "registryClient": {
       "available": true,
@@ -869,7 +880,7 @@
     },
     "cloudflarePages": {
       "available": true,
-      "ok": true,
+      "ok": false,
       "steps": [
         {
           "id": "well-known-mcp-parity",
@@ -883,8 +894,8 @@
         },
         {
           "id": "functions-import-graph",
-          "ok": true,
-          "detail": "allowlist ok"
+          "ok": false,
+          "detail": "exit 1"
         },
         {
           "id": "functions-edge-safety",
@@ -897,7 +908,7 @@
           "detail": "13 contracts · 20 consistency"
         }
       ],
-      "timestamp": "2026-07-28T04:24:17.805Z",
+      "timestamp": "2026-07-28T14:46:42.964Z",
       "pagesUrl": "https://project-r-score.pages.dev",
       "path": "/registry/cloudflare-pages-preflight.json"
     },
@@ -1083,8 +1094,8 @@
           "ok": true
         }
       ],
-      "proofHash": "d27a5a447da32270b2d48f9f96325997ab8f1f0172de1e78c1e38491482deb6a",
-      "timestamp": "2026-07-28T04:24:17.187Z",
+      "proofHash": "a1378eca6f66c8b9908dff274a55988130becdb50f358377974a298072b2c496",
+      "timestamp": "2026-07-28T14:46:42.336Z",
       "path": "/registry/proof-taxonomy-audit.json"
     },
     "channelMeta": {
@@ -1095,7 +1106,7 @@
       "total": 75,
       "status": "pass",
       "proofHash": "36a60aabb4b0b07ae9f4ea7e5d3998e229aebd0e7a68d599f89cfabe6b2dacaf",
-      "updatedAt": "2026-07-28T04:24:16.897Z",
+      "updatedAt": "2026-07-28T14:46:42.332Z",
       "channel": "stable",
       "targetVersion": "1.4.0",
       "runtimeVersion": "1.4.0",
@@ -1376,16 +1387,16 @@
       ]
     },
     "channels": {
-      "pending": 20,
+      "pending": 0,
       "failed": 0,
-      "sent": 983,
-      "oldestPendingAt": "2026-07-28T04:17:28.714Z",
+      "sent": 1021,
+      "oldestPendingAt": null,
       "failRate": 0
     },
     "toc": {
       "available": true,
       "path": "/registry/toc-ops.json",
-      "generatedAt": "2026-07-28T04:24:17.908Z",
+      "generatedAt": "2026-07-28T14:46:43.020Z",
       "partners": 3,
       "warmed": 4,
       "warming": 2,
@@ -1399,7 +1410,7 @@
       "principalOutstandingTotal": 20300,
       "throttleOnboarding": false,
       "primedDrums": 4,
-      "playableDrums": 2,
+      "playableDrums": 1,
       "playsPending": 4,
       "playsSettled": 13,
       "activeExperiments": 2,
@@ -1407,13 +1418,13 @@
       "identityLinked": true,
       "identityPartners": 3,
       "enforcementFocus": "rope",
-      "enforcementFailed": 11,
+      "enforcementFailed": 12,
       "enforcementCritical": 6,
       "throughputT": 5116,
       "throughputI": 47810,
       "throughputOE": 1655,
       "topRankedProcess": "LIMIT",
-      "avgRP": 8.653425824003158,
+      "avgRP": 8.105319427411338,
       "settlementFloatRatio": 0.5103534825350345,
       "presencePartners": 3,
       "presenceIpv6": 31,
@@ -1481,17 +1492,17 @@
       "reserved": 29,
       "settled": 7,
       "settledViaFullLoop": 29,
-      "outboxSent": 983,
+      "outboxSent": 1021,
       "outboxFailed": 0,
-      "outboxPending": 20,
-      "oldestPendingAgeSec": 411,
-      "manualStepsPerCycle": 20,
+      "outboxPending": 0,
+      "oldestPendingAgeSec": null,
+      "manualStepsPerCycle": 0,
       "loopCompletionRate": 1,
       "distinctPlaysDispatched": 7,
       "settledPlaysViaFullLoop": 7,
       "loopCompletionRateByPlay": 1,
       "capitalEfficiencyProxy": 0.1278360819590205,
-      "limitEfficiencyProxy": 1.3301282051282053,
+      "limitEfficiencyProxy": 2.0833333333333335,
       "processReturnProxy": 0.20128651835968908,
       "projectorBackend": "r2",
       "projectorBucket": "factory-wager-registry",
@@ -1500,7 +1511,7 @@
     "telegramHandshake": {
       "available": true,
       "path": "/registry/telegram-handshake.json",
-      "generatedAt": "2026-07-28T04:24:19.718Z",
+      "generatedAt": "2026-07-28T14:46:45.418Z",
       "partners": 4,
       "inviteGaps": 0,
       "blocked": 0,
@@ -1614,7 +1625,7 @@
     "seatCapitalDesk": {
       "available": true,
       "path": "/registry/seat-capital-desk.json",
-      "generatedAt": "2026-07-28T04:24:19.722Z",
+      "generatedAt": "2026-07-28T14:46:45.460Z",
       "desks": 4,
       "blocked": 0,
       "partial": 0,
@@ -1638,7 +1649,8 @@
               "freeplayPct": "25%",
               "status": "ready",
               "incomplete": false,
-              "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username"
+              "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username",
+              "bookMaxLine": "Book max (last known): no book history"
             },
             {
               "outNum": "2",
@@ -1650,7 +1662,8 @@
               "freeplayPct": "—",
               "status": "deferred",
               "incomplete": false,
-              "note": "ASH-002 warming slot — assign after partner ack"
+              "note": "ASH-002 warming slot — assign after partner ack",
+              "bookMaxLine": "Book max (last known): no book history"
             }
           ],
           "checklist": [
@@ -1692,7 +1705,8 @@
               "freeplayPct": "25%",
               "status": "ready",
               "incomplete": false,
-              "note": "Operator ready — partner assigns book + rails via desk Fill · harness login — replace via Fill Username"
+              "note": "Operator ready — partner assigns book + rails via desk Fill · harness login — replace via Fill Username",
+              "bookMaxLine": "Book max (last known): no book history"
             }
           ],
           "checklist": [
@@ -1730,7 +1744,8 @@
               "freeplayPct": "25%",
               "status": "ready",
               "incomplete": false,
-              "note": "SouthFL PPH · ONB seat — book login pending partner ack · harness login — replace via Fill Username"
+              "note": "SouthFL PPH · ONB seat — book login pending partner ack · harness login — replace via Fill Username",
+              "bookMaxLine": "Book max (last known): no book history"
             },
             {
               "outNum": "2",
@@ -1742,7 +1757,8 @@
               "freeplayPct": "—",
               "status": "deferred",
               "incomplete": false,
-              "note": "Second out slot — assign after ONB Ready"
+              "note": "Second out slot — assign after ONB Ready",
+              "bookMaxLine": "Book max (last known): no book history"
             }
           ],
           "checklist": [
@@ -1783,7 +1799,8 @@
               "maxBet": "500",
               "freeplayPct": "25%",
               "status": "ready",
-              "incomplete": false
+              "incomplete": false,
+              "bookMaxLine": "Book max (last known): no book history"
             },
             {
               "outNum": "2",
@@ -1794,7 +1811,8 @@
               "maxBet": "500",
               "freeplayPct": "25%",
               "status": "ready",
-              "incomplete": false
+              "incomplete": false,
+              "bookMaxLine": "Book max (last known): no book history"
             },
             {
               "outNum": "3",
@@ -1806,7 +1824,8 @@
               "freeplayPct": "25%",
               "status": "ready",
               "incomplete": false,
-              "note": "logged in ~$17,747 (backend.action92.com)"
+              "note": "logged in ~$17,747 (backend.action92.com)",
+              "bookMaxLine": "Book max (last known): no book history"
             },
             {
               "outNum": "4",
@@ -1817,7 +1836,8 @@
               "maxBet": "500",
               "freeplayPct": "25%",
               "status": "ready",
-              "incomplete": false
+              "incomplete": false,
+              "bookMaxLine": "Book max (last known): no book history"
             },
             {
               "outNum": "5",
@@ -1829,7 +1849,8 @@
               "freeplayPct": "—",
               "status": "deferred",
               "incomplete": false,
-              "note": "book label only — pass field was NO"
+              "note": "book label only — pass field was NO",
+              "bookMaxLine": "Book max (last known): no book history"
             }
           ],
           "checklist": [
@@ -1877,11 +1898,227 @@
         "MA",
         "NJ"
       ],
-      "generatedAt": "2026-07-28T04:24:17.749Z",
+      "generatedAt": "2026-07-28T14:46:43.065Z",
       "path": "/registry/compliance-board.json",
       "portal": "/portal/compliance/"
     },
     "limitChanges": [
+      {
+        "limit_id": 145,
+        "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "sportsbook": "fanduel",
+        "sport_id": "nba",
+        "market_id": "spread",
+        "bet_type": "straight",
+        "previous_max": 800,
+        "new_limit": 1200,
+        "increased_at": 1785247270,
+        "direction": "up",
+        "message": "fanduel nba/spread straight: $800 → $1200",
+        "context_available": true,
+        "multi_factor_score": 0.5935799999999999,
+        "top_contributing_factors": [
+          "violation_count_30d",
+          "chargeback_count_30d",
+          "kyc_pass_rate"
+        ],
+        "context_proof": {
+          "algorithm": "sha3-256",
+          "digestValid": true,
+          "signed": true,
+          "hmacValid": true,
+          "valid": true
+        }
+      },
+      {
+        "limit_id": 153,
+        "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "sportsbook": "fanduel",
+        "sport_id": "nba",
+        "market_id": "spread",
+        "bet_type": "straight",
+        "previous_max": 800,
+        "new_limit": 1200,
+        "increased_at": 1785247270,
+        "direction": "up",
+        "message": "fanduel nba/spread straight: $800 → $1200",
+        "context_available": true,
+        "multi_factor_score": 0.5935799999999999,
+        "top_contributing_factors": [
+          "violation_count_30d",
+          "chargeback_count_30d",
+          "kyc_pass_rate"
+        ],
+        "context_proof": {
+          "algorithm": "sha3-256",
+          "digestValid": true,
+          "signed": true,
+          "hmacValid": true,
+          "valid": true
+        }
+      },
+      {
+        "limit_id": 147,
+        "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+        "sportsbook": "draftkings",
+        "sport_id": "nba",
+        "market_id": "totals",
+        "bet_type": "straight",
+        "previous_max": 500,
+        "new_limit": 1500,
+        "increased_at": 1785244970,
+        "direction": "up",
+        "message": "draftkings nba/totals straight: $500 → $1500",
+        "context_available": true,
+        "multi_factor_score": 0.5935799999999999,
+        "top_contributing_factors": [
+          "violation_count_30d",
+          "chargeback_count_30d",
+          "kyc_pass_rate"
+        ],
+        "context_proof": {
+          "algorithm": "sha3-256",
+          "digestValid": true,
+          "signed": true,
+          "hmacValid": true,
+          "valid": true
+        }
+      },
+      {
+        "limit_id": 149,
+        "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
+        "sportsbook": "draftkings",
+        "sport_id": "nba",
+        "market_id": "totals",
+        "bet_type": "straight",
+        "previous_max": 500,
+        "new_limit": 1500,
+        "increased_at": 1785244970,
+        "direction": "up",
+        "message": "draftkings nba/totals straight: $500 → $1500",
+        "context_available": true,
+        "multi_factor_score": 0.5935799999999999,
+        "top_contributing_factors": [
+          "violation_count_30d",
+          "chargeback_count_30d",
+          "kyc_pass_rate"
+        ],
+        "context_proof": {
+          "algorithm": "sha3-256",
+          "digestValid": true,
+          "signed": true,
+          "hmacValid": true,
+          "valid": true
+        }
+      },
+      {
+        "limit_id": 155,
+        "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
+        "sportsbook": "draftkings",
+        "sport_id": "nba",
+        "market_id": "totals",
+        "bet_type": "straight",
+        "previous_max": 500,
+        "new_limit": 1500,
+        "increased_at": 1785244970,
+        "direction": "up",
+        "message": "draftkings nba/totals straight: $500 → $1500",
+        "context_available": true,
+        "multi_factor_score": 0.5935799999999999,
+        "top_contributing_factors": [
+          "violation_count_30d",
+          "chargeback_count_30d",
+          "kyc_pass_rate"
+        ],
+        "context_proof": {
+          "algorithm": "sha3-256",
+          "digestValid": true,
+          "signed": true,
+          "hmacValid": true,
+          "valid": true
+        }
+      },
+      {
+        "limit_id": 157,
+        "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
+        "sportsbook": "draftkings",
+        "sport_id": "nba",
+        "market_id": "totals",
+        "bet_type": "straight",
+        "previous_max": 500,
+        "new_limit": 1500,
+        "increased_at": 1785244970,
+        "direction": "up",
+        "message": "draftkings nba/totals straight: $500 → $1500",
+        "context_available": true,
+        "multi_factor_score": 0.5935799999999999,
+        "top_contributing_factors": [
+          "violation_count_30d",
+          "chargeback_count_30d",
+          "kyc_pass_rate"
+        ],
+        "context_proof": {
+          "algorithm": "sha3-256",
+          "digestValid": true,
+          "signed": true,
+          "hmacValid": true,
+          "valid": true
+        }
+      },
+      {
+        "limit_id": 143,
+        "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+        "sportsbook": "draftkings",
+        "sport_id": "nba",
+        "market_id": "totals",
+        "bet_type": "straight",
+        "previous_max": 500,
+        "new_limit": 1500,
+        "increased_at": 1785244570,
+        "direction": "up",
+        "message": "draftkings nba/totals straight: $500 → $1500",
+        "context_available": true,
+        "multi_factor_score": 0.49000000000000005,
+        "top_contributing_factors": [
+          "violation_count_30d",
+          "chargeback_count_30d",
+          "kyc_pass_rate"
+        ],
+        "context_proof": {
+          "algorithm": "sha3-256",
+          "digestValid": true,
+          "signed": true,
+          "hmacValid": true,
+          "valid": true
+        }
+      },
+      {
+        "limit_id": 151,
+        "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+        "sportsbook": "draftkings",
+        "sport_id": "nba",
+        "market_id": "totals",
+        "bet_type": "straight",
+        "previous_max": 500,
+        "new_limit": 1500,
+        "increased_at": 1785244570,
+        "direction": "up",
+        "message": "draftkings nba/totals straight: $500 → $1500",
+        "context_available": true,
+        "multi_factor_score": 0.49000000000000005,
+        "top_contributing_factors": [
+          "violation_count_30d",
+          "chargeback_count_30d",
+          "kyc_pass_rate"
+        ],
+        "context_proof": {
+          "algorithm": "sha3-256",
+          "digestValid": true,
+          "signed": true,
+          "hmacValid": true,
+          "valid": true
+        }
+      },
       {
         "limit_id": 116,
         "node_id": "partner-42",
@@ -2234,10 +2471,30 @@
     "limitPatterns": {
       "schemaVersion": 1,
       "lookbackHours": 48,
-      "partners": 4,
-      "nodes": 9,
-      "downlineNodes": 5,
+      "partners": 6,
+      "nodes": 15,
+      "downlineNodes": 9,
       "books": [
+        {
+          "key": "draftkings",
+          "changes": 9,
+          "raises": 9,
+          "decreases": 0,
+          "net_delta": 9200,
+          "avg_delta_pct": 185.19,
+          "avg_influence_score": 0.598,
+          "partners": 5,
+          "nodes": 9,
+          "states": [
+            "MA",
+            "NJ"
+          ],
+          "zip_prefixes": [
+            "021",
+            "071"
+          ],
+          "top_market": "totals"
+        },
         {
           "key": "caesars",
           "changes": 4,
@@ -2260,24 +2517,22 @@
           "top_market": "match_winner"
         },
         {
-          "key": "draftkings",
-          "changes": 3,
-          "raises": 3,
+          "key": "fanduel",
+          "changes": 4,
+          "raises": 4,
           "decreases": 0,
-          "net_delta": 3200,
-          "avg_delta_pct": 155.56,
-          "avg_influence_score": 0.6758,
+          "net_delta": 2300,
+          "avg_delta_pct": 66.67,
+          "avg_influence_score": 0.6301,
           "partners": 3,
-          "nodes": 3,
+          "nodes": 4,
           "states": [
-            "MA",
             "NJ"
           ],
           "zip_prefixes": [
-            "021",
             "071"
           ],
-          "top_market": "over_under"
+          "top_market": "spread"
         },
         {
           "key": "hardrock",
@@ -2314,24 +2569,6 @@
           ],
           "zip_prefixes": [
             "021",
-            "071"
-          ],
-          "top_market": "match_winner"
-        },
-        {
-          "key": "fanduel",
-          "changes": 2,
-          "raises": 2,
-          "decreases": 0,
-          "net_delta": 1500,
-          "avg_delta_pct": 83.33,
-          "avg_influence_score": 0.6666,
-          "partners": 1,
-          "nodes": 2,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
             "071"
           ],
           "top_market": "match_winner"
@@ -2471,6 +2708,164 @@
         }
       ],
       "nodePatterns": [
+        {
+          "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+          "partner_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+          "parent_node_id": null,
+          "node_name": "Cascade Partner",
+          "node_type": "partner",
+          "downline_depth": 0,
+          "state_code": null,
+          "location": null,
+          "zip_code": null,
+          "zip_prefix": null,
+          "license_status": null,
+          "violation_count_30d": 0,
+          "changes": 2,
+          "scored_changes": 2,
+          "proof_verified_changes": 2,
+          "raises": 2,
+          "decreases": 0,
+          "net_delta": 1400,
+          "avg_delta_pct": 125,
+          "avg_influence_score": 0.5418,
+          "sportsbooks": [
+            "draftkings",
+            "fanduel"
+          ],
+          "top_market": "spread"
+        },
+        {
+          "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
+          "partner_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+          "parent_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+          "node_name": "TOC ASH-001",
+          "node_type": "agent",
+          "downline_depth": 1,
+          "state_code": null,
+          "location": null,
+          "zip_code": null,
+          "zip_prefix": null,
+          "license_status": null,
+          "violation_count_30d": 0,
+          "changes": 1,
+          "scored_changes": 1,
+          "proof_verified_changes": 1,
+          "raises": 1,
+          "decreases": 0,
+          "net_delta": 1000,
+          "avg_delta_pct": 200,
+          "avg_influence_score": 0.5936,
+          "sportsbooks": [
+            "draftkings"
+          ],
+          "top_market": "totals"
+        },
+        {
+          "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
+          "partner_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+          "parent_node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
+          "node_name": "TOC ASH-002",
+          "node_type": "agent",
+          "downline_depth": 1,
+          "state_code": null,
+          "location": null,
+          "zip_code": null,
+          "zip_prefix": null,
+          "license_status": null,
+          "violation_count_30d": 0,
+          "changes": 1,
+          "scored_changes": 1,
+          "proof_verified_changes": 1,
+          "raises": 1,
+          "decreases": 0,
+          "net_delta": 1000,
+          "avg_delta_pct": 200,
+          "avg_influence_score": 0.5936,
+          "sportsbooks": [
+            "draftkings"
+          ],
+          "top_market": "totals"
+        },
+        {
+          "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+          "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+          "parent_node_id": null,
+          "node_name": "Factory Rail Co",
+          "node_type": "partner",
+          "downline_depth": 0,
+          "state_code": null,
+          "location": null,
+          "zip_code": null,
+          "zip_prefix": null,
+          "license_status": null,
+          "violation_count_30d": 0,
+          "changes": 2,
+          "scored_changes": 2,
+          "proof_verified_changes": 2,
+          "raises": 2,
+          "decreases": 0,
+          "net_delta": 1400,
+          "avg_delta_pct": 125,
+          "avg_influence_score": 0.5418,
+          "sportsbooks": [
+            "draftkings",
+            "fanduel"
+          ],
+          "top_market": "spread"
+        },
+        {
+          "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
+          "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+          "parent_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+          "node_name": "TOC PAT-001",
+          "node_type": "agent",
+          "downline_depth": 1,
+          "state_code": null,
+          "location": null,
+          "zip_code": null,
+          "zip_prefix": null,
+          "license_status": null,
+          "violation_count_30d": 0,
+          "changes": 1,
+          "scored_changes": 1,
+          "proof_verified_changes": 1,
+          "raises": 1,
+          "decreases": 0,
+          "net_delta": 1000,
+          "avg_delta_pct": 200,
+          "avg_influence_score": 0.5936,
+          "sportsbooks": [
+            "draftkings"
+          ],
+          "top_market": "totals"
+        },
+        {
+          "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
+          "partner_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+          "parent_node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
+          "node_name": "TOC PAT-002",
+          "node_type": "agent",
+          "downline_depth": 1,
+          "state_code": null,
+          "location": null,
+          "zip_code": null,
+          "zip_prefix": null,
+          "license_status": null,
+          "violation_count_30d": 0,
+          "changes": 1,
+          "scored_changes": 1,
+          "proof_verified_changes": 1,
+          "raises": 1,
+          "decreases": 0,
+          "net_delta": 1000,
+          "avg_delta_pct": 200,
+          "avg_influence_score": 0.5936,
+          "sportsbooks": [
+            "draftkings"
+          ],
+          "top_market": "totals"
+        },
         {
           "node_id": "limit-demo-atlantic",
           "partner_node_id": "limit-demo-atlantic",
@@ -2710,13 +3105,13 @@
         }
       ],
       "audit": {
-        "changeRows": 14,
-        "hierarchyLinked": 8,
+        "changeRows": 22,
+        "hierarchyLinked": 14,
         "geoLinked": 8,
         "licensed": 8,
-        "scored": 14,
-        "proofVerified": 10,
-        "coveragePct": 87.3,
+        "scored": 22,
+        "proofVerified": 18,
+        "coveragePct": 78.7,
         "sourceTables": [
           "tree_nodes",
           "partner_account_limits",
@@ -2743,12 +3138,12 @@
       "MA",
       "NJ"
     ],
-    "generatedAt": "2026-07-28T04:24:17.749Z",
+    "generatedAt": "2026-07-28T14:46:43.065Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
   },
   "bunUtils": {
-    "proofHash": "c3a7bae9d93be4f678bfcec71295828a923b392664a2b8ec58844b9855173a6c",
+    "proofHash": "3d8511243bc991821841ff9c1004c682ac1afba9a3871a8275819b164e36d54e",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -2926,7 +3321,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "36a60aabb4b0b07ae9f4ea7e5d3998e229aebd0e7a68d599f89cfabe6b2dacaf",
-    "updatedAt": "2026-07-28T04:24:16.897Z",
+    "updatedAt": "2026-07-28T14:46:42.332Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -3143,14 +3538,14 @@
         "ok": true
       }
     ],
-    "proofHash": "d27a5a447da32270b2d48f9f96325997ab8f1f0172de1e78c1e38491482deb6a",
-    "timestamp": "2026-07-28T04:24:17.187Z",
+    "proofHash": "a1378eca6f66c8b9908dff274a55988130becdb50f358377974a298072b2c496",
+    "timestamp": "2026-07-28T14:46:42.336Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-28T04:24:19.718Z",
+    "generatedAt": "2026-07-28T14:46:45.418Z",
     "partners": 4,
     "inviteGaps": 0,
     "blocked": 0,
@@ -3264,7 +3659,7 @@
   "seatCapitalDesk": {
     "available": true,
     "path": "/registry/seat-capital-desk.json",
-    "generatedAt": "2026-07-28T04:24:19.722Z",
+    "generatedAt": "2026-07-28T14:46:45.460Z",
     "desks": 4,
     "blocked": 0,
     "partial": 0,
@@ -3288,7 +3683,8 @@
             "freeplayPct": "25%",
             "status": "ready",
             "incomplete": false,
-            "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username"
+            "note": "WARMED seat · limits stale — confirm rails before play · harness login — replace via Fill Username",
+            "bookMaxLine": "Book max (last known): no book history"
           },
           {
             "outNum": "2",
@@ -3300,7 +3696,8 @@
             "freeplayPct": "—",
             "status": "deferred",
             "incomplete": false,
-            "note": "ASH-002 warming slot — assign after partner ack"
+            "note": "ASH-002 warming slot — assign after partner ack",
+            "bookMaxLine": "Book max (last known): no book history"
           }
         ],
         "checklist": [
@@ -3342,7 +3739,8 @@
             "freeplayPct": "25%",
             "status": "ready",
             "incomplete": false,
-            "note": "Operator ready — partner assigns book + rails via desk Fill · harness login — replace via Fill Username"
+            "note": "Operator ready — partner assigns book + rails via desk Fill · harness login — replace via Fill Username",
+            "bookMaxLine": "Book max (last known): no book history"
           }
         ],
         "checklist": [
@@ -3380,7 +3778,8 @@
             "freeplayPct": "25%",
             "status": "ready",
             "incomplete": false,
-            "note": "SouthFL PPH · ONB seat — book login pending partner ack · harness login — replace via Fill Username"
+            "note": "SouthFL PPH · ONB seat — book login pending partner ack · harness login — replace via Fill Username",
+            "bookMaxLine": "Book max (last known): no book history"
           },
           {
             "outNum": "2",
@@ -3392,7 +3791,8 @@
             "freeplayPct": "—",
             "status": "deferred",
             "incomplete": false,
-            "note": "Second out slot — assign after ONB Ready"
+            "note": "Second out slot — assign after ONB Ready",
+            "bookMaxLine": "Book max (last known): no book history"
           }
         ],
         "checklist": [
@@ -3433,7 +3833,8 @@
             "maxBet": "500",
             "freeplayPct": "25%",
             "status": "ready",
-            "incomplete": false
+            "incomplete": false,
+            "bookMaxLine": "Book max (last known): no book history"
           },
           {
             "outNum": "2",
@@ -3444,7 +3845,8 @@
             "maxBet": "500",
             "freeplayPct": "25%",
             "status": "ready",
-            "incomplete": false
+            "incomplete": false,
+            "bookMaxLine": "Book max (last known): no book history"
           },
           {
             "outNum": "3",
@@ -3456,7 +3858,8 @@
             "freeplayPct": "25%",
             "status": "ready",
             "incomplete": false,
-            "note": "logged in ~$17,747 (backend.action92.com)"
+            "note": "logged in ~$17,747 (backend.action92.com)",
+            "bookMaxLine": "Book max (last known): no book history"
           },
           {
             "outNum": "4",
@@ -3467,7 +3870,8 @@
             "maxBet": "500",
             "freeplayPct": "25%",
             "status": "ready",
-            "incomplete": false
+            "incomplete": false,
+            "bookMaxLine": "Book max (last known): no book history"
           },
           {
             "outNum": "5",
@@ -3479,7 +3883,8 @@
             "freeplayPct": "—",
             "status": "deferred",
             "incomplete": false,
-            "note": "book label only — pass field was NO"
+            "note": "book label only — pass field was NO",
+            "bookMaxLine": "Book max (last known): no book history"
           }
         ],
         "checklist": [

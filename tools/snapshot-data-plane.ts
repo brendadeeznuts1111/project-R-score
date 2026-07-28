@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -21,6 +22,7 @@ const HELP = `Scope-aware data-plane snapshotter (legacy flags)
   --scope <name>   prediction|portal|gaps|limits
   --base <url>     Origin (default SNAPSHOT_BASE_URL or http://localhost:3000)
   --dry-run        Plan only
+  --debug          Bun.inspect dump
   --list           List snapshots
   --last           Last manifest
   --grep <filter>  Filter list (scope=prediction · bias>2)
@@ -34,22 +36,22 @@ async function main(): Promise<void> {
     return;
   }
 
-  const { scope: scopeArg, baseUrl, dryRun } = parseSnapshotFlags(args);
+  const { scope: scopeArg, baseUrl, dryRun, debug } = parseSnapshotFlags(args);
   const scope = await resolveScope(scopeArg);
   const grepIdx = args.indexOf('--grep');
   const grep = grepIdx >= 0 ? args[grepIdx + 1] : undefined;
 
   if (args.includes('--list')) {
-    await listSnapshots({ scope, grep });
+    await listSnapshots({ scope, grep, debug });
     return;
   }
   if (args.includes('--last')) {
-    await showLastSnapshot({ scope });
+    await showLastSnapshot({ scope, debug });
     return;
   }
 
   await ensureSnapshotDir();
-  await runSnapshot({ scope, baseUrl, dryRun });
+  await runSnapshot({ scope, baseUrl, dryRun, debug });
 }
 
 if (import.meta.main) main();

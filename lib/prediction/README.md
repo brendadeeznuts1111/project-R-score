@@ -18,6 +18,7 @@ SSOT lives here — not under `lib/operations/`.
 | Tests | `tests/prediction-backtest.test.ts` · `tests/prediction-report.test.ts` |
 | Skill | [`.agents/skills/ops-dual-mode-experiments/SKILL.md`](../../.agents/skills/ops-dual-mode-experiments/SKILL.md) (C5) |
 | Sibling (C4) | [`lib/experiments/`](../experiments/) · `bun run ops:experiments` |
+| Tenant runbook | [`docs/harness/tenants/prediction-report.md`](../../docs/harness/tenants/prediction-report.md) · claim `prediction-report-v3` |
 
 ## Model (v1)
 

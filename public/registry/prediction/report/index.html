@@ -1,18 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="color-scheme" content="dark"/>
+  <meta name="color-scheme" content="dark light"/>
   <meta name="description" content="FactoryWager coverage prediction backtest — MAE, residuals, calibration"/>
   <title>Coverage prediction · FactoryWager</title>
   <link rel="alternate" type="application/json" href="/registry/prediction/report/summary.json"/>
   <style>
-    :root {
+    :root, html[data-theme="dark"] {
+      color-scheme: dark;
       --bg: #0d1117; --surface: #161b22; --border: #30363d;
       --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff;
-      --green: #3fb950; --red: #f85149; --yellow: #d29922; --purple: #a371f7;
+      --green: #3fb950; --red: #f85149; --yellow: #d29922;
       --radius: 8px;
+    }
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #ffffff; --surface: #f6f8fa; --border: #d0d7de;
+      --text: #1f2328; --muted: #656d76; --accent: #0969da;
+      --green: #1a7f37; --red: #cf222e; --yellow: #9a6700;
     }
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; line-height: 1.45; }
@@ -24,33 +31,52 @@
       background: rgba(22,27,34,.9); position: sticky; top: 0; z-index: 10;
       backdrop-filter: blur(8px);
     }
-    .logo { font-weight: 600; font-size: 15px; letter-spacing: .02em; }
-    .logo span { color: var(--accent); margin-right: 6px; }
+    .brand { font-weight: 600; font-size: 15px; letter-spacing: .02em; }
+    .brand .mark { color: var(--accent); margin-right: 6px; }
+    .brand .page { color: var(--muted); font-weight: 500; margin-left: 8px; }
     nav { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; }
     nav a { color: var(--muted); }
     nav a:hover, nav a.active { color: var(--text); }
+    .topbar-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .topbar-actions button {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      border-radius: 6px; padding: 6px 10px; font-size: 12px; cursor: pointer;
+    }
+    .topbar-actions button:hover { border-color: var(--accent); }
     main { max-width: 1100px; margin: 0 auto; padding: 24px 20px 48px; }
-    h1 { font-size: 22px; margin: 0 0 6px; font-weight: 600; }
-    .lede { color: var(--muted); font-size: 13px; margin: 0 0 20px; }
-    .badge {
-      display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px;
-      border-radius: 999px; border: 1px solid var(--border); vertical-align: middle; margin-left: 8px;
+    .hero { margin-bottom: 8px; }
+    .hero h1 { font-size: 22px; margin: 0 0 6px; font-weight: 600; }
+    .hero-sub { color: var(--muted); font-size: 14px; margin: 0 0 8px; }
+    .meta { font-size: 12px; color: var(--muted); margin: 0 0 16px; font-variant-numeric: tabular-nums; }
+    .meta code { background: var(--surface); padding: 1px 6px; border-radius: 4px; font-size: 11px; border: 1px solid var(--border); }
+    .status {
+      display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px;
+      border-radius: 6px; border: 1px solid var(--border); margin-left: 8px; vertical-align: middle;
     }
-    .badge.good { color: var(--green); border-color: rgba(63,185,80,.4); background: rgba(63,185,80,.08); }
-    .badge.fair { color: var(--yellow); border-color: rgba(210,153,34,.4); background: rgba(210,153,34,.08); }
-    .badge.poor { color: var(--red); border-color: rgba(248,81,73,.4); background: rgba(248,81,73,.08); }
-    .badge.unknown { color: var(--muted); }
-    .cards {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;
+    .status.good { color: var(--green); border-color: rgba(63,185,80,.4); background: rgba(63,185,80,.08); }
+    .status.fair { color: var(--yellow); border-color: rgba(210,153,34,.4); background: rgba(210,153,34,.08); }
+    .status.poor { color: var(--red); border-color: rgba(248,81,73,.4); background: rgba(248,81,73,.08); }
+    .status.unknown { color: var(--muted); }
+    .stats-row {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 0 0 20px;
     }
-    @media (max-width: 720px) { .cards { grid-template-columns: repeat(2, 1fr); } }
-    .card {
+    @media (max-width: 900px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 520px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .stat {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 14px 16px;
+      padding: 14px 16px; position: relative;
     }
-    .card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; }
-    .card .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
-    .card .sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .stat:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .stat .tip {
+      display: none; position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 20;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 10px 12px; font-size: 12px; color: var(--text); line-height: 1.4;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .stat:hover .tip, .stat:focus-within .tip { display: block; }
+    .stat .label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 6px; }
+    .stat .value { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .stat .sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
     .panel {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
       padding: 12px; margin-bottom: 16px;
@@ -62,8 +88,13 @@
     @media (max-width: 840px) { .chart-grid { grid-template-columns: 1fr; } }
     .chart { width: 100%; overflow-x: auto; }
     .chart svg { display: block; max-width: 100%; height: auto; }
+    html[data-theme="light"] .chart svg { filter: invert(1) hue-rotate(180deg); }
+    .latest {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;
+    }
+    @media (max-width: 720px) { .latest { grid-template-columns: repeat(2, 1fr); } }
     .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 12px; font-size: 12px; color: var(--muted); }
-    .toolbar input, .toolbar select, .toolbar button {
+    .toolbar input, .toolbar button {
       background: var(--bg); border: 1px solid var(--border); color: var(--text);
       border-radius: 6px; padding: 6px 10px; font-size: 13px;
     }
@@ -92,112 +123,177 @@
       font-size: 12px; color: var(--muted);
     }
     .footer code { background: var(--surface); padding: 1px 6px; border-radius: 4px; font-size: 11px; border: 1px solid var(--border); }
-    .links { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 0; font-size: 13px; }
-    .empty-banner {
+    .links { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0 0; font-size: 13px; }
+    .status-banner {
       margin: 0 0 16px; padding: 12px 14px; border-radius: var(--radius);
       background: rgba(210,153,34,.08); border: 1px solid rgba(210,153,34,.35);
       color: var(--yellow); font-size: 13px;
     }
-    .empty-banner code { background: var(--surface); padding: 1px 6px; border-radius: 4px; font-size: 11px; border: 1px solid var(--border); }
-    .empty-banner a { margin-left: 8px; }
+    .status-banner code { background: var(--surface); padding: 1px 6px; border-radius: 4px; font-size: 11px; border: 1px solid var(--border); }
+    .status-banner a { margin-left: 8px; }
+
+    .ops-strip {
+      display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 16px; font-size: 12px; font-weight: 600;
+    }
+    .ops-strip .chip {
+      padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface);
+    }
+    .ops-strip.good .chip { border-color: rgba(63,185,80,.45); color: var(--green); background: rgba(63,185,80,.08); }
+    .ops-strip.warn .chip { border-color: rgba(210,153,34,.45); color: var(--yellow); background: rgba(210,153,34,.08); }
+    .ops-strip.bad .chip { border-color: rgba(248,81,73,.45); color: var(--red); background: rgba(248,81,73,.08); }
+    .ops-cards {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 0 20px;
+    }
+    @media (max-width: 720px) { .ops-cards { grid-template-columns: 1fr; } }
+    .ops-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 16px; font-size: 13px;
+    }
+    .ops-card h3 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .ops-card ul { margin: 0; padding: 0 0 0 18px; color: var(--text); }
+    .ops-card li { margin: 4px 0; }
+    .ops-card .card-link { display: inline-block; margin-top: 10px; font-size: 12px; }
+    .stat .value.tone-good, .stat .value .tone-good { color: var(--green); }
+    .stat .value.tone-fair, .stat .value .tone-fair { color: var(--yellow); }
+    .stat .value.tone-poor, .stat .value .tone-poor { color: var(--red); }
+    .dist-grid {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 16px; margin-bottom: 16px;
+    }
+    @media (max-width: 840px) { .dist-grid { grid-template-columns: 1fr; } }
+    .mini-hist { display: flex; align-items: flex-end; gap: 3px; height: 72px; margin: 8px 0 4px; }
+    .mini-bar { height: 100%; min-width: 8px; border-radius: 3px 3px 0 0; opacity: .9; }
+    .mini-bar.mae-bin { outline: 1px solid var(--text); opacity: 1; }
+    .flag { color: var(--red); margin-left: 4px; font-weight: 700; }
+    .worst-table { width: 100%; font-size: 12px; }
     .note { font-size: 12px; color: var(--muted); margin: 0 0 8px; }
+    .what-changed {
+      margin: 0 0 16px; padding: 10px 14px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px;
+    }
+    .what-changed summary { cursor: pointer; font-weight: 600; }
+    .diff-row { margin: 8px 0 4px; font-variant-numeric: tabular-nums; }
+    .delta-good { color: var(--green); }
+    .delta-bad { color: var(--red); }
+    @media print {
+      .topbar-actions, nav, .toolbar, .chips, #csv-btn, #filter, #thresh-chips { display: none !important; }
+      body { background: #fff; color: #000; }
+      .topbar { position: static; background: #fff; border-bottom: 1px solid #ccc; }
+      .panel, .stat, .ops-card { break-inside: avoid; border-color: #ccc; }
+      .stat .tip { display: none !important; }
+      html[data-theme="light"] .chart svg, .chart svg { filter: none !important; }
+      a { color: #000; text-decoration: underline; }
+    }
   </style>
 </head>
 <body>
   <header class="topbar">
-    <div class="logo"><span>■</span> Coverage prediction</div>
-    <nav>
+    <div class="brand"><span class="mark">■</span>FactoryWager<span class="page">Coverage prediction</span></div>
+    <div class="topbar-actions">
+      <button type="button" id="theme-toggle" aria-label="Toggle light/dark theme">Theme</button>
+      <button type="button" id="print-btn">Print</button>
+      <button type="button" id="download-btn">Download HTML</button>
+    </div>
+    <nav aria-label="Primary">
       <a href="/portal/ops/">Ops</a>
       <a href="/portal/dashboard/">Dashboard</a>
       <a href="/portal/health/">Health</a>
       <a href="/monitoring">Monitoring</a>
-      <a href="/registry/ops-summary.json">ops-summary</a>
-      <a href="/registry/prediction/coverage-chart.svg">Coverage SVG</a>
-      <a href="/registry/prediction/error-chart.svg">Residuals SVG</a>
-      <a href="/registry/prediction/report/summary.json">summary.json</a>
-      <a href="coverage-chart.png">PNG</a>
       <a href="/registry/prediction/report/" class="active">Report</a>
     </nav>
   </header>
   <main>
-    <h1>Coverage prediction backtest
-      <span class="badge good">Good fit</span>
-      <span class="badge unknown">Stable</span>
-    </h1>
-    <p class="lede">Generated 2026-07-27T17:08:34.258Z · range 2026-06-25 → 2026-07-24 · model naive coverage % · residual = predicted − actual · artifact from <code>ops:prediction report</code> / <code>ops:snapshot</code></p>
+    <section class="hero">
+      <h1>Coverage prediction backtest
+        <span class="status good">Good fit · Stable</span>
+      </h1>
+      <p class="hero-sub">Backtest accuracy for coverage % (predicted − actual).</p>
+      <p class="meta" id="gen-meta">
+        2026-07-28T15:23:48.481Z · schema v3 · model naive-coverage-v1 · range 2026-06-25 → 2026-07-24 ·
+        <a href="/registry/prediction/report/summary.json">summary.json</a>
+      </p>
+    </section>
 
     
 
-    <div class="cards">
-      <div class="card">
-        <div class="label">n</div>
-        <div class="value">30</div>
-        <div class="sub">backtest rows</div>
-      </div>
-      <div class="card">
-        <div class="label">MAE</div>
-        <div class="value">2.87</div>
-        <div class="sub">mean abs error</div>
-      </div>
-      <div class="card">
-        <div class="label">RMSE</div>
-        <div class="value">4.46</div>
-        <div class="sub">root mean square</div>
-      </div>
-      <div class="card">
-        <div class="label">Bias</div>
-        <div class="value">2.87</div>
-        <div class="sub">mean (pred − actual)</div>
-      </div>
+    <div class="ops-strip good" id="ops" aria-label="Ops strip">
+      <span class="chip">Within 5: 73% · target 65%</span>
+      <span class="chip">Trend: → stable · Δ 0.00</span>
     </div>
 
-    <div class="cards">
-      <div class="card">
-        <div class="label">Within ≤5</div>
-        <div class="value">73%</div>
-        <div class="sub">calibration hit rate</div>
-      </div>
-      <div class="card">
-        <div class="label">Within ≤15</div>
-        <div class="value">100%</div>
-        <div class="sub">soft band</div>
-      </div>
-      <div class="card">
-        <div class="label">Trend (½ MAE)</div>
-        <div class="value">0.00</div>
-        <div class="sub">2.87 → 2.87 · stable</div>
-      </div>
-      <div class="card">
-        <div class="label">Over / under</div>
-        <div class="value">14/0</div>
-        <div class="sub">16 exact · worst 2026-06-30</div>
-      </div>
+    <section class="stats-row" id="glance" aria-label="Fit at a glance">
+      <div class="stat" tabindex="0" role="group" aria-describedby="tip-n">
+      <div class="label">n</div>
+      <div class="value">30</div>
+      <div class="sub">backtest rows</div>
+      <div class="tip" id="tip-n" role="tooltip">Number of evaluation days in this report window (30).</div>
     </div>
-
-    <div class="cards">
-      <div class="card">
-        <div class="label">Worst |error|</div>
-        <div class="value">10.00</div>
-        <div class="sub">2026-06-30</div>
-      </div>
-      <div class="card">
-        <div class="label">Mean |error|</div>
-        <div class="value">2.87</div>
-        <div class="sub">series absolute</div>
-      </div>
-      <div class="card">
-        <div class="label">Last predicted</div>
-        <div class="value">100.0</div>
-        <div class="sub">coverage %</div>
-      </div>
-      <div class="card">
-        <div class="label">Last actual</div>
-        <div class="value">93.0</div>
-        <div class="sub">residual +7.00</div>
-      </div>
+      <div class="stat" tabindex="0" role="group" aria-describedby="tip-mae">
+      <div class="label">MAE</div>
+      <div class="value"><span class="tone-good">2.87</span></div>
+      <div class="sub">mean abs error</div>
+      <div class="tip" id="tip-mae" role="tooltip">Mean Absolute Error — average miss in coverage percentage points. Lower is better. Here, typical error is 2.87. Good ≤5, fair ≤15.</div>
     </div>
+      <div class="stat" tabindex="0" role="group" aria-describedby="tip-rmse">
+      <div class="label">RMSE</div>
+      <div class="value">4.46</div>
+      <div class="sub">ratio 0.64</div>
+      <div class="tip" id="tip-rmse" role="tooltip">Root Mean Squared Error — penalizes large misses. Always ≥ MAE. Ratio RMSE/MAE (0.64) indicates outlier severity.</div>
+    </div>
+      <div class="stat" tabindex="0" role="group" aria-describedby="tip-bias">
+      <div class="label">Bias</div>
+      <div class="value"><span class="tone-fair">+2.87</span></div>
+      <div class="sub">medium · mean (pred − actual)</div>
+      <div class="tip" id="tip-bias" role="tooltip">Average over/under-prediction (predicted − actual). +2.87 means slight over-prediction.</div>
+    </div>
+      <div class="stat" tabindex="0" role="group" aria-describedby="tip-within5">
+      <div class="label">Within ≤5</div>
+      <div class="value"><span class="tone-good">73%</span></div>
+      <div class="sub">target 65% · ≤15: 100%</div>
+      <div class="tip" id="tip-within5" role="tooltip">73% of predictions were within 5 coverage points of actual. Target ≥65%.</div>
+    </div>
+      <div class="stat" tabindex="0" role="group" aria-describedby="tip-trend">
+      <div class="label">Trend</div>
+      <div class="value"><span class="tone-fair">Stable</span></div>
+      <div class="sub">2.87 → 2.87 (Δ 0.00)</div>
+      <div class="tip" id="tip-trend" role="tooltip">Half-series MAE trend: stable. Δ 0.00 — positive means errors growing (worsening).</div>
+    </div>
+    </section>
 
-    <section class="panel">
+    <details class="what-changed" id="what-changed">
+  <summary>What changed? <span class="delta delta-bad">Mixed/regressed</span></summary>
+  <p class="diff-row">
+    <span class="">MAE: 2.87 → 2.87 (→ 0% worse)</span>
+    · <span class="delta-good">≤5: 73% → 73% (↑ 0pp)</span>
+    · <span>Bias: +2.87 → +2.87</span>
+  </p>
+  <p class="note">Compared to prior bake 2026-07-28T15:23:48.430Z (Good fit).</p>
+</details>
+
+    <section class="ops-cards" aria-label="Ops summary">
+      <div class="ops-card">
+        <h3>Quality check</h3>
+        <ul>
+          <li>Good fit</li>
+          <li>MAE/RMSE ratio: 0.64</li>
+          <li>Bias medium (+2.87)</li>
+          <li>≤5 rate 73% (target &gt;65%)</li>
+          <li>σ(errors) 3.42</li>
+        </ul>
+        <a class="card-link" href="/registry/prediction/error-histogram.svg">View error distribution →</a>
+      </div>
+      <div class="ops-card">
+        <h3>Trend &amp; stability</h3>
+        <ul>
+          <li>Half-series trend: Stable (Δ 0.00)</li>
+          <li>No decay detected</li>
+          <li>First half MAE 2.87 → second 2.87</li>
+          <li>Over/under 14/0 (16 exact)</li>
+        </ul>
+        <a class="card-link" href="/registry/prediction/rolling-mae.svg">View rolling performance →</a>
+      </div>
+    </section>
+
+    <section class="panel" id="charts">
       <h2>Predicted vs actual</h2>
       <div class="chart"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="320" viewBox="0 0 720 320">
   <rect width="100%" height="100%" fill="#0d1117"/>
@@ -284,7 +380,7 @@
   <text x="48" y="20" fill="#e6edf3" font-family="ui-sans-serif,system-ui" font-size="13" font-weight="600">|Error| distribution · max 10.0</text>
   <rect x="48.0" y="32.0" width="78.5" height="128.0" fill="#3fb950" opacity="0.9" rx="2"/><text x="87.3" y="186" fill="#8b949e" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">0</text><text x="87.3" y="28.0" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">16</text>
   <rect x="130.5" y="160.0" width="78.5" height="0.0" fill="#3fb950" opacity="0.9" rx="2"/><text x="169.8" y="186" fill="#8b949e" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">1</text>
-  <rect x="213.0" y="144.0" width="78.5" height="16.0" fill="#3fb950" opacity="0.9" rx="2"/><text x="252.3" y="186" fill="#8b949e" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">3</text><text x="252.3" y="140.0" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">2</text>
+  <rect x="213.0" y="144.0" width="78.5" height="16.0" fill="#3fb950" opacity="0.9" rx="2" stroke="#e6edf3" stroke-width="1.5"/><text x="252.3" y="186" fill="#8b949e" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">3</text><text x="252.3" y="140.0" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">2</text>
   <rect x="295.5" y="144.0" width="78.5" height="16.0" fill="#3fb950" opacity="0.9" rx="2"/><text x="334.8" y="186" fill="#8b949e" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">4</text><text x="334.8" y="140.0" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">2</text>
   <rect x="378.0" y="128.0" width="78.5" height="32.0" fill="#d29922" opacity="0.9" rx="2"/><text x="417.3" y="186" fill="#8b949e" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">5</text><text x="417.3" y="124.0" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">4</text>
   <rect x="460.5" y="144.0" width="78.5" height="16.0" fill="#d29922" opacity="0.9" rx="2"/><text x="499.8" y="186" fill="#8b949e" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">6</text><text x="499.8" y="140.0" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="ui-sans-serif,system-ui">2</text>
@@ -296,23 +392,56 @@
       </section>
     </div>
 
-    <section class="panel">
-      <h2>Rolling MAE</h2>
-      <p class="note">7-day rolling mean absolute error with good/fair band guides.</p>
+    <section class="panel" id="stability">
+      <h2>Stability · rolling MAE</h2>
+      <p class="note">7-day rolling mean absolute error with ±1σ band and good/fair guides.</p>
       <div class="chart"><svg xmlns="http://www.w3.org/2000/svg" width="720" height="180" viewBox="0 0 720 180">
   <rect width="100%" height="100%" fill="#0d1117"/>
-  <text x="48" y="20" fill="#e6edf3" font-family="ui-sans-serif,system-ui" font-size="13" font-weight="600">Rolling MAE · window 7</text>
+  <text x="48" y="20" fill="#e6edf3" font-family="ui-sans-serif,system-ui" font-size="13" font-weight="600">Rolling MAE · window 7 · ±1σ</text>
+  <line x1="48" y1="69.6" x2="704" y2="69.6" stroke="#3fb950" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>
   
-  
-  <path d="M48.0,144.0 L70.6,65.6 L93.2,91.7 L115.9,81.3 L138.5,93.8 L161.1,49.9 L183.7,63.4 L206.3,63.4 L229.0,49.9 L251.6,49.9 L274.2,36.5 L296.8,36.5 L319.4,63.4 L342.1,63.4 L364.7,32.0 L387.3,67.8 L409.9,45.4 L432.6,72.3 L455.2,58.9 L477.8,76.8 L500.4,32.0 L523.0,63.4 L545.7,63.4 L568.3,49.9 L590.9,49.9 L613.5,36.5 L636.1,36.5 L658.8,63.4 L681.4,63.4 L704.0,32.0" fill="none" stroke="#a371f7" stroke-width="2.25"/>
+  <line x1="48" y1="101.4" x2="704" y2="101.4" stroke="#8b949e" stroke-width="1" stroke-dasharray="4 4" opacity="0.65"/>
+  <path d="M48.0,144.0 L70.6,69.6 L93.2,84.1 L115.9,82.7 L138.5,89.6 L161.1,45.1 L183.7,53.1 L206.3,53.1 L229.0,40.4 L251.6,40.4 L274.2,32.0 L296.8,32.0 L319.4,58.8 L342.1,58.8 L364.7,42.0 L387.3,64.4 L409.9,54.9 L432.6,68.9 L455.2,64.9 L477.8,72.0 L500.4,36.4 L523.0,53.1 L545.7,53.1 L568.3,40.4 L590.9,40.4 L613.5,32.0 L636.1,32.0 L658.8,58.8 L681.4,58.8 L704.0,42.0 L704.0,139.8 L681.4,144.0 L658.8,144.0 L636.1,144.0 L613.5,144.0 L590.9,144.0 L568.3,144.0 L545.7,144.0 L523.0,144.0 L500.4,144.0 L477.8,144.0 L455.2,142.3 L432.6,144.0 L409.9,139.6 L387.3,144.0 L364.7,139.8 L342.1,144.0 L319.4,144.0 L296.8,144.0 L274.2,144.0 L251.6,144.0 L229.0,144.0 L206.3,144.0 L183.7,144.0 L161.1,144.0 L138.5,144.0 L115.9,144.0 L93.2,144.0 L70.6,144.0 L48.0,144.0 Z" fill="#58a6ff" opacity="0.18"/>
+  <path d="M48.0,144.0 L70.6,106.8 L93.2,119.2 L115.9,114.2 L138.5,120.2 L161.1,99.4 L183.7,105.7 L206.3,105.7 L229.0,99.4 L251.6,99.4 L274.2,93.0 L296.8,93.0 L319.4,105.7 L342.1,105.7 L364.7,90.9 L387.3,107.9 L409.9,97.2 L432.6,110.0 L455.2,103.6 L477.8,112.1 L500.4,90.9 L523.0,105.7 L545.7,105.7 L568.3,99.4 L590.9,99.4 L613.5,93.0 L636.1,93.0 L658.8,105.7 L681.4,105.7 L704.0,90.9" fill="none" stroke="#58a6ff" stroke-width="2.25"/>
   <text x="48" y="170" fill="#8b949e" font-size="11" font-family="ui-sans-serif,system-ui">2026-06-25</text>
   <text x="704" y="170" fill="#8b949e" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">2026-07-24</text>
-  <text x="704" y="36" fill="#a371f7" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">last 3.57</text>
+  <text x="704" y="36" fill="#58a6ff" font-size="11" text-anchor="end" font-family="ui-sans-serif,system-ui">last 3.57 · overall 2.87</text>
 </svg>
 </div>
     </section>
 
-    <section class="panel">
+    <section class="latest" aria-label="Latest point">
+      <div class="stat"><div class="label">Last predicted</div><div class="value">100.0</div><div class="sub">coverage %</div></div>
+      <div class="stat"><div class="label">Last actual</div><div class="value">93.0</div><div class="sub">residual +7.00</div></div>
+      <div class="stat"><div class="label">Worst |error|</div><div class="value">10.00</div><div class="sub">2026-06-30</div></div>
+      <div class="stat"><div class="label">Over / under</div><div class="value">14/0</div><div class="sub">16 exact</div></div>
+    </section>
+
+    <section class="panel" id="distribution" aria-label="Error distribution summary">
+      <h2>Error distribution summary</h2>
+      <div class="dist-grid">
+        <div>
+          <p class="note">Mini histogram · outlined bar contains MAE · hover for counts.</p>
+          <div class="mini-hist"><div class="mini-bar" style="width:100%;background:var(--green)" title="0.0–1.3: 16 (53%)"></div><div class="mini-bar" style="width:4%;background:var(--green)" title="1.3–2.5: 0 (0%)"></div><div class="mini-bar mae-bin" style="width:13%;background:var(--green)" title="2.5–3.8: 2 (7%) · MAE here"></div><div class="mini-bar" style="width:13%;background:var(--green)" title="3.8–5.0: 2 (7%)"></div><div class="mini-bar" style="width:25%;background:var(--yellow)" title="5.0–6.3: 4 (13%)"></div><div class="mini-bar" style="width:13%;background:var(--yellow)" title="6.3–7.5: 2 (7%)"></div><div class="mini-bar" style="width:13%;background:var(--yellow)" title="7.5–8.8: 2 (7%)"></div><div class="mini-bar" style="width:13%;background:var(--yellow)" title="8.8–10.0: 2 (7%)"></div></div>
+          <a class="card-link" href="/registry/prediction/error-histogram.svg">Full histogram SVG →</a>
+        </div>
+        <div>
+          <p class="note">Worst 5 days by |error| · red • exceeds RMSE.</p>
+          <table class="worst-table">
+            <thead><tr><th>Date</th><th>Actual</th><th>Pred</th><th>Error</th><th>≤5?</th></tr></thead>
+            <tbody>
+<tr class="err-bad"><td class="mono">2026-06-30</td><td>90.0</td><td>100.0</td><td>10.00</td><td>no<span class="flag" title="|error| &gt; RMSE">•</span></td></tr>
+<tr class="err-bad"><td class="mono">2026-07-15</td><td>90.0</td><td>100.0</td><td>10.00</td><td>no<span class="flag" title="|error| &gt; RMSE">•</span></td></tr>
+<tr class="err-bad"><td class="mono">2026-07-03</td><td>92.0</td><td>100.0</td><td>8.00</td><td>no<span class="flag" title="|error| &gt; RMSE">•</span></td></tr>
+<tr class="err-bad"><td class="mono">2026-07-18</td><td>92.0</td><td>100.0</td><td>8.00</td><td>no<span class="flag" title="|error| &gt; RMSE">•</span></td></tr>
+<tr class="err-bad"><td class="mono">2026-07-09</td><td>93.0</td><td>100.0</td><td>7.00</td><td>no<span class="flag" title="|error| &gt; RMSE">•</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="series">
       <h2>Series (30 rows)</h2>
       <div class="toolbar">
         <label>Filter <input type="search" id="filter" placeholder="YYYY-MM… or value" autocomplete="off"/></label>
@@ -326,7 +455,7 @@
         <span id="row-count">30 shown</span>
       </div>
       <div class="table-wrap">
-        <table id="series">
+        <table id="series-table">
           <thead>
             <tr>
               <th data-col="0">Date<span class="sort">↕</span></th>
@@ -550,26 +679,26 @@
           </tbody>
         </table>
       </div>
-      <div class="links">
-        <a href="/portal/ops/">← Ops dashboard</a>
-        <a href="/portal/dashboard/">Executive dashboard</a>
-        <a href="/api/operations/summary">Live ops summary API</a>
-        <a href="/registry/prediction/report/summary.json">summary.json</a>
-        <a href="/registry/prediction/coverage-chart.svg">Coverage SVG</a>
-        <a href="/registry/prediction/error-chart.svg">Residuals SVG</a>
-      </div>
     </section>
 
     <footer class="footer">
-      <p>Regenerate: <code>bun run ops:snapshot:demo</code> · <code>bun run ops:prediction report</code> · <code>bun run ops:snapshot</code> · optional PNG: <code>bun run ops:prediction report --webview</code></p>
-      <p>Error coloring: green ≤5 · amber ≤15 · red &gt;15 absolute points of coverage %. Residual sign matches bias (predicted − actual).</p>
+      <p>Regenerate: <code>bun run ops:seed:prediction</code> · <code>bun run ops:prediction daily</code> · <code>bun run ops:prediction backtest</code> · <code>bun run ops:prediction report</code> · <code>bun run ops:snapshot</code> · PNG: <code>bun run ops:prediction report --webview</code></p>
+      <p>Bands: green ≤5 · amber ≤15 · red &gt;15 abs coverage points. Residual sign matches bias (predicted − actual).</p>
+      <div class="links">
+        <a href="/portal/ops/">Ops dashboard</a>
+        <a href="/registry/prediction/report/summary.json">summary.json</a>
+        <a href="/registry/prediction/coverage-chart.svg">coverage SVG</a>
+        <a href="/registry/prediction/error-chart.svg">residuals SVG</a>
+        <a href="/registry/prediction/error-histogram.svg">histogram SVG</a>
+        <a href="/registry/prediction/rolling-mae.svg">rolling MAE SVG</a>
+        <a href="/registry/prediction/coverage-chart.png">PNG</a>
+      </div>
     </footer>
   </main>
-  <script type="application/json" id="prediction-series">[{"date":"2026-06-25","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-06-26","predicted":100,"actual":95,"error":5,"abs":5},{"date":"2026-06-27","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-06-28","predicted":100,"actual":97,"error":3,"abs":3},{"date":"2026-06-29","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-06-30","predicted":100,"actual":90,"error":10,"abs":10},{"date":"2026-07-01","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-02","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-03","predicted":100,"actual":92,"error":8,"abs":8},{"date":"2026-07-04","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-05","predicted":100,"actual":94,"error":6,"abs":6},{"date":"2026-07-06","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-07","predicted":100,"actual":96,"error":4,"abs":4},{"date":"2026-07-08","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-09","predicted":100,"actual":93,"error":7,"abs":7},{"date":"2026-07-10","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-11","predicted":100,"actual":95,"error":5,"abs":5},{"date":"2026-07-12","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-13","predicted":100,"actual":97,"error":3,"abs":3},{"date":"2026-07-14","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-15","predicted":100,"actual":90,"error":10,"abs":10},{"date":"2026-07-16","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-17","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-18","predicted":100,"actual":92,"error":8,"abs":8},{"date":"2026-07-19","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-20","predicted":100,"actual":94,"error":6,"abs":6},{"date":"2026-07-21","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-22","predicted":100,"actual":96,"error":4,"abs":4},{"date":"2026-07-23","predicted":100,"actual":100,"error":0,"abs":0},{"date":"2026-07-24","predicted":100,"actual":93,"error":7,"abs":7}]</script>
   <script>
     (function () {
       const input = document.getElementById('filter');
-      const tbody = document.querySelector('#series tbody');
+      const tbody = document.querySelector('#series-table tbody');
       const count = document.getElementById('row-count');
       const chips = document.getElementById('thresh-chips');
       const csvBtn = document.getElementById('csv-btn');
@@ -611,12 +740,14 @@
 
       if (csvBtn) {
         csvBtn.addEventListener('click', () => {
-          const lines = ['date,predicted,actual,error,abs_error'];
+          const lines = ['date,predicted,actual,error,abs_error,quality_band'];
           for (const tr of rows) {
             if (tr.classList.contains('hidden')) continue;
             const cells = Array.from(tr.children).map(td => (td.textContent || '').trim());
             if (cells.length < 5) continue;
-            lines.push(cells.join(','));
+            const abs = Number(cells[4]);
+            const band = abs <= 5 ? 'ok' : abs <= 15 ? 'mid' : 'bad';
+            lines.push(cells.join(',') + ',' + band);
           }
           const blob = new Blob([lines.join('\n') + '\n'], { type: 'text/csv' });
           const url = URL.createObjectURL(blob);
@@ -630,7 +761,7 @@
 
       let sortCol = -1;
       let sortAsc = true;
-      document.querySelectorAll('#series th[data-col]').forEach(th => {
+      document.querySelectorAll('#series-table th[data-col]').forEach(th => {
         th.addEventListener('click', () => {
           const col = Number(th.getAttribute('data-col'));
           if (sortCol === col) sortAsc = !sortAsc;
@@ -648,6 +779,43 @@
           refresh();
         });
       });
+    })();
+
+    (function themeExport() {
+      const KEY = 'fw-prediction-report-theme';
+      const root = document.documentElement;
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      const btn = document.getElementById('theme-toggle');
+      function apply(theme) {
+        root.setAttribute('data-theme', theme);
+        if (meta) meta.setAttribute('content', theme === 'light' ? 'light' : 'dark');
+        if (btn) btn.textContent = theme === 'light' ? 'Dark' : 'Light';
+      }
+      const stored = localStorage.getItem(KEY);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      apply(stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+          localStorage.setItem(KEY, next);
+          apply(next);
+        });
+      }
+      const printBtn = document.getElementById('print-btn');
+      if (printBtn) printBtn.addEventListener('click', () => window.print());
+      const dlBtn = document.getElementById('download-btn');
+      if (dlBtn) {
+        dlBtn.addEventListener('click', () => {
+          const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+          const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'prediction-report-' + new Date().toISOString().slice(0, 10) + '.html';
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      }
     })();
   </script>
 </body>

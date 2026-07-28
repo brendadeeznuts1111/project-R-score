@@ -8,10 +8,12 @@ import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   buildCoverageChartSvg,
   buildErrorChartSvg,
-  buildErrorHistogramSvg,
   buildReportHtml,
   buildRollingMaeSvg,
   computeReportDiagnostics,
+  computeReportDiff,
+  computeRollingSeries,
+  readPreviousSummary,
   writePredictionReport,
 } from '../lib/prediction/report.ts';
 import { runCoverageBacktest } from '../lib/prediction/tester.ts';
@@ -34,11 +36,38 @@ describe('prediction report', () => {
     expect(d.within5Pct).toBe(75);
     expect(d.overCount).toBe(1);
     expect(d.underCount).toBe(3);
-    expect(buildErrorHistogramSvg(points)).toContain('|Error| distribution');
-    expect(buildRollingMaeSvg(points)).toContain('Rolling MAE');
+    const rolling = computeRollingSeries(points);
+    expect(rolling.mae.length).toBe(4);
+    expect(rolling.stdUpper.length).toBe(4);
+    const rollingSvg = buildRollingMaeSvg(points, { rolling });
+    expect(rollingSvg).toContain('Rolling MAE');
+    expect(rollingSvg).toContain('±1σ');
+    expect(rollingSvg).toContain('opacity="0.18"');
   });
 
-  test('extended report HTML has cards, residuals, and series table', () => {
+  test('computeReportDiff with prior summary', () => {
+    const points = [
+      { date: '2024-01-01', predicted: 10, actual: 12, error: -2 },
+      { date: '2024-01-02', predicted: 20, actual: 22, error: -2 },
+    ];
+    const accuracy = { mae: 2, rmse: 2, bias: -2, n: 2 };
+    const diagnostics = computeReportDiagnostics(points, accuracy);
+    const previous = {
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      mae: 3,
+      rmse: 3,
+      bias: -1,
+      within5Pct: 50,
+      n: 2,
+      qualityLabel: 'Good fit',
+    };
+    const diff = computeReportDiff({ accuracy, diagnostics }, previous);
+    expect(diff.available).toBe(true);
+    expect(diff.maeDelta).toBe(-1);
+    expect(diff.improved).toBe(true);
+  });
+
+  test('extended report HTML has Round 2 polish', () => {
     const points = [
       { date: '2024-01-01', predicted: 10, actual: 12, error: -2 },
       { date: '2024-02-01', predicted: 20, actual: 40, error: -20 },
@@ -50,24 +79,58 @@ describe('prediction report', () => {
       accuracy,
       points,
       generated: '2026-01-01T00:00:00.000Z',
+      pngHref: '/registry/prediction/coverage-chart.png',
     });
-    expect(html).toContain('Coverage prediction backtest');
-    expect(html).toContain('Residuals');
-    expect(html).toContain('Within ≤5');
-    expect(html).toContain('Rolling MAE');
-    expect(html).toContain('|Error| distribution');
-    expect(html).toContain('summary.json');
-    expect(html).toContain('Download CSV');
-    expect(html).toContain('prediction-series');
-    expect(html).toContain('MAE');
-    expect(html).toContain('RMSE');
-    expect(html).toContain('data-col');
-    expect(html).toContain('err-bad');
-    expect(html).toContain('/portal/ops/');
-    expect(buildErrorChartSvg(points)).toContain('Residuals');
+    expect(html).toContain('FactoryWager');
+    expect(html).toContain('schema v3');
+    expect(html).toContain('id="glance"');
+    expect(html).toContain('id="stability"');
+    expect(html).toContain('id="distribution"');
+    expect(html).toContain('id="series"');
+    expect(html).toContain('role="tooltip"');
+    expect(html).toContain('tip-mae');
+    expect(html).toContain('theme-toggle');
+    expect(html).toContain('print-btn');
+    expect(html).toContain('download-btn');
+    expect(html).toContain('fw-prediction-report-theme');
+    expect(html).toContain('@media print');
+    expect(html).toContain('What changed?');
+    expect(html).toContain('No previous bake');
+    expect(html).toContain('ops-strip');
+    expect(html).toContain('Quality check');
+    expect(html).toContain('/registry/prediction/coverage-chart.png');
+    expect(html).not.toContain('#a371f7');
   });
 
-  test('writes SVG + HTML after backtest', async () => {
+  test('diff row when previous provided', () => {
+    const points = [{ date: '2024-01-01', predicted: 10, actual: 12, error: -2 }];
+    const accuracy = { mae: 2, rmse: 2, bias: -2, n: 1 };
+    const previous = {
+      generatedAt: '2026-01-01T00:00:00.000Z',
+      mae: 3,
+      rmse: 3,
+      bias: -1,
+      within5Pct: 50,
+      n: 1,
+      qualityLabel: 'Good fit',
+    };
+    const html = buildReportHtml({
+      svgInline: buildCoverageChartSvg(points, accuracy),
+      accuracy,
+      points,
+      generated: '2026-02-01T00:00:00.000Z',
+      previous,
+      diff: computeReportDiff(
+        { accuracy, diagnostics: computeReportDiagnostics(points, accuracy) },
+        previous
+      ),
+    });
+    expect(html).toContain('MAE: 3.00 → 2.00');
+    expect(html).toContain('What changed?');
+    expect(html).not.toContain('No previous bake');
+  });
+
+  test('writes SVG + HTML after backtest with schema v3', async () => {
     const db = openOperationsDb({ path: ':memory:' });
     const now = new Date().toISOString();
     db.run(
@@ -104,23 +167,28 @@ describe('prediction report', () => {
     expect(await Bun.file(report.htmlPath).exists()).toBe(true);
     expect(await Bun.file(report.summaryPath).exists()).toBe(true);
     const summary = await Bun.file(report.summaryPath).json();
-    expect(summary.model).toBe('naive-coverage-v1');
-    expect(summary.diagnostics.within5Pct).toBeGreaterThanOrEqual(0);
-    const svg = await Bun.file(report.svgPath).text();
-    expect(svg).toContain('predicted');
-    expect(svg).toContain('actual');
-    const html = await Bun.file(report.htmlPath).text();
-    expect(html).toContain('thresh-chips');
-    expect(html).toContain('summary.json');
-    expect(html).toContain('Within ≤5');
+    expect(summary.schemaVersion).toBe(3);
+    expect(summary.rolling.mae.length).toBe(2);
+    expect(summary.diff.available).toBe(false);
+    expect(summary.previous).toBeNull();
 
-    // Bun.Image polish of SVG is not supported; polish a seed PNG instead
-    const seed = Buffer.from(
-      'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC',
-      'base64'
-    );
-    const polished = await new Bun.Image(seed).resize(120, 80, { fit: 'fill' }).png().bytes();
-    expect(polished.byteLength).toBeGreaterThan(50);
+    // Second bake picks up prior summary for diff
+    await writePredictionReport(db, { outDir, webview: false });
+    const summary2 = await Bun.file(report.summaryPath).json();
+    expect(summary2.schemaVersion).toBe(3);
+    expect(summary2.diff.available).toBe(true);
+    expect(summary2.previous.mae).toBe(summary.accuracy.mae);
+
+    const prior = await readPreviousSummary(report.summaryPath);
+    expect(prior?.mae).toBe(summary2.accuracy.mae);
+
+    const html = await Bun.file(report.htmlPath).text();
+    expect(html).toContain('schema v3');
+    expect(html).toContain('What changed?');
+    expect(html).toContain('theme-toggle');
+
+    const rollingSvg = await Bun.file(`${outDir}/rolling-mae.svg`).text();
+    expect(rollingSvg).toContain('±1σ');
 
     db.close();
   });
