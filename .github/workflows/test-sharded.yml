@@ -5,25 +5,27 @@ name: Test (sharded parallel)
 on:
   pull_request:
     paths:
-      - 'lib/**'
-      - 'scripts/**'
-      - 'tools/**'
-      - 'tests/**'
-      - 'packages/**'
-      - 'package.json'
-      - 'bun.lock'
-      - 'bunfig.toml'
-      - '.github/workflows/test-sharded.yml'
+      - "lib/**"
+      - "scripts/**"
+      - "tools/**"
+      - "tests/**"
+      - "packages/**"
+      - "public/**"
+      - "package.json"
+      - "bun.lock"
+      - "bunfig.toml"
+      - ".github/workflows/test-sharded.yml"
   push:
     branches: [main]
     paths:
-      - 'lib/**'
-      - 'scripts/**'
-      - 'tools/**'
-      - 'tests/**'
-      - 'packages/**'
-      - 'package.json'
-      - 'bun.lock'
+      - "lib/**"
+      - "scripts/**"
+      - "tools/**"
+      - "tests/**"
+      - "packages/**"
+      - "public/**"
+      - "package.json"
+      - "bun.lock"
   workflow_dispatch:
 
 concurrency:
@@ -31,6 +33,28 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  portal-registry-isolation:
+    name: portal + registry isolation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
+
+      - name: Test isolated portal and registry writers
+        run: |
+          bun test --timeout=60000 \
+            tests/compliance-portal-bake.test.ts \
+            tests/harness-utilities.test.ts \
+            tests/ops-snapshot-cron.test.ts \
+            tests/portal-weave.test.ts \
+            tests/registry-contracts.test.ts
+
+      - name: Prove tests did not rewrite tracked public artifacts
+        run: git diff --exit-code -- public/
+
   test:
     name: tests shard ${{ matrix.shard }}/4
     runs-on: ubuntu-latest
@@ -42,8 +66,6 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4]
     env:
-      BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
-      BUN_INSTALL_GLOBAL_STORE: '1'
       SHARD: ${{ matrix.shard }}/4
       JUNIT_OUT: tmp/junit-${{ matrix.shard }}.xml
     steps:
