@@ -1,11 +1,18 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 /**
  * Operations DB connection factory — WAL + busy_timeout + unified schema.
+ *
+ * Default path resolves to the repo root via import.meta.dir (not cwd) so
+ * OS-level cron fires (launchd/crontab run without a working directory) open
+ * the same database as interactive runs. Explicit opts.path always wins.
  */
 import { Database } from 'bun:sqlite';
+import { joinPath } from '../path-bun.ts';
 import { initSchema } from './schema.ts';
 
-export const DEFAULT_OPS_DB_PATH = 'data/operations.db';
+const REPO_ROOT = joinPath(import.meta.dir, '..', '..');
+
+export const DEFAULT_OPS_DB_PATH = joinPath(REPO_ROOT, 'data', 'operations.db');
 
 export type OpenOperationsDbOpts = {
   path?: string;

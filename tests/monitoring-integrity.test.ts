@@ -46,7 +46,8 @@ describe('monitoring integrity check', () => {
   });
 
   test('default path is operations DB SSOT (not registry.db)', () => {
-    expect(DEFAULT_OPS_DB_PATH).toBe('data/operations.db');
+    // Repo-root-absolute since the OS-cron cwd fix; suffix is the contract.
+    expect(DEFAULT_OPS_DB_PATH.endsWith('data/operations.db')).toBe(true);
     expect(DEFAULT_OPS_DB_PATH).not.toContain('registry.db');
   });
 });

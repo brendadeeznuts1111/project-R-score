@@ -9,6 +9,11 @@
  */
 import { loadReasonixEnv } from './load-reasonix-env.ts';
 import { runCatalogResearchCycle } from './cron.ts';
+import { joinPath } from '../../path-bun.ts';
+
+// OS cron fires with no working directory — anchor to the repo root so
+// cwd-relative report paths (reports/telegram/*) resolve correctly.
+process.chdir(joinPath(import.meta.dir, '..', '..', '..'));
 
 export default {
   async scheduled(_controller: Bun.CronController) {
