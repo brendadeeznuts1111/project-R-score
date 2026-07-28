@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- @see docs/portal-foundation.md — baked by tools/vault-health-bake.ts; do not edit -->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="portal-poll-ms" content="60000" />
+  <title>Vault · FactoryWager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/portal/style.css" />
+  <script type="application/json" id="vault-health-embed">{"kind":"vault-health","generatedAt":"2026-07-28T17:01:28.176Z","vaults":[{"name":"factorywager","active":23,"trashed":3,"trashedTitles":["Telegram Ops Chat","Telegram Webhook Secret","Telegram: factorywager_bot"]}],"referenced":[{"envKey":"CLOUDFLARE_API_TOKEN","vault":"factorywager","item":"Cloudflare API Token","status":"ok"},{"envKey":"CLOUDFLARE_DNS_API_TOKEN","vault":"factorywager","item":"Cloudflare API Token (DNS)","status":"ok"},{"envKey":"DOD_ID_ENCRYPTION_KEY","vault":"factorywager","item":"DOD ID Encryption Key","status":"ok"},{"envKey":"DOD_PROOF_SECRET","vault":"factorywager","item":"DOD Proof Secret","status":"ok"},{"envKey":"FACTORY_WAGER_TOKEN","vault":"factorywager","item":"FactoryWager Registry Token","status":"ok"},{"envKey":"GITHUB_TOKEN","vault":"factorywager","item":"GitHub PAT","status":"missing"},{"envKey":"PLAY_SIGNING_SECRET","vault":"factorywager","item":"Play Signing Secret","status":"ok"},{"envKey":"PROVISION_ENCRYPTION_KEY","vault":"factorywager","item":"Provision Encryption Key","status":"ok"},{"envKey":"R2_ACCESS_KEY_ID","vault":"factorywager","item":"R2 bun-secrets bucket","status":"ok"},{"envKey":"R2_SECRET_ACCESS_KEY","vault":"factorywager","item":"R2 bun-secrets bucket","status":"ok"},{"envKey":"REGISTRY_SECRET","vault":"factorywager","item":"Registry Dev Secret","status":"ok"},{"envKey":"REPORT_SIGNING_SECRET","vault":"factorywager","item":"Report Signing Secret","status":"ok"},{"envKey":"SSH_CASCADE_KEY","vault":"factorywager","item":"SSH Cascade Key","status":"missing"},{"envKey":"SSH_DEPLOY_KEY","vault":"factorywager","item":"SSH Deploy Key","status":"missing"},{"envKey":"TELEGRAM_BOT_FACTORY","vault":"factorywager","item":"Telegram: factorywager_bot","status":"trashed"},{"envKey":"TELEGRAM_WEBHOOK_SECRET","vault":"factorywager","item":"Telegram Webhook Secret","status":"trashed"}],"summary":{"vaultCount":1,"activeItems":23,"trashedItems":3,"referencedOk":11,"referencedTrashed":2,"referencedMissing":3,"healthy":false}}</script>
+  <style>
+    .vh-wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px 48px; }
+    .vh-stats { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; margin: 16px 0 20px; }
+    .vh-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+    .vh-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+    .vh-stat .v { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .vh-stat.bad .v { color: var(--red, #f85149); }
+    .vh-stat.ok .v { color: var(--green, #3fb950); }
+    .vh-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
+    .vh-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
+    .vh-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .vh-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
+    .vh-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); }
+    .vh-table td.bad, .vh-table tr.bad td { color: var(--red, #f85149); }
+    .vh-table tr.warn td { color: var(--yellow, #d29922); }
+    .vh-table td.ok { color: var(--green, #3fb950); }
+    .dim { color: var(--text-dim); font-size: 11px; }
+  </style>
+</head>
+<body>
+  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="logo">
+        <span class="logo-icon">■</span>
+        <span class="brand-wordmark">FactoryWager</span>
+        <span class="brand-badge">ops</span>
+        <span class="logo-page">Vault</span>
+      </h1>
+      <nav class="topbar-nav" aria-label="Primary"></nav>
+    </div>
+  </header>
+  <main class="vh-wrap">
+    <p class="dim">Proton Pass live state × env references · generated 2026-07-28T17:01:28.176Z · <code>bun run vault:health:bake</code></p>
+    <div class="vh-stats">
+      <div class="vh-stat "><div class="k">Vaults</div><div class="v">1</div></div>
+      <div class="vh-stat "><div class="k">Active items</div><div class="v">23</div></div>
+      <div class="vh-stat bad"><div class="k">Trashed items</div><div class="v">3</div></div>
+      <div class="vh-stat bad"><div class="k">Refs trashed</div><div class="v">2</div></div>
+      <div class="vh-stat bad"><div class="k">Refs missing</div><div class="v">3</div></div>
+    </div>
+    <div class="vh-panel">
+      <h2>Referenced-item issues (purge risk)</h2>
+      <table class="vh-table">
+        <thead><tr><th>Env key</th><th>Vault</th><th>Item</th><th>Status</th></tr></thead>
+        <tbody><tr class="warn">
+            <td>GITHUB_TOKEN</td><td>factorywager</td>
+            <td>GitHub PAT</td><td>MISSING</td>
+          </tr>
+<tr class="warn">
+            <td>SSH_CASCADE_KEY</td><td>factorywager</td>
+            <td>SSH Cascade Key</td><td>MISSING</td>
+          </tr>
+<tr class="warn">
+            <td>SSH_DEPLOY_KEY</td><td>factorywager</td>
+            <td>SSH Deploy Key</td><td>MISSING</td>
+          </tr>
+<tr class="bad">
+            <td>TELEGRAM_BOT_FACTORY</td><td>factorywager</td>
+            <td>Telegram: factorywager_bot</td><td>TRASHED</td>
+          </tr>
+<tr class="bad">
+            <td>TELEGRAM_WEBHOOK_SECRET</td><td>factorywager</td>
+            <td>Telegram Webhook Secret</td><td>TRASHED</td>
+          </tr></tbody>
+      </table>
+    </div>
+    <div class="vh-panel">
+      <h2>Vaults</h2>
+      <table class="vh-table">
+        <thead><tr><th>Vault</th><th>Active</th><th>Trashed</th><th>Trashed titles</th></tr></thead>
+        <tbody><tr>
+        <td>factorywager</td><td>23</td>
+        <td class="bad">3</td>
+        <td class="dim">Telegram Ops Chat, Telegram Webhook Secret, Telegram: factorywager_bot</td>
+      </tr></tbody>
+      </table>
+    </div>
+    <p class="dim">No secret values are read or stored by this bake — titles and states only.</p>
+  </main>
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/components/sidebar.js"></script>
+  <script type="module" src="/portal/components/notification.js"></script>
+  <script type="module" src="/portal/components/footer.js"></script>
+</body>
+</html>

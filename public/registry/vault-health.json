@@ -1,0 +1,123 @@
+{
+  "kind": "vault-health",
+  "generatedAt": "2026-07-28T17:01:28.176Z",
+  "vaults": [
+    {
+      "name": "factorywager",
+      "active": 23,
+      "trashed": 3,
+      "trashedTitles": [
+        "Telegram Ops Chat",
+        "Telegram Webhook Secret",
+        "Telegram: factorywager_bot"
+      ]
+    }
+  ],
+  "referenced": [
+    {
+      "envKey": "CLOUDFLARE_API_TOKEN",
+      "vault": "factorywager",
+      "item": "Cloudflare API Token",
+      "status": "ok"
+    },
+    {
+      "envKey": "CLOUDFLARE_DNS_API_TOKEN",
+      "vault": "factorywager",
+      "item": "Cloudflare API Token (DNS)",
+      "status": "ok"
+    },
+    {
+      "envKey": "DOD_ID_ENCRYPTION_KEY",
+      "vault": "factorywager",
+      "item": "DOD ID Encryption Key",
+      "status": "ok"
+    },
+    {
+      "envKey": "DOD_PROOF_SECRET",
+      "vault": "factorywager",
+      "item": "DOD Proof Secret",
+      "status": "ok"
+    },
+    {
+      "envKey": "FACTORY_WAGER_TOKEN",
+      "vault": "factorywager",
+      "item": "FactoryWager Registry Token",
+      "status": "ok"
+    },
+    {
+      "envKey": "GITHUB_TOKEN",
+      "vault": "factorywager",
+      "item": "GitHub PAT",
+      "status": "missing"
+    },
+    {
+      "envKey": "PLAY_SIGNING_SECRET",
+      "vault": "factorywager",
+      "item": "Play Signing Secret",
+      "status": "ok"
+    },
+    {
+      "envKey": "PROVISION_ENCRYPTION_KEY",
+      "vault": "factorywager",
+      "item": "Provision Encryption Key",
+      "status": "ok"
+    },
+    {
+      "envKey": "R2_ACCESS_KEY_ID",
+      "vault": "factorywager",
+      "item": "R2 bun-secrets bucket",
+      "status": "ok"
+    },
+    {
+      "envKey": "R2_SECRET_ACCESS_KEY",
+      "vault": "factorywager",
+      "item": "R2 bun-secrets bucket",
+      "status": "ok"
+    },
+    {
+      "envKey": "REGISTRY_SECRET",
+      "vault": "factorywager",
+      "item": "Registry Dev Secret",
+      "status": "ok"
+    },
+    {
+      "envKey": "REPORT_SIGNING_SECRET",
+      "vault": "factorywager",
+      "item": "Report Signing Secret",
+      "status": "ok"
+    },
+    {
+      "envKey": "SSH_CASCADE_KEY",
+      "vault": "factorywager",
+      "item": "SSH Cascade Key",
+      "status": "missing"
+    },
+    {
+      "envKey": "SSH_DEPLOY_KEY",
+      "vault": "factorywager",
+      "item": "SSH Deploy Key",
+      "status": "missing"
+    },
+    {
+      "envKey": "TELEGRAM_BOT_FACTORY",
+      "vault": "factorywager",
+      "item": "Telegram: factorywager_bot",
+      "status": "trashed"
+    },
+    {
+      "envKey": "TELEGRAM_WEBHOOK_SECRET",
+      "vault": "factorywager",
+      "item": "Telegram Webhook Secret",
+      "status": "trashed"
+    }
+  ],
+  "summary": {
+    "vaultCount": 1,
+    "activeItems": 23,
+    "trashedItems": 3,
+    "referencedOk": 11,
+    "referencedTrashed": 2,
+    "referencedMissing": 3,
+    "healthy": false
+  }
+}
