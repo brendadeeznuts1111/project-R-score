@@ -36,17 +36,114 @@ bun tools/bun-doc-refs.ts suggest "bun patch"
 |-------|---------------|---------|
 | Workspaces + `workspace:` | https://bun.com/docs/pm/workspaces | Globs, linking, publish rewrite |
 | Catalogs + `catalog:` | https://bun.com/docs/pm/catalogs | Shared version SSOT |
-| `--filter` / scripts | https://bun.com/docs/pm/filter | Name vs `./path`, install/outdated/scripts |
+| `--filter` / scripts | https://bun.com/docs/pm/filter | Name vs `./path`, install/outdated/scripts — see [§ bun --filter](#bun---filter-canonical) |
 | Parallel / sequential | https://bun.com/docs/pm/filter#parallel-and-sequential-mode | `bun run --parallel` ≠ `bun test --parallel` |
+| Dependency order | https://bun.com/docs/pm/filter#dependency-order | Filtered scripts wait on workspace deps |
 | Install CLI | https://bun.com/docs/pm/cli/install | Frozen lockfile, peers, filters |
+| Outdated | https://bun.com/docs/pm/cli/outdated | `--filter` restricts packages |
 | Isolated installs | https://bun.com/docs/pm/isolated-installs | `configVersion: 1` default |
 | Overrides | https://bun.com/docs/pm/overrides | Root-only metadeps |
 | Patch | https://bun.com/docs/pm/cli/patch | `patchedDependencies` |
-| bunfig install | https://bun.com/docs/runtime/bunfig | exact · frozen · scopes |
+| bunfig install | https://bun.com/docs/runtime/bunfig | exact · frozen · scopes (TOML) |
 | bun pm | https://bun.com/docs/pm/cli/pm | `ls` · `why` · `pkg` |
 | Trusted lifecycle | https://bun.com/docs/pm/lifecycle#trusteddependencies | Allow list **replaces** defaults |
 
 Related catalog pages (from `bun tools/bun-docs-catalog.ts get workspaces`): workspaces · catalogs · install · outdated · update · filter · isolated-installs · bunfig.
+
+## bun --filter (canonical)
+
+**SSOT page:** [pm/filter](https://bun.com/docs/pm/filter) · offline: `bun tools/bun-doc-refs.ts suggest "--filter"` →  
+`https://bun.com/docs/pm/filter#package-name-filter-pattern`
+
+`--filter` / `-F` selects **workspace packages** by pattern. It is supported by:
+
+1. **`bun install`** — install deps for a subset of workspaces  
+2. **`bun outdated`** — report outdated deps for a subset  
+3. **Script runs** — `bun run --filter <pattern> <script>` (or `bun --filter …`)
+
+Filters **respect root `workspaces`**: only listed members match. Nested monorepos under `projects/**` are invisible to root `--filter`.
+
+### Matching
+
+| Kind | Pattern | Selects |
+|------|---------|---------|
+| Package **name** | `--filter '@factorywager/*'` · `--filter sports-terminal-os` · `--filter '*'` | `package.json` `"name"` (glob) |
+| Package **path** | `--filter './packages/*'` · `--filter './packages/guards'` | Dirs under workspace root; **must** start with `./` |
+| Negation | `--filter '!pkg-c'` · `--filter '!./'` | Exclude name or path (e.g. exclude root package) |
+| Root only | `--filter './'` | Root `package.json` only (useful for `outdated`) |
+
+### install / outdated
+
+```bash
+# All homebase packages under packages/ (not STO unless path matches)
+bun install --filter './packages/*'
+
+# Exclude root package.json from install selection
+bun install --filter '!./' --filter './packages/*'
+
+# Outdated pins for @factorywager scope names
+bun outdated --filter '@factorywager/*'
+
+# Root package.json only
+bun outdated --filter './'
+```
+
+With root `frozenLockfile = true`, intentional filtered installs still need the usual unlock → install → freeze cycle when the lockfile would change ([UNIFIED](../../UNIFIED.md)).
+
+### Scripts (parallel / sequential / if-present)
+
+```bash
+# Concurrent package scripts (Foreman-style prefixes: pkg:script | …)
+bun run --parallel --filter '*' --if-present test
+bun run --parallel --filter '*' "build:*"
+bun run --parallel --no-exit-on-error --filter '*' test
+
+# All workspace packages, one after another
+bun run --sequential --workspaces --if-present typecheck
+
+# Named package from anywhere in the monorepo (no cd)
+bun run --filter @factorywager/registry-client build
+bun run --filter sports-terminal-os typecheck
+
+# Multiple scripts per package where present
+bun run --parallel --filter '*' --if-present build test
+```
+
+| Flag | Role |
+|------|------|
+| `--parallel` | Concurrent package scripts (≠ `bun test --parallel`) |
+| `--sequential` | One package at a time |
+| `--workspaces` | All workspace packages |
+| `--if-present` | Skip packages missing the script (almost always required here — most packages have few scripts) |
+| `--no-exit-on-error` | Keep fan-out running after a package fails |
+
+**Dependency order:** if workspace package `foo` depends on `bar` and both have `build`, `bun --filter '*' build` starts `foo` only after `bar` finishes ([dependency order](https://bun.com/docs/pm/filter#dependency-order)).
+
+### Docs UI pitfall: `?search=type:toml`
+
+URLs like  
+https://bun.com/docs/pm/filter?search=type%3Atoml  
+append a **Mintlify docs-site search facet** (`type:toml` = “show TOML code samples”). That is **not** a Bun CLI filter and **not** a workspace selector.
+
+- On the filter page itself there is no `type:toml` flag.  
+- TOML hits in package-manager docs are almost always **`bunfig.toml`** snippets (exact, scopes, ignoreScripts) — see [runtime/bunfig](https://bun.com/docs/runtime/bunfig) and our root `bunfig.toml`.  
+- Do **not** invent `bun --filter type:toml` or confuse docs search with package selection.
+
+### FactoryWager cheatsheet
+
+```bash
+# Package tests / typecheck
+bun run --parallel --filter '*' --if-present test
+bun run --filter @factorywager/registry-client build
+bun run --filter sports-terminal-os typecheck
+bun run --filter './packages/*' --if-present test
+
+# Root product (never --filter these script names)
+bun run ops:limits:check
+bun run portal:snapshot:once
+bun test tests/limits-e2e.test.ts
+bun test tests/portal-snapshot-cron.test.ts
+```
 
 ## Root workspaces SSOT
 
@@ -95,7 +192,7 @@ bun run validate:workspaces --verbose
 bun pm ls
 bun install --dry-run          # must succeed with frozenLockfile=true
 
-# Package scripts (not root ops)
+# Package scripts — full filter semantics: § bun --filter above
 bun run --parallel --filter '*' --if-present test
 bun run --filter @factorywager/registry-client build
 bun run --filter sports-terminal-os typecheck
@@ -134,6 +231,9 @@ Tests: `tests/portal-snapshot-cron.test.ts` · Bun cron docs: https://bun.com/do
 | `bun-types: "latest"` in a workspace package | `catalog:` after pinning in root catalog |
 | Partial `trustedDependencies: ["one-pkg"]` | Full list (replaces Bun defaults) |
 | Expecting `--filter` to select test files | Path globs / `bun test` patterns |
+| Treating docs `?search=type:toml` as a CLI flag | Docs UI facet only; real filter is name/`./path` ([pm/filter](https://bun.com/docs/pm/filter)) |
+| `bun run --parallel` vs `bun test --parallel` confusion | Foreman workspace scripts vs test workers ([day-loop](../day-loop.md)) |
+| `bun run --workspaces test` without `--if-present` | Most packages lack `test` — always pair `--if-present` here |
 
 ## Related harness
 

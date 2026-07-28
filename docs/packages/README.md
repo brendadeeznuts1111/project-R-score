@@ -23,7 +23,12 @@
 ```bash
 bun run validate:workspaces
 bun run --parallel --filter '*' --if-present test
+bun outdated --filter '@factorywager/*'
 bun tools/bun-docs-catalog.ts get workspaces   # Bun canonical page set
+bun tools/bun-doc-refs.ts suggest "--filter"   # → pm/filter
 ```
+
+Filter deep-dive (name vs path, install, parallel, docs `type:toml` pitfall):  
+[monorepo-workspaces § bun --filter](../harness/tenants/monorepo-workspaces.md#bun---filter-canonical) · https://bun.com/docs/pm/filter
 
 Do not hand-edit REGISTRY.md for triage; regenerate.

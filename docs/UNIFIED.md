@@ -68,7 +68,7 @@ Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalog
 | `trustedDependencies` | root | Explicit list **replaces** Bun defaults — do not set a partial list casually. |
 | Root `peerDependencies` | avoid | Application root is not a library; put toolchain pins in `devDependencies` + `catalog:`. |
 
-**Scripts:** product/ops scripts live on the **root** package. Package scripts run with `bun run --filter <name|./path> <script>` or `--workspaces --if-present`. Do not use `--filter` for root-only script names.
+**Scripts:** product/ops scripts live on the **root** package. Package scripts run with `bun run --filter <name|./path> <script>` or `--workspaces --if-present`. Do not use `--filter` for root-only script names. Full filter semantics (name vs `./path`, install/outdated, parallel, dep order): [pm/filter](https://bun.com/docs/pm/filter) · FactoryWager runbook [monorepo-workspaces § bun --filter](./harness/tenants/monorepo-workspaces.md#bun---filter-canonical). Docs-site `?search=type:toml` is a **search facet** for TOML samples (bunfig), not a Bun filter flag.
 
 **Types pin:** catalog `@types/bun` / `bun-types` may lag `packageManager` / runtime (e.g. runtime 1.4.0, types 1.3.14). Bump both type packages together; prove with typecheck gates. Pages `BUN_VERSION` is a separate deploy pin.
 
