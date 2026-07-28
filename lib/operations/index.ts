@@ -240,3 +240,11 @@ export {
   type RaiseContextRow,
 } from './partner-analytics-repo.ts';
 export { handleLimitRaiseAgentRequest } from './limit-raise-agent-api.ts';
+export {
+  LimitRaiseReport,
+  printLimitRaiseReport,
+  LIMIT_RAISE_TABLE_PROPERTIES,
+  LIMIT_FACTOR_TABLE_PROPERTIES,
+  LIMIT_CLV_TABLE_PROPERTIES,
+  LIMIT_CONTEXT_TABLE_PROPERTIES,
+} from './limit-raise-report.ts';
