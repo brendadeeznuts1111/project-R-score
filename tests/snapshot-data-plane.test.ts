@@ -160,6 +160,9 @@ describe('snapshot-data-plane grep + flat manifest', () => {
     expect(await runInPty({ TERM: 'xterm-256color', COLORTERM: 'truecolor' })).toContain('\x1b[');
     expect(await runInPty({ TERM: 'xterm-256color', NO_COLOR: '1' })).toBe('X');
     expect(await runInPty({ TERM: 'dumb' })).toBe('X');
+    // FORCE_COLOR=1 forces codes even with NO_COLOR set and no depth
+    // detectable (Bun falls back to ansi-16) — docs/runtime/environment-variables
+    expect(await runInPty({ TERM: 'dumb', NO_COLOR: '1', FORCE_COLOR: '1' })).toContain('\x1b[');
     // Piped (this test process) → plain text
     expect(termColor('X', 'green')).toBe('X');
   });
