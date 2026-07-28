@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T14:46:45.497Z",
+  "generated": "2026-07-28T16:06:32.863Z",
   "bunVersion": "1.4.0",
   "schemaVersion": 1,
   "packageCount": 17,
@@ -626,8 +626,8 @@
   },
   "monitoring": {
     "source": "snapshot",
-    "uptime": "0d 0h 0m 3s",
-    "uptimeMs": 3173,
+    "uptime": "0d 0h 0m 2s",
+    "uptimeMs": 2293,
     "packageCount": 17,
     "versionCount": 23,
     "lastIntegrity": {
@@ -652,8 +652,8 @@
     },
     "experimentsActive": 1,
     "predictionN": 30,
-    "timestamp": "2026-07-28T14:46:45.486Z",
-    "snapshotAt": "2026-07-28T14:46:45.486Z",
+    "timestamp": "2026-07-28T16:06:32.859Z",
+    "snapshotAt": "2026-07-28T16:06:32.859Z",
     "compliance": {
       "available": true,
       "ok": true,
@@ -669,7 +669,7 @@
         "MA",
         "NJ"
       ],
-      "generatedAt": "2026-07-28T14:46:43.065Z",
+      "generatedAt": "2026-07-28T16:06:31.077Z",
       "path": "/registry/compliance-board.json",
       "portal": "/portal/compliance/"
     },
@@ -680,14 +680,14 @@
       "raises": 19,
       "lookbackHours": 48,
       "patternNodes": 15,
-      "generatedAt": "2026-07-28T14:46:43.087Z",
+      "generatedAt": "2026-07-28T16:06:31.285Z",
       "path": "/registry/limit-raises.json",
       "portal": "/portal/limits/"
     }
   },
   "ops": {
     "source": "snapshot",
-    "generated": "2026-07-28T14:46:45.470Z",
+    "generated": "2026-07-28T16:06:32.847Z",
     "liquidity": {
       "total": 108210
     },
@@ -772,7 +772,21 @@
         "mae": 2.8666666666666667,
         "rmse": 4.464676173400859,
         "bias": 2.8666666666666667,
-        "n": 30
+        "n": 30,
+        "quality": "good",
+        "trend": "stable",
+        "within5Pct": 73.33333333333333,
+        "within15Pct": 100,
+        "within5Status": "above_target",
+        "within5Target": 65,
+        "biasSeverity": "medium",
+        "decayDetected": false,
+        "errorStdDev": 3.422799374131582,
+        "maeDelta": 0,
+        "worstDate": "2026-06-30",
+        "maxAbsError": 10,
+        "stripTone": "good",
+        "report": "/registry/prediction/report/"
       },
       "limitRaise": {
         "mae": 0,
@@ -830,11 +844,11 @@
     "bunUtils": {
       "bunVersion": "1.4.0",
       "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-      "proofHash": "a7afbce8555b90a4f4ebcddcedd6feaf66db7322bd7617af70501626c3f3b133",
+      "proofHash": "00b0962b47aff3b2554e8a3bec9172de09976c1e1e3f36d49fc59056aa844a43",
       "passed": 30,
       "total": 30,
       "failed": 0,
-      "timestamp": "2026-07-28T14:46:45.472Z"
+      "timestamp": "2026-07-28T16:06:32.848Z"
     },
     "registryClient": {
       "available": true,
@@ -905,18 +919,18 @@
         {
           "id": "proof-taxonomy-audit",
           "ok": true,
-          "detail": "13 contracts · 20 consistency"
+          "detail": "13 contracts · 20 consistency · preflight self-contract deferred"
         }
       ],
-      "timestamp": "2026-07-28T14:46:42.964Z",
+      "timestamp": "2026-07-28T16:06:31.002Z",
       "pagesUrl": "https://project-r-score.pages.dev",
       "path": "/registry/cloudflare-pages-preflight.json"
     },
     "proofTaxonomy": {
       "available": true,
-      "ok": true,
+      "ok": false,
       "contracts": 13,
-      "contractsOk": 13,
+      "contractsOk": 12,
       "consistencyOk": 20,
       "consistencyTotal": 20,
       "audits": [
@@ -1007,7 +1021,7 @@
         {
           "path": "public/registry/cloudflare-pages-preflight.json",
           "reportPath": "/registry/cloudflare-pages-preflight.json",
-          "ok": true,
+          "ok": false,
           "primarySubsystem": "other",
           "rows": 5
         }
@@ -1094,8 +1108,8 @@
           "ok": true
         }
       ],
-      "proofHash": "a1378eca6f66c8b9908dff274a55988130becdb50f358377974a298072b2c496",
-      "timestamp": "2026-07-28T14:46:42.336Z",
+      "proofHash": "9826b9c5a9d80120578e850f55e8a0cdb369478fc0d35284d0bb73aa1dc1670a",
+      "timestamp": "2026-07-28T16:06:30.590Z",
       "path": "/registry/proof-taxonomy-audit.json"
     },
     "channelMeta": {
@@ -1105,8 +1119,8 @@
       "passed": 75,
       "total": 75,
       "status": "pass",
-      "proofHash": "36a60aabb4b0b07ae9f4ea7e5d3998e229aebd0e7a68d599f89cfabe6b2dacaf",
-      "updatedAt": "2026-07-28T14:46:42.332Z",
+      "proofHash": "77dd527cb7a2ca90d366d20d1cdda04aa52317e7b5ff23cef2ba5ba0da487978",
+      "updatedAt": "2026-07-28T16:06:30.586Z",
       "channel": "stable",
       "targetVersion": "1.4.0",
       "runtimeVersion": "1.4.0",
@@ -1396,7 +1410,7 @@
     "toc": {
       "available": true,
       "path": "/registry/toc-ops.json",
-      "generatedAt": "2026-07-28T14:46:43.020Z",
+      "generatedAt": "2026-07-28T16:06:31.041Z",
       "partners": 3,
       "warmed": 4,
       "warming": 2,
@@ -1424,7 +1438,7 @@
       "throughputI": 47810,
       "throughputOE": 1655,
       "topRankedProcess": "LIMIT",
-      "avgRP": 8.105319427411338,
+      "avgRP": 8.040115883009907,
       "settlementFloatRatio": 0.5103534825350345,
       "presencePartners": 3,
       "presenceIpv6": 31,
@@ -1511,7 +1525,7 @@
     "telegramHandshake": {
       "available": true,
       "path": "/registry/telegram-handshake.json",
-      "generatedAt": "2026-07-28T14:46:45.418Z",
+      "generatedAt": "2026-07-28T16:06:32.829Z",
       "partners": 4,
       "inviteGaps": 0,
       "blocked": 0,
@@ -1625,7 +1639,7 @@
     "seatCapitalDesk": {
       "available": true,
       "path": "/registry/seat-capital-desk.json",
-      "generatedAt": "2026-07-28T14:46:45.460Z",
+      "generatedAt": "2026-07-28T16:06:32.840Z",
       "desks": 4,
       "blocked": 0,
       "partial": 0,
@@ -1898,13 +1912,34 @@
         "MA",
         "NJ"
       ],
-      "generatedAt": "2026-07-28T14:46:43.065Z",
+      "generatedAt": "2026-07-28T16:06:31.077Z",
       "path": "/registry/compliance-board.json",
       "portal": "/portal/compliance/"
     },
+    "monorepoHealth": {
+      "available": true,
+      "ok": false,
+      "score": 34.1,
+      "grade": "critical",
+      "formulaVersion": 1,
+      "bunVersion": "1.4.0",
+      "fileCount": 833,
+      "largeFileCount": 338,
+      "deadFileCount": 44,
+      "cyclicDependencyCount": 14,
+      "duplicateDepCount": 0,
+      "deadCodePercent": 8.6,
+      "largeFilePercent": 40.6,
+      "testCoveragePercent": 0,
+      "generatedAt": "2026-07-28T16:06:31.242Z",
+      "path": "/registry/monorepo-health.json",
+      "portal": "/portal/packages/",
+      "claim": "monorepo-health-score",
+      "gate": "check:monorepo-health"
+    },
     "limitChanges": [
       {
-        "limit_id": 145,
+        "limit_id": 161,
         "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
         "sportsbook": "fanduel",
         "sport_id": "nba",
@@ -1912,7 +1947,7 @@
         "bet_type": "straight",
         "previous_max": 800,
         "new_limit": 1200,
-        "increased_at": 1785247270,
+        "increased_at": 1785247351,
         "direction": "up",
         "message": "fanduel nba/spread straight: $800 → $1200",
         "context_available": true,
@@ -1931,7 +1966,7 @@
         }
       },
       {
-        "limit_id": 153,
+        "limit_id": 169,
         "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
         "sportsbook": "fanduel",
         "sport_id": "nba",
@@ -1939,7 +1974,7 @@
         "bet_type": "straight",
         "previous_max": 800,
         "new_limit": 1200,
-        "increased_at": 1785247270,
+        "increased_at": 1785247351,
         "direction": "up",
         "message": "fanduel nba/spread straight: $800 → $1200",
         "context_available": true,
@@ -1958,7 +1993,7 @@
         }
       },
       {
-        "limit_id": 147,
+        "limit_id": 163,
         "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
         "sportsbook": "draftkings",
         "sport_id": "nba",
@@ -1966,7 +2001,7 @@
         "bet_type": "straight",
         "previous_max": 500,
         "new_limit": 1500,
-        "increased_at": 1785244970,
+        "increased_at": 1785245051,
         "direction": "up",
         "message": "draftkings nba/totals straight: $500 → $1500",
         "context_available": true,
@@ -1985,7 +2020,7 @@
         }
       },
       {
-        "limit_id": 149,
+        "limit_id": 165,
         "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
         "sportsbook": "draftkings",
         "sport_id": "nba",
@@ -1993,7 +2028,7 @@
         "bet_type": "straight",
         "previous_max": 500,
         "new_limit": 1500,
-        "increased_at": 1785244970,
+        "increased_at": 1785245051,
         "direction": "up",
         "message": "draftkings nba/totals straight: $500 → $1500",
         "context_available": true,
@@ -2012,7 +2047,7 @@
         }
       },
       {
-        "limit_id": 155,
+        "limit_id": 171,
         "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
         "sportsbook": "draftkings",
         "sport_id": "nba",
@@ -2020,7 +2055,7 @@
         "bet_type": "straight",
         "previous_max": 500,
         "new_limit": 1500,
-        "increased_at": 1785244970,
+        "increased_at": 1785245051,
         "direction": "up",
         "message": "draftkings nba/totals straight: $500 → $1500",
         "context_available": true,
@@ -2039,7 +2074,7 @@
         }
       },
       {
-        "limit_id": 157,
+        "limit_id": 173,
         "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
         "sportsbook": "draftkings",
         "sport_id": "nba",
@@ -2047,7 +2082,7 @@
         "bet_type": "straight",
         "previous_max": 500,
         "new_limit": 1500,
-        "increased_at": 1785244970,
+        "increased_at": 1785245051,
         "direction": "up",
         "message": "draftkings nba/totals straight: $500 → $1500",
         "context_available": true,
@@ -2066,7 +2101,7 @@
         }
       },
       {
-        "limit_id": 143,
+        "limit_id": 159,
         "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
         "sportsbook": "draftkings",
         "sport_id": "nba",
@@ -2074,7 +2109,7 @@
         "bet_type": "straight",
         "previous_max": 500,
         "new_limit": 1500,
-        "increased_at": 1785244570,
+        "increased_at": 1785244651,
         "direction": "up",
         "message": "draftkings nba/totals straight: $500 → $1500",
         "context_available": true,
@@ -2093,7 +2128,7 @@
         }
       },
       {
-        "limit_id": 151,
+        "limit_id": 167,
         "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
         "sportsbook": "draftkings",
         "sport_id": "nba",
@@ -2101,7 +2136,7 @@
         "bet_type": "straight",
         "previous_max": 500,
         "new_limit": 1500,
-        "increased_at": 1785244570,
+        "increased_at": 1785244651,
         "direction": "up",
         "message": "draftkings nba/totals straight: $500 → $1500",
         "context_available": true,
@@ -3138,12 +3173,12 @@
       "MA",
       "NJ"
     ],
-    "generatedAt": "2026-07-28T14:46:43.065Z",
+    "generatedAt": "2026-07-28T16:06:31.077Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
   },
   "bunUtils": {
-    "proofHash": "3d8511243bc991821841ff9c1004c682ac1afba9a3871a8275819b164e36d54e",
+    "proofHash": "38dbd693efa11a1928c1050f7b6969630903242a690744f8ed9547bcb6f81026",
     "passed": 30,
     "total": 30,
     "bunVersion": "1.4.0",
@@ -3320,8 +3355,8 @@
     "passed": 75,
     "total": 75,
     "status": "pass",
-    "proofHash": "36a60aabb4b0b07ae9f4ea7e5d3998e229aebd0e7a68d599f89cfabe6b2dacaf",
-    "updatedAt": "2026-07-28T14:46:42.332Z",
+    "proofHash": "77dd527cb7a2ca90d366d20d1cdda04aa52317e7b5ff23cef2ba5ba0da487978",
+    "updatedAt": "2026-07-28T16:06:30.586Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -3358,9 +3393,9 @@
   },
   "proofTaxonomy": {
     "available": true,
-    "ok": true,
+    "ok": false,
     "contracts": 13,
-    "contractsOk": 13,
+    "contractsOk": 12,
     "consistencyOk": 20,
     "consistencyTotal": 20,
     "audits": [
@@ -3451,7 +3486,7 @@
       {
         "path": "public/registry/cloudflare-pages-preflight.json",
         "reportPath": "/registry/cloudflare-pages-preflight.json",
-        "ok": true,
+        "ok": false,
         "primarySubsystem": "other",
         "rows": 5
       }
@@ -3538,14 +3573,14 @@
         "ok": true
       }
     ],
-    "proofHash": "a1378eca6f66c8b9908dff274a55988130becdb50f358377974a298072b2c496",
-    "timestamp": "2026-07-28T14:46:42.336Z",
+    "proofHash": "9826b9c5a9d80120578e850f55e8a0cdb369478fc0d35284d0bb73aa1dc1670a",
+    "timestamp": "2026-07-28T16:06:30.590Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-28T14:46:45.418Z",
+    "generatedAt": "2026-07-28T16:06:32.829Z",
     "partners": 4,
     "inviteGaps": 0,
     "blocked": 0,
@@ -3659,7 +3694,7 @@
   "seatCapitalDesk": {
     "available": true,
     "path": "/registry/seat-capital-desk.json",
-    "generatedAt": "2026-07-28T14:46:45.460Z",
+    "generatedAt": "2026-07-28T16:06:32.840Z",
     "desks": 4,
     "blocked": 0,
     "partial": 0,

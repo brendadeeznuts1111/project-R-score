@@ -1,7 +1,7 @@
 {
   "type": "CloudflarePagesPreflightReport",
   "version": "1.0.0",
-  "timestamp": "2026-07-28T14:46:42.964Z",
+  "timestamp": "2026-07-28T16:06:31.002Z",
   "ok": false,
   "steps": [
     {
@@ -27,7 +27,7 @@
     {
       "id": "proof-taxonomy-audit",
       "ok": true,
-      "detail": "13 contracts · 20 consistency"
+      "detail": "13 contracts · 20 consistency · preflight self-contract deferred"
     }
   ],
   "pagesUrl": "https://project-r-score.pages.dev",

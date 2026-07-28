@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T14:46:43.087Z",
+  "generatedAt": "2026-07-28T16:06:31.285Z",
   "lookbackHours": 48,
   "byNode": {
     "019f92bf-40d6-72e3-aa09-f0a9b8a95824": {
       "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
       "raises": [
         {
-          "limit_id": 145,
+          "limit_id": 161,
           "sportsbook": "fanduel",
           "sport_id": "nba",
           "market_id": "spread",
           "bet_type": "straight",
           "previous_max": 800,
           "new_limit": 1200,
-          "increased_at": 1785247270,
+          "increased_at": 1785247351,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 47,
+            "id": 55,
             "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
-            "limit_record_id": 145,
+            "limit_record_id": 161,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -34,10 +34,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785247271,
+            "snapshot_at": 1785247352,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "82f2ac6389fd129124431d119a44a6c174fc22e6e73eeb449e9a389a4466e700",
-            "proof_hmac": "14e8c1ee09f278168e32370699767de9ef2c3ada0d5ba357944435b80318c97a"
+            "proof_digest": "d74f4c91b69ca11197196d515036d4d626377a0ba0fc459be66ffaaf66c6d599",
+            "proof_hmac": "a93a52dd07035f860b2d7e5f40f51b120af1b134dc645935dd8a826325b29d58"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -66,20 +66,20 @@
           }
         },
         {
-          "limit_id": 143,
+          "limit_id": 159,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785244570,
+          "increased_at": 1785244651,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 53,
+            "id": 61,
             "node_id": "019f92bf-40d6-72e3-aa09-f0a9b8a95824",
-            "limit_record_id": 143,
+            "limit_record_id": 159,
             "active_players_7d": 0,
             "new_players_7d": 0,
             "total_handle_7d": 0,
@@ -93,10 +93,10 @@
             "sportsbook_share": 0.5,
             "partner_profit_30d": 0,
             "partner_roi_30d": 0,
-            "snapshot_at": 1785244570,
+            "snapshot_at": 1785244651,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "e2a48146071318dc16137ee4451dbcd7bcaac79a28f50426c10411c61f9fcaf4",
-            "proof_hmac": "c4df94a42cef8fe78d0bc91afa6f82aee91bc3c82e21cc09445a63ffbeb982a8"
+            "proof_digest": "877486cedd20f4c17265a9f1e97209b22f29dc5fc148ee0486192af542e91e1f",
+            "proof_hmac": "69017782648d72bebc143e020f30ad38779332160b000aa5dfa3910f33296db7"
           },
           "multi_factor_score": 0.49000000000000005,
           "top_contributing_factors": [
@@ -130,20 +130,20 @@
       "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
       "raises": [
         {
-          "limit_id": 153,
+          "limit_id": 169,
           "sportsbook": "fanduel",
           "sport_id": "nba",
           "market_id": "spread",
           "bet_type": "straight",
           "previous_max": 800,
           "new_limit": 1200,
-          "increased_at": 1785247270,
+          "increased_at": 1785247351,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 50,
+            "id": 58,
             "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-            "limit_record_id": 153,
+            "limit_record_id": 169,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -157,10 +157,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785247271,
+            "snapshot_at": 1785247352,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "0d6538c848cf2fa2db5027c9186b7462d2bfcd7bb403a0e0ecc08aa8c50156ad",
-            "proof_hmac": "3e21ac91597aebe4d424bff19a626513c285ee99a0785c2b9148b575360157eb"
+            "proof_digest": "bd087cd5875d696e1666e99cf641776e4cec8fcffae0672fbeab630506c2544d",
+            "proof_hmac": "d29ede54cf3b406aa3476b18e528cc0d4e88469c1e9a5a452caadcee01af87f0"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -189,20 +189,20 @@
           }
         },
         {
-          "limit_id": 151,
+          "limit_id": 167,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785244570,
+          "increased_at": 1785244651,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 54,
+            "id": 62,
             "node_id": "019f92bf-40d6-72e4-bfd9-0c06e5891188",
-            "limit_record_id": 151,
+            "limit_record_id": 167,
             "active_players_7d": 0,
             "new_players_7d": 0,
             "total_handle_7d": 0,
@@ -216,10 +216,10 @@
             "sportsbook_share": 0.5,
             "partner_profit_30d": 0,
             "partner_roi_30d": 0,
-            "snapshot_at": 1785244570,
+            "snapshot_at": 1785244651,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "050a222fe8ba5209eaa81bc8ebac09610bcaddc4166df41da82c74604ae69937",
-            "proof_hmac": "74e33c81b695d297948fb7c81f5cb73726a327acac14003039c4b9a342189241"
+            "proof_digest": "6b65a71b35bc84ec1e2f69d0792c55d0741ae8e51d270d80faf6549341b980ec",
+            "proof_hmac": "06c76e49908513034a2f2b2dc2e8a20bb13d2d9d124154e00db49d84f2ab96ea"
           },
           "multi_factor_score": 0.49000000000000005,
           "top_contributing_factors": [
@@ -253,20 +253,20 @@
       "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
       "raises": [
         {
-          "limit_id": 147,
+          "limit_id": 163,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785244970,
+          "increased_at": 1785245051,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 48,
+            "id": 56,
             "node_id": "019f92ee-5ef8-71e9-b207-5ae20c07d095",
-            "limit_record_id": 147,
+            "limit_record_id": 163,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -280,10 +280,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785244971,
+            "snapshot_at": 1785245052,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "036a7ea254151675463a05491f2b41eda52481aa19d610afeab3db84a5dcfe4b",
-            "proof_hmac": "8af53adc15475b06bfee3c64a435899cc47e198fa991f259cc4cfca0d7df5c1c"
+            "proof_digest": "57e043ba2dc82439934301f2b582df5e37eb28e597a6950e189fa76e324b0fe9",
+            "proof_hmac": "8cf4331491cc8c144e13b938a35fafe2e1fbe5274d188c611e214d6d0ebd7d62"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -317,20 +317,20 @@
       "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
       "raises": [
         {
-          "limit_id": 149,
+          "limit_id": 165,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785244970,
+          "increased_at": 1785245051,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 49,
+            "id": 57,
             "node_id": "019f92ee-5ef9-728d-950c-6c02a59903a2",
-            "limit_record_id": 149,
+            "limit_record_id": 165,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -344,10 +344,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785244971,
+            "snapshot_at": 1785245052,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "0635ff46f61942f22abf24573e00bd914c3fb7a65472f5f5782e4b0c287408e9",
-            "proof_hmac": "f3789cf84a5f9e07147fbea83aa80b3f65751a2a2a8833e5a02f5782c747e682"
+            "proof_digest": "5bff4b27c9026049e720b749f9de9a5933fd12667cadeb7b21d858458f99e03a",
+            "proof_hmac": "5eeae60cee563a1de7a0ec24ffa4dd85e746939f61592d25e58815b788fc9e15"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -381,20 +381,20 @@
       "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
       "raises": [
         {
-          "limit_id": 155,
+          "limit_id": 171,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785244970,
+          "increased_at": 1785245051,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 51,
+            "id": 59,
             "node_id": "019fa2d3-c5a0-74f9-b159-730b0c911784",
-            "limit_record_id": 155,
+            "limit_record_id": 171,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -408,10 +408,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785244971,
+            "snapshot_at": 1785245052,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "906682b10422b1758ccd3c3a9426696e0349c466e71612c104f74e95bd813d4e",
-            "proof_hmac": "a66b6a95ba608a51112cbea7471e426b098c56fa384140bc6c77c65506b7474a"
+            "proof_digest": "01996855c1cfa7edb4e67277f5eedd7b7248212f1f9bd1f3a73c7f6ed64fda4f",
+            "proof_hmac": "fe6817e9694be00ae4d91c1534f111cb8b6869fe8c026b8dca5bf33e74a057f1"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [
@@ -445,20 +445,20 @@
       "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
       "raises": [
         {
-          "limit_id": 157,
+          "limit_id": 173,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785244970,
+          "increased_at": 1785245051,
           "line_move_5m": null,
           "top_clv": [],
           "context": {
-            "id": 52,
+            "id": 60,
             "node_id": "019fa2d3-c5a1-7113-82c7-212bf22256de",
-            "limit_record_id": 157,
+            "limit_record_id": 173,
             "active_players_7d": 42,
             "new_players_7d": 6,
             "total_handle_7d": 185000,
@@ -472,10 +472,10 @@
             "sportsbook_share": 0.41,
             "partner_profit_30d": 38000,
             "partner_roi_30d": 0.14,
-            "snapshot_at": 1785244971,
+            "snapshot_at": 1785245052,
             "proof_algorithm": "sha3-256",
-            "proof_digest": "8d14e65e5dd0e0281e0c6d89bd2837af350ba39632e6e2304b247369a63b44e1",
-            "proof_hmac": "c5c0829eaa75c2a49f52dcaec32c34a6720d58ba65fefbefee63b1a69372822c"
+            "proof_digest": "4ae47e74d5826693ac44cd3a4053f19d807b5c8e1a3ea5c26f5202c7e1bf4b0b",
+            "proof_hmac": "a503021f0265318b8928da3a772b5a6ac044f6383aebde34ee3a14a526d1d0a5"
           },
           "multi_factor_score": 0.5935799999999999,
           "top_contributing_factors": [

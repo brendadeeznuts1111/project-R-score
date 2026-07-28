@@ -20,33 +20,19 @@ import {
   scopeConfigs,
   type SnapshotScopeName,
 } from './snapshot-scopes.ts';
+import type {
+  ParsedSnapshotFlags,
+  SnapshotFilterOptions,
+  SnapshotManifest,
+  SnapshotRunOptions,
+} from './snapshot-types.ts';
 
-export type SnapshotManifest = {
-  id: string; // brand-ok — opaque snapshot id
-  scope: SnapshotScopeName;
-  reportType: string;
-  capturedAt: string;
-  commit: string;
-  branch: string;
-  bunVersion: string;
-  baseUrl: string;
-  fileCount: number;
-  files: string[];
-  metadata: Record<string, string>;
-};
-
-export type SnapshotRunOptions = {
-  scope: SnapshotScopeName;
-  baseUrl?: string;
-  dryRun?: boolean;
-  debug?: boolean;
-};
-
-export type SnapshotFilterOptions = {
-  scope?: SnapshotScopeName;
-  grep?: string;
-  debug?: boolean;
-};
+export type {
+  ParsedSnapshotFlags,
+  SnapshotFilterOptions,
+  SnapshotManifest,
+  SnapshotRunOptions,
+} from './snapshot-types.ts';
 
 const SCOPE_MARKER = '.snapshot-scope';
 
@@ -601,14 +587,6 @@ export async function resolveScope(explicit?: string): Promise<SnapshotScopeName
   if (envScope && isSnapshotScope(envScope)) return envScope;
   return detectScopeFromCwd() ?? 'prediction';
 }
-
-export type ParsedSnapshotFlags = {
-  scope?: string;
-  baseUrl: string;
-  dryRun: boolean;
-  debug: boolean;
-  positional: string[];
-};
 
 export function parseSnapshotFlags(argv: string[]): ParsedSnapshotFlags {
   const positional: string[] = [];

@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
-  "uptime": "0d 0h 0m 3s",
-  "uptimeMs": 3173,
+  "uptime": "0d 0h 0m 2s",
+  "uptimeMs": 2293,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -26,8 +26,8 @@
   },
   "experimentsActive": 1,
   "predictionN": 30,
-  "timestamp": "2026-07-28T14:46:45.486Z",
-  "snapshotAt": "2026-07-28T14:46:45.486Z",
+  "timestamp": "2026-07-28T16:06:32.859Z",
+  "snapshotAt": "2026-07-28T16:06:32.859Z",
   "compliance": {
     "available": true,
     "ok": true,
@@ -43,7 +43,7 @@
       "MA",
       "NJ"
     ],
-    "generatedAt": "2026-07-28T14:46:43.065Z",
+    "generatedAt": "2026-07-28T16:06:31.077Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
   },
@@ -54,14 +54,14 @@
     "raises": 19,
     "lookbackHours": 48,
     "patternNodes": 15,
-    "generatedAt": "2026-07-28T14:46:43.087Z",
+    "generatedAt": "2026-07-28T16:06:31.285Z",
     "path": "/registry/limit-raises.json",
     "portal": "/portal/limits/"
   },
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-28T14:46:45.487Z",
+    "checkedAt": "2026-07-28T16:06:32.860Z",
     "summary": {
       "total": 26,
       "ok": 26,
@@ -417,7 +417,7 @@
     "demosPassed": 30,
     "demosTotal": 30,
     "demoPassRate": "100.0%",
-    "generated": "2026-07-28T14:46:45.479Z",
+    "generated": "2026-07-28T16:06:32.856Z",
     "apisVerified": 30
   },
   "registryClientProof": {

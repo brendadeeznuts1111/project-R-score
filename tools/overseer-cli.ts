@@ -47,7 +47,9 @@ async function runInProject(projectName: string, cmd: string[]) {
   console.info(`[${projectName}] Running: ${cmd.join(' ')}`);
   const proc = spawn([binPath, ...cmd.slice(1)], {
     cwd: projectHome,
-    stdio: 'inherit',
+    stdin: 'inherit',
+    stdout: 'inherit',
+    stderr: 'inherit',
     env: {
       ...Bun.env,
       PROJECT_HOME: projectHome,
