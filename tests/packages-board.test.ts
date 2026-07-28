@@ -4,8 +4,10 @@ import {
   PACKAGES_MAP_SCHEMA,
   actionHint,
   buildDependencyGraphModel,
+  edgesForPackage,
   formatLoadError,
   gradeFromScore,
+  graphFocusSet,
   normalizePackagesMap,
   renderDependencyGraphSvg,
 } from '../public/portal/packages/packages-board.js';
@@ -53,6 +55,14 @@ describe('packages-board failure paths', () => {
     expect(svg).toContain('<svg');
     expect(svg).toContain('docs-tools');
     expect(svg).toContain('edge-ext');
+    // focus dimming
+    const focused = renderDependencyGraphSvg(model, { focusId: 'rip' });
+    expect(focused).toContain('focus');
+    expect(focused).toContain(' dim');
+    const neigh = graphFocusSet(model, 'rip');
+    expect(neigh.has('rip')).toBe(true);
+    expect(neigh.has('ext:bare:bun')).toBe(true);
+    expect(edgesForPackage(model, 'docs-tools')).toHaveLength(1);
   });
 
   test('normalizePackagesMap accepts bake shape', () => {

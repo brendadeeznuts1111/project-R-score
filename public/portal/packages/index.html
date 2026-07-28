@@ -56,12 +56,40 @@
     .pkg-dep-svg .node-consumed { fill: color-mix(in srgb, var(--green, #3dd68c) 45%, #111); stroke: var(--green, #3dd68c); stroke-width: 1.5; cursor: pointer; }
     .pkg-dep-svg .node-dormant { fill: color-mix(in srgb, var(--yellow, #e6b84d) 40%, #111); stroke: var(--yellow, #e6b84d); stroke-width: 1.5; cursor: pointer; }
     .pkg-dep-svg .node-archive { fill: color-mix(in srgb, var(--red, #f07178) 40%, #111); stroke: var(--red, #f07178); stroke-width: 2; cursor: pointer; }
-    .pkg-dep-svg .node-ext { fill: color-mix(in srgb, var(--text-dim) 35%, #111); stroke: var(--border); stroke-width: 1; }
+    .pkg-dep-svg .node-root { fill: color-mix(in srgb, var(--text-dim) 40%, #111); stroke: var(--text-dim); stroke-width: 1.5; cursor: pointer; }
+    .pkg-dep-svg .node-ext { fill: color-mix(in srgb, var(--text-dim) 35%, #111); stroke: var(--border); stroke-width: 1; cursor: pointer; }
     .pkg-dep-svg .node-label { fill: var(--text); font-size: 10px; font-family: ui-monospace, monospace; pointer-events: none; }
     .pkg-dep-svg .pkg-node:hover .node-pkg,
     .pkg-dep-svg .pkg-node:hover .node-consumed,
     .pkg-dep-svg .pkg-node:hover .node-dormant { filter: brightness(1.15); }
+    .pkg-dep-svg .pkg-node.dim { opacity: 0.18; }
+    .pkg-dep-svg .pkg-node.focus circle { stroke-width: 3; filter: drop-shadow(0 0 4px var(--accent)); }
+    .pkg-dep-svg .edge-int.dim, .pkg-dep-svg .edge-ext.dim { opacity: 0.08; }
+    .pkg-dep-svg .edge-int.hot { opacity: 0.85; }
+    .pkg-dep-svg .edge-ext.hot { opacity: 0.7; }
+    .pkg-dep-svg .edge-w { fill: var(--text-dim); font-size: 9px; opacity: 0.7; }
+    .pkg-dep-svg .edge-w.dim { opacity: 0.05; }
+    .pkg-dep-layout { display: grid; gap: 14px; }
+    @media (min-width: 900px) {
+      .pkg-dep-layout { grid-template-columns: 1fr minmax(240px, 300px); align-items: start; }
+    }
+    #pkg-detail { background: var(--bg, #0d1117); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; font-size: 12px; min-height: 120px; }
+    #pkg-detail h4 { margin: 0 0 8px; font-size: 13px; }
+    #pkg-detail ul { margin: 4px 0 10px; padding-inline-start: 16px; }
+    .pkg-detail-cli { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .copy-cli, .pkg-chip {
+      font: inherit; font-size: 11px; font-family: ui-monospace, monospace;
+      padding: 5px 9px; border-radius: 6px; border: 1px solid var(--border);
+      background: transparent; color: var(--text); cursor: pointer;
+    }
+    .copy-cli:hover, .pkg-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .pkg-chip.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+    .pkg-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 10px; }
+    #pkg-role-filters { display: flex; flex-wrap: wrap; gap: 6px; }
     tr.pkg-row-flash td { background: color-mix(in srgb, var(--accent, #58a6ff) 18%, transparent); transition: background 0.3s; }
+    tr.pkg-row-selected td { outline: 1px solid var(--accent); outline-offset: -1px; }
+    tr.pkg-row-clickable { cursor: pointer; }
+    tr.pkg-row-clickable:hover td { background: color-mix(in srgb, var(--surface) 80%, var(--accent)); }
   </style>
 </head>
 <body>
@@ -131,6 +159,16 @@
     <section class="pkg-dep-panel" aria-label="Dependency graph">
       <h3>Dependency graph</h3>
       <p class="meta" id="pkg-dep-meta">Loading…</p>
+      <div class="pkg-toolbar">
+        <div id="pkg-role-filters" aria-label="Role filters">
+          <button type="button" class="pkg-chip" data-role="consumed">consumed</button>
+          <button type="button" class="pkg-chip" data-role="dormant">dormant</button>
+          <button type="button" class="pkg-chip" data-role="root-tooling">root-tooling</button>
+        </div>
+        <button type="button" class="pkg-chip" id="pkg-focus-clear">clear focus</button>
+        <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy pm graph</button>
+        <button type="button" class="copy-cli" data-cli="bun run audit:packages -- --bake">copy rebake</button>
+      </div>
       <div class="pkg-dep-legend">
         <span class="lg-pkg">package</span>
         <span class="lg-consumed">consumed</span>
@@ -138,8 +176,13 @@
         <span class="lg-archive">archive candidate</span>
         <span class="lg-ext">external target</span>
       </div>
-      <div id="pkg-dep-graph"><p class="pkg-empty">Loading graph…</p></div>
-      <p class="meta">Click a package node to jump to the table · data from <code>packages-graph-map.json</code> · <code>portal-cli pm graph</code></p>
+      <div class="pkg-dep-layout">
+        <div id="pkg-dep-graph"><p class="pkg-empty">Loading graph…</p></div>
+        <aside id="pkg-detail" aria-live="polite">
+          <p class="meta">Select a package node (or table row) for edges, role, and CLI.</p>
+        </aside>
+      </div>
+      <p class="meta">Click node/row to focus (dims unrelated) · data from <code>packages-graph-map.json</code> · <code>portal-cli pm graph</code></p>
     </section>
 
     <section class="actions" aria-label="Monorepo surfaces">

@@ -323,31 +323,80 @@ export function buildDependencyGraphModel(data) {
 }
 
 /**
+ * Neighbors of a node (including self) for focus highlighting.
+ * @param {object} model
+ * @param {string} focusId
+ * @returns {Set<string>}
+ */
+export function graphFocusSet(model, focusId) {
+  const set = new Set([focusId]);
+  if (!focusId) return set;
+  for (const e of model.edges || []) {
+    if (e.from === focusId) set.add(e.to);
+    if (e.to === focusId) set.add(e.from);
+  }
+  return set;
+}
+
+/**
+ * Edges involving a package (for detail panel).
+ * @param {object} model
+ * @param {string} pkgId
+ */
+export function edgesForPackage(model, pkgId) {
+  return (model.edges || []).filter(e => e.from === pkgId || e.to === pkgId);
+}
+
+/**
  * Render SVG for dependency graph (no D3/Mermaid).
  * @param {object} model - from buildDependencyGraphModel
+ * @param {{ focusId?: string|null, roleFilter?: string }} [opts]
  * @returns {string}
  */
-export function renderDependencyGraphSvg(model) {
+export function renderDependencyGraphSvg(model, opts = {}) {
   const W = 640;
   const H = 440;
+  const focusId = opts.focusId || null;
+  const roleFilter = opts.roleFilter || '';
+  const focus = focusId ? graphFocusSet(model, focusId) : null;
   const byId = new Map(model.nodes.map(n => [n.id, n]));
   const edgeEls = model.edges
     .map(e => {
       const a = byId.get(e.from);
       const b = byId.get(e.to);
       if (!a || !b) return '';
+      if (roleFilter && a.kind === 'package' && a.role !== roleFilter && b.kind === 'package') {
+        // keep edge if either end matches filter when package-only
+      }
       const sw = Math.min(4, 1 + Math.log2(e.weight + 1));
       const cls = e.kind === 'external' ? 'edge-ext' : 'edge-int';
-      return `<line class="${cls}" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke-width="${sw.toFixed(2)}" />`;
+      const dim =
+        focus && !focus.has(e.from) && !focus.has(e.to)
+          ? ' dim'
+          : focus && (focus.has(e.from) || focus.has(e.to))
+            ? ' hot'
+            : '';
+      const midX = ((a.x + b.x) / 2).toFixed(1);
+      const midY = ((a.y + b.y) / 2).toFixed(1);
+      const wLabel =
+        e.weight > 1
+          ? `<text class="edge-w${dim}" x="${midX}" y="${midY}">${e.weight}</text>`
+          : '';
+      return `<line class="${cls}${dim}" data-from="${escapeAttr(e.from)}" data-to="${escapeAttr(e.to)}" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke-width="${sw.toFixed(2)}" /><title>${escapeHtml(e.from)} → ${escapeHtml(e.to)} · weight ${e.weight}</title>${wLabel}`;
     })
     .join('');
   const nodeEls = model.nodes
     .map(n => {
+      if (roleFilter && n.kind === 'package' && n.role !== roleFilter) {
+        // still draw but dimmed when filtering
+      }
       const r = n.kind === 'package' ? 22 : 16;
       const roleCls = `role-${String(n.role).replace(/[^a-z0-9_-]/gi, '-')}`;
       const arch = n.archive ? ' archive' : '';
       const score =
-        n.score != null ? `<title>${escapeHtml(n.label)} · score ${n.score} · ${escapeHtml(n.role)}</title>` : `<title>${escapeHtml(n.label)} · ${escapeHtml(n.role)}</title>`;
+        n.score != null
+          ? `<title>${escapeHtml(n.label)} · score ${n.score} · ${escapeHtml(n.role)}</title>`
+          : `<title>${escapeHtml(n.label)} · ${escapeHtml(n.role)}</title>`;
       const fillClass =
         n.kind === 'external'
           ? 'node-ext'
@@ -357,8 +406,14 @@ export function renderDependencyGraphSvg(model) {
               ? 'node-dormant'
               : n.role === 'consumed'
                 ? 'node-consumed'
-                : 'node-pkg';
-      return `<g class="pkg-node ${roleCls}${arch}" data-id="${escapeAttr(n.id)}">
+                : n.role === 'root-tooling'
+                  ? 'node-root'
+                  : 'node-pkg';
+      let dim = '';
+      if (roleFilter && n.kind === 'package' && n.role !== roleFilter) dim = ' dim';
+      if (focus && !focus.has(n.id)) dim = ' dim';
+      if (focusId && n.id === focusId) dim = ' focus';
+      return `<g class="pkg-node ${roleCls}${arch}${dim}" data-id="${escapeAttr(n.id)}" data-kind="${escapeAttr(n.kind)}" data-role="${escapeAttr(n.role)}">
         <circle class="${fillClass}" cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="${r}" />
         ${score}
         <text x="${n.x.toFixed(1)}" y="${(n.y + r + 12).toFixed(1)}" text-anchor="middle" class="node-label">${escapeHtml(n.label.length > 14 ? n.label.slice(0, 12) + '…' : n.label)}</text>
@@ -377,6 +432,108 @@ export function renderDependencyGraphSvg(model) {
 }
 
 /**
+ * Fill the package detail panel for a selected node.
+ * @param {object} data - board view-model
+ * @param {object} model - graph model
+ * @param {string|null} pkgId
+ * @param {Document} [doc]
+ */
+export function renderPackageDetail(data, model, pkgId, doc = document) {
+  const el = doc.getElementById('pkg-detail');
+  if (!el) return;
+  if (!pkgId || pkgId.startsWith('ext:')) {
+    if (pkgId && pkgId.startsWith('ext:')) {
+      const label = pkgId.slice(4);
+      const inbound = (model.edges || []).filter(e => e.to === pkgId);
+      el.innerHTML = `<h4>External · <code>${escapeHtml(label)}</code></h4>
+        <p class="meta">Imported by ${inbound.length} edge(s)</p>
+        <ul>${inbound.map(e => `<li><code>${escapeHtml(e.from)}</code> · weight ${e.weight}</li>`).join('') || '<li>—</li>'}</ul>
+        <p class="meta"><button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy pm graph</button></p>`;
+      bindCopyButtons(el);
+      return;
+    }
+    el.innerHTML =
+      '<p class="meta">Select a package node (or table row) for edges, role, and CLI.</p>';
+    return;
+  }
+  const row = (data.packages || []).find(p => (p.name || p.package) === pkgId);
+  const node = (model.nodes || []).find(n => n.id === pkgId);
+  const edges = edgesForPackage(model, pkgId);
+  const actions = (data.actions || []).filter(a => a.package === pkgId);
+  const probes = (data.archiveProbes || []).filter(p => p.package === pkgId);
+  const score = row?.score ?? node?.score;
+  const role = row?.role ?? node?.role ?? '—';
+  const g = gradeFromScore(score);
+  el.innerHTML = `<h4><code>${escapeHtml(pkgId)}</code></h4>
+    <p class="meta">role=<span class="role role-${escapeAttr(String(role))}">${escapeHtml(String(role))}</span>
+      · score=<span class="grade-${g}">${score ?? '—'}</span>
+      · orphans=${row?.orphans ?? 0}
+      · ${node?.archive ? '<strong class="grade-critical">archive candidate</strong>' : 'active'}</p>
+    <p class="meta">Edges (${edges.length})</p>
+    <ul>${
+      edges
+        .map(e => {
+          const other = e.from === pkgId ? e.to : e.from;
+          const dir = e.from === pkgId ? '→' : '←';
+          const label = other.startsWith('ext:') ? other.slice(4) : other;
+          return `<li><code>${escapeHtml(pkgId)}</code> ${dir} <code>${escapeHtml(label)}</code> · w=${e.weight} · ${escapeHtml(e.kind)}</li>`;
+        })
+        .join('') || '<li class="meta">No edges in bake (internal packageEdges empty — external only)</li>'
+    }</ul>
+    ${
+      actions.length
+        ? `<p class="meta">Actions</p><ul>${actions
+            .map(
+              a =>
+                `<li><strong>${escapeHtml(a.action)}</strong> — ${escapeHtml(a.reason || '')}${
+                  actionHint(a.action)
+                    ? ` · <code>${escapeHtml(actionHint(a.action))}</code>`
+                    : ''
+                }</li>`
+            )
+            .join('')}</ul>`
+        : ''
+    }
+    ${
+      probes.length
+        ? `<p class="meta">Archive probes</p><ul>${probes
+            .map(
+              p =>
+                `<li>${escapeHtml(p.kind || '')} → <strong>${escapeHtml(p.recommendation || '')}</strong> — ${escapeHtml(p.note || '')}</li>`
+            )
+            .join('')}</ul>`
+        : ''
+    }
+    <div class="pkg-detail-cli">
+      <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy pm graph</button>
+      <button type="button" class="copy-cli" data-cli="bun run audit:packages -- --bake">copy rebake</button>
+      <button type="button" class="copy-cli" data-cli="bun run portal-cli dashboard --view=packages">copy dashboard URL cmd</button>
+    </div>`;
+  bindCopyButtons(el);
+}
+
+function bindCopyButtons(root) {
+  root.querySelectorAll('.copy-cli').forEach(btn => {
+    if (btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', async e => {
+      e.stopPropagation();
+      const cmd = btn.getAttribute('data-cli') || '';
+      try {
+        await navigator.clipboard.writeText(cmd);
+        const prev = btn.textContent;
+        btn.textContent = 'copied';
+        setTimeout(() => {
+          btn.textContent = prev;
+        }, 1000);
+      } catch {
+        btn.textContent = 'copy failed';
+      }
+    });
+  });
+}
+
+/**
  * Mount dependency graph into #pkg-dep-graph.
  * @param {object} data - normalizePackagesMap result
  * @param {Document} [doc]
@@ -386,29 +543,102 @@ export function renderDependencyGraph(data, doc = document) {
   const meta = doc.getElementById('pkg-dep-meta');
   if (!host) return;
   const model = buildDependencyGraphModel(data);
+  // stash for filters / re-render
+  host._pkgGraphModel = model;
+  host._pkgBoardData = data;
+  host._pkgFocusId = host._pkgFocusId || null;
+  host._pkgRoleFilter = host._pkgRoleFilter || '';
+
   if (meta) {
-    meta.textContent = `${model.stats.packageNodes} packages · ${model.stats.externalNodes} external targets · ${model.stats.edges} edges · CLI: portal-cli pm graph`;
+    meta.textContent = `${model.stats.packageNodes} packages · ${model.stats.externalNodes} external targets · ${model.stats.edges} edges · click node to focus · CLI: portal-cli pm graph`;
   }
   if (model.stats.packageNodes === 0) {
     host.innerHTML =
       '<p class="pkg-empty">No package nodes in bake — run <code>bun run audit:packages -- --bake</code></p>';
     return;
   }
-  host.innerHTML = renderDependencyGraphSvg(model);
-  // Click package node → highlight row in table
-  host.querySelectorAll('.pkg-node').forEach(g => {
-    g.addEventListener('click', () => {
-      const id = g.getAttribute('data-id') || '';
-      if (id.startsWith('ext:')) return;
-      const row = [...doc.querySelectorAll('#pkg-body tr[data-pkg]')].find(
-        r => r.getAttribute('data-pkg') === id
-      );
-      if (row) {
-        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        row.classList.add('pkg-row-flash');
-        setTimeout(() => row.classList.remove('pkg-row-flash'), 1200);
-      }
+
+  const paint = () => {
+    host.innerHTML = renderDependencyGraphSvg(model, {
+      focusId: host._pkgFocusId,
+      roleFilter: host._pkgRoleFilter,
     });
+    host.querySelectorAll('.pkg-node').forEach(g => {
+      g.addEventListener('click', ev => {
+        ev.stopPropagation();
+        const id = g.getAttribute('data-id') || '';
+        // toggle focus
+        host._pkgFocusId = host._pkgFocusId === id ? null : id;
+        paint();
+        renderPackageDetail(data, model, host._pkgFocusId, doc);
+        if (id && !id.startsWith('ext:')) {
+          const row = [...doc.querySelectorAll('#pkg-body tr[data-pkg]')].find(
+            r => r.getAttribute('data-pkg') === id
+          );
+          if (row) {
+            row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            row.classList.add('pkg-row-flash');
+            setTimeout(() => row.classList.remove('pkg-row-flash'), 1200);
+            // mark selected row
+            doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
+              r.classList.remove('pkg-row-selected');
+            });
+            row.classList.add('pkg-row-selected');
+          }
+        }
+      });
+    });
+  };
+  paint();
+  renderPackageDetail(data, model, host._pkgFocusId, doc);
+
+  // Role filter chips
+  const filterHost = doc.getElementById('pkg-role-filters');
+  if (filterHost && !filterHost.dataset.bound) {
+    filterHost.dataset.bound = '1';
+    filterHost.addEventListener('click', e => {
+      const t = e.target;
+      if (!(t instanceof HTMLElement)) return;
+      const role = t.getAttribute('data-role');
+      if (role == null) return;
+      host._pkgRoleFilter = role === host._pkgRoleFilter ? '' : role;
+      filterHost.querySelectorAll('[data-role]').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-role') === host._pkgRoleFilter);
+      });
+      paint();
+      applyTableRoleFilter(doc, host._pkgRoleFilter);
+    });
+  }
+
+  // Clear focus
+  const clearBtn = doc.getElementById('pkg-focus-clear');
+  if (clearBtn && !clearBtn.dataset.bound) {
+    clearBtn.dataset.bound = '1';
+    clearBtn.addEventListener('click', () => {
+      host._pkgFocusId = null;
+      paint();
+      renderPackageDetail(data, model, null, doc);
+      doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
+        r.classList.remove('pkg-row-selected');
+      });
+    });
+  }
+}
+
+/**
+ * Filter package table by role (empty = all).
+ * @param {Document} doc
+ * @param {string} role
+ */
+export function applyTableRoleFilter(doc, role) {
+  doc.querySelectorAll('#pkg-body tr[data-pkg]').forEach(tr => {
+    if (!role) {
+      tr.hidden = false;
+      return;
+    }
+    const cell = tr.querySelector('td.role');
+    const r = cell?.textContent?.trim() || '';
+    tr.hidden = r !== role;
   });
 }
 
@@ -538,11 +768,31 @@ export function renderPackagesBoard(data, doc = document) {
         const bytes = typeof p.bytes === 'number' ? (p.bytes / 1024).toFixed(1) : '—';
         const g = gradeFromScore(p.score);
         tr.dataset.pkg = String(name);
+        tr.dataset.role = String(role);
+        tr.classList.add('pkg-row-clickable');
         tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td class="role role-${escapeAttr(String(role))}">${escapeHtml(String(role))}</td><td class="grade-${g}">${p.score ?? '—'}</td><td>${p.orphans ?? 0}</td><td>${bytes}</td>`;
+        tr.addEventListener('click', () => {
+          const graphHost = doc.getElementById('pkg-dep-graph');
+          if (!graphHost) return;
+          graphHost._pkgFocusId = String(name);
+          // re-render graph with focus
+          renderDependencyGraph(data, doc);
+          doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
+            r.classList.remove('pkg-row-selected');
+          });
+          tr.classList.add('pkg-row-selected');
+        });
         body.appendChild(tr);
       }
     }
   }
+  // re-apply role filter if user had one selected
+  const graphHost = doc.getElementById('pkg-dep-graph');
+  if (graphHost?._pkgRoleFilter) {
+    applyTableRoleFilter(doc, graphHost._pkgRoleFilter);
+  }
+  // toolbar copy buttons
+  bindCopyButtons(doc);
 
   const actionList = doc.getElementById('action-list');
   if (actionList) {
