@@ -1,0 +1,99 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`vault-health report shape is a stable contract (snapshot) 1`] = `
+{
+  "generatedAt": "2026-07-28T00:00:00Z",
+  "kind": "vault-health",
+  "referenced": [
+    {
+      "envKey": "DNS",
+      "item": "DNS Token",
+      "status": "ok",
+      "vault": "cloudflare",
+    },
+    {
+      "envKey": "GH",
+      "item": "GitHub PAT",
+      "status": "missing",
+      "vault": "factorywager",
+    },
+    {
+      "envKey": "GOOD",
+      "item": "Good Token",
+      "status": "ok",
+      "vault": "factorywager",
+    },
+    {
+      "envKey": "TG",
+      "item": "Telegram: bot",
+      "status": "trashed",
+      "vault": "factorywager",
+    },
+  ],
+  "summary": {
+    "activeItems": 2,
+    "healthy": false,
+    "referencedMissing": 1,
+    "referencedOk": 2,
+    "referencedTrashed": 1,
+    "trashedItems": 1,
+    "vaultCount": 2,
+  },
+  "vaults": [
+    {
+      "active": 1,
+      "name": "cloudflare",
+      "trashed": 0,
+      "trashedTitles": [],
+    },
+    {
+      "active": 1,
+      "name": "factorywager",
+      "trashed": 1,
+      "trashedTitles": [
+        "Telegram: bot",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`vault-health healthy report shape (snapshot) 1`] = `
+{
+  "generatedAt": "2026-07-28T00:00:00Z",
+  "kind": "vault-health",
+  "referenced": [
+    {
+      "envKey": "DNS",
+      "item": "DNS Token",
+      "status": "ok",
+      "vault": "cloudflare",
+    },
+  ],
+  "summary": {
+    "activeItems": 2,
+    "healthy": true,
+    "referencedMissing": 0,
+    "referencedOk": 1,
+    "referencedTrashed": 0,
+    "trashedItems": 1,
+    "vaultCount": 2,
+  },
+  "vaults": [
+    {
+      "active": 1,
+      "name": "cloudflare",
+      "trashed": 0,
+      "trashedTitles": [],
+    },
+    {
+      "active": 1,
+      "name": "factorywager",
+      "trashed": 1,
+      "trashedTitles": [
+        "Telegram: bot",
+      ],
+    },
+  ],
+}
+`;

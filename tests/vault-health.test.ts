@@ -86,4 +86,27 @@ describe('vault-health', () => {
     expect(fw.trashed).toBe(1);
     expect(fw.trashedTitles).toEqual(['Telegram: bot']);
   });
+
+  test('report shape is a stable contract (snapshot)', () => {
+    const report = computeVaultHealth(
+      [
+        { envKey: 'GOOD', vault: 'factorywager', item: 'Good Token' },
+        { envKey: 'TG', vault: 'factorywager', item: 'Telegram: bot' },
+        { envKey: 'GH', vault: 'factorywager', item: 'GitHub PAT' },
+        { envKey: 'DNS', vault: 'cloudflare', item: 'DNS Token' },
+      ],
+      live,
+      '2026-07-28T00:00:00Z'
+    );
+    expect(report).toMatchSnapshot();
+  });
+
+  test('healthy report shape (snapshot)', () => {
+    const report = computeVaultHealth(
+      [{ envKey: 'DNS', vault: 'cloudflare', item: 'DNS Token' }],
+      live,
+      '2026-07-28T00:00:00Z'
+    );
+    expect(report).toMatchSnapshot();
+  });
 });
