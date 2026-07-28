@@ -8,6 +8,12 @@
 #
 # Machine install SSOT: ~/.bunfig.toml (linker, globalStore, cache.dir, minimumReleaseAge, minimumReleaseAgeExcludes)
 # Enterprise reference profile (not auto-loaded): ./.bunfig.toml
+#
+# Lockfile linker defaults (https://bun.com/docs/pm/isolated-installs):
+#   root bun.lock MUST keep "configVersion": 1 with workspaces → isolated default.
+#   Machine layer sets linker = "isolated" + globalStore = true (do not duplicate here).
+#   Do not downgrade configVersion to 0 (legacy hoisted default for pre-1.3.2 projects).
+#   Prove: bun run install:verify · portal-cli scanner policy
 
 [console]
 # Deep inspect for doctor gates and nested log fields (default 2 truncates too early)

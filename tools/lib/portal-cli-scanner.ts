@@ -1,3 +1,5 @@
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @see https://bun.com/docs/pm/isolated-installs — configVersion + linker defaults
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/pm/security-scanner-api — Security Scanner API
@@ -210,6 +212,13 @@ export type PackageMgmtPolicy = {
   exact: boolean | undefined;
   frozenLockfile: boolean | undefined;
   saveTextLockfile: boolean | undefined;
+  /** bun.lock configVersion — 1 + workspaces → isolated default (Bun docs). */
+  configVersion: number | null;
+  lockfileVersion: number | null;
+  hasWorkspaces: boolean;
+  expectsIsolatedDefault: boolean;
+  linker: string | null;
+  globalStore: boolean | null;
   installTimeScanner: string | undefined;
   socketMode: InstallSecurityStatus['mode'];
   socketApiKeySet: boolean;
@@ -227,6 +236,12 @@ export function buildPackageMgmtPolicy(
     lastScan: ScannerLastRun | null;
     saveTextLockfile?: boolean;
     cooldownHours?: number;
+    configVersion?: number | null;
+    lockfileVersion?: number | null;
+    hasWorkspaces?: boolean;
+    expectsIsolatedDefault?: boolean;
+    linker?: string | null;
+    globalStore?: boolean | null;
   }
 ): PackageMgmtPolicy {
   const cooldownHours = extras.cooldownHours ?? resolveScanCooldownHours();
@@ -236,7 +251,8 @@ export function buildPackageMgmtPolicy(
     'Socket free mode (no SOCKET_API_KEY): public firewall-api.socket.dev — ~1 request per lockfile package per scan/install.',
     'Socket authenticated mode: org API + paid quota; needs packages:list scope (token 401 without it).',
     'Factory default: install-time scanner OFF in bunfig; on-demand `portal-cli scanner scan` with cooldown.',
-    'CVE alternate (no Socket): `bun audit` / `portal-cli pm` does not include audit passthrough — use `bun audit`.',
+    'CVE alternate (no Socket): `bun audit` — no Socket quota.',
+    'Linker: monorepo uses isolated (machine ~/.bunfig.toml); lockfile configVersion=1 + workspaces → isolated default.',
   ];
   if (n != null && n > 200) {
     quotaNotes.push(
@@ -253,6 +269,12 @@ export function buildPackageMgmtPolicy(
     exact: status.exact,
     frozenLockfile: status.frozenLockfile,
     saveTextLockfile: extras.saveTextLockfile,
+    configVersion: extras.configVersion ?? null,
+    lockfileVersion: extras.lockfileVersion ?? null,
+    hasWorkspaces: extras.hasWorkspaces ?? false,
+    expectsIsolatedDefault: extras.expectsIsolatedDefault ?? false,
+    linker: extras.linker ?? null,
+    globalStore: extras.globalStore ?? null,
     installTimeScanner: status.scanner,
     socketMode: status.mode,
     socketApiKeySet: status.socketApiKeySet,
@@ -268,6 +290,14 @@ export function formatPackageMgmtPolicy(p: PackageMgmtPolicy): string {
   const lastAt = p.lastScan?.at ?? '(never)';
   const lines = [
     'FactoryWager package management policy (Bun-aligned)',
+    '',
+    'Lockfile + linker (https://bun.com/docs/pm/isolated-installs):',
+    `  configVersion:      ${p.configVersion ?? '— (MISSING — run bun install; monorepo requires 1)'}`,
+    `  lockfileVersion:    ${p.lockfileVersion ?? '—'}`,
+    `  workspaces:         ${p.hasWorkspaces ? 'yes' : 'no'}`,
+    `  expects isolated:   ${p.expectsIsolatedDefault ? 'yes (configVersion=1 + workspaces)' : 'no'}`,
+    `  linker:             ${p.linker ?? '—'} (machine SSOT ~/.bunfig.toml)`,
+    `  globalStore:        ${p.globalStore === null || p.globalStore === undefined ? '—' : String(p.globalStore)}`,
     '',
     'Install SSOT (workspace bunfig.toml):',
     `  exact:              ${p.exact === undefined ? '—' : String(p.exact)}`,
@@ -297,8 +327,10 @@ export function formatPackageMgmtPolicy(p: PackageMgmtPolicy): string {
     '  portal-cli scanner configure @socketsecurity/bun-security-scanner --write  # install-time ON',
     '  portal-cli scanner clear --write   # install-time OFF (recommended day-to-day)',
     '  bun audit                          # npm advisories (no Socket)',
+    '  bun run install:verify             # configVersion 1 + isolated linker gate',
     '',
     `Docs: ${SECURITY_SCANNER_DOCS}`,
+    'Isolated installs: https://bun.com/docs/pm/isolated-installs',
     'Bun install: https://bun.com/docs/pm/cli/install',
   ];
   return lines.join('\n');
@@ -446,13 +478,12 @@ export function parseSocketFromVaultMapText(text: string): {
 
 /** Whether package.json deps/devDeps list the scanner package name. */
 export function packageJsonHasScanner(
-  pkgJson: unknown,
+  pkgJson: Record<string, unknown> | null | undefined,
   scanner: string | undefined
 ): boolean {
   if (!scanner || !pkgJson || typeof pkgJson !== 'object') return false;
-  const p = pkgJson as Record<string, unknown>;
   for (const key of ['dependencies', 'devDependencies', 'optionalDependencies'] as const) {
-    const block = p[key];
+    const block = pkgJson[key];
     if (block && typeof block === 'object' && scanner in (block as object)) return true;
   }
   return false;
@@ -496,7 +527,7 @@ export async function readInstallSecurityStatus(
   const pkgFile = Bun.file(packageJsonPath);
   if (await pkgFile.exists()) {
     try {
-      const pj = await pkgFile.json();
+      const pj = (await pkgFile.json()) as Record<string, unknown>;
       // Prefer configured scanner name; also detect Socket package when install-time is off
       scannerInPackageJson =
         packageJsonHasScanner(pj, scanner) || packageJsonHasScanner(pj, SOCKET_SCANNER_PACKAGE);
@@ -532,11 +563,10 @@ export async function readInstallSecurityStatus(
     mapPassRef = vm.passRef;
   }
 
-  const refs = [templatePassRef, mapPassRef, SOCKET_API_KEY_PASS_REF].filter(
-    (r): r is string => Boolean(r)
+  const refs = [templatePassRef, mapPassRef, SOCKET_API_KEY_PASS_REF].filter((r): r is string =>
+    Boolean(r)
   );
-  const socketRefsAligned =
-    refs.length === 0 ? true : refs.every(r => r === refs[0]);
+  const socketRefsAligned = refs.length === 0 ? true : refs.every(r => r === refs[0]);
 
   const mode: InstallSecurityStatus['mode'] = !scanner
     ? 'unconfigured'
@@ -765,8 +795,7 @@ export function setInstallSecurityScanner(text: string, packageName: string): st
 
   // Only match real table headers at line start (not `# #[install.security]` comments)
   const headerRe = /^\[install\.security\]\s*$/im;
-  const scannerLineRe =
-    /^scanner\s*=\s*(?:"[^"]*"|'[^']*'|[^\n#]+)\s*$/im;
+  const scannerLineRe = /^scanner\s*=\s*(?:"[^"]*"|'[^']*'|[^\n#]+)\s*$/im;
 
   if (headerRe.test(text)) {
     // Replace first live scanner assignment after the header, or insert after header
@@ -1093,13 +1122,30 @@ export async function dispatchScanner(
 
   if (cmd === 'policy') {
     const status = await readInstallSecurityStatus(bunfigPath, { cwd });
-    const packageCountEstimate = await estimateLockfilePackageCount(`${cwd}/${DEFAULT_LOCKFILE_REL}`);
+    const packageCountEstimate = await estimateLockfilePackageCount(
+      `${cwd}/${DEFAULT_LOCKFILE_REL}`
+    );
     const lastScan = await readScannerLastRun(`${cwd}/${SCANNER_LAST_REL}`);
+    const { readLockfileInstallMeta } = await import('../../lib/docs/bun-install-linker-docs.ts');
+    const { readMachineBunfig, readProjectBunfig, resolveEffectiveInstallPolicy } = await import(
+      '../../scripts/lib/machine-bunfig.ts'
+    );
+    const lockMeta = await readLockfileInstallMeta(cwd);
+    const eff = resolveEffectiveInstallPolicy(
+      await readProjectBunfig(cwd),
+      await readMachineBunfig()
+    );
     const policy = buildPackageMgmtPolicy(status, {
       packageCountEstimate,
       lastScan,
       saveTextLockfile: status.saveTextLockfile,
       cooldownHours: resolveScanCooldownHours(),
+      configVersion: lockMeta?.configVersion ?? null,
+      lockfileVersion: lockMeta?.lockfileVersion ?? null,
+      hasWorkspaces: lockMeta?.hasWorkspaces ?? false,
+      expectsIsolatedDefault: lockMeta?.expectsIsolatedDefault ?? false,
+      linker: eff.linker,
+      globalStore: eff.globalStore,
     });
     if (hasFlag(rest, '--json')) {
       console.log(JSON.stringify(policy, null, 2));
@@ -1161,7 +1207,9 @@ export async function dispatchScanner(
       return 1;
     }
 
-    const packageCountEstimate = await estimateLockfilePackageCount(`${cwd}/${DEFAULT_LOCKFILE_REL}`);
+    const packageCountEstimate = await estimateLockfilePackageCount(
+      `${cwd}/${DEFAULT_LOCKFILE_REL}`
+    );
     const lastPath = `${cwd}/${SCANNER_LAST_REL}`;
     const lastScan = await readScannerLastRun(lastPath);
     const cooldownHours = resolveScanCooldownHours();
