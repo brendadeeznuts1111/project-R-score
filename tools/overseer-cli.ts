@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/utils#bun-main — Bun.main
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -10,6 +11,7 @@ import { ensureDirectExecution } from '../lib/shared/tools/entry-guard';
 ensureDirectExecution();
 
 import { which, spawn } from 'bun';
+import { logTable } from '../lib/console-depth';
 
 console.info(`Overseer running from: ${Bun.main}`);
 
@@ -24,7 +26,10 @@ if (projects.length === 0) {
 }
 
 console.info('Available projects:');
-console.table(projects.map(p => ({ name: p, path: `${Bun.cwd}/${p}` })));
+logTable(
+  projects.map(p => ({ name: p, path: `${Bun.cwd}/${p}` })),
+  ['name', 'path']
+);
 
 async function runInProject(projectName: string, cmd: string[]) {
   const projectHome = `${Bun.cwd}/${projectName}`;
