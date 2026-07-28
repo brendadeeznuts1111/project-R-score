@@ -85,10 +85,11 @@ Content-Type matrix rows for env page CT section.
    <script type="module" src="/portal/topbar.js"></script>
    ```
 3. Use shared topbar chrome: brand wordmark + priority nav (Home · Ops · Registry · Health · DOD · Compliance) + overflow (Catalog · Skills · Env · Packages · Dashboard · TOC · Limits · Monitoring · Wiki). SSOT: [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) · bake `bun run portal:chrome:bake` → `/registry/portal-chrome.json` · re-apply with `bun run portal:chrome:apply`.
-4. Add topbar status: MD link (if applicable) + health link with `#health-dot` / `#health-label`.
-5. Subscribe to `portal:data` for data; do not inline-fetch `/api/health` for the dot.
-6. Register route in [`scripts/serve-public.ts`](../scripts/serve-public.ts) `buildPublicRoutes()` if needed.
-7. Run `bun run verify:portal:static`.
+4. Bun-native monorepo/portal probes (lockfile, workspaces, scope, semver, snapshots): `bun run portal:probe` · `bun tools/portal-probe.ts --json` · `portal-cli probe lockfile`.
+5. Add topbar status: MD link (if applicable) + health link with `#health-dot` / `#health-label`.
+6. Subscribe to `portal:data` for data; do not inline-fetch `/api/health` for the dot.
+7. Register route in [`scripts/serve-public.ts`](../scripts/serve-public.ts) `buildPublicRoutes()` if needed.
+8. Run `bun run verify:portal:static`.
 
 ---
 

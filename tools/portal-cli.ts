@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -57,9 +58,12 @@ Examples:
 const ROOT_HELP = `FactoryWager portal CLI
 
   portal-cli snapshot <subcommand>   Scope-aware report snapshots
+  portal-cli probe [command]         Bun-native monorepo/portal probes
   portal-cli help                    This message
 
   bun run portal-cli snapshot run --scope prediction
+  bun run portal-cli probe lockfile
+  bun run portal:probe
 `;
 
 function usage(): never {
@@ -75,6 +79,9 @@ async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promis
 
   const { scope: scopeArg, baseUrl, dryRun, debug, positional } = parseSnapshotFlags(rest);
   const scope = await resolveScope(scopeArg);
+  // Only filter by scope when the user explicitly passed --scope; otherwise
+  // list/grep/last would silently hide non-default scopes (default: prediction).
+  const filterScope = scopeArg ? scope : undefined;
 
   switch (sub) {
     case 'run': {
@@ -85,18 +92,18 @@ async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promis
     case 'list': {
       const grepIdx = rest.indexOf('--grep');
       const grep = grepIdx >= 0 ? rest[grepIdx + 1] : undefined;
-      await listSnapshots({ scope, grep, debug });
+      await listSnapshots({ scope: filterScope, grep, debug });
       break;
     }
     case 'grep': {
       const queryParts = positional.filter(p => p !== 'grep');
       const query = queryParts.join(' ').trim();
       if (!query) cliError('grep requires a query (e.g. bias>2 or scope=prediction)');
-      await grepSnapshots(query, { scope, debug });
+      await grepSnapshots(query, { scope: filterScope, debug });
       break;
     }
     case 'last': {
-      await showLastSnapshot({ scope, debug });
+      await showLastSnapshot({ scope: filterScope, debug });
       break;
     }
     case 'config': {
@@ -123,6 +130,17 @@ async function main(): Promise<void> {
   if (cmd === 'snapshot') {
     await dispatchSnapshot(argv[1], argv.slice(2));
     return;
+  }
+
+  if (cmd === 'probe') {
+    // Re-dispatch to portal-probe with remaining args (lockfile | --json | all…)
+    const proc = Bun.spawn(['bun', 'tools/portal-probe.ts', ...argv.slice(1)], {
+      cwd: process.cwd(),
+      stdout: 'inherit',
+      stderr: 'inherit',
+      stdin: 'inherit',
+    });
+    process.exit((await proc.exited) ?? 1);
   }
 
   cliError(`Unknown command: ${cmd}\n\n${ROOT_HELP}`);

@@ -5,7 +5,7 @@
   "engines": {
     "bun": ">=1.4.0"
   },
-  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -1086,7 +1086,7 @@
           }
         ],
         "spf": "v=spf1 include:_spf.protonmail.ch ~all",
-        "dkim": "pending — protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
+        "dkim": "pending \u2014 protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
         "dmarc": "v=DMARC1; p=quarantine; rua=mailto:admin@factory-wager.com; ruf=mailto:admin@factory-wager.com; fo=1",
         "verification": "protonmail-verification=96c089f0b6b18c1c28ff042ec54b48c7d6fe4daf"
       }
@@ -1904,6 +1904,7 @@
     "ci:bun:check": "bun run scripts/ci-bun-check.ts",
     "ci:r2:version:check": "bun run scripts/ci-r2-version-check.ts",
     "check:brands:types": "bun x tsc -p tests/tsconfig.branded.json",
+    "check:snapshot:types": "bun x tsc -p tests/tsconfig.snapshot.json",
     "check:brands:all": "bun run brand:manifest:check && bun run check:brands && bun run check:brands:types",
     "check:env-defaults": "bun scripts/check-env-defaults.ts",
     "check:env-defaults:staged": "bun scripts/check-env-defaults.ts --staged",
@@ -1951,7 +1952,7 @@
     "check:routes": "bun tools/verify-networking.ts --routes-only",
     "check:formdata": "bun tools/verify-formdata.ts",
     "check:formdata:save": "bun tools/verify-formdata.ts --save",
-    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-bun-release.ts --save && bun tools/verify-package-info.ts --save && bun tools/verify-install-env.ts --save && bun tools/verify-registry-client.ts --save && bun tools/verify-install-platform.ts --dry-run --save && bun tools/verify-bun-runtime-nits.ts --save && bun tools/verify-bundler.ts --save && bun tools/build-doc-index.ts --save && bun tools/verify-docs-coverage.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"✅ Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");const ip=await Bun.file(\"public/registry/install-platform.json\").json();console.log(\"✅ Install platform: \"+ip.summary.passed+\"/\"+ip.summary.total);const ie=await Bun.file(\"public/registry/install-env-proof.json\").json();console.log(\"✅ Install env: \"+ie.summary.passed+\"/\"+ie.summary.total+\" probes (6 env + scoped + read-plane)\");const rc=await Bun.file(\"public/registry/registry-client-proof.json\").json();console.log(\"✅ Registry client: \"+rc.summary.passed+\"/\"+rc.summary.total+\" probes (resolve + download + publish) v\"+rc.sdkVersion);const bl=await Bun.file(\"public/registry/bundler-loaders-proof.json\").json();console.log(\"✅ Bundler loaders: \"+bl.summary.passed+\"/\"+bl.summary.total);' && bun tools/verify-channel-meta.ts --prefer-artifacts --save && bun tools/verify-proof-taxonomy.ts --save && bun tools/verify-portal.ts && bun tools/verify-script-flags.ts",
+    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-bun-release.ts --save && bun tools/verify-package-info.ts --save && bun tools/verify-install-env.ts --save && bun tools/verify-registry-client.ts --save && bun tools/verify-install-platform.ts --dry-run --save && bun tools/verify-bun-runtime-nits.ts --save && bun tools/verify-bundler.ts --save && bun tools/build-doc-index.ts --save && bun tools/verify-docs-coverage.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"\u2705 Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");const ip=await Bun.file(\"public/registry/install-platform.json\").json();console.log(\"\u2705 Install platform: \"+ip.summary.passed+\"/\"+ip.summary.total);const ie=await Bun.file(\"public/registry/install-env-proof.json\").json();console.log(\"\u2705 Install env: \"+ie.summary.passed+\"/\"+ie.summary.total+\" probes (6 env + scoped + read-plane)\");const rc=await Bun.file(\"public/registry/registry-client-proof.json\").json();console.log(\"\u2705 Registry client: \"+rc.summary.passed+\"/\"+rc.summary.total+\" probes (resolve + download + publish) v\"+rc.sdkVersion);const bl=await Bun.file(\"public/registry/bundler-loaders-proof.json\").json();console.log(\"\u2705 Bundler loaders: \"+bl.summary.passed+\"/\"+bl.summary.total);' && bun tools/verify-channel-meta.ts --prefer-artifacts --save && bun tools/verify-proof-taxonomy.ts --save && bun tools/verify-portal.ts && bun tools/verify-script-flags.ts",
     "verify:install-env": "bun tools/verify-install-env.ts",
     "verify:portal": "bun tools/verify-portal.ts",
     "verify:portal:static": "bun tools/verify-portal.ts --static-only",
@@ -2109,7 +2110,10 @@
     "cloudflare:validate:vault": "bash scripts/proton-run.sh factorywager --reasonix -- bun run cloudflare:env:validate",
     "proton:audit:quick": "PROTON_PASS_KEY_PROVIDER=fs PROTON_PASS_SESSION_DIR=/tmp/pass-agent-admin pass-cli share list --output json",
     "proton:snapshot:vps": "bun scripts/vps-health-snapshot.ts",
-    "proton:partner:provision": "source scripts/agent-env.sh partners && PROTON_PASS_AGENT_REASON=\"Provisioning partner secrets\" bun scripts/provision-partner-secrets.ts"
+    "proton:partner:provision": "source scripts/agent-env.sh partners && PROTON_PASS_AGENT_REASON=\"Provisioning partner secrets\" bun scripts/provision-partner-secrets.ts",
+    "portal:probe": "bun tools/portal-probe.ts",
+    "portal:probe:json": "bun tools/portal-probe.ts --json",
+    "portal:probe:lockfile": "bun tools/portal-probe.ts lockfile"
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",
