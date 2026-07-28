@@ -90,21 +90,21 @@ protocol = "https-static"
 access = "public"
 note = "Serves app landing, NOT the webhook. Real endpoint: score…/api/telegram/webhook/{tenant}."
 
-[surfaces.support]
-host = "support.factory-wager.com"
-backend = "helpscout (intended)"
-status = "broken"
-protocol = "https"
-access = "external"
-note = "525 SSL handshake failure between Cloudflare and origin (2026-07-28)."
-
 [surfaces.terminal]
 host = "terminal.factory-wager.com"
-backend = "none — no tunnel config exists (machine or repo)"
+backend = "none — CNAME → 293ba37a-844f-413d-8b40-b9a9f8ae1c2a.cfargotunnel.com (orphaned tunnel; credential on this Mac but no config references it)"
 status = "dangling"
 protocol = "https → 502"
 access = "none"
-note = "DNS points at a tunnel that does not exist. Remove the record or provision the tunnel."
+note = "DNS (verified via CF API 2026-07-28): points at the ORPHAN tunnel from tunnel-inventory — the 293ba37a credential's tunnel is terminal.'s. Delete the CNAME (and the dead tunnel in the dashboard) or provision it."
+
+[surfaces.support]
+host = "support.factory-wager.com"
+backend = "CNAME → helpscout.com (proxied)"
+status = "broken"
+protocol = "https → 525"
+access = "external"
+note = "525 SSL handshake failure (verified 2026-07-28): HelpScout has no cert for this custom domain — configure the custom domain in HelpScout (their SSL) or delete the record. Proxied CNAME→CNAME needs the target's cert."
 
 [surfaces.reasonix]
 host = "reasonix.factory-wager.com"
