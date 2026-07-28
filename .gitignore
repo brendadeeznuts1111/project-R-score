@@ -246,6 +246,7 @@ config/*
 !config/domain-branding.json
 !config/vault-map.json
 !config/vault-map.toml
+!config/runtime-flags.json
 # Homebase harness SSOT (must clone into worktrees; not machine secrets)
 !config/bun-dx-catalog.ts
 !config/eslint/
