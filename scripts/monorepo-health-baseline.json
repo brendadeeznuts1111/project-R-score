@@ -1,0 +1,9 @@
+{
+  "$comment": "Ratchet floors for monorepo-health gate. minScore may only rise; max* may only fall. Re-pin: bun scripts/check-monorepo-health.ts --write-baseline",
+  "formulaVersion": 1,
+  "minScore": 30,
+  "maxDeadCodePercent": 15,
+  "maxLargeFilePercent": 45,
+  "maxCyclicDependencyCount": 20,
+  "maxDuplicateDepCount": 5
+}

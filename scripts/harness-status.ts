@@ -58,6 +58,18 @@ const ratchets: Array<{ cmd: string; purpose: string }> = [
   { cmd: 'bun run test:changed:watch', purpose: '--changed --watch' },
   { cmd: 'bun run ci:harness:fast', purpose: 'local parity (quiet)' },
   { cmd: 'bun run ci:harness', purpose: 'harness envelope (quiet)' },
+  {
+    cmd: 'bun run check:import-graph',
+    purpose: 'cycle + deep-relative ratchet (pre-commit · ci:core · monorepo-health SSOT)',
+  },
+  {
+    cmd: 'bun run check:monorepo-health',
+    purpose: 'health score schema + metric floors (ci:core; tests-only on pre-commit when staged)',
+  },
+  {
+    cmd: 'bun run monorepo:health',
+    purpose: 'operator TTY score + SQLite trend (not a commit gate)',
+  },
   { cmd: 'bun run public:discover:check', purpose: 'public/ portal · registry refs' },
   { cmd: 'bun run public:audit:verify', purpose: 'public plane discovery + portal + audit' },
   { cmd: 'bun run discover:compose:check', purpose: 'harness + public discovery' },

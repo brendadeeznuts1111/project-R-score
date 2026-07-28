@@ -355,6 +355,31 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     owner: 'lib/console-depth.ts',
   },
   {
+    id: 'monorepo-health-score',
+    claim:
+      'Monorepo health score collects via Bun.Transpiler/Glob, schema-validates, and ratchets floors (minScore / max dead·large·cycles) in ci:core; pre-commit runs unit tests when health sources staged; import-graph shares scanSourceImports SSOT',
+    kinds: ['unit', 'boundary', 'journey'],
+    gateClass: 'continuous',
+    gateRef: 'ci:core',
+    evidence: [
+      'bun run check:monorepo-health',
+      'bun scripts/check-monorepo-health.ts',
+      'scripts/check-monorepo-health.ts',
+      'scripts/monorepo-health-baseline.json',
+      'lib/harness/monorepo-health.ts',
+      'lib/harness/monorepo-health-ui.ts',
+      'lib/harness/monorepo-health-history.ts',
+      'tools/monorepo-health.ts',
+      'tests/monorepo-health.test.ts',
+      'tests/monorepo-health-ui.test.ts',
+      'tests/check-monorepo-health.test.ts',
+      'docs/harness/tenants/monorepo-health.md',
+    ],
+    freshRerun: 'bun run check:monorepo-health',
+    freshRerunKind: 'claim',
+    owner: 'lib/harness/monorepo-health.ts',
+  },
+  {
     id: 'github-repository-ref-boundaries',
     claim:
       'GitHub repository identity resolves Actions → git remote → CANONICAL_REMOTES and fails loud on garbage wire',

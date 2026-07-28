@@ -1,9 +1,10 @@
 # Tenant: monorepo-health
 
 **Tenant** `monorepo-health`  
-**Runs** `bun run monorepo:health` · `bun tools/monorepo-health.ts`  
-**Proof** `reports/monorepo-health-latest.json` · formula unit tests  
-**Catalog** Bun-native Glob · build metafile · optional Archive  
+**Runs** `bun run monorepo:health` · `bun run check:monorepo-health` · `bun tools/monorepo-health.ts`  
+**Proof** claim `monorepo-health-score` · `reports/monorepo-health-latest.json` · formula unit tests  
+**Gates** pre-commit `--tests-only` when health sources staged · **ci:core** full ratchet · import-graph shares `scanSourceImports`  
+**Catalog** Bun-native Glob · build metafile · optional Archive · SQLite trend
 
 ## Formula (0–100)
 
@@ -38,9 +39,17 @@ Health = 100
 ## CLI
 
 ```bash
+# Continuous gate (ci:core + claim monorepo-health-score)
+bun run check:monorepo-health                    # unit tests + collect + schema + baseline ratchet
+bun scripts/check-monorepo-health.ts --tests-only  # pre-commit when health files staged
+bun scripts/check-monorepo-health.ts --write-baseline  # owners: re-pin floors after intentional change
+bun run check:import-graph                       # cycle/deep-relative (shares scanSourceImports)
+
+# Operator CLI (not a commit gate by itself)
 bun run monorepo:health              # human table + latest JSON + SQLite trend
 bun run monorepo:health:json         # stdout JSON only
 bun run monorepo:health:full         # --with-coverage --archive
+bun run monorepo:health:watch
 bun tools/monorepo-health.ts --no-build
 bun tools/monorepo-health.ts --with-tests
 bun tools/monorepo-health.ts --with-coverage  # tests + All-files line % bonus
@@ -50,6 +59,16 @@ bun tools/monorepo-health.ts --interactive
 bun tools/monorepo-health.ts --inspect
 bun tools/monorepo-health.ts --validate reports/monorepo-health-latest.json
 ```
+
+### Integration
+
+| Surface | Behavior |
+|---------|----------|
+| Husky pre-commit | When `lib/harness/monorepo-health*` / `tools/monorepo-health.ts` / gate/baseline/tests staged → `check-monorepo-health --tests-only` |
+| Husky pre-commit | Always (lib/scripts staged): `check:import-graph` (same Transpiler SSOT) |
+| `ci:core` | Full `check:monorepo-health` after import-graph |
+| Proton / vault | Not this tenant — use `audit:packages:env` · `env:inventory` · `vault:gap:*` · [`proton-integration.md`](proton-integration.md) |
+| Portal bake | Packages board via `audit:packages:*` (related tenant section below) |
 
 ### CLI I/O model
 

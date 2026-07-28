@@ -34,6 +34,10 @@ const CORE_STEPS: Array<{ name: string; cmd: string[] }> = [
     name: 'import-graph',
     cmd: ['bun', 'scripts/check-import-graph.ts'],
   },
+  {
+    name: 'monorepo-health',
+    cmd: ['bun', 'scripts/check-monorepo-health.ts', '--no-history'],
+  },
 ];
 
 async function run(

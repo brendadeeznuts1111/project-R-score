@@ -394,6 +394,29 @@ async function main(): Promise<void> {
     parallelJobs.push(spawnGate('import-graph', ['bun', 'scripts/check-import-graph.ts']));
   }
 
+  // Monorepo-health formula/UI/history — unit tests only (full ratchet lives in ci:core).
+  const monorepoHealthStaged = staged.some(f => {
+    const n = f.replace(/^\.\//, '');
+    return (
+      n === 'tools/monorepo-health.ts' ||
+      n === 'scripts/check-monorepo-health.ts' ||
+      n === 'scripts/monorepo-health-baseline.json' ||
+      n.startsWith('lib/harness/monorepo-health') ||
+      n.startsWith('tests/monorepo-health') ||
+      n === 'tests/check-monorepo-health.test.ts' ||
+      n === 'docs/harness/tenants/monorepo-health.md'
+    );
+  });
+  if (monorepoHealthStaged) {
+    parallelJobs.push(
+      spawnGate('monorepo-health-tests', [
+        'bun',
+        'scripts/check-monorepo-health.ts',
+        '--tests-only',
+      ])
+    );
+  }
+
   // Complexity floor on staged lib/harness sources (Bun.stdin path list — not npm pre*).
   const harnessComplexityStaged = staged.some(f => {
     const n = f.replace(/^\.\//, '');
@@ -419,6 +442,8 @@ async function main(): Promise<void> {
   const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
   const importGraph = parallelResults.find(r => r.name === 'import-graph')?.code ?? 0;
+  const monorepoHealthTests =
+    parallelResults.find(r => r.name === 'monorepo-health-tests')?.code ?? 0;
   const complexityStaged =
     parallelResults.find(r => r.name === 'harness-complexity-staged')?.code ?? 0;
 
@@ -451,6 +476,14 @@ async function main(): Promise<void> {
   }
   if (importGraph !== 0) {
     console.error('❌ import cycle or deep-relative-import growth — bun run check:import-graph');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (monorepoHealthTests !== 0) {
+    console.error(
+      '❌ monorepo-health unit tests failed — bun scripts/check-monorepo-health.ts --tests-only\n' +
+        '   full ratchet: bun run check:monorepo-health (ci:core)'
+    );
     await writeTimings(timings, full);
     process.exit(1);
   }
