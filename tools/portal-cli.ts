@@ -1,12 +1,18 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/pm/cli/pm — bun pm (pack · ls · version · pkg · trust · cache · hash)
+// @see https://bun.com/docs/runtime#general-execution-options — --smol · --console-depth · --bun · --watch
 /**
  * FactoryWager portal CLI — snapshot, probe, secret, vault health, bun pm.
+ *
+ * Bun execution flags (before the command) are forwarded to child `bun` spawns:
+ *   bun tools/portal-cli.ts --smol vault health
+ *   bun tools/portal-cli.ts --console-depth=4 probe lockfile
  *
  *   portal-cli snapshot run [--scope prediction] [--dry-run] [--debug]
  *   portal-cli snapshot list [--scope portal]
@@ -41,6 +47,14 @@ import {
   updatePackageGraphBake,
   type PackageGraphFlags,
 } from './lib/portal-package-scope.ts';
+import {
+  BUN_FLAGS_HELP,
+  parseBunExecutionFlags,
+  spawnBunWithFlags,
+} from './lib/portal-cli-bun-flags.ts';
+
+/** Bun runtime flags harvested from argv (before portal-cli command). */
+let bunExecFlags: string[] = [];
 
 const SNAPSHOT_HELP = `Usage: portal-cli snapshot <subcommand> [options]
 
@@ -50,6 +64,7 @@ Subcommands:
   grep      Search metadata; prints matching manifest paths
   last      Show most recent manifest JSON
   config    Show scope configurations
+  cron      Bun.cron tenant tool passthrough (register|remove|preview)
 
 Options (all subcommands):
   --scope <name>    prediction | portal | gaps | limits (default: PORTAL_SCOPE or prediction)
@@ -158,6 +173,8 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli pm graph
   bun run portal-cli dashboard --view=packages --open
   bun run portal:probe
+
+${BUN_FLAGS_HELP}
 
 Dashboard boards (chrome overflow + weave SSOT):
   /portal/tools/           CLI hub (this map)
@@ -758,6 +775,18 @@ async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promis
       }
       break;
     }
+    case 'cron': {
+      // Passthrough to the Bun.cron tenant tool (register|remove|preview).
+      if (!rest[0]) {
+        cliError('Usage: portal-cli snapshot cron <register|remove|preview> [args…]');
+      }
+      const proc = Bun.spawn(['bun', `${import.meta.dir}/portal-snapshot-cron.ts`, ...rest], {
+        stdout: 'inherit',
+        stderr: 'inherit',
+        stdin: 'inherit',
+      });
+      process.exit((await proc.exited) ?? 1);
+    }
     default:
       cliError(`Unknown snapshot subcommand: ${sub}\n\n${SNAPSHOT_HELP}`);
   }
@@ -779,13 +808,9 @@ async function dispatchVault(sub: string | undefined, rest: string[]): Promise<v
   const args = ['test', 'tests/vault-health.test.ts'];
   if (update) args.push('--update-snapshots');
 
-  const proc = Bun.spawn(['bun', ...args], {
-    cwd: process.cwd(),
-    stdout: 'inherit',
-    stderr: 'inherit',
-    stdin: 'inherit',
-  });
-  const code = (await proc.exited) ?? 1;
+  // Forward Bun execution flags: bun --smol test …
+  // @see https://bun.com/docs/runtime#general-execution-options
+  const code = await spawnBunWithFlags(bunExecFlags, args);
   if (update && code === 0) {
     console.log(
       'vault health: snapshots updated — commit tests/__snapshots__/vault-health.test.ts.snap'
@@ -795,7 +820,10 @@ async function dispatchVault(sub: string | undefined, rest: string[]): Promise<v
 }
 
 async function main(): Promise<void> {
-  const argv = Bun.argv.slice(2);
+  // Harvest Bun runtime flags before portal-cli command (docs/runtime general options).
+  const parsed = parseBunExecutionFlags(Bun.argv.slice(2));
+  bunExecFlags = parsed.bunFlags;
+  const argv = parsed.rest;
   const cmd = argv[0];
 
   if (!cmd || cmd === 'help' || cmd === '--help' || cmd === '-h') {
@@ -809,13 +837,9 @@ async function main(): Promise<void> {
 
   if (cmd === 'probe') {
     // Re-dispatch to portal-probe with remaining args (lockfile | --json | all…)
-    const proc = Bun.spawn(['bun', 'tools/portal-probe.ts', ...argv.slice(1)], {
-      cwd: process.cwd(),
-      stdout: 'inherit',
-      stderr: 'inherit',
-      stdin: 'inherit',
-    });
-    process.exit((await proc.exited) ?? 1);
+    // bun [--smol] tools/portal-probe.ts …
+    const code = await spawnBunWithFlags(bunExecFlags, ['tools/portal-probe.ts', ...argv.slice(1)]);
+    process.exit(code);
   }
 
   if (cmd === 'vault') {
@@ -824,6 +848,7 @@ async function main(): Promise<void> {
   }
 
   if (cmd === 'secret') {
+    // pass-cli children — do not forward Bun flags to pass-cli
     const { dispatchSecret } = await import('./portal-secret.ts');
     await dispatchSecret(argv[1], argv.slice(2));
     return;
@@ -865,14 +890,9 @@ async function main(): Promise<void> {
       return;
     }
     // Full bun pm surface — https://bun.com/docs/pm/cli/pm
-    // Inherit stdio; no invented flags (only what bun pm accepts).
-    const proc = Bun.spawn(['bun', 'pm', ...pmArgs], {
-      cwd: process.cwd(),
-      stdout: 'inherit',
-      stderr: 'inherit',
-      stdin: 'inherit',
-    });
-    process.exit((await proc.exited) ?? 1);
+    // bun [--smol] pm ls …
+    const code = await spawnBunWithFlags(bunExecFlags, ['pm', ...pmArgs]);
+    process.exit(code);
   }
 
   if (cmd === 'dashboard') {
