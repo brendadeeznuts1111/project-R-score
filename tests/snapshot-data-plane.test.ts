@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   formatFlatManifest,
   getLockfileState,
+  limitChartDataFromMetadata,
   matchesGrep,
   type SnapshotManifest,
 } from '../tools/snapshot-core.ts';
@@ -87,5 +88,36 @@ describe('snapshot-data-plane grep + flat manifest', () => {
     // Stable across calls
     const again = await getLockfileState();
     expect(again!.lockHash).toBe(state!.lockHash);
+  });
+
+  test('limitChartDataFromMetadata maps unique* keys to chart books/partners', () => {
+    const data = limitChartDataFromMetadata({
+      raises: '19',
+      decreases: '3',
+      netDelta: '16',
+      avgScore: '0.87',
+      uniqueSportsbooks: '7',
+      uniquePartners: '15',
+    });
+    expect(data).toEqual({
+      raises: 19,
+      decreases: 3,
+      netDelta: 16,
+      avgScore: 0.87,
+      books: 7,
+      partners: 15,
+    });
+  });
+
+  test('limitChartDataFromMetadata defaults missing keys to zero / null avgScore', () => {
+    const data = limitChartDataFromMetadata({});
+    expect(data).toEqual({
+      raises: 0,
+      decreases: 0,
+      netDelta: 0,
+      avgScore: null,
+      books: 0,
+      partners: 0,
+    });
   });
 });

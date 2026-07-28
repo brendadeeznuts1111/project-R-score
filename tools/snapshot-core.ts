@@ -258,6 +258,29 @@ function extractLimitsMetadata(data: Record<string, unknown>, meta: Record<strin
   }
 }
 
+/**
+ * Map limits-scope manifest metadata → limit-chart input (pure; unit-tested).
+ * `books`/`partners` come from `uniqueSportsbooks`/`uniquePartners` written by
+ * extractLimitsMetadata — not from nonexistent `books`/`partners` keys.
+ */
+export function limitChartDataFromMetadata(meta: Record<string, string>): {
+  raises: number;
+  decreases: number;
+  netDelta: number;
+  avgScore: number | null;
+  books: number;
+  partners: number;
+} {
+  return {
+    raises: Number(meta.raises ?? 0),
+    decreases: Number(meta.decreases ?? 0),
+    netDelta: Number(meta.netDelta ?? 0),
+    avgScore: meta.avgScore ? Number(meta.avgScore) : null,
+    books: Number(meta.uniqueSportsbooks ?? 0),
+    partners: Number(meta.uniquePartners ?? 0),
+  };
+}
+
 function extractPortalMetadata(data: Record<string, unknown>, meta: Record<string, string>): void {
   if (data.generatedAt != null) meta.generatedAt = String(data.generatedAt);
   const pred = data.prediction as { coverage?: { mae?: number; n?: number } } | undefined;
@@ -447,36 +470,14 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   // Generate chart artifact for limit scope
   if (scope === 'limits' && manifest.metadata?.status === 'ok') {
     try {
-      const { generateLimitChartSvg } =
-        require('./limit-chart.ts') as typeof import('./limit-chart.ts');
-      const chartData = {
-        raises: Number(manifest.metadata.raises ?? 0),
-        decreases: Number(manifest.metadata.decreases ?? 0),
-        netDelta: Number(manifest.metadata.netDelta ?? 0),
-        avgScore: manifest.metadata.avgScore ? Number(manifest.metadata.avgScore) : null,
-        books: Number(manifest.metadata.books ?? 0),
-        partners: Number(manifest.metadata.partners ?? 0),
-      };
-      const svg = generateLimitChartSvg(chartData);
-      const chartPath = `${snapshotDir}/${id}/chart.svg`;
+      const { generateLimitChartSvg } = await import('./limit-chart.ts');
+      const svg = generateLimitChartSvg(limitChartDataFromMetadata(manifest.metadata));
+      const chartPath = `${snapDir}/${id}/chart.svg`;
       await write(chartPath, svg);
       capturedFiles.push(chartPath);
       console.log(`  📊 Chart: ${chartPath}`);
-
-      // Try rasterizing to PNG via Bun.Image
-      try {
-        const img = new (Bun as any).Image(file(chartPath));
-        if (img && typeof img.png === 'function') {
-          const pngBuf = await img.png();
-          if (pngBuf) {
-            const pngPath = `${snapshotDir}/${id}/chart.png`;
-            await write(pngPath, pngBuf);
-            capturedFiles.push(pngPath);
-          }
-        }
-      } catch {}
-    } catch {
-      console.log('  ⚠️  Chart generation skipped');
+    } catch (e) {
+      warn(`Chart generation skipped: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
 
