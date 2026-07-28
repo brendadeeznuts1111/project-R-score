@@ -24,6 +24,21 @@ import {
 
 const MANIFEST_PATH = new URL('../lib/types/brand-manifest.json', import.meta.url).pathname;
 
+/**
+ * Derive wire/field short forms from a brand name (data-mapping aliases):
+ * `shortName` camelCase for struct/field positions (SessionId → sessionId),
+ * `envName` SCREAMING_SNAKE for env-var and flat-key positions
+ * (SessionId → SESSION_ID, PartnerProfileKey → PARTNER_PROFILE_KEY).
+ * Handles acronym runs (AccessDomainId → ACCESS_DOMAIN_ID).
+ */
+export function shortFormsForBrand(name: string): { shortName: string; envName: string } {
+  const envName = name
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+    .toUpperCase();
+  return { shortName: name.charAt(0).toLowerCase() + name.slice(1), envName };
+}
+
 type Manifest = {
   version: 3;
   generatedAt: string;
@@ -44,6 +59,8 @@ type Manifest = {
       constructors: ReturnType<typeof constructorNamesForBrand>;
       validation: ReturnType<typeof validationForBrand>;
       guard: string;
+      shortName: string;
+      envName: string;
     }
   >;
   constructorTiers: {
@@ -64,6 +81,7 @@ function buildManifest(): Manifest {
     constructors: constructorNamesForBrand(spec.name),
     validation: validationForBrand(spec),
     guard: `BRAND_GUARDS.is${spec.name}`,
+    ...shortFormsForBrand(spec.name),
   }));
   return {
     version: 3,

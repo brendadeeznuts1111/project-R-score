@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-28T22:33:11.009Z",
+  "generatedAt": "2026-07-28T22:48:46.470Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
   "brandCount": 50,
   "domainCount": 9,
@@ -93,7 +93,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isSessionId"
+      "guard": "BRAND_GUARDS.isSessionId",
+      "shortName": "sessionId",
+      "envName": "SESSION_ID"
     },
     {
       "name": "TerminalId",
@@ -119,7 +121,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isTerminalId"
+      "guard": "BRAND_GUARDS.isTerminalId",
+      "shortName": "terminalId",
+      "envName": "TERMINAL_ID"
     },
     {
       "name": "RequestId",
@@ -145,7 +149,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isRequestId"
+      "guard": "BRAND_GUARDS.isRequestId",
+      "shortName": "requestId",
+      "envName": "REQUEST_ID"
     },
     {
       "name": "CorrelationId",
@@ -171,7 +177,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isCorrelationId"
+      "guard": "BRAND_GUARDS.isCorrelationId",
+      "shortName": "correlationId",
+      "envName": "CORRELATION_ID"
     },
     {
       "name": "SnapshotId",
@@ -197,7 +205,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isSnapshotId"
+      "guard": "BRAND_GUARDS.isSnapshotId",
+      "shortName": "snapshotId",
+      "envName": "SNAPSHOT_ID"
     },
     {
       "name": "UserId",
@@ -224,7 +234,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isUserId"
+      "guard": "BRAND_GUARDS.isUserId",
+      "shortName": "userId",
+      "envName": "USER_ID"
     },
     {
       "name": "AccountId",
@@ -250,7 +262,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isAccountId"
+      "guard": "BRAND_GUARDS.isAccountId",
+      "shortName": "accountId",
+      "envName": "ACCOUNT_ID"
     },
     {
       "name": "IdentityId",
@@ -276,7 +290,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isIdentityId"
+      "guard": "BRAND_GUARDS.isIdentityId",
+      "shortName": "identityId",
+      "envName": "IDENTITY_ID"
     },
     {
       "name": "AccessKeyId",
@@ -302,7 +318,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isAccessKeyId"
+      "guard": "BRAND_GUARDS.isAccessKeyId",
+      "shortName": "accessKeyId",
+      "envName": "ACCESS_KEY_ID"
     },
     {
       "name": "TokenId",
@@ -328,7 +346,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isTokenId"
+      "guard": "BRAND_GUARDS.isTokenId",
+      "shortName": "tokenId",
+      "envName": "TOKEN_ID"
     },
     {
       "name": "DocumentId",
@@ -354,7 +374,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isDocumentId"
+      "guard": "BRAND_GUARDS.isDocumentId",
+      "shortName": "documentId",
+      "envName": "DOCUMENT_ID"
     },
     {
       "name": "ZoneId",
@@ -379,7 +401,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isZoneId"
+      "guard": "BRAND_GUARDS.isZoneId",
+      "shortName": "zoneId",
+      "envName": "ZONE_ID"
     },
     {
       "name": "DocTokenId",
@@ -405,7 +429,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isDocTokenId"
+      "guard": "BRAND_GUARDS.isDocTokenId",
+      "shortName": "docTokenId",
+      "envName": "DOC_TOKEN_ID"
     },
     {
       "name": "ChallengeId",
@@ -431,7 +457,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isChallengeId"
+      "guard": "BRAND_GUARDS.isChallengeId",
+      "shortName": "challengeId",
+      "envName": "CHALLENGE_ID"
     },
     {
       "name": "PolicyId",
@@ -457,7 +485,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isPolicyId"
+      "guard": "BRAND_GUARDS.isPolicyId",
+      "shortName": "policyId",
+      "envName": "POLICY_ID"
     },
     {
       "name": "DeploymentId",
@@ -483,7 +513,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isDeploymentId"
+      "guard": "BRAND_GUARDS.isDeploymentId",
+      "shortName": "deploymentId",
+      "envName": "DEPLOYMENT_ID"
     },
     {
       "name": "VersionId",
@@ -509,7 +541,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isVersionId"
+      "guard": "BRAND_GUARDS.isVersionId",
+      "shortName": "versionId",
+      "envName": "VERSION_ID"
     },
     {
       "name": "AuditId",
@@ -535,7 +569,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isAuditId"
+      "guard": "BRAND_GUARDS.isAuditId",
+      "shortName": "auditId",
+      "envName": "AUDIT_ID"
     },
     {
       "name": "AuditFindingId",
@@ -561,7 +597,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isAuditFindingId"
+      "guard": "BRAND_GUARDS.isAuditFindingId",
+      "shortName": "auditFindingId",
+      "envName": "AUDIT_FINDING_ID"
     },
     {
       "name": "AuditConceptId",
@@ -587,7 +625,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isAuditConceptId"
+      "guard": "BRAND_GUARDS.isAuditConceptId",
+      "shortName": "auditConceptId",
+      "envName": "AUDIT_CONCEPT_ID"
     },
     {
       "name": "AuditEntryId",
@@ -613,7 +653,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isAuditEntryId"
+      "guard": "BRAND_GUARDS.isAuditEntryId",
+      "shortName": "auditEntryId",
+      "envName": "AUDIT_ENTRY_ID"
     },
     {
       "name": "EvidenceId",
@@ -639,7 +681,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isEvidenceId"
+      "guard": "BRAND_GUARDS.isEvidenceId",
+      "shortName": "evidenceId",
+      "envName": "EVIDENCE_ID"
     },
     {
       "name": "OperationId",
@@ -665,7 +709,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isOperationId"
+      "guard": "BRAND_GUARDS.isOperationId",
+      "shortName": "operationId",
+      "envName": "OPERATION_ID"
     },
     {
       "name": "ResourceId",
@@ -691,7 +737,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isResourceId"
+      "guard": "BRAND_GUARDS.isResourceId",
+      "shortName": "resourceId",
+      "envName": "RESOURCE_ID"
     },
     {
       "name": "ProjectId",
@@ -717,7 +765,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isProjectId"
+      "guard": "BRAND_GUARDS.isProjectId",
+      "shortName": "projectId",
+      "envName": "PROJECT_ID"
     },
     {
       "name": "PipelineId",
@@ -743,7 +793,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isPipelineId"
+      "guard": "BRAND_GUARDS.isPipelineId",
+      "shortName": "pipelineId",
+      "envName": "PIPELINE_ID"
     },
     {
       "name": "JobId",
@@ -769,7 +821,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isJobId"
+      "guard": "BRAND_GUARDS.isJobId",
+      "shortName": "jobId",
+      "envName": "JOB_ID"
     },
     {
       "name": "StepId",
@@ -795,7 +849,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isStepId"
+      "guard": "BRAND_GUARDS.isStepId",
+      "shortName": "stepId",
+      "envName": "STEP_ID"
     },
     {
       "name": "WebhookId",
@@ -821,7 +877,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isWebhookId"
+      "guard": "BRAND_GUARDS.isWebhookId",
+      "shortName": "webhookId",
+      "envName": "WEBHOOK_ID"
     },
     {
       "name": "FeedId",
@@ -847,7 +905,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isFeedId"
+      "guard": "BRAND_GUARDS.isFeedId",
+      "shortName": "feedId",
+      "envName": "FEED_ID"
     },
     {
       "name": "RunId",
@@ -872,7 +932,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isRunId"
+      "guard": "BRAND_GUARDS.isRunId",
+      "shortName": "runId",
+      "envName": "RUN_ID"
     },
     {
       "name": "DecisionId",
@@ -898,7 +960,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isDecisionId"
+      "guard": "BRAND_GUARDS.isDecisionId",
+      "shortName": "decisionId",
+      "envName": "DECISION_ID"
     },
     {
       "name": "LoopId",
@@ -923,7 +987,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isLoopId"
+      "guard": "BRAND_GUARDS.isLoopId",
+      "shortName": "loopId",
+      "envName": "LOOP_ID"
     },
     {
       "name": "TreeNodeId",
@@ -949,7 +1015,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isTreeNodeId"
+      "guard": "BRAND_GUARDS.isTreeNodeId",
+      "shortName": "treeNodeId",
+      "envName": "TREE_NODE_ID"
     },
     {
       "name": "ExperimentId",
@@ -976,7 +1044,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isExperimentId"
+      "guard": "BRAND_GUARDS.isExperimentId",
+      "shortName": "experimentId",
+      "envName": "EXPERIMENT_ID"
     },
     {
       "name": "ExperimentVariantId",
@@ -1001,7 +1071,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isExperimentVariantId"
+      "guard": "BRAND_GUARDS.isExperimentVariantId",
+      "shortName": "experimentVariantId",
+      "envName": "EXPERIMENT_VARIANT_ID"
     },
     {
       "name": "ExperimentAssignmentId",
@@ -1026,7 +1098,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isExperimentAssignmentId"
+      "guard": "BRAND_GUARDS.isExperimentAssignmentId",
+      "shortName": "experimentAssignmentId",
+      "envName": "EXPERIMENT_ASSIGNMENT_ID"
     },
     {
       "name": "PartnerProfileKey",
@@ -1051,7 +1125,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isPartnerProfileKey"
+      "guard": "BRAND_GUARDS.isPartnerProfileKey",
+      "shortName": "partnerProfileKey",
+      "envName": "PARTNER_PROFILE_KEY"
     },
     {
       "name": "PartnerTemplateId",
@@ -1077,7 +1153,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isPartnerTemplateId"
+      "guard": "BRAND_GUARDS.isPartnerTemplateId",
+      "shortName": "partnerTemplateId",
+      "envName": "PARTNER_TEMPLATE_ID"
     },
     {
       "name": "GateDecisionId",
@@ -1102,7 +1180,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isGateDecisionId"
+      "guard": "BRAND_GUARDS.isGateDecisionId",
+      "shortName": "gateDecisionId",
+      "envName": "GATE_DECISION_ID"
     },
     {
       "name": "OpsChannelEventId",
@@ -1127,7 +1207,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isOpsChannelEventId"
+      "guard": "BRAND_GUARDS.isOpsChannelEventId",
+      "shortName": "opsChannelEventId",
+      "envName": "OPS_CHANNEL_EVENT_ID"
     },
     {
       "name": "StateCode",
@@ -1154,7 +1236,9 @@
         "try": "tryStateCode",
         "parse": "parseStateCode"
       },
-      "guard": "BRAND_GUARDS.isStateCode"
+      "guard": "BRAND_GUARDS.isStateCode",
+      "shortName": "stateCode",
+      "envName": "STATE_CODE"
     },
     {
       "name": "ZipCode",
@@ -1181,7 +1265,9 @@
         "try": "tryZipCode",
         "parse": "parseZipCode"
       },
-      "guard": "BRAND_GUARDS.isZipCode"
+      "guard": "BRAND_GUARDS.isZipCode",
+      "shortName": "zipCode",
+      "envName": "ZIP_CODE"
     },
     {
       "name": "PortalTenantId",
@@ -1207,7 +1293,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isPortalTenantId"
+      "guard": "BRAND_GUARDS.isPortalTenantId",
+      "shortName": "portalTenantId",
+      "envName": "PORTAL_TENANT_ID"
     },
     {
       "name": "TelegramUserId",
@@ -1232,7 +1320,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isTelegramUserId"
+      "guard": "BRAND_GUARDS.isTelegramUserId",
+      "shortName": "telegramUserId",
+      "envName": "TELEGRAM_USER_ID"
     },
     {
       "name": "PortalAccountId",
@@ -1257,7 +1347,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isPortalAccountId"
+      "guard": "BRAND_GUARDS.isPortalAccountId",
+      "shortName": "portalAccountId",
+      "envName": "PORTAL_ACCOUNT_ID"
     },
     {
       "name": "LinkNonceId",
@@ -1282,7 +1374,9 @@
         "shape": "nonblank",
         "ingressNormalization": "trim"
       },
-      "guard": "BRAND_GUARDS.isLinkNonceId"
+      "guard": "BRAND_GUARDS.isLinkNonceId",
+      "shortName": "linkNonceId",
+      "envName": "LINK_NONCE_ID"
     },
     {
       "name": "HostId",
@@ -1310,7 +1404,9 @@
         "try": "tryHostId",
         "parse": "parseHostId"
       },
-      "guard": "BRAND_GUARDS.isHostId"
+      "guard": "BRAND_GUARDS.isHostId",
+      "shortName": "hostId",
+      "envName": "HOST_ID"
     },
     {
       "name": "SurfaceId",
@@ -1338,7 +1434,9 @@
         "try": "trySurfaceId",
         "parse": "parseSurfaceId"
       },
-      "guard": "BRAND_GUARDS.isSurfaceId"
+      "guard": "BRAND_GUARDS.isSurfaceId",
+      "shortName": "surfaceId",
+      "envName": "SURFACE_ID"
     },
     {
       "name": "AccessDomainId",
@@ -1366,7 +1464,9 @@
         "try": "tryAccessDomainId",
         "parse": "parseAccessDomainId"
       },
-      "guard": "BRAND_GUARDS.isAccessDomainId"
+      "guard": "BRAND_GUARDS.isAccessDomainId",
+      "shortName": "accessDomainId",
+      "envName": "ACCESS_DOMAIN_ID"
     }
   ],
   "constructorTiers": {

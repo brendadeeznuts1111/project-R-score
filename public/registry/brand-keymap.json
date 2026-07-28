@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-28T22:33:11.844Z",
+  "generatedAt": "2026-07-28T22:50:39.739Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -122,6 +122,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isSessionId",
+      "shortName": "sessionId",
+      "envName": "SESSION_ID",
       "coverage": {
         "status": "covered",
         "references": 23,
@@ -192,6 +194,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isTerminalId",
+      "shortName": "terminalId",
+      "envName": "TERMINAL_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -245,6 +249,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isRequestId",
+      "shortName": "requestId",
+      "envName": "REQUEST_ID",
       "coverage": {
         "status": "covered",
         "references": 6,
@@ -302,6 +308,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isCorrelationId",
+      "shortName": "correlationId",
+      "envName": "CORRELATION_ID",
       "coverage": {
         "status": "covered",
         "references": 13,
@@ -361,6 +369,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isSnapshotId",
+      "shortName": "snapshotId",
+      "envName": "SNAPSHOT_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -415,6 +425,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isUserId",
+      "shortName": "userId",
+      "envName": "USER_ID",
       "coverage": {
         "status": "referenced-unconstructed",
         "references": 8,
@@ -479,6 +491,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isAccountId",
+      "shortName": "accountId",
+      "envName": "ACCOUNT_ID",
       "coverage": {
         "status": "covered",
         "references": 24,
@@ -552,6 +566,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isIdentityId",
+      "shortName": "identityId",
+      "envName": "IDENTITY_ID",
       "coverage": {
         "status": "covered",
         "references": 14,
@@ -613,6 +629,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isAccessKeyId",
+      "shortName": "accessKeyId",
+      "envName": "ACCESS_KEY_ID",
       "coverage": {
         "status": "covered",
         "references": 12,
@@ -678,6 +696,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isTokenId",
+      "shortName": "tokenId",
+      "envName": "TOKEN_ID",
       "coverage": {
         "status": "covered",
         "references": 14,
@@ -741,6 +761,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isDocumentId",
+      "shortName": "documentId",
+      "envName": "DOCUMENT_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -793,6 +815,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isZoneId",
+      "shortName": "zoneId",
+      "envName": "ZONE_ID",
       "coverage": {
         "status": "covered",
         "references": 4,
@@ -852,6 +876,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isDocTokenId",
+      "shortName": "docTokenId",
+      "envName": "DOC_TOKEN_ID",
       "coverage": {
         "status": "covered",
         "references": 2,
@@ -911,6 +937,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isChallengeId",
+      "shortName": "challengeId",
+      "envName": "CHALLENGE_ID",
       "coverage": {
         "status": "covered",
         "references": 4,
@@ -968,6 +996,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isPolicyId",
+      "shortName": "policyId",
+      "envName": "POLICY_ID",
       "coverage": {
         "status": "covered",
         "references": 5,
@@ -1025,6 +1055,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isDeploymentId",
+      "shortName": "deploymentId",
+      "envName": "DEPLOYMENT_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1078,6 +1110,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isVersionId",
+      "shortName": "versionId",
+      "envName": "VERSION_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1131,6 +1165,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isAuditId",
+      "shortName": "auditId",
+      "envName": "AUDIT_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1184,6 +1220,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isAuditFindingId",
+      "shortName": "auditFindingId",
+      "envName": "AUDIT_FINDING_ID",
       "coverage": {
         "status": "covered",
         "references": 14,
@@ -1247,6 +1285,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isAuditConceptId",
+      "shortName": "auditConceptId",
+      "envName": "AUDIT_CONCEPT_ID",
       "coverage": {
         "status": "covered",
         "references": 14,
@@ -1308,6 +1348,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isAuditEntryId",
+      "shortName": "auditEntryId",
+      "envName": "AUDIT_ENTRY_ID",
       "coverage": {
         "status": "covered",
         "references": 26,
@@ -1375,6 +1417,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isEvidenceId",
+      "shortName": "evidenceId",
+      "envName": "EVIDENCE_ID",
       "coverage": {
         "status": "covered",
         "references": 11,
@@ -1436,6 +1480,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isOperationId",
+      "shortName": "operationId",
+      "envName": "OPERATION_ID",
       "coverage": {
         "status": "covered",
         "references": 6,
@@ -1495,6 +1541,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isResourceId",
+      "shortName": "resourceId",
+      "envName": "RESOURCE_ID",
       "coverage": {
         "status": "referenced-unconstructed",
         "references": 5,
@@ -1552,6 +1600,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isProjectId",
+      "shortName": "projectId",
+      "envName": "PROJECT_ID",
       "coverage": {
         "status": "covered",
         "references": 3,
@@ -1609,6 +1659,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isPipelineId",
+      "shortName": "pipelineId",
+      "envName": "PIPELINE_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1662,6 +1714,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isJobId",
+      "shortName": "jobId",
+      "envName": "JOB_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1715,6 +1769,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isStepId",
+      "shortName": "stepId",
+      "envName": "STEP_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1768,6 +1824,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isWebhookId",
+      "shortName": "webhookId",
+      "envName": "WEBHOOK_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1821,6 +1879,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isFeedId",
+      "shortName": "feedId",
+      "envName": "FEED_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1873,6 +1933,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isRunId",
+      "shortName": "runId",
+      "envName": "RUN_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1926,6 +1988,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isDecisionId",
+      "shortName": "decisionId",
+      "envName": "DECISION_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -1978,6 +2042,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isLoopId",
+      "shortName": "loopId",
+      "envName": "LOOP_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -2031,6 +2097,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isTreeNodeId",
+      "shortName": "treeNodeId",
+      "envName": "TREE_NODE_ID",
       "coverage": {
         "status": "covered",
         "references": 247,
@@ -2111,6 +2179,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isExperimentId",
+      "shortName": "experimentId",
+      "envName": "EXPERIMENT_ID",
       "coverage": {
         "status": "covered",
         "references": 32,
@@ -2179,6 +2249,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isExperimentVariantId",
+      "shortName": "experimentVariantId",
+      "envName": "EXPERIMENT_VARIANT_ID",
       "coverage": {
         "status": "covered",
         "references": 3,
@@ -2237,6 +2309,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isExperimentAssignmentId",
+      "shortName": "experimentAssignmentId",
+      "envName": "EXPERIMENT_ASSIGNMENT_ID",
       "coverage": {
         "status": "covered",
         "references": 0,
@@ -2293,6 +2367,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isPartnerProfileKey",
+      "shortName": "partnerProfileKey",
+      "envName": "PARTNER_PROFILE_KEY",
       "coverage": {
         "status": "covered",
         "references": 3,
@@ -2350,6 +2426,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isPartnerTemplateId",
+      "shortName": "partnerTemplateId",
+      "envName": "PARTNER_TEMPLATE_ID",
       "coverage": {
         "status": "covered",
         "references": 24,
@@ -2420,6 +2498,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isGateDecisionId",
+      "shortName": "gateDecisionId",
+      "envName": "GATE_DECISION_ID",
       "coverage": {
         "status": "covered",
         "references": 2,
@@ -2480,6 +2560,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isOpsChannelEventId",
+      "shortName": "opsChannelEventId",
+      "envName": "OPS_CHANNEL_EVENT_ID",
       "coverage": {
         "status": "covered",
         "references": 2,
@@ -2540,6 +2622,8 @@
         "parse": "parseStateCode"
       },
       "guard": "BRAND_GUARDS.isStateCode",
+      "shortName": "stateCode",
+      "envName": "STATE_CODE",
       "coverage": {
         "status": "covered",
         "references": 19,
@@ -2608,6 +2692,8 @@
         "parse": "parseZipCode"
       },
       "guard": "BRAND_GUARDS.isZipCode",
+      "shortName": "zipCode",
+      "envName": "ZIP_CODE",
       "coverage": {
         "status": "covered",
         "references": 10,
@@ -2667,6 +2753,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isPortalTenantId",
+      "shortName": "portalTenantId",
+      "envName": "PORTAL_TENANT_ID",
       "coverage": {
         "status": "covered",
         "references": 26,
@@ -2735,6 +2823,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isTelegramUserId",
+      "shortName": "telegramUserId",
+      "envName": "TELEGRAM_USER_ID",
       "coverage": {
         "status": "covered",
         "references": 20,
@@ -2811,6 +2901,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isPortalAccountId",
+      "shortName": "portalAccountId",
+      "envName": "PORTAL_ACCOUNT_ID",
       "coverage": {
         "status": "covered",
         "references": 15,
@@ -2873,6 +2965,8 @@
         "ingressNormalization": "trim"
       },
       "guard": "BRAND_GUARDS.isLinkNonceId",
+      "shortName": "linkNonceId",
+      "envName": "LINK_NONCE_ID",
       "coverage": {
         "status": "unused",
         "references": 0,
@@ -2928,9 +3022,11 @@
         "parse": "parseHostId"
       },
       "guard": "BRAND_GUARDS.isHostId",
+      "shortName": "hostId",
+      "envName": "HOST_ID",
       "coverage": {
         "status": "covered",
-        "references": 10,
+        "references": 13,
         "constructors": {
           "as": 7,
           "try": 0,
@@ -2938,16 +3034,18 @@
         },
         "guards": 0,
         "files": [
+          "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
           "scripts/bake-surfaces.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 10,
+            "references": 13,
             "constructionCalls": 7,
             "guardCalls": 0,
             "files": [
+              "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
               "scripts/bake-surfaces.ts"
             ]
@@ -2989,9 +3087,11 @@
         "parse": "parseSurfaceId"
       },
       "guard": "BRAND_GUARDS.isSurfaceId",
+      "shortName": "surfaceId",
+      "envName": "SURFACE_ID",
       "coverage": {
         "status": "covered",
-        "references": 2,
+        "references": 5,
         "constructors": {
           "as": 2,
           "try": 0,
@@ -2999,15 +3099,17 @@
         },
         "guards": 0,
         "files": [
+          "lib/surfaces/inventory.ts",
           "scripts/bake-surfaces.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 2,
+            "references": 5,
             "constructionCalls": 2,
             "guardCalls": 0,
             "files": [
+              "lib/surfaces/inventory.ts",
               "scripts/bake-surfaces.ts"
             ]
           },
@@ -3048,27 +3150,33 @@
         "parse": "parseAccessDomainId"
       },
       "guard": "BRAND_GUARDS.isAccessDomainId",
+      "shortName": "accessDomainId",
+      "envName": "ACCESS_DOMAIN_ID",
       "coverage": {
         "status": "covered",
-        "references": 6,
+        "references": 15,
         "constructors": {
-          "as": 4,
+          "as": 5,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
+          "lib/verification/cloudflare-access-policy.ts",
           "scripts/bake-surfaces.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 6,
-            "constructionCalls": 4,
+            "references": 15,
+            "constructionCalls": 5,
             "guardCalls": 0,
             "files": [
+              "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
+              "lib/verification/cloudflare-access-policy.ts",
               "scripts/bake-surfaces.ts"
             ]
           },
