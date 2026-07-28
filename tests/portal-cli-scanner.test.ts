@@ -97,6 +97,7 @@ describe('portal-cli-scanner pure helpers', () => {
       scanner: undefined,
       frozenLockfile: true,
       exact: true,
+      saveTextLockfile: true,
       socketApiKeySet: false,
       socketApiKeyPassRef: 'pass://factorywager/Socket API Key/password',
       scannerInPackageJson: false,
@@ -141,13 +142,14 @@ field = "password"
     expect(packageJsonHasScanner({ dependencies: {} }, SOCKET_SCANNER_PACKAGE)).toBe(false);
   });
 
-  test('doctor is ok for fully wired free-mode Socket status', () => {
+  test('doctor is ok for package present + install-time off (quota-safe)', () => {
     const s = {
       bunfigPath: 'bunfig.toml',
       bunfigExists: true,
-      scanner: SOCKET_SCANNER_PACKAGE,
+      scanner: undefined,
       frozenLockfile: true,
       exact: true,
+      saveTextLockfile: true,
       socketApiKeySet: false,
       socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
       scannerInPackageJson: true,
@@ -155,21 +157,23 @@ field = "password"
       socketInEnvTemplate: true,
       socketInVaultMap: true,
       socketRefsAligned: true,
-      mode: 'free' as const,
+      mode: 'unconfigured' as const,
     };
     const r = evaluateDoctor(s);
     expect(r.ok).toBe(true);
-    expect(r.mode).toBe('free');
-    expect(buildDoctorChecks(s).every(c => c.ok || c.level === 'info')).toBe(true);
+    expect(buildDoctorChecks(s).find(c => c.id === 'install-time-scanner')?.message).toContain(
+      'OFF'
+    );
   });
 
-  test('doctor fails fatal when scanner missing', () => {
+  test('doctor fails fatal when scanner package missing', () => {
     const r = evaluateDoctor({
       bunfigPath: 'bunfig.toml',
       bunfigExists: true,
       scanner: undefined,
       frozenLockfile: true,
       exact: true,
+      saveTextLockfile: true,
       socketApiKeySet: false,
       socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
       scannerInPackageJson: false,
@@ -180,7 +184,7 @@ field = "password"
       mode: 'unconfigured',
     });
     expect(r.ok).toBe(false);
-    expect(r.checks.find(c => c.id === 'scanner-configured')?.ok).toBe(false);
+    expect(r.checks.find(c => c.id === 'scanner-package')?.ok).toBe(false);
   });
 
   test('PORTAL_CLI_COMMANDS includes scanner', () => {
@@ -337,14 +341,15 @@ describe('portal-cli scanner CLI', () => {
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
     const j = JSON.parse(out);
-    expect(j.scanner).toBe(SOCKET_SCANNER_PACKAGE);
+    // install-time scanner may be off (quota-safe); package still present
+    expect(j.scannerInPackageJson).toBe(true);
     expect(j.socketApiKeyPassRef).toBe(SOCKET_API_KEY_PASS_REF);
     expect(j.socketInEnvTemplate).toBe(true);
     expect(j.socketInVaultMap).toBe(true);
     expect(['free', 'authenticated', 'unconfigured']).toContain(j.mode);
   });
 
-  test('scanner doctor exits 0 for configured Socket free mode', async () => {
+  test('scanner doctor exits 0 with package present and install-time off', async () => {
     const proc = Bun.spawn(['bun', CLI, 'scanner', 'doctor'], {
       cwd: ROOT,
       stdout: 'pipe',
@@ -354,7 +359,47 @@ describe('portal-cli scanner CLI', () => {
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
     expect(out).toContain('doctor');
-    expect(out).toContain('scanner-configured');
+    expect(out).toContain('scanner-package');
+    expect(out).toContain('install-time-scanner');
+  });
+
+  test('scanner policy and estimate are API-free', async () => {
+    for (const sub of ['policy', 'estimate'] as const) {
+      const proc = Bun.spawn(['bun', CLI, 'scanner', sub, '--json'], {
+        cwd: ROOT,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      });
+      const code = await proc.exited;
+      const out = await new Response(proc.stdout).text();
+      expect(code).toBe(0);
+      const j = JSON.parse(out);
+      if (sub === 'estimate') {
+        expect(j.packageCountEstimate).toBeGreaterThan(100);
+        expect(j.freeApiHitsIfScanned).toBe(j.packageCountEstimate);
+      } else {
+        expect(j.kind).toBe('portal-cli-package-policy');
+        expect(j.scanCooldownHours).toBeGreaterThanOrEqual(0);
+        expect(Array.isArray(j.quotaNotes)).toBe(true);
+      }
+    }
+  });
+
+  test('evaluateScanCooldown skips within window unless force', async () => {
+    const { evaluateScanCooldown } = await import('../tools/lib/portal-cli-scanner.ts');
+    const last = {
+      kind: 'portal-scanner-last' as const,
+      schemaVersion: 1 as const,
+      at: new Date().toISOString(),
+      mode: 'free' as const,
+      exitCode: 0,
+      packageCountEstimate: 100,
+      force: false,
+    };
+    const blocked = evaluateScanCooldown(last, { cooldownHours: 24, nowMs: Date.now() });
+    expect(blocked.skip).toBe(true);
+    const forced = evaluateScanCooldown(last, { force: true, cooldownHours: 24 });
+    expect(forced.skip).toBe(false);
   });
 
   test('scanner vault prints Pass create recipe without secrets', async () => {
@@ -390,8 +435,8 @@ describe('portal-cli scanner CLI', () => {
     expect(out).toContain('warn');
   });
 
-  test('scanner scan with Socket configured exits 0 (free mode OK)', async () => {
-    const proc = Bun.spawn(['bun', CLI, 'scanner', 'scan'], {
+  test('scanner scan --oneshot --force free mode exits 0 (quota path)', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'scanner', 'scan', '--oneshot', '--force'], {
       cwd: ROOT,
       stdout: 'pipe',
       stderr: 'pipe',
@@ -399,13 +444,20 @@ describe('portal-cli scanner CLI', () => {
     const code = await proc.exited;
     const out = (await new Response(proc.stdout).text()) + (await new Response(proc.stderr).text());
     expect(code).toBe(0);
-    // free mode warning or clean scan summary
+    // free mode warning or clean scan summary; oneshot restores bunfig
     expect(
       out.includes('No advisories') ||
         out.includes('free mode') ||
         out.includes('Scanning') ||
+        out.includes('oneshot') ||
         out.includes('pm scan')
     ).toBe(true);
+    // bunfig should not retain a live install-time scanner line after oneshot
+    const bunfig = await Bun.file(`${ROOT}/bunfig.toml`).text();
+    expect(/^scanner\s*=\s*"@socketsecurity\/bun-security-scanner"/m.test(bunfig)).toBe(
+      false
+    );
+    expect(/^\[install\.security\]\s*$/m.test(bunfig)).toBe(false);
   });
 
   test('root help lists scanner command', async () => {

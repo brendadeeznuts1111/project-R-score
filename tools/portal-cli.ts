@@ -199,7 +199,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli capabilities health [--update] Capability-map subset snapshot gate
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
-  portal-cli scanner <subcommand>    Bun Security Scanner (status · doctor · vault · scan)
+  portal-cli scanner <subcommand>    Bun Security Scanner (policy · estimate · scan --oneshot)
   portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
   portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
   portal-cli help                    This message

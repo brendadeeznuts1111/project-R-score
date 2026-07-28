@@ -3,6 +3,7 @@
 // @see https://bun.com/docs/pm/security-scanner-api — Security Scanner API
 // @see https://bun.com/docs/runtime/bunfig#install-security-scanner — [install.security] scanner
 // @see https://bun.com/docs/pm/cli/pm — bun pm scan
+// @see https://bun.com/docs/pm/cli/audit — bun audit (npm advisory alternate)
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -15,19 +16,21 @@
  *   - One-off / lockfile scan: `bun pm scan` (requires scanner configured)
  *   - Scanner packages export `scanner: Bun.Security.Scanner` with `version: "1"`
  *     and `scan({ packages })` → `Bun.Security.Advisory[]` (fatal | warn)
- *   - Optional Socket org mode: SOCKET_API_KEY (packages scope)
+ *   - Optional Socket org mode: SOCKET_API_KEY (packages:list scope)
+ *
+ * Quota policy (FactoryWager monorepo ~750 lockfile packages):
+ *   - Default: NO install-time scanner in bunfig (every bun install/add would hit
+ *     Socket free API once per purl → burns free quota). Use on-demand scan.
+ *   - `portal-cli scanner scan` has a cooldown (default 24h); pass --force to override.
+ *   - Prefer free mode (no SOCKET_API_KEY in .env) unless org token + packages:list.
+ *   - Alternate CVE path: `bun audit` (npm registry) — no Socket quota.
  *
  * Docs example package `@oven/bun-security-scanner` is **not** a real npm package.
  * Official authoring template: https://github.com/oven-sh/security-scanner-template
  * Real Socket package: @socketsecurity/bun-security-scanner
  *
- *   portal-cli scanner status [--json]
- *   portal-cli scanner doctor [--strict] [--json]
- *   portal-cli scanner vault
- *   portal-cli scanner scan
- *   portal-cli scanner configure <pkg> --write
- *   portal-cli scanner install <pkg>
- *   portal-cli scanner init [dir]
+ *   portal-cli scanner status|doctor|policy|estimate|vault|scan [--force]
+ *   portal-cli scanner configure|clear|install|init
  */
 
 export const SECURITY_SCANNER_DOCS = 'https://bun.com/docs/pm/security-scanner-api';
@@ -46,7 +49,260 @@ export const DEFAULT_BUNFIG_REL = 'bunfig.toml';
 export const DEFAULT_ENV_TEMPLATE_REL = 'env.template';
 export const DEFAULT_VAULT_MAP_REL = 'config/vault-map.toml';
 export const DEFAULT_PACKAGE_JSON_REL = 'package.json';
+export const DEFAULT_LOCKFILE_REL = 'bun.lock';
 export const DEFAULT_INIT_DIR = 'my-security-scanner';
+/** Last on-demand scan stamp (no secrets) — gitignored under tmp/. */
+export const SCANNER_LAST_REL = 'tmp/portal-scanner-last.json';
+/** Default min hours between on-demand scans (protect free Socket quota). */
+export const DEFAULT_SCAN_COOLDOWN_HOURS = 24;
+/** Env override: PORTAL_SCANNER_COOLDOWN_HOURS=0 disables cooldown. */
+export const SCAN_COOLDOWN_ENV = 'PORTAL_SCANNER_COOLDOWN_HOURS';
+
+export type ScannerLastRun = {
+  kind: 'portal-scanner-last';
+  schemaVersion: 1;
+  at: string;
+  mode: 'free' | 'authenticated' | 'unconfigured';
+  exitCode: number;
+  packageCountEstimate: number | null;
+  force: boolean;
+};
+
+/** Approximate package entries from bun.lock text (JSON-with-trailing-commas). */
+export function estimateLockfilePackageCountFromText(text: string): number {
+  // bun.lock v1 "packages" values are arrays: `    "@scope/name": ["@scope/name@1.0.0", ...`
+  // Also accept object form `    "name": {` for older shapes.
+  let n = 0;
+  let inPackages = false;
+  for (const line of text.split(/\r?\n/)) {
+    if (/^\s*"packages"\s*:\s*\{/.test(line)) {
+      inPackages = true;
+      continue;
+    }
+    if (!inPackages) continue;
+    // end of top-level packages map (2-space close after entries)
+    if (/^\s{2}\},?\s*$/.test(line) && n > 0) break;
+    if (/^\s{4}"[^"]+"\s*:\s*[\[{]/.test(line)) n++;
+  }
+  return n;
+}
+
+export async function estimateLockfilePackageCount(
+  lockPath: string = DEFAULT_LOCKFILE_REL
+): Promise<number | null> {
+  const f = Bun.file(lockPath);
+  if (!(await f.exists())) return null;
+  return estimateLockfilePackageCountFromText(await f.text());
+}
+
+export function resolveScanCooldownHours(
+  env: Record<string, string | undefined> = Bun.env
+): number {
+  const raw = env[SCAN_COOLDOWN_ENV];
+  if (raw === undefined || raw === '') return DEFAULT_SCAN_COOLDOWN_HOURS;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < 0) return DEFAULT_SCAN_COOLDOWN_HOURS;
+  return n;
+}
+
+export async function readScannerLastRun(
+  path: string = SCANNER_LAST_REL
+): Promise<ScannerLastRun | null> {
+  const f = Bun.file(path);
+  if (!(await f.exists())) return null;
+  try {
+    const j = (await f.json()) as ScannerLastRun;
+    if (j?.kind !== 'portal-scanner-last' || typeof j.at !== 'string') return null;
+    return j;
+  } catch {
+    return null;
+  }
+}
+
+export async function writeScannerLastRun(
+  run: ScannerLastRun,
+  path: string = SCANNER_LAST_REL
+): Promise<void> {
+  await Bun.write(path, `${JSON.stringify(run, null, 2)}\n`);
+}
+
+export type ScanCooldownDecision = {
+  skip: boolean;
+  reason: string;
+  last: ScannerLastRun | null;
+  cooldownHours: number;
+  remainingMs: number;
+};
+
+export function evaluateScanCooldown(
+  last: ScannerLastRun | null,
+  opts: { force?: boolean; cooldownHours?: number; nowMs?: number } = {}
+): ScanCooldownDecision {
+  const cooldownHours = opts.cooldownHours ?? DEFAULT_SCAN_COOLDOWN_HOURS;
+  const nowMs = opts.nowMs ?? Date.now();
+  if (opts.force) {
+    return {
+      skip: false,
+      reason: 'forced (--force)',
+      last,
+      cooldownHours,
+      remainingMs: 0,
+    };
+  }
+  if (cooldownHours <= 0) {
+    return {
+      skip: false,
+      reason: 'cooldown disabled',
+      last,
+      cooldownHours,
+      remainingMs: 0,
+    };
+  }
+  if (!last?.at) {
+    return {
+      skip: false,
+      reason: 'no prior on-demand scan',
+      last,
+      cooldownHours,
+      remainingMs: 0,
+    };
+  }
+  const lastMs = Date.parse(last.at);
+  if (!Number.isFinite(lastMs)) {
+    return {
+      skip: false,
+      reason: 'prior stamp unreadable',
+      last,
+      cooldownHours,
+      remainingMs: 0,
+    };
+  }
+  const windowMs = cooldownHours * 3600_000;
+  const elapsed = nowMs - lastMs;
+  if (elapsed < windowMs) {
+    return {
+      skip: true,
+      reason: `within ${cooldownHours}h cooldown`,
+      last,
+      cooldownHours,
+      remainingMs: windowMs - elapsed,
+    };
+  }
+  return {
+    skip: false,
+    reason: 'cooldown elapsed',
+    last,
+    cooldownHours,
+    remainingMs: 0,
+  };
+}
+
+export function formatDurationMs(ms: number): string {
+  if (ms <= 0) return '0m';
+  const h = Math.floor(ms / 3600_000);
+  const m = Math.floor((ms % 3600_000) / 60_000);
+  if (h > 0) return `${h}h${m > 0 ? ` ${m}m` : ''}`;
+  return `${Math.max(1, m)}m`;
+}
+
+export type PackageMgmtPolicy = {
+  kind: 'portal-cli-package-policy';
+  exact: boolean | undefined;
+  frozenLockfile: boolean | undefined;
+  saveTextLockfile: boolean | undefined;
+  installTimeScanner: string | undefined;
+  socketMode: InstallSecurityStatus['mode'];
+  socketApiKeySet: boolean;
+  packageCountEstimate: number | null;
+  scanCooldownHours: number;
+  lastScan: ScannerLastRun | null;
+  cooldown: ScanCooldownDecision;
+  quotaNotes: string[];
+};
+
+export function buildPackageMgmtPolicy(
+  status: InstallSecurityStatus,
+  extras: {
+    packageCountEstimate: number | null;
+    lastScan: ScannerLastRun | null;
+    saveTextLockfile?: boolean;
+    cooldownHours?: number;
+  }
+): PackageMgmtPolicy {
+  const cooldownHours = extras.cooldownHours ?? resolveScanCooldownHours();
+  const cooldown = evaluateScanCooldown(extras.lastScan, { cooldownHours });
+  const n = extras.packageCountEstimate;
+  const quotaNotes: string[] = [
+    'Socket free mode (no SOCKET_API_KEY): public firewall-api.socket.dev — ~1 request per lockfile package per scan/install.',
+    'Socket authenticated mode: org API + paid quota; needs packages:list scope (token 401 without it).',
+    'Factory default: install-time scanner OFF in bunfig; on-demand `portal-cli scanner scan` with cooldown.',
+    'CVE alternate (no Socket): `bun audit` / `portal-cli pm` does not include audit passthrough — use `bun audit`.',
+  ];
+  if (n != null && n > 200) {
+    quotaNotes.push(
+      `This lockfile ≈ ${n} packages — one free-mode scan ≈ ${n} public API hits. Prefer cooldown + intentional --force.`
+    );
+  }
+  if (status.scanner) {
+    quotaNotes.push(
+      'Install-time scanner ON: every `bun install` / `bun add` re-scans packages (high quota cost). Clear with `portal-cli scanner clear --write` for day-to-day.'
+    );
+  }
+  return {
+    kind: 'portal-cli-package-policy',
+    exact: status.exact,
+    frozenLockfile: status.frozenLockfile,
+    saveTextLockfile: extras.saveTextLockfile,
+    installTimeScanner: status.scanner,
+    socketMode: status.mode,
+    socketApiKeySet: status.socketApiKeySet,
+    packageCountEstimate: n,
+    scanCooldownHours: cooldownHours,
+    lastScan: extras.lastScan,
+    cooldown,
+    quotaNotes,
+  };
+}
+
+export function formatPackageMgmtPolicy(p: PackageMgmtPolicy): string {
+  const lastAt = p.lastScan?.at ?? '(never)';
+  const lines = [
+    'FactoryWager package management policy (Bun-aligned)',
+    '',
+    'Install SSOT (workspace bunfig.toml):',
+    `  exact:              ${p.exact === undefined ? '—' : String(p.exact)}`,
+    `  frozenLockfile:     ${p.frozenLockfile === undefined ? '—' : String(p.frozenLockfile)}`,
+    `  saveTextLockfile:   ${p.saveTextLockfile === undefined ? '—' : String(p.saveTextLockfile)}`,
+    `  install-time scanner: ${p.installTimeScanner ?? '(off — on-demand only)'}`,
+    '',
+    'Socket / security:',
+    `  mode:               ${p.socketMode}`,
+    `  SOCKET_API_KEY:     ${p.socketApiKeySet ? 'set' : 'unset (free mode)'}`,
+    `  lockfile packages≈  ${p.packageCountEstimate ?? '—'}`,
+    `  scan cooldown:      ${p.scanCooldownHours}h (env ${SCAN_COOLDOWN_ENV})`,
+    `  last on-demand:     ${lastAt}`,
+    `  next scan:          ${
+      p.cooldown.skip
+        ? `wait ${formatDurationMs(p.cooldown.remainingMs)} (or --force)`
+        : 'allowed now'
+    }`,
+    '',
+    'Quota notes:',
+    ...p.quotaNotes.map(n => `  · ${n}`),
+    '',
+    'Commands:',
+    '  portal-cli scanner estimate',
+    '  portal-cli scanner scan            # respects cooldown',
+    '  portal-cli scanner scan --force    # intentional full scan (CI / after bun add)',
+    '  portal-cli scanner configure @socketsecurity/bun-security-scanner --write  # install-time ON',
+    '  portal-cli scanner clear --write   # install-time OFF (recommended day-to-day)',
+    '  bun audit                          # npm advisories (no Socket)',
+    '',
+    `Docs: ${SECURITY_SCANNER_DOCS}`,
+    'Bun install: https://bun.com/docs/pm/cli/install',
+  ];
+  return lines.join('\n');
+}
 
 /** npm package name shape: name or @scope/name (no invented packages). */
 const SCANNER_PKG_RE = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/i;
@@ -70,6 +326,7 @@ export type InstallSecurityStatus = {
   scanner: string | undefined;
   frozenLockfile: boolean | undefined;
   exact: boolean | undefined;
+  saveTextLockfile: boolean | undefined;
   /**
    * Whether SOCKET_API_KEY is present in the process env (value never returned).
    * Socket free mode works without it; org settings need packages-scoped token.
@@ -99,19 +356,35 @@ export function parseInstallSecurityFromText(text: string): {
   scanner: string | undefined;
   frozenLockfile: boolean | undefined;
   exact: boolean | undefined;
+  saveTextLockfile: boolean | undefined;
 } {
   let parsed: unknown;
   try {
     parsed = Bun.TOML.parse(text);
   } catch {
-    return { scanner: undefined, frozenLockfile: undefined, exact: undefined };
+    return {
+      scanner: undefined,
+      frozenLockfile: undefined,
+      exact: undefined,
+      saveTextLockfile: undefined,
+    };
   }
   if (!parsed || typeof parsed !== 'object') {
-    return { scanner: undefined, frozenLockfile: undefined, exact: undefined };
+    return {
+      scanner: undefined,
+      frozenLockfile: undefined,
+      exact: undefined,
+      saveTextLockfile: undefined,
+    };
   }
   const install = (parsed as Record<string, unknown>).install;
   if (!install || typeof install !== 'object') {
-    return { scanner: undefined, frozenLockfile: undefined, exact: undefined };
+    return {
+      scanner: undefined,
+      frozenLockfile: undefined,
+      exact: undefined,
+      saveTextLockfile: undefined,
+    };
   }
   const inst = install as Record<string, unknown>;
   const security = inst.security;
@@ -124,6 +397,8 @@ export function parseInstallSecurityFromText(text: string): {
     scanner,
     frozenLockfile: typeof inst.frozenLockfile === 'boolean' ? inst.frozenLockfile : undefined,
     exact: typeof inst.exact === 'boolean' ? inst.exact : undefined,
+    saveTextLockfile:
+      typeof inst.saveTextLockfile === 'boolean' ? inst.saveTextLockfile : undefined,
   };
 }
 
@@ -208,28 +483,36 @@ export async function readInstallSecurityStatus(
   let scanner: string | undefined;
   let frozenLockfile: boolean | undefined;
   let exact: boolean | undefined;
+  let saveTextLockfile: boolean | undefined;
   if (exists) {
     const parsed = parseInstallSecurityFromText(await f.text());
     scanner = parsed.scanner;
     frozenLockfile = parsed.frozenLockfile;
     exact = parsed.exact;
+    saveTextLockfile = parsed.saveTextLockfile;
   }
 
   let scannerInPackageJson = false;
   const pkgFile = Bun.file(packageJsonPath);
   if (await pkgFile.exists()) {
     try {
-      scannerInPackageJson = packageJsonHasScanner(await pkgFile.json(), scanner);
+      const pj = await pkgFile.json();
+      // Prefer configured scanner name; also detect Socket package when install-time is off
+      scannerInPackageJson =
+        packageJsonHasScanner(pj, scanner) || packageJsonHasScanner(pj, SOCKET_SCANNER_PACKAGE);
     } catch {
       scannerInPackageJson = false;
     }
   }
 
   let scannerInNodeModules = false;
-  if (scanner) {
+  for (const name of [scanner, SOCKET_SCANNER_PACKAGE].filter(Boolean) as string[]) {
     // scoped packages: @scope/name → node_modules/@scope/name/package.json
-    const nm = `${cwd}/node_modules/${scanner}/package.json`;
-    scannerInNodeModules = await Bun.file(nm).exists();
+    const nm = `${cwd}/node_modules/${name}/package.json`;
+    if (await Bun.file(nm).exists()) {
+      scannerInNodeModules = true;
+      break;
+    }
   }
 
   let socketInEnvTemplate = false;
@@ -267,6 +550,7 @@ export async function readInstallSecurityStatus(
     scanner,
     frozenLockfile,
     exact,
+    saveTextLockfile,
     socketApiKeySet,
     socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
     scannerInPackageJson,
@@ -297,6 +581,9 @@ export type DoctorReport = {
 
 /** Pure readiness checklist from status (no I/O). */
 export function buildDoctorChecks(s: InstallSecurityStatus): DoctorCheck[] {
+  // Prefer package present + install-time OFF (quota). On-demand: scan --oneshot.
+  const socketPkgReady = s.scannerInPackageJson || s.scannerInNodeModules;
+
   const checks: DoctorCheck[] = [
     {
       id: 'bunfig-exists',
@@ -307,32 +594,40 @@ export function buildDoctorChecks(s: InstallSecurityStatus): DoctorCheck[] {
         : `bunfig missing: ${s.bunfigPath}`,
     },
     {
-      id: 'scanner-configured',
+      id: 'scanner-package',
       level: 'fatal',
-      ok: Boolean(s.scanner),
+      ok: socketPkgReady || Boolean(s.scanner),
+      message: socketPkgReady
+        ? `scanner package available (${SOCKET_SCANNER_PACKAGE} or configured)`
+        : s.scanner
+          ? `scanner "${s.scanner}" configured but package missing from package.json/node_modules`
+          : `install ${SOCKET_SCANNER_PACKAGE} (devDep) for on-demand --oneshot scans`,
+    },
+    {
+      id: 'install-time-scanner',
+      level: 'info',
+      ok: true,
       message: s.scanner
-        ? `[install.security] scanner = "${s.scanner}"`
-        : 'no [install.security] scanner configured',
+        ? `[install.security] ON = "${s.scanner}" (every bun install hits Socket API — high quota cost)`
+        : 'install-time scanner OFF (quota-safe; use scan --oneshot --force)',
     },
     {
       id: 'scanner-in-package-json',
       level: 'warn',
-      ok: !s.scanner || s.scannerInPackageJson,
-      message: !s.scanner
-        ? 'skip package.json (no scanner)'
-        : s.scannerInPackageJson
-          ? `package.json lists ${s.scanner}`
-          : `package.json missing ${s.scanner} (run: portal-cli scanner install ${s.scanner})`,
+      ok: socketPkgReady || !s.scanner,
+      message: s.scannerInPackageJson
+        ? `package.json lists scanner package`
+        : s.scanner
+          ? `package.json missing configured scanner (run: portal-cli scanner install ${s.scanner})`
+          : `prefer package.json devDependency ${SOCKET_SCANNER_PACKAGE}`,
     },
     {
       id: 'scanner-in-node-modules',
       level: 'warn',
-      ok: !s.scanner || s.scannerInNodeModules,
-      message: !s.scanner
-        ? 'skip node_modules (no scanner)'
-        : s.scannerInNodeModules
-          ? `node_modules has ${s.scanner}`
-          : `node_modules missing ${s.scanner} (bun install)`,
+      ok: s.scannerInNodeModules || !s.scannerInPackageJson,
+      message: s.scannerInNodeModules
+        ? `node_modules has scanner package`
+        : 'node_modules missing scanner (bun install)',
     },
     {
       id: 'socket-api-key',
@@ -468,15 +763,37 @@ export function setInstallSecurityScanner(text: string, packageName: string): st
   const escaped = pkg.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   const block = `[install.security]\nscanner = "${escaped}"\n`;
 
-  // Replace existing scanner = "…" under [install.security]
-  const sectionRe = /(\[install\.security\][^[]*?)(\nscanner\s*=\s*(?:"[^"]*"|'[^']*'|[^\n#]+))/is;
-  if (sectionRe.test(text)) {
-    return text.replace(sectionRe, `$1\nscanner = "${escaped}"`);
-  }
+  // Only match real table headers at line start (not `# #[install.security]` comments)
+  const headerRe = /^\[install\.security\]\s*$/im;
+  const scannerLineRe =
+    /^scanner\s*=\s*(?:"[^"]*"|'[^']*'|[^\n#]+)\s*$/im;
 
-  // Section exists but no scanner key — append key after header
-  if (/\[install\.security\]/i.test(text)) {
-    return text.replace(/(\[install\.security\])/i, `$1\nscanner = "${escaped}"`);
+  if (headerRe.test(text)) {
+    // Replace first live scanner assignment after the header, or insert after header
+    const lines = text.split(/\r?\n/);
+    let headerIdx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (/^\[install\.security\]\s*$/i.test(lines[i]!)) {
+        headerIdx = i;
+        break;
+      }
+    }
+    if (headerIdx >= 0) {
+      let replaced = false;
+      for (let i = headerIdx + 1; i < lines.length; i++) {
+        const L = lines[i]!;
+        if (/^\[/.test(L)) break; // next table
+        if (scannerLineRe.test(L)) {
+          lines[i] = `scanner = "${escaped}"`;
+          replaced = true;
+          break;
+        }
+      }
+      if (!replaced) {
+        lines.splice(headerIdx + 1, 0, `scanner = "${escaped}"`);
+      }
+      return lines.join('\n');
+    }
   }
 
   // Append new section (with leading newline if file non-empty)
@@ -495,21 +812,62 @@ export function setInstallSecurityScanner(text: string, packageName: string): st
  * Pure text transform: remove scanner key; drop empty [install.security] table.
  */
 export function clearInstallSecurityScanner(text: string): string {
-  if (!/\[install\.security\]/i.test(text)) return text;
+  // Only touch real `[install.security]` tables (line-start), not commented docs.
+  if (!/^\[install\.security\]\s*$/im.test(text)) return text;
 
-  // Remove scanner assignment lines inside the section (best-effort)
-  let next = text.replace(
-    /(\[install\.security\][^[]*?)\nscanner\s*=\s*(?:"[^"]*"|'[^']*'|[^\n#]+)[^\n]*/gi,
-    '$1'
-  );
+  const lines = text.split(/\r?\n/);
+  const out: string[] = [];
+  let inSec = false;
+  let secBuf: string[] = [];
 
-  // If section is now only header (+ blank/comment lines until next table), drop it
+  const flushSec = () => {
+    // Keep section only if non-scanner live keys remain
+    const kept = secBuf.filter(l => {
+      const t = l.trim();
+      if (!t) return true; // preserve blank structure if we keep section
+      if (t.startsWith('#')) return true;
+      if (/^\[install\.security\]$/i.test(t)) return true;
+      if (/^scanner\s*=/.test(t)) return false;
+      return true;
+    });
+    const liveKeys = kept.filter(l => {
+      const t = l.trim();
+      return t && !t.startsWith('#') && !/^\[install\.security\]$/i.test(t);
+    });
+    if (liveKeys.length > 0) {
+      out.push(...kept);
+    }
+    // else drop entire section (quota-safe default: no install-time scanner)
+    secBuf = [];
+    inSec = false;
+  };
+
+  for (const L of lines) {
+    if (/^\[install\.security\]\s*$/i.test(L)) {
+      if (inSec) flushSec();
+      inSec = true;
+      secBuf = [L];
+      continue;
+    }
+    if (inSec) {
+      if (/^\[/.test(L)) {
+        flushSec();
+        out.push(L);
+      } else {
+        secBuf.push(L);
+      }
+      continue;
+    }
+    out.push(L);
+  }
+  if (inSec) flushSec();
+
+  let next = out.join('\n');
+  // Drop orphaned security comment banners left empty
   next = next.replace(
-    /\n*#\s*Bun Security Scanner[^\n]*\n(?:#\s*Scanners export[^\n]*\n)?\[install\.security\]\s*(?:\n(?:\s*|#.*))*?(?=\n\[|\s*$)/gi,
+    /\n*#\s*Bun Security Scanner[^\n]*\n(?:#\s*Scanners export[^\n]*\n)?(?=\n|\s*$)/gi,
     '\n'
   );
-  // Bare empty [install.security] with optional trailing blanks
-  next = next.replace(/\n*\[install\.security\]\s*(?:\n\s*)*(?=\n\[|\s*$)/gi, '\n');
   return next.replace(/\n{3,}/g, '\n\n').replace(/\s+$/, '\n');
 }
 
@@ -580,52 +938,51 @@ Grounded Bun Security Scanner control plane — no invented packages/APIs.
 Docs: ${SECURITY_SCANNER_DOCS}
 Real Socket package: ${SOCKET_SCANNER_PACKAGE}
 
+Quota-safe defaults (monorepo ≈ hundreds of lockfile packages):
+  · Install-time scanner OFF by default (every bun install would re-hit Socket free API)
+  · On-demand scan cooldown ${DEFAULT_SCAN_COOLDOWN_HOURS}h (override: ${SCAN_COOLDOWN_ENV}=N, or --force)
+  · Prefer free mode (no SOCKET_API_KEY in .env) unless org token has packages:list
+  · Alternate CVE path: bun audit (npm registry — no Socket quota)
+
 Subcommands:
   status [--json]        Show bunfig + vault wiring + package presence (default)
   doctor [--strict] [--json]
                          Readiness checklist (fatal fails exit 1; --strict fails on warns)
+  policy [--json]        Bun install SSOT + Socket quota policy
+  estimate [--json]      Lockfile package count (no API calls)
   vault                  Pass ref + pass-cli create recipe for SOCKET_API_KEY
-  scan                   Run \`bun pm scan\` (requires scanner configured)
-  configure <pkg>        Preview / write scanner into bunfig.toml
+  scan [--force]         Run \`bun pm scan\` (cooldown unless --force; needs scanner in bunfig)
+  configure <pkg>        Preview / write install-time scanner into bunfig.toml
                          --write   apply (default is dry-run preview)
                          --bunfig <path>  (default: bunfig.toml)
-  clear                  Preview / remove scanner from bunfig.toml
+  clear                  Preview / remove install-time scanner from bunfig.toml
                          --write   apply
   install <pkg>          bun add -d <pkg> (does not auto-unfreeze lockfile)
   init [dir]             git clone official scanner template
                          (default dir: ${DEFAULT_INIT_DIR})
   help                   This message
 
-Real mechanics:
-  1. Install a scanner package (or author from template)
-  2. Set bunfig:  [install.security]
-                  scanner = "your-package"
-  3. bun install / bun add run the scanner; one-off: bun pm scan
-  4. Optional: SOCKET_API_KEY via Pass inject for Socket org mode
+Recommended flow:
+  1. Keep install-time scanner OFF day-to-day (scanner clear --write)
+  2. After intentional bun add / weekly: scanner configure … --write && scanner scan --force
+     then scanner clear --write again  — or leave OFF and only: scanner scan --force
+     (scan requires scanner package name in bunfig for bun pm scan)
+  3. CI: bun run scanner:ci  (uses --force)
 
-Scanner package export shape (template):
-  export const scanner: Bun.Security.Scanner = {
-    version: "1",
-    async scan({ packages }) { return advisories; }  // level: fatal | warn
-  };
-
-Advisories:
-  fatal  — install stops immediately
-  warn   — TTY prompts; CI/non-TTY cancels
-
-Examples:
-  portal-cli scanner status
-  portal-cli scanner status --json
-  portal-cli scanner doctor
-  portal-cli scanner doctor --strict
-  portal-cli scanner vault
+For one-off scan without permanent install-time config, configure just before scan:
   portal-cli scanner configure ${SOCKET_SCANNER_PACKAGE} --write
-  portal-cli scanner install ${SOCKET_SCANNER_PACKAGE}
-  portal-cli scanner scan
-  portal-cli scanner init my-org-scanner
+  portal-cli scanner scan --force
   portal-cli scanner clear --write
 
-Also available via passthrough: portal-cli pm scan  →  bun pm scan
+Examples:
+  portal-cli scanner policy
+  portal-cli scanner estimate
+  portal-cli scanner scan
+  portal-cli scanner scan --force
+  portal-cli scanner doctor
+  portal-cli scanner vault
+
+Also: portal-cli pm scan → bun pm scan (no cooldown). Prefer portal-cli scanner scan.
 `;
 
 export type ScannerDispatchOpts = {
@@ -725,8 +1082,58 @@ export async function dispatchScanner(
       console.log(JSON.stringify(report, null, 2));
     } else {
       console.log(formatDoctorReport(report));
+      if (status.scanner) {
+        console.log(
+          '\nquota: install-time scanner ON — every bun install/add hits Socket. Prefer clear --write day-to-day.'
+        );
+      }
     }
     return report.ok ? 0 : 1;
+  }
+
+  if (cmd === 'policy') {
+    const status = await readInstallSecurityStatus(bunfigPath, { cwd });
+    const packageCountEstimate = await estimateLockfilePackageCount(`${cwd}/${DEFAULT_LOCKFILE_REL}`);
+    const lastScan = await readScannerLastRun(`${cwd}/${SCANNER_LAST_REL}`);
+    const policy = buildPackageMgmtPolicy(status, {
+      packageCountEstimate,
+      lastScan,
+      saveTextLockfile: status.saveTextLockfile,
+      cooldownHours: resolveScanCooldownHours(),
+    });
+    if (hasFlag(rest, '--json')) {
+      console.log(JSON.stringify(policy, null, 2));
+    } else {
+      console.log(formatPackageMgmtPolicy(policy));
+    }
+    return 0;
+  }
+
+  if (cmd === 'estimate') {
+    const n = await estimateLockfilePackageCount(`${cwd}/${DEFAULT_LOCKFILE_REL}`);
+    const status = await readInstallSecurityStatus(bunfigPath, { cwd });
+    const payload = {
+      kind: 'portal-scanner-estimate',
+      packageCountEstimate: n,
+      mode: status.mode,
+      installTimeScanner: status.scanner ?? null,
+      socketApiKeySet: status.socketApiKeySet,
+      freeApiHitsIfScanned: n,
+      note:
+        n != null
+          ? `Free-mode Socket ≈ ${n} public API requests per full scan/install-time pass.`
+          : 'bun.lock not found',
+    };
+    if (hasFlag(rest, '--json')) {
+      console.log(JSON.stringify(payload, null, 2));
+    } else {
+      console.log(`Lockfile package estimate: ${n ?? '—'}`);
+      console.log(`Socket free-mode API hits if scanned: ${n ?? '—'}`);
+      console.log(`Mode: ${status.mode} · install-time scanner: ${status.scanner ?? '(off)'}`);
+      console.log(payload.note);
+      console.log('(no Socket API called)');
+    }
+    return 0;
   }
 
   if (cmd === 'vault') {
@@ -735,18 +1142,88 @@ export async function dispatchScanner(
   }
 
   if (cmd === 'scan') {
-    const status = await readInstallSecurityStatus(bunfigPath, { cwd });
-    if (!status.scanner) {
+    const force = hasFlag(rest, '--force');
+    // --oneshot: temporarily set Socket scanner in bunfig, scan, clear — no lasting install-time cost
+    const oneshot = hasFlag(rest, '--oneshot');
+    let status = await readInstallSecurityStatus(bunfigPath, { cwd });
+    let restoredBunfig: string | null = null;
+
+    if (!status.scanner && !oneshot) {
       console.error(
         `error: no security scanner configured in ${bunfigPath}\n` +
-          `  [install.security]\n  scanner = "package_name"\n\n` +
-          `  portal-cli scanner configure <pkg> --write\n` +
+          `  Quota-safe one-shot (no lasting install-time scanner):\n` +
+          `    portal-cli scanner scan --oneshot --force\n\n` +
+          `  Or leave install-time ON (costs Socket API on every bun install):\n` +
+          `    portal-cli scanner configure ${SOCKET_SCANNER_PACKAGE} --write\n` +
+          `    portal-cli scanner scan --force\n\n` +
           `Docs: ${SECURITY_SCANNER_DOCS}`
       );
       return 1;
     }
-    // Real command: bun pm scan
-    return spawnBun(['pm', 'scan'], { cwd });
+
+    const packageCountEstimate = await estimateLockfilePackageCount(`${cwd}/${DEFAULT_LOCKFILE_REL}`);
+    const lastPath = `${cwd}/${SCANNER_LAST_REL}`;
+    const lastScan = await readScannerLastRun(lastPath);
+    const cooldownHours = resolveScanCooldownHours();
+    const decision = evaluateScanCooldown(lastScan, { force, cooldownHours });
+
+    if (decision.skip) {
+      console.log(
+        `scan skipped: ${decision.reason} (remaining ${formatDurationMs(decision.remainingMs)})\n` +
+          `  last: ${lastScan?.at ?? '—'}\n` +
+          `  packages≈ ${packageCountEstimate ?? '—'} · mode=${status.mode}\n` +
+          `  re-run with --force to spend Socket quota intentionally\n` +
+          `  policy: portal-cli scanner policy`
+      );
+      return 0;
+    }
+
+    if (oneshot) {
+      const f = Bun.file(bunfigPath);
+      const current = (await f.exists()) ? await f.text() : '';
+      restoredBunfig = current;
+      const next = setInstallSecurityScanner(current, SOCKET_SCANNER_PACKAGE);
+      await Bun.write(bunfigPath, next.endsWith('\n') ? next : `${next}\n`);
+      status = await readInstallSecurityStatus(bunfigPath, { cwd });
+      console.log(
+        `oneshot: temporarily set scanner = ${SOCKET_SCANNER_PACKAGE} (will clear after scan)\n`
+      );
+    }
+
+    if (packageCountEstimate != null && packageCountEstimate > 200) {
+      console.log(
+        `note: ≈${packageCountEstimate} packages · free mode ≈ that many Socket free API hits\n` +
+          `  mode=${status.mode} · force=${force} · oneshot=${oneshot}\n`
+      );
+    }
+
+    let code = 1;
+    try {
+      // Real command: bun pm scan
+      code = await spawnBun(['pm', 'scan'], { cwd });
+    } finally {
+      if (oneshot && restoredBunfig != null) {
+        await Bun.write(
+          bunfigPath,
+          restoredBunfig.endsWith('\n') ? restoredBunfig : `${restoredBunfig}\n`
+        );
+        console.log(`oneshot: restored ${bunfigPath} (install-time scanner off again)`);
+      }
+    }
+
+    await writeScannerLastRun(
+      {
+        kind: 'portal-scanner-last',
+        schemaVersion: 1,
+        at: new Date().toISOString(),
+        mode: status.mode === 'unconfigured' ? 'free' : status.mode,
+        exitCode: code,
+        packageCountEstimate,
+        force,
+      },
+      lastPath
+    );
+    return code;
   }
 
   if (cmd === 'configure') {

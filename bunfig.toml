@@ -6,7 +6,7 @@
 #   4. Global file (~/.bunfig.toml) — machine-wide defaults
 # @see https://bun.com/docs/runtime/bunfig#global-vs-local
 #
-# Machine install SSOT: ~/.bunfig.toml (linker, globalStore, cache.dir, minimumReleaseAge)
+# Machine install SSOT: ~/.bunfig.toml (linker, globalStore, cache.dir, minimumReleaseAge, minimumReleaseAgeExcludes)
 # Enterprise reference profile (not auto-loaded): ./.bunfig.toml
 
 [console]
@@ -96,6 +96,12 @@ hostname = "0.0.0.0"
 output = "public"
 
 # Bun Security Scanner — https://bun.com/docs/pm/security-scanner-api
-# Scanners export: { version: "1", scan({ packages }) => Advisory[] }
-[install.security]
-scanner = "@socketsecurity/bun-security-scanner"
+# Quota policy: install-time scanner OFF by default (this monorepo ≈ 750 lockfile packages;
+# Socket free mode ≈ 1 public API hit per package per install/scan — protects free quota).
+# On-demand (recommended):
+#   portal-cli scanner scan --oneshot --force
+# Install-time ON (only when intentionally scanning every bun install/add):
+#   portal-cli scanner configure @socketsecurity/bun-security-scanner --write
+# Package stays a devDependency; clear with: portal-cli scanner clear --write
+# #[install.security]
+# #scanner = "@socketsecurity/bun-security-scanner"
