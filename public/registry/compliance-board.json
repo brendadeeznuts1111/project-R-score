@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T00:51:17.341Z",
+  "generatedAt": "2026-07-28T04:24:17.749Z",
   "enhancements": {
-    "generatedAt": "2026-07-28T00:51:17.320Z",
+    "generatedAt": "2026-07-28T04:24:17.684Z",
     "consoleDepth": 4,
     "rows": [
       {
@@ -130,11 +130,11 @@
     ],
     "passed": 8,
     "total": 8,
-    "signature": "f3aa87d1eb017f4dfc27c2e4bb6325a8ab39bdc464852057f3fd83c84259554e"
+    "signature": "65b394bdd0d9d0766775a900cd31e422fae71e2ba4d88ac092e062287353c480"
   },
   "shadow": {
-    "generatedAt": "2026-07-28T00:51:17.341Z",
-    "base": "http://127.0.0.1:62225/",
+    "generatedAt": "2026-07-28T04:24:17.748Z",
+    "base": "http://127.0.0.1:61586/",
     "rows": [
       {
         "state": "MA",
@@ -210,13 +210,13 @@
       "block": 4,
       "mismatches": 0
     },
-    "signature": "0e81169ff971a71fc009ba747e673cf1de5e1472fd8fc11d30b8bda1912ee48e",
+    "signature": "691ae55cbdc6a0a2b655d7b55bd9d0aa78573f34db814d799cdfd97f5cdd8afc",
     "proof": {
       "algorithm": "sha3-256",
-      "digest": "0e81169ff971a71fc009ba747e673cf1de5e1472fd8fc11d30b8bda1912ee48e",
+      "digest": "691ae55cbdc6a0a2b655d7b55bd9d0aa78573f34db814d799cdfd97f5cdd8afc",
       "bunVersion": "1.4.0",
-      "generatedAt": "2026-07-28T00:51:17.341Z",
-      "hmac": "cab811d1cd812a7d6f820a206ed84e672273d873f1281843a84ee248e9aabb2c"
+      "generatedAt": "2026-07-28T04:24:17.748Z",
+      "hmac": "1f301388cb477bd79bb950bac57e8357b9ac30e364074e6a910e9afd4acea037"
     }
   },
   "geo": {
@@ -251,14 +251,25 @@
       }
     ]
   },
+  "deepAudit": {
+    "zipWindow": {
+      "ok": true,
+      "days": 90,
+      "mode": "enriched",
+      "totalPlays": 10,
+      "inWindowPlays": 4,
+      "label": "ZIP 90d window via enriched_at (4/10 plays)"
+    },
+    "command": "bun run ops:audit:deep"
+  },
   "integrity": {
     "scoreHint": "integrity+hmac",
     "proof": {
       "algorithm": "sha3-256",
-      "digest": "c6a3e96437897d2634b45e4f0cdc39c734f558ee7e0c30dc55cec00a81ca584c",
+      "digest": "6a3c1f4ddfae53005b2ea792b6de8cef9609f4982c8f52a02f539765ba9c8d10",
       "bunVersion": "1.4.0",
-      "generatedAt": "2026-07-28T00:51:17.346Z",
-      "hmac": "b4ce58a81cfd13016d0223f6312bf08c789aa53298b2130baa9fa5523c683b95"
+      "generatedAt": "2026-07-28T04:24:17.764Z",
+      "hmac": "136eea7f135053e6cf23d5c315c82adfa53a591d7c87f3801105bf27887f4b46"
     },
     "checks": [
       {
@@ -279,12 +290,17 @@
       {
         "id": "hmac",
         "ok": true,
-        "label": "HMAC (REPORT_SIGNING_SECRET from vault/mint)"
+        "label": "HMAC present (REPORT_SIGNING_SECRET)"
       },
       {
         "id": "geo",
         "ok": true,
         "label": "Geo profiles discrete (state/age/location/zip)"
+      },
+      {
+        "id": "zip-window",
+        "ok": true,
+        "label": "ZIP 90d window via enriched_at (4/10 plays)"
       }
     ]
   },

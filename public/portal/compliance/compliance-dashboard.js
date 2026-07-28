@@ -76,7 +76,6 @@ function render(board, source) {
   document.getElementById('st-enh').textContent = `${enh.passed ?? 0}/${enh.total ?? 0}`;
   document.getElementById('st-allow').textContent = String(shadow.summary?.allow ?? '—');
   document.getElementById('st-block').textContent = String(shadow.summary?.block ?? '—');
-  const mm = shadow.summary?.mismatches ?? 0;
   document.getElementById('st-mm').textContent = String(mm);
   document.getElementById('st-mm-wrap').className = mm > 0 ? 'cmp-stat bad' : 'cmp-stat ok';
 
@@ -148,10 +147,32 @@ function render(board, source) {
       : '<tr><td colspan="5">Run bun run compliance:bake to populate geo profiles</td></tr>';
   }
 
+  // ZIP day-window (deep audit proof)
+  const zip = board.deepAudit?.zipWindow;
+  const zipStats = document.getElementById('zip-stats');
+  if (zipStats && zip) {
+    zipStats.hidden = false;
+    const okEl = document.getElementById('st-zip-ok');
+    const wrap = document.getElementById('st-zip-ok-wrap');
+    if (okEl) okEl.textContent = zip.ok ? `${zip.days}d ✓` : `${zip.days}d ✗`;
+    if (wrap) wrap.className = zip.ok ? 'cmp-stat ok' : 'cmp-stat bad';
+    const modeEl = document.getElementById('st-zip-mode');
+    if (modeEl) modeEl.textContent = zip.mode ?? '—';
+    const inEl = document.getElementById('st-zip-in');
+    if (inEl) inEl.textContent = String(zip.inWindowPlays ?? '—');
+    const totEl = document.getElementById('st-zip-total');
+    if (totEl) totEl.textContent = String(zip.totalPlays ?? '—');
+    const zipSig = document.getElementById('zip-sig');
+    if (zipSig) {
+      zipSig.textContent = `${zip.label ?? ''} · ${board.deepAudit?.command ?? 'bun run ops:audit:deep'}`;
+    }
+  }
+
   const proton = board.proton ?? {};
   document.getElementById('cmp-cmds').textContent = [
     '# Bake (offline-safe)',
     'bun run compliance:bake',
+    'bun run compliance:verify',
     '',
     '# Vault inject + bake (Proton Pass → CLOUDFLARE_API_TOKEN for deploy)',
     proton.bakeVault ?? 'bun run compliance:bake:vault',
@@ -168,6 +189,9 @@ function render(board, source) {
     'bun run ops:compliance:mock',
     'bun run ops:audit:deep',
     'bun run ops:compliance:report',
+    '',
+    '# Telegram /register with MA/NJ geo',
+    '# /register <ref> <name> state=NJ age=28 zip=07102 loc=Newark idv=yes',
     '',
     '# Onboard with MA/NJ geo (code)',
     '# applyPartnerOnboardPackage(db, plan, { compliance: { stateCode: "NJ", age: 28, location: "Newark", zipCode: "07102" } })',

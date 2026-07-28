@@ -18,9 +18,21 @@ export type ZipClusterStat = {
   avg_clv: number | null;
 };
 
+export type ZipDayWindowMode = 'none' | 'plays' | 'enriched';
+
+export type ZipClusterStatsResult = {
+  stats: ZipClusterStat[];
+  window: { days: number; mode: ZipDayWindowMode; applied: boolean };
+};
+
 export class ZipEnrichmentRepo extends ScopedRepository {
   constructor(db: Database, scope: Scope) {
     super(db, scope, 'play_zip_enrichment');
+  }
+
+  /** Which timestamp column drives the day window (or none). */
+  resolveDayWindowMode(days = 90): ZipDayWindowMode {
+    return this.dayWindowClause(days).mode;
   }
 
   /**
@@ -28,6 +40,11 @@ export class ZipEnrichmentRepo extends ScopedRepository {
    * Pass `days <= 0` or omit finite bound to include all rows for scope.
    */
   getClusterStats(days = 90): ZipClusterStat[] {
+    return this.getClusterStatsWithMeta(days).stats;
+  }
+
+  /** Same as {@link getClusterStats} plus which day-window mode applied. */
+  getClusterStatsWithMeta(days = 90): ZipClusterStatsResult {
     const hasZipPrefix = this.columnExists('play_zip_enrichment', 'zip_prefix');
     const zipCol = hasZipPrefix ? 'z.zip_prefix' : 'substr(z.zip_code, 1, 3)';
     const zipAlias = hasZipPrefix ? 'z.zip_prefix' : 'substr(z.zip_code, 1, 3)';
@@ -74,6 +91,7 @@ export class ZipEnrichmentRepo extends ScopedRepository {
     const whereSql = scopeWhere.join(' AND ');
     const hasAnalysis = this.tableExists('play_analysis');
 
+    let stats: ZipClusterStat[];
     if (!hasAnalysis) {
       const sql = `
         SELECT ${zipCol} AS zip_prefix,
@@ -85,10 +103,9 @@ export class ZipEnrichmentRepo extends ScopedRepository {
         GROUP BY ${zipAlias}
         ORDER BY total_plays DESC
       `;
-      return this.db.query(sql).all(...params) as ZipClusterStat[];
-    }
-
-    const sql = `
+      stats = this.db.query(sql).all(...params) as ZipClusterStat[];
+    } else {
+      const sql = `
       SELECT ${zipCol} AS zip_prefix,
              COUNT(*) AS total_plays,
              AVG(CASE WHEN pa.won = 1 THEN 1.0 ELSE 0.0 END) AS win_rate,
@@ -113,7 +130,17 @@ export class ZipEnrichmentRepo extends ScopedRepository {
       GROUP BY ${zipAlias}
       ORDER BY total_plays DESC
     `;
-    return this.db.query(sql).all(...params) as ZipClusterStat[];
+      stats = this.db.query(sql).all(...params) as ZipClusterStat[];
+    }
+
+    return {
+      stats,
+      window: {
+        days,
+        mode: day.mode,
+        applied: day.mode !== 'none',
+      },
+    };
   }
 
   /**

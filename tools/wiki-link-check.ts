@@ -79,7 +79,7 @@ export function fixWikiHref(href: string, fromFile = 'README.md'): string {
   if (href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:')) {
     return href;
   }
-  const [pathPart, ...rest] = href.split('#');
+  const [pathPart = '', ...rest] = href.split('#');
   const anchor = rest.length ? `#${rest.join('#')}` : '';
   const queryIdx = pathPart.indexOf('?');
   const query = queryIdx >= 0 ? pathPart.slice(queryIdx) : '';

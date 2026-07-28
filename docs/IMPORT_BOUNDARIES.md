@@ -21,11 +21,6 @@ Rules are currently enforced for package `src/` imports:
   - may import from:
     - `packages/docs-tools/src/**`
     - `lib/docs/**`
-- `packages/package/src/**`
-  - may import from:
-    - `packages/package/src/**`
-    - `lib/docs/**`
-
 Only relative imports are validated by the guard script.
 
 ## CI Enforcement

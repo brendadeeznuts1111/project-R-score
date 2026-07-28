@@ -33,15 +33,19 @@ Proton Pass: CF deploy token + optional REPORT_SIGNING_SECRET for board HMAC
 # 1. Prove offline board + tests
 bun run compliance:verify
 
-# 2. Local portal
+# 2. Deep audit (ZIP 90d window + HMAC scoreboard)
+bun run ops:audit:deep
+
+# 3. Local portal
 bun run serve:public:hot   # open /portal/compliance/ · /api/compliance · /monitoring
 
-# 3. Vault + deploy
+# 4. Vault + deploy
 bun run proton:inject:factorywager:reasonix
 bun run compliance:bake:vault
 bun run proton:deploy:pages
 ```
 
+Board bake includes a ZIP day-window proof (`deepAudit.zipWindow`) aligned with `ZipEnrichmentRepo` (`enriched_at` / `plays.sent_at`).
 ## One board → many projections
 
 Single SSOT bake: `public/registry/compliance-board.json` (`bun run compliance:bake` / ops-snapshot companion).

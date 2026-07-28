@@ -282,16 +282,6 @@
       "description": "RIP protocol utilities"
     },
     {
-      "id": "packages-package",
-      "zone": "packages",
-      "name": "@factorywager/package",
-      "path": "packages/package",
-      "view": "names",
-      "items": "exports",
-      "tags": ["package", "meta"],
-      "description": "Package metadata utilities"
-    },
-    {
       "id": "packages-docs-tools",
       "zone": "packages",
       "name": "@factorywager/docs-tools",

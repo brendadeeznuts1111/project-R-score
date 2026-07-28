@@ -81,11 +81,14 @@ export function fundViaRail(db: Database, input: FundInput): FundResult {
       $amt: amount,
       $rid: railId,
     });
-    db.run('UPDATE sb_accounts SET balance = balance + $net WHERE agent_id = $aid AND status = $active', {
-      $net: netAmount,
-      $aid: toAgentId,
-      $active: 'active',
-    });
+    db.run(
+      'UPDATE sb_accounts SET balance = balance + $net WHERE agent_id = $aid AND status = $active',
+      {
+        $net: netAmount,
+        $aid: toAgentId,
+        $active: 'active',
+      }
+    );
   })();
 
   return { ok: true, fundingId, netAmount };
@@ -93,6 +96,7 @@ export function fundViaRail(db: Database, input: FundInput): FundResult {
 
 /** Risk-based daily limit from lifetime P&L and tenure. */
 export function calculateRailLimit(db: Database, nodeId: string): number {
+  // brand-ok — TreeNodeId wire
   const lifetime = db
     .query(
       `SELECT COALESCE(SUM(p.pnl), 0) as total
@@ -103,7 +107,9 @@ export function calculateRailLimit(db: Database, nodeId: string): number {
     .get({ $nid: nodeId }) as { total: number };
 
   const tenure = db
-    .query(`SELECT julianday('now') - julianday(created_at) as days FROM tree_nodes WHERE id = $nid`)
+    .query(
+      `SELECT julianday('now') - julianday(created_at) as days FROM tree_nodes WHERE id = $nid`
+    )
     .get({ $nid: nodeId }) as { days: number } | null;
 
   const base = 5_000;

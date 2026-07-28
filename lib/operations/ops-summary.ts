@@ -39,6 +39,8 @@ import {
   loadSeatCapitalDeskSummarySlice,
   type SeatCapitalDeskSummarySlice,
 } from '../telegram/seat-desk-snapshot.ts';
+import { asTreeNodeId } from '../types/branded.ts';
+import { buildLimitPatternSnapshot, type LimitPatternSnapshot } from './limit-patterns.ts';
 
 export type OpsSummaryExpert = {
   name: string;
@@ -343,6 +345,8 @@ export type OpsSummaryPayload = {
     top_contributing_factors: string[];
     context_proof: RaiseContextProofStatus | null;
   }>;
+  /** Connected hierarchy, sportsbook, state, and ZIP-prefix pattern rollups. */
+  limitPatterns: LimitPatternSnapshot;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -910,6 +914,17 @@ export function buildOpsSummary(
     )
     .get() as { inventory: number; issued: number; returned: number };
 
+  const limitChanges = queryLimitChangeSummary(db);
+  const limitPatterns = buildLimitPatternSnapshot(
+    db,
+    limitChanges.map(change => ({
+      ...change,
+      node_id: asTreeNodeId(change.node_id),
+      context_proof_valid: change.context_proof?.valid ?? null,
+    })),
+    48
+  );
+
   return {
     source,
     generated: new Date().toISOString(),
@@ -948,6 +963,7 @@ export function buildOpsSummary(
     telegramHandshake: loadTelegramHandshakeSummarySlice(),
     seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
     compliance: loadComplianceSummarySliceSync(),
-    limitChanges: queryLimitChangeSummary(db),
+    limitChanges,
+    limitPatterns,
   };
 }

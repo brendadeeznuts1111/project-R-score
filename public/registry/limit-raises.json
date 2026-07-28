@@ -1,20 +1,650 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T02:14:39.522Z",
+  "generatedAt": "2026-07-28T04:24:20.237Z",
   "lookbackHours": 48,
   "byNode": {
+    "limit-demo-atlantic": {
+      "node_id": "limit-demo-atlantic",
+      "raises": [
+        {
+          "limit_id": 121,
+          "sportsbook": "fanduel",
+          "sport_id": "soccer",
+          "market_id": "match_winner",
+          "bet_type": "pregame",
+          "previous_max": 1500,
+          "new_limit": 2000,
+          "increased_at": 1785169519,
+          "line_move_5m": 0.35,
+          "top_clv": [],
+          "context": {
+            "id": 37,
+            "node_id": "limit-demo-atlantic",
+            "limit_record_id": 121,
+            "active_players_7d": 53,
+            "new_players_7d": 11,
+            "total_handle_7d": 420000,
+            "avg_clv_7d": 92,
+            "top_tier_player_count": 8,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.99,
+            "market_volatility_index": 0.65,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.56,
+            "partner_profit_30d": 96000,
+            "partner_roi_30d": 0.21,
+            "snapshot_at": 1785169520,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "c62bde9ed0079e48425832b6132ef6e118893ab7ece4c057cee8b24fce0b96e8",
+            "proof_hmac": "ffc795ef3571d55dd9e13650ccaef54a9d8ae49e596b20d1890b7e9a074cd84b"
+          },
+          "multi_factor_score": 0.7376000000000001,
+          "top_contributing_factors": [
+            "total_handle_7d",
+            "violation_count_30d",
+            "chargeback_count_30d"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.168,
+            "avg_clv_7d": 0.048,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.099,
+            "market_volatility_index": 0.0696,
+            "sportsbook_share": 0.028000000000000004,
+            "partner_profit_30d": 0.0584,
+            "top_tier_player_count": 0.016,
+            "active_players_7d": 0.0106
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        },
+        {
+          "limit_id": 119,
+          "sportsbook": "draftkings",
+          "sport_id": "basketball",
+          "market_id": "over_under",
+          "bet_type": "straight",
+          "previous_max": 1000,
+          "new_limit": 2500,
+          "increased_at": 1785169399,
+          "line_move_5m": 0.35,
+          "top_clv": [],
+          "context": {
+            "id": 38,
+            "node_id": "limit-demo-atlantic",
+            "limit_record_id": 119,
+            "active_players_7d": 53,
+            "new_players_7d": 11,
+            "total_handle_7d": 420000,
+            "avg_clv_7d": 92,
+            "top_tier_player_count": 8,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.99,
+            "market_volatility_index": 0.65,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.56,
+            "partner_profit_30d": 96000,
+            "partner_roi_30d": 0.21,
+            "snapshot_at": 1785169400,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "9aec64a76dd13e1d3002d23b178987e7aa35a39235506b5ae77faae5924401ba",
+            "proof_hmac": "a91a9de0490391a3e5b34eacd914aa4565c3ed94d902b5e2abf23e67b44696a7"
+          },
+          "multi_factor_score": 0.7376000000000001,
+          "top_contributing_factors": [
+            "total_handle_7d",
+            "violation_count_30d",
+            "chargeback_count_30d"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.168,
+            "avg_clv_7d": 0.048,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.099,
+            "market_volatility_index": 0.0696,
+            "sportsbook_share": 0.028000000000000004,
+            "partner_profit_30d": 0.0584,
+            "top_tier_player_count": 0.016,
+            "active_players_7d": 0.0106
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "limit-demo-atlantic-sub": {
+      "node_id": "limit-demo-atlantic-sub",
+      "raises": [
+        {
+          "limit_id": 141,
+          "sportsbook": "caesars",
+          "sport_id": "soccer",
+          "market_id": "match_winner",
+          "bet_type": "live",
+          "previous_max": 900,
+          "new_limit": 1600,
+          "increased_at": 1785172339,
+          "line_move_5m": 0.98,
+          "top_clv": [],
+          "context": {
+            "id": 46,
+            "node_id": "limit-demo-atlantic-sub",
+            "limit_record_id": 141,
+            "active_players_7d": 22,
+            "new_players_7d": 4,
+            "total_handle_7d": 175000,
+            "avg_clv_7d": 39,
+            "top_tier_player_count": 3,
+            "violation_count_30d": 2,
+            "chargeback_count_30d": 1,
+            "kyc_pass_rate": 0.9,
+            "market_volatility_index": 1.49,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.45,
+            "partner_profit_30d": 22000,
+            "partner_roi_30d": 0.08,
+            "snapshot_at": 1785172340,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "b1f487b5e3c26bd06d9d4f6f44d06d261406b8705422fa85bab6b9ffde0f2f87",
+            "proof_hmac": "29560474bcf9dc6096c654f0bc773dcfb756d2842a86b37a6f0ba61d85c56269"
+          },
+          "multi_factor_score": 0.51661,
+          "top_contributing_factors": [
+            "chargeback_count_30d",
+            "violation_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.06999999999999999,
+            "avg_clv_7d": 0.034749999999999996,
+            "violation_count_30d": 0.096,
+            "chargeback_count_30d": 0.108,
+            "kyc_pass_rate": 0.09000000000000001,
+            "market_volatility_index": 0.056159999999999995,
+            "sportsbook_share": 0.022500000000000003,
+            "partner_profit_30d": 0.0288,
+            "top_tier_player_count": 0.006,
+            "active_players_7d": 0.0044
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "limit-demo-baystate": {
+      "node_id": "limit-demo-baystate",
+      "raises": [
+        {
+          "limit_id": 132,
+          "sportsbook": "caesars",
+          "sport_id": "soccer",
+          "market_id": "match_winner",
+          "bet_type": "pregame",
+          "previous_max": 800,
+          "new_limit": 1400,
+          "increased_at": 1785170779,
+          "line_move_5m": 0.62,
+          "top_clv": [],
+          "context": {
+            "id": 41,
+            "node_id": "limit-demo-baystate",
+            "limit_record_id": 132,
+            "active_players_7d": 45,
+            "new_players_7d": 9,
+            "total_handle_7d": 360000,
+            "avg_clv_7d": 74,
+            "top_tier_player_count": 7,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.99,
+            "market_volatility_index": 0.65,
+            "peak_betting_hours": "[17,18,19,20]",
+            "sportsbook_share": 0.56,
+            "partner_profit_30d": 72000,
+            "partner_roi_30d": 0.17,
+            "snapshot_at": 1785170780,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "5e43e7210c089b136f9bd46f92aa46621a975068e9dd30d66fd33a2b6bdd090d",
+            "proof_hmac": "b776a6af34c581e8189fba8778467d1f4a3997565ef6de464b40a2dc9d88a26d"
+          },
+          "multi_factor_score": 0.6959,
+          "top_contributing_factors": [
+            "total_handle_7d",
+            "violation_count_30d",
+            "chargeback_count_30d"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.144,
+            "avg_clv_7d": 0.0435,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.099,
+            "market_volatility_index": 0.0696,
+            "sportsbook_share": 0.028000000000000004,
+            "partner_profit_30d": 0.0488,
+            "top_tier_player_count": 0.013999999999999999,
+            "active_players_7d": 0.009000000000000001
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        },
+        {
+          "limit_id": 130,
+          "sportsbook": "betmgm",
+          "sport_id": "basketball",
+          "market_id": "over_under",
+          "bet_type": "straight",
+          "previous_max": 1000,
+          "new_limit": 2200,
+          "increased_at": 1785170659,
+          "line_move_5m": 0.62,
+          "top_clv": [],
+          "context": {
+            "id": 42,
+            "node_id": "limit-demo-baystate",
+            "limit_record_id": 130,
+            "active_players_7d": 45,
+            "new_players_7d": 9,
+            "total_handle_7d": 360000,
+            "avg_clv_7d": 74,
+            "top_tier_player_count": 7,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.99,
+            "market_volatility_index": 0.65,
+            "peak_betting_hours": "[17,18,19,20]",
+            "sportsbook_share": 0.56,
+            "partner_profit_30d": 72000,
+            "partner_roi_30d": 0.17,
+            "snapshot_at": 1785170660,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "c82d0729bc5e664ce0f0c124d329af1ae3948ccf319f612a74d0603c3d7a41b3",
+            "proof_hmac": "6d28ecdfd7f833ad705b1b6218938ca64ef8c7b3bd3c60cfe24f6f85d3f0a33d"
+          },
+          "multi_factor_score": 0.6959,
+          "top_contributing_factors": [
+            "total_handle_7d",
+            "violation_count_30d",
+            "chargeback_count_30d"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.144,
+            "avg_clv_7d": 0.0435,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.099,
+            "market_volatility_index": 0.0696,
+            "sportsbook_share": 0.028000000000000004,
+            "partner_profit_30d": 0.0488,
+            "top_tier_player_count": 0.013999999999999999,
+            "active_players_7d": 0.009000000000000001
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "limit-demo-boston-agent": {
+      "node_id": "limit-demo-boston-agent",
+      "raises": [
+        {
+          "limit_id": 134,
+          "sportsbook": "draftkings",
+          "sport_id": "basketball",
+          "market_id": "over_under",
+          "bet_type": "live",
+          "previous_max": 600,
+          "new_limit": 1300,
+          "increased_at": 1785171079,
+          "line_move_5m": 0.71,
+          "top_clv": [],
+          "context": {
+            "id": 43,
+            "node_id": "limit-demo-boston-agent",
+            "limit_record_id": 134,
+            "active_players_7d": 26,
+            "new_players_7d": 5,
+            "total_handle_7d": 210000,
+            "avg_clv_7d": 46,
+            "top_tier_player_count": 4,
+            "violation_count_30d": 1,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.945,
+            "market_volatility_index": 1.07,
+            "peak_betting_hours": "[17,18,19,20]",
+            "sportsbook_share": 0.45,
+            "partner_profit_30d": 35000,
+            "partner_roi_30d": 0.11,
+            "snapshot_at": 1785171080,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "f5d5e6e5dca24123a7069b1bd3dfeee1afc9d25ac5321818d6f603a63c6066a1",
+            "proof_hmac": "7a33272ff10b4541cd4a53a625c13f27eb8fa8179d76dead466be3d43e19a9a0"
+          },
+          "multi_factor_score": 0.57558,
+          "top_contributing_factors": [
+            "chargeback_count_30d",
+            "violation_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.084,
+            "avg_clv_7d": 0.0365,
+            "violation_count_30d": 0.108,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.0945,
+            "market_volatility_index": 0.06288,
+            "sportsbook_share": 0.022500000000000003,
+            "partner_profit_30d": 0.034,
+            "top_tier_player_count": 0.008,
+            "active_players_7d": 0.005200000000000001
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "limit-demo-jersey-sub": {
+      "node_id": "limit-demo-jersey-sub",
+      "raises": [
+        {
+          "limit_id": 127,
+          "sportsbook": "hardrock",
+          "sport_id": "basketball",
+          "market_id": "over_under",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 1000,
+          "increased_at": 1785170239,
+          "line_move_5m": 0.53,
+          "top_clv": [],
+          "context": {
+            "id": 40,
+            "node_id": "limit-demo-jersey-sub",
+            "limit_record_id": 127,
+            "active_players_7d": 17,
+            "new_players_7d": 3,
+            "total_handle_7d": 135000,
+            "avg_clv_7d": 32,
+            "top_tier_player_count": 2,
+            "violation_count_30d": 2,
+            "chargeback_count_30d": 2,
+            "kyc_pass_rate": 0.9,
+            "market_volatility_index": 1.49,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.45,
+            "partner_profit_30d": 12000,
+            "partner_roi_30d": 0.06,
+            "snapshot_at": 1785170240,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "32d0f72a105a504065df98988f58e71f2ed867889622caa0531c36fa8de8584c",
+            "proof_hmac": "d9335640a813b7eba6eb0d686a2849f9c927935085f8e56557c9f6b0d3012047"
+          },
+          "multi_factor_score": 0.47986000000000006,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "kyc_pass_rate"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.054000000000000006,
+            "avg_clv_7d": 0.033,
+            "violation_count_30d": 0.096,
+            "chargeback_count_30d": 0.096,
+            "kyc_pass_rate": 0.09000000000000001,
+            "market_volatility_index": 0.056159999999999995,
+            "sportsbook_share": 0.022500000000000003,
+            "partner_profit_30d": 0.024800000000000003,
+            "top_tier_player_count": 0.004,
+            "active_players_7d": 0.0034000000000000002
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "limit-demo-newark-agent": {
+      "node_id": "limit-demo-newark-agent",
+      "raises": [
+        {
+          "limit_id": 123,
+          "sportsbook": "fanduel",
+          "sport_id": "basketball",
+          "market_id": "over_under",
+          "bet_type": "live",
+          "previous_max": 750,
+          "new_limit": 1750,
+          "increased_at": 1785169819,
+          "line_move_5m": 0.43999999999999995,
+          "top_clv": [],
+          "context": {
+            "id": 39,
+            "node_id": "limit-demo-newark-agent",
+            "limit_record_id": 123,
+            "active_players_7d": 32,
+            "new_players_7d": 6,
+            "total_handle_7d": 255000,
+            "avg_clv_7d": 58,
+            "top_tier_player_count": 5,
+            "violation_count_30d": 1,
+            "chargeback_count_30d": 1,
+            "kyc_pass_rate": 0.945,
+            "market_volatility_index": 1.07,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.56,
+            "partner_profit_30d": 41000,
+            "partner_roi_30d": 0.13,
+            "snapshot_at": 1785169820,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "57bf0013378aecb2c06012bc4a69554ea2160267898165d4315c27c5d59887e0",
+            "proof_hmac": "b0d88de1304c9b4848de24bf5d05b71e8f1c79dc0ad8cc6ca74eff9242f5e053"
+          },
+          "multi_factor_score": 0.59568,
+          "top_contributing_factors": [
+            "violation_count_30d",
+            "chargeback_count_30d",
+            "total_handle_7d"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.10200000000000001,
+            "avg_clv_7d": 0.03949999999999999,
+            "violation_count_30d": 0.108,
+            "chargeback_count_30d": 0.108,
+            "kyc_pass_rate": 0.0945,
+            "market_volatility_index": 0.06288,
+            "sportsbook_share": 0.028000000000000004,
+            "partner_profit_30d": 0.0364,
+            "top_tier_player_count": 0.01,
+            "active_players_7d": 0.0064
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "limit-demo-shoreline": {
+      "node_id": "limit-demo-shoreline",
+      "raises": [
+        {
+          "limit_id": 139,
+          "sportsbook": "hardrock",
+          "sport_id": "basketball",
+          "market_id": "over_under",
+          "bet_type": "straight",
+          "previous_max": 1250,
+          "new_limit": 3000,
+          "increased_at": 1785171919,
+          "line_move_5m": 0.89,
+          "top_clv": [],
+          "context": {
+            "id": 45,
+            "node_id": "limit-demo-shoreline",
+            "limit_record_id": 139,
+            "active_players_7d": 39,
+            "new_players_7d": 8,
+            "total_handle_7d": 310000,
+            "avg_clv_7d": 67,
+            "top_tier_player_count": 6,
+            "violation_count_30d": 1,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.945,
+            "market_volatility_index": 1.07,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.45,
+            "partner_profit_30d": 54000,
+            "partner_roi_30d": 0.14,
+            "snapshot_at": 1785171920,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "a927738e65f949e08353c84981758020238fde2896225e0c1c0043e3ef3d7eb3",
+            "proof_hmac": "2074d44a6af2bf2e4da5fde9613a4ff6831f5b6d6ecd975c3d7204d3f114f381"
+          },
+          "multi_factor_score": 0.63503,
+          "top_contributing_factors": [
+            "total_handle_7d",
+            "chargeback_count_30d",
+            "violation_count_30d"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.124,
+            "avg_clv_7d": 0.041749999999999995,
+            "violation_count_30d": 0.108,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.0945,
+            "market_volatility_index": 0.06288,
+            "sportsbook_share": 0.022500000000000003,
+            "partner_profit_30d": 0.0416,
+            "top_tier_player_count": 0.012,
+            "active_players_7d": 0.0078000000000000005
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
+    "limit-demo-worcester-sub": {
+      "node_id": "limit-demo-worcester-sub",
+      "raises": [
+        {
+          "limit_id": 136,
+          "sportsbook": "caesars",
+          "sport_id": "soccer",
+          "market_id": "match_winner",
+          "bet_type": "straight",
+          "previous_max": 700,
+          "new_limit": 1100,
+          "increased_at": 1785171499,
+          "line_move_5m": 0.7999999999999999,
+          "top_clv": [],
+          "context": {
+            "id": 44,
+            "node_id": "limit-demo-worcester-sub",
+            "limit_record_id": 136,
+            "active_players_7d": 12,
+            "new_players_7d": 2,
+            "total_handle_7d": 95000,
+            "avg_clv_7d": 18,
+            "top_tier_player_count": 2,
+            "violation_count_30d": 3,
+            "chargeback_count_30d": 2,
+            "kyc_pass_rate": 0.855,
+            "market_volatility_index": 1.9100000000000001,
+            "peak_betting_hours": "[17,18,19,20]",
+            "sportsbook_share": 0.45,
+            "partner_profit_30d": 4000,
+            "partner_roi_30d": 0.02,
+            "snapshot_at": 1785171500,
+            "proof_algorithm": "sha3-256",
+            "proof_digest": "13a5fe5ee745aeee1180bf810207ffe94047d20a6ac63b52998b2c90ecda3a01",
+            "proof_hmac": "6fe89716c14f8c54b0554f62f2381a104c8d300aef75cc8a6342c67dbb1e2e20"
+          },
+          "multi_factor_score": 0.43294000000000005,
+          "top_contributing_factors": [
+            "chargeback_count_30d",
+            "kyc_pass_rate",
+            "violation_count_30d"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.038000000000000006,
+            "avg_clv_7d": 0.0295,
+            "violation_count_30d": 0.08399999999999999,
+            "chargeback_count_30d": 0.096,
+            "kyc_pass_rate": 0.0855,
+            "market_volatility_index": 0.04944,
+            "sportsbook_share": 0.022500000000000003,
+            "partner_profit_30d": 0.0216,
+            "top_tier_player_count": 0.004,
+            "active_players_7d": 0.0024
+          },
+          "context_proof": {
+            "algorithm": "sha3-256",
+            "digestValid": true,
+            "signed": true,
+            "hmacValid": true,
+            "valid": true
+          }
+        }
+      ]
+    },
     "partner-42": {
       "node_id": "partner-42",
       "raises": [
         {
-          "limit_id": 35,
+          "limit_id": 116,
           "sportsbook": "draftkings",
           "sport_id": "nba",
           "market_id": "totals",
           "bet_type": "straight",
           "previous_max": 500,
           "new_limit": 1500,
-          "increased_at": 1785203048,
+          "increased_at": 1785209600,
           "line_move_5m": 1,
           "top_clv": [
             {
@@ -29,9 +659,9 @@
             }
           ],
           "context": {
-            "id": 9,
+            "id": 36,
             "node_id": "partner-42",
-            "limit_record_id": 35,
+            "limit_record_id": 116,
             "active_players_7d": 42,
             "new_players_7d": 8,
             "total_handle_7d": 380000,
@@ -45,7 +675,7 @@
             "sportsbook_share": 0.55,
             "partner_profit_30d": 80000,
             "partner_roi_30d": 0.18,
-            "snapshot_at": 1785203048,
+            "snapshot_at": 1785209600,
             "proof_algorithm": null,
             "proof_digest": null,
             "proof_hmac": null
@@ -79,6 +709,502 @@
       ]
     }
   },
-  "partners": 1,
-  "raises": 1
+  "partners": 9,
+  "raises": 11,
+  "patterns": {
+    "schemaVersion": 1,
+    "lookbackHours": 48,
+    "partners": 4,
+    "nodes": 9,
+    "downlineNodes": 5,
+    "books": [
+      {
+        "key": "caesars",
+        "changes": 4,
+        "raises": 3,
+        "decreases": 1,
+        "net_delta": 1250,
+        "avg_delta_pct": 42.25,
+        "avg_influence_score": 0.5485,
+        "partners": 2,
+        "nodes": 3,
+        "states": [
+          "MA",
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "016",
+          "021",
+          "084"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "key": "draftkings",
+        "changes": 3,
+        "raises": 3,
+        "decreases": 0,
+        "net_delta": 3200,
+        "avg_delta_pct": 155.56,
+        "avg_influence_score": 0.6758,
+        "partners": 3,
+        "nodes": 3,
+        "states": [
+          "MA",
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "021",
+          "071"
+        ],
+        "top_market": "over_under"
+      },
+      {
+        "key": "hardrock",
+        "changes": 3,
+        "raises": 2,
+        "decreases": 1,
+        "net_delta": 2050,
+        "avg_delta_pct": 73.33,
+        "avg_influence_score": 0.5574,
+        "partners": 2,
+        "nodes": 2,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "073",
+          "084"
+        ],
+        "top_market": "over_under"
+      },
+      {
+        "key": "betmgm",
+        "changes": 2,
+        "raises": 1,
+        "decreases": 1,
+        "net_delta": 900,
+        "avg_delta_pct": 47.5,
+        "avg_influence_score": 0.6959,
+        "partners": 2,
+        "nodes": 2,
+        "states": [
+          "MA",
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "021",
+          "071"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "key": "fanduel",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1500,
+        "avg_delta_pct": 83.33,
+        "avg_influence_score": 0.6666,
+        "partners": 1,
+        "nodes": 2,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "071"
+        ],
+        "top_market": "match_winner"
+      }
+    ],
+    "states": [
+      {
+        "key": "NJ",
+        "changes": 8,
+        "raises": 6,
+        "decreases": 2,
+        "net_delta": 5450,
+        "avg_delta_pct": 73.68,
+        "avg_influence_score": 0.6171,
+        "partners": 2,
+        "nodes": 5,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "071",
+          "073",
+          "084"
+        ],
+        "top_market": "over_under"
+      },
+      {
+        "key": "MA",
+        "changes": 5,
+        "raises": 4,
+        "decreases": 1,
+        "net_delta": 2450,
+        "avg_delta_pct": 65.58,
+        "avg_influence_score": 0.6001,
+        "partners": 1,
+        "nodes": 3,
+        "states": [
+          "MA"
+        ],
+        "zip_prefixes": [
+          "016",
+          "021"
+        ],
+        "top_market": "match_winner"
+      }
+    ],
+    "zips": [
+      {
+        "key": "071",
+        "changes": 4,
+        "raises": 3,
+        "decreases": 1,
+        "net_delta": 2700,
+        "avg_delta_pct": 72.92,
+        "avg_influence_score": 0.6903,
+        "partners": 1,
+        "nodes": 2,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "071"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "key": "021",
+        "changes": 3,
+        "raises": 3,
+        "decreases": 0,
+        "net_delta": 2500,
+        "avg_delta_pct": 103.89,
+        "avg_influence_score": 0.6558,
+        "partners": 1,
+        "nodes": 2,
+        "states": [
+          "MA"
+        ],
+        "zip_prefixes": [
+          "021"
+        ],
+        "top_market": "over_under"
+      },
+      {
+        "key": "016",
+        "changes": 2,
+        "raises": 1,
+        "decreases": 1,
+        "net_delta": -50,
+        "avg_delta_pct": 8.12,
+        "avg_influence_score": 0.4329,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "MA"
+        ],
+        "zip_prefixes": [
+          "016"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "key": "073",
+        "changes": 2,
+        "raises": 1,
+        "decreases": 1,
+        "net_delta": 300,
+        "avg_delta_pct": 40,
+        "avg_influence_score": 0.4799,
+        "partners": 1,
+        "nodes": 1,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "073"
+        ],
+        "top_market": "over_under"
+      },
+      {
+        "key": "084",
+        "changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 2450,
+        "avg_delta_pct": 108.89,
+        "avg_influence_score": 0.5758,
+        "partners": 1,
+        "nodes": 2,
+        "states": [
+          "NJ"
+        ],
+        "zip_prefixes": [
+          "084"
+        ],
+        "top_market": "match_winner"
+      }
+    ],
+    "nodePatterns": [
+      {
+        "node_id": "limit-demo-atlantic",
+        "partner_node_id": "limit-demo-atlantic",
+        "parent_node_id": null,
+        "node_name": "Atlantic Partner Desk",
+        "node_type": "partner",
+        "downline_depth": 0,
+        "state_code": "NJ",
+        "location": "Newark",
+        "zip_code": "07102",
+        "zip_prefix": "071",
+        "license_status": "active",
+        "violation_count_30d": 0,
+        "changes": 2,
+        "scored_changes": 2,
+        "proof_verified_changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 2000,
+        "avg_delta_pct": 91.67,
+        "avg_influence_score": 0.7376,
+        "sportsbooks": [
+          "draftkings",
+          "fanduel"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "node_id": "limit-demo-newark-agent",
+        "partner_node_id": "limit-demo-atlantic",
+        "parent_node_id": "limit-demo-atlantic",
+        "node_name": "Newark Agent Lane",
+        "node_type": "agent",
+        "downline_depth": 1,
+        "state_code": "NJ",
+        "location": "Newark",
+        "zip_code": "07103",
+        "zip_prefix": "071",
+        "license_status": "active",
+        "violation_count_30d": 1,
+        "changes": 2,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 1,
+        "net_delta": 700,
+        "avg_delta_pct": 54.17,
+        "avg_influence_score": 0.5957,
+        "sportsbooks": [
+          "betmgm",
+          "fanduel"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "node_id": "limit-demo-jersey-sub",
+        "partner_node_id": "limit-demo-atlantic",
+        "parent_node_id": "limit-demo-newark-agent",
+        "node_name": "Jersey City Sub-Agent",
+        "node_type": "sub_agent",
+        "downline_depth": 2,
+        "state_code": "NJ",
+        "location": "Jersey City",
+        "zip_code": "07302",
+        "zip_prefix": "073",
+        "license_status": "active",
+        "violation_count_30d": 2,
+        "changes": 2,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 1,
+        "net_delta": 300,
+        "avg_delta_pct": 40,
+        "avg_influence_score": 0.4799,
+        "sportsbooks": [
+          "hardrock"
+        ],
+        "top_market": "over_under"
+      },
+      {
+        "node_id": "limit-demo-baystate",
+        "partner_node_id": "limit-demo-baystate",
+        "parent_node_id": null,
+        "node_name": "Bay State Partner Desk",
+        "node_type": "partner",
+        "downline_depth": 0,
+        "state_code": "MA",
+        "location": "Boston",
+        "zip_code": "02108",
+        "zip_prefix": "021",
+        "license_status": "active",
+        "violation_count_30d": 0,
+        "changes": 2,
+        "scored_changes": 2,
+        "proof_verified_changes": 2,
+        "raises": 2,
+        "decreases": 0,
+        "net_delta": 1800,
+        "avg_delta_pct": 97.5,
+        "avg_influence_score": 0.6959,
+        "sportsbooks": [
+          "betmgm",
+          "caesars"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "node_id": "limit-demo-boston-agent",
+        "partner_node_id": "limit-demo-baystate",
+        "parent_node_id": "limit-demo-baystate",
+        "node_name": "Boston Agent Lane",
+        "node_type": "agent",
+        "downline_depth": 1,
+        "state_code": "MA",
+        "location": "Boston",
+        "zip_code": "02111",
+        "zip_prefix": "021",
+        "license_status": "active",
+        "violation_count_30d": 1,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 700,
+        "avg_delta_pct": 116.67,
+        "avg_influence_score": 0.5756,
+        "sportsbooks": [
+          "draftkings"
+        ],
+        "top_market": "over_under"
+      },
+      {
+        "node_id": "limit-demo-worcester-sub",
+        "partner_node_id": "limit-demo-baystate",
+        "parent_node_id": "limit-demo-boston-agent",
+        "node_name": "Worcester Sub-Agent",
+        "node_type": "sub_agent",
+        "downline_depth": 2,
+        "state_code": "MA",
+        "location": "Worcester",
+        "zip_code": "01608",
+        "zip_prefix": "016",
+        "license_status": "active",
+        "violation_count_30d": 3,
+        "changes": 2,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 1,
+        "net_delta": -50,
+        "avg_delta_pct": 8.12,
+        "avg_influence_score": 0.4329,
+        "sportsbooks": [
+          "caesars"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "node_id": "limit-demo-shoreline",
+        "partner_node_id": "limit-demo-shoreline",
+        "parent_node_id": null,
+        "node_name": "Shoreline Partner Desk",
+        "node_type": "partner",
+        "downline_depth": 0,
+        "state_code": "NJ",
+        "location": "Atlantic City",
+        "zip_code": "08401",
+        "zip_prefix": "084",
+        "license_status": "active",
+        "violation_count_30d": 1,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 1750,
+        "avg_delta_pct": 140,
+        "avg_influence_score": 0.635,
+        "sportsbooks": [
+          "hardrock"
+        ],
+        "top_market": "over_under"
+      },
+      {
+        "node_id": "limit-demo-atlantic-sub",
+        "partner_node_id": "limit-demo-shoreline",
+        "parent_node_id": "limit-demo-shoreline",
+        "node_name": "Atlantic City Sub-Agent",
+        "node_type": "sub_agent",
+        "downline_depth": 1,
+        "state_code": "NJ",
+        "location": "Atlantic City",
+        "zip_code": "08401",
+        "zip_prefix": "084",
+        "license_status": "active",
+        "violation_count_30d": 2,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 1,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 700,
+        "avg_delta_pct": 77.78,
+        "avg_influence_score": 0.5166,
+        "sportsbooks": [
+          "caesars"
+        ],
+        "top_market": "match_winner"
+      },
+      {
+        "node_id": "partner-42",
+        "partner_node_id": "partner-42",
+        "parent_node_id": null,
+        "node_name": "partner-42",
+        "node_type": "partner",
+        "downline_depth": 0,
+        "state_code": null,
+        "location": null,
+        "zip_code": null,
+        "zip_prefix": null,
+        "license_status": null,
+        "violation_count_30d": 0,
+        "changes": 1,
+        "scored_changes": 1,
+        "proof_verified_changes": 0,
+        "raises": 1,
+        "decreases": 0,
+        "net_delta": 1000,
+        "avg_delta_pct": 200,
+        "avg_influence_score": 0.7143,
+        "sportsbooks": [
+          "draftkings"
+        ],
+        "top_market": "totals"
+      }
+    ],
+    "audit": {
+      "changeRows": 14,
+      "hierarchyLinked": 8,
+      "geoLinked": 8,
+      "licensed": 8,
+      "scored": 11,
+      "proofVerified": 10,
+      "coveragePct": 81.8,
+      "sourceTables": [
+        "tree_nodes",
+        "partner_account_limits",
+        "limit_raise_context",
+        "partner_geo_profiles",
+        "partner_state_licenses",
+        "regulatory_violations"
+      ]
+    }
+  }
 }

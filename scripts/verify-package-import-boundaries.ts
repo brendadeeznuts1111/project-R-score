@@ -31,11 +31,6 @@ const RULES: PackageBoundaryRule[] = [
     sourceDir: 'packages/docs-tools/src',
     allowedRoots: ['packages/docs-tools/src', 'lib/docs'],
   },
-  {
-    name: 'package',
-    sourceDir: 'packages/package/src',
-    allowedRoots: ['packages/package/src', 'lib/docs'],
-  },
 ];
 
 const IMPORT_PATTERN =

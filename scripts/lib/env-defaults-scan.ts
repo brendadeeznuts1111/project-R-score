@@ -266,13 +266,28 @@ export function scanTextForUsages(file: string, text: string): EnvUsage[] {
   return out;
 }
 
-/** Parse KEY= lines and pass:// refs from an env.template body. */
+/** True when a template value is a usable local default (not vault/placeholder). */
+export function isUsableTemplateDefault(val: string): boolean {
+  const v = val.trim();
+  if (!v) return false;
+  if (/\{\{\s*pass:\/\//.test(v)) return false;
+  if (/^pass:\/\//i.test(v)) return false;
+  if (/^(changeme|replace|todo|xxx|your-|<.*>)$/i.test(v)) return false;
+  if (/^(true|false|0|1)$/i.test(v)) return true;
+  // Non-empty literals (urls, depths, paths) count as defaults
+  return true;
+}
+
+/** Parse KEY= lines, pass:// refs, and usable literal defaults from an env.template body. */
 export function parseEnvTemplate(text: string): {
   keys: string[];
   vaultRefs: { key: string; ref: string }[];
+  /** KEY → literal default when not a vault/placeholder (never secret payloads from Pass). */
+  defaults: Record<string, string>;
 } {
   const keys: string[] = [];
   const vaultRefs: { key: string; ref: string }[] = [];
+  const defaults: Record<string, string> = {};
   for (const line of text.split('\n')) {
     const t = line.trim();
     if (!t || t.startsWith('#')) continue;
@@ -283,7 +298,11 @@ export function parseEnvTemplate(text: string): {
     if (!/^[A-Z_][A-Z0-9_]*$/.test(key)) continue;
     keys.push(key);
     const m = val.match(/\{\{\s*(pass:\/\/[^}]+)\s*\}\}/);
-    if (m) vaultRefs.push({ key, ref: m[1]!.trim() });
+    if (m) {
+      vaultRefs.push({ key, ref: m[1]!.trim() });
+      continue;
+    }
+    if (isUsableTemplateDefault(val)) defaults[key] = val;
   }
-  return { keys, vaultRefs };
+  return { keys, vaultRefs, defaults };
 }

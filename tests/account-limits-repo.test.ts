@@ -37,7 +37,7 @@ describe('account-limits-repo', () => {
     expect(rows[0]!.top_clv.length).toBeGreaterThanOrEqual(1);
     expect(rows[0]!.top_clv[0]!.player_name).toBe('Jayson Tatum');
     const text = formatEnrichedLimitRaises(rows);
-    expect(text).toContain('$500 → $1500');
+    expect(text).toContain('$500 → $1,500');
     expect(text).toContain('Jayson Tatum');
     db.close();
   });

@@ -20,6 +20,8 @@ export type ComplianceMonitoringSlice = {
   geoProfiles?: number | null;
   /** True when board integrity includes HMAC */
   hmac?: boolean;
+  /** ZIP day-window proof from board.deepAudit */
+  zipWindowOk?: boolean | null;
   scoreHint?: string | null;
   states?: string[];
   portal: '/portal/compliance/';
@@ -40,10 +42,11 @@ type ComplianceBoardFile = {
   enhancements?: { passed?: number; total?: number };
   shadow?: { summary?: { mismatches?: number; allow?: number; block?: number } };
   geo?: { partners?: unknown[] };
+  deepAudit?: { zipWindow?: { ok?: boolean } };
   integrity?: {
     scoreHint?: string;
     proof?: { hmac?: string };
-    checks?: Array<{ id?: string; ok?: boolean }>; // brand-ok — board integrity check key (enhancements|shadow|sha3|hmac|geo)
+    checks?: Array<{ id?: string; ok?: boolean }>; // brand-ok — board integrity check key
   };
 };
 
@@ -113,6 +116,7 @@ function emptyUnavailable(): ComplianceMonitoringSlice {
     shadowBlock: null,
     geoProfiles: null,
     hmac: false,
+    zipWindowOk: null,
     scoreHint: null,
     states: ['MA', 'NJ'],
     portal: COMPLIANCE_PORTAL_PATH,
@@ -157,6 +161,7 @@ function projectBoard(board: ComplianceBoardFile): ComplianceMonitoringSlice {
     shadowBlock: board.shadow?.summary?.block ?? null,
     geoProfiles: Array.isArray(board.geo?.partners) ? board.geo!.partners!.length : null,
     hmac: hasHmac,
+    zipWindowOk: board.deepAudit?.zipWindow?.ok ?? null,
     scoreHint: board.integrity?.scoreHint ?? (hasHmac ? 'integrity+hmac' : 'integrity-only'),
     states: ['MA', 'NJ'],
     generatedAt: board.generatedAt ?? null,

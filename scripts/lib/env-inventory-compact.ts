@@ -5,7 +5,7 @@
  * Compact Bun.env inventory for packages-graph-map + env:inventory bake.
  * Never includes secret values — keys, counts, dispositions, samples only.
  *
- * schemaVersion 2: reverse owners · root vs product runtime · defaults issues
+ * schemaVersion 3: reverse owners · root/product runtime · template-default cover
  */
 import { Glob } from 'bun';
 import {
@@ -71,8 +71,19 @@ export type EnvKeyOwner = {
   samples: string[]; // brand-ok — file:line
 };
 
+export type EnvRuntimeSlice = {
+  templateKeysPresent: number;
+  /** Bun.env unset (includes keys covered by template defaults). */
+  templateKeysMissing: number;
+  missingKeys: string[];
+  /** Unset and no usable template default — needs inject / local set. */
+  missingNeedsInject: string[];
+  /** Unset but env.template ships a usable literal default. */
+  coveredByTemplateDefault: string[];
+};
+
 export type EnvInventoryCompact = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   kind: 'env-inventory';
   generatedAt: string;
   scannedRoots: string[];
@@ -100,26 +111,23 @@ export type EnvInventoryCompact = {
   packagesPlane: PackageVaultMap;
   /** Presence flags — root monorepo template vs product templates. */
   runtime: {
-    root: {
-      templateKeysPresent: number;
-      templateKeysMissing: number;
-      missingKeys: string[];
-    };
-    products: {
-      templateKeysPresent: number;
-      templateKeysMissing: number;
-      missingKeys: string[];
-    };
+    root: EnvRuntimeSlice;
+    products: EnvRuntimeSlice;
     /** @deprecated prefer root/products — union of all templates */
     templateKeysPresent: number;
     templateKeysMissing: number;
     missingKeys: string[];
+    missingNeedsInject: string[];
+    coveredByTemplateDefault: string[];
   };
   summary: {
     ownerCount: number;
     packageTouchedKeys: number;
     multiPlaneKeys: number;
+    /** @deprecated prefer rootRuntimeNeedsInject — raw Bun.env gaps */
     rootRuntimeMissing: number;
+    rootRuntimeNeedsInject: number;
+    rootCoveredByDefault: number;
     defaultsIssueCount: number;
   };
 };
@@ -160,16 +168,16 @@ async function collectTsFiles(root: string, roots: readonly string[]): Promise<s
   return found;
 }
 
-function runtimeSlice(keys: Set<string>): {
-  templateKeysPresent: number;
-  templateKeysMissing: number;
-  missingKeys: string[];
-} {
+function runtimeSlice(keys: Set<string>, defaults: Record<string, string>): EnvRuntimeSlice {
   const missing = [...keys].filter(k => !Bun.env[k]?.trim()).sort();
+  const coveredByTemplateDefault = missing.filter(k => !!defaults[k]?.trim());
+  const missingNeedsInject = missing.filter(k => !defaults[k]?.trim());
   return {
     templateKeysPresent: keys.size - missing.length,
     templateKeysMissing: missing.length,
     missingKeys: missing.slice(0, 40),
+    missingNeedsInject: missingNeedsInject.slice(0, 40),
+    coveredByTemplateDefault: coveredByTemplateDefault.slice(0, 40),
   };
 }
 
@@ -233,6 +241,9 @@ export async function buildEnvInventoryCompact(
   const allTemplateKeys = new Set<string>();
   const rootTemplateKeys = new Set<string>();
   const productTemplateKeys = new Set<string>();
+  const rootDefaults: Record<string, string> = {};
+  const productDefaults: Record<string, string> = {};
+  const allDefaults: Record<string, string> = {};
 
   for (const rel of ENV_INVENTORY_TEMPLATES) {
     try {
@@ -241,9 +252,14 @@ export async function buildEnvInventoryCompact(
       templateKeyCount += parsed.keys.length;
       vaultRefCount += parsed.vaultRefs.length;
       const target = rel === 'env.template' ? rootTemplateKeys : productTemplateKeys;
+      const defaultsTarget = rel === 'env.template' ? rootDefaults : productDefaults;
       for (const k of parsed.keys) {
         allTemplateKeys.add(k);
         target.add(k);
+      }
+      for (const [k, v] of Object.entries(parsed.defaults)) {
+        defaultsTarget[k] = v;
+        if (!(k in allDefaults)) allDefaults[k] = v;
       }
       for (const v of parsed.vaultRefs) {
         vaultKeySet.add(v.key);
@@ -312,15 +328,15 @@ export async function buildEnvInventoryCompact(
     })
     .slice(0, maxOwners);
 
-  const rootRuntime = runtimeSlice(rootTemplateKeys);
-  const productRuntime = runtimeSlice(productTemplateKeys);
-  const allRuntime = runtimeSlice(allTemplateKeys);
+  const rootRuntime = runtimeSlice(rootTemplateKeys, rootDefaults);
+  const productRuntime = runtimeSlice(productTemplateKeys, productDefaults);
+  const allRuntime = runtimeSlice(allTemplateKeys, allDefaults);
 
   const pkgIssues = defaultsIssues.filter(i => i.file.startsWith('packages/'));
   const harnessIssues = defaultsIssues.filter(i => !i.file.startsWith('packages/'));
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     kind: 'env-inventory',
     generatedAt: new Date().toISOString(),
     scannedRoots: [...ENV_INVENTORY_SCAN_ROOTS],
@@ -364,12 +380,16 @@ export async function buildEnvInventoryCompact(
       templateKeysPresent: allRuntime.templateKeysPresent,
       templateKeysMissing: allRuntime.templateKeysMissing,
       missingKeys: allRuntime.missingKeys,
+      missingNeedsInject: allRuntime.missingNeedsInject,
+      coveredByTemplateDefault: allRuntime.coveredByTemplateDefault,
     },
     summary: {
       ownerCount: owners.length,
       packageTouchedKeys: owners.filter(o => o.packages.length > 0).length,
       multiPlaneKeys: owners.filter(o => o.planes.length > 1).length,
       rootRuntimeMissing: rootRuntime.templateKeysMissing,
+      rootRuntimeNeedsInject: rootRuntime.missingNeedsInject.length,
+      rootCoveredByDefault: rootRuntime.coveredByTemplateDefault.length,
       defaultsIssueCount: defaultsIssues.length,
     },
   };

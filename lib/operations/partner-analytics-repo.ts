@@ -12,10 +12,13 @@ import type { Database } from 'bun:sqlite';
 import {
   AccountLimitsRepository,
   ensureAccountLimitsSchema,
+  queryRecentLimitChanges,
   type EnrichedLimitRaise,
   type LimitRaise,
 } from '../account-limits-repo.ts';
 import { buildReportProofFromValue, type ReportHashAlgorithm } from '../security/report-proof.ts';
+import { asTreeNodeId } from '../types/branded.ts';
+import type { LimitPatternSnapshot } from './limit-patterns.ts';
 
 export type RaiseContextMetrics = {
   active_players_7d: number;
@@ -495,6 +498,7 @@ export type LimitRaisesSnapshot = {
   >;
   partners: number;
   raises: number;
+  patterns: LimitPatternSnapshot;
 };
 
 /** Capture missing context for every node with recent limit history. */
@@ -552,6 +556,32 @@ export async function exportLimitRaisesSnapshot(
     raises += rows.length;
   }
 
+  const scoredByLimit = new Map(
+    Object.values(byNode).flatMap(bucket =>
+      bucket.raises.map(raise => [
+        raise.limit_id,
+        {
+          score: raise.multi_factor_score,
+          proofValid: raise.context_proof?.valid ?? null,
+        },
+      ])
+    )
+  );
+  const { buildLimitPatternSnapshot } = await import('./limit-patterns.ts');
+  const patterns = buildLimitPatternSnapshot(
+    db,
+    queryRecentLimitChanges(db, lookbackHours).map(change => {
+      const score = scoredByLimit.get(change.limit_id);
+      return {
+        ...change,
+        node_id: asTreeNodeId(change.node_id),
+        multi_factor_score: score?.score,
+        context_proof_valid: score?.proofValid,
+      };
+    }),
+    lookbackHours
+  );
+
   const snapshot: LimitRaisesSnapshot = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
@@ -559,6 +589,7 @@ export async function exportLimitRaisesSnapshot(
     byNode,
     partners: Object.keys(byNode).length,
     raises,
+    patterns,
   };
 
   const root = opts?.root ?? process.cwd();

@@ -31,33 +31,34 @@ case "$PROJECT" in
     # Cloudflare Pages deploy — resolves env first, then deploys
     VAULT="factorywager"
     TEMPLATE="$ROOT/env.template"
-    # After inject, cloudflare-pages-deploy.ts reads CLOUDFLARE_API_TOKEN from env
-    DEPLOY_CMD="exec bun $ROOT/tools/cloudflare-pages-deploy.ts $@"
+    # After inject, cloudflare-pages-deploy.ts reads CLOUDFLARE_API_TOKEN from env.
+    # Do not prefix with shell builtin `exec` — pass-cli run execve's argv[0] as a binary.
+    DEPLOY_CMD=(bun "$ROOT/tools/cloudflare-pages-deploy.ts" "$@")
     ;;
   staging)
     VAULT="factorywager"
     TEMPLATE="$ROOT/env.template"
-    DEPLOY_CMD="exec bash $SCRIPT_DIR/shell/deploy-staging.sh $@"
+    DEPLOY_CMD=(bash "$SCRIPT_DIR/shell/deploy-staging.sh" "$@")
     ;;
   factorywager)
     VAULT="factorywager"
     TEMPLATE="$ROOT/env.template"
-    DEPLOY_CMD="exec $@"
+    DEPLOY_CMD=("$@")
     ;;
   bet-ticker)
     VAULT="bet-ticker"
     TEMPLATE="$ROOT/projects/active/enterprise/bet-ticker-worker-v1.1/env.template"
-    DEPLOY_CMD="exec $@"
+    DEPLOY_CMD=("$@")
     ;;
   cascade-mover)
     VAULT="cascade-mover"
     TEMPLATE="$ROOT/projects/active/enterprise/cascade-mover-v3/env.template"
-    DEPLOY_CMD="exec $@"
+    DEPLOY_CMD=("$@")
     ;;
   scanner)
     VAULT="factorywager"
     TEMPLATE="$ROOT/projects/active/analysis/scanner/env.template"
-    DEPLOY_CMD="exec $@"
+    DEPLOY_CMD=("$@")
     ;;
   *)
     echo "❌ Unknown project: $PROJECT"
@@ -76,7 +77,11 @@ if [ -f "$TEMPLATE" ]; then
   echo "✅ .env written with vault secrets"
 fi
 
-# Run the deploy
+# Run the deploy (argv array — never shell-builtin `exec`; pass-cli run execve's argv[0])
+if [ ${#DEPLOY_CMD[@]} -eq 0 ]; then
+  echo "❌ No deploy command for project: $PROJECT"
+  exit 1
+fi
 echo "🚀 Deploying $PROJECT..."
 PROTON_PASS_AGENT_REASON="Deploying $PROJECT" \
-  pass-cli run -- $DEPLOY_CMD
+  pass-cli run -- "${DEPLOY_CMD[@]}"

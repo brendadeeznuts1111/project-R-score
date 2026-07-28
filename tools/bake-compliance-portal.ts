@@ -156,6 +156,18 @@ export type ComplianceBoard = {
       zipCode: string | null;
     }>;
   };
+  /** ZIP cluster day-window proof (deep-audit aligned). */
+  deepAudit?: {
+    zipWindow: {
+      ok: boolean;
+      days: number;
+      mode: string;
+      totalPlays: number;
+      inWindowPlays: number;
+      label: string;
+    };
+    command: string;
+  };
   integrity?: {
     scoreHint: string;
     proof: ReportProof;
@@ -223,6 +235,9 @@ export async function bakeCompliancePortal(opts?: {
   });
   geoDb.close();
 
+  const { proveZipDayWindow } = await import('../lib/operations/prove-zip-day-window.ts');
+  const zipWindow = proveZipDayWindow({ days: 90, recentCount: 4, staleCount: 6 });
+
   const boardProof = buildReportProofFromValue({
     kind: 'compliance-board',
     enhancements: {
@@ -235,6 +250,13 @@ export async function bakeCompliancePortal(opts?: {
       digest: shadow.proof?.digest ?? shadow.signature,
     },
     geoPartners,
+    zipWindow: {
+      ok: zipWindow.ok,
+      days: zipWindow.days,
+      mode: zipWindow.mode,
+      totalPlays: zipWindow.totalPlays,
+      inWindowPlays: zipWindow.inWindowPlays,
+    },
     bunVersion: Bun.version,
   });
 
@@ -267,6 +289,11 @@ export async function bakeCompliancePortal(opts?: {
       ok: geoPartners.every(p => p.zipCode && p.location && p.stateCode !== '—'),
       label: 'Geo profiles discrete (state/age/location/zip)',
     },
+    {
+      id: 'zip-window',
+      ok: zipWindow.ok,
+      label: zipWindow.label,
+    },
   ];
 
   const board: ComplianceBoard = {
@@ -275,6 +302,17 @@ export async function bakeCompliancePortal(opts?: {
     enhancements,
     shadow,
     geo: { partners: geoPartners },
+    deepAudit: {
+      zipWindow: {
+        ok: zipWindow.ok,
+        days: zipWindow.days,
+        mode: zipWindow.mode,
+        totalPlays: zipWindow.totalPlays,
+        inWindowPlays: zipWindow.inWindowPlays,
+        label: zipWindow.label,
+      },
+      command: 'bun run ops:audit:deep',
+    },
     integrity: {
       scoreHint: boardProof.hmac
         ? 'integrity+hmac'

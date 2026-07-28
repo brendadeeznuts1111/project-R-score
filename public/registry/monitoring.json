@@ -1,7 +1,7 @@
 {
   "source": "snapshot",
-  "uptime": "0d 0h 0m 2s",
-  "uptimeMs": 2504,
+  "uptime": "0d 0h 0m 4s",
+  "uptimeMs": 4284,
   "packageCount": 17,
   "versionCount": 23,
   "lastIntegrity": {
@@ -26,16 +26,35 @@
   },
   "experimentsActive": 1,
   "predictionN": 30,
-  "timestamp": "2026-07-27T17:09:30.920Z",
-  "snapshotAt": "2026-07-27T17:09:30.920Z",
+  "timestamp": "2026-07-28T04:24:21.444Z",
+  "snapshotAt": "2026-07-28T04:24:21.444Z",
+  "compliance": {
+    "available": true,
+    "ok": true,
+    "enhancements": "8/8",
+    "shadowMismatches": 0,
+    "shadowAllow": 4,
+    "shadowBlock": 4,
+    "geoProfiles": 4,
+    "hmac": true,
+    "zipWindowOk": true,
+    "scoreHint": "integrity+hmac",
+    "states": [
+      "MA",
+      "NJ"
+    ],
+    "generatedAt": "2026-07-28T04:24:17.749Z",
+    "path": "/registry/compliance-board.json",
+    "portal": "/portal/compliance/"
+  },
   "env": {
     "ok": true,
     "source": "env-check",
-    "checkedAt": "2026-07-27T17:09:30.921Z",
+    "checkedAt": "2026-07-28T04:24:21.444Z",
     "summary": {
       "total": 26,
       "ok": 26,
-      "missing": 6,
+      "missing": 5,
       "placeholder": 0,
       "requiredMissing": 0
     },
@@ -191,15 +210,15 @@
         "Key": "PLAY_SIGNING_SECRET",
         "Group": "ops",
         "Severity": "recommended",
-        "Status": "default",
-        "Detail": "unset · code default · defaults to operations-dev-secret if unset"
+        "Status": "set",
+        "Detail": "set (len 64, fa9…99)"
       },
       {
         "Key": "PROVISION_ENCRYPTION_KEY",
         "Group": "ops",
         "Severity": "optional",
-        "Status": "missing",
-        "Detail": "—"
+        "Status": "set",
+        "Detail": "set (len 64, 1c9…a0)"
       },
       {
         "Key": "SNAPSHOT_PHASE",
@@ -387,7 +406,7 @@
     "demosPassed": 30,
     "demosTotal": 30,
     "demoPassRate": "100.0%",
-    "generated": "2026-07-27T17:09:30.917Z",
+    "generated": "2026-07-28T04:24:21.443Z",
     "apisVerified": 30
   },
   "registryClientProof": {

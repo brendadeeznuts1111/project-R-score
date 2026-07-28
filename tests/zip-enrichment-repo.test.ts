@@ -116,4 +116,23 @@ describe('ZipEnrichmentRepo + ScopedRepository', () => {
     const total = windowed.reduce((n, s) => n + s.total_plays, 0);
     expect(total).toBe(2);
   });
+
+  test('getClusterStats day window filters via play_zip_enrichment.enriched_at', () => {
+    db.run(`ALTER TABLE play_zip_enrichment ADD COLUMN enriched_at TEXT`);
+    const oldIso = new Date(Date.now() - 200 * 86_400_000).toISOString();
+    const recentIso = new Date().toISOString();
+    for (let i = 0; i < 6; i++) {
+      db.run(
+        `UPDATE play_zip_enrichment SET enriched_at = ? WHERE play_id = ?`,
+        i < 2 ? recentIso : oldIso,
+        `p${i}`
+      );
+    }
+
+    const zipRepo = new ZipEnrichmentRepo(db, scope);
+    expect(zipRepo.resolveDayWindowMode(30)).toBe('enriched');
+    const meta = zipRepo.getClusterStatsWithMeta(30);
+    expect(meta.window.applied).toBe(true);
+    expect(meta.stats.reduce((n, s) => n + s.total_plays, 0)).toBe(2);
+  });
 });
