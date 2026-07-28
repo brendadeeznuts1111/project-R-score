@@ -57,7 +57,11 @@ import type { BunRequest } from 'bun';
 import { Database } from 'bun:sqlite';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
-import { handleLimitRaiseAgentRequest } from '../lib/operations/limit-raise-agent-api.ts';
+import {
+  handleLimitRaiseAgentRequest,
+  handleLimitRecordRequest,
+  handleLimitSummaryRequest,
+} from '../lib/operations/limit-raise-agent-api.ts';
 import { readLocalChannelEvents } from '../lib/channels/outbox.ts';
 import { parseOpsChannelTopic } from '../lib/channels/ops-channel-event.ts';
 import { collectMonitoring, renderMonitoringHtml } from '../lib/monitoring/index.ts';
@@ -872,6 +876,26 @@ function agentLimitRaisesApi(req: Request): Response {
   }
 }
 
+/** POST /api/agents/v1/limits/record — record a limit snapshot (no auth, write-only). */
+function agentLimitRecordApi(req: Request): Response {
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    return handleLimitRecordRequest(req, db);
+  } finally {
+    db.close();
+  }
+}
+
+/** GET /api/limits/summary — aggregate stats, public (no auth). */
+function limitSummaryApi(): Response {
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    return handleLimitSummaryRequest(db);
+  } finally {
+    db.close();
+  }
+}
+
 /** GET /monitoring — server-rendered Bun.inspect.table dashboard. */
 async function monitoringPage(): Promise<Response> {
   try {
@@ -1462,6 +1486,12 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/agents/v1/limits/raises' || path === '/api/agents/v1/limits/raises/') {
     return agentLimitRaisesApi(req);
   }
+  if (path === '/api/agents/v1/limits/record' || path === '/api/agents/v1/limits/record/') {
+    return agentLimitRecordApi(req);
+  }
+  if (path === '/api/limits/summary' || path === '/api/limits/summary/') {
+    return limitSummaryApi();
+  }
 
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
@@ -1473,6 +1503,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
       '/api/compliance',
       '/api/channels',
       '/api/operations/summary',
+      '/api/limits/summary',
       '/api/catalog',
       '/api/skills', // prefix also covers /api/skills/{name} + /package (publish-gated POST)
       // Packaged .skill archives under public/skills/ — public read plane.
@@ -1833,6 +1864,9 @@ function buildPublicRoutes() {
     '/api/compliance/': () => complianceBoardApi(),
     '/api/agents/v1/limits/raises': (req: Request) => agentLimitRaisesApi(req),
     '/api/agents/v1/limits/raises/': (req: Request) => agentLimitRaisesApi(req),
+    '/api/agents/v1/limits/record': (req: Request) => agentLimitRecordApi(req),
+    '/api/agents/v1/limits/record/': (req: Request) => agentLimitRecordApi(req),
+    '/api/limits/summary': () => limitSummaryApi(),
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
     '/api/dod': (req: Request) => dodApi(req),

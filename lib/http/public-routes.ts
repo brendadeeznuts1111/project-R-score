@@ -277,6 +277,22 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'requires read auth plus node_id; returns scoped multi-factor context with proof',
   },
   {
+    path: '/api/agents/v1/limits/record',
+    name: 'Limit record API',
+    category: 'api',
+    kind: 'simd-route',
+    okStatuses: [400, 201],
+    note: 'POST — record a limit snapshot; auto-detects raises and enqueues alerts',
+  },
+  {
+    path: '/api/limits/summary',
+    name: 'Limit summary API',
+    category: 'api',
+    kind: 'simd-route',
+    okStatuses: [200],
+    note: 'public — aggregate limit changes across all partners (48h window)',
+  },
+  {
     path: '/portal/toc/',
     name: 'TOC Ops portal',
     category: 'portal',
