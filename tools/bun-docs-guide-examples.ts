@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 // @see https://bun.com/docs/pm/cli/install#cpu-and-os-flags — --cpu
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
@@ -449,6 +450,24 @@ async function extractSocialMetadata(url: string): Promise<SocialMetadata> {
       body: 'const str = Bun.inspect(\n  { z: 1, a: { b: 2, c: 3 } },\n  { colors: true, depth: 2, sorted: true, compact: false },\n);',
     },
   ],
+  // Official bun-types JSDoc — Bun.sliceAnsi (slice by visible columns, ANSI intact)
+  'reference/bun/sliceAnsi': [
+    {
+      lang: 'ts',
+      body: 'import { sliceAnsi } from "bun";\n\n// Plain slice (replaces the `slice-ansi` npm package)\nsliceAnsi("hello", 1, 4);                              // "ell"\nsliceAnsi("\\u001b[31mhello\\u001b[39m", 1, 4);          // "\\u001b[31mell\\u001b[39m"\nsliceAnsi("\\u5b89\\u5b81\\u54c8", 0, 4);                 // "\\u5b89\\u5b81" (CJK: width 2 each)\n\n// Truncation (replaces the `cli-truncate` npm package)\nsliceAnsi("unicorn", 0, 4, "\\u2026");           // "uni\\u2026"\nsliceAnsi("unicorn", -4, undefined, "\\u2026");  // "\\u2026orn"',
+    },
+  ],
+  // Official docs — runtime/console#object-inspection-depth
+  'runtime/console#object-inspection-depth': [
+    {
+      lang: 'ts',
+      body: 'const nested = { a: { b: { c: { d: "deep" } } } };\nconsole.log(nested);\n// Default (depth 2): { a: { b: [Object] } }\n// With depth 4: { a: { b: { c: { d: \'deep\' } } } }',
+    },
+    {
+      lang: 'toml',
+      body: '[console]\ndepth = 3',
+    },
+  ],
   // Official docs — Bun.inspect.custom (≡ util.inspect.custom)
   'runtime/utils#bun-inspect-custom': [
     {
@@ -804,6 +823,10 @@ export const TOKEN_GUIDE_PATH: Record<string, string> = {
   'Bun.inspect': 'runtime/utils#bun-inspect',
   'Bun.inspect()': 'runtime/utils#bun-inspect',
   'Bun.inspect.custom': 'runtime/utils#bun-inspect-custom',
+  'Bun.inspect.sorted': 'reference/bun/BunInspectOptions',
+  'Bun.inspect.compact': 'reference/bun/BunInspectOptions',
+  'Bun.sliceAnsi': 'reference/bun/sliceAnsi',
+  'console.depth': 'runtime/console#object-inspection-depth',
   'Bun.inspect.table': 'runtime/utils#bun-inspect-table-tabulardata-properties-options',
   'Bun.inspect.table(tabularData, properties, options)':
     'runtime/utils#bun-inspect-table-tabulardata-properties-options',

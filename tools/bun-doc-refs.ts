@@ -992,8 +992,11 @@ export const CANONICAL_REFS: Record<string, string> = {
     'bun-inspect-table-tabulardata-properties-options'
   ),
   BunInspectOptions: 'https://bun.com/reference/bun/BunInspectOptions',
+  'Bun.inspect.sorted': 'https://bun.com/reference/bun/BunInspectOptions',
+  'Bun.inspect.compact': 'https://bun.com/reference/bun/BunInspectOptions',
   console: 'https://bun.com/docs/runtime/console',
   '--console-depth': 'https://bun.com/docs/runtime/console#object-inspection-depth',
+  'console.depth': 'https://bun.com/docs/runtime/console#object-inspection-depth',
 
   // ── Color & TTY conventions (replaces chalk / ansi-styles) ─────────────
   'Bun.color': 'https://bun.com/docs/runtime/color#flexible-input',

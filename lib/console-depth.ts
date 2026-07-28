@@ -51,7 +51,7 @@
 // console.log (native layer) and the wrappers below. Static TOML import:
 // sync, zero fs, resolved relative to this module (repo root = ../).
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — console.depth
-// @see https://bun.com/docs/runtime/loaders#toml — TOML import attribute
+// @see https://bun.com/docs/bundler/loaders#toml — TOML import attribute
 import bunfig from '../bunfig.toml' with { type: 'toml' };
 
 /**

@@ -1,3 +1,7 @@
+// @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
+// @see https://bun.com/reference/bun/SQL — Bun.SQL
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
+// @see https://bun.com/blog/bun-v1.3.14#no-orphans — --no-orphans
 // @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
 // @see https://bun.com/docs/bundler/bytecode#with-standalone-executables — --compile
 // @see https://bun.com/docs/runtime/console#object-inspection-depth — --console-depth
@@ -806,6 +810,64 @@ export const CURATED_ENTRIES: CuratedEntry[] = [
       'Options for Bun.inspect — colors, depth, sorted, compact (Node util.inspect extras are ignored)',
     related: ['runtime/utils#bun-inspect', 'runtime/console'],
     relatedTokens: ['Bun.inspect', 'Bun.inspect.custom', 'Bun.inspect.table', '--console-depth'],
+  },
+  // Inspection family completion: bunfig depth key + inspect options + ANSI utils.
+  // Without curated entries these fall back to page-peer `related` noise
+  // (console.depth was previously grouped with test-runner flags).
+  {
+    term: 'console.depth',
+    path: 'runtime/console#object-inspection-depth',
+    description:
+      'bunfig.toml [console] depth — persistent object-inspection depth for console.log (default 2; --console-depth flag overrides)',
+    related: ['runtime/console'],
+    relatedTokens: ['--console-depth', 'Bun.inspect', 'BunInspectOptions'],
+  },
+  {
+    term: 'Bun.inspect.sorted',
+    path: 'reference/bun/BunInspectOptions',
+    description:
+      'Bun.inspect option — sort object keys alphabetically, recursively (deterministic output for snapshots/diffs)',
+    related: ['runtime/utils#bun-inspect'],
+    relatedTokens: ['Bun.inspect', 'Bun.inspect.compact', 'BunInspectOptions'],
+  },
+  {
+    term: 'Bun.inspect.compact',
+    path: 'reference/bun/BunInspectOptions',
+    description: 'Bun.inspect option — single-line output for hot paths / watch loops',
+    related: ['runtime/utils#bun-inspect'],
+    relatedTokens: ['Bun.inspect', 'Bun.inspect.sorted', 'BunInspectOptions'],
+  },
+  {
+    term: 'Bun.stringWidth',
+    path: 'runtime/utils#bun-stringwidth',
+    description:
+      'Column count of a string as displayed in a terminal (ANSI-aware, emoji/wide chars; ~6,756x faster than string-width)',
+    related: ['runtime/utils'],
+    relatedTokens: ['Bun.sliceAnsi', 'Bun.stripANSI', 'Bun.wrapAnsi'],
+  },
+  {
+    term: 'Bun.stripANSI',
+    path: 'runtime/utils#bun-stripansi',
+    description: 'Remove ANSI escape codes from a string',
+    related: ['runtime/utils'],
+    relatedTokens: ['Bun.stringWidth', 'Bun.wrapAnsi', 'Bun.sliceAnsi'],
+  },
+  {
+    term: 'Bun.wrapAnsi',
+    path: 'runtime/utils#bun-wrapansi',
+    description:
+      'Word-wrap text to a column width, ANSI- and grapheme-safe (styles closed and re-opened per row)',
+    related: ['runtime/utils'],
+    relatedTokens: ['Bun.stringWidth', 'Bun.stripANSI', 'Bun.sliceAnsi'],
+  },
+  {
+    term: 'Bun.sliceAnsi',
+    path: 'reference/bun/sliceAnsi',
+    description:
+      'Slice a string by visual column range without breaking ANSI codes or graphemes — truncation primitive',
+    minVersion: '1.3.11',
+    related: ['runtime/utils#bun-stringwidth'],
+    relatedTokens: ['Bun.stringWidth', 'Bun.stripANSI', 'Bun.wrapAnsi'],
   },
   // Env: Bun.env ≡ process.env (guide: guides/runtime/read-env). Prefer utils#bun-env over changelog dump.
   {
