@@ -7,7 +7,12 @@
  */
 
 import { BrandValidationError } from '../../core/core-errors.ts';
-import { defineBrandConstructors, type BrandSpec, type BrandedString } from './_core.ts';
+import {
+  defineBrandConstructors,
+  type BrandSpec,
+  type BrandValidationSpec,
+  type BrandedString,
+} from './_core.ts';
 
 export type OperationId = BrandedString<'OperationId'>;
 export type ResourceId = BrandedString<'ResourceId'>;
@@ -147,7 +152,12 @@ export const parseOpsChannelEventId = opsChannelEventId.parse;
 export const REGULATED_STATE_CODES = ['MA', 'NJ'] as const;
 export type RegulatedStateCode = (typeof REGULATED_STATE_CODES)[number];
 
-const STATE_CODE_RE = /^[A-Z]{2}$/;
+const STATE_CODE_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^[A-Z]{2}$',
+  ingressNormalization: 'trim-uppercase',
+} as const satisfies BrandValidationSpec;
+const STATE_CODE_RE = new RegExp(STATE_CODE_VALIDATION.pattern);
 
 function normalizeStateCode(value: string): string {
   return value.trim().toUpperCase();
@@ -176,7 +186,12 @@ export function parseStateCode(value: unknown): StateCode {
 }
 
 /** US ZIP (`12345`) or ZIP+4 (`12345-6789`). */
-const ZIP_CODE_RE = /^\d{5}(-\d{4})?$/;
+const ZIP_CODE_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^\\d{5}(-\\d{4})?$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+const ZIP_CODE_RE = new RegExp(ZIP_CODE_VALIDATION.pattern);
 
 export function asZipCode(value: string): ZipCode {
   const z = value.trim();
@@ -200,7 +215,7 @@ export function parseZipCode(value: unknown): ZipCode {
   return asZipCode(value);
 }
 
-export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
+export const OPERATIONS_BRAND_SPECS = [
   {
     name: 'OperationId',
     domain: 'operations',
@@ -340,6 +355,7 @@ export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
     tiers: ['as', 'try', 'parse'],
     mint: ['user-input', 'wire-input'],
     description: 'US state jurisdiction code for regulatory scoping (MA, NJ, …)',
+    validation: STATE_CODE_VALIDATION,
   },
   {
     name: 'ZipCode',
@@ -347,5 +363,6 @@ export const OPERATIONS_BRAND_SPECS: readonly BrandSpec[] = [
     tiers: ['as', 'try', 'parse'],
     mint: ['user-input', 'wire-input'],
     description: 'US ZIP or ZIP+4 postal code (discrete geo column)',
+    validation: ZIP_CODE_VALIDATION,
   },
-] as const;
+] as const satisfies readonly BrandSpec[];

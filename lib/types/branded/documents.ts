@@ -30,7 +30,7 @@ export const asDocTokenId = docToken.as;
 export const tryDocTokenId = docToken.try;
 export const parseDocTokenId = docToken.parse;
 
-export const DOCUMENT_BRAND_SPECS: readonly BrandSpec[] = [
+export const DOCUMENT_BRAND_SPECS = [
   {
     name: 'DocumentId',
     domain: 'documents',
@@ -52,4 +52,4 @@ export const DOCUMENT_BRAND_SPECS: readonly BrandSpec[] = [
     mint: ['wire-input', 'system-internal'],
     description: 'Bun documentation token identity (catalog / TokenRef northstar)',
   },
-] as const;
+] as const satisfies readonly BrandSpec[];

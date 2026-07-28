@@ -48,6 +48,25 @@ describe('branded domain-value catalog', () => {
     }
   });
 
+  test('generated guards cover every canonical runtime shape', () => {
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(47);
+
+    for (const spec of branded.BRAND_CATALOG) {
+      const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;
+      const guard = branded.BRAND_GUARDS[guardName];
+      const sample = sampleFor(spec.name);
+
+      expect(guard(sample.expected)).toBeTrue();
+      expect(guard(42)).toBeFalse();
+      expect(branded.isBrandedValue(spec.name, sample.expected)).toBeTrue();
+    }
+
+    expect(branded.BRAND_GUARDS.isStateCode('MA')).toBeTrue();
+    expect(branded.BRAND_GUARDS.isStateCode('ma')).toBeFalse();
+    expect(branded.BRAND_GUARDS.isZipCode('02139-1234')).toBeTrue();
+    expect(branded.BRAND_GUARDS.isZipCode('2139')).toBeFalse();
+  });
+
   test('generic constructors reject blank values and strip a brand explicitly', () => {
     expect(() => branded.asSessionId('   ')).toThrow();
     expect(branded.trySessionId(null)).toBeUndefined();

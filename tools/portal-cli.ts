@@ -205,7 +205,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
   portal-cli scanner <subcommand>    Bun Security Scanner (policy · estimate · scan --oneshot)
-  portal-cli doctor [--json] [--full] Unified health gate (linker configVersion + offline bakes)
+  portal-cli doctor [--verbose] [--full]  Unified health gate (linker configVersion + bakes)
   portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
   portal-cli bunfig status|check     Bunfig install config provenance + policy gate
   portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
@@ -1154,25 +1154,25 @@ Rebake: bun run bunfig:bake  ·  Policy: docs/UNIFIED.md
     // @see https://bun.com/docs/pm/cli/install#default-strategy
     // @see https://bun.com/docs/pm/isolated-installs
     if (argv.includes('--help') || argv.includes('-h')) {
-      console.log(`Usage: portal-cli doctor [--json] [--verbose|-v] [--full]
+      console.log(`Usage: portal-cli doctor [flags]
 
 Unified offline health gate for the portal control plane.
 
 Checks (default — pure, no network):
-  linker-config-version   bun.lock configVersion=1 (isolated monorepo default)
-  machine-isolated-linker linker=isolated from machine bunfig
-  vault-health-bake       public/registry/vault-health.json present
-  capability-map-subset   public/registry/capability-map-subset.json present
-  bunfig-state-bake       public/registry/bunfig-state.json (info)
+  Linker:  linker-config-version · machine-isolated-linker
+  Bakes:   vault-health · capability-map-subset · bunfig-state (+ age when present)
+  Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
 Flags:
-  --verbose · -v   Table: fix command · auto-fixable · scope · time · impact
-  --full           Also spawn: install:verify · vault-health tests · capability tests
-  --json           Machine-readable report (schemaVersion 2 + summary)
+  --verbose · -v     Table: status · fix · auto · scope · age + remediation detail
+  --failed-only      Hide passing checks (pairs with --verbose)
+  --full             Spawn install:verify · vault-health · capability-map tests
+  --json             Machine-readable report (schemaVersion 3 + summary)
 
 Examples:
   portal-cli doctor
   portal-cli doctor --verbose
+  portal-cli doctor --failed-only --verbose
   portal-cli doctor --json
   portal-cli doctor --full --verbose
 
@@ -1187,6 +1187,7 @@ Related: vault health · capabilities health · scanner doctor · bunfig check �
     const report = await runPortalDoctor({
       full: argv.includes('--full'),
       verbose,
+      failedOnly: argv.includes('--failed-only'),
     });
     if (argv.includes('--json')) {
       console.log(JSON.stringify(report, null, 2));

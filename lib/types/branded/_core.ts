@@ -51,6 +51,19 @@ export type BrandDomain =
   | 'portal';
 export type BrandName = `${string}Id` | `${string}Key` | `${string}Code`;
 export type BrandKind = 'id' | 'key' | 'code';
+export type BrandIngressNormalization = 'trim' | 'trim-uppercase';
+
+export type BrandValidationSpec =
+  | {
+      shape: 'nonblank';
+      ingressNormalization: 'trim';
+    }
+  | {
+      shape: 'pattern';
+      pattern: string;
+      flags?: string;
+      ingressNormalization: BrandIngressNormalization;
+    };
 
 export type BrandSpec = {
   /** Brand tag, e.g. SessionId */
@@ -63,6 +76,8 @@ export type BrandSpec = {
   mint: readonly MintAuthority[];
   /** One-line institutional meaning */
   description: string;
+  /** Canonical runtime shape; omitted entries use the nonblank-string default. */
+  validation?: BrandValidationSpec;
 };
 
 export type BrandConstructorNames<Name extends BrandName = BrandName> = {
@@ -85,6 +100,41 @@ export function constructorNamesForBrand<Name extends BrandName>(
     try: `try${name}`,
     parse: `parse${name}`,
   };
+}
+
+export function validationForBrand(spec: BrandSpec): BrandValidationSpec {
+  return (
+    spec.validation ?? {
+      shape: 'nonblank',
+      ingressNormalization: 'trim',
+    }
+  );
+}
+
+function normalizeForIngress(value: string, validation: BrandValidationSpec): string {
+  const trimmed = value.trim();
+  return validation.ingressNormalization === 'trim-uppercase' ? trimmed.toUpperCase() : trimmed;
+}
+
+/** Check the canonical runtime representation without minting or coercing it. */
+export function isCanonicalBrandValue<B extends BrandName>(
+  spec: BrandSpec & { name: B },
+  value: unknown
+): value is BrandedString<B> {
+  if (typeof value !== 'string' || value.trim() === '') return false;
+  const validation = validationForBrand(spec);
+  if (validation.shape === 'nonblank') return true;
+  const canonical = normalizeForIngress(value, validation);
+  if (canonical !== value) return false;
+  return new RegExp(validation.pattern, validation.flags).test(value);
+}
+
+export type BrandGuard<B extends BrandName> = (value: unknown) => value is BrandedString<B>;
+
+export function createBrandGuard<B extends BrandName>(
+  spec: BrandSpec & { name: B }
+): BrandGuard<B> {
+  return (value: unknown): value is BrandedString<B> => isCanonicalBrandValue(spec, value);
 }
 
 /**

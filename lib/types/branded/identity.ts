@@ -42,7 +42,7 @@ export const asTokenId = token.as;
 export const tryTokenId = token.try;
 export const parseTokenId = token.parse;
 
-export const IDENTITY_BRAND_SPECS: readonly BrandSpec[] = [
+export const IDENTITY_BRAND_SPECS = [
   {
     name: 'UserId',
     domain: 'identity',
@@ -78,4 +78,4 @@ export const IDENTITY_BRAND_SPECS: readonly BrandSpec[] = [
     mint: ['system-internal', 'wire-input'],
     description: 'Opaque token handle (not the token secret)',
   },
-] as const;
+] as const satisfies readonly BrandSpec[];

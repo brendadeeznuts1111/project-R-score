@@ -22,7 +22,7 @@ export const asPolicyId = policy.as;
 export const tryPolicyId = policy.try;
 export const parsePolicyId = policy.parse;
 
-export const SECURITY_BRAND_SPECS: readonly BrandSpec[] = [
+export const SECURITY_BRAND_SPECS = [
   {
     name: 'ChallengeId',
     domain: 'security',
@@ -37,4 +37,4 @@ export const SECURITY_BRAND_SPECS: readonly BrandSpec[] = [
     mint: ['system-internal', 'wire-input'],
     description: 'Access policy identity',
   },
-] as const;
+] as const satisfies readonly BrandSpec[];

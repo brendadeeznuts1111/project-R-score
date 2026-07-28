@@ -13,20 +13,25 @@ export type {
   BrandedString,
   BrandConstructorNames,
   BrandDomain,
+  BrandGuard,
+  BrandIngressNormalization,
   BrandKind,
   BrandName,
   BrandSpec,
+  BrandValidationSpec,
   ConstructorTier,
   MintAuthority,
 } from './_core.ts';
 export {
   brandKindFromName,
   constructorNamesForBrand,
+  createBrandGuard,
   defineBrandConstructors,
   makeBrandedString,
   parseBrandedString,
   tryBrandedString,
   unbrand,
+  validationForBrand,
   // Compatibility aliases.
   makeId,
   parseBrandId,
@@ -42,7 +47,7 @@ export * from './audit.ts';
 export * from './operations.ts';
 export * from './portal.ts';
 
-import type { BrandSpec } from './_core.ts';
+import { createBrandGuard, type BrandGuard, type BrandedString, type BrandSpec } from './_core.ts';
 import { SESSION_BRAND_SPECS } from './session.ts';
 import { IDENTITY_BRAND_SPECS } from './identity.ts';
 import { DOCUMENT_BRAND_SPECS } from './documents.ts';
@@ -91,7 +96,7 @@ import type {
 import type { PortalTenantId, TelegramUserId, PortalAccountId, LinkNonceId } from './portal.ts';
 
 /** Full institutional catalog — SSOT for brand-manifest generation. */
-export const BRAND_CATALOG: readonly BrandSpec[] = [
+export const BRAND_CATALOG = [
   ...SESSION_BRAND_SPECS,
   ...IDENTITY_BRAND_SPECS,
   ...DOCUMENT_BRAND_SPECS,
@@ -100,7 +105,25 @@ export const BRAND_CATALOG: readonly BrandSpec[] = [
   ...AUDIT_BRAND_SPECS,
   ...OPERATIONS_BRAND_SPECS,
   ...PORTAL_BRAND_SPECS,
-] as const;
+] as const satisfies readonly BrandSpec[];
+
+export type CatalogBrandName = (typeof BRAND_CATALOG)[number]['name'];
+export type BrandGuardRegistry = {
+  readonly [Name in CatalogBrandName as `is${Name}`]: BrandGuard<Name>;
+};
+
+/** Generated shape guards. Guards validate canonical representation; they do not prove provenance. */
+export const BRAND_GUARDS = Object.fromEntries(
+  BRAND_CATALOG.map(spec => [`is${spec.name}`, createBrandGuard(spec)])
+) as BrandGuardRegistry;
+
+export function isBrandedValue<Name extends CatalogBrandName>(
+  name: Name,
+  value: unknown
+): value is BrandedString<Name> {
+  const guard = BRAND_GUARDS[`is${name}`] as BrandGuard<Name>;
+  return guard(value);
+}
 
 /** Union of every identity brand (all catalog names ending in `Id`). */
 export type AnyId =

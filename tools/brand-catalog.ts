@@ -26,13 +26,25 @@ type Brand = {
     try: string;
     parse: string;
   };
+  validation:
+    | {
+        shape: 'nonblank';
+        ingressNormalization: 'trim';
+      }
+    | {
+        shape: 'pattern';
+        pattern: string;
+        flags?: string;
+        ingressNormalization: 'trim' | 'trim-uppercase';
+      };
+  guard: string;
   tiers: string[];
   mint: string[];
   description: string;
 };
 
 type Manifest = {
-  version: 2;
+  version: 3;
   brandCount: number;
   domainCount: number;
   domains: string[];
@@ -45,7 +57,7 @@ type Manifest = {
 
 async function load(): Promise<Manifest> {
   const manifest = JSON.parse(await Bun.file(MANIFEST).text()) as Manifest;
-  if (manifest.version !== 2 || !Array.isArray(manifest.brands)) {
+  if (manifest.version !== 3 || !Array.isArray(manifest.brands)) {
     throw new Error('brand-manifest.json schema is stale — run: bun tools/brand-manifest.ts');
   }
   return manifest;
@@ -67,6 +79,7 @@ function printDomain(m: Manifest, domain: string, asJson: boolean): void {
     console.info(`  ${b.name}`);
     console.info(`    tiers: ${b.tiers.join(' · ')}`);
     console.info(`    mint:  ${b.mint.join(' · ')}`);
+    console.info(`    guard: ${b.guard}`);
     console.info(`    ${b.description}`);
     console.info('');
   }
@@ -88,6 +101,12 @@ function printBrand(m: Manifest, name: string, asJson: boolean): void {
   console.info(`  ${b.description}`);
   console.info(`  kind: ${b.kind}`);
   console.info(`  tiers: ${b.constructors.as} · ${b.constructors.try} · ${b.constructors.parse}`);
+  console.info(
+    `  validation: ${b.validation.shape}` +
+      (b.validation.shape === 'pattern' ? ` /${b.validation.pattern}/` : '') +
+      ` · ingress ${b.validation.ingressNormalization}`
+  );
+  console.info(`  guard: ${b.guard}`);
   console.info(`  mint authority: ${b.mint.join(', ')}`);
   console.info(`  module: ${b.module}\n`);
 }
@@ -106,6 +125,8 @@ function printIndex(m: Manifest, asJson: boolean): void {
             domain: b.domain,
             kind: b.kind,
             constructors: b.constructors,
+            validation: b.validation,
+            guard: b.guard,
           })),
           constructorTiers: m.constructorTiers,
           emptyPolicy: m.emptyPolicy,

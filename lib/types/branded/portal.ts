@@ -33,7 +33,7 @@ export const asLinkNonceId = linkNonce.as;
 export const tryLinkNonceId = linkNonce.try;
 export const parseLinkNonceId = linkNonce.parse;
 
-export const PORTAL_BRAND_SPECS: readonly BrandSpec[] = [
+export const PORTAL_BRAND_SPECS = [
   {
     name: 'PortalTenantId',
     domain: 'portal',
@@ -62,4 +62,4 @@ export const PORTAL_BRAND_SPECS: readonly BrandSpec[] = [
     mint: ['system-internal'],
     description: 'Telegram link nonce for account binding',
   },
-] as const;
+] as const satisfies readonly BrandSpec[];

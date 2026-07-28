@@ -2,8 +2,8 @@
 name: branded-ids
 description:
   Discover, add, and apply FactoryWager branded domain values (IDs, keys, and
-  validated codes). Use for any domain *Id, constructor-tier choice, brand
-  catalog or manifest maintenance, and branded-ID gate failures.
+  validated codes). Use for any domain *Id, constructor-tier or guard choice,
+  brand coverage, catalog or manifest maintenance, and branded-ID gate failures.
 ---
 
 # Branded domain values
@@ -49,17 +49,20 @@ The current contract is 47 branded values across 8 domains:
 
 ## Choose the constructor tier
 
-| Situation                                             | Tier            |
-| ----------------------------------------------------- | --------------- |
-| Required, trusted interior value or owned system mint | `asX(value)`    |
-| Optional config or soft merge                         | `tryX(value)`   |
-| Wire, JSON, CLI, form, or environment ingress         | `parseX(value)` |
+| Situation                                             | Tier                      |
+| ----------------------------------------------------- | ------------------------- |
+| Required, trusted interior value or owned system mint | `asX(value)`              |
+| Optional config or soft merge                         | `tryX(value)`             |
+| Wire, JSON, CLI, form, or environment ingress         | `parseX(value)`           |
+| Already-canonical unknown value that must be narrowed | `BRAND_GUARDS.isX(value)` |
 
 `as*` and `parse*` throw `BrandValidationError` on invalid input. `try*` returns
 `undefined`. Missing is never represented by an empty branded string.
 
 Format-aware brands retain their owned constructors. For example,
 `asStateCode('ma')` normalizes to `MA`, while `asZipCode` enforces ZIP/ZIP+4.
+Guards validate canonical shape only; they do not prove provenance or entity
+existence.
 
 ## Apply at the boundary
 
@@ -92,6 +95,23 @@ bun test tests/branded-catalog.test.ts
 bun run check:brands:all
 ```
 
+## Audit adoption before migration
+
+Use the read-only coverage report before adding a brand or planning a migration:
+
+```bash
+bun tools/brand-coverage.ts
+bun tools/brand-coverage.ts --attention
+bun tools/brand-coverage.ts --json
+```
+
+- `unused`: no consumer reference, constructor, parse, or guard was found.
+- `referenced-unconstructed`: consumers name the type but no constructor tier is
+  called; inspect for a missing boundary parse.
+- `covered`: at least one construction path or guard exists.
+
+The report is evidence for investigation, not permission for bulk deletion.
+
 ## Fix gate failures
 
 Run the staged gate before commit:
@@ -119,3 +139,6 @@ grandfather legacy lines only; it never permits a new bare-string ID.
 - `docs/WIRE_BOUNDARY.md` — parse-once boundary policy
 - `tests/branded-types.test-d.ts` — nominal type proof
 - `tests/branded-catalog.test.ts` — catalog and runtime proof
+- `tools/brand-coverage.ts` — read-only adoption and boundary report
+- [`../references/agent-tooling.md`](../references/agent-tooling.md) — shared
+  scan and commit gates

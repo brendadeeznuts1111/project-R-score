@@ -13,6 +13,7 @@ text must not travel through the harness as a bare `string`.
 - **Inventory:** 47 values across 8 domains: 44 IDs, 1 key, and 2 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
+- **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
 - **Boundary:** [`docs/WIRE_BOUNDARY.md`](../../../docs/WIRE_BOUNDARY.md)
 - **Agent workflow:**
   [`.agents/skills/branded-ids/SKILL.md`](../../../.agents/skills/branded-ids/SKILL.md)
@@ -53,6 +54,25 @@ may normalize further; `StateCode`, for example, uppercases before validation.
 
 Missing is not a brand. Never write `'' as AccountId` or forge a value with a
 type assertion.
+
+## Runtime shape guards
+
+`BRAND_GUARDS` is generated from the literal catalog:
+
+```ts
+if (BRAND_GUARDS.isStateCode(raw)) {
+  // raw narrows to StateCode and is already in canonical uppercase form
+}
+
+if (isBrandedValue('SessionId', raw)) {
+  // raw narrows to SessionId
+}
+```
+
+Guards prove canonical runtime shape, not provenance or entity existence.
+Generic ID guards accept nonblank strings. Pattern brands use catalog metadata:
+`StateCode` requires canonical uppercase letters and `ZipCode` requires ZIP or
+ZIP+4. Use `parse*` when input needs trimming or normalization.
 
 ## Aggregate types
 
@@ -107,6 +127,7 @@ the nominal type and constructor semantics.
 | `bun tools/brand-manifest.ts --check`             | proves generated metadata matches `BRAND_CATALOG`                  |
 | `bun run check:brands:types`                      | proves nominal separation and aggregate coverage                   |
 | `bun test tests/branded-catalog.test.ts`          | proves catalog uniqueness, constructor exports, and runtime tiers  |
+| `bun tools/brand-coverage.ts --attention`         | reports unused and referenced-but-unconstructed brands             |
 
 Intentional opaque third-party primary keys require an inline decision:
 
@@ -121,6 +142,8 @@ bun tools/brand-catalog.ts
 bun tools/brand-catalog.ts operations
 bun tools/brand-catalog.ts StateCode
 bun tools/brand-catalog.ts portal --json
+bun tools/brand-coverage.ts --attention
+bun tools/brand-coverage.ts --json
 bun tools/brand-manifest.ts
 bun tools/brand-manifest.ts --check
 bun run check:brands

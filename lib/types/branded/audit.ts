@@ -52,7 +52,7 @@ export const asEvidenceId = evidence.as;
 export const tryEvidenceId = evidence.try;
 export const parseEvidenceId = evidence.parse;
 
-export const AUDIT_BRAND_SPECS: readonly BrandSpec[] = [
+export const AUDIT_BRAND_SPECS = [
   {
     name: 'VersionId',
     domain: 'audit',
@@ -95,4 +95,4 @@ export const AUDIT_BRAND_SPECS: readonly BrandSpec[] = [
     mint: ['system-internal', 'wire-input'],
     description: 'Screenshot / image evidence row (UUID v7 via Bun.randomUUIDv7)',
   },
-] as const;
+] as const satisfies readonly BrandSpec[];

@@ -16,7 +16,7 @@ export const asDeploymentId = deployment.as;
 export const tryDeploymentId = deployment.try;
 export const parseDeploymentId = deployment.parse;
 
-export const DEPLOYMENT_BRAND_SPECS: readonly BrandSpec[] = [
+export const DEPLOYMENT_BRAND_SPECS = [
   {
     name: 'DeploymentId',
     domain: 'deployment',
@@ -24,4 +24,4 @@ export const DEPLOYMENT_BRAND_SPECS: readonly BrandSpec[] = [
     mint: ['system-internal', 'wire-input'],
     description: 'Release / deployment instance identity',
   },
-] as const;
+] as const satisfies readonly BrandSpec[];

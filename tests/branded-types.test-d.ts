@@ -38,6 +38,7 @@ import type {
   ResourceId,
   SessionId,
   SnapshotId,
+  StateCode,
   StepId,
   TerminalId,
   TokenId,
@@ -47,6 +48,7 @@ import type {
   ZoneId,
 } from '../lib/types/branded.ts';
 import {
+  BRAND_GUARDS,
   asAccessKeyId,
   asAccountId,
   asAuditId,
@@ -94,6 +96,7 @@ import {
   asWebhookId,
   asZipCode,
   asZoneId,
+  isBrandedValue,
   parseZoneId,
   trySessionId,
   unbrand,
@@ -195,6 +198,17 @@ const parseReturnsZone: ZoneId = parseZoneId(wireValue);
 
 // @ts-expect-error — asUserId mints a UserId, never a SessionId
 const wrongBrandFromCtor: SessionId = asUserId('u-3');
+
+// Generated guards narrow unknown values to the selected catalog brand.
+const guardInput: unknown = JSON.parse('"MA"');
+if (BRAND_GUARDS.isStateCode(guardInput)) {
+  const guardedState: StateCode = guardInput;
+  void guardedState;
+}
+if (isBrandedValue('SessionId', guardInput)) {
+  const guardedSession: SessionId = guardInput;
+  void guardedSession;
+}
 
 // ─── 6. Aggregate unions cover the complete 47-value catalog ────────────────
 

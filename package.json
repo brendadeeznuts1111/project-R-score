@@ -1592,6 +1592,7 @@
     "scanner:estimate": "bun run portal-cli scanner estimate",
     "scanner:doctor": "bun run portal-cli scanner doctor",
     "portal:doctor": "bun tools/portal-cli.ts doctor",
+    "portal:doctor:verbose": "bun tools/portal-cli.ts doctor --verbose",
     "portal:doctor:full": "bun tools/portal-cli.ts doctor --full",
     "build:portal-cli": "bun build tools/portal-cli.ts --compile --outfile dist/portal",
     "portal:snapshot": "bun tools/portal-cli.ts snapshot run",

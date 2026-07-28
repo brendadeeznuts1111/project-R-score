@@ -42,7 +42,7 @@ export const trySnapshotId = snapshot.try;
 export const parseSnapshotId = snapshot.parse;
 
 /** Machine-readable capability table for this domain. */
-export const SESSION_BRAND_SPECS: readonly BrandSpec[] = [
+export const SESSION_BRAND_SPECS = [
   {
     name: 'SessionId',
     domain: 'session',
@@ -78,4 +78,4 @@ export const SESSION_BRAND_SPECS: readonly BrandSpec[] = [
     mint: ['system-internal', 'wire-input'],
     description: 'Point-in-time state snapshot identity',
   },
-] as const;
+] as const satisfies readonly BrandSpec[];

@@ -16,6 +16,7 @@ import {
   BRAND_CATALOG,
   brandKindFromName,
   constructorNamesForBrand,
+  validationForBrand,
   type BrandDomain,
   type BrandKind,
   type BrandSpec,
@@ -24,7 +25,7 @@ import {
 const MANIFEST_PATH = new URL('../lib/types/brand-manifest.json', import.meta.url).pathname;
 
 type Manifest = {
-  version: 2;
+  version: 3;
   generatedAt: string;
   source: 'lib/types/branded/index.ts#BRAND_CATALOG';
   brandCount: number;
@@ -41,6 +42,8 @@ type Manifest = {
       kind: BrandKind;
       module: string;
       constructors: ReturnType<typeof constructorNamesForBrand>;
+      validation: ReturnType<typeof validationForBrand>;
+      guard: string;
     }
   >;
   constructorTiers: {
@@ -59,9 +62,11 @@ function buildManifest(): Manifest {
     kind: brandKindFromName(spec.name),
     module: `lib/types/branded/${spec.domain}.ts`,
     constructors: constructorNamesForBrand(spec.name),
+    validation: validationForBrand(spec),
+    guard: `BRAND_GUARDS.is${spec.name}`,
   }));
   return {
-    version: 2,
+    version: 3,
     generatedAt: new Date().toISOString(),
     source: 'lib/types/branded/index.ts#BRAND_CATALOG',
     brandCount: BRAND_CATALOG.length,

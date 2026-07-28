@@ -5,8 +5,13 @@ import { describe, expect, test } from 'bun:test';
 import { resolvePath } from '../scripts/lib/fs-bun';
 import {
   checkLinkerConfigVersion,
+  filterDoctorChecks,
+  formatAgeFromIso,
+  formatDoctorSummaryFooter,
   formatPortalDoctor,
+  formatPortalDoctorVerbose,
   runPortalDoctor,
+  summarizeDoctorChecks,
 } from '../tools/lib/portal-cli-doctor.ts';
 import { PORTAL_CLI_COMMANDS } from '../tools/lib/portal-cli-bun-flags.ts';
 
@@ -18,7 +23,9 @@ describe('portal-cli doctor pure', () => {
     const c = await checkLinkerConfigVersion(ROOT);
     expect(c.id).toBe('linker-config-version');
     expect(c.ok).toBe(true);
+    expect(c.group).toBe('linker');
     expect(c.message).toContain('configVersion=1');
+    expect(c.fixCommand).toBeUndefined(); // clean when passing
   });
 
   test('linker check fails when configVersion is 0', async () => {
@@ -31,6 +38,8 @@ describe('portal-cli doctor pure', () => {
     const c = await checkLinkerConfigVersion(tmp);
     expect(c.ok).toBe(false);
     expect(c.message).toContain('configVersion=0');
+    expect(c.fixCommand).toBeTruthy();
+    expect(c.autoFixable).toBe(false);
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
@@ -44,28 +53,96 @@ describe('portal-cli doctor pure', () => {
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
+  test('formatAgeFromIso produces human ages', () => {
+    const now = Date.parse('2026-07-28T12:00:00.000Z');
+    expect(formatAgeFromIso('2026-07-28T11:59:00.000Z', now)).toBe('1m ago');
+    expect(formatAgeFromIso('2026-07-28T10:00:00.000Z', now)).toBe('2h ago');
+    expect(formatAgeFromIso('2026-07-25T12:00:00.000Z', now)).toBe('3d ago');
+  });
+
+  test('summarizeDoctorChecks counts passed/failed and auto-fix suggestions', () => {
+    const s = summarizeDoctorChecks([
+      {
+        id: 'a',
+        level: 'fatal',
+        group: 'linker',
+        ok: true,
+        message: 'ok',
+      },
+      {
+        id: 'b',
+        level: 'warn',
+        group: 'bakes',
+        ok: false,
+        message: 'miss',
+        autoFixable: true,
+        fixCommand: 'bun run bake:capabilities',
+      },
+      {
+        id: 'c',
+        level: 'info',
+        group: 'bakes',
+        ok: true,
+        message: 'ok',
+      },
+    ]);
+    expect(s.checkCount).toBe(3);
+    expect(s.passed).toBe(2);
+    expect(s.failed).toBe(1);
+    expect(s.autoFixableFailed).toBe(1);
+    expect(s.suggested).toEqual(['bun run bake:capabilities']);
+    expect(formatDoctorSummaryFooter(s)).toContain('2/3 passed');
+    expect(formatDoctorSummaryFooter(s)).toContain('bake:capabilities');
+  });
+
+  test('filterDoctorChecks failed-only keeps failures', () => {
+    const checks = [
+      {
+        id: 'linker-config-version',
+        level: 'fatal' as const,
+        group: 'linker' as const,
+        ok: true,
+        message: 'ok',
+      },
+      {
+        id: 'vault-health-bake',
+        level: 'warn' as const,
+        group: 'bakes' as const,
+        ok: false,
+        message: 'miss',
+      },
+    ];
+    const f = filterDoctorChecks(checks, true);
+    expect(f).toHaveLength(1);
+    expect(f[0]!.id).toBe('vault-health-bake');
+  });
+
   test('runPortalDoctor is OK on monorepo root (default)', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false });
     expect(r.kind).toBe('portal-cli-doctor');
-    expect(r.schemaVersion).toBe(2);
+    expect(r.schemaVersion).toBe(3);
     expect(r.ok).toBe(true);
     const linker = r.checks.find(c => c.id === 'linker-config-version');
     expect(linker?.ok).toBe(true);
-    expect(linker?.fixCommand).toBeTruthy();
-    expect(linker?.autoFixable).toBe(false);
+    expect(linker?.group).toBe('linker');
     expect(linker?.envScope).toBe('all');
-    expect(r.summary.fatal).toBeGreaterThanOrEqual(2);
-    expect(formatPortalDoctor(r)).toContain('linker-config-version');
-    expect(formatPortalDoctor(r)).toContain('Summary:');
+    expect(r.summary.passed).toBe(r.summary.checkCount);
+    expect(r.summary.failed).toBe(0);
+    const text = formatPortalDoctor(r);
+    expect(text).toContain('Linker policy:');
+    expect(text).toContain('Offline bakes:');
+    expect(text).toContain('linker-config-version');
+    expect(text).toMatch(/\d+\/\d+ passed/);
   });
 
-  test('verbose format includes fix table columns', async () => {
-    const { formatPortalDoctorVerbose } = await import('../tools/lib/portal-cli-doctor.ts');
+  test('verbose format includes status table and remediation section', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false, verbose: true });
     const text = formatPortalDoctorVerbose(r);
     expect(text).toContain('verbose');
-    expect(text).toMatch(/fix|auto|scope/i);
-    expect(text).toContain('impact');
+    expect(text).toMatch(/status|pass|FAIL/i);
+    expect(text).toContain('Remediation detail');
+    expect(text).toContain('Linker policy reference');
+    expect(text).toContain('default-strategy');
   });
 
   test('PORTAL_CLI_COMMANDS includes doctor', () => {
@@ -86,9 +163,10 @@ describe('portal-cli doctor CLI', () => {
     expect(out).toContain('portal doctor');
     expect(out).toContain('linker-config-version');
     expect(out).toContain('configVersion=1');
+    expect(out).toContain('Linker policy:');
   });
 
-  test('doctor --json is machine-readable with summary + fix metadata', async () => {
+  test('doctor --json is machine-readable with summary + groups', async () => {
     const proc = Bun.spawn(['bun', CLI, 'doctor', '--json'], {
       cwd: ROOT,
       stdout: 'pipe',
@@ -99,16 +177,17 @@ describe('portal-cli doctor CLI', () => {
     expect(code).toBe(0);
     const j = JSON.parse(out);
     expect(j.kind).toBe('portal-cli-doctor');
-    expect(j.schemaVersion).toBe(2);
+    expect(j.schemaVersion).toBe(3);
     expect(j.ok).toBe(true);
-    expect(j.summary?.fatal).toBeGreaterThanOrEqual(2);
+    expect(j.summary?.passed).toBe(j.summary?.checkCount);
+    expect(j.docs?.installIsolated).toContain('isolated-installs');
     expect(
       j.checks.some((c: { id: string /* brand-ok — opaque check key */ }) => c.id === 'linker-config-version')
     ).toBe(true);
     const linker = j.checks.find(
       (c: { id: string /* brand-ok */ }) => c.id === 'linker-config-version'
     );
-    expect(linker?.fixCommand).toBeTruthy();
+    expect(linker?.group).toBe('linker');
     expect(typeof linker?.autoFixable).toBe('boolean');
   });
 
@@ -122,7 +201,7 @@ describe('portal-cli doctor CLI', () => {
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
     expect(out).toContain('verbose');
-    expect(out).toContain('Summary:');
+    expect(out).toMatch(/Summary:|passed/);
   });
 
   test('root help lists doctor', async () => {
