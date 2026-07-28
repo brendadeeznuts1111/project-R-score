@@ -63,6 +63,15 @@ jobs:
       - name: Capability doctor (Bun floors)
         run: bun run portal-cli capabilities doctor --bun-only
 
+      # Portal doctor offline pure checks (linker · bakes · catalog · bunfig · infra skipped-live).
+      # Plain CI log: result=ok|fail · PASS/FAIL · full messages. No live Access (use --live-access locally).
+      - name: Portal doctor (offline)
+        run: bun run portal:doctor:ci
+
+      # doctor-state.json fingerprint gate (stable ids/ok/level — offline Access).
+      - name: Portal doctor-state fingerprint
+        run: bun run bake:doctor:check
+
       # One install: verify + hygiene + ci:harness (was a second repo-hygiene job).
       - name: CI core
         run: bun run ci:core

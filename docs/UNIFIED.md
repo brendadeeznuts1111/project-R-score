@@ -238,7 +238,7 @@ bun run check:release-tracker                # tests + release verify
 | `bunfig-project-no-machine-keys` | fatal | `./bunfig.toml` does not set machine-owned install keys |
 | `bunfig-merge-consistency` | fatal | effective policy is isolated + globalStore + absolute cache |
 | `bunfig-release-age-excludes` | warn | excludes include `bun-types`, `@types/bun`, `@types/node`, `typescript` |
-| `bunfig-no-install-env-overrides` | fatal | no `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` in env |
+| `bunfig-no-install-env-overrides` | fatal | no `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` in **local** env; GHA / `FACTORY_BUN_CI=1` / `CI_ALLOW_BUN_INSTALL_ENV=1` allowed (ephemeral CI) |
 
 Board: `/portal/doctor/` · bake: `bun run bake:doctor` · check: `bun run bake:doctor --check` · loopback run: `POST /api/doctor/run` · tenant [`docs/harness/tenants/portal-doctor.md`](harness/tenants/portal-doctor.md).
 

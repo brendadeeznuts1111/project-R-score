@@ -58,14 +58,24 @@ Machine: `portal-cli doctor --json` · fingerprint gate: `bun run bake:doctor:ch
 ## Intervention
 
 ```bash
-bun run portal:doctor --verbose
-bun run portal:doctor --group bunfig --verbose
+CI=true NO_COLOR=1 bun run portal:doctor:ci
+bun run portal:doctor --group bunfig
 bun run audit:bunfig
 bun run install:verify
 bun run bake:doctor
+bun run bake:doctor:check
 # loopback only:
 curl -X POST http://127.0.0.1:3000/api/doctor/run
 ```
+
+### CI (harness-gates)
+
+| Step | Command |
+|------|---------|
+| Portal doctor (offline) | `bun run portal:doctor:ci` (`--env ci --no-write`) |
+| doctor-state fingerprint | `bun run bake:doctor:check` |
+
+Live Access is **off** in CI (offline skips). Local edge proof: `portal-cli doctor --group infra --live-access`.
 
 ## Data plane
 

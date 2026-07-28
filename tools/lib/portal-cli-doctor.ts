@@ -382,16 +382,16 @@ export function summarizeDoctorChecks(checks: PortalDoctorCheck[]): PortalDoctor
   };
 }
 
-/** Filter checks for display (failed-only keeps failures; always keeps fatals if any fail). */
+/**
+ * Filter checks for display.
+ * failed-only → failures only; when green, empty list (header/summary still show counts).
+ */
 export function filterDoctorChecks(
   checks: PortalDoctorCheck[],
   failedOnly: boolean
 ): PortalDoctorCheck[] {
   if (!failedOnly) return checks;
-  const failed = checks.filter(c => !c.ok);
-  // If everything passed, show nothing extra would be confusing — show linker fatals only
-  if (failed.length === 0) return checks.filter(c => c.group === 'linker');
-  return failed;
+  return checks.filter(c => !c.ok);
 }
 
 export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<PortalDoctorReport> {
@@ -670,6 +670,10 @@ export function formatPortalDoctorPlain(r: PortalDoctorReport): string {
     if (!c.ok && c.fixCommand) lines.push(`  fix: ${c.fixCommand}`);
   }
 
+  if (display.length === 0 && r.failedOnly) {
+    lines.push('(no failures)');
+  }
+
   lines.push('');
   lines.push(formatDoctorSummaryFooterPlain(r.summary, r.failedOnly));
   return lines.join('\n');
@@ -730,7 +734,7 @@ export function formatDoctorSummaryFooterPlain(s: PortalDoctorSummary, failedOnl
   } else if (s.failed > 0 && !failedOnly) {
     lines.push('next: portal-cli doctor --verbose --failed-only');
   } else if (s.failed === 0) {
-    lines.push('next: optional portal-cli doctor --full');
+    lines.push('status: all checks passed');
   }
   return lines.join('\n');
 }
@@ -748,9 +752,9 @@ export function formatDoctorSummaryFooterPretty(
     lines.push('Suggested (auto-fixable):');
     for (const cmd of s.suggested) lines.push(`  ${cmd}`);
   } else if (s.failed > 0 && !failedOnly) {
-    lines.push('Suggested: portal-cli doctor --verbose  # fix · impact');
+    lines.push('next: portal-cli doctor --verbose --failed-only');
   } else if (s.failed === 0) {
-    lines.push('All checks green. Optional: portal-cli doctor --full');
+    lines.push('status: all checks passed');
   }
   return lines.join('\n');
 }

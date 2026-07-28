@@ -126,6 +126,22 @@ describe('portal-cli doctor pure', () => {
     const f = filterDoctorChecks(checks, true);
     expect(f).toHaveLength(1);
     expect(f[0]!.id).toBe('vault-health-bake');
+    // green tree → empty list (header/summary still report counts)
+    expect(
+      filterDoctorChecks(
+        checks.map(c => ({ ...c, ok: true })),
+        true
+      )
+    ).toEqual([]);
+  });
+
+  test('bunfig env probe allows ephemeral GHA install env', async () => {
+    const { isEphemeralCiInstallEnv } = await import('../tools/lib/portal-cli-doctor-bunfig.ts');
+    expect(isEphemeralCiInstallEnv({ GITHUB_ACTIONS: 'true' })).toBe(true);
+    expect(isEphemeralCiInstallEnv({ FACTORY_BUN_CI: '1' })).toBe(true);
+    expect(isEphemeralCiInstallEnv({ CI_ALLOW_BUN_INSTALL_ENV: '1' })).toBe(true);
+    expect(isEphemeralCiInstallEnv({ CI: 'true' })).toBe(false);
+    expect(isEphemeralCiInstallEnv({})).toBe(false);
   });
 
   test('runPortalDoctor is OK on monorepo root (default)', async () => {

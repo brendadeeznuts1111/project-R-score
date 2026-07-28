@@ -269,14 +269,16 @@ export async function runBunfigChecks(cwd: string): Promise<PortalDoctorCheck[]>
     )
   );
 
-  // 5) Shell must not set install cache/store env (machine bunfig owns them)
+  // 5) Shell must not set install cache/store env (machine bunfig owns them).
+  // Ephemeral CI (GHA setup-factory-bun / with-bun-cache-env) may set them — allowed.
   const forbiddenEnv = (['BUN_INSTALL_CACHE_DIR', 'BUN_INSTALL_GLOBAL_STORE'] as const).filter(
     k => {
       const v = Bun.env[k];
       return typeof v === 'string' && v.trim().length > 0;
     }
   );
-  const envOk = forbiddenEnv.length === 0;
+  const ephemeralCi = isEphemeralCiInstallEnv();
+  const envOk = forbiddenEnv.length === 0 || ephemeralCi;
   checks.push(
     withMeta(
       {
@@ -284,17 +286,21 @@ export async function runBunfigChecks(cwd: string): Promise<PortalDoctorCheck[]>
         level: 'fatal',
         group: 'bunfig',
         ok: envOk,
-        message: envOk
-          ? 'no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in env'
-          : `forbidden install env set: ${forbiddenEnv.join(', ')} — use ~/.bunfig.toml`,
+        message:
+          forbiddenEnv.length === 0
+            ? 'no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in env'
+            : ephemeralCi
+              ? `ephemeral CI install env allowed: ${forbiddenEnv.join(', ')} (local still machine bunfig SSOT)`
+              : `forbidden install env set: ${forbiddenEnv.join(', ')} — use ~/.bunfig.toml`,
         source: UNIFIED,
       },
       {
-        fixCommand: envOk
-          ? undefined
-          : 'Unset BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE from shell/IDE; use machine bunfig',
+        fixCommand:
+          forbiddenEnv.length === 0 || ephemeralCi
+            ? undefined
+            : 'Unset BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE from shell/IDE; use machine bunfig',
         impact:
-          'Shell BUN_INSTALL_* cache/store env bypasses bunfig-policy / install:verify machine SSOT',
+          'Local shell BUN_INSTALL_* cache/store env bypasses bunfig-policy; GHA/setup-factory-bun is the documented exception',
         autoFixable: false,
         timeToFix: envOk ? undefined : '2–10 min',
         envScope: 'all',
@@ -303,6 +309,21 @@ export async function runBunfigChecks(cwd: string): Promise<PortalDoctorCheck[]>
   );
 
   return checks;
+}
+
+/**
+ * Ephemeral CI may set BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE
+ * (setup-factory-bun, with-bun-cache-env). Local developer shells must not.
+ * @see docs/UNIFIED.md
+ */
+export function isEphemeralCiInstallEnv(
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): boolean {
+  return (
+    env.GITHUB_ACTIONS === 'true' ||
+    env.FACTORY_BUN_CI === '1' ||
+    env.CI_ALLOW_BUN_INSTALL_ENV === '1'
+  );
 }
 
 /** Home path for docs/tests. */
