@@ -1,13 +1,25 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
+// @see https://bun.com/docs/pm/isolated-installs — linker = isolated
+// @see https://bun.com/docs/pm/global-store — globalStore + absolute cache.dir
 /**
  * Verify Bun install cache + global virtual store alignment.
+ * Policy table SSOT: lib/install/machine-bunfig-policy.ts
  * https://bun.sh/docs/pm/global-cache
  * https://bun.sh/docs/pm/global-store
+ * @see docs/UNIFIED.md
  */
+import {
+  FORBIDDEN_INSTALL_ENV_VARS,
+  isEphemeralCiInstallEnv,
+  MACHINE_EXPECTED_GLOBAL_STORE,
+  MACHINE_EXPECTED_LINKER,
+} from '../lib/install/machine-bunfig-policy.ts';
 import {
   applyBunInstallEnv,
   findTildeCacheDirs,
@@ -22,9 +34,22 @@ import {
   resolveEffectiveInstallPolicy,
 } from './lib/machine-bunfig.ts';
 
+// Re-export SSOT so tests prove install:verify ≡ machine-bunfig-policy (same refs).
+export {
+  FORBIDDEN_INSTALL_ENV_VARS,
+  isEphemeralCiInstallEnv,
+  MACHINE_EXPECTED_GLOBAL_STORE,
+  MACHINE_EXPECTED_LINKER,
+} from '../lib/install/machine-bunfig-policy.ts';
+
 const ROOT = `${import.meta.dir}/..`;
 const strict = Bun.argv.includes('--strict');
 const quiet = Bun.argv.includes('--quiet');
+const dryRun = Bun.argv.includes('--dry-run');
+const json = Bun.argv.includes('--json');
+
+/** Human label for the forbidden install-env pair (SSOT order). */
+const FORBIDDEN_INSTALL_ENV_LABEL = FORBIDDEN_INSTALL_ENV_VARS.join(' / ');
 
 type Check = { ok: boolean; label: string; detail?: string };
 
@@ -39,8 +64,8 @@ async function checkBunfig(): Promise<Check> {
   const policy = resolveEffectiveInstallPolicy(project, machine);
   const env = applyBunInstallEnv();
 
-  const linkerOk = policy.linker === 'isolated';
-  const storeOk = policy.globalStore === true;
+  const linkerOk = policy.linker === MACHINE_EXPECTED_LINKER;
+  const storeOk = policy.globalStore === MACHINE_EXPECTED_GLOBAL_STORE;
   const policyOk = linkerOk && storeOk;
   const envPolicyOk = envInstallPolicyOk(env);
   const envFallback = !machine.bunfigPath && envPolicyOk;
@@ -57,7 +82,12 @@ async function checkBunfig(): Promise<Check> {
     );
   }
   if (envFallback) {
-    parts.push('policy via BUN_INSTALL_CACHE_DIR + BUN_INSTALL_GLOBAL_STORE env');
+    const ephemeral = isEphemeralCiInstallEnv();
+    parts.push(
+      ephemeral
+        ? `policy via ${FORBIDDEN_INSTALL_ENV_LABEL} (ephemeral CI)`
+        : `policy via ${FORBIDDEN_INSTALL_ENV_LABEL} env`
+    );
   }
 
   if (!machine.bunfigPath && !envPolicyOk) {
@@ -84,16 +114,54 @@ function checkEnvDefaults(): Check {
     return {
       ok: false,
       label: 'install env',
-      detail: `cache=${cache || '(unset)'}, globalStore=${store ?? '(unset)'}`,
+      detail: `cache=${cache || '(unset)'}, globalStore=${store ?? '(unset)'} (${FORBIDDEN_INSTALL_ENV_LABEL})`,
     };
   }
-  return { ok: true, label: 'install env', detail: 'cache absolute, globalStore=1' };
+  return {
+    ok: true,
+    label: 'install env',
+    detail: `cache absolute, globalStore=1 (${FORBIDDEN_INSTALL_ENV_LABEL})`,
+  };
+}
+
+/**
+ * Shell must not set install cache/store env (machine bunfig owns them).
+ * Ephemeral CI (GHA setup-factory-bun / with-bun-cache-env) may set them — allowed.
+ * Same rule as doctor bunfig-no-install-env-overrides / audit:bunfig.
+ */
+function checkShellInstallEnv(
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): Check {
+  const forbiddenEnv = FORBIDDEN_INSTALL_ENV_VARS.filter(k => {
+    const v = env[k];
+    return typeof v === 'string' && v.trim().length > 0;
+  });
+  const ephemeralCi = isEphemeralCiInstallEnv(env);
+  if (forbiddenEnv.length === 0) {
+    return { ok: true, label: 'install shell env', detail: `no ${FORBIDDEN_INSTALL_ENV_LABEL}` };
+  }
+  if (ephemeralCi) {
+    return {
+      ok: true,
+      label: 'install shell env',
+      detail: `ephemeral CI allow ${forbiddenEnv.join(', ')}`,
+    };
+  }
+  return {
+    ok: false,
+    label: 'install shell env',
+    detail: `forbidden set: ${forbiddenEnv.join(', ')} — use ~/.bunfig.toml`,
+  };
 }
 
 function checkCacheDir(): Check {
   const cacheDir = resolveBunInstallCacheDir(applyBunInstallEnv());
   if (!cacheDir) {
-    return { ok: false, label: 'cache dir', detail: 'could not resolve BUN_INSTALL_CACHE_DIR' };
+    return {
+      ok: false,
+      label: 'cache dir',
+      detail: `could not resolve ${FORBIDDEN_INSTALL_ENV_VARS[0]}`,
+    };
   }
   if (cacheDir.includes('/~/') || cacheDir.endsWith('/~')) {
     return { ok: false, label: 'cache dir', detail: `literal tilde in path: ${cacheDir}` };
@@ -179,13 +247,17 @@ async function checkLockfile(): Promise<Check> {
   }
   const text = await Bun.file(lockPath).text();
   if (text.includes('"configVersion": 1')) {
-    return { ok: true, label: 'lockfile', detail: 'configVersion 1 (isolated)' };
+    return {
+      ok: true,
+      label: 'lockfile',
+      detail: `configVersion 1 (${MACHINE_EXPECTED_LINKER})`,
+    };
   }
   if (text.includes('"configVersion": 0')) {
     return {
       ok: false,
       label: 'lockfile',
-      detail: 'configVersion 0 — monorepo requires 1 (isolated default)',
+      detail: `configVersion 0 — monorepo requires 1 (${MACHINE_EXPECTED_LINKER} default)`,
     };
   }
   // Missing configVersion is fatal for this workspace monorepo (default strategy SSOT)
@@ -222,11 +294,14 @@ function checkNodeModulesLayout(): Check {
 }
 
 async function main() {
-  Bun.spawnSync(['bun', `${ROOT}/scripts/evict-root-tilde-cache.ts`], { cwd: ROOT });
+  if (!dryRun) {
+    Bun.spawnSync(['bun', `${ROOT}/scripts/evict-root-tilde-cache.ts`], { cwd: ROOT });
+  }
 
   const checks = [
     await checkBunfig(),
     checkEnvDefaults(),
+    checkShellInstallEnv(),
     checkCacheDir(),
     checkGlobalStore(),
     checkTildeDrift(),
@@ -238,6 +313,24 @@ async function main() {
   let failed = 0;
   for (const check of checks) {
     if (!check.ok) failed++;
+  }
+
+  if (json) {
+    const result = {
+      ok: failed === 0,
+      failed,
+      strict,
+      dryRun,
+      checks: checks.map(c => ({ ok: c.ok, label: c.label, detail: c.detail })),
+    };
+    console.info(JSON.stringify(result));
+    if (failed > 0 && strict) {
+      process.exit(1);
+    }
+    return;
+  }
+
+  for (const check of checks) {
     if (quiet && check.ok) continue;
     const icon = check.ok ? '✅' : strict ? '❌' : '⚠️';
     const suffix = check.detail ? ` — ${check.detail}` : '';

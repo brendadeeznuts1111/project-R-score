@@ -11,6 +11,8 @@ import {
   isEphemeralCiInstallEnv,
   MACHINE_BUNFIG_REQUIRED_SNIPPETS,
   MACHINE_BUNFIG_TEMPLATE_REL,
+  MACHINE_EXPECTED_GLOBAL_STORE,
+  MACHINE_EXPECTED_LINKER,
   MACHINE_MINIMUM_RELEASE_AGE_SECONDS,
   MACHINE_OWNED_CACHE_DIR_LABEL,
   MACHINE_OWNED_INSTALL_KEYS,
@@ -66,8 +68,12 @@ describe('machine-bunfig-policy SSOT', () => {
 
   test('required snippets include policy fragments + every age exclude', () => {
     expect(MACHINE_MINIMUM_RELEASE_AGE_SECONDS).toBe(259200);
-    expect(MACHINE_BUNFIG_REQUIRED_SNIPPETS).toContain('linker = "isolated"');
-    expect(MACHINE_BUNFIG_REQUIRED_SNIPPETS).toContain('globalStore = true');
+    expect(MACHINE_EXPECTED_LINKER).toBe('isolated');
+    expect(MACHINE_EXPECTED_GLOBAL_STORE).toBe(true);
+    expect(MACHINE_BUNFIG_REQUIRED_SNIPPETS).toContain(`linker = "${MACHINE_EXPECTED_LINKER}"`);
+    expect(MACHINE_BUNFIG_REQUIRED_SNIPPETS).toContain(
+      `globalStore = ${MACHINE_EXPECTED_GLOBAL_STORE}`
+    );
     expect(MACHINE_BUNFIG_REQUIRED_SNIPPETS).toContain(
       `minimumReleaseAge = ${MACHINE_MINIMUM_RELEASE_AGE_SECONDS}`
     );

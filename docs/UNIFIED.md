@@ -172,7 +172,7 @@ TOML samples under package-manager docs are almost always **`bunfig.toml`** (`ex
 | PATH | `~/.config/shell/path.sh` |
 | aliases | `ba` → `audit:bunfig` · `bhealth` / `bmachine` |
 
-**Code SSOT** (machine-owned keys · age excludes · forbidden env · ephemeral CI allowlist · template path): [`lib/install/machine-bunfig-policy.ts`](../lib/install/machine-bunfig-policy.ts) — imported by doctor bunfig + `scripts/ensure-machine-bunfig.ts`.
+**Code SSOT** (machine-owned keys · expected linker/globalStore · age excludes · forbidden env · ephemeral CI allowlist · template path): [`lib/install/machine-bunfig-policy.ts`](../lib/install/machine-bunfig-policy.ts) — imported by doctor bunfig · `scripts/ensure-machine-bunfig.ts` · `scripts/audit-bunfig.ts` · `scripts/verify-install-cache.ts` (`install:verify`).
 
 ## Tilde drift
 

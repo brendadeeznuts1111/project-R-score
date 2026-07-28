@@ -10,10 +10,11 @@
  *   - tools/lib/portal-cli-doctor-bunfig.ts  (doctor bunfig group)
  *   - scripts/ensure-machine-bunfig.ts       (template ensure / --check snippets)
  *   - scripts/audit-bunfig.ts               (audit:bunfig workspace duplication scan)
+ *   - scripts/verify-install-cache.ts       (install:verify linker / store / forbidden env)
  *
  * Human map: docs/UNIFIED.md · template: config/machine.bunfig.toml.template
  *
- * Do not duplicate these lists in doctor / ensure / audit without importing here.
+ * Do not duplicate these lists in doctor / ensure / audit / verify without importing here.
  */
 
 /** Repo-relative path of the machine bunfig template (written to ~/.bunfig.toml). */
@@ -55,6 +56,12 @@ export type RequiredReleaseAgeExclude = (typeof REQUIRED_RELEASE_AGE_EXCLUDES)[n
 /** Supply-chain floor (seconds) — 3 days. */
 export const MACHINE_MINIMUM_RELEASE_AGE_SECONDS = 259200 as const;
 
+/** Expected effective/machine `linker` value (isolated installs). */
+export const MACHINE_EXPECTED_LINKER = 'isolated' as const;
+
+/** Expected effective/machine `globalStore` value. */
+export const MACHINE_EXPECTED_GLOBAL_STORE = true as const;
+
 /**
  * Process env vars forbidden in normal shell/IDE (machine bunfig owns cache/store).
  * Ephemeral CI may set them when {@link isEphemeralCiInstallEnv} is true.
@@ -78,11 +85,11 @@ export const EPHEMERAL_CI_INSTALL_ENV_ALLOWLIST = [
 
 /**
  * String-contains fragments for `ensure-machine-bunfig --check`
- * (not a full TOML parse). Derived from age excludes so lists cannot drift.
+ * (not a full TOML parse). Derived from expected linker/store + age so lists cannot drift.
  */
 export const MACHINE_BUNFIG_REQUIRED_SNIPPETS: readonly string[] = [
-  'linker = "isolated"',
-  'globalStore = true',
+  `linker = "${MACHINE_EXPECTED_LINKER}"`,
+  `globalStore = ${MACHINE_EXPECTED_GLOBAL_STORE}`,
   `minimumReleaseAge = ${MACHINE_MINIMUM_RELEASE_AGE_SECONDS}`,
   ...REQUIRED_RELEASE_AGE_EXCLUDES,
   '[install.cache]',
