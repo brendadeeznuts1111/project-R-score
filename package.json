@@ -2008,6 +2008,7 @@
     "check:path-bun": "bun scripts/check-path-bun.ts",
     "check:bun-env": "bun scripts/check-bun-env.ts",
     "check:import-graph": "bun scripts/check-import-graph.ts",
+    "check:oxlint-ratchet": "bun scripts/check-oxlint-ratchet.ts",
     "check:monorepo-health": "bun scripts/check-monorepo-health.ts",
     "check:invisible-chars": "bun scripts/check-invisible-chars.ts",
     "harness:status": "bun scripts/harness-status.ts",

@@ -393,6 +393,9 @@ async function main(): Promise<void> {
     parallelJobs.push(spawnGate('bun-env', ['bun', 'scripts/check-bun-env.ts']));
     parallelJobs.push(spawnGate('import-graph', ['bun', 'scripts/check-import-graph.ts']));
   }
+  if (libStaged || scriptsStaged || toolsStaged) {
+    parallelJobs.push(spawnGate('oxlint-ratchet', ['bun', 'scripts/check-oxlint-ratchet.ts']));
+  }
 
   // Monorepo-health formula/UI/history — unit tests only (full ratchet lives in ci:core).
   const monorepoHealthStaged = staged.some(f => {
@@ -442,6 +445,7 @@ async function main(): Promise<void> {
   const pathBun = parallelResults.find(r => r.name === 'path-bun')?.code ?? 0;
   const bunEnv = parallelResults.find(r => r.name === 'bun-env')?.code ?? 0;
   const importGraph = parallelResults.find(r => r.name === 'import-graph')?.code ?? 0;
+  const oxlintRatchet = parallelResults.find(r => r.name === 'oxlint-ratchet')?.code ?? 0;
   const monorepoHealthTests =
     parallelResults.find(r => r.name === 'monorepo-health-tests')?.code ?? 0;
   const complexityStaged =
@@ -476,6 +480,11 @@ async function main(): Promise<void> {
   }
   if (importGraph !== 0) {
     console.error('❌ import cycle or deep-relative-import growth — bun run check:import-graph');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+  if (oxlintRatchet !== 0) {
+    console.error('❌ oxlint warnings grew — bun run check:oxlint-ratchet');
     await writeTimings(timings, full);
     process.exit(1);
   }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
 // @see https://bun.com/docs/runtime/s3 — S3Client
-import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
+import { fileExistsSync, readText, resolvePath } from './lib/fs-bun';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -8796,12 +8796,12 @@ async function main(): Promise<void> {
           };
         })();
         if (freshnessIdx >= 0) {
-          stages[freshnessIdx] = { ...(stages[freshnessIdx] || {}), ...nextFreshnessStage };
+          stages[freshnessIdx] = { ...stages[freshnessIdx], ...nextFreshnessStage };
         } else {
           stages.push(nextFreshnessStage);
         }
         raw.freshness = {
-          ...(raw?.freshness || {}),
+          ...raw?.freshness,
           ...freshness,
         };
         raw.stages = stages;
