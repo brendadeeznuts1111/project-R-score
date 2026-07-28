@@ -586,6 +586,7 @@ export function queryRecentLimitIncreases(
   db: Database,
   hours = 48
 ): Array<{
+  limit_id: number; // brand-ok — partner_account_limits.id
   node_id: string; // brand-ok — TreeNodeId wire
   sportsbook: string;
   sport_id: string; // brand-ok — SportId wire
@@ -600,7 +601,7 @@ export function queryRecentLimitIncreases(
   const rows = db
     .query(
       `
-    SELECT a.node_id, a.sportsbook, a.sport_id, a.market_id, a.bet_type,
+    SELECT a.id AS limit_id, a.node_id, a.sportsbook, a.sport_id, a.market_id, a.bet_type,
            (SELECT MAX(b.max_wager) FROM partner_account_limits b
             WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
               AND b.sport_id = a.sport_id AND b.market_id = a.market_id
@@ -626,6 +627,7 @@ export function queryRecentLimitIncreases(
   `
     )
     .all(since) as Array<{
+    limit_id: number; // brand-ok — partner_account_limits.id
     node_id: string; // brand-ok — TreeNodeId wire
     sportsbook: string;
     sport_id: string; // brand-ok — SportId wire

@@ -1,148 +1,285 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Partner Limits — FactoryWager</title>
-<link rel="stylesheet" href="/portal/style.css">
-<link rel="stylesheet" href="/portal/theme-tokens.css">
-<script type="module" src="/portal/data.js"></script>
-<script type="module" src="/portal/topbar.js"></script>
-<style>
-  body { font-family: system-ui, sans-serif; margin: 1em; background: var(--bg, #fff); color: var(--text, #111); }
-  .card { background: var(--card, #f5f5f5); border-radius: 8px; padding: 1em; margin: 1em 0; }
-  .card h2 { margin: 0 0 0.5em; font-size: 1.1em; }
-  .metric { font-size: 1.8em; font-weight: 700; }
-  .metric.ok { color: #16a34a; }
-  .metric.raised { color: #2563eb; }
-  table { width: 100%; border-collapse: collapse; margin: 0.5em 0; }
-  th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border, #ddd); font-size: 0.9em; }
-  th { font-weight: 600; color: var(--text-dim, #666); }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; }
-  .badge.up { background: #dbeafe; color: #1d4ed8; }
-  .badge.live { background: #fce7f3; color: #be185d; }
-  .badge.pregame { background: #d1fae5; color: #047857; }
-  .filter-bar { display: flex; gap: 0.5em; flex-wrap: wrap; margin: 1em 0; }
-  .filter-bar input, .filter-bar select { padding: 6px 10px; border: 1px solid var(--border, #ccc); border-radius: 4px; font-size: 0.9em; }
-  .filter-bar button { padding: 6px 14px; border: none; border-radius: 4px; background: #2563eb; color: #fff; cursor: pointer; font-weight: 600; }
-  .empty { color: var(--text-dim, #999); font-style: italic; padding: 2em; text-align: center; }
-  .nav { display: flex; gap: 1em; margin-bottom: 1em; }
-  .nav a { color: #2563eb; text-decoration: none; font-size: 0.9em; }
-  .nav a:hover { text-decoration: underline; }
-</style>
-</head>
-<body>
-<div class="nav">
-  <a href="/portal/">&larr; Portal home</a>
-  <a href="/portal/ops/">Ops dashboard</a>
-  <a href="/registry/ops-summary.json" target="_blank">ops-summary.json</a>
-</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Partner Limits — FactoryWager</title>
+    <link rel="stylesheet" href="/portal/style.css" />
+    <link rel="stylesheet" href="/portal/theme-tokens.css" />
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 1em;
+        background: var(--bg, #fff);
+        color: var(--text, #111);
+      }
+      .card {
+        background: var(--card, #f5f5f5);
+        border-radius: 8px;
+        padding: 1em;
+        margin: 1em 0;
+      }
+      .card h2 {
+        margin: 0 0 0.5em;
+        font-size: 1.1em;
+      }
+      .metric {
+        font-size: 1.8em;
+        font-weight: 700;
+      }
+      .metric.ok {
+        color: #16a34a;
+      }
+      .metric.raised {
+        color: #2563eb;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0.5em 0;
+      }
+      th,
+      td {
+        padding: 6px 8px;
+        text-align: left;
+        border-bottom: 1px solid var(--border, #ddd);
+        font-size: 0.9em;
+      }
+      th {
+        font-weight: 600;
+        color: var(--text-dim, #666);
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75em;
+        font-weight: 600;
+      }
+      .badge.up {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+      .badge.live {
+        background: #fce7f3;
+        color: #be185d;
+      }
+      .badge.pregame {
+        background: #d1fae5;
+        color: #047857;
+      }
+      .badge.score {
+        background: #ede9fe;
+        color: #6d28d9;
+        cursor: help;
+      }
+      .badge.pending {
+        background: #e5e7eb;
+        color: #4b5563;
+        cursor: help;
+      }
+      .filter-bar {
+        display: flex;
+        gap: 0.5em;
+        flex-wrap: wrap;
+        margin: 1em 0;
+      }
+      .filter-bar input,
+      .filter-bar select {
+        padding: 6px 10px;
+        border: 1px solid var(--border, #ccc);
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+      .filter-bar button {
+        padding: 6px 14px;
+        border: none;
+        border-radius: 4px;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .empty {
+        color: var(--text-dim, #999);
+        font-style: italic;
+        padding: 2em;
+        text-align: center;
+      }
+      .nav {
+        display: flex;
+        gap: 1em;
+        margin-bottom: 1em;
+      }
+      .nav a {
+        color: #2563eb;
+        text-decoration: none;
+        font-size: 0.9em;
+      }
+      .nav a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <a href="/portal/">&larr; Portal home</a>
+      <a href="/portal/ops/">Ops dashboard</a>
+      <a href="/registry/ops-summary.json" target="_blank">ops-summary.json</a>
+    </div>
 
-<h1>🚀 Partner Limit Increases</h1>
-<p style="color:var(--text-dim,#666)">Recent limit increases across all partners — last 48 hours. Auto-refreshes every 30s.</p>
+    <h1>🚀 Partner Limit Increases</h1>
+    <p style="color: var(--text-dim, #666)">
+      Recent limit increases across all partners — last 48 hours. Auto-refreshes every 30s.
+    </p>
 
-<div class="filter-bar">
-  <input type="text" id="filter-partner" placeholder="Filter by partner ID..." style="flex:1">
-  <select id="filter-book">
-    <option value="">All sportsbooks</option>
-    <option value="draftkings">DraftKings</option>
-    <option value="fanduel">FanDuel</option>
-    <option value="hardrock">Hard Rock</option>
-    <option value="betmgm">BetMGM</option>
-    <option value="caesars">Caesars</option>
-  </select>
-  <button onclick="applyFilter()">Filter</button>
-  <span id="count-badge" style="margin-left:auto;font-size:0.9em;color:var(--text-dim)"></span>
-</div>
+    <div class="filter-bar">
+      <input
+        type="text"
+        id="filter-partner"
+        placeholder="Filter by partner ID..."
+        style="flex: 1"
+      />
+      <select id="filter-book">
+        <option value="">All sportsbooks</option>
+        <option value="draftkings">DraftKings</option>
+        <option value="fanduel">FanDuel</option>
+        <option value="hardrock">Hard Rock</option>
+        <option value="betmgm">BetMGM</option>
+        <option value="caesars">Caesars</option>
+      </select>
+      <button onclick="applyFilter()">Filter</button>
+      <span
+        id="count-badge"
+        style="margin-left: auto; font-size: 0.9em; color: var(--text-dim)"
+      ></span>
+    </div>
 
-<div id="summary-section" class="card">
-  <h2>📊 Summary</h2>
-  <div style="display:flex;gap:2em;flex-wrap:wrap">
-    <div><span class="metric" id="total-raises">0</span><br>Total raises</div>
-    <div><span class="metric" id="unique-partners">0</span><br>Partners with raises</div>
-    <div><span class="metric" id="unique-books">0</span><br>Sportsbooks</div>
-  </div>
-</div>
+    <div id="summary-section" class="card">
+      <h2>📊 Summary</h2>
+      <div style="display: flex; gap: 2em; flex-wrap: wrap">
+        <div><span class="metric" id="total-raises">0</span><br />Total raises</div>
+        <div><span class="metric" id="unique-partners">0</span><br />Partners with raises</div>
+        <div><span class="metric" id="unique-books">0</span><br />Sportsbooks</div>
+      </div>
+    </div>
 
-<div id="raises-table-section" class="card">
-  <h2>📋 Recent Increases</h2>
-  <table>
-    <thead><tr>
-      <th>Partner</th><th>Sportsbook</th><th>Sport</th><th>Market</th><th>Type</th><th>Previous</th><th>New</th><th>Raise</th><th>When</th>
-    </tr></thead>
-    <tbody id="raises-tbody"></tbody>
-  </table>
-  <div class="empty" id="empty-state">No limit increases found. Seed demo data with <code>bun run ops:limits:demo</code>.</div>
-</div>
+    <div id="raises-table-section" class="card">
+      <h2>📋 Recent Increases</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Partner</th>
+            <th>Sportsbook</th>
+            <th>Sport</th>
+            <th>Market</th>
+            <th>Type</th>
+            <th>Previous</th>
+            <th>New</th>
+            <th>Raise</th>
+            <th>Influence</th>
+            <th>When</th>
+          </tr>
+        </thead>
+        <tbody id="raises-tbody"></tbody>
+      </table>
+      <div class="empty" id="empty-state">
+        No limit increases found. Seed demo data with <code>bun run ops:limits:demo</code>.
+      </div>
+    </div>
 
-<div id="per-partner-section" class="card">
-  <h2>👥 Per-Partner Breakdown</h2>
-  <div id="partner-breakdown"></div>
-</div>
+    <div id="per-partner-section" class="card">
+      <h2>👥 Per-Partner Breakdown</h2>
+      <div id="partner-breakdown"></div>
+    </div>
 
-<script>
-const POLL_INTERVAL = 30_000;
-let data = null;
-let filterPartner = '';
-let filterBook = '';
+    <script>
+      const POLL_INTERVAL = 30_000;
+      let data = null;
+      let filterPartner = '';
+      let filterBook = '';
 
-async function load() {
-  try {
-    const res = await fetch('/api/operations/summary');
-    if (res.ok) { data = await res.json(); return render(); }
-  } catch {}
-  try {
-    const res = await fetch('/registry/ops-summary.json');
-    if (res.ok) { data = await res.json(); return render(); }
-  } catch {}
-  document.getElementById('empty-state').textContent = '⚠️ Could not load data. Is the server running?';
-}
+      async function load() {
+        try {
+          const res = await fetch('/api/operations/summary');
+          if (res.ok) {
+            data = await res.json();
+            return render();
+          }
+        } catch {}
+        try {
+          const res = await fetch('/registry/ops-summary.json');
+          if (res.ok) {
+            data = await res.json();
+            return render();
+          }
+        } catch {}
+        document.getElementById('empty-state').textContent =
+          '⚠️ Could not load data. Is the server running?';
+      }
 
-function applyFilter() {
-  filterPartner = document.getElementById('filter-partner').value.trim().toLowerCase();
-  filterBook = document.getElementById('filter-book').value;
-  render();
-}
+      function applyFilter() {
+        filterPartner = document.getElementById('filter-partner').value.trim().toLowerCase();
+        filterBook = document.getElementById('filter-book').value;
+        render();
+      }
 
-function esc(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
+      function esc(s) {
+        const d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+      }
 
-function render() {
-  if (!data || !data.limitIncreases) return;
-  const lims = data.limitIncreases;
+      function render() {
+        if (!data || !data.limitIncreases) return;
+        const lims = data.limitIncreases;
 
-  // Filter
-  const filtered = lims.filter(r => {
-    if (filterPartner && !r.node_id?.toLowerCase().includes(filterPartner)) return false;
-    if (filterBook && r.sportsbook !== filterBook) return false;
-    return true;
-  });
+        // Filter
+        const filtered = lims.filter(r => {
+          if (filterPartner && !r.node_id?.toLowerCase().includes(filterPartner)) return false;
+          if (filterBook && r.sportsbook !== filterBook) return false;
+          return true;
+        });
 
-  // Summary counts
-  const partners = new Set(filtered.map(r => r.node_id));
-  const books = new Set(filtered.map(r => r.sportsbook));
-  document.getElementById('total-raises').textContent = filtered.length;
-  document.getElementById('unique-partners').textContent = partners.size;
-  document.getElementById('unique-books').textContent = books.size;
-  document.getElementById('count-badge').textContent = `Showing ${filtered.length} of ${lims.length} total`;
+        // Summary counts
+        const partners = new Set(filtered.map(r => r.node_id));
+        const books = new Set(filtered.map(r => r.sportsbook));
+        document.getElementById('total-raises').textContent = filtered.length;
+        document.getElementById('unique-partners').textContent = partners.size;
+        document.getElementById('unique-books').textContent = books.size;
+        document.getElementById('count-badge').textContent =
+          `Showing ${filtered.length} of ${lims.length} total`;
 
-  // Table
-  const tbody = document.getElementById('raises-tbody');
-  const empty = document.getElementById('empty-state');
-  if (filtered.length === 0) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
-  } else {
-    empty.style.display = 'none';
-    tbody.innerHTML = filtered.slice(0, 50).map(r => {
-      const raise = r.new_limit - r.previous_max;
-      const pct = r.previous_max > 0 ? ((raise / r.previous_max) * 100).toFixed(0) : '∞';
-      const typeCls = r.bet_type === 'live' ? 'live' : 'pregame';
-      return `<tr>
-        <td><code>${esc(r.node_id?.slice(0,14) ?? '—')}</code></td>
+        // Table
+        const tbody = document.getElementById('raises-tbody');
+        const empty = document.getElementById('empty-state');
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          empty.style.display = 'block';
+        } else {
+          empty.style.display = 'none';
+          tbody.innerHTML = filtered
+            .slice(0, 50)
+            .map(r => {
+              const raise = r.new_limit - r.previous_max;
+              const pct = r.previous_max > 0 ? ((raise / r.previous_max) * 100).toFixed(0) : '∞';
+              const typeCls = r.bet_type === 'live' ? 'live' : 'pregame';
+              const drivers = (r.top_contributing_factors ?? []).join(', ');
+              const proof = r.context_proof?.valid
+                ? 'context proof verified'
+                : r.context_proof?.signed
+                  ? 'signed context; proof not verified'
+                  : 'unsigned or pending context';
+              const scoreTitle = drivers
+                ? `Drivers: ${drivers} · ${proof}`
+                : `Drivers pending · ${proof}`;
+              const scoreBadge = r.context_available
+                ? `<span class="badge score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}</span>`
+                : `<span class="badge pending" title="${esc(scoreTitle)}">pending</span>`;
+              return `<tr>
+        <td><code>${esc(r.node_id?.slice(0, 14) ?? '—')}</code></td>
         <td><strong>${esc(r.sportsbook)}</strong></td>
         <td>${esc(r.sport_id)}</td>
         <td>${esc(r.market_id)}</td>
@@ -150,39 +287,51 @@ function render() {
         <td>$${r.previous_max.toLocaleString()}</td>
         <td><strong>$${r.new_limit.toLocaleString()}</strong></td>
         <td><span class="badge up">+$${raise.toLocaleString()} (${pct}%)</span></td>
-        <td>${new Date(r.increased_at*1000).toLocaleString()}</td>
+        <td>${scoreBadge}</td>
+        <td>${new Date(r.increased_at * 1000).toLocaleString()}</td>
       </tr>`;
-    }).join('');
-  }
+            })
+            .join('');
+        }
 
-  // Per-partner breakdown
-  const pb = document.getElementById('partner-breakdown');
-  const byPartner = {};
-  for (const r of filtered) {
-    const key = r.node_id || 'unknown';
-    if (!byPartner[key]) byPartner[key] = [];
-    byPartner[key].push(r);
-  }
-  pb.innerHTML = Object.entries(byPartner).slice(0, 20).map(([pid, raises]) => {
-    const total = raises.reduce((s, r) => s + (r.new_limit - r.previous_max), 0);
-    return `<div style="margin:0.5em 0;padding:0.5em;background:var(--bg,#fafafa);border-radius:4px">
+        // Per-partner breakdown
+        const pb = document.getElementById('partner-breakdown');
+        const byPartner = {};
+        for (const r of filtered) {
+          const key = r.node_id || 'unknown';
+          if (!byPartner[key]) byPartner[key] = [];
+          byPartner[key].push(r);
+        }
+        pb.innerHTML =
+          Object.entries(byPartner)
+            .slice(0, 20)
+            .map(([pid, raises]) => {
+              const total = raises.reduce((s, r) => s + (r.new_limit - r.previous_max), 0);
+              return `<div style="margin:0.5em 0;padding:0.5em;background:var(--bg,#fafafa);border-radius:4px">
       <div style="display:flex;justify-content:space-between;font-weight:600">
-        <span><code>${esc(pid.slice(0,18))}</code></span>
+        <span><code>${esc(pid.slice(0, 18))}</code></span>
         <span>${raises.length} raise(s) · +$${total.toLocaleString()} total</span>
       </div>
       <div style="font-size:0.85em;margin-top:4px;color:var(--text-dim,#666)">
-        ${raises.slice(0, 3).map(r => `${esc(r.sportsbook)} ${esc(r.sport_id)}/${esc(r.market_id)}: <strong>$${r.new_limit.toLocaleString()}</strong>`).join(' · ')}
+        ${raises
+          .slice(0, 3)
+          .map(
+            r =>
+              `${esc(r.sportsbook)} ${esc(r.sport_id)}/${esc(r.market_id)}: <strong>$${r.new_limit.toLocaleString()}</strong>`
+          )
+          .join(' · ')}
         ${raises.length > 3 ? ` · +${raises.length - 3} more` : ''}
       </div>
     </div>`;
-  }).join('') || '<div class="empty">No data</div>';
-}
+            })
+            .join('') || '<div class="empty">No data</div>';
+      }
 
-document.getElementById('filter-partner').addEventListener('input', applyFilter);
-document.getElementById('filter-book').addEventListener('change', applyFilter);
+      document.getElementById('filter-partner').addEventListener('input', applyFilter);
+      document.getElementById('filter-book').addEventListener('change', applyFilter);
 
-load();
-setInterval(load, POLL_INTERVAL);
-</script>
-</body>
+      load();
+      setInterval(load, POLL_INTERVAL);
+    </script>
+  </body>
 </html>

@@ -4,10 +4,7 @@
  * Includes factorial experiments (C4), coverage prediction (C5),
  * growth metrics, Bun utils runtime proof, and routing proof.
  */
-import {
-  renderVerificationResults,
-  renderVerificationTableRow,
-} from './verification-card.js';
+import { renderVerificationResults, renderVerificationTableRow } from './verification-card.js';
 import './channel-filter.js';
 
 /** Format summary.bySubsystem for ops panel subtitle. */
@@ -27,14 +24,7 @@ function releasePreviewRows(results) {
 /** Diverse preview: up to limitPer per subsystem so filters see non-runtime rows. */
 function releasePreviewRowsBySubsystem(results, limitPer = 3, maxTotal = 12) {
   const filtered = releasePreviewRows(results);
-  const order = [
-    'runtime',
-    'package-manager',
-    'networking',
-    'bundler',
-    'test',
-    'other',
-  ];
+  const order = ['runtime', 'package-manager', 'networking', 'bundler', 'test', 'other'];
   const bySub = new Map();
   for (const r of filtered) {
     const key = r.subsystem || 'other';
@@ -118,7 +108,7 @@ class OperationsDashboard extends HTMLElement {
             <div class="ops-metric" id="limits-count">0</div>
             <div class="ops-sub" id="limits-detail"></div>
             <table id="limits-table" style="width:100%;font-size:0.85em;margin-top:4px">
-              <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>When</th></tr></thead>
+              <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
               <tbody id="limits-tbody"></tbody>
             </table>
           </section>
@@ -444,9 +434,7 @@ class OperationsDashboard extends HTMLElement {
   }
 
   async loadReleaseFeatures(path) {
-    const url = path && String(path).trim()
-      ? String(path)
-      : '/registry/release-features.json';
+    const url = path && String(path).trim() ? String(path) : '/registry/release-features.json';
     this.releaseFeatures = null;
     this.releaseFeaturesPath = url;
     try {
@@ -763,14 +751,9 @@ class OperationsDashboard extends HTMLElement {
             d.toc.principalOutstandingTotal != null
               ? `principal $${Math.round(d.toc.principalOutstandingTotal)}`
               : '';
-          const settled =
-            d.toc.playsSettled != null ? `${d.toc.playsSettled} settled` : '';
-          const openTasks =
-            d.toc.openTasks != null ? `${d.toc.openTasks} open tasks` : '';
-          const bn =
-            d.toc.openBottlenecks != null
-              ? `${d.toc.openBottlenecks} bottlenecks`
-              : '';
+          const settled = d.toc.playsSettled != null ? `${d.toc.playsSettled} settled` : '';
+          const openTasks = d.toc.openTasks != null ? `${d.toc.openTasks} open tasks` : '';
+          const bn = d.toc.openBottlenecks != null ? `${d.toc.openBottlenecks} bottlenecks` : '';
           tocDetail.textContent =
             `DEMO · ${idLink} · ${focus}${fails ? ` · ${fails}` : ''}${topProc ? ` · ${topProc}` : ''}${settle ? ` · ${settle}` : ''}${principal ? ` · ${principal}` : ''} · ` +
             `${d.toc.warming ?? 0} warming · ${d.toc.onboarding ?? 0} onboarding · ` +
@@ -787,8 +770,7 @@ class OperationsDashboard extends HTMLElement {
           const crit = d.toc.enforcementCritical;
           const top = d.toc.topRankedProcess;
           const avgRP = d.toc.avgRP;
-          const playable =
-            d.toc.playableDrums != null ? ` · ${d.toc.playableDrums} playable` : '';
+          const playable = d.toc.playableDrums != null ? ` · ${d.toc.playableDrums} playable` : '';
           const geo =
             d.toc.presenceUniqueZips != null
               ? ` · ${d.toc.presenceUniqueZips} zips` +
@@ -813,9 +795,7 @@ class OperationsDashboard extends HTMLElement {
           const channel =
             d.toc.messageLogEntries != null
               ? ` · ${d.toc.messageLogEntries} msgs` +
-                (d.toc.messageLogSlaBreaches
-                  ? ` · ${d.toc.messageLogSlaBreaches} SLA`
-                  : '') +
+                (d.toc.messageLogSlaBreaches ? ` · ${d.toc.messageLogSlaBreaches} SLA` : '') +
                 (d.toc.avgExperimentLiftPct != null
                   ? ` · lift ${(Number(d.toc.avgExperimentLiftPct) * 100).toFixed(0)}%`
                   : '') +
@@ -888,9 +868,7 @@ class OperationsDashboard extends HTMLElement {
           const states = (c.states || ['MA', 'NJ']).join('/');
           const mm = c.shadowMismatches != null ? ` · shadow Δ ${c.shadowMismatches}` : '';
           const ab =
-            c.shadowAllow != null
-              ? ` · allow ${c.shadowAllow}/block ${c.shadowBlock ?? 0}`
-              : '';
+            c.shadowAllow != null ? ` · allow ${c.shadowAllow}/block ${c.shadowBlock ?? 0}` : '';
           const hmac = c.hmac ? ' · HMAC' : ' · integrity-only';
           cmpDetail.textContent = `${states}${mm}${ab}${hmac}${c.scoreHint ? ` · ${c.scoreHint}` : ''}`;
         }
@@ -921,7 +899,8 @@ class OperationsDashboard extends HTMLElement {
         partnersRecent.innerHTML = (d.partners.recent ?? [])
           .slice(0, 5)
           .map(
-            p => `<li><span>${p.name}</span><small>${p.partnerTemplate ?? p.templateId} · ${p.lifecycleStatus}</small></li>`
+            p =>
+              `<li><span>${p.name}</span><small>${p.partnerTemplate ?? p.templateId} · ${p.lifecycleStatus}</small></li>`
           )
           .join('');
       }
@@ -935,14 +914,25 @@ class OperationsDashboard extends HTMLElement {
       const lims = d.limitIncreases;
       limitsCount.textContent = String(lims.length);
       if (limitsDetail) {
-        limitsDetail.textContent = lims.length > 0 ? `Last: ${lims[0].message}` : 'No recent increases';
+        limitsDetail.textContent =
+          lims.length > 0 ? `Last: ${lims[0].message}` : 'No recent increases';
       }
       if (limitsTbody) {
         limitsTbody.innerHTML = lims
           .slice(0, 10)
-          .map(
-            r => `<tr><td>${r.node_id?.slice(0,12) ?? '—'}</td><td>${r.sportsbook}</td><td>${r.sport_id}</td><td>${r.market_id}</td><td>${r.bet_type}</td><td>$${r.previous_max}</td><td><strong>$${r.new_limit}</strong></td><td>${new Date(r.increased_at*1000).toLocaleDateString()}</td></tr>`
-          )
+          .map(r => {
+            const drivers = (r.top_contributing_factors ?? []).join(', ');
+            const proof = r.context_proof?.valid
+              ? 'context proof verified'
+              : r.context_proof?.signed
+                ? 'signed context; proof not verified'
+                : 'unsigned or pending context';
+            const title = drivers ? `Drivers: ${drivers} · ${proof}` : `Drivers pending · ${proof}`;
+            const score = r.context_available
+              ? `${Math.round((r.multi_factor_score ?? 0) * 100)}`
+              : 'pending';
+            return `<tr><td>${esc(r.node_id?.slice(0, 12) ?? '—')}</td><td>${esc(r.sportsbook)}</td><td>${esc(r.sport_id)}</td><td>${esc(r.market_id)}</td><td>${esc(r.bet_type)}</td><td>$${Number(r.previous_max).toLocaleString()}</td><td><strong>$${Number(r.new_limit).toLocaleString()}</strong></td><td><span class="version-badge subsystem-other" title="${esc(title)}">${esc(score)}</span></td><td>${new Date(r.increased_at * 1000).toLocaleDateString()}</td></tr>`;
+          })
           .join('');
       }
     }
@@ -977,8 +967,7 @@ class OperationsDashboard extends HTMLElement {
         tgGaps.classList.toggle('bad', (tgHs.inviteGaps ?? 0) > 0);
         const when = tgHs.generatedAt ? ` · baked ${String(tgHs.generatedAt).slice(0, 19)}` : '';
         if (tgDetail) {
-          tgDetail.textContent =
-            `${tgHs.partners ?? 0} linked · ${tgHs.operatorReady ?? 0} operator_ready · ${tgHs.designated ?? 0} designated · ${tgHs.forumReady ?? 0} forum_ready · ${tgHs.blocked ?? 0} blocked · verify fail ${tgHs.verifyFailPartners ?? 0} · lane fail ${tgHs.laneFailPartners ?? 0}${when}`;
+          tgDetail.textContent = `${tgHs.partners ?? 0} linked · ${tgHs.operatorReady ?? 0} operator_ready · ${tgHs.designated ?? 0} designated · ${tgHs.forumReady ?? 0} forum_ready · ${tgHs.blocked ?? 0} blocked · verify fail ${tgHs.verifyFailPartners ?? 0} · lane fail ${tgHs.laneFailPartners ?? 0}${when}`;
         }
         if (tgFilterWrap) tgFilterWrap.hidden = false;
         if (tgCatalogLink && tgHs.catalogPath) tgCatalogLink.href = tgHs.catalogPath;
@@ -1001,11 +990,7 @@ class OperationsDashboard extends HTMLElement {
                     ? 'stored'
                     : '—';
               const phaseClass =
-                r.phase === 'blocked'
-                  ? 'match-no'
-                  : r.phase === 'operator_ready'
-                    ? 'match-ok'
-                    : '';
+                r.phase === 'blocked' ? 'match-no' : r.phase === 'operator_ready' ? 'match-ok' : '';
               const memClass = r.needsPartnerInForum ? 'match-no' : '';
               const verify =
                 r.verifyTotal != null
@@ -1013,10 +998,7 @@ class OperationsDashboard extends HTMLElement {
                   : r.handshakeOk
                     ? 'OK'
                     : 'FAIL';
-              const lanes =
-                r.lanesTotal != null
-                  ? `${r.lanesOk ?? '?'}/${r.lanesTotal}`
-                  : '—';
+              const lanes = r.lanesTotal != null ? `${r.lanesOk ?? '?'}/${r.lanesTotal}` : '—';
               const detail =
                 r.gapCount > 0 ||
                 r.needsPartnerInForum ||
@@ -1041,9 +1023,8 @@ class OperationsDashboard extends HTMLElement {
                         )
                         .join('') || ''
                     }${
-                      (r.nextSteps || [])
-                        .map(s => `<p class="ops-sub">→ ${esc(s)}</p>`)
-                        .join('') || ''
+                      (r.nextSteps || []).map(s => `<p class="ops-sub">→ ${esc(s)}</p>`).join('') ||
+                      ''
                     }${
                       (r.lanesBlocked || []).length
                         ? `<p class="ops-sub">blocked until link: ${esc(r.lanesBlocked.join(', '))}</p>`
@@ -1103,8 +1084,7 @@ class OperationsDashboard extends HTMLElement {
         scdMetric.classList.toggle('bad', incomplete > 0 || blocked > 0);
         const when = scd.generatedAt ? ` · baked ${String(scd.generatedAt).slice(0, 19)}` : '';
         if (scdDetail) {
-          scdDetail.textContent =
-            `${scd.desks} desks · blocked ${blocked} · partial ${scd.partial ?? 0} · ready ${scd.ready ?? 0} · funded ${scd.funded ?? 0}${when}`;
+          scdDetail.textContent = `${scd.desks} desks · blocked ${blocked} · partial ${scd.partial ?? 0} · ready ${scd.ready ?? 0} · funded ${scd.funded ?? 0}${when}`;
         }
 
         const rows = scd.rows ?? [];
@@ -1198,9 +1178,7 @@ class OperationsDashboard extends HTMLElement {
           `disp ${d.loop.dispatched ?? 0} · full ${d.loop.settledViaFullLoop ?? 0}` +
           ` · manual ${d.loop.manualStepsPerCycle ?? 0}` +
           ` · outbox fail ${d.loop.outboxFailed ?? 0}` +
-          (d.loop.oldestPendingAgeSec != null
-            ? ` · oldest ${d.loop.oldestPendingAgeSec}s`
-            : '') +
+          (d.loop.oldestPendingAgeSec != null ? ` · oldest ${d.loop.oldestPendingAgeSec}s` : '') +
           ` · gate +${d.loop.gatedAllow ?? 0}/~${d.loop.gatedAdjust ?? 0}/-${d.loop.gatedDeny ?? 0}` +
           (d.loop.gatedDefer != null && d.loop.gatedDefer > 0
             ? ` · defer ${d.loop.gatedDefer}`
@@ -1264,8 +1242,7 @@ class OperationsDashboard extends HTMLElement {
     };
     const bunPass = this.querySelector('#bun-utils-pass');
     if (bunPass) {
-      bunPass.textContent =
-        bun.total > 0 ? `${bun.passed}/${bun.total}` : '—';
+      bunPass.textContent = bun.total > 0 ? `${bun.passed}/${bun.total}` : '—';
       bunPass.classList.toggle('ok', bun.total > 0 && bun.failed === 0);
       bunPass.classList.toggle('bad', bun.failed > 0);
     }
@@ -1278,9 +1255,7 @@ class OperationsDashboard extends HTMLElement {
     }
     const bunHash = this.querySelector('#bun-utils-hash');
     if (bunHash) {
-      bunHash.textContent = bun.proofHash
-        ? `sha256 ${String(bun.proofHash).slice(0, 16)}…`
-        : '';
+      bunHash.textContent = bun.proofHash ? `sha256 ${String(bun.proofHash).slice(0, 16)}…` : '';
     }
 
     // Routing proof (last artifact embedded in summary)
@@ -1289,7 +1264,10 @@ class OperationsDashboard extends HTMLElement {
     if (routingPass) {
       if (rt.available && rt.total > 0) {
         routingPass.textContent = `${rt.passed}/${rt.total}`;
-        routingPass.classList.toggle('ok', (rt.failed ?? 0) === 0 && (rt.criticalFailed ?? 0) === 0);
+        routingPass.classList.toggle(
+          'ok',
+          (rt.failed ?? 0) === 0 && (rt.criticalFailed ?? 0) === 0
+        );
         routingPass.classList.toggle('bad', (rt.failed ?? 0) > 0 || (rt.criticalFailed ?? 0) > 0);
       } else {
         routingPass.textContent = '—';
@@ -1311,9 +1289,7 @@ class OperationsDashboard extends HTMLElement {
     }
     const routingHash = this.querySelector('#routing-hash');
     if (routingHash) {
-      routingHash.textContent = rt.proofHash
-        ? `sha256 ${String(rt.proofHash).slice(0, 16)}…`
-        : '';
+      routingHash.textContent = rt.proofHash ? `sha256 ${String(rt.proofHash).slice(0, 16)}…` : '';
     }
     const routingRoutes = this.querySelector('#routing-routes');
     if (routingRoutes) {
@@ -1364,9 +1340,7 @@ class OperationsDashboard extends HTMLElement {
     }
     const docHash = this.querySelector('#doc-refs-hash');
     if (docHash) {
-      docHash.textContent = doc.proofHash
-        ? `sha256 ${String(doc.proofHash).slice(0, 16)}…`
-        : '';
+      docHash.textContent = doc.proofHash ? `sha256 ${String(doc.proofHash).slice(0, 16)}…` : '';
     }
 
     const tax = this.proofTaxonomyAudit || {};
@@ -1376,12 +1350,16 @@ class OperationsDashboard extends HTMLElement {
       const audits = tax.audits || [];
       if (audits.length > 0) {
         const okCount = audits.filter(a => a.ok).length;
-        taxPass.textContent = tax.ok ? `${okCount}/${audits.length} contracts` : `${okCount}/${audits.length} failing`;
+        taxPass.textContent = tax.ok
+          ? `${okCount}/${audits.length} contracts`
+          : `${okCount}/${audits.length} failing`;
         taxPass.classList.toggle('ok', tax.ok === true);
         taxPass.classList.toggle('bad', tax.ok !== true);
       } else if (pt?.available && pt.contracts != null) {
         const okCount = pt.contractsOk ?? 0;
-        taxPass.textContent = pt.ok ? `${okCount}/${pt.contracts} contracts` : `${okCount}/${pt.contracts} failing`;
+        taxPass.textContent = pt.ok
+          ? `${okCount}/${pt.contracts} contracts`
+          : `${okCount}/${pt.contracts} failing`;
         taxPass.classList.toggle('ok', pt.ok === true);
         taxPass.classList.toggle('bad', pt.ok !== true);
       } else {
@@ -1395,9 +1373,7 @@ class OperationsDashboard extends HTMLElement {
       if (ts) {
         const consistency = tax.consistency || [];
         const cOk =
-          consistency.length > 0
-            ? consistency.filter(c => c.ok).length
-            : (pt?.consistencyOk ?? 0);
+          consistency.length > 0 ? consistency.filter(c => c.ok).length : (pt?.consistencyOk ?? 0);
         const cTotal = consistency.length > 0 ? consistency.length : (pt?.consistencyTotal ?? 0);
         const cBit = cTotal > 0 ? ` · consistency ${cOk}/${cTotal}` : '';
         taxDetail.textContent = `audited ${String(ts).slice(0, 19)}${cBit}`;
@@ -1420,7 +1396,10 @@ class OperationsDashboard extends HTMLElement {
         taxTable.classList.remove('hidden');
         taxTbody.innerHTML = taxRows
           .map(a => {
-            const file = String(a.path || '').split('/').pop() || a.path;
+            const file =
+              String(a.path || '')
+                .split('/')
+                .pop() || a.path;
             const rowLabel = a.rows > 0 ? String(a.rows) : 'report';
             const status = a.ok ? '✅' : '❌';
             const subBadge = a.primarySubsystem
@@ -1474,8 +1453,12 @@ class OperationsDashboard extends HTMLElement {
         const bits = [`provenance ${tags.provenanceId}`];
         if (tags.testSuiteCommit) bits.push(`commit ${String(tags.testSuiteCommit).slice(0, 8)}`);
         if (tags.channelResolveSource) bits.push(`via ${tags.channelResolveSource}`);
-        if (tags.channelPublishedAt) bits.push(`published ${String(tags.channelPublishedAt).slice(0, 10)}`);
-        if (this.releaseFeaturesPath && this.releaseFeaturesPath !== '/registry/release-features.json') {
+        if (tags.channelPublishedAt)
+          bits.push(`published ${String(tags.channelPublishedAt).slice(0, 10)}`);
+        if (
+          this.releaseFeaturesPath &&
+          this.releaseFeaturesPath !== '/registry/release-features.json'
+        ) {
           bits.push(`view ${this.releaseFeaturesPath}`);
         }
         relChannel.textContent = bits.join(' · ');
@@ -1485,9 +1468,7 @@ class OperationsDashboard extends HTMLElement {
     }
     const relHash = this.querySelector('#release-hash');
     if (relHash) {
-      relHash.textContent = rel.proofHash
-        ? `sha256 ${String(rel.proofHash).slice(0, 16)}…`
-        : '';
+      relHash.textContent = rel.proofHash ? `sha256 ${String(rel.proofHash).slice(0, 16)}…` : '';
     }
     const relBake = this.querySelector('#release-meta-bake');
     if (relBake) {
@@ -1540,7 +1521,10 @@ class OperationsDashboard extends HTMLElement {
       if (relCards) relCards.classList.add('hidden');
       if (previewRows.length > 0) {
         relTable.classList.remove('hidden');
-        relTbody.innerHTML = previewRows.slice(0, 12).map(r => renderVerificationTableRow(r)).join('');
+        relTbody.innerHTML = previewRows
+          .slice(0, 12)
+          .map(r => renderVerificationTableRow(r))
+          .join('');
       } else {
         relTable.classList.add('hidden');
         relTbody.innerHTML = '';
@@ -1779,7 +1763,9 @@ class OperationsDashboard extends HTMLElement {
           ? 'live ✅'
           : 'live ❌'
         : 'live skipped';
-      const catalog = cf.mcpCatalog?.ok ? `catalog ${cf.mcpCatalog.serverCount ?? 5}/5` : 'catalog ❌';
+      const catalog = cf.mcpCatalog?.ok
+        ? `catalog ${cf.mcpCatalog.serverCount ?? 5}/5`
+        : 'catalog ❌';
       cfDetail.textContent = `${catalog} · tier ${tier} · ${live}`;
     }
     const cfPreflight = this.querySelector('#cloudflare-preflight-detail');
@@ -1976,7 +1962,9 @@ class OperationsDashboard extends HTMLElement {
     }
     const guidesDetail = this.querySelector('#guides-detail');
     if (guidesDetail) {
-      const resources = (guides.results || []).filter(r => !r.name.startsWith('install guide:')).length;
+      const resources = (guides.results || []).filter(
+        r => !r.name.startsWith('install guide:')
+      ).length;
       guidesDetail.textContent = guides.timestamp
         ? `guides index · install guide · /get · ${resources} URLs + 2 command dry-runs · ${guides.timestamp.slice(0, 10)}`
         : 'No guides proof — run bun run verify:guides:save';
@@ -2002,9 +1990,7 @@ class OperationsDashboard extends HTMLElement {
     if (bundlerDetail) {
       if (bundler.bunVersion) {
         const loaders = [
-          ...new Set(
-            (bundler.results || []).map(r => r.loader).filter(Boolean)
-          ),
+          ...new Set((bundler.results || []).map(r => r.loader).filter(Boolean)),
         ].join(' · ');
         const loaderBit = loaders || 'loaders';
         bundlerDetail.textContent = `Bun ${bundler.bunVersion} · ${loaderBit} · subsystem bundler${formatBySubsystem(bundler.summary?.bySubsystem)}`;
@@ -2048,10 +2034,11 @@ class OperationsDashboard extends HTMLElement {
       const n = d.tree?.partners != null ? (d.packageCount ?? null) : null;
       // Prefer routing total as "routes probed" proxy when packageCount absent
       snapPkgs.textContent =
-        d.bunUtils?.total != null
-          ? `${d.bunUtils.passed ?? 0}/${d.bunUtils.total} utils`
-          : '—';
-      snapPkgs.classList.toggle('ok', (d.bunUtils?.failed ?? 0) === 0 && (d.bunUtils?.total ?? 0) > 0);
+        d.bunUtils?.total != null ? `${d.bunUtils.passed ?? 0}/${d.bunUtils.total} utils` : '—';
+      snapPkgs.classList.toggle(
+        'ok',
+        (d.bunUtils?.failed ?? 0) === 0 && (d.bunUtils?.total ?? 0) > 0
+      );
       snapPkgs.classList.toggle('bad', (d.bunUtils?.failed ?? 0) > 0);
       void n;
     }
@@ -2122,7 +2109,10 @@ class OperationsDashboard extends HTMLElement {
     const chart = this.querySelector('#pred-chart');
     if (chart) {
       // Prefer PNG (Bun.Image from WebView); fall back to SVG artifact
-      const trySrc = ['/registry/prediction/coverage-chart.png', '/registry/prediction/coverage-chart.svg'];
+      const trySrc = [
+        '/registry/prediction/coverage-chart.png',
+        '/registry/prediction/coverage-chart.svg',
+      ];
       let i = 0;
       const next = () => {
         if (i >= trySrc.length) {

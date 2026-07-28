@@ -8,6 +8,8 @@ import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
 import { FactorialEngine } from '../lib/experiments/index.ts';
 import { runCoverageBacktest } from '../lib/prediction/index.ts';
 import { asTreeNodeId, unbrand } from '../lib/types/branded.ts';
+import { seedAccountLimitsDemo } from '../lib/account-limits-repo.ts';
+import { PartnerAnalyticsRepository } from '../lib/operations/partner-analytics-repo.ts';
 
 describe('buildOpsSummary', () => {
   test('live and snapshot use the same top-level contract keys', () => {
@@ -207,6 +209,23 @@ describe('buildOpsSummary', () => {
     expect(s.prediction.coverage.n).toBe(1);
     expect(s.prediction.coverage.mae).toBe(30);
 
+    db.close();
+  });
+
+  test('projects multi-factor limit influence and proof state for the portal', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = Math.floor(Date.now() / 1000);
+    const { nodeId } = seedAccountLimitsDemo(db, { nowSec: now, force: true });
+    const repository = new PartnerAnalyticsRepository(db, nodeId);
+    expect(repository.sealMissingRaiseContextProofs(now - 86400).sealed).toBe(1);
+
+    const summary = buildOpsSummary(db, 'live');
+    const raise = summary.limitIncreases[0];
+    expect(raise?.node_id).toBe(nodeId);
+    expect(raise?.context_available).toBe(true);
+    expect(raise?.multi_factor_score).toBeGreaterThan(0);
+    expect(raise?.top_contributing_factors).toHaveLength(3);
+    expect(raise?.context_proof?.valid).toBe(true);
     db.close();
   });
 });

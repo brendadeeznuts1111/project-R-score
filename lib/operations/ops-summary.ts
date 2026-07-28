@@ -14,6 +14,11 @@ import { queryRecentLimitIncreases } from '../account-limits-repo.ts';
 import { getPredictionAccuracy } from '../prediction/index.ts';
 import { queryPartnersSlice, type PartnersSummarySlice } from './partner-profile-bridge.ts';
 import { queryOpsChannelHealth } from '../channels/outbox.ts';
+import {
+  computeMultiFactorScore,
+  PartnerAnalyticsRepository,
+  type RaiseContextProofStatus,
+} from './partner-analytics-repo.ts';
 import type { OpsChannelHealthSlice } from '../channels/ops-channel-event.ts';
 import { loadTocOpsSummarySlice, type TocOpsSummarySlice } from '../toc-ops/export-snapshot.ts';
 import {
@@ -315,6 +320,7 @@ export type OpsSummaryPayload = {
   compliance: OpsSummaryCompliance;
   /** Recent account limit raises (partner_account_limits table; live query, 48h window). */
   limitIncreases: Array<{
+    limit_id: number; // brand-ok — partner_account_limits.id
     node_id: string; // brand-ok — TreeNodeId wire
     sportsbook: string;
     sport_id: string; // brand-ok — SportId wire
@@ -324,6 +330,10 @@ export type OpsSummaryPayload = {
     new_limit: number;
     increased_at: number;
     message: string;
+    context_available: boolean;
+    multi_factor_score: number;
+    top_contributing_factors: string[];
+    context_proof: RaiseContextProofStatus | null;
   }>;
 };
 
@@ -340,6 +350,31 @@ function emptyExperiments(): OpsSummaryPayload['experiments'] {
 
 function emptyPrediction(): OpsSummaryPayload['prediction'] {
   return { coverage: { mae: 0, rmse: 0, bias: 0, n: 0 } };
+}
+
+function queryLimitIncreaseSummary(db: Database): OpsSummaryPayload['limitIncreases'] {
+  if (!tableExists(db, 'partner_account_limits')) return [];
+
+  const repositories = new Map<string, PartnerAnalyticsRepository>();
+  return queryRecentLimitIncreases(db, 48).map(raise => {
+    let repository = repositories.get(raise.node_id);
+    if (!repository) {
+      repository = new PartnerAnalyticsRepository(db, raise.node_id);
+      repositories.set(raise.node_id, repository);
+    }
+    const context = repository.getRaiseContext(raise.limit_id);
+    const score = context
+      ? computeMultiFactorScore(context)
+      : { score: 0, topFactors: [], factorScores: {} };
+
+    return {
+      ...raise,
+      context_available: context != null,
+      multi_factor_score: score.score,
+      top_contributing_factors: score.topFactors,
+      context_proof: context ? repository.verifyRaiseContextProof(context) : null,
+    };
+  });
 }
 
 function queryExperiments(db: Database): OpsSummaryPayload['experiments'] {
@@ -891,8 +926,6 @@ export function buildOpsSummary(
     telegramHandshake: loadTelegramHandshakeSummarySlice(),
     seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
     compliance: loadComplianceSummarySliceSync(),
-    limitIncreases: tableExists(db, 'partner_account_limits')
-      ? queryRecentLimitIncreases(db, 48)
-      : [],
+    limitIncreases: queryLimitIncreaseSummary(db),
   };
 }

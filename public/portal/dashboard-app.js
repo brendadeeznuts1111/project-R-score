@@ -7,10 +7,7 @@
  * @see public/portal/verification-card.js
  * @see public/portal/channel-filter.js
  */
-import {
-  renderVerificationResults,
-  renderVerificationTableRow,
-} from './verification-card.js';
+import { renderVerificationResults, renderVerificationTableRow } from './verification-card.js';
 import './channel-filter.js';
 
 const $ = id => document.getElementById(id);
@@ -103,9 +100,10 @@ function metricCard({ label, value, detail, cls = '', href }) {
 
 function renderSkeleton() {
   const sk = n =>
-    Array.from({ length: n }, () => '<div class="card skeleton skeleton-card" aria-hidden="true"></div>').join(
-      ''
-    );
+    Array.from(
+      { length: n },
+      () => '<div class="card skeleton skeleton-card" aria-hidden="true"></div>'
+    ).join('');
   const plane = $('ops-plane');
   if (plane) {
     plane.innerHTML =
@@ -179,8 +177,7 @@ function renderOpsPlane(ops) {
         : '',
     ].filter(Boolean);
     const focus = toc.enforcementFocus ? `focus ${toc.enforcementFocus}` : 'no enf';
-    const enfFails =
-      toc.enforcementFailed != null ? `${toc.enforcementFailed} gate fails` : '';
+    const enfFails = toc.enforcementFailed != null ? `${toc.enforcementFailed} gate fails` : '';
     tocHtml = `<article class="plane-card" data-plane="toc">
       <h3>TOC Ops <span class="badge-demo" title="Operate-lite gates baked; Soft mutations not on Pages">DEMO</span></h3>
       <div class="plane-metric ${metricCls}">${esc(String(toc.warmed ?? 0))} <span style="font-size:0.45em;font-weight:500;color:var(--text-dim)">warmed</span></div>
@@ -293,7 +290,22 @@ function renderOpsPlane(ops) {
   const lims = ops.limitIncreases;
   let limitHtml;
   if (lims && lims.length > 0) {
-    const top3 = lims.slice(0, 3).map(r => `<li><code>${esc(r.sportsbook)}</code> ${esc(r.sport_id)}/${esc(r.market_id)} <strong>$${r.new_limit}</strong> <span style="color:var(--text-dim)">($${r.previous_max})</span></li>`).join('');
+    const top3 = lims
+      .slice(0, 3)
+      .map(r => {
+        const drivers = (r.top_contributing_factors ?? []).join(', ');
+        const proof = r.context_proof?.valid
+          ? 'context proof verified'
+          : r.context_proof?.signed
+            ? 'signed context; proof not verified'
+            : 'unsigned or pending context';
+        const title = drivers ? `Drivers: ${drivers} · ${proof}` : `Drivers pending · ${proof}`;
+        const score = r.context_available
+          ? `<span class="badge-demo" title="${esc(title)}">${Math.round((r.multi_factor_score ?? 0) * 100)} score</span>`
+          : `<span class="badge-demo" title="${esc(title)}">context pending</span>`;
+        return `<li><code>${esc(r.sportsbook)}</code> ${esc(r.sport_id)}/${esc(r.market_id)} <strong>$${r.new_limit}</strong> <span style="color:var(--text-dim)">($${r.previous_max})</span> ${score}</li>`;
+      })
+      .join('');
     limitHtml = `<article class="plane-card" data-plane="limit-raises">
       <h3>🚀 Limit increases <span class="badge-demo" title="Live query, 48h window">${lims.length}</span></h3>
       <ul class="plane-gap-list">${top3}</ul>
@@ -471,7 +483,7 @@ function renderKpis(ctx) {
     },
     {
       label: 'Tree / liquidity',
-      value: partners != null ? String(partners) : ops?.liquidity?.total ?? mon?.dodQueue ?? '—',
+      value: partners != null ? String(partners) : (ops?.liquidity?.total ?? mon?.dodQueue ?? '—'),
       detail:
         partners != null
           ? `${tree?.agents ?? 0} agents · $${ops?.liquidity?.total ?? '—'}`
@@ -498,10 +510,7 @@ function renderKpis(ctx) {
     },
     {
       label: 'Loop settle',
-      value:
-        ops?.loop?.settled != null
-          ? String(ops.loop.settled)
-          : '—',
+      value: ops?.loop?.settled != null ? String(ops.loop.settled) : '—',
       detail:
         ops?.loop != null
           ? `${ops.loop.dispatched ?? 0} dispatched · ${
@@ -539,14 +548,7 @@ function renderKpis(ctx) {
 
 function renderSubsystems(release) {
   const by = release?.summary?.bySubsystem || {};
-  const pillars = [
-    'runtime',
-    'package-manager',
-    'networking',
-    'bundler',
-    'test',
-    'other',
-  ];
+  const pillars = ['runtime', 'package-manager', 'networking', 'bundler', 'test', 'other'];
   const html = pillars
     .filter(p => by[p]?.total)
     .map(p => {
@@ -655,7 +657,10 @@ function renderTaxonomy(taxonomy) {
   }
   const rows = audits
     .map(a => {
-      const file = String(a.path || '').split('/').pop() || a.path;
+      const file =
+        String(a.path || '')
+          .split('/')
+          .pop() || a.path;
       const sub = a.primarySubsystem
         ? `<span class="version-badge subsystem-${esc(a.primarySubsystem)}">${esc(a.primarySubsystem)}</span>`
         : '—';
@@ -713,29 +718,19 @@ export async function load() {
     return list.length ? await fetchJson(list[0]) : { _error: true };
   }
 
-  const [
-    def,
-    mon,
-    release,
-    installPlatform,
-    installEnv,
-    bundler,
-    nits,
-    taxonomy,
-    ops,
-    bake,
-  ] = await Promise.all([
-    firstOk(urls.def),
-    firstOk(urls.mon),
-    firstOk(urls.release),
-    firstOk(urls.installPlatform),
-    firstOk(urls.installEnv),
-    firstOk(urls.bundler),
-    firstOk(urls.nits),
-    firstOk(urls.taxonomy),
-    firstOk(urls.ops),
-    firstOk(urls.bake),
-  ]);
+  const [def, mon, release, installPlatform, installEnv, bundler, nits, taxonomy, ops, bake] =
+    await Promise.all([
+      firstOk(urls.def),
+      firstOk(urls.mon),
+      firstOk(urls.release),
+      firstOk(urls.installPlatform),
+      firstOk(urls.installEnv),
+      firstOk(urls.bundler),
+      firstOk(urls.nits),
+      firstOk(urls.taxonomy),
+      firstOk(urls.ops),
+      firstOk(urls.bake),
+    ]);
 
   const failed = [def, mon, release, taxonomy]
     .filter(x => x?._error)
