@@ -1,8 +1,12 @@
 # .cloudflare-access.yml — scoped policy-as-code for operator surfaces.
 #
-# STATUS: STAGED — NOT APPLIED. No available token has Cloudflare Access scope
-# and the DNS token is Zone.DNS-only. Create a least-privilege Access token,
-# store it in Proton Pass, then follow docs/harness/tenants/cloudflare-access.md.
+# STATUS (verified live 2026-07-28):
+#   · ledger.factory-wager.com     — APPLIED (existing app name "ledger" · 302 Access)
+#   · score.factory-wager.com/portal — APPLIED (app "FactoryWager Portal" · 302 Access)
+#   · project-r-score.pages.dev/portal — APPLIED (app "FactoryWager Portal (pages.dev)" · 302 Access)
+#   · reasonix.factory-wager.com   — STAGED (no DNS record yet)
+# Access token: Proton factorywager / Cloudflare Access API Token
+#   → CLOUDFLARE_ACCESS_API_TOKEN (kimi plan uses CLOUDFLARE_API_TOKEN=that value)
 #
 # Schema matches src/lib/cloudflare-access-policy.ts (kimi-toolchain):
 # apps[].policies[].include/require/exclude entries are Cloudflare Access

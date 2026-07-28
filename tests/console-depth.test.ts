@@ -206,17 +206,19 @@ describe('widthOf options (Bun.stringWidth surface)', () => {
 });
 
 describe('inspect / getConsoleDepth', () => {
-  test('default depth is 4 when BUN_CONSOLE_DEPTH is unset', () => {
+  test('bunfig [console] depth (6) is the default when env is unset', () => {
+    // SSOT chain: explicit > --console-depth flag > BUN_CONSOLE_DEPTH env
+    // > bunfig [console] depth (pinned 6 in this repo) > DEFAULT_DEPTH (2).
     const prev = Bun.env.BUN_CONSOLE_DEPTH;
     delete Bun.env.BUN_CONSOLE_DEPTH;
     try {
-      expect(getConsoleDepth()).toBe(4);
+      expect(getConsoleDepth()).toBe(6);
     } finally {
       if (prev === undefined) delete Bun.env.BUN_CONSOLE_DEPTH;
       else Bun.env.BUN_CONSOLE_DEPTH = prev;
     }
   });
-  test('BUN_CONSOLE_DEPTH env overrides default', () => {
+  test('BUN_CONSOLE_DEPTH env overrides bunfig default', () => {
     const prev = Bun.env.BUN_CONSOLE_DEPTH;
     Bun.env.BUN_CONSOLE_DEPTH = '2';
     try {

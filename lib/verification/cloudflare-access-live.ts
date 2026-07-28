@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
 // @see https://bun.com/docs/runtime/networking/dns — Bun.dns.lookup
 // @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
@@ -81,18 +82,42 @@ export async function probeCloudflareAccess(
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), timeoutMs);
   try {
+    // Cache-bust: CF edge can return a cached public 200 briefly after Access attach
     const res = await fetchImpl(url, {
       method: 'GET',
       redirect: 'manual',
       signal: ac.signal,
+      headers: {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
     });
-    const enforced = isCloudflareAccessEnforced(res.status, res.headers);
+    let status = res.status;
+    let headers = res.headers;
+    let enforced = isCloudflareAccessEnforced(status, headers);
+    // One retry on public 200 (propagation / edge cache)
+    if (!enforced && status === 200) {
+      await Bun.sleep(400);
+      const res2 = await fetchImpl(url, {
+        method: 'GET',
+        redirect: 'manual',
+        signal: ac.signal,
+        headers: {
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+          'CF-Cache-Status': 'BYPASS',
+        },
+      });
+      status = res2.status;
+      headers = res2.headers;
+      enforced = isCloudflareAccessEnforced(status, headers);
+    }
     return {
       url,
       ok: enforced,
-      status: res.status,
+      status,
       accessEnforced: enforced,
-      evidence: evidenceFromResponse(res.status, res.headers, enforced),
+      evidence: evidenceFromResponse(status, headers, enforced),
     };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);

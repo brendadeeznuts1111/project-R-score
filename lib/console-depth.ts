@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
 /**
  * console-depth.ts — project-wide SSOT for object-inspection verbosity.
  *
@@ -29,8 +30,11 @@
  * Control plane (highest wins):
  *   1. explicit `depth` argument
  *   2. `--console-depth=N` in process args
- *   3. `BUN_CONSOLE_DEPTH` env (set it in the project root .env)
- *   4. DEFAULT_DEPTH (4)
+ *   3. `BUN_CONSOLE_DEPTH` env (repo-local override; the runtime ignores it,
+ *      only these wrappers read it)
+ *   4. bunfig.toml `[console] depth` (statically imported below — the single
+ *      persistent knob shared with plain console.log)
+ *   5. DEFAULT_DEPTH (2 = Bun's native default, last resort)
  *
  * .env note: Bun auto-loads .env with precedence .env < .env.{NODE_ENV}
  * < .env.local — a local override of BUN_CONSOLE_DEPTH wins silently.
@@ -43,7 +47,25 @@
  * `[Bun.inspect.custom]()` on the class (see utils docs above).
  */
 
-const DEFAULT_DEPTH = 4;
+// bunfig.toml [console] depth — the single persistent knob for BOTH plain
+// console.log (native layer) and the wrappers below. Static TOML import:
+// sync, zero fs, resolved relative to this module (repo root = ../).
+// @see https://bun.com/docs/runtime/console#object-inspection-depth — console.depth
+// @see https://bun.com/docs/runtime/loaders#toml — TOML import attribute
+import bunfig from '../bunfig.toml' with { type: 'toml' };
+
+/**
+ * Last-resort depth when no layer above provides one. Mirrors Bun's native
+ * default (2) so the wrapper chain degrades exactly like plain console.log.
+ * @see https://bun.com/docs/runtime/console#object-inspection-depth — default 2
+ */
+const DEFAULT_DEPTH = 2;
+
+/** bunfig.toml `[console] depth`, validated. `null` when absent/invalid. */
+const BUNFIG_DEPTH = (() => {
+  const raw = (bunfig as { console?: { depth?: unknown } }).console?.depth;
+  return typeof raw === 'number' && Number.isFinite(raw) && raw >= 0 ? Math.floor(raw) : null;
+})();
 
 function parseDepth(raw: string | undefined): number | null {
   if (!raw) return null;
@@ -73,11 +95,13 @@ function argDepth(): number | null {
 
 /**
  * Effective console depth for this process.
+ * Precedence: explicit option > `--console-depth` flag > BUN_CONSOLE_DEPTH env
+ * > bunfig `[console] depth` > DEFAULT_DEPTH (2).
  * @see https://bun.com/docs/runtime/console — depth precedence (flag > bunfig)
  * @see https://bun.com/docs/runtime — `--console-depth` CLI flag
  */
 export function getConsoleDepth(): number {
-  return argDepth() ?? parseDepth(Bun.env.BUN_CONSOLE_DEPTH) ?? DEFAULT_DEPTH;
+  return argDepth() ?? parseDepth(Bun.env.BUN_CONSOLE_DEPTH) ?? BUNFIG_DEPTH ?? DEFAULT_DEPTH;
 }
 
 /**
