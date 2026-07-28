@@ -43,14 +43,7 @@ import {
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
 import { shouldColor, termWidth } from '../../lib/console-depth.ts';
-import {
-  cliTone,
-  columnTable,
-  displayWidth,
-  frameBlock,
-  padDisplay,
-  truncateDisplay,
-} from '../../lib/portal/cli-chrome.ts';
+import { cliTone, displayWidth, frameBlock, padDisplay } from '../../lib/portal/cli-chrome.ts';
 import { runCatalogChecks } from './portal-cli-doctor-catalog.ts';
 import { runBunfigChecks } from './portal-cli-doctor-bunfig.ts';
 import { runInfraChecks } from './portal-cli-doctor-infra.ts';
@@ -707,12 +700,18 @@ export function formatPortalDoctorPlain(r: PortalDoctorReport): string {
   return lines.join('\n');
 }
 
-/** Pretty TTY: frameBlock + Bun.stringWidth one-liners + Bun.color (shouldColor). */
+/**
+ * Pretty TTY: frameBlock + Bun.stringWidth layout + Bun.color (shouldColor).
+ * Never pre-truncate check messages with "…" — same-line when they fit the
+ * frame inner width; otherwise full message on following indented line(s).
+ * frameBlock wraps overflow via Bun.wrapAnsi (word wrap, no ellipsis).
+ */
 export function formatPortalDoctorPretty(r: PortalDoctorReport): string {
   const display = filterDoctorChecks(r.checks, r.failedOnly);
   const body: string[] = [];
   const frameWidth = doctorFrameWidth();
-  const lineMax = frameWidth - 4;
+  // frameBlock: width - 2 (borders) - 2 (side padding) = inner wrap width
+  const lineMax = Math.max(12, frameWidth - 4);
 
   let lastGroup: PortalDoctorGroup | undefined;
   for (const c of display) {
@@ -724,16 +723,36 @@ export function formatPortalDoctorPretty(r: PortalDoctorReport): string {
     const mark = c.ok ? cliTone.ok(statusMark(c)) : cliTone.fail(statusMark(c));
     const levelTag = padDisplay(`[${c.level}]`, 7);
     const head = `  ${mark} ${levelTag} ${c.id}`;
-    const headW = displayWidth(Bun.stripANSI(head));
     const gap = 2;
-    const msgBudget = Math.max(12, lineMax - headW - gap);
-    const msg = truncateDisplay(c.message, msgBudget);
-    body.push(`${head}${' '.repeat(gap)}${cliTone.dim(msg)}`);
+    const msgDim = cliTone.dim(c.message);
+    const sameLine = `${head}${' '.repeat(gap)}${msgDim}`;
+    // Prefer one line when the full message fits; else head + hang-indented wrap
+    // (Bun.wrapAnsi, no ellipsis). Pre-wrap so frameBlock does not re-break indent.
+    if (displayWidth(sameLine) <= lineMax) {
+      body.push(sameLine);
+    } else {
+      body.push(head);
+      const indent = '    ';
+      const msgWidth = Math.max(8, lineMax - indent.length);
+      const wrapped = Bun.wrapAnsi(c.message, msgWidth, {
+        hard: false,
+        wordWrap: true,
+        trim: false,
+      });
+      for (const part of wrapped.split('\n')) {
+        body.push(cliTone.dim(`${indent}${part}`));
+      }
+    }
+  }
+
+  if (display.length === 0 && r.failedOnly) {
+    body.push(cliTone.dim('(no failures)'));
   }
 
   body.push('');
+  // Full footer lines — frameBlock wraps; never mid-line ellipsis
   for (const line of formatDoctorSummaryFooterPretty(r.summary, r.failedOnly).split('\n')) {
-    body.push(truncateDisplay(line, lineMax));
+    body.push(line);
   }
 
   const mode = doctorModeLabel(r);
@@ -861,22 +880,26 @@ function formatPortalDoctorVerbosePlain(r: PortalDoctorReport): string {
 
 function formatPortalDoctorVerbosePretty(r: PortalDoctorReport): string {
   const display = filterDoctorChecks(r.checks, r.failedOnly);
-  const tableRows = display.map(c => [
-    c.group,
-    c.id,
-    c.level,
-    c.ok ? 'pass' : 'FAIL',
-    c.message,
-    c.ok ? '—' : (c.fixCommand ?? '?'),
-    c.autoFixable === undefined ? '—' : c.autoFixable ? 'yes' : 'no',
-    c.envScope ?? '—',
-  ]);
-
-  const table = columnTable(
-    ['group', 'check', 'level', 'status', 'what', 'fix', 'auto', 'scope'],
-    tableRows,
-    { maxWidths: [10, 28, 6, 5, 36, 28, 4, 5], gap: 1 }
-  );
+  // Multi-line checks: full message/fix/impact — never columnTable ellipsis.
+  const checkLines: string[] = [];
+  let lastGroup: PortalDoctorGroup | undefined;
+  for (const c of display) {
+    if (c.group !== lastGroup) {
+      if (lastGroup) checkLines.push('');
+      checkLines.push(cliTone.accent(GROUP_LABEL[c.group]));
+      lastGroup = c.group;
+    }
+    const mark = c.ok ? cliTone.ok(statusMark(c)) : cliTone.fail(statusMark(c));
+    const status = c.ok ? cliTone.ok('pass') : cliTone.fail('FAIL');
+    const auto = c.autoFixable === undefined ? '' : c.autoFixable ? ' · auto' : ' · manual';
+    const scope = c.envScope ? ` · ${c.envScope}` : '';
+    checkLines.push(`${mark} ${c.id}  [${c.level}]  ${status}${auto}${scope}`);
+    checkLines.push(cliTone.dim(`  ${c.message}`));
+    if (c.impact) checkLines.push(cliTone.dim(`  impact  ${c.impact}`));
+    if (!c.ok && c.fixCommand) checkLines.push(cliTone.dim(`  fix     ${c.fixCommand}`));
+    if (c.source) checkLines.push(cliTone.dim(`  source  ${c.source}`));
+    if (c.freshness) checkLines.push(cliTone.dim(`  age     ${c.freshness}`));
+  }
 
   const summaryBody = [
     ...formatDoctorSummaryFooterPretty(r.summary, r.failedOnly).split('\n'),
@@ -906,7 +929,7 @@ function formatPortalDoctorVerbosePretty(r: PortalDoctorReport): string {
     mode ? cliTone.dim(`  mode · ${mode}`) : '',
     '',
     cliTone.accent('Checks'),
-    ...table,
+    ...checkLines,
     '',
     frameBlock('remediation', failures.length ? 'ACTION' : 'none', remBody, {
       width: doctorFrameWidth(),

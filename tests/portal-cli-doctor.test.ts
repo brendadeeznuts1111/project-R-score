@@ -16,6 +16,7 @@ import {
   parseDoctorGroupsFromArgv,
   runPortalDoctor,
   summarizeDoctorChecks,
+  type PortalDoctorReport,
 } from '../tools/lib/portal-cli-doctor.ts';
 import { runCatalogChecks } from '../tools/lib/portal-cli-doctor-catalog.ts';
 import {
@@ -423,6 +424,51 @@ describe('portal-cli doctor pure', () => {
     ];
     expect(filterDoctorByScope(checks, { group: 'catalog' }).map(c => c.id)).toEqual(['b']);
     expect(filterDoctorByScope(checks, { env: 'ci' }).map(c => c.id)).toEqual(['a']);
+  });
+
+  test('pretty format keeps full messages (no mid-line …) and wraps in frame', async () => {
+    const longMsg =
+      'lockfile configVersion is isolated-compatible and this sentence is deliberately long so same-line layout cannot fit inside a narrow frame without wrapping or ellipsis';
+    const base = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
+    const checks = base.checks.map((c, i) => (i === 0 ? { ...c, message: longMsg } : c));
+    const r: PortalDoctorReport = {
+      ...base,
+      format: 'pretty',
+      checks,
+      summary: summarizeDoctorChecks(checks),
+    };
+    /** Collapse frame wrap + padding so full message is searchable after Bun.wrapAnsi. */
+    const flat = (s: string) =>
+      s
+        .replace(/\x1b\[[0-9;]*m/g, '')
+        .replace(/[╭╰│─]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const pretty = formatPortalDoctor(r, { format: 'pretty' });
+    expect(pretty).toMatch(/[╭╰│]/);
+    expect(flat(pretty)).toContain(longMsg);
+    expect(pretty).not.toContain('…');
+    expect(pretty).toContain('status: all checks passed');
+    expect(pretty).not.toMatch(/All checks green/i);
+
+    const plain = formatPortalDoctor(r, { format: 'plain' });
+    expect(plain).not.toMatch(/[╭╰│]/);
+    expect(plain).toContain(longMsg);
+    expect(plain).toContain('portal-doctor');
+
+    const verbosePretty = formatPortalDoctorVerbose(r, { format: 'pretty' });
+    expect(flat(verbosePretty)).toContain(longMsg);
+    expect(verbosePretty).not.toContain('…');
+    expect(verbosePretty).toMatch(/[╭╰]/);
+  });
+
+  test('plain format under CI-style override has no box chars', async () => {
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
+    const text = formatPortalDoctor(r, { format: 'plain' });
+    expect(text).not.toMatch(/[╭╰│]/);
+    expect(text).not.toContain('…');
+    expect(text).toMatch(/summary\s+passed=/);
   });
 });
 

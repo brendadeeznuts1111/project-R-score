@@ -153,10 +153,11 @@ export function frameBlock(
       out.push(`│ ${padDisplay(raw, inner)} │`);
       continue;
     }
+    // trim:false keeps intentional leading indent (e.g. doctor continuation lines)
     const wrapped = Bun.wrapAnsi(raw, inner, {
       hard: false,
       wordWrap: true,
-      trim: true,
+      trim: false,
     });
     for (const line of wrapped.split('\n')) {
       out.push(`│ ${padDisplay(line, inner)} │`);
