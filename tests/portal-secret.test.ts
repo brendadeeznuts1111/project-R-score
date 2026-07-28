@@ -1,4 +1,9 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
+// @see https://bun.com/docs/runtime/utils#bun-sleep — Bun.sleep
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 import { describe, expect, test } from 'bun:test';
 import {
@@ -64,7 +69,7 @@ describe('portal-secret autofill --json (stubbed pass-cli)', () => {
           env: { ...Bun.env, PATH: `${shimDir}:${Bun.env.PATH ?? ''}` },
         }
       );
-      const stdout = await new Response(proc.stdout).text();
+      const stdout = await Bun.readableStreamToText(proc.stdout);
       const code = await proc.exited;
 
       expect(code).toBe(0);
@@ -81,7 +86,7 @@ describe('portal-secret autofill --json (stubbed pass-cli)', () => {
       expect(report.parallel).toBe(true);
       expect(typeof report.durationMs).toBe('number');
     } finally {
-      Bun.spawnSync(['rm', '-rf', `${import.meta.dir}/../.tmp`]);
+      await Bun.$`rm -rf ${`${import.meta.dir}/../.tmp`}`.quiet();
     }
   });
 });

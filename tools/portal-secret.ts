@@ -377,7 +377,7 @@ export async function capturePassCli(
     stdin: 'inherit',
     env: passEnv(reason),
   });
-  const stdout = await new Response(proc.stdout).text();
+  const stdout = await Bun.readableStreamToText(proc.stdout);
   const code = (await proc.exited) ?? 1;
   return { code, stdout: stdout.replace(/\n$/, '') };
 }
