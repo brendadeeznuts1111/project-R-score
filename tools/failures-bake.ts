@@ -19,6 +19,7 @@ import { buildFailuresReport, type TestFailuresReport } from '../lib/failure-rep
 const ROOT = joinPath(import.meta.dir, '..');
 const OUT_JSON = joinPath(ROOT, 'public', 'registry', 'failures.json');
 const OUT_HTML = joinPath(ROOT, 'public', 'portal', 'failures', 'index.html');
+const NO_FAIL = Bun.argv.includes('--no-fail');
 
 function renderHtml(report: TestFailuresReport): string {
   const t = report.totals;
@@ -171,7 +172,7 @@ async function main(): Promise<void> {
   }
   console.log(`baked: ${OUT_JSON}`);
   console.log(`baked: ${OUT_HTML}`);
-  if (!report.healthy) process.exit(1);
+  if (!report.healthy && !NO_FAIL) process.exit(1);
 }
 
 if (import.meta.main) {

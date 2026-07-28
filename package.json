@@ -1653,6 +1653,7 @@
     "test:ci:shard:parallel": "bash -c 'mkdir -p \"$(dirname \"${JUNIT_OUT:-tmp/junit.xml}\")\" && bun test --parallel=4 --timeout=30000 --pass-with-no-tests tests --shard=\"${SHARD:-1/4}\" --reporter=junit --reporter-outfile=\"${JUNIT_OUT:-tmp/junit.xml}\"'",
     "test:inventory": "bun scripts/suite-inventory.ts",
     "failures:bake": "bun tools/failures-bake.ts",
+    "test:ci:report": "bash -c 'bun run test:ci; bun run failures:bake'",
     "test:inventory:json": "bun scripts/suite-inventory.ts --json",
     "proof:install": "bun run install:verify",
     "ratchet": "bun tools/ratchet.ts",

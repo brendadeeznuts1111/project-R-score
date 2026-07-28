@@ -89,3 +89,34 @@ jobs:
           name: junit-shard-${{ matrix.shard }}
           path: tmp/junit-*.xml
           if-no-files-found: ignore
+
+  failures-report:
+    name: failures board bake
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Factory Bun
+        uses: ./.github/actions/setup-factory-bun
+
+      - name: Download JUnit artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: junit-shard-*
+          path: tmp
+          merge-multiple: true
+
+      - name: Bake failures report (all shards)
+        run: bun tools/failures-bake.ts --all --no-fail
+
+      - name: Upload failures board
+        uses: actions/upload-artifact@v4
+        with:
+          name: failures-report
+          path: |
+            public/registry/failures.json
+            public/portal/failures/index.html
+          if-no-files-found: error
