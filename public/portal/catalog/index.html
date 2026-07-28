@@ -93,6 +93,15 @@
     <div id="error-banner" class="ops-banner error hidden"></div>
     <div id="loading" class="ops-loading"><div class="spinner"></div><p>Loading catalog…</p></div>
     <div id="dashboard" class="hidden">
+      <p class="meta" id="catalog-related" style="font-size:12px;color:var(--text-dim);margin:0 0 12px">
+        Related registry:
+        <a href="/registry/catalog-snapshot.json"><code>catalog-snapshot.json</code></a> ·
+        <a href="/registry/content-type-matrix.json" title="Content-Type wire matrix bake"><code>content-type-matrix.json</code></a>
+        <span id="ct-matrix-meta"></span> ·
+        <a href="/registry/harness-skills-catalog.json" title="Harness agent skills catalog bake"><code>harness-skills-catalog.json</code></a>
+        <span id="harness-skills-meta"></span> ·
+        <a href="/portal/skills/">Skills board</a>
+      </p>
       <div class="stats-row">
         <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">accounts</div></div>
         <div class="stat-card"><div class="stat-num" id="stat-active">0</div><div class="stat-label">active</div></div>
@@ -202,6 +211,37 @@
     $('search').addEventListener('input', renderGrid);
     $('sort-select').addEventListener('change', renderGrid);
     load();
+
+    // Related catalog-plane bakes (closes surfaces v3 wire-portal orphans)
+    (async () => {
+      try {
+        const res = await fetch('/registry/content-type-matrix.json', {
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          const j = await res.json();
+          const s = j.summary;
+          if (s && $('ct-matrix-meta')) {
+            $('ct-matrix-meta').textContent =
+              ` (${s.pass ?? '?'}/${s.total ?? '?'} pass)`;
+          }
+        }
+      } catch { /* optional */ }
+      try {
+        const res = await fetch('/registry/harness-skills-catalog.json', {
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          const j = await res.json();
+          const n = Array.isArray(j.skills) ? j.skills.length : 0;
+          if ($('harness-skills-meta')) {
+            $('harness-skills-meta').textContent = n ? ` (${n} skills)` : '';
+          }
+        }
+      } catch { /* optional */ }
+    })();
   </script>
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>

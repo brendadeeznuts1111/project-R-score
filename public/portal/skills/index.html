@@ -163,6 +163,26 @@
         $('error-banner').classList.remove('hidden');
         render();
       } catch (err) {
+        // Last resort: harness-skills-catalog bake (agent skills inventory)
+        try {
+          const res = await fetch('/registry/harness-skills-catalog.json');
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          skills = (data.skills ?? []).map(s => ({
+            name: s.name,
+            description: s.description,
+            hasPackage: false,
+            updatedAt: data.scannedAt,
+            validation: [],
+          }));
+          $('error-banner').innerHTML =
+            `<p>ℹ️ Harness skills from <code>/registry/harness-skills-catalog.json</code> (${skills.length})</p>`;
+          $('error-banner').classList.remove('hidden');
+          render();
+          return;
+        } catch {
+          /* fall through */
+        }
         $('error-banner').innerHTML = `<p>⚠️ Could not load skills — ${esc(err?.message ?? err)}</p>`;
         $('error-banner').classList.remove('hidden');
         $('loading').classList.add('hidden');

@@ -198,6 +198,8 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/portal/toc/#harness">TOC harness glance</a>
             <a class="ops-link" href="/portal/packages/">Packages map</a>
             <a class="ops-link" href="/registry/monorepo-health.json">Health JSON</a>
+            <a class="ops-link" href="/registry/toc-ops.json">TOC ops fixture</a>
+            <a class="ops-link" href="/registry/toc-ops-bake-proof.json" title="TOC ops bake proof">TOC bake proof</a>
             <a class="ops-link" href="/registry/portal-chrome.json">Chrome registry</a>
           </section>
           <section class="ops-panel">

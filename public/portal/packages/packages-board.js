@@ -7,10 +7,20 @@
 /** Supported bake schema for this board (pin — warn on mismatch, still try to render). */
 export const PACKAGES_MAP_SCHEMA = 13;
 /** Older bakes still render; surfaces block appears only on v13+. */
-export const PACKAGES_MAP_SCHEMA_MIN = 12;
+const PACKAGES_MAP_SCHEMA_MIN = 12;
 
 /** Primary registry bake + optional local audit-report fallbacks (dev only paths may 404 on Pages). */
-export const PACKAGES_MAP_SOURCES = ['/registry/packages-graph-map.json', '/audit-report.json'];
+const PACKAGES_MAP_SOURCES = [
+  '/registry/packages-graph-map.json',
+  '/audit-report.json',
+];
+
+/** Related package-plane bakes (wire-portal orphan close for package-info). */
+export const PACKAGES_RELATED_REGISTRY = [
+  '/registry/packages-graph-map.json',
+  '/registry/package-info.json',
+  '/registry/monorepo-health.json',
+];
 
 /**
  * @param {unknown} err
@@ -117,7 +127,7 @@ export function normalizePackagesMap(raw, source) {
  * @param {string[]} [sources]
  * @param {{ signal?: AbortSignal }} [opts]
  */
-export async function loadPackagesMap(sources = PACKAGES_MAP_SOURCES, opts = {}) {
+async function loadPackagesMap(sources = PACKAGES_MAP_SOURCES, opts = {}) {
   /** @type {string[]} */
   const errors = [];
   for (const url of sources) {
@@ -459,7 +469,7 @@ export function renderDependencyGraphSvg(model, opts = {}) {
  * @param {string|null} pkgId
  * @param {Document} [doc]
  */
-export function renderPackageDetail(data, model, pkgId, doc = document) {
+function renderPackageDetail(data, model, pkgId, doc = document) {
   const el = doc.getElementById('pkg-detail');
   if (!el) return;
   if (!pkgId || pkgId.startsWith('ext:')) {
@@ -554,6 +564,34 @@ function bindCopyButtons(root) {
 }
 
 /**
+ * Load /registry/package-info.json summary into #package-info-meta (optional plane).
+ * @param {Document} [doc]
+ */
+export async function loadPackageInfoRelated(doc = document) {
+  const el = doc.getElementById('package-info-meta');
+  if (!el) return;
+  try {
+    const res = await fetch('/registry/package-info.json', {
+      cache: 'no-store',
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (!res.ok) {
+      el.textContent = `package-info: HTTP ${res.status}`;
+      return;
+    }
+    const j = await res.json();
+    const summary = j.summary || {};
+    const n = Array.isArray(j.results) ? j.results.length : summary.total ?? '—';
+    const passed = summary.passed ?? '—';
+    el.innerHTML = `Related: <a href="/registry/package-info.json"><code>package-info.json</code></a> · ${passed}/${n} ok · bun ${escapeHtml(String(j.bunVersion || '?'))}`;
+  } catch (err) {
+    el.textContent = `package-info: ${formatLoadError(err)}`;
+  }
+}
+
+/**
  * Bipartite SVG: portal pages (left) → registry bakes (right).
  * @param {Array<{ page: string, registryPath: string, family: string, weight: number }>} edges
  * @param {{ maxEdges?: number }} [opts]
@@ -607,7 +645,7 @@ export function renderPageRegistrySvg(edges, opts = {}) {
  * @param {Record<string, unknown> | null} surfaces
  * @param {Document} [doc]
  */
-export function renderCrossPlanePanel(surfaces, doc = document) {
+function renderCrossPlanePanel(surfaces, doc = document) {
   const edgeHost = doc.getElementById('page-reg-graph');
   const edgeMeta = doc.getElementById('page-reg-meta');
   const hubList = doc.getElementById('lib-hub-list');
@@ -664,7 +702,7 @@ export function renderCrossPlanePanel(surfaces, doc = document) {
  * @param {object} data - normalizePackagesMap result
  * @param {Document} [doc]
  */
-export function renderDependencyGraph(data, doc = document) {
+function renderDependencyGraph(data, doc = document) {
   const host = doc.getElementById('pkg-dep-graph');
   const meta = doc.getElementById('pkg-dep-meta');
   if (!host) return;
@@ -774,7 +812,7 @@ export function renderDependencyGraph(data, doc = document) {
  * @param {Document} doc
  * @param {string} role
  */
-export function applyTableRoleFilter(doc, role) {
+function applyTableRoleFilter(doc, role) {
   doc.querySelectorAll('#pkg-body tr[data-pkg]').forEach(tr => {
     if (!role) {
       tr.hidden = false;
@@ -786,7 +824,7 @@ export function applyTableRoleFilter(doc, role) {
   });
 }
 
-export function renderPackagesBoard(data, doc = document) {
+function renderPackagesBoard(data, doc = document) {
   const summary = data.summary ?? {};
   const boardGrade = gradeFromScore(data.score);
   const scoreEl = doc.getElementById('s-score');
@@ -929,6 +967,9 @@ export function renderPackagesBoard(data, doc = document) {
 
   // Cross-plane: page→registry edges, lib hubs, orphan triage (surfaces v3)
   renderCrossPlanePanel(surfaces, doc);
+
+  // Related package-plane bakes (package-info orphan → packages board)
+  void loadPackageInfoRelated(doc);
 
   const body = doc.getElementById('pkg-body');
   if (body) {
@@ -1084,7 +1125,7 @@ export function renderPackagesBoard(data, doc = document) {
  * @param {unknown} err
  * @param {Document} doc
  */
-export function renderPackagesBoardError(err, doc = document) {
+function renderPackagesBoardError(err, doc = document) {
   const msg = formatLoadError(err);
   setText(doc.getElementById('gen-meta'), `Failed to load map: ${msg}`);
   setText(doc.getElementById('s-score'), '—');
@@ -1154,7 +1195,7 @@ function classToken(value) {
 }
 
 /** Bootstrap when loaded as a module on the packages board page. */
-export async function mountPackagesBoard() {
+async function mountPackagesBoard() {
   const banner = document.getElementById('pkg-error-banner');
   if (banner) banner.classList.add('hidden');
 

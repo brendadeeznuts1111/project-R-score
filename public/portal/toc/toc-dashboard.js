@@ -79,6 +79,12 @@ async function loadOpsSummaryExtras(embedLoop) {
     const limitChanges = Array.isArray(summary?.limitChanges)
       ? summary.limitChanges
       : null;
+    // Warm projects-registry (tenant plane) so surfaces orphan scan stays closed
+    try {
+      await fetchJson('/registry/projects-registry.json');
+    } catch {
+      /* optional tenant inventory */
+    }
     return {
       loop: embedLoop ?? summary?.loop ?? null,
       limitChangeCount: limitChanges ? limitChanges.length : null,
@@ -88,6 +94,11 @@ async function loadOpsSummaryExtras(embedLoop) {
       packagesGraph: null,
     };
   } catch {
+    try {
+      await fetchJson('/registry/projects-registry.json');
+    } catch {
+      /* optional */
+    }
     return {
       loop: embedLoop ?? null,
       limitChangeCount: null,
@@ -326,6 +337,7 @@ function renderHero({ mode, data, plane, enf, flow }) {
       ${fact('Source', esc(mode === 'embed' ? 'snapshot embed' : mode))}
       ${fact('Generated', `<time datetime="${esc(data.generatedAt || '')}">${esc(data.generatedAt || '—')}</time>`)}
       ${fact('Artifact', `<a href="/registry/toc-ops.json"><code>/registry/toc-ops.json</code></a>`)}
+      ${fact('Projects', `<a href="/registry/projects-registry.json"><code>/registry/projects-registry.json</code></a>`)}
     </dl>
   </header>`;
 }
