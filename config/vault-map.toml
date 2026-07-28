@@ -1,12 +1,15 @@
 # Vault map — env key → Proton Pass display + path chrome (Bun-native TOML)
 # SSOT for label/color/icon/type (+ optional vault/item/field overrides).
 # Machine paths also live in env.template as KEY={{ pass://vault/item/field }}.
+# Edit this file — not config/vault-map.json (legacy fallback) or the portal bake.
 #
 # Load:
 #   import map from "../config/vault-map.toml" with { type: "toml" }
 #   Bun.TOML.parse(await Bun.file("config/vault-map.toml").text())
+# @see https://bun.com/docs/guides/runtime/import-toml
 # @see https://bun.com/docs/runtime/toml
 # @see https://bun.com/docs/bundler/loaders#toml
+# @see https://protonpass.github.io/pass-cli/commands/contents/secret-references/
 #
 # Naming: {DOMAIN}_{SCOPE}_{ROLE}
 #   _TOKEN = API tokens · _PAT = PATs · _KEY = encryption/SSH · _SECRET = symmetric
@@ -148,15 +151,8 @@ icon = "public/portal/icons/vault/ssh.svg"
 type = "ssh"
 filename = "id_deploy"
 
-[env.SSH_CASCADE_KEY]
-vault = "factorywager"
-item = "SSH Cascade Key"
-field = "note"
-label = "SSH Cascade Key"
-color = "#F59E0B"
-icon = "public/portal/icons/vault/ssh.svg"
-type = "ssh"
-filename = "id_cascade"
+# SSH_CASCADE_KEY removed 2026-07-28: no distinct cascade key on disk and zero
+# consumers outside this file (vault-health flagged it referencedMissing).
 
 # ── Personal Access Tokens ───────────────────────────────────────────────────
 [env.GITHUB_TOKEN]
