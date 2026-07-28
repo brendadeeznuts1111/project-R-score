@@ -25,6 +25,10 @@ bun tools/brand-catalog.ts
 bun run check:brands:all
 ```
 
+## Console output (structured dumps)
+
+Use the [`lib/console-depth.ts`](../lib/console-depth.ts) helpers for object/table output — `inspect` / `logDepth` / `logTable` / `stripANSI` — not raw `console.log(obj)`, `console.table`, or `JSON.stringify(x, null, 2)` as default human output (`--json` branches excepted). Depth SSOT: `bunfig.toml [console] depth = 6`; local override `BUN_CONSOLE_DEPTH` (wrapper-only). Details: root [`AGENTS.md`](../AGENTS.md) "Console depth".
+
 ## Everyday
 
 ```bash
