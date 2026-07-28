@@ -96,7 +96,7 @@ export type EnvInventoryCompact = {
     actionableVaultGaps: string[];
     secretsUsedAndVaulted: string[];
     secretsUsedButNotInTemplate: string[];
-    /** Display chrome count from config/vault-map.json (additive). */
+    /** Display chrome count from config/vault-map.toml (additive). */
     displayMapped?: number;
     withColor?: number;
     withIcon?: number;

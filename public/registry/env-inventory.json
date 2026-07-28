@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "kind": "env-inventory",
-  "generatedAt": "2026-07-28T16:39:33.490Z",
+  "generatedAt": "2026-07-28T16:44:22.042Z",
   "scannedRoots": [
     "lib",
     "config",
@@ -9,12 +9,12 @@
     "tools",
     "packages"
   ],
-  "usageCount": 428,
-  "uniqueVars": 193,
+  "usageCount": 425,
+  "uniqueVars": 192,
   "byKind": {
     "ambient": 18,
     "secret": 15,
-    "config": 160
+    "config": 159
   },
   "vault": {
     "templateKeyCount": 41,
@@ -42,9 +42,9 @@
       "TELEGRAM_BOT_TOKEN",
       "TELEGRAM_CATALOG_RESEARCH_LLM_KEY"
     ],
-    "displayMapped": 17,
-    "withColor": 17,
-    "withIcon": 17
+    "displayMapped": 16,
+    "withColor": 16,
+    "withIcon": 9
   },
   "topConfig": [
     {
@@ -160,7 +160,7 @@
       "samples": [
         "scripts/vault-gap-close.ts:70",
         "scripts/lib/vault-gap-status.ts:203",
-        "tools/portal-secret.ts:166"
+        "tools/portal-secret.ts:252"
       ]
     },
     {
@@ -502,24 +502,6 @@
       ]
     },
     {
-      "envKey": "TELEGRAM_BOT_TOKEN",
-      "kind": "secret",
-      "disposition": "alias",
-      "count": 2,
-      "planes": [
-        "lib"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/operations/account-service.ts:425",
-        "lib/identity/account-lockout.ts:65"
-      ]
-    },
-    {
       "envKey": "CLOUDFLARE_DNS_API_TOKEN",
       "kind": "secret",
       "disposition": "vaulted",
@@ -568,6 +550,23 @@
       "runtimePresent": true,
       "samples": [
         "tools/provision-queue.ts:104"
+      ]
+    },
+    {
+      "envKey": "TELEGRAM_BOT_TOKEN",
+      "kind": "secret",
+      "disposition": "alias",
+      "count": 1,
+      "planes": [
+        "lib"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/operations/account-service.ts:425"
       ]
     },
     {
@@ -835,7 +834,7 @@
       "samples": [
         "scripts/vault-gap-close.ts:70",
         "scripts/lib/vault-gap-status.ts:203",
-        "tools/portal-secret.ts:166"
+        "tools/portal-secret.ts:252"
       ]
     },
     {
@@ -1443,7 +1442,7 @@
     "top": []
   },
   "packagesPlane": {
-    "generatedAt": "2026-07-28T16:39:33.490Z",
+    "generatedAt": "2026-07-28T16:44:22.042Z",
     "templateKeys": [
       "R2_ACCOUNT_ID",
       "R2_ACCESS_KEY_ID",
@@ -1472,7 +1471,7 @@
         "key": "R2_ACCESS_KEY_ID",
         "ref": "pass://factorywager/R2 bun-secrets bucket/username",
         "label": "R2 Access Key",
-        "color": "#E11D48",
+        "color": "#F38020",
         "icon": "public/portal/icons/vault/r2.svg",
         "type": "token"
       },
@@ -1480,15 +1479,15 @@
         "key": "R2_SECRET_ACCESS_KEY",
         "ref": "pass://factorywager/R2 bun-secrets bucket/password",
         "label": "R2 Secret Key",
-        "color": "#E11D48",
+        "color": "#F38020",
         "icon": "public/portal/icons/vault/r2.svg",
-        "type": "token"
+        "type": "secret"
       },
       {
         "key": "FACTORY_WAGER_TOKEN",
         "ref": "pass://factorywager/FactoryWager Registry Token/password",
-        "label": "FactoryWager Registry Token",
-        "color": "#3B82F6",
+        "label": "Registry Token",
+        "color": "#6366F1",
         "icon": "public/portal/icons/vault/key.svg",
         "type": "token"
       },
@@ -1496,30 +1495,30 @@
         "key": "REGISTRY_SECRET",
         "ref": "pass://factorywager/Registry Dev Secret/password",
         "label": "Registry Dev Secret",
-        "color": "#A855F7",
-        "icon": "public/portal/icons/vault/hmac.svg",
+        "color": "#6366F1",
+        "icon": null,
         "type": "secret"
       },
       {
         "key": "CLOUDFLARE_API_TOKEN",
         "ref": "pass://factorywager/Cloudflare API Token/password",
         "label": "Cloudflare API Token",
-        "color": "#F6821F",
+        "color": "#F38020",
         "icon": "public/portal/icons/vault/cloudflare.svg",
         "type": "token"
       },
       {
         "key": "CLOUDFLARE_DNS_API_TOKEN",
         "ref": "pass://factorywager/Cloudflare API Token (DNS)/password",
-        "label": "Cloudflare DNS API Token",
-        "color": "#F6821F",
+        "label": "Cloudflare DNS Token",
+        "color": "#F38020",
         "icon": "public/portal/icons/vault/cloudflare.svg",
         "type": "token"
       },
       {
         "key": "TELEGRAM_BOT_FACTORY",
         "ref": "pass://factorywager/Telegram: factorywager_bot/password",
-        "label": "Telegram factorywager_bot",
+        "label": "Telegram Bot Token",
         "color": "#26A5E4",
         "icon": "public/portal/icons/vault/telegram.svg",
         "type": "token"
@@ -1529,47 +1528,47 @@
         "ref": "pass://factorywager/Telegram Webhook Secret/password",
         "label": "Telegram Webhook Secret",
         "color": "#26A5E4",
-        "icon": "public/portal/icons/vault/telegram.svg",
+        "icon": null,
         "type": "secret"
       },
       {
         "key": "PLAY_SIGNING_SECRET",
         "ref": "pass://factorywager/Play Signing Secret/password",
         "label": "Play Signing Secret",
-        "color": "#A855F7",
-        "icon": "public/portal/icons/vault/hmac.svg",
-        "type": "hmac"
+        "color": "#10B981",
+        "icon": null,
+        "type": "secret"
       },
       {
         "key": "REPORT_SIGNING_SECRET",
         "ref": "pass://factorywager/Report Signing Secret/password",
         "label": "Report Signing Secret",
-        "color": "#A855F7",
-        "icon": "public/portal/icons/vault/hmac.svg",
-        "type": "hmac"
+        "color": "#10B981",
+        "icon": null,
+        "type": "secret"
       },
       {
         "key": "DOD_PROOF_SECRET",
         "ref": "pass://factorywager/DOD Proof Secret/password",
         "label": "DOD Proof Secret",
         "color": "#8B5CF6",
-        "icon": "public/portal/icons/vault/hmac.svg",
-        "type": "hmac"
+        "icon": null,
+        "type": "secret"
       },
       {
         "key": "DOD_ID_ENCRYPTION_KEY",
         "ref": "pass://factorywager/DOD ID Encryption Key/password",
-        "label": "DOD ID Encryption Key",
+        "label": "DOD Encryption Key",
         "color": "#8B5CF6",
-        "icon": "public/portal/icons/vault/key.svg",
+        "icon": null,
         "type": "key"
       },
       {
         "key": "PROVISION_ENCRYPTION_KEY",
         "ref": "pass://factorywager/Provision Encryption Key/password",
-        "label": "Provision Encryption Key",
+        "label": "Provision Key",
         "color": "#8B5CF6",
-        "icon": "public/portal/icons/vault/key.svg",
+        "icon": null,
         "type": "key"
       }
     ],
@@ -1630,9 +1629,9 @@
         "field": "password",
         "passRef": "pass://factorywager/Cloudflare API Token/password",
         "label": "Cloudflare API Token",
-        "color": "#F6821F",
+        "color": "#F38020",
         "icon": "public/portal/icons/vault/cloudflare.svg",
-        "glyph": "☁",
+        "glyph": "🔑",
         "type": "token",
         "inTemplate": true,
         "runtimePresent": true
@@ -1643,10 +1642,10 @@
         "item": "Cloudflare API Token (DNS)",
         "field": "password",
         "passRef": "pass://factorywager/Cloudflare API Token (DNS)/password",
-        "label": "Cloudflare DNS API Token",
-        "color": "#F6821F",
+        "label": "Cloudflare DNS Token",
+        "color": "#F38020",
         "icon": "public/portal/icons/vault/cloudflare.svg",
-        "glyph": "☁",
+        "glyph": "🔑",
         "type": "token",
         "inTemplate": true,
         "runtimePresent": true
@@ -1657,9 +1656,9 @@
         "item": "DOD ID Encryption Key",
         "field": "password",
         "passRef": "pass://factorywager/DOD ID Encryption Key/password",
-        "label": "DOD ID Encryption Key",
+        "label": "DOD Encryption Key",
         "color": "#8B5CF6",
-        "icon": "public/portal/icons/vault/key.svg",
+        "icon": null,
         "glyph": "🔑",
         "type": "key",
         "inTemplate": true,
@@ -1673,9 +1672,9 @@
         "passRef": "pass://factorywager/DOD Proof Secret/password",
         "label": "DOD Proof Secret",
         "color": "#8B5CF6",
-        "icon": "public/portal/icons/vault/hmac.svg",
+        "icon": null,
         "glyph": "🔏",
-        "type": "hmac",
+        "type": "secret",
         "inTemplate": true,
         "runtimePresent": true
       },
@@ -1685,8 +1684,8 @@
         "item": "FactoryWager Registry Token",
         "field": "password",
         "passRef": "pass://factorywager/FactoryWager Registry Token/password",
-        "label": "FactoryWager Registry Token",
-        "color": "#3B82F6",
+        "label": "Registry Token",
+        "color": "#6366F1",
         "icon": "public/portal/icons/vault/key.svg",
         "glyph": "🔑",
         "type": "token",
@@ -1695,29 +1694,15 @@
       },
       {
         "envKey": "GITHUB_TOKEN",
-        "vault": null,
-        "item": null,
-        "field": null,
-        "passRef": null,
-        "label": "GitHub PAT",
+        "vault": "factorywager",
+        "item": "GitHub PAT",
+        "field": "note",
+        "passRef": "pass://factorywager/GitHub PAT/note",
+        "label": "GitHub Personal Access Token",
         "color": "#2DA44E",
         "icon": "public/portal/icons/vault/github.svg",
         "glyph": "🐙",
-        "type": "token",
-        "inTemplate": false,
-        "runtimePresent": false
-      },
-      {
-        "envKey": "OPENAI_API_KEY",
-        "vault": null,
-        "item": null,
-        "field": null,
-        "passRef": null,
-        "label": "OpenAI API Key",
-        "color": "#10A37F",
-        "icon": "public/portal/icons/vault/key.svg",
-        "glyph": "🔑",
-        "type": "token",
+        "type": "pat",
         "inTemplate": false,
         "runtimePresent": false
       },
@@ -1728,10 +1713,10 @@
         "field": "password",
         "passRef": "pass://factorywager/Play Signing Secret/password",
         "label": "Play Signing Secret",
-        "color": "#A855F7",
-        "icon": "public/portal/icons/vault/hmac.svg",
+        "color": "#10B981",
+        "icon": null,
         "glyph": "🔏",
-        "type": "hmac",
+        "type": "secret",
         "inTemplate": true,
         "runtimePresent": true
       },
@@ -1741,9 +1726,9 @@
         "item": "Provision Encryption Key",
         "field": "password",
         "passRef": "pass://factorywager/Provision Encryption Key/password",
-        "label": "Provision Encryption Key",
+        "label": "Provision Key",
         "color": "#8B5CF6",
-        "icon": "public/portal/icons/vault/key.svg",
+        "icon": null,
         "glyph": "🔑",
         "type": "key",
         "inTemplate": true,
@@ -1756,9 +1741,9 @@
         "field": "username",
         "passRef": "pass://factorywager/R2 bun-secrets bucket/username",
         "label": "R2 Access Key",
-        "color": "#E11D48",
+        "color": "#F38020",
         "icon": "public/portal/icons/vault/r2.svg",
-        "glyph": "🗄",
+        "glyph": "🔑",
         "type": "token",
         "inTemplate": true,
         "runtimePresent": true
@@ -1770,10 +1755,10 @@
         "field": "password",
         "passRef": "pass://factorywager/R2 bun-secrets bucket/password",
         "label": "R2 Secret Key",
-        "color": "#E11D48",
+        "color": "#F38020",
         "icon": "public/portal/icons/vault/r2.svg",
-        "glyph": "🗄",
-        "type": "token",
+        "glyph": "🔏",
+        "type": "secret",
         "inTemplate": true,
         "runtimePresent": true
       },
@@ -1784,8 +1769,8 @@
         "field": "password",
         "passRef": "pass://factorywager/Registry Dev Secret/password",
         "label": "Registry Dev Secret",
-        "color": "#A855F7",
-        "icon": "public/portal/icons/vault/hmac.svg",
+        "color": "#6366F1",
+        "icon": null,
         "glyph": "🔏",
         "type": "secret",
         "inTemplate": true,
@@ -1798,35 +1783,35 @@
         "field": "password",
         "passRef": "pass://factorywager/Report Signing Secret/password",
         "label": "Report Signing Secret",
-        "color": "#A855F7",
-        "icon": "public/portal/icons/vault/hmac.svg",
+        "color": "#10B981",
+        "icon": null,
         "glyph": "🔏",
-        "type": "hmac",
+        "type": "secret",
         "inTemplate": true,
         "runtimePresent": true
       },
       {
-        "envKey": "SLACK_WEBHOOK_URL",
-        "vault": null,
-        "item": null,
-        "field": null,
-        "passRef": null,
-        "label": "Slack Webhook URL",
-        "color": "#E01E5A",
-        "icon": "public/portal/icons/vault/url.svg",
-        "glyph": "🔗",
-        "type": "url",
+        "envKey": "SSH_CASCADE_KEY",
+        "vault": "factorywager",
+        "item": "SSH Cascade Key",
+        "field": "note",
+        "passRef": "pass://factorywager/SSH Cascade Key/note",
+        "label": "SSH Cascade Key",
+        "color": "#F59E0B",
+        "icon": "public/portal/icons/vault/ssh.svg",
+        "glyph": "🔐",
+        "type": "ssh",
         "inTemplate": false,
         "runtimePresent": false
       },
       {
-        "envKey": "SSH_PKEY",
-        "vault": null,
-        "item": null,
-        "field": null,
-        "passRef": null,
+        "envKey": "SSH_DEPLOY_KEY",
+        "vault": "factorywager",
+        "item": "SSH Deploy Key",
+        "field": "note",
+        "passRef": "pass://factorywager/SSH Deploy Key/note",
         "label": "SSH Deploy Key",
-        "color": "#FF6B35",
+        "color": "#F59E0B",
         "icon": "public/portal/icons/vault/ssh.svg",
         "glyph": "🔐",
         "type": "ssh",
@@ -1839,10 +1824,10 @@
         "item": "Telegram: factorywager_bot",
         "field": "password",
         "passRef": "pass://factorywager/Telegram: factorywager_bot/password",
-        "label": "Telegram factorywager_bot",
+        "label": "Telegram Bot Token",
         "color": "#26A5E4",
         "icon": "public/portal/icons/vault/telegram.svg",
-        "glyph": "✈",
+        "glyph": "🔑",
         "type": "token",
         "inTemplate": true,
         "runtimePresent": true
@@ -1855,8 +1840,8 @@
         "passRef": "pass://factorywager/Telegram Webhook Secret/password",
         "label": "Telegram Webhook Secret",
         "color": "#26A5E4",
-        "icon": "public/portal/icons/vault/telegram.svg",
-        "glyph": "✈",
+        "icon": null,
+        "glyph": "🔏",
         "type": "secret",
         "inTemplate": true,
         "runtimePresent": true
@@ -1870,7 +1855,7 @@
       "openVaultActions": 0,
       "inTemplateHits": 2,
       "runtimePresentHits": 0,
-      "displayMapped": 17
+      "displayMapped": 16
     }
   },
   "runtime": {

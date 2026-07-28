@@ -1,130 +1,144 @@
 {
   "schemaVersion": 1,
   "kind": "vault-map",
-  "description": "Display metadata for env keys resolved via env.template pass:// refs. Paths are machine truth from the template; label/color/icon are optional UI chrome.",
+  "description": "Env → Proton Pass vault mapping",
   "envMap": {
     "R2_ACCESS_KEY_ID": {
-      "label": "R2 Access Key",
+      "vault": "factorywager",
+      "item": "R2 bun-secrets bucket",
+      "key": "username",
       "type": "token",
-      "color": "#E11D48",
-      "icon": "public/portal/icons/vault/r2.svg",
-      "glyph": "🗄"
+      "label": "R2 Access Key",
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/r2.svg"
     },
     "R2_SECRET_ACCESS_KEY": {
+      "vault": "factorywager",
+      "item": "R2 bun-secrets bucket",
+      "key": "password",
+      "type": "secret",
       "label": "R2 Secret Key",
-      "type": "token",
-      "color": "#E11D48",
-      "icon": "public/portal/icons/vault/r2.svg",
-      "glyph": "🗄"
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/r2.svg"
     },
     "FACTORY_WAGER_TOKEN": {
-      "label": "FactoryWager Registry Token",
+      "vault": "factorywager",
+      "item": "FactoryWager Registry Token",
+      "key": "password",
       "type": "token",
-      "color": "#3B82F6",
-      "icon": "public/portal/icons/vault/key.svg",
-      "glyph": "🔑"
+      "label": "Registry Token",
+      "color": "#6366F1",
+      "icon": "public/portal/icons/vault/key.svg"
     },
     "REGISTRY_SECRET": {
-      "label": "Registry Dev Secret",
+      "vault": "factorywager",
+      "item": "Registry Dev Secret",
+      "key": "password",
       "type": "secret",
-      "color": "#A855F7",
-      "icon": "public/portal/icons/vault/hmac.svg",
-      "glyph": "🔏"
+      "label": "Registry Dev Secret",
+      "color": "#6366F1"
     },
     "CLOUDFLARE_API_TOKEN": {
-      "label": "Cloudflare API Token",
+      "vault": "factorywager",
+      "item": "Cloudflare API Token",
+      "key": "password",
       "type": "token",
-      "color": "#F6821F",
-      "icon": "public/portal/icons/vault/cloudflare.svg",
-      "glyph": "☁"
+      "label": "Cloudflare API Token",
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/cloudflare.svg"
     },
     "CLOUDFLARE_DNS_API_TOKEN": {
-      "label": "Cloudflare DNS API Token",
+      "vault": "factorywager",
+      "item": "Cloudflare API Token (DNS)",
+      "key": "password",
       "type": "token",
-      "color": "#F6821F",
-      "icon": "public/portal/icons/vault/cloudflare.svg",
-      "glyph": "☁"
+      "label": "Cloudflare DNS Token",
+      "color": "#F38020",
+      "icon": "public/portal/icons/vault/cloudflare.svg"
     },
     "TELEGRAM_BOT_FACTORY": {
-      "label": "Telegram factorywager_bot",
+      "vault": "factorywager",
+      "item": "Telegram: factorywager_bot",
+      "key": "password",
       "type": "token",
+      "label": "Telegram Bot Token",
       "color": "#26A5E4",
-      "icon": "public/portal/icons/vault/telegram.svg",
-      "glyph": "✈"
+      "icon": "public/portal/icons/vault/telegram.svg"
     },
     "TELEGRAM_WEBHOOK_SECRET": {
-      "label": "Telegram Webhook Secret",
+      "vault": "factorywager",
+      "item": "Telegram Webhook Secret",
+      "key": "password",
       "type": "secret",
-      "color": "#26A5E4",
-      "icon": "public/portal/icons/vault/telegram.svg",
-      "glyph": "✈"
+      "label": "Telegram Webhook Secret",
+      "color": "#26A5E4"
     },
     "PLAY_SIGNING_SECRET": {
+      "vault": "factorywager",
+      "item": "Play Signing Secret",
+      "key": "password",
+      "type": "secret",
       "label": "Play Signing Secret",
-      "type": "hmac",
-      "color": "#A855F7",
-      "icon": "public/portal/icons/vault/hmac.svg",
-      "glyph": "🔏"
+      "color": "#10B981"
     },
     "REPORT_SIGNING_SECRET": {
+      "vault": "factorywager",
+      "item": "Report Signing Secret",
+      "key": "password",
+      "type": "secret",
       "label": "Report Signing Secret",
-      "type": "hmac",
-      "color": "#A855F7",
-      "icon": "public/portal/icons/vault/hmac.svg",
-      "glyph": "🔏"
+      "color": "#10B981"
     },
     "DOD_PROOF_SECRET": {
+      "vault": "factorywager",
+      "item": "DOD Proof Secret",
+      "key": "password",
+      "type": "secret",
       "label": "DOD Proof Secret",
-      "type": "hmac",
-      "color": "#8B5CF6",
-      "icon": "public/portal/icons/vault/hmac.svg",
-      "glyph": "🔏"
+      "color": "#8B5CF6"
     },
     "DOD_ID_ENCRYPTION_KEY": {
-      "label": "DOD ID Encryption Key",
+      "vault": "factorywager",
+      "item": "DOD ID Encryption Key",
+      "key": "password",
       "type": "key",
-      "color": "#8B5CF6",
-      "icon": "public/portal/icons/vault/key.svg",
-      "glyph": "🔑"
+      "label": "DOD Encryption Key",
+      "color": "#8B5CF6"
     },
     "PROVISION_ENCRYPTION_KEY": {
-      "label": "Provision Encryption Key",
+      "vault": "factorywager",
+      "item": "Provision Encryption Key",
+      "key": "password",
       "type": "key",
-      "color": "#8B5CF6",
-      "icon": "public/portal/icons/vault/key.svg",
-      "glyph": "🔑"
+      "label": "Provision Key",
+      "color": "#8B5CF6"
     },
-    "OPENAI_API_KEY": {
-      "label": "OpenAI API Key",
-      "type": "token",
-      "color": "#10A37F",
-      "icon": "public/portal/icons/vault/key.svg",
-      "glyph": "🔑",
-      "note": "Human vault gap — not yet in env.template pass://"
-    },
-    "SLACK_WEBHOOK_URL": {
-      "label": "Slack Webhook URL",
-      "type": "url",
-      "color": "#E01E5A",
-      "icon": "public/portal/icons/vault/url.svg",
-      "glyph": "🔗",
-      "note": "Human vault gap — not yet in env.template pass://"
-    },
-    "SSH_PKEY": {
-      "label": "SSH Deploy Key",
+    "SSH_DEPLOY_KEY": {
+      "vault": "factorywager",
+      "item": "SSH Deploy Key",
+      "key": "note",
       "type": "ssh",
-      "color": "#FF6B35",
-      "icon": "public/portal/icons/vault/ssh.svg",
-      "glyph": "🔐",
-      "note": "Documented in env.template (commented)"
+      "label": "SSH Deploy Key",
+      "color": "#F59E0B",
+      "icon": "public/portal/icons/vault/ssh.svg"
+    },
+    "SSH_CASCADE_KEY": {
+      "vault": "factorywager",
+      "item": "SSH Cascade Key",
+      "key": "note",
+      "type": "ssh",
+      "label": "SSH Cascade Key",
+      "color": "#F59E0B",
+      "icon": "public/portal/icons/vault/ssh.svg"
     },
     "GITHUB_TOKEN": {
-      "label": "GitHub PAT",
-      "type": "token",
+      "vault": "factorywager",
+      "item": "GitHub PAT",
+      "key": "note",
+      "type": "pat",
+      "label": "GitHub Personal Access Token",
       "color": "#2DA44E",
-      "icon": "public/portal/icons/vault/github.svg",
-      "glyph": "🐙",
-      "note": "Documented in env.template (commented)"
+      "icon": "public/portal/icons/vault/github.svg"
     }
   }
 }

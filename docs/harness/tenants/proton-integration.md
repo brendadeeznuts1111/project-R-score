@@ -127,7 +127,7 @@ bun run cloudflare:deploy:vault
 | `proton:deploy:pages` | [`scripts/proton-deploy.sh`](../../../scripts/proton-deploy.sh) | root `.env` then deploy |
 | Agent session | [`scripts/agent-env.sh`](../../../scripts/agent-env.sh) | — |
 | Portal CLI wrapper | [`tools/portal-secret.ts`](../../../tools/portal-secret.ts) · `bun run portal:secret` / `portal-cli secret` | thin `pass-cli` only |
-| Vault map display | [`config/vault-map.json`](../../../config/vault-map.json) · [`lib/security/vault-map.ts`](../../../lib/security/vault-map.ts) | label/color/icon |
+| Vault map display | [`config/vault-map.toml`](../../../config/vault-map.toml) · [`lib/security/vault-map.ts`](../../../lib/security/vault-map.ts) | label/color/icon (`type: "toml"`) |
 
 ### Portal `secret` subcommand
 
@@ -149,11 +149,16 @@ Maps to real CLI only: `item view` / `item list --output json` / `run` / `inject
 | Layer | Role |
 |-------|------|
 | [`env.template`](../../../env.template) | Machine truth: `KEY={{ pass://vault/item/field }}` |
-| [`config/vault-map.json`](../../../config/vault-map.json) | Optional `label` / `color` / `icon` / `glyph` / `type` |
-| [`lib/security/vault-map.ts`](../../../lib/security/vault-map.ts) | Merge + `Bun.color` status lines (ansi-16m) |
+| [`config/vault-map.toml`](../../../config/vault-map.toml) | Optional `label` / `color` / `icon` / `glyph` / `type` (Bun `with { type: "toml" }`) |
+| [`lib/security/vault-map.ts`](../../../lib/security/vault-map.ts) | Merge + `Bun.TOML` / `Bun.color` status lines (ansi-16m) |
 | `/registry/vault-map.json` | Baked by `bun run env:inventory:bake` · portal `/portal/env/` |
 
-Additive fields only — older maps without color/icon still work. Icons under `public/portal/icons/vault/`. Never stores secret values.
+```ts
+import vaultMap from '../config/vault-map.toml' with { type: 'toml' };
+// or: Bun.TOML.parse(await Bun.file('config/vault-map.toml').text())
+```
+
+Additive fields only — older maps without color/icon still work. Icons under `public/portal/icons/vault/`. Never stores secret values. JSON (`config/vault-map.json`) is legacy fallback only.
 
 Template refs use `{{ pass://<vault>/<item>/<field> }}` — see root [`env.template`](../../../env.template).
 

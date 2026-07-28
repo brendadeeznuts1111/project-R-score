@@ -1,20 +1,34 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML.parse
+// @see https://bun.com/docs/bundler/loaders#toml — import with { type: "toml" }
 /**
  * Vault map — display metadata for env keys + merge with env.template pass:// refs.
  *
  * SSOT for machine path: env.template `KEY={{ pass://vault/item/field }}`
- * SSOT for label/color/icon: config/vault-map.json (optional; additive)
+ * SSOT for label/color/icon: config/vault-map.toml (optional; additive)
+ *   load: `import map from "../config/vault-map.toml" with { type: "toml" }`
+ *   or:   `Bun.TOML.parse(await Bun.file(path).text())`
+ * Legacy: config/vault-map.json (fallback only)
  *
  * Never embeds secret values — only names, refs, and UI chrome.
  */
 import { joinPath } from '../path-bun.ts';
 import { parseEnvTemplate } from '../../scripts/lib/env-defaults-scan.ts';
 
-export type VaultSecretType = 'token' | 'secret' | 'hmac' | 'key' | 'ssh' | 'url' | 'note' | string;
+export type VaultSecretType =
+  | 'token'
+  | 'secret'
+  | 'hmac'
+  | 'key'
+  | 'ssh'
+  | 'url'
+  | 'note'
+  | 'pat'
+  | string;
 
-/** Optional display fields in config/vault-map.json envMap entries. */
+/** Optional display fields in config/vault-map.toml envMap entries. */
 export type VaultMapDisplay = {
   /** Override vault when not yet in env.template (rare). */
   vault?: string;
@@ -76,8 +90,103 @@ export type VaultMapBundle = {
 };
 
 const ROOT = joinPath(import.meta.dir, '..', '..');
-export const VAULT_MAP_PATH = joinPath(ROOT, 'config', 'vault-map.json');
+/** Preferred SSOT (Bun TOML loader / Bun.TOML.parse). */
+export const VAULT_MAP_TOML_PATH = joinPath(ROOT, 'config', 'vault-map.toml');
+/** Legacy JSON fallback. */
+export const VAULT_MAP_JSON_PATH = joinPath(ROOT, 'config', 'vault-map.json');
+/** @deprecated use VAULT_MAP_TOML_PATH — kept as alias for callers. */
+export const VAULT_MAP_PATH = VAULT_MAP_TOML_PATH;
 export const ENV_TEMPLATE_PATH = joinPath(ROOT, 'env.template');
+
+/**
+ * Normalize either legacy JSON `{ kind, envMap }` or TOML SSOT
+ * `{ metadata, env }` (import with { type: "toml" }) into VaultMapFile.
+ */
+export function normalizeVaultMapRaw(raw: unknown): VaultMapFile | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const o = raw as Record<string, unknown>;
+
+  // Legacy JSON / earlier TOML: kind + envMap
+  if (o.kind === 'vault-map' && o.envMap && typeof o.envMap === 'object') {
+    return o as VaultMapFile;
+  }
+
+  // Bun type: "toml" SSOT: [metadata] + [env.KEY]
+  const env =
+    (o.env && typeof o.env === 'object' ? o.env : null) ??
+    (o.envMap && typeof o.envMap === 'object' ? o.envMap : null);
+  if (!env || typeof env !== 'object') return null;
+
+  const meta =
+    o.metadata && typeof o.metadata === 'object' ? (o.metadata as Record<string, unknown>) : {};
+  const version =
+    typeof meta.version === 'number'
+      ? meta.version
+      : typeof o.schemaVersion === 'number'
+        ? o.schemaVersion
+        : 1;
+  const description =
+    (typeof meta.description === 'string' && meta.description) ||
+    (typeof o.description === 'string' && o.description) ||
+    undefined;
+
+  const envMap: Record<string, VaultMapDisplay> = {};
+  for (const [key, val] of Object.entries(env as Record<string, unknown>)) {
+    if (!val || typeof val !== 'object') continue;
+    const e = val as Record<string, unknown>;
+    const display: VaultMapDisplay = {};
+    if (typeof e.vault === 'string') display.vault = e.vault;
+    if (typeof e.item === 'string') display.item = e.item;
+    // TOML uses `field`; VaultMapDisplay uses `key` for the Pass field name
+    if (typeof e.field === 'string') display.key = e.field;
+    else if (typeof e.key === 'string') display.key = e.key;
+    if (typeof e.type === 'string') display.type = e.type;
+    if (typeof e.label === 'string') display.label = e.label;
+    if (typeof e.color === 'string') display.color = e.color;
+    if (typeof e.icon === 'string') display.icon = e.icon;
+    if (typeof e.glyph === 'string') display.glyph = e.glyph;
+    if (typeof e.note === 'string') display.note = e.note;
+    envMap[key] = display;
+  }
+
+  if (Object.keys(envMap).length === 0) return null;
+
+  return {
+    schemaVersion: version,
+    kind: 'vault-map',
+    ...(description ? { description } : {}),
+    envMap,
+  };
+}
+
+/**
+ * Load vault-map via Bun import attribute `with { type: "toml" }`.
+ * Prefer for static paths; falls back to null on failure.
+ */
+export async function loadVaultMapTomlImport(
+  path: string = VAULT_MAP_TOML_PATH
+): Promise<VaultMapFile | null> {
+  try {
+    // Bun: import "./x.toml" with { type: "toml" } → default export is the table
+    const mod = (await import(path, { with: { type: 'toml' } })) as {
+      default?: unknown;
+    };
+    const raw = mod.default ?? mod;
+    return normalizeVaultMapRaw(raw);
+  } catch {
+    return null;
+  }
+}
+
+/** Parse vault-map TOML text with Bun.TOML.parse. */
+export function parseVaultMapToml(text: string): VaultMapFile | null {
+  try {
+    const raw = Bun.TOML.parse(text) as unknown;
+    return normalizeVaultMapRaw(raw);
+  } catch {
+    return null;
+  }
+}
 
 const DEFAULT_COLOR_BY_TYPE: Record<string, string> = {
   token: '#3B82F6',
@@ -87,6 +196,7 @@ const DEFAULT_COLOR_BY_TYPE: Record<string, string> = {
   ssh: '#FF6B35',
   url: '#E01E5A',
   note: '#8B949E',
+  pat: '#2DA44E',
 };
 
 const DEFAULT_GLYPH_BY_TYPE: Record<string, string> = {
@@ -97,6 +207,7 @@ const DEFAULT_GLYPH_BY_TYPE: Record<string, string> = {
   ssh: '🔐',
   url: '🔗',
   note: '📝',
+  pat: '🐙',
 };
 
 /** Parse `pass://vault/item[/field]` — item may contain spaces and colons. */
@@ -154,20 +265,45 @@ export function formatVaultStatusLine(
   return `  ${mark} ${glyph}${name}: ${tail}`;
 }
 
+/**
+ * Load vault-map from path.
+ * - `.toml` → `import with { type: "toml" }`, then `Bun.TOML.parse`
+ * - `.json` → `Bun.file().json()`
+ * - default path → try TOML SSOT then JSON fallback
+ */
 export async function loadVaultMapFile(
-  path: string = VAULT_MAP_PATH
+  path: string = VAULT_MAP_TOML_PATH
 ): Promise<VaultMapFile | null> {
-  try {
-    const raw = await Bun.file(path).json();
-    if (!raw || typeof raw !== 'object') return null;
-    const file = raw as VaultMapFile;
-    if (file.kind !== 'vault-map' || !file.envMap || typeof file.envMap !== 'object') {
+  const tryToml = async (p: string): Promise<VaultMapFile | null> => {
+    const viaImport = await loadVaultMapTomlImport(p);
+    if (viaImport) return viaImport;
+    try {
+      const text = await Bun.file(p).text();
+      return parseVaultMapToml(text);
+    } catch {
       return null;
     }
-    return file;
-  } catch {
-    return null;
+  };
+
+  const tryJson = async (p: string): Promise<VaultMapFile | null> => {
+    try {
+      const raw = await Bun.file(p).json();
+      return normalizeVaultMapRaw(raw);
+    } catch {
+      return null;
+    }
+  };
+
+  // Explicit path (toml preferred; sibling .json if toml missing)
+  if (path.endsWith('.toml')) {
+    return (await tryToml(path)) ?? (await tryJson(path.replace(/\.toml$/i, '.json')));
   }
+  if (path.endsWith('.json')) {
+    return (await tryJson(path)) ?? (await tryToml(path.replace(/\.json$/i, '.toml')));
+  }
+
+  // Default resolution: TOML SSOT → JSON legacy
+  return (await tryToml(VAULT_MAP_TOML_PATH)) ?? (await tryJson(VAULT_MAP_JSON_PATH));
 }
 
 export async function loadTemplateVaultRefs(
@@ -182,7 +318,7 @@ export async function loadTemplateVaultRefs(
 }
 
 /**
- * Merge config/vault-map.json display fields with env.template pass:// paths.
+ * Merge config/vault-map.toml display fields with env.template pass:// paths.
  * Template refs win for vault/item/field; display map wins for label/color/icon.
  */
 export async function buildVaultMapBundle(opts?: {
@@ -192,7 +328,7 @@ export async function buildVaultMapBundle(opts?: {
   env?: NodeJS.ProcessEnv;
 }): Promise<VaultMapBundle> {
   const root = opts?.root ?? ROOT;
-  const mapPath = opts?.mapPath ?? joinPath(root, 'config', 'vault-map.json');
+  const mapPath = opts?.mapPath ?? joinPath(root, 'config', 'vault-map.toml');
   const templatePath = opts?.templatePath ?? joinPath(root, 'env.template');
   const env = opts?.env ?? Bun.env;
 

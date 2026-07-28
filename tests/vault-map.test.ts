@@ -1,14 +1,50 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
+// @see https://bun.com/docs/bundler/loaders#toml — type: "toml"
 import { describe, expect, test } from 'bun:test';
 import {
   buildVaultMapBundle,
   colorize,
   entryForVaultItem,
   formatVaultStatusLine,
+  loadVaultMapFile,
+  loadVaultMapTomlImport,
   parsePassUri,
+  parseVaultMapToml,
+  VAULT_MAP_TOML_PATH,
 } from '../lib/security/vault-map.ts';
 
 describe('vault-map', () => {
+  test('loads config/vault-map.toml via type: "toml" import', async () => {
+    const file = await loadVaultMapTomlImport(VAULT_MAP_TOML_PATH);
+    expect(file?.kind).toBe('vault-map');
+    expect(file?.envMap?.CLOUDFLARE_API_TOKEN?.color).toMatch(/^#/);
+  });
+
+  test('Bun.TOML.parse and loadVaultMapFile prefer toml', async () => {
+    const text = await Bun.file(VAULT_MAP_TOML_PATH).text();
+    const parsed = parseVaultMapToml(text);
+    expect(parsed?.kind).toBe('vault-map');
+    expect(parsed?.envMap?.TELEGRAM_BOT_FACTORY?.type).toBe('token');
+    // TOML SSOT uses [env.KEY] + field= → normalized to envMap + key
+    expect(parsed?.envMap?.CLOUDFLARE_API_TOKEN?.key).toBe('password');
+    expect(parsed?.envMap?.CLOUDFLARE_API_TOKEN?.vault).toBe('factorywager');
+    const file = await loadVaultMapFile();
+    expect(file?.kind).toBe('vault-map');
+    expect(Object.keys(file!.envMap).length).toBeGreaterThan(0);
+  });
+
+  test('normalizeVaultMapRaw accepts type:toml env tables', async () => {
+    const { normalizeVaultMapRaw } = await import('../lib/security/vault-map.ts');
+    const n = normalizeVaultMapRaw({
+      metadata: { version: 1, description: 't' },
+      env: {
+        FOO: { vault: 'factorywager', item: 'Foo', field: 'password', type: 'token' },
+      },
+    });
+    expect(n?.envMap.FOO?.key).toBe('password');
+    expect(n?.envMap.FOO?.item).toBe('Foo');
+  });
   test('parsePassUri splits vault / multi-segment item / field', () => {
     const p = parsePassUri('pass://factorywager/Cloudflare API Token/password');
     expect(p).toEqual({

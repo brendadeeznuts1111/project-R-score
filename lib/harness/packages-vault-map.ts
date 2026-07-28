@@ -21,7 +21,7 @@ import { buildVaultMapBundle, type VaultMapEntry } from '../security/vault-map.t
 
 export type PackageVaultDisposition = SecretDisposition | 'config' | 'ambient';
 
-/** Display chrome from config/vault-map.json (optional; never secret values). */
+/** Display chrome from config/vault-map.toml (optional; never secret values). */
 export type PackageVaultDisplay = {
   label: string;
   color: string | null;
@@ -87,7 +87,7 @@ export type PackageVaultMap = {
     mintableWouldMint: string[];
     catalogFlags: Array<{ envKey: string; flag: string; title: string }>;
   };
-  /** Merged config/vault-map.json + env.template (display only). */
+  /** Merged config/vault-map.toml + env.template (display only). */
   displayMap?: Array<
     Pick<
       VaultMapEntry,
