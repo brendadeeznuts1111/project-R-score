@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   formatFlatManifest,
   getLockfileState,
+  getRepoIdentity,
   limitChartDataFromMetadata,
   matchesGrep,
   type SnapshotManifest,
@@ -119,5 +120,23 @@ describe('snapshot-data-plane grep + flat manifest', () => {
       books: 0,
       partners: 0,
     });
+  });
+
+  test('getRepoIdentity reads package.json identity + bunfig hash', async () => {
+    const meta = await getRepoIdentity();
+    expect(meta.pkgName).toBeTruthy();
+    expect(meta.pkgVersion).toMatch(/^\d+\./);
+    expect(meta.bunfigHash).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  test('flat manifest includes repo identity keys when present', () => {
+    const flat = formatFlatManifest(
+      sampleManifest({
+        metadata: { status: 'ok', lockBytes: '199437', pkgVersion: '5.2.0', bunfigHash: 'abc123' },
+      })
+    );
+    expect(flat).toContain('lockBytes=199437');
+    expect(flat).toContain('pkgVersion=5.2.0');
+    expect(flat).toContain('bunfigHash=abc123');
   });
 });

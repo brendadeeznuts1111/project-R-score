@@ -49,12 +49,10 @@ function indexPath(): string {
 
 export function manifestJsonPath(id: string): string {
   // brand-ok — opaque snapshot id
-  // brand-ok — opaque snapshot id
   return `${getSnapshotDir()}/${id}.json`;
 }
 
 export function manifestFlatPath(id: string): string {
-  // brand-ok — opaque snapshot id
   // brand-ok — opaque snapshot id
   return `${getSnapshotDir()}/${id}.txt`;
 }
@@ -125,6 +123,35 @@ export async function getLockfileState(): Promise<{
   }
 }
 
+/**
+ * Repo identity + config-provenance metadata: package.json name/version and a
+ * short sha256 of bunfig.toml (install/test policy drift). Fields are omitted
+ * when the sources are unreadable.
+ */
+export async function getRepoIdentity(): Promise<Record<string, string>> {
+  const meta: Record<string, string> = {};
+  try {
+    const pkg = JSON.parse(await file(`${repoRoot()}/package.json`).text()) as {
+      name?: string;
+      version?: string;
+    };
+    if (pkg.name) meta.pkgName = pkg.name;
+    if (pkg.version) meta.pkgVersion = pkg.version;
+  } catch {
+    /* package.json unreadable — omit identity fields */
+  }
+  try {
+    const bunfig = file(`${repoRoot()}/bunfig.toml`);
+    if (await bunfig.exists()) {
+      const text = await bunfig.text();
+      meta.bunfigHash = new Bun.CryptoHasher('sha256').update(text).digest('hex').slice(0, 16);
+    }
+  } catch {
+    /* bunfig unreadable — omit hash */
+  }
+  return meta;
+}
+
 function generateId(scope: string): string {
   const ts = Date.now().toString(36);
   const rand = Math.random().toString(36).slice(2, 6);
@@ -168,6 +195,10 @@ export function formatFlatManifest(m: SnapshotManifest): string {
     'errors',
     'warnings',
     'lockHash',
+    'lockBytes',
+    'pkgName',
+    'pkgVersion',
+    'bunfigHash',
   ]) {
     if (m.metadata[key] != null) parts.push(`${key}=${m.metadata[key]}`);
   }
@@ -345,6 +376,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   const config = scopeConfigs[scope];
   const gitInfo = await getGitInfo();
   const lockState = await getLockfileState();
+  const repoIdentity = await getRepoIdentity();
   const id = generateId(scope);
   const timestamp = isoNow();
   const snapDir = getSnapshotDir();
@@ -365,7 +397,8 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
       gitDirty: gitInfo.dirty ? 'true' : 'false',
       cwd: Bun.cwd,
       standalone: Bun.isStandaloneExecutable ? 'true' : 'false',
-      ...(lockState ?? {}),
+      ...lockState,
+      ...repoIdentity,
     },
   };
 

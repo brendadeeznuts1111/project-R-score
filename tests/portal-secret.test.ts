@@ -4,7 +4,9 @@ import {
   envNameFromTitle,
   findItemRefByTitle,
   itemTitlesFromListJson,
+  mapWithConcurrency,
   moveArgsFromTarget,
+  parseSecretTarget,
   shareItemArgs,
   shareVaultArgs,
   splitVaultTitle,
@@ -198,5 +200,50 @@ describe('portal-secret totp args', () => {
 
   test('totpArgsFromTarget rejects bare name', () => {
     expect(() => totpArgsFromTarget('only-one')).toThrow(/pass:\/\/|vault\/item/);
+  });
+});
+
+describe('portal-secret parseSecretTarget', () => {
+  test('pass:// URI short-circuits all modes', () => {
+    for (const mode of ['default', 'explicit', 'never'] as const) {
+      const t = parseSecretTarget('pass://sid/iid/field', mode);
+      expect(t.uri).toBe('pass://sid/iid/field');
+      expect(t.vault).toBeNull();
+    }
+  });
+
+  test('field modes diverge only on 3+ segments', () => {
+    expect(parseSecretTarget('v/Totp Item/otp', 'explicit').field).toBe('otp');
+    expect(parseSecretTarget('v/Totp Item/otp', 'explicit').title).toBe('Totp Item');
+    expect(parseSecretTarget('v/Totp Item/otp', 'never').field).toBeNull();
+    expect(parseSecretTarget('v/Totp Item/otp', 'never').title).toBe('Totp Item/otp');
+    expect(parseSecretTarget('v/T', 'default').field).toBe('password');
+    expect(parseSecretTarget('v/T', 'explicit').field).toBeNull();
+  });
+
+  test('rejects empty and bare targets', () => {
+    expect(() => parseSecretTarget('  ', 'default')).toThrow(/empty/);
+    expect(() => parseSecretTarget('one', 'never')).toThrow(/pass:\/\/|vault\/item/);
+  });
+});
+
+describe('portal-secret mapWithConcurrency', () => {
+  test('preserves order across all items', async () => {
+    const items = Array.from({ length: 20 }, (_, i) => i);
+    const out = await mapWithConcurrency(items, 4, async n => n * 2);
+    expect(out).toEqual(items.map(n => n * 2));
+  });
+
+  test('never exceeds the concurrency cap', async () => {
+    const items = Array.from({ length: 12 }, (_, i) => i);
+    let active = 0;
+    let peak = 0;
+    await mapWithConcurrency(items, 3, async () => {
+      active++;
+      peak = Math.max(peak, active);
+      await Bun.sleep(5);
+      active--;
+    });
+    expect(peak).toBeLessThanOrEqual(3);
   });
 });

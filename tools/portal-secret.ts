@@ -52,8 +52,9 @@ Subcommands:
   get <target>          pass-cli item view (secret to stdout)
                         target: pass://vault/title/field  OR  vault/title[/field]
   view <target>         alias of get
-  run [--env-file f] -- <cmd…>
+  run [--env-file f] [--no-masking] -- <cmd…>
                         pass-cli run (template dotenv → child env)
+                        upstream masks secret values in child output (2.1.4+)
   inject -i <in> [-o out] [-f]
                         pass-cli inject (env.template → file/stdout)
   autofill --vault <v> [--json] [--parallel] [-- <cmd…>]
@@ -66,6 +67,10 @@ Subcommands:
   map [--json]          Print vault-map bundle (TOML SSOT + display chrome)
   invite list           pass-cli invite list
   invite accept <id>    pass-cli invite accept <INVITE_ID>
+  invite reject <id>    pass-cli invite reject <INVITE_ID>
+  accept <id>           alias of invite accept (invite id, not URL)
+  password <generate|score> [args…]
+                        pass-cli password (needs session)
   share list [--json]   pass-cli share list
   share item <vault/title> <email> [--role viewer|editor|manager]
                         pass-cli item share (resolves share-id via item list)
@@ -121,29 +126,61 @@ export function resolvePassCli(): string {
   return path;
 }
 
+export type SecretTarget = {
+  /** Raw pass:// URI — pass through as positional. */
+  uri: string | null;
+  vault: string | null;
+  title: string | null;
+  field: string | null;
+};
+
+/**
+ * Single parser for secret targets (view/totp/share item; move/trash use
+ * splitVaultTitle since they never take a field).
+ * - `pass://…` → `{ uri }` (pass through untouched)
+ * - `vault/title…` → vault + title; with fieldMode ≠ 'never' and ≥3 segments,
+ *   the last segment is the field and the middle is the title.
+ * - fieldMode 'default' (view): missing field → 'password'.
+ *   fieldMode 'explicit' (totp): no --field unless ≥3 segments.
+ *   fieldMode 'never': last segment stays part of the title.
+ */
+export function parseSecretTarget(
+  target: string,
+  fieldMode: 'default' | 'explicit' | 'never'
+): SecretTarget {
+  const t = target.trim();
+  if (!t) throw new Error('empty secret target');
+  if (t.startsWith('pass://')) return { uri: t, vault: null, title: null, field: null };
+
+  const parts = t.split('/').filter(Boolean);
+  if (parts.length < 2) {
+    throw new Error(`Invalid target "${t}". Use pass://vault/item/field or vault/item[/field]`);
+  }
+  if (fieldMode !== 'never' && parts.length >= 3) {
+    return {
+      uri: null,
+      vault: parts[0]!,
+      title: parts.slice(1, -1).join('/'),
+      field: parts[parts.length - 1]!,
+    };
+  }
+  return {
+    uri: null,
+    vault: parts[0]!,
+    title: parts.slice(1).join('/'),
+    field: fieldMode === 'default' ? 'password' : null,
+  };
+}
+
 /**
  * Map portal target → `pass-cli item view` args.
  * - `pass://…` → positional URI
  * - `vault/title[/field]` → --vault-name / --item-title / --field (default password)
  */
 export function viewArgsFromTarget(target: string): string[] {
-  const t = target.trim();
-  if (!t) throw new Error('empty secret target');
-
-  if (t.startsWith('pass://')) {
-    return ['item', 'view', t];
-  }
-
-  const parts = t.split('/').filter(Boolean);
-  if (parts.length < 2) {
-    throw new Error(`Invalid target "${t}". Use pass://vault/item/field or vault/item[/field]`);
-  }
-
-  const vault = parts[0]!;
-  const field = parts.length >= 3 ? parts[parts.length - 1]! : 'password';
-  const title = parts.length >= 3 ? parts.slice(1, -1).join('/') : parts.slice(1).join('/');
-
-  return ['item', 'view', '--vault-name', vault, '--item-title', title, '--field', field];
+  const t = parseSecretTarget(target, 'default');
+  if (t.uri) return ['item', 'view', t.uri];
+  return ['item', 'view', '--vault-name', t.vault!, '--item-title', t.title!, '--field', t.field!];
 }
 
 /**
@@ -152,24 +189,10 @@ export function viewArgsFromTarget(target: string): string[] {
  * item's own TOTP field is used (2.2.0 also supports ?totp=uri|code on URIs).
  */
 export function totpArgsFromTarget(target: string): string[] {
-  const t = target.trim();
-  if (!t) throw new Error('empty totp target');
-
-  if (t.startsWith('pass://')) {
-    return ['item', 'totp', t];
-  }
-
-  const parts = t.split('/').filter(Boolean);
-  if (parts.length < 2) {
-    throw new Error(`Invalid target "${t}". Use pass://vault/item[/field] or vault/item[/field]`);
-  }
-
-  const args = ['item', 'totp', '--vault-name', parts[0]!];
-  if (parts.length >= 3) {
-    args.push('--item-title', parts.slice(1, -1).join('/'), '--field', parts[parts.length - 1]!);
-  } else {
-    args.push('--item-title', parts.slice(1).join('/'));
-  }
+  const t = parseSecretTarget(target, 'explicit');
+  if (t.uri) return ['item', 'totp', t.uri];
+  const args = ['item', 'totp', '--vault-name', t.vault!, '--item-title', t.title!];
+  if (t.field) args.push('--field', t.field);
   return args;
 }
 
@@ -301,28 +324,33 @@ export function shareVaultArgs(vault: string, email: string, role: string): stri
   return ['vault', 'share', '--vault-name', vault, '--role', role, email];
 }
 
-function passEnv(): NodeJS.ProcessEnv {
+function passEnv(reason?: string): NodeJS.ProcessEnv {
   return {
     ...Bun.env,
-    PROTON_PASS_AGENT_REASON: Bun.env.PROTON_PASS_AGENT_REASON ?? 'portal-cli secret',
+    // Per-command reason → shows intent in the Proton Pass agent audit log.
+    PROTON_PASS_AGENT_REASON:
+      Bun.env.PROTON_PASS_AGENT_REASON ?? `portal secret ${reason ?? 'cli'}`.trim(),
   };
 }
 
 /** Inherit all stdio — interactive / operator-facing pass-cli. */
-export async function runPassCli(args: string[]): Promise<number> {
+export async function runPassCli(args: string[], reason?: string): Promise<number> {
   const bin = resolvePassCli();
   const proc = Bun.spawn([bin, ...args], {
     stdout: 'inherit',
     stderr: 'inherit',
     stdin: 'inherit',
-    env: passEnv(),
+    env: passEnv(reason),
   });
   const code = (await proc.exited) ?? 1;
   return code;
 }
 
 /** Capture stdout; stderr inherits for operator visibility. */
-export async function capturePassCli(args: string[]): Promise<{
+export async function capturePassCli(
+  args: string[],
+  reason?: string
+): Promise<{
   code: number;
   stdout: string;
 }> {
@@ -331,11 +359,32 @@ export async function capturePassCli(args: string[]): Promise<{
     stdout: 'pipe',
     stderr: 'inherit',
     stdin: 'inherit',
-    env: passEnv(),
+    env: passEnv(reason),
   });
   const stdout = await new Response(proc.stdout).text();
   const code = (await proc.exited) ?? 1;
   return { code, stdout: stdout.replace(/\n$/, '') };
+}
+
+/**
+ * Map items → results with a concurrency cap, order preserved.
+ * Caps parallel pass-cli fan-out (Bun 1.4.0 spawn-churn crash reports).
+ */
+export async function mapWithConcurrency<T, R>(
+  items: readonly T[],
+  limit: number,
+  fn: (item: T) => Promise<R>
+): Promise<R[]> {
+  const out = Array.from<R>({ length: items.length });
+  let idx = 0;
+  async function worker(): Promise<void> {
+    while (idx < items.length) {
+      const i = idx++;
+      out[i] = await fn(items[i]!);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, worker));
+  return out;
 }
 
 async function exitOnFail(code: number): Promise<void> {
@@ -377,7 +426,7 @@ async function cmdGet(target: string | undefined): Promise<void> {
   } catch (e) {
     cliError(e instanceof Error ? e.message : String(e));
   }
-  const { code, stdout } = await capturePassCli(viewArgs);
+  const { code, stdout } = await capturePassCli(viewArgs, 'get');
   await exitOnFail(code);
   // item view may print field only or human blob — emit raw stdout for $()
   process.stdout.write(stdout.endsWith('\n') ? stdout : `${stdout}\n`);
@@ -445,7 +494,10 @@ async function cmdAutofill(rest: string[]): Promise<void> {
   }
 
   const start = Date.now();
-  const { code, stdout } = await capturePassCli(['item', 'list', vault, '--output', 'json']);
+  const { code, stdout } = await capturePassCli(
+    ['item', 'list', vault, '--output', 'json'],
+    'autofill'
+  );
   await exitOnFail(code);
 
   let titles: string[];
@@ -482,22 +534,23 @@ async function cmdAutofill(rest: string[]): Promise<void> {
     };
     if (!envKey) return row;
     try {
-      const { code: vc, stdout: secret } = await capturePassCli([
-        'item',
-        'view',
-        '--vault-name',
-        vault!,
-        '--item-title',
-        title,
-        '--field',
-        field,
-      ]);
+      const { code: vc, stdout: secret } = await capturePassCli(
+        ['item', 'view', '--vault-name', vault!, '--item-title', title, '--field', field],
+        'autofill'
+      );
       if (vc !== 0) {
         row.error = `item view --field ${field} exit ${vc}`;
         return row;
       }
+      const value = secret.trim();
+      if (!value) {
+        // Empty field content is a fetch success but useless as a secret —
+        // surface it as missing instead of injecting an empty env var.
+        row.error = `item view --field ${field} returned empty value`;
+        return row;
+      }
       row.ok = true;
-      row.secret = secret.trim();
+      row.secret = value;
       return row;
     } catch (e) {
       row.error = e instanceof Error ? e.message : String(e);
@@ -505,9 +558,9 @@ async function cmdAutofill(rest: string[]): Promise<void> {
     }
   }
 
-  // --parallel: one pass-cli spawn per item, concurrently; order preserved.
+  // --parallel: pass-cli spawns per item, concurrency-capped; order preserved.
   const rows: AutofillRow[] = parallel
-    ? await Promise.all(titles.map(fetchRow))
+    ? await mapWithConcurrency(titles, 8, fetchRow)
     : await (async () => {
         const out: AutofillRow[] = [];
         for (const t of titles) out.push(await fetchRow(t));
@@ -577,12 +630,12 @@ async function cmdRun(rest: string[]): Promise<void> {
     cliError('Usage: portal secret run [--env-file <path>] [--no-masking] -- <command>…');
   }
   const args = ['run', ...before, '--', ...after];
-  process.exit(await runPassCli(args));
+  process.exit(await runPassCli(args, 'run'));
 }
 
 async function cmdInject(rest: string[]): Promise<void> {
   // Forward real inject flags only: -i/--in-file, -o/--out-file, -f/--force, --file-mode
-  process.exit(await runPassCli(['inject', ...rest]));
+  process.exit(await runPassCli(['inject', ...rest], 'inject'));
 }
 
 /**
@@ -600,11 +653,11 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       return;
 
     case 'login':
-      process.exit(await runPassCli(['login', ...rest]));
+      process.exit(await runPassCli(['login', ...rest], 'login'));
       return;
 
     case 'logout':
-      process.exit(await runPassCli(['logout', ...rest]));
+      process.exit(await runPassCli(['logout', ...rest], 'logout'));
       return;
 
     case 'info': {
@@ -612,12 +665,12 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       const args = json
         ? ['info', '--output', 'json', ...rest.filter(a => a !== '--json')]
         : ['info', ...rest];
-      process.exit(await runPassCli(args));
+      process.exit(await runPassCli(args, 'info'));
       return;
     }
 
     case 'test':
-      process.exit(await runPassCli(['test', ...rest]));
+      process.exit(await runPassCli(['test', ...rest], 'test'));
       return;
 
     case 'vaults':
@@ -626,7 +679,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       const args = json
         ? ['vault', 'list', '--output', 'json']
         : ['vault', 'list', ...rest.filter(a => a !== '--json')];
-      process.exit(await runPassCli(args));
+      process.exit(await runPassCli(args, 'vaults'));
       return;
     }
 
@@ -640,7 +693,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       const args = json
         ? ['item', 'list', vault, '--output', 'json']
         : ['item', 'list', vault, ...rest.slice(1).filter(a => a !== '--json')];
-      process.exit(await runPassCli(args));
+      process.exit(await runPassCli(args, 'items'));
       return;
     }
 
@@ -668,21 +721,21 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
     case 'invite': {
       const action = rest[0];
       if (action === 'list') {
-        process.exit(await runPassCli(['invite', 'list', ...rest.slice(1)]));
+        process.exit(await runPassCli(['invite', 'list', ...rest.slice(1)], 'invite'));
       }
       if (action === 'accept') {
         const id = rest[1];
         if (!id) cliError('Usage: portal secret invite accept <INVITE_ID>');
-        process.exit(await runPassCli(['invite', 'accept', id]));
+        process.exit(await runPassCli(['invite', 'accept', id], 'invite'));
       }
       if (action === 'reject') {
         const id = rest[1];
         if (!id) cliError('Usage: portal secret invite reject <INVITE_ID>');
-        process.exit(await runPassCli(['invite', 'reject', id]));
+        process.exit(await runPassCli(['invite', 'reject', id], 'invite'));
       }
       // Bare accept alias: portal secret invite <INVITE_ID>
       if (action && action !== 'help') {
-        process.exit(await runPassCli(['invite', 'accept', action]));
+        process.exit(await runPassCli(['invite', 'accept', action], 'invite'));
       }
       cliError('Usage: portal secret invite list|accept <id>|reject <id>');
       return;
@@ -697,7 +750,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
             '(pass-cli has no secure-link URL accept; use invite accept)'
         );
       }
-      process.exit(await runPassCli(['invite', 'accept', id]));
+      process.exit(await runPassCli(['invite', 'accept', id], 'invite'));
       return;
     }
 
@@ -713,7 +766,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       } catch (e) {
         cliError(e instanceof Error ? e.message : String(e));
       }
-      process.exit(await runPassCli(args));
+      process.exit(await runPassCli(args!, 'move'));
       return;
     }
 
@@ -727,7 +780,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       } catch (e) {
         cliError(e instanceof Error ? e.message : String(e));
       }
-      process.exit(await runPassCli(args));
+      process.exit(await runPassCli(args!, sub));
       return;
     }
 
@@ -738,7 +791,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
         const args = json
           ? ['share', 'list', '--output', 'json']
           : ['share', 'list', ...rest.filter(a => a !== 'list' && a !== '--json')];
-        process.exit(await runPassCli(args));
+        process.exit(await runPassCli(args, 'share list'));
       }
       if (action === 'item') {
         const target = rest[1];
@@ -755,7 +808,10 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
         } catch (e) {
           cliError(e instanceof Error ? e.message : String(e));
         }
-        const { code, stdout } = await capturePassCli(['item', 'list', vault, '--output', 'json']);
+        const { code, stdout } = await capturePassCli(
+          ['item', 'list', vault, '--output', 'json'],
+          'share item'
+        );
         await exitOnFail(code);
         let ref: ReturnType<typeof findItemRefByTitle>;
         try {
@@ -770,7 +826,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
         } catch (e) {
           cliError(e instanceof Error ? e.message : String(e));
         }
-        process.exit(await runPassCli(args));
+        process.exit(await runPassCli(args!, 'share item'));
       }
       if (action === 'vault') {
         const vault = rest[1];
@@ -787,7 +843,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
         } catch (e) {
           cliError(e instanceof Error ? e.message : String(e));
         }
-        process.exit(await runPassCli(args));
+        process.exit(await runPassCli(args!, 'share vault'));
       }
       cliError(
         'Usage: portal secret share list [--json] | share item <vault/item-title> <email> [--role …] | share vault <vault> <email> [--role …]\n' +
@@ -810,7 +866,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
             'member vault remove --vault-name portal --member-share-id <id>'
         );
       }
-      process.exit(await runPassCli([kind!, 'member', ...rest.slice(1)]));
+      process.exit(await runPassCli([kind!, 'member', ...rest.slice(1)], `member ${kind}`));
       return;
     }
 
@@ -825,7 +881,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       } catch (e) {
         cliError(e instanceof Error ? e.message : String(e));
       }
-      const { code, stdout } = await capturePassCli(args);
+      const { code, stdout } = await capturePassCli(args!, 'totp');
       await exitOnFail(code);
       process.stdout.write(stdout.endsWith('\n') ? stdout : `${stdout}\n`);
       return;
@@ -836,7 +892,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       if (!rest[0]) {
         cliError('Usage: portal secret session <lock|unlock|create-lock> [args…]');
       }
-      process.exit(await runPassCli(['session', ...rest]));
+      process.exit(await runPassCli(['session', ...rest], 'session'));
       return;
     }
 
@@ -847,7 +903,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
           'Usage: portal secret settings <subcommand> [args…] — e.g. settings set default-vault <name>'
         );
       }
-      process.exit(await runPassCli(['settings', ...rest]));
+      process.exit(await runPassCli(['settings', ...rest], 'settings'));
       return;
     }
 
@@ -857,7 +913,16 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       if (!rest[0]) {
         cliError('Usage: portal secret pat <list|create|delete|renew|access> [args…]');
       }
-      process.exit(await runPassCli(['personal-access-token', ...rest]));
+      process.exit(await runPassCli(['personal-access-token', ...rest], 'pat'));
+      return;
+    }
+
+    case 'password': {
+      // pass-cli password generate random|passphrase · password score (needs session).
+      if (!rest[0]) {
+        cliError('Usage: portal secret password <generate|score> [args…]');
+      }
+      process.exit(await runPassCli(['password', ...rest], 'password'));
       return;
     }
 

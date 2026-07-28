@@ -40,13 +40,16 @@ async function main(): Promise<void> {
   const scope = await resolveScope(scopeArg);
   const grepIdx = args.indexOf('--grep');
   const grep = grepIdx >= 0 ? args[grepIdx + 1] : undefined;
+  // Only filter by scope when --scope was explicit (same as portal-cli filterScope);
+  // the resolved default would hide portal/gaps/limits snapshots from list/last.
+  const filterScope = scopeArg ? scope : undefined;
 
   if (args.includes('--list')) {
-    await listSnapshots({ scope, grep, debug });
+    await listSnapshots({ scope: filterScope, grep, debug });
     return;
   }
   if (args.includes('--last')) {
-    await showLastSnapshot({ scope, debug });
+    await showLastSnapshot({ scope: filterScope, debug });
     return;
   }
 
@@ -55,5 +58,3 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) main();
-
-export { formatFlatManifest, matchesGrep, type SnapshotManifest } from './snapshot-core.ts';
