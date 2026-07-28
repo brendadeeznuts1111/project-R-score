@@ -344,6 +344,7 @@ describe('portal-cli doctor pure', () => {
       full: false,
       group: 'infra',
       env: 'ci',
+      skipLiveAccess: false,
       accessFetch: async url => {
         if (String(url).includes('ledger')) {
           return new Response(null, {
@@ -359,13 +360,26 @@ describe('portal-cli doctor pure', () => {
       },
     });
     expect(r.group).toBe('infra');
+    expect(r.liveAccess).toBe(true);
     expect(r.checks).toHaveLength(2);
     expect(r.checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
     expect(r.checks.find(c => c.id === 'infra-portal-access')?.ok).toBe(false);
     expect(r.checks.find(c => c.id === 'infra-portal-access')?.level).toBe('warn');
     // only fatals fail the gate
     expect(r.ok).toBe(true);
-    expect(formatPortalDoctor(r)).toContain('Infra');
+    expect(formatPortalDoctor(r, { format: 'plain' })).toContain('infra-portal-access');
+  });
+
+  test('offline infra uses policy presence not skipped green', async () => {
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      full: false,
+      group: 'infra',
+      skipLiveAccess: true,
+    });
+    expect(r.liveAccess).toBe(false);
+    expect(r.checks.find(c => c.id === 'infra-ledger-access')?.message).toMatch(/policy/);
+    expect(r.checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
   });
 
   test('--env ci drops envScope=dev checks', async () => {

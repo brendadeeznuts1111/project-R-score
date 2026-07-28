@@ -42,7 +42,7 @@ import {
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
-import { shouldColor } from '../../lib/console-depth.ts';
+import { shouldColor, termWidth } from '../../lib/console-depth.ts';
 import {
   cliTone,
   columnTable,
@@ -109,6 +109,10 @@ export type PortalDoctorReport = {
   groups?: PortalDoctorGroup[];
   /** Optional env filter: ci skips envScope=dev checks. */
   env?: PortalDoctorEnvScope;
+  /** Output format preference (CLI --format / env). */
+  format?: 'plain' | 'pretty';
+  /** Whether live Access HTTPS probes ran. */
+  liveAccess?: boolean;
   generatedAt: string;
   checks: PortalDoctorCheck[];
   summary: PortalDoctorSummary;
@@ -140,11 +144,16 @@ export type PortalDoctorOpts = {
   spawn?: (argv: string[], opts?: { cwd?: string }) => Promise<number>;
   /**
    * Inject fetch for infra Access probes (tests).
-   * When omitted, live HTTPS probes run (ledger + portal).
+   * When omitted and not skipLiveAccess, live HTTPS probes run.
    */
   accessFetch?: import('../../lib/verification/cloudflare-access-live.ts').AccessProbeFetch;
-  /** Skip live Access probes (offline pure tests). */
+  /**
+   * Skip live Access HTTPS probes (policy-file only).
+   * Default for full doctor bake; CLI enables live when --group infra or --live-access.
+   */
   skipLiveAccess?: boolean;
+  /** Force plain or pretty output (overrides env auto-detect). */
+  format?: 'plain' | 'pretty';
 };
 
 export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
@@ -493,9 +502,10 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   // 3b) Bunfig machine/project SSOT
   checks.push(...(await runBunfigChecks(cwd)));
 
-  // 3c) Infra · live Cloudflare Access probes (ledger fatal · portal warn)
+  // 3c) Infra · Access (live HTTPS or offline policy SSOT)
   checks.push(
     ...(await runInfraChecks({
+      cwd,
       fetch: opts.accessFetch,
       skipLive: opts.skipLiveAccess,
     }))
@@ -578,6 +588,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const ok = scoped.filter(c => c.level === 'fatal').every(c => c.ok);
   const summary = summarizeDoctorChecks(scoped);
 
+  const skipLive = Boolean(opts.skipLiveAccess);
   return {
     kind: 'portal-cli-doctor',
     schemaVersion: 4,
@@ -588,6 +599,8 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
     group,
     groups,
     env,
+    format: opts.format,
+    liveAccess: !skipLive,
     generatedAt: new Date().toISOString(),
     checks: scoped,
     summary,
@@ -602,11 +615,15 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
 
 /**
  * Plain (CI / piped) vs pretty (TTY) doctor layout.
- * Override: PORTAL_DOCTOR_FORMAT=plain|pretty
+ * Override: PORTAL_DOCTOR_FORMAT=plain|pretty or opts.format / --format
  * Color always via shouldColor() → Bun.color (console-depth SSOT).
- * NO_COLOR alone does not force plain if PORTAL_DOCTOR_FORMAT=pretty.
  */
-export function doctorUsesPlainFormat(env: Record<string, string | undefined> = Bun.env): boolean {
+export function doctorUsesPlainFormat(
+  env: Record<string, string | undefined> = Bun.env,
+  formatOverride?: 'plain' | 'pretty'
+): boolean {
+  if (formatOverride === 'pretty') return false;
+  if (formatOverride === 'plain') return true;
   if (env.PORTAL_DOCTOR_FORMAT === 'pretty') return false;
   if (env.PORTAL_DOCTOR_FORMAT === 'plain') return true;
   if (env.CI === '1' || env.CI === 'true' || env.GITHUB_ACTIONS === 'true') return true;
@@ -615,6 +632,12 @@ export function doctorUsesPlainFormat(env: Record<string, string | undefined> = 
   } catch {
     return true;
   }
+}
+
+/** Resolve pretty frame width from TTY columns (capped). */
+export function doctorFrameWidth(): number {
+  const cols = termWidth();
+  return Math.min(Math.max(cols, 60), 100);
 }
 
 function doctorModeLabel(r: PortalDoctorReport): string {
@@ -683,7 +706,7 @@ export function formatPortalDoctorPlain(r: PortalDoctorReport): string {
 export function formatPortalDoctorPretty(r: PortalDoctorReport): string {
   const display = filterDoctorChecks(r.checks, r.failedOnly);
   const body: string[] = [];
-  const frameWidth = 80;
+  const frameWidth = doctorFrameWidth();
   const lineMax = frameWidth - 4;
 
   let lastGroup: PortalDoctorGroup | undefined;
@@ -717,9 +740,14 @@ export function formatPortalDoctorPretty(r: PortalDoctorReport): string {
   );
 }
 
-/** Default: pretty on TTY, plain in CI/pipe. */
-export function formatPortalDoctor(r: PortalDoctorReport): string {
-  return doctorUsesPlainFormat() ? formatPortalDoctorPlain(r) : formatPortalDoctorPretty(r);
+/** Default: pretty on TTY, plain in CI/pipe. Pass format override from CLI --format. */
+export function formatPortalDoctor(
+  r: PortalDoctorReport,
+  opts?: { format?: 'plain' | 'pretty' }
+): string {
+  return doctorUsesPlainFormat(Bun.env, opts?.format ?? r.format)
+    ? formatPortalDoctorPlain(r)
+    : formatPortalDoctorPretty(r);
 }
 
 export function formatDoctorSummaryFooterPlain(s: PortalDoctorSummary, failedOnly = false): string {
@@ -759,14 +787,21 @@ export function formatDoctorSummaryFooterPretty(
   return lines.join('\n');
 }
 
-export function formatDoctorSummaryFooter(s: PortalDoctorSummary, failedOnly = false): string {
-  return doctorUsesPlainFormat()
+export function formatDoctorSummaryFooter(
+  s: PortalDoctorSummary,
+  failedOnly = false,
+  format?: 'plain' | 'pretty'
+): string {
+  return doctorUsesPlainFormat(Bun.env, format)
     ? formatDoctorSummaryFooterPlain(s, failedOnly)
     : formatDoctorSummaryFooterPretty(s, failedOnly);
 }
 
-export function formatPortalDoctorVerbose(r: PortalDoctorReport): string {
-  return doctorUsesPlainFormat()
+export function formatPortalDoctorVerbose(
+  r: PortalDoctorReport,
+  opts?: { format?: 'plain' | 'pretty' }
+): string {
+  return doctorUsesPlainFormat(Bun.env, opts?.format ?? r.format)
     ? formatPortalDoctorVerbosePlain(r)
     : formatPortalDoctorVerbosePretty(r);
 }
@@ -860,7 +895,7 @@ function formatPortalDoctorVerbosePretty(r: PortalDoctorReport): string {
   const mode = doctorModeLabel({ ...r, verbose: true });
   return [
     frameBlock('portal doctor', r.ok ? 'OK' : 'FAIL', summaryBody, {
-      width: 80,
+      width: doctorFrameWidth(),
       ok: r.ok,
     }),
     mode ? cliTone.dim(`  mode · ${mode}`) : '',
@@ -869,7 +904,7 @@ function formatPortalDoctorVerbosePretty(r: PortalDoctorReport): string {
     ...table,
     '',
     frameBlock('remediation', failures.length ? 'ACTION' : 'none', remBody, {
-      width: 80,
+      width: doctorFrameWidth(),
       ok: failures.length === 0,
     }),
     '',

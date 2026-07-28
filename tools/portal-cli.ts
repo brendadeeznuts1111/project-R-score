@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color (cli-chrome / shouldColor)
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth (doctor pretty)
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 // @see https://bun.com/docs/bundler/executables — --force
@@ -1218,45 +1220,49 @@ Related: portal-cli --help · portal-cli doctor --group catalog
     if (argv.includes('--help') || argv.includes('-h')) {
       console.log(`Usage: portal-cli doctor [flags]
 
-Unified offline health gate for the portal control plane.
+Unified portal health gate (linker · bakes · catalog · bunfig · infra · gates).
 
-Checks (default — pure groups + live Access probes):
+Checks:
   Linker:  linker-config-version · machine-isolated-linker
   Bakes:   vault-health · capability-map-subset · bunfig-state (+ age when present)
-  Catalog: catalog-json-schema · catalog-shortcode-conflict · catalog-bun-help-parity · catalog-help-coverage · catalog-deprecated-flags
-  Bunfig:  machine-ssot · machine-frozen-lockfile · project-no-machine-keys · merge · excludes · no-install-env
-  Infra:   infra-ledger-access (fatal) · infra-portal-access (warn) — live HTTPS
+  Catalog: catalog-json-schema · shortcode · bun-help-parity · help-coverage · deprecated
+  Bunfig:  machine-ssot · frozen-lockfile · project-no-machine-keys · merge · excludes · env
+  Infra:   infra-ledger-access (fatal) · infra-portal-access (warn)
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
-Flags:
-  --verbose · -v     Full fields per check (no truncated tables)
-  --failed-only      Hide passing checks (pairs with --verbose)
-  --full             Spawn install:verify · vault-health · capability-map tests
-  --group <name>     linker | bakes | catalog | bunfig | infra | gates
-  --env <scope>      all (default) | ci (skip envScope=dev) | dev
-  --json             Machine-readable report (schemaVersion 4 + summary)
-  --no-write         Do not refresh public/registry/doctor-state.json
-  --live-access      Include live Cloudflare Access probes (default: offline)
+Access probes:
+  Default doctor is offline (policy SSOT only — stable bake fingerprint).
+  --group infra  → live HTTPS probes ON (unless --offline)
+  --live-access  → force live probes on any group mix
+  --offline      → force policy-only (no network)
 
-Output is CI-safe plain text (result=ok|fail · PASS/FAIL · full messages · no box art).
-CI / pipes / NO_COLOR: no ANSI. Machine gates: --json
+Flags:
+  --verbose · -v     Full fields / remediation (pretty: Bun.stringWidth table)
+  --failed-only      Hide passing checks
+  --full             Spawn install:verify · vault · capability tests
+  --group <name>     linker | bakes | catalog | bunfig | infra | gates
+  --env <scope>      all | ci | dev
+  --layout plain|pretty   Override auto (TTY→pretty · CI/pipe→plain)
+  --json             Machine-readable report
+  --no-write         Do not refresh public/registry/doctor-state.json
+  --live-access      Live Cloudflare Access probes
+  --offline          Policy-only Access (no HTTPS)
+
+Pretty TTY uses Bun.stringWidth + Bun.color (shouldColor). Plain is greppable PASS/FAIL.
 
 Examples:
   portal-cli doctor
+  portal-cli doctor --group infra                 # live Access probes
+  portal-cli doctor --env ci --group infra --layout pretty
+  portal-cli doctor --group bunfig --offline
   portal-cli doctor --verbose --failed-only
-  portal-cli doctor --group bunfig
-  portal-cli doctor --group catalog,bunfig
-  portal-cli doctor --env ci --failed-only
   portal-cli doctor --json
   portal-cli doctor --full --verbose
 
-Catalog / bunfig:
-  bun run portal:flags:check
-  bun run audit:bunfig
-  bun run bake:doctor
-  bun run bake:doctor:check      # sha256 fingerprint gate
+Catalog / bunfig / bake:
+  bun run portal:flags:check · audit:bunfig · bake:doctor · bake:doctor:check
 
-Related: vault health · capabilities health · scanner doctor · bunfig check · flags · install:verify
+Related: vault health · capabilities · scanner · flags · install:verify
 `);
       return;
     }
@@ -1283,32 +1289,48 @@ Related: vault health · capabilities health · scanner doctor · bunfig check �
     } catch (e) {
       cliError(e instanceof Error ? e.message : String(e));
     }
-    // CI / pure: skip live Access unless --live-access (network flake must not gate offline checks)
-    const liveAccess = argv.includes('--live-access');
+    // Layout: --layout plain|pretty (env: PORTAL_DOCTOR_FORMAT)
+    let format: 'plain' | 'pretty' | undefined;
+    const layoutEq = argv.find(a => a.startsWith('--layout='));
+    const layoutIdx = argv.indexOf('--layout');
+    const layoutRaw = layoutEq
+      ? layoutEq.slice('--layout='.length)
+      : layoutIdx >= 0
+        ? argv[layoutIdx + 1]
+        : undefined;
+    if (layoutRaw === 'plain' || layoutRaw === 'pretty') format = layoutRaw;
+    else if (layoutRaw != null) cliError(`Unknown --layout=${layoutRaw}; expect plain | pretty`);
+
+    // Live Access: --group infra (default on) or --live-access; --offline forces policy-only
+    const offline = argv.includes('--offline');
+    const groupsIncludeInfra = Boolean(groups?.includes('infra'));
+    const liveAccess = !offline && (argv.includes('--live-access') || groupsIncludeInfra);
     const report = await runPortalDoctor({
       full: argv.includes('--full'),
       verbose,
       failedOnly: argv.includes('--failed-only'),
       groups,
       env,
+      format,
       skipLiveAccess: !liveAccess,
     });
-    // Refresh board bake unless --no-write (always offline-stable fingerprint)
-    if (!argv.includes('--no-write')) {
+    // Refresh board bake unless --no-write
+    // When live Access ran, skip auto-write so bake fingerprint stays offline-stable
+    if (!argv.includes('--no-write') && !liveAccess) {
       try {
         const { toDoctorState, DOCTOR_STATE_REL } = await import('./bake-doctor.ts');
         const state = toDoctorState(report);
         await Bun.write(DOCTOR_STATE_REL, `${JSON.stringify(state, null, 2)}\n`);
       } catch {
-        // non-fatal — doctor stdout still useful without bake write
+        // non-fatal
       }
     }
     if (argv.includes('--json')) {
       console.log(JSON.stringify(report, null, 2));
     } else if (verbose) {
-      console.log(formatPortalDoctorVerbose(report));
+      console.log(formatPortalDoctorVerbose(report, { format }));
     } else {
-      console.log(formatPortalDoctor(report));
+      console.log(formatPortalDoctor(report, { format }));
     }
     process.exit(report.ok ? 0 : 1);
   }

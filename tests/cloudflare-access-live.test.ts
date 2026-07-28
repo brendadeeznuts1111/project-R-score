@@ -99,4 +99,15 @@ describe('cloudflare-access-live', () => {
     expect(checks[1]!.ok).toBe(false);
     expect(checks[1]!.envScope).toBe('all');
   });
+
+  test('runInfraChecks offline uses policy SSOT (not fake green skip)', async () => {
+    const checks = await runInfraChecks({ skipLive: true, cwd: process.cwd() });
+    expect(checks).toHaveLength(2);
+    expect(checks[0]!.message).toContain('policy');
+    expect(checks[0]!.message).not.toContain('skipped');
+    // monorepo has ledger + portal in .cloudflare-access.yml
+    expect(checks[0]!.ok).toBe(true);
+    expect(checks[1]!.ok).toBe(true);
+    expect(checks[1]!.message).toContain('staged');
+  });
 });
