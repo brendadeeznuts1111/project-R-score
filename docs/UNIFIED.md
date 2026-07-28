@@ -192,14 +192,22 @@ frozenLockfile = true
 ## Tooling
 
 ```bash
+bun run machine:bunfig:ensure   # ~/.bunfig.toml ← config/machine.bunfig.toml.template
+bun run machine:bunfig:check    # SSOT snippets + absolute cache.dir
 bun run audit:bunfig
 bun run install:verify          # · :strict — cache, global store links, configVersion
 bun run portal:doctor --group bunfig   # machine SSOT · project drift · merge · excludes
-bun run bake:doctor             # → public/registry/doctor-state.json · /portal/doctor/
+CI=true bun run portal:doctor:ci       # ensure + offline doctor (harness-gates)
+bun run bake:doctor             # ensure + doctor-state.json
+bun run bake:doctor:check       # ensure + sha256 fingerprint gate
 bun run install:machine:health
 bun run install:cache:lifecycle
 bun scripts/with-bun-cache-env.ts ci   # GHA / ephemeral
+```
 
+**CI runners:** `setup-factory-bun` writes `~/.bunfig.toml` via `machine:bunfig:ensure --overwrite` so doctor/fingerprint gates are portable.
+
+```bash
 # Project-scoped install verification (11 aspects — toolchain + config + platform + linker)
 bun run verify:install-platform              # full
 bun run verify:install-platform:dry-run      # profile SSOT + lockfile/linker reads only

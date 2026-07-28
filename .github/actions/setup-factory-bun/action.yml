@@ -29,6 +29,11 @@ runs:
         restore-keys: |
           bun-install-${{ runner.os }}-
 
+    - name: Machine bunfig SSOT
+      shell: bash
+      run: bun scripts/ensure-machine-bunfig.ts --overwrite
+      # Installs ~/.bunfig.toml from config/machine.bunfig.toml.template (absolute cache.dir)
+
     - name: Install
       shell: bash
       env:

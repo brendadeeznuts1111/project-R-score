@@ -1,0 +1,19 @@
+# Machine Bun install SSOT — FactoryWager
+# @see docs/UNIFIED.md · https://bun.com/docs/pm/isolated-installs
+# Installed to ~/.bunfig.toml by: bun run machine:bunfig:ensure
+# Project ./bunfig.toml must NOT duplicate linker / globalStore / cache.dir / age keys.
+#
+# {{CACHE_DIR}} is replaced with an absolute path (e.g. $HOME/.bun/install/cache).
+
+[install]
+linker = "isolated"
+globalStore = true
+frozenLockfile = true
+# 3 days — https://bun.com/docs/runtime/bunfig#install-minimumreleaseage
+minimumReleaseAge = 259200
+# Type-only packages may move faster than the age gate; list replaces Bun default.
+minimumReleaseAgeExcludes = ["bun-types", "@types/bun", "@types/node", "typescript"]
+
+[install.cache]
+# Absolute path required (unexpanded ~ becomes literal ./~ — oven-sh/bun#6237)
+dir = "{{CACHE_DIR}}"

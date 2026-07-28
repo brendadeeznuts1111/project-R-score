@@ -63,8 +63,12 @@ jobs:
       - name: Capability doctor (Bun floors)
         run: bun run portal-cli capabilities doctor --bun-only
 
-      # Portal doctor offline pure checks (linker · bakes · catalog · bunfig · infra skipped-live).
-      # Plain CI log: result=ok|fail · PASS/FAIL · full messages. No live Access (use --live-access locally).
+      # Machine ~/.bunfig.toml from committed template (CI-portable SSOT).
+      - name: Machine bunfig SSOT
+        run: bun run machine:bunfig:ensure -- --overwrite
+
+      # Portal doctor offline pure checks (linker · bakes · catalog · bunfig · infra offline).
+      # Plain CI log: result=ok|fail · PASS/FAIL · full messages.
       - name: Portal doctor (offline)
         run: bun run portal:doctor:ci
 

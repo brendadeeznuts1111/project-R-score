@@ -72,8 +72,11 @@ curl -X POST http://127.0.0.1:3000/api/doctor/run
 
 | Step | Command |
 |------|---------|
-| Portal doctor (offline) | `bun run portal:doctor:ci` (`--env ci --no-write`) |
-| doctor-state fingerprint | `bun run bake:doctor:check` |
+| Machine bunfig SSOT | `bun run machine:bunfig:ensure -- --overwrite` (also in setup-factory-bun) |
+| Portal doctor (offline) | `bun run portal:doctor:ci` (ensure + `--env ci --no-write`) |
+| doctor-state fingerprint | `bun run bake:doctor:check` (ensure + sha256) |
+
+Template: [`config/machine.bunfig.toml.template`](../../../config/machine.bunfig.toml.template) → `~/.bunfig.toml` with absolute `cache.dir`. Without this, bunfig machine probes fail fatally on clean runners.
 
 Live Access is **off** in CI (offline skips). Local edge proof: `portal-cli doctor --group infra --live-access`.
 

@@ -79,9 +79,13 @@ function asStringArray(v: InstallToml[keyof InstallToml]): string[] {
 
 /**
  * Run pure bunfig SSOT checks (no network, no spawn).
+ * @param env process-like env for HOME / BUN_INSTALL_* (tests inject; default Bun.env)
  */
-export async function runBunfigChecks(cwd: string): Promise<PortalDoctorCheck[]> {
-  const machine = await readMachineBunfig();
+export async function runBunfigChecks(
+  cwd: string,
+  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
+): Promise<PortalDoctorCheck[]> {
+  const machine = await readMachineBunfig(env);
   const project = await readProjectBunfig(cwd);
   const machineInstall = await readInstallSection(machine.bunfigPath);
   const projectInstall = await readInstallSection(project.bunfigPath);
@@ -273,11 +277,11 @@ export async function runBunfigChecks(cwd: string): Promise<PortalDoctorCheck[]>
   // Ephemeral CI (GHA setup-factory-bun / with-bun-cache-env) may set them — allowed.
   const forbiddenEnv = (['BUN_INSTALL_CACHE_DIR', 'BUN_INSTALL_GLOBAL_STORE'] as const).filter(
     k => {
-      const v = Bun.env[k];
+      const v = env[k];
       return typeof v === 'string' && v.trim().length > 0;
     }
   );
-  const ephemeralCi = isEphemeralCiInstallEnv();
+  const ephemeralCi = isEphemeralCiInstallEnv(env);
   const envOk = forbiddenEnv.length === 0 || ephemeralCi;
   checks.push(
     withMeta(

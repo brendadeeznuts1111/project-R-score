@@ -1,7 +1,7 @@
 {
   "kind": "portal-doctor-state",
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T21:48:21.325Z",
+  "generatedAt": "2026-07-28T21:58:02.436Z",
   "ok": true,
   "tone": "green",
   "full": false,
@@ -74,7 +74,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/capability-map-subset.json present · 16m ago",
+      "message": "public/registry/capability-map-subset.json present · 26m ago",
       "autoFixable": true
     },
     {
@@ -178,7 +178,7 @@
       "group": "infra",
       "level": "fatal",
       "ok": true,
-      "message": "ledger Access probe skipped (offline)",
+      "message": "ledger · policy has ledger.factory-wager.com (offline · no live probe)",
       "autoFixable": false
     },
     {
@@ -186,7 +186,7 @@
       "group": "infra",
       "level": "warn",
       "ok": true,
-      "message": "portal Access probe skipped (offline)",
+      "message": "portal · policy has score.factory-wager.com/portal staged (offline · no live probe)",
       "autoFixable": false
     }
   ],

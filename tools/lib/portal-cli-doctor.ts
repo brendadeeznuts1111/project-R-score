@@ -154,6 +154,11 @@ export type PortalDoctorOpts = {
   skipLiveAccess?: boolean;
   /** Force plain or pretty output (overrides env auto-detect). */
   format?: 'plain' | 'pretty';
+  /**
+   * Process-like env for machine bunfig / BUN_INSTALL_* probes (default Bun.env).
+   * Distinct from doctor --env ci|dev|all (envScope filter).
+   */
+  machineEnv?: Record<string, string | undefined>;
 };
 
 export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
@@ -500,7 +505,7 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   checks.push(...catalogResult.checks);
 
   // 3b) Bunfig machine/project SSOT
-  checks.push(...(await runBunfigChecks(cwd)));
+  checks.push(...(await runBunfigChecks(cwd, opts.machineEnv)));
 
   // 3c) Infra · Access (live HTTPS or offline policy SSOT)
   checks.push(

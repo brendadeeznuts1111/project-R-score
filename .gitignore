@@ -243,6 +243,7 @@ credentials/
 **/credentials/
 !config/
 config/*
+!config/machine.bunfig.toml.template
 !config/domain-branding.json
 !config/vault-map.json
 !config/vault-map.toml
