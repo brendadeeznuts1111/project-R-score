@@ -68,7 +68,29 @@ Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalog
 | `trustedDependencies` | root | Explicit list **replaces** Bun defaults — do not set a partial list casually. |
 | Root `peerDependencies` | avoid | Application root is not a library; put toolchain pins in `devDependencies` + `catalog:`. |
 
-**Scripts:** product/ops scripts live on the **root** package. Package scripts run with `bun run --filter <name|./path> <script>` or `--workspaces --if-present`. Do not use `--filter` for root-only script names. Full filter semantics (name vs `./path`, install/outdated, parallel, dep order): [pm/filter](https://bun.com/docs/pm/filter) · FactoryWager runbook [monorepo-workspaces § bun --filter](./harness/tenants/monorepo-workspaces.md#bun---filter-canonical). Docs-site `?search=type:toml` is a **search facet** for TOML samples (bunfig), not a Bun filter flag.
+### Scripts vs `--filter`
+
+| Surface | How to run | Notes |
+|---------|------------|--------|
+| **Root** product/ops | `bun run ops:limits:check` · `bun run portal:snapshot:once` | Scripts live only on root `package.json` — **never** `bun run --filter '*' ops:…` |
+| **Package** scripts | `bun run --filter <name\|./path> <script>` · `--workspaces --if-present` | Only workspace members; use `--if-present` (most packages lack full script sets) |
+| **Tests (files)** | `bun test tests/…` or path globs | Not workspace `--filter` |
+
+Canonical: [pm/filter](https://bun.com/docs/pm/filter) · FactoryWager runbook: [monorepo-workspaces § bun --filter](./harness/tenants/monorepo-workspaces.md#bun---filter-canonical).
+
+```bash
+# Package scripts (workspace members only)
+bun run --parallel --filter '*' --if-present test
+bun run --filter @factorywager/registry-client build
+bun run --filter './packages/*' --if-present test
+
+# Root-only (no --filter)
+bun run ops:limits:check
+bun test tests/limits-e2e.test.ts
+```
+
+**Warning — docs UI `type:toml` is not a filter flag.**  
+URLs such as `https://bun.com/docs/pm/filter?search=type%3Atoml` use Mintlify’s **search facet** (`type:toml` = show TOML code samples on the docs site). That is **not** a Bun CLI option, not a workspace selector, and not related to `bun --filter`. TOML samples under package-manager docs are almost always **`bunfig.toml`** (`exact`, `scopes`, `ignoreScripts`) — see [runtime/bunfig](https://bun.com/docs/runtime/bunfig) and this repo’s root `bunfig.toml`. Do not invent `bun --filter type:toml`.
 
 **Types pin:** catalog `@types/bun` / `bun-types` may lag `packageManager` / runtime (e.g. runtime 1.4.0, types 1.3.14). Bump both type packages together; prove with typecheck gates. Pages `BUN_VERSION` is a separate deploy pin.
 
@@ -97,6 +119,8 @@ Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalog
 | Hardcoding shared versions in every workspace package | defeats [catalogs](https://bun.com/docs/pm/catalogs); version skew (e.g. TS 5 vs 6) | root `catalog` + `catalog:` in members |
 | `bun-types: "latest"` / wide carets for cataloged names | fights `install.exact` + frozen lockfile | pin via catalog |
 | Treating nested `projects/**` as root workspaces in docs | false install graph; filter/install surprise | match root `package.json` only |
+| Docs URL `?search=type:toml` as a CLI/workspace filter | Mintlify search facet only; no Bun flag | use `--filter <name\|./path>` · [pm/filter](https://bun.com/docs/pm/filter) · [runbook](./harness/tenants/monorepo-workspaces.md#bun---filter-canonical) |
+| `bun run --filter '*' <root-script>` | root scripts are not package scripts | `bun run <root-script>` without `--filter` |
 | Spawning bare `'bun'` in verify scripts | PATH may resolve a different binary than the runtime interpreter | `lib/verification/resolve-bun-binary.ts` — `process.execPath` first, `Bun.which('bun')` fallback |
 | `BUN_CONFIG_REGISTRY` in project `.env` for default registry | env overrides bunfig unpredictably in dev/CI | use `[install].registry` in bunfig, scoped `.npmrc`, or `bun publish --registry` ([docs](https://bun.com/docs/pm/cli/publish#registry-configuration)); tool overlay `REGISTRY_URL` is npm API only — not Pages routing probes |
 
