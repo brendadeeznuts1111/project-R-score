@@ -45,6 +45,11 @@ jobs:
       - name: Packages docs-index sync
         run: bun run packages:docs-index:check
 
+      # Vault-map inventory + health report-shape SSOT (offline; no pass-cli session).
+      # Intentional drift: portal-cli vault health --update → commit the .snap
+      - name: Vault health snapshots
+        run: bun test tests/vault-health.test.ts
+
       # One install: verify + hygiene + ci:harness (was a second repo-hygiene job).
       - name: CI core
         run: bun run ci:core

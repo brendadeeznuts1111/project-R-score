@@ -1920,6 +1920,8 @@
     "env:inventory:baseline": "bun scripts/env-inventory.ts --write-baseline",
     "env:inventory:bake": "bun scripts/env-inventory.ts --bake",
     "vault:gap:status": "bun scripts/vault-gap-close.ts status",
+    "vault:health": "bun test tests/vault-health.test.ts",
+    "vault:health:update": "bun test tests/vault-health.test.ts --update-snapshots",
     "vault:health:bake": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun tools/vault-health-bake.ts'",
     "vault:gap:mint-local": "bun scripts/vault-gap-close.ts mint-local",
     "vault:gap:export-minted": "bun scripts/vault-gap-close.ts export-minted",

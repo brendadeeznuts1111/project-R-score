@@ -5,11 +5,14 @@
  * Vault health bake — cross-references config/vault-map.toml env refs against
  * LIVE Proton Pass item states, writes:
  *   public/registry/vault-health.json   (machine report)
- *   public/portal/secrets/index.html    (baked board)
+ *   public/portal/vault/index.html      (baked board / visual summary)
  *
  * Exits 1 when any env-referenced item is missing or trashed (purge time-bomb
  * detector) unless --no-fail. Requires an agent session:
  *   source scripts/agent-env.sh factorywager && bun run vault:health:bake
+ *
+ * CI gate (no live vault): portal-cli vault health → tests/vault-health.test.ts
+ * snapshots (inventory + report shape). Dashboard reflects bake; gate is snap.
  */
 import { joinPath } from '../lib/path-bun.ts';
 import { escapeHtml } from '../lib/escape-html.ts';

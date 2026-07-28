@@ -42,6 +42,23 @@ pass://factorywager/Cloudflare API Token/password
 - Mint/rotate only in the [Cloudflare dashboard](https://dash.cloudflare.com/profile/api-tokens), then **update the vault item**.
 - Runtime consumers read `CLOUDFLARE_API_TOKEN` after inject (MCP, Pages deploy, `cloudflare:env:*`).
 
+## Vault health (gate vs dashboard)
+
+| Layer | Command | Needs pass-cli session? | Role |
+|-------|---------|-------------------------|------|
+| **Gate (CI)** | `bun test tests/vault-health.test.ts` · `portal-cli vault health` | No | Report-shape + **env→vault inventory** snapshot SSOT in git (`tests/__snapshots__/vault-health.test.ts.snap`). Harness Gates step. |
+| **Intentional drift** | `portal-cli vault health --update` | No | Refresh inventory/shape snaps after you move/rename a mapped item; commit the `.snap`. |
+| **Live bake** | `bun run vault:health:bake` | Yes (agent session) | Cross-check live Proton Pass titles/states vs map; exit 1 on trashed/missing refs (purge risk). |
+| **Dashboard** | `/portal/vault/` · `public/registry/vault-health.json` | — | Visual summary of the last bake — not the gate. |
+
+```bash
+bun run vault:health                 # same as portal-cli vault health
+bun run vault:health:update          # intentional snap refresh
+source scripts/agent-env.sh factorywager && bun run vault:health:bake
+```
+
+Engine: [`lib/security/vault-health.ts`](../../../lib/security/vault-health.ts) · bake: [`tools/vault-health-bake.ts`](../../../tools/vault-health-bake.ts).
+
 ## Env inventory (code ↔ vault)
 
 Map harness `Bun.env.*` usage to `env.template` / Proton Pass refs (no secret values printed):

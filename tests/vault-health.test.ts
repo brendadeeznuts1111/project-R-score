@@ -1,5 +1,21 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/test/snapshots — toMatchSnapshot / --update-snapshots
+/**
+ * Vault health gate (offline-safe).
+ *
+ * - Engine unit tests: pure computeVaultHealth / parsers (fixtures only).
+ * - Report-shape snapshots: stable JSON contract for the bake/board payload.
+ * - Inventory snapshot: machine SSOT for env→vault/item paths the vault
+ *   *should* contain (from env.template + config/vault-map.toml). Move or
+ *   delete a mapped secret → this file fails until you intentionally update:
+ *     bun run portal-cli vault health --update
+ *     # or: bun test tests/vault-health.test.ts --update-snapshots
+ *
+ * Live Proton Pass state is NOT checked here (needs session). That is the
+ * bake gate: `bun run vault:health:bake` → public/portal/vault/ board.
+ */
 import { describe, expect, test } from 'bun:test';
+import { buildVaultMapBundle } from '../lib/security/vault-map.ts';
 import {
   computeVaultHealth,
   itemTitleFromRow,
@@ -108,5 +124,25 @@ describe('vault-health', () => {
       '2026-07-28T00:00:00Z'
     );
     expect(report).toMatchSnapshot();
+  });
+
+  /**
+   * Inventory SSOT — what the vault map claims must exist (no live pass-cli).
+   * Strips runtimePresent / generatedAt so the snap is env-independent in CI.
+   */
+  test('vault-map referenced inventory is stable (snapshot)', async () => {
+    const bundle = await buildVaultMapBundle({ env: {} });
+    const inventory = bundle.entries
+      .filter(e => e.vault && e.item)
+      .map(e => ({
+        envKey: e.envKey,
+        vault: e.vault,
+        item: e.item,
+        field: e.field,
+        inTemplate: e.inTemplate,
+        passRef: e.passRef,
+      }))
+      .sort((a, b) => a.envKey.localeCompare(b.envKey));
+    expect(inventory).toMatchSnapshot();
   });
 });
