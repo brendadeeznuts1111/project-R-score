@@ -64,12 +64,27 @@ Same call-sign spine across planes; org/Telegram in portal, Soft/capital in TOC.
       · assignOnboardingDefaults (expert, parent, cut)
       · onboardPartnerProfile (default-prospect)
       · attachProfileMessageTemplates (welcome/balances/status + phoneLabel)
+      · **optional compliance** `--state=NJ --age=28 --location=Newark --zip=07102`
+            → partner_state_licenses + partner_geo_profiles (state|age|location|zip) + identity_verified
       · enqueue partner.welcome + partner.onboard.complete (if telegram linked)
 4. telegram-link-chat <call-sign> tg:chat:…  → ChatChannelMeta + telegram_id
 5. telegram:ops:consume → render partner.welcome.v1 (HTML + keyboard)
 6. User taps Balances → balances.v1 (fresh Soft/hard, edit-capable)
 7. Only then: FUND → LIMIT → WARM×2 → WARMED (TOC Rope)
 ```
+
+### MA/NJ compliance on apply
+
+```bash
+bun tools/onboard-partner-package.ts ASH-001 \
+  --state=NJ --age=28 --location=Newark --zip=07102 --identity-verified
+
+# Telegram register (trailing tokens)
+/register <referral-id> Alice state=NJ age=28 zip=07102 loc=Newark
+```
+
+Checklist after apply includes license + geo rows. Portal board: `bun run compliance:bake` · `/portal/compliance/`.
+
 
 ### Rules
 

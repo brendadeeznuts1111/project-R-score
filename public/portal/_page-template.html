@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/portal/style.css" />
 </head>
 <body>
+  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
   <header class="topbar">
     <div class="topbar-inner">
       <h1 class="logo">
@@ -85,5 +86,7 @@
     const cached = getHealthData();
     if (cached) renderFromHealth({ status: 'stale', data: cached });
   </script>
+  <script type="module" src="/portal/components/sidebar.js"></script>
+  <script type="module" src="/portal/components/notification.js"></script>
 </body>
 </html>

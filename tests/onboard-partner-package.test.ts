@@ -15,6 +15,7 @@ import {
   resolvePackageGroupRequest,
 } from '../lib/operations/partner-onboard-package.ts';
 import { bindPartnerProfile } from '../lib/operations/partner-profile-bridge.ts';
+import { getPartnerGeoProfile } from '../lib/operations/state-regulation.ts';
 import { getChatChannelMeta } from '../lib/telegram/flows/channel-meta.ts';
 import { asTreeNodeId } from '../lib/types/branded/operations.ts';
 
@@ -217,6 +218,8 @@ describe('partner onboard package', () => {
     expect(unlinked.checklist.telegramLinked).toBe(false);
     expect(unlinked.checklist.consumeReady).toBe(false);
     expect(unlinked.lines.some(l => l.includes('telegram-link-chat'))).toBe(true);
+    expect(unlinked.lines.some(l => l.includes('State license'))).toBe(true);
+    expect(unlinked.lines.some(l => l.includes('Geo profile'))).toBe(true);
 
     db.run(`UPDATE tree_nodes SET telegram_id = '888001' WHERE id = $id`, { $id: agentId });
     bindPartnerProfile(db, tid);
@@ -224,6 +227,37 @@ describe('partner onboard package', () => {
     const linked = buildOnboardChecklist(db, tid);
     expect(linked.checklist.telegramLinked).toBe(true);
     expect(linked.lines.some(l => l.includes('Profile bound'))).toBe(true);
+    db.close();
+  });
+
+  test('apply with compliance stamps license + geo and checklist marks them', () => {
+    const db = openOperationsDb({ path: ':memory:' });
+    const now = new Date().toISOString();
+    const expertId = seedExpert(db, now);
+    const agentId = seedAgent(db, { callSign: 'NJX-001', expertId }, now);
+    const tid = asTreeNodeId(agentId);
+
+    const plan = planPartnerOnboardPackage(db, tid, { source: 'portal' });
+    const result = applyPartnerOnboardPackage(db, plan, {
+      source: 'portal',
+      compliance: {
+        stateCode: 'NJ',
+        age: 28,
+        location: 'Newark',
+        zipCode: '07102',
+      },
+    });
+    expect(result.status).toBe('ok');
+    expect(result.compliance?.applied).toBe(true);
+    expect(result.compliance?.stateCode).toBe('NJ');
+
+    const geo = getPartnerGeoProfile(db, tid);
+    expect(geo?.location).toBe('Newark');
+    expect(geo?.zipCode).toBe('07102');
+
+    const { lines } = buildOnboardChecklist(db, tid);
+    expect(lines.some(l => l.includes('[x] State license NJ'))).toBe(true);
+    expect(lines.some(l => l.includes('[x] Geo profile') && l.includes('Newark'))).toBe(true);
     db.close();
   });
 

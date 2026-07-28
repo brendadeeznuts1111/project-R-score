@@ -4,6 +4,7 @@ import { openOperationsDb } from '../lib/operations/db.ts';
 import {
   applyPartnerComplianceOnboard,
   parseComplianceOnboardFields,
+  splitComplianceKvTokens,
 } from '../lib/operations/partner-compliance-onboard.ts';
 import { ComplianceRepository, getPartnerGeoProfile } from '../lib/operations/state-regulation.ts';
 import { asTreeNodeId } from '../lib/types/branded.ts';
@@ -60,5 +61,21 @@ describe('partner-compliance-onboard', () => {
     expect(opts?.age).toBe(32);
     expect(opts?.zipCode).toBe('02108');
     expect(opts?.identityVerified).toBe(true);
+  });
+
+  test('splitComplianceKvTokens peels state= age= loc= zip= from name words', () => {
+    const { plain, compliance } = splitComplianceKvTokens([
+      'Alice',
+      'Chen',
+      'state=NJ',
+      'age=28',
+      'loc=Newark',
+      'zip=07102',
+    ]);
+    expect(plain).toEqual(['Alice', 'Chen']);
+    expect(compliance?.stateCode).toBe('NJ');
+    expect(compliance?.age).toBe(28);
+    expect(compliance?.location).toBe('Newark');
+    expect(compliance?.zipCode).toBe('07102');
   });
 });

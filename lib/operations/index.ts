@@ -177,6 +177,7 @@ export {
 export {
   applyPartnerComplianceOnboard,
   parseComplianceOnboardFields,
+  splitComplianceKvTokens,
   type PartnerComplianceOnboardOpts,
   type PartnerComplianceOnboardResult,
 } from './partner-compliance-onboard.ts';

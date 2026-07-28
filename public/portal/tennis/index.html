@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="/portal/style.css" />
 </head>
 <body>
+  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
   <header class="topbar">
     <img src="/icons/tennis/mark.svg" alt="tennis" class="brand-icon" style="height:24px;vertical-align:middle;margin-right:8px">
     <div class="topbar-inner">
@@ -95,5 +96,7 @@
     const cached = getHealthData();
     if (cached) renderFromHealth({ status: 'stale', data: cached });
   </script>
+  <script type="module" src="/portal/components/sidebar.js"></script>
+  <script type="module" src="/portal/components/notification.js"></script>
 </body>
 </html>

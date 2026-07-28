@@ -4,6 +4,7 @@
 import { describe, expect, test } from 'bun:test';
 import { randomUUIDv7 } from 'bun';
 import { initSchema } from '../lib/operations/schema.ts';
+import { getPartnerGeoProfile } from '../lib/operations/state-regulation.ts';
 import { getChatChannelMeta } from '../lib/telegram/flows/channel-meta.ts';
 import {
   dispatchOpsFlowOutput,
@@ -63,6 +64,46 @@ describe('ops-commands flow dispatch', () => {
     const meta = getChatChannelMeta(db, '7777');
     expect(meta?.chatId).toBe('7777');
     expect(meta?.treeNodeIds.length).toBe(1);
+    db.close();
+  });
+
+  test('handleOpsRegister applies trailing state= age= zip= loc= compliance', async () => {
+    const db = new (await import('bun:sqlite')).Database(':memory:');
+    initSchema(db);
+    const now = new Date().toISOString();
+    const parentId = randomUUIDv7();
+    db.run(
+      `INSERT INTO tree_nodes (id, type, name, telegram_id, active, created_at)
+       VALUES ($pid, 'partner', 'Parent', NULL, 1, $now)`,
+      { $pid: parentId, $now: now }
+    );
+
+    const reply = handleOpsRegister(db, asTelegramUserId('8888'), [
+      parentId,
+      'Alice',
+      'Chen',
+      'state=NJ',
+      'age=28',
+      'loc=Newark',
+      'zip=07102',
+    ]);
+    expect(reply).toContain('Registered');
+    expect(reply).toContain('Compliance');
+    expect(reply).toContain('NJ');
+
+    const meta = getChatChannelMeta(db, '8888');
+    expect(meta?.treeNodeIds.length).toBe(1);
+    const nodeId = meta!.treeNodeIds[0]!;
+    const geo = getPartnerGeoProfile(db, nodeId);
+    expect(geo?.stateCode).toBe('NJ');
+    expect(geo?.age).toBe(28);
+    expect(geo?.location).toBe('Newark');
+    expect(geo?.zipCode).toBe('07102');
+
+    const name = db
+      .query('SELECT name FROM tree_nodes WHERE id = $id')
+      .get({ $id: nodeId as string }) as { name: string };
+    expect(name.name).toBe('Alice Chen');
     db.close();
   });
 });

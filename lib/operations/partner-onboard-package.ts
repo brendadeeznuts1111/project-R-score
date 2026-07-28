@@ -31,6 +31,7 @@ import {
   type PartnerComplianceOnboardOpts,
   type PartnerComplianceOnboardResult,
 } from './partner-compliance-onboard.ts';
+import { ensureStateRegulationSchema, getPartnerGeoProfile } from './state-regulation.ts';
 import type { PartnerProfileBinding } from './partner-profile-bridge.ts';
 import { formatPackageGroupTitle } from '../telegram/surfaces.ts';
 import {
@@ -522,6 +523,29 @@ export function buildOnboardChecklist(
     `  [${linked ? 'x' : ' '}] Telegram linked for ${ctx.callSign ?? ctx.name}`,
     `  [ ] Welcome outbox pending: ${ctx.pendingWelcomeCount}`,
   ];
+
+  // Optional MA/NJ surface (present after --state= / Telegram state= onboarding)
+  ensureStateRegulationSchema(db);
+  const license = db
+    .query(
+      `SELECT state_code, status FROM partner_state_licenses
+       WHERE node_id = $id ORDER BY granted_at DESC LIMIT 1`
+    )
+    .get({ $id: treeNodeId as string }) as { state_code: string; status: string } | null;
+  const geo = getPartnerGeoProfile(db, treeNodeId);
+  if (license) {
+    lines.push(`  [x] State license ${license.state_code} (${license.status})`);
+  } else {
+    lines.push('  [ ] State license (optional: --state=MA|NJ)');
+  }
+  if (geo) {
+    lines.push(
+      `  [x] Geo profile state=${geo.stateCode} age=${geo.age ?? '—'} loc=${geo.location ?? '—'} zip=${geo.zipCode ?? '—'}`
+    );
+  } else {
+    lines.push('  [ ] Geo profile (state|age|location|zip)');
+  }
+
   if (!transport.ready && transport.missing.length) {
     lines.push(`  → missing: ${transport.missing.join(', ')} (bun run telegram:verify)`);
   }
@@ -538,6 +562,7 @@ export function buildOnboardChecklist(
   lines.push(
     '  → TOC capital path: FUND → LIMIT → WARM×2 → WARMED (docs/harness/tenants/toc-ops.md)'
   );
+  lines.push('  → compliance board: bun run compliance:bake · /portal/compliance/');
 
   return { lines, checklist };
 }

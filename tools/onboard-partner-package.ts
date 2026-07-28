@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Apply standard partner onboarding package to a tree node / call-sign.
  *
@@ -8,8 +9,10 @@
  *   bun tools/onboard-partner-package.ts ASH-001
  *   bun tools/onboard-partner-package.ts ASH-001 --dry-run
  *   bun tools/onboard-partner-package.ts ASH-001 --create-package-group
+ *   bun tools/onboard-partner-package.ts ASH-001 --state=NJ --age=28 --location=Newark --zip=07102
  */
 import { openOperationsDb } from '../lib/operations/db.ts';
+import { parseComplianceOnboardFields } from '../lib/operations/partner-compliance-onboard.ts';
 import {
   applyPartnerOnboardPackage,
   buildOnboardChecklist,
@@ -20,10 +23,21 @@ import {
   resolveOnboardTreeNodeId,
 } from '../lib/operations/partner-onboard-package.ts';
 
+function flag(name: string): string | undefined {
+  const hit = process.argv.find(a => a.startsWith(`--${name}=`));
+  return hit?.slice(name.length + 3);
+}
+
 const ref = process.argv[2];
 if (!ref || ref.startsWith('--')) {
   console.error(
-    'Usage: bun tools/onboard-partner-package.ts <call-sign|tree-node-id> [--dry-run] [--force] [--create-package-group] [--expert-id=…] [--parent-id=…]'
+    [
+      'Usage: bun tools/onboard-partner-package.ts <call-sign|tree-node-id>',
+      '  [--dry-run] [--force] [--create-package-group]',
+      '  [--expert-id=…] [--parent-id=…]',
+      '  [--state=MA|NJ] [--age=N] [--location=City] [--zip=#####] [--license=…]',
+      '  [--identity-verified]  # force identity_verified=true',
+    ].join('\n')
   );
   process.exit(1);
 }
@@ -31,8 +45,16 @@ if (!ref || ref.startsWith('--')) {
 const dryRun = process.argv.includes('--dry-run');
 const force = process.argv.includes('--force');
 const createPackageGroup = process.argv.includes('--create-package-group');
-const expertFlag = process.argv.find(a => a.startsWith('--expert-id='));
-const parentFlag = process.argv.find(a => a.startsWith('--parent-id='));
+const identityVerified = process.argv.includes('--identity-verified');
+
+const compliance = parseComplianceOnboardFields({
+  state: flag('state'),
+  age: flag('age'),
+  location: flag('location'),
+  zip: flag('zip'),
+  licenseNumber: flag('license'),
+  identityVerified: identityVerified ? true : undefined,
+});
 
 const db = openOperationsDb();
 try {
@@ -41,9 +63,16 @@ try {
     source: 'portal' as const,
     dryRun,
     force,
-    preferredExpertId: expertFlag?.split('=')[1],
-    referralNodeId: parentFlag?.split('=')[1],
+    preferredExpertId: flag('expert-id'),
+    referralNodeId: flag('parent-id'),
+    compliance,
   };
+
+  if (compliance) {
+    console.log(
+      `compliance: state=${compliance.stateCode} age=${compliance.age ?? '—'} loc=${compliance.location ?? '—'} zip=${compliance.zipCode ?? '—'}`
+    );
+  }
 
   const plan = planPartnerOnboardPackage(db, treeNodeId, opts);
   for (const line of formatOnboardPlanLines(plan)) console.log(line);

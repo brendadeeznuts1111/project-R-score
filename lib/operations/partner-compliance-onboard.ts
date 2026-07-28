@@ -136,3 +136,34 @@ export function parseComplianceOnboardFields(input: {
     identityVerified,
   };
 }
+
+/**
+ * Split free-form tokens into plain words vs `key=value` compliance fields.
+ * Used by Telegram `/register <ref> <name…> state=NJ age=28 zip=##### loc=City`.
+ *
+ * Aliases: loc→location, zipcode→zip, idv|identity_verified→identityVerified, license→licenseNumber.
+ */
+export function splitComplianceKvTokens(tokens: string[]): {
+  plain: string[];
+  compliance?: PartnerComplianceOnboardOpts;
+} {
+  const plain: string[] = [];
+  const kv: Record<string, string> = {};
+  for (const part of tokens) {
+    const m = /^([a-zA-Z_][a-zA-Z0-9_]*)=(.*)$/.exec(part);
+    if (m) {
+      kv[m[1].toLowerCase()] = m[2];
+    } else {
+      plain.push(part);
+    }
+  }
+  const compliance = parseComplianceOnboardFields({
+    state: kv.state ?? kv.statecode,
+    age: kv.age,
+    location: kv.location ?? kv.loc,
+    zip: kv.zip ?? kv.zipcode,
+    licenseNumber: kv.license ?? kv.licensenumber,
+    identityVerified: kv.idv ?? kv.identity_verified ?? kv.identityverified,
+  });
+  return { plain, compliance };
+}

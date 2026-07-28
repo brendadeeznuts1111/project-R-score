@@ -8,6 +8,10 @@ import { DODVerifier } from '../dod/verifier.ts';
 import { asTreeNodeId } from '../types/branded/operations.ts';
 import { asTelegramUserId, type TelegramUserId } from '../types/branded/portal.ts';
 import { onboardPartnerProfile } from '../operations/partner-onboarding.ts';
+import {
+  applyPartnerComplianceOnboard,
+  splitComplianceKvTokens,
+} from '../operations/partner-compliance-onboard.ts';
 import { enqueuePartnerWelcomeEvent } from '../channels/outbox.ts';
 import { flowOutputToPlainText } from './flows/deliver.ts';
 import { commandToFlowId, runFlow } from './flows/registry.ts';
@@ -88,8 +92,11 @@ export function handleOpsRegister(
   const existing = findNodeByTelegram(db, telegramUserId);
   if (existing) return '✅ Already registered.';
 
-  const [refId, ...nameParts] = args;
-  if (!refId || !nameParts.length) return 'Usage: `/register <referral-id> <your-name>`';
+  const [refId, ...rest] = args;
+  const { plain: nameParts, compliance } = splitComplianceKvTokens(rest);
+  if (!refId || !nameParts.length) {
+    return 'Usage: `/register <referral-id> <your-name> [state=MA|NJ age=N zip=##### loc=City]`';
+  }
 
   const name = nameParts.join(' ');
   const parent = db
@@ -136,7 +143,19 @@ export function handleOpsRegister(
     });
   }
 
-  return [`✅ Registered as sub-agent of *${parent.name}*`, `Your ID: \`${newId}\``].join('\n');
+  const lines = [`✅ Registered as sub-agent of *${parent.name}*`, `Your ID: \`${newId}\``];
+  if (compliance) {
+    const reg = applyPartnerComplianceOnboard(db, treeNodeId, compliance);
+    if (reg.applied) {
+      lines.push(
+        `Compliance: *${reg.stateCode}* license+geo` +
+          (reg.identityVerified ? ' · identity verified' : '')
+      );
+    } else if (reg.skippedReason) {
+      lines.push(`Compliance skipped: ${reg.skippedReason}`);
+    }
+  }
+  return lines.join('\n');
 }
 
 export function handleOpsVerifyDod(
