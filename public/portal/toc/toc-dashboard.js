@@ -25,27 +25,59 @@ async function loadToc() {
   const complianceBoard = await loadComplianceBoard();
   const embed = parseEmbed();
   if (embed?.partners) {
-    const loop = embed.opsLoop ?? (await loadOpsLoopSlice());
-    return { mode: 'embed', data: embed, loop, complianceBoard };
+    const extras = await loadOpsSummaryExtras(embed.opsLoop);
+    return {
+      mode: 'embed',
+      data: embed,
+      loop: extras.loop,
+      limitChangeCount: extras.limitChangeCount,
+      complianceBoard,
+    };
   }
   try {
     const data = await fetchJson('/api/toc');
-    const loop = data.opsLoop ?? (await loadOpsLoopSlice());
-    return { mode: data.mode || 'api', data, loop, complianceBoard };
+    const extras = await loadOpsSummaryExtras(data.opsLoop);
+    return {
+      mode: data.mode || 'api',
+      data,
+      loop: extras.loop,
+      limitChangeCount: extras.limitChangeCount,
+      complianceBoard,
+    };
   } catch {
     const data = await fetchJson('/registry/toc-ops.json');
-    const loop = data.opsLoop ?? (await loadOpsLoopSlice());
-    return { mode: 'registry', data, loop, complianceBoard };
+    const extras = await loadOpsSummaryExtras(data.opsLoop);
+    return {
+      mode: 'registry',
+      data,
+      loop: extras.loop,
+      limitChangeCount: extras.limitChangeCount,
+      complianceBoard,
+    };
+  }
+}
+
+/**
+ * One ops-summary fetch: loop slice + optional limitChanges length for the
+ * sportsbook raises callout (not TOC LIMIT tasks / fixture limitHistory).
+ */
+async function loadOpsSummaryExtras(embedLoop) {
+  try {
+    const summary = await fetchJson('/registry/ops-summary.json');
+    return {
+      loop: embedLoop ?? summary?.loop ?? null,
+      limitChangeCount: Array.isArray(summary?.limitChanges)
+        ? summary.limitChanges.length
+        : null,
+    };
+  } catch {
+    return { loop: embedLoop ?? null, limitChangeCount: null };
   }
 }
 
 async function loadOpsLoopSlice() {
-  try {
-    const summary = await fetchJson('/registry/ops-summary.json');
-    return summary?.loop ?? null;
-  } catch {
-    return null;
-  }
+  const extras = await loadOpsSummaryExtras(null);
+  return extras.loop;
 }
 
 async function loadComplianceBoard() {
@@ -670,6 +702,29 @@ function renderPresenceRollup(presence, house) {
 }
 
 /**
+ * Lightweight join to partner multi-factor raises board.
+ * Not TOC LIMIT task queue · not fixture limitHistory dual-write.
+ */
+function renderLimitsCallout(limitChangeCount) {
+  const countLine =
+    limitChangeCount != null
+      ? `<span>${esc(String(limitChangeCount))} recent ops-summary change(s)</span>`
+      : `<span>Multi-factor raises · separate from LIMIT task / maxBet desk terms</span>`;
+  return `<section class="toc-section" id="limits-callout">
+    ${sectionHead(
+      'Sportsbook limit raises',
+      'Account raise detection (SQLite / limit-raises bake) — not TOC LIMIT tasks'
+    )}
+    <div class="toc-buffer">
+      <span class="toc-buffer-label">Limits</span>
+      ${countLine}
+      <a href="/portal/limits/">Sportsbook limit raises → /portal/limits/</a>
+      <a href="/registry/limit-raises.json">limit-raises.json</a>
+    </div>
+  </section>`;
+}
+
+/**
  * MA/NJ regulatory board glance — loads /registry/compliance-board.json
  * (shared with /portal/compliance/ and ops-summary.compliance).
  */
@@ -1289,7 +1344,7 @@ function renderPartners(partners, assetBySign, limitBySign) {
   </section>`;
 }
 
-function render(root, { mode, data, loop, complianceBoard }) {
+function render(root, { mode, data, loop, complianceBoard, limitChangeCount }) {
   const s = data.summary || {};
   const buf = data.buffer || {};
   const partners = data.partners || [];
@@ -1307,6 +1362,7 @@ function render(root, { mode, data, loop, complianceBoard }) {
     ${renderHero({ mode, data, plane, enf, flow })}
     ${renderAgentBrief({ mode, data, plane, enf, flow, identity })}
     ${renderComplianceBoard(complianceBoard)}
+    ${renderLimitsCallout(limitChangeCount)}
 
     <section class="toc-section" id="rollup">
       ${sectionHead('Rollup', 'Drum readiness and open work')}
@@ -1365,6 +1421,7 @@ function render(root, { mode, data, loop, complianceBoard }) {
       · <a href="/api/toc"><code>/api/toc</code></a>
       · <a href="/portal/ops">Ops rollup</a>
       · <a href="/portal/compliance/">Compliance board</a>
+      · <a href="/portal/limits/">Sportsbook limit raises</a>
       · seed <code>bun run ops:seed:toc -- --force</code>
       · <code>bun run compliance:bake</code>
     </footer>

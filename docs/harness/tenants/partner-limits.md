@@ -182,5 +182,14 @@ chargebacks / volatility **lower** score). SSOT: `MULTI_FACTOR_WEIGHTS` /
   after record
 - [`compliance-portal.md`](compliance-portal.md) — sibling portal board pattern
 - [`public-plane.md`](public-plane.md) — portal static / registry plane
+- [`toc-ops.md`](toc-ops.md) — TOC desk fixture · **LIMIT task** (account
+  limit-refresh work) is not a sportsbook **limit raise** · not seat
+  **maxBet** terms
+- [`telegram-factory.md`](telegram-factory.md) — package bot / outbox plane
+  (alerts may fan out; desk UI is `/portal/limits/`)
+- [`partner-onboarding-package.md`](partner-onboarding-package.md) — onboard
+  package · flow cards before raises land
+- [`seat-capital-desk.md`](seat-capital-desk.md) — per-out **maxBet** /
+  freeplay desk vocabulary (terms, not raise detection)
 - [Bun.inspect.table](https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options)
   · [inspect.custom](https://bun.com/docs/runtime/utils#bun-inspect-custom)

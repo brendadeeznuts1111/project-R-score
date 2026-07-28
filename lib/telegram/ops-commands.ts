@@ -23,6 +23,8 @@ import {
 } from './flows/seat-telegram.ts';
 import type { FlowOutput } from './flows/types.ts';
 import { gateFactoryCommand } from './ops-acl.ts';
+import { AccountLimitsRepository } from '../account-limits-repo.ts';
+import { PartnerAnalyticsRepository } from '../operations/partner-analytics-repo.ts';
 
 export type OpsTreeNode = {
   id: string; // brand-ok
@@ -190,14 +192,17 @@ export function handleOpsVerifyDod(
 /** `/limits` — show recent limit increases for the partner. */
 export function handleOpsLimits(db: Database, node: OpsTreeNode | null): string {
   if (!node) return '❌ Not registered';
-  const { AccountLimitsRepository } =
-    require('../account-limits-repo.ts') as typeof import('../account-limits-repo.ts');
   const repo = new AccountLimitsRepository(db);
   const since = Math.floor(Date.now() / 1000) - 48 * 3600;
   const raises = repo.detectRaises(node.id, since);
   const decreases = repo.detectDecreases(node.id, since);
   if (raises.length === 0 && decreases.length === 0) {
-    return '📋 No recent limit changes in the last 48h.\n\nUse `/limits refresh` to re-check or `bun run ops:limits:demo` to seed test data.';
+    return [
+      '📋 No recent limit changes in the last 48h.',
+      '',
+      'Use `/limits` again to re-check or `bun run ops:limits:demo` to seed test data.',
+      'Portal: /portal/limits/ · /portal/partner-history/',
+    ].join('\n');
   }
   const lines: string[] = ['📊 *Limit Changes* (48h)'];
   if (raises.length > 0) {
@@ -210,6 +215,26 @@ export function handleOpsLimits(db: Database, node: OpsTreeNode | null): string 
       lines.push(
         `• ${r.sportsbook} ${r.sport_id}/${r.market_id}: $${r.previous_max} → *$${r.new_limit}*${pct}`
       );
+    }
+    // Multi-factor score for first raise when context is available (keep short for Telegram)
+    try {
+      const analytics = new PartnerAnalyticsRepository(db, node.id);
+      const enriched = analytics.getEnrichedRaisesWithContext(since);
+      const first = raises[0];
+      const match = enriched.find(
+        e =>
+          e.sportsbook === first.sportsbook &&
+          e.sport_id === first.sport_id &&
+          e.market_id === first.market_id &&
+          e.bet_type === first.bet_type
+      );
+      if (match?.multi_factor_score != null && Number.isFinite(match.multi_factor_score)) {
+        const pctScore = Math.round(match.multi_factor_score * 100);
+        const drivers = (match.top_contributing_factors ?? []).slice(0, 3).join(', ');
+        lines.push(`🧮 Multi-factor: *${pctScore}%*` + (drivers ? ` · ${drivers}` : ''));
+      }
+    } catch {
+      // analytics optional — omit score line if context unavailable
     }
   }
   if (decreases.length > 0) {
@@ -226,7 +251,11 @@ export function handleOpsLimits(db: Database, node: OpsTreeNode | null): string 
   }
   const total = raises.length + decreases.length;
   lines.push('', `Total: ${total} change(s) · 🚀${raises.length} ⬇️${decreases.length}`);
-  lines.push('', 'Use `/limits` again to refresh. Portal: /portal/partner-history/');
+  lines.push(
+    '',
+    'Use `/limits` again to refresh.',
+    'Portal: /portal/limits/ · history: /portal/partner-history/'
+  );
   return lines.join('\n');
 }
 export function dispatchOpsFlowOutput(
@@ -271,6 +300,7 @@ export function dispatchOpsCommand(db: Database, dbPath: string, input: OpsComma
       return handleOpsVerifyDod(db, dbPath, node, input.args);
     case '/limits':
       return handleOpsLimits(db, node);
+    default:
       return 'Unknown command. Try /help';
   }
 }

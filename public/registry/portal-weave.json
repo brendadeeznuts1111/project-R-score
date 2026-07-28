@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T14:02:47.284Z",
+  "generated": "2026-07-28T14:19:10.102Z",
   "surfaces": [
     {
       "label": "Home",
@@ -22,7 +22,7 @@
     {
       "label": "Monitoring",
       "href": "/monitoring/",
-      "note": "routing · env · compliance tile"
+      "note": "routing · env · compliance tile · limitRaises / limits board"
     },
     {
       "label": "DOD queue",

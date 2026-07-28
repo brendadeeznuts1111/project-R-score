@@ -35,7 +35,9 @@ const TEMPLATE = `
   <div class="lcc-toolbar">
     <span id="lcc-title" style="font-weight:600;flex:1">Limit changes</span>
     <button id="lcc-export" title="Download CSV">⬇ CSV</button>
-    <a id="lcc-link" href="/portal/limits/">📊 Details</a>
+    <a id="lcc-link" href="/portal/limits/" title="Limits board">📊 Limits</a>
+    <a href="/portal/partner-history/" title="Partner history">Partners</a>
+    <a href="/registry/limit-raises.json" title="Baked registry JSON">JSON</a>
   </div>
   <div id="lcc-summary" class="lcc-summary"></div>
   <div id="lcc-table-wrap"></div>

@@ -41,7 +41,11 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     note: 'C4/C5 · TOC · loop · compliance panel',
   },
   { label: 'TOC Ops', href: '/portal/toc/', note: 'Drum/Buffer/Rope · MA/NJ board glance' },
-  { label: 'Monitoring', href: '/monitoring/', note: 'routing · env · compliance tile' },
+  {
+    label: 'Monitoring',
+    href: '/monitoring/',
+    note: 'routing · env · compliance tile · limitRaises / limits board',
+  },
   { label: 'DOD queue', href: '/portal/dod/', note: 'visual proof review' },
   {
     label: 'Compliance',

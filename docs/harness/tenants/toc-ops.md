@@ -41,6 +41,8 @@ Two planes. Cloudflare MCP is **not** a TOC desk API — it only helps deploy/in
 
 **Partner identity bridge** ([`ops-partner-bridge.md`](ops-partner-bridge.md)) gates FactoryWager plays; it does not own Soft Balance, rail confirm, or MessageLog.
 
+**Sportsbook limit raises** (multi-factor maxBet/account raise detection, SQLite + `/portal/limits/`) are a separate plane from TOC **LIMIT** tasks (freshness / limit-refresh work on the Drum). Do not dual-write fixture `limitHistory` into raise rows — see [`partner-limits.md`](partner-limits.md). The TOC board only cross-links that board (optional `ops-summary.limitChanges` count).
+
 **Cloudflare MCP** ([`cloudflare-pages.md`](cloudflare-pages.md) · [`.mcp.json`](../../../.mcp.json)): platform account/docs/bindings/builds/observability only. No TOC Ops MCP server. Pages serves baked `/registry/toc-ops.json` as ASSETS.
 
 ## Artifacts

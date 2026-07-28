@@ -167,3 +167,5 @@ Long-poll [`lib/telegram/ops-bot.ts`](../../../lib/telegram/ops-bot.ts) is **dev
 - [`lib/telegram/README.md`](../../../lib/telegram/README.md)
 - [`partner-onboarding-package.md`](partner-onboarding-package.md)
 - [`ops-partner-bridge.md`](ops-partner-bridge.md)
+- [`partner-limits.md`](partner-limits.md) — sportsbook limit raises board
+  (`/portal/limits/`); not TOC LIMIT tasks · not seat maxBet terms

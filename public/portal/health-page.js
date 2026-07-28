@@ -433,6 +433,36 @@ function renderCards(d) {
     </article>`);
   }
 
+  // Optional limit-raises bake (artifacts.limitRaises). Missing bake is optional — not degraded.
+  const lr = d.artifacts?.limitRaises;
+  if (lr && typeof lr === 'object') {
+    const lrCls = !lr.exists ? 'warn' : lr.ok ? 'ok' : 'bad';
+    const lrVal = !lr.exists
+      ? 'missing'
+      : lr.raises != null
+        ? String(lr.raises)
+        : lr.ok
+          ? 'ok'
+          : '—';
+    const lrSub = !lr.exists
+      ? 'optional bake · bun run ops:snapshot'
+      : [
+          lr.partners != null ? `${lr.partners} partners` : null,
+          lr.lookbackHours != null ? `${lr.lookbackHours}h lookback` : null,
+          lr.generated ? String(lr.generated).slice(0, 19) : null,
+        ]
+          .filter(Boolean)
+          .join(' · ');
+    const lrPortal = esc(lr.portal || '/portal/limits/');
+    const lrPath = esc(lr.path || '/registry/limit-raises.json');
+    html.push(`<article class="health-card ${lrCls}" data-card="limit-raises">
+      <h3>Limit raises</h3>
+      <div class="val">${esc(lrVal)}</div>
+      <div class="sub">${esc(lrSub || (lr.exists ? 'board' : 'optional bake'))}</div>
+      <div class="sub"><a class="ops-link" href="${lrPortal}">portal/limits</a> · <a class="ops-link" href="${lrPath}">registry</a> · <a class="ops-link" href="/api/limits/summary">API</a></div>
+    </article>`);
+  }
+
   $('cards').innerHTML = html.join('');
   void fillDefaultsCard(d.defaults);
 }

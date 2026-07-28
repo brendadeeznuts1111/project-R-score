@@ -111,6 +111,9 @@ class OperationsDashboard extends HTMLElement {
               <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>Influence</th><th>When</th></tr></thead>
               <tbody id="limits-tbody"></tbody>
             </table>
+            <a class="ops-link" href="/portal/limits/">Limits board</a>
+            <a class="ops-link" href="/portal/partner-history/">Partner history</a>
+            <a class="ops-link" href="/registry/limit-raises.json">limit-raises.json</a>
           </section>
           <section class="ops-panel">
             <h2>Ops channels</h2>

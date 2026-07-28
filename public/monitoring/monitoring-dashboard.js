@@ -258,6 +258,30 @@ export function renderMonitoringDashboard(payload) {
           : '',
         '/portal/compliance/'
       ),
+      card(
+        'Limit raises',
+        mon.limitRaises?.available
+          ? mon.limitRaises.raises != null
+            ? String(mon.limitRaises.raises)
+            : mon.limitRaises.ok
+              ? 'ok'
+              : '—'
+          : '—',
+        mon.limitRaises?.available
+          ? [
+              mon.limitRaises.partners != null ? `${mon.limitRaises.partners} partners` : null,
+              mon.limitRaises.lookbackHours != null
+                ? `${mon.limitRaises.lookbackHours}h lookback`
+                : null,
+              mon.limitRaises.generatedAt ? fmtTime(mon.limitRaises.generatedAt) : null,
+              mon.limitRaises.ok ? 'ok' : 'fail',
+            ]
+              .filter(Boolean)
+              .join(' · ')
+          : 'run ops:snapshot · /registry/limit-raises.json',
+        mon.limitRaises?.available ? (mon.limitRaises.ok ? 'ok' : 'bad') : '',
+        mon.limitRaises?.portal || '/portal/limits/'
+      ),
       card('Platforms', Object.values(mon.platformSummary || {}).reduce((a, b) => a + b, 0) || '0', `api yes ${mon.platformApiAvailable?.yes ?? 0} · no ${mon.platformApiAvailable?.no ?? 0}`),
       card('Experiments', mon.experimentsActive ?? 0),
       card('Prediction', mon.predictionN ?? 0, mon.predictionN ? 'coverage report available' : '', mon.predictionN ? 'ok' : '', mon.predictionN ? '/registry/prediction/report/' : ''),
@@ -284,10 +308,12 @@ export function renderMonitoringDashboard(payload) {
       <section class="mon-section mon-actions">
         <a href="/portal/ops/">Ops dashboard</a>
         <a href="/portal/dod/">DOD queue</a>
+        <a href="/portal/limits/">Limit raises</a>
         <a href="/portal/skills/">Skills</a>
         <a href="/portal/health/">Health</a>
         <a href="/api/monitoring">JSON</a>
         <a href="/registry/monitoring.json">Snapshot</a>
+        <a href="/registry/limit-raises.json">limit-raises.json</a>
         <a href="/registry/prediction/report/">Prediction report</a>
         <a href="/registry/portal-weave.json">Portal weave</a>
         <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki index</a>
