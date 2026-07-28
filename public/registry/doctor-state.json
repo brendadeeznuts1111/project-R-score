@@ -1,16 +1,16 @@
 {
   "kind": "portal-doctor-state",
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T21:58:02.436Z",
+  "generatedAt": "2026-07-28T22:14:43.065Z",
   "ok": true,
   "tone": "green",
   "full": false,
   "summary": {
-    "checkCount": 18,
-    "passed": 18,
+    "checkCount": 19,
+    "passed": 19,
     "failed": 0,
     "fatal": 10,
-    "warn": 6,
+    "warn": 7,
     "info": 2,
     "failedFatal": 0,
     "failedWarn": 0,
@@ -39,7 +39,7 @@
       "fatalFailed": 0
     },
     "infra": {
-      "total": 2,
+      "total": 3,
       "failed": 0,
       "fatalFailed": 0
     }
@@ -66,7 +66,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/vault-health.json present · 4h ago",
+      "message": "public/registry/vault-health.json present · 5h ago",
       "autoFixable": true
     },
     {
@@ -74,7 +74,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/capability-map-subset.json present · 26m ago",
+      "message": "public/registry/capability-map-subset.json present · 43m ago",
       "autoFixable": true
     },
     {
@@ -174,6 +174,14 @@
       "autoFixable": false
     },
     {
+      "id": "infra-access-policy",
+      "group": "infra",
+      "level": "warn",
+      "ok": true,
+      "message": ".cloudflare-access.yml valid · ledger=yes · portal=yes",
+      "autoFixable": false
+    },
+    {
       "id": "infra-ledger-access",
       "group": "infra",
       "level": "fatal",
@@ -193,5 +201,6 @@
   "cli": "bun run portal:doctor",
   "board": "/portal/doctor/",
   "href": "/registry/doctor-state.json",
-  "fingerprint": "727f9ba80150b0b2a5f0e1b8685598232fb2e8b3e0aa74181936c3682066c931"
+  "fingerprintPortable": true,
+  "fingerprint": "5efcb0f274e01cf8eb1c7e75d1aa82cd2c9b2c153c5a1642141ac6f964dd31c0"
 }

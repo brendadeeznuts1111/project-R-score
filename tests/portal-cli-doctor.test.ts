@@ -309,8 +309,13 @@ describe('portal-cli doctor pure', () => {
     };
     expect(doctorStateFingerprint(a)).toBe(doctorStateFingerprint(b));
     expect(doctorStateFingerprint(a)).toMatch(/^[0-9a-f]{64}$/);
-    const drift = diffDoctorStates(a, { ...a, tone: 'red' as const });
-    expect(drift.some(l => l.startsWith('tone:'))).toBe(true);
+    // Portable fingerprint recomputes tone from checks — flip a check ok to drift.
+    const drifted = {
+      ...a,
+      checks: a.checks.map((c, i) => (i === 0 ? { ...c, ok: false } : c)),
+    };
+    const drift = diffDoctorStates(a, drifted);
+    expect(drift.some(l => l.startsWith('check '))).toBe(true);
   });
 
   test('parseDoctorGroupsFromArgv supports multi and comma groups', () => {
