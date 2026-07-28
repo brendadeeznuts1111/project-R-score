@@ -2,24 +2,34 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
- * Bake AGENTS.md grounded capability map → public/registry/capability-map-subset.json
+ * Bake AGENTS.md grounded capability map → registry JSON.
  *
  *   bun run bake:capabilities
- *   bun run bake:capabilities:check   # fail if registry file stale
+ *   bun run bake:capabilities:check   # fail if registry files stale
  *   bun tools/bake-capability-map.ts --write|--check
+ *
+ * Writes:
+ *   public/registry/capability-map-subset.json  (tools hub / packages panel)
+ *   public/registry/capability-map-full.json    (debug / portal docs)
  */
 import { joinPath } from '../lib/path-bun.ts';
 import {
+  buildCapabilityMapFull,
   buildCapabilityMapSubset,
+  capabilityMapFullFingerprint,
   capabilityMapSubsetFingerprint,
+  CAPABILITY_MAP_FULL_REL,
   CAPABILITY_MAP_SUBSET_REL,
+  serializeCapabilityMapFull,
   serializeCapabilityMapSubset,
+  type CapabilityMapFull,
   type CapabilityMapSubset,
 } from '../lib/portal/capability-map-subset.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 const AGENTS = joinPath(ROOT, 'AGENTS.md');
-const OUT = joinPath(ROOT, CAPABILITY_MAP_SUBSET_REL);
+const OUT_SUBSET = joinPath(ROOT, CAPABILITY_MAP_SUBSET_REL);
+const OUT_FULL = joinPath(ROOT, CAPABILITY_MAP_FULL_REL);
 const CHECK = Bun.argv.includes('--check');
 const WRITE = Bun.argv.includes('--write') || (!CHECK && !Bun.argv.includes('--help'));
 
@@ -27,37 +37,64 @@ async function main(): Promise<void> {
   if (Bun.argv.includes('--help') || Bun.argv.includes('-h')) {
     console.log(`Usage: bun tools/bake-capability-map.ts [--write] [--check]
 
-  --write   Parse AGENTS.md and write ${CAPABILITY_MAP_SUBSET_REL} (default)
-  --check   Fail if registry file missing or out of sync with AGENTS.md
+  --write   Parse AGENTS.md and write subset + full registry JSON (default)
+  --check   Fail if registry files missing or out of sync with AGENTS.md
 `);
     process.exit(0);
   }
 
   const md = await Bun.file(AGENTS).text();
-  const next = buildCapabilityMapSubset(md);
+  const nextSubset = buildCapabilityMapSubset(md);
+  const nextFull = buildCapabilityMapFull(md);
 
   if (CHECK) {
-    const f = Bun.file(OUT);
-    if (!(await f.exists())) {
+    const fSub = Bun.file(OUT_SUBSET);
+    if (!(await fSub.exists())) {
       console.error(`missing ${CAPABILITY_MAP_SUBSET_REL} — run: bun run bake:capabilities`);
       process.exit(1);
     }
-    const prev = (await f.json()) as CapabilityMapSubset;
-    if (capabilityMapSubsetFingerprint(prev) !== capabilityMapSubsetFingerprint(next)) {
+    const prevSub = (await fSub.json()) as CapabilityMapSubset;
+    if (capabilityMapSubsetFingerprint(prevSub) !== capabilityMapSubsetFingerprint(nextSubset)) {
       console.error(
-        `stale ${CAPABILITY_MAP_SUBSET_REL} (rows=${prev.rowCount ?? prev.rows?.length} → ${next.rowCount})\n` +
+        `stale ${CAPABILITY_MAP_SUBSET_REL} (rows=${prevSub.rowCount ?? prevSub.rows?.length} → ${nextSubset.rowCount})\n` +
           `Run: bun run bake:capabilities`
       );
       process.exit(1);
     }
-    console.log(`capability-map-subset: OK · ${next.rowCount} rows · source ${next.source}`);
+
+    const fFull = Bun.file(OUT_FULL);
+    if (!(await fFull.exists())) {
+      console.error(`missing ${CAPABILITY_MAP_FULL_REL} — run: bun run bake:capabilities`);
+      process.exit(1);
+    }
+    const prevFull = (await fFull.json()) as CapabilityMapFull;
+    if (capabilityMapFullFingerprint(prevFull) !== capabilityMapFullFingerprint(nextFull)) {
+      console.error(
+        `stale ${CAPABILITY_MAP_FULL_REL} (rows=${prevFull.rowCount ?? prevFull.rows?.length} → ${nextFull.rowCount})\n` +
+          `Run: bun run bake:capabilities`
+      );
+      process.exit(1);
+    }
+
+    const { protocolCounts } = nextSubset.summary;
+    const proto = Object.entries(protocolCounts)
+      .map(([k, v]) => `${k}=${v}`)
+      .join(' · ');
+    console.log(
+      `capability-map: OK · subset ${nextSubset.rowCount} rows · full ${nextFull.rowCount} rows · ${proto} · schema v${nextSubset.schemaVersion}`
+    );
     return;
   }
 
   if (WRITE) {
-    await Bun.write(OUT, serializeCapabilityMapSubset(next));
+    await Bun.write(OUT_SUBSET, serializeCapabilityMapSubset(nextSubset));
+    await Bun.write(OUT_FULL, serializeCapabilityMapFull(nextFull));
+    const { protocolCounts, typeCounts } = nextSubset.summary;
     console.log(
-      `capability-map-subset: wrote ${CAPABILITY_MAP_SUBSET_REL} · ${next.rowCount} rows · ${next.generatedAt}`
+      `capability-map: wrote ${CAPABILITY_MAP_SUBSET_REL} + ${CAPABILITY_MAP_FULL_REL} · ${nextSubset.rowCount} rows · schema v${nextSubset.schemaVersion} · ${nextSubset.generatedAt}`
+    );
+    console.log(
+      `  protocols: ${JSON.stringify(protocolCounts)} · types: ${Object.keys(typeCounts).length} distinct`
     );
   }
 }

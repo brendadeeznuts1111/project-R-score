@@ -3,28 +3,13 @@
  * Static Pages only: no Bun.spawn from the browser.
  */
 
+import { bindCopyButtons } from '../copy-cli.js';
+import { fetchJsonResult } from '../fetch-json.js';
+import { BAKE_SOURCES, ageLabel, pickGeneratedAt } from '../command-centre-core.js';
+
+/** Shared bakes plus tools-hub-only vault-map row. */
 const BAKES = [
-  {
-    id: 'packages',
-    label: 'packages-graph-map',
-    href: '/registry/packages-graph-map.json',
-    board: '/portal/packages/',
-    cli: 'bun run portal-cli pm graph',
-  },
-  {
-    id: 'failures',
-    label: 'failures',
-    href: '/registry/failures.json',
-    board: '/portal/failures/',
-    cli: 'bun run failures:bake',
-  },
-  {
-    id: 'vault-health',
-    label: 'vault-health',
-    href: '/registry/vault-health.json',
-    board: '/portal/vault/',
-    cli: 'bun run vault:health:bake',
-  },
+  ...BAKE_SOURCES,
   {
     id: 'vault-map',
     label: 'vault-map',
@@ -33,61 +18,20 @@ const BAKES = [
     cli: 'bun run portal-cli secret map',
   },
   {
-    id: 'monorepo-health',
-    label: 'monorepo-health',
-    href: '/registry/monorepo-health.json',
-    board: '/portal/health/',
-    cli: 'bun run monorepo:health:bake',
-  },
-  {
-    id: 'ops-summary',
-    label: 'ops-summary',
-    href: '/registry/ops-summary.json',
-    board: '/portal/ops/',
-    cli: 'bun run ops:snapshot --no-routing',
-  },
-  {
     id: 'capability-map',
     label: 'capability-map-subset',
     href: '/registry/capability-map-subset.json',
     board: '/portal/tools/#capabilities',
     cli: 'bun run portal-cli dashboard --view=capabilities',
   },
-];
-
-function ageLabel(iso) {
-  if (!iso) return '—';
-  const t = Date.parse(iso);
-  if (Number.isNaN(t)) return iso;
-  const mins = Math.round((Date.now() - t) / 60_000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.round(mins / 60);
-  if (hrs < 48) return `${hrs}h ago`;
-  const days = Math.round(hrs / 24);
-  return `${days}d ago · ${iso.slice(0, 10)}`;
-}
-
-async function fetchJson(url) {
-  try {
-    const res = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(5000) });
-    if (!res.ok) return { ok: false, status: res.status };
-    return { ok: true, data: await res.json() };
-  } catch (e) {
-    return { ok: false, error: String(e?.message || e) };
-  }
-}
-
-function pickGeneratedAt(data) {
-  return data?.generatedAt || data?.generated || data?.capturedAt || null;
-}
+].filter((b, i, arr) => arr.findIndex(x => x.id === b.id) === i);
 
 async function fillBakeStatus() {
   const tbody = document.getElementById('bake-status-body');
   if (!tbody) return;
   const rows = await Promise.all(
     BAKES.map(async b => {
-      const r = await fetchJson(b.href);
+      const r = await fetchJsonResult(b.href);
       if (!r.ok) {
         return `<tr class="warn"><td>${b.label}</td><td class="dim">missing (${r.status ?? 'err'})</td><td><a href="${b.board}">board</a></td><td><button type="button" class="copy-cli" data-cli="${b.cli}">copy bake</button></td></tr>`;
       }
@@ -102,6 +46,16 @@ async function fillBakeStatus() {
       if (b.id === 'vault-health' && r.data?.summary) {
         const s = r.data.summary;
         extra = ` · active=${s.activeItems ?? '—'} · healthy=${s.healthy ?? '—'}`;
+      }
+      if (b.id === 'capability-map' && r.data) {
+        const n = r.data.rowCount ?? r.data.rows?.length ?? '—';
+        const pc = r.data.summary?.protocolCounts;
+        const proto = pc
+          ? Object.entries(pc)
+              .map(([k, v]) => `${k}=${v}`)
+              .join(' ')
+          : '';
+        extra = ` · rows=${n}${proto ? ` · ${proto}` : ''} · schema v${r.data.schemaVersion ?? '?'}`;
       }
       return `<tr><td><a href="${b.href}">${b.label}</a></td><td>${ageLabel(at)}${extra}</td><td><a href="${b.board}">board</a></td><td><button type="button" class="copy-cli" data-cli="${b.cli}">copy</button></td></tr>`;
     })
@@ -118,7 +72,7 @@ async function fillSnapshotWidget() {
   // Optional bake path (not required) — fail soft to CLI hint
   // Real public artifact only (no phantom portal-snapshot-last.json)
   const url = '/registry/catalog-snapshot.json';
-  const r = await fetchJson(url);
+  const r = await fetchJsonResult(url);
   if (r.ok && r.data) {
     const n = Array.isArray(r.data?.accounts)
       ? r.data.accounts.length
@@ -136,55 +90,46 @@ async function fillSnapshotWidget() {
     <code>portal-cli snapshot list</code></p>`;
 }
 
-function bindCopyButtons(root = document) {
-  root.querySelectorAll('.copy-cli').forEach(btn => {
-    if (btn.dataset.bound === '1') return;
-    btn.dataset.bound = '1';
-    btn.addEventListener('click', async () => {
-      const cmd = btn.getAttribute('data-cli') || btn.textContent?.trim() || '';
-      try {
-        await navigator.clipboard.writeText(cmd);
-        const prev = btn.textContent;
-        btn.textContent = 'copied';
-        setTimeout(() => {
-          btn.textContent = prev;
-        }, 1200);
-      } catch {
-        btn.textContent = 'copy failed';
-      }
-    });
-  });
-}
-
 /**
  * Capability subset SSOT: /registry/capability-map-subset.json
  * Fallback rows only if bake missing (keep in sync with registry file).
  * Full matrix: AGENTS.md#grounded-capability-map
  */
-/** Fallback when bake missing: [capability, type, protocol, version, api, status, usedIn] */
+/**
+ * Fallback when bake missing:
+ * [capability, type, protocol, version, api, status, usedIn, sourceUrl]
+ */
 const CAPABILITY_FALLBACK = [
-  ['Vault config (TOML)', 'config', 'Bun', 'Bun ≥1.4', 'import with { type: "toml" }', 'Available', 'config/vault-map.toml'],
-  ['Secret inject', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli inject -i/-o', 'Implemented', 'portal-cli secret inject'],
-  ['Vault & item list', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli vault list · item list', 'Implemented', 'portal-cli secret vaults'],
-  ['Secret view', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli item view', 'Implemented', 'portal-cli secret get'],
-  ['Snapshot testing', 'test', 'Bun', 'Bun ≥1.0', 'expect().toMatchSnapshot()', 'Implemented', 'portal-cli vault health'],
-  ['Update snapshots', 'test', 'Bun', 'Bun ≥1.0', 'bun test --update-snapshots', 'Implemented', 'portal-cli vault health --update'],
-  ['Pack workspace', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm pack', 'Implemented', 'portal-cli pm pack'],
-  ['List deps', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm ls', 'Implemented', 'portal-cli pm ls'],
-  ['Packages graph', 'pkg', 'Bun', 'Bun ≥1.0', 'packages-graph-map bake · portal-cli pm graph', 'Implemented', 'portal-cli pm graph'],
-  ['Dashboard launcher', 'cli', 'Bun', 'Bun ≥1.0', 'portal-cli dashboard --view', 'Implemented', '/portal/tools/'],
-  ['ANSI color', 'display', 'Bun', 'Bun ≥1.0', 'Bun.color(hex, "ansi-16m")', 'Implemented', 'vault-map status lines'],
-  ['File I/O', 'io', 'Bun', 'Bun ≥1.0', 'Bun.file · Bun.write', 'Implemented', 'bakes · snapshots'],
+  ['Vault config (TOML)', 'config', 'Bun', 'Bun ≥1.4', 'import with { type: "toml" }', 'Available', 'config/vault-map.toml', 'https://bun.sh/docs/runtime/loaders#toml'],
+  ['Secret inject', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli inject -i/-o', 'Implemented', 'portal-cli secret inject', ''],
+  ['Vault & item list', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli vault list · item list', 'Implemented', 'portal-cli secret vaults', ''],
+  ['Secret view', 'secrets', 'pass-cli', 'pass-cli ≥2.2', 'pass-cli item view', 'Implemented', 'portal-cli secret get', ''],
+  ['Snapshot testing', 'test', 'Bun', 'Bun ≥1.0', 'expect().toMatchSnapshot()', 'Implemented', 'portal-cli vault health', 'https://bun.com/docs/test/snapshots'],
+  ['Update snapshots', 'test', 'Bun', 'Bun ≥1.0', 'bun test --update-snapshots', 'Implemented', 'portal-cli vault health --update', ''],
+  ['Pack workspace', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm pack', 'Implemented', 'portal-cli pm pack', ''],
+  ['List deps', 'pkg', 'Bun', 'Bun ≥1.0', 'bun pm ls', 'Implemented', 'portal-cli pm ls', ''],
+  ['Packages graph', 'pkg', 'Bun', 'Bun ≥1.0', 'packages-graph-map bake · portal-cli pm graph', 'Implemented', 'portal-cli pm graph', ''],
+  ['Dashboard launcher', 'cli', 'Bun', 'Bun ≥1.0', 'portal-cli dashboard --view', 'Implemented', '/', ''],
+  ['ANSI color', 'display', 'Bun', 'Bun ≥1.0', 'Bun.color(hex, "ansi-16m")', 'Implemented', 'vault-map status lines', ''],
+  ['File I/O', 'io', 'Bun', 'Bun ≥1.0', 'Bun.file · Bun.write', 'Implemented', 'bakes · snapshots', ''],
 ];
 
 /** @type {string[][]} */
 let capabilityRows = CAPABILITY_FALLBACK.slice();
-/** @type {{ generatedAt?: string, source?: string, schemaVersion?: number }|null} */
+/** @type {{ generatedAt?: string, source?: string, schemaVersion?: number, summary?: object }|null} */
 let capabilityMeta = null;
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 /**
  * Normalize registry JSON rows to
- * [capability, type, protocol, version, api, status, usedIn].
+ * [capability, type, protocol, version, api, status, usedIn, sourceUrl].
  * @param {object|null} data
  * @returns {string[][]}
  */
@@ -194,11 +139,13 @@ export function normalizeCapabilityRows(data) {
   }
   return data.rows.map(r => {
     if (Array.isArray(r)) {
-      // Legacy 4-tuple → pad type/protocol/version
+      // Legacy 4-tuple → pad type/protocol/version/source
       if (r.length === 4) {
-        return [String(r[0]), '—', '—', '—', String(r[1]), String(r[2]), String(r[3])];
+        return [String(r[0]), '—', '—', '—', String(r[1]), String(r[2]), String(r[3]), ''];
       }
-      return r.map(String);
+      const arr = r.map(String);
+      while (arr.length < 8) arr.push('');
+      return arr.slice(0, 8);
     }
     const bunApi = String(r.bunApi ?? '');
     const protonCli = String(r.protonCli ?? '');
@@ -215,6 +162,7 @@ export function normalizeCapabilityRows(data) {
               ? 'pass-cli'
               : '—';
     }
+    const src = typeof r.source === 'string' && r.source.startsWith('http') ? r.source : '';
     return [
       String(r.capability ?? r.name ?? ''),
       String(r.type ?? '—'),
@@ -223,18 +171,20 @@ export function normalizeCapabilityRows(data) {
       String(r.api ?? r.bunApi ?? r.protonCli ?? ''),
       String(r.status ?? ''),
       String(r.usedIn ?? r.used_in ?? ''),
+      src,
     ];
   });
 }
 
 async function loadCapabilityRows() {
-  const r = await fetchJson('/registry/capability-map-subset.json');
+  const r = await fetchJsonResult('/registry/capability-map-subset.json');
   if (r.ok && r.data) {
     capabilityRows = normalizeCapabilityRows(r.data);
     capabilityMeta = {
       generatedAt: r.data.generatedAt,
       source: r.data.source,
       schemaVersion: r.data.schemaVersion,
+      summary: r.data.summary,
     };
   }
 }
@@ -245,22 +195,30 @@ function fillCapabilityTable() {
   const q = (document.getElementById('capability-filter')?.value || '').toLowerCase();
   const rows = capabilityRows.filter(r => !q || r.join(' ').toLowerCase().includes(q));
   tbody.innerHTML = rows
-    .map(
-      ([cap, type, protocol, version, api, status, used]) =>
-        `<tr>
-          <td>${cap}</td>
-          <td><span class="group-tag">${type}</span></td>
-          <td><code>${protocol}</code></td>
-          <td class="dim">${version}</td>
-          <td><code>${api}</code></td>
-          <td>${status}</td>
-          <td><code>${used}</code></td>
-        </tr>`
-    )
+    .map(([cap, type, protocol, version, api, status, used, sourceUrl]) => {
+      const capCell = sourceUrl
+        ? `${escapeHtml(cap)} <a class="cap-source" href="${escapeHtml(sourceUrl)}" target="_blank" rel="noopener noreferrer" title="docs">↗</a>`
+        : escapeHtml(cap);
+      return `<tr>
+          <td>${capCell}</td>
+          <td><span class="group-tag">${escapeHtml(type)}</span></td>
+          <td><code>${escapeHtml(protocol)}</code></td>
+          <td class="dim">${escapeHtml(version)}</td>
+          <td><code>${escapeHtml(api)}</code></td>
+          <td>${escapeHtml(status)}</td>
+          <td><code>${escapeHtml(used)}</code></td>
+        </tr>`;
+    })
     .join('');
   const meta = document.getElementById('capability-meta');
   if (meta && capabilityMeta) {
-    meta.textContent = `${capabilityRows.length} rows · schema v${capabilityMeta.schemaVersion ?? '?'} · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'} · columns: type · protocol · version · api · rebake: bun run bake:capabilities`;
+    const pc = capabilityMeta.summary?.protocolCounts;
+    const proto = pc
+      ? Object.entries(pc)
+          .map(([k, v]) => `${k}=${v}`)
+          .join(' · ')
+      : '';
+    meta.textContent = `${capabilityRows.length} rows · schema v${capabilityMeta.schemaVersion ?? '?'} · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'}${proto ? ` · ${proto}` : ''} · columns: type · protocol · version · api · optional source link · rebake: bun run bake:capabilities`;
   }
 }
 

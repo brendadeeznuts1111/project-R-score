@@ -53,17 +53,21 @@ describe('capability-map-subset normalize', () => {
     const rows = normalizeCapabilityRows(data);
     expect(rows.length).toBeGreaterThan(5);
     expect(rows.some(r => r[0].includes('Secret view') || r[0].includes('Secret'))).toBe(true);
-    // [capability, type, protocol, version, api, status, usedIn]
-    expect(rows.every(r => r.length === 7)).toBe(true);
+    // [capability, type, protocol, version, api, status, usedIn, sourceUrl]
+    expect(rows.every(r => r.length === 8)).toBe(true);
     expect(rows.some(r => r[1] === 'secrets' || r[1] === 'pkg' || r[1] === 'runtime')).toBe(true);
     expect(rows.some(r => r[2] === 'Bun' || r[2] === 'pass-cli')).toBe(true);
     expect(rows.every(r => String(r[4]).length > 0)).toBe(true); // api
+    // schema v3: optional source URLs on many Bun rows
+    expect(rows.some(r => String(r[7]).startsWith('https://'))).toBe(true);
+    expect(data.schemaVersion).toBe(3);
+    expect(data.summary?.protocolCounts).toBeDefined();
   });
 
   test('fallback when empty', () => {
     const rows = normalizeCapabilityRows(null);
     expect(rows.length).toBeGreaterThan(5);
-    expect(rows.every(r => r.length === 7)).toBe(true);
+    expect(rows.every(r => r.length === 8)).toBe(true);
   });
 });
 
@@ -81,8 +85,10 @@ describe('nav-badges + tools-hub static modules', () => {
 
   test('tools-hub.js uses copy-cli not browser spawn', async () => {
     const src = await Bun.file(resolvePath(ROOT, 'public/portal/tools/tools-hub.js')).text();
+    const copyCli = await Bun.file(resolvePath(ROOT, 'public/portal/copy-cli.js')).text();
     expect(src).toContain('copy-cli');
-    expect(src).toContain('navigator.clipboard');
+    expect(src).toContain("from '../copy-cli.js'");
+    expect(copyCli).toContain('navigator.clipboard');
     expect(src).not.toMatch(/Bun\.spawn\s*\(/);
     expect(src).toContain('capability-map-subset.json');
   });
