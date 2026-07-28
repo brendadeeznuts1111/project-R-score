@@ -36,7 +36,9 @@ Credential files were **left in place**; deletion is a human decision.
 
 ## Service management
 
-No LaunchAgent / LaunchDaemon for cloudflared exists. Tunnels run only when started manually and die on reboot — no auto-start, no HA. Binary: `/opt/homebrew/bin/cloudflared` (Homebrew).
+**launchd (user LaunchAgent) installed 2026-07-28** — `~/Library/LaunchAgents/com.factorywager.ledger-tunnel.plist` runs `cloudflared tunnel --config ~/.cloudflared/config-ledger.yml run` with RunAtLoad + KeepAlive (30s throttle), logs to `~/.cloudflared/ledger-tunnel.{out,err}.log`. Verified: 3 QUIC connections registered, `state = running`, origin `127.0.0.1:3000/api/registry/health` = 200. Manage: `launchctl kickstart -k gui/$(id -u)/com.factorywager.ledger-tunnel` (restart) · `launchctl bootout gui/$(id -u)/com.factorywager.ledger-tunnel` (stop). Binary: `/opt/homebrew/bin/cloudflared` (Homebrew).
+
+**Tunnel ownership (verified via CF API 2026-07-28):** both tunnels (`2029fc06-…` live, `293ba37a-…` dead) live in a **different Cloudflare account** than FactoryWager (`7a470541…`) — `cfd_tunnel` returns 0 tunnels and both IDs 404. The zone CNAMEs point cross-account, which is valid. Deleting the dead tunnel requires that account's dashboard/credentials — **no vault token can do it** (all are FactoryWager-account scoped). The `~/.cloudflared/cert.pem` origin cert belongs to that other account.
 
 ## Repo-side template
 
@@ -45,8 +47,8 @@ No LaunchAgent / LaunchDaemon for cloudflared exists. Tunnels run only when star
 ## Gaps / recommended actions
 
 1. ~~**Access policy in front of `ledger.factory-wager.com`**~~ — **DONE 2026-07-28** (Access app live; verified 302 to Access login). Also applied same day: `score…/portal` + `project-r-score.pages.dev/portal` (302 verified). Remaining staged: `reasonix` (no DNS).
-2. **launchd service for HA** — install `cloudflared service install` (or a LaunchAgent) for `accounting-ledger` so it survives reboot.
-3. ~~**Orphan credential decision**~~ — **RESOLVED 2026-07-28**: `293ba37a-…json` is the credential for the tunnel behind `terminal.factory-wager.com` (CNAME verified via CF API). Delete the CNAME + the dead tunnel (dashboard) + file, or provision the tunnel with a config (human decision).
+2. ~~**launchd service for HA**~~ — **DONE 2026-07-28** (user LaunchAgent `com.factorywager.ledger-tunnel`; RunAtLoad + KeepAlive; verified running with 3 QUIC connections).
+3. ~~**Orphan credential decision**~~ — **RESOLVED 2026-07-28**: `293ba37a-…json` is the credential for the tunnel behind `terminal.factory-wager.com` (CNAME verified via CF API; record deleted). Remaining: delete the dead tunnel **in the other Cloudflare account's dashboard** (tunnels are not in the FactoryWager account — no vault token covers them) and remove the local credential file.
 4. **`reasonix-serve`: install or decommission** — either create the tunnel + credential and install the repo template, or delete `scripts/cloudflared-reasonix.yml`. DNS currently does not resolve.
 5. **`tunnel:init` generator missing** — ledger configs cite a generator that does not exist; either restore it or stop claiming provenance.
 6. **`terminal.factory-wager.com` dangling (502)** — DNS points at a tunnel that has no config on this machine or in repo. Remove the DNS record or provision the tunnel; until then treat the host as broken, not "Sports Terminal".
