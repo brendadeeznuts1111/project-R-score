@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
-// @see https://bun.com/docs/runtime/utils#bun-semver — Bun.semver
+// @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://protonpass.github.io/pass-cli/ — pass-cli
