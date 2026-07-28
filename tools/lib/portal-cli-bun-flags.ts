@@ -4,10 +4,10 @@
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/bunfig#run-silent-suppress-reporting-the-command-being-run — --silent
-// @see https://bun.com/docs/runtime#general-execution-options — bun run general flags
-// @see https://bun.com/docs/runtime#runtime-process-control — --smol · --bun · --console-depth
-// @see https://bun.com/docs/runtime#development-workflow — --watch · --hot
-// @see https://bun.com/docs/runtime#debugging — --inspect
+// @see https://bun.com/docs/runtime/index#general-execution-options — bun run general flags
+// @see https://bun.com/docs/runtime/watch-mode — --watch · --hot · --no-clear-screen
+// @see https://bun.com/docs/runtime/debugger — --inspect · --inspect-wait · --inspect-brk
+// @see https://bun.com/docs/runtime/auto-install — --prefer-offline · --install=fallback
 /**
  * Parse Bun general execution options from portal-cli argv and rebuild spawn argv.
  *
@@ -201,22 +201,31 @@ export async function spawnBunWithFlags(
   return (await proc.exited) ?? 1;
 }
 
-/** Human-readable short help for portal-cli root help. */
-export const BUN_FLAGS_HELP = `Bun execution flags (before the portal-cli command — https://bun.com/docs/runtime#general-execution-options):
-  --smol                 Lower memory, more GC
-  --console-depth=N      console.log / Bun.inspect depth
-  --bun / -b             Force Bun runtime (not node shebang)
-  --watch                Restart child bun process on change
-  --hot                  Hot reload (state-preserving where supported)
-  --inspect[=host:port]  Activate debugger
-  --inspect-brk[=…]      Break on first line
-  --preload <mod> / -r   Import module before entry
-  --no-install           Disable runtime auto-install
-  --silent               Quiet script command echo (package scripts)
+/** Curated Bun runtime help for portal-cli users; intentionally not every Bun flag. */
+export const BUN_FLAGS_HELP = `Runtime options (via bun):
+  Development:
+    bun --watch tools/portal-cli.ts ...             restart on imported file changes
+    bun --hot tools/portal-cli.ts ...               soft-reload modules; preserve global state
+    bun --no-clear-screen --watch tools/portal-cli.ts ...
+                                                    keep output visible during reloads
+  Debugging:
+    bun --inspect tools/portal-cli.ts ...           attach debugger on an available port
+    bun --inspect-wait tools/portal-cli.ts ...      wait for debugger before executing
+    bun --inspect-brk tools/portal-cli.ts ...       break on the first line and wait
+  Environment & config:
+    bun --cwd /path tools/portal-cli.ts ...         set working directory
+    bun --config ./bunfig.toml tools/portal-cli.ts ...
+                                                    use a custom bunfig.toml
+    bun --define 'process.env.NODE_ENV:"production"' tools/portal-cli.ts ...
+                                                    substitute a constant at parse time
+    bun --conditions custom tools/portal-cli.ts ... pass custom export conditions
+  Output control:
+    bun --silent tools/portal-cli.ts ...            suppress Bun's script-command echo
+  Performance:
+    bun --smol tools/portal-cli.ts ...              lower memory; run GC more often
+  Dependency resolution:
+    bun --prefer-offline tools/portal-cli.ts ...    skip cache staleness checks
+    bun --install=fallback tools/portal-cli.ts ...  install missing packages only
 
-Examples:
-  bun tools/portal-cli.ts --smol vault health
-  bun tools/portal-cli.ts --console-depth=4 probe lockfile
-  bun tools/portal-cli.ts --bun pm ls
-  bun run portal-cli --smol vault health
+  See all options: https://bun.com/docs/runtime/index#general-execution-options
 `;
