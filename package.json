@@ -665,7 +665,7 @@
       "license": "MIT"
     },
     "performance": {
-      "max_concurrent_requests": 1e4,
+      "max_concurrent_requests": 10000,
       "request_timeout": "30s",
       "connection_pool_size": 100,
       "cache_ttl": "300s",
@@ -695,7 +695,7 @@
       "max_memory": "1gb",
       "eviction_policy": "lru",
       "compression": true,
-      "max_keys": 1e6,
+      "max_keys": 1000000,
       "cleanup_interval": "600s"
     },
     "api": {
@@ -736,7 +736,7 @@
     },
     "limits": {
       "max_file_upload_size": "100mb",
-      "max_api_calls_per_hour": 1e4,
+      "max_api_calls_per_hour": 10000,
       "max_concurrent_sessions": 1000,
       "max_storage_per_user": "10gb",
       "max_bandwidth_per_month": "1tb",
@@ -1578,6 +1578,8 @@
     "ops:limits:alerts": "bun tools/ops-check-limits.ts --alerts",
     "ops:limits:predict": "bun tools/ops-limit-predict.ts",
     "ops:limits:predict:json": "bun tools/ops-limit-predict.ts --json",
+    "ops:limits:analyze": "bun tools/ops-limit-analyze.ts",
+    "ops:limits:analyze:json": "bun tools/ops-limit-analyze.ts --json",
     "ops:seed:toc": "bun tools/ops-seed-toc.ts",
     "ops:seed:all": "bun tools/ops-seed.ts && bun tools/ops-seed-prediction.ts && bun tools/ops-seed-dod.ts && bun tools/ops-seed-partners.ts && bun tools/ops-seed-toc.ts && bun tools/ops-seed-tenants.ts",
     "ops:snapshot:demo": "bun run ops:seed:all && bun tools/ops-snapshot.ts --no-routing",
@@ -1999,6 +2001,8 @@
     "audit:packages:json": "bun tools/packages-metafile-audit.ts --json",
     "audit:packages:strict": "bun tools/packages-metafile-audit.ts --strict",
     "audit:packages:full": "bun tools/packages-metafile-audit.ts --cross-check --diff --md --map --bake",
+    "audit:packages:apply": "bun tools/packages-metafile-audit.ts --apply-actions --bake --md",
+    "audit:packages:apply:dry": "bun tools/packages-metafile-audit.ts --apply-actions --dry-run",
     "cloudflare:env": "bun config/r2-env.ts",
     "cloudflare:env:assert": "bun config/r2-env.ts --assert",
     "cloudflare:env:assert-apex": "bun config/r2-env.ts --assert-apex",
@@ -2085,8 +2089,10 @@
   },
   "dependencies": {
     "@factorywager/business": "workspace:*",
+    "@factorywager/docs-tools": "workspace:*",
     "@factorywager/guards": "workspace:*",
     "@factorywager/p2p": "workspace:*",
+    "@factorywager/registry-client": "workspace:*",
     "@factorywager/rip": "workspace:*",
     "@modelcontextprotocol/sdk": "1.29.0",
     "@pinecone-database/pinecone": "7.2.0",
