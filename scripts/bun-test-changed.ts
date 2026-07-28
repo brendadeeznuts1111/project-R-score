@@ -16,6 +16,8 @@
  *   bun run test:changed:main
  *   bun run test:changed:watch
  *   bun run test:changed -- --serial     # opt out of --parallel
+ *   bun run test:changed -- --isolate    # fresh global per file, no worker pool
+ *   bun run test:changed -- --shard=1/4  # shard the changed test set
  *   bun run test:changed -- --dry-run    # preview selection without running tests
  *   BUN_TEST_SERIAL=1 bun run test:changed
  *
@@ -24,13 +26,20 @@
  */
 import { hasCodeLikeChange, listChangedFiles, resolveMainHead } from './lib/git-changed';
 
+export type TestChangedShard = {
+  index: number;
+  count: number;
+};
+
 export type TestChangedArgs = {
   /** Unresolved ref from positional argv (undefined for dirty tree or --main-head). */
   ref: string | undefined;
   watch: boolean;
   dryRun: boolean;
   serial: boolean;
+  isolate: boolean;
   mainHead: boolean;
+  shard: TestChangedShard | undefined;
   /** Remaining flags to forward to `bun test` (e.g. --bail=1). */
   flags: string[];
   /** Positional args after the ref to forward to `bun test`. */
@@ -53,6 +62,20 @@ export type TestChangedDeps = {
   hasCodeLikeChange?: (files: string[]) => boolean;
 };
 
+/** Parse and validate `--shard=M/N` (1-based index, positive count). */
+export function parseShard(value: string): TestChangedShard {
+  const match = value.match(/^([1-9]\d*)\/([1-9]\d*)$/);
+  if (!match) {
+    throw new Error(`--shard must be M/N with positive integers (e.g. 1/4); got ${value}`);
+  }
+  const index = parseInt(match[1]!, 10);
+  const count = parseInt(match[2]!, 10);
+  if (index > count) {
+    throw new Error(`--shard index ${index} exceeds count ${count}`);
+  }
+  return { index, count };
+}
+
 /** Parse `bun-test-changed` argv into a typed shape. */
 export function parseTestChangedArgs(
   argv: string[],
@@ -61,10 +84,22 @@ export function parseTestChangedArgs(
   const wantMainHead = argv.includes('--main-head');
   const wantSerial =
     argv.includes('--serial') || env.BUN_TEST_SERIAL === '1' || env.BUN_TEST_SERIAL === 'true';
+  const wantIsolate = argv.includes('--isolate');
   const dryRun = argv.includes('--dry-run');
   const stripped = argv.filter(a => a !== '--main-head' && a !== '--serial' && a !== '--dry-run');
-  const flags = stripped.filter(a => a.startsWith('-'));
-  const positionals = stripped.filter(a => !a.startsWith('-'));
+
+  // Parse --shard=M/N and remove from forwarded flags so we can validate it.
+  let shard: TestChangedShard | undefined;
+  const strippedWithoutShard = stripped.filter(a => {
+    if (!a.startsWith('--shard')) return true;
+    if (a === '--shard') return true; // space form: let bun test parse/validate
+    const value = a.slice('--shard='.length);
+    shard = parseShard(value);
+    return false;
+  });
+
+  const flags = strippedWithoutShard.filter(a => a.startsWith('-'));
+  const positionals = strippedWithoutShard.filter(a => !a.startsWith('-'));
   const restPositionals = wantMainHead ? positionals : positionals.slice(1);
   const ref = wantMainHead ? undefined : positionals[0];
   const watch = flags.includes('--watch');
@@ -73,6 +108,8 @@ export function parseTestChangedArgs(
     watch,
     dryRun,
     serial: wantSerial,
+    isolate: wantIsolate,
+    shard,
     mainHead: wantMainHead,
     flags,
     restPositionals,
@@ -87,10 +124,14 @@ export function buildBunTestCommand(
   const bunArgs = ['test', '--pass-with-no-tests'];
   bunArgs.push(resolvedRef ? `--changed=${resolvedRef}` : '--changed');
 
-  // Parallel implies --isolate (fresh global per file). Opt out with --serial.
+  // Parallel implies --isolate (fresh global per file). Opt out with --serial or --isolate.
   const hasParallel = args.flags.some(f => f === '--parallel' || f.startsWith('--parallel='));
-  if (!args.serial && !hasParallel) {
+  if (!args.serial && !args.isolate && !hasParallel) {
     bunArgs.push('--parallel');
+  }
+
+  if (args.shard) {
+    bunArgs.push(`--shard=${args.shard.index}/${args.shard.count}`);
   }
 
   bunArgs.push(...args.flags, ...args.restPositionals);

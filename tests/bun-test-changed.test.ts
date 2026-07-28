@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   buildBunTestCommand,
   buildTestChangedPreview,
+  parseShard,
   parseTestChangedArgs,
   runTestChanged,
   type TestChangedArgs,
@@ -14,7 +15,9 @@ function args(partial: Partial<TestChangedArgs> = {}): TestChangedArgs {
     watch: false,
     dryRun: false,
     serial: false,
+    isolate: false,
     mainHead: false,
+    shard: undefined,
     flags: [],
     restPositionals: [],
     ...partial,
@@ -70,6 +73,42 @@ describe('parseTestChangedArgs', () => {
     expect(parsed.serial).toBe(true);
     expect(parsed.flags).toEqual(['--bail=1']);
   });
+
+  test('--isolate is recognized and kept in forwarded flags', () => {
+    const parsed = parseTestChangedArgs(['--isolate', '--bail=1']);
+    expect(parsed.isolate).toBe(true);
+    expect(parsed.flags).toEqual(['--isolate', '--bail=1']);
+  });
+
+  test('--shard=M/N is parsed and removed from forwarded flags', () => {
+    const parsed = parseTestChangedArgs(['--shard=2/4', '--bail=1']);
+    expect(parsed.shard).toEqual({ index: 2, count: 4 });
+    expect(parsed.flags).toEqual(['--bail=1']);
+  });
+
+  test('--shard without = is forwarded for bun test to parse', () => {
+    const parsed = parseTestChangedArgs(['--shard', '2/4', '--bail=1']);
+    expect(parsed.shard).toBeUndefined();
+    expect(parsed.flags).toEqual(['--shard', '--bail=1']);
+  });
+});
+
+describe('parseShard', () => {
+  test('accepts valid 1-based shard specs', () => {
+    expect(parseShard('1/4')).toEqual({ index: 1, count: 4 });
+    expect(parseShard('4/4')).toEqual({ index: 4, count: 4 });
+  });
+
+  test('rejects non-numeric or malformed shard specs', () => {
+    expect(() => parseShard('foo')).toThrow('must be M/N');
+    expect(() => parseShard('1/4/5')).toThrow('must be M/N');
+    expect(() => parseShard('0/4')).toThrow('positive integers');
+    expect(() => parseShard('1/0')).toThrow('positive integers');
+  });
+
+  test('rejects out-of-range shard index', () => {
+    expect(() => parseShard('5/4')).toThrow('exceeds count');
+  });
 });
 
 describe('buildBunTestCommand', () => {
@@ -107,6 +146,40 @@ describe('buildBunTestCommand', () => {
       'tests/foo.test.ts',
     ]);
   });
+
+  test('omits --parallel when isolate is requested', () => {
+    const cmd = buildBunTestCommand(args({ isolate: true, flags: ['--isolate'] }), undefined);
+    expect(cmd).toEqual(['test', '--pass-with-no-tests', '--changed', '--isolate']);
+  });
+
+  test('renders --shard before forwarded flags', () => {
+    const cmd = buildBunTestCommand(
+      args({ shard: { index: 2, count: 4 }, flags: ['--bail=1'] }),
+      'main'
+    );
+    expect(cmd).toEqual([
+      'test',
+      '--pass-with-no-tests',
+      '--changed=main',
+      '--parallel',
+      '--shard=2/4',
+      '--bail=1',
+    ]);
+  });
+
+  test('omits auto --parallel when --parallel=N is already in flags', () => {
+    const cmd = buildBunTestCommand(
+      args({ flags: ['--parallel=8'], restPositionals: ['tests/foo.test.ts'] }),
+      'main'
+    );
+    expect(cmd).toEqual([
+      'test',
+      '--pass-with-no-tests',
+      '--changed=main',
+      '--parallel=8',
+      'tests/foo.test.ts',
+    ]);
+  });
 });
 
 describe('buildTestChangedPreview', () => {
@@ -133,6 +206,24 @@ describe('buildTestChangedPreview', () => {
   test('respects serial mode in preview command', () => {
     const preview = buildTestChangedPreview(args({ serial: true }), undefined, ['lib/foo.ts']);
     expect(preview.command).toBe('bun test --pass-with-no-tests --changed');
+  });
+
+  test('respects isolate mode in preview command', () => {
+    const preview = buildTestChangedPreview(
+      args({ isolate: true, flags: ['--isolate'] }),
+      undefined,
+      ['lib/foo.ts']
+    );
+    expect(preview.command).toBe('bun test --pass-with-no-tests --changed --isolate');
+  });
+
+  test('includes shard in preview command', () => {
+    const preview = buildTestChangedPreview(
+      args({ shard: { index: 1, count: 4 } }),
+      undefined,
+      ['lib/foo.ts']
+    );
+    expect(preview.command).toBe('bun test --pass-with-no-tests --changed --parallel --shard=1/4');
   });
 });
 
