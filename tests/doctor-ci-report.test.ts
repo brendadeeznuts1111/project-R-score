@@ -9,6 +9,8 @@ import { afterAll, describe, expect, test } from 'bun:test';
 import { joinPath, resolvePath } from '../scripts/lib/fs-bun';
 import {
   DEFAULT_REPORT_REL,
+  escapeGithubActionsMessage,
+  formatDoctorGithubAnnotations,
   formatDoctorStepSummary,
   runDoctorCiReport,
   writeDoctorCiReport,
@@ -188,6 +190,119 @@ describe('doctor-ci-report', () => {
     expect(md).toContain('bun run install:verify');
     expect(md).not.toContain('capability-map-subset');
     expect(md).toMatch(/`fail`/);
+  });
+
+  test('formatDoctorGithubAnnotations: fail report → ::error / ::warning; pass → none', () => {
+    const failReport: PortalDoctorReport = {
+      kind: 'portal-cli-doctor',
+      schemaVersion: 4,
+      ok: false,
+      full: false,
+      verbose: false,
+      failedOnly: false,
+      env: 'ci',
+      liveAccess: false,
+      generatedAt: '2026-07-28T00:00:00.000Z',
+      checks: [
+        {
+          id: 'linker-config-version',
+          level: 'fatal',
+          group: 'linker',
+          ok: false,
+          message: 'configVersion=0 (need 1)',
+          fixCommand: 'bun run install:verify',
+        },
+        {
+          id: 'bunfig-project-no-machine-keys',
+          level: 'warn',
+          group: 'bunfig',
+          ok: false,
+          message: 'project bunfig sets machine-owned keys',
+          fixCommand: 'bun run bunfig:bake',
+        },
+        {
+          id: 'capability-map-subset',
+          level: 'warn',
+          group: 'bakes',
+          ok: true,
+          message: 'present',
+        },
+      ],
+      summary: {
+        checkCount: 3,
+        passed: 1,
+        failed: 2,
+        fatal: 1,
+        warn: 2,
+        info: 0,
+        failedFatal: 1,
+        failedWarn: 1,
+        autoFixableFailed: 1,
+        suggested: ['bun run install:verify', 'bun run bunfig:bake'],
+      },
+      docs: {
+        isolatedInstalls: 'https://bun.com/docs/pm/isolated-installs',
+        defaultStrategy: 'https://bun.com/docs/pm/cli/install#default-strategy',
+        installIsolated: 'https://bun.com/docs/pm/isolated-installs',
+        installHoisted: 'https://bun.com/docs/pm/cli/install',
+      },
+    };
+
+    const lines = formatDoctorGithubAnnotations(failReport);
+    expect(lines).toHaveLength(2);
+
+    expect(lines[0]).toBe(
+      '::error title=portal-doctor::linker-config-version [fatal] configVersion=0 (need 1) | fix: bun run install:verify'
+    );
+    expect(lines[1]).toBe(
+      '::warning title=portal-doctor::bunfig-project-no-machine-keys [warn] project bunfig sets machine-owned keys | fix: bun run bunfig:bake'
+    );
+
+    // multiline message collapses to single annotation line via %0A
+    const multiline: PortalDoctorReport = {
+      ...failReport,
+      checks: [
+        {
+          id: 'machine-isolated-linker',
+          level: 'fatal',
+          group: 'linker',
+          ok: false,
+          message: 'line one\nline two',
+          fixCommand: 'echo a\necho b',
+        },
+      ],
+    };
+    const multiLines = formatDoctorGithubAnnotations(multiline);
+    expect(multiLines).toHaveLength(1);
+    expect(multiLines[0]).toBe(
+      `::error title=portal-doctor::machine-isolated-linker [fatal] line one%0Aline two | fix: echo a%0Aecho b`
+    );
+    expect(multiLines[0]!.includes('\n')).toBe(false);
+    expect(escapeGithubActionsMessage('a\nb')).toBe('a%0Ab');
+
+    const passReport: PortalDoctorReport = {
+      ...failReport,
+      ok: true,
+      checks: [
+        {
+          id: 'linker-config-version',
+          level: 'fatal',
+          group: 'linker',
+          ok: true,
+          message: 'configVersion=1',
+        },
+      ],
+      summary: {
+        ...failReport.summary,
+        checkCount: 1,
+        passed: 1,
+        failed: 0,
+        failedFatal: 0,
+        failedWarn: 0,
+        suggested: [],
+      },
+    };
+    expect(formatDoctorGithubAnnotations(passReport)).toEqual([]);
   });
 
   test('writeDoctorCiReport noJson skips file; noSummary skips env append', async () => {

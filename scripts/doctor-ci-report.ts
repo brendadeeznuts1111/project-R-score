@@ -4,7 +4,8 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 /**
- * Portal doctor CI report — one process: plain log + JSON artifact + step summary.
+ * Portal doctor CI report — one process: plain log + JSON artifact + step summary
+ * + GitHub Actions workflow annotations on FAIL checks.
  *
  *   bun scripts/doctor-ci-report.ts
  *   bun scripts/doctor-ci-report.ts --out reports/portal-doctor-ci.json
@@ -12,6 +13,7 @@
  *
  * Env:
  *   GITHUB_STEP_SUMMARY — when set, append concise markdown forensics
+ *   GITHUB_ACTIONS=true — emit ::error / ::warning annotations for each FAIL check
  *
  * Exit: report.ok ? 0 : 1
  *
@@ -19,6 +21,7 @@
  *
  * @see tools/lib/portal-cli-doctor.ts
  * @see docs/UNIFIED.md
+ * @see https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands
  */
 
 import { dirnamePath, ensureDir, resolvePath } from './lib/fs-bun.ts';
@@ -150,6 +153,48 @@ export function formatDoctorStepSummary(report: PortalDoctorReport): string {
   return lines.join('\n');
 }
 
+/**
+ * Escape a value for GitHub Actions workflow-command message bodies.
+ * Newlines/%/\r must be encoded so the annotation stays a single log line.
+ * @see https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message
+ */
+export function escapeGithubActionsMessage(text: string): string {
+  return text.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+}
+
+/**
+ * Pure formatter: one GHA workflow annotation per failing doctor check.
+ *
+ * Format (matches harness convention; GHA parses first `::` after the command
+ * as the properties/message split, so title displays as `portal-doctor` and the
+ * message begins with `<id> [<level>] …`):
+ *
+ *   ::error title=portal-doctor::<id> [<level>] <message>
+ *   ::warning title=portal-doctor::<id> [<level>] <message>
+ *
+ * - fatal FAIL → `::error`
+ * - warn (or other non-fatal) FAIL → `::warning`
+ * - pass checks omitted; empty array when report is clean
+ *
+ * Includes ` | fix: <cmd>` when `fixCommand` is set (single-line escaped).
+ * Callers print only when `GITHUB_ACTIONS=true` (local noise gate).
+ */
+export function formatDoctorGithubAnnotations(report: PortalDoctorReport): string[] {
+  const lines: string[] = [];
+  for (const c of report.checks) {
+    if (c.ok) continue;
+    const cmd = c.level === 'fatal' ? 'error' : 'warning';
+    let body = `[${c.level}] ${c.message}`;
+    if (c.fixCommand?.trim()) {
+      body += ` | fix: ${c.fixCommand.trim()}`;
+    }
+    body = escapeGithubActionsMessage(body);
+    // Literal harness shape — do not insert a second `::` before the body.
+    lines.push(`::${cmd} title=portal-doctor::${c.id} ${body}`);
+  }
+  return lines;
+}
+
 export async function writeDoctorCiReport(
   report: PortalDoctorReport,
   opts: DoctorCiReportOpts = {}
@@ -201,6 +246,14 @@ export async function runDoctorCiReport(opts: DoctorCiReportOpts = {}): Promise<
   // Plain CI stdout (same shape as portal:doctor:ci without TTY chrome)
   if (!opts.quiet) {
     console.log(plain);
+  }
+
+  // GHA annotations for FAIL checks (stdout — harness-gates already captures this)
+  const annotations = formatDoctorGithubAnnotations(report);
+  if (!opts.quiet && annotations.length > 0 && Bun.env.GITHUB_ACTIONS === 'true') {
+    for (const line of annotations) {
+      console.log(line);
+    }
   }
 
   const written = await writeDoctorCiReport(report, { ...opts, cwd });
