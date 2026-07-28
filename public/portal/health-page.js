@@ -642,6 +642,10 @@ function boot() {
   });
   void load();
   void loadVpsStatus();
+  // Document-plane verification pins (closes surfaces orphan triage "document" set)
+  void import('./proof-index.js').then(m =>
+    m.mountProofIndex(document.getElementById('proof-index-host'))
+  );
   setInterval(() => void load(), 15_000);
 }
 

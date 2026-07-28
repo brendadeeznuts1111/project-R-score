@@ -1,7 +1,7 @@
 {
   "schemaVersion": 13,
   "kind": "packages-metafile-audit",
-  "generatedAt": "2026-07-28T18:24:52.985Z",
+  "generatedAt": "2026-07-28T18:29:50.708Z",
   "bunVersion": "1.4.0",
   "root": ".",
   "glob": "packages/*/src/**/*.{ts,tsx}",
@@ -739,24 +739,24 @@
   "surfaces": {
     "schemaVersion": 3,
     "kind": "monorepo-surfaces",
-    "generatedAt": "2026-07-28T18:24:52.966Z",
+    "generatedAt": "2026-07-28T18:29:50.682Z",
     "summary": {
       "workspaceMembers": 8,
       "packagesPlane": 6,
       "otherWorkspaces": 2,
       "portalPages": 19,
-      "portalModules": 27,
+      "portalModules": 28,
       "chromeComponents": 12,
       "brandAssets": 20,
       "registryTopLevelJson": 55,
       "registryStoragePackages": 9,
       "libTopLevelDirs": 39,
       "stoNestedPackages": 3,
-      "portalRegistryRefs": 51,
-      "registryOrphanFromPortal": 6,
+      "portalRegistryRefs": 57,
+      "registryOrphanFromPortal": 0,
       "registryFamilyCount": 13,
       "themeDarkTokens": 12,
-      "pageRegistryEdges": 149,
+      "pageRegistryEdges": 156,
       "libImportHubs": 1,
       "orphanWireCandidates": 0
     },
@@ -1178,6 +1178,11 @@
           "id": "packages-board"
         },
         {
+          "path": "//portal/proof-index.js",
+          "kind": "module",
+          "id": "proof-index"
+        },
+        {
           "path": "//portal/search.js",
           "kind": "module",
           "id": "search"
@@ -1328,7 +1333,7 @@
       },
       "modulesByKind": {
         "template": 1,
-        "module": 14,
+        "module": 15,
         "page-script": 5,
         "component": 4,
         "style": 1,
@@ -1667,7 +1672,7 @@
           "file": "packages-graph-map.json",
           "kind": "packages-graph-map",
           "schemaVersion": 13,
-          "bytes": 96320,
+          "bytes": 98380,
           "family": "packages"
         },
         {
@@ -2080,6 +2085,13 @@
           "exists": true
         },
         {
+          "path": "/registry/formdata-proof.json",
+          "from": [
+            "public/portal/proof-index.js"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/guides-proof.json",
           "from": [
             "public/portal/operations-dashboard.js"
@@ -2160,6 +2172,13 @@
           "exists": true
         },
         {
+          "path": "/registry/networking-channel-proof.json",
+          "from": [
+            "public/portal/proof-index.js"
+          ],
+          "exists": true
+        },
+        {
           "path": "/registry/networking-proof.json",
           "from": [
             "public/portal/operations-dashboard.js"
@@ -2196,6 +2215,7 @@
             "public/portal/operations-dashboard.js",
             "public/portal/packages/index.html",
             "public/portal/packages/packages-board.js",
+            "public/portal/proof-index.js",
             "public/portal/tools/tools-hub.js"
           ],
           "exists": true
@@ -2358,7 +2378,36 @@
         {
           "path": "/registry/verification-index.json",
           "from": [
-            "public/portal/operations-dashboard.js"
+            "public/portal/operations-dashboard.js",
+            "public/portal/proof-index.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/verification-pinned-1.3.14.json",
+          "from": [
+            "public/portal/proof-index.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/verification-stable-1.4.0-bundler.json",
+          "from": [
+            "public/portal/proof-index.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/verification-stable-1.4.0-networking.json",
+          "from": [
+            "public/portal/proof-index.js"
+          ],
+          "exists": true
+        },
+        {
+          "path": "/registry/verification-stable-1.4.0.json",
+          "from": [
+            "public/portal/proof-index.js"
           ],
           "exists": true
         },
@@ -2370,52 +2419,8 @@
           "exists": true
         }
       ],
-      "orphanFromPortal": [
-        "formdata-proof.json",
-        "networking-channel-proof.json",
-        "verification-pinned-1.3.14.json",
-        "verification-stable-1.4.0-bundler.json",
-        "verification-stable-1.4.0-networking.json",
-        "verification-stable-1.4.0.json"
-      ],
-      "orphanTriage": [
-        {
-          "file": "formdata-proof.json",
-          "family": "proof",
-          "action": "document",
-          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
-        },
-        {
-          "file": "networking-channel-proof.json",
-          "family": "proof",
-          "action": "document",
-          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
-        },
-        {
-          "file": "verification-pinned-1.3.14.json",
-          "family": "verification",
-          "action": "document",
-          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
-        },
-        {
-          "file": "verification-stable-1.4.0-bundler.json",
-          "family": "verification",
-          "action": "document",
-          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
-        },
-        {
-          "file": "verification-stable-1.4.0-networking.json",
-          "family": "verification",
-          "action": "document",
-          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
-        },
-        {
-          "file": "verification-stable-1.4.0.json",
-          "family": "verification",
-          "action": "document",
-          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
-        }
-      ]
+      "orphanFromPortal": [],
+      "orphanTriage": []
     },
     "libPlane": {
       "dirs": [
@@ -2910,6 +2915,13 @@
           "pageHref": "/portal/",
           "registryPath": "/registry/monorepo-health.json",
           "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/packages-graph-map.json",
+          "family": "packages",
           "weight": 2
         },
         {
@@ -3510,8 +3522,15 @@
         {
           "page": "shared",
           "pageHref": "/portal/",
-          "registryPath": "/registry/packages-graph-map.json",
-          "family": "packages",
+          "registryPath": "/registry/formdata-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/networking-channel-proof.json",
+          "family": "proof",
           "weight": 1
         },
         {
@@ -3533,6 +3552,41 @@
           "pageHref": "/portal/",
           "registryPath": "/registry/vault-health.json",
           "family": "vault",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/verification-index.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/verification-pinned-1.3.14.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/verification-stable-1.4.0-bundler.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/verification-stable-1.4.0-networking.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/verification-stable-1.4.0.json",
+          "family": "verification",
           "weight": 1
         },
         {
@@ -3738,7 +3792,7 @@
       {
         "id": "portal-modules",
         "label": "portal JS/CSS modules",
-        "count": 27,
+        "count": 28,
         "note": "components/ + root modules + page scripts + theme"
       },
       {
@@ -3757,13 +3811,13 @@
       {
         "id": "registry-portal-refs",
         "label": "portal → registry refs",
-        "count": 51,
-        "note": "unique /registry/*.json from portal JS/HTML · orphanTop=6"
+        "count": 57,
+        "note": "unique /registry/*.json from portal JS/HTML · orphanTop=0"
       },
       {
         "id": "page-registry-edges",
         "label": "page → registry edges",
-        "count": 149,
+        "count": 156,
         "portal": "/portal/packages/",
         "note": "attributed via page scripts + shell HTML (v3 cross-plane)"
       },
@@ -3777,7 +3831,7 @@
         "id": "orphan-wire",
         "label": "orphan wire-portal candidates",
         "count": 0,
-        "note": "of 6 orphans · proofs stay document-only"
+        "note": "of 0 orphans · proofs stay document-only"
       },
       {
         "id": "registry-storage",
@@ -3877,7 +3931,7 @@
     "Actions: business:archive-candidate, p2p:archive-candidate",
     "Summary: avgPkg=95 · openActions=2 · archivePlaceholders=0 · hub=lib/docs",
     "Quarantine: none",
-    "Surfaces v3: workspaces=8 (packagesPlane=6+other=2) · libDirs=39 · stoNested=3 · portalPages=19 · chrome=12 · brand=20 · registryJson=55 · regRefs=51 · pageEdges=149 · libHubs=1 · regOrphan=6 · orphanWire=0 · themeDark=12 · storagePkgs=9"
+    "Surfaces v3: workspaces=8 (packagesPlane=6+other=2) · libDirs=39 · stoNested=3 · portalPages=19 · chrome=12 · brand=20 · registryJson=55 · regRefs=57 · pageEdges=156 · libHubs=1 · regOrphan=0 · orphanWire=0 · themeDark=12 · storagePkgs=9"
   ],
   "metafile": {
     "inputs": {

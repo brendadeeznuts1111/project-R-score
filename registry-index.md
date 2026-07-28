@@ -25,6 +25,19 @@ Machine-readable proofs and operator bakes live on **Cloudflare Pages** (not thi
 | Doc index | [doc-index.json](https://score.factory-wager.com/registry/doc-index.json) | `bun run build:doc-index` |
 | Verification | [verification-index.json](https://score.factory-wager.com/registry/verification-index.json) | `bun run verify-all` |
 
+## Document-plane proof pins
+
+Operator proof bakes (not product boards). Linked from portal [Health](https://score.factory-wager.com/portal/health/) · [Dashboard](https://score.factory-wager.com/portal/dashboard/) via `proof-index.js`.
+
+| Artifact | JSON |
+|----------|------|
+| FormData | [formdata-proof.json](https://score.factory-wager.com/registry/formdata-proof.json) |
+| Networking channel | [networking-channel-proof.json](https://score.factory-wager.com/registry/networking-channel-proof.json) |
+| Pinned 1.3.14 | [verification-pinned-1.3.14.json](https://score.factory-wager.com/registry/verification-pinned-1.3.14.json) |
+| Stable 1.4.0 | [verification-stable-1.4.0.json](https://score.factory-wager.com/registry/verification-stable-1.4.0.json) |
+| Stable 1.4.0 bundler | [verification-stable-1.4.0-bundler.json](https://score.factory-wager.com/registry/verification-stable-1.4.0-bundler.json) |
+| Stable 1.4.0 networking | [verification-stable-1.4.0-networking.json](https://score.factory-wager.com/registry/verification-stable-1.4.0-networking.json) |
+
 ## Portal boards (consume registry)
 
 | Board | URL |

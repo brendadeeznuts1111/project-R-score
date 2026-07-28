@@ -72,6 +72,14 @@ Rebake weave after doc changes: `bun run ops:snapshot --no-seed` or `bun run com
 | Limit raises | [limit-raises.json](https://score.factory-wager.com/registry/limit-raises.json) |
 | Verification index | [verification-index.json](https://score.factory-wager.com/registry/verification-index.json) |
 | Portal weave | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) |
+| FormData proof | [formdata-proof.json](https://score.factory-wager.com/registry/formdata-proof.json) |
+| Networking channel proof | [networking-channel-proof.json](https://score.factory-wager.com/registry/networking-channel-proof.json) |
+| Verification pinned 1.3.14 | [verification-pinned-1.3.14.json](https://score.factory-wager.com/registry/verification-pinned-1.3.14.json) |
+| Verification stable 1.4.0 | [verification-stable-1.4.0.json](https://score.factory-wager.com/registry/verification-stable-1.4.0.json) |
+| Stable 1.4.0 bundler | [verification-stable-1.4.0-bundler.json](https://score.factory-wager.com/registry/verification-stable-1.4.0-bundler.json) |
+| Stable 1.4.0 networking | [verification-stable-1.4.0-networking.json](https://score.factory-wager.com/registry/verification-stable-1.4.0-networking.json) |
+
+Document-plane pins also render on portal **Health** and **Dashboard** (`public/portal/proof-index.js`).
 
 Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc: [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md)
 

@@ -8,6 +8,7 @@
  * @see public/portal/channel-filter.js
  */
 import { renderVerificationResults, renderVerificationTableRow } from './verification-card.js';
+import { mountProofIndex } from './proof-index.js';
 import './channel-filter.js';
 
 const $ = id => document.getElementById(id);
@@ -764,6 +765,8 @@ export async function load() {
   renderDefaults(isOk(def) ? def : null);
   renderTaxonomy(isOk(taxonomy) ? taxonomy : null);
   renderErrors(failed);
+  // Document-plane verification pins (formdata, networking, stable/pinned 1.4.0)
+  void mountProofIndex(document.getElementById('proof-index-host'));
 
   $('ts').textContent = `Updated ${new Date().toLocaleTimeString()}`;
   document.dispatchEvent(new CustomEvent('portal:dashboard-ready', { detail: ctx }));

@@ -161,6 +161,16 @@
     }
     .proof-line { margin-top: 10px; }
     .ops-link { font-size: 12px; color: var(--accent); margin-inline-end: 12px; }
+    .proof-index-list { list-style: none; padding: 0; margin: 0; font-size: 12px; }
+    .proof-index-list li {
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(48,54,61,.35);
+      font-family: var(--font-mono, ui-monospace, monospace);
+    }
+    .proof-index-list a { color: var(--accent); }
+    .proof-fam { color: var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: .04em; }
+    .proof-index-list .st-ok { color: var(--green, #3fb950); }
+    .proof-index-list .st-bad { color: var(--red, #f85149); }
     .empty-hint {
       font-size: 13px;
       color: var(--text-dim);
@@ -412,6 +422,11 @@
         <a class="ops-link" href="/portal/ops/">Ops deep dive</a>
         <a class="ops-link" href="/portal/toc/">TOC board</a>
       </p>
+    </section>
+
+    <section class="section" id="proof-pins" aria-labelledby="pins-heading">
+      <h2 id="pins-heading">Verification · proof pins</h2>
+      <div id="proof-index-host" class="proof-index-host"></div>
     </section>
 
     <section class="section" id="taxonomy-tbl" aria-labelledby="tax-heading">
