@@ -2,6 +2,8 @@
 
 **Bun-native monorepo** — shared harness in `lib/` and `packages/`; apps under `projects/active/`. Each project may own its own workspace.
 
+**Wiki navigation:** [full index](wiki-index.md) · [docs index](docs/README.md) · [harness JIT](docs/harness/README.md)
+
 ## Canonical docs
 
 | Role | Doc |
@@ -20,6 +22,7 @@
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**) |
 | Wiki (live) | [wiki.factory-wager.com](https://wiki.factory-wager.com/) — GitHub Pages from this repo |
+| Wiki index | [`wiki-index.md`](wiki-index.md) — full tenant + portal navigation |
 
 **Remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score). `cascade` → `cascade-mover-v3` (private git remote; do not default-push there).
 

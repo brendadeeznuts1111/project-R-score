@@ -1,5 +1,7 @@
 # FactoryWager harness index (JIT)
 
+Wiki hub: [`wiki-index.md`](../../wiki-index.md) · live surfaces: [`README.md`](../../README.md#live-surfaces)
+
 Hold the model fixed; improve **context + tools**. Upstream: [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (transform ideas into our owners — do not clone their tree). Prefer **artifact** over “codebase.”
 
 When a decision is unresolved, read **one** owner below — do not load the full standards stack.

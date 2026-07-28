@@ -1,0 +1,139 @@
+---
+title: Wiki index
+---
+
+# FactoryWager Wiki — full index
+
+Navigation hub for [wiki.factory-wager.com](https://wiki.factory-wager.com/). Homepage: [`README.md`](README.md).
+
+**Quick jump:** [Live surfaces](#live-surfaces) · [Portal boards](#portal-boards) · [Registry](#registry-artifacts-key-bakes) · [Tenants](#harness-tenants) · [Proof loop](#operator-proof-loop)
+
+## Platform entry
+
+| Role | Link |
+|------|------|
+| Human hub | [`README.md`](README.md) |
+| Docs index | [`docs/README.md`](docs/README.md) |
+| Agent entry | [`AGENTS.md`](AGENTS.md) · [`docs/AGENTS.md`](docs/AGENTS.md) |
+| Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
+| Harness JIT | [`docs/harness/README.md`](docs/harness/README.md) · `bun run harness:status` |
+| Coding standards | [`.custom-instructions.md`](.custom-instructions.md) |
+
+## Live surfaces
+
+| Surface | URL |
+|---------|-----|
+| Wiki (GitHub Pages) | [wiki.factory-wager.com](https://wiki.factory-wager.com/) |
+| Portal boards | [score.factory-wager.com/portal/](https://score.factory-wager.com/portal/) |
+| Registry bake | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/) |
+| Monitoring | [score.factory-wager.com/monitoring/](https://score.factory-wager.com/monitoring/) |
+| Portal weave JSON | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) |
+
+Routing: [`docs/platform-routing.md`](docs/platform-routing.md)
+
+## Portal boards
+
+| Board | Live | Doc |
+|-------|------|-----|
+| Home | [/portal/](https://score.factory-wager.com/portal/) | [`docs/portal-foundation.md`](docs/portal-foundation.md) |
+| Ops | [/portal/ops/](https://score.factory-wager.com/portal/ops/) | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) |
+| TOC Ops | [/portal/toc/](https://score.factory-wager.com/portal/toc/) | [`toc-ops.md`](docs/harness/tenants/toc-ops.md) |
+| Compliance | [/portal/compliance/](https://score.factory-wager.com/portal/compliance/) | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md) |
+| Limits | [/portal/limits/](https://score.factory-wager.com/portal/limits/) | `bun run ops:limits:check` |
+| Dashboard | [/portal/dashboard/](https://score.factory-wager.com/portal/dashboard/) | — |
+| Health · Env | [/portal/health/](https://score.factory-wager.com/portal/health/) · [/portal/env/](https://score.factory-wager.com/portal/env/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| DOD | [/portal/dod/](https://score.factory-wager.com/portal/dod/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Skills | [/portal/skills/](https://score.factory-wager.com/portal/skills/) | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+
+## Registry artifacts (key bakes)
+
+| Artifact | JSON |
+|----------|------|
+| Ops summary | [ops-summary.json](https://score.factory-wager.com/registry/ops-summary.json) |
+| Compliance board | [compliance-board.json](https://score.factory-wager.com/registry/compliance-board.json) |
+| Telegram handshake | [telegram-handshake.json](https://score.factory-wager.com/registry/telegram-handshake.json) |
+| Seat capital desk | [seat-capital-desk.json](https://score.factory-wager.com/registry/seat-capital-desk.json) |
+| TOC Ops | [toc-ops.json](https://score.factory-wager.com/registry/toc-ops.json) |
+| Monitoring | [monitoring.json](https://score.factory-wager.com/registry/monitoring.json) |
+| Limit raises | [limit-raises.json](https://score.factory-wager.com/registry/limit-raises.json) |
+| Verification index | [verification-index.json](https://score.factory-wager.com/registry/verification-index.json) |
+| Portal weave | [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json) |
+
+Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc: [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md)
+
+## Harness tenants
+
+### Operator · portal · Telegram
+
+| Tenant | Doc |
+|--------|-----|
+| Compliance portal | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md) |
+| TOC Ops | [`toc-ops.md`](docs/harness/tenants/toc-ops.md) |
+| Ops loop / outbox | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) |
+| Ops snapshot | [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md) |
+| Public plane | [`public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Factory Telegram | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) |
+| Package-group handshake | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) |
+| Seat capital desk | [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) |
+| Partner onboard | [`partner-onboarding-package.md`](docs/harness/tenants/partner-onboarding-package.md) |
+| Ops partner bridge | [`ops-partner-bridge.md`](docs/harness/tenants/ops-partner-bridge.md) |
+
+### Cloudflare · deploy · vault
+
+| Tenant | Doc |
+|--------|-----|
+| Cloudflare Pages | [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
+| Cloudflare Access | [`cloudflare-access.md`](docs/harness/tenants/cloudflare-access.md) |
+| Proton / vault | [`proton-integration.md`](docs/harness/tenants/proton-integration.md) |
+| Deploy production | [`deploy-production.md`](docs/harness/tenants/deploy-production.md) |
+| Deploy staging | [`deploy-staging.md`](docs/harness/tenants/deploy-staging.md) |
+| Tunnel inventory | [`tunnel-inventory.md`](docs/harness/tenants/tunnel-inventory.md) |
+
+### Harness quality · CI
+
+| Tenant | Doc |
+|--------|-----|
+| Install verify | [`install-verify.md`](docs/harness/tenants/install-verify.md) |
+| CI core | [`ci-core.md`](docs/harness/tenants/ci-core.md) |
+| TypeScript CI | [`typescript-ci.md`](docs/harness/tenants/typescript-ci.md) |
+| Coverage floor | [`coverage-floor.md`](docs/harness/tenants/coverage-floor.md) |
+| Complexity floor | [`complexity-floor.md`](docs/harness/tenants/complexity-floor.md) |
+| Docs integrity | [`docs-integrity.md`](docs/harness/tenants/docs-integrity.md) |
+| Reference discovery | [`reference-discovery.md`](docs/harness/tenants/reference-discovery.md) |
+| Registry integrity | [`registry-integrity.md`](docs/harness/tenants/registry-integrity.md) |
+
+### Code · lib
+
+| Topic | Doc |
+|-------|-----|
+| Identity / auth | [`lib/identity/README.md`](lib/identity/README.md) · `bun test tests/identity-*.test.ts` |
+| Branded IDs | [`lib/types/branded/README.md`](lib/types/branded/README.md) |
+| Wire boundary | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
+| Bun native | [`docs/BUN_NATIVE_CAPABILITIES.md`](docs/BUN_NATIVE_CAPABILITIES.md) |
+
+## Operator proof loop
+
+```bash
+bun run harness:status
+bun run ops:snapshot --no-seed
+bun run compliance:verify
+bun run telegram:handshake:readiness --deep
+bun run test:seat-desk
+bun test tests/identity-*.test.ts
+bun run verify:portal:static
+bun run public:audit:verify
+PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun run verify:pages-edge
+```
+
+Proof journey: [`docs/harness/PROOF.md`](docs/harness/PROOF.md) · `bun run proof:install`
+
+Deploy Pages: `bun run proton:inject:factorywager:reasonix` → `bun run proton:deploy:pages`
+
+## Doc trees
+
+| Tree | Path |
+|------|------|
+| Guides | [`docs/guides/`](docs/guides/) |
+| Harness | [`docs/harness/`](docs/harness/) |
+| Audit | [`docs/audit/`](docs/audit/) |
+| Organization | [`docs/organization/`](docs/organization/) |

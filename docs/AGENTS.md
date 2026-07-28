@@ -1,10 +1,13 @@
 # AGENTS — full guide
 
-**Read first:** root [`AGENTS.md`](../AGENTS.md).
+**Read first:** root [`AGENTS.md`](../AGENTS.md) · wiki index [`../wiki-index.md`](../wiki-index.md).
+
+## Platform
 
 | Concern | Document |
 |---------|----------|
 | Operating rules / brands / wire summary | [`../AGENTS.md`](../AGENTS.md) |
+| Human hub / live surfaces | [`../README.md`](../README.md) |
 | Coding standards | [`../.custom-instructions.md`](../.custom-instructions.md) · [DEVELOPMENT-STANDARDS.md](./DEVELOPMENT-STANDARDS.md) |
 | Install / bunfig | [UNIFIED.md](./UNIFIED.md) |
 | Wire boundary (full) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) |
@@ -15,7 +18,31 @@
 | Workspace map | [`../STRUCTURE.md`](../STRUCTURE.md) |
 | Harness JIT | [harness/README.md](./harness/README.md) · `bun run harness:status` |
 | Path SSOT | [`../lib/docs/repo-docs.ts`](../lib/docs/repo-docs.ts) |
-| Cloudflare / R2 / Pages | [`../config/r2-env.ts`](../config/r2-env.ts) · `bun run cloudflare:env` · [harness/tenants/cloudflare-pages.md](./harness/tenants/cloudflare-pages.md) · claim `cloudflare-pages-env-ssot` |
+| Platform routing | [platform-routing.md](./platform-routing.md) · `bun run verify:pages-edge` |
+| Portal foundation | [portal-foundation.md](./portal-foundation.md) · `bun run verify:portal:static` |
+
+## Operator · portal · Telegram
+
+| Concern | Document · commands |
+|---------|---------------------|
+| Compliance portal (MA/NJ) | [harness/tenants/compliance-portal.md](./harness/tenants/compliance-portal.md) · `compliance:bake` · `compliance:verify` |
+| TOC Ops board | [harness/tenants/toc-ops.md](./harness/tenants/toc-ops.md) · `/portal/toc/` · `ops:seed:toc` |
+| Ops loop / outbox | [harness/tenants/ops-loop-throughput.md](./harness/tenants/ops-loop-throughput.md) |
+| Ops snapshot / registry | [harness/tenants/ops-snapshot.md](./harness/tenants/ops-snapshot.md) · `ops:snapshot` |
+| Public plane audit | [harness/tenants/public-plane.md](./harness/tenants/public-plane.md) · `public:audit:verify` |
+| Factory Telegram | [harness/tenants/telegram-factory.md](./harness/tenants/telegram-factory.md) · `telegram:verify` |
+| Package-group handshake | [harness/tenants/partner-package-group-handshake.md](./harness/tenants/partner-package-group-handshake.md) · `telegram:handshake:readiness --deep` |
+| Seat capital desk | [harness/tenants/seat-capital-desk.md](./harness/tenants/seat-capital-desk.md) · `test:seat-desk` |
+| Partner onboard package | [harness/tenants/partner-onboarding-package.md](./harness/tenants/partner-onboarding-package.md) |
+| Identity / auth (Phase 0–2b) | [`../lib/identity/README.md`](../lib/identity/README.md) |
+
+## Cloudflare · deploy
+
+| Concern | Document |
+|---------|----------|
+| Cloudflare / R2 / Pages | [`../config/r2-env.ts`](../config/r2-env.ts) · `bun run cloudflare:env` · [harness/tenants/cloudflare-pages.md](./harness/tenants/cloudflare-pages.md) |
+| Proton / vault deploy | [harness/tenants/proton-integration.md](./harness/tenants/proton-integration.md) · `proton:inject:factorywager:reasonix` |
+| Cloudflare Access SSO | [harness/tenants/cloudflare-access.md](./harness/tenants/cloudflare-access.md) |
 
 **Spine:** `lib/` · `packages/` · `scripts/` · `tools/` · `docs/` · selected `projects/active/*` workspaces. Nested own-repos under `projects/active/` are not homebase SSOT.
 
