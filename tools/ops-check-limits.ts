@@ -118,6 +118,16 @@ function main(): void {
         ? `[ops-check-limits] seeded demo for ${s.nodeId}`
         : `[ops-check-limits] demo already present for ${s.nodeId} (use --force-seed)`
     );
+    // Seal context proofs so deep inspect shows Uint8Array digests
+    if (opts.multi || opts.inspect || opts.clv) {
+      const analytics = new PartnerAnalyticsRepository(db, defaultNode);
+      const sealed = analytics.sealMissingRaiseContextProofs(0);
+      if (sealed.sealed > 0 || sealed.signed > 0) {
+        console.error(
+          `[ops-check-limits] sealed proofs sealed=${sealed.sealed} signed=${sealed.signed}`
+        );
+      }
+    }
   }
 
   let nodes: string[];

@@ -41,6 +41,8 @@ describe('LimitRaiseReport · Bun.inspect.table + custom', () => {
     const rendered = report.render({ colors: false });
     expect(rendered.raises).toContain('book');
     expect(rendered.raises).toContain('draftkings');
+    expect(rendered.proofs).toContain('digest');
+    expect(rendered.u8sample).toMatch(/Uint8Array/);
 
     const proof = report.tableProof();
     expect(proof.raises.properties).toEqual([...LIMIT_RAISE_TABLE_PROPERTIES]);
@@ -54,10 +56,8 @@ describe('LimitRaiseReport · Bun.inspect.table + custom', () => {
     expect(Array.isArray(deep[0]!.peak_betting_hours)).toBe(true);
     // Uint8Array when proof digest sealed on context
     const bytes = deep[0]!.proof_digest_bytes;
-    if (bytes != null) {
-      expect(bytes).toBeInstanceOf(Uint8Array);
-      expect((bytes as Uint8Array).byteLength).toBeGreaterThan(0);
-    }
+    expect(bytes).toBeInstanceOf(Uint8Array);
+    expect((bytes as Uint8Array).byteLength).toBeGreaterThan(0);
 
     const json = report.toJSON() as { tableProof: { raises: { renderIdempotent: boolean } } };
     expect(json.tableProof.raises.renderIdempotent).toBe(true);

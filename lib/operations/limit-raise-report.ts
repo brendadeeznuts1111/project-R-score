@@ -53,6 +53,16 @@ export const LIMIT_CLV_TABLE_PROPERTIES = ['limit_id', 'player', 'tier', 'delta'
 /** Context metric rows (flattened key/value per raise). */
 export const LIMIT_CONTEXT_TABLE_PROPERTIES = ['limit_id', 'metric', 'value'] as const;
 
+/** Proof digest rows (hex + Uint8Array length for inspect.table). */
+export const LIMIT_PROOF_TABLE_PROPERTIES = [
+  'limit_id',
+  'algorithm',
+  'digest_hex',
+  'digest_bytes',
+  'signed',
+  'valid',
+] as const;
+
 export type LimitRaiseReportOpts = {
   nodeId?: string; // brand-ok — TreeNodeId wire / partner slug
   hours?: number;
@@ -243,6 +253,26 @@ export class LimitRaiseReport {
     return rows;
   }
 
+  /** Proof digests as inspect.table rows (hex + byte length). */
+  proofRows(): TableRow[] {
+    return this.raises.map(r => {
+      const hex =
+        typeof r.context?.proof_digest === 'string' && r.context.proof_digest.length > 0
+          ? r.context.proof_digest
+          : null;
+      const bytes = hexToUint8Array(hex);
+      const proof = r.context_proof;
+      return {
+        limit_id: r.limit_id,
+        algorithm: r.context?.proof_algorithm ?? proof?.algorithm ?? '—',
+        digest_hex: hex ? `${hex.slice(0, 16)}…` : '—',
+        digest_bytes: bytes ? bytes.byteLength : 0,
+        signed: proof?.signed ?? Boolean(r.context?.proof_hmac),
+        valid: proof?.valid ?? false,
+      };
+    });
+  }
+
   /**
    * Deep payload for Bun.inspect: includes Array, nested objects, and Uint8Array digests.
    * Depth controlled by getConsoleDepth() / --console-depth.
@@ -262,6 +292,10 @@ export class LimitRaiseReport {
         peakHours = r.context?.peak_betting_hours ?? [];
       }
       const digestBytes = hexToUint8Array(digestHex);
+      const roundedFactors: Record<string, number> = {};
+      for (const [k, v] of Object.entries(r.factor_scores ?? {})) {
+        roundedFactors[k] = Number(Number(v).toFixed(4));
+      }
       return {
         limit_id: r.limit_id,
         book: r.sportsbook,
@@ -269,18 +303,18 @@ export class LimitRaiseReport {
         bet_type: r.bet_type,
         previous_max: r.previous_max,
         new_limit: r.new_limit,
-        multi_factor_score: r.multi_factor_score,
+        multi_factor_score: Number((r.multi_factor_score ?? 0).toFixed(4)),
         /** string[] — top drivers */
         top_contributing_factors: [...(r.top_contributing_factors ?? [])],
         /** Array of CLV movers */
         top_clv: (r.top_clv ?? []).map(p => ({ ...p })),
         /** number[] peak hours from context JSON */
         peak_betting_hours: Array.isArray(peakHours) ? peakHours : [peakHours],
-        /** Uint8Array digest bytes when proof present */
-        proof_digest_bytes: digestBytes,
+        /** Uint8Array digest bytes when proof present (Bun.inspect shows Uint8Array(n) [ … ]) */
+        proof_digest_bytes: digestBytes ?? new Uint8Array(0),
         proof_digest_hex: digestHex,
         context_proof: r.context_proof,
-        factor_scores: r.factor_scores,
+        factor_scores: roundedFactors,
         context: r.context
           ? {
               handle7d: r.context.total_handle_7d,
@@ -300,6 +334,7 @@ export class LimitRaiseReport {
     factors?: InspectTableProof;
     clv?: InspectTableProof;
     context?: InspectTableProof;
+    proofs?: InspectTableProof;
   } {
     const raiseRows = projectTableRows(
       this.raiseRows() as unknown as TableRow[],
@@ -320,6 +355,10 @@ export class LimitRaiseReport {
     if (ctx.length) {
       proof.context = proveInspectTable(ctx, LIMIT_CONTEXT_TABLE_PROPERTIES);
     }
+    const proofs = this.proofRows();
+    if (proofs.length) {
+      proof.proofs = proveInspectTable(proofs, LIMIT_PROOF_TABLE_PROPERTIES);
+    }
     return proof;
   }
 
@@ -328,13 +367,17 @@ export class LimitRaiseReport {
     factors: string;
     clv: string;
     context: string;
+    proofs: string;
     deep: string;
+    /** Bun.inspect of a sample Uint8Array for demo/docs */
+    u8sample: string;
   } {
     const colors = opts.colors ?? shouldColor();
     const raiseRows = this.raiseRows() as unknown as TableRow[];
     const factors = this.factorRows();
     const clv = this.clvRows();
     const ctx = this.contextRows();
+    const proofs = this.proofRows();
     const depth = getConsoleDepth();
 
     // prove idempotency on primary table
@@ -349,6 +392,14 @@ export class LimitRaiseReport {
       throw new Error('LimitRaiseReport: inspect.table not idempotent');
     }
 
+    const deep = this.deepPayload() as Array<{ proof_digest_bytes?: Uint8Array }>;
+    const firstU8 = deep.find(
+      d => d.proof_digest_bytes && d.proof_digest_bytes.byteLength > 0
+    )?.proof_digest_bytes;
+    const u8sample = firstU8
+      ? Bun.inspect(firstU8, { depth: 1, colors, compact: true })
+      : Bun.inspect(new Uint8Array(0), { colors, compact: true });
+
     return {
       raises: inspectTable(raiseRows, LIMIT_RAISE_TABLE_PROPERTIES, { colors }),
       factors: factors.length
@@ -360,11 +411,15 @@ export class LimitRaiseReport {
       context: ctx.length
         ? inspectTable(ctx, LIMIT_CONTEXT_TABLE_PROPERTIES, { colors })
         : '(no context snapshots)',
+      proofs: proofs.length
+        ? inspectTable(proofs, LIMIT_PROOF_TABLE_PROPERTIES, { colors })
+        : '(no proofs)',
       deep: Bun.inspect(this.deepPayload(), {
         depth,
         colors,
         sorted: true,
       }),
+      u8sample,
     };
   }
 
@@ -415,7 +470,9 @@ export class LimitRaiseReport {
       parts.push('', '── MULTI-FACTOR DRIVERS ──', r.factors);
       parts.push('', '── CLV MOVERS (array) ──', r.clv);
       parts.push('', '── CONTEXT METRICS ──', r.context);
-      parts.push('', '── DEEP (Bun.inspect · arrays · Uint8Array digests) ──', r.deep);
+      parts.push('', '── PROOFS (digest table) ──', r.proofs);
+      parts.push('', '── Uint8Array sample (Bun.inspect) ──', r.u8sample);
+      parts.push('', '── DEEP (Bun.inspect · string[] · number[] · Uint8Array digests) ──', r.deep);
     }
     return parts.join('\n');
   }
