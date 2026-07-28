@@ -2,7 +2,7 @@
   {
     "flag": "--watch",
     "category": "Development",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Restart on imported file changes",
     "url": "https://bun.com/docs/runtime/watch-mode",
     "takesValue": false,
@@ -10,12 +10,12 @@
     "deprecated": false,
     "behavior": "Restarts the process when any imported file changes",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--hot",
     "category": "Development",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Soft-reload modules while preserving global state",
     "url": "https://bun.com/docs/runtime/watch-mode",
     "takesValue": false,
@@ -23,12 +23,12 @@
     "deprecated": false,
     "behavior": "Hot-reloads modules without a full process restart when possible",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--no-clear-screen",
     "category": "Development",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.1.9",
     "description": "Keep terminal output visible during reloads",
     "url": "https://bun.com/docs/runtime/watch-mode",
     "takesValue": false,
@@ -36,12 +36,12 @@
     "deprecated": false,
     "behavior": "Disables clearing the terminal on each --watch/--hot reload",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--inspect",
     "category": "Debugging",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Attach the debugger on an available port",
     "url": "https://bun.com/docs/runtime/debugger",
     "takesValue": true,
@@ -49,12 +49,12 @@
     "deprecated": false,
     "behavior": "Optional host:port value; starts inspector without blocking startup",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--inspect-wait",
     "category": "Debugging",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Wait for the debugger before executing",
     "url": "https://bun.com/docs/runtime/debugger",
     "takesValue": true,
@@ -62,12 +62,12 @@
     "deprecated": false,
     "behavior": "Blocks until a debugger connects, then continues",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--inspect-brk",
     "category": "Debugging",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Break on the first line and wait",
     "url": "https://bun.com/docs/runtime/debugger",
     "takesValue": true,
@@ -75,12 +75,12 @@
     "deprecated": false,
     "behavior": "Starts paused on the first line until a debugger continues",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--cwd",
     "category": "Environment & Config",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Set the working directory",
     "url": "https://bun.com/docs/runtime/index#global-configuration-context",
     "takesValue": true,
@@ -88,13 +88,13 @@
     "deprecated": false,
     "behavior": "Changes process.cwd before loading the entrypoint",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--config",
     "shortcode": "-c",
     "category": "Environment & Config",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Use a custom bunfig.toml",
     "url": "https://bun.com/docs/runtime/index#global-configuration-context",
     "takesValue": true,
@@ -102,26 +102,26 @@
     "deprecated": false,
     "behavior": "Loads the given bunfig path instead of discovering one",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--define",
     "shortcode": "-d",
     "category": "Environment & Config",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Substitute a constant at parse time",
     "url": "https://bun.com/docs/guides/runtime/define-constant",
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "behavior": "Compile-time identifier → literal replacement (e.g. process.env.NODE_ENV:\"production\")",
+    "behavior": "Compile-time identifier \u2192 literal replacement (e.g. process.env.NODE_ENV:\"production\")",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--conditions",
     "category": "Environment & Config",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.0.30",
     "description": "Pass custom export conditions",
     "url": "https://bun.com/docs/runtime/index#dependency-module-resolution",
     "takesValue": true,
@@ -129,12 +129,12 @@
     "deprecated": false,
     "behavior": "Adds package.json exports conditions for resolution",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--silent",
     "category": "Output Control",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Suppress Bun's script-command echo",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": false,
@@ -142,12 +142,12 @@
     "deprecated": false,
     "behavior": "Hides the $ command line Bun prints when running package scripts",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--smol",
     "category": "Performance",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Lower memory usage with more frequent garbage collection",
     "url": "https://bun.com/docs/runtime/index#runtime-process-control",
     "takesValue": false,
@@ -155,12 +155,12 @@
     "deprecated": false,
     "behavior": "Trades CPU for a smaller heap via more aggressive GC",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--prefer-offline",
     "category": "Dependency Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Skip package-cache staleness checks and resolve from disk",
     "url": "https://bun.com/docs/runtime/auto-install",
     "takesValue": false,
@@ -168,349 +168,349 @@
     "deprecated": false,
     "behavior": "Prefers local cache / node_modules without revalidating remoteness",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--install",
     "category": "Dependency Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Install packages only when missing locally",
     "url": "https://bun.com/docs/runtime/auto-install",
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "behavior": "Controls auto-install mode; curated help documents =fallback. Runtime bare -i ≡ --install=fallback (standalone catalog row).",
+    "behavior": "Controls auto-install mode; curated help documents =fallback. Runtime bare -i \u2261 --install=fallback (standalone catalog row).",
     "helpExample": "fallback",
     "context": "runtime",
     "curated": true,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--bun",
     "shortcode": "-b",
     "category": "Execution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Force Bun as the runtime for package scripts",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--if-present",
     "category": "Execution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.0.5",
     "description": "Exit 0 if the script is missing",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--eval",
     "shortcode": "-e",
     "category": "Execution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.0.12",
     "description": "Evaluate a script string",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--print",
     "shortcode": "-p",
     "category": "Execution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.0.31",
     "description": "Evaluate and print the result",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--shell",
     "category": "Execution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.0.36",
     "description": "Shell for package scripts (bun|system)",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--title",
     "category": "Execution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.0",
     "description": "Set the process title",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--console-depth",
     "category": "Output Control",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.19",
     "description": "Object inspection depth for console output",
     "url": "https://bun.com/docs/runtime/console#object-inspection-depth",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--unhandled-rejections",
     "category": "Runtime Process",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.17",
     "description": "How to treat unhandled promise rejections",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--expose-gc",
     "category": "Performance",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.0",
     "description": "Expose global gc() for manual collection",
     "url": "https://bun.com/docs/runtime/index#runtime-process-control",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--no-deprecation",
     "category": "Runtime Process",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.0",
     "description": "Silence deprecation warnings",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--throw-deprecation",
     "category": "Runtime Process",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.0",
     "description": "Throw on deprecation warnings",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--zero-fill-buffers",
     "category": "Runtime Process",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.1",
     "description": "Zero-fill Buffer allocations",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--no-addons",
     "category": "Runtime Process",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.13",
     "description": "Disallow loading native addons",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--no-install",
     "category": "Dependency Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Disable auto-install of missing packages",
     "url": "https://bun.com/docs/runtime/auto-install",
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "behavior": "No shortcode — runtime -i is NOT --no-install (see standalone -i row)",
+    "behavior": "No shortcode \u2014 runtime -i is NOT --no-install (see standalone -i row)",
     "context": "runtime",
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "-i",
     "category": "Dependency Resolution",
-    "version": "Bun ≥1.0",
-    "description": "Auto-install missing packages during execution (≡ --install=fallback)",
+    "version": "Bun \u22651.0",
+    "description": "Auto-install missing packages during execution (\u2261 --install=fallback)",
     "url": "https://bun.com/docs/runtime/auto-install",
     "takesValue": false,
     "default": null,
     "deprecated": false,
-    "behavior": "Standalone runtime short flag; NOT --no-install. bun update -i is --interactive (PM context — out of this catalog).",
+    "behavior": "Standalone runtime short flag; NOT --no-install. bun update -i is --interactive (PM context \u2014 out of this catalog).",
     "equivalentTo": "--install=fallback",
     "context": "runtime",
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--prefer-latest",
     "category": "Dependency Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Prefer the latest matching version when resolving",
     "url": "https://bun.com/docs/runtime/auto-install",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--preserve-symlinks",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.13",
     "description": "Preserve symlinks when resolving modules",
     "url": "https://bun.com/docs/runtime/index#dependency-module-resolution",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--preserve-symlinks-main",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.13",
     "description": "Preserve symlinks for the main entry",
     "url": "https://bun.com/docs/runtime/index#dependency-module-resolution",
     "takesValue": false,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--preload",
     "shortcode": "-r",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v0.5.8",
     "description": "Preload a module before the entrypoint",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--require",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.13",
     "description": "Require a module before the entrypoint (CJS-style)",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--import",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.2.17",
     "description": "Import a module before the entrypoint",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--main-fields",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "package.json main fields resolution order",
     "url": "https://bun.com/docs/runtime/index#dependency-module-resolution",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--extension-order",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "File extension resolution order",
     "url": "https://bun.com/docs/runtime/index#dependency-module-resolution",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--tsconfig-override",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Use an alternate tsconfig path",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--drop",
     "category": "Environment & Config",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.1.31",
     "description": "Drop calls to a global identifier at build time",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--loader",
     "shortcode": "-l",
     "category": "Module Resolution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Map an extension to a loader",
     "url": "https://bun.com/docs/runtime/index#general-execution-options",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--env-file",
     "category": "Environment & Config",
-    "version": "Bun ≥1.0",
+    "version": "Bun v1.0.12",
     "description": "Load environment variables from a file",
     "url": "https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files",
     "takesValue": true,
@@ -518,18 +518,18 @@
     "deprecated": false,
     "behavior": "Loads .env-style vars before the entrypoint (shortcode is not -e; -e is --eval)",
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   },
   {
     "flag": "--port",
     "category": "Execution",
-    "version": "Bun ≥1.0",
+    "version": "Bun \u22651.0",
     "description": "Set the default server port",
     "url": "https://bun.com/docs/runtime/http/server#configuring-a-default-port",
     "takesValue": true,
     "default": null,
     "deprecated": false,
     "curated": false,
-    "versionVerified": false
+    "versionVerified": true
   }
 ]
