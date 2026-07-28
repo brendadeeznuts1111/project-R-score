@@ -25,6 +25,7 @@ import {
   fitVisible,
   truncateWidth,
   wrapText,
+  stripANSI,
   colorize,
   inspect,
   getConsoleDepth,
@@ -341,6 +342,14 @@ describe('wrapText', () => {
   });
 });
 
+describe('stripANSI', () => {
+  test('wrapper strips SGR and OSC 8 like Bun.stripANSI', () => {
+    expect(stripANSI('\x1b[1m\x1b[31mbold red\x1b[0m')).toBe('bold red');
+    expect(stripANSI('plain')).toBe('plain');
+    expect(stripANSI('\x1b]8;;https://bun.com\x07link\x1b]8;;\x07')).toBe('link');
+  });
+});
+
 describe('docs-grounded runtime behavior (verified Bun 1.4.0)', () => {
   test('Bun.color "ansi" auto-detect returns "" when piped (no color support)', () => {
     // docs/runtime/color: "ansi" picks depth from environment, "" when unsupported
@@ -350,6 +359,17 @@ describe('docs-grounded runtime behavior (verified Bun 1.4.0)', () => {
     const withGetter = { get x() { return 42; } };
     expect(Bun.inspect(withGetter, { getters: true } as never)).toContain('[Getter]');
     expect(Bun.inspect([1, 2, 3, 4], { maxArrayLength: 2 } as never)).toContain('4');
+  });
+  test('Bun.inspect silently ignores maxStringLength / showProxy / numericSeparator', () => {
+    // Runtime-verified on Bun 1.4.0 — these Node util.inspect options are
+    // accepted without error but have no effect, so the wrapper omits them.
+    expect(Bun.inspect('x'.repeat(50), { maxStringLength: 5 } as never)).toContain(
+      'x'.repeat(50)
+    );
+    expect(Bun.inspect(1234567, { numericSeparator: true } as never)).not.toContain('_');
+    expect(Bun.inspect(new Proxy({ a: 1 }, {}), { showProxy: true } as never)).not.toContain(
+      'Proxy'
+    );
   });
 
   test('runtime nits inspect probes align with console-depth SSOT', async () => {

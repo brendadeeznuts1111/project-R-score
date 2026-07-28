@@ -9,7 +9,7 @@
  *
  * Never emit ANSI when piped, CI, or NO_COLOR — same contract as logDepth/colorize.
  */
-import { shouldColor } from '../console-depth.ts';
+import { shouldColor, stripANSI } from '../console-depth.ts';
 
 const RESET = '\x1b[0m';
 
@@ -59,7 +59,7 @@ export function truncateDisplay(s: string, max: number): string {
   if (max <= 0) return '';
   if (displayWidth(s) <= max) return s;
   if (max === 1) return '…';
-  const plain = Bun.stripANSI(s);
+  const plain = stripANSI(s);
   let out = '';
   for (const ch of plain) {
     if (displayWidth(out + ch + '…') > max) break;

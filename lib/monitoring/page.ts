@@ -4,6 +4,7 @@
  * Server-rendered monitoring HTML using Bun.inspect.table.
  */
 import type { MonitoringPayload } from './collect.ts';
+import { stripANSI } from '../console-depth.ts';
 
 function escapeHtml(text: string): string {
   return text
@@ -16,7 +17,7 @@ function escapeHtml(text: string): string {
 function tableSection(title: string, rows: Record<string, string | number>[]): string {
   // colors: false — ANSI codes are noise in HTML <pre>
   const body = Bun.inspect.table(rows, { colors: false });
-  const plain = typeof Bun.stripANSI === 'function' ? Bun.stripANSI(body) : body;
+  const plain = stripANSI(body);
   return `<div class="section"><h2>${escapeHtml(title)}</h2><pre>${escapeHtml(plain)}</pre></div>`;
 }
 

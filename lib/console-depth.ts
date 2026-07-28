@@ -140,8 +140,9 @@ export type InspectOptions = {
 /**
  * Wire-edge Bun.inspect — accepts runtime `unknown` before typed use inward.
  * Only official BunInspectOptions fields are exposed — runtime-verified
- * on Bun 1.4.0: `getters`, `maxArrayLength`, and `maxStringLength` are
- * silently ignored by Bun.inspect, so they are deliberately absent.
+ * on Bun 1.4.0: `getters`, `maxArrayLength`, `maxStringLength`, `showProxy`,
+ * and `numericSeparator` are silently ignored by Bun.inspect, so they are
+ * deliberately absent.
  * @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
  * @see https://bun.com/reference/bun/BunInspectOptions — colors / depth / sorted / compact
  */
@@ -406,6 +407,15 @@ export function wrapText(
   options: { hard?: boolean; wordWrap?: boolean; trim?: boolean; ambiguousIsNarrow?: boolean } = {}
 ): string {
   return Bun.wrapAnsi(text, columns, options);
+}
+
+/**
+ * Remove ANSI escape codes. Thin alias of Bun.stripANSI — completes the
+ * ANSI family (width / pad / truncate / wrap / strip) behind one import.
+ * @see https://bun.com/docs/runtime/utils#bun-stripansi
+ */
+export function stripANSI(text: string): string {
+  return Bun.stripANSI(text);
 }
 
 /**
