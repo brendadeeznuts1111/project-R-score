@@ -38,22 +38,42 @@ Health = 100
 ## CLI
 
 ```bash
-bun run monorepo:health              # human table + latest JSON
+bun run monorepo:health              # human table + latest JSON + SQLite trend
 bun run monorepo:health:json         # stdout JSON only
 bun run monorepo:health:full         # --with-coverage --archive
 bun tools/monorepo-health.ts --no-build
 bun tools/monorepo-health.ts --with-tests
 bun tools/monorepo-health.ts --with-coverage  # tests + All-files line % bonus
 bun tools/monorepo-health.ts --archive        # tar report when Bun.Archive available
+bun tools/monorepo-health.ts --watch --interval=30
+bun tools/monorepo-health.ts --interactive
+bun tools/monorepo-health.ts --inspect
+bun tools/monorepo-health.ts --validate reports/monorepo-health-latest.json
 ```
+
+### CLI I/O model
+
+| Surface | Use |
+|---------|-----|
+| `process.stdout` / `stderr` | tables, help, host spinner (not `Bun.Terminal`) |
+| `Bun.inspect` / `.table` | structured dumps; depth via `BUN_CONSOLE_DEPTH` / `--console-depth` |
+| `Bun.Terminal` | **child** PTY only — [`lib/terminal.ts`](../../../lib/terminal.ts) |
+| `bun:sqlite` | `reports/monorepo-health-history.sqlite` score trend |
+| `Bun.semver` | warn if runtime &lt; 1.3.0 |
+| `Bun.which` | probe `bun` / `git` / `tar` on PATH |
+| `Bun.sleep` | `--watch` interval |
+| `Bun.stdin` | `--interactive` prompts |
 
 ## Code
 
 | Path | Role |
 |------|------|
 | [`lib/harness/monorepo-health.ts`](../../../lib/harness/monorepo-health.ts) | formula + collect |
+| [`lib/harness/monorepo-health-history.ts`](../../../lib/harness/monorepo-health-history.ts) | SQLite trend |
+| [`lib/harness/monorepo-health-ui.ts`](../../../lib/harness/monorepo-health-ui.ts) | spinner · tables · schema · prompts |
 | [`tools/monorepo-health.ts`](../../../tools/monorepo-health.ts) | CLI |
 | [`tests/monorepo-health.test.ts`](../../../tests/monorepo-health.test.ts) | pure formula + helpers |
+| [`tests/monorepo-health-ui.test.ts`](../../../tests/monorepo-health-ui.test.ts) | UI + history |
 
 ## Related: packages metafile audit
 
