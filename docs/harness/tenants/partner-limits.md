@@ -101,7 +101,22 @@ bun run scan:domains --limit-only
 | **Barrel**               | [`lib/operations/index.ts`](../../../lib/operations/index.ts) · [`lib/prediction/index.ts`](../../../lib/prediction/index.ts)                                              | all limit agent handlers + limit prediction exports                                                                                  |
 | **Tests**                | `tests/account-limits-repo.test.ts` · `analytics-multifactor.test.ts` · `limit-raise-report.test.ts` · `limit-raise-agent-api.test.ts` · `limit-patterns*.test.ts` · `limit-prediction-report.test.ts` | schema · score · inspect · agent · Pages · predict                                                                                    |
 
-## Scripts
+## Monorepo filter (bun --filter)
+
+Limit-related tools run from the root workspace. Use `bun --filter <pattern>` to target packages:
+
+```bash
+# Run limit tests only in specified workspaces
+bun test --filter '!tests/limit-*-agent-api*'    # exclude agent API tests
+bun --filter '*' ops:limits:check                  # run in all workspaces (root only has the script)
+bun --filter './packages/*' ops:limits:check       # packages only (no-op — limit tools in root)
+
+# Install dependencies for specific groups
+bun install --filter '!packages/*'                 # root only (omit sub-packages)
+bun install --filter './packages/*'                # packages only
+```
+
+See [`bun --filter` docs](https://bun.com/docs/cli/filter).
 
 | Script                            | Tool / behavior                           |
 | --------------------------------- | ----------------------------------------- |
