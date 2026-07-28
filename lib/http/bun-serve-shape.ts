@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
 /**
@@ -11,6 +12,7 @@
  *
  * @see https://bun.com/docs/runtime/http/server#reference — published Server interface
  * @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — port env precedence
+ * @see https://bun.com/docs/runtime/environment-variables — Bun.env / .env auto-load (PORT, BUN_PORT)
  * @see https://bun.com/docs/runtime/http/tls — protocol https when TLS enabled
  * @see https://github.com/oven-sh/bun/blob/main/packages/bun-types/serve.d.ts — bun-types SSOT
  * @see https://bun.com/rss.xml — release feed (indexed locally)
@@ -39,6 +41,15 @@ export type BunServeShapeRow = {
   docsReference: BunServeShapeDocsStatus;
   /** Summary from bun-types serve.d.ts Server interface. */
   bunTypes: string;
+  /** Typical / allowed runtime values. */
+  values: string;
+  /**
+   * When the Bun.serve *option* is omitted (pre-bind attempt), or n/a for derived fields.
+   * Not the same as “read after bind” — Bun recommends server.port / server.url for the chosen listen.
+   */
+  defaultWhen: string;
+  /** Resolution chain, twin field, or busy-port / unix fallback. */
+  fallback: string;
   /** Verified on Bun 1.4.0 canary unless noted. */
   runtimeNote: string;
   /** Mapped in lib/http/bun-server.ts ServerIdentity. */
@@ -48,87 +59,161 @@ export type BunServeShapeRow = {
 /**
  * Known drift between published docs, bun-types, and runtime.
  * `server.protocol` is in bun-types + runtime but absent from published #reference (2026-07-22).
+ *
+ * Bun recommend: after bind, read chosen listen from `server.port` / `server.url`
+ * ([port + hostname](https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname)).
  */
 export const BUN_SERVE_SHAPE_MATRIX: readonly BunServeShapeRow[] = [
   {
     field: 'server.port',
     docsReference: 'documented',
-    bunTypes: 'number | undefined (undefined on unix)',
-    runtimeNote: 'number when TCP; matches ephemeral pick for port:0',
+    bunTypes: 'number | undefined',
+    values: '1–65535 TCP · undefined on unix',
+    defaultWhen: 'omit option → --port → BUN_PORT → PORT → NODE_PORT → 3000',
+    fallback: 'port:0 → OS ephemeral; EADDRINUSE → harness retry port:0; always re-read after bind',
+    runtimeNote: 'Chosen listen — never guess from env after Bun.serve returns',
     factoryField: 'port',
+  },
+  {
+    field: 'server.url',
+    docsReference: 'documented',
+    bunTypes: 'URL',
+    values: 'http(s)://host:port/ …',
+    defaultWhen: 'derived after bind (not a Bun.serve option)',
+    fallback: 'unix → non-TCP URL shape; prefer loopbackOrigin when hostname is 0.0.0.0',
+    runtimeNote: 'Docs startup: Server running at ${server.url}',
+    factoryField: 'url',
   },
   {
     field: 'server.url.port',
     docsReference: 'via-url-only',
-    bunTypes: 'URL.port (string)',
-    runtimeNote: 'String(server.port) for non-default ports; empty for 80/443',
+    bunTypes: 'string (URL.port)',
+    values: '"3000" · "" on default 80/443',
+    defaultWhen: 'n/a — mirror of listen',
+    fallback: 'empty string ≠ missing; compare to String(server.port) except 80/443',
+    runtimeNote: 'Twin of server.port — type is string',
     factoryField: 'urlPort',
+  },
+  {
+    field: 'server.url.href',
+    docsReference: 'documented',
+    bunTypes: 'string (URL.href)',
+    values: 'http://localhost:3000/',
+    defaultWhen: 'n/a — derived',
+    fallback: 'trailing slash on root path',
+    runtimeNote: 'Full href; same plane as server.url',
+    factoryField: 'url',
+  },
+  {
+    field: 'server.url.origin',
+    docsReference: 'via-url-only',
+    bunTypes: 'string (URL.origin)',
+    values: 'http://localhost:3000',
+    defaultWhen: 'n/a — derived',
+    fallback: 'scheme+host+port; use for absolute fetch bases',
+    runtimeNote: 'No path — good loopback base',
+    factoryField: 'origin',
   },
   {
     field: 'server.hostname',
     docsReference: 'documented',
     bunTypes: 'string | undefined',
-    runtimeNote:
-      'Omitted → localhost on 1.4.0 canary (docs example says 0.0.0.0 for options default)',
+    values: '0.0.0.0 · localhost · 127.0.0.1 · FQDN bind',
+    defaultWhen: 'docs: 0.0.0.0 · 1.4 canary often localhost when omitted',
+    fallback: 'undefined on unix · NOT a DNS HostId',
+    runtimeNote: 'OS bind address only — never assign to HostId',
+    factoryField: 'hostname',
+  },
+  {
+    field: 'server.url.hostname',
+    docsReference: 'via-url-only',
+    bunTypes: 'string (URL.hostname)',
+    values: 'localhost · 127.0.0.1 · …',
+    defaultWhen: 'n/a — derived from listen',
+    fallback: 'may differ from server.hostname when printing loopback',
+    runtimeNote: 'Still bind plane — not surfaces.toml HostId',
     factoryField: 'hostname',
   },
   {
     field: 'server.protocol',
     docsReference: 'missing',
     bunTypes: '"http" | "https" | null',
-    runtimeNote: '"http" on plain TCP; "https" with tls; null on unix',
+    values: 'http · https · null (unix)',
+    defaultWhen: 'plain TCP → http · tls → https',
+    fallback: 'null on unix · not in published #reference (bun-types + runtime yes)',
+    runtimeNote: 'Bare scheme — no colon',
     factoryField: 'protocol',
   },
   {
     field: 'server.url.protocol',
     docsReference: 'via-url-only',
-    bunTypes: 'URL.protocol',
-    runtimeNote: 'Always includes colon; http: / https:',
+    bunTypes: 'string (URL.protocol)',
+    values: 'http: · https:',
+    defaultWhen: 'n/a — `${server.protocol}:` on TCP',
+    fallback: 'always trailing colon — distinct from server.protocol',
+    runtimeNote: 'Must match `${server.protocol}:` on TCP',
     factoryField: 'urlProtocol',
-  },
-  {
-    field: 'server.url.origin',
-    docsReference: 'via-url-only',
-    bunTypes: 'URL.origin',
-    runtimeNote: 'scheme + host + port; use for loopback base URLs',
-    factoryField: 'origin',
-  },
-  {
-    field: 'server.url.href',
-    docsReference: 'documented',
-    bunTypes: 'URL.href',
-    runtimeNote: 'Trailing slash on root',
-    factoryField: 'url',
   },
   {
     field: 'server.development',
     docsReference: 'documented',
     bunTypes: 'boolean',
-    runtimeNote: 'Omitted → false when NODE_ENV=production on 1.4.0 canary',
+    values: 'true · false',
+    defaultWhen: 'omit → follows NODE_ENV (production → false on 1.4 canary)',
+    fallback: 'dev error pages leak stacks — off in production',
+    runtimeNote: 'Option + runtime flag',
     factoryField: 'development',
   },
   {
     field: 'server.id',
     docsReference: 'documented',
     bunTypes: 'string',
-    runtimeNote: 'May be empty string unless configured',
+    values: 'opaque · often ""',
+    defaultWhen: 'unused unless bun --hot',
+    fallback: 'hot reload identity',
+    runtimeNote: 'May be empty string',
     factoryField: 'id',
   },
   {
     field: 'server.pendingRequests',
     docsReference: 'documented',
     bunTypes: 'number',
-    runtimeNote: '0 with no in-flight traffic',
+    values: '≥ 0',
+    defaultWhen: '0 idle',
+    fallback: 'n/a',
+    runtimeNote: 'In-flight HTTP count',
     factoryField: 'pendingRequests',
   },
   {
     field: 'server.pendingWebSockets',
     docsReference: 'documented',
     bunTypes: 'number',
-    runtimeNote: '0 without upgrades',
+    values: '≥ 0',
+    defaultWhen: '0 without upgrades',
+    fallback: 'n/a',
+    runtimeNote: 'Active WS count',
     factoryField: 'pendingWebSockets',
   },
 ] as const;
+
+/** Compact CLI/agent rows — property · type · values · default · fallback. */
+export function bunServeShapeTableRows(): Array<{
+  property: string;
+  type: string;
+  values: string;
+  default: string;
+  fallback: string;
+  docs: BunServeShapeDocsStatus;
+}> {
+  return BUN_SERVE_SHAPE_MATRIX.map(r => ({
+    property: r.field,
+    type: r.bunTypes,
+    values: r.values,
+    default: r.defaultWhen,
+    fallback: r.fallback,
+    docs: r.docsReference,
+  }));
+}
 
 /** Default port env precedence when `port` option omitted — docs order. */
 export const BUN_SERVE_DEFAULT_PORT_ENV = ['BUN_PORT', 'PORT', 'NODE_PORT'] as const;
@@ -137,6 +222,8 @@ export const BUN_SERVE_DEFAULT_PORT_FALLBACK = 3000;
 
 /**
  * Resolve bind port from env only (BUN_PORT → PORT → NODE_PORT → 3000).
+ * Reads {@link Bun.env} by default — already merged with auto-loaded `.env` files by Bun
+ * ([env docs](https://bun.com/docs/runtime/environment-variables)); does not re-parse `.env`.
  * Use {@link resolveBunServeDefaultPort} when `--port` CLI may apply (verify probes).
  * @see https://bun.com/docs/runtime/http/server#configuring-a-default-port
  */
@@ -268,10 +355,15 @@ export function serverShapeViolations(probe: ServerShapeProbe): string[] {
 /** Markdown table for portal / agent consumption. */
 export function renderBunServeShapeMatrix(): string {
   const header =
-    '| Field | Docs #reference | bun-types | Runtime (1.4) | FactoryWager |\n|---|---|---|---|---|';
+    '| Property | Type | Values | Default (omit / pre-bind) | Fallback / after-bind | Docs #reference | FactoryWager |\n|---|---|---|---|---|---|---|';
   const rows = BUN_SERVE_SHAPE_MATRIX.map(
     r =>
-      `| \`${r.field}\` | ${r.docsReference} | ${r.bunTypes} | ${r.runtimeNote} | \`${r.factoryField}\` |`
+      `| \`${r.field}\` | ${r.bunTypes} | ${r.values} | ${r.defaultWhen} | ${r.fallback} | ${r.docsReference} | \`${r.factoryField}\` |`
   );
-  return [header, ...rows].join('\n');
+  return [
+    header,
+    ...rows,
+    '',
+    '_Bun recommend: after `Bun.serve`, read chosen listen from `server.port` / `server.url` — not from env alone._',
+  ].join('\n');
 }

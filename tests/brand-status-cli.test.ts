@@ -30,12 +30,15 @@ describe('brand-status CLI', () => {
     const snap = JSON.parse(stdout) as {
       kind: string;
       apex: string;
-      planes: unknown[];
+      planes: Array<{ property?: string; default?: string }>;
+      serveShape: Array<{ property: string; default: string; fallback: string }>;
       lineage: { host: string; transitions: Array<{ step: string }> } | null;
     };
     expect(snap.kind).toBe('brand-status');
     expect(snap.apex).toBe('factory-wager.com');
-    expect(snap.planes.length).toBeGreaterThanOrEqual(11);
+    expect(snap.planes.length).toBeGreaterThanOrEqual(13);
+    expect(snap.planes.some(p => p.property === 'server.port' && p.default?.includes('BUN_PORT'))).toBeTrue();
+    expect(snap.serveShape.some(r => r.property === 'server.url')).toBeTrue();
     expect(snap.lineage?.host).toBe('score.factory-wager.com');
     expect(snap.lineage?.transitions.some(t => t.step === '4.accessPath')).toBeTrue();
   });
@@ -47,6 +50,15 @@ describe('brand-status CLI', () => {
     expect(stdout).toContain('plane=dns');
     expect(stdout).toContain('HostId');
     expect(stdout).not.toContain('\nDOMAINS\n');
+  });
+
+  test('--plane bind --once shows SERVER/URL defaults columns', async () => {
+    const { code, stdout } = await runBrandStatus(['--plane', 'bind', '--once']);
+    expect(code).toBe(0);
+    expect(stdout).toContain('SERVER / URL');
+    expect(stdout).toContain('server.port');
+    expect(stdout).toContain('BUN_PORT');
+    expect(stdout).toContain('fallback');
   });
 
   test('--lineage --once prints live transition steps', async () => {

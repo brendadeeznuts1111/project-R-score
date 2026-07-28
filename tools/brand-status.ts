@@ -45,6 +45,7 @@ import {
   dnsAccessLineageRows,
   resolveLineageInput,
 } from '../lib/http/host-lineage.ts';
+import { bunServeShapeTableRows } from '../lib/http/bun-serve-shape.ts';
 import { type HostPlane, hostPlaneTableRows, isHostPlane } from '../lib/http/host-planes.ts';
 import { cliTone, frameBlock, kvLines, msFromNs } from '../lib/portal/cli-chrome.ts';
 import { hostPartsForSurface, loadSurfacesInventory } from '../lib/surfaces/inventory.ts';
@@ -132,7 +133,8 @@ Usage:
   bun tools/brand-status.ts --once
   bun tools/brand-status.ts --docs --once
   bun tools/brand-status.ts --lineage [host] --once
-  bun tools/brand-status.ts --plane dns|bind|access|pages [--verbose] --once
+  bun tools/brand-status.ts --plane bind --once   # + SERVER/URL defaults/fallbacks
+  bun tools/brand-status.ts --plane dns|access|pages [--verbose] --once
   bun tools/brand-status.ts --json --once
   bun tools/brand-status.ts --watch [--every '*/5 * * * *']
   bun tools/brand-status.ts --repl
@@ -182,32 +184,73 @@ function hostPlaneNoteCols(): number {
   return Math.min(64, Math.max(36, cols - 70));
 }
 
+function clip(text: string, cols: number, tty: boolean): string {
+  return tty ? truncateWidth(text, cols, { ellipsis: '…' }) : text;
+}
+
+/** Bun.serve Server + URL property matrix (type · values · default · fallback). */
+function printServeShapeTable(opts: { verbose: boolean }): void {
+  const tty = process.stdout.isTTY === true;
+  const w = Math.min(48, Math.max(24, hostPlaneNoteCols()));
+  console.info(
+    cliTone.accent('\nSERVER / URL') +
+      cliTone.dim(
+        '  after bind read server.port · server.url · defaults are pre-bind attempts only'
+      )
+  );
+  const cols = opts.verbose
+    ? (['property', 'type', 'values', 'default', 'fallback', 'docs'] as const)
+    : (['property', 'type', 'values', 'default', 'fallback'] as const);
+  const rows = bunServeShapeTableRows().map(r => ({
+    property: r.property,
+    type: r.type,
+    values: clip(r.values, w, tty),
+    default: clip(r.default, w, tty),
+    fallback: clip(r.fallback, w, tty),
+    ...(opts.verbose ? { docs: r.docs } : {}),
+  }));
+  logTable(rows, [...cols]);
+}
+
 function printHostPlanesTable(opts: { plane?: HostPlane; verbose: boolean }): void {
   const tty = process.stdout.isTTY === true;
   const noteCols = hostPlaneNoteCols();
   const planeLabel = opts.plane ? ` · plane=${opts.plane}` : '';
+  const expanded = opts.verbose || opts.plane === 'bind';
   console.info(
     cliTone.accent('\nHOST PLANES') +
       cliTone.dim(
         tty
-          ? `  bind≠dns${planeLabel} · notes≤${noteCols} (sliceAnsi)${opts.verbose ? ' · +ssot' : ''}`
+          ? `  bind≠dns${planeLabel} · notes≤${noteCols}${expanded ? ' · +defaults' : ''}`
           : `  bind≠dns${planeLabel} · do not mix`
       )
   );
-  const cols = opts.verbose
-    ? (['plane', 'concept', 'typeOrField', 'example', 'ssot', 'note'] as const)
-    : (['plane', 'concept', 'typeOrField', 'example', 'note'] as const);
+  const cols = expanded
+    ? ([
+        'plane',
+        'concept',
+        'property',
+        'type',
+        'values',
+        'default',
+        'fallback',
+        'example',
+        ...(opts.verbose ? (['ssot', 'note'] as const) : (['note'] as const)),
+      ] as string[])
+    : (['plane', 'concept', 'typeOrField', 'example', 'note'] as string[]);
   const rows = hostPlaneTableRows({
     plane: opts.plane,
     includeSsot: opts.verbose,
+    includeDefaults: expanded,
   }).map(r => ({
     ...r,
-    note: tty ? truncateWidth(r.note, noteCols, { ellipsis: '…' }) : r.note,
-    ...(r.ssot !== undefined && tty
-      ? { ssot: truncateWidth(r.ssot, Math.min(40, noteCols), { ellipsis: '…' }) }
-      : {}),
+    note: clip(r.note, noteCols, tty),
+    ...(r.values !== undefined ? { values: clip(r.values, noteCols, tty) } : {}),
+    ...(r.default !== undefined ? { default: clip(r.default, noteCols, tty) } : {}),
+    ...(r.fallback !== undefined ? { fallback: clip(r.fallback, noteCols, tty) } : {}),
+    ...(r.ssot !== undefined ? { ssot: clip(r.ssot, Math.min(40, noteCols), tty) } : {}),
   }));
-  logTable(rows, [...cols]);
+  logTable(rows, cols);
 }
 
 function printDomainTable(brands: BrandRow[]): void {
@@ -485,7 +528,9 @@ async function buildJsonSnapshot(opts: CliOpts): Promise<Record<string, unknown>
     planes: hostPlaneTableRows({
       plane: opts.plane,
       includeSsot: true,
+      includeDefaults: true,
     }),
+    serveShape: bunServeShapeTableRows(),
     domains: [...new Set(m.brands.map(b => b.domain))].sort(),
     surfacesBrands: m.brands
       .filter(b => b.domain === 'surfaces')
@@ -515,6 +560,9 @@ async function printTables(opts: CliOpts & { widthHint: boolean }): Promise<void
   const m = await loadManifest();
   printHeader(m, t0);
   printHostPlanesTable({ plane: opts.plane, verbose: opts.verbose });
+  if (!opts.plane || opts.plane === 'bind' || opts.verbose) {
+    printServeShapeTable({ verbose: opts.verbose || opts.plane === 'bind' });
+  }
   if (!opts.plane) {
     printDomainTable(m.brands);
     printSurfacesTable(m.brands);
