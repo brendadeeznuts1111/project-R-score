@@ -133,6 +133,9 @@ bun run portal-cli pm ls
 bun run portal-cli pm pack --dry-run
 bun run portal-cli pm pkg get name
 bun run portal-cli pm hash
+# FactoryWager extension: offline packages graph bake (not bun pm)
+bun run portal-cli pm graph
+bun run audit:packages -- --bake              # rebake packages-graph-map.json
 # Inject secrets from Proton Pass and run a command (real pass-cli)
 bun run portal-cli secret autofill --vault factorywager -- ./start-agent.sh
 # Compiled binary (optional)

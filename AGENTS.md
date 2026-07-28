@@ -224,3 +224,10 @@ Each row maps to a documented API — Bun or Proton Pass CLI — with type, vers
 | **Cache inspection** | infra | Bun ≥1.0 | `bun pm cache` | — | `portal-cli pm cache` | Implemented | [bun pm cache](https://bun.com/docs/pm/cli/pm#cache) | `bun run portal-cli pm cache` |
 | **Lockfile hash** | integrity | Bun ≥1.0 | `bun pm hash` | — | `portal-cli pm hash` | Implemented | [bun pm hash](https://bun.com/docs/pm/cli/pm#hash) | `bun run portal-cli pm hash` |
 | **PM utilities (full group)** | pkg | Bun ≥1.0 | `bun pm` | — | `portal-cli pm` passthrough | Implemented | [bun pm](https://bun.com/docs/pm/cli/pm) | `bun run portal-cli pm whoami` |
+| **Package graph bake** | audit | Bun ≥1.0 | `Bun.file` + `Bun.write` (bake) · `Bun.inspect.table` (view) | — | `audit:packages --bake` · `portal-cli pm graph` | Implemented | claim `packages-graph-map-v12` · [pm/filter](https://bun.com/docs/pm/filter) (workspace context) | `bun run portal-cli pm graph` · `bun run audit:packages -- --bake` |
+
+## Known technical debt
+
+| Debt | Status | Exit criteria | Owner | Doc |
+|------|--------|---------------|-------|-----|
+| **STO TypeScript 6** | Tracked — STO pins `typescript` **5.9.3**; root catalog is **6.0.3** | `cd projects/active/sports-terminal-os && bun run typecheck` green with catalog TS 6 → set `"typescript": "catalog:"` and drop UNIFIED exception | platform / STO | [Open debt: STO TypeScript 6](docs/harness/tenants/monorepo-workspaces.md#open-debt-sto-typescript-6) |

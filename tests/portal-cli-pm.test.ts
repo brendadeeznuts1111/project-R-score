@@ -45,4 +45,17 @@ describe('portal-cli pm passthrough', () => {
     expect(code).toBe(0);
     expect(out.includes('factorywager') || out.includes('"name"')).toBe(true);
   });
+
+  test('pm graph prints offline packages-graph-map table', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'pm', 'graph'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out.includes('packages-graph-map') || out.includes('registry-client')).toBe(true);
+    expect(out.includes('Rebake') || out.includes('role') || out.includes('score')).toBe(true);
+  });
 });

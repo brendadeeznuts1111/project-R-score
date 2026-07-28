@@ -84,10 +84,10 @@ Examples:
 // Canonical docs: https://bun.com/docs/pm/cli/pm
 const PM_HELP = `Usage: portal-cli pm <subcommand> [args…]
 
-Passthrough to \`bun pm\` — zero invention; only flags bun pm accepts.
+Most subcommands passthrough to \`bun pm\` (no invented flags).
 Docs: https://bun.com/docs/pm/cli/pm
 
-Subcommands:
+bun pm subcommands:
   pack              Create a tarball of the package
   ls                List installed packages (workspace-aware)
   version           Bump package version
@@ -100,11 +100,17 @@ Subcommands:
   bin               Print the path to the bin directory
   migrate           Migrate another package manager's lockfile
 
+FactoryWager extensions (not bun pm — read offline bake):
+  graph             Print packages-graph-map.json as a table
+                    Source: public/registry/packages-graph-map.json
+                    Rebake: bun run audit:packages -- --bake
+
 Examples:
   portal-cli pm ls
   portal-cli pm pack --dry-run
   portal-cli pm pkg get name
   portal-cli pm version --no-git-tag-version
+  portal-cli pm graph
 `;
 
 const ROOT_HELP = `FactoryWager portal CLI
@@ -113,7 +119,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli probe [command]         Bun-native monorepo/portal probes
   portal-cli vault health [--update] Vault-map inventory + report-shape gate
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
-  portal-cli pm <args…>              Passthrough → bun pm (pack, ls, version, pkg, …)
+  portal-cli pm <args…>              bun pm passthrough + FW graph helper
   portal-cli help                    This message
 
   bun run portal-cli snapshot run --scope prediction
@@ -122,6 +128,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli secret which
   bun run portal-cli pm ls
   bun run portal-cli pm pack --dry-run
+  bun run portal-cli pm graph
   bun run portal:probe
 
 Vault health (offline SSOT; live bake separate):
@@ -154,6 +161,62 @@ Secret (real pass-cli only — https://protonpass.github.io/pass-cli/):
 function usage(): never {
   console.log(ROOT_HELP);
   process.exit(0);
+}
+
+/** Offline packages-graph-map bake — not bun pm. @see public/registry/packages-graph-map.json */
+async function printPackagesGraphTable(): Promise<void> {
+  const { joinPath } = await import('../lib/path-bun.ts');
+  const { logTable } = await import('../lib/console-depth.ts');
+  const root = joinPath(import.meta.dir, '..');
+  const mapPath = joinPath(root, 'public/registry/packages-graph-map.json');
+  const file = Bun.file(mapPath);
+  if (!(await file.exists())) {
+    cliError(
+      `Missing packages graph bake: ${mapPath}\n` +
+        `Rebake offline: bun run audit:packages -- --bake`
+    );
+  }
+  const data = (await file.json()) as {
+    generatedAt?: string;
+    score?: number;
+    grade?: string;
+    bunVersion?: string;
+    packages?: Array<{
+      name: string;
+      role?: string;
+      score?: number;
+      grade?: string;
+      scanned?: number;
+      orphans?: number;
+      bytes?: number;
+    }>;
+    map?: { summary?: Record<string, number | string> };
+    totals?: Record<string, number>;
+  };
+  const rows = (data.packages ?? []).map(p => ({
+    package: p.name,
+    role: p.role ?? '—',
+    score: p.score ?? '—',
+    grade: p.grade ?? '—',
+    files: p.scanned ?? '—',
+    orphans: p.orphans ?? '—',
+    kB: p.bytes != null ? Math.round(p.bytes / 1024) : '—',
+  }));
+  console.log(
+    `packages-graph-map  schema=v12  generated=${data.generatedAt ?? '?'}  bun=${data.bunVersion ?? '?'}  score=${data.score ?? '?'}  grade=${data.grade ?? '?'}`
+  );
+  if (data.map?.summary) {
+    const s = data.map.summary;
+    console.log(
+      `summary  packages=${s.packageCount}  consumed=${s.consumed}  dormant=${s.dormant}  rootTooling=${s.rootTooling}  openActions=${s.openActions}`
+    );
+  }
+  if (rows.length === 0) {
+    console.log('(no packages in bake)');
+    return;
+  }
+  logTable(rows, ['package', 'role', 'score', 'grade', 'files', 'orphans', 'kB']);
+  console.log(`\nRebake: bun run audit:packages -- --bake`);
 }
 
 async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promise<void> {
@@ -273,9 +336,19 @@ async function main(): Promise<void> {
   if (cmd === 'pm') {
     const pmArgs = argv.slice(1);
     // Bare `pm` → short help (exit 0), not full `bun pm` dump.
-    if (pmArgs.length === 0) {
+    if (
+      pmArgs.length === 0 ||
+      pmArgs[0] === 'help' ||
+      pmArgs[0] === '--help' ||
+      pmArgs[0] === '-h'
+    ) {
       console.log(PM_HELP);
       process.exit(0);
+    }
+    // FactoryWager extension: offline packages graph bake (not a bun pm subcommand).
+    if (pmArgs[0] === 'graph') {
+      await printPackagesGraphTable();
+      return;
     }
     // Full bun pm surface — https://bun.com/docs/pm/cli/pm
     // Inherit stdio; no invented flags (only what bun pm accepts).
