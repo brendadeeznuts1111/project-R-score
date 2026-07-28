@@ -3,8 +3,14 @@ import { asDocTokenId } from '../lib/types/branded/documents.ts';
 import {
   buildBunBrandMap,
   loadBunBrandMapInput,
+  mapWithConcurrency,
   observationKey,
   observeBunCapabilities,
+  parseBrandKeymap,
+  parseBrandManifest,
+  parseBunBrandUsageBaseline,
+  parseBunDocsCatalog,
+  parseReleaseProof,
 } from '../tools/bun-brand-map.ts';
 
 describe('Bun capability observation', () => {
@@ -258,6 +264,127 @@ describe('Bun brand map join', () => {
         baseline: true,
       })
     );
+  });
+
+  test('failed proof outranks stale and missing proof regardless of declaration order', () => {
+    const declaration = {
+      key: 'image-proof-precedence',
+      token: asDocTokenId('Bun.Image'),
+      variant: 'image-processing',
+      scope: 'tooling' as const,
+      policy: 'optional' as const,
+      ownerLane: 'audit',
+      implementations: [{ path: 'lib/image.ts', symbol: 'render' }],
+      consumers: [],
+      relationships: [
+        {
+          direction: 'none' as const,
+          brand: null,
+          rationale: 'The native image remains unbranded.',
+        },
+      ],
+      proofs: [
+        { source: 'missing.json', key: 'result:missing' },
+        { source: 'stale.json', key: 'result:stale', maxAgeDays: 1 },
+        { source: 'failed.json', key: 'result:failed' },
+      ],
+    };
+    const common = {
+      catalog: {
+        generated: '2026-07-28T00:00:00Z',
+        entries: [
+          {
+            name: 'Bun.Image',
+            type: 'api',
+            stability: 'stable' as const,
+            releasedIn: '1.3.14',
+          },
+        ],
+      },
+      manifest: { brandCount: 0, domains: ['audit'], brands: [] },
+      brandKeymap: { projects: [] },
+      trackedPaths: new Set(['lib/image.ts']),
+      observations: [],
+      baseline: new Set<string>(),
+      releases: new Map([
+        [
+          'stale.json',
+          {
+            timestamp: '2026-01-01T00:00:00Z',
+            results: [{ canonicalKey: 'stale', passed: true }],
+          },
+        ],
+        [
+          'failed.json',
+          {
+            timestamp: '2026-07-28T00:00:00Z',
+            results: [{ canonicalKey: 'failed', passed: false }],
+          },
+        ],
+      ]),
+      generatedAt: '2026-07-28T12:00:00Z',
+    };
+
+    const forward = buildBunBrandMap({ ...common, declarations: [declaration] });
+    const reverse = buildBunBrandMap({
+      ...common,
+      declarations: [{ ...declaration, proofs: [...declaration.proofs].reverse() }],
+    });
+
+    expect(forward.capabilities[0]?.evidenceState).toBe('failed');
+    expect(reverse.capabilities[0]?.evidenceState).toBe('failed');
+    expect(forward.summary.attention).toBe(1);
+    expect(forward.findings.filter(row => row.kind === 'proof-state')).toHaveLength(1);
+  });
+
+  test('source validators reject malformed catalog, manifest, keymap, proof, and baseline data', () => {
+    expect(() =>
+      parseBunDocsCatalog({
+        generated: '2026-07-28T00:00:00Z',
+        entries: [{ name: 'Bun.Image', type: 'api', stability: 'preview' }],
+      })
+    ).toThrow('tools/bun-docs-catalog.json at entries[0].stability');
+    expect(() =>
+      parseBrandManifest({
+        brandCount: 2,
+        domains: ['audit'],
+        brands: [{ name: 'EvidenceId', domain: 'audit' }],
+      })
+    ).toThrow('brandCount');
+    expect(() =>
+      parseBrandKeymap({
+        projects: [{ project: 'projects/active/example', status: 1 }],
+      })
+    ).toThrow('projects[0].status');
+    expect(() =>
+      parseReleaseProof({
+        timestamp: 'not-a-date',
+        results: [],
+      })
+    ).toThrow('release-features.json at timestamp');
+    expect(() =>
+      parseBunBrandUsageBaseline({
+        schemaVersion: 1,
+        kind: 'bun-brand-usage-baseline',
+        keys: ['duplicate', 'duplicate'],
+      })
+    ).toThrow('contains duplicates');
+  });
+
+  test('tracked source mapping preserves order while bounding concurrency', async () => {
+    let active = 0;
+    let maximum = 0;
+    const values = Array.from({ length: 20 }, (_, index) => index);
+    const mapped = await mapWithConcurrency(values, 3, async value => {
+      active += 1;
+      maximum = Math.max(maximum, active);
+      await new Promise(resolve => setTimeout(resolve, 1));
+      active -= 1;
+      return value * 2;
+    });
+
+    expect(maximum).toBeLessThanOrEqual(3);
+    expect(mapped).toEqual(values.map(value => value * 2));
   });
 
   test(

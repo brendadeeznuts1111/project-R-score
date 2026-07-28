@@ -51,6 +51,26 @@ export type EdgeProofTaxonomySlice = {
   source: 'ops-summary' | 'audit-json' | null;
 };
 
+export type EdgeBunBrandMapSlice = {
+  available: boolean;
+  ok: boolean;
+  warnings: number;
+  errors: number;
+  stale: boolean;
+  path: '/registry/bun-brand-map.json';
+  invalid?: boolean;
+  declared?: number;
+  observed?: number;
+  matched?: number;
+  undeclared?: number;
+  legacyUndeclared?: number;
+  newUndeclared?: number;
+  catalogConflicts?: number;
+  experimentalApprovals?: number;
+  projects?: number;
+  generatedAt?: string;
+};
+
 export type EdgeHealthBody = {
   status: 'ok' | 'degraded';
   schemaVersion: 1;
@@ -70,9 +90,77 @@ export type EdgeHealthBody = {
   channels?: Record<string, unknown> | null;
   loop?: Record<string, unknown> | null;
   monorepoHealth?: Record<string, unknown> | null;
-  bunBrandMap?: Record<string, unknown> | null;
+  bunBrandMap?: EdgeBunBrandMapSlice | null;
   serve: Record<string, unknown>;
 };
+
+const EDGE_BUN_BRAND_COUNT_FIELDS = [
+  'declared',
+  'observed',
+  'matched',
+  'undeclared',
+  'legacyUndeclared',
+  'newUndeclared',
+  'catalogConflicts',
+  'experimentalApprovals',
+  'projects',
+] as const;
+
+function isUnknownRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isNonNegativeInteger(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0;
+}
+
+/**
+ * Parse the ops-summary embed once at the edge boundary. A present malformed
+ * control slice is a hard/stale health error; a missing optional slice remains absent.
+ */
+export function parseEmbeddedBunBrandMap(value: unknown): EdgeBunBrandMapSlice | null {
+  if (value == null) return null;
+  const invalid: EdgeBunBrandMapSlice = {
+    available: true,
+    ok: false,
+    warnings: 0,
+    errors: 1,
+    stale: true,
+    invalid: true,
+    path: '/registry/bun-brand-map.json',
+  };
+  if (!isUnknownRecord(value)) return invalid;
+  if (
+    typeof value.available !== 'boolean' ||
+    typeof value.ok !== 'boolean' ||
+    !isNonNegativeInteger(value.warnings) ||
+    !isNonNegativeInteger(value.errors) ||
+    typeof value.stale !== 'boolean'
+  ) {
+    return invalid;
+  }
+  for (const field of EDGE_BUN_BRAND_COUNT_FIELDS) {
+    if (value[field] !== undefined && !isNonNegativeInteger(value[field])) return invalid;
+  }
+  if (value.generatedAt !== undefined && typeof value.generatedAt !== 'string') return invalid;
+  if (value.path !== undefined && value.path !== '/registry/bun-brand-map.json') {
+    return invalid;
+  }
+  return {
+    available: value.available,
+    ok: value.ok,
+    warnings: value.warnings,
+    errors: value.errors,
+    stale: value.stale,
+    path: '/registry/bun-brand-map.json',
+    ...Object.fromEntries(
+      EDGE_BUN_BRAND_COUNT_FIELDS.flatMap(field =>
+        value[field] === undefined ? [] : [[field, value[field]]]
+      )
+    ),
+    ...(typeof value.generatedAt === 'string' ? { generatedAt: value.generatedAt } : {}),
+  };
+}
 
 /** @internal exported for unit tests */
 export function sliceDefaults(raw: Record<string, unknown> | null): EdgeDefaultsSlice {
@@ -184,7 +272,8 @@ export function edgeTaxonomyDegradesHealth(slice: EdgeProofTaxonomySlice): boole
 async function readJsonResponse(res: Response): Promise<Record<string, unknown> | null> {
   if (!res.ok) return null;
   try {
-    return (await res.json()) as Record<string, unknown>;
+    const value: unknown = await res.json();
+    return isUnknownRecord(value) ? value : null;
   } catch {
     return null;
   }
@@ -320,7 +409,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     projectComplianceHealthArtifact(complianceBoard);
   // Missing bake does not degrade edge health (optional plane); present + fail does.
   const complianceFail = complianceArtifact.exists && !complianceArtifact.ok;
-  const bunBrandMap = (ops?.bunBrandMap as Record<string, unknown> | undefined) ?? null;
+  const bunBrandMap = parseEmbeddedBunBrandMap(ops?.bunBrandMap);
   const bunBrandMapFail =
     bunBrandMap?.available === true &&
     ((typeof bunBrandMap.errors === 'number' && bunBrandMap.errors > 0) ||
@@ -508,7 +597,7 @@ export function renderEdgeHealthPlain(data: EdgeHealthBody): string {
         `  Next:        ${toc.topRankedProcess ?? '—'}${toc.avgRP != null ? ` · avg R_P ${Number(toc.avgRP).toFixed(3)}` : ''}`
       );
     }
-    if (toc.principalOutstandingTotal != null) {
+    if (typeof toc.principalOutstandingTotal === 'number') {
       lines.push(`  Principal:   $${Math.round(toc.principalOutstandingTotal)}`);
     }
   } else {

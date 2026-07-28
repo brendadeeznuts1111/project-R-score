@@ -143,7 +143,7 @@ describe('Bun brand ops slice', () => {
 
   test('new undeclared and stale evidence degrade the slice', async () => {
     const path = await writeArtifact({
-      summary: { baselineUndeclared: 3, newUndeclared: 1, stale: true },
+      summary: { baselineUndeclared: 3, newUndeclared: 1, stale: 1 },
       findings: [
         {
           kind: 'observed-undeclared',
@@ -162,7 +162,7 @@ describe('Bun brand ops slice', () => {
     });
   });
 
-  test('missing or invalid artifacts are unavailable, not silently healthy', () => {
+  test('missing or invalid artifacts are unavailable, not silently healthy', async () => {
     expect(loadBunBrandMapSummarySliceSync('/definitely/missing/bun-brand-map.json')).toEqual({
       available: false,
       ok: false,
@@ -171,5 +171,18 @@ describe('Bun brand ops slice', () => {
       stale: false,
       path: '/registry/bun-brand-map.json',
     });
+    const malformedSummary = await writeArtifact({
+      schemaVersion: 1,
+      kind: 'bun-brand-map',
+      summary: { newUndeclared: '0' },
+      findings: [],
+    });
+    expect(loadBunBrandMapSummarySliceSync(malformedSummary).available).toBe(false);
+
+    const malformedFinding = await writeArtifact({
+      summary: { newUndeclared: 0 },
+      findings: [{ severity: 'critical', baseline: false }],
+    });
+    expect(loadBunBrandMapSummarySliceSync(malformedFinding).available).toBe(false);
   });
 });

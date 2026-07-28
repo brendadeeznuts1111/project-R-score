@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-07-28T23:29:45.573Z",
+  "generatedAt": "2026-07-28T23:43:03.606Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -26,7 +26,7 @@
     "wrappers": 10,
     "projects": 32,
     "verified": 2,
-    "attention": 319,
+    "attention": 28,
     "declared": 16,
     "observed": 324,
     "matched": 33,

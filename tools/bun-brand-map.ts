@@ -30,8 +30,10 @@ import * as ts from 'typescript';
 import { BUN_BRAND_USAGES } from '../lib/docs/bun-brand-usages.ts';
 import {
   assertBunBrandUsages,
+  mostSevereBunBrandProofState,
   type BunBrandCatalogToken,
   type BunBrandEvidenceState,
+  type BunBrandProofState,
   type BunBrandUsageDeclaration,
 } from '../lib/docs/bun-brand-contract.ts';
 
@@ -72,6 +74,151 @@ type ReleaseProof = {
     name?: string;
   }>;
 };
+
+function sourceFailure(source: string, field: string, message: string): never {
+  throw new Error(`Invalid ${source} at ${field}: ${message}`);
+}
+
+function parseSourceRecord(source: string, field: string, value: unknown): Record<string, unknown> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    sourceFailure(source, field, 'expected an object');
+  }
+  return value as Record<string, unknown>;
+}
+
+function parseSourceArray(source: string, field: string, value: unknown): unknown[] {
+  if (!Array.isArray(value)) sourceFailure(source, field, 'expected an array');
+  return value;
+}
+
+function parseSourceString(
+  source: string,
+  field: string,
+  value: unknown,
+  options: { nonblank?: boolean } = {}
+): string {
+  if (typeof value !== 'string') sourceFailure(source, field, 'expected a string');
+  if (options.nonblank && !value.trim()) sourceFailure(source, field, 'must be nonblank');
+  return value;
+}
+
+function parseOptionalSourceString(source: string, field: string, value: unknown): void {
+  if (value !== undefined && typeof value !== 'string') {
+    sourceFailure(source, field, 'expected a string when present');
+  }
+}
+
+function parseSourceTimestamp(source: string, field: string, value: unknown): string {
+  const timestamp = parseSourceString(source, field, value, { nonblank: true });
+  if (!Number.isFinite(Date.parse(timestamp))) {
+    sourceFailure(source, field, 'expected a parseable timestamp');
+  }
+  return timestamp;
+}
+
+export function parseBunDocsCatalog(value: unknown): Catalog {
+  const source = 'tools/bun-docs-catalog.json';
+  const record = parseSourceRecord(source, '<root>', value);
+  parseSourceTimestamp(source, 'generated', record.generated);
+  const entries = parseSourceArray(source, 'entries', record.entries);
+  const names = new Set<string>();
+  entries.forEach((entry, index) => {
+    const field = `entries[${index}]`;
+    const row = parseSourceRecord(source, field, entry);
+    const name = parseSourceString(source, `${field}.name`, row.name, { nonblank: true });
+    if (names.has(name)) sourceFailure(source, `${field}.name`, `duplicate token ${name}`);
+    names.add(name);
+    parseSourceString(source, `${field}.type`, row.type, { nonblank: true });
+    if (!['stable', 'experimental', 'deprecated'].includes(String(row.stability))) {
+      sourceFailure(source, `${field}.stability`, 'expected stable, experimental, or deprecated');
+    }
+    parseOptionalSourceString(source, `${field}.releasedIn`, row.releasedIn);
+    parseOptionalSourceString(source, `${field}.docsUrl`, row.docsUrl);
+    parseOptionalSourceString(source, `${field}.canonicalPage`, row.canonicalPage);
+  });
+  return record as Catalog;
+}
+
+export function parseBrandManifest(value: unknown): BrandManifest {
+  const source = 'lib/types/brand-manifest.json';
+  const record = parseSourceRecord(source, '<root>', value);
+  if (!Number.isInteger(record.brandCount) || Number(record.brandCount) < 0) {
+    sourceFailure(source, 'brandCount', 'expected a non-negative integer');
+  }
+  const domains = parseSourceArray(source, 'domains', record.domains).map((domain, index) =>
+    parseSourceString(source, `domains[${index}]`, domain, { nonblank: true })
+  );
+  const domainNames = new Set(domains);
+  const brands = parseSourceArray(source, 'brands', record.brands);
+  const brandNames = new Set<string>();
+  brands.forEach((brand, index) => {
+    const field = `brands[${index}]`;
+    const row = parseSourceRecord(source, field, brand);
+    const name = parseSourceString(source, `${field}.name`, row.name, { nonblank: true });
+    const domain = parseSourceString(source, `${field}.domain`, row.domain, { nonblank: true });
+    if (brandNames.has(name)) sourceFailure(source, `${field}.name`, `duplicate brand ${name}`);
+    if (!domainNames.has(domain)) {
+      sourceFailure(source, `${field}.domain`, `unknown manifest domain ${domain}`);
+    }
+    brandNames.add(name);
+  });
+  if (record.brandCount !== brands.length) {
+    sourceFailure(
+      source,
+      'brandCount',
+      `declares ${String(record.brandCount)} but brands contains ${brands.length}`
+    );
+  }
+  return record as BrandManifest;
+}
+
+export function parseBrandKeymap(value: unknown): BrandKeymap {
+  const source = 'public/registry/brand-keymap.json';
+  const record = parseSourceRecord(source, '<root>', value);
+  const projects = parseSourceArray(source, 'projects', record.projects);
+  const names = new Set<string>();
+  projects.forEach((project, index) => {
+    const field = `projects[${index}]`;
+    const row = parseSourceRecord(source, field, project);
+    const name = parseSourceString(source, `${field}.project`, row.project, { nonblank: true });
+    parseSourceString(source, `${field}.status`, row.status, { nonblank: true });
+    if (names.has(name)) sourceFailure(source, `${field}.project`, `duplicate project ${name}`);
+    names.add(name);
+  });
+  return record as BrandKeymap;
+}
+
+export function parseReleaseProof(value: unknown): ReleaseProof {
+  const source = 'public/registry/release-features.json';
+  const record = parseSourceRecord(source, '<root>', value);
+  parseSourceTimestamp(source, 'timestamp', record.timestamp);
+  const results = parseSourceArray(source, 'results', record.results);
+  results.forEach((result, index) => {
+    const field = `results[${index}]`;
+    const row = parseSourceRecord(source, field, result);
+    parseOptionalSourceString(source, `${field}.canonicalKey`, row.canonicalKey);
+    parseOptionalSourceString(source, `${field}.introducedIn`, row.introducedIn);
+    parseOptionalSourceString(source, `${field}.name`, row.name);
+    if (row.passed !== undefined && typeof row.passed !== 'boolean') {
+      sourceFailure(source, `${field}.passed`, 'expected a boolean when present');
+    }
+  });
+  return record as ReleaseProof;
+}
+
+export function parseBunBrandUsageBaseline(value: unknown): BunBrandUsageBaseline {
+  const source = BUN_BRAND_BASELINE_PATH;
+  const record = parseSourceRecord(source, '<root>', value);
+  if (record.schemaVersion !== 1) sourceFailure(source, 'schemaVersion', 'expected 1');
+  if (record.kind !== 'bun-brand-usage-baseline') {
+    sourceFailure(source, 'kind', 'expected bun-brand-usage-baseline');
+  }
+  const keys = parseSourceArray(source, 'keys', record.keys).map((key, index) =>
+    parseSourceString(source, `keys[${index}]`, key, { nonblank: true })
+  );
+  if (new Set(keys).size !== keys.length) sourceFailure(source, 'keys', 'contains duplicates');
+  return record as BunBrandUsageBaseline;
+}
 
 export type BunCapabilityObservation = {
   token: string;
@@ -581,7 +728,7 @@ function proofState(
   proofs: Array<{ source: string; key: string; state: 'passed' | 'failed' | 'missing' | 'stale' }>;
 } {
   if (declaration.proofs.length === 0) return { state: 'declared-unproven', proofs: [] };
-  let state: BunBrandEvidenceState = 'verified';
+  const states: BunBrandProofState[] = [];
   const proofs = declaration.proofs.map(proof => {
     const report = releases.get(proof.source);
     const result =
@@ -589,23 +736,24 @@ function proofState(
         ? report.results.find(row => row.canonicalKey === proof.key.slice('result:'.length))
         : undefined;
     if (!report || !result || typeof result.passed !== 'boolean') {
-      state = 'declared-unproven';
+      states.push('declared-unproven');
       return { source: proof.source, key: proof.key, state: 'missing' as const };
     }
     if (!result.passed) {
-      state = 'failed';
+      states.push('failed');
       return { source: proof.source, key: proof.key, state: 'failed' as const };
     }
     if (proof.maxAgeDays) {
       const ageMs = Date.parse(generatedAt) - Date.parse(report.timestamp);
       if (ageMs > proof.maxAgeDays * 86_400_000) {
-        state = 'stale';
+        states.push('stale');
         return { source: proof.source, key: proof.key, state: 'stale' as const };
       }
     }
+    states.push('verified');
     return { source: proof.source, key: proof.key, state: 'passed' as const };
   });
-  return { state, proofs };
+  return { state: mostSevereBunBrandProofState(states), proofs };
 }
 
 function comparable(value: BunBrandMapPayload): BunBrandMapPayload {
@@ -715,6 +863,9 @@ export function buildBunBrandMap(input: {
     if (evidence.state !== 'verified') attention.push(evidence.state);
     if (token.stability === 'experimental') attention.push('experimental');
     if (declaration.policy === 'lab-only') attention.push('lab-only');
+    if (catalogConflicts.some(row => row.declaration === declaration.key)) {
+      attention.push('catalog-conflict');
+    }
     return {
       id: declaration.key,
       key: declaration.key,
@@ -834,6 +985,10 @@ export function buildBunBrandMap(input: {
   ).length;
   const externalProjects = projectRows.filter(row => row.status === 'external-or-untracked').length;
   const trackedProjects = projectRows.length - externalProjects;
+  const attentionCapabilities = new Set([
+    ...capabilities.filter(row => row.attention.length > 0).map(row => row.key),
+    ...undeclared.map(row => `undeclared:${row.token}|${row.variant ?? 'default'}`),
+  ]);
 
   return {
     schemaVersion: 1,
@@ -866,7 +1021,7 @@ export function buildBunBrandMap(input: {
         .size,
       projects: trackedProjects,
       verified: capabilities.filter(row => row.evidenceState === 'verified').length,
-      attention: findings.length + capabilities.filter(row => row.attention.length > 0).length,
+      attention: attentionCapabilities.size,
       declared: input.declarations.length,
       observed: input.observations.length,
       matched: input.observations.length - undeclared.length,
@@ -911,6 +1066,28 @@ export function buildBunBrandMap(input: {
   } as const;
 }
 
+export const TRACKED_FILE_READ_CONCURRENCY = 32;
+
+export async function mapWithConcurrency<T, R>(
+  items: readonly T[],
+  limit: number,
+  mapper: (item: T, index: number) => Promise<R>
+): Promise<R[]> {
+  if (!Number.isInteger(limit) || limit < 1) {
+    throw new Error(`concurrency limit must be a positive integer; received ${limit}`);
+  }
+  const results = new Array<R>(items.length);
+  let cursor = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (cursor < items.length) {
+      const index = cursor++;
+      results[index] = await mapper(items[index]!, index);
+    }
+  });
+  await Promise.all(workers);
+  return results;
+}
+
 async function trackedFiles(root: string): Promise<{ paths: string[]; files: SourceFile[] }> {
   const proc = Bun.spawn(['git', 'ls-files', '-z'], {
     cwd: root,
@@ -925,10 +1102,36 @@ async function trackedFiles(root: string): Promise<{ paths: string[]; files: Sou
   if (exitCode !== 0) throw new Error(`git ls-files failed: ${stderr.trim()}`);
   const paths = stdout.split('\0').filter(Boolean);
   const scanPaths = paths.filter(isBunBrandScanPath);
-  const files = await Promise.all(
-    scanPaths.map(async path => ({ path, content: await Bun.file(`${root}/${path}`).text() }))
-  );
+  const files = await mapWithConcurrency(scanPaths, TRACKED_FILE_READ_CONCURRENCY, async path => {
+    try {
+      return { path, content: await Bun.file(`${root}/${path}`).text() };
+    } catch (error) {
+      throw new Error(
+        `Failed to read tracked source ${path}: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  });
   return { paths, files };
+}
+
+async function readJsonSource(root: string, path: string): Promise<unknown> {
+  const file = Bun.file(`${root}/${path}`);
+  if (!(await file.exists())) throw new Error(`Missing required Bun brand map source: ${path}`);
+  let text: string;
+  try {
+    text = await file.text();
+  } catch (error) {
+    throw new Error(
+      `Failed to read Bun brand map source ${path}: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+  try {
+    return JSON.parse(text) as unknown;
+  } catch (error) {
+    throw new Error(
+      `Invalid JSON in Bun brand map source ${path}: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
 }
 
 async function loadBaseline(root: string): Promise<BunBrandUsageBaseline> {
@@ -936,18 +1139,23 @@ async function loadBaseline(root: string): Promise<BunBrandUsageBaseline> {
   if (!(await file.exists())) {
     return { schemaVersion: 1, kind: 'bun-brand-usage-baseline', keys: [] };
   }
-  return file.json() as Promise<BunBrandUsageBaseline>;
+  return parseBunBrandUsageBaseline(await readJsonSource(root, BUN_BRAND_BASELINE_PATH));
 }
 
 export async function loadBunBrandMapInput(root: string, generatedAt?: string) {
-  const [catalog, manifest, brandKeymap, releaseFeatures, baseline, tracked] = await Promise.all([
-    Bun.file(`${root}/tools/bun-docs-catalog.json`).json() as Promise<Catalog>,
-    Bun.file(`${root}/lib/types/brand-manifest.json`).json() as Promise<BrandManifest>,
-    Bun.file(`${root}/public/registry/brand-keymap.json`).json() as Promise<BrandKeymap>,
-    Bun.file(`${root}/public/registry/release-features.json`).json() as Promise<ReleaseProof>,
-    loadBaseline(root),
-    trackedFiles(root),
-  ]);
+  const [catalogRaw, manifestRaw, brandKeymapRaw, releaseFeaturesRaw, baseline, tracked] =
+    await Promise.all([
+      readJsonSource(root, 'tools/bun-docs-catalog.json'),
+      readJsonSource(root, 'lib/types/brand-manifest.json'),
+      readJsonSource(root, 'public/registry/brand-keymap.json'),
+      readJsonSource(root, 'public/registry/release-features.json'),
+      loadBaseline(root),
+      trackedFiles(root),
+    ]);
+  const catalog = parseBunDocsCatalog(catalogRaw);
+  const manifest = parseBrandManifest(manifestRaw);
+  const brandKeymap = parseBrandKeymap(brandKeymapRaw);
+  const releaseFeatures = parseReleaseProof(releaseFeaturesRaw);
   const knownProjects = brandKeymap.projects.map(row => row.project);
   const observations = observeBunCapabilities(tracked.files, knownProjects);
   return {

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  mostSevereBunBrandProofState,
   validateBunBrandUsages,
   type BunBrandCatalogToken,
   type BunBrandUsageDeclaration,
@@ -51,6 +52,18 @@ const context = {
 };
 
 describe('Bun brand declaration contract', () => {
+  test('proof severity precedence is explicit and order-independent', () => {
+    expect(
+      mostSevereBunBrandProofState(['declared-unproven', 'failed', 'stale', 'verified'])
+    ).toBe('failed');
+    expect(
+      mostSevereBunBrandProofState(['verified', 'stale', 'failed', 'declared-unproven'])
+    ).toBe('failed');
+    expect(mostSevereBunBrandProofState(['verified', 'declared-unproven', 'stale'])).toBe(
+      'stale'
+    );
+  });
+
   test('accepts a known token, brand, owner, and tracked implementation', () => {
     expect(validateBunBrandUsages([declaration()], context)).toEqual([]);
   });

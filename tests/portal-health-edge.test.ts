@@ -7,6 +7,7 @@ import {
   collectEdgeHealth,
   edgeHealthETagPayload,
   edgeTaxonomyDegradesHealth,
+  parseEmbeddedBunBrandMap,
   renderEdgeHealthPlain,
   sliceDefaults,
   sliceProofTaxonomy,
@@ -284,6 +285,45 @@ describe('portal-health-edge', () => {
       stale: false,
       path: '/registry/bun-brand-map.json',
     });
+  });
+
+  test('malformed embedded Bun-brand JSON is sanitized and fails health closed', async () => {
+    expect(
+      parseEmbeddedBunBrandMap({
+        available: true,
+        ok: 'true',
+        warnings: -1,
+        errors: 0,
+        stale: false,
+      })
+    ).toEqual({
+      available: true,
+      ok: false,
+      warnings: 0,
+      errors: 1,
+      stale: true,
+      invalid: true,
+      path: '/registry/bun-brand-map.json',
+    });
+
+    const body = await collectEdgeHealth(
+      mockAssetsEnv({
+        ...emptyArtifacts,
+        '/registry/ops-summary.json': {
+          bunBrandMap: {
+            available: true,
+            ok: true,
+            warnings: '0',
+            errors: 0,
+            stale: false,
+          },
+        },
+      }),
+      'https://edge.test/'
+    );
+
+    expect(body.status).toBe('degraded');
+    expect(body.bunBrandMap).toMatchObject({ invalid: true, errors: 1, stale: true });
   });
 
   test('complianceBoard missing: exists false, does not degrade status', async () => {

@@ -52,6 +52,8 @@ type WireProject = {
 };
 
 type WireArtifact = {
+  schemaVersion?: number;
+  kind?: string;
   generatedAt?: string;
   summary?: {
     declared?: number;
@@ -63,7 +65,7 @@ type WireArtifact = {
     catalogConflicts?: number;
     experimentalApprovals?: number;
     projects?: number;
-    stale?: boolean;
+    stale?: number;
   };
   capabilities?: Array<{
     policy?: string;
@@ -72,6 +74,118 @@ type WireArtifact = {
   findings?: WireFinding[];
   projects?: WireProject[];
 };
+
+const SUMMARY_COUNT_FIELDS = [
+  'declared',
+  'observed',
+  'matched',
+  'undeclared',
+  'baselineUndeclared',
+  'newUndeclared',
+  'catalogConflicts',
+  'experimentalApprovals',
+  'projects',
+  'stale',
+] as const;
+
+const PROJECT_COUNT_FIELDS = ['observed', 'undeclared', 'legacyUndeclared', 'attention'] as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isCount(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0;
+}
+
+function optionalField(
+  record: Record<string, unknown>,
+  key: string,
+  guard: (value: unknown) => boolean
+): boolean {
+  return record[key] === undefined || guard(record[key]);
+}
+
+function parseWireArtifact(value: unknown): WireArtifact | null {
+  if (!isRecord(value)) return null;
+  if (!optionalField(value, 'schemaVersion', candidate => candidate === 1)) return null;
+  if (!optionalField(value, 'kind', candidate => candidate === 'bun-brand-map')) return null;
+  if (!optionalField(value, 'generatedAt', candidate => typeof candidate === 'string')) return null;
+
+  if (value.summary !== undefined) {
+    if (!isRecord(value.summary)) return null;
+    const summary = value.summary;
+    if (!SUMMARY_COUNT_FIELDS.every(field => optionalField(summary, field, isCount))) {
+      return null;
+    }
+  }
+
+  if (value.findings !== undefined) {
+    if (
+      !Array.isArray(value.findings) ||
+      !value.findings.every(
+        row =>
+          isRecord(row) &&
+          optionalField(row, 'kind', candidate => typeof candidate === 'string') &&
+          optionalField(
+            row,
+            'severity',
+            candidate => candidate === 'warning' || candidate === 'error'
+          ) &&
+          optionalField(row, 'baseline', candidate => typeof candidate === 'boolean')
+      )
+    ) {
+      return null;
+    }
+  }
+
+  if (value.capabilities !== undefined) {
+    if (
+      !Array.isArray(value.capabilities) ||
+      !value.capabilities.every(
+        row =>
+          isRecord(row) &&
+          optionalField(
+            row,
+            'policy',
+            candidate =>
+              candidate === 'production-approved' ||
+              candidate === 'optional' ||
+              candidate === 'lab-only' ||
+              candidate === 'blocked'
+          ) &&
+          optionalField(
+            row,
+            'evidenceState',
+            candidate =>
+              candidate === 'verified' ||
+              candidate === 'declared-unproven' ||
+              candidate === 'observed-undeclared' ||
+              candidate === 'failed' ||
+              candidate === 'stale'
+          )
+      )
+    ) {
+      return null;
+    }
+  }
+
+  if (value.projects !== undefined) {
+    if (
+      !Array.isArray(value.projects) ||
+      !value.projects.every(
+        row =>
+          isRecord(row) &&
+          optionalField(row, 'path', candidate => typeof candidate === 'string') &&
+          PROJECT_COUNT_FIELDS.every(field => optionalField(row, field, isCount))
+      )
+    ) {
+      return null;
+    }
+  }
+
+  return value as WireArtifact;
+}
 
 export function loadBunBrandMapSummarySliceSync(
   artifactPath: string = BUN_BRAND_MAP_PATH
@@ -87,7 +201,8 @@ export function loadBunBrandMapSummarySliceSync(
 
   try {
     const mapped = Bun.mmap(artifactPath);
-    const artifact = JSON.parse(new TextDecoder().decode(mapped)) as WireArtifact;
+    const artifact = parseWireArtifact(JSON.parse(new TextDecoder().decode(mapped)));
+    if (!artifact) return unavailable;
     const summary = artifact.summary ?? {};
     const findings = artifact.findings ?? [];
     const legacyUndeclared =
@@ -115,7 +230,7 @@ export function loadBunBrandMapSummarySliceSync(
     const errors = Math.max(newUndeclared, hardFindings, productionProofErrors);
     const warnings = Math.max(legacyUndeclared, warningFindings, nonProductionProofWarnings);
     const stale =
-      summary.stale === true ||
+      (summary.stale ?? 0) > 0 ||
       findings.some(row => row.kind === 'stale' && row.baseline !== true) ||
       capabilities.some(
         row => row.policy === 'production-approved' && row.evidenceState === 'stale'

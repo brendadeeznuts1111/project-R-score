@@ -36,6 +36,27 @@ export const BUN_BRAND_EVIDENCE_STATES = [
 ] as const;
 export type BunBrandEvidenceState = (typeof BUN_BRAND_EVIDENCE_STATES)[number];
 
+/** Proof aggregation is order-independent: failure outranks stale, missing, then pass. */
+export const BUN_BRAND_PROOF_STATE_SEVERITY = {
+  verified: 0,
+  'declared-unproven': 1,
+  stale: 2,
+  failed: 3,
+} as const satisfies Record<Exclude<BunBrandEvidenceState, 'observed-undeclared'>, number>;
+export type BunBrandProofState = keyof typeof BUN_BRAND_PROOF_STATE_SEVERITY;
+
+export function mostSevereBunBrandProofState(
+  states: readonly BunBrandProofState[]
+): BunBrandProofState {
+  return states.reduce<BunBrandProofState>(
+    (highest, state) =>
+      BUN_BRAND_PROOF_STATE_SEVERITY[state] > BUN_BRAND_PROOF_STATE_SEVERITY[highest]
+        ? state
+        : highest,
+    'verified'
+  );
+}
+
 export type BunBrandSourceRef = {
   path: string;
   symbol: string;
