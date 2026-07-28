@@ -1812,6 +1812,8 @@
     "test:scoped": "bun test tests/console-depth.test.ts",
     "help": "bun run scripts/help.ts",
     "packages:list": "bun run scripts/packages-list.ts",
+    "packages:docs-index": "bun run scripts/packages-docs-index.ts --write",
+    "packages:docs-index:check": "bun run scripts/packages-docs-index.ts --check",
     "fix:as-any": "bun run scripts/fix-as-any.ts",
     "fix:empty-catches": "bun run scripts/fix-empty-catches.ts",
     "fix:pin-versions": "bun run scripts/fix-pin-versions.ts",

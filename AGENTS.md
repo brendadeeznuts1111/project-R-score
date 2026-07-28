@@ -191,7 +191,7 @@ Object-inspection depth is controlled project-wide via [`lib/console-depth.ts`](
 
 Each row maps to a documented API — Bun or Proton Pass CLI — with type, version, "Used in", status, and canonical source.
 
-**Consumers of this map (decision tables):** packages/workspace docs index — [`docs/packages/README.md`](docs/packages/README.md) · machine SSOT [`docs/packages/docs-index.json`](docs/packages/docs-index.json) (Type · Status · Audience · Last verified · Grounded capabilities · Maintainer · Triggers · Related commands).
+**Consumers of this map (decision tables):** packages/workspace docs index — [`docs/packages/README.md`](docs/packages/README.md) · machine SSOT [`docs/packages/docs-index.json`](docs/packages/docs-index.json). Regenerate tables: `bun run packages:docs-index` · CI: `bun run packages:docs-index:check` · re-audit dates: `bun run packages:docs-index --bump-verified`.
 
 | Capability | Type | Version | Bun API | Proton CLI | Used in | Status | Source | Example (snippet) |
 |---|---|---|---|---|---|---|---|---|

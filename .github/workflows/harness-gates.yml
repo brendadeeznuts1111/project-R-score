@@ -41,6 +41,10 @@ jobs:
         if: github.event_name == 'pull_request'
         run: bun scripts/check-pr-claim.ts --dry-run --event "$GITHUB_EVENT_PATH"
 
+      # packages/README decision tables must match docs-index.json (same idea as REGISTRY.md).
+      - name: Packages docs-index sync
+        run: bun run packages:docs-index:check
+
       # One install: verify + hygiene + ci:harness (was a second repo-hygiene job).
       - name: CI core
         run: bun run ci:core
