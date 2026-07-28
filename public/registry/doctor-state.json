@@ -1,19 +1,19 @@
 {
   "kind": "portal-doctor-state",
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T21:33:47.777Z",
+  "generatedAt": "2026-07-28T21:41:11.009Z",
   "ok": true,
-  "tone": "yellow",
+  "tone": "green",
   "full": false,
   "summary": {
     "checkCount": 18,
-    "passed": 17,
-    "failed": 1,
+    "passed": 18,
+    "failed": 0,
     "fatal": 10,
     "warn": 6,
     "info": 2,
     "failedFatal": 0,
-    "failedWarn": 1,
+    "failedWarn": 0,
     "autoFixableFailed": 0,
     "suggested": []
   },
@@ -40,7 +40,7 @@
     },
     "infra": {
       "total": 2,
-      "failed": 1,
+      "failed": 0,
       "fatalFailed": 0
     }
   },
@@ -74,7 +74,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/capability-map-subset.json present · 2m ago",
+      "message": "public/registry/capability-map-subset.json present · 9m ago",
       "autoFixable": true
     },
     {
@@ -82,7 +82,7 @@
       "group": "bakes",
       "level": "info",
       "ok": true,
-      "message": "public/registry/bunfig-state.json present · 54m ago",
+      "message": "public/registry/bunfig-state.json present · 1h ago",
       "autoFixable": true
     },
     {
@@ -178,20 +178,20 @@
       "group": "infra",
       "level": "fatal",
       "ok": true,
-      "message": "ledger.factory-wager.com Access enforced · 302 → factory-wager.cloudflareaccess.com (Access)",
+      "message": "ledger Access probe skipped (offline)",
       "autoFixable": false
     },
     {
       "id": "infra-portal-access",
       "group": "infra",
       "level": "warn",
-      "ok": false,
-      "message": "Access gap: score 200 public (no Access challenge) · pages.dev 200 public (no Access challenge) — promote staged score…/portal policy + Pages Access",
-      "fixCommand": "Promote staged Access for https://score.factory-wager.com/portal/ + Pages Access on project-r-score.pages.dev · .cloudflare-access.yml",
+      "ok": true,
+      "message": "portal Access probe skipped (offline)",
       "autoFixable": false
     }
   ],
   "cli": "bun run portal:doctor",
   "board": "/portal/doctor/",
-  "href": "/registry/doctor-state.json"
+  "href": "/registry/doctor-state.json",
+  "fingerprint": "727f9ba80150b0b2a5f0e1b8685598232fb2e8b3e0aa74181936c3682066c931"
 }

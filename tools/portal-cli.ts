@@ -1229,30 +1229,32 @@ Checks (default — pure groups + live Access probes):
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
 Flags:
-  --verbose · -v     Table: status · fix · auto · impact · scope + remediation
+  --verbose · -v     Full fields per check (no truncated tables)
   --failed-only      Hide passing checks (pairs with --verbose)
   --full             Spawn install:verify · vault-health · capability-map tests
-  --group <name>     linker | bakes | catalog | bunfig | infra | gates  (repeatable / comma list)
+  --group <name>     linker | bakes | catalog | bunfig | infra | gates
   --env <scope>      all (default) | ci (skip envScope=dev) | dev
   --json             Machine-readable report (schemaVersion 4 + summary)
   --no-write         Do not refresh public/registry/doctor-state.json
+  --live-access      Include live Cloudflare Access probes (default: offline)
+
+Output is CI-safe plain text (result=ok|fail · PASS/FAIL · full messages · no box art).
+CI / pipes / NO_COLOR: no ANSI. Machine gates: --json
 
 Examples:
   portal-cli doctor
-  portal-cli doctor --verbose
-  portal-cli doctor --group catalog --verbose
+  portal-cli doctor --verbose --failed-only
   portal-cli doctor --group bunfig
-  portal-cli doctor --env ci --group infra
-  portal-cli doctor --group linker --group catalog
+  portal-cli doctor --group catalog,bunfig
   portal-cli doctor --env ci --failed-only
   portal-cli doctor --json
   portal-cli doctor --full --verbose
 
-Catalog / bunfig fix scripts:
-  bun run portal:flags:check     # schema · shortcodes · help coverage
-  bun run portal:flags:migrate   # list deprecated flags
-  bun run audit:bunfig           # machine bunfig policy
-  bun run bake:doctor            # refresh doctor-state.json for portal boards
+Catalog / bunfig:
+  bun run portal:flags:check
+  bun run audit:bunfig
+  bun run bake:doctor
+  bun run bake:doctor:check      # sha256 fingerprint gate
 
 Related: vault health · capabilities health · scanner doctor · bunfig check · flags · install:verify
 `);
@@ -1281,14 +1283,17 @@ Related: vault health · capabilities health · scanner doctor · bunfig check �
     } catch (e) {
       cliError(e instanceof Error ? e.message : String(e));
     }
+    // CI / pure: skip live Access unless --live-access (network flake must not gate offline checks)
+    const liveAccess = argv.includes('--live-access');
     const report = await runPortalDoctor({
       full: argv.includes('--full'),
       verbose,
       failedOnly: argv.includes('--failed-only'),
       groups,
       env,
+      skipLiveAccess: !liveAccess,
     });
-    // Always refresh public/registry/doctor-state.json for portal boards (skip --no-write).
+    // Refresh board bake unless --no-write (always offline-stable fingerprint)
     if (!argv.includes('--no-write')) {
       try {
         const { toDoctorState, DOCTOR_STATE_REL } = await import('./bake-doctor.ts');

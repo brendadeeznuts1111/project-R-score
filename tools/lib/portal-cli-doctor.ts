@@ -2,7 +2,7 @@
 // @see https://bun.com/docs/pm/cli/install#default-strategy — lockfile configVersion
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
-// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth (cli-chrome tables)
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env (CI / NO_COLOR format selection)
 /**
  * portal-cli doctor — unified offline health gate for portal control plane.
  *
@@ -39,15 +39,7 @@ import {
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
-import {
-  cliTone,
-  columnTable,
-  displayWidth,
-  frameBlock,
-  kvLines,
-  padDisplay,
-  truncateDisplay,
-} from '../../lib/portal/cli-chrome.ts';
+import { cliTone } from '../../lib/portal/cli-chrome.ts';
 import { runCatalogChecks } from './portal-cli-doctor-catalog.ts';
 import { runBunfigChecks } from './portal-cli-doctor-bunfig.ts';
 import { runInfraChecks } from './portal-cli-doctor-infra.ts';
@@ -597,9 +589,33 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   };
 }
 
-function statusMark(c: PortalDoctorCheck): string {
-  if (c.ok) return c.level === 'info' ? '·' : '✓';
-  return '✗';
+/** True when stdout should be plain CI log format (no box-drawing / no mid-line truncation). */
+export function doctorUsesPlainFormat(env: Record<string, string | undefined> = Bun.env): boolean {
+  if (env.PORTAL_DOCTOR_FORMAT === 'pretty') return false;
+  if (env.PORTAL_DOCTOR_FORMAT === 'plain') return true;
+  if (env.CI === '1' || env.CI === 'true' || env.GITHUB_ACTIONS === 'true') return true;
+  if (env.NO_COLOR != null && env.NO_COLOR !== '') return true;
+  try {
+    return process.stdout?.isTTY !== true;
+  } catch {
+    return true;
+  }
+}
+
+function doctorColorEnabled(env: Record<string, string | undefined> = Bun.env): boolean {
+  if (env.NO_COLOR != null && env.NO_COLOR !== '') return false;
+  if (env.CI === '1' || env.CI === 'true' || env.GITHUB_ACTIONS === 'true') return false;
+  if (env.FORCE_COLOR === '0') return false;
+  try {
+    return process.stdout?.isTTY === true;
+  } catch {
+    return false;
+  }
+}
+
+function tone(kind: 'ok' | 'fail' | 'warn' | 'dim' | 'accent', s: string, color: boolean): string {
+  if (!color) return s;
+  return cliTone[kind](s);
 }
 
 function doctorModeLabel(r: PortalDoctorReport): string {
@@ -612,150 +628,133 @@ function doctorModeLabel(r: PortalDoctorReport): string {
     r.env && r.env !== 'all' ? `env=${r.env}` : null,
   ]
     .filter(Boolean)
-    .join(' · ');
+    .join(' ');
+}
+
+function statusToken(c: PortalDoctorCheck): string {
+  return c.ok ? 'PASS' : 'FAIL';
 }
 
 /**
- * Compact default listing — one check per line inside a frame.
- * Long prose/fix URLs stay in --verbose (default must stay scannable).
+ * CI-grade doctor report: no box drawing, no mid-line ellipsis, full messages.
+ * Suitable for GitHub Actions logs and monorepo gates.
  */
 export function formatPortalDoctor(r: PortalDoctorReport): string {
+  const color = doctorColorEnabled();
   const display = filterDoctorChecks(r.checks, r.failedOnly);
-  const body: string[] = [];
-  // Frame inner content ≈ width - 4 (│ + spaces)
-  const frameWidth = 80;
-  const lineMax = frameWidth - 4;
+  const result = r.ok ? 'ok' : 'fail';
+  const lines: string[] = [
+    [
+      'portal-doctor',
+      `result=${result}`,
+      `schema=${r.schemaVersion}`,
+      `checks=${r.summary.passed}/${r.summary.checkCount}`,
+      `failed=${r.summary.failed}`,
+      `fatal_failed=${r.summary.failedFatal}`,
+      `warn_failed=${r.summary.failedWarn}`,
+      `auto_fixable_failed=${r.summary.autoFixableFailed}`,
+    ].join('  '),
+  ];
+  const mode = doctorModeLabel(r);
+  if (mode) lines.push(`mode  ${mode}`);
+  lines.push('');
 
   let lastGroup: PortalDoctorGroup | undefined;
   for (const c of display) {
     if (c.group !== lastGroup) {
-      if (lastGroup) body.push('');
-      body.push(cliTone.accent(GROUP_LABEL[c.group]));
+      if (lastGroup) lines.push('');
+      lines.push(`## ${GROUP_LABEL[c.group]} (${c.group})`);
       lastGroup = c.group;
     }
-    const mark = c.ok ? cliTone.ok(statusMark(c)) : cliTone.fail(statusMark(c));
-    // Fixed-width level tag: [fatal] [warn]  [info]  — no mid-bracket padding
-    const levelTag = padDisplay(`[${c.level}]`, 7);
-    // `  ✓ [fatal] id  message…` — truncate message so the line never wraps the frame
-    const head = `  ${mark} ${levelTag} ${c.id}`;
-    const headW = displayWidth(Bun.stripANSI(head));
-    const gap = 2;
-    const msgBudget = Math.max(12, lineMax - headW - gap);
-    const msg = truncateDisplay(c.message, msgBudget);
-    body.push(`${head}${' '.repeat(gap)}${cliTone.dim(msg)}`);
+    const st = statusToken(c);
+    const stCol = c.ok ? tone('ok', st, color) : tone('fail', st, color);
+    lines.push(`${stCol}  ${c.level.padEnd(5)}  ${c.id}`);
+    lines.push(`  ${c.message}`);
+    if (!c.ok && c.fixCommand) {
+      lines.push(`  fix: ${c.fixCommand}`);
+    }
   }
 
-  body.push('');
-  for (const line of formatDoctorSummaryFooter(r.summary, r.failedOnly).split('\n')) {
-    body.push(truncateDisplay(line, lineMax));
+  lines.push('');
+  lines.push(formatDoctorSummaryFooter(r.summary, r.failedOnly));
+  if (!r.ok) {
+    lines.push('detail: portal-cli doctor --verbose --failed-only');
   }
-
-  const mode = doctorModeLabel(r);
-  return (
-    frameBlock('portal doctor', r.ok ? 'OK' : 'FAIL', body, {
-      width: frameWidth,
-      ok: r.ok,
-    }) + (mode ? `\n${cliTone.dim(`  mode · ${mode}`)}` : '')
-  );
+  return lines.join('\n');
 }
 
 export function formatDoctorSummaryFooter(s: PortalDoctorSummary, failedOnly = false): string {
   const lines = [
-    `Summary: ${s.passed}/${s.checkCount} passed · ${s.failed} failed` +
-      ` (${s.failedFatal} fatal · ${s.failedWarn} warn)` +
-      ` · levels ${s.fatal}f/${s.warn}w/${s.info}i` +
-      ` · ${s.autoFixableFailed} auto-fixable`,
+    `summary  passed=${s.passed}/${s.checkCount}  failed=${s.failed}` +
+      `  fatal_failed=${s.failedFatal}  warn_failed=${s.failedWarn}` +
+      `  levels=fatal:${s.fatal},warn:${s.warn},info:${s.info}` +
+      `  auto_fixable_failed=${s.autoFixableFailed}`,
   ];
   if (s.autoFixableFailed > 0 && s.suggested.length) {
-    lines.push('Suggested (auto-fixable):');
+    lines.push('auto_fix:');
     for (const cmd of s.suggested) {
       lines.push(`  ${cmd}`);
     }
   } else if (s.failed > 0 && !failedOnly) {
-    lines.push('Suggested: portal-cli doctor --verbose  # fix commands + impact');
+    lines.push('next: portal-cli doctor --verbose --failed-only');
   } else if (s.failed === 0) {
-    lines.push('All checks green. Optional: portal-cli doctor --full  # spawn CI gates');
+    lines.push('next: optional portal-cli doctor --full');
   }
   return lines.join('\n');
 }
 
 /**
- * Extended table for --verbose: check · level · status · what · fix · auto · impact · scope
- * Table is printed unframed so Bun.stringWidth columns stay aligned.
+ * Verbose operator report: full fields, no width-capped table cells.
  */
 export function formatPortalDoctorVerbose(r: PortalDoctorReport): string {
+  const color = doctorColorEnabled();
   const display = filterDoctorChecks(r.checks, r.failedOnly);
-  const tableRows = display.map(c => [
-    c.group,
-    c.id,
-    c.level,
-    c.ok ? 'pass' : 'FAIL',
-    c.message,
-    c.ok ? '—' : (c.fixCommand ?? '?'),
-    c.autoFixable === undefined ? '—' : c.autoFixable ? 'yes' : 'no',
-    c.impact ?? '—',
-    c.envScope ?? '—',
-  ]);
-
-  const table = columnTable(
-    ['group', 'check', 'level', 'status', 'what', 'fix', 'auto', 'impact', 'scope'],
-    tableRows,
-    { maxWidths: [8, 26, 6, 5, 40, 40, 4, 32, 4], gap: 2 }
-  ).join('\n');
-
-  const summaryBody: string[] = [
-    ...kvLines([
-      ['checks', `${r.summary.passed}/${r.summary.checkCount} passed`],
-      [
-        'failed',
-        `${r.summary.failed} (${r.summary.failedFatal} fatal · ${r.summary.failedWarn} warn)`,
-      ],
-      ['auto-fix', String(r.summary.autoFixableFailed)],
-    ]),
+  const result = r.ok ? 'ok' : 'fail';
+  const lines: string[] = [
+    [
+      'portal-doctor',
+      `result=${result}`,
+      `schema=${r.schemaVersion}`,
+      `checks=${r.summary.passed}/${r.summary.checkCount}`,
+      `failed=${r.summary.failed}`,
+      `fatal_failed=${r.summary.failedFatal}`,
+    ].join('  '),
   ];
-  if (r.summary.autoFixableFailed > 0 && r.summary.suggested.length) {
-    summaryBody.push('');
-    summaryBody.push(cliTone.accent('Auto-fix available'));
-    for (const cmd of r.summary.suggested) {
-      summaryBody.push(`  ${cmd}`);
-    }
+  const mode = doctorModeLabel({ ...r, verbose: true });
+  if (mode) lines.push(`mode  ${mode}`);
+  lines.push('');
+  lines.push('## checks');
+
+  for (const c of display) {
+    const st = statusToken(c);
+    const stCol = c.ok ? tone('ok', st, color) : tone('fail', st, color);
+    lines.push(`${stCol}  group=${c.group}  level=${c.level}  id=${c.id}`);
+    lines.push(`  message: ${c.message}`);
+    if (c.impact) lines.push(`  impact:  ${c.impact}`);
+    if (!c.ok && c.fixCommand) lines.push(`  fix:     ${c.fixCommand}`);
+    if (c.autoFixable !== undefined) lines.push(`  auto:    ${c.autoFixable ? 'yes' : 'no'}`);
+    if (c.envScope) lines.push(`  scope:   ${c.envScope}`);
+    if (c.source) lines.push(`  source:  ${c.source}`);
+    if (c.freshness) lines.push(`  age:     ${c.freshness}`);
+    lines.push('');
   }
 
-  const failures = r.checks.filter(c => !c.ok);
-  const remBody: string[] = [];
+  const failures = display.filter(c => !c.ok);
+  lines.push('## remediation');
   if (failures.length === 0) {
-    remBody.push(cliTone.dim('(none — all checks passed)'));
+    lines.push('(none)');
   } else {
     for (const c of failures) {
-      remBody.push(`· ${c.id} [${c.level}]`);
-      if (c.impact) remBody.push(cliTone.dim(`  impact  ${c.impact}`));
-      if (c.fixCommand) remBody.push(cliTone.dim(`  fix     ${c.fixCommand}`));
-      if (c.source) remBody.push(cliTone.dim(`  doc     ${c.source}`));
+      lines.push(`- ${c.id} [${c.level}]`);
+      if (c.fixCommand) lines.push(`    fix: ${c.fixCommand}`);
+      if (c.impact) lines.push(`    impact: ${c.impact}`);
+      if (c.source) lines.push(`    doc: ${c.source}`);
     }
   }
-
-  const mode = doctorModeLabel({ ...r, verbose: true });
-  const head = frameBlock('portal doctor', r.ok ? 'OK' : 'FAIL', summaryBody, {
-    width: 72,
-    ok: r.ok,
-  });
-  const rem = frameBlock('remediation', failures.length ? 'ACTION' : 'none', remBody, {
-    width: 72,
-    ok: failures.length === 0,
-  });
-
-  return [
-    head,
-    mode ? cliTone.dim(`  mode · ${mode}`) : '',
-    '',
-    cliTone.accent('Checks'),
-    table,
-    '',
-    rem,
-    '',
-    cliTone.dim(`docs · ${r.docs.defaultStrategy}`),
-    cliTone.dim(`     · ${r.docs.isolatedInstalls}`),
-  ]
-    .filter(Boolean)
-    .join('\n');
+  lines.push('');
+  lines.push(`docs: ${r.docs.defaultStrategy}`);
+  lines.push(`docs: ${r.docs.isolatedInstalls}`);
+  lines.push('');
+  lines.push(formatDoctorSummaryFooter(r.summary, r.failedOnly));
+  return lines.join('\n');
 }

@@ -102,7 +102,7 @@ describe('portal-cli doctor pure', () => {
     expect(s.failed).toBe(1);
     expect(s.autoFixableFailed).toBe(1);
     expect(s.suggested).toEqual(['bun run bake:capabilities']);
-    expect(formatDoctorSummaryFooter(s)).toContain('2/3 passed');
+    expect(formatDoctorSummaryFooter(s)).toContain('passed=2/3');
     expect(formatDoctorSummaryFooter(s)).toContain('bake:capabilities');
   });
 
@@ -141,21 +141,28 @@ describe('portal-cli doctor pure', () => {
     expect(r.ok).toBe(true);
     expect(r.summary.failed).toBe(0);
     const text = formatPortalDoctor(r);
-    expect(text).toContain('portal doctor');
+    expect(text).toContain('portal-doctor');
+    expect(text).toMatch(/result=ok/);
     expect(text).toContain('Linker policy');
     expect(text).toContain('Offline bakes');
     expect(text).toContain('linker-config-version');
-    expect(text).toMatch(/\d+\/\d+ passed/);
-    expect(text).toMatch(/╭|╰/); // framed chrome
+    expect(text).toMatch(/PASS\s+fatal\s+linker-config-version/);
+    expect(text).toMatch(/summary\s+passed=\d+\/\d+/);
+    // CI format: no box-drawing truncation toys
+    expect(text).not.toMatch(/[╭╰│]/);
+    expect(text).not.toContain('…');
   });
 
-  test('verbose format includes status table and remediation section', async () => {
+  test('verbose format includes full fields and remediation section', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false, verbose: true, skipLiveAccess: true });
     const text = formatPortalDoctorVerbose(r);
-    expect(text).toContain('portal doctor');
-    expect(text).toMatch(/status|pass|FAIL|check/i);
-    expect(text.toLowerCase()).toContain('remediation');
+    expect(text).toContain('portal-doctor');
+    expect(text).toMatch(/result=ok/);
+    expect(text).toContain('## checks');
+    expect(text).toContain('## remediation');
+    expect(text).toMatch(/PASS\s+group=/);
     expect(text).toContain('default-strategy');
+    expect(text).not.toMatch(/[╭╰]/);
   });
 
   test('PORTAL_CLI_COMMANDS includes doctor and flags', () => {
@@ -269,8 +276,8 @@ describe('portal-cli doctor pure', () => {
     expect(state.href).toBe('/registry/doctor-state.json');
   });
 
-  test('doctorStatesDeepEqual ignores generatedAt', async () => {
-    const { doctorStatesDeepEqual } = await import('../tools/bake-doctor.ts');
+  test('doctorStateFingerprint ignores generatedAt and messages', async () => {
+    const { doctorStateFingerprint, diffDoctorStates } = await import('../tools/bake-doctor.ts');
     const r = await runPortalDoctor({
       cwd: ROOT,
       full: false,
@@ -278,9 +285,15 @@ describe('portal-cli doctor pure', () => {
       skipLiveAccess: true,
     });
     const a = toDoctorState(r);
-    const b = { ...a, generatedAt: '1999-01-01T00:00:00.000Z' };
-    expect(doctorStatesDeepEqual(a, b)).toBe(true);
-    expect(doctorStatesDeepEqual(a, { ...a, tone: 'red' as const })).toBe(false);
+    const b = {
+      ...a,
+      generatedAt: '1999-01-01T00:00:00.000Z',
+      checks: a.checks.map(c => ({ ...c, message: 'noise' })),
+    };
+    expect(doctorStateFingerprint(a)).toBe(doctorStateFingerprint(b));
+    expect(doctorStateFingerprint(a)).toMatch(/^[0-9a-f]{64}$/);
+    const drift = diffDoctorStates(a, { ...a, tone: 'red' as const });
+    expect(drift.some(l => l.startsWith('tone:'))).toBe(true);
   });
 
   test('parseDoctorGroupsFromArgv supports multi and comma groups', () => {
@@ -386,14 +399,16 @@ describe('portal-cli doctor CLI', () => {
     const code = await proc.exited;
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
-    expect(out).toContain('portal doctor');
+    expect(out).toContain('portal-doctor');
+    expect(out).toMatch(/result=ok/);
     expect(out).toContain('linker-config-version');
     expect(out).toContain('configVersion=1');
     expect(out).toContain('Linker policy');
+    expect(out).not.toMatch(/[╭╰]/);
   });
 
   test('doctor --json is machine-readable with summary + groups', async () => {
-    const proc = Bun.spawn(['bun', CLI, 'doctor', '--json'], {
+    const proc = Bun.spawn(['bun', CLI, 'doctor', '--json', '--no-write'], {
       cwd: ROOT,
       stdout: 'pipe',
       stderr: 'pipe',
@@ -404,11 +419,12 @@ describe('portal-cli doctor CLI', () => {
     const j = JSON.parse(out);
     expect(j.kind).toBe('portal-cli-doctor');
     expect(j.schemaVersion).toBe(4);
-    expect(j.ok).toBe(true); // fatals pass; warn failures (e.g. infra-portal-access) allowed
+    expect(j.ok).toBe(true);
     expect(j.summary?.failedFatal).toBe(0);
-    expect(
-      j.checks.some((c: { id: string /* brand-ok */ }) => c.id === 'infra-ledger-access')
-    ).toBe(true);
+    // default offline: live Access probes recorded as skipped (use --live-access to hit edge)
+    const ledger = j.checks.find((c: { id: string /* brand-ok */ }) => c.id === 'infra-ledger-access');
+    expect(ledger?.ok).toBe(true);
+    expect(String(ledger?.message ?? '')).toMatch(/skipped|offline/i);
     expect(j.docs?.installIsolated).toContain('isolated-installs');
     expect(
       j.checks.some((c: { id: string /* brand-ok — opaque check key */ }) => c.id === 'linker-config-version')
@@ -420,17 +436,20 @@ describe('portal-cli doctor CLI', () => {
     expect(typeof linker?.autoFixable).toBe('boolean');
   });
 
-  test('doctor --verbose prints extended columns', async () => {
-    const proc = Bun.spawn(['bun', CLI, 'doctor', '--verbose'], {
+  test('doctor --verbose prints full fields (CI plain)', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'doctor', '--verbose', '--no-write'], {
       cwd: ROOT,
       stdout: 'pipe',
       stderr: 'pipe',
+      env: { ...Bun.env, CI: 'true', NO_COLOR: '1' },
     });
     const code = await proc.exited;
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
     expect(out).toContain('verbose');
-    expect(out).toMatch(/Summary:|passed/);
+    expect(out).toMatch(/summary\s+passed=/);
+    expect(out).toContain('## checks');
+    expect(out).not.toMatch(/[╭╰]/);
   });
 
   test('root help lists doctor and flags', async () => {

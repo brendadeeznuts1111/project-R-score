@@ -30,12 +30,28 @@ Unified offline health gate for the portal control plane. Pure checks by default
 | `bunfig-release-age-excludes` | warn | excludes cover type packages |
 | `bunfig-no-install-env-overrides` | fatal | no `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` |
 
+## Output (CI)
+
+Plain text only (no box-drawing, no mid-line ellipsis):
+
+```
+portal-doctor  result=ok|fail  schema=4  checks=N/M  failed=…  fatal_failed=…
+PASS  fatal  <check-id>
+  <full message>
+FAIL  fatal  <check-id>
+  <full message>
+  fix: <command>
+summary  passed=…  failed=…
+```
+
+Machine: `portal-cli doctor --json` · fingerprint gate: `bun run bake:doctor:check` (sha256 of stable fields; offline Access probes).
+
 ## Signal (failure)
 
 | Gate | Failure |
 |------|---------|
-| `bun run portal:doctor` | any fatal check failed |
-| `bun run bake:doctor --check` | stable doctor-state drift or missing bake |
+| `bun run portal:doctor` | any fatal check failed (`result=fail`) |
+| `bun run bake:doctor:check` | fingerprint mismatch or missing bake |
 | `/portal/doctor/` missing tone | no bake — run `bake:doctor` |
 | Nav badge red/yellow | last bake tone from doctor-state |
 

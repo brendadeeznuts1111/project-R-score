@@ -2,15 +2,16 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
-// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 /**
  * Bake portal doctor state → public/registry/doctor-state.json
  *
  *   bun run bake:doctor
- *   bun run bake:doctor --check   # drift vs on-disk bake (stable payload)
- *   bun tools/bake-doctor.ts --full   # include spawn gates
+ *   bun run bake:doctor --check   # fingerprint gate (offline pure checks only)
+ *   bun tools/bake-doctor.ts --full
  *
- * Consumed by /portal/doctor/ board and command-centre widget.
+ * Bake/check always skip live Access probes so the artifact is CI-stable.
+ * Board: /portal/doctor/
  */
 import { joinPath } from '../scripts/lib/fs-bun.ts';
 import {
@@ -33,7 +34,6 @@ export type DoctorState = {
   full: boolean;
   summary: PortalDoctorReport['summary'];
   byGroup: Record<string, { total: number; failed: number; fatalFailed: number }>;
-  /** Compact check rows for widgets (no long docs). */
   checks: Array<{
     id: string; // brand-ok — opaque doctor check key (bunfig-machine-ssot, …)
     group: string;
@@ -46,6 +46,24 @@ export type DoctorState = {
   cli: string;
   board: string;
   href: string;
+  /** sha256 of stable fingerprint payload (set at bake time). */
+  fingerprint?: string;
+};
+
+export type DoctorStateStable = {
+  kind: typeof DOCTOR_STATE_KIND;
+  schemaVersion: 1;
+  ok: boolean;
+  tone: DoctorStateTone;
+  full: boolean;
+  summary: DoctorState['summary'];
+  byGroup: DoctorState['byGroup'];
+  checks: Array<{
+    id: string; // brand-ok — opaque doctor check key
+    group: string;
+    level: string;
+    ok: boolean;
+  }>;
 };
 
 export function toneFromReport(r: PortalDoctorReport): DoctorStateTone {
@@ -65,7 +83,7 @@ export function toDoctorState(r: PortalDoctorReport): DoctorState {
     }
     byGroup[c.group] = g;
   }
-  return {
+  const state: DoctorState = {
     kind: DOCTOR_STATE_KIND,
     schemaVersion: 1,
     generatedAt: r.generatedAt,
@@ -87,30 +105,23 @@ export function toDoctorState(r: PortalDoctorReport): DoctorState {
     board: '/portal/doctor/',
     href: '/registry/doctor-state.json',
   };
+  state.fingerprint = doctorStateFingerprint(state);
+  return state;
 }
 
-/**
- * Strip volatile fields for bake drift comparison.
- * Omits generatedAt and check messages (age labels change every run).
- */
-export function stableDoctorState(state: DoctorState): {
-  kind: DoctorState['kind'];
-  schemaVersion: DoctorState['schemaVersion'];
-  ok: boolean;
-  tone: DoctorStateTone;
-  full: boolean;
-  summary: DoctorState['summary'];
-  byGroup: DoctorState['byGroup'];
-  checks: Array<{
-    id: string /* brand-ok — opaque doctor check key */;
-    group: string;
-    level: string;
-    ok: boolean;
-  }>;
-  cli: string;
-  board: string;
-  href: string;
-} {
+/** Stable payload for CI fingerprint (no timestamps, no free-text messages). */
+export function stableDoctorState(state: DoctorState): DoctorStateStable {
+  const byGroupEntries = Object.entries(state.byGroup).sort(([a], [b]) => a.localeCompare(b));
+  const byGroup: DoctorState['byGroup'] = {};
+  for (const [k, v] of byGroupEntries) byGroup[k] = v;
+  const checks = state.checks
+    .map(c => ({
+      id: c.id, // brand-ok — opaque doctor check key
+      group: c.group,
+      level: c.level,
+      ok: c.ok,
+    }))
+    .sort((a, b) => a.id.localeCompare(b.id));
   return {
     kind: state.kind,
     schemaVersion: state.schemaVersion,
@@ -118,28 +129,77 @@ export function stableDoctorState(state: DoctorState): {
     tone: state.tone,
     full: state.full,
     summary: state.summary,
-    byGroup: state.byGroup,
-    checks: state.checks.map(c => ({
-      id: c.id, // brand-ok — opaque doctor check key
-      group: c.group,
-      level: c.level,
-      ok: c.ok,
-    })),
-    cli: state.cli,
-    board: state.board,
-    href: state.href,
+    byGroup,
+    checks,
   };
 }
 
+/** Canonical sha256 over stable doctor-state fields. */
+export function doctorStateFingerprint(state: DoctorState): string {
+  const payload = JSON.stringify(stableDoctorState(state));
+  return new Bun.CryptoHasher('sha256').update(payload).digest('hex');
+}
+
+/** Field-level drift lines for CI logs (empty when equal). */
+export function diffDoctorStates(fresh: DoctorState, onDisk: DoctorState): string[] {
+  const a = stableDoctorState(fresh);
+  const b = stableDoctorState(onDisk);
+  const lines: string[] = [];
+  if (a.ok !== b.ok) lines.push(`ok: disk=${b.ok} fresh=${a.ok}`);
+  if (a.tone !== b.tone) lines.push(`tone: disk=${b.tone} fresh=${a.tone}`);
+  if (a.full !== b.full) lines.push(`full: disk=${b.full} fresh=${a.full}`);
+  if (a.summary.checkCount !== b.summary.checkCount) {
+    lines.push(`summary.checkCount: disk=${b.summary.checkCount} fresh=${a.summary.checkCount}`);
+  }
+  if (a.summary.passed !== b.summary.passed) {
+    lines.push(`summary.passed: disk=${b.summary.passed} fresh=${a.summary.passed}`);
+  }
+  if (a.summary.failed !== b.summary.failed) {
+    lines.push(`summary.failed: disk=${b.summary.failed} fresh=${a.summary.failed}`);
+  }
+  if (a.summary.failedFatal !== b.summary.failedFatal) {
+    lines.push(`summary.failedFatal: disk=${b.summary.failedFatal} fresh=${a.summary.failedFatal}`);
+  }
+  const aMap = new Map(a.checks.map(c => [c.id, c]));
+  const bMap = new Map(b.checks.map(c => [c.id, c]));
+  for (const id of new Set([...aMap.keys(), ...bMap.keys()]).values()) {
+    const x = aMap.get(id);
+    const y = bMap.get(id);
+    if (!y) {
+      lines.push(`check +${id} (fresh only)`);
+      continue;
+    }
+    if (!x) {
+      lines.push(`check -${id} (disk only)`);
+      continue;
+    }
+    if (x.ok !== y.ok || x.level !== y.level || x.group !== y.group) {
+      lines.push(
+        `check ${id}: disk={ok:${y.ok},level:${y.level},group:${y.group}} fresh={ok:${x.ok},level:${x.level},group:${x.group}}`
+      );
+    }
+  }
+  return lines;
+}
+
+/** @deprecated use doctorStateFingerprint equality */
 export function doctorStatesDeepEqual(a: DoctorState, b: DoctorState): boolean {
-  return Bun.deepEquals(stableDoctorState(a), stableDoctorState(b), true);
+  return doctorStateFingerprint(a) === doctorStateFingerprint(b);
+}
+
+/** Offline pure opts for bake/check (no live Access). */
+function bakeOpts(opts: PortalDoctorOpts = {}): PortalDoctorOpts {
+  return {
+    ...opts,
+    skipLiveAccess: opts.skipLiveAccess ?? true,
+  };
 }
 
 /** Run doctor and write public/registry/doctor-state.json. */
 export async function bakeDoctorState(
   opts: PortalDoctorOpts = {}
 ): Promise<{ state: DoctorState; path: string; report: PortalDoctorReport }> {
-  const report = await runPortalDoctor(opts);
+  const report = await runPortalDoctor(bakeOpts(opts));
   const state = toDoctorState(report);
   const path = joinPath(opts.cwd ?? process.cwd(), DOCTOR_STATE_REL);
   await Bun.write(path, `${JSON.stringify(state, null, 2)}\n`);
@@ -148,7 +208,7 @@ export async function bakeDoctorState(
 
 /**
  * Compare freshly computed state to on-disk bake (no write).
- * Returns ok=true when stable payload matches.
+ * Uses sha256 fingerprint of stable fields — not free-text message equality.
  */
 export async function checkDoctorState(opts: PortalDoctorOpts = {}): Promise<{
   ok: boolean;
@@ -157,11 +217,15 @@ export async function checkDoctorState(opts: PortalDoctorOpts = {}): Promise<{
   fresh: DoctorState;
   onDisk: DoctorState | null;
   reason?: string;
+  fingerprintFresh?: string;
+  fingerprintDisk?: string;
+  drift?: string[];
 }> {
   const cwd = opts.cwd ?? process.cwd();
   const path = joinPath(cwd, DOCTOR_STATE_REL);
-  const report = await runPortalDoctor(opts);
+  const report = await runPortalDoctor(bakeOpts(opts));
   const fresh = toDoctorState(report);
+  const fingerprintFresh = doctorStateFingerprint(fresh);
   const file = Bun.file(path);
   if (!(await file.exists())) {
     return {
@@ -170,7 +234,8 @@ export async function checkDoctorState(opts: PortalDoctorOpts = {}): Promise<{
       present: false,
       fresh,
       onDisk: null,
-      reason: 'missing doctor-state.json — run bake:doctor',
+      fingerprintFresh,
+      reason: 'missing doctor-state.json — run: bun run bake:doctor',
     };
   }
   try {
@@ -182,17 +247,23 @@ export async function checkDoctorState(opts: PortalDoctorOpts = {}): Promise<{
         present: true,
         fresh,
         onDisk,
+        fingerprintFresh,
         reason: `unexpected kind ${String(onDisk.kind)}`,
       };
     }
-    const equal = doctorStatesDeepEqual(fresh, onDisk);
+    const fingerprintDisk = doctorStateFingerprint(onDisk);
+    const drift = diffDoctorStates(fresh, onDisk);
+    const equal = fingerprintFresh === fingerprintDisk && drift.length === 0;
     return {
       ok: equal,
       path,
       present: true,
       fresh,
       onDisk,
-      reason: equal ? undefined : 'stable doctor-state drift (tone/summary/checks/byGroup)',
+      fingerprintFresh,
+      fingerprintDisk,
+      drift: equal ? undefined : drift,
+      reason: equal ? undefined : 'doctor-state fingerprint mismatch',
     };
   } catch (e) {
     return {
@@ -201,6 +272,7 @@ export async function checkDoctorState(opts: PortalDoctorOpts = {}): Promise<{
       present: true,
       fresh,
       onDisk: null,
+      fingerprintFresh,
       reason: e instanceof Error ? e.message : String(e),
     };
   }
@@ -212,20 +284,38 @@ if (import.meta.main) {
   if (check) {
     const result = await checkDoctorState({ full });
     if (!result.ok) {
-      console.error(`doctor-state check FAIL · ${result.reason ?? 'drift'} · path=${result.path}`);
-      console.error(
-        `  fresh tone=${result.fresh.tone} · ${result.fresh.summary.passed}/${result.fresh.summary.checkCount} passed`
-      );
+      console.error(`doctor-state:check  result=fail`);
+      console.error(`  path: ${result.path}`);
+      console.error(`  reason: ${result.reason ?? 'drift'}`);
+      if (result.fingerprintFresh) console.error(`  fingerprint_fresh: ${result.fingerprintFresh}`);
+      if (result.fingerprintDisk) console.error(`  fingerprint_disk:  ${result.fingerprintDisk}`);
+      for (const line of result.drift ?? []) {
+        console.error(`  drift: ${line}`);
+      }
+      console.error(`  repair: bun run bake:doctor`);
       process.exit(1);
     }
     console.log(
-      `doctor-state check OK · tone=${result.fresh.tone} · ${result.fresh.summary.passed}/${result.fresh.summary.checkCount} passed · path=${result.path}`
+      [
+        'doctor-state:check  result=ok',
+        `path=${result.path}`,
+        `tone=${result.fresh.tone}`,
+        `passed=${result.fresh.summary.passed}/${result.fresh.summary.checkCount}`,
+        `fingerprint=${result.fingerprintFresh}`,
+      ].join('  ')
     );
     process.exit(0);
   }
   const { state, path } = await bakeDoctorState({ full });
   console.log(
-    `doctor-state: wrote ${path} · tone=${state.tone} · ${state.summary.passed}/${state.summary.checkCount} passed · fatalFailed=${state.summary.failedFatal}`
+    [
+      'doctor-state:bake  result=ok',
+      `path=${path}`,
+      `tone=${state.tone}`,
+      `passed=${state.summary.passed}/${state.summary.checkCount}`,
+      `fatal_failed=${state.summary.failedFatal}`,
+      `fingerprint=${state.fingerprint}`,
+    ].join('  ')
   );
   process.exit(state.ok ? 0 : 1);
 }
