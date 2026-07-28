@@ -58,6 +58,34 @@ export async function getMonitoringData(
     } catch {}
   }
 
+  // Compliance board slice for monitoring tile + portal cross-link
+  try {
+    const cf = Bun.file('public/registry/compliance-board.json');
+    if (await cf.exists()) {
+      const board = (await cf.json()) as {
+        generatedAt?: string;
+        enhancements?: { passed?: number; total?: number };
+        shadow?: { summary?: { mismatches?: number; allow?: number; block?: number } };
+      };
+      const enh = board.enhancements;
+      const mismatches = board.shadow?.summary?.mismatches ?? 0;
+      const ok = (enh?.passed ?? 0) === (enh?.total ?? 0) && mismatches === 0;
+      data.compliance = {
+        available: true,
+        ok,
+        enhancements: enh ? `${enh.passed ?? 0}/${enh.total ?? 0}` : null,
+        shadowMismatches: mismatches,
+        shadowAllow: board.shadow?.summary?.allow ?? null,
+        shadowBlock: board.shadow?.summary?.block ?? null,
+        generatedAt: board.generatedAt ?? null,
+        path: '/registry/compliance-board.json',
+        portal: '/portal/compliance/',
+      };
+    }
+  } catch {
+    /* optional plane */
+  }
+
   monitoringCache = { data: data as MonitoringPayload, ts: now };
   return data as MonitoringPayload;
 }

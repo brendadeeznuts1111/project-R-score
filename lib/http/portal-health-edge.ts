@@ -218,16 +218,25 @@ export async function computeEdgeHealthETag(body: EdgeHealthBody): Promise<strin
 }
 
 export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise<EdgeHealthBody> {
-  const [ops, monitoring, staticSnap, registry, proof, defaultsRaw, taxonomyAudit] =
-    await Promise.all([
-      assetJson(env, origin, '/registry/ops-summary.json'),
-      assetJson(env, origin, '/registry/monitoring.json'),
-      assetJson(env, origin, '/registry/static.json'),
-      assetJson(env, origin, '/registry/registry.json'),
-      assetJson(env, origin, '/tools/bun-api-coverage-proof.json'),
-      assetJson(env, origin, '/registry/defaults-proof.json'),
-      assetJson(env, origin, '/registry/proof-taxonomy-audit.json'),
-    ]);
+  const [
+    ops,
+    monitoring,
+    staticSnap,
+    registry,
+    proof,
+    defaultsRaw,
+    taxonomyAudit,
+    complianceBoard,
+  ] = await Promise.all([
+    assetJson(env, origin, '/registry/ops-summary.json'),
+    assetJson(env, origin, '/registry/monitoring.json'),
+    assetJson(env, origin, '/registry/static.json'),
+    assetJson(env, origin, '/registry/registry.json'),
+    assetJson(env, origin, '/tools/bun-api-coverage-proof.json'),
+    assetJson(env, origin, '/registry/defaults-proof.json'),
+    assetJson(env, origin, '/registry/proof-taxonomy-audit.json'),
+    assetJson(env, origin, '/registry/compliance-board.json'),
+  ]);
 
   const defaults = sliceDefaults(defaultsRaw);
   const proofTaxonomy = sliceProofTaxonomy(
@@ -285,7 +294,23 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     ((defaults.status != null && defaults.status !== 'pass') ||
       (defaults.passed != null && defaults.total != null && defaults.passed < defaults.total));
   const taxonomyFail = edgeTaxonomyDegradesHealth(proofTaxonomy);
-  const status: 'ok' | 'degraded' = defaultsFail || taxonomyFail ? 'degraded' : 'ok';
+
+  const enh = complianceBoard?.enhancements as
+    | { passed?: number; total?: number; signature?: string }
+    | undefined;
+  const shadow = complianceBoard?.shadow as
+    | { summary?: { mismatches?: number; allow?: number; block?: number } }
+    | undefined;
+  const complianceExists = Boolean(complianceBoard?.schemaVersion === 1);
+  const complianceOk =
+    complianceExists &&
+    (enh?.passed ?? 0) === (enh?.total ?? 0) &&
+    (shadow?.summary?.mismatches ?? 0) === 0;
+  // Missing bake does not degrade edge health (optional plane); mismatches do.
+  const complianceFail = complianceExists && !complianceOk;
+
+  const status: 'ok' | 'degraded' =
+    defaultsFail || taxonomyFail || complianceFail ? 'degraded' : 'ok';
 
   return {
     status,
@@ -305,6 +330,15 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       tocOps: { exists: Boolean(ops?.toc) },
       defaultsProof: { exists: Boolean(defaultsRaw) },
       proofTaxonomyAudit: { exists: Boolean(taxonomyAudit) },
+      complianceBoard: {
+        exists: complianceExists,
+        ok: complianceOk,
+        generated: (complianceBoard?.generatedAt as string) ?? null,
+        enhancements: enh ? `${enh.passed ?? 0}/${enh.total ?? 0}` : null,
+        shadowMismatches: shadow?.summary?.mismatches ?? null,
+        path: '/registry/compliance-board.json',
+        portal: '/portal/compliance/',
+      },
     },
     registry: {
       packages,

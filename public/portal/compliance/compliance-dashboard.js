@@ -1,6 +1,7 @@
 /**
  * Compliance portal board — loads baked registry snapshot (Pages-safe).
  * Prefer embed → /api/compliance → /registry/compliance-board.json
+ * Auto-refresh every portal-poll-ms (default 60s). Click a row for expected/actual.
  */
 function esc(s) {
   // Client-side escape (mirror Bun.escapeHTML entity set for portal XSS safety).
@@ -10,6 +11,12 @@ function esc(s) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#x27;');
+}
+
+function pollMs() {
+  const meta = document.querySelector('meta[name="portal-poll-ms"]');
+  const n = Number(meta?.content);
+  return Number.isFinite(n) && n >= 5000 ? n : 60_000;
 }
 
 function readEmbed() {
@@ -69,11 +76,22 @@ function render(board, source) {
 
   const enhBody = document.querySelector('#enh-table tbody');
   enhBody.innerHTML = (enh.rows ?? [])
-    .map(
-      r =>
-        `<tr class="${r.match ? 'pass' : 'fail'}"><td>${esc(r.feature)}</td><td class="match">${r.match ? '✓' : '✗'}</td><td>${esc(r.notes)}</td></tr>`
-    )
+    .map((r, i) => {
+      const detailId = `enh-detail-${i}`;
+      return `<tr class="${r.match ? 'pass' : 'fail'} enh-row" data-detail="${detailId}" style="cursor:pointer" title="Toggle expected/actual">
+  <td>${esc(r.feature)}</td><td class="match">${r.match ? '✓' : '✗'}</td><td>${esc(r.notes)}</td>
+</tr>
+<tr id="${detailId}" class="enh-detail" hidden>
+  <td colspan="3"><pre class="cmp-meta" style="white-space:pre-wrap;margin:0">${esc(JSON.stringify({ expected: r.expectedState, actual: r.actualState }, null, 2))}</pre></td>
+</tr>`;
+    })
     .join('');
+  enhBody.querySelectorAll('.enh-row').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const el = document.getElementById(tr.dataset.detail);
+      if (el) el.hidden = !el.hidden;
+    });
+  });
   document.getElementById('enh-sig').textContent = `sha256 ${enh.signature ?? '—'} · depth ${enh.consoleDepth ?? '—'}`;
 
   const shBody = document.querySelector('#shadow-table tbody');
@@ -153,5 +171,15 @@ function render(board, source) {
     .join('\n');
 }
 
-const { board, source } = await loadBoard();
-render(board, source);
+async function tick() {
+  const { board, source } = await loadBoard();
+  render(board, source);
+}
+
+await tick();
+setInterval(tick, pollMs());
+
+// Prefer fresh registry over stale embed after first tick interval.
+document.getElementById('cmp-banner')?.addEventListener('dblclick', () => {
+  tick();
+});

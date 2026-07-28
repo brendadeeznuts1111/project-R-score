@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-27T17:11:49.003Z",
+  "generatedAt": "2026-07-28T00:35:10.929Z",
   "enhancements": {
-    "generatedAt": "2026-07-27T17:11:48.989Z",
+    "generatedAt": "2026-07-28T00:35:10.905Z",
     "consoleDepth": 4,
     "rows": [
       {
@@ -130,11 +130,11 @@
     ],
     "passed": 8,
     "total": 8,
-    "signature": "7fa6166c85cbfc571da2510ab5ce2151b06585118f8e6f9094a2693e9715d295"
+    "signature": "dc01339b56c0f619870dd94fbb7a9ebe6c2771394e099fbc444f59deb423b9d2"
   },
   "shadow": {
-    "generatedAt": "2026-07-27T17:11:49.002Z",
-    "base": "http://127.0.0.1:60355/",
+    "generatedAt": "2026-07-28T00:35:10.929Z",
+    "base": "http://127.0.0.1:58268/",
     "rows": [
       {
         "state": "MA",
@@ -210,13 +210,12 @@
       "block": 4,
       "mismatches": 0
     },
-    "signature": "ed8111b6e0680bb7534ed8d194d34daf588e5a5dabf74f0cd1e0c2e40ba777d5",
+    "signature": "9b5882d1c2fe474e2396b113a698c02f1cef50a3a0f774837b954e2eaa293fa2",
     "proof": {
       "algorithm": "sha3-256",
-      "digest": "ed8111b6e0680bb7534ed8d194d34daf588e5a5dabf74f0cd1e0c2e40ba777d5",
+      "digest": "9b5882d1c2fe474e2396b113a698c02f1cef50a3a0f774837b954e2eaa293fa2",
       "bunVersion": "1.4.0",
-      "generatedAt": "2026-07-27T17:11:49.002Z",
-      "hmac": "457b8c33f90cd1d85f93967d6a577fc1fcbaaaa3482a2d7da3f50835a13ab06a"
+      "generatedAt": "2026-07-28T00:35:10.929Z"
     }
   },
   "geo": {
@@ -252,13 +251,12 @@
     ]
   },
   "integrity": {
-    "scoreHint": "integrity+hmac",
+    "scoreHint": "integrity-only (mint REPORT_SIGNING_SECRET or vault inject)",
     "proof": {
       "algorithm": "sha3-256",
-      "digest": "792ad808d3ed37ece90ffef68b686ba5062e3623f67542126b62e3b7105f1c2a",
+      "digest": "0790fb0ca65a189f3343d5c5c74f90a95d46c8310445f1e836ae9b8efb07e71f",
       "bunVersion": "1.4.0",
-      "generatedAt": "2026-07-27T17:11:49.007Z",
-      "hmac": "e021868eddce163efa4da2565f30b91118a9d61b3dcf8ebd3cabe4f9e1dd2320"
+      "generatedAt": "2026-07-28T00:35:10.934Z"
     },
     "checks": [
       {
@@ -278,7 +276,7 @@
       },
       {
         "id": "hmac",
-        "ok": true,
+        "ok": false,
         "label": "HMAC (REPORT_SIGNING_SECRET from vault/mint)"
       },
       {

@@ -733,7 +733,7 @@ function withMarkdownAlternate(res: Response, path: string): Response {
   if (path === '/portal/index.html') slug = 'index';
   else {
     const m = path.match(
-      /^\/portal\/(ops|catalog|dod|health|env|monitoring|skills|dashboard)\/index\.html$/
+      /^\/portal\/(ops|catalog|dod|health|env|monitoring|skills|dashboard|compliance)\/index\.html$/
     );
     if (m) slug = m[1]!;
   }
@@ -1406,6 +1406,21 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
   if (path === '/api/env' || path === '/api/env/') return envStatus();
   if (path === '/api/content-type' || path === '/api/content-type/') return contentTypeApi();
+  if (path === '/api/compliance' || path === '/api/compliance/') {
+    const f = Bun.file('public/registry/compliance-board.json');
+    if (!(await f.exists())) {
+      return json(
+        {
+          ok: false,
+          error: 'compliance-board missing — bun run compliance:bake',
+          links: { portal: '/portal/compliance/', bake: 'bun run compliance:bake' },
+        },
+        503
+      );
+    }
+    const board = await f.json();
+    return json({ ok: true, mode: 'snapshot', readOnly: true, ...board });
+  }
 
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
@@ -1414,6 +1429,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
       '/api/monitoring',
       '/api/registry',
       '/api/dod',
+      '/api/compliance',
       '/api/channels',
       '/api/operations/summary',
       '/api/catalog',

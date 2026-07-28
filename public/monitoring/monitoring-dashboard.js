@@ -245,6 +245,19 @@ export function renderMonitoringDashboard(payload) {
       card('Integrity', integrity.status || 'unknown', fmtTime(integrity.timestamp), statusClass(intOk)),
       card('Env checks', env.summary ? `${env.summary.ok}/${env.summary.total}` : '—', `${env.summary?.requiredMissing ?? 0} required missing`, statusClass(envOk)),
       card('DOD queue', mon.dodQueue ?? 0, Object.keys(mon.dodByStatus || {}).length ? JSON.stringify(mon.dodByStatus) : 'empty', '', '/portal/dod/'),
+      card(
+        'Compliance',
+        mon.compliance?.enhancements ?? ops?.compliance?.enhancements ?? '—',
+        mon.compliance?.available || ops?.compliance?.available
+          ? `shadow Δ ${mon.compliance?.shadowMismatches ?? ops?.compliance?.shadowMismatches ?? 0} · ${mon.compliance?.ok || ops?.compliance?.ok ? 'ok' : 'fail'}`
+          : 'run compliance:bake',
+        mon.compliance?.available || ops?.compliance?.available
+          ? mon.compliance?.ok || ops?.compliance?.ok
+            ? 'ok'
+            : 'bad'
+          : '',
+        '/portal/compliance/'
+      ),
       card('Platforms', Object.values(mon.platformSummary || {}).reduce((a, b) => a + b, 0) || '0', `api yes ${mon.platformApiAvailable?.yes ?? 0} · no ${mon.platformApiAvailable?.no ?? 0}`),
       card('Experiments', mon.experimentsActive ?? 0),
       card('Prediction', mon.predictionN ?? 0, mon.predictionN ? 'coverage report available' : '', mon.predictionN ? 'ok' : '', mon.predictionN ? '/registry/prediction/report/' : ''),

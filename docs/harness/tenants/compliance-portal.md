@@ -25,18 +25,23 @@ Proton Pass: inject CF token for deploy only (pass://factorywager/Cloudflare API
 ## Operator loop
 
 ```bash
-# 1. Prove offline board
-bun run compliance:bake
-bun run ops:enhancements
+# 1. Prove offline board + tests
+bun run compliance:verify
 
 # 2. Local portal
-bun run serve:public:hot   # open /portal/compliance/
+bun run serve:public:hot   # open /portal/compliance/ · /api/compliance · /monitoring
 
 # 3. Vault + deploy
 bun run proton:inject:factorywager:reasonix
 bun run compliance:bake:vault
 bun run proton:deploy:pages
 ```
+
+## Health + monitoring
+
+- Edge `/api/health` artifacts include `complianceBoard` (`exists`, `ok`, enhancements ratio, shadow mismatches).
+- Mismatches or failed enhancement rows **degrade** edge health status.
+- Monitoring tile **Compliance** links to `/portal/compliance/` (from live `getMonitoringData` slice).
 
 ## Env (non-secret)
 
