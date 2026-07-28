@@ -783,11 +783,30 @@ function renderDependencyGraph(data, doc = document) {
       const role = t.getAttribute('data-role');
       if (role == null) return;
       host._pkgRoleFilter = role === host._pkgRoleFilter ? '' : role;
+      // role and grade filters are independent (AND)
       filterHost.querySelectorAll('[data-role]').forEach(b => {
         b.classList.toggle('active', b.getAttribute('data-role') === host._pkgRoleFilter);
       });
       paint();
-      applyTableRoleFilter(doc, host._pkgRoleFilter);
+      applyTableFilters(doc, host._pkgRoleFilter, host._pkgGradeFilter || '');
+    });
+  }
+
+  // Grade filter chips
+  const gradeHost = doc.getElementById('pkg-grade-filters');
+  if (gradeHost && !gradeHost.dataset.bound) {
+    gradeHost.dataset.bound = '1';
+    gradeHost.addEventListener('click', e => {
+      const t = e.target;
+      if (!(t instanceof HTMLElement)) return;
+      const grade = t.getAttribute('data-grade');
+      if (grade == null) return;
+      host._pkgGradeFilter = grade === host._pkgGradeFilter ? '' : grade;
+      gradeHost.querySelectorAll('[data-grade]').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-grade') === host._pkgGradeFilter);
+      });
+      paint();
+      applyTableFilters(doc, host._pkgRoleFilter || '', host._pkgGradeFilter);
     });
   }
 
@@ -797,8 +816,13 @@ function renderDependencyGraph(data, doc = document) {
     clearBtn.dataset.bound = '1';
     clearBtn.addEventListener('click', () => {
       host._pkgFocusId = null;
+      host._pkgRoleFilter = '';
+      host._pkgGradeFilter = '';
+      filterHost?.querySelectorAll('[data-role]').forEach(b => b.classList.remove('active'));
+      gradeHost?.querySelectorAll('[data-grade]').forEach(b => b.classList.remove('active'));
       paint();
       renderPackageDetail(data, model, null, doc);
+      applyTableFilters(doc, '', '');
       doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
         r.classList.remove('pkg-row-selected');
         r.setAttribute('aria-selected', 'false');
@@ -808,25 +832,57 @@ function renderDependencyGraph(data, doc = document) {
 }
 
 /**
- * Filter package table by role (empty = all).
+ * Filter package table by role and/or grade (empty = all).
  * @param {Document} doc
  * @param {string} role
+ * @param {string} grade
  */
-function applyTableRoleFilter(doc, role) {
+export function applyTableFilters(doc, role, grade) {
   doc.querySelectorAll('#pkg-body tr[data-pkg]').forEach(tr => {
-    if (!role) {
-      tr.hidden = false;
-      return;
+    let hide = false;
+    if (role) {
+      const cell = tr.querySelector('td.role');
+      const r = cell?.textContent?.trim() || '';
+      if (r !== role) hide = true;
     }
-    const cell = tr.querySelector('td.role');
-    const r = cell?.textContent?.trim() || '';
-    tr.hidden = r !== role;
+    if (!hide && grade) {
+      const g = tr.getAttribute('data-grade') || '';
+      if (g !== grade) hide = true;
+    }
+    tr.hidden = hide;
   });
+}
+
+/** @deprecated use applyTableFilters */
+function applyTableRoleFilter(doc, role) {
+  applyTableFilters(doc, role, '');
+}
+
+/**
+ * Role / grade counts for summary cards.
+ * @param {Array<object|string>} packages
+ */
+export function summarizePackageRoles(packages) {
+  const roles = { consumed: 0, dormant: 0, 'root-tooling': 0, scripted: 0, other: 0 };
+  const grades = { healthy: 0, 'needs-improvement': 0, critical: 0, unknown: 0 };
+  let orphanFiles = 0;
+  for (const p of packages || []) {
+    if (typeof p === 'string') continue;
+    const role = p.role || 'other';
+    if (role in roles) roles[role]++;
+    else roles.other++;
+    const g = gradeFromScore(p.score);
+    if (g in grades) grades[g]++;
+    else grades.unknown++;
+    orphanFiles += Number(p.orphans) || 0;
+  }
+  return { roles, grades, orphanFiles, count: (packages || []).length };
 }
 
 function renderPackagesBoard(data, doc = document) {
   const summary = data.summary ?? {};
   const boardGrade = gradeFromScore(data.score);
+  const breakdown = summarizePackageRoles(data.packages);
   const scoreEl = doc.getElementById('s-score');
   setText(scoreEl, data.score != null ? String(data.score) : '—');
   if (scoreEl) {
@@ -841,6 +897,13 @@ function renderPackagesBoard(data, doc = document) {
     doc.getElementById('s-actions'),
     summary.openActions != null ? String(summary.openActions) : '—'
   );
+  setText(doc.getElementById('s-consumed'), String(breakdown.roles.consumed));
+  setText(doc.getElementById('s-dormant'), String(breakdown.roles.dormant));
+  setText(
+    doc.getElementById('s-pkg-count'),
+    summary.packageCount != null ? String(summary.packageCount) : String(breakdown.count)
+  );
+  // Optional legacy cards if present in older HTML
   setText(
     doc.getElementById('s-archive'),
     summary.archivePlaceholders != null ? String(summary.archivePlaceholders) : '—'
@@ -860,6 +923,25 @@ function renderPackagesBoard(data, doc = document) {
         : '—'
   );
   setText(doc.getElementById('hub'), summary.topHub != null ? String(summary.topHub) : '—');
+
+  // Summary meta + orphan alert
+  const summaryMeta = doc.getElementById('pkg-summary-meta');
+  if (summaryMeta) {
+    const g = breakdown.grades;
+    summaryMeta.textContent = `grades: healthy=${g.healthy} · needs-improvement=${g['needs-improvement']} · critical=${g.critical} · roles: consumed=${breakdown.roles.consumed} dormant=${breakdown.roles.dormant} root-tooling=${breakdown.roles['root-tooling']} · CLI: portal-cli pm graph --view=dormant`;
+  }
+  const orphanAlert = doc.getElementById('pkg-orphan-alert');
+  if (orphanAlert) {
+    if (breakdown.orphanFiles > 0) {
+      orphanAlert.hidden = false;
+      orphanAlert.className = 'meta grade-critical';
+      orphanAlert.textContent = `⚠ ${breakdown.orphanFiles} orphan file(s) across packages — run audit:packages and review orphans column.`;
+    } else {
+      orphanAlert.hidden = false;
+      orphanAlert.className = 'meta grade-healthy';
+      orphanAlert.textContent = 'Orphan files: 0 (all scanned package sources reachable from entrypoints).';
+    }
+  }
 
   const schemaNote =
     data.schemaStatus === 'current'
@@ -998,6 +1080,8 @@ function renderPackagesBoard(data, doc = document) {
         const g = gradeFromScore(p.score);
         tr.dataset.pkg = String(name);
         tr.dataset.role = String(role);
+        tr.dataset.grade = g;
+        tr.setAttribute('data-grade', g);
         tr.tabIndex = 0;
         tr.setAttribute('aria-label', `Focus package ${String(name)} in dependency graph`);
         tr.setAttribute('aria-selected', 'false');
@@ -1026,10 +1110,10 @@ function renderPackagesBoard(data, doc = document) {
       }
     }
   }
-  // re-apply role filter if user had one selected
+  // re-apply role/grade filters if user had them selected
   const graphHost = doc.getElementById('pkg-dep-graph');
-  if (graphHost?._pkgRoleFilter) {
-    applyTableRoleFilter(doc, graphHost._pkgRoleFilter);
+  if (graphHost) {
+    applyTableFilters(doc, graphHost._pkgRoleFilter || '', graphHost._pkgGradeFilter || '');
   }
   // toolbar copy buttons
   bindCopyButtons(doc);

@@ -31,6 +31,11 @@ import {
 import { isSnapshotScope } from './snapshot-scopes.ts';
 import {
   availablePackageGraphScopes,
+  colorizeByHealth,
+  formatPackageGraphCsv,
+  formatPackageGraphJson,
+  packageGradeBreakdown,
+  packageRoleBreakdown,
   parsePackageGraphFlags,
   selectPackageGraphRows,
   updatePackageGraphBake,
@@ -111,6 +116,11 @@ FactoryWager extensions (not bun pm — read offline bake):
   graph             Print packages-graph-map.json as a table
     --scope <scope> Filter packages/* rows only (surface sections stay global)
                     Accepts @factorywager, factorywager, unscoped, or all
+    --view <view>   Filter packages/* by role or grade:
+                    dormant | consumed | root-tooling | scripted |
+                    healthy | needs-improvement | critical | all
+    --export <fmt>  table (default) | json | csv  (shorthand: --json)
+    --color / --no-color   Force ANSI score tones (default: auto TTY)
     --update         Refresh the complete package audit + graph before reading
                     Writes audit-report.json and packages-graph-map.json
                     Source: public/registry/packages-graph-map.json
@@ -123,6 +133,8 @@ Examples:
   portal-cli pm version --no-git-tag-version
   portal-cli pm graph
   portal-cli pm graph --scope @factorywager
+  portal-cli pm graph --view=dormant
+  portal-cli pm graph --view=healthy --export=json
   portal-cli pm graph --scope unscoped --update  # refreshes tracked bake outputs
 `;
 
@@ -133,6 +145,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli vault health [--update] Vault-map inventory + report-shape gate
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
+  portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
   portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
   portal-cli help                    This message
 
@@ -267,22 +280,59 @@ async function printPackagesGraphTable(flags: PackageGraphFlags): Promise<void> 
   const schema = data.schemaVersion ?? 12;
   const packages = data.packages ?? [];
   const workspaces = data.surfaces?.workspaces ?? [];
-  const selectedPackages = selectPackageGraphRows(packages, workspaces, flags.scope);
+  const selectedPackages = selectPackageGraphRows(packages, workspaces, flags.scope, flags.view);
   const availableScopes = availablePackageGraphScopes(packages, workspaces);
-  const rows = selectedPackages.map(({ npmName, package: p }) => ({
-    package: npmName,
-    role: p.role ?? '—',
-    score: p.score ?? '—',
-    grade: p.grade ?? '—',
-    files: p.scanned ?? '—',
-    orphans: p.orphans ?? '—',
-    kB: p.bytes != null ? Math.round(p.bytes / 1024) : '—',
-  }));
+  const useColor =
+    flags.color === true
+      ? true
+      : flags.color === false
+        ? false
+        : Boolean(process.stdout.isTTY) && flags.exportFormat === 'table';
+
+  // Machine-readable export short-circuits human tables
+  if (flags.exportFormat === 'json') {
+    process.stdout.write(
+      formatPackageGraphJson(selectedPackages, {
+        schemaVersion: schema,
+        generatedAt: data.generatedAt ?? null,
+        bunVersion: data.bunVersion ?? null,
+        boardScore: data.score ?? null,
+        boardGrade: data.grade ?? null,
+        scope: flags.scope,
+        view: flags.view,
+        selected: selectedPackages.length,
+        total: packages.length,
+      })
+    );
+    return;
+  }
+  if (flags.exportFormat === 'csv') {
+    process.stdout.write(formatPackageGraphCsv(selectedPackages));
+    return;
+  }
+
+  const rows = selectedPackages.map(({ npmName, package: p }) => {
+    const scoreRaw = p.score;
+    const scoreText =
+      scoreRaw != null ? colorizeByHealth(String(scoreRaw), scoreRaw, useColor) : '—';
+    const gradeText = p.grade != null ? colorizeByHealth(String(p.grade), scoreRaw, useColor) : '—';
+    return {
+      package: npmName,
+      role: p.role ?? '—',
+      score: scoreText,
+      grade: gradeText,
+      files: p.scanned ?? '—',
+      orphans: p.orphans ?? '—',
+      kB: p.bytes != null ? Math.round(p.bytes / 1024) : '—',
+    };
+  });
+  const boardScoreText =
+    data.score != null ? colorizeByHealth(String(data.score), data.score, useColor) : '?';
   console.log(
-    `packages-graph-map  schema=v${schema}  generated=${data.generatedAt ?? '?'}  bun=${data.bunVersion ?? '?'}  score=${data.score ?? '?'}  grade=${data.grade ?? '?'}`
+    `packages-graph-map  schema=v${schema}  generated=${data.generatedAt ?? '?'}  bun=${data.bunVersion ?? '?'}  score=${boardScoreText}  grade=${data.grade ?? '?'}`
   );
   console.log(
-    `selection  scope=${flags.scope}  selected=${selectedPackages.length}/${packages.length}  view=packages-only  surfaces=global`
+    `selection  scope=${flags.scope}  view=${flags.view}  selected=${selectedPackages.length}/${packages.length}  surfaces=global`
   );
   if (data.map?.summary) {
     const s = data.map.summary;
@@ -290,6 +340,23 @@ async function printPackagesGraphTable(flags: PackageGraphFlags): Promise<void> 
       `summary  packages=${s.packageCount}  consumed=${s.consumed}  dormant=${s.dormant}  rootTooling=${s.rootTooling}  openActions=${s.openActions}`
     );
   }
+  // Live role/grade breakdown of the full bake (not just filtered view)
+  const roles = packageRoleBreakdown(packages);
+  const grades = packageGradeBreakdown(packages);
+  console.log(
+    `roles  ${
+      Object.entries(roles)
+        .map(([k, v]) => `${k}=${v}`)
+        .join('  ') || '—'
+    }`
+  );
+  console.log(
+    `grades ${
+      Object.entries(grades)
+        .map(([k, v]) => `${k}=${v}`)
+        .join('  ') || '—'
+    }`
+  );
 
   // Multi-surface plane table (v13+) — why registry/portal show more than packages/*
   const surfaces = data.surfaces;
@@ -324,11 +391,11 @@ async function printPackagesGraphTable(flags: PackageGraphFlags): Promise<void> 
   }
 
   console.log(
-    `\n── packages/* import graph (audit plane; scope=${flags.scope}; selected=${selectedPackages.length}/${packages.length}) ──`
+    `\n── packages/* import graph (audit plane; scope=${flags.scope}; view=${flags.view}; selected=${selectedPackages.length}/${packages.length}) ──`
   );
   if (rows.length === 0) {
     console.log(
-      `(no packages match scope ${flags.scope}; available scopes: ${availableScopes.join(', ') || 'none'})`
+      `(no packages match scope=${flags.scope} view=${flags.view}; available scopes: ${availableScopes.join(', ') || 'none'})`
     );
   } else {
     logTable(rows, ['package', 'role', 'score', 'grade', 'files', 'orphans', 'kB']);
@@ -579,6 +646,75 @@ async function printPackagesGraphTable(flags: PackageGraphFlags): Promise<void> 
   console.log('Board:  /portal/packages/  ·  chrome: /registry/portal-chrome.json');
 }
 
+/**
+ * `portal-cli badge` — offline preview of the nav badges the portal topbar shows.
+ * Reuses the pure pickers from public/portal/nav-badges.js against the baked
+ * registry JSONs (no server, no secrets). @see public/portal/nav-badges.js
+ */
+async function printBadgeTable(flags: string[] = []): Promise<void> {
+  const { joinPath } = await import('../lib/path-bun.ts');
+  const { logTable } = await import('../lib/console-depth.ts');
+  const badges = (await import('../public/portal/nav-badges.js')) as {
+    pickFailuresBadge: (d: unknown) => number | null;
+    toneFailuresBadge: (n: number | null) => string;
+    pickVaultBadge: (d: unknown) => number | null;
+    toneVaultBadge: (n: number | null) => string;
+    pickPackagesBadge: (d: unknown) => number | null;
+    tonePackagesBadge: (n: number | null) => string;
+    pickHealthBadge: (d: unknown) => number | null;
+    toneHealthBadge: (n: number | null) => string;
+  };
+  const root = joinPath(import.meta.dir, '..');
+  const specs = [
+    {
+      board: '/portal/failures/',
+      source: 'public/registry/failures.json',
+      pick: badges.pickFailuresBadge,
+      tone: badges.toneFailuresBadge,
+    },
+    {
+      board: '/portal/vault/',
+      source: 'public/registry/vault-health.json',
+      pick: badges.pickVaultBadge,
+      tone: badges.toneVaultBadge,
+    },
+    {
+      board: '/portal/packages/',
+      source: 'public/registry/packages-graph-map.json',
+      pick: badges.pickPackagesBadge,
+      tone: badges.tonePackagesBadge,
+    },
+    {
+      board: '/portal/health/',
+      source: 'public/registry/monorepo-health.json',
+      pick: badges.pickHealthBadge,
+      tone: badges.toneHealthBadge,
+    },
+  ];
+  const rows = await Promise.all(
+    specs.map(async s => {
+      const file = Bun.file(joinPath(root, s.source));
+      const data = (await file.exists()) ? await file.json() : null;
+      const value = data ? s.pick(data) : null;
+      return {
+        board: s.board,
+        source: s.source.replace('public/registry/', '/registry/'),
+        value: value ?? '—',
+        tone: value != null ? s.tone(value) : data ? 'neutral' : 'missing-bake',
+      };
+    })
+  );
+  if (flags.includes('--json')) {
+    console.log(JSON.stringify(rows, null, 2));
+    return;
+  }
+  console.log('nav badges (offline — from baked registry JSON):');
+  logTable(rows, ['board', 'source', 'value', 'tone']);
+  if (rows.some(r => r.tone === 'missing-bake')) {
+    console.log('\nmissing bake(s) — run bun run bake:all');
+  }
+}
+
 async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promise<void> {
   if (!sub || sub === 'help' || sub === '--help' || sub === '-h') {
     console.log(SNAPSHOT_HELP);
@@ -693,6 +829,14 @@ async function main(): Promise<void> {
     return;
   }
 
+  if (cmd === 'badge') {
+    const badgeFlags = argv.slice(1);
+    const bad = badgeFlags.filter(f => f !== '--json');
+    if (bad.length) cliError(`Unknown badge flag(s): ${bad.join(', ')}\nFlags: --json`);
+    await printBadgeTable(badgeFlags);
+    return;
+  }
+
   if (cmd === 'pm') {
     const pmArgs = argv.slice(1);
     // Bare `pm` → short help (exit 0), not full `bun pm` dump.
@@ -758,16 +902,27 @@ async function main(): Promise<void> {
       Bun.env.SNAPSHOT_BASE_URL?.replace(/\/$/, '') ||
       'https://score.factory-wager.com';
     if (argv.includes('--help') || argv.includes('-h')) {
-      console.log(`Usage: portal-cli dashboard [path|/portal/…] [--view=name] [--open]
+      console.log(`Usage: portal-cli dashboard [path|/portal/…] [--view=name] [--open] [--list]
 
 Views: ${Object.keys(VIEW_PATHS).sort().join(', ')}
 
 Examples:
   portal-cli dashboard
+  portal-cli dashboard --list
   portal-cli dashboard --view=packages --open
   portal-cli dashboard /portal/vault/
   PORTAL_BASE_URL=http://127.0.0.1:8787 portal-cli dashboard --view=tools --open
 `);
+      return;
+    }
+    if (argv.includes('--list')) {
+      const { logTable } = await import('../lib/console-depth.ts');
+      logTable(
+        Object.entries(VIEW_PATHS)
+          .map(([view, path]) => ({ view, path }))
+          .sort((a, b) => a.view.localeCompare(b.view)),
+        ['view', 'path']
+      );
       return;
     }
     const viewFlag = argv.find(a => a.startsWith('--view='));

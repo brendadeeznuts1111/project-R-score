@@ -13,6 +13,8 @@ import {
   normalizePackagesMap,
   renderDependencyGraphSvg,
   renderPageRegistrySvg,
+  summarizePackageRoles,
+  applyTableFilters,
 } from '../public/portal/packages/packages-board.js';
 
 describe('packages-board failure paths', () => {
@@ -264,5 +266,21 @@ describe('packages-board failure paths', () => {
     expect(svg).toContain('ops');
     expect(svg).toContain('ops-summary');
     expect(svg).toContain('edge-page-reg');
+  });
+
+  test('summarizePackageRoles counts roles grades and orphans', () => {
+    const s = summarizePackageRoles([
+      { name: 'a', role: 'consumed', score: 100, orphans: 0 },
+      { name: 'b', role: 'dormant', score: 85, orphans: 2 },
+      { name: 'c', role: 'root-tooling', score: 50, orphans: 0 },
+    ]);
+    expect(s.roles.consumed).toBe(1);
+    expect(s.roles.dormant).toBe(1);
+    expect(s.roles['root-tooling']).toBe(1);
+    expect(s.grades.healthy).toBe(1);
+    expect(s.grades['needs-improvement']).toBe(1);
+    expect(s.grades.critical).toBe(1);
+    expect(s.orphanFiles).toBe(2);
+    expect(s.count).toBe(3);
   });
 });

@@ -152,14 +152,16 @@
 
     <div id="pkg-error-banner" class="ops-banner error hidden" role="alert"></div>
 
-    <div class="stats-row">
+    <div class="stats-row" id="pkg-summary-cards" aria-label="Packages summary">
       <div class="stat-card"><div class="stat-num" id="s-score">—</div><div class="stat-label">board score</div></div>
       <div class="stat-card"><div class="stat-num" id="s-avg">—</div><div class="stat-label">avg package score</div></div>
       <div class="stat-card"><div class="stat-num" id="s-actions">—</div><div class="stat-label">open actions</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-archive">—</div><div class="stat-label">archive placeholders</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-quarantine">—</div><div class="stat-label">quarantine</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-inject">—</div><div class="stat-label">root needs inject</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-consumed">—</div><div class="stat-label">consumed</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-dormant">—</div><div class="stat-label">dormant</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-pkg-count">—</div><div class="stat-label">packages</div></div>
     </div>
+    <p class="meta" id="pkg-summary-meta">Loading summary…</p>
+    <p class="meta" id="pkg-orphan-alert" hidden></p>
 
     <section class="pkg-dep-panel" aria-label="Dependency graph">
       <h3>Dependency graph</h3>
@@ -170,8 +172,14 @@
           <button type="button" class="pkg-chip" data-role="dormant">dormant</button>
           <button type="button" class="pkg-chip" data-role="root-tooling">root-tooling</button>
         </div>
+        <div id="pkg-grade-filters" aria-label="Grade filters">
+          <button type="button" class="pkg-chip" data-grade="healthy">healthy</button>
+          <button type="button" class="pkg-chip" data-grade="needs-improvement">needs-improvement</button>
+          <button type="button" class="pkg-chip" data-grade="critical">critical</button>
+        </div>
         <button type="button" class="pkg-chip" id="pkg-focus-clear">clear focus</button>
         <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy pm graph</button>
+        <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph --view=dormant">copy dormant view</button>
         <button type="button" class="copy-cli" data-cli="bun run audit:packages -- --bake">copy rebake</button>
       </div>
       <div class="pkg-dep-legend">

@@ -7,8 +7,12 @@ import { resolvePath } from '../scripts/lib/fs-bun';
 import {
   PACKAGE_GRAPH_UPDATE_COMMAND,
   availablePackageGraphScopes,
+  colorizeByHealth,
+  formatPackageGraphCsv,
+  packageGraphViewMatches,
   parsePackageGraphFlags,
   selectPackageGraphRows,
+  toneHealthBadge,
   updatePackageGraphBake,
 } from '../tools/lib/portal-package-scope';
 
@@ -66,8 +70,36 @@ describe('portal-cli pm passthrough', () => {
     expect(code).toBe(0);
     expect(out.includes('packages-graph-map') || out.includes('registry-client')).toBe(true);
     expect(out.includes('Rebake') || out.includes('role') || out.includes('score')).toBe(true);
-    expect(out).toContain('selection  scope=all  selected=');
-    expect(out).toContain('view=packages-only  surfaces=global');
+    expect(out).toContain('selection  scope=all  view=all  selected=');
+    expect(out).toContain('surfaces=global');
+  });
+
+  test('pm graph --view=dormant filters package rows', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'pm', 'graph', '--view=dormant', '--no-color'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain('view=dormant');
+    // dormant packages in current bake include business/p2p when present
+    expect(out.includes('dormant') || out.includes('selected=')).toBe(true);
+  });
+
+  test('pm graph --export=json is machine-readable', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'pm', 'graph', '--export=json', '--view=all'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    const j = JSON.parse(out);
+    expect(Array.isArray(j.packages)).toBe(true);
+    expect(j.view).toBe('all');
   });
 
   test('pm graph filters canonical workspace package names by npm scope', async () => {
@@ -79,7 +111,7 @@ describe('portal-cli pm passthrough', () => {
     const code = await proc.exited;
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
-    expect(out).toContain('selection  scope=@factorywager  selected=6/6');
+    expect(out).toContain('selection  scope=@factorywager  view=all  selected=6/6');
     expect(out).toContain('@factorywager/registry-client');
   });
 
@@ -119,24 +151,52 @@ describe('portal-cli pm graph flags', () => {
   test('normalizes npm scopes and preserves all/unscoped selectors', () => {
     expect(parsePackageGraphFlags([])).toEqual({
       scope: 'all',
+      view: 'all',
+      exportFormat: 'table',
       update: false,
       help: false,
+      color: 'auto',
     });
     expect(parsePackageGraphFlags(['--scope', 'factorywager'])).toEqual({
       scope: '@factorywager',
+      view: 'all',
+      exportFormat: 'table',
       update: false,
       help: false,
+      color: 'auto',
     });
     expect(parsePackageGraphFlags(['--scope=@factory', '--update'])).toEqual({
       scope: '@factory',
+      view: 'all',
+      exportFormat: 'table',
       update: true,
       help: false,
+      color: 'auto',
     });
     expect(parsePackageGraphFlags(['--scope', 'unscoped'])).toEqual({
       scope: 'unscoped',
+      view: 'all',
+      exportFormat: 'table',
       update: false,
       help: false,
+      color: 'auto',
     });
+  });
+
+  test('parses --view and --export / --json', () => {
+    expect(parsePackageGraphFlags(['--view', 'dormant'])).toMatchObject({
+      view: 'dormant',
+      exportFormat: 'table',
+    });
+    expect(parsePackageGraphFlags(['--view=healthy', '--export=csv'])).toMatchObject({
+      view: 'healthy',
+      exportFormat: 'csv',
+    });
+    expect(parsePackageGraphFlags(['--json', '--view=consumed'])).toMatchObject({
+      view: 'consumed',
+      exportFormat: 'json',
+    });
+    expect(parsePackageGraphFlags(['--no-color'])).toMatchObject({ color: false });
   });
 
   test('rejects missing, repeated, and unknown graph options', () => {
@@ -144,7 +204,7 @@ describe('portal-cli pm graph flags', () => {
     expect(() => parsePackageGraphFlags(['--scope', 'all', '--scope', 'unscoped'])).toThrow(
       'only be specified once'
     );
-    expect(() => parsePackageGraphFlags(['--json'])).toThrow('Unknown pm graph option');
+    expect(() => parsePackageGraphFlags(['--view', 'nope'])).toThrow('Invalid --view');
     expect(() => parsePackageGraphFlags(['--bogus'])).toThrow('Unknown pm graph option');
   });
 
@@ -169,10 +229,10 @@ describe('portal-cli pm graph flags', () => {
 
   test('filters on canonical workspace names and keeps genuinely unscoped rows', () => {
     const packages = [
-      { name: 'business', score: 100 },
-      { name: 'health-check', score: 90 },
-      { name: 'local-tool', score: 80 },
-      { name: '@other/direct', score: 70 },
+      { name: 'business', score: 100, role: 'dormant' },
+      { name: 'health-check', score: 90, role: 'consumed' },
+      { name: 'local-tool', score: 80, role: 'dormant' },
+      { name: '@other/direct', score: 70, role: 'consumed' },
     ];
     const workspaces = [
       { path: 'packages/business', name: '@factorywager/business' },
@@ -190,6 +250,22 @@ describe('portal-cli pm graph flags', () => {
       selectPackageGraphRows(packages, workspaces, 'unscoped').map(row => row.npmName)
     ).toEqual(['local-tool']);
     expect(selectPackageGraphRows(packages, workspaces, 'all')).toHaveLength(4);
+    expect(
+      selectPackageGraphRows(packages, workspaces, 'all', 'dormant').map(r => r.npmName)
+    ).toEqual(['@factorywager/business', 'local-tool']);
+    expect(packageGraphViewMatches({ name: 'x', role: 'consumed', score: 100 }, 'healthy')).toBe(
+      true
+    );
+    expect(toneHealthBadge(100)).toBe('ok');
+    expect(toneHealthBadge(70)).toBe('warn');
+    expect(toneHealthBadge(40)).toBe('bad');
+    expect(colorizeByHealth('90', 90, false)).toBe('90');
+    expect(colorizeByHealth('90', 90, true)).toContain('90');
+    const csv = formatPackageGraphCsv(
+      selectPackageGraphRows(packages, workspaces, 'all', 'consumed')
+    );
+    expect(csv).toContain('package,role,score');
+    expect(csv).toContain('@factory/health-check');
     expect(availablePackageGraphScopes(packages, workspaces)).toEqual([
       '@factory',
       '@factorywager',
@@ -207,7 +283,7 @@ describe('portal-cli pm graph flags', () => {
     const code = await proc.exited;
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
-    expect(out).toContain('no packages match scope @unavailable');
+    expect(out).toContain('no packages match scope=@unavailable view=all');
     expect(out).toContain('available scopes: @factorywager');
   });
 
