@@ -12,6 +12,7 @@ import {
   assertApiIntegrity,
   buildCapabilityMapFull,
   buildCapabilityMapSubset,
+  capabilityMapsDeepEqual,
   capabilityMapSubsetFingerprint,
   capabilityMapSubsetForSnapshot,
   extractMdLinkUrl,
@@ -181,19 +182,22 @@ describe('capability-map-subset parse', () => {
     expect(rows.filter(r => r.source?.startsWith('https://')).length).toBeGreaterThan(20);
   });
 
-  test('baked subset matches AGENTS (fingerprint) and snapshot contract', async () => {
+  test('baked subset matches AGENTS (Bun.deepEquals) and snapshot contract', async () => {
     const md = await Bun.file('AGENTS.md').text();
     const built = buildCapabilityMapSubset(md, '2026-07-28T00:00:00.000Z');
     const bakedPath = 'public/registry/capability-map-subset.json';
     const bakedFile = Bun.file(bakedPath);
     expect(await bakedFile.exists()).toBe(true);
     const baked = (await bakedFile.json()) as ReturnType<typeof buildCapabilityMapSubset>;
-    if (capabilityMapSubsetFingerprint(baked) !== capabilityMapSubsetFingerprint(built)) {
+    // Structural equality (strict) — generatedAt/fingerprint stripped inside helper.
+    if (!capabilityMapsDeepEqual(baked, built)) {
       throw new Error(
         `stale ${bakedPath} — run: bun run bake:capabilities\n` +
           `Then if the snapshot is intentionally new: bun test tests/capability-map-subset.test.ts --update-snapshots`
       );
     }
+    expect(capabilityMapsDeepEqual(baked, baked)).toBe(true);
+    expect(capabilityMapSubsetFingerprint(baked)).toBe(capabilityMapSubsetFingerprint(built));
     expect(baked.schemaVersion).toBe(3);
     expect(baked.summary).toBeDefined();
     expect(baked.summary.protocolCounts).toBeDefined();

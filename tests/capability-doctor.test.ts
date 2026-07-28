@@ -100,7 +100,7 @@ describe('capability-doctor', () => {
     expect(report.failing).toHaveLength(0);
   });
 
-  test('formatCapabilityDoctorHuman uses framed inspect.table / stripANSI surfaces', () => {
+  test('formatCapabilityDoctorHuman uses framed stringWidth columns / deepEquals SSOT', () => {
     const subset = buildCapabilityMapSubset(SAMPLE, '2026-07-28T00:00:00.000Z');
     const bad = doctorFromSubset(subset, {
       bunVersion: '1.0.0',

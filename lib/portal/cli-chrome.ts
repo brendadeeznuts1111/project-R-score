@@ -3,8 +3,8 @@
 // @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
 // @see https://bun.com/docs/runtime/utils#bun-wrapansi — Bun.wrapAnsi
 /**
- * Small Bun-native CLI chrome for portal tools (doctor, check:snapshots, …).
- * Prefer this over ad-hoc console.log strings so labels align and ANSI is consistent.
+ * Bun-native CLI chrome: ANSI-aware layout via Bun.stringWidth (not String.length).
+ * Used by capabilities doctor, check:snapshots, and related portal CLI.
  */
 const RESET = '\x1b[0m';
 
@@ -22,22 +22,88 @@ export const cliTone = {
   bold: (s: string) => `\x1b[1m${s}${RESET}`,
 } as const;
 
-/** Pad `s` with spaces so display width is at least `width` (ANSI-aware). */
+/**
+ * Terminal column width. Bun.stringWidth ignores ANSI by default and handles
+ * emoji / wide Unicode — use this, never s.length, for layout.
+ */
+export function displayWidth(s: string): number {
+  return Bun.stringWidth(s);
+}
+
+/** Pad so visible width is exactly `width` (ANSI/emoji-safe). */
 export function padDisplay(s: string, width: number, align: 'left' | 'right' = 'left'): string {
-  const w = Bun.stringWidth(s);
+  const w = displayWidth(s);
   const n = Math.max(0, width - w);
   const pad = ' '.repeat(n);
   return align === 'right' ? pad + s : s + pad;
 }
 
-/** Two-column key/value lines with aligned values. */
+/**
+ * Truncate to max visible columns, appending "…" when needed.
+ * Works on plain or ANSI strings (measures with stringWidth).
+ */
+export function truncateDisplay(s: string, max: number): string {
+  if (max <= 0) return '';
+  if (displayWidth(s) <= max) return s;
+  if (max === 1) return '…';
+  // Build from stripped text so we don't split mid-escape; re-dim if original was dimmed.
+  const plain = Bun.stripANSI(s);
+  let out = '';
+  for (const ch of plain) {
+    if (displayWidth(out + ch + '…') > max) break;
+    out += ch;
+  }
+  return `${out}…`;
+}
+
+/** Two-column key/value lines with stringWidth-aligned keys. */
 export function kvLines(
   pairs: ReadonlyArray<readonly [string, string]>,
   opts: { keyWidth?: number; indent?: string } = {}
 ): string[] {
   const indent = opts.indent ?? '  ';
-  const keyWidth = opts.keyWidth ?? Math.max(4, ...pairs.map(([k]) => Bun.stringWidth(k)));
+  const keyWidth = opts.keyWidth ?? Math.max(4, ...pairs.map(([k]) => displayWidth(k)));
   return pairs.map(([k, v]) => `${indent}${padDisplay(cliTone.dim(k), keyWidth + 2)} ${v}`);
+}
+
+/**
+ * Fixed-column table using Bun.stringWidth (cleaner than inspect.table for short CLI).
+ * Headers + rows; each cell truncated to column max.
+ */
+export function columnTable(
+  headers: readonly string[],
+  rows: readonly (readonly string[])[],
+  opts: { maxWidths?: number[]; gap?: number } = {}
+): string[] {
+  const gap = opts.gap ?? 2;
+  const gapStr = ' '.repeat(gap);
+  const colCount = headers.length;
+  const maxW =
+    opts.maxWidths ??
+    headers.map((_, i) => {
+      let m = displayWidth(headers[i]!);
+      for (const row of rows) {
+        m = Math.max(m, displayWidth(String(row[i] ?? '')));
+      }
+      // Cap wide columns so doctor fits in ~80 cols
+      return Math.min(m, i === 0 ? 28 : 16);
+    });
+
+  const fmt = (cells: readonly string[], head: boolean) =>
+    cells
+      .slice(0, colCount)
+      .map((c, i) => {
+        const t = truncateDisplay(String(c ?? ''), maxW[i]!);
+        const cell = head ? cliTone.dim(t) : t;
+        return padDisplay(cell, maxW[i]!);
+      })
+      .join(gapStr);
+
+  const out = [fmt(headers, true)];
+  const rule = maxW.map(w => '─'.repeat(w)).join(gapStr);
+  out.push(cliTone.dim(rule));
+  for (const row of rows) out.push(fmt(row, false));
+  return out;
 }
 
 /**
@@ -66,25 +132,26 @@ export function frameBlock(
   const topInner = width - 2;
   const titlePart = ` ${cliTone.accent(title)} `;
   const statusPart = statusText ? ` ${statusText} ` : '';
-  const titleW = Bun.stringWidth(Bun.stripANSI(titlePart));
-  const statusW = Bun.stringWidth(Bun.stripANSI(statusPart));
+  // stringWidth already ignores ANSI escape width by default
+  const titleW = displayWidth(titlePart);
+  const statusW = displayWidth(statusPart);
   const dash = Math.max(1, topInner - titleW - statusW);
   const top = `╭${titlePart}${'─'.repeat(dash)}${statusPart}╮`;
 
   const out: string[] = [top];
+  const inner = topInner - 2;
   for (const raw of bodyLines) {
-    const plain = Bun.stripANSI(raw);
-    if (Bun.stringWidth(plain) <= topInner - 2) {
-      out.push(`│ ${padDisplay(raw, topInner - 2)} │`);
+    if (displayWidth(raw) <= inner) {
+      out.push(`│ ${padDisplay(raw, inner)} │`);
       continue;
     }
-    const wrapped = Bun.wrapAnsi(raw, topInner - 2, {
+    const wrapped = Bun.wrapAnsi(raw, inner, {
       hard: false,
       wordWrap: true,
       trim: true,
     });
     for (const line of wrapped.split('\n')) {
-      out.push(`│ ${padDisplay(line, topInner - 2)} │`);
+      out.push(`│ ${padDisplay(line, inner)} │`);
     }
   }
   out.push(`╰${'─'.repeat(topInner)}╯`);

@@ -22,7 +22,7 @@
  * Human output uses Bun.inspect.table · stringWidth · stripANSI · wrapAnsi.
  * No invented flags.
  */
-import { cliTone, frameBlock, kvLines, msFromNs } from './cli-chrome.ts';
+import { cliTone, columnTable, frameBlock, kvLines, msFromNs } from './cli-chrome.ts';
 import {
   CAPABILITY_MAP_SUBSET_REL,
   type CapabilityMapRow,
@@ -267,18 +267,14 @@ export function formatCapabilityDoctorHuman(
   if (report.failing.length) {
     body.push('');
     body.push(cliTone.fail(`${report.failing.length} version floor(s) not met`));
-    const rows = report.failing.slice(0, 12).map(f => ({
-      capability: f.capability.length > 28 ? `${f.capability.slice(0, 27)}…` : f.capability,
-      field: f.field,
-      need: f.range,
-      have: f.actual,
-    }));
-    const table = Bun.inspect.table(rows, ['capability', 'field', 'need', 'have'], {
-      colors: true,
-    });
-    for (const line of table.split('\n')) {
-      if (line.trim()) body.push(line);
-    }
+    // Column layout via Bun.stringWidth (not String.length / inspect.table).
+    body.push(
+      ...columnTable(
+        ['capability', 'field', 'need', 'have'],
+        report.failing.slice(0, 12).map(f => [f.capability, f.field, f.range, f.actual]),
+        { maxWidths: [28, 12, 12, 16], gap: 2 }
+      )
+    );
     if (report.failing.length > 12) {
       body.push(cliTone.dim(`… +${report.failing.length - 12} more`));
     }

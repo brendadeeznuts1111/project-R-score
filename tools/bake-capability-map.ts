@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
@@ -16,8 +17,8 @@ import { joinPath } from '../lib/path-bun.ts';
 import {
   buildCapabilityMapFull,
   buildCapabilityMapSubset,
-  capabilityMapFullFingerprint,
-  capabilityMapSubsetFingerprint,
+  capabilityFullMapsDeepEqual,
+  capabilityMapsDeepEqual,
   CAPABILITY_MAP_FULL_REL,
   CAPABILITY_MAP_SUBSET_REL,
   serializeCapabilityMapFull,
@@ -54,7 +55,8 @@ async function main(): Promise<void> {
       process.exit(1);
     }
     const prevSub = (await fSub.json()) as CapabilityMapSubset;
-    if (capabilityMapSubsetFingerprint(prevSub) !== capabilityMapSubsetFingerprint(nextSubset)) {
+    // Bun.deepEquals (strict) — not string fingerprint — is the bake drift SSOT.
+    if (!capabilityMapsDeepEqual(prevSub, nextSubset)) {
       console.error(
         `stale ${CAPABILITY_MAP_SUBSET_REL} (rows=${prevSub.rowCount ?? prevSub.rows?.length} → ${nextSubset.rowCount})\n` +
           `Run: bun run bake:capabilities`
@@ -68,7 +70,7 @@ async function main(): Promise<void> {
       process.exit(1);
     }
     const prevFull = (await fFull.json()) as CapabilityMapFull;
-    if (capabilityMapFullFingerprint(prevFull) !== capabilityMapFullFingerprint(nextFull)) {
+    if (!capabilityFullMapsDeepEqual(prevFull, nextFull)) {
       console.error(
         `stale ${CAPABILITY_MAP_FULL_REL} (rows=${prevFull.rowCount ?? prevFull.rows?.length} → ${nextFull.rowCount})\n` +
           `Run: bun run bake:capabilities`

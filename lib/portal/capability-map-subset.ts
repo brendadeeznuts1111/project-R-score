@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/semver#bun-semver-satisfies-version-string-range-string-boolean — Bun.semver (portal doctor minBun checks)
 // @see https://bun.com/docs/runtime/hashing — Bun.CryptoHasher (subset fingerprint)
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals (stable bake compare)
 /**
  * Capability map subset — parse AGENTS.md grounded capability table → portal tools-hub JSON.
  *
@@ -427,7 +428,7 @@ export function serializeCapabilityMapFull(payload: CapabilityMapFull): string {
   return `${JSON.stringify(payload, null, 2)}\n`;
 }
 
-/** Stable compare ignoring generatedAt. */
+/** Stable compare ignoring generatedAt (string form — hash / logs). */
 export function capabilityMapSubsetFingerprint(payload: CapabilityMapSubset): string {
   const { generatedAt: _g, ...rest } = payload;
   return JSON.stringify(rest);
@@ -447,4 +448,32 @@ export function capabilityMapSubsetForSnapshot(
 ): Omit<CapabilityMapSubset, 'generatedAt'> {
   const { generatedAt: _g, ...rest } = payload;
   return rest;
+}
+
+/** Drop volatile fields before structural equality. */
+export function stableCapabilityMapSubset(
+  payload: CapabilityMapSubset
+): Omit<CapabilityMapSubset, 'generatedAt' | 'fingerprint'> {
+  const { generatedAt: _g, fingerprint: _f, ...rest } = payload;
+  return rest;
+}
+
+export function stableCapabilityMapFull(
+  payload: CapabilityMapFull
+): Omit<CapabilityMapFull, 'generatedAt'> {
+  const { generatedAt: _g, ...rest } = payload;
+  return rest;
+}
+
+/**
+ * Structural equality for bake --check (strict: undefined keys matter).
+ * Prefer this over fingerprint string compare — Bun.deepEquals is the SSOT.
+ * @see https://bun.com/docs/runtime/utils#bun-deepequals
+ */
+export function capabilityMapsDeepEqual(a: CapabilityMapSubset, b: CapabilityMapSubset): boolean {
+  return Bun.deepEquals(stableCapabilityMapSubset(a), stableCapabilityMapSubset(b), true);
+}
+
+export function capabilityFullMapsDeepEqual(a: CapabilityMapFull, b: CapabilityMapFull): boolean {
+  return Bun.deepEquals(stableCapabilityMapFull(a), stableCapabilityMapFull(b), true);
 }
