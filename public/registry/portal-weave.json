@@ -2,13 +2,13 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-28T16:41:44.067Z",
+  "generated": "2026-07-28T17:28:19.972Z",
   "summary": {
-    "surfaces": 16,
-    "artifacts": 26,
+    "surfaces": 17,
+    "artifacts": 28,
     "components": 11,
     "wiki": 6,
-    "scripts": 26
+    "scripts": 29
   },
   "related": {
     "chrome": "/registry/portal-chrome.json",
@@ -119,6 +119,13 @@
       "group": "harness"
     },
     {
+      "id": "vault",
+      "label": "Vault",
+      "href": "/portal/vault/",
+      "note": "Proton Pass health bake · inventory gate = portal-cli vault health",
+      "group": "harness"
+    },
+    {
       "id": "prediction-report",
       "label": "Prediction report",
       "href": "/registry/prediction/report/",
@@ -196,84 +203,96 @@
       "id": "artifact-11-env-inventory"
     },
     {
+      "label": "vault-health",
+      "href": "/registry/vault-health.json",
+      "note": "live bake · gate: portal-cli vault health · vault:health:bake",
+      "id": "artifact-12-vault-health"
+    },
+    {
+      "label": "vault-map",
+      "href": "/registry/vault-map.json",
+      "note": "display chrome + pass:// paths · no secret values",
+      "id": "artifact-13-vault-map"
+    },
+    {
       "label": "dod-queue",
       "href": "/registry/dod-queue.json",
-      "id": "artifact-12-dod-queue"
+      "id": "artifact-14-dod-queue"
     },
     {
       "label": "compliance-board",
       "href": "/registry/compliance-board.json",
       "note": "enhancements + shadow + geo · ops-summary.compliance",
-      "id": "artifact-13-compliance-board"
+      "id": "artifact-15-compliance-board"
     },
     {
       "label": "compliance-enhancements",
       "href": "/registry/compliance-enhancements.json",
       "note": "deepEquals · escapeHTML proof rows",
-      "id": "artifact-14-compliance-enhancements"
+      "id": "artifact-16-compliance-enhancements"
     },
     {
       "label": "compliance-shadow",
       "href": "/registry/compliance-shadow.json",
       "note": "real vs shadow check matrix",
-      "id": "artifact-15-compliance-shadow"
+      "id": "artifact-17-compliance-shadow"
     },
     {
       "label": "limit-raises",
       "href": "/registry/limit-raises.json",
       "note": "multi-factor raise context bake · agent API snapshot",
-      "id": "artifact-16-limit-raises"
+      "id": "artifact-18-limit-raises"
     },
     {
       "label": "verification-index",
       "href": "/registry/verification-index.json",
       "note": "verify-all rollup · release track",
-      "id": "artifact-17-verification-index"
+      "id": "artifact-19-verification-index"
     },
     {
       "label": "doc-index",
       "href": "/registry/doc-index.json",
       "note": "CANONICAL_REFS · bun docs catalog coverage",
-      "id": "artifact-18-doc-index"
+      "id": "artifact-20-doc-index"
     },
     {
       "label": "static aggregate",
       "href": "/registry/static.json",
-      "id": "artifact-19-static-aggregate"
+      "id": "artifact-21-static-aggregate"
     },
     {
       "label": "proof taxonomy",
       "href": "/registry/proof-taxonomy-audit.json",
-      "id": "artifact-20-proof-taxonomy"
+      "id": "artifact-22-proof-taxonomy"
     },
     {
       "label": "portal weave",
       "href": "/registry/portal-weave.json",
-      "id": "artifact-21-portal-weave"
+      "id": "artifact-23-portal-weave"
     },
     {
       "label": "content-type matrix",
       "href": "/registry/content-type-matrix.json",
       "note": "Pages Functions content-type.ts snapshot",
-      "id": "artifact-22-content-type-matrix"
+      "id": "artifact-24-content-type-matrix"
     },
     {
       "label": "formdata proof",
       "href": "/registry/formdata-proof.json",
       "note": "verify:formdata bake",
-      "id": "artifact-23-formdata-proof"
+      "id": "artifact-25-formdata-proof"
     },
     {
       "label": "package-info",
       "href": "/registry/package-info.json",
       "note": "verify:package-info bake",
-      "id": "artifact-24-package-info"
+      "id": "artifact-26-package-info"
     },
     {
       "label": "seat-capital-desk",
       "href": "/registry/seat-capital-desk.json",
       "note": "FUND status · outs · checklist",
-      "id": "artifact-25-seat-capital-desk"
+      "id": "artifact-27-seat-capital-desk"
     }
   ],
   "components": [
@@ -443,92 +462,110 @@
       "id": "script-8-compliance-bake-proton-vault"
     },
     {
+      "label": "Vault health gate (snapshots)",
+      "cmd": "bun run vault:health",
+      "doc": "docs/harness/tenants/proton-integration.md",
+      "id": "script-9-vault-health-gate-snapshots"
+    },
+    {
+      "label": "Vault health live bake",
+      "cmd": "bun run vault:health:bake",
+      "doc": "docs/harness/tenants/proton-integration.md",
+      "id": "script-10-vault-health-live-bake"
+    },
+    {
+      "label": "Vault map resolve (list)",
+      "cmd": "bun run vault:resolve",
+      "doc": "docs/harness/tenants/proton-integration.md",
+      "id": "script-11-vault-map-resolve-list"
+    },
+    {
       "label": "Limit raises multi-factor demo",
       "cmd": "bun run ops:limits:demo",
       "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-9-limit-raises-multi-factor-demo"
+      "id": "script-12-limit-raises-multi-factor-demo"
     },
     {
       "label": "Capture raise context",
       "cmd": "bun run ops:limits:capture",
       "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-10-capture-raise-context"
+      "id": "script-13-capture-raise-context"
     },
     {
       "label": "Limit raise predict",
       "cmd": "bun run ops:limits:predict",
       "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-11-limit-raise-predict"
+      "id": "script-14-limit-raise-predict"
     },
     {
       "label": "Limit raises multi check",
       "cmd": "bun run ops:limits:check:multi",
       "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-12-limit-raises-multi-check"
+      "id": "script-15-limit-raises-multi-check"
     },
     {
       "label": "Limit raise analyze",
       "cmd": "bun run ops:limits:analyze",
       "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-13-limit-raise-analyze"
+      "id": "script-16-limit-raise-analyze"
     },
     {
       "label": "Limit pattern seed + bake",
       "cmd": "bun run ops:limits:seed-patterns",
       "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-14-limit-pattern-seed-bake"
+      "id": "script-17-limit-pattern-seed-bake"
     },
     {
       "label": "Limit raise alerts",
       "cmd": "bun run ops:limits:alerts",
       "doc": "docs/harness/tenants/partner-limits.md",
-      "id": "script-15-limit-raise-alerts"
+      "id": "script-18-limit-raise-alerts"
     },
     {
       "label": "Reference discovery",
       "cmd": "bun run reference:discover:check",
       "doc": "docs/harness/tenants/reference-discovery.md",
-      "id": "script-16-reference-discovery"
+      "id": "script-19-reference-discovery"
     },
     {
       "label": "Public plane discovery",
       "cmd": "bun run public:discover:check",
       "doc": "docs/harness/tenants/public-plane.md",
-      "id": "script-17-public-plane-discovery"
+      "id": "script-20-public-plane-discovery"
     },
     {
       "label": "Public audit bundle",
       "cmd": "bun run public:audit:verify",
       "doc": "docs/harness/tenants/public-plane.md",
-      "id": "script-18-public-audit-bundle"
+      "id": "script-21-public-audit-bundle"
     },
     {
       "label": "Discovery compose",
       "cmd": "bun run discover:compose:check",
       "doc": "docs/harness/tenants/reference-discovery.md",
-      "id": "script-19-discovery-compose"
+      "id": "script-22-discovery-compose"
     },
     {
       "label": "Sync R2 registry index",
       "cmd": "bun run registry:sync-index-r2",
-      "id": "script-20-sync-r2-registry-index"
+      "id": "script-23-sync-r2-registry-index"
     },
     {
       "label": "Pages edge verify",
       "cmd": "bun run verify:pages-edge --taxonomy",
-      "id": "script-21-pages-edge-verify"
+      "id": "script-24-pages-edge-verify"
     },
     {
       "label": "Doc map check",
       "cmd": "bun run docs:map:check",
       "doc": "docs/README.md",
-      "id": "script-22-doc-map-check"
+      "id": "script-25-doc-map-check"
     },
     {
       "label": "Doc index bake",
       "cmd": "bun run build:doc-index",
       "doc": "lib/docs/doc-index.ts",
-      "id": "script-23-doc-index-bake"
+      "id": "script-26-doc-index-bake"
     },
     {
       "id": "portal-chrome-bake-apply",

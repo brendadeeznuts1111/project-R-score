@@ -75,6 +75,13 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
   { id: 'skills', label: 'Skills', href: '/portal/skills/', tier: 'overflow' },
   { id: 'env', label: 'Env', href: '/portal/env/', tier: 'overflow' },
   {
+    id: 'vault',
+    label: 'Vault',
+    href: '/portal/vault/',
+    tier: 'overflow',
+    note: 'Proton Pass health · gate: vault health',
+  },
+  {
     id: 'packages',
     label: 'Packages',
     href: '/portal/packages/',
@@ -105,6 +112,7 @@ export const PORTAL_FOOTER_LINKS: PortalChromeCatalog['footerLinks'] = [
   { label: 'Limits', href: '/portal/limits/' },
   { label: 'DOD', href: '/portal/dod/' },
   { label: 'Env', href: '/portal/env/' },
+  { label: 'Vault', href: '/portal/vault/' },
   { label: 'Monorepo health', href: '/registry/monorepo-health.json' },
   {
     label: 'GitHub',

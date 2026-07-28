@@ -54,10 +54,14 @@ pass://factorywager/Cloudflare API Token/password
 ```bash
 bun run vault:health                 # same as portal-cli vault health
 bun run vault:health:update          # intentional snap refresh
+bun run vault:resolve                # list map (no secret values)
+bun run vault:resolve --json         # machine inventory
 source scripts/agent-env.sh factorywager && bun run vault:health:bake
 ```
 
-Engine: [`lib/security/vault-health.ts`](../../../lib/security/vault-health.ts) · bake: [`tools/vault-health-bake.ts`](../../../tools/vault-health-bake.ts).
+Engine: [`lib/security/vault-health.ts`](../../../lib/security/vault-health.ts) · bake: [`tools/vault-health-bake.ts`](../../../tools/vault-health-bake.ts) · resolve: [`tools/vault-resolver.ts`](../../../tools/vault-resolver.ts). Portal nav: `/portal/vault/` (weave surface `vault`).
+
+If pass-cli reports a corrupted local DB: `pass-cli logout --force` then re-login / re-run `source scripts/agent-env.sh factorywager`.
 
 ## Env inventory (code ↔ vault)
 

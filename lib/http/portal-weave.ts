@@ -149,6 +149,13 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
   { id: 'health', label: 'Health', href: '/portal/health/', group: 'harness' },
   { id: 'env', label: 'Env', href: '/portal/env/', group: 'harness' },
   {
+    id: 'vault',
+    label: 'Vault',
+    href: '/portal/vault/',
+    note: 'Proton Pass health bake · inventory gate = portal-cli vault health',
+    group: 'harness',
+  },
+  {
     id: 'prediction-report',
     label: 'Prediction report',
     href: '/registry/prediction/report/',
@@ -197,6 +204,16 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'env-inventory',
     href: '/registry/env-inventory.json',
     note: 'owners · needsInject vs template defaults · packages plane · env:inventory:bake',
+  },
+  {
+    label: 'vault-health',
+    href: '/registry/vault-health.json',
+    note: 'live bake · gate: portal-cli vault health · vault:health:bake',
+  },
+  {
+    label: 'vault-map',
+    href: '/registry/vault-map.json',
+    note: 'display chrome + pass:// paths · no secret values',
   },
   { label: 'dod-queue', href: '/registry/dod-queue.json' },
   {
@@ -295,6 +312,21 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   {
     label: 'Compliance bake (Proton vault)',
     cmd: 'bun run compliance:bake:vault',
+    doc: 'docs/harness/tenants/proton-integration.md',
+  },
+  {
+    label: 'Vault health gate (snapshots)',
+    cmd: 'bun run vault:health',
+    doc: 'docs/harness/tenants/proton-integration.md',
+  },
+  {
+    label: 'Vault health live bake',
+    cmd: 'bun run vault:health:bake',
+    doc: 'docs/harness/tenants/proton-integration.md',
+  },
+  {
+    label: 'Vault map resolve (list)',
+    cmd: 'bun run vault:resolve',
     doc: 'docs/harness/tenants/proton-integration.md',
   },
   {

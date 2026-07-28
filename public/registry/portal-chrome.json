@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-28T15:36:11.370Z",
+  "generated": "2026-07-28T17:28:19.972Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 9,
-    "footerLinks": 11,
+    "overflowNav": 10,
+    "footerLinks": 12,
     "components": 11,
     "scripts": 5
   },
@@ -74,6 +74,13 @@
       "label": "Env",
       "href": "/portal/env/",
       "tier": "overflow"
+    },
+    {
+      "id": "vault",
+      "label": "Vault",
+      "href": "/portal/vault/",
+      "tier": "overflow",
+      "note": "Proton Pass health · gate: vault health"
     },
     {
       "id": "packages",
@@ -153,6 +160,10 @@
     {
       "label": "Env",
       "href": "/portal/env/"
+    },
+    {
+      "label": "Vault",
+      "href": "/portal/vault/"
     },
     {
       "label": "Monorepo health",

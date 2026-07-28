@@ -111,6 +111,7 @@ function renderHtml(report: ReturnType<typeof computeVaultHealth>): string {
   </header>
   <main class="vh-wrap">
     <p class="dim">Proton Pass live state × env references · generated ${escapeHtml(report.generatedAt)} · <code>bun run vault:health:bake</code></p>
+    <p class="dim">Gate (CI, offline): <code>portal-cli vault health</code> · inventory SSOT <code>tests/__snapshots__/vault-health.test.ts.snap</code> · intentional drift <code>--update</code> · machine report <a href="/registry/vault-health.json">vault-health.json</a></p>
     <div class="vh-stats">
       ${stat('Vaults', s.vaultCount)}
       ${stat('Active items', s.activeItems)}
