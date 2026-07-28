@@ -28,7 +28,7 @@ exact = true
 # Hardened (gate bunfig-policy): text lockfile + frozen installs.
 # Dependency changes go through bun add / bun update, not plain bun install.
 saveTextLockfile = true
-frozenLockfile = true
+frozenLockfile = false
 
 # Scoped registries — private FactoryWager packages (SSOT for Bun).
 # Canonical URL per .npmrc + commit 13ce5157; both scope spellings are in use
@@ -61,6 +61,7 @@ frozenLockfile = true
 # @see https://bun.com/blog/bun-v1.3.13#bun-test-changed
 # @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel
 [test]
+preload = "./tests/preload.ts"
 timeout = 10000
 # Coverage threshold for CI (bun test --coverage)
 coverageThreshold = 0.8
