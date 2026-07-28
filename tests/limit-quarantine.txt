@@ -1,0 +1,18 @@
+# Limit detection test quarantine
+# Format: [modifier] test-name [[ expectations ]] [# comment]
+#
+# Entries match by SUBSTRING. Use for files that cannot run at all on
+# specific platforms (hangs, crashes, or trips sanitizers).
+# For individual flaky tests, use test.skip / test.skipIf / test.todo
+# inside the test file instead of quarantining the whole file.
+
+# ── Non-TTY environments (CI, test runners) ─────────────────────────────
+# These are handled via describe.skipIf(isNonTTY) inside the test file.
+# No quarantine needed — skips happen automatically.
+
+# ── No current quarantines ──────────────────────────────────────────────
+# All 185 tests pass: 183 pass, 2 intentional skip (ANSI in non-TTY),
+# 0 fail, 2 snapshots, 415 expect() calls.
+#
+# Add entries below when a platform-specific failure is identified that
+# cannot be handled via describe.skipIf / test.skipIf.
