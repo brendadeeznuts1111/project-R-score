@@ -219,7 +219,7 @@ function fillCapabilityTable() {
           .map(([k, v]) => `${k}=${v}`)
           .join(' · ')
       : '';
-    meta.textContent = `${capabilityRows.length} rows · schema v${capabilityMeta.schemaVersion ?? '?'} · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'}${proto ? ` · ${proto}` : ''} · columns: type · protocol · version · api · optional source link · rebake: bun run bake:capabilities`;
+    meta.textContent = `${capabilityRows.length} rows · schema v${capabilityMeta.schemaVersion ?? '?'} · generated ${capabilityMeta.generatedAt || '—'} · source ${capabilityMeta.source || 'AGENTS.md'}${proto ? ` · ${proto}` : ''} · columns: type · protocol · version · api · optional source link · rebake: bun run bake:capabilities · gate: portal-cli capabilities health · check:snapshots`;
   }
 }
 

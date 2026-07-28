@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process — Bun.cron
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -31,6 +33,7 @@ import {
   ensureSnapshotDir,
   grepSnapshots,
   listSnapshots,
+  pruneSnapshots,
   parseSnapshotFlags,
   resolveScope,
   runSnapshot,
@@ -68,22 +71,30 @@ Subcommands:
   grep      Search metadata; prints matching manifest paths
   last      Show most recent manifest JSON
   config    Show scope configurations
+  prune     Keep newest N per scope in local store (gitignored snapshots/)
   cron      Bun.cron tenant tool passthrough (register|remove|preview)
 
 Options (all subcommands):
   --scope <name>    prediction | portal | gaps | limits (default: PORTAL_SCOPE or prediction)
   --base <url>      Fetch origin (run only; default SNAPSHOT_BASE_URL or localhost:3000)
-  --dry-run         Plan capture without writing (run only)
+  --dry-run         Plan capture without writing (run / prune)
+  --keep <n>        prune only — retain newest N per scope (default 5)
   --debug           Bun.inspect dump of manifest / list / last
 
 Environment:
   PORTAL_SCOPE          Default scope when --scope omitted
-  PORTAL_SNAPSHOT_DIR   Snapshot root (default: snapshots)
+  PORTAL_SNAPSHOT_DIR   Snapshot root (default: snapshots) — local only, not R2
   SNAPSHOT_BASE_URL     Fetch origin for run
+
+Note:
+  bun:test reviewed snaps live in tests/__snapshots__/ (git SSOT).
+  Gate: bun run check:snapshots · update: bun run test:snapshots:update
 
 Examples:
   portal-cli snapshot run --scope prediction
   portal-cli snapshot list --scope portal
+  portal-cli snapshot prune --keep=5
+  portal-cli snapshot prune --keep=3 --scope prediction --dry-run
   portal-cli snapshot grep "bias>2" --scope prediction
   portal-cli snapshot config
 `;
@@ -113,6 +124,28 @@ Examples:
 
 // Short help for bare `portal-cli pm` — not the full `bun pm` dump.
 // Canonical docs: https://bun.com/docs/pm/cli/pm
+const CAPABILITIES_HELP = `Usage: portal-cli capabilities <subcommand> [options]
+
+Subcommands:
+  health              Run capability-map snapshot + bake fingerprint gate (offline)
+  health --update     Intentional drift: refresh tests/__snapshots__/capability-map-subset.test.ts.snap
+                      (after bun run bake:capabilities when AGENTS.md matrix changed)
+
+Gate (CI):
+  bun test tests/capability-map-subset.test.ts
+  bun run bake:capabilities:check
+  bun run check:snapshots
+
+Registry artifacts:
+  /registry/capability-map-subset.json   tools hub rows (schema v3)
+  /registry/capability-map-full.json     full matrix + examples
+
+Examples:
+  portal-cli capabilities health
+  portal-cli capabilities health --update
+  bun run bake:capabilities && bun run bake:capabilities:update
+`;
+
 const PM_HELP = `Usage: portal-cli pm <subcommand> [args…]
 
 Most subcommands passthrough to \`bun pm\` (no invented flags).
@@ -163,6 +196,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli snapshot <subcommand>   Scope-aware report snapshots
   portal-cli probe [command]         Bun-native monorepo/portal probes
   portal-cli vault health [--update] Vault-map inventory + report-shape gate
+  portal-cli capabilities health [--update] Capability-map subset snapshot gate
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
   portal-cli scanner <subcommand>    Bun Security Scanner (status · doctor · vault · scan)
@@ -173,6 +207,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli snapshot run --scope prediction
   bun run portal-cli probe lockfile
   bun run portal-cli vault health
+  bun run portal-cli capabilities health
   bun run portal-cli secret which
   bun run portal-cli pm ls
   bun run portal-cli pm pack --dry-run
@@ -196,6 +231,12 @@ Vault health (offline SSOT; live bake separate):
   vault health --update        # bun test … --update-snapshots (commit the snap)
   bun run vault:health:bake    # live pass-cli → /portal/vault/ board
 
+Capabilities (offline SSOT; bun:test snaps under tests/__snapshots__/):
+  capabilities health          # bake:check + capability-map-subset tests
+  capabilities health --update # intentional snap refresh (commit .snap)
+  bun run check:snapshots      # catalog SSOT · orphan snap prune gate
+  bun run test:snapshots:update -- --id capability-map
+
 pm (canonical: https://bun.com/docs/pm/cli/pm) — zero invention, only bun pm flags:
   pm ls | ls --all | ls --trusted
   pm pack [--destination dir] [--quiet] [--dry-run]
@@ -209,12 +250,15 @@ pm (canonical: https://bun.com/docs/pm/cli/pm) — zero invention, only bun pm f
   pm graph [--scope <scope>] [--update]
                                # FW: offline packages-graph-map table
 
-Scanner (real: https://bun.com/docs/pm/security-scanner-api):
+Scanner (real: https://bun.com/docs/pm/security-scanner-api) — quota-safe defaults:
+  scanner policy               # Bun install SSOT + Socket free-quota notes
+  scanner estimate             # lockfile package count (no API)
   scanner status [--json]      # bunfig + vault wiring + package presence
-  scanner doctor [--strict]    # readiness checklist (CI-friendly)
+  scanner doctor [--strict]    # readiness checklist
   scanner vault                # SOCKET_API_KEY Pass create recipe
-  scanner scan                 # → bun pm scan
-  scanner configure <pkg> [--write]
+  scanner scan [--oneshot] [--force]  # cooldown 24h; oneshot = temp bunfig
+  scanner configure <pkg> [--write]   # install-time ON (costs quota each install)
+  scanner clear --write        # install-time OFF (recommended day-to-day)
   scanner install <pkg>        # bun add -d (frozenLockfile may block)
   scanner init [dir]           # clone oven-sh/security-scanner-template
 
@@ -792,6 +836,30 @@ async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promis
       }
       break;
     }
+    case 'prune': {
+      const keepIdx = rest.indexOf('--keep');
+      let keep = 5;
+      if (keepIdx >= 0) {
+        const raw = rest[keepIdx + 1];
+        // allow --keep=3 form via rest scan
+        keep = Number(raw);
+      }
+      for (const a of rest) {
+        if (a.startsWith('--keep=')) {
+          keep = Number(a.slice('--keep='.length));
+        }
+      }
+      if (!Number.isFinite(keep) || keep < 0) {
+        cliError('--keep must be a non-negative number');
+      }
+      await pruneSnapshots({
+        keep,
+        scope: filterScope,
+        dryRun,
+        debug,
+      });
+      break;
+    }
     case 'cron': {
       // Passthrough to the Bun.cron tenant tool (register|remove|preview).
       if (!rest[0]) {
@@ -836,6 +904,42 @@ async function dispatchVault(sub: string | undefined, rest: string[]): Promise<v
   process.exit(code);
 }
 
+async function dispatchCapabilities(sub: string | undefined, rest: string[]): Promise<void> {
+  if (!sub || sub === 'help' || sub === '--help' || sub === '-h') {
+    console.log(CAPABILITIES_HELP);
+    return;
+  }
+
+  if (sub !== 'health') {
+    cliError(`Unknown capabilities subcommand: ${sub}\n\n${CAPABILITIES_HELP}`);
+  }
+
+  const update = rest.includes('--update') || rest.includes('-u');
+  // Mechanical gate: capability-map subset snapshot + bake fingerprint (no network).
+  // @see https://bun.com/docs/test/snapshots
+  if (!update) {
+    const check = await spawnBunWithFlags(bunExecFlags, [
+      'tools/bake-capability-map.ts',
+      '--check',
+    ]);
+    if (check !== 0) process.exit(check);
+  }
+
+  const args = ['test', 'tests/capability-map-subset.test.ts'];
+  if (update) args.push('--update-snapshots');
+
+  const code = await spawnBunWithFlags(bunExecFlags, args);
+  if (update && code === 0) {
+    console.log(
+      'capabilities health: snapshots updated — commit tests/__snapshots__/capability-map-subset.test.ts.snap'
+    );
+    console.log(
+      '  (if AGENTS.md matrix changed, also commit public/registry/capability-map-*.json)'
+    );
+  }
+  process.exit(code);
+}
+
 async function main(): Promise<void> {
   // Harvest Bun runtime flags before portal-cli command (docs/runtime general options).
   const parsed = parseBunExecutionFlags(Bun.argv.slice(2));
@@ -861,6 +965,11 @@ async function main(): Promise<void> {
 
   if (cmd === 'vault') {
     await dispatchVault(argv[1], argv.slice(2));
+    return;
+  }
+
+  if (cmd === 'capabilities' || cmd === 'capability') {
+    await dispatchCapabilities(argv[1], argv.slice(2));
     return;
   }
 

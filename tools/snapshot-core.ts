@@ -60,7 +60,10 @@ export function manifestFlatPath(id: string): string {
 const ANSI_RESET = '\x1b[0m';
 
 function termColor(text: string, color: string): string {
-  const code = Bun.color(color, 'ansi') || Bun.color(color, 'ansi-256') || '';
+  // Bun.color(…, 'ansi') auto-detects and returns '' off-TTY; without the
+  // isTTY guard the ansi-256 fallback would force escape codes into pipes.
+  const code =
+    Bun.color(color, 'ansi') || (process.stdout.isTTY ? Bun.color(color, 'ansi-256') : null) || '';
   return code ? `${code}${text}${ANSI_RESET}` : text;
 }
 
@@ -192,6 +195,13 @@ export function formatFlatManifest(m: SnapshotManifest): string {
     'schemaVersion',
     'totalChanges',
     'raises',
+    'decreases',
+    'netDelta',
+    'avgScore',
+    'uniquePartners',
+    'uniqueSportsbooks',
+    'predictions',
+    'backfilled',
     'errors',
     'warnings',
     'lockHash',
@@ -220,10 +230,17 @@ export async function readSnapshotIndex(): Promise<SnapshotManifest[]> {
     .text()
     .catch(() => '');
   if (!text.trim()) return [];
-  return text
-    .split('\n')
-    .filter(Boolean)
-    .map(line => JSON.parse(line) as SnapshotManifest);
+  const out: SnapshotManifest[] = [];
+  for (const line of text.split('\n')) {
+    if (!line.trim()) continue;
+    try {
+      out.push(JSON.parse(line) as SnapshotManifest);
+    } catch {
+      // One corrupt line must not kill list/last/grep for every snapshot.
+      warn(`index.jsonl: skipping unparseable line (${line.slice(0, 48)}…)`);
+    }
+  }
+  return out;
 }
 
 export function matchesGrep(m: SnapshotManifest, pattern: string): boolean {
@@ -585,6 +602,97 @@ export async function listSnapshots(opts: SnapshotFilterOptions = {}): Promise<v
   for (const r of rows) console.log(line(r));
   console.log(border('└', '┴', '┘'));
   console.log('');
+}
+
+/**
+ * Retain only the newest `keep` snapshots per scope in the local gitignored store
+ * (`PORTAL_SNAPSHOT_DIR` / `snapshots/`). Rewrites index.jsonl and removes
+ * orphaned dirs + .json/.txt sidecars. Does not touch R2 — data-plane snaps are local.
+ *
+ *   portal-cli snapshot prune --keep=5
+ *   portal-cli snapshot prune --keep=3 --scope prediction --dry-run
+ */
+export async function pruneSnapshots(opts: {
+  keep?: number;
+  scope?: SnapshotScopeName;
+  dryRun?: boolean;
+  debug?: boolean;
+}): Promise<{ kept: number; removed: number; removedIds: string[] }> {
+  const keep = Math.max(0, opts.keep ?? 5);
+  const index = await readSnapshotIndex();
+  if (index.length === 0) {
+    console.log('  No snapshots to prune.');
+    return { kept: 0, removed: 0, removedIds: [] };
+  }
+
+  // Group by scope, keep newest (tail of index is chronological append order).
+  const byScope = new Map<string, SnapshotManifest[]>();
+  for (const m of index) {
+    if (opts.scope && m.scope !== opts.scope) continue;
+    const list = byScope.get(m.scope) ?? [];
+    list.push(m);
+    byScope.set(m.scope, list);
+  }
+
+  const remove = new Set<string>();
+  for (const [, list] of byScope) {
+    // Sort oldest → newest by capturedAt
+    list.sort((a, b) => a.capturedAt.localeCompare(b.capturedAt));
+    const excess = list.slice(0, Math.max(0, list.length - keep));
+    for (const m of excess) remove.add(m.id);
+  }
+
+  // When filtering by scope, keep other scopes entirely.
+  const nextIndex = index.filter(m => {
+    if (opts.scope && m.scope !== opts.scope) return true;
+    return !remove.has(m.id);
+  });
+  const removedIds = [...remove];
+
+  if (removedIds.length === 0) {
+    console.log(`  Nothing to prune (keep=${keep}${opts.scope ? ` scope=${opts.scope}` : ''}).`);
+    return { kept: nextIndex.length, removed: 0, removedIds: [] };
+  }
+
+  if (opts.dryRun) {
+    console.log(`  dry-run prune keep=${keep}: would remove ${removedIds.length}`);
+    for (const id of removedIds) console.log(`    - ${id}`);
+    return { kept: nextIndex.length, removed: removedIds.length, removedIds };
+  }
+
+  for (const id of removedIds) {
+    // brand-ok — opaque snapshot id
+    const dir = `${getSnapshotDir()}/${id}`;
+    const json = manifestJsonPath(id);
+    const flat = manifestFlatPath(id);
+    try {
+      if (await Bun.file(json).exists()) await Bun.file(json).unlink();
+    } catch {
+      /* ignore */
+    }
+    try {
+      if (await Bun.file(flat).exists()) await Bun.file(flat).unlink();
+    } catch {
+      /* ignore */
+    }
+    // recursive dir — spawn rm -rf only for the snapshot id dir under getSnapshotDir()
+    try {
+      const proc = Bun.spawn(['rm', '-rf', dir], { stdout: 'ignore', stderr: 'ignore' });
+      await proc.exited;
+    } catch {
+      /* ignore */
+    }
+    if (opts.debug) console.log(`  removed ${id}`);
+  }
+
+  // Rewrite index.jsonl
+  const indexP = indexPath();
+  const lines = nextIndex.map(m => JSON.stringify(m)).join('\n') + (nextIndex.length ? '\n' : '');
+  await write(indexP, lines);
+  console.log(
+    `  pruned ${removedIds.length} snapshot(s); kept ${nextIndex.length} (keep=${keep}${opts.scope ? ` scope=${opts.scope}` : ''})`
+  );
+  return { kept: nextIndex.length, removed: removedIds.length, removedIds };
 }
 
 /** Print manifest paths for snapshots matching query (script-friendly). */
