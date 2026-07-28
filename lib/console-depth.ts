@@ -237,12 +237,14 @@ const ANSI_RESET = '\x1b[0m';
  * Colorize text via Bun.color. Uses the "ansi" output format, which
  * auto-detects the terminal's color depth (ansi-16m / ansi-256 / ansi-16)
  * from the environment and returns "" when stdout supports no color —
- * the docs-recommended form. ansi-256 kept as a belt-and-braces fallback.
+ * the docs-recommended form. No explicit-format fallback: an ansi-256
+ * fallback would bypass auto-detection and colorize under TERM=dumb,
+ * which runtime tests pin as plain output.
  * @see https://bun.com/docs/runtime/color — "ansi" auto-detection
  */
 export function colorize(text: string, color: string): string {
   if (!shouldColor()) return text;
-  const code = Bun.color(color, 'ansi') || Bun.color(color, 'ansi-256') || '';
+  const code = Bun.color(color, 'ansi') || '';
   return code ? `${code}${text}${ANSI_RESET}` : text;
 }
 

@@ -11,7 +11,7 @@
  * Scope-aware snapshot core — imported by snapshot-data-plane.ts and portal-cli.ts.
  */
 import { Glob, write, file } from 'bun';
-import { logDepth, logTable } from '../lib/console-depth.ts';
+import { colorize, logDepth, logTable } from '../lib/console-depth.ts';
 import { runPublicDiscovery } from '../lib/public-discovery.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import {
@@ -58,17 +58,11 @@ export function manifestFlatPath(id: string): string {
   return `${getSnapshotDir()}/${id}.txt`;
 }
 
-const ANSI_RESET = '\x1b[0m';
-
 export function termColor(text: string, color: string): string {
-  // Bun.color(x, 'ansi') auto-detects stdout color depth (16m/256/16) and
-  // honors NO_COLOR, TERM=dumb, and pipes — runtime-verified on the pinned
-  // canary via PTY spawn (the session's own NO_COLOR=1 was the confound
-  // behind earlier "detection is broken" readings). NOTE: deliberately NOT
-  // the wrapper's colorize() — tests pin TERM=dumb → plain output, which
-  // only Bun.color auto-detection honors (colorize gates on isTTY/env only).
-  const code = Bun.color(color, 'ansi') || '';
-  return code ? `${code}${text}${ANSI_RESET}` : text;
+  // Delegates to the console-depth colorize() gold standard — Bun.color
+  // 'ansi' auto-detection honors NO_COLOR, TERM=dumb, and pipes
+  // (runtime-verified via PTY spawn in tests/snapshot-data-plane.test.ts).
+  return colorize(text, color);
 }
 
 function logOk(msg: string): void {
