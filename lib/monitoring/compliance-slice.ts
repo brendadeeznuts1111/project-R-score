@@ -121,15 +121,31 @@ function emptyUnavailable(): ComplianceMonitoringSlice {
   };
 }
 
+/**
+ * Pure board health — SSOT for server slice + portal/TOC client formulas.
+ * When total===0: ok iff no shadow mismatches (and integrity if checks present).
+ * When total>0: require full pass + zero mismatches + integrity checks.
+ */
+export function isComplianceBoardOk(board: {
+  enhancements?: { passed?: number; total?: number };
+  shadow?: { summary?: { mismatches?: number } };
+  integrity?: { checks?: Array<{ ok?: boolean }> };
+}): boolean {
+  const passed = board.enhancements?.passed ?? 0;
+  const total = board.enhancements?.total ?? 0;
+  const mismatches = board.shadow?.summary?.mismatches ?? 0;
+  const integrityOk =
+    !Array.isArray(board.integrity?.checks) || board.integrity!.checks!.every(c => c?.ok !== false);
+  if (total > 0) return passed === total && mismatches === 0 && integrityOk;
+  return mismatches === 0 && integrityOk;
+}
+
 function projectBoard(board: ComplianceBoardFile): ComplianceMonitoringSlice {
   const enh = board.enhancements;
   const mismatches = board.shadow?.summary?.mismatches ?? 0;
   const passed = enh?.passed ?? 0;
   const total = enh?.total ?? 0;
-  const integrityOk =
-    board.integrity?.checks?.every(c => c.ok !== false) ??
-    (total > 0 && passed === total && mismatches === 0);
-  const ok = total > 0 ? passed === total && mismatches === 0 && integrityOk : mismatches === 0;
+  const ok = isComplianceBoardOk(board);
   const hasHmac = Boolean(board.integrity?.proof?.hmac);
 
   return {

@@ -18,6 +18,7 @@ export {
   loadComplianceMonitoringSlice,
   loadComplianceSummarySliceSync,
   projectComplianceHealthArtifact,
+  isComplianceBoardOk,
   COMPLIANCE_BOARD_PATH,
   COMPLIANCE_PORTAL_PATH,
   type ComplianceMonitoringSlice,

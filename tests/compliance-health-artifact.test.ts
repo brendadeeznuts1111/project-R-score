@@ -7,6 +7,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   COMPLIANCE_BOARD_PATH,
   COMPLIANCE_PORTAL_PATH,
+  isComplianceBoardOk,
   projectComplianceHealthArtifact,
 } from '../lib/monitoring/compliance-slice.ts';
 
@@ -116,5 +117,61 @@ describe('projectComplianceHealthArtifact', () => {
 
   test('empty object is not schema v1 → exists:false', () => {
     expect(projectComplianceHealthArtifact({})).toEqual(emptyArtifact);
+  });
+
+  test('integrity check fail → ok:false even when enhancements pass', () => {
+    const art = projectComplianceHealthArtifact({
+      schemaVersion: 1,
+      generatedAt: '2026-07-24T05:00:00.000Z',
+      enhancements: { passed: 8, total: 8 },
+      shadow: { summary: { mismatches: 0 } },
+      integrity: {
+        checks: [
+          { id: 'enhancements', ok: true },
+          { id: 'hmac', ok: false },
+        ],
+        proof: {},
+      },
+    });
+    expect(art.exists).toBe(true);
+    expect(art.ok).toBe(false);
+    expect(isComplianceBoardOk({
+      enhancements: { passed: 8, total: 8 },
+      shadow: { summary: { mismatches: 0 } },
+      integrity: { checks: [{ id: 'hmac', ok: false }] },
+    })).toBe(false);
+  });
+
+  test('geoProfiles + hmac projected when present', () => {
+    const art = projectComplianceHealthArtifact({
+      schemaVersion: 1,
+      generatedAt: '2026-07-24T05:00:00.000Z',
+      enhancements: { passed: 8, total: 8 },
+      shadow: { summary: { mismatches: 0 } },
+      geo: { partners: [{}, {}, {}] },
+      integrity: {
+        checks: [{ id: 'sha3', ok: true }],
+        proof: { hmac: 'abc' },
+        scoreHint: 'integrity+hmac',
+      },
+    });
+    expect(art.ok).toBe(true);
+    expect(art.geoProfiles).toBe(3);
+    expect(art.hmac).toBe(true);
+  });
+
+  test('total===0 with zero mismatches is ok (empty board surface)', () => {
+    expect(
+      isComplianceBoardOk({
+        enhancements: { passed: 0, total: 0 },
+        shadow: { summary: { mismatches: 0 } },
+      })
+    ).toBe(true);
+    expect(
+      isComplianceBoardOk({
+        enhancements: { passed: 0, total: 0 },
+        shadow: { summary: { mismatches: 1 } },
+      })
+    ).toBe(false);
   });
 });

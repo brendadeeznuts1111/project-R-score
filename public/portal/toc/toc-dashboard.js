@@ -681,11 +681,13 @@ function renderComplianceBoard(board) {
   const passed = enh?.passed ?? 0;
   const total = enh?.total ?? 0;
   const mm = shadow?.mismatches ?? 0;
-  // Align with projectBoard / projectComplianceHealthArtifact (integrity checks).
+  // Mirror isComplianceBoardOk (lib/monitoring/compliance-slice.ts)
   const integrityOk =
     !Array.isArray(board?.integrity?.checks) ||
     board.integrity.checks.every(c => c?.ok !== false);
-  const ok = available && total > 0 && passed === total && mm === 0 && integrityOk;
+  const boardOk =
+    total > 0 ? passed === total && mm === 0 && integrityOk : mm === 0 && integrityOk;
+  const ok = available && boardOk;
   const states = 'MA / NJ';
   return `<section class="toc-section" id="compliance-board">
     ${sectionHead(

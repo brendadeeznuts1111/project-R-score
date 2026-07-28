@@ -58,13 +58,14 @@ function render(board, source) {
 
   const enh = board.enhancements ?? {};
   const shadow = board.shadow ?? {};
+  // Mirror isComplianceBoardOk (lib/monitoring/compliance-slice.ts)
+  const passed = enh.passed ?? 0;
+  const total = enh.total ?? 0;
+  const mm = shadow.summary?.mismatches ?? 0;
   const integrityOk =
     !Array.isArray(board.integrity?.checks) ||
     board.integrity.checks.every(c => c?.ok !== false);
-  const ok =
-    (enh.passed ?? 0) === (enh.total ?? 0) &&
-    (shadow.summary?.mismatches ?? 0) === 0 &&
-    integrityOk;
+  const ok = total > 0 ? passed === total && mm === 0 && integrityOk : mm === 0 && integrityOk;
 
   banner.className = ok ? 'cmp-banner' : 'cmp-banner warn';
   banner.textContent = ok

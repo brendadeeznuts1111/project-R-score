@@ -1,8 +1,9 @@
 // @see https://bun.com/docs/test/index#run-tests
-import { describe, expect, test } from 'bun:test';
+import { afterEach, describe, expect, spyOn, test } from 'bun:test';
 import { joinPath } from '../lib/path-bun.ts';
-import { bakeCompliancePortal } from '../tools/bake-compliance-portal.ts';
 import { loadComplianceMonitoringSlice } from '../lib/monitoring/compliance-slice.ts';
+import * as bakeMod from '../tools/bake-compliance-portal.ts';
+import { bakeCompliancePortal } from '../tools/bake-compliance-portal.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 
@@ -49,15 +50,69 @@ describe('compliance portal bake', () => {
 });
 
 describe('ops-snapshot compliance ownership', () => {
-  test('withCompliance default is on; --no-compliance honored via options', async () => {
-    // Import after argv parse would freeze module flags — use option override.
-    const { buildRegistrySnapshot } = await import('../tools/ops-snapshot.ts');
-    // Smoke: skip is accepted (no throw). Full snapshot is covered by ops-snapshot-cron.
-    expect(typeof buildRegistrySnapshot).toBe('function');
-    // Flag surface in CLI help path (module source contract)
+  let bakeSpy: ReturnType<typeof spyOn> | undefined;
+
+  afterEach(() => {
+    bakeSpy?.mockRestore();
+    bakeSpy = undefined;
+  });
+
+  test('CLI/env flag surface in ops-snapshot source', async () => {
     const src = await Bun.file(joinPath(ROOT, 'tools/ops-snapshot.ts')).text();
     expect(src).toContain('--no-compliance');
     expect(src).toContain('OPS_SNAPSHOT_COMPLIANCE');
     expect(src).toContain('bakeCompliancePortal');
+    expect(src).toContain('withCompliance');
   });
+
+  test(
+    'withCompliance:true invokes bakeCompliancePortal({ log: false })',
+    async () => {
+      bakeSpy = spyOn(bakeMod, 'bakeCompliancePortal').mockResolvedValue({
+        ok: true,
+        boardPath: joinPath(ROOT, 'public/registry/compliance-board.json'),
+        generatedAt: new Date().toISOString(),
+        enhancements: { passed: 8, total: 8 },
+        shadowMismatches: 0,
+        hmac: false,
+        board: { schemaVersion: 1 } as bakeMod.ComplianceBoard,
+      });
+      const { buildRegistrySnapshot } = await import('../tools/ops-snapshot.ts');
+      const outPath = joinPath(ROOT, '.tmp/ops-snapshot-compliance-on.json');
+      await buildRegistrySnapshot({
+        withCompliance: true,
+        withRouting: false,
+        withReport: false,
+        withWebView: false,
+        withStatic: false,
+        withChannelMeta: false,
+        outPath,
+      });
+      expect(bakeSpy).toHaveBeenCalled();
+      expect(bakeSpy.mock.calls.some(c => c[0]?.log === false)).toBe(true);
+    },
+    30_000
+  );
+
+  test(
+    'withCompliance:false never calls bakeCompliancePortal',
+    async () => {
+      bakeSpy = spyOn(bakeMod, 'bakeCompliancePortal').mockImplementation(() => {
+        throw new Error('bakeCompliancePortal must not run when withCompliance:false');
+      });
+      const { buildRegistrySnapshot } = await import('../tools/ops-snapshot.ts');
+      const outPath = joinPath(ROOT, '.tmp/ops-snapshot-compliance-off.json');
+      await buildRegistrySnapshot({
+        withCompliance: false,
+        withRouting: false,
+        withReport: false,
+        withWebView: false,
+        withStatic: false,
+        withChannelMeta: false,
+        outPath,
+      });
+      expect(bakeSpy).not.toHaveBeenCalled();
+    },
+    30_000
+  );
 });

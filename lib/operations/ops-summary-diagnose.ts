@@ -25,6 +25,8 @@ export type OpsSummaryDiagnoseShape = {
     enhancements?: string | null;
     shadowMismatches?: number | null;
     hmac?: boolean;
+    geoProfiles?: number | null;
+    scoreHint?: string | null;
     portal?: string;
   };
 };
@@ -184,7 +186,12 @@ export function formatComplianceBoardLine(
   const hmacHint =
     compliance.hmac === true ? 'hmac' : compliance.hmac === false ? 'integrity-only' : 'hmac?';
   const status = compliance.ok === true ? 'ok' : 'WARN';
-  return `${status} · ${enh} · shadowΔ ${mm} · ${hmacHint}`;
+  const geo =
+    compliance.geoProfiles != null && compliance.geoProfiles > 0
+      ? ` · geo ${compliance.geoProfiles}`
+      : '';
+  const hint = compliance.ok !== true && compliance.scoreHint ? ` · ${compliance.scoreHint}` : '';
+  return `${status} · ${enh} · shadowΔ ${mm} · ${hmacHint}${geo}${hint}`;
 }
 
 /** Routes marked fail in embedded routing slice. */

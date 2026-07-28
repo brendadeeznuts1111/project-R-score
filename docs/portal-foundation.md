@@ -41,7 +41,7 @@ Origin: `collectHealthData()` in [`scripts/serve-public.ts`](../scripts/serve-pu
 | `status` | `'ok' \| 'degraded'` | Topbar dot mapping |
 | `env` | object | `{ summary, table, requiredMissingKeys }` |
 | `registry` | object | `{ packages, versions }` |
-| `artifacts` | object | ops summary, proofs |
+| `artifacts` | object | ops summary, proofs, `complianceBoard` (edge + serve-public parity) |
 | `defaults` | object | Bun defaults proof slice (`passed`/`total`/`status`) |
 | `proofTaxonomy` | object | taxonomy audit rollup (`contracts`/`ok`) |
 
@@ -84,7 +84,7 @@ Content-Type matrix rows for env page CT section.
    <script type="module" src="/portal/data.js"></script>
    <script type="module" src="/portal/topbar.js"></script>
    ```
-3. Use shared topbar chrome: brand wordmark + priority nav (Home · Ops · Registry · Health · DOD) + overflow (Catalog · Env · Dashboard · Monitoring · Wiki). Re-apply with `bun tools/portal-apply-chrome.ts` after editing shells.
+3. Use shared topbar chrome: brand wordmark + priority nav (Home · Ops · Registry · Health · DOD · Compliance) + overflow (Catalog · Env · Dashboard · Monitoring · Wiki). Re-apply with `bun tools/portal-apply-chrome.ts` after editing shells.
 4. Add topbar status: MD link (if applicable) + health link with `#health-dot` / `#health-label`.
 5. Subscribe to `portal:data` for data; do not inline-fetch `/api/health` for the dot.
 6. Register route in [`scripts/serve-public.ts`](../scripts/serve-public.ts) `buildPublicRoutes()` if needed.
@@ -251,6 +251,21 @@ Fixture-first Drum / Buffer / Rope desk for Pages (no `toc-ops-repo` SQLite on t
 | Live mutations | **toc-ops-repo** Central Tool (`ct`) only |
 
 **Plane split:** `/portal/toc` = demo-readonly mirror of TOC edge (rails, accounts, Soft/Gate 12, Ball-in-Court, bottlenecks). `/portal/ops` = live FactoryWager ops (partner-profile bridge, channels outbox, phones inventory) **plus** a TOC summary card. Cloudflare MCP does **not** expose TOC desk data — use it for Pages deploy/inspect only. Full concern matrix: [`docs/harness/tenants/toc-ops.md`](harness/tenants/toc-ops.md)#surface-map-portal-vs-live.
+
+### Compliance board (`/portal/compliance/`)
+
+Baked MA/NJ board (enhancements · shadow · geo · HMAC). Priority-nav surface; same bake projects to Ops rollup, monitoring tile, and health.
+
+| Piece | Path |
+|-------|------|
+| UI | [`public/portal/compliance/`](../public/portal/compliance/) · `compliance-dashboard.js` |
+| Baked artifact | [`public/registry/compliance-board.json`](../public/registry/compliance-board.json) |
+| Health | `/api/health` → `artifacts.complianceBoard` (`projectComplianceHealthArtifact`) |
+| Edge API | `GET /api/compliance` (registry snapshot; 503 if missing bake) |
+| Bake / verify | `bun run compliance:bake` · `bun run compliance:verify` · companion of `ops:snapshot` |
+| Tenant | [`docs/harness/tenants/compliance-portal.md`](harness/tenants/compliance-portal.md) |
+
+Missing bake → `exists:false` (no degrade); present + fail → `ok:false` (**degrades** health).
 
 ### Local auth (`REGISTRY_SECRET`)
 
