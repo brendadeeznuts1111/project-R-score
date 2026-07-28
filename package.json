@@ -1984,6 +1984,7 @@
     "vault:health": "bun test tests/vault-health.test.ts",
     "vault:health:update": "bun test tests/vault-health.test.ts --update-snapshots",
     "vault:health:bake": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun tools/vault-health-bake.ts'",
+    "vault:health:cron:register": "bun -e 'await Bun.cron(\"/Users/nolarose/Projects/lib/security/vault-health-cron-worker.ts\", \"23 9 * * *\", \"vault-health\")'",
     "vault:gap:mint-local": "bun scripts/vault-gap-close.ts mint-local",
     "vault:gap:export-minted": "bun scripts/vault-gap-close.ts export-minted",
     "vault:gap:mint": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts mint'",
