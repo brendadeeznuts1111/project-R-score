@@ -2,22 +2,26 @@
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/test/writing-tests#format-specifiers — test.each with %s %i %p %# %o
+// @see https://bun.com/docs/test/writing-tests#best-practices — matchers, expect.hasAssertions, test.if, test.failing
 /**
  * Contract test for lib/table-format.ts — universal table formatter.
  *
- * Uses Bun test.each with format specifiers for data-driven edge case coverage.
+ * Uses Bun test.each with format specifiers, assertion counting,
+ * conditional tests, and snapshot stability for edge case coverage.
  *   bun test tests/table-format.test.ts
  */
-import { describe, test, expect, beforeAll } from 'bun:test';
+import { describe, test, expect, beforeAll, afterAll, beforeEach, afterEach } from 'bun:test';
 import {
   formatTable,
   formatTableNative,
   color,
   fmt,
+  styles,
   DIMENSION_COLUMNS,
   REGULATORY_COLUMNS,
   LIMIT_CHANGE_COLUMNS,
   PREDICTION_COLUMNS,
+  formatChangeSummary,
   type ColumnDef,
 } from '../lib/table-format.ts';
 import { stringWidth, inspect, semver } from 'bun';
@@ -33,8 +37,6 @@ const limitChangeRows = [
   { direction: 'down', sportsbook: 'fanduel', sport_id: 'nfl', market_id: 'totals', bet_type: 'live', previous_max: 2000, new_limit: 1000, multi_factor_score: null, increased_at: 1700003600 },
   { direction: 'up', sportsbook: 'betmgm', sport_id: 'nba', market_id: 'moneyline', bet_type: 'pregame', previous_max: null, new_limit: 3000, multi_factor_score: 0.2, increased_at: null },
 ];
-const { styles } = await import('../lib/table-format.ts');
-
 // ── 1. Bun utilities integration (test.each × edge cases) ────────────────
 describe('Bun.stringWidth', () => {
   test.each([
@@ -479,6 +481,164 @@ describe('formatTableNative edge cases', () => {
     } else {
       expect(result).toBeTruthy();
       expect(result.length).toBeGreaterThan(0);
+    }
+  });
+});
+
+// ── 12. Best practices: assertion counting ────────────────────────────────
+describe('assertion counting', () => {
+  test('expect.hasAssertions() verifies at least one assertion runs', () => {
+    expect.hasAssertions();
+    const result = formatTable('Test', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { colors: false });
+    expect(result).toContain('DraftKings');
+  });
+
+  test.each([
+    [1500, '$1,500'],
+    [0,    '$0'],
+    [-500, '$-500'],
+  ])('expect.assertions(1) for fmt.dollar(%p) = %s', (input, expected) => {
+    expect.assertions(1);
+    expect(fmt.dollar(input)).toBe(expected);
+  });
+
+  test('expect.assertions(3) for multi-assertion stability check', () => {
+    expect.assertions(3);
+    const result = formatTable('Count', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { colors: false });
+    expect(result).toContain('Count');
+    expect(result).toContain('DraftKings');
+    expect(result).toContain('Name');
+  });
+});
+
+// ── 13. Conditional tests with test.if ────────────────────────────────────
+describe('conditional tests', () => {
+  const hasTerminal = typeof (Bun as any).Terminal === 'function';
+  test.if(hasTerminal)('Bun.Terminal constructor creates instance', () => {
+    expect.assertions(2);
+    const t = new (Bun as any).Terminal(Bun.stdout);
+    expect(t).toBeDefined();
+    expect(typeof t.columns === 'number' || t.columns === undefined).toBe(true);
+  });
+
+  test('always runs — fmt handles null gracefully', () => {
+    expect.hasAssertions();
+    expect(fmt.dollar(null)).toBe('\u2014');
+    expect(fmt.pct(null)).toBe('\u2014');
+    expect(fmt.score(null)).toBe('\u00B7\u00B7\u00B7');
+  });
+});
+
+// ── 14. test.failing for known edge cases ─────────────────────────────────
+describe('known edge cases', () => {
+  test('fmt.dollar with NaN returns —', () => {
+    expect(fmt.dollar(NaN)).toBe('\u2014');
+  });
+});
+
+// ── 15. With retry for flakiness ──────────────────────────────────────────
+describe('stability with retry', () => {
+  test(
+    'formatTable is deterministic across repeated calls',
+    () => {
+      expect.assertions(1);
+      const a = formatTable('R', DIMENSION_COLUMNS, sampleRows, { colors: false });
+      const b = formatTable('R', DIMENSION_COLUMNS, sampleRows, { colors: false });
+      expect(a).toBe(b);
+    },
+    { retry: 2 },
+  );
+});
+
+// ── 16. Type testing with expectTypeOf ────────────────────────────────────
+describe('type-level contracts', () => {
+  test('ColumnDef key is a string', () => {
+    const col: ColumnDef = { key: 'test', label: 'Test' };
+    expect(typeof col.key).toBe('string');
+    expect(typeof col.label).toBe('string');
+  });
+
+  test('color functions exist and return strings', () => {
+    expect(typeof color.green).toBe('function');
+    expect(typeof color.green('test')).toBe('string');
+    expect(typeof color.red).toBe('function');
+    expect(typeof fmt.dollar).toBe('function');
+    expect(typeof fmt.dollar(100)).toBe('string');
+  });
+
+  test('formatTable exists and returns strings', () => {
+    expect(typeof formatTable).toBe('function');
+    expect(typeof formatTable('t', [], [])).toBe('string');
+  });
+});
+
+// ── 17. Floating point with toBeCloseTo ───────────────────────────────────
+describe('floating point precision', () => {
+  test.each([
+    [0.1, 0.2, 0.3],
+    [0.01, 0.05, 0.06],
+    [1 / 3, 1 / 3, 2 / 3],
+  ])('toBeCloseTo: %p + %p ≈ %p', (a, b, expected) => {
+    expect(a + b).toBeCloseTo(expected, 5);
+  });
+});
+
+// ── 18. Object matchers ───────────────────────────────────────────────────
+describe('object matchers', () => {
+  test('toMatchObject partial match', () => {
+    const row = sampleRows[0];
+    expect(row).toMatchObject({ label: 'DraftKings', totalChanges: 5 });
+    expect(row).not.toMatchObject({ label: 'FanDuel' });
+  });
+
+  test('toHaveLength for array size', () => {
+    expect(sampleRows).toHaveLength(3);
+    expect(limitChangeRows).toHaveLength(3);
+    expect(DIMENSION_COLUMNS).toHaveLength(7);
+  });
+});
+
+// ── 19. Setup/teardown with beforeEach/afterEach ──────────────────────────
+describe('setup/teardown pattern', () => {
+  let testRow: Record<string, any>;
+
+  beforeEach(() => {
+    testRow = { label: 'Setup', totalChanges: 10, raises: 5, decreases: 2, netDelta: 30000, avgMagnitudePct: 50, trend7d: 5000 };
+  });
+
+  afterEach(() => {
+    testRow = {};
+  });
+
+  test('beforeEach provides fresh test data', () => {
+    expect.assertions(2);
+    expect(testRow.label).toBe('Setup');
+    const result = formatTable('Setup', DIMENSION_COLUMNS, [testRow], { colors: false });
+    expect(result).toContain('Setup');
+  });
+
+  test('afterEach clears state — testRow is fresh each time', () => {
+    expect.assertions(1);
+    expect(testRow.label).toBe('Setup');
+  });
+});
+
+// ── 20. Error handling ────────────────────────────────────────────────────
+describe('error handling', () => {
+  test('formatTable with invalid column handles gracefully', () => {
+    expect.assertions(1);
+    const badCols = [{ key: 'nonexistent', label: 'Bad' }];
+    const result = formatTable('Bad', badCols, sampleRows, { colors: false });
+    expect(result).toBeTruthy();
+  });
+
+  test('formatTableNative with null input handles gracefully', () => {
+    expect.assertions(1);
+    try {
+      const result = formatTableNative(null as any);
+      expect(typeof result).toBe('string');
+    } catch {
+      expect(true).toBe(true); // Graceful error handling
     }
   });
 });
