@@ -21,6 +21,7 @@ describe('account-limits-repo', () => {
     expect(raises[0]!.sportsbook).toBe('draftkings');
     expect(raises[0]!.previous_max).toBe(500);
     expect(raises[0]!.new_limit).toBe(1500);
+    expect(raises[0]!.limit_id).toBeGreaterThan(0);
     db.close();
   });
 

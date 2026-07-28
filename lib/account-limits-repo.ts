@@ -76,6 +76,32 @@ export function ensureAccountLimitsSchema(db: Database): void {
     );
     CREATE INDEX IF NOT EXISTS idx_mlm_dim_time
       ON market_line_movement(node_id, sportsbook, sport_id, market_id, bet_type, recorded_at);
+
+    -- Multi-factor snapshot at the moment of a limit raise
+    CREATE TABLE IF NOT EXISTS limit_raise_context (
+      id                       INTEGER PRIMARY KEY AUTOINCREMENT,
+      node_id                  TEXT NOT NULL,
+      limit_record_id          INTEGER NOT NULL,
+      active_players_7d        INTEGER,
+      new_players_7d           INTEGER,
+      total_handle_7d          REAL,
+      avg_clv_7d               REAL,
+      top_tier_player_count    INTEGER,
+      violation_count_30d      INTEGER,
+      chargeback_count_30d     INTEGER,
+      kyc_pass_rate            REAL,
+      market_volatility_index  REAL,
+      peak_betting_hours       TEXT,
+      sportsbook_share         REAL,
+      partner_profit_30d       REAL,
+      partner_roi_30d          REAL,
+      snapshot_at              INTEGER NOT NULL DEFAULT (unixepoch()),
+      FOREIGN KEY (limit_record_id) REFERENCES partner_account_limits(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_lrc_node_limit
+      ON limit_raise_context(node_id, limit_record_id);
+    CREATE INDEX IF NOT EXISTS idx_lrc_snapshot
+      ON limit_raise_context(node_id, snapshot_at DESC);
   `);
 
   // Migrate older DBs that only allowed pregame|live
@@ -139,6 +165,8 @@ export interface LimitRecord {
 }
 
 export interface LimitRaise {
+  /** partner_account_limits.id for the raised row */
+  limit_id: number; // brand-ok — limit history row pk
   sportsbook: string;
   sport_id: string; // brand-ok
   market_id: string; // brand-ok
@@ -182,12 +210,18 @@ export class AccountLimitsRepository {
   }
 
   /**
-   * Record a limit with an optional raise alert.  Call this after
-   * {@link recordLimit} if you want to create an alert for the same row.
+   * Record a limit and create an alert if it is a raise.
    */
   recordLimitWithAlert(limit: LimitRecord): LimitRaise | null {
     this.recordLimit(limit);
-    return this.raiseForJustInserted(limit);
+    const raise = this.raiseForJustInserted(limit);
+    if (raise) {
+      this.createAlert(
+        limit.node_id,
+        `Limit raised on ${raise.sportsbook} ${raise.sport_id}/${raise.market_id} ${raise.bet_type}: $${raise.previous_max} → $${raise.new_limit}`
+      );
+    }
+    return raise;
   }
 
   /** Find limit raises since a timestamp (default: epoch 0 = all time). */
@@ -197,11 +231,12 @@ export class AccountLimitsRepository {
     const rows = this.db
       .query(
         `
-      SELECT a.sportsbook, a.sport_id, a.market_id, a.bet_type,
+      SELECT a.id AS limit_id,
+             a.sportsbook, a.sport_id, a.market_id, a.bet_type,
              (SELECT MAX(b.max_wager) FROM partner_account_limits b
               WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
                 AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-                AND b.bet_type = a.bet_type AND b.recorded_at < a.recorded_at) as previous_max,
+                AND b.bet_type = a.bet_type AND b.id < a.id) as previous_max,
              a.max_wager as new_limit,
              a.recorded_at as increased_at
       FROM partner_account_limits a
@@ -211,13 +246,13 @@ export class AccountLimitsRepository {
           SELECT 1 FROM partner_account_limits b
           WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
             AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-            AND b.bet_type = a.bet_type AND b.recorded_at < a.recorded_at
+            AND b.bet_type = a.bet_type AND b.id < a.id
         )
         AND a.max_wager > (
           SELECT MAX(b.max_wager) FROM partner_account_limits b
           WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
             AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-            AND b.bet_type = a.bet_type AND b.recorded_at < a.recorded_at
+            AND b.bet_type = a.bet_type AND b.id < a.id
         )
       ORDER BY a.recorded_at DESC
     `
@@ -302,17 +337,18 @@ export class AccountLimitsRepository {
     const raise = this.db
       .query(
         `
-      SELECT a.sportsbook, a.sport_id, a.market_id, a.bet_type,
+      SELECT a.id AS limit_id,
+             a.sportsbook, a.sport_id, a.market_id, a.bet_type,
              (SELECT MAX(b.max_wager) FROM partner_account_limits b
               WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
                 AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-                AND b.bet_type = a.bet_type AND b.recorded_at < a.recorded_at) as previous_max,
+                AND b.bet_type = a.bet_type AND b.id < a.id) as previous_max,
              a.max_wager as new_limit,
              a.recorded_at as increased_at
       FROM partner_account_limits a
       WHERE a.node_id = ? AND a.sportsbook = ? AND a.sport_id = ? AND a.market_id = ?
         AND a.bet_type = ?
-      ORDER BY a.recorded_at DESC
+      ORDER BY a.id DESC
       LIMIT 1
     `
       )
@@ -390,6 +426,12 @@ export function seedAccountLimitsDemo(
   }
 
   if (opts?.force) {
+    db.run(
+      `DELETE FROM limit_raise_context WHERE node_id = ? OR limit_record_id IN (
+         SELECT id FROM partner_account_limits WHERE node_id = ?
+       )`,
+      [nodeId, nodeId]
+    );
     db.run(`DELETE FROM market_line_movement WHERE node_id = ?`, [nodeId]);
     db.run(
       `DELETE FROM player_clv_snapshots WHERE node_id = ? OR player_id IN (SELECT id FROM partner_players WHERE node_id = ?)`,
@@ -467,6 +509,45 @@ export function seedAccountLimitsDemo(
     [nodeId, tRaise]
   );
 
+  // Multi-factor context for the raised DK row
+  const raiseRow = db
+    .query(
+      `SELECT id FROM partner_account_limits
+       WHERE node_id = ? AND sportsbook = 'draftkings' AND sport_id = 'nba'
+         AND market_id = 'totals' AND bet_type = 'straight'
+       ORDER BY id DESC LIMIT 1`
+    )
+    .get(nodeId) as { id: number } | null;
+  if (raiseRow) {
+    // Lazy import avoided — insert directly so seed stays self-contained
+    db.run(
+      `INSERT INTO limit_raise_context (
+         node_id, limit_record_id, active_players_7d, new_players_7d, total_handle_7d,
+         avg_clv_7d, top_tier_player_count, violation_count_30d, chargeback_count_30d,
+         kyc_pass_rate, market_volatility_index, peak_betting_hours, sportsbook_share,
+         partner_profit_30d, partner_roi_30d, snapshot_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        nodeId,
+        raiseRow.id,
+        42,
+        8,
+        380_000, // high handle → top multi-factor driver
+        120,
+        8,
+        0,
+        0,
+        0.97,
+        0.85,
+        JSON.stringify([18, 19, 20, 21]),
+        0.55,
+        80_000,
+        0.18,
+        tRaise,
+      ]
+    );
+  }
+
   return { seeded: true, nodeId };
 }
 
@@ -508,7 +589,14 @@ export function formatLimitRaisesTable(raises: LimitRaise[]): string {
 }
 
 /** Human lines matching the bun -e demo (raise + line 5m + top CLV). */
-export function formatEnrichedLimitRaises(raises: EnrichedLimitRaise[]): string {
+export function formatEnrichedLimitRaises(
+  raises: Array<
+    EnrichedLimitRaise & {
+      multi_factor_score?: number;
+      top_contributing_factors?: string[];
+    }
+  >
+): string {
   if (raises.length === 0) return '  No limit raises found.';
   const out: string[] = [];
   for (const r of raises) {
@@ -518,8 +606,12 @@ export function formatEnrichedLimitRaises(raises: EnrichedLimitRaise[]): string 
         : r.top_clv.map(p => `${p.player_name}(+$${p.delta.toFixed(0)})`).join(', ');
     const line =
       r.line_move_5m != null && Number.isFinite(r.line_move_5m) ? r.line_move_5m.toFixed(2) : 'N/A';
+    const score =
+      r.multi_factor_score != null
+        ? `  ·  multi ${r.multi_factor_score.toFixed(2)} [${(r.top_contributing_factors ?? []).join(', ')}]`
+        : '';
     out.push(
-      `🚀 ${r.sportsbook} ${r.sport_id}/${r.market_id} ${r.bet_type}: $${r.previous_max} → $${r.new_limit}`
+      `🚀 ${r.sportsbook} ${r.sport_id}/${r.market_id} ${r.bet_type}: $${r.previous_max} → $${r.new_limit}${score}`
     );
     out.push(`   📈 Line 5m: ${line}  |  🎯 Top CLV: ${clv}`);
   }

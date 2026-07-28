@@ -5,7 +5,7 @@
   "engines": {
     "bun": ">=1.4.0"
   },
-  "description": "\ud83d\ude80 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
+  "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
   "workspaces": {
     "packages": [
       "packages/*",
@@ -665,7 +665,7 @@
       "license": "MIT"
     },
     "performance": {
-      "max_concurrent_requests": 10000,
+      "max_concurrent_requests": 1e4,
       "request_timeout": "30s",
       "connection_pool_size": 100,
       "cache_ttl": "300s",
@@ -695,7 +695,7 @@
       "max_memory": "1gb",
       "eviction_policy": "lru",
       "compression": true,
-      "max_keys": 1000000,
+      "max_keys": 1e6,
       "cleanup_interval": "600s"
     },
     "api": {
@@ -736,7 +736,7 @@
     },
     "limits": {
       "max_file_upload_size": "100mb",
-      "max_api_calls_per_hour": 10000,
+      "max_api_calls_per_hour": 1e4,
       "max_concurrent_sessions": 1000,
       "max_storage_per_user": "10gb",
       "max_bandwidth_per_month": "1tb",
@@ -1085,7 +1085,7 @@
           }
         ],
         "spf": "v=spf1 include:_spf.protonmail.ch ~all",
-        "dkim": "pending \u2014 protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
+        "dkim": "pending — protonmail.domainkey/protonmail2.domainkey/protonmail3.domainkey CNAMEs not yet in Cloudflare zone",
         "dmarc": "v=DMARC1; p=quarantine; rua=mailto:admin@factory-wager.com; ruf=mailto:admin@factory-wager.com; fo=1",
         "verification": "protonmail-verification=96c089f0b6b18c1c28ff042ec54b48c7d6fe4daf"
       }
@@ -1572,7 +1572,9 @@
     "ops:limits:check": "bun tools/ops-check-limits.ts",
     "ops:limits:check:all": "bun tools/ops-check-limits.ts --all",
     "ops:limits:check:clv": "bun tools/ops-check-limits.ts --clv",
-    "ops:limits:demo": "bun tools/ops-check-limits.ts --force-seed --clv",
+    "ops:limits:check:multi": "bun tools/ops-check-limits.ts --multi",
+    "ops:limits:demo": "bun tools/ops-check-limits.ts --force-seed --multi",
+    "ops:limits:capture": "bun tools/capture-raise-context.ts",
     "ops:limits:alerts": "bun tools/ops-check-limits.ts --alerts",
     "ops:seed:toc": "bun tools/ops-seed-toc.ts",
     "ops:seed:all": "bun tools/ops-seed.ts && bun tools/ops-seed-prediction.ts && bun tools/ops-seed-dod.ts && bun tools/ops-seed-partners.ts && bun tools/ops-seed-toc.ts && bun tools/ops-seed-tenants.ts",
@@ -1927,7 +1929,7 @@
     "check:routes": "bun tools/verify-networking.ts --routes-only",
     "check:formdata": "bun tools/verify-formdata.ts",
     "check:formdata:save": "bun tools/verify-formdata.ts --save",
-    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-bun-release.ts --save && bun tools/verify-package-info.ts --save && bun tools/verify-install-env.ts --save && bun tools/verify-registry-client.ts --save && bun tools/verify-install-platform.ts --dry-run --save && bun tools/verify-bun-runtime-nits.ts --save && bun tools/verify-bundler.ts --save && bun tools/build-doc-index.ts --save && bun tools/verify-docs-coverage.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"\u2705 Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");const ip=await Bun.file(\"public/registry/install-platform.json\").json();console.log(\"\u2705 Install platform: \"+ip.summary.passed+\"/\"+ip.summary.total);const ie=await Bun.file(\"public/registry/install-env-proof.json\").json();console.log(\"\u2705 Install env: \"+ie.summary.passed+\"/\"+ie.summary.total+\" probes (6 env + scoped + read-plane)\");const rc=await Bun.file(\"public/registry/registry-client-proof.json\").json();console.log(\"\u2705 Registry client: \"+rc.summary.passed+\"/\"+rc.summary.total+\" probes (resolve + download + publish) v\"+rc.sdkVersion);const bl=await Bun.file(\"public/registry/bundler-loaders-proof.json\").json();console.log(\"\u2705 Bundler loaders: \"+bl.summary.passed+\"/\"+bl.summary.total);' && bun tools/verify-channel-meta.ts --prefer-artifacts --save && bun tools/verify-proof-taxonomy.ts --save && bun tools/verify-portal.ts && bun tools/verify-script-flags.ts",
+    "verify-all": "bun tools/verify-defaults.ts --save && bun tools/verify-networking.ts --save && bun tools/verify-bun-release.ts --save && bun tools/verify-package-info.ts --save && bun tools/verify-install-env.ts --save && bun tools/verify-registry-client.ts --save && bun tools/verify-install-platform.ts --dry-run --save && bun tools/verify-bun-runtime-nits.ts --save && bun tools/verify-bundler.ts --save && bun tools/build-doc-index.ts --save && bun tools/verify-docs-coverage.ts --save && bun -e 'const f=await Bun.file(\"public/registry/@factorywager/bun-utils-test/latest.json\").json();console.log(\"✅ Bun utils: \"+f.summary.passed+\"/\"+f.summary.total+\" passed\");const ip=await Bun.file(\"public/registry/install-platform.json\").json();console.log(\"✅ Install platform: \"+ip.summary.passed+\"/\"+ip.summary.total);const ie=await Bun.file(\"public/registry/install-env-proof.json\").json();console.log(\"✅ Install env: \"+ie.summary.passed+\"/\"+ie.summary.total+\" probes (6 env + scoped + read-plane)\");const rc=await Bun.file(\"public/registry/registry-client-proof.json\").json();console.log(\"✅ Registry client: \"+rc.summary.passed+\"/\"+rc.summary.total+\" probes (resolve + download + publish) v\"+rc.sdkVersion);const bl=await Bun.file(\"public/registry/bundler-loaders-proof.json\").json();console.log(\"✅ Bundler loaders: \"+bl.summary.passed+\"/\"+bl.summary.total);' && bun tools/verify-channel-meta.ts --prefer-artifacts --save && bun tools/verify-proof-taxonomy.ts --save && bun tools/verify-portal.ts && bun tools/verify-script-flags.ts",
     "verify:install-env": "bun tools/verify-install-env.ts",
     "verify:portal": "bun tools/verify-portal.ts",
     "verify:portal:static": "bun tools/verify-portal.ts --static-only",
@@ -2076,6 +2078,7 @@
     "@factorywager/rip": "workspace:*",
     "@modelcontextprotocol/sdk": "1.29.0",
     "@pinecone-database/pinecone": "7.2.0",
+    "@simplewebauthn/server": "13.3.2",
     "plaid": "42.2.0",
     "yaml": "2.9.0"
   },

@@ -4,15 +4,13 @@
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
- * Ops limit check — detect partner account limit raises (+ CLV / line move).
+ * Ops limit check — detect partner account limit raises (+ CLV / multi-factor).
  *
  *   bun run ops:limits:check
- *   bun run ops:limits:check --partner partner-42
- *   bun run ops:limits:check --hours 48 --clv
- *   bun run ops:limits:check --all
- *   bun run ops:limits:check --alerts
- *   bun run ops:limits:check --seed          # demo data for partner-42
- *   bun run ops:limits:check --force-seed --clv
+ *   bun run ops:limits:check --partner partner-42 --clv
+ *   bun run ops:limits:check --multi          # multi-factor score + context
+ *   bun run ops:limits:check --force-seed --multi
+ *   bun run ops:limits:demo                   # force-seed --multi
  *
  * DB: operations.db (schema via ensureAccountLimitsSchema on migrate).
  */
@@ -26,6 +24,11 @@ import {
   type LimitRaise,
 } from '../lib/account-limits-repo.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
+import {
+  formatMultiFactorRaises,
+  PartnerAnalyticsRepository,
+  type MultiFactorEnrichedRaise,
+} from '../lib/operations/partner-analytics-repo.ts';
 
 const HELP = `Usage: ops-check-limits.ts [opts]
 
@@ -33,8 +36,10 @@ const HELP = `Usage: ops-check-limits.ts [opts]
   --all                Check limits for every partner with data
   --hours <N>          Look back N hours (default: 24)
   --clv                Correlate with gold/platinum CLV + 5m line move
+  --multi              Multi-factor score + top drivers + context (implies --clv)
+  --capture            Derive+store missing limit_raise_context before report
   --alerts             Also show recent alert messages
-  --seed               Seed demo limit/CLV/line rows if missing
+  --seed               Seed demo limit/CLV/line/context rows if missing
   --force-seed         Re-seed demo for the target partner
   --json               Output raw JSON
   --help               This message
@@ -47,6 +52,8 @@ function parseArgs(): {
   json: boolean;
   all: boolean;
   clv: boolean;
+  multi: boolean;
+  capture: boolean;
   seed: boolean;
   forceSeed: boolean;
 } {
@@ -65,13 +72,16 @@ function parseArgs(): {
     }
     i++;
   }
+  const multi = flags.multi === 'true';
   return {
     partner: flags.partner ?? null,
     hours: flags.hours ? Number(flags.hours) : 24,
     alerts: flags.alerts === 'true',
     json: flags.json === 'true',
     all: flags.all === 'true',
-    clv: flags.clv === 'true',
+    clv: multi || flags.clv === 'true',
+    multi,
+    capture: flags.capture === 'true',
     seed: flags.seed === 'true',
     forceSeed: flags['force-seed'] === 'true',
   };
@@ -103,7 +113,7 @@ function main(): void {
       .all() as Array<{ node_id: string }>; // brand-ok — partner slug column
     nodes = rows.map(r => r.node_id);
     if (nodes.length === 0) {
-      console.log('No nodes with limit data found. Try: bun run ops:limits:check --seed --clv');
+      console.log('No nodes with limit data found. Try: bun run ops:limits:demo');
       return;
     }
   } else {
@@ -113,10 +123,22 @@ function main(): void {
   const since = Math.floor(Date.now() / 1000) - opts.hours * 3600;
   const allRaises: Array<{
     node_id: string; // brand-ok — partner slug
-    raises: LimitRaise[] | EnrichedLimitRaise[];
+    raises: LimitRaise[] | EnrichedLimitRaise[] | MultiFactorEnrichedRaise[];
   }> = [];
 
   for (const nodeId of nodes) {
+    if (opts.multi || opts.capture) {
+      const analytics = new PartnerAnalyticsRepository(db, nodeId);
+      if (opts.capture) {
+        const n = analytics.captureMissingRaiseContexts(since);
+        if (n > 0) console.error(`[ops-check-limits] captured ${n} context row(s) for ${nodeId}`);
+      }
+      if (opts.multi) {
+        const raises = analytics.getEnrichedRaisesWithContext(since);
+        if (raises.length > 0) allRaises.push({ node_id: nodeId, raises });
+        continue;
+      }
+    }
     const raises = opts.clv
       ? repo.detectRaisesEnriched(nodeId, since)
       : repo.detectRaises(nodeId, since);
@@ -129,6 +151,7 @@ function main(): void {
     const output: Record<string, unknown> = {
       since_hours: opts.hours,
       clv: opts.clv,
+      multi: opts.multi,
       total_raises: allRaises.reduce((s, r) => s + r.raises.length, 0),
       partners: allRaises,
     };
@@ -147,17 +170,19 @@ function main(): void {
   if (allRaises.length === 0) {
     console.log(
       `\n  ✅ No limit raises in the last ${opts.hours}h for ${opts.all ? 'any partner' : nodes.join(', ')}.\n` +
-        (opts.seed || opts.forceSeed ? '' : '  hint: bun run ops:limits:check --seed --clv\n')
+        (opts.seed || opts.forceSeed ? '' : '  hint: bun run ops:limits:demo\n')
     );
     return;
   }
 
   for (const entry of allRaises) {
     console.log(`\n  🚀 Limit raises — ${entry.node_id} (last ${opts.hours}h)`);
-    if (opts.clv) {
+    if (opts.multi) {
+      console.log(formatMultiFactorRaises(entry.raises as MultiFactorEnrichedRaise[]));
+    } else if (opts.clv) {
       console.log(formatEnrichedLimitRaises(entry.raises as EnrichedLimitRaise[]));
     } else {
-      console.log(formatLimitRaisesTable(entry.raises));
+      console.log(formatLimitRaisesTable(entry.raises as LimitRaise[]));
     }
   }
 

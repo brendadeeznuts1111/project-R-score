@@ -222,3 +222,14 @@ export {
   type BookScrapeResult,
 } from './book-reconcile.ts';
 export { exportPostgresDdl, probePostgresOps } from './postgres-bridge.ts';
+export {
+  PartnerAnalyticsRepository,
+  computeMultiFactorScore,
+  formatMultiFactorRaises,
+  MULTI_FACTOR_RANGES,
+  MULTI_FACTOR_WEIGHTS,
+  type MultiFactorEnrichedRaise,
+  type MultiFactorScore,
+  type RaiseContextMetrics,
+  type RaiseContextRow,
+} from './partner-analytics-repo.ts';
