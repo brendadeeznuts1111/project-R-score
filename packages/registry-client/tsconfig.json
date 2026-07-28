@@ -8,6 +8,9 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
+    // Empty on purpose: public .d.ts emit must not inject Bun globals into consumers.
+    // App/scripts tsconfigs use "types": ["bun"] (tsconfig.base.json). TS 6+ requires explicit types.
+    // @see https://bun.com/docs/typescript-6
     "types": []
   },
   "include": ["src/**/*.ts"],

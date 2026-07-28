@@ -1,13 +1,26 @@
 {
   "compilerOptions": {
+    // TypeScript 6+ does not auto-discover @types/* — list packages explicitly.
+    // "bun" loads @types/bun (must be installed). Same requirement for TypeScript 7.
+    // Fix for "Cannot find name 'Bun'" after upgrading TS: add "types": ["bun"].
+    // @see https://bun.com/docs/typescript-6
+    // @see https://bun.com/docs/typescript
     "types": ["bun"],
-    "target": "ES2022",
+
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "target": "ESNext",
     "module": "ESNext",
+    "moduleDetection": "force",
     "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowJs": true,
+
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+
+    // TS 6 deprecations (paths/baseUrl still used monorepo-wide)
     "ignoreDeprecations": "6.0",
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],

@@ -1,6 +1,9 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    // Explicit for TS 6+ (inherited from base; restate so tools/ is self-documenting)
+    // @see https://bun.com/docs/typescript-6
+    "types": ["bun"],
     "noEmit": true,
     "strict": true,
     "noUncheckedIndexedAccess": true
