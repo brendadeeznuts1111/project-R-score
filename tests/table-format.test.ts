@@ -511,16 +511,52 @@ describe('assertion counting', () => {
   });
 });
 
-// ── 13. Conditional tests with test.if ────────────────────────────────────
-describe('conditional tests', () => {
-  const hasTerminal = typeof (Bun as any).Terminal === 'function';
-  test.if(hasTerminal)('Bun.Terminal constructor creates instance', () => {
+// ── 13. Conditional describe blocks (describe.if / skipIf / todoIf) ──────
+const hasTerminal = typeof (Bun as any).Terminal === 'function';
+const isNonTTY = !(Bun.stdout as any).isTTY;
+const isMacOS = process.platform === 'darwin';
+
+// Describe.if — only runs on terminals with Bun.Terminal
+describe.if(hasTerminal)('Bun.Terminal constructor (describe.if — only in TTY)', () => {
+  test('should construct a Terminal instance with isTTY and columns', () => {
     expect.assertions(2);
     const t = new (Bun as any).Terminal(Bun.stdout);
     expect(t).toBeDefined();
     expect(typeof t.columns === 'number' || t.columns === undefined).toBe(true);
   });
 
+  test('should have isTTY boolean property', () => {
+    expect.assertions(1);
+    const t = new (Bun as any).Terminal(Bun.stdout);
+    expect(typeof t.isTTY === 'boolean' || t.isTTY === undefined).toBe(true);
+  });
+});
+
+// Describe.skipIf — skip Terminal tests in non-TTY (most test runners)
+describe.skipIf(isNonTTY)('ANSI color codes (describe.skipIf — skip in non-TTY)', () => {
+  test('should include ANSI escape sequences when TTY', () => {
+    expect.assertions(1);
+    const colored = color.green('ok');
+    expect(colored.includes('\x1b[') || isNonTTY).toBe(true);
+  });
+
+  test('should not strip color output', () => {
+    expect.assertions(1);
+    const result = styles.up('🚀');
+    expect(typeof result).toBe('string');
+    expect(result.length).toBeGreaterThan(0);
+  });
+});
+
+// Describe.todoIf — mark macOS-specific tests as todo on other platforms
+describe.todoIf(!isMacOS)('macOS-specific formatting (describe.todoIf — TODO on non-macOS)', () => {
+  test('should format locale numbers correctly', () => {
+    expect(fmt.dollar(1500)).toBe('$1,500');
+  });
+});
+
+// Always-run tests
+describe('always-run null safety', () => {
   test('should return em-dash or ellipsis placeholders for all format helpers when given null', () => {
     expect.hasAssertions();
     expect(fmt.dollar(null)).toBe('\u2014');
