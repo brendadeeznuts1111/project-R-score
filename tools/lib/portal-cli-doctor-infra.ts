@@ -84,14 +84,14 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
         group: 'infra',
         ok: ledger.accessEnforced,
         message: ledger.accessEnforced
-          ? `ledger.factory-wager.com Access enforced · ${ledger.evidence}`
-          : `ledger.factory-wager.com NOT behind Access · ${ledger.evidence}`,
+          ? `ledger · Access · ${ledger.evidence}`
+          : `ledger · open · ${ledger.evidence}`,
         source: ACCESS_DOCS,
       },
       {
         fixCommand: ledger.accessEnforced
           ? undefined
-          : `Apply Access app for ledger (see ${ACCESS_POLICY_PATH}) · bun run cloudflare:access:verify · curl -sI ${LEDGER_ACCESS_URL} | head`,
+          : `bun run cloudflare:access:verify · apply ledger app in ${ACCESS_POLICY_PATH}`,
         impact: 'Ledger tunnel origin must not be reachable without Cloudflare Access login',
         autoFixable: false,
         timeToFix: ledger.accessEnforced ? undefined : '15–45 min',
@@ -104,6 +104,8 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
     fetch: opts.fetch,
     timeoutMs: opts.timeoutMs,
   });
+  const scoreBit = portal.custom.accessEnforced ? 'score Access' : 'score open';
+  const pagesBit = portal.pages.accessEnforced ? 'pages.dev Access' : 'pages.dev open';
   checks.push(
     withMeta(
       {
@@ -111,13 +113,15 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
         level: 'warn',
         group: 'infra',
         ok: portal.ok,
-        message: portal.message,
+        message: portal.ok
+          ? `portal · Access · ${scoreBit} · ${pagesBit}`
+          : `portal · gap · ${scoreBit} · ${pagesBit}`,
         source: ACCESS_DOCS,
       },
       {
         fixCommand: portal.ok
           ? undefined
-          : `Promote staged Access for ${PORTAL_ACCESS_CUSTOM_URL} + Pages Access on project-r-score.pages.dev · ${ACCESS_POLICY_PATH}`,
+          : `Promote /portal Access on score + pages.dev (${ACCESS_POLICY_PATH})`,
         impact:
           'Operator portal is public until custom-domain /portal and pages.dev Access are both live',
         autoFixable: false,

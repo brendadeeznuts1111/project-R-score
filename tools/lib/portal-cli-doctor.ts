@@ -39,7 +39,15 @@ import {
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
-import { cliTone, columnTable, frameBlock, kvLines } from '../../lib/portal/cli-chrome.ts';
+import {
+  cliTone,
+  columnTable,
+  displayWidth,
+  frameBlock,
+  kvLines,
+  padDisplay,
+  truncateDisplay,
+} from '../../lib/portal/cli-chrome.ts';
 import { runCatalogChecks } from './portal-cli-doctor-catalog.ts';
 import { runBunfigChecks } from './portal-cli-doctor-bunfig.ts';
 import { runInfraChecks } from './portal-cli-doctor-infra.ts';
@@ -607,10 +615,16 @@ function doctorModeLabel(r: PortalDoctorReport): string {
     .join(' · ');
 }
 
-/** Compact default listing with framed chrome + grouped checks. */
+/**
+ * Compact default listing — one check per line inside a frame.
+ * Long prose/fix URLs stay in --verbose (default must stay scannable).
+ */
 export function formatPortalDoctor(r: PortalDoctorReport): string {
   const display = filterDoctorChecks(r.checks, r.failedOnly);
   const body: string[] = [];
+  // Frame inner content ≈ width - 4 (│ + spaces)
+  const frameWidth = 80;
+  const lineMax = frameWidth - 4;
 
   let lastGroup: PortalDoctorGroup | undefined;
   for (const c of display) {
@@ -620,22 +634,26 @@ export function formatPortalDoctor(r: PortalDoctorReport): string {
       lastGroup = c.group;
     }
     const mark = c.ok ? cliTone.ok(statusMark(c)) : cliTone.fail(statusMark(c));
-    body.push(`  ${mark} [${c.level}] ${c.id}`);
-    body.push(cliTone.dim(`       ${c.message}`));
-    if (!c.ok && c.fixCommand) {
-      body.push(cliTone.dim(`       fix · ${c.fixCommand}`));
-    }
+    // Fixed-width level tag: [fatal] [warn]  [info]  — no mid-bracket padding
+    const levelTag = padDisplay(`[${c.level}]`, 7);
+    // `  ✓ [fatal] id  message…` — truncate message so the line never wraps the frame
+    const head = `  ${mark} ${levelTag} ${c.id}`;
+    const headW = displayWidth(Bun.stripANSI(head));
+    const gap = 2;
+    const msgBudget = Math.max(12, lineMax - headW - gap);
+    const msg = truncateDisplay(c.message, msgBudget);
+    body.push(`${head}${' '.repeat(gap)}${cliTone.dim(msg)}`);
   }
 
   body.push('');
   for (const line of formatDoctorSummaryFooter(r.summary, r.failedOnly).split('\n')) {
-    body.push(line);
+    body.push(truncateDisplay(line, lineMax));
   }
 
   const mode = doctorModeLabel(r);
   return (
     frameBlock('portal doctor', r.ok ? 'OK' : 'FAIL', body, {
-      width: 88,
+      width: frameWidth,
       ok: r.ok,
     }) + (mode ? `\n${cliTone.dim(`  mode · ${mode}`)}` : '')
   );

@@ -51,7 +51,7 @@ describe('cloudflare-access-live', () => {
       fetch: async () => new Response('ok', { status: 200 }),
     });
     expect(open.accessEnforced).toBe(false);
-    expect(open.evidence).toContain('public');
+    expect(open.evidence).toMatch(/public/);
   });
 
   test('probePortalAccess requires both score and pages.dev', async () => {

@@ -56,18 +56,10 @@ export function isCloudflareAccessEnforced(
 
 function evidenceFromResponse(status: number, headers: Headers, enforced: boolean): string {
   if (enforced) {
-    const loc = headers.get('location') ?? '';
-    if (loc) {
-      try {
-        const host = new URL(loc).host;
-        return `${status} → ${host} (Access)`;
-      } catch {
-        return `${status} → Access login`;
-      }
-    }
-    return `${status} · www-authenticate Cloudflare-Access`;
+    // Short: "302 Access" — host detail is redundant for the doctor one-liner
+    return `${status} Access`;
   }
-  return `${status} public (no Access challenge)`;
+  return `${status} public`;
 }
 
 /**
@@ -128,13 +120,10 @@ export async function probePortalAccess(opts?: {
   const custom = await probeCloudflareAccess(PORTAL_ACCESS_CUSTOM_URL, opts);
   const pages = await probeCloudflareAccess(PORTAL_ACCESS_PAGES_URL, opts);
   const ok = custom.accessEnforced && pages.accessEnforced;
-  const parts = [`score ${custom.evidence}`, `pages.dev ${pages.evidence}`];
   return {
     ok,
     custom,
     pages,
-    message: ok
-      ? `Access on score + pages.dev /portal · ${parts.join(' · ')}`
-      : `Access gap: ${parts.join(' · ')} — promote staged score…/portal policy + Pages Access`,
+    message: `score ${custom.evidence} · pages.dev ${pages.evidence}`,
   };
 }
