@@ -123,6 +123,41 @@ function joinOrDash(xs: string[]): string {
   return xs.map(x => (x.startsWith('`') ? x : `\`${x}\``)).join(' · ');
 }
 
+/**
+ * Format one grounded capability for a markdown table cell.
+ * - Already contains backticks → emit as-is (JSON may pre-format multi-token cells).
+ * - Embedded ` · ` → format each piece, rejoin.
+ * - ` / ` multi-token (e.g. Bun.file / readJson) → backtick each side, not the whole string.
+ * - Otherwise wrap the whole token/phrase once.
+ */
+function formatCapability(c: string): string {
+  const s = c.trim();
+  if (!s) return s;
+  if (s.includes('`')) return s;
+  if (s.includes(' · ')) {
+    return s
+      .split(' · ')
+      .map(part => formatCapability(part))
+      .join(' · ');
+  }
+  if (s.includes(' / ')) {
+    return s
+      .split(' / ')
+      .map(part => {
+        const p = part.trim();
+        if (!p) return p;
+        return p.includes('`') ? p : `\`${p}\``;
+      })
+      .join(' / ');
+  }
+  return `\`${s}\``;
+}
+
+function formatCapabilities(xs: string[]): string {
+  if (!xs || xs.length === 0) return '—';
+  return xs.map(formatCapability).join(' · ');
+}
+
 function joinPlain(xs: string[]): string {
   if (!xs || xs.length === 0) return '—';
   return xs.join(' · ');
@@ -148,7 +183,7 @@ function buildOwnershipTable(docs: DocRow[]): string {
     '| Doc | Grounded capabilities | Maintainer | Triggers | Related commands |\n' +
     '|-----|----------------------|------------|----------|------------------|';
   const rows = docs.map(d => {
-    const caps = d.groundedCapabilities.map(c => (c.startsWith('`') ? c : `\`${c}\``)).join(' · ');
+    const caps = formatCapabilities(d.groundedCapabilities);
     const triggers = joinPlain(d.triggers);
     const cmds = d.relatedCommands.map(c => (c.startsWith('`') ? c : `\`${c}\``)).join(' · ');
     // Short display name for long doc titles in second table

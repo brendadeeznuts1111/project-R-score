@@ -30,7 +30,7 @@ Decision tables below are **generated** from [`docs-index.json`](./docs-index.js
 
 | Doc | Grounded capabilities | Maintainer | Triggers | Related commands |
 |-----|----------------------|------------|----------|------------------|
-| [REGISTRY.md](./REGISTRY.md) | `Bun.Glob (scanFilesSync)` · `Bun.file / readJson` · `Bun.write` | docs / packages tooling | new workspace member · version bump · triage change | `bun run packages:list` · `bun run packages:list --write` |
+| [REGISTRY.md](./REGISTRY.md) | `Bun.Glob (scanFilesSync)` · `Bun.file` / `readJson` · `Bun.write` | docs / packages tooling | new workspace member · version bump · triage change | `bun run packages:list` · `bun run packages:list --write` |
 | [monorepo-workspaces.md](../harness/tenants/monorepo-workspaces.md) | `workspace globs` · `catalog:` · `bun run --filter` · `bun outdated --filter` | platform | Bun PM upgrade · workspace membership change | `bun run validate:workspaces` · `bun run --filter '*'` · `bun outdated --filter` |
 | [§ bun --filter](../harness/tenants/monorepo-workspaces.md#bun---filter-canonical) | `--filter` · `--if-present` · `--parallel` · `--sequential` · `--workspaces` | platform | Bun filter semantics change | `bun run --parallel --filter '*'` · `bun install --filter` · `bun outdated --filter` |
 | [UNIFIED catalogs](../UNIFIED.md#catalogs-and-workspace-protocols) | `catalog:` · `workspace:*` · `frozenLockfile` · `install.exact` | platform | install policy change · catalog pin bump | `bun install` · `bun run validate:workspaces` |
@@ -102,6 +102,8 @@ portal-cli is **not** `@factorywager/portal-cli` and is **not** listed under roo
 ## Day-to-day commands
 
 **Capability map:** Commands below use APIs and CLIs from the [Grounded capability map](../../AGENTS.md#grounded-capability-map) where applicable (`Bun.spawn`, `Bun.write`, `Bun.file`, `Bun.Glob` / glob scan, `Bun.color`, `Bun.main` for CLI entry, pass-cli for secrets) plus workspace **`--filter`** as documented in [pm/filter](https://bun.com/docs/pm/filter).
+
+**PM surface:** `bun run portal-cli pm …` (pack · ls · version · pkg · trust · cache · hash) — rows in the [Grounded capability map](../../AGENTS.md#grounded-capability-map); do not invent flags beyond [bun.com/docs/pm/cli/pm](https://bun.com/docs/pm/cli/pm).
 
 ```bash
 # Workspace integrity
