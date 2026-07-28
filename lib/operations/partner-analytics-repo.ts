@@ -14,6 +14,7 @@ import {
   type EnrichedLimitRaise,
   type LimitRaise,
 } from '../account-limits-repo.ts';
+import { buildReportProofFromValue, type ReportHashAlgorithm } from '../security/report-proof.ts';
 
 export type RaiseContextMetrics = {
   active_players_7d: number;
@@ -37,6 +38,23 @@ export type RaiseContextRow = RaiseContextMetrics & {
   node_id: string; // brand-ok — partner slug
   limit_record_id: number; // brand-ok — partner_account_limits.id
   snapshot_at?: number;
+  proof_algorithm?: ReportHashAlgorithm | null;
+  proof_digest?: string | null;
+  proof_hmac?: string | null;
+};
+
+export type RaiseContextProofStatus = {
+  algorithm: ReportHashAlgorithm | null;
+  digestValid: boolean;
+  signed: boolean;
+  hmacValid: boolean | null;
+  valid: boolean;
+};
+
+export type RaiseContextProofSealResult = {
+  sealed: number;
+  signed: number;
+  invalid: number;
 };
 
 export type MultiFactorScore = {
@@ -51,6 +69,7 @@ export type MultiFactorEnrichedRaise = EnrichedLimitRaise & {
   multi_factor_score: number;
   top_contributing_factors: string[];
   factor_scores: Record<string, number>;
+  context_proof: RaiseContextProofStatus | null;
 };
 
 type FactorRange = { min: number; max: number; invert?: boolean };
@@ -102,6 +121,67 @@ function normalize(raw: number, range: FactorRange): number {
   return clamp01(n);
 }
 
+function contextMetricsFromRow(row: RaiseContextRow): RaiseContextMetrics {
+  return {
+    active_players_7d: row.active_players_7d,
+    new_players_7d: row.new_players_7d,
+    total_handle_7d: row.total_handle_7d,
+    avg_clv_7d: row.avg_clv_7d,
+    top_tier_player_count: row.top_tier_player_count,
+    violation_count_30d: row.violation_count_30d,
+    chargeback_count_30d: row.chargeback_count_30d,
+    kyc_pass_rate: row.kyc_pass_rate,
+    market_volatility_index: row.market_volatility_index,
+    peak_betting_hours: row.peak_betting_hours,
+    sportsbook_share: row.sportsbook_share,
+    partner_profit_30d: row.partner_profit_30d,
+    partner_roi_30d: row.partner_roi_30d,
+  };
+}
+
+function raiseContextProofBody(
+  nodeId: string, // brand-ok — partner tree node slug
+  limitRecordId: number,
+  metrics: RaiseContextMetrics,
+  snapshotAt: number
+) {
+  return {
+    node_id: nodeId,
+    limit_record_id: limitRecordId,
+    ...metrics,
+    snapshot_at: snapshotAt,
+  };
+}
+
+function constantTimeTextEqual(left: string, right: string): boolean {
+  if (left.length !== right.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < left.length; i++) {
+    mismatch |= left.charCodeAt(i) ^ right.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
+function ensureRaiseContextProofColumns(db: Database): void {
+  const columns = new Set(
+    (
+      db.query(`PRAGMA table_info(limit_raise_context)`).all() as Array<{
+        name: string;
+      }>
+    ).map(column => column.name)
+  );
+  const additions = [
+    ['proof_algorithm', 'TEXT'],
+    ['proof_digest', 'TEXT'],
+    ['proof_hmac', 'TEXT'],
+  ] as const;
+  for (const [name, sqlType] of additions) {
+    if (!columns.has(name)) {
+      db.run(`ALTER TABLE limit_raise_context ADD COLUMN ${name} ${sqlType}`);
+    }
+  }
+}
+
 /** Pure multi-factor score (no DB). */
 export function computeMultiFactorScore(context: RaiseContextMetrics): MultiFactorScore {
   let totalScore = 0;
@@ -139,6 +219,7 @@ export class PartnerAnalyticsRepository {
     private nodeId: string // brand-ok — partner tree node slug
   ) {
     ensureAccountLimitsSchema(db);
+    ensureRaiseContextProofColumns(db);
     this.limits = new AccountLimitsRepository(db);
   }
 
@@ -162,13 +243,17 @@ export class PartnerAnalyticsRepository {
   ): void {
     // brand-ok — limit_record_id is partner_account_limits.id
     const at = snapshotAt ?? Math.floor(Date.now() / 1000);
+    const proof = buildReportProofFromValue(
+      raiseContextProofBody(this.nodeId, limitRecordId, metrics, at)
+    );
     this.db.run(
       `INSERT INTO limit_raise_context (
          node_id, limit_record_id, active_players_7d, new_players_7d, total_handle_7d,
          avg_clv_7d, top_tier_player_count, violation_count_30d, chargeback_count_30d,
          kyc_pass_rate, market_volatility_index, peak_betting_hours, sportsbook_share,
-         partner_profit_30d, partner_roi_30d, snapshot_at
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         partner_profit_30d, partner_roi_30d, snapshot_at,
+         proof_algorithm, proof_digest, proof_hmac
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         this.nodeId,
         limitRecordId,
@@ -186,6 +271,9 @@ export class PartnerAnalyticsRepository {
         metrics.partner_profit_30d,
         metrics.partner_roi_30d,
         at,
+        proof.algorithm,
+        proof.digest,
+        proof.hmac ?? null,
       ]
     );
   }
@@ -200,6 +288,92 @@ export class PartnerAnalyticsRepository {
       )
       .get(this.nodeId, limitRecordId) as RaiseContextRow | null;
     return row ?? null;
+  }
+
+  verifyRaiseContextProof(context: RaiseContextRow): RaiseContextProofStatus {
+    const algorithm = context.proof_algorithm ?? null;
+    const digest = context.proof_digest ?? null;
+    if (!algorithm || !digest || context.snapshot_at == null) {
+      return {
+        algorithm,
+        digestValid: false,
+        signed: Boolean(context.proof_hmac),
+        hmacValid: null,
+        valid: false,
+      };
+    }
+
+    const body = raiseContextProofBody(
+      context.node_id,
+      context.limit_record_id,
+      contextMetricsFromRow(context),
+      context.snapshot_at
+    );
+    const expected = buildReportProofFromValue(body, {
+      algorithm,
+      tryHmac: Boolean(context.proof_hmac),
+    });
+    const digestValid = constantTimeTextEqual(digest, expected.digest);
+    const signed = Boolean(context.proof_hmac);
+    const hmacValid = signed
+      ? expected.hmac
+        ? constantTimeTextEqual(context.proof_hmac!, expected.hmac)
+        : null
+      : null;
+
+    return {
+      algorithm,
+      digestValid,
+      signed,
+      hmacValid,
+      valid: digestValid && (!signed || hmacValid === true),
+    };
+  }
+
+  /**
+   * Seal legacy rows that predate proof columns and add HMAC when signing
+   * material later becomes available. Existing mismatched digests are never
+   * overwritten; they remain visible as invalid evidence.
+   */
+  sealMissingRaiseContextProofs(sinceTimestamp = 0): RaiseContextProofSealResult {
+    const rows = this.db
+      .query(
+        `SELECT * FROM limit_raise_context
+         WHERE node_id = ? AND snapshot_at >= ?
+         ORDER BY snapshot_at ASC`
+      )
+      .all(this.nodeId, sinceTimestamp) as RaiseContextRow[];
+    const result: RaiseContextProofSealResult = { sealed: 0, signed: 0, invalid: 0 };
+
+    for (const row of rows) {
+      if (row.id == null || row.snapshot_at == null) continue;
+      const body = raiseContextProofBody(
+        row.node_id,
+        row.limit_record_id,
+        contextMetricsFromRow(row),
+        row.snapshot_at
+      );
+      const proof = buildReportProofFromValue(body);
+      if (row.proof_digest && !constantTimeTextEqual(row.proof_digest, proof.digest)) {
+        result.invalid++;
+        continue;
+      }
+
+      const needsDigest = !row.proof_digest || !row.proof_algorithm;
+      const needsHmac = !row.proof_hmac && Boolean(proof.hmac);
+      if (!needsDigest && !needsHmac) continue;
+
+      this.db.run(
+        `UPDATE limit_raise_context
+         SET proof_algorithm = ?, proof_digest = ?, proof_hmac = COALESCE(proof_hmac, ?)
+         WHERE id = ? AND node_id = ?`,
+        [proof.algorithm, proof.digest, proof.hmac ?? null, row.id, this.nodeId]
+      );
+      if (needsDigest) result.sealed++;
+      if (needsHmac) result.signed++;
+    }
+
+    return result;
   }
 
   /**
@@ -301,6 +475,7 @@ export class PartnerAnalyticsRepository {
         multi_factor_score: multi.score,
         top_contributing_factors: multi.topFactors,
         factor_scores: multi.factorScores,
+        context_proof: context ? this.verifyRaiseContextProof(context) : null,
       };
     });
   }

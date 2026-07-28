@@ -252,6 +252,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'snapshot from compliance-board.json; 503 if missing bake',
   },
   {
+    path: '/api/agents/v1/limits/raises',
+    name: 'Agent limit-raise context API',
+    category: 'api',
+    kind: 'simd-route',
+    okStatuses: [400, 401],
+    note: 'requires read auth plus node_id; returns scoped multi-factor context with proof',
+  },
+  {
     path: '/portal/toc/',
     name: 'TOC Ops portal',
     category: 'portal',

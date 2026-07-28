@@ -28,6 +28,7 @@ const db = openOperationsDb();
 ensureAccountLimitsSchema(db);
 const analytics = new PartnerAnalyticsRepository(db, nodeId);
 const written = analytics.captureMissingRaiseContexts(since);
+const proofs = analytics.sealMissingRaiseContextProofs(since);
 const enriched = analytics.getEnrichedRaisesWithContext(since);
 
 console.log(
@@ -36,6 +37,7 @@ console.log(
       node_id: nodeId,
       hours,
       contexts_written: written,
+      proofs,
       raises: enriched.length,
       multi: enriched.map(r => ({
         limit_id: r.limit_id,

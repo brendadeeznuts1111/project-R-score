@@ -80,6 +80,27 @@ describe('multi-factor limit raise context', () => {
     expect(repo.captureMissingRaiseContexts(now - 86400)).toBe(0);
   });
 
+  test('legacy context rows are sealed without overwriting mismatched evidence', () => {
+    const db = new Database(':memory:');
+    ensureAccountLimitsSchema(db);
+    const now = Math.floor(Date.now() / 1000);
+    const { nodeId } = seedAccountLimitsDemo(db, { nowSec: now, force: true });
+    const repo = new PartnerAnalyticsRepository(db, nodeId);
+    const raise = repo.detectRaises(now - 86400)[0]!;
+    const legacy = repo.getRaiseContext(raise.limit_id)!;
+    expect(repo.verifyRaiseContextProof(legacy).valid).toBe(false);
+
+    expect(repo.sealMissingRaiseContextProofs(now - 86400).sealed).toBe(1);
+    const sealed = repo.getRaiseContext(raise.limit_id)!;
+    expect(repo.verifyRaiseContextProof(sealed).valid).toBe(true);
+
+    db.run(`UPDATE limit_raise_context SET total_handle_7d = total_handle_7d + 1 WHERE id = ?`, [
+      sealed.id,
+    ]);
+    expect(repo.sealMissingRaiseContextProofs(now - 86400).invalid).toBe(1);
+    expect(repo.verifyRaiseContextProof(repo.getRaiseContext(raise.limit_id)!).valid).toBe(false);
+  });
+
   test('computeMultiFactorScore penalizes violations/chargebacks', () => {
     const healthy = computeMultiFactorScore({
       active_players_7d: 100,

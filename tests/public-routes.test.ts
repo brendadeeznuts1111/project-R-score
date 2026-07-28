@@ -21,6 +21,7 @@ describe('lib/http/public-routes', () => {
     expect(paths.has('/portal/health/')).toBe(true);
     expect(paths.has('/portal/compliance/')).toBe(true);
     expect(paths.has('/api/compliance')).toBe(true);
+    expect(paths.has('/api/agents/v1/limits/raises')).toBe(true);
     expect(paths.has('/registry/compliance-board.json')).toBe(true);
     expect(paths.has('/api/operations/summary')).toBe(true);
     expect(paths.has('/api/monitoring')).toBe(true);

@@ -57,6 +57,7 @@ import type { BunRequest } from 'bun';
 import { Database } from 'bun:sqlite';
 import { openOperationsDb, DEFAULT_OPS_DB_PATH } from '../lib/operations/db.ts';
 import { buildOpsSummary } from '../lib/operations/ops-summary.ts';
+import { handleLimitRaiseAgentRequest } from '../lib/operations/limit-raise-agent-api.ts';
 import { readLocalChannelEvents } from '../lib/channels/outbox.ts';
 import { parseOpsChannelTopic } from '../lib/channels/ops-channel-event.ts';
 import { collectMonitoring, renderMonitoringHtml } from '../lib/monitoring/index.ts';
@@ -859,6 +860,18 @@ async function liveMonitoringApi(): Promise<Response> {
   }
 }
 
+/** GET /api/agents/v1/limits/raises — scoped, proofed multi-factor raise context. */
+function agentLimitRaisesApi(req: Request): Response {
+  const authErr = requireReadAuth(req);
+  if (authErr) return authErr;
+  const db = openOperationsDb({ path: dbPath });
+  try {
+    return handleLimitRaiseAgentRequest(req, db);
+  } finally {
+    db.close();
+  }
+}
+
 /** GET /monitoring — server-rendered Bun.inspect.table dashboard. */
 async function monitoringPage(): Promise<Response> {
   try {
@@ -1446,6 +1459,9 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/env' || path === '/api/env/') return envStatus();
   if (path === '/api/content-type' || path === '/api/content-type/') return contentTypeApi();
   if (path === '/api/compliance' || path === '/api/compliance/') return complianceBoardApi();
+  if (path === '/api/agents/v1/limits/raises' || path === '/api/agents/v1/limits/raises/') {
+    return agentLimitRaisesApi(req);
+  }
 
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
@@ -1815,6 +1831,8 @@ function buildPublicRoutes() {
     '/api/monitoring': () => liveMonitoringApi(),
     '/api/compliance': () => complianceBoardApi(),
     '/api/compliance/': () => complianceBoardApi(),
+    '/api/agents/v1/limits/raises': (req: Request) => agentLimitRaisesApi(req),
+    '/api/agents/v1/limits/raises/': (req: Request) => agentLimitRaisesApi(req),
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
     '/api/dod': (req: Request) => dodApi(req),
