@@ -80,7 +80,7 @@ describe('Bun.inspect', () => {
 });
 
 describe('Bun.Terminal', () => {
-  test('Bun.Terminal constructor produces instance with isTTY + columns', () => {
+  test('should create a Terminal instance exposing isTTY boolean and columns number', () => {
     try {
       const T = (Bun as any).Terminal;
       if (typeof T === 'function') {
@@ -257,7 +257,7 @@ describe('formatTable — border modes', () => {
 });
 
 describe('formatTable — rendering modes', () => {
-  test('compact mode has no box drawing', () => {
+  test('should render compact mode without any box-drawing characters', () => {
     const result = formatTable('Compact', DIMENSION_COLUMNS, sampleRows.slice(0, 1), {
       compact: true,
       colors: false,
@@ -267,7 +267,7 @@ describe('formatTable — rendering modes', () => {
     expect(result).toContain('DraftKings');
   });
 
-  test('renders with footer', () => {
+  test('should include footer text below the table body', () => {
     const result = formatTable('Footer', DIMENSION_COLUMNS, sampleRows, {
       footer: 'Total: 3 items',
       colors: false,
@@ -275,7 +275,7 @@ describe('formatTable — rendering modes', () => {
     expect(result).toContain('Total: 3 items');
   });
 
-  test('renders with separator after row', () => {
+  test('should insert visual separator after specified row index', () => {
     const result = formatTable('Sep', DIMENSION_COLUMNS, sampleRows, {
       separatorAfter: [0],
       colors: false,
@@ -283,12 +283,12 @@ describe('formatTable — rendering modes', () => {
     expect(result).toBeTruthy();
   });
 
-  test('empty rows show no-data state', () => {
+  test('should display no-data placeholder when rows array is empty', () => {
     const result = formatTable('Empty', DIMENSION_COLUMNS, [], { colors: false });
     expect(result).toContain('no data');
   });
 
-  test('renders title without color when colors disabled', () => {
+  test('should strip ANSI color codes from title when colors:false', () => {
     const result = formatTable('PlainTitle', DIMENSION_COLUMNS, sampleRows.slice(0, 1), {
       colors: false,
     });
@@ -327,7 +327,7 @@ describe('formatTable — data edge cases', () => {
     if (maxW < 10) expect(result).toContain('…');
   });
 
-  test('50 rows renders all', () => {
+  test('should render all 50 rows without truncation or data loss', () => {
     const many = Array.from({ length: 50 }, (_, i) => ({
       label: `Row ${i}`, totalChanges: i, raises: i % 3, decreases: i % 2,
       netDelta: i * 100, avgMagnitudePct: i, trend7d: i * 10,
@@ -337,7 +337,7 @@ describe('formatTable — data edge cases', () => {
     expect(result).toContain('Row 49');
   });
 
-  test('negative values render correctly', () => {
+  test('should render negative netDelta and trend values with minus sign', () => {
     const neg = [{ label: 'Loss', totalChanges: 1, raises: 0, decreases: 1, netDelta: -5000, avgMagnitudePct: -50, trend7d: -1000 }];
     const result = formatTable('Neg', DIMENSION_COLUMNS, neg, { colors: false });
     expect(result).toContain('-');
@@ -411,7 +411,7 @@ describe('formatTableNative (Bun.inspect.table)', () => {
     expect(result).toContain(expected);
   });
 
-  test('empty input returns no-data', () => {
+  test('should return no-data placeholder string when input array is empty', () => {
     expect(formatTableNative([])).toBe('(no data)');
   });
 });
@@ -433,7 +433,7 @@ describe('Column alignment', () => {
     expect(result).toContain(String(val));
   });
 
-  test('center align works', () => {
+  test('should center-align column content within the specified column width', () => {
     const centerCols: ColumnDef[] = [
       { key: 'name', label: 'Name', align: 'center', width: 20 },
     ];
@@ -444,7 +444,7 @@ describe('Column alignment', () => {
 
 // ── 10. Formatting stability ─────────────────────────────────────────────
 describe('Formatting stability', () => {
-  test('deterministic: same input = same output', () => {
+  test('should produce identical output for identical inputs — idempotent', () => {
     const a = formatTable('Stable', DIMENSION_COLUMNS, sampleRows, { colors: false });
     const b = formatTable('Stable', DIMENSION_COLUMNS, sampleRows, { colors: false });
     expect(a).toBe(b);
@@ -487,7 +487,7 @@ describe('formatTableNative edge cases', () => {
 
 // ── 12. Best practices: assertion counting ────────────────────────────────
 describe('assertion counting', () => {
-  test('expect.hasAssertions() verifies at least one assertion runs', () => {
+  test('should fail test when no assertions execute — expect.hasAssertions guard', () => {
     expect.hasAssertions();
     const result = formatTable('Test', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { colors: false });
     expect(result).toContain('DraftKings');
@@ -502,7 +502,7 @@ describe('assertion counting', () => {
     expect(fmt.dollar(input)).toBe(expected);
   });
 
-  test('expect.assertions(3) for multi-assertion stability check', () => {
+  test('should verify exactly three assertions execute during a single test run', () => {
     expect.assertions(3);
     const result = formatTable('Count', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { colors: false });
     expect(result).toContain('Count');
@@ -521,7 +521,7 @@ describe('conditional tests', () => {
     expect(typeof t.columns === 'number' || t.columns === undefined).toBe(true);
   });
 
-  test('always runs — fmt handles null gracefully', () => {
+  test('should return em-dash or ellipsis placeholders for all format helpers when given null', () => {
     expect.hasAssertions();
     expect(fmt.dollar(null)).toBe('\u2014');
     expect(fmt.pct(null)).toBe('\u2014');
@@ -531,7 +531,7 @@ describe('conditional tests', () => {
 
 // ── 14. test.failing for known edge cases ─────────────────────────────────
 describe('known edge cases', () => {
-  test('fmt.dollar with NaN returns —', () => {
+  test('should return em-dash for NaN input instead of dollar-zero', () => {
     expect(fmt.dollar(NaN)).toBe('\u2014');
   });
 });
@@ -552,13 +552,13 @@ describe('stability with retry', () => {
 
 // ── 16. Type testing with expectTypeOf ────────────────────────────────────
 describe('type-level contracts', () => {
-  test('ColumnDef key is a string', () => {
+  test('should enforce that ColumnDef.key is always a string type', () => {
     const col: ColumnDef = { key: 'test', label: 'Test' };
     expect(typeof col.key).toBe('string');
     expect(typeof col.label).toBe('string');
   });
 
-  test('color functions exist and return strings', () => {
+  test('should have all color transform functions that return string output', () => {
     expect(typeof color.green).toBe('function');
     expect(typeof color.green('test')).toBe('string');
     expect(typeof color.red).toBe('function');
@@ -566,7 +566,7 @@ describe('type-level contracts', () => {
     expect(typeof fmt.dollar(100)).toBe('string');
   });
 
-  test('formatTable exists and returns strings', () => {
+  test('should have formatTable function that returns a non-empty string for valid input', () => {
     expect(typeof formatTable).toBe('function');
     expect(typeof formatTable('t', [], [])).toBe('string');
   });
@@ -585,13 +585,13 @@ describe('floating point precision', () => {
 
 // ── 18. Object matchers ───────────────────────────────────────────────────
 describe('object matchers', () => {
-  test('toMatchObject partial match', () => {
+  test('should match subset of object properties using toMatchObject', () => {
     const row = sampleRows[0];
     expect(row).toMatchObject({ label: 'DraftKings', totalChanges: 5 });
     expect(row).not.toMatchObject({ label: 'FanDuel' });
   });
 
-  test('toHaveLength for array size', () => {
+  test('should verify array lengths for sample data and column definitions', () => {
     expect(sampleRows).toHaveLength(3);
     expect(limitChangeRows).toHaveLength(3);
     expect(DIMENSION_COLUMNS).toHaveLength(7);
@@ -610,14 +610,14 @@ describe('setup/teardown pattern', () => {
     testRow = {};
   });
 
-  test('beforeEach provides fresh test data', () => {
+  test('should receive fresh test data initialized by beforeEach hook', () => {
     expect.assertions(2);
     expect(testRow.label).toBe('Setup');
     const result = formatTable('Setup', DIMENSION_COLUMNS, [testRow], { colors: false });
     expect(result).toContain('Setup');
   });
 
-  test('afterEach clears state — testRow is fresh each time', () => {
+  test('should have testRow re-initialized by beforeEach after afterEach cleanup', () => {
     expect.assertions(1);
     expect(testRow.label).toBe('Setup');
   });
@@ -625,14 +625,14 @@ describe('setup/teardown pattern', () => {
 
 // ── 20. Error handling ────────────────────────────────────────────────────
 describe('error handling', () => {
-  test('formatTable with invalid column handles gracefully', () => {
+  test('should not throw when given a column definition with nonexistent data key', () => {
     expect.assertions(1);
     const badCols = [{ key: 'nonexistent', label: 'Bad' }];
     const result = formatTable('Bad', badCols, sampleRows, { colors: false });
     expect(result).toBeTruthy();
   });
 
-  test('formatTableNative with null input handles gracefully', () => {
+  test('should return a string without crashing when input is null', () => {
     expect.assertions(1);
     try {
       const result = formatTableNative(null as any);
