@@ -1,9 +1,11 @@
 // @see https://bun.com/docs/test
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals (stable twin)
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * bake-doctor portable fingerprint — CI/laptop compare ignores infra|gates.
  * Check-report helpers: forensics JSON shape · step summary · GHA annotations.
+ * Product gate = sha256 fingerprint; Bun.deepEquals is the stable-payload twin for tests.
  */
 import { afterAll, describe, expect, test } from 'bun:test';
 import { joinPath, resolvePath } from '../scripts/lib/fs-bun.ts';
@@ -13,6 +15,8 @@ import {
   PORTABLE_DOCTOR_GROUPS,
   diffDoctorStates,
   doctorStateFingerprint,
+  doctorStatesFingerprintAgree,
+  doctorStatesStableEqual,
   escapeGithubActionsMessage,
   formatDoctorStateCheckSummary,
   formatDoctorStateGithubAnnotations,
@@ -268,6 +272,30 @@ describe('bake-doctor portable fingerprint', () => {
     expect(doctorStateFingerprint(a, { portable: false })).not.toBe(
       doctorStateFingerprint(b, { portable: false })
     );
+  });
+
+  test('deepEquals stable twin agrees with fingerprint (portable)', () => {
+    const a = baseState();
+    const b = baseState({
+      generatedAt: '1999-01-01T00:00:00.000Z',
+      checks: baseState().checks.map(c =>
+        c.group === 'infra'
+          ? { ...c, ok: false, message: 'infra noise' }
+          : { ...c, message: 'host path /Users/other/.bunfig.toml' }
+      ),
+    });
+    expect(doctorStatesStableEqual(a, b)).toBe(true);
+    expect(doctorStateFingerprint(a)).toBe(doctorStateFingerprint(b));
+    expect(doctorStatesFingerprintAgree(a, b)).toBe(true);
+
+    const drifted = baseState({
+      checks: baseState().checks.map(c =>
+        c.id === 'catalog-json-schema' ? { ...c, ok: false } : c
+      ),
+    });
+    expect(doctorStatesStableEqual(a, drifted)).toBe(false);
+    expect(doctorStateFingerprint(a)).not.toBe(doctorStateFingerprint(drifted));
+    expect(doctorStatesFingerprintAgree(a, drifted)).toBe(false);
   });
 
   test('messages and generatedAt never affect fingerprint', () => {

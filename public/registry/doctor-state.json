@@ -1,7 +1,7 @@
 {
   "kind": "portal-doctor-state",
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T22:14:43.065Z",
+  "generatedAt": "2026-07-28T22:57:54.334Z",
   "ok": true,
   "tone": "green",
   "full": false,
@@ -74,7 +74,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/capability-map-subset.json present · 43m ago",
+      "message": "public/registry/capability-map-subset.json present · 4m ago",
       "autoFixable": true
     },
     {
@@ -82,7 +82,7 @@
       "group": "bakes",
       "level": "info",
       "ok": true,
-      "message": "public/registry/bunfig-state.json present · 1h ago",
+      "message": "public/registry/bunfig-state.json present · 2h ago",
       "autoFixable": true
     },
     {

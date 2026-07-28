@@ -4,6 +4,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals (stable twin of fingerprint)
 /**
  * Bake portal doctor state → public/registry/doctor-state.json
  *
@@ -271,6 +272,38 @@ export function doctorStateFingerprint(state: DoctorState, opts: StableDoctorOpt
   return new Bun.CryptoHasher('sha256').update(payload).digest('hex');
 }
 
+/**
+ * Structural equality of stable doctor-state (portable by default).
+ *
+ * **Product CI gate** remains fingerprint hex equality + field drift lines.
+ * This is the Bun.deepEquals twin for tests / local asserts — same stripped
+ * payload as {@link doctorStateFingerprint}, not free-text messages.
+ *
+ * Live install policy is NOT deepEquals: use `===` / includes against
+ * `lib/install/machine-bunfig-policy.ts`. Bun.semver is for version floors only.
+ */
+export function doctorStatesStableEqual(
+  a: DoctorState,
+  b: DoctorState,
+  opts: StableDoctorOpts = {}
+): boolean {
+  return Bun.deepEquals(stableDoctorState(a, opts), stableDoctorState(b, opts), true);
+}
+
+/**
+ * Consistency: stable deepEquals ⇔ same fingerprint (same opts).
+ * Used by tests; CI still logs fingerprint + drift for greppability.
+ */
+export function doctorStatesFingerprintAgree(
+  a: DoctorState,
+  b: DoctorState,
+  opts: StableDoctorOpts = {}
+): boolean {
+  const deep = doctorStatesStableEqual(a, b, opts);
+  const hash = doctorStateFingerprint(a, opts) === doctorStateFingerprint(b, opts);
+  return deep === hash ? deep : false;
+}
+
 /** Field-level drift lines for CI logs (empty when equal). Portable by default. */
 export function diffDoctorStates(
   fresh: DoctorState,
@@ -426,7 +459,10 @@ export async function checkDoctorState(opts: BakeDoctorOpts = {}): Promise<Docto
     }
     const fingerprintDisk = doctorStateFingerprint(onDisk, { portable });
     const drift = diffDoctorStates(fresh, onDisk, { portable });
-    const equal = fingerprintFresh === fingerprintDisk && drift.length === 0;
+    // Product gate: hex fingerprint + explicit drift (logs/annotations).
+    // Bun.deepEquals(stableA, stableB) is the test twin — see doctorStatesStableEqual.
+    const hashEqual = fingerprintFresh === fingerprintDisk;
+    const equal = hashEqual && drift.length === 0;
     return {
       ok: equal,
       path,

@@ -83,7 +83,9 @@ Operator map for harness-gates + local reproduce. Tables over narrative.
 | `linker` · `bakes` · `catalog` · `bunfig` | `infra` (Access offline/live ok bits) · `gates` (`--full` spawns) |
 
 - Code: `PORTABLE_DOCTOR_GROUPS` in `tools/bake-doctor.ts`
-- Fingerprint: sha256 of stable fields (ids / ok / level / summary / byGroup) — **messages never fingerprinted**
+- **Product CI gate:** sha256 of stable fields (ids / ok / level / summary / byGroup) + field `drift[]` — **messages never fingerprinted**
+- **Test twin:** `doctorStatesStableEqual` = `Bun.deepEquals(stableA, stableB, true)` on the same stripped payload (not the public log signal)
+- **Live policy** (doctor bunfig · install:verify · audit): scalar `===` / `includes` vs `lib/install/machine-bunfig-policy.ts` — **not** deepEquals, **not** `Bun.semver`
 - Board JSON still lists all groups; bake sets `fingerprint` + `fingerprintPortable: true`
 - CI + laptop share the same hash after `machine:bunfig:ensure`
 
