@@ -250,3 +250,83 @@ describe('seat-desk-book-max with in-memory sqlite', () => {
     expect(htmlish).toContain('Δ −$1,000');
   });
 });
+
+describe('seat-desk-book-max multi-node + hardrock', () => {
+  test('sportsbookKeysMatch Hard Rock Florida ↔ hardrock', () => {
+    expect(sportsbookKeysMatch('Hard Rock Florida', 'hardrock')).toBe(true);
+    expect(normalizeSportsbookKey('Hard Rock Florida')).toContain('hardrock');
+  });
+
+  test('mergeLatestLimitsBySportsbook keeps newest per book', async () => {
+    const { mergeLatestLimitsBySportsbook } = await import('../lib/telegram/seat-desk-book-max.ts');
+    const older = {
+      limit_id: 1,
+      sportsbook: 'hardrock',
+      sport_id: 'nba',
+      market_id: 'spread',
+      bet_type: 'straight',
+      max_wager: 400,
+      recorded_at: 100,
+      previous_max: null,
+    };
+    const newer = {
+      limit_id: 2,
+      sportsbook: 'hardrock',
+      sport_id: 'nba',
+      market_id: 'spread',
+      bet_type: 'straight',
+      max_wager: 1000,
+      recorded_at: 200,
+      previous_max: 400,
+    };
+    const merged = mergeLatestLimitsBySportsbook([[older], [newer]]);
+    expect(merged).toHaveLength(1);
+    expect(merged[0]!.max_wager).toBe(1000);
+  });
+
+  test('loadBookMaxComparesForSeatDesk matches Hard Rock via call_sign node', () => {
+    const db = new Database(':memory:');
+    ensureAccountLimitsSchema(db);
+    db.run(`
+      CREATE TABLE tree_nodes (
+        id TEXT PRIMARY KEY,
+        call_sign TEXT,
+        active INTEGER DEFAULT 1
+      );
+    `);
+    db.run(`INSERT INTO tree_nodes (id, call_sign, active) VALUES ('node-ash-001', 'ASH-001', 1)`);
+    const repo = new AccountLimitsRepository(db);
+    repo.recordLimit({
+      node_id: 'node-ash-001' as never,
+      sportsbook: 'hardrock',
+      sport_id: 'nba',
+      market_id: 'spread',
+      bet_type: 'straight',
+      max_wager: 400,
+    });
+    repo.recordLimit({
+      node_id: 'node-ash-001' as never,
+      sportsbook: 'hardrock',
+      sport_id: 'nba',
+      market_id: 'spread',
+      bet_type: 'straight',
+      max_wager: 1000,
+    });
+    const record = {
+      partnerCode: 'ASH',
+      callSign: 'ASH-001',
+      outs: [
+        {
+          outId: 'ASH-1',
+          book: 'Hard Rock Florida',
+          maxBet: '500',
+        },
+      ],
+    } as SeatIntakeRecord;
+    const map = loadBookMaxComparesForSeatDesk(db, record);
+    expect(map).not.toBeNull();
+    const cmp = map!.get('ASH-1');
+    expect(cmp?.bookMax).toBe(1000);
+    db.close();
+  });
+});

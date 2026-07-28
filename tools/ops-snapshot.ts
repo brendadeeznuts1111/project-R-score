@@ -465,6 +465,32 @@ export async function buildRegistrySnapshot(options?: {
       }
     }
 
+    // TOC identity → sportsbook raises bridge (demo/snapshot:demo path).
+    // Opt out: --no-toc-limits or OPS_SNAPSHOT_TOC_LIMITS=0
+    const skipTocLimits =
+      argv.includes('--no-toc-limits') ||
+      Bun.env.OPS_SNAPSHOT_TOC_LIMITS === '0' ||
+      Bun.env.OPS_SNAPSHOT_TOC_LIMITS === 'false';
+    if (!skipTocLimits && !argv.includes('--no-seed')) {
+      try {
+        const { seedTocLimitBridge } = await import('../lib/operations/toc-limit-bridge-seed.ts');
+        const bridge = await seedTocLimitBridge(db, {
+          force: argv.includes('--seed-force') || argv.includes('--seed-toc-limits-force'),
+          captureContext: true,
+        });
+        if (bridge.nodes.length > 0) {
+          console.log(
+            `[ops-snapshot] toc-limit-bridge → source=${bridge.source} · targets=${bridge.targets} · raises=${bridge.raises} · rows=${bridge.limitRows}`
+          );
+        }
+      } catch (e) {
+        console.warn(
+          '[ops-snapshot] toc-limit-bridge skipped:',
+          e instanceof Error ? e.message : e
+        );
+      }
+    }
+
     // Multi-factor limit raises: capture missing context + bake Pages/agent snapshot.
     try {
       const { exportLimitRaisesSnapshot } = await import(

@@ -1221,8 +1221,16 @@ class OperationsDashboard extends HTMLElement {
             .map(r => {
               const outsSummary =
                 (r.outs ?? [])
-                  .map(o => `${esc(o.outNum)} ${esc(o.book)} · ${esc(o.status)}`)
-                  .join(' · ') || 'no outs on desk';
+                  .map(o => {
+                    const bookMax =
+                      o.bookMaxLine && o.bookMaxLine !== 'Book max (last known): no book history'
+                        ? ` · ${esc(o.bookMaxLine)}`
+                        : o.maxBet && o.maxBet !== '—'
+                          ? ` · maxBet ${esc(o.maxBet)}`
+                          : '';
+                    return `${esc(o.outNum)} ${esc(o.book)} · ${esc(o.status)}${bookMax}`;
+                  })
+                  .join('<br>') || 'no outs on desk';
               const checklist =
                 (r.checklist ?? [])
                   .map(c => `<li>${c.done ? '☑' : '☐'} ${esc(c.label)}</li>`)

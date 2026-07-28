@@ -235,20 +235,40 @@ export async function handleLimitRecordRequest(request: Request, db: Database): 
             /* tree_nodes optional */
           }
         }
-        // Optional multi-factor enrich (caller-supplied — outbox does not query analytics).
-        const multiFactorScore =
+        // Multi-factor: prefer body, else derive+seal context on the raise for package-forum HTML.
+        let multiFactorScore =
           typeof body.multi_factor_score === 'number' && Number.isFinite(body.multi_factor_score)
             ? body.multi_factor_score
             : typeof body.multiFactorScore === 'number' && Number.isFinite(body.multiFactorScore)
               ? body.multiFactorScore
               : undefined;
         const rawDrivers = body.top_drivers ?? body.topDrivers;
-        const topDrivers = Array.isArray(rawDrivers)
+        let topDrivers = Array.isArray(rawDrivers)
           ? rawDrivers
               .filter((d): d is string => typeof d === 'string' && d.trim().length > 0)
               .map(d => d.trim())
               .slice(0, 5)
           : undefined;
+        if (multiFactorScore == null || !topDrivers?.length) {
+          try {
+            const analytics = new PartnerAnalyticsRepository(db, nodeId);
+            if (!analytics.getRaiseContext(raise.limit_id)) {
+              const metrics = analytics.deriveContextMetrics(raise);
+              analytics.recordRaiseContext(raise.limit_id, metrics, raise.increased_at + 1);
+            }
+            const enriched = analytics
+              .getEnrichedRaisesWithContext(raise.increased_at - 60)
+              .find(r => r.limit_id === raise.limit_id);
+            if (enriched) {
+              if (multiFactorScore == null) multiFactorScore = enriched.multi_factor_score;
+              if (!topDrivers?.length) {
+                topDrivers = (enriched.top_contributing_factors ?? []).slice(0, 5);
+              }
+            }
+          } catch {
+            /* analytics optional */
+          }
+        }
         enqueueLimitRaiseAlert(db, {
           treeNodeId: nodeId,
           sportsbook,

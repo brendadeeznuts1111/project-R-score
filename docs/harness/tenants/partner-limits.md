@@ -121,8 +121,10 @@ bun run scan:domains --limit-only
 | `bun run ops:limits:analyze`      | Granular book/sport/market breakdown      |
 | `bun run ops:limits:analyze:json` | Analyze JSON only                         |
 | `bun run ops:limits:seed-patterns` | Connected multi-partner seed + registry bake (`seed-limit-patterns --force --bake`) |
-| `bun run ops:limits:seed-toc-bridge` | Seed raises on TOC identity treeNodeIds (ASH/PAT) for board join · `seed-toc-limit-bridge --force` · add `--bake` to refresh registry |
-| `bun run ops:snapshot`            | Bakes `limit-raises.json` (capture + 48h) |
+| `bun run ops:limits:seed-toc-bridge` | Seed raises on TOC identity UUIDs (ASH/PAT) · `--reseed` · optional bake via `:bake` |
+| `bun run ops:limits:smoke` | Cross-surface test bundle (bridge · join · outbox · seat book-max · UI) |
+| `bun run ops:snapshot:demo` | `ops:seed:all` (includes toc-bridge) + snapshot bake |
+| `bun run ops:snapshot` | Bakes `limit-raises.json` (capture + 48h; runs toc-bridge unless `--no-toc-limits`) |
 
 ```bash
 bun --console-depth=6 run ops:limits:demo     # deeper nested digests

@@ -1110,24 +1110,7 @@ export function formatLimitChangeCompact(
     .join('\n');
 }
 
-// ── Naming aliases (preferred modern names) ──────────────────────────────
-/** @deprecated Use `fetchLimitChanges` */
-export const queryRecentLimitChanges_ = queryRecentLimitChanges;
-export { queryRecentLimitChanges_ as queryRecentLimitChanges };
-
-/** @deprecated Use `recordAndNotifyPartner` */
-export const enqueueLimitRaiseForPartner_ = enqueueLimitRaiseForPartner;
-
-/** @deprecated Use `seedDemoLimits` */
-export const seedAccountLimitsDemo_ = seedAccountLimitsDemo;
-
-/** @deprecated Use `broadcastLimitEvent` */
-export const publishLimitAlertToChannel_ = publishLimitAlertToChannel;
-
-/** @deprecated Use `collectLimitAlerts` */
-export const collectDeepLimitAlerts_ = collectDeepLimitAlerts;
-
-// Preferred names
+// Preferred modern aliases (keep original exports stable for callers).
 export const fetchLimitChanges = queryRecentLimitChanges;
 export const recordAndNotifyPartner = enqueueLimitRaiseForPartner;
 export const seedDemoLimits = seedAccountLimitsDemo;

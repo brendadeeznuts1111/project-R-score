@@ -249,6 +249,59 @@ export function resolveNodeIdByCallSign(
   }
 }
 
+/**
+ * Resolve all tree node ids that may own sportsbook limits for a seat desk record:
+ * exact call_sign, partner CODE root, and CODE-% seats (TOC identity bridge).
+ */
+export function resolveNodeIdsForSeatDesk(
+  db: Database,
+  record: SeatIntakeRecord,
+  opts?: { nodeId?: string /* brand-ok — TreeNodeId wire */ }
+): string[] {
+  // brand-ok — TreeNodeId wires
+  const ids = new Set<string>();
+  if (opts?.nodeId?.trim()) ids.add(opts.nodeId.trim());
+  const byCs = resolveNodeIdByCallSign(db, record.callSign);
+  if (byCs) ids.add(byCs);
+  const code = (record.partnerCode ?? record.callSign.split('-')[0] ?? '').trim().toUpperCase();
+  if (code.length >= 2) {
+    try {
+      const rows = db
+        .query(
+          `SELECT id FROM tree_nodes
+           WHERE (active = 1 OR active IS NULL)
+             AND (
+               call_sign = $code
+               OR call_sign LIKE $prefix
+               OR id = $code
+             )`
+        )
+        .all({ $code: code, $prefix: `${code}-%` }) as Array<{ id: string }>; // brand-ok — TreeNodeId wire
+      for (const r of rows) {
+        if (r.id?.trim()) ids.add(r.id.trim());
+      }
+    } catch {
+      /* tree_nodes optional */
+    }
+  }
+  return [...ids];
+}
+
+/** Merge latest-per-sportsbook rows from multiple nodes (newest recorded_at wins per book). */
+export function mergeLatestLimitsBySportsbook(
+  batches: readonly LatestBookLimit[][]
+): LatestBookLimit[] {
+  const best = new Map<string, LatestBookLimit>();
+  for (const batch of batches) {
+    for (const row of batch) {
+      const key = normalizeSportsbookKey(row.sportsbook) || row.sportsbook.toLowerCase();
+      const prev = best.get(key);
+      if (!prev || row.recorded_at > prev.recorded_at) best.set(key, row);
+    }
+  }
+  return [...best.values()];
+}
+
 function outBookLabel(out: SeatOut): string {
   return (out.book ?? out.url ?? '').trim();
 }
@@ -286,10 +339,14 @@ export function loadBookMaxComparesForSeatDesk(
   record: SeatIntakeRecord,
   opts?: { nodeId?: string /* brand-ok — TreeNodeId wire */ }
 ): Map<string, DeskBookMaxCompare | null> | null {
-  const nodeId = opts?.nodeId?.trim() || resolveNodeIdByCallSign(db, record.callSign) || null;
-  if (!nodeId) return null;
+  const nodeIds = resolveNodeIdsForSeatDesk(db, record, opts);
+  if (nodeIds.length === 0) {
+    // Still return empty map so callers can show "no book history" lines
+    return mapOutsToBookMaxCompares(record, []);
+  }
   const repo = new AccountLimitsRepository(db);
-  const limits = repo.latestLimitsPerSportsbook(nodeId);
+  const batches = nodeIds.map(id => repo.latestLimitsPerSportsbook(id));
+  const limits = mergeLatestLimitsBySportsbook(batches);
   return mapOutsToBookMaxCompares(record, limits);
 }
 

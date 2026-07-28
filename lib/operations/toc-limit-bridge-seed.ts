@@ -348,6 +348,17 @@ function seedNodeRaises(
       t0: now - 6 * 3600 + offset,
       t1: now - 90 * 60 + offset,
     },
+    // hardrock — matches seat intake books ("Hard Rock Florida") for maxBet compare
+    {
+      sportsbook: 'hardrock',
+      sport: 'nba',
+      market: 'spread',
+      betType: 'straight',
+      prev: 400,
+      next: 1_000,
+      t0: now - 5 * 3600 + offset,
+      t1: now - 70 * 60 + offset,
+    },
   ];
   if (role === 'partner') {
     series.push({
@@ -357,7 +368,7 @@ function seedNodeRaises(
       betType: 'straight',
       prev: 800,
       next: 1_200,
-      t0: now - 5 * 3600 + offset,
+      t0: now - 4 * 3600 + offset,
       t1: now - 45 * 60 + offset,
     });
   }
