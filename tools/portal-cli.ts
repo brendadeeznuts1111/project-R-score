@@ -301,7 +301,7 @@ function usage(): never {
 /** Offline packages-graph-map bake — not bun pm. @see public/registry/packages-graph-map.json */
 async function printPackagesGraphTable(flags: PackageGraphFlags): Promise<void> {
   const { joinPath } = await import('../lib/path-bun.ts');
-  const { logTable } = await import('../lib/console-depth.ts');
+  const { logTable, shouldColor } = await import('../lib/console-depth.ts');
   const root = joinPath(import.meta.dir, '..');
   if (flags.update) {
     console.log('Refreshing complete package audit + graph...');
@@ -381,7 +381,7 @@ async function printPackagesGraphTable(flags: PackageGraphFlags): Promise<void> 
       ? true
       : flags.color === false
         ? false
-        : Boolean(process.stdout.isTTY) && flags.exportFormat === 'table';
+        : shouldColor() && flags.exportFormat === 'table';
 
   // Machine-readable export short-circuits human tables
   if (flags.exportFormat === 'json') {
