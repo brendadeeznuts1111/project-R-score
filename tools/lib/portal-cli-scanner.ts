@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/pm/security-scanner-api — Security Scanner API
 // @see https://bun.com/docs/runtime/bunfig#install-security-scanner — [install.security] scanner
@@ -29,6 +30,9 @@ export const SECURITY_SCANNER_DOCS = 'https://bun.com/docs/pm/security-scanner-a
 export const SECURITY_SCANNER_BUNFIG =
   'https://bun.com/docs/runtime/bunfig#install-security-scanner';
 export const SECURITY_SCANNER_TEMPLATE = 'https://github.com/oven-sh/security-scanner-template';
+/** Canonical Proton Pass ref for Socket authenticated mode (packages scope). */
+export const SOCKET_API_KEY_PASS_REF = 'pass://factorywager/Socket API Key/password';
+export const SOCKET_API_KEY_ENV = 'SOCKET_API_KEY';
 export const DEFAULT_BUNFIG_REL = 'bunfig.toml';
 export const DEFAULT_INIT_DIR = 'my-security-scanner';
 
@@ -54,6 +58,13 @@ export type InstallSecurityStatus = {
   scanner: string | undefined;
   frozenLockfile: boolean | undefined;
   exact: boolean | undefined;
+  /**
+   * Whether SOCKET_API_KEY is present in the process env (value never returned).
+   * Socket free mode works without it; org settings need packages-scoped token.
+   */
+  socketApiKeySet: boolean;
+  /** Canonical vault ref for inject (no secret value). */
+  socketApiKeyPassRef: string;
 };
 
 /**
@@ -92,10 +103,17 @@ export function parseInstallSecurityFromText(text: string): {
   };
 }
 
+/** True when SOCKET_API_KEY is a non-empty env string (never returns the value). */
+export function isSocketApiKeySet(env: Record<string, string | undefined> = Bun.env): boolean {
+  const v = env[SOCKET_API_KEY_ENV];
+  return typeof v === 'string' && v.trim().length > 0;
+}
+
 /** Load status from a bunfig path (repo root default). */
 export async function readInstallSecurityStatus(
   bunfigPath: string = DEFAULT_BUNFIG_REL
 ): Promise<InstallSecurityStatus> {
+  const socketApiKeySet = isSocketApiKeySet();
   const f = Bun.file(bunfigPath);
   const exists = await f.exists();
   if (!exists) {
@@ -105,6 +123,8 @@ export async function readInstallSecurityStatus(
       scanner: undefined,
       frozenLockfile: undefined,
       exact: undefined,
+      socketApiKeySet,
+      socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
     };
   }
   const text = await f.text();
@@ -115,6 +135,8 @@ export async function readInstallSecurityStatus(
     scanner: parsed.scanner,
     frozenLockfile: parsed.frozenLockfile,
     exact: parsed.exact,
+    socketApiKeySet,
+    socketApiKeyPassRef: SOCKET_API_KEY_PASS_REF,
   };
 }
 
@@ -180,12 +202,17 @@ export function clearInstallSecurityScanner(text: string): string {
 }
 
 export function formatScannerStatus(s: InstallSecurityStatus): string {
+  const keyLine = s.socketApiKeySet
+    ? 'set (org / authenticated mode)'
+    : 'unset (Socket free mode — optional)';
   const lines: string[] = [
     'Bun Security Scanner status',
     `  bunfig:          ${s.bunfigPath}${s.bunfigExists ? '' : ' (missing)'}`,
     `  scanner:         ${s.scanner ?? '(not configured)'}`,
     `  frozenLockfile:  ${s.frozenLockfile === undefined ? '—' : String(s.frozenLockfile)}`,
     `  exact:           ${s.exact === undefined ? '—' : String(s.exact)}`,
+    `  SOCKET_API_KEY:  ${keyLine}`,
+    `  vault ref:       ${s.socketApiKeyPassRef}`,
     '',
     `Docs: ${SECURITY_SCANNER_DOCS}`,
     `bunfig: ${SECURITY_SCANNER_BUNFIG}`,
@@ -203,6 +230,15 @@ export function formatScannerStatus(s: InstallSecurityStatus): string {
     );
   } else {
     lines.push('', 'Run: portal-cli scanner scan   # → bun pm scan');
+  }
+  if (!s.socketApiKeySet) {
+    lines.push(
+      '',
+      'Optional org mode: mint Socket API token (packages scope) → vault item, inject:',
+      `  ${s.socketApiKeyPassRef}`,
+      '  bun run portal-cli secret inject -i env.template -o .env -f',
+      '  # or: export SOCKET_API_KEY=…'
+    );
   }
   if (s.frozenLockfile) {
     lines.push(

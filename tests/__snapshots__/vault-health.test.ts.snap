@@ -197,6 +197,14 @@ exports[`vault-health vault-map referenced inventory is stable (snapshot) 1`] = 
     "vault": "factorywager",
   },
   {
+    "envKey": "SOCKET_API_KEY",
+    "field": "password",
+    "inTemplate": true,
+    "item": "Socket API Key",
+    "passRef": "pass://factorywager/Socket API Key/password",
+    "vault": "factorywager",
+  },
+  {
     "envKey": "SSH_DEPLOY_KEY",
     "field": "note",
     "inTemplate": false,

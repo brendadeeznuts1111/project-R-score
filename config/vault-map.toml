@@ -164,6 +164,18 @@ color = "#2DA44E"
 icon = "public/portal/icons/vault/github.svg"
 type = "pat"
 
+# ── Supply chain / Security scanners ─────────────────────────────────────────
+# Bun [install.security] scanner = @socketsecurity/bun-security-scanner
+# Free mode works without this; org policies need packages-scoped API token.
+[env.SOCKET_API_KEY]
+vault = "factorywager"
+item = "Socket API Key"
+field = "password"
+label = "Socket API Key"
+color = "#7C3AED"
+icon = "public/portal/icons/vault/key.svg"
+type = "token"
+
 # ── Backlog ──────────────────────────────────────────────────────────────────
 [backlog]
 human_only = ["OPENAI_API_KEY", "SLACK_WEBHOOK_URL"]

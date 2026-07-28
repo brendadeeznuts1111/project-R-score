@@ -83,18 +83,23 @@ describe('portal-cli-scanner pure helpers', () => {
     expect(cleared).toContain('frozenLockfile = true');
   });
 
-  test('formatScannerStatus mentions docs and unconfigured state', () => {
+  test('formatScannerStatus mentions docs, vault ref, and unconfigured state', () => {
     const text = formatScannerStatus({
       bunfigPath: 'bunfig.toml',
       bunfigExists: true,
       scanner: undefined,
       frozenLockfile: true,
       exact: true,
+      socketApiKeySet: false,
+      socketApiKeyPassRef: 'pass://factorywager/Socket API Key/password',
     });
     expect(text).toContain('(not configured)');
     expect(text).toContain(SECURITY_SCANNER_DOCS);
     expect(text).toContain('frozenLockfile');
     expect(text).toContain(SECURITY_SCANNER_TEMPLATE);
+    expect(text).toContain('SOCKET_API_KEY');
+    expect(text).toContain('pass://factorywager/Socket API Key/password');
+    expect(text).toContain('unset');
   });
 
   test('PORTAL_CLI_COMMANDS includes scanner', () => {
@@ -222,7 +227,7 @@ describe('dispatchScanner', () => {
 });
 
 describe('portal-cli scanner CLI', () => {
-  test('bare scanner / status exits 0 and documents real API', async () => {
+  test('bare scanner / status exits 0 and documents real API + vault ref', async () => {
     const proc = Bun.spawn(['bun', CLI, 'scanner'], {
       cwd: ROOT,
       stdout: 'pipe',
@@ -233,8 +238,10 @@ describe('portal-cli scanner CLI', () => {
     expect(code).toBe(0);
     expect(out).toContain('scanner:');
     expect(out).toContain(SECURITY_SCANNER_DOCS);
-    // Repo bunfig has no scanner yet
-    expect(out).toContain('not configured');
+    // Repo bunfig configures Socket after feat(security) enable commit
+    expect(out).toContain('@socketsecurity/bun-security-scanner');
+    expect(out).toContain('SOCKET_API_KEY');
+    expect(out).toContain('pass://factorywager/Socket API Key/password');
   });
 
   test('scanner help lists grounded subcommands', async () => {
@@ -252,18 +259,22 @@ describe('portal-cli scanner CLI', () => {
     expect(out).toContain('warn');
   });
 
-  test('scanner scan without config exits non-zero', async () => {
+  test('scanner scan with Socket configured exits 0 (free mode OK)', async () => {
     const proc = Bun.spawn(['bun', CLI, 'scanner', 'scan'], {
       cwd: ROOT,
       stdout: 'pipe',
       stderr: 'pipe',
     });
     const code = await proc.exited;
-    const err = await new Response(proc.stderr).text();
-    expect(code).not.toBe(0);
-    expect(err.includes('no security scanner') || err.includes('not configured')).toBe(
-      true
-    );
+    const out = (await new Response(proc.stdout).text()) + (await new Response(proc.stderr).text());
+    expect(code).toBe(0);
+    // free mode warning or clean scan summary
+    expect(
+      out.includes('No advisories') ||
+        out.includes('free mode') ||
+        out.includes('Scanning') ||
+        out.includes('pm scan')
+    ).toBe(true);
   });
 
   test('root help lists scanner command', async () => {

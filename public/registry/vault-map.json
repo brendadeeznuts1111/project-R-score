@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "vault-map-bundle",
-  "generatedAt": "2026-07-28T16:44:22.044Z",
+  "generatedAt": "2026-07-28T19:16:29.075Z",
   "sourceMap": "config/vault-map.toml",
   "template": "env.template",
   "entries": [
@@ -186,18 +186,18 @@
       "runtimePresent": true
     },
     {
-      "envKey": "SSH_CASCADE_KEY",
+      "envKey": "SOCKET_API_KEY",
       "vault": "factorywager",
-      "item": "SSH Cascade Key",
-      "field": "note",
-      "passRef": "pass://factorywager/SSH Cascade Key/note",
-      "type": "ssh",
-      "label": "SSH Cascade Key",
-      "color": "#F59E0B",
-      "icon": "public/portal/icons/vault/ssh.svg",
-      "glyph": "🔐",
+      "item": "Socket API Key",
+      "field": "password",
+      "passRef": "pass://factorywager/Socket API Key/password",
+      "type": "token",
+      "label": "Socket API Key",
+      "color": "#7C3AED",
+      "icon": "public/portal/icons/vault/key.svg",
+      "glyph": "🔑",
       "note": null,
-      "inTemplate": false,
+      "inTemplate": true,
       "runtimePresent": false
     },
     {

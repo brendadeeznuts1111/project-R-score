@@ -42,6 +42,23 @@ pass://factorywager/Cloudflare API Token/password
 - Mint/rotate only in the [Cloudflare dashboard](https://dash.cloudflare.com/profile/api-tokens), then **update the vault item**.
 - Runtime consumers read `CLOUDFLARE_API_TOKEN` after inject (MCP, Pages deploy, `cloudflare:env:*`).
 
+### Socket API key (optional — Bun Security Scanner)
+
+```
+pass://factorywager/Socket API Key/password
+```
+
+- Env: `SOCKET_API_KEY` (wired in root `env.template` + `config/vault-map.toml`).
+- Bun config: `[install.security] scanner = "@socketsecurity/bun-security-scanner"` in `bunfig.toml`.
+- **Free mode** works without the key (public Socket API). Org settings / authenticated scan need a Socket API token with **`packages`** scope — mint at [socket.dev](https://socket.dev), store password field on the vault item above, then inject:
+  ```bash
+  source scripts/agent-env.sh factorywager
+  bun run portal-cli secret inject -i env.template -o .env -f
+  bun run portal-cli scanner status   # shows SOCKET_API_KEY: set | unset
+  bun run portal-cli scanner scan
+  ```
+- Never commit the raw token. CLI: `portal-cli scanner status` reports presence only (no secret value).
+
 ## Vault health (gate vs dashboard)
 
 | Layer | Command | Needs pass-cli session? | Role |
