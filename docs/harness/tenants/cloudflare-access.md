@@ -103,29 +103,51 @@ bun tools/portal-cli.ts doctor --env ci --group infra
 bun tools/portal-cli.ts doctor --group infra --verbose
 ```
 
-Ledger is live-enforced today; portal custom-domain + Pages Access remain **staged** until apply (warn fails until both hosts challenge).
+### Live status (re-probed 2026-07-28)
+
+| Surface | Edge | Doctor |
+|---------|------|--------|
+| `ledger.factory-wager.com` | **Access 302** | `infra-ledger-access` PASS |
+| `score.factory-wager.com/portal` | **public 200** | `infra-portal-access` FAIL warn |
+| `project-r-score.pages.dev/portal` | **public 200** | (same) |
+| `terminal.factory-wager.com` | **502 dangling** | `infra-terminal-host` FAIL warn |
+| `reasonix.factory-wager.com` | **NXDOMAIN** | `infra-reasonix-dns` info (expected) |
+
+```bash
+bun tools/portal-cli.ts doctor --group infra --no-write          # live
+bun tools/portal-cli.ts doctor --group infra --offline --layout plain
+```
+
+### Apply blocker (Access API)
+
+`kimi-cloudflare-access plan` currently fails with **Cloudflare API 403** —
+`CLOUDFLARE_API_TOKEN` has no Access/Zero Trust scope; DNS token is Zone.DNS-only.
+
+**Human steps before apply:**
+
+1. Cloudflare dashboard → create API token with Access:Apps & Policies Edit (account).
+2. Proton Pass `factorywager` vault → item `Cloudflare Access API Token`.
+3. `bun run proton:inject:factorywager:reasonix` (or wire `CLOUDFLARE_ACCESS_API_TOKEN`).
+4. `bun run cloudflare:access:verify` then `kimi-cloudflare-access plan` (creates/updates only).
+5. Review plan → `kimi-cloudflare-access apply` only with rollback snapshot.
+6. Re-probe: `portal-cli doctor --group infra` → portal warn must go green.
+7. Pages: enable Access on production + preview in Pages project settings (custom-domain app alone does **not** cover `pages.dev`).
+
+Do **not** run apply until token + IdP + Pages Access + rollback exist.
 
 ## Apply gate
 
 ```bash
 bun run cloudflare:access:verify
 bun run proton:check
-kimi-cloudflare-access plan
+kimi-cloudflare-access plan   # requires Access-scoped token
 ```
 
-Review the plan for creates/updates only. Any delete is a stop condition.
-
-Before apply, test the rollback path: preserve the prior app/policy snapshot and
-confirm an administrator can disable the new policy or restore the prior one.
 After apply, verify:
 
 - authorized account member succeeds;
 - non-member is denied;
 - portal custom domain is protected;
 - public registry read routes remain reachable without interactive login;
-- Ledger and Reasonix are protected;
-- Pages production and preview hostnames enforce Pages Access;
-- Access authentication logs identify the matching app and policy.
-
-Do not run `kimi-cloudflare-access apply` until the dedicated token, Cloudflare
-IdP, Pages Access setting, and rollback snapshot all exist.
+- Ledger protected; Reasonix only when DNS exists;
+- Pages production and preview enforce Pages Access.

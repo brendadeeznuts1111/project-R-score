@@ -361,7 +361,9 @@ describe('portal-cli doctor pure', () => {
     });
     expect(r.group).toBe('infra');
     expect(r.liveAccess).toBe(true);
-    expect(r.checks).toHaveLength(2);
+    expect(r.checks.map(c => c.id)).toContain('infra-ledger-access');
+    expect(r.checks.map(c => c.id)).toContain('infra-portal-access');
+    expect(r.checks.map(c => c.id)).toContain('infra-access-policy');
     expect(r.checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
     expect(r.checks.find(c => c.id === 'infra-portal-access')?.ok).toBe(false);
     expect(r.checks.find(c => c.id === 'infra-portal-access')?.level).toBe('warn');
@@ -378,6 +380,11 @@ describe('portal-cli doctor pure', () => {
       skipLiveAccess: true,
     });
     expect(r.liveAccess).toBe(false);
+    expect(r.checks.map(c => c.id)).toEqual([
+      'infra-access-policy',
+      'infra-ledger-access',
+      'infra-portal-access',
+    ]);
     expect(r.checks.find(c => c.id === 'infra-ledger-access')?.message).toMatch(/policy/);
     expect(r.checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
   });

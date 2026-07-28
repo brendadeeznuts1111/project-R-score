@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
+// @see https://bun.com/docs/runtime/networking/dns — Bun.dns.lookup
 // @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
 // @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/
 /**
@@ -15,6 +16,9 @@ export const LEDGER_ACCESS_URL = 'https://ledger.factory-wager.com/';
 export const PORTAL_ACCESS_CUSTOM_URL = 'https://score.factory-wager.com/portal/';
 /** Pages production hostname (Access must cover this too — custom-domain app alone does not). */
 export const PORTAL_ACCESS_PAGES_URL = 'https://project-r-score.pages.dev/portal/';
+/** Dangling tunnel host (502, no ingress) — inventory only. */
+export const TERMINAL_HOST_URL = 'https://terminal.factory-wager.com/';
+export const REASONIX_HOSTNAME = 'reasonix.factory-wager.com';
 
 export type AccessProbeFetch = (
   url: string,
@@ -125,5 +129,103 @@ export async function probePortalAccess(opts?: {
     custom,
     pages,
     message: `score ${custom.evidence} · pages.dev ${pages.evidence}`,
+  };
+}
+
+export type HostProbeResult = {
+  host: string;
+  /** DNS resolves (A/AAAA). */
+  resolves: boolean;
+  status: number | null;
+  evidence: string;
+  error?: string;
+};
+
+/**
+ * DNS lookup via Bun.dns (no dig dependency).
+ * @see https://bun.com/docs/runtime/networking/dns
+ */
+export async function probeDnsResolves(hostname: string): Promise<boolean> {
+  try {
+    const rows = await Bun.dns.lookup(hostname);
+    return Array.isArray(rows) && rows.length > 0;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * HTTP status for a host (no redirect follow). Used for dangling-tunnel inventory.
+ */
+export async function probeHostHttp(
+  url: string,
+  opts?: { fetch?: AccessProbeFetch; timeoutMs?: number }
+): Promise<{ status: number | null; error?: string }> {
+  const fetchImpl = opts?.fetch ?? globalThis.fetch;
+  const timeoutMs = opts?.timeoutMs ?? 10_000;
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), timeoutMs);
+  try {
+    const res = await fetchImpl(url, { method: 'GET', redirect: 'manual', signal: ac.signal });
+    return { status: res.status };
+  } catch (e) {
+    return { status: null, error: e instanceof Error ? e.message : String(e) };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * terminal.factory-wager.com — expected dangling: DNS yes, HTTP 502 (no tunnel ingress).
+ * "ok" means inventory is honest (not silently healthy). We treat 502 as known-bad (not ok).
+ */
+export async function probeTerminalHost(opts?: {
+  fetch?: AccessProbeFetch;
+  timeoutMs?: number;
+}): Promise<HostProbeResult> {
+  const host = 'terminal.factory-wager.com';
+  const resolves = await probeDnsResolves(host);
+  if (!resolves) {
+    return {
+      host,
+      resolves: false,
+      status: null,
+      evidence: 'NXDOMAIN · no DNS (good if decommissioned)',
+    };
+  }
+  const http = await probeHostHttp(TERMINAL_HOST_URL, opts);
+  const status = http.status;
+  // 502 = dangling proxy; open 200 would be unexpected success
+  if (status === 502) {
+    return {
+      host,
+      resolves: true,
+      status,
+      evidence: '502 dangling tunnel (DNS yes · no ingress)',
+    };
+  }
+  return {
+    host,
+    resolves: true,
+    status,
+    evidence:
+      status == null
+        ? `unreachable · ${http.error ?? '?'}`
+        : `${status} (expected 502 or NXDOMAIN)`,
+    error: http.error,
+  };
+}
+
+/** reasonix.factory-wager.com — staged Access app; DNS should not resolve until provisioned. */
+export async function probeReasonixDns(): Promise<HostProbeResult> {
+  const host = REASONIX_HOSTNAME;
+  const resolves = await probeDnsResolves(host);
+  return {
+    host,
+    resolves,
+    status: null,
+    evidence: resolves
+      ? 'DNS resolves · tunnel/Access should be live or DNS removed'
+      : 'NXDOMAIN · staged only (expected until provisioned)',
   };
 }

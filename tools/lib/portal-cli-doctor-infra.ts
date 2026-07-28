@@ -1,14 +1,17 @@
 // @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
 // @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file (policy file)
+// @see https://bun.com/docs/runtime/networking/dns — Bun.dns.lookup
 /**
- * portal-cli doctor — Infra group (Cloudflare Access).
+ * portal-cli doctor — Infra group (Access + host inventory).
  *
- *   infra-ledger-access  fatal · all — ledger behind Access (live) or app in policy (offline)
- *   infra-portal-access  warn  · all — score + pages.dev /portal Access (live) or staged app (offline)
+ *   infra-access-policy     warn  · all — .cloudflare-access.yml static verify
+ *   infra-ledger-access     fatal · all — ledger Access (live) or policy (offline)
+ *   infra-portal-access     warn  · all — score + pages.dev /portal
+ *   infra-terminal-host     warn  · all — terminal dangling 502 (live only)
+ *   infra-reasonix-dns      info  · dev  — reasonix NXDOMAIN until provisioned (live)
  *
- * Offline mode never fakes green without policy evidence.
- * Live mode: unauthenticated HTTPS HEAD/GET probes.
+ * Offline: policy SSOT only (no fake green). Live: HTTPS + Bun.dns.
  */
 
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
@@ -18,6 +21,8 @@ import {
   PORTAL_ACCESS_PAGES_URL,
   probeCloudflareAccess,
   probePortalAccess,
+  probeReasonixDns,
+  probeTerminalHost,
   type AccessProbeFetch,
 } from '../../lib/verification/cloudflare-access-live.ts';
 import { verifyCloudflareAccessPolicyText } from '../../lib/verification/cloudflare-access-policy.ts';
@@ -25,6 +30,7 @@ import type { PortalDoctorCheck } from './portal-cli-doctor.ts';
 
 const ACCESS_DOCS = 'https://developers.cloudflare.com/cloudflare-one/access-controls/policies/';
 const ACCESS_POLICY_PATH = '.cloudflare-access.yml';
+const TUNNEL_DOCS = 'docs/harness/tenants/tunnel-inventory.md';
 
 const LEDGER_DOMAIN = 'ledger.factory-wager.com';
 const PORTAL_DOMAIN = 'score.factory-wager.com/portal';
@@ -40,7 +46,7 @@ export type RunInfraChecksOpts = {
   cwd?: string;
   fetch?: AccessProbeFetch;
   timeoutMs?: number;
-  /** Skip live HTTPS probes — use policy file only (bake / CI fingerprint). */
+  /** Skip live HTTPS/DNS — use policy file only (bake / CI fingerprint). */
   skipLive?: boolean;
 };
 
@@ -69,13 +75,10 @@ export async function loadAccessPolicySurfaces(
     }
     const text = await Bun.file(path).text();
     const report = verifyCloudflareAccessPolicyText(text);
-    // Domain presence even if other policy issues exist
-    const hasLedger = text.includes(LEDGER_DOMAIN);
-    const hasPortal = text.includes(PORTAL_DOMAIN);
     return {
       loadOk: true,
-      ledger: hasLedger,
-      portal: hasPortal,
+      ledger: text.includes(LEDGER_DOMAIN),
+      portal: text.includes(PORTAL_DOMAIN),
       policyOk: report.ok,
       issues: report.issues.map(i => `${i.code}: ${i.message}`),
     };
@@ -91,16 +94,43 @@ export async function loadAccessPolicySurfaces(
   }
 }
 
+function policyCheck(policy: PolicySurfacePresence): PortalDoctorCheck {
+  return withMeta(
+    {
+      id: 'infra-access-policy',
+      level: 'warn',
+      group: 'infra',
+      ok: policy.loadOk && policy.policyOk,
+      message:
+        policy.loadOk && policy.policyOk
+          ? `${ACCESS_POLICY_PATH} valid · ledger=${policy.ledger ? 'yes' : 'no'} · portal=${policy.portal ? 'yes' : 'no'}`
+          : policy.loadOk
+            ? `policy issues: ${policy.issues.slice(0, 2).join('; ')}`
+            : (policy.issues[0] ?? 'policy load failed'),
+      source: ACCESS_DOCS,
+    },
+    {
+      fixCommand:
+        policy.loadOk && policy.policyOk
+          ? undefined
+          : `bun run cloudflare:access:verify · edit ${ACCESS_POLICY_PATH}`,
+      impact: 'Scoped Access SSOT must stay valid before apply',
+      autoFixable: false,
+      timeToFix: policy.loadOk && policy.policyOk ? undefined : '10–30 min',
+      envScope: 'all',
+    }
+  );
+}
+
 /**
- * Access enforcement checks (group: infra).
+ * Access + host inventory checks (group: infra).
  */
 export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<PortalDoctorCheck[]> {
   const cwd = opts.cwd ?? process.cwd();
   const policy = await loadAccessPolicySurfaces(cwd);
-  const checks: PortalDoctorCheck[] = [];
+  const checks: PortalDoctorCheck[] = [policyCheck(policy)];
 
   if (opts.skipLive) {
-    // Offline: prove policy SSOT still claims the surfaces — never fake "Access enforced"
     checks.push(
       withMeta(
         {
@@ -116,8 +146,8 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
         {
           fixCommand: policy.ledger
             ? undefined
-            : `Add self_hosted app for ${LEDGER_DOMAIN} in ${ACCESS_POLICY_PATH} · bun run cloudflare:access:verify`,
-          impact: 'Policy SSOT must list ledger; use --live-access to probe the edge',
+            : `Add self_hosted app for ${LEDGER_DOMAIN} in ${ACCESS_POLICY_PATH}`,
+          impact: 'Policy SSOT must list ledger; --group infra (live) probes the edge',
           autoFixable: false,
           timeToFix: policy.ledger ? undefined : '15–45 min',
           envScope: 'all',
@@ -138,8 +168,7 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
           fixCommand: policy.portal
             ? undefined
             : `Add self_hosted app for ${PORTAL_DOMAIN} in ${ACCESS_POLICY_PATH}`,
-          impact:
-            'Staged portal Access in policy only; live still public until apply + --live-access',
+          impact: 'Staged in policy only until Access apply + live probe green',
           autoFixable: false,
           timeToFix: policy.portal ? undefined : '15–45 min',
           envScope: 'all',
@@ -149,7 +178,7 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
     return checks;
   }
 
-  // Live probes
+  // Live Access
   const ledger = await probeCloudflareAccess(LEDGER_ACCESS_URL, {
     fetch: opts.fetch,
     timeoutMs: opts.timeoutMs,
@@ -169,8 +198,8 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
       {
         fixCommand: ledger.accessEnforced
           ? undefined
-          : `bun run cloudflare:access:verify · apply ledger app in ${ACCESS_POLICY_PATH}`,
-        impact: 'Ledger tunnel origin must not be reachable without Cloudflare Access login',
+          : `Apply ledger Access app · ${ACCESS_POLICY_PATH} · bun run cloudflare:access:verify`,
+        impact: 'Ledger must not be reachable without Access login',
         autoFixable: false,
         timeToFix: ledger.accessEnforced ? undefined : '15–45 min',
         envScope: 'all',
@@ -199,12 +228,62 @@ export async function runInfraChecks(opts: RunInfraChecksOpts = {}): Promise<Por
       {
         fixCommand: portal.ok
           ? undefined
-          : `Promote /portal Access on score + pages.dev (${ACCESS_POLICY_PATH})`,
-        impact:
-          'Operator portal is public until custom-domain /portal and pages.dev Access are both live',
+          : `Apply ${PORTAL_DOMAIN} + Pages Access (needs Access-scoped API token) · ${ACCESS_POLICY_PATH}`,
+        impact: 'Portal remains public until score /portal and pages.dev both challenge',
         autoFixable: false,
         timeToFix: portal.ok ? undefined : '30–90 min',
         envScope: 'all',
+      }
+    )
+  );
+
+  // Host inventory
+  const terminal = await probeTerminalHost({
+    fetch: opts.fetch,
+    timeoutMs: opts.timeoutMs,
+  });
+  // 502 dangling → fail warn; NXDOMAIN → pass (decommissioned)
+  const terminalOk = !terminal.resolves || terminal.status !== 502;
+  checks.push(
+    withMeta(
+      {
+        id: 'infra-terminal-host',
+        level: 'warn',
+        group: 'infra',
+        ok: terminalOk,
+        message: `terminal · ${terminal.evidence}`,
+        source: TUNNEL_DOCS,
+      },
+      {
+        fixCommand: terminalOk
+          ? undefined
+          : 'Delete DNS for terminal.factory-wager.com or attach a real tunnel · tunnel-inventory.md',
+        impact: 'Dangling 502 confuses operators; not Sports Terminal until provisioned',
+        autoFixable: false,
+        timeToFix: terminalOk ? undefined : '15–60 min',
+        envScope: 'all',
+      }
+    )
+  );
+
+  const reasonix = await probeReasonixDns();
+  checks.push(
+    withMeta(
+      {
+        id: 'infra-reasonix-dns',
+        level: 'info',
+        group: 'infra',
+        ok: true,
+        message: `reasonix · ${reasonix.evidence}`,
+        source: ACCESS_DOCS,
+      },
+      {
+        fixCommand: reasonix.resolves
+          ? 'Confirm reasonix tunnel + Access or remove DNS'
+          : undefined,
+        impact: 'Staged Access app; add DNS only when Reasonix is ready',
+        autoFixable: false,
+        envScope: 'dev',
       }
     )
   );

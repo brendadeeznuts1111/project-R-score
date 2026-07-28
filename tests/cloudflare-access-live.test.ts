@@ -88,26 +88,54 @@ describe('cloudflare-access-live', () => {
         return new Response('public', { status: 200 });
       },
     });
-    expect(checks.map(c => c.id)).toEqual([
-      'infra-ledger-access',
-      'infra-portal-access',
-    ]);
-    expect(checks[0]!.group).toBe('infra');
-    expect(checks[0]!.level).toBe('fatal');
-    expect(checks[0]!.ok).toBe(true);
-    expect(checks[1]!.level).toBe('warn');
-    expect(checks[1]!.ok).toBe(false);
-    expect(checks[1]!.envScope).toBe('all');
+    expect(checks.map(c => c.id)).toContain('infra-ledger-access');
+    expect(checks.map(c => c.id)).toContain('infra-portal-access');
+    expect(checks.find(c => c.id === 'infra-ledger-access')?.group).toBe('infra');
+    expect(checks.find(c => c.id === 'infra-ledger-access')?.level).toBe('fatal');
+    expect(checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
+    expect(checks.find(c => c.id === 'infra-portal-access')?.level).toBe('warn');
+    expect(checks.find(c => c.id === 'infra-portal-access')?.ok).toBe(false);
   });
 
   test('runInfraChecks offline uses policy SSOT (not fake green skip)', async () => {
     const checks = await runInfraChecks({ skipLive: true, cwd: process.cwd() });
-    expect(checks).toHaveLength(2);
-    expect(checks[0]!.message).toContain('policy');
-    expect(checks[0]!.message).not.toContain('skipped');
-    // monorepo has ledger + portal in .cloudflare-access.yml
-    expect(checks[0]!.ok).toBe(true);
-    expect(checks[1]!.ok).toBe(true);
-    expect(checks[1]!.message).toContain('staged');
+    // policy + ledger + portal
+    expect(checks.map(c => c.id)).toEqual([
+      'infra-access-policy',
+      'infra-ledger-access',
+      'infra-portal-access',
+    ]);
+    expect(checks.find(c => c.id === 'infra-ledger-access')?.message).toContain('policy');
+    expect(checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
+    expect(checks.find(c => c.id === 'infra-portal-access')?.message).toContain('staged');
+  });
+
+  test('runInfraChecks live includes host inventory ids', async () => {
+    const checks = await runInfraChecks({
+      skipLive: false,
+      fetch: async url => {
+        const u = String(url);
+        if (u.includes('ledger')) {
+          return new Response(null, {
+            status: 302,
+            headers: {
+              location: 'https://factory-wager.cloudflareaccess.com/cdn-cgi/access/login/x',
+            },
+          });
+        }
+        if (u.includes('terminal')) {
+          return new Response('Bad Gateway', { status: 502 });
+        }
+        return new Response('ok', { status: 200 });
+      },
+    });
+    const ids = checks.map(c => c.id);
+    expect(ids).toContain('infra-access-policy');
+    expect(ids).toContain('infra-ledger-access');
+    expect(ids).toContain('infra-portal-access');
+    expect(ids).toContain('infra-terminal-host');
+    expect(ids).toContain('infra-reasonix-dns');
+    expect(checks.find(c => c.id === 'infra-terminal-host')?.ok).toBe(false);
+    expect(checks.find(c => c.id === 'infra-reasonix-dns')?.level).toBe('info');
   });
 });

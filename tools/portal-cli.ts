@@ -1227,7 +1227,7 @@ Checks:
   Bakes:   vault-health · capability-map-subset · bunfig-state (+ age when present)
   Catalog: catalog-json-schema · shortcode · bun-help-parity · help-coverage · deprecated
   Bunfig:  machine-ssot · frozen-lockfile · project-no-machine-keys · merge · excludes · env
-  Infra:   infra-ledger-access (fatal) · infra-portal-access (warn)
+  Infra:   access-policy · ledger-access · portal-access · terminal-host · reasonix-dns
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
 Access probes:
