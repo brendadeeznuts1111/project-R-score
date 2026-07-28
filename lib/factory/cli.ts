@@ -427,7 +427,7 @@ async function cmdStatus(): Promise<void> {
     Bun.inspect.table(
       rows.map(([svc, ver, state, col]) => ({
         Service: svc,
-        State: `${state} ${Bun.color(col as string, 'ansi')}`,
+        State: colorize(String(state), col as string),
         Details: ver,
       })),
       ['Service', 'State', 'Details'],
@@ -524,7 +524,7 @@ async function cmdProof(args: string[]): Promise<void> {
     Bun.inspect.table(
       results.map(r => ({
         Claim: r.claim,
-        Status: `${Bun.color(r.color, 'ansi')}${r.status}\x1b[0m`,
+        Status: colorize(r.status, r.color),
         Detail: r.detail,
       })),
       ['Claim', 'Status', 'Detail'],
