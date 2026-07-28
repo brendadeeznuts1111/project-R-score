@@ -1,0 +1,17 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`snapshot stability formatTable compact mode matches snapshot 1`] = `
+"Name               Total    🚀    ⬇️         Net     Avg%     Trend/d
+─────────────────────────────────────────────────────────────────────
+DraftKings             5     3     2    +$15,000   +66.7%    +$2500/d
+  Snapshot footer"
+`;
+
+exports[`snapshot stability formatTable with all borders matches snapshot 1`] = `
+"Border
+┌──────────────────┬────────┬──────┬──────┬────────────┬─────────┬────────────┐
+│Name            │ Total│  🚀│  ⬇️│       Net│   Avg%│   Trend/d│
+├──────────────────┼────────┼──────┼──────┼────────────┼─────────┼────────────┤
+│DraftKings      │     5│   3│   2│  +$15,000│ +66.7%│  +$2500/d│
+└──────────────────┴────────┴──────┴──────┴────────────┴─────────┴────────────┘"
+`;
