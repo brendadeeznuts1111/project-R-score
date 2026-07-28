@@ -7,9 +7,13 @@ file** as `AccountSystem` (`data/accounts-<tenant>.db`, WAL) so auth tables can
 Phase 0: alias credentials (argon2id), sessions (hash-only storage), audit log,
 role hierarchy. Phase 1a: lockout enforcement (`lockout.ts`). Phase 2: login
 anomaly detection (`anomaly.ts`) and GDPR-style export (`export.ts` +
-`GET /auth/export`). Phase 2b: geo blocking (`geo-policy.ts`), password
-strength (`password-strength.ts`), JIT provisioning (`jit.ts`). Phase 3:
-audit-safe impersonation (`impersonate.ts`).
+`GET /auth/export`); high-risk ops alerts via `telegram-alerts.ts`
+(`createHighRiskTelegramHook` → `IdentityOptions.onHighRisk`). Phase 2b: geo
+blocking (`geo-policy.ts`), password strength (`password-strength.ts`), JIT
+provisioning (`jit.ts`). Phase 3: audit-safe impersonation (`impersonate.ts`)
+and activity timeline (`timeline.ts` · `getTimeline`). Phase 4: self-service
+security (`self-service.ts` — password change, session revoke, device untrust,
+IP allowlist; HTTP under `/auth/me/*`).
 
 ## Schema (`schema.ts` — `migrateIdentity(db)`, idempotent)
 

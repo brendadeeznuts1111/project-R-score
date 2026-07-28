@@ -14,6 +14,15 @@
  *   POST /auth/impersonate     Bearer (superadmin) + { nodeId } → { token, expiresAt }
  *   POST /auth/impersonate/end Bearer (the impersonated token) → { ok: true }
  *
+ * Self-service (Phase 4, all Bearer-required, scoped to the caller's OWN node):
+ *   POST /auth/me/password               { currentPassword, newPassword } → { ok, revoked }
+ *   GET  /auth/me/sessions               → { sessions: [...] }
+ *   POST /auth/me/sessions/revoke-others → { revoked: n }
+ *   GET  /auth/me/devices                → { devices: [...] } (hash truncated to 12)
+ *   POST /auth/me/devices/untrust        { fingerprintHash } → { ok: true }
+ *   GET  /auth/me/ip-allowlist           → { entries: [...] }
+ *   PUT  /auth/me/ip-allowlist           { cidrs: string[] } → { ok, count }
+ *
  * Responses to session-resolving routes (session, export, impersonate/end)
  * carry `X-Impersonator: <nodeId>` when the resolved session is impersonated.
  */
@@ -26,11 +35,52 @@ import {
   GeoBlockedError,
   IdentityError,
   InvalidCredentialsError,
+  IpNotAllowedError,
   WeakPasswordError,
   type IdentitySystem,
   type SessionInfo,
 } from './identity.ts';
 import { endImpersonation, impersonate } from './impersonate.ts';
+import {
+  changePassword,
+  getIpAllowlist,
+  listDevices,
+  listSessions,
+  revokeOtherSessions,
+  setIpAllowlist,
+  untrustDevice,
+} from './self-service.ts';
+
+interface ChangePasswordBody {
+  currentPassword: string;
+  newPassword: string;
+}
+
+function isChangePasswordBody(value: unknown): value is ChangePasswordBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  return typeof body.currentPassword === 'string' && typeof body.newPassword === 'string';
+}
+
+interface UntrustDeviceBody {
+  fingerprintHash: string;
+}
+
+function isUntrustDeviceBody(value: unknown): value is UntrustDeviceBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  return typeof body.fingerprintHash === 'string';
+}
+
+interface IpAllowlistBody {
+  cidrs: string[];
+}
+
+function isIpAllowlistBody(value: unknown): value is IpAllowlistBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  return Array.isArray(body.cidrs) && body.cidrs.every(c => typeof c === 'string');
+}
 
 interface LoginBody {
   slug: string;
@@ -113,6 +163,7 @@ export function createIdentityHandler(
         if (err instanceof AccountLockedError) return jsonError(423, 'Account is locked');
         if (err instanceof GeoBlockedError)
           return jsonError(403, `Login not permitted from ${err.country}`);
+        if (err instanceof IpNotAllowedError) return jsonError(403, err.message);
         if (err instanceof AnomalyBlockedError) return jsonError(403, err.reason);
         if (err instanceof InvalidCredentialsError) return jsonError(401, 'Invalid credentials');
         if (err instanceof WeakPasswordError) {
@@ -212,6 +263,79 @@ export function createIdentityHandler(
       if (!session) return jsonError(401, 'Invalid or expired session');
       endImpersonation(identity, asTokenId(token));
       return withImpersonatorHeader(Response.json({ ok: true }), session);
+    }
+
+    // ── Self-service (/auth/me/*) — Bearer-required, caller's OWN node only ──
+
+    if (url.pathname.startsWith('/auth/me/')) {
+      const token = bearerToken(req);
+      if (!token) return jsonError(401, 'Missing bearer token');
+      const tokenId = asTokenId(token);
+      const session = identity.resolveSession(tokenId);
+      if (!session) return jsonError(401, 'Invalid or expired session');
+      const nodeId = session.nodeId;
+
+      if (url.pathname === '/auth/me/password' && req.method === 'POST') {
+        const body = await parseJsonBody(req);
+        if (!isChangePasswordBody(body)) return jsonError(400, 'Invalid request body');
+        try {
+          const revoked = await changePassword(
+            identity,
+            nodeId,
+            body.currentPassword,
+            body.newPassword,
+            tokenId
+          );
+          return Response.json({ ok: true, revoked });
+        } catch (err) {
+          if (err instanceof InvalidCredentialsError) return jsonError(401, 'Invalid credentials');
+          if (err instanceof WeakPasswordError) {
+            return Response.json({ error: err.message, feedback: err.feedback }, { status: 400 });
+          }
+          if (err instanceof IdentityError) return jsonError(400, err.message);
+          throw err;
+        }
+      }
+
+      if (url.pathname === '/auth/me/sessions' && req.method === 'GET') {
+        return Response.json({ sessions: listSessions(identity, nodeId) });
+      }
+
+      if (url.pathname === '/auth/me/sessions/revoke-others' && req.method === 'POST') {
+        return Response.json({ revoked: revokeOtherSessions(identity, nodeId, tokenId) });
+      }
+
+      if (url.pathname === '/auth/me/devices' && req.method === 'GET') {
+        return Response.json({ devices: listDevices(identity, nodeId) });
+      }
+
+      if (url.pathname === '/auth/me/devices/untrust' && req.method === 'POST') {
+        const body = await parseJsonBody(req);
+        if (!isUntrustDeviceBody(body)) return jsonError(400, 'Invalid request body');
+        try {
+          untrustDevice(identity, nodeId, body.fingerprintHash);
+          return Response.json({ ok: true });
+        } catch (err) {
+          if (err instanceof IdentityError) return jsonError(400, err.message);
+          throw err;
+        }
+      }
+
+      if (url.pathname === '/auth/me/ip-allowlist' && req.method === 'GET') {
+        return Response.json({ entries: getIpAllowlist(identity, nodeId) });
+      }
+
+      if (url.pathname === '/auth/me/ip-allowlist' && req.method === 'PUT') {
+        const body = await parseJsonBody(req);
+        if (!isIpAllowlistBody(body)) return jsonError(400, 'Invalid request body');
+        try {
+          setIpAllowlist(identity, nodeId, body.cidrs);
+          return Response.json({ ok: true, count: body.cidrs.length });
+        } catch (err) {
+          if (err instanceof IdentityError) return jsonError(400, err.message);
+          throw err;
+        }
+      }
     }
 
     return jsonError(404, 'Not found');

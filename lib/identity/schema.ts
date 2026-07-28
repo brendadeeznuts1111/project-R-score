@@ -12,6 +12,9 @@
  * DBs — CREATE TABLE IF NOT EXISTS never alters an existing table, so the
  * ALTERs are the upgrade path. `migrateIdentity` stays the single idempotent
  * entry point for both shapes.
+ *
+ * `auth_ip_allowlist` (Phase 4 self-service) is a NEW table, so the CREATE
+ * IF NOT EXISTS alone covers both fresh and pre-existing DBs — no ALTERs.
  */
 
 import { Database } from 'bun:sqlite';
@@ -72,6 +75,14 @@ export function migrateIdentity(db: Database): void {
       country_code TEXT,
       trusted INTEGER NOT NULL DEFAULT 0,
       PRIMARY KEY (node_id, fingerprint_hash)
+    );
+
+    CREATE TABLE IF NOT EXISTS auth_ip_allowlist (
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      cidr TEXT NOT NULL,
+      label TEXT,
+      created_at TEXT NOT NULL,
+      PRIMARY KEY (node_id, cidr)
     );
 
     CREATE INDEX IF NOT EXISTS idx_auth_sessions_node ON auth_sessions(node_id);

@@ -22,6 +22,12 @@
  *     checkAnomaly() (anomaly.ts) when ctx.ip is present — high risk audits
  *     login_blocked_anomaly and throws AnomalyBlockedError, medium audits
  *     login_suspicious and allows. No ctx.ip → check skipped ('no-ip', low).
+ *   - IP allowlist: when the node has ≥1 auth_ip_allowlist entries (managed
+ *     via self-service.ts), login() enforces it AFTER the geo gate and BEFORE
+ *     password verification — a non-matching ctx.ip audits login_blocked_ip
+ *     (success 0) and throws IpNotAllowedError. Empty allowlist → no
+ *     restriction; no ctx.ip → allowed. Match is exact IPv4 or /24 prefix
+ *     (documented approximation, same granularity as anomaly fingerprints).
  *
  * Note: parameterized writes use `db.query(sql).run(params)` — the typed
  * pattern (bun-types: `db.run(sql, paramsObj)` trips TS2353).
@@ -121,6 +127,23 @@ export interface SessionExportRow {
   userAgent: string | null;
 }
 
+/** Active session view for self-service listing — NEVER includes token_hash. */
+export interface ActiveSessionInfo {
+  createdAt: string;
+  expiresAt: number; // unix seconds
+  ip: string | null;
+  userAgent: string | null;
+  /** True when the session was minted via impersonation — presence flag only. */
+  impersonated: boolean;
+}
+
+/** Deserialized auth_ip_allowlist row. */
+export interface IpAllowlistEntry {
+  cidr: string;
+  label: string | null;
+  createdAt: string;
+}
+
 /** GDPR-style export row for auth_alias_credentials — NEVER includes password_hash. */
 export interface AliasSummary {
   slug: string;
@@ -185,6 +208,16 @@ export class GeoBlockedError extends IdentityError {
     super('Login blocked by geo policy');
     this.name = 'GeoBlockedError';
     this.country = country;
+  }
+}
+
+/** Node's IP allowlist (auth_ip_allowlist) is set and ctx.ip matches no entry. */
+export class IpNotAllowedError extends IdentityError {
+  readonly ip: string;
+  constructor(ip: string) {
+    super('Login not permitted from this IP address');
+    this.name = 'IpNotAllowedError';
+    this.ip = ip;
   }
 }
 
@@ -330,6 +363,21 @@ export class IdentitySystem {
         });
         throw new GeoBlockedError(country);
       }
+    }
+
+    // IP allowlist (managed via self-service.ts): runs AFTER the geo gate and
+    // BEFORE password verification (fail cheap, no credential oracle). A node
+    // with no allowlist entries is unrestricted; no ctx.ip → allowed (a
+    // missing IP signal never blocks, same posture as the geo gate).
+    if (ctx.ip && !this.isIpAllowed(nodeId, ctx.ip)) {
+      this.logAuthEvent({
+        nodeId,
+        action: 'login_blocked_ip',
+        details: { slug },
+        ip: ctx.ip,
+        success: false,
+      });
+      throw new IpNotAllowedError(ctx.ip);
     }
 
     if (cred.lockedUntil !== null && cred.lockedUntil > now) {
@@ -735,6 +783,146 @@ export class IdentitySystem {
       ip: (row.ip as string | null) ?? null,
       userAgent: (row.user_agent as string | null) ?? null,
     }));
+  }
+
+  // ── Self-service accessors (narrow, typed — consumed by self-service.ts) ──
+
+  /** Verify the node's current password WITHOUT minting a session. */
+  async verifyNodePassword(nodeId: TreeNodeId, password: string): Promise<boolean> {
+    const row = this.db
+      .query('SELECT password_hash FROM auth_alias_credentials WHERE node_id = $node')
+      .get({ $node: nodeId }) as Record<string, unknown> | null;
+    if (!row) return false;
+    return Bun.password.verify(password, row.password_hash as string);
+  }
+
+  /**
+   * Replace the node's password hash and stamp rotated_at. The caller
+   * (self-service.ts) hashes argon2id BEFORE calling — plaintext never
+   * crosses this boundary. Throws when the node has no credentials.
+   */
+  rotatePasswordHash(nodeId: TreeNodeId, passwordHash: string): void {
+    const result = this.db
+      .query(
+        `UPDATE auth_alias_credentials SET password_hash = $hash, rotated_at = $at
+         WHERE node_id = $node`
+      )
+      .run({ $hash: passwordHash, $at: new Date().toISOString(), $node: nodeId });
+    if (result.changes === 0) throw new IdentityError('Node has no credentials');
+  }
+
+  /** Active (non-revoked, non-expired) sessions — explicit columns, token_hash never selected. */
+  activeSessionsFor(nodeId: TreeNodeId): ActiveSessionInfo[] {
+    const rows = this.db
+      .query(
+        `SELECT created_at, expires_at, ip, user_agent, impersonator_id
+         FROM auth_sessions
+         WHERE node_id = $node AND revoked_at IS NULL AND expires_at > $now
+         ORDER BY created_at DESC`
+      )
+      .all({ $node: nodeId, $now: unixNow() }) as Record<string, unknown>[];
+    return rows.map(row => ({
+      createdAt: row.created_at as string,
+      expiresAt: row.expires_at as number,
+      ip: (row.ip as string | null) ?? null,
+      userAgent: (row.user_agent as string | null) ?? null,
+      impersonated: row.impersonator_id !== null,
+    }));
+  }
+
+  /**
+   * Revoke every active session for the node EXCEPT the caller's current
+   * token ("log out everywhere else"). Returns the number revoked.
+   */
+  revokeOtherSessions(nodeId: TreeNodeId, currentToken: TokenId): number {
+    const keepHash = sha256Hex(currentToken as string);
+    const result = this.db
+      .query(
+        `UPDATE auth_sessions SET revoked_at = $at
+         WHERE node_id = $node AND revoked_at IS NULL AND token_hash != $keep`
+      )
+      .run({ $at: unixNow(), $node: nodeId, $keep: keepHash });
+    return result.changes;
+  }
+
+  /**
+   * Revoke one session by raw token, SCOPED to the node ("log out this
+   * device") — a token belonging to another node is never touched. Returns
+   * true when a live session was actually revoked.
+   */
+  revokeOwnSessionByToken(nodeId: TreeNodeId, token: TokenId): boolean {
+    const tokenHash = sha256Hex(token as string);
+    const result = this.db
+      .query(
+        `UPDATE auth_sessions SET revoked_at = $at
+         WHERE node_id = $node AND token_hash = $hash AND revoked_at IS NULL`
+      )
+      .run({ $at: unixNow(), $node: nodeId, $hash: tokenHash });
+    return result.changes > 0;
+  }
+
+  /** Mark a device fingerprint as untrusted (inverse of trustFingerprint). */
+  untrustFingerprint(nodeId: TreeNodeId, fingerprintHash: string): void {
+    this.db
+      .query(
+        `UPDATE auth_device_fingerprints SET trusted = 0
+         WHERE node_id = $node AND fingerprint_hash = $hash`
+      )
+      .run({ $node: nodeId, $hash: fingerprintHash });
+  }
+
+  /** Node's IP allowlist entries, oldest-first. */
+  ipAllowlistFor(nodeId: TreeNodeId): IpAllowlistEntry[] {
+    const rows = this.db
+      .query(
+        `SELECT cidr, label, created_at FROM auth_ip_allowlist
+         WHERE node_id = $node ORDER BY created_at ASC`
+      )
+      .all({ $node: nodeId }) as Record<string, unknown>[];
+    return rows.map(row => ({
+      cidr: row.cidr as string,
+      label: (row.label as string | null) ?? null,
+      createdAt: row.created_at as string,
+    }));
+  }
+
+  /** Replace-all write of the node's IP allowlist (single transaction). */
+  replaceIpAllowlist(nodeId: TreeNodeId, entries: { cidr: string; label?: string | null }[]): void {
+    const replace = this.db.transaction((rows: { cidr: string; label?: string | null }[]) => {
+      this.db.query('DELETE FROM auth_ip_allowlist WHERE node_id = $node').run({ $node: nodeId });
+      const insert = this.db.query(
+        `INSERT INTO auth_ip_allowlist (node_id, cidr, label, created_at)
+         VALUES ($node, $cidr, $label, $created)`
+      );
+      for (const row of rows) {
+        insert.run({
+          $node: nodeId,
+          $cidr: row.cidr,
+          $label: row.label ?? null,
+          $created: new Date().toISOString(),
+        });
+      }
+    });
+    replace(entries);
+  }
+
+  /**
+   * Login enforcement: true when the node has NO allowlist entries, or the
+   * IP matches an entry. Match semantics (documented approximation):
+   * exact IPv4 equality, or /24 prefix (first three octets) for `a.b.c.0/24`
+   * entries — the same granularity anomaly fingerprints use. Validation of
+   * stored entries happens at write time (self-service.ts).
+   */
+  isIpAllowed(nodeId: TreeNodeId, ip: string): boolean {
+    const entries = this.ipAllowlistFor(nodeId);
+    if (entries.length === 0) return true;
+    return entries.some(entry => {
+      if (entry.cidr.endsWith('/24')) {
+        const prefix = entry.cidr.slice(0, -'/24'.length).split('.').slice(0, 3).join('.');
+        return ip.split('.').slice(0, 3).join('.') === prefix;
+      }
+      return entry.cidr === ip;
+    });
   }
 
   // ── Internals ─────────────────────────────────────────────────────────
