@@ -52,7 +52,9 @@ Docs: [platform-specific dependencies](https://bun.com/docs/pm/cli/install#platf
 
 ## Catalogs and workspace protocols
 
-Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalogs](https://bun.com/docs/pm/catalogs) · [filter](https://bun.com/docs/pm/filter).
+**Operator runbook (FactoryWager hybrid model):** [harness/tenants/monorepo-workspaces.md](./harness/tenants/monorepo-workspaces.md) · gate `bun run validate:workspaces` · tag `v5.2.2-monorepo-workspaces-catalog`.
+
+Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalogs](https://bun.com/docs/pm/catalogs) · [filter](https://bun.com/docs/pm/filter) · [isolated installs](https://bun.com/docs/pm/isolated-installs) · resolve offline: `bun tools/bun-docs-catalog.ts get workspaces`.
 
 | Mechanism | Where | Rule |
 |-----------|--------|------|

@@ -25,7 +25,7 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Human hub | [`README.md`](/) |
 | Workspace map | [`STRUCTURE.md`](STRUCTURE.md) |
 | Coding standards | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md) · [`docs/DEVELOPMENT-STANDARDS.md`](docs/DEVELOPMENT-STANDARDS.md) |
-| Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) |
+| Bun install policy | [`docs/UNIFIED.md`](docs/UNIFIED.md) · catalogs/workspaces: [`docs/harness/tenants/monorepo-workspaces.md`](docs/harness/tenants/monorepo-workspaces.md) · `bun run validate:workspaces` |
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation (static UI) | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run verify:portal:static` · `bun run public:audit:verify` · [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) · `serve:public:hot` |

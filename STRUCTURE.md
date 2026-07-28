@@ -92,7 +92,7 @@ These may exist on disk under `~/Projects` but are **gitignored** or separate re
 
 - **Day loop?** `bun run help` · `bun run type-check` (`tsconfig.check.json` spine) · `bun run build:affected` / `test:affected` (**git-true** via [`scripts/affected-workspaces.ts`](scripts/affected-workspaces.ts)). Harness JIT: [`docs/harness/README.md`](docs/harness/README.md). CLI: `bun run help` (optional regenerate [`docs/CLI.md`](docs/CLI.md) via `cli:docs`).
 - **Run something?** Root `package.json` scripts (`bun run <name>`). Prefer named scripts over inventing paths.
-- **Workspace:** `bun run validate:workspaces` · `build:affected` / `test:affected` · `affected:list`
+- **Workspace:** `bun run validate:workspaces` · [monorepo-workspaces.md](docs/harness/tenants/monorepo-workspaces.md) · `build:affected` / `test:affected` · `affected:list`
 - **CLI:** [`tools/cli/`](tools/cli/) · `bun run help`
 - **Demos:** [`examples/`](examples/INDEX.md) (optional for product work)
 - **Bun install policy:** [`docs/UNIFIED.md`](docs/UNIFIED.md)

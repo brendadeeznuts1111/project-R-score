@@ -29,7 +29,8 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 
 | Role | Path | Anchors |
 |------|------|---------|
-| Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
+| Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) · [catalogs & workspace protocols](./UNIFIED.md#catalogs-and-workspace-protocols) |
+| Hybrid monorepo workspaces | [harness/tenants/monorepo-workspaces.md](./harness/tenants/monorepo-workspaces.md) | `validate:workspaces` · catalog: · filter · tag `v5.2.2-monorepo-workspaces-catalog` |
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
 | Portal foundation (static UI) | [portal-foundation.md](./portal-foundation.md) | data.js · topbar · verify · dev reload · TOC board § |
 | Platform routing (local vs Pages) | [platform-routing.md](./platform-routing.md) | domains · functions · auth plane |
