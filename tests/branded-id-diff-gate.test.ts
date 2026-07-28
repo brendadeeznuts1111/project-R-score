@@ -1,10 +1,22 @@
 import { describe, expect, test } from 'bun:test';
 import {
   addedLineBrandViolations,
+  GOVERNED_TYPESCRIPT_ROOTS,
   projectLegacyAttribution,
+  trackedTypeScriptFiles,
 } from '../tools/branded-id-check.ts';
 
 describe('branded ID added-line gate', () => {
+  test('smart inventory covers every governed tracked TypeScript root', async () => {
+    const files = await trackedTypeScriptFiles();
+
+    expect(files.length).toBeGreaterThan(0);
+    expect(files.every(file => /\.tsx?$/.test(file))).toBe(true);
+    for (const root of GOVERNED_TYPESCRIPT_ROOTS) {
+      expect(files.some(file => file.startsWith(`${root}/`))).toBe(true);
+    }
+  });
+
   test('governs project TSX additions and ignores deleted legacy lines', async () => {
     const diff = [
       'diff --git a/projects/active/demo/view.tsx b/projects/active/demo/view.tsx',

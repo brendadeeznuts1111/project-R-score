@@ -523,10 +523,33 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   },
 ];
 
-function withLinkIds(links: PortalWeaveLink[], prefix: string): PortalWeaveLink[] {
-  return links.map((l, i) => ({
-    ...l,
-    id: l.id ?? `${prefix}-${i}-${slugFromLabel(l.label)}`,
+/**
+ * Fill optional link ids from semantic labels, independent of declaration order.
+ * Explicit ids remain unchanged for compatibility. Duplicate generated ids must
+ * be disambiguated explicitly at the declaration site.
+ */
+export function withStableLinkIds(
+  links: readonly PortalWeaveLink[],
+  prefix: string
+): PortalWeaveLink[] {
+  const seen = new Set<string>();
+  return links.map(link => {
+    const id = link.id ?? `${prefix}-${slugFromLabel(link.label)}`;
+    if (seen.has(id)) {
+      throw new Error(`Duplicate portal weave id "${id}"; declare an explicit stable id`);
+    }
+    seen.add(id);
+    return { ...link, id };
+  });
+}
+
+function withLegacyPositionedLinkIds(
+  links: readonly PortalWeaveLink[],
+  prefix: string
+): PortalWeaveLink[] {
+  return links.map((link, index) => ({
+    ...link,
+    id: link.id ?? `${prefix}-${index}-${slugFromLabel(link.label)}`,
   }));
 }
 
@@ -539,9 +562,9 @@ function slugFromLabel(label: string): string {
 }
 
 export function buildPortalWeavePayload(generated?: string): PortalWeavePayload {
-  const surfaces = withLinkIds(PORTAL_WEAVE_SURFACES, 'surface');
-  const artifacts = withLinkIds(PORTAL_WEAVE_ARTIFACTS, 'artifact');
-  const wiki = withLinkIds(
+  const surfaces = withStableLinkIds(PORTAL_WEAVE_SURFACES, 'surface');
+  const artifacts = withStableLinkIds(PORTAL_WEAVE_ARTIFACTS, 'artifact');
+  const wiki = withLegacyPositionedLinkIds(
     PORTAL_WEAVE_WIKI.map(w => ({ ...w, group: 'wiki' as const })),
     'wiki'
   );

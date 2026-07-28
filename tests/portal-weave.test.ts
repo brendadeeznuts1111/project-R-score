@@ -4,6 +4,7 @@ import {
   buildPortalWeavePayload,
   PORTAL_WEAVE_ARTIFACTS,
   PORTAL_WEAVE_SURFACES,
+  withStableLinkIds,
 } from '../lib/http/portal-weave.ts';
 import { PORTAL_WEAVE_WIKI } from '../lib/http/wiki-nav.ts';
 import { PORTAL_MARKDOWN_SLUGS } from '../lib/http/portal-route-manifest.ts';
@@ -31,6 +32,37 @@ describe('portal weave', () => {
     const pred = p.surfaces.find(s => s.label === 'Prediction report');
     expect(pred?.href).toBe('/registry/prediction/report/');
     expect(pred?.id).toBe('prediction-report');
+  });
+
+  test('artifact ids are semantic and independent of declaration order', () => {
+    const forward = withStableLinkIds(PORTAL_WEAVE_ARTIFACTS, 'artifact');
+    const reversed = withStableLinkIds([...PORTAL_WEAVE_ARTIFACTS].reverse(), 'artifact');
+    const reversedByHref = new Map(reversed.map(link => [link.href, link.id]));
+
+    for (const link of forward) {
+      expect(reversedByHref.get(link.href)).toBe(link.id);
+    }
+    expect(forward.find(link => link.href === '/registry/bun-brand-map.json')?.id).toBe(
+      'artifact-bun-brand-map'
+    );
+  });
+
+  test('explicit stable link ids are preserved and generated collisions fail closed', () => {
+    expect(
+      withStableLinkIds(
+        [{ id: 'existing-id', label: 'Existing', href: '/registry/existing.json' }],
+        'artifact'
+      )[0]?.id
+    ).toBe('existing-id');
+    expect(() =>
+      withStableLinkIds(
+        [
+          { label: 'Same label', href: '/registry/one.json' },
+          { label: 'Same label', href: '/registry/two.json' },
+        ],
+        'artifact'
+      )
+    ).toThrow('Duplicate portal weave id');
   });
 
   test('markdown slugs include dashboard and toc; llms parity', () => {

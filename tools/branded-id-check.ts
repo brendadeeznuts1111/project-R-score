@@ -46,6 +46,26 @@ const SKIP_FILE =
 const SKIP_LINE = /brand-ok/;
 const BASELINE_URL = new URL('./branded-id-baseline.json', import.meta.url);
 
+/**
+ * Root TypeScript surfaces governed by the repository-wide smart scan.
+ * Staged and PR-diff checks remain repository-wide through git pathspecs.
+ */
+export const GOVERNED_TYPESCRIPT_ROOTS = [
+  'lib',
+  'projects',
+  'scripts',
+  'tools',
+  'tests',
+  'packages',
+  'server',
+  'config',
+  'dashboard',
+] as const;
+
+const LEGACY_WARNING_ROOTS = new Set<string>(
+  GOVERNED_TYPESCRIPT_ROOTS.filter(root => root !== 'lib')
+);
+
 /** High-trust boundary layers — bare `id` still flags here. */
 const HIGH_TRUST_PATH =
   /(?:^|\/)(lib\/security|lib\/core|lib\/mcp|lib\/registry|lib\/auth)(?:\/|$)/;
@@ -561,19 +581,19 @@ async function diffBaseViolations(base: string): Promise<BrandDiffViolation[]> {
   ]);
 }
 
-async function trackedTypeScriptFiles(): Promise<string[]> {
-  const proc = Bun.spawn(
-    ['git', 'ls-files', '-z', '--', 'lib/**/*.ts', 'projects/**/*.ts', 'projects/**/*.tsx'],
-    {
-      cwd: new URL('..', import.meta.url).pathname,
-      stdout: 'pipe',
-      stderr: 'inherit',
-    }
-  );
+export async function trackedTypeScriptFiles(): Promise<string[]> {
+  const proc = Bun.spawn(['git', 'ls-files', '-z', '--', ...GOVERNED_TYPESCRIPT_ROOTS], {
+    cwd: new URL('..', import.meta.url).pathname,
+    stdout: 'pipe',
+    stderr: 'inherit',
+  });
   const out = await new Response(proc.stdout).arrayBuffer();
   const code = await proc.exited;
   if (code !== 0) throw new Error(`git ls-files failed with exit ${code}`);
-  return new TextDecoder().decode(out).split('\0').filter(Boolean);
+  return new TextDecoder()
+    .decode(out)
+    .split('\0')
+    .filter(file => /\.tsx?$/.test(file));
 }
 
 async function collectFiles(args: string[]): Promise<string[]> {
@@ -596,17 +616,22 @@ async function collectFiles(args: string[]): Promise<string[]> {
 }
 
 /**
- * Project legacy remains visible but warning-only during adoption. New project
- * declarations are still hard-failed by --staged and --diff-base.
+ * Newly governed root and project legacy remains visible but warning-only during
+ * adoption. New declarations are still hard-failed by --staged and --diff-base.
  */
-function applyProjectLegacyVisibility(hits: Hit[]): Hit[] {
+function applyGovernedRootLegacyVisibility(hits: Hit[]): Hit[] {
   return hits.map(hit => {
-    if (hit.suppressed || !hit.file.startsWith('projects/')) return hit;
+    if (hit.suppressed) return hit;
+    const root = hit.file.split('/', 1)[0] ?? '';
+    if (!LEGACY_WARNING_ROOTS.has(root)) return hit;
+    const reason =
+      root === 'projects'
+        ? 'legacy project inventory (warning-only; new lines fail staged and PR base-diff gates)'
+        : 'legacy governed-root inventory (warning-only; new lines fail staged and PR base-diff gates)';
     return {
       ...hit,
       suppressed: true,
-      reason:
-        'legacy project inventory (warning-only; new lines fail staged and PR base-diff gates)',
+      reason,
     };
   });
 }
@@ -711,13 +736,17 @@ async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Pr
   const projectLegacy = suppressed.filter(h =>
     h.reason.startsWith('legacy project inventory')
   ).length;
-  const otherSuppressed = suppressed.length - legacy - projectLegacy;
+  const governedRootLegacy = suppressed.filter(h =>
+    h.reason.startsWith('legacy governed-root inventory')
+  ).length;
+  const otherSuppressed = suppressed.length - legacy - projectLegacy - governedRootLegacy;
   const projectAttribution = projectLegacyAttribution(suppressed);
 
   if (quiet && !asJson && actionable.length === 0) {
     console.info(
       `✅ brands-smart (${hits.length} hits, 0 actionable, ${legacy} baseline + ` +
         `${projectLegacy} project-legacy warnings across ${projectAttribution.length} projects` +
+        `${governedRootLegacy > 0 ? ` + ${governedRootLegacy} governed-root warnings` : ''}` +
         `${otherSuppressed > 0 ? ` + ${otherSuppressed} normalized/suppressed` : ''})`
     );
     return;
@@ -732,6 +761,7 @@ async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Pr
           autoSuppressed: suppressed.length,
           legacyBaseline: legacy,
           projectLegacyWarnings: projectLegacy,
+          governedRootLegacyWarnings: governedRootLegacy,
           otherSuppressed,
           projectAttribution,
           manifestLoaded: maps.loadedFromManifest,
@@ -763,7 +793,8 @@ async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Pr
       `${hits.length} total hits → ${actionable.length} actionable ` +
       `(${suppressed.length} suppressed` +
       `${legacy > 0 ? `, ${legacy} legacy-baseline` : ''}` +
-      `${projectLegacy > 0 ? `, ${projectLegacy} project-legacy warnings` : ''})\n` +
+      `${projectLegacy > 0 ? `, ${projectLegacy} project-legacy warnings` : ''}` +
+      `${governedRootLegacy > 0 ? `, ${governedRootLegacy} governed-root warnings` : ''})\n` +
       `  AGENTS: new domain *Id fields MUST use brands (as*/try*/parse*) — staged gate has no baseline.\n`
   );
 
@@ -902,7 +933,7 @@ async function main(): Promise<void> {
 
   if (smart) {
     const baseline = await loadBaselineKeys();
-    const hits = applyProjectLegacyVisibility(applyBaseline(await scanAll(files), baseline));
+    const hits = applyGovernedRootLegacyVisibility(applyBaseline(await scanAll(files), baseline));
     await printSmartReport(hits, asJson, quiet);
     const actionable = hits.filter(h => !h.suppressed).length;
     if (strict && actionable > 0) process.exit(1);
