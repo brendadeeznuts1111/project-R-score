@@ -3,12 +3,15 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 /**
  * Per-file tests/ inventory — pass / fail / HANG with wall timeout.
  *
  *   bun run test:inventory
  *   bun run test:inventory -- --timeout-ms=15000 --json
  *   bun run test:inventory -- --parallel-probe   # groups of 10 under --parallel
+ *   bun run test:inventory -- --lane=linux-ci --shards=4 \
+ *     --shard-plan-out=tmp/test-shard-plan.json
  *
  * Distinguishes **wall** (this process kills spawn after --timeout-ms, default 20s)
  * from **bun --timeout** (per-test, capped at min(10s, wall-1s)). A file can pass
@@ -19,22 +22,50 @@
  * Writes: tmp/test-file-report.json
  */
 import { Glob } from 'bun';
-import { joinPath } from '../lib/path-bun.ts';
+import { dirnamePath, joinPath, resolvePath } from '../lib/path-bun.ts';
+import {
+  buildTestSuiteInventoryReport,
+  type TestDurationRow,
+} from './lib/duration-balanced-shards.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 const OUT = joinPath(ROOT, 'tmp', 'test-file-report.json');
 const argv = Bun.argv.slice(2);
 const JSON_ONLY = argv.includes('--json');
 const PARALLEL_PROBE = argv.includes('--parallel-probe');
+
+function optionValue(name: string): string | undefined {
+  const inlinePrefix = `${name}=`;
+  const inline = argv.find(arg => arg.startsWith(inlinePrefix));
+  if (inline) return inline.slice(inlinePrefix.length);
+  const index = argv.indexOf(name);
+  return index >= 0 ? argv[index + 1] : undefined;
+}
+
 const timeoutMs = (() => {
-  const i = argv.indexOf('--timeout-ms');
-  if (i >= 0 && argv[i + 1]) return Number(argv[i + 1]);
-  return 20_000;
+  const raw = optionValue('--timeout-ms');
+  const parsed = raw === undefined ? 20_000 : Number(raw);
+  if (!Number.isSafeInteger(parsed) || parsed < 1_001) {
+    throw new RangeError('--timeout-ms must be an integer greater than 1000');
+  }
+  return parsed;
 })();
+const laneName = optionValue('--lane') ?? (PARALLEL_PROBE ? 'parallel-probe' : 'local-serial');
+const shardCount = (() => {
+  const raw = optionValue('--shards');
+  if (raw === undefined) return undefined;
+  const parsed = Number(raw);
+  if (!Number.isSafeInteger(parsed) || parsed < 1) {
+    throw new RangeError('--shards must be a positive integer');
+  }
+  return parsed;
+})();
+const shardPlanOut = optionValue('--shard-plan-out');
+if (shardPlanOut && shardCount === undefined) {
+  throw new TypeError('--shard-plan-out requires --shards');
+}
 
-type Row = { path: string; status: 'pass' | 'fail' | 'HANG'; s: number; msg: string };
-
-async function runOne(path: string, parallel: boolean): Promise<Row> {
+async function runOne(path: string, parallel: boolean): Promise<TestDurationRow> {
   const t0 = performance.now();
   const args = ['test', `--timeout=${Math.min(10_000, timeoutMs - 1000)}`, '--pass-with-no-tests'];
   if (parallel) args.push('--parallel');
@@ -86,7 +117,7 @@ files.sort();
 
 if (!JSON_ONLY) console.info(`test-suite-inventory: ${files.length} files, timeout=${timeoutMs}ms`);
 
-const results: Row[] = [];
+const results: TestDurationRow[] = [];
 const tAll = performance.now();
 
 if (PARALLEL_PROBE) {
@@ -125,30 +156,37 @@ for (const path of files) {
 }
 
 const elapsed = Math.round((performance.now() - tAll) / 10) / 100;
-const counts = {
-  pass: results.filter(r => r.status === 'pass').length,
-  fail: results.filter(r => r.status === 'fail').length,
-  HANG: results.filter(r => r.status === 'HANG').length,
-};
-
-const report = {
+const report = buildTestSuiteInventoryReport(results, {
   generatedAt: new Date().toISOString(),
+  lane: {
+    name: laneName,
+    // Per-file evidence is collected by runOne serially. --parallel-probe is
+    // an additional batch diagnostic, represented separately below.
+    mode: 'serial',
+    parallelProbe: PARALLEL_PROBE,
+    runtime: 'bun',
+    runtimeVersion: process.versions.bun ?? 'unknown',
+    platform: process.platform,
+    architecture: process.arch,
+    timeoutMs,
+  },
   elapsedSec: elapsed,
-  counts,
-  hangs: results.filter(r => r.status === 'HANG').map(r => r.path),
-  fails: results.filter(r => r.status === 'fail').map(r => ({ path: r.path, msg: r.msg, s: r.s })),
-  slow: [...results]
-    .filter(r => r.s >= 3)
-    .sort((a, b) => b.s - a.s)
-    .slice(0, 30),
-};
+  ...(shardCount === undefined ? {} : { shardCount }),
+});
 
+await Bun.$`mkdir -p ${dirnamePath(OUT)}`.quiet();
 await Bun.write(OUT, JSON.stringify(report, null, 2) + '\n');
+if (shardPlanOut && report.shardPlan) {
+  const resolvedShardPlanOut = resolvePath(ROOT, shardPlanOut);
+  await Bun.$`mkdir -p ${dirnamePath(resolvedShardPlanOut)}`.quiet();
+  await Bun.write(resolvedShardPlanOut, JSON.stringify(report.shardPlan, null, 2) + '\n');
+  if (!JSON_ONLY) console.info(`wrote ${resolvedShardPlanOut}`);
+}
 if (!JSON_ONLY) {
   console.info('');
-  console.info(`DONE ${elapsed}s counts=${JSON.stringify(counts)}`);
+  console.info(`DONE ${elapsed}s counts=${JSON.stringify(report.counts)}`);
   console.info(`wrote ${OUT}`);
   for (const h of report.hangs) console.info(` HANG ${h}`);
   for (const f of report.fails) console.info(` FAIL ${f.path}`);
 }
-process.exit(counts.HANG + counts.fail > 0 ? 1 : 0);
+process.exit(report.counts.HANG + report.counts.fail > 0 ? 1 : 0);

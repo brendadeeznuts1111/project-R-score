@@ -1,15 +1,33 @@
 // @see https://bun.com/docs/test/index#run-tests
-import { afterEach, describe, expect, spyOn, test } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
+import { mkdir } from 'node:fs/promises';
 import { joinPath } from '../lib/path-bun.ts';
 import { loadComplianceMonitoringSlice } from '../lib/monitoring/compliance-slice.ts';
-import * as bakeMod from '../tools/bake-compliance-portal.ts';
 import { bakeCompliancePortal } from '../tools/bake-compliance-portal.ts';
+import {
+  runComplianceSnapshotBake,
+  type ComplianceSnapshotBake,
+} from '../tools/ops-snapshot.ts';
+import { createTestWorkspace } from './harness.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
 
 describe('compliance portal bake', () => {
-  test('bakeCompliancePortal writes board + returns freeze summary', async () => {
-    const result = await bakeCompliancePortal({ log: false });
+  test('bakeCompliancePortal writes only to an injected workspace', async () => {
+    await using workspace = await createTestWorkspace('factorywager-compliance-');
+    const registryDir = workspace.resolve('registry');
+    const portalHtmlPath = workspace.resolve('compliance.html');
+    const productionPortalPath = joinPath(ROOT, 'public/portal/compliance/index.html');
+    const productionPortalBefore = await Bun.file(productionPortalPath).text();
+    await mkdir(registryDir, { recursive: true });
+    await Bun.write(portalHtmlPath, productionPortalBefore);
+
+    const result = await bakeCompliancePortal({
+      log: false,
+      registryDir,
+      portalHtmlPath,
+    });
+
     expect(result.ok).toBe(true);
     expect(result.enhancements.passed).toBe(result.enhancements.total);
     expect(result.shadowMismatches).toBe(0);
@@ -22,22 +40,20 @@ describe('compliance portal bake', () => {
     expect(slice?.available).toBe(true);
     expect(slice?.ok).toBe(true);
     expect(slice?.portal).toBe('/portal/compliance/');
-  });
-
-  test('registry artifacts exist and board schema is v1', async () => {
-    // Ensure fresh bake when missing (CI without prior bake step)
-    const boardPath = joinPath(ROOT, 'public/registry/compliance-board.json');
-    if (!(await Bun.file(boardPath).exists())) {
-      const result = await bakeCompliancePortal({ log: false });
-      expect(result.ok).toBe(true);
-    }
-    const board = await Bun.file(boardPath).json();
+    const board = await Bun.file(result.boardPath).json();
     expect(board.schemaVersion).toBe(1);
     expect(board.enhancements?.passed).toBe(board.enhancements?.total);
     expect(board.shadow?.summary?.mismatches).toBe(0);
     expect(board.links?.portal).toBe('/portal/compliance/');
     expect(board.proton?.inject).toContain('proton:inject');
     expect(board.proton?.reportSigning).toContain('REPORT_SIGNING_SECRET');
+    expect(await Bun.file(joinPath(registryDir, 'compliance-enhancements.json')).exists()).toBe(
+      true
+    );
+    expect(await Bun.file(joinPath(registryDir, 'compliance-shadow.json')).exists()).toBe(true);
+    expect(await Bun.file(joinPath(registryDir, 'portal-weave.json')).exists()).toBe(true);
+    expect(await Bun.file(portalHtmlPath).text()).toContain(result.generatedAt);
+    expect(await Bun.file(productionPortalPath).text()).toBe(productionPortalBefore);
   });
 
   test('portal page has embed slot', async () => {
@@ -50,13 +66,6 @@ describe('compliance portal bake', () => {
 });
 
 describe('ops-snapshot compliance ownership', () => {
-  let bakeSpy: ReturnType<typeof spyOn> | undefined;
-
-  afterEach(() => {
-    bakeSpy?.mockRestore();
-    bakeSpy = undefined;
-  });
-
   test('CLI/env flag surface in ops-snapshot source', async () => {
     const src = await Bun.file(joinPath(ROOT, 'tools/ops-snapshot.ts')).text();
     expect(src).toContain('--no-compliance');
@@ -65,54 +74,35 @@ describe('ops-snapshot compliance ownership', () => {
     expect(src).toContain('withCompliance');
   });
 
-  test(
-    'withCompliance:true invokes bakeCompliancePortal({ log: false })',
-    async () => {
-      bakeSpy = spyOn(bakeMod, 'bakeCompliancePortal').mockResolvedValue({
-        ok: true,
-        boardPath: joinPath(ROOT, 'public/registry/compliance-board.json'),
-        generatedAt: new Date().toISOString(),
-        enhancements: { passed: 8, total: 8 },
-        shadowMismatches: 0,
-        hmac: false,
-        board: { schemaVersion: 1 } as bakeMod.ComplianceBoard,
-      });
-      const { buildRegistrySnapshot } = await import('../tools/ops-snapshot.ts');
-      const outPath = joinPath(ROOT, '.tmp/ops-snapshot-compliance-on.json');
-      await buildRegistrySnapshot({
-        withCompliance: true,
-        withRouting: false,
-        withReport: false,
-        withWebView: false,
-        withStatic: false,
-        withChannelMeta: false,
-        outPath,
-      });
-      expect(bakeSpy).toHaveBeenCalled();
-      expect(bakeSpy.mock.calls.some(c => c[0]?.log === false)).toBe(true);
-    },
-    30_000
-  );
+  test('enabled compliance invokes the owned bake boundary', async () => {
+    const calls: Array<{ log: false }> = [];
+    const expected: ComplianceSnapshotBake = {
+      ok: true,
+      enhancements: { passed: 8, total: 8 },
+      shadowMismatches: 0,
+      hmac: false,
+    };
+    const result = await runComplianceSnapshotBake({
+      enabled: true,
+      bake: async options => {
+        calls.push(options);
+        return expected;
+      },
+    });
+    expect(calls).toEqual([{ log: false }]);
+    expect(result).toEqual(expected);
+  });
 
-  test(
-    'withCompliance:false never calls bakeCompliancePortal',
-    async () => {
-      bakeSpy = spyOn(bakeMod, 'bakeCompliancePortal').mockImplementation(() => {
-        throw new Error('bakeCompliancePortal must not run when withCompliance:false');
-      });
-      const { buildRegistrySnapshot } = await import('../tools/ops-snapshot.ts');
-      const outPath = joinPath(ROOT, '.tmp/ops-snapshot-compliance-off.json');
-      await buildRegistrySnapshot({
-        withCompliance: false,
-        withRouting: false,
-        withReport: false,
-        withWebView: false,
-        withStatic: false,
-        withChannelMeta: false,
-        outPath,
-      });
-      expect(bakeSpy).not.toHaveBeenCalled();
-    },
-    30_000
-  );
+  test('disabled compliance never crosses the bake boundary', async () => {
+    let called = false;
+    const result = await runComplianceSnapshotBake({
+      enabled: false,
+      bake: async () => {
+        called = true;
+        throw new Error('disabled compliance must not bake');
+      },
+    });
+    expect(called).toBe(false);
+    expect(result).toBeNull();
+  });
 });

@@ -9,6 +9,7 @@ import {
 } from '../lib/operations/snapshot-cron.ts';
 import { scheduleInProcess } from '../lib/harness/cron.ts';
 import { tenantById } from '../spine/tenants.ts';
+import { createTestWorkspace } from './harness.ts';
 
 describe('ops-snapshot in-process Bun.cron', () => {
   test('schedule is a 5-field cron expression (UTC complement)', () => {
@@ -39,16 +40,41 @@ describe('ops-snapshot in-process Bun.cron', () => {
     expect(t!.schedule).toBe('*/10 * * * *');
   });
 
-  test('runOpsSnapshotCycle --no-routing writes artifacts', async () => {
-    const result = await runOpsSnapshotCycle({
+  test('runOpsSnapshotCycle delegates isolated artifact writes', async () => {
+    await using workspace = await createTestWorkspace('factorywager-ops-snapshot-');
+    const outPath = workspace.resolve('ops-summary.json');
+    const staticPath = workspace.resolve('static.json');
+    const calls: Array<Record<string, unknown>> = [];
+
+    const result = await runOpsSnapshotCycle(
+      {
+        withRouting: false,
+        withReport: false,
+        withWebView: false,
+        withStatic: true,
+        prepareState: false,
+        withLoopAutomation: false,
+      },
+      {
+        buildSnapshot: async options => {
+          calls.push({ ...options });
+          await Bun.write(outPath, `${JSON.stringify({ source: 'test' })}\n`);
+          await Bun.write(staticPath, `${JSON.stringify({ source: 'test' })}\n`);
+          return { out: outPath, static: staticPath };
+        },
+      }
+    );
+
+    expect(result.code).toBe(0);
+    expect(calls).toHaveLength(1);
+    expect(calls[0]).toMatchObject({
       withRouting: false,
       withReport: false,
       withWebView: false,
       withStatic: true,
     });
-    expect(result.code).toBe(0);
-    expect(result.summary?.out).toBe('public/registry/ops-summary.json');
-    expect(await Bun.file('public/registry/ops-summary.json').exists()).toBe(true);
-    expect(await Bun.file('public/registry/static.json').exists()).toBe(true);
-  }, 60_000);
+    expect(result.summary).toMatchObject({ out: outPath, static: staticPath });
+    expect(await Bun.file(outPath).json()).toEqual({ source: 'test' });
+    expect(await Bun.file(staticPath).json()).toEqual({ source: 'test' });
+  });
 });

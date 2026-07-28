@@ -1,83 +1,147 @@
-# Bun test speed — parallel, changed, shard
+# Bun tests: fast loops, isolation, and sharding
 
-Immediate wins from Bun 1.3.13+ test runner flags. Machine install SSOT (`linker = "isolated"`, streaming extract) lives in `~/.bunfig.toml` — **do not** duplicate in workspace `bunfig.toml`.
+FactoryWager uses Bun's changed-test selection, process isolation, parallel
+workers, and CI sharding as separate controls. Speed is useful only after tests
+own their state: a worker-safe test must not depend on execution order or mutate
+tracked portal and registry artifacts.
 
-## Local day-loop
+Machine install policy (`linker = "isolated"`, global store, and cache location)
+lives in `~/.bunfig.toml`. Workspace tests and workflow jobs must not duplicate
+install-scoped environment configuration owned by the Factory Bun setup action.
 
-| Command | What |
-|---------|------|
-| `bun run test:changed` | Import-graph filter on dirty/HEAD… + **`--parallel`** (fresh isolate per file) |
-| `bun run test:changed:watch` | Re-query git + re-run affected |
-| `bun run test:watch` | Native `--changed --watch --parallel` |
-| `bun run test:changed:serial` | Opt out of workers (`--serial` / `BUN_TEST_SERIAL=1`) |
-| `bun run test` | Full `tests/` suite (serial — reliable; some files hang under workers) |
-| `bun run test:parallel` | Full `tests/` with workers + 30s timeout |
-| `bun run test:ci` | Serial `tests/` + JUnit → `tmp/junit.xml` |
-| `SHARD=2/4 bun run test:ci:shard` | One of N CI shards (serial per shard — wall time still /N) |
-| `SHARD=2/4 bun run test:ci:shard:parallel` | Shard + 4 workers (use when suite is hang-clean) |
+## Local day loop
 
-Wrapper: [`scripts/bun-test-changed.ts`](../scripts/bun-test-changed.ts) — skips the test runner when the change set has no code-like files.
+| Command                                    | Purpose                                                              |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| `bun run test:changed`                     | Select tests from the current import graph and run files in parallel |
+| `bun run test:changed:watch`               | Re-query git and rerun affected tests                                |
+| `bun run test:watch`                       | Native changed/watch/parallel loop                                   |
+| `bun run test:changed:serial`              | Diagnose a worker-only failure without parallelism                   |
+| `bun run test`                             | Full serial `tests/` suite                                           |
+| `bun run test:parallel`                    | Full suite with isolated workers and a 30-second file timeout        |
+| `bun run test:ci`                          | Full serial suite with JUnit output                                  |
+| `SHARD=2/4 bun run test:ci:shard`          | One serial CI shard                                                  |
+| `SHARD=2/4 bun run test:ci:shard:parallel` | One shard with four workers after its files are isolation-clean      |
+| `bun run test:inventory`                   | Produce current suite and timing evidence                            |
 
-## CI
+The changed-test wrapper is
+[`scripts/bun-test-changed.ts`](../scripts/bun-test-changed.ts). It exits
+cleanly without starting Bun when the change set contains no code-like files.
 
-- **harness-gates** → `ci:harness` → `test:changed` (already parallel via wrapper).
-- **test-sharded** (`.github/workflows/test-sharded.yml`) → matrix `1/4`…`4/4` full suite, JUnit artifacts.
+## State isolation is the first speed feature
+
+Tests must not rewrite tracked files under `public/`. Portal pages, registry
+JSON, monitoring snapshots, proof artifacts, and generated indexes are
+production outputs, not writable test fixtures.
+
+Writer APIs should accept an explicit output root or a typed map containing
+every destination they own. Tests pass paths from a disposable workspace created
+through [`tests/harness.ts`](../tests/harness.ts), then assert against that
+workspace. Environment changes and local HTTP fixtures use the same explicit
+helper boundary so cleanup remains local to the test.
+
+After changing a portal or registry writer test:
+
+```bash
+bun test path/to/changed-writer.test.ts
+test -z "$(git status --porcelain --untracked-files=all -- public/)"
+```
+
+The second command is part of the contract and detects modified tracked outputs
+as well as newly created untracked files. A green assertion set that leaves
+artifacts behind is a failing test design.
+
+Serial execution is not an isolation mechanism. It can temporarily help diagnose
+an order-dependent failure, but the fix is to remove shared writable state.
+
+## CI lanes
+
+The [`test-sharded` workflow](../.github/workflows/test-sharded.yml) has two
+different confidence levels:
+
+- **Portal and registry isolation** is a small required job. It exercises the
+  isolated snapshot/bake path together with fast portal and registry contracts,
+  then fails if tracked `public/` artifacts changed.
+- **Full-suite shard matrix** runs four serial shards and uploads JUnit
+  artifacts. It remains advisory while known crash, hang, and shared-state debt
+  is being retired.
+
+Promote the full matrix to required only after repeated CI runs are hang-clean
+and every artifact writer in its scope uses disposable destinations. Parallel
+workers are a later optimization within each shard, not a prerequisite for
+making the matrix required.
 
 ## Pre-commit
 
-When staged `*.ts`/`*.js` exist:
+When staged TypeScript or JavaScript exists, the harness runs:
 
 ```bash
 bun run test:changed -- --bail=1
 ```
 
-Escape hatch: `SKIP_TEST_CHANGED=1`.
+`SKIP_TEST_CHANGED=1` is an explicit operator escape hatch, not a persistent
+test configuration.
 
-## Flags (Bun)
+## Bun runner controls
 
 ```text
---parallel[=N]   worker processes (implies --isolate)
---isolate        fresh global object per test file
---shard=M/N      subset of files for CI matrix
---changed[=REF]  tests that transitively import changed files
---bail=1         stop on first failure
+--parallel[=N]   distribute files across worker processes; implies isolation
+--isolate        give each test file a fresh global object
+--shard=M/N      select one deterministic subset for a CI runner
+--changed[=REF]  select tests that transitively import changed files
+--bail=1         stop after the first failure
 --reporter=junit --reporter-outfile=path
 ```
 
-## What you do **not** need to configure
+Pin for the reviewed upstream behavior:
+[Bun test tree](https://github.com/oven-sh/bun/tree/b5036bc6a11be1389b5cb50549c407f956df76d3/test)
+and
+[Bun test README](https://github.com/oven-sh/bun/blob/b5036bc6a11be1389b5cb50549c407f956df76d3/test/README.md).
 
-| Capability | Status |
-|------------|--------|
-| Streaming `bun install` extract | On by default |
-| `linker = isolated` | Machine `~/.bunfig.toml` |
-| Source-map bit-pack memory | Runtime automatic |
-| zlib-ng compress | Runtime automatic |
-| `Range` / 206 on static files | [`scripts/serve-public.ts`](../scripts/serve-public.ts) already documents Range |
+## Quarantine
 
-## Suite inventory
+Quarantine is only for a whole-file crash or hang that prevents Bun from
+reporting ordinary test failures. Do not quarantine assertion failures,
+filesystem coupling, timing flakiness, or slow-but-completing tests.
+
+An entry must name the exact file, owner, failure evidence, and removal
+condition. Broad directory quarantine is prohibited because it silently removes
+unrelated coverage.
+
+## Timing evidence and balanced-shard plans
+
+The inventory retains every per-file result with lane, Bun version, platform,
+architecture, timeout, and execution-mode metadata. It can also emit a
+deterministic longest-processing-time shard plan:
 
 ```bash
-bun run test:inventory          # scripts/suite-inventory.ts → tmp/test-file-report.json
+bun run test:inventory -- \
+  --lane=linux-ci \
+  --shards=4 \
+  --shard-plan-out=tmp/test-shard-plan.json
 ```
 
-Baseline (2026-07-27, serial per-file, 20s wall): **260 files · ~238 pass · ~21 fail · 1 slow/hang-risk**  
-(`tests/harness-tenant-runbooks.test.ts` runs multi-tenant freshReruns — allow **≥180s** timeout).
+The complete report is written to `tmp/test-file-report.json`; the optional
+shard-plan path contains the stable assignment. Failed and hanging files remain
+in the evidence and assignment instead of disappearing from scheduling.
+`--parallel-probe` runs an additional batch probe; the retained per-file timing
+rows remain serial measurements and are labeled accordingly.
 
-### Fixed in deep pass (examples)
+A single observation is not yet a promoted CI baseline. Promotion should use
+rolling medians from comparable OS, Bun-version, and serial/parallel lanes, with
+a conservative default weight for new files. Until that evidence is collected
+and reviewed, the workflow continues to execute Bun's deterministic
+`--shard=M/N` selection; generated balanced plans are diagnostic artifacts.
 
-| File | Issue |
-|------|--------|
-| `play-callback.ts` | missing `AccountService` import (e2e) |
-| `play-settlement.ts` | outbox enqueue skipped when no `play_distribution` rows |
-| `defaults-cron.test.ts` | case count 12→13 |
-| `r2-env.test.ts` | `.env.example` bucket `factory-wager-registry` |
-| `seat-capital-desk-rich.test.ts` | Fill button labels for max/fp todos |
+## Runtime capabilities that require no repository configuration
 
-### Notes
+| Capability                              | Ownership                                               |
+| --------------------------------------- | ------------------------------------------------------- |
+| Streaming install extraction            | Bun runtime default                                     |
+| Install linker, global store, and cache | Machine `~/.bunfig.toml` and setup action               |
+| Test-file workers and fresh globals     | Bun runner flags                                        |
+| Static `Range` / `206` responses        | [`scripts/serve-public.ts`](../scripts/serve-public.ts) |
 
-- **Changed/watch loops use `--parallel` by default** (few files → isolation wins).
-- Full `tests/` suite: prefer **serial** (`bun run test` / `test:ci:shard`) until hangers under `--isolate` are cleaned.
-- Small suites (<~10 files) may not beat serial wall time (spawn overhead).
-- Sharding still cuts CI wall time ≈ **N-way** even with serial workers.
-- Secrets continuous watch: `bun run test:secrets:watch`.
-- **Do not** set `linker = isolated` in workspace `bunfig.toml` — machine SSOT is `~/.bunfig.toml`.
+Small focused suites may be faster serially because worker startup has a fixed
+cost. Use timing evidence to choose worker count; do not trade away isolation or
+required coverage for a synthetic wall-time win.

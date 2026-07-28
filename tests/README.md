@@ -1,44 +1,148 @@
-# Limit Detection Tests
+# FactoryWager Bun test map
 
-按照 Bun 测试规范组织的测试文件。详见 https://bun.com/docs/test/writing-tests
+FactoryWager tests use [`bun:test`](https://bun.com/docs/test) and follow Bun's
+upstream harness pattern: keep global preload behavior minimal, import test
+utilities explicitly, isolate filesystem and environment state, and run the
+smallest relevant lane during development.
 
-## 目录结构
+## Test layout
 
-```
-tests/
-  limits-e2e.test.ts           # E2E 流水线测试（11 个阶段）
-  table-format.test.ts         # 表格格式化器合约测试（173 项）
-  limit-quarantine.txt         # 测试隔离清单（当前无隔离项）
-  account-limits-repo.test.ts  # 仓库层测试
-  limit-patterns.test.ts       # 模式检测测试
-  limit-prediction-report.test.ts  # 预测报告测试
-  limit-raise-agent-api.test.ts    # Agent API 测试
-  limit-raise-report.test.ts       # 提升报告测试
-  limit-raises-ui.test.ts          # UI 组件测试
-  limit-slice.test.ts              # Monitoring slice 测试
-```
+| Location or pattern          | Purpose                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------- |
+| `tests/*.test.ts`            | Unit, contract, integration, and artifact tests grouped by owning subsystem                       |
+| `tests/journey/`             | Multi-step operator and tenant journeys                                                           |
+| `tests/toc-ops/`             | TOC operations fixtures and focused suites                                                        |
+| `tests/fixtures/`            | Checked-in immutable inputs; never use tracked production artifacts as writable fixtures          |
+| `tests/__snapshots__/`       | Reviewed `bun:test` snapshots                                                                     |
+| `tests/preload.ts`           | Minimal process-wide environment normalization                                                    |
+| `tests/harness.ts`           | Explicitly imported databases, temporary workspaces, scoped environment, and local server helpers |
+| `tests/limit-quarantine.txt` | Limit-lane crash/hang quarantine metadata                                                         |
 
-## 运行测试
+Test files stay near the public contract they prove. Add regression coverage to
+the existing owning test file when one exists. Use `tests/regression/` only for
+a demonstrated numbered upstream or production regression.
+
+## Day-loop commands
 
 ```bash
-# 运行所有限制检测测试
-bun test tests/limits-e2e.test.ts tests/table-format.test.ts
+# Import-graph-selected tests for the current change
+bun run test:changed
 
-# 只运行 E2E 流水线测试
-bun test tests/limits-e2e.test.ts
+# Re-query git and rerun affected tests
+bun run test:changed:watch
 
-# 只运行表格格式化器测试
-bun test tests/table-format.test.ts
+# Full reliable suite
+bun run test
 
-# 运行所有测试（包含其他模块）
-bun test
+# Full worker-isolated suite while parallel debt is being retired
+bun run test:parallel
+
+# CI-compatible serial run with JUnit output
+bun run test:ci
+
+# One CI shard
+SHARD=2/4 JUNIT_OUT=tmp/junit-2.xml bun run test:ci:shard
+
+# Inventory test files and timing evidence
+bun run test:inventory
 ```
 
-## 编写测试规范
+Run a focused file directly while iterating:
 
-- 使用 `describe` + `test` + `expect`（从 `bun:test` 导入）
-- 优先使用 `test.each` 配合格式说明符 `%s %i %p %# %o`
-- 使用 `test.if()` / `describe.if()` 处理条件测试
-- 使用 `expect.hasAssertions()` 确保断言执行
-- 测试名称使用 `should + 描述行为` 格式
-- 回归测试放在 `tests/regression/` 目录（带有 GitHub issue 编号）
+```bash
+bun test tests/portal-weave.test.ts
+bun test tests/registry-contracts.test.ts
+```
+
+The test speed and CI model are documented in
+[`docs/BUN_TEST_SPEED.md`](../docs/BUN_TEST_SPEED.md).
+
+## Isolation contract
+
+Tests must not rewrite tracked files under `public/`, including portal pages,
+registry JSON, generated proofs, or monitoring artifacts. A passing assertion is
+not sufficient if the test leaves the source tree dirty.
+
+- Give artifact builders an explicit output root or complete output map.
+- Create disposable directories through helpers from `tests/harness.ts`.
+- Pass temporary paths to snapshot, bake, database, and report writers.
+- Restore environment mutations with the scoped environment helper.
+- Start local HTTP fixtures on an ephemeral port and close them in test cleanup.
+- Keep immutable checked-in artifacts read-only; copy them into a temporary
+  workspace before testing mutations.
+- After changing a writer test, run it and verify
+  `test -z "$(git status --porcelain --untracked-files=all -- public/)"`.
+
+Do not hide filesystem coupling with serial execution. Isolation is what makes
+`--parallel`, local reruns, and CI sharding deterministic.
+
+## Shared harness policy
+
+`tests/preload.ts` is deliberately small. Reusable stateful behavior belongs in
+`tests/harness.ts` and must be imported by the test that owns its lifecycle.
+This keeps dependencies visible and allows cleanup to occur in the same scope as
+setup.
+
+Prefer shared helpers for:
+
+- in-memory test databases and canonical seed data;
+- disposable filesystem workspaces;
+- scoped process environment changes;
+- local JSON/HTTP fixtures;
+- stable platform and terminal capability checks.
+
+Add a helper only when at least two tests share the lifecycle or when the helper
+enforces an isolation boundary that would otherwise be easy to miss.
+
+## Quarantine policy
+
+Quarantine is reserved for a whole-file crash or hang that prevents the runner
+from reporting ordinary failures. Assertion failures, flaky data, environment
+coupling, and slow tests are defects to fix, not reasons to quarantine a file.
+
+Every quarantine entry must identify an owner, a concrete failure, and an expiry
+or removal condition. Keep the narrowest affected file quarantined; never
+quarantine a directory or broad subsystem.
+
+## Writing tests
+
+- Import `describe`, `test`, and `expect` from `bun:test`.
+- Name tests after observable behavior.
+- Prefer deterministic fixtures and fixed clocks over timing sleeps.
+- Use `test.each` for repeated contracts.
+- Use `expect.hasAssertions()` when callbacks or branches might skip assertions.
+- Use `@ts-expect-error` for an intentional type failure; avoid broad
+  suppression.
+- Close servers, databases, timers, and subprocesses in `afterEach`, `afterAll`,
+  `using`, or the shared harness cleanup mechanism.
+- Add canonical Bun references when a test introduces a new `Bun.*` API.
+
+Upstream references are pinned to the reviewed Bun revision:
+[test README](https://github.com/oven-sh/bun/blob/b5036bc6a11be1389b5cb50549c407f956df76d3/test/README.md),
+[test harness](https://github.com/oven-sh/bun/blob/b5036bc6a11be1389b5cb50549c407f956df76d3/test/harness.ts),
+and
+[test configuration](https://github.com/oven-sh/bun/blob/b5036bc6a11be1389b5cb50549c407f956df76d3/test/bunfig.toml).
+
+## Partner-limit lane
+
+The limit suite covers account-limit persistence, multi-factor patterns,
+prediction, reports, UI surfaces, and the agent API.
+
+```bash
+# High-level E2E pipeline and formatting contract
+bun test tests/limits-e2e.test.ts tests/table-format.test.ts
+
+# Focused pattern, prediction, report, API, and UI coverage
+bun test \
+  tests/account-limits-repo.test.ts \
+  tests/limit-patterns.test.ts \
+  tests/limit-prediction-report.test.ts \
+  tests/limit-raise-agent-api.test.ts \
+  tests/limit-raise-report.test.ts \
+  tests/limit-raises-ui.test.ts \
+  tests/limit-slice.test.ts
+```
+
+See
+[`docs/harness/tenants/partner-limits.md`](../docs/harness/tenants/partner-limits.md)
+for the owned artifact and operator flow.
