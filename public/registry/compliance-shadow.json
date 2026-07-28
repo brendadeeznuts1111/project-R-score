@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-28T16:06:31.077Z",
-  "base": "http://127.0.0.1:58136/",
+  "generatedAt": "2026-07-28T16:41:38.413Z",
+  "base": "http://127.0.0.1:63489/",
   "rows": [
     {
       "state": "MA",
@@ -76,12 +76,12 @@
     "block": 4,
     "mismatches": 0
   },
-  "signature": "197a08eae57c500aaea1f68d565aec56f7073294440243cf6149dc0a570424d0",
+  "signature": "c84627afd3c65800a46f3869a49a3ca35107b6e67f1651be07375cb3263cfaaa",
   "proof": {
     "algorithm": "sha3-256",
-    "digest": "197a08eae57c500aaea1f68d565aec56f7073294440243cf6149dc0a570424d0",
+    "digest": "c84627afd3c65800a46f3869a49a3ca35107b6e67f1651be07375cb3263cfaaa",
     "bunVersion": "1.4.0",
-    "generatedAt": "2026-07-28T16:06:31.077Z",
-    "hmac": "961277b2eb784b30538ded03ecaf413523f03764a4c981dcc224e285e89906bf"
+    "generatedAt": "2026-07-28T16:41:38.413Z",
+    "hmac": "8b140efd870f4955b5c704fe4d0ee9f543e7462b5fda0120d067f8469181ba85"
   }
 }

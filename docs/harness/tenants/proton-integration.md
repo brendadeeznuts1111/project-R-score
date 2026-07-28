@@ -146,19 +146,27 @@ Maps to real CLI only: `item view` / `item list --output json` / `run` / `inject
 
 ### Vault map (display chrome)
 
+**Source SSOT:** [`config/vault-map.toml`](../../../config/vault-map.toml) — Bun-native TOML (`import … with { type: "toml" }`), no JSON parse step for the map itself.
+
 | Layer | Role |
 |-------|------|
-| [`env.template`](../../../env.template) | Machine truth: `KEY={{ pass://vault/item/field }}` |
-| [`config/vault-map.toml`](../../../config/vault-map.toml) | Optional `label` / `color` / `icon` / `glyph` / `type` (Bun `with { type: "toml" }`) |
-| [`lib/security/vault-map.ts`](../../../lib/security/vault-map.ts) | Merge + `Bun.TOML` / `Bun.color` status lines (ansi-16m) |
-| `/registry/vault-map.json` | Baked by `bun run env:inventory:bake` · portal `/portal/env/` |
+| [`env.template`](../../../env.template) | Machine truth: `KEY={{ pass://vault/item/field }}` ([secret references](https://protonpass.github.io/pass-cli/commands/contents/secret-references/)) |
+| [`config/vault-map.toml`](../../../config/vault-map.toml) | Display chrome: `label` / `color` / `icon` / `glyph` / `type` + optional vault/item/field |
+| [`lib/security/vault-map.ts`](../../../lib/security/vault-map.ts) | Normalize TOML `[env.KEY]` → bundle; `Bun.color` status lines (ansi-16m) |
+| [`tools/vault-resolver.ts`](../../../tools/vault-resolver.ts) · `bun run vault:resolve` | List map entries (no secret values) |
+| `public/registry/vault-map.json` | **Baked artifact** for portal `/portal/env/` (`bun run env:inventory:bake`) — not the edit SSOT |
+| `config/vault-map.json` | Legacy fallback only — do not edit; prefer TOML |
 
 ```ts
+// Prefer static import attribute (bundler + runtime loader)
 import vaultMap from '../config/vault-map.toml' with { type: 'toml' };
-// or: Bun.TOML.parse(await Bun.file('config/vault-map.toml').text())
+// Dynamic: const mod = await import('../config/vault-map.toml', { with: { type: 'toml' } });
+// Text: Bun.TOML.parse(await Bun.file('config/vault-map.toml').text())
 ```
 
-Additive fields only — older maps without color/icon still work. Icons under `public/portal/icons/vault/`. Never stores secret values. JSON (`config/vault-map.json`) is legacy fallback only.
+Bun docs: [Import a TOML file](https://bun.com/docs/guides/runtime/import-toml) · [`Bun.TOML`](https://bun.com/docs/runtime/toml) · [loader:toml](https://bun.com/docs/bundler/loaders#toml).
+
+TOML shape: `[metadata]`, `[env.KEY]` (`vault` / `item` / `field` / `label` / `color` / `type`), `[backlog]`. Paths align with Pass URIs (`pass://vault/item/field`) used by [`inject`](https://protonpass.github.io/pass-cli/commands/contents/inject/) (`{{ … }}`) and [`run`](https://protonpass.github.io/pass-cli/commands/contents/run/) (bare). Never stores secret values. Icons under `public/portal/icons/vault/`.
 
 Template refs use `{{ pass://<vault>/<item>/<field> }}` — see root [`env.template`](../../../env.template).
 

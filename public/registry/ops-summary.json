@@ -1,6 +1,6 @@
 {
   "source": "snapshot",
-  "generated": "2026-07-28T16:06:32.847Z",
+  "generated": "2026-07-28T16:41:41.204Z",
   "liquidity": {
     "total": 108210
   },
@@ -157,11 +157,11 @@
   "bunUtils": {
     "bunVersion": "1.4.0",
     "bunRevision": "a227ad991b62fc4e9b9ee5e998ad6c2e6508fe88",
-    "proofHash": "00b0962b47aff3b2554e8a3bec9172de09976c1e1e3f36d49fc59056aa844a43",
+    "proofHash": "a8e98175a2c7385ba8b9005e7dac25e7c13373f64534c86594d0e544ad318691",
     "passed": 30,
     "total": 30,
     "failed": 0,
-    "timestamp": "2026-07-28T16:06:32.848Z"
+    "timestamp": "2026-07-28T16:41:41.209Z"
   },
   "registryClient": {
     "available": true,
@@ -235,7 +235,7 @@
         "detail": "13 contracts · 20 consistency · preflight self-contract deferred"
       }
     ],
-    "timestamp": "2026-07-28T16:06:31.002Z",
+    "timestamp": "2026-07-28T16:41:38.277Z",
     "pagesUrl": "https://project-r-score.pages.dev",
     "path": "/registry/cloudflare-pages-preflight.json"
   },
@@ -421,8 +421,8 @@
         "ok": true
       }
     ],
-    "proofHash": "9826b9c5a9d80120578e850f55e8a0cdb369478fc0d35284d0bb73aa1dc1670a",
-    "timestamp": "2026-07-28T16:06:30.590Z",
+    "proofHash": "4d981383872b42d23d88ce651064a14ab1fa8a6c4153179e993f7fcb0c4888d3",
+    "timestamp": "2026-07-28T16:41:37.673Z",
     "path": "/registry/proof-taxonomy-audit.json"
   },
   "channelMeta": {
@@ -433,7 +433,7 @@
     "total": 75,
     "status": "pass",
     "proofHash": "77dd527cb7a2ca90d366d20d1cdda04aa52317e7b5ff23cef2ba5ba0da487978",
-    "updatedAt": "2026-07-28T16:06:30.586Z",
+    "updatedAt": "2026-07-28T16:41:37.379Z",
     "channel": "stable",
     "targetVersion": "1.4.0",
     "runtimeVersion": "1.4.0",
@@ -714,16 +714,16 @@
     ]
   },
   "channels": {
-    "pending": 0,
+    "pending": 9,
     "failed": 0,
     "sent": 1021,
-    "oldestPendingAt": null,
+    "oldestPendingAt": "2026-07-28T16:07:12.240Z",
     "failRate": 0
   },
   "toc": {
     "available": true,
     "path": "/registry/toc-ops.json",
-    "generatedAt": "2026-07-28T16:06:31.041Z",
+    "generatedAt": "2026-07-28T16:41:38.338Z",
     "partners": 3,
     "warmed": 4,
     "warming": 2,
@@ -751,7 +751,7 @@
     "throughputI": 47810,
     "throughputOE": 1655,
     "topRankedProcess": "LIMIT",
-    "avgRP": 8.040115883009907,
+    "avgRP": 8.01175573225242,
     "settlementFloatRatio": 0.5103534825350345,
     "presencePartners": 3,
     "presenceIpv6": 31,
@@ -821,9 +821,9 @@
     "settledViaFullLoop": 29,
     "outboxSent": 1021,
     "outboxFailed": 0,
-    "outboxPending": 0,
-    "oldestPendingAgeSec": null,
-    "manualStepsPerCycle": 0,
+    "outboxPending": 9,
+    "oldestPendingAgeSec": 2068,
+    "manualStepsPerCycle": 9,
     "loopCompletionRate": 1,
     "distinctPlaysDispatched": 7,
     "settledPlaysViaFullLoop": 7,
@@ -838,7 +838,7 @@
   "telegramHandshake": {
     "available": true,
     "path": "/registry/telegram-handshake.json",
-    "generatedAt": "2026-07-28T16:06:32.829Z",
+    "generatedAt": "2026-07-28T16:41:41.165Z",
     "partners": 4,
     "inviteGaps": 0,
     "blocked": 0,
@@ -952,7 +952,7 @@
   "seatCapitalDesk": {
     "available": true,
     "path": "/registry/seat-capital-desk.json",
-    "generatedAt": "2026-07-28T16:06:32.840Z",
+    "generatedAt": "2026-07-28T16:41:41.193Z",
     "desks": 4,
     "blocked": 0,
     "partial": 0,
@@ -1225,26 +1225,26 @@
       "MA",
       "NJ"
     ],
-    "generatedAt": "2026-07-28T16:06:31.077Z",
+    "generatedAt": "2026-07-28T16:41:38.413Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
   },
   "monorepoHealth": {
     "available": true,
     "ok": false,
-    "score": 34.1,
+    "score": 34.5,
     "grade": "critical",
     "formulaVersion": 1,
     "bunVersion": "1.4.0",
-    "fileCount": 833,
+    "fileCount": 835,
     "largeFileCount": 338,
-    "deadFileCount": 44,
+    "deadFileCount": 41,
     "cyclicDependencyCount": 14,
     "duplicateDepCount": 0,
-    "deadCodePercent": 8.6,
-    "largeFilePercent": 40.6,
+    "deadCodePercent": 8.1,
+    "largeFilePercent": 40.5,
     "testCoveragePercent": 0,
-    "generatedAt": "2026-07-28T16:06:31.242Z",
+    "generatedAt": "2026-07-28T16:41:39.562Z",
     "path": "/registry/monorepo-health.json",
     "portal": "/portal/packages/",
     "claim": "monorepo-health-score",
