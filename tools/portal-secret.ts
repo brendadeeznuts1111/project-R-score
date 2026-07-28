@@ -14,8 +14,8 @@
  *   pass-cli share list
  *   pass-cli login | info | test
  *
- * Display chrome (label/color/icon): config/vault-map.json + env.template
- * via lib/security/vault-map.ts — never invents pass-cli flags.
+ * Display chrome (label/color/icon): config/vault-map.toml + env.template
+ * (import with { type: "toml" } / Bun.TOML.parse) — never invents pass-cli flags.
  *
  * Prefer agent session: `source scripts/agent-env.sh factorywager`
  *
@@ -55,12 +55,18 @@ Subcommands:
                         pass-cli inject (env.template → file/stdout)
   autofill --vault <v> -- <cmd…>
                         List vault items; inject each password as ENV from title
-                        Status lines use config/vault-map.json label/color/glyph
+                        Status lines use config/vault-map.toml label/color/glyph
                         Prefer: secret run --env-file env.template -- <cmd>
-  map [--json]          Print vault-map bundle (template paths + display chrome)
+  map [--json]          Print vault-map bundle (TOML SSOT + display chrome)
   invite list           pass-cli invite list
   invite accept <id>    pass-cli invite accept <INVITE_ID>
-  share list [--json]   pass-cli share list (not secure-link mint)
+  share list [--json]   pass-cli share list
+  share item <vault/title> <email> [--role viewer|editor|manager]
+                        pass-cli item share (resolves share-id via item list)
+  move <vault/title> --to <vault>
+                        pass-cli item move
+  trash <vault/title>   pass-cli item trash
+  untrash <vault/title> pass-cli item untrash (restore from trash)
   help                  This message
 
 Agent session (before vault ops):
@@ -158,6 +164,86 @@ export function itemTitlesFromListJson(raw: string): string[] {
     if (title) titles.push(title);
   }
   return titles;
+}
+
+/** Split `vault/item title` target into components (titles may contain slashes). */
+export function splitVaultTitle(target: string): { vault: string; title: string } {
+  const parts = target.trim().split('/').filter(Boolean);
+  if (parts.length < 2) {
+    throw new Error(`Invalid target "${target}". Use vault/item-title`);
+  }
+  return { vault: parts[0]!, title: parts.slice(1).join('/') };
+}
+
+/** `pass-cli item move` args for `vault/title` → destination vault. */
+export function moveArgsFromTarget(target: string, toVault: string): string[] {
+  const { vault, title } = splitVaultTitle(target);
+  if (!toVault.trim()) throw new Error('move requires a non-empty destination vault');
+  return [
+    'item',
+    'move',
+    '--from-vault-name',
+    vault,
+    '--item-title',
+    title,
+    '--to-vault-name',
+    toVault,
+  ];
+}
+
+/** `pass-cli item trash|untrash` args for `vault/title`. */
+export function trashArgsFromTarget(target: string, untrash = false): string[] {
+  const { vault, title } = splitVaultTitle(target);
+  return ['item', untrash ? 'untrash' : 'trash', '--vault-name', vault, '--item-title', title];
+}
+
+/** Locate an item's { id, shareId } by exact title in `item list --output json`. */
+export function findItemRefByTitle(
+  raw: string,
+  title: string
+): { id: string; shareId: string; state?: string } | null {
+  // brand-ok — return fields are opaque Proton Pass wire ids (item id, share id)
+  const parsed = safeJsonParse<unknown>(raw);
+  if (parsed === undefined) throw new Error('Failed to parse item list JSON');
+  const arr: unknown[] = Array.isArray(parsed)
+    ? parsed
+    : parsed && typeof parsed === 'object' && Array.isArray((parsed as { items?: unknown }).items)
+      ? ((parsed as { items: unknown[] }).items ?? [])
+      : [];
+  for (const row of arr) {
+    if (!row || typeof row !== 'object') continue;
+    const r = row as Record<string, unknown>;
+    const t =
+      (typeof r.title === 'string' && r.title) ||
+      (r.data &&
+        typeof r.data === 'object' &&
+        (r.data as { metadata?: { name?: string } }).metadata?.name) ||
+      undefined;
+    if (t !== title) continue;
+    if (typeof r.id !== 'string' || typeof r.share_id !== 'string') continue;
+    return {
+      id: r.id,
+      shareId: r.share_id,
+      state: typeof r.state === 'string' ? r.state : undefined,
+    };
+  }
+  return null;
+}
+
+const SHARE_ROLES = new Set(['viewer', 'editor', 'manager']);
+
+/** `pass-cli item share` args (email share, NOT a secure link — CLI has none). */
+export function shareItemArgs(
+  shareId: string, // brand-ok — opaque Proton Pass share id (wire)
+  itemId: string, // brand-ok — opaque Proton Pass item id (wire)
+  email: string,
+  role: string
+): string[] {
+  if (!SHARE_ROLES.has(role)) {
+    throw new Error(`Invalid role "${role}" — expected viewer|editor|manager`);
+  }
+  if (!email.includes('@')) throw new Error(`Invalid email "${email}"`);
+  return ['item', 'share', '--share-id', shareId, '--item-id', itemId, '--role', role, email];
 }
 
 function passEnv(): NodeJS.ProcessEnv {
@@ -484,6 +570,36 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       return;
     }
 
+    case 'move': {
+      const target = rest[0];
+      const to = flagValue(rest, '--to');
+      if (!target || !to) {
+        cliError('Usage: portal secret move <vault/item-title> --to <dest-vault>');
+      }
+      let args: string[];
+      try {
+        args = moveArgsFromTarget(target, to);
+      } catch (e) {
+        cliError(e instanceof Error ? e.message : String(e));
+      }
+      process.exit(await runPassCli(args));
+      return;
+    }
+
+    case 'trash':
+    case 'untrash': {
+      const target = rest[0];
+      if (!target) cliError(`Usage: portal secret ${sub} <vault/item-title>`);
+      let args: string[];
+      try {
+        args = trashArgsFromTarget(target, sub === 'untrash');
+      } catch (e) {
+        cliError(e instanceof Error ? e.message : String(e));
+      }
+      process.exit(await runPassCli(args));
+      return;
+    }
+
     case 'share': {
       const action = rest[0] ?? 'list';
       if (action === 'list' || action === '--json') {
@@ -493,9 +609,41 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
           : ['share', 'list', ...rest.filter(a => a !== 'list' && a !== '--json')];
         process.exit(await runPassCli(args));
       }
+      if (action === 'item') {
+        const target = rest[1];
+        const email = rest[2];
+        const role = flagValue(rest, '--role') ?? 'viewer';
+        if (!target || !email) {
+          cliError(
+            'Usage: portal secret share item <vault/item-title> <email> [--role viewer|editor|manager]'
+          );
+        }
+        let vault: string, title: string;
+        try {
+          ({ vault, title } = splitVaultTitle(target));
+        } catch (e) {
+          cliError(e instanceof Error ? e.message : String(e));
+        }
+        const { code, stdout } = await capturePassCli(['item', 'list', vault, '--output', 'json']);
+        await exitOnFail(code);
+        let ref: ReturnType<typeof findItemRefByTitle>;
+        try {
+          ref = findItemRefByTitle(stdout, title!);
+        } catch (e) {
+          cliError(e instanceof Error ? e.message : String(e));
+        }
+        if (!ref) cliError(`item "${title}" not found in vault "${vault}"`);
+        let args: string[];
+        try {
+          args = shareItemArgs(ref.shareId, ref.id, email!, role);
+        } catch (e) {
+          cliError(e instanceof Error ? e.message : String(e));
+        }
+        process.exit(await runPassCli(args));
+      }
       cliError(
-        'Usage: portal secret share list [--json]\n' +
-          'Note: pass-cli has no secure-link mint; item share is email+share-id+item-id (use pass-cli item share directly).'
+        'Usage: portal secret share list [--json] | share item <vault/item-title> <email> [--role …]\n' +
+          'Note: pass-cli shares items by email (no secure-link mint in CLI v2.2.3).'
       );
       return;
     }

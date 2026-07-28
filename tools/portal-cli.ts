@@ -74,6 +74,8 @@ Secret (real pass-cli only — https://protonpass.github.io/pass-cli/):
   secret run --env-file env.template -- <cmd>
   secret autofill --vault factorywager -- <cmd>
   secret inject -i env.template -o .env -f
+  secret share list | share item <vault/title> <email> [--role …]
+  secret move <vault/title> --to <vault>  ·  secret [un]trash <vault/title>
   secret invite accept <INVITE_ID>          # not URL secure-link accept
   source scripts/agent-env.sh factorywager  # agent session before secret cmds
 `;

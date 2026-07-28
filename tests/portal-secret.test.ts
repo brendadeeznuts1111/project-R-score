@@ -2,7 +2,12 @@
 import { describe, expect, test } from 'bun:test';
 import {
   envNameFromTitle,
+  findItemRefByTitle,
   itemTitlesFromListJson,
+  moveArgsFromTarget,
+  shareItemArgs,
+  splitVaultTitle,
+  trashArgsFromTarget,
   viewArgsFromTarget,
 } from '../tools/portal-secret.ts';
 
@@ -66,5 +71,66 @@ describe('portal-secret helpers', () => {
 
   test('itemTitlesFromListJson rejects bad JSON', () => {
     expect(() => itemTitlesFromListJson('not-json{')).toThrow(/parse/);
+  });
+});
+
+describe('portal-secret move/trash/share helpers', () => {
+  test('splitVaultTitle splits first segment only', () => {
+    expect(splitVaultTitle('factorywager/Telegram: bot/extra')).toEqual({
+      vault: 'factorywager',
+      title: 'Telegram: bot/extra',
+    });
+  });
+
+  test('splitVaultTitle rejects bare name', () => {
+    expect(() => splitVaultTitle('one')).toThrow(/vault\/item-title/);
+  });
+
+  test('moveArgsFromTarget maps to item move flags', () => {
+    const args = moveArgsFromTarget('factorywager/My Item', 'archive');
+    expect(args).toEqual([
+      'item', 'move',
+      '--from-vault-name', 'factorywager',
+      '--item-title', 'My Item',
+      '--to-vault-name', 'archive',
+    ]);
+  });
+
+  test('trashArgsFromTarget trash vs untrash', () => {
+    expect(trashArgsFromTarget('v/T')[1]).toBe('trash');
+    expect(trashArgsFromTarget('v/T', true)[1]).toBe('untrash');
+  });
+
+  test('findItemRefByTitle matches exact title in items shape', () => {
+    const raw = JSON.stringify({
+      items: [
+        { id: 'id1', share_id: 'sid1', title: 'Other', state: 'Active' },
+        { id: 'id2', share_id: 'sid2', title: 'Telegram: bot', state: 'Trashed' },
+      ],
+    });
+    expect(findItemRefByTitle(raw, 'Telegram: bot')).toEqual({ id: 'id2', shareId: 'sid2', state: 'Trashed' });
+    expect(findItemRefByTitle(raw, 'missing')).toBeNull();
+  });
+
+  test('findItemRefByTitle supports array shape + metadata.name', () => {
+    const raw = JSON.stringify([
+      { id: 'i1', share_id: 's1', data: { metadata: { name: 'Nested' } } },
+    ]);
+    expect(findItemRefByTitle(raw, 'Nested')?.id).toBe('i1');
+  });
+
+  test('findItemRefByTitle rejects bad JSON', () => {
+    expect(() => findItemRefByTitle('not-json{', 'x')).toThrow(/parse/);
+  });
+
+  test('shareItemArgs builds email share with role', () => {
+    expect(shareItemArgs('sid', 'iid', 'ops@factory-wager.com', 'editor')).toEqual([
+      'item', 'share', '--share-id', 'sid', '--item-id', 'iid', '--role', 'editor', 'ops@factory-wager.com',
+    ]);
+  });
+
+  test('shareItemArgs validates role and email', () => {
+    expect(() => shareItemArgs('s', 'i', 'a@b.c', 'owner')).toThrow(/role/);
+    expect(() => shareItemArgs('s', 'i', 'not-an-email', 'viewer')).toThrow(/email/);
   });
 });
