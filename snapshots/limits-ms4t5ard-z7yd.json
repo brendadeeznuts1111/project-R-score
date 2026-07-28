@@ -1,0 +1,16 @@
+{
+  "id": "limits-ms4t5ard-z7yd",
+  "scope": "limits",
+  "reportType": "limits",
+  "capturedAt": "2026-07-28T15:25:36.314Z",
+  "commit": "19d98563f17cf80741c6094e705b067b98f8f220",
+  "branch": "main",
+  "bunVersion": "1.4.0",
+  "baseUrl": "http://localhost:3000",
+  "fileCount": 0,
+  "files": [],
+  "metadata": {
+    "status": "error",
+    "statusCode": "401"
+  }
+}
