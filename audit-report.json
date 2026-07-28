@@ -1,7 +1,7 @@
 {
   "schemaVersion": 13,
   "kind": "packages-metafile-audit",
-  "generatedAt": "2026-07-28T18:02:19.843Z",
+  "generatedAt": "2026-07-28T18:09:49.642Z",
   "bunVersion": "1.4.0",
   "root": "/Users/nolarose/Projects",
   "glob": "packages/*/src/**/*.{ts,tsx}",
@@ -234,7 +234,7 @@
         "targetPrefix": "lib/docs",
         "weight": 11,
         "samples": [
-          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains.ts",
+          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/categories",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/fragments.ts"
         ]
@@ -737,9 +737,9 @@
     }
   },
   "surfaces": {
-    "schemaVersion": 2,
+    "schemaVersion": 3,
     "kind": "monorepo-surfaces",
-    "generatedAt": "2026-07-28T18:02:19.817Z",
+    "generatedAt": "2026-07-28T18:09:49.620Z",
     "summary": {
       "workspaceMembers": 8,
       "packagesPlane": 6,
@@ -755,7 +755,10 @@
       "portalRegistryRefs": 44,
       "registryOrphanFromPortal": 12,
       "registryFamilyCount": 13,
-      "themeDarkTokens": 12
+      "themeDarkTokens": 12,
+      "pageRegistryEdges": 141,
+      "libImportHubs": 1,
+      "orphanWireCandidates": 6
     },
     "workspaces": [
       {
@@ -1657,7 +1660,7 @@
           "file": "packages-graph-map.json",
           "kind": "packages-graph-map",
           "schemaVersion": 13,
-          "bytes": 37269,
+          "bytes": 64853,
           "family": "packages"
         },
         {
@@ -1756,7 +1759,7 @@
           "kind": null,
           "schemaVersion": null,
           "bytes": 1141,
-          "family": "proof"
+          "family": "ops"
         },
         {
           "file": "toc-ops.json",
@@ -1842,7 +1845,7 @@
       "byFamily": [
         {
           "family": "proof",
-          "count": 13
+          "count": 12
         },
         {
           "family": "catalog",
@@ -1858,7 +1861,7 @@
         },
         {
           "family": "ops",
-          "count": 5
+          "count": 6
         },
         {
           "family": "health",
@@ -2322,6 +2325,86 @@
         "verification-stable-1.4.0-bundler.json",
         "verification-stable-1.4.0-networking.json",
         "verification-stable-1.4.0.json"
+      ],
+      "orphanTriage": [
+        {
+          "file": "content-type-matrix.json",
+          "family": "catalog",
+          "action": "wire-portal",
+          "note": "skills/catalog boards consume catalogs",
+          "suggestPortal": "/portal/catalog/"
+        },
+        {
+          "file": "dod-registry.json",
+          "family": "compliance",
+          "action": "wire-portal",
+          "note": "compliance board",
+          "suggestPortal": "/portal/compliance/"
+        },
+        {
+          "file": "formdata-proof.json",
+          "family": "proof",
+          "action": "document",
+          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
+        },
+        {
+          "file": "harness-skills-catalog.json",
+          "family": "catalog",
+          "action": "wire-portal",
+          "note": "skills/catalog boards consume catalogs",
+          "suggestPortal": "/portal/catalog/"
+        },
+        {
+          "file": "networking-channel-proof.json",
+          "family": "proof",
+          "action": "document",
+          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
+        },
+        {
+          "file": "package-info.json",
+          "family": "packages",
+          "action": "wire-portal",
+          "note": "packages graph board",
+          "suggestPortal": "/portal/packages/"
+        },
+        {
+          "file": "projects-registry.json",
+          "family": "tenant",
+          "action": "wire-portal",
+          "note": "tenant TOC boards",
+          "suggestPortal": "/portal/toc/"
+        },
+        {
+          "file": "toc-ops-bake-proof.json",
+          "family": "ops",
+          "action": "wire-portal",
+          "note": "ops-summary consumers",
+          "suggestPortal": "/portal/ops/"
+        },
+        {
+          "file": "verification-pinned-1.3.14.json",
+          "family": "verification",
+          "action": "document",
+          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
+        },
+        {
+          "file": "verification-stable-1.4.0-bundler.json",
+          "family": "verification",
+          "action": "document",
+          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
+        },
+        {
+          "file": "verification-stable-1.4.0-networking.json",
+          "family": "verification",
+          "action": "document",
+          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
+        },
+        {
+          "file": "verification-stable-1.4.0.json",
+          "family": "verification",
+          "action": "document",
+          "note": "proof/verification artifact — keep as bake, link from wiki/proof index not portal shell"
+        }
       ]
     },
     "libPlane": {
@@ -2544,6 +2627,1007 @@
         }
       ]
     },
+    "crossPlane": {
+      "pageToRegistry": [
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/ops-summary.json",
+          "family": "ops",
+          "weight": 3
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 3
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 3
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 3
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 3
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/compliance-board.json",
+          "family": "compliance",
+          "weight": 2
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/bundler-loaders-proof.json",
+          "family": "proof",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/channel-meta-bake.json",
+          "family": "catalog",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/install-platform.json",
+          "family": "catalog",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/ops-summary.json",
+          "family": "ops",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/proof-taxonomy-audit.json",
+          "family": "verification",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/release-features.json",
+          "family": "verification",
+          "weight": 2
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/toc-ops.json",
+          "family": "ops",
+          "weight": 2
+        },
+        {
+          "page": "dod",
+          "pageHref": "/portal/dod/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "dod",
+          "pageHref": "/portal/dod/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "failures",
+          "pageHref": "/portal/failures/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "failures",
+          "pageHref": "/portal/failures/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 2
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "home",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "home",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "home",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 2
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/packages-graph-map.json",
+          "family": "packages",
+          "weight": 2
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/ops-summary.json",
+          "family": "ops",
+          "weight": 2
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 2
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "skills",
+          "pageHref": "/portal/skills/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "skills",
+          "pageHref": "/portal/skills/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/toc-ops.json",
+          "family": "ops",
+          "weight": 2
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 2
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/monorepo-health.json",
+          "family": "health",
+          "weight": 2
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 2
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/catalog-snapshot.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "catalog",
+          "pageHref": "/portal/catalog/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/compliance-enhancements.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/compliance-shadow.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "compliance",
+          "pageHref": "/portal/compliance/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/bun-defaults-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/bun-runtime-nits-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/compliance-board.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/defaults-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/install-env-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/monitoring.json",
+          "family": "health",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/seat-capital-desk.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "dashboard",
+          "pageHref": "/portal/dashboard/",
+          "registryPath": "/registry/telegram-handshake.json",
+          "family": "telegram",
+          "weight": 1
+        },
+        {
+          "page": "dod",
+          "pageHref": "/portal/dod/",
+          "registryPath": "/registry/dod-queue.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "dod",
+          "pageHref": "/portal/dod/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "dod",
+          "pageHref": "/portal/dod/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/env-inventory.json",
+          "family": "env",
+          "weight": 1
+        },
+        {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "env",
+          "pageHref": "/portal/env/",
+          "registryPath": "/registry/vault-map.json",
+          "family": "vault",
+          "weight": 1
+        },
+        {
+          "page": "factory",
+          "pageHref": "/portal/factory/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "failures",
+          "pageHref": "/portal/failures/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "failures",
+          "pageHref": "/portal/failures/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/bun-defaults-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/defaults-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/monitoring.json",
+          "family": "health",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/static.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/toc-ops.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "health",
+          "pageHref": "/portal/health/",
+          "registryPath": "/registry/vps-health.json",
+          "family": "health",
+          "weight": 1
+        },
+        {
+          "page": "home",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "limits",
+          "pageHref": "/portal/limits/",
+          "registryPath": "/registry/ops-summary.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/bun-runtime-nits-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/bundler-loaders-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/channel-meta-bake.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/cloudflare-pages-preflight.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/cloudflare-token-scope-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/compliance-board.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/doc-index.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/docs-coverage-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/guides-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/install-env-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/install-platform.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/networking-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/ops-summary.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/packages-graph-map.json",
+          "family": "packages",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/portal-weave.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/proof-taxonomy-audit.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/ratchet.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/registry-client-proof.json",
+          "family": "proof",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/release-features.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/seat-capital-desk.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/static.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/telegram-handshake-catalog.json",
+          "family": "telegram",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/telegram-handshake.json",
+          "family": "telegram",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/toc-ops.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "ops",
+          "pageHref": "/portal/ops/",
+          "registryPath": "/registry/verification-index.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "packages",
+          "pageHref": "/portal/packages/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "partner-history",
+          "pageHref": "/portal/partner-history/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "science",
+          "pageHref": "/portal/science/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/packages-graph-map.json",
+          "family": "packages",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/portal-chrome.json",
+          "family": "portal",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/release-features.json",
+          "family": "verification",
+          "weight": 1
+        },
+        {
+          "page": "shared",
+          "pageHref": "/portal/",
+          "registryPath": "/registry/vault-health.json",
+          "family": "vault",
+          "weight": 1
+        },
+        {
+          "page": "skills",
+          "pageHref": "/portal/skills/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "skills",
+          "pageHref": "/portal/skills/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "skills",
+          "pageHref": "/portal/skills/",
+          "registryPath": "/registry/skills-catalog.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "tennis",
+          "pageHref": "/portal/tennis/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/compliance-board.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/limit-raises.json",
+          "family": "compliance",
+          "weight": 1
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/ops-summary.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "toc",
+          "pageHref": "/portal/toc/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/catalog-snapshot.json",
+          "family": "catalog",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/ops-summary.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/packages-graph-map.json",
+          "family": "packages",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/vault-health.json",
+          "family": "vault",
+          "weight": 1
+        },
+        {
+          "page": "tools",
+          "pageHref": "/portal/tools/",
+          "registryPath": "/registry/vault-map.json",
+          "family": "vault",
+          "weight": 1
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/failures.json",
+          "family": "ops",
+          "weight": 1
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/registry.json",
+          "family": "other",
+          "weight": 1
+        },
+        {
+          "page": "vault",
+          "pageHref": "/portal/vault/",
+          "registryPath": "/registry/vault-health.json",
+          "family": "vault",
+          "weight": 1
+        }
+      ],
+      "libImportHubs": [
+        {
+          "targetPrefix": "lib/docs",
+          "weight": 12,
+          "fromPackages": [
+            "business",
+            "docs-tools"
+          ]
+        }
+      ]
+    },
     "planes": [
       {
         "id": "packages-graph",
@@ -2602,13 +3686,32 @@
         "label": "registry top-level JSON",
         "count": 54,
         "bake": "/registry/",
-        "note": "families: proof=13 · catalog=8 · verification=8 · compliance=6 · ops=5 · health=3 · not npm package deps"
+        "note": "families: proof=12 · catalog=8 · verification=8 · compliance=6 · ops=6 · health=3 · not npm package deps"
       },
       {
         "id": "registry-portal-refs",
         "label": "portal → registry refs",
         "count": 44,
         "note": "unique /registry/*.json from portal JS/HTML · orphanTop=12"
+      },
+      {
+        "id": "page-registry-edges",
+        "label": "page → registry edges",
+        "count": 141,
+        "portal": "/portal/packages/",
+        "note": "attributed via page scripts + shell HTML (v3 cross-plane)"
+      },
+      {
+        "id": "lib-import-hubs",
+        "label": "packages → lib hubs",
+        "count": 1,
+        "note": "top hub lib/docs"
+      },
+      {
+        "id": "orphan-wire",
+        "label": "orphan wire-portal candidates",
+        "count": 6,
+        "note": "of 12 orphans · proofs stay document-only"
       },
       {
         "id": "registry-storage",
@@ -2708,7 +3811,7 @@
     "Actions: business:archive-candidate, p2p:archive-candidate",
     "Summary: avgPkg=95 · openActions=2 · archivePlaceholders=0 · hub=lib/docs",
     "Quarantine: none",
-    "Surfaces: workspaces=8 (packagesPlane=6+other=2) · portalPages=19 · chrome=12 · brand=20 · registryJson=54 · storagePkgs=9"
+    "Surfaces v3: workspaces=8 (packagesPlane=6+other=2) · libDirs=39 · stoNested=3 · portalPages=19 · chrome=12 · brand=20 · registryJson=54 · regRefs=44 · regOrphan=12 · themeDark=12 · storagePkgs=9"
   ],
   "metafile": {
     "inputs": {

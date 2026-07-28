@@ -534,6 +534,112 @@ function bindCopyButtons(root) {
 }
 
 /**
+ * Bipartite SVG: portal pages (left) → registry bakes (right).
+ * @param {Array<{ page: string, registryPath: string, family: string, weight: number }>} edges
+ * @param {{ maxEdges?: number }} [opts]
+ */
+export function renderPageRegistrySvg(edges, opts = {}) {
+  const maxEdges = opts.maxEdges ?? 24;
+  const top = [...edges].sort((a, b) => b.weight - a.weight).slice(0, maxEdges);
+  if (!top.length) {
+    return '<p class="pkg-empty">No page→registry edges — rebake surfaces v3</p>';
+  }
+  const pages = [...new Set(top.map(e => e.page))].sort();
+  const regs = [...new Set(top.map(e => e.registryPath.replace('/registry/', '')))].sort();
+  const W = 640;
+  const H = Math.max(220, Math.max(pages.length, regs.length) * 22 + 40);
+  const leftX = 90;
+  const rightX = 520;
+  const pageY = i => 28 + (i * (H - 48)) / Math.max(pages.length - 1, 1);
+  const regY = i => 28 + (i * (H - 48)) / Math.max(regs.length - 1, 1);
+  const pageIdx = Object.fromEntries(pages.map((p, i) => [p, i]));
+  const regIdx = Object.fromEntries(regs.map((r, i) => [r, i]));
+
+  const lines = top
+    .map(e => {
+      const reg = e.registryPath.replace('/registry/', '');
+      const y1 = pageY(pageIdx[e.page] ?? 0);
+      const y2 = regY(regIdx[reg] ?? 0);
+      const op = Math.min(0.85, 0.25 + e.weight * 0.08);
+      return `<line class="edge-page-reg" x1="${leftX + 36}" y1="${y1}" x2="${rightX - 36}" y2="${y2}" stroke-opacity="${op}" stroke-width="${Math.min(3, 1 + e.weight * 0.15)}" />`;
+    })
+    .join('');
+
+  const pageNodes = pages
+    .map((p, i) => {
+      const y = pageY(i);
+      return `<g class="page-node"><circle cx="${leftX}" cy="${y}" r="7" class="node-page" /><text class="node-label" x="${leftX - 12}" y="${y + 3}" text-anchor="end">${escapeHtml(p)}</text></g>`;
+    })
+    .join('');
+  const regNodes = regs
+    .map((r, i) => {
+      const y = regY(i);
+      const short = r.length > 22 ? r.slice(0, 20) + '…' : r;
+      return `<g class="reg-node"><circle cx="${rightX}" cy="${y}" r="7" class="node-reg" /><text class="node-label" x="${rightX + 12}" y="${y + 3}" text-anchor="start">${escapeHtml(short)}</text></g>`;
+    })
+    .join('');
+
+  return `<svg class="pkg-dep-svg page-reg-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Page to registry edges">${lines}${pageNodes}${regNodes}</svg>`;
+}
+
+/**
+ * Render surfaces v3 cross-plane panels (page edges, lib hubs, orphan triage).
+ * @param {Record<string, unknown> | null} surfaces
+ * @param {Document} [doc]
+ */
+export function renderCrossPlanePanel(surfaces, doc = document) {
+  const edgeHost = doc.getElementById('page-reg-graph');
+  const edgeMeta = doc.getElementById('page-reg-meta');
+  const hubList = doc.getElementById('lib-hub-list');
+  const orphanList = doc.getElementById('orphan-triage-list');
+
+  const edges = Array.isArray(surfaces?.crossPlane?.pageToRegistry)
+    ? surfaces.crossPlane.pageToRegistry
+    : [];
+  const hubs = Array.isArray(surfaces?.crossPlane?.libImportHubs)
+    ? surfaces.crossPlane.libImportHubs
+    : [];
+  const triage = Array.isArray(surfaces?.registry?.orphanTriage)
+    ? surfaces.registry.orphanTriage
+    : [];
+
+  if (edgeMeta) {
+    edgeMeta.textContent = edges.length
+      ? `${edges.length} page→registry edges · top ${Math.min(24, edges.length)} drawn`
+      : 'No page→registry edges — rebake: bun run audit:packages -- --bake';
+  }
+  if (edgeHost) {
+    edgeHost.innerHTML = edges.length
+      ? renderPageRegistrySvg(edges, { maxEdges: 24 })
+      : '<p class="pkg-empty">No edges in bake</p>';
+  }
+  if (hubList) {
+    hubList.innerHTML = hubs.length
+      ? hubs
+          .map(
+            h =>
+              `<li><code>${escapeHtml(h.targetPrefix)}</code> · w=${h.weight} · from ${ (h.fromPackages || []).map(escapeHtml).join(', ') }</li>`
+          )
+          .join('')
+      : '<li>No lib hubs (bake without packageExternalEdges?)</li>';
+  }
+  if (orphanList) {
+    if (!triage.length) {
+      orphanList.innerHTML = '<li>No orphans</li>';
+    } else {
+      orphanList.innerHTML = triage
+        .map(t => {
+          const portal = t.suggestPortal
+            ? ` · <a href="${escapeAttr(t.suggestPortal)}">${escapeHtml(t.suggestPortal)}</a>`
+            : '';
+          return `<li><code>${escapeHtml(t.file)}</code> · <strong>${escapeHtml(t.action)}</strong> · ${escapeHtml(t.family)}${portal} — ${escapeHtml(t.note || '')}</li>`;
+        })
+        .join('');
+    }
+  }
+}
+
+/**
  * Mount dependency graph into #pkg-dep-graph.
  * @param {object} data - normalizePackagesMap result
  * @param {Document} [doc]
@@ -705,6 +811,9 @@ export function renderPackagesBoard(data, doc = document) {
       s.portalRegistryRefs != null ? `regRefs=${s.portalRegistryRefs}` : null,
       s.registryOrphanFromPortal != null ? `regOrphan=${s.registryOrphanFromPortal}` : null,
       s.themeDarkTokens != null ? `themeDark=${s.themeDarkTokens}` : null,
+      s.pageRegistryEdges != null ? `pageEdges=${s.pageRegistryEdges}` : null,
+      s.libImportHubs != null ? `libHubs=${s.libImportHubs}` : null,
+      s.orphanWireCandidates != null ? `orphanWire=${s.orphanWireCandidates}` : null,
     ]
       .filter(Boolean)
       .join(' · ');
@@ -771,6 +880,9 @@ export function renderPackagesBoard(data, doc = document) {
       : '';
     chromeList.innerHTML = chromeHtml + brandHtml + familyHtml;
   }
+
+  // Cross-plane: page→registry edges, lib hubs, orphan triage (surfaces v3)
+  renderCrossPlanePanel(surfaces, doc);
 
   const body = doc.getElementById('pkg-body');
   if (body) {

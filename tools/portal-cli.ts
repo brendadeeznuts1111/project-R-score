@@ -459,6 +459,92 @@ async function printPackagesGraphTable(): Promise<void> {
     );
   }
 
+  // Cross-plane (surfaces v3)
+  const cross = (
+    surfaces as {
+      crossPlane?: {
+        pageToRegistry?: Array<{
+          page: string;
+          registryPath: string;
+          family: string;
+          weight: number;
+        }>;
+        libImportHubs?: Array<{
+          targetPrefix: string;
+          weight: number;
+          fromPackages: string[];
+        }>;
+      };
+      registry?: {
+        orphanTriage?: Array<{
+          file: string;
+          family: string;
+          action: string;
+          note: string;
+          suggestPortal?: string;
+        }>;
+      };
+    }
+  )?.crossPlane;
+  if (cross?.pageToRegistry?.length) {
+    console.log('\n── page → registry edges (top) ──');
+    logTable(
+      cross.pageToRegistry.slice(0, 15).map(e => ({
+        page: e.page,
+        registry: e.registryPath.replace('/registry/', ''),
+        family: e.family,
+        w: e.weight,
+      })),
+      ['page', 'registry', 'family', 'w']
+    );
+    if (cross.pageToRegistry.length > 15) {
+      console.log('  ... +' + (cross.pageToRegistry.length - 15) + ' more edges');
+    }
+  }
+  if (cross?.libImportHubs?.length) {
+    console.log('\n── packages → lib import hubs ──');
+    logTable(
+      cross.libImportHubs.map(h => ({
+        hub: h.targetPrefix,
+        weight: h.weight,
+        from: h.fromPackages.join(', '),
+      })),
+      ['hub', 'weight', 'from']
+    );
+  }
+  const orphanTriage = (
+    surfaces as {
+      registry?: {
+        orphanTriage?: Array<{
+          file: string;
+          family: string;
+          action: string;
+          note: string;
+          suggestPortal?: string;
+        }>;
+      };
+    }
+  )?.registry?.orphanTriage;
+  if (orphanTriage?.length) {
+    console.log('\n── orphan registry triage ──');
+    const wire = orphanTriage.filter(t => t.action === 'wire-portal');
+    const doc = orphanTriage.filter(t => t.action === 'document');
+    const review = orphanTriage.filter(t => t.action === 'review');
+    console.log(
+      'wire-portal=' + wire.length + '  document=' + doc.length + '  review=' + review.length
+    );
+    if (wire.length) {
+      logTable(
+        wire.map(t => ({
+          file: t.file,
+          family: t.family,
+          portal: t.suggestPortal ?? '—',
+        })),
+        ['file', 'family', 'portal']
+      );
+    }
+  }
+
   console.log('\nRebake: bun run audit:packages -- --bake');
   console.log('Board:  /portal/packages/  ·  chrome: /registry/portal-chrome.json');
 }

@@ -10,6 +10,7 @@ import {
   graphFocusSet,
   normalizePackagesMap,
   renderDependencyGraphSvg,
+  renderPageRegistrySvg,
 } from '../public/portal/packages/packages-board.js';
 
 describe('packages-board failure paths', () => {
@@ -164,5 +165,26 @@ describe('packages-board failure paths', () => {
   test('formatLoadError stringifies Errors', () => {
     expect(formatLoadError(new Error('HTTP 404'))).toBe('HTTP 404');
     expect(formatLoadError('boom')).toBe('boom');
+  });
+
+  test('renderPageRegistrySvg bipartite page→registry', () => {
+    const svg = renderPageRegistrySvg([
+      {
+        page: 'ops',
+        registryPath: '/registry/ops-summary.json',
+        family: 'ops',
+        weight: 3,
+      },
+      {
+        page: 'health',
+        registryPath: '/registry/monorepo-health.json',
+        family: 'health',
+        weight: 2,
+      },
+    ]);
+    expect(svg).toContain('page-reg-svg');
+    expect(svg).toContain('ops');
+    expect(svg).toContain('ops-summary');
+    expect(svg).toContain('edge-page-reg');
   });
 });

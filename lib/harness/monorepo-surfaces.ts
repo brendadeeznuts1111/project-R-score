@@ -9,7 +9,7 @@
  * full workspace package.json members (STO + lib/shared). This module
  * inventories those surfaces without inventing edges between planes.
  *
- * Claim: packages-graph-map-v13 · monorepo-surfaces schema v2
+ * Claim: packages-graph-map-v13 · monorepo-surfaces schema v3
  */
 
 import { Glob } from 'bun';
@@ -112,8 +112,44 @@ export type ThemeInventory = {
   layoutKeys: string[]; // brand-ok — theme layout slot keys
 };
 
+/** Portal page shell → registry bake edge (v3). */
+export type PageRegistryEdge = {
+  page: string; // brand-ok — page slug or "home"
+  pageHref: string;
+  registryPath: string;
+  family: RegistryFamily;
+  /** How many portal source files on this page contribute the ref. */
+  weight: number;
+};
+
+/** packages/* → lib/ external hub rollup (v3). */
+export type LibImportHub = {
+  targetPrefix: string;
+  weight: number;
+  fromPackages: string[];
+};
+
+/** Orphan registry triage action (v3). */
+export type OrphanAction = 'document' | 'wire-portal' | 'review';
+
+export type OrphanTriage = {
+  file: string;
+  family: RegistryFamily;
+  action: OrphanAction;
+  note: string;
+  /** Suggested portal board href when action is wire-portal. */
+  suggestPortal?: string;
+};
+
+export type PackageExternalEdgeIn = {
+  fromPackage: string;
+  plane: string;
+  targetPrefix: string;
+  weight: number;
+};
+
 export type MonorepoSurfaces = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   kind: 'monorepo-surfaces';
   generatedAt: string;
   summary: {
@@ -133,6 +169,10 @@ export type MonorepoSurfaces = {
     registryOrphanFromPortal?: number;
     registryFamilyCount?: number;
     themeDarkTokens?: number;
+    /** v3 */
+    pageRegistryEdges?: number;
+    libImportHubs?: number;
+    orphanWireCandidates?: number;
   };
   /** Full workspace package.json members (root workspaces globs). */
   workspaces: WorkspaceMember[];
@@ -167,6 +207,8 @@ export type MonorepoSurfaces = {
     portalRefs?: PortalRegistryRef[];
     /** Top-level registry JSON never referenced from portal (v2). */
     orphanFromPortal?: string[];
+    /** Orphan triage with document/wire/review (v3). */
+    orphanTriage?: OrphanTriage[];
   };
   /** lib/ top-level dirs (not only workspace package.json members) (v2). */
   libPlane?: {
@@ -177,6 +219,11 @@ export type MonorepoSurfaces = {
   sto?: {
     root: string;
     nested: StoNestedPackage[];
+  };
+  /** Cross-plane edges (v3). */
+  crossPlane?: {
+    pageToRegistry: PageRegistryEdge[];
+    libImportHubs: LibImportHub[];
   };
   /** Explicit plane map so operators know why counts differ. */
   planes: Array<{
@@ -755,11 +802,174 @@ export async function discoverThemeInventory(root: string): Promise<ThemeInvento
   return inv;
 }
 
+/**
+ * Map portal source files to page slugs via page script inventory + path heuristics.
+ * Shared modules (topbar, data.js) fan out to every page that loads them.
+ */
+export function buildPageRegistryEdges(
+  pages: PortalPage[],
+  portalRefs: PortalRegistryRef[],
+  topLevel: RegistryArtifact[]
+): PageRegistryEdge[] {
+  const familyByFile = new Map(topLevel.map(a => [a.file, a.family]));
+  // script web path → page slugs that load it
+  const scriptToPages = new Map<string, Set<string>>();
+  for (const page of pages) {
+    const slug = page.slug || 'home';
+    for (const src of page.scripts ?? []) {
+      const key = src.startsWith('/') ? src : '/' + src;
+      let set = scriptToPages.get(key);
+      if (!set) {
+        set = new Set();
+        scriptToPages.set(key, set);
+      }
+      set.add(slug);
+    }
+  }
+
+  function pagesForSource(rel: string): string[] {
+    // public/portal/ops/index.html → ops
+    const n = rel.replace(RE_BACKSLASH, '/');
+    const pageIndex = n.match(/^public\/portal\/([^/]+)\/index\.html$/);
+    if (pageIndex) return [pageIndex[1]!];
+    if (n === 'public/portal/index.html') return ['home'];
+    // public/portal/foo.js → pages that script-src /portal/foo.js
+    if (n.startsWith('public/portal/')) {
+      // public/portal/foo.js → /portal/foo.js (avoid //portal)
+      const web = n.replace(/^public/, '');
+      const viaScript = scriptToPages.get(web) ?? scriptToPages.get('/' + web.replace(/^\//, ''));
+      if (viaScript?.size) return [...viaScript].sort();
+      // page-local: public/portal/ops/toc-dashboard.js → ops
+      const nested = n.match(/^public\/portal\/([^/]+)\/.+\.js$/);
+      if (nested) return [nested[1]!];
+      // shared root module with no page loaders → "shared"
+      return ['shared'];
+    }
+    return ['shared'];
+  }
+
+  type Acc = {
+    page: string;
+    pageHref: string;
+    registryPath: string;
+    family: RegistryFamily;
+    weight: number;
+  };
+  const acc = new Map<string, Acc>();
+
+  for (const ref of portalRefs) {
+    if (!ref.exists) continue;
+    const file = ref.path.replace(/^\/registry\//, '');
+    if (file.includes('/')) continue; // skip scoped nested for page graph (noise)
+    const family = familyByFile.get(file) ?? classifyRegistryFamily(file, null);
+    for (const src of ref.from) {
+      for (const page of pagesForSource(src)) {
+        const pageHref =
+          page === 'home' ? '/portal/' : page === 'shared' ? '/portal/' : '/portal/' + page + '/';
+        const key = page + '\0' + ref.path;
+        const cur = acc.get(key);
+        if (cur) cur.weight++;
+        else
+          acc.set(key, {
+            page,
+            pageHref,
+            registryPath: ref.path,
+            family,
+            weight: 1,
+          });
+      }
+    }
+  }
+
+  return [...acc.values()].sort(
+    (a, b) =>
+      b.weight - a.weight ||
+      a.page.localeCompare(b.page) ||
+      a.registryPath.localeCompare(b.registryPath)
+  );
+}
+
+/** Roll up packages graph externalEdges that target lib/* into hubs. */
+export function buildLibImportHubs(edges: PackageExternalEdgeIn[]): LibImportHub[] {
+  const map = new Map<string, { weight: number; pkgs: Set<string> }>();
+  for (const e of edges) {
+    if (e.plane !== 'lib' && !e.targetPrefix.startsWith('lib/')) continue;
+    const prefix = e.targetPrefix.startsWith('lib/') ? e.targetPrefix : 'lib/' + e.targetPrefix;
+    let cur = map.get(prefix);
+    if (!cur) {
+      cur = { weight: 0, pkgs: new Set() };
+      map.set(prefix, cur);
+    }
+    cur.weight += e.weight;
+    cur.pkgs.add(e.fromPackage);
+  }
+  return [...map.entries()]
+    .map(([targetPrefix, v]) => ({
+      targetPrefix,
+      weight: v.weight,
+      fromPackages: [...v.pkgs].sort(),
+    }))
+    .sort((a, b) => b.weight - a.weight || a.targetPrefix.localeCompare(b.targetPrefix));
+}
+
+const ORPHAN_WIRE_HINTS: Partial<Record<RegistryFamily, { portal: string; note: string }>> = {
+  catalog: { portal: '/portal/catalog/', note: 'skills/catalog boards consume catalogs' },
+  ops: { portal: '/portal/ops/', note: 'ops-summary consumers' },
+  compliance: { portal: '/portal/compliance/', note: 'compliance board' },
+  health: { portal: '/portal/health/', note: 'health / monorepo score panels' },
+  packages: { portal: '/portal/packages/', note: 'packages graph board' },
+  vault: { portal: '/portal/vault/', note: 'vault health board' },
+  env: { portal: '/portal/env/', note: 'env inventory board' },
+  telegram: { portal: '/portal/ops/', note: 'ops / handshake panels' },
+  tenant: { portal: '/portal/toc/', note: 'tenant TOC boards' },
+};
+
+/**
+ * Triage orphan registry JSON: document (proofs), wire-portal (UI bake), or review.
+ */
+export function triageRegistryOrphans(
+  orphans: string[],
+  topLevel: RegistryArtifact[]
+): OrphanTriage[] {
+  const familyByFile = new Map(topLevel.map(a => [a.file, a.family]));
+  return orphans.map(file => {
+    const family = familyByFile.get(file) ?? classifyRegistryFamily(file, null);
+    if (family === 'proof' || family === 'verification') {
+      return {
+        file,
+        family,
+        action: 'document' as const,
+        note: 'proof/verification artifact — keep as bake, link from wiki/proof index not portal shell',
+      };
+    }
+    const wire = ORPHAN_WIRE_HINTS[family];
+    if (wire) {
+      return {
+        file,
+        family,
+        action: 'wire-portal' as const,
+        note: wire.note,
+        suggestPortal: wire.portal,
+      };
+    }
+    return {
+      file,
+      family,
+      action: 'review' as const,
+      note: 'no default portal owner — document or delete if stale',
+    };
+  });
+}
+
 /** Build full multi-surface inventory for bake + CLI. */
 export async function buildMonorepoSurfaces(
   root: string,
-  generatedAt = new Date().toISOString()
+  opts?: {
+    generatedAt?: string;
+    packageExternalEdges?: PackageExternalEdgeIn[];
+  }
 ): Promise<MonorepoSurfaces> {
+  const generatedAt = opts?.generatedAt ?? new Date().toISOString();
   const [
     workspaces,
     packagesGraphDirs,
@@ -815,6 +1025,10 @@ export async function buildMonorepoSurfaces(
     portalRefs.map(r => r.path.replace(/^\/registry\//, '')).filter(f => !f.includes('/'))
   );
   const orphanFromPortal = [...topFiles].filter(f => !referencedTop.has(f)).sort();
+  const pageToRegistry = buildPageRegistryEdges(pages, portalRefs, registry.topLevel);
+  const libImportHubs = buildLibImportHubs(opts?.packageExternalEdges ?? []);
+  const orphanTriage = triageRegistryOrphans(orphanFromPortal, registry.topLevel);
+  const orphanWireCandidates = orphanTriage.filter(t => t.action === 'wire-portal').length;
 
   const brandTenantNote = brand.tenants.length > 0 ? brand.tenants.join(', ') : '(none)';
   const familyNote = byFamily
@@ -823,7 +1037,7 @@ export async function buildMonorepoSurfaces(
     .join(' · ');
 
   const surfaces: MonorepoSurfaces = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     kind: 'monorepo-surfaces',
     generatedAt,
     summary: {
@@ -842,6 +1056,9 @@ export async function buildMonorepoSurfaces(
       registryOrphanFromPortal: orphanFromPortal.length,
       registryFamilyCount: byFamily.length,
       themeDarkTokens: theme.darkTokenCount,
+      pageRegistryEdges: pageToRegistry.length,
+      libImportHubs: libImportHubs.length,
+      orphanWireCandidates,
     },
     workspaces,
     packagesGraphDirs,
@@ -863,9 +1080,14 @@ export async function buildMonorepoSurfaces(
       byFamily,
       portalRefs,
       orphanFromPortal,
+      orphanTriage,
     },
     libPlane,
     sto: sto ?? undefined,
+    crossPlane: {
+      pageToRegistry,
+      libImportHubs,
+    },
     planes: [
       {
         id: 'packages-graph',
@@ -943,6 +1165,28 @@ export async function buildMonorepoSurfaces(
         label: 'portal → registry refs',
         count: portalRefs.length,
         note: 'unique /registry/*.json from portal JS/HTML · orphanTop=' + orphanFromPortal.length,
+      },
+      {
+        id: 'page-registry-edges',
+        label: 'page → registry edges',
+        count: pageToRegistry.length,
+        portal: '/portal/packages/',
+        note: 'attributed via page scripts + shell HTML (v3 cross-plane)',
+      },
+      {
+        id: 'lib-import-hubs',
+        label: 'packages → lib hubs',
+        count: libImportHubs.length,
+        note:
+          libImportHubs.length === 0
+            ? 'pass packageExternalEdges from packages graph bake'
+            : 'top hub ' + (libImportHubs[0]?.targetPrefix ?? '—'),
+      },
+      {
+        id: 'orphan-wire',
+        label: 'orphan wire-portal candidates',
+        count: orphanWireCandidates,
+        note: 'of ' + orphanFromPortal.length + ' orphans · proofs stay document-only',
       },
       {
         id: 'registry-storage',

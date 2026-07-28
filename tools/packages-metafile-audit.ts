@@ -974,9 +974,16 @@ export async function runPackagesMetafileAudit(opts?: {
   let surfaces: MonorepoSurfaces | undefined;
   if (opts?.deepMap !== false) {
     try {
-      surfaces = await buildMonorepoSurfaces(ROOT);
+      surfaces = await buildMonorepoSurfaces(ROOT, {
+        packageExternalEdges: map.externalEdges.map(e => ({
+          fromPackage: e.fromPackage,
+          plane: e.plane,
+          targetPrefix: e.targetPrefix,
+          weight: e.weight,
+        })),
+      });
       notes.push(
-        `Surfaces v${surfaces.schemaVersion}: workspaces=${surfaces.summary.workspaceMembers} (packagesPlane=${surfaces.summary.packagesPlane}+other=${surfaces.summary.otherWorkspaces}) · libDirs=${surfaces.summary.libTopLevelDirs ?? '—'} · stoNested=${surfaces.summary.stoNestedPackages ?? '—'} · portalPages=${surfaces.summary.portalPages} · chrome=${surfaces.summary.chromeComponents} · brand=${surfaces.summary.brandAssets} · registryJson=${surfaces.summary.registryTopLevelJson} · regRefs=${surfaces.summary.portalRegistryRefs ?? '—'} · regOrphan=${surfaces.summary.registryOrphanFromPortal ?? '—'} · themeDark=${surfaces.summary.themeDarkTokens ?? '—'} · storagePkgs=${surfaces.summary.registryStoragePackages}`
+        `Surfaces v${surfaces.schemaVersion}: workspaces=${surfaces.summary.workspaceMembers} (packagesPlane=${surfaces.summary.packagesPlane}+other=${surfaces.summary.otherWorkspaces}) · libDirs=${surfaces.summary.libTopLevelDirs ?? '—'} · stoNested=${surfaces.summary.stoNestedPackages ?? '—'} · portalPages=${surfaces.summary.portalPages} · chrome=${surfaces.summary.chromeComponents} · brand=${surfaces.summary.brandAssets} · registryJson=${surfaces.summary.registryTopLevelJson} · regRefs=${surfaces.summary.portalRegistryRefs ?? '—'} · pageEdges=${surfaces.summary.pageRegistryEdges ?? '—'} · libHubs=${surfaces.summary.libImportHubs ?? '—'} · regOrphan=${surfaces.summary.registryOrphanFromPortal ?? '—'} · orphanWire=${surfaces.summary.orphanWireCandidates ?? '—'} · themeDark=${surfaces.summary.themeDarkTokens ?? '—'} · storagePkgs=${surfaces.summary.registryStoragePackages}`
       );
     } catch (e) {
       notes.push(`Surfaces: discovery failed — ${e instanceof Error ? e.message : String(e)}`);
