@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-07-28T23:48:00.881Z",
+  "generatedAt": "2026-07-28T23:50:39.688Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -3034,14 +3034,15 @@
       "envName": "HOST_ID",
       "coverage": {
         "status": "covered",
-        "references": 20,
+        "references": 27,
         "constructors": {
           "as": 2,
-          "try": 3,
+          "try": 4,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/http/host-lineage.ts",
           "lib/http/host-planes.ts",
           "lib/http/portal-weave.ts",
           "lib/surfaces/inventory.ts",
@@ -3053,10 +3054,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 20,
-            "constructionCalls": 5,
+            "references": 27,
+            "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
+              "lib/http/host-lineage.ts",
               "lib/http/host-planes.ts",
               "lib/http/portal-weave.ts",
               "lib/surfaces/inventory.ts",
@@ -3369,32 +3371,36 @@
       "envName": "ACCESS_DOMAIN_ID",
       "coverage": {
         "status": "covered",
-        "references": 16,
+        "references": 19,
         "constructors": {
           "as": 5,
-          "try": 0,
+          "try": 1,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/http/host-lineage.ts",
           "lib/http/host-planes.ts",
           "lib/surfaces/inventory.ts",
           "lib/verification/cloudflare-access-live.ts",
           "lib/verification/cloudflare-access-policy.ts",
-          "scripts/bake-surfaces.ts"
+          "scripts/bake-surfaces.ts",
+          "tools/brand-status.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 16,
-            "constructionCalls": 5,
+            "references": 19,
+            "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
+              "lib/http/host-lineage.ts",
               "lib/http/host-planes.ts",
               "lib/surfaces/inventory.ts",
               "lib/verification/cloudflare-access-live.ts",
               "lib/verification/cloudflare-access-policy.ts",
-              "scripts/bake-surfaces.ts"
+              "scripts/bake-surfaces.ts",
+              "tools/brand-status.ts"
             ]
           },
           "projects": {
