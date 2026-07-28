@@ -417,6 +417,42 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
 
   await copyLocalAssets(id, config.localAssets, capturedFiles);
 
+  // Generate chart artifact for limit scope
+  if (scope === 'limits' && manifest.metadata?.status === 'ok') {
+    try {
+      const { generateLimitChartSvg } =
+        require('./limit-chart.ts') as typeof import('./limit-chart.ts');
+      const chartData = {
+        raises: Number(manifest.metadata.raises ?? 0),
+        decreases: Number(manifest.metadata.decreases ?? 0),
+        netDelta: Number(manifest.metadata.netDelta ?? 0),
+        avgScore: manifest.metadata.avgScore ? Number(manifest.metadata.avgScore) : null,
+        books: Number(manifest.metadata.books ?? 0),
+        partners: Number(manifest.metadata.partners ?? 0),
+      };
+      const svg = generateLimitChartSvg(chartData);
+      const chartPath = `${snapshotDir}/${id}/chart.svg`;
+      await write(chartPath, svg);
+      capturedFiles.push(chartPath);
+      console.log(`  📊 Chart: ${chartPath}`);
+
+      // Try rasterizing to PNG via Bun.Image
+      try {
+        const img = new (Bun as any).Image(file(chartPath));
+        if (img && typeof img.png === 'function') {
+          const pngBuf = await img.png();
+          if (pngBuf) {
+            const pngPath = `${snapshotDir}/${id}/chart.png`;
+            await write(pngPath, pngBuf);
+            capturedFiles.push(pngPath);
+          }
+        }
+      } catch {}
+    } catch {
+      console.log('  ⚠️  Chart generation skipped');
+    }
+  }
+
   manifest.files = capturedFiles;
   manifest.fileCount = capturedFiles.length;
   if (manifest.metadata.status === 'pending') {

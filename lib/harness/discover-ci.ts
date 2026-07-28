@@ -37,6 +37,7 @@ export const CI_JOB_OWNERS: Readonly<Record<string, string>> = {
   'build:defines': 'ci-core',
   'build:defines:dev': 'ci-core',
   'build:defines:compile': 'ci-core',
+  'build:portal-cli': 'ci-core',
   'type-check:ci': 'typescript-ci',
   'type-check:full': 'typescript-ci',
   'deploy:production': 'deploy-production',

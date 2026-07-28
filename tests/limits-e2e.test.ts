@@ -182,6 +182,34 @@ describe('limit detection pipeline (E2E)', () => {
     expect(manifest.bunVersion).toBe(Bun.version);
   });
 
+  test('Stage 12: chart SVG generation', () => {
+    const { generateLimitChartSvg } = require('../tools/limit-chart.ts');
+    const chartData = {
+      raises: 3,
+      decreases: 1,
+      netDelta: 15000,
+      avgScore: 0.714,
+      books: 2,
+      partners: 1,
+      changes: [
+        { sportsbook: 'draftkings', direction: 'up', previous_max: 500, new_limit: 1500 },
+        { sportsbook: 'fanduel', direction: 'down', previous_max: 2000, new_limit: 1000 },
+        { sportsbook: 'betmgm', direction: 'up', previous_max: 0, new_limit: 3000 },
+      ],
+      predictionAccuracy: { mae: 0.123, rmse: 0.456, bias: -0.012, n: 50 },
+    };
+
+    const svg = generateLimitChartSvg(chartData);
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('</svg>');
+    expect(svg).toContain('🚀');
+    expect(svg).toContain('Limit Changes Snapshot');
+    expect(svg).toContain('draftkings');
+    expect(svg).toContain('Prediction Accuracy');
+    expect(svg).toContain('MAE: 0.123');
+    expect(svg).toMatchSnapshot();
+  });
+
   // Cleanup
   afterAll(() => {
     db.close();
