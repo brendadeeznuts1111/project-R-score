@@ -59,12 +59,11 @@ export function manifestFlatPath(id: string): string {
 
 const ANSI_RESET = '\x1b[0m';
 
-function termColor(text: string, color: string): string {
-  // Bun.color(…, 'ansi') auto-detects stdout color depth from the environment
-  // (16m / 256 / 16) and returns '' when stdout supports no color (pipes,
-  // dumb terminals, NO_COLOR) — so detection, upgrade, and opt-out are all
-  // the runtime's job; no manual fallback or env checks.
-  // https://bun.com/docs/runtime/color#format-colors-as-ansi-for-terminals
+export function termColor(text: string, color: string): string {
+  // Bun.color(x, 'ansi') auto-detects stdout color depth (16m/256/16) and
+  // honors NO_COLOR, TERM=dumb, and pipes — runtime-verified on the pinned
+  // canary via PTY spawn (the session's own NO_COLOR=1 was the confound
+  // behind earlier "detection is broken" readings).
   const code = Bun.color(color, 'ansi') || '';
   return code ? `${code}${text}${ANSI_RESET}` : text;
 }

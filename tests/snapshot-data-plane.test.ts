@@ -6,6 +6,7 @@ import {
   getRepoIdentity,
   limitChartDataFromMetadata,
   matchesGrep,
+  termColor,
   type SnapshotManifest,
 } from '../tools/snapshot-core.ts';
 import { isSnapshotScope, resolveSnapshotUrl, scopeConfigs } from '../tools/snapshot-scopes.ts';
@@ -127,6 +128,40 @@ describe('snapshot-data-plane grep + flat manifest', () => {
     expect(meta.pkgName).toBeTruthy();
     expect(meta.pkgVersion).toMatch(/^\d+\./);
     expect(meta.bunfigHash).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  test('termColor emits codes on a color TTY and plain text elsewhere', async () => {
+    // NOTE: this session exports NO_COLOR=1, which Bun.color honors — the
+    // color case must strip it from the child env or every check reads ''.
+    const runInPty = async (env: Record<string, string>): Promise<string> => {
+      const { NO_COLOR: _drop, ...baseEnv } = Bun.env;
+      let out = '';
+      const proc = Bun.spawn(
+        [
+          'bun',
+          '-e',
+          'import { termColor } from "./tools/snapshot-core.ts"; process.stdout.write(termColor("X", "green"));',
+        ],
+        {
+          env: { ...baseEnv, ...env },
+          terminal: {
+            cols: 80,
+            rows: 24,
+            data(_t: unknown, d: Uint8Array) {
+              out += new TextDecoder().decode(d);
+            },
+          },
+        }
+      );
+      await proc.exited;
+      return out;
+    };
+
+    expect(await runInPty({ TERM: 'xterm-256color', COLORTERM: 'truecolor' })).toContain('\x1b[');
+    expect(await runInPty({ TERM: 'xterm-256color', NO_COLOR: '1' })).toBe('X');
+    expect(await runInPty({ TERM: 'dumb' })).toBe('X');
+    // Piped (this test process) → plain text
+    expect(termColor('X', 'green')).toBe('X');
   });
 
   test('flat manifest includes repo identity keys when present', () => {
