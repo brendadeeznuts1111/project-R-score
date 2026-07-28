@@ -105,6 +105,29 @@ await s.stop(true);
 
 describe('Bun.serve', () => {
   describe('options.port', () => {
+    /**
+     * Docs contract:
+     *   console.log(server.port); // 3000
+     *   console.log(server.url);  // http://localhost:3000
+     * After bind, always read the Server object — never re-read env.
+     * @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname
+     */
+    test('docs parity: read chosen port from server.port and server.url after bind', () => {
+      const server = serve({ port: 3001, hostname: 'localhost' });
+      // number: actual bound port (not the options bag, not Bun.env)
+      expect(typeof server.port).toBe('number');
+      expect(server.port).toBe(3001);
+      // URL instance — stringifies to the public origin
+      expect(server.url).toBeInstanceOf(URL);
+      expect(server.url.href).toBe('http://localhost:3001/');
+      expect(String(server.url)).toBe('http://localhost:3001/');
+      // url.port is the string form of the same chosen port
+      expect(server.url.port).toBe(String(server.port));
+      expect(server.url.port).toBe('3001');
+      // origin is usable for fetch / console links
+      expect(server.url.origin).toBe(`http://localhost:${server.port}`);
+    });
+
     test('when port is 0, binds an ephemeral port and url.port equals String(server.port)', () => {
       const server = serve({ port: 0 });
       expect(server.port).toBeGreaterThan(0);
