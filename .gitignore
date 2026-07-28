@@ -416,3 +416,8 @@ tests/snapshot-types.test-d.ts
 tests/tsconfig.snapshot.json
 tools/portal-probe.ts
 tools/snapshot-types.ts
+
+# Test debris from bun-file-analyzer example/monitoring tests (regenerable; accidentally committed in ed55fc42f)
+/bun-write-test/
+/integration-test-metafile.json
+/large-metafile.json
