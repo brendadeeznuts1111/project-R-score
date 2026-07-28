@@ -9,6 +9,7 @@ import {
   shareVaultArgs,
   splitVaultTitle,
   summarizeAutofill,
+  totpArgsFromTarget,
   trashArgsFromTarget,
   viewArgsFromTarget,
   type AutofillRow,
@@ -175,5 +176,27 @@ describe('portal-secret autofill report', () => {
   test('summarizeAutofill never surfaces secret values', () => {
     const summary = summarizeAutofill([row({ envKey: 'A', secret: 's3cret' })]);
     expect(JSON.stringify(summary)).not.toContain('s3cret');
+  });
+});
+
+describe('portal-secret totp args', () => {
+  test('totpArgsFromTarget passes pass:// URI through', () => {
+    expect(totpArgsFromTarget('pass://sid/iid/otp')).toEqual(['item', 'totp', 'pass://sid/iid/otp']);
+  });
+
+  test('totpArgsFromTarget omits --field for vault/title', () => {
+    expect(totpArgsFromTarget('factorywager/My Login')).toEqual([
+      'item', 'totp', '--vault-name', 'factorywager', '--item-title', 'My Login',
+    ]);
+  });
+
+  test('totpArgsFromTarget passes explicit field', () => {
+    const args = totpArgsFromTarget('factorywager/My Login/otp');
+    expect(args).toContain('--field');
+    expect(args[args.indexOf('--field') + 1]).toBe('otp');
+  });
+
+  test('totpArgsFromTarget rejects bare name', () => {
+    expect(() => totpArgsFromTarget('only-one')).toThrow(/pass:\/\/|vault\/item/);
   });
 });
