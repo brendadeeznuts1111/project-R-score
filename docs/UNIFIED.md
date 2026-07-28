@@ -2,7 +2,7 @@
 
 > **JIT:** Install/bunfig only. Day loop → `bun run harness:status`.
 
-**Precedence:** CLI flags → `BUN_CONFIG_*` → bunfig shallow merge (`~/.bunfig.toml` + `./bunfig.toml`). **General** keys: project wins on conflict. **Install policy keys** (`linker`, `globalStore`, `[install.cache].dir`, `minimumReleaseAge`): **machine owns** — root project bunfig must not duplicate them (only dev overrides like `frozenLockfile = false`). Pin: `packageManager` **bun@1.4.0**.
+**Precedence:** CLI flags → `BUN_CONFIG_*` → bunfig shallow merge (`~/.bunfig.toml` + `./bunfig.toml`). **General** keys: project wins on conflict. **Install policy keys** (`linker`, `globalStore`, `[install.cache].dir`, `minimumReleaseAge`, `minimumReleaseAgeExcludes`): **machine owns** — root project bunfig must not duplicate them (only dev overrides like `frozenLockfile = false`). Pin: `packageManager` **bun@1.4.0**.
 
 Not wire/brands — see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
 
@@ -14,6 +14,7 @@ Not wire/brands — see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
 | `[install.cache].dir` | **absolute** | never `~` | avoids `./~` ([bun#6237](https://github.com/oven-sh/bun/issues/6237)); store lives under `<cache>/links/` |
 | `frozenLockfile` | true | root **`true`** (hardened) | intentional dep edits: temporarily set `false`, then restore; nested workspaces may override |
 | `minimumReleaseAge` | 259200 | prefer inherit | supply-chain floor |
+| `minimumReleaseAgeExcludes` | `["bun-types", "@types/bun", "@types/node", "typescript"]` | prefer inherit | type-only packages move faster than the age gate; list **replaces** Bun's default `["@types/node", "typescript"]` — keep it a superset |
 | scopes / `[test]` / `[console]` / `[run].noOrphans` | — | project | keep local; orphans → [bunfig run.noOrphans](https://bun.com/docs/runtime/bunfig#run-noorphans-dont-leave-orphan-processes-behind) |
 
 Legitimate hoisted/local-cache overrides exist under some `projects/active/**` — review before stripping (`bun run audit:bunfig`).
@@ -181,7 +182,7 @@ Symptom: literal `./~` under a repo. Cause: unexpanded `~` in cache dir. Fix: ab
 [install]
 exact = true
 frozenLockfile = true
-# linker / globalStore / cache.dir / minimumReleaseAge: machine ~/.bunfig.toml only
+# linker / globalStore / cache.dir / minimumReleaseAge(+Excludes): machine ~/.bunfig.toml only
 # Scope mapping SSOT here [install.scopes] — local dev: http://localhost:3000/
 # Production apex: https://registry.factory-wager.com/ · token "$FACTORY_WAGER_TOKEN"
 # Nested workspace roots may set frozenLockfile = false — bunfig does not inherit upward.
@@ -233,11 +234,13 @@ bun run check:release-tracker                # tests + release verify
 | Check id | Level | Proves |
 |----------|-------|--------|
 | `bunfig-machine-ssot` | fatal | `~/.bunfig.toml` has linker/globalStore/age/excludes/cache.dir |
+| `bunfig-machine-frozen-lockfile` | warn | machine declares `frozenLockfile` |
 | `bunfig-project-no-machine-keys` | fatal | `./bunfig.toml` does not set machine-owned install keys |
 | `bunfig-merge-consistency` | fatal | effective policy is isolated + globalStore + absolute cache |
 | `bunfig-release-age-excludes` | warn | excludes include `bun-types`, `@types/bun`, `@types/node`, `typescript` |
+| `bunfig-no-install-env-overrides` | fatal | no `BUN_INSTALL_CACHE_DIR` / `BUN_INSTALL_GLOBAL_STORE` in env |
 
-Board: `/portal/doctor/` · bake: `bun run bake:doctor` · loopback run: `POST /api/doctor/run`.
+Board: `/portal/doctor/` · bake: `bun run bake:doctor` · check: `bun run bake:doctor --check` · loopback run: `POST /api/doctor/run` · tenant [`docs/harness/tenants/portal-doctor.md`](harness/tenants/portal-doctor.md).
 
 Install verify spawns resolve `bun` via `lib/verification/resolve-bun-binary.ts` (runtime `execPath` → `Bun.which('bun')` fallback) — not bare PATH `'bun'`.
 

@@ -1,19 +1,19 @@
 {
   "kind": "portal-doctor-state",
   "schemaVersion": 1,
-  "generatedAt": "2026-07-28T21:14:07.792Z",
+  "generatedAt": "2026-07-28T21:33:47.777Z",
   "ok": true,
-  "tone": "green",
+  "tone": "yellow",
   "full": false,
   "summary": {
-    "checkCount": 14,
-    "passed": 14,
-    "failed": 0,
-    "fatal": 8,
-    "warn": 4,
+    "checkCount": 18,
+    "passed": 17,
+    "failed": 1,
+    "fatal": 10,
+    "warn": 6,
     "info": 2,
     "failedFatal": 0,
-    "failedWarn": 0,
+    "failedWarn": 1,
     "autoFixableFailed": 0,
     "suggested": []
   },
@@ -34,8 +34,13 @@
       "fatalFailed": 0
     },
     "bunfig": {
-      "total": 4,
+      "total": 6,
       "failed": 0,
+      "fatalFailed": 0
+    },
+    "infra": {
+      "total": 2,
+      "failed": 1,
       "fatalFailed": 0
     }
   },
@@ -61,7 +66,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/vault-health.json present · 3h ago",
+      "message": "public/registry/vault-health.json present · 4h ago",
       "autoFixable": true
     },
     {
@@ -69,7 +74,7 @@
       "group": "bakes",
       "level": "warn",
       "ok": true,
-      "message": "public/registry/capability-map-subset.json present · 3m ago",
+      "message": "public/registry/capability-map-subset.json present · 2m ago",
       "autoFixable": true
     },
     {
@@ -77,7 +82,7 @@
       "group": "bakes",
       "level": "info",
       "ok": true,
-      "message": "public/registry/bunfig-state.json present · 35m ago",
+      "message": "public/registry/bunfig-state.json present · 54m ago",
       "autoFixable": true
     },
     {
@@ -129,6 +134,14 @@
       "autoFixable": false
     },
     {
+      "id": "bunfig-machine-frozen-lockfile",
+      "group": "bunfig",
+      "level": "warn",
+      "ok": true,
+      "message": "machine frozenLockfile=true",
+      "autoFixable": false
+    },
+    {
       "id": "bunfig-project-no-machine-keys",
       "group": "bunfig",
       "level": "fatal",
@@ -150,6 +163,31 @@
       "level": "warn",
       "ok": true,
       "message": "minimumReleaseAgeExcludes covers bun-types, @types/bun, @types/node, typescript",
+      "autoFixable": false
+    },
+    {
+      "id": "bunfig-no-install-env-overrides",
+      "group": "bunfig",
+      "level": "fatal",
+      "ok": true,
+      "message": "no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in env",
+      "autoFixable": false
+    },
+    {
+      "id": "infra-ledger-access",
+      "group": "infra",
+      "level": "fatal",
+      "ok": true,
+      "message": "ledger.factory-wager.com Access enforced · 302 → factory-wager.cloudflareaccess.com (Access)",
+      "autoFixable": false
+    },
+    {
+      "id": "infra-portal-access",
+      "group": "infra",
+      "level": "warn",
+      "ok": false,
+      "message": "Access gap: score 200 public (no Access challenge) · pages.dev 200 public (no Access challenge) — promote staged score…/portal policy + Pages Access",
+      "fixCommand": "Promote staged Access for https://score.factory-wager.com/portal/ + Pages Access on project-r-score.pages.dev · .cloudflare-access.yml",
       "autoFixable": false
     }
   ],

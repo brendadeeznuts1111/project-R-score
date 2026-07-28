@@ -1224,7 +1224,7 @@ Checks (default — pure groups + live Access probes):
   Linker:  linker-config-version · machine-isolated-linker
   Bakes:   vault-health · capability-map-subset · bunfig-state (+ age when present)
   Catalog: catalog-json-schema · catalog-shortcode-conflict · catalog-bun-help-parity · catalog-help-coverage · catalog-deprecated-flags
-  Bunfig:  bunfig-machine-ssot · project-no-machine-keys · merge-consistency · release-age-excludes
+  Bunfig:  machine-ssot · machine-frozen-lockfile · project-no-machine-keys · merge · excludes · no-install-env
   Infra:   infra-ledger-access (fatal) · infra-portal-access (warn) — live HTTPS
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 

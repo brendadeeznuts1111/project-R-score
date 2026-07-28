@@ -7,6 +7,7 @@
  *   Vault     → /registry/vault-health.json summary.activeItems (or referencedOk)
  *   Packages  → /registry/packages-graph-map.json packages.length
  *   Health    → /registry/monorepo-health.json score (optional)
+ *   Doctor    → /registry/doctor-state.json tone (green/yellow/red)
  *
  * @see lib/portal/chrome-catalog.ts data-cli / data-group
  */
@@ -63,6 +64,28 @@ export function toneHealthBadge(n) {
   return n >= 80 ? 'ok' : n >= 50 ? 'warn' : 'bad';
 }
 
+/**
+ * Doctor badge label from portal-doctor-state bake.
+ * @param {object|null|undefined} data
+ * @returns {string|null}
+ */
+export function pickDoctorBadge(data) {
+  if (!data || data.kind !== 'portal-doctor-state') return null;
+  const tone = data.tone;
+  if (tone === 'green' || tone === 'yellow' || tone === 'red') return tone;
+  if (data.ok === true) return 'green';
+  if (data.ok === false) return 'red';
+  return null;
+}
+
+/** @param {string|null} tone */
+export function toneDoctorBadge(tone) {
+  if (tone === 'green') return 'ok';
+  if (tone === 'yellow') return 'warn';
+  if (tone === 'red') return 'bad';
+  return 'neutral';
+}
+
 const BADGE_SPECS = [
   {
     href: '/portal/failures/',
@@ -88,6 +111,13 @@ const BADGE_SPECS = [
     pick: pickHealthBadge,
     tone: toneHealthBadge,
     format: n => String(n),
+  },
+  {
+    href: '/portal/doctor/',
+    source: '/registry/doctor-state.json',
+    pick: pickDoctorBadge,
+    tone: toneDoctorBadge,
+    format: t => String(t),
   },
 ];
 

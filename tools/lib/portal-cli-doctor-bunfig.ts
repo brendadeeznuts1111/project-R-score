@@ -110,9 +110,6 @@ export async function runBunfigChecks(cwd: string): Promise<PortalDoctorCheck[]>
         missing.push('[install.cache].dir absolute or ~/…');
       }
     }
-    if (machineInstall?.frozenLockfile !== true && machineInstall?.frozenLockfile !== false) {
-      // recommend present; warn-level later if only missing frozen — keep fatal list for core SSOT
-    }
   }
   const machineOk = missing.length === 0;
   checks.push(
@@ -135,6 +132,33 @@ export async function runBunfigChecks(cwd: string): Promise<PortalDoctorCheck[]>
           'Machine install policy (isolated linker, global store, release age) is the monorepo SSOT',
         autoFixable: false,
         timeToFix: machineOk ? undefined : '5–15 min',
+        envScope: 'all',
+      }
+    )
+  );
+
+  // 1b) Machine frozenLockfile recommended (warn — project may own hardened true)
+  const frozenPresent =
+    machineInstall?.frozenLockfile === true || machineInstall?.frozenLockfile === false;
+  checks.push(
+    withMeta(
+      {
+        id: 'bunfig-machine-frozen-lockfile',
+        level: 'warn',
+        group: 'bunfig',
+        ok: frozenPresent,
+        message: frozenPresent
+          ? `machine frozenLockfile=${String(machineInstall?.frozenLockfile)}`
+          : 'machine ~/.bunfig.toml missing frozenLockfile (recommend true for CI parity)',
+        source: UNIFIED,
+      },
+      {
+        fixCommand: frozenPresent
+          ? undefined
+          : 'Add frozenLockfile = true to [install] in ~/.bunfig.toml (docs/UNIFIED.md)',
+        impact: 'Machine frozenLockfile documents install freeze posture; project may harden true',
+        autoFixable: false,
+        timeToFix: frozenPresent ? undefined : '1–3 min',
         envScope: 'all',
       }
     )
@@ -240,6 +264,39 @@ export async function runBunfigChecks(cwd: string): Promise<PortalDoctorCheck[]>
           'Without excludes, catalog type packages can be blocked by minimumReleaseAge on install',
         autoFixable: false,
         timeToFix: excludesOk ? undefined : '2–5 min',
+        envScope: 'all',
+      }
+    )
+  );
+
+  // 5) Shell must not set install cache/store env (machine bunfig owns them)
+  const forbiddenEnv = (['BUN_INSTALL_CACHE_DIR', 'BUN_INSTALL_GLOBAL_STORE'] as const).filter(
+    k => {
+      const v = Bun.env[k];
+      return typeof v === 'string' && v.trim().length > 0;
+    }
+  );
+  const envOk = forbiddenEnv.length === 0;
+  checks.push(
+    withMeta(
+      {
+        id: 'bunfig-no-install-env-overrides',
+        level: 'fatal',
+        group: 'bunfig',
+        ok: envOk,
+        message: envOk
+          ? 'no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in env'
+          : `forbidden install env set: ${forbiddenEnv.join(', ')} — use ~/.bunfig.toml`,
+        source: UNIFIED,
+      },
+      {
+        fixCommand: envOk
+          ? undefined
+          : 'Unset BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE from shell/IDE; use machine bunfig',
+        impact:
+          'Shell BUN_INSTALL_* cache/store env bypasses bunfig-policy / install:verify machine SSOT',
+        autoFixable: false,
+        timeToFix: envOk ? undefined : '2–10 min',
         envScope: 'all',
       }
     )

@@ -19,7 +19,7 @@
  *   portal-cli doctor --group linker --group catalog
  *   portal-cli doctor --env ci      # skip envScope=dev checks
  *
- * Bunfig probes: tools/lib/portal-cli-doctor-bunfig.ts · re-export lib/doctor/probes/bunfig.ts
+ * Bunfig probes: tools/lib/portal-cli-doctor-bunfig.ts
  * Bake: bun run bake:doctor · check: bun run bake:doctor --check · board: /portal/doctor/
  *
  * Fix commands use real monorepo scripts only (no invented Bun flags).

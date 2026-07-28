@@ -57,6 +57,7 @@ export type PortalWeaveSummary = {
 export type PortalWeaveRelated = {
   chrome: '/registry/portal-chrome.json';
   monorepoHealth: '/registry/monorepo-health.json';
+  doctorState: '/registry/doctor-state.json';
   packagesGraph: '/registry/packages-graph-map.json';
   opsSummary: '/registry/ops-summary.json';
   tocOps: '/registry/toc-ops.json';
@@ -137,6 +138,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     note: 'system health · monorepo score',
     group: 'harness',
     cli: 'bun run monorepo:health:bake',
+  },
+  {
+    id: 'doctor',
+    label: 'Doctor',
+    href: '/portal/doctor/',
+    note: 'unified portal doctor · bunfig · catalog · linker · doctor-state bake',
+    group: 'harness',
+    cli: 'bun run portal:doctor --verbose',
   },
   {
     id: 'tools',
@@ -262,6 +271,13 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'monorepo-health',
     href: '/registry/monorepo-health.json',
     note: 'score 0–100 · claim monorepo-health-score · gate check:monorepo-health · TOC harness glance',
+  },
+  {
+    label: 'doctor-state',
+    href: '/registry/doctor-state.json',
+    note: 'portal-cli doctor bake · tone green/yellow/red · bunfig/catalog/linker groups · bake:doctor',
+    group: 'harness',
+    cli: 'bun run bake:doctor',
   },
   {
     label: 'portal-chrome',
@@ -391,6 +407,24 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'Vault health gate (snapshots)',
     cmd: 'bun run vault:health',
     doc: 'docs/harness/tenants/proton-integration.md',
+  },
+  {
+    label: 'Portal doctor (all groups)',
+    cmd: 'bun run portal:doctor --verbose',
+    doc: 'docs/harness/tenants/portal-doctor.md',
+    group: 'harness',
+  },
+  {
+    label: 'Portal doctor (bunfig only)',
+    cmd: 'bun run portal:doctor --group bunfig --verbose',
+    doc: 'docs/UNIFIED.md',
+    group: 'harness',
+  },
+  {
+    label: 'Bake doctor-state',
+    cmd: 'bun run bake:doctor',
+    doc: 'docs/harness/tenants/portal-doctor.md',
+    group: 'harness',
   },
   {
     label: 'Vault health live bake',
@@ -536,6 +570,7 @@ export function buildPortalWeavePayload(generated?: string): PortalWeavePayload 
     related: {
       chrome: '/registry/portal-chrome.json',
       monorepoHealth: '/registry/monorepo-health.json',
+      doctorState: '/registry/doctor-state.json',
       packagesGraph: '/registry/packages-graph-map.json',
       opsSummary: '/registry/ops-summary.json',
       tocOps: '/registry/toc-ops.json',
