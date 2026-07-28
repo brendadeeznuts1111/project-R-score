@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   formatFlatManifest,
+  getLockfileState,
   matchesGrep,
   type SnapshotManifest,
 } from '../tools/snapshot-core.ts';
@@ -70,5 +71,21 @@ describe('snapshot-data-plane grep + flat manifest', () => {
 
   test('matchesGrep substring fallback', () => {
     expect(matchesGrep(sampleManifest(), 'deadbeef')).toBe(true);
+  });
+
+  test('flat manifest includes lockHash when present in metadata', () => {
+    const flat = formatFlatManifest(sampleManifest({ metadata: { status: 'ok', lockHash: 'abc123' } }));
+    expect(flat).toContain('lockHash=abc123');
+  });
+
+  test('getLockfileState hashes the repo text lockfile', async () => {
+    const state = await getLockfileState();
+    // Repo root has a text bun.lock (saveTextLockfile = true)
+    expect(state).not.toBeNull();
+    expect(state!.lockHash).toMatch(/^[0-9a-f]{16}$/);
+    expect(Number(state!.lockBytes)).toBeGreaterThan(0);
+    // Stable across calls
+    const again = await getLockfileState();
+    expect(again!.lockHash).toBe(state!.lockHash);
   });
 });

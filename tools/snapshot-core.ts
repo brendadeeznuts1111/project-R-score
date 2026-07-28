@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @see https://bun.com/docs/runtime/hashing — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 /**
  * Scope-aware snapshot core — imported by snapshot-data-plane.ts and portal-cli.ts.
@@ -103,6 +104,27 @@ async function getGitInfo(): Promise<{ commit: string; branch: string; dirty: bo
   }
 }
 
+/**
+ * Dependency-lockfile state for reproducibility metadata: short sha256 of the
+ * text `bun.lock` at the repo root. Null when absent/unreadable — the manifest
+ * simply omits `lockHash`/`lockBytes` then.
+ */
+export async function getLockfileState(): Promise<{
+  lockHash: string;
+  lockBytes: string;
+} | null> {
+  try {
+    const lockFile = file(`${repoRoot()}/bun.lock`);
+    if (!(await lockFile.exists())) return null;
+    const text = await lockFile.text();
+    const lockHash = new Bun.CryptoHasher('sha256').update(text).digest('hex').slice(0, 16);
+    return { lockHash, lockBytes: String(text.length) };
+  } catch {
+    /* lockfile unreadable — omit from metadata */
+    return null;
+  }
+}
+
 function generateId(scope: string): string {
   const ts = Date.now().toString(36);
   const rand = Math.random().toString(36).slice(2, 6);
@@ -145,6 +167,7 @@ export function formatFlatManifest(m: SnapshotManifest): string {
     'raises',
     'errors',
     'warnings',
+    'lockHash',
   ]) {
     if (m.metadata[key] != null) parts.push(`${key}=${m.metadata[key]}`);
   }
@@ -298,6 +321,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   const debug = opts.debug ?? false;
   const config = scopeConfigs[scope];
   const gitInfo = await getGitInfo();
+  const lockState = await getLockfileState();
   const id = generateId(scope);
   const timestamp = isoNow();
   const snapDir = getSnapshotDir();
@@ -318,6 +342,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
       gitDirty: gitInfo.dirty ? 'true' : 'false',
       cwd: Bun.cwd,
       standalone: Bun.isStandaloneExecutable ? 'true' : 'false',
+      ...(lockState ?? {}),
     },
   };
 
@@ -326,8 +351,10 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   console.log(`     Dir: ${snapDir}`);
   console.log(`     Base: ${baseUrl}`);
   console.log(
-    `     Git: ${gitInfo.commit.slice(0, 8)} on ${gitInfo.branch}${gitInfo.dirty ? termColor(' (dirty)', 'yellow') : ''}\n`
+    `     Git: ${gitInfo.commit.slice(0, 8)} on ${gitInfo.branch}${gitInfo.dirty ? termColor(' (dirty)', 'yellow') : ''}`
   );
+  if (lockState) console.log(`     Lock: bun.lock #${lockState.lockHash}\n`);
+  else console.log('');
 
   if (dryRun) {
     console.log(`  ${termColor('DRY RUN', 'yellow')} — would capture:`);
