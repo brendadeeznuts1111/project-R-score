@@ -22,6 +22,7 @@ import { resolveChannelR2BridgeConfig } from '../../scripts/lib/r2-bridge.ts';
 import { resolveProductionOutboxOpts } from '../channels/outbox-prod-opts.ts';
 import { requeueFailedChannelOutbox } from '../channels/outbox.ts';
 import { AccountService } from './account-service.ts';
+import { AccountLimitsRepository } from '../account-limits-repo.ts';
 import { openOperationsDb } from './db.ts';
 import { settlePendingPlays } from './ops-settle-batch.ts';
 import { processOpsSyncQueue } from './ops-sync.ts';
@@ -128,6 +129,39 @@ export async function runOpsSettleCycle(): Promise<{
 }
 
 /**
+ * Record current limit baselines for every partner with sb_accounts.
+ * Called by the snapshot cron to build historical limit records over time.
+ */
+export function capturePartnerLimitBaselines(db: Database): { recorded: number } {
+  const accounts = db
+    .query(
+      `SELECT DISTINCT a.agent_id, a.book FROM sb_accounts a
+     JOIN tree_nodes n ON n.id = a.agent_id
+     WHERE n.type = 'partner' AND a.status = 'active'`
+    )
+    .all() as Array<{ agent_id: string; book: string }>; // brand-ok — AgentId wire
+
+  const repo = new AccountLimitsRepository(db);
+  let count = 0;
+  const seen = new Set<string>();
+  for (const acct of accounts) {
+    const key = `${acct.agent_id}:${acct.book}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    repo.recordLimit({
+      node_id: acct.agent_id,
+      sportsbook: acct.book,
+      sport_id: '_any',
+      market_id: '_any',
+      bet_type: 'straight',
+      max_wager: 0,
+    });
+    count++;
+  }
+  return { recorded: count };
+}
+
+/**
  * One tick: write ops-summary, monitoring, static, proofs, optional prediction.
  * Returns process-style exit code (0 ok, 1 failed).
  */
@@ -135,6 +169,12 @@ export async function runOpsSnapshotCycle(
   opts: OpsSnapshotCronOpts = {}
 ): Promise<{ code: number; summary?: Record<string, unknown>; error?: string }> {
   try {
+    const db = openOperationsDb();
+    const limitResult = capturePartnerLimitBaselines(db);
+    db.close();
+    if (limitResult.recorded > 0) {
+      console.log(`[${OPS_SNAPSHOT_CRON_TITLE}] recorded ${limitResult.recorded} limit baselines`);
+    }
     const summary = await buildRegistrySnapshot({
       withRouting: opts.withRouting ?? true,
       withReport: opts.withReport ?? true,

@@ -689,3 +689,43 @@ export function enqueuePlayGatedChannelEvent(
     projectors: ['r2'],
   });
 }
+
+/** Helper: limit raise alert (alerts topic, telegram + r2 projectors). */
+export function enqueueLimitRaiseAlert(
+  db: Database,
+  input: {
+    treeNodeId: TreeNodeId;
+    sportsbook: string;
+    sportId: string; // brand-ok — SportId wire
+    marketId: string; // brand-ok — MarketId wire
+    betType: string;
+    previousMax: number;
+    newLimit: number;
+    telegramId?: string; // brand-ok
+  }
+): OpsChannelEvent | null {
+  const message = [
+    `🚀 <b>Limit raised</b> — ${input.sportsbook}`,
+    `${input.sportId}/${input.marketId} ${input.betType}`,
+    `$${input.previousMax} → <b>$${input.newLimit}</b>`,
+  ].join('\n');
+
+  return enqueueOpsChannelEvent(db, {
+    topic: 'alerts',
+    eventType: 'account.limit_raise',
+    idempotencyKey: `limit.raise:${input.treeNodeId as string}:${input.sportsbook}:${input.sportId}:${input.marketId}:${input.betType}:${input.newLimit}`,
+    payload: {
+      treeNodeId: input.treeNodeId as string,
+      sportsbook: input.sportsbook,
+      sportId: input.sportId,
+      marketId: input.marketId,
+      betType: input.betType,
+      previousMax: input.previousMax,
+      newLimit: input.newLimit,
+      telegramId: input.telegramId,
+      parseMode: 'HTML',
+      text: message,
+    },
+    projectors: ['r2', 'telegram'],
+  });
+}

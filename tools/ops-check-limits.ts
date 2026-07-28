@@ -132,6 +132,12 @@ function main(): void {
       if (opts.capture) {
         const n = analytics.captureMissingRaiseContexts(since);
         if (n > 0) console.error(`[ops-check-limits] captured ${n} context row(s) for ${nodeId}`);
+        const proofs = analytics.sealMissingRaiseContextProofs(since);
+        if (proofs.sealed > 0 || proofs.signed > 0 || proofs.invalid > 0) {
+          console.error(
+            `[ops-check-limits] context proofs sealed=${proofs.sealed} signed=${proofs.signed} invalid=${proofs.invalid}`
+          );
+        }
       }
       if (opts.multi) {
         const raises = analytics.getEnrichedRaisesWithContext(since);

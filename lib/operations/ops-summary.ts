@@ -10,6 +10,7 @@
 import type { Database } from 'bun:sqlite';
 import { buildBunUtilsProof } from '../bun-utils-proof.ts';
 import { loadRoutingOpsSliceSync, type RoutingOpsSlice } from '../routing-proof.ts';
+import { queryRecentLimitIncreases } from '../account-limits-repo.ts';
 import { getPredictionAccuracy } from '../prediction/index.ts';
 import { queryPartnersSlice, type PartnersSummarySlice } from './partner-profile-bridge.ts';
 import { queryOpsChannelHealth } from '../channels/outbox.ts';
@@ -312,6 +313,18 @@ export type OpsSummaryPayload = {
    * (`bun run compliance:bake` / ops:snapshot companion).
    */
   compliance: OpsSummaryCompliance;
+  /** Recent account limit raises (partner_account_limits table; live query, 48h window). */
+  limitIncreases: Array<{
+    node_id: string; // brand-ok — TreeNodeId wire
+    sportsbook: string;
+    sport_id: string; // brand-ok — SportId wire
+    market_id: string; // brand-ok — MarketId wire
+    bet_type: string;
+    previous_max: number;
+    new_limit: number;
+    increased_at: number;
+    message: string;
+  }>;
 };
 
 function tableExists(db: Database, name: string): boolean {
@@ -878,5 +891,8 @@ export function buildOpsSummary(
     telegramHandshake: loadTelegramHandshakeSummarySlice(),
     seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
     compliance: loadComplianceSummarySliceSync(),
+    limitIncreases: tableExists(db, 'partner_account_limits')
+      ? queryRecentLimitIncreases(db, 48)
+      : [],
   };
 }

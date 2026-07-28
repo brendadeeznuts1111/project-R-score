@@ -21,6 +21,7 @@ import { stringWidth } from 'bun';
 import { asStateCode, asTreeNodeId } from '../lib/types/branded.ts';
 import { getConsoleDepth, logDepth } from '../lib/console-depth.ts';
 import { ScopedRepository, type Scope } from '../lib/repository.ts';
+import { AccountLimitsRepository, ensureAccountLimitsSchema } from '../lib/account-limits-repo.ts';
 import { ZipEnrichmentRepo } from '../lib/zip-enrichment-repo.ts';
 import { createMockComplianceDb } from '../lib/operations/state-compliance-http.ts';
 import { bindPartnerProfile } from '../lib/operations/partner-profile-bridge.ts';
@@ -92,9 +93,10 @@ async function main(): Promise<void> {
     );
     CREATE TABLE play_zip_enrichment (
       play_id TEXT, node_id TEXT, country_code TEXT, sport_id TEXT, market_id TEXT, state_code TEXT,
-      zip_prefix TEXT
+      zip_prefix TEXT, enriched_at TEXT
     );
   `);
+  ensureAccountLimitsSchema(db);
 
   const scope: Scope = {
     nodeId: 'partner-deep',
@@ -104,6 +106,10 @@ async function main(): Promise<void> {
     state: 'NJ',
   };
 
+  const ZIP_WINDOW_DAYS = 90;
+  const recentIso = new Date().toISOString();
+  const staleIso = new Date(Date.now() - (ZIP_WINDOW_DAYS + 40) * 86_400_000).toISOString();
+
   const plays = Array.from({ length: 30 }, (_, i) => ({
     playId: `p${i}`,
     line: 1.5 + rand() * 1.5,
@@ -111,11 +117,13 @@ async function main(): Promise<void> {
     won: rand() > 0.45 ? 1 : 0,
     rlm: rand() > 0.7 ? 1 : 0,
     zip: (['084', '070', '071'] as const)[i % 3]!,
+    // First 12 plays recent; rest older than the 90d window
+    enrichedAt: i < 12 ? recentIso : staleIso,
   }));
 
   const stmtPlay = db.prepare('INSERT INTO play_analysis VALUES (?,?,?,?,?,?,?,?,?,?)');
   const stmtSnap = db.prepare('INSERT INTO market_snapshots VALUES (?,?,?,?,?,?,?,?,?,?)');
-  const stmtZip = db.prepare('INSERT INTO play_zip_enrichment VALUES (?,?,?,?,?,?,?)');
+  const stmtZip = db.prepare('INSERT INTO play_zip_enrichment VALUES (?,?,?,?,?,?,?,?)');
 
   for (const p of plays) {
     stmtPlay.run(
@@ -166,7 +174,8 @@ async function main(): Promise<void> {
       scope.sport,
       scope.market,
       scope.state,
-      p.zip
+      p.zip,
+      p.enrichedAt
     );
   }
   stmtPlay.finalize();
@@ -180,7 +189,16 @@ async function main(): Promise<void> {
     'SELECT play_id, line_at_bet, won FROM play_analysis LIMIT 5'
   ) as Array<{ play_id: string; line_at_bet: number; won: number }>; // brand-ok
 
-  const zipStats = zipRepo.getClusterStats(90);
+  const zipAll = zipRepo.getClusterStats(0);
+  const zipWithMeta = zipRepo.getClusterStatsWithMeta(ZIP_WINDOW_DAYS);
+  const zipStats = zipWithMeta.stats;
+  const zipTotal = zipAll.reduce((n, s) => n + s.total_plays, 0);
+  const zipInWindow = zipStats.reduce((n, s) => n + s.total_plays, 0);
+  const zipWindowOk =
+    zipWithMeta.window.mode === 'enriched' &&
+    zipInWindow === 12 &&
+    zipTotal === 30 &&
+    zipInWindow < zipTotal;
 
   const patterns = db
     .query(
@@ -241,6 +259,60 @@ async function main(): Promise<void> {
     zipCode: '08401',
   });
 
+  // ── Account limit raises fixture ────────────────────────────────
+  ensureAccountLimitsSchema(db);
+  const limitRepo = new AccountLimitsRepository(db);
+  // Baseline (day 1)
+  limitRepo.recordLimit({
+    node_id: scope.nodeId,
+    sportsbook: 'draftkings',
+    sport_id: 'soccer',
+    market_id: 'match_winner',
+    bet_type: 'pregame',
+    max_wager: 2500,
+  });
+  limitRepo.recordLimit({
+    node_id: scope.nodeId,
+    sportsbook: 'hardrock',
+    sport_id: 'basketball',
+    market_id: 'spread',
+    bet_type: 'live',
+    max_wager: 500,
+  });
+  // Raise (day 2) — insert directly with old timestamp so the raise fires
+  db.run(
+    `INSERT INTO partner_account_limits
+    (node_id, sportsbook, sport_id, market_id, bet_type, max_wager, recorded_at, effective_from)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      scope.nodeId,
+      'draftkings',
+      'soccer',
+      'match_winner',
+      'pregame',
+      5000,
+      Math.floor(Date.now() / 1000) - 3600,
+      Math.floor(Date.now() / 1000) - 3600,
+    ]
+  );
+  limitRepo.recordLimit({
+    node_id: scope.nodeId,
+    sportsbook: 'draftkings',
+    sport_id: 'soccer',
+    market_id: 'match_winner',
+    bet_type: 'pregame',
+    max_wager: 7500,
+  });
+  limitRepo.recordLimit({
+    node_id: scope.nodeId,
+    sportsbook: 'hardrock',
+    sport_id: 'basketball',
+    market_id: 'spread',
+    bet_type: 'live',
+    max_wager: 750,
+  });
+  const limitRaises = limitRepo.detectRaises(scope.nodeId, 0);
+
   const compCheck = compRepo.isBetAllowed({
     nodeId: scope.nodeId,
     stateCode: asStateCode(scope.state!),
@@ -268,6 +340,15 @@ async function main(): Promise<void> {
   const complianceRow = [
     [compCheck.allowed ? 'ALLOWED' : 'BLOCKED', !compCheck.allowed ? compCheck.reason : '—'],
   ];
+  const limitRaiseRows = limitRaises.map(r => [
+    r.sportsbook,
+    r.sport_id,
+    r.market_id,
+    r.bet_type,
+    `$${r.previous_max}`,
+    `$${r.new_limit}`,
+    new Date(r.increased_at * 1000).toLocaleDateString(),
+  ]);
 
   // Stable structured body for integrity (no wall-clock)
   const stableBody = {
@@ -286,12 +367,27 @@ async function main(): Promise<void> {
       win_rate: Number(Number(z.win_rate).toFixed(6)),
       avg_clv: z.avg_clv == null ? null : Number(Number(z.avg_clv).toFixed(6)),
     })),
+    zipWindow: {
+      days: ZIP_WINDOW_DAYS,
+      mode: zipWithMeta.window.mode,
+      totalPlays: zipTotal,
+      inWindowPlays: zipInWindow,
+    },
     compliance: {
       allowed: compCheck.allowed,
       reason: !compCheck.allowed ? compCheck.reason : null,
       wagerAmount: 250,
       betType: 'straight',
     },
+    accountLimitRaises: limitRaises.map(r => ({
+      sportsbook: r.sportsbook,
+      sport_id: r.sport_id,
+      market_id: r.market_id,
+      bet_type: r.bet_type,
+      previous_max: r.previous_max,
+      new_limit: r.new_limit,
+      increased_at: r.increased_at,
+    })),
     bunVersion: Bun.version,
   };
 
@@ -322,8 +418,15 @@ async function main(): Promise<void> {
     },
     {
       id: 'zip-window',
-      ok: false,
-      label: 'ZIP day-window filter (label only — not yet time-bounded)',
+      ok: zipWindowOk,
+      label: zipWindowOk
+        ? `ZIP ${ZIP_WINDOW_DAYS}d window via enriched_at (${zipInWindow}/${zipTotal} plays)`
+        : 'ZIP day-window filter (not proven)',
+    },
+    {
+      id: 'limit-raises',
+      ok: limitRaises.length > 0,
+      label: `🚀 Limit raises detected: ${limitRaises.length} (fixture)`,
     },
   ];
   const gapOk = gaps.filter(g => g.ok).length;
@@ -337,11 +440,16 @@ async function main(): Promise<void> {
       patternRows
     ),
     buildTable(
-      '🗺️ ZIP Clusters (scoped fixture · not calendar-90d yet)',
+      `🗺️ ZIP Clusters (${ZIP_WINDOW_DAYS}d · mode=${zipWithMeta.window.mode})`,
       ['ZIP3', 'Bets', 'Win %', 'Avg CLV'],
       zipRows
     ),
     buildTable('🛡️ Compliance Check', ['Decision', 'Reason'], complianceRow),
+    buildTable(
+      '🚀 Limit Raises',
+      ['Book', 'Sport', 'Market', 'Type', 'Old', 'New', 'When'],
+      limitRaiseRows
+    ),
     buildTable(
       '📋 Integrity / Score Checklist',
       ['OK', 'Check'],

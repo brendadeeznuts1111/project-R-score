@@ -189,6 +189,7 @@ export {
   type PartnerComplianceOnboardOpts,
   type PartnerComplianceOnboardResult,
 } from './partner-compliance-onboard.ts';
+export { proveZipDayWindow, type ZipDayWindowProof } from './prove-zip-day-window.ts';
 export {
   CALL_SIGN_PATTERN,
   applyPartnerOnboardPackage,
@@ -231,5 +232,8 @@ export {
   type MultiFactorEnrichedRaise,
   type MultiFactorScore,
   type RaiseContextMetrics,
+  type RaiseContextProofSealResult,
+  type RaiseContextProofStatus,
   type RaiseContextRow,
 } from './partner-analytics-repo.ts';
+export { handleLimitRaiseAgentRequest } from './limit-raise-agent-api.ts';

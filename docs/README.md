@@ -20,8 +20,13 @@ Navigation for **platform SSOT** docs (root + `docs/` + shared `lib` maps). Proj
 | Bun install / bunfig / CI | [UNIFIED.md](./UNIFIED.md) | [TOC](./UNIFIED.md#table-of-contents) |
 | Wire boundary (parse once) | [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md) | full map |
 | Portal foundation (static UI) | [portal-foundation.md](./portal-foundation.md) | data.js · topbar · verify · dev reload · TOC board § |
-| TOC Ops portal tenant | [harness/tenants/toc-ops.md](./harness/tenants/toc-ops.md) | `/portal/toc` fixture · surface map · MCP boundary |
 | Platform routing (local vs Pages) | [platform-routing.md](./platform-routing.md) | domains · functions · auth plane |
+| Compliance portal (MA/NJ) | [harness/tenants/compliance-portal.md](./harness/tenants/compliance-portal.md) | `/portal/compliance/` · `compliance:bake` |
+| Seat capital desk | [harness/tenants/seat-capital-desk.md](./harness/tenants/seat-capital-desk.md) | Telegram desk · intake · registry bake |
+| Factory Telegram | [harness/tenants/telegram-factory.md](./harness/tenants/telegram-factory.md) | surfaces · ops consume · templates |
+| Package-group handshake | [harness/tenants/partner-package-group-handshake.md](./harness/tenants/partner-package-group-handshake.md) | readiness · invite gap · 23 lanes |
+| Identity / auth subsystem | [../lib/identity/README.md](../lib/identity/README.md) | lockout · anomaly · geo · JIT |
+| TOC Ops portal tenant | [harness/tenants/toc-ops.md](./harness/tenants/toc-ops.md) | `/portal/toc` fixture · surface map · MCP boundary |
 | Registry client SDK | [registry-client.md](./registry-client.md) | resolve · download · publish |
 | Bun runtime nits (Phase 1) | [bun-runtime-nits.md](./bun-runtime-nits.md) | inspect · streams · url · file-io |
 | Package import graph | [IMPORT_BOUNDARIES.md](./IMPORT_BOUNDARIES.md) | — |
@@ -52,6 +57,9 @@ bun run docs:refresh
 bun run verify:proof-taxonomy:save   # proof JSON contracts + cross-proof parity
 PAGES_VERIFY_BASE=https://project-r-score.pages.dev bun run verify:pages-edge
 PORTAL_VERIFY_BASE=http://127.0.0.1:3000 bun run verify:portal
+bun run verify:portal:static
+bun run compliance:verify
+bun run telegram:handshake:readiness --deep
 ```
 
 ## Not SSOT / archives

@@ -114,6 +114,15 @@ class OperationsDashboard extends HTMLElement {
             <ul id="partners-recent"></ul>
           </section>
           <section class="ops-panel">
+            <h2>🚀 Limit increases</h2>
+            <div class="ops-metric" id="limits-count">0</div>
+            <div class="ops-sub" id="limits-detail"></div>
+            <table id="limits-table" style="width:100%;font-size:0.85em;margin-top:4px">
+              <thead><tr><th>Partner</th><th>Book</th><th>Sport</th><th>Market</th><th>Type</th><th>Old</th><th>New</th><th>When</th></tr></thead>
+              <tbody id="limits-tbody"></tbody>
+            </table>
+          </section>
+          <section class="ops-panel">
             <h2>Ops channels</h2>
             <div class="ops-metric" id="channels-pending">0</div>
             <div class="ops-sub" id="channels-detail"></div>
@@ -913,6 +922,26 @@ class OperationsDashboard extends HTMLElement {
           .slice(0, 5)
           .map(
             p => `<li><span>${p.name}</span><small>${p.partnerTemplate ?? p.templateId} · ${p.lifecycleStatus}</small></li>`
+          )
+          .join('');
+      }
+    }
+
+    // ── Limit increases panel ──
+    const limitsCount = this.querySelector('#limits-count');
+    const limitsDetail = this.querySelector('#limits-detail');
+    const limitsTbody = this.querySelector('#limits-tbody');
+    if (limitsCount && d.limitIncreases) {
+      const lims = d.limitIncreases;
+      limitsCount.textContent = String(lims.length);
+      if (limitsDetail) {
+        limitsDetail.textContent = lims.length > 0 ? `Last: ${lims[0].message}` : 'No recent increases';
+      }
+      if (limitsTbody) {
+        limitsTbody.innerHTML = lims
+          .slice(0, 10)
+          .map(
+            r => `<tr><td>${r.node_id?.slice(0,12) ?? '—'}</td><td>${r.sportsbook}</td><td>${r.sport_id}</td><td>${r.market_id}</td><td>${r.bet_type}</td><td>$${r.previous_max}</td><td><strong>$${r.new_limit}</strong></td><td>${new Date(r.increased_at*1000).toLocaleDateString()}</td></tr>`
           )
           .join('');
       }

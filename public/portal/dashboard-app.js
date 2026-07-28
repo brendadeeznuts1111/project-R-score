@@ -289,6 +289,27 @@ function renderOpsPlane(ops) {
     </article>`;
   }
 
+  // ── Limit raises plane card ──
+  const lims = ops.limitIncreases;
+  let limitHtml;
+  if (lims && lims.length > 0) {
+    const top3 = lims.slice(0, 3).map(r => `<li><code>${esc(r.sportsbook)}</code> ${esc(r.sport_id)}/${esc(r.market_id)} <strong>$${r.new_limit}</strong> <span style="color:var(--text-dim)">($${r.previous_max})</span></li>`).join('');
+    limitHtml = `<article class="plane-card" data-plane="limit-raises">
+      <h3>🚀 Limit increases <span class="badge-demo" title="Live query, 48h window">${lims.length}</span></h3>
+      <ul class="plane-gap-list">${top3}</ul>
+      <div class="plane-actions">
+        <a class="ops-link" href="/portal/ops/">Full Ops</a>
+        <a class="ops-link" href="/registry/ops-summary.json">ops-summary.json</a>
+      </div>
+    </article>`;
+  } else {
+    limitHtml = `<article class="plane-card" data-plane="limit-raises">
+      <h3>Limit increases</h3>
+      <p class="plane-detail empty-hint">No recent increases.</p>
+      <div class="plane-actions"><a class="ops-link" href="/portal/ops/">Full Ops</a></div>
+    </article>`;
+  }
+
   const scd = ops.seatCapitalDesk;
   let seatDeskHtml;
   if (scd?.available && (scd.desks ?? 0) > 0) {
@@ -350,7 +371,7 @@ function renderOpsPlane(ops) {
     </article>`;
   }
 
-  el.innerHTML = tocHtml + loopHtml + handshakeHtml + seatDeskHtml + complianceHtml;
+  el.innerHTML = tocHtml + loopHtml + handshakeHtml + limitHtml + seatDeskHtml + complianceHtml;
 }
 
 function proofStatusCls(sum) {

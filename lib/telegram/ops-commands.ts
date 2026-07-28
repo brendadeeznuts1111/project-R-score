@@ -95,7 +95,7 @@ export function handleOpsRegister(
   const [refId, ...rest] = args;
   const { plain: nameParts, compliance } = splitComplianceKvTokens(rest);
   if (!refId || !nameParts.length) {
-    return 'Usage: `/register <referral-id> <your-name> [state=MA|NJ age=N zip=##### loc=City]`';
+    return 'Usage: `/register <referral-id> <your-name> [state=MA|NJ age=N zip=##### loc=City idv=yes]`';
   }
 
   const name = nameParts.join(' ');
@@ -187,6 +187,25 @@ export function handleOpsVerifyDod(
   }
 }
 
+/** `/limits` — show recent limit increases for the partner. */
+export function handleOpsLimits(db: Database, node: OpsTreeNode | null): string {
+  if (!node) return '❌ Not registered';
+  const { AccountLimitsRepository } =
+    require('../account-limits-repo.ts') as typeof import('../account-limits-repo.ts');
+  const repo = new AccountLimitsRepository(db);
+  const since = Math.floor(Date.now() / 1000) - 48 * 3600;
+  const raises = repo.detectRaises(node.id, since);
+  if (raises.length === 0) return '📋 No recent limit increases in the last 48h.';
+  const lines = raises
+    .slice(0, 5)
+    .map(
+      r =>
+        `• ${r.sportsbook} ${r.sport_id}/${r.market_id} ${r.bet_type}: $${r.previous_max} → *$${r.new_limit}*`
+    );
+  return [`🚀 *Limit Increases* (48h)`, '', ...lines, '', `Total: ${raises.length} raise(s)`].join(
+    '\n'
+  );
+}
 export function dispatchOpsFlowOutput(
   db: Database,
   dbPath: string,
@@ -227,7 +246,8 @@ export function dispatchOpsCommand(db: Database, dbPath: string, input: OpsComma
       return handleOpsRegister(db, telegramUserId, input.args);
     case '/verifydod':
       return handleOpsVerifyDod(db, dbPath, node, input.args);
-    default:
+    case '/limits':
+      return handleOpsLimits(db, node);
       return 'Unknown command. Try /help';
   }
 }

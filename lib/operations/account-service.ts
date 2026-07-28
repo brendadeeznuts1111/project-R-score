@@ -8,6 +8,7 @@
 import { Database } from 'bun:sqlite';
 import type { Database as DatabaseType } from 'bun:sqlite';
 import { openOperationsDb } from './db.ts';
+import { AccountLimitsRepository } from '../account-limits-repo.ts';
 
 export interface TreeNode {
   id: string; // brand-ok — UUID v7
@@ -256,6 +257,22 @@ export class AccountService {
       { $id: nodeId, $at: new Date().toISOString() }
     );
 
+    // Record initial limit baselines for each sportsbook account
+    const accounts = this.db
+      .query(`SELECT book FROM sb_accounts WHERE agent_id = ? AND status = 'active'`)
+      .all(nodeId) as Array<{ book: string }>;
+    const repo = new AccountLimitsRepository(this.db);
+    for (const a of accounts) {
+      repo.recordLimit({
+        node_id: nodeId,
+        sportsbook: a.book,
+        sport_id: '_any',
+        market_id: '_any',
+        bet_type: 'straight',
+        max_wager: 0,
+      });
+    }
+
     if (node.telegramId && !node.telegramId.startsWith('pending-')) {
       await sendTelegramMessage(node.telegramId, [
         '🎉 *PROMOTION*',
@@ -265,6 +282,9 @@ export class AccountService {
         `Your cut: ${node.cutPercentage}% from downstream.`,
         '',
         'Use /tree to see your network.',
+        ...(accounts.length > 0
+          ? ['', `📋 ${accounts.length} sportsbook account(s) — limit baselines recorded.`]
+          : []),
       ]);
     }
   }

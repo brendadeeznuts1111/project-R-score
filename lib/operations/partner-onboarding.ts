@@ -15,12 +15,21 @@ import {
   templateIdForOnboardingSource,
 } from './onboarding-config.ts';
 import { bindPartnerProfile } from './partner-profile-bridge.ts';
+import { AccountLimitsRepository } from '../account-limits-repo.ts';
 
 export type AssignOnboardingOpts = {
   referralNodeId?: string; // brand-ok — TreeNodeId wire from ops-sync
   source?: string;
   preferredExpertId?: string; // brand-ok — ExpertId wire
   templateId?: PartnerTemplateId;
+  /** Record initial limit baselines after onboarding (sportsbook → max_wager). */
+  initialLimits?: Array<{
+    sportsbook: string;
+    sportId: string; // brand-ok — SportId wire
+    marketId: string; // brand-ok — MarketId wire
+    betType: 'pregame' | 'live' | 'straight';
+    maxWager: number;
+  }>;
 };
 
 export type AssignOnboardingResult = {
@@ -114,8 +123,25 @@ export function onboardPartnerProfile(
   }
 ) {
   const assigned = assignOnboardingDefaults(db, treeNodeId, opts);
-  return bindPartnerProfile(db, treeNodeId, {
+  const bound = bindPartnerProfile(db, treeNodeId, {
     templateId: assigned.templateId,
     lifecycleStatus: opts?.lifecycleStatus,
   });
+
+  // Record initial limit baselines when provided
+  if (opts?.initialLimits && opts.initialLimits.length > 0) {
+    const repo = new AccountLimitsRepository(db);
+    for (const l of opts.initialLimits) {
+      repo.recordLimit({
+        node_id: treeNodeId as string,
+        sportsbook: l.sportsbook,
+        sport_id: l.sportId,
+        market_id: l.marketId,
+        bet_type: l.betType,
+        max_wager: l.maxWager,
+      });
+    }
+  }
+
+  return bound;
 }

@@ -551,6 +551,96 @@ export function seedAccountLimitsDemo(
   return { seeded: true, nodeId };
 }
 
+// ── Full pipeline: record → alert → outbox ──────────────────────────
+
+/**
+ * Full limit pipeline: record, detect raise, create local alert, and enqueue
+ * to ops_channel_outbox for Telegram/r2 delivery.  No-op when no raise.
+ *
+ * Returns the raise when detected, or null.
+ */
+export function enqueueLimitRaiseForPartner(
+  db: Database,
+  limit: LimitRecord,
+  opts?: { telegramId?: string; enqueueOpsChannelEvent?: Function } // brand-ok — TelegramId wire
+): LimitRaise | null {
+  const repo = new AccountLimitsRepository(db);
+  const raise = repo.recordLimitWithAlert(limit);
+  if (raise && opts?.enqueueOpsChannelEvent) {
+    opts.enqueueOpsChannelEvent(db, {
+      treeNodeId: limit.node_id,
+      sportsbook: limit.sportsbook,
+      sportId: limit.sport_id,
+      marketId: limit.market_id,
+      betType: limit.bet_type,
+      previousMax: raise.previous_max,
+      newLimit: raise.new_limit,
+      telegramId: opts.telegramId,
+    });
+  }
+  return raise;
+}
+
+/** Query recent limit increases for ops summary (across all nodes). */
+export function queryRecentLimitIncreases(
+  db: Database,
+  hours = 48
+): Array<{
+  node_id: string; // brand-ok — TreeNodeId wire
+  sportsbook: string;
+  sport_id: string; // brand-ok — SportId wire
+  market_id: string; // brand-ok — MarketId wire
+  bet_type: string;
+  previous_max: number;
+  new_limit: number;
+  increased_at: number;
+  message: string;
+}> {
+  const since = Math.floor(Date.now() / 1000) - hours * 3600;
+  const rows = db
+    .query(
+      `
+    SELECT a.node_id, a.sportsbook, a.sport_id, a.market_id, a.bet_type,
+           (SELECT MAX(b.max_wager) FROM partner_account_limits b
+            WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+              AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+              AND b.bet_type = a.bet_type AND b.id < a.id) as previous_max,
+           a.max_wager as new_limit,
+           a.recorded_at as increased_at
+    FROM partner_account_limits a
+    WHERE a.recorded_at > ?
+      AND EXISTS (
+        SELECT 1 FROM partner_account_limits b
+        WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+          AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+          AND b.bet_type = a.bet_type AND b.id < a.id
+      )
+      AND a.max_wager > (
+        SELECT MAX(b.max_wager) FROM partner_account_limits b
+        WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+          AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+          AND b.bet_type = a.bet_type AND b.id < a.id
+      )
+    ORDER BY a.recorded_at DESC
+    LIMIT 20
+  `
+    )
+    .all(since) as Array<{
+    node_id: string; // brand-ok — TreeNodeId wire
+    sportsbook: string;
+    sport_id: string; // brand-ok — SportId wire
+    market_id: string; // brand-ok — MarketId wire
+    bet_type: string;
+    previous_max: number;
+    new_limit: number;
+    increased_at: number;
+  }>;
+  return rows.map(r => ({
+    ...r,
+    message: `${r.sportsbook} ${r.sport_id}/${r.market_id} ${r.bet_type}: $${r.previous_max} → $${r.new_limit}`,
+  }));
+}
+
 // ── Table formatter (terminal) ────────────────────────────────────────────
 
 /**

@@ -14,12 +14,52 @@
 | Import boundaries | [`docs/IMPORT_BOUNDARIES.md`](docs/IMPORT_BOUNDARIES.md) |
 | Wire boundary (parse once) | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md) |
 | Portal foundation | [`docs/portal-foundation.md`](docs/portal-foundation.md) |
+| Harness JIT index | [`docs/harness/README.md`](docs/harness/README.md) · `bun run harness:status` |
 | Projects triage | [`projects/README.md`](projects/README.md) |
 | Docs index | [`docs/README.md`](docs/README.md) |
 | Path SSOT (code) | [`lib/docs/repo-docs.ts`](lib/docs/repo-docs.ts) (`CANONICAL_REPO_DOCS`) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) (domain types; prefer **artifact** over **codebase**) |
 
 **Remotes:** `origin` → [project-R-score](https://github.com/brendadeeznuts1111/project-R-score). `cascade` → `cascade-mover-v3` (private git remote; do not default-push there).
+
+## Live surfaces
+
+| Surface | URL | Role |
+|---------|-----|------|
+| **Wiki** (this site) | [wiki.factory-wager.com](https://wiki.factory-wager.com/) | GitHub Pages · repo root markdown (`README.md`, `docs/`, `AGENTS.md`) |
+| **Portal boards** | [score.factory-wager.com/portal/](https://score.factory-wager.com/portal/) | Static UI + baked registry embeds (Cloudflare Pages) |
+| **Registry bake** | [score.factory-wager.com/registry/](https://score.factory-wager.com/registry/) | `ops:snapshot` JSON artifacts (`ops-summary`, handshake, compliance, …) |
+| **Monitoring** | [score.factory-wager.com/monitoring/](https://score.factory-wager.com/monitoring/) | Routing · env · proof tiles |
+
+Routing SSOT: [`docs/platform-routing.md`](docs/platform-routing.md) · verify: `bun run verify:pages-edge`
+
+## Portal boards (operator)
+
+| Board | Pages path | Harness doc |
+|-------|------------|-------------|
+| TOC Ops | [`/portal/toc/`](https://score.factory-wager.com/portal/toc/) | [`docs/harness/tenants/toc-ops.md`](docs/harness/tenants/toc-ops.md) |
+| Compliance (MA/NJ) | [`/portal/compliance/`](https://score.factory-wager.com/portal/compliance/) | [`docs/harness/tenants/compliance-portal.md`](docs/harness/tenants/compliance-portal.md) |
+| Seat capital desk | registry `seat-capital-desk.json` | [`docs/harness/tenants/seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) |
+| Telegram handshake | registry `telegram-handshake.json` | [`docs/harness/tenants/partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) |
+| DOD queue | [`/portal/dod/`](https://score.factory-wager.com/portal/dod/) | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Skills catalog | [`/portal/skills/`](https://score.factory-wager.com/portal/skills/) | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) |
+
+Bake loop: `bun run ops:snapshot` · compliance-only: `bun run compliance:bake` · portal verify: `bun run verify:portal:static`
+
+## Harness tenants (JIT)
+
+When a decision is unresolved, read **one** owner in [`docs/harness/README.md`](docs/harness/README.md) — not the full standards stack.
+
+| Lane | Entry |
+|------|-------|
+| Identity / auth (Phase 0–2b) | [`lib/identity/README.md`](lib/identity/README.md) · geo · password strength · JIT |
+| Factory Telegram | [`docs/harness/tenants/telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · `bun run telegram:verify` |
+| Package-group handshake | [`docs/harness/tenants/partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · `bun run telegram:handshake:readiness --deep` |
+| Ops loop / outbox | [`docs/harness/tenants/ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md) |
+| Cloudflare Pages | [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · `bun run cloudflare:env` |
+| Branded IDs | [`lib/types/branded/README.md`](lib/types/branded/README.md) · `bun run check:brands:all` |
+
+Agent entry (full table): [`AGENTS.md`](AGENTS.md)
 
 ## Quick Start
 
@@ -66,6 +106,12 @@ Triage tiers `experimental/` / `archive/` are documented under `projects/`; only
 | `bun run fix:scan-any-types` | Scan for `any` types |
 | `bun run dev` | Start platform server |
 | `bun run deployment:readiness` | Deployment readiness matrix |
+| `bun run ops:snapshot` | Rebake `public/registry/*` + portal embeds |
+| `bun run compliance:bake` | Compliance board (MA/NJ shadow matrix) |
+| `bun run compliance:verify` | Compliance bake + portal tests |
+| `bun run telegram:handshake:readiness` | Package-group handshake gates (`--deep`) |
+| `bun run test:seat-desk` | Seat capital desk + handshake snapshot tests |
+| `bun run harness:status` | Day-loop ratchets + proof status |
 
 See `bun run help --verbose` (regenerate long [`docs/CLI.md`](docs/CLI.md) with `bun run cli:docs` only when needed).
 
