@@ -1,15 +1,16 @@
 // @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/pm/isolated-installs — configVersion + linker defaults
-// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
-// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/pm/security-scanner-api — Security Scanner API
 // @see https://bun.com/docs/runtime/bunfig#install-security-scanner — [install.security] scanner
 // @see https://bun.com/docs/pm/cli/pm — bun pm scan
-// @see https://bun.com/docs/pm/cli/audit — bun audit (npm advisory alternate)
+// @see https://bun.com/docs/pm/cli/audit — bun audit
 // @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/pm/cli/install#dry-run — dry-run install flag
 /**
  * portal-cli scanner — grounded Bun Security Scanner control plane.
  *
