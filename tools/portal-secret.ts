@@ -407,6 +407,58 @@ async function exitOnFail(code: number): Promise<void> {
   if (code !== 0) process.exit(code);
 }
 
+/** try/catch → cliError: lets the never-return type work for the caller. */
+function argsOrExit<T>(fn: () => T): T {
+  try {
+    return fn();
+  } catch (e) {
+    cliError(e instanceof Error ? e.message : String(e));
+  }
+}
+
+/** Capture pass-cli stdout (exit-checked) and print it exactly once-terminated. */
+async function printCaptured(args: string[], reason: string): Promise<void> {
+  const { code, stdout } = await capturePassCli(args, reason);
+  await exitOnFail(code);
+  process.stdout.write(stdout.endsWith('\n') ? stdout : `${stdout}\n`);
+}
+
+/** `--json` → `--output json` remap; extra args are forwarded either way. */
+function jsonOrPassthrough(base: string[], rest: string[], strip: string[] = ['--json']): string[] {
+  const filtered = rest.filter(a => !strip.includes(a));
+  return hasFlag(rest, '--json')
+    ? [...base, '--output', 'json', ...filtered]
+    : [...base, ...filtered];
+}
+
+/** Thin passthrough subcommands: guard optional, then forward verbatim. */
+const PASSTHROUGH_COMMANDS: Record<string, { words: string[]; usage?: string; reason?: string }> = {
+  login: { words: ['login'] },
+  logout: { words: ['logout'] },
+  test: { words: ['test'] },
+  session: {
+    words: ['session'],
+    usage: 'portal secret session <lock|unlock|create-lock|remove-lock> [args…]',
+  },
+  settings: {
+    words: ['settings'],
+    usage: 'portal secret settings <subcommand> [args…] — e.g. settings set default-vault <name>',
+  },
+  pat: {
+    words: ['personal-access-token'],
+    usage: 'portal secret pat <list|create|delete|renew|access> [args…]',
+  },
+  'personal-access-token': {
+    words: ['personal-access-token'],
+    usage: 'portal secret pat <list|create|delete|renew|access> [args…]',
+    reason: 'pat',
+  },
+  password: {
+    words: ['password'],
+    usage: 'portal secret password <generate|score> [args…]',
+  },
+};
+
 function takeAfterDashDash(rest: string[]): { before: string[]; after: string[] } {
   const idx = rest.indexOf('--');
   if (idx === -1) return { before: rest, after: [] };
@@ -436,16 +488,11 @@ async function cmdGet(target: string | undefined): Promise<void> {
   if (!target) {
     cliError('Usage: portal secret get <pass://vault/item/field|vault/item[/field]>');
   }
-  let viewArgs: string[];
-  try {
-    viewArgs = viewArgsFromTarget(target);
-  } catch (e) {
-    cliError(e instanceof Error ? e.message : String(e));
-  }
-  const { code, stdout } = await capturePassCli(viewArgs, 'get');
-  await exitOnFail(code);
   // item view may print field only or human blob — emit raw stdout for $()
-  process.stdout.write(stdout.endsWith('\n') ? stdout : `${stdout}\n`);
+  await printCaptured(
+    argsOrExit(() => viewArgsFromTarget(target)),
+    'get'
+  );
 }
 
 async function cmdMap(rest: string[]): Promise<void> {
@@ -674,41 +721,25 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
     return;
   }
 
+  const passthrough = PASSTHROUGH_COMMANDS[sub!];
+  if (passthrough) {
+    if (passthrough.usage && !rest[0]) cliError(`Usage: ${passthrough.usage}`);
+    process.exit(await runPassCli([...passthrough.words, ...rest], passthrough.reason ?? sub));
+  }
+
   switch (sub) {
     case 'which':
       await cmdWhich();
       return;
 
-    case 'login':
-      process.exit(await runPassCli(['login', ...rest], 'login'));
-      return;
-
-    case 'logout':
-      process.exit(await runPassCli(['logout', ...rest], 'logout'));
-      return;
-
-    case 'info': {
-      const json = hasFlag(rest, '--json');
-      const args = json
-        ? ['info', '--output', 'json', ...rest.filter(a => a !== '--json')]
-        : ['info', ...rest];
-      process.exit(await runPassCli(args, 'info'));
-      return;
-    }
-
-    case 'test':
-      process.exit(await runPassCli(['test', ...rest], 'test'));
+    case 'info':
+      process.exit(await runPassCli(jsonOrPassthrough(['info'], rest), 'info'));
       return;
 
     case 'vaults':
-    case 'vault-list': {
-      const json = hasFlag(rest, '--json');
-      const args = json
-        ? ['vault', 'list', '--output', 'json', ...rest.filter(a => a !== '--json')]
-        : ['vault', 'list', ...rest.filter(a => a !== '--json')];
-      process.exit(await runPassCli(args, 'vaults'));
+    case 'vault-list':
+      process.exit(await runPassCli(jsonOrPassthrough(['vault', 'list'], rest), 'vaults'));
       return;
-    }
 
     case 'items':
     case 'list': {
@@ -716,11 +747,9 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       if (!vault || vault.startsWith('-')) {
         cliError('Usage: portal secret items <vault> [--json]');
       }
-      const json = hasFlag(rest, '--json');
-      const args = json
-        ? ['item', 'list', vault, '--output', 'json']
-        : ['item', 'list', vault, ...rest.slice(1).filter(a => a !== '--json')];
-      process.exit(await runPassCli(args, 'items'));
+      process.exit(
+        await runPassCli(jsonOrPassthrough(['item', 'list', vault!], rest.slice(1)), 'items')
+      );
       return;
     }
 
@@ -787,13 +816,12 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       if (!target || !to) {
         cliError('Usage: portal secret move <vault/item-title> --to <dest-vault>');
       }
-      let args: string[];
-      try {
-        args = moveArgsFromTarget(target, to);
-      } catch (e) {
-        cliError(e instanceof Error ? e.message : String(e));
-      }
-      process.exit(await runPassCli(args!, 'move'));
+      process.exit(
+        await runPassCli(
+          argsOrExit(() => moveArgsFromTarget(target, to)),
+          'move'
+        )
+      );
       return;
     }
 
@@ -801,13 +829,12 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
     case 'untrash': {
       const target = rest[0];
       if (!target) cliError(`Usage: portal secret ${sub} <vault/item-title>`);
-      let args: string[];
-      try {
-        args = trashArgsFromTarget(target, sub === 'untrash');
-      } catch (e) {
-        cliError(e instanceof Error ? e.message : String(e));
-      }
-      process.exit(await runPassCli(args!, sub));
+      process.exit(
+        await runPassCli(
+          argsOrExit(() => trashArgsFromTarget(target, sub === 'untrash')),
+          sub
+        )
+      );
       return;
     }
 
@@ -829,31 +856,20 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
             'Usage: portal secret share item <vault/item-title> <email> [--role viewer|editor|manager]'
           );
         }
-        let vault: string, title: string;
-        try {
-          ({ vault, title } = splitVaultTitle(target));
-        } catch (e) {
-          cliError(e instanceof Error ? e.message : String(e));
-        }
+        const { vault, title } = argsOrExit(() => splitVaultTitle(target!));
         const { code, stdout } = await capturePassCli(
           ['item', 'list', vault, '--output', 'json'],
           'share item'
         );
         await exitOnFail(code);
-        let ref: ReturnType<typeof findItemRefByTitle>;
-        try {
-          ref = findItemRefByTitle(stdout, title!);
-        } catch (e) {
-          cliError(e instanceof Error ? e.message : String(e));
-        }
+        const ref = argsOrExit(() => findItemRefByTitle(stdout, title));
         if (!ref) cliError(`item "${title}" not found in vault "${vault}"`);
-        let args: string[];
-        try {
-          args = shareItemArgs(ref.shareId, ref.id, email!, role);
-        } catch (e) {
-          cliError(e instanceof Error ? e.message : String(e));
-        }
-        process.exit(await runPassCli(args!, 'share item'));
+        process.exit(
+          await runPassCli(
+            argsOrExit(() => shareItemArgs(ref!.shareId, ref!.id, email!, role)),
+            'share item'
+          )
+        );
       }
       if (action === 'vault') {
         const vault = rest[1];
@@ -864,13 +880,12 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
             'Usage: portal secret share vault <vault> <email> [--role viewer|editor|manager]'
           );
         }
-        let args: string[];
-        try {
-          args = shareVaultArgs(vault!, email!, role);
-        } catch (e) {
-          cliError(e instanceof Error ? e.message : String(e));
-        }
-        process.exit(await runPassCli(args!, 'share vault'));
+        process.exit(
+          await runPassCli(
+            argsOrExit(() => shareVaultArgs(vault!, email!, role)),
+            'share vault'
+          )
+        );
       }
       cliError(
         'Usage: portal secret share list [--json] | share item <vault/item-title> <email> [--role …] | share vault <vault> <email> [--role …]\n' +
@@ -902,55 +917,10 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
       if (!target) {
         cliError('Usage: portal secret totp <pass://vault/item[/field]|vault/item[/field]>');
       }
-      let args: string[];
-      try {
-        args = totpArgsFromTarget(target);
-      } catch (e) {
-        cliError(e instanceof Error ? e.message : String(e));
-      }
-      const { code, stdout } = await capturePassCli(args!, 'totp');
-      await exitOnFail(code);
-      process.stdout.write(stdout.endsWith('\n') ? stdout : `${stdout}\n`);
-      return;
-    }
-
-    case 'session': {
-      // Thin passthrough: pass-cli session lock|unlock|create-lock (2.2.x).
-      if (!rest[0]) {
-        cliError('Usage: portal secret session <lock|unlock|create-lock> [args…]');
-      }
-      process.exit(await runPassCli(['session', ...rest], 'session'));
-      return;
-    }
-
-    case 'settings': {
-      // Thin passthrough: pass-cli settings (default vault, output format).
-      if (!rest[0]) {
-        cliError(
-          'Usage: portal secret settings <subcommand> [args…] — e.g. settings set default-vault <name>'
-        );
-      }
-      process.exit(await runPassCli(['settings', ...rest], 'settings'));
-      return;
-    }
-
-    case 'pat':
-    case 'personal-access-token': {
-      // Thin passthrough: pass-cli personal-access-token list|create|delete|renew|access.
-      if (!rest[0]) {
-        cliError('Usage: portal secret pat <list|create|delete|renew|access> [args…]');
-      }
-      process.exit(await runPassCli(['personal-access-token', ...rest], 'pat'));
-      return;
-    }
-
-    case 'password': {
-      // pass-cli password generate random|passphrase · score — upstream runs
-      // this before the authenticated-client gate (no vault session needed).
-      if (!rest[0]) {
-        cliError('Usage: portal secret password <generate|score> [args…]');
-      }
-      process.exit(await runPassCli(['password', ...rest], 'password'));
+      await printCaptured(
+        argsOrExit(() => totpArgsFromTarget(target)),
+        'totp'
+      );
       return;
     }
 

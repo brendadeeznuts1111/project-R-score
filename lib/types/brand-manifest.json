@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "generatedAt": "2026-07-28T20:04:32.038Z",
+  "version": 3,
+  "generatedAt": "2026-07-28T20:22:13.843Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
   "brandCount": 47,
   "domainCount": 8,
@@ -82,7 +82,12 @@
         "as": "asSessionId",
         "try": "trySessionId",
         "parse": "parseSessionId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isSessionId"
     },
     {
       "name": "TerminalId",
@@ -103,7 +108,12 @@
         "as": "asTerminalId",
         "try": "tryTerminalId",
         "parse": "parseTerminalId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTerminalId"
     },
     {
       "name": "RequestId",
@@ -124,7 +134,12 @@
         "as": "asRequestId",
         "try": "tryRequestId",
         "parse": "parseRequestId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isRequestId"
     },
     {
       "name": "CorrelationId",
@@ -145,7 +160,12 @@
         "as": "asCorrelationId",
         "try": "tryCorrelationId",
         "parse": "parseCorrelationId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isCorrelationId"
     },
     {
       "name": "SnapshotId",
@@ -166,7 +186,12 @@
         "as": "asSnapshotId",
         "try": "trySnapshotId",
         "parse": "parseSnapshotId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isSnapshotId"
     },
     {
       "name": "UserId",
@@ -188,7 +213,12 @@
         "as": "asUserId",
         "try": "tryUserId",
         "parse": "parseUserId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isUserId"
     },
     {
       "name": "AccountId",
@@ -209,7 +239,12 @@
         "as": "asAccountId",
         "try": "tryAccountId",
         "parse": "parseAccountId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAccountId"
     },
     {
       "name": "IdentityId",
@@ -230,7 +265,12 @@
         "as": "asIdentityId",
         "try": "tryIdentityId",
         "parse": "parseIdentityId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isIdentityId"
     },
     {
       "name": "AccessKeyId",
@@ -251,7 +291,12 @@
         "as": "asAccessKeyId",
         "try": "tryAccessKeyId",
         "parse": "parseAccessKeyId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAccessKeyId"
     },
     {
       "name": "TokenId",
@@ -272,7 +317,12 @@
         "as": "asTokenId",
         "try": "tryTokenId",
         "parse": "parseTokenId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTokenId"
     },
     {
       "name": "DocumentId",
@@ -293,7 +343,12 @@
         "as": "asDocumentId",
         "try": "tryDocumentId",
         "parse": "parseDocumentId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDocumentId"
     },
     {
       "name": "ZoneId",
@@ -313,7 +368,12 @@
         "as": "asZoneId",
         "try": "tryZoneId",
         "parse": "parseZoneId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isZoneId"
     },
     {
       "name": "DocTokenId",
@@ -334,7 +394,12 @@
         "as": "asDocTokenId",
         "try": "tryDocTokenId",
         "parse": "parseDocTokenId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDocTokenId"
     },
     {
       "name": "ChallengeId",
@@ -355,7 +420,12 @@
         "as": "asChallengeId",
         "try": "tryChallengeId",
         "parse": "parseChallengeId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isChallengeId"
     },
     {
       "name": "PolicyId",
@@ -376,7 +446,12 @@
         "as": "asPolicyId",
         "try": "tryPolicyId",
         "parse": "parsePolicyId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPolicyId"
     },
     {
       "name": "DeploymentId",
@@ -397,7 +472,12 @@
         "as": "asDeploymentId",
         "try": "tryDeploymentId",
         "parse": "parseDeploymentId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDeploymentId"
     },
     {
       "name": "VersionId",
@@ -418,7 +498,12 @@
         "as": "asVersionId",
         "try": "tryVersionId",
         "parse": "parseVersionId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isVersionId"
     },
     {
       "name": "AuditId",
@@ -439,7 +524,12 @@
         "as": "asAuditId",
         "try": "tryAuditId",
         "parse": "parseAuditId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAuditId"
     },
     {
       "name": "AuditFindingId",
@@ -460,7 +550,12 @@
         "as": "asAuditFindingId",
         "try": "tryAuditFindingId",
         "parse": "parseAuditFindingId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAuditFindingId"
     },
     {
       "name": "AuditConceptId",
@@ -481,7 +576,12 @@
         "as": "asAuditConceptId",
         "try": "tryAuditConceptId",
         "parse": "parseAuditConceptId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAuditConceptId"
     },
     {
       "name": "AuditEntryId",
@@ -502,7 +602,12 @@
         "as": "asAuditEntryId",
         "try": "tryAuditEntryId",
         "parse": "parseAuditEntryId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isAuditEntryId"
     },
     {
       "name": "EvidenceId",
@@ -523,7 +628,12 @@
         "as": "asEvidenceId",
         "try": "tryEvidenceId",
         "parse": "parseEvidenceId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isEvidenceId"
     },
     {
       "name": "OperationId",
@@ -544,7 +654,12 @@
         "as": "asOperationId",
         "try": "tryOperationId",
         "parse": "parseOperationId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOperationId"
     },
     {
       "name": "ResourceId",
@@ -565,7 +680,12 @@
         "as": "asResourceId",
         "try": "tryResourceId",
         "parse": "parseResourceId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isResourceId"
     },
     {
       "name": "ProjectId",
@@ -586,7 +706,12 @@
         "as": "asProjectId",
         "try": "tryProjectId",
         "parse": "parseProjectId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isProjectId"
     },
     {
       "name": "PipelineId",
@@ -607,7 +732,12 @@
         "as": "asPipelineId",
         "try": "tryPipelineId",
         "parse": "parsePipelineId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPipelineId"
     },
     {
       "name": "JobId",
@@ -628,7 +758,12 @@
         "as": "asJobId",
         "try": "tryJobId",
         "parse": "parseJobId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isJobId"
     },
     {
       "name": "StepId",
@@ -649,7 +784,12 @@
         "as": "asStepId",
         "try": "tryStepId",
         "parse": "parseStepId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isStepId"
     },
     {
       "name": "WebhookId",
@@ -670,7 +810,12 @@
         "as": "asWebhookId",
         "try": "tryWebhookId",
         "parse": "parseWebhookId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isWebhookId"
     },
     {
       "name": "FeedId",
@@ -691,7 +836,12 @@
         "as": "asFeedId",
         "try": "tryFeedId",
         "parse": "parseFeedId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isFeedId"
     },
     {
       "name": "RunId",
@@ -711,7 +861,12 @@
         "as": "asRunId",
         "try": "tryRunId",
         "parse": "parseRunId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isRunId"
     },
     {
       "name": "DecisionId",
@@ -732,7 +887,12 @@
         "as": "asDecisionId",
         "try": "tryDecisionId",
         "parse": "parseDecisionId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isDecisionId"
     },
     {
       "name": "LoopId",
@@ -752,7 +912,12 @@
         "as": "asLoopId",
         "try": "tryLoopId",
         "parse": "parseLoopId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isLoopId"
     },
     {
       "name": "TreeNodeId",
@@ -773,7 +938,12 @@
         "as": "asTreeNodeId",
         "try": "tryTreeNodeId",
         "parse": "parseTreeNodeId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTreeNodeId"
     },
     {
       "name": "ExperimentId",
@@ -795,7 +965,12 @@
         "as": "asExperimentId",
         "try": "tryExperimentId",
         "parse": "parseExperimentId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExperimentId"
     },
     {
       "name": "ExperimentVariantId",
@@ -815,7 +990,12 @@
         "as": "asExperimentVariantId",
         "try": "tryExperimentVariantId",
         "parse": "parseExperimentVariantId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExperimentVariantId"
     },
     {
       "name": "ExperimentAssignmentId",
@@ -835,7 +1015,12 @@
         "as": "asExperimentAssignmentId",
         "try": "tryExperimentAssignmentId",
         "parse": "parseExperimentAssignmentId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isExperimentAssignmentId"
     },
     {
       "name": "PartnerProfileKey",
@@ -855,7 +1040,12 @@
         "as": "asPartnerProfileKey",
         "try": "tryPartnerProfileKey",
         "parse": "parsePartnerProfileKey"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPartnerProfileKey"
     },
     {
       "name": "PartnerTemplateId",
@@ -876,7 +1066,12 @@
         "as": "asPartnerTemplateId",
         "try": "tryPartnerTemplateId",
         "parse": "parsePartnerTemplateId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPartnerTemplateId"
     },
     {
       "name": "GateDecisionId",
@@ -896,7 +1091,12 @@
         "as": "asGateDecisionId",
         "try": "tryGateDecisionId",
         "parse": "parseGateDecisionId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isGateDecisionId"
     },
     {
       "name": "OpsChannelEventId",
@@ -916,7 +1116,12 @@
         "as": "asOpsChannelEventId",
         "try": "tryOpsChannelEventId",
         "parse": "parseOpsChannelEventId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isOpsChannelEventId"
     },
     {
       "name": "StateCode",
@@ -931,13 +1136,19 @@
         "wire-input"
       ],
       "description": "US state jurisdiction code for regulatory scoping (MA, NJ, …)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[A-Z]{2}$",
+        "ingressNormalization": "trim-uppercase"
+      },
       "kind": "code",
       "module": "lib/types/branded/operations.ts",
       "constructors": {
         "as": "asStateCode",
         "try": "tryStateCode",
         "parse": "parseStateCode"
-      }
+      },
+      "guard": "BRAND_GUARDS.isStateCode"
     },
     {
       "name": "ZipCode",
@@ -952,13 +1163,19 @@
         "wire-input"
       ],
       "description": "US ZIP or ZIP+4 postal code (discrete geo column)",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^\\d{5}(-\\d{4})?$",
+        "ingressNormalization": "trim"
+      },
       "kind": "code",
       "module": "lib/types/branded/operations.ts",
       "constructors": {
         "as": "asZipCode",
         "try": "tryZipCode",
         "parse": "parseZipCode"
-      }
+      },
+      "guard": "BRAND_GUARDS.isZipCode"
     },
     {
       "name": "PortalTenantId",
@@ -979,7 +1196,12 @@
         "as": "asPortalTenantId",
         "try": "tryPortalTenantId",
         "parse": "parsePortalTenantId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPortalTenantId"
     },
     {
       "name": "TelegramUserId",
@@ -999,7 +1221,12 @@
         "as": "asTelegramUserId",
         "try": "tryTelegramUserId",
         "parse": "parseTelegramUserId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isTelegramUserId"
     },
     {
       "name": "PortalAccountId",
@@ -1019,7 +1246,12 @@
         "as": "asPortalAccountId",
         "try": "tryPortalAccountId",
         "parse": "parsePortalAccountId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isPortalAccountId"
     },
     {
       "name": "LinkNonceId",
@@ -1039,7 +1271,12 @@
         "as": "asLinkNonceId",
         "try": "tryLinkNonceId",
         "parse": "parseLinkNonceId"
-      }
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isLinkNonceId"
     }
   ],
   "constructorTiers": {

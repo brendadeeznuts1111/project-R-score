@@ -412,7 +412,8 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
     metadata: {
       status: 'pending',
       gitDirty: gitInfo.dirty ? 'true' : 'false',
-      cwd: Bun.cwd,
+      // cwd deliberately omitted — absolute operator paths (usernames) must
+      // not leak into manifests that may be baked or published.
       standalone: Bun.isStandaloneExecutable ? 'true' : 'false',
       ...lockState,
       ...repoIdentity,

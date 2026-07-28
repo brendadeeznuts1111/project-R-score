@@ -1,4 +1,5 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 import { describe, expect, test } from 'bun:test';
 import {
   envNameFromTitle,
@@ -17,6 +18,73 @@ import {
   viewArgsFromTarget,
   type AutofillRow,
 } from '../tools/portal-secret.ts';
+
+const PORTAL_SECRET_CLI = `${import.meta.dir}/../tools/portal-secret.ts`;
+
+/**
+ * Minimal pass-cli shim for integration tests: answers `item list` with a
+ * fixed vault and `item view` per title (one good secret, one empty field).
+ * Everything else exits 1, like a vault miss.
+ */
+const PASS_CLI_SHIM = `#!/bin/bash
+if [ "$1" = "item" ] && [ "$2" = "list" ]; then
+  echo '[{"title":"Good Token","id":"i1","share_id":"s1"},{"title":"Empty Field","id":"i2","share_id":"s1"},{"title":"!!!","id":"i3","share_id":"s1"},{"title":"Path","id":"i4","share_id":"s1"}]'
+  exit 0
+fi
+if [ "$1" = "item" ] && [ "$2" = "view" ]; then
+  title=""
+  prev=""
+  for a in "$@"; do
+    if [ "$prev" = "--item-title" ]; then title="$a"; fi
+    prev="$a"
+  done
+  case "$title" in
+    "Good Token") echo "s3cret-value-12345" ;;
+    "Empty Field") echo "" ;;
+    *) exit 1 ;;
+  esac
+  exit 0
+fi
+exit 1
+`;
+
+describe('portal-secret autofill --json (stubbed pass-cli)', () => {
+  test('report is value-free; empty + unsanitizable + reserved land in missing', async () => {
+    const shimDir = `${import.meta.dir}/../.tmp/pass-shim-${process.pid}-${Date.now()}`;
+    const shimPath = `${shimDir}/pass-cli`;
+    try {
+      await Bun.write(shimPath, PASS_CLI_SHIM);
+      Bun.spawnSync(['chmod', '755', shimPath]);
+
+      const proc = Bun.spawn(
+        ['bun', PORTAL_SECRET_CLI, 'autofill', '--vault', 'shimvault', '--json', '--parallel'],
+        {
+          stdout: 'pipe',
+          stderr: 'pipe',
+          env: { ...Bun.env, PATH: `${shimDir}:${Bun.env.PATH ?? ''}` },
+        }
+      );
+      const stdout = await new Response(proc.stdout).text();
+      const code = await proc.exited;
+
+      expect(code).toBe(0);
+      const report = JSON.parse(stdout);
+      // Value-free contract: the fetched secret never reaches stdout.
+      expect(stdout).not.toContain('s3cret-value-12345');
+      expect(report.injected).toEqual(['GOOD_TOKEN']);
+      expect(report.missing).toContain('EMPTY_FIELD');
+      expect(report.missing).toContain('!!!');
+      expect(report.missing).toContain('PATH');
+      expect(report.errors.EMPTY_FIELD).toMatch(/empty value/);
+      expect(report.errors['!!!']).toMatch(/unsanitizable/);
+      expect(report.errors.PATH).toMatch(/reserved env key/);
+      expect(report.parallel).toBe(true);
+      expect(typeof report.durationMs).toBe('number');
+    } finally {
+      Bun.spawnSync(['rm', '-rf', `${import.meta.dir}/../.tmp`]);
+    }
+  });
+});
 
 describe('portal-secret helpers', () => {
   test('viewArgsFromTarget parses pass:// URI', () => {
