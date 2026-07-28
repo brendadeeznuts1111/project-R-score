@@ -1,10 +1,12 @@
-// @see https://bun.com/docs/runtime/sqlite
+// @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
+// @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 /**
  * Granular limit analysis — breakdown by sportsbook, sport, market, bet type
  * with regulatory correlation (state licenses, regulatory limits).
  */
 import type { Database } from 'bun:sqlite';
 import { AccountLimitsRepository } from '../account-limits-repo.ts';
+import { formatTable, color, fmt, DIMENSION_COLUMNS, REGULATORY_COLUMNS } from '../table-format.ts';
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -230,70 +232,47 @@ export function runGranularAnalysis(db: Database, hours = 48): GranularAnalysis 
 // ── Formatters ───────────────────────────────────────────────────────────
 
 export function formatDimensionTable(title: string, data: DimensionBreakdown[], limit = 8): string {
-  if (data.length === 0) return `  ${title}: No data`;
-  const rows = data
-    .slice(0, limit)
-    .map(d => [
-      d.label,
-      String(d.totalChanges),
-      String(d.raises),
-      d.decreases > 0 ? String(d.decreases) : '—',
-      `${d.netDelta >= 0 ? '+' : ''}${d.netDelta}`,
-      d.avgMagnitudePct ? `${d.avgMagnitudePct}%` : '—',
-      d.trend7d ? `${d.trend7d >= 0 ? '+' : ''}${d.trend7d}/d` : '—',
-    ]);
-  const headers = ['Name', 'Total', '🚀', '⬇', 'Net', 'Avg%', 'Trend'];
-  const pad = (s: string, w: number) => s + ' '.repeat(Math.max(0, w - s.length));
-  const widths = headers.map((h, i) =>
-    Math.max(h.length, ...rows.map(r => String(r[i] ?? '').length))
-  );
-  const border = (l: string, j: string, r: string) =>
-    l + widths.map(w => '─'.repeat(w + 2)).join(j) + r;
-  const line = (cells: string[]) =>
-    '│ ' + cells.map((c, i) => pad(c, widths[i]!)).join(' │ ') + ' │';
-  return [
-    `  ${title}`,
-    border('┌', '┬', '┐'),
-    line(headers),
-    border('├', '┼', '┤'),
-    ...rows.map(r => line(r.map(String))),
-    border('└', '┴', '┘'),
-  ].join('\n');
+  if (data.length === 0) return `  ${color.dim(title)}: ${color.dim('(no data)')}`;
+  const rows = data.slice(0, limit).map(d => ({
+    label: d.label,
+    totalChanges: d.totalChanges,
+    raises: d.raises,
+    decreases: d.decreases || '',
+    netDelta: d.netDelta,
+    avgMagnitudePct: d.avgMagnitudePct,
+    trend7d: d.trend7d,
+  }));
+  const raisesTotal = data.reduce((s, d) => s + d.raises, 0);
+  const downsTotal = data.reduce((s, d) => s + d.decreases, 0);
+  const netTotal = data.reduce((s, d) => s + d.netDelta, 0);
+  return formatTable(title, DIMENSION_COLUMNS, rows, {
+    titleColor: color.bold,
+    footer: `Total: ${data.length} · 🚀${raisesTotal} ⬇${downsTotal} · Net ${netTotal >= 0 ? '+' : ''}$${netTotal.toLocaleString()}`,
+    alternating: true,
+  });
 }
 
 export function formatRegulatoryTable(correlations: RegulatoryCorrelation[], limit = 10): string {
-  if (correlations.length === 0) return '  No regulatory correlations found.';
+  if (correlations.length === 0) return `  ${color.dim('Regulatory')}: ${color.dim('(no data)')}`;
   const show = correlations.slice(0, limit);
-  const rows = show.map(c => [
-    c.partner.slice(0, 12),
-    c.sportsbook,
-    c.sportId,
-    c.marketId,
-    `$${c.currentLimit}`,
-    c.regulatoryMax != null ? `$${c.regulatoryMax}` : '—',
-    c.status === 'over_limit'
-      ? '⚠️ OVER'
-      : c.status === 'at_limit'
-        ? '⚡ AT'
-        : c.status === 'under_limit'
-          ? '✅ OK'
-          : '—',
-  ]);
-  const headers = ['Partner', 'Book', 'Sport', 'Market', 'Limit', 'RegMax', 'Status'];
-  const pad = (s: string, w: number) => s + ' '.repeat(Math.max(0, w - s.length));
-  const widths = headers.map((h, i) =>
-    Math.max(h.length, ...rows.map(r => String(r[i] ?? '').length))
-  );
-  const border = (l: string, j: string, r: string) =>
-    l + widths.map(w => '─'.repeat(w + 2)).join(j) + r;
-  const line = (cells: string[]) =>
-    '│ ' + cells.map((c, i) => pad(c, widths[i]!)).join(' │ ') + ' │';
-  return [
-    border('┌', '┬', '┐'),
-    line(headers),
-    border('├', '┼', '┤'),
-    ...rows.map(r => line(r)),
-    border('└', '┴', '┘'),
-    `  ${correlations.length} total · ${correlations.filter(c => c.status === 'over_limit').length} over limit · ${correlations.filter(c => c.status === 'at_limit').length} at limit`,
-  ].join('\n');
+  const rows = show.map(c => ({
+    partner: c.partner.slice(0, 14),
+    sportsbook: c.sportsbook,
+    sportId: c.sportId,
+    marketId: c.marketId,
+    currentLimit: c.currentLimit,
+    regulatoryMax: c.regulatoryMax,
+    status: c.status,
+    stateCode: c.stateCode,
+  }));
+  const overCount = correlations.filter(c => c.status === 'over_limit').length;
+  const atCount = correlations.filter(c => c.status === 'at_limit').length;
+  const overMsg = overCount > 0 ? color.red(`⚠️ ${overCount} over limit`) : '';
+  const atMsg = atCount > 0 ? color.yellow(`⚡ ${atCount} at limit`) : '';
+  const footer = [overMsg, atMsg, `${correlations.length} total`].filter(Boolean).join(' · ');
+  return formatTable('Regulatory Correlation', REGULATORY_COLUMNS, rows, {
+    titleColor: color.bold,
+    footer,
+    separatorAfter: correlations.length > limit ? [limit - 1] : undefined,
+  });
 }
