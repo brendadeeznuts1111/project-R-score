@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
 set -e
 
+DRY_RUN=0
+if [ "$1" = "--dry-run" ]; then
+  DRY_RUN=1
+fi
+
 # Hygiene ‖ harness in parallel; ast-grep after (may depend on clean tree).
 # Kill background siblings on INT/TERM/EXIT so a cancelled hook does not leave orphans.
 # Belt-and-suspenders with workspace [run] noOrphans = true (bunfig.toml).
@@ -42,8 +47,12 @@ fi
 if git diff --cached --name-only | grep -q '^\.mcp\.json$'; then
   echo ""
   echo "== pre-commit: mcp sync (.mcp.json staged) =="
-  bun scripts/mcp-sync.ts
-  git add .vscode/mcp.json
+  if [ "$DRY_RUN" -eq 1 ]; then
+    echo "  [dry-run] bun scripts/mcp-sync.ts && git add .vscode/mcp.json"
+  else
+    bun scripts/mcp-sync.ts
+    git add .vscode/mcp.json
+  fi
 fi
 
 echo ""
@@ -53,20 +62,28 @@ bun scripts/pre-commit-ast-grep.ts --staged
 echo ""
 echo "== pre-commit: gitleaks secret scan =="
 if command -v gitleaks &>/dev/null; then
-  if [ "$1" = "--dry-run" ]; then
+  if [ "$DRY_RUN" -eq 1 ]; then
     echo "  [dry-run] gitleaks detect --source . --no-git --config .gitleaks.toml -v"
   else
     gitleaks detect --source . --no-git --config .gitleaks.toml --verbose 2>&1 | tail -5 || true
   fi
 else
-  echo "  ⚠️  gitleaks not installed — skip (brew install gitleaks)"
+  if [ "$DRY_RUN" -eq 1 ]; then
+    echo "  ⚠️  [dry-run] gitleaks not installed — would skip"
+  else
+    echo "  ⚠️  gitleaks not installed — skip (brew install gitleaks)"
+  fi
 fi
 
 echo ""
 echo "== pre-commit: type-check (tools) =="
 # Only when tools/ is staged — full type-check:tools is ~400 errors on canary types (non-gate CI).
-if [ "$1" = "--dry-run" ]; then
-  echo "  [dry-run] type-check:tools if tools/ staged"
+if [ "$DRY_RUN" -eq 1 ]; then
+  if git diff --cached --name-only --diff-filter=ACMR | grep -qE '^tools/'; then
+    echo "  [dry-run] bun run type-check:tools (tools/ staged)"
+  else
+    echo "  ⏭️  [dry-run] no tools/ staged — type-check:tools would skip"
+  fi
 else
   if git diff --cached --name-only --diff-filter=ACMR | grep -qE '^tools/'; then
     bun run type-check:tools 2>&1 | tail -5 || echo "  ⚠️  type-check:tools failed (non-blocking)"
@@ -78,15 +95,15 @@ fi
 echo ""
 echo "== pre-commit: env defaults check =="
 # Staged-only + harness heuristics. Non-blocking until clean.
-if [ "$1" = "--dry-run" ]; then
-  echo "  [dry-run] bun scripts/check-env-defaults.ts --staged --dry-run"
+if [ "$DRY_RUN" -eq 1 ]; then
+  echo "  [dry-run] bun scripts/check-env-defaults.ts --staged"
 else
   bun scripts/check-env-defaults.ts --staged || echo "  ⚠️  env-defaults: staged optional config without fallback (non-blocking)"
 fi
 
 echo ""
 echo "== pre-commit: env vault-gap ratchet =="
-if [ "$1" = "--dry-run" ]; then
+if [ "$DRY_RUN" -eq 1 ]; then
   echo "  [dry-run] bun scripts/env-inventory.ts --ratchet"
 else
   # Soft fail for now (baseline exists); promote to hard fail when team is ready
@@ -97,8 +114,12 @@ echo ""
 echo "== pre-commit: test:changed (bail) =="
 # Import-graph filter + parallel workers; short-circuits on docs-only diffs.
 # Hard fail — catch broken tests before push. Opt out: SKIP_TEST_CHANGED=1
-if [ "$1" = "--dry-run" ]; then
-  echo "  [dry-run] bun run test:changed -- --bail=1"
+if [ "$DRY_RUN" -eq 1 ]; then
+  if git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.(ts|tsx|js|jsx|mts|cts)$'; then
+    bun run test:changed -- --dry-run --bail=1
+  else
+    echo "  ⏭️  [dry-run] no staged TS/JS — test:changed would skip"
+  fi
 elif [ "${SKIP_TEST_CHANGED:-}" = "1" ]; then
   echo "  ⏭️  SKIP_TEST_CHANGED=1"
 else
@@ -114,7 +135,7 @@ else
 fi
 
 echo ""
-if [ "$1" = "--dry-run" ]; then
+if [ "$DRY_RUN" -eq 1 ]; then
   echo "✅ Pre-commit dry-run complete (no changes made)"
 else
   echo "✅ Pre-commit checks passed"

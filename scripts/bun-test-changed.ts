@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/test/index#run-tests — bun test
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed / --changed=REF / --watch
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --isolate / --parallel
-// @see https://bun.com/docs/guides/process/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Day-loop wrapper for `bun test --changed` (+ parallel by default).
@@ -15,6 +16,7 @@
  *   bun run test:changed:main
  *   bun run test:changed:watch
  *   bun run test:changed -- --serial     # opt out of --parallel
+ *   bun run test:changed -- --dry-run    # preview selection without running tests
  *   BUN_TEST_SERIAL=1 bun run test:changed
  *
  * Short-circuit: if the change set has no code-like files, exit 0 without
@@ -22,43 +24,155 @@
  */
 import { hasCodeLikeChange, listChangedFiles, resolveMainHead } from './lib/git-changed';
 
-const raw = Bun.argv.slice(2);
-const wantMainHead = raw.includes('--main-head');
-const wantSerial =
-  raw.includes('--serial') || Bun.env.BUN_TEST_SERIAL === '1' || Bun.env.BUN_TEST_SERIAL === 'true';
-const stripped = raw.filter(a => a !== '--main-head' && a !== '--serial');
-const flags = stripped.filter(a => a.startsWith('-'));
-const positionals = stripped.filter(a => !a.startsWith('-'));
-const restPositionals = wantMainHead ? positionals : positionals.slice(1);
-const ref = wantMainHead ? await resolveMainHead() : positionals[0];
-const watch = flags.includes('--watch');
+export type TestChangedArgs = {
+  /** Unresolved ref from positional argv (undefined for dirty tree or --main-head). */
+  ref: string | undefined;
+  watch: boolean;
+  dryRun: boolean;
+  serial: boolean;
+  mainHead: boolean;
+  /** Remaining flags to forward to `bun test` (e.g. --bail=1). */
+  flags: string[];
+  /** Positional args after the ref to forward to `bun test`. */
+  restPositionals: string[];
+};
 
-if (!watch) {
-  const changed = await listChangedFiles({
-    since: ref,
-    dirty: true,
-  });
-  if (changed.length === 0 || !hasCodeLikeChange(changed)) {
-    const why = changed.length === 0 ? 'empty change set' : 'no code-like files in change set';
-    console.info(`✓ test:changed — skip (${why}${ref ? `; since ${ref}` : ''})`);
-    process.exit(0);
+export type TestChangedPreview = {
+  ref: string | undefined;
+  changedCount: number;
+  codeLike: boolean;
+  /** Undefined when codeLike is true. */
+  skipReason: string | undefined;
+  /** Command that would run, or '(none — would skip)'. */
+  command: string;
+};
+
+export type TestChangedDeps = {
+  resolveMainHead?: () => Promise<string>;
+  listChangedFiles?: (opts: { since?: string; dirty?: boolean }) => Promise<string[]>;
+  hasCodeLikeChange?: (files: string[]) => boolean;
+};
+
+/** Parse `bun-test-changed` argv into a typed shape. */
+export function parseTestChangedArgs(
+  argv: string[],
+  env: Record<string, string | undefined> = {}
+): TestChangedArgs {
+  const wantMainHead = argv.includes('--main-head');
+  const wantSerial =
+    argv.includes('--serial') || env.BUN_TEST_SERIAL === '1' || env.BUN_TEST_SERIAL === 'true';
+  const dryRun = argv.includes('--dry-run');
+  const stripped = argv.filter(a => a !== '--main-head' && a !== '--serial' && a !== '--dry-run');
+  const flags = stripped.filter(a => a.startsWith('-'));
+  const positionals = stripped.filter(a => !a.startsWith('-'));
+  const restPositionals = wantMainHead ? positionals : positionals.slice(1);
+  const ref = wantMainHead ? undefined : positionals[0];
+  const watch = flags.includes('--watch');
+  return {
+    ref,
+    watch,
+    dryRun,
+    serial: wantSerial,
+    mainHead: wantMainHead,
+    flags,
+    restPositionals,
+  };
+}
+
+/** Build the `bun test ...` argv from parsed args and the resolved ref. */
+export function buildBunTestCommand(
+  args: TestChangedArgs,
+  resolvedRef: string | undefined
+): string[] {
+  const bunArgs = ['test', '--pass-with-no-tests'];
+  bunArgs.push(resolvedRef ? `--changed=${resolvedRef}` : '--changed');
+
+  // Parallel implies --isolate (fresh global per file). Opt out with --serial.
+  const hasParallel = args.flags.some(f => f === '--parallel' || f.startsWith('--parallel='));
+  if (!args.serial && !hasParallel) {
+    bunArgs.push('--parallel');
   }
+
+  bunArgs.push(...args.flags, ...args.restPositionals);
+  return bunArgs;
 }
 
-const bunArgs = ['test', '--pass-with-no-tests'];
-bunArgs.push(ref ? `--changed=${ref}` : '--changed');
-
-// Parallel implies --isolate (fresh global per file). Opt out with --serial.
-const hasParallel = flags.some(f => f === '--parallel' || f.startsWith('--parallel='));
-if (!wantSerial && !hasParallel) {
-  bunArgs.push('--parallel');
+/** Build a dry-run preview without spawning Bun test. */
+export function buildTestChangedPreview(
+  args: TestChangedArgs,
+  resolvedRef: string | undefined,
+  changedFiles: string[],
+  hasCodeLikeChangeImpl: (files: string[]) => boolean = hasCodeLikeChange
+): TestChangedPreview {
+  const codeLike = hasCodeLikeChangeImpl(changedFiles);
+  const skipReason =
+    changedFiles.length === 0 ? 'empty change set' : 'no code-like files in change set';
+  const command = codeLike
+    ? `bun ${buildBunTestCommand(args, resolvedRef).join(' ')}`
+    : '(none — would skip)';
+  return {
+    ref: resolvedRef,
+    changedCount: changedFiles.length,
+    codeLike,
+    skipReason: codeLike ? undefined : skipReason,
+    command,
+  };
 }
 
-bunArgs.push(...flags, ...restPositionals);
+/** Run the changed-test selector. Returns the exit code to use. */
+export async function runTestChanged(
+  opts: {
+    argv?: string[];
+    env?: Record<string, string | undefined>;
+  } & TestChangedDeps = {}
+): Promise<number> {
+  const args = parseTestChangedArgs(opts.argv ?? Bun.argv.slice(2), opts.env ?? Bun.env);
+  const resolveHead = opts.resolveMainHead ?? resolveMainHead;
+  const listChanged = opts.listChangedFiles ?? listChangedFiles;
+  const codeLike = opts.hasCodeLikeChange ?? hasCodeLikeChange;
+  const ref = args.mainHead ? await resolveHead() : args.ref;
+  const bunArgs = buildBunTestCommand(args, ref);
 
-const proc = Bun.spawn(['bun', ...bunArgs], {
-  stdout: 'inherit',
-  stderr: 'inherit',
-  stdin: 'inherit',
-});
-process.exit((await proc.exited) ?? 1);
+  if (args.dryRun) {
+    if (args.watch) {
+      console.info('[dry-run] test:changed preview');
+      console.info(`  ref: ${ref ?? '(dirty tree)'}`);
+      console.info('  mode: watch');
+      console.info(`  command: bun ${bunArgs.join(' ')}`);
+      return 0;
+    }
+
+    const changed = await listChanged({ since: ref, dirty: true });
+    const preview = buildTestChangedPreview(args, ref, changed, codeLike);
+
+    console.info('[dry-run] test:changed preview');
+    console.info(`  ref: ${preview.ref ?? '(dirty tree)'}`);
+    console.info(`  changed files: ${preview.changedCount}`);
+    console.info(`  code-like: ${preview.codeLike}`);
+    if (preview.skipReason) {
+      console.info(`  skip reason: ${preview.skipReason}${ref ? `; since ${ref}` : ''}`);
+    }
+    console.info(`  command: ${preview.command}`);
+    return 0;
+  }
+
+  if (!args.watch) {
+    const changed = await listChanged({ since: ref, dirty: true });
+    if (changed.length === 0 || !codeLike(changed)) {
+      const why = changed.length === 0 ? 'empty change set' : 'no code-like files in change set';
+      console.info(`✓ test:changed — skip (${why}${ref ? `; since ${ref}` : ''})`);
+      return 0;
+    }
+  }
+
+  const proc = Bun.spawn(['bun', ...bunArgs], {
+    stdout: 'inherit',
+    stderr: 'inherit',
+    stdin: 'inherit',
+  });
+  return (await proc.exited) ?? 1;
+}
+
+if (import.meta.main) {
+  process.exit(await runTestChanged());
+}
