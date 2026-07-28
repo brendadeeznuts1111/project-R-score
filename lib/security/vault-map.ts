@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -239,12 +240,23 @@ export function defaultGlyphForType(type: string | null | undefined): string | n
 }
 
 /**
- * Colorize a string with Bun.color → ansi-16m (truecolor).
- * `ansi` alone returns empty for many hex inputs; prefer ansi-16m.
+ * Colorize a string for STDERR status lines.
+ * Autofill prints JSON to stdout and status lines to stderr, so the
+ * stdout-based auto-detection inside Bun.color(x, 'ansi') can't gate this —
+ * stderr must be detected explicitly: plain text when stderr is not a TTY,
+ * NO_COLOR is set, or TERM=dumb; FORCE_COLOR=1 overrides. Depth: 24-bit on
+ * truecolor terminals, 256 otherwise (explicit formats, since 'ansi' only
+ * inspects stdout).
  */
 export function colorize(text: string, color: string | null | undefined): string {
   if (!color || !text) return text;
-  const open = Bun.color(color, 'ansi-16m');
+  if (Bun.env.FORCE_COLOR == null) {
+    if (!process.stderr.isTTY || Bun.env.NO_COLOR != null || Bun.env.TERM === 'dumb') {
+      return text;
+    }
+  }
+  const truecolor = Bun.env.COLORTERM === 'truecolor' || Bun.env.COLORTERM === '24bit';
+  const open = Bun.color(color, truecolor ? 'ansi-16m' : 'ansi-256') || Bun.color(color, 'ansi-16');
   if (!open) return text;
   return `${open}${text}\x1b[0m`;
 }
