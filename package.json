@@ -2161,6 +2161,7 @@
     "yaml": "2.9.0"
   },
   "devDependencies": {
+    "@socketsecurity/bun-security-scanner": "^1.1.2",
     "@types/bun": "catalog:",
     "@types/node": "25.9.0",
     "@typescript-eslint/eslint-plugin": "8.59.3",

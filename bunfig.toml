@@ -95,3 +95,7 @@ hostname = "0.0.0.0"
 [build]
 output = "public"
 
+# Bun Security Scanner — https://bun.com/docs/pm/security-scanner-api
+# Scanners export: { version: "1", scan({ packages }) => Advisory[] }
+[install.security]
+scanner = "@socketsecurity/bun-security-scanner"
