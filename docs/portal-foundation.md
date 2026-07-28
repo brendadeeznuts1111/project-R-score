@@ -27,6 +27,21 @@ Pages **must not** poll `/api/health` directly for the topbar dot. Use `portal:d
 
 Exception: [`public/portal/health-page.js`](../public/portal/health-page.js) (shell [`health/index.html`](../public/portal/health/index.html)) is a diagnostic surface that probes `/api/health` and `/health` for its own banner. It must not own the topbar dot (still `data.js` / `topbar.js`). Surfaces routing proof rows, env checklist, defaults proof, and operate glance (TOC/loop via `ops-summary` enrich).
 
+### Chrome + CLI control plane
+
+| Piece | Path / command | Notes |
+|-------|----------------|-------|
+| Nav SSOT | [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) | priority + overflow · `group` · `cli` · bake `portal:chrome:bake` · apply `portal:chrome:apply` |
+| Weave surfaces | [`lib/http/portal-weave.ts`](../lib/http/portal-weave.ts) | machine map · includes `vault` · `tools` · `failures` |
+| Nav badges | [`public/portal/nav-badges.js`](../public/portal/nav-badges.js) | client `fetch` of **baked** registry JSON only (no pass-cli) |
+| CLI hub | [`/portal/tools/`](../public/portal/tools/) | copy-CLI · bake freshness · capability subset · `#capabilities` |
+| Packages board | [`/portal/packages/`](../public/portal/packages/) | SVG dependency graph · role filter · detail panel · claim `packages-graph-map-v13` |
+| Vault board | [`/portal/vault/`](../public/portal/vault/) | live bake visual; gate = `portal-cli vault health` (offline snaps) |
+| Failures board | [`/portal/failures/`](../public/portal/failures/) | junit bake · nav badge = failure count |
+| Launcher | `bun run portal-cli dashboard --view=packages\|vault\|tools\|… [--open]` | real boards only — no phantom `/portal/pm/` etc. |
+
+Do **not** invent new portal routes without a board under `public/portal/<name>/` + route manifest + chrome/weave entries.
+
 ---
 
 ## API contracts
@@ -84,12 +99,12 @@ Content-Type matrix rows for env page CT section.
    <script type="module" src="/portal/data.js"></script>
    <script type="module" src="/portal/topbar.js"></script>
    ```
-3. Use shared topbar chrome: brand wordmark + priority nav (Home · Ops · Registry · Health · DOD · Compliance) + overflow (Catalog · Skills · Env · Packages · Dashboard · TOC · Limits · Monitoring · Wiki). SSOT: [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) · bake `bun run portal:chrome:bake` → `/registry/portal-chrome.json` · re-apply with `bun run portal:chrome:apply`.
-4. Bun-native monorepo/portal probes (lockfile, workspaces, scope, semver, snapshots): `bun run portal:probe` · `bun tools/portal-probe.ts --json` · `portal-cli probe lockfile`.
-5. Add topbar status: MD link (if applicable) + health link with `#health-dot` / `#health-label`.
+3. Use shared topbar chrome from SSOT (do not hand-edit nav): [`lib/portal/chrome-catalog.ts`](../lib/portal/chrome-catalog.ts) · bake `bun run portal:chrome:bake` → `/registry/portal-chrome.json` · apply `bun run portal:chrome:apply`. Priority: Home · Ops · Registry · Health · DOD · Compliance. Overflow includes Packages · Vault · Env · CLI Tools · Failures · … (see catalog).
+4. Bun-native monorepo/portal probes: `bun run portal:probe` · `portal-cli probe lockfile`. Launcher: `portal-cli dashboard --view=<board>`.
+5. Add topbar status: MD link (if applicable) + health link with `#health-dot` / `#health-label` (badges via `nav-badges.js` / topbar).
 6. Subscribe to `portal:data` for data; do not inline-fetch `/api/health` for the dot.
-7. Register route in [`scripts/serve-public.ts`](../scripts/serve-public.ts) `buildPublicRoutes()` if needed.
-8. Run `bun run verify:portal:static`.
+7. Register route in [`lib/http/portal-route-manifest.ts`](../lib/http/portal-route-manifest.ts) + `public/_redirects` + chrome/weave when adding a board.
+8. Run `bun run verify:portal:static` · `bun run public:discover:check`.
 
 ---
 

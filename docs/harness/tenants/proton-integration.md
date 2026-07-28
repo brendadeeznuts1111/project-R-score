@@ -50,16 +50,19 @@ pass://factorywager/Cloudflare API Token/password
 | **Intentional drift** | `portal-cli vault health --update` | No | Refresh inventory/shape snaps after you move/rename a mapped item; commit the `.snap`. |
 | **Live bake** | `bun run vault:health:bake` | Yes (agent session) | Cross-check live Proton Pass titles/states vs map; exit 1 on trashed/missing refs (purge risk). |
 | **Dashboard** | `/portal/vault/` · `public/registry/vault-health.json` | — | Visual summary of the last bake — not the gate. |
+| **CLI hub** | `/portal/tools/` · `portal-cli dashboard` | No | Command → board matrix, bake freshness, capability subset, copy-CLI. Nav badges from registry JSON (no pass-cli in browser). |
 
 ```bash
 bun run vault:health                 # same as portal-cli vault health
 bun run vault:health:update          # intentional snap refresh
 bun run vault:resolve                # list map (no secret values)
 bun run vault:resolve --json         # machine inventory
+bun run portal-cli dashboard --view=vault --open
+bun run portal-cli dashboard --view=tools
 source scripts/agent-env.sh factorywager && bun run vault:health:bake
 ```
 
-Engine: [`lib/security/vault-health.ts`](../../../lib/security/vault-health.ts) · bake: [`tools/vault-health-bake.ts`](../../../tools/vault-health-bake.ts) · resolve: [`tools/vault-resolver.ts`](../../../tools/vault-resolver.ts). Portal nav: `/portal/vault/` (weave surface `vault`).
+Engine: [`lib/security/vault-health.ts`](../../../lib/security/vault-health.ts) · bake: [`tools/vault-health-bake.ts`](../../../tools/vault-health-bake.ts) · resolve: [`tools/vault-resolver.ts`](../../../tools/vault-resolver.ts). Portal nav: `/portal/vault/` (weave surface `vault`) · tools hub: [`public/portal/tools/`](../../../public/portal/tools/) · badges: [`public/portal/nav-badges.js`](../../../public/portal/nav-badges.js).
 
 If pass-cli reports a corrupted local DB: `pass-cli logout --force` then re-login / re-run `source scripts/agent-env.sh factorywager`.
 
@@ -79,7 +82,7 @@ bun run proton:check               # inject proof for all templates
 
 ### Packages ↔ vault + env inventory (workspace `packages/*`)
 
-`env:inventory` scans **`packages/`** alongside `lib`/`config`/`scripts`/`tools` and emits reverse **owners** + root/product runtime (claim `packages-graph-map-v11`):
+`env:inventory` scans **`packages/`** alongside `lib`/`config`/`scripts`/`tools` and emits reverse **owners** + root/product runtime (claim `packages-graph-map-v13`):
 
 ```bash
 bun run env:inventory              # includes packages plane section

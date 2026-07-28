@@ -365,17 +365,19 @@ export function renderDependencyGraphSvg(model, opts = {}) {
       const a = byId.get(e.from);
       const b = byId.get(e.to);
       if (!a || !b) return '';
-      if (roleFilter && a.kind === 'package' && a.role !== roleFilter && b.kind === 'package') {
-        // keep edge if either end matches filter when package-only
-      }
+      // Role filter: dim edges that do not touch a matching package node
+      const roleTouch =
+        !roleFilter ||
+        (a.kind === 'package' && a.role === roleFilter) ||
+        (b.kind === 'package' && b.role === roleFilter) ||
+        (a.kind === 'external' && b.kind === 'package' && b.role === roleFilter) ||
+        (b.kind === 'external' && a.kind === 'package' && a.role === roleFilter);
       const sw = Math.min(4, 1 + Math.log2(e.weight + 1));
       const cls = e.kind === 'external' ? 'edge-ext' : 'edge-int';
-      const dim =
-        focus && !focus.has(e.from) && !focus.has(e.to)
-          ? ' dim'
-          : focus && (focus.has(e.from) || focus.has(e.to))
-            ? ' hot'
-            : '';
+      let dim = '';
+      if (!roleTouch) dim = ' dim';
+      else if (focus && !focus.has(e.from) && !focus.has(e.to)) dim = ' dim';
+      else if (focus && (focus.has(e.from) || focus.has(e.to))) dim = ' hot';
       const midX = ((a.x + b.x) / 2).toFixed(1);
       const midY = ((a.y + b.y) / 2).toFixed(1);
       const wLabel =
@@ -387,9 +389,6 @@ export function renderDependencyGraphSvg(model, opts = {}) {
     .join('');
   const nodeEls = model.nodes
     .map(n => {
-      if (roleFilter && n.kind === 'package' && n.role !== roleFilter) {
-        // still draw but dimmed when filtering
-      }
       const r = n.kind === 'package' ? 22 : 16;
       const roleCls = `role-${String(n.role).replace(/[^a-z0-9_-]/gi, '-')}`;
       const arch = n.archive ? ' archive' : '';
@@ -409,6 +408,7 @@ export function renderDependencyGraphSvg(model, opts = {}) {
                 : n.role === 'root-tooling'
                   ? 'node-root'
                   : 'node-pkg';
+      // Dim: role filter miss, or out of focus set (focus wins over role for package match)
       let dim = '';
       if (roleFilter && n.kind === 'package' && n.role !== roleFilter) dim = ' dim';
       if (focus && !focus.has(n.id)) dim = ' dim';
