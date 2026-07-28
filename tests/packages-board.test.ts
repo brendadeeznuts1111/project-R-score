@@ -1,4 +1,5 @@
-// @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/test/index#run-tests — bun:test
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 import { describe, test, expect } from 'bun:test';
 import {
   PACKAGES_MAP_SCHEMA,
@@ -8,6 +9,7 @@ import {
   formatLoadError,
   gradeFromScore,
   graphFocusSet,
+  isKeyboardActivationKey,
   normalizePackagesMap,
   renderDependencyGraphSvg,
 } from '../public/portal/packages/packages-board.js';
@@ -55,6 +57,9 @@ describe('packages-board failure paths', () => {
     expect(svg).toContain('<svg');
     expect(svg).toContain('docs-tools');
     expect(svg).toContain('edge-ext');
+    expect(svg).toContain('role="button"');
+    expect(svg).toContain('tabindex="0"');
+    expect(svg).toContain('aria-pressed="false"');
     // focus dimming
     const focused = renderDependencyGraphSvg(model, { focusId: 'rip' });
     expect(focused).toContain('focus');
@@ -63,6 +68,46 @@ describe('packages-board failure paths', () => {
     expect(neigh.has('rip')).toBe(true);
     expect(neigh.has('ext:bare:bun')).toBe(true);
     expect(edgesForPackage(model, 'docs-tools')).toHaveLength(1);
+  });
+
+  test('SVG preserves opaque scoped and external IDs in escaped attributes', () => {
+    const model = buildDependencyGraphModel({
+      packages: [{ name: '@factorywager/registry-client', role: 'consumed', score: 100 }],
+      archiveProbes: [],
+      map: {
+        packageEdges: [],
+        externalEdges: [
+          {
+            fromPackage: '@factorywager/registry-client',
+            targetPrefix: 'bare:bun',
+            plane: 'bare',
+            weight: 1,
+          },
+        ],
+      },
+    });
+    const svg = renderDependencyGraphSvg(model, {
+      focusId: '@factorywager/registry-client',
+    });
+    expect(svg).toContain('data-id="@factorywager/registry-client"');
+    expect(svg).toContain('data-id="ext:bare:bun"');
+    expect(svg).toContain('data-from="@factorywager/registry-client"');
+    expect(svg).toContain('aria-pressed="true"');
+  });
+
+  test('keyboard activation recognizes Enter and Space only', () => {
+    expect(isKeyboardActivationKey('Enter')).toBe(true);
+    expect(isKeyboardActivationKey(' ')).toBe(true);
+    expect(isKeyboardActivationKey('Spacebar')).toBe(false);
+    expect(isKeyboardActivationKey('Escape')).toBe(false);
+  });
+
+  test('table rows expose keyboard and selected-state semantics', async () => {
+    const source = await Bun.file('public/portal/packages/packages-board.js').text();
+    expect(source).toContain('tr.tabIndex = 0');
+    expect(source).toContain("tr.setAttribute('aria-selected', 'false')");
+    expect(source).toContain("tr.addEventListener('keydown'");
+    expect(source).toContain('isKeyboardActivationKey(event.key)');
   });
 
   test('normalizePackagesMap accepts bake shape', () => {
@@ -123,6 +168,8 @@ describe('packages-board failure paths', () => {
       '/registry/packages-graph-map.json'
     );
     expect(data.schemaOk).toBe(true);
+    expect(data.schemaStatus).toBe('current');
+    expect(data.schemaDegraded).toBe(false);
     expect(data.packages).toHaveLength(1);
     expect(data.summary.openActions).toBe(0);
     expect(data.quarantine).toHaveLength(1);
@@ -141,6 +188,8 @@ describe('packages-board failure paths', () => {
       '/registry/packages-graph-map.json'
     );
     expect(data.schemaOk).toBe(true);
+    expect(data.schemaStatus).toBe('legacy');
+    expect(data.schemaDegraded).toBe(false);
     expect(data.surfaces).toBeNull();
   });
 
@@ -158,7 +207,36 @@ describe('packages-board failure paths', () => {
       '/registry/packages-graph-map.json'
     );
     expect(data.schemaOk).toBe(false);
+    expect(data.schemaStatus).toBe('unsupported');
+    expect(data.schemaDegraded).toBe(true);
     expect(data.schemaVersion).toBe(9);
+  });
+
+  test('missing and invalid schema versions are explicitly degraded', () => {
+    const missing = normalizePackagesMap(
+      {
+        packages: [],
+        map: { summary: {}, actions: [], archiveProbes: [] },
+      },
+      '/registry/packages-graph-map.json'
+    );
+    const invalid = normalizePackagesMap(
+      {
+        schemaVersion: '13',
+        packages: [],
+        map: { summary: {}, actions: [], archiveProbes: [] },
+      },
+      '/registry/packages-graph-map.json'
+    );
+
+    expect(missing.schemaVersion).toBeNull();
+    expect(missing.schemaStatus).toBe('missing');
+    expect(missing.schemaOk).toBe(false);
+    expect(missing.schemaDegraded).toBe(true);
+    expect(invalid.schemaVersion).toBeNull();
+    expect(invalid.schemaStatus).toBe('invalid');
+    expect(invalid.schemaOk).toBe(false);
+    expect(invalid.schemaDegraded).toBe(true);
   });
 
   test('formatLoadError stringifies Errors', () => {

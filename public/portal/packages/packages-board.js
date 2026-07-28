@@ -10,10 +10,7 @@ export const PACKAGES_MAP_SCHEMA = 13;
 export const PACKAGES_MAP_SCHEMA_MIN = 12;
 
 /** Primary registry bake + optional local audit-report fallbacks (dev only paths may 404 on Pages). */
-export const PACKAGES_MAP_SOURCES = [
-  '/registry/packages-graph-map.json',
-  '/audit-report.json',
-];
+export const PACKAGES_MAP_SOURCES = ['/registry/packages-graph-map.json', '/audit-report.json'];
 
 /**
  * @param {unknown} err
@@ -71,7 +68,23 @@ export function normalizePackagesMap(raw, source) {
     });
   }
 
-  const schemaVersion = Number(raw.schemaVersion ?? map.schemaVersion ?? 0);
+  const rawSchemaVersion = raw.schemaVersion ?? map.schemaVersion;
+  const schemaVersion =
+    typeof rawSchemaVersion === 'number' &&
+    Number.isInteger(rawSchemaVersion) &&
+    rawSchemaVersion > 0
+      ? rawSchemaVersion
+      : null;
+  const schemaStatus =
+    rawSchemaVersion == null
+      ? 'missing'
+      : schemaVersion == null
+        ? 'invalid'
+        : schemaVersion === PACKAGES_MAP_SCHEMA
+          ? 'current'
+          : schemaVersion === PACKAGES_MAP_SCHEMA_MIN
+            ? 'legacy'
+            : 'unsupported';
   const surfaces =
     raw.surfaces && typeof raw.surfaces === 'object'
       ? /** @type {Record<string, unknown>} */ (raw.surfaces)
@@ -79,10 +92,10 @@ export function normalizePackagesMap(raw, source) {
   return {
     source,
     schemaVersion,
-    schemaOk:
-      schemaVersion === PACKAGES_MAP_SCHEMA ||
-      schemaVersion === PACKAGES_MAP_SCHEMA_MIN ||
-      schemaVersion === 0,
+    schemaStatus,
+    schemaOk: schemaStatus === 'current' || schemaStatus === 'legacy',
+    schemaDegraded:
+      schemaStatus === 'missing' || schemaStatus === 'invalid' || schemaStatus === 'unsupported',
     generatedAt: raw.generatedAt ?? map.generatedAt ?? '',
     bunVersion: raw.bunVersion ?? map.bunVersion ?? '',
     score: raw.score ?? map.score,
@@ -347,6 +360,11 @@ export function edgesForPackage(model, pkgId) {
   return (model.edges || []).filter(e => e.from === pkgId || e.to === pkgId);
 }
 
+/** Enter and Space activate focused graph nodes and table rows. */
+export function isKeyboardActivationKey(key) {
+  return key === 'Enter' || key === ' ';
+}
+
 /**
  * Render SVG for dependency graph (no D3/Mermaid).
  * @param {object} model - from buildDependencyGraphModel
@@ -379,10 +397,8 @@ export function renderDependencyGraphSvg(model, opts = {}) {
       const midX = ((a.x + b.x) / 2).toFixed(1);
       const midY = ((a.y + b.y) / 2).toFixed(1);
       const wLabel =
-        e.weight > 1
-          ? `<text class="edge-w${dim}" x="${midX}" y="${midY}">${e.weight}</text>`
-          : '';
-      return `<line class="${cls}${dim}" data-from="${escapeAttr(e.from)}" data-to="${escapeAttr(e.to)}" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke-width="${sw.toFixed(2)}" /><title>${escapeHtml(e.from)} → ${escapeHtml(e.to)} · weight ${e.weight}</title>${wLabel}`;
+        e.weight > 1 ? `<text class="edge-w${dim}" x="${midX}" y="${midY}">${e.weight}</text>` : '';
+      return `<g class="pkg-edge${dim}" data-from="${escapeAttribute(e.from)}" data-to="${escapeAttribute(e.to)}"><title>${escapeHtml(e.from)} → ${escapeHtml(e.to)} · weight ${e.weight}</title><line class="${cls}${dim}" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke-width="${sw.toFixed(2)}" />${wLabel}</g>`;
     })
     .join('');
   const nodeEls = model.nodes
@@ -391,7 +407,7 @@ export function renderDependencyGraphSvg(model, opts = {}) {
         // still draw but dimmed when filtering
       }
       const r = n.kind === 'package' ? 22 : 16;
-      const roleCls = `role-${String(n.role).replace(/[^a-z0-9_-]/gi, '-')}`;
+      const roleCls = `role-${classToken(n.role)}`;
       const arch = n.archive ? ' archive' : '';
       const score =
         n.score != null
@@ -413,7 +429,12 @@ export function renderDependencyGraphSvg(model, opts = {}) {
       if (roleFilter && n.kind === 'package' && n.role !== roleFilter) dim = ' dim';
       if (focus && !focus.has(n.id)) dim = ' dim';
       if (focusId && n.id === focusId) dim = ' focus';
-      return `<g class="pkg-node ${roleCls}${arch}${dim}" data-id="${escapeAttr(n.id)}" data-kind="${escapeAttr(n.kind)}" data-role="${escapeAttr(n.role)}">
+      const selected = focusId === n.id;
+      const nodeLabel =
+        n.kind === 'external'
+          ? `External dependency ${n.label}`
+          : `Package ${n.label}, role ${n.role}${n.score != null ? `, score ${n.score}` : ''}`;
+      return `<g class="pkg-node ${roleCls}${arch}${dim}" data-id="${escapeAttribute(n.id)}" data-kind="${escapeAttribute(n.kind)}" data-role="${escapeAttribute(n.role)}" role="button" tabindex="0" focusable="true" aria-label="${escapeAttribute(nodeLabel)}" aria-pressed="${selected}">
         <circle class="${fillClass}" cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="${r}" />
         ${score}
         <text x="${n.x.toFixed(1)}" y="${(n.y + r + 12).toFixed(1)}" text-anchor="middle" class="node-label">${escapeHtml(n.label.length > 14 ? n.label.slice(0, 12) + '…' : n.label)}</text>
@@ -465,7 +486,7 @@ export function renderPackageDetail(data, model, pkgId, doc = document) {
   const role = row?.role ?? node?.role ?? '—';
   const g = gradeFromScore(score);
   el.innerHTML = `<h4><code>${escapeHtml(pkgId)}</code></h4>
-    <p class="meta">role=<span class="role role-${escapeAttr(String(role))}">${escapeHtml(String(role))}</span>
+    <p class="meta">role=<span class="role role-${classToken(role)}">${escapeHtml(String(role))}</span>
       · score=<span class="grade-${g}">${score ?? '—'}</span>
       · orphans=${row?.orphans ?? 0}
       · ${node?.archive ? '<strong class="grade-critical">archive candidate</strong>' : 'active'}</p>
@@ -478,7 +499,8 @@ export function renderPackageDetail(data, model, pkgId, doc = document) {
           const label = other.startsWith('ext:') ? other.slice(4) : other;
           return `<li><code>${escapeHtml(pkgId)}</code> ${dir} <code>${escapeHtml(label)}</code> · w=${e.weight} · ${escapeHtml(e.kind)}</li>`;
         })
-        .join('') || '<li class="meta">No edges in bake (internal packageEdges empty — external only)</li>'
+        .join('') ||
+      '<li class="meta">No edges in bake (internal packageEdges empty — external only)</li>'
     }</ul>
     ${
       actions.length
@@ -486,9 +508,7 @@ export function renderPackageDetail(data, model, pkgId, doc = document) {
             .map(
               a =>
                 `<li><strong>${escapeHtml(a.action)}</strong> — ${escapeHtml(a.reason || '')}${
-                  actionHint(a.action)
-                    ? ` · <code>${escapeHtml(actionHint(a.action))}</code>`
-                    : ''
+                  actionHint(a.action) ? ` · <code>${escapeHtml(actionHint(a.action))}</code>` : ''
                 }</li>`
             )
             .join('')}</ul>`
@@ -550,7 +570,7 @@ export function renderDependencyGraph(data, doc = document) {
   host._pkgRoleFilter = host._pkgRoleFilter || '';
 
   if (meta) {
-    meta.textContent = `${model.stats.packageNodes} packages · ${model.stats.externalNodes} external targets · ${model.stats.edges} edges · click node to focus · CLI: portal-cli pm graph`;
+    meta.textContent = `${model.stats.packageNodes} packages · ${model.stats.externalNodes} external targets · ${model.stats.edges} edges · click or press Enter/Space to focus · CLI: portal-cli pm graph`;
   }
   if (model.stats.packageNodes === 0) {
     host.innerHTML =
@@ -558,36 +578,53 @@ export function renderDependencyGraph(data, doc = document) {
     return;
   }
 
-  const paint = () => {
+  const paint = focusNodeId => {
     host.innerHTML = renderDependencyGraphSvg(model, {
       focusId: host._pkgFocusId,
       roleFilter: host._pkgRoleFilter,
     });
     host.querySelectorAll('.pkg-node').forEach(g => {
-      g.addEventListener('click', ev => {
+      const activate = (ev, restoreKeyboardFocus = false) => {
         ev.stopPropagation();
         const id = g.getAttribute('data-id') || '';
         // toggle focus
         host._pkgFocusId = host._pkgFocusId === id ? null : id;
-        paint();
+        paint(restoreKeyboardFocus ? id : null);
         renderPackageDetail(data, model, host._pkgFocusId, doc);
-        if (id && !id.startsWith('ext:')) {
+        doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
+          r.classList.remove('pkg-row-selected');
+          r.setAttribute('aria-selected', 'false');
+        });
+        if (host._pkgFocusId && !host._pkgFocusId.startsWith('ext:')) {
           const row = [...doc.querySelectorAll('#pkg-body tr[data-pkg]')].find(
-            r => r.getAttribute('data-pkg') === id
+            r => r.getAttribute('data-pkg') === host._pkgFocusId
           );
           if (row) {
             row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             row.classList.add('pkg-row-flash');
             setTimeout(() => row.classList.remove('pkg-row-flash'), 1200);
-            // mark selected row
-            doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
-              r.classList.remove('pkg-row-selected');
-            });
             row.classList.add('pkg-row-selected');
+            row.setAttribute('aria-selected', 'true');
           }
         }
+      };
+      g.addEventListener('click', ev => activate(ev));
+      g.addEventListener('keydown', ev => {
+        if (!isKeyboardActivationKey(ev.key)) return;
+        ev.preventDefault();
+        activate(ev, true);
+      });
+      g.addEventListener('focus', () => g.classList.add('focus'));
+      g.addEventListener('blur', () => {
+        if (g.getAttribute('aria-pressed') !== 'true') g.classList.remove('focus');
       });
     });
+    if (focusNodeId) {
+      const focused = [...host.querySelectorAll('.pkg-node')].find(
+        node => node.getAttribute('data-id') === focusNodeId
+      );
+      focused?.focus();
+    }
   };
   paint();
   renderPackageDetail(data, model, host._pkgFocusId, doc);
@@ -620,6 +657,7 @@ export function renderDependencyGraph(data, doc = document) {
       renderPackageDetail(data, model, null, doc);
       doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
         r.classList.remove('pkg-row-selected');
+        r.setAttribute('aria-selected', 'false');
       });
     });
   }
@@ -679,9 +717,16 @@ export function renderPackagesBoard(data, doc = document) {
   );
   setText(doc.getElementById('hub'), summary.topHub != null ? String(summary.topHub) : '—');
 
-  const schemaNote = data.schemaOk
-    ? `schema ${data.schemaVersion || PACKAGES_MAP_SCHEMA}`
-    : `schema ${data.schemaVersion} (board pins v${PACKAGES_MAP_SCHEMA} — rebake recommended)`;
+  const schemaNote =
+    data.schemaStatus === 'current'
+      ? `schema ${data.schemaVersion}`
+      : data.schemaStatus === 'legacy'
+        ? `schema ${data.schemaVersion} (legacy; board pins v${PACKAGES_MAP_SCHEMA} — rebake recommended)`
+        : data.schemaStatus === 'missing'
+          ? `schema missing (degraded; rebake required for v${PACKAGES_MAP_SCHEMA})`
+          : data.schemaStatus === 'invalid'
+            ? `schema invalid (degraded; rebake required for v${PACKAGES_MAP_SCHEMA})`
+            : `schema ${data.schemaVersion} unsupported (degraded; board pins v${PACKAGES_MAP_SCHEMA})`;
   const gradeNote = data.grade ? ` · ${data.grade}` : '';
   setText(
     doc.getElementById('gen-meta'),
@@ -737,7 +782,9 @@ export function renderPackagesBoard(data, doc = document) {
           .join('')
       : '';
     const libHtml = libDirs.length
-      ? `<li class="surfaces-lib"><strong>lib/</strong> dirs=${libDirs.length} (workspace pkg only shared) · heavy: ${[...libDirs]
+      ? `<li class="surfaces-lib"><strong>lib/</strong> dirs=${libDirs.length} (workspace pkg only shared) · heavy: ${[
+          ...libDirs,
+        ]
           .sort((a, b) => (b.tsFiles || 0) - (a.tsFiles || 0))
           .slice(0, 6)
           .map(d => `${escapeHtml(d.name)}(${d.tsFiles || 0})`)
@@ -757,8 +804,7 @@ export function renderPackagesBoard(data, doc = document) {
     const chromeHtml = chrome.length
       ? chrome
           .map(c => {
-            const disk =
-              c.onDisk === false ? ' · <span class="grade-critical">missing</span>' : '';
+            const disk = c.onDisk === false ? ' · <span class="grade-critical">missing</span>' : '';
             return `<li><code>${escapeHtml(c.id)}</code> · ${escapeHtml(c.kind || 'module')} · ${escapeHtml(c.path || '')}${disk}</li>`;
           })
           .join('')
@@ -786,7 +832,10 @@ export function renderPackagesBoard(data, doc = document) {
         const gb = gradeFromScore(b.score);
         const rank = g =>
           g === 'critical' ? 0 : g === 'needs-improvement' ? 1 : g === 'healthy' ? 2 : 3;
-        return rank(ga) - rank(gb) || String(a.name ?? a.package).localeCompare(String(b.name ?? b.package));
+        return (
+          rank(ga) - rank(gb) ||
+          String(a.name ?? a.package).localeCompare(String(b.name ?? b.package))
+        );
       });
       for (const p of rows) {
         const tr = doc.createElement('tr');
@@ -796,9 +845,12 @@ export function renderPackagesBoard(data, doc = document) {
         const g = gradeFromScore(p.score);
         tr.dataset.pkg = String(name);
         tr.dataset.role = String(role);
+        tr.tabIndex = 0;
+        tr.setAttribute('aria-label', `Focus package ${String(name)} in dependency graph`);
+        tr.setAttribute('aria-selected', 'false');
         tr.classList.add('pkg-row-clickable');
-        tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td class="role role-${escapeAttr(String(role))}">${escapeHtml(String(role))}</td><td class="grade-${g}">${p.score ?? '—'}</td><td>${p.orphans ?? 0}</td><td>${bytes}</td>`;
-        tr.addEventListener('click', () => {
+        tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td class="role role-${classToken(role)}">${escapeHtml(String(role))}</td><td class="grade-${g}">${p.score ?? '—'}</td><td>${p.orphans ?? 0}</td><td>${bytes}</td>`;
+        const activateRow = () => {
           const graphHost = doc.getElementById('pkg-dep-graph');
           if (!graphHost) return;
           graphHost._pkgFocusId = String(name);
@@ -806,8 +858,16 @@ export function renderPackagesBoard(data, doc = document) {
           renderDependencyGraph(data, doc);
           doc.querySelectorAll('#pkg-body tr.pkg-row-selected').forEach(r => {
             r.classList.remove('pkg-row-selected');
+            r.setAttribute('aria-selected', 'false');
           });
           tr.classList.add('pkg-row-selected');
+          tr.setAttribute('aria-selected', 'true');
+        };
+        tr.addEventListener('click', activateRow);
+        tr.addEventListener('keydown', event => {
+          if (!isKeyboardActivationKey(event.key)) return;
+          event.preventDefault();
+          activateRow();
         });
         body.appendChild(tr);
       }
@@ -929,7 +989,13 @@ export function renderPackagesBoardError(err, doc = document) {
   if (body) {
     body.innerHTML = `<tr><td colspan="5" class="pkg-error">Unavailable — rebake with <code>bun run audit:packages:full</code></td></tr>`;
   }
-  for (const id of ['action-list', 'probe-list', 'quarantine-list', 'vault-list', 'env-owner-list']) {
+  for (const id of [
+    'action-list',
+    'probe-list',
+    'quarantine-list',
+    'vault-list',
+    'env-owner-list',
+  ]) {
     const el = doc.getElementById(id);
     if (el) el.innerHTML = '<li>Unavailable</li>';
   }
@@ -956,14 +1022,23 @@ function escapeHtml(s) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /**
  * @param {string} s
  */
-function escapeAttr(s) {
-  return escapeHtml(s).replace(/[^a-zA-Z0-9_-]/g, '');
+function escapeAttribute(s) {
+  return escapeHtml(s);
+}
+
+/**
+ * CSS class fragments are identifiers, not opaque values.
+ * @param {unknown} value
+ */
+function classToken(value) {
+  return String(value).replace(/[^a-z0-9_-]/gi, '-');
 }
 
 /** Bootstrap when loaded as a module on the packages board page. */
