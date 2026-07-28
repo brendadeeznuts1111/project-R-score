@@ -9,10 +9,11 @@
  * Consumers:
  *   - tools/lib/portal-cli-doctor-bunfig.ts  (doctor bunfig group)
  *   - scripts/ensure-machine-bunfig.ts       (template ensure / --check snippets)
+ *   - scripts/audit-bunfig.ts               (audit:bunfig workspace duplication scan)
  *
  * Human map: docs/UNIFIED.md · template: config/machine.bunfig.toml.template
  *
- * Do not duplicate these lists in doctor / ensure / shell docs without importing here.
+ * Do not duplicate these lists in doctor / ensure / audit without importing here.
  */
 
 /** Repo-relative path of the machine bunfig template (written to ~/.bunfig.toml). */
