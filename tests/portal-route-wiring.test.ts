@@ -71,6 +71,11 @@ describe('portal route wiring', () => {
     expect(await Bun.file('functions/api/agents/v1/limits/raises.ts').exists()).toBe(true);
   });
 
+  test('/api/limits/summary and limits/record Pages Functions exist', async () => {
+    expect(await Bun.file('functions/api/limits/summary.ts').exists()).toBe(true);
+    expect(await Bun.file('functions/api/agents/v1/limits/record.ts').exists()).toBe(true);
+  });
+
   test('monitoring href variants share one public handler', async () => {
     const source = await Bun.file('scripts/serve-public.ts').text();
     expect(source).toContain("'/monitoring': () => monitoringPage()");

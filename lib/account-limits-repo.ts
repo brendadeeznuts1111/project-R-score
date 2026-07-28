@@ -412,13 +412,13 @@ export class AccountLimitsRepository {
     }>;
   }
 
-  /** Find limit decreases (max_wager dropped below previous min). */
+  /** Find limit decreases (max_wager dropped below previous high-water mark). */
   detectDecreases(nodeId: string, sinceTimestamp: number = 0): LimitRaise[] {
     // brand-ok — TreeNodeId wire
     const rows = this.db
       .query(
         `
-      SELECT a.sportsbook, a.sport_id, a.market_id, a.bet_type,
+      SELECT a.id AS limit_id, a.sportsbook, a.sport_id, a.market_id, a.bet_type,
              (SELECT MAX(b.max_wager) FROM partner_account_limits b
               WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
                 AND b.sport_id = a.sport_id AND b.market_id = a.market_id
@@ -435,7 +435,7 @@ export class AccountLimitsRepository {
             AND b.bet_type = a.bet_type AND b.id < a.id
         )
         AND a.max_wager < (
-          SELECT MIN(b.max_wager) FROM partner_account_limits b
+          SELECT MAX(b.max_wager) FROM partner_account_limits b
           WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
             AND b.sport_id = a.sport_id AND b.market_id = a.market_id
             AND b.bet_type = a.bet_type AND b.id < a.id
@@ -656,20 +656,20 @@ export function queryRecentLimitChanges(
            CASE WHEN a.max_wager > (SELECT MAX(b.max_wager) FROM partner_account_limits b
                 WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
                   AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-                  AND b.id < a.id) THEN 'up' ELSE 'down' END as direction
+                  AND b.bet_type = a.bet_type AND b.id < a.id) THEN 'up' ELSE 'down' END as direction
     FROM partner_account_limits a
     WHERE a.recorded_at > ?
       AND EXISTS (
         SELECT 1 FROM partner_account_limits b
         WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
           AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-          AND b.id < a.id
+          AND b.bet_type = a.bet_type AND b.id < a.id
       )
       AND a.max_wager != (
         SELECT MAX(b.max_wager) FROM partner_account_limits b
         WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
           AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-          AND b.id < a.id
+          AND b.bet_type = a.bet_type AND b.id < a.id
       )
     ORDER BY a.recorded_at DESC
     LIMIT 40

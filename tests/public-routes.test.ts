@@ -22,6 +22,12 @@ describe('lib/http/public-routes', () => {
     expect(paths.has('/portal/compliance/')).toBe(true);
     expect(paths.has('/api/compliance')).toBe(true);
     expect(paths.has('/api/agents/v1/limits/raises')).toBe(true);
+    expect(paths.has('/api/agents/v1/limits/record')).toBe(true);
+    expect(paths.has('/api/limits/summary')).toBe(true);
+    expect(paths.has('/api/limits/analyze')).toBe(true);
+    expect(paths.has('/api/limits/predictions')).toBe(true);
+    expect(paths.has('/portal/limits/')).toBe(true);
+    expect(paths.has('/registry/limit-raises.json')).toBe(true);
     expect(paths.has('/registry/compliance-board.json')).toBe(true);
     expect(paths.has('/api/operations/summary')).toBe(true);
     expect(paths.has('/api/monitoring')).toBe(true);

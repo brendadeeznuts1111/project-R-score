@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Partner Limits — FactoryWager</title>
+    <title>Partner Limit Patterns — FactoryWager</title>
     <link rel="stylesheet" href="/portal/style.css" />
     <link rel="stylesheet" href="/portal/theme-tokens.css" />
     <script type="module" src="/portal/data.js"></script>
@@ -61,6 +61,10 @@
       .badge.up {
         background: #dbeafe;
         color: #1d4ed8;
+      }
+      .badge.down {
+        background: #fee2e2;
+        color: #b91c1c;
       }
       .badge.live {
         background: #fce7f3;
@@ -121,6 +125,41 @@
       .nav a:hover {
         text-decoration: underline;
       }
+      .pattern-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1em;
+      }
+      .pattern-list {
+        display: grid;
+        gap: 0.5em;
+      }
+      .pattern-row {
+        display: grid;
+        grid-template-columns: minmax(90px, 1fr) 2fr auto;
+        gap: 0.75em;
+        align-items: center;
+        padding: 0.55em;
+        border: 1px solid var(--border, #ddd);
+        border-radius: 6px;
+      }
+      .pattern-row small {
+        color: var(--text-dim, #666);
+      }
+      .audit-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 0.75em;
+      }
+      .audit-item {
+        padding: 0.65em;
+        border-radius: 6px;
+        background: var(--bg, #fafafa);
+      }
+      .audit-item strong {
+        display: block;
+        font-size: 1.3em;
+      }
     </style>
   </head>
   <body>
@@ -132,9 +171,10 @@
       <a href="/api/limits/summary" target="_blank">summary API</a>
     </div>
 
-    <h1>🚀 Partner Limit Increases</h1>
+    <h1>🚀 Partner Limit Patterns</h1>
     <p style="color: var(--text-dim, #666)">
-      Recent limit increases across all partners — last 48 hours. Auto-refreshes every 30s.
+      Connected partner, downline, sportsbook, regulatory state, and ZIP-prefix signals — last 48
+      hours. Auto-refreshes every 30s.
     </p>
 
     <div class="filter-bar">
@@ -152,6 +192,12 @@
         <option value="betmgm">BetMGM</option>
         <option value="caesars">Caesars</option>
       </select>
+      <select id="filter-state">
+        <option value="">All states</option>
+      </select>
+      <select id="filter-zip">
+        <option value="">All ZIP prefixes</option>
+      </select>
       <button onclick="applyFilter()">Filter</button>
       <span
         id="count-badge"
@@ -162,18 +208,43 @@
     <div id="summary-section" class="card">
       <h2>📊 Summary</h2>
       <div style="display: flex; gap: 2em; flex-wrap: wrap">
-        <div><span class="metric" id="total-raises">0</span><br />Total raises</div>
-        <div><span class="metric" id="unique-partners">0</span><br />Partners with raises</div>
+        <div><span class="metric" id="total-raises">0</span><br />Total changes</div>
+        <div><span class="metric" id="unique-partners">0</span><br />Nodes with changes</div>
         <div><span class="metric" id="unique-books">0</span><br />Sportsbooks</div>
+        <div><span class="metric" id="downline-nodes">0</span><br />Downline nodes</div>
+        <div><span class="metric" id="unique-states">0</span><br />States</div>
+        <div><span class="metric" id="unique-zips">0</span><br />ZIP clusters</div>
       </div>
     </div>
 
+    <div class="pattern-grid">
+      <div class="card">
+        <h2>📚 Sportsbook Patterns</h2>
+        <div id="book-patterns" class="pattern-list"></div>
+      </div>
+      <div class="card">
+        <h2>🗺️ State &amp; ZIP Patterns</h2>
+        <div id="geo-patterns" class="pattern-list"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔗 Partner → Downline Context</h2>
+      <div id="downline-patterns"></div>
+    </div>
+
+    <div class="card">
+      <h2>🛡️ Data Connection Audit</h2>
+      <div id="pattern-audit" class="audit-grid"></div>
+    </div>
+
     <div id="raises-table-section" class="card">
-      <h2>📋 Recent Increases</h2>
+      <h2>📋 Recent Limit Changes</h2>
       <table>
         <thead>
           <tr>
-            <th>Partner</th>
+            <th>Node / Downline</th>
+            <th>State / ZIP</th>
             <th>Sportsbook</th>
             <th>Sport</th>
             <th>Market</th>
@@ -188,12 +259,13 @@
         <tbody id="raises-tbody"></tbody>
       </table>
       <div class="empty" id="empty-state">
-        No limit increases found. Seed demo data with <code>bun run ops:limits:demo</code>.
+        No limit changes found. Seed connected data with
+        <code>bun tools/seed-limit-patterns.ts --force --bake</code>.
       </div>
     </div>
 
     <div id="per-partner-section" class="card">
-      <h2>👥 Per-Partner Breakdown</h2>
+      <h2>👥 Per-Node Breakdown</h2>
       <div id="partner-breakdown"></div>
     </div>
 
@@ -202,29 +274,87 @@
       let data = null;
       let filterPartner = '';
       let filterBook = '';
+      let filterState = '';
+      let filterZip = '';
 
       async function load() {
+        let summary = null;
+        let loadError = null;
         try {
           const res = await fetch('/api/operations/summary');
           if (res.ok) {
-            data = await res.json();
-            return render();
+            summary = await res.json();
           }
-        } catch {}
+        } catch (e) {
+          loadError = e;
+        }
+        if (!summary) {
+          try {
+            const res = await fetch('/registry/ops-summary.json');
+            if (res.ok) summary = await res.json();
+          } catch (e) {
+            loadError = e;
+          }
+        }
+        // Prefer live summary API when present (Pages + local)
         try {
-          const res = await fetch('/registry/ops-summary.json');
+          const res = await fetch('/api/limits/summary');
           if (res.ok) {
-            data = await res.json();
-            return render();
+            const lim = await res.json();
+            if (Array.isArray(lim.changes) && lim.changes.length) {
+              summary = {
+                ...(summary ?? {}),
+                limitChanges: summary?.limitChanges?.length ? summary.limitChanges : lim.changes,
+                limitPatterns: summary?.limitPatterns ?? lim.patterns,
+              };
+            }
+          } else if (res.status === 503 && !summary) {
+            loadError = new Error('limit summary bake missing (503)');
           }
-        } catch {}
-        document.getElementById('empty-state').textContent =
-          '⚠️ Could not load data. Is the server running?';
+        } catch (e) {
+          loadError = e;
+        }
+        try {
+          const res = await fetch('/registry/limit-raises.json');
+          if (res.ok) {
+            const snapshot = await res.json();
+            const snapshotChanges = Object.values(snapshot.byNode ?? {}).flatMap(bucket =>
+              (bucket.raises ?? []).map(raise => ({
+                ...raise,
+                node_id: bucket.node_id ?? raise.node_id,
+                direction:
+                  Number(raise.new_limit ?? 0) >= Number(raise.previous_max ?? 0) ? 'up' : 'down',
+                context_available: raise.context != null,
+              }))
+            );
+            summary = {
+              ...(summary ?? {}),
+              limitChanges: summary?.limitChanges?.length ? summary.limitChanges : snapshotChanges,
+              limitPatterns: summary?.limitPatterns ?? snapshot.patterns,
+            };
+          }
+        } catch (e) {
+          loadError = e;
+        }
+        if (summary && Array.isArray(summary.limitChanges)) {
+          data = summary;
+          return render();
+        }
+        const empty = document.getElementById('empty-state');
+        empty.style.display = 'block';
+        empty.innerHTML =
+          '⚠️ Could not load limit data. ' +
+          (loadError
+            ? 'Run <code>bun run ops:snapshot</code> or <code>bun tools/seed-limit-patterns.ts --force --bake</code>.'
+            : 'Is the server running?') +
+          ' See <code>docs/harness/tenants/partner-limits.md</code>.';
       }
 
       function applyFilter() {
         filterPartner = document.getElementById('filter-partner').value.trim().toLowerCase();
         filterBook = document.getElementById('filter-book').value;
+        filterState = document.getElementById('filter-state').value;
+        filterZip = document.getElementById('filter-zip').value;
         render();
       }
 
@@ -235,13 +365,48 @@
       }
 
       function render() {
-        if (!data || !data.limitChanges) return;
+        if (!data || !Array.isArray(data.limitChanges)) {
+          document.getElementById('empty-state').style.display = 'block';
+          return;
+        }
         const lims = data.limitChanges;
+        const patterns = data.limitPatterns ?? {
+          books: [],
+          states: [],
+          zips: [],
+          nodePatterns: [],
+          audit: {},
+        };
+        const patternByNode = new Map(
+          (patterns.nodePatterns ?? []).map(pattern => [pattern.node_id, pattern])
+        );
+
+        const stateSelect = document.getElementById('filter-state');
+        const zipSelect = document.getElementById('filter-zip');
+        const selectedState = stateSelect.value;
+        const selectedZip = zipSelect.value;
+        stateSelect.innerHTML =
+          '<option value="">All states</option>' +
+          (patterns.states ?? [])
+            .map(row => `<option value="${esc(row.key)}">${esc(row.key)}</option>`)
+            .join('');
+        zipSelect.innerHTML =
+          '<option value="">All ZIP prefixes</option>' +
+          (patterns.zips ?? [])
+            .map(row => `<option value="${esc(row.key)}">${esc(row.key)}</option>`)
+            .join('');
+        stateSelect.value = selectedState;
+        zipSelect.value = selectedZip;
 
         // Filter
         const filtered = lims.filter(r => {
-          if (filterPartner && !r.node_id?.toLowerCase().includes(filterPartner)) return false;
+          const pattern = patternByNode.get(r.node_id);
+          const partnerSearch =
+            `${r.node_id ?? ''} ${pattern?.partner_node_id ?? ''} ${pattern?.node_name ?? ''}`.toLowerCase();
+          if (filterPartner && !partnerSearch.includes(filterPartner)) return false;
           if (filterBook && r.sportsbook !== filterBook) return false;
+          if (filterState && pattern?.state_code !== filterState) return false;
+          if (filterZip && pattern?.zip_prefix !== filterZip) return false;
           return true;
         });
 
@@ -251,6 +416,9 @@
         document.getElementById('total-raises').textContent = filtered.length;
         document.getElementById('unique-partners').textContent = partners.size;
         document.getElementById('unique-books').textContent = books.size;
+        document.getElementById('downline-nodes').textContent = patterns.downlineNodes ?? 0;
+        document.getElementById('unique-states').textContent = patterns.states?.length ?? 0;
+        document.getElementById('unique-zips').textContent = patterns.zips?.length ?? 0;
         document.getElementById('count-badge').textContent =
           `Showing ${filtered.length} of ${lims.length} total`;
 
@@ -265,9 +433,14 @@
           tbody.innerHTML = filtered
             .slice(0, 50)
             .map(r => {
-              const raise = r.new_limit - r.previous_max;
-              const pct = r.previous_max > 0 ? ((raise / r.previous_max) * 100).toFixed(0) : '∞';
+              const pattern = patternByNode.get(r.node_id);
+              const prev = Number(r.previous_max ?? 0);
+              const next = Number(r.new_limit ?? 0);
+              const raise = next - prev;
+              const pct = prev > 0 ? ((raise / prev) * 100).toFixed(0) : '∞';
               const typeCls = r.bet_type === 'live' ? 'live' : 'pregame';
+              const directionCls = r.direction === 'down' ? 'down' : 'up';
+              const directionLabel = r.direction === 'down' ? '↓' : '↑';
               const drivers = (r.top_contributing_factors ?? []).join(', ');
               const proof = r.context_proof?.valid
                 ? 'context proof verified'
@@ -280,23 +453,28 @@
               const scoreBadge = r.context_available
                 ? `<span class="badge score" title="${esc(scoreTitle)}">${Math.round((r.multi_factor_score ?? 0) * 100)}</span>`
                 : `<span class="badge pending" title="${esc(scoreTitle)}">pending</span>`;
+              const when =
+                Number.isFinite(Number(r.increased_at)) && Number(r.increased_at) > 0
+                  ? new Date(Number(r.increased_at) * 1000).toLocaleString()
+                  : '—';
               return `<tr>
-        <td><code>${esc(r.node_id?.slice(0, 14) ?? '—')}</code></td>
-        <td><strong>${esc(r.sportsbook)}</strong></td>
-        <td>${esc(r.sport_id)}</td>
-        <td>${esc(r.market_id)}</td>
-        <td><span class="badge ${typeCls}">${esc(r.bet_type)}</span></td>
-        <td>$${r.previous_max.toLocaleString()}</td>
-        <td><strong>$${r.new_limit.toLocaleString()}</strong></td>
-        <td><span class="badge up">+$${raise.toLocaleString()} (${pct}%)</span></td>
+        <td><strong>${esc(pattern?.node_name ?? r.node_id ?? '—')}</strong><br><small>${esc(pattern?.node_type ?? 'node')} · depth ${pattern?.downline_depth ?? 0}</small></td>
+        <td>${esc(pattern?.state_code ?? '—')} · <code>${esc(pattern?.zip_code ?? '—')}</code><br><small>${esc(pattern?.location ?? '')}</small></td>
+        <td><strong>${esc(r.sportsbook ?? '—')}</strong></td>
+        <td>${esc(r.sport_id ?? '—')}</td>
+        <td>${esc(r.market_id ?? '—')}</td>
+        <td><span class="badge ${typeCls}">${esc(r.bet_type ?? '—')}</span></td>
+        <td>$${prev.toLocaleString()}</td>
+        <td><strong>$${next.toLocaleString()}</strong></td>
+        <td><span class="badge ${directionCls}">${directionLabel} ${raise >= 0 ? '+' : '−'}$${Math.abs(raise).toLocaleString()} (${pct}%)</span></td>
         <td>${scoreBadge}</td>
-        <td>${new Date(r.increased_at * 1000).toLocaleString()}</td>
+        <td>${when}</td>
       </tr>`;
             })
             .join('');
         }
 
-        // Per-partner breakdown
+        // Per-node breakdown
         const pb = document.getElementById('partner-breakdown');
         const byPartner = {};
         for (const r of filtered) {
@@ -308,18 +486,21 @@
           Object.entries(byPartner)
             .slice(0, 20)
             .map(([pid, raises]) => {
-              const total = raises.reduce((s, r) => s + (r.new_limit - r.previous_max), 0);
+              const total = raises.reduce(
+                (s, r) => s + (Number(r.new_limit ?? 0) - Number(r.previous_max ?? 0)),
+                0
+              );
               return `<div style="margin:0.5em 0;padding:0.5em;background:var(--bg,#fafafa);border-radius:4px">
       <div style="display:flex;justify-content:space-between;font-weight:600">
         <span><code>${esc(pid.slice(0, 18))}</code></span>
-        <span>${raises.length} raise(s) · +$${total.toLocaleString()} total</span>
+        <span>${raises.length} change(s) · ${total >= 0 ? '+' : '−'}$${Math.abs(total).toLocaleString()} net</span>
       </div>
       <div style="font-size:0.85em;margin-top:4px;color:var(--text-dim,#666)">
         ${raises
           .slice(0, 3)
           .map(
             r =>
-              `${esc(r.sportsbook)} ${esc(r.sport_id)}/${esc(r.market_id)}: <strong>$${r.new_limit.toLocaleString()}</strong>`
+              `${esc(r.sportsbook ?? '—')} ${esc(r.sport_id ?? '—')}/${esc(r.market_id ?? '—')}: <strong>$${Number(r.new_limit ?? 0).toLocaleString()}</strong>`
           )
           .join(' · ')}
         ${raises.length > 3 ? ` · +${raises.length - 3} more` : ''}
@@ -327,10 +508,77 @@
     </div>`;
             })
             .join('') || '<div class="empty">No data</div>';
+
+        const bookPatterns = document.getElementById('book-patterns');
+        bookPatterns.innerHTML =
+          (patterns.books ?? [])
+            .map(
+              row => `<div class="pattern-row">
+                <strong>${esc(row.key)}</strong>
+                <small>${row.changes} changes · ${row.raises} up / ${row.decreases} down · ${row.partners} partners · ${esc((row.states ?? []).join('/'))}</small>
+                <span class="badge score" title="Average multi-factor influence">${row.avg_influence_score == null ? 'pending' : Math.round(row.avg_influence_score * 100)}</span>
+              </div>`
+            )
+            .join('') || '<div class="empty">No sportsbook patterns</div>';
+
+        const geoPatterns = document.getElementById('geo-patterns');
+        geoPatterns.innerHTML =
+          [
+            ...(patterns.states ?? []).map(row => ({ ...row, kind: 'state' })),
+            ...(patterns.zips ?? []).map(row => ({ ...row, kind: 'ZIP' })),
+          ]
+            .map(
+              row => `<div class="pattern-row">
+                <strong>${esc(row.key)} <small>${row.kind}</small></strong>
+                <small>${row.changes} changes · net ${row.net_delta >= 0 ? '+' : '−'}$${Math.abs(row.net_delta).toLocaleString()} · top ${esc(row.top_market ?? '—')}</small>
+                <span>${row.avg_delta_pct >= 0 ? '+' : ''}${row.avg_delta_pct}%</span>
+              </div>`
+            )
+            .join('') || '<div class="empty">No state or ZIP patterns</div>';
+
+        const downlinePatterns = document.getElementById('downline-patterns');
+        downlinePatterns.innerHTML =
+          `<table><thead><tr><th>Partner</th><th>Node</th><th>Depth</th><th>State</th><th>ZIP</th><th>License</th><th>Violations</th><th>Books</th><th>Changes</th><th>Influence</th></tr></thead><tbody>` +
+          (patterns.nodePatterns ?? [])
+            .map(
+              row => `<tr>
+                <td><code>${esc(row.partner_node_id)}</code></td>
+                <td>${esc(row.node_name)}<br><small>${esc(row.node_type)}</small></td>
+                <td>${row.downline_depth}</td>
+                <td>${esc(row.state_code ?? '—')}</td>
+                <td><code>${esc(row.zip_code ?? '—')}</code></td>
+                <td>${esc(row.license_status ?? 'none')}</td>
+                <td>${row.violation_count_30d}</td>
+                <td>${esc((row.sportsbooks ?? []).join(', '))}</td>
+                <td>${row.changes}</td>
+                <td>${row.avg_influence_score == null ? 'pending' : Math.round(row.avg_influence_score * 100)}</td>
+              </tr>`
+            )
+            .join('') +
+          '</tbody></table>';
+
+        const audit = patterns.audit ?? {};
+        const auditItems = [
+          ['Coverage', `${audit.coveragePct ?? 0}%`],
+          ['Change rows', audit.changeRows ?? 0],
+          ['Hierarchy linked', audit.hierarchyLinked ?? 0],
+          ['Geo linked', audit.geoLinked ?? 0],
+          ['Licensed', audit.licensed ?? 0],
+          ['Scored', audit.scored ?? 0],
+          ['Proof verified', audit.proofVerified ?? 0],
+        ];
+        document.getElementById('pattern-audit').innerHTML = auditItems
+          .map(
+            ([label, value]) =>
+              `<div class="audit-item"><strong>${esc(value)}</strong><small>${esc(label)}</small></div>`
+          )
+          .join('');
       }
 
       document.getElementById('filter-partner').addEventListener('input', applyFilter);
       document.getElementById('filter-book').addEventListener('change', applyFilter);
+      document.getElementById('filter-state').addEventListener('change', applyFilter);
+      document.getElementById('filter-zip').addEventListener('change', applyFilter);
 
       load();
       setInterval(load, POLL_INTERVAL);

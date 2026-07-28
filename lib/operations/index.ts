@@ -239,7 +239,25 @@ export {
   type RaiseContextProofStatus,
   type RaiseContextRow,
 } from './partner-analytics-repo.ts';
-export { handleLimitRaiseAgentRequest } from './limit-raise-agent-api.ts';
+export {
+  handleLimitRaiseAgentRequest,
+  handleLimitRecordRequest,
+  handleLimitSummaryRequest,
+  handleLimitAnalyzeRequest,
+  handleLimitPredictCycleRequest,
+  handleLimitPredictionsRequest,
+} from './limit-raise-agent-api.ts';
+export {
+  buildLimitPatternSnapshot,
+  queryLimitPatternSnapshot,
+  scopeLimitPatternSnapshot,
+  seedLimitPatternDemo,
+  type LimitPatternAggregate,
+  type LimitPatternChange,
+  type LimitPatternNode,
+  type LimitPatternSnapshot,
+  type SeedLimitPatternDemoResult,
+} from './limit-patterns.ts';
 export {
   LimitRaiseReport,
   printLimitRaiseReport,

@@ -37,6 +37,11 @@ Edge-safe only (no `bun:sqlite`). Key handlers:
 | `/api/registry/*` | `functions/api/registry/[[path]].ts` → R2 binding |
 | `/api/health`, `/api/env`, `/api/monitoring` | `functions/api/*.ts` |
 | `/health` (JSON) · `/health/pre` (plain) | `functions/health/index.ts` · `functions/health/pre.ts` → [`portal-health-edge.ts`](../lib/http/portal-health-edge.ts) (no `functions/health.ts` file — CF rejects file+dir same name) |
+| `/api/agents/v1/limits/raises` | `functions/api/agents/v1/limits/raises.ts` → filter `limit-raises.json` (snapshot; `?format=table`; empty/`byNode` missing → **503**) |
+| `/api/limits/summary` | `functions/api/limits/summary.ts` → aggregate from `limit-raises.json` |
+| `/api/agents/v1/limits/record` | `functions/api/agents/v1/limits/record.ts` → **503** stub (mutations need local SQLite) |
+
+Partner limits live path (local): `scripts/serve-public.ts` → [`limit-raise-agent-api.ts`](../lib/operations/limit-raise-agent-api.ts) against `operations.db`. Tenant: [`harness/tenants/partner-limits.md`](harness/tenants/partner-limits.md).
 
 Full inventory: [`docs/harness/tenants/cloudflare-pages.md`](harness/tenants/cloudflare-pages.md).
 

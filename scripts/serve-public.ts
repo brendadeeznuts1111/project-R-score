@@ -880,10 +880,10 @@ function agentLimitRaisesApi(req: Request): Response {
 }
 
 /** POST /api/agents/v1/limits/record — record a limit snapshot (no auth, write-only). */
-function agentLimitRecordApi(req: Request): Response {
+async function agentLimitRecordApi(req: Request): Promise<Response> {
   const db = openOperationsDb({ path: dbPath });
   try {
-    return handleLimitRecordRequest(req, db);
+    return await handleLimitRecordRequest(req, db);
   } finally {
     db.close();
   }
