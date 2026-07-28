@@ -7,7 +7,7 @@
  * @see lib/registry/contracts.ts validateTocOpsBakeProof
  */
 import type { TocOpsSnapshot } from './types.ts';
-import { TOC_OPS_REGISTRY_PATH } from './export-snapshot.ts';
+import { TOC_OPS_REGISTRY_PATH } from './types.ts';
 
 export const TOC_OPS_BAKE_PROOF_REL = 'public/registry/toc-ops-bake-proof.json';
 export const TOC_OPS_BAKE_PROOF_PATH = '/registry/toc-ops-bake-proof.json' as const;

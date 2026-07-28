@@ -29,12 +29,21 @@ const WRITE_BASELINE = Bun.argv.includes('--write-baseline');
 
 interface Baseline {
   deepRelativeImports: number;
-  cycles: number;
+  /** Legacy field — total cycles. New baselines use strongCycles/weakCycles. */
+  cycles?: number;
+  strongCycles?: number;
+  weakCycles?: number;
   deepImportFiles: Record<string, number>;
 }
 
+interface ImportEdge {
+  target: string;
+  /** dynamic import() — lazy edge; cycles containing one are 'weak'. */
+  lazy: boolean;
+}
+
 interface FileRec {
-  relImports: string[];
+  relImports: ImportEdge[];
 }
 
 function resolveRel(fromFile: string, spec: string): string | null {
@@ -86,7 +95,7 @@ for (const dir of ['lib', 'scripts'] as const) {
       const levels = upLevels(spec);
       if (levels >= 3) deep++;
       const r = resolveRel(rel, spec);
-      if (r) relImports.push(r);
+      if (r) relImports.push({ target: r, lazy: im.kind === 'dynamic-import' });
     }
 
     files.set(key, { relImports });
@@ -110,7 +119,7 @@ function dfs(node: string, path: string[]): void {
   visited.add(node);
   const rec = files.get(node);
   if (!rec) return;
-  for (const dep of rec.relImports) dfs(dep, [...path, node]);
+  for (const e of rec.relImports) dfs(e.target, [...path, node]);
 }
 for (const key of files.keys()) dfs(key, []);
 const seen = new Set<string>();
@@ -123,35 +132,67 @@ for (const c of rawCycles) {
   }
 }
 
+/** A cycle is 'weak' when at least one edge is a lazy dynamic import(). */
+function isWeakCycle(cycle: string[]): boolean {
+  for (let i = 0; i < cycle.length - 1; i++) {
+    const from = files.get(cycle[i]);
+    const edge = from?.relImports.find(e => e.target === cycle[i + 1]);
+    if (edge?.lazy) return true;
+  }
+  return false;
+}
+const strongCycles = cycles.filter(c => !isWeakCycle(c));
+const weakCycles = cycles.filter(c => isWeakCycle(c));
+
 // ── Baseline I/O ─────────────────────────────────────────────────────────
-const current: Baseline = { deepRelativeImports, cycles: cycles.length, deepImportFiles };
+const current: Baseline = {
+  deepRelativeImports,
+  cycles: cycles.length,
+  strongCycles: strongCycles.length,
+  weakCycles: weakCycles.length,
+  deepImportFiles,
+};
 
 if (WRITE_BASELINE) {
   await Bun.write(BASELINE_PATH, `${JSON.stringify(current, null, 2)}\n`);
   console.info(
-    `import-graph baseline written: ${deepRelativeImports} deep imports, ${cycles.length} cycles`
+    `import-graph baseline written: ${deepRelativeImports} deep imports, ` +
+      `${strongCycles.length} strong + ${weakCycles.length} weak cycles`
   );
   process.exit(0);
 }
 
-let baseline: Baseline = { deepRelativeImports: 0, cycles: 0, deepImportFiles: {} };
+let baseline: Baseline = { deepRelativeImports: 0, deepImportFiles: {} };
 try {
   baseline = { ...baseline, ...(await Bun.file(BASELINE_PATH).json()) };
 } catch {
   console.error('missing scripts/import-graph-baseline.json — run with --write-baseline');
   process.exit(1);
 }
+// Legacy baselines pinned only `cycles` (total) — treat as the strong ceiling.
+const strongBaseline = baseline.strongCycles ?? baseline.cycles ?? 0;
+const weakBaseline = baseline.weakCycles ?? 0;
 
 // ── Verdict ──────────────────────────────────────────────────────────────
 let failed = false;
 
-if (cycles.length > baseline.cycles) {
+if (strongCycles.length > strongBaseline) {
   failed = true;
   console.error(
-    `import cycles ratchet: ${cycles.length} > baseline ${baseline.cycles} (may only go down):`
+    `strong import cycles ratchet: ${strongCycles.length} > baseline ${strongBaseline} (all-static edges; may only go down):`
   );
-  for (const c of cycles.slice(0, 10)) console.error(`  🔄 ${c.join(' → ')}`);
-  console.error('Break mutual imports or re-pin with --write-baseline after intentional change.');
+  for (const c of strongCycles.slice(0, 10)) console.error(`  🔄 ${c.join(' → ')}`);
+  console.error(
+    'Break via a shared leaf module or dependency inversion; lazy import() is the last resort.'
+  );
+}
+
+if (weakCycles.length > weakBaseline) {
+  failed = true;
+  console.error(
+    `weak import cycles ratchet: ${weakCycles.length} > baseline ${weakBaseline} (contains lazy dynamic-import edge; may only go down):`
+  );
+  for (const c of weakCycles.slice(0, 10)) console.error(`  🔄 ${c.join(' → ')}`);
 }
 
 if (deepRelativeImports > baseline.deepRelativeImports) {
@@ -168,5 +209,6 @@ if (deepRelativeImports > baseline.deepRelativeImports) {
 
 if (failed) process.exit(1);
 console.info(
-  `import-graph OK: ${cycles.length} cycles, ${deepRelativeImports}/${baseline.deepRelativeImports} deep relative imports · Bun.Transpiler.scanImports`
+  `import-graph OK: ${strongCycles.length}/${strongBaseline} strong + ${weakCycles.length}/${weakBaseline} weak cycles, ` +
+    `${deepRelativeImports}/${baseline.deepRelativeImports} deep relative imports · Bun.Transpiler.scanImports`
 );

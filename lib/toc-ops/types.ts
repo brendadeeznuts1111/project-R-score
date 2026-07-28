@@ -7,6 +7,10 @@
  */
 import type { TocIdentityBridge } from './identity.ts';
 
+/** Registry path for the baked TOC Ops snapshot — shared leaf constant
+ *  (lives here, not export-snapshot.ts, to keep bake-proof ↔ export-snapshot acyclic). */
+export const TOC_OPS_REGISTRY_PATH = '/registry/toc-ops.json' as const;
+
 export type TocGateId =
   | 'play_warmed'
   | 'play_limit'

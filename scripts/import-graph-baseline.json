@@ -1,6 +1,8 @@
 {
   "deepRelativeImports": 7,
-  "cycles": 16,
+  "cycles": 14,
+  "strongCycles": 9,
+  "weakCycles": 5,
   "deepImportFiles": {
     "lib/telegram/flows/cards/status.ts": 1,
     "lib/telegram/flows/cards/welcome.ts": 1,

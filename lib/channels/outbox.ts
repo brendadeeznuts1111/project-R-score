@@ -25,7 +25,7 @@ import type {
 } from './ops-channel-event.ts';
 import { parseProjectors } from './ops-channel-event.ts';
 import { sendTelegramBotMessage } from '../telegram/telegram-api.ts';
-import { recordBroadcastOutboxSend } from '../telegram/broadcast.ts';
+import { recordBroadcastOutboxSend } from '../telegram/broadcast-log.ts';
 import { rememberTemplateMessageId } from '../telegram/flows/channel-meta.ts';
 import { playAckKeyboard, translateKeyboard } from '../telegram/flows/keyboards.ts';
 import { resolveOpsChatForOutbox } from '../telegram/surfaces.ts';
