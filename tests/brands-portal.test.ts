@@ -28,19 +28,99 @@ describe('brand keymap portal', () => {
     expect(payload.projects.some(project => project.status === 'local-pattern')).toBe(true);
   });
 
-  test('shell and board load the keymap through shared portal chrome', async () => {
+  test('relationship artifact exposes graph-ready Bun, brand, project, and proof rows', async () => {
+    const payload = await Bun.file('public/registry/bun-brand-map.json').json();
+
+    expect(payload).toMatchObject({
+      schemaVersion: 1,
+      kind: 'bun-brand-map',
+      path: '/registry/bun-brand-map.json',
+      summary: {
+        totalCanonicalBrands: 50,
+        trackedProjects: 32,
+        externalProjects: 3,
+        newUndeclared: 0,
+        catalogConflicts: 0,
+      },
+    });
+    expect(payload.relationships.length).toBeGreaterThan(0);
+    expect(
+      payload.relationships.every(
+        row =>
+          row.id &&
+          row.capabilityId &&
+          row.api &&
+          row.wrapper &&
+          row.project &&
+          row.policy &&
+          row.evidenceState
+      )
+    ).toBe(true);
+    expect(payload.capabilities).toContainEqual(
+      expect.objectContaining({
+        token: 'Bun.Image',
+        versionIntroduced: '1.3.14',
+      })
+    );
+  });
+
+  test('shell and board load both registries through shared portal chrome', async () => {
+    const [html, script, css] = await Promise.all([
+      Bun.file('public/portal/brands/index.html').text(),
+      Bun.file('public/portal/brands/brands-board.js').text(),
+      Bun.file('public/portal/brands/brands.css').text(),
+    ]);
+
+    expect(html).toContain('Bun capability × FactoryWager brand map');
+    expect(html).toContain('/portal/data.js');
+    expect(html).toContain('/portal/topbar.js');
+    expect(html).toContain('/portal/components/footer.js');
+    expect(html).toContain('/portal/brands/brands-board.js');
+    expect(html).toContain('/portal/brands/brands.css');
+    expect(html).not.toContain('<style>');
+    expect(script).toContain("const BRAND_KEYMAP_URL = '/registry/brand-keymap.json'");
+    expect(script).toContain("const BUN_BRAND_MAP_URL = '/registry/bun-brand-map.json'");
+    expect(script).not.toContain("fetch('/api/health");
+    expect(css).toContain('@media (max-width: 759px)');
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)');
+  });
+
+  test('relationships are default, filterable, shareable, and graph-table equivalent', async () => {
     const [html, script] = await Promise.all([
       Bun.file('public/portal/brands/index.html').text(),
       Bun.file('public/portal/brands/brands-board.js').text(),
     ]);
 
-    expect(html).toContain('Branded domain-value keymap');
-    expect(html).toContain('/portal/data.js');
-    expect(html).toContain('/portal/topbar.js');
-    expect(html).toContain('/portal/components/footer.js');
-    expect(html).toContain('/portal/brands/brands-board.js');
-    expect(script).toContain("const KEYMAP_URL = '/registry/brand-keymap.json'");
-    expect(script).not.toContain("fetch('/api/health");
+    expect(html).toContain('data-view="relationships"');
+    expect(html).toContain('aria-selected="true"');
+    expect(html).toContain('role="tabpanel"');
+    expect(html).toContain('id="relationship-domain"');
+    expect(html).toContain('id="relationship-project"');
+    expect(html).toContain('id="relationship-policy"');
+    expect(html).toContain('id="relationship-evidence"');
+    expect(html).toContain('Canonical relationship table');
+    expect(html).toContain('id="relationship-detail"');
+    expect(script).toContain('new URLSearchParams(window.location.hash');
+    expect(script).toContain('history.replaceState');
+    expect(script).toContain("document.createElementNS(SVG_NS, 'desc')");
+    expect(script).toContain("'ArrowLeft', 'ArrowRight', 'Home', 'End'");
+    expect(script).toContain("row.brand || 'none'");
+  });
+
+  test('raw artifacts and adjacent portal surfaces cross-link the map', async () => {
+    const [html, nav, tools, packages] = await Promise.all([
+      Bun.file('public/portal/brands/index.html').text(),
+      Bun.file('public/portal/nav-badges.js').text(),
+      Bun.file('public/portal/tools/index.html').text(),
+      Bun.file('public/portal/packages/packages-board.js').text(),
+    ]);
+
+    expect(html).toContain('/registry/bun-brand-map.json');
+    expect(html).toContain('/registry/brand-keymap.json');
+    expect(nav).toContain("href: '/portal/brands/'");
+    expect(nav).toContain("source: '/registry/bun-brand-map.json'");
+    expect(tools).toContain('/portal/brands/#view=relationships');
+    expect(packages).toContain('/portal/brands/#view=relationships');
   });
 
   test('chrome and weave make the glossary discoverable', () => {
@@ -55,6 +135,9 @@ describe('brand keymap portal', () => {
     );
     expect(PORTAL_WEAVE_ARTIFACTS).toContainEqual(
       expect.objectContaining({ href: '/registry/brand-keymap.json' })
+    );
+    expect(PORTAL_WEAVE_ARTIFACTS).toContainEqual(
+      expect.objectContaining({ href: '/registry/bun-brand-map.json' })
     );
   });
 });

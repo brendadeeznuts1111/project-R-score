@@ -49,6 +49,10 @@ describe('buildOpsSummary', () => {
     expect(s.monorepoHealth.path).toBe('/registry/monorepo-health.json');
     expect(s.monorepoHealth.portal).toBe('/portal/packages/');
     expect(s.monorepoHealth.claim).toBe('monorepo-health-score');
+    expect(s.bunBrandMap).toHaveProperty('available');
+    expect(s.bunBrandMap.path).toBe('/registry/bun-brand-map.json');
+    expect(typeof s.bunBrandMap.warnings).toBe('number');
+    expect(typeof s.bunBrandMap.errors).toBe('number');
     if (s.proofTaxonomy.available) {
       expect(s.proofTaxonomy.contracts).toBeGreaterThan(0);
       expect(s.proofTaxonomy.proofHash).toMatch(/^[a-f0-9]{64}$/);

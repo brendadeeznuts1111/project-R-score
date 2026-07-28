@@ -413,11 +413,11 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
   },
   {
     path: '/portal/brands/',
-    name: 'Brand keymap',
+    name: 'Brand relationships',
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
-    note: '/registry/brand-keymap.json · constructor glossary · project adoption',
+    note: '/registry/bun-brand-map.json + brand-keymap.json · capability proof · glossary · projects',
   },
   {
     path: '/portal/dashboard/',
@@ -486,6 +486,13 @@ export const HOT_STATIC_ROUTES: PublicRouteDef[] = [
     category: 'registry',
     kind: 'hot-static',
     critical: true,
+    okStatuses: [200],
+  },
+  {
+    path: '/registry/bun-brand-map.json',
+    name: 'Bun brand relationship artifact',
+    category: 'registry',
+    kind: 'hot-static',
     okStatuses: [200],
   },
   {

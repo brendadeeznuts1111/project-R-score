@@ -22,6 +22,7 @@
  *   bun tools/branded-id-check.ts --strict     # exit 1 on actionable hits
  *                                              #   (with --smart: ignores opaque-pk)
  *   bun tools/branded-id-check.ts --staged     # ADDED lines only (agents)
+ *   bun tools/branded-id-check.ts --diff-base <sha> # PR ADDED lines vs merge base
  *   bun tools/branded-id-check.ts --write-baseline  # refresh grandfather list
  *
  * Suppression: end a declaration line with `// brand-ok` to skip it
@@ -151,10 +152,15 @@ type Hit = {
   reason: string;
 };
 
-type Violation = { file: string; line: number; text: string };
+export type BrandDiffViolation = { file: string; line: number; text: string };
 
 function relPath(file: string): string {
-  return file.replace(/^.*?(?=lib\/|scripts\/|tools\/|tests\/|dashboard\/)/, '') || file;
+  return (
+    file.replace(
+      /^.*?(?=lib\/|scripts\/|tools\/|tests\/|dashboard\/|projects\/|packages\/|server\/|config\/)/,
+      ''
+    ) || file
+  );
 }
 
 function extractField(line: string): string | null {
@@ -447,18 +453,15 @@ function classifyHit(
 }
 
 /**
- * Violations in added lines of the staged diff (hunk-aware).
- * **No baseline** — agents cannot introduce new bare-string domain IDs.
- * Catches mid-line function params (`sessionId: string`) as well as properties.
+ * Parse a zero-context git diff and return actionable declarations on added
+ * TypeScript lines. **No baseline** — agents cannot introduce new bare-string
+ * domain IDs. Exported so staged and PR base-diff behavior share one testable
+ * contract.
  */
-async function stagedViolations(): Promise<Violation[]> {
+export async function addedLineBrandViolations(diff: string): Promise<BrandDiffViolation[]> {
   const maps = await fieldMaps();
-  const proc = Bun.spawn(['git', 'diff', '--cached', '-U0', '--diff-filter=ACM', '--', '*.ts'], {
-    stdout: 'pipe',
-  });
-  const diff = await new Response(proc.stdout).text();
   const diffLines = diff.split('\n');
-  const violations: Violation[] = [];
+  const violations: BrandDiffViolation[] = [];
   let file = '';
   let newLine = 0;
 
@@ -518,22 +521,94 @@ async function stagedViolations(): Promise<Violation[]> {
   return violations;
 }
 
+async function gitDiffViolations(args: string[]): Promise<BrandDiffViolation[]> {
+  const proc = Bun.spawn(args, {
+    cwd: new URL('..', import.meta.url).pathname,
+    stdout: 'pipe',
+    stderr: 'inherit',
+  });
+  const diff = await new Response(proc.stdout).text();
+  const code = await proc.exited;
+  if (code !== 0) {
+    throw new Error(`git diff failed with exit ${code}`);
+  }
+  return addedLineBrandViolations(diff);
+}
+
+async function stagedViolations(): Promise<BrandDiffViolation[]> {
+  return gitDiffViolations([
+    'git',
+    'diff',
+    '--cached',
+    '-U0',
+    '--diff-filter=ACM',
+    '--',
+    '*.ts',
+    '*.tsx',
+  ]);
+}
+
+async function diffBaseViolations(base: string): Promise<BrandDiffViolation[]> {
+  return gitDiffViolations([
+    'git',
+    'diff',
+    `${base}...HEAD`,
+    '-U0',
+    '--diff-filter=ACM',
+    '--',
+    '*.ts',
+    '*.tsx',
+  ]);
+}
+
+async function trackedTypeScriptFiles(): Promise<string[]> {
+  const proc = Bun.spawn(
+    ['git', 'ls-files', '-z', '--', 'lib/**/*.ts', 'projects/**/*.ts', 'projects/**/*.tsx'],
+    {
+      cwd: new URL('..', import.meta.url).pathname,
+      stdout: 'pipe',
+      stderr: 'inherit',
+    }
+  );
+  const out = await new Response(proc.stdout).arrayBuffer();
+  const code = await proc.exited;
+  if (code !== 0) throw new Error(`git ls-files failed with exit ${code}`);
+  return new TextDecoder().decode(out).split('\0').filter(Boolean);
+}
+
 async function collectFiles(args: string[]): Promise<string[]> {
   const paths = args.filter(a => !a.startsWith('--'));
-  const roots = paths.length > 0 ? paths : ['lib'];
+  if (paths.length === 0) return trackedTypeScriptFiles();
+  const roots = paths;
   const files: string[] = [];
   for (const root of roots) {
     const stat = await Bun.file(root)
       .stat()
       .catch(() => null);
     if (stat?.isDirectory()) {
-      const glob = new Bun.Glob('**/*.ts');
+      const glob = new Bun.Glob('**/*.{ts,tsx}');
       for await (const f of glob.scan({ cwd: root, absolute: true })) files.push(f);
-    } else if (root.endsWith('.ts')) {
+    } else if (root.endsWith('.ts') || root.endsWith('.tsx')) {
       files.push(root);
     }
   }
   return files;
+}
+
+/**
+ * Project legacy remains visible but warning-only during adoption. New project
+ * declarations are still hard-failed by --staged and --diff-base.
+ */
+function applyProjectLegacyVisibility(hits: Hit[]): Hit[] {
+  return hits.map(hit => {
+    if (hit.suppressed || !hit.file.startsWith('projects/')) return hit;
+    return {
+      ...hit,
+      suppressed: true,
+      reason:
+        'legacy project inventory (warning-only; new lines fail staged and PR base-diff gates)',
+    };
+  });
 }
 
 async function scanAll(files: string[]): Promise<Hit[]> {
@@ -582,14 +657,68 @@ async function writeBaselineFile(files: string[]): Promise<void> {
   );
 }
 
+const PROJECT_REPORT_CATEGORIES = new Set([
+  'analysis',
+  'automation',
+  'dashboards',
+  'development',
+  'enterprise',
+  'tools',
+  'utilities',
+]);
+
+function projectRootForReport(file: string): string {
+  const parts = file.split('/');
+  if (parts[0] !== 'projects') return '(spine)';
+  if (parts[1] === 'active' && PROJECT_REPORT_CATEGORIES.has(parts[2] ?? '') && parts[3]) {
+    return parts.slice(0, 4).join('/');
+  }
+  return parts.slice(0, 3).join('/');
+}
+
+export function projectLegacyAttribution(hits: readonly Pick<Hit, 'file' | 'reason'>[]): Array<{
+  project: string;
+  hits: number;
+  files: number;
+  topFiles: Array<{ path: string; hits: number }>;
+}> {
+  const projectFiles = new Map<string, Map<string, number>>();
+  for (const hit of hits) {
+    if (!hit.reason.startsWith('legacy project inventory')) continue;
+    const project = projectRootForReport(hit.file);
+    const files = projectFiles.get(project) ?? new Map<string, number>();
+    files.set(hit.file, (files.get(hit.file) ?? 0) + 1);
+    projectFiles.set(project, files);
+  }
+  return [...projectFiles.entries()]
+    .map(([project, files]) => ({
+      project,
+      hits: [...files.values()].reduce((sum, count) => sum + count, 0),
+      files: files.size,
+      topFiles: [...files.entries()]
+        .map(([path, count]) => ({ path, hits: count }))
+        .sort((a, b) => b.hits - a.hits || a.path.localeCompare(b.path))
+        .slice(0, 3),
+    }))
+    .sort((a, b) => b.hits - a.hits || a.project.localeCompare(b.project));
+}
+
 async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Promise<void> {
   const maps = await fieldMaps();
   const actionable = hits.filter(h => !h.suppressed);
   const suppressed = hits.filter(h => h.suppressed);
+  const legacy = suppressed.filter(h => h.reason.startsWith('legacy baseline')).length;
+  const projectLegacy = suppressed.filter(h =>
+    h.reason.startsWith('legacy project inventory')
+  ).length;
+  const otherSuppressed = suppressed.length - legacy - projectLegacy;
+  const projectAttribution = projectLegacyAttribution(suppressed);
 
   if (quiet && !asJson && actionable.length === 0) {
     console.info(
-      `✅ brands-smart (${hits.length} hits, 0 actionable, ${suppressed.length} suppressed)`
+      `✅ brands-smart (${hits.length} hits, 0 actionable, ${legacy} baseline + ` +
+        `${projectLegacy} project-legacy warnings across ${projectAttribution.length} projects` +
+        `${otherSuppressed > 0 ? ` + ${otherSuppressed} normalized/suppressed` : ''})`
     );
     return;
   }
@@ -601,6 +730,10 @@ async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Pr
           total: hits.length,
           actionable: actionable.length,
           autoSuppressed: suppressed.length,
+          legacyBaseline: legacy,
+          projectLegacyWarnings: projectLegacy,
+          otherSuppressed,
+          projectAttribution,
           manifestLoaded: maps.loadedFromManifest,
           byRole: Object.fromEntries(
             (
@@ -624,15 +757,27 @@ async function printSmartReport(hits: Hit[], asJson: boolean, quiet = false): Pr
     return;
   }
 
-  const legacy = suppressed.filter(h => h.reason.startsWith('legacy baseline')).length;
   console.info(
     `\n🧠 branded-id-check --smart` +
       `${maps.loadedFromManifest ? ' (manifest-driven)' : ' (manifest missing — weak field maps)'}\n` +
       `${hits.length} total hits → ${actionable.length} actionable ` +
       `(${suppressed.length} suppressed` +
-      `${legacy > 0 ? `, ${legacy} legacy-baseline` : ''})\n` +
+      `${legacy > 0 ? `, ${legacy} legacy-baseline` : ''}` +
+      `${projectLegacy > 0 ? `, ${projectLegacy} project-legacy warnings` : ''})\n` +
       `  AGENTS: new domain *Id fields MUST use brands (as*/try*/parse*) — staged gate has no baseline.\n`
   );
+
+  if (projectAttribution.length > 0) {
+    console.info('  project legacy attribution (warning-only; new diff lines fail):');
+    for (const row of projectAttribution) {
+      const files = row.topFiles.map(file => `${file.path}(${file.hits})`).join(', ');
+      console.info(
+        `    ${String(row.hits).padStart(4)}  ${row.project} · ${row.files} file(s)` +
+          (files ? ` · top: ${files}` : '')
+      );
+    }
+    console.info('');
+  }
 
   const roles: Role[] = ['auth-credential', 'named-domain', 'new-brand', 'opaque-pk', 'ambiguous'];
   for (const role of roles) {
@@ -710,19 +855,30 @@ async function main(): Promise<void> {
   const asJson = args.includes('--json');
   const quiet = args.includes('--quiet');
   const writeBaseline = args.includes('--write-baseline');
+  const diffBaseIndex = args.findIndex(arg => arg === '--diff-base');
+  const diffBaseInline = args.find(arg => arg.startsWith('--diff-base='));
+  const diffBase =
+    (diffBaseIndex >= 0 ? args[diffBaseIndex + 1] : undefined) ??
+    diffBaseInline?.slice('--diff-base='.length);
+
+  if ((diffBaseIndex >= 0 || diffBaseInline) && (!diffBase || diffBase.startsWith('--'))) {
+    console.error('❌ --diff-base requires a git revision');
+    process.exit(2);
+  }
 
   // Staged mode: hunk-aware — only ADDED lines are judged, so legacy
   // violations elsewhere in a touched file never block the commit.
   // Baseline does NOT apply — agents cannot add new bare-string domain IDs.
-  if (args.includes('--staged')) {
-    const violations = await stagedViolations();
+  if (args.includes('--staged') || diffBase) {
+    const violations = diffBase ? await diffBaseViolations(diffBase) : await stagedViolations();
+    const scope = diffBase ? `PR changes since ${diffBase}` : 'staged changes';
     if (violations.length === 0) {
-      console.info('✅ no new unbranded ID declarations in staged changes');
+      console.info(`✅ no new unbranded ID declarations in ${scope}`);
       return;
     }
     for (const v of violations) console.info(`  ${v.file}:${v.line}: ${v.text}`);
     console.info(
-      `\n❌ ${violations.length} new unbranded ID declaration(s) in staged changes\n` +
+      `\n❌ ${violations.length} new unbranded ID declaration(s) in ${scope}\n` +
         '   → REQUIRED: use brands from lib/types/branded.ts (as*/try*/parse*)\n' +
         '   → catalog: bun tools/brand-catalog.ts [SessionId|UserId|…]\n' +
         '   → intentional opaque only: end line with // brand-ok\n' +
@@ -732,16 +888,21 @@ async function main(): Promise<void> {
     return;
   }
 
-  const files = await collectFiles(args);
+  const scanArgs = args.filter((arg, index) => {
+    if (arg.startsWith('--')) return false;
+    return diffBaseIndex < 0 || index !== diffBaseIndex + 1;
+  });
+  const files = await collectFiles(scanArgs);
 
   if (writeBaseline) {
-    await writeBaselineFile(files);
+    const nonProjectFiles = files.filter(file => !relPath(file).startsWith('projects/'));
+    await writeBaselineFile(nonProjectFiles);
     return;
   }
 
   if (smart) {
     const baseline = await loadBaselineKeys();
-    const hits = applyBaseline(await scanAll(files), baseline);
+    const hits = applyProjectLegacyVisibility(applyBaseline(await scanAll(files), baseline));
     await printSmartReport(hits, asJson, quiet);
     const actionable = hits.filter(h => !h.suppressed).length;
     if (strict && actionable > 0) process.exit(1);

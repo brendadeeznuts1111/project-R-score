@@ -77,6 +77,7 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/limit-raises.json');
     expect(arts).toContain('/registry/verification-index.json');
     expect(arts).toContain('/registry/doc-index.json');
+    expect(arts).toContain('/registry/bun-brand-map.json');
     expect(p.scripts.some(s => s.cmd.includes('docs:map:check'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('compliance:bake'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('compliance:verify'))).toBe(true);

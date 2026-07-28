@@ -223,6 +223,34 @@ async function main(): Promise<void> {
   const harnessFiles = staged.filter(isHarnessPath);
   const docMapFiles = staged.filter(isDocMapPath);
 
+  // Must run before the project-only / non-harness early return below.
+  // Hunk-aware and baseline-free: every new TS/TSX declaration is governed,
+  // including projects/** files that are intentionally outside root lint.
+  console.info('🏷️  Branded IDs (all staged TypeScript additions)...');
+  const stagedBrandCode = await runGate(
+    'brands-staged',
+    ['bun', 'tools/branded-id-check.ts', '--staged', '--strict'],
+    timings
+  );
+  if (stagedBrandCode !== 0) {
+    console.error('❌ New unbranded ID declaration — bun run check:brands:staged');
+    await writeTimings(timings, full);
+    process.exit(1);
+  }
+
+  if (staged.includes('lib/docs/bun-brand-usage-baseline.json')) {
+    console.info('📉 Bun brand warning baseline (no growth)...');
+    const baselineCode = await runGate(
+      'bun-brand-baseline',
+      ['bun', 'scripts/check-bun-brand-baseline.ts', '--staged'],
+      timings
+    );
+    if (baselineCode !== 0) {
+      await writeTimings(timings, full);
+      process.exit(1);
+    }
+  }
+
   if (docMapFiles.length > 0) {
     console.info(`🗺️  Doc map check (${docMapFiles.length} SSOT path(s) staged)...`);
     const code = await runGate('doc-map', ['bun', 'tools/doc-map-check.ts'], timings);
@@ -491,11 +519,11 @@ async function main(): Promise<void> {
     );
   });
 
-  // Parallel: brands staged ‖ brands smart ‖ path-bun ‖ bun-env (types only on --full)
+  // Parallel: brands smart ‖ path-bun ‖ bun-env (types only on --full)
   console.info(
     full
-      ? '🏷️  Branded IDs + ratchets (staged ‖ smart ‖ types ‖ path-bun ‖ bun-env)...'
-      : '🏷️  Branded IDs + ratchets (staged ‖ smart ‖ path-bun ‖ bun-env; types deferred)...'
+      ? '🏷️  Branded IDs + ratchets (smart ‖ types ‖ path-bun ‖ bun-env)...'
+      : '🏷️  Branded IDs + ratchets (smart ‖ path-bun ‖ bun-env; types deferred)...'
   );
 
   async function spawnGate(name: string, cmd: string[]): Promise<GateTiming & { code: number }> {
@@ -510,7 +538,6 @@ async function main(): Promise<void> {
   }
 
   const parallelJobs: Array<Promise<GateTiming & { code: number }>> = [
-    spawnGate('brands-staged', ['bun', 'tools/branded-id-check.ts', '--staged', '--strict']),
     spawnGate('brands-smart', [
       'bun',
       'tools/branded-id-check.ts',

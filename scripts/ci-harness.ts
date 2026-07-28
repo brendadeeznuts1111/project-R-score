@@ -66,6 +66,12 @@ const CHEAP: Step[] = [
     repair: 'bun tools/branded-id-check.ts --smart --strict',
   },
   {
+    name: 'bun-brand-map',
+    cmd: ['bun', 'run', 'bun:brand-map:check'],
+    owner: 'lib/docs/bun-brand-contract.ts · lib/docs/bun-brand-usage-baseline.json',
+    repair: 'bun run bun:brand-map · bun run bun:brand-map:check',
+  },
+  {
     name: 'projects-roots',
     cmd: ['bun', 'run', 'projects:roots:check'],
     owner: 'tools/projects-root-check.ts · projects/README.md',

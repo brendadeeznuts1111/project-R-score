@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
 // @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
@@ -98,6 +99,23 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
     freshRerun: 'bun run check:brands:types',
     freshRerunKind: 'claim',
     owner: 'platform / harness',
+  },
+  {
+    id: 'bun-brand-cross-map',
+    claim:
+      'Bun capability consumers resolve to owned brand relationships, tracked projects, and exact runtime proof',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'continuous',
+    gateRef: 'ci:harness',
+    evidence: [
+      'bun run bun:brand-map:check',
+      'bun run bun:brand-map:baseline:ratchet',
+      'public/registry/bun-brand-map.json',
+      'lib/docs/bun-brand-usage-baseline.json',
+    ],
+    freshRerun: 'bun run bun:brand-map:check',
+    freshRerunKind: 'claim',
+    owner: 'runtime-tooling',
   },
   {
     id: 'install-verify',

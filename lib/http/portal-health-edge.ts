@@ -70,6 +70,7 @@ export type EdgeHealthBody = {
   channels?: Record<string, unknown> | null;
   loop?: Record<string, unknown> | null;
   monorepoHealth?: Record<string, unknown> | null;
+  bunBrandMap?: Record<string, unknown> | null;
   serve: Record<string, unknown>;
 };
 
@@ -319,6 +320,11 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     projectComplianceHealthArtifact(complianceBoard);
   // Missing bake does not degrade edge health (optional plane); present + fail does.
   const complianceFail = complianceArtifact.exists && !complianceArtifact.ok;
+  const bunBrandMap = (ops?.bunBrandMap as Record<string, unknown> | undefined) ?? null;
+  const bunBrandMapFail =
+    bunBrandMap?.available === true &&
+    ((typeof bunBrandMap.errors === 'number' && bunBrandMap.errors > 0) ||
+      bunBrandMap.stale === true);
 
   // Limit raises bake is informational (missing does not degrade).
   const limitRaisesArtifact: LimitRaisesHealthArtifact =
@@ -343,7 +349,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       : projectMonorepoHealthHealthArtifact(null);
 
   const status: 'ok' | 'degraded' =
-    defaultsFail || taxonomyFail || complianceFail ? 'degraded' : 'ok';
+    defaultsFail || taxonomyFail || complianceFail || bunBrandMapFail ? 'degraded' : 'ok';
 
   return {
     status,
@@ -366,6 +372,14 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       complianceBoard: complianceArtifact,
       limitRaises: limitRaisesArtifact,
       monorepoHealth: monorepoArtifact,
+      bunBrandMap: {
+        exists: bunBrandMap?.available === true,
+        ok: bunBrandMap?.ok ?? null,
+        warnings: bunBrandMap?.warnings ?? null,
+        errors: bunBrandMap?.errors ?? null,
+        stale: bunBrandMap?.stale ?? null,
+        path: '/registry/bun-brand-map.json',
+      },
     },
     registry: {
       packages,
@@ -387,6 +401,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     monorepoHealth: monorepoBake
       ? (projectMonorepoHealthBake(monorepoBake) as unknown as Record<string, unknown>)
       : ((ops?.monorepoHealth as Record<string, unknown> | undefined) ?? null),
+    bunBrandMap,
     env: {
       summary: {
         total: envTable.length,

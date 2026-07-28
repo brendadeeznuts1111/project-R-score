@@ -16,6 +16,10 @@ text must not travel through the harness as a bare `string`.
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
 - **Portal glossary:** [`/portal/brands/`](../../../public/portal/brands/)
   backed by [`brand-keymap.json`](../../../public/registry/brand-keymap.json)
+  and the Bun capability
+  [`bun-brand-map.json`](../../../public/registry/bun-brand-map.json)
+- **Bun relationship contract:**
+  [`docs/harness/tenants/bun-brand-cross-map.md`](../../../docs/harness/tenants/bun-brand-cross-map.md)
 - **Boundary:** [`docs/WIRE_BOUNDARY.md`](../../../docs/WIRE_BOUNDARY.md)
 - **Agent workflow:**
   [`.agents/skills/branded-ids/SKILL.md`](../../../.agents/skills/branded-ids/SKILL.md)
@@ -203,6 +207,7 @@ the nominal type and constructor semantics.
 | `bun test tests/branded-catalog.test.ts`          | proves catalog uniqueness, constructor exports, and runtime tiers  |
 | `bun tools/brand-coverage.ts --attention`         | reports unused and referenced-but-unconstructed brands             |
 | `bun tools/brand-keymap.ts --check`               | proves the portal glossary and project adoption map are current    |
+| `bun run bun:brand-map:check`                     | proves Bun API → wrapper → brand → project/proof joins are current |
 
 Intentional opaque third-party primary keys require an inline decision:
 

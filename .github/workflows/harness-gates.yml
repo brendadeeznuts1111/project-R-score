@@ -96,6 +96,14 @@ jobs:
           path: reports/doctor-state-check.json
           if-no-files-found: ignore
 
+      # Baseline-free PR hunk gate. Uses the actual PR base rather than the
+      # runner index, so project-only changes cannot bypass branded IDs.
+      - name: Branded IDs (PR additions)
+        if: github.event_name == 'pull_request'
+        run: |
+          bun run check:brands:diff "${{ github.event.pull_request.base.sha }}"
+          bun run bun:brand-map:baseline:ratchet --base "${{ github.event.pull_request.base.sha }}"
+
       # One install: verify + hygiene + ci:harness (was a second repo-hygiene job).
       - name: CI core
         run: bun run ci:core

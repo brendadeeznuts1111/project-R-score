@@ -37,6 +37,10 @@ import {
   type MonorepoHealthSummarySlice,
 } from '../monitoring/monorepo-health-slice.ts';
 import {
+  loadBunBrandMapSummarySliceSync,
+  type BunBrandMapSummarySlice,
+} from '../monitoring/bun-brand-map-slice.ts';
+import {
   queryLoopMetricsSlice,
   withProjectorBackendSignal,
   type OpsLoopMetricsSlice,
@@ -247,6 +251,9 @@ export type OpsSummaryCompliance = ComplianceSummarySlice;
 /** Monorepo health score rollup from /registry/monorepo-health.json. */
 export type OpsSummaryMonorepoHealth = MonorepoHealthSummarySlice;
 
+/** Bun capability × brand declaration, adoption, and proof rollup. */
+export type OpsSummaryBunBrandMap = BunBrandMapSummarySlice;
+
 export type OpsSummaryPayload = {
   source: 'live' | 'snapshot';
   generated: string;
@@ -366,6 +373,11 @@ export type OpsSummaryPayload = {
    * (`check:monorepo-health` / `ops:snapshot` / `monorepo:health:bake`).
    */
   monorepoHealth: OpsSummaryMonorepoHealth;
+  /**
+   * Derived Bun capability × brand map. Legacy undeclared usage is warning-only;
+   * new/hard findings and stale proof degrade the slice.
+   */
+  bunBrandMap: OpsSummaryBunBrandMap;
   /** Recent account limit changes (partner_account_limits table; live query, 48h window). */
   limitChanges: Array<{
     limit_id: number; // brand-ok — partner_account_limits.id
@@ -1035,6 +1047,7 @@ export function buildOpsSummary(
     seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
     compliance: loadComplianceSummarySliceSync(),
     monorepoHealth: loadMonorepoHealthSummarySliceSync(),
+    bunBrandMap: loadBunBrandMapSummarySliceSync(),
     limitChanges,
     limitPatterns,
   };

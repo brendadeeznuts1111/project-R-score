@@ -109,9 +109,9 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     id: 'brands',
     label: 'Brands',
     href: '/portal/brands/',
-    note: 'domain-value glossary · constructors · project adoption',
+    note: 'Bun capability relationships · domain-value glossary · project adoption',
     group: 'registry',
-    cli: 'bun tools/brand-keymap.ts',
+    cli: 'bun run bun:brand-map',
   },
   {
     id: 'surfaces',
@@ -255,6 +255,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'surfaces-state',
     href: '/registry/surfaces-state.json',
     note: 'schema v2 · apex/subdomain/backendCode · Access domains · surfaces:bake',
+  },
+  {
+    label: 'bun-brand-map',
+    href: '/registry/bun-brand-map.json',
+    note: 'Bun API → wrapper → branded value → project → runtime proof',
   },
   {
     label: 'telegram-handshake',

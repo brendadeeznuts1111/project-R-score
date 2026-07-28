@@ -34,12 +34,16 @@ const STEPS: BakeStep[] = [
     cmd: ['bun', 'run', 'bake:capabilities'],
     note: 'capability-map-subset.json + capability-map-full.json',
   },
-  { id: 'bunfig', cmd: ['bun', 'run', 'bunfig:bake'], note: 'bunfig-state.json' },
   { id: 'chrome', cmd: ['bun', 'run', 'portal:chrome:bake'], note: 'portal-chrome.json' },
   {
     id: 'brands',
     cmd: ['bun', 'tools/brand-keymap.ts'],
     note: 'brand-keymap.json',
+  },
+  {
+    id: 'bun-brand-map',
+    cmd: ['bun', 'tools/bun-brand-map.ts'],
+    note: 'bun-brand-map.json',
   },
   {
     id: 'packages',

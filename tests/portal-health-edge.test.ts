@@ -233,6 +233,59 @@ describe('portal-health-edge', () => {
     '/registry/limit-raises.json': null,
   } as const;
 
+  test('legacy Bun-brand warnings remain healthy', async () => {
+    const body = await collectEdgeHealth(
+      mockAssetsEnv({
+        ...emptyArtifacts,
+        '/registry/ops-summary.json': {
+          source: 'snapshot',
+          generated: '2026-07-28T00:00:00.000Z',
+          bunBrandMap: {
+            available: true,
+            ok: true,
+            warnings: 42,
+            errors: 0,
+            stale: false,
+          },
+        },
+      }),
+      'https://edge.test/'
+    );
+
+    expect(body.status).toBe('ok');
+    expect(body.bunBrandMap).toMatchObject({ warnings: 42, errors: 0 });
+  });
+
+  test('hard Bun-brand findings degrade health', async () => {
+    const body = await collectEdgeHealth(
+      mockAssetsEnv({
+        ...emptyArtifacts,
+        '/registry/ops-summary.json': {
+          source: 'snapshot',
+          generated: '2026-07-28T00:00:00.000Z',
+          bunBrandMap: {
+            available: true,
+            ok: false,
+            warnings: 3,
+            errors: 1,
+            stale: false,
+          },
+        },
+      }),
+      'https://edge.test/'
+    );
+
+    expect(body.status).toBe('degraded');
+    expect(body.artifacts.bunBrandMap).toMatchObject({
+      exists: true,
+      ok: false,
+      warnings: 3,
+      errors: 1,
+      stale: false,
+      path: '/registry/bun-brand-map.json',
+    });
+  });
+
   test('complianceBoard missing: exists false, does not degrade status', async () => {
     const body = await collectEdgeHealth(
       mockAssetsEnv({ ...emptyArtifacts }),

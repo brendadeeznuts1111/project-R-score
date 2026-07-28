@@ -6,6 +6,7 @@
  *   Failures  → /registry/failures.json totals.failures
  *   Vault     → /registry/vault-health.json summary.activeItems (or referencedOk)
  *   Packages  → /registry/packages-graph-map.json packages.length
+ *   Brands    → /registry/bun-brand-map.json summary.attention
  *   Health    → /registry/monorepo-health.json score (optional)
  *   Doctor    → /registry/doctor-state.json tone (green/yellow/red)
  *
@@ -50,6 +51,18 @@ export function pickPackagesBadge(data) {
 /** @param {number|null} _n */
 export function tonePackagesBadge(_n) {
   return 'neutral';
+}
+
+/** @param {object|null|undefined} data */
+export function pickBrandsBadge(data) {
+  if (!data || data.kind !== 'bun-brand-map') return null;
+  const attention = data?.summary?.attention;
+  return typeof attention === 'number' ? attention : null;
+}
+
+/** @param {number|null} n */
+export function toneBrandsBadge(n) {
+  return n == null ? 'neutral' : n > 0 ? 'warn' : 'ok';
 }
 
 /** @param {object|null|undefined} data */
@@ -104,6 +117,12 @@ const BADGE_SPECS = [
     source: '/registry/packages-graph-map.json',
     pick: pickPackagesBadge,
     tone: tonePackagesBadge,
+  },
+  {
+    href: '/portal/brands/',
+    source: '/registry/bun-brand-map.json',
+    pick: pickBrandsBadge,
+    tone: toneBrandsBadge,
   },
   {
     href: '/portal/health/',

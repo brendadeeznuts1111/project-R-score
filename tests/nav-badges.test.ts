@@ -2,11 +2,13 @@
 import { describe, expect, test } from 'bun:test';
 import { resolvePath } from '../scripts/lib/fs-bun';
 import {
+  pickBrandsBadge,
   pickDoctorBadge,
   pickFailuresBadge,
   pickHealthBadge,
   pickPackagesBadge,
   pickVaultBadge,
+  toneBrandsBadge,
   toneDoctorBadge,
   toneFailuresBadge,
   toneHealthBadge,
@@ -37,6 +39,14 @@ describe('nav-badges pure pickers', () => {
     expect(pickPackagesBadge({ packages: [1, 2, 3, 4, 5, 6] })).toBe(6);
     expect(pickPackagesBadge({ map: { packages: ['a', 'b'] } })).toBe(2);
     expect(tonePackagesBadge(6)).toBe('neutral');
+  });
+
+  test('brands pick + attention tone', () => {
+    expect(pickBrandsBadge({ kind: 'bun-brand-map', summary: { attention: 0 } })).toBe(0);
+    expect(pickBrandsBadge({ kind: 'bun-brand-map', summary: { attention: 4 } })).toBe(4);
+    expect(pickBrandsBadge({ kind: 'brand-keymap', summary: { attention: 4 } })).toBeNull();
+    expect(toneBrandsBadge(0)).toBe('ok');
+    expect(toneBrandsBadge(4)).toBe('warn');
   });
 
   test('health score pick + bands', () => {
@@ -84,11 +94,13 @@ describe('capability-map-subset normalize', () => {
 });
 
 describe('nav-badges + tools-hub static modules', () => {
-  test('nav-badges.js maps failures vault packages health doctor to registry paths', async () => {
+  test('nav-badges.js maps failures vault packages brands health doctor to registry paths', async () => {
     const src = await Bun.file(resolvePath(ROOT, 'public/portal/nav-badges.js')).text();
     expect(src).toContain('/registry/failures.json');
     expect(src).toContain('/registry/vault-health.json');
     expect(src).toContain('/registry/packages-graph-map.json');
+    expect(src).toContain('/registry/bun-brand-map.json');
+    expect(src).toContain('/portal/brands/');
     expect(src).toContain('/registry/monorepo-health.json');
     expect(src).toContain('/registry/doctor-state.json');
     expect(src).toContain('/portal/doctor/');

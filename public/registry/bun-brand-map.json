@@ -1,0 +1,4882 @@
+{
+  "schemaVersion": 1,
+  "kind": "bun-brand-map",
+  "path": "/registry/bun-brand-map.json",
+  "generatedAt": "2026-07-28T22:49:53.102Z",
+  "sources": {
+    "declarations": "lib/docs/bun-brand-usages.ts",
+    "catalog": "tools/bun-docs-catalog.json",
+    "brands": "lib/types/brand-manifest.json",
+    "brandKeymap": "public/registry/brand-keymap.json",
+    "baseline": "lib/docs/bun-brand-usage-baseline.json",
+    "proof": "public/registry/release-features.json"
+  },
+  "sourceDigests": {
+    "declarations": "17216ebf587660a3865417a6d8578fd74c0a4d624a5257f2ce2842f37b110a2d",
+    "catalog": "397470e5050312c556f570ec32cc4f2b57b82e6e3e607231ab8d2079303556b6",
+    "brandManifest": "b40947639cb2679c65024d7f2d055ea2a8a4ba20160ef0e886cdd2e3611dff8c",
+    "brandKeymap": "2aca8079f83252f9a94c0012e59610fc934c84f3302214725683cfa4400d50ac",
+    "observations": "ac54d28ea81b6ef506a29f01dc7c4a72ea43192bae462839400becc9cc5624bb",
+    "baseline": "01a862cd2467b74b632bf7562f0b03c604fb19f548c9ecfafed77438b24cae43",
+    "proofs": "a605f7e22ca4954bf58f3eb2940e4edab0ad009b4205c484d0f6e2ecd9fc0033"
+  },
+  "summary": {
+    "apis": 15,
+    "relationships": 16,
+    "wrappers": 10,
+    "projects": 32,
+    "verified": 2,
+    "attention": 321,
+    "declared": 16,
+    "observed": 324,
+    "matched": 31,
+    "undeclared": 293,
+    "baselineUndeclared": 293,
+    "legacyUndeclared": 293,
+    "newUndeclared": 0,
+    "catalogConflicts": 0,
+    "productionProofErrors": 0,
+    "stale": 0,
+    "experimentalApprovals": 0,
+    "brands": 50,
+    "mappedBrands": 1,
+    "totalCanonicalBrands": 50,
+    "trackedProjects": 32,
+    "externalProjects": 3
+  },
+  "capabilities": [
+    {
+      "id": "bun-image-dod-evidence",
+      "key": "bun-image-dod-evidence",
+      "token": "Bun.Image",
+      "variant": "image-processing",
+      "kind": "api",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/image",
+      "scope": "production",
+      "policy": "production-approved",
+      "ownerLane": "audit",
+      "implementations": [
+        {
+          "path": "lib/dod/evidence.ts",
+          "symbol": "buildDodEvidencePackage"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/dod/evidence.ts",
+          "symbol": "DodEvidencePackage"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "evidence",
+          "brand": "EvidenceId",
+          "rationale": "Decoded and resized image bytes are stored in an EvidenceId-addressed record."
+        }
+      ],
+      "proofs": [
+        {
+          "source": "public/registry/release-features.json",
+          "key": "result:terminal-methods",
+          "state": "passed"
+        }
+      ],
+      "evidenceState": "verified",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": []
+    },
+    {
+      "id": "bun-webview-dod-evidence",
+      "key": "bun-webview-dod-evidence",
+      "token": "Bun.WebView",
+      "variant": "headless",
+      "kind": "api",
+      "versionIntroduced": "1.4.0",
+      "stability": "experimental",
+      "docsUrl": "https://bun.com/docs/runtime/webview",
+      "scope": "production",
+      "policy": "lab-only",
+      "ownerLane": "audit",
+      "implementations": [
+        {
+          "path": "lib/dod/verifier.ts",
+          "symbol": "DODVerifier.applyWatermark"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/dod/verifier.ts",
+          "symbol": "DODVerifier.process"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "evidence",
+          "brand": "EvidenceId",
+          "rationale": "Headless rendering prepares the visual payload in the DOD evidence flow."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": [
+        "declared-unproven",
+        "experimental",
+        "lab-only"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-evidence-mint",
+      "key": "bun-randomuuidv7-evidence-mint",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "audit",
+      "implementations": [
+        {
+          "path": "lib/time.ts",
+          "symbol": "mintEvidenceId"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/dod/evidence.ts",
+          "symbol": "buildDodEvidencePackage"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "EvidenceId",
+          "rationale": "The owned mint converts a UUIDv7 result into EvidenceId."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 3,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-cron-in-process-monitoring",
+      "key": "bun-cron-in-process-monitoring",
+      "token": "Bun.cron",
+      "variant": "in-process",
+      "kind": "api",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/cron",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "lib/factory/monitoring.ts",
+          "symbol": "registerRegistryCrons"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/factory/server.ts",
+          "symbol": "registerRegistryCrons"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The scheduler controls runtime callbacks; no domain identity crosses this boundary."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 0,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-cron-os-persistent",
+      "key": "bun-cron-os-persistent",
+      "token": "Bun.cron",
+      "variant": "os-persistent",
+      "kind": "api",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/cron",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "lib/harness/cron.ts",
+          "symbol": "registerOsCron"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "tools/portal-cli.ts",
+          "symbol": "dispatchSnapshot"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The operating-system job title is scheduler metadata and is not a FactoryWager domain ID."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-sliceansi-terminal-output",
+      "key": "bun-sliceansi-terminal-output",
+      "token": "Bun.sliceAnsi",
+      "variant": "display-width",
+      "kind": "api",
+      "versionIntroduced": "1.3.11",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/reference/bun/sliceAnsi",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "lib/console-depth.ts",
+          "symbol": "truncateWidth"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/factory/cli.ts",
+          "symbol": "truncateDesc"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "ANSI-aware slicing transforms display text and does not create or consume an identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 3,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-terminal-pty",
+      "key": "bun-terminal-pty",
+      "token": "Bun.Terminal",
+      "variant": "pty",
+      "kind": "api",
+      "versionIntroduced": "1.3.5",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/terminal",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "lib/terminal.ts",
+          "symbol": "createCapturingTerminal"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "tools/monorepo-health.ts",
+          "symbol": "runInteractive"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The PTY object is native process infrastructure; terminal identity remains separately branded."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "process-execve-capability-probe",
+      "key": "process-execve-capability-probe",
+      "token": "process.execve",
+      "variant": "capability-probe",
+      "kind": "concept",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/node-api",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "scripts/dx-mcp.ts",
+          "symbol": "toolsCall"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "scripts/dx-mcp.ts",
+          "symbol": "dispatch"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The probe reports process replacement availability without transporting a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 0,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "no-orphans-capability-probe",
+      "key": "no-orphans-capability-probe",
+      "token": "--no-orphans",
+      "variant": "runtime-cli",
+      "kind": "cli-flag",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/blog/bun-v1.3.14#no-orphans",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "scripts/dx-mcp.ts",
+          "symbol": "toolsCall"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "scripts/dx-mcp.ts",
+          "symbol": "dispatch"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Parent-lifetime supervision is process policy and has no domain-valued payload."
+        }
+      ],
+      "proofs": [
+        {
+          "source": "public/registry/release-features.json",
+          "key": "result:no-orphans",
+          "state": "passed"
+        }
+      ],
+      "evidenceState": "verified",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 0,
+      "attention": []
+    },
+    {
+      "id": "bun-test-parallel",
+      "key": "bun-test-parallel",
+      "token": "--parallel",
+      "variant": "bun-test",
+      "kind": "cli-option",
+      "versionIntroduced": "1.3.13",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "scope": "config",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "package.json",
+          "symbol": "test:parallel"
+        }
+      ],
+      "consumers": [
+        {
+          "path": ".github/workflows/test-sharded.yml",
+          "symbol": "tests shard"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Test scheduling changes execution topology but does not transport domain identities."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 10,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-test-isolate",
+      "key": "bun-test-isolate",
+      "token": "--isolate",
+      "variant": "bun-test",
+      "kind": "cli-option",
+      "versionIntroduced": "1.3.13",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel",
+      "scope": "config",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "package.json",
+          "symbol": "test:isolate"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "package.json",
+          "symbol": "scripts"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Per-file test isolation is harness configuration without a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-test-shard",
+      "key": "bun-test-shard",
+      "token": "--shard",
+      "variant": "bun-test",
+      "kind": "cli-option",
+      "versionIntroduced": "1.3.13",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-shard-m-n-for-splitting-tests-across-ci-jobs",
+      "scope": "config",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "package.json",
+          "symbol": "test:ci:shard"
+        }
+      ],
+      "consumers": [
+        {
+          "path": ".github/workflows/test-sharded.yml",
+          "symbol": "tests shard"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 7,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-test-changed",
+      "key": "bun-test-changed",
+      "token": "--changed",
+      "variant": "bun-test",
+      "kind": "cli-option",
+      "versionIntroduced": "1.3.13",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/blog/bun-v1.3.13#bun-test-changed",
+      "scope": "config",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "package.json",
+          "symbol": "test:watch"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "package.json",
+          "symbol": "scripts"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Changed-test selection consumes repository state, not a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "fetch-http2-client",
+      "key": "fetch-http2-client",
+      "token": "fetch protocol http2",
+      "variant": "fetch-client",
+      "kind": "concept",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/blog/bun-v1.3.14#http2-client",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "projects/active/sports-terminal-os/src/utils/h2-fetch.ts",
+          "symbol": "h2Fetch"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "projects/active/sports-terminal-os/src/utils/h2-fetch.ts",
+          "symbol": "h2Fetch"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The negotiated transport protocol changes network behavior without changing request identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "projects/active/sports-terminal-os"
+      ],
+      "observations": 0,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "fetch-http3-client-probe",
+      "key": "fetch-http3-client-probe",
+      "token": "http3",
+      "variant": "fetch-client",
+      "kind": "concept",
+      "versionIntroduced": "1.3.14",
+      "stability": "experimental",
+      "docsUrl": "https://bun.com/docs/runtime/http/server",
+      "scope": "tooling",
+      "policy": "lab-only",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "scripts/dx-mcp.ts",
+          "symbol": "toolsCall"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "scripts/dx-mcp.ts",
+          "symbol": "dispatch"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The experimental transport probe reports connectivity and carries no domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 0,
+      "attention": [
+        "declared-unproven",
+        "experimental",
+        "lab-only"
+      ]
+    },
+    {
+      "id": "bun-serve-http3-probe",
+      "key": "bun-serve-http3-probe",
+      "token": "Bun.serve http3",
+      "variant": "quic-server",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/blog/bun-v1.3.14#http3",
+      "scope": "tooling",
+      "policy": "lab-only",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "scripts/dx-mcp.ts",
+          "symbol": "toolsCall"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "scripts/dx-mcp.ts",
+          "symbol": "dispatch"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The QUIC server probe validates runtime support without transporting a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 0,
+      "attention": [
+        "declared-unproven",
+        "lab-only"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "bun-image-dod-evidence:0:0",
+      "key": "bun-image-dod-evidence:0:0",
+      "capabilityId": "bun-image-dod-evidence",
+      "capabilityKey": "bun-image-dod-evidence",
+      "api": "Bun.Image",
+      "variant": "image-processing",
+      "brand": "EvidenceId",
+      "direction": "evidence",
+      "rationale": "Decoded and resized image bytes are stored in an EvidenceId-addressed record.",
+      "wrapper": "lib/dod/evidence.ts",
+      "wrapperSymbol": "buildDodEvidencePackage",
+      "consumer": "lib/dod/evidence.ts",
+      "consumerSymbol": "DodEvidencePackage",
+      "project": "project-R-score",
+      "policy": "production-approved",
+      "evidenceState": "verified",
+      "proofs": [
+        "public/registry/release-features.json#result:terminal-methods"
+      ]
+    },
+    {
+      "id": "bun-webview-dod-evidence:0:0",
+      "key": "bun-webview-dod-evidence:0:0",
+      "capabilityId": "bun-webview-dod-evidence",
+      "capabilityKey": "bun-webview-dod-evidence",
+      "api": "Bun.WebView",
+      "variant": "headless",
+      "brand": "EvidenceId",
+      "direction": "evidence",
+      "rationale": "Headless rendering prepares the visual payload in the DOD evidence flow.",
+      "wrapper": "lib/dod/verifier.ts",
+      "wrapperSymbol": "DODVerifier.applyWatermark",
+      "consumer": "lib/dod/verifier.ts",
+      "consumerSymbol": "DODVerifier.process",
+      "project": "project-R-score",
+      "policy": "lab-only",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-evidence-mint:0:0",
+      "key": "bun-randomuuidv7-evidence-mint:0:0",
+      "capabilityId": "bun-randomuuidv7-evidence-mint",
+      "capabilityKey": "bun-randomuuidv7-evidence-mint",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "EvidenceId",
+      "direction": "output",
+      "rationale": "The owned mint converts a UUIDv7 result into EvidenceId.",
+      "wrapper": "lib/time.ts",
+      "wrapperSymbol": "mintEvidenceId",
+      "consumer": "lib/dod/evidence.ts",
+      "consumerSymbol": "buildDodEvidencePackage",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-cron-in-process-monitoring:0:0",
+      "key": "bun-cron-in-process-monitoring:0:0",
+      "capabilityId": "bun-cron-in-process-monitoring",
+      "capabilityKey": "bun-cron-in-process-monitoring",
+      "api": "Bun.cron",
+      "variant": "in-process",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The scheduler controls runtime callbacks; no domain identity crosses this boundary.",
+      "wrapper": "lib/factory/monitoring.ts",
+      "wrapperSymbol": "registerRegistryCrons",
+      "consumer": "lib/factory/server.ts",
+      "consumerSymbol": "registerRegistryCrons",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-cron-os-persistent:0:0",
+      "key": "bun-cron-os-persistent:0:0",
+      "capabilityId": "bun-cron-os-persistent",
+      "capabilityKey": "bun-cron-os-persistent",
+      "api": "Bun.cron",
+      "variant": "os-persistent",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The operating-system job title is scheduler metadata and is not a FactoryWager domain ID.",
+      "wrapper": "lib/harness/cron.ts",
+      "wrapperSymbol": "registerOsCron",
+      "consumer": "tools/portal-cli.ts",
+      "consumerSymbol": "dispatchSnapshot",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-sliceansi-terminal-output:0:0",
+      "key": "bun-sliceansi-terminal-output:0:0",
+      "capabilityId": "bun-sliceansi-terminal-output",
+      "capabilityKey": "bun-sliceansi-terminal-output",
+      "api": "Bun.sliceAnsi",
+      "variant": "display-width",
+      "brand": null,
+      "direction": "none",
+      "rationale": "ANSI-aware slicing transforms display text and does not create or consume an identity.",
+      "wrapper": "lib/console-depth.ts",
+      "wrapperSymbol": "truncateWidth",
+      "consumer": "lib/factory/cli.ts",
+      "consumerSymbol": "truncateDesc",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-terminal-pty:0:0",
+      "key": "bun-terminal-pty:0:0",
+      "capabilityId": "bun-terminal-pty",
+      "capabilityKey": "bun-terminal-pty",
+      "api": "Bun.Terminal",
+      "variant": "pty",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The PTY object is native process infrastructure; terminal identity remains separately branded.",
+      "wrapper": "lib/terminal.ts",
+      "wrapperSymbol": "createCapturingTerminal",
+      "consumer": "tools/monorepo-health.ts",
+      "consumerSymbol": "runInteractive",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "process-execve-capability-probe:0:0",
+      "key": "process-execve-capability-probe:0:0",
+      "capabilityId": "process-execve-capability-probe",
+      "capabilityKey": "process-execve-capability-probe",
+      "api": "process.execve",
+      "variant": "capability-probe",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The probe reports process replacement availability without transporting a domain identity.",
+      "wrapper": "scripts/dx-mcp.ts",
+      "wrapperSymbol": "toolsCall",
+      "consumer": "scripts/dx-mcp.ts",
+      "consumerSymbol": "dispatch",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "no-orphans-capability-probe:0:0",
+      "key": "no-orphans-capability-probe:0:0",
+      "capabilityId": "no-orphans-capability-probe",
+      "capabilityKey": "no-orphans-capability-probe",
+      "api": "--no-orphans",
+      "variant": "runtime-cli",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Parent-lifetime supervision is process policy and has no domain-valued payload.",
+      "wrapper": "scripts/dx-mcp.ts",
+      "wrapperSymbol": "toolsCall",
+      "consumer": "scripts/dx-mcp.ts",
+      "consumerSymbol": "dispatch",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "verified",
+      "proofs": [
+        "public/registry/release-features.json#result:no-orphans"
+      ]
+    },
+    {
+      "id": "bun-test-parallel:0:0",
+      "key": "bun-test-parallel:0:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:parallel",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-isolate:0:0",
+      "key": "bun-test-isolate:0:0",
+      "capabilityId": "bun-test-isolate",
+      "capabilityKey": "bun-test-isolate",
+      "api": "--isolate",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Per-file test isolation is harness configuration without a domain identity.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:isolate",
+      "consumer": "package.json",
+      "consumerSymbol": "scripts",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-shard:0:0",
+      "key": "bun-test-shard:0:0",
+      "capabilityId": "bun-test-shard",
+      "capabilityKey": "bun-test-shard",
+      "api": "--shard",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Shard coordinates are CI configuration rather than a FactoryWager domain value.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:ci:shard",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-changed:0:0",
+      "key": "bun-test-changed:0:0",
+      "capabilityId": "bun-test-changed",
+      "capabilityKey": "bun-test-changed",
+      "api": "--changed",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Changed-test selection consumes repository state, not a domain identity.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:watch",
+      "consumer": "package.json",
+      "consumerSymbol": "scripts",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "fetch-http2-client:0:0",
+      "key": "fetch-http2-client:0:0",
+      "capabilityId": "fetch-http2-client",
+      "capabilityKey": "fetch-http2-client",
+      "api": "fetch protocol http2",
+      "variant": "fetch-client",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The negotiated transport protocol changes network behavior without changing request identity.",
+      "wrapper": "projects/active/sports-terminal-os/src/utils/h2-fetch.ts",
+      "wrapperSymbol": "h2Fetch",
+      "consumer": "projects/active/sports-terminal-os/src/utils/h2-fetch.ts",
+      "consumerSymbol": "h2Fetch",
+      "project": "projects/active/sports-terminal-os",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "fetch-http3-client-probe:0:0",
+      "key": "fetch-http3-client-probe:0:0",
+      "capabilityId": "fetch-http3-client-probe",
+      "capabilityKey": "fetch-http3-client-probe",
+      "api": "http3",
+      "variant": "fetch-client",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The experimental transport probe reports connectivity and carries no domain identity.",
+      "wrapper": "scripts/dx-mcp.ts",
+      "wrapperSymbol": "toolsCall",
+      "consumer": "scripts/dx-mcp.ts",
+      "consumerSymbol": "dispatch",
+      "project": "project-R-score",
+      "policy": "lab-only",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-serve-http3-probe:0:0",
+      "key": "bun-serve-http3-probe:0:0",
+      "capabilityId": "bun-serve-http3-probe",
+      "capabilityKey": "bun-serve-http3-probe",
+      "api": "Bun.serve http3",
+      "variant": "quic-server",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The QUIC server probe validates runtime support without transporting a domain identity.",
+      "wrapper": "scripts/dx-mcp.ts",
+      "wrapperSymbol": "toolsCall",
+      "consumer": "scripts/dx-mcp.ts",
+      "consumerSymbol": "dispatch",
+      "project": "project-R-score",
+      "policy": "lab-only",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    }
+  ],
+  "brands": [
+    {
+      "name": "SessionId",
+      "domain": "session",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "TerminalId",
+      "domain": "session",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "RequestId",
+      "domain": "session",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "CorrelationId",
+      "domain": "session",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "SnapshotId",
+      "domain": "session",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "UserId",
+      "domain": "identity",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "AccountId",
+      "domain": "identity",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "IdentityId",
+      "domain": "identity",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "AccessKeyId",
+      "domain": "identity",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "TokenId",
+      "domain": "identity",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "DocumentId",
+      "domain": "documents",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ZoneId",
+      "domain": "documents",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "DocTokenId",
+      "domain": "documents",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ChallengeId",
+      "domain": "security",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "PolicyId",
+      "domain": "security",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "DeploymentId",
+      "domain": "deployment",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "VersionId",
+      "domain": "audit",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "AuditId",
+      "domain": "audit",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "AuditFindingId",
+      "domain": "audit",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "AuditConceptId",
+      "domain": "audit",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "AuditEntryId",
+      "domain": "audit",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "EvidenceId",
+      "domain": "audit",
+      "capabilities": [
+        "Bun.Image",
+        "Bun.WebView",
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 3,
+      "projects": [
+        "project-R-score"
+      ]
+    },
+    {
+      "name": "OperationId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ResourceId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ProjectId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "PipelineId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "JobId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "StepId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "WebhookId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "FeedId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "RunId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "DecisionId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "LoopId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "TreeNodeId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ExperimentId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ExperimentVariantId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ExperimentAssignmentId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "PartnerProfileKey",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "PartnerTemplateId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "GateDecisionId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "OpsChannelEventId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "StateCode",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ZipCode",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "PortalTenantId",
+      "domain": "portal",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "TelegramUserId",
+      "domain": "portal",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "PortalAccountId",
+      "domain": "portal",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "LinkNonceId",
+      "domain": "portal",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "HostId",
+      "domain": "surfaces",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "SurfaceId",
+      "domain": "surfaces",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "AccessDomainId",
+      "domain": "surfaces",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    }
+  ],
+  "projects": [
+    {
+      "path": "projects/active/dashboards/quantum-terminal-dashboard",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 3,
+      "observed": 3,
+      "undeclared": 3,
+      "legacyUndeclared": 3
+    },
+    {
+      "path": "projects/active/enterprise/fantasy42-fire22-registry",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 3,
+      "observed": 3,
+      "undeclared": 3,
+      "legacyUndeclared": 3
+    },
+    {
+      "path": "projects/active/utilities/bun-toml-secrets-editor",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 1,
+      "observed": 1,
+      "undeclared": 1,
+      "legacyUndeclared": 1
+    },
+    {
+      "path": "projects/active/enterprise/bet-ticker-worker-v1.1",
+      "status": "external-or-untracked",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/dashboards/enterprise-dashboard",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 9,
+      "observed": 9,
+      "undeclared": 9,
+      "legacyUndeclared": 9
+    },
+    {
+      "path": "projects/experimental/api-plive-setup-discovery",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/automation/enhancements-1.0.01",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/experimental/keyboard-shortcuts-lite",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/enterprise/full-stack-bun.io",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 31,
+      "observed": 31,
+      "undeclared": 31,
+      "legacyUndeclared": 31
+    },
+    {
+      "path": "projects/active/dashboards/secrets-dashboard",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/utilities/bun-file-analyzer",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 6,
+      "observed": 6,
+      "undeclared": 6,
+      "legacyUndeclared": 6
+    },
+    {
+      "path": "projects/active/utilities/shortcut-registry",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/enterprise/cascade-mover-v3",
+      "status": "external-or-untracked",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/development/kal-poly-bot",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 5,
+      "observed": 5,
+      "undeclared": 5,
+      "legacyUndeclared": 5
+    },
+    {
+      "path": "projects/active/analysis/matrix-analysis",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 16,
+      "observed": 16,
+      "undeclared": 16,
+      "legacyUndeclared": 16
+    },
+    {
+      "path": "projects/active/tools/native-addon-tool",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/analysis/grok-security",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 6,
+      "observed": 6,
+      "undeclared": 6,
+      "legacyUndeclared": 6
+    },
+    {
+      "path": "projects/active/enterprise/foxy-proxy",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/experimental/rust-bun-plugin",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/utilities/proton-pass",
+      "status": "local-pattern",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/development/geelark",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 4,
+      "observed": 4,
+      "undeclared": 4,
+      "legacyUndeclared": 4
+    },
+    {
+      "path": "projects/experimental/cli-dashboard",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/utilities/toml-cli",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/experimental/zig-self-bun",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 1,
+      "observed": 1,
+      "undeclared": 1,
+      "legacyUndeclared": 1
+    },
+    {
+      "path": "projects/active/sports-terminal-os",
+      "status": "adopted",
+      "capabilities": [
+        "fetch protocol http2"
+      ],
+      "relationships": 1,
+      "brands": [],
+      "verified": 0,
+      "attention": 31,
+      "observed": 30,
+      "undeclared": 30,
+      "legacyUndeclared": 30
+    },
+    {
+      "path": "projects/experimental/edge-worker",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/analysis/scanner",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 3,
+      "observed": 3,
+      "undeclared": 3,
+      "legacyUndeclared": 3
+    },
+    {
+      "path": "projects/active/playwriter-skill",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/experimental/my-bun-app",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/experimental/codepoint",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/experimental/tan-bun",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/experimental/testing",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 13,
+      "observed": 13,
+      "undeclared": 13,
+      "legacyUndeclared": 13
+    },
+    {
+      "path": "projects/active/f402-openapi",
+      "status": "external-or-untracked",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 0,
+      "observed": 0,
+      "undeclared": 0,
+      "legacyUndeclared": 0
+    },
+    {
+      "path": "projects/active/factorywager",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 2,
+      "observed": 2,
+      "undeclared": 2,
+      "legacyUndeclared": 2
+    },
+    {
+      "path": "projects/experimental/2048",
+      "status": "governed-no-usage",
+      "capabilities": [],
+      "relationships": 0,
+      "brands": [],
+      "verified": 0,
+      "attention": 10,
+      "observed": 10,
+      "undeclared": 10,
+      "legacyUndeclared": 10
+    }
+  ],
+  "findings": [
+    {
+      "key": "--no-orphans|bun-config|.bun-create/factory-library/bunfig.toml#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "--no-orphans",
+      "path": ".bun-create/factory-library/bunfig.toml",
+      "line": 9,
+      "detail": "--no-orphans (bun-config) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "--no-orphans|bun-config|bunfig.toml#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "--no-orphans",
+      "path": "bunfig.toml",
+      "line": 26,
+      "detail": "--no-orphans (bun-config) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "--parallel|bun-run|projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/package.json#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "--parallel",
+      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/package.json",
+      "line": 1,
+      "detail": "--parallel (bun-run) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "--parallel|bun-run|scratch/bun-v1.3.9-examples/benchmarks/package.json#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "--parallel",
+      "path": "scratch/bun-v1.3.9-examples/benchmarks/package.json",
+      "line": 9,
+      "detail": "--parallel (bun-run) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "--parallel|bun-run|scratch/bun-v1.3.9-examples/playground/package.json#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "--parallel",
+      "path": "scratch/bun-v1.3.9-examples/playground/package.json",
+      "line": 9,
+      "detail": "--parallel (bun-run) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|projects/active/sports-terminal-os/demos/mega-liner-v3.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v3.ts",
+      "line": 462,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|projects/active/sports-terminal-os/demos/mega-liner-v7.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v7.ts",
+      "line": 443,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|projects/active/sports-terminal-os/demos/mega-liner-v8.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v8.ts",
+      "line": 736,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|projects/active/sports-terminal-os/src/services/cron.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "projects/active/sports-terminal-os/src/services/cron.ts",
+      "line": 453,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|projects/active/sports-terminal-os/src/services/prediction-market-service.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "projects/active/sports-terminal-os/src/services/prediction-market-service.ts",
+      "line": 839,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|projects/active/sports-terminal-os/src/services/prediction-market-service.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "projects/active/sports-terminal-os/src/services/prediction-market-service.ts",
+      "line": 856,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|tools/bun-api-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/bun-api-oneliners.ts",
+      "line": 619,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|tools/bun-api-showcase/oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/bun-api-showcase/oneliners.ts",
+      "line": 563,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|tools/bun-api-showcase/ops-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/bun-api-showcase/ops-oneliners.ts",
+      "line": 192,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|in-process|tools/bun-ops-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 319,
+      "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|parse|lib/harness/cron.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/harness/cron.ts",
+      "line": 65,
+      "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|parse|tools/telegram-catalog-research-cron.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/telegram-catalog-research-cron.ts",
+      "line": 33,
+      "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|unknown|lib/accounts/automation.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/accounts/automation.ts",
+      "line": 35,
+      "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|unknown|lib/accounts/automation.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/accounts/automation.ts",
+      "line": 47,
+      "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|unknown|lib/accounts/automation.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/accounts/automation.ts",
+      "line": 62,
+      "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|unknown|lib/accounts/automation.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/accounts/automation.ts",
+      "line": 79,
+      "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.cron|unknown|lib/harness/cron.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/harness/cron.ts",
+      "line": 57,
+      "detail": "Bun.cron (unknown) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/dod/verifier.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/dod/verifier.ts",
+      "line": 255,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/dod/verifier.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/dod/verifier.ts",
+      "line": 506,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/image-metadata.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/image-metadata.ts",
+      "line": 125,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/image-metadata.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/image-metadata.ts",
+      "line": 156,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/prediction/report.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/prediction/report.ts",
+      "line": 1563,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/telegram/branding.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/telegram/branding.ts",
+      "line": 105,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|lib/telegram/package-group-icon.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/telegram/package-group-icon.ts",
+      "line": 17,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|projects/active/sports-terminal-os/demos/mega-liner-v7.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v7.ts",
+      "line": 246,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|projects/active/sports-terminal-os/demos/mega-liner-v8.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v8.ts",
+      "line": 341,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|projects/active/sports-terminal-os/src/services/pipeline-worker.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "projects/active/sports-terminal-os/src/services/pipeline-worker.ts",
+      "line": 288,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|projects/active/sports-terminal-os/src/services/pipeline-worker.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "projects/active/sports-terminal-os/src/services/pipeline-worker.ts",
+      "line": 291,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|tools/bun-api-showcase.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/bun-api-showcase.ts",
+      "line": 234,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|tools/bun-api-showcase/oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/bun-api-showcase/oneliners.ts",
+      "line": 537,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|tools/generate-portal-icons.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/generate-portal-icons.ts",
+      "line": 277,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|tools/generate-portal-icons.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/generate-portal-icons.ts",
+      "line": 289,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|tools/limit-chart.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/limit-chart.ts",
+      "line": 170,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Image|image-processing|tools/verify-bun-release.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/verify-bun-release.ts",
+      "line": 416,
+      "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64|projects/active/analysis/matrix-analysis/my-wager-v3/utils/omega-utilities.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/my-wager-v3/utils/omega-utilities.ts",
+      "line": 14,
+      "detail": "Bun.randomUUIDv7 (uuid-base64) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64|projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts",
+      "line": 25,
+      "detail": "Bun.randomUUIDv7 (uuid-base64) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts",
+      "line": 193,
+      "detail": "Bun.randomUUIDv7 (uuid-base64) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts",
+      "line": 124,
+      "detail": "Bun.randomUUIDv7 (uuid-base64) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64url|projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts",
+      "line": 26,
+      "detail": "Bun.randomUUIDv7 (uuid-base64url) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64url|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts",
+      "line": 195,
+      "detail": "Bun.randomUUIDv7 (uuid-base64url) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64url|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts",
+      "line": 125,
+      "detail": "Bun.randomUUIDv7 (uuid-base64url) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64url|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts",
+      "line": 31,
+      "detail": "Bun.randomUUIDv7 (uuid-base64url) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64url|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/src/utils/bun-utils-factory.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/src/utils/bun-utils-factory.ts",
+      "line": 194,
+      "detail": "Bun.randomUUIDv7 (uuid-base64url) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64url|projects/active/factorywager/registry/packages/dev-dashboard/src/benchmark-runner.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/factorywager/registry/packages/dev-dashboard/src/benchmark-runner.ts",
+      "line": 32,
+      "detail": "Bun.randomUUIDv7 (uuid-base64url) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-base64url|projects/active/factorywager/registry/packages/dev-dashboard/src/benchmarks/core.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/factorywager/registry/packages/dev-dashboard/src/benchmarks/core.ts",
+      "line": 55,
+      "detail": "Bun.randomUUIDv7 (uuid-base64url) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-buffer|lib/time.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/time.ts",
+      "line": 96,
+      "detail": "Bun.randomUUIDv7 (uuid-buffer) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-buffer|projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts",
+      "line": 27,
+      "detail": "Bun.randomUUIDv7 (uuid-buffer) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-buffer|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts",
+      "line": 198,
+      "detail": "Bun.randomUUIDv7 (uuid-buffer) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-buffer|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts",
+      "line": 128,
+      "detail": "Bun.randomUUIDv7 (uuid-buffer) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-buffer|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts",
+      "line": 26,
+      "detail": "Bun.randomUUIDv7 (uuid-buffer) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-buffer|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts",
+      "line": 98,
+      "detail": "Bun.randomUUIDv7 (uuid-buffer) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-buffer|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/src/utils/bun-utils-factory.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/src/utils/bun-utils-factory.ts",
+      "line": 186,
+      "detail": "Bun.randomUUIDv7 (uuid-buffer) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-hex|lib/time.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/time.ts",
+      "line": 93,
+      "detail": "Bun.randomUUIDv7 (uuid-hex) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-hex|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts",
+      "line": 191,
+      "detail": "Bun.randomUUIDv7 (uuid-hex) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-hex|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts",
+      "line": 123,
+      "detail": "Bun.randomUUIDv7 (uuid-hex) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-hex|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts",
+      "line": 132,
+      "detail": "Bun.randomUUIDv7 (uuid-hex) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/accounts/accounts.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/accounts/accounts.ts",
+      "line": 136,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/ai-operations-manager.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/ai-operations-manager.ts",
+      "line": 1505,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/ai-operations-manager.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/ai-operations-manager.ts",
+      "line": 1512,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/anomaly-detector.ts",
+      "line": 431,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/anomaly-detector.ts",
+      "line": 456,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/anomaly-detector.ts",
+      "line": 548,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/anomaly-detector.ts",
+      "line": 680,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/ai/anomaly-detector.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/ai/anomaly-detector.ts",
+      "line": 680,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/automation/provision-accounts.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/automation/provision-accounts.ts",
+      "line": 179,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/channels/outbox.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/channels/outbox.ts",
+      "line": 85,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/champion-challenger.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/champion-challenger.ts",
+      "line": 38,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 121,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 154,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 335,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 386,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 450,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#6",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 715,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#7",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 751,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/engine.ts#8",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/engine.ts",
+      "line": 818,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/switchback.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/switchback.ts",
+      "line": 120,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/experiments/switchback.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/experiments/switchback.ts",
+      "line": 203,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/identity/identity.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/identity/identity.ts",
+      "line": 318,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/identity/identity.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/identity/identity.ts",
+      "line": 711,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/monitoring/collect.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/monitoring/collect.ts",
+      "line": 186,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/account-service.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/account-service.ts",
+      "line": 93,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/book-reconcile.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/book-reconcile.ts",
+      "line": 154,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/coverage-analytics.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/coverage-analytics.ts",
+      "line": 135,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/coverage-analytics.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/coverage-analytics.ts",
+      "line": 224,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/coverage-analytics.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/coverage-analytics.ts",
+      "line": 285,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/dod-seed.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/dod-seed.ts",
+      "line": 126,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/dod-seed.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/dod-seed.ts",
+      "line": 127,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/liquidity.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/liquidity.ts",
+      "line": 44,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-fixture.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-loop-fixture.ts",
+      "line": 20,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-fixture.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-loop-fixture.ts",
+      "line": 21,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-fixture.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-loop-fixture.ts",
+      "line": 76,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-fixture.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-loop-fixture.ts",
+      "line": 85,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-gate-backfill.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-loop-gate-backfill.ts",
+      "line": 92,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-loop-gate-backfill.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-loop-gate-backfill.ts",
+      "line": 97,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 61,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#10",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 121,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#11",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 257,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#12",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 258,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#13",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 259,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#14",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 260,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#15",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 279,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#16",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 280,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#17",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 294,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#18",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 295,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#19",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 308,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 70,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#20",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 308,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#21",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 308,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 71,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 72,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 73,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#6",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 74,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#7",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 75,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#8",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 110,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/ops-seed.ts#9",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/ops-seed.ts",
+      "line": 120,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/partner-profile-bridge.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/partner-profile-bridge.ts",
+      "line": 383,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/partner-profile-bridge.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/partner-profile-bridge.ts",
+      "line": 552,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/partner-profile-seed.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/partner-profile-seed.ts",
+      "line": 99,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/partner-profile-seed.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/partner-profile-seed.ts",
+      "line": 141,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/partner-profile-seed.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/partner-profile-seed.ts",
+      "line": 167,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/play-dispatcher.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/play-dispatcher.ts",
+      "line": 118,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/play-dispatcher.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/play-dispatcher.ts",
+      "line": 187,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/play-dispatcher.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/play-dispatcher.ts",
+      "line": 236,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/play-settlement.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/play-settlement.ts",
+      "line": 110,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/play-signing.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/play-signing.ts",
+      "line": 85,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/prediction-seed.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/prediction-seed.ts",
+      "line": 119,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/rail-limits.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/rail-limits.ts",
+      "line": 63,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-identity-bridge.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/toc-identity-bridge.ts",
+      "line": 92,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-identity-bridge.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/toc-identity-bridge.ts",
+      "line": 124,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-identity-bridge.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/toc-identity-bridge.ts",
+      "line": 172,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-identity-bridge.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/toc-identity-bridge.ts",
+      "line": 193,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/operations/toc-soft-balance.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/operations/toc-soft-balance.ts",
+      "line": 78,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/prediction/limit-prediction.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/prediction/limit-prediction.ts",
+      "line": 161,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/prediction/tester.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/prediction/tester.ts",
+      "line": 103,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/provisioning/queue.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/provisioning/queue.ts",
+      "line": 42,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast-log.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/broadcast-log.ts",
+      "line": 45,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast-log.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/broadcast-log.ts",
+      "line": 53,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/broadcast.ts",
+      "line": 103,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/broadcast.ts",
+      "line": 125,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/broadcast.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/broadcast.ts",
+      "line": 204,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/flows/media.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/flows/media.ts",
+      "line": 29,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/ops-bot.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/ops-bot.ts",
+      "line": 285,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|lib/telegram/ops-commands.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/telegram/ops-commands.ts",
+      "line": 105,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|packages/p2p/src/customer-notifier.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "packages/p2p/src/customer-notifier.ts",
+      "line": 32,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|packages/p2p/src/customer-notifier.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "packages/p2p/src/customer-notifier.ts",
+      "line": 199,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|packages/p2p/src/migration-workflow.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "packages/p2p/src/migration-workflow.ts",
+      "line": 76,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/.claude/matrix/column-standards.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/.claude/matrix/column-standards.ts",
+      "line": 1647,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/.claude/matrix/registry.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/.claude/matrix/registry.ts",
+      "line": 295,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/factory-wager/registry/upload-handler.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/factory-wager/registry/upload-handler.ts",
+      "line": 133,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/bun-feedback.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/bun-feedback.ts",
+      "line": 93,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/bun-globals-master.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/bun-globals-master.ts",
+      "line": 651,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/tension-status.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/tension-status.ts",
+      "line": 188,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/tier1380-registry.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-registry.ts",
+      "line": 2211,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts",
+      "line": 213,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts",
+      "line": 331,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts",
+      "line": 480,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts",
+      "line": 503,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts",
+      "line": 546,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/scanner/optimizations/bun-v137-apis.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/scanner/optimizations/bun-v137-apis.ts",
+      "line": 233,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/analysis/scanner/optimizations/bun-v137-apis.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/analysis/scanner/optimizations/bun-v137-apis.ts",
+      "line": 249,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/dashboards/enterprise-dashboard/examples/advanced-server-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/enterprise-dashboard/examples/advanced-server-demo.ts",
+      "line": 45,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/dashboards/enterprise-dashboard/src/server/features/realtime.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/enterprise-dashboard/src/server/features/realtime.ts",
+      "line": 244,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/dashboards/enterprise-dashboard/src/server/handlers/export.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/enterprise-dashboard/src/server/handlers/export.ts",
+      "line": 136,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/dashboards/enterprise-dashboard/src/server/index.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/enterprise-dashboard/src/server/index.ts",
+      "line": 1707,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/dashboards/enterprise-dashboard/src/server/index.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/enterprise-dashboard/src/server/index.ts",
+      "line": 1719,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/dashboards/enterprise-dashboard/src/server/index.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/enterprise-dashboard/src/server/index.ts",
+      "line": 1730,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/dashboards/enterprise-dashboard/src/server/index.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/enterprise-dashboard/src/server/index.ts",
+      "line": 1741,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/dashboards/enterprise-dashboard/src/server/services/pty-service.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/enterprise-dashboard/src/server/services/pty-service.ts",
+      "line": 102,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/development/kal-poly-bot/infrastructure/v2-4-2/component-132-uuid-generator.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/component-132-uuid-generator.ts",
+      "line": 29,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/utils/uuid-generator.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/utils/uuid-generator.ts",
+      "line": 16,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/fantasy42-fire22-registry/src/bun-optimized-server.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/fantasy42-fire22-registry/src/bun-optimized-server.ts",
+      "line": 367,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts",
+      "line": 24,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/bun-runtime-arsenal.ts",
+      "line": 28,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts",
+      "line": 155,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts",
+      "line": 183,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-arb-factory-demo.ts",
+      "line": 424,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts",
+      "line": 113,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts",
+      "line": 114,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bun-utils-complete-demo.ts",
+      "line": 115,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bunx-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/bunx-demo.ts",
+      "line": 528,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts",
+      "line": 22,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts",
+      "line": 44,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts",
+      "line": 60,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/examples/uuid-arb-demo.ts",
+      "line": 130,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/src/utils/bun-utils-factory.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/enterprise/full-stack-bun.io/packages/dynamic-spy-kit/src/utils/bun-utils-factory.ts",
+      "line": 177,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/demos/mega-liner-v8.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v8.ts",
+      "line": 181,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/api/alert-routes.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/api/alert-routes.ts",
+      "line": 210,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/api/router.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "line": 234,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/api/router.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "line": 263,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/api/router.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "line": 285,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/api/router.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "line": 296,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/api/router.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "line": 323,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/api/router.ts#6",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "line": 327,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/api/router.ts#7",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/api/router.ts",
+      "line": 362,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/index.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/index.ts",
+      "line": 292,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/index.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/index.ts",
+      "line": 407,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/index.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/index.ts",
+      "line": 738,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/middleware/security.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/middleware/security.ts",
+      "line": 44,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/services/export-service.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/services/export-service.ts",
+      "line": 440,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/services/rules-engine.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/services/rules-engine.ts",
+      "line": 304,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/sports-terminal-os/src/services/rules-engine.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/sports-terminal-os/src/services/rules-engine.ts",
+      "line": 573,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/utilities/bun-file-analyzer/api/server.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/utilities/bun-file-analyzer/api/server.ts",
+      "line": 15,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/utilities/bun-file-analyzer/bun.config.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/utilities/bun-file-analyzer/bun.config.ts",
+      "line": 22,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/utilities/bun-file-analyzer/bun.config.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/utilities/bun-file-analyzer/bun.config.ts",
+      "line": 171,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/utilities/bun-file-analyzer/bun.config.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/utilities/bun-file-analyzer/bun.config.ts",
+      "line": 187,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/utilities/bun-file-analyzer/bun.config.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/utilities/bun-file-analyzer/bun.config.ts",
+      "line": 214,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/utilities/bun-file-analyzer/src/api/routes.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/utilities/bun-file-analyzer/src/api/routes.ts",
+      "line": 126,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun.ts",
+      "line": 6,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/demos/demo-batch-tracing.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/demos/demo-batch-tracing.ts",
+      "line": 33,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/demos/demo-crc32-sql.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/demos/demo-crc32-sql.ts",
+      "line": 34,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/demos/demo-crc32-sql.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/demos/demo-crc32-sql.ts",
+      "line": 67,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/demos/demo-crc32-sql.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/demos/demo-crc32-sql.ts",
+      "line": 95,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/demos/demo-crc32-sql.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/demos/demo-crc32-sql.ts",
+      "line": 125,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/examples/bulk-crc32-insert.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/examples/bulk-crc32-insert.ts",
+      "line": 24,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/examples/bulk-crc32-insert.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/examples/bulk-crc32-insert.ts",
+      "line": 33,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/examples/bulk-crc32-insert.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/examples/bulk-crc32-insert.ts",
+      "line": 42,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/examples/bulk-crc32-insert.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/examples/bulk-crc32-insert.ts",
+      "line": 95,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|projects/experimental/2048/examples/bulk-crc32-insert.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/experimental/2048/examples/bulk-crc32-insert.ts",
+      "line": 122,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|scripts/seed-platforms.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "scripts/seed-platforms.ts",
+      "line": 260,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|scripts/seed-platforms.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "scripts/seed-platforms.ts",
+      "line": 278,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|scripts/seed-platforms.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "scripts/seed-platforms.ts",
+      "line": 294,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/benchmarks/deep-benchmark.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/benchmarks/deep-benchmark.ts",
+      "line": 167,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-api-oneliners.ts",
+      "line": 153,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-api-showcase.ts",
+      "line": 114,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase/oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-api-showcase/oneliners.ts",
+      "line": 193,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase/ops-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-api-showcase/ops-oneliners.ts",
+      "line": 46,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase/ops-oneliners.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-api-showcase/ops-oneliners.ts",
+      "line": 75,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-api-showcase/ops-oneliners.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-api-showcase/ops-oneliners.ts",
+      "line": 102,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 33,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 34,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 35,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 36,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 61,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#6",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 87,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#7",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 114,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/bun-ops-oneliners.ts#8",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 265,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.randomUUIDv7|uuid-string|tools/deep-audit-report.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "tools/deep-audit-report.ts",
+      "line": 82,
+      "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.sliceAnsi|display-width|lib/factory/cli.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "lib/factory/cli.ts",
+      "line": 324,
+      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.sliceAnsi|display-width|tools/benchmarks/console-depth-perf.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "tools/benchmarks/console-depth-perf.ts",
+      "line": 92,
+      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.sliceAnsi|display-width|tools/bun-api-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "tools/bun-api-oneliners.ts",
+      "line": 213,
+      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.sliceAnsi|display-width|tools/bun-api-showcase/oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "tools/bun-api-showcase/oneliners.ts",
+      "line": 237,
+      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.sliceAnsi|display-width|tools/packages-metafile-audit.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "tools/packages-metafile-audit.ts",
+      "line": 259,
+      "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/grok-security/bun-inspect-utils/src/terminal/pty-terminal.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/grok-security/bun-inspect-utils/src/terminal/pty-terminal.ts",
+      "line": 47,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/grok-security/tools/versioned-components.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/grok-security/tools/versioned-components.ts",
+      "line": 316,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/grok-security/tools/versioned-components.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/grok-security/tools/versioned-components.ts",
+      "line": 391,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/grok-security/tools/versioned-components.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/grok-security/tools/versioned-components.ts",
+      "line": 488,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/grok-security/tools/versioned-components.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/grok-security/tools/versioned-components.ts",
+      "line": 671,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/grok-security/tools/versioned-components.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/grok-security/tools/versioned-components.ts",
+      "line": 936,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/matrix-analysis/.claude/core/team/profile-terminal.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/matrix-analysis/.claude/core/team/profile-terminal.ts",
+      "line": 130,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/matrix-analysis/my-wager-v3/terminals/terminal-manager.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/matrix-analysis/my-wager-v3/terminals/terminal-manager.ts",
+      "line": 59,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/matrix-analysis/my-wager-v3/terminals/terminal-manager.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/matrix-analysis/my-wager-v3/terminals/terminal-manager.ts",
+      "line": 170,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/analysis/scanner/cli/renderers/process-management.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/analysis/scanner/cli/renderers/process-management.ts",
+      "line": 246,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/dashboards/enterprise-dashboard/src/server/pty-ui.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/dashboards/enterprise-dashboard/src/server/pty-ui.ts",
+      "line": 12,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts",
+      "line": 104,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts",
+      "line": 203,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts",
+      "line": 430,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/development/geelark/dev/dev-hq/servers/dashboard-server.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/development/geelark/dev/dev-hq/servers/dashboard-server.ts",
+      "line": 60,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/development/geelark/src/examples/terminal-dashboard-example.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/development/geelark/src/examples/terminal-dashboard-example.ts",
+      "line": 25,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/development/geelark/src/examples/terminal-dashboard-example.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/development/geelark/src/examples/terminal-dashboard-example.ts",
+      "line": 248,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/development/geelark/src/websocket/config-handler.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/development/geelark/src/websocket/config-handler.ts",
+      "line": 179,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/development/kal-poly-bot/examples/terminal-pty-examples.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/development/kal-poly-bot/examples/terminal-pty-examples.ts",
+      "line": 161,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/development/kal-poly-bot/poly-kalshi-arb/src/bun/terminal_server.bun.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/development/kal-poly-bot/poly-kalshi-arb/src/bun/terminal_server.bun.ts",
+      "line": 63,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/development/kal-poly-bot/src/terminal-server.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/development/kal-poly-bot/src/terminal-server.ts",
+      "line": 99,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/active/development/kal-poly-bot/src/terminal-utils.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/active/development/kal-poly-bot/src/terminal-utils.ts",
+      "line": 135,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/scripts/registry.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/scripts/registry.ts",
+      "line": 161,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/scripts/registry.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/scripts/registry.ts",
+      "line": 205,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/scripts/registry.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/scripts/registry.ts",
+      "line": 606,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/cli/demo-pty.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/cli/demo-pty.ts",
+      "line": 7,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/cli/index.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/cli/index.ts",
+      "line": 39,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/cli/index.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/cli/index.ts",
+      "line": 72,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/cli/terminal.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/cli/terminal.ts",
+      "line": 18,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/cli/terminal.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/cli/terminal.ts",
+      "line": 32,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/cli/terminal.ts#3",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/cli/terminal.ts",
+      "line": 51,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/cli/terminal.ts#4",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/cli/terminal.ts",
+      "line": 80,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/cli/terminal.ts#5",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/cli/terminal.ts",
+      "line": 107,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/systems/phone-system.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/systems/phone-system.ts",
+      "line": 32,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/testing/src/systems/phone-system.ts#2",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/testing/src/systems/phone-system.ts",
+      "line": 157,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.Terminal|pty|projects/experimental/zig-self-bun/registry/terminal/term.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "projects/experimental/zig-self-bun/registry/terminal/term.ts",
+      "line": 23,
+      "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|lib/automation/provision-accounts.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "lib/automation/provision-accounts.ts",
+      "line": 108,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|lib/prediction/report.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "lib/prediction/report.ts",
+      "line": 1559,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|projects/active/sports-terminal-os/demos/mega-liner-v3.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v3.ts",
+      "line": 259,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|projects/active/sports-terminal-os/demos/mega-liner-v7.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v7.ts",
+      "line": 235,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|projects/active/sports-terminal-os/demos/mega-liner-v8.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "projects/active/sports-terminal-os/demos/mega-liner-v8.ts",
+      "line": 329,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|projects/active/sports-terminal-os/src/services/pipeline-worker.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "projects/active/sports-terminal-os/src/services/pipeline-worker.ts",
+      "line": 244,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|tools/bun-api-showcase.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "tools/bun-api-showcase.ts",
+      "line": 219,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|tools/bun-api-showcase/oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "tools/bun-api-showcase/oneliners.ts",
+      "line": 523,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|tools/bun-api-showcase/ops-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "tools/bun-api-showcase/ops-oneliners.ts",
+      "line": 119,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "Bun.WebView|headless|tools/bun-ops-oneliners.ts#1",
+      "kind": "observed-undeclared",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "tools/bun-ops-oneliners.ts",
+      "line": 194,
+      "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
+      "baseline": true
+    },
+    {
+      "key": "proof-state|bun-cron-in-process-monitoring",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/factory/monitoring.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-cron-os-persistent",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "lib/harness/cron.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-evidence-mint",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "lib/time.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-serve-http3-probe",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.serve http3",
+      "path": "scripts/dx-mcp.ts",
+      "line": 1,
+      "detail": "lab-only capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-sliceansi-terminal-output",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.sliceAnsi",
+      "path": "lib/console-depth.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-terminal-pty",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.Terminal",
+      "path": "lib/terminal.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-test-changed",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "--changed",
+      "path": "package.json",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-test-isolate",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "--isolate",
+      "path": "package.json",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-test-parallel",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "--parallel",
+      "path": "package.json",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-test-shard",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "--shard",
+      "path": "package.json",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-webview-dod-evidence",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.WebView",
+      "path": "lib/dod/verifier.ts",
+      "line": 1,
+      "detail": "lab-only capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|fetch-http2-client",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "fetch protocol http2",
+      "path": "projects/active/sports-terminal-os/src/utils/h2-fetch.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|fetch-http3-client-probe",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "http3",
+      "path": "scripts/dx-mcp.ts",
+      "line": 1,
+      "detail": "lab-only capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|process-execve-capability-probe",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "process.execve",
+      "path": "scripts/dx-mcp.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    }
+  ]
+}
