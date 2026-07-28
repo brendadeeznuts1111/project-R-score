@@ -10,9 +10,11 @@ import {
   buildBunFlagsHelp,
   buildFlagSets,
   bunSpawnArgv,
+  findBunHelpMisses,
   formatFlagDisplay,
   formatRuntimeFlagsTable,
   parseBunExecutionFlags,
+  parseBunHelpTokens,
 } from '../tools/lib/portal-cli-bun-flags.ts';
 import {
   BUN_API_REFERENCE_URL,
@@ -144,7 +146,15 @@ describe('parseBunExecutionFlags', () => {
     expect(sets.boolFlags.has('--smol')).toBe(true);
     expect(sets.valueFlags.has('--cwd')).toBe(true);
     expect(sets.valueFlags.has('-c')).toBe(true); // --config shortcode
+    expect(sets.boolFlags.has('-i')).toBe(true); // standalone ≡ --install=fallback
+    expect(sets.boolFlags.has('--no-install')).toBe(true);
+    // -i is NOT shortcode of --no-install
+    const noInstall = RUNTIME_FLAGS.find(r => r.flag === '--no-install');
+    expect(noInstall?.shortcode).toBeUndefined();
+    const bareI = RUNTIME_FLAGS.find(r => r.flag === '-i');
+    expect(bareI?.equivalentTo).toBe('--install=fallback');
     expect(BUN_BOOL_FLAGS.has('--watch')).toBe(true);
+    expect(BUN_BOOL_FLAGS.has('-i')).toBe(true);
     expect(BUN_VALUE_FLAGS.has('--env-file')).toBe(true);
 
     const health = assessRuntimeFlagsCatalog(RUNTIME_FLAGS);
@@ -154,6 +164,7 @@ describe('parseBunExecutionFlags', () => {
     expect(health.shortcodeConflicts).toEqual([]);
     expect(health.deprecatedFlags).toEqual([]);
     expect(health.helpCoverageMisses).toEqual([]);
+    expect(health.bunHelpMisses).toEqual([]);
 
     expect(BUN_FLAGS_HELP).not.toContain('--verbose');
     expect(BUN_FLAGS_HELP).toContain(`API reference: ${BUN_API_REFERENCE_URL}`);
@@ -217,5 +228,111 @@ describe('parseBunExecutionFlags', () => {
     expect(bad.ok).toBe(false);
     expect(bad.shortcodeConflicts.some(s => s.includes('-c'))).toBe(true);
     expect(bad.schemaIssues.length).toBeGreaterThan(0);
+  });
+
+  test('rejects --no-install claiming shortcode -i', () => {
+    const bad = assessRuntimeFlagsCatalog([
+      {
+        flag: '--no-install',
+        shortcode: '-i',
+        category: 'Dependency Resolution',
+        version: 'Bun ≥1.0',
+        description: 'wrong',
+        url: 'https://bun.com/docs/runtime/auto-install',
+        takesValue: false,
+      },
+    ]);
+    expect(bad.schemaIssues.some(s => s.includes('--no-install') && s.includes('-i'))).toBe(
+      true
+    );
+  });
+
+  test('shortcodes unique per context — same shortcode allowed across contexts', () => {
+    const ok = assessRuntimeFlagsCatalog([
+      {
+        flag: '-i',
+        category: 'Dependency Resolution',
+        version: 'Bun ≥1.0',
+        description: 'runtime auto-install',
+        url: 'https://bun.com/docs/runtime/auto-install',
+        takesValue: false,
+        context: 'runtime',
+        equivalentTo: '--install=fallback',
+      },
+      {
+        flag: '--interactive',
+        shortcode: '-i',
+        category: 'Update',
+        version: 'Bun ≥1.0',
+        description: 'update interactive',
+        url: 'https://bun.com/docs/pm/cli/update',
+        takesValue: false,
+        context: 'update',
+      },
+    ]);
+    expect(ok.shortcodeConflicts).toEqual([]);
+    expect(ok.schemaIssues).toEqual([]);
+    // harvest only runtime
+    const sets = buildFlagSets(ok.total ? [
+      {
+        flag: '-i',
+        category: 'Dependency Resolution',
+        version: 'Bun ≥1.0',
+        description: 'runtime auto-install',
+        url: 'https://bun.com/docs/runtime/auto-install',
+        takesValue: false,
+        context: 'runtime' as const,
+      },
+      {
+        flag: '--interactive',
+        shortcode: '-i',
+        category: 'Update',
+        version: 'Bun ≥1.0',
+        description: 'update interactive',
+        url: 'https://bun.com/docs/pm/cli/update',
+        takesValue: false,
+        context: 'update' as const,
+      },
+    ] : []);
+    expect(sets.boolFlags.has('-i')).toBe(true);
+    expect(sets.boolFlags.has('--interactive')).toBe(false);
+  });
+
+  test('parseBunHelpTokens + parity catches missing tokens', async () => {
+    const proc = Bun.spawn(['bun', '--help'], { stdout: 'pipe', stderr: 'pipe' });
+    const help = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    const { longs, shorts } = parseBunHelpTokens(help);
+    expect(longs.has('--watch')).toBe(true);
+    expect(shorts.has('-i')).toBe(true);
+    expect(longs.has('--no-install')).toBe(true);
+
+    const misses = findBunHelpMisses(RUNTIME_FLAGS, help);
+    expect(misses).toEqual([]);
+
+    const health = assessRuntimeFlagsCatalog(RUNTIME_FLAGS, { bunHelpText: help });
+    expect(health.bunHelpMisses).toEqual([]);
+    expect(health.ok).toBe(true);
+
+    const fakeMiss = findBunHelpMisses(
+      [
+        {
+          flag: '--not-a-real-bun-flag-xyz',
+          category: 'X',
+          version: 'Bun ≥1.0',
+          description: 'x',
+          url: 'https://bun.com/docs/runtime',
+          context: 'runtime',
+        },
+      ],
+      help
+    );
+    expect(fakeMiss).toContain('--not-a-real-bun-flag-xyz');
+  });
+
+  test('harvests standalone -i as bun runtime flag', () => {
+    const p = parseBunExecutionFlags(['-i', 'pm', 'ls']);
+    expect(p.bunFlags).toEqual(['-i']);
+    expect(p.rest).toEqual(['pm', 'ls']);
   });
 });

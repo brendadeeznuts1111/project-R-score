@@ -28,6 +28,14 @@ import catalogJson from '../../config/runtime-flags.json' with { type: 'json' };
  *   bun tools/portal-cli.ts --bun pm ls
  */
 
+/**
+ * Bun CLI surface this row documents.
+ * Shortcodes are unique only within a context — e.g. runtime `-i` ≠ `bun update -i` (--interactive).
+ * @see https://bun.com/docs/pm/cli/update — update -i = interactive
+ * @see https://bun.com/docs/runtime/auto-install — runtime -i ≡ --install=fallback
+ */
+export type RuntimeFlagContext = 'runtime' | 'update' | 'install' | 'test' | 'pm';
+
 /** One row in config/runtime-flags.json (schema v2 optional fields). */
 export type RuntimeFlagEntry = {
   flag: string;
@@ -44,9 +52,20 @@ export type RuntimeFlagEntry = {
   helpExample?: string;
   /** When true, appears in BUN_FLAGS_HELP and default `portal flags` table. */
   curated?: boolean;
+  /**
+   * CLI surface for shortcode uniqueness + parity (default: runtime).
+   * portal-cli harvest only uses context=runtime rows.
+   */
+  context?: RuntimeFlagContext;
+  /**
+   * Documented equivalent (e.g. runtime `-i` → `--install=fallback`).
+   * Not necessarily another catalog primary flag.
+   */
+  equivalentTo?: string;
 };
 
 export const RUNTIME_FLAGS_CATALOG_PATH = 'config/runtime-flags.json';
+export const DEFAULT_RUNTIME_FLAG_CONTEXT: RuntimeFlagContext = 'runtime';
 
 function normalizeEntry(raw: RuntimeFlagEntry): RuntimeFlagEntry {
   return {
@@ -55,7 +74,13 @@ function normalizeEntry(raw: RuntimeFlagEntry): RuntimeFlagEntry {
     default: raw.default ?? null,
     deprecated: Boolean(raw.deprecated),
     curated: Boolean(raw.curated),
+    context: raw.context ?? DEFAULT_RUNTIME_FLAG_CONTEXT,
   };
+}
+
+/** Token key scoped by CLI context (shortcodes are not global). */
+export function flagTokenKey(context: RuntimeFlagContext | undefined, token: string): string {
+  return `${context ?? DEFAULT_RUNTIME_FLAG_CONTEXT}\0${token}`;
 }
 
 /** Loaded catalog (module init). Prefer `loadRuntimeFlagsCatalog` for cwd-relative reloads in tests. */
@@ -113,7 +138,10 @@ export async function loadRuntimeFlagsCatalog(cwd?: string): Promise<RuntimeFlag
   return loaded.catalog;
 }
 
-/** Build bool / value Sets from catalog (flag + optional shortcode). */
+/**
+ * Build bool / value Sets from catalog (flag + optional shortcode).
+ * Only `context: runtime` (default) rows feed portal-cli harvest.
+ */
 export function buildFlagSets(catalog: RuntimeFlagEntry[]): {
   boolFlags: Set<string>;
   valueFlags: Set<string>;
@@ -121,6 +149,8 @@ export function buildFlagSets(catalog: RuntimeFlagEntry[]): {
   const boolFlags = new Set<string>();
   const valueFlags = new Set<string>();
   for (const row of catalog) {
+    const ctx = row.context ?? DEFAULT_RUNTIME_FLAG_CONTEXT;
+    if (ctx !== 'runtime') continue;
     const set = row.takesValue ? valueFlags : boolFlags;
     set.add(row.flag);
     if (row.shortcode) set.add(row.shortcode);
@@ -285,26 +315,90 @@ export type RuntimeFlagsCatalogHealth = {
   deprecated: number;
   valueFlags: number;
   boolFlags: number;
-  /** All issue strings (schema + shortcode + help). */
+  /** All issue strings (schema + shortcode + help + optional parity). */
   issues: string[];
   /** Schema / required-field problems (not shortcode collisions). */
   schemaIssues: string[];
-  /** Duplicate shortcodes or flag/shortcode token collisions. */
+  /** Duplicate shortcodes or flag/shortcode token collisions (scoped by context). */
   shortcodeConflicts: string[];
   /** Flags with deprecated: true */
   deprecatedFlags: string[];
   /** Curated flags whose description is missing from generated help (should be empty). */
   helpCoverageMisses: string[];
+  /**
+   * Catalog tokens missing from live `bun --help` (runtime context only).
+   * Populated only when assess opts include bunHelpText / parity result.
+   */
+  bunHelpMisses: string[];
 };
+
+export type AssessRuntimeFlagsOpts = {
+  /** When set, compare runtime-context tokens to this `bun --help` text. */
+  bunHelpText?: string;
+};
+
+/** Parse long/short flag tokens from `bun --help` output. */
+export function parseBunHelpTokens(helpText: string): {
+  longs: Set<string>;
+  shorts: Set<string>;
+} {
+  const longs = new Set<string>();
+  const shorts = new Set<string>();
+  for (const line of helpText.split('\n')) {
+    // "  -c, --config=<val>  …"
+    const paired = line.match(/^\s+(-[a-zA-Z0-9]),\s+(--[a-z0-9-]+)/);
+    if (paired) {
+      shorts.add(paired[1]!);
+      longs.add(paired[2]!);
+      continue;
+    }
+    // "  -i                                  Auto-install…"
+    const bareShort = line.match(/^\s+(-[a-zA-Z0-9])\s{2,}\S/);
+    if (bareShort) {
+      shorts.add(bareShort[1]!);
+      continue;
+    }
+    // "      --watch                         …" or "      --install=<val>  …"
+    const longOnly = line.match(/^\s+(--[a-z0-9-]+)(?:=<val>)?/);
+    if (longOnly) longs.add(longOnly[1]!);
+  }
+  return { longs, shorts };
+}
+
+/**
+ * Runtime-context catalog tokens that do not appear in live `bun --help`.
+ * Short primary flags (e.g. `-i`) check shorts; long flags check longs; shortcodes check shorts.
+ */
+export function findBunHelpMisses(catalog: RuntimeFlagEntry[], helpText: string): string[] {
+  const { longs, shorts } = parseBunHelpTokens(helpText);
+  const misses: string[] = [];
+  for (const row of catalog) {
+    const ctx = row.context ?? DEFAULT_RUNTIME_FLAG_CONTEXT;
+    if (ctx !== 'runtime') continue;
+    const primary = row.flag.split('=')[0]!;
+    if (primary.startsWith('--')) {
+      if (!longs.has(primary)) misses.push(primary);
+    } else if (primary.startsWith('-')) {
+      if (!shorts.has(primary)) misses.push(primary);
+    }
+    if (row.shortcode && !shorts.has(row.shortcode)) {
+      misses.push(`${row.flag} shortcode ${row.shortcode}`);
+    }
+  }
+  return misses;
+}
 
 /** Validate catalog integrity + help coverage (doctor-style, structured). */
 export function assessRuntimeFlagsCatalog(
-  catalog: RuntimeFlagEntry[] = RUNTIME_FLAGS
+  catalog: RuntimeFlagEntry[] = RUNTIME_FLAGS,
+  opts: AssessRuntimeFlagsOpts = {}
 ): RuntimeFlagsCatalogHealth {
   const schemaIssues: string[] = [];
   const shortcodeConflicts: string[] = [];
-  const flagSeen = new Set<string>();
-  const tokenOwner = new Map<string, string>(); // token → owning flag
+  /** Within a context: primary flag names must be unique. */
+  const flagSeenByContext = new Map<string, Set<string>>();
+  /** context\0token → owning primary flag */
+  const tokenOwner = new Map<string, string>();
   let curated = 0;
   let withShortcode = 0;
   let deprecated = 0;
@@ -313,34 +407,52 @@ export function assessRuntimeFlagsCatalog(
   const deprecatedFlags: string[] = [];
 
   for (const row of catalog) {
+    const ctx = row.context ?? DEFAULT_RUNTIME_FLAG_CONTEXT;
     if (!row.flag || typeof row.flag !== 'string' || !row.flag.startsWith('-')) {
       schemaIssues.push(`invalid flag name: ${JSON.stringify(row.flag)}`);
       continue;
     }
-    if (flagSeen.has(row.flag)) {
-      schemaIssues.push(`duplicate flag: ${row.flag}`);
-    }
-    flagSeen.add(row.flag);
 
-    const prevFlag = tokenOwner.get(row.flag);
-    if (prevFlag && prevFlag !== row.flag) {
-      shortcodeConflicts.push(`${row.flag} collides with token of ${prevFlag}`);
+    let seen = flagSeenByContext.get(ctx);
+    if (!seen) {
+      seen = new Set();
+      flagSeenByContext.set(ctx, seen);
     }
-    tokenOwner.set(row.flag, row.flag);
+    if (seen.has(row.flag)) {
+      schemaIssues.push(`duplicate flag in context=${ctx}: ${row.flag}`);
+    }
+    seen.add(row.flag);
+
+    const primaryKey = flagTokenKey(ctx, row.flag);
+    const prevPrimary = tokenOwner.get(primaryKey);
+    if (prevPrimary && prevPrimary !== row.flag) {
+      shortcodeConflicts.push(`context=${ctx}: ${row.flag} collides with token of ${prevPrimary}`);
+    }
+    tokenOwner.set(primaryKey, row.flag);
 
     if (row.shortcode) {
       withShortcode++;
       if (typeof row.shortcode !== 'string' || !row.shortcode.startsWith('-')) {
         schemaIssues.push(`${row.flag}: invalid shortcode ${JSON.stringify(row.shortcode)}`);
+      } else if (row.shortcode === row.flag) {
+        schemaIssues.push(`${row.flag}: shortcode must not equal primary flag`);
       } else {
-        const owner = tokenOwner.get(row.shortcode);
+        const sk = flagTokenKey(ctx, row.shortcode);
+        const owner = tokenOwner.get(sk);
         if (owner && owner !== row.flag) {
           shortcodeConflicts.push(
-            `shortcode ${row.shortcode} used by both ${owner} and ${row.flag}`
+            `context=${ctx}: shortcode ${row.shortcode} used by both ${owner} and ${row.flag}`
           );
         }
-        tokenOwner.set(row.shortcode, row.flag);
+        tokenOwner.set(sk, row.flag);
       }
+    }
+
+    // Known false mapping: runtime -i is never --no-install
+    if (ctx === 'runtime' && row.flag === '--no-install' && row.shortcode === '-i') {
+      schemaIssues.push(
+        '--no-install must not claim shortcode -i (runtime -i ≡ --install=fallback; update -i = --interactive)'
+      );
     }
 
     if (!row.category || typeof row.category !== 'string') {
@@ -374,11 +486,19 @@ export function assessRuntimeFlagsCatalog(
     }
   }
 
+  const bunHelpMisses =
+    opts.bunHelpText != null ? findBunHelpMisses(catalog, opts.bunHelpText) : [];
+
   const issues = [
     ...schemaIssues,
     ...shortcodeConflicts,
     ...(helpCoverageMisses.length
       ? [`help missing curated flag(s): ${helpCoverageMisses.join(', ')}`]
+      : []),
+    ...(bunHelpMisses.length
+      ? [
+          `bun --help missing: ${bunHelpMisses.slice(0, 8).join(', ')}${bunHelpMisses.length > 8 ? '…' : ''}`,
+        ]
       : []),
   ];
 
@@ -395,7 +515,16 @@ export function assessRuntimeFlagsCatalog(
     shortcodeConflicts,
     deprecatedFlags,
     helpCoverageMisses,
+    bunHelpMisses,
   };
+}
+
+/** Fetch live `bun --help` text (for parity checks). */
+export async function fetchBunHelpText(): Promise<string> {
+  const proc = Bun.spawn(['bun', '--help'], { stdout: 'pipe', stderr: 'pipe' });
+  const text = await new Response(proc.stdout).text();
+  await proc.exited;
+  return text;
 }
 
 /** Group catalog rows by category (stable order = first appearance). */

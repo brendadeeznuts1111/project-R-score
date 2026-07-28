@@ -1223,29 +1223,34 @@ Unified offline health gate for the portal control plane.
 Checks (default — pure, no network):
   Linker:  linker-config-version · machine-isolated-linker
   Bakes:   vault-health · capability-map-subset · bunfig-state (+ age when present)
-  Catalog: catalog-json-schema · catalog-shortcode-conflict · catalog-help-coverage · catalog-deprecated-flags
+  Catalog: catalog-json-schema · catalog-shortcode-conflict · catalog-bun-help-parity · catalog-help-coverage · catalog-deprecated-flags
+  Bunfig:  bunfig-machine-ssot · project-no-machine-keys · merge-consistency · release-age-excludes
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
 Flags:
   --verbose · -v     Table: status · fix · auto · impact · scope + remediation
   --failed-only      Hide passing checks (pairs with --verbose)
   --full             Spawn install:verify · vault-health · capability-map tests
-  --group <name>     linker | bakes | catalog | gates  (repeatable / comma list)
+  --group <name>     linker | bakes | catalog | bunfig | gates  (repeatable / comma list)
   --env <scope>      all (default) | ci (skip envScope=dev) | dev
   --json             Machine-readable report (schemaVersion 4 + summary)
+  --no-write         Do not refresh public/registry/doctor-state.json
 
 Examples:
   portal-cli doctor
   portal-cli doctor --verbose
   portal-cli doctor --group catalog --verbose
+  portal-cli doctor --group bunfig
   portal-cli doctor --group linker --group catalog
   portal-cli doctor --env ci --failed-only
   portal-cli doctor --json
   portal-cli doctor --full --verbose
 
-Catalog fix scripts:
+Catalog / bunfig fix scripts:
   bun run portal:flags:check     # schema · shortcodes · help coverage
   bun run portal:flags:migrate   # list deprecated flags
+  bun run audit:bunfig           # machine bunfig policy
+  bun run bake:doctor            # refresh doctor-state.json for portal boards
 
 Related: vault health · capabilities health · scanner doctor · bunfig check · flags · install:verify
 `);
@@ -1281,6 +1286,16 @@ Related: vault health · capabilities health · scanner doctor · bunfig check �
       groups,
       env,
     });
+    // Always refresh public/registry/doctor-state.json for portal boards (skip --no-write).
+    if (!argv.includes('--no-write')) {
+      try {
+        const { toDoctorState, DOCTOR_STATE_REL } = await import('./bake-doctor.ts');
+        const state = toDoctorState(report);
+        await Bun.write(DOCTOR_STATE_REL, `${JSON.stringify(state, null, 2)}\n`);
+      } catch {
+        // non-fatal — doctor stdout still useful without bake write
+      }
+    }
     if (argv.includes('--json')) {
       console.log(JSON.stringify(report, null, 2));
     } else if (verbose) {

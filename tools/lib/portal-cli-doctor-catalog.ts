@@ -1,20 +1,24 @@
 // @see https://bun.com/docs/runtime/index#general-execution-options — curated runtime flags SSOT
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file catalog load
+// @see https://bun.com/docs/runtime/auto-install — runtime -i ≡ --install=fallback
+// @see https://bun.com/docs/pm/cli/update — update -i = --interactive (out of this catalog)
 /**
  * portal-cli doctor — Catalog SSOT checks (runtime-flags.json).
  *
  * Granular checks (group: catalog):
- *   catalog-json-schema       fatal — file loads + required fields
- *   catalog-shortcode-conflict fatal — duplicate shortcodes / token collisions
- *   catalog-help-coverage     warn  — curated flags appear in generated BUN_FLAGS_HELP
- *   catalog-deprecated-flags  info  — deprecated rows present (dev awareness)
+ *   catalog-json-schema         fatal — file loads + required fields
+ *   catalog-shortcode-conflict  fatal — duplicate shortcodes / token collisions (per context)
+ *   catalog-bun-help-parity     fatal — runtime tokens appear in live `bun --help`
+ *   catalog-help-coverage       warn  — curated flags appear in generated BUN_FLAGS_HELP
+ *   catalog-deprecated-flags    info  — deprecated rows present (dev awareness)
  *
- * Fix commands are real monorepo paths/scripts only (no invented portal:gen:*).
+ * Fix commands are real monorepo paths/scripts only.
  */
 
 import {
   RUNTIME_FLAGS_CATALOG_PATH,
   assessRuntimeFlagsCatalog,
+  fetchBunHelpText,
   tryLoadRuntimeFlagsCatalog,
   type RuntimeFlagsCatalogHealth,
 } from './portal-cli-bun-flags.ts';
@@ -36,12 +40,37 @@ export type CatalogChecksResult = {
   loadError?: string;
 };
 
+export type RunCatalogChecksOpts = {
+  cwd?: string;
+  /** Inject `bun --help` text (tests). When omitted, spawns `bun --help`. */
+  bunHelpText?: string;
+  /** Skip live bun --help spawn (offline pure tests). */
+  skipBunHelpParity?: boolean;
+};
+
 /**
- * Run pure catalog SSOT checks against config/runtime-flags.json.
+ * Run catalog SSOT checks against config/runtime-flags.json.
  */
-export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResult> {
+export async function runCatalogChecks(
+  cwdOrOpts?: string | RunCatalogChecksOpts
+): Promise<CatalogChecksResult> {
+  const opts: RunCatalogChecksOpts =
+    typeof cwdOrOpts === 'string' || cwdOrOpts === undefined ? { cwd: cwdOrOpts } : cwdOrOpts;
+  const cwd = opts.cwd;
+
   const loaded = await tryLoadRuntimeFlagsCatalog(cwd);
-  const health = assessRuntimeFlagsCatalog(loaded.catalog);
+  let bunHelpText = opts.bunHelpText;
+  if (!opts.skipBunHelpParity && bunHelpText == null) {
+    try {
+      bunHelpText = await fetchBunHelpText();
+    } catch {
+      bunHelpText = undefined;
+    }
+  }
+
+  const health = assessRuntimeFlagsCatalog(loaded.catalog, {
+    bunHelpText: opts.skipBunHelpParity ? undefined : bunHelpText,
+  });
   const checks: PortalDoctorCheck[] = [];
 
   // 1) Schema / load
@@ -75,7 +104,7 @@ export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResul
     )
   );
 
-  // 2) Shortcode / token collisions
+  // 2) Shortcode / token collisions (per context)
   const shortOk = health.shortcodeConflicts.length === 0;
   checks.push(
     withMeta(
@@ -85,15 +114,15 @@ export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResul
         group: 'catalog',
         ok: shortOk,
         message: shortOk
-          ? `${health.withShortcode} shortcodes unique (no token collisions)`
+          ? `${health.withShortcode} shortcodes unique per context (no token collisions)`
           : health.shortcodeConflicts.slice(0, 3).join('; '),
         source: RUNTIME_DOCS,
       },
       {
         fixCommand: shortOk
           ? undefined
-          : `bun run portal:flags:check  # then dedupe shortcodes in ${RUNTIME_FLAGS_CATALOG_PATH}`,
-        impact: 'CLI parsing ambiguity when harvesting Bun runtime flags for child spawns',
+          : `bun run portal:flags:check  # then dedupe shortcodes in ${RUNTIME_FLAGS_CATALOG_PATH} (scoped by context)`,
+        impact: 'CLI parsing ambiguity; shortcodes are context-scoped (runtime -i ≠ bun update -i)',
         autoFixable: false,
         timeToFix: shortOk ? undefined : '2–10 min',
         envScope: 'all',
@@ -101,7 +130,36 @@ export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResul
     )
   );
 
-  // 3) Help coverage (curated → generated BUN_FLAGS_HELP)
+  // 3) Live bun --help parity (runtime context)
+  const paritySkipped = opts.skipBunHelpParity || bunHelpText == null;
+  const parityOk = paritySkipped || (health.bunHelpMisses.length === 0 && loaded.ok);
+  checks.push(
+    withMeta(
+      {
+        id: 'catalog-bun-help-parity',
+        level: 'fatal',
+        group: 'catalog',
+        ok: parityOk,
+        message: paritySkipped
+          ? 'bun --help parity skipped'
+          : health.bunHelpMisses.length === 0
+            ? `all runtime catalog tokens present in bun --help`
+            : `missing from bun --help: ${health.bunHelpMisses.slice(0, 6).join(', ')}${health.bunHelpMisses.length > 6 ? '…' : ''}`,
+        source: RUNTIME_DOCS,
+      },
+      {
+        fixCommand: parityOk
+          ? undefined
+          : `bun run portal:flags:check  # align ${RUNTIME_FLAGS_CATALOG_PATH} with bun --help (this Bun)`,
+        impact: 'Catalog claims flags Bun no longer advertises — harvest/help mislead operators',
+        autoFixable: false,
+        timeToFix: parityOk ? undefined : '5–15 min',
+        envScope: 'all',
+      }
+    )
+  );
+
+  // 4) Help coverage (curated → generated BUN_FLAGS_HELP)
   const helpOk = health.helpCoverageMisses.length === 0 && health.curated > 0;
   checks.push(
     withMeta(
@@ -118,19 +176,18 @@ export async function runCatalogChecks(cwd?: string): Promise<CatalogChecksResul
         source: RUNTIME_DOCS,
       },
       {
-        // Help is generated from catalog at import time — miss = curated row missing description/flag.
         fixCommand: helpOk
           ? undefined
           : 'bun run portal:flags:check  # curated rows must have flag+description; help is catalog-generated',
         impact: 'portal-cli --help runtime section drifts from catalog SSOT',
-        autoFixable: true,
+        autoFixable: false,
         timeToFix: helpOk ? undefined : '1–5 min',
         envScope: 'all',
       }
     )
   );
 
-  // 4) Deprecated awareness (info · dev)
+  // 5) Deprecated awareness (info · dev)
   const depFlags = health.deprecatedFlags;
   checks.push(
     withMeta(

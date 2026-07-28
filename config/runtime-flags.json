@@ -166,8 +166,9 @@
     "takesValue": true,
     "default": null,
     "deprecated": false,
-    "behavior": "Controls auto-install mode; curated help documents =fallback",
+    "behavior": "Controls auto-install mode; curated help documents =fallback. Runtime bare -i ≡ --install=fallback (standalone catalog row).",
     "helpExample": "fallback",
+    "context": "runtime",
     "curated": true
   },
   {
@@ -318,7 +319,6 @@
   },
   {
     "flag": "--no-install",
-    "shortcode": "-i",
     "category": "Dependency Resolution",
     "version": "Bun ≥1.0",
     "description": "Disable auto-install of missing packages",
@@ -326,6 +326,22 @@
     "takesValue": false,
     "default": null,
     "deprecated": false,
+    "behavior": "No shortcode — runtime -i is NOT --no-install (see standalone -i row)",
+    "context": "runtime",
+    "curated": false
+  },
+  {
+    "flag": "-i",
+    "category": "Dependency Resolution",
+    "version": "Bun ≥1.0",
+    "description": "Auto-install missing packages during execution (≡ --install=fallback)",
+    "url": "https://bun.com/docs/runtime/auto-install",
+    "takesValue": false,
+    "default": null,
+    "deprecated": false,
+    "behavior": "Standalone runtime short flag; NOT --no-install. bun update -i is --interactive (PM context — out of this catalog).",
+    "equivalentTo": "--install=fallback",
+    "context": "runtime",
     "curated": false
   },
   {

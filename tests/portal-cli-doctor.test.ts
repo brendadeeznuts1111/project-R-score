@@ -162,6 +162,7 @@ describe('portal-cli doctor pure', () => {
     expect(ids).toEqual([
       'catalog-json-schema',
       'catalog-shortcode-conflict',
+      'catalog-bun-help-parity',
       'catalog-help-coverage',
       'catalog-deprecated-flags',
     ]);
@@ -171,25 +172,27 @@ describe('portal-cli doctor pure', () => {
     const schema = r.checks.find(c => c.id === 'catalog-json-schema');
     expect(schema?.level).toBe('fatal');
     expect(schema?.autoFixable).toBe(false);
-    expect(r.checks.find(c => c.id === 'catalog-help-coverage')?.autoFixable).toBe(true);
+    expect(r.checks.find(c => c.id === 'catalog-help-coverage')?.autoFixable).toBe(false);
+    expect(r.checks.find(c => c.id === 'catalog-bun-help-parity')?.level).toBe('fatal');
     expect(r.checks.find(c => c.id === 'catalog-deprecated-flags')?.envScope).toBe('dev');
     expect(formatPortalDoctor(r)).toContain('Catalog SSOT');
   });
 
-  test('runCatalogChecks returns health + four checks', async () => {
+  test('runCatalogChecks returns health + five checks', async () => {
     const res = await runCatalogChecks(ROOT);
     expect(res.loadOk).toBe(true);
-    expect(res.checks).toHaveLength(4);
+    expect(res.checks).toHaveLength(5);
     expect(res.health.curated).toBe(14);
     expect(res.health.schemaIssues).toEqual([]);
     expect(res.health.shortcodeConflicts).toEqual([]);
+    expect(res.health.bunHelpMisses).toEqual([]);
   });
 
   test('--group catalog scopes report to catalog checks only', async () => {
     const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'catalog' });
     expect(r.group).toBe('catalog');
     expect(r.checks.every(c => c.group === 'catalog')).toBe(true);
-    expect(r.checks).toHaveLength(4);
+    expect(r.checks).toHaveLength(5);
     expect(r.ok).toBe(true);
     expect(formatPortalDoctor(r)).toContain('group=catalog');
   });
