@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
@@ -59,11 +60,22 @@ const ROOT_HELP = `FactoryWager portal CLI
 
   portal-cli snapshot <subcommand>   Scope-aware report snapshots
   portal-cli probe [command]         Bun-native monorepo/portal probes
+  portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli help                    This message
 
   bun run portal-cli snapshot run --scope prediction
   bun run portal-cli probe lockfile
+  bun run portal-cli secret which
   bun run portal:probe
+
+Secret (real pass-cli only — https://protonpass.github.io/pass-cli/):
+  secret which | login | info | vaults | items <vault>
+  secret get 'pass://vault/item/password'   # → pass-cli item view
+  secret run --env-file env.template -- <cmd>
+  secret autofill --vault factorywager -- <cmd>
+  secret inject -i env.template -o .env -f
+  secret invite accept <INVITE_ID>          # not URL secure-link accept
+  source scripts/agent-env.sh factorywager  # agent session before secret cmds
 `;
 
 function usage(): never {
@@ -141,6 +153,12 @@ async function main(): Promise<void> {
       stdin: 'inherit',
     });
     process.exit((await proc.exited) ?? 1);
+  }
+
+  if (cmd === 'secret') {
+    const { dispatchSecret } = await import('./portal-secret.ts');
+    await dispatchSecret(argv[1], argv.slice(2));
+    return;
   }
 
   cliError(`Unknown command: ${cmd}\n\n${ROOT_HELP}`);

@@ -108,6 +108,21 @@ bun run cloudflare:deploy:vault
 | `proton:run` | [`scripts/proton-run.sh`](../../../scripts/proton-run.sh) | inject then `exec` |
 | `proton:deploy:pages` | [`scripts/proton-deploy.sh`](../../../scripts/proton-deploy.sh) | root `.env` then deploy |
 | Agent session | [`scripts/agent-env.sh`](../../../scripts/agent-env.sh) | — |
+| Portal CLI wrapper | [`tools/portal-secret.ts`](../../../tools/portal-secret.ts) · `bun run portal:secret` / `portal-cli secret` | thin `pass-cli` only |
+
+### Portal `secret` subcommand
+
+```bash
+bun run portal:secret:which          # Bun.which pass-cli
+bun run portal-cli secret help
+bun run portal-cli secret get 'pass://factorywager/Cloudflare API Token/password'
+bun run portal-cli secret run --env-file env.template -- bun run cloudflare:env:validate
+bun run portal-cli secret autofill --vault factorywager -- ./start-agent.sh
+bun run portal-cli secret inject -i env.template -o .env -f
+bun run portal-cli secret invite accept <INVITE_ID>
+```
+
+Maps to real CLI only: `item view` / `item list --output json` / `run` / `inject` / `invite accept` / `share list`. No phantom flags, no invented secure-link URL accept (use invite id). Autofill injects vault item passwords as env names derived from titles; prefer `run --env-file` when a template exists.
 
 Template refs use `{{ pass://<vault>/<item>/<field> }}` — see root [`env.template`](../../../env.template).
 
