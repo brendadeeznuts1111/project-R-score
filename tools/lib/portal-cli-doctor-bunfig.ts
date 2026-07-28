@@ -4,7 +4,7 @@
 /**
  * portal-cli doctor — bunfig group (machine SSOT · project drift · merge · excludes).
  *
- * Machine-owned install keys (must NOT appear in project bunfig.toml):
+ * Policy table SSOT: lib/install/machine-bunfig-policy.ts
  *   linker · globalStore · minimumReleaseAge · minimumReleaseAgeExcludes · [install.cache].dir
  *
  *   portal-cli doctor --group bunfig
@@ -12,6 +12,13 @@
  * Fix: bun run audit:bunfig · bun run install:verify · docs/UNIFIED.md
  */
 import { TOML } from 'bun';
+import {
+  FORBIDDEN_INSTALL_ENV_VARS,
+  isEphemeralCiInstallEnv,
+  MACHINE_OWNED_CACHE_DIR_LABEL,
+  MACHINE_OWNED_INSTALL_KEYS,
+  REQUIRED_RELEASE_AGE_EXCLUDES,
+} from '../../lib/install/machine-bunfig-policy.ts';
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
 import {
   isAbsoluteCachePath,
@@ -21,24 +28,17 @@ import {
 } from '../../scripts/lib/machine-bunfig.ts';
 import type { PortalDoctorCheck } from './portal-cli-doctor.ts';
 
+// Re-export SSOT for existing importers (tests / CLI).
+export {
+  FORBIDDEN_INSTALL_ENV_VARS,
+  isEphemeralCiInstallEnv,
+  MACHINE_OWNED_CACHE_DIR_LABEL,
+  MACHINE_OWNED_INSTALL_KEYS,
+  REQUIRED_RELEASE_AGE_EXCLUDES,
+} from '../../lib/install/machine-bunfig-policy.ts';
+
 const UNIFIED = 'docs/UNIFIED.md';
 const BUNFIG_ISOLATED = 'https://bun.com/docs/pm/isolated-installs';
-
-/** Install keys that must live only on the machine (~/.bunfig.toml). */
-export const MACHINE_OWNED_INSTALL_KEYS = [
-  'linker',
-  'globalStore',
-  'minimumReleaseAge',
-  'minimumReleaseAgeExcludes',
-] as const;
-
-/** Catalog / types packages that must bypass minimumReleaseAge. */
-export const REQUIRED_RELEASE_AGE_EXCLUDES = [
-  'bun-types',
-  '@types/bun',
-  '@types/node',
-  'typescript',
-] as const;
 
 type InstallToml = {
   linker?: unknown;
@@ -174,7 +174,7 @@ export async function runBunfigChecks(
     for (const k of MACHINE_OWNED_INSTALL_KEYS) {
       if (projectInstall[k] != null) leaked.push(k);
     }
-    if (projectInstall.cache?.dir != null) leaked.push('[install.cache].dir');
+    if (projectInstall.cache?.dir != null) leaked.push(MACHINE_OWNED_CACHE_DIR_LABEL);
   }
   const projectOk = leaked.length === 0;
   checks.push(
@@ -275,14 +275,13 @@ export async function runBunfigChecks(
 
   // 5) Shell must not set install cache/store env (machine bunfig owns them).
   // Ephemeral CI (GHA setup-factory-bun / with-bun-cache-env) may set them — allowed.
-  const forbiddenEnv = (['BUN_INSTALL_CACHE_DIR', 'BUN_INSTALL_GLOBAL_STORE'] as const).filter(
-    k => {
-      const v = env[k];
-      return typeof v === 'string' && v.trim().length > 0;
-    }
-  );
+  const forbiddenEnv = FORBIDDEN_INSTALL_ENV_VARS.filter(k => {
+    const v = env[k];
+    return typeof v === 'string' && v.trim().length > 0;
+  });
   const ephemeralCi = isEphemeralCiInstallEnv(env);
   const envOk = forbiddenEnv.length === 0 || ephemeralCi;
+  const forbiddenLabel = FORBIDDEN_INSTALL_ENV_VARS.join(' / ');
   checks.push(
     withMeta(
       {
@@ -292,7 +291,7 @@ export async function runBunfigChecks(
         ok: envOk,
         message:
           forbiddenEnv.length === 0
-            ? 'no BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE in env'
+            ? `no ${forbiddenLabel} in env`
             : ephemeralCi
               ? `ephemeral CI install env allowed: ${forbiddenEnv.join(', ')} (local still machine bunfig SSOT)`
               : `forbidden install env set: ${forbiddenEnv.join(', ')} — use ~/.bunfig.toml`,
@@ -302,7 +301,7 @@ export async function runBunfigChecks(
         fixCommand:
           forbiddenEnv.length === 0 || ephemeralCi
             ? undefined
-            : 'Unset BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE from shell/IDE; use machine bunfig',
+            : `Unset ${forbiddenLabel} from shell/IDE; use machine bunfig`,
         impact:
           'Local shell BUN_INSTALL_* cache/store env bypasses bunfig-policy; GHA/setup-factory-bun is the documented exception',
         autoFixable: false,
@@ -313,21 +312,6 @@ export async function runBunfigChecks(
   );
 
   return checks;
-}
-
-/**
- * Ephemeral CI may set BUN_INSTALL_CACHE_DIR / BUN_INSTALL_GLOBAL_STORE
- * (setup-factory-bun, with-bun-cache-env). Local developer shells must not.
- * @see docs/UNIFIED.md
- */
-export function isEphemeralCiInstallEnv(
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
-): boolean {
-  return (
-    env.GITHUB_ACTIONS === 'true' ||
-    env.FACTORY_BUN_CI === '1' ||
-    env.CI_ALLOW_BUN_INSTALL_ENV === '1'
-  );
 }
 
 /** Home path for docs/tests. */

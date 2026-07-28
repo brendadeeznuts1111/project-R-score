@@ -172,6 +172,8 @@ TOML samples under package-manager docs are almost always **`bunfig.toml`** (`ex
 | PATH | `~/.config/shell/path.sh` |
 | aliases | `ba` → `audit:bunfig` · `bhealth` / `bmachine` |
 
+**Code SSOT** (machine-owned keys · age excludes · forbidden env · ephemeral CI allowlist · template path): [`lib/install/machine-bunfig-policy.ts`](../lib/install/machine-bunfig-policy.ts) — imported by doctor bunfig + `scripts/ensure-machine-bunfig.ts`.
+
 ## Tilde drift
 
 Symptom: literal `./~` under a repo. Cause: unexpanded `~` in cache dir. Fix: absolute machine `cache.dir`; never set cache env in IDE; never `dir = "~/.bun/..."`.

@@ -13,12 +13,23 @@
  * CI: setup-factory-bun runs this so portal:doctor + bake:doctor:check are portable.
  * Local: no-op if ~/.bunfig.toml already present (unless --overwrite).
  *
+ * Policy table SSOT: lib/install/machine-bunfig-policy.ts
  * @see docs/UNIFIED.md
  */
+import {
+  CACHE_DIR_PLACEHOLDER,
+  cacheDirUsesUnexpandedTilde,
+  MACHINE_BUNFIG_TEMPLATE_REL,
+  machineBunfigMissingSnippets,
+} from '../lib/install/machine-bunfig-policy.ts';
 import { joinPath } from './lib/fs-bun.ts';
 
-export const MACHINE_BUNFIG_TEMPLATE_REL = 'config/machine.bunfig.toml.template';
-export const CACHE_DIR_PLACEHOLDER = '{{CACHE_DIR}}';
+// Re-export SSOT for existing importers (tests / CLI).
+export {
+  CACHE_DIR_PLACEHOLDER,
+  MACHINE_BUNFIG_REQUIRED_SNIPPETS,
+  MACHINE_BUNFIG_TEMPLATE_REL,
+} from '../lib/install/machine-bunfig-policy.ts';
 
 export type EnsureMachineBunfigOpts = {
   cwd?: string;
@@ -48,20 +59,9 @@ export function renderMachineBunfigTemplate(template: string, cacheDir: string):
   return template.split(CACHE_DIR_PLACEHOLDER).join(cacheDir);
 }
 
-/** Required machine SSOT fragments (string contains checks — not full TOML parse). */
-export const MACHINE_BUNFIG_REQUIRED_SNIPPETS = [
-  'linker = "isolated"',
-  'globalStore = true',
-  'minimumReleaseAge = 259200',
-  'bun-types',
-  '@types/bun',
-  '@types/node',
-  'typescript',
-  '[install.cache]',
-] as const;
-
+/** @deprecated prefer machineBunfigMissingSnippets from lib/install/machine-bunfig-policy */
 export function machineBunfigHasRequiredSnippets(text: string): string[] {
-  return MACHINE_BUNFIG_REQUIRED_SNIPPETS.filter(s => !text.includes(s));
+  return machineBunfigMissingSnippets(text);
 }
 
 export async function ensureMachineBunfig(
@@ -108,7 +108,7 @@ export async function ensureMachineBunfig(
       };
     }
     const text = await existing.text();
-    const missing = machineBunfigHasRequiredSnippets(text);
+    const missing = machineBunfigMissingSnippets(text);
     if (missing.length) {
       return {
         ok: false,
@@ -118,8 +118,8 @@ export async function ensureMachineBunfig(
         reason: `machine bunfig missing SSOT snippets: ${missing.join(', ')}`,
       };
     }
-    // cache.dir should be absolute (not bare ~)
-    if (text.includes('dir = "~') || text.includes("dir = '~/")) {
+    // cache.dir should be absolute (not bare ~) — SSOT: cacheDirUsesUnexpandedTilde
+    if (cacheDirUsesUnexpandedTilde(text)) {
       return {
         ok: false,
         action: 'check-fail',
