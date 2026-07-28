@@ -140,7 +140,11 @@ export class EnterpriseDocumentationURLBuilder {
    * Helper method to get URL configuration for a provider
    */
   private getURLConfig(provider: DocumentationProvider): DocumentationURLConfig {
-    const config = ENTERPRISE_DOCUMENTATION_BASE_URLS[provider];
+    const config = (
+      ENTERPRISE_DOCUMENTATION_BASE_URLS as Partial<
+        Record<DocumentationProvider, DocumentationURLConfig>
+      >
+    )[provider];
     if (!config) {
       throw new Error(`No URL configuration found for provider: ${provider}`);
     }

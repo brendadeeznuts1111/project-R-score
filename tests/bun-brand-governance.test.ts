@@ -62,6 +62,13 @@ describe('Bun brand governance wiring', () => {
       owner: 'runtime-tooling',
     });
   });
+
+  test('release and Bun definition versions remain aligned', async () => {
+    const pkg = await Bun.file('package.json').json();
+    expect(pkg.version.split('+')[0]).toBe(pkg.versioning.current);
+    expect(pkg.catalog['@types/bun']).toBe(pkg.catalog['bun-types']);
+    expect(Bun.semver.order(pkg.versioning.current, '5.3.0')).toBeGreaterThanOrEqual(0);
+  });
 });
 
 describe('Bun brand ops slice', () => {

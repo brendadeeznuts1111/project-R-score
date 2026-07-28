@@ -106,18 +106,28 @@ export function guardBunFirst(): void {
   const originalRequire = (globalThis as { require?: NodeRequire }).require;
 
   if (originalRequire) {
-    (globalThis as { require: NodeRequire }).require = function (id: string) {
-      const violation = MODULE_VIOLATIONS[id];
-      if (violation) {
-        const message = `🛡️ BUN-FIRST GUARD: "${id}" is blocked. ${formatBunMessage(violation.catalogId, violation.replacement)}`;
+    const guardedRequire = Object.assign(
+      function (id: string) {
+        // brand-ok — CommonJS module specifier, not a FactoryWager domain identity
+        const violation = MODULE_VIOLATIONS[id];
+        if (violation) {
+          const message = `🛡️ BUN-FIRST GUARD: "${id}" is blocked. ${formatBunMessage(violation.catalogId, violation.replacement)}`;
 
-        if (violation.severity === 'error') {
-          throw new Error(message);
+          if (violation.severity === 'error') {
+            throw new Error(message);
+          }
+          console.warn(`⚠️ ${message}`);
         }
-        console.warn(`⚠️ ${message}`);
+        return originalRequire(id);
+      },
+      {
+        cache: originalRequire.cache,
+        extensions: originalRequire.extensions,
+        main: originalRequire.main,
+        resolve: originalRequire.resolve,
       }
-      return originalRequire.apply(this, arguments as unknown as Parameters<NodeRequire>);
-    };
+    );
+    (globalThis as { require: NodeRequire }).require = guardedRequire;
   }
 }
 

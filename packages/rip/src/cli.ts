@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // lib/rip/cli.ts — CLI interface for code analysis and transmutation
@@ -69,7 +70,7 @@ ${result.results.map(r => `  • ${r}`).join('\n')}
 ═══════════════════════════════════════════════════════════════
       `);
     } catch (error) {
-      console.error('❌ Purge failed:', error.message);
+      console.error('❌ Purge failed:', error instanceof Error ? error.message : String(error));
       process.exit(1);
     }
   }
@@ -98,7 +99,7 @@ ${links.map(link => `  • ${link}`).join('\n')}
 ═══════════════════════════════════════════════════════════════
       `);
     } catch (error) {
-      console.error('❌ Link scan failed:', error.message);
+      console.error('❌ Link scan failed:', error instanceof Error ? error.message : String(error));
       process.exit(1);
     }
   }
@@ -131,7 +132,10 @@ ${nonBun.map(code => `  • ${code}`).join('\n')}
    • child_process → Bun.spawn
       `);
     } catch (error) {
-      console.error('❌ Non-Bun scan failed:', error.message);
+      console.error(
+        '❌ Non-Bun scan failed:',
+        error instanceof Error ? error.message : String(error)
+      );
       process.exit(1);
     }
   }

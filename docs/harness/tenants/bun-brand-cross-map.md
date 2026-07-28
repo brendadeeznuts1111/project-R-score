@@ -5,6 +5,7 @@
 **Surface** `/portal/brands/` → **Relationships**
 
 **Registry** `/registry/bun-brand-map.json`
+
 **Owner** `runtime-tooling` plus the declared brand-domain lane
 
 The cross-map answers both directions of the same operational question:
@@ -13,8 +14,8 @@ The cross-map answers both directions of the same operational question:
 - which brands, wrappers, consumers, and projects depend on a Bun API.
 
 It is a derived join, not a second proof taxonomy. `DocTokenId` and
-`tools/bun-docs-catalog.json` own API identity, version, stability, and canonical
-documentation. `lib/types/brand-manifest.json` and
+`tools/bun-docs-catalog.json` own API identity, version, stability, and
+canonical documentation. `lib/types/brand-manifest.json` and
 `public/registry/brand-keymap.json` own brand and project identity. Reviewed
 declarations own semantic relationships. Exact proof references determine
 evidence state.
@@ -42,6 +43,41 @@ servers, and terminal objects are not brands.
 
 Experimental Bun APIs default to `lab-only`. Production approval requires an
 owner, rationale, fallback, expiry, and passing proof.
+
+## Declaration contract
+
+[`lib/docs/bun-brand-usages.ts`](../../../lib/docs/bun-brand-usages.ts) is the
+reviewed declaration manifest. Each declaration provides:
+
+| Field                           | Authority                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------ |
+| `token` + `variant`             | `DocTokenId` catalog identity and overload/context disambiguation                          |
+| `implementations` + `consumers` | exact tracked paths and symbols                                                            |
+| `scope` + `policy`              | runtime posture: production, tooling, test, or config                                      |
+| `ownerLane`                     | brand domain or `runtime-tooling`                                                          |
+| `brands`                        | `input`, `output`, `control`, `evidence`, or explained `none`                              |
+| `proofs`                        | exact artifact path and proof key; fuzzy names never join                                  |
+| `experimentalApproval`          | owner, rationale, fallback, expiry, and proof when experimental production use is approved |
+
+The validator rejects unknown tokens, unknown brands, invalid owner paths,
+untracked implementation paths, unexplained `none` relationships, expired
+experimental approvals, and production approvals without passing proof.
+
+## Version authority
+
+Three version axes are deliberately separate:
+
+1. `package.json#version` and `package.json#versioning.current` identify the
+   FactoryWager artifact release.
+2. `package.json#catalog` pins the compile-time Bun and TypeScript definitions.
+   `@types/bun` and `bun-types` must remain on the same version.
+3. `DocTokenId` entries in `tools/bun-docs-catalog.json` own each Bun API's
+   introduction version and stability. The generated cross-map copies those
+   values; declarations and prose do not override them.
+
+This is why `Bun.Image` reports `1.3.14` regardless of the FactoryWager release
+number or installed runtime. `schemaVersion` on the registry payload versions
+the JSON contract and is not a package or Bun runtime version.
 
 ## Operate
 
@@ -76,3 +112,22 @@ The **Glossary** view remains the constructor/keymap reference for all canonical
 brands. The **Projects** view distinguishes the 32 tracked roots from three
 explicit external or untracked roots and shows observed, matched, verified, and
 attention counts.
+
+## Release acceptance
+
+Before tagging a release that changes this contract:
+
+```bash
+bun run bun:brand-map:check
+bun run brand:manifest:check
+bun run check:brands:all
+bun run type-check:ci
+bun run type-check:full
+bun run check:release-tracker
+bun run docs:map:check
+bun run verify:portal:static
+```
+
+The release is blocked by a stale registry bake, package/version metadata drift,
+misaligned Bun definition pins, an unknown brand or token, any new undeclared
+usage, a catalog conflict, or failed/stale production proof.

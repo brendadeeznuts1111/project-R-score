@@ -127,16 +127,12 @@ export class BusinessContinuity {
       throw new Error('Old business data not found');
     }
 
-    await redis.hset(`business:${oldBusinessId}`, [
-      'endDate',
-      new Date().toISOString(),
-      'current',
-      'false',
-      'migratedTo',
-      newBusinessData.alias,
-      'migrationReason',
-      newBusinessData.reason,
-    ]);
+    await redis.hset(`business:${oldBusinessId}`, {
+      endDate: new Date().toISOString(),
+      current: 'false',
+      migratedTo: newBusinessData.alias,
+      migrationReason: newBusinessData.reason,
+    });
 
     // 2. Create new business identity
     const newBusinessId = await this.registerBusinessIdentity({

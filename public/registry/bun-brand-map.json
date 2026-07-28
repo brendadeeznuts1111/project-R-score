@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-07-28T22:49:53.102Z",
+  "generatedAt": "2026-07-28T23:05:39.933Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -14,9 +14,9 @@
   "sourceDigests": {
     "declarations": "17216ebf587660a3865417a6d8578fd74c0a4d624a5257f2ce2842f37b110a2d",
     "catalog": "397470e5050312c556f570ec32cc4f2b57b82e6e3e607231ab8d2079303556b6",
-    "brandManifest": "b40947639cb2679c65024d7f2d055ea2a8a4ba20160ef0e886cdd2e3611dff8c",
-    "brandKeymap": "2aca8079f83252f9a94c0012e59610fc934c84f3302214725683cfa4400d50ac",
-    "observations": "ac54d28ea81b6ef506a29f01dc7c4a72ea43192bae462839400becc9cc5624bb",
+    "brandManifest": "63a869f0e826cf0e201245c40fdfa0f4569c372481c345a880bb66159cfe6735",
+    "brandKeymap": "f14a57b2b7ac4516370a56f5e6829c9893d8454fdfaf12625ff5dbe6edb0811c",
+    "observations": "216cb4cf827fc22fd9057b6ecfa81f61dacea342414185d4995810640af964ac",
     "baseline": "01a862cd2467b74b632bf7562f0b03c604fb19f548c9ecfafed77438b24cae43",
     "proofs": "a605f7e22ca4954bf58f3eb2940e4edab0ad009b4205c484d0f6e2ecd9fc0033"
   },

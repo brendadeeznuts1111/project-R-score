@@ -53,6 +53,7 @@ Routing: [`docs/platform-routing.md`](docs/platform-routing.md) · edge verify: 
 | Doctor | [`/portal/doctor/`](https://score.factory-wager.com/portal/doctor/) | `bun run portal:doctor` · `bake:doctor` · bunfig/catalog/linker groups · [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | DOD queue | [`/portal/dod/`](https://score.factory-wager.com/portal/dod/) | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) |
 | Skills catalog | [`/portal/skills/`](https://score.factory-wager.com/portal/skills/) | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) |
+| Brands | [`/portal/brands/`](https://score.factory-wager.com/portal/brands/) | Bun API relationships · 50-value glossary · project adoption |
 | Seat capital desk | [`registry/seat-capital-desk.json`](https://score.factory-wager.com/registry/seat-capital-desk.json) | [`docs/harness/tenants/seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) |
 | Telegram handshake | [`registry/telegram-handshake.json`](https://score.factory-wager.com/registry/telegram-handshake.json) | [`docs/harness/tenants/partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) |
 
@@ -67,6 +68,7 @@ Routing: [`docs/platform-routing.md`](docs/platform-routing.md) · edge verify: 
 | Monitoring | [`/registry/monitoring.json`](https://score.factory-wager.com/registry/monitoring.json) | Routing proof · DOD · compliance tile |
 | TOC Ops | [`/registry/toc-ops.json`](https://score.factory-wager.com/registry/toc-ops.json) | Fixture board bake |
 | Proof taxonomy | [`/registry/proof-taxonomy-audit.json`](https://score.factory-wager.com/registry/proof-taxonomy-audit.json) | Cross-proof contracts |
+| Bun × brand map | [`/registry/bun-brand-map.json`](https://score.factory-wager.com/registry/bun-brand-map.json) | API → wrapper/consumer → branded value → project → runtime proof |
 
 Full weave list: [portal-weave.ts](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-weave.ts) (repo) · baked at [portal-weave.json](https://score.factory-wager.com/registry/portal-weave.json)
 
