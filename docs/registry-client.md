@@ -84,3 +84,28 @@ Probes:
 Local resolve/download probes pass when `bun scripts/serve-public.ts` is running
 and `public/registry/storage/@factorywager/registry-client/1.0.0/artifact.tgz`
 exists (served from the R2-backed index).
+
+## Naming planes
+
+Three planes share "registry" vocabulary — do not cross them. Canonical names
+(scanner: `naming-cluster` findings in `bun tools/reference-discovery.ts`):
+
+| Plane | Canonical | Scope |
+|-------|-----------|-------|
+| npm registry | `factoryWagerRegistryUrlFromEnv()` · `REGISTRY_URL` · `registry.factory-wager.com` | artifact resolve/publish (this doc) |
+| Pages public | `factoryWagerPagesCustomUrl()` · `ROUTING_PROBE_BASE_URL` · `score.factory-wager.com` | Pages portal + routing probes — never `bun publish --registry` |
+| R2 bucket | `factoryRegistryBucketFromEnv()` · `R2_REGISTRY_BUCKET` · `factory-wager-registry` | object store bucket — see `config/r2-env.ts` |
+
+## Env naming: similar pairs
+
+Pairs the reference-discovery scanner flags by name similarity (≥0.82) that are
+intentional, not drift. Allowlisted in `isAllowedSimilarEnvPair`
+(`lib/reference-discovery.ts`); owner table in
+[`docs/harness/tenants/reference-discovery.md`](harness/tenants/reference-discovery.md).
+
+| Pair | First | Second | Why both exist |
+|------|-------|--------|----------------|
+| `CLOUDFLARE_API_TOKEN` ↔ `CLOUDFLARE_DNS_API_TOKEN` | Pages + zone-read token, **no** Zone.DNS scope | separate token with Zone.DNS:Read/Edit | least-privilege split, verified 2026-07-27 — see `docs/harness/tenants/proton-integration.md` |
+| `COMPLIANCE_MOCK_PORT` ↔ `COMPLIANCE_MOCK_URL` | mock server listen port (default 8787) | client base URL for report/shadow tools | server side vs client side of the same compliance mock |
+| `TELEGRAM_CATALOG_RESEARCH_CRON_SCHEDULE` ↔ `TELEGRAM_CATALOG_RESEARCH_CRON_TITLE` | cron expression (default `0 7 * * *`) | job/log title (`telegram-catalog-research`) | schedule vs log identity in `lib/telegram/catalog-research/constants.ts` |
+| `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` ↔ `..._LLM_MODEL` ↔ `..._LLM_URL` | API key (canonical alias → `OPENAI_API_KEY`) | model name (default `gpt-4o-mini`) / OpenAI-compatible base URL | three independent LLM knobs in `lib/telegram/catalog-research/llm-pass.ts` |

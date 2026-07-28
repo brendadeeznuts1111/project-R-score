@@ -30,6 +30,12 @@ These pairs are **not** drift — scanner skips them via `isAllowedSimilarEnvPai
 | S3-compat bucket | `R2_BUCKET_NAME` · `S3_BUCKET_NAME` | `lib/security/r2-credentials.ts` · `config/r2-env.ts` |
 | Search bench pin | `SEARCH_BENCH_PIN_*` fail vs `SEARCH_BENCH_PIN_WARN_*` warn thresholds | `scripts/search-benchmark-pin.ts` |
 | Search bench proxy | `SEARCH_BENCH_PROXY_URL` · `SEARCH_BENCH_PROXY_AUTH` | search bench harness |
+| Cloudflare two-token | `CLOUDFLARE_API_TOKEN` (Pages/API, no Zone.DNS scope) · `CLOUDFLARE_DNS_API_TOKEN` (Zone.DNS:Read/Edit) | `lib/env-check.ts` · `scripts/cloudflare-dns-sync.ts` · [`proton-integration.md`](proton-integration.md) |
+| Compliance mock | `COMPLIANCE_MOCK_PORT` (server listen port) · `COMPLIANCE_MOCK_URL` (client base URL) | `tools/state-compliance-mock.ts` · `lib/operations/state-compliance-http.ts` |
+| Telegram catalog cron | `TELEGRAM_CATALOG_RESEARCH_CRON_SCHEDULE` (cron expr) · `TELEGRAM_CATALOG_RESEARCH_CRON_TITLE` (job/log title) | `lib/telegram/catalog-research/constants.ts` |
+| Telegram catalog LLM | `TELEGRAM_CATALOG_RESEARCH_LLM_KEY` (alias → `OPENAI_API_KEY`) · `..._LLM_MODEL` · `..._LLM_URL` | `lib/telegram/catalog-research/llm-pass.ts` |
+
+Per-pair disambiguation table: [`docs/registry-client.md`](../../registry-client.md) §Env naming: similar pairs.
 
 New env keys: prefer SSOT helpers in `config/r2-env.ts` over raw `Bun.env` reads in harness perimeter.
 
@@ -61,7 +67,7 @@ bun tools/bun-doc-refs.ts integrity
 | Gate | Last run | Result |
 |------|----------|--------|
 | `discover:compose:check` | 2026-07-26 | 0 errors · harness + public |
-| `reference:discover:check` | 2026-07-26 | 0 errors · 0 warn · 36 info |
+| `reference:discover:check` | 2026-07-28 | 0 errors · 0 warn · 50 info |
 | `audit:verify` | 2026-07-26 | pass · 4 findings · 5 concepts |
 | `docs:map:check` | 2026-07-26 | pass |
 | `bun-doc-refs integrity` | 2026-07-26 | pass · 2277 links |

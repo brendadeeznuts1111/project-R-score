@@ -298,6 +298,40 @@ function isAllowedSimilarEnvPair(a: string, b: string): boolean {
     return true;
   }
 
+  // Cloudflare two-token policy — see docs/registry-client.md §Env naming: similar pairs
+  if (
+    (a === 'CLOUDFLARE_API_TOKEN' && b === 'CLOUDFLARE_DNS_API_TOKEN') ||
+    (a === 'CLOUDFLARE_DNS_API_TOKEN' && b === 'CLOUDFLARE_API_TOKEN')
+  ) {
+    return true;
+  }
+
+  // Compliance mock: server listen port vs client base URL
+  if (
+    (a === 'COMPLIANCE_MOCK_PORT' && b === 'COMPLIANCE_MOCK_URL') ||
+    (a === 'COMPLIANCE_MOCK_URL' && b === 'COMPLIANCE_MOCK_PORT')
+  ) {
+    return true;
+  }
+
+  // Telegram catalog research cron: schedule expression vs job/log title
+  if (
+    (a === 'TELEGRAM_CATALOG_RESEARCH_CRON_SCHEDULE' &&
+      b === 'TELEGRAM_CATALOG_RESEARCH_CRON_TITLE') ||
+    (a === 'TELEGRAM_CATALOG_RESEARCH_CRON_TITLE' &&
+      b === 'TELEGRAM_CATALOG_RESEARCH_CRON_SCHEDULE')
+  ) {
+    return true;
+  }
+
+  // Telegram catalog research LLM: key vs model vs base URL (lib/telegram/catalog-research/llm-pass.ts)
+  const telegramLlmCluster = new Set([
+    'TELEGRAM_CATALOG_RESEARCH_LLM_KEY',
+    'TELEGRAM_CATALOG_RESEARCH_LLM_MODEL',
+    'TELEGRAM_CATALOG_RESEARCH_LLM_URL',
+  ]);
+  if (telegramLlmCluster.has(a) && telegramLlmCluster.has(b)) return true;
+
   return false;
 }
 
