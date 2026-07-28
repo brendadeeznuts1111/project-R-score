@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!-- @see docs/portal-foundation.md -->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partner Limit History · FactoryWager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/portal/style.css" />
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/components/notification.js"></script>
+  <script type="module" src="/portal/components/limit-changes-card.js"></script>
+  <style>
+    .partner-page { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0; }
+    .page-header h1 { margin: 0; font-size: 1.5em; }
+    .partner-select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); font-size: 0.9em; min-width: 200px; }
+    .metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0; }
+    .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+    .metric-card .num { font-size: 1.8em; font-weight: 700; }
+    .metric-card .label { font-size: 0.8em; color: var(--text-dim); margin-top: 2px; }
+    .section-title { font-size: 1.1em; font-weight: 600; margin: 24px 0 8px; }
+    .nav-bar { display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+    .nav-bar a { color: var(--accent); text-decoration: none; font-size: 0.9em; }
+    .nav-bar a:hover { text-decoration: underline; }
+    .empty-state { text-align: center; padding: 3em; color: var(--text-dim); }
+    .empty-state code { background: var(--surface); padding: 2px 6px; border-radius: 4px; }
+    .tabs { display: flex; gap: 2px; margin-bottom: 16px; }
+    .tab { padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px 6px 0 0; background: var(--surface); cursor: pointer; font-size: 0.85em; }
+    .tab.active { border-bottom-color: var(--accent); font-weight: 600; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+<nav id="global-topbar"></nav>
+<div class="partner-page">
+  <div class="nav-bar">
+    <a href="/portal/">← Portal home</a>
+    <a href="/portal/ops/">Ops dashboard</a>
+    <a href="/portal/limits/">Limit overview</a>
+    <a href="/portal/health/">Health</a>
+    <a href="/registry/ops-summary.json" target="_blank">ops-summary.json</a>
+  </div>
+
+  <div class="page-header">
+    <h1>📊 Partner Limit History</h1>
+    <div>
+      <label for="partner-select" style="font-size:0.85em;color:var(--text-dim);margin-right:8px">Partner:</label>
+      <select id="partner-select" class="partner-select">
+        <option value="">All partners</option>
+      </select>
+      <button id="refresh-btn" style="margin-left:8px;padding:8px 16px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer">↻ Refresh</button>
+    </div>
+  </div>
+
+  <!-- Metric row -->
+  <div class="metric-row" id="metric-row">
+    <div class="metric-card"><div class="num" id="total-ct">—</div><div class="label">Total changes</div></div>
+    <div class="metric-card" style="border-color:#16a34a"><div class="num" id="raises-ct" style="color:#16a34a">—</div><div class="label">🚀 Raises</div></div>
+    <div class="metric-card" style="border-color:#dc2626"><div class="num" id="downs-ct" style="color:#dc2626">—</div><div class="label">⬇️ Decreases</div></div>
+    <div class="metric-card"><div class="num" id="net-ct">—</div><div class="label">Net change</div></div>
+    <div class="metric-card"><div class="num" id="avg-score">—</div><div class="label">Avg score</div></div>
+    <div class="metric-card"><div class="num" id="book-ct">—</div><div class="label">Sportsbooks</div></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" data-tab="recent">Recent changes</div>
+    <div class="tab" data-tab="partner">Per partner</div>
+    <div class="tab" data-tab="export">Export</div>
+  </div>
+
+  <!-- Tab: Recent changes -->
+  <div class="tab-panel active" id="panel-recent">
+    <limit-changes-card id="recent-card" limit="25" show-all></limit-changes-card>
+  </div>
+
+  <!-- Tab: Per partner -->
+  <div class="tab-panel" id="panel-partner">
+    <div id="partner-breakdown"></div>
+  </div>
+
+  <!-- Tab: Export -->
+  <div class="tab-panel" id="panel-export">
+    <div class="metric-card" style="text-align:left;padding:2em">
+      <h3 style="margin:0 0 1em">Download limit data</h3>
+      <div style="display:flex;gap:1em;flex-wrap:wrap">
+        <button id="export-csv-btn" style="padding:10px 20px;border:none;border-radius:6px;background:var(--accent);color:#fff;cursor:pointer;font-weight:600">⬇ Download CSV</button>
+        <button id="export-json-btn" style="padding:10px 20px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;font-weight:600">📋 Copy JSON</button>
+      </div>
+      <p style="color:var(--text-dim);font-size:0.85em;margin-top:1em">CSV includes all limit changes (last 48h). JSON exports the full ops-summary.limitChanges array.</p>
+    </div>
+  </div>
+
+  <div id="empty-state" class="empty-state" style="display:none">
+    <p>No limit changes detected.</p>
+    <p>Seed demo data: <code>bun run ops:limits:demo</code></p>
+  </div>
+</div>
+
+<notification-center></notification-center>
+<script type="module">
+import { startDataService, getOpsData } from '/portal/data.js';
+
+const partnerSelect = document.getElementById('partner-select');
+const refreshBtn = document.getElementById('refresh-btn');
+const tabs = document.querySelectorAll('.tab');
+const card = document.getElementById('recent-card');
+const breakdownEl = document.getElementById('partner-breakdown');
+const emptyState = document.getElementById('empty-state');
+
+let data = null;
+let opsData = null;
+
+// Start data service for health dots
+startDataService();
+
+// Tab switching
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+async function load() {
+  try {
+    const res = await fetch('/api/operations/summary');
+    if (res.ok) { opsData = await res.json(); return render(); }
+  } catch {}
+  try {
+    const res = await fetch('/registry/ops-summary.json');
+    if (res.ok) { opsData = await res.json(); return render(); }
+  } catch {}
+  emptyState.style.display = 'block';
+  emptyState.innerHTML = '<p>⚠️ Could not load data. Is the server running?</p>';
+}
+
+function render() {
+  if (!opsData?.limitChanges) {
+    emptyState.style.display = 'block';
+    document.getElementById('metric-row').style.display = 'none';
+    return;
+  }
+
+  data = opsData.limitChanges;
+  emptyState.style.display = 'none';
+  document.getElementById('metric-row').style.display = 'grid';
+
+  const selectedPartner = partnerSelect.value;
+
+  // Populate partner dropdown
+  const partners = [...new Set(data.map(c => c.node_id).filter(Boolean))];
+  const currentVal = partnerSelect.value;
+  partnerSelect.innerHTML = '<option value="">All partners</option>' + partners.map(p => `<option value="${p}"${p === currentVal ? ' selected' : ''}>${p}</option>`).join('');
+
+  // Filter
+  const filtered = selectedPartner ? data.filter(c => c.node_id === selectedPartner) : data;
+
+  // Metrics
+  const total = filtered.length;
+  const raises = filtered.filter(c => c.direction === 'up').length;
+  const downs = filtered.filter(c => c.direction === 'down').length;
+  const netDelta = filtered.reduce((s, c) => s + ((c.new_limit ?? 0) - (c.previous_max ?? 0)), 0);
+  const avgScore = filtered.reduce((s, c) => s + (c.multi_factor_score ?? 0), 0) / (total || 1);
+  const books = new Set(filtered.map(c => c.sportsbook)).size;
+
+  document.getElementById('total-ct').textContent = total;
+  document.getElementById('raises-ct').textContent = raises;
+  document.getElementById('downs-ct').textContent = downs;
+  document.getElementById('net-ct').textContent = (netDelta >= 0 ? '+' : '') + '$' + Math.abs(netDelta).toLocaleString();
+  document.getElementById('avg-score').textContent = avgScore > 0 ? (avgScore * 100).toFixed(0) + '%' : '—';
+  document.getElementById('book-ct').textContent = books;
+
+  // Recent card
+  card.setAttribute('partner', selectedPartner || '');
+  card.data = opsData;
+
+  // Partner breakdown
+  if (selectedPartner) {
+    breakdownEl.innerHTML = '<p style="color:var(--text-dim)">Select "All partners" to see per-partner breakdown.</p>';
+  } else {
+    const byPartner = {};
+    for (const c of filtered) {
+      const key = c.node_id || 'unknown';
+      if (!byPartner[key]) byPartner[key] = [];
+      byPartner[key].push(c);
+    }
+    breakdownEl.innerHTML = Object.entries(byPartner).slice(0, 20).map(([pid, changes]) => {
+      const pRaises = changes.filter(c => c.direction === 'up').length;
+      const pDowns = changes.filter(c => c.direction === 'down').length;
+      const pNet = changes.reduce((s, c) => s + ((c.new_limit ?? 0) - (c.previous_max ?? 0)), 0);
+      const pAvg = changes.reduce((s, c) => s + (c.multi_factor_score ?? 0), 0) / changes.length;
+      return `<div style="margin:8px 0;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:600;font-family:monospace">${pid}</span>
+          <span style="font-size:0.85em;color:var(--text-dim)">🚀${pRaises} ⬇${pDowns} · ${pNet >= 0 ? '+' : ''}$${Math.abs(pNet).toLocaleString()} net · 🧮${(pAvg * 100).toFixed(0)}%</span>
+        </div>
+        <div style="font-size:0.8em;margin-top:4px;color:var(--text-dim)">
+          ${changes.slice(0, 3).map(c => `${c.sportsbook} ${c.sport_id}/${c.market_id}: <strong>$${Number(c.new_limit).toLocaleString()}</strong> ${c.direction === 'down' ? '⬇' : '🚀'}`).join(' · ')}
+          ${changes.length > 3 ? ` · +${changes.length - 3} more` : ''}
+        </div>
+        <div style="margin-top:4px"><button class="partner-drill" data-partner="${pid}" style="font-size:0.75em;padding:2px 8px;border:1px solid var(--border);border-radius:4px;background:transparent;cursor:pointer;color:var(--accent)">View →</button></div>
+      </div>`;
+    }).join('');
+
+    // Wire drill-down buttons
+    document.querySelectorAll('.partner-drill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        partnerSelect.value = btn.dataset.partner;
+        render();
+      });
+    });
+  }
+}
+
+// Export: CSV
+document.getElementById('export-csv-btn').addEventListener('click', () => {
+  if (!data || data.length === 0) return;
+  const headers = ['direction','sportsbook','sport_id','market_id','bet_type','previous_max','new_limit','delta','score','increased_at'];
+  const rows = data.map(c => [c.direction, c.sportsbook, c.sport_id, c.market_id, c.bet_type, c.previous_max ?? '', c.new_limit ?? '', (c.new_limit??0)-(c.previous_max??0), c.multi_factor_score ?? '', c.increased_at != null ? new Date(c.increased_at*1000).toISOString() : '']);
+  const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `limit-changes-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// Export: Copy JSON
+document.getElementById('export-json-btn').addEventListener('click', async () => {
+  if (!data) return;
+  await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+  const btn = document.getElementById('export-json-btn');
+  btn.textContent = '✅ Copied!';
+  setTimeout(() => btn.textContent = '📋 Copy JSON', 2000);
+});
+
+partnerSelect.addEventListener('change', render);
+refreshBtn.addEventListener('click', load);
+
+load();
+</script>
+</body>
+</html>

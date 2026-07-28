@@ -127,6 +127,8 @@ export class NotificationCenter extends HTMLElement {
     }
     if (p.eventType === 'play.gate.adjusted') return `Play gated (adjust) · ${String(p.playId ?? '').slice(0, 8)}`;
     if (p.eventType === 'play.settled') return `Play settled · ${p.result} · pnl $${p.pnl ?? 0}`;
+    if (p.kind === 'limit_raise') return `🚀 Limit raised: ${p.sportsbook} ${p.sport_id}/${p.market_id} $${p.previous_max}→$${p.new_limit}`;
+    if (p.kind === 'limit_decrease' || p.event === 'limit_decrease') return `⬇️ Limit decreased: ${p.sportsbook} ${p.sport_id}/${p.market_id} $${p.previous_max}→$${p.new_limit}`;
     return JSON.stringify(p);
   }
 
