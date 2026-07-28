@@ -13,7 +13,8 @@
  * ALTERs are the upgrade path. `migrateIdentity` stays the single idempotent
  * entry point for both shapes.
  *
- * `auth_ip_allowlist` (Phase 4 self-service) is a NEW table, so the CREATE
+ * `auth_ip_allowlist` (Phase 4 self-service) and the TOTP MFA tables
+ * (`auth_totp`, `auth_totp_recovery` — mfa.ts) are NEW tables, so the CREATE
  * IF NOT EXISTS alone covers both fresh and pre-existing DBs — no ALTERs.
  */
 
@@ -83,6 +84,21 @@ export function migrateIdentity(db: Database): void {
       label TEXT,
       created_at TEXT NOT NULL,
       PRIMARY KEY (node_id, cidr)
+    );
+
+    CREATE TABLE IF NOT EXISTS auth_totp (
+      node_id TEXT PRIMARY KEY REFERENCES tree_nodes(id),
+      secret TEXT NOT NULL,
+      enabled INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL,
+      verified_at INTEGER
+    );
+
+    CREATE TABLE IF NOT EXISTS auth_totp_recovery (
+      node_id TEXT NOT NULL REFERENCES tree_nodes(id),
+      code_hash TEXT NOT NULL,
+      used_at INTEGER,
+      PRIMARY KEY (node_id, code_hash)
     );
 
     CREATE INDEX IF NOT EXISTS idx_auth_sessions_node ON auth_sessions(node_id);

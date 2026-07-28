@@ -28,6 +28,14 @@
  *     (success 0) and throws IpNotAllowedError. Empty allowlist → no
  *     restriction; no ctx.ip → allowed. Match is exact IPv4 or /24 prefix
  *     (documented approximation, same granularity as anomaly fingerprints).
+ *   - TOTP MFA (mfa.ts / totp-core.ts): when the node has an ENABLED
+ *     enrollment, login() requires ctx.otp AFTER password verification and
+ *     BEFORE the anomaly hook. Missing → login_totp_required (success 0) +
+ *     TotpRequiredError (HTTP 401 { error: 'totp_required' }). Wrong code →
+ *     login_totp_failed via the SAME failed_attempts/lockout path as a bad
+ *     password, then InvalidCredentialsError (no MFA oracle). A single-use
+ *     recovery code in ctx.otp is consumed (used_at) and audits
+ *     totp_recovery_used. Pending (unconfirmed) enrollments never gate.
  *
  * Note: parameterized writes use `db.query(sql).run(params)` — the typed
  * pattern (bun-types: `db.run(sql, paramsObj)` trips TS2353).
@@ -51,6 +59,7 @@ import { isGeoBlocked, type GeoPolicy } from './geo-policy.ts';
 import { LOCKOUT_DURATION_SECONDS, LOCKOUT_THRESHOLD } from './lockout.ts';
 import { validatePasswordStrength } from './password-strength.ts';
 import { migrateIdentity } from './schema.ts';
+import { verifyTotp } from './totp-core.ts';
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -65,6 +74,8 @@ const SLUG_PATTERN = /^[a-z0-9_-]{3,32}$/;
 export interface LoginContext {
   ip?: string;
   userAgent?: string;
+  /** TOTP authenticator code (or a single-use recovery code) when the node has MFA enabled. */
+  otp?: string;
 }
 
 export interface LoginResult {
@@ -231,6 +242,18 @@ export class WeakPasswordError extends IdentityError {
   }
 }
 
+/**
+ * The node has TOTP enabled but the login carried no `ctx.otp`. HTTP maps
+ * this to 401 with `{ error: 'totp_required' }` — a distinct machine-readable
+ * code at the SAME status as bad credentials (no account/MFA enumeration).
+ */
+export class TotpRequiredError extends IdentityError {
+  constructor() {
+    super('TOTP code required');
+    this.name = 'TotpRequiredError';
+  }
+}
+
 // ── Helpers ──────────────────────────────────────────────────────────────
 
 function sha256Hex(input: string): string {
@@ -394,43 +417,39 @@ export class IdentitySystem {
 
     const ok = await Bun.password.verify(password, cred.passwordHash);
     if (!ok) {
-      const failedAttempts = cred.failedAttempts + 1;
-      this.db
-        .query(
-          'UPDATE auth_alias_credentials SET failed_attempts = failed_attempts + 1 WHERE alias_slug = $slug'
-        )
-        .run({ $slug: slug });
-      this.logAuthEvent({
-        nodeId,
-        action: 'login_failed',
-        details: { slug, failedAttempts },
-        ip: ctx.ip,
-        success: false,
-      });
-      if (failedAttempts >= LOCKOUT_THRESHOLD) {
-        const lockedUntil = now + LOCKOUT_DURATION_SECONDS;
-        this.db
-          .query(
-            `UPDATE auth_alias_credentials SET locked_until = $until, lock_reason = $reason
-             WHERE alias_slug = $slug`
-          )
-          .run({ $until: lockedUntil, $reason: 'too_many_failed_attempts', $slug: slug });
-        this.logAuthEvent({
-          nodeId,
-          action: 'account_locked',
-          details: {
-            slug,
-            reason: 'too_many_failed_attempts',
-            failedAttempts,
-            durationSeconds: LOCKOUT_DURATION_SECONDS,
-            lockedUntil,
-          },
-          ip: ctx.ip,
-        });
-      }
       // The escalating attempt itself stays InvalidCredentialsError (no
       // enumeration); subsequent attempts hit AccountLockedError above.
+      this.recordFailedLogin(cred, slug, now, ctx.ip, 'login_failed');
       throw new InvalidCredentialsError();
+    }
+
+    // TOTP gate (mfa.ts / totp-core.ts) — runs AFTER password verification
+    // (fail cheap: no MFA work for wrong passwords) and BEFORE the anomaly
+    // hook. Only an ENABLED enrollment gates; a pending (unconfirmed) one
+    // never does, so enrollment can't lock the user out mid-setup.
+    const totp = this.totpRecordFor(nodeId);
+    if (totp?.enabled) {
+      if (!ctx.otp) {
+        this.logAuthEvent({
+          nodeId,
+          action: 'login_totp_required',
+          details: { slug },
+          ip: ctx.ip,
+          success: false,
+        });
+        throw new TotpRequiredError();
+      }
+      let otpOk = await verifyTotp(totp.secret, ctx.otp);
+      if (!otpOk && this.consumeTotpRecovery(nodeId, ctx.otp)) {
+        otpOk = true;
+        this.logAuthEvent({ nodeId, action: 'totp_recovery_used', details: { slug }, ip: ctx.ip });
+      }
+      if (!otpOk) {
+        // Exactly the bad-password path: same counter, same lockout
+        // escalation, same InvalidCredentialsError (no MFA oracle).
+        this.recordFailedLogin(cred, slug, now, ctx.ip, 'login_totp_failed');
+        throw new InvalidCredentialsError();
+      }
     }
 
     // Anomaly scoring (anomaly.ts) — runs only when ctx.ip is present; no ip
@@ -929,6 +948,74 @@ export class IdentitySystem {
     });
   }
 
+  // ── TOTP MFA accessors (narrow, typed — consumed by mfa.ts + the login gate) ──
+
+  /** TOTP enrollment row (secret included — the login gate and mfa.ts verify against it). */
+  totpRecordFor(nodeId: TreeNodeId): { secret: string; enabled: boolean } | null {
+    const row = this.db
+      .query('SELECT secret, enabled FROM auth_totp WHERE node_id = $node')
+      .get({ $node: nodeId }) as Record<string, unknown> | null;
+    if (!row) return null;
+    return { secret: row.secret as string, enabled: row.enabled === 1 };
+  }
+
+  /**
+   * Insert or replace a PENDING enrollment (enabled=0, verified_at=NULL) and
+   * replace the recovery-code hash set — single transaction, so a re-enroll
+   * never leaves stale codes bound to a dead secret.
+   */
+  upsertPendingTotp(nodeId: TreeNodeId, secret: string, recoveryCodeHashes: string[]): void {
+    const upsert = this.db.transaction((hashes: string[]) => {
+      this.db
+        .query(
+          `INSERT INTO auth_totp (node_id, secret, enabled, created_at, verified_at)
+           VALUES ($node, $secret, 0, $created, NULL)
+           ON CONFLICT(node_id) DO UPDATE SET
+           secret = $secret, enabled = 0, created_at = $created, verified_at = NULL`
+        )
+        .run({ $node: nodeId, $secret: secret, $created: new Date().toISOString() });
+      this.db.query('DELETE FROM auth_totp_recovery WHERE node_id = $node').run({ $node: nodeId });
+      const insert = this.db.query(
+        'INSERT INTO auth_totp_recovery (node_id, code_hash, used_at) VALUES ($node, $hash, NULL)'
+      );
+      for (const hash of hashes) insert.run({ $node: nodeId, $hash: hash });
+    });
+    upsert(recoveryCodeHashes);
+  }
+
+  /** Flip a pending enrollment to enabled=1 + verified_at=now. Returns false when no row exists. */
+  enableTotp(nodeId: TreeNodeId): boolean {
+    const result = this.db
+      .query('UPDATE auth_totp SET enabled = 1, verified_at = $at WHERE node_id = $node')
+      .run({ $at: unixNow(), $node: nodeId });
+    return result.changes > 0;
+  }
+
+  /** Remove the enrollment and ALL recovery codes (disable). Returns true when a row existed. */
+  deleteTotp(nodeId: TreeNodeId): boolean {
+    const remove = this.db.transaction(() => {
+      this.db.query('DELETE FROM auth_totp_recovery WHERE node_id = $node').run({ $node: nodeId });
+      return this.db.query('DELETE FROM auth_totp WHERE node_id = $node').run({ $node: nodeId })
+        .changes;
+    });
+    return remove() > 0;
+  }
+
+  /**
+   * Single-use recovery code: true (and stamps used_at) when the code's
+   * SHA-256 hash exists and is still unused; false otherwise — replaying a
+   * consumed code never passes.
+   */
+  consumeTotpRecovery(nodeId: TreeNodeId, code: string): boolean {
+    const result = this.db
+      .query(
+        `UPDATE auth_totp_recovery SET used_at = $at
+         WHERE node_id = $node AND code_hash = $hash AND used_at IS NULL`
+      )
+      .run({ $at: unixNow(), $node: nodeId, $hash: sha256Hex(code) });
+    return result.changes > 0;
+  }
+
   // ── Internals ─────────────────────────────────────────────────────────
 
   private toDeviceFingerprint(row: Record<string, unknown>): DeviceFingerprint {
@@ -948,6 +1035,55 @@ export class IdentitySystem {
       this.onHighRisk(nodeId, reason);
     } catch {
       // Alerting must never break or mask the login flow.
+    }
+  }
+
+  /**
+   * Shared failed-attempt path (bad password AND bad TOTP code): increment
+   * failed_attempts, audit the given action, then escalate to a lock at
+   * LOCKOUT_THRESHOLD. Audit order matches the original bad-password flow:
+   * failure event first, then account_locked.
+   */
+  private recordFailedLogin(
+    cred: Credential,
+    slug: string,
+    now: number,
+    ip: string | undefined,
+    action: string
+  ): void {
+    const failedAttempts = cred.failedAttempts + 1;
+    this.db
+      .query(
+        'UPDATE auth_alias_credentials SET failed_attempts = failed_attempts + 1 WHERE alias_slug = $slug'
+      )
+      .run({ $slug: slug });
+    this.logAuthEvent({
+      nodeId: cred.nodeId,
+      action,
+      details: { slug, failedAttempts },
+      ip,
+      success: false,
+    });
+    if (failedAttempts >= LOCKOUT_THRESHOLD) {
+      const lockedUntil = now + LOCKOUT_DURATION_SECONDS;
+      this.db
+        .query(
+          `UPDATE auth_alias_credentials SET locked_until = $until, lock_reason = $reason
+           WHERE alias_slug = $slug`
+        )
+        .run({ $until: lockedUntil, $reason: 'too_many_failed_attempts', $slug: slug });
+      this.logAuthEvent({
+        nodeId: cred.nodeId,
+        action: 'account_locked',
+        details: {
+          slug,
+          reason: 'too_many_failed_attempts',
+          failedAttempts,
+          durationSeconds: LOCKOUT_DURATION_SECONDS,
+          lockedUntil,
+        },
+        ip,
+      });
     }
   }
 

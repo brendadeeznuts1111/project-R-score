@@ -13,7 +13,9 @@ blocking (`geo-policy.ts`), password strength (`password-strength.ts`), JIT
 provisioning (`jit.ts`). Phase 3: audit-safe impersonation (`impersonate.ts`)
 and activity timeline (`timeline.ts` · `getTimeline`). Phase 4: self-service
 security (`self-service.ts` — password change, session revoke, device untrust,
-IP allowlist; HTTP under `/auth/me/*`).
+IP allowlist; HTTP under `/auth/me/*`). Phase 5: TOTP MFA (`mfa.ts` +
+`totp-core.ts` — RFC 6238 enroll/confirm/disable, recovery codes, login
+`ctx.otp` gate; HTTP under `/auth/me/totp/*`).
 
 ## Schema (`schema.ts` — `migrateIdentity(db)`, idempotent)
 
@@ -24,6 +26,8 @@ IP allowlist; HTTP under `/auth/me/*`).
 | `auth_audit` | Append-only auth event log (`id`, `node_id`, `action`, `details_json`, `ip`, `success`, `created_at`, `impersonator_id`) |
 | `auth_device_fingerprints` | `(node_id, fingerprint_hash)` trust registry — `first_seen`/`last_seen`, `country_code`, `trusted` |
 | `auth_ip_allowlist` | `(node_id, cidr)` self-service login allowlist — plain IPv4 or IPv4 `/24`, `label`, `created_at` |
+| `auth_totp` | TOTP enrollment (mfa.ts) — `node_id` PK, `secret` (plaintext, see tradeoff below), `enabled` (0 pending / 1 confirmed), `created_at`, `verified_at` |
+| `auth_totp_recovery` | `(node_id, code_hash)` single-use recovery codes — SHA-256 hashes only, `used_at` stamps consumption |
 
 ## Anomaly detection (`anomaly.ts`)
 
@@ -117,6 +121,9 @@ no target-node parameter). HTTP routes are all Bearer-required under
 | `POST /auth/me/devices/untrust` | `{ fingerprintHash }` → `{ ok: true }` (full hash or unique ≥12-char prefix) |
 | `GET /auth/me/ip-allowlist` | → `{ entries: [...] }` |
 | `PUT /auth/me/ip-allowlist` | `{ cidrs: string[] }` → `{ ok, count }` · 400 invalid entry |
+| `POST /auth/me/totp/enroll` | → `{ secret, uri, recoveryCodes }` (plaintext once) · 409 already enabled |
+| `POST /auth/me/totp/confirm` | `{ code }` → `{ ok: true }` · 400 invalid code / nothing pending |
+| `POST /auth/me/totp/disable` | `{ code }` → `{ ok: true }` (TOTP or recovery code) · 400 invalid |
 
 Library API: `changePassword` (verify current → strength-check new → argon2id
 rehash + `rotated_at` → revoke all OTHER sessions; audits
@@ -135,6 +142,47 @@ as anomaly fingerprints) audits `login_blocked_ip` (success 0) and throws
 `IpNotAllowedError` (HTTP → 403). Empty allowlist → no restriction; absent
 `ctx.ip` → allowed (a missing IP signal never blocks).
 `setIpAllowlist` is replace-all (audits `ip_allowlist_updated` with count).
+
+## TOTP MFA (`mfa.ts` / `totp-core.ts`)
+
+Bun-native RFC 6238 TOTP (no npm deps): HMAC-SHA1 via `crypto.subtle`, 20-byte
+secrets from `crypto.getRandomValues`, base32 (RFC 4648) hand-rolled in
+`totp-core.ts` (pure — no identity.ts imports; `identity.ts` imports it for
+the login gate, keeping the module graph cycle-free). `mfa.ts` is the thin
+policy/audit wrapper; `generateTotp` / `verifyTotp` are re-exported from it.
+
+Flow (self-service, own node; routes are Bearer-required under
+`/auth/me/totp/*`):
+
+1. `enrollTotp` (`POST /auth/me/totp/enroll`) → `{ secret, uri, recoveryCodes }`.
+   160-bit base32 secret + `otpauth://totp/FactoryWager:<slug>?secret=…&issuer=FactoryWager`
+   URI + 8 single-use recovery codes (10-char alnum, rejection-sampled).
+   Returned plaintext ONCE; the DB stores the secret + SHA-256 code hashes.
+   Row starts `enabled=0` — a pending enrollment never gates login. Audits
+   `totp_enrolled`. 409 when already enabled.
+2. `confirmTotp` (`POST …/confirm`, `{ code }`) → verifies a live code,
+   flips `enabled=1` + `verified_at`. Audits `totp_enabled`, or
+   `totp_confirm_failed` (0) + `IdentityError`.
+3. `disableTotp` (`POST …/disable`, `{ code }`) → requires a valid TOTP code
+   OR an unused recovery code (a password-only attacker cannot strip MFA).
+   Deletes enrollment + all codes. Audits `totp_disabled` /
+   `totp_disable_failed` (0) / `totp_recovery_used`.
+
+**Login with MFA.** When the node has an ENABLED enrollment, `login()`
+requires `ctx.otp` AFTER password verification and BEFORE the anomaly hook:
+missing → `login_totp_required` (0) + `TotpRequiredError` (HTTP 401
+`{ error: 'totp_required' }` — same status as bad creds, distinct
+machine-readable code, no enumeration); wrong code → `login_totp_failed`
+through the SAME `failed_attempts`/lockout escalation as a bad password,
+then `InvalidCredentialsError` (no MFA oracle). A recovery code in
+`ctx.otp` is consumed (`used_at`) and audits `totp_recovery_used`; replays
+are rejected. HTTP login body accepts optional `otp`.
+
+**At-rest tradeoff (deliberate).** The TOTP shared secret is stored
+PLAINTEXT in `auth_totp.secret` — unlike passwords it cannot be
+salted-hashed (the server must compute the same HMAC as the authenticator),
+and encryption with a same-host key is theatre. This is the pragmatic norm
+for TOTP; mitigation is DB file permissions + backup hygiene.
 
 ## API (`identity.ts`)
 
@@ -161,11 +209,15 @@ identity.auditFor(nodeId, { action, limit });                 // newest-first
 identity.close();
 ```
 
-Failures: `InvalidCredentialsError` (unknown slug **or** wrong password — never
-distinguish), `AccountLockedError` (carries `lockedUntil`), `GeoBlockedError`
+Failures: `InvalidCredentialsError` (unknown slug **or** wrong password **or**
+wrong TOTP code — never distinguish), `AccountLockedError` (carries
+`lockedUntil`), `GeoBlockedError`
 (carries `country`, HTTP 403), `IpNotAllowedError` (carries `ip`, HTTP 403),
+`TotpRequiredError` (MFA enabled, `ctx.otp` missing — HTTP 401
+`{ error: 'totp_required' }`),
 `WeakPasswordError` (carries `feedback`),
-`IdentityError` (validation, duplicate slug, unknown node).
+`IdentityError` (validation, duplicate slug, unknown node, TOTP
+enroll/confirm/disable policy).
 
 ## HTTP (`http.ts`)
 
@@ -174,7 +226,7 @@ returns `null` for non-`/auth/` paths so hosts can chain. This file is the
 **wire boundary** — bodies are parsed/type-guarded here, branded values flow
 inward.
 
-- `POST /auth/login` `{ slug, password }` → `{ token, sessionId, expiresAt }` · 400/401/403 (anomaly-blocked)/423
+- `POST /auth/login` `{ slug, password, otp? }` → `{ token, sessionId, expiresAt }` · 400/401 (`Invalid credentials` or `totp_required`)/403 (anomaly-blocked)/423
 - `POST /auth/logout` `Authorization: Bearer <token>` → `{ ok: true }`
 - `GET /auth/session` `Authorization: Bearer <token>` → `{ sessionId, nodeId, role }` · 401
 - `GET /auth/export` `Authorization: Bearer <token>` → JSON attachment `export-<nodeId>.json`;

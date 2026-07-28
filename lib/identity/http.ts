@@ -6,7 +6,8 @@
  * for non-`/auth/` paths so hosts can chain handlers.
  *
  * Routes:
- *   POST /auth/login    { slug, password } → { token, sessionId, expiresAt }
+ *   POST /auth/login    { slug, password, otp? } → { token, sessionId, expiresAt }
+ *                       (otp = TOTP/recovery code; MFA-enabled + no otp → 401 { error: 'totp_required' })
  *   POST /auth/logout   Authorization: Bearer <token>
  *   GET  /auth/session  Authorization: Bearer <token> → { sessionId, nodeId, role }
  *   GET  /auth/export   Authorization: Bearer <token> → JSON attachment (own data;
@@ -22,6 +23,9 @@
  *   POST /auth/me/devices/untrust        { fingerprintHash } → { ok: true }
  *   GET  /auth/me/ip-allowlist           → { entries: [...] }
  *   PUT  /auth/me/ip-allowlist           { cidrs: string[] } → { ok, count }
+ *   POST /auth/me/totp/enroll            → { secret, uri, recoveryCodes } (409 if enabled)
+ *   POST /auth/me/totp/confirm           { code } → { ok: true }
+ *   POST /auth/me/totp/disable           { code } → { ok: true } (code = TOTP or recovery)
  *
  * Responses to session-resolving routes (session, export, impersonate/end)
  * carry `X-Impersonator: <nodeId>` when the resolved session is impersonated.
@@ -36,11 +40,13 @@ import {
   IdentityError,
   InvalidCredentialsError,
   IpNotAllowedError,
+  TotpRequiredError,
   WeakPasswordError,
   type IdentitySystem,
   type SessionInfo,
 } from './identity.ts';
 import { endImpersonation, impersonate } from './impersonate.ts';
+import { confirmTotp, disableTotp, enrollTotp } from './mfa.ts';
 import {
   changePassword,
   getIpAllowlist,
@@ -85,12 +91,27 @@ function isIpAllowlistBody(value: unknown): value is IpAllowlistBody {
 interface LoginBody {
   slug: string;
   password: string;
+  otp?: string; // TOTP code or recovery code, when the node has MFA enabled
 }
 
 function isLoginBody(value: unknown): value is LoginBody {
   if (typeof value !== 'object' || value === null) return false;
   const body = value as Record<string, unknown>;
-  return typeof body.slug === 'string' && typeof body.password === 'string';
+  return (
+    typeof body.slug === 'string' &&
+    typeof body.password === 'string' &&
+    (body.otp === undefined || typeof body.otp === 'string')
+  );
+}
+
+interface TotpCodeBody {
+  code: string;
+}
+
+function isTotpCodeBody(value: unknown): value is TotpCodeBody {
+  if (typeof value !== 'object' || value === null) return false;
+  const body = value as Record<string, unknown>;
+  return typeof body.code === 'string';
 }
 
 interface ImpersonateBody {
@@ -153,6 +174,7 @@ export function createIdentityHandler(
         const result = await identity.login(body.slug, body.password, {
           ip: clientIp(req),
           userAgent: req.headers.get('user-agent') ?? undefined,
+          otp: body.otp,
         });
         return Response.json({
           token: result.token as string,
@@ -165,6 +187,9 @@ export function createIdentityHandler(
           return jsonError(403, `Login not permitted from ${err.country}`);
         if (err instanceof IpNotAllowedError) return jsonError(403, err.message);
         if (err instanceof AnomalyBlockedError) return jsonError(403, err.reason);
+        // Distinct machine-readable code, SAME 401 as bad credentials — a
+        // client cannot tell "MFA-enabled account" from anything else.
+        if (err instanceof TotpRequiredError) return jsonError(401, 'totp_required');
         if (err instanceof InvalidCredentialsError) return jsonError(401, 'Invalid credentials');
         if (err instanceof WeakPasswordError) {
           return Response.json({ error: err.message, feedback: err.feedback }, { status: 400 });
@@ -334,6 +359,47 @@ export function createIdentityHandler(
         try {
           setIpAllowlist(identity, nodeId, body.cidrs);
           return Response.json({ ok: true, count: body.cidrs.length });
+        } catch (err) {
+          if (err instanceof IdentityError) return jsonError(400, err.message);
+          throw err;
+        }
+      }
+
+      // ── TOTP MFA (/auth/me/totp/*) — enroll/confirm/disable, own node only ──
+
+      if (url.pathname === '/auth/me/totp/enroll' && req.method === 'POST') {
+        try {
+          const enrollment = await enrollTotp(identity, nodeId);
+          // Plaintext secret + recovery codes are returned ONCE — the DB
+          // holds the secret + code hashes only.
+          return Response.json(enrollment);
+        } catch (err) {
+          if (err instanceof IdentityError) {
+            if (err.message === 'TOTP is already enabled') return jsonError(409, err.message);
+            return jsonError(400, err.message);
+          }
+          throw err;
+        }
+      }
+
+      if (url.pathname === '/auth/me/totp/confirm' && req.method === 'POST') {
+        const body = await parseJsonBody(req);
+        if (!isTotpCodeBody(body)) return jsonError(400, 'Invalid request body');
+        try {
+          await confirmTotp(identity, nodeId, body.code);
+          return Response.json({ ok: true });
+        } catch (err) {
+          if (err instanceof IdentityError) return jsonError(400, err.message);
+          throw err;
+        }
+      }
+
+      if (url.pathname === '/auth/me/totp/disable' && req.method === 'POST') {
+        const body = await parseJsonBody(req);
+        if (!isTotpCodeBody(body)) return jsonError(400, 'Invalid request body');
+        try {
+          await disableTotp(identity, nodeId, body.code);
+          return Response.json({ ok: true });
         } catch (err) {
           if (err instanceof IdentityError) return jsonError(400, err.message);
           throw err;
