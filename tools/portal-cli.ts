@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @see https://bun.com/docs/runtime/index#general-execution-options — Bun runtime CLI flags
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/pm/cli/pm — bun pm (pack · ls · version · pkg · trust · cache · hash)
@@ -197,6 +198,14 @@ Secret (real pass-cli only — https://protonpass.github.io/pass-cli/):
   secret move <vault/title> --to <vault>  ·  secret [un]trash <vault/title>
   secret invite accept <INVITE_ID>          # not URL secure-link accept
   source scripts/agent-env.sh factorywager  # agent session before secret cmds
+
+Runtime options (via bun):
+  bun --watch tools/portal-cli.ts ...       restart on imported file changes
+  bun --hot tools/portal-cli.ts ...         soft-reload imported modules
+  bun --cwd /path tools/portal-cli.ts ...   set working directory
+  bun --silent tools/portal-cli.ts ...      suppress Bun's script-command echo
+  bun --inspect tools/portal-cli.ts ...     attach debugger
+  See: https://bun.com/docs/runtime/index#general-execution-options
 `;
 
 function usage(): never {
