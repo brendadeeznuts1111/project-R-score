@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   envNameFromTitle,
   findItemRefByTitle,
+  isReservedEnvKey,
   itemTitlesFromListJson,
   mapWithConcurrency,
   moveArgsFromTarget,
@@ -131,7 +132,7 @@ describe('portal-secret move/trash/share helpers', () => {
 
   test('shareItemArgs builds email share with role', () => {
     expect(shareItemArgs('sid', 'iid', 'ops@factory-wager.com', 'editor')).toEqual([
-      'item', 'share', '--share-id', 'sid', '--item-id', 'iid', '--role', 'editor', 'ops@factory-wager.com',
+      'item', 'share', '--share-id', 'sid', '--item-id', 'iid', '--role', 'editor', '--', 'ops@factory-wager.com',
     ]);
   });
 
@@ -142,7 +143,7 @@ describe('portal-secret move/trash/share helpers', () => {
 
   test('shareVaultArgs maps to vault share with email positional', () => {
     expect(shareVaultArgs('portal', 'alice@example.com', 'viewer')).toEqual([
-      'vault', 'share', '--vault-name', 'portal', '--role', 'viewer', 'alice@example.com',
+      'vault', 'share', '--vault-name', 'portal', '--role', 'viewer', '--', 'alice@example.com',
     ]);
   });
 
@@ -245,5 +246,30 @@ describe('portal-secret mapWithConcurrency', () => {
       active--;
     });
     expect(peak).toBeLessThanOrEqual(3);
+  });
+});
+
+describe('portal-secret env-key guards', () => {
+  test('isReservedEnvKey blocks hijack primitives', () => {
+    expect(isReservedEnvKey('PATH')).toBe(true);
+    expect(isReservedEnvKey('HOME')).toBe(true);
+    expect(isReservedEnvKey('DYLD_INSERT_LIBRARIES')).toBe(true);
+    expect(isReservedEnvKey('NODE_OPTIONS')).toBe(true);
+    expect(isReservedEnvKey('BUN_CONFIG_VERBOSE_FETCH')).toBe(true);
+    expect(isReservedEnvKey('CLOUDFLARE_API_TOKEN')).toBe(false);
+    expect(isReservedEnvKey('PATHWAY')).toBe(false);
+  });
+
+  test('summarizeAutofill falls back to title for unsanitizable rows', () => {
+    const summary = summarizeAutofill([
+      { title: '!!!', envKey: '', label: null, color: null, glyph: null, ok: false, error: 'unsanitizable title (no env key)' },
+    ]);
+    expect(summary.missing).toEqual(['!!!']);
+    expect(summary.errors['!!!']).toMatch(/unsanitizable/);
+  });
+
+  test('findItemRefByTitle matches name-only rows (autofill/share seam)', () => {
+    const raw = JSON.stringify([{ id: 'i9', share_id: 's9', name: 'Name Only' }]);
+    expect(findItemRefByTitle(raw, 'Name Only')?.id).toBe('i9');
   });
 });

@@ -1,6 +1,18 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @see https://bun.com/docs/pm/isolated-installs — isolated installs overview
+// @see https://bun.com/docs/pm/cli/install#default-strategy — lockfile configVersion default
+// @see https://bun.com/docs/pm/cli/install#isolated-installs — install CLI isolated
+// @see https://bun.com/docs/pm/cli/install#hoisted-installs — install CLI hoisted
 /**
  * Isolated installs + global virtual store — doc anchors and lockfile metadata.
+ *
+ * Bun default strategy (https://bun.com/docs/pm/cli/install#default-strategy):
+ *   configVersion=1 + workspaces → isolated
+ *   configVersion=1 without workspaces → hoisted
+ *   configVersion=0 (pre-1.3.2 / npm·yarn migrate) → hoisted
+ *
+ * Full guide: https://bun.com/docs/pm/isolated-installs
+ * Related: workspaces · lockfile · install CLI (see INSTALL_LINKER_DOCS).
  *
  * @see https://bun.com/docs/pm/isolated-installs
  * @see https://bun.com/docs/pm/global-store
@@ -10,9 +22,19 @@ import { bunDocs } from './bun-site-url.ts';
 import { joinPath } from '../path-bun.ts';
 
 export const INSTALL_LINKER_DOCS = {
+  /** Full isolated-installs guide (default strategy table, layout, migration). */
   isolatedInstalls: bunDocs('pm/isolated-installs'),
+  /** install CLI — default strategy + configVersion pointer. */
+  installDefaultStrategy: bunDocs('pm/cli/install', 'default-strategy'),
+  /** install CLI — isolated section. */
+  installIsolated: bunDocs('pm/cli/install', 'isolated-installs'),
+  /** install CLI — hoisted section. */
+  installHoisted: bunDocs('pm/cli/install', 'hoisted-installs'),
+  /** Related docs footer on isolated-installs page. */
+  isolatedRelated: bunDocs('pm/isolated-installs', 'related-documentation'),
   globalStore: bunDocs('pm/global-store'),
   lockfile: bunDocs('pm/lockfile'),
+  bunfigLinker: 'https://bun.com/docs/runtime/bunfig#install-linker',
   bunfigGlobalStore: 'https://bun.com/docs/runtime/bunfig#install-globalstore',
 } as const;
 

@@ -799,6 +799,11 @@ export const CANONICAL_REFS: Record<string, string> = {
   'isolated installs': bunDocs('pm/isolated-installs'),
   'global virtual store': bunDocs('pm/global-store'),
   configVersion: bunDocs('pm/isolated-installs'),
+  // install CLI anchors (default strategy / linker modes)
+  'install default strategy': bunDocs('pm/cli/install', 'default-strategy'),
+  'install isolated': bunDocs('pm/cli/install', 'isolated-installs'),
+  'install hoisted': bunDocs('pm/cli/install', 'hoisted-installs'),
+  'isolated related documentation': bunDocs('pm/isolated-installs', 'related-documentation'),
   'Bun.Cookie': 'https://bun.com/docs/runtime/cookies#cookie-class',
   CookieMap: 'https://bun.com/docs/runtime/cookies#cookiemap-class',
   'Bun.connect': 'https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect',

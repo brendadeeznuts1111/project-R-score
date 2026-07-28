@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/test — bun:test
 // @see https://bun.com/docs/test/index#run-tests
-import { describe, test, expect, beforeAll } from 'bun:test';
+import { describe, test, expect } from 'bun:test';
 import {
   diffAgainstPrevious,
   findImportCycles,
@@ -11,18 +11,19 @@ import {
 } from '../tools/packages-metafile-audit.ts';
 
 describe('packages-metafile-audit', () => {
-  let deep: PackageAuditReport;
-  let shallow: PackageAuditReport;
-  let cross: PackageAuditReport;
+  // Lazy memoized reports: hooks have a fixed ~5s timeout (unconfigurable),
+  // and three sequential full-monorepo audits exceeded it under parallel-lane
+  // load. Deferring into the first awaiting test puts the cost inside the
+  // 10s test budget; each report is still computed at most once.
+  let deepP: Promise<PackageAuditReport> | undefined;
+  let shallowP: Promise<PackageAuditReport> | undefined;
+  let crossP: Promise<PackageAuditReport> | undefined;
+  const getDeep = () => (deepP ??= runPackagesMetafileAudit());
+  const getShallow = () => (shallowP ??= runPackagesMetafileAudit({ deepMap: false }));
+  const getCross = () => (crossP ??= runPackagesMetafileAudit({ crossCheck: true }));
 
-  beforeAll(async () => {
-    // Sequential builds via tool lock; share reports so tests don't stampede Bun.build.
-    deep = await runPackagesMetafileAudit();
-    shallow = await runPackagesMetafileAudit({ deepMap: false });
-    cross = await runPackagesMetafileAudit({ crossCheck: true });
-  });
-
-  test('schema v13 score + probes + quarantine + summary', () => {
+  test('schema v13 score + probes + quarantine + summary', async () => {
+    const deep = await getDeep();
     expect(deep.schemaVersion).toBe(13);
     expect(deep.root).toBe('.');
     expect(deep.map.quarantine).toBeDefined();
@@ -53,7 +54,8 @@ describe('packages-metafile-audit', () => {
     expect(deep.entrypoints.some(e => e.includes('/dist/'))).toBe(false);
   });
 
-  test('emits portable provenance and deterministic sampled edges', () => {
+  test('emits portable provenance and deterministic sampled edges', async () => {
+    const [deep, shallow] = await Promise.all([getDeep(), getShallow()]);
     const samples = [...deep.map.packageEdges, ...deep.map.externalEdges].map(edge => edge.samples);
     for (const evidence of samples) {
       expect(evidence).toEqual([...evidence].sort());
@@ -72,7 +74,8 @@ describe('packages-metafile-audit', () => {
     expect(sampleIndex(deep)).toEqual(sampleIndex(shallow));
   });
 
-  test('--shallow skips deep-map enrichment', () => {
+  test('--shallow skips deep-map enrichment', async () => {
+    const shallow = await getShallow();
     expect(shallow.map.intra).toBeUndefined();
     expect(shallow.map.outsideConsumers).toBeUndefined();
     expect(shallow.map.declared).toBeUndefined();
@@ -124,14 +127,14 @@ describe('packages-metafile-audit', () => {
     expect(diff.scoreDelta).toBe(2);
   });
 
-  test('formatAuditMarkdown includes score', () => {
-    const md = formatAuditMarkdown(deep);
+  test('formatAuditMarkdown includes score', async () => {
+    const md = formatAuditMarkdown(await getDeep());
     expect(md).toContain('Score:');
-    expect(md).toContain(String(deep.score));
+    expect(md).toContain(String((await getDeep()).score));
   });
 
-  test('cross-check attaches Transpiler compare', () => {
-    expect(cross.crossCheck).toBeDefined();
+  test('cross-check attaches Transpiler compare', async () => {
+    expect((await getCross()).crossCheck).toBeDefined();
   });
 
   test('vault plane attaches env.template coupling', async () => {

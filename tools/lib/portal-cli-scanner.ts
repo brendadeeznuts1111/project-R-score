@@ -332,6 +332,9 @@ export function formatPackageMgmtPolicy(p: PackageMgmtPolicy): string {
     '',
     `Docs: ${SECURITY_SCANNER_DOCS}`,
     'Isolated installs: https://bun.com/docs/pm/isolated-installs',
+    'Default strategy: https://bun.com/docs/pm/cli/install#default-strategy',
+    'Install CLI isolated: https://bun.com/docs/pm/cli/install#isolated-installs',
+    'Install CLI hoisted: https://bun.com/docs/pm/cli/install#hoisted-installs',
     'Bun install: https://bun.com/docs/pm/cli/install',
   ];
   return lines.join('\n');

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -59,9 +60,10 @@ Subcommands:
                         pass-cli inject (env.template → file/stdout)
   autofill --vault <v> [--json] [--parallel] [-- <cmd…>]
                         List vault items; inject each password as ENV from title
-                        --parallel fetches items concurrently (Promise.all)
+                        --parallel fetches concurrently, capped at 8 spawns
                         --json prints {injected, missing, errors} — no values, jq-safe;
                         omit '-- <cmd>' for report-only mode (e.g. | jq '.missing')
+                        Child env is UNMASKED with '-- <cmd>' — prefer run for masking
                         Status lines use config/vault-map.toml label/color/glyph
                         Prefer: secret run --env-file env.template -- <cmd>
   map [--json]          Print vault-map bundle (TOML SSOT + display chrome)
@@ -70,7 +72,7 @@ Subcommands:
   invite reject <id>    pass-cli invite reject <INVITE_ID>
   accept <id>           alias of invite accept (invite id, not URL)
   password <generate|score> [args…]
-                        pass-cli password (needs session)
+                        pass-cli password (no vault session needed)
   share list [--json]   pass-cli share list
   share item <vault/title> <email> [--role viewer|editor|manager]
                         pass-cli item share (resolves share-id via item list)
@@ -81,7 +83,7 @@ Subcommands:
                         remove = revoke a share (by --member-share-id)
   totp <target>         pass-cli item totp (code to stdout)
                         target: pass://vault/item[/field] OR vault/item[/field]
-  session <lock|unlock|create-lock>
+  session <lock|unlock|create-lock|remove-lock>
                         pass-cli session (2.2.x session lock; passthrough)
   settings <set|…>      pass-cli settings (default vault, output format)
   pat <list|create|delete|renew|access>
@@ -205,6 +207,16 @@ export function envNameFromTitle(title: string): string {
     .toUpperCase();
 }
 
+/**
+ * Env keys a vault item title must never set on the autofill child process:
+ * PATH/HOME resolution hijack, dylib injection (DYLD_/LD_ prefixes), and
+ * runtime option channels (BUN_/NODE_ prefixes). Titles are
+ * operator-controlled strings.
+ */
+export function isReservedEnvKey(name: string): boolean {
+  return /^(PATH|HOME|DYLD_.*|LD_.*|BUN_.*|NODE_.*)$/.test(name);
+}
+
 /** Extract item titles from `item list --output json` payload. */
 export function itemTitlesFromListJson(raw: string): string[] {
   const parsed = safeJsonParse<unknown>(raw);
@@ -283,6 +295,8 @@ export function findItemRefByTitle(
     const r = row as Record<string, unknown>;
     const t =
       (typeof r.title === 'string' && r.title) ||
+      (typeof r.name === 'string' && r.name) ||
+      (typeof r.itemTitle === 'string' && r.itemTitle) ||
       (r.data &&
         typeof r.data === 'object' &&
         (r.data as { metadata?: { name?: string } }).metadata?.name) ||
@@ -311,7 +325,8 @@ export function shareItemArgs(
     throw new Error(`Invalid role "${role}" — expected viewer|editor|manager`);
   }
   if (!email.includes('@')) throw new Error(`Invalid email "${email}"`);
-  return ['item', 'share', '--share-id', shareId, '--item-id', itemId, '--role', role, email];
+  // `--` terminator: a flag-looking email can't be reinterpreted by clap.
+  return ['item', 'share', '--share-id', shareId, '--item-id', itemId, '--role', role, '--', email];
 }
 
 /** `pass-cli vault share` args (one email per call; default role is viewer). */
@@ -321,7 +336,8 @@ export function shareVaultArgs(vault: string, email: string, role: string): stri
     throw new Error(`Invalid role "${role}" — expected viewer|editor|manager`);
   }
   if (!email.includes('@')) throw new Error(`Invalid email "${email}"`);
-  return ['vault', 'share', '--vault-name', vault, '--role', role, email];
+  // `--` terminator: a flag-looking email can't be reinterpreted by clap.
+  return ['vault', 'share', '--vault-name', vault, '--role', role, '--', email];
 }
 
 function passEnv(reason?: string): NodeJS.ProcessEnv {
@@ -473,8 +489,11 @@ export function summarizeAutofill(rows: AutofillRow[]): {
   for (const r of rows) {
     if (r.ok) injected.push(r.envKey);
     else {
-      missing.push(r.envKey);
-      if (r.error) errors[r.envKey] = r.error;
+      // Fall back to the title for unsanitizable rows (empty envKey) so no
+      // vault item vanishes from the accounting.
+      const key = r.envKey || r.title;
+      missing.push(key);
+      if (r.error) errors[key] = r.error;
     }
   }
   return { injected, missing, errors };
@@ -485,7 +504,7 @@ async function cmdAutofill(rest: string[]): Promise<void> {
   const vault = flagValue(before, '--vault') ?? flagValue(before, '--vault-name');
   const json = hasFlag(before, '--json');
   const parallel = hasFlag(before, '--parallel');
-  if (!vault || (after.length === 0 && !json)) {
+  if (!vault || vault.startsWith('-') || (after.length === 0 && !json)) {
     cliError(
       'Usage: portal secret autofill --vault <vault> [--json] [--parallel] [-- <command> [args…]]\n' +
         '--json prints a report WITHOUT secret values (injected/missing/errors) — jq-safe.\n' +
@@ -532,7 +551,15 @@ async function cmdAutofill(rest: string[]): Promise<void> {
       glyph: mapped?.glyph ?? null,
       ok: false,
     };
-    if (!envKey) return row;
+    if (!envKey) {
+      row.error = 'unsanitizable title (no env key)';
+      return row;
+    }
+    if (isReservedEnvKey(envKey)) {
+      // Never let a vault item title clobber PATH/DYLD_*/BUN_* on the child.
+      row.error = `reserved env key "${envKey}" rejected`;
+      return row;
+    }
     try {
       const { code: vc, stdout: secret } = await capturePassCli(
         ['item', 'view', '--vault-name', vault!, '--item-title', title, '--field', field],
@@ -567,7 +594,7 @@ async function cmdAutofill(rest: string[]): Promise<void> {
         return out;
       })();
 
-  const usable = rows.filter(r => r.envKey);
+  const usable = rows.filter(r => r.envKey || r.error);
   const summary = summarizeAutofill(usable);
 
   if (json) {
@@ -593,7 +620,7 @@ async function cmdAutofill(rest: string[]): Promise<void> {
       formatVaultStatusLine(
         {
           label: r.label ?? (r.ok ? r.envKey : r.title),
-          envKey: r.envKey,
+          envKey: r.envKey || '(no env key)',
           color: r.color,
           glyph: r.glyph,
         },
@@ -677,7 +704,7 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
     case 'vault-list': {
       const json = hasFlag(rest, '--json');
       const args = json
-        ? ['vault', 'list', '--output', 'json']
+        ? ['vault', 'list', '--output', 'json', ...rest.filter(a => a !== '--json')]
         : ['vault', 'list', ...rest.filter(a => a !== '--json')];
       process.exit(await runPassCli(args, 'vaults'));
       return;
@@ -918,7 +945,8 @@ export async function dispatchSecret(sub: string | undefined, rest: string[]): P
     }
 
     case 'password': {
-      // pass-cli password generate random|passphrase · password score (needs session).
+      // pass-cli password generate random|passphrase · score — upstream runs
+      // this before the authenticated-client gate (no vault session needed).
       if (!rest[0]) {
         cliError('Usage: portal secret password <generate|score> [args…]');
       }
