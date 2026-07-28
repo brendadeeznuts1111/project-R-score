@@ -10,7 +10,8 @@
 /**
  * Scope-aware snapshot core — imported by snapshot-data-plane.ts and portal-cli.ts.
  */
-import { Glob, inspect, stringWidth, write, file } from 'bun';
+import { Glob, write, file } from 'bun';
+import { logDepth, logTable } from '../lib/console-depth.ts';
 import { runPublicDiscovery } from '../lib/public-discovery.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 import {
@@ -63,7 +64,9 @@ export function termColor(text: string, color: string): string {
   // Bun.color(x, 'ansi') auto-detects stdout color depth (16m/256/16) and
   // honors NO_COLOR, TERM=dumb, and pipes — runtime-verified on the pinned
   // canary via PTY spawn (the session's own NO_COLOR=1 was the confound
-  // behind earlier "detection is broken" readings).
+  // behind earlier "detection is broken" readings). NOTE: deliberately NOT
+  // the wrapper's colorize() — tests pin TERM=dumb → plain output, which
+  // only Bun.color auto-detection honors (colorize gates on isTTY/env only).
   const code = Bun.color(color, 'ansi') || '';
   return code ? `${code}${text}${ANSI_RESET}` : text;
 }
@@ -74,10 +77,6 @@ function logOk(msg: string): void {
 
 function logHeadline(msg: string): void {
   console.log(`\n  ${termColor(msg, 'cyan')}`);
-}
-
-function pad(s: string, w: number): string {
-  return s + ' '.repeat(Math.max(0, w - stringWidth(s)));
 }
 
 export function cliError(msg: string): never {
@@ -422,14 +421,14 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   };
 
   logHeadline(`📸 Snapshot — ${config.label} (scope=${scope})`);
-  console.log(`     ID: ${id}`);
-  console.log(`     Dir: ${snapDir}`);
-  console.log(`     Base: ${baseUrl}`);
-  console.log(
-    `     Git: ${gitInfo.commit.slice(0, 8)} on ${gitInfo.branch}${gitInfo.dirty ? termColor(' (dirty)', 'yellow') : ''}`
-  );
-  if (lockState) console.log(`     Lock: bun.lock #${lockState.lockHash}\n`);
-  else console.log('');
+  logDepth({
+    ID: id,
+    Dir: snapDir,
+    Base: baseUrl,
+    Git: `${gitInfo.commit.slice(0, 8)} on ${gitInfo.branch}${gitInfo.dirty ? termColor(' (dirty)', 'yellow') : ''}`,
+    ...(lockState ? { Lock: `bun.lock #${lockState.lockHash}` } : {}),
+  });
+  console.log('');
 
   if (dryRun) {
     console.log(`  ${termColor('DRY RUN', 'yellow')} — would capture:`);
@@ -545,12 +544,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   console.log(`  📝 ${manifestFlatPath(id)}\n`);
 
   if (debug) {
-    console.log(
-      inspect(
-        { manifest, gitInfo, config: scopeConfigs[scope], capturedFiles },
-        { depth: 5, colors: true }
-      )
-    );
+    logDepth({ manifest, gitInfo, config: scopeConfigs[scope], capturedFiles }, { depth: 5 });
   }
 
   return manifest;
@@ -573,36 +567,23 @@ export async function listSnapshots(opts: SnapshotFilterOptions = {}): Promise<v
   }
 
   if (opts.debug) {
-    console.log(inspect(filtered, { depth: 4, colors: true }));
+    logDepth(filtered, { depth: 4 });
     return;
   }
 
-  const rows = filtered.map(m => [
-    m.scope,
-    m.id.slice(0, 22),
-    m.capturedAt.slice(0, 19),
-    String(m.fileCount),
-    m.metadata?.status ?? '?',
-    m.metadata?.mae ? `mae=${m.metadata.mae}` : '',
-    m.metadata?.raises ? `↑${m.metadata.raises}` : '',
-    m.commit.slice(0, 8),
-  ]);
-
-  const headers = ['Scope', 'ID', 'Captured', 'Files', 'Status', 'Metrics', 'Raise', 'Commit'];
-  const widths = headers.map((h, i) =>
-    Math.max(h.length, ...rows.map(r => stringWidth(r[i] ?? '')))
-  );
-  const border = (l: string, j: string, r: string) =>
-    l + widths.map(w => '─'.repeat(w + 2)).join(j) + r;
-  const line = (cells: string[]) =>
-    '│ ' + cells.map((c, i) => pad(c, widths[i]!)).join(' │ ') + ' │';
+  const rows = filtered.map(m => ({
+    Scope: m.scope,
+    ID: m.id.slice(0, 22),
+    Captured: m.capturedAt.slice(0, 19),
+    Files: String(m.fileCount),
+    Status: m.metadata?.status ?? '?',
+    Metrics: m.metadata?.mae ? `mae=${m.metadata.mae}` : '',
+    Raise: m.metadata?.raises ? `↑${m.metadata.raises}` : '',
+    Commit: m.commit.slice(0, 8),
+  }));
 
   console.log(`\n  📋 Snapshots (${filtered.length})`);
-  console.log(border('┌', '┬', '┐'));
-  console.log(line(headers));
-  console.log(border('├', '┼', '┤'));
-  for (const r of rows) console.log(line(r));
-  console.log(border('└', '┴', '┘'));
+  logTable(rows, ['Scope', 'ID', 'Captured', 'Files', 'Status', 'Metrics', 'Raise', 'Commit']);
   console.log('');
 }
 
@@ -735,12 +716,7 @@ export async function showLastSnapshot(opts: SnapshotFilterOptions = {}): Promis
     console.log(`  No snapshots for scope=${opts.scope ?? '*'}`);
     return;
   }
-  console.log(
-    inspect(filtered[filtered.length - 1], {
-      depth: opts.debug ? 6 : 4,
-      colors: true,
-    })
-  );
+  logDepth(filtered[filtered.length - 1], { depth: opts.debug ? 6 : 4 });
 }
 
 export function showScopeConfig(scope?: SnapshotScopeName): void {
