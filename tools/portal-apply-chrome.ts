@@ -2,13 +2,19 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
- * One-shot: inject brand font links + trimmed topbar nav into portal HTML shells.
- * Idempotent — safe to re-run.
+ * Inject brand fonts + topbar nav + shared footer into portal HTML shells.
+ * Uses lib/portal/chrome-catalog.ts SSOT. Idempotent.
  *
  *   bun tools/portal-apply-chrome.ts
+ *   bun run portal:chrome:bake && bun tools/portal-apply-chrome.ts
  */
 import { joinPath } from '../lib/path-bun.ts';
 import { PORTAL_WIKI_DROPDOWN_HREF } from '../lib/http/wiki-nav.ts';
+import {
+  renderFooterHtml,
+  renderPriorityNavHtml,
+  type PortalChromeNavItem,
+} from '../lib/portal/chrome-catalog.ts';
 
 const PORTAL = joinPath(import.meta.dir, '../public/portal');
 
@@ -27,6 +33,10 @@ type PageKey =
   | 'env'
   | 'dashboard'
   | 'skills'
+  | 'packages'
+  | 'toc'
+  | 'compliance'
+  | 'limits'
   | 'template';
 
 const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: string }[] = [
@@ -38,33 +48,22 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
   { file: 'env/index.html', active: 'env', pageLabel: 'Env', brandBadge: 'ops' },
   { file: 'dashboard/index.html', active: 'dashboard', pageLabel: 'Dashboard', brandBadge: 'ops' },
   { file: 'skills/index.html', active: 'skills', pageLabel: 'Skills', brandBadge: 'ops' },
+  { file: 'packages/index.html', active: 'packages', pageLabel: 'Packages', brandBadge: 'ops' },
+  { file: 'toc/index.html', active: 'toc', pageLabel: 'TOC', brandBadge: 'ops' },
+  {
+    file: 'compliance/index.html',
+    active: 'compliance',
+    pageLabel: 'Compliance',
+    brandBadge: 'ops',
+  },
+  { file: 'limits/index.html', active: 'limits', pageLabel: 'Limits', brandBadge: 'ops' },
   { file: '_page-template.html', active: 'template', pageLabel: 'New Page', brandBadge: 'ops' },
 ];
 
-function cls(active: PageKey, key: PageKey): string {
-  return active === key ? 'nav-link active' : 'nav-link';
-}
-
 function renderNav(active: PageKey): string {
-  return `<nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="${cls(active, 'home')}">Home</a>
-        <a href="/portal/ops" class="${cls(active, 'ops')}">Ops</a>
-        <a href="/portal/" class="${cls(active, 'registry')}">Registry</a>
-        <a href="/portal/health" class="${cls(active, 'health')}">Health</a>
-        <a href="/portal/dod" class="${cls(active, 'dod')}">DOD</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-            <a href="/portal/catalog" class="${cls(active, 'catalog')}" role="menuitem">Catalog</a>
-            <a href="/portal/skills" class="${cls(active, 'skills')}" role="menuitem">Skills</a>
-            <a href="/portal/env" class="${cls(active, 'env')}" role="menuitem">Env</a>
-            <a href="/portal/dashboard" class="${cls(active, 'dashboard')}" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" role="menuitem">TOC</a>
-            <a href="/monitoring" class="nav-link" role="menuitem">Monitoring</a>
-            <a href="${PORTAL_WIKI_DROPDOWN_HREF}" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem" title="Portal · registry · tenants · proof loop">Wiki</a>
-          </div>
-        </div>
-      </nav>`;
+  // Map page key to chrome id (registry page uses registry id)
+  const activeId = active === 'template' ? undefined : active;
+  return renderPriorityNavHtml(activeId);
 }
 
 function renderLogo(pageLabel: string, brandBadge?: string): string {
@@ -78,9 +77,15 @@ function renderLogo(pageLabel: string, brandBadge?: string): string {
 
 const NAV_RE = /<nav class="topbar-nav"[^>]*>[\s\S]*?<\/nav>/;
 const LOGO_RE = /<h1 class="logo">[\s\S]*?<\/h1>/;
+const FOOTER_RE = /<footer class="footer"[^>]*>[\s\S]*?<\/footer>/;
+const FOOTER_SCRIPT = '<script type="module" src="/portal/components/footer.js"></script>';
 
 async function patchFile(entry: (typeof PAGES)[number]): Promise<void> {
   const path = joinPath(PORTAL, entry.file);
+  if (!(await Bun.file(path).exists())) {
+    console.log(`skip missing ${entry.file}`);
+    return;
+  }
   let html = await Bun.file(path).text();
   let changed = false;
 
@@ -118,6 +123,23 @@ async function patchFile(entry: (typeof PAGES)[number]): Promise<void> {
     }
   }
 
+  const footerHtml = renderFooterHtml();
+  if (FOOTER_RE.test(html)) {
+    const prev = html.match(FOOTER_RE)?.[0] ?? '';
+    if (prev !== footerHtml) {
+      html = html.replace(FOOTER_RE, footerHtml);
+      changed = true;
+    }
+  } else if (html.includes('</body>')) {
+    html = html.replace('</body>', `  ${footerHtml}\n</body>`);
+    changed = true;
+  }
+
+  if (!html.includes('/portal/components/footer.js') && html.includes('</body>')) {
+    html = html.replace('</body>', `  ${FOOTER_SCRIPT}\n</body>`);
+    changed = true;
+  }
+
   if (changed) {
     await Bun.write(path, html);
     console.log(`updated ${entry.file}`);
@@ -130,7 +152,7 @@ for (const page of PAGES) {
   await patchFile(page);
 }
 
-/** Normalize wiki dropdown on shells not in PAGES (compliance, monitoring, …). */
+/** Normalize wiki dropdown on shells not fully covered. */
 const WIKI_NAV_RE =
   /<a href="https:\/\/wiki\.factory-wager\.com(?:\/wiki-index\.html)?" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem"[^>]*>Wiki<\/a>/g;
 const WIKI_NAV_ANCHOR = `<a href="${PORTAL_WIKI_DROPDOWN_HREF}" class="nav-link" target="_blank" rel="noopener noreferrer" role="menuitem" title="Portal · registry · tenants · proof loop">Wiki</a>`;
@@ -148,12 +170,13 @@ async function sweepWikiNav(rel: string): Promise<void> {
 
 for (const rel of [
   'public/monitoring/index.html',
-  'public/portal/compliance/index.html',
-  'public/portal/toc/index.html',
-  'public/portal/limits/index.html',
   'public/portal/science/index.html',
   'public/portal/tennis/index.html',
   'public/portal/factory/index.html',
+  'public/portal/partner-history/index.html',
 ]) {
   await sweepWikiNav(rel);
 }
+
+// Suppress unused import lint for type-only if needed
+void (0 as unknown as PortalChromeNavItem);

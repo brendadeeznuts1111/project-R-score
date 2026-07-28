@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="portal-poll-ms" content="60000" />
   <title>Packages map · FactoryWager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
     .pkg-board { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
@@ -49,10 +52,25 @@
       </h1>
       <nav class="topbar-nav" aria-label="Primary">
         <a href="/" class="nav-link">Home</a>
-        <a href="/portal/ops" class="nav-link">Ops</a>
+        <a href="/portal/ops/" class="nav-link">Ops</a>
         <a href="/portal/" class="nav-link">Registry</a>
-        <a href="/portal/health" class="nav-link">Health</a>
-        <a href="/portal/packages/" class="nav-link active">Packages</a>
+        <a href="/portal/health/" class="nav-link">Health</a>
+        <a href="/portal/dod/" class="nav-link">DOD</a>
+        <a href="/portal/compliance/" class="nav-link">Compliance</a>
+        <div class="nav-overflow">
+          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/portal/catalog/" class="nav-link" role="menuitem">Catalog</a>
+            <a href="/portal/skills/" class="nav-link" role="menuitem">Skills</a>
+            <a href="/portal/env/" class="nav-link" role="menuitem">Env</a>
+            <a href="/portal/packages/" class="nav-link active" role="menuitem" title="graph map">Packages</a>
+            <a href="/portal/dashboard/" class="nav-link" role="menuitem">Dashboard</a>
+            <a href="/portal/toc/" class="nav-link" role="menuitem" title="Drum/Buffer/Rope">TOC</a>
+            <a href="/portal/limits/" class="nav-link" role="menuitem">Limits</a>
+            <a href="/monitoring/" class="nav-link" role="menuitem">Monitoring</a>
+            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" role="menuitem" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub">Wiki</a>
+          </div>
+        </div>
       </nav>
       <div class="topbar-status">
         <a href="/registry/packages-graph-map.json" class="nav-link nav-md" title="Raw JSON">JSON</a>
@@ -110,5 +128,26 @@
   <script type="module" src="/portal/topbar.js"></script>
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/packages/packages-board.js"></script>
+  <footer class="footer" data-portal-chrome="footer">
+    <p>
+      <strong>FactoryWager</strong> ·
+      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
+      <a href="/portal/ops/">Ops</a> ·
+      <a href="/portal/toc/">TOC</a> ·
+      <a href="/portal/packages/">Packages</a> ·
+      <a href="/portal/health/">Health</a> ·
+      <a href="/portal/compliance/">Compliance</a> ·
+      <a href="/portal/limits/">Limits</a> ·
+      <a href="/portal/dod/">DOD</a> ·
+      <a href="/portal/env/">Env</a> ·
+      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="footer-meta">
+      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
+      · <span data-footer-ts>…</span>
+    </p>
+  </footer>
+  <script type="module" src="/portal/components/footer.js"></script>
 </body>
 </html>

@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Partner Limit Patterns — FactoryWager</title>
-    <link rel="stylesheet" href="/portal/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/portal/style.css" />
     <link rel="stylesheet" href="/portal/theme-tokens.css" />
     <script type="module" src="/portal/data.js"></script>
     <script type="module" src="/portal/topbar.js"></script>
@@ -628,5 +631,26 @@
       load();
       setInterval(load, POLL_INTERVAL);
     </script>
-  </body>
+    <footer class="footer" data-portal-chrome="footer">
+    <p>
+      <strong>FactoryWager</strong> ·
+      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
+      <a href="/portal/ops/">Ops</a> ·
+      <a href="/portal/toc/">TOC</a> ·
+      <a href="/portal/packages/">Packages</a> ·
+      <a href="/portal/health/">Health</a> ·
+      <a href="/portal/compliance/">Compliance</a> ·
+      <a href="/portal/limits/">Limits</a> ·
+      <a href="/portal/dod/">DOD</a> ·
+      <a href="/portal/env/">Env</a> ·
+      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="footer-meta">
+      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
+      · <span data-footer-ts>…</span>
+    </p>
+  </footer>
+  <script type="module" src="/portal/components/footer.js"></script>
+</body>
 </html>

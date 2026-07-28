@@ -190,6 +190,16 @@ class OperationsDashboard extends HTMLElement {
             <a class="ops-link" href="/registry/compliance-board.json">Board JSON</a>
             <a class="ops-link" href="/api/compliance">API snapshot</a>
           </section>
+          <section class="ops-panel" id="monorepo-health-panel" data-subsystem="harness">
+            <h2>Monorepo health <span class="ops-badge" title="claim monorepo-health-score · gate check:monorepo-health">harness</span></h2>
+            <div class="ops-metric" id="monorepo-health-metric">—</div>
+            <div class="ops-sub" id="monorepo-health-detail"></div>
+            <div class="ops-sub" id="monorepo-health-metrics"></div>
+            <a class="ops-link" href="/portal/toc/#harness">TOC harness glance</a>
+            <a class="ops-link" href="/portal/packages/">Packages map</a>
+            <a class="ops-link" href="/registry/monorepo-health.json">Health JSON</a>
+            <a class="ops-link" href="/registry/portal-chrome.json">Chrome registry</a>
+          </section>
           <section class="ops-panel">
             <h2>Growth</h2>
             <div class="ops-metric" id="growth-plays">0</div>
@@ -890,6 +900,42 @@ class OperationsDashboard extends HTMLElement {
         cmpMetric.classList.remove('ok', 'bad');
         if (cmpDetail) cmpDetail.textContent = 'Board missing — bun run compliance:bake';
         if (cmpGeo) cmpGeo.textContent = '';
+      }
+    }
+
+    const mhMetric = this.querySelector('#monorepo-health-metric');
+    const mhDetail = this.querySelector('#monorepo-health-detail');
+    const mhMetrics = this.querySelector('#monorepo-health-metrics');
+    if (mhMetric) {
+      const m = d.monorepoHealth;
+      if (m?.available && m.score != null) {
+        mhMetric.textContent = String(m.score);
+        mhMetric.classList.toggle('ok', m.grade === 'healthy');
+        mhMetric.classList.toggle(
+          'bad',
+          m.grade === 'critical' || m.ok === false
+        );
+        if (mhDetail) {
+          mhDetail.textContent = `${m.grade || '—'} · formula v${m.formulaVersion ?? '?'}${
+            m.bunVersion ? ` · bun ${m.bunVersion}` : ''
+          }`;
+        }
+        if (mhMetrics) {
+          const parts = [];
+          if (m.cyclicDependencyCount != null) parts.push(`cycles ${m.cyclicDependencyCount}`);
+          if (m.largeFilePercent != null)
+            parts.push(`large ${Number(m.largeFilePercent).toFixed(1)}%`);
+          if (m.deadCodePercent != null)
+            parts.push(`dead ${Number(m.deadCodePercent).toFixed(1)}%`);
+          if (m.fileCount != null) parts.push(`files ${m.fileCount}`);
+          mhMetrics.textContent = parts.length ? parts.join(' · ') : 'metrics n/a';
+        }
+      } else {
+        mhMetric.textContent = '—';
+        mhMetric.classList.remove('ok', 'bad');
+        if (mhDetail)
+          mhDetail.textContent = 'Missing — bun run monorepo:health:bake · ops:snapshot';
+        if (mhMetrics) mhMetrics.textContent = '';
       }
     }
 

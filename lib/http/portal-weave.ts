@@ -9,6 +9,7 @@
  */
 
 import { PORTAL_WEAVE_WIKI } from './wiki-nav.ts';
+import { PORTAL_CHROME_COMPONENTS } from '../portal/chrome-catalog.ts';
 
 export type PortalWeaveLink = {
   label: string;
@@ -22,10 +23,19 @@ export type PortalWeaveScript = {
   doc?: string;
 };
 
+export type PortalWeaveComponent = {
+  id: string; // brand-ok — chrome component key, not a domain *Id
+  path: string;
+  role: string;
+  kind?: string;
+};
+
 export type PortalWeavePayload = {
   generated: string;
   surfaces: PortalWeaveLink[];
   artifacts: PortalWeaveLink[];
+  /** Shared chrome modules (topbar, footer, sidebar, …). */
+  components: PortalWeaveComponent[];
   /** GitHub Pages wiki (external to score.factory-wager.com). */
   wiki: PortalWeaveLink[];
   scripts: PortalWeaveScript[];
@@ -110,6 +120,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'monorepo-health',
     href: '/registry/monorepo-health.json',
     note: 'score 0–100 · claim monorepo-health-score · gate check:monorepo-health · TOC harness glance',
+  },
+  {
+    label: 'portal-chrome',
+    href: '/registry/portal-chrome.json',
+    note: 'nav · footer · components SSOT · apply via portal-apply-chrome',
   },
   {
     label: 'env-inventory',
@@ -289,7 +304,25 @@ export function buildPortalWeavePayload(generated?: string): PortalWeavePayload 
     generated: generated ?? new Date().toISOString(),
     surfaces: PORTAL_WEAVE_SURFACES,
     artifacts: PORTAL_WEAVE_ARTIFACTS,
+    components: PORTAL_CHROME_COMPONENTS.map(c => ({
+      id: c.id,
+      path: c.path,
+      role: c.role,
+      kind: c.kind,
+    })),
     wiki: PORTAL_WEAVE_WIKI,
-    scripts: PORTAL_WEAVE_SCRIPTS,
+    scripts: [
+      ...PORTAL_WEAVE_SCRIPTS,
+      {
+        label: 'Portal chrome bake + apply',
+        cmd: 'bun run portal:chrome:bake && bun tools/portal-apply-chrome.ts',
+        doc: 'docs/portal-foundation.md',
+      },
+      {
+        label: 'Monorepo health bake',
+        cmd: 'bun run monorepo:health:bake',
+        doc: 'docs/harness/tenants/monorepo-health.md',
+      },
+    ],
   };
 }
