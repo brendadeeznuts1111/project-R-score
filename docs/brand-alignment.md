@@ -2,18 +2,22 @@
 
 ## Domain Structure
 
-Live DNS (all resolve to Cloudflare proxy IPs):
+Verified live (dig + curl 2026-07-28 — status in parentheses):
 ```
-factory-wager.com          → Pages (score app, apex)
+factory-wager.com          → Pages (project-r-score, apex)
   www.factory-wager.com    → Pages (same as apex)
-  score.factory-wager.com  → Pages (score app)
-  registry.factory-wager.com → Pages (Bun package registry)
-  health.factory-wager.com → Pages health endpoint
-  telegram.factory-wager.com → Telegram webhook
-  support.factory-wager.com → HelpScout
-  wiki.factory-wager.com   → GitHub Pages
-  ledger.factory-wager.com → machine-side cloudflared tunnel (Sports Terminal; no repo config)
-  terminal.factory-wager.com → machine-side cloudflared tunnel (Sports Terminal; no repo config)
+  score.factory-wager.com  → Pages (portal + proofs; /portal behind Access since 2026-07-28 — 302 → login)
+  registry.factory-wager.com → Pages (/api/registry/* → R2, read-only allowlist)
+  wiki.factory-wager.com   → GitHub Pages (docs hub, proxied via Cloudflare)
+  ledger.factory-wager.com → cloudflared tunnel → this Mac :3000 · Cloudflare Access APPLIED (302 → login)
+```
+
+Resolves but misleading or broken (do not treat as functional endpoints):
+```
+  health.factory-wager.com   → Pages vanity CNAME — serves app landing, NOT the health endpoint (real: score.factory-wager.com/health)
+  telegram.factory-wager.com → Pages vanity CNAME — serves app landing, NOT the webhook (real: score…/api/telegram/webhook/{tenant})
+  support.factory-wager.com  → 525 SSL handshake failure (HelpScout origin broken)
+  terminal.factory-wager.com → 502 — DNS points at a tunnel with no live config; dangling
 ```
 
 Not resolving (no DNS records):

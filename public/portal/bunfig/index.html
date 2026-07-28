@@ -1,0 +1,448 @@
+<!doctype html>
+<!-- @see docs/portal-foundation.md — bunfig install config board; reads /registry/bunfig-state.json (bun run bunfig:bake) -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bunfig · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      .bf-wrap {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 24px 48px;
+      }
+      .bf-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin: 16px 0 20px;
+      }
+      .bf-stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+      }
+      .bf-stat .k {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-dim);
+      }
+      .bf-stat .v {
+        font-size: 20px;
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+      }
+      .bf-stat.bad .v {
+        color: var(--red, #f85149);
+      }
+      .bf-stat.ok .v {
+        color: var(--green, #3fb950);
+      }
+      .bf-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        margin-bottom: 16px;
+      }
+      .bf-panel h2 {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-dim);
+        margin: 0 0 12px;
+      }
+      .bf-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      .bf-table th {
+        text-align: left;
+        padding: 6px 8px;
+        color: var(--text-dim);
+        font-weight: 500;
+        border-bottom: 1px solid var(--border);
+      }
+      .bf-table td {
+        padding: 6px 8px;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.4);
+      }
+      .bf-table td.mono {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+      }
+      .bf-table td.bad,
+      .bf-table tr.bad td {
+        color: var(--red, #f85149);
+      }
+      .bf-table td.ok {
+        color: var(--green, #3fb950);
+      }
+      .bf-table td.dim,
+      .dim {
+        color: var(--text-dim);
+        font-size: 11px;
+      }
+      .bf-pill {
+        display: inline-block;
+        padding: 1px 7px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .bf-pill.machine,
+      .bf-pill.prod {
+        background: rgba(88, 166, 255, 0.12);
+        color: #58a6ff;
+      }
+      .bf-pill.project,
+      .bf-pill.dev {
+        background: rgba(210, 153, 34, 0.12);
+        color: #d29922;
+      }
+      .bf-pill.unset {
+        background: rgba(139, 148, 158, 0.12);
+        color: var(--text-dim);
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Bunfig</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/" class="nav-link" data-group="other">Home</a>
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · bun run ops:snapshot"
+            data-group="ops"
+            data-cli="bun run ops:snapshot"
+            >Ops</a
+          >
+          <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+          <a
+            href="/portal/health/"
+            class="nav-link"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-cli="bun run monorepo:health:bake"
+            >Health</a
+          >
+          <a href="/portal/dod/" class="nav-link" title="visual proof review" data-group="plane"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · bun run compliance:bake"
+            data-group="ops"
+            data-cli="bun run compliance:bake"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem"
+                >Catalog</a
+              >
+              <a
+                href="/portal/packages/"
+                class="nav-link"
+                title="graph map · portal-cli pm graph"
+                data-group="registry"
+                role="menuitem"
+                >Packages</a
+              >
+              <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem"
+                >Skills</a
+              >
+              <a
+                href="/portal/vault/"
+                class="nav-link"
+                title="Proton Pass health bake · gate: portal-cli vault health"
+                data-group="secrets"
+                role="menuitem"
+                >Vault</a
+              >
+              <a
+                href="/portal/env/"
+                class="nav-link"
+                title="vault-map inject · secret autofill mapping"
+                data-group="secrets"
+                role="menuitem"
+                >Env</a
+              >
+              <a
+                href="/portal/tools/"
+                class="nav-link"
+                title="portal-cli surface map · badges · capability subset"
+                data-group="harness"
+                role="menuitem"
+                >CLI Tools</a
+              >
+              <a
+                href="/portal/failures/"
+                class="nav-link"
+                title="test failures bake · junit · nav badge = count"
+                data-group="harness"
+                role="menuitem"
+                >Failures</a
+              >
+              <a
+                href="/portal/bunfig/"
+                class="nav-link active"
+                aria-current="page"
+                title="bunfig install config provenance · portal-cli bunfig status"
+                data-group="harness"
+                data-cli="bun run portal-cli bunfig status"
+                role="menuitem"
+                >Bunfig</a
+              >
+              <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem"
+                >Dashboard</a
+              >
+              <a
+                href="/portal/toc/"
+                class="nav-link"
+                title="Drum/Buffer/Rope · bun run ops:seed:toc"
+                data-group="ops"
+                role="menuitem"
+                >TOC</a
+              >
+              <a
+                href="/portal/limits/"
+                class="nav-link"
+                title="bun run ops:limits:demo"
+                data-group="ops"
+                role="menuitem"
+                >Limits</a
+              >
+              <a
+                href="/portal/partner-history/"
+                class="nav-link"
+                title="per-partner limit history board"
+                data-group="ops"
+                role="menuitem"
+                >Partner history</a
+              >
+              <a href="/monitoring/" class="nav-link" data-group="ops" role="menuitem"
+                >Monitoring</a
+              >
+              <a
+                href="/registry/prediction/report/"
+                class="nav-link"
+                title="latest prediction report · snapshot scope"
+                data-group="ops"
+                role="menuitem"
+                >Prediction</a
+              >
+              <a
+                href="https://wiki.factory-wager.com/wiki-index.html"
+                class="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Portal · registry · tenants · proof loop"
+                data-group="other"
+                role="menuitem"
+                >Wiki</a
+              >
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+    <main class="bf-wrap">
+      <p class="dim">
+        Machine <code>~/.bunfig.toml</code> × project <code>./bunfig.toml</code> — effective install
+        config with per-key provenance · <code>bun run bunfig:bake</code>
+      </p>
+      <p class="dim">
+        Gate: <code>portal-cli bunfig check</code> (audit --strict) · machine report
+        <a href="/registry/bunfig-state.json">bunfig-state.json</a> · policy
+        <a href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/UNIFIED.md"
+          >docs/UNIFIED.md</a
+        >
+      </p>
+      <div class="bf-stats" id="bf-stats"></div>
+      <div class="bf-panel">
+        <h2>Install keys (effective = project overlays machine)</h2>
+        <table class="bf-table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Effective</th>
+              <th>Source</th>
+              <th>Owner</th>
+              <th>Drift</th>
+            </tr>
+          </thead>
+          <tbody id="bf-keys">
+            <tr>
+              <td colspan="5" class="dim">loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="bf-panel">
+        <h2>Registry scopes (project bunfig — this machine)</h2>
+        <table class="bf-table">
+          <thead>
+            <tr>
+              <th>Scope</th>
+              <th>URL</th>
+              <th>Plane</th>
+              <th>Workspace pkgs</th>
+              <th>Token env</th>
+            </tr>
+          </thead>
+          <tbody id="bf-scopes">
+            <tr>
+              <td colspan="5" class="dim">loading…</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="dim" style="margin-top: 10px" id="bf-scope-note"></p>
+      </div>
+      <div class="bf-panel">
+        <h2>Gates</h2>
+        <table class="bf-table">
+          <thead>
+            <tr>
+              <th>Gate</th>
+              <th>Status</th>
+              <th>Exit</th>
+            </tr>
+          </thead>
+          <tbody id="bf-gates">
+            <tr>
+              <td colspan="3" class="dim">loading…</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="dim" style="margin-top: 10px">
+          Fix drift: strip the duplicated key from the workspace bunfig — machine owns install
+          policy (<code>audit-bunfig --strict</code>).
+        </p>
+      </div>
+    </main>
+    <script type="module">
+      const $ = id => document.getElementById(id);
+      const esc = s =>
+        String(s).replace(
+          /[&<>"]/g,
+          c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]
+        );
+      const fmt = v => (v == null ? '—' : Array.isArray(v) ? v.join(', ') : String(v));
+      const pill = s => `<span class="bf-pill ${esc(s)}">${esc(s)}</span>`;
+      try {
+        const res = await fetch('/registry/bunfig-state.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const d = await res.json();
+        const healthy = d.summary?.healthy === true;
+        $('bf-stats').innerHTML = [
+          ['Healthy', healthy ? 'yes' : 'no', healthy ? 'ok' : 'bad'],
+          ['Tracked keys', d.summary?.trackedKeys ?? d.keys?.length ?? 0, ''],
+          [
+            'Drift keys',
+            d.summary?.driftKeys?.length ?? 0,
+            (d.summary?.driftKeys?.length ?? 0) ? 'bad' : 'ok',
+          ],
+          ['Generated', (d.generatedAt ?? '—').slice(0, 16).replace('T', ' '), ''],
+        ]
+          .map(
+            ([k, v, c]) =>
+              `<div class="bf-stat ${c}"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`
+          )
+          .join('');
+        $('bf-keys').innerHTML =
+          (d.keys ?? [])
+            .map(
+              k =>
+                `<tr${k.drift ? ' class="bad"' : ''}><td class="mono">${esc(k.key)}</td><td class="mono">${esc(fmt(k.effective))}</td><td>${pill(k.source)}</td><td class="dim">${esc(k.owner)}</td><td class="${k.drift ? 'bad' : 'ok'}">${k.drift ? 'DRIFT' : ''}</td></tr>`
+            )
+            .join('') || '<tr><td colspan="5" class="dim">no keys in bake</td></tr>';
+        $('bf-scopes').innerHTML =
+          (d.scopes ?? [])
+            .map(
+              s =>
+                `<tr><td class="mono">${esc(s.scope)}</td><td class="mono">${esc(s.url ?? '—')}</td><td>${pill(s.plane ?? 'unset')}</td><td class="dim">${(s.usedBy ?? []).length || '—'}</td><td class="mono">${esc(s.tokenEnv ?? '—')}</td></tr>`
+            )
+            .join('') || '<tr><td colspan="5" class="dim">no scopes</td></tr>';
+        $('bf-scope-note').textContent = d.registry?.prodHost
+          ? `Dev plane = loopback registry on this machine. Production installs of @factorywager/* go via the prod host: ${d.registry.prodHost} (Pages Functions + R2 — see docs/platform-routing.md). Scopes with zero workspace packages cover legacy/external consumers.`
+          : '';
+        $('bf-gates').innerHTML = Object.entries(d.gates ?? {})
+          .map(
+            ([name, g]) =>
+              `<tr><td>${esc(name)}</td><td class="${g.ok ? 'ok' : 'bad'}">${g.ok ? 'ok' : 'FAIL'}</td><td class="dim">${g.exitCode}</td></tr>`
+          )
+          .join('');
+      } catch (e) {
+        $('bf-keys').innerHTML =
+          `<tr><td colspan="5" class="bad">bunfig-state.json unavailable — run <code>bun run bunfig:bake</code> (${esc(e.message)})</td></tr>`;
+        $('bf-scopes').innerHTML = '';
+        $('bf-gates').innerHTML = '';
+      }
+    </script>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/tools/">CLI Tools</a> · <a href="/portal/compliance/">Compliance</a> ·
+        <a href="/portal/limits/">Limits</a> · <a href="/portal/dod/">DOD</a> ·
+        <a href="/portal/env/">Env</a> · <a href="/portal/vault/">Vault</a> ·
+        <a href="/portal/failures/">Failures</a> ·
+        <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </p>
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-ts>…</span>
+      </p>
+    </footer>
+  </body>
+</html>

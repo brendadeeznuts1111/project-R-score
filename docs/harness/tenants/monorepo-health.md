@@ -130,7 +130,7 @@ bun run audit:packages:env       # --env --vault-gap + bake packages + env-inven
 bun run audit:packages:vault     # --vault --vault-gap (live pass-cli status) + bake
 bun run audit:packages:apply     # wire open wire-root-dep actions + bake
 bun run env:inventory            # scans packages/ · owners · packages plane
-bun run env:inventory:bake       # → /registry/env-inventory.json (schemaVersion 3)
+bun run env:inventory:bake       # → /registry/env-inventory.json (schemaVersion 4, +toml plane)
 ```
 
 | Path | Role |

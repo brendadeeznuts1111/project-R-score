@@ -1,3 +1,4 @@
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -42,10 +43,8 @@ export const CLOUDFLARE_DEFAULTS = {
       id: 'a3b7ba4bb62cb1b177b04b8675250674',
       name: 'factory-wager.com',
     },
-    missonControl: {
-      id: 'ba2906afe573e63c6b32f471d2fe01fe',
-      name: 'misson-control.com',
-    },
+    // Removed 2026-07-28: missonControl (ba2906afe…) — typo'd name, zero consumers.
+    // Re-add with the correct zone name if a second zone ever gets a surface.
   },
   wikiHost: 'wiki.factory-wager.com',
   /** HTTPS package registry (npm / CDN front). */

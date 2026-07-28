@@ -277,4 +277,5 @@ export const FUNCTIONS_LIB_IMPORT_ALLOWLIST = [
   'lib/types/branded/portal.ts',
   'lib/types/branded/security.ts',
   'lib/types/branded/session.ts',
+  'lib/types/branded/surfaces.ts',
 ] as const;

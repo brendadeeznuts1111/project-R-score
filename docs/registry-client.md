@@ -52,6 +52,12 @@ Checksum mismatch or size drift throws before returning bytes.
 FormData to the **authenticated** publish origin (`publishUrl`, default
 `baseUrl`). Requires `apiKey`; the read plane rejects writes.
 
+> **Placeholder host:** `registry-write.internal.factory-wager.com` below is the
+> *intended* private publish plane — it is not provisioned (no DNS, no server).
+> Today the only authenticated write origins are the local gateway
+> (`http://localhost:3000`, `POST /api/registry/:scope/:name/versions`) and
+> direct-to-R2 SigV4 via `bun run factory publish`. See ADR-0002.
+
 ```ts
 const client = new RegistryClient({
   baseUrl: 'https://registry.factory-wager.com',

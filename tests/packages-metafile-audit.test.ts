@@ -151,7 +151,7 @@ describe('packages-metafile-audit', () => {
   test('env inventory attaches compact harness scan with owners', async () => {
     const report = await runPackagesMetafileAudit({ envInventory: true });
     expect(report.map.env).toBeDefined();
-    expect(report.map.env!.schemaVersion).toBe(3);
+    expect(report.map.env!.schemaVersion).toBe(4);
     expect(report.map.env!.runtime.root.missingNeedsInject).toBeDefined();
     expect(report.map.summary?.envRootRuntimeNeedsInject).toBe(
       report.map.env!.summary.rootRuntimeNeedsInject

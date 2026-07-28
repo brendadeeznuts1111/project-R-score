@@ -10,7 +10,7 @@ Live status (verified 2026-07-28 — see `.cloudflare-access.yml` header):
 
 - `ledger.factory-wager.com` — whole hostname behind Access. **APPLIED** (302 → Access login).
 - `reasonix.factory-wager.com` — whole hostname behind Access. **STAGED** (no DNS record yet).
-- `score.factory-wager.com/portal` — portal path behind Access. **STAGED** (public 200 today).
+- `score.factory-wager.com/portal` — portal path behind Access. **APPLIED** 2026-07-28 17:18 (302 → Access login; also `project-r-score.pages.dev/portal`).
 - `score.factory-wager.com/registry` and public proof/API read routes stay
   outside this app so package and verification consumers remain non-interactive.
 - The Pages production `pages.dev` hostname and preview deployments should use the

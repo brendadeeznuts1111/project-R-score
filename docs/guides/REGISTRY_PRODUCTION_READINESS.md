@@ -76,7 +76,9 @@ multipart endpoint; the Pages/R2 read plane rejects writes.
 > then refresh the snapshot.
 
 Configure the two origins independently so the bearer token is never sent to the
-public read plane:
+public read plane. (`registry-write.internal.factory-wager.com` is a placeholder
+for the intended private publish plane — not provisioned; today the write
+origins are the local gateway on :3000 and direct-to-R2 SigV4, per ADR-0002.)
 
 ```ts
 const client = new RegistryClient({
@@ -91,6 +93,19 @@ The Bun gateway rejects writes when no `FACTORY_WAGER_TOKEN` or
 and enforces `REGISTRY_MAX_PUBLISH_BYTES` (50 MiB by default). Run one publish
 gateway instance; the R2 index update model has a single-writer authority while
 Cloudflare scales the read plane independently.
+
+> **Bucket reality (audited 2026-07-28 via SigV4 ListObjectsV2):** the
+> `factory-wager-registry` bucket holds 12 objects — the catalog index
+> (`registry.json`, 17 packages, metadata + inline README), an `ops-summary.json`
+> stub, and the `channels/*` telegram event streams. **No `storage/` artifact
+> objects exist** — no publish has landed artifact bytes in R2 to date. What
+> `bun install` actually resolves (packuments like
+> `@factorywager/registry-client/latest.json` + tarballs) is served from the
+> **committed static mirror** (`public/registry/@factorywager/*`), not R2. The
+> `storage/` write plane in this doc is the designed path, not the current one;
+> the bucket is catalog-only today. The same bucket is multi-tenant (registry +
+> telegram channels) — the public read plane stays safe because the edge
+> allowlist (`lib/factory/http-keys.ts`) never exposes `channels/*`.
 
 ## Dynamic integrations
 

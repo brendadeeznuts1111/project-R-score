@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 2,
+  "kind": "bunfig-state",
+  "generatedAt": "2026-07-28T20:38:56.562Z",
+  "paths": {
+    "machine": "/Users/nolarose/.bunfig.toml",
+    "project": "bunfig.toml"
+  },
+  "cacheDir": "/Users/nolarose/.bun/install/cache",
+  "registry": {
+    "prodHost": "registry.factory-wager.com"
+  },
+  "keys": [
+    {
+      "key": "linker",
+      "machine": "isolated",
+      "project": null,
+      "effective": "isolated",
+      "source": "machine",
+      "owner": "machine",
+      "drift": false
+    },
+    {
+      "key": "globalStore",
+      "machine": true,
+      "project": null,
+      "effective": true,
+      "source": "machine",
+      "owner": "machine",
+      "drift": false
+    },
+    {
+      "key": "frozenLockfile",
+      "machine": true,
+      "project": true,
+      "effective": true,
+      "source": "project",
+      "owner": "project",
+      "drift": false
+    },
+    {
+      "key": "minimumReleaseAge",
+      "machine": 259200,
+      "project": null,
+      "effective": 259200,
+      "source": "machine",
+      "owner": "machine",
+      "drift": false
+    },
+    {
+      "key": "minimumReleaseAgeExcludes",
+      "machine": [
+        "bun-types",
+        "@types/bun",
+        "@types/node",
+        "typescript"
+      ],
+      "project": null,
+      "effective": [
+        "bun-types",
+        "@types/bun",
+        "@types/node",
+        "typescript"
+      ],
+      "source": "machine",
+      "owner": "machine",
+      "drift": false
+    },
+    {
+      "key": "exact",
+      "machine": null,
+      "project": true,
+      "effective": true,
+      "source": "project",
+      "owner": "project",
+      "drift": false
+    },
+    {
+      "key": "saveTextLockfile",
+      "machine": null,
+      "project": true,
+      "effective": true,
+      "source": "project",
+      "owner": "project",
+      "drift": false
+    }
+  ],
+  "scopes": [
+    {
+      "scope": "@factorywager",
+      "url": "http://localhost:3000/",
+      "plane": "dev",
+      "usedBy": [
+        "@factorywager/business",
+        "@factorywager/docs-tools",
+        "@factorywager/guards",
+        "@factorywager/p2p",
+        "@factorywager/registry-client",
+        "@factorywager/rip",
+        "@factorywager/shared"
+      ],
+      "tokenEnv": "FACTORY_WAGER_TOKEN"
+    },
+    {
+      "scope": "@factory-wager",
+      "url": "http://localhost:3000/",
+      "plane": "dev",
+      "usedBy": [],
+      "tokenEnv": "FACTORY_WAGER_TOKEN"
+    },
+    {
+      "scope": "@factory",
+      "url": "http://localhost:3000/",
+      "plane": "dev",
+      "usedBy": [],
+      "tokenEnv": "FACTORY_WAGER_TOKEN"
+    },
+    {
+      "scope": "@factorywager-prod",
+      "url": "https://registry.factory-wager.com/",
+      "plane": "prod",
+      "usedBy": [],
+      "tokenEnv": "FACTORY_WAGER_TOKEN"
+    }
+  ],
+  "securityScanner": null,
+  "gates": {
+    "doctor": {
+      "ok": true,
+      "exitCode": 0,
+      "tail": "  ⚠   - globalBinDir unset — hardened ~/.bun/bin ([install].globalBinDir)\n  ⚠   - minimumReleaseAge unset — using Bun official default 0\n  ⚠   - minimumReleaseAgeExcludes unset — using Bun official default [\"@types/node\",\"typescript\"]\n  ⚠   - concurrentScripts unset — hardened 8 ([install].concurrentScripts)"
+    },
+    "audit": {
+      "ok": true,
+      "exitCode": 0,
+      "tail": "── Trust surface (bun pm untrusted) ──\n  ✅ 0 untrusted dependencies with blocked scripts\n\n✅ No redundant install key assignments found."
+    }
+  },
+  "summary": {
+    "trackedKeys": 7,
+    "driftKeys": [],
+    "healthy": true
+  }
+}

@@ -1,7 +1,7 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "kind": "env-inventory",
-  "generatedAt": "2026-07-28T16:44:22.042Z",
+  "generatedAt": "2026-07-28T21:16:10.944Z",
   "scannedRoots": [
     "lib",
     "config",
@@ -9,16 +9,16 @@
     "tools",
     "packages"
   ],
-  "usageCount": 425,
-  "uniqueVars": 192,
+  "usageCount": 444,
+  "uniqueVars": 197,
   "byKind": {
-    "ambient": 18,
+    "ambient": 19,
     "secret": 15,
-    "config": 159
+    "config": 163
   },
   "vault": {
-    "templateKeyCount": 41,
-    "vaultRefCount": 20,
+    "templateKeyCount": 42,
+    "vaultRefCount": 21,
     "actionableVaultGaps": [
       "OPENAI_API_KEY",
       "SLACK_WEBHOOK_URL"
@@ -71,7 +71,7 @@
       "var": "PORTAL_SCOPE",
       "count": 5,
       "samples": [
-        "tools/snapshot-core.ts:622",
+        "tools/snapshot-core.ts:793",
         "tools/portal-probe.ts:200",
         "tools/portal-probe.ts:204",
         "tools/portal-probe.ts:324"
@@ -83,7 +83,7 @@
       "samples": [
         "lib/verification/networking-channel.ts:155",
         "tools/verify-etag.ts:87",
-        "tools/ops-snapshot.ts:562",
+        "tools/ops-snapshot.ts:601",
         "tools/verify-networking.ts:130"
       ]
     },
@@ -103,7 +103,7 @@
       "samples": [
         "lib/verification/networking-channel.ts:155",
         "tools/verify-etag.ts:87",
-        "tools/ops-snapshot.ts:562",
+        "tools/ops-snapshot.ts:601",
         "tools/verify-networking.ts:130"
       ]
     },
@@ -113,7 +113,7 @@
       "samples": [
         "lib/registry-snapshot.ts:97",
         "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:111",
+        "tools/ops-snapshot.ts:112",
         "tools/verify-package-info.ts:19"
       ]
     },
@@ -125,6 +125,26 @@
         "scripts/search-benchmark-dashboard.ts:157",
         "scripts/search-unified-status.ts:39",
         "scripts/lib/domain-health-read.ts:383"
+      ]
+    },
+    {
+      "var": "SNAPSHOT_BASE_URL",
+      "count": 4,
+      "samples": [
+        "tools/snapshot-core.ts:801",
+        "tools/portal-snapshot-cron-constants.ts:64",
+        "tools/snapshot-scopes.ts:22",
+        "tools/portal-cli.ts:1367"
+      ]
+    },
+    {
+      "var": "USERPROFILE",
+      "count": 4,
+      "samples": [
+        "lib/monitoring/install-cache-slice.ts:27",
+        "lib/docs/cache-manager.ts:54",
+        "lib/security/mintable-secret.ts:50",
+        "scripts/machine-bun-health.ts:22"
       ]
     },
     {
@@ -151,7 +171,7 @@
       "samples": [
         "lib/registry-snapshot.ts:97",
         "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:111"
+        "tools/ops-snapshot.ts:112"
       ]
     },
     {
@@ -160,7 +180,7 @@
       "samples": [
         "scripts/vault-gap-close.ts:70",
         "scripts/lib/vault-gap-status.ts:203",
-        "tools/portal-secret.ts:252"
+        "tools/portal-secret.ts:348"
       ]
     },
     {
@@ -170,24 +190,6 @@
         "lib/core/url-handler.ts:347",
         "config/ports.ts:28",
         "scripts/lib/dashboard-env.ts:28"
-      ]
-    },
-    {
-      "var": "SNAPSHOT_BASE_URL",
-      "count": 3,
-      "samples": [
-        "tools/snapshot-core.ts:630",
-        "tools/portal-snapshot-cron-constants.ts:57",
-        "tools/snapshot-scopes.ts:22"
-      ]
-    },
-    {
-      "var": "USERPROFILE",
-      "count": 3,
-      "samples": [
-        "lib/docs/cache-manager.ts:54",
-        "lib/security/mintable-secret.ts:50",
-        "scripts/machine-bun-health.ts:22"
       ]
     },
     {
@@ -205,6 +207,14 @@
       "samples": [
         "scripts/ci-r2-version-check.ts:25",
         "scripts/ci-r2-version-check.ts:57"
+      ]
+    },
+    {
+      "var": "BUN_CACHE_PRUNE_MAX_MB",
+      "count": 2,
+      "samples": [
+        "lib/monitoring/install-cache-slice.ts:44",
+        "scripts/lib/bun-cache-metrics.ts:105"
       ]
     },
     {
@@ -262,14 +272,6 @@
         "lib/docs/constants/domains.ts:197",
         "lib/docs/constants/domains.ts:198"
       ]
-    },
-    {
-      "var": "KIMI_TOOLCHAIN_ROOT",
-      "count": 2,
-      "samples": [
-        "scripts/machine-bun-health.ts:18",
-        "scripts/machine-bun-health.ts:19"
-      ]
     }
   ],
   "owners": [
@@ -290,7 +292,7 @@
       "inRootTemplate": true,
       "inAnyTemplate": true,
       "passRef": null,
-      "runtimePresent": false,
+      "runtimePresent": true,
       "samples": [
         "config/ports.ts:27",
         "tools/bun-api-showcase.ts:293",
@@ -339,7 +341,7 @@
         "lib/factory/server.ts:181",
         "lib/verification/install-env-probes.ts:196",
         "scripts/lib/domain-registry.ts:141",
-        "tools/ops-snapshot.ts:114"
+        "tools/ops-snapshot.ts:115"
       ]
     },
     {
@@ -359,8 +361,8 @@
       "runtimePresent": true,
       "samples": [
         "lib/factory/server.ts:181",
-        "scripts/serve-public.ts:1470",
-        "tools/ops-snapshot.ts:113",
+        "scripts/serve-public.ts:1472",
+        "tools/ops-snapshot.ts:114",
         "tools/verify-formdata.ts:20"
       ]
     },
@@ -368,7 +370,7 @@
       "envKey": "R2_ACCESS_KEY_ID",
       "kind": "secret",
       "disposition": "vaulted",
-      "count": 4,
+      "count": 5,
       "planes": [
         "lib",
         "tools"
@@ -382,14 +384,14 @@
         "lib/factory/object-store.ts:129",
         "lib/factory/registry.ts:381",
         "lib/dod/verifier.ts:120",
-        "tools/verify-bun-release.ts:603"
+        "tools/verify-bun-release.ts:601"
       ]
     },
     {
       "envKey": "R2_SECRET_ACCESS_KEY",
       "kind": "secret",
       "disposition": "vaulted",
-      "count": 4,
+      "count": 5,
       "planes": [
         "lib",
         "tools"
@@ -403,7 +405,7 @@
         "lib/factory/object-store.ts:130",
         "lib/factory/registry.ts:382",
         "lib/dod/verifier.ts:121",
-        "tools/verify-bun-release.ts:604"
+        "tools/verify-bun-release.ts:601"
       ]
     },
     {
@@ -430,7 +432,7 @@
       "envKey": "CLOUDFLARE_API_TOKEN",
       "kind": "secret",
       "disposition": "vaulted",
-      "count": 4,
+      "count": 5,
       "planes": [
         "tools"
       ],
@@ -590,7 +592,7 @@
       "envKey": "HOME",
       "kind": "ambient",
       "disposition": "ambient",
-      "count": 20,
+      "count": 21,
       "planes": [
         "config",
         "lib",
@@ -605,8 +607,8 @@
       "samples": [
         "lib/gate-map.ts:80",
         "lib/package/package-manager.ts:42",
-        "lib/telegram/telegram-env-bind.ts:136",
-        "lib/telegram/catalog-research/load-reasonix-env.ts:16"
+        "lib/monitoring/install-cache-slice.ts:27",
+        "lib/telegram/telegram-env-bind.ts:136"
       ]
     },
     {
@@ -654,6 +656,27 @@
       ]
     },
     {
+      "envKey": "PWD",
+      "kind": "ambient",
+      "disposition": "ambient",
+      "count": 3,
+      "planes": [
+        "lib",
+        "scripts",
+        "tools"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": true,
+      "samples": [
+        "lib/package/package-manager.ts:40",
+        "scripts/serve-public.ts:1584",
+        "tools/cli/integrated-cli.ts:83"
+      ]
+    },
+    {
       "envKey": "SERVER_HOST",
       "kind": "config",
       "disposition": "config",
@@ -691,7 +714,7 @@
       "samples": [
         "lib/verification/networking-channel.ts:155",
         "tools/verify-etag.ts:87",
-        "tools/ops-snapshot.ts:562",
+        "tools/ops-snapshot.ts:601",
         "tools/verify-networking.ts:130"
       ]
     },
@@ -712,7 +735,7 @@
       "samples": [
         "lib/verification/networking-channel.ts:155",
         "tools/verify-etag.ts:87",
-        "tools/ops-snapshot.ts:562",
+        "tools/ops-snapshot.ts:601",
         "tools/verify-networking.ts:130"
       ]
     },
@@ -733,8 +756,29 @@
       "samples": [
         "lib/registry-snapshot.ts:97",
         "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:111",
+        "tools/ops-snapshot.ts:112",
         "tools/verify-package-info.ts:19"
+      ]
+    },
+    {
+      "envKey": "USERPROFILE",
+      "kind": "config",
+      "disposition": "config",
+      "count": 4,
+      "planes": [
+        "lib",
+        "scripts"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/monitoring/install-cache-slice.ts:27",
+        "lib/docs/cache-manager.ts:54",
+        "lib/security/mintable-secret.ts:50",
+        "scripts/machine-bun-health.ts:22"
       ]
     },
     {
@@ -794,7 +838,7 @@
       "samples": [
         "lib/registry-snapshot.ts:97",
         "lib/verification/install-env-probes.ts:35",
-        "tools/ops-snapshot.ts:111"
+        "tools/ops-snapshot.ts:112"
       ]
     },
     {
@@ -834,27 +878,7 @@
       "samples": [
         "scripts/vault-gap-close.ts:70",
         "scripts/lib/vault-gap-status.ts:203",
-        "tools/portal-secret.ts:252"
-      ]
-    },
-    {
-      "envKey": "USERPROFILE",
-      "kind": "config",
-      "disposition": "config",
-      "count": 3,
-      "planes": [
-        "lib",
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "lib/docs/cache-manager.ts:54",
-        "lib/security/mintable-secret.ts:50",
-        "scripts/machine-bun-health.ts:22"
+        "tools/portal-secret.ts:348"
       ]
     },
     {
@@ -875,6 +899,25 @@
         "lib/routing-proof.ts:737",
         "tools/routing-registry-proof.ts:42",
         "tools/bun-utils-registry-proof.ts:35"
+      ]
+    },
+    {
+      "envKey": "BUN_CACHE_PRUNE_MAX_MB",
+      "kind": "config",
+      "disposition": "config",
+      "count": 2,
+      "planes": [
+        "lib",
+        "scripts"
+      ],
+      "packages": [],
+      "inRootTemplate": false,
+      "inAnyTemplate": false,
+      "passRef": null,
+      "runtimePresent": false,
+      "samples": [
+        "lib/monitoring/install-cache-slice.ts:44",
+        "scripts/lib/bun-cache-metrics.ts:105"
       ]
     },
     {
@@ -950,7 +993,7 @@
       "runtimePresent": false,
       "samples": [
         "lib/core/url-handler.ts:347",
-        "scripts/serve-public.ts:138"
+        "scripts/serve-public.ts:140"
       ]
     },
     {
@@ -969,7 +1012,7 @@
       "runtimePresent": false,
       "samples": [
         "lib/registry-snapshot.ts:138",
-        "tools/ops-snapshot.ts:96"
+        "tools/ops-snapshot.ts:97"
       ]
     },
     {
@@ -1007,26 +1050,7 @@
       "runtimePresent": false,
       "samples": [
         "lib/registry-snapshot.ts:136",
-        "tools/ops-snapshot.ts:78"
-      ]
-    },
-    {
-      "envKey": "PWD",
-      "kind": "ambient",
-      "disposition": "ambient",
-      "count": 2,
-      "planes": [
-        "lib",
-        "tools"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": true,
-      "samples": [
-        "lib/package/package-manager.ts:40",
-        "tools/cli/integrated-cli.ts:83"
+        "tools/ops-snapshot.ts:79"
       ]
     },
     {
@@ -1043,7 +1067,7 @@
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "tools/snapshot-core.ts:622",
+        "tools/snapshot-core.ts:793",
         "tools/portal-probe.ts:200",
         "tools/portal-probe.ts:204",
         "tools/portal-probe.ts:324"
@@ -1093,7 +1117,7 @@
       "envKey": "SNAPSHOT_BASE_URL",
       "kind": "config",
       "disposition": "config",
-      "count": 3,
+      "count": 4,
       "planes": [
         "tools"
       ],
@@ -1103,9 +1127,10 @@
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "tools/snapshot-core.ts:630",
-        "tools/portal-snapshot-cron-constants.ts:57",
-        "tools/snapshot-scopes.ts:22"
+        "tools/snapshot-core.ts:801",
+        "tools/portal-snapshot-cron-constants.ts:64",
+        "tools/snapshot-scopes.ts:22",
+        "tools/portal-cli.ts:1367"
       ]
     },
     {
@@ -1286,8 +1311,8 @@
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "tools/portal-snapshot-cron-constants.ts:24",
-        "tools/portal-snapshot-cron-constants.ts:38"
+        "tools/portal-snapshot-cron-constants.ts:31",
+        "tools/portal-snapshot-cron-constants.ts:45"
       ]
     },
     {
@@ -1304,8 +1329,8 @@
       "passRef": null,
       "runtimePresent": false,
       "samples": [
-        "tools/portal-snapshot-cron-constants.ts:19",
-        "tools/portal-snapshot-cron-constants.ts:33"
+        "tools/portal-snapshot-cron-constants.ts:26",
+        "tools/portal-snapshot-cron-constants.ts:40"
       ]
     },
     {
@@ -1415,34 +1440,22 @@
         "scripts/ci-r2-version-check.ts:24",
         "scripts/ci-r2-version-check.ts:56"
       ]
-    },
-    {
-      "envKey": "SEARCH_BENCH_QUERY_RETRIES",
-      "kind": "config",
-      "disposition": "config",
-      "count": 2,
-      "planes": [
-        "scripts"
-      ],
-      "packages": [],
-      "inRootTemplate": false,
-      "inAnyTemplate": false,
-      "passRef": null,
-      "runtimePresent": false,
-      "samples": [
-        "scripts/search-benchmark-snapshot.ts:206",
-        "scripts/search-benchmark.ts:136"
-      ]
     }
   ],
   "defaultsIssues": {
-    "total": 0,
+    "total": 1,
     "packages": 0,
-    "harness": 0,
-    "top": []
+    "harness": 1,
+    "top": [
+      {
+        "envVar": "PORTAL_SNAPSHOT_CRON_MARKER",
+        "file": "tools/portal-snapshot-cron-worker.ts",
+        "line": 18
+      }
+    ]
   },
   "packagesPlane": {
-    "generatedAt": "2026-07-28T16:44:22.042Z",
+    "generatedAt": "2026-07-28T21:16:10.931Z",
     "templateKeys": [
       "R2_ACCOUNT_ID",
       "R2_ACCESS_KEY_ID",
@@ -1461,6 +1474,7 @@
       "DOD_PROOF_SECRET",
       "DOD_ID_ENCRYPTION_KEY",
       "PROVISION_ENCRYPTION_KEY",
+      "SOCKET_API_KEY",
       "REDIS_URL",
       "NODE_ENV",
       "MCP_LOG_LEVEL",
@@ -1570,6 +1584,14 @@
         "color": "#8B5CF6",
         "icon": null,
         "type": "key"
+      },
+      {
+        "key": "SOCKET_API_KEY",
+        "ref": "pass://factorywager/Socket API Key/password",
+        "label": "Socket API Key",
+        "color": "#7C3AED",
+        "icon": "public/portal/icons/vault/key.svg",
+        "type": "token"
       }
     ],
     "envHits": [
@@ -1579,7 +1601,7 @@
         "kind": "config",
         "disposition": "config",
         "inTemplate": true,
-        "runtimePresent": false,
+        "runtimePresent": true,
         "passRef": null,
         "samples": [
           "packages/business/src/habits-classifier.ts:33"
@@ -1591,7 +1613,7 @@
         "kind": "config",
         "disposition": "config",
         "inTemplate": true,
-        "runtimePresent": false,
+        "runtimePresent": true,
         "passRef": null,
         "samples": [
           "packages/p2p/src/customer-notifier.ts:8",
@@ -1791,17 +1813,17 @@
         "runtimePresent": true
       },
       {
-        "envKey": "SSH_CASCADE_KEY",
+        "envKey": "SOCKET_API_KEY",
         "vault": "factorywager",
-        "item": "SSH Cascade Key",
-        "field": "note",
-        "passRef": "pass://factorywager/SSH Cascade Key/note",
-        "label": "SSH Cascade Key",
-        "color": "#F59E0B",
-        "icon": "public/portal/icons/vault/ssh.svg",
-        "glyph": "🔐",
-        "type": "ssh",
-        "inTemplate": false,
+        "item": "Socket API Key",
+        "field": "password",
+        "passRef": "pass://factorywager/Socket API Key/password",
+        "label": "Socket API Key",
+        "color": "#7C3AED",
+        "icon": "public/portal/icons/vault/key.svg",
+        "glyph": "🔑",
+        "type": "token",
+        "inTemplate": true,
         "runtimePresent": false
       },
       {
@@ -1854,21 +1876,21 @@
       "missingTemplate": 0,
       "openVaultActions": 0,
       "inTemplateHits": 2,
-      "runtimePresentHits": 0,
+      "runtimePresentHits": 2,
       "displayMapped": 16
     }
   },
   "runtime": {
     "root": {
-      "templateKeysPresent": 20,
+      "templateKeysPresent": 21,
       "templateKeysMissing": 1,
       "missingKeys": [
-        "REDIS_URL"
+        "SOCKET_API_KEY"
       ],
-      "missingNeedsInject": [],
-      "coveredByTemplateDefault": [
-        "REDIS_URL"
-      ]
+      "missingNeedsInject": [
+        "SOCKET_API_KEY"
+      ],
+      "coveredByTemplateDefault": []
     },
     "products": {
       "templateKeysPresent": 4,
@@ -1912,7 +1934,7 @@
         "SCANNER_PORT"
       ]
     },
-    "templateKeysPresent": 20,
+    "templateKeysPresent": 21,
     "templateKeysMissing": 17,
     "missingKeys": [
       "ADMIN_PASSWORD",
@@ -1930,14 +1952,15 @@
       "LOG_LEVEL",
       "OFFICE",
       "R2_S3_ENDPOINT",
-      "REDIS_URL",
-      "SCANNER_PORT"
+      "SCANNER_PORT",
+      "SOCKET_API_KEY"
     ],
     "missingNeedsInject": [
       "ADMIN_PASSWORD",
       "CSRF_SECRET",
       "HYGIENE_JWT_SECRET",
-      "INITIAL_TOKEN"
+      "INITIAL_TOKEN",
+      "SOCKET_API_KEY"
     ],
     "coveredByTemplateDefault": [
       "AGENT_ID",
@@ -1951,17 +1974,252 @@
       "LOG_LEVEL",
       "OFFICE",
       "R2_S3_ENDPOINT",
-      "REDIS_URL",
       "SCANNER_PORT"
     ]
+  },
+  "toml": {
+    "totalFiles": 10,
+    "totalKeys": 284,
+    "files": [
+      {
+        "path": "bunfig.toml",
+        "keyCount": 22,
+        "sampleKeys": [
+          "console.depth",
+          "run.noOrphans",
+          "debug.editor",
+          "install.exact",
+          "install.saveTextLockfile",
+          "install.frozenLockfile",
+          "install.scopes.@factorywager.url",
+          "install.scopes.@factorywager.token",
+          "install.scopes.@factory-wager.url",
+          "install.scopes.@factory-wager.token",
+          "install.scopes.@factory.url",
+          "install.scopes.@factory.token",
+          "install.scopes.@factorywager-prod.url",
+          "install.scopes.@factorywager-prod.token",
+          "test.preload",
+          "test.timeout",
+          "test.coverageThreshold",
+          "test.concurrentTestGlob",
+          "test.pathIgnorePatterns",
+          "serve.port"
+        ],
+        "importers": [
+          "lib/gate-map.ts:188",
+          "lib/verification/install-env-probes.ts:198",
+          "scripts/bake-bunfig.ts:24",
+          "scripts/bake-bunfig.ts:156",
+          "scripts/dx-mcp.ts:814",
+          "scripts/pre-commit-harness.ts:352"
+        ]
+      },
+      {
+        "path": "config/ci.bunfig.toml",
+        "keyCount": 5,
+        "sampleKeys": [
+          "install.cache",
+          "install.optional",
+          "run.shell",
+          "test.preload",
+          "test.coverage"
+        ],
+        "importers": []
+      },
+      {
+        "path": "config/onboarding-defaults.toml",
+        "keyCount": 6,
+        "sampleKeys": [
+          "default_expert_sport",
+          "default_cut_percentage",
+          "default_template_by_source.referral",
+          "default_template_by_source.portal",
+          "default_template_by_source.telegram",
+          "default_template_by_source.promoted"
+        ],
+        "importers": [
+          "lib/operations/onboarding-config.ts:14"
+        ]
+      },
+      {
+        "path": "config/partner-templates/default-prospect.toml",
+        "keyCount": 15,
+        "sampleKeys": [
+          "meta.template_id",
+          "meta.name",
+          "meta.description",
+          "meta.version",
+          "sor.eligible_tiers",
+          "sor.max_exposure_per_signal",
+          "sor.max_daily_exposure",
+          "sor.max_single_bet",
+          "sor.steam_allowed",
+          "sor.arb_allowed",
+          "sor.clv_allowed",
+          "sor.manual_allowed",
+          "sor.predictive_allowed",
+          "sor.require_opsec_green",
+          "sor.opsec_score_max"
+        ],
+        "importers": [
+          "lib/telegram/templates/registry.ts:161",
+          "lib/telegram/templates/registry.ts:288",
+          "lib/operations/ops-loop-fixture.ts:35",
+          "lib/operations/ops-loop-fixture.ts:98",
+          "lib/operations/onboarding-config.ts:12",
+          "lib/operations/partner-profile-bridge.ts:27"
+        ]
+      },
+      {
+        "path": "config/partner-templates/partner-active.toml",
+        "keyCount": 15,
+        "sampleKeys": [
+          "meta.template_id",
+          "meta.name",
+          "meta.description",
+          "meta.version",
+          "sor.eligible_tiers",
+          "sor.max_exposure_per_signal",
+          "sor.max_daily_exposure",
+          "sor.max_single_bet",
+          "sor.steam_allowed",
+          "sor.arb_allowed",
+          "sor.clv_allowed",
+          "sor.manual_allowed",
+          "sor.predictive_allowed",
+          "sor.require_opsec_green",
+          "sor.opsec_score_max"
+        ],
+        "importers": [
+          "lib/operations/onboarding-config.ts:38"
+        ]
+      },
+      {
+        "path": "config/serve-public.toml",
+        "keyCount": 2,
+        "sampleKeys": [
+          "metadata.version",
+          "metadata.description"
+        ],
+        "importers": [
+          "lib/http/serve-public-config.ts:5",
+          "lib/http/serve-public-config.ts:10",
+          "lib/http/serve-public-config.ts:58"
+        ]
+      },
+      {
+        "path": "config/surfaces.toml",
+        "keyCount": 94,
+        "sampleKeys": [
+          "surfaces.apex.host",
+          "surfaces.apex.backend",
+          "surfaces.apex.status",
+          "surfaces.apex.protocol",
+          "surfaces.apex.access",
+          "surfaces.apex.note",
+          "surfaces.www.host",
+          "surfaces.www.backend",
+          "surfaces.www.status",
+          "surfaces.www.protocol",
+          "surfaces.www.access",
+          "surfaces.www.note",
+          "surfaces.score.host",
+          "surfaces.score.backend",
+          "surfaces.score.status",
+          "surfaces.score.protocol",
+          "surfaces.score.access",
+          "surfaces.score.note",
+          "surfaces.score.accessSubpaths",
+          "surfaces.pages_dev.host"
+        ],
+        "importers": [
+          "scripts/bake-surfaces.ts:37"
+        ]
+      },
+      {
+        "path": "config/vault-map.toml",
+        "keyCount": 114,
+        "sampleKeys": [
+          "metadata.version",
+          "metadata.generated",
+          "metadata.description",
+          "conventions.naming",
+          "conventions.color_api",
+          "conventions.icon_path",
+          "env.R2_ACCESS_KEY_ID.vault",
+          "env.R2_ACCESS_KEY_ID.item",
+          "env.R2_ACCESS_KEY_ID.field",
+          "env.R2_ACCESS_KEY_ID.label",
+          "env.R2_ACCESS_KEY_ID.color",
+          "env.R2_ACCESS_KEY_ID.icon",
+          "env.R2_ACCESS_KEY_ID.type",
+          "env.R2_SECRET_ACCESS_KEY.vault",
+          "env.R2_SECRET_ACCESS_KEY.item",
+          "env.R2_SECRET_ACCESS_KEY.field",
+          "env.R2_SECRET_ACCESS_KEY.label",
+          "env.R2_SECRET_ACCESS_KEY.color",
+          "env.R2_SECRET_ACCESS_KEY.icon",
+          "env.R2_SECRET_ACCESS_KEY.type"
+        ],
+        "importers": [
+          "lib/security/vault-map.ts:94",
+          "lib/security/vault-map.ts:343",
+          "tools/lib/portal-cli-scanner.ts:53",
+          "lib/http/portal-weave.ts:282",
+          "lib/security/vault-map.ts:52",
+          "lib/security/vault-map.ts:110"
+        ]
+      },
+      {
+        "path": "lib/shared/bunfig.toml",
+        "keyCount": 7,
+        "sampleKeys": [
+          "install.scopes.@factorywager.token",
+          "install.scopes.@factorywager.url",
+          "install.scopes.@duoplus.token",
+          "install.scopes.@duoplus.url",
+          "install.exact",
+          "install.registry",
+          "publish.registry"
+        ],
+        "importers": [
+          "lib/gate-map.ts:188",
+          "lib/verification/install-env-probes.ts:198",
+          "scripts/bake-bunfig.ts:24",
+          "scripts/bake-bunfig.ts:156",
+          "scripts/dx-mcp.ts:814",
+          "scripts/pre-commit-harness.ts:352"
+        ]
+      },
+      {
+        "path": "wrangler.toml",
+        "keyCount": 4,
+        "sampleKeys": [
+          "name",
+          "compatibility_date",
+          "vars.REGISTRY_CORS_ORIGINS",
+          "r2_buckets"
+        ],
+        "importers": [
+          "scripts/dx-mcp.ts:143",
+          "scripts/dx-mcp.ts:144",
+          "scripts/dx-mcp.ts:439",
+          "scripts/dx-mcp.ts:814",
+          "scripts/bake-surfaces.ts:75"
+        ]
+      }
+    ],
+    "orphanFiles": [],
+    "parseErrors": []
   },
   "summary": {
     "ownerCount": 60,
     "packageTouchedKeys": 1,
-    "multiPlaneKeys": 29,
+    "multiPlaneKeys": 30,
     "rootRuntimeMissing": 1,
-    "rootRuntimeNeedsInject": 0,
-    "rootCoveredByDefault": 1,
-    "defaultsIssueCount": 0
+    "rootRuntimeNeedsInject": 1,
+    "rootCoveredByDefault": 0,
+    "defaultsIssueCount": 1
   }
 }

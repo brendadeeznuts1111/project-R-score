@@ -42,6 +42,7 @@ type PageKey =
   | 'vault'
   | 'tools'
   | 'failures'
+  | 'bunfig'
   | 'dashboard'
   | 'skills'
   | 'packages'
@@ -60,6 +61,7 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
   { file: 'vault/index.html', active: 'vault', pageLabel: 'Vault', brandBadge: 'ops' },
   { file: 'tools/index.html', active: 'tools', pageLabel: 'CLI Tools', brandBadge: 'ops' },
   { file: 'failures/index.html', active: 'failures', pageLabel: 'Failures', brandBadge: 'ops' },
+  { file: 'bunfig/index.html', active: 'bunfig', pageLabel: 'Bunfig', brandBadge: 'ops' },
   { file: 'dashboard/index.html', active: 'dashboard', pageLabel: 'Dashboard', brandBadge: 'ops' },
   { file: 'skills/index.html', active: 'skills', pageLabel: 'Skills', brandBadge: 'ops' },
   { file: 'packages/index.html', active: 'packages', pageLabel: 'Packages', brandBadge: 'ops' },
