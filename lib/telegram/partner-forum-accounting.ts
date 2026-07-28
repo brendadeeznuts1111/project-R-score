@@ -7,12 +7,8 @@
  * @see docs/harness/tenants/seat-capital-desk.md
  */
 import type { Database } from 'bun:sqlite';
-import {
-  loadSeatIntake,
-  postSeatDeskAccountingThreadMessage,
-  SEAT_INTAKE_DIR,
-  type SeatIntakeRecord,
-} from './seat-capital-desk.ts';
+import { postSeatDeskAccountingThreadMessage } from './seat-desk-forum-post.ts';
+import { loadSeatIntake, SEAT_INTAKE_DIR, type SeatIntakeRecord } from './seat-intake.ts';
 import { enhancePackageGroupForum } from './enhance-package-group-forum.ts';
 import {
   loadPackageGroupForumMetadata,

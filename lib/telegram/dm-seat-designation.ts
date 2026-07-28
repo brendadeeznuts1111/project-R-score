@@ -12,7 +12,7 @@ import {
   type PackageGroupRegistryRow,
 } from './package-group-registry.ts';
 import { getChatChannelMeta } from './flows/channel-meta.ts';
-import { resolveSeatTelegramId, telegramIdWireLinked } from './flows/seat-telegram.ts';
+import { resolveSeatTelegramId, telegramIdWireLinked } from './flows/seat-telegram-id.ts';
 import { assertCallSignArg, partnerCodeFromCallSign } from './handshake-ref.ts';
 
 export type DmSeatStatus = 'none' | 'designated' | 'linked' | 'shared';

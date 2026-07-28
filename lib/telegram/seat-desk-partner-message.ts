@@ -24,7 +24,7 @@ import {
   SEAT_DESK_PIPE_FORMAT_LINES,
   type SeatIntakeRecord,
   type SeatOut,
-} from './seat-capital-desk.ts';
+} from './seat-intake.ts';
 import { getSurface } from './surfaces.ts';
 
 /** Where a desk field may appear (intake JSON always stores marked fields). */

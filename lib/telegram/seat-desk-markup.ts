@@ -17,7 +17,7 @@ import {
   outSequenceNumber,
   type SeatIntakeRecord,
   type SeatOut,
-} from './seat-capital-desk.ts';
+} from './seat-intake.ts';
 
 /** Telegram CopyTextButton payload limit (Bot API 7.11+). */
 export const TELEGRAM_COPY_TEXT_MAX = 256;

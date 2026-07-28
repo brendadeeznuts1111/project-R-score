@@ -5,14 +5,18 @@
  * One human may operate ASH-001 and BIL-001 from the same private chat. Only the first bind
  * sets tree_nodes.telegram_id (UNIQUE); later seats merge into ChatChannelMeta instead.
  * Bot commands use `activeCallSign` on meta (`/seat BIL-001`).
+ *
+ * Id-resolution primitives live in [`seat-telegram-id.ts`](./seat-telegram-id.ts) (leaf,
+ * re-exported here for backward compatibility).
  */
 import type { Database } from 'bun:sqlite';
-import type { TreeNodeId } from '../../types/branded/operations.ts';
+import { getChatChannelMeta, upsertChatChannelMeta } from './channel-meta.ts';
 import {
   ensureChatChannelMetaSchema,
-  getChatChannelMeta,
-  upsertChatChannelMeta,
-} from './channel-meta.ts';
+  findTreeNodeOwningTelegramId,
+  parseStringArray,
+  telegramIdWireLinked,
+} from './seat-telegram-id.ts';
 import type { OpsFlowNode } from './types.ts';
 import { getPackageGroupRegistry, listPackageGroupRegistry } from '../package-group-registry.ts';
 import {
@@ -32,35 +36,23 @@ import {
 } from '../package-group-membership.ts';
 import { partnerCodeFromCallSign, tryPartnerCodeArg } from '../handshake-ref.ts';
 
-export function telegramIdWireLinked(telegramId: string | null | undefined): boolean {
-  // brand-ok — tree_nodes.telegram_id wire
-  if (!telegramId || telegramId.startsWith('pending-')) return false;
-  // Placeholder refs (seed/demo) — not Bot API DM targets
-  if (telegramId.startsWith('tg:')) return false;
-  return true;
-}
+// ── Backward-compat re-exports (extracted to seat-telegram-id.ts — import the leaf directly) ──
+export {
+  detectTelegramLinkConflict,
+  findTreeNodeOwningTelegramId,
+  resolveSeatTelegramId,
+  resolveSeatTelegramIdFromMeta,
+  telegramIdWireLinked,
+  type LinkTelegramConflict,
+  type TreeNodeTelegramOwner,
+} from './seat-telegram-id.ts';
 
 function resolvePartnerCodeFromCallSign(callSign: string): string | null {
   return partnerCodeFromCallSign(callSign) ?? tryPartnerCodeArg(callSign);
 }
 
-function parseStringArray(raw: string): string[] {
-  try {
-    const v = JSON.parse(raw) as unknown;
-    return Array.isArray(v) ? v.map(String).filter(Boolean) : [];
-  } catch {
-    return [];
-  }
-}
-
 const FLOW_NODE_SELECT = `SELECT id, type, parent_id, expert_id, name, telegram_id, call_sign
   FROM tree_nodes WHERE active = 1`;
-
-export type TreeNodeTelegramOwner = {
-  id: string; // brand-ok
-  callSign: string | null;
-  name: string;
-};
 
 function loadFlowNodeByCallSign(db: Database, callSign: string): OpsFlowNode | null {
   return db
@@ -73,86 +65,6 @@ function loadFlowNodeById(db: Database, id: string): OpsFlowNode | null {
   return db
     .query(`${FLOW_NODE_SELECT} AND id = $id LIMIT 1`)
     .get({ $id: id }) as OpsFlowNode | null;
-}
-
-/** Active seat that already owns this telegram_id on tree_nodes (excluding optional node). */
-export function findTreeNodeOwningTelegramId(
-  db: Database,
-  telegramId: string, // brand-ok
-  excludeNodeId?: string // brand-ok
-): TreeNodeTelegramOwner | null {
-  const row = db
-    .query(
-      `SELECT id, call_sign, name FROM tree_nodes
-       WHERE active = 1 AND telegram_id = $tg
-         AND ($exclude IS NULL OR id != $exclude)
-       LIMIT 1`
-    )
-    .get({ $tg: telegramId, $exclude: excludeNodeId ?? null }) as {
-    id: string; // brand-ok
-    call_sign: string | null;
-    name: string;
-  } | null;
-  if (!row) return null;
-  return { id: row.id, callSign: row.call_sign, name: row.name };
-}
-
-/** Resolve DM chat id from ChatChannelMeta when seat shares a Telegram user with another seat. */
-export function resolveSeatTelegramIdFromMeta(
-  db: Database,
-  opts: { callSign?: string | null; treeNodeId?: TreeNodeId }
-): string | null {
-  ensureChatChannelMetaSchema(db);
-  const rows = db
-    .query(`SELECT chat_id, call_signs_json, tree_node_ids_json FROM ops_chat_channel_meta`)
-    .all() as Array<{
-    chat_id: string; // brand-ok
-    call_signs_json: string;
-    tree_node_ids_json: string;
-  }>;
-
-  for (const row of rows) {
-    const callSigns = parseStringArray(row.call_signs_json);
-    const nodeIds = parseStringArray(row.tree_node_ids_json);
-    if (opts.callSign?.trim() && callSigns.includes(opts.callSign.trim())) {
-      return row.chat_id;
-    }
-    if (opts.treeNodeId && nodeIds.includes(opts.treeNodeId as string)) {
-      return row.chat_id;
-    }
-  }
-  return null;
-}
-
-/** Effective Telegram DM id for a seat — tree_nodes first, then shared ChatChannelMeta. */
-export function resolveSeatTelegramId(
-  db: Database,
-  opts: { callSign?: string | null; treeNodeId?: TreeNodeId }
-): string | null {
-  if (opts.treeNodeId) {
-    const row = db
-      .query(`SELECT telegram_id, call_sign FROM tree_nodes WHERE id = $id AND active = 1`)
-      .get({ $id: opts.treeNodeId as string }) as {
-      telegram_id: string | null; // brand-ok
-      call_sign: string | null;
-    } | null;
-    if (row && telegramIdWireLinked(row.telegram_id)) return row.telegram_id!.trim();
-    const fromMeta = resolveSeatTelegramIdFromMeta(db, {
-      treeNodeId: opts.treeNodeId,
-      callSign: opts.callSign ?? row?.call_sign,
-    });
-    if (fromMeta) return fromMeta;
-  }
-
-  if (opts.callSign?.trim()) {
-    const row = db
-      .query(`SELECT telegram_id FROM tree_nodes WHERE active = 1 AND call_sign = $cs LIMIT 1`)
-      .get({ $cs: opts.callSign.trim() }) as { telegram_id: string | null } | null; // brand-ok
-    if (row && telegramIdWireLinked(row.telegram_id)) return row.telegram_id!.trim();
-    return resolveSeatTelegramIdFromMeta(db, { callSign: opts.callSign });
-  }
-
-  return null;
 }
 
 /** Call-signs reachable from this Telegram user (primary tree row + shared meta). */
@@ -280,22 +192,6 @@ export function handleOpsSeatCommand(
   return [`✅ Active seat: *${result.activeCallSign}*`, node ? `Name: ${node.name}` : '']
     .filter(Boolean)
     .join('\n');
-}
-
-export type LinkTelegramConflict = {
-  kind: 'shared_dm';
-  owner: TreeNodeTelegramOwner;
-};
-
-/** Whether binding chatId to treeNodeId must skip tree_nodes.telegram_id (UNIQUE). */
-export function detectTelegramLinkConflict(
-  db: Database,
-  chatId: string, // brand-ok
-  treeNodeId: TreeNodeId
-): LinkTelegramConflict | null {
-  const owner = findTreeNodeOwningTelegramId(db, chatId, treeNodeId as string);
-  if (!owner) return null;
-  return { kind: 'shared_dm', owner };
 }
 
 export type SeatMapEntry = {

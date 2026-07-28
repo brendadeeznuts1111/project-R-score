@@ -1202,7 +1202,9 @@
         "line": 980,
         "match": "const newVal = r.new_limit != null ? `$${r.new_limit}` : '—';"
       }
-    ]
+    ],
+    "totalLines": 986,
+    "scannedAt": "2026-07-28T14:16:19.438Z"
   },
   "monitoring": {
     "files": [
@@ -1630,7 +1632,9 @@
         "line": 94,
         "match": "<title>Monitoring · FactoryWager</title>"
       }
-    ]
+    ],
+    "totalLines": 1184,
+    "scannedAt": "2026-07-28T14:16:19.442Z"
   },
   "operations": {
     "files": [
@@ -6318,7 +6322,9 @@
         "line": 193,
         "match": "stakeholder: r.stakeholder,"
       }
-    ]
+    ],
+    "totalLines": 14361,
+    "scannedAt": "2026-07-28T14:16:19.445Z"
   },
   "prediction": {
     "files": [
@@ -7181,6 +7187,8 @@
         "line": 95,
         "match": "LIMIT 1`"
       }
-    ]
+    ],
+    "totalLines": 2071,
+    "scannedAt": "2026-07-28T14:16:19.467Z"
   }
 }

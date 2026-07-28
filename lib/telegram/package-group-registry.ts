@@ -10,7 +10,7 @@
 import { Database } from 'bun:sqlite';
 import { formatPackageGroupTitle, TOC_OPS_SURFACES } from './surfaces.ts';
 import { tryPartnerCodeArg, HANDSHAKE_PARTNER_CODE_RE } from './handshake-ref.ts';
-import { resolveSeatTelegramId, telegramIdWireLinked } from './flows/seat-telegram.ts';
+import { resolveSeatTelegramId, telegramIdWireLinked } from './flows/seat-telegram-id.ts';
 
 /** @deprecated use HANDSHAKE_PARTNER_CODE_RE from handshake-ref.ts */
 export const PARTNER_CODE_PATTERN = HANDSHAKE_PARTNER_CODE_RE;

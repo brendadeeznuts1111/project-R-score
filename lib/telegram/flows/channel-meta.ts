@@ -7,7 +7,15 @@ import type { TreeNodeId } from '../../types/branded/operations.ts';
 import { resolveLocale } from './i18n.ts';
 import type { ChatChannelMeta, FlowLocale } from './types.ts';
 import type { TemplateId } from '../templates/types.ts';
-import { detectTelegramLinkConflict, findTreeNodeOwningTelegramId } from './seat-telegram.ts';
+import {
+  detectTelegramLinkConflict,
+  ensureChatChannelMetaSchema,
+  findTreeNodeOwningTelegramId,
+  parseStringArray,
+} from './seat-telegram-id.ts';
+
+// Backward-compat re-export (schema moved to the seat-telegram-id leaf).
+export { ensureChatChannelMetaSchema } from './seat-telegram-id.ts';
 
 type MetaRow = {
   chat_id: string; // brand-ok
@@ -20,39 +28,6 @@ type MetaRow = {
   linked_at: string | null;
   active_call_sign: string | null;
 };
-
-export function ensureChatChannelMetaSchema(db: Database): void {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS ops_chat_channel_meta (
-      chat_id TEXT PRIMARY KEY,
-      tree_node_ids_json TEXT NOT NULL DEFAULT '[]',
-      call_signs_json TEXT NOT NULL DEFAULT '[]',
-      locale TEXT NOT NULL DEFAULT 'en',
-      topics_json TEXT NOT NULL DEFAULT '{}',
-      image_bundle_id TEXT,
-      last_template_ids_json TEXT NOT NULL DEFAULT '{}',
-      linked_at TEXT,
-      active_call_sign TEXT
-    );
-  `);
-  const cols = new Set(
-    (db.query('PRAGMA table_info(ops_chat_channel_meta)').all() as { name: string }[]).map(
-      c => c.name
-    )
-  );
-  if (!cols.has('active_call_sign')) {
-    db.run(`ALTER TABLE ops_chat_channel_meta ADD COLUMN active_call_sign TEXT`);
-  }
-}
-
-function parseStringArray(raw: string): string[] {
-  try {
-    const v = JSON.parse(raw) as unknown;
-    return Array.isArray(v) ? v.map(String).filter(Boolean) : [];
-  } catch {
-    return [];
-  }
-}
 
 function parseTopics(raw: string): ChatChannelMeta['topics'] {
   try {
