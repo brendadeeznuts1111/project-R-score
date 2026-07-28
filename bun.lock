@@ -5,10 +5,8 @@
     "": {
       "name": "factorywager-enterprise",
       "dependencies": {
-        "@factorywager/business": "workspace:*",
         "@factorywager/docs-tools": "workspace:*",
         "@factorywager/guards": "workspace:*",
-        "@factorywager/p2p": "workspace:*",
         "@factorywager/registry-client": "workspace:*",
         "@factorywager/rip": "workspace:*",
         "@modelcontextprotocol/sdk": "1.29.0",

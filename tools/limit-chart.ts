@@ -47,6 +47,8 @@ export function generateLimitChartSvg(data: {
     bias: number;
     n: number;
   };
+  /** ISO timestamp for footer (tests pass a fixed value for stable snapshots). */
+  generatedAt?: string;
 }): string {
   const lines: string[] = [];
   let y = 25;
@@ -139,8 +141,9 @@ export function generateLimitChartSvg(data: {
     `<line x1="${leftX}" y1="${y}" x2="580" y2="${y}" stroke="${CHART_COLORS.border}" stroke-width="1"/>`
   );
   y += 18;
+  const generatedAt = data.generatedAt ?? new Date().toISOString().slice(0, 19);
   lines.push(
-    `<text x="${leftX}" y="${y}" font-family="system-ui" font-size="10" fill="${CHART_COLORS.dim}">Generated: ${new Date().toISOString().slice(0, 19)} | Bun ${Bun.version}</text>`
+    `<text x="${leftX}" y="${y}" font-family="system-ui" font-size="10" fill="${CHART_COLORS.dim}">Generated: ${esc(generatedAt)} | Bun ${Bun.version}</text>`
   );
 
   const svg = [

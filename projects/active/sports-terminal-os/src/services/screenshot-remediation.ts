@@ -11,4 +11,4 @@ export {
   type ScreenshotEvidenceRecord,
   type Test003Remediation,
   type Test003Response,
-} from "../../../../../lib/screenshot-remediation.ts";
+} from "../../../../../lib/screenshot-remediation";

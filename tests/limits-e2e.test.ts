@@ -197,6 +197,7 @@ describe('limit detection pipeline (E2E)', () => {
         { sportsbook: 'betmgm', direction: 'up', previous_max: 0, new_limit: 3000 },
       ],
       predictionAccuracy: { mae: 0.123, rmse: 0.456, bias: -0.012, n: 50 },
+      generatedAt: '2026-07-28T00:00:00',
     };
 
     const svg = generateLimitChartSvg(chartData);

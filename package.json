@@ -2099,6 +2099,8 @@
     "proton:inject:scanner": "bash scripts/proton-inject.sh scanner",
     "proton:check": "bash scripts/proton-vault-check.sh",
     "proton:check:list": "bash scripts/proton-vault-check.sh --list-only",
+    "proton:verify": "bun tools/proton-verify.ts",
+    "proton:verify:json": "bun tools/proton-verify.ts --json",
     "proton:run": "bash scripts/proton-run.sh",
     "proton:deploy": "bash scripts/proton-deploy.sh",
     "proton:agent:factorywager": "source scripts/agent-env.sh factorywager",
@@ -2114,13 +2116,13 @@
     "proton:partner:provision": "source scripts/agent-env.sh partners && PROTON_PASS_AGENT_REASON=\"Provisioning partner secrets\" bun scripts/provision-partner-secrets.ts",
     "portal:probe": "bun tools/portal-probe.ts",
     "portal:probe:json": "bun tools/portal-probe.ts --json",
-    "portal:probe:lockfile": "bun tools/portal-probe.ts lockfile"
+    "portal:probe:lockfile": "bun tools/portal-probe.ts lockfile",
+    "portal:secret": "bun tools/portal-secret.ts",
+    "portal:secret:which": "bun tools/portal-secret.ts which"
   },
   "dependencies": {
-    "@factorywager/business": "workspace:*",
     "@factorywager/docs-tools": "workspace:*",
     "@factorywager/guards": "workspace:*",
-    "@factorywager/p2p": "workspace:*",
     "@factorywager/registry-client": "workspace:*",
     "@factorywager/rip": "workspace:*",
     "@modelcontextprotocol/sdk": "1.29.0",

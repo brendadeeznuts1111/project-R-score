@@ -59,7 +59,7 @@ Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalog
 | `workspaces.packages` | root `package.json` | Only listed globs are monorepo members: `packages/*`, `projects/active/sports-terminal-os`, `lib/*`. Nested products under `projects/**` are separate install roots unless promoted. |
 | `catalog` | root `package.json` | **Version SSOT** for shared third-party pins (`typescript`, `@types/bun`, `bun-types`, `zod`, React stack). Prefer exact pins (matches `install.exact`). |
 | `catalog:` / `catalog:<name>` | any **root workspace** `package.json` | Consumers of shared pins **must** use the protocol — do not re-declare floating `^` / `latest` for cataloged names. |
-| `workspace:*` | root or packages | Link **internal** packages only. Apps like sports-terminal-os are workspace members for `--filter` / install; they need not be root `dependencies`. |
+| `workspace:*` | root or packages | Link **internal** packages only when the root (or another package) imports them. Workspace membership alone is enough for `--filter` / discovery — do not list unused stubs in root `dependencies`. Apps like sports-terminal-os need not be root deps. |
 | Named `catalogs` | root | Only when a second stack needs a separate pin set. Empty/demo named catalogs are not allowed. |
 | `overrides` | root only | Metadeps / CVE pins — [pm/overrides](https://bun.com/docs/pm/overrides). Nested overrides unsupported. |
 | `patchedDependencies` | root + `patches/` | Only via [bun patch](https://bun.com/docs/pm/cli/patch). Patched pkgs may be global-store ineligible. |
