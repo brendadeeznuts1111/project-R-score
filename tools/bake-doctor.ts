@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
@@ -8,16 +9,21 @@
  *
  *   bun run bake:doctor
  *   bun run bake:doctor --check   # fingerprint gate (portable groups; offline Access)
+ *   bun run bake:doctor:check:report  # check + JSON forensics + GHA summary/annotations
  *   bun tools/bake-doctor.ts --full
  *   bun tools/bake-doctor.ts --check --no-portable  # full-group fingerprint (rare)
+ *   bun tools/bake-doctor.ts --check --report
  *
  * Bake/check always skip live Access probes so the artifact is CI-stable.
  * Fingerprint covers portable groups only (linker|bakes|catalog|bunfig) so
  * host-dependent infra ok bits and --full gates do not break CI/laptop compare.
  * Board JSON still lists all checks.
  * Board: /portal/doctor/
+ *
+ * Check report (when --report, or GITHUB_ACTIONS / GITHUB_STEP_SUMMARY set):
+ *   reports/doctor-state-check.json · step summary · ::error title=doctor-state::
  */
-import { joinPath } from '../scripts/lib/fs-bun.ts';
+import { dirnamePath, ensureDir, joinPath, resolvePath } from '../scripts/lib/fs-bun.ts';
 import {
   runPortalDoctor,
   type PortalDoctorOpts,
@@ -26,6 +32,8 @@ import {
 
 export const DOCTOR_STATE_REL = 'public/registry/doctor-state.json';
 export const DOCTOR_STATE_KIND = 'portal-doctor-state' as const;
+/** CI forensics JSON for fingerprint check (gitignored under reports/). */
+export const DOCTOR_STATE_CHECK_REPORT_REL = 'reports/doctor-state-check.json';
 
 /**
  * Groups included in doctor-state fingerprint (CI/laptop portable).
@@ -336,11 +344,8 @@ export async function bakeDoctorState(
   return { state, path, report };
 }
 
-/**
- * Compare freshly computed state to on-disk bake (no write).
- * Uses sha256 fingerprint of stable portable fields — not free-text message equality.
- */
-export async function checkDoctorState(opts: BakeDoctorOpts = {}): Promise<{
+/** Result of {@link checkDoctorState} (no write). */
+export type DoctorStateCheckResult = {
   ok: boolean;
   path: string;
   present: boolean;
@@ -351,7 +356,41 @@ export async function checkDoctorState(opts: BakeDoctorOpts = {}): Promise<{
   fingerprintDisk?: string;
   drift?: string[];
   portable?: boolean;
-}> {
+};
+
+/**
+ * Portable forensics artifact for CI (`reports/doctor-state-check.json`).
+ * No free-text doctor messages — fingerprint + drift only.
+ */
+export type DoctorStateCheckReport = {
+  ok: boolean;
+  fingerprintFresh?: string;
+  fingerprintDisk?: string;
+  drift: string[];
+  portable: boolean;
+  tone: DoctorStateTone;
+  path: string;
+  reason?: string;
+  present: boolean;
+};
+
+export type DoctorStateCheckReportOpts = {
+  cwd?: string;
+  /** JSON path (default: reports/doctor-state-check.json under cwd). */
+  outPath?: string;
+  /** Skip GITHUB_STEP_SUMMARY even if env is set. */
+  noSummary?: boolean;
+  /** Skip JSON forensics file. */
+  noJson?: boolean;
+  /** Suppress console report path / summary lines. */
+  quiet?: boolean;
+};
+
+/**
+ * Compare freshly computed state to on-disk bake (no write).
+ * Uses sha256 fingerprint of stable portable fields — not free-text message equality.
+ */
+export async function checkDoctorState(opts: BakeDoctorOpts = {}): Promise<DoctorStateCheckResult> {
   const portable = opts.portable !== false;
   const cwd = opts.cwd ?? process.cwd();
   const path = joinPath(cwd, DOCTOR_STATE_REL);
@@ -414,13 +453,193 @@ export async function checkDoctorState(opts: BakeDoctorOpts = {}): Promise<{
   }
 }
 
+/** Map check result → portable forensics JSON shape. */
+export function toDoctorStateCheckReport(result: DoctorStateCheckResult): DoctorStateCheckReport {
+  return {
+    ok: result.ok,
+    fingerprintFresh: result.fingerprintFresh,
+    fingerprintDisk: result.fingerprintDisk,
+    drift: result.drift ?? [],
+    portable: result.portable !== false,
+    tone: result.fresh.tone,
+    path: result.path,
+    reason: result.reason,
+    present: result.present,
+  };
+}
+
+/**
+ * Escape a value for GitHub Actions workflow-command message bodies.
+ * @see https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#setting-an-error-message
+ */
+export function escapeGithubActionsMessage(text: string): string {
+  return text.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+}
+
+/**
+ * Concise markdown for GITHUB_STEP_SUMMARY (fingerprint mismatch + drift bullets).
+ * Pure — no I/O.
+ */
+export function formatDoctorStateCheckSummary(report: DoctorStateCheckReport): string {
+  const result = report.ok ? 'ok' : 'fail';
+  const lines: string[] = [
+    '## Doctor-state fingerprint',
+    '',
+    `| Field | Value |`,
+    `| --- | --- |`,
+    `| result | \`${result}\` |`,
+    `| tone | \`${report.tone}\` |`,
+    `| portable | ${report.portable ? 'yes' : 'no'} |`,
+    `| present | ${report.present ? 'yes' : 'no'} |`,
+    `| path | \`${report.path}\` |`,
+  ];
+  if (report.fingerprintFresh) {
+    lines.push(`| fingerprint_fresh | \`${report.fingerprintFresh}\` |`);
+  }
+  if (report.fingerprintDisk) {
+    lines.push(`| fingerprint_disk | \`${report.fingerprintDisk}\` |`);
+  }
+  if (report.reason) {
+    lines.push(`| reason | ${report.reason} |`);
+  }
+  lines.push('');
+
+  if (!report.ok) {
+    const fresh = report.fingerprintFresh ?? '(none)';
+    const disk = report.fingerprintDisk ?? '(none)';
+    if (fresh !== disk) {
+      lines.push('### Fingerprint mismatch');
+      lines.push('');
+      lines.push(`- fresh: \`${fresh}\``);
+      lines.push(`- disk: \`${disk}\``);
+      lines.push('');
+    }
+  }
+
+  if (report.drift.length > 0) {
+    lines.push('### Drift');
+    lines.push('');
+    for (const d of report.drift) {
+      lines.push(`- ${d}`);
+    }
+    lines.push('');
+  } else if (report.ok) {
+    lines.push('_No fingerprint drift._');
+    lines.push('');
+  } else if (report.reason) {
+    lines.push(`_${report.reason}_`);
+    lines.push('');
+  }
+
+  if (!report.ok) {
+    lines.push('### Repair');
+    lines.push('');
+    lines.push('- `bun run bake:doctor`');
+    lines.push('- `bun run bake:doctor:check`');
+    lines.push('');
+  }
+
+  return lines.join('\n');
+}
+
+/**
+ * Pure formatter: one GHA `::error title=doctor-state::` per drift line (or reason).
+ * Newlines in drift text are escaped. Empty when check is ok.
+ */
+export function formatDoctorStateGithubAnnotations(report: DoctorStateCheckReport): string[] {
+  if (report.ok) return [];
+  const lines: string[] = [];
+  const drift = report.drift;
+  if (drift.length > 0) {
+    for (const d of drift) {
+      lines.push(`::error title=doctor-state::${escapeGithubActionsMessage(d)}`);
+    }
+    return lines;
+  }
+  // Missing file / bad kind / parse — single error from reason
+  const body = report.reason?.trim() || 'doctor-state fingerprint mismatch';
+  lines.push(`::error title=doctor-state::${escapeGithubActionsMessage(body)}`);
+  return lines;
+}
+
+function resolveCheckReportPath(cwd: string, outPath?: string): string {
+  const rel = outPath?.trim() || DOCTOR_STATE_CHECK_REPORT_REL;
+  return rel.startsWith('/') ? rel : resolvePath(cwd, rel);
+}
+
+/**
+ * Write forensics JSON + optional GITHUB_STEP_SUMMARY for a check result.
+ * Annotations are returned for the caller to print when GITHUB_ACTIONS=true.
+ */
+export async function writeDoctorStateCheckReport(
+  result: DoctorStateCheckResult,
+  opts: DoctorStateCheckReportOpts = {}
+): Promise<{
+  report: DoctorStateCheckReport;
+  jsonPath?: string;
+  summaryWritten: boolean;
+  annotations: string[];
+}> {
+  const cwd = opts.cwd ?? process.cwd();
+  const report = toDoctorStateCheckReport(result);
+  let jsonPath: string | undefined;
+  let summaryWritten = false;
+
+  if (!opts.noJson) {
+    jsonPath = resolveCheckReportPath(cwd, opts.outPath);
+    await ensureDir(dirnamePath(jsonPath));
+    await Bun.write(jsonPath, `${JSON.stringify(report, null, 2)}\n`);
+  }
+
+  if (!opts.noSummary) {
+    const summaryPath = Bun.env.GITHUB_STEP_SUMMARY;
+    if (summaryPath && summaryPath.length > 0) {
+      const md = formatDoctorStateCheckSummary(report);
+      const existing = (await Bun.file(summaryPath).exists())
+        ? await Bun.file(summaryPath).text()
+        : '';
+      const sep = existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
+      await Bun.write(summaryPath, `${existing}${sep}${md}`);
+      summaryWritten = true;
+    }
+  }
+
+  const annotations = formatDoctorStateGithubAnnotations(report);
+  return { report, jsonPath, summaryWritten, annotations };
+}
+
+/** True when CI should emit forensics (explicit --report or GHA env). */
+export function shouldEmitDoctorStateCheckReport(forceReport: boolean): boolean {
+  if (forceReport) return true;
+  if (Bun.env.GITHUB_ACTIONS === 'true') return true;
+  const summary = Bun.env.GITHUB_STEP_SUMMARY;
+  return typeof summary === 'string' && summary.length > 0;
+}
+
 if (import.meta.main) {
   const full = Bun.argv.includes('--full');
   const check = Bun.argv.includes('--check');
   // Portable fingerprint is default; --no-portable includes infra|gates in hash.
   const portable = !Bun.argv.includes('--no-portable');
+  // Explicit --report, or auto when GITHUB_ACTIONS / GITHUB_STEP_SUMMARY set.
+  const forceReport = Bun.argv.includes('--report');
   if (check) {
     const result = await checkDoctorState({ full, portable });
+    if (shouldEmitDoctorStateCheckReport(forceReport)) {
+      const written = await writeDoctorStateCheckReport(result);
+      if (written.jsonPath) {
+        console.error(`doctor-state:check  report=${written.jsonPath}`);
+      }
+      if (written.summaryWritten) {
+        console.error('doctor-state:check  GITHUB_STEP_SUMMARY updated');
+      }
+      if (Bun.env.GITHUB_ACTIONS === 'true') {
+        for (const line of written.annotations) {
+          // Workflow commands must be on stdout for Actions to parse them.
+          console.log(line);
+        }
+      }
+    }
     if (!result.ok) {
       console.error(`doctor-state:check  result=fail`);
       console.error(`  path: ${result.path}`);

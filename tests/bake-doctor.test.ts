@@ -1,18 +1,37 @@
 // @see https://bun.com/docs/test
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
  * bake-doctor portable fingerprint — CI/laptop compare ignores infra|gates.
+ * Check-report helpers: forensics JSON shape · step summary · GHA annotations.
  */
-import { describe, expect, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
+import { joinPath, resolvePath } from '../scripts/lib/fs-bun.ts';
 import {
+  DOCTOR_STATE_CHECK_REPORT_REL,
   DOCTOR_STATE_KIND,
   PORTABLE_DOCTOR_GROUPS,
   diffDoctorStates,
   doctorStateFingerprint,
+  escapeGithubActionsMessage,
+  formatDoctorStateCheckSummary,
+  formatDoctorStateGithubAnnotations,
   isPortableDoctorGroup,
+  shouldEmitDoctorStateCheckReport,
   stableDoctorState,
+  toDoctorStateCheckReport,
+  writeDoctorStateCheckReport,
   type DoctorState,
+  type DoctorStateCheckReport,
+  type DoctorStateCheckResult,
 } from '../tools/bake-doctor.ts';
+
+const ROOT = resolvePath(import.meta.dir, '..');
+const TMP = joinPath(ROOT, 'tmp/bake-doctor-report-test');
+
+afterAll(async () => {
+  await Bun.$`rm -rf ${TMP}`.quiet().nothrow();
+});
 
 function baseState(overrides: Partial<DoctorState> = {}): DoctorState {
   const checks: DoctorState['checks'] = [
@@ -259,5 +278,191 @@ describe('bake-doctor portable fingerprint', () => {
       checks: a.checks.map(c => ({ ...c, message: `noise-${c.id}` })),
     };
     expect(doctorStateFingerprint(a)).toBe(doctorStateFingerprint(b));
+  });
+});
+
+function failCheckResult(overrides: Partial<DoctorStateCheckResult> = {}): DoctorStateCheckResult {
+  const fresh = baseState();
+  const drift = [
+    'ok: disk=true fresh=false',
+    'check linker-config-version: disk={ok:true,level:fatal,group:linker} fresh={ok:false,level:fatal,group:linker}',
+  ];
+  return {
+    ok: false,
+    path: joinPath(ROOT, 'public/registry/doctor-state.json'),
+    present: true,
+    fresh,
+    onDisk: fresh,
+    reason: 'doctor-state fingerprint mismatch',
+    fingerprintFresh: 'a'.repeat(64),
+    fingerprintDisk: 'b'.repeat(64),
+    drift,
+    portable: true,
+    ...overrides,
+  };
+}
+
+describe('bake-doctor check report (CI forensics)', () => {
+  test('DEFAULT report rel is reports/doctor-state-check.json', () => {
+    expect(DOCTOR_STATE_CHECK_REPORT_REL).toBe('reports/doctor-state-check.json');
+  });
+
+  test('toDoctorStateCheckReport maps required forensics fields', () => {
+    const result = failCheckResult();
+    const report = toDoctorStateCheckReport(result);
+    expect(report.ok).toBe(false);
+    expect(report.fingerprintFresh).toBe(result.fingerprintFresh);
+    expect(report.fingerprintDisk).toBe(result.fingerprintDisk);
+    expect(report.drift).toEqual(result.drift);
+    expect(report.portable).toBe(true);
+    expect(report.tone).toBe(result.fresh.tone);
+    expect(report.path).toBe(result.path);
+    expect(report.present).toBe(true);
+    expect(report.reason).toBe('doctor-state fingerprint mismatch');
+  });
+
+  test('formatDoctorStateCheckSummary includes fingerprint mismatch + drift bullets', () => {
+    const report = toDoctorStateCheckReport(failCheckResult());
+    const md = formatDoctorStateCheckSummary(report);
+    expect(md).toContain('## Doctor-state fingerprint');
+    expect(md).toContain('| result | `fail` |');
+    expect(md).toContain('### Fingerprint mismatch');
+    expect(md).toContain(`- fresh: \`${report.fingerprintFresh}\``);
+    expect(md).toContain(`- disk: \`${report.fingerprintDisk}\``);
+    expect(md).toContain('### Drift');
+    expect(md).toContain(`- ${report.drift[0]}`);
+    expect(md).toContain('bun run bake:doctor');
+  });
+
+  test('formatDoctorStateCheckSummary ok path has no drift section noise', () => {
+    const ok: DoctorStateCheckReport = {
+      ok: true,
+      fingerprintFresh: 'c'.repeat(64),
+      fingerprintDisk: 'c'.repeat(64),
+      drift: [],
+      portable: true,
+      tone: 'green',
+      path: '/tmp/doctor-state.json',
+      present: true,
+    };
+    const md = formatDoctorStateCheckSummary(ok);
+    expect(md).toContain('| result | `ok` |');
+    expect(md).toContain('_No fingerprint drift._');
+    expect(md).not.toContain('### Fingerprint mismatch');
+    expect(md).not.toContain('### Repair');
+  });
+
+  test('formatDoctorStateGithubAnnotations emits ::error title=doctor-state:: per drift', () => {
+    const report = toDoctorStateCheckReport(failCheckResult());
+    const lines = formatDoctorStateGithubAnnotations(report);
+    expect(lines).toHaveLength(2);
+    expect(lines[0]).toBe(`::error title=doctor-state::${report.drift[0]}`);
+    expect(lines[1]).toBe(`::error title=doctor-state::${report.drift[1]}`);
+  });
+
+  test('formatDoctorStateGithubAnnotations escapes newlines and reason-only fail', () => {
+    const report = toDoctorStateCheckReport(
+      failCheckResult({
+        drift: undefined,
+        reason: 'missing doctor-state.json — run: bun run bake:doctor',
+        fingerprintDisk: undefined,
+        present: false,
+        onDisk: null,
+      })
+    );
+    // toDoctorStateCheckReport normalizes undefined drift → []
+    expect(report.drift).toEqual([]);
+    const lines = formatDoctorStateGithubAnnotations(report);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toBe(
+      '::error title=doctor-state::missing doctor-state.json — run: bun run bake:doctor'
+    );
+
+    const multi: DoctorStateCheckReport = {
+      ...report,
+      drift: ['line one\nline two', 'pct%value'],
+      reason: 'doctor-state fingerprint mismatch',
+    };
+    const multiLines = formatDoctorStateGithubAnnotations(multi);
+    expect(multiLines).toHaveLength(2);
+    expect(multiLines[0]).toBe('::error title=doctor-state::line one%0Aline two');
+    expect(multiLines[1]).toBe('::error title=doctor-state::pct%25value');
+    expect(multiLines[0]!.includes('\n')).toBe(false);
+    expect(escapeGithubActionsMessage('a\nb')).toBe('a%0Ab');
+  });
+
+  test('formatDoctorStateGithubAnnotations empty when ok', () => {
+    const report: DoctorStateCheckReport = {
+      ok: true,
+      fingerprintFresh: 'd'.repeat(64),
+      fingerprintDisk: 'd'.repeat(64),
+      drift: [],
+      portable: true,
+      tone: 'green',
+      path: '/x',
+      present: true,
+    };
+    expect(formatDoctorStateGithubAnnotations(report)).toEqual([]);
+  });
+
+  test('shouldEmitDoctorStateCheckReport force and GHA env', () => {
+    expect(shouldEmitDoctorStateCheckReport(true)).toBe(true);
+    const prevActions = Bun.env.GITHUB_ACTIONS;
+    const prevSummary = Bun.env.GITHUB_STEP_SUMMARY;
+    try {
+      delete Bun.env.GITHUB_ACTIONS;
+      delete Bun.env.GITHUB_STEP_SUMMARY;
+      expect(shouldEmitDoctorStateCheckReport(false)).toBe(false);
+      Bun.env.GITHUB_ACTIONS = 'true';
+      expect(shouldEmitDoctorStateCheckReport(false)).toBe(true);
+      Bun.env.GITHUB_ACTIONS = 'false';
+      Bun.env.GITHUB_STEP_SUMMARY = '/tmp/summary.md';
+      expect(shouldEmitDoctorStateCheckReport(false)).toBe(true);
+    } finally {
+      if (prevActions === undefined) delete Bun.env.GITHUB_ACTIONS;
+      else Bun.env.GITHUB_ACTIONS = prevActions;
+      if (prevSummary === undefined) delete Bun.env.GITHUB_STEP_SUMMARY;
+      else Bun.env.GITHUB_STEP_SUMMARY = prevSummary;
+    }
+  });
+
+  test('writeDoctorStateCheckReport writes JSON + appends step summary', async () => {
+    const outDir = joinPath(TMP, 'write-report');
+    await Bun.$`rm -rf ${outDir}`.quiet().nothrow();
+    await Bun.$`mkdir -p ${outDir}`.quiet();
+    const outPath = joinPath(outDir, 'doctor-state-check.json');
+    const summaryPath = joinPath(outDir, 'step-summary.md');
+    await Bun.write(summaryPath, '# prior\n');
+
+    const prevSummary = Bun.env.GITHUB_STEP_SUMMARY;
+    Bun.env.GITHUB_STEP_SUMMARY = summaryPath;
+    try {
+      const result = failCheckResult();
+      const written = await writeDoctorStateCheckReport(result, {
+        outPath,
+        quiet: true,
+      });
+      expect(written.jsonPath).toBe(outPath);
+      expect(written.summaryWritten).toBe(true);
+      expect(written.annotations).toHaveLength(2);
+      expect(await Bun.file(outPath).exists()).toBe(true);
+
+      const json = (await Bun.file(outPath).json()) as DoctorStateCheckReport;
+      expect(json.ok).toBe(false);
+      expect(json.fingerprintFresh).toBe(result.fingerprintFresh);
+      expect(json.fingerprintDisk).toBe(result.fingerprintDisk);
+      expect(json.drift).toEqual(result.drift);
+      expect(json.portable).toBe(true);
+      expect(json.tone).toBe(result.fresh.tone);
+      expect(json.path).toBe(result.path);
+
+      const summary = await Bun.file(summaryPath).text();
+      expect(summary.startsWith('# prior\n')).toBe(true);
+      expect(summary).toContain('## Doctor-state fingerprint');
+      expect(summary).toContain('### Drift');
+    } finally {
+      if (prevSummary === undefined) delete Bun.env.GITHUB_STEP_SUMMARY;
+      else Bun.env.GITHUB_STEP_SUMMARY = prevSummary;
+    }
   });
 });

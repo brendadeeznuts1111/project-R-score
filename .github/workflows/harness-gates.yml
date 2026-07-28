@@ -83,8 +83,18 @@ jobs:
           if-no-files-found: ignore
 
       # doctor-state.json fingerprint gate (stable ids/ok/level — offline Access).
+      # Forensics: reports/doctor-state-check.json + GITHUB_STEP_SUMMARY + ::error title=doctor-state::
       - name: Portal doctor-state fingerprint
-        run: bun run bake:doctor:check
+        id: doctor-state-check
+        run: bun run bake:doctor:check:report
+
+      - name: Upload doctor-state check report
+        if: failure() && steps.doctor-state-check.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: doctor-state-check
+          path: reports/doctor-state-check.json
+          if-no-files-found: ignore
 
       # One install: verify + hygiene + ci:harness (was a second repo-hygiene job).
       - name: CI core

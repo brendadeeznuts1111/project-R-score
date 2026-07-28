@@ -50,11 +50,12 @@ Operator map for harness-gates + local reproduce. Tables over narrative.
 | `bun run portal:doctor:ci:report` | One process: plain log + JSON artifact + GHA annotations + step summary |
 | `bun run bake:doctor` | ensure + write `public/registry/doctor-state.json` |
 | `bun run bake:doctor:check` | ensure + portable sha256 fingerprint vs on-disk bake |
+| `bun run bake:doctor:check:report` | same + `reports/doctor-state-check.json` · step summary · `::error title=doctor-state::` |
 | `bun run portal:doctor:bunfig:check` | offline plain bunfig group only (`--no-write`) |
 | `bun run audit:bunfig` | workspace duplication / machine-key scan (`audit:bunfig:strict` harder) |
 | `bun run install:verify` | install cache / linker hygiene (related; not doctor fingerprint) |
 
-**No `bake:doctor:check:report`** — fingerprint gate is stdout-only (`doctor-state:check result=ok|fail`). Rare full-group hash: `bun tools/bake-doctor.ts --check --no-portable`.
+`--check --report` (or `GITHUB_ACTIONS` / `GITHUB_STEP_SUMMARY` set) writes forensics JSON. Rare full-group hash: `bun tools/bake-doctor.ts --check --no-portable`.
 
 ### Escapes (`SKIP_*`)
 
@@ -69,12 +70,11 @@ Operator map for harness-gates + local reproduce. Tables over narrative.
 | Artifact | Path / sink | Produced by |
 |----------|-------------|-------------|
 | CI JSON report | `reports/portal-doctor-ci.json` (gitignored) | `portal:doctor:ci:report` · GHA upload on failure |
+| Doctor-state check forensics | `reports/doctor-state-check.json` (gitignored) | `bake:doctor:check:report` · GHA upload on failure |
 | Doctor board bake | `public/registry/doctor-state.json` · `/registry/doctor-state.json` | `bake:doctor` |
-| GHA annotations | stdout `::error` / `::warning title=portal-doctor::…` | `portal:doctor:ci:report` when `GITHUB_ACTIONS=true` |
-| Step summary | `$GITHUB_STEP_SUMMARY` markdown (`## Portal doctor (CI)`) | same, when env set |
+| GHA annotations | stdout `::error` / `::warning title=portal-doctor::…` · `::error title=doctor-state::…` | doctor CI report / fingerprint check when `GITHUB_ACTIONS=true` |
+| Step summary | `$GITHUB_STEP_SUMMARY` markdown | both report paths when env set |
 | Plain CI log | stdout (PASS/FAIL lines, no TTY chrome) | `portal:doctor:ci` · `:ci:report` |
-
-Fingerprint check does **not** write `reports/doctor-state-check.json` — compare is live vs committed bake; failures print `fingerprint_fresh` / `fingerprint_disk` / `drift:` lines.
 
 ### Portable fingerprint groups
 
@@ -94,7 +94,7 @@ Fingerprint check does **not** write `reports/doctor-state-check.json` — compa
 | Machine bunfig SSOT | `bun run machine:bunfig:ensure -- --overwrite` |
 | Portal doctor (offline) | `bun run portal:doctor:ci:report` |
 | Upload CI report (on doctor failure) | artifact `portal-doctor-ci` ← `reports/portal-doctor-ci.json` |
-| doctor-state fingerprint | `bun run bake:doctor:check` |
+| doctor-state fingerprint | `bun run bake:doctor:check:report` |
 
 Template: [`config/machine.bunfig.toml.template`](../../../config/machine.bunfig.toml.template) → `~/.bunfig.toml`. Without ensure, bunfig machine probes fail fatally on clean runners.
 
@@ -119,6 +119,7 @@ bun run portal:doctor --group bunfig
 bun run audit:bunfig
 bun run bake:doctor
 bun run bake:doctor:check
+bun run bake:doctor:check:report
 # loopback only:
 curl -X POST http://127.0.0.1:3000/api/doctor/run
 ```
@@ -143,7 +144,7 @@ Machine JSON: `portal-cli doctor --json` · GHA annotation shape: `::error title
 | Gate | Failure |
 |------|---------|
 | `bun run portal:doctor` / `:ci:report` | any fatal check failed (`result=fail` / exit 1) |
-| `bun run bake:doctor:check` | fingerprint mismatch or missing bake |
+| `bun run bake:doctor:check` / `:check:report` | fingerprint mismatch or missing bake |
 | `/portal/doctor/` missing tone | no bake — run `bake:doctor` |
 | Nav badge red/yellow | last bake tone from doctor-state |
 
@@ -154,8 +155,9 @@ Machine JSON: `portal-cli doctor --json` · GHA annotation shape: `::error title
 | Doctor state | `/registry/doctor-state.json` |
 | Board | `/portal/doctor/` |
 | CI report (local/GHA) | `reports/portal-doctor-ci.json` |
+| Fingerprint forensics | `reports/doctor-state-check.json` |
 | API (loopback) | `POST /api/doctor/run` |
 | Policy SSOT | `lib/install/machine-bunfig-policy.ts` |
 | Bunfig probes | `tools/lib/portal-cli-doctor-bunfig.ts` |
 | CI report script | `scripts/doctor-ci-report.ts` |
-| Bake / fingerprint | `tools/bake-doctor.ts` |
+| Bake / fingerprint / check report | `tools/bake-doctor.ts` |

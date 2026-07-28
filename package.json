@@ -1633,6 +1633,7 @@
     "portal:doctor:ci:report": "bun scripts/doctor-ci-report.ts",
     "bake:doctor": "bun scripts/ensure-machine-bunfig.ts && bun tools/bake-doctor.ts",
     "bake:doctor:check": "bun scripts/ensure-machine-bunfig.ts && bun tools/bake-doctor.ts --check",
+    "bake:doctor:check:report": "bun scripts/ensure-machine-bunfig.ts && bun tools/bake-doctor.ts --check --report",
     "machine:bunfig:ensure": "bun scripts/ensure-machine-bunfig.ts",
     "machine:bunfig:check": "bun scripts/ensure-machine-bunfig.ts --check",
     "build:portal-cli": "bun build tools/portal-cli.ts --compile --outfile dist/portal",
@@ -2212,7 +2213,8 @@
     "bunfig:bake": "bun scripts/bake-bunfig.ts",
     "bunfig:check": "bun scripts/bake-bunfig.ts --check",
     "surfaces:bake": "bun scripts/bake-surfaces.ts",
-    "surfaces:check": "bun scripts/bake-surfaces.ts --check"
+    "surfaces:check": "bun scripts/bake-surfaces.ts --check",
+    "check:console-format": "bun scripts/lint-console-format.ts"
   },
   "private": "false",
   "files": [
