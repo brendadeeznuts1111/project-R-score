@@ -38,6 +38,7 @@ describe('portal weave', () => {
     expect(hrefs).toContain('/portal/dod/');
     expect(hrefs).toContain('/portal/skills/');
     expect(hrefs).toContain('/portal/compliance/');
+    expect(hrefs).toContain('/portal/limits/');
     expect(hrefs).toContain('/portal/dashboard/');
     const arts = PORTAL_WEAVE_ARTIFACTS.map(a => a.href);
     expect(arts).toContain('/registry/toc-ops.json');
@@ -51,8 +52,10 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/compliance-board.json');
     expect(arts).toContain('/registry/compliance-enhancements.json');
     expect(arts).toContain('/registry/compliance-shadow.json');
+    expect(arts).toContain('/registry/limit-raises.json');
     expect(p.scripts.some(s => s.cmd.includes('compliance:bake'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('compliance:verify'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd.includes('ops:limits:demo'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:snapshot'))).toBe(true);
   });
 });

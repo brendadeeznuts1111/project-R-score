@@ -234,6 +234,23 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'compliance-dashboard.js · /registry/compliance-board.json · /api/compliance',
   },
   {
+    path: '/portal/limits/',
+    name: 'Partner limits portal',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    critical: true,
+    note: 'multi-factor raises · ops-summary.limitChanges · /api/agents/v1/limits/raises',
+  },
+  {
+    path: '/registry/limit-raises.json',
+    name: 'Limit raises multi-factor bake',
+    category: 'registry',
+    kind: 'file-static',
+    okStatuses: [200, 404],
+    note: 'ops:snapshot companion · PartnerAnalyticsRepository',
+  },
+  {
     path: '/registry/compliance-board.json',
     name: 'Compliance board fixture',
     category: 'registry',

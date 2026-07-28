@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-28T02:14:39.522Z",
+  "lookbackHours": 48,
+  "byNode": {
+    "partner-42": {
+      "node_id": "partner-42",
+      "raises": [
+        {
+          "limit_id": 35,
+          "sportsbook": "draftkings",
+          "sport_id": "nba",
+          "market_id": "totals",
+          "bet_type": "straight",
+          "previous_max": 500,
+          "new_limit": 1500,
+          "increased_at": 1785203048,
+          "line_move_5m": 1,
+          "top_clv": [
+            {
+              "player_name": "Jayson Tatum",
+              "tier": "platinum",
+              "delta": 90
+            },
+            {
+              "player_name": "Jaylen Brown",
+              "tier": "gold",
+              "delta": 65
+            }
+          ],
+          "context": {
+            "id": 9,
+            "node_id": "partner-42",
+            "limit_record_id": 35,
+            "active_players_7d": 42,
+            "new_players_7d": 8,
+            "total_handle_7d": 380000,
+            "avg_clv_7d": 120,
+            "top_tier_player_count": 8,
+            "violation_count_30d": 0,
+            "chargeback_count_30d": 0,
+            "kyc_pass_rate": 0.97,
+            "market_volatility_index": 0.85,
+            "peak_betting_hours": "[18,19,20,21]",
+            "sportsbook_share": 0.55,
+            "partner_profit_30d": 80000,
+            "partner_roi_30d": 0.18,
+            "snapshot_at": 1785203048,
+            "proof_algorithm": null,
+            "proof_digest": null,
+            "proof_hmac": null
+          },
+          "multi_factor_score": 0.7143,
+          "top_contributing_factors": [
+            "total_handle_7d",
+            "violation_count_30d",
+            "chargeback_count_30d"
+          ],
+          "factor_scores": {
+            "total_handle_7d": 0.15200000000000002,
+            "avg_clv_7d": 0.05499999999999999,
+            "violation_count_30d": 0.12,
+            "chargeback_count_30d": 0.12,
+            "kyc_pass_rate": 0.097,
+            "market_volatility_index": 0.0664,
+            "sportsbook_share": 0.027500000000000004,
+            "partner_profit_30d": 0.052000000000000005,
+            "top_tier_player_count": 0.016,
+            "active_players_7d": 0.0084
+          },
+          "context_proof": {
+            "algorithm": null,
+            "digestValid": false,
+            "signed": false,
+            "hmacValid": null,
+            "valid": false
+          }
+        }
+      ]
+    }
+  },
+  "partners": 1,
+  "raises": 1
+}

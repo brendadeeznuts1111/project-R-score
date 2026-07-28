@@ -41,6 +41,11 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     href: '/portal/compliance/',
     note: 'MA/NJ enhancements · shadow · geo · HMAC',
   },
+  {
+    label: 'Limits',
+    href: '/portal/limits/',
+    note: 'account raises · multi-factor score · drivers',
+  },
   { label: 'Skills', href: '/portal/skills/', note: 'catalog · .skill packages' },
   {
     label: 'Dashboard',
@@ -90,6 +95,11 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
     label: 'compliance-shadow',
     href: '/registry/compliance-shadow.json',
     note: 'real vs shadow check matrix',
+  },
+  {
+    label: 'limit-raises',
+    href: '/registry/limit-raises.json',
+    note: 'multi-factor raise context bake · agent API snapshot',
   },
   { label: 'static aggregate', href: '/registry/static.json' },
   { label: 'proof taxonomy', href: '/registry/proof-taxonomy-audit.json' },
@@ -158,6 +168,14 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'Compliance bake (Proton vault)',
     cmd: 'bun run compliance:bake:vault',
     doc: 'docs/harness/tenants/proton-integration.md',
+  },
+  {
+    label: 'Limit raises multi-factor demo',
+    cmd: 'bun run ops:limits:demo',
+  },
+  {
+    label: 'Capture raise context',
+    cmd: 'bun run ops:limits:capture',
   },
   {
     label: 'Reference discovery',

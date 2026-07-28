@@ -78,6 +78,7 @@ describe('loadComplianceMonitoringSlice', () => {
         hmac: false,
         scoreHint: 'integrity-only',
         states: ['MA', 'NJ'],
+        zipWindowOk: null,
         generatedAt: '2026-07-27T12:00:00.000Z',
         path: '/registry/compliance-board.json',
         portal: '/portal/compliance/',

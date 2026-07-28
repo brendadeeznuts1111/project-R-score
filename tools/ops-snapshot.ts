@@ -441,6 +441,22 @@ export async function buildRegistrySnapshot(options?: {
       }
     }
 
+    // Multi-factor limit raises: capture missing context + bake Pages/agent snapshot.
+    try {
+      const { exportLimitRaisesSnapshot } = await import(
+        '../lib/operations/partner-analytics-repo.ts'
+      );
+      const lim = await exportLimitRaisesSnapshot(db, { root, lookbackHours: 48, capture: true });
+      console.log(
+        `[ops-snapshot] limit-raises → ${lim.raises} raise(s) · ${lim.partners} partner(s) · 48h`
+      );
+    } catch (e) {
+      console.warn(
+        '[ops-snapshot] limit-raises export skipped:',
+        e instanceof Error ? e.message : e
+      );
+    }
+
     let telegramHandshakeSlice = (
       await import('../lib/telegram/handshake-snapshot.ts')
     ).emptyTelegramHandshakeSummarySlice();

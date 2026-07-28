@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 /**
  * Partner analytics — multi-factor context around account limit raises.
@@ -479,6 +480,91 @@ export class PartnerAnalyticsRepository {
       };
     });
   }
+}
+
+export type LimitRaisesSnapshot = {
+  schemaVersion: 1;
+  generatedAt: string;
+  lookbackHours: number;
+  byNode: Record<
+    string, // brand-ok — TreeNodeId wire
+    {
+      node_id: string; // brand-ok
+      raises: MultiFactorEnrichedRaise[];
+    }
+  >;
+  partners: number;
+  raises: number;
+};
+
+/** Capture missing context for every node with recent limit history. */
+export function captureAllMissingRaiseContexts(
+  db: Database,
+  lookbackHours = 48
+): { nodes: number; written: number } {
+  ensureAccountLimitsSchema(db);
+  const since = Math.floor(Date.now() / 1000) - lookbackHours * 3600;
+  const nodes = db
+    .query(
+      `SELECT DISTINCT node_id FROM partner_account_limits
+       WHERE recorded_at > ?
+       ORDER BY node_id`
+    )
+    .all(since) as Array<{ node_id: string }>; // brand-ok — partner slug column
+  let written = 0;
+  for (const { node_id } of nodes) {
+    const repo = new PartnerAnalyticsRepository(db, node_id);
+    written += repo.captureMissingRaiseContexts(since);
+  }
+  return { nodes: nodes.length, written };
+}
+
+/**
+ * Bake multi-factor raise context for Pages + agent snapshot API.
+ * Writes public/registry/limit-raises.json (or custom outPath).
+ */
+export async function exportLimitRaisesSnapshot(
+  db: Database,
+  opts?: { root?: string; lookbackHours?: number; outPath?: string; capture?: boolean }
+): Promise<LimitRaisesSnapshot> {
+  ensureAccountLimitsSchema(db);
+  const lookbackHours = opts?.lookbackHours ?? 48;
+  const since = Math.floor(Date.now() / 1000) - lookbackHours * 3600;
+  if (opts?.capture !== false) {
+    captureAllMissingRaiseContexts(db, lookbackHours);
+  }
+
+  const nodes = db
+    .query(
+      `SELECT DISTINCT node_id FROM partner_account_limits
+       WHERE recorded_at > ?
+       ORDER BY node_id`
+    )
+    .all(since) as Array<{ node_id: string }>; // brand-ok — partner slug column
+
+  const byNode: LimitRaisesSnapshot['byNode'] = {};
+  let raises = 0;
+  for (const { node_id } of nodes) {
+    const repo = new PartnerAnalyticsRepository(db, node_id);
+    const rows = repo.getEnrichedRaisesWithContext(since);
+    if (rows.length === 0) continue;
+    byNode[node_id] = { node_id, raises: rows };
+    raises += rows.length;
+  }
+
+  const snapshot: LimitRaisesSnapshot = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    lookbackHours,
+    byNode,
+    partners: Object.keys(byNode).length,
+    raises,
+  };
+
+  const root = opts?.root ?? process.cwd();
+  const outPath = opts?.outPath ?? `${root.replace(/\/$/, '')}/public/registry/limit-raises.json`;
+  await Bun.write(outPath, `${JSON.stringify(snapshot, null, 2)}\n`);
+  return snapshot;
 }
 
 /** Format multi-factor enriched raises for terminal. */

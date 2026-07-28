@@ -8,8 +8,10 @@ import {
 } from '../lib/account-limits-repo.ts';
 import {
   computeMultiFactorScore,
+  exportLimitRaisesSnapshot,
   PartnerAnalyticsRepository,
 } from '../lib/operations/partner-analytics-repo.ts';
+import { joinPath } from '../lib/path-bun.ts';
 
 describe('multi-factor limit raise context', () => {
   test('context is stored and retrieved; score ranks drivers', () => {
@@ -99,6 +101,31 @@ describe('multi-factor limit raise context', () => {
     ]);
     expect(repo.sealMissingRaiseContextProofs(now - 86400).invalid).toBe(1);
     expect(repo.verifyRaiseContextProof(repo.getRaiseContext(raise.limit_id)!).valid).toBe(false);
+  });
+
+  test('exportLimitRaisesSnapshot writes bake artifact', async () => {
+    const db = new Database(':memory:');
+    ensureAccountLimitsSchema(db);
+    const now = Math.floor(Date.now() / 1000);
+    const { nodeId } = seedAccountLimitsDemo(db, { nowSec: now, force: true });
+    const dir = joinPath(process.cwd(), '.tmp', `limit-raises-${now}`);
+    await Bun.$`mkdir -p ${dir}`.quiet();
+    try {
+      const outPath = joinPath(dir, 'limit-raises.json');
+      const snap = await exportLimitRaisesSnapshot(db, {
+        outPath,
+        lookbackHours: 48,
+        capture: false,
+      });
+      expect(snap.schemaVersion).toBe(1);
+      expect(snap.raises).toBeGreaterThanOrEqual(1);
+      expect(snap.byNode[nodeId]?.raises.length).toBeGreaterThanOrEqual(1);
+      const file = await Bun.file(outPath).json();
+      expect(file.byNode[nodeId].raises[0].multi_factor_score).toBeGreaterThan(0);
+    } finally {
+      await Bun.$`rm -rf ${dir}`.quiet();
+      db.close();
+    }
   });
 
   test('computeMultiFactorScore penalizes violations/chargebacks', () => {

@@ -225,10 +225,13 @@ export {
 export { exportPostgresDdl, probePostgresOps } from './postgres-bridge.ts';
 export {
   PartnerAnalyticsRepository,
+  captureAllMissingRaiseContexts,
   computeMultiFactorScore,
+  exportLimitRaisesSnapshot,
   formatMultiFactorRaises,
   MULTI_FACTOR_RANGES,
   MULTI_FACTOR_WEIGHTS,
+  type LimitRaisesSnapshot,
   type MultiFactorEnrichedRaise,
   type MultiFactorScore,
   type RaiseContextMetrics,

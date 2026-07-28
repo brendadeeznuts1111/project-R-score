@@ -220,7 +220,7 @@ describe('buildOpsSummary', () => {
     expect(repository.sealMissingRaiseContextProofs(now - 86400).sealed).toBe(1);
 
     const summary = buildOpsSummary(db, 'live');
-    const raise = summary.limitIncreases[0];
+    const raise = summary.limitChanges[0];
     expect(raise?.node_id).toBe(nodeId);
     expect(raise?.context_available).toBe(true);
     expect(raise?.multi_factor_score).toBeGreaterThan(0);

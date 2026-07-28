@@ -38,6 +38,7 @@ describe('portal route wiring', () => {
     expect(paths.has('/api/toc')).toBe(true);
     expect(paths.has('/portal/compliance/')).toBe(true);
     expect(paths.has('/registry/compliance-board.json')).toBe(true);
+    expect(paths.has('/portal/limits/')).toBe(true);
     expect(paths.has('/api/compliance')).toBe(true);
     expect(paths.has('/portal/skills/')).toBe(true);
     expect(paths.has('/monitoring/')).toBe(true);
@@ -49,6 +50,12 @@ describe('portal route wiring', () => {
     expect(PORTAL_MARKDOWN_SLUGS).toContain('compliance');
   });
 
+  test('limits portal is first-class in route SSOT', () => {
+    expect(PORTAL_HTML_ROUTES).toContain('/portal/limits/');
+    expect(PORTAL_TRAILING_SLASH_SOURCES).toContain('/portal/limits');
+    expect(PORTAL_MARKDOWN_SLUGS).toContain('limits');
+  });
+
   test('markdown slugs have static stubs under public/portal/', async () => {
     for (const slug of PORTAL_MARKDOWN_SLUGS) {
       const rel = slug === 'index' ? 'public/portal/index.md' : `public/portal/${slug}.md`;
@@ -58,6 +65,10 @@ describe('portal route wiring', () => {
 
   test('/api/skills Pages Function exists', async () => {
     expect(await Bun.file('functions/api/skills.ts').exists()).toBe(true);
+  });
+
+  test('/api/agents/v1/limits/raises Pages Function exists', async () => {
+    expect(await Bun.file('functions/api/agents/v1/limits/raises.ts').exists()).toBe(true);
   });
 
   test('monitoring href variants share one public handler', async () => {
