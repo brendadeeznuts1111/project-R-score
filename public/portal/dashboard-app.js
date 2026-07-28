@@ -287,12 +287,15 @@ function renderOpsPlane(ops) {
   }
 
   // ── Limit raises plane card ──
-  const lims = ops.limitIncreases;
+  const lims = ops.limitChanges;
   let limitHtml;
   if (lims && lims.length > 0) {
+    const raises = lims.filter(r => r.direction === 'up').length;
+    const downs = lims.filter(r => r.direction === 'down').length;
     const top3 = lims
       .slice(0, 3)
       .map(r => {
+        const icon = r.direction === 'down' ? '⬇️' : '🚀';
         const drivers = (r.top_contributing_factors ?? []).join(', ');
         const proof = r.context_proof?.valid
           ? 'context proof verified'
@@ -303,11 +306,11 @@ function renderOpsPlane(ops) {
         const score = r.context_available
           ? `<span class="badge-demo" title="${esc(title)}">${Math.round((r.multi_factor_score ?? 0) * 100)} score</span>`
           : `<span class="badge-demo" title="${esc(title)}">context pending</span>`;
-        return `<li><code>${esc(r.sportsbook)}</code> ${esc(r.sport_id)}/${esc(r.market_id)} <strong>$${r.new_limit}</strong> <span style="color:var(--text-dim)">($${r.previous_max})</span> ${score}</li>`;
+        return `<li><code>${esc(r.sportsbook)}</code> ${esc(r.sport_id)}/${esc(r.market_id)} <strong>$${r.new_limit}</strong> ${icon} <span style="color:var(--text-dim)">($${r.previous_max})</span> ${score}</li>`;
       })
       .join('');
     limitHtml = `<article class="plane-card" data-plane="limit-raises">
-      <h3>🚀 Limit increases <span class="badge-demo" title="Live query, 48h window">${lims.length}</span></h3>
+      <h3>📊 Limit changes <span class="badge-demo" title="Live query, 48h window">🚀${raises} ⬇️${downs}</span></h3>
       <ul class="plane-gap-list">${top3}</ul>
       <div class="plane-actions">
         <a class="ops-link" href="/portal/ops/">Full Ops</a>

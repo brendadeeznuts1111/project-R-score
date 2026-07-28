@@ -233,8 +233,8 @@
       }
 
       function render() {
-        if (!data || !data.limitIncreases) return;
-        const lims = data.limitIncreases;
+        if (!data || !data.limitChanges) return;
+        const lims = data.limitChanges;
 
         // Filter
         const filtered = lims.filter(r => {

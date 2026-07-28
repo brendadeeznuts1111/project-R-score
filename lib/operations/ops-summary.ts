@@ -10,7 +10,7 @@
 import type { Database } from 'bun:sqlite';
 import { buildBunUtilsProof } from '../bun-utils-proof.ts';
 import { loadRoutingOpsSliceSync, type RoutingOpsSlice } from '../routing-proof.ts';
-import { queryRecentLimitIncreases } from '../account-limits-repo.ts';
+import { queryRecentLimitChanges } from '../account-limits-repo.ts';
 import { getPredictionAccuracy } from '../prediction/index.ts';
 import { queryPartnersSlice, type PartnersSummarySlice } from './partner-profile-bridge.ts';
 import { queryOpsChannelHealth } from '../channels/outbox.ts';
@@ -318,8 +318,8 @@ export type OpsSummaryPayload = {
    * (`bun run compliance:bake` / ops:snapshot companion).
    */
   compliance: OpsSummaryCompliance;
-  /** Recent account limit raises (partner_account_limits table; live query, 48h window). */
-  limitIncreases: Array<{
+  /** Recent account limit changes (partner_account_limits table; live query, 48h window). */
+  limitChanges: Array<{
     limit_id: number; // brand-ok — partner_account_limits.id
     node_id: string; // brand-ok — TreeNodeId wire
     sportsbook: string;
@@ -329,6 +329,7 @@ export type OpsSummaryPayload = {
     previous_max: number;
     new_limit: number;
     increased_at: number;
+    direction: 'up' | 'down';
     message: string;
     context_available: boolean;
     multi_factor_score: number;
@@ -352,11 +353,11 @@ function emptyPrediction(): OpsSummaryPayload['prediction'] {
   return { coverage: { mae: 0, rmse: 0, bias: 0, n: 0 } };
 }
 
-function queryLimitIncreaseSummary(db: Database): OpsSummaryPayload['limitIncreases'] {
+function queryLimitChangeSummary(db: Database): OpsSummaryPayload['limitChanges'] {
   if (!tableExists(db, 'partner_account_limits')) return [];
 
   const repositories = new Map<string, PartnerAnalyticsRepository>();
-  return queryRecentLimitIncreases(db, 48).map(raise => {
+  return queryRecentLimitChanges(db, 48).map(raise => {
     let repository = repositories.get(raise.node_id);
     if (!repository) {
       repository = new PartnerAnalyticsRepository(db, raise.node_id);
@@ -926,6 +927,6 @@ export function buildOpsSummary(
     telegramHandshake: loadTelegramHandshakeSummarySlice(),
     seatCapitalDesk: loadSeatCapitalDeskSummarySlice(),
     compliance: loadComplianceSummarySliceSync(),
-    limitIncreases: queryLimitIncreaseSummary(db),
+    limitChanges: queryLimitChangeSummary(db),
   };
 }

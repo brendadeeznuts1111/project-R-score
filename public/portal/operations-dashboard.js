@@ -104,7 +104,7 @@ class OperationsDashboard extends HTMLElement {
             <ul id="partners-recent"></ul>
           </section>
           <section class="ops-panel">
-            <h2>🚀 Limit increases</h2>
+            <h2>📊 Limit changes</h2>
             <div class="ops-metric" id="limits-count">0</div>
             <div class="ops-sub" id="limits-detail"></div>
             <table id="limits-table" style="width:100%;font-size:0.85em;margin-top:4px">
@@ -906,16 +906,18 @@ class OperationsDashboard extends HTMLElement {
       }
     }
 
-    // ── Limit increases panel ──
+    // ── Limit changes panel ──
     const limitsCount = this.querySelector('#limits-count');
     const limitsDetail = this.querySelector('#limits-detail');
     const limitsTbody = this.querySelector('#limits-tbody');
-    if (limitsCount && d.limitIncreases) {
-      const lims = d.limitIncreases;
+    if (limitsCount && d.limitChanges) {
+      const lims = d.limitChanges;
       limitsCount.textContent = String(lims.length);
       if (limitsDetail) {
+        const raises = lims.filter(r => r.direction === 'up').length;
+        const downs = lims.filter(r => r.direction === 'down').length;
         limitsDetail.textContent =
-          lims.length > 0 ? `Last: ${lims[0].message}` : 'No recent increases';
+          `🚀${raises} ⬇️${downs} · Last: ${lims[0]?.message ?? 'none'}`;
       }
       if (limitsTbody) {
         limitsTbody.innerHTML = lims
@@ -931,7 +933,7 @@ class OperationsDashboard extends HTMLElement {
             const score = r.context_available
               ? `${Math.round((r.multi_factor_score ?? 0) * 100)}`
               : 'pending';
-            return `<tr><td>${esc(r.node_id?.slice(0, 12) ?? '—')}</td><td>${esc(r.sportsbook)}</td><td>${esc(r.sport_id)}</td><td>${esc(r.market_id)}</td><td>${esc(r.bet_type)}</td><td>$${Number(r.previous_max).toLocaleString()}</td><td><strong>$${Number(r.new_limit).toLocaleString()}</strong></td><td><span class="version-badge subsystem-other" title="${esc(title)}">${esc(score)}</span></td><td>${new Date(r.increased_at * 1000).toLocaleDateString()}</td></tr>`;
+            return `<tr><td>${esc(r.node_id?.slice(0, 12) ?? '—')}</td><td>${esc(r.sportsbook)}</td><td>${esc(r.sport_id)}</td><td>${esc(r.market_id)}</td><td>${esc(r.bet_type)}</td><td>$${Number(r.previous_max).toLocaleString()}</td><td><strong>$${Number(r.new_limit).toLocaleString()}</strong></td><td>${r.direction === 'down' ? '⬇️' : '🚀'}</td><td><span class="version-badge subsystem-other" title="${esc(title)}">${esc(score)}</span></td><td>${new Date(r.increased_at * 1000).toLocaleDateString()}</td></tr>`;
           })
           .join('');
       }

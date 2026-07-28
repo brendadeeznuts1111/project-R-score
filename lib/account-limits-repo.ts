@@ -402,6 +402,41 @@ export class AccountLimitsRepository {
       created_at: number;
     }>;
   }
+
+  /** Find limit decreases (max_wager dropped below previous min). */
+  detectDecreases(nodeId: string, sinceTimestamp: number = 0): LimitRaise[] {
+    // brand-ok — TreeNodeId wire
+    const rows = this.db
+      .query(
+        `
+      SELECT a.sportsbook, a.sport_id, a.market_id, a.bet_type,
+             (SELECT MAX(b.max_wager) FROM partner_account_limits b
+              WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+                AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+                AND b.bet_type = a.bet_type AND b.id < a.id) as previous_max,
+             a.max_wager as new_limit,
+             a.recorded_at as increased_at
+      FROM partner_account_limits a
+      WHERE a.node_id = ?
+        AND a.recorded_at > ?
+        AND EXISTS (
+          SELECT 1 FROM partner_account_limits b
+          WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+            AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+            AND b.bet_type = a.bet_type AND b.id < a.id
+        )
+        AND a.max_wager < (
+          SELECT MIN(b.max_wager) FROM partner_account_limits b
+          WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+            AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+            AND b.bet_type = a.bet_type AND b.id < a.id
+        )
+      ORDER BY a.recorded_at DESC
+    `
+      )
+      .all(nodeId, sinceTimestamp) as LimitRaise[];
+    return rows;
+  }
 }
 
 // ── Demo seed ─────────────────────────────────────────────────────────────
@@ -582,7 +617,7 @@ export function enqueueLimitRaiseForPartner(
 }
 
 /** Query recent limit increases for ops summary (across all nodes). */
-export function queryRecentLimitIncreases(
+export function queryRecentLimitChanges(
   db: Database,
   hours = 48
 ): Array<{
@@ -595,6 +630,7 @@ export function queryRecentLimitIncreases(
   previous_max: number;
   new_limit: number;
   increased_at: number;
+  direction: 'up' | 'down';
   message: string;
 }> {
   const since = Math.floor(Date.now() / 1000) - hours * 3600;
@@ -607,23 +643,27 @@ export function queryRecentLimitIncreases(
               AND b.sport_id = a.sport_id AND b.market_id = a.market_id
               AND b.bet_type = a.bet_type AND b.id < a.id) as previous_max,
            a.max_wager as new_limit,
-           a.recorded_at as increased_at
+           a.recorded_at as increased_at,
+           CASE WHEN a.max_wager > (SELECT MAX(b.max_wager) FROM partner_account_limits b
+                WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
+                  AND b.sport_id = a.sport_id AND b.market_id = a.market_id
+                  AND b.id < a.id) THEN 'up' ELSE 'down' END as direction
     FROM partner_account_limits a
     WHERE a.recorded_at > ?
       AND EXISTS (
         SELECT 1 FROM partner_account_limits b
         WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
           AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-          AND b.bet_type = a.bet_type AND b.id < a.id
+          AND b.id < a.id
       )
-      AND a.max_wager > (
+      AND a.max_wager != (
         SELECT MAX(b.max_wager) FROM partner_account_limits b
         WHERE b.node_id = a.node_id AND b.sportsbook = a.sportsbook
           AND b.sport_id = a.sport_id AND b.market_id = a.market_id
-          AND b.bet_type = a.bet_type AND b.id < a.id
+          AND b.id < a.id
       )
     ORDER BY a.recorded_at DESC
-    LIMIT 20
+    LIMIT 40
   `
     )
     .all(since) as Array<{
@@ -643,7 +683,79 @@ export function queryRecentLimitIncreases(
   }));
 }
 
-// ── Table formatter (terminal) ────────────────────────────────────────────
+// ── Deep alert pipeline: detect + multi-factor + channel publish ────
+
+/**
+ * Detect raises and decreases, compute multi-factor context, and return
+ * enhanced alerts ready for outbox/channel publishing.
+ *
+ * Returns { raises, decreases } with score from analytics when available.
+ * Caller is responsible for outbox enqueue / channel publish.
+ */
+export function collectDeepLimitAlerts(
+  db: Database,
+  nodeId: string, // brand-ok — TreeNodeId wire
+  sinceTimestamp: number = Math.floor(Date.now() / 1000) - 48 * 3600
+): {
+  raises: Array<LimitRaise & { direction: 'up'; score?: number }>;
+  decreases: Array<LimitRaise & { direction: 'down'; score?: number }>;
+} {
+  const repo = new AccountLimitsRepository(db);
+  const raises = repo
+    .detectRaises(nodeId, sinceTimestamp)
+    .map(r => ({ ...r, direction: 'up' as const }));
+  const decreases = repo
+    .detectDecreases(nodeId, sinceTimestamp)
+    .map(r => ({ ...r, direction: 'down' as const }));
+
+  // Attempt multi-factor enrichment when analytics module available
+  try {
+    const { PartnerAnalyticsRepository } =
+      require('./partner-analytics-repo.ts') as typeof import('./partner-analytics-repo.ts');
+    const analytics = new PartnerAnalyticsRepository(db, nodeId);
+    for (const r of raises) {
+      try {
+        const enriched = analytics.getEnrichedRaisesWithContext(sinceTimestamp);
+        const match = enriched.find(
+          e => e.sportsbook === r.sportsbook && e.sport_id === r.sport_id
+        );
+        if (match && match.multi_factor_score != null) {
+          (r as any).score = match.multi_factor_score;
+          (r as any).top_factors = match.top_contributing_factors;
+        }
+      } catch {}
+    }
+  } catch {}
+
+  return { raises, decreases };
+}
+
+/** Publish a limit alert to the MemoryChannelStore for SSE delivery. */
+export function publishLimitAlertToChannel(
+  db: Database,
+  alert: LimitRaise & { node_id: string; direction?: string; score?: number } // brand-ok — TreeNodeId wire
+): void {
+  try {
+    const { ChannelMessage, publishEvent } =
+      require('./channels/channels.ts') as typeof import('./channels/channels.ts');
+    const { localOpsChannelStore } =
+      require('./channels/outbox.ts') as typeof import('./channels/outbox.ts');
+    if (localOpsChannelStore) {
+      publishEvent(localOpsChannelStore, 'alerts', {
+        kind: alert.direction === 'down' ? 'limit_decrease' : 'limit_raise',
+        node_id: alert.node_id,
+        sportsbook: alert.sportsbook,
+        sport_id: alert.sport_id,
+        market_id: alert.market_id,
+        bet_type: alert.bet_type,
+        previous_max: alert.previous_max,
+        new_limit: alert.new_limit,
+        score: alert.score,
+        ts: Date.now(),
+      }).catch(() => {});
+    }
+  } catch {}
+}
 
 /**
  * Render limit raises as a formatted table for terminal output.
