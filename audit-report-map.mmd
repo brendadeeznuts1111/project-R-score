@@ -1,0 +1,25 @@
+flowchart LR
+  subgraph packages
+    ab_testing["ab-testing"]
+    business["business"]
+    docs_tools["docs-tools"]
+    guards["guards"]
+    p2p["p2p"]
+    package["package"]
+    registry_client["registry-client"]
+    rip["rip"]
+    versioning["versioning"]
+  end
+  subgraph external
+    bare_bun["bare:bun"]
+    bare_url["bare:url"]
+    config["config"]
+    lib_docs["lib/docs"]
+  end
+  docs_tools -.->|11| lib_docs
+  p2p -.->|3| bare_bun
+  rip -.->|3| bare_bun
+  business -.->|1| bare_bun
+  business -.->|1| lib_docs
+  docs_tools -.->|1| bare_url
+  guards -.->|1| config

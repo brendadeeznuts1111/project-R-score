@@ -1,0 +1,20 @@
+digraph packages {
+  rankdir=LR;
+  node [shape=box, fontname="Helvetica"];
+  "ab-testing";
+  "business";
+  "docs-tools";
+  "guards";
+  "p2p";
+  "package";
+  "registry-client";
+  "rip";
+  "versioning";
+  "docs-tools" -> "lib/docs" [style=dashed, label="11"];
+  "p2p" -> "bare:bun" [style=dashed, label="3"];
+  "rip" -> "bare:bun" [style=dashed, label="3"];
+  "business" -> "bare:bun" [style=dashed, label="1"];
+  "business" -> "lib/docs" [style=dashed, label="1"];
+  "docs-tools" -> "bare:url" [style=dashed, label="1"];
+  "guards" -> "config" [style=dashed, label="1"];
+}

@@ -58,16 +58,18 @@ bun tools/monorepo-health.ts --archive   # tar report when Bun.Archive available
 Focused `packages/*/src` graph (Bun.build metafile), complementary to this tenant:
 
 ```bash
-bun run audit:packages           # score/grade + table
-bun run audit:packages:full      # --cross-check --diff --md --map
+bun run audit:packages           # score/grade + deep map (schema v5)
+bun run audit:packages:full      # --cross-check --diff --md --map --bake
 bun run audit:packages:strict    # exit 1 on orphans/cycles/critical
 ```
 
 | Path | Role |
 |------|------|
-| [`tools/packages-metafile-audit.ts`](../../../tools/packages-metafile-audit.ts) | orphans · cycles · hubs · fan-out · score · diff |
-| [`lib/harness/packages-graph-map.ts`](../../../lib/harness/packages-graph-map.ts) | package↔package + lib/config/bare map · Mermaid/DOT |
+| [`tools/packages-metafile-audit.ts`](../../../tools/packages-metafile-audit.ts) | orphans · cycles · hubs · fan-out · score · diff · bake |
+| [`lib/harness/packages-graph-map.ts`](../../../lib/harness/packages-graph-map.ts) | cross-pkg + external + intra depth + outside consumers + declared |
 | `audit-report.json` / `.md` / `-map.mmd` / `-map.dot` | latest artifacts (repo root) |
+| [`public/registry/packages-graph-map.json`](../../../public/registry/packages-graph-map.json) | baked map (`--bake`) |
 
 Score: `100 − 8·orphans − 0.5·orphan% − 10·cycles − 25·buildFail` (same grade bands as above).
 Map resolves relative/bare metafile paths so external planes stay honest (`lib/docs`, `bare:bun`, `config`).
+Deep map (default; `--shallow` to skip): intra-package topo depth, outside consumers under `lib/tools/scripts/tests`, and declared `workspace:*` vs actual cross-pkg edges.
