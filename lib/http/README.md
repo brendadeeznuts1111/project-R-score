@@ -11,8 +11,12 @@ HTTP helpers for Bun.serve surfaces (static response utilities, caching headers)
 | [`form-upload.ts`](form-upload.ts) | FormData file receive/send (`req.formData` + `Bun.write`) |
 | [`data-etag.ts`](data-etag.ts) | Shared ETag for JSON health/summary bodies |
 | [`live-reload.ts`](live-reload.ts) | Local SSE browser live-reload + HTML inject (serve-public HMR) |
+| [`serve-public-config.ts`](serve-public-config.ts) | `config/serve-public.toml` import + env merge for bind prefs |
+| [`serve-public-bind.ts`](serve-public-bind.ts) | Port bind policy, ephemeral fallback, bind manifest, verify base |
 | [`bun-server.ts`](bun-server.ts) | `Bun.serve` Server helpers — identity, probes, lifecycle |
 | [`bun-serve-shape.ts`](bun-serve-shape.ts) | Docs / bun-types / runtime cross-ref matrix for Server bind fields |
+| [`host-planes.ts`](host-planes.ts) | Bind vs DNS vs Access vs Pages vocabulary map (`HOST_PLANE_MAP`) |
+| [`host-lineage.ts`](host-lineage.ts) | Live HostId → apex/sub → Access → https transition rows |
 | [`../docs/bun-release-tracker.ts`](../docs/bun-release-tracker.ts) | Release-note changelog → verification probes (TLS system CA, GC smoke) |
 | [`verification-scripts.ts`](verification-scripts.ts) | Pipe-friendly verify scripts (`curl …/script \| bun run -`) |
 
@@ -49,6 +53,7 @@ Cross-reference SSOT: [`bun-serve-shape.ts`](bun-serve-shape.ts) · helpers: [`b
 |--------|------|
 | [Server #reference](https://bun.com/docs/runtime/http/server#reference) | Published Server fields (`url`, `port`, `hostname` — **no `protocol` yet**) |
 | [Port / hostname](https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname) | `$BUN_PORT` → `$PORT` → `$NODE_PORT` → `3000` |
+| [Environment variables](https://bun.com/docs/runtime/environment-variables) | Auto `.env` → `Bun.env`; `BUN_OPTIONS` prepends CLI flags |
 | [oven-sh/bun serve.d.ts](https://github.com/oven-sh/bun/blob/main/packages/bun-types/serve.d.ts) | Adds `readonly protocol: "http" \| "https" \| null` |
 | [bun.com/rss.xml](https://bun.com/rss.xml) | Release feed → `tools/release-index.json` (no `protocol` RSS note as of 1.3.14) |
 | Runtime probe | `probeServerShape()` on this Bun |
@@ -65,7 +70,7 @@ Two shapes on the same listener:
 - `server.port` (number) · `server.url.port` (string; empty only on default 80/443)
 - `server.protocol` (`http` / `https`) · `server.url.protocol` (`http:` / `https:`)
 
-`serve-public` uses `serveBindSnapshot()` for typed startup + loopback URLs when bound to `0.0.0.0`.
+`serve-public` uses `bindServePublicPort()` + `serveBindSnapshot()` for typed startup, ephemeral fallback, and loopback URLs when bound to `0.0.0.0`. Operator doc: [`docs/harness/tenants/serve-public-bind.md`](../../docs/harness/tenants/serve-public-bind.md).
 
 ### Portal spine + flag-order
 

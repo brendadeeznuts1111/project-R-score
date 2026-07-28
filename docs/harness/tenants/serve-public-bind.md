@@ -123,7 +123,7 @@ When `serve-public` omits `port` on `Bun.serve`, Bun applies this chain ([docs](
 
 English “host” / “hostname” / “domain” spans **two planes**. Do not put `0.0.0.0` in a `HostId` column or `score.factory-wager.com` in `Bun.serve({ hostname })` unless you intend that bind.
 
-**Data SSOT:** [`lib/http/host-planes.ts`](../../../lib/http/host-planes.ts) · `HOST_PLANE_MAP` · CLI: `bun run brand:status:once` (HOST PLANES table) · `bun run brand:status:docs` (tables + DNS/Access lineage via `Bun.markdown.ansi`).
+**Data SSOT:** [`lib/http/host-planes.ts`](../../../lib/http/host-planes.ts) · `HOST_PLANE_MAP` · live transitions [`lib/http/host-lineage.ts`](../../../lib/http/host-lineage.ts) · CLI: `bun run brand:status:once` · `brand:status:docs` · `brand:status:lineage` · `brand:status:json` · `--plane dns|bind|access|pages`.
 
 | Plane | Concept | Type / field | Example | Is not |
 |-------|---------|--------------|---------|--------|

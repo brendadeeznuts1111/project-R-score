@@ -1802,6 +1802,8 @@
     "brand:status": "bun tools/brand-status.ts",
     "brand:status:once": "bun tools/brand-status.ts --once",
     "brand:status:docs": "bun tools/brand-status.ts --docs --once",
+    "brand:status:json": "bun tools/brand-status.ts --json --once",
+    "brand:status:lineage": "bun tools/brand-status.ts --lineage --once",
     "brand:manifest:check": "bun tools/brand-manifest.ts --check",
     "check:brands": "bun tools/branded-id-check.ts --smart --strict",
     "check:brands:staged": "bun tools/branded-id-check.ts --staged --strict",

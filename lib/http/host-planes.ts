@@ -149,24 +149,46 @@ export const HOST_PLANE_MAP: readonly HostPlaneRow[] = [
 /** Planes in display order. */
 export const HOST_PLANES: readonly HostPlane[] = ['bind', 'dns', 'access', 'pages'] as const;
 
+export function isHostPlane(value: string): value is HostPlane {
+  return (HOST_PLANES as readonly string[]).includes(value);
+}
+
+export function hostPlaneById(
+  id: string /* brand-ok — plane-map row key */
+): HostPlaneRow | undefined {
+  return HOST_PLANE_MAP.find(r => r.id === id);
+}
+
 export function hostPlaneRows(plane?: HostPlane): readonly HostPlaneRow[] {
   if (!plane) return HOST_PLANE_MAP;
   return HOST_PLANE_MAP.filter(r => r.plane === plane);
 }
 
-/** Compact CLI/table rows (concept · type · example · plane). */
-export function hostPlaneTableRows(plane?: HostPlane): Array<{
+export type HostPlaneTableOpts = {
+  plane?: HostPlane;
+  /** Include SSOT column (verbose / agent tables). */
+  includeSsot?: boolean;
+};
+
+/** Compact CLI/table rows (concept · type · example · plane [· ssot]). */
+export function hostPlaneTableRows(opts?: HostPlane | HostPlaneTableOpts): Array<{
   plane: HostPlane;
   concept: string;
   typeOrField: string;
   example: string;
   note: string;
+  ssot?: string;
 }> {
-  return hostPlaneRows(plane).map(r => ({
-    plane: r.plane,
-    concept: r.concept,
-    typeOrField: r.typeOrField,
-    example: r.example,
-    note: r.note,
-  }));
+  const normalized: HostPlaneTableOpts =
+    typeof opts === 'string' || opts === undefined ? { plane: opts } : opts;
+  return hostPlaneRows(normalized.plane).map(r => {
+    const row = {
+      plane: r.plane,
+      concept: r.concept,
+      typeOrField: r.typeOrField,
+      example: r.example,
+      note: r.note,
+    };
+    return normalized.includeSsot ? { ...row, ssot: r.ssot } : row;
+  });
 }

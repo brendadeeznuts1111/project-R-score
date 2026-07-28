@@ -13,23 +13,21 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/reference/bun/sliceAnsi — Bun.sliceAnsi
 /**
- * brand-status.ts — live brand / apex / subdomain status for the terminal.
+ * brand-status.ts — live brand / apex / subdomain / lineage status for the terminal.
  *
- * Tables use Bun.inspect.table + cli-chrome (stringWidth · wrapAnsi · color).
- * Depth for nested dumps follows bunfig [console] depth (6) via console-depth SSOT.
- * `--docs` renders the DNS/Access lineage slice via Bun.markdown.ansi.
- * `--watch` reprints tables on an in-process Bun.cron schedule (UTC; --hot safe).
- * Interactive mode reads hosts line-by-line from `console` (AsyncIterable stdin).
+ * Tables use Bun.inspect.table + cli-chrome. Depth follows bunfig [console] depth.
+ * `--docs` → Bun.markdown.ansi lineage slice · `--json` → machine snapshot
+ * `--plane` filters HOST PLANES · `--lineage [host]` live transition matrix
+ * REPL: FQDN / URL / AccessDomain · commands access · url · plane · lineage · help
  *
  * Usage:
- *   bun tools/brand-status.ts              # tables, then REPL if TTY / piped lines
- *   bun tools/brand-status.ts --once       # tables only
- *   bun tools/brand-status.ts --docs       # tables + lineage markdown (ANSI)
+ *   bun tools/brand-status.ts --once
  *   bun tools/brand-status.ts --docs --once
- *   bun tools/brand-status.ts --watch      # tables + cron reprint (no REPL)
- *   bun --hot tools/brand-status.ts --watch
- *   bun tools/brand-status.ts --repl       # skip inventory dump; prompt for hosts
- *   printf 'score.factory-wager.com\n' | bun tools/brand-status.ts --repl
+ *   bun tools/brand-status.ts --lineage score.factory-wager.com --once
+ *   bun tools/brand-status.ts --plane dns --verbose --once
+ *   bun tools/brand-status.ts --json --once
+ *   bun tools/brand-status.ts --watch
+ *   bun tools/brand-status.ts --repl
  */
 
 import {
@@ -42,12 +40,20 @@ import {
   termWidth,
   truncateWidth,
 } from '../lib/console-depth.ts';
-import { hostPlaneTableRows } from '../lib/http/host-planes.ts';
+import {
+  LINEAGE_DEMO_HOST,
+  dnsAccessLineageRows,
+  resolveLineageInput,
+} from '../lib/http/host-lineage.ts';
+import { type HostPlane, hostPlaneTableRows, isHostPlane } from '../lib/http/host-planes.ts';
 import { cliTone, frameBlock, kvLines, msFromNs } from '../lib/portal/cli-chrome.ts';
 import { hostPartsForSurface, loadSurfacesInventory } from '../lib/surfaces/inventory.ts';
 import {
   FACTORY_WAGER_APEX,
+  accessDomainFromHost,
   hostIdFromParts,
+  httpsUrlForAccessDomain,
+  httpsUrlForHost,
   splitHostId,
   tryHostId,
 } from '../lib/types/branded.ts';
@@ -58,11 +64,8 @@ const BRANDED_README = new URL('../lib/types/branded/README.md', import.meta.url
 const ROOT = resolvePath(import.meta.dir, '..');
 const SURFACES_TOML = `${ROOT}/config/surfaces.toml`;
 
-/** Slice markers in lib/types/branded/README.md (must stay in sync with that file). */
 const LINEAGE_START = '### DNS / Access lineage';
 const LINEAGE_END = '## Constructor tiers';
-
-/** Default watch cadence — every 5 minutes UTC. Override with --every '* * * * *'. */
 const DEFAULT_WATCH_CRON = '*/5 * * * *';
 
 type BrandRow = {
@@ -89,43 +92,61 @@ type CliOpts = {
   docs: boolean;
   watch: boolean;
   every: string;
+  json: boolean;
+  verbose: boolean;
+  plane: HostPlane | undefined;
+  lineageHost: string | undefined;
   help: boolean;
 };
 
 function args(): CliOpts {
   const a = Bun.argv.slice(2);
-  const everyIdx = a.indexOf('--every');
-  const every =
-    everyIdx >= 0 && typeof a[everyIdx + 1] === 'string' && !a[everyIdx + 1]!.startsWith('-')
-      ? a[everyIdx + 1]!
-      : DEFAULT_WATCH_CRON;
+  const take = (flag: string): string | undefined => {
+    const i = a.indexOf(flag);
+    if (i < 0) return undefined;
+    const v = a[i + 1];
+    return typeof v === 'string' && !v.startsWith('-') ? v : undefined;
+  };
+  const planeRaw = take('--plane');
+  const plane = planeRaw && isHostPlane(planeRaw) ? planeRaw : undefined;
+  const lineageFlag = a.includes('--lineage');
+  const lineageHost = take('--lineage') ?? (lineageFlag ? LINEAGE_DEMO_HOST : undefined);
   return {
     once: a.includes('--once'),
     replOnly: a.includes('--repl'),
     docs: a.includes('--docs'),
     watch: a.includes('--watch'),
-    every,
+    every: take('--every') ?? DEFAULT_WATCH_CRON,
+    json: a.includes('--json'),
+    verbose: a.includes('--verbose') || a.includes('-v'),
+    plane,
+    lineageHost,
     help: a.includes('--help') || a.includes('-h'),
   };
 }
 
 function printHelp(): void {
-  console.info(`brand-status — apex/subdomain + brand glossary tables
+  console.info(`brand-status — apex/subdomain + host planes + DNS/Access lineage
 
 Usage:
-  bun tools/brand-status.ts              tables then stdin REPL (TTY or pipe)
-  bun tools/brand-status.ts --once       tables only
-  bun tools/brand-status.ts --docs       tables + DNS/Access lineage (markdown.ansi)
+  bun tools/brand-status.ts --once
   bun tools/brand-status.ts --docs --once
-  bun tools/brand-status.ts --watch      tables + Bun.cron reprint (no REPL)
-  bun --hot tools/brand-status.ts --watch
-  bun tools/brand-status.ts --watch --every '* * * * *'
-  bun tools/brand-status.ts --repl       host split REPL only
-  bun tools/brand-status.ts --help
+  bun tools/brand-status.ts --lineage [host] --once
+  bun tools/brand-status.ts --plane dns|bind|access|pages [--verbose] --once
+  bun tools/brand-status.ts --json --once
+  bun tools/brand-status.ts --watch [--every '*/5 * * * *']
+  bun tools/brand-status.ts --repl
 
-REPL: type a host FQDN per line (q / quit / exit to leave).
-Depth: bunfig [console] depth · --console-depth · getConsoleDepth().
-Planes: HOST PLANES notes truncate via Bun.sliceAnsi (truncateWidth).
+REPL lines:
+  <fqdn> | <url> | <host/path>     split / resolve + lineage steps
+  access <host> [path]             mint AccessDomainId (default /portal)
+  url <host|access>                https URL helpers
+  lineage [host]                   transition matrix
+  plane [name]                     HOST PLANES filter
+  docs                             markdown.ansi lineage slice
+  help | q                         this help / quit
+
+Depth: bunfig [console] depth · Planes notes: Bun.sliceAnsi on TTY.
 `);
 }
 
@@ -155,34 +176,38 @@ function printHeader(m: Manifest, t0: number): void {
   );
 }
 
-/**
- * Visible budget for the note column on a TTY — leave room for other columns.
- * Prefer stdout.columns; fall back to COLUMNS env (scripts) then 100.
- */
 function hostPlaneNoteCols(): number {
   const parsed = Number.parseInt(Bun.env.COLUMNS ?? '', 10);
   const cols = process.stdout.columns ?? (Number.isFinite(parsed) && parsed > 0 ? parsed : 100);
   return Math.min(64, Math.max(36, cols - 70));
 }
 
-/** Bind listen hostname ≠ DNS HostId — show the plane map first. */
-function printHostPlanesTable(): void {
+function printHostPlanesTable(opts: { plane?: HostPlane; verbose: boolean }): void {
   const tty = process.stdout.isTTY === true;
   const noteCols = hostPlaneNoteCols();
+  const planeLabel = opts.plane ? ` · plane=${opts.plane}` : '';
   console.info(
     cliTone.accent('\nHOST PLANES') +
       cliTone.dim(
         tty
-          ? `  bind = Bun.serve listen · dns = public FQDN brands · notes≤${noteCols} (sliceAnsi)`
-          : '  bind = Bun.serve listen · dns = public FQDN brands · do not mix'
+          ? `  bind≠dns${planeLabel} · notes≤${noteCols} (sliceAnsi)${opts.verbose ? ' · +ssot' : ''}`
+          : `  bind≠dns${planeLabel} · do not mix`
       )
   );
-  // Truncate notes only on TTY (narrow table). Piped/CI keeps full note text.
-  const rows = hostPlaneTableRows().map(r => ({
+  const cols = opts.verbose
+    ? (['plane', 'concept', 'typeOrField', 'example', 'ssot', 'note'] as const)
+    : (['plane', 'concept', 'typeOrField', 'example', 'note'] as const);
+  const rows = hostPlaneTableRows({
+    plane: opts.plane,
+    includeSsot: opts.verbose,
+  }).map(r => ({
     ...r,
     note: tty ? truncateWidth(r.note, noteCols, { ellipsis: '…' }) : r.note,
+    ...(r.ssot !== undefined && tty
+      ? { ssot: truncateWidth(r.ssot, Math.min(40, noteCols), { ellipsis: '…' }) }
+      : {}),
   }));
-  logTable(rows, ['plane', 'concept', 'typeOrField', 'example', 'note']);
+  logTable(rows, [...cols]);
 }
 
 function printDomainTable(brands: BrandRow[]): void {
@@ -250,10 +275,6 @@ async function printInventoryTable(): Promise<void> {
   logTable(rows, ['surfaceId', 'host', 'apex', 'subdomain', 'status', 'access']);
 }
 
-/**
- * Render DNS/Access lineage from branded README via Bun.markdown.ansi.
- * Mermaid stays fenced text (no graph) — table + rules are the operator signal.
- */
 async function printLineageDocs(): Promise<void> {
   const md = await Bun.file(BRANDED_README).text();
   const a = md.indexOf(LINEAGE_START);
@@ -263,40 +284,108 @@ async function printLineageDocs(): Promise<void> {
     return;
   }
   console.info(
-    cliTone.accent('\nLINEAGE') + cliTone.dim('  lib/types/branded/README.md · Bun.markdown.ansi')
+    cliTone.accent('\nLINEAGE DOCS') +
+      cliTone.dim('  lib/types/branded/README.md · Bun.markdown.ansi')
   );
   process.stdout.write(ansiMarkdown(md.slice(a, b).trimEnd() + '\n'));
 }
 
-function splitRow(raw: string): {
-  host: string;
-  apex: string;
-  subdomain: string;
-  roundTrip: string;
-} | null {
-  const host = tryHostId(raw.trim());
-  if (!host) return null;
-  const parts = splitHostId(host);
-  const round = hostIdFromParts(parts.apex, parts.subdomain);
-  const ok = String(round) === String(host);
-  return {
-    host: String(host),
-    apex: String(parts.apex),
-    subdomain: String(parts.subdomain),
-    roundTrip: ok ? cliTone.ok('ok') : cliTone.fail('FAIL'),
-  };
+function printLineageTransitions(rawHost: string): void {
+  const resolved = resolveLineageInput(rawHost);
+  if (resolved.kind === 'invalid') {
+    console.info(cliTone.fail(`invalid lineage input: ${JSON.stringify(rawHost)}`));
+    return;
+  }
+  const host = resolved.host;
+  const rows = dnsAccessLineageRows(host);
+  const kind =
+    resolved.kind === 'access'
+      ? `access→${resolved.access}`
+      : resolved.kind === 'url'
+        ? `url→${resolved.url}`
+        : 'host';
+  console.info(cliTone.accent('\nLINEAGE') + cliTone.dim(`  ${host} · ${kind} · live helpers`));
+  logTable(rows, ['step', 'from', 'op', 'to', 'note']);
+  logDepth(
+    {
+      host: String(host),
+      ...splitHostId(host),
+      https: httpsUrlForHost(host),
+      accessPortal: String(accessDomainFromHost(host, '/portal')),
+    },
+    { depth: getConsoleDepth() }
+  );
 }
 
 function printSplit(raw: string): void {
-  const row = splitRow(raw);
-  if (!row) {
-    console.info(cliTone.fail(`invalid HostId: ${JSON.stringify(raw.trim())}`));
+  const resolved = resolveLineageInput(raw);
+  if (resolved.kind === 'invalid') {
+    console.info(cliTone.fail(`invalid input: ${JSON.stringify(raw.trim())}`));
     return;
   }
-  logTable([row], ['host', 'apex', 'subdomain', 'roundTrip']);
-  // Nested dump at effective console depth (bunfig 6 unless overridden).
-  const host = tryHostId(raw.trim())!;
-  logDepth({ host: String(host), ...splitHostId(host) }, { depth: getConsoleDepth() });
+  const host = resolved.host;
+  const parts = splitHostId(host);
+  const round = hostIdFromParts(parts.apex, parts.subdomain);
+  const ok = String(round) === String(host);
+  logTable(
+    [
+      {
+        kind: resolved.kind,
+        host: String(host),
+        apex: String(parts.apex),
+        subdomain: String(parts.subdomain),
+        roundTrip: ok ? cliTone.ok('ok') : cliTone.fail('FAIL'),
+        https: httpsUrlForHost(host),
+      },
+    ],
+    ['kind', 'host', 'apex', 'subdomain', 'roundTrip', 'https']
+  );
+  printLineageTransitions(String(host));
+}
+
+function printAccess(hostRaw: string, path = '/portal'): void {
+  const host = tryHostId(hostRaw.trim());
+  if (!host) {
+    console.info(cliTone.fail(`invalid HostId: ${JSON.stringify(hostRaw)}`));
+    return;
+  }
+  const access = accessDomainFromHost(host, path);
+  logTable(
+    [
+      {
+        host: String(host),
+        path,
+        access: String(access),
+        https: httpsUrlForAccessDomain(access),
+      },
+    ],
+    ['host', 'path', 'access', 'https']
+  );
+}
+
+function printUrl(raw: string): void {
+  const resolved = resolveLineageInput(raw);
+  if (resolved.kind === 'invalid') {
+    console.info(cliTone.fail(`invalid url input: ${JSON.stringify(raw)}`));
+    return;
+  }
+  if (resolved.kind === 'access') {
+    logTable(
+      [
+        {
+          input: String(resolved.access),
+          https: httpsUrlForAccessDomain(resolved.access),
+          host: String(resolved.host),
+        },
+      ],
+      ['input', 'https', 'host']
+    );
+    return;
+  }
+  logTable(
+    [{ input: String(resolved.host), https: httpsUrlForHost(resolved.host) }],
+    ['input', 'https']
+  );
 }
 
 function isQuit(line: string): boolean {
@@ -304,14 +393,65 @@ function isQuit(line: string): boolean {
   return t === 'q' || t === 'quit' || t === 'exit' || t === '.';
 }
 
-/**
- * Read hosts line-by-line from Bun's console AsyncIterable (process.stdin).
- * @see https://bun.com/docs/runtime/console — for await (const line of console)
- */
-async function runRepl(): Promise<void> {
+async function handleReplLine(line: string, opts: CliOpts): Promise<void> {
+  const trimmed = line.trim();
+  if (!trimmed) return;
+  const [cmd, ...rest] = trimmed.split(/\s+/);
+  const c = (cmd ?? '').toLowerCase();
+
+  if (c === 'help' || c === '?') {
+    printHelp();
+    return;
+  }
+  if (c === 'docs') {
+    await printLineageDocs();
+    return;
+  }
+  if (c === 'plane') {
+    const p = rest[0];
+    if (p && !isHostPlane(p)) {
+      console.info(cliTone.fail(`unknown plane: ${p} (bind|dns|access|pages)`));
+      return;
+    }
+    printHostPlanesTable({
+      plane: p && isHostPlane(p) ? p : opts.plane,
+      verbose: true,
+    });
+    return;
+  }
+  if (c === 'lineage') {
+    printLineageTransitions(rest[0] ?? LINEAGE_DEMO_HOST);
+    return;
+  }
+  if (c === 'access') {
+    if (!rest[0]) {
+      console.info(cliTone.fail('usage: access <host> [path]'));
+      return;
+    }
+    printAccess(rest[0], rest[1] ?? '/portal');
+    return;
+  }
+  if (c === 'url') {
+    if (!rest[0]) {
+      console.info(cliTone.fail('usage: url <host|access|url>'));
+      return;
+    }
+    printUrl(rest.join(' '));
+    return;
+  }
+
+  // Bare token — FQDN / URL / AccessDomain
+  printSplit(trimmed);
+}
+
+async function runRepl(opts: CliOpts): Promise<void> {
   console.info('');
-  console.info(cliTone.dim('host split REPL') + '  ' + cliTone.dim('(FQDN per line · q to quit)'));
-  console.write(cliTone.accent('host> '));
+  console.info(
+    cliTone.dim('lineage REPL') +
+      '  ' +
+      cliTone.dim('FQDN · url · host/path · access · url · lineage · plane · docs · q')
+  );
+  console.write(cliTone.accent('brand> '));
 
   for await (const line of console) {
     if (isQuit(line)) {
@@ -319,22 +459,70 @@ async function runRepl(): Promise<void> {
       break;
     }
     if (!line.trim()) {
-      console.write(cliTone.accent('host> '));
+      console.write(cliTone.accent('brand> '));
       continue;
     }
-    printSplit(line);
-    console.write(cliTone.accent('host> '));
+    await handleReplLine(line, opts);
+    console.write(cliTone.accent('brand> '));
   }
 }
 
-async function printTables(opts: { docs: boolean; widthHint: boolean }): Promise<void> {
+async function buildJsonSnapshot(opts: CliOpts): Promise<Record<string, unknown>> {
+  const m = await loadManifest();
+  const inv = await loadSurfacesInventory(SURFACES_TOML);
+  const lineageHost = tryHostId(opts.lineageHost ?? LINEAGE_DEMO_HOST);
+  return {
+    kind: 'brand-status',
+    bun: Bun.version,
+    depth: getConsoleDepth(),
+    apex: String(FACTORY_WAGER_APEX),
+    manifest: {
+      version: m.version,
+      brandCount: m.brandCount,
+      domainCount: m.domainCount,
+      kinds: m.kinds,
+    },
+    planes: hostPlaneTableRows({
+      plane: opts.plane,
+      includeSsot: true,
+    }),
+    domains: [...new Set(m.brands.map(b => b.domain))].sort(),
+    surfacesBrands: m.brands
+      .filter(b => b.domain === 'surfaces')
+      .map(b => ({ name: b.name, shortName: b.shortName, envName: b.envName })),
+    inventory: inv.surfaces.map(s => {
+      const p = hostPartsForSurface(s);
+      return {
+        surfaceId: String(s.id),
+        host: String(s.host),
+        apex: String(p.apex),
+        subdomain: String(p.subdomain),
+        status: s.status,
+        access: s.access,
+      };
+    }),
+    lineage: lineageHost
+      ? {
+          host: String(lineageHost),
+          transitions: dnsAccessLineageRows(lineageHost),
+        }
+      : null,
+  };
+}
+
+async function printTables(opts: CliOpts & { widthHint: boolean }): Promise<void> {
   const t0 = Bun.nanoseconds();
   const m = await loadManifest();
   printHeader(m, t0);
-  printHostPlanesTable();
-  printDomainTable(m.brands);
-  printSurfacesTable(m.brands);
-  await printInventoryTable();
+  printHostPlanesTable({ plane: opts.plane, verbose: opts.verbose });
+  if (!opts.plane) {
+    printDomainTable(m.brands);
+    printSurfacesTable(m.brands);
+    await printInventoryTable();
+  }
+  if (opts.lineageHost !== undefined) {
+    printLineageTransitions(opts.lineageHost);
+  }
   if (opts.docs) await printLineageDocs();
   if (opts.widthHint) {
     const sample = cliTone.ok('ok');
@@ -346,18 +534,13 @@ async function printTables(opts: { docs: boolean; widthHint: boolean }): Promise
   }
 }
 
-/**
- * Keep process alive and reprint tables on schedule.
- * Under `bun --hot`, in-process cron jobs are cleared before re-eval — re-register is automatic.
- * @see https://bun.com/docs/runtime/cron#bun-cron-schedule-handler-in-process
- */
 function startWatch(opts: CliOpts): Bun.CronJob {
   console.info(
     cliTone.dim(`\nwatch  cron=${JSON.stringify(opts.every)} UTC · Ctrl-C to stop · bun --hot safe`)
   );
   return Bun.cron(opts.every, async () => {
     console.info(cliTone.dim(`\n── cron reprint ${new Date().toISOString()} ──`));
-    await printTables({ docs: false, widthHint: false });
+    await printTables({ ...opts, widthHint: false });
   });
 }
 
@@ -368,26 +551,41 @@ async function main(): Promise<void> {
     return;
   }
 
+  if (opts.plane === undefined) {
+    const planeRaw = Bun.argv.slice(2).find((_, i, a) => a[i - 1] === '--plane');
+    if (Bun.argv.includes('--plane') && planeRaw && !isHostPlane(planeRaw)) {
+      console.info(cliTone.fail(`unknown --plane ${planeRaw} (bind|dns|access|pages)`));
+      process.exitCode = 1;
+      return;
+    }
+  }
+
+  if (opts.json) {
+    // stdout.write — not console.info(JSON.stringify) — keeps console-format ratchet clean
+    process.stdout.write(`${JSON.stringify(await buildJsonSnapshot(opts), null, 2)}\n`);
+    return;
+  }
+
   if (!opts.replOnly) {
-    await printTables({ docs: opts.docs, widthHint: true });
+    await printTables({ ...opts, widthHint: !opts.watch });
   } else if (opts.docs) {
     await printLineageDocs();
+  } else if (opts.lineageHost !== undefined) {
+    printLineageTransitions(opts.lineageHost);
   }
 
   if (opts.watch) {
     using _job = startWatch(opts);
-    // Keep alive until SIGINT — cron defaults to ref()'d.
     await new Promise<void>(() => {});
     return;
   }
 
   if (opts.once) return;
 
-  // REPL when TTY, or when stdin is a pipe (non-TTY) so scripts can feed hosts.
   const tty = process.stdin.isTTY === true;
   const piped = process.stdin.isTTY === false;
   if (opts.replOnly || tty || piped) {
-    await runRepl();
+    await runRepl(opts);
   }
 }
 

@@ -3,8 +3,10 @@ import { describe, expect, test } from 'bun:test';
 import {
   HOST_PLANE_MAP,
   HOST_PLANES,
+  hostPlaneById,
   hostPlaneRows,
   hostPlaneTableRows,
+  isHostPlane,
 } from '../lib/http/host-planes.ts';
 
 describe('host planes map', () => {
@@ -47,5 +49,13 @@ describe('host planes map', () => {
     expect(table).toHaveLength(HOST_PLANE_MAP.length);
     expect(table[0]).toHaveProperty('typeOrField');
     expect(table[0]).toHaveProperty('example');
+    expect(table[0]).not.toHaveProperty('ssot');
+
+    const verbose = hostPlaneTableRows({ includeSsot: true, plane: 'dns' });
+    expect(verbose.every(r => r.plane === 'dns')).toBeTrue();
+    expect(verbose[0]).toHaveProperty('ssot');
+    expect(isHostPlane('dns')).toBeTrue();
+    expect(isHostPlane('ftp')).toBeFalse();
+    expect(hostPlaneById('dns.host')?.typeOrField).toBe('HostId');
   });
 });
