@@ -6,6 +6,7 @@
  * @see lib/operations/limit-raise-agent-api.ts handleLimitAnalyzeRequest
  * @see docs/harness/tenants/partner-limits.md
  */
+import { getOnly } from '../_get-only.ts';
 
 function json(data: object, status = 200): Response {
   return Response.json(data, {
@@ -17,8 +18,10 @@ function json(data: object, status = 200): Response {
   });
 }
 
-export const onRequestGet: PagesFunction = async () =>
-  json(
+export const onRequest: PagesFunction = async (context: { request: Request }) => {
+  const blocked = getOnly(context.request);
+  if (blocked) return blocked;
+  return json(
     {
       ok: false,
       mode: 'snapshot',
@@ -33,3 +36,4 @@ export const onRequestGet: PagesFunction = async () =>
     },
     503
   );
+};

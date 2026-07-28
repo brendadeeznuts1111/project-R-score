@@ -1,0 +1,141 @@
+# FactoryWager surfaces SSOT — every public hostname and what serves it.
+# Consumed by scripts/bake-surfaces.ts → public/registry/surfaces-state.json.
+# Status vocabulary:
+#   live        — resolves and serves its documented purpose
+#   vanity      — resolves to the Pages app but does NOT serve its implied purpose
+#   broken      — resolves but origin errors (5xx)
+#   dangling    — resolves with no serving config behind it
+#   staged      — configured intent, not yet provisioned
+#   placeholder — documented name only; nothing provisions it
+#   external    — third-party service (not our infra)
+# Verified via dig + curl 2026-07-28. Re-verify: bake --probe (planned) or manual dig/curl.
+
+[surfaces.apex]
+host = "factory-wager.com"
+backend = "cloudflare-pages:project-r-score"
+status = "live"
+protocol = "https-static+functions"
+access = "public"
+note = "Apex of the Pages app."
+
+[surfaces.www]
+host = "www.factory-wager.com"
+backend = "cloudflare-pages:project-r-score"
+status = "live"
+protocol = "https-static+functions"
+access = "public"
+note = "Same as apex."
+
+[surfaces.score]
+host = "score.factory-wager.com"
+backend = "cloudflare-pages:project-r-score"
+status = "live"
+protocol = "https-static+functions"
+access = "public"
+note = "Portal + registry proofs. /portal Access app STAGED (public 200 today)."
+
+[[surfaces.score.accessSubpaths]]
+path = "/portal"
+access = "staged"
+
+[surfaces.pages_dev]
+host = "project-r-score.pages.dev"
+backend = "cloudflare-pages:project-r-score"
+status = "live"
+protocol = "https-static+functions"
+access = "public"
+note = "Pages hostname + previews — Pages Access control NOT enforced (custom-domain apps do not cover it)."
+
+[surfaces.registry]
+host = "registry.factory-wager.com"
+backend = "cloudflare-pages:project-r-score /api/registry/* → R2 factory-wager-registry"
+status = "live"
+protocol = "https-get-only allowlist gateway (npm packuments + proof JSON)"
+access = "allowlist"
+note = "Token in bunfig scope is sent but not verified; authz = key allowlist. Writes → 405. Bucket audit 2026-07-28: 12 objects, catalog index (registry.json, 17 pkgs metadata+readme) + ops stub + telegram channels/ — NO storage/ artifacts; installable packuments+tarballs are served from the committed static mirror (public/registry/@factorywager/*), not R2."
+
+[surfaces.wiki]
+host = "wiki.factory-wager.com"
+backend = "github-pages"
+status = "live"
+protocol = "https-static (Jekyll)"
+access = "public"
+note = "Docs hub. Proxied via Cloudflare. Do NOT repoint to CF Pages without content migration."
+
+[surfaces.ledger]
+host = "ledger.factory-wager.com"
+backend = "cloudflared tunnel accounting-ledger → 127.0.0.1:3000 (this Mac)"
+status = "live"
+protocol = "https via cloudflared"
+access = "applied"
+note = "Access app APPLIED 2026-07-28 (302 → factory-wager.cloudflareaccess.com login). Tunnel is manual-run only — no launchd."
+
+[surfaces.health_host]
+host = "health.factory-wager.com"
+backend = "cloudflare-pages:project-r-score (vanity CNAME)"
+status = "vanity"
+protocol = "https-static"
+access = "public"
+note = "Serves app landing, NOT health. Real endpoint: score.factory-wager.com/health."
+
+[surfaces.telegram_host]
+host = "telegram.factory-wager.com"
+backend = "cloudflare-pages:project-r-score (vanity CNAME)"
+status = "vanity"
+protocol = "https-static"
+access = "public"
+note = "Serves app landing, NOT the webhook. Real endpoint: score…/api/telegram/webhook/{tenant}."
+
+[surfaces.support]
+host = "support.factory-wager.com"
+backend = "helpscout (intended)"
+status = "broken"
+protocol = "https"
+access = "external"
+note = "525 SSL handshake failure between Cloudflare and origin (2026-07-28)."
+
+[surfaces.terminal]
+host = "terminal.factory-wager.com"
+backend = "none — no tunnel config exists (machine or repo)"
+status = "dangling"
+protocol = "https → 502"
+access = "none"
+note = "DNS points at a tunnel that does not exist. Remove the record or provision the tunnel."
+
+[surfaces.reasonix]
+host = "reasonix.factory-wager.com"
+backend = "none — scripts/cloudflared-reasonix.yml template never installed"
+status = "staged"
+protocol = "—"
+access = "staged"
+note = "No DNS record. Access app staged. Install tunnel + credential or decommission template."
+
+[surfaces.registry_write]
+host = "registry-write.internal.factory-wager.com"
+backend = "none"
+status = "placeholder"
+protocol = "—"
+access = "bearer (intended)"
+note = "Intended private publish plane (SDK publishUrl examples). Not provisioned; real writes = local :3000 POST or direct-to-R2 SigV4 (ADR-0002)."
+
+# Publish lanes (ADR-0002) — not hosts, but part of the registry protocol map.
+[publish.prod]
+lane = "prod-write"
+protocol = "SigV4 S3Client → R2 factory-wager-registry (no HTTP endpoint)"
+entry = "bun run factory publish <path> · RegistryClient.publish"
+auth = "R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY (local env)"
+note = "Single-writer authority on the R2 index; refresh read snapshot with ops:snapshot."
+
+[publish.local_gateway]
+lane = "local-gateway"
+protocol = "POST /api/registry/:scope/:name/versions (multipart, 50 MiB cap)"
+entry = "lib/factory/server.ts on http://localhost:3000"
+auth = "Bearer FACTORY_WAGER_TOKEN / REGISTRY_SECRET (constant-time digest; 503 fail-closed)"
+note = "Writes through to R2 when R2 env present."
+
+[publish.local_npm]
+lane = "local-npm"
+protocol = "npm publish protocol — PUT /{name}, PUT /@scope/name (+ packument GET)"
+entry = "scripts/serve-public.ts (loopback only; X-Registry-Lane: local-dev)"
+auth = "loopback dev"
+note = "bun publish works here ONLY. Writes local storage/ + registry.json — never R2 (ADR-0002)."

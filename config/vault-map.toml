@@ -80,6 +80,16 @@ color = "#F38020"
 icon = "public/portal/icons/vault/cloudflare.svg"
 type = "token"
 
+# Access / Zero Trust only — plan+apply Access apps (not DNS, not general Pages)
+[env.CLOUDFLARE_ACCESS_API_TOKEN]
+vault = "factorywager"
+item = "Cloudflare Access API Token"
+field = "password"
+label = "Cloudflare Access API Token"
+color = "#F38020"
+icon = "public/portal/icons/vault/cloudflare.svg"
+type = "token"
+
 # ── Telegram ─────────────────────────────────────────────────────────────────
 [env.TELEGRAM_BOT_FACTORY]
 vault = "factorywager"

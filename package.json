@@ -2207,7 +2207,11 @@
     "portal:secret:which": "bun tools/portal-secret.ts which",
     "cn": "bunx --bun shadcn@latest",
     "cn:sto": "bunx --bun shadcn@latest --cwd projects/active/sports-terminal-os",
-    "bake:all": "bun tools/bake-all.ts"
+    "bake:all": "bun tools/bake-all.ts",
+    "bunfig:bake": "bun scripts/bake-bunfig.ts",
+    "bunfig:check": "bun scripts/bake-bunfig.ts --check",
+    "surfaces:bake": "bun scripts/bake-surfaces.ts",
+    "surfaces:check": "bun scripts/bake-surfaces.ts --check"
   },
   "private": "false",
   "files": [

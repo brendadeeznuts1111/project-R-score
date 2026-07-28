@@ -15,6 +15,8 @@
  * @see https://developers.cloudflare.com/pages/functions/api-reference/
  */
 
+import { getOnly } from '../_get-only.ts';
+
 export type PagesSummaryEnv = {
   /** Cloudflare Pages static asset binding (when present). */
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
@@ -29,6 +31,8 @@ export type PagesSummaryContext = {
  * Prefer ASSETS binding; fall back to same-origin fetch of the snapshot path.
  */
 export async function onRequest(context: PagesSummaryContext): Promise<Response> {
+  const blocked = getOnly(context.request);
+  if (blocked) return blocked;
   const url = new URL(context.request.url);
   const snapshotUrl = new URL('/registry/ops-summary.json', url.origin);
 
