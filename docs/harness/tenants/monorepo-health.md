@@ -124,7 +124,7 @@ bun run check:monorepo-health                # gate + bake
 Focused `packages/*/src` graph (Bun.build metafile), complementary to this tenant:
 
 ```bash
-bun run audit:packages           # score/grade + deep map (schema v12)
+bun run audit:packages           # score/grade + deep map (schema v13; board accepts v12+)
 bun run audit:packages:full      # --cross-check --diff --md --map --bake --vault --env
 bun run audit:packages:env       # --env --vault-gap + bake packages + env-inventory
 bun run audit:packages:vault     # --vault --vault-gap (live pass-cli status) + bake
@@ -141,7 +141,7 @@ bun run env:inventory:bake       # → /registry/env-inventory.json (schemaVersi
 | [`scripts/lib/env-inventory-compact.ts`](../../../scripts/lib/env-inventory-compact.ts) | owners · needsInject vs template defaults · packages plane |
 | [`public/registry/packages-graph-map.json`](../../../public/registry/packages-graph-map.json) | baked map |
 | [`public/registry/env-inventory.json`](../../../public/registry/env-inventory.json) | baked env inventory |
-| [`public/portal/packages/`](../../../public/portal/packages/) · [`/portal/env/`](../../../public/portal/env/) | boards (schema pin · quarantine · env owners) |
+| [`public/portal/packages/`](../../../public/portal/packages/) · [`/portal/env/`](../../../public/portal/env/) | boards (schema pin v13 · SVG dep graph · quarantine · env owners) · `portal-cli dashboard --view=packages` |
 
 **Claim** `packages-graph-map-v13` · multi-surface inventory **v3** (workspaces, `lib/` dirs, STO nested, portal chrome/brand/theme, registry families, **page→registry edges**, **lib import hubs**, **orphan triage** wire/document/review) via [`lib/harness/monorepo-surfaces.ts`](../../../lib/harness/monorepo-surfaces.ts) · ratchet: `bun test tests/packages-graph-map.test.ts tests/monorepo-surfaces.test.ts tests/packages-metafile-audit.test.ts tests/packages-vault-map.test.ts tests/env-inventory-compact.test.ts tests/packages-board.test.ts tests/env-defaults-scan.test.ts` · `bun run audit:packages:env` · `bun run portal-cli pm graph`
 

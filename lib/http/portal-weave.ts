@@ -136,7 +136,7 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     href: '/portal/tools/',
     note: 'portal-cli surface map · pm · snapshot · secret · vault',
     group: 'harness',
-    cli: 'bun run portal-cli help',
+    cli: 'bun run portal-cli dashboard --view=tools',
   },
   {
     id: 'failures',

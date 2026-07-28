@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-28T17:37:15.565Z",
+  "generated": "2026-07-28T18:11:52.146Z",
   "summary": {
     "surfaces": 19,
     "artifacts": 28,
@@ -81,7 +81,7 @@
       "href": "/portal/tools/",
       "note": "portal-cli surface map · pm · snapshot · secret · vault",
       "group": "harness",
-      "cli": "bun run portal-cli help"
+      "cli": "bun run portal-cli dashboard --view=tools"
     },
     {
       "id": "failures",

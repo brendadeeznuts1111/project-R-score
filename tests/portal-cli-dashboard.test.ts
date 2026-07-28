@@ -58,4 +58,35 @@ describe('portal-cli dashboard', () => {
     expect(code).toBe(0);
     expect(out).toContain('/portal/tools/#capabilities');
   });
+
+  test('--view=vault and --view=tools map boards', async () => {
+    for (const [view, path] of [
+      ['vault', '/portal/vault/'],
+      ['tools', '/portal/tools/'],
+    ] as const) {
+      const proc = Bun.spawn(['bun', CLI, 'dashboard', `--view=${view}`], {
+        cwd: ROOT,
+        stdout: 'pipe',
+        stderr: 'pipe',
+        env: { ...Bun.env, PORTAL_BASE_URL: 'https://example.test' },
+      });
+      const code = await proc.exited;
+      const out = await new Response(proc.stdout).text();
+      expect(code).toBe(0);
+      expect(out).toContain(`https://example.test${path}`);
+    }
+  });
+
+  test('unknown --view exits non-zero', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'dashboard', '--view=not-a-board'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env, PORTAL_BASE_URL: 'https://example.test' },
+    });
+    const code = await proc.exited;
+    const err = (await new Response(proc.stderr).text()) + (await new Response(proc.stdout).text());
+    expect(code).not.toBe(0);
+    expect(err.toLowerCase()).toMatch(/unknown|known/);
+  });
 });
