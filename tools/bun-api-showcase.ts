@@ -1,4 +1,11 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @see https://bun.com/reference/bun/RedisClient — Bun.RedisClient
+// @see https://bun.com/reference/bun/SQL — Bun.SQL
+// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
+// @see https://bun.com/reference/bun/JSONC — Bun.JSONC
+// @see https://bun.com/reference/bun/semver/satisfies — Bun.semver.satisfies
+// @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/sql — Bun.SQL
@@ -71,6 +78,7 @@
 import { Database } from 'bun:sqlite';
 import { cc, FFIType, suffix } from 'bun:ffi';
 import { formatCliTable } from './cli-table.ts';
+import { ansiMarkdown, colorize } from '../lib/console-depth.ts';
 
 export type ShowcaseGate = 'offline' | 'network' | 'env' | 'ui';
 
@@ -312,12 +320,9 @@ export const SHOWCASE_DEMOS: readonly ShowcaseDemo[] = [
       const pkg = (await Bun.file(join(dir, 'package.json')).json()) as { version: string };
       const ok = Bun.semver.satisfies(pkg.version, '^1.0.0');
       const md = `# Release ${pkg.version}\n\n- Feature A\n- Fix B\n`;
-      const ansi = Bun.markdown.ansi(md);
-      const cyan = Bun.color('#00ffff', 'ansi-256') || '';
-      const mark = ok ? Bun.color('#00ff00', 'ansi-256') : Bun.color('#ff0000', 'ansi-256');
-      log(
-        `${cyan}Semver${Bun.color('#ffffff', 'ansi-256') || ''} ${mark}${ok ? 'OK' : 'FAIL'}\n${ansi}`
-      );
+      const ansi = ansiMarkdown(md);
+      const mark = ok ? '#00ff00' : '#ff0000';
+      log(`${colorize('Semver', '#00ffff')} ${colorize(ok ? 'OK' : 'FAIL', mark)}\n${ansi}`);
       if (!ok) throw new Error('semver should satisfy ^1.0.0');
       return `version=${pkg.version} ansiChars=${ansi.length}`;
     },
