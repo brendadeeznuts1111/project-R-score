@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-07-28T22:48:46.470Z",
+  "generatedAt": "2026-07-28T23:10:41.610Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 50,
+  "brandCount": 52,
   "domainCount": 9,
   "domains": [
     "audit",
@@ -16,7 +16,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 47,
+    "id": 49,
     "key": 1,
     "code": 2
   },
@@ -64,7 +64,7 @@
     {
       "name": "surfaces",
       "module": "lib/types/branded/surfaces.ts",
-      "brandCount": 3
+      "brandCount": 5
     }
   ],
   "brands": [
@@ -1407,6 +1407,66 @@
       "guard": "BRAND_GUARDS.isHostId",
       "shortName": "hostId",
       "envName": "HOST_ID"
+    },
+    {
+      "name": "ApexDomainId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "Zone apex FQDN (factory-wager.com) — split from HostId",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9-]{2,63}$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asApexDomainId",
+        "try": "tryApexDomainId",
+        "parse": "parseApexDomainId"
+      },
+      "guard": "BRAND_GUARDS.isApexDomainId",
+      "shortName": "apexDomainId",
+      "envName": "APEX_DOMAIN_ID"
+    },
+    {
+      "name": "SubdomainId",
+      "domain": "surfaces",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "wire-input",
+        "system-internal"
+      ],
+      "description": "DNS labels under apex (score, www) or @ for bare apex host",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^(?:@|(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))*)$",
+        "flags": "",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/surfaces.ts",
+      "constructors": {
+        "as": "asSubdomainId",
+        "try": "trySubdomainId",
+        "parse": "parseSubdomainId"
+      },
+      "guard": "BRAND_GUARDS.isSubdomainId",
+      "shortName": "subdomainId",
+      "envName": "SUBDOMAIN_ID"
     },
     {
       "name": "SurfaceId",

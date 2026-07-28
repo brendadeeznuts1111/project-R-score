@@ -5,12 +5,16 @@
  * Public edge surface brands — hostnames and inventory keys stay separated.
  *
  * - **HostId** — pure FQDN (no scheme, no path): `ledger.factory-wager.com`
+ * - **ApexDomainId** — zone apex: `factory-wager.com`
+ * - **SubdomainId** — left labels under apex (`score`, `www`) or `@` for bare apex
  * - **SurfaceId** — config/surfaces.toml key: `ledger`, `score`, `pages_dev`
+ *   (inventory key — not the same as DNS SubdomainId)
  * - **AccessDomainId** — Cloudflare Access app `domain` (host or host/path):
  *   `score.factory-wager.com/portal`
  *
  * Do not pass a path-bearing Access domain where a HostId is required.
  * Split with `hostIdFromAccessDomain` / `pathFromAccessDomain`.
+ * Apex/subdomain: `splitHostId` / `hostIdFromParts`.
  *
  * SSOT inventory: config/surfaces.toml · bake: scripts/bake-surfaces.ts
  */
@@ -20,6 +24,15 @@ import { type BrandSpec, type BrandedString, type BrandValidationSpec } from './
 
 /** Pure DNS hostname (FQDN). Never includes scheme or path. */
 export type HostId = BrandedString<'HostId'>;
+
+/** Zone apex FQDN (e.g. factory-wager.com). */
+export type ApexDomainId = BrandedString<'ApexDomainId'>;
+
+/**
+ * DNS labels left of the apex, or `@` when the host is the bare apex.
+ * Not the same as SurfaceId (inventory key may differ, e.g. pages_dev).
+ */
+export type SubdomainId = BrandedString<'SubdomainId'>;
 
 /** Surface inventory key from config/surfaces.toml (e.g. ledger, score). */
 export type SurfaceId = BrandedString<'SurfaceId'>;
@@ -33,11 +46,50 @@ export type AccessDomainId = BrandedString<'AccessDomainId'>;
 /** Hostname: labels + TLD; lowercase; no trailing dot. */
 const HOST_RE = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9-]{2,63}$/;
 
+/** Single DNS label (no dots). */
+const DNS_LABEL_RE = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
+/** Subdomain: `@` (apex host) or one-or-more DNS labels joined by dots. */
+const SUBDOMAIN_RE =
+  /^(?:@|(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))*)$/;
+
 /** Surface keys: snake_case / alphanumeric starting with letter. */
 const SURFACE_RE = /^[a-z][a-z0-9_]{0,62}$/;
 
+/** Common multi-part public suffixes (apex = last 3 labels). */
+const THREE_PART_PUBLIC_SUFFIXES = new Set([
+  'co.uk',
+  'org.uk',
+  'gov.uk',
+  'ac.uk',
+  'com.au',
+  'net.au',
+  'org.au',
+  'co.jp',
+  'com.br',
+  'com.mx',
+  'com.tr',
+]);
+
+/** Known apexes preferred when splitting HostId (longest match wins). */
+const KNOWN_APEXES = ['factory-wager.com'] as const;
+
 function normalizeHost(value: string): string {
   return value.trim().toLowerCase().replace(/\.$/, '');
+}
+
+function isValidSubdomainRaw(value: string): boolean {
+  if (value === '@') return true;
+  if (
+    !value ||
+    value.includes('/') ||
+    value.includes(':') ||
+    value.startsWith('.') ||
+    value.endsWith('.')
+  ) {
+    return false;
+  }
+  return value.split('.').every(label => DNS_LABEL_RE.test(label));
 }
 
 export function asHostId(value: string): HostId {
@@ -62,6 +114,93 @@ export function parseHostId(value: unknown): HostId {
     throw new BrandValidationError('HostId', value as never);
   }
   return asHostId(value);
+}
+
+export function asApexDomainId(value: string): ApexDomainId {
+  const host = normalizeHost(value);
+  if (!HOST_RE.test(host)) {
+    throw new BrandValidationError('ApexDomainId', value);
+  }
+  // Apex must be at least two labels (e.g. example.com).
+  if (host.split('.').length < 2) {
+    throw new BrandValidationError('ApexDomainId', value);
+  }
+  return host as ApexDomainId;
+}
+
+export function tryApexDomainId(value: string | undefined | null): ApexDomainId | undefined {
+  if (value == null || String(value).trim() === '') return undefined;
+  try {
+    return asApexDomainId(String(value));
+  } catch {
+    return undefined;
+  }
+}
+
+export function parseApexDomainId(value: unknown): ApexDomainId {
+  if (typeof value !== 'string') {
+    throw new BrandValidationError('ApexDomainId', value as never);
+  }
+  return asApexDomainId(value);
+}
+
+/** Canonical FactoryWager zone apex (lives here — not r2-env — for Pages boundary safety). */
+export const FACTORY_WAGER_APEX = asApexDomainId('factory-wager.com');
+
+export function asSubdomainId(value: string): SubdomainId {
+  const s = value.trim().toLowerCase();
+  if (!isValidSubdomainRaw(s) || !SUBDOMAIN_RE.test(s)) {
+    throw new BrandValidationError('SubdomainId', value);
+  }
+  return s as SubdomainId;
+}
+
+export function trySubdomainId(value: string | undefined | null): SubdomainId | undefined {
+  if (value == null || String(value).trim() === '') return undefined;
+  try {
+    return asSubdomainId(String(value));
+  } catch {
+    return undefined;
+  }
+}
+
+export function parseSubdomainId(value: unknown): SubdomainId {
+  if (typeof value !== 'string') {
+    throw new BrandValidationError('SubdomainId', value as never);
+  }
+  return asSubdomainId(value);
+}
+
+/**
+ * Split a HostId into apex + subdomain.
+ * Prefers known apexes (longest match), then public-suffix heuristic.
+ */
+export function splitHostId(host: HostId): { apex: ApexDomainId; subdomain: SubdomainId } {
+  const normalized = String(host);
+
+  const known = [...KNOWN_APEXES].sort((a, b) => b.length - a.length);
+  for (const apex of known) {
+    if (normalized === apex) {
+      return { apex: asApexDomainId(apex), subdomain: asSubdomainId('@') };
+    }
+    if (normalized.endsWith(`.${apex}`)) {
+      const left = normalized.slice(0, normalized.length - apex.length - 1) || '@';
+      return { apex: asApexDomainId(apex), subdomain: asSubdomainId(left) };
+    }
+  }
+
+  const labels = normalized.split('.').filter(Boolean);
+  const suffix2 = labels.slice(-2).join('.');
+  const apexPartCount = labels.length >= 3 && THREE_PART_PUBLIC_SUFFIXES.has(suffix2) ? 3 : 2;
+  const apex = labels.slice(-apexPartCount).join('.');
+  const subdomain = labels.length > apexPartCount ? labels.slice(0, -apexPartCount).join('.') : '@';
+  return { apex: asApexDomainId(apex), subdomain: asSubdomainId(subdomain) };
+}
+
+/** Compose HostId from apex + subdomain (`@` → bare apex). */
+export function hostIdFromParts(apex: ApexDomainId, subdomain: SubdomainId): HostId {
+  if (String(subdomain) === '@') return asHostId(String(apex));
+  return asHostId(`${subdomain}.${apex}`);
 }
 
 export function asSurfaceId(value: string): SurfaceId {
@@ -219,6 +358,20 @@ export const ACCESS_DOMAIN_BRAND_VALIDATION = {
   ingressNormalization: 'trim',
 } as const satisfies BrandValidationSpec;
 
+export const APEX_DOMAIN_BRAND_VALIDATION = {
+  shape: 'pattern',
+  pattern: HOST_RE.source,
+  flags: '',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+
+export const SUBDOMAIN_BRAND_VALIDATION = {
+  shape: 'pattern',
+  pattern: SUBDOMAIN_RE.source,
+  flags: '',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+
 export const SURFACES_BRAND_SPECS = [
   {
     name: 'HostId',
@@ -227,6 +380,22 @@ export const SURFACES_BRAND_SPECS = [
     mint: ['wire-input', 'system-internal'],
     description: 'Public edge FQDN (no scheme/path) — config/surfaces.toml host',
     validation: HOST_BRAND_VALIDATION,
+  },
+  {
+    name: 'ApexDomainId',
+    domain: 'surfaces',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input', 'system-internal'],
+    description: 'Zone apex FQDN (factory-wager.com) — split from HostId',
+    validation: APEX_DOMAIN_BRAND_VALIDATION,
+  },
+  {
+    name: 'SubdomainId',
+    domain: 'surfaces',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['wire-input', 'system-internal'],
+    description: 'DNS labels under apex (score, www) or @ for bare apex host',
+    validation: SUBDOMAIN_BRAND_VALIDATION,
   },
   {
     name: 'SurfaceId',

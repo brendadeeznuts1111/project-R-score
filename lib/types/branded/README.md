@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 50 values across 9 domains: 47 IDs, 1 key, and 2 codes
+- **Inventory:** 52 values across 9 domains: 49 IDs, 1 key, and 2 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -36,17 +36,20 @@ authoritative.
 | audit      | 6 version, audit, finding, concept, entry, and evidence IDs             | [`audit.ts`](./audit.ts)           |
 | operations | 21 operational IDs plus `PartnerProfileKey`, `StateCode`, and `ZipCode` | [`operations.ts`](./operations.ts) |
 | portal     | 4 portal tenant, Telegram user, portal account, and link-nonce IDs      | [`portal.ts`](./portal.ts)         |
-| surfaces   | 3 host FQDN, surface inventory key, and Access app domain IDs           | [`surfaces.ts`](./surfaces.ts)     |
+| surfaces   | 5 host FQDN, apex, DNS subdomain, surface inventory key, and Access app domain IDs | [`surfaces.ts`](./surfaces.ts) |
 
 `StateCode` and `ZipCode` have format-aware constructors. Do not replace those
 constructors with the generic factory. `HostId` / `AccessDomainId` are also
 format-aware (FQDN vs host/path) — never use a path-bearing Access domain as a
-`HostId`.
+`HostId`. `SubdomainId` is the DNS left-of-apex label (`@` for bare apex) —
+not the same as `SurfaceId` (inventory key; e.g. `pages_dev` ≠ `project-r-score`).
 
 **Surfaces helpers** ([`surfaces.ts`](./surfaces.ts)):
 
 | Helper | Role |
 |--------|------|
+| `splitHostId` / `hostIdFromParts` | apex + subdomain ↔ `HostId` |
+| `FACTORY_WAGER_APEX` | canonical `factory-wager.com` apex constant |
 | `accessDomainFromHost(host, path?)` | compose Access domain from `HostId` |
 | `hostIdFromAccessDomain` / `pathFromAccessDomain` | split Access domain |
 | `isPathScopedAccessDomain` | path-bearing vs whole-host |
@@ -54,7 +57,8 @@ format-aware (FQDN vs host/path) — never use a path-bearing Access domain as a
 | `httpsUrlForHost` / `httpsUrlForAccessDomain` | probe URLs |
 
 Inventory (parse once): [`lib/surfaces/inventory.ts`](../../surfaces/inventory.ts) ·
-`loadSurfacesInventory` · `appliedAccessDomains` · `findSurfaceByHost`.
+`loadSurfacesInventory` · `appliedAccessDomains` · `findSurfaceByHost` ·
+`hostPartsForSurface`.
 
 ## Constructor tiers
 

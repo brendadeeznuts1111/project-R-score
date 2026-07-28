@@ -4,8 +4,9 @@
 /**
  * Surface inventory — parse-once loader for config/surfaces.toml.
  *
- * Domain brands (HostId · SurfaceId · AccessDomainId) are minted at the TOML
- * boundary. Interior consumers import this module instead of re-parsing hosts.
+ * Domain brands (HostId · ApexDomainId · SubdomainId · SurfaceId · AccessDomainId)
+ * are minted at the TOML boundary. Interior consumers import this module instead
+ * of re-parsing hosts.
  *
  * SSOT: config/surfaces.toml · bake: scripts/bake-surfaces.ts
  * Brands: lib/types/branded/surfaces.ts
@@ -14,8 +15,11 @@ import {
   accessDomainFromHost,
   asHostId,
   asSurfaceId,
+  splitHostId,
   type AccessDomainId,
+  type ApexDomainId,
   type HostId,
+  type SubdomainId,
   type SurfaceId,
 } from '../types/branded.ts';
 
@@ -153,6 +157,14 @@ export function findSurfaceByHost(
   host: HostId
 ): SurfaceRecord | undefined {
   return inventory.byHost.get(host);
+}
+
+/** Derive apex + DNS subdomain labels from a surface's HostId. */
+export function hostPartsForSurface(surface: SurfaceRecord): {
+  apex: ApexDomainId;
+  subdomain: SubdomainId;
+} {
+  return splitHostId(surface.host);
 }
 
 export function parseSurfacesToml(text: string): SurfacesInventory {

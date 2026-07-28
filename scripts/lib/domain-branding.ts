@@ -3,6 +3,7 @@ import { fileExistsSync, readJsonSync, resolvePath } from './fs-bun';
 // @see https://bun.com/docs/runtime/color — Bun.color
 
 import { checkContrast, generatePalette, parseHSL } from '../../lib/utils/advanced-hsl-colors';
+import { splitHostId, tryHostId } from '../../lib/types/branded.ts';
 
 type DomainBrandingConfig = {
   default?: {
@@ -105,6 +106,14 @@ function splitDomain(
     .toLowerCase()
     .replace(/:\d+$/, '');
 
+  // Prefer branded HostId split (known apex + public-suffix heuristic).
+  const host = tryHostId(normalized);
+  if (host) {
+    const parts = splitHostId(host);
+    return { apexDomain: String(parts.apex), subdomain: String(parts.subdomain) };
+  }
+
+  // Configured apexes (may include entries that are not yet HostId-shaped).
   const configuredDomains = Object.keys(cfg.domains || {}).sort((a, b) => b.length - a.length);
   for (const domain of configuredDomains) {
     if (normalized === domain) {

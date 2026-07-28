@@ -15,6 +15,10 @@ function sampleFor(name: string): { input: string; expected: string } {
   if (name === 'ZipCode') return { input: '02139', expected: '02139' };
   // surfaces domain: format-aware FQDN / inventory key / Access domain
   if (name === 'HostId') return { input: 'Ledger.Factory-Wager.COM', expected: 'ledger.factory-wager.com' };
+  if (name === 'ApexDomainId') {
+    return { input: 'Factory-Wager.COM', expected: 'factory-wager.com' };
+  }
+  if (name === 'SubdomainId') return { input: 'Score', expected: 'score' };
   if (name === 'SurfaceId') return { input: 'Ledger', expected: 'ledger' };
   if (name === 'AccessDomainId') {
     return {
@@ -26,8 +30,8 @@ function sampleFor(name: string): { input: string; expected: string } {
 }
 
 describe('branded domain-value catalog', () => {
-  test('catalog is a unique 50-value, 9-domain contract', () => {
-    expect(branded.BRAND_CATALOG).toHaveLength(50);
+  test('catalog is a unique 52-value, 9-domain contract', () => {
+    expect(branded.BRAND_CATALOG).toHaveLength(52);
 
     const names = branded.BRAND_CATALOG.map(spec => spec.name);
     const domains = new Set(branded.BRAND_CATALOG.map(spec => spec.domain));
@@ -36,7 +40,7 @@ describe('branded domain-value catalog', () => {
     expect(new Set(names).size).toBe(names.length);
     expect(domains.size).toBe(9);
     expect(domains.has('surfaces')).toBeTrue();
-    expect(kinds.filter(kind => kind === 'id')).toHaveLength(47);
+    expect(kinds.filter(kind => kind === 'id')).toHaveLength(49);
     expect(kinds.filter(kind => kind === 'key')).toHaveLength(1);
     expect(kinds.filter(kind => kind === 'code')).toHaveLength(2);
   });
@@ -59,7 +63,7 @@ describe('branded domain-value catalog', () => {
   });
 
   test('generated guards cover every canonical runtime shape', () => {
-    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(50);
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(52);
 
     for (const spec of branded.BRAND_CATALOG) {
       const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;
@@ -105,6 +109,18 @@ describe('branded domain-value catalog', () => {
     // path-bearing Access domain must not pass HostId constructors
     expect(() => branded.asHostId('score.factory-wager.com/portal')).toThrow();
     expect(branded.tryHostId('not a host')).toBeUndefined();
+  });
+
+  test('surfaces apex/subdomain split prefers known FactoryWager apex', () => {
+    const parts = branded.splitHostId(branded.asHostId('score.factory-wager.com'));
+    expect(parts.apex).toBe(branded.FACTORY_WAGER_APEX);
+    expect(parts.subdomain).toBe(branded.asSubdomainId('score'));
+    expect(branded.hostIdFromParts(parts.apex, parts.subdomain)).toBe(
+      'score.factory-wager.com'
+    );
+    expect(branded.BRAND_GUARDS.isApexDomainId('factory-wager.com')).toBeTrue();
+    expect(branded.BRAND_GUARDS.isSubdomainId('@')).toBeTrue();
+    expect(branded.trySubdomainId('bad/label')).toBeUndefined();
   });
 
   test('generic constructors reject blank values and strip a brand explicitly', () => {

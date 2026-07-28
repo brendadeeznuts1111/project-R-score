@@ -6,14 +6,20 @@ import {
   declaredAccessDomains,
   findSurfaceByHost,
   findSurfaceById,
+  hostPartsForSurface,
   loadSurfacesInventory,
   parseSurfacesToml,
 } from '../lib/surfaces/inventory.ts';
 import {
+  asApexDomainId,
   asHostId,
+  asSubdomainId,
   asSurfaceId,
+  FACTORY_WAGER_APEX,
   hostIdFromAccessDomain,
+  hostIdFromParts,
   isPathScopedAccessDomain,
+  splitHostId,
 } from '../lib/types/branded.ts';
 import { resolvePath } from '../scripts/lib/fs-bun';
 
@@ -64,5 +70,33 @@ describe('lib/surfaces/inventory', () => {
 
   test('parseSurfacesToml rejects empty inventory', () => {
     expect(() => parseSurfacesToml('')).toThrow(/missing/);
+  });
+
+  test('splitHostId / hostIdFromParts round-trip apex and subdomain', () => {
+    const ledger = asHostId('ledger.factory-wager.com');
+    const parts = splitHostId(ledger);
+    expect(parts.apex).toBe(FACTORY_WAGER_APEX);
+    expect(parts.subdomain).toBe(asSubdomainId('ledger'));
+    expect(hostIdFromParts(parts.apex, parts.subdomain)).toBe(ledger);
+
+    const apexHost = asHostId('factory-wager.com');
+    const apexParts = splitHostId(apexHost);
+    expect(apexParts.apex).toBe(asApexDomainId('factory-wager.com'));
+    expect(apexParts.subdomain).toBe(asSubdomainId('@'));
+    expect(hostIdFromParts(apexParts.apex, apexParts.subdomain)).toBe(apexHost);
+
+    const pages = asHostId('project-r-score.pages.dev');
+    const pagesParts = splitHostId(pages);
+    expect(String(pagesParts.apex)).toBe('pages.dev');
+    expect(String(pagesParts.subdomain)).toBe('project-r-score');
+    expect(hostIdFromParts(pagesParts.apex, pagesParts.subdomain)).toBe(pages);
+  });
+
+  test('hostPartsForSurface derives apex/subdomain from inventory HostId', async () => {
+    const inv = await loadSurfacesInventory(TOML);
+    const ledger = findSurfaceById(inv, asSurfaceId('ledger'))!;
+    const parts = hostPartsForSurface(ledger);
+    expect(parts.apex).toBe(FACTORY_WAGER_APEX);
+    expect(parts.subdomain).toBe(asSubdomainId('ledger'));
   });
 });

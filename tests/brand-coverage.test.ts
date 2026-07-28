@@ -47,7 +47,7 @@ describe('brand coverage reporter', () => {
     ];
 
     const rows = analyzeBrandCoverage(files);
-    expect(rows).toHaveLength(47);
+    expect(rows).toHaveLength(52);
     expect(row(rows, 'SessionId')).toMatchObject({
       references: 0,
       asCalls: 2,

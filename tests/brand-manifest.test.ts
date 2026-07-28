@@ -26,6 +26,14 @@ describe('brand-manifest short forms', () => {
 
   test('single-word and short names stay stable', () => {
     expect(shortFormsForBrand('HostId')).toEqual({ shortName: 'hostId', envName: 'HOST_ID' });
+    expect(shortFormsForBrand('ApexDomainId')).toEqual({
+      shortName: 'apexDomainId',
+      envName: 'APEX_DOMAIN_ID',
+    });
+    expect(shortFormsForBrand('SubdomainId')).toEqual({
+      shortName: 'subdomainId',
+      envName: 'SUBDOMAIN_ID',
+    });
     expect(shortFormsForBrand('ZipCode')).toEqual({ shortName: 'zipCode', envName: 'ZIP_CODE' });
   });
 

@@ -17,6 +17,7 @@ import type {
   AccountId,
   AnyBrandedValue,
   AnyId,
+  ApexDomainId,
   AuditId,
   AuditFindingId,
   AuditConceptId,
@@ -42,6 +43,7 @@ import type {
   SnapshotId,
   StateCode,
   StepId,
+  SubdomainId,
   SurfaceId,
   TerminalId,
   TokenId,
@@ -55,6 +57,7 @@ import {
   asAccessDomainId,
   asAccessKeyId,
   asAccountId,
+  asApexDomainId,
   asAuditId,
   asAuditFindingId,
   asAuditConceptId,
@@ -92,6 +95,7 @@ import {
   asSnapshotId,
   asStepId,
   asStateCode,
+  asSubdomainId,
   asSurfaceId,
   asTerminalId,
   asTokenId,
@@ -133,6 +137,8 @@ const crossAsAccessKey: AccessKeyId = accountId;
 const crossAsAccount: AccountId = accessKeyId;
 
 const hostId: HostId = asHostId('ledger.factory-wager.com');
+const apexDomainId: ApexDomainId = asApexDomainId('factory-wager.com');
+const subdomainId: SubdomainId = asSubdomainId('ledger');
 const accessDomainId: AccessDomainId = asAccessDomainId('score.factory-wager.com/portal');
 const surfaceId: SurfaceId = asSurfaceId('ledger');
 
@@ -142,6 +148,16 @@ const crossHostAsAccessDomain: AccessDomainId = hostId;
 const crossAccessDomainAsHost: HostId = accessDomainId;
 // @ts-expect-error — SurfaceId is not a HostId
 const crossSurfaceAsHost: HostId = surfaceId;
+// @ts-expect-error — ApexDomainId is not a HostId
+const crossApexAsHost: HostId = apexDomainId;
+// @ts-expect-error — HostId is not an ApexDomainId
+const crossHostAsApex: ApexDomainId = hostId;
+// @ts-expect-error — SubdomainId is not a SurfaceId (DNS label ≠ inventory key)
+const crossSubdomainAsSurface: SurfaceId = subdomainId;
+// @ts-expect-error — SurfaceId is not a SubdomainId
+const crossSurfaceAsSubdomain: SubdomainId = surfaceId;
+// @ts-expect-error — SubdomainId is not a HostId
+const crossSubdomainAsHost: HostId = subdomainId;
 
 // @ts-expect-error — OperationId is not a JobId
 const crossAsJob: JobId = operationId;
@@ -227,7 +243,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 50-value catalog (47 IDs) ───────
+// ─── 6. Aggregate unions cover the complete 52-value catalog (49 IDs) ───────
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -275,6 +291,8 @@ const everyId: readonly AnyId[] = [
   asPortalAccountId('portal-account'),
   asLinkNonceId('nonce'),
   asHostId('ledger.factory-wager.com'),
+  asApexDomainId('factory-wager.com'),
+  asSubdomainId('ledger'),
   asSurfaceId('ledger'),
   asAccessDomainId('score.factory-wager.com/portal'),
 ];
