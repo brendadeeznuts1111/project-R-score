@@ -46,11 +46,11 @@ describe('packages-graph-map', () => {
     const bare = resolveMetaImportPath('packages/p2p/src/x.ts', 'bun', '/r');
     expect(bare).toEqual({ kind: 'bare', name: 'bun' });
     const local = resolveMetaImportPath(
-      'packages/ab-testing/src/cookie-manager.ts',
-      './manager',
+      'packages/guards/src/bun-first-guard.ts',
+      './index',
       '/r'
     );
-    expect(local).toEqual({ kind: 'file', path: 'packages/ab-testing/src/manager' });
+    expect(local).toEqual({ kind: 'file', path: 'packages/guards/src/index' });
   });
 
   test('mermaid export includes edge weights', () => {

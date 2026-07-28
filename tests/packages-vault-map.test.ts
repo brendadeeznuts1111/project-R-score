@@ -7,8 +7,8 @@ describe('packages-vault-map', () => {
     const map = await buildPackageVaultMap(process.cwd(), [
       'p2p',
       'business',
-      'ab-testing',
-      'package',
+      'guards',
+      'rip',
     ]);
     expect(map.summary.packagesWithEnv).toBeGreaterThan(0);
     expect(map.envHits.some(h => h.envKey === 'REDIS_URL')).toBe(true);

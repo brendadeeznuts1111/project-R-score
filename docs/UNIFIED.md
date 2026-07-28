@@ -56,7 +56,7 @@ Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalog
 
 | Mechanism | Where | Rule |
 |-----------|--------|------|
-| `workspaces.packages` | root `package.json` | Only listed globs are monorepo members: `packages/*`, `projects/active/sports-terminal-os`, `lib/*`. Nested products under `projects/**` are separate install roots unless promoted. |
+| `workspaces.packages` | root `package.json` | Only listed globs are monorepo members: `packages/*`, `projects/active/sports-terminal-os`, `lib/*`. Nested products under `projects/**` are separate install roots unless promoted. Gate: `bun run validate:workspaces` (homebase-only — does not require experimental/archive trees). Archived packages live under `projects/archive/factorywager-packages/`. |
 | `catalog` | root `package.json` | **Version SSOT** for shared third-party pins (`typescript`, `@types/bun`, `bun-types`, `zod`, React stack). Prefer exact pins (matches `install.exact`). |
 | `catalog:` / `catalog:<name>` | any **root workspace** `package.json` | Consumers of shared pins **must** use the protocol — do not re-declare floating `^` / `latest` for cataloged names. |
 | `workspace:*` | root or packages | Link **internal** packages only when the root (or another package) imports them. Workspace membership alone is enough for `--filter` / discovery — do not list unused stubs in root `dependencies`. Apps like sports-terminal-os need not be root deps. |

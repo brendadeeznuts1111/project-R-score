@@ -2,6 +2,11 @@
   "name": "@factorywager/guards",
   "version": "0.1.0",
   "private": true,
-  "module": "src/index.ts",
-  "type": "module"
+  "type": "module",
+  "description": "Bun-first compliance guards for FactoryWager harness tooling",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "module": "./src/index.ts"
 }

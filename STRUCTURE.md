@@ -112,7 +112,8 @@ From root `package.json` `workspaces.packages` (SSOT — do not invent extra glo
 - `lib/*` — currently only `lib/shared` (`name: shared`); product code under other `lib/**` paths is imported relatively, not as workspace packages
 
 **Root `workspace:*` deps (imported from spine):** `docs-tools`, `guards`, `registry-client`, `rip`.  
-**Workspace-only (not root deps):** `ab-testing`, `business`, `p2p`, `versioning`, `shared`, `sports-terminal-os` — still installable via globs / `bun run --filter`; archive or wire when a consumer appears.
+**Workspace-only (not root deps):** `business`, `p2p`, `@factorywager/shared` (`lib/shared`), `sports-terminal-os`.  
+**Archived (out of root install graph):** `projects/archive/factorywager-packages/{ab-testing,versioning}` — revive only with a real consumer.
 
 **Not root workspaces:** nested monorepos under `projects/**` (e.g. `projects/active/factorywager/registry`) keep their **own** `workspaces` / `catalog` and own `bun install`. Shared third-party pins for root members use root `catalog` + `catalog:` — see [`docs/UNIFIED.md`](docs/UNIFIED.md#catalogs-and-workspace-protocols).
 
