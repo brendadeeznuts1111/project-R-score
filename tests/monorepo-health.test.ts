@@ -1,10 +1,14 @@
 // @see https://bun.com/docs/test — bun:test
+// @see https://bun.com/docs/runtime/transpiler — Bun.Transpiler
 import { describe, expect, test } from 'bun:test';
 import {
   computeMonorepoHealth,
   countCycles,
   gradeMonorepoHealth,
+  loaderForPath,
   parseTestSummary,
+  scanSourceExports,
+  scanSourceImports,
 } from '../lib/harness/monorepo-health.ts';
 
 describe('monorepo-health formula', () => {
@@ -83,5 +87,50 @@ describe('monorepo-health helpers', () => {
     expect(s.pass).toBe(27);
     expect(s.fail).toBe(2);
     expect(s.testFailureRate).toBeCloseTo((2 / 29) * 100, 5);
+  });
+
+  test('loaderForPath maps extensions', () => {
+    expect(loaderForPath('a.ts')).toBe('ts');
+    expect(loaderForPath('a.tsx')).toBe('tsx');
+    expect(loaderForPath('a.jsx')).toBe('jsx');
+    expect(loaderForPath('a.js')).toBe('js');
+  });
+});
+
+describe('Bun.Transpiler scan for import graph', () => {
+  test('scanSourceImports finds ESM, require, and dynamic import; skips type-only', () => {
+    const code = `
+      import React from 'react';
+      import type { Node } from 'typescript';
+      import { joinPath } from '../path-bun.ts';
+      const cjs = require('./cjs-dep.ts');
+      const dyn = import('./lazy.ts');
+      export const name = 'x';
+    `;
+    const imports = scanSourceImports(code, 'ts');
+    const paths = imports.map(i => i.path);
+    expect(paths).toContain('react');
+    expect(paths).toContain('../path-bun.ts');
+    expect(paths).toContain('./cjs-dep.ts');
+    expect(paths).toContain('./lazy.ts');
+    // type-only import ignored by Bun.Transpiler.scan
+    expect(paths.some(p => p === 'typescript')).toBe(false);
+
+    const kinds = new Map(imports.map(i => [i.path, i.kind]));
+    expect(kinds.get('react')).toBe('import-statement');
+    expect(kinds.get('./cjs-dep.ts')).toBe('require-call');
+    expect(kinds.get('./lazy.ts')).toBe('dynamic-import');
+  });
+
+  test('scanSourceExports lists value exports only', () => {
+    const code = `
+      export type T = string;
+      export const y = 1;
+      export function f() {}
+    `;
+    const exports = scanSourceExports(code, 'ts');
+    expect(exports).toContain('y');
+    expect(exports).toContain('f');
+    expect(exports).not.toContain('T');
   });
 });

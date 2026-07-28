@@ -3,32 +3,41 @@
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
+// @see https://bun.com/docs/runtime/utils#bun-inspect-custom — Bun.inspect.custom
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect (depth)
 /**
  * Ops limit check — detect partner account limit raises (+ CLV / multi-factor).
+ *
+ * Multi/clv output uses LimitRaiseReport:
+ *   console.log(report) → [Bun.inspect.custom]
+ *     · Bun.inspect.table(rows, properties)
+ *     · deep Bun.inspect(arrays · Uint8Array digests)
  *
  *   bun run ops:limits:check
  *   bun run ops:limits:check --partner partner-42 --clv
  *   bun run ops:limits:check --multi          # multi-factor score + context
  *   bun run ops:limits:check --force-seed --multi
  *   bun run ops:limits:demo                   # force-seed --multi
+ *   bun --console-depth=6 run ops:limits:demo
  *
  * DB: operations.db (schema via ensureAccountLimitsSchema on migrate).
  */
 import {
   AccountLimitsRepository,
   ensureAccountLimitsSchema,
-  formatEnrichedLimitRaises,
-  formatLimitRaisesTable,
+  formatChangeSummary,
+  formatLimitChangeTable,
   seedAccountLimitsDemo,
   type EnrichedLimitRaise,
   type LimitRaise,
 } from '../lib/account-limits-repo.ts';
 import { openOperationsDb } from '../lib/operations/db.ts';
 import {
-  formatMultiFactorRaises,
   PartnerAnalyticsRepository,
   type MultiFactorEnrichedRaise,
 } from '../lib/operations/partner-analytics-repo.ts';
+import { LimitRaiseReport, printLimitRaiseReport } from '../lib/operations/limit-raise-report.ts';
 
 const HELP = `Usage: ops-check-limits.ts [opts]
 
@@ -41,7 +50,8 @@ const HELP = `Usage: ops-check-limits.ts [opts]
   --alerts             Also show recent alert messages
   --seed               Seed demo limit/CLV/line/context rows if missing
   --force-seed         Re-seed demo for the target partner
-  --json               Output raw JSON
+  --json               Output raw JSON (includes tableProof + deep payload)
+  --inspect            Force LimitRaiseReport Bun.inspect.custom tables (default for multi/clv)
   --help               This message
 `;
 
@@ -56,6 +66,7 @@ function parseArgs(): {
   capture: boolean;
   seed: boolean;
   forceSeed: boolean;
+  inspect: boolean;
 } {
   const args = Bun.argv.slice(2);
   const flags: Record<string, string> = {};
@@ -73,17 +84,20 @@ function parseArgs(): {
     i++;
   }
   const multi = flags.multi === 'true';
+  const clv = multi || flags.clv === 'true';
   return {
     partner: flags.partner ?? null,
     hours: flags.hours ? Number(flags.hours) : 24,
     alerts: flags.alerts === 'true',
     json: flags.json === 'true',
     all: flags.all === 'true',
-    clv: multi || flags.clv === 'true',
+    clv,
     multi,
     capture: flags.capture === 'true',
     seed: flags.seed === 'true',
     forceSeed: flags['force-seed'] === 'true',
+    // default on for multi/clv so Bun.inspect.table + inspect.custom always fire
+    inspect: flags.inspect === 'true' || clv || multi || flags.inspect !== 'false',
   };
 }
 
@@ -154,12 +168,19 @@ function main(): void {
   }
 
   if (opts.json) {
+    const partners = allRaises.map(entry =>
+      new LimitRaiseReport(entry.raises, {
+        nodeId: entry.node_id,
+        hours: opts.hours,
+        multi: opts.multi || opts.clv,
+      }).toJSON()
+    );
     const output: Record<string, unknown> = {
       since_hours: opts.hours,
       clv: opts.clv,
       multi: opts.multi,
       total_raises: allRaises.reduce((s, r) => s + r.raises.length, 0),
-      partners: allRaises,
+      partners,
     };
     if (opts.alerts) {
       const alertsMap: Record<string, unknown[]> = {};
@@ -182,13 +203,17 @@ function main(): void {
   }
 
   for (const entry of allRaises) {
-    console.log(`\n  🚀 Limit raises — ${entry.node_id} (last ${opts.hours}h)`);
-    if (opts.multi) {
-      console.log(formatMultiFactorRaises(entry.raises as MultiFactorEnrichedRaise[]));
-    } else if (opts.clv) {
-      console.log(formatEnrichedLimitRaises(entry.raises as EnrichedLimitRaise[]));
+    if (opts.inspect || opts.multi || opts.clv) {
+      // Bun.inspect.custom → inspect.table(data, properties) + deep arrays/Uint8Array
+      printLimitRaiseReport(entry.raises, {
+        nodeId: entry.node_id,
+        hours: opts.hours,
+        multi: opts.multi || opts.clv,
+      });
     } else {
-      console.log(formatLimitRaisesTable(entry.raises as LimitRaise[]));
+      console.log(`\n  🚀 Limit raises — ${entry.node_id} (last ${opts.hours}h)`);
+      console.log(formatLimitChangeTable(entry.raises as LimitRaise[]));
+      console.log(formatChangeSummary(entry.raises as LimitRaise[]));
     }
   }
 

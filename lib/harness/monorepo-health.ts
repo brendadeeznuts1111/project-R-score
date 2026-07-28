@@ -2,7 +2,9 @@
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
-// @see https://bun.com/docs/bundler/index#metafile — Bun.build metafile
+// @see https://bun.com/docs/runtime/transpiler — Bun.Transpiler
+// @see https://bun.com/docs/runtime/transpiler#scan — .scan() imports/exports
+// @see https://bun.com/docs/runtime/transpiler#scanimports — .scanImports()
 // @see https://bun.com/docs/runtime/archive#quickstart — Bun.Archive
 /**
  * Monorepo health score (0–100) — Bun-native metrics for FactoryWager.
@@ -15,6 +17,7 @@
  *   − (cyclicDependencyCount × 1.5)
  *   + (testCoveragePercent × 0.2)
  *
+ * Import graph: Bun.Transpiler.scan / scanImports (not regex).
  * Target: score ≥ 90. CLI: `bun tools/monorepo-health.ts`
  */
 import { joinPath } from '../path-bun.ts';
@@ -251,8 +254,58 @@ export function countCycles(adjacency: Map<string, string[]>): number {
   return cycles;
 }
 
-const REL_IMPORT_RE =
-  /(?:import|export)(?:[\s\S]*?\sfrom\s*|[\s]+)['"](\.[^'"]+)['"]|require\s*\(\s*['"](\.[^'"]+)['"]\s*\)/g;
+type TranspilerLoader = 'ts' | 'tsx' | 'js' | 'jsx';
+
+/** Cached transpilers — constructor loader is fixed; we pick by file extension. */
+const transpilerByLoader: Record<TranspilerLoader, Bun.Transpiler> = {
+  ts: new Bun.Transpiler({ loader: 'ts', target: 'bun' }),
+  tsx: new Bun.Transpiler({ loader: 'tsx', target: 'bun' }),
+  js: new Bun.Transpiler({ loader: 'js', target: 'bun' }),
+  jsx: new Bun.Transpiler({ loader: 'jsx', target: 'bun' }),
+};
+
+/** Map file path → Bun.Transpiler loader. */
+export function loaderForPath(path: string): TranspilerLoader {
+  if (path.endsWith('.tsx')) return 'tsx';
+  if (path.endsWith('.jsx')) return 'jsx';
+  if (path.endsWith('.js') || path.endsWith('.mjs') || path.endsWith('.cjs')) return 'js';
+  return 'ts';
+}
+
+export type ScannedImport = {
+  path: string;
+  kind: string;
+};
+
+/**
+ * Bun.Transpiler import inventory (type-only imports ignored by Bun).
+ *
+ * Prefer **scanImports** over **scan**: on Bun 1.4, `scan()` can omit
+ * `require()` edges while `scanImports()` still reports `require-call`.
+ */
+export function scanSourceImports(code: string, loader: TranspilerLoader = 'ts'): ScannedImport[] {
+  const t = transpilerByLoader[loader];
+  try {
+    return t.scanImports(code).map(i => ({ path: i.path, kind: String(i.kind) }));
+  } catch {
+    try {
+      const { imports } = t.scan(code);
+      return imports.map(i => ({ path: i.path, kind: String(i.kind) }));
+    } catch {
+      return [];
+    }
+  }
+}
+
+/** Export names from Bun.Transpiler.scan (type-only exports ignored). */
+export function scanSourceExports(code: string, loader: TranspilerLoader = 'ts'): string[] {
+  const t = transpilerByLoader[loader];
+  try {
+    return t.scan(code).exports ?? [];
+  } catch {
+    return [];
+  }
+}
 
 /** Resolve a relative import to an existing absolute path (ts/tsx/index). */
 export async function resolveRelativeImport(
@@ -276,8 +329,8 @@ export async function resolveRelativeImport(
 }
 
 /**
- * Relative-import graph for dead-code reachability + cycle count.
- * More reliable than metafile+external:* for a multi-package monorepo.
+ * Import graph via Bun.Transpiler.scan — orphan dead-code + cycle count.
+ * Relative specs resolve into the scanned file set; package imports are tallied only.
  */
 export async function analyzeImportGraph(
   allFiles: string[],
@@ -287,6 +340,7 @@ export async function analyzeImportGraph(
   deadFileCount: number;
   cyclicDependencyCount: number;
   entrypointsUsed: string[];
+  packageImportEdges: number;
   notes: string[];
 }> {
   const notes: string[] = [];
@@ -302,11 +356,15 @@ export async function analyzeImportGraph(
       deadFileCount: 0,
       cyclicDependencyCount: 0,
       entrypointsUsed: [],
+      packageImportEdges: 0,
       notes,
     };
   }
 
   const adjacency = new Map<string, string[]>();
+  let packageImportEdges = 0;
+  let scanErrors = 0;
+
   for (const file of allFiles) {
     let text: string;
     try {
@@ -315,19 +373,29 @@ export async function analyzeImportGraph(
       adjacency.set(file, []);
       continue;
     }
+
+    let imports: ScannedImport[];
+    try {
+      imports = scanSourceImports(text, loaderForPath(file));
+    } catch {
+      scanErrors++;
+      adjacency.set(file, []);
+      continue;
+    }
+
     const deps: string[] = [];
-    REL_IMPORT_RE.lastIndex = 0;
-    let m: RegExpExecArray | null;
-    while ((m = REL_IMPORT_RE.exec(text)) !== null) {
-      const spec = m[1] ?? m[2];
-      if (!spec) continue;
+    for (const imp of imports) {
+      const spec = imp.path;
+      if (!spec.startsWith('.')) {
+        packageImportEdges++;
+        continue;
+      }
       const resolved = await resolveRelativeImport(file, spec);
       if (resolved && fileSet.has(resolved)) deps.push(resolved);
     }
     adjacency.set(file, deps);
   }
 
-  // Dead = never the target of a relative import (orphan), excluding entrypoints.
   const imported = new Set<string>();
   for (const deps of adjacency.values()) {
     for (const d of deps) imported.add(d);
@@ -341,18 +409,19 @@ export async function analyzeImportGraph(
   }
   const deadCodePercent = scoped.length ? (deadFileCount / scoped.length) * 100 : 0;
 
-  // Cap cycle signal: unique back-edges can overcount; use min(count, files/10)
   const rawCycles = countCycles(adjacency);
   const cyclicDependencyCount = Math.min(rawCycles, Math.max(5, Math.floor(allFiles.length / 50)));
   notes.push(
-    `dead=orphan (never imported); cycles raw=${rawCycles} capped=${cyclicDependencyCount}`
+    `import graph via Bun.Transpiler.scanImports; dead=orphan; package edges=${packageImportEdges}; cycles raw=${rawCycles} capped=${cyclicDependencyCount}`
   );
+  if (scanErrors > 0) notes.push(`transpiler scan errors on ${scanErrors} file(s)`);
 
   return {
     deadCodePercent,
     deadFileCount,
     cyclicDependencyCount,
     entrypointsUsed: existing,
+    packageImportEdges,
     notes,
   };
 }
@@ -428,6 +497,9 @@ export async function collectMonorepoHealth(
     cyclicDependencyCount = graph.cyclicDependencyCount;
     entrypointsUsed = graph.entrypointsUsed;
     notes.push(...graph.notes);
+    if (graph.packageImportEdges > 0) {
+      notes.push(`package import edges (non-relative): ${graph.packageImportEdges}`);
+    }
   } else {
     notes.push('import-graph analysis skipped (--no-build)');
   }

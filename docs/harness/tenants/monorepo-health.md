@@ -28,10 +28,12 @@ Health = 100
 | Metric | Source |
 |--------|--------|
 | duplicateDepCount | workspace + root `package.json` dependency version sets |
-| deadCodePercent / cycles | `Bun.build({ metafile: true })` over barrel entrypoints |
+| deadCodePercent / cycles | **`Bun.Transpiler.scanImports`** (prefers over `scan` — captures `require()` on Bun 1.4) · ESM + dynamic `import()` · type-only ignored · relative edges for orphans/cycles |
 | largeFilePercent | `Bun.Glob` + line count (&gt; 200 default) |
 | testFailureRate | optional `--with-tests` focused `bun test` sample |
 | testCoveragePercent | reserved (0 until coverage parse wired) |
+
+**Not a full AST.** Bun has no public ESTree walk API; `scan` / `scanImports` are the native module-graph surface ([transpiler](https://bun.com/docs/runtime/transpiler)). Cyclomatic complexity still uses the TypeScript compiler API.
 
 ## CLI
 
