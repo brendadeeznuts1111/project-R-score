@@ -120,7 +120,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli vault health [--update] Vault-map inventory + report-shape gate
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
-  portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
+  portal-cli dashboard [path]        Print/open portal board URL (default: /portal/tools/)
   portal-cli help                    This message
 
   bun run portal-cli snapshot run --scope prediction
@@ -131,19 +131,17 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli pm pack --dry-run
   bun run portal-cli pm graph
   bun run portal-cli dashboard
-  bun run portal-cli dashboard --view=packages --open
   bun run portal:probe
 
-Dashboard boards (chrome overflow + weave SSOT · nav badges from registry):
-  /portal/tools/           CLI hub · bake freshness · capability subset
-  /portal/vault/           vault health bake · gate: vault health (badge: active items)
+Dashboard boards (chrome overflow + weave SSOT):
+  /portal/tools/           CLI hub (this map)
+  /portal/vault/           vault health bake · gate: vault health
   /portal/env/             vault-map · secret map
-  /portal/packages/        packages graph · pm graph (badge: package count)
-  /portal/failures/        test failures bake (badge: failure count)
-  /portal/health/          system health (badge: monorepo score)
+  /portal/packages/        packages graph · pm graph
+  /portal/failures/        test failures bake
+  /portal/health/          system health
   /portal/ops/             ops-summary rollup
   /registry/prediction/report/  prediction report
-  Views: tools|packages|vault|env|failures|health|ops|prediction|capabilities|…
 
 Vault health (offline SSOT; live bake separate):
   vault health                 # bun test tests/vault-health.test.ts
@@ -276,7 +274,7 @@ async function printPackagesGraphTable(): Promise<void> {
         plane: p.id,
         label: p.label,
         count: p.count,
-        note: p.note.length > 56 ? `${p.note.slice(0, 53)}…` : p.note,
+        note: p.note.length > 56 ? p.note.slice(0, 53) + '…' : p.note,
       })),
       ['plane', 'label', 'count', 'note']
     );
@@ -312,7 +310,19 @@ async function printPackagesGraphTable(): Promise<void> {
     const theme = surfaces.portal.theme;
     console.log('\n── portal chrome / pages / brand ──');
     console.log(
-      `pages=${pages.length}  chromeComponents=${chrome.length}  modules=${surfaces.portal.modules?.length ?? 0}  theme(jsonc=${theme?.jsonc ? 'y' : 'n'},tokens=${theme?.tokensCss ? 'y' : 'n'},style=${theme?.styleCss ? 'y' : 'n'})`
+      'pages=' +
+        pages.length +
+        '  chromeComponents=' +
+        chrome.length +
+        '  modules=' +
+        (surfaces.portal.modules?.length ?? 0) +
+        '  theme(jsonc=' +
+        (theme?.jsonc ? 'y' : 'n') +
+        ',tokens=' +
+        (theme?.tokensCss ? 'y' : 'n') +
+        ',style=' +
+        (theme?.styleCss ? 'y' : 'n') +
+        ')'
     );
     if (chrome.length) {
       logTable(
@@ -321,11 +331,14 @@ async function printPackagesGraphTable(): Promise<void> {
       );
     }
     if (pages.length) {
-      console.log(`pages: ${pages.map(p => p.slug || 'home').join(', ')}`);
+      console.log('pages: ' + pages.map(p => p.slug || 'home').join(', '));
     }
     if (surfaces.brand?.tenants?.length) {
       console.log(
-        `brand tenants: ${surfaces.brand.tenants.join(', ')}  assets=${surfaces.brand.assets?.length ?? 0}`
+        'brand tenants: ' +
+          surfaces.brand.tenants.join(', ') +
+          '  assets=' +
+          (surfaces.brand.assets?.length ?? 0)
       );
     }
   }
@@ -336,9 +349,13 @@ async function printPackagesGraphTable(): Promise<void> {
     const scoped = surfaces.registry.scopedLatest ?? [];
     console.log('\n── registry bake plane ──');
     console.log(
-      `topLevelJson=${top.length}  storagePackages=${storage.length}  scopedLatest=${scoped.length}`
+      'topLevelJson=' +
+        top.length +
+        '  storagePackages=' +
+        storage.length +
+        '  scopedLatest=' +
+        scoped.length
     );
-    // Show kind rollup
     const byKind = new Map<string, number>();
     for (const a of top) {
       const k = a.kind ?? '(no-kind)';
@@ -349,15 +366,15 @@ async function printPackagesGraphTable(): Promise<void> {
       .map(([kind, n]) => ({ kind, count: n }));
     if (kindRows.length) {
       logTable(kindRows.slice(0, 20), ['kind', 'count']);
-      if (kindRows.length > 20) console.log(`  … +${kindRows.length - 20} more kinds`);
+      if (kindRows.length > 20) console.log('  … +' + (kindRows.length - 20) + ' more kinds');
     }
     if (storage.length) {
-      console.log(`storage: ${storage.join(', ')}`);
+      console.log('storage: ' + storage.join(', '));
     }
   }
 
-  console.log(`\nRebake: bun run audit:packages -- --bake`);
-  console.log(`Board:  /portal/packages/  ·  chrome: /registry/portal-chrome.json`);
+  console.log('\nRebake: bun run audit:packages -- --bake');
+  console.log('Board:  /portal/packages/  ·  chrome: /registry/portal-chrome.json');
 }
 
 async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promise<void> {
@@ -504,71 +521,16 @@ async function main(): Promise<void> {
 
   if (cmd === 'dashboard') {
     // Print (and optionally open) a portal board URL — boards are static Pages paths.
-    // --view=packages|vault|tools|env|failures|health|ops|prediction maps known boards.
-    const VIEW_PATHS: Record<string, string> = {
-      tools: '/portal/tools/',
-      packages: '/portal/packages/',
-      vault: '/portal/vault/',
-      env: '/portal/env/',
-      failures: '/portal/failures/',
-      health: '/portal/health/',
-      ops: '/portal/ops/',
-      compliance: '/portal/compliance/',
-      limits: '/portal/limits/',
-      toc: '/portal/toc/',
-      skills: '/portal/skills/',
-      catalog: '/portal/catalog/',
-      dashboard: '/portal/dashboard/',
-      dod: '/portal/dod/',
-      monitoring: '/monitoring/',
-      prediction: '/registry/prediction/report/',
-      capabilities: '/portal/tools/#capabilities',
-    };
     const base =
       Bun.env.PORTAL_BASE_URL?.replace(/\/$/, '') ||
       Bun.env.SNAPSHOT_BASE_URL?.replace(/\/$/, '') ||
       'https://score.factory-wager.com';
-    const viewFlag = argv.find(a => a.startsWith('--view='));
-    const viewIdx = argv.indexOf('--view');
-    const view =
-      viewFlag?.slice('--view='.length) ||
-      (viewIdx >= 0 ? argv[viewIdx + 1] : undefined) ||
-      undefined;
-    let pathArg =
-      view && VIEW_PATHS[view]
-        ? VIEW_PATHS[view]
-        : argv[1] && !argv[1].startsWith('-')
-          ? argv[1]
-          : '/portal/tools/';
-    if (view && !VIEW_PATHS[view] && !pathArg.startsWith('/')) {
-      cliError(
-        `Unknown dashboard view "${view}". Known: ${Object.keys(VIEW_PATHS).sort().join(', ')}`
-      );
-    }
-    const hashIdx = pathArg.indexOf('#');
-    const hash = hashIdx >= 0 ? pathArg.slice(hashIdx) : '';
-    const pathOnly = hashIdx >= 0 ? pathArg.slice(0, hashIdx) : pathArg;
-    const path = pathOnly.startsWith('/') ? pathOnly : `/${pathOnly}`;
-    const withSlash = path.endsWith('/') || path.includes('.') || hash ? path : `${path}/`;
-    const url = `${base}${withSlash}${hash}`;
+    const pathArg = argv[1] && !argv[1].startsWith('-') ? argv[1] : '/portal/tools/';
+    const path = pathArg.startsWith('/') ? pathArg : `/${pathArg}`;
+    const url = `${base}${path.endsWith('/') || path.includes('.') ? path : `${path}/`}`;
     const open = argv.includes('--open') || argv.includes('-o');
-    if (argv.includes('--help') || argv.includes('-h')) {
-      console.log(`Usage: portal-cli dashboard [path|/portal/…] [--view=name] [--open]
-
-Views: ${Object.keys(VIEW_PATHS).sort().join(', ')}
-
-Examples:
-  portal-cli dashboard
-  portal-cli dashboard --view=packages --open
-  portal-cli dashboard /portal/vault/
-  PORTAL_BASE_URL=http://127.0.0.1:8787 portal-cli dashboard --view=tools --open
-`);
-      return;
-    }
     console.log(url);
-    console.log(
-      'Local serve: bun run serve:public:hot  →  http://127.0.0.1:8787' + withSlash + hash
-    );
+    console.log('Local serve: bun run serve:public:hot  →  http://127.0.0.1:8787' + path);
     if (open) {
       const opener =
         process.platform === 'darwin'

@@ -8,8 +8,10 @@ import {
   shareItemArgs,
   shareVaultArgs,
   splitVaultTitle,
+  summarizeAutofill,
   trashArgsFromTarget,
   viewArgsFromTarget,
+  type AutofillRow,
 } from '../tools/portal-secret.ts';
 
 describe('portal-secret helpers', () => {
@@ -145,5 +147,33 @@ describe('portal-secret move/trash/share helpers', () => {
     expect(() => shareVaultArgs('  ', 'a@b.c', 'viewer')).toThrow(/vault/);
     expect(() => shareVaultArgs('portal', 'a@b.c', 'owner')).toThrow(/role/);
     expect(() => shareVaultArgs('portal', 'not-an-email', 'editor')).toThrow(/email/);
+  });
+});
+
+describe('portal-secret autofill report', () => {
+  const row = (over: Partial<AutofillRow>): AutofillRow => ({
+    title: 'T',
+    envKey: 'KEY',
+    label: null,
+    color: null,
+    glyph: null,
+    ok: true,
+    ...over,
+  });
+
+  test('summarizeAutofill splits injected vs missing with errors', () => {
+    const summary = summarizeAutofill([
+      row({ envKey: 'A', secret: 's3cret' }),
+      row({ envKey: 'B', ok: false, error: 'exit 1' }),
+      row({ envKey: 'C', ok: false }),
+    ]);
+    expect(summary.injected).toEqual(['A']);
+    expect(summary.missing).toEqual(['B', 'C']);
+    expect(summary.errors).toEqual({ B: 'exit 1' });
+  });
+
+  test('summarizeAutofill never surfaces secret values', () => {
+    const summary = summarizeAutofill([row({ envKey: 'A', secret: 's3cret' })]);
+    expect(JSON.stringify(summary)).not.toContain('s3cret');
   });
 });

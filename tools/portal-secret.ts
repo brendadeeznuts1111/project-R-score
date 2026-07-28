@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/blog/bun-v1.3.13#bun-test-isolate-and-bun-test-parallel — --parallel
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
@@ -54,8 +55,11 @@ Subcommands:
                         pass-cli run (template dotenv → child env)
   inject -i <in> [-o out] [-f]
                         pass-cli inject (env.template → file/stdout)
-  autofill --vault <v> -- <cmd…>
+  autofill --vault <v> [--json] [--parallel] [-- <cmd…>]
                         List vault items; inject each password as ENV from title
+                        --parallel fetches items concurrently (Promise.all)
+                        --json prints {injected, missing, errors} — no values, jq-safe;
+                        omit '-- <cmd>' for report-only mode (e.g. | jq '.missing')
                         Status lines use config/vault-map.toml label/color/glyph
                         Prefer: secret run --env-file env.template -- <cmd>
   map [--json]          Print vault-map bundle (TOML SSOT + display chrome)
@@ -359,16 +363,53 @@ async function cmdMap(rest: string[]): Promise<void> {
   }
 }
 
+export type AutofillRow = {
+  title: string;
+  envKey: string;
+  label: string | null;
+  color: string | null;
+  glyph: string | null;
+  ok: boolean;
+  secret?: string;
+  error?: string;
+};
+
+/**
+ * Pure summary for --json reports — injected/missing/errors only.
+ * NEVER includes secret values, so the report is safe to pipe (jq '.missing').
+ */
+export function summarizeAutofill(rows: AutofillRow[]): {
+  injected: string[];
+  missing: string[];
+  errors: Record<string, string>;
+} {
+  const injected: string[] = [];
+  const missing: string[] = [];
+  const errors: Record<string, string> = {};
+  for (const r of rows) {
+    if (r.ok) injected.push(r.envKey);
+    else {
+      missing.push(r.envKey);
+      if (r.error) errors[r.envKey] = r.error;
+    }
+  }
+  return { injected, missing, errors };
+}
+
 async function cmdAutofill(rest: string[]): Promise<void> {
   const { before, after } = takeAfterDashDash(rest);
   const vault = flagValue(before, '--vault') ?? flagValue(before, '--vault-name');
-  if (!vault || after.length === 0) {
+  const json = hasFlag(before, '--json');
+  const parallel = hasFlag(before, '--parallel');
+  if (!vault || (after.length === 0 && !json)) {
     cliError(
-      'Usage: portal secret autofill --vault <vault> -- <command> [args…]\n' +
+      'Usage: portal secret autofill --vault <vault> [--json] [--parallel] [-- <command> [args…]]\n' +
+        '--json prints a report WITHOUT secret values (injected/missing/errors) — jq-safe.\n' +
         'Prefer template path: portal secret run --env-file env.template -- <cmd>'
     );
   }
 
+  const start = Date.now();
   const { code, stdout } = await capturePassCli(['item', 'list', vault, '--output', 'json']);
   await exitOnFail(code);
 
@@ -390,62 +431,101 @@ async function cmdAutofill(rest: string[]): Promise<void> {
     mapBundle = null;
   }
 
-  const injected: Record<string, string> = {};
-  const statusRows: string[] = [];
-  for (const title of titles) {
+  async function fetchRow(title: string): Promise<AutofillRow> {
     const mapped = mapBundle
-      ? entryForVaultItem(mapBundle, vault, title, envNameFromTitle)
+      ? entryForVaultItem(mapBundle, vault!, title, envNameFromTitle)
       : undefined;
     const field = mapped?.field || 'password';
-    const { code: vc, stdout: secret } = await capturePassCli([
-      'item',
-      'view',
-      '--vault-name',
-      vault,
-      '--item-title',
+    const envKey = mapped?.envKey ?? envNameFromTitle(title);
+    const row: AutofillRow = {
       title,
-      '--field',
-      field,
-    ]);
-    if (vc !== 0) {
-      statusRows.push(
-        formatVaultStatusLine(
-          {
-            label: mapped?.label ?? title,
-            envKey: mapped?.envKey ?? envNameFromTitle(title),
-            color: mapped?.color ?? null,
-            glyph: mapped?.glyph ?? null,
-          },
-          false
-        )
-      );
-      console.error(
-        `warn: skip "${title}" (item view --field ${field} exit ${vc}; try note/username)`
-      );
-      continue;
+      envKey,
+      label: mapped?.label ?? null,
+      color: mapped?.color ?? null,
+      glyph: mapped?.glyph ?? null,
+      ok: false,
+    };
+    if (!envKey) return row;
+    try {
+      const { code: vc, stdout: secret } = await capturePassCli([
+        'item',
+        'view',
+        '--vault-name',
+        vault!,
+        '--item-title',
+        title,
+        '--field',
+        field,
+      ]);
+      if (vc !== 0) {
+        row.error = `item view --field ${field} exit ${vc}`;
+        return row;
+      }
+      row.ok = true;
+      row.secret = secret.trim();
+      return row;
+    } catch (e) {
+      row.error = e instanceof Error ? e.message : String(e);
+      return row;
     }
-    const name = mapped?.envKey ?? envNameFromTitle(title);
-    if (!name) continue;
-    injected[name] = secret.trim();
-    statusRows.push(
-      formatVaultStatusLine(
-        {
-          label: mapped?.label ?? name,
-          envKey: name,
-          color: mapped?.color ?? null,
-          glyph: mapped?.glyph ?? null,
-        },
-        true
-      )
+  }
+
+  // --parallel: one pass-cli spawn per item, concurrently; order preserved.
+  const rows: AutofillRow[] = parallel
+    ? await Promise.all(titles.map(fetchRow))
+    : await (async () => {
+        const out: AutofillRow[] = [];
+        for (const t of titles) out.push(await fetchRow(t));
+        return out;
+      })();
+
+  const usable = rows.filter(r => r.envKey);
+  const summary = summarizeAutofill(usable);
+
+  if (json) {
+    // Machine report on stdout. Secret values are never serialized.
+    console.log(
+      JSON.stringify({
+        vault,
+        injected: summary.injected,
+        missing: summary.missing,
+        errors: summary.errors,
+        fetchedAt: new Date().toISOString(),
+        durationMs: Date.now() - start,
+        parallel,
+      })
     );
   }
 
-  const keys = Object.keys(injected);
-  if (keys.length === 0) {
+  console.error(
+    `portal secret autofill: injected ${summary.injected.length} env key(s) from vault "${vault}"`
+  );
+  for (const r of usable) {
+    console.error(
+      formatVaultStatusLine(
+        {
+          label: r.label ?? (r.ok ? r.envKey : r.title),
+          envKey: r.envKey,
+          color: r.color,
+          glyph: r.glyph,
+        },
+        r.ok
+      )
+    );
+    if (!r.ok && r.error) {
+      console.error(`warn: skip "${r.title}" (${r.error}; try note/username)`);
+    }
+  }
+
+  if (after.length === 0) return; // report-only mode (--json without --)
+
+  if (summary.injected.length === 0) {
     cliError(`No secrets resolved from vault "${vault}"`);
   }
-  console.error(`portal secret autofill: injected ${keys.length} env key(s) from vault "${vault}"`);
-  for (const line of statusRows) console.error(line);
+  const injected: Record<string, string> = {};
+  for (const r of usable) {
+    if (r.ok && r.secret != null) injected[r.envKey] = r.secret;
+  }
 
   const proc = Bun.spawn(after, {
     stdout: 'inherit',

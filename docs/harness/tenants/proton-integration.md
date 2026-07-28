@@ -163,7 +163,7 @@ bun run portal-cli secret inject -i env.template -o .env -f
 bun run portal-cli secret invite accept <INVITE_ID>
 ```
 
-Maps to real CLI only (verified against pass-cli 2.2.3 source): `item view` / `item list --output json` / `run` / `inject` / `invite accept` / `share list` / `item share` / `vault share` / `vault member` / `item member`. No phantom flags, no invented secure-link URL accept (use invite id); shares are by email, one per call, roles `viewer|editor|manager`; revoke via `member … remove --member-share-id`. Autofill injects vault item passwords as env names derived from titles; prefer `run --env-file` when a template exists. Status lines use vault-map label/color/glyph (never secret values).
+Maps to real CLI only (verified against pass-cli 2.2.3 source): `item view` / `item list --output json` / `run` / `inject` / `invite accept` / `share list` / `item share` / `vault share` / `vault member` / `item member`. No phantom flags, no invented secure-link URL accept (use invite id); shares are by email, one per call, roles `viewer|editor|manager`; revoke via `member … remove --member-share-id`. Autofill injects vault item passwords as env names derived from titles (`--parallel` fetches concurrently; `--json` prints a value-free `{injected, missing, errors}` report for `jq`, report-only when `--` is omitted); prefer `run --env-file` when a template exists. Status lines use vault-map label/color/glyph (never secret values).
 
 ### Vault map (display chrome)
 
