@@ -13,6 +13,7 @@
       "lib/*"
     ]
   },
+  "trustedDependencies": [],
   "catalog": {
     "zod": "3.23.0",
     "@types/bun": "1.3.14",
@@ -1590,6 +1591,8 @@
     "scanner:policy": "bun run portal-cli scanner policy",
     "scanner:estimate": "bun run portal-cli scanner estimate",
     "scanner:doctor": "bun run portal-cli scanner doctor",
+    "portal:doctor": "bun tools/portal-cli.ts doctor",
+    "portal:doctor:full": "bun tools/portal-cli.ts doctor --full",
     "build:portal-cli": "bun build tools/portal-cli.ts --compile --outfile dist/portal",
     "portal:snapshot": "bun tools/portal-cli.ts snapshot run",
     "portal:snapshot:list": "bun tools/portal-cli.ts snapshot list",

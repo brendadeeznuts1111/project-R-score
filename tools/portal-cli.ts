@@ -205,6 +205,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
   portal-cli scanner <subcommand>    Bun Security Scanner (policy · estimate · scan --oneshot)
+  portal-cli doctor [--json] [--full] Unified health gate (linker configVersion + offline bakes)
   portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
   portal-cli bunfig status|check     Bunfig install config provenance + policy gate
   portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
@@ -214,6 +215,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli probe lockfile
   bun run portal-cli vault health
   bun run portal-cli capabilities health
+  bun run portal-cli doctor
   bun run portal-cli secret which
   bun run portal-cli pm ls
   bun run portal-cli pm pack --dry-run
@@ -1154,6 +1156,47 @@ Rebake: bun run bunfig:bake  ·  Policy: docs/UNIFIED.md
       spawnBun: async (args, o) => spawnBunWithFlags(bunExecFlags, args, o),
     });
     process.exit(code);
+  }
+
+  if (cmd === 'doctor') {
+    // Unified portal health gate — linker configVersion + offline bakes.
+    // --full also runs install:verify + vault/capabilities test gates.
+    // @see https://bun.com/docs/pm/cli/install#default-strategy
+    // @see https://bun.com/docs/pm/isolated-installs
+    if (argv.includes('--help') || argv.includes('-h')) {
+      console.log(`Usage: portal-cli doctor [--json] [--full]
+
+Unified offline health gate for the portal control plane.
+
+Checks (default — pure, no network):
+  linker-config-version   bun.lock configVersion=1 (isolated monorepo default)
+  machine-isolated-linker linker=isolated from machine bunfig
+  vault-health-bake       public/registry/vault-health.json present
+  capability-map-subset   public/registry/capability-map-subset.json present
+  bunfig-state-bake       public/registry/bunfig-state.json (info)
+
+  --full   also spawn: install:verify · vault-health tests · capability-map tests
+  --json   machine-readable report
+
+Examples:
+  portal-cli doctor
+  portal-cli doctor --json
+  portal-cli doctor --full
+
+Related: vault health · capabilities health · scanner doctor · bunfig check · install:verify
+`);
+      return;
+    }
+    const { runPortalDoctor, formatPortalDoctor } = await import('./lib/portal-cli-doctor.ts');
+    const report = await runPortalDoctor({
+      full: argv.includes('--full'),
+    });
+    if (argv.includes('--json')) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(formatPortalDoctor(report));
+    }
+    process.exit(report.ok ? 0 : 1);
   }
 
   if (cmd === 'pm') {

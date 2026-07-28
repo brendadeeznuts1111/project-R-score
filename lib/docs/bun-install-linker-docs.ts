@@ -75,6 +75,15 @@ export async function probeLockfileConfigVersion(
   if (!meta) {
     return { ok: false, note: 'bun.lock missing', meta: null };
   }
+  // configVersion must be defined — Bun uses it for default linker strategy
+  // @see https://bun.com/docs/pm/cli/install#default-strategy
+  if (meta.configVersion == null || Number.isNaN(meta.configVersion)) {
+    return {
+      ok: false,
+      note: 'configVersion missing in bun.lock — monorepo requires configVersion=1 (isolated default with workspaces)',
+      meta,
+    };
+  }
   if (meta.configVersion === 0) {
     return {
       ok: false,

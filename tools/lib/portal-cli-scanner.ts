@@ -85,7 +85,7 @@ export function estimateLockfilePackageCountFromText(text: string): number {
     if (!inPackages) continue;
     // end of top-level packages map (2-space close after entries)
     if (/^\s{2}\},?\s*$/.test(line) && n > 0) break;
-    if (/^\s{4}"[^"]+"\s*:\s*[\[{]/.test(line)) n++;
+    if (/^\s{4}"[^"]+"\s*:\s*[[{]/.test(line)) n++;
   }
   return n;
 }
@@ -815,7 +815,7 @@ export function setInstallSecurityScanner(text: string, packageName: string): st
       let replaced = false;
       for (let i = headerIdx + 1; i < lines.length; i++) {
         const L = lines[i]!;
-        if (/^\[/.test(L)) break; // next table
+        if (L.startsWith('[')) break; // next table
         if (scannerLineRe.test(L)) {
           lines[i] = `scanner = "${escaped}"`;
           replaced = true;
@@ -883,7 +883,7 @@ export function clearInstallSecurityScanner(text: string): string {
       continue;
     }
     if (inSec) {
-      if (/^\[/.test(L)) {
+      if (L.startsWith('[')) {
         flushSec();
         out.push(L);
       } else {

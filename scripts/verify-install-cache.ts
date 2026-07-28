@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
@@ -140,6 +141,37 @@ function checkTildeDrift(): Check {
   return { ok: true, label: 'tilde drift', detail: 'no literal ./~ cache dirs' };
 }
 
+async function checkTrustedDependencies(): Promise<Check> {
+  const pkgPath = `${ROOT}/package.json`;
+  if (!(await Bun.file(pkgPath).exists())) {
+    return { ok: false, label: 'trustedDependencies', detail: 'root package.json missing' };
+  }
+  const pkg = (await Bun.file(pkgPath).json()) as Record<string, unknown>;
+  const trusted = pkg.trustedDependencies;
+  if (trusted === undefined) {
+    // Absent is acceptable (Bun defaults apply), but an explicit empty list is preferred
+    // because it documents the decision not to trust dependency lifecycle scripts.
+    return {
+      ok: true,
+      label: 'trustedDependencies',
+      detail: 'field absent — Bun defaults apply; consider setting [] to document intent',
+    };
+  }
+  if (Array.isArray(trusted) && trusted.length === 0) {
+    return {
+      ok: true,
+      label: 'trustedDependencies',
+      detail: 'explicitly empty and documented',
+    };
+  }
+  return {
+    ok: false,
+    label: 'trustedDependencies',
+    detail:
+      'must be an empty list or absent; partial list replaces Bun defaults silently — see docs/UNIFIED.md',
+  };
+}
+
 async function checkLockfile(): Promise<Check> {
   const lockPath = `${ROOT}/bun.lock`;
   if (!(await Bun.file(lockPath).exists())) {
@@ -150,9 +182,18 @@ async function checkLockfile(): Promise<Check> {
     return { ok: true, label: 'lockfile', detail: 'configVersion 1 (isolated)' };
   }
   if (text.includes('"configVersion": 0')) {
-    return { ok: false, label: 'lockfile', detail: 'configVersion 0 — run bun run install:all' };
+    return {
+      ok: false,
+      label: 'lockfile',
+      detail: 'configVersion 0 — monorepo requires 1 (isolated default)',
+    };
   }
-  return { ok: true, label: 'lockfile', detail: 'configVersion not found (non-fatal)' };
+  // Missing configVersion is fatal for this workspace monorepo (default strategy SSOT)
+  return {
+    ok: false,
+    label: 'lockfile',
+    detail: 'configVersion missing — monorepo requires configVersion: 1',
+  };
 }
 
 function checkNodeModulesLayout(): Check {
@@ -189,6 +230,7 @@ async function main() {
     checkCacheDir(),
     checkGlobalStore(),
     checkTildeDrift(),
+    await checkTrustedDependencies(),
     await checkLockfile(),
     checkNodeModulesLayout(),
   ];
