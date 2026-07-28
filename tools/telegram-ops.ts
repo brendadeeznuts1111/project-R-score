@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/bundler/executables — --force
 // @see https://bun.com/docs/bundler/executables#code-signing-on-macos — --deep
@@ -17,6 +18,7 @@
  *   bun run telegram:ops -- graph --mermaid
  *   bun run telegram:ops -- link-package-group ASH -1003937534779 --invite 'https://t.me/+…'
  */
+import { logTable } from '../lib/console-depth.ts';
 import { DEFAULT_OPS_DB_PATH, openOperationsDb } from '../lib/operations/db.ts';
 import {
   broadcastToKnownChats,
@@ -459,9 +461,10 @@ function cmdSurfaces(): void {
     console.log('TELEGRAM_SURFACES: (unset — brand CLI uses builtins for ash-staging + sandbox)');
   } else {
     console.log('TELEGRAM_SURFACES bindings:');
-    for (const [slug, chatId] of bindings) {
-      console.log(`  ${slug.padEnd(14)}  ${chatId}`);
-    }
+    logTable(
+      bindings.map(([slug, chatId]) => ({ slug, chatId })),
+      ['slug', 'chatId']
+    );
   }
   const ops = loadTelegramEnv().opsChatId;
   console.log(`TELEGRAM_OPS_CHAT_ID: ${ops ?? '(unset)'}`);
