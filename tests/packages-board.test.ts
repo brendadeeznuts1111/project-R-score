@@ -3,9 +3,11 @@ import { describe, test, expect } from 'bun:test';
 import {
   PACKAGES_MAP_SCHEMA,
   actionHint,
+  buildDependencyGraphModel,
   formatLoadError,
   gradeFromScore,
   normalizePackagesMap,
+  renderDependencyGraphSvg,
 } from '../public/portal/packages/packages-board.js';
 
 describe('packages-board failure paths', () => {
@@ -25,6 +27,32 @@ describe('packages-board failure paths', () => {
     expect(actionHint('wire-root-dep')).toContain('audit:packages:apply');
     expect(actionHint('migrate-relative-imports')).toContain('@factorywager');
     expect(actionHint('archive-candidate')).toContain('quarantine');
+  });
+
+  test('buildDependencyGraphModel lays out packages + external edges', () => {
+    const model = buildDependencyGraphModel({
+      packages: [
+        { name: 'rip', role: 'consumed', score: 100 },
+        { name: 'docs-tools', role: 'dormant', score: 85 },
+      ],
+      archiveProbes: [{ package: 'docs-tools' }],
+      map: {
+        packageEdges: [],
+        externalEdges: [
+          { fromPackage: 'docs-tools', targetPrefix: 'lib/docs', plane: 'lib', weight: 11 },
+          { fromPackage: 'rip', targetPrefix: 'bare:bun', plane: 'bare', weight: 3 },
+        ],
+      },
+    });
+    expect(model.stats.packageNodes).toBe(2);
+    expect(model.stats.externalNodes).toBe(2);
+    expect(model.stats.edges).toBe(2);
+    expect(model.nodes.find(n => n.id === 'docs-tools')?.archive).toBe(true);
+    expect(model.nodes.every(n => typeof n.x === 'number' && typeof n.y === 'number')).toBe(true);
+    const svg = renderDependencyGraphSvg(model);
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('docs-tools');
+    expect(svg).toContain('edge-ext');
   });
 
   test('normalizePackagesMap accepts bake shape', () => {

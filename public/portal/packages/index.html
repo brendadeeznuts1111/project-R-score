@@ -38,6 +38,30 @@
     .error-hint { margin: 8px 0 0; font-size: 13px; }
     .retry-btn { cursor: pointer; }
     @media (max-width: 720px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    /* Dependency graph (SVG, no D3/Mermaid) */
+    .pkg-dep-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin: 20px 0 24px; }
+    .pkg-dep-panel h3 { margin: 0 0 6px; font-size: 14px; }
+    .pkg-dep-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 11px; color: var(--text-dim); margin: 8px 0 12px; }
+    .pkg-dep-legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-inline-end: 5px; vertical-align: middle; }
+    .pkg-dep-legend .lg-pkg::before { background: var(--accent, #58a6ff); }
+    .pkg-dep-legend .lg-consumed::before { background: var(--green, #3dd68c); }
+    .pkg-dep-legend .lg-dormant::before { background: var(--yellow, #e6b84d); }
+    .pkg-dep-legend .lg-archive::before { background: var(--red, #f07178); }
+    .pkg-dep-legend .lg-ext::before { background: var(--text-dim); }
+    #pkg-dep-graph { overflow: auto; max-width: 100%; }
+    .pkg-dep-svg { width: 100%; max-width: 640px; height: auto; color: var(--text-dim); }
+    .pkg-dep-svg .edge-int { stroke: var(--accent, #58a6ff); opacity: 0.45; }
+    .pkg-dep-svg .edge-ext { stroke: var(--text-dim); opacity: 0.35; stroke-dasharray: 4 3; }
+    .pkg-dep-svg .node-pkg { fill: color-mix(in srgb, var(--accent, #58a6ff) 55%, #111); stroke: var(--accent); stroke-width: 1.5; cursor: pointer; }
+    .pkg-dep-svg .node-consumed { fill: color-mix(in srgb, var(--green, #3dd68c) 45%, #111); stroke: var(--green, #3dd68c); stroke-width: 1.5; cursor: pointer; }
+    .pkg-dep-svg .node-dormant { fill: color-mix(in srgb, var(--yellow, #e6b84d) 40%, #111); stroke: var(--yellow, #e6b84d); stroke-width: 1.5; cursor: pointer; }
+    .pkg-dep-svg .node-archive { fill: color-mix(in srgb, var(--red, #f07178) 40%, #111); stroke: var(--red, #f07178); stroke-width: 2; cursor: pointer; }
+    .pkg-dep-svg .node-ext { fill: color-mix(in srgb, var(--text-dim) 35%, #111); stroke: var(--border); stroke-width: 1; }
+    .pkg-dep-svg .node-label { fill: var(--text); font-size: 10px; font-family: ui-monospace, monospace; pointer-events: none; }
+    .pkg-dep-svg .pkg-node:hover .node-pkg,
+    .pkg-dep-svg .pkg-node:hover .node-consumed,
+    .pkg-dep-svg .pkg-node:hover .node-dormant { filter: brightness(1.15); }
+    tr.pkg-row-flash td { background: color-mix(in srgb, var(--accent, #58a6ff) 18%, transparent); transition: background 0.3s; }
   </style>
 </head>
 <body>
@@ -103,6 +127,20 @@
       <div class="stat-card"><div class="stat-num" id="s-quarantine">—</div><div class="stat-label">quarantine</div></div>
       <div class="stat-card"><div class="stat-num" id="s-inject">—</div><div class="stat-label">root needs inject</div></div>
     </div>
+
+    <section class="pkg-dep-panel" aria-label="Dependency graph">
+      <h3>Dependency graph</h3>
+      <p class="meta" id="pkg-dep-meta">Loading…</p>
+      <div class="pkg-dep-legend">
+        <span class="lg-pkg">package</span>
+        <span class="lg-consumed">consumed</span>
+        <span class="lg-dormant">dormant</span>
+        <span class="lg-archive">archive candidate</span>
+        <span class="lg-ext">external target</span>
+      </div>
+      <div id="pkg-dep-graph"><p class="pkg-empty">Loading graph…</p></div>
+      <p class="meta">Click a package node to jump to the table · data from <code>packages-graph-map.json</code> · <code>portal-cli pm graph</code></p>
+    </section>
 
     <section class="actions" aria-label="Monorepo surfaces">
       <h3>Monorepo surfaces</h3>

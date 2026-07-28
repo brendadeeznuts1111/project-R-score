@@ -174,6 +174,244 @@ export function actionHint(action) {
   }
 }
 
+/**
+ * Build a lightweight dependency graph model from packages-graph-map bake.
+ * Zero CDN deps — pure layout for SVG rendering.
+ *
+ * @param {object} data - normalizePackagesMap result (packages, map, archiveProbes)
+ * @returns {{ nodes: object[], edges: object[], stats: { packageNodes: number, externalNodes: number, edges: number } }}
+ */
+export function buildDependencyGraphModel(data) {
+  const map = data?.map && typeof data.map === 'object' ? data.map : {};
+  const pkgRows = Array.isArray(data?.packages) ? data.packages : [];
+  const archiveSet = new Set(
+    (Array.isArray(data?.archiveProbes) ? data.archiveProbes : [])
+      .map(p => p?.package || p?.name)
+      .filter(Boolean)
+  );
+  // Also mark archive-candidate actions
+  for (const a of Array.isArray(map.actions) ? map.actions : []) {
+    if (a?.action === 'archive-candidate' && a?.package) archiveSet.add(a.package);
+  }
+
+  /** @type {Map<string, object>} */
+  const nodes = new Map();
+
+  for (const p of pkgRows) {
+    const name = typeof p === 'string' ? p : p?.name;
+    if (!name || typeof name !== 'string') continue;
+    nodes.set(name, {
+      id: name,
+      label: name,
+      kind: 'package',
+      role: String(p?.role || 'unknown'),
+      score: typeof p?.score === 'number' ? p.score : null,
+      archive: archiveSet.has(name),
+    });
+  }
+  // string[] packages on map
+  if (Array.isArray(map.packages) && map.packages.every(x => typeof x === 'string')) {
+    for (const name of map.packages) {
+      if (nodes.has(name)) continue;
+      nodes.set(name, {
+        id: name,
+        label: name,
+        kind: 'package',
+        role: 'unknown',
+        score: null,
+        archive: archiveSet.has(name),
+      });
+    }
+  }
+
+  /** @type {object[]} */
+  const edges = [];
+  const packageEdges = Array.isArray(map.packageEdges) ? map.packageEdges : [];
+  for (const e of packageEdges) {
+    const from = e?.fromPackage || e?.from;
+    const to = e?.toPackage || e?.to;
+    if (!from || !to) continue;
+    if (!nodes.has(from)) {
+      nodes.set(from, {
+        id: from,
+        label: from,
+        kind: 'package',
+        role: 'unknown',
+        score: null,
+        archive: archiveSet.has(from),
+      });
+    }
+    if (!nodes.has(to)) {
+      nodes.set(to, {
+        id: to,
+        label: to,
+        kind: 'package',
+        role: 'unknown',
+        score: null,
+        archive: archiveSet.has(to),
+      });
+    }
+    edges.push({
+      from: String(from),
+      to: String(to),
+      weight: Number(e?.weight) || 1,
+      kind: 'internal',
+    });
+  }
+
+  const externalEdges = Array.isArray(map.externalEdges) ? map.externalEdges : [];
+  for (const e of externalEdges) {
+    const from = e?.fromPackage || e?.from;
+    const target = e?.targetPrefix || e?.to || e?.target;
+    if (!from || !target) continue;
+    if (!nodes.has(from)) {
+      nodes.set(from, {
+        id: from,
+        label: from,
+        kind: 'package',
+        role: 'unknown',
+        score: null,
+        archive: archiveSet.has(from),
+      });
+    }
+    const extId = `ext:${target}`;
+    if (!nodes.has(extId)) {
+      nodes.set(extId, {
+        id: extId,
+        label: String(target),
+        kind: 'external',
+        role: String(e?.plane || 'external'),
+        score: null,
+        archive: false,
+      });
+    }
+    edges.push({
+      from: String(from),
+      to: extId,
+      weight: Number(e?.weight) || 1,
+      kind: 'external',
+    });
+  }
+
+  // Layout: packages on inner ring, externals on outer ring
+  const pkgs = [...nodes.values()].filter(n => n.kind === 'package');
+  const exts = [...nodes.values()].filter(n => n.kind === 'external');
+  const cx = 320;
+  const cy = 220;
+  const rPkg = 120;
+  const rExt = 200;
+
+  const placed = pkgs.map((n, i) => {
+    const angle = (2 * Math.PI * i) / Math.max(pkgs.length, 1) - Math.PI / 2;
+    return { ...n, x: cx + rPkg * Math.cos(angle), y: cy + rPkg * Math.sin(angle) };
+  });
+  const placedExt = exts.map((n, i) => {
+    const angle = (2 * Math.PI * i) / Math.max(exts.length, 1) - Math.PI / 2;
+    return { ...n, x: cx + rExt * Math.cos(angle), y: cy + rExt * Math.sin(angle) };
+  });
+  const allNodes = [...placed, ...placedExt];
+
+  return {
+    nodes: allNodes,
+    edges,
+    stats: {
+      packageNodes: pkgs.length,
+      externalNodes: exts.length,
+      edges: edges.length,
+    },
+  };
+}
+
+/**
+ * Render SVG for dependency graph (no D3/Mermaid).
+ * @param {object} model - from buildDependencyGraphModel
+ * @returns {string}
+ */
+export function renderDependencyGraphSvg(model) {
+  const W = 640;
+  const H = 440;
+  const byId = new Map(model.nodes.map(n => [n.id, n]));
+  const edgeEls = model.edges
+    .map(e => {
+      const a = byId.get(e.from);
+      const b = byId.get(e.to);
+      if (!a || !b) return '';
+      const sw = Math.min(4, 1 + Math.log2(e.weight + 1));
+      const cls = e.kind === 'external' ? 'edge-ext' : 'edge-int';
+      return `<line class="${cls}" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke-width="${sw.toFixed(2)}" />`;
+    })
+    .join('');
+  const nodeEls = model.nodes
+    .map(n => {
+      const r = n.kind === 'package' ? 22 : 16;
+      const roleCls = `role-${String(n.role).replace(/[^a-z0-9_-]/gi, '-')}`;
+      const arch = n.archive ? ' archive' : '';
+      const score =
+        n.score != null ? `<title>${escapeHtml(n.label)} · score ${n.score} · ${escapeHtml(n.role)}</title>` : `<title>${escapeHtml(n.label)} · ${escapeHtml(n.role)}</title>`;
+      const fillClass =
+        n.kind === 'external'
+          ? 'node-ext'
+          : n.archive
+            ? 'node-archive'
+            : n.role === 'dormant'
+              ? 'node-dormant'
+              : n.role === 'consumed'
+                ? 'node-consumed'
+                : 'node-pkg';
+      return `<g class="pkg-node ${roleCls}${arch}" data-id="${escapeAttr(n.id)}">
+        <circle class="${fillClass}" cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="${r}" />
+        ${score}
+        <text x="${n.x.toFixed(1)}" y="${(n.y + r + 12).toFixed(1)}" text-anchor="middle" class="node-label">${escapeHtml(n.label.length > 14 ? n.label.slice(0, 12) + '…' : n.label)}</text>
+      </g>`;
+    })
+    .join('');
+  return `<svg class="pkg-dep-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Package dependency graph">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="currentColor" opacity="0.45" />
+      </marker>
+    </defs>
+    <g class="edges" marker-end="url(#arrow)">${edgeEls}</g>
+    <g class="nodes">${nodeEls}</g>
+  </svg>`;
+}
+
+/**
+ * Mount dependency graph into #pkg-dep-graph.
+ * @param {object} data - normalizePackagesMap result
+ * @param {Document} [doc]
+ */
+export function renderDependencyGraph(data, doc = document) {
+  const host = doc.getElementById('pkg-dep-graph');
+  const meta = doc.getElementById('pkg-dep-meta');
+  if (!host) return;
+  const model = buildDependencyGraphModel(data);
+  if (meta) {
+    meta.textContent = `${model.stats.packageNodes} packages · ${model.stats.externalNodes} external targets · ${model.stats.edges} edges · CLI: portal-cli pm graph`;
+  }
+  if (model.stats.packageNodes === 0) {
+    host.innerHTML =
+      '<p class="pkg-empty">No package nodes in bake — run <code>bun run audit:packages -- --bake</code></p>';
+    return;
+  }
+  host.innerHTML = renderDependencyGraphSvg(model);
+  // Click package node → highlight row in table
+  host.querySelectorAll('.pkg-node').forEach(g => {
+    g.addEventListener('click', () => {
+      const id = g.getAttribute('data-id') || '';
+      if (id.startsWith('ext:')) return;
+      const row = [...doc.querySelectorAll('#pkg-body tr[data-pkg]')].find(
+        r => r.getAttribute('data-pkg') === id
+      );
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        row.classList.add('pkg-row-flash');
+        setTimeout(() => row.classList.remove('pkg-row-flash'), 1200);
+      }
+    });
+  });
+}
+
 export function renderPackagesBoard(data, doc = document) {
   const summary = data.summary ?? {};
   const boardGrade = gradeFromScore(data.score);
@@ -219,6 +457,9 @@ export function renderPackagesBoard(data, doc = document) {
     doc.getElementById('gen-meta'),
     `${data.generatedAt || 'unknown time'} · bun ${data.bunVersion || '?'} · ${schemaNote}${gradeNote} · ${data.source}`
   );
+
+  // Interactive dependency graph (SVG, zero CDN) from packageEdges + externalEdges
+  renderDependencyGraph(data, doc);
 
   // Multi-surface inventory (v13+) — workspaces beyond packages/*, portal, brand, registry
   const surfaces = data.surfaces;
@@ -296,6 +537,7 @@ export function renderPackagesBoard(data, doc = document) {
         const name = p.name ?? p.package ?? '—';
         const bytes = typeof p.bytes === 'number' ? (p.bytes / 1024).toFixed(1) : '—';
         const g = gradeFromScore(p.score);
+        tr.dataset.pkg = String(name);
         tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td class="role role-${escapeAttr(String(role))}">${escapeHtml(String(role))}</td><td class="grade-${g}">${p.score ?? '—'}</td><td>${p.orphans ?? 0}</td><td>${bytes}</td>`;
         body.appendChild(tr);
       }
