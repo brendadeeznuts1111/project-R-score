@@ -886,11 +886,13 @@ function agentLimitRecordApi(req: Request): Response {
   }
 }
 
-/** GET /api/limits/summary — aggregate stats, public (no auth). */
-function limitSummaryApi(): Response {
+/** GET /api/limits/summary — aggregate stats, public (no auth).
+ *  ?format=table|text → Bun.inspect.table via LimitRaiseReport
+ */
+function limitSummaryApi(req?: Request): Response {
   const db = openOperationsDb({ path: dbPath });
   try {
-    return handleLimitSummaryRequest(db);
+    return handleLimitSummaryRequest(db, req);
   } finally {
     db.close();
   }
@@ -1490,7 +1492,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
     return agentLimitRecordApi(req);
   }
   if (path === '/api/limits/summary' || path === '/api/limits/summary/') {
-    return limitSummaryApi();
+    return limitSummaryApi(req);
   }
 
   // Optional auth for read endpoints — public paths skip the gate
@@ -1866,7 +1868,7 @@ function buildPublicRoutes() {
     '/api/agents/v1/limits/raises/': (req: Request) => agentLimitRaisesApi(req),
     '/api/agents/v1/limits/record': (req: Request) => agentLimitRecordApi(req),
     '/api/agents/v1/limits/record/': (req: Request) => agentLimitRecordApi(req),
-    '/api/limits/summary': () => limitSummaryApi(),
+    '/api/limits/summary': (req: Request) => limitSummaryApi(req),
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
     '/api/dod': (req: Request) => dodApi(req),

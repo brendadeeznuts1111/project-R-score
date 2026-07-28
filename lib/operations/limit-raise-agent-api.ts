@@ -1,3 +1,4 @@
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
 // @see https://bun.com/docs/runtime/sqlite — bun:sqlite
 /**
  * Agent-facing multi-factor limit-raise response.
@@ -11,6 +12,7 @@ import { buildReportProofFromValue, proofScoreHints } from '../security/report-p
 import { PartnerAnalyticsRepository } from './partner-analytics-repo.ts';
 import { AccountLimitsRepository, queryRecentLimitChanges } from '../account-limits-repo.ts';
 import { enqueueLimitRaiseAlert } from '../channels/outbox.ts';
+import { LimitRaiseReport } from './limit-raise-report.ts';
 
 const DEFAULT_LOOKBACK_HOURS = 24;
 const MAX_LOOKBACK_HOURS = 24 * 30;
@@ -126,9 +128,15 @@ export function handleLimitRecordRequest(request: Request, db: Database): Respon
   }
 }
 
-/** GET /api/agents/v1/limits/summary — aggregate limit changes across partners. */
-export function handleLimitSummaryRequest(db: Database): Response {
+/** GET /api/limits/summary — aggregate limit changes across partners.
+ *  `?format=table|text` → text/plain Bun.inspect.table via LimitRaiseReport.
+ *  default → JSON + proof.
+ */
+export function handleLimitSummaryRequest(db: Database, request?: Request): Response {
   try {
+    const format = request
+      ? (new URL(request.url).searchParams.get('format') ?? 'json').toLowerCase()
+      : 'json';
     const changes = queryRecentLimitChanges(db, 48);
     const total = changes.length;
     const raises = changes.filter(c => c.direction === 'up').length;
@@ -137,6 +145,41 @@ export function handleLimitSummaryRequest(db: Database): Response {
     const avgScore = changes.reduce((s, c) => s + (c.multi_factor_score ?? 0), 0) / (total || 1);
     const books = new Set(changes.map(c => c.sportsbook)).size;
     const partners = new Set(changes.map(c => c.node_id)).size;
+
+    if (format === 'table' || format === 'text' || format === 'inspect') {
+      // Group by node for multi-report text dump
+      const byNode = new Map<string, typeof changes>();
+      for (const c of changes) {
+        const list = byNode.get(c.node_id) ?? [];
+        list.push(c);
+        byNode.set(c.node_id, list);
+      }
+      const parts: string[] = [
+        `LimitSummary · 48h · total=${total} raises=${raises} decreases=${downs} netΔ=$${netDelta}`,
+        `partners=${partners} books=${books} avgScore=${avgScore > 0 ? avgScore.toFixed(3) : '—'}`,
+        '',
+      ];
+      if (byNode.size === 0) {
+        parts.push('(no limit changes in window)');
+      } else {
+        for (const [nodeId, rows] of byNode) {
+          const report = new LimitRaiseReport(rows as never[], {
+            nodeId,
+            hours: 48,
+            multi: true,
+          });
+          parts.push(Bun.inspect(report, { colors: false }), '');
+        }
+      }
+      return new Response(parts.join('\n'), {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-store',
+        },
+      });
+    }
+
     const body = {
       schemaVersion: 1,
       generated: new Date().toISOString(),
