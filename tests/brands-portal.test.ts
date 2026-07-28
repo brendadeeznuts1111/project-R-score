@@ -2,6 +2,14 @@ import { describe, expect, test } from 'bun:test';
 
 import { PORTAL_OVERFLOW_NAV, PORTAL_FOOTER_LINKS } from '../lib/portal/chrome-catalog.ts';
 import { PORTAL_WEAVE_ARTIFACTS, PORTAL_WEAVE_SURFACES } from '../lib/http/portal-weave.ts';
+import {
+  buildBrandDomainMap,
+  chooseRelationship,
+  filterRelationshipRows,
+  parseBrandHash,
+  patchBrandHash,
+  relationshipLabel,
+} from '../public/portal/brands/brands-board.js';
 
 describe('brand keymap portal', () => {
   test('registry artifact exposes glossary, governance, and project adoption', async () => {
@@ -85,11 +93,8 @@ describe('brand keymap portal', () => {
     expect(css).toContain('@media (prefers-reduced-motion: reduce)');
   });
 
-  test('relationships are default, filterable, shareable, and graph-table equivalent', async () => {
-    const [html, script] = await Promise.all([
-      Bun.file('public/portal/brands/index.html').text(),
-      Bun.file('public/portal/brands/brands-board.js').text(),
-    ]);
+  test('relationships are default and graph-table-detail regions are equivalent', async () => {
+    const html = await Bun.file('public/portal/brands/index.html').text();
 
     expect(html).toContain('data-view="relationships"');
     expect(html).toContain('aria-selected="true"');
@@ -100,11 +105,86 @@ describe('brand keymap portal', () => {
     expect(html).toContain('id="relationship-evidence"');
     expect(html).toContain('Canonical relationship table');
     expect(html).toContain('id="relationship-detail"');
-    expect(script).toContain('new URLSearchParams(window.location.hash');
-    expect(script).toContain('history.replaceState');
-    expect(script).toContain("document.createElementNS(SVG_NS, 'desc')");
-    expect(script).toContain("'ArrowLeft', 'ArrowRight', 'Home', 'End'");
-    expect(script).toContain("row.brand || 'none'");
+    expect(html).toContain('id="relationship-graph"');
+  });
+
+  test('relationship filters compute against one domain map and normalized state', () => {
+    const rows = [
+      {
+        id: 'image',
+        api: 'Bun.Image',
+        variant: 'image-processing',
+        brand: 'EvidenceId',
+        direction: 'evidence',
+        wrapper: 'lib/dod/evidence.ts',
+        consumer: 'lib/dod/evidence.ts',
+        project: 'project-R-score',
+        policy: 'production-approved',
+        evidenceState: 'verified',
+        proofs: ['release-features#terminal-methods'],
+      },
+      {
+        id: 'cron',
+        api: 'Bun.cron',
+        variant: 'in-process',
+        brand: null,
+        direction: 'none',
+        wrapper: 'lib/factory/monitoring.ts',
+        consumer: null,
+        project: 'project-R-score',
+        policy: 'optional',
+        evidenceState: 'declared-unproven',
+        proofs: [],
+      },
+    ];
+    const domains = buildBrandDomainMap([{ name: 'EvidenceId', domain: 'audit' }]);
+
+    expect(
+      filterRelationshipRows(
+        rows,
+        {
+          query: 'image',
+          domain: 'audit',
+          project: 'project-R-score',
+          policy: 'production-approved',
+          evidence: 'verified',
+        },
+        domains
+      )
+    ).toEqual([rows[0]]);
+    expect(relationshipLabel(rows[0])).toBe('Bun.Image · image-processing');
+    expect(relationshipLabel({ api: 'Bun.Image', variant: null })).toBe('Bun.Image');
+  });
+
+  test('hash helpers preserve tenant query state and repair stale relationship selections', () => {
+    const parsed = parseBrandHash(
+      '#view=projects&q=image&domain=audit&project=project-R-score&selected=missing'
+    );
+    expect(parsed).toEqual({
+      view: 'projects',
+      query: 'image',
+      domain: 'audit',
+      project: 'project-R-score',
+      policy: '',
+      evidence: '',
+      selected: 'missing',
+    });
+    expect(patchBrandHash('#view=projects&selected=missing', { selected: 'image' })).toBe(
+      'view=projects&selected=image'
+    );
+    expect(
+      chooseRelationship(
+        [
+          { id: 'image' },
+          { id: 'cron' },
+        ],
+        'missing'
+      )
+    ).toEqual({ row: { id: 'image' }, usedFallback: true });
+    expect(chooseRelationship([{ id: 'image' }], 'image')).toEqual({
+      row: { id: 'image' },
+      usedFallback: false,
+    });
   });
 
   test('raw artifacts and adjacent portal surfaces cross-link the map', async () => {

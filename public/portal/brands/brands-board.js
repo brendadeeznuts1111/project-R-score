@@ -13,6 +13,7 @@ const VIEWS = ['relationships', 'glossary', 'projects'];
 let brandKeymap = null;
 let bunBrandMap = null;
 let selectedRelationship = null;
+let requestedSelectionId = null;
 
 function text(tag, value, className) {
   const node = document.createElement(tag);
@@ -60,21 +61,34 @@ function compact(value, max = 29) {
   return string.length <= max ? string : `${string.slice(0, max - 1)}…`;
 }
 
-function domainByBrand() {
-  return new Map((brandKeymap?.brands ?? []).map(brand => [brand.name, brand.domain]));
+export function buildBrandDomainMap(brands = []) {
+  return new Map(brands.map(brand => [brand.name, brand.domain]));
 }
 
-function currentHash() {
-  return new URLSearchParams(window.location.hash.replace(/^#/, ''));
+export function parseBrandHash(hash = '') {
+  const params = new URLSearchParams(String(hash).replace(/^#/, ''));
+  return {
+    view: params.get('view') || 'relationships',
+    query: params.get('q') || '',
+    domain: params.get('domain') || '',
+    project: params.get('project') || '',
+    policy: params.get('policy') || '',
+    evidence: params.get('evidence') || '',
+    selected: params.get('selected') || '',
+  };
 }
 
-function writeHash(patch) {
-  const params = currentHash();
+export function patchBrandHash(hash, patch) {
+  const params = new URLSearchParams(String(hash || '').replace(/^#/, ''));
   for (const [key, value] of Object.entries(patch)) {
     if (value) params.set(key, value);
     else params.delete(key);
   }
-  const fragment = params.toString();
+  return params.toString();
+}
+
+function writeHash(patch) {
+  const fragment = patchBrandHash(window.location.hash, patch);
   history.replaceState(
     null,
     '',
@@ -152,18 +166,17 @@ function capabilityFor(row) {
   return (bunBrandMap?.capabilities ?? []).find(item => item.id === row.capabilityId);
 }
 
-function relationshipMatches(row) {
-  const query = document.getElementById('relationship-search').value.trim().toLowerCase();
-  const domain = document.getElementById('relationship-domain').value;
-  const project = document.getElementById('relationship-project').value;
-  const policy = document.getElementById('relationship-policy').value;
-  const evidence = document.getElementById('relationship-evidence').value;
-  const brandDomain = domainByBrand().get(row.brand);
-  if (domain && brandDomain !== domain) return false;
-  if (project && row.project !== project) return false;
-  if (policy && row.policy !== policy) return false;
-  if (evidence && row.evidenceState !== evidence) return false;
-  if (!query) return true;
+export function relationshipLabel(row) {
+  return row.variant ? `${row.api} · ${row.variant}` : row.api;
+}
+
+export function relationshipMatches(row, filters, brandDomains) {
+  const brandDomain = brandDomains.get(row.brand);
+  if (filters.domain && brandDomain !== filters.domain) return false;
+  if (filters.project && row.project !== filters.project) return false;
+  if (filters.policy && row.policy !== filters.policy) return false;
+  if (filters.evidence && row.evidenceState !== filters.evidence) return false;
+  if (!filters.query) return true;
   return [
     row.api,
     row.variant,
@@ -178,11 +191,24 @@ function relationshipMatches(row) {
   ]
     .join(' ')
     .toLowerCase()
-    .includes(query);
+    .includes(filters.query);
+}
+
+export function filterRelationshipRows(rows, filters, brandDomains) {
+  return rows.filter(row => relationshipMatches(row, filters, brandDomains));
+}
+
+export function chooseRelationship(rows, selectedId) {
+  const selected = rows.find(row => row.id === selectedId);
+  return {
+    row: selected ?? rows[0] ?? null,
+    usedFallback: Boolean(selectedId) && !selected && rows.length > 0,
+  };
 }
 
 function selectRelationship(row, options = {}) {
   selectedRelationship = row;
+  requestedSelectionId = row?.id ?? null;
   if (options.writeHash !== false) writeHash({ selected: row?.id ?? '' });
   renderGraph(row);
   renderDetail(row);
@@ -195,18 +221,22 @@ function selectRelationship(row, options = {}) {
 }
 
 function renderRelationships() {
-  const rows = (bunBrandMap?.relationships ?? []).filter(relationshipMatches);
+  const filters = {
+    query: document.getElementById('relationship-search').value.trim().toLowerCase(),
+    domain: document.getElementById('relationship-domain').value,
+    project: document.getElementById('relationship-project').value,
+    policy: document.getElementById('relationship-policy').value,
+    evidence: document.getElementById('relationship-evidence').value,
+  };
+  const brandDomains = buildBrandDomainMap(brandKeymap?.brands ?? []);
+  const rows = filterRelationshipRows(bunBrandMap?.relationships ?? [], filters, brandDomains);
   const target = document.getElementById('relationship-rows');
   target.replaceChildren(
     ...rows.map(row => {
       const tr = document.createElement('tr');
       tr.dataset.relationship = row.id;
       tr.setAttribute('aria-selected', String(row.id === selectedRelationship?.id));
-      const apiButton = text(
-        'button',
-        row.variant ? `${row.api} · ${row.variant}` : row.api,
-        'brand-select-button'
-      );
+      const apiButton = text('button', relationshipLabel(row), 'brand-select-button');
       apiButton.type = 'button';
       apiButton.addEventListener('click', () => selectRelationship(row));
       const wrapper = document.createElement('div');
@@ -234,8 +264,8 @@ function renderRelationships() {
     target.append(tr);
     selectRelationship(null);
   } else {
-    const selected = rows.find(row => row.id === selectedRelationship?.id) ?? rows[0];
-    selectRelationship(selected, { writeHash: false });
+    const choice = chooseRelationship(rows, selectedRelationship?.id ?? requestedSelectionId);
+    selectRelationship(choice.row, { writeHash: choice.usedFallback });
   }
   document.getElementById('relationship-result-count').textContent =
     `${rows.length} of ${bunBrandMap?.relationships?.length ?? 0} relationships`;
@@ -593,22 +623,24 @@ function renderProjects() {
 }
 
 function restoreState() {
-  const params = currentHash();
-  setView(params.get('view') || 'relationships', false);
+  const state = parseBrandHash(window.location.hash);
+  setView(state.view, false);
   const fields = {
-    q: 'relationship-search',
+    query: 'relationship-search',
     domain: 'relationship-domain',
     project: 'relationship-project',
     policy: 'relationship-policy',
     evidence: 'relationship-evidence',
   };
   for (const [key, id] of Object.entries(fields)) {
-    const value = params.get(key);
+    const value = state[key];
     if (value) document.getElementById(id).value = value;
   }
-  const selected = params.get('selected');
-  if (selected) {
-    selectedRelationship = (bunBrandMap?.relationships ?? []).find(row => row.id === selected);
+  requestedSelectionId = state.selected || null;
+  if (requestedSelectionId) {
+    selectedRelationship = (bunBrandMap?.relationships ?? []).find(
+      row => row.id === requestedSelectionId
+    );
   }
 }
 
@@ -624,6 +656,7 @@ function initializeFilters() {
     document.getElementById(id).addEventListener('input', event => {
       writeHash({ [key]: event.currentTarget.value, selected: '' });
       selectedRelationship = null;
+      requestedSelectionId = null;
       renderRelationships();
     });
   }
@@ -726,4 +759,4 @@ async function bootstrap() {
     : 'Registry artifacts unavailable; use the raw JSON links to inspect recovery state.';
 }
 
-void bootstrap();
+if (typeof document !== 'undefined') void bootstrap();
