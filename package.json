@@ -2046,6 +2046,8 @@
     "sync:well-known-mcp:check": "bun tools/sync-well-known-mcp.ts --check",
     "mcp:sync": "bun scripts/mcp-sync.ts",
     "mcp:sync:check": "bun scripts/mcp-sync.ts --check",
+    "mcp:cloudflare:probe": "bun tools/mcp-cloudflare-probe.ts",
+    "mcp:cloudflare:probe:json": "bun tools/mcp-cloudflare-probe.ts --json",
     "docs:harness": "bun ./docs/harness/README.md",
     "docs:cron": "bun scripts/docs-cron.ts",
     "docs:install-verify": "bun scripts/docs-install-verify.ts",
