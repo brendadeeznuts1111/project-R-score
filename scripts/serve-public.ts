@@ -1017,34 +1017,20 @@ async function collectHealthData(): Promise<{
     typeof networking.degraded === 'boolean' &&
     networking.degraded;
 
-  // Compliance board slice — parity with edge collectEdgeHealth (lib/http/portal-health-edge.ts).
+  // Compliance board — shared freeze-shape with edge collectEdgeHealth.
   // Missing bake does not degrade; present + fail does.
-  let complianceRaw: Record<string, unknown> | null = null;
+  let complianceRaw: unknown = null;
   const complianceFile = Bun.file('public/registry/compliance-board.json');
   if (await complianceFile.exists()) {
     try {
-      complianceRaw = (await complianceFile.json()) as Record<string, unknown>;
+      complianceRaw = await complianceFile.json();
     } catch {
       /* malformed → treat as missing */
     }
   }
-  const enh = complianceRaw?.enhancements as { passed?: number; total?: number } | undefined;
-  const shadow = complianceRaw?.shadow as { summary?: { mismatches?: number } } | undefined;
-  const complianceExists = Boolean(complianceRaw?.schemaVersion === 1);
-  const complianceOk =
-    complianceExists &&
-    (enh?.passed ?? 0) === (enh?.total ?? 0) &&
-    (shadow?.summary?.mismatches ?? 0) === 0;
-  const complianceFail = complianceExists && !complianceOk;
-  const complianceBoard = {
-    exists: complianceExists,
-    ok: complianceOk,
-    generated: (complianceRaw?.generatedAt as string) ?? null,
-    enhancements: enh ? `${enh.passed ?? 0}/${enh.total ?? 0}` : null,
-    shadowMismatches: shadow?.summary?.mismatches ?? null,
-    path: '/registry/compliance-board.json' as const,
-    portal: '/portal/compliance/' as const,
-  };
+  const { projectComplianceHealthArtifact } = await import('../lib/monitoring/compliance-slice.ts');
+  const complianceBoard = projectComplianceHealthArtifact(complianceRaw);
+  const complianceFail = complianceBoard.exists && !complianceBoard.ok;
 
   const data: Record<string, unknown> = {
     schemaVersion: 1,

@@ -28,17 +28,25 @@ export type PortalWeavePayload = {
 export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Registry', href: '/portal/' },
-  { label: 'Ops', href: '/portal/ops/', note: 'C4 experiments · C5 prediction' },
-  { label: 'TOC Ops', href: '/portal/toc/', note: 'Drum/Buffer/Rope · operate-lite' },
-  { label: 'Monitoring', href: '/monitoring/', note: 'routing · env · proof tiles' },
+  {
+    label: 'Ops',
+    href: '/portal/ops/',
+    note: 'C4/C5 · TOC · loop · compliance panel',
+  },
+  { label: 'TOC Ops', href: '/portal/toc/', note: 'Drum/Buffer/Rope · MA/NJ board glance' },
+  { label: 'Monitoring', href: '/monitoring/', note: 'routing · env · compliance tile' },
   { label: 'DOD queue', href: '/portal/dod/', note: 'visual proof review' },
   {
     label: 'Compliance',
     href: '/portal/compliance/',
-    note: 'MA/NJ enhancements · shadow matrix · deepEquals',
+    note: 'MA/NJ enhancements · shadow · geo · HMAC',
   },
   { label: 'Skills', href: '/portal/skills/', note: 'catalog · .skill packages' },
-  { label: 'Dashboard', href: '/portal/dashboard/', note: 'executive proof summary' },
+  {
+    label: 'Dashboard',
+    href: '/portal/dashboard/',
+    note: 'executive KPIs · TOC · compliance plane',
+  },
   { label: 'Catalog', href: '/portal/catalog/' },
   { label: 'Health', href: '/portal/health/' },
   { label: 'Env', href: '/portal/env/' },
@@ -71,7 +79,7 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   {
     label: 'compliance-board',
     href: '/registry/compliance-board.json',
-    note: 'enhancements + shadow · portal/compliance',
+    note: 'enhancements + shadow + geo · ops-summary.compliance',
   },
   {
     label: 'compliance-enhancements',
@@ -135,6 +143,11 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     label: 'Compliance board bake',
     cmd: 'bun run compliance:bake',
     doc: 'docs/harness/tenants/compliance-portal.md',
+  },
+  {
+    label: 'Ops snapshot (includes compliance)',
+    cmd: 'bun run ops:snapshot',
+    doc: 'docs/harness/tenants/ops-snapshot.md',
   },
   {
     label: 'Compliance bake (Proton vault)',

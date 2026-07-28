@@ -16,7 +16,13 @@ export {
 } from './collect.ts';
 export {
   loadComplianceMonitoringSlice,
+  loadComplianceSummarySliceSync,
+  projectComplianceHealthArtifact,
+  COMPLIANCE_BOARD_PATH,
+  COMPLIANCE_PORTAL_PATH,
   type ComplianceMonitoringSlice,
+  type ComplianceSummarySlice,
+  type ComplianceHealthArtifact,
 } from './compliance-slice.ts';
 export { ensureMonitoringSchema } from './schema.ts';
 export { renderMonitoringHtml } from './page.ts';

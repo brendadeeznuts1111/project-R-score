@@ -76,4 +76,35 @@ describe('ops-summary-diagnose', () => {
     expect(snapshotAgeWarn(now - 1000, now, 24 * 3_600_000)).toBeNull();
     expect(snapshotAgeWarn(null, now, 24 * 3_600_000)).toMatch(/missing/);
   });
+
+  test('compliance board fail warns without failing live source', () => {
+    const r = classifySummaryPayload(
+      parseSummaryShape({
+        source: 'live',
+        liquidity: { total: 1 },
+        compliance: {
+          available: true,
+          ok: false,
+          enhancements: '6/8',
+          shadowMismatches: 2,
+        },
+      }),
+      200
+    );
+    expect(r.severity).toBe('warn');
+    expect(r.reasons.some(x => x.includes('compliance board fail'))).toBe(true);
+  });
+
+  test('compliance ok is not a warn reason', () => {
+    const r = classifySummaryPayload(
+      parseSummaryShape({
+        source: 'live',
+        liquidity: { total: 1 },
+        compliance: { available: true, ok: true, enhancements: '8/8', shadowMismatches: 0 },
+      }),
+      200
+    );
+    expect(r.severity).toBe('ok');
+    expect(r.reasons.some(x => x.includes('compliance'))).toBe(false);
+  });
 });

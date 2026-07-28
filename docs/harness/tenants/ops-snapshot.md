@@ -13,6 +13,7 @@ Refreshes portal/Pages artifacts:
 - `public/registry/static.json`
 - `public/registry/dod-queue.json` (+ bakes `#dod-embed` on `/portal/dod/`)
 - `public/registry/toc-ops.json` (+ bakes `#toc-embed` on `/portal/toc/` · ops-summary `toc` slice)
+- `public/registry/compliance-board.json` (+ enhancements/shadow · portal embed · ops-summary `compliance` slice; disable with `--no-compliance` / `OPS_SNAPSHOT_COMPLIANCE=0`)
 - tenant slices `public/registry/{factory,science,tennis}/registry.json` (when thin)
 - `@factorywager/bun-utils-test` + `routing-test` proofs
 - prediction report (unless `--no-report`)

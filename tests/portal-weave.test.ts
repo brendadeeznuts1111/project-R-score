@@ -29,13 +29,16 @@ describe('portal weave', () => {
     }
   });
 
-  test('surfaces cover ops toc monitoring dod skills', () => {
+  test('surfaces cover ops toc monitoring dod skills compliance', () => {
+    const p = buildPortalWeavePayload();
     const hrefs = PORTAL_WEAVE_SURFACES.map(s => s.href);
     expect(hrefs).toContain('/portal/ops/');
     expect(hrefs).toContain('/portal/toc/');
     expect(hrefs).toContain('/monitoring/');
     expect(hrefs).toContain('/portal/dod/');
     expect(hrefs).toContain('/portal/skills/');
+    expect(hrefs).toContain('/portal/compliance/');
+    expect(hrefs).toContain('/portal/dashboard/');
     const arts = PORTAL_WEAVE_ARTIFACTS.map(a => a.href);
     expect(arts).toContain('/registry/toc-ops.json');
     expect(arts).toContain('/registry/telegram-handshake.json');
@@ -45,5 +48,10 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/formdata-proof.json');
     expect(arts).toContain('/registry/package-info.json');
     expect(arts).toContain('/registry/seat-capital-desk.json');
+    expect(arts).toContain('/registry/compliance-board.json');
+    expect(arts).toContain('/registry/compliance-enhancements.json');
+    expect(arts).toContain('/registry/compliance-shadow.json');
+    expect(p.scripts.some(s => s.cmd.includes('compliance:bake'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd.includes('ops:snapshot'))).toBe(true);
   });
 });

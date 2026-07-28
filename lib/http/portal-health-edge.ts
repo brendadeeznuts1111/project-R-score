@@ -6,6 +6,10 @@
  * @see docs/portal-foundation.md
  * @see docs/platform-routing.md
  */
+import {
+  projectComplianceHealthArtifact,
+  type ComplianceHealthArtifact,
+} from '../monitoring/compliance-slice.ts';
 import { buildEdgeEnvTable } from './portal-env-edge.ts';
 import { portalOptionsResponse } from './portal-cors.ts';
 
@@ -295,9 +299,9 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       (defaults.passed != null && defaults.total != null && defaults.passed < defaults.total));
   const taxonomyFail = edgeTaxonomyDegradesHealth(proofTaxonomy);
 
-  // Shared freeze-shape with serve-public + monitoring (lib/monitoring/compliance-slice.ts).
-  const { projectComplianceHealthArtifact } = await import('../monitoring/compliance-slice.ts');
-  const complianceArtifact = projectComplianceHealthArtifact(complianceBoard);
+  // Shared freeze-shape with serve-public + monitoring (compliance-slice.ts).
+  const complianceArtifact: ComplianceHealthArtifact =
+    projectComplianceHealthArtifact(complianceBoard);
   // Missing bake does not degrade edge health (optional plane); present + fail does.
   const complianceFail = complianceArtifact.exists && !complianceArtifact.ok;
 

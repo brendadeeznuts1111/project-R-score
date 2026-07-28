@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-28T00:51:17.348Z",
+  "generated": "2026-07-28T00:53:29.120Z",
   "surfaces": [
     {
       "label": "Home",
@@ -12,17 +12,17 @@
     {
       "label": "Ops",
       "href": "/portal/ops/",
-      "note": "C4 experiments · C5 prediction"
+      "note": "C4/C5 · TOC · loop · compliance panel"
     },
     {
       "label": "TOC Ops",
       "href": "/portal/toc/",
-      "note": "Drum/Buffer/Rope · operate-lite"
+      "note": "Drum/Buffer/Rope · MA/NJ board glance"
     },
     {
       "label": "Monitoring",
       "href": "/monitoring/",
-      "note": "routing · env · proof tiles"
+      "note": "routing · env · compliance tile"
     },
     {
       "label": "DOD queue",
@@ -32,7 +32,7 @@
     {
       "label": "Compliance",
       "href": "/portal/compliance/",
-      "note": "MA/NJ enhancements · shadow matrix · deepEquals"
+      "note": "MA/NJ enhancements · shadow · geo · HMAC"
     },
     {
       "label": "Skills",
@@ -42,7 +42,7 @@
     {
       "label": "Dashboard",
       "href": "/portal/dashboard/",
-      "note": "executive proof summary"
+      "note": "executive KPIs · TOC · compliance plane"
     },
     {
       "label": "Catalog",
@@ -106,7 +106,7 @@
     {
       "label": "compliance-board",
       "href": "/registry/compliance-board.json",
-      "note": "enhancements + shadow · portal/compliance"
+      "note": "enhancements + shadow + geo · ops-summary.compliance"
     },
     {
       "label": "compliance-enhancements",
@@ -180,6 +180,11 @@
       "label": "Compliance board bake",
       "cmd": "bun run compliance:bake",
       "doc": "docs/harness/tenants/compliance-portal.md"
+    },
+    {
+      "label": "Ops snapshot (includes compliance)",
+      "cmd": "bun run ops:snapshot",
+      "doc": "docs/harness/tenants/ops-snapshot.md"
     },
     {
       "label": "Compliance bake (Proton vault)",
