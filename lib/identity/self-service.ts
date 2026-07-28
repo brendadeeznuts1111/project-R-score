@@ -136,7 +136,9 @@ export function untrustDevice(
 ): void {
   const matches = identity
     .fingerprintsFor(nodeId)
-    .filter(fp => fp.fingerprintHash === fingerprintHash || fp.fingerprintHash.startsWith(fingerprintHash));
+    .filter(
+      fp => fp.fingerprintHash === fingerprintHash || fp.fingerprintHash.startsWith(fingerprintHash)
+    );
   if (fingerprintHash.length < 12 || matches.length !== 1) {
     throw new IdentityError('Unknown or ambiguous device fingerprint');
   }
@@ -171,13 +173,20 @@ export function isValidAllowlistEntry(cidr: string): boolean {
  * details.count. Throws IdentityError on any invalid entry — nothing is
  * written in that case.
  */
-export function setIpAllowlist(identity: IdentitySystem, nodeId: TreeNodeId, cidrs: string[]): void {
+export function setIpAllowlist(
+  identity: IdentitySystem,
+  nodeId: TreeNodeId,
+  cidrs: string[]
+): void {
   for (const cidr of cidrs) {
     if (!isValidAllowlistEntry(cidr)) {
       throw new IdentityError(`Invalid allowlist entry: ${cidr} (IPv4 or IPv4/24 only)`);
     }
   }
-  identity.replaceIpAllowlist(nodeId, cidrs.map(cidr => ({ cidr })));
+  identity.replaceIpAllowlist(
+    nodeId,
+    cidrs.map(cidr => ({ cidr }))
+  );
   identity.logAuthEvent({
     nodeId,
     action: 'ip_allowlist_updated',

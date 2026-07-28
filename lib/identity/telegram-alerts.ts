@@ -48,7 +48,8 @@ function warnSendFailureOnce(): void {
  * never rejects, so the fire-and-forget hook has nothing to catch in the
  * common path.
  */
-function createDefaultSend(chatId?: string): TelegramAlertSend { // brand-ok — Telegram chat_id wire string
+function createDefaultSend(chatId?: string): TelegramAlertSend {
+  // brand-ok — Telegram chat_id wire string
   const env = loadTelegramEnv();
   const token = env.effectiveToken;
   const target = chatId ?? env.opsChatId;

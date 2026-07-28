@@ -150,7 +150,9 @@ export function getTimeline(
 
   // auditFor already returns newest-first (created_at DESC, id DESC); the
   // stable re-sort makes the contract explicit without disturbing ties.
-  events = [...events].sort((a, b) => (a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0));
+  events = [...events].sort((a, b) =>
+    a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0
+  );
 
   return events.slice(0, limit);
 }
