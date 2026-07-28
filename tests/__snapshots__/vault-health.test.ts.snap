@@ -101,6 +101,14 @@ exports[`vault-health healthy report shape (snapshot) 1`] = `
 exports[`vault-health vault-map referenced inventory is stable (snapshot) 1`] = `
 [
   {
+    "envKey": "CLOUDFLARE_ACCESS_API_TOKEN",
+    "field": "password",
+    "inTemplate": true,
+    "item": "Cloudflare Access API Token",
+    "passRef": "pass://factorywager/Cloudflare Access API Token/password",
+    "vault": "factorywager",
+  },
+  {
     "envKey": "CLOUDFLARE_API_TOKEN",
     "field": "password",
     "inTemplate": true,
