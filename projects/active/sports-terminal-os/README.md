@@ -40,6 +40,7 @@ bun run --filter sports-terminal-os start         # Production start
 ### shadcn / `cn add` (UI components)
 
 shadcn is initialized for this package (`components.json`, Tailwind v4, dark terminal theme).
+Home dashboard uses Card / Badge / Button / Skeleton from the kit.
 
 ```bash
 # From monorepo root (cn is not a global binary — use bun run / bunx)
@@ -53,7 +54,24 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 ```
 
-Components land in `src/components/ui/`. Existing zone pages stay under `src/frontend/components/`.
+Kit on disk: `src/components/ui/` (button, card, badge, input, dialog, sheet, tabs, table, …).
+Zone-specific UIs stay under `src/frontend/components/`.
+
+### Cloudflare skills + MCP
+
+Monorepo agent skills (from [cloudflare/skills](https://github.com/cloudflare/skills)):
+
+```bash
+bunx skills add https://github.com/cloudflare/skills   # → .agents/skills/cloudflare*
+```
+
+MCP (account API + docs + bindings) is in workspace `.mcp.json` and Grok `~/.grok/config.toml`.
+Requires `CLOUDFLARE_API_TOKEN` in project `.env` (`bun run proton:inject:factorywager` / `cloudflare:env:validate`).
+
+```bash
+bun run mcp:sync                 # refresh .vscode/mcp.json from .mcp.json
+bun run cloudflare:env:validate  # token scope probe
+```
 
 ## Quick Start (Standalone)
 

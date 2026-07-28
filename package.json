@@ -1918,6 +1918,7 @@
     "env:inventory:baseline": "bun scripts/env-inventory.ts --write-baseline",
     "env:inventory:bake": "bun scripts/env-inventory.ts --bake",
     "vault:gap:status": "bun scripts/vault-gap-close.ts status",
+    "vault:health:bake": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun tools/vault-health-bake.ts'",
     "vault:gap:mint-local": "bun scripts/vault-gap-close.ts mint-local",
     "vault:gap:export-minted": "bun scripts/vault-gap-close.ts export-minted",
     "vault:gap:mint": "bash -c 'source scripts/agent-env.sh factorywager >/dev/null && bun scripts/vault-gap-close.ts mint'",
@@ -2105,6 +2106,9 @@
     "vault:resolve": "bun tools/vault-resolver.ts",
     "vault:resolve:json": "bun tools/vault-resolver.ts --json",
     "vault:resolve:check": "bun tools/vault-resolver.ts --check",
+    "vault:resolve:inject": "bun tools/vault-resolver.ts --inject",
+    "vault:resolve:ssh": "bun tools/vault-resolver.ts --ssh",
+    "vault:resolve:all": "bun tools/vault-resolver.ts --inject --ssh",
     "proton:verify:json": "bun tools/proton-verify.ts --json",
     "proton:run": "bash scripts/proton-run.sh",
     "proton:run:ssh": "bash scripts/proton-run.sh factorywager --ssh --",
@@ -2126,7 +2130,7 @@
     "portal:secret": "bun tools/portal-secret.ts",
     "portal:secret:which": "bun tools/portal-secret.ts which",
     "cn": "bunx --bun shadcn@latest",
-    "cn:sto": "bunx --bun shadcn@latest -c projects/active/sports-terminal-os"
+    "cn:sto": "bunx --bun shadcn@latest --cwd projects/active/sports-terminal-os"
   },
   "dependencies": {
     "@factorywager/docs-tools": "workspace:*",
