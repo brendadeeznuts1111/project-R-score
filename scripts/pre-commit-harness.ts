@@ -72,6 +72,21 @@ function isRuntimeFlagsPath(file: string): boolean {
   return file.replace(/^\.\//, '') === 'config/runtime-flags.json';
 }
 
+/**
+ * Machine/project bunfig policy surface — fast offline doctor --group bunfig only.
+ * Escape: SKIP_DOCTOR_BUNFIG=1
+ */
+export function isDoctorBunfigPath(file: string): boolean {
+  const n = file.replace(/^\.\//, '');
+  return (
+    n === 'bunfig.toml' ||
+    n === 'config/machine.bunfig.toml.template' ||
+    n === 'scripts/ensure-machine-bunfig.ts' ||
+    n === 'scripts/lib/machine-bunfig.ts' ||
+    n === 'tools/lib/portal-cli-doctor-bunfig.ts'
+  );
+}
+
 /** Audit findings/concepts SSOT — verify even when no harness .ts is staged. */
 export function isAuditSsotPath(file: string): boolean {
   const n = file.replace(/^\.\//, '');
@@ -270,6 +285,31 @@ async function main(): Promise<void> {
     }
   }
 
+  // Bunfig policy surface — offline doctor group only (no full doctor / no Access network).
+  const doctorBunfigFiles = staged.filter(isDoctorBunfigPath);
+  if (doctorBunfigFiles.length > 0) {
+    if (Bun.env.SKIP_DOCTOR_BUNFIG === '1') {
+      console.info('⏭️  SKIP_DOCTOR_BUNFIG=1 — portal doctor bunfig group skipped');
+    } else {
+      console.info(`🩺 Portal doctor bunfig (${doctorBunfigFiles.length} path(s) staged)...`);
+      const code = await runGate(
+        'doctor-bunfig',
+        ['bun', 'run', 'portal:doctor:bunfig:check'],
+        timings
+      );
+      if (code !== 0) {
+        console.error(
+          '❌ Portal doctor bunfig failed — machine/project install policy surface\n' +
+            '   bun run portal:doctor:bunfig:check\n' +
+            '   escape: SKIP_DOCTOR_BUNFIG=1\n' +
+            '   docs/harness/tenants/portal-doctor.md'
+        );
+        await writeTimings(timings, full);
+        process.exit(1);
+      }
+    }
+  }
+
   if (harnessFiles.length === 0) {
     if (
       docMapFiles.length > 0 ||
@@ -277,10 +317,11 @@ async function main(): Promise<void> {
       libFiles.length > 0 ||
       auditFiles.length > 0 ||
       publicFiles.length > 0 ||
-      runtimeFlagsFiles.length > 0
+      runtimeFlagsFiles.length > 0 ||
+      doctorBunfigFiles.length > 0
     ) {
       console.info(
-        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags gates only)'
+        '✅ Harness pre-commit checks passed (doc/projects/lib/audit/public/flags/bunfig gates only)'
       );
     } else {
       console.info('✅ No staged harness TypeScript or doc-map SSOT files');

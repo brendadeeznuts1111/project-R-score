@@ -44,7 +44,9 @@ FAIL  fatal  <check-id>
 summary  passed=…  failed=…
 ```
 
-Machine: `portal-cli doctor --json` · fingerprint gate: `bun run bake:doctor:check` (sha256 of stable fields; offline Access probes).
+Machine: `portal-cli doctor --json` · fingerprint gate: `bun run bake:doctor:check` (sha256 of **portable** stable fields; offline Access probes).
+
+**Portable fingerprint groups:** `linker` · `bakes` · `catalog` · `bunfig` only. Excludes `infra` (Access offline/live ok bits) and `gates` (`--full` spawns) so CI runners and laptops compare the same hash after `machine:bunfig:ensure`. Board `doctor-state.json` still lists all checks; `fingerprint` / `fingerprintPortable: true` cover the portable subset. Rare full-group hash: `bun tools/bake-doctor.ts --check --no-portable`.
 
 ## Signal (failure)
 
@@ -79,6 +81,8 @@ curl -X POST http://127.0.0.1:3000/api/doctor/run
 Template: [`config/machine.bunfig.toml.template`](../../../config/machine.bunfig.toml.template) → `~/.bunfig.toml` with absolute `cache.dir`. Without this, bunfig machine probes fail fatally on clean runners.
 
 Live Access is **off** in CI (offline skips). Local edge proof: `portal-cli doctor --group infra --live-access`.
+
+**Pre-commit:** when staged paths touch the bunfig policy surface (`bunfig.toml`, `config/machine.bunfig.toml.template`, `scripts/ensure-machine-bunfig.ts`, `scripts/lib/machine-bunfig.ts`, `tools/lib/portal-cli-doctor-bunfig.ts`), harness runs `bun run portal:doctor:bunfig:check` (offline · plain · `--no-write`). Escape: `SKIP_DOCTOR_BUNFIG=1`.
 
 ## Data plane
 
