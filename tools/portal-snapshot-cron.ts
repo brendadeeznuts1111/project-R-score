@@ -9,18 +9,17 @@
  *   bun run portal:snapshot:cron:preview
  *   bun run portal:snapshot:cron:remove
  */
-import { joinPath } from '../lib/path-bun.ts';
 import { parseCron, registerOsCron, removeOsCron } from '../lib/harness/cron.ts';
 import {
   PORTAL_SNAPSHOT_CRON_TITLE,
   PORTAL_SNAPSHOT_OS_SCHEDULE,
+  PORTAL_SNAPSHOT_CRON_WORKER,
   resolvePortalSnapshotCronTitle,
   resolvePortalSnapshotOsSchedule,
   resolvePortalSnapshotScopes,
 } from './portal-snapshot-cron-constants.ts';
 
-const ROOT = joinPath(import.meta.dir, '..');
-export const PORTAL_SNAPSHOT_CRON_WORKER = joinPath(ROOT, 'tools/portal-snapshot-cron-worker.ts');
+export { PORTAL_SNAPSHOT_CRON_WORKER } from './portal-snapshot-cron-constants.ts';
 
 type Command = 'register' | 'remove' | 'preview';
 
@@ -59,10 +58,11 @@ function parseArgv(
   return { command, schedule, title, count: Math.max(1, count) };
 }
 
-const opts = parseArgv(Bun.argv.slice(2));
-if (!opts) {
-  const scopes = resolvePortalSnapshotScopes().join(',');
-  console.log(`Usage: bun tools/portal-snapshot-cron.ts <register|remove|preview> [options]
+async function main(): Promise<void> {
+  const opts = parseArgv(Bun.argv.slice(2));
+  if (!opts) {
+    const scopes = resolvePortalSnapshotScopes().join(',');
+    console.log(`Usage: bun tools/portal-snapshot-cron.ts <register|remove|preview> [options]
 
 OS Bun.cron for portal-cli snapshot capture (scope-aware data-plane).
 
@@ -86,29 +86,32 @@ Logs (macOS): /tmp/bun.cron.${PORTAL_SNAPSHOT_CRON_TITLE}.stdout.log
 In-process complement (while serve-public runs):
   PORTAL_SNAPSHOT_CRON=1 bun run serve:public:hot
 `);
-  process.exit(1);
+    process.exit(1);
+  }
+
+  switch (opts.command) {
+    case 'register': {
+      await registerOsCron(PORTAL_SNAPSHOT_CRON_WORKER, opts.schedule, opts.title);
+      console.log(`Registered OS cron "${opts.title}"`);
+      console.log(`  worker: ${PORTAL_SNAPSHOT_CRON_WORKER}`);
+      console.log(`  schedule: ${opts.schedule} (system local time)`);
+      console.log(`  scopes: ${resolvePortalSnapshotScopes().join(', ')}`);
+      console.log(`  logs: /tmp/bun.cron.${opts.title}.stdout.log`);
+      break;
+    }
+    case 'remove': {
+      await removeOsCron(opts.title);
+      console.log(`Removed OS cron "${opts.title}" (if present)`);
+      break;
+    }
+    case 'preview': {
+      const times = previewFireTimes(opts.schedule, opts.count);
+      console.log(`Schedule: ${opts.schedule} (OS local) · title=${opts.title}`);
+      console.log(`Next ${times.length} fire(s) (UTC via Bun.cron.parse preview):`);
+      for (const t of times) console.log(`  ${t.toISOString()}`);
+      break;
+    }
+  }
 }
 
-switch (opts.command) {
-  case 'register': {
-    await registerOsCron(PORTAL_SNAPSHOT_CRON_WORKER, opts.schedule, opts.title);
-    console.log(`Registered OS cron "${opts.title}"`);
-    console.log(`  worker: ${PORTAL_SNAPSHOT_CRON_WORKER}`);
-    console.log(`  schedule: ${opts.schedule} (system local time)`);
-    console.log(`  scopes: ${resolvePortalSnapshotScopes().join(', ')}`);
-    console.log(`  logs: /tmp/bun.cron.${opts.title}.stdout.log`);
-    break;
-  }
-  case 'remove': {
-    await removeOsCron(opts.title);
-    console.log(`Removed OS cron "${opts.title}" (if present)`);
-    break;
-  }
-  case 'preview': {
-    const times = previewFireTimes(opts.schedule, opts.count);
-    console.log(`Schedule: ${opts.schedule} (OS local) · title=${opts.title}`);
-    console.log(`Next ${times.length} fire(s) (UTC via Bun.cron.parse preview):`);
-    for (const t of times) console.log(`  ${t.toISOString()}`);
-    break;
-  }
-}
+if (import.meta.main) main();

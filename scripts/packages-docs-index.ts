@@ -118,11 +118,6 @@ function escCell(s: string): string {
   return s.replace(/\|/g, '\\|').replace(/\n/g, ' ');
 }
 
-function joinOrDash(xs: string[]): string {
-  if (!xs || xs.length === 0) return '—';
-  return xs.map(x => (x.startsWith('`') ? x : `\`${x}\``)).join(' · ');
-}
-
 /**
  * Format one grounded capability for a markdown table cell.
  * - Already contains backticks → emit as-is (JSON may pre-format multi-token cells).
