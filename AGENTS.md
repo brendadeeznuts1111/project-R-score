@@ -123,6 +123,22 @@ Machine SSOT is `~/.bunfig.toml` (`linker = "isolated"`, `globalStore = true`, `
 - Workspace `bunfig.toml` holds **project-specific** overrides only (`frozenLockfile = true` hardened, scopes, `[test]`, etc.) — do **not** duplicate `linker`, `globalStore`, or `cache.dir` unless intentionally overriding. Intentional dep edits: temporarily set `frozenLockfile = false`, then restore.
 - Do **not** set `BUN_INSTALL_CACHE_DIR` or `BUN_INSTALL_GLOBAL_STORE` in shell or IDE — fails `bunfig-policy` / `bun_verify`.
 - Verify: `bun run install:verify` · `bun run audit:bunfig` · `kimi-doctor --gate bunfig-policy` · `bhealth` / `bmachine`.
+- **Portal doctor (bunfig group):** `bun run portal:doctor --group bunfig` · full gate `bun run portal:doctor` · bake board `bun run bake:doctor` → `/portal/doctor/` + `public/registry/doctor-state.json`. Probes: machine SSOT keys · project must not set machine-owned keys · effective merge · `minimumReleaseAgeExcludes` covers type packages.
+
+## Portal doctor + bunfig control plane
+
+Unified offline health gate for the portal control plane (linker · bakes · catalog · **bunfig** · optional `--full` gates).
+
+| Command | Role |
+|---------|------|
+| `bun run portal:doctor` | Full pure doctor (writes `doctor-state.json` unless `--no-write`) |
+| `bun run portal:doctor --group bunfig` | Machine/project/merge/excludes only |
+| `bun run portal:doctor --group catalog,bunfig` | Multi-group (repeatable or comma list) |
+| `bun run portal:doctor --verbose` | Fix · auto · impact · scope table |
+| `bun run bake:doctor` | Refresh `public/registry/doctor-state.json` for boards |
+| Loopback API | `POST /api/doctor/run` via `serve-public` (rewrites bake; not on Pages) |
+
+Board: [`/portal/doctor/`](public/portal/doctor/) · capability rows below (Unified Doctor · Bunfig · Doctor groups) · policy SSOT [`docs/UNIFIED.md`](docs/UNIFIED.md).
 
 ## Bun API references (required for agents)
 
@@ -263,6 +279,11 @@ Each row maps to a documented API — Bun or Proton Pass CLI — with type, vers
 | **Cache inspection** | infra | Bun ≥1.0 | `bun pm cache` | — | `portal-cli pm cache` | Implemented | [bun pm cache](https://bun.com/docs/pm/cli/pm#cache) | `bun run portal-cli pm cache` |
 | **Curated runtime flags catalog** | cli | Bun ≥1.0 | `config/runtime-flags.json` SSOT (14 curated · harvest set) · context-scoped shortcodes · `-i` ≡ `--install=fallback` (not `--no-install`) | — | `portal-cli flags` · `portal:flags:check` · doctor catalog-* | Implemented | [runtime options](https://bun.com/docs/runtime/index#general-execution-options) · [auto-install](https://bun.com/docs/runtime/auto-install) | `bun run portal:flags` · `portal:flags:check` · `portal-cli doctor --group catalog` |
 | **Linker policy verification** | config | Bun ≥1.4 | `bun.lock` `configVersion` field | — | `install:verify` · `portal-cli doctor` (linker-config-version · machine-isolated-linker) | Implemented | [Default strategy](https://bun.com/docs/pm/cli/install#default-strategy) · [isolated installs](https://bun.com/docs/pm/isolated-installs) | `bun run portal-cli doctor` · `portal-cli doctor --verbose` · unit: `probeLockfileConfigVersion` |
+| **Unified Doctor** | dev | Bun ≥1.4 | `bun run portal:doctor` | — | CI · developer checks · `/portal/doctor/` · `bake:doctor` | Implemented | claim portal-doctor · [isolated installs](https://bun.com/docs/pm/isolated-installs) | `bun run portal:doctor --verbose` · `portal-cli doctor --json` |
+| **Bunfig (machine)** | config | Bun ≥1.4 | `~/.bunfig.toml` | — | Machine-level install policy SSOT | Implemented | [runtime/bunfig](https://bun.com/docs/runtime/bunfig) · [`docs/UNIFIED.md`](docs/UNIFIED.md) | `linker` · `globalStore` · `minimumReleaseAge` · `cache.dir` |
+| **Bunfig (project)** | config | Bun ≥1.4 | `./bunfig.toml` | — | Project-level overrides only (no machine keys) | Implemented | same · doctor `bunfig-project-no-machine-keys` | scopes · `[test]` · `frozenLockfile` |
+| **Bunfig merge** | config | Bun ≥1.4 | Shallow merge: machine → project | — | Effective install config resolution | Implemented | doctor `bunfig-merge-consistency` | `bun run install:verify` |
+| **Doctor groups** | dev | Bun ≥1.4 | `linker` · `bakes` · `catalog` · `gates` · `bunfig` | — | Group-based portal doctor checks | Implemented | `tools/lib/portal-cli-doctor.ts` | `portal-cli doctor --group bunfig` · `--group catalog,bunfig` |
 | **Lockfile hash** | integrity | Bun ≥1.0 | `bun pm hash` | — | `portal-cli pm hash` | Implemented | [bun pm hash](https://bun.com/docs/pm/cli/pm#hash) | `bun run portal-cli pm hash` |
 | **PM utilities (full group)** | pkg | Bun ≥1.0 | `bun pm` | — | `portal-cli pm` passthrough | Implemented | [bun pm](https://bun.com/docs/pm/cli/pm) | `bun run portal-cli pm whoami` |
 | **Package graph bake** | audit | Bun ≥1.0 | `Bun.file` + `Bun.write` (bake) · `Bun.inspect.table` (view) | — | `audit:packages --bake` · `portal-cli pm graph` | Implemented | claim `packages-graph-map-v13` · surfaces v3 (page→registry · lib hubs · orphan triage) · [pm/filter](https://bun.com/docs/pm/filter) | `bun run portal-cli pm graph` · `bun run audit:packages -- --bake` |

@@ -1,0 +1,159 @@
+{
+  "kind": "portal-doctor-state",
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-28T21:14:07.792Z",
+  "ok": true,
+  "tone": "green",
+  "full": false,
+  "summary": {
+    "checkCount": 14,
+    "passed": 14,
+    "failed": 0,
+    "fatal": 8,
+    "warn": 4,
+    "info": 2,
+    "failedFatal": 0,
+    "failedWarn": 0,
+    "autoFixableFailed": 0,
+    "suggested": []
+  },
+  "byGroup": {
+    "linker": {
+      "total": 2,
+      "failed": 0,
+      "fatalFailed": 0
+    },
+    "bakes": {
+      "total": 3,
+      "failed": 0,
+      "fatalFailed": 0
+    },
+    "catalog": {
+      "total": 5,
+      "failed": 0,
+      "fatalFailed": 0
+    },
+    "bunfig": {
+      "total": 4,
+      "failed": 0,
+      "fatalFailed": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "linker-config-version",
+      "group": "linker",
+      "level": "fatal",
+      "ok": true,
+      "message": "configVersion=1 + workspaces → isolated linker default per Bun docs",
+      "autoFixable": false
+    },
+    {
+      "id": "machine-isolated-linker",
+      "group": "linker",
+      "level": "fatal",
+      "ok": true,
+      "message": "linker=isolated (source=machine) · globalStore=true",
+      "autoFixable": false
+    },
+    {
+      "id": "vault-health-bake",
+      "group": "bakes",
+      "level": "warn",
+      "ok": true,
+      "message": "public/registry/vault-health.json present · 3h ago",
+      "autoFixable": true
+    },
+    {
+      "id": "capability-map-subset",
+      "group": "bakes",
+      "level": "warn",
+      "ok": true,
+      "message": "public/registry/capability-map-subset.json present · 3m ago",
+      "autoFixable": true
+    },
+    {
+      "id": "bunfig-state-bake",
+      "group": "bakes",
+      "level": "info",
+      "ok": true,
+      "message": "public/registry/bunfig-state.json present · 35m ago",
+      "autoFixable": true
+    },
+    {
+      "id": "catalog-json-schema",
+      "group": "catalog",
+      "level": "fatal",
+      "ok": true,
+      "message": "config/runtime-flags.json valid · 42 flags · required fields present",
+      "autoFixable": false
+    },
+    {
+      "id": "catalog-shortcode-conflict",
+      "group": "catalog",
+      "level": "fatal",
+      "ok": true,
+      "message": "7 shortcodes unique per context (no token collisions)",
+      "autoFixable": false
+    },
+    {
+      "id": "catalog-bun-help-parity",
+      "group": "catalog",
+      "level": "fatal",
+      "ok": true,
+      "message": "all runtime catalog tokens present in bun --help",
+      "autoFixable": false
+    },
+    {
+      "id": "catalog-help-coverage",
+      "group": "catalog",
+      "level": "warn",
+      "ok": true,
+      "message": "14 curated flags present in generated BUN_FLAGS_HELP",
+      "autoFixable": false
+    },
+    {
+      "id": "catalog-deprecated-flags",
+      "group": "catalog",
+      "level": "info",
+      "ok": true,
+      "message": "no deprecated flags in catalog",
+      "autoFixable": false
+    },
+    {
+      "id": "bunfig-machine-ssot",
+      "group": "bunfig",
+      "level": "fatal",
+      "ok": true,
+      "message": "machine /Users/nolarose/.bunfig.toml has linker/globalStore/age/excludes/cache.dir",
+      "autoFixable": false
+    },
+    {
+      "id": "bunfig-project-no-machine-keys",
+      "group": "bunfig",
+      "level": "fatal",
+      "ok": true,
+      "message": "project bunfig.toml does not set machine-owned install keys",
+      "autoFixable": false
+    },
+    {
+      "id": "bunfig-merge-consistency",
+      "group": "bunfig",
+      "level": "fatal",
+      "ok": true,
+      "message": "effective linker=isolated · globalStore=true · cache=machine",
+      "autoFixable": false
+    },
+    {
+      "id": "bunfig-release-age-excludes",
+      "group": "bunfig",
+      "level": "warn",
+      "ok": true,
+      "message": "minimumReleaseAgeExcludes covers bun-types, @types/bun, @types/node, typescript",
+      "autoFixable": false
+    }
+  ],
+  "cli": "bun run portal:doctor",
+  "board": "/portal/doctor/",
+  "href": "/registry/doctor-state.json"
+}

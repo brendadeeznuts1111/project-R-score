@@ -1,96 +1,148 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FactoryWager · project-R-score</title>
+    <title>FactoryWager · Command centre</title>
     <meta
       name="description"
-      content="Cloudflare Pages surface for project-R-score. Wiki and registry live here."
+      content="FactoryWager apex command centre — health, doctor, registry, vault, and portal CLI actions."
     />
-    <link rel="canonical" href="https://wiki.factory-wager.com/" />
+    <link rel="canonical" href="https://score.factory-wager.com/" />
+    <meta name="theme-color" content="#0d1117" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="stylesheet" href="/portal/style.css" />
     <style>
-      :root {
-        --ink: #1a1f16;
-        --muted: #5c664f;
-        --paper: #f3f0e7;
-        --accent: #2f6b3a;
+      .cc-page { max-width: 1120px; margin: 0 auto; padding: 0 24px 48px; }
+      .cc-hero { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: baseline; margin: 20px 0 8px; }
+      .cc-hero h1 { font-size: 1.4rem; font-weight: 650; margin: 0; }
+      .cc-welcome {
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 14px 16px; margin: 12px 0 18px; font-size: 14px; color: var(--text-dim);
       }
-      * {
-        box-sizing: border-box;
+      .cc-welcome a { color: var(--accent); }
+      .cc-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+      .cc-toolbar button, .cc-toolbar a.btn {
+        font: inherit; font-size: 12px; padding: 7px 12px; border-radius: 6px;
+        border: 1px solid var(--border); background: var(--bg, #0d1117); color: var(--text);
+        cursor: pointer; text-decoration: none;
       }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-        color: var(--ink);
-        background:
-          radial-gradient(1200px 600px at 10% -10%, #dfe8d4 0%, transparent 55%),
-          linear-gradient(165deg, #ebe6d8 0%, var(--paper) 45%, #e4e9dc 100%);
+      .cc-toolbar button:hover, .cc-toolbar a.btn:hover { border-color: var(--accent); color: var(--accent); }
+      #cc-updated { font-size: 12px; color: var(--text-dim); }
+      #cc-grid {
         display: grid;
-        place-items: center;
-        padding: 2.5rem 1.25rem;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px;
       }
-      main {
-        width: min(36rem, 100%);
+      .cc-widget {
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 14px 16px; min-height: 120px;
       }
-      .brand {
-        font-size: clamp(2.4rem, 6vw, 3.4rem);
-        font-weight: 700;
-        letter-spacing: -0.03em;
-        line-height: 1.05;
-        margin: 0 0 0.75rem;
+      .cc-widget--wide { grid-column: 1 / -1; }
+      .cc-widget-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+      .cc-widget-head h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; margin: 0; color: var(--text-dim); }
+      .cc-stat, .cc-list { font-size: 13px; margin: 0 0 8px; padding: 0; list-style: none; }
+      .cc-list li { margin: 4px 0; }
+      .cc-meta { font-size: 12px; color: var(--text-dim); margin: 0 0 8px; }
+      .cc-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+      .cc-btn {
+        font: inherit; font-size: 12px; padding: 6px 10px; border-radius: 6px;
+        border: 1px solid var(--border); background: var(--bg); color: var(--text);
+        cursor: pointer; text-decoration: none; display: inline-block;
       }
-      p {
-        margin: 0 0 1.5rem;
-        color: var(--muted);
-        font-size: 1.05rem;
-        line-height: 1.45;
+      .cc-btn--primary { border-color: var(--accent); color: var(--accent); }
+      .cc-btn--ghost { opacity: .9; }
+      .cc-btn:hover { border-color: var(--accent); color: var(--accent); }
+      .cc-bake-strip { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+      .cc-bake-chip {
+        font-size: 11px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border);
+        color: var(--text-dim);
       }
-      nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem 1.25rem;
+      .cc-bake-chip--warn { border-color: #9e6a03; color: #d29922; }
+      .cc-bake-chip a { color: inherit; text-decoration: none; }
+      .cc-qa-grid { display: flex; flex-direction: column; gap: 8px; }
+      .cc-qa-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+      .cc-qa-cmd { font-size: 11px; color: var(--text-dim); overflow-wrap: anywhere; }
+      .cc-qa-btns { display: flex; gap: 6px; }
+      .cc-links { display: flex; flex-direction: column; gap: 10px; }
+      .cc-link-group { font-size: 13px; }
+      .cc-group-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim); margin-bottom: 4px; }
+      .cc-link-row { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+      .cc-link-row a { color: var(--accent); text-decoration: none; }
+      .cc-sep { color: var(--text-dim); }
+      .cc-error {
+        grid-column: 1 / -1; padding: 20px; border: 1px solid var(--red, #f85149);
+        border-radius: var(--radius); background: rgba(248,81,73,.08);
       }
-      a {
-        color: var(--accent);
-        font-weight: 600;
-        text-decoration-thickness: 1px;
-        text-underline-offset: 0.18em;
-      }
-      a:hover {
-        color: var(--ink);
-      }
+      .cc-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 6px; }
+      .footer-mini { margin-top: 28px; font-size: 12px; color: var(--text-dim); display: flex; flex-wrap: wrap; gap: 8px 14px; }
+      .footer-mini a { color: var(--accent); text-decoration: none; }
     </style>
   </head>
   <body>
-    <main>
-      <h1 class="brand">FactoryWager</h1>
-      <p>
-        project-R-score Pages edge — registry and crawl assets under
-        <code>/registry</code>, <code>/robots.txt</code>, and sitemaps.
-        SDK: <code>@factorywager/registry-client</code> (resolve · download · publish).
-      </p>
-      <nav>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon">■</span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Home</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/" class="nav-link active" aria-current="page" data-group="other">Home</a>
+          <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+          <a href="/portal/ops/" class="nav-link" data-group="ops">Ops</a>
+          <a href="/portal/health/" class="nav-link" data-group="harness">Health</a>
+          <a href="/portal/doctor/" class="nav-link" data-group="harness">Doctor</a>
+          <a href="/portal/tools/" class="nav-link" data-group="harness">CLI Tools</a>
+          <a href="/monitoring/" class="nav-link" data-group="plane">Monitoring</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="cc-page">
+      <div class="cc-hero">
+        <h1>Command centre</h1>
+        <p id="cc-updated" class="cc-meta">Loading baked registry…</p>
+      </div>
+
+      <div class="cc-welcome">
+        Get started in the CLI tools hub —
+        <a href="/portal/tools/">/portal/tools/</a>
+        · doctor
+        <a href="/portal/doctor/">/portal/doctor/</a>
+        · prediction
+        <a href="/registry/prediction/report/">report</a>
+        · wiki
+        <a href="https://wiki.factory-wager.com/wiki-index.html">wiki.factory-wager.com</a>
+      </div>
+
+      <div class="cc-toolbar">
+        <button type="button" id="cc-refresh">Refresh</button>
+        <a class="btn" href="/portal/tools/">CLI tools</a>
+        <a class="btn" href="/portal/doctor/">Doctor</a>
+        <a class="btn" href="/registry/projects-registry.json">Projects registry</a>
+        <button type="button" class="copy-cli" data-cli="bun run portal:doctor --verbose">copy doctor</button>
+        <button type="button" class="copy-cli" data-cli="bun run bake:doctor">copy bake:doctor</button>
+      </div>
+
+      <div id="cc-grid" class="cc-grid" aria-live="polite">
+        <p class="cc-meta">Loading widgets…</p>
+      </div>
+
+      <footer class="footer-mini">
         <a href="/portal/">Registry portal</a>
-        <a href="/portal/ops/">Operations (C4/C5)</a>
-        <a href="/portal/dashboard/">Executive dashboard</a>
+        <a href="/portal/ops/">Operations</a>
         <a href="/monitoring/">Monitoring</a>
-        <a href="/portal/dod/">DOD review</a>
-        <a href="/portal/skills/">Skills catalog</a>
-        <a href="/portal/catalog/">Platform catalog</a>
-        <a href="/portal/health/">Health</a>
-        <a href="/registry/@factorywager/registry-client/latest.json">Registry client package</a>
-        <a href="/registry/registry-client-proof.json">Registry client proof</a>
-        <a href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/registry-client.md">Registry client docs</a>
         <a href="/registry/ops-summary.json">Ops summary JSON</a>
-        <a href="/registry/prediction/report/">Prediction report</a>
-        <a href="/registry/portal-weave.json">Portal weave</a>
-        <a href="https://wiki.factory-wager.com/wiki-index.html">Wiki index</a>
-        <a href="https://wiki.factory-wager.com/registry-index.html">Registry index (wiki)</a>
         <a href="/registry/projects-registry.json">Projects registry</a>
+        <a href="https://wiki.factory-wager.com/">Wiki</a>
         <a href="https://github.com/brendadeeznuts1111/project-R-score">Source</a>
-      </nav>
+      </footer>
     </main>
+
+    <script type="module" src="/portal/command-centre.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
   </body>
 </html>

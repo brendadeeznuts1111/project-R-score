@@ -68,6 +68,21 @@ Canonical Bun docs: [workspaces](https://bun.com/docs/pm/workspaces) · [catalog
 | `trustedDependencies` | root | Explicit list **replaces** Bun defaults — do not set a partial list casually. |
 | Root `peerDependencies` | avoid | Application root is not a library; put toolchain pins in `devDependencies` + `catalog:`. |
 
+### `trustedDependencies` decision
+
+Root `package.json` sets `"trustedDependencies": []`. This is intentional:
+
+- Bun does **not** execute dependency lifecycle scripts by default (supply-chain risk).
+- Bun auto-optimizes popular native packages (`esbuild`, `sharp`, etc.) without requiring trust.
+- Project lifecycle scripts (`prepare`, `postinstall`) are owned by the root workspace and limited to `husky` + `scripts/evict-root-tilde-cache.ts`.
+
+Because `trustedDependencies` is an **explicit allow-list that replaces Bun defaults**, adding even one package silently drops all default trusted entries. If a dependency truly needs its lifecycle scripts:
+
+1. Add the package name to root `trustedDependencies`.
+2. Run `bun install` (or `bun pm trust <pkg>`).
+3. Verify with `bun pm untrusted`.
+4. Document the justification in this section and update `scripts/verify-install-cache.ts` if a new allow-list shape is required.
+
 ### Scripts vs `--filter`
 
 | Surface | How to run | Notes |
@@ -178,6 +193,8 @@ frozenLockfile = true
 ```bash
 bun run audit:bunfig
 bun run install:verify          # · :strict — cache, global store links, configVersion
+bun run portal:doctor --group bunfig   # machine SSOT · project drift · merge · excludes
+bun run bake:doctor             # → public/registry/doctor-state.json · /portal/doctor/
 bun run install:machine:health
 bun run install:cache:lifecycle
 bun scripts/with-bun-cache-env.ts ci   # GHA / ephemeral
@@ -211,7 +228,27 @@ bun run check:release-tracker                # tests + release verify
 
 `install:verify` (cache dir, tilde drift, global store links, node_modules layout) complements the seven aspects above — run both for full install health.
 
+**Portal doctor bunfig group** (`tools/lib/portal-cli-doctor-bunfig.ts`) is the control-plane gate for the same machine/project split:
+
+| Check id | Level | Proves |
+|----------|-------|--------|
+| `bunfig-machine-ssot` | fatal | `~/.bunfig.toml` has linker/globalStore/age/excludes/cache.dir |
+| `bunfig-project-no-machine-keys` | fatal | `./bunfig.toml` does not set machine-owned install keys |
+| `bunfig-merge-consistency` | fatal | effective policy is isolated + globalStore + absolute cache |
+| `bunfig-release-age-excludes` | warn | excludes include `bun-types`, `@types/bun`, `@types/node`, `typescript` |
+
+Board: `/portal/doctor/` · bake: `bun run bake:doctor` · loopback run: `POST /api/doctor/run`.
+
 Install verify spawns resolve `bun` via `lib/verification/resolve-bun-binary.ts` (runtime `execPath` → `Bun.which('bun')` fallback) — not bare PATH `'bun'`.
+
+### Install-hygiene audit bake
+
+`bun run bake:install-hygiene` writes `public/registry/install-hygiene-report.json` by combining the install-cache slice, the npm-install check, and a dry-run of `install:verify`. The report is projected into `monitoring.json` as `installHygiene` and consumed by `ops:snapshot`. It is informational: a failed hygiene check bakes the failure into the report rather than blocking the snapshot.
+
+```bash
+bun run bake:install-hygiene
+bun run install:verify --dry-run --json   # JSON used by the bake script
+```
 
 **`BUN_CONFIG_*` (env > bunfig)** — canonical: [configuring-with-environment-variables](https://bun.com/docs/pm/cli/install#configuring-with-environment-variables). SSOT: `tools/bun-install-env.ts` · runtime proof: `tools/verify-install-env.ts` · **8 probe rows** in `public/registry/install-env-proof.json` (6 env vars + `install.scopes` npm plane + `registry-read-plane` SDK plane).
 
@@ -231,3 +268,11 @@ Install verify spawns resolve `bun` via `lib/verification/resolve-bun-binary.ts`
 Code SSOT: `lib/verification/install-platform.ts` · `lib/verification/install-env-probes.ts` · `lib/verification/registry-client-probes.ts` · `lib/verification/bun-runtime-nits-probes.ts` · `lib/docs/bun-install-platform-docs.ts` · `lib/docs/bun-install-linker-docs.ts` · `scripts/verify-install-cache.ts`.
 
 CI: `setup-factory-bun` + `ci:core`. Docs: [Bun bunfig](https://bun.com/docs/runtime/bunfig) · [isolated installs](https://bun.com/docs/pm/isolated-installs) · [global store](https://bun.com/docs/pm/global-store) · [lockfile](https://bun.com/docs/pm/lockfile).
+
+## References and further reading
+
+- Bun package manager: [`bun install`](https://bun.com/docs/cli/install) · [`bunfig.toml`](https://bun.com/docs/runtime/bunfig) · [isolated installs](https://bun.com/docs/pm/isolated-installs) · [global store](https://bun.com/docs/pm/global-store) · [global cache](https://bun.com/docs/pm/global-cache) · [trusted dependencies](https://bun.com/docs/install/lifecycle#trusted-dependencies) · [security scanner](https://bun.com/docs/pm/security-scanner-api).
+- Supply-chain hardening: [SLSA levels](https://slsa.dev/spec/v1.0/levels) · [npm "scripts build scripts" supply-chain guidance](https://docs.npmjs.com/cli/v10/using-npm/scripts#best-practices) · [OWASP Software Dependencies](https://owasp.org/www-project-dependency-check/) · [OpenSSF SLSA](https://github.com/slsa-framework/slsa).
+- Bun verification tools in this repo: `bun tools/bun-doc-refs.ts suggest "<api>"` · `bun run docs:refresh` · `bun run verify-all`.
+
+*Verified 2026-07-28 on Bun 1.4.0.*

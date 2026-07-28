@@ -94,7 +94,10 @@
       <div class="quick-actions">
         <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli snapshot run --scope portal">snapshot run</button>
         <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli snapshot list">snapshot list</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli doctor">portal doctor</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal:doctor --verbose">portal doctor</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal:doctor --group bunfig">doctor bunfig</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run bake:doctor">bake doctor</button>
+        <a class="qa-btn" href="/portal/doctor/" style="display:inline-flex;align-items:center;text-decoration:none">Doctor board</a>
         <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli vault health">vault health gate</button>
         <button type="button" class="copy-cli qa-btn" data-cli="bun run vault:health:bake">vault health bake</button>
         <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli scanner doctor">scanner doctor</button>
@@ -163,6 +166,16 @@
               <code>monorepo:health:bake</code>
             </td>
             <td>Health dashboard · monorepo score</td>
+          </tr>
+          <tr>
+            <td><a href="/portal/doctor/">Doctor</a> <span class="group-tag">harness</span></td>
+            <td>
+              <button type="button" class="copy-cli" data-cli="bun run portal:doctor --verbose">copy</button>
+              <code>portal:doctor</code><br />
+              <code>portal:doctor --group bunfig</code><br />
+              <code>bake:doctor</code>
+            </td>
+            <td>Unified doctor · bunfig/catalog/linker · doctor-state bake</td>
           </tr>
           <tr>
             <td><a href="/portal/failures/">Failures</a> <span class="group-tag">harness</span></td>

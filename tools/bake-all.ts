@@ -51,6 +51,7 @@ const STEPS: BakeStep[] = [
   { id: 'env', cmd: ['bun', 'run', 'env:inventory:bake'], note: 'env inventory' },
   { id: 'compliance', cmd: ['bun', 'run', 'compliance:bake'], note: 'compliance board' },
   { id: 'ops', cmd: ['bun', 'run', 'ops:snapshot'], note: 'ops-summary + limit-raises' },
+  { id: 'doctor', cmd: ['bun', 'run', 'bake:doctor'], note: 'doctor-state.json' },
 ];
 
 const SKIPPED = [

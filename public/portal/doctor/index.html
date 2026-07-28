@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- @see docs/portal-foundation.md — portal doctor board; reads /registry/doctor-state.json -->
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="portal-poll-ms" content="60000" />
+  <title>Doctor · FactoryWager</title>
+  <meta name="theme-color" content="#0d1117" />
+  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+  <link rel="stylesheet" href="/portal/style.css" />
+  <style>
+    .doc-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 48px; }
+    .doc-hero { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin: 16px 0 8px; }
+    .doc-hero h1 { font-size: 1.35rem; font-weight: 650; margin: 0; }
+    .doc-badge {
+      font-size: 12px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border);
+    }
+    .doc-badge.green { color: #3fb950; border-color: #238636; background: rgba(63,185,80,.12); }
+    .doc-badge.yellow { color: #d29922; border-color: #9e6a03; background: rgba(210,153,34,.12); }
+    .doc-badge.red { color: #f85149; border-color: #da3633; background: rgba(248,81,73,.12); }
+    .doc-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 16px 0; }
+    .doc-stat {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;
+    }
+    .doc-stat .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+    .doc-stat .v { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .doc-panel {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 18px; margin-bottom: 16px;
+    }
+    .doc-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
+    .doc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .doc-table th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); }
+    .doc-table td { padding: 6px 8px; border-bottom: 1px solid rgba(48,54,61,.4); vertical-align: top; }
+    .doc-table tr.fail td { color: var(--red, #f85149); }
+    .doc-table code { font-size: 11px; }
+    .doc-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
+    .doc-actions button, .doc-actions a.btn {
+      font: inherit; font-size: 12px; padding: 7px 12px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--bg, #0d1117); color: var(--text); cursor: pointer;
+      text-decoration: none;
+    }
+    .doc-actions button:hover, .doc-actions a.btn:hover { border-color: var(--accent); color: var(--accent); }
+    .doc-actions button:disabled { opacity: .5; cursor: wait; }
+    .dim { color: var(--text-dim); font-size: 12px; }
+    .group-chip {
+      display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: .04em;
+      padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); color: var(--text-dim);
+    }
+  </style>
+</head>
+<body>
+  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="logo">
+        <span class="logo-icon">■</span>
+        <span class="brand-wordmark">FactoryWager</span>
+        <span class="brand-badge">ops</span>
+        <span class="logo-page">Doctor</span>
+      </h1>
+      <nav class="topbar-nav" aria-label="Primary">
+        <a href="/" class="nav-link" data-group="other">Home</a>
+        <a href="/portal/ops/" class="nav-link" data-group="ops">Ops</a>
+        <a href="/portal/" class="nav-link" data-group="registry">Registry</a>
+        <a href="/portal/health/" class="nav-link" data-group="harness">Health</a>
+        <a href="/portal/doctor/" class="nav-link active" aria-current="page" data-group="harness">Doctor</a>
+        <a href="/portal/tools/" class="nav-link" data-group="harness">CLI Tools</a>
+      </nav>
+    </div>
+  </header>
+  <main class="doc-wrap">
+    <div class="doc-hero">
+      <h1>Portal doctor</h1>
+      <span id="doc-tone" class="doc-badge">…</span>
+      <p class="dim" id="doc-meta">Loading /registry/doctor-state.json…</p>
+    </div>
+    <div class="doc-actions">
+      <button type="button" id="doc-run" title="Loopback only: re-run doctor + bake">Run doctor</button>
+      <button type="button" class="copy-cli" data-cli="bun run portal:doctor --verbose">copy CLI</button>
+      <a class="btn" href="/registry/doctor-state.json">JSON</a>
+      <a class="btn" href="/portal/bunfig/">Bunfig board</a>
+      <a class="btn" href="/portal/tools/">CLI Tools</a>
+    </div>
+    <p class="dim" id="doc-run-status"></p>
+
+    <div class="doc-stats" id="doc-stats"></div>
+
+    <div class="doc-panel">
+      <h2>By group</h2>
+      <div id="doc-groups" class="dim">—</div>
+    </div>
+
+    <div class="doc-panel">
+      <h2>Checks</h2>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Status</th><th>Group</th><th>Check</th><th>Level</th><th>What</th><th>Fix</th></tr>
+        </thead>
+        <tbody id="doc-body"><tr><td colspan="6" class="dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+  <script type="module" src="/portal/data.js"></script>
+  <script type="module" src="/portal/doctor/doctor-board.js"></script>
+  <script type="module" src="/portal/topbar.js"></script>
+</body>
+</html>

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-28T19:24:04.022Z",
+  "generated": "2026-07-28T21:10:50.272Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
-    "overflowNav": 14,
-    "footerLinks": 15,
+    "overflowNav": 17,
+    "footerLinks": 16,
     "components": 13,
     "scripts": 5
   },
@@ -85,6 +85,15 @@
       "cli": "bun run portal-cli pm graph  # offline packages-graph-map table"
     },
     {
+      "id": "brands",
+      "label": "Brands",
+      "href": "/portal/brands/",
+      "tier": "overflow",
+      "group": "registry",
+      "note": "domain-value glossary · constructor tiers · project adoption",
+      "cli": "bun run brand:keymap"
+    },
+    {
       "id": "skills",
       "label": "Skills",
       "href": "/portal/skills/",
@@ -126,6 +135,24 @@
       "group": "harness",
       "note": "test failures bake · junit · nav badge = count",
       "cli": "bun run failures:bake  # → /registry/failures.json"
+    },
+    {
+      "id": "bunfig",
+      "label": "Bunfig",
+      "href": "/portal/bunfig/",
+      "tier": "overflow",
+      "group": "harness",
+      "note": "bunfig install config provenance · portal-cli bunfig status",
+      "cli": "bun run bunfig:bake  # → /registry/bunfig-state.json"
+    },
+    {
+      "id": "doctor",
+      "label": "Doctor",
+      "href": "/portal/doctor/",
+      "tier": "overflow",
+      "group": "harness",
+      "note": "unified health gate · bunfig · catalog · linker",
+      "cli": "bun run portal:doctor --verbose"
     },
     {
       "id": "dashboard",
@@ -203,6 +230,10 @@
     {
       "label": "Packages",
       "href": "/portal/packages/"
+    },
+    {
+      "label": "Brands",
+      "href": "/portal/brands/"
     },
     {
       "label": "Health",

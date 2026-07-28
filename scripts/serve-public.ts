@@ -1492,6 +1492,66 @@ function isNpmPackagePath(path: string): boolean {
 }
 
 /**
+ * GET|POST /api/doctor/run — loopback-only portal doctor bake.
+ * Runs pure doctor (no --full spawn by default) and writes doctor-state.json.
+ * Never enable on non-loopback binds (Pages / staging IPs).
+ *
+ *   curl -X POST http://127.0.0.1:3000/api/doctor/run
+ *   curl 'http://127.0.0.1:3000/api/doctor/run?full=1'
+ */
+async function doctorRunApi(req: Request, server?: RouteServer): Promise<Response> {
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return json({ error: 'Method not allowed — use GET or POST' }, 405);
+  }
+  const ip = clientSocket(req, server);
+  const addr = ip?.address ?? '';
+  const loopback =
+    addr === '127.0.0.1' ||
+    addr === '::1' ||
+    addr === '::ffff:127.0.0.1' ||
+    (!ip &&
+      (new URL(req.url).hostname === '127.0.0.1' ||
+        new URL(req.url).hostname === 'localhost' ||
+        new URL(req.url).hostname === '::1'));
+  if (!loopback) {
+    return json(
+      {
+        error: 'doctor run is loopback-only',
+        hint: 'Use: bun run bake:doctor  ·  or bun run portal:doctor',
+        client: addr || null,
+      },
+      403
+    );
+  }
+  try {
+    const full = new URL(req.url).searchParams.get('full') === '1';
+    const { bakeDoctorState } = await import('../tools/bake-doctor.ts');
+    const { state, path } = await bakeDoctorState({ full });
+    return json({
+      ok: state.ok,
+      tone: state.tone,
+      path: '/registry/doctor-state.json',
+      wrote: path,
+      generatedAt: state.generatedAt,
+      summary: state.summary,
+      byGroup: state.byGroup,
+      state,
+      cli: 'bun run portal:doctor',
+      board: '/portal/doctor/',
+    });
+  } catch (e) {
+    return json(
+      {
+        ok: false,
+        error: e instanceof Error ? e.message : String(e),
+        hint: 'bun run bake:doctor',
+      },
+      500
+    );
+  }
+}
+
+/**
  * POST /api/packages/graph/rebake — loopback-only offline bake.
  * Runs `bun run audit:packages -- --bake` and returns score metadata from the new map.
  * Never enable on non-loopback binds (Pages / staging IPs).
@@ -1638,6 +1698,10 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   // Local-only packages graph rebake (never on Pages / remote binds)
   if (path === '/api/packages/graph/rebake' || path === '/api/packages/graph/rebake/') {
     return packagesGraphRebake(req, server);
+  }
+  // Local-only portal doctor run + doctor-state bake
+  if (path === '/api/doctor/run' || path === '/api/doctor/run/') {
+    return doctorRunApi(req, server);
   }
   if (path === '/api/portal/dashboard' || path === '/api/portal/dashboard/') {
     const { portalDashboardResponse } = await import('../lib/portal/command-centre-api.ts');

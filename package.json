@@ -24,6 +24,33 @@
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3"
   },
+  "dependencies": {
+    "@factorywager/docs-tools": "workspace:*",
+    "@factorywager/guards": "workspace:*",
+    "@factorywager/registry-client": "workspace:*",
+    "@factorywager/rip": "workspace:*",
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "@pinecone-database/pinecone": "7.2.0",
+    "@simplewebauthn/server": "13.3.2",
+    "plaid": "42.2.0",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@socketsecurity/bun-security-scanner": "^1.1.2",
+    "@types/bun": "catalog:",
+    "@types/node": "25.9.0",
+    "@typescript-eslint/eslint-plugin": "8.59.3",
+    "@typescript-eslint/parser": "8.59.3",
+    "bun-types": "catalog:",
+    "eslint": "9.39.4",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-security": "3.0.1",
+    "husky": "9.1.7",
+    "prettier": "3.6.2",
+    "typescript": "catalog:",
+    "typescript-eslint": "8.59.3",
+    "undici-types": "8.8.0"
+  },
   "bin": {
     "dx-mcp": "./scripts/dx-mcp.ts",
     "ops-prediction": "./tools/ops-prediction.ts",
@@ -1599,7 +1626,9 @@
     "portal:flags:check": "bun tools/portal-flags-check.ts",
     "portal:flags:migrate": "bun tools/portal-flags-migrate.ts",
     "portal:doctor:catalog": "bun tools/portal-cli.ts doctor --group catalog --verbose",
+    "portal:doctor:bunfig": "bun tools/portal-cli.ts doctor --group bunfig --verbose",
     "portal:doctor:ci": "bun tools/portal-cli.ts doctor --env ci --failed-only",
+    "bake:doctor": "bun tools/bake-doctor.ts",
     "build:portal-cli": "bun build tools/portal-cli.ts --compile --outfile dist/portal",
     "portal:snapshot": "bun tools/portal-cli.ts snapshot run",
     "portal:snapshot:list": "bun tools/portal-cli.ts snapshot list",
@@ -2174,33 +2203,6 @@
     "cn": "bunx --bun shadcn@latest",
     "cn:sto": "bunx --bun shadcn@latest --cwd projects/active/sports-terminal-os",
     "bake:all": "bun tools/bake-all.ts"
-  },
-  "dependencies": {
-    "@factorywager/docs-tools": "workspace:*",
-    "@factorywager/guards": "workspace:*",
-    "@factorywager/registry-client": "workspace:*",
-    "@factorywager/rip": "workspace:*",
-    "@modelcontextprotocol/sdk": "1.29.0",
-    "@pinecone-database/pinecone": "7.2.0",
-    "@simplewebauthn/server": "13.3.2",
-    "plaid": "42.2.0",
-    "yaml": "2.9.0"
-  },
-  "devDependencies": {
-    "@socketsecurity/bun-security-scanner": "^1.1.2",
-    "@types/bun": "catalog:",
-    "@types/node": "25.9.0",
-    "@typescript-eslint/eslint-plugin": "8.59.3",
-    "@typescript-eslint/parser": "8.59.3",
-    "bun-types": "catalog:",
-    "eslint": "9.39.4",
-    "eslint-plugin-import": "2.32.0",
-    "eslint-plugin-security": "3.0.1",
-    "husky": "9.1.7",
-    "prettier": "3.6.2",
-    "typescript": "catalog:",
-    "typescript-eslint": "8.59.3",
-    "undici-types": "8.8.0"
   },
   "private": "false",
   "files": [

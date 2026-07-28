@@ -37,10 +37,11 @@ import {
 } from '../../scripts/lib/machine-bunfig.ts';
 import { cliTone, columnTable, frameBlock, kvLines } from '../../lib/portal/cli-chrome.ts';
 import { runCatalogChecks } from './portal-cli-doctor-catalog.ts';
+import { runBunfigChecks } from './portal-cli-doctor-bunfig.ts';
 
 export type PortalDoctorLevel = 'fatal' | 'warn' | 'info';
 export type PortalDoctorEnvScope = 'dev' | 'ci' | 'all';
-export type PortalDoctorGroup = 'linker' | 'bakes' | 'catalog' | 'gates';
+export type PortalDoctorGroup = 'linker' | 'bakes' | 'catalog' | 'gates' | 'bunfig';
 
 export type PortalDoctorCheck = {
   id: string; // brand-ok — check id enum-like opaque key (linker-config-version, …)
@@ -127,10 +128,17 @@ export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
   linker: 'Linker policy',
   bakes: 'Offline bakes',
   catalog: 'Catalog SSOT',
+  bunfig: 'Bunfig SSOT',
   gates: 'Spawned gates',
 };
 
-export const PORTAL_DOCTOR_GROUPS: PortalDoctorGroup[] = ['linker', 'bakes', 'catalog', 'gates'];
+export const PORTAL_DOCTOR_GROUPS: PortalDoctorGroup[] = [
+  'linker',
+  'bakes',
+  'catalog',
+  'bunfig',
+  'gates',
+];
 
 export function parseDoctorGroup(raw: string | undefined): PortalDoctorGroup | undefined {
   if (!raw) return undefined;
@@ -456,6 +464,9 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   //    catalog-json-schema · catalog-shortcode-conflict · catalog-help-coverage · catalog-deprecated-flags
   const catalogResult = await runCatalogChecks(cwd);
   checks.push(...catalogResult.checks);
+
+  // 3b) Bunfig machine/project SSOT
+  checks.push(...(await runBunfigChecks(cwd)));
 
   // 4) Optional full: spawn existing gates (no network assumed)
   if (full) {

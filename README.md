@@ -50,6 +50,7 @@ Routing: [`docs/platform-routing.md`](docs/platform-routing.md) · edge verify: 
 | Partner limits | [`/portal/limits/`](https://score.factory-wager.com/portal/limits/) | [`docs/harness/tenants/partner-limits.md`](docs/harness/tenants/partner-limits.md) · `ops:limits:demo` · `ops:limits:capture` · `ops:limits:predict` |
 | Dashboard | [`/portal/dashboard/`](https://score.factory-wager.com/portal/dashboard/) | KPIs · TOC · compliance plane |
 | Health / Env | [`/portal/health/`](https://score.factory-wager.com/portal/health/) · [`/portal/env/`](https://score.factory-wager.com/portal/env/) | `/api/health` schema v1 · env checklist |
+| Doctor | [`/portal/doctor/`](https://score.factory-wager.com/portal/doctor/) | `bun run portal:doctor` · `bake:doctor` · bunfig/catalog/linker groups · [`docs/UNIFIED.md`](docs/UNIFIED.md) |
 | DOD queue | [`/portal/dod/`](https://score.factory-wager.com/portal/dod/) | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) |
 | Skills catalog | [`/portal/skills/`](https://score.factory-wager.com/portal/skills/) | [`docs/harness/tenants/public-plane.md`](docs/harness/tenants/public-plane.md) |
 | Seat capital desk | [`registry/seat-capital-desk.json`](https://score.factory-wager.com/registry/seat-capital-desk.json) | [`docs/harness/tenants/seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md) |
@@ -73,6 +74,9 @@ Full weave list: [portal-weave.ts](https://github.com/brendadeeznuts1111/project
 
 ```bash
 bun run harness:status              # ratchets + proof posture
+bun run portal:doctor               # unified health gate (linker · bakes · catalog · bunfig)
+bun run portal:doctor --group bunfig --verbose
+bun run bake:doctor                 # → /registry/doctor-state.json · /portal/doctor/
 bun run ops:snapshot --no-seed      # rebake registry + portal embeds
 bun run compliance:verify           # compliance board + portal tests
 bun run telegram:handshake:readiness --deep   # 23/23 lanes per partner

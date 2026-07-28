@@ -24,6 +24,13 @@ const BAKES = [
     board: '/portal/tools/#capabilities',
     cli: 'bun run portal-cli dashboard --view=capabilities',
   },
+  {
+    id: 'doctor-state',
+    label: 'doctor-state',
+    href: '/registry/doctor-state.json',
+    board: '/portal/doctor/',
+    cli: 'bun run bake:doctor',
+  },
 ].filter((b, i, arr) => arr.findIndex(x => x.id === b.id) === i);
 
 async function fillBakeStatus() {
@@ -56,6 +63,10 @@ async function fillBakeStatus() {
               .join(' ')
           : '';
         extra = ` · rows=${n}${proto ? ` · ${proto}` : ''} · schema v${r.data.schemaVersion ?? '?'}`;
+      }
+      if (b.id === 'doctor-state' && r.data) {
+        const s = r.data.summary || {};
+        extra = ` · tone=${r.data.tone ?? '—'} · ${s.passed ?? '?'}/${s.checkCount ?? '?'} passed · fatalFail=${s.failedFatal ?? 0}`;
       }
       return `<tr><td><a href="${b.href}">${b.label}</a></td><td>${ageLabel(at)}${extra}</td><td><a href="${b.board}">board</a></td><td><button type="button" class="copy-cli" data-cli="${b.cli}">copy</button></td></tr>`;
     })
@@ -111,6 +122,11 @@ const CAPABILITY_FALLBACK = [
   ['Packages graph', 'pkg', 'Bun', 'Bun ≥1.0', 'packages-graph-map bake · portal-cli pm graph', 'Implemented', 'portal-cli pm graph', ''],
   ['Security scanner', 'security', 'Bun', 'Bun ≥1.4', 'bun pm scan · [install.security]', 'Implemented', 'portal-cli scanner doctor', 'https://bun.com/docs/pm/security-scanner-api'],
   ['Linker policy verification', 'config', 'Bun', 'Bun ≥1.4', 'bun.lock configVersion field', 'Implemented', 'portal-cli doctor · install:verify', 'https://bun.com/docs/pm/cli/install#default-strategy'],
+  ['Unified Doctor', 'dev', 'Bun', 'Bun ≥1.4', 'bun run portal:doctor', 'Implemented', 'CI, developer checks', ''],
+  ['Bunfig (machine)', 'config', 'Bun', 'Bun ≥1.4', '~/.bunfig.toml', 'Implemented', 'Machine-level policy', 'https://bun.com/docs/runtime/bunfig'],
+  ['Bunfig (project)', 'config', 'Bun', 'Bun ≥1.4', './bunfig.toml', 'Implemented', 'Project-level overrides', 'https://bun.com/docs/runtime/bunfig'],
+  ['Bunfig merge', 'config', 'Bun', 'Bun ≥1.4', 'Shallow merge: machine → project', 'Implemented', 'Effective config resolution', ''],
+  ['Doctor groups', 'dev', 'Bun', 'Bun ≥1.4', 'linker, bakes, catalog, gates, bunfig', 'Implemented', 'Group-based checks', ''],
   ['Dashboard launcher', 'cli', 'Bun', 'Bun ≥1.0', 'portal-cli dashboard --view', 'Implemented', '/', ''],
   ['ANSI color', 'display', 'Bun', 'Bun ≥1.0', 'Bun.color(hex, "ansi-16m")', 'Implemented', 'vault-map status lines', ''],
   ['File I/O', 'io', 'Bun', 'Bun ≥1.0', 'Bun.file · Bun.write', 'Implemented', 'bakes · snapshots', ''],

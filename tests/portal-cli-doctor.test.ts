@@ -18,6 +18,12 @@ import {
   summarizeDoctorChecks,
 } from '../tools/lib/portal-cli-doctor.ts';
 import { runCatalogChecks } from '../tools/lib/portal-cli-doctor-catalog.ts';
+import {
+  MACHINE_OWNED_INSTALL_KEYS,
+  REQUIRED_RELEASE_AGE_EXCLUDES,
+  runBunfigChecks,
+} from '../tools/lib/portal-cli-doctor-bunfig.ts';
+import { toDoctorState, DOCTOR_STATE_KIND } from '../tools/bake-doctor.ts';
 import { PORTAL_CLI_COMMANDS } from '../tools/lib/portal-cli-bun-flags.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
@@ -195,6 +201,54 @@ describe('portal-cli doctor pure', () => {
     expect(r.checks).toHaveLength(5);
     expect(r.ok).toBe(true);
     expect(formatPortalDoctor(r)).toContain('group=catalog');
+  });
+
+  test('doctor includes bunfig SSOT checks', async () => {
+    const r = await runPortalDoctor({ cwd: ROOT, full: false });
+    const ids = r.checks.filter(c => c.group === 'bunfig').map(c => c.id);
+    expect(ids).toEqual([
+      'bunfig-machine-ssot',
+      'bunfig-project-no-machine-keys',
+      'bunfig-merge-consistency',
+      'bunfig-release-age-excludes',
+    ]);
+    for (const id of ids) {
+      expect(r.checks.find(c => c.id === id)?.ok).toBe(true);
+    }
+    expect(formatPortalDoctor(r)).toContain('Bunfig SSOT');
+  });
+
+  test('--group bunfig scopes to four checks', async () => {
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'bunfig' });
+    expect(r.group).toBe('bunfig');
+    expect(r.checks).toHaveLength(4);
+    expect(r.checks.every(c => c.group === 'bunfig')).toBe(true);
+    expect(r.ok).toBe(true);
+  });
+
+  test('runBunfigChecks exports machine key / excludes constants', async () => {
+    expect(MACHINE_OWNED_INSTALL_KEYS).toContain('linker');
+    expect(MACHINE_OWNED_INSTALL_KEYS).toContain('globalStore');
+    expect(REQUIRED_RELEASE_AGE_EXCLUDES).toEqual([
+      'bun-types',
+      '@types/bun',
+      '@types/node',
+      'typescript',
+    ]);
+    const checks = await runBunfigChecks(ROOT);
+    expect(checks).toHaveLength(4);
+  });
+
+  test('toDoctorState maps report to portal-doctor-state', async () => {
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'bunfig' });
+    const state = toDoctorState(r);
+    expect(state.kind).toBe(DOCTOR_STATE_KIND);
+    expect(state.schemaVersion).toBe(1);
+    expect(state.tone).toBe('green');
+    expect(state.byGroup.bunfig?.total).toBe(4);
+    expect(state.checks).toHaveLength(4);
+    expect(state.board).toBe('/portal/doctor/');
+    expect(state.href).toBe('/registry/doctor-state.json');
   });
 
   test('parseDoctorGroupsFromArgv supports multi and comma groups', () => {

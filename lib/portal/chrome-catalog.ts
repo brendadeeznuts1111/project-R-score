@@ -177,6 +177,24 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     note: 'test failures bake · junit · nav badge = count',
     cli: 'bun run failures:bake  # → /registry/failures.json',
   },
+  {
+    id: 'bunfig',
+    label: 'Bunfig',
+    href: '/portal/bunfig/',
+    tier: 'overflow',
+    group: 'harness',
+    note: 'bunfig install config provenance · portal-cli bunfig status',
+    cli: 'bun run bunfig:bake  # → /registry/bunfig-state.json',
+  },
+  {
+    id: 'doctor',
+    label: 'Doctor',
+    href: '/portal/doctor/',
+    tier: 'overflow',
+    group: 'harness',
+    note: 'unified health gate · bunfig · catalog · linker',
+    cli: 'bun run portal:doctor --verbose',
+  },
   // ── Ops boards ──
   {
     id: 'dashboard',
