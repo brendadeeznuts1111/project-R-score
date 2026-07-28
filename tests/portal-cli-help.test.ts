@@ -18,11 +18,27 @@ describe('portal-cli help', () => {
 
     expect(code).toBe(0);
     expect(out).toContain('Runtime options (via bun):');
+    expect(out).toContain('Development:');
+    expect(out).toContain('Debugging:');
+    expect(out).toContain('Environment & config:');
+    expect(out).toContain('Output control:');
+    expect(out).toContain('Performance:');
+    expect(out).toContain('Dependency resolution:');
     expect(out).toContain('bun --watch tools/portal-cli.ts ...');
     expect(out).toContain('bun --hot tools/portal-cli.ts ...');
+    expect(out).toContain('bun --no-clear-screen --watch tools/portal-cli.ts ...');
+    expect(out).toContain('bun --inspect-wait tools/portal-cli.ts ...');
+    expect(out).toContain('bun --inspect-brk tools/portal-cli.ts ...');
     expect(out).toContain('bun --cwd /path tools/portal-cli.ts ...');
+    expect(out).toContain('bun --config ./bunfig.toml tools/portal-cli.ts ...');
+    expect(out).toContain(`bun --define 'process.env.NODE_ENV:"production"'`);
+    expect(out).toContain('bun --conditions custom tools/portal-cli.ts ...');
     expect(out).toContain('bun --silent tools/portal-cli.ts ...');
     expect(out).toContain('bun --inspect tools/portal-cli.ts ...');
-    expect(out).toEndWith('See: https://bun.com/docs/runtime/index#general-execution-options');
+    expect(out).toContain('bun --smol tools/portal-cli.ts ...');
+    expect(out).toContain('bun --prefer-offline tools/portal-cli.ts ...');
+    expect(out).toContain('bun --install=fallback tools/portal-cli.ts ...');
+    expect(out).not.toContain('bun --verbose');
+    expect(out).toEndWith('See all options: https://bun.com/docs/runtime/index#general-execution-options');
   });
 });

@@ -1,121 +1,100 @@
 [
   {
     "flag": "--watch",
-    "category": "Development & Reloading",
+    "category": "Development",
     "version": "Bun ≥1.0",
-    "description": "Auto-restart on file changes",
-    "url": "https://bun.com/docs/runtime#watch-mode"
+    "description": "Restart on imported file changes",
+    "url": "https://bun.com/docs/runtime/watch-mode"
   },
   {
     "flag": "--hot",
-    "category": "Development & Reloading",
+    "category": "Development",
     "version": "Bun ≥1.0",
-    "description": "Hot module replacement (preserves module state)",
-    "url": "https://bun.com/docs/runtime#hot-mode"
+    "description": "Soft-reload modules while preserving global state",
+    "url": "https://bun.com/docs/runtime/watch-mode"
   },
   {
     "flag": "--no-clear-screen",
-    "category": "Development & Reloading",
+    "category": "Development",
     "version": "Bun ≥1.0",
-    "description": "Keep terminal content on reload",
-    "url": "https://bun.com/docs/runtime#watch-mode"
+    "description": "Keep terminal output visible during reloads",
+    "url": "https://bun.com/docs/runtime/watch-mode"
   },
   {
     "flag": "--inspect",
-    "category": "Debugging & Inspection",
+    "category": "Debugging",
     "version": "Bun ≥1.0",
-    "description": "Attach debugger (default port 6499)",
+    "description": "Attach the debugger on an available port",
     "url": "https://bun.com/docs/runtime/debugger"
   },
   {
     "flag": "--inspect-wait",
-    "category": "Debugging & Inspection",
+    "category": "Debugging",
     "version": "Bun ≥1.0",
-    "description": "Wait for debugger before executing",
+    "description": "Wait for the debugger before executing",
     "url": "https://bun.com/docs/runtime/debugger"
   },
   {
     "flag": "--inspect-brk",
-    "category": "Debugging & Inspection",
+    "category": "Debugging",
     "version": "Bun ≥1.0",
-    "description": "Break on first line",
+    "description": "Break on the first line and wait",
     "url": "https://bun.com/docs/runtime/debugger"
   },
   {
-    "flag": "--smol",
-    "category": "Performance & Memory",
+    "flag": "--cwd",
+    "category": "Environment & Config",
     "version": "Bun ≥1.0",
-    "description": "Lower memory usage, more frequent GC",
-    "url": "https://bun.com/docs/runtime#memory-usage"
+    "description": "Set the working directory",
+    "url": "https://bun.com/docs/runtime/index#global-configuration-context"
   },
   {
-    "flag": "--expose-gc",
-    "category": "Performance & Memory",
+    "flag": "--config",
+    "category": "Environment & Config",
     "version": "Bun ≥1.0",
-    "description": "Expose gc() globally for forced collection",
-    "url": "https://bun.com/docs/runtime#memory-usage"
+    "description": "Use a custom bunfig.toml",
+    "url": "https://bun.com/docs/runtime/index#global-configuration-context"
   },
   {
-    "flag": "--no-install",
-    "category": "Module Resolution",
+    "flag": "--define",
+    "category": "Environment & Config",
     "version": "Bun ≥1.0",
-    "description": "Disable auto-install of missing dependencies",
-    "url": "https://bun.com/docs/runtime/auto-install"
-  },
-  {
-    "flag": "--prefer-offline",
-    "category": "Module Resolution",
-    "version": "Bun ≥1.0",
-    "description": "Skip stale checks, use disk cache",
-    "url": "https://bun.com/docs/pm/cli#prefer-offline"
-  },
-  {
-    "flag": "--prefer-latest",
-    "category": "Module Resolution",
-    "version": "Bun ≥1.0",
-    "description": "Always fetch latest matching versions",
-    "url": "https://bun.com/docs/pm/cli#prefer-latest"
+    "description": "Substitute a constant at parse time",
+    "url": "https://bun.com/docs/guides/runtime/define-constant"
   },
   {
     "flag": "--conditions",
-    "category": "Module Resolution",
+    "category": "Environment & Config",
     "version": "Bun ≥1.0",
-    "description": "Pass custom export conditions (repeatable)",
-    "url": "https://bun.com/docs/runtime/modules#custom-export-conditions"
-  },
-  {
-    "flag": "--cwd",
-    "category": "Environment & CWD",
-    "version": "Bun ≥1.0",
-    "description": "Set working directory",
-    "url": "https://bun.com/docs/runtime/environment-variables"
-  },
-  {
-    "flag": "--title",
-    "category": "Environment & CWD",
-    "version": "Bun ≥1.0",
-    "description": "Set process title",
-    "url": "https://bun.com/docs/runtime/environment-variables"
+    "description": "Pass custom export conditions",
+    "url": "https://bun.com/docs/runtime/index#dependency-module-resolution"
   },
   {
     "flag": "--silent",
     "category": "Output Control",
     "version": "Bun ≥1.0",
-    "description": "Suppress all output",
-    "url": "https://bun.com/docs/runtime/environment-variables"
+    "description": "Suppress Bun's script-command echo",
+    "url": "https://bun.com/docs/runtime/index#general-execution-options"
   },
   {
-    "flag": "--verbose",
-    "category": "Output Control",
+    "flag": "--smol",
+    "category": "Performance",
     "version": "Bun ≥1.0",
-    "description": "Verbose logging (adds more detail)",
-    "url": "https://bun.com/docs/runtime/environment-variables"
+    "description": "Lower memory usage with more frequent garbage collection",
+    "url": "https://bun.com/docs/runtime/index#runtime-process-control"
   },
   {
-    "flag": "--console-depth",
-    "category": "Output Control",
+    "flag": "--prefer-offline",
+    "category": "Dependency Resolution",
     "version": "Bun ≥1.0",
-    "description": "Set object inspection depth (e.g. --console-depth=6)",
-    "url": "https://bun.com/docs/runtime/utils#bun-inspect"
+    "description": "Skip package-cache staleness checks and resolve from disk",
+    "url": "https://bun.com/docs/runtime/auto-install"
+  },
+  {
+    "flag": "--install=fallback",
+    "category": "Dependency Resolution",
+    "version": "Bun ≥1.0",
+    "description": "Install packages only when missing locally",
+    "url": "https://bun.com/docs/runtime/auto-install"
   }
 ]

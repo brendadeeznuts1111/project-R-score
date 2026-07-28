@@ -54,10 +54,31 @@ describe('capability-map-subset parse', () => {
   test('repo AGENTS.md parses non-empty map', async () => {
     const md = await Bun.file('AGENTS.md').text();
     const rows = parseCapabilityTableFromMarkdown(md);
-    expect(rows.length).toBeGreaterThan(10);
+    expect(rows.length).toBeGreaterThanOrEqual(47);
     expect(rows.some(r => /item view|Secret retrieval|Vault inject/i.test(r.capability + r.api))).toBe(
       true
     );
+    const requiredRuntimeCapabilities = [
+      'Watch mode (hard restart)',
+      'Hot reload (state-preserving)',
+      'No clear screen on reload',
+      'Debugger',
+      'Working directory',
+      'Custom Bun config',
+      'Define constants',
+      'Custom export conditions',
+      'Silent command echo',
+      'Low memory mode',
+      'Prefer cached packages',
+      'Auto-install fallback',
+    ];
+    for (const capability of requiredRuntimeCapabilities) {
+      expect(rows.some(row => row.capability === capability && row.status === 'Available')).toBe(
+        true
+      );
+    }
+    expect(rows.filter(row => row.capability === 'Debugger')).toHaveLength(1);
+    expect(rows.some(row => row.capability === 'Runtime inspect')).toBe(false);
     // no invented item get
     expect(rows.every(r => !/\bitem get\b/i.test(r.api))).toBe(true);
   });

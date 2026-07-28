@@ -2,6 +2,7 @@
 // @see https://bun.com/docs/runtime#general-execution-options
 import { describe, expect, test } from 'bun:test';
 import {
+  BUN_FLAGS_HELP,
   bunSpawnArgv,
   parseBunExecutionFlags,
 } from '../tools/lib/portal-cli-bun-flags.ts';
@@ -35,6 +36,36 @@ describe('parseBunExecutionFlags', () => {
     expect(p.rest).toEqual(['pm', 'ls']);
   });
 
+  test('harvests the curated environment and dependency flags', () => {
+    const p = parseBunExecutionFlags([
+      '--no-clear-screen',
+      '--cwd',
+      '/tmp/project',
+      '--config=./bunfig.toml',
+      '--define',
+      'process.env.NODE_ENV:"production"',
+      '--conditions',
+      'custom',
+      '--prefer-offline',
+      '--install=fallback',
+      'probe',
+      'lockfile',
+    ]);
+    expect(p.bunFlags).toEqual([
+      '--no-clear-screen',
+      '--cwd',
+      '/tmp/project',
+      '--config=./bunfig.toml',
+      '--define',
+      'process.env.NODE_ENV:"production"',
+      '--conditions',
+      'custom',
+      '--prefer-offline',
+      '--install=fallback',
+    ]);
+    expect(p.rest).toEqual(['probe', 'lockfile']);
+  });
+
   test('stops at portal command; later flags stay on rest', () => {
     const p = parseBunExecutionFlags(['vault', 'health', '--update']);
     expect(p.bunFlags).toEqual([]);
@@ -55,5 +86,43 @@ describe('parseBunExecutionFlags', () => {
       'x.test.ts',
     ]);
     expect(bunSpawnArgv([], ['pm', 'ls'])).toEqual(['bun', 'pm', 'ls']);
+  });
+
+  test('curated catalog and help expose only the grounded portal flags', async () => {
+    const catalog = (await Bun.file('config/runtime-flags.json').json()) as Array<{
+      flag: string;
+      description: string;
+    }>;
+    expect(catalog.map(row => row.flag)).toEqual([
+      '--watch',
+      '--hot',
+      '--no-clear-screen',
+      '--inspect',
+      '--inspect-wait',
+      '--inspect-brk',
+      '--cwd',
+      '--config',
+      '--define',
+      '--conditions',
+      '--silent',
+      '--smol',
+      '--prefer-offline',
+      '--install=fallback',
+    ]);
+    expect(catalog.find(row => row.flag === '--silent')?.description).toContain(
+      'script-command echo'
+    );
+    expect(BUN_FLAGS_HELP).not.toContain('--verbose');
+    for (const row of catalog) {
+      expect(BUN_FLAGS_HELP).toContain(row.flag);
+    }
+
+    const proc = Bun.spawn(['bun', '--help'], { stdout: 'pipe', stderr: 'pipe' });
+    const runtimeHelp = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    for (const row of catalog) {
+      expect(runtimeHelp).toContain(row.flag.split('=')[0]!);
+    }
+    expect(runtimeHelp).not.toMatch(/^\s+--verbose\b/m);
   });
 });

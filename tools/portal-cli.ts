@@ -175,8 +175,6 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli dashboard --view=packages --open
   bun run portal:probe
 
-${BUN_FLAGS_HELP}
-
 Dashboard boards (chrome overflow + weave SSOT):
   /portal/tools/           CLI hub (this map)
   /portal/vault/           vault health bake · gate: vault health
@@ -216,13 +214,7 @@ Secret (real pass-cli only — https://protonpass.github.io/pass-cli/):
   secret invite accept <INVITE_ID>          # not URL secure-link accept
   source scripts/agent-env.sh factorywager  # agent session before secret cmds
 
-Runtime options (via bun):
-  bun --watch tools/portal-cli.ts ...       restart on imported file changes
-  bun --hot tools/portal-cli.ts ...         soft-reload imported modules
-  bun --cwd /path tools/portal-cli.ts ...   set working directory
-  bun --silent tools/portal-cli.ts ...      suppress Bun's script-command echo
-  bun --inspect tools/portal-cli.ts ...     attach debugger
-  See: https://bun.com/docs/runtime/index#general-execution-options
+${BUN_FLAGS_HELP}
 `;
 
 function usage(): never {
