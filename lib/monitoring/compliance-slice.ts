@@ -42,9 +42,8 @@ type ComplianceBoardFile = {
   integrity?: {
     scoreHint?: string;
     proof?: { hmac?: string };
-    checks?: Array<{ id?: string; ok?: boolean }>;
+    checks?: Array<{ id?: string; ok?: boolean }>; // brand-ok — board integrity check key (enhancements|shadow|sha3|hmac|geo)
   };
-  links?: { portal?: string; api?: string };
 };
 
 function emptyUnavailable(): ComplianceMonitoringSlice {
@@ -98,29 +97,22 @@ function boardAbsPath(root = process.cwd()): string {
 }
 
 /**
- * Sync load for ops-summary / diagnose (Bun.mmap when available).
+ * Sync load for ops-summary / diagnose (Bun.mmap).
  */
 export function loadComplianceSummarySliceSync(root = process.cwd()): ComplianceSummarySlice {
   const abs = boardAbsPath(root);
   try {
-    const { existsSync, readFileSync } = require('node:fs') as typeof import('node:fs');
-    if (!existsSync(abs)) return emptyUnavailable();
-    const board = JSON.parse(readFileSync(abs, 'utf8')) as ComplianceBoardFile;
+    const mapped = Bun.mmap(abs);
+    const board = JSON.parse(new TextDecoder().decode(mapped)) as ComplianceBoardFile;
     return projectBoard(board);
   } catch {
-    try {
-      // Bun.mmap path (preferred when available)
-      const bytes = Bun.mmap(abs);
-      const board = JSON.parse(new TextDecoder().decode(bytes)) as ComplianceBoardFile;
-      return projectBoard(board);
-    } catch {
-      return emptyUnavailable();
-    }
+    return emptyUnavailable();
   }
 }
 
 /**
  * Async load for monitoring collect / bake inject.
+ * Returns `null` when the board is missing (optional plane).
  */
 export async function loadComplianceMonitoringSlice(
   boardPath: string = REGISTRY_REL

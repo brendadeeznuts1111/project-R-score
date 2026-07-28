@@ -1,41 +1,42 @@
-# .cloudflare-access.yml — policy-as-code for `kimi-cloudflare-access plan/apply`.
+# .cloudflare-access.yml — scoped policy-as-code for operator surfaces.
 #
 # STATUS: STAGED — NOT APPLIED. No available token has Cloudflare Access scope
-# (main account token verified 403 on Access; the DNS token is Zone.DNS-only).
-# To apply: human mints a token with `Account > Access: Edit` (+ Read) for
-# account 7a470541a704caaf91e71efccc78fd36, stores it in the Proton vault,
-# re-runs `bun run proton:inject:factorywager:reasonix`, then:
-#   kimi-cloudflare-access plan   # review diff
-#   kimi-cloudflare-access apply  # after confirming the plan
+# and the DNS token is Zone.DNS-only. Create a least-privilege Access token,
+# store it in Proton Pass, then follow docs/harness/tenants/cloudflare-access.md.
 #
 # Schema matches src/lib/cloudflare-access-policy.ts (kimi-toolchain):
 # apps[].policies[].include/require/exclude entries are Cloudflare Access
-# rule groups. `email_domain` + `auth_method: otp` = one-time PIN sent to
-# @factory-wager.com mailboxes (Proton-hosted).
+# rule groups. `cloudflare_account_member: {}` delegates authentication to
+# Cloudflare as IdP and restricts authorization to this account's members.
+#
+# scoped: true is a hard safety boundary: unlisted live Access apps are ignored.
+scoped: true
+
 apps:
   - name: ledger.factory-wager.com
     domain: ledger.factory-wager.com
     type: self_hosted
     session_duration: 8h
     policies:
-      - name: Allow factory-wager.com OTP
+      - name: Allow Cloudflare account members
         decision: allow
         include:
-          - email_domain:
-              domain: factory-wager.com
-        require:
-          - auth_method:
-              auth_method: otp
+          - cloudflare_account_member: {}
   - name: reasonix.factory-wager.com
     domain: reasonix.factory-wager.com
     type: self_hosted
     session_duration: 8h
     policies:
-      - name: Allow factory-wager.com OTP
+      - name: Allow Cloudflare account members
         decision: allow
         include:
-          - email_domain:
-              domain: factory-wager.com
-        require:
-          - auth_method:
-              auth_method: otp
+          - cloudflare_account_member: {}
+  - name: FactoryWager Portal
+    domain: score.factory-wager.com/portal
+    type: self_hosted
+    session_duration: 8h
+    policies:
+      - name: Allow Cloudflare account members
+        decision: allow
+        include:
+          - cloudflare_account_member: {}

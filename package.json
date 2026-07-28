@@ -1991,6 +1991,7 @@
     "verify:cloudflare-token": "bun tools/verify-cloudflare-token.ts",
     "verify:cloudflare-token:save": "bun tools/verify-cloudflare-token.ts --save",
     "verify:cloudflare-token:static": "bun tools/verify-cloudflare-token.ts --no-live --save",
+    "cloudflare:access:verify": "bun tools/verify-cloudflare-access-policy.ts",
     "sync:well-known-mcp": "bun tools/sync-well-known-mcp.ts",
     "sync:well-known-mcp:check": "bun tools/sync-well-known-mcp.ts --check",
     "mcp:sync": "bun scripts/mcp-sync.ts",
