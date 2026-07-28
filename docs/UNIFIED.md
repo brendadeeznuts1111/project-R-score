@@ -90,7 +90,13 @@ bun test tests/limits-e2e.test.ts
 ```
 
 **Warning — docs UI `type:toml` is not a filter flag.**  
-URLs such as `https://bun.com/docs/pm/filter?search=type%3Atoml` use Mintlify’s **search facet** (`type:toml` = show TOML code samples on the docs site). That is **not** a Bun CLI option, not a workspace selector, and not related to `bun --filter`. TOML samples under package-manager docs are almost always **`bunfig.toml`** (`exact`, `scopes`, `ignoreScripts`) — see [runtime/bunfig](https://bun.com/docs/runtime/bunfig) and this repo’s root `bunfig.toml`. Do not invent `bun --filter type:toml`.
+URLs such as `https://bun.com/docs/pm/filter?search=type%3Atoml` use Mintlify’s **search facet** (`type:toml` = show TOML code samples on the docs site). That is **not** a Bun CLI option, not a workspace selector, and not related to `bun --filter`.
+
+- ❌ Do **not** use `?search=type:toml` as a `--filter` flag. This is a Mintlify documentation search parameter, not a Bun CLI argument.
+- ❌ Do **not** invent `bun run --filter type:toml …` or `bun outdated --filter type:toml`.
+- ✅ Use package **name** globs or **`./path`** patterns only — [pm/filter](https://bun.com/docs/pm/filter) · [packages README](./packages/README.md#outdated--filter-canonical-patterns).
+
+TOML samples under package-manager docs are almost always **`bunfig.toml`** (`exact`, `scopes`, `ignoreScripts`) — see [runtime/bunfig](https://bun.com/docs/runtime/bunfig) and this repo’s root `bunfig.toml`.
 
 **Types pin:** catalog `@types/bun` / `bun-types` may lag `packageManager` / runtime (e.g. runtime 1.4.0, types 1.3.14). Bump both type packages together; prove with typecheck gates. Pages `BUN_VERSION` is a separate deploy pin.
 
