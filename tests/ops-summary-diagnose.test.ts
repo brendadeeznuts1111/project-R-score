@@ -4,6 +4,7 @@ import {
   classifySummaryPayload,
   detectRoutingDrift,
   embeddedRoutingFailures,
+  formatComplianceBoardLine,
   formatSourceLabel,
   parseSummaryShape,
   severityToExitCode,
@@ -106,5 +107,42 @@ describe('ops-summary-diagnose', () => {
     );
     expect(r.severity).toBe('ok');
     expect(r.reasons.some(x => x.includes('compliance'))).toBe(false);
+  });
+
+  test('compliance available=false is optional plane (not a warn reason)', () => {
+    const r = classifySummaryPayload(
+      parseSummaryShape({
+        source: 'live',
+        liquidity: { total: 1 },
+        compliance: { available: false, ok: false },
+      }),
+      200
+    );
+    expect(r.severity).toBe('ok');
+    expect(r.reasons.some(x => x.includes('compliance'))).toBe(false);
+    expect(formatComplianceBoardLine({ available: false, ok: false })).toBe('not baked');
+  });
+
+  test('formatComplianceBoardLine matches channelMeta/routing column values', () => {
+    expect(formatComplianceBoardLine(undefined)).toBeNull();
+    expect(formatComplianceBoardLine({ available: false, ok: false })).toBe('not baked');
+    expect(
+      formatComplianceBoardLine({
+        available: true,
+        ok: true,
+        enhancements: '8/8',
+        shadowMismatches: 0,
+        hmac: true,
+      })
+    ).toBe('ok · 8/8 · shadowΔ 0 · hmac');
+    expect(
+      formatComplianceBoardLine({
+        available: true,
+        ok: false,
+        enhancements: '6/8',
+        shadowMismatches: 2,
+        hmac: false,
+      })
+    ).toBe('WARN · 6/8 · shadowΔ 2 · integrity-only');
   });
 });

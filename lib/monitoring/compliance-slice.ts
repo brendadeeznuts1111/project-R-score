@@ -57,6 +57,10 @@ export type ComplianceHealthArtifact = {
   generated: string | null;
   enhancements: string | null;
   shadowMismatches: number | null;
+  /** Discrete geo partner count when board includes geo profiles */
+  geoProfiles?: number | null;
+  /** True when board integrity proof includes HMAC */
+  hmac?: boolean;
   path: typeof COMPLIANCE_BOARD_PATH;
   portal: typeof COMPLIANCE_PORTAL_PATH;
 };
@@ -68,6 +72,8 @@ function emptyHealthArtifact(): ComplianceHealthArtifact {
     generated: null,
     enhancements: null,
     shadowMismatches: null,
+    geoProfiles: null,
+    hmac: false,
     path: COMPLIANCE_BOARD_PATH,
     portal: COMPLIANCE_PORTAL_PATH,
   };
@@ -76,7 +82,9 @@ function emptyHealthArtifact(): ComplianceHealthArtifact {
 /**
  * Project raw board JSON into the freeze-shape health artifact.
  * Shared by Pages edge health and local serve-public (parity).
+ * Wire edge: board JSON is untrusted until schemaVersion + projection.
  */
+// eslint-disable-next-line harness/no-unknown-function-param -- registry JSON wire boundary
 export function projectComplianceHealthArtifact(board: unknown): ComplianceHealthArtifact {
   if (!board || typeof board !== 'object') return emptyHealthArtifact();
   const raw = board as ComplianceBoardFile;
@@ -88,6 +96,8 @@ export function projectComplianceHealthArtifact(board: unknown): ComplianceHealt
     generated: slice.generatedAt ?? null,
     enhancements: slice.enhancements,
     shadowMismatches: slice.shadowMismatches,
+    geoProfiles: slice.geoProfiles ?? null,
+    hmac: Boolean(slice.hmac),
     path: COMPLIANCE_BOARD_PATH,
     portal: COMPLIANCE_PORTAL_PATH,
   };

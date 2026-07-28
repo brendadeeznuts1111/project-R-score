@@ -34,6 +34,8 @@ export {
   type OpsSummaryGrowth,
   type OpsSummaryBunUtils,
   type OpsSummaryPartners,
+  /** MA/NJ board rollup — alias of monitoring `ComplianceSummarySlice`. */
+  type OpsSummaryCompliance,
 } from './ops-summary.ts';
 export type { RoutingOpsSlice } from '../routing-proof.ts';
 export { PlaySigner } from './play-signing.ts';
@@ -174,6 +176,12 @@ export {
   ONBOARDING_DEFAULTS_PATH,
   type OnboardingDefaults,
 } from './onboarding-config.ts';
+/**
+ * Partner onboard → license / geo / identity binding (write path).
+ * Board **read** projections (ops-summary.compliance · monitoring tile · health):
+ * import `ComplianceSummarySlice` / `loadComplianceMonitoringSlice` /
+ * `projectComplianceHealthArtifact` from `lib/monitoring` (or `lib/monitoring/compliance-slice.ts`).
+ */
 export {
   applyPartnerComplianceOnboard,
   parseComplianceOnboardFields,

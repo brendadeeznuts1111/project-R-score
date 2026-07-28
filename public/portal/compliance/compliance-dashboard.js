@@ -58,8 +58,13 @@ function render(board, source) {
 
   const enh = board.enhancements ?? {};
   const shadow = board.shadow ?? {};
+  const integrityOk =
+    !Array.isArray(board.integrity?.checks) ||
+    board.integrity.checks.every(c => c?.ok !== false);
   const ok =
-    (enh.passed ?? 0) === (enh.total ?? 0) && (shadow.summary?.mismatches ?? 0) === 0;
+    (enh.passed ?? 0) === (enh.total ?? 0) &&
+    (shadow.summary?.mismatches ?? 0) === 0 &&
+    integrityOk;
 
   banner.className = ok ? 'cmp-banner' : 'cmp-banner warn';
   banner.textContent = ok

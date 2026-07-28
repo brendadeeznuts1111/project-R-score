@@ -229,6 +229,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'portal',
     kind: 'file-static',
     okStatuses: [200],
+    critical: true,
     note: 'compliance-dashboard.js · /registry/compliance-board.json · /api/compliance',
   },
   {
@@ -237,6 +238,8 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'registry',
     kind: 'file-static',
     okStatuses: [200],
+    critical: true,
+    note: 'ops:snapshot companion bake · bun run compliance:bake',
   },
   {
     path: '/api/compliance',
@@ -244,6 +247,7 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     category: 'api',
     kind: 'fetch-handler',
     okStatuses: [200, 503],
+    critical: true,
     note: 'snapshot from compliance-board.json; 503 if missing bake',
   },
   {

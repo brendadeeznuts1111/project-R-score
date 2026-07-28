@@ -52,6 +52,7 @@ describe('portal weave', () => {
     expect(arts).toContain('/registry/compliance-enhancements.json');
     expect(arts).toContain('/registry/compliance-shadow.json');
     expect(p.scripts.some(s => s.cmd.includes('compliance:bake'))).toBe(true);
+    expect(p.scripts.some(s => s.cmd.includes('compliance:verify'))).toBe(true);
     expect(p.scripts.some(s => s.cmd.includes('ops:snapshot'))).toBe(true);
   });
 });

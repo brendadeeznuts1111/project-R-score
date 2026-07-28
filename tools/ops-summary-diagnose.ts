@@ -16,6 +16,7 @@ import {
   classifySummaryPayload,
   detectRoutingDrift,
   embeddedRoutingFailures,
+  formatComplianceBoardLine,
   formatSourceLabel,
   parseSummaryShape,
   severityToExitCode,
@@ -169,6 +170,12 @@ function printHuman(report: DiagnoseReport): void {
   console.info(`  routing       ${s.routing?.passed ?? '—'}/${s.routing?.total ?? '—'}`);
   if (report.embeddedRoutingBaseUrl) {
     console.info(`  routing base  ${report.embeddedRoutingBaseUrl}`);
+  }
+  {
+    const complianceLine = formatComplianceBoardLine(s.compliance);
+    if (complianceLine != null) {
+      console.info(`  compliance    ${complianceLine}`);
+    }
   }
   console.info(`  liquidity     $${s.liquidity?.total ?? 0}`);
   console.info(`  tree_nodes    ${report.treeNodes ?? 'unreachable'}`);

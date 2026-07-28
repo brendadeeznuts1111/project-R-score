@@ -145,6 +145,11 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
     doc: 'docs/harness/tenants/compliance-portal.md',
   },
   {
+    label: 'Compliance verify (bake + tests)',
+    cmd: 'bun run compliance:verify',
+    doc: 'docs/harness/tenants/compliance-portal.md',
+  },
+  {
     label: 'Ops snapshot (includes compliance)',
     cmd: 'bun run ops:snapshot',
     doc: 'docs/harness/tenants/ops-snapshot.md',

@@ -14,17 +14,10 @@ import {
   type HealthEnv,
 } from '../lib/http/portal-health-edge.ts';
 import { portalOptionsResponse } from '../lib/http/portal-cors.ts';
+import type { ComplianceHealthArtifact } from '../lib/monitoring/compliance-slice.ts';
 
 /** Freeze shape for artifacts.complianceBoard (edge + local parity). */
-type ComplianceBoardSlice = {
-  exists: boolean;
-  ok: boolean;
-  generated: string | null;
-  enhancements: string | null;
-  shadowMismatches: number | null;
-  path: '/registry/compliance-board.json';
-  portal: '/portal/compliance/';
-};
+type ComplianceBoardSlice = ComplianceHealthArtifact;
 
 function sample(): EdgeHealthBody {
   return {
@@ -251,6 +244,8 @@ describe('portal-health-edge', () => {
       generated: null,
       enhancements: null,
       shadowMismatches: null,
+      geoProfiles: null,
+      hmac: false,
       path: '/registry/compliance-board.json',
       portal: '/portal/compliance/',
     });
@@ -266,6 +261,8 @@ describe('portal-health-edge', () => {
           generatedAt: '2026-07-24T05:00:00.000Z',
           enhancements: { passed: 8, total: 8, signature: 'abc' },
           shadow: { summary: { mismatches: 0, allow: 4, block: 4 } },
+          geo: { partners: [{ nodeId: 'a' }, { nodeId: 'b' }] },
+          integrity: { proof: { hmac: 'deadbeef' }, scoreHint: 'integrity+hmac' },
         },
       }),
       'https://edge.test/'
@@ -276,6 +273,8 @@ describe('portal-health-edge', () => {
     expect(cb.generated).toBe('2026-07-24T05:00:00.000Z');
     expect(cb.enhancements).toBe('8/8');
     expect(cb.shadowMismatches).toBe(0);
+    expect(cb.geoProfiles).toBe(2);
+    expect(cb.hmac).toBe(true);
     expect(cb.path).toBe('/registry/compliance-board.json');
     expect(cb.portal).toBe('/portal/compliance/');
     expect(body.status).toBe('ok');

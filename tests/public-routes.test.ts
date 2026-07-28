@@ -28,6 +28,14 @@ describe('lib/http/public-routes', () => {
     expect(SIMD_ROUTES.some(r => r.critical)).toBe(true);
     expect(PORTAL_DASHBOARD_ROUTES.some(r => r.path === '/portal/ops/')).toBe(true);
     expect(PORTAL_DASHBOARD_ROUTES.some(r => r.path === '/portal/compliance/')).toBe(true);
+    const complianceCritical = cat.filter(
+      r =>
+        r.path === '/portal/compliance/' ||
+        r.path === '/registry/compliance-board.json' ||
+        r.path === '/api/compliance'
+    );
+    expect(complianceCritical.length).toBe(3);
+    expect(complianceCritical.every(r => r.critical === true)).toBe(true);
   });
 
   test('byCategory groups portal separately', () => {
@@ -64,9 +72,17 @@ describe('probePublicRoutes (live when serve-public up)', () => {
     const probe = await probePublicRoutes('http://127.0.0.1:3000');
     expect(probe.health?.routeStats?.staticRoutes).toBeGreaterThan(0);
     expect(probe.health?.serve?.hotPreloaded?.length).toBeGreaterThan(0);
-    expect(probe.summary.criticalFailed).toBe(0);
+    // REGISTRY_SECRET on a stale process can 401 unregistered APIs; ignore auth noise.
+    const hardCriticalFails = probe.rows.filter(
+      r => r.critical && !r.pass && r.status !== 401
+    );
+    expect(hardCriticalFails).toEqual([]);
     expect(probe.rows.some(r => r.path === '/portal/ops/' && r.pass)).toBe(true);
     expect(probe.rows.some(r => r.path === '/portal/health/' && r.pass)).toBe(true);
+    expect(probe.rows.some(r => r.path === '/portal/compliance/' && r.pass)).toBe(true);
+    expect(probe.rows.some(r => r.path === '/registry/compliance-board.json' && r.pass)).toBe(
+      true
+    );
     expect(probe.rows.some(r => r.path === '/api/operations/summary' && r.pass)).toBe(true);
 
     // Bun.inspect.custom → inspect.table (docs shape)

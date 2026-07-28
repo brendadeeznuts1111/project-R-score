@@ -418,6 +418,8 @@ function renderCards(d) {
           : 'fail';
     const cbSub = [
       cb.shadowMismatches != null ? `${cb.shadowMismatches} shadow mismatch` : null,
+      cb.geoProfiles != null ? `${cb.geoProfiles} geo` : null,
+      cb.hmac === true ? 'HMAC' : cb.exists ? 'integrity-only' : null,
       cb.generated ? String(cb.generated).slice(0, 19) : null,
     ]
       .filter(Boolean)
@@ -427,7 +429,7 @@ function renderCards(d) {
       <h3>Compliance</h3>
       <div class="val">${esc(cbVal)}</div>
       <div class="sub">${esc(cbSub || (cb.exists ? 'board' : 'optional bake'))}</div>
-      <div class="sub"><a class="ops-link" href="${portalHref}">portal/compliance</a></div>
+      <div class="sub"><a class="ops-link" href="${portalHref}">portal/compliance</a> · <a class="ops-link" href="/api/compliance">API</a></div>
     </article>`);
   }
 

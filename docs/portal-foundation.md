@@ -235,6 +235,8 @@ Filters: `<channel-filter>` composes release channel + verification subsystem ch
 
 TOC Ops rollup card on this page reads `ops-summary.toc` (warmed / warming / bottlenecks). Full board: [`/portal/toc/`](../public/portal/toc/) · tenant [`docs/harness/tenants/toc-ops.md`](harness/tenants/toc-ops.md).
 
+Compliance rollup on Ops reads `ops-summary.compliance` from the same bake as `/portal/compliance/` · monitoring · health — one board → many projections: [`docs/harness/tenants/compliance-portal.md`](harness/tenants/compliance-portal.md).
+
 ### TOC Ops board (`/portal/toc/`)
 
 Fixture-first Drum / Buffer / Rope desk for Pages (no `toc-ops-repo` SQLite on the edge).

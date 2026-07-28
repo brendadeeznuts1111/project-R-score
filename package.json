@@ -1608,7 +1608,7 @@
     "compliance:bake": "bun tools/bake-compliance-portal.ts",
     "compliance:bake:vault": "bash scripts/proton-run.sh factorywager -- bun run compliance:bake",
     "compliance:portal": "bun run compliance:bake && bun run ops:enhancements",
-    "compliance:verify": "bun run compliance:bake && bun test tests/compliance-portal-bake.test.ts tests/show-enhancements.test.ts tests/state-compliance-http.test.ts",
+    "compliance:verify": "bun run compliance:bake && bun test tests/compliance-portal-bake.test.ts tests/show-enhancements.test.ts tests/state-compliance-http.test.ts tests/portal-health-edge.test.ts tests/monitoring-enrich.test.ts tests/portal-route-wiring.test.ts tests/public-routes.test.ts tests/ops-summary-diagnose.test.ts tests/portal-weave.test.ts",
     "ops:compliance:report": "bun tools/enhanced-compliance-report.ts",
     "ops:compliance:report:deep": "bun --console-depth=6 run tools/enhanced-compliance-report.ts",
     "ops:compliance:report:html": "bun --console-depth=6 tools/enhanced-compliance-report.ts --html",

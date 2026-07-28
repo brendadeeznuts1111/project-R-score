@@ -9,6 +9,7 @@ import {
   renderSidebar,
   tenantRegistryPaths,
 } from './components/sidebar.js';
+import { markCurrentNavigation } from './navigation.js';
 import './components/notification.js';
 
 let pendingHealthRaf = 0;
@@ -37,12 +38,20 @@ function applyHealthDot(status, staleHint = false) {
   if (label) {
     const suffix = staleHint ? ' (cached)' : '';
     label.textContent = `${status}${suffix}`;
+    label.setAttribute('role', 'status');
+    label.setAttribute('aria-live', 'polite');
   }
   if (link) {
-    link.setAttribute('role', 'status');
-    link.setAttribute('aria-live', 'polite');
+    link.dataset.status = klass;
+    link.dataset.source = staleHint ? 'cache' : 'live';
     link.setAttribute('aria-label', `System health: ${status}${suffixFromHint(staleHint)}`);
   }
+  document.documentElement.dataset.healthSignal = klass;
+  document.dispatchEvent(
+    new CustomEvent('portal:health-signal', {
+      detail: { status: klass, source: staleHint ? 'cache' : 'live' },
+    })
+  );
 }
 
 function suffixFromHint(staleHint) {
@@ -141,6 +150,10 @@ if (!window.__portalDataStarted) {
 }
 
 function onReady() {
+  const navigation = markCurrentNavigation();
+  if (navigation) {
+    document.dispatchEvent(new CustomEvent('portal:navigation', { detail: navigation }));
+  }
   bootstrapSidebar();
   bootstrapNavOverflow();
 }

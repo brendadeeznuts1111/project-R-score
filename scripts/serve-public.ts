@@ -747,6 +747,23 @@ function withMarkdownAlternate(res: Response, path: string): Response {
 
 const startedAt = Date.now();
 
+/** GET /api/compliance — baked board snapshot (public read plane; no auth). */
+async function complianceBoardApi(): Promise<Response> {
+  const f = Bun.file('public/registry/compliance-board.json');
+  if (!(await f.exists())) {
+    return json(
+      {
+        ok: false,
+        error: 'compliance-board missing — bun run compliance:bake',
+        links: { portal: '/portal/compliance/', bake: 'bun run compliance:bake' },
+      },
+      503
+    );
+  }
+  const board = await f.json();
+  return json({ ok: true, mode: 'snapshot', readOnly: true, ...board });
+}
+
 /** GET /api/monitoring — registry + ops metrics + API proof (JSON). */
 async function liveMonitoringApi(): Promise<Response> {
   try {
@@ -1428,21 +1445,7 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/api/proof' || path === '/api/proof/') return bunApiProof();
   if (path === '/api/env' || path === '/api/env/') return envStatus();
   if (path === '/api/content-type' || path === '/api/content-type/') return contentTypeApi();
-  if (path === '/api/compliance' || path === '/api/compliance/') {
-    const f = Bun.file('public/registry/compliance-board.json');
-    if (!(await f.exists())) {
-      return json(
-        {
-          ok: false,
-          error: 'compliance-board missing — bun run compliance:bake',
-          links: { portal: '/portal/compliance/', bake: 'bun run compliance:bake' },
-        },
-        503
-      );
-    }
-    const board = await f.json();
-    return json({ ok: true, mode: 'snapshot', readOnly: true, ...board });
-  }
+  if (path === '/api/compliance' || path === '/api/compliance/') return complianceBoardApi();
 
   // Optional auth for read endpoints — public paths skip the gate
   const authErr = requireReadAuth(req);
@@ -1810,6 +1813,8 @@ function buildPublicRoutes() {
       serveVerificationScriptMeta('doc-index', new URL(req.url).origin),
     '/api/env': () => envStatus(),
     '/api/monitoring': () => liveMonitoringApi(),
+    '/api/compliance': () => complianceBoardApi(),
+    '/api/compliance/': () => complianceBoardApi(),
     '/api/operations/summary': () => liveOpsSummary(),
     '/api/catalog': (req: Request) => liveCatalog(req),
     '/api/dod': (req: Request) => dodApi(req),

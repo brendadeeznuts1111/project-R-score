@@ -42,24 +42,23 @@ bun run compliance:bake:vault
 bun run proton:deploy:pages
 ```
 
-## Health + monitoring
+## One board → many projections
 
-- Edge `/api/health` artifacts include `complianceBoard` (`exists`, `ok`, enhancements ratio, shadow mismatches).
-- Mismatches or failed enhancement rows **degrade** edge health status.
-- Monitoring tile **Compliance** links to `/portal/compliance/` (from live `getMonitoringData` slice).
+Single SSOT bake: `public/registry/compliance-board.json` (`bun run compliance:bake` / ops-snapshot companion).
+Projectors live in [`lib/monitoring/compliance-slice.ts`](../../../lib/monitoring/compliance-slice.ts).
 
-## Portal · Ops · Dashboard · TOC
+| Projection | Field / surface | Loader |
+|------------|-----------------|--------|
+| Ops summary | `ops-summary.compliance` (`OpsSummaryCompliance`) | `loadComplianceSummarySliceSync` → [`ops-summary.ts`](../../../lib/operations/ops-summary.ts) |
+| Monitoring | `monitoring.compliance` tile · `/monitoring/` | `loadComplianceMonitoringSlice` |
+| Health artifact | `/api/health` → `artifacts.complianceBoard` | `projectComplianceHealthArtifact` |
+| Portal UI | `/portal/compliance/` embed + board | bake embed · `GET /api/compliance` |
+| Adjacent cards | `/portal/ops/` panel · dashboard KPI · TOC “State compliance” | same board / summary slice |
 
-| Surface | Integration |
-|---------|-------------|
-| `/portal/compliance/` | Board UI + embed (`compliance:bake`) |
-| `/portal/ops/` | Panel from `ops-summary.compliance` |
-| `/portal/dashboard/` | Plane card + KPI (enhancements · shadow · geo · HMAC) |
-| `/portal/toc/` | “State compliance” section (board JSON + open flags) |
-| `/monitoring/` | Compliance tile via `loadComplianceMonitoringSlice` |
-| Route SSOT | `PORTAL_HTML_ROUTES` · `public-routes` · `/api/compliance` |
+Write path (DB, not board): `applyPartnerComplianceOnboard` / `parseComplianceOnboardFields` / `splitComplianceKvTokens` from [`lib/operations`](../../../lib/operations/index.ts) (barrel). Ops-facing type: `OpsSummaryCompliance` (same barrel). Full slice loaders + `ComplianceSummarySlice` / `ComplianceHealthArtifact` — import from `lib/monitoring` (or `compliance-slice.ts`).
 
-Slice code: [`lib/monitoring/compliance-slice.ts`](../../../lib/monitoring/compliance-slice.ts) · wired into [`lib/operations/ops-summary.ts`](../../../lib/operations/ops-summary.ts).
+- Edge health: missing bake → `exists:false` (no degrade); present + fail → `ok:false` (**degrades**).
+- Route SSOT: `PORTAL_HTML_ROUTES` · `public-routes` · `/api/compliance`.
 
 ## Env (non-secret)
 
@@ -88,7 +87,13 @@ bun run compliance:bake:vault
 ## Onboarding integration
 
 ```ts
-import { applyPartnerOnboardPackage } from './lib/operations/partner-onboard-package.ts';
+import {
+  applyPartnerOnboardPackage,
+  applyPartnerComplianceOnboard,
+  parseComplianceOnboardFields,
+  splitComplianceKvTokens,
+} from './lib/operations/index.ts';
+// Board projections (types + loaders): import from './lib/monitoring/index.ts'
 
 applyPartnerOnboardPackage(db, plan, {
   compliance: {
@@ -100,15 +105,19 @@ applyPartnerOnboardPackage(db, plan, {
   },
 });
 // → partner_state_licenses + partner_geo_profiles + identity_verified
+// Board bake still required for portal/ops/monitoring projections (compliance:bake).
 ```
 
 ## Related
 
+- [`lib/operations/index.ts`](../../../lib/operations/index.ts) — public barrel (onboard write + `OpsSummaryCompliance`)
 - [`lib/operations/state-compliance-http.ts`](../../../lib/operations/state-compliance-http.ts)
 - [`lib/operations/partner-compliance-onboard.ts`](../../../lib/operations/partner-compliance-onboard.ts)
+- [`lib/monitoring/compliance-slice.ts`](../../../lib/monitoring/compliance-slice.ts) — board → projections
 - [`lib/security/report-proof.ts`](../../../lib/security/report-proof.ts)
 - [`tools/show-enhancements.ts`](../../../tools/show-enhancements.ts)
 - [`tools/deep-audit-report.ts`](../../../tools/deep-audit-report.ts)
 - [`docs/harness/tenants/proton-integration.md`](proton-integration.md)
 - [`docs/harness/tenants/partner-onboarding-package.md`](partner-onboarding-package.md)
+- [`docs/harness/ops-summary-endpoint.md`](../ops-summary-endpoint.md)
 - [`docs/portal-foundation.md`](../../portal-foundation.md)

@@ -134,6 +134,7 @@ export function classifySummaryPayload(
     const mm = shape.compliance.shadowMismatches ?? '?';
     reasons.push(`compliance board fail (${enh} · shadowΔ ${mm})`);
   }
+  // available:false → human line "not baked" only (optional plane; does not warn)
 
   if (severity === 'ok' && reasons.length === 0 && shape.source === 'live') {
     reasons.push('live summary OK');
@@ -161,6 +162,29 @@ export function formatSourceLabel(shape: OpsSummaryDiagnoseShape): string {
   if (shape.source === 'snapshot') return 'Snapshot';
   if (shape.source === 'none') return 'Unavailable';
   return shape.source ?? 'Unknown';
+}
+
+/**
+ * One-line compliance board status for diagnose human output.
+ * Matches channelMeta/routing column style (`  compliance   …`).
+ *
+ * - missing/undefined → null (quiet; omit line)
+ * - available=false → "not baked"
+ * - available+ok → "ok · 8/8 · shadowΔ 0 · hmac"
+ * - available+!ok → "WARN · 6/8 · shadowΔ 2 · integrity-only"
+ */
+export function formatComplianceBoardLine(
+  compliance: OpsSummaryDiagnoseShape['compliance'] | undefined
+): string | null {
+  if (compliance == null) return null;
+  if (compliance.available !== true) return 'not baked';
+
+  const enh = compliance.enhancements ?? '?';
+  const mm = compliance.shadowMismatches ?? '?';
+  const hmacHint =
+    compliance.hmac === true ? 'hmac' : compliance.hmac === false ? 'integrity-only' : 'hmac?';
+  const status = compliance.ok === true ? 'ok' : 'WARN';
+  return `${status} · ${enh} · shadowΔ ${mm} · ${hmacHint}`;
 }
 
 /** Routes marked fail in embedded routing slice. */

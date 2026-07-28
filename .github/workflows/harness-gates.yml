@@ -48,3 +48,7 @@ jobs:
       # Hard fail if new Proton Pass / env.template secret gaps appear (no live vault needed).
       - name: Env vault-gap ratchet
         run: bun run env:inventory:ratchet
+
+      # MA/NJ compliance board bake + portal/route/health freeze tests (offline-safe).
+      - name: Compliance verify
+        run: bun run compliance:verify

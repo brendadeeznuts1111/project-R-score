@@ -249,8 +249,8 @@ export function renderMonitoringDashboard(payload) {
         'Compliance',
         mon.compliance?.enhancements ?? ops?.compliance?.enhancements ?? '—',
         mon.compliance?.available || ops?.compliance?.available
-          ? `shadow Δ ${mon.compliance?.shadowMismatches ?? ops?.compliance?.shadowMismatches ?? 0} · ${mon.compliance?.ok || ops?.compliance?.ok ? 'ok' : 'fail'}`
-          : 'run compliance:bake',
+          ? `shadow Δ ${mon.compliance?.shadowMismatches ?? ops?.compliance?.shadowMismatches ?? 0} · ${mon.compliance?.ok || ops?.compliance?.ok ? 'ok' : 'fail'} · ops · toc`
+          : 'run compliance:bake · ops:snapshot',
         mon.compliance?.available || ops?.compliance?.available
           ? mon.compliance?.ok || ops?.compliance?.ok
             ? 'ok'

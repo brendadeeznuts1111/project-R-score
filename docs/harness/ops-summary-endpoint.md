@@ -70,9 +70,14 @@ probe on `--base-url` (default localhost when diagnosing local server).
 2. **Portal banner** — “Operations summary unavailable” after retries → server down, wrong port, or both summary paths failed
 3. **Specific panel** — summary embed vs separate registry fetch (networking, release-features, etc.)
 
+`ops:diagnose` prints a **compliance** board line when `payload.compliance` is present (same column style as `channelMeta` / `routing`): `ok · 8/8 · shadowΔ 0 · hmac`, `WARN · …`, or `not baked` when `available: false`. Absent field → quiet.
+
+`payload.compliance` is **not** assembled from SQLite — it is a freeze-shape projection of `public/registry/compliance-board.json` (`loadComplianceSummarySliceSync`). Same board also feeds monitoring, edge health, and `/portal/compliance/`. Projection map: [`tenants/compliance-portal.md`](tenants/compliance-portal.md).
+
 ## Ownership
 
 - **Artifact freshness** (ops-summary.json, monitoring, static, routing/bun-utils proofs) — tenant [`ops-snapshot`](tenants/ops-snapshot.md) · claim `ops-snapshot-cron-v1`
+- **Compliance board bake** — companion of ops-snapshot · [`compliance-portal`](tenants/compliance-portal.md)
 - **Channel meta / taxonomy embeds** — [`channel-meta-verification`](tenants/channel-meta-verification.md) · claim `channel-meta-verification-v1`
 
 ## Ratchet

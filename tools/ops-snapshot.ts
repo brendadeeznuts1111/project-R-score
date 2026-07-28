@@ -658,6 +658,8 @@ export async function buildRegistrySnapshot(options?: {
         packages,
         monitoring,
         ops: payload,
+        /** Top-level MA/NJ board rollup (also under ops.compliance). */
+        compliance: payload.compliance,
         bunUtils: {
           proofHash: bunProof.proofHash,
           passed: bunProof.summary?.passed,

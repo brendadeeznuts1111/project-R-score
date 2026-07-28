@@ -61,9 +61,19 @@ async function checkClientContract() {
   const dataJs = await readPortalFile('data.js');
   if (!dataJs.includes('startDataService')) throw new Error('data.js missing startDataService');
   if (!dataJs.includes('portal:data')) throw new Error('data.js missing portal:data event');
+  const navigationJs = await readPortalFile('navigation.js');
+  if (!navigationJs.includes('markCurrentNavigation')) {
+    throw new Error('navigation.js missing current-page href signal');
+  }
   const topbarJs = await readPortalFile('topbar.js');
   if (!topbarJs.includes('portal:data')) throw new Error('topbar.js missing portal:data listener');
-  console.log('✓ data.js + topbar.js contract');
+  if (!topbarJs.includes('portal:navigation')) {
+    throw new Error('topbar.js missing portal:navigation signal');
+  }
+  if (!topbarJs.includes('portal:health-signal')) {
+    throw new Error('topbar.js missing portal:health-signal event');
+  }
+  console.log('✓ data.js + navigation.js + topbar.js contract');
 }
 
 async function checkPortalStyles() {
@@ -72,6 +82,7 @@ async function checkPortalStyles() {
     '/portal/theme-tokens.css',
     '/portal/topbar.js',
     '/portal/data.js',
+    '/portal/navigation.js',
   ];
   const failures: string[] = [];
   for (const path of assets) {
