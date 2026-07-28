@@ -15,8 +15,12 @@
  *   portal-cli doctor --failed-only # hide passing checks
  *   portal-cli doctor --full        # spawn install:verify · vault · capability gates
  *   portal-cli doctor --group catalog
+ *   portal-cli doctor --group bunfig
  *   portal-cli doctor --group linker --group catalog
  *   portal-cli doctor --env ci      # skip envScope=dev checks
+ *
+ * Bunfig probes: tools/lib/portal-cli-doctor-bunfig.ts · re-export lib/doctor/probes/bunfig.ts
+ * Bake: bun run bake:doctor · check: bun run bake:doctor --check · board: /portal/doctor/
  *
  * Fix commands use real monorepo scripts only (no invented Bun flags).
  *
@@ -38,10 +42,11 @@ import {
 import { cliTone, columnTable, frameBlock, kvLines } from '../../lib/portal/cli-chrome.ts';
 import { runCatalogChecks } from './portal-cli-doctor-catalog.ts';
 import { runBunfigChecks } from './portal-cli-doctor-bunfig.ts';
+import { runInfraChecks } from './portal-cli-doctor-infra.ts';
 
 export type PortalDoctorLevel = 'fatal' | 'warn' | 'info';
 export type PortalDoctorEnvScope = 'dev' | 'ci' | 'all';
-export type PortalDoctorGroup = 'linker' | 'bakes' | 'catalog' | 'gates' | 'bunfig';
+export type PortalDoctorGroup = 'linker' | 'bakes' | 'catalog' | 'bunfig' | 'infra' | 'gates';
 
 export type PortalDoctorCheck = {
   id: string; // brand-ok — check id enum-like opaque key (linker-config-version, …)
@@ -122,6 +127,13 @@ export type PortalDoctorOpts = {
   env?: PortalDoctorEnvScope;
   /** Inject spawn for tests */
   spawn?: (argv: string[], opts?: { cwd?: string }) => Promise<number>;
+  /**
+   * Inject fetch for infra Access probes (tests).
+   * When omitted, live HTTPS probes run (ledger + portal).
+   */
+  accessFetch?: import('../../lib/verification/cloudflare-access-live.ts').AccessProbeFetch;
+  /** Skip live Access probes (offline pure tests). */
+  skipLiveAccess?: boolean;
 };
 
 export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
@@ -129,6 +141,7 @@ export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
   bakes: 'Offline bakes',
   catalog: 'Catalog SSOT',
   bunfig: 'Bunfig SSOT',
+  infra: 'Infra · Access',
   gates: 'Spawned gates',
 };
 
@@ -137,6 +150,7 @@ export const PORTAL_DOCTOR_GROUPS: PortalDoctorGroup[] = [
   'bakes',
   'catalog',
   'bunfig',
+  'infra',
   'gates',
 ];
 
@@ -467,6 +481,14 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
 
   // 3b) Bunfig machine/project SSOT
   checks.push(...(await runBunfigChecks(cwd)));
+
+  // 3c) Infra · live Cloudflare Access probes (ledger fatal · portal warn)
+  checks.push(
+    ...(await runInfraChecks({
+      fetch: opts.accessFetch,
+      skipLive: opts.skipLiveAccess,
+    }))
+  );
 
   // 4) Optional full: spawn existing gates (no network assumed)
   if (full) {

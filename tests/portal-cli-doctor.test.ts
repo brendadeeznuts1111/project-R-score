@@ -129,7 +129,7 @@ describe('portal-cli doctor pure', () => {
   });
 
   test('runPortalDoctor is OK on monorepo root (default)', async () => {
-    const r = await runPortalDoctor({ cwd: ROOT, full: false });
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
     expect(r.kind).toBe('portal-cli-doctor');
     expect(r.schemaVersion).toBe(4);
     expect(r.ok).toBe(true);
@@ -137,7 +137,8 @@ describe('portal-cli doctor pure', () => {
     expect(linker?.ok).toBe(true);
     expect(linker?.group).toBe('linker');
     expect(linker?.envScope).toBe('all');
-    expect(r.summary.passed).toBe(r.summary.checkCount);
+    expect(r.summary.failedFatal).toBe(0);
+    expect(r.ok).toBe(true);
     expect(r.summary.failed).toBe(0);
     const text = formatPortalDoctor(r);
     expect(text).toContain('portal doctor');
@@ -149,7 +150,7 @@ describe('portal-cli doctor pure', () => {
   });
 
   test('verbose format includes status table and remediation section', async () => {
-    const r = await runPortalDoctor({ cwd: ROOT, full: false, verbose: true });
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, verbose: true, skipLiveAccess: true });
     const text = formatPortalDoctorVerbose(r);
     expect(text).toContain('portal doctor');
     expect(text).toMatch(/status|pass|FAIL|check/i);
@@ -163,7 +164,7 @@ describe('portal-cli doctor pure', () => {
   });
 
   test('doctor includes granular catalog SSOT checks', async () => {
-    const r = await runPortalDoctor({ cwd: ROOT, full: false });
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
     const ids = r.checks.filter(c => c.group === 'catalog').map(c => c.id);
     expect(ids).toEqual([
       'catalog-json-schema',
@@ -195,7 +196,7 @@ describe('portal-cli doctor pure', () => {
   });
 
   test('--group catalog scopes report to catalog checks only', async () => {
-    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'catalog' });
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'catalog', skipLiveAccess: true });
     expect(r.group).toBe('catalog');
     expect(r.checks.every(c => c.group === 'catalog')).toBe(true);
     expect(r.checks).toHaveLength(5);
@@ -204,13 +205,15 @@ describe('portal-cli doctor pure', () => {
   });
 
   test('doctor includes bunfig SSOT checks', async () => {
-    const r = await runPortalDoctor({ cwd: ROOT, full: false });
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
     const ids = r.checks.filter(c => c.group === 'bunfig').map(c => c.id);
     expect(ids).toEqual([
       'bunfig-machine-ssot',
+      'bunfig-machine-frozen-lockfile',
       'bunfig-project-no-machine-keys',
       'bunfig-merge-consistency',
       'bunfig-release-age-excludes',
+      'bunfig-no-install-env-overrides',
     ]);
     for (const id of ids) {
       expect(r.checks.find(c => c.id === id)?.ok).toBe(true);
@@ -218,10 +221,10 @@ describe('portal-cli doctor pure', () => {
     expect(formatPortalDoctor(r)).toContain('Bunfig SSOT');
   });
 
-  test('--group bunfig scopes to four checks', async () => {
-    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'bunfig' });
+  test('--group bunfig scopes to bunfig checks only', async () => {
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'bunfig', skipLiveAccess: true });
     expect(r.group).toBe('bunfig');
-    expect(r.checks).toHaveLength(4);
+    expect(r.checks).toHaveLength(6);
     expect(r.checks.every(c => c.group === 'bunfig')).toBe(true);
     expect(r.ok).toBe(true);
   });
@@ -236,19 +239,48 @@ describe('portal-cli doctor pure', () => {
       'typescript',
     ]);
     const checks = await runBunfigChecks(ROOT);
-    expect(checks).toHaveLength(4);
+    expect(checks).toHaveLength(6);
+    expect(checks.every(c => c.group === 'bunfig')).toBe(true);
+  });
+
+  test('project bunfig leaking machine keys fails project probe', async () => {
+    const tmp = resolvePath(ROOT, 'tmp/portal-doctor-bunfig-leak');
+    await Bun.$`mkdir -p ${tmp}`.quiet();
+    await Bun.write(
+      `${tmp}/bunfig.toml`,
+      `[install]\nlinker = "hoisted"\nglobalStore = false\n`
+    );
+    const checks = await runBunfigChecks(tmp);
+    const project = checks.find(c => c.id === 'bunfig-project-no-machine-keys');
+    expect(project?.ok).toBe(false);
+    expect(project?.message).toMatch(/linker|globalStore/);
+    await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
   test('toDoctorState maps report to portal-doctor-state', async () => {
-    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'bunfig' });
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'bunfig', skipLiveAccess: true });
     const state = toDoctorState(r);
     expect(state.kind).toBe(DOCTOR_STATE_KIND);
     expect(state.schemaVersion).toBe(1);
     expect(state.tone).toBe('green');
-    expect(state.byGroup.bunfig?.total).toBe(4);
-    expect(state.checks).toHaveLength(4);
+    expect(state.byGroup.bunfig?.total).toBe(r.checks.length);
+    expect(state.checks).toHaveLength(r.checks.length);
     expect(state.board).toBe('/portal/doctor/');
     expect(state.href).toBe('/registry/doctor-state.json');
+  });
+
+  test('doctorStatesDeepEqual ignores generatedAt', async () => {
+    const { doctorStatesDeepEqual } = await import('../tools/bake-doctor.ts');
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      full: false,
+      group: 'bunfig',
+      skipLiveAccess: true,
+    });
+    const a = toDoctorState(r);
+    const b = { ...a, generatedAt: '1999-01-01T00:00:00.000Z' };
+    expect(doctorStatesDeepEqual(a, b)).toBe(true);
+    expect(doctorStatesDeepEqual(a, { ...a, tone: 'red' as const })).toBe(false);
   });
 
   test('parseDoctorGroupsFromArgv supports multi and comma groups', () => {
@@ -268,6 +300,7 @@ describe('portal-cli doctor pure', () => {
       cwd: ROOT,
       full: false,
       groups: ['linker', 'catalog'],
+      skipLiveAccess: true,
     });
     expect(r.groups).toEqual(['linker', 'catalog']);
     expect(r.checks.every(c => c.group === 'linker' || c.group === 'catalog')).toBe(true);
@@ -276,9 +309,39 @@ describe('portal-cli doctor pure', () => {
     expect(r.checks.some(c => c.group === 'bakes')).toBe(false);
   });
 
+  test('--group infra includes Access checks', async () => {
+    const r = await runPortalDoctor({
+      cwd: ROOT,
+      full: false,
+      group: 'infra',
+      env: 'ci',
+      accessFetch: async url => {
+        if (String(url).includes('ledger')) {
+          return new Response(null, {
+            status: 302,
+            headers: {
+              location: 'https://factory-wager.cloudflareaccess.com/cdn-cgi/access/login/ledger',
+              'www-authenticate': 'Cloudflare-Access',
+            },
+          });
+        }
+        // portal still public → warn fails
+        return new Response('<html></html>', { status: 200 });
+      },
+    });
+    expect(r.group).toBe('infra');
+    expect(r.checks).toHaveLength(2);
+    expect(r.checks.find(c => c.id === 'infra-ledger-access')?.ok).toBe(true);
+    expect(r.checks.find(c => c.id === 'infra-portal-access')?.ok).toBe(false);
+    expect(r.checks.find(c => c.id === 'infra-portal-access')?.level).toBe('warn');
+    // only fatals fail the gate
+    expect(r.ok).toBe(true);
+    expect(formatPortalDoctor(r)).toContain('Infra');
+  });
+
   test('--env ci drops envScope=dev checks', async () => {
-    const all = await runPortalDoctor({ cwd: ROOT, full: false });
-    const ci = await runPortalDoctor({ cwd: ROOT, full: false, env: 'ci' });
+    const all = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
+    const ci = await runPortalDoctor({ cwd: ROOT, full: false, env: 'ci', skipLiveAccess: true });
     expect(ci.env).toBe('ci');
     expect(ci.checks.find(c => c.id === 'catalog-deprecated-flags')).toBeUndefined();
     expect(all.checks.find(c => c.id === 'catalog-deprecated-flags')).toBeTruthy();
@@ -341,8 +404,11 @@ describe('portal-cli doctor CLI', () => {
     const j = JSON.parse(out);
     expect(j.kind).toBe('portal-cli-doctor');
     expect(j.schemaVersion).toBe(4);
-    expect(j.ok).toBe(true);
-    expect(j.summary?.passed).toBe(j.summary?.checkCount);
+    expect(j.ok).toBe(true); // fatals pass; warn failures (e.g. infra-portal-access) allowed
+    expect(j.summary?.failedFatal).toBe(0);
+    expect(
+      j.checks.some((c: { id: string /* brand-ok */ }) => c.id === 'infra-ledger-access')
+    ).toBe(true);
     expect(j.docs?.installIsolated).toContain('isolated-installs');
     expect(
       j.checks.some((c: { id: string /* brand-ok — opaque check key */ }) => c.id === 'linker-config-version')

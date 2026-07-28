@@ -1220,18 +1220,19 @@ Related: portal-cli --help · portal-cli doctor --group catalog
 
 Unified offline health gate for the portal control plane.
 
-Checks (default — pure, no network):
+Checks (default — pure groups + live Access probes):
   Linker:  linker-config-version · machine-isolated-linker
   Bakes:   vault-health · capability-map-subset · bunfig-state (+ age when present)
   Catalog: catalog-json-schema · catalog-shortcode-conflict · catalog-bun-help-parity · catalog-help-coverage · catalog-deprecated-flags
   Bunfig:  bunfig-machine-ssot · project-no-machine-keys · merge-consistency · release-age-excludes
+  Infra:   infra-ledger-access (fatal) · infra-portal-access (warn) — live HTTPS
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
 Flags:
   --verbose · -v     Table: status · fix · auto · impact · scope + remediation
   --failed-only      Hide passing checks (pairs with --verbose)
   --full             Spawn install:verify · vault-health · capability-map tests
-  --group <name>     linker | bakes | catalog | bunfig | gates  (repeatable / comma list)
+  --group <name>     linker | bakes | catalog | bunfig | infra | gates  (repeatable / comma list)
   --env <scope>      all (default) | ci (skip envScope=dev) | dev
   --json             Machine-readable report (schemaVersion 4 + summary)
   --no-write         Do not refresh public/registry/doctor-state.json
@@ -1241,6 +1242,7 @@ Examples:
   portal-cli doctor --verbose
   portal-cli doctor --group catalog --verbose
   portal-cli doctor --group bunfig
+  portal-cli doctor --env ci --group infra
   portal-cli doctor --group linker --group catalog
   portal-cli doctor --env ci --failed-only
   portal-cli doctor --json

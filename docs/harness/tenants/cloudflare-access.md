@@ -6,14 +6,16 @@ authorization selector. Proton Pass is the credential source for automation.
 
 ## Managed surfaces
 
-- `ledger.factory-wager.com` — whole hostname behind Access.
-- `reasonix.factory-wager.com` — whole hostname behind Access.
-- `score.factory-wager.com/portal` — portal path behind Access.
+Live status (verified 2026-07-28 — see `.cloudflare-access.yml` header):
+
+- `ledger.factory-wager.com` — whole hostname behind Access. **APPLIED** (302 → Access login).
+- `reasonix.factory-wager.com` — whole hostname behind Access. **STAGED** (no DNS record yet).
+- `score.factory-wager.com/portal` — portal path behind Access. **STAGED** (public 200 today).
 - `score.factory-wager.com/registry` and public proof/API read routes stay
   outside this app so package and verification consumers remain non-interactive.
-- The Pages production `pages.dev` hostname and preview deployments use the
-  Pages Access control in addition to the custom-domain application. A normal
-  custom-domain Access app does not cover those hostnames.
+- The Pages production `pages.dev` hostname and preview deployments should use the
+  Pages Access control in addition to the custom-domain application — **not yet
+  enforced**. A normal custom-domain Access app does not cover those hostnames.
 
 The policy source is
 [`.cloudflare-access.yml`](../../../.cloudflare-access.yml). It is deliberately
@@ -86,6 +88,22 @@ Before a live plan:
 
 Token creation is a human Cloudflare-dashboard action. Source changes must not
 pretend the permission exists before the vault item is real.
+
+## Doctor probes (live edge)
+
+`portal-cli doctor` group **`infra`** observes edge behavior (no Access API token required):
+
+| Check | Level | Proves |
+|-------|-------|--------|
+| `infra-ledger-access` | fatal | `ledger.factory-wager.com` returns Access challenge (302 → `*.cloudflareaccess.com` or `www-authenticate: Cloudflare-Access`) |
+| `infra-portal-access` | warn | both `score.factory-wager.com/portal/` **and** `project-r-score.pages.dev/portal/` are Access-enforced |
+
+```bash
+bun tools/portal-cli.ts doctor --env ci --group infra
+bun tools/portal-cli.ts doctor --group infra --verbose
+```
+
+Ledger is live-enforced today; portal custom-domain + Pages Access remain **staged** until apply (warn fails until both hosts challenge).
 
 ## Apply gate
 
