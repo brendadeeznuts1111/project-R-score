@@ -989,16 +989,6 @@ export function formatChangeSummary(
  * Legacy alias. Renders limit raises as a formatted table.
  * Uses Bun.stringWidth for accurate column widths.
  */
-export function formatLimitRaisesTable(raises: LimitRaise[]): string {
-  if (!raises || raises.length === 0) return '  No limit raises found.';
-  return formatLimitChangeTable(raises.map(r => ({ ...r, direction: 'up' as const })));
-}
-
-/**
- * Rich human-readable lines for enriched limit changes with multi-factor.
- * Shows CLV movers, line movement, multi-factor score + top factors,
- * direction icons, and driver details.
- */
 export function formatEnrichedLimitChanges(
   changes: Array<
     EnrichedLimitRaise & {
@@ -1078,7 +1068,7 @@ export function formatEnrichedLimitChanges(
   return out.join('\n').trimEnd();
 }
 
-/** Human lines matching the bun -e demo (raise + line 5m + top CLV). */
+/** @deprecated Use formatEnrichedLimitChanges */
 export function formatEnrichedLimitRaises(
   raises: Array<
     EnrichedLimitRaise & {

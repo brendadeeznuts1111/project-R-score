@@ -16,32 +16,38 @@
  * - Unicode box-drawing with fallback to ASCII
  * - Supports Bun.inspect for rich cell values
  */
-import { stringWidth, inspect, semver } from 'bun';
+import { stringWidth, inspect } from 'bun';
 
-// ── Bun version check ────────────────────────────────────────────────────
-const BUN_VERSION = Bun.version;
-const BUN_MAJOR = parseInt(BUN_VERSION.split('.')[0] ?? '0', 10);
-const BUN_MINOR = parseInt(BUN_VERSION.split('.')[1] ?? '0', 10);
-const BUN_OK = semver.satisfies(BUN_VERSION, '>=1.3.0');
+// ── Terminal detection (lazy, first-use only) ─────────────────────────────
+let _ttyCache: { isTTY: boolean; width: number } | undefined;
 
-// ── Terminal detection via Bun.Terminal (constructor) ─────────────────────
-// Bun 1.4+: new Bun.Terminal(writable) returns a Terminal instance
-// with isTTY, columns, rows, color, etc.
-let isTTY = false;
-let TERM_WIDTH = 80;
-try {
-  const t = new (Bun as any).Terminal(Bun.stdout);
-  isTTY = t.isTTY === true;
-  TERM_WIDTH = typeof t.columns === 'number' && t.columns > 0 ? t.columns : 80;
-} catch {
-  // Fallback: Bun.stdout may have TTY info in some versions
+function getTerminal(): { isTTY: boolean; width: number } {
+  if (_ttyCache) return _ttyCache;
+  let isTTY = false;
+  let width = 80;
   try {
-    isTTY = (Bun.stdout as any)?.isTTY === true;
-  } catch {}
+    const t = new (Bun as any).Terminal(Bun.stdout);
+    isTTY = t.isTTY === true;
+    width = typeof t.columns === 'number' && t.columns > 0 ? t.columns : 80;
+  } catch {
+    try {
+      isTTY = (Bun.stdout as any)?.isTTY === true;
+    } catch {}
+  }
+  _ttyCache = { isTTY, width };
+  return _ttyCache;
 }
-const NO_COLOR = !isTTY || Bun.env.NO_COLOR !== undefined || process.argv.includes('--no-color');
 
-const C = (code: string) => (s: string) => (NO_COLOR ? s : `\x1b[${code}m${s}\x1b[0m`);
+// Lazy color detection — computed once, then cached
+let _noColor: boolean | undefined;
+function isNoColor(): boolean {
+  if (_noColor !== undefined) return _noColor;
+  _noColor =
+    !getTerminal().isTTY || Bun.env.NO_COLOR !== undefined || process.argv.includes('--no-color');
+  return _noColor;
+}
+
+const C = (code: string) => (s: string) => (isNoColor() ? s : `\x1b[${code}m${s}\x1b[0m`);
 export const color = {
   red: C('31'),
   green: C('32'),
@@ -94,8 +100,8 @@ export type TableOpts = {
 
 const DEFAULT_OPTS: TableOpts = {
   compact: false,
-  colors: !NO_COLOR,
-  maxColWidth: Math.floor(TERM_WIDTH / 3),
+  colors: !isNoColor(),
+  maxColWidth: Math.floor(getTerminal().width / 3),
   alternate: true,
   border: 'unicode',
 };
@@ -204,7 +210,7 @@ export function formatTable(
 ): string {
   const o = { ...DEFAULT_OPTS, ...opts };
   const b = BOX[o.border ?? 'unicode'];
-  const useColor = o.colors && !NO_COLOR;
+  const useColor = o.colors && !isNoColor();
 
   if (rows.length === 0) {
     const empty = `  ${title}: ${color.dim('(no data)')}`;
@@ -212,7 +218,7 @@ export function formatTable(
   }
 
   // Compute column widths
-  const maxW = o.maxColWidth ?? Math.floor(TERM_WIDTH / 3);
+  const maxW = o.maxColWidth ?? Math.floor(getTerminal().width / 3);
   const widths = columns.map((col, i) => {
     const labelW = sw(col.label);
     const dataW = Math.max(
@@ -307,7 +313,7 @@ export function formatTableNative(
         return subset;
       })
     : rows;
-  return inspect.table(data, { colors: options?.colors ?? !NO_COLOR });
+  return inspect.table(data, { colors: options?.colors ?? !isNoColor() });
 }
 
 // ── Convenience: number formatting ────────────────────────────────────────
@@ -453,7 +459,5 @@ export const PREDICTION_COLUMNS: ColumnDef[] = [
   { key: 'windowHint', label: 'Window', align: 'left', width: 24, color: color.dim },
 ];
 
-// ── Naming aliases ───────────────────────────────────────────────────────
-/** @deprecated Use `formatInspectTable` */
-export const formatTableNativeAlias = formatTableNative;
+// ── Preferred name ───────────────────────────────────────────────────────
 export const formatInspectTable = formatTableNative;
