@@ -21,16 +21,98 @@ Refreshes portal/Pages artifacts:
   disable with `--no-channel-meta` / `OPS_SNAPSHOT_CHANNEL_META=0`) · claim
   `channel-meta-verification-v1`
 
-**Populate demos (Pages “looks live”):** `bun run ops:snapshot:demo` runs
-`ops:seed:all` (ops + prediction + DOD + partner profiles/channels/accounts +
-TOC Ops fixture + tenants) then snapshot. Snapshot itself auto-seeds empty ops /
-prediction / DOD / partner bindings / missing `toc-ops.json` unless `--no-seed`,
-and always refreshes `catalog-snapshot.json` + `toc-ops.json`.
+**Populate demos (Pages “looks live”):** `bun run ops:snapshot:demo` — see
+[Flag matrix](#flag-matrix-seed--compliance) below.
 
 TOC board: [`toc-ops.md`](toc-ops.md) · `/portal/toc/` · concern matrix (rails/accounts/Soft/bots vs Cloudflare MCP) in that tenant.
 
 Uses routing proof **retry + TTL cache** (`lib/routing-proof.ts` ·
 `getRoutingProof`). Next fire waits for the snapshot Promise (**no overlap**).
+
+## Flag matrix (seed + compliance)
+
+SSOT: [`tools/ops-snapshot.ts`](../../../tools/ops-snapshot.ts). Do not invent flags —
+only argv/`Bun.env` keys the tool actually reads.
+
+### Compliance board
+
+| Control | Default | Effect |
+|---------|---------|--------|
+| *(none)* | **on** | Bake `compliance-board.json` (+ enhancements/shadow + portal embed) before ops-summary so `payload.compliance` / monitoring slice stay fresh |
+| `--no-compliance` | — | Skip companion bake |
+| `OPS_SNAPSHOT_COMPLIANCE=0` | — | Same skip (env; either flag **or** env disables) |
+
+```bash
+bun run ops:snapshot -- --no-compliance
+OPS_SNAPSHOT_COMPLIANCE=0 bun run ops:snapshot
+```
+
+Companion path: [`compliance-portal.md`](compliance-portal.md) · `bun run compliance:bake`.
+
+### Seed flags
+
+Auto-seed block (ops / prediction / DOD / partner bindings / tenant registries /
+TOC demo seed) runs unless `--no-seed`. **Outside** that block, snapshot **always**
+refreshes `catalog-snapshot.json` and re-exports `toc-ops.json` (+ soft/identity
+bridge).
+
+| Flag | When seed runs | `force` | `ifEmpty` | Notes |
+|------|----------------|---------|-----------|-------|
+| *(default)* | When the domain is empty (`is*Empty` / missing `toc-ops.json`) | `false` | `true` | No-op if data already present |
+| `--seed` | Always enter each seed call | `false` | `false` | Bypasses the empty gate (`ifEmpty: false`) so seeders run even when data exists (inserts more demo rows; not a wipe) |
+| `--seed-force` | Always | `true` | `false` | Overwrite / re-seed; also force-seeds TOC identity bridge + Soft Balance on the always-on TOC export |
+| `--seed-tenants` | (with seed block) | tenants only: `true` | — | `seedTenantRegistries({ force: true })`; other domains keep default/seed/`--seed-force` rules |
+| `--no-seed` | Never | — | — | Skips the whole demo-seed block (catalog + TOC export still run) |
+
+Combinations (as coded):
+
+- `--seed-force` implies seed want (`wantSeed`); sets `forceSeed` for all domains in the block.
+- `--seed-tenants` alone does **not** set `wantSeed` / `forceSeed` for ops/prediction/DOD/partners/TOC; it only ORs into tenant-registry `force`.
+- `--no-seed` wins: seed flags are ignored when the block is skipped.
+- Tenant force = `forceSeed` **or** `--seed-tenants` (so `--seed-force` also force-fills tenant registries).
+
+```bash
+bun run ops:snapshot -- --no-seed              # pure assemble; no demo fill
+bun run ops:snapshot -- --seed                 # call seeders (empty-or-present policy per seeder)
+bun run ops:snapshot -- --seed-force           # re-seed demos
+bun run ops:snapshot -- --seed-tenants         # force thin tenant registry.json only
+```
+
+### `ops:snapshot:demo`
+
+```bash
+bun run ops:snapshot:demo
+# ≡  bun run ops:seed:all && bun tools/ops-snapshot.ts --no-routing
+```
+
+| Step | What runs |
+|------|-----------|
+| 1. `ops:seed:all` | External seeds: ops + prediction + DOD + partners + TOC fixture + tenants (`package.json` chain) |
+| 2. `ops-snapshot --no-routing` | Full snapshot **without** live routing proof (faster local/Pages “looks live”); seed block still **default** (if-empty) — usually no-ops after step 1 |
+
+Compliance, channel-meta, static, report, TOC export, catalog stay **on** (defaults).
+`ops:snapshot:demo` does not forward extra argv; for a compliance-skip demo bake, run the two steps manually:
+
+```bash
+bun run ops:seed:all && bun tools/ops-snapshot.ts --no-routing --no-compliance
+```
+
+### Other flags (reference)
+
+| Flag / env | Default | Effect |
+|------------|---------|--------|
+| `--no-routing` | routing **on** | Skip `getRoutingProof` |
+| `--force-routing` | cache OK | Force routing refresh |
+| `--no-report` | report **on** | Skip prediction HTML/SVG |
+| `--webview` | off | Prediction report WebView PNG |
+| `--no-static` | static **on** | Skip `public/registry/static.json` |
+| `--no-channel-meta` / `OPS_SNAPSHOT_CHANNEL_META=0` | channel meta **on** | Skip prefer-artifact channel meta merge |
+| `--publish` / `OPS_SNAPSHOT_PUBLISH=1` | off | Multipart publish proof artifacts (needs `REGISTRY_URL` + secret) |
+| `--out <path>` / `OPS_SNAPSHOT_PATH` | `public/registry/ops-summary.json` | Ops-summary write path |
+| `OPS_DB_PATH` | default ops DB | SQLite path |
+
+Package scripts: `ops:snapshot` · `ops:snapshot:demo` · `ops:snapshot:once` (cron
+`--once`) · `ops:snapshot:cron`.
 
 ## Signal (failure)
 

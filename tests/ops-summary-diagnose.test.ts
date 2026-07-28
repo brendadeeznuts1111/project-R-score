@@ -145,4 +145,63 @@ describe('ops-summary-diagnose', () => {
       })
     ).toBe('WARN · 6/8 · shadowΔ 2 · integrity-only');
   });
+
+  test('formatComplianceBoardLine ok with geoProfiles > 0 includes geo N', () => {
+    expect(
+      formatComplianceBoardLine({
+        available: true,
+        ok: true,
+        enhancements: '8/8',
+        shadowMismatches: 0,
+        hmac: true,
+        geoProfiles: 4,
+      })
+    ).toBe('ok · 8/8 · shadowΔ 0 · hmac · geo 4');
+    // zero / null geoProfiles omit the geo segment
+    expect(
+      formatComplianceBoardLine({
+        available: true,
+        ok: true,
+        enhancements: '8/8',
+        shadowMismatches: 0,
+        hmac: true,
+        geoProfiles: 0,
+      })
+    ).toBe('ok · 8/8 · shadowΔ 0 · hmac');
+  });
+
+  test('formatComplianceBoardLine WARN with scoreHint includes the hint', () => {
+    expect(
+      formatComplianceBoardLine({
+        available: true,
+        ok: false,
+        enhancements: '6/8',
+        shadowMismatches: 2,
+        hmac: false,
+        scoreHint: 'integrity-only',
+      })
+    ).toBe('WARN · 6/8 · shadowΔ 2 · integrity-only · integrity-only');
+    expect(
+      formatComplianceBoardLine({
+        available: true,
+        ok: false,
+        enhancements: '6/8',
+        shadowMismatches: 2,
+        hmac: true,
+        geoProfiles: 3,
+        scoreHint: 'integrity+hmac',
+      })
+    ).toBe('WARN · 6/8 · shadowΔ 2 · hmac · geo 3 · integrity+hmac');
+    // scoreHint is only appended on non-ok
+    expect(
+      formatComplianceBoardLine({
+        available: true,
+        ok: true,
+        enhancements: '8/8',
+        shadowMismatches: 0,
+        hmac: true,
+        scoreHint: 'integrity+hmac',
+      })
+    ).toBe('ok · 8/8 · shadowΔ 0 · hmac');
+  });
 });

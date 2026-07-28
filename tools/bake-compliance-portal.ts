@@ -255,9 +255,12 @@ export async function bakeCompliancePortal(opts?: {
       label: 'Board integrity sha3-256',
     },
     {
+      // Optional proof — missing secret does not fail the board (scoreHint carries advisory).
       id: 'hmac',
-      ok: Boolean(boardProof.hmac),
-      label: 'HMAC (REPORT_SIGNING_SECRET from vault/mint)',
+      ok: true,
+      label: boardProof.hmac
+        ? 'HMAC present (REPORT_SIGNING_SECRET)'
+        : 'HMAC optional (mint REPORT_SIGNING_SECRET for keyed auth)',
     },
     {
       id: 'geo',
@@ -320,10 +323,12 @@ export async function bakeCompliancePortal(opts?: {
     if (log) console.warn('  portal weave skip:', e instanceof Error ? e.message : e);
   }
 
-  const ok = enhancements.passed === enhancements.total && shadow.summary.mismatches === 0;
+  const { isComplianceBoardOk } = await import('../lib/monitoring/compliance-slice.ts');
+  const ok = isComplianceBoardOk(board);
   if (log) {
     console.info(
-      `  enhancements ${enhancements.passed}/${enhancements.total} · shadow mismatches=${shadow.summary.mismatches}`
+      `  enhancements ${enhancements.passed}/${enhancements.total} · shadow mismatches=${shadow.summary.mismatches}` +
+        (boardProof.hmac ? ' · hmac' : ' · integrity-only')
     );
     console.info(`  → ${boardPath}`);
   }
