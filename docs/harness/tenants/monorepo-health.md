@@ -36,6 +36,20 @@ Health = 100
 
 **Not a full AST.** Bun has no public ESTree walk API; `scan` / `scanImports` are the native module-graph surface ([transpiler](https://bun.com/docs/runtime/transpiler)). Cyclomatic complexity still uses the TypeScript compiler API.
 
+## Health score vs import-graph gate
+
+Two tools consume one import SSOT — `scanSourceImports` in [`lib/harness/monorepo-health.ts`](../../../lib/harness/monorepo-health.ts) (`Bun.Transpiler.scanImports`: ESM + `require()` + dynamic `import()`, type-only ignored). They own different decisions:
+
+| Tool | Owns | Verdict feeds |
+|------|------|---------------|
+| `monorepo:health` / `check:monorepo-health` | **Advisory trend** — 0–100 score; cycles are one capped linear penalty (×1.5) | dashboards · SQLite trend · `/api/health` · portal boards |
+| `check:import-graph` ([`scripts/check-import-graph.ts`](../../../scripts/check-import-graph.ts)) | **Hard fail** — strong/weak cycle + deep-relative counts vs `scripts/import-graph-baseline.json` may only go down | commit blocking (pre-commit + ci:core) |
+
+- The score tolerates a flat cycle count; the gate does not — one new strong cycle fails the commit even at score ≥ 90.
+- Use `monorepo-health` for trends and operator triage; use `check:import-graph` when deciding whether a commit may land.
+- Never hand-roll import scanning in a third tool — extend `scanSourceImports` so cycle definitions (strong = all-static edges, weak = ≥1 lazy `import()` edge) cannot drift between tools.
+- Re-pin authority is separate per tool: `check-import-graph --write-baseline` (owners, after intentional restructuring) never re-pins the score baseline, and vice versa.
+
 ## CLI
 
 ```bash
