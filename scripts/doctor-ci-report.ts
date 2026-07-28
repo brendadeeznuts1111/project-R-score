@@ -21,8 +21,7 @@
  * @see docs/UNIFIED.md
  */
 
-import { ensureDir, resolvePath } from './lib/fs-bun.ts';
-import { dirnamePath } from '../lib/path-bun.ts';
+import { dirnamePath, ensureDir, resolvePath } from './lib/fs-bun.ts';
 import {
   formatPortalDoctorPlain,
   runPortalDoctor,
@@ -35,10 +34,20 @@ export const DEFAULT_REPORT_REL = 'reports/portal-doctor-ci.json';
 export type DoctorCiReportOpts = {
   cwd?: string;
   outPath?: string;
+  /**
+   * Process-like env for machine bunfig / BUN_INSTALL_* probes (default Bun.env).
+   * Distinct from doctor --env ci (envScope filter).
+   */
+  machineEnv?: Record<string, string | undefined>;
   /** When true, skip writing GITHUB_STEP_SUMMARY even if env is set. */
   noSummary?: boolean;
   /** When true, skip writing JSON report file. */
   noJson?: boolean;
+  /**
+   * When true, do not print plain doctor text / report path lines
+   * (library callers / tests). CLI main leaves this false.
+   */
+  quiet?: boolean;
 };
 
 function parseArgs(argv: string[]): DoctorCiReportOpts {
@@ -177,6 +186,7 @@ export async function runDoctorCiReport(opts: DoctorCiReportOpts = {}): Promise<
   exitCode: number;
   jsonPath?: string;
   summaryWritten: boolean;
+  plain: string;
 }> {
   const cwd = opts.cwd ?? process.cwd();
   const report = await runPortalDoctor({
@@ -184,17 +194,23 @@ export async function runDoctorCiReport(opts: DoctorCiReportOpts = {}): Promise<
     env: 'ci',
     skipLiveAccess: true,
     format: 'plain',
+    machineEnv: opts.machineEnv,
   });
 
+  const plain = formatPortalDoctorPlain(report);
   // Plain CI stdout (same shape as portal:doctor:ci without TTY chrome)
-  console.log(formatPortalDoctorPlain(report));
+  if (!opts.quiet) {
+    console.log(plain);
+  }
 
   const written = await writeDoctorCiReport(report, { ...opts, cwd });
-  if (written.jsonPath) {
-    console.log(`report  ${written.jsonPath}`);
-  }
-  if (written.summaryWritten) {
-    console.log('summary  GITHUB_STEP_SUMMARY updated');
+  if (!opts.quiet) {
+    if (written.jsonPath) {
+      console.log(`report  ${written.jsonPath}`);
+    }
+    if (written.summaryWritten) {
+      console.log('summary  GITHUB_STEP_SUMMARY updated');
+    }
   }
 
   return {
@@ -202,6 +218,7 @@ export async function runDoctorCiReport(opts: DoctorCiReportOpts = {}): Promise<
     exitCode: report.ok ? 0 : 1,
     jsonPath: written.jsonPath,
     summaryWritten: written.summaryWritten,
+    plain,
   };
 }
 
