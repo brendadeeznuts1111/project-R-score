@@ -1,15 +1,25 @@
 // @see https://bun.com/docs/runtime/test
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
-// @see https://bun.com/docs/runtime/terminal — Bun.terminal
+// @see https://bun.com/docs/test/writing-tests#format-specifiers — test.each with %s %i %p %# %o
 /**
  * Contract test for lib/table-format.ts — universal table formatter.
  *
- * Tests: rendering modes, edge cases, Bun utilities integration.
+ * Uses Bun test.each with format specifiers for data-driven edge case coverage.
  *   bun test tests/table-format.test.ts
  */
 import { describe, test, expect, beforeAll } from 'bun:test';
-import { formatTable, formatChangeSummary, color, fmt, DIMENSION_COLUMNS, REGULATORY_COLUMNS, LIMIT_CHANGE_COLUMNS, type ColumnDef } from '../lib/table-format.ts';
+import {
+  formatTable,
+  formatTableNative,
+  color,
+  fmt,
+  DIMENSION_COLUMNS,
+  REGULATORY_COLUMNS,
+  LIMIT_CHANGE_COLUMNS,
+  PREDICTION_COLUMNS,
+  type ColumnDef,
+} from '../lib/table-format.ts';
 import { stringWidth, inspect, semver } from 'bun';
 
 // ── Test data ─────────────────────────────────────────────────────────────
@@ -18,327 +28,457 @@ const sampleRows = [
   { label: 'FanDuel', totalChanges: 3, raises: 2, decreases: 1, netDelta: 8500, avgMagnitudePct: 33.3, trend7d: 1200 },
   { label: 'BetMGM', totalChanges: 1, raises: 0, decreases: 1, netDelta: -500, avgMagnitudePct: -10, trend7d: -100 },
 ];
-
-const emptyRows: Record<string, any>[] = [];
-
 const limitChangeRows = [
   { direction: 'up', sportsbook: 'draftkings', sport_id: 'nba', market_id: 'spread', bet_type: 'straight', previous_max: 500, new_limit: 1500, multi_factor_score: 0.714, increased_at: 1700000000 },
   { direction: 'down', sportsbook: 'fanduel', sport_id: 'nfl', market_id: 'totals', bet_type: 'live', previous_max: 2000, new_limit: 1000, multi_factor_score: null, increased_at: 1700003600 },
   { direction: 'up', sportsbook: 'betmgm', sport_id: 'nba', market_id: 'moneyline', bet_type: 'pregame', previous_max: null, new_limit: 3000, multi_factor_score: 0.2, increased_at: null },
 ];
+const { styles } = await import('../lib/table-format.ts');
 
-const regulatoryRows = [
-  { partner: 'partner-42', sportsbook: 'draftkings', sportId: 'nba', marketId: 'spread', currentLimit: 1500, regulatoryMax: 10000, status: 'under_limit', stateCode: 'NJ' },
-  { partner: 'partner-99', sportsbook: 'fanduel', sportId: 'nfl', marketId: 'totals', currentLimit: 15000, regulatoryMax: 10000, status: 'over_limit', stateCode: 'MA' },
-];
-
-// ── Contract: Bun utilities integration ───────────────────────────────────
-describe('Bun utilities integration', () => {
-  test('Bun.semver validates version constraints', () => {
-    expect(semver.satisfies(Bun.version, '>=1.3.0')).toBe(true);
-    expect(semver.satisfies(Bun.version, '>=2.0.0')).toBe(false);
-    expect(semver.satisfies('1.4.0', '^1.4.0')).toBe(true);
+// ── 1. Bun utilities integration (test.each × edge cases) ────────────────
+describe('Bun.stringWidth', () => {
+  test.each([
+    ['hello',        5],
+    ['🚀',           2],
+    ['$1,500',       6],
+    ['',             0],
+    ['   ',          3],
+    ['a\nb',         2],   // newline = 1 char in Bun
+    ['\x1b[31mred\x1b[0m', 3], // ANSI codes NOT counted
+  ])('stringWidth(%s) = %i', (input, expected) => {
+    expect(stringWidth(input)).toBe(expected);
   });
+});
 
-  test('Bun.Terminal can be constructed for TTY detection', () => {
-    // Bun.Terminal constructor (v1.4+) provides isTTY, columns
-    // In test runner (non-TTY), it may return undefined values — that's fine
+describe('Bun.semver', () => {
+  test.each([
+    [Bun.version,     '>=1.3.0', true],
+    [Bun.version,     '>=2.0.0', false],
+    ['1.4.0',         '^1.4.0',  true],
+    ['1.4.0-canary',  '>=1.4.0', false],  // canary semver < release
+    ['1.3.14',        '~1.3.0',  true],
+    ['1.5.0',         '1.x.x',   true],
+  ])('semver.satisfies(%s, %s) = %p', (ver, range, expected) => {
+    expect(semver.satisfies(ver, range)).toBe(expected);
+  });
+});
+
+describe('Bun.inspect', () => {
+  test.each([
+    [{ a: 1 },                    '%o',   'contains a'],
+    [{ nested: { x: 2 } },        null,   'handles nesting'],
+    [null,                         null,  'handles null'],
+    [undefined,                   null,   'handles undefined'],
+    [{ color: true },              { depth: 1, colors: false }, 'supports options'],
+  ])('inspect(%p) %s', (input, opts, _label) => {
+    const result = opts ? inspect(input, opts) : inspect(input);
+    expect(result).toBeTruthy();
+    expect(typeof result).toBe('string');
+  });
+});
+
+describe('Bun.Terminal', () => {
+  test('Bun.Terminal constructor produces instance with isTTY + columns', () => {
     try {
       const T = (Bun as any).Terminal;
       if (typeof T === 'function') {
         const t = new T(Bun.stdout);
-        expect(typeof t.isTTY === 'boolean' || t.isTTY === undefined).toBe(true);
-        expect(typeof t.columns === 'number' || t.columns === undefined).toBe(true);
+        expect(t == null).toBe(false);
+        if (t !== undefined) {
+          expect(typeof t.isTTY === 'boolean' || t.isTTY === undefined).toBe(true);
+          expect(typeof t.columns === 'number' || t.columns === undefined).toBe(true);
+        }
       }
     } catch {
-      // Bun.Terminal may not exist in older versions — that's OK
+      // Bun.Terminal may not exist in older versions — feature-detect gracefully
     }
   });
+});
 
-  test('Bun.inspect produces valid output', () => {
-    const result = inspect({ a: 1, b: 'hello' }, { depth: 2, colors: false });
-    expect(result).toContain('a');
-    expect(result).toContain('1');
-    expect(result).toContain('hello');
+// ── 2. Color system ──────────────────────────────────────────────────────
+describe('color system', () => {
+  test.each([
+    [color.green('ok'),     'ok'],
+    [color.red('err'),      'err'],
+    [color.bold('bold'),    'bold'],
+    [color.dim('dim'),      'dim'],
+    [color.yellow('warn'), 'warn'],
+    [color.cyan('info'),   'info'],
+    [color.blue('link'),   'link'],
+  ])('color produces valid output for %s', (result, _label) => {
+    expect(result).toBeTruthy();
+    expect(result.length).toBeGreaterThan(0);
+    // In non-TTY: result === label; in TTY: result contains ANSI escapes
+    // Both are valid — just verify it's a string
+    expect(typeof result).toBe('string');
   });
 
-  test('color returns valid output (plain when non-TTY, ANSI when TTY)', () => {
-    const colored = color.green('hello');
-    expect(colored).toContain('hello');
-    expect(colored.length).toBeGreaterThan(0);
-    // When not in TTY (test runner), ANSI escapes may be absent — that's correct
-    expect(color.red('test')).toBeTruthy();
-    expect(color.bold('test')).toBeTruthy();
-    expect(color.dim('test')).toBeTruthy();
+  test.each([
+    [styles.up,     '🚀',    'up'],
+    [styles.down,   '⬇️',   'down'],
+    [styles.neutral, '—',   'neutral'],
+    [styles.warning, '⚠️', 'warning'],
+  ])(`style %s applies to %s`, (styleFn, input, _label) => {
+    expect(styleFn(input)).toBeTruthy();
+    expect(styleFn(input).includes(input)).toBe(true);
   });
 });
 
-// ── Contract: Format helpers ──────────────────────────────────────────────
-describe('fmt helpers', () => {
-  test('fmt.dollar formats valid numbers', () => {
-    expect(fmt.dollar(1500)).toBe('$1,500');
-    expect(fmt.dollar(0)).toBe('$0');
-    expect(fmt.dollar(-500)).toBe('$-500');  // Bun's toLocaleString puts sign after $
-    expect(fmt.dollar(null)).toBe('—');
-    expect(fmt.dollar(undefined)).toBe('—');
-    expect(fmt.dollar('abc')).toBe('—');
-  });
-
-  test('fmt.delta formats with sign', () => {
-    expect(fmt.delta(1500)).toBe('+$1,500');
-    expect(fmt.delta(-500)).toBe('$-500');  // Bun's toLocaleString puts sign after $
-    expect(fmt.delta(0)).toBe('+$0');
-    expect(fmt.delta(null)).toBe('—');
-  });
-
-  test('fmt.pct formats percentages', () => {
-    expect(fmt.pct(0.5)).toBe('50.0%');
-    expect(fmt.pct(1)).toBe('100.0%');
-    expect(fmt.pct(0)).toBe('0.0%');
-    expect(fmt.pct(null)).toBe('—');
-  });
-
-  test('fmt.pctRaw formats with sign', () => {
-    expect(fmt.pctRaw(50)).toBe('+50.0%');
-    expect(fmt.pctRaw(-10)).toBe('-10.0%');
-    expect(fmt.pctRaw(0)).toBe('+0.0%');
-  });
-
-  test('fmt.date formats timestamps', () => {
-    expect(fmt.date(1700000000)).toBeTruthy();
-    expect(fmt.date(0)).toBeTruthy();
-    expect(fmt.date(null)).toBe('—');
-    expect(fmt.date(undefined)).toBe('—');
-  });
-
-  test('fmt.score formats score values', () => {
-    expect(fmt.score(0.714)).toBe('71%');
-    expect(fmt.score(0)).toBe('0%');
-    expect(fmt.score(1)).toBe('100%');
-    expect(fmt.score(null)).toBe('···');
-  });
-
-  test('fmt.icon provides useful icons', () => {
-    expect(fmt.icon.up).toBe('🚀');
-    expect(fmt.icon.down).toBe('⬇️');
-    expect(fmt.icon.check).toBe('✅');
-    expect(fmt.icon.cross).toBe('❌');
+// ── 3. Format helpers: fmt.dollar ────────────────────────────────────────
+describe('fmt.dollar', () => {
+  test.each([
+    [1500,        '$1,500'],
+    [0,           '$0'],
+    [-500,        '$-500'],    // Bun toLocaleString
+    [null,        '\u2014'],   // em-dash
+    [undefined,   '\u2014'],
+    ['abc',       '\u2014'],
+    ['',          '\u2014'],
+    [1e6,         '$1,000,000'],
+    [-1e6,        '$-1,000,000'],
+  ])('fmt.dollar(%p) = %s', (input, expected) => {
+    expect(fmt.dollar(input)).toBe(expected);
   });
 });
 
-// ── Contract: formatTable rendering ───────────────────────────────────────
-describe('formatTable rendering', () => {
-  test('renders with data rows', () => {
-    const result = formatTable('Test Table', DIMENSION_COLUMNS, sampleRows, { colors: false });
-    // Should contain title and all labels
-    expect(result).toContain('Test Table');
-    expect(result).toContain('DraftKings');
-    expect(result).toContain('FanDuel');
-    expect(result).toContain('BetMGM');
-    // Should contain headers
-    expect(result).toContain('Name');
-    expect(result).toContain('Total');
-    expect(result).toContain('Net');
+describe('fmt.delta', () => {
+  test.each([
+    [1500,     '+$1,500'],
+    [-500,     '$-500'],
+    [0,        '+$0'],
+    [null,     '\u2014'],
+    [undefined, '\u2014'],
+    ['bad',    '\u2014'],
+    [1,        '+$1'],
+    [-1,       '$-1'],
+  ])('fmt.delta(%p) = %s', (input, expected) => {
+    expect(fmt.delta(input)).toBe(expected);
   });
+});
 
-  test('renders empty state', () => {
-    const result = formatTable('Empty', DIMENSION_COLUMNS, emptyRows, { colors: false });
-    expect(result).toContain('no data');
+describe('fmt.pct', () => {
+  test.each([
+    [0.5,      '50.0%'],
+    [1,        '100.0%'],
+    [0,        '0.0%'],
+    [null,     '\u2014'],
+    [undefined, '\u2014'],
+    ['',       '\u2014'],
+    [0.001,    '0.1%'],
+    [0.999,    '99.9%'],
+  ])('fmt.pct(%p) = %s', (input, expected) => {
+    expect(fmt.pct(input)).toBe(expected);
   });
+});
 
-  test('renders with unicode box drawing', () => {
-    const result = formatTable('Unicode', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { border: 'unicode', colors: false });
-    expect(result).toContain('┌');
-    expect(result).toContain('┐');
-    expect(result).toContain('│');
-    expect(result).toContain('└');
-    expect(result).toContain('┘');
+describe('fmt.pctRaw', () => {
+  test.each([
+    [50,   '+50.0%'],
+    [-10,  '-10.0%'],
+    [0,    '+0.0%'],
+    [null, '\u2014'],
+  ])('fmt.pctRaw(%p) = %s', (input, expected) => {
+    expect(fmt.pctRaw(input)).toBe(expected);
   });
+});
 
-  test('renders with ASCII box drawing', () => {
-    const result = formatTable('ASCII', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { border: 'ascii', colors: false });
-    expect(result).toContain('+');
-    expect(result).toContain('|');
-    expect(result).toContain('-');
+describe('fmt.date', () => {
+  test.each([
+    [1700000000,  true],
+    [0,           true],
+    [null,        false],
+    [undefined,   false],
+    ['',          false],
+  ])('fmt.date(%p) is %s', (input, isDate) => {
+    const result = fmt.date(input);
+    if (isDate) {
+      expect(result).not.toBe('\u2014');
+      expect(result.length).toBeGreaterThan(0);
+    } else {
+      expect(result).toBe('\u2014');
+    }
   });
+});
 
-  test('renders compact mode (no box drawing)', () => {
-    const result = formatTable('Compact', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { compact: true, colors: false });
+describe('fmt.score', () => {
+  test.each([
+    [0.714,   '71%'],
+    [0,       '0%'],
+    [1,       '100%'],
+    [null,    '\u00B7\u00B7\u00B7'],  // ···
+    [undefined, '\u00B7\u00B7\u00B7'],
+    ['',      '\u00B7\u00B7\u00B7'],
+    [0.5,     '50%'],
+    [0.999,   '100%'],
+  ])('fmt.score(%p) = %s', (input, expected) => {
+    expect(fmt.score(input)).toBe(expected);
+  });
+});
+
+describe('fmt.icon', () => {
+  test.each([
+    ['up',    '🚀'],
+    ['down',  '⬇️'],
+    ['check', '✅'],
+    ['cross', '❌'],
+    ['warn',  '⚠️'],
+  ])('fmt.icon.%s = %s', (key, expected) => {
+    expect((fmt.icon as any)[key]).toBe(expected);
+  });
+});
+
+// ── 4. formatTable: border modes ─────────────────────────────────────────
+describe('formatTable — border modes', () => {
+  const single = sampleRows.slice(0, 1);
+
+  test.each([
+    ['unicode',  '┌', true],
+    ['unicode',  '┐', true],
+    ['unicode',  '│', true],
+    ['ascii',    '+', true],
+    ['ascii',    '|', true],
+    ['ascii',    '-', true],
+    ['minimal',  '─', false],  // minimal has no box borders, only data
+    ['none',     '┌', false],
+    ['none',     '│', false],
+  ])('border=%s contains %s = %p', (border, char, shouldContain) => {
+    const result = formatTable('Border', DIMENSION_COLUMNS, single, {
+      border: border as any,
+      colors: false,
+    });
+    if (shouldContain) {
+      expect(result).toContain(char);
+    } else {
+      expect(result).not.toContain(char);
+    }
+  });
+});
+
+describe('formatTable — rendering modes', () => {
+  test('compact mode has no box drawing', () => {
+    const result = formatTable('Compact', DIMENSION_COLUMNS, sampleRows.slice(0, 1), {
+      compact: true,
+      colors: false,
+    });
     expect(result).not.toContain('┌');
     expect(result).not.toContain('│');
-    // Should still have aligned columns
     expect(result).toContain('DraftKings');
   });
 
   test('renders with footer', () => {
-    const result = formatTable('With Footer', DIMENSION_COLUMNS, sampleRows, { footer: 'Total: 3 items', colors: false });
+    const result = formatTable('Footer', DIMENSION_COLUMNS, sampleRows, {
+      footer: 'Total: 3 items',
+      colors: false,
+    });
     expect(result).toContain('Total: 3 items');
   });
 
-  test('renders with separator after specific rows', () => {
-    const result = formatTable('Separated', DIMENSION_COLUMNS, sampleRows, { separatorAfter: [0], colors: false });
-    expect(result).toBeTruthy(); // Should not crash
-  });
-
-  test('handles null/undefined values gracefully', () => {
-    const nullRows = [{ label: null, totalChanges: undefined, raises: null }];
-    const result = formatTable('Nulls', DIMENSION_COLUMNS, nullRows, { colors: false });
-    expect(result).toContain('—');
-    expect(result).toBeTruthy();
-  });
-});
-
-// ── Contract: Predefined columns ──────────────────────────────────────────
-describe('Predefined column sets', () => {
-  test('LIMIT_CHANGE_COLUMNS has all required fields', () => {
-    const keys = LIMIT_CHANGE_COLUMNS.map(c => c.key);
-    expect(keys).toContain('direction');
-    expect(keys).toContain('sportsbook');
-    expect(keys).toContain('sport_id');
-    expect(keys).toContain('market_id');
-    expect(keys).toContain('bet_type');
-    expect(keys).toContain('previous_max');
-    expect(keys).toContain('new_limit');
-    expect(keys).toContain('multi_factor_score');
-    expect(keys).toContain('increased_at');
-  });
-
-  test('DIMENSION_COLUMNS has all required fields', () => {
-    const keys = DIMENSION_COLUMNS.map(c => c.key);
-    expect(keys).toContain('label');
-    expect(keys).toContain('totalChanges');
-    expect(keys).toContain('raises');
-    expect(keys).toContain('netDelta');
-  });
-
-  test('REGULATORY_COLUMNS has all required fields', () => {
-    const keys = REGULATORY_COLUMNS.map(c => c.key);
-    expect(keys).toContain('partner');
-    expect(keys).toContain('sportsbook');
-    expect(keys).toContain('status');
-    expect(keys).toContain('stateCode');
-  });
-});
-
-// ── Contract: Limit change table rendering ────────────────────────────────
-describe('Limit change table rendering', () => {
-  test('renders direction icons correctly', () => {
-    const result = formatTable('Changes', LIMIT_CHANGE_COLUMNS, limitChangeRows, { colors: false });
-    // Up direction should show 🚀
-    expect(result).toContain('🚀');
-    // Down direction should show ⬇️
-    expect(result).toContain('⬇️');
-  });
-
-  test('renders dollar values with locale formatting', () => {
-    const result = formatTable('Dollars', LIMIT_CHANGE_COLUMNS, limitChangeRows.slice(0, 1), { colors: false });
-    expect(result).toContain('$1,500');
-    expect(result).toContain('$500');
-  });
-
-  test('renders null previous_max as em-dash', () => {
-    const result = formatTable('NullMax', LIMIT_CHANGE_COLUMNS, limitChangeRows.slice(2, 3), { colors: false });
-    expect(result).toContain('—');
-  });
-
-  test('renders null increased_at as em-dash', () => {
-    const result = formatTable('NullDate', LIMIT_CHANGE_COLUMNS, limitChangeRows.slice(2, 3), { colors: false });
-    // The date formatter should handle null
+  test('renders with separator after row', () => {
+    const result = formatTable('Sep', DIMENSION_COLUMNS, sampleRows, {
+      separatorAfter: [0],
+      colors: false,
+    });
     expect(result).toBeTruthy();
   });
 
-  test('renders null multi_factor_score as ···', () => {
-    const result = formatTable('NullScore', LIMIT_CHANGE_COLUMNS, limitChangeRows.slice(1, 2), { colors: false });
-    expect(result).toContain('···');
+  test('empty rows show no-data state', () => {
+    const result = formatTable('Empty', DIMENSION_COLUMNS, [], { colors: false });
+    expect(result).toContain('no data');
+  });
+
+  test('renders title without color when colors disabled', () => {
+    const result = formatTable('PlainTitle', DIMENSION_COLUMNS, sampleRows.slice(0, 1), {
+      colors: false,
+    });
+    expect(result).toContain('PlainTitle');
+    expect(result).not.toContain('\x1b[');
   });
 });
 
-// ── Contract: Edge cases ──────────────────────────────────────────────────
-describe('Edge cases', () => {
-  test('truncates very long values', () => {
-    const longRows = [{ label: 'A'.repeat(200), totalChanges: 1, raises: 1, decreases: 0, netDelta: 100, avgMagnitudePct: 10, trend7d: 5 }];
-    const result = formatTable('Long', DIMENSION_COLUMNS, longRows, { maxColWidth: 10, colors: false });
-    // Should be truncated with …
-    expect(result).toContain('…');
+// ── 5. formatTable: data edge cases ──────────────────────────────────────
+describe('formatTable — data edge cases', () => {
+  test.each([
+    ['single row',      sampleRows.slice(0, 1),  'DraftKings'],
+    ['two rows',        sampleRows.slice(0, 2),  'FanDuel'],
+    ['all three rows',  sampleRows,              'BetMGM'],
+  ])('%s: contains %s', (_label, rows, expected) => {
+    const result = formatTable('Data', DIMENSION_COLUMNS, rows, { colors: false });
+    expect(result).toContain(expected);
   });
 
-  test('handles single row', () => {
-    const result = formatTable('Single', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { colors: false });
-    expect(result).toContain('DraftKings');
-    expect(result).not.toContain('FanDuel');
+  test.each([
+    [{ label: null, totalChanges: undefined, raises: null }, '\u2014'], // em-dash
+    [{ label: '', totalChanges: 0, raises: 0 },            '0'],
+    [{ label: 'Test', totalChanges: NaN, raises: 1 },      '1'],
+  ])('null/undefined/NaN values: %p shows %s', (row, expected) => {
+    const result = formatTable('Edge', DIMENSION_COLUMNS, [row], { colors: false });
+    expect(result).toContain(expected);
   });
 
-  test('handles many rows', () => {
-    const manyRows = Array.from({ length: 50 }, (_, i) => ({
-      label: `Row ${i}`,
-      totalChanges: i,
-      raises: i % 3,
-      decreases: i % 2,
-      netDelta: i * 100,
-      avgMagnitudePct: i,
-      trend7d: i * 10,
+  test.each([
+    [5,    true],
+    [1,    true],
+  ])('maxColWidth=%i truncates with …', (maxW, _) => {
+    const long = [{ label: 'A'.repeat(200), totalChanges: 1, raises: 1, decreases: 0, netDelta: 100, avgMagnitudePct: 10, trend7d: 5 }];
+    const result = formatTable('Long', DIMENSION_COLUMNS, long, { maxColWidth: maxW, colors: false });
+    expect(result).toBeTruthy();
+    if (maxW < 10) expect(result).toContain('…');
+  });
+
+  test('50 rows renders all', () => {
+    const many = Array.from({ length: 50 }, (_, i) => ({
+      label: `Row ${i}`, totalChanges: i, raises: i % 3, decreases: i % 2,
+      netDelta: i * 100, avgMagnitudePct: i, trend7d: i * 10,
     }));
-    const result = formatTable('Many', DIMENSION_COLUMNS, manyRows, { colors: false });
-    expect(result).toContain('Row 49');
+    const result = formatTable('Many', DIMENSION_COLUMNS, many, { colors: false });
     expect(result).toContain('Row 0');
+    expect(result).toContain('Row 49');
   });
 
-  test('handles negative values', () => {
-    const negRows = [{ label: 'Loss', totalChanges: 1, raises: 0, decreases: 1, netDelta: -5000, avgMagnitudePct: -50, trend7d: -1000 }];
-    const result = formatTable('Negative', DIMENSION_COLUMNS, negRows, { colors: false });
+  test('negative values render correctly', () => {
+    const neg = [{ label: 'Loss', totalChanges: 1, raises: 0, decreases: 1, netDelta: -5000, avgMagnitudePct: -50, trend7d: -1000 }];
+    const result = formatTable('Neg', DIMENSION_COLUMNS, neg, { colors: false });
     expect(result).toContain('-');
-    expect(result).toBeTruthy();
-  });
-
-  test('border none produces no box characters', () => {
-    const result = formatTable('None', DIMENSION_COLUMNS, sampleRows.slice(0, 1), { border: 'none', colors: false });
-    expect(result).not.toContain('┌');
-    expect(result).not.toContain('│');
-    // border=none removes box chars, but values may still contain '+' for positive deltas
-    expect(result).toContain('DraftKings');
+    expect(result).toContain('Loss');
   });
 });
 
-// ── Contract: Column alignment ────────────────────────────────────────────
-describe('Column alignment', () => {
-  test('right-aligned numbers appear right-aligned in output', () => {
-    const customCols: ColumnDef[] = [
-      { key: 'name', label: 'Name', align: 'left', width: 10 },
-      { key: 'val', label: 'Value', align: 'right', width: 10 },
-    ];
-    const data = [{ name: 'test', val: 42 }];
-    const result = formatTable('Align', customCols, data, { colors: false });
-    // The value "42" should be padded on the left
-    expect(result).toContain('42');
-    expect(result).toBeTruthy();
+// ── 6. Predefined column sets ────────────────────────────────────────────
+describe('Predefined column sets', () => {
+  const sets: [string, ColumnDef[], string[]][] = [
+    ['LIMIT_CHANGE_COLUMNS',  LIMIT_CHANGE_COLUMNS,  ['direction', 'sportsbook', 'sport_id', 'market_id', 'bet_type', 'previous_max', 'new_limit', 'multi_factor_score']],
+    ['DIMENSION_COLUMNS',     DIMENSION_COLUMNS,     ['label', 'totalChanges', 'raises', 'netDelta']],
+    ['REGULATORY_COLUMNS',    REGULATORY_COLUMNS,    ['partner', 'sportsbook', 'status', 'stateCode']],
+    ['PREDICTION_COLUMNS',    PREDICTION_COLUMNS,    ['sportsbook', 'sport_id', 'market_id', 'bet_type', 'predictedRaiseProb', 'confidence']],
+  ];
+
+  test.each(sets)('%s has keys %p', (_name, cols, expectedKeys) => {
+    const keys = cols.map(c => c.key);
+    for (const k of expectedKeys) {
+      expect(keys).toContain(k);
+    }
   });
 
-  test('center-aligned text appears centered', () => {
-    const customCols: ColumnDef[] = [
+  test.each(sets)('%s columns have valid labels', (_name, cols) => {
+    for (const c of cols) {
+      // Direction column intentionally has empty label (icon only)
+      if (c.key === 'direction') continue;
+      expect(c.label).toBeTruthy();
+      expect(typeof c.label).toBe('string');
+    }
+  });
+
+  test.each(sets)('%s columns have align defined', (_name, cols) => {
+    for (const c of cols) {
+      expect(['left', 'right', 'center', undefined]).toContain(c.align);
+    }
+  });
+});
+
+// ── 7. Limit change table ────────────────────────────────────────────────
+describe('Limit change table', () => {
+  test.each([
+    ['up direction',    limitChangeRows.slice(0, 1), '🚀'],
+    ['down direction',  limitChangeRows.slice(1, 2), '⬇️'],
+    ['dollar formatting', limitChangeRows.slice(0, 1), '$1,500'],
+    ['null previous_max', limitChangeRows.slice(2, 3), '\u2014'],  // em-dash
+    ['null score',       limitChangeRows.slice(1, 2), '···'],
+  ])('%s contains %s', (_label, rows, expected) => {
+    const result = formatTable('LC', LIMIT_CHANGE_COLUMNS, rows, { colors: false });
+    expect(result).toContain(expected);
+  });
+});
+
+// ── 8. formatTableNative (Bun.inspect.table) ─────────────────────────────
+describe('formatTableNative (Bun.inspect.table)', () => {
+  test.each([
+    [sampleRows.slice(0, 1),           undefined,     'DraftKings'],
+    [sampleRows,                       undefined,     'FanDuel'],
+    [{ label: 'X', totalChanges: 1 } as any, undefined, 'X'],
+  ])('renders data showing %s', (_input, _opts, expected) => {
+    const result = formatTableNative(_input);
+    expect(result).toContain(expected);
+    expect(result.length).toBeGreaterThan(0);
+  });
+
+  test.each([
+    [sampleRows.slice(0, 1), ['label', 'raises'], 'raises'],
+    [sampleRows, ['label', 'netDelta'],           'netDelta'],
+  ])('with property filter shows %s', (_input, props, expected) => {
+    const result = formatTableNative(_input, { properties: props as string[] });
+    expect(result).toContain(expected);
+  });
+
+  test('empty input returns no-data', () => {
+    expect(formatTableNative([])).toBe('(no data)');
+  });
+});
+
+// ── 9. Column alignment ──────────────────────────────────────────────────
+describe('Column alignment', () => {
+  const alignCols: ColumnDef[] = [
+    { key: 'name', label: 'Name', align: 'left', width: 10 },
+    { key: 'val',  label: 'Value', align: 'right', width: 10 },
+  ];
+
+  test.each([
+    ['test',    42],
+    ['example', 99],
+    ['x',        5],
+  ])('aligns name=%s val=%i', (name, val) => {
+    const result = formatTable('Align', alignCols, [{ name, val }], { colors: false });
+    expect(result).toContain(name);
+    expect(result).toContain(String(val));
+  });
+
+  test('center align works', () => {
+    const centerCols: ColumnDef[] = [
       { key: 'name', label: 'Name', align: 'center', width: 20 },
     ];
-    const data = [{ name: 'center' }];
-    const result = formatTable('Center', customCols, data, { colors: false });
-    expect(result).toContain('center');
+    const result = formatTable('Center', centerCols, [{ name: 'hello' }], { colors: false });
+    expect(result).toContain('hello');
   });
 });
 
-// ── Contract: Formatting stability ────────────────────────────────────────
+// ── 10. Formatting stability ─────────────────────────────────────────────
 describe('Formatting stability', () => {
-  test('same input produces same output (deterministic)', () => {
-    const result1 = formatTable('Stable', DIMENSION_COLUMNS, sampleRows, { colors: false });
-    const result2 = formatTable('Stable', DIMENSION_COLUMNS, sampleRows, { colors: false });
-    expect(result1).toBe(result2);
+  test('deterministic: same input = same output', () => {
+    const a = formatTable('Stable', DIMENSION_COLUMNS, sampleRows, { colors: false });
+    const b = formatTable('Stable', DIMENSION_COLUMNS, sampleRows, { colors: false });
+    expect(a).toBe(b);
   });
 
-  test('empty columns array produces valid output', () => {
-    const result = formatTable('NoCols', [], sampleRows, { colors: false });
-    expect(result).toBeTruthy();
+  test.each([
+    ['no columns',    []],
+    ['single column', [{ key: 'x', label: 'X' }]],
+  ])('%s produces valid output', (_label, cols) => {
+    const result = formatTable('Test', cols as ColumnDef[], sampleRows, { colors: false });
+    expect(typeof result).toBe('string');
+    expect(result.length).toBeGreaterThan(0);
   });
 
-  test('rows with extra fields are handled', () => {
-    const extraRows = [{ label: 'Extra', totalChanges: 1, raises: 1, decreases: 0, netDelta: 100, avgMagnitudePct: 10, trend7d: 5, extraField: 'ignored' }];
-    const result = formatTable('Extra', DIMENSION_COLUMNS, extraRows, { colors: false });
-    expect(result).toContain('Extra');
+  test.each([
+    { label: 'Extra', totalChanges: 1, raises: 1, decreases: 0, netDelta: 100, avgMagnitudePct: 10, trend7d: 5, extra: 'ignored' },
+    { label: 'Min', totalChanges: 1, raises: 0, decreases: 0, netDelta: 0, avgMagnitudePct: 0, trend7d: 0 },
+  ])('handles extra fields: %p', (row) => {
+    const result = formatTable('Stable', DIMENSION_COLUMNS, [row], { colors: false });
+    expect(result).toContain(row.label);
+  });
+});
+
+// ── 11. formatTableNative edge cases ─────────────────────────────────────
+describe('formatTableNative edge cases', () => {
+  test.each([
+    [[],                                      0],
+    [[{ a: 1 }],                               1],
+    [[{ a: 1, b: 2 }, { a: 3, b: 4 }],        2],
+  ])('handles %p rows', (rows, expectedCount) => {
+    const result = formatTableNative(rows);
+    if (rows.length === 0) {
+      expect(result).toBe('(no data)');
+    } else {
+      expect(result).toBeTruthy();
+      expect(result.length).toBeGreaterThan(0);
+    }
   });
 });

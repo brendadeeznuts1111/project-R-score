@@ -330,11 +330,12 @@ export const fmt = {
     return Number.isFinite(n) ? `${(n * 100).toFixed(1)}%` : '—';
   },
   pctRaw: (v: any) => {
+    if (v == null || v === '') return '—';
     const n = Number(v);
     return Number.isFinite(n) ? `${n >= 0 ? '+' : ''}${n.toFixed(1)}%` : '—';
   },
   date: (v: any) => {
-    if (v == null) return '—';
+    if (v == null || v === '') return '—';
     const n = Number(v);
     return Number.isFinite(n) ? new Date(n * 1000).toLocaleDateString() : '—';
   },
