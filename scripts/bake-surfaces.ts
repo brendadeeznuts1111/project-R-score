@@ -2,8 +2,6 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
-// @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML.parse
 /**
  * bake-surfaces.ts — bake the FactoryWager surface inventory → surfaces-state.json
  *
@@ -13,8 +11,8 @@
  *   wrangler.toml           (R2 bucket binding ↔ registry surface backend)
  *   config/r2-env.ts        (registryHost SSOT ↔ registry surface host)
  *
- * Domain types (parse once at TOML / Access YAML boundary):
- *   SurfaceId · HostId · AccessDomainId — lib/types/branded/surfaces.ts
+ * Domain types (parse once via lib/surfaces/inventory.ts):
+ *   SurfaceId · HostId · AccessDomainId
  *
  *   bun run surfaces:bake            # write public/registry/surfaces-state.json
  *   bun run surfaces:bake -- --check # fail on cross-check drift
@@ -23,64 +21,29 @@
  */
 import { CLOUDFLARE_DEFAULTS } from '../config/r2-env.ts';
 import {
+  appliedAccessDomains,
+  declaredAccessDomains,
+  findSurfaceByHost,
+  findSurfaceById,
+  loadSurfacesInventory,
+} from '../lib/surfaces/inventory.ts';
+import {
   asAccessDomainId,
   asHostId,
   asSurfaceId,
   hostIdFromAccessDomain,
   pathFromAccessDomain,
   type AccessDomainId,
-  type HostId,
-  type SurfaceId,
 } from '../lib/types/branded.ts';
 import { resolvePath } from './lib/fs-bun';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 const CHECK = Bun.argv.includes('--check');
-
-type SurfaceWire = {
-  host: string;
-  backend: string;
-  status: 'live' | 'vanity' | 'broken' | 'dangling' | 'staged' | 'placeholder' | 'external';
-  protocol: string;
-  access: 'public' | 'allowlist' | 'applied' | 'staged' | 'bearer (intended)' | 'external' | 'none';
-  note: string;
-  /** Path-scoped Access posture on an otherwise-public host (e.g. /portal staged). */
-  accessSubpaths?: Array<{ path: string; access: 'applied' | 'staged' }>;
-};
-
-type Surface = {
-  id: SurfaceId;
-  host: HostId;
-  backend: string;
-  status: SurfaceWire['status'];
-  protocol: string;
-  access: SurfaceWire['access'];
-  note: string;
-  accessSubpaths?: SurfaceWire['accessSubpaths'];
-};
-
-type PublishLane = { lane: string; protocol: string; entry: string; auth: string; note: string };
-
-function parseSurfaceEntry(rawKey: string, s: SurfaceWire): Surface {
-  return {
-    id: asSurfaceId(rawKey),
-    host: asHostId(s.host),
-    backend: s.backend,
-    status: s.status,
-    protocol: s.protocol,
-    access: s.access,
-    note: s.note,
-    accessSubpaths: s.accessSubpaths,
-  };
-}
+const TOML = `${ROOT}/config/surfaces.toml`;
 
 async function main(): Promise<void> {
-  const inv = Bun.TOML.parse(await Bun.file(`${ROOT}/config/surfaces.toml`).text()) as {
-    surfaces: Record<string, SurfaceWire>;
-    publish: Record<string, PublishLane>;
-  };
-  const surfaces = Object.entries(inv.surfaces).map(([id, s]) => parseSurfaceEntry(id, s));
-  const lanes = Object.values(inv.publish);
+  const inventory = await loadSurfacesInventory(TOML);
+  const { surfaces, publishLanes: lanes } = inventory;
 
   // ── Cross-checks ──────────────────────────────────────────────────
   const issues: string[] = [];
@@ -93,7 +56,7 @@ async function main(): Promise<void> {
   for (const domain of appDomains) {
     const host = hostIdFromAccessDomain(domain);
     const subpath = pathFromAccessDomain(domain) ?? null;
-    const s = surfaces.find(x => x.host === host);
+    const s = findSurfaceByHost(inventory, host);
     if (!s) {
       issues.push(`access app "${domain}" has no surface entry in config/surfaces.toml`);
     } else if (subpath) {
@@ -107,17 +70,21 @@ async function main(): Promise<void> {
       issues.push(`access app "${domain}" but surface "${s.id}" marked access=${s.access}`);
     }
   }
-  // applied surface without an access app entry
-  for (const s of surfaces.filter(x => x.access === 'applied')) {
-    if (!appDomains.some(d => String(d).startsWith(String(s.host)))) {
-      issues.push(`surface "${s.id}" marked access=applied but no app in .cloudflare-access.yml`);
+  // applied Access domains must appear in policy-as-code
+  for (const s of surfaces) {
+    for (const domain of appliedAccessDomains(s)) {
+      if (!appDomains.some(d => d === domain)) {
+        issues.push(
+          `surface "${s.id}" applied Access domain "${domain}" missing from .cloudflare-access.yml`
+        );
+      }
     }
   }
 
   // 2. wrangler R2 bucket ↔ registry surface backend
   const wrangler = await Bun.file(`${ROOT}/wrangler.toml`).text();
   const bucket = wrangler.match(/bucket_name\s*=\s*"([^"]+)"/)?.[1];
-  const reg = surfaces.find(x => x.id === asSurfaceId('registry'));
+  const reg = findSurfaceById(inventory, asSurfaceId('registry'));
   if (bucket && reg && !reg.backend.includes(bucket)) {
     issues.push(`wrangler bucket "${bucket}" not reflected in registry surface backend`);
   }
@@ -134,6 +101,8 @@ async function main(): Promise<void> {
   const byAccess = new Map<string, number>();
   for (const s of surfaces) byAccess.set(s.access, (byAccess.get(s.access) ?? 0) + 1);
 
+  const accessDomainList = declaredAccessDomains(inventory).map(String).sort();
+
   const state = {
     schemaVersion: 1,
     kind: 'surfaces-state',
@@ -147,6 +116,7 @@ async function main(): Promise<void> {
       byStatus: Object.fromEntries(byStatus),
       byAccess: Object.fromEntries(byAccess),
       lanes: lanes.length,
+      accessDomains: accessDomainList,
     },
   };
 
@@ -156,7 +126,7 @@ async function main(): Promise<void> {
   );
   console.log('→ public/registry/surfaces-state.json');
   console.log(
-    `surfaces-state  total=${surfaces.length}  byStatus=${JSON.stringify(state.summary.byStatus)}  crossCheck=${issues.length === 0 ? 'ok' : 'DRIFT'}`
+    `surfaces-state  total=${surfaces.length}  byStatus=${JSON.stringify(state.summary.byStatus)}  accessDomains=${accessDomainList.length}  crossCheck=${issues.length === 0 ? 'ok' : 'DRIFT'}`
   );
   for (const i of issues) console.log(`  ✗ ${i}`);
   if (CHECK && issues.length > 0) process.exit(1);

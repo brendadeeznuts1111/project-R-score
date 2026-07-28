@@ -86,9 +86,22 @@ describe('branded domain-value catalog', () => {
     const host = branded.hostIdFromAccessDomain(access);
     expect(host).toBe('score.factory-wager.com');
     expect(branded.pathFromAccessDomain(access)).toBe('/portal');
+    expect(branded.isPathScopedAccessDomain(access)).toBeTrue();
     expect(branded.httpsUrlForHost(host, '/portal/')).toBe(
       'https://score.factory-wager.com/portal/'
     );
+    // compose from HostId + path (never forge AccessDomainId from path-bearing HostId)
+    expect(branded.accessDomainFromHost(host, '/portal')).toBe(
+      'score.factory-wager.com/portal'
+    );
+    expect(branded.accessDomainFromHost(host)).toBe('score.factory-wager.com');
+    expect(branded.httpsUrlForAccessDomain(access)).toBe(
+      'https://score.factory-wager.com/portal/'
+    );
+    expect(branded.hostIdFromUrl('https://Ledger.Factory-Wager.COM/x')).toBe(
+      'ledger.factory-wager.com'
+    );
+    expect(branded.tryHostIdFromUrl('not a host!!!')).toBeUndefined();
     // path-bearing Access domain must not pass HostId constructors
     expect(() => branded.asHostId('score.factory-wager.com/portal')).toThrow();
     expect(branded.tryHostId('not a host')).toBeUndefined();

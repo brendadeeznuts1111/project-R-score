@@ -4,10 +4,14 @@
  * This verifier intentionally owns repository policy, not Cloudflare's whole
  * API schema. Live IDs and provider state remain a plan-time concern.
  *
+ * Required domains use AccessDomainId (surfaces brand) — host vs host/path stay
+ * separated from HostId.
+ *
  * @see https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/cloudflare/
  * @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/
  */
 import { parse } from 'yaml';
+import { asAccessDomainId, type AccessDomainId } from '../types/branded.ts';
 
 type AccountMemberRule = {
   cloudflare_account_member?: {
@@ -54,11 +58,13 @@ export type CloudflareAccessPolicyReport = {
   issues: CloudflareAccessPolicyIssue[];
 };
 
-const REQUIRED_DOMAINS = [
-  'ledger.factory-wager.com',
-  'reasonix.factory-wager.com',
-  'score.factory-wager.com/portal',
-] as const;
+/** Operator surfaces that policy-as-code must manage (AccessDomainId, not HostId). */
+const REQUIRED_DOMAINS: readonly AccessDomainId[] = [
+  asAccessDomainId('ledger.factory-wager.com'),
+  asAccessDomainId('reasonix.factory-wager.com'),
+  asAccessDomainId('score.factory-wager.com/portal'),
+  asAccessDomainId('project-r-score.pages.dev/portal'),
+];
 
 function issue(
   issues: CloudflareAccessPolicyIssue[],
@@ -141,15 +147,20 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
         issue(issues, 'duplicate-domain', `${path}.domain`, `duplicate app domain: ${domain}`);
       }
       domains.add(domain);
-      if (
-        !domain.startsWith('score.factory-wager.com/') &&
-        !domain.endsWith('.factory-wager.com')
-      ) {
+      // Allow factory-wager.com hosts/paths, plus Pages production hostname (pages.dev)
+      // which custom-domain Access apps do not cover.
+      const allowed =
+        domain.endsWith('.factory-wager.com') ||
+        domain.startsWith('score.factory-wager.com/') ||
+        domain === 'factory-wager.com' ||
+        domain.startsWith('project-r-score.pages.dev/') ||
+        domain === 'project-r-score.pages.dev';
+      if (!allowed) {
         issue(
           issues,
           'foreign-domain',
           `${path}.domain`,
-          'managed operator apps must stay under factory-wager.com'
+          'managed operator apps must stay under factory-wager.com (or project-r-score.pages.dev for Pages)'
         );
       }
     }
@@ -222,7 +233,7 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
   });
 
   for (const required of REQUIRED_DOMAINS) {
-    if (!domains.has(required)) {
+    if (!domains.has(String(required))) {
       issue(
         issues,
         'missing-required-domain',

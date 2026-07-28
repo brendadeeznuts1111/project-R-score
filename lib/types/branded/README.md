@@ -43,6 +43,19 @@ constructors with the generic factory. `HostId` / `AccessDomainId` are also
 format-aware (FQDN vs host/path) — never use a path-bearing Access domain as a
 `HostId`.
 
+**Surfaces helpers** ([`surfaces.ts`](./surfaces.ts)):
+
+| Helper | Role |
+|--------|------|
+| `accessDomainFromHost(host, path?)` | compose Access domain from `HostId` |
+| `hostIdFromAccessDomain` / `pathFromAccessDomain` | split Access domain |
+| `isPathScopedAccessDomain` | path-bearing vs whole-host |
+| `hostIdFromUrl` / `tryHostIdFromUrl` | extract FQDN from URL or bare host |
+| `httpsUrlForHost` / `httpsUrlForAccessDomain` | probe URLs |
+
+Inventory (parse once): [`lib/surfaces/inventory.ts`](../../surfaces/inventory.ts) ·
+`loadSurfacesInventory` · `appliedAccessDomains` · `findSurfaceByHost`.
+
 ## Constructor tiers
 
 Every catalog entry exports the same public trio:

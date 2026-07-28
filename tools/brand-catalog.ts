@@ -84,7 +84,18 @@ function printDomain(m: Manifest, domain: string, asJson: boolean): void {
     console.info('');
   }
   console.info(`  import: ${brands[0]!.module}`);
-  console.info(`  or:     lib/types/branded.ts\n`);
+  console.info(`  or:     lib/types/branded.ts`);
+  if (domain === 'surfaces') {
+    console.info('');
+    console.info('  helpers (format-aware compose/split):');
+    console.info('    accessDomainFromHost(host, path?)');
+    console.info('    hostIdFromAccessDomain / pathFromAccessDomain / isPathScopedAccessDomain');
+    console.info(
+      '    hostIdFromUrl / tryHostIdFromUrl / httpsUrlForHost / httpsUrlForAccessDomain'
+    );
+    console.info('  inventory: lib/surfaces/inventory.ts (loadSurfacesInventory)');
+  }
+  console.info('');
 }
 
 function printBrand(m: Manifest, name: string, asJson: boolean): void {

@@ -9,7 +9,8 @@ describe('Cloudflare Access policy', () => {
   test('repository config is scoped and uses Cloudflare account-member SSO', async () => {
     const report = verifyCloudflareAccessPolicyText(await Bun.file(configPath).text());
     expect(report.ok).toBe(true);
-    expect(report.appCount).toBe(3);
+    // ledger · reasonix · score/portal · pages.dev/portal
+    expect(report.appCount).toBe(4);
     expect(report.issues).toEqual([]);
   });
 

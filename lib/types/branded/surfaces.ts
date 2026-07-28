@@ -136,10 +136,65 @@ export function pathFromAccessDomain(domain: AccessDomainId): string | undefined
   return `/${parts.slice(1).join('/')}`;
 }
 
+/** True when the Access domain is path-scoped (e.g. host/portal), not whole-host. */
+export function isPathScopedAccessDomain(domain: AccessDomainId): boolean {
+  return pathFromAccessDomain(domain) !== undefined;
+}
+
+/**
+ * Compose an Access domain from a HostId + optional path.
+ * Path may be `/portal`, `portal`, or omitted (whole-host).
+ * Never pass a path-bearing Access domain where a HostId is required — use this instead.
+ */
+export function accessDomainFromHost(host: HostId, path?: string): AccessDomainId {
+  if (path == null || path === '' || path === '/') {
+    return asAccessDomainId(String(host));
+  }
+  const stripped = path.startsWith('/') ? path.slice(1) : path;
+  return asAccessDomainId(`${host}/${stripped}`);
+}
+
 /** Build https URL for a host (+ optional path). */
 export function httpsUrlForHost(host: HostId, path: string = '/'): string {
   const p = path.startsWith('/') ? path : `/${path}`;
   return `https://${host}${p === '/' ? '/' : p}`;
+}
+
+/**
+ * Extract HostId from a URL or bare host string (scheme/path stripped).
+ * Fail-closed: throws BrandValidationError when the host is not a valid FQDN.
+ */
+export function hostIdFromUrl(value: string): HostId {
+  const raw = value.trim();
+  if (!raw) throw new BrandValidationError('HostId', value);
+  try {
+    const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `https://${raw}`;
+    const u = new URL(withScheme);
+    if (!u.hostname) throw new BrandValidationError('HostId', value);
+    return asHostId(u.hostname);
+  } catch (e) {
+    if (e instanceof BrandValidationError) throw e;
+    // bare host without URL-parseable shape — fall through to asHostId
+    return asHostId(raw.replace(/^https?:\/\//i, '').split('/')[0] ?? raw);
+  }
+}
+
+export function tryHostIdFromUrl(value: string | undefined | null): HostId | undefined {
+  if (value == null || String(value).trim() === '') return undefined;
+  try {
+    return hostIdFromUrl(String(value));
+  } catch {
+    return undefined;
+  }
+}
+
+/** AccessDomainId + path → https URL for live probes (trailing slash preserved for path roots). */
+export function httpsUrlForAccessDomain(domain: AccessDomainId, trailingSlash = true): string {
+  const host = hostIdFromAccessDomain(domain);
+  const path = pathFromAccessDomain(domain);
+  if (!path) return httpsUrlForHost(host, '/');
+  const p = trailingSlash && !path.endsWith('/') ? `${path}/` : path;
+  return httpsUrlForHost(host, p);
 }
 
 export const HOST_BRAND_VALIDATION = {

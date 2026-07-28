@@ -4,6 +4,7 @@
 #   · ledger.factory-wager.com     — APPLIED (existing app name "ledger" · 302 Access)
 #   · score.factory-wager.com/portal — APPLIED (app "FactoryWager Portal" · 302 Access)
 #   · project-r-score.pages.dev/portal — APPLIED (app "FactoryWager Portal (pages.dev)" · 302 Access)
+#     (policy-as-code app below; live was created 2026-07-28)
 #   · reasonix.factory-wager.com   — STAGED (no DNS record yet)
 # Access token: Proton factorywager / Cloudflare Access API Token
 #   → CLOUDFLARE_ACCESS_API_TOKEN (kimi plan uses CLOUDFLARE_API_TOKEN=that value)
@@ -37,6 +38,15 @@ apps:
           - cloudflare_account_member: {}
   - name: FactoryWager Portal
     domain: score.factory-wager.com/portal
+    type: self_hosted
+    session_duration: 8h
+    policies:
+      - name: Allow Cloudflare account members
+        decision: allow
+        include:
+          - cloudflare_account_member: {}
+  - name: FactoryWager Portal (pages.dev)
+    domain: project-r-score.pages.dev/portal
     type: self_hosted
     session_duration: 8h
     policies:

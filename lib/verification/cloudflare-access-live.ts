@@ -18,8 +18,9 @@
  */
 
 import {
-  asAccessDomainId,
+  accessDomainFromHost,
   asHostId,
+  httpsUrlForAccessDomain,
   httpsUrlForHost,
   type AccessDomainId,
   type HostId,
@@ -32,19 +33,18 @@ export const PAGES_DEV_HOST: HostId = asHostId('project-r-score.pages.dev');
 export const TERMINAL_HOST: HostId = asHostId('terminal.factory-wager.com');
 export const REASONIX_HOST: HostId = asHostId('reasonix.factory-wager.com');
 
-/** Access app domain fields (host or host/path) — separate from HostId. */
-export const LEDGER_ACCESS_DOMAIN: AccessDomainId = asAccessDomainId('ledger.factory-wager.com');
-export const PORTAL_ACCESS_DOMAIN: AccessDomainId = asAccessDomainId(
-  'score.factory-wager.com/portal'
-);
-export const PORTAL_PAGES_ACCESS_DOMAIN: AccessDomainId = asAccessDomainId(
-  'project-r-score.pages.dev/portal'
+/** Access app domain fields — composed from HostId + path (never forged as bare strings). */
+export const LEDGER_ACCESS_DOMAIN: AccessDomainId = accessDomainFromHost(LEDGER_HOST);
+export const PORTAL_ACCESS_DOMAIN: AccessDomainId = accessDomainFromHost(SCORE_HOST, '/portal');
+export const PORTAL_PAGES_ACCESS_DOMAIN: AccessDomainId = accessDomainFromHost(
+  PAGES_DEV_HOST,
+  '/portal'
 );
 
-export const LEDGER_ACCESS_URL = httpsUrlForHost(LEDGER_HOST, '/');
-export const PORTAL_ACCESS_CUSTOM_URL = httpsUrlForHost(SCORE_HOST, '/portal/');
+export const LEDGER_ACCESS_URL = httpsUrlForAccessDomain(LEDGER_ACCESS_DOMAIN);
+export const PORTAL_ACCESS_CUSTOM_URL = httpsUrlForAccessDomain(PORTAL_ACCESS_DOMAIN);
 /** Pages production hostname (Access must cover this too — custom-domain apps do not cover it alone). */
-export const PORTAL_ACCESS_PAGES_URL = httpsUrlForHost(PAGES_DEV_HOST, '/portal/');
+export const PORTAL_ACCESS_PAGES_URL = httpsUrlForAccessDomain(PORTAL_PAGES_ACCESS_DOMAIN);
 /** Dangling tunnel host (502, no ingress) — inventory only. */
 export const TERMINAL_HOST_URL = httpsUrlForHost(TERMINAL_HOST, '/');
 /** @deprecated use REASONIX_HOST (HostId) */
