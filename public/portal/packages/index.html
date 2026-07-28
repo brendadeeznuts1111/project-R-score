@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- @see docs/portal-foundation.md · claim packages-graph-map-v12 -->
+<!-- @see docs/portal-foundation.md · claim packages-graph-map-v13 -->
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
@@ -61,12 +61,12 @@
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
             <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link active" aria-current="page" title="graph map · portal-cli pm graph · bun run portal-cli pm graph" data-group="registry" data-cli="bun run portal-cli pm graph" role="menuitem">Packages</a>
+            <a href="/portal/packages/" class="nav-link active" aria-current="page" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
             <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health" data-group="secrets" data-cli="bun run portal-cli vault health" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map" data-group="secrets" data-cli="bun run portal-cli secret map" role="menuitem">Env</a>
-            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · pm · snapshot · secret · vault · bun run portal-cli help" data-group="harness" data-cli="bun run portal-cli help" role="menuitem">CLI Tools</a>
-            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · bun run failures:bake" data-group="harness" data-cli="bun run failures:bake" role="menuitem">Failures</a>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+            <a href="/portal/tools/" class="nav-link" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
+            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
             <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
             <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
             <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
@@ -89,7 +89,7 @@
   <main class="main pkg-board">
     <section class="hero">
       <h2>Packages graph map</h2>
-      <p class="hero-sub">Coupling · quarantine · env owners · template defaults (schema v12)</p>
+      <p class="hero-sub">Multi-surface inventory · packages/* coupling · portal chrome/brand · registry bakes (schema v13)</p>
       <p class="meta" id="gen-meta">Loading…</p>
     </section>
 
@@ -103,6 +103,17 @@
       <div class="stat-card"><div class="stat-num" id="s-quarantine">—</div><div class="stat-label">quarantine</div></div>
       <div class="stat-card"><div class="stat-num" id="s-inject">—</div><div class="stat-label">root needs inject</div></div>
     </div>
+
+    <section class="actions" aria-label="Monorepo surfaces">
+      <h3>Monorepo surfaces</h3>
+      <p class="meta" id="surfaces-meta">Loading…</p>
+      <p class="meta">Why registry shows more than 6 packages: import graph is <code>packages/*</code> only; workspaces also include STO + <code>lib/shared</code>; registry JSON is ops/proof bake, not package deps; chrome/brand live under <code>public/portal</code> + <code>public/icons</code>.</p>
+      <ul id="surfaces-list"><li>Loading…</li></ul>
+      <h3>Workspace members</h3>
+      <ul id="workspace-list"><li>Loading…</li></ul>
+      <h3>Portal chrome + brand</h3>
+      <ul id="chrome-list"><li>Loading…</li></ul>
+    </section>
 
     <table class="pkg-table" aria-label="Package coupling">
       <thead>

@@ -5,7 +5,7 @@ Workspace package coupling board — metafile orphans, external hubs, archive pr
 - Board: [/portal/packages/](/portal/packages/)
 - Bake: [/registry/packages-graph-map.json](/registry/packages-graph-map.json)
 - Env inventory: [/registry/env-inventory.json](/registry/env-inventory.json) · [/portal/env/](/portal/env/)
-- Claim: `packages-graph-map-v12`
+- Claim: `packages-graph-map-v13` (multi-surface: workspaces + portal chrome/brand + registry bakes)
 - CLI:
   - `bun run audit:packages:full` — cross-check · diff · map · vault · env · bake
   - `bun run audit:packages:env` — vault-gap + env inventory bake

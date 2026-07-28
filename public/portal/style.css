@@ -188,12 +188,15 @@ body {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 4px;
-    min-width: 168px;
+    min-width: 200px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     z-index: 20;
 
     .nav-link {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
       padding-block: 8px;
       padding-inline: 12px;
     }
@@ -204,6 +207,44 @@ body {
     flex-direction: column;
     gap: 2px;
   }
+}
+
+/* Live counts from baked registry JSON (nav-badges.js) */
+.nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.15rem;
+  padding: 0 5px;
+  margin-inline-start: 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  background: var(--border);
+  color: var(--text-dim);
+}
+.nav-badge--ok {
+  background: color-mix(in srgb, var(--green, #3fb950) 22%, transparent);
+  color: var(--green, #3fb950);
+}
+.nav-badge--bad {
+  background: color-mix(in srgb, var(--red, #f85149) 22%, transparent);
+  color: var(--red, #f85149);
+}
+.nav-badge--warn {
+  background: color-mix(in srgb, var(--yellow, #d29922) 22%, transparent);
+  color: var(--yellow, #d29922);
+}
+.nav-badge--neutral {
+  background: color-mix(in srgb, var(--accent, #58a6ff) 18%, transparent);
+  color: var(--accent, #58a6ff);
+}
+.topbar-nav > .nav-link {
+  display: inline-flex;
+  align-items: center;
 }
 
 /* RTL langs: mirror overflow chevron when lang is set without dir= */

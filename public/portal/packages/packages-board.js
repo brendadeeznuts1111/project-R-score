@@ -1,11 +1,13 @@
 /**
  * Packages graph map board — load + render with explicit failure paths.
  * @see docs/portal-foundation.md
- * @see docs/harness/tenants/monorepo-health.md (claim packages-graph-map-v12)
+ * @see docs/harness/tenants/monorepo-health.md (claim packages-graph-map-v13)
  */
 
 /** Supported bake schema for this board (pin — warn on mismatch, still try to render). */
-export const PACKAGES_MAP_SCHEMA = 12;
+export const PACKAGES_MAP_SCHEMA = 13;
+/** Older bakes still render; surfaces block appears only on v13+. */
+export const PACKAGES_MAP_SCHEMA_MIN = 12;
 
 /** Primary registry bake + optional local audit-report fallbacks (dev only paths may 404 on Pages). */
 export const PACKAGES_MAP_SOURCES = [
@@ -70,10 +72,17 @@ export function normalizePackagesMap(raw, source) {
   }
 
   const schemaVersion = Number(raw.schemaVersion ?? map.schemaVersion ?? 0);
+  const surfaces =
+    raw.surfaces && typeof raw.surfaces === 'object'
+      ? /** @type {Record<string, unknown>} */ (raw.surfaces)
+      : null;
   return {
     source,
     schemaVersion,
-    schemaOk: schemaVersion === PACKAGES_MAP_SCHEMA || schemaVersion === 0,
+    schemaOk:
+      schemaVersion === PACKAGES_MAP_SCHEMA ||
+      schemaVersion === PACKAGES_MAP_SCHEMA_MIN ||
+      schemaVersion === 0,
     generatedAt: raw.generatedAt ?? map.generatedAt ?? '',
     bunVersion: raw.bunVersion ?? map.bunVersion ?? '',
     score: raw.score ?? map.score,
@@ -86,6 +95,7 @@ export function normalizePackagesMap(raw, source) {
     quarantine: Array.isArray(map.quarantine) ? map.quarantine : [],
     vault: map.vault && typeof map.vault === 'object' ? map.vault : null,
     env: map.env && typeof map.env === 'object' ? map.env : null,
+    surfaces,
   };
 }
 
@@ -209,6 +219,60 @@ export function renderPackagesBoard(data, doc = document) {
     doc.getElementById('gen-meta'),
     `${data.generatedAt || 'unknown time'} · bun ${data.bunVersion || '?'} · ${schemaNote}${gradeNote} · ${data.source}`
   );
+
+  // Multi-surface inventory (v13+) — workspaces beyond packages/*, portal, brand, registry
+  const surfaces = data.surfaces;
+  const surfacesMeta = doc.getElementById('surfaces-meta');
+  const surfacesList = doc.getElementById('surfaces-list');
+  const workspaceList = doc.getElementById('workspace-list');
+  const chromeList = doc.getElementById('chrome-list');
+  if (surfaces?.summary && surfacesMeta) {
+    const s = surfaces.summary;
+    surfacesMeta.textContent = `workspaces=${s.workspaceMembers ?? '—'} (graph=${s.packagesPlane ?? '—'}+other=${s.otherWorkspaces ?? '—'}) · portalPages=${s.portalPages ?? '—'} · chrome=${s.chromeComponents ?? '—'} · brand=${s.brandAssets ?? '—'} · registryJson=${s.registryTopLevelJson ?? '—'} · storagePkgs=${s.registryStoragePackages ?? '—'}`;
+  } else if (surfacesMeta) {
+    surfacesMeta.textContent =
+      'No surfaces block — rebake: bun run audit:packages -- --bake (schema v13)';
+  }
+  if (surfacesList) {
+    const planes = Array.isArray(surfaces?.planes) ? surfaces.planes : [];
+    surfacesList.innerHTML = planes.length
+      ? planes
+          .map(
+            p =>
+              `<li><code>${escapeHtml(p.id)}</code> · <strong>${p.count ?? 0}</strong> — ${escapeHtml(p.label || '')}${p.note ? ` · ${escapeHtml(p.note)}` : ''}</li>`
+          )
+          .join('')
+      : '<li>No plane inventory in bake</li>';
+  }
+  if (workspaceList) {
+    const ws = Array.isArray(surfaces?.workspaces) ? surfaces.workspaces : [];
+    workspaceList.innerHTML = ws.length
+      ? ws
+          .map(
+            w =>
+              `<li><code>${escapeHtml(w.path)}</code> · ${escapeHtml(w.name || '')} · plane=${escapeHtml(w.plane || '')}${w.inPackagesGraph ? ' · inGraph' : ''}</li>`
+          )
+          .join('')
+      : '<li>—</li>';
+  }
+  if (chromeList) {
+    const chrome = Array.isArray(surfaces?.portal?.chromeComponents)
+      ? surfaces.portal.chromeComponents
+      : [];
+    const brandTenants = Array.isArray(surfaces?.brand?.tenants) ? surfaces.brand.tenants : [];
+    const chromeHtml = chrome.length
+      ? chrome
+          .map(
+            c =>
+              `<li><code>${escapeHtml(c.id)}</code> · ${escapeHtml(c.kind || 'module')} · ${escapeHtml(c.path || '')}</li>`
+          )
+          .join('')
+      : '<li>No chrome components (portal-chrome bake missing?)</li>';
+    const brandHtml = brandTenants.length
+      ? `<li class="surfaces-brand">brand tenants: ${brandTenants.map(escapeHtml).join(', ')} · assets=${surfaces?.brand?.assets?.length ?? 0}</li>`
+      : '';
+    chromeList.innerHTML = chromeHtml + brandHtml;
+  }
 
   const body = doc.getElementById('pkg-body');
   if (body) {

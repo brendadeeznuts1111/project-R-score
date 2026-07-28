@@ -32,4 +32,30 @@ describe('portal-cli dashboard', () => {
     expect(code).toBe(0);
     expect(out).toContain('https://example.test/portal/vault/');
   });
+
+  test('--view=packages maps to packages board', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'dashboard', '--view=packages'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env, PORTAL_BASE_URL: 'https://score.factory-wager.com' },
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain('/portal/packages/');
+  });
+
+  test('--view=capabilities uses tools hash', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'dashboard', '--view=capabilities'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+      env: { ...Bun.env, PORTAL_BASE_URL: 'https://score.factory-wager.com' },
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain('/portal/tools/#capabilities');
+  });
 });

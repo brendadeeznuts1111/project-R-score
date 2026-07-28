@@ -120,7 +120,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli vault health [--update] Vault-map inventory + report-shape gate
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
-  portal-cli dashboard [path]        Print/open portal board URL (default: /portal/tools/)
+  portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
   portal-cli help                    This message
 
   bun run portal-cli snapshot run --scope prediction
@@ -131,17 +131,19 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli pm pack --dry-run
   bun run portal-cli pm graph
   bun run portal-cli dashboard
+  bun run portal-cli dashboard --view=packages --open
   bun run portal:probe
 
-Dashboard boards (chrome overflow + weave SSOT):
-  /portal/tools/           CLI hub (this map)
-  /portal/vault/           vault health bake · gate: vault health
+Dashboard boards (chrome overflow + weave SSOT · nav badges from registry):
+  /portal/tools/           CLI hub · bake freshness · capability subset
+  /portal/vault/           vault health bake · gate: vault health (badge: active items)
   /portal/env/             vault-map · secret map
-  /portal/packages/        packages graph · pm graph
-  /portal/failures/        test failures bake
-  /portal/health/          system health
+  /portal/packages/        packages graph · pm graph (badge: package count)
+  /portal/failures/        test failures bake (badge: failure count)
+  /portal/health/          system health (badge: monorepo score)
   /portal/ops/             ops-summary rollup
   /registry/prediction/report/  prediction report
+  Views: tools|packages|vault|env|failures|health|ops|prediction|capabilities|…
 
 Vault health (offline SSOT; live bake separate):
   vault health                 # bun test tests/vault-health.test.ts
@@ -191,6 +193,7 @@ async function printPackagesGraphTable(): Promise<void> {
     );
   }
   const data = (await file.json()) as {
+    schemaVersion?: number;
     generatedAt?: string;
     score?: number;
     grade?: string;
@@ -206,7 +209,45 @@ async function printPackagesGraphTable(): Promise<void> {
     }>;
     map?: { summary?: Record<string, number | string> };
     totals?: Record<string, number>;
+    surfaces?: {
+      summary?: Record<string, number>;
+      workspaces?: Array<{
+        path: string;
+        name: string;
+        plane: string;
+        inPackagesGraph: boolean;
+      }>;
+      packagesGraphDirs?: string[];
+      portal?: {
+        pages?: Array<{ href: string; slug: string }>;
+        chromeComponents?: Array<{
+          id: string; // brand-ok — chrome component key, not domain *Id
+          path: string;
+          kind: string;
+        }>;
+        modules?: Array<{
+          id: string; // brand-ok — portal module key, not domain *Id
+          path: string;
+          kind: string;
+        }>;
+        theme?: { jsonc?: boolean; tokensCss?: boolean; styleCss?: boolean };
+      };
+      brand?: { tenants?: string[]; assets?: Array<{ path: string; kind: string }> };
+      registry?: {
+        topLevel?: Array<{ file: string; kind: string | null; schemaVersion: number | null }>;
+        storagePackageNames?: string[];
+        scopedLatest?: string[];
+      };
+      planes?: Array<{
+        id: string; // brand-ok — monorepo surface plane key, not domain *Id
+        label: string;
+        count: number;
+        note: string;
+        bake?: string;
+      }>;
+    };
   };
+  const schema = data.schemaVersion ?? 12;
   const rows = (data.packages ?? []).map(p => ({
     package: p.name,
     role: p.role ?? '—',
@@ -217,7 +258,7 @@ async function printPackagesGraphTable(): Promise<void> {
     kB: p.bytes != null ? Math.round(p.bytes / 1024) : '—',
   }));
   console.log(
-    `packages-graph-map  schema=v12  generated=${data.generatedAt ?? '?'}  bun=${data.bunVersion ?? '?'}  score=${data.score ?? '?'}  grade=${data.grade ?? '?'}`
+    `packages-graph-map  schema=v${schema}  generated=${data.generatedAt ?? '?'}  bun=${data.bunVersion ?? '?'}  score=${data.score ?? '?'}  grade=${data.grade ?? '?'}`
   );
   if (data.map?.summary) {
     const s = data.map.summary;
@@ -225,12 +266,98 @@ async function printPackagesGraphTable(): Promise<void> {
       `summary  packages=${s.packageCount}  consumed=${s.consumed}  dormant=${s.dormant}  rootTooling=${s.rootTooling}  openActions=${s.openActions}`
     );
   }
+
+  // Multi-surface plane table (v13+) — why registry/portal show more than packages/*
+  const surfaces = data.surfaces;
+  if (surfaces?.planes?.length) {
+    console.log('\n── monorepo surfaces (not only packages/*) ──');
+    logTable(
+      surfaces.planes.map(p => ({
+        plane: p.id,
+        label: p.label,
+        count: p.count,
+        note: p.note.length > 56 ? `${p.note.slice(0, 53)}…` : p.note,
+      })),
+      ['plane', 'label', 'count', 'note']
+    );
+  } else if (schema < 13) {
+    console.log(
+      '\n(no surfaces block — rebake with bun run audit:packages -- --bake for v13 multi-surface inventory)'
+    );
+  }
+
+  if (surfaces?.workspaces?.length) {
+    console.log('\n── workspace members (bun workspaces) ──');
+    logTable(
+      surfaces.workspaces.map(w => ({
+        path: w.path,
+        name: w.name,
+        plane: w.plane,
+        inGraph: w.inPackagesGraph ? 'yes' : 'no',
+      })),
+      ['path', 'name', 'plane', 'inGraph']
+    );
+  }
+
+  console.log('\n── packages/* import graph (audit plane) ──');
   if (rows.length === 0) {
     console.log('(no packages in bake)');
-    return;
+  } else {
+    logTable(rows, ['package', 'role', 'score', 'grade', 'files', 'orphans', 'kB']);
   }
-  logTable(rows, ['package', 'role', 'score', 'grade', 'files', 'orphans', 'kB']);
+
+  if (surfaces?.portal) {
+    const pages = surfaces.portal.pages ?? [];
+    const chrome = surfaces.portal.chromeComponents ?? [];
+    const theme = surfaces.portal.theme;
+    console.log('\n── portal chrome / pages / brand ──');
+    console.log(
+      `pages=${pages.length}  chromeComponents=${chrome.length}  modules=${surfaces.portal.modules?.length ?? 0}  theme(jsonc=${theme?.jsonc ? 'y' : 'n'},tokens=${theme?.tokensCss ? 'y' : 'n'},style=${theme?.styleCss ? 'y' : 'n'})`
+    );
+    if (chrome.length) {
+      logTable(
+        chrome.map(c => ({ id: c.id, kind: c.kind, path: c.path })),
+        ['id', 'kind', 'path']
+      );
+    }
+    if (pages.length) {
+      console.log(`pages: ${pages.map(p => p.slug || 'home').join(', ')}`);
+    }
+    if (surfaces.brand?.tenants?.length) {
+      console.log(
+        `brand tenants: ${surfaces.brand.tenants.join(', ')}  assets=${surfaces.brand.assets?.length ?? 0}`
+      );
+    }
+  }
+
+  if (surfaces?.registry) {
+    const top = surfaces.registry.topLevel ?? [];
+    const storage = surfaces.registry.storagePackageNames ?? [];
+    const scoped = surfaces.registry.scopedLatest ?? [];
+    console.log('\n── registry bake plane ──');
+    console.log(
+      `topLevelJson=${top.length}  storagePackages=${storage.length}  scopedLatest=${scoped.length}`
+    );
+    // Show kind rollup
+    const byKind = new Map<string, number>();
+    for (const a of top) {
+      const k = a.kind ?? '(no-kind)';
+      byKind.set(k, (byKind.get(k) ?? 0) + 1);
+    }
+    const kindRows = [...byKind.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([kind, n]) => ({ kind, count: n }));
+    if (kindRows.length) {
+      logTable(kindRows.slice(0, 20), ['kind', 'count']);
+      if (kindRows.length > 20) console.log(`  … +${kindRows.length - 20} more kinds`);
+    }
+    if (storage.length) {
+      console.log(`storage: ${storage.join(', ')}`);
+    }
+  }
+
   console.log(`\nRebake: bun run audit:packages -- --bake`);
+  console.log(`Board:  /portal/packages/  ·  chrome: /registry/portal-chrome.json`);
 }
 
 async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promise<void> {
@@ -377,16 +504,71 @@ async function main(): Promise<void> {
 
   if (cmd === 'dashboard') {
     // Print (and optionally open) a portal board URL — boards are static Pages paths.
+    // --view=packages|vault|tools|env|failures|health|ops|prediction maps known boards.
+    const VIEW_PATHS: Record<string, string> = {
+      tools: '/portal/tools/',
+      packages: '/portal/packages/',
+      vault: '/portal/vault/',
+      env: '/portal/env/',
+      failures: '/portal/failures/',
+      health: '/portal/health/',
+      ops: '/portal/ops/',
+      compliance: '/portal/compliance/',
+      limits: '/portal/limits/',
+      toc: '/portal/toc/',
+      skills: '/portal/skills/',
+      catalog: '/portal/catalog/',
+      dashboard: '/portal/dashboard/',
+      dod: '/portal/dod/',
+      monitoring: '/monitoring/',
+      prediction: '/registry/prediction/report/',
+      capabilities: '/portal/tools/#capabilities',
+    };
     const base =
       Bun.env.PORTAL_BASE_URL?.replace(/\/$/, '') ||
       Bun.env.SNAPSHOT_BASE_URL?.replace(/\/$/, '') ||
       'https://score.factory-wager.com';
-    const pathArg = argv[1] && !argv[1].startsWith('-') ? argv[1] : '/portal/tools/';
-    const path = pathArg.startsWith('/') ? pathArg : `/${pathArg}`;
-    const url = `${base}${path.endsWith('/') || path.includes('.') ? path : `${path}/`}`;
+    const viewFlag = argv.find(a => a.startsWith('--view='));
+    const viewIdx = argv.indexOf('--view');
+    const view =
+      viewFlag?.slice('--view='.length) ||
+      (viewIdx >= 0 ? argv[viewIdx + 1] : undefined) ||
+      undefined;
+    let pathArg =
+      view && VIEW_PATHS[view]
+        ? VIEW_PATHS[view]
+        : argv[1] && !argv[1].startsWith('-')
+          ? argv[1]
+          : '/portal/tools/';
+    if (view && !VIEW_PATHS[view] && !pathArg.startsWith('/')) {
+      cliError(
+        `Unknown dashboard view "${view}". Known: ${Object.keys(VIEW_PATHS).sort().join(', ')}`
+      );
+    }
+    const hashIdx = pathArg.indexOf('#');
+    const hash = hashIdx >= 0 ? pathArg.slice(hashIdx) : '';
+    const pathOnly = hashIdx >= 0 ? pathArg.slice(0, hashIdx) : pathArg;
+    const path = pathOnly.startsWith('/') ? pathOnly : `/${pathOnly}`;
+    const withSlash = path.endsWith('/') || path.includes('.') || hash ? path : `${path}/`;
+    const url = `${base}${withSlash}${hash}`;
     const open = argv.includes('--open') || argv.includes('-o');
+    if (argv.includes('--help') || argv.includes('-h')) {
+      console.log(`Usage: portal-cli dashboard [path|/portal/…] [--view=name] [--open]
+
+Views: ${Object.keys(VIEW_PATHS).sort().join(', ')}
+
+Examples:
+  portal-cli dashboard
+  portal-cli dashboard --view=packages --open
+  portal-cli dashboard /portal/vault/
+  PORTAL_BASE_URL=http://127.0.0.1:8787 portal-cli dashboard --view=tools --open
+`);
+      return;
+    }
     console.log(url);
-    console.log('Local serve: bun run serve:public:hot  →  http://127.0.0.1:8787' + path);
+    console.log(
+      'Local serve: bun run serve:public:hot  →  http://127.0.0.1:8787' + withSlash + hash
+    );
     if (open) {
       const opener =
         process.platform === 'darwin'

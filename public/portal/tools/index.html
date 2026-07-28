@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/portal/style.css" />
   <style>
-    .tools-wrap { max-width: 960px; margin: 0 auto; padding: 0 24px 48px; }
+    .tools-wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px 48px; }
     .tools-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
     .tools-panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--text-dim); margin: 0 0 12px; }
     .tools-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -20,6 +20,19 @@
     .tools-table code { font-size: 11px; }
     .dim { color: var(--text-dim); font-size: 12px; }
     .group-tag { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim); }
+    .quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
+    .copy-cli, .qa-btn {
+      font: inherit; font-size: 11px; font-family: ui-monospace, monospace;
+      padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg, #0d1117); color: var(--text); cursor: pointer;
+    }
+    .copy-cli:hover, .qa-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .snap-list { margin: 0; padding-inline-start: 18px; font-size: 12px; }
+    #capability-filter {
+      width: 100%; max-width: 320px; margin-bottom: 10px; padding: 6px 10px;
+      border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text);
+    }
+    tr.warn td { color: var(--yellow, #d29922); }
   </style>
 </head>
 <body>
@@ -43,12 +56,12 @@
           <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
           <div class="nav-dropdown" role="menu">
             <a href="/portal/catalog/" class="nav-link" data-group="registry" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph" data-group="registry" data-cli="bun run portal-cli pm graph" role="menuitem">Packages</a>
+            <a href="/portal/packages/" class="nav-link" title="graph map · portal-cli pm graph · bun run portal-cli pm graph  # offline packages-graph-map table" data-group="registry" data-cli="bun run portal-cli pm graph  # offline packages-graph-map table" role="menuitem">Packages</a>
             <a href="/portal/skills/" class="nav-link" data-group="registry" role="menuitem">Skills</a>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health" data-group="secrets" data-cli="bun run portal-cli vault health" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map" data-group="secrets" data-cli="bun run portal-cli secret map" role="menuitem">Env</a>
-            <a href="/portal/tools/" class="nav-link active" aria-current="page" title="portal-cli surface map · pm · snapshot · secret · vault · bun run portal-cli help" data-group="harness" data-cli="bun run portal-cli help" role="menuitem">CLI Tools</a>
-            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · bun run failures:bake" data-group="harness" data-cli="bun run failures:bake" role="menuitem">Failures</a>
+            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" role="menuitem">Vault</a>
+            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+            <a href="/portal/tools/" class="nav-link active" aria-current="page" title="portal-cli surface map · badges · capability subset · bun run portal-cli dashboard --view=tools" data-group="harness" data-cli="bun run portal-cli dashboard --view=tools" role="menuitem">CLI Tools</a>
+            <a href="/portal/failures/" class="nav-link" title="test failures bake · junit · nav badge = count · bun run failures:bake  # → /registry/failures.json" data-group="harness" data-cli="bun run failures:bake  # → /registry/failures.json" role="menuitem">Failures</a>
             <a href="/portal/dashboard/" class="nav-link" data-group="ops" role="menuitem">Dashboard</a>
             <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope · bun run ops:seed:toc" data-group="ops" data-cli="bun run ops:seed:toc" role="menuitem">TOC</a>
             <a href="/portal/limits/" class="nav-link" title="bun run ops:limits:demo" data-group="ops" data-cli="bun run ops:limits:demo" role="menuitem">Limits</a>
@@ -61,8 +74,38 @@
     </div>
   </header>
   <main class="tools-wrap">
-    <p class="dim">Maps portal boards to real <code>portal-cli</code> / package scripts. No phantom routes — each board href is a live surface.</p>
-    <p class="dim">Open this page: <code>bun run portal-cli dashboard</code> · full help: <code>bun run portal-cli help</code></p>
+    <p class="dim">Control plane for real boards + real <code>portal-cli</code> commands. No phantom routes · no browser-side spawn (copy CLI instead).</p>
+    <p class="dim">Launcher: <code>bun run portal-cli dashboard</code> · <code>portal-cli dashboard --view=vault --open</code></p>
+
+    <div class="tools-panel" id="quick-actions">
+      <h2>Quick actions (copy)</h2>
+      <p class="dim">Run these in a trusted shell (agent session for vault ops). Buttons only copy — Pages cannot spawn your CLI.</p>
+      <div class="quick-actions">
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli snapshot run --scope portal">snapshot run</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli snapshot list">snapshot list</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli vault health">vault health gate</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run vault:health:bake">vault health bake</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli pm graph">pm graph</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run failures:bake">failures bake</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run ops:snapshot --no-routing">ops snapshot</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="bun run monorepo:health:bake">monorepo health bake</button>
+        <button type="button" class="copy-cli qa-btn" data-cli="source scripts/agent-env.sh factorywager &amp;&amp; bun run portal-cli secret autofill --vault factorywager -- bun run cloudflare:env:validate">secret autofill (example)</button>
+      </div>
+    </div>
+
+    <div class="tools-panel">
+      <h2 id="bakes">Baked data status</h2>
+      <p class="dim">Freshness from public registry artifacts (same sources as nav badges).</p>
+      <table class="tools-table">
+        <thead><tr><th>Artifact</th><th>Age / summary</th><th>Board</th><th>CLI</th></tr></thead>
+        <tbody id="bake-status-body"><tr><td colspan="4" class="dim">Loading…</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="tools-panel">
+      <h2 id="snapshots">Last snapshot (widget)</h2>
+      <div id="snapshot-widget"><p class="dim">Loading…</p></div>
+    </div>
 
     <div class="tools-panel">
       <h2>portal-cli → board</h2>
@@ -73,45 +116,78 @@
         <tbody>
           <tr>
             <td><a href="/portal/packages/">Packages</a> <span class="group-tag">registry</span></td>
-            <td><code>portal-cli pm graph</code><br /><code>portal-cli pm ls</code></td>
+            <td>
+              <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy</button>
+              <code>portal-cli pm graph</code><br />
+              <code>portal-cli pm ls</code>
+            </td>
             <td>packages-graph-map bake · bun pm passthrough</td>
           </tr>
           <tr>
             <td><a href="/portal/vault/">Vault</a> <span class="group-tag">secrets</span></td>
-            <td><code>portal-cli vault health</code><br /><code>bun run vault:health:bake</code></td>
+            <td>
+              <button type="button" class="copy-cli" data-cli="bun run portal-cli vault health">copy</button>
+              <code>portal-cli vault health</code><br />
+              <code>bun run vault:health:bake</code>
+            </td>
             <td>Offline inventory snapshots (CI) · live bake board</td>
           </tr>
           <tr>
             <td><a href="/portal/env/">Env</a> <span class="group-tag">secrets</span></td>
-            <td><code>portal-cli secret map</code><br /><code>portal-cli secret inject …</code></td>
+            <td>
+              <button type="button" class="copy-cli" data-cli="bun run portal-cli secret map">copy</button>
+              <code>portal-cli secret map</code>
+            </td>
             <td>vault-map display + pass:// paths (no secret values)</td>
           </tr>
           <tr>
             <td><a href="/portal/health/">Health</a> <span class="group-tag">harness</span></td>
-            <td><code>bun run monorepo:health:bake</code><br /><code>portal-cli probe</code></td>
+            <td>
+              <button type="button" class="copy-cli" data-cli="bun run monorepo:health:bake">copy</button>
+              <code>monorepo:health:bake</code>
+            </td>
             <td>Health dashboard · monorepo score</td>
           </tr>
           <tr>
             <td><a href="/portal/failures/">Failures</a> <span class="group-tag">harness</span></td>
-            <td><code>bun run failures:bake</code></td>
-            <td>JUnit / test-failures board</td>
+            <td>
+              <button type="button" class="copy-cli" data-cli="bun run failures:bake">copy</button>
+              <code>failures:bake</code>
+            </td>
+            <td>JUnit / test-failures board · nav badge = failure count</td>
           </tr>
           <tr>
             <td><a href="/portal/ops/">Ops</a> <span class="group-tag">ops</span></td>
-            <td><code>bun run ops:snapshot</code><br /><code>portal-cli snapshot run</code></td>
+            <td>
+              <button type="button" class="copy-cli" data-cli="bun run ops:snapshot --no-routing">copy</button>
+              <code>ops:snapshot</code>
+            </td>
             <td>ops-summary rollup · scope snapshots</td>
           </tr>
           <tr>
             <td><a href="/registry/prediction/report/">Prediction report</a> <span class="group-tag">ops</span></td>
-            <td><code>portal-cli snapshot last --scope prediction</code></td>
+            <td>
+              <button type="button" class="copy-cli" data-cli="bun run portal-cli snapshot last --scope prediction">copy</button>
+              <code>snapshot last --scope prediction</code>
+            </td>
             <td>Latest prediction report HTML</td>
           </tr>
-          <tr>
-            <td><a href="/portal/compliance/">Compliance</a> <span class="group-tag">ops</span></td>
-            <td><code>bun run compliance:bake</code></td>
-            <td>MA/NJ board + shadow</td>
-          </tr>
         </tbody>
+      </table>
+    </div>
+
+    <div class="tools-panel" id="capabilities">
+      <h2>Grounded capability map (subset)</h2>
+      <p class="dim">
+        Full matrix:
+        <a href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/AGENTS.md#grounded-capability-map">AGENTS.md § Grounded capability map</a>
+        · decision tables:
+        <a href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/packages/README.md">docs/packages</a>
+      </p>
+      <input id="capability-filter" type="search" placeholder="Filter capabilities…" autocomplete="off" />
+      <table class="tools-table">
+        <thead><tr><th>Capability</th><th>API</th><th>Status</th><th>Used in</th></tr></thead>
+        <tbody id="capability-body"></tbody>
       </table>
     </div>
 
@@ -137,32 +213,20 @@
             <td><code>portal-cli pm ls|pack|pkg|graph|…</code> · bun pm passthrough + FW graph</td>
           </tr>
           <tr>
+            <td>dashboard</td>
+            <td><code>portal-cli dashboard [--view=packages|vault|tools|…] [--open]</code></td>
+          </tr>
+          <tr>
             <td>probe</td>
             <td><code>portal-cli probe [lockfile|…]</code></td>
           </tr>
         </tbody>
       </table>
     </div>
-
-    <div class="tools-panel">
-      <h2>Capability map</h2>
-      <p class="dim">
-        Grounded API matrix lives in repo
-        <a href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/AGENTS.md#grounded-capability-map">AGENTS.md § Grounded capability map</a>
-        (Bun + pass-cli rows with version, status, source). Package decision tables:
-        <a href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/packages/README.md">docs/packages/README.md</a>.
-      </p>
-      <p class="dim">
-        Registry machine refs:
-        <a href="/registry/portal-weave.json">portal-weave.json</a> ·
-        <a href="/registry/portal-chrome.json">portal-chrome.json</a> ·
-        <a href="/registry/vault-health.json">vault-health.json</a> ·
-        <a href="/registry/packages-graph-map.json">packages-graph-map.json</a>
-      </p>
-    </div>
   </main>
   <script type="module" src="/portal/data.js"></script>
   <script type="module" src="/portal/topbar.js"></script>
+  <script type="module" src="/portal/tools/tools-hub.js"></script>
   <script type="module" src="/portal/components/sidebar.js"></script>
   <script type="module" src="/portal/components/notification.js"></script>
   <script type="module" src="/portal/components/footer.js"></script>

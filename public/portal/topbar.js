@@ -10,6 +10,7 @@ import {
   tenantRegistryPaths,
 } from './components/sidebar.js';
 import { markCurrentNavigation } from './navigation.js';
+import { bootstrapNavBadges } from './nav-badges.js';
 import './components/notification.js';
 
 let pendingHealthRaf = 0;
@@ -156,6 +157,7 @@ function onReady() {
   }
   bootstrapSidebar();
   bootstrapNavOverflow();
+  bootstrapNavBadges();
 }
 
 if (document.readyState === 'loading') {

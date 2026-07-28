@@ -243,7 +243,7 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   {
     label: 'packages-graph-map',
     href: '/registry/packages-graph-map.json',
-    note: 'workspace coupling · env owners · template defaults · claim packages-graph-map-v12',
+    note: 'workspace coupling · multi-surface · env owners · claim packages-graph-map-v13',
   },
   {
     label: 'monorepo-health',

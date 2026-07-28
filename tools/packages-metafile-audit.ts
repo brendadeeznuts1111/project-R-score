@@ -17,7 +17,7 @@
  *   bun run audit:packages:full   # --cross-check --diff --md --map --bake
  *   bun tools/packages-metafile-audit.ts --strict
  *
- * Claim: packages-graph-map-v12
+ * Claim: packages-graph-map-v13
  */
 import { Glob, sliceAnsi } from 'bun';
 import { joinPath } from '../lib/path-bun.ts';
@@ -37,6 +37,7 @@ import {
   type PackageGraphMap,
 } from '../lib/harness/packages-graph-map.ts';
 import { buildPackageVaultMap } from '../lib/harness/packages-vault-map.ts';
+import { buildMonorepoSurfaces, type MonorepoSurfaces } from '../lib/harness/monorepo-surfaces.ts';
 import { buildEnvInventoryCompact } from '../scripts/lib/env-inventory-compact.ts';
 
 const ROOT = joinPath(import.meta.dir, '..');
@@ -121,7 +122,7 @@ export type EntrypointKind =
   | 'explicit';
 
 export type PackageAuditReport = {
-  schemaVersion: 12;
+  schemaVersion: 13;
   kind: 'packages-metafile-audit';
   generatedAt: string;
   bunVersion: string;
@@ -145,6 +146,12 @@ export type PackageAuditReport = {
   heaviest: Array<{ path: string; bytes: number; importCount: number }>;
   /** Package-level dependency map (cross-pkg + external planes). */
   map: PackageGraphMap;
+  /**
+   * Multi-surface inventory (workspaces beyond packages/*, portal chrome/brand,
+   * registry bakes). Populated on full deep map / bake — explains why registry
+   * has more JSON than the packages import graph.
+   */
+  surfaces?: MonorepoSurfaces;
   packages: Array<{
     name: string;
     scanned: number;
@@ -962,8 +969,22 @@ export async function runPackagesMetafileAudit(opts?: {
     notes.push('Quarantine: none');
   }
 
+  // Multi-surface inventory (workspaces + portal + brand + registry) — always
+  // on deep map so bake/CLI explain "why registry has more than 6 packages".
+  let surfaces: MonorepoSurfaces | undefined;
+  if (opts?.deepMap !== false) {
+    try {
+      surfaces = await buildMonorepoSurfaces(ROOT);
+      notes.push(
+        `Surfaces: workspaces=${surfaces.summary.workspaceMembers} (packagesPlane=${surfaces.summary.packagesPlane}+other=${surfaces.summary.otherWorkspaces}) · portalPages=${surfaces.summary.portalPages} · chrome=${surfaces.summary.chromeComponents} · brand=${surfaces.summary.brandAssets} · registryJson=${surfaces.summary.registryTopLevelJson} · storagePkgs=${surfaces.summary.registryStoragePackages}`
+      );
+    } catch (e) {
+      notes.push(`Surfaces: discovery failed — ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
   const report: PackageAuditReport = {
-    schemaVersion: 12,
+    schemaVersion: 13,
     kind: 'packages-metafile-audit',
     generatedAt: new Date().toISOString(),
     bunVersion: Bun.version,
@@ -986,6 +1007,7 @@ export async function runPackagesMetafileAudit(opts?: {
     fanOut,
     heaviest,
     map,
+    ...(surfaces ? { surfaces } : {}),
     packages,
     totals: {
       inputCount: inputs.size,
@@ -1137,7 +1159,7 @@ Map v12: + template-default cover · archive placeholder removed · env inventor
   if (argvFlag('--bake')) {
     const bakePath = joinPath(ROOT, 'public/registry/packages-graph-map.json');
     const bake = {
-      schemaVersion: 12,
+      schemaVersion: 13,
       kind: 'packages-graph-map',
       generatedAt: report.generatedAt,
       bunVersion: report.bunVersion,
@@ -1146,6 +1168,7 @@ Map v12: + template-default cover · archive placeholder removed · env inventor
       map: report.map,
       packages: report.packages,
       totals: report.totals,
+      ...(report.surfaces ? { surfaces: report.surfaces } : {}),
     };
     await Bun.write(bakePath, JSON.stringify(bake, null, 2) + '\n');
     if (!argvFlag('--json')) console.log(`→ ${bakePath}`);

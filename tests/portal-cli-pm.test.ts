@@ -58,4 +58,22 @@ describe('portal-cli pm passthrough', () => {
     expect(out.includes('packages-graph-map') || out.includes('registry-client')).toBe(true);
     expect(out.includes('Rebake') || out.includes('role') || out.includes('score')).toBe(true);
   });
+
+  test('pm graph surfaces block after v13 bake (or rebake hint)', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'pm', 'graph'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    // v13 bake shows monorepo surfaces; v12 shows rebake hint
+    const hasSurfaces =
+      out.includes('monorepo surfaces') ||
+      out.includes('workspace members') ||
+      out.includes('registry bake plane') ||
+      out.includes('no surfaces block');
+    expect(hasSurfaces).toBe(true);
+  });
 });

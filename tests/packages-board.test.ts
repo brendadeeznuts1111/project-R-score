@@ -9,8 +9,8 @@ import {
 } from '../public/portal/packages/packages-board.js';
 
 describe('packages-board failure paths', () => {
-  test('pins board schema v12', () => {
-    expect(PACKAGES_MAP_SCHEMA).toBe(12);
+  test('pins board schema v13', () => {
+    expect(PACKAGES_MAP_SCHEMA).toBe(13);
   });
 
   test('gradeFromScore matches monorepo-health bands', () => {
@@ -30,12 +30,43 @@ describe('packages-board failure paths', () => {
   test('normalizePackagesMap accepts bake shape', () => {
     const data = normalizePackagesMap(
       {
-        schemaVersion: 12,
+        schemaVersion: 13,
         kind: 'packages-graph-map',
         generatedAt: 't',
         bunVersion: '1.4.0',
         score: 100,
         packages: [{ name: 'rip', score: 100, role: 'consumed', orphans: 0, bytes: 1024 }],
+        surfaces: {
+          summary: {
+            workspaceMembers: 8,
+            packagesPlane: 6,
+            otherWorkspaces: 2,
+            portalPages: 18,
+            chromeComponents: 11,
+            brandAssets: 20,
+            registryTopLevelJson: 54,
+          },
+          planes: [
+            {
+              id: 'packages-graph',
+              label: 'packages/* import graph',
+              count: 6,
+              note: 'coupling only',
+            },
+          ],
+          workspaces: [
+            {
+              path: 'packages/rip',
+              name: '@factorywager/rip',
+              plane: 'packages',
+              inPackagesGraph: true,
+            },
+          ],
+          portal: {
+            chromeComponents: [{ id: 'topbar', path: '/portal/topbar.js', kind: 'module' }],
+          },
+          brand: { tenants: ['factory'], assets: [] },
+        },
         map: {
           summary: { openActions: 0, avgPackageScore: 100, archivePlaceholders: 0 },
           actions: [],
@@ -58,6 +89,21 @@ describe('packages-board failure paths', () => {
     expect(data.summary.openActions).toBe(0);
     expect(data.quarantine).toHaveLength(1);
     expect(data.env?.owners?.[0]?.envKey).toBe('REDIS_URL');
+    expect(data.surfaces?.summary?.registryTopLevelJson).toBe(54);
+    expect(data.surfaces?.planes?.[0]?.id).toBe('packages-graph');
+  });
+
+  test('normalizePackagesMap accepts legacy schema v12', () => {
+    const data = normalizePackagesMap(
+      {
+        schemaVersion: 12,
+        packages: [{ name: 'rip', score: 100, role: 'consumed', orphans: 0, bytes: 1 }],
+        map: { summary: {}, actions: [], archiveProbes: [] },
+      },
+      '/registry/packages-graph-map.json'
+    );
+    expect(data.schemaOk).toBe(true);
+    expect(data.surfaces).toBeNull();
   });
 
   test('normalizePackagesMap rejects empty payload', () => {

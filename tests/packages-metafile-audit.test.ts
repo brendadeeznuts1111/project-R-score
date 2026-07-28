@@ -21,8 +21,8 @@ describe('packages-metafile-audit', () => {
     cross = await runPackagesMetafileAudit({ crossCheck: true });
   });
 
-  test('schema v12 score + probes + quarantine + summary', () => {
-    expect(deep.schemaVersion).toBe(12);
+  test('schema v13 score + probes + quarantine + summary', () => {
+    expect(deep.schemaVersion).toBe(13);
     expect(deep.map.quarantine).toBeDefined();
     expect(deep.map.summary?.quarantineCount).toBe(deep.map.quarantine!.length);
     expect(deep.map.packages.includes('package')).toBe(false);
@@ -115,7 +115,7 @@ describe('packages-metafile-audit', () => {
 
   test('vault plane attaches env.template coupling', async () => {
     const report = await runPackagesMetafileAudit({ vault: true });
-    expect(report.schemaVersion).toBe(12);
+    expect(report.schemaVersion).toBe(13);
     expect(report.map.vault).toBeDefined();
     expect(report.map.vault!.summary.packagesWithEnv).toBeGreaterThan(0);
     expect(report.map.summary?.vaultPackagesWithEnv).toBe(

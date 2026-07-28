@@ -121,7 +121,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     tier: 'overflow',
     group: 'registry',
     note: 'graph map · portal-cli pm graph',
-    cli: 'bun run portal-cli pm graph',
+    cli: 'bun run portal-cli pm graph  # offline packages-graph-map table',
   },
   {
     id: 'skills',
@@ -138,7 +138,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     tier: 'overflow',
     group: 'secrets',
     note: 'Proton Pass health bake · gate: portal-cli vault health',
-    cli: 'bun run portal-cli vault health',
+    cli: 'bun run portal-cli vault health  # offline SSOT · --update to refresh snaps',
   },
   {
     id: 'env',
@@ -147,7 +147,7 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     tier: 'overflow',
     group: 'secrets',
     note: 'vault-map inject · secret autofill mapping',
-    cli: 'bun run portal-cli secret map',
+    cli: 'bun run portal-cli secret map  # no secret values printed',
   },
   // ── Harness ──
   {
@@ -156,8 +156,8 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/tools/',
     tier: 'overflow',
     group: 'harness',
-    note: 'portal-cli surface map · pm · snapshot · secret · vault',
-    cli: 'bun run portal-cli help',
+    note: 'portal-cli surface map · badges · capability subset',
+    cli: 'bun run portal-cli dashboard --view=tools',
   },
   {
     id: 'failures',
@@ -165,8 +165,8 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
     href: '/portal/failures/',
     tier: 'overflow',
     group: 'harness',
-    note: 'test failures bake · junit',
-    cli: 'bun run failures:bake',
+    note: 'test failures bake · junit · nav badge = count',
+    cli: 'bun run failures:bake  # → /registry/failures.json',
   },
   // ── Ops boards ──
   {
@@ -251,9 +251,15 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
     kind: 'module',
   },
   {
+    id: 'nav-badges',
+    path: '/portal/nav-badges.js',
+    role: 'live counts from baked registry JSON on nav links',
+    kind: 'module',
+  },
+  {
     id: 'topbar',
     path: '/portal/topbar.js',
-    role: 'health dot · nav current · sidebar bootstrap',
+    role: 'health dot · nav current · sidebar bootstrap · nav badges',
     kind: 'module',
   },
   {

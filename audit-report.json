@@ -1,33 +1,29 @@
 {
-  "schemaVersion": 12,
+  "schemaVersion": 13,
   "kind": "packages-metafile-audit",
-  "generatedAt": "2026-07-28T14:02:47.267Z",
+  "generatedAt": "2026-07-28T17:38:18.622Z",
   "bunVersion": "1.4.0",
   "root": "/Users/nolarose/Projects",
   "glob": "packages/*/src/**/*.{ts,tsx}",
   "target": "bun",
   "score": 100,
   "grade": "healthy",
-  "scanned": 26,
+  "scanned": 21,
   "entrypoints": [
-    "packages/ab-testing/src/index.ts",
     "packages/business/src/index.ts",
     "packages/docs-tools/src/index.ts",
     "packages/guards/src/index.ts",
     "packages/p2p/src/index.ts",
     "packages/registry-client/src/index.ts",
     "packages/rip/src/cli.ts",
-    "packages/rip/src/index.ts",
-    "packages/versioning/src/index.ts"
+    "packages/rip/src/index.ts"
   ],
   "entrypointKinds": {
     "packages/registry-client/src/index.ts": "index",
     "packages/guards/src/index.ts": "index",
-    "packages/versioning/src/index.ts": "index",
     "packages/docs-tools/src/index.ts": "index",
     "packages/p2p/src/index.ts": "index",
     "packages/business/src/index.ts": "index",
-    "packages/ab-testing/src/index.ts": "index",
     "packages/rip/src/cli.ts": "cli",
     "packages/rip/src/index.ts": "index"
   },
@@ -40,22 +36,18 @@
     "lib/docs/constants/fragments.ts",
     "lib/docs/constants/utils.ts",
     "lib/docs/urls.ts",
-    "packages/ab-testing/src/manager.ts",
     "packages/business/src/habits-pure.ts",
     "packages/registry-client/src/index.ts",
-    "packages/rip/src/config.ts",
-    "packages/versioning/src/version-tracking.ts"
+    "packages/rip/src/config.ts"
   ],
   "entrypointRoots": [
-    "packages/ab-testing/src/index.ts",
     "packages/business/src/index.ts",
     "packages/docs-tools/src/index.ts",
     "packages/guards/src/index.ts",
     "packages/p2p/src/index.ts",
     "packages/registry-client/src/index.ts",
     "packages/rip/src/cli.ts",
-    "packages/rip/src/index.ts",
-    "packages/versioning/src/index.ts"
+    "packages/rip/src/index.ts"
   ],
   "orphans": [],
   "externalInputs": [
@@ -74,11 +66,6 @@
       "path": "packages/docs-tools/src/builders/validator.ts",
       "inbound": 1,
       "bytes": 37256
-    },
-    {
-      "path": "packages/versioning/src/version-tracking.ts",
-      "inbound": 1,
-      "bytes": 20529
     },
     {
       "path": "packages/docs-tools/src/builders/url-builder.ts",
@@ -119,6 +106,11 @@
       "path": "packages/p2p/src/customer-notifier.ts",
       "inbound": 1,
       "bytes": 5926
+    },
+    {
+      "path": "packages/guards/src/bun-first-guard.ts",
+      "inbound": 1,
+      "bytes": 5126
     }
   ],
   "fanOut": [
@@ -180,11 +172,6 @@
       "importCount": 4
     },
     {
-      "path": "packages/versioning/src/version-tracking.ts",
-      "bytes": 20529,
-      "importCount": 0
-    },
-    {
       "path": "packages/docs-tools/src/builders/url-builder.ts",
       "bytes": 18948,
       "importCount": 3
@@ -223,18 +210,21 @@
       "path": "packages/rip/src/index.ts",
       "bytes": 7897,
       "importCount": 4
+    },
+    {
+      "path": "packages/rip/src/cli.ts",
+      "bytes": 7325,
+      "importCount": 1
     }
   ],
   "map": {
     "packages": [
-      "ab-testing",
       "business",
       "docs-tools",
       "guards",
       "p2p",
       "registry-client",
-      "rip",
-      "versioning"
+      "rip"
     ],
     "packageEdges": [],
     "externalEdges": [
@@ -244,7 +234,7 @@
         "targetPrefix": "lib/docs",
         "weight": 11,
         "samples": [
-          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains.ts",
+          "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/domains",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/categories",
           "packages/docs-tools/src/builders/url-builder.ts → lib/docs/constants/fragments.ts"
         ]
@@ -308,59 +298,35 @@
         ]
       }
     ],
-    "internalEdgeCount": 21,
+    "internalEdgeCount": 17,
     "dependents": {
-      "ab-testing": [],
       "business": [],
       "docs-tools": [],
       "guards": [],
       "p2p": [],
       "registry-client": [],
-      "rip": [],
-      "versioning": []
+      "rip": []
     },
     "dependencies": {
-      "ab-testing": [],
       "business": [],
       "docs-tools": [],
       "guards": [],
       "p2p": [],
       "registry-client": [],
-      "rip": [],
-      "versioning": []
+      "rip": []
     },
     "layers": [
       [
-        "ab-testing",
         "business",
         "docs-tools",
         "guards",
         "p2p",
         "registry-client",
-        "rip",
-        "versioning"
+        "rip"
       ]
     ],
     "packageCycles": [],
     "intra": {
-      "ab-testing": {
-        "fileCount": 3,
-        "depth": 3,
-        "layers": [
-          [
-            "src/index.ts"
-          ],
-          [
-            "src/cookie-manager.ts"
-          ],
-          [
-            "src/manager.ts"
-          ]
-        ],
-        "entryFiles": [
-          "src/index.ts"
-        ]
-      },
       "business": {
         "fileCount": 4,
         "depth": 3,
@@ -454,21 +420,6 @@
           "src/cli.ts",
           "src/index.ts"
         ]
-      },
-      "versioning": {
-        "fileCount": 2,
-        "depth": 2,
-        "layers": [
-          [
-            "src/index.ts"
-          ],
-          [
-            "src/version-tracking.ts"
-          ]
-        ],
-        "entryFiles": [
-          "src/index.ts"
-        ]
       }
     },
     "outsideConsumers": [
@@ -519,22 +470,13 @@
     ],
     "declared": [
       {
-        "package": "ab-testing",
-        "npmName": "@factorywager/ab-testing",
-        "declaredWorkspace": [],
-        "actualCrossPkg": [],
-        "missingInPackageJson": [],
-        "unusedDeclared": [],
-        "inRootWorkspaceDeps": false
-      },
-      {
         "package": "business",
         "npmName": "@factorywager/business",
         "declaredWorkspace": [],
         "actualCrossPkg": [],
         "missingInPackageJson": [],
         "unusedDeclared": [],
-        "inRootWorkspaceDeps": true
+        "inRootWorkspaceDeps": false
       },
       {
         "package": "docs-tools",
@@ -561,7 +503,7 @@
         "actualCrossPkg": [],
         "missingInPackageJson": [],
         "unusedDeclared": [],
-        "inRootWorkspaceDeps": true
+        "inRootWorkspaceDeps": false
       },
       {
         "package": "registry-client",
@@ -580,15 +522,6 @@
         "missingInPackageJson": [],
         "unusedDeclared": [],
         "inRootWorkspaceDeps": true
-      },
-      {
-        "package": "versioning",
-        "npmName": "@factorywager/versioning",
-        "declaredWorkspace": [],
-        "actualCrossPkg": [],
-        "missingInPackageJson": [],
-        "unusedDeclared": [],
-        "inRootWorkspaceDeps": false
       }
     ],
     "externalHubs": [
@@ -630,21 +563,11 @@
     ],
     "coupling": [
       {
-        "package": "ab-testing",
+        "package": "business",
         "role": "dormant",
         "outsideCount": 0,
         "dependentCount": 0,
         "inRootWorkspaceDeps": false,
-        "workspaceImports": 0,
-        "relativeImports": 0,
-        "scriptCount": 0
-      },
-      {
-        "package": "business",
-        "role": "root-tooling",
-        "outsideCount": 0,
-        "dependentCount": 0,
-        "inRootWorkspaceDeps": true,
         "workspaceImports": 0,
         "relativeImports": 0,
         "scriptCount": 0
@@ -671,10 +594,10 @@
       },
       {
         "package": "p2p",
-        "role": "root-tooling",
+        "role": "dormant",
         "outsideCount": 0,
         "dependentCount": 0,
-        "inRootWorkspaceDeps": true,
+        "inRootWorkspaceDeps": false,
         "workspaceImports": 0,
         "relativeImports": 0,
         "scriptCount": 0
@@ -698,21 +621,11 @@
         "workspaceImports": 1,
         "relativeImports": 0,
         "scriptCount": 0
-      },
-      {
-        "package": "versioning",
-        "role": "dormant",
-        "outsideCount": 0,
-        "dependentCount": 0,
-        "inRootWorkspaceDeps": false,
-        "workspaceImports": 0,
-        "relativeImports": 0,
-        "scriptCount": 0
       }
     ],
     "actions": [
       {
-        "package": "ab-testing",
+        "package": "business",
         "action": "archive-candidate",
         "reason": "no outside imports, no root dep, no package.json script refs"
       },
@@ -720,6 +633,11 @@
         "package": "guards",
         "action": "ok",
         "reason": "workspace imports + root dep aligned"
+      },
+      {
+        "package": "p2p",
+        "action": "archive-candidate",
+        "reason": "no outside imports, no root dep, no package.json script refs"
       },
       {
         "package": "registry-client",
@@ -730,29 +648,24 @@
         "package": "rip",
         "action": "ok",
         "reason": "workspace imports + root dep aligned"
-      },
-      {
-        "package": "versioning",
-        "action": "archive-candidate",
-        "reason": "no outside imports, no root dep, no package.json script refs"
       }
     ],
     "archiveProbes": [
       {
-        "package": "ab-testing",
+        "package": "business",
         "kind": "library",
-        "srcFiles": 3,
-        "bytes": 5529,
+        "srcFiles": 4,
+        "bytes": 8728,
         "hasTests": false,
         "indexIsEmptyExport": false,
         "recommendation": "keep-review",
         "note": "dormant with real source — review before archive"
       },
       {
-        "package": "versioning",
+        "package": "p2p",
         "kind": "library",
-        "srcFiles": 2,
-        "bytes": 20776,
+        "srcFiles": 4,
+        "bytes": 24728,
         "hasTests": false,
         "indexIsEmptyExport": false,
         "recommendation": "keep-review",
@@ -762,19 +675,11 @@
     "quarantine": [],
     "packageScores": [
       {
-        "package": "ab-testing",
+        "package": "business",
         "score": 85,
         "grade": "needs-improvement",
         "reasons": [
           "dormant library"
-        ]
-      },
-      {
-        "package": "business",
-        "score": 100,
-        "grade": "healthy",
-        "reasons": [
-          "aligned"
         ]
       },
       {
@@ -795,10 +700,10 @@
       },
       {
         "package": "p2p",
-        "score": 100,
-        "grade": "healthy",
+        "score": 85,
+        "grade": "needs-improvement",
         "reasons": [
-          "aligned"
+          "dormant library"
         ]
       },
       {
@@ -816,1866 +721,956 @@
         "reasons": [
           "aligned"
         ]
-      },
-      {
-        "package": "versioning",
-        "score": 85,
-        "grade": "needs-improvement",
-        "reasons": [
-          "dormant library"
-        ]
       }
     ],
     "summary": {
-      "packageCount": 8,
+      "packageCount": 6,
       "consumed": 3,
-      "rootTooling": 3,
+      "rootTooling": 1,
       "scripted": 0,
       "dormant": 2,
       "openActions": 2,
       "archivePlaceholders": 0,
-      "avgPackageScore": 96.3,
+      "avgPackageScore": 95,
       "topHub": "lib/docs",
-      "quarantineCount": 0,
-      "vaultOpenActions": 2,
-      "vaultPackagesWithEnv": 2,
-      "envPackageTouchedKeys": 1,
-      "envMultiPlaneKeys": 27,
-      "envRootRuntimeMissing": 1,
-      "envRootRuntimeNeedsInject": 0,
-      "envRootCoveredByDefault": 1
-    },
-    "vault": {
-      "generatedAt": "2026-07-28T14:02:47.257Z",
-      "templateKeys": [
-        "R2_ACCOUNT_ID",
-        "R2_ACCESS_KEY_ID",
-        "R2_SECRET_ACCESS_KEY",
-        "R2_BUCKET_NAME",
-        "FACTORY_WAGER_TOKEN",
-        "REGISTRY_SECRET",
-        "CLOUDFLARE_API_TOKEN",
-        "CLOUDFLARE_DNS_API_TOKEN",
-        "CLOUDFLARE_ACCOUNT_ID",
-        "TELEGRAM_BOT_FACTORY",
-        "TELEGRAM_WEBHOOK_SECRET",
-        "TELEGRAM_OPS_CHAT_ID",
-        "NODE_ENV",
-        "MCP_LOG_LEVEL",
-        "BUN_CONSOLE_DEPTH",
-        "REDIS_URL",
-        "DOD_PROOF_SECRET",
-        "DOD_ID_ENCRYPTION_KEY",
-        "PROVISION_ENCRYPTION_KEY",
-        "PLAY_SIGNING_SECRET",
-        "REPORT_SIGNING_SECRET"
-      ],
-      "vaultRefs": [
-        {
-          "key": "R2_ACCESS_KEY_ID",
-          "ref": "pass://factorywager/R2 bun-secrets bucket/username"
-        },
-        {
-          "key": "R2_SECRET_ACCESS_KEY",
-          "ref": "pass://factorywager/R2 bun-secrets bucket/password"
-        },
-        {
-          "key": "FACTORY_WAGER_TOKEN",
-          "ref": "pass://factorywager/FactoryWager Registry Token/password"
-        },
-        {
-          "key": "REGISTRY_SECRET",
-          "ref": "pass://factorywager/Registry Dev Secret/password"
-        },
-        {
-          "key": "CLOUDFLARE_API_TOKEN",
-          "ref": "pass://factorywager/Cloudflare API Token/password"
-        },
-        {
-          "key": "CLOUDFLARE_DNS_API_TOKEN",
-          "ref": "pass://factorywager/Cloudflare API Token (DNS)/password"
-        },
-        {
-          "key": "TELEGRAM_BOT_FACTORY",
-          "ref": "pass://factorywager/Telegram: factorywager_bot/password"
-        },
-        {
-          "key": "TELEGRAM_WEBHOOK_SECRET",
-          "ref": "pass://factorywager/Telegram Webhook Secret/password"
-        },
-        {
-          "key": "DOD_PROOF_SECRET",
-          "ref": "pass://factorywager/DOD Proof Secret/password"
-        },
-        {
-          "key": "DOD_ID_ENCRYPTION_KEY",
-          "ref": "pass://factorywager/DOD ID Encryption Key/password"
-        },
-        {
-          "key": "PROVISION_ENCRYPTION_KEY",
-          "ref": "pass://factorywager/Provision Encryption Key/password"
-        },
-        {
-          "key": "PLAY_SIGNING_SECRET",
-          "ref": "pass://factorywager/Play Signing Secret/password"
-        },
-        {
-          "key": "REPORT_SIGNING_SECRET",
-          "ref": "pass://factorywager/Report Signing Secret/password"
-        }
-      ],
-      "envHits": [
-        {
-          "package": "business",
-          "envKey": "REDIS_URL",
-          "kind": "config",
-          "disposition": "config",
-          "inTemplate": true,
-          "runtimePresent": false,
-          "passRef": null,
-          "samples": [
-            "packages/business/src/habits-classifier.ts:33"
-          ]
-        },
-        {
-          "package": "p2p",
-          "envKey": "REDIS_URL",
-          "kind": "config",
-          "disposition": "config",
-          "inTemplate": true,
-          "runtimePresent": false,
-          "passRef": null,
-          "samples": [
-            "packages/p2p/src/customer-notifier.ts:8",
-            "packages/p2p/src/business-continuity.ts:8",
-            "packages/p2p/src/migration-workflow.ts:10"
-          ]
-        }
-      ],
-      "byPackage": [
-        {
-          "package": "business",
-          "envKeys": [
-            "REDIS_URL"
-          ],
-          "secretKeys": [],
-          "vaultedKeys": [],
-          "missingTemplateKeys": []
-        },
-        {
-          "package": "p2p",
-          "envKeys": [
-            "REDIS_URL"
-          ],
-          "secretKeys": [],
-          "vaultedKeys": [],
-          "missingTemplateKeys": []
-        }
-      ],
-      "actions": [],
-      "summary": {
-        "packagesWithEnv": 2,
-        "envKeyCount": 1,
-        "vaultedHits": 0,
-        "missingTemplate": 0,
-        "openVaultActions": 0,
-        "inTemplateHits": 2,
-        "runtimePresentHits": 0
-      }
-    },
-    "env": {
-      "schemaVersion": 3,
-      "kind": "env-inventory",
-      "generatedAt": "2026-07-28T14:02:47.257Z",
-      "scannedRoots": [
-        "lib",
-        "config",
-        "scripts",
-        "tools",
-        "packages"
-      ],
-      "usageCount": 400,
-      "uniqueVars": 183,
-      "byKind": {
-        "ambient": 17,
-        "secret": 15,
-        "config": 151
-      },
-      "vault": {
-        "templateKeyCount": 41,
-        "vaultRefCount": 20,
-        "actionableVaultGaps": [
-          "OPENAI_API_KEY",
-          "SLACK_WEBHOOK_URL"
-        ],
-        "secretsUsedAndVaulted": [
-          "CLOUDFLARE_API_TOKEN",
-          "CLOUDFLARE_DNS_API_TOKEN",
-          "DOD_PROOF_SECRET",
-          "FACTORY_WAGER_TOKEN",
-          "PROVISION_ENCRYPTION_KEY",
-          "R2_ACCESS_KEY_ID",
-          "R2_SECRET_ACCESS_KEY",
-          "REGISTRY_SECRET"
-        ],
-        "secretsUsedButNotInTemplate": [
-          "API_KEY",
-          "API_TOKEN",
-          "OPENAI_API_KEY",
-          "REGISTRY_API_KEY",
-          "SLACK_WEBHOOK_URL",
-          "TELEGRAM_BOT_TOKEN",
-          "TELEGRAM_CATALOG_RESEARCH_LLM_KEY"
-        ]
-      },
-      "topConfig": [
-        {
-          "var": "OPS_DB_PATH",
-          "count": 45,
-          "samples": [
-            "lib/registry-snapshot.ts:135",
-            "lib/monitoring/integrity.ts:37",
-            "lib/telegram/ops-bridge.ts:23",
-            "lib/telegram/ops-bridge.ts:40"
-          ]
-        },
-        {
-          "var": "REDIS_URL",
-          "count": 9,
-          "samples": [
-            "config/ports.ts:27",
-            "tools/bun-api-showcase.ts:293",
-            "tools/bun-api-showcase.ts:653",
-            "tools/bun-api-showcase.ts:654"
-          ]
-        },
-        {
-          "var": "BASE_URL",
-          "count": 4,
-          "samples": [
-            "lib/verification/networking-channel.ts:155",
-            "tools/verify-etag.ts:87",
-            "tools/ops-snapshot.ts:512",
-            "tools/verify-networking.ts:130"
-          ]
-        },
-        {
-          "var": "DOMAIN_REGISTRY_PATH",
-          "count": 4,
-          "samples": [
-            "scripts/domain-registry-status.ts:31",
-            "scripts/search-benchmark-dashboard.ts:8623",
-            "scripts/search-unified-status.ts:134",
-            "scripts/lib/domain-registry.ts:75"
-          ]
-        },
-        {
-          "var": "HEALTH_URL",
-          "count": 4,
-          "samples": [
-            "lib/verification/networking-channel.ts:155",
-            "tools/verify-etag.ts:87",
-            "tools/ops-snapshot.ts:512",
-            "tools/verify-networking.ts:130"
-          ]
-        },
-        {
-          "var": "REGISTRY_URL",
-          "count": 4,
-          "samples": [
-            "lib/registry-snapshot.ts:97",
-            "lib/verification/install-env-probes.ts:35",
-            "tools/ops-snapshot.ts:108",
-            "tools/verify-package-info.ts:19"
-          ]
-        },
-        {
-          "var": "SEARCH_BENCH_DOMAIN",
-          "count": 4,
-          "samples": [
-            "scripts/project-online-readiness.ts:16",
-            "scripts/search-benchmark-dashboard.ts:157",
-            "scripts/search-unified-status.ts:39",
-            "scripts/lib/domain-health-read.ts:383"
-          ]
-        },
-        {
-          "var": "COMPLIANCE_URL",
-          "count": 3,
-          "samples": [
-            "lib/operations/state-compliance-http.ts:517",
-            "tools/bake-compliance-portal.ts:48",
-            "tools/enhanced-compliance-report.ts:262"
-          ]
-        },
-        {
-          "var": "DATABASE_URL",
-          "count": 3,
-          "samples": [
-            "lib/operations/postgres-bridge.ts:34",
-            "tools/bun-api-showcase.ts:594",
-            "tools/bun-api-showcase/oneliners.ts:489"
-          ]
-        },
-        {
-          "var": "FACTORY_REGISTRY_URL",
-          "count": 3,
-          "samples": [
-            "lib/registry-snapshot.ts:97",
-            "lib/verification/install-env-probes.ts:35",
-            "tools/ops-snapshot.ts:108"
-          ]
-        },
-        {
-          "var": "SERVER_HOST",
-          "count": 3,
-          "samples": [
-            "lib/core/url-handler.ts:347",
-            "config/ports.ts:28",
-            "scripts/lib/dashboard-env.ts:28"
-          ]
-        },
-        {
-          "var": "USERPROFILE",
-          "count": 3,
-          "samples": [
-            "lib/docs/cache-manager.ts:54",
-            "lib/security/mintable-secret.ts:50",
-            "scripts/machine-bun-health.ts:22"
-          ]
-        },
-        {
-          "var": "VERSION",
-          "count": 3,
-          "samples": [
-            "lib/routing-proof.ts:737",
-            "tools/routing-registry-proof.ts:42",
-            "tools/bun-utils-registry-proof.ts:35"
-          ]
-        },
-        {
-          "var": "AWS_BUCKET_NAME",
-          "count": 2,
-          "samples": [
-            "scripts/ci-r2-version-check.ts:25",
-            "scripts/ci-r2-version-check.ts:57"
-          ]
-        },
-        {
-          "var": "BUN_CONFIG_MAX_HTTP_REQUESTS",
-          "count": 2,
-          "samples": [
-            "tools/verify-networking.ts:602",
-            "tools/verify-networking.ts:653"
-          ]
-        },
-        {
-          "var": "BUN_CONSOLE_DEPTH",
-          "count": 2,
-          "samples": [
-            "lib/console-depth.ts:80",
-            "tools/live-enhancement-report.ts:50"
-          ]
-        },
-        {
-          "var": "BUN_PORT",
-          "count": 2,
-          "samples": [
-            "tools/bun-serve-defaults-table.ts:199",
-            "tools/bun-serve-defaults-table.ts:204"
-          ]
-        },
-        {
-          "var": "CI_RUN_ID",
-          "count": 2,
-          "samples": [
-            "lib/verification/ratchet.ts:141",
-            "lib/verification/channels.ts:511"
-          ]
-        },
-        {
-          "var": "CLOUDFLARE_ACCOUNT_ID",
-          "count": 2,
-          "samples": [
-            "lib/dod/verifier.ts:119",
-            "tools/cloudflare-pages-deploy.ts:34"
-          ]
-        },
-        {
-          "var": "COMPLIANCE_MOCK_URL",
-          "count": 2,
-          "samples": [
-            "lib/operations/state-compliance-http.ts:518",
-            "tools/show-enhancements.ts:324"
-          ]
-        },
-        {
-          "var": "GITHUB_ENTERPRISE_URL",
-          "count": 2,
-          "samples": [
-            "lib/docs/constants/domains.ts:197",
-            "lib/docs/constants/domains.ts:198"
-          ]
-        },
-        {
-          "var": "KIMI_TOOLCHAIN_ROOT",
-          "count": 2,
-          "samples": [
-            "scripts/machine-bun-health.ts:18",
-            "scripts/machine-bun-health.ts:19"
-          ]
-        },
-        {
-          "var": "MONITORING_SNAPSHOT_PATH",
-          "count": 2,
-          "samples": [
-            "lib/registry-snapshot.ts:138",
-            "tools/ops-snapshot.ts:93"
-          ]
-        },
-        {
-          "var": "OPS_SNAPSHOT_PATH",
-          "count": 2,
-          "samples": [
-            "lib/registry-snapshot.ts:136",
-            "tools/ops-snapshot.ts:78"
-          ]
-        },
-        {
-          "var": "PROTON_PASS_AGENT_REASON",
-          "count": 2,
-          "samples": [
-            "scripts/vault-gap-close.ts:70",
-            "scripts/lib/vault-gap-status.ts:203"
-          ]
-        }
-      ],
-      "owners": [
-        {
-          "envKey": "REDIS_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 9,
-          "planes": [
-            "config",
-            "packages",
-            "tools"
-          ],
-          "packages": [
-            "business",
-            "p2p"
-          ],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "config/ports.ts:27",
-            "tools/bun-api-showcase.ts:293",
-            "tools/bun-api-showcase.ts:653",
-            "tools/bun-api-showcase.ts:654"
-          ]
-        },
-        {
-          "envKey": "API_KEY",
-          "kind": "secret",
-          "disposition": "alias",
-          "count": 6,
-          "planes": [
-            "config",
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/registry-snapshot.ts:98",
-            "lib/docs/constants/utils.ts:848",
-            "config/bun-dx-catalog.ts:276",
-            "tools/routing-registry-proof.ts:40"
-          ]
-        },
-        {
-          "envKey": "FACTORY_WAGER_TOKEN",
-          "kind": "secret",
-          "disposition": "vaulted",
-          "count": 5,
-          "planes": [
-            "lib",
-            "scripts",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": "pass://factorywager/FactoryWager Registry Token/password",
-          "runtimePresent": true,
-          "samples": [
-            "lib/factory/server.ts:181",
-            "lib/verification/install-env-probes.ts:196",
-            "scripts/lib/domain-registry.ts:141",
-            "tools/ops-snapshot.ts:111"
-          ]
-        },
-        {
-          "envKey": "REGISTRY_SECRET",
-          "kind": "secret",
-          "disposition": "vaulted",
-          "count": 4,
-          "planes": [
-            "lib",
-            "scripts",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": "pass://factorywager/Registry Dev Secret/password",
-          "runtimePresent": true,
-          "samples": [
-            "lib/factory/server.ts:181",
-            "scripts/serve-public.ts:1467",
-            "tools/ops-snapshot.ts:110",
-            "tools/verify-formdata.ts:20"
-          ]
-        },
-        {
-          "envKey": "R2_ACCESS_KEY_ID",
-          "kind": "secret",
-          "disposition": "vaulted",
-          "count": 4,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": "pass://factorywager/R2 bun-secrets bucket/username",
-          "runtimePresent": true,
-          "samples": [
-            "lib/factory/object-store.ts:129",
-            "lib/factory/registry.ts:381",
-            "lib/dod/verifier.ts:120",
-            "tools/verify-bun-release.ts:603"
-          ]
-        },
-        {
-          "envKey": "R2_SECRET_ACCESS_KEY",
-          "kind": "secret",
-          "disposition": "vaulted",
-          "count": 4,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": "pass://factorywager/R2 bun-secrets bucket/password",
-          "runtimePresent": true,
-          "samples": [
-            "lib/factory/object-store.ts:130",
-            "lib/factory/registry.ts:382",
-            "lib/dod/verifier.ts:121",
-            "tools/verify-bun-release.ts:604"
-          ]
-        },
-        {
-          "envKey": "REGISTRY_API_KEY",
-          "kind": "secret",
-          "disposition": "alias",
-          "count": 3,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/registry-snapshot.ts:98",
-            "tools/routing-registry-proof.ts:40",
-            "tools/bun-utils-registry-proof.ts:32"
-          ]
-        },
-        {
-          "envKey": "CLOUDFLARE_API_TOKEN",
-          "kind": "secret",
-          "disposition": "vaulted",
-          "count": 4,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": "pass://factorywager/Cloudflare API Token/password",
-          "runtimePresent": true,
-          "samples": [
-            "tools/routing-registry-proof.ts:40",
-            "tools/bun-utils-registry-proof.ts:32",
-            "tools/cloudflare-pages-deploy.ts:21",
-            "tools/cloudflare-pages-deploy.ts:59"
-          ]
-        },
-        {
-          "envKey": "OPENAI_API_KEY",
-          "kind": "secret",
-          "disposition": "vault-required",
-          "count": 3,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/telegram/catalog-research/llm-pass.ts:68",
-            "lib/telegram/catalog-research/llm-pass.ts:77",
-            "lib/telegram/catalog-research/agent.ts:41"
-          ]
-        },
-        {
-          "envKey": "API_TOKEN",
-          "kind": "secret",
-          "disposition": "demo",
-          "count": 2,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "tools/bun-docs-guide-examples.ts:319",
-            "tools/bun-docs-guide-examples.ts:325"
-          ]
-        },
-        {
-          "envKey": "SLACK_WEBHOOK_URL",
-          "kind": "secret",
-          "disposition": "vault-required",
-          "count": 2,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/channels/outbox.ts:436",
-            "lib/factory/alerts.ts:31"
-          ]
-        },
-        {
-          "envKey": "CLOUDFLARE_DNS_API_TOKEN",
-          "kind": "secret",
-          "disposition": "vaulted",
-          "count": 1,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": "pass://factorywager/Cloudflare API Token (DNS)/password",
-          "runtimePresent": true,
-          "samples": [
-            "scripts/cloudflare-dns-sync.ts:93"
-          ]
-        },
-        {
-          "envKey": "DOD_PROOF_SECRET",
-          "kind": "secret",
-          "disposition": "vaulted",
-          "count": 1,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": "pass://factorywager/DOD Proof Secret/password",
-          "runtimePresent": true,
-          "samples": [
-            "lib/dod/evidence.ts:231"
-          ]
-        },
-        {
-          "envKey": "PROVISION_ENCRYPTION_KEY",
-          "kind": "secret",
-          "disposition": "vaulted",
-          "count": 1,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": "pass://factorywager/Provision Encryption Key/password",
-          "runtimePresent": true,
-          "samples": [
-            "tools/provision-queue.ts:104"
-          ]
-        },
-        {
-          "envKey": "TELEGRAM_BOT_TOKEN",
-          "kind": "secret",
-          "disposition": "alias",
-          "count": 1,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/operations/account-service.ts:425"
-          ]
-        },
-        {
-          "envKey": "TELEGRAM_CATALOG_RESEARCH_LLM_KEY",
-          "kind": "secret",
-          "disposition": "alias",
-          "count": 1,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/telegram/catalog-research/llm-pass.ts:68"
-          ]
-        },
-        {
-          "envKey": "HOME",
-          "kind": "ambient",
-          "disposition": "ambient",
-          "count": 20,
-          "planes": [
-            "config",
-            "lib",
-            "scripts",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": true,
-          "samples": [
-            "lib/gate-map.ts:80",
-            "lib/package/package-manager.ts:42",
-            "lib/telegram/telegram-env-bind.ts:136",
-            "lib/telegram/catalog-research/load-reasonix-env.ts:16"
-          ]
-        },
-        {
-          "envKey": "OPS_DB_PATH",
-          "kind": "config",
-          "disposition": "config",
-          "count": 45,
-          "planes": [
-            "lib",
-            "scripts",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/registry-snapshot.ts:135",
-            "lib/monitoring/integrity.ts:37",
-            "lib/telegram/ops-bridge.ts:23",
-            "lib/telegram/ops-bridge.ts:40"
-          ]
-        },
-        {
-          "envKey": "PORT",
-          "kind": "ambient",
-          "disposition": "ambient",
-          "count": 4,
-          "planes": [
-            "lib",
-            "scripts",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/factory/server.ts:387",
-            "scripts/lib/dashboard-env.ts:36",
-            "tools/bun-serve-defaults-table.ts:200",
-            "tools/bun-serve-defaults-table.ts:204"
-          ]
-        },
-        {
-          "envKey": "SERVER_HOST",
-          "kind": "config",
-          "disposition": "config",
-          "count": 3,
-          "planes": [
-            "config",
-            "lib",
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/core/url-handler.ts:347",
-            "config/ports.ts:28",
-            "scripts/lib/dashboard-env.ts:28"
-          ]
-        },
-        {
-          "envKey": "BASE_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 4,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/verification/networking-channel.ts:155",
-            "tools/verify-etag.ts:87",
-            "tools/ops-snapshot.ts:512",
-            "tools/verify-networking.ts:130"
-          ]
-        },
-        {
-          "envKey": "HEALTH_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 4,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/verification/networking-channel.ts:155",
-            "tools/verify-etag.ts:87",
-            "tools/ops-snapshot.ts:512",
-            "tools/verify-networking.ts:130"
-          ]
-        },
-        {
-          "envKey": "REGISTRY_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 4,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/registry-snapshot.ts:97",
-            "lib/verification/install-env-probes.ts:35",
-            "tools/ops-snapshot.ts:108",
-            "tools/verify-package-info.ts:19"
-          ]
-        },
-        {
-          "envKey": "COMPLIANCE_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 3,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/operations/state-compliance-http.ts:517",
-            "tools/bake-compliance-portal.ts:48",
-            "tools/enhanced-compliance-report.ts:262"
-          ]
-        },
-        {
-          "envKey": "DATABASE_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 3,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/operations/postgres-bridge.ts:34",
-            "tools/bun-api-showcase.ts:594",
-            "tools/bun-api-showcase/oneliners.ts:489"
-          ]
-        },
-        {
-          "envKey": "FACTORY_REGISTRY_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 3,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/registry-snapshot.ts:97",
-            "lib/verification/install-env-probes.ts:35",
-            "tools/ops-snapshot.ts:108"
-          ]
-        },
-        {
-          "envKey": "PATH",
-          "kind": "ambient",
-          "disposition": "ambient",
-          "count": 3,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": true,
-          "samples": [
-            "lib/verification/resolve-bun-binary.ts:98",
-            "tools/overseer-cli.ts:39",
-            "tools/bun-api-showcase.ts:644"
-          ]
-        },
-        {
-          "envKey": "USERPROFILE",
-          "kind": "config",
-          "disposition": "config",
-          "count": 3,
-          "planes": [
-            "lib",
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/docs/cache-manager.ts:54",
-            "lib/security/mintable-secret.ts:50",
-            "scripts/machine-bun-health.ts:22"
-          ]
-        },
-        {
-          "envKey": "VERSION",
-          "kind": "config",
-          "disposition": "config",
-          "count": 3,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/routing-proof.ts:737",
-            "tools/routing-registry-proof.ts:42",
-            "tools/bun-utils-registry-proof.ts:35"
-          ]
-        },
-        {
-          "envKey": "BUN_CONSOLE_DEPTH",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": null,
-          "runtimePresent": true,
-          "samples": [
-            "lib/console-depth.ts:80",
-            "tools/live-enhancement-report.ts:50"
-          ]
-        },
-        {
-          "envKey": "CLOUDFLARE_ACCOUNT_ID",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": null,
-          "runtimePresent": true,
-          "samples": [
-            "lib/dod/verifier.ts:119",
-            "tools/cloudflare-pages-deploy.ts:34"
-          ]
-        },
-        {
-          "envKey": "COMPLIANCE_MOCK_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/operations/state-compliance-http.ts:518",
-            "tools/show-enhancements.ts:324"
-          ]
-        },
-        {
-          "envKey": "HOST",
-          "kind": "ambient",
-          "disposition": "ambient",
-          "count": 2,
-          "planes": [
-            "lib",
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/core/url-handler.ts:347",
-            "scripts/serve-public.ts:138"
-          ]
-        },
-        {
-          "envKey": "MONITORING_SNAPSHOT_PATH",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/registry-snapshot.ts:138",
-            "tools/ops-snapshot.ts:93"
-          ]
-        },
-        {
-          "envKey": "OPS_SNAPSHOT_PATH",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/registry-snapshot.ts:136",
-            "tools/ops-snapshot.ts:78"
-          ]
-        },
-        {
-          "envKey": "PWD",
-          "kind": "ambient",
-          "disposition": "ambient",
-          "count": 2,
-          "planes": [
-            "lib",
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": true,
-          "samples": [
-            "lib/package/package-manager.ts:40",
-            "tools/cli/integrated-cli.ts:83"
-          ]
-        },
-        {
-          "envKey": "DOMAIN_REGISTRY_PATH",
-          "kind": "config",
-          "disposition": "config",
-          "count": 4,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "scripts/domain-registry-status.ts:31",
-            "scripts/search-benchmark-dashboard.ts:8623",
-            "scripts/search-unified-status.ts:134",
-            "scripts/lib/domain-registry.ts:75"
-          ]
-        },
-        {
-          "envKey": "SEARCH_BENCH_DOMAIN",
-          "kind": "config",
-          "disposition": "config",
-          "count": 4,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "scripts/project-online-readiness.ts:16",
-            "scripts/search-benchmark-dashboard.ts:157",
-            "scripts/search-unified-status.ts:39",
-            "scripts/lib/domain-health-read.ts:383"
-          ]
-        },
-        {
-          "envKey": "TMP",
-          "kind": "ambient",
-          "disposition": "ambient",
-          "count": 3,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "tools/bun-api-showcase.ts:116",
-            "tools/run-verified.ts:43",
-            "tools/verify-networking.ts:413"
-          ]
-        },
-        {
-          "envKey": "TMPDIR",
-          "kind": "ambient",
-          "disposition": "ambient",
-          "count": 3,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": true,
-          "samples": [
-            "tools/bun-api-showcase.ts:116",
-            "tools/run-verified.ts:43",
-            "tools/verify-networking.ts:413"
-          ]
-        },
-        {
-          "envKey": "AWS_BUCKET_NAME",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "scripts/ci-r2-version-check.ts:25",
-            "scripts/ci-r2-version-check.ts:57"
-          ]
-        },
-        {
-          "envKey": "BUN_CONFIG_MAX_HTTP_REQUESTS",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "tools/verify-networking.ts:602",
-            "tools/verify-networking.ts:653"
-          ]
-        },
-        {
-          "envKey": "BUN_PORT",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "tools/bun-serve-defaults-table.ts:199",
-            "tools/bun-serve-defaults-table.ts:204"
-          ]
-        },
-        {
-          "envKey": "CI_RUN_ID",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/verification/ratchet.ts:141",
-            "lib/verification/channels.ts:511"
-          ]
-        },
-        {
-          "envKey": "GITHUB_ENTERPRISE_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/docs/constants/domains.ts:197",
-            "lib/docs/constants/domains.ts:198"
-          ]
-        },
-        {
-          "envKey": "KIMI_TOOLCHAIN_ROOT",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": true,
-          "samples": [
-            "scripts/machine-bun-health.ts:18",
-            "scripts/machine-bun-health.ts:19"
-          ]
-        },
-        {
-          "envKey": "NODE_PORT",
-          "kind": "ambient",
-          "disposition": "ambient",
-          "count": 2,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "tools/bun-serve-defaults-table.ts:201",
-            "tools/bun-serve-defaults-table.ts:204"
-          ]
-        },
-        {
-          "envKey": "PROTON_PASS_AGENT_REASON",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "scripts/vault-gap-close.ts:70",
-            "scripts/lib/vault-gap-status.ts:203"
-          ]
-        },
-        {
-          "envKey": "R2_BUCKET_NAME",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": true,
-          "inAnyTemplate": true,
-          "passRef": null,
-          "runtimePresent": true,
-          "samples": [
-            "scripts/ci-r2-version-check.ts:23",
-            "scripts/ci-r2-version-check.ts:55"
-          ]
-        },
-        {
-          "envKey": "R2_PUBLIC_BASE",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "tools/verify-networking.ts:231",
-            "tools/verify-networking.ts:660"
-          ]
-        },
-        {
-          "envKey": "R2_PUBLIC_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "tools/verify-networking.ts:231",
-            "tools/verify-networking.ts:660"
-          ]
-        },
-        {
-          "envKey": "REGISTRY_PUBLIC_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/factory/health.ts:72",
-            "lib/factory/resolve.ts:22"
-          ]
-        },
-        {
-          "envKey": "REGISTRY_SECRETS_SERVICE",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/security/infra-secrets.ts:33",
-            "lib/security/infra-secrets.ts:135"
-          ]
-        },
-        {
-          "envKey": "S3_BUCKET_NAME",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "scripts/ci-r2-version-check.ts:24",
-            "scripts/ci-r2-version-check.ts:56"
-          ]
-        },
-        {
-          "envKey": "SEARCH_BENCH_QUERY_RETRIES",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "scripts/search-benchmark-snapshot.ts:206",
-            "scripts/search-benchmark.ts:136"
-          ]
-        },
-        {
-          "envKey": "SEARCH_BENCH_QUERY_TIMEOUT_MS",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "scripts"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "scripts/search-benchmark-snapshot.ts:202",
-            "scripts/search-benchmark.ts:132"
-          ]
-        },
-        {
-          "envKey": "TELEGRAM_CATALOG_RESEARCH_LLM_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 2,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/telegram/catalog-research/llm-pass.ts:66",
-            "lib/telegram/catalog-research/agent.ts:41"
-          ]
-        },
-        {
-          "envKey": "AB_TESTING_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 1,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/core/url-service.ts:24"
-          ]
-        },
-        {
-          "envKey": "API_BASE_URL",
-          "kind": "config",
-          "disposition": "config",
-          "count": 1,
-          "planes": [
-            "lib"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "lib/core/url-service.ts:21"
-          ]
-        },
-        {
-          "envKey": "AUDIT_CATALOG_PATH",
-          "kind": "config",
-          "disposition": "config",
-          "count": 1,
-          "planes": [
-            "tools"
-          ],
-          "packages": [],
-          "inRootTemplate": false,
-          "inAnyTemplate": false,
-          "passRef": null,
-          "runtimePresent": false,
-          "samples": [
-            "tools/audit-catalog.ts:43"
-          ]
-        }
-      ],
-      "defaultsIssues": {
-        "total": 0,
-        "packages": 0,
-        "harness": 0,
-        "top": []
-      },
-      "packagesPlane": {
-        "generatedAt": "2026-07-28T14:02:47.257Z",
-        "templateKeys": [
-          "R2_ACCOUNT_ID",
-          "R2_ACCESS_KEY_ID",
-          "R2_SECRET_ACCESS_KEY",
-          "R2_BUCKET_NAME",
-          "FACTORY_WAGER_TOKEN",
-          "REGISTRY_SECRET",
-          "CLOUDFLARE_API_TOKEN",
-          "CLOUDFLARE_DNS_API_TOKEN",
-          "CLOUDFLARE_ACCOUNT_ID",
-          "TELEGRAM_BOT_FACTORY",
-          "TELEGRAM_WEBHOOK_SECRET",
-          "TELEGRAM_OPS_CHAT_ID",
-          "NODE_ENV",
-          "MCP_LOG_LEVEL",
-          "BUN_CONSOLE_DEPTH",
-          "REDIS_URL",
-          "DOD_PROOF_SECRET",
-          "DOD_ID_ENCRYPTION_KEY",
-          "PROVISION_ENCRYPTION_KEY",
-          "PLAY_SIGNING_SECRET",
-          "REPORT_SIGNING_SECRET"
-        ],
-        "vaultRefs": [
-          {
-            "key": "R2_ACCESS_KEY_ID",
-            "ref": "pass://factorywager/R2 bun-secrets bucket/username"
-          },
-          {
-            "key": "R2_SECRET_ACCESS_KEY",
-            "ref": "pass://factorywager/R2 bun-secrets bucket/password"
-          },
-          {
-            "key": "FACTORY_WAGER_TOKEN",
-            "ref": "pass://factorywager/FactoryWager Registry Token/password"
-          },
-          {
-            "key": "REGISTRY_SECRET",
-            "ref": "pass://factorywager/Registry Dev Secret/password"
-          },
-          {
-            "key": "CLOUDFLARE_API_TOKEN",
-            "ref": "pass://factorywager/Cloudflare API Token/password"
-          },
-          {
-            "key": "CLOUDFLARE_DNS_API_TOKEN",
-            "ref": "pass://factorywager/Cloudflare API Token (DNS)/password"
-          },
-          {
-            "key": "TELEGRAM_BOT_FACTORY",
-            "ref": "pass://factorywager/Telegram: factorywager_bot/password"
-          },
-          {
-            "key": "TELEGRAM_WEBHOOK_SECRET",
-            "ref": "pass://factorywager/Telegram Webhook Secret/password"
-          },
-          {
-            "key": "DOD_PROOF_SECRET",
-            "ref": "pass://factorywager/DOD Proof Secret/password"
-          },
-          {
-            "key": "DOD_ID_ENCRYPTION_KEY",
-            "ref": "pass://factorywager/DOD ID Encryption Key/password"
-          },
-          {
-            "key": "PROVISION_ENCRYPTION_KEY",
-            "ref": "pass://factorywager/Provision Encryption Key/password"
-          },
-          {
-            "key": "PLAY_SIGNING_SECRET",
-            "ref": "pass://factorywager/Play Signing Secret/password"
-          },
-          {
-            "key": "REPORT_SIGNING_SECRET",
-            "ref": "pass://factorywager/Report Signing Secret/password"
-          }
-        ],
-        "envHits": [
-          {
-            "package": "business",
-            "envKey": "REDIS_URL",
-            "kind": "config",
-            "disposition": "config",
-            "inTemplate": true,
-            "runtimePresent": false,
-            "passRef": null,
-            "samples": [
-              "packages/business/src/habits-classifier.ts:33"
-            ]
-          },
-          {
-            "package": "p2p",
-            "envKey": "REDIS_URL",
-            "kind": "config",
-            "disposition": "config",
-            "inTemplate": true,
-            "runtimePresent": false,
-            "passRef": null,
-            "samples": [
-              "packages/p2p/src/customer-notifier.ts:8",
-              "packages/p2p/src/business-continuity.ts:8",
-              "packages/p2p/src/migration-workflow.ts:10"
-            ]
-          }
-        ],
-        "byPackage": [
-          {
-            "package": "business",
-            "envKeys": [
-              "REDIS_URL"
-            ],
-            "secretKeys": [],
-            "vaultedKeys": [],
-            "missingTemplateKeys": []
-          },
-          {
-            "package": "p2p",
-            "envKeys": [
-              "REDIS_URL"
-            ],
-            "secretKeys": [],
-            "vaultedKeys": [],
-            "missingTemplateKeys": []
-          }
-        ],
-        "actions": [],
-        "summary": {
-          "packagesWithEnv": 2,
-          "envKeyCount": 1,
-          "vaultedHits": 0,
-          "missingTemplate": 0,
-          "openVaultActions": 0,
-          "inTemplateHits": 2,
-          "runtimePresentHits": 0
-        }
-      },
-      "runtime": {
-        "root": {
-          "templateKeysPresent": 20,
-          "templateKeysMissing": 1,
-          "missingKeys": [
-            "REDIS_URL"
-          ],
-          "missingNeedsInject": [],
-          "coveredByTemplateDefault": [
-            "REDIS_URL"
-          ]
-        },
-        "products": {
-          "templateKeysPresent": 4,
-          "templateKeysMissing": 16,
-          "missingKeys": [
-            "ADMIN_PASSWORD",
-            "AGENT_ID",
-            "BACKUP_DIR",
-            "BACKUP_RETENTION_DAYS",
-            "BET_TICKER_WORKER_URL",
-            "CASCADE_DB_PATH",
-            "CASCADE_HOSTNAME",
-            "CASCADE_LOG_LEVEL",
-            "CASCADE_PORT",
-            "CSRF_SECRET",
-            "HYGIENE_JWT_SECRET",
-            "INITIAL_TOKEN",
-            "LOG_LEVEL",
-            "OFFICE",
-            "R2_S3_ENDPOINT",
-            "SCANNER_PORT"
-          ],
-          "missingNeedsInject": [
-            "ADMIN_PASSWORD",
-            "CSRF_SECRET",
-            "HYGIENE_JWT_SECRET",
-            "INITIAL_TOKEN"
-          ],
-          "coveredByTemplateDefault": [
-            "AGENT_ID",
-            "BACKUP_DIR",
-            "BACKUP_RETENTION_DAYS",
-            "BET_TICKER_WORKER_URL",
-            "CASCADE_DB_PATH",
-            "CASCADE_HOSTNAME",
-            "CASCADE_LOG_LEVEL",
-            "CASCADE_PORT",
-            "LOG_LEVEL",
-            "OFFICE",
-            "R2_S3_ENDPOINT",
-            "SCANNER_PORT"
-          ]
-        },
-        "templateKeysPresent": 20,
-        "templateKeysMissing": 17,
-        "missingKeys": [
-          "ADMIN_PASSWORD",
-          "AGENT_ID",
-          "BACKUP_DIR",
-          "BACKUP_RETENTION_DAYS",
-          "BET_TICKER_WORKER_URL",
-          "CASCADE_DB_PATH",
-          "CASCADE_HOSTNAME",
-          "CASCADE_LOG_LEVEL",
-          "CASCADE_PORT",
-          "CSRF_SECRET",
-          "HYGIENE_JWT_SECRET",
-          "INITIAL_TOKEN",
-          "LOG_LEVEL",
-          "OFFICE",
-          "R2_S3_ENDPOINT",
-          "REDIS_URL",
-          "SCANNER_PORT"
-        ],
-        "missingNeedsInject": [
-          "ADMIN_PASSWORD",
-          "CSRF_SECRET",
-          "HYGIENE_JWT_SECRET",
-          "INITIAL_TOKEN"
-        ],
-        "coveredByTemplateDefault": [
-          "AGENT_ID",
-          "BACKUP_DIR",
-          "BACKUP_RETENTION_DAYS",
-          "BET_TICKER_WORKER_URL",
-          "CASCADE_DB_PATH",
-          "CASCADE_HOSTNAME",
-          "CASCADE_LOG_LEVEL",
-          "CASCADE_PORT",
-          "LOG_LEVEL",
-          "OFFICE",
-          "R2_S3_ENDPOINT",
-          "REDIS_URL",
-          "SCANNER_PORT"
-        ]
-      },
-      "summary": {
-        "ownerCount": 60,
-        "packageTouchedKeys": 1,
-        "multiPlaneKeys": 27,
-        "rootRuntimeMissing": 1,
-        "rootRuntimeNeedsInject": 0,
-        "rootCoveredByDefault": 1,
-        "defaultsIssueCount": 0
-      }
+      "quarantineCount": 0
     }
   },
-  "packages": [
-    {
-      "name": "ab-testing",
-      "scanned": 3,
-      "inGraph": 3,
-      "orphans": 0,
-      "bytes": 5529,
-      "score": 85,
-      "grade": "needs-improvement",
-      "role": "dormant"
+  "surfaces": {
+    "schemaVersion": 1,
+    "kind": "monorepo-surfaces",
+    "generatedAt": "2026-07-28T17:38:18.616Z",
+    "summary": {
+      "workspaceMembers": 8,
+      "packagesPlane": 6,
+      "otherWorkspaces": 2,
+      "portalPages": 19,
+      "portalModules": 27,
+      "chromeComponents": 12,
+      "brandAssets": 20,
+      "registryTopLevelJson": 54,
+      "registryStoragePackages": 9
     },
+    "workspaces": [
+      {
+        "path": "lib/shared",
+        "name": "@factorywager/shared",
+        "version": "0.1.0",
+        "plane": "lib",
+        "inPackagesGraph": false
+      },
+      {
+        "path": "packages/business",
+        "name": "@factorywager/business",
+        "version": "0.1.0",
+        "plane": "packages",
+        "inPackagesGraph": true
+      },
+      {
+        "path": "packages/docs-tools",
+        "name": "@factorywager/docs-tools",
+        "version": "0.1.0",
+        "plane": "packages",
+        "inPackagesGraph": true
+      },
+      {
+        "path": "packages/guards",
+        "name": "@factorywager/guards",
+        "version": "0.1.0",
+        "plane": "packages",
+        "inPackagesGraph": true
+      },
+      {
+        "path": "packages/p2p",
+        "name": "@factorywager/p2p",
+        "version": "0.1.0",
+        "plane": "packages",
+        "inPackagesGraph": true
+      },
+      {
+        "path": "packages/registry-client",
+        "name": "@factorywager/registry-client",
+        "version": "1.0.0",
+        "plane": "packages",
+        "inPackagesGraph": true
+      },
+      {
+        "path": "packages/rip",
+        "name": "@factorywager/rip",
+        "version": "0.1.0",
+        "plane": "packages",
+        "inPackagesGraph": true
+      },
+      {
+        "path": "projects/active/sports-terminal-os",
+        "name": "sports-terminal-os",
+        "version": "5.2.0",
+        "plane": "projects",
+        "inPackagesGraph": false
+      }
+    ],
+    "packagesGraphDirs": [
+      "business",
+      "docs-tools",
+      "guards",
+      "p2p",
+      "registry-client",
+      "rip"
+    ],
+    "portal": {
+      "pages": [
+        {
+          "href": "/portal/",
+          "slug": "",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/catalog/",
+          "slug": "catalog",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/compliance/",
+          "slug": "compliance",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/dashboard/",
+          "slug": "dashboard",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/dod/",
+          "slug": "dod",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/env/",
+          "slug": "env",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/factory/",
+          "slug": "factory",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/failures/",
+          "slug": "failures",
+          "hasIndex": true,
+          "hasMd": false
+        },
+        {
+          "href": "/portal/health/",
+          "slug": "health",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/limits/",
+          "slug": "limits",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/ops/",
+          "slug": "ops",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/packages/",
+          "slug": "packages",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/partner-history/",
+          "slug": "partner-history",
+          "hasIndex": true,
+          "hasMd": false
+        },
+        {
+          "href": "/portal/science/",
+          "slug": "science",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/skills/",
+          "slug": "skills",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/tennis/",
+          "slug": "tennis",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/toc/",
+          "slug": "toc",
+          "hasIndex": true,
+          "hasMd": true
+        },
+        {
+          "href": "/portal/tools/",
+          "slug": "tools",
+          "hasIndex": true,
+          "hasMd": false
+        },
+        {
+          "href": "/portal/vault/",
+          "slug": "vault",
+          "hasIndex": true,
+          "hasMd": false
+        }
+      ],
+      "modules": [
+        {
+          "path": "//portal/_page-template.html",
+          "kind": "template",
+          "id": "_page-template"
+        },
+        {
+          "path": "//portal/app.js",
+          "kind": "module",
+          "id": "app"
+        },
+        {
+          "path": "//portal/card.js",
+          "kind": "module",
+          "id": "card"
+        },
+        {
+          "path": "//portal/channel-filter.js",
+          "kind": "module",
+          "id": "channel-filter"
+        },
+        {
+          "path": "//portal/compliance/compliance-dashboard.js",
+          "kind": "page-script",
+          "id": "compliance-dashboard"
+        },
+        {
+          "path": "//portal/components/footer.js",
+          "kind": "component",
+          "id": "footer"
+        },
+        {
+          "path": "//portal/components/limit-changes-card.js",
+          "kind": "component",
+          "id": "limit-changes-card"
+        },
+        {
+          "path": "//portal/components/notification.js",
+          "kind": "component",
+          "id": "notification"
+        },
+        {
+          "path": "//portal/components/sidebar.js",
+          "kind": "component",
+          "id": "sidebar"
+        },
+        {
+          "path": "//portal/dashboard-app.js",
+          "kind": "module",
+          "id": "dashboard-app"
+        },
+        {
+          "path": "//portal/dashboard.js",
+          "kind": "module",
+          "id": "dashboard"
+        },
+        {
+          "path": "//portal/data.js",
+          "kind": "module",
+          "id": "data"
+        },
+        {
+          "path": "//portal/dod/dod-dashboard.js",
+          "kind": "page-script",
+          "id": "dod-dashboard"
+        },
+        {
+          "path": "//portal/health-page.js",
+          "kind": "module",
+          "id": "health-page"
+        },
+        {
+          "path": "//portal/health.js",
+          "kind": "module",
+          "id": "health"
+        },
+        {
+          "path": "//portal/nav-badges.js",
+          "kind": "module",
+          "id": "nav-badges"
+        },
+        {
+          "path": "//portal/navigation.js",
+          "kind": "module",
+          "id": "navigation"
+        },
+        {
+          "path": "//portal/operations-dashboard.js",
+          "kind": "module",
+          "id": "operations-dashboard"
+        },
+        {
+          "path": "//portal/packages/packages-board.js",
+          "kind": "page-script",
+          "id": "packages-board"
+        },
+        {
+          "path": "//portal/search.js",
+          "kind": "module",
+          "id": "search"
+        },
+        {
+          "path": "//portal/style.css",
+          "kind": "style",
+          "id": "style"
+        },
+        {
+          "path": "//portal/theme-tokens.css",
+          "kind": "theme",
+          "id": "theme-tokens"
+        },
+        {
+          "path": "//portal/theme.jsonc",
+          "kind": "theme",
+          "id": "theme"
+        },
+        {
+          "path": "//portal/toc/toc-dashboard.js",
+          "kind": "page-script",
+          "id": "toc-dashboard"
+        },
+        {
+          "path": "//portal/tools/tools-hub.js",
+          "kind": "page-script",
+          "id": "tools-hub"
+        },
+        {
+          "path": "//portal/topbar.js",
+          "kind": "module",
+          "id": "topbar"
+        },
+        {
+          "path": "//portal/verification-card.js",
+          "kind": "module",
+          "id": "verification-card"
+        }
+      ],
+      "chromeComponents": [
+        {
+          "id": "data",
+          "path": "/portal/data.js",
+          "kind": "module",
+          "role": "SWR health service · portal:data"
+        },
+        {
+          "id": "nav-badges",
+          "path": "/portal/nav-badges.js",
+          "kind": "module",
+          "role": "live counts from baked registry JSON on nav links"
+        },
+        {
+          "id": "topbar",
+          "path": "/portal/topbar.js",
+          "kind": "module",
+          "role": "health dot · nav current · sidebar bootstrap · nav badges"
+        },
+        {
+          "id": "navigation",
+          "path": "/portal/navigation.js",
+          "kind": "module",
+          "role": "markCurrentNavigation path SSOT"
+        },
+        {
+          "id": "sidebar",
+          "path": "/portal/components/sidebar.js",
+          "kind": "module",
+          "role": "tenant switcher"
+        },
+        {
+          "id": "notification",
+          "path": "/portal/components/notification.js",
+          "kind": "module",
+          "role": "notification-center toasts"
+        },
+        {
+          "id": "footer",
+          "path": "/portal/components/footer.js",
+          "kind": "module",
+          "role": "shared footer from portal-chrome registry"
+        },
+        {
+          "id": "limit-changes-card",
+          "path": "/portal/components/limit-changes-card.js",
+          "kind": "module",
+          "role": "reusable limit-raises card"
+        },
+        {
+          "id": "style",
+          "path": "/portal/style.css",
+          "kind": "style",
+          "role": "design tokens · chrome layout"
+        },
+        {
+          "id": "page-template",
+          "path": "/portal/_page-template.html",
+          "kind": "template",
+          "role": "new page shell SSOT"
+        },
+        {
+          "id": "operations-dashboard",
+          "path": "/portal/operations-dashboard.js",
+          "kind": "module",
+          "role": "ops custom element · monorepoHealth panel"
+        },
+        {
+          "id": "toc-dashboard",
+          "path": "/portal/toc/toc-dashboard.js",
+          "kind": "module",
+          "role": "TOC Drum/Buffer/Rope · harness glance"
+        }
+      ],
+      "theme": {
+        "jsonc": true,
+        "tokensCss": true,
+        "styleCss": true
+      }
+    },
+    "brand": {
+      "tenants": [
+        "factory",
+        "science",
+        "telegram",
+        "tennis"
+      ],
+      "assets": [
+        {
+          "path": "public/brand/telegram/toc-ops-profile.jpg",
+          "tenant": "telegram",
+          "kind": "brand"
+        },
+        {
+          "path": "public/icons/factory/mark-16.webp",
+          "tenant": "factory",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/factory/mark-32.webp",
+          "tenant": "factory",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/factory/mark-64.webp",
+          "tenant": "factory",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/factory/mark.png",
+          "tenant": "factory",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/factory/mark.svg",
+          "tenant": "factory",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/factory/mark.thumbhash.txt",
+          "tenant": "factory",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/manifest.json",
+          "kind": "manifest"
+        },
+        {
+          "path": "public/icons/science/mark-16.webp",
+          "tenant": "science",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/science/mark-32.webp",
+          "tenant": "science",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/science/mark-64.webp",
+          "tenant": "science",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/science/mark.png",
+          "tenant": "science",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/science/mark.svg",
+          "tenant": "science",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/science/mark.thumbhash.txt",
+          "tenant": "science",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/tennis/mark-16.webp",
+          "tenant": "tennis",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/tennis/mark-32.webp",
+          "tenant": "tennis",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/tennis/mark-64.webp",
+          "tenant": "tennis",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/tennis/mark.png",
+          "tenant": "tennis",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/tennis/mark.svg",
+          "tenant": "tennis",
+          "kind": "icon"
+        },
+        {
+          "path": "public/icons/tennis/mark.thumbhash.txt",
+          "tenant": "tennis",
+          "kind": "icon"
+        }
+      ]
+    },
+    "registry": {
+      "topLevel": [
+        {
+          "file": "bun-defaults-proof.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 4022
+        },
+        {
+          "file": "bun-runtime-nits-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 15065
+        },
+        {
+          "file": "bundler-loaders-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 9961
+        },
+        {
+          "file": "catalog-snapshot.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 4451
+        },
+        {
+          "file": "channel-meta-bake.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 821
+        },
+        {
+          "file": "cloudflare-pages-preflight.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 1069
+        },
+        {
+          "file": "cloudflare-token-scope-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 3019
+        },
+        {
+          "file": "compliance-board.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 8511
+        },
+        {
+          "file": "compliance-enhancements.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 3043
+        },
+        {
+          "file": "compliance-shadow.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 2156
+        },
+        {
+          "file": "content-type-matrix.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 11701
+        },
+        {
+          "file": "defaults-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 4856
+        },
+        {
+          "file": "doc-index.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 164860
+        },
+        {
+          "file": "docs-coverage-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 2750
+        },
+        {
+          "file": "dod-queue.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 4713
+        },
+        {
+          "file": "dod-registry.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 2187
+        },
+        {
+          "file": "env-inventory.json",
+          "kind": "env-inventory",
+          "schemaVersion": 3,
+          "bytes": 49270
+        },
+        {
+          "file": "failures.json",
+          "kind": "test-failures",
+          "schemaVersion": null,
+          "bytes": 250
+        },
+        {
+          "file": "formdata-proof.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 2914
+        },
+        {
+          "file": "guides-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 1240
+        },
+        {
+          "file": "harness-skills-catalog.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 18656
+        },
+        {
+          "file": "install-env-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 8488
+        },
+        {
+          "file": "install-platform.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 10384
+        },
+        {
+          "file": "limit-raises.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 59659
+        },
+        {
+          "file": "monitoring.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 12176
+        },
+        {
+          "file": "monorepo-health.json",
+          "kind": "monorepo-health",
+          "schemaVersion": 1,
+          "bytes": 1131
+        },
+        {
+          "file": "networking-channel-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 10592
+        },
+        {
+          "file": "networking-proof.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 9217
+        },
+        {
+          "file": "ops-summary.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 67452
+        },
+        {
+          "file": "package-info.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 1027
+        },
+        {
+          "file": "packages-graph-map.json",
+          "kind": "packages-graph-map",
+          "schemaVersion": 12,
+          "bytes": 13781
+        },
+        {
+          "file": "portal-chrome.json",
+          "kind": "portal-chrome",
+          "schemaVersion": 1,
+          "bytes": 8115
+        },
+        {
+          "file": "portal-weave.json",
+          "kind": "portal-weave",
+          "schemaVersion": 2,
+          "bytes": 18186
+        },
+        {
+          "file": "projects-registry.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 17207
+        },
+        {
+          "file": "proof-taxonomy-audit.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 7041
+        },
+        {
+          "file": "ratchet.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 691
+        },
+        {
+          "file": "registry-client-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 4010
+        },
+        {
+          "file": "registry.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 19740
+        },
+        {
+          "file": "release-features.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 109656
+        },
+        {
+          "file": "seat-capital-desk.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 7467
+        },
+        {
+          "file": "skills-catalog.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 27769
+        },
+        {
+          "file": "static.json",
+          "kind": null,
+          "schemaVersion": 1,
+          "bytes": 115523
+        },
+        {
+          "file": "telegram-handshake-catalog.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 17963
+        },
+        {
+          "file": "telegram-handshake.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 3073
+        },
+        {
+          "file": "toc-ops-bake-proof.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 1141
+        },
+        {
+          "file": "toc-ops.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 383949
+        },
+        {
+          "file": "vault-health.json",
+          "kind": "vault-health",
+          "schemaVersion": null,
+          "bytes": 2547
+        },
+        {
+          "file": "vault-map.json",
+          "kind": "vault-map-bundle",
+          "schemaVersion": 1,
+          "bytes": 7345
+        },
+        {
+          "file": "verification-index.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 2060
+        },
+        {
+          "file": "verification-pinned-1.3.14.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 54601
+        },
+        {
+          "file": "verification-stable-1.4.0-bundler.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 6416
+        },
+        {
+          "file": "verification-stable-1.4.0-networking.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 10592
+        },
+        {
+          "file": "verification-stable-1.4.0.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 109656
+        },
+        {
+          "file": "vps-health.json",
+          "kind": null,
+          "schemaVersion": null,
+          "bytes": 606
+        }
+      ],
+      "storagePackageNames": [
+        "@factory/health-check",
+        "@factorywager/bun-test",
+        "@factorywager/final-test",
+        "@factorywager/registry-client",
+        "__formdata-test",
+        "formdata-test",
+        "sdk-test-pkg",
+        "test-npm-pkg",
+        "test-plugin"
+      ],
+      "scopedLatest": [
+        "@factorywager/bun-utils-test/latest.json",
+        "@factorywager/registry-client/latest.json",
+        "@factorywager/registry-snapshot/latest.json",
+        "@factorywager/routing-test/latest.json"
+      ]
+    },
+    "planes": [
+      {
+        "id": "packages-graph",
+        "label": "packages/* import graph",
+        "count": 6,
+        "bake": "/registry/packages-graph-map.json",
+        "portal": "/portal/packages/",
+        "note": "Default audit:packages glob — coupling / orphans / roles only"
+      },
+      {
+        "id": "workspaces",
+        "label": "bun workspaces (package.json)",
+        "count": 8,
+        "note": "packages/* + sports-terminal-os + lib/* — see bun pm ls"
+      },
+      {
+        "id": "portal-pages",
+        "label": "portal HTML pages",
+        "count": 19,
+        "portal": "/portal/",
+        "note": "public/portal/*/index.html shells"
+      },
+      {
+        "id": "portal-chrome",
+        "label": "portal chrome components",
+        "count": 12,
+        "bake": "/registry/portal-chrome.json",
+        "note": "nav + shared modules SSOT · portal:chrome:bake"
+      },
+      {
+        "id": "portal-modules",
+        "label": "portal JS/CSS modules",
+        "count": 27,
+        "note": "components/ + root modules + page scripts + theme"
+      },
+      {
+        "id": "brand",
+        "label": "brand + tenant icons",
+        "count": 20,
+        "note": "tenants: factory, science, telegram, tennis · public/icons · public/brand"
+      },
+      {
+        "id": "registry-bake",
+        "label": "registry top-level JSON",
+        "count": 54,
+        "bake": "/registry/",
+        "note": "ops/proof/health bakes — not npm package deps"
+      },
+      {
+        "id": "registry-storage",
+        "label": "registry storage packages",
+        "count": 9,
+        "note": "public/registry/storage published artifact.tgz names"
+      }
+    ]
+  },
+  "packages": [
     {
       "name": "business",
       "scanned": 4,
       "inGraph": 4,
       "orphans": 0,
       "bytes": 8728,
-      "score": 100,
-      "grade": "healthy",
-      "role": "root-tooling"
+      "score": 85,
+      "grade": "needs-improvement",
+      "role": "dormant"
     },
     {
       "name": "docs-tools",
@@ -2703,9 +1698,9 @@
       "inGraph": 4,
       "orphans": 0,
       "bytes": 24728,
-      "score": 100,
-      "grade": "healthy",
-      "role": "root-tooling"
+      "score": 85,
+      "grade": "needs-improvement",
+      "role": "dormant"
     },
     {
       "name": "registry-client",
@@ -2726,23 +1721,13 @@
       "score": 100,
       "grade": "healthy",
       "role": "consumed"
-    },
-    {
-      "name": "versioning",
-      "scanned": 2,
-      "inGraph": 2,
-      "orphans": 0,
-      "bytes": 20776,
-      "score": 85,
-      "grade": "needs-improvement",
-      "role": "dormant"
     }
   ],
   "totals": {
-    "inputCount": 34,
-    "inputBytes": 327159,
+    "inputCount": 29,
+    "inputBytes": 300854,
     "orphanCount": 0,
-    "leafCount": 11,
+    "leafCount": 9,
     "orphanPercent": 0,
     "cycleCount": 0,
     "hubCount": 10,
@@ -2750,45 +1735,24 @@
     "externalEdges": 7,
     "mapLayers": 1,
     "openActions": 2,
-    "avgPackageScore": 96.3
-  },
-  "crossCheck": {
-    "deadFileCount": 0,
-    "cyclicDependencyCount": 0,
-    "metafileOnlyOrphans": [],
-    "transpilerOnlyDead": [],
-    "notes": [
-      "import graph via Bun.Transpiler.scanImports; dead=orphan; package edges=8; cycles raw=0 capped=0",
-      "Cross-check excludes entrypoints from Transpiler “dead” (roots are never imported)."
-    ]
+    "avgPackageScore": 95
   },
   "notes": [
-    "Entrypoints: 8 index · 1 cli · 0 main/bin · 0 package.json",
+    "Entrypoints: 6 index · 1 cli · 0 main/bin · 0 package.json",
     "leaves = zero outbound imports (not dead). orphans = scanned but unreachable from entrypoints.",
     "8 external input(s) pulled into graph (lib/, config/, …) — expected for workspace edges.",
     "score 100/100 (healthy)",
-    "cross-check: metafile orphans=0 · transpiler orphans(excl entry)=0 · cycles(transpiler)=0",
     "Package map: no cross-package edges (packages are isolated islands)",
     "Outside consumers (lib/tools/scripts/tests): registry-client:3, guards:1, rip:1",
-    "Declared: 6/8 in root workspace deps · 0 pkg(s) with undeclared cross-imports",
-    "Intra depth: deepest ab-testing depth=3 files=3",
+    "Declared: 4/6 in root workspace deps · 0 pkg(s) with undeclared cross-imports",
+    "Intra depth: deepest business depth=3 files=4",
     "External hubs: lib/docs:12, bare:bun:7, bare:url:1",
-    "Coupling: 3 consumed · 3 root-tooling · 0 scripted · 2 dormant (ab-testing, versioning)",
-    "Actions: ab-testing:archive-candidate, versioning:archive-candidate",
-    "Summary: avgPkg=96.3 · openActions=2 · archivePlaceholders=0 · hub=lib/docs",
-    "Vault: 2 pkg(s) with Bun.env · 1 keys · inTemplate=2 · missingTemplate=0 · openActions=0",
-    "Env inventory: unique=183 · secrets=15 · config=151 · actionableGaps=2 · rootNeedsInject=0 · rootCoveredByDefault=1 · owners=60 · pkgKeys=1 · multiPlane=27 · defaultsIssues=0",
-    "Quarantine: none"
+    "Coupling: 3 consumed · 1 root-tooling · 0 scripted · 2 dormant (business, p2p)",
+    "Actions: business:archive-candidate, p2p:archive-candidate",
+    "Summary: avgPkg=95 · openActions=2 · archivePlaceholders=0 · hub=lib/docs",
+    "Quarantine: none",
+    "Surfaces: workspaces=8 (packagesPlane=6+other=2) · portalPages=19 · chrome=12 · brand=20 · registryJson=54 · storagePkgs=9"
   ],
-  "diff": {
-    "previousGeneratedAt": "2026-07-28T13:53:45.240Z",
-    "previousScore": 100,
-    "scoreDelta": 0,
-    "orphanDelta": 0,
-    "cycleDelta": 0,
-    "addedOrphans": [],
-    "removedOrphans": []
-  },
   "metafile": {
     "inputs": {
       "config/bun-dx-catalog.ts": {
@@ -2828,21 +1792,6 @@
       },
       "lib/docs/urls.ts": {
         "bytes": 5444,
-        "importCount": 0,
-        "format": "esm"
-      },
-      "packages/ab-testing/src/cookie-manager.ts": {
-        "bytes": 1318,
-        "importCount": 1,
-        "format": "esm"
-      },
-      "packages/ab-testing/src/index.ts": {
-        "bytes": 96,
-        "importCount": 2,
-        "format": "esm"
-      },
-      "packages/ab-testing/src/manager.ts": {
-        "bytes": 4115,
         "importCount": 0,
         "format": "esm"
       },
@@ -2949,16 +1898,6 @@
       "packages/rip/src/utils.ts": {
         "bytes": 10438,
         "importCount": 1,
-        "format": "esm"
-      },
-      "packages/versioning/src/index.ts": {
-        "bytes": 247,
-        "importCount": 1,
-        "format": "esm"
-      },
-      "packages/versioning/src/version-tracking.ts": {
-        "bytes": 20529,
-        "importCount": 0,
         "format": "esm"
       }
     }

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-28T17:32:17.737Z",
+  "generated": "2026-07-28T17:37:15.565Z",
   "path": "/registry/portal-chrome.json",
   "summary": {
     "priorityNav": 6,
     "overflowNav": 13,
     "footerLinks": 14,
-    "components": 11,
+    "components": 12,
     "scripts": 5
   },
   "related": {
@@ -82,7 +82,7 @@
       "tier": "overflow",
       "group": "registry",
       "note": "graph map · portal-cli pm graph",
-      "cli": "bun run portal-cli pm graph"
+      "cli": "bun run portal-cli pm graph  # offline packages-graph-map table"
     },
     {
       "id": "skills",
@@ -98,7 +98,7 @@
       "tier": "overflow",
       "group": "secrets",
       "note": "Proton Pass health bake · gate: portal-cli vault health",
-      "cli": "bun run portal-cli vault health"
+      "cli": "bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
     },
     {
       "id": "env",
@@ -107,7 +107,7 @@
       "tier": "overflow",
       "group": "secrets",
       "note": "vault-map inject · secret autofill mapping",
-      "cli": "bun run portal-cli secret map"
+      "cli": "bun run portal-cli secret map  # no secret values printed"
     },
     {
       "id": "tools",
@@ -115,8 +115,8 @@
       "href": "/portal/tools/",
       "tier": "overflow",
       "group": "harness",
-      "note": "portal-cli surface map · pm · snapshot · secret · vault",
-      "cli": "bun run portal-cli help"
+      "note": "portal-cli surface map · badges · capability subset",
+      "cli": "bun run portal-cli dashboard --view=tools"
     },
     {
       "id": "failures",
@@ -124,8 +124,8 @@
       "href": "/portal/failures/",
       "tier": "overflow",
       "group": "harness",
-      "note": "test failures bake · junit",
-      "cli": "bun run failures:bake"
+      "note": "test failures bake · junit · nav badge = count",
+      "cli": "bun run failures:bake  # → /registry/failures.json"
     },
     {
       "id": "dashboard",
@@ -245,9 +245,15 @@
       "kind": "module"
     },
     {
+      "id": "nav-badges",
+      "path": "/portal/nav-badges.js",
+      "role": "live counts from baked registry JSON on nav links",
+      "kind": "module"
+    },
+    {
       "id": "topbar",
       "path": "/portal/topbar.js",
-      "role": "health dot · nav current · sidebar bootstrap",
+      "role": "health dot · nav current · sidebar bootstrap · nav badges",
       "kind": "module"
     },
     {

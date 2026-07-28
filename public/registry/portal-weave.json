@@ -2,11 +2,11 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-07-28T17:32:17.737Z",
+  "generated": "2026-07-28T17:37:15.565Z",
   "summary": {
     "surfaces": 19,
     "artifacts": 28,
-    "components": 11,
+    "components": 12,
     "wiki": 6,
     "scripts": 29
   },
@@ -209,7 +209,7 @@
     {
       "label": "packages-graph-map",
       "href": "/registry/packages-graph-map.json",
-      "note": "workspace coupling · env owners · template defaults · claim packages-graph-map-v12",
+      "note": "workspace coupling · multi-surface · env owners · claim packages-graph-map-v13",
       "id": "artifact-8-packages-graph-map"
     },
     {
@@ -331,9 +331,15 @@
       "kind": "module"
     },
     {
+      "id": "nav-badges",
+      "path": "/portal/nav-badges.js",
+      "role": "live counts from baked registry JSON on nav links",
+      "kind": "module"
+    },
+    {
       "id": "topbar",
       "path": "/portal/topbar.js",
-      "role": "health dot · nav current · sidebar bootstrap",
+      "role": "health dot · nav current · sidebar bootstrap · nav badges",
       "kind": "module"
     },
     {

@@ -224,7 +224,7 @@ Each row maps to a documented API — Bun or Proton Pass CLI — with type, vers
 | **Cache inspection** | infra | Bun ≥1.0 | `bun pm cache` | — | `portal-cli pm cache` | Implemented | [bun pm cache](https://bun.com/docs/pm/cli/pm#cache) | `bun run portal-cli pm cache` |
 | **Lockfile hash** | integrity | Bun ≥1.0 | `bun pm hash` | — | `portal-cli pm hash` | Implemented | [bun pm hash](https://bun.com/docs/pm/cli/pm#hash) | `bun run portal-cli pm hash` |
 | **PM utilities (full group)** | pkg | Bun ≥1.0 | `bun pm` | — | `portal-cli pm` passthrough | Implemented | [bun pm](https://bun.com/docs/pm/cli/pm) | `bun run portal-cli pm whoami` |
-| **Package graph bake** | audit | Bun ≥1.0 | `Bun.file` + `Bun.write` (bake) · `Bun.inspect.table` (view) | — | `audit:packages --bake` · `portal-cli pm graph` | Implemented | claim `packages-graph-map-v12` · [pm/filter](https://bun.com/docs/pm/filter) (workspace context) | `bun run portal-cli pm graph` · `bun run audit:packages -- --bake` |
+| **Package graph bake** | audit | Bun ≥1.0 | `Bun.file` + `Bun.write` (bake) · `Bun.inspect.table` (view) | — | `audit:packages --bake` · `portal-cli pm graph` | Implemented | claim `packages-graph-map-v13` · multi-surface (workspaces + portal chrome/brand + registry) · [pm/filter](https://bun.com/docs/pm/filter) | `bun run portal-cli pm graph` · `bun run audit:packages -- --bake` |
 
 ## Known technical debt
 
