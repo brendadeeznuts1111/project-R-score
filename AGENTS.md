@@ -47,6 +47,29 @@ AI agent entrypoint for the FactoryWager monorepo (`~/Projects`).
 | Cloudflare / R2 / Pages | [`config/r2-env.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/config/r2-env.ts) · `bun run cloudflare:env` / `:assert` / `:assert-apex` / `:assert-live` / `:validate` · `cloudflare:preflight` · `cloudflare:deploy:verify` · [`docs/harness/tenants/cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) |
 | Harness thesis | [lopopolo/harness-engineering](https://github.com/lopopolo/harness-engineering) |
 
+## Grounded capability map
+
+Each row maps to a documented API — Bun or Proton Pass CLI — with type classifier and version baseline.
+
+| Capability | Type | Version | Bun API | Proton CLI | Source |
+|---|---|---|---|---|---|
+| Vault config (TOML) | config | Bun 1.4+ | `import x from '.toml' with { type: 'toml' }` | — | [bun.sh/docs/pm/filter](https://bun.com/docs/pm/filter?search=type%3Atoml) |
+| Vault resolve | secrets | pass-cli 2.2+ | `Bun.color(hex, 'ansi')` + `Bun.spawn` | `pass-cli vault list` | [protonpass.github.io](https://protonpass.github.io/pass-cli/) |
+| Vault inject | secrets | pass-cli 2.2+ | — | `pass-cli inject --in-file --out-file` | [protonpass.github.io/inject](https://protonpass.github.io/pass-cli/commands/contents/inject/) |
+| Vault run | secrets | pass-cli 2.2+ | — | `pass-cli run -- <cmd>` | [protonpass.github.io/run](https://protonpass.github.io/pass-cli/commands/contents/run/) |
+| SSH agent load | ssh | pass-cli 2.2+ | — | `pass-cli ssh-agent load --vault-name` | [protonpass.github.io](https://protonpass.github.io/pass-cli/) |
+| PAT login | auth | pass-cli 2.2+ | — | `pass-cli login --personal-access-token` | [protonpass.github.io/login](https://protonpass.github.io/pass-cli/commands/login/) |
+| PAT manage | auth | pass-cli 2.2+ | — | `pass-cli personal-access-token create/list` | [protonpass.github.io](https://protonpass.github.io/pass-cli/) |
+| Vault proxy | secrets | pass-cli 2.2+ | `Bun.spawn` with `stdout: "pipe"` | `pass-cli view pass://...` | [protonpass.github.io](https://protonpass.github.io/pass-cli/) |
+| Table formatting | display | Bun 1.4+ | `formatTable()` + `formatInspectTable()` | — | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| ANSI color | display | Bun 1.4+ | `Bun.color(hex, 'ansi')` | — | [bun.sh/docs/api/color](https://bun.sh/docs/api/color) |
+| Terminal detection | display | Bun 1.4+ | `new Bun.Terminal(Bun.stdout)` | — | [runtime/utils](https://bun.com/docs/runtime/utils) |
+| File I/O | io | Bun 1.4+ | `Bun.file()` / `Bun.write()` | — | [bun.sh/docs/api/file-io](https://bun.sh/docs/api/file-io) |
+| spawn | process | Bun 1.4+ | `Bun.spawn` with `stdout: "pipe"` / `"inherit"` | — | [bun.sh/docs/api/spawn](https://bun.sh/docs/api/spawn) |
+| Image chart | image | Bun 1.4+ | `new Bun.Image(Bun.file(path))` + `.png()` | — | [runtime/image](https://bun.com/docs/runtime/image) |
+| Test framework | test | Bun 1.4+ | `bun:test` — `describe`/`test`/`expect` | — | [bun.sh/docs/test/writing-tests](https://bun.sh/docs/test/writing-tests) |
+| Semver check | util | Bun 1.4+ | `Bun.semver.satisfies()` | — | [runtime/semver](https://bun.com/docs/runtime/semver) |
+
 ## Communication precision
 
 Do not append an unrequested caveat, counterargument, or moralizing endcap to a sharp claim merely to demonstrate balance. If a boundary condition changes the truth of the claim, put it in the mechanism or scope the claim correctly. If it does not, cut it. Accuracy belongs in the argument; model self-protection does not.
