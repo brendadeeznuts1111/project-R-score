@@ -252,6 +252,13 @@ export type OpsSummaryPayload = {
   };
   prediction: {
     coverage: { mae: number; rmse: number; bias: number; n: number };
+    limitRaise: {
+      mae: number;
+      rmse: number;
+      bias: number;
+      n: number;
+      lastPredicted: string | null;
+    };
   };
   /** Period growth_metrics rollup (current calendar month). */
   growth: OpsSummaryGrowth;
@@ -350,7 +357,30 @@ function emptyExperiments(): OpsSummaryPayload['experiments'] {
 }
 
 function emptyPrediction(): OpsSummaryPayload['prediction'] {
-  return { coverage: { mae: 0, rmse: 0, bias: 0, n: 0 } };
+  return {
+    coverage: { mae: 0, rmse: 0, bias: 0, n: 0 },
+    limitRaise: { mae: 0, rmse: 0, bias: 0, n: 0, lastPredicted: null },
+  };
+}
+
+function queryPrediction(db: Database): OpsSummaryPayload['prediction'] {
+  if (!tableExists(db, 'prediction_accuracy')) return emptyPrediction();
+  try {
+    const coverage = getPredictionAccuracy(db, 'coverage');
+    const limitRaiseAcc = getPredictionAccuracy(db, 'limit_raise');
+    let lastPredicted: string | null = null;
+    try {
+      const row = db
+        .query(
+          `SELECT MAX(prediction_date) as d FROM prediction_accuracy WHERE prediction_type = 'limit_raise'`
+        )
+        .get() as { d: string | null } | null;
+      lastPredicted = row?.d ?? null;
+    } catch {}
+    return { coverage, limitRaise: { ...limitRaiseAcc, lastPredicted } };
+  } catch {
+    return emptyPrediction();
+  }
 }
 
 function queryLimitChangeSummary(db: Database): OpsSummaryPayload['limitChanges'] {
@@ -422,15 +452,6 @@ function queryExperiments(db: Database): OpsSummaryPayload['experiments'] {
       metrics: r.metrics,
     })),
   };
-}
-
-function queryPrediction(db: Database): OpsSummaryPayload['prediction'] {
-  if (!tableExists(db, 'prediction_accuracy')) return emptyPrediction();
-  try {
-    return { coverage: getPredictionAccuracy(db, 'coverage') };
-  } catch {
-    return emptyPrediction();
-  }
 }
 
 function emptyGrowth(period: string): OpsSummaryGrowth {

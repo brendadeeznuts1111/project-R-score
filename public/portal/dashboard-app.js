@@ -306,12 +306,13 @@ function renderOpsPlane(ops) {
         const score = r.context_available
           ? `<span class="badge-demo" title="${esc(title)}">${Math.round((r.multi_factor_score ?? 0) * 100)} score</span>`
           : `<span class="badge-demo" title="${esc(title)}">context pending</span>`;
-        return `<li><code>${esc(r.sportsbook)}</code> ${esc(r.sport_id)}/${esc(r.market_id)} <strong>$${r.new_limit}</strong> ${icon} <span style="color:var(--text-dim)">($${r.previous_max})</span> ${score}</li>`;
+        return `<li><code>${esc(r.sportsbook)}</code> ${esc(r.sport_id)}/${esc(r.market_id)} <strong>$${r.new_limit}</strong> ${icon} <span style="color:var(--text-dim)">($${r.previous_max})</span> ${score}${r.predicted_raise_prob != null ? ` <span class="badge-demo">🔮${(r.predicted_raise_prob * 100).toFixed(0)}%</span>` : ''}</li>`;
       })
       .join('');
     limitHtml = `<article class="plane-card" data-plane="limit-raises">
       <h3>📊 Limit changes <span class="badge-demo" title="Live query, 48h window">🚀${raises} ⬇️${downs}</span></h3>
       <ul class="plane-gap-list">${top3}</ul>
+      <p class="plane-sub">${ops.prediction?.limitRaise?.n > 0 ? `🎯 prediction accuracy MAE ${Number(ops.prediction.limitRaise.mae).toFixed(3)} (${ops.prediction.limitRaise.n} samples)` : ''}</p>
       <div class="plane-actions">
         <a class="ops-link" href="/portal/ops/">Full Ops</a>
         <a class="ops-link" href="/registry/ops-summary.json">ops-summary.json</a>
