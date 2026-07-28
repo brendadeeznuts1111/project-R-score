@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/console — console depth · AsyncIterable stdin · console.write
 // @see https://bun.com/docs/runtime/file-io — Bun.file
+// @see https://bun.com/docs/runtime/http/server#changing-the-port-and-hostname — Bun.serve bind hostname ≠ HostId
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/utils#bun-stringwidth — Bun.stringWidth
 // @see https://bun.com/docs/runtime/utils#bun-stripansi — Bun.stripANSI
@@ -30,6 +31,7 @@ import {
   stripANSI,
   termWidth,
 } from '../lib/console-depth.ts';
+import { hostPlaneTableRows } from '../lib/http/host-planes.ts';
 import { cliTone, frameBlock, kvLines, msFromNs } from '../lib/portal/cli-chrome.ts';
 import { hostPartsForSurface, loadSurfacesInventory } from '../lib/surfaces/inventory.ts';
 import {
@@ -109,6 +111,15 @@ function printHeader(m: Manifest, t0: number): void {
       ok: true,
     })
   );
+}
+
+/** Bind listen hostname ≠ DNS HostId — show the plane map first. */
+function printHostPlanesTable(): void {
+  console.info(
+    cliTone.accent('\nHOST PLANES') +
+      cliTone.dim('  bind = Bun.serve listen · dns = public FQDN brands · do not mix')
+  );
+  logTable(hostPlaneTableRows(), ['plane', 'concept', 'typeOrField', 'example', 'note']);
 }
 
 function printDomainTable(brands: BrandRow[]): void {
@@ -247,6 +258,7 @@ async function main(): Promise<void> {
   if (!opts.replOnly) {
     const m = await loadManifest();
     printHeader(m, t0);
+    printHostPlanesTable();
     printDomainTable(m.brands);
     printSurfacesTable(m.brands);
     await printInventoryTable();

@@ -67,6 +67,12 @@ Inventory (parse once): [`lib/surfaces/inventory.ts`](../../surfaces/inventory.t
 `loadSurfacesInventory` · `appliedAccessDomains` · `findSurfaceByHost` ·
 `hostPartsForSurface`.
 
+**Bind vs DNS:** `Bun.serve({ hostname })` is the **bind** plane (`0.0.0.0` /
+`localhost`) — not a `HostId`. Cross-map:
+[`lib/http/host-planes.ts`](../../http/host-planes.ts) ·
+[`serve-public-bind.md`](../../../docs/harness/tenants/serve-public-bind.md) ·
+`bun run brand:status:once`.
+
 ## Constructor tiers
 
 Every catalog entry exports the same public trio:
