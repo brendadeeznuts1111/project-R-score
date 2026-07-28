@@ -15,6 +15,7 @@ import {
   renderPageRegistrySvg,
   summarizePackageRoles,
   applyTableFilters,
+  matchCapabilityRows,
 } from '../public/portal/packages/packages-board.js';
 
 describe('packages-board failure paths', () => {
@@ -282,5 +283,17 @@ describe('packages-board failure paths', () => {
     expect(s.grades.critical).toBe(1);
     expect(s.orphanFiles).toBe(2);
     expect(s.count).toBe(3);
+  });
+
+  test('matchCapabilityRows finds package mentions', () => {
+    const hits = matchCapabilityRows(
+      [
+        { capability: 'Package graph bake', usedIn: 'portal-cli pm graph', status: 'Implemented' },
+        { capability: 'Vault', usedIn: 'secret inject', status: 'Implemented' },
+      ],
+      'graph'
+    );
+    expect(hits).toHaveLength(1);
+    expect(hits[0]?.capability).toContain('Package graph');
   });
 });

@@ -6,10 +6,11 @@
 // @see https://bun.com/docs/runtime/index#general-execution-options — Bun runtime CLI flags
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
-// @see https://bun.com/docs/pm/cli/pm — bun pm (pack · ls · version · pkg · trust · cache · hash)
+// @see https://bun.com/docs/pm/cli/pm — bun pm (pack · ls · version · pkg · trust · cache · hash · scan)
+// @see https://bun.com/docs/pm/security-scanner-api — Security Scanner API
 // @see https://bun.com/docs/runtime#general-execution-options — --smol · --console-depth · --bun · --watch
 /**
- * FactoryWager portal CLI — snapshot, probe, secret, vault health, bun pm.
+ * FactoryWager portal CLI — snapshot, probe, secret, vault health, bun pm, scanner.
  *
  * Bun execution flags (before the command) are forwarded to child `bun` spawns:
  *   bun tools/portal-cli.ts --smol vault health
@@ -18,7 +19,8 @@
  *   portal-cli snapshot run [--scope prediction] [--dry-run] [--debug]
  *   portal-cli snapshot list [--scope portal]
  *   portal-cli vault health [--update]
- *   portal-cli pm ls | pack | version | pkg …
+ *   portal-cli pm ls | pack | version | pkg … | scan
+ *   portal-cli scanner status | scan | configure | install | init
  *   portal-cli secret autofill --vault factorywager -- <cmd>
  *
  *   bun tools/portal-cli.ts snapshot run
@@ -53,6 +55,7 @@ import {
   parseBunExecutionFlags,
   spawnBunWithFlags,
 } from './lib/portal-cli-bun-flags.ts';
+import { dispatchScanner } from './lib/portal-cli-scanner.ts';
 
 /** Bun runtime flags harvested from argv (before portal-cli command). */
 let bunExecFlags: string[] = [];
@@ -152,6 +155,7 @@ Examples:
   portal-cli pm graph --view=dormant
   portal-cli pm graph --view=healthy --export=json
   portal-cli pm graph --scope unscoped --update  # refreshes tracked bake outputs
+  portal-cli pm scan                             # security scan (needs [install.security] scanner)
 `;
 
 const ROOT_HELP = `FactoryWager portal CLI
@@ -161,6 +165,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli vault health [--update] Vault-map inventory + report-shape gate
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
+  portal-cli scanner <subcommand>    Bun Security Scanner (status · scan · configure)
   portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
   portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
   portal-cli help                    This message
@@ -172,6 +177,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli pm ls
   bun run portal-cli pm pack --dry-run
   bun run portal-cli pm graph
+  bun run portal-cli scanner status
   bun run portal-cli dashboard --view=packages --open
   bun run portal:probe
 
@@ -199,8 +205,16 @@ pm (canonical: https://bun.com/docs/pm/cli/pm) — zero invention, only bun pm f
   pm cache | cache rm
   pm trust <names> | untrusted | default-trusted
   pm whoami | migrate | bin [-g]
+  pm scan                      # lockfile security scan (needs scanner in bunfig)
   pm graph [--scope <scope>] [--update]
                                # FW: offline packages-graph-map table
+
+Scanner (real: https://bun.com/docs/pm/security-scanner-api):
+  scanner status               # [install.security] scanner from bunfig.toml
+  scanner scan                 # → bun pm scan
+  scanner configure <pkg> [--write]
+  scanner install <pkg>        # bun add -d (frozenLockfile may block)
+  scanner init [dir]           # clone oven-sh/security-scanner-template
 
 Secret (real pass-cli only — https://protonpass.github.io/pass-cli/):
   secret which | login | info | vaults | items <vault>
@@ -861,6 +875,16 @@ async function main(): Promise<void> {
     if (bad.length) cliError(`Unknown badge flag(s): ${bad.join(', ')}\nFlags: --json`);
     await printBadgeTable(badgeFlags);
     return;
+  }
+
+  if (cmd === 'scanner') {
+    // Bun Security Scanner control plane (status / configure / scan / init).
+    // scan → bun pm scan; configure edits [install.security] in bunfig.toml.
+    // @see https://bun.com/docs/pm/security-scanner-api
+    const code = await dispatchScanner(argv[1], argv.slice(2), {
+      spawnBun: async (args, o) => spawnBunWithFlags(bunExecFlags, args, o),
+    });
+    process.exit(code);
   }
 
   if (cmd === 'pm') {

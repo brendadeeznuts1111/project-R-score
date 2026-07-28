@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect — Bun.connect
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
@@ -1490,6 +1491,78 @@ function isNpmPackagePath(path: string): boolean {
 }
 
 /**
+ * POST /api/packages/graph/rebake — loopback-only offline bake.
+ * Runs `bun run audit:packages -- --bake` and returns score metadata from the new map.
+ * Never enable on non-loopback binds (Pages / staging IPs).
+ */
+async function packagesGraphRebake(req: Request, server?: RouteServer): Promise<Response> {
+  if (req.method !== 'POST' && req.method !== 'GET') {
+    return json({ error: 'Method not allowed — use POST' }, 405);
+  }
+  const ip = clientSocket(req, server);
+  const addr = ip?.address ?? '';
+  const loopback =
+    addr === '127.0.0.1' ||
+    addr === '::1' ||
+    addr === '::ffff:127.0.0.1' ||
+    // in-process server.fetch without TCP has no requestIP — allow only when host is loopback
+    (!ip &&
+      (new URL(req.url).hostname === '127.0.0.1' ||
+        new URL(req.url).hostname === 'localhost' ||
+        new URL(req.url).hostname === '::1'));
+  if (!loopback) {
+    return json(
+      {
+        error: 'packages graph rebake is loopback-only',
+        hint: 'Use: bun run audit:packages -- --bake  ·  or portal-cli pm graph --update',
+        client: addr || null,
+      },
+      403
+    );
+  }
+  const root = Bun.env.PWD || '.';
+  const proc = Bun.spawn(['bun', 'run', 'audit:packages', '--', '--bake'], {
+    cwd: root,
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: { ...Bun.env },
+  });
+  const code = await proc.exited;
+  const stderr = await new Response(proc.stderr).text();
+  if (code !== 0) {
+    return json(
+      {
+        ok: false,
+        error: 'rebake failed',
+        exitCode: code,
+        stderr: stderr.slice(0, 2000),
+      },
+      500
+    );
+  }
+  const mapPath = 'public/registry/packages-graph-map.json';
+  const file = Bun.file(mapPath);
+  if (!(await file.exists())) {
+    return json({ ok: false, error: 'bake finished but packages-graph-map.json missing' }, 500);
+  }
+  const map = (await file.json()) as {
+    score?: number;
+    grade?: string;
+    generatedAt?: string;
+    schemaVersion?: number;
+  };
+  return json({
+    ok: true,
+    path: '/registry/packages-graph-map.json',
+    score: map.score ?? null,
+    grade: map.grade ?? null,
+    generatedAt: map.generatedAt ?? null,
+    schemaVersion: map.schemaVersion ?? null,
+    cli: 'bun run portal-cli pm graph --update',
+  });
+}
+
+/**
  * Unmatched-request handler (Bun routing docs: runs when no `routes` match).
  * Second arg is Server on real TCP; may be undefined for in-process server.fetch.
  * @see https://bun.com/docs/runtime/http/routing#fetch-request-handler
@@ -1585,6 +1658,18 @@ async function fetchHandler(req: Request, server?: RouteServer): Promise<Respons
   if (path === '/monitoring' || path === '/monitoring/') return monitoringPage();
   if (path === '/api/operations/summary' || path === '/api/operations/summary/')
     return liveOpsSummary();
+  // Local-only packages graph rebake (never on Pages / remote binds)
+  if (path === '/api/packages/graph/rebake' || path === '/api/packages/graph/rebake/') {
+    return packagesGraphRebake(req, server);
+  }
+  if (path === '/api/portal/dashboard' || path === '/api/portal/dashboard/') {
+    const { portalDashboardResponse } = await import('../lib/portal/command-centre-api.ts');
+    return portalDashboardResponse();
+  }
+  if (path === '/api/portal/action' || path === '/api/portal/action/') {
+    const { portalActionResponse } = await import('../lib/portal/command-centre-api.ts');
+    return portalActionResponse(req, server);
+  }
   if (path === '/api/catalog' || path === '/api/catalog/') return liveCatalog(req);
   // Skills registry — local SKILL.md scan + *.skill package drop (never crashes)
   if (path === '/api/skills' || path === '/api/skills/') return json(await buildSkillsCatalog());

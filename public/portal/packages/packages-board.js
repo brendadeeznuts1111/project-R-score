@@ -469,6 +469,26 @@ export function renderDependencyGraphSvg(model, opts = {}) {
  * @param {string|null} pkgId
  * @param {Document} [doc]
  */
+/**
+ * Match capability-map-subset rows that mention a package.
+ * @param {Array<{capability?:string,usedIn?:string,api?:string,status?:string}>} rows
+ * @param {string} pkgId
+ */
+export function matchCapabilityRows(rows, pkgId) {
+  const needle = String(pkgId || '').toLowerCase();
+  if (!needle || !Array.isArray(rows)) return [];
+  return rows.filter(r => {
+    const blob = `${r.capability || ''} ${r.usedIn || ''} ${r.api || ''}`.toLowerCase();
+    return blob.includes(needle) || blob.includes(`@factorywager/${needle}`);
+  });
+}
+
+/**
+ * @param {object} data
+ * @param {object} model
+ * @param {string|null} pkgId
+ * @param {Document} [doc]
+ */
 function renderPackageDetail(data, model, pkgId, doc = document) {
   const el = doc.getElementById('pkg-detail');
   if (!el) return;
@@ -479,12 +499,13 @@ function renderPackageDetail(data, model, pkgId, doc = document) {
       el.innerHTML = `<h4>External · <code>${escapeHtml(label)}</code></h4>
         <p class="meta">Imported by ${inbound.length} edge(s)</p>
         <ul>${inbound.map(e => `<li><code>${escapeHtml(e.from)}</code> · weight ${e.weight}</li>`).join('') || '<li>—</li>'}</ul>
+        <p class="meta">Registry plane: external target (not a packages/* row)</p>
         <p class="meta"><button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy pm graph</button></p>`;
       bindCopyButtons(el);
       return;
     }
     el.innerHTML =
-      '<p class="meta">Select a package node (or table row) for edges, role, and CLI.</p>';
+      '<p class="meta">Select a package node (or table row) for edges, registry links, and CLI.</p>';
     return;
   }
   const row = (data.packages || []).find(p => (p.name || p.package) === pkgId);
@@ -492,13 +513,23 @@ function renderPackageDetail(data, model, pkgId, doc = document) {
   const edges = edgesForPackage(model, pkgId);
   const actions = (data.actions || []).filter(a => a.package === pkgId);
   const probes = (data.archiveProbes || []).filter(p => p.package === pkgId);
+  const declared = (data.map?.declared || []).find(d => d.package === pkgId);
   const score = row?.score ?? node?.score;
   const role = row?.role ?? node?.role ?? '—';
   const g = gradeFromScore(score);
+  const npmGuess = pkgId.startsWith('@') ? pkgId : `@factorywager/${pkgId}`;
+  const pkgCli = `bun run portal-cli pm graph --package=${pkgId} --export=json`;
+  const viewCli =
+    role && role !== '—'
+      ? `bun run portal-cli pm graph --view=${role}`
+      : 'bun run portal-cli pm graph';
+
   el.innerHTML = `<h4><code>${escapeHtml(pkgId)}</code></h4>
     <p class="meta">role=<span class="role role-${classToken(role)}">${escapeHtml(String(role))}</span>
       · score=<span class="grade-${g}">${score ?? '—'}</span>
+      · grade=<span class="grade-${g}">${escapeHtml(g)}</span>
       · orphans=${row?.orphans ?? 0}
+      · kB=${typeof row?.bytes === 'number' ? (row.bytes / 1024).toFixed(1) : '—'}
       · ${node?.archive ? '<strong class="grade-critical">archive candidate</strong>' : 'active'}</p>
     <p class="meta">Edges (${edges.length})</p>
     <ul>${
@@ -512,6 +543,17 @@ function renderPackageDetail(data, model, pkgId, doc = document) {
         .join('') ||
       '<li class="meta">No edges in bake (internal packageEdges empty — external only)</li>'
     }</ul>
+    ${
+      declared
+        ? `<p class="meta">Declared workspace deps</p>
+        <ul>
+          <li>in root workspace deps: <strong>${declared.inRootWorkspaceDeps ? 'yes' : 'no'}</strong></li>
+          <li>actual cross-pkg: ${(declared.actualCrossPkg || []).map(escapeHtml).join(', ') || '—'}</li>
+          <li>missing in package.json: ${(declared.missingInPackageJson || []).map(escapeHtml).join(', ') || '—'}</li>
+          <li>unused declared: ${(declared.unusedDeclared || []).map(escapeHtml).join(', ') || '—'}</li>
+        </ul>`
+        : ''
+    }
     ${
       actions.length
         ? `<p class="meta">Actions</p><ul>${actions
@@ -534,12 +576,131 @@ function renderPackageDetail(data, model, pkgId, doc = document) {
             .join('')}</ul>`
         : ''
     }
+    <p class="meta">Registry drill-down</p>
+    <ul id="pkg-registry-links">
+      <li><a href="/registry/packages-graph-map.json"><code>packages-graph-map.json</code></a></li>
+      <li><a href="/registry/package-info.json"><code>package-info.json</code></a> · match <code>${escapeHtml(npmGuess)}</code></li>
+      <li id="pkg-info-hit" class="meta">package-info: loading…</li>
+      <li id="pkg-cap-hit" class="meta">capabilities: loading…</li>
+    </ul>
     <div class="pkg-detail-cli">
-      <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy pm graph</button>
+      <button type="button" class="copy-cli" data-cli="${escapeAttribute(pkgCli)}">copy package JSON CLI</button>
+      <button type="button" class="copy-cli" data-cli="${escapeAttribute(viewCli)}">copy role view CLI</button>
       <button type="button" class="copy-cli" data-cli="bun run audit:packages -- --bake">copy rebake</button>
-      <button type="button" class="copy-cli" data-cli="bun run portal-cli dashboard --view=packages">copy dashboard URL cmd</button>
-    </div>`;
+      <button type="button" class="pkg-chip" id="pkg-rebake-local" title="POST /api/packages/graph/rebake (local serve-public only)">rebake (local API)</button>
+    </div>
+    <p class="meta" id="pkg-rebake-status"></p>`;
   bindCopyButtons(el);
+  bindRebakeLocal(el);
+  void enrichPackageRegistryDetail(pkgId, npmGuess, el);
+}
+
+/**
+ * Load package-info + capability-map-subset hits for the selected package.
+ * @param {string} pkgId
+ * @param {string} npmGuess
+ * @param {HTMLElement} el
+ */
+async function enrichPackageRegistryDetail(pkgId, npmGuess, el) {
+  const infoEl = el.querySelector('#pkg-info-hit');
+  const capEl = el.querySelector('#pkg-cap-hit');
+  try {
+    const res = await fetch('/registry/package-info.json', {
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (res.ok && infoEl) {
+      const j = await res.json();
+      const results = Array.isArray(j.results) ? j.results : [];
+      const hit = results.find(
+        r =>
+          r.name === npmGuess ||
+          r.name === pkgId ||
+          String(r.name || '').endsWith('/' + pkgId)
+      );
+      if (hit) {
+        infoEl.innerHTML = `package-info: <strong>${escapeHtml(hit.status || '—')}</strong> · ${escapeHtml(hit.registry || '')} · v${escapeHtml(String(hit.version || '—'))} · readme ${escapeHtml(String(hit.readme || '—'))}`;
+      } else {
+        infoEl.textContent = `package-info: no row for ${npmGuess}`;
+      }
+    } else if (infoEl) {
+      infoEl.textContent = `package-info: HTTP ${res.status}`;
+    }
+  } catch (err) {
+    if (infoEl) infoEl.textContent = `package-info: ${formatLoadError(err)}`;
+  }
+  try {
+    const res = await fetch('/registry/capability-map-subset.json', {
+      cache: 'no-store',
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(6000),
+    });
+    if (res.ok && capEl) {
+      const j = await res.json();
+      const hits = matchCapabilityRows(j.rows || [], pkgId);
+      if (hits.length) {
+        capEl.innerHTML =
+          'capabilities: ' +
+          hits
+            .slice(0, 4)
+            .map(
+              h =>
+                `<code title="${escapeAttribute(h.usedIn || '')}">${escapeHtml(h.capability || '?')}</code> (${escapeHtml(h.status || '')})`
+            )
+            .join(' · ');
+      } else {
+        capEl.innerHTML =
+          'capabilities: none matched · <a href="/portal/tools/">tools hub</a>';
+      }
+    } else if (capEl) {
+      capEl.textContent = `capabilities: HTTP ${res.status}`;
+    }
+  } catch (err) {
+    if (capEl) capEl.textContent = `capabilities: ${formatLoadError(err)}`;
+  }
+}
+
+/**
+ * POST local rebake when serve-public is on loopback; else show CLI hint.
+ * @param {ParentNode} root
+ */
+function bindRebakeLocal(root) {
+  const btn = root.querySelector('#pkg-rebake-local');
+  const status = root.querySelector('#pkg-rebake-status');
+  if (!btn || btn.dataset.bound === '1') return;
+  btn.dataset.bound = '1';
+  btn.addEventListener('click', async e => {
+    e.stopPropagation();
+    if (status) status.textContent = 'Rebaking… (local API)';
+    try {
+      const res = await fetch('/api/packages/graph/rebake', {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(300_000),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (status) {
+          status.innerHTML = `Rebake unavailable (${res.status}${body.error ? `: ${escapeHtml(body.error)}` : ''}). Use <code>bun run audit:packages -- --bake</code> or <code>portal-cli pm graph --update</code>.`;
+        }
+        return;
+      }
+      if (status) {
+        status.textContent = `Rebake ok · score=${body.score ?? '—'} · ${body.generatedAt || ''}`;
+      }
+      // Reload board from fresh bake
+      if (typeof window !== 'undefined' && typeof window.__pkgBoardReload === 'function') {
+        window.__pkgBoardReload();
+      } else {
+        location.reload();
+      }
+    } catch (err) {
+      if (status) {
+        status.innerHTML = `Rebake failed: ${escapeHtml(formatLoadError(err))}. Local only: <code>bun run serve:public</code> then retry, or copy rebake CLI.`;
+      }
+    }
+  });
 }
 
 function bindCopyButtons(root) {
@@ -1115,8 +1276,46 @@ function renderPackagesBoard(data, doc = document) {
   if (graphHost) {
     applyTableFilters(doc, graphHost._pkgRoleFilter || '', graphHost._pkgGradeFilter || '');
   }
-  // toolbar copy buttons
+  // toolbar copy buttons + local rebake
   bindCopyButtons(doc);
+  const toolbarRebake = doc.getElementById('pkg-rebake-toolbar');
+  if (toolbarRebake && toolbarRebake.dataset.bound !== '1') {
+    toolbarRebake.dataset.bound = '1';
+    // reuse same handler as detail panel via synthetic root
+    const wrap = doc.createElement('div');
+    wrap.innerHTML =
+      '<button type="button" id="pkg-rebake-local"></button><p id="pkg-rebake-status"></p>';
+    const status = doc.getElementById('pkg-toolbar-status');
+    toolbarRebake.addEventListener('click', async () => {
+      if (status) status.textContent = 'Rebaking… (local API)';
+      try {
+        const res = await fetch('/api/packages/graph/rebake', {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          signal: AbortSignal.timeout(300_000),
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (status) {
+            status.textContent = `Rebake unavailable (${res.status}). Use: bun run audit:packages -- --bake`;
+          }
+          return;
+        }
+        if (status) {
+          status.textContent = `Rebake ok · score=${body.score ?? '—'} · reloading…`;
+        }
+        if (typeof window !== 'undefined' && typeof window.__pkgBoardReload === 'function') {
+          window.__pkgBoardReload();
+        } else {
+          location.reload();
+        }
+      } catch (err) {
+        if (status) {
+          status.textContent = `Rebake failed: ${formatLoadError(err)}. Need bun run serve:public on loopback.`;
+        }
+      }
+    });
+  }
 
   const actionList = doc.getElementById('action-list');
   if (actionList) {
@@ -1307,4 +1506,8 @@ async function mountPackagesBoard() {
 
 if (typeof document !== 'undefined' && document.getElementById('pkg-body')) {
   void mountPackagesBoard();
+  // Used by local rebake success path
+  if (typeof window !== 'undefined') {
+    window.__pkgBoardReload = () => void mountPackagesBoard();
+  }
 }

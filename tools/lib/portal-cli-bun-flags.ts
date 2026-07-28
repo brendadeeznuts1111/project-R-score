@@ -88,6 +88,7 @@ export const PORTAL_CLI_COMMANDS = new Set([
   'secret',
   'badge',
   'pm',
+  'scanner',
   'dashboard',
   'help',
 ]);

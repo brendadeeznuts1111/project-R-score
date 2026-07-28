@@ -70,7 +70,8 @@ describe('portal-cli pm passthrough', () => {
     expect(code).toBe(0);
     expect(out.includes('packages-graph-map') || out.includes('registry-client')).toBe(true);
     expect(out.includes('Rebake') || out.includes('role') || out.includes('score')).toBe(true);
-    expect(out).toContain('selection  scope=all  view=all  selected=');
+    expect(out).toContain('selection  scope=all  view=all  package=');
+    expect(out).toContain('selected=');
     expect(out).toContain('surfaces=global');
   });
 
@@ -111,7 +112,8 @@ describe('portal-cli pm passthrough', () => {
     const code = await proc.exited;
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
-    expect(out).toContain('selection  scope=@factorywager  view=all  selected=6/6');
+    expect(out).toContain('selection  scope=@factorywager  view=all');
+    expect(out).toContain('selected=6/6');
     expect(out).toContain('@factorywager/registry-client');
   });
 
@@ -152,6 +154,7 @@ describe('portal-cli pm graph flags', () => {
     expect(parsePackageGraphFlags([])).toEqual({
       scope: 'all',
       view: 'all',
+      packageFilter: null,
       exportFormat: 'table',
       update: false,
       help: false,
@@ -160,6 +163,7 @@ describe('portal-cli pm graph flags', () => {
     expect(parsePackageGraphFlags(['--scope', 'factorywager'])).toEqual({
       scope: '@factorywager',
       view: 'all',
+      packageFilter: null,
       exportFormat: 'table',
       update: false,
       help: false,
@@ -168,6 +172,7 @@ describe('portal-cli pm graph flags', () => {
     expect(parsePackageGraphFlags(['--scope=@factory', '--update'])).toEqual({
       scope: '@factory',
       view: 'all',
+      packageFilter: null,
       exportFormat: 'table',
       update: true,
       help: false,
@@ -176,6 +181,7 @@ describe('portal-cli pm graph flags', () => {
     expect(parsePackageGraphFlags(['--scope', 'unscoped'])).toEqual({
       scope: 'unscoped',
       view: 'all',
+      packageFilter: null,
       exportFormat: 'table',
       update: false,
       help: false,
@@ -197,6 +203,9 @@ describe('portal-cli pm graph flags', () => {
       exportFormat: 'json',
     });
     expect(parsePackageGraphFlags(['--no-color'])).toMatchObject({ color: false });
+    expect(parsePackageGraphFlags(['--package=registry-client'])).toMatchObject({
+      packageFilter: 'registry-client',
+    });
   });
 
   test('rejects missing, repeated, and unknown graph options', () => {

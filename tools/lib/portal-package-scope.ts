@@ -18,6 +18,8 @@ export type PackageGraphExport = 'table' | 'json' | 'csv';
 export interface PackageGraphFlags {
   readonly scope: PackageScopeFilter;
   readonly view: PackageGraphView;
+  /** Optional name substring filter (matches npmName or dir name). */
+  readonly packageFilter: string | null;
   readonly exportFormat: PackageGraphExport;
   readonly update: boolean;
   readonly help: boolean;
@@ -161,6 +163,8 @@ export function parsePackageGraphFlags(args: readonly string[]): PackageGraphFla
   let scopeSeen = false;
   let view: PackageGraphView = 'all';
   let viewSeen = false;
+  let packageFilter: string | null = null;
+  let packageSeen = false;
   let exportFormat: PackageGraphExport = 'table';
   let exportSeen = false;
   let update = false;
@@ -188,6 +192,7 @@ export function parsePackageGraphFlags(args: readonly string[]): PackageGraphFla
 
     let scopeValue: string | undefined;
     let viewValue: string | undefined;
+    let packageValue: string | undefined;
     let exportValue: string | undefined;
 
     if (arg === '--scope') {
@@ -215,6 +220,17 @@ export function parsePackageGraphFlags(args: readonly string[]): PackageGraphFla
         throw new Error(
           '--view requires: all, dormant, consumed, root-tooling, healthy, needs-improvement, critical.'
         );
+      }
+    } else if (arg === '--package' || arg === '--pkg') {
+      packageValue = args[index + 1];
+      if (!packageValue || packageValue.startsWith('-')) {
+        throw new Error('--package requires a package name substring (e.g. registry-client).');
+      }
+      index += 1;
+    } else if (arg.startsWith('--package=') || arg.startsWith('--pkg=')) {
+      packageValue = arg.slice(arg.indexOf('=') + 1);
+      if (!packageValue) {
+        throw new Error('--package requires a package name substring (e.g. registry-client).');
       }
     } else if (arg === '--export') {
       exportValue = args[index + 1];
@@ -244,6 +260,11 @@ export function parsePackageGraphFlags(args: readonly string[]): PackageGraphFla
       view = normalizePackageGraphView(viewValue);
       viewSeen = true;
     }
+    if (packageValue !== undefined) {
+      if (packageSeen) throw new Error('--package may only be specified once.');
+      packageFilter = packageValue.trim().toLowerCase();
+      packageSeen = true;
+    }
     if (exportValue !== undefined) {
       if (exportSeen) throw new Error('--export may only be specified once.');
       exportFormat = normalizePackageGraphExport(exportValue);
@@ -251,7 +272,7 @@ export function parsePackageGraphFlags(args: readonly string[]): PackageGraphFla
     }
   }
 
-  return { scope, view, exportFormat, update, help, color };
+  return { scope, view, packageFilter, exportFormat, update, help, color };
 }
 
 function packageScope(name: string): `@${string}` | undefined {
@@ -269,15 +290,23 @@ export function selectPackageGraphRows<T extends PackageGraphRow>(
   packages: readonly T[],
   workspaces: readonly PackageGraphWorkspace[],
   scope: PackageScopeFilter,
-  view: PackageGraphView = 'all'
+  view: PackageGraphView = 'all',
+  packageFilter: string | null = null
 ): ScopedPackageGraphRow<T>[] {
+  const needle = packageFilter?.toLowerCase() ?? null;
   return resolvePackageGraphRows(packages, workspaces).filter(row => {
     if (scope !== 'all') {
       const npmScope = packageScope(row.npmName);
       const scopeOk = scope === 'unscoped' ? npmScope === undefined : npmScope === scope;
       if (!scopeOk) return false;
     }
-    return packageGraphViewMatches(row.package, view);
+    if (!packageGraphViewMatches(row.package, view)) return false;
+    if (needle) {
+      const name = row.npmName.toLowerCase();
+      const dir = String(row.package.name ?? '').toLowerCase();
+      if (!name.includes(needle) && !dir.includes(needle)) return false;
+    }
+    return true;
   });
 }
 

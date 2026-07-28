@@ -181,7 +181,9 @@
         <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy pm graph</button>
         <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph --view=dormant">copy dormant view</button>
         <button type="button" class="copy-cli" data-cli="bun run audit:packages -- --bake">copy rebake</button>
+        <button type="button" class="pkg-chip" id="pkg-rebake-toolbar" title="POST /api/packages/graph/rebake (serve-public loopback only)">rebake (local API)</button>
       </div>
+      <p class="meta" id="pkg-toolbar-status"></p>
       <div class="pkg-dep-legend">
         <span class="lg-pkg">package</span>
         <span class="lg-consumed">consumed</span>
