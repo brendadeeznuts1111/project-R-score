@@ -2,8 +2,16 @@
 // @see https://bun.com/docs/runtime#general-execution-options
 import { describe, expect, test } from 'bun:test';
 import {
+  BUN_BOOL_FLAGS,
   BUN_FLAGS_HELP,
+  BUN_VALUE_FLAGS,
+  RUNTIME_FLAGS,
+  assessRuntimeFlagsCatalog,
+  buildBunFlagsHelp,
+  buildFlagSets,
   bunSpawnArgv,
+  formatFlagDisplay,
+  formatRuntimeFlagsTable,
   parseBunExecutionFlags,
 } from '../tools/lib/portal-cli-bun-flags.ts';
 import {
@@ -77,6 +85,12 @@ describe('parseBunExecutionFlags', () => {
     expect(p.rest).toEqual(['vault', 'health', '--update']);
   });
 
+  test('stops at flags command (portal owns it)', () => {
+    const p = parseBunExecutionFlags(['flags', '--all']);
+    expect(p.bunFlags).toEqual([]);
+    expect(p.rest).toEqual(['flags', '--all']);
+  });
+
   test('unknown leading flag becomes portal rest', () => {
     const p = parseBunExecutionFlags(['--not-a-bun-flag', 'dashboard']);
     expect(p.bunFlags).toEqual([]);
@@ -93,12 +107,20 @@ describe('parseBunExecutionFlags', () => {
     expect(bunSpawnArgv([], ['pm', 'ls'])).toEqual(['bun', 'pm', 'ls']);
   });
 
-  test('curated catalog and help expose only the grounded portal flags', async () => {
+  test('catalog SSOT drives parse sets and curated help', async () => {
     const catalog = (await Bun.file('config/runtime-flags.json').json()) as Array<{
       flag: string;
       description: string;
+      curated?: boolean;
+      takesValue?: boolean;
+      shortcode?: string;
+      helpExample?: string;
     }>;
-    expect(catalog.map(row => row.flag)).toEqual([
+    expect(catalog.length).toBe(RUNTIME_FLAGS.length);
+    expect(catalog.length).toBeGreaterThanOrEqual(14);
+
+    const curated = catalog.filter(r => r.curated);
+    expect(curated.map(row => formatFlagDisplay(row as (typeof RUNTIME_FLAGS)[0]))).toEqual([
       '--watch',
       '--hot',
       '--no-clear-screen',
@@ -117,20 +139,83 @@ describe('parseBunExecutionFlags', () => {
     expect(catalog.find(row => row.flag === '--silent')?.description).toContain(
       'script-command echo'
     );
+
+    const sets = buildFlagSets(RUNTIME_FLAGS);
+    expect(sets.boolFlags.has('--smol')).toBe(true);
+    expect(sets.valueFlags.has('--cwd')).toBe(true);
+    expect(sets.valueFlags.has('-c')).toBe(true); // --config shortcode
+    expect(BUN_BOOL_FLAGS.has('--watch')).toBe(true);
+    expect(BUN_VALUE_FLAGS.has('--env-file')).toBe(true);
+
+    const health = assessRuntimeFlagsCatalog(RUNTIME_FLAGS);
+    expect(health.ok).toBe(true);
+    expect(health.curated).toBe(14);
+    expect(health.schemaIssues).toEqual([]);
+    expect(health.shortcodeConflicts).toEqual([]);
+    expect(health.deprecatedFlags).toEqual([]);
+    expect(health.helpCoverageMisses).toEqual([]);
+
     expect(BUN_FLAGS_HELP).not.toContain('--verbose');
     expect(BUN_FLAGS_HELP).toContain(`API reference: ${BUN_API_REFERENCE_URL}`);
     expect(BUN_FLAGS_HELP).toContain(`Type declarations: ${BUN_TYPES_SOURCE_URL}`);
     expect(BUN_FLAGS_HELP).toContain(`Repository: ${BUN_REPOSITORY_URL}`);
-    for (const row of catalog) {
+    for (const row of curated) {
       expect(BUN_FLAGS_HELP).toContain(row.flag);
     }
+
+    // Generated help matches buildBunFlagsHelp
+    expect(buildBunFlagsHelp(RUNTIME_FLAGS)).toBe(BUN_FLAGS_HELP);
+
+    const table = formatRuntimeFlagsTable({ catalog: RUNTIME_FLAGS });
+    expect(table).toContain('--watch');
+    expect(table).toContain('portal flags');
+    expect(table).not.toContain('--console-depth'); // non-curated hidden by default
+    expect(formatRuntimeFlagsTable({ all: true, catalog: RUNTIME_FLAGS })).toContain(
+      '--console-depth'
+    );
 
     const proc = Bun.spawn(['bun', '--help'], { stdout: 'pipe', stderr: 'pipe' });
     const runtimeHelp = await new Response(proc.stdout).text();
     expect(await proc.exited).toBe(0);
-    for (const row of catalog) {
+    for (const row of curated) {
       expect(runtimeHelp).toContain(row.flag.split('=')[0]!);
     }
     expect(runtimeHelp).not.toMatch(/^\s+--verbose\b/m);
+  });
+
+  test('assessRuntimeFlagsCatalog detects shortcode conflicts and schema gaps', () => {
+    const bad = assessRuntimeFlagsCatalog([
+      {
+        flag: '--config',
+        shortcode: '-c',
+        category: 'Environment & Config',
+        version: 'Bun ≥1.0',
+        description: 'a',
+        url: 'https://bun.com/docs/runtime',
+        takesValue: true,
+        curated: true,
+      },
+      {
+        flag: '--cwd',
+        shortcode: '-c',
+        category: 'Environment & Config',
+        version: 'Bun ≥1.0',
+        description: 'b',
+        url: 'https://bun.com/docs/runtime',
+        takesValue: true,
+        curated: true,
+      },
+      {
+        flag: '--broken',
+        category: '',
+        version: 'Bun ≥1.0',
+        description: '',
+        url: 'not-https',
+        curated: false,
+      },
+    ]);
+    expect(bad.ok).toBe(false);
+    expect(bad.shortcodeConflicts.some(s => s.includes('-c'))).toBe(true);
+    expect(bad.schemaIssues.length).toBeGreaterThan(0);
   });
 });

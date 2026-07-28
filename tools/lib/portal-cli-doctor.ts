@@ -14,11 +14,14 @@
  *   portal-cli doctor --verbose     # table: fix · auto · scope · time + impact
  *   portal-cli doctor --failed-only # hide passing checks (default + verbose)
  *   portal-cli doctor --full        # spawn install:verify · vault · capability gates
+ *   portal-cli doctor --group catalog
+ *   portal-cli doctor --env ci      # skip envScope=dev checks
  *
  * Fix commands use real monorepo scripts only (no invented Bun flags).
  *
  * @see lib/docs/bun-install-linker-docs.ts
  * @see scripts/verify-install-cache.ts (install:verify)
+ * @see tools/lib/portal-cli-doctor-catalog.ts
  */
 
 import { joinPath } from '../../scripts/lib/fs-bun.ts';
@@ -31,10 +34,11 @@ import {
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from '../../scripts/lib/machine-bunfig.ts';
+import { runCatalogChecks } from './portal-cli-doctor-catalog.ts';
 
 export type PortalDoctorLevel = 'fatal' | 'warn' | 'info';
 export type PortalDoctorEnvScope = 'dev' | 'ci' | 'all';
-export type PortalDoctorGroup = 'linker' | 'bakes' | 'gates';
+export type PortalDoctorGroup = 'linker' | 'bakes' | 'catalog' | 'gates';
 
 export type PortalDoctorCheck = {
   id: string; // brand-ok — check id enum-like opaque key (linker-config-version, …)
@@ -78,6 +82,10 @@ export type PortalDoctorReport = {
   full: boolean;
   verbose: boolean;
   failedOnly: boolean;
+  /** Optional group filter applied to display + summary. */
+  group?: PortalDoctorGroup;
+  /** Optional env filter: ci skips envScope=dev checks. */
+  env?: PortalDoctorEnvScope;
   generatedAt: string;
   checks: PortalDoctorCheck[];
   summary: PortalDoctorSummary;
@@ -94,15 +102,61 @@ export type PortalDoctorOpts = {
   full?: boolean;
   verbose?: boolean;
   failedOnly?: boolean;
+  /** Only include checks from this group (e.g. catalog). */
+  group?: PortalDoctorGroup;
+  /**
+   * Env filter for envScope:
+   * - `ci` → include envScope `ci` | `all` (skip `dev`)
+   * - `dev` → include `dev` | `all`
+   * - `all` / omit → no env filter
+   */
+  env?: PortalDoctorEnvScope;
   /** Inject spawn for tests */
   spawn?: (argv: string[], opts?: { cwd?: string }) => Promise<number>;
 };
 
-const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
+export const GROUP_LABEL: Record<PortalDoctorGroup, string> = {
   linker: 'Linker policy',
   bakes: 'Offline bakes',
+  catalog: 'Catalog SSOT',
   gates: 'Spawned gates',
 };
+
+export const PORTAL_DOCTOR_GROUPS: PortalDoctorGroup[] = ['linker', 'bakes', 'catalog', 'gates'];
+
+export function parseDoctorGroup(raw: string | undefined): PortalDoctorGroup | undefined {
+  if (!raw) return undefined;
+  if ((PORTAL_DOCTOR_GROUPS as string[]).includes(raw)) return raw as PortalDoctorGroup;
+  throw new Error(
+    `Unknown doctor --group=${raw}; expect one of: ${PORTAL_DOCTOR_GROUPS.join(' | ')}`
+  );
+}
+
+export function parseDoctorEnv(raw: string | undefined): PortalDoctorEnvScope | undefined {
+  if (!raw) return undefined;
+  if (raw === 'dev' || raw === 'ci' || raw === 'all') return raw;
+  throw new Error(`Unknown doctor --env=${raw}; expect one of: dev | ci | all`);
+}
+
+/** Apply group + env filters (pure). */
+export function filterDoctorByScope(
+  checks: PortalDoctorCheck[],
+  opts: { group?: PortalDoctorGroup; env?: PortalDoctorEnvScope }
+): PortalDoctorCheck[] {
+  let out = checks;
+  if (opts.group) {
+    out = out.filter(c => c.group === opts.group);
+  }
+  if (opts.env && opts.env !== 'all') {
+    out = out.filter(c => {
+      const scope = c.envScope ?? 'all';
+      if (opts.env === 'ci') return scope === 'ci' || scope === 'all';
+      if (opts.env === 'dev') return scope === 'dev' || scope === 'all';
+      return true;
+    });
+  }
+  return out;
+}
 
 async function defaultSpawn(argv: string[], opts?: { cwd?: string }): Promise<number> {
   const proc = Bun.spawn(argv, {
@@ -270,6 +324,8 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
   const full = Boolean(opts.full);
   const verbose = Boolean(opts.verbose);
   const failedOnly = Boolean(opts.failedOnly);
+  const group = opts.group;
+  const env = opts.env;
   const spawn = opts.spawn ?? defaultSpawn;
   const checks: PortalDoctorCheck[] = [];
 
@@ -353,7 +409,12 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
     )
   );
 
-  // 3) Optional full: spawn existing gates (no network assumed)
+  // 3) Catalog SSOT health (runtime flags — pure, no network)
+  //    catalog-json-schema · catalog-shortcode-conflict · catalog-help-coverage · catalog-deprecated-flags
+  const catalogResult = await runCatalogChecks(cwd);
+  checks.push(...catalogResult.checks);
+
+  // 4) Optional full: spawn existing gates (no network assumed)
   if (full) {
     const installVerify = await spawn(['bun', 'run', 'install:verify'], { cwd });
     checks.push(
@@ -423,9 +484,12 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
     );
   }
 
+  // Scope filters (group / env) apply to report checks + summary + exit ok
+  const scoped = filterDoctorByScope(checks, { group, env });
+
   // Default mode: only fatal failures fail the doctor; warns are advisory
-  const ok = checks.filter(c => c.level === 'fatal').every(c => c.ok);
-  const summary = summarizeDoctorChecks(checks);
+  const ok = scoped.filter(c => c.level === 'fatal').every(c => c.ok);
+  const summary = summarizeDoctorChecks(scoped);
 
   return {
     kind: 'portal-cli-doctor',
@@ -434,8 +498,10 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
     full,
     verbose,
     failedOnly,
+    group,
+    env,
     generatedAt: new Date().toISOString(),
-    checks,
+    checks: scoped,
     summary,
     docs: {
       isolatedInstalls: INSTALL_LINKER_DOCS.isolatedInstalls,
@@ -459,6 +525,8 @@ export function formatPortalDoctor(r: PortalDoctorReport): string {
     r.full ? 'full' : null,
     r.verbose ? 'verbose' : null,
     r.failedOnly ? 'failed-only' : null,
+    r.group ? `group=${r.group}` : null,
+    r.env && r.env !== 'all' ? `env=${r.env}` : null,
   ]
     .filter(Boolean)
     .join(' · ');
@@ -483,7 +551,7 @@ export function formatPortalDoctor(r: PortalDoctorReport): string {
   lines.push(`      ${r.docs.isolatedInstalls}`);
   lines.push('');
   lines.push(
-    'Related: portal-cli vault health · capabilities health · scanner doctor · bunfig check'
+    'Related: portal-cli vault health · capabilities health · scanner doctor · bunfig check · flags'
   );
   lines.push(
     '         bun run install:verify · portal-cli doctor --verbose · portal-cli doctor --full'
@@ -533,6 +601,8 @@ export function formatPortalDoctorVerbose(r: PortalDoctorReport): string {
     r.full ? 'full' : null,
     'verbose',
     r.failedOnly ? 'failed-only' : null,
+    r.group ? `group=${r.group}` : null,
+    r.env && r.env !== 'all' ? `env=${r.env}` : null,
   ]
     .filter(Boolean)
     .join(' · ');

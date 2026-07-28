@@ -56,8 +56,12 @@ import {
 } from './lib/portal-package-scope.ts';
 import {
   BUN_FLAGS_HELP,
+  assessRuntimeFlagsCatalog,
+  formatRuntimeFlagsTable,
+  loadRuntimeFlagsCatalog,
   parseBunExecutionFlags,
   spawnBunWithFlags,
+  type RuntimeFlagsJsonReport,
 } from './lib/portal-cli-bun-flags.ts';
 import { dispatchScanner } from './lib/portal-cli-scanner.ts';
 
@@ -205,7 +209,8 @@ const ROOT_HELP = `FactoryWager portal CLI
   portal-cli secret <subcommand>     Proton Pass CLI (pass-cli) wrapper
   portal-cli pm <args…>              bun pm passthrough + FW graph helper
   portal-cli scanner <subcommand>    Bun Security Scanner (policy · estimate · scan --oneshot)
-  portal-cli doctor [--verbose] [--full]  Unified health gate (linker configVersion + bakes)
+  portal-cli doctor [--verbose] [--full]  Unified health gate (linker configVersion + bakes + catalog)
+  portal-cli flags [--all] [--verbose] [--json]  Curated Bun runtime flags table (SSOT catalog)
   portal-cli badge [--json]          Offline nav-badge preview (from baked registry JSON)
   portal-cli bunfig status|check     Bunfig install config provenance + policy gate
   portal-cli dashboard [--view=name] [--open]  Print/open portal board (default: tools)
@@ -216,6 +221,7 @@ const ROOT_HELP = `FactoryWager portal CLI
   bun run portal-cli vault health
   bun run portal-cli capabilities health
   bun run portal-cli doctor
+  bun run portal-cli flags
   bun run portal-cli secret which
   bun run portal-cli pm ls
   bun run portal-cli pm pack --dry-run
@@ -825,7 +831,13 @@ async function printBunfigStatus(flags: string[] = []): Promise<void> {
       owner: string;
       drift: boolean;
     }>;
-    scopes?: Array<{ scope: string; url: string | null; tokenEnv: string | null }>;
+    scopes?: Array<{
+      scope: string;
+      url: string | null;
+      plane?: string;
+      usedBy?: string[];
+      tokenEnv: string | null;
+    }>;
     securityScanner?: string | null;
     gates?: {
       doctor?: { ok: boolean; exitCode: number };
@@ -857,8 +869,14 @@ async function printBunfigStatus(flags: string[] = []): Promise<void> {
   if (data.scopes?.length) {
     console.log('\n── registry scopes (project) ──');
     logTable(
-      data.scopes.map(s => ({ scope: s.scope, url: s.url ?? '—', tokenEnv: s.tokenEnv ?? '—' })),
-      ['scope', 'url', 'tokenEnv']
+      data.scopes.map(s => ({
+        scope: s.scope,
+        url: s.url ?? '—',
+        plane: s.plane ?? '—',
+        pkgs: (s.usedBy ?? []).length || '—',
+        tokenEnv: s.tokenEnv ?? '—',
+      })),
+      ['scope', 'url', 'plane', 'pkgs', 'tokenEnv']
     );
   }
   console.log(`\nsecurity scanner: ${data.securityScanner ?? '—'}`);
@@ -1147,8 +1165,52 @@ Rebake: bun run bunfig:bake  ·  Policy: docs/UNIFIED.md
     process.exit(code);
   }
 
+  if (cmd === 'flags') {
+    // Catalog-driven Bun runtime flags table (SSOT: config/runtime-flags.json).
+    // @see https://bun.com/docs/runtime/index#general-execution-options
+    if (argv.includes('--help') || argv.includes('-h')) {
+      console.log(`Usage: portal-cli flags [flags]
+
+Curated Bun runtime flags from config/runtime-flags.json (SSOT for help + harvest).
+
+Flags:
+  --all · -a         Include full harvestable set (not only curated help rows)
+  --verbose · -v     Extra columns: version · default · deprecated · behavior
+  --json             Machine-readable catalog + health report
+
+Examples:
+  portal-cli flags
+  portal-cli flags --all
+  portal-cli flags --verbose
+  portal-cli flags --json
+
+Related: portal-cli --help · portal-cli doctor --group catalog
+`);
+      return;
+    }
+    const all = argv.includes('--all') || argv.includes('-a');
+    const verbose = argv.includes('--verbose') || argv.includes('-v');
+    const catalog = await loadRuntimeFlagsCatalog();
+    const health = assessRuntimeFlagsCatalog(catalog);
+    if (argv.includes('--json')) {
+      const report: RuntimeFlagsJsonReport = {
+        kind: 'portal-cli-flags',
+        schemaVersion: 1,
+        curatedOnly: !all,
+        verbose,
+        generatedAt: new Date().toISOString(),
+        flags: all ? catalog : catalog.filter(r => r.curated),
+        health,
+      };
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(formatRuntimeFlagsTable({ all, verbose, catalog }));
+    }
+    process.exit(health.ok ? 0 : 1);
+  }
+
   if (cmd === 'doctor') {
-    // Unified portal health gate — linker configVersion + offline bakes.
+    // Unified portal health gate — linker configVersion + offline bakes + catalog.
     // --full also runs install:verify + vault/capabilities test gates.
     // --verbose adds fix command · impact · auto-fixable · env scope table.
     // @see https://bun.com/docs/pm/cli/install#default-strategy
@@ -1161,33 +1223,66 @@ Unified offline health gate for the portal control plane.
 Checks (default — pure, no network):
   Linker:  linker-config-version · machine-isolated-linker
   Bakes:   vault-health · capability-map-subset · bunfig-state (+ age when present)
+  Catalog: catalog-json-schema · catalog-shortcode-conflict · catalog-help-coverage · catalog-deprecated-flags
   Gates:   (only with --full) install:verify · vault-health tests · capability tests
 
 Flags:
   --verbose · -v     Table: status · fix · auto · scope · age + remediation detail
   --failed-only      Hide passing checks (pairs with --verbose)
   --full             Spawn install:verify · vault-health · capability-map tests
+  --group <name>     linker | bakes | catalog | gates
+  --env <scope>      all (default) | ci (skip envScope=dev) | dev
   --json             Machine-readable report (schemaVersion 3 + summary)
 
 Examples:
   portal-cli doctor
   portal-cli doctor --verbose
+  portal-cli doctor --group catalog --verbose
+  portal-cli doctor --env ci
   portal-cli doctor --failed-only --verbose
   portal-cli doctor --json
   portal-cli doctor --full --verbose
 
-Related: vault health · capabilities health · scanner doctor · bunfig check · install:verify
+Related: vault health · capabilities health · scanner doctor · bunfig check · flags · install:verify
 `);
       return;
     }
-    const { runPortalDoctor, formatPortalDoctor, formatPortalDoctorVerbose } = await import(
-      './lib/portal-cli-doctor.ts'
-    );
+    const {
+      runPortalDoctor,
+      formatPortalDoctor,
+      formatPortalDoctorVerbose,
+      parseDoctorGroup,
+      parseDoctorEnv,
+    } = await import('./lib/portal-cli-doctor.ts');
     const verbose = argv.includes('--verbose') || argv.includes('-v');
+    let group: ReturnType<typeof parseDoctorGroup>;
+    let env: ReturnType<typeof parseDoctorEnv>;
+    try {
+      const groupEq = argv.find(a => a.startsWith('--group='));
+      const groupIdx = argv.indexOf('--group');
+      const groupRaw = groupEq
+        ? groupEq.slice('--group='.length)
+        : groupIdx >= 0
+          ? argv[groupIdx + 1]
+          : undefined;
+      group = parseDoctorGroup(groupRaw);
+      const envEq = argv.find(a => a.startsWith('--env='));
+      const envIdx = argv.indexOf('--env');
+      const envRaw = envEq
+        ? envEq.slice('--env='.length)
+        : envIdx >= 0
+          ? argv[envIdx + 1]
+          : undefined;
+      env = parseDoctorEnv(envRaw);
+    } catch (e) {
+      cliError(e instanceof Error ? e.message : String(e));
+    }
     const report = await runPortalDoctor({
       full: argv.includes('--full'),
       verbose,
       failedOnly: argv.includes('--failed-only'),
+      group,
+      env,
     });
     if (argv.includes('--json')) {
       console.log(JSON.stringify(report, null, 2));

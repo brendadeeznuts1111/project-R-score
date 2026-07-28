@@ -5,14 +5,18 @@ import { describe, expect, test } from 'bun:test';
 import { resolvePath } from '../scripts/lib/fs-bun';
 import {
   checkLinkerConfigVersion,
+  filterDoctorByScope,
   filterDoctorChecks,
   formatAgeFromIso,
   formatDoctorSummaryFooter,
   formatPortalDoctor,
   formatPortalDoctorVerbose,
+  parseDoctorEnv,
+  parseDoctorGroup,
   runPortalDoctor,
   summarizeDoctorChecks,
 } from '../tools/lib/portal-cli-doctor.ts';
+import { runCatalogChecks } from '../tools/lib/portal-cli-doctor-catalog.ts';
 import { PORTAL_CLI_COMMANDS } from '../tools/lib/portal-cli-bun-flags.ts';
 
 const ROOT = resolvePath(import.meta.dir, '..');
@@ -145,8 +149,83 @@ describe('portal-cli doctor pure', () => {
     expect(text).toContain('default-strategy');
   });
 
-  test('PORTAL_CLI_COMMANDS includes doctor', () => {
+  test('PORTAL_CLI_COMMANDS includes doctor and flags', () => {
     expect(PORTAL_CLI_COMMANDS.has('doctor')).toBe(true);
+    expect(PORTAL_CLI_COMMANDS.has('flags')).toBe(true);
+  });
+
+  test('doctor includes granular catalog SSOT checks', async () => {
+    const r = await runPortalDoctor({ cwd: ROOT, full: false });
+    const ids = r.checks.filter(c => c.group === 'catalog').map(c => c.id);
+    expect(ids).toEqual([
+      'catalog-json-schema',
+      'catalog-shortcode-conflict',
+      'catalog-help-coverage',
+      'catalog-deprecated-flags',
+    ]);
+    for (const id of ids) {
+      expect(r.checks.find(c => c.id === id)?.ok).toBe(true);
+    }
+    const schema = r.checks.find(c => c.id === 'catalog-json-schema');
+    expect(schema?.level).toBe('fatal');
+    expect(schema?.autoFixable).toBe(false);
+    expect(r.checks.find(c => c.id === 'catalog-help-coverage')?.autoFixable).toBe(true);
+    expect(r.checks.find(c => c.id === 'catalog-deprecated-flags')?.envScope).toBe('dev');
+    expect(formatPortalDoctor(r)).toContain('Catalog SSOT:');
+  });
+
+  test('runCatalogChecks returns health + four checks', async () => {
+    const res = await runCatalogChecks(ROOT);
+    expect(res.loadOk).toBe(true);
+    expect(res.checks).toHaveLength(4);
+    expect(res.health.curated).toBe(14);
+    expect(res.health.schemaIssues).toEqual([]);
+    expect(res.health.shortcodeConflicts).toEqual([]);
+  });
+
+  test('--group catalog scopes report to catalog checks only', async () => {
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, group: 'catalog' });
+    expect(r.group).toBe('catalog');
+    expect(r.checks.every(c => c.group === 'catalog')).toBe(true);
+    expect(r.checks).toHaveLength(4);
+    expect(r.ok).toBe(true);
+    expect(formatPortalDoctor(r)).toContain('group=catalog');
+  });
+
+  test('--env ci drops envScope=dev checks', async () => {
+    const all = await runPortalDoctor({ cwd: ROOT, full: false });
+    const ci = await runPortalDoctor({ cwd: ROOT, full: false, env: 'ci' });
+    expect(ci.env).toBe('ci');
+    expect(ci.checks.find(c => c.id === 'catalog-deprecated-flags')).toBeUndefined();
+    expect(all.checks.find(c => c.id === 'catalog-deprecated-flags')).toBeTruthy();
+    expect(ci.summary.checkCount).toBeLessThan(all.summary.checkCount);
+  });
+
+  test('parseDoctorGroup / parseDoctorEnv / filterDoctorByScope', () => {
+    expect(parseDoctorGroup('catalog')).toBe('catalog');
+    expect(() => parseDoctorGroup('nope')).toThrow(/Unknown doctor --group/);
+    expect(parseDoctorEnv('ci')).toBe('ci');
+    expect(() => parseDoctorEnv('prod')).toThrow(/Unknown doctor --env/);
+    const checks = [
+      {
+        id: 'a',
+        level: 'fatal' as const,
+        group: 'linker' as const,
+        ok: true,
+        message: 'x',
+        envScope: 'all' as const,
+      },
+      {
+        id: 'b',
+        level: 'info' as const,
+        group: 'catalog' as const,
+        ok: true,
+        message: 'y',
+        envScope: 'dev' as const,
+      },
+    ];
+    expect(filterDoctorByScope(checks, { group: 'catalog' }).map(c => c.id)).toEqual(['b']);
+    expect(filterDoctorByScope(checks, { env: 'ci' }).map(c => c.id)).toEqual(['a']);
   });
 });
 
@@ -204,7 +283,7 @@ describe('portal-cli doctor CLI', () => {
     expect(out).toMatch(/Summary:|passed/);
   });
 
-  test('root help lists doctor', async () => {
+  test('root help lists doctor and flags', async () => {
     const proc = Bun.spawn(['bun', CLI, 'help'], {
       cwd: ROOT,
       stdout: 'pipe',
@@ -214,5 +293,36 @@ describe('portal-cli doctor CLI', () => {
     const out = await new Response(proc.stdout).text();
     expect(code).toBe(0);
     expect(out).toContain('doctor');
+    expect(out).toContain('flags');
+  });
+
+  test('portal-cli flags prints curated table', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'flags'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    expect(out).toContain('portal flags');
+    expect(out).toContain('--watch');
+    expect(out).toContain('config/runtime-flags.json');
+  });
+
+  test('portal-cli flags --json is machine-readable', async () => {
+    const proc = Bun.spawn(['bun', CLI, 'flags', '--json'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const code = await proc.exited;
+    const out = await new Response(proc.stdout).text();
+    expect(code).toBe(0);
+    const j = JSON.parse(out);
+    expect(j.kind).toBe('portal-cli-flags');
+    expect(j.schemaVersion).toBe(1);
+    expect(j.health?.ok).toBe(true);
+    expect(j.flags?.length).toBe(14);
   });
 });
