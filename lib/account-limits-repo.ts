@@ -211,6 +211,7 @@ export class AccountLimitsRepository {
 
   /**
    * Record a limit and create an alert if it is a raise.
+   * Also publishes to the SSE channel for real-time dashboard updates.
    */
   recordLimitWithAlert(limit: LimitRecord): LimitRaise | null {
     this.recordLimit(limit);
@@ -220,6 +221,14 @@ export class AccountLimitsRepository {
         limit.node_id,
         `Limit raised on ${raise.sportsbook} ${raise.sport_id}/${raise.market_id} ${raise.bet_type}: $${raise.previous_max} → $${raise.new_limit}`
       );
+      // Fire-and-forget SSE channel publish
+      try {
+        publishLimitAlertToChannel(this.db, {
+          ...raise,
+          node_id: limit.node_id,
+          direction: 'up',
+        });
+      } catch {}
     }
     return raise;
   }

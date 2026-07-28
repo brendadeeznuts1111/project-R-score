@@ -195,16 +195,39 @@ export function handleOpsLimits(db: Database, node: OpsTreeNode | null): string 
   const repo = new AccountLimitsRepository(db);
   const since = Math.floor(Date.now() / 1000) - 48 * 3600;
   const raises = repo.detectRaises(node.id, since);
-  if (raises.length === 0) return '📋 No recent limit increases in the last 48h.';
-  const lines = raises
-    .slice(0, 5)
-    .map(
-      r =>
-        `• ${r.sportsbook} ${r.sport_id}/${r.market_id} ${r.bet_type}: $${r.previous_max} → *$${r.new_limit}*`
-    );
-  return [`🚀 *Limit Increases* (48h)`, '', ...lines, '', `Total: ${raises.length} raise(s)`].join(
-    '\n'
-  );
+  const decreases = repo.detectDecreases(node.id, since);
+  if (raises.length === 0 && decreases.length === 0) {
+    return '📋 No recent limit changes in the last 48h.\n\nUse `/limits refresh` to re-check or `bun run ops:limits:demo` to seed test data.';
+  }
+  const lines: string[] = ['📊 *Limit Changes* (48h)'];
+  if (raises.length > 0) {
+    lines.push('', '🚀 *Raises*');
+    for (const r of raises.slice(0, 5)) {
+      const pct =
+        r.previous_max > 0
+          ? ` (${(((r.new_limit - r.previous_max) / r.previous_max) * 100).toFixed(0)}%)`
+          : '';
+      lines.push(
+        `• ${r.sportsbook} ${r.sport_id}/${r.market_id}: $${r.previous_max} → *$${r.new_limit}*${pct}`
+      );
+    }
+  }
+  if (decreases.length > 0) {
+    lines.push('', '⬇️ *Decreases*');
+    for (const r of decreases.slice(0, 3)) {
+      const pct =
+        r.previous_max > 0
+          ? ` (${(((r.new_limit - r.previous_max) / r.previous_max) * 100).toFixed(0)}%)`
+          : '';
+      lines.push(
+        `• ${r.sportsbook} ${r.sport_id}/${r.market_id}: $${r.previous_max} → *$${r.new_limit}*${pct}`
+      );
+    }
+  }
+  const total = raises.length + decreases.length;
+  lines.push('', `Total: ${total} change(s) · 🚀${raises.length} ⬇️${decreases.length}`);
+  lines.push('', 'Use `/limits` again to refresh. Portal: /portal/partner-history/');
+  return lines.join('\n');
 }
 export function dispatchOpsFlowOutput(
   db: Database,

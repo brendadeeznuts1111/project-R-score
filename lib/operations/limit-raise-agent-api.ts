@@ -9,6 +9,8 @@ import type { Database } from 'bun:sqlite';
 import { parseTreeNodeId } from '../types/branded.ts';
 import { buildReportProofFromValue, proofScoreHints } from '../security/report-proof.ts';
 import { PartnerAnalyticsRepository } from './partner-analytics-repo.ts';
+import { AccountLimitsRepository, queryRecentLimitChanges } from '../account-limits-repo.ts';
+import { enqueueLimitRaiseAlert } from '../channels/outbox.ts';
 
 const DEFAULT_LOOKBACK_HOURS = 24;
 const MAX_LOOKBACK_HOURS = 24 * 30;
@@ -74,4 +76,82 @@ export function handleLimitRaiseAgentRequest(request: Request, db: Database): Re
     proof,
     integrity: proofScoreHints(proof),
   });
+}
+
+/** POST /api/agents/v1/limits/record — record a current limit snapshot. */
+export function handleLimitRecordRequest(request: Request, db: Database): Response {
+  if (request.method !== 'POST') {
+    return json({ error: 'POST required' }, 405);
+  }
+  try {
+    const body = request.body ? JSON.parse(request.body as any) : {};
+    const { node_id, sportsbook, sport_id, market_id, bet_type, max_wager } = body;
+    if (!node_id || !sportsbook || !sport_id || !market_id || !bet_type || max_wager == null) {
+      return json(
+        {
+          error:
+            'Missing required fields: node_id, sportsbook, sport_id, market_id, bet_type, max_wager',
+        },
+        400
+      );
+    }
+    const nodeId = parseTreeNodeId(node_id);
+    if (!['pregame', 'live', 'straight'].includes(bet_type)) {
+      return json({ error: 'bet_type must be pregame, live, or straight' }, 400);
+    }
+    const repo = new AccountLimitsRepository(db);
+    const raise = repo.recordLimitWithAlert({
+      node_id: nodeId,
+      sportsbook,
+      sport_id,
+      market_id,
+      bet_type,
+      max_wager: Number(max_wager),
+    });
+    // Enqueue outbox alert when raise detected
+    if (raise) {
+      enqueueLimitRaiseAlert(db, {
+        treeNodeId: nodeId,
+        sportsbook,
+        sportId: sport_id,
+        marketId: market_id,
+        betType: bet_type,
+        previousMax: raise.previous_max,
+        newLimit: raise.new_limit,
+      });
+    }
+    return json({ recorded: true, raise_detected: raise != null, raise }, 201);
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : 'invalid request' }, 400);
+  }
+}
+
+/** GET /api/agents/v1/limits/summary — aggregate limit changes across partners. */
+export function handleLimitSummaryRequest(db: Database): Response {
+  try {
+    const changes = queryRecentLimitChanges(db, 48);
+    const total = changes.length;
+    const raises = changes.filter(c => c.direction === 'up').length;
+    const downs = changes.filter(c => c.direction === 'down').length;
+    const netDelta = changes.reduce((s, c) => s + ((c.new_limit ?? 0) - (c.previous_max ?? 0)), 0);
+    const avgScore = changes.reduce((s, c) => s + (c.multi_factor_score ?? 0), 0) / (total || 1);
+    const books = new Set(changes.map(c => c.sportsbook)).size;
+    const partners = new Set(changes.map(c => c.node_id)).size;
+    const body = {
+      schemaVersion: 1,
+      generated: new Date().toISOString(),
+      total,
+      raises,
+      decreases: downs,
+      netDelta,
+      avgScore: avgScore > 0 ? Number(avgScore.toFixed(4)) : null,
+      uniqueSportsbooks: books,
+      uniquePartners: partners,
+      changes,
+    };
+    const proof = buildReportProofFromValue(body);
+    return json({ ...body, proof, integrity: proofScoreHints(proof) });
+  } catch (error) {
+    return json({ error: error instanceof Error ? error.message : 'unknown error' }, 500);
+  }
 }
