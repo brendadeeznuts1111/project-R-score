@@ -5,15 +5,15 @@
   "gate": "check:monorepo-health",
   "path": "/registry/monorepo-health.json",
   "portal": "/portal/packages/",
-  "generatedAt": "2026-07-28T14:50:51.379Z",
+  "generatedAt": "2026-07-28T15:36:11.542Z",
   "bunVersion": "1.4.0",
-  "score": 34,
+  "score": 34.1,
   "grade": "critical",
   "formulaVersion": 1,
   "metrics": {
     "duplicateDepCount": 0,
-    "deadCodePercent": 8.610567514677104,
-    "largeFilePercent": 40.65533980582524,
+    "deadCodePercent": 8.6,
+    "largeFilePercent": 40.6,
     "testFailureRate": 0,
     "cyclicDependencyCount": 14,
     "testCoveragePercent": 0
@@ -21,21 +21,21 @@
   "breakdown": {
     "base": 100,
     "duplicateDepPenalty": 0,
-    "deadCodePenalty": 4.305283757338552,
-    "largeFilePenalty": 40.65533980582524,
+    "deadCodePenalty": 4.3,
+    "largeFilePenalty": 40.6,
     "testFailurePenalty": 0,
     "cyclePenalty": 21,
     "coverageBonus": 0
   },
-  "fileCount": 824,
-  "largeFileCount": 335,
+  "fileCount": 831,
+  "largeFileCount": 337,
   "deadFileCount": 44,
   "workspacePackageCount": 9,
   "testsRun": false,
   "buildRun": true,
   "notes": [
-    "import graph via Bun.Transpiler.scanImports; dead=orphan; package edges=186; cycles raw=14 capped=14",
-    "package import edges (non-relative): 186",
+    "import graph via Bun.Transpiler.scanImports; dead=orphan; package edges=187; cycles raw=14 capped=14",
+    "package import edges (non-relative): 187",
     "tests skipped (pass --with-tests / --with-coverage for failure rate + coverage)"
   ]
 }

@@ -11,16 +11,23 @@
 import { PORTAL_WEAVE_WIKI } from './wiki-nav.ts';
 import { PORTAL_CHROME_COMPONENTS } from '../portal/chrome-catalog.ts';
 
+export type PortalWeaveGroup = 'ops' | 'harness' | 'registry' | 'wiki' | 'plane' | 'other';
+
 export type PortalWeaveLink = {
+  /** Stable slug for UI chips / filters */
+  id?: string; // brand-ok — weave link key, not a domain *Id
   label: string;
   href: string;
   note?: string;
+  group?: PortalWeaveGroup;
 };
 
 export type PortalWeaveScript = {
+  id?: string; // brand-ok — script slot key
   label: string;
   cmd: string;
   doc?: string;
+  group?: PortalWeaveGroup;
 };
 
 export type PortalWeaveComponent = {
@@ -30,8 +37,29 @@ export type PortalWeaveComponent = {
   kind?: string;
 };
 
+export type PortalWeaveSummary = {
+  surfaces: number;
+  artifacts: number;
+  components: number;
+  wiki: number;
+  scripts: number;
+};
+
+export type PortalWeaveRelated = {
+  chrome: '/registry/portal-chrome.json';
+  monorepoHealth: '/registry/monorepo-health.json';
+  packagesGraph: '/registry/packages-graph-map.json';
+  opsSummary: '/registry/ops-summary.json';
+  tocOps: '/registry/toc-ops.json';
+};
+
 export type PortalWeavePayload = {
+  schemaVersion: 2;
+  kind: 'portal-weave';
+  path: '/registry/portal-weave.json';
   generated: string;
+  summary: PortalWeaveSummary;
+  related: PortalWeaveRelated;
   surfaces: PortalWeaveLink[];
   artifacts: PortalWeaveLink[];
   /** Shared chrome modules (topbar, footer, sidebar, …). */
@@ -41,52 +69,91 @@ export type PortalWeavePayload = {
   scripts: PortalWeaveScript[];
 };
 
+export const PORTAL_WEAVE_REGISTRY_PATH = '/registry/portal-weave.json' as const;
+
 /** HTML portal surfaces (trailing slash). */
 export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
-  { label: 'Home', href: '/' },
-  { label: 'Registry', href: '/portal/' },
+  { id: 'home', label: 'Home', href: '/', group: 'other' },
+  { id: 'registry', label: 'Registry', href: '/portal/', group: 'registry' },
   {
+    id: 'ops',
     label: 'Ops',
     href: '/portal/ops/',
-    note: 'C4/C5 · TOC · loop · compliance panel',
+    note: 'C4/C5 · TOC · loop · compliance · monorepo-health panel',
+    group: 'ops',
   },
-  { label: 'TOC Ops', href: '/portal/toc/', note: 'Drum/Buffer/Rope · MA/NJ board glance' },
   {
+    id: 'toc',
+    label: 'TOC Ops',
+    href: '/portal/toc/',
+    note: 'Drum/Buffer/Rope · harness glance · MA/NJ',
+    group: 'ops',
+  },
+  {
+    id: 'monitoring',
     label: 'Monitoring',
     href: '/monitoring/',
-    note: 'routing · env · compliance tile · limitRaises / limits board',
+    note: 'routing · env · compliance tile · limitRaises',
+    group: 'ops',
   },
-  { label: 'DOD queue', href: '/portal/dod/', note: 'visual proof review' },
   {
+    id: 'dod',
+    label: 'DOD queue',
+    href: '/portal/dod/',
+    note: 'visual proof review',
+    group: 'plane',
+  },
+  {
+    id: 'compliance',
     label: 'Compliance',
     href: '/portal/compliance/',
     note: 'MA/NJ enhancements · shadow · geo · HMAC',
+    group: 'ops',
   },
   {
+    id: 'limits',
     label: 'Limits',
     href: '/portal/limits/',
     note: 'account raises · multi-factor score · drivers',
+    group: 'ops',
   },
   {
+    id: 'partner-history',
     label: 'Partner history',
     href: '/portal/partner-history/',
     note: 'per-partner limit history board',
+    group: 'ops',
   },
-  { label: 'Skills', href: '/portal/skills/', note: 'catalog · .skill packages' },
   {
+    id: 'skills',
+    label: 'Skills',
+    href: '/portal/skills/',
+    note: 'catalog · .skill packages',
+    group: 'registry',
+  },
+  {
+    id: 'packages',
     label: 'Packages',
     href: '/portal/packages/',
     note: 'metafile map · coupling · archive probes',
+    group: 'harness',
   },
   {
+    id: 'dashboard',
     label: 'Dashboard',
     href: '/portal/dashboard/',
     note: 'executive KPIs · TOC · compliance plane',
+    group: 'ops',
   },
-  { label: 'Catalog', href: '/portal/catalog/' },
-  { label: 'Health', href: '/portal/health/' },
-  { label: 'Env', href: '/portal/env/' },
-  { label: 'Prediction report', href: '/registry/prediction/report/' },
+  { id: 'catalog', label: 'Catalog', href: '/portal/catalog/', group: 'registry' },
+  { id: 'health', label: 'Health', href: '/portal/health/', group: 'harness' },
+  { id: 'env', label: 'Env', href: '/portal/env/', group: 'harness' },
+  {
+    id: 'prediction-report',
+    label: 'Prediction report',
+    href: '/registry/prediction/report/',
+    group: 'registry',
+  },
 ];
 
 /** Static registry artifacts the portal surfaces depend on. */
@@ -299,30 +366,79 @@ export const PORTAL_WEAVE_SCRIPTS: PortalWeaveScript[] = [
   },
 ];
 
+function withLinkIds(links: PortalWeaveLink[], prefix: string): PortalWeaveLink[] {
+  return links.map((l, i) => ({
+    ...l,
+    id: l.id ?? `${prefix}-${i}-${slugFromLabel(l.label)}`,
+  }));
+}
+
+function slugFromLabel(label: string): string {
+  return label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 40);
+}
+
 export function buildPortalWeavePayload(generated?: string): PortalWeavePayload {
+  const surfaces = withLinkIds(PORTAL_WEAVE_SURFACES, 'surface');
+  const artifacts = withLinkIds(PORTAL_WEAVE_ARTIFACTS, 'artifact');
+  const wiki = withLinkIds(
+    PORTAL_WEAVE_WIKI.map(w => ({ ...w, group: 'wiki' as const })),
+    'wiki'
+  );
+  const scripts: PortalWeaveScript[] = [
+    ...PORTAL_WEAVE_SCRIPTS,
+    {
+      id: 'portal-chrome-bake-apply',
+      label: 'Portal chrome bake + apply',
+      cmd: 'bun run portal:chrome:bake && bun tools/portal-apply-chrome.ts',
+      doc: 'docs/portal-foundation.md',
+      group: 'harness',
+    },
+    {
+      id: 'monorepo-health-bake',
+      label: 'Monorepo health bake',
+      cmd: 'bun run monorepo:health:bake',
+      doc: 'docs/harness/tenants/monorepo-health.md',
+      group: 'harness',
+    },
+  ].map((s, i) => ({
+    ...s,
+    id: s.id ?? `script-${i}-${slugFromLabel(s.label)}`,
+  }));
+
+  const components = PORTAL_CHROME_COMPONENTS.map(c => ({
+    id: c.id,
+    path: c.path,
+    role: c.role,
+    kind: c.kind,
+  }));
+
   return {
+    schemaVersion: 2,
+    kind: 'portal-weave',
+    path: PORTAL_WEAVE_REGISTRY_PATH,
     generated: generated ?? new Date().toISOString(),
-    surfaces: PORTAL_WEAVE_SURFACES,
-    artifacts: PORTAL_WEAVE_ARTIFACTS,
-    components: PORTAL_CHROME_COMPONENTS.map(c => ({
-      id: c.id,
-      path: c.path,
-      role: c.role,
-      kind: c.kind,
-    })),
-    wiki: PORTAL_WEAVE_WIKI,
-    scripts: [
-      ...PORTAL_WEAVE_SCRIPTS,
-      {
-        label: 'Portal chrome bake + apply',
-        cmd: 'bun run portal:chrome:bake && bun tools/portal-apply-chrome.ts',
-        doc: 'docs/portal-foundation.md',
-      },
-      {
-        label: 'Monorepo health bake',
-        cmd: 'bun run monorepo:health:bake',
-        doc: 'docs/harness/tenants/monorepo-health.md',
-      },
-    ],
+    summary: {
+      surfaces: surfaces.length,
+      artifacts: artifacts.length,
+      components: components.length,
+      wiki: wiki.length,
+      scripts: scripts.length,
+    },
+    related: {
+      chrome: '/registry/portal-chrome.json',
+      monorepoHealth: '/registry/monorepo-health.json',
+      packagesGraph: '/registry/packages-graph-map.json',
+      opsSummary: '/registry/ops-summary.json',
+      tocOps: '/registry/toc-ops.json',
+    },
+    surfaces,
+    artifacts,
+    components,
+    wiki,
+    scripts,
   };
 }

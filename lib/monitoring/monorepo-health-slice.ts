@@ -143,7 +143,36 @@ export function projectMonorepoHealthHealthArtifact(
   };
 }
 
+function round1(n: number): number {
+  return Math.round(n * 10) / 10;
+}
+
+function formatMetrics(m: MonorepoHealthReport['metrics']): MonorepoHealthReport['metrics'] {
+  return {
+    duplicateDepCount: m.duplicateDepCount,
+    deadCodePercent: round1(m.deadCodePercent),
+    largeFilePercent: round1(m.largeFilePercent),
+    testFailureRate: round1(m.testFailureRate),
+    cyclicDependencyCount: m.cyclicDependencyCount,
+    testCoveragePercent: round1(m.testCoveragePercent),
+  };
+}
+
+function formatBreakdown(b: MonorepoHealthReport['breakdown']): MonorepoHealthReport['breakdown'] {
+  return {
+    base: b.base,
+    duplicateDepPenalty: round1(b.duplicateDepPenalty),
+    deadCodePenalty: round1(b.deadCodePenalty),
+    largeFilePenalty: round1(b.largeFilePenalty),
+    testFailurePenalty: round1(b.testFailurePenalty),
+    cyclePenalty: round1(b.cyclePenalty),
+    coverageBonus: round1(b.coverageBonus),
+  };
+}
+
 export function reportToRegistryBake(report: MonorepoHealthReport): MonorepoHealthRegistryBake {
+  const metrics = formatMetrics(report.metrics);
+  const breakdown = formatBreakdown(report.breakdown);
   return {
     schemaVersion: 1,
     kind: 'monorepo-health',
@@ -153,11 +182,11 @@ export function reportToRegistryBake(report: MonorepoHealthReport): MonorepoHeal
     portal: MONOREPO_HEALTH_PORTAL_PACKAGES,
     generatedAt: report.generatedAt,
     bunVersion: report.bunVersion,
-    score: report.score,
+    score: round1(report.score),
     grade: report.grade,
     formulaVersion: report.formulaVersion,
-    metrics: report.metrics,
-    breakdown: report.breakdown,
+    metrics,
+    breakdown,
     fileCount: report.fileCount,
     largeFileCount: report.largeFileCount,
     deadFileCount: report.deadFileCount,

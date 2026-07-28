@@ -38,10 +38,14 @@ describe('portal-chrome-catalog', () => {
     expect(html).toContain('portal-chrome.json');
   });
 
-  test('catalog schema v1', () => {
+  test('catalog schema v1 with summary + related', () => {
     const c = buildPortalChromeCatalog('t');
     expect(c.schemaVersion).toBe(1);
     expect(c.kind).toBe('portal-chrome');
     expect(c.components.length).toBeGreaterThan(5);
+    expect(c.summary.components).toBe(c.components.length);
+    expect(c.summary.priorityNav).toBe(c.priorityNav.length);
+    expect(c.related.weave).toBe('/registry/portal-weave.json');
+    expect(c.related.monorepoHealth).toBe('/registry/monorepo-health.json');
   });
 });

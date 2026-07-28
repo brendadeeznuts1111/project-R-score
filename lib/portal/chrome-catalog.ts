@@ -33,6 +33,19 @@ export type PortalChromeCatalog = {
   kind: 'portal-chrome';
   generated: string;
   path: typeof PORTAL_CHROME_REGISTRY_PATH;
+  summary: {
+    priorityNav: number;
+    overflowNav: number;
+    footerLinks: number;
+    components: number;
+    scripts: number;
+  };
+  related: {
+    weave: '/registry/portal-weave.json';
+    monorepoHealth: '/registry/monorepo-health.json';
+    packagesGraph: '/registry/packages-graph-map.json';
+    opsSummary: '/registry/ops-summary.json';
+  };
   priorityNav: PortalChromeNavItem[];
   overflowNav: PortalChromeNavItem[];
   footerLinks: Array<{ label: string; href: string; external?: boolean }>;
@@ -173,25 +186,40 @@ export const PORTAL_CHROME_COMPONENTS: PortalChromeComponent[] = [
 export function buildPortalChromeCatalog(
   generated = new Date().toISOString()
 ): PortalChromeCatalog {
+  const scripts = [
+    {
+      label: 'apply chrome',
+      cmd: 'bun tools/portal-apply-chrome.ts',
+      doc: 'docs/portal-foundation.md',
+    },
+    { label: 'bake chrome registry', cmd: 'bun run portal:chrome:bake' },
+    { label: 'verify portal static', cmd: 'bun run verify:portal:static' },
+    { label: 'monorepo health bake', cmd: 'bun run monorepo:health:bake' },
+    { label: 'ops snapshot', cmd: 'bun run ops:snapshot --no-routing' },
+  ];
   return {
     schemaVersion: 1,
     kind: 'portal-chrome',
     generated,
     path: PORTAL_CHROME_REGISTRY_PATH,
+    summary: {
+      priorityNav: PORTAL_PRIORITY_NAV.length,
+      overflowNav: PORTAL_OVERFLOW_NAV.length,
+      footerLinks: PORTAL_FOOTER_LINKS.length,
+      components: PORTAL_CHROME_COMPONENTS.length,
+      scripts: scripts.length,
+    },
+    related: {
+      weave: '/registry/portal-weave.json',
+      monorepoHealth: '/registry/monorepo-health.json',
+      packagesGraph: '/registry/packages-graph-map.json',
+      opsSummary: '/registry/ops-summary.json',
+    },
     priorityNav: PORTAL_PRIORITY_NAV,
     overflowNav: PORTAL_OVERFLOW_NAV,
     footerLinks: PORTAL_FOOTER_LINKS,
     components: PORTAL_CHROME_COMPONENTS,
-    scripts: [
-      {
-        label: 'apply chrome',
-        cmd: 'bun tools/portal-apply-chrome.ts',
-        doc: 'docs/portal-foundation.md',
-      },
-      { label: 'bake chrome registry', cmd: 'bun run portal:chrome:bake' },
-      { label: 'verify portal static', cmd: 'bun run verify:portal:static' },
-      { label: 'monorepo health bake', cmd: 'bun run monorepo:health:bake' },
-    ],
+    scripts,
   };
 }
 

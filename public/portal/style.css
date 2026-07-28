@@ -640,6 +640,37 @@ body {
   border-radius: 3px;
 }
 
+.ops-weave-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  line-height: 1.35;
+  text-decoration: none;
+  color: var(--accent);
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+.ops-weave-chip:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.ops-weave-chip[data-group='ops'] {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+.ops-weave-chip[data-group='harness'] {
+  border-color: color-mix(in srgb, var(--green, #3fb950) 40%, var(--border));
+}
+.ops-weave-chip[data-group='registry'] {
+  border-color: color-mix(in srgb, var(--yellow, #e6b84d) 35%, var(--border));
+}
+.ops-weave-chip[data-group='related'] {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+}
+
 /* ── Package grid ──────────────────────────────────────────────────── */
 
 .package-grid {

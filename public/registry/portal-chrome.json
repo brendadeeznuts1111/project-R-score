@@ -1,8 +1,21 @@
 {
   "schemaVersion": 1,
   "kind": "portal-chrome",
-  "generated": "2026-07-28T14:56:09.995Z",
+  "generated": "2026-07-28T15:36:11.370Z",
   "path": "/registry/portal-chrome.json",
+  "summary": {
+    "priorityNav": 6,
+    "overflowNav": 9,
+    "footerLinks": 11,
+    "components": 11,
+    "scripts": 5
+  },
+  "related": {
+    "weave": "/registry/portal-weave.json",
+    "monorepoHealth": "/registry/monorepo-health.json",
+    "packagesGraph": "/registry/packages-graph-map.json",
+    "opsSummary": "/registry/ops-summary.json"
+  },
   "priorityNav": [
     {
       "id": "home",
@@ -236,6 +249,10 @@
     {
       "label": "monorepo health bake",
       "cmd": "bun run monorepo:health:bake"
+    },
+    {
+      "label": "ops snapshot",
+      "cmd": "bun run ops:snapshot --no-routing"
     }
   ]
 }
