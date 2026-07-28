@@ -50,6 +50,20 @@ describe('monitoring', () => {
     expect(typeof data.compliance?.shadowMismatches).toBe('number');
   });
 
+  test('collectMonitoring includes limitRaises when bake is present', async () => {
+    const bake = Bun.file('public/registry/limit-raises.json');
+    if (!(await bake.exists())) return;
+    const db = openOperationsDb({ path: ':memory:' });
+    const data = await collectMonitoring(db, { source: 'snapshot' });
+    db.close();
+
+    expect(data.limitRaises).toBeDefined();
+    expect(data.limitRaises?.available).toBe(true);
+    expect(data.limitRaises?.path).toBe('/registry/limit-raises.json');
+    expect(data.limitRaises?.portal).toBe('/portal/limits/');
+    expect(typeof data.limitRaises?.ok).toBe('boolean');
+  });
+
   test('renderMonitoringHtml embeds Bun.inspect.table output', async () => {
     const db = openOperationsDb({ path: ':memory:' });
     const data = await collectMonitoring(db, { source: 'live' });

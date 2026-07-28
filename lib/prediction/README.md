@@ -8,8 +8,11 @@ SSOT lives here — not under `lib/operations/`.
 | [`tester.ts`](tester.ts) | `simulateCoveragePrediction` · `runCoverageBacktest` · `runDailyCoveragePredictionCycle` · `getPredictionAccuracy` |
 | [`report.ts`](report.ts) | SVG chart + HTML; optional `Bun.WebView` → `Bun.Image` PNG |
 | [`schema.ts`](schema.ts) | `ensurePredictionSchema` → table `prediction_accuracy` |
-| [`index.ts`](index.ts) | Public barrel |
-| CLI | [`tools/ops-prediction.ts`](../../tools/ops-prediction.ts) · `bun run ops:prediction` |
+| [`limit-prediction.ts`](limit-prediction.ts) | Partner limit raise forecast · cycle · backfill |
+| [`limit-prediction-report.ts`](limit-prediction-report.ts) | `LimitPredictionReport` · Bun.inspect.table |
+| [`granular-analysis.ts`](granular-analysis.ts) | Book/sport/market breakdown + regulatory correlation |
+| [`index.ts`](index.ts) | Public barrel (coverage + limit prediction) |
+| CLI | [`tools/ops-prediction.ts`](../../tools/ops-prediction.ts) · `bun run ops:prediction` · `ops:limits:predict` |
 | Cron | [`lib/accounts/automation.ts`](../accounts/automation.ts) · `ops-coverage-prediction` @ 01:00 UTC |
 | Schema hook | `migrateSchema` in [`lib/operations/schema.ts`](../operations/schema.ts) |
 | Tests | `tests/prediction-backtest.test.ts` · `tests/prediction-report.test.ts` |

@@ -100,12 +100,12 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveLink[] = [
   {
     label: 'packages-graph-map',
     href: '/registry/packages-graph-map.json',
-    note: 'workspace coupling · env owners · quarantine · claim packages-graph-map-v11',
+    note: 'workspace coupling · env owners · template defaults · claim packages-graph-map-v12',
   },
   {
     label: 'env-inventory',
     href: '/registry/env-inventory.json',
-    note: 'Bun.env owners · root/product runtime · packages plane · env:inventory:bake',
+    note: 'owners · needsInject vs template defaults · packages plane · env:inventory:bake',
   },
   { label: 'dod-queue', href: '/registry/dod-queue.json' },
   {

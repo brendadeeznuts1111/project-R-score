@@ -10,6 +10,7 @@ import {
   loadComplianceMonitoringSlice,
   type ComplianceMonitoringSlice,
 } from './compliance-slice.ts';
+import { loadLimitRaisesMonitoringSlice, type LimitRaisesMonitoringSlice } from './limit-slice.ts';
 import { ensureMonitoringSchema } from './schema.ts';
 
 export type IntegritySnapshot = {
@@ -115,6 +116,11 @@ export type MonitoringPayload = {
    * Baked into monitoring.json (no live SQLite required on Pages).
    */
   compliance?: ComplianceMonitoringSlice;
+  /**
+   * Limit-raises bake slice for monitoring tile + /portal/limits/.
+   * Baked into monitoring.json from public/registry/limit-raises.json.
+   */
+  limitRaises?: LimitRaisesMonitoringSlice;
 };
 
 const REGISTRY_INTEGRITY_FILE = joinPath(import.meta.dir, '../../reports/registry-integrity.json');
@@ -316,7 +322,10 @@ export async function collectMonitoring(
   }
 
   const timestamp = new Date().toISOString();
-  const compliance = await loadComplianceMonitoringSlice();
+  const [compliance, limitRaises] = await Promise.all([
+    loadComplianceMonitoringSlice(),
+    loadLimitRaisesMonitoringSlice(),
+  ]);
 
   return {
     source: opts?.source ?? 'live',
@@ -334,5 +343,6 @@ export async function collectMonitoring(
     timestamp,
     snapshotAt: timestamp,
     ...(compliance ? { compliance } : {}),
+    ...(limitRaises ? { limitRaises } : {}),
   };
 }

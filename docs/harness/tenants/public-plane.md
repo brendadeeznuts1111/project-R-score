@@ -34,6 +34,7 @@ Pages static artifact plane — portal UI, registry bake, monitoring shells. Dis
 | Proof taxonomy panel on ops dashboard | **Closed** | `verify-portal.ts` taxonomy chrome check |
 | Live `/api/health` schema v1 on Pages | **Partial** | `verify:portal` live probe · env-dependent |
 | Orphan registry JSON without portal link | **Closed** | weave SSOT (`PORTAL_WEAVE_ARTIFACTS`) · `content-type-matrix` · `formdata-proof` · `package-info` |
+| Limit raises bake + board | **Closed** | `/portal/limits/` · `limit-raises.json` · health `artifacts.limitRaises` · tenant `partner-limits.md` |
 | `skills-catalog.json` scope | **Closed** | Kimi Daimon (`PORTAL_SKILLS_DIR`) · harness plane baked separately as `harness-skills-catalog.json` |
 
 ## Compose

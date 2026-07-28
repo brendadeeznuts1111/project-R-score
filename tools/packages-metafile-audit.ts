@@ -17,7 +17,7 @@
  *   bun run audit:packages:full   # --cross-check --diff --md --map --bake
  *   bun tools/packages-metafile-audit.ts --strict
  *
- * Claim: packages-graph-map-v11
+ * Claim: packages-graph-map-v12
  */
 import { Glob, sliceAnsi } from 'bun';
 import { joinPath } from '../lib/path-bun.ts';
@@ -121,7 +121,7 @@ export type EntrypointKind =
   | 'explicit';
 
 export type PackageAuditReport = {
-  schemaVersion: 11;
+  schemaVersion: 12;
   kind: 'packages-metafile-audit';
   generatedAt: string;
   bunVersion: string;
@@ -551,7 +551,7 @@ export function formatAuditMarkdown(report: PackageAuditReport): string {
       `### Env inventory (owners)`,
       ``,
       `- unique=${e.uniqueVars} · owners=${e.summary.ownerCount} · packageTouched=${e.summary.packageTouchedKeys} · multiPlane=${e.summary.multiPlaneKeys}`,
-      `- root runtime missing=${e.runtime.root.templateKeysMissing} · defaultsIssues=${e.defaultsIssues.total} (pkg=${e.defaultsIssues.packages})`,
+      `- root needsInject=${e.runtime.root.missingNeedsInject.length} · coveredByDefault=${e.runtime.root.coveredByTemplateDefault.length} · unset=${e.runtime.root.templateKeysMissing} · defaultsIssues=${e.defaultsIssues.total} (pkg=${e.defaultsIssues.packages})`,
       ``
     );
     for (const o of e.owners.filter(x => x.packages.length).slice(0, 16)) {
@@ -784,6 +784,8 @@ export async function runPackagesMetafileAudit(opts?: {
               envPackageTouchedKeys: env.summary.packageTouchedKeys,
               envMultiPlaneKeys: env.summary.multiPlaneKeys,
               envRootRuntimeMissing: env.summary.rootRuntimeMissing,
+              envRootRuntimeNeedsInject: env.summary.rootRuntimeNeedsInject,
+              envRootCoveredByDefault: env.summary.rootCoveredByDefault,
             }
           : map.summary,
       };
@@ -949,17 +951,19 @@ export async function runPackagesMetafileAudit(opts?: {
   }
   if (map.env) {
     notes.push(
-      `Env inventory: unique=${map.env.uniqueVars} · secrets=${map.env.byKind.secret} · config=${map.env.byKind.config} · actionableGaps=${map.env.vault.actionableVaultGaps.length} · rootRuntimeMissing=${map.env.runtime.root.templateKeysMissing} · owners=${map.env.summary.ownerCount} · pkgKeys=${map.env.summary.packageTouchedKeys} · multiPlane=${map.env.summary.multiPlaneKeys} · defaultsIssues=${map.env.defaultsIssues.total}`
+      `Env inventory: unique=${map.env.uniqueVars} · secrets=${map.env.byKind.secret} · config=${map.env.byKind.config} · actionableGaps=${map.env.vault.actionableVaultGaps.length} · rootNeedsInject=${map.env.runtime.root.missingNeedsInject.length} · rootCoveredByDefault=${map.env.runtime.root.coveredByTemplateDefault.length} · owners=${map.env.summary.ownerCount} · pkgKeys=${map.env.summary.packageTouchedKeys} · multiPlane=${map.env.summary.multiPlaneKeys} · defaultsIssues=${map.env.defaultsIssues.total}`
     );
   }
   if (map.quarantine?.length) {
     notes.push(
       `Quarantine: ${map.quarantine.map(q => `${q.package}(blocked=${q.blockedBy.length})`).join(', ')}`
     );
+  } else if (map.summary?.quarantineCount === 0) {
+    notes.push('Quarantine: none');
   }
 
   const report: PackageAuditReport = {
-    schemaVersion: 11,
+    schemaVersion: 12,
     kind: 'packages-metafile-audit',
     generatedAt: new Date().toISOString(),
     bunVersion: Bun.version,
@@ -1049,7 +1053,7 @@ async function main(): Promise<void> {
 
 Score: 100 − 8·orphans − 0.5·orphan% − 10·cycles − 25·buildFail
 Grade: healthy≥90 · needs-improvement≥60 · critical<60
-Map v11: + env key owners · root/product runtime · defaults issues · quarantine
+Map v12: + template-default cover · archive placeholder removed · env inventory schema 3
 `);
     return;
   }
@@ -1133,7 +1137,7 @@ Map v11: + env key owners · root/product runtime · defaults issues · quaranti
   if (argvFlag('--bake')) {
     const bakePath = joinPath(ROOT, 'public/registry/packages-graph-map.json');
     const bake = {
-      schemaVersion: 11,
+      schemaVersion: 12,
       kind: 'packages-graph-map',
       generatedAt: report.generatedAt,
       bunVersion: report.bunVersion,
@@ -1288,13 +1292,18 @@ Map v11: + env key owners · root/product runtime · defaults issues · quaranti
         `\nenv inventory: roots=[${e.scannedRoots.join(',')}] unique=${e.uniqueVars} secret=${e.byKind.secret} config=${e.byKind.config} gaps=${e.vault.actionableVaultGaps.length}`
       );
       console.log(
-        `  root runtime: present=${e.runtime.root.templateKeysPresent} missing=${e.runtime.root.templateKeysMissing}` +
-          (e.runtime.root.missingKeys.length
-            ? ` [${e.runtime.root.missingKeys.slice(0, 8).join(', ')}]`
+        `  root runtime: present=${e.runtime.root.templateKeysPresent} unset=${e.runtime.root.templateKeysMissing}` +
+          ` · needsInject=${e.runtime.root.missingNeedsInject.length}` +
+          (e.runtime.root.missingNeedsInject.length
+            ? ` [${e.runtime.root.missingNeedsInject.slice(0, 8).join(', ')}]`
+            : '') +
+          ` · coveredByDefault=${e.runtime.root.coveredByTemplateDefault.length}` +
+          (e.runtime.root.coveredByTemplateDefault.length
+            ? ` [${e.runtime.root.coveredByTemplateDefault.slice(0, 8).join(', ')}]`
             : '')
       );
       console.log(
-        `  product runtime missing=${e.runtime.products.templateKeysMissing} · owners=${e.summary.ownerCount} · pkgKeys=${e.summary.packageTouchedKeys} · multiPlane=${e.summary.multiPlaneKeys} · defaultsIssues=${e.defaultsIssues.total}`
+        `  product runtime unset=${e.runtime.products.templateKeysMissing} needsInject=${e.runtime.products.missingNeedsInject.length} · owners=${e.summary.ownerCount} · pkgKeys=${e.summary.packageTouchedKeys} · multiPlane=${e.summary.multiPlaneKeys} · defaultsIssues=${e.defaultsIssues.total}`
       );
       const pkgOwners = e.owners.filter(o => o.packages.length).slice(0, 8);
       if (pkgOwners.length) {

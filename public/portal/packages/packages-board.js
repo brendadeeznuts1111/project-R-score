@@ -1,11 +1,11 @@
 /**
  * Packages graph map board — load + render with explicit failure paths.
  * @see docs/portal-foundation.md
- * @see docs/harness/tenants/monorepo-health.md (claim packages-graph-map-v11)
+ * @see docs/harness/tenants/monorepo-health.md (claim packages-graph-map-v12)
  */
 
 /** Supported bake schema for this board (pin — warn on mismatch, still try to render). */
-export const PACKAGES_MAP_SCHEMA = 11;
+export const PACKAGES_MAP_SCHEMA = 12;
 
 /** Primary registry bake + optional local audit-report fallbacks (dev only paths may 404 on Pages). */
 export const PACKAGES_MAP_SOURCES = [
@@ -247,7 +247,7 @@ export function renderPackagesBoard(data, doc = document) {
   const env = data.env;
   if (envMeta) {
     if (env?.summary) {
-      envMeta.textContent = `unique=${env.uniqueVars} · owners=${env.summary.ownerCount} · pkgKeys=${env.summary.packageTouchedKeys} · multiPlane=${env.summary.multiPlaneKeys} · rootMissing=${env.runtime?.root?.templateKeysMissing ?? '—'} · defaultsIssues=${env.defaultsIssues?.total ?? 0}`;
+      envMeta.textContent = `unique=${env.uniqueVars} · owners=${env.summary.ownerCount} · pkgKeys=${env.summary.packageTouchedKeys} · multiPlane=${env.summary.multiPlaneKeys} · rootNeedsInject=${env.runtime?.root?.missingNeedsInject?.length ?? env.summary?.rootRuntimeNeedsInject ?? '—'} · coveredByDefault=${env.runtime?.root?.coveredByTemplateDefault?.length ?? env.summary?.rootCoveredByDefault ?? '—'} · defaultsIssues=${env.defaultsIssues?.total ?? 0}`;
     } else {
       envMeta.textContent = 'No env inventory — run bun run audit:packages:env';
     }

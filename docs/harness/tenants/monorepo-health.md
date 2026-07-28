@@ -58,7 +58,7 @@ bun tools/monorepo-health.ts --archive   # tar report when Bun.Archive available
 Focused `packages/*/src` graph (Bun.build metafile), complementary to this tenant:
 
 ```bash
-bun run audit:packages           # score/grade + deep map (schema v11)
+bun run audit:packages           # score/grade + deep map (schema v12)
 bun run audit:packages:full      # --cross-check --diff --md --map --bake --vault --env
 bun run audit:packages:env       # --env --vault-gap + bake packages + env-inventory
 bun run audit:packages:vault     # --vault --vault-gap (live pass-cli status) + bake

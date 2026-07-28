@@ -2,7 +2,7 @@
 // @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
 /**
  * Package-level dependency mapping from a file-level import adjacency.
- * Used by tools/packages-metafile-audit.ts (schema v11+).
+ * Used by tools/packages-metafile-audit.ts (schema v12+).
  */
 
 import type { PackageVaultMap } from './packages-vault-map.ts';
@@ -152,6 +152,8 @@ export type PackageGraphMap = {
     envPackageTouchedKeys?: number;
     envMultiPlaneKeys?: number;
     envRootRuntimeMissing?: number;
+    envRootRuntimeNeedsInject?: number;
+    envRootCoveredByDefault?: number;
   };
   /** Packages ↔ env.template / Proton Pass (optional --vault). */
   vault?: PackageVaultMap;

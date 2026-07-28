@@ -230,6 +230,7 @@ describe('portal-health-edge', () => {
     '/registry/defaults-proof.json': null,
     '/registry/proof-taxonomy-audit.json': null,
     '/registry/compliance-board.json': null,
+    '/registry/limit-raises.json': null,
   } as const;
 
   test('complianceBoard missing: exists false, does not degrade status', async () => {
@@ -249,6 +250,45 @@ describe('portal-health-edge', () => {
       path: '/registry/compliance-board.json',
       portal: '/portal/compliance/',
     });
+    expect(body.status).toBe('ok');
+    const lim = body.artifacts.limitRaises as {
+      exists: boolean;
+      ok: boolean;
+      path: string;
+      portal: string;
+    };
+    expect(lim.exists).toBe(false);
+    expect(lim.path).toBe('/registry/limit-raises.json');
+    expect(lim.portal).toBe('/portal/limits/');
+  });
+
+  test('limitRaises present: exists true, does not degrade status', async () => {
+    const body = await collectEdgeHealth(
+      mockAssetsEnv({
+        ...emptyArtifacts,
+        '/registry/limit-raises.json': {
+          schemaVersion: 1,
+          generatedAt: '2026-07-28T00:00:00.000Z',
+          lookbackHours: 48,
+          partners: 2,
+          raises: 3,
+          byNode: {
+            a: { raises: [{}, {}, {}] },
+          },
+        },
+      }),
+      'https://edge.test/'
+    );
+    const lim = body.artifacts.limitRaises as {
+      exists: boolean;
+      ok: boolean;
+      partners: number;
+      raises: number;
+    };
+    expect(lim.exists).toBe(true);
+    expect(lim.ok).toBe(true);
+    expect(lim.partners).toBe(2);
+    expect(lim.raises).toBe(3);
     expect(body.status).toBe('ok');
   });
 

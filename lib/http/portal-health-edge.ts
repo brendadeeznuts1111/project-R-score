@@ -10,6 +10,10 @@ import {
   projectComplianceHealthArtifact,
   type ComplianceHealthArtifact,
 } from '../monitoring/compliance-slice.ts';
+import {
+  projectLimitRaisesHealthArtifact,
+  type LimitRaisesHealthArtifact,
+} from '../monitoring/limit-slice.ts';
 import { buildEdgeEnvTable } from './portal-env-edge.ts';
 import { portalOptionsResponse } from './portal-cors.ts';
 
@@ -231,6 +235,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     defaultsRaw,
     taxonomyAudit,
     complianceBoard,
+    limitRaisesBoard,
   ] = await Promise.all([
     assetJson(env, origin, '/registry/ops-summary.json'),
     assetJson(env, origin, '/registry/monitoring.json'),
@@ -240,6 +245,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     assetJson(env, origin, '/registry/defaults-proof.json'),
     assetJson(env, origin, '/registry/proof-taxonomy-audit.json'),
     assetJson(env, origin, '/registry/compliance-board.json'),
+    assetJson(env, origin, '/registry/limit-raises.json'),
   ]);
 
   const defaults = sliceDefaults(defaultsRaw);
@@ -305,6 +311,10 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
   // Missing bake does not degrade edge health (optional plane); present + fail does.
   const complianceFail = complianceArtifact.exists && !complianceArtifact.ok;
 
+  // Limit raises bake is informational (missing does not degrade).
+  const limitRaisesArtifact: LimitRaisesHealthArtifact =
+    projectLimitRaisesHealthArtifact(limitRaisesBoard);
+
   const status: 'ok' | 'degraded' =
     defaultsFail || taxonomyFail || complianceFail ? 'degraded' : 'ok';
 
@@ -327,6 +337,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       defaultsProof: { exists: Boolean(defaultsRaw) },
       proofTaxonomyAudit: { exists: Boolean(taxonomyAudit) },
       complianceBoard: complianceArtifact,
+      limitRaises: limitRaisesArtifact,
     },
     registry: {
       packages,

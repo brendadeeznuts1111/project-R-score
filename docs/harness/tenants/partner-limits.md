@@ -28,7 +28,10 @@ operations.db
         ├── exportLimitRaisesSnapshot        # ops:snapshot → /registry/limit-raises.json
         │
         ├── Local: serve-public agent handlers (live SQLite)
-        └── Pages: GET /api/agents/v1/limits/raises → ASSETS snapshot (read-only)
+        └── Pages:
+              GET /api/agents/v1/limits/raises  → ASSETS snapshot
+              GET /api/limits/summary           → snapshot aggregate
+              POST record / analyze / predictions → 503 stubs (local only)
 ```
 
 **DB home:** `operations.db` (not `partner.db`). Wire `AccountLimitsRepository`
@@ -42,7 +45,7 @@ bun run ops:limits:demo
 # ≡ ops-check-limits --force-seed --multi  → LimitRaiseReport inspect tables
 
 # Connected fixture: 3 partners · 5 downline nodes · 5 books · MA/NJ · 5 ZIP clusters
-bun tools/seed-limit-patterns.ts --force --bake
+bun run ops:limits:seed-patterns
 
 # 2. Check / capture / predict
 bun run ops:limits:check --partner partner-42 --multi
@@ -82,7 +85,8 @@ bun run serve:public:hot   # open /portal/limits/ · /registry/limit-raises.json
 | **Route SSOT**           | [`lib/http/public-routes.ts`](../../../lib/http/public-routes.ts)                                                                                                          | `/portal/limits/` · registry · raises · record · summary · analyze · predictions                                                     |
 | **Weave**                | [`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts)                                                                                                            | surface · artifact · scripts (`ops:limits:*` · seed-limit-patterns)                                                                  |
 | **Ops summary**          | [`lib/operations/ops-summary.ts`](../../../lib/operations/ops-summary.ts)                                                                                                  | `limitChanges[]` card slice from ops DB                                                                                              |
-| **Barrel**               | [`lib/operations/index.ts`](../../../lib/operations/index.ts)                                                                                                              | all limit agent handlers + report properties + analytics helpers                                                                     |
+| **Monitoring / health**  | [`lib/monitoring/limit-slice.ts`](../../../lib/monitoring/limit-slice.ts)                                                                                                  | `limitRaises` monitoring tile · health `artifacts.limitRaises` (missing bake does not degrade)                                       |
+| **Barrel**               | [`lib/operations/index.ts`](../../../lib/operations/index.ts) · [`lib/prediction/index.ts`](../../../lib/prediction/index.ts)                                              | all limit agent handlers + limit prediction exports                                                                                  |
 | **Tests**                | `tests/account-limits-repo.test.ts` · `analytics-multifactor.test.ts` · `limit-raise-report.test.ts` · `limit-raise-agent-api.test.ts` · `limit-patterns*.test.ts` · `limit-prediction-report.test.ts` | schema · score · inspect · agent · Pages · predict                                                                                    |
 
 ## Scripts

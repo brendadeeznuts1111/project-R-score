@@ -33,10 +33,16 @@ Tree-structured agent management with HMAC-signed play distribution.
 | [`play-dispatcher.ts`](play-dispatcher.ts) | Publish + gate + reserve + Telegram outbox |
 | [`state-regulation.ts`](state-regulation.ts) | MA/NJ limits · geo columns (`state_code`/`age`/`location`/`zip_code`) · scope · dispatcher |
 | [`state-compliance-http.ts`](state-compliance-http.ts) | Mock Bun.serve API · `ComplianceClient` · `ops:compliance:mock` · demo partners |
+| [`partner-analytics-repo.ts`](partner-analytics-repo.ts) | Multi-factor raise context · seal proofs · `exportLimitRaisesSnapshot` |
+| [`limit-raise-report.ts`](limit-raise-report.ts) | `LimitRaiseReport` · Bun.inspect.table sections |
+| [`limit-raise-agent-api.ts`](limit-raise-agent-api.ts) | Agent HTTP: raises / record / summary / analyze / predictions |
+| [`limit-patterns.ts`](limit-patterns.ts) | Connected partner/downline/book/state/ZIP pattern snapshot |
 | [`account-service.ts`](account-service.ts) | Tree nodes, portal sync |
 | [`cut-engine.ts`](cut-engine.ts) | Cut cascade allocations |
 | [`backup.ts`](backup.ts) | DB backup helpers |
 | [`index.ts`](index.ts) | Barrel exports |
+
+Partner limits tenant: [`docs/harness/tenants/partner-limits.md`](../../docs/harness/tenants/partner-limits.md) · `bun run ops:limits:demo` · `/portal/limits/`.
 
 Prove loop: `bun run ops:settle` · `ops:outbox:requeue` · `bun test tests/ops-loop-hardening.test.ts` · tenant [`docs/harness/tenants/ops-loop-throughput.md`](../../docs/harness/tenants/ops-loop-throughput.md).
 

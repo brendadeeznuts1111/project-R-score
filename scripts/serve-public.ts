@@ -1121,6 +1121,19 @@ async function collectHealthData(): Promise<{
   const complianceBoard = projectComplianceHealthArtifact(complianceRaw);
   const complianceFail = complianceBoard.exists && !complianceBoard.ok;
 
+  // Limit raises bake — informational (missing does not degrade).
+  let limitRaisesRaw: unknown = null;
+  const limitRaisesFile = Bun.file('public/registry/limit-raises.json');
+  if (await limitRaisesFile.exists()) {
+    try {
+      limitRaisesRaw = await limitRaisesFile.json();
+    } catch {
+      /* malformed → treat as missing */
+    }
+  }
+  const { projectLimitRaisesHealthArtifact } = await import('../lib/monitoring/limit-slice.ts');
+  const limitRaises = projectLimitRaisesHealthArtifact(limitRaisesRaw);
+
   const data: Record<string, unknown> = {
     schemaVersion: 1,
     status:
@@ -1133,6 +1146,7 @@ async function collectHealthData(): Promise<{
     artifacts: {
       opsSummary: { exists, generated, ageSeconds },
       complianceBoard,
+      limitRaises,
     },
     registry: { packages: pkgCount, versions: versionCount },
     bunApiProof: proofStatus,

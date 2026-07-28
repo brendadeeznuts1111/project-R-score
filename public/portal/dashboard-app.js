@@ -314,15 +314,19 @@ function renderOpsPlane(ops) {
       <ul class="plane-gap-list">${top3}</ul>
       <p class="plane-sub">${ops.prediction?.limitRaise?.n > 0 ? `🎯 prediction accuracy MAE ${Number(ops.prediction.limitRaise.mae).toFixed(3)} (${ops.prediction.limitRaise.n} samples)` : ''}</p>
       <div class="plane-actions">
+        <a class="ops-link" href="/portal/limits/">Limits board</a>
         <a class="ops-link" href="/portal/ops/">Full Ops</a>
-        <a class="ops-link" href="/registry/ops-summary.json">ops-summary.json</a>
+        <a class="ops-link" href="/registry/limit-raises.json">limit-raises.json</a>
       </div>
     </article>`;
   } else {
     limitHtml = `<article class="plane-card" data-plane="limit-raises">
       <h3>Limit increases</h3>
       <p class="plane-detail empty-hint">No recent increases.</p>
-      <div class="plane-actions"><a class="ops-link" href="/portal/ops/">Full Ops</a></div>
+      <div class="plane-actions">
+        <a class="ops-link" href="/portal/limits/">Limits board</a>
+        <a class="ops-link" href="/portal/ops/">Full Ops</a>
+      </div>
     </article>`;
   }
 

@@ -25,6 +25,16 @@ export {
   type ComplianceSummarySlice,
   type ComplianceHealthArtifact,
 } from './compliance-slice.ts';
+export {
+  loadLimitRaisesMonitoringSlice,
+  loadLimitRaisesSummarySliceSync,
+  projectLimitRaisesHealthArtifact,
+  LIMIT_RAISES_BOARD_PATH,
+  LIMIT_RAISES_PORTAL_PATH,
+  type LimitRaisesMonitoringSlice,
+  type LimitRaisesSummarySlice,
+  type LimitRaisesHealthArtifact,
+} from './limit-slice.ts';
 export { ensureMonitoringSchema } from './schema.ts';
 export { renderMonitoringHtml } from './page.ts';
 export { enrichMonitoringForSnapshot, type MonitoringSnapshotExtras } from './enrich-snapshot.ts';

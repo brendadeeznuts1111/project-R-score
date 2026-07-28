@@ -3,7 +3,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
  * Packages ↔ Proton Pass / env.template coupling.
- * Used by packages-metafile-audit --vault / --env (schema v11+).
+ * Used by packages-metafile-audit --vault / --env (schema v12+).
  *
  * Never prints secret values — only key names, dispositions, and vault item titles.
  */

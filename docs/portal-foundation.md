@@ -252,6 +252,17 @@ Fixture-first Drum / Buffer / Rope desk for Pages (no `toc-ops-repo` SQLite on t
 
 **Plane split:** `/portal/toc` = demo-readonly mirror of TOC edge (rails, accounts, Soft/Gate 12, Ball-in-Court, bottlenecks). `/portal/ops` = live FactoryWager ops (partner-profile bridge, channels outbox, phones inventory) **plus** a TOC summary card. Cloudflare MCP does **not** expose TOC desk data — use it for Pages deploy/inspect only. Full concern matrix: [`docs/harness/tenants/toc-ops.md`](harness/tenants/toc-ops.md)#surface-map-portal-vs-live.
 
+### Partner limits board (`/portal/limits/`)
+
+| | |
+|-|-|
+| UI | [`public/portal/limits/`](../public/portal/limits/) · multi-factor score badges |
+| Bake | `/registry/limit-raises.json` via `ops:snapshot` |
+| Agent | Local SQLite · Pages snapshot `GET /api/agents/v1/limits/raises` · summary `/api/limits/summary` |
+| Tenant | [`docs/harness/tenants/partner-limits.md`](harness/tenants/partner-limits.md) · `ops:limits:demo` |
+
+Dashboard plane card + monitoring `limitRaises` slice + health `artifacts.limitRaises` project from the same bake (missing bake does not degrade health).
+
 ### Compliance board (`/portal/compliance/`)
 
 Baked MA/NJ board (enhancements · shadow · geo · HMAC). Priority-nav surface; same bake projects to Ops rollup, monitoring tile, and health.
